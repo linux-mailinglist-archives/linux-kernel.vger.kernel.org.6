@@ -1,150 +1,120 @@
-Return-Path: <linux-kernel+bounces-338267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC899855A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:40:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E998B9855B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06FA72842CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:40:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFBEA2842B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7349F15B0EC;
-	Wed, 25 Sep 2024 08:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193D415B118;
+	Wed, 25 Sep 2024 08:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NiZjgL4r"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="r0iPZGwZ"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9440132124;
-	Wed, 25 Sep 2024 08:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6B2139579
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727253638; cv=none; b=Nlx6JUJIoEFnLln88pZZgDAKkBThBgFBpbsqgViXandBTsc2Wai3FEYocMxHUFIWDZ/upfy5GeZZMkm/o82MdVA/HzSNxxonybg9ePvGXUZ9HcUAF1tsCxHfBb4xJbK8rJGW5FGykSrsRxgr2P50Wm9sS2ixPq0t1gwfR/Yo06Y=
+	t=1727253695; cv=none; b=UHBwAFRSa0X7wnraDu1xYexVk5d9OWyDmsJHXLw+p97y8rrZVfOZ5P3uVNUKJOa6Vm+7Na7G50f2CghhPL27SLmIp8oGap+GZM4++97Bh0vE3yadsf49DP6qK/uZu256FgEOXoIawIVSGilBk1bxlp2YY0svP2luENnVLFfiqME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727253638; c=relaxed/simple;
-	bh=G3rkyJMud+WT9NrQgRrDr5uH79egWN8AUKmAFpNfr2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mlBwzds2SHI1gpWJts3xxhCv8Hc3mkTxfq0kVHBjzbwH/BIbml2vYbKRxjeb9A3zCKUJSRStVqx5LFMLji0SNYFvzIaONhHyIGRDrgvb4NCgUrJ/YVD1a4bRVd0k2jz2MHQVGu8JtdGYqgdMXTjZj7Vv5cNmb1eoHDb8QrK/ZXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NiZjgL4r; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48P8CCGv003198;
-	Wed, 25 Sep 2024 08:40:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	byKamiQAHNnlbq0CpogC8pF/k5ZwWEhkxkolRelxSvg=; b=NiZjgL4r8MKCcwte
-	5H3eFAR3nqSC8aGQbcRAys2mlWKhfhQQNL4qe2KdLFPYHrSubav92hEPI/tnLa/p
-	ysLKPR9pGujpAW2SZyQgYMX4QgZ6OAJeY3kE2d8mfNk6eZeBXwZvP3bWvwalgVCG
-	bIZZA4APTXRjLIWxIkDmkv5h8E0lCUJbZ2y2XMasAfAWlXHSnqOOyiNXt0OevWaP
-	FOgwYqJ/LamocboV4/QanWqsXbZEKztQdTjqvCGFpRg3DiGZovLcQd0MMMCm4PVu
-	2sJic/+BmqE0gjUq3q8WfmpcavCoeXh77MGBXK/mfZqRVGXrPYuE6NbwKVo67dKT
-	sMh0sg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sph6ujyp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 08:40:27 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P8ePO0027288
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 08:40:25 GMT
-Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Sep
- 2024 01:40:23 -0700
-Message-ID: <56b3ca36-e7b8-480f-99b8-c624acba8d65@quicinc.com>
-Date: Wed, 25 Sep 2024 16:40:20 +0800
+	s=arc-20240116; t=1727253695; c=relaxed/simple;
+	bh=V2jnRDCH9o63aNm+SoxQBY2Sf3d0HgZbebkRjdGr9lY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OOPysts+jOFWlBCsO+Ph9W5cytTgrTuMrEisyDoTUcUcrFMqf8BYLF4/UhkpRl4TpErHY48pQwoCvo6yNUDR9rIeDuAeWZKTbunOQ2TEC4snOXICOlBwJMHaZCzFmXQejkVYSGgIa1O/fOjgcOQT4E8C3njnJ4uq9rowo61qV10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=r0iPZGwZ; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: f02495a27b1911ef8b96093e013ec31c-20240925
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=r7DM1OmTlAwvtjukMDEk3ahsIfChXG9XjEPCHP7QFb8=;
+	b=r0iPZGwZFUbGpu8UKobqoePl7TIAvPreNeKEbZ1K+Xs24qHrWm3YvIeTKb5DtrowUsIrRSN2lkBt5yAPjK5zKNVVN4lzcDmn5hHZl7Yrz8/svdsGfp9eQ/j2YuMtk+QctE16SjX+IJdE0tRcWPcJk8BYx/NCpNgorKgI5fMT1HQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:0d84a92a-5af0-442e-98bd-1e54c5d8d2d7,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6dc6a47,CLOUDID:fc343a18-b42d-49a6-94d2-a75fa0df01d2,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: f02495a27b1911ef8b96093e013ec31c-20240925
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
+	(envelope-from <liankun.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1374822066; Wed, 25 Sep 2024 16:41:20 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 25 Sep 2024 16:41:17 +0800
+Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 25 Sep 2024 16:41:17 +0800
+From: Liankun Yang <liankun.yang@mediatek.com>
+To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <rex-bc.chen@mediatek.com>,
+	<msp@baylibre.com>, <granquet@baylibre.com>, <dmitry.osipenko@collabora.com>,
+	<jitao.shi@mediatek.com>, <mac.shen@mediatek.com>, <peng.liu@mediatek.com>,
+	<liankun.yang@mediatek.com>
+CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v1 1/1] drm/mediatek: Fix wrong check of nvmem_cell_read
+Date: Wed, 25 Sep 2024 16:40:24 +0800
+Message-ID: <20240925084116.28848-1-liankun.yang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: interconnect: qcom-bwmon: Document QCS8300
- bwmon compatibles
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Georgi Djakov
-	<djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, <quic_tengfan@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240925-qcs8300_bwmon_binding-v1-1-a7bfd94b2854@quicinc.com>
- <7ld327om75xpz53fb7itxp2i7gjqvhavywzuhmf52myynawwvo@rmb7yimjxxmy>
-Content-Language: en-US
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-In-Reply-To: <7ld327om75xpz53fb7itxp2i7gjqvhavywzuhmf52myynawwvo@rmb7yimjxxmy>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: amRyg2Afm2cv0iX8sGCVKnzRyLNofn1g
-X-Proofpoint-ORIG-GUID: amRyg2Afm2cv0iX8sGCVKnzRyLNofn1g
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxlogscore=999
- mlxscore=0 adultscore=0 phishscore=0 suspectscore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409250062
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--5.492400-8.000000
+X-TMASE-MatchedRID: SuWkWSV/ibcryFHbNnBLG0KcYi5Qw/RVsEf8CpnIYtnfc2Xd6VJ+ynOQ
+	FTxg7zBiief1bXK4Giqi5055Kxg7KbBAQLqGlKiv4pdq9sdj8LUFHCcDXik5Rpsoi2XrUn/Js98
+	n9dYnJNNQSFbL1bvQASAHAopEd76vrTCa7ZKhhkhBggx/bFjh7r0Dqq+NSXuwaGjbsK/Gvmg8gV
+	7uQwboPw==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--5.492400-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: 13CCA0BB40EB3E96C6F46EEAE16D8E08228DAD574439DD1B6B754A5BEAC8938E2000:8
+X-MTK: N
 
+If the len is 0, kernel crash will occur when performing operations.
+Add the len check conditions to prevent kernel crash.
 
+Fixes: f70ac097a2cf ("drm/mediatek: Add MT8195 Embedded DisplayPort driver")
 
-On 9/25/2024 4:10 PM, Dmitry Baryshkov wrote:
-> On Wed, Sep 25, 2024 at 03:45:06PM GMT, Jingyi Wang wrote:
->> Document QCS8300 BWMONs, which has two BWMONv4 instances for the CPU->LLCC
->> path and one BWMONv5 instance for LLCC->DDR path.
->>
->> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->> ---
->>  Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
->> index 189f5900ee50..251410aabf38 100644
->> --- a/Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
->> +++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
->> @@ -26,6 +26,7 @@ properties:
->>        - items:
->>            - enum:
->>                - qcom,qcm2290-cpu-bwmon
->> +              - qcom,qcs8300-cpu-bwmon
-> 
-> In most other cases qcs8300 is being declared with the compat fallback
-> to sa8775p compat string. Is there any reason why bwmon is different?
-> 
-All the *cpu-bwmon are fallback to "qcom,sdm845-bwmon", so we add "qcom,qcs8300-cpu-bwmon"
-compatible and fallback to that.
->>                - qcom,sa8775p-cpu-bwmon
->>                - qcom,sc7180-cpu-bwmon
->>                - qcom,sc7280-cpu-bwmon
->> @@ -40,6 +41,7 @@ properties:
->>            - const: qcom,sdm845-bwmon    # BWMON v4, unified register space
->>        - items:
->>            - enum:
->> +              - qcom,qcs8300-llcc-bwmon
->>                - qcom,sa8775p-llcc-bwmon
->>                - qcom,sc7180-llcc-bwmon
->>                - qcom,sc8280xp-llcc-bwmon
->>
->> ---
->> base-commit: 4d0326b60bb753627437fff0f76bf1525bcda422
->> change-id: 20240925-qcs8300_bwmon_binding-641d8e4bf376
->>
->> Best regards,
->> -- 
->> Jingyi Wang <quic_jingyw@quicinc.com>
->>
-> 
-Thanks,
-Jingyi
+Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+index d8796a904eca..0cc75ba96b98 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dp.c
++++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+@@ -1082,7 +1082,7 @@ static void mtk_dp_get_calibration_data(struct mtk_dp *mtk_dp)
+ 	buf = (u32 *)nvmem_cell_read(cell, &len);
+ 	nvmem_cell_put(cell);
+ 
+-	if (IS_ERR(buf) || ((len / sizeof(u32)) != 4)) {
++	if (IS_ERR(buf) || (len == 0) || ((len / sizeof(u32)) != 4)) {
+ 		dev_warn(dev, "Failed to read nvmem_cell_read\n");
+ 
+ 		if (!IS_ERR(buf))
+-- 
+2.45.2
 
 
