@@ -1,132 +1,106 @@
-Return-Path: <linux-kernel+bounces-339388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38A198646F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:05:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BDC9986474
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791E11F25712
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:05:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4C61C20DC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBC417BB4;
-	Wed, 25 Sep 2024 16:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49DB3D97F;
+	Wed, 25 Sep 2024 16:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VMB4Xryn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Mk8j8pJk"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSv6tBBX"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C753208D1
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDE52F5B;
+	Wed, 25 Sep 2024 16:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727280342; cv=none; b=jVLl0h8NHx1/VApvBOZ9XwUrhIxt/yRoyeX5md5fni0wQNQDDwynrmEeH9yZJur+23ROqUuGIfdcoDi/YhvuhzqC1YuUO8IGXvej+yzuK3SvGzYJc8dQUbgt3Z2jnLJH+ZiYq7DexRi1YxaqjabG41MW1y4VlkK+5my1ztmEcgU=
+	t=1727280399; cv=none; b=QZvc7hdc4rsE+OQ3iWQK/McS/Yp/6XCAq5U9FC3m/P/sAta2vHfv3GErhihk25h++4t7G8GceX57LqPbEcpAZIGsFOPIspgt1dSHBmBrXm06w4qmbgCUhXlGwYTdsTQlSEcOY63j66fi1ErSTDDhrcOE1RhEWSMSpT8plOAYzXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727280342; c=relaxed/simple;
-	bh=YzQrJg/S2A7PM9rT1EAcA+I3pRA4EnsshfBm2/PzeYY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Gz/9BQ1adymjDf7KmIetGL1hvWab9X2LYFlua5oNp3pgVNxKJvpqT1fNODiJFQke9Ta2W3jMM0FwAEtCAu00Y4fS+WtMZQBhWkkWIqRCbQxnqSPmLNfEIVdp3ejXEr6jsuHiqDYvH0DPS8oBaWuEsZyQAiWk5yPX1ESFmQ5KY/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VMB4Xryn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Mk8j8pJk; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id E707A1380600;
-	Wed, 25 Sep 2024 12:05:29 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 25 Sep 2024 12:05:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727280329;
-	 x=1727366729; bh=1Jou7M4p83DcYzy5Ln4gAWeJqnubiTKkro2D97yUltU=; b=
-	VMB4XrynzJA4JABRzZPdOiYDRIosap8SM48qCziC2ikivtNJT0EBLfYiDuXi9l00
-	y8kOYz3DKZLPhgt20oG+0X9mfe7hdlBSC1SuAtFCuWrD6XOKHThVH7btAUfkFplx
-	O4QvrH5e/Al4rWkEj8g3gR7b3bh5wPHAmgvBhGR5ulFy+QwGO0wGSX96aSeN8Z2r
-	+LIZtLIrand6pgLsz9NnQI45vYgWtOlUgHTuJnE6v18JgBOsoRFE5Y4f1ZNejdMF
-	slqahInX7D4mBV/aWUl4Zw4RgMrcClvCr3X1VscsnHhhzBpQ4fbwZ/Ea5aRRaavI
-	qZDQT0ajzviIPoH6HJ6PcQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727280329; x=
-	1727366729; bh=1Jou7M4p83DcYzy5Ln4gAWeJqnubiTKkro2D97yUltU=; b=M
-	k8j8pJkiwfmDa1GoxI4u76IQwwnbCC/vUDCYqXVc6KVt7FRf0wLBmi587C0zT8l+
-	yRJRSF1FhKLsv/HKk+gHSI0kjrG0wh6vLX3tEduNN9Whp0p6cn8VQCPEty1THVkd
-	w4nJLv+s/KgUm4/2vShwL7e6gj2/W4e5sjmjxNIH802v1Yh7BCOZTO7QUTyJESr9
-	nltvyGw9vSLBeBmW+0Si1BYD9+rzslJR/g+X7pshzCJiWFCkVuQIdfUsutj7foYQ
-	681AlG/anny/mI89YeGeelTHgoqwa31N00VItXM6MfZ5ZasV4UV2vAPwjsxvR6HV
-	+XKi4PD0jAPJBo7PLlzsA==
-X-ME-Sender: <xms:yTT0ZvQORKncCTVSWRYGivmg2IScxDzfzJPuvF-dKWOovWy5YbUrpQ>
-    <xme:yTT0ZgyyT-C9g9m8ZDgEqjeHxHX2CTXOgHFve0R1mAYunyYe0oYF9ap6h_S9smKXK
-    pmSHObMmTr8-AvYlQo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddthedgleejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudef
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhgvghlohhgihhorggttghhih
-    hnohdruggvlhhrvghgnhhosegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepmhgr
-    rhgvgiesuggvnhigrdguvgdprhgtphhtthhopehkvghrnhgvlhesughhqdgvlhgvtghtrh
-    honhhitghsrdgtohhmpdhrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepshgrrhgrvhgrnhgrkhesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
-    epshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghilhdrrghr
-    mhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmh
-    dqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohep
-    ihhmgieslhhishhtshdrlhhinhhugidruggvvh
-X-ME-Proxy: <xmx:yTT0Zk3vVZ4YcnfDmGBnxe8Qxw_AQlFpd0vVHOZ9JLNraE6FuFPSMA>
-    <xmx:yTT0ZvB9dUWaoeuhevthtk2v1EEtrfae2hzuKjyVFuljeSXLyPmR1w>
-    <xmx:yTT0ZogDsJdyr7trVOSGVQoy_JRIcS8TozEs7WiY2wtZY477yBsZBQ>
-    <xmx:yTT0ZjpNZGvEpWLF0HtOxtSk_uZ4LmC55s7xSNR5MXZUY1NwXmwxhA>
-    <xmx:yTT0ZpbNenf67gM6ZAAEIA2-LcLbc2cJBFv6hjXnuvSJ__BCsLbiU6XE>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 754232220071; Wed, 25 Sep 2024 12:05:29 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727280399; c=relaxed/simple;
+	bh=2Wpg2PjOSk/M4D8f3ZoLXyifchNF3HCLIWirDmcvRPE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rg1xCo3kWdXEsZrXxamruv4p58X4bmBUYzmdjPJxAoG8CWR8JcL2dZz+eXnuRIila2V0AXZBpQdXZz/BFcutMqSGKqGA/QrspwXC9JUe57L3lJhp2mDCNsniaTzNNOj9aGKOcC+MDOrtupyPQGdoMy9b+nxzyyHZ3z/U71ldv8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PSv6tBBX; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f6580c2bbfso9618481fa.1;
+        Wed, 25 Sep 2024 09:06:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727280395; x=1727885195; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Wpg2PjOSk/M4D8f3ZoLXyifchNF3HCLIWirDmcvRPE=;
+        b=PSv6tBBXqtYRf+bFFSSyY6Gz5ZS+09z9IYDPl6qDIXcrzNzyVXrtZ9/5E7MYgqjBo2
+         MUkIrn6YLgEdsR2rTrwbRRv2Rg3QXuBxH4BYEuuYRjIfOIKb5bCKdrh580ow4+XnZE/T
+         8YI8M8bE9SyvY9QhkHtkSi7TaiuJIXGicTMI/PjEWaJ2TmaPGQ59SX+U54jvmX6zZho2
+         uaWntNgC4/S9WO8piOey9B+9h0MarHXZy5FEgtrf4h0A7ZgpTanxPTLLUiWzIQHdoNbX
+         8IBeOmNHbigJzFN3K+y3xwDa1SVxzvYxixrroN+Q3ThwcErPrNaKqnIpQ1SR/2QBrmnq
+         cnvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727280395; x=1727885195;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2Wpg2PjOSk/M4D8f3ZoLXyifchNF3HCLIWirDmcvRPE=;
+        b=EBkTaJSJmPrSMu+9IIYNd7v+/EV/3uwiy4L4i0Fudf/2t7vhMll6ONsuSdibCfYfKM
+         Wbw6J2XCxEsok4T8wXcaiuswHYwp5wrHmYEfCCSBNJ5k0ljigKOQR6JOO+oDGA51skVB
+         yxkN2vwf9q7UV7N/HFl4u4slOguJYXSHNER/3EeWCmff3o1OcfzEXiG1SNmyEq5iQyXq
+         etXKtGXZXjWTP/YycapRzWMizd4pviVltPIU31DFL13DGhhEHBhSKv3yTeQhMGdhXsAx
+         eyvyTh/14m2u8oHw1k9VKc+oZjQBQFwvMVnUR/OW7D0wp1CJ+ey2/Ydzb1LYnOmqUxqk
+         fxxw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2HhC03z0KOWw9AKsN0gZCY2xP4NUY+eEwynG/jDN6ZbrbxOeVKgz25V1BJ6VH5Q8NwjNBdWOmJ91P@vger.kernel.org, AJvYcCVoB+t7UMNkoAOlXpUelOVIsf6OD8xiLGH53QPABKmmD9/2mG0LfolketJ57Cxjf3y2Iy/kenN/PGq2NAVt@vger.kernel.org, AJvYcCWGm/bIK2IU6Re41H0JVa1RPK8oxC//2uPXGRSgaCnMMESVLOUxaDj5CkYqYqT5TyCSm7GQb8UH9dHlKQ1O@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtgGFpIYIbEQgpvhFvCJoCE9DRJ3QNSrWmJLeghWjkYoVBT0/o
+	fI9EKgO8phvf5a1jE9Hf38zdCxqZzKfsxC0KWf3kQWIvy6x4hDMSaU4Smh1/ZddH7zKqYD+PnMq
+	+ElXwPRixkgRM8EsEdIBAp7k8+Uc=
+X-Google-Smtp-Source: AGHT+IFfTUuhRjGyeGP067T50/GeAjOgvxwBokvoT72wr9zTIkRSPAAxAiRwC3Lcnvamx1vFFxiaaHJQqlay4IHWcBk=
+X-Received: by 2002:a2e:611a:0:b0:2ef:1f5e:92be with SMTP id
+ 38308e7fff4ca-2f9c6c66aa6mr392431fa.9.1727280395131; Wed, 25 Sep 2024
+ 09:06:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 25 Sep 2024 16:04:54 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Marek Vasut" <marex@denx.de>, linux-arm-kernel@lists.infradead.org
-Cc: kernel@dh-electronics.com,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Fabio Estevam" <festevam@gmail.com>,
- "Jeff Johnson" <quic_jjohnson@quicinc.com>,
- "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>,
- "Saravana Kannan" <saravanak@google.com>,
- "Sascha Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>,
- imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Message-Id: <486054ad-20c2-45f4-a457-c9334afb53ed@app.fastmail.com>
-In-Reply-To: <20240925160026.84091-1-marex@denx.de>
-References: <20240925160026.84091-1-marex@denx.de>
-Subject: Re: [PATCH] soc: imx8m: Probe the SoC driver late
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <0a3b09db-23e8-4a06-85f8-a0d7bbc3228b@meta.com> <87plotvuo1.fsf@gentoo.org>
+In-Reply-To: <87plotvuo1.fsf@gentoo.org>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Thu, 26 Sep 2024 00:06:18 +0800
+Message-ID: <CAMgjq7A3uRcr5VzPYo-hvM91fT+01tB-D3HPvk6_wcx3pq+m+Q@mail.gmail.com>
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+To: Sam James <sam@gentoo.org>, stable@kernel.org
+Cc: clm@meta.com, Matthew Wilcox <willy@infradead.org>, axboe@kernel.dk, ct@flyingcircus.io, 
+	david@fromorbit.com, dqminh@cloudflare.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
+	regressions@leemhuis.info, regressions@lists.linux.dev, 
+	torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 25, 2024, at 16:00, Marek Vasut wrote:
-> With driver_async_probe=* on kernel command line, the following trace is
-> produced because on i.MX8M Plus hardware because the soc-imx8m.c driver
-> calls of_clk_get_by_name() which returns -EPROBE_DEFER because the clock
-> driver is not yet probed. This was not detected during regular testing
-> without driver_async_probe.
+On Wed, Sep 25, 2024 at 1:16=E2=80=AFAM Sam James <sam@gentoo.org> wrote:
 >
-> Attempt to fix it by probing the SoC driver late, but I don't think that
-> is the correct approach here.
+> Kairui, could you send them to the stable ML to be queued if Willy is
+> fine with it?
+>
 
-I think the correct fix would be to propagate the -EPROBE_DEFER
-and return that from imx8_soc_init(), so it gets retried again
-after the clock driver.
+Hi Sam,
 
-      Arnd
+Thanks for adding me to the discussion.
+
+Yes I'd like to, just not sure if people are still testing and
+checking the commits.
+
+And I haven't sent seperate fix just for stable fix before, so can
+anyone teach me, should I send only two patches for a minimal change,
+or send a whole series (with some minor clean up patch as dependency)
+for minimal conflicts? Or the stable team can just pick these up?
 
