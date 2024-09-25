@@ -1,485 +1,142 @@
-Return-Path: <linux-kernel+bounces-339320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155B6986348
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:22:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924A6986232
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C376D288181
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:22:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFCA81C2735F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D771A0AF5;
-	Wed, 25 Sep 2024 15:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0065F381C2;
+	Wed, 25 Sep 2024 15:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ongWkgeN"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="omoHMJqQ"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177F219FA76
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FFC38FA6
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727276587; cv=none; b=oPQxp/TTTdmCyVSC2Zgc/wy3wcQQdMYjCq763FUJrEolJGrunVYtdM9lEP25ou94f6gUyKSA0TlsML2S3yaE2c9caQamaFIh4+05K+reWNO1nyHCdn7/mBTA9fFf+1iMyw9G+V34ugbJYjYbHWPARMXdspXajxbZ51p9lhXzFzU=
+	t=1727276512; cv=none; b=BaNYkTU6A2tuHDEo/NxQ5zCoQ9pkefbVePOuQqYTNDJtuoz4wENa6AuCkXde8yUCbwAkJv6JY17ufX8x3nTjvaKxKG5+E7zUNTJpcXTQa10tk4N6+jRrW5rHgyhZqgAxj9KfEbHgsLyIrONlvyevuPSOmGV9Krud/K3+8vIE8SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727276587; c=relaxed/simple;
-	bh=YvM9TRdamHMMVDaQnr/PY1VL/3cpzPBrLHBshWo7LWw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CWT9BBi+nFZLqmVAaW2opJ8nfiJS9wXD1vBM4gJm5U5ExW+tN7UPLdyewOdWlM6nceURx7EDlwGpftHmVzqsjHafyILi4pRhvZHFyEBer/E3KXwqirS/xa2Bj1C8Cp4e5HX0rxPp4ohbj9eJ9+X7gJ1fbrgPxCwoW1Y5TAPEp+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ongWkgeN; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-42cbcf60722so52510645e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:03:03 -0700 (PDT)
+	s=arc-20240116; t=1727276512; c=relaxed/simple;
+	bh=HyezUH8s4vB3bE8d9XKTG58UQRvZwYgHO4cj+l8WGCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E5CeQERugO6M4nxfZFct2aDfvKYp1RyX460Y/DtLEF2oWwtQy9lWABcaW2HVCYTtOR7pRHH2c6Y/fAegvi6PGGEbhdjVr6TmUr+9CcJAjyGHRi9gGYFAhyap0E7CISJvxBwALq5RH8Lc+Be1GI0kHm25kx3aVh7kbM0qKUxYlR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=omoHMJqQ; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37ccc600466so277507f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:01:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727276581; x=1727881381; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/fxT1DdHMwMyeW8np4BBTWW8phQCD6XQ4SETP482c8=;
-        b=ongWkgeNEUsXO/yFix7MO/NjZ2xvYjoDtIUAZporkb9MuWeyH9GspZlyxNuptzMS9z
-         27Wcx+k6toKj75Lqn7eTnYkTBw2H2B/ooJKtEmb4PCjaA7tabdO0KaZ0MASZ2VwCe6tF
-         dCZWRxhB0Df0qIrum8EqqV+z13+lw9hhfUWtEGwpL0BsUWnrImwdQkmrlVuWFiGfgQHl
-         eZS6XOrp4ju9m/p48G2u5gOy3ga2/DqLQRrgaaVl4yJsa7a2bT7kHX5MYA4LyuWo4zSD
-         gRzCcLC+XGFxdW9bdOm28v1dXeZRvGrlwwA3ODwA2n6vokwpU4qtgvNJ+5kk0Dpe76FB
-         qzQg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727276508; x=1727881308; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=a+DIs+cjfT3JD55mRAd2TBTt3EC9HtAmYb81V/vRFFU=;
+        b=omoHMJqQQquU9+SzmRf3jVcybk8bIgw6mPAn8HvsvvA5Uh/hC26ISRJ1EzH8ZNhUU5
+         91NEqnK+pFsdMWz2Qs+PULlGV1LGlphOQUB9jsgD0o46p79hKbBgs0Be4vTETUD290cL
+         Q5GD0UAzyuFgLOBSP8MbfYtJQ/PEW2Fw7mDdd5tWgsykY8m1FEDOHRy08xB5s+EQ6TOx
+         0Xh/n5HMNGtApTpFY3g7ZhmpzGR76xOAg92ju3E7Vcx+ytQQibJQf//UyCUcZyUI0yKG
+         KEqVLNmLBmHLcGZQ9n0vh+1oUntWgTDgT49wIY+970scMo+EhnmuKMoRYSFhWGqregbA
+         5lDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727276581; x=1727881381;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/fxT1DdHMwMyeW8np4BBTWW8phQCD6XQ4SETP482c8=;
-        b=TBZt1UfndPrVyk+YXC7p+hQ+phTJvKHh3Uh9Bqshc3s9TymdnqooPXjA87eBUIKZcf
-         X6/JC3GZIeZUZlA5fAuRfWJ73pdHhfWGzY66h/rK4bEgZuXuKIYBT7gAkkZXDKjcmMYX
-         cYwJeYobNFa3VmzmghXUp84HOSC+Spjz1czaSB8CEj9xryS9+TaR1MERbdX8JJM9eOAv
-         Lyy5pDzcEBNajybDNFSkaG0MJs+K1RVW7Fl6nrbdbFYbyN1ZAtgFPbovuSdzbvhEu0b5
-         5evtc4+Sr2QRvvtVLGkueZ0IVTpBBEbKEzU68t4UHTAkDhRZvVTXNd1pqiqksFPZcEA7
-         ROrQ==
-X-Gm-Message-State: AOJu0YyJZQpwyS7IdIyH+R4rgsZ1yynW6X6hgr1xmI+87E8uv0E1iSAc
-	I6yNZk+kXJG9nRRMVF4KmAcZde07LohLs35Ato8y7xKfsVzM6Q/XtoOP79jD7omhISo+sPPrM5o
-	vLUVXH75k4CyFsnUzRQMpqc9A3xXboHY2JNLsCBSSDvJOmNw0IPnGaBEA2Pd9GqruUnonbP8aCd
-	Gq2AMefdF8NzDxKN9gFePMif7xncawyw==
-X-Google-Smtp-Source: AGHT+IH1WYrW/UKZ6ngnkIpIsR2dgkaJ0zFY0ft3XgXQ0QWdCfqsR4NIFZKbE/zMO6K3p2uoWgwYBDA5
-X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
- (user=ardb job=sendgmr) by 2002:a05:600c:5709:b0:42c:a879:3d0f with SMTP id
- 5b1f17b1804b1-42e960af3c0mr226185e9.0.1727276581262; Wed, 25 Sep 2024
- 08:03:01 -0700 (PDT)
-Date: Wed, 25 Sep 2024 17:01:28 +0200
-In-Reply-To: <20240925150059.3955569-30-ardb+git@google.com>
+        d=1e100.net; s=20230601; t=1727276508; x=1727881308;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a+DIs+cjfT3JD55mRAd2TBTt3EC9HtAmYb81V/vRFFU=;
+        b=JKuKq5KU5iEnfRjxqqDZQo/RfSP2q6vgVbhCVrErGym2c9z7bAOU4V2QtU2v3V1ijF
+         aa35S8460qAP5mWmN7q+Iu2lptmLJtd1031KPfFCmvT2N6Ymb5YJuJhL48YKNJfO/eg+
+         9Gf0UM9iA8i5uonAsZpB4tuSm3MaedZ2KbzjKa542o2rkFwL2lxDgoQFXi6RBQgQpr1Z
+         rjDfPrQV+TavWsogUY5oLPUFTkv1RPBz8CnK67eGrX+kAeUPrWWZYY3/q/iOLKGp3D5I
+         PTeh2F9fj14o40v/hsl1QIL3ZjeU4RhLOBhYNiLHSh3xHydpAI3+3J2Ls6cbLLR2kCvW
+         loOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXa1x/eX/akhzKdtkPbDwqTDu1DvnSCKRW1v63CENkeIjBom531FAsWxr1vMsn/8gUOy0KMamryIYdU/4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpSX3aKmNSdpcnWHK1OsQlC+wS2KiIJfEEupqnfJ1P1mFYriOV
+	05vBzTKOjZFjEVnlUSRs3kJkY+HdZV3Q2AUa/AuSNf77glMBp2nxvhlGO+YDFgg=
+X-Google-Smtp-Source: AGHT+IHfbzpphdy6WAUwhQp1pcPNJKsRYShLsVQDedS0f/0PBeU1GtCFcb/lDjITm8qpA3o3J6cTfg==
+X-Received: by 2002:adf:f5d2:0:b0:374:c56e:1d44 with SMTP id ffacd0b85a97d-37cc24c9fd3mr2148358f8f.48.1727276508205;
+        Wed, 25 Sep 2024 08:01:48 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d3:3500:4a02:2aff:fe07:1efc])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37cbc2c1eb8sm4233697f8f.42.2024.09.25.08.01.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 08:01:47 -0700 (PDT)
+Date: Wed, 25 Sep 2024 17:01:42 +0200
+From: Corentin LABBE <clabbe@baylibre.com>
+To: Janpieter Sollie <janpieter.sollie@kabelmail.de>
+Cc: linux.amoon@gmail.com, Jason@zx2c4.com, heiko@sntech.de,
+	herbert@gondor.apana.org.au, hl@rock-chips.com,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, mike.rudenko@gmail.com,
+	robin.murphy@arm.com, shawn.lin@rock-chips.com,
+	troy.lin@rock-chips.com, ty@wevs.org
+Subject: Re: [PATCH] hw_random: rockchip: import driver from vendor tree
+Message-ID: <ZvQl1i2TfA6JYUDH@Red>
+References: <CANAwSgTTzZOwBaR9zjJ5VMpxm5BydtW6rB2S7jg+dnoX8hAoWg@mail.gmail.com>
+ <ef2f6e41-bf9e-470e-a416-fda7ce5d8a51@kabelmail.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240925150059.3955569-30-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11373; i=ardb@kernel.org;
- h=from:subject; bh=vOsRO/wusTOgSIMrTbPQkuvbTEvedgqm5gFKQyyQ6LE=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIe2L6uU7KcXh52pbo2UXaeZq6U587fAt6o/qk6KOindLu
- xmSJDk6SlkYxDgYZMUUWQRm/3238/REqVrnWbIwc1iZQIYwcHEKwES8vjP8D6r8/Whqj0Ue89/g
- jLlev1knyS9cOWlNtI5Y6rLiT9GiiYwMF5pPLt85df5ck61Kskef/1wi37sr+6Xjrf+r3xWdTEj U5wUA
-X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
-Message-ID: <20240925150059.3955569-58-ardb+git@google.com>
-Subject: [RFC PATCH 28/28] x86/tools: Drop x86_64 support from 'relocs' tool
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Uros Bizjak <ubizjak@gmail.com>, 
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Juergen Gross <jgross@suse.com>, 
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Keith Packard <keithp@keithp.com>, 
-	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-doc@vger.kernel.org, 
-	linux-pm@vger.kernel.org, kvm@vger.kernel.org, xen-devel@lists.xenproject.org, 
-	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ef2f6e41-bf9e-470e-a416-fda7ce5d8a51@kabelmail.de>
 
-From: Ard Biesheuvel <ardb@kernel.org>
+Le Mon, Sep 23, 2024 at 09:48:54AM +0200, Janpieter Sollie a écrit :
+> 
+> Hi everybody,
+> 
+> Is there any chance this random driver will be upstreamed?
+> I'm using it instead of the built-in crypto driver (rk3328-crypto), as this crypto driver showed 
+> the following:
+> 
+> > [     9.270549] rk3288-crypto ff060000.crypto: will run requests pump with realtime priority
+> > [     9.270687] rk3288-crypto ff060000.crypto: Register ecb(aes) as ecb-aes-rk
+> > [     9.270808] rk3288-crypto ff060000.crypto: Register cbc(aes) as cbc-aes-rk
+> > [     9.270831] rk3288-crypto ff060000.crypto: Register ecb(des) as ecb-des-rk
+> > [     9.270848] rk3288-crypto ff060000.crypto: Register cbc(des) as cbc-des-rk
+> > [     9.270864] rk3288-crypto ff060000.crypto: Register ecb(des3_ede) as ecb-des3-ede-rk
+> > [     9.270880] rk3288-crypto ff060000.crypto: Register cbc(des3_ede) as cbc-des3-ede-rk
+> > [     9.270896] rk3288-crypto ff060000.crypto: Register sha1 as rk-sha1
+> > [     9.270915] rk3288-crypto ff060000.crypto: Register sha256 as rk-sha256
+> > [     9.270932] rk3288-crypto ff060000.crypto: Register md5 as rk-md5
+> 
+> so the options here are pretty useless:
+> standard tls / ssh (ktls anyone?) almost never uses ecb or cbc ciphers, and about des ... yeah, 
+> won't dig into that one.
+> I think a rk3328 device will actually benefit more from a entropy source (even if it's not 
+> high-quality) than from sha1/256 which are almost always covered by armv8 crypto extensions.
+> I tried this patch (and disabled the crypto device in dts), it works.
+> Off course there are FIPS failures, but the user employing a rk3328 board probably knows this is 
+> not a high-security device.
+> 
+> Any chances here? applying the patch on 6.6.48 (even with clang thinLTO) works flawlessly.
+> 
+> kind regards,
+> 
+> Janpieter Sollie
 
-The relocs tool is no longer used on vmlinux, which is the only 64-bit
-ELF executable that it used to operate on in the 64-bit build. (It is
-still used for parts of the decompressor)
+Did you test if it really works by testing entropy output QUALITY ?
 
-So drop the 64-bit handling - it is dead code now.
+I asked how the serie was tested and the sender never answered raising a big red flag.
+If you check the thread, someone tested and the quality bringed by the vendor driver is really BAD.
+This is due to the fact that their sample value was really too short.
+So as-is, this serie is a security issue to the randomness quality.
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/x86/tools/Makefile        |   2 +-
- arch/x86/tools/relocs.c        | 178 +-------------------
- arch/x86/tools/relocs.h        |   9 +-
- arch/x86/tools/relocs_64.c     |  18 --
- arch/x86/tools/relocs_common.c |  11 +-
- 5 files changed, 9 insertions(+), 209 deletions(-)
+I need to regrab some time finishing, my patch adding support for it on intree crypto driver.
+I found an old tree that I push here https://github.com/montjoie/linux/tree/rk3288-trng
+This is not a final patch, but it could help finding a correct value of sample via the debugfs.
+I dont remember which value of sample was necessary to obtain a minimal quality. (perhaps 500 since it seems the default in my patch).
 
-diff --git a/arch/x86/tools/Makefile b/arch/x86/tools/Makefile
-index 7278e2545c35..f7d12a9dccfc 100644
---- a/arch/x86/tools/Makefile
-+++ b/arch/x86/tools/Makefile
-@@ -40,7 +40,7 @@ $(obj)/insn_sanity.o: $(srctree)/tools/arch/x86/lib/insn.c $(srctree)/tools/arch
- 
- HOST_EXTRACFLAGS += -I$(srctree)/tools/include
- hostprogs	+= relocs
--relocs-objs     := relocs_32.o relocs_64.o relocs_common.o
-+relocs-objs     := relocs_32.o relocs_common.o
- PHONY += relocs
- relocs: $(obj)/relocs
- 	@:
-diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
-index 22c2d3f07a57..ff5578e63ff8 100644
---- a/arch/x86/tools/relocs.c
-+++ b/arch/x86/tools/relocs.c
-@@ -28,12 +28,7 @@ struct relocs {
- static struct relocs		relocs16;
- static struct relocs		relocs32;
- 
--#if ELF_BITS == 64
--static struct relocs		relocs64;
--# define FMT PRIu64
--#else
- # define FMT PRIu32
--#endif
- 
- struct section {
- 				Elf_Shdr         shdr;
-@@ -86,10 +81,6 @@ static const char * const	sym_regex_kernel[S_NSYMTYPES] = {
- 	"__end_rodata_aligned|"
- 	"__initramfs_start|"
- 	"(jiffies|jiffies_64)|"
--#if ELF_BITS == 64
--	"__per_cpu_load|"
--	"__end_rodata_hpage_align|"
--#endif
- 	"__vvar_page|"
- 	"_end)$"
- };
-@@ -210,27 +201,6 @@ static const char *rel_type(unsigned type)
- {
- 	static const char *type_name[] = {
- #define REL_TYPE(X) [X] = #X
--#if ELF_BITS == 64
--		REL_TYPE(R_X86_64_NONE),
--		REL_TYPE(R_X86_64_64),
--		REL_TYPE(R_X86_64_PC64),
--		REL_TYPE(R_X86_64_PC32),
--		REL_TYPE(R_X86_64_GOT32),
--		REL_TYPE(R_X86_64_PLT32),
--		REL_TYPE(R_X86_64_COPY),
--		REL_TYPE(R_X86_64_GLOB_DAT),
--		REL_TYPE(R_X86_64_JUMP_SLOT),
--		REL_TYPE(R_X86_64_RELATIVE),
--		REL_TYPE(R_X86_64_GOTPCREL),
--		REL_TYPE(R_X86_64_GOTPCRELX),
--		REL_TYPE(R_X86_64_REX_GOTPCRELX),
--		REL_TYPE(R_X86_64_32),
--		REL_TYPE(R_X86_64_32S),
--		REL_TYPE(R_X86_64_16),
--		REL_TYPE(R_X86_64_PC16),
--		REL_TYPE(R_X86_64_8),
--		REL_TYPE(R_X86_64_PC8),
--#else
- 		REL_TYPE(R_386_NONE),
- 		REL_TYPE(R_386_32),
- 		REL_TYPE(R_386_PC32),
-@@ -246,7 +216,6 @@ static const char *rel_type(unsigned type)
- 		REL_TYPE(R_386_PC8),
- 		REL_TYPE(R_386_16),
- 		REL_TYPE(R_386_PC16),
--#endif
- #undef REL_TYPE
- 	};
- 	const char *name = "unknown type rel type name";
-@@ -312,19 +281,9 @@ static uint32_t elf32_to_cpu(uint32_t val)
- #define elf_half_to_cpu(x)	elf16_to_cpu(x)
- #define elf_word_to_cpu(x)	elf32_to_cpu(x)
- 
--#if ELF_BITS == 64
--static uint64_t elf64_to_cpu(uint64_t val)
--{
--        return le64_to_cpu(val);
--}
--# define elf_addr_to_cpu(x)	elf64_to_cpu(x)
--# define elf_off_to_cpu(x)	elf64_to_cpu(x)
--# define elf_xword_to_cpu(x)	elf64_to_cpu(x)
--#else
- # define elf_addr_to_cpu(x)	elf32_to_cpu(x)
- # define elf_off_to_cpu(x)	elf32_to_cpu(x)
- # define elf_xword_to_cpu(x)	elf32_to_cpu(x)
--#endif
- 
- static int sym_index(Elf_Sym *sym)
- {
-@@ -515,10 +474,7 @@ static void print_absolute_symbols(void)
- 	int i;
- 	const char *format;
- 
--	if (ELF_BITS == 64)
--		format = "%5d %016"PRIx64" %5"PRId64" %10s %10s %12s %s\n";
--	else
--		format = "%5d %08"PRIx32"  %5"PRId32" %10s %10s %12s %s\n";
-+	format = "%5d %08"PRIx32"  %5"PRId32" %10s %10s %12s %s\n";
- 
- 	printf("Absolute symbols\n");
- 	printf(" Num:    Value Size  Type       Bind        Visibility  Name\n");
-@@ -559,10 +515,7 @@ static void print_absolute_relocs(void)
- 	int i, printed = 0;
- 	const char *format;
- 
--	if (ELF_BITS == 64)
--		format = "%016"PRIx64" %016"PRIx64" %10s %016"PRIx64"  %s\n";
--	else
--		format = "%08"PRIx32" %08"PRIx32" %10s %08"PRIx32"  %s\n";
-+	format = "%08"PRIx32" %08"PRIx32" %10s %08"PRIx32"  %s\n";
- 
- 	for (i = 0; i < shnum; i++) {
- 		struct section *sec = &secs[i];
-@@ -694,104 +647,6 @@ static void walk_relocs(int (*process)(struct section *sec, Elf_Rel *rel,
- 	}
- }
- 
--#if ELF_BITS == 64
--
--static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
--		      const char *symname)
--{
--	unsigned r_type = ELF64_R_TYPE(rel->r_info);
--	ElfW(Addr) offset = rel->r_offset;
--	int shn_abs = (sym->st_shndx == SHN_ABS) && !is_reloc(S_REL, symname);
--
--	if (sym->st_shndx == SHN_UNDEF)
--		return 0;
--
--	switch (r_type) {
--	case R_X86_64_NONE:
--		/* NONE can be ignored. */
--		break;
--
--	case R_X86_64_PC32:
--	case R_X86_64_PLT32:
--		/*
--		 * PC relative relocations don't need to be adjusted.
--		 *
--		 * NB: R_X86_64_PLT32 can be treated as R_X86_64_PC32.
--		 */
--		break;
--
--	case R_X86_64_PC64:
--		/*
--		 * Only used by jump labels
--		 */
--		break;
--
--	case R_X86_64_32:
--	case R_X86_64_32S:
--	case R_X86_64_64:
--	case R_X86_64_GOTPCREL:
--		if (shn_abs) {
--			/*
--			 * Whitelisted absolute symbols do not require
--			 * relocation.
--			 */
--			if (is_reloc(S_ABS, symname))
--				break;
--
--			die("Invalid absolute %s relocation: %s\n", rel_type(r_type), symname);
--			break;
--		}
--
--		if (r_type == R_X86_64_GOTPCREL) {
--			Elf_Shdr *s = &secs[sec->shdr.sh_info].shdr;
--			unsigned file_off = offset - s->sh_addr + s->sh_offset;
--
--			/*
--			 * GOTPCREL relocations refer to instructions that load
--			 * a 64-bit address via a 32-bit relative reference to
--			 * the GOT.  In this case, it is the GOT entry that
--			 * needs to be fixed up, not the immediate offset in
--			 * the opcode. Note that the linker will have applied an
--			 * addend of -4 to compensate for the delta between the
--			 * relocation offset and the value of RIP when the
--			 * instruction executes, and this needs to be backed out
--			 * again. (Addends other than -4 are permitted in
--			 * principle, but make no sense in practice so they are
--			 * not supported.)
--                         */
--			if (rel->r_addend != -4) {
--				die("invalid addend (%ld) for %s relocation: %s\n",
--				    rel->r_addend, rel_type(r_type), symname);
--				break;
--			}
--			offset += 4 + (int32_t)get_unaligned_le32(elf_image + file_off);
--		}
--
--		/*
--		 * Relocation offsets for 64 bit kernels are output
--		 * as 32 bits and sign extended back to 64 bits when
--		 * the relocations are processed.
--		 * Make sure that the offset will fit.
--		 */
--		if ((int32_t)offset != (int64_t)offset)
--			die("Relocation offset doesn't fit in 32 bits\n");
--
--		if (r_type == R_X86_64_64 || r_type == R_X86_64_GOTPCREL)
--			add_reloc(&relocs64, offset);
--		else
--			add_reloc(&relocs32, offset);
--		break;
--
--	default:
--		die("Unsupported relocation type: %s (%d)\n", rel_type(r_type), r_type);
--		break;
--	}
--
--	return 0;
--}
--
--#else
--
- static int do_reloc32(struct section *sec, Elf_Rel *rel, Elf_Sym *sym,
- 		      const char *symname)
- {
-@@ -902,8 +757,6 @@ static int do_reloc_real(struct section *sec, Elf_Rel *rel, Elf_Sym *sym, const
- 	return 0;
- }
- 
--#endif
--
- static int cmp_relocs(const void *va, const void *vb)
- {
- 	const uint32_t *a, *b;
-@@ -939,17 +792,10 @@ static void emit_relocs(int as_text, int use_real_mode)
- 	int (*write_reloc)(uint32_t, FILE *) = write32;
- 	int (*do_reloc)(struct section *sec, Elf_Rel *rel, Elf_Sym *sym, const char *symname);
- 
--#if ELF_BITS == 64
--	if (!use_real_mode)
--		do_reloc = do_reloc64;
--	else
--		die("--realmode not valid for a 64-bit ELF file");
--#else
- 	if (!use_real_mode)
- 		do_reloc = do_reloc32;
- 	else
- 		do_reloc = do_reloc_real;
--#endif
- 
- 	/* Collect up the relocations */
- 	walk_relocs(do_reloc);
-@@ -959,11 +805,7 @@ static void emit_relocs(int as_text, int use_real_mode)
- 
- 	/* Order the relocations for more efficient processing */
- 	sort_relocs(&relocs32);
--#if ELF_BITS == 64
--	sort_relocs(&relocs64);
--#else
- 	sort_relocs(&relocs16);
--#endif
- 
- 	/* Print the relocations */
- 	if (as_text) {
-@@ -984,16 +826,6 @@ static void emit_relocs(int as_text, int use_real_mode)
- 		for (i = 0; i < relocs32.count; i++)
- 			write_reloc(relocs32.offset[i], stdout);
- 	} else {
--#if ELF_BITS == 64
--		/* Print a stop */
--		write_reloc(0, stdout);
--
--		/* Now print each relocation */
--		for (i = 0; i < relocs64.count; i++)
--			if (!i || relocs64.offset[i] != relocs64.offset[i - 1])
--				write_reloc(relocs64.offset[i], stdout);
--#endif
--
- 		/* Print a stop */
- 		write_reloc(0, stdout);
- 
-@@ -1027,12 +859,6 @@ static void print_reloc_info(void)
- 	walk_relocs(do_reloc_info);
- }
- 
--#if ELF_BITS == 64
--# define process process_64
--#else
--# define process process_32
--#endif
--
- void process(FILE *fp, int use_real_mode, int as_text,
- 	     int show_absolute_syms, int show_absolute_relocs,
- 	     int show_reloc_info)
-diff --git a/arch/x86/tools/relocs.h b/arch/x86/tools/relocs.h
-index 7a509604ff92..ef9eec96bd62 100644
---- a/arch/x86/tools/relocs.h
-+++ b/arch/x86/tools/relocs.h
-@@ -32,10 +32,7 @@ enum symtype {
- 	S_NSYMTYPES
- };
- 
--void process_32(FILE *fp, int use_real_mode, int as_text,
--		int show_absolute_syms, int show_absolute_relocs,
--		int show_reloc_info);
--void process_64(FILE *fp, int use_real_mode, int as_text,
--		int show_absolute_syms, int show_absolute_relocs,
--		int show_reloc_info);
-+void process(FILE *fp, int use_real_mode, int as_text,
-+	     int show_absolute_syms, int show_absolute_relocs,
-+	     int show_reloc_info);
- #endif /* RELOCS_H */
-diff --git a/arch/x86/tools/relocs_64.c b/arch/x86/tools/relocs_64.c
-deleted file mode 100644
-index 9029cb619cb1..000000000000
---- a/arch/x86/tools/relocs_64.c
-+++ /dev/null
-@@ -1,18 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--#include "relocs.h"
--
--#define ELF_BITS 64
--
--#define ELF_MACHINE             EM_X86_64
--#define ELF_MACHINE_NAME        "x86_64"
--#define SHT_REL_TYPE            SHT_RELA
--#define Elf_Rel                 Elf64_Rela
--
--#define ELF_CLASS               ELFCLASS64
--#define ELF_R_SYM(val)          ELF64_R_SYM(val)
--#define ELF_R_TYPE(val)         ELF64_R_TYPE(val)
--#define ELF_ST_TYPE(o)          ELF64_ST_TYPE(o)
--#define ELF_ST_BIND(o)          ELF64_ST_BIND(o)
--#define ELF_ST_VISIBILITY(o)    ELF64_ST_VISIBILITY(o)
--
--#include "relocs.c"
-diff --git a/arch/x86/tools/relocs_common.c b/arch/x86/tools/relocs_common.c
-index 6634352a20bc..167985ecd544 100644
---- a/arch/x86/tools/relocs_common.c
-+++ b/arch/x86/tools/relocs_common.c
-@@ -72,14 +72,9 @@ int main(int argc, char **argv)
- 		die("Cannot read %s: %s", fname, strerror(errno));
- 	}
- 	rewind(fp);
--	if (e_ident[EI_CLASS] == ELFCLASS64)
--		process_64(fp, use_real_mode, as_text,
--			   show_absolute_syms, show_absolute_relocs,
--			   show_reloc_info);
--	else
--		process_32(fp, use_real_mode, as_text,
--			   show_absolute_syms, show_absolute_relocs,
--			   show_reloc_info);
-+	process(fp, use_real_mode, as_text,
-+		show_absolute_syms, show_absolute_relocs,
-+		show_reloc_info);
- 	fclose(fp);
- 	return 0;
- }
--- 
-2.46.0.792.g87dc391469-goog
+Unfortunatly, I cannot test it immediatly, as my CI controller got some HW issue, and I need to fix them.
 
+Regards
 
