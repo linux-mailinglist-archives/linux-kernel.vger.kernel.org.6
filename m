@@ -1,90 +1,158 @@
-Return-Path: <linux-kernel+bounces-339590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C07B98675C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:02:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D29A986761
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06C391F27162
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:02:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 256321C22986
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84CC146A6B;
-	Wed, 25 Sep 2024 20:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B7813B2A5;
+	Wed, 25 Sep 2024 20:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RqSeqGfC"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZBnwprkA"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2273A8F0
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 20:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB1B1F94C
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 20:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727294522; cv=none; b=iX4Rn4jti7N3TDOATznXKiWE339NVpb3DyI+FrxcgCOfoL9b7FADS8iG924a+mo4KRJvjMRj3nurXTBZjoyBWl1Jp/qugalTLVQ/aZD8lP3CHgNSnXPodxhezRCTD2fybHx4Vw6PTw5JxKf78mVheggKhqWEjqkl8Pnt2Sg0srQ=
+	t=1727294623; cv=none; b=Gz3DPLaHAWio5MHnHEd4FQnVeoBj2EOFs6GxOx+7O4F9EZvML4p6qnIAA7710b/LadPsKWBfB+JmfY3SNrLpZEdZh2gnKcvpekVhTObCQSrJaVlAeqIzxAgj4xPHPDY3LFyEzCb8GNV0PZsWgGDeSYTfGq4QolIMVmqR3h2OTgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727294522; c=relaxed/simple;
-	bh=GuAtbY3FxHHtmaHMBG3KUXH3yBXNnrSuxiRVAzTx8ds=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BpZnJG3aJOgMTkgh5jFhGMmPbtjulbaR/n7zj4mIcaEBPdWlIz0yk8w5UVwtEg2yPmm9jWgXXthc7JsGTJJkPeDSymZ8a+w0I9r7Yr12BGdA1VGsAgChJKVRVd/+3SwyR7gNgaEpCBGLui+55b2fKBi8w35Egt1Jjqq668H9c1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RqSeqGfC; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <895a685b-7449-4bf1-b14d-00aee1d8f75b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727294518;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YfbUzqws6stxPgb9eT4nEGannHed53FdV2xBgbx4dKI=;
-	b=RqSeqGfCCZ6YmwlRXsgxBrh7ruqVV3x98v/vzK+XODrCAMKQ6MCbfMsk/ECbPaOVf0KXu5
-	ZHHvyrJab4ckHdNyOJzRZlRUbyijhqluskNcQdDO0pmety1vfUgVUBQxZxZjTavhUhfc2W
-	p0eLT8aScNV5RHFz5mYDza7TmPMRoj0=
-Date: Wed, 25 Sep 2024 13:01:43 -0700
+	s=arc-20240116; t=1727294623; c=relaxed/simple;
+	bh=TzlI78RvHRJWU3ER+sSoLdSmNODsf86xVXpeJLDOOGY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YCi5o+RBkaM31HMgeq7M2/zW4vnaIdG7oPSfrzFzDyNMdUeuC0SPJEtu3m6hWcumY0MJBd47ET9WTZR3gS0Caw1u9PPM2xS6fThhpctaL4KUwdgcS73QmTcnlw1freoQPvh2JJMbrvl+5vUB7IXk20nnHCAnXMjMvsNZxWxhJj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZBnwprkA; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8a765f980dso3257266b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:03:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727294620; x=1727899420; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7HgaPcFgtSKuERkOpWGZHvTOoJfY0PpNzgljuME4AjU=;
+        b=ZBnwprkApHrX2DpNPUIi8NP6N4jJ9pgFh23d1MuYp019R1QJi02sLYG1JuybN28Uw6
+         5+utREjvhP6uQrxkDT32YBymgfj+qo+J9MTHxITyRYiZX32Kp/LTtDTg1Iu2BKM+/PwL
+         HhFu59ZApHt9PAFEN68xxaO4ySHXvrNq3XM6NC09JHq2I9+exY2d/NVndNvX8c2MgM8r
+         OcBwONoXM56UHujxAmCrbhu0VFbvRHX844G1Ks9ESQBDmc0pEC0LqYLFcKsvMm/oAi5X
+         wu9CbUZaJNsY69++ci1aLXO6nN8NSrM9Ec+GOa7rajwJMIrd8jj/Hi98HhMLkucr97Rf
+         MSZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727294620; x=1727899420;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7HgaPcFgtSKuERkOpWGZHvTOoJfY0PpNzgljuME4AjU=;
+        b=V/mSmDGAOT4skALu277L2ONW9e2xPTaO7Z5ihZ2H+U3Q4lw4ZHn4AVE4vD9DTgIx6H
+         9cyeqpwjP8vCwSH7TAg713v9ulaQRHbqQzo/Nl+AsSZ6eMlvKHzwnPVFXhLpQSooh0ry
+         wgFMULjRdaGtwMjmBrFvb5sIS1G/czBwFhumfL/n4IMBo4SKIEr9xTM4G/cm9RQ52sEn
+         EtMiD7wS/ySCr8bT2o8VXxRvg41rhUkZD8mu6pSTkgnrhnA1PZ3ebOeI46WlYDaEkbB3
+         aDTiqkGg8R7PomaLPXhDEKJ/sYk0T/RBy2Ox0W8vVeXHKyoxYBVT4w0tSSAkRLl0+9BO
+         qX9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVIk60y+C7966x2npW6Tua5zEFNZakMC4IfUOatPRIGV9Bv4Xi7+sSHhee5D4sk8TU0Su74ozSSoItkFi8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4a2t+U5Y+KdM5qvEm781JwPr22f5NceyH9uHu0igFX7ezhzVm
+	UIkputimPCzjCWsxzAM9i/fziKootGsXvGFlxSEyU2DQC1fvWy4vqzBiGIOuY7o=
+X-Google-Smtp-Source: AGHT+IGtttYkTWKLgIuuEe274U/T+IjIVMQiEFLWyFviK4ik07lzn1rvbK1bsg3SEgm31Wy7AHXzMA==
+X-Received: by 2002:a17:907:36ca:b0:a8d:2624:1a84 with SMTP id a640c23a62f3a-a93b26e5000mr21978266b.11.1727294620316;
+        Wed, 25 Sep 2024 13:03:40 -0700 (PDT)
+Received: from [192.168.0.18] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f541a0sm254728366b.80.2024.09.25.13.03.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2024 13:03:39 -0700 (PDT)
+Message-ID: <1e9626a0-8e11-42a4-a809-b25eb51632be@linaro.org>
+Date: Wed, 25 Sep 2024 22:03:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2] selftests/bpf: convert test_xdp_features.sh
- to test_progs
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-To: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Jakub Kicinski <kuba@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>, ebpf@linuxfoundation.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, netdev@vger.kernel.org
-References: <20240910-convert_xdp_tests-v2-1-a46367c9d038@bootlin.com>
- <64df8d41-6cfb-45a9-8337-5cc04daedb60@linux.dev> <ZuVWmxoqXFI3qvVI@lore-desk>
- <20240914063828.7bd73c5e@kernel.org>
- <464e0ae0-d6e3-4da4-a157-f74260f96275@bootlin.com>
- <366e4392-bd00-4120-8585-a71b3952e365@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] HID: hid-goodix: drop unsupported and undocumented DT
+ part
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Charles Wang <charles.goodix@gmail.com>, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240925194921.18933-1-krzysztof.kozlowski@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-In-Reply-To: <366e4392-bd00-4120-8585-a71b3952e365@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240925194921.18933-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 9/25/24 3:37 AM, Martin KaFai Lau wrote:
-> I am not sure which case in xdp_features.c does not have existing coverage in 
-> test_progs. From a quick look, it seems only BPF_MAP_TYPE_CPUMAP is missing 
-> (please check)?
+On 25/09/2024 21:49, Krzysztof Kozlowski wrote:
+> Drop support for Devicetree from, because the binding is being reverted
+> (on basis of duplicating existing binding) and property was not added to
 
-Re: CPUMAP, I noticed there is a xdp_(cpu)map_attach.c test but it only does 
-attach test. May be something similar can be done like 
-https://lore.kernel.org/bpf/20240911-devel-koalo-fix-ingress-ifindex-v4-2-5c643ae10258@linutronix.de/ 
-to exercise the xdp prog that does cpumap redirect.
+This probably is unclear. Should be:
+
+...(on basis of duplicating existing binding) and the driver uses a
+property was not added to the original binding.
+
+> the original binding.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+
+I really wished we did not have to drop parts of drivers, but after
+three pings no one cared to fix this (author does not respond at all)
+and it landed in Linus' affecting everyone.
+
+Best regards,
+Krzysztof
+
 
