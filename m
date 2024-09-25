@@ -1,195 +1,119 @@
-Return-Path: <linux-kernel+bounces-337904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1E49850DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:09:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A1F99850E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32BBF1C22C3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:09:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B33E8B21141
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3083D148307;
-	Wed, 25 Sep 2024 02:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8E3148827;
+	Wed, 25 Sep 2024 02:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bytncnkh"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dKfgOgVd"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C99136672;
-	Wed, 25 Sep 2024 02:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1E313AA53
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 02:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727230169; cv=none; b=JgFBr7CkQrK413XBtn9boOJVsxtfjB3Zk467WKPWo8SbCWj0expSIvpy0MaD9t0JAtZoBx87vS3jf4P08mnvpx2nyeujtEXMRi3prmoiGvw+c7NGT8p7gSG4ZFCRXN1DV5AioSjTZf2iPnxar9aeqz7cD3ioRzV811SC0tB7meA=
+	t=1727230389; cv=none; b=RVans0F0bJweovijZBF3QPNED5k7pscymh7Wwe9p0pUlVgqUlGDQpw48J3FHglN+exDs3ceFWOEiAjWTEB+Ujf5BUVai/FMZ4FDqbKKWfMEkRSiqVhxKYNUI0kbKZ3zR2byaKrPyH+b+xWlJKt9+RFlD5915wRcdCvEbaRiJHI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727230169; c=relaxed/simple;
-	bh=dALrHiqc+AULWuHCigbUNG/T0LDQA1gxAoWOKjKKFpk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sbjME6017OthbFKGSpaRWdABimqe+c9GCKvzSJiklFQS/A9PAUa3ifVlIlDRf8hHL/DXKv0OHLqG10X5c0w9YkXE91mbqKUPNPm1i4HdQco70bCt4V2Wd8ZKbNIE4qy1G8xt5ACfzBCAuGsbJVtzaA1FfqgkCosDDNi8AcX4Bi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bytncnkh; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d8a9a15a7fso1176057a91.0;
-        Tue, 24 Sep 2024 19:09:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727230167; x=1727834967; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lhT4emZQMu0iLsfja78mVDr5B3L8j965fQjbvHU4u9w=;
-        b=bytncnkhhzX90WPXW3QnqW2R4zbU2jmCCWm3oapUDF1othhy9pdEtUvdSh9VefvawA
-         dDT6jnTcGVZIREZaj20y8rLWNt8NtEFbdlqKj2+AE9jBK/zG3t+WLCMHsQqwuw1O5S//
-         qR64AyPr1g4R2yJYz3Rmndwp4GJoPuDv7XG76wdERR1pthjeketNhrGUaBUnvzMexGjW
-         lnX2D+nVbe3RmMGq1ebLlpYt20BTksmYfwv86jKhqZX8ARWxkxpzdsgb99ZK1h6JuXGx
-         vw9BSUG7NWWJ7wcU4O4Ph4Q/qCb2oaEomf4T+/ZMnpsG3lCmum/9NTuwfzHBqAoQvCFt
-         m3Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727230167; x=1727834967;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lhT4emZQMu0iLsfja78mVDr5B3L8j965fQjbvHU4u9w=;
-        b=eg9FsP/cafsbn+f9y2oh5oqG8urQJuebDnQH1sdwR/cdMey5kM9siN41C85wm4Jgy6
-         xIh0bItX5te2ORkqyzYz31yohY/cw8pFxyy0gLu400VFV916jp10Y+UA03P5XVAxhUin
-         agoPbupdZPATIGp6ZOaeIfSZ0DfCdqFggSjXdmfgidnDaCvTbY2bv/MOPXAXCEJx9kiP
-         dkZ+0Y5cupuu/sMtoRdDwekiFtQTogPwPOs4hkFlqpumZ82piF/iO2kztNg/I8PVQ96W
-         YZGb1lT2j4ZTe7wcjBFcjXM+AonPjsq6T09wne5TP1ZxzAzKDfSDxXqkakVVbzkBiLbE
-         /Kdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWmlHoJ+VJA61Ga8vX1sCEE+YXAT3eq9NVYyI/lot254+cx30jZanbDzdiUIyZiaSHWE1Coj1PI0eZko8r3@vger.kernel.org, AJvYcCX+EWAv4eLWrmiLdtFo/bJ/c6oT8JoPoBKZyk0ncTZMc+PW/LR1Ni9cSE44o/Nw2ekIScIajbEwfk6V@vger.kernel.org
-X-Gm-Message-State: AOJu0YyarYQfwjRIaQxF7vyMSZ0zhohiVKA+/mw3mLC5jJDVzruVjMGa
-	tPjNNmNUNCGBzlThe990K+7bBIj1Sy/+/NXqCSBkBFeqaO6L7HGz
-X-Google-Smtp-Source: AGHT+IEgOjNFa2IPtnydRtu4ja6d33MWXnvg3q5KwwfLA4hgKFc9OYCnHhghim3qoE66AaUQyL+GJA==
-X-Received: by 2002:a17:90b:3a86:b0:2db:60b:9be5 with SMTP id 98e67ed59e1d1-2e06affdd19mr597228a91.8.1727230167336;
-        Tue, 24 Sep 2024 19:09:27 -0700 (PDT)
-Received: from [192.168.60.56] ([103.29.142.67])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1e6660sm287402a91.24.2024.09.24.19.09.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 19:09:27 -0700 (PDT)
-Message-ID: <87146372-6d05-4994-8f64-47f4cb07e2b4@gmail.com>
-Date: Wed, 25 Sep 2024 10:09:21 +0800
+	s=arc-20240116; t=1727230389; c=relaxed/simple;
+	bh=80X2Gp24nNMX8cXLPZsZvliNWxzeYD78Zp8JZk8dOng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kUZnE3tpJkhyWc3QrzPYuFvwyNH+JOSOOWJNXXZTU2sNJaG5rQe6Flbgjoo9aqcTD79l4BGDHXT5CLOSxCY0hBSlk6jvi+m+X0DfpifrPoe7xPESQ5gvW9KrVS7gmipyyN5nDMycgBJMBg1eorwT5USOPHQEFX+eJfKHDX5F9+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dKfgOgVd; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 24 Sep 2024 22:13:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727230386;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hBkMp/0eODCP6liVuxv3l7JuWVErFP5s89WUrTpn8/s=;
+	b=dKfgOgVdYMp8dbkclyYFcyazgNGRS2mgqFwJkwWIUg4o4iBZbkmEmt8s8jBYaiRM8qxFcw
+	IKpCHY9kzGlZFMnL3sc56kSDJXCqrl/78cyNyM/LoUNtUsssrnvE2aWfXhMd0iRWzr9/5z
+	amWebubHMpGQw50NZNEEhqgllvST3gk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dave Chinner <dchinner@redhat.com>
+Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
+Message-ID: <v5lvhjauvcx27fcsyhyugzexdk7sik7an2soyxtx5dxj3oxjqa@gbvyu2kc7vpy>
+References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
+ <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
+ <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
+ <ZvIHUL+3iO3ZXtw7@dread.disaster.area>
+ <CAHk-=whbD0zwn-0RMNdgAw-8wjVJFQh4o_hGqffazAiW7DwXSQ@mail.gmail.com>
+ <74sgzrvtnry4wganaatcmxdsfwauv6r33qggxo27yvricrzxvq@77knsf6cfftl>
+ <ZvIzNlIPX4Dt8t6L@dread.disaster.area>
+ <dia6l34faugmuwmgpyvpeeppqjwmv2qhhvu57nrerc34qknwlo@ltwkoy7pstrm>
+ <ZvNgmoKgWF0TBXP8@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: rockchip,inno-usb2phy: add
- rk3576
-Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>, krzk@kernel.org
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, heiko@sntech.de, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- william.wu@rock-chips.com, tim.chen@rock-chips.com,
- Frank Wang <frank.wang@rock-chips.com>
-References: <20240924085510.20863-1-frawang.cn@gmail.com>
- <20240924-overtly-curable-13df2e7fdc9b@spud>
-From: Frank Wang <frawang.cn@gmail.com>
-In-Reply-To: <20240924-overtly-curable-13df2e7fdc9b@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZvNgmoKgWF0TBXP8@dread.disaster.area>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Conor,
+On Wed, Sep 25, 2024 at 11:00:10AM GMT, Dave Chinner wrote:
+> > Eh? Of course it'd have to be coherent, but just checking if an inode is
+> > present in the VFS cache is what, 1-2 cache misses? Depending on hash
+> > table fill factor...
+> 
+> Sure, when there is no contention and you have CPU to spare. But the
+> moment the lookup hits contention problems (i.e. we are exceeding
+> the cache lookup scalability capability), we are straight back to
+> running a VFS cache speed instead of uncached speed.
 
-On 2024/9/25 0:11, Conor Dooley wrote:
-> On Tue, Sep 24, 2024 at 04:55:09PM +0800, Frank Wang wrote:
->> From: Frank Wang <frank.wang@rock-chips.com>
->>
->> Add compatible for the USB2 phy in the Rockchip RK3576 SoC.
->>
->> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
->> ---
->> Changelog:
->> v2:
->>   - Categorize clock names by oneOf keyword.
->>
->> v1:
->>   - https://patchwork.kernel.org/project/linux-phy/patch/20240923025326.10467-1-frank.wang@rock-chips.com/
->>
->>   .../bindings/phy/rockchip,inno-usb2phy.yaml      | 16 ++++++++++++++--
->>   1 file changed, 14 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
->> index 5254413137c64..8af4e0f8637fc 100644
->> --- a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
->> +++ b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
->> @@ -20,6 +20,7 @@ properties:
->>         - rockchip,rk3366-usb2phy
->>         - rockchip,rk3399-usb2phy
->>         - rockchip,rk3568-usb2phy
->> +      - rockchip,rk3576-usb2phy
->>         - rockchip,rk3588-usb2phy
->>         - rockchip,rv1108-usb2phy
->>   
->> @@ -34,10 +35,20 @@ properties:
->>       const: 0
->>   
->>     clocks:
->> -    maxItems: 1
->> +    minItems: 1
->> +    maxItems: 3
->>   
->>     clock-names:
->> -    const: phyclk
->> +    minItems: 1
->> +    maxItems: 3
-> clock-names isn't a required property, you can't allow jumbling the order
-> like this does without breaking the ABI. Why can't the new device have
-> phyclk in position 1?
+The cache lookups are just reads; they don't introduce scalability
+issues, unless they're contending with other cores writing to those
+cachelines - checking if an item is present in a hash table is trivial
+to do locklessly.
 
-I sent a draft changes in patch v1 comments which put the "phyclk" in 
-position 1, Krzysztof said I have messed the order, so I reorder them in v2.
-Did I misunderstand? anyway, should the changes like the below?
+But pulling an inode into and then evicting it from the inode cache
+entails a lot more work - just initializing a struct inode is
+nontrivial, and then there's the (multiple) shared data structures you
+have to manipulate.
 
-@@ -34,10 +35,20 @@ properties:
-       const: 0
+> Keep in mind that not having a referenced inode opens up the code to
+> things like pre-emption races. i.e. a cache miss doesn't prevent
+> the current task from being preempted before it reads the inode
+> information into the user buffer. The VFS inode could bei
+> instantiated and modified before the uncached access runs again and
+> pulls stale information from the underlying buffer and returns that
+> to userspace.
 
-     clocks:
--    maxItems: 1
-+    minItems: 1
-+    maxItems: 3
+Yeah, if you're reading from a buffer cache that doesn't have a lock
+that does get dicy - but for bcachefs where we're reading from a btree
+node that does have a lock it's quite manageable.
 
-     clock-names:
--    const: phyclk
-+    minItems: 1
-+    maxItems: 3
-+    items:
-+      oneOf:
-+        - description: PHY input reference clocks.
-+          const: phyclk
-+        - description: aclk for USB MMU.
-+          const: aclk
-+        - description: aclk_slv for USB MMU.
-+          const: aclk_slv
+And incidentally this sort of "we have a cache on top of the btree, but
+sometimes we have to do direct access" is already something that comes
+up a lot in bcachefs, primarily for the alloc btree. _Tons_ of fun, but
+doesn't actually come up here for us since we don't use the vfs inode
+cache as a writeback cache.
 
+Now, for some completely different sillyness, there's actually _three_
+levels of caching for inodes in bcachefs: btree node cache, btree key
+cache, then the vfs cache. In the first two inodes are packed down to
+~100 bytes so it's not that bad, but it does make you go "...what?". It
+would be nice in theory to collapse - but the upside is that we don't
+have the interactions between the vfs inode cache and journalling that
+xfs has.
 
-BR.
-Frank
-
->> +    items:
->> +      oneOf:
->> +        - description: aclk for USB MMU.
->> +          const: aclk
->> +        - description: aclk_slv for USB MMU.
->> +          const: aclk_slv
->> +        - description: PHY input reference clocks.
->> +          const: phyclk
->>   
->>     assigned-clocks:
->>       description:
->> @@ -143,6 +154,7 @@ allOf:
->>             contains:
->>               enum:
->>                 - rockchip,rk3568-usb2phy
->> +              - rockchip,rk3576-usb2phy
->>                 - rockchip,rk3588-usb2phy
->>   
->>       then:
->> -- 
->> 2.45.2
->>
-
+But if vfs inodes no longer have their own lifetime like you've been
+talking about, that might open up interesting possibilities.
 
