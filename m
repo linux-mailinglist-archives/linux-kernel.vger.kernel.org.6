@@ -1,309 +1,201 @@
-Return-Path: <linux-kernel+bounces-338350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AECDD9856BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:56:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E983C9856BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65DF12873C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:56:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61A121F2539B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0447158DCC;
-	Wed, 25 Sep 2024 09:56:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A19E13B284;
-	Wed, 25 Sep 2024 09:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56194156C73;
+	Wed, 25 Sep 2024 09:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UU+VeMYL"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28D714B967
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727258171; cv=none; b=dJRUxqRYnd6dVvsSbk69ZziYcyLJfypxtl+pxJPvLQrkN21s14utV4VOp86QgrnNRldkpkdaTCJAGF9ymq4LmSK4ZIXwZZm2iwRXspNlYgVwATLgPgoPv16u1jo/PckbRDoggJUcrWYSBfsIuJ20IiylFTCIehwin751mD8eX5s=
+	t=1727258209; cv=none; b=qRnaVooNYFY3u/2aOjZGQ5i/U5pDj5moLvEw6EXB9TMMYMbrCUTYZqLGmpZQ0HxpSJkvXBgLlSrDz4EVMxdGVa6ytnHzby1KjDfdYmGk/01F12woEGmZ7pq/9xV+Xdtb2155IIxPKwDYhWBEsHVkNZ0zJ2J+8Tu/Pa8uhTjwl78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727258171; c=relaxed/simple;
-	bh=SKG7T5E2iG+DmItT/XrkXD2mDXw496/hmcH5RpxfgTs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qzkK43rwAlxF/zH6jN4icxV4Nb425DbBHTu3c+uUhpR301lpDjztYehq/VlbHJNqvFvumgw0DEFDFSUs0bp+m7Yz1W5ZgG2NKQA9UNBRE3V9ob8Gk1ZLAT44F9FtaswKgFNlKT8sKcMWMZ/l97yMNq9TzBmqjMCo9QFhaXT0XwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1EFD512FC;
-	Wed, 25 Sep 2024 02:56:37 -0700 (PDT)
-Received: from [10.57.78.226] (unknown [10.57.78.226])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6EB9E3F64C;
-	Wed, 25 Sep 2024 02:56:04 -0700 (PDT)
-Message-ID: <033f8885-9c0e-4c5a-a272-baf48807dc5d@arm.com>
-Date: Wed, 25 Sep 2024 10:56:01 +0100
+	s=arc-20240116; t=1727258209; c=relaxed/simple;
+	bh=xEng0ILGawkE/K9pQCc8vU14hShyRxs7UG8CXeYAF04=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SIzNKGL43CHXglKTiCU95vEe26vhYI1ZATTN5PeCbjfOb6gKtgXoj2yQSsLnlMNI+iXkqSMIN93kMEipuzRyEBfoT7Xel7ZqUlJvK2cVRRnkbdHfASOqgZLTcJJ7pJqiSbTlQWGJ9kVuCb7UPtILkrxUf9wVg7YY11Jz/1EIRcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UU+VeMYL; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37ccc5c7857so8094f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 02:56:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727258206; x=1727863006; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T4ek5g2WpaEArbed43Ic4SfAR8svgIoVtYNeQf4QZko=;
+        b=UU+VeMYLsKSW3dHDi0FKe1s4pY5hRWuRRU5MRa1/NYaTEr2waUTYojM/YQa0omyZVV
+         ZCe/qjquY0C6Eqqyvp/Cah2VT9nXP/R7fO38ejy9DCgXqJ7NEsWYaMTegssgVC4sJA0b
+         KHOz+vGT1BZJvY6GXQtItjjPRc2aLS0rmsLLyXLPgZvw6RDcpAZbdV4KLgcW3BrqJNbl
+         YGzURW2VCv38YbYi4npPXkS97ovidTp1YKp13tskr9B40k6O5q9hLpxkL9H9MBdtfo2i
+         JF7okKVkknpkDiWhn7iTBGGBSXE5fz0npLNR6zHI/H8gyM3HCXbA7od+XGRZ5t8gHERz
+         8WTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727258206; x=1727863006;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T4ek5g2WpaEArbed43Ic4SfAR8svgIoVtYNeQf4QZko=;
+        b=UTKeDFTDj+pOGnUe1LaifQu4GR9PEiVD9069WfYE4R8tRl67orflLe2CLtuaEUbWdZ
+         a8k1O1twG70KkEpVUCzMJCAiuP9Ad0GUs5BqziC6Y5TmkMF76hpleBxOX9k+XO37AxDc
+         J3ie4Kitan6XBxa2c5PvjPyfZgMEVO8gW64F5jNFC/4NBwwT4F1sMKtCWvKehpOJQXv8
+         1GO/Omqex5kKKh112p2rh08vJVdkxPv6rBu8vnmYBm7VuGVPk9cdlHd4PsF2aORdRQvG
+         7W28R+NzT2jUewCcA+iuHkooEVto1pUlHv3YNjrAaUKTlDSurpUbJzr6HqlZ7TjIn79e
+         G/0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVFtspYcaf4PE+Gyr5j2V3cyuZc/Gx97bUyGy7xFZGUUsLr43ay2LIyp7FBChD9s44bOztSRuhBY1WoPEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX5JeUX11N32Q7O0GK8fDoi/F9qSXJOcCQQpitmUz/8YHVYWzw
+	0XvL52Hu0TsUqNpQHZr1208xnJHaRFNHZ5QFRYDeWJpNCUBcm/G4Iu036OYeeUM=
+X-Google-Smtp-Source: AGHT+IGSJhzwvWL9e+QqYHeRxVHO7r6yn25VxHi+gaz4ceL1fnx2qrMA8vQyjlnTr3Yrz+A2YPHONQ==
+X-Received: by 2002:a5d:64c8:0:b0:374:c2e9:28aa with SMTP id ffacd0b85a97d-37cc249efa7mr700119f8f.8.1727258205960;
+        Wed, 25 Sep 2024 02:56:45 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2a8bcasm3559020f8f.9.2024.09.25.02.56.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 02:56:45 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	soc@kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-arm-kernel@lists.infradead.org,
+	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Will Deacon <will@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Conor Dooley <conor@kernel.org>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH v2] Documentation/process: maintainer-soc: clarify submitting patches
+Date: Wed, 25 Sep 2024 11:56:35 +0200
+Message-ID: <20240925095635.30452-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/5] drm/panthor: introduce job cycle and timestamp
- accounting
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org
-References: <5c4d1008-261f-4c47-ab73-c527675484a4@arm.com>
- <bq6lctwgpsxvrdaajmjo3xdjt32srmsxvjhtzyebdj6izjzoaw@6duby4axg3pf>
- <ef799587-f7c2-472a-8550-9c40a395eccb@arm.com>
- <jgdknf77n6vqanh4jv2yixe4n4hsbhqqhth4beued4topggwgz@wx7bumhrbpje>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <jgdknf77n6vqanh4jv2yixe4n4hsbhqqhth4beued4topggwgz@wx7bumhrbpje>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 23/09/2024 21:43, Adrián Larumbe wrote:
-> Hi Steve,
-> 
-> On 23.09.2024 09:55, Steven Price wrote:
->> On 20/09/2024 23:36, Adrián Larumbe wrote:
->>> Hi Steve, thanks for the review.
->>
->> Hi Adrián,
->>
->>> I've applied all of your suggestions for the next patch series revision, so I'll
->>> only be answering to your question about the calc_profiling_ringbuf_num_slots
->>> function further down below.
->>>
->>
->> [...]
->>
->>>>> @@ -3003,6 +3190,34 @@ static const struct drm_sched_backend_ops panthor_queue_sched_ops = {
->>>>>  	.free_job = queue_free_job,
->>>>>  };
->>>>>  
->>>>> +static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
->>>>> +				       u32 cs_ringbuf_size)
->>>>> +{
->>>>> +	u32 min_profiled_job_instrs = U32_MAX;
->>>>> +	u32 last_flag = fls(PANTHOR_DEVICE_PROFILING_ALL);
->>>>> +
->>>>> +	/*
->>>>> +	 * We want to calculate the minimum size of a profiled job's CS,
->>>>> +	 * because since they need additional instructions for the sampling
->>>>> +	 * of performance metrics, they might take up further slots in
->>>>> +	 * the queue's ringbuffer. This means we might not need as many job
->>>>> +	 * slots for keeping track of their profiling information. What we
->>>>> +	 * need is the maximum number of slots we should allocate to this end,
->>>>> +	 * which matches the maximum number of profiled jobs we can place
->>>>> +	 * simultaneously in the queue's ring buffer.
->>>>> +	 * That has to be calculated separately for every single job profiling
->>>>> +	 * flag, but not in the case job profiling is disabled, since unprofiled
->>>>> +	 * jobs don't need to keep track of this at all.
->>>>> +	 */
->>>>> +	for (u32 i = 0; i < last_flag; i++) {
->>>>> +		if (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL)
->>>>> +			min_profiled_job_instrs =
->>>>> +				min(min_profiled_job_instrs, calc_job_credits(BIT(i)));
->>>>> +	}
->>>>> +
->>>>> +	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u64));
->>>>> +}
->>>>
->>>> I may be missing something, but is there a situation where this is
->>>> different to calc_job_credits(0)? AFAICT the infrastructure you've added
->>>> can only add extra instructions to the no-flags case - whereas this
->>>> implies you're thinking that instructions may also be removed (or replaced).
->>>>
->>>> Steve
->>>
->>> Since we create a separate kernel BO to hold the profiling information slot, we
->>> need one that would be able to accomodate as many slots as the maximum number of
->>> profiled jobs we can insert simultaneously into the queue's ring buffer. Because
->>> profiled jobs always take more instructions than unprofiled ones, then we would
->>> usually need fewer slots than the number of unprofiled jobs we could insert at
->>> once in the ring buffer.
->>>
->>> Because we represent profiling metrics with a bit mask, then we need to test the
->>> size of the CS for every single metric enabled in isolation, since enabling more
->>> than one will always mean a bigger CS, and therefore fewer jobs tracked at once
->>> in the queue's ring buffer.
->>>
->>> In our case, calling calc_job_credits(0) would simply tell us the number of
->>> instructions we need for a normal job with no profiled features enabled, which
->>> would always requiere less instructions than profiled ones, and therefore more
->>> slots in the profiling info kernel BO. But we don't need to keep track of
->>> profiling numbers for unprofiled jobs, so there's no point in calculating this
->>> number.
->>>
->>> At first I was simply allocating a profiling info kernel BO as big as the number
->>> of simultaneous unprofiled job slots in the ring queue, but Boris pointed out
->>> that since queue ringbuffers can be as big as 2GiB, a lot of this memory would
->>> be wasted, since profiled jobs always require more slots because they hold more
->>> instructions, so fewer profiling slots in said kernel BO.
->>>
->>> The value of this approach will eventually manifest if we decided to keep track of
->>> more profiling metrics, since this code won't have to change at all, other than
->>> adding new profiling flags in the panthor_device_profiling_flags enum.
->>
->> Thanks for the detailed explanation. I think what I was missing is that
->> the loop is checking each bit flag independently and *not* checking
->> calc_job_credits(0).
->>
->> The check for (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL) is probably what
->> confused me - that should be completely redundant. Or at least we need
->> something more intelligent if we have profiling bits which are not
->> mutually compatible.
-> 
-> I thought of an alternative that would only test bits that are actually part of
-> the mask:
-> 
-> static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
-> 				       u32 cs_ringbuf_size)
-> {
-> 	u32 min_profiled_job_instrs = U32_MAX;
-> 	u32 profiling_mask = PANTHOR_DEVICE_PROFILING_ALL;
-> 
-> 	while (profiling_mask) {
-> 		u32 i = ffs(profiling_mask) - 1;
-> 		profiling_mask &= ~BIT(i);
-> 		min_profiled_job_instrs =
-> 			min(min_profiled_job_instrs, calc_job_credits(BIT(i)));
-> 	}
-> 
-> 	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u64));
-> }
-> 
-> However, I don't think this would be more efficient, because ffs() is probably
-> fetching the first set bit by performing register shifts, and I guess this would
-> take somewhat longer than iterating over every single bit from the last one,
-> even if also matching them against the whole mask, just in case in future
-> additions of performance metrics we decide to leave some of the lower
-> significance bits untouched.
+Patches for SoCs are expected to be picked up by SoC submaintainers.
+The main SoC maintainers should be addressed only in few cases.
 
-Efficiency isn't very important here - we're not on a fast path, so it's
-more about ensuring the code is readable. I don't think the above is
-more readable then the original for loop.
+Rewrite the section about maintainer handling to document above
+expectation.
 
-> Regarding your question about mutual compatibility, I don't think that is an
-> issue here, because we're testing bits in isolation. If in the future we find
-> out that some of the values we're profiling cannot be sampled at once, we can
-> add that logic to the sysfs knob handler, to make sure UM cannot set forbidden
-> profiling masks.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Conor Dooley <conor@kernel.org>
+Cc: Heiko Stübner <heiko@sntech.de>
 
-My comment about compatibility is because in the original above you were
-calculating the top bit of PANTHOR_DEVICE_PROFILING_ALL:
+---
 
-> u32 last_flag = fls(PANTHOR_DEVICE_PROFILING_ALL);
+During our LPC ad-hoc BoF, we discussed improving Maintainer SoC docs
+and I think I volunteered to write something.  The trouble is that
+whatever I won't write in my notes, escapes my memory.
 
-then looping between 0 and that bit:
+I believe this is what we discussed.  Was there anything more to
+write/document?
 
-> for (u32 i = 0; i < last_flag; i++) {
+Changes in v2:
+1. Fix missing closing ) (Conor).
+2. Style changes (in point 3.).
+3. Soften note that soc@kernel is not for discussing ("is usually not").
+---
+ Documentation/process/maintainer-soc.rst | 42 +++++++++++++++++++++---
+ 1 file changed, 37 insertions(+), 5 deletions(-)
 
-So the test:
-
-> if (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL)
-
-would only fail if PANTHOR_DEVICE_PROFILING_ALL had gaps in the bits
-that it set. The only reason I can think for that to be true in the
-future is if there is some sort of incompatibility - e.g. maybe there's
-an old and new way of doing some form of profiling with the old way
-being kept for backwards compatibility. But I suspect if/when that is
-required we'll need to revisit this function anyway. So that 'if'
-statement seems completely redundant (it's trivially always true).
-
-Steve
-
->> I'm also not entirely sure that the amount of RAM saved is significant,
->> but you've already written the code so we might as well have the saving ;)
-> 
-> I think this was more evident before Boris suggested we reduce the basic slot
-> size to that of a single cache line, because then the minimum profiled job
-> might've taken twice as many ringbuffer slots as a nonprofiled one. In that
-> case, we would need a half as big BO for holding the sampled data (in case the
-> least size profiled job CS would extend over the 16 instruction boundary).
-> I still think this is a good idea so that in the future we don't need to worry
-> about adjusting the code that deals with preparing the right boilerplate CS,
-> since it'll only be a matter of adding new instructions inside prepare_job_instrs().
-> 
->> Thanks,
->> Steve
->>
->>> Regards,
->>> Adrian
->>>
->>>>> +
->>>>>  static struct panthor_queue *
->>>>>  group_create_queue(struct panthor_group *group,
->>>>>  		   const struct drm_panthor_queue_create *args)
->>>>> @@ -3056,9 +3271,35 @@ group_create_queue(struct panthor_group *group,
->>>>>  		goto err_free_queue;
->>>>>  	}
->>>>>  
->>>>> +	queue->profiling.slot_count =
->>>>> +		calc_profiling_ringbuf_num_slots(group->ptdev, args->ringbuf_size);
->>>>> +
->>>>> +	queue->profiling.slots =
->>>>> +		panthor_kernel_bo_create(group->ptdev, group->vm,
->>>>> +					 queue->profiling.slot_count *
->>>>> +					 sizeof(struct panthor_job_profiling_data),
->>>>> +					 DRM_PANTHOR_BO_NO_MMAP,
->>>>> +					 DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
->>>>> +					 DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
->>>>> +					 PANTHOR_VM_KERNEL_AUTO_VA);
->>>>> +
->>>>> +	if (IS_ERR(queue->profiling.slots)) {
->>>>> +		ret = PTR_ERR(queue->profiling.slots);
->>>>> +		goto err_free_queue;
->>>>> +	}
->>>>> +
->>>>> +	ret = panthor_kernel_bo_vmap(queue->profiling.slots);
->>>>> +	if (ret)
->>>>> +		goto err_free_queue;
->>>>> +
->>>>> +	/*
->>>>> +	 * Credit limit argument tells us the total number of instructions
->>>>> +	 * across all CS slots in the ringbuffer, with some jobs requiring
->>>>> +	 * twice as many as others, depending on their profiling status.
->>>>> +	 */
->>>>>  	ret = drm_sched_init(&queue->scheduler, &panthor_queue_sched_ops,
->>>>>  			     group->ptdev->scheduler->wq, 1,
->>>>> -			     args->ringbuf_size / (NUM_INSTRS_PER_SLOT * sizeof(u64)),
->>>>> +			     args->ringbuf_size / sizeof(u64),
->>>>>  			     0, msecs_to_jiffies(JOB_TIMEOUT_MS),
->>>>>  			     group->ptdev->reset.wq,
->>>>>  			     NULL, "panthor-queue", group->ptdev->base.dev);
->>>>> @@ -3354,6 +3595,7 @@ panthor_job_create(struct panthor_file *pfile,
->>>>>  {
->>>>>  	struct panthor_group_pool *gpool = pfile->groups;
->>>>>  	struct panthor_job *job;
->>>>> +	u32 credits;
->>>>>  	int ret;
->>>>>  
->>>>>  	if (qsubmit->pad)
->>>>> @@ -3407,9 +3649,16 @@ panthor_job_create(struct panthor_file *pfile,
->>>>>  		}
->>>>>  	}
->>>>>  
->>>>> +	job->profiling.mask = pfile->ptdev->profile_mask;
->>>>> +	credits = calc_job_credits(job->profiling.mask);
->>>>> +	if (credits == 0) {
->>>>> +		ret = -EINVAL;
->>>>> +		goto err_put_job;
->>>>> +	}
->>>>> +
->>>>>  	ret = drm_sched_job_init(&job->base,
->>>>>  				 &job->group->queues[job->queue_idx]->entity,
->>>>> -				 1, job->group);
->>>>> +				 credits, job->group);
->>>>>  	if (ret)
->>>>>  		goto err_put_job;
->>>>>  
->>>
-> 
-> 
-> Adrian Larumbe
+diff --git a/Documentation/process/maintainer-soc.rst b/Documentation/process/maintainer-soc.rst
+index 12637530d68f..fe9d8bcfbd2b 100644
+--- a/Documentation/process/maintainer-soc.rst
++++ b/Documentation/process/maintainer-soc.rst
+@@ -30,10 +30,13 @@ tree as a dedicated branch covering multiple subsystems.
+ The main SoC tree is housed on git.kernel.org:
+   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/
+ 
++Maintainers
++-----------
++
+ Clearly this is quite a wide range of topics, which no one person, or even
+ small group of people are capable of maintaining.  Instead, the SoC subsystem
+-is comprised of many submaintainers, each taking care of individual platforms
+-and driver subdirectories.
++is comprised of many submaintainers (platform maintainers), each taking care of
++individual platforms and driver subdirectories.
+ In this regard, "platform" usually refers to a series of SoCs from a given
+ vendor, for example, Nvidia's series of Tegra SoCs.  Many submaintainers operate
+ on a vendor level, responsible for multiple product lines.  For several reasons,
+@@ -43,14 +46,43 @@ MAINTAINERS file.
+ 
+ Most of these submaintainers have their own trees where they stage patches,
+ sending pull requests to the main SoC tree.  These trees are usually, but not
+-always, listed in MAINTAINERS.  The main SoC maintainers can be reached via the
+-alias soc@kernel.org if there is no platform-specific maintainer, or if they
+-are unresponsive.
++always, listed in MAINTAINERS.
+ 
+ What the SoC tree is not, however, is a location for architecture-specific code
+ changes.  Each architecture has its own maintainers that are responsible for
+ architectural details, CPU errata and the like.
+ 
++Submitting Patches for Given SoC
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++All typical platform related patches should be sent via SoC submaintainers
++(platform-specific maintainers).  This includes also changes to per-platform or
++shared defconfigs (scripts/get_maintainer.pl might not provide correct
++addresses in such case).
++
++Submitting Patches to the Main SoC Maintainers
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++The main SoC maintainers can be reached via the alias soc@kernel.org only in
++following cases:
++
++1. There are no platform-specific maintainers.
++
++2. Platform-specific maintainers are unresponsive.
++
++3. Introducing a completely new SoC platform.  Such new SoC work should be sent
++   first to common mailing lists, pointed out by scripts/get_maintainer.pl, for
++   community review.  After positive community review, work should be sent to
++   soc@kernel.org in one patchset containing new arch/foo/Kconfig entry, DTS
++   files, MAINTAINERS file entry and optionally initial drivers with their
++   Devicetree bindings.  The MAINTAINERS file entry should list new
++   platform-specific maintainers, who are going to be responsible for handling
++   patches for the platform from now on.
++
++Note that the soc@kernel.org is usually not the place to discuss the patches,
++thus work sent to this address should be already considered as acceptable by
++the community.
++
+ Information for (new) Submaintainers
+ ------------------------------------
+ 
+-- 
+2.43.0
 
 
