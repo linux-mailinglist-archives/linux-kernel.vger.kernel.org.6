@@ -1,162 +1,161 @@
-Return-Path: <linux-kernel+bounces-338273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7929855BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:43:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5B89855C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C547828438F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28D811C22E89
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE19515ADA1;
-	Wed, 25 Sep 2024 08:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F9415B0FF;
+	Wed, 25 Sep 2024 08:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Mo1xlRuh"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dB8lF5YF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598F91552E0;
-	Wed, 25 Sep 2024 08:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC3F1552E0;
+	Wed, 25 Sep 2024 08:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727253793; cv=none; b=hzhgx+48/mFtEG/EMRoV1lmMVsjcqnBz1cN5tkH5XWWgxDmTLwnKrfRTXZYmvVJNLc1yCNEELVzbSiJebVb/Iu8mUF2k3+HCWN4Jfd1yisYIObUczPU5B3hJh1YgiTF1cggxMd4/K+Amv2V6c8mGc0cXxr2GnmgnJoRmjD/abuI=
+	t=1727253853; cv=none; b=qpVGsvRSx5Fzu6amZ5LyBb4VgDcV8fFDTSGqH8cuVAvYb3cEq+OwJarCYdGMCQlqEa1jf+vzIGWUxC/4zmj97e5yA/+dnMdzDZXR0cDqe2Fj20UV+FxMre7mhLlU6BsLJjE6gLO4KkYmrf7CMhPtiq1Wf/RA1X2QRTal4lLOSTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727253793; c=relaxed/simple;
-	bh=dI3IZSn8QJ5+D9rEhSc0z1pZ65+OKrZFPZp75fmOL3c=;
+	s=arc-20240116; t=1727253853; c=relaxed/simple;
+	bh=DO8VK0v2Jf7/FGxXPyOnJqfVq2g37pkTvX5TLfE/ong=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=N7ZXp4BzEklVosN6lA5c9ixmSZbktNSmjKIqlH+79jqcqC2JHPUdPSrL3Vl2aLKpbuyVVDa0gxjitcY1vgkFKhd878X0qKBZATxQqU+aR0+dFCqgLKsibm4nZZHIcvZHjQlNvYL0eWj5VTT8p9bwoRAkVLWYs9yGJtXjkc3vkuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Mo1xlRuh; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 2e3b99f87b1a11ef8b96093e013ec31c-20240925
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=JrbVtDLJwECuyvPhK0BEV+KwQsj0q8fI1QSWfwxU1nE=;
-	b=Mo1xlRuhAzQobwoV5qygzF6o/nRQm+uZy6LeTFM2p3IOe2WmHz6dsVeJDNQbeqrZu2gPYXicr/MSNhpy55dcIABLvsLL23jFUDrnZdl2OYLehbx+lg+ZudLnvhKEw0lxcgDzu71I3eNwWoyKf2q/faCnTKGXIBth+2ei7hBHJKw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:664a495c-7254-4e32-b0a8-7a062548c705,IP:0,U
-	RL:0,TC:0,Content:8,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:8
-X-CID-META: VersionHash:6dc6a47,CLOUDID:7490899e-8e9a-4ac1-b510-390a86b53c0a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 2e3b99f87b1a11ef8b96093e013ec31c-20240925
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2138599595; Wed, 25 Sep 2024 16:43:04 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 25 Sep 2024 16:43:02 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n1.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Wed, 25 Sep 2024 16:43:01 +0800
-Message-ID: <2821ef09-1b32-082d-69d1-e09a3a302447@mediatek.com>
-Date: Wed, 25 Sep 2024 16:42:59 +0800
+	 In-Reply-To:Content-Type; b=pKnYr2MxoISxBR+btrB+mWK0EuZ0TybzDTMp0lN3+41jC1H4rf744OqrenM1ZBXN0HpMH0m9stXTsK/SIrFefLgcne49gpJknaJsHnI2Pde9H83wqWpKGRFeNmuulbKzEjdgXs/4WYHeZH0NT0px+sjz403MbIfUbFIxrJEUTss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dB8lF5YF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48P8Kj50016579;
+	Wed, 25 Sep 2024 08:44:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Wg9VmCa1LfbiNfZVXVBt2tG1pR0YkPVDCUAhMon4a4o=; b=dB8lF5YFErAH1VBj
+	HpEqfIaNFxe7/lzs+IDMozZ3w0OuH8YpnM9V4VLB4W3DPXa5k+h29wXUvYFhrWWm
+	fhJo+AcEhjyay8nMwezbM4q9kq/3udIlXI0cTINiQwW4uHDJ3Klq7AWqfjme7DVN
+	owqvX0gRY0AbLBAu/HxwXZKS74l6Ua3ri1QDhQWTkql7TD1Dvr6GbcoEE6S4RF3N
+	7NzB4wZRrBXzySV9turR8Kc4NOpzXTcxgNtwhFh0Z1beVc8/Zt5y000+r7M8kGkE
+	kQ0DiMXHAd6SwXdCuIcADuyNmLrqKra2OVEX6HiwAag99apvRnuhpXnFTABro7Pi
+	461tdA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41skueue0n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 08:44:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P8i8ht000614
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 08:44:08 GMT
+Received: from [10.151.37.18] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Sep
+ 2024 01:44:06 -0700
+Message-ID: <3c3647c1-8d6d-4038-8815-30c1570d856c@quicinc.com>
+Date: Wed, 25 Sep 2024 14:14:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 3/6] dt-bindings: display: mediatek: Fix clocks count
- constraint for new SoCs
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] i2c: qcom-geni: add 32MHz I2C SE clock support for
+ IPQ5424
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>, <andi.shyti@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+References: <20240924065020.2009975-1-quic_mmanikan@quicinc.com>
+ <e14e2136-54eb-411d-afff-f6803a23ad6a@quicinc.com>
 Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <moudy.ho@mediatek.com>,
-	<macross.chen@mediatek.com>
-CC: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yong Wu
-	<yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
-	<will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Matthias Brugger
-	<matthias.bgg@gmail.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, Alexandre Mergnat
-	<amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, Pablo Sun
-	<pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen Chu
-	<sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>, "MediaTek
- Chromebook Upstream" <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Chen-Yu Tsai <wenst@chromium.org>
-References: <20240924103156.13119-1-macpaul.lin@mediatek.com>
- <20240924103156.13119-3-macpaul.lin@mediatek.com>
- <ffc1900b-3921-48ca-a2b2-1b798c57e572@collabora.com>
- <20240924-commute-collision-13ad39717d31@spud>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20240924-commute-collision-13ad39717d31@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--11.313000-8.000000
-X-TMASE-MatchedRID: QfHZjzml1E8OwH4pD14DsPHkpkyUphL9Wot5Z16+u76+UkTh6A/DwT8f
-	ilvi6fr90mFsFMx0VZMOYgThO+DmXx2P280ZiGmRdARARTk4h59bAoaK+wS4jRSX1u8BLtZAFRE
-	6l+a4SRTiTN0gJqFURMzVnE1oQDqoavi5Lq9+Ha1s7yIvC2pwGtF9F+XaXgXeZ5yuplze9ptTyk
-	OINBDQU+cQv6iXuAzrwVMUpfyfKUIAwWnlblYdAsxmTzofEWOOazzS+36ix9ybKItl61J/ycnjL
-	TA/UDoAA6QGdvwfwZZWRVlrjsKO8N0H8LFZNFG7bkV4e2xSge75AqQykow+yePbmdtfeypRXtRV
-	FLwJOwOr2TwTTCELzrAUyUg9ogFt
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--11.313000-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: 972967CB0576905A235A1CA79982300AA079E3A940A8E8B2F8C6AB1ADA60F2932000:8
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <e14e2136-54eb-411d-afff-f6803a23ad6a@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: T5ZMbQUGk6GSK37eaJXTzOdHna3SpbTz
+X-Proofpoint-ORIG-GUID: T5ZMbQUGk6GSK37eaJXTzOdHna3SpbTz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ adultscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
+ malwarescore=0 impostorscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409250062
 
 
-On 9/25/24 00:00, Conor Dooley wrote:
-> On Tue, Sep 24, 2024 at 01:42:01PM +0200, AngeloGioacchino Del Regno wrote:
->> Il 24/09/24 12:31, Macpaul Lin ha scritto:
->>> The display node in mt8195.dtsi was triggering a CHECK_DTBS error due
->>> to an excessively long 'clocks' property:
->>>     display@14f06000: clocks: [[31, 14], [31, 43], [31, 44]] is too long
->>>
->>> To resolve this issue, add "maxItems: 3" to the 'clocks' property in
->>> the DT schema.
->>>
->>> Fixes: 4ed545e7d100 ("dt-bindings: display: mediatek: disp: split each block to individual yaml")
->>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
->>> ---
->>>    .../devicetree/bindings/display/mediatek/mediatek,split.yaml     | 1 +
->>>    1 file changed, 1 insertion(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
->>> index e4affc854f3d..42d2d483cc29 100644
->>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
->>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
->>> @@ -57,6 +57,7 @@ properties:
->>>      clocks:
->>>        items:
->>>          - description: SPLIT Clock
->>
->> That's at least confusing (granted that it works) - either add a description for
->> each clock and then set `minItems: 1` (preferred), or remove this "SPLIT Clock"
->> description and allow a maximum of 3 clocks.
->>
->> Removing the description can be done - IMO - because "SPLIT Clock" is, well,
->> saying that the SPLIT block gets a SPLIT clock ... stating the obvious, anyway.
+
+On 9/25/2024 1:06 PM, Mukesh Kumar Savaliya wrote:
+> Hi Manikanta,
 > 
-> Right, but what are the other two new clocks? Are they as obvious?
-> There's no clock-names here to give any more information as to what the
-> other clocks are supposed to be.
-> 
-> Kinda unrelated, but I think that "SPLIT Clock" probably isn't what the
-> name of the clock in the IP block is anyway, sounds more like the name
-> for it on the provider end..
+> On 9/24/2024 12:20 PM, Manikanta Mylavarapu wrote:
+>> The IPQ5424 I2C SE clock operates at a frequency of 32MHz. Since the
+> would it be better to say , I2C SE is sourced from 32MHZ ?
 
-Thanks for the suggestions. I think Moudy could help on the new fixes
-for both DT schem and mt8195.dtsi. This patch could be separated from
-origin patch set.
+Okay, sure.
 
-Thanks
-Macpaul Lin
+>> existing map table is based on 19.2MHz, this patch incorporate the
+> based on 19.2MHz. this patch /,/.
+
+Okay, sure.
+
+>> clock map table to derive the SCL clock from the 32MHz SE clock.
+> from the 32MHz Source Clock frequency.
+> SE = Expand OR  (I2C Serial Engine Controller)
+
+Okay, sure.
+
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>>   drivers/i2c/busses/i2c-qcom-geni.c | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+>> index 212336f724a6..bbd9ecf09f4b 100644
+>> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+>> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+>> @@ -71,6 +71,7 @@ enum geni_i2c_err_code {
+>>     #define I2C_AUTO_SUSPEND_DELAY    250
+>>   #define KHZ(freq)        (1000 * freq)
+>> +#define MHZ(freq)        (1000000 * freq)
+>>   #define PACKING_BYTES_PW    4
+>>     #define ABORT_TIMEOUT        HZ
+>> @@ -152,11 +153,21 @@ static const struct geni_i2c_clk_fld geni_i2c_clk_map[] = {
+> A thought - Should we rename this appending _19.2M ? In future one or more may come as it evolves speed.
+
+Okay, sure.
+
+Thanks & Regards,
+Manikanta.
+
+>>       {KHZ(1000), 1, 3,  9, 18},
+>>   };
+>>   +/* source_clock = 32 MHz */
+>> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_32M[] = {
+>> +    {KHZ(100), 7, 14, 18, 40},
+>> +    {KHZ(400), 4,  3, 11, 20},
+>> +    {KHZ(1000), 4, 3,  6, 15},
+>> +};
+>> +
+>>   static int geni_i2c_clk_map_idx(struct geni_i2c_dev *gi2c)
+>>   {
+>>       int i;
+>>       const struct geni_i2c_clk_fld *itr = geni_i2c_clk_map;
+>>   +    if (clk_get_rate(gi2c->se.clk) == MHZ(32))
+>> +        itr = geni_i2c_clk_map_32M;
+>> +
+>>       for (i = 0; i < ARRAY_SIZE(geni_i2c_clk_map); i++, itr++) {
+>>           if (itr->clk_freq_out == gi2c->clk_freq_out) {
+>>               gi2c->clk_fld = itr;
+
 
