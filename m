@@ -1,86 +1,160 @@
-Return-Path: <linux-kernel+bounces-339610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9DC9867C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:47:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 540D09867C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE31128529D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:47:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D1501C2137B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D2F1465B3;
-	Wed, 25 Sep 2024 20:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A70E14D430;
+	Wed, 25 Sep 2024 20:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F845A0rO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pvlEHb9X"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D546118637
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 20:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6F4146A68;
+	Wed, 25 Sep 2024 20:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727297227; cv=none; b=opMtimkpqYmGwocpbb++1K2y+TADqC7G10X7TKSySu2a1+SfJ98Nd274RApEb/fB4HiHTqLqU9MpQoJcFHPPVz2sgqYqrTfPeki3DSafZ1M6iyo7lhfXiPrKEklGHkhFgdcZ0gPmErKDRBb/58LziuDK1oyi/OqT00P36HLHKN4=
+	t=1727297248; cv=none; b=KpmFIbzb6waNDG36gXywoR2FRAbHyVYFHNZ+pvjObF/2lya5oWcbLIWu+ZhDIitV8DdkJvihtFMvm3g4jT6hrAAm3A6SORAGUMRQf038VYN0I3tEkp2BBhITSAoOerYu5SXeORNRrksXly0oMDZaAZNRiZCU3CYKr469BT6E488=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727297227; c=relaxed/simple;
-	bh=WD+jMqvgC8MnHU3Lhm2a0gl+Uu82ABZjkjg4bL/0m3I=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=nWvcUemEFY6NsA9YWLz3SdLP94hdQQ0QN/1IvrvnVo8lLBvURXx0obw6XCciRL6rVNHfC3R/cb1p+Gm11xb1ZlkApEW+V/Wu/cKlj6N5o2ZsD9jXb+bmu9nnuigcrPvgA6oDI20iIofgJpExlJ0q5xSgN0Az5c5wg1lwZFVYMBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=F845A0rO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD996C4CEC3;
-	Wed, 25 Sep 2024 20:47:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1727297227;
-	bh=WD+jMqvgC8MnHU3Lhm2a0gl+Uu82ABZjkjg4bL/0m3I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F845A0rOvyN/U53R+uSQ/BHfMMCq1WP5EVLnSVqkUXzMRjWB5Bkc9opYk7w9HiIvc
-	 GPNNW505gW7LX88jmEOe72y9/UmSrNotcBN0dD/8ypblMvFZfyNdIkCBYAmunc5j3F
-	 PIuEAAi7CjqVZZOprZZmcohl0+k5QJsn2D35gb9I=
-Date: Wed, 25 Sep 2024 13:47:06 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Adrian Huang <adrianhuang0701@gmail.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko
- <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov
- <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Uladzislau Rezki <urezki@gmail.com>, kasan-dev@googlegroups.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, Adrian Huang
- <ahuang12@lenovo.com>
-Subject: Re: [PATCH 1/1] kasan, vmalloc: avoid lock contention when
- depopulating vmalloc
-Message-Id: <20240925134706.2a0c2717a41a338d938581ff@linux-foundation.org>
-In-Reply-To: <20240925134732.24431-1-ahuang12@lenovo.com>
-References: <20240925134732.24431-1-ahuang12@lenovo.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727297248; c=relaxed/simple;
+	bh=YCk6yFooSXFzCNCFc6DidwopbJLroorPKNmDuXpOW/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QOkQ9mgZUizOjKW/LCIr9Ys4AWbbumOaK07xUzXmY4tkOqDCUPC26wEI8M7vbk2GonlJNsI23v2UwUomcSeao6Cp/V9rXaHnYrCgCy72M+LIQor1b6i/Ata6VP6nFiZPcmgGgf4b1C7pa4O+ibP3Qqx9nkRh1NxbjAE1vpOh/n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pvlEHb9X; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PH5Mdb021527;
+	Wed, 25 Sep 2024 20:47:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Ilg5tfgVnEPmPCjHj4egV6TXzDXzT2qIKba21pN5eZU=; b=pvlEHb9XNTAnKW8D
+	Fy+9+TNGHv8Zapn/YcB7/1YX9qC/dlPEezBZ+1CahoTkfk+QOi/2ot729qRpXp0L
+	TAdozfw8ZtLg/VrpvUmuFMgqNfRVYx0JaBYK8IqSVTwp6MTLWm0qBJlSegM4Ei7n
+	foCWwuTtl5DUJfhlUgXU4eRVGRZXE1u3dPdEeKJsErhBRsHrMbDDIhSTirt1PtEj
+	BuD71uQxbia2z67yeiq3S2WIsxFNucZ+7lJ24HWJCecsxsHxhX2eA1s6HoO4fpy3
+	NfHQjHEn/r6xIrSqqFzAO4Sf7A+rW4/NoafHt+xw6RyfS/vU7GZRcLJ+9SmJ6ZoF
+	z6RCVg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqakn11f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 20:47:13 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48PKlCWd030319
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 20:47:12 GMT
+Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Sep
+ 2024 13:47:11 -0700
+Message-ID: <5a0be97f-a8a5-40dc-a2fa-b3c79c104915@quicinc.com>
+Date: Wed, 25 Sep 2024 13:47:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/22] drm: add clone mode check for CRTC
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+        Rob Clark
+	<robdclark@gmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>
+CC: <quic_ebharadw@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@chromium.org>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
+ <20240924-concurrent-wb-v2-1-7849f900e863@quicinc.com>
+ <87bk0c40f1.fsf@intel.com>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <87bk0c40f1.fsf@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9LRX0bmY2EJ0EHZhzSF9BBTzRPmaP3wO
+X-Proofpoint-GUID: 9LRX0bmY2EJ0EHZhzSF9BBTzRPmaP3wO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 suspectscore=0 phishscore=0 adultscore=0
+ clxscore=1015 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409250147
 
-On Wed, 25 Sep 2024 21:47:32 +0800 Adrian Huang <adrianhuang0701@gmail.com> wrote:
 
->
-> ...
->
-> From: Adrian Huang <ahuang12@lenovo.com>
-> After re-visiting code path about setting the kasan ptep (pte pointer),
-> it's unlikely that a kasan ptep is set and cleared simultaneously by
-> different CPUs. So, use ptep_get_and_clear() to get rid of the spinlock
-> operation.
 
-"unlikely" isn't particularly comforting.  We'd prefer to never corrupt
-pte's!
+On 9/25/2024 1:12 AM, Jani Nikula wrote:
+> On Tue, 24 Sep 2024, Jessica Zhang <quic_jesszhan@quicinc.com> wrote:
+>> Add helper to check if the given CRTC state is in clone mode
+>>
+>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>> ---
+>>   include/drm/drm_crtc.h | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+>> index 8b48a1974da3..ecb93e2c4afc 100644
+>> --- a/include/drm/drm_crtc.h
+>> +++ b/include/drm/drm_crtc.h
+>> @@ -1323,5 +1323,12 @@ static inline struct drm_crtc *drm_crtc_find(struct drm_device *dev,
+>>   
+>>   int drm_crtc_create_scaling_filter_property(struct drm_crtc *crtc,
+>>   					    unsigned int supported_filters);
+>> +static inline bool drm_crtc_in_clone_mode(struct drm_crtc_state *crtc_state)
+>> +{
+>> +	if (!crtc_state)
+>> +		return false;
+>> +
+>> +	return hweight32(crtc_state->encoder_mask) > 1;
+>> +}
+> 
+> What's the benefit of this being static inline?
+> 
+> You're implicitly depending on hweight32() being available, basically
+> <linux/bitops.h> being included. Maybe it already is, but it's the
+> accumulation of small and innocent looking things like this that then
+> explode the header dependencies, and make them harder to reduce.
 
-I'm suspecting we need a more thorough solution here.
+Hi Jani,
 
-btw, for a lame fix, did you try moving the spin_lock() into
-kasan_release_vmalloc(), around the apply_to_existing_page_range()
-call?  That would at least reduce locking frequency a lot.  Some
-mitigation might be needed to avoid excessive hold times.
+Good point, I'll move the implementation to drm_crtc.c.
 
+Thanks,
+
+Jessica Zhang
+
+> 
+> BR,
+> Jani.
+> 
+>>   
+>>   #endif /* __DRM_CRTC_H__ */
+> 
+> -- 
+> Jani Nikula, Intel
 
 
