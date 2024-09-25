@@ -1,47 +1,71 @@
-Return-Path: <linux-kernel+bounces-339607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F40979867B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:34:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4999867B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8D17282B41
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:34:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D43B71C215F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A031487DC;
-	Wed, 25 Sep 2024 20:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D8414D2B8;
+	Wed, 25 Sep 2024 20:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vor6ORfe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="I46luq1y"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8783130E58;
-	Wed, 25 Sep 2024 20:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CC91BC2A
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 20:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727296467; cv=none; b=ri428YPRq0ThWWuLAoNZAxHXzkRYqmPqpS5vdrzHZ2i0euCZAvis7eLxz+tZilp4d4wiuH7pdJU/f5+zlmAsqxynTGYFmwAUuI5DeGJ663Y/64YBNfhxO3hzsjmN05ivtnxPu779PS/vlo0NBgUuBiC4HTroUlKzxY9NWP4kB5c=
+	t=1727296735; cv=none; b=WWzuhzYyIZXUTRURIyESgDQeFdg1DsrvszZzK7AxfBXgnNyJWqmUfn2fPzkVJH99Wj7MZkBwtaD0VlwgnOfaUMb2GlAcuM+r3X/XG+GfO36TA25i9Xs0xTKqmh49NUmreclVd9n7Aso8AU4Uf8+/Sh7JHLYTDKIQq9V+N34xY+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727296467; c=relaxed/simple;
-	bh=m5R3GPQSy0bIi+Po10NtET+RQXjn0TLy6x7dDFzvlRY=;
+	s=arc-20240116; t=1727296735; c=relaxed/simple;
+	bh=YVNmR6XXvH8A5mvxHVgdhsaKgdAgwRDKLgBUf6F6wc0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OSlBtylvJRbuywT6uiHJyT+B64q4Cl0kzDoN1Sb2gokdIK4iCoLQTZqmGL1EUSdSz2lVb8P9KVgRdsIXDWRBQGfL8zuQyf4cS/waw0qwKltr0EZEbkw4xTuHe9DvJf7HUe05dopUDLnl3grF2uqGVm6JU4cG02KQ7XLcpB5EisY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vor6ORfe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94419C4CEC3;
-	Wed, 25 Sep 2024 20:34:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727296466;
-	bh=m5R3GPQSy0bIi+Po10NtET+RQXjn0TLy6x7dDFzvlRY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Vor6ORfefnzPPs91Iul7OTslbva5DV5b26gdWDhUQtr2jcwa5zvdcAOBIjv0s4iYB
-	 NV6J4KD+SwPnu1m82IHr9NUYh/tSoV5RqA9T2RB0C5bogOSUvVJhhtxV4AzkhxE6HU
-	 z6UgEhpYzGT7jwIIPeL5ITrndG+lIBzkkrzN41Tu+y2l2mFAXqN+DT/lLEypmOf2pF
-	 WRG5Yy9ZC94sR8RjYqUdOAIjGDBLbNnV4xIxPFBLowQ3DxiwrHQmq5aXMXZSz4he/Y
-	 1tb9TcFhxudeH0/iOxpVjY8onVXQx0fJcxUumIZ57DV9eR6aKw/54Z2YwgKosOgrv+
-	 fxWcPtTYbtEAg==
-Message-ID: <ca92d19a-716e-4737-8e2b-99de25658869@kernel.org>
-Date: Wed, 25 Sep 2024 22:34:20 +0200
+	 In-Reply-To:Content-Type; b=Qm5RY5fxzMYDi/iXLizAyp8iF2zI9woSybDF+qbVgo/TywP1ul659g55EcCDr8096hUme67aBJx1Hzijflm0lCqkhMB6oncvz//QizPDnRksnlzoV3e/j+5J744YAuSVfh5ceYq9BqlAJskkkiCWZl7ouzUOT3F+NRAgg1fODaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=I46luq1y; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20570b42f24so2458265ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:38:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1727296733; x=1727901533; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=KMqnLJA14tEsx7O9h7xhY2igThYy8VcFXXux1jwsKwM=;
+        b=I46luq1yYoPYyO3TaT/8qIP9cBwvN1cA52v7dzRzg54QT3uHex+0pXMn6Sg5Z0ry3Y
+         mtBJE+wGK6sa+NwR4m2j2lDHfgfrWlvbIH4J5xy2k64F0FG7rWCeSZFG/ub2kI1pYJ/6
+         fyaWev5bv+/x2RNIBmNE3+05RlnC9Awe/Wuf8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727296733; x=1727901533;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KMqnLJA14tEsx7O9h7xhY2igThYy8VcFXXux1jwsKwM=;
+        b=UG/E5lfL0YXOeqmNluYnIikn34ZqKuyoIPBzQoJtkEFIr4s0CxiZn27SECy0tpxhX9
+         zXNCE/EpeoA4ZnIeIW125HYcVajYOWX83aRBfAp9rZby3WnOuA5W+raz7c851GTxpxMd
+         TfyDmdBemkFTN6GAqhjkTnW+mHmgnLgMDuKKJZdWIaN/vbYd2q7VQc6vvE1MLkxN9E2g
+         oXAqbp2+nRfoeWW6F5fRBkV1brXcNkn1+rUVX6/bMS95EOaisG2f3WH5ic3MW1laytYX
+         sqgJWVnnIDCncZojDddvnrCJERt5crChIzk9xaC9DgwK7YvsnQks9B2iVGesf8z234ui
+         yDYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWG1go1cKjLMVa0Oe3PTJbjkfD89pnXzHrIJuflp9Tnbjbf/V+u+LKaIh+3OQk23yIlGdn5H+8dPbSg5K0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNqCWGs25Y92ph2XS2u9TqN8kQkWjrZQ5sEjAbNOGe9qB6uW5o
+	DvyBRH7H3ziisEHf9c5mPsAJONAZ+648wI4gHoWj8yOZI5ASyme4AqUBozcg4Q==
+X-Google-Smtp-Source: AGHT+IH1jpsv0tw2DCcjrIftabUlsulweSmtlXGW2NhlfsDo3ONd9Fj2VcbVlSoC4aSk6HabY5Rwpg==
+X-Received: by 2002:a17:902:d481:b0:20b:f89:de76 with SMTP id d9443c01a7336-20b0f89e1d1mr25897875ad.36.1727296733476;
+        Wed, 25 Sep 2024 13:38:53 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af16e0551sm27781615ad.3.2024.09.25.13.38.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2024 13:38:52 -0700 (PDT)
+Message-ID: <6723d91c-ac15-436e-878c-2d6fc1aac5e2@broadcom.com>
+Date: Wed, 25 Sep 2024 13:38:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,117 +73,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] dt-bindings: display: samsung,exynos7-decon: add
- exynos7870 compatible
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: airlied@gmail.com, alim.akhtar@samsung.com, conor@kernel.org,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- inki.dae@samsung.com, kyungmin.park@samsung.com,
+Subject: Re: [PATCH] arm: dts: broadcom: Add missing required fields
+To: Stefan Wahren <wahrenst@gmx.net>,
+ Karan Sanghavi <karansanghvi98@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, robh@kernel.org, simona@ffwll.ch,
- sw0312.kim@samsung.com, tzimmermann@suse.de
-References: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
- <20240919-exynosdrm-decon-v1-6-8c3e3ccffad5@disroot.org>
- <32ae1188-196d-4fe8-8719-968e5149a771@kernel.org>
- <7e5caaea80390e8cf87ba0a74d9719f0@disroot.org>
- <1bc0ad48-03c0-4cf6-afb1-2296d1c259b9@kernel.org>
- <8e0672ad3fd72f69d2bdb5687e778c86@disroot.org>
- <ef786b8b-32c0-457a-9e14-ed7bd9f04172@kernel.org>
- <d8f5999921a31d7723e0aa9b12bb9eaf@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ Shuah Khan <skhan@linuxfoundation.org>, Anup <anupnewsmail@gmail.com>
+References: <ZvQ27pvrnEYA8BB9@Emma>
+ <3e296eed-5dbc-4098-ac3c-3c3125a352d8@gmx.net>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <d8f5999921a31d7723e0aa9b12bb9eaf@disroot.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <3e296eed-5dbc-4098-ac3c-3c3125a352d8@gmx.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 25/09/2024 22:05, Kaustabh Chakraborty wrote:
-> On 2024-09-25 19:56, Krzysztof Kozlowski wrote:
->> On 25/09/2024 21:36, Kaustabh Chakraborty wrote:
->>> On 2024-09-25 19:25, Krzysztof Kozlowski wrote:
->>>> On 25/09/2024 20:42, Kaustabh Chakraborty wrote:
->>>>> On 2024-09-20 12:39, Krzysztof Kozlowski wrote:
->>>>>> On 19/09/2024 17:20, Kaustabh Chakraborty wrote:
->>>>>>> Add the compatible string of Exynos7870 to the existing list.
->>>>>>>
->>>>>>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->>>>>>
->>>>>> ... and the DTS is <please provide lore ink in changelog>?
->>>>>
->>>>> Didn't quite understand. The patch adds the compatible string
->>>>> for Exynos7870 DECON in documentation. There's no DTS involved
->>>>> in here, right?
->>>>
->>>> Provide lore link to the DTS submission.
->>>
->>> There aren't any DTS submissions *yet* which use the compatible.
->>> Is that an issue?
->>>
->>
->> Yeah, users are supposed to be upstream. Not downstream.
+On 9/25/24 09:39, Stefan Wahren wrote:
+> Hi Karan,
 > 
-> I understand that. I had plans to submit it in the future.
-> If that's how it's meant to be done, I'll have to revisit this
-> submission at a later date then.
+> Am 25.09.24 um 18:14 schrieb Karan Sanghavi:
+>> Added below mentioned required fields
+>>    1. interrupt-controller
+>>    2. #interrupt-cells
+>> in the bcm2711.dtsi file for the
+>> interrupt-controller@40000000 block as defined in the
+>> bindings/interrupt-controller/brcm,bcm2836-l1-intc.yaml.
+>> This issue was noticed while compiling the dtb file
+>> for broadcom/bcm2711-rpi-4-b.dts file.
+>> After including the above fields in the dtsi file
+>> interrupt-conntroller error was resolved.
+> looks like you made the same mistake like me [1]. This change breaks
+> boot of Raspberry Pi 4 [2].
 > 
+> There are a lot of DT schema warnings to fix, but this doesn't belong to
+> the trivial ones.
 
-Partial, asynchronous bringup of a device is fine, so if the basic
-support is there, I understand that drivers come in different pace.
-Although I don't understand why DTS for this piece of hardware would
-come in different pace, considering you cannot test it without DTS. You
-have there DTS, so it should be sent.
+Including the #interrupt-cells would not have a functional impact 
+however, and we ought to be able to do that.
 
-But even without the DTS for DECON, the problem is earlier - lack of
-basic support for this device. There is nothing for this chip.
+The 'interrupt-controller' property presence means that the controller 
+will be picked up by of_irq_init() and that is was causes problems for 
+people testing this. Stefan, do you know if the VPU firmware 
+removes/inserts that property to tell Linux which interrupt controller 
+(bcm2836-l1-intc or ARM GIC) to use or does it make use of the "status" 
+property which would be the canonical way about doing that?
 
-This means it cannot be tested and is trickier to verify. That's not the
-usual upstreaming way we expect, especially that you did not provide
-rationale for such way.
-
-Best regards,
-Krzysztof
-
+Thanks!
+-- 
+Florian
 
