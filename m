@@ -1,82 +1,59 @@
-Return-Path: <linux-kernel+bounces-338237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49A1985532
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:11:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CCD4985533
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CECCA1C20BC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:11:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D847A1F2432E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CF1158D94;
-	Wed, 25 Sep 2024 08:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B671E15AD9B;
+	Wed, 25 Sep 2024 08:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WYuGLM+V"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nqUtiHKG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6927158D87
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FAF15A851
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727251853; cv=none; b=jwpATS1I3gdsCzkwmwo+G3Tfit3f6cZV8apRVfT8NUd6r9jLtQZqW+z6XmWaPmiGXysZVJ7WvNS6N9Fc4K99+sEdCkOQPjtqQPuQXayLIEk65paB1llDjzJD1ezRzF8BipKXjZSVVZ5itQqtGPC2WgJxV/9i8Hte7hl5iC3JEpk=
+	t=1727251855; cv=none; b=j2pfTp0C9FfUXSWWms+4hSPhqDGIii1AqJwC5qGsdNEfVe64U8hITi1qqeE3a01Uc7MR22bWHRlehGvsTkSyCnN1b7+E8rULvxoVikiSRg3ivyOm4vRK4kI9GwFfqVwJQr8L96WhrrX8R433JIrQJ018cnLhffkiH4WEaF+xeyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727251853; c=relaxed/simple;
-	bh=wUF1o3AkPJBZeRpaPm+2e/bxd2DtFAMDs4G51MfPD6I=;
+	s=arc-20240116; t=1727251855; c=relaxed/simple;
+	bh=UzK291mxXxbkbGh766qf/zEd99wtKZEiO0xk+CZ/uh8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=loRzeuR9I0WtK3b2W3llmcMUHuv89TC9At6o3dgxM+pyOYZblNeiqw1ZkdVUPpJYHqXkavG5YFAeBxy3DQqpny5kF9PnlFUQYBwXDBG0OYm0xXiUbhSDwEErVZDOJw5UaEyZUdi02D/mVlJ/dDNuOirb7RbADGxFVyOzhs8HRAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WYuGLM+V; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-374bd0da617so4560246f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727251850; x=1727856650; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wUF1o3AkPJBZeRpaPm+2e/bxd2DtFAMDs4G51MfPD6I=;
-        b=WYuGLM+VGJWvSPyNOagLMbdlmKCSV4IRITVCa1MxvIKkbZrI4IsGje8RU5VhD0DvCe
-         aMxAc4Uc9Yde2bXkIkmOyFw7CV+IJJax/w+oDR3TvDDyhH8thRoCapDXf32eSY1vIM0g
-         gtdzdx2J85Cxuj6ciSCGHKeBkYLfgCj/5Ou1HWD8i+Gvq+JGP7jCXlJ8h4L6lkjVOjhI
-         SyUU8rt8rgvwWM224hKjkbP7mw/V2km7fmEFcohhq9eGRDmi9lIopoL2YYSSw817Ahv2
-         pTTpAIzhIZuD7jDS7Q9pV0lRAXyQSdlr6wzQwC9E4X+AihzuyL2rFVCLD5tCpcVltBKB
-         H4wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727251850; x=1727856650;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wUF1o3AkPJBZeRpaPm+2e/bxd2DtFAMDs4G51MfPD6I=;
-        b=UABuFLe8jXS6bUXILLyKZQIXtxLXfFHpnW5PjcZ0n/xUy6YTd5J2MpDSyDbXVICp10
-         zT1aiJgufvNuPfyPi/43km3i0HbBOyFf7VP9zzxaDx3tGM2e8N+ppLqEC1pwysQRuHkG
-         KqLBIWXjS+kCBU5KHn1BiZbW0vvpbfOhyrRk0SjxXryk/uKfTza9q2zrFs8S3urqdnia
-         ieTSTXn1vC8aUvqmVgDS/+AHCAghkNObYPbQA2yfX8bmfED9RHcMMfp0QgOWFytj9t88
-         ww1/MR9lhD8GGAu4AIPHlXYQbp06IB5wmzD7FX9rgz5UP3tY4SA1bkQ6RRs4T1z+TxCr
-         JksQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqZoTHw04PnJ83XAxNibSWFqEAnEYekN1pvaMOY259h3fT9jOK4US93YMvE5v3XS9wiKuoR10sNElIIFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK8jgXhmJ7urNGnf6Oc67Os6NmPv+568uC3OiTkvERa6Bq7qMO
-	PjlzHply/3h8W5lvdmd923Blk6SqRnno4gQDmIuGEkhqhrRa1TqjWKMx9ii6jgc=
-X-Google-Smtp-Source: AGHT+IGn6GRJD8Rwx5J8w8ZJjTWua9r/sU/GDxbO3mmjVPsYbj0GV7sfKvfSRKx47UxiedbotWn/Jw==
-X-Received: by 2002:a5d:4576:0:b0:374:b5fc:d31a with SMTP id ffacd0b85a97d-37cc248beabmr1185242f8f.25.1727251850028;
-        Wed, 25 Sep 2024 01:10:50 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2c1eb8sm3308269f8f.42.2024.09.25.01.10.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 01:10:49 -0700 (PDT)
-Date: Wed, 25 Sep 2024 11:10:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Fabricio Gasperin <fgasperin@lkcamp.dev>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	Teddy Wang <teddy.wang@siliconmotion.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht
-Subject: Re: [PATCH] staging: sm750fb: Rename function
- sm750_hw_cursor_setData2
-Message-ID: <0125af58-3070-4ee4-bf14-f5d0d498aa9f@stanley.mountain>
-References: <20240921180612.57657-1-fgasperin@lkcamp.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LiOKkpz+PPs3oTkiTSEQs05suX2wjxmloLR+eCQa0e7+/Q2vRcBs0A/89vQIFFfgVs1Y18asM++VydanP04NGFPWF44zJiebGQriBKleCKr3v0KiLCWSubrrtAoYtKYteipPNMSuVxX1H2qPM/CMnbYlpR3WwOlKVXzYCagjkmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nqUtiHKG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 044D6C4CEC3;
+	Wed, 25 Sep 2024 08:10:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727251854;
+	bh=UzK291mxXxbkbGh766qf/zEd99wtKZEiO0xk+CZ/uh8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nqUtiHKGIYRKEszWIETKHucQ1UCh5d3MVzEDwS2iZrR/UIaxIggYQWrfnpPm8TRZG
+	 /m4gZd1jPWaP7jMaA2LZ0kXVrziZupv81rWSfQBN4EwpK6ywpeY7i+ALy2bjouMKRc
+	 nYfaUIKL3jHSXte+aMFPs5RoQ0JCAQyxRPbIFKTA=
+Date: Wed, 25 Sep 2024 10:10:51 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Fangzheng Zhang <fangzheng.zhang@unisoc.com>
+Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, tkjos@google.com,
+	Fangzheng Zhang <fangzheng.zhang1003@gmail.com>,
+	Yuming Han <yuming.han@unisoc.com>
+Subject: Re: [PATCH 1/2] mm/slub: Add panic function when slub leaks
+Message-ID: <2024092528-primp-ogle-23c4@gregkh>
+References: <20240925032256.1782-1-fangzheng.zhang@unisoc.com>
+ <20240925032256.1782-2-fangzheng.zhang@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,11 +62,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240921180612.57657-1-fgasperin@lkcamp.dev>
+In-Reply-To: <20240925032256.1782-2-fangzheng.zhang@unisoc.com>
 
-If nothing is calling the function, then just delete it.
+On Wed, Sep 25, 2024 at 11:22:55AM +0800, Fangzheng Zhang wrote:
+> Perform real-time memory usage monitoring on the slub page
+> allocation paths, ie, kmalloc_large_alloced and alloc_slab_page.
+> When the usage exceeds the set threshole value, the panic function
+> will be triggered.
+> 
+> Signed-off-by: Fangzheng Zhang <fangzheng.zhang@unisoc.com>
+> ---
+>  mm/Kconfig | 11 ++++++++
+>  mm/slub.c  | 76 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 87 insertions(+)
+> 
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 09aebca1cae3..60cf72d4f0da 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -255,6 +255,17 @@ config SLUB_TINY
+>  
+>  	   If unsure, say N.
+>  
+> +config SLUB_LEAK_PANIC
+> +	bool "Trigger panic when slub leaks"
+> +	default y
+> +	help
+> +	  Detect slub leaks by monitoring its usage in real time on the page
+> +	  allocation path of the slub. When the slub occupancy exceeds the
+> +	  user-set value, it is considered that the slub is leaking at this
+> +	  time, and a panic operation will be triggered immediately. Uers
+> +	  can enable and set leak threshold by using the kernel command line
+> +	  parameters "slub.leak_panic" and "slub.leak_panic_threshold".
+> +
+>  config SLAB_MERGE_DEFAULT
+>  	bool "Allow slab caches to be merged"
+>  	default y
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 21f71cb6cc06..91049f87ab98 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -42,6 +42,9 @@
+>  #include <kunit/test.h>
+>  #include <kunit/test-bug.h>
+>  #include <linux/sort.h>
+> +#ifdef CONFIG_SLUB_LEAK_PANIC
+> +#include <linux/vmstat.h>
+> +#endif
 
-regards,
-dan carpenter
+Please redo this to not require #ifdef in .c files, otherwise it gets
+very unmaintainable over time.
 
+thanks,
+
+greg k-h
 
