@@ -1,251 +1,152 @@
-Return-Path: <linux-kernel+bounces-339234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7AAF98618E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:55:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1EC986221
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC4521C26A14
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:55:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87845B36DA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914A218A6D2;
-	Wed, 25 Sep 2024 14:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBAA175D2F;
+	Wed, 25 Sep 2024 14:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KS321w1d"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C97AtYnc"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6209176FCF;
-	Wed, 25 Sep 2024 14:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6A31537AC
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727274332; cv=none; b=Te7g5eXhel7wgM/Ud0HlJJJovqy/fa7soZp5doV1FEpdCXhhiyYLzVZo7MDp0YdeNrgSof47ghTVRszqRaZy+Z5mK4T43A60U76vbFifdIscKmfY4MTm69UZ4fqg1ECMwJpg2ezjk7DYq2u3HjHwIifnT3+ohkeSyKV5DdxycF0=
+	t=1727274313; cv=none; b=UX+TSus22znSm+EHfShurv943V44npdT2A9N2cxR01qoPRfRefC0ECNDeRrlXNt//e73wC2HPIuWp09WJO5S7lPyfK5aBzth62OTHUbgLgfxOjofLHVo/nevT/4tU9u/uC+B5b7looFxDUcQL0SpLtRctGc5RT8niL/vsLwJxRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727274332; c=relaxed/simple;
-	bh=0KrTP0hX+3PRCNf/kikMSMXg0eMbbB55A2pBrDjHw8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GValM7J6t3wz12hZVaDESmfB86KoiryR4EnWEkgV2ktm7CBc0dcy8l6CqqK/Z6yrs8fkeS7qARAP6KmsImMKmgWQUxb3+N/6q2p3EQg/qG8DCHXeYeL3Q1HdvrnToScmpkijYihCErgF/jD1VRd3DvjzzcAaZKgvFlIrNRFlpCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KS321w1d; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727274331; x=1758810331;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0KrTP0hX+3PRCNf/kikMSMXg0eMbbB55A2pBrDjHw8k=;
-  b=KS321w1d22R84Q+L+EvfhedMaocQD4tFaXrR6vFKKunIRMhPphep8f3P
-   xCy+IPo6XF1jQxgvdjdENl63vyiMS0txqAOFHpPP1hk/Mwf1wzDUwWxv3
-   RYSGX6G3qqYlQBNzUIRhizLAXznqqq8jNUN5XT/wu5mzRn0DvhZJRcArH
-   fVhl/qdE2Xk4QOINUHGd+e+26xmIqhW4EIPP40KgRtTbufPDstQwQXQh1
-   2Pyc+PEmGCzlrmlNgPrHDyH497sc1R+Fv79eYZWbjZ2o0rY1KEbxVoTfY
-   DBy/bFITrbruuZtXR8qPhnygqJrZRJe4b+1PvKuvkwzYicaXW6LyNdFZD
-   A==;
-X-CSE-ConnectionGUID: nqsf7Q3ITcCFLo1orpCYXA==
-X-CSE-MsgGUID: qYElqjHdTWSZJzbCfG1VjQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="30036742"
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="30036742"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 07:25:25 -0700
-X-CSE-ConnectionGUID: VHKIucy4Q9qg8bWQwRvclA==
-X-CSE-MsgGUID: KXuWMDfTQ0KbE/JPST/d0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="95119418"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 25 Sep 2024 07:25:20 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1stSxC-000Jb2-0h;
-	Wed, 25 Sep 2024 14:25:18 +0000
-Date: Wed, 25 Sep 2024 22:24:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>, patrick@stwcx.xyz,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Carsten =?iso-8859-1?Q?Spie=DF?= <mail@carsten-spiess.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, Yikai Tsai <yikai.tsai.wiwynn@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v7 2/2] hwmon: (isl28022) new driver for ISL28022 power
- monitor
-Message-ID: <202409252223.s09tP6IL-lkp@intel.com>
-References: <20240925031131.14645-3-yikai.tsai.wiwynn@gmail.com>
+	s=arc-20240116; t=1727274313; c=relaxed/simple;
+	bh=n00m11QQSfQ6NwbwsJxtlv32VdLsA/YagcRFhB1hDJk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ANZocejuJGeSveU74RYVrRf3HugkTPIuYvO10p3CZ2Ci6vkRzpUpDAzQhhepWdaLS35oEje6UCSUVvM9V98PO7bV7jWI5Ja3aD0+LCuqiy4S1+jj16WQlay1T/tf4TdQFGWRbXYYMJnsT2RfYRq0kWxnfv/sjLn8iZwHgF56/g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C97AtYnc; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6c351809a80so48365806d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:25:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727274310; x=1727879110; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WKHSbKmh/OWvf7D+QnPJyajvAk99sQW7fmf5zk+OZak=;
+        b=C97AtYnccws9SqCqVTgfmYlnUW7xo3RbvGCivrjHADwyjKqG/YtzSn9h46ZKhAGCG/
+         lIac4wFfju+kHU3DDp2ySkayjCtALQ+bahqmv5Qiba0H5jcsnrrITrnARQfmOm98Bmhz
+         1JNAPrvhD9kLJFVHpFVwAIsFEHyTnfKK++gwVGjF8ggW43kCyE4aaloDbFiUWsbJSi6w
+         aCJTTrKZc6UeA56fNm2e5yOMGTmTWvkg1DKWoUiu7nR8PZglTpLKqIu/LLVL4pqSMw32
+         tXw4v8ncYv1U6S1fNnuBTt6jeNZiP39jZ3xU4RBY9v33Z25ZozRj6SuvKXlpJ5yYQson
+         o1gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727274310; x=1727879110;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WKHSbKmh/OWvf7D+QnPJyajvAk99sQW7fmf5zk+OZak=;
+        b=SdaRLGzbL/ujKtl2uqVI1dOR8t2oGIIZIEM999/yUaXkr00PNythUXgf8tCQE5KjpE
+         /i1Pxkwka5XQ4Gs1dbjnvD1ecvEfRkKNIQXFd86fqmiwpVpCF7LbuC0/inP+kHkl/qkf
+         k/O2oQXAT+Z4SfrEJnGDAxPTWM/J8XGkD//6pflt/RGAEwWm2zxCrPH95Sg/o5yWSi7z
+         aKnKMzZrLemXfgIaKO3ef9z/xbWZRQ6ANz1Md+lQVtrOQ/LOn6H9YcPV8j1EA0aIMOQ7
+         vwmf+SsxOzcbZcusVhIuG0PbnklIw9zJq7aBYqN3OpvNnCvgb97e8ErCcvk93SMCPHER
+         WtjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMnGdq/R4M5SZlQiGAph2QFiZJkLT2EQ18C2IfI7KnE2ffK+tZnQ6zTlWKk7oOLTvSkqXovQKqlpSJWmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi0/irsJPNjerQREQkC2bD+8JOe8biPSNk8wApIqvDOzChjHYd
+	mMXSf/WkvxdJToKWwXn6dbH4FjQamMeSTnAm7caCDfsFxz3YMDBbSGqbF4fJDDvpikLz4aFdNwo
+	7A1bItNts8+Cq9BDC/Zub0oFigHk=
+X-Google-Smtp-Source: AGHT+IFLa0kzxCW1URmiLzO2BzTPqeUkWkh3YRKUbIonFy99BzaY1ai262Y2O72SZlbEfK/b6Tcu6tImrSFgVdwX1Jg=
+X-Received: by 2002:a05:6214:469b:b0:6c7:c645:e0d3 with SMTP id
+ 6a1803df08f44-6cb1de0b169mr43734736d6.49.1727274310268; Wed, 25 Sep 2024
+ 07:25:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925031131.14645-3-yikai.tsai.wiwynn@gmail.com>
+References: <20240923231142.4155415-1-nphamcs@gmail.com> <4d38c65d-760c-43a5-bb47-8e0235c13a51@linux.alibaba.com>
+ <CAJD7tkamKcaqHR5V+4+9ixmFc3dC2NnGcu7YzdXqxqNEe8FqqA@mail.gmail.com>
+ <9a110f20-42ad-468b-96c6-683e162452a9@linux.alibaba.com> <CAKEwX=PiOdrR7Ad5XoT8pRZDLB=q6B_fmwQ3ScgWFPNptBuHPw@mail.gmail.com>
+ <CAJD7tkZFu3DbovTwyRdQmEG=7nQtmzrjQVgyhE4mNzbCtZxFZA@mail.gmail.com>
+ <CAKEwX=ML4+iW+WkyjezaqipZU=N=DeB561M4XzOqQMD6drk9dA@mail.gmail.com>
+ <87o74cryhu.fsf@yhuang6-desk2.ccr.corp.intel.com> <CAGsJ_4yckKO29b-BtTHazJEcf58R4JaUkTYZbhNDByLecqJGGQ@mail.gmail.com>
+ <CAKEwX=NuRuu9qXA9mRMqb6Okcwa86mEkp2Ac8sQjwb0ACdS7YQ@mail.gmail.com>
+In-Reply-To: <CAKEwX=NuRuu9qXA9mRMqb6Okcwa86mEkp2Ac8sQjwb0ACdS7YQ@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Wed, 25 Sep 2024 07:24:59 -0700
+Message-ID: <CAKEwX=NWJ43LW-N-qLWnWz-wM65_2Ti-UUQe96PC8LDX9VxF+A@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] remove SWAP_MAP_SHMEM
+To: Barry Song <baohua@kernel.org>
+Cc: "Huang, Ying" <ying.huang@intel.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org, 
+	hannes@cmpxchg.org, hughd@google.com, shakeel.butt@linux.dev, 
+	ryan.roberts@arm.com, chrisl@kernel.org, david@redhat.com, kasong@tencent.com, 
+	willy@infradead.org, viro@zeniv.linux.org.uk, chengming.zhou@linux.dev, 
+	linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yikai,
+On Wed, Sep 25, 2024 at 7:21=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrote=
+:
+>
+>
+> I'm only supporting the case nr > 1, when there is no need to add swap
+> continuations :) That's the only current use case right now (shmem) :)
 
-kernel test robot noticed the following build warnings:
+Sorry, I forgot to say - but to fully support a batched variant, we
+can do something like this:
 
-[auto build test WARNING on groeck-staging/hwmon-next]
-[also build test WARNING on linus/master v6.11 next-20240925]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Yikai-Tsai/dt-bindings-hwmon-add-renesas-isl28022/20240925-111332
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
-patch link:    https://lore.kernel.org/r/20240925031131.14645-3-yikai.tsai.wiwynn%40gmail.com
-patch subject: [PATCH v7 2/2] hwmon: (isl28022) new driver for ISL28022 power monitor
-config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20240925/202409252223.s09tP6IL-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240925/202409252223.s09tP6IL-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409252223.s09tP6IL-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/hwmon/isl28022.c: In function 'isl28022_read_properties':
->> drivers/hwmon/isl28022.c:396:36: warning: passing argument 2 of 'dev_err_probe' makes integer from pointer without a cast [-Wint-conversion]
-     396 |                 dev_err_probe(dev, "renesas,shunt-range-microvolt invalid value %d\n", val);
-         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                    |
-         |                                    char *
-   In file included from include/linux/device.h:15,
-                    from include/linux/acpi.h:14,
-                    from include/linux/i2c.h:13,
-                    from drivers/hwmon/isl28022.c:11:
-   include/linux/dev_printk.h:278:64: note: expected 'int' but argument is of type 'char *'
-     278 | __printf(3, 4) int dev_err_probe(const struct device *dev, int err, const char *fmt, ...);
-         |                                                            ~~~~^~~
->> drivers/hwmon/isl28022.c:396:88: warning: passing argument 3 of 'dev_err_probe' makes pointer from integer without a cast [-Wint-conversion]
-     396 |                 dev_err_probe(dev, "renesas,shunt-range-microvolt invalid value %d\n", val);
-         |                                                                                        ^~~
-         |                                                                                        |
-         |                                                                                        u32 {aka unsigned int}
-   include/linux/dev_printk.h:278:81: note: expected 'const char *' but argument is of type 'u32' {aka 'unsigned int'}
-     278 | __printf(3, 4) int dev_err_probe(const struct device *dev, int err, const char *fmt, ...);
-         |                                                                     ~~~~~~~~~~~~^~~
-   drivers/hwmon/isl28022.c:406:36: warning: passing argument 2 of 'dev_err_probe' makes integer from pointer without a cast [-Wint-conversion]
-     406 |                 dev_err_probe(dev, "renesas,average-samples invalid value %d\n", val);
-         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                    |
-         |                                    char *
-   include/linux/dev_printk.h:278:64: note: expected 'int' but argument is of type 'char *'
-     278 | __printf(3, 4) int dev_err_probe(const struct device *dev, int err, const char *fmt, ...);
-         |                                                            ~~~~^~~
-   drivers/hwmon/isl28022.c:406:82: warning: passing argument 3 of 'dev_err_probe' makes pointer from integer without a cast [-Wint-conversion]
-     406 |                 dev_err_probe(dev, "renesas,average-samples invalid value %d\n", val);
-         |                                                                                  ^~~
-         |                                                                                  |
-         |                                                                                  u32 {aka unsigned int}
-   include/linux/dev_printk.h:278:81: note: expected 'const char *' but argument is of type 'u32' {aka 'unsigned int'}
-     278 | __printf(3, 4) int dev_err_probe(const struct device *dev, int err, const char *fmt, ...);
-         |                                                                     ~~~~~~~~~~~~^~~
-   drivers/hwmon/isl28022.c:414:28: warning: passing argument 2 of 'dev_err_probe' makes integer from pointer without a cast [-Wint-conversion]
-     414 |         dev_err_probe(dev, "renesas,shunt-resistor-microvolt invalid value %d\n", data->shunt);
-         |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                            |
-         |                            char *
-   include/linux/dev_printk.h:278:64: note: expected 'int' but argument is of type 'char *'
-     278 | __printf(3, 4) int dev_err_probe(const struct device *dev, int err, const char *fmt, ...);
-         |                                                            ~~~~^~~
-   drivers/hwmon/isl28022.c:414:87: warning: passing argument 3 of 'dev_err_probe' makes pointer from integer without a cast [-Wint-conversion]
-     414 |         dev_err_probe(dev, "renesas,shunt-resistor-microvolt invalid value %d\n", data->shunt);
-         |                                                                                   ~~~~^~~~~~~
-         |                                                                                       |
-         |                                                                                       u32 {aka unsigned int}
-   include/linux/dev_printk.h:278:81: note: expected 'const char *' but argument is of type 'u32' {aka 'unsigned int'}
-     278 | __printf(3, 4) int dev_err_probe(const struct device *dev, int err, const char *fmt, ...);
-         |                                                                     ~~~~~~~~~~~~^~~
-
-
-vim +/dev_err_probe +396 drivers/hwmon/isl28022.c
-
-   346	
-   347	/*
-   348	 * read property values and make consistency checks.
-   349	 *
-   350	 * following values for shunt range and resistor are allowed:
-   351	 *   40 mV -> gain 1, shunt min.  800 micro ohms
-   352	 *   80 mV -> gain 2, shunt min. 1600 micro ohms
-   353	 *  160 mV -> gain 4, shunt min. 3200 micro ohms
-   354	 *  320 mV -> gain 8, shunt min. 6400 micro ohms
-   355	 */
-   356	static int isl28022_read_properties(struct device *dev, struct isl28022_data *data)
-   357	{
-   358		u32 val;
-   359		int err;
-   360	
-   361		err = device_property_read_u32(dev, "shunt-resistor-micro-ohms", &val);
-   362		if (err == -EINVAL)
-   363			val = 10000;
-   364		else if (err < 0)
-   365			return err;
-   366		data->shunt = val;
-   367	
-   368		err = device_property_read_u32(dev, "renesas,shunt-range-microvolt", &val);
-   369		if (err == -EINVAL)
-   370			val = 320000;
-   371		else if (err < 0)
-   372			return err;
-   373	
-   374		switch (val) {
-   375		case 40000:
-   376			data->gain = 1;
-   377			if (data->shunt < 800)
-   378				goto shunt_invalid;
-   379			break;
-   380		case 80000:
-   381			data->gain = 2;
-   382			if (data->shunt < 1600)
-   383				goto shunt_invalid;
-   384			break;
-   385		case 160000:
-   386			data->gain = 4;
-   387			if (data->shunt < 3200)
-   388				goto shunt_invalid;
-   389			break;
-   390		case 320000:
-   391			data->gain = 8;
-   392			if (data->shunt < 6400)
-   393				goto shunt_invalid;
-   394			break;
-   395		default:
- > 396			dev_err_probe(dev, "renesas,shunt-range-microvolt invalid value %d\n", val);
-   397			return -EINVAL;
-   398		}
-   399	
-   400		err = device_property_read_u32(dev, "renesas,average-samples", &val);
-   401		if (err == -EINVAL)
-   402			val = 1;
-   403		else if (err < 0)
-   404			return err;
-   405		if (val > 128 || hweight32(val) != 1) {
-   406			dev_err_probe(dev, "renesas,average-samples invalid value %d\n", val);
-   407			return -EINVAL;
-   408		}
-   409		data->average = val;
-   410	
-   411		return 0;
-   412	
-   413	shunt_invalid:
-   414		dev_err_probe(dev, "renesas,shunt-resistor-microvolt invalid value %d\n", data->shunt);
-   415		return -EINVAL;
-   416	}
-   417	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> 1. Keep the non-batched variant:
+>
+> int swap_duplicate(swp_entry_t entry)
+> {
+>     int err =3D 0;
+>
+>     while (!err && __swap_duplicate(entry, 1, 1) =3D=3D -ENOMEM)
+>         err =3D add_swap_count_continuation(entry, GFP_ATOMIC);
+>     return err;
+> }
+>
+> 2. Implement the batched variant:
+>
+> int swap_duplicate_nr(swp_entry_t entry, int nr)
+> {
+>     swp_entry_t cur_entry;
+>     int i, err;
+>
+>     if (nr =3D=3D 1)
+>         return swap_duplicate(entry);
+>
+>     err =3D __swap_duplicate(entry, 1, nr);
+>     if (err =3D=3D -ENOMEM) {
+>         /* fallback to non-batched version */
+>         for (i =3D 0; i < nr; i++) {
+>             cur_entry =3D (swp_entry_t){entry.val + i};
+>             if (swap_duplicate(cur_entry)) {
+>                 /* rollback */
+>                 while (--i >=3D 0) {
+>                      cur_entry =3D (swp_entry_t){entry.val + i};
+>                      swap_free(cur_entry);
+>                 }
+missing a "return err;" here. Not my best idea to write (pseudo) code
+before caffeine in the morning :)
+>             }
+>         }
+>     }
+>    return err;
+> }
+>
+> How does this look? My concern is that there is not really a use for
+> the fallback logic. Basically dead code.
+>
+> I can keep it in if you guys have a use for it soon, but otherwise I
+> lean towards just adding a WARN etc. there, or return -ENOMEM, and
+> WARN at shmem's callsite (because it cannot get -ENOMEM).
 
