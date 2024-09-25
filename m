@@ -1,171 +1,154 @@
-Return-Path: <linux-kernel+bounces-339239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DFDD98619C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:56:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DEB9863CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8AD1F2701F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:56:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1632DB22E25
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DAC19CC13;
-	Wed, 25 Sep 2024 14:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C280019DF41;
+	Wed, 25 Sep 2024 14:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mg00ml7N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="AVuH250i"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AC31591F1;
-	Wed, 25 Sep 2024 14:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAB919CD18
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727274461; cv=none; b=SxaUfHmpW2PcS+9BJIh2bzDrCLBoXL0nIasoSgdDN7odv0KKW2DQ5lDJ7mbxA0+og8uOhhtgjgK/m0F4R4fLowhxSBmx2wFHmvoyyTjSsB8XZMVJz1P3esu8rlyFX5vv4JEpFuSP7H1bRX73cMfOG1V3xxKwokJUyf0sjuEF6Lo=
+	t=1727274471; cv=none; b=k0RufXrnBO06XAZszvuCwQAyiGBGPMkCCgmvpraFpBj9JFHd8hNgUtktCXffrlQscoSZjl/lU35yIEkEQohVIUTL5ArF2bkxEmHhjrxUuOQJ7EBxaGyVQVwqT73xD/LEN9cs7rcSAFve9SDqxKfTsjl6eLRu8IfMxAWI8SKzn9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727274461; c=relaxed/simple;
-	bh=63oaX325SYpxbL3bIK8gMNOxof7JWBN8Cv11K1SrD2I=;
+	s=arc-20240116; t=1727274471; c=relaxed/simple;
+	bh=ZzzS60uv4ljHoqQHnDejqf+hAYHuRqdqRY36I/hxpF0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iQj543ozy7060ZgV38xYqfSBqFAV0JfGcIblp4CLOqm3/fipmLtdRTWKr3T6VdBrMzjpv1Hloj5b5VPKymuvOUDZK7WDUH+Rbpvgu15XApARc4UjVBebNcmW9pU8OUXGDNdCf4kB977m6tC+HVtuMiwspzVFpx1/1h7JyxCerc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mg00ml7N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD72DC4CEC9;
-	Wed, 25 Sep 2024 14:27:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727274460;
-	bh=63oaX325SYpxbL3bIK8gMNOxof7JWBN8Cv11K1SrD2I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mg00ml7NxMoy3bqxa5/5kyfPA3sl37LnByf7e3eE3+siVonLVNa+lbhLOCHk2WGVx
-	 tE8vLB6T+9rk49Y8d2vqBQWEOSQs4jG9KR5rkP1/cx96CFF3VD62wllvuNIVV9BWTq
-	 N6hzcGS4Q46ktrnzv9AQDegIPK/lGESky1zo0lyfl0wGX3QDc0aAZPYICfbXsX0xMl
-	 QrMgaZDHxAaAa2916wzsqP53Ip9DdPXVJgWcmD8HRTHyMZQL1tfbmS/1NRpWBXx6w3
-	 1Jrp6sr1fP4NtghSWf5wczOFnEIGXHlgEH0kFqZAxC/Tmr7WoBEPsez/NYazNuQK08
-	 wIt7/UJPacSXQ==
-Date: Wed, 25 Sep 2024 15:27:35 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>
-Subject: Re: [PATCH 1/2] dt-bindings: linflexuart: add clock definitions
-Message-ID: <20240925-enunciate-bleak-04799744ae2b@spud>
-References: <20240924141247.132455-1-ciprianmarian.costea@oss.nxp.com>
- <20240924141247.132455-2-ciprianmarian.costea@oss.nxp.com>
- <20240924-twitch-embody-0ffb3ab7fd26@spud>
- <b8024c74-f5d7-4b56-96ea-dee5d8dd9a98@oss.nxp.com>
- <20240924-exposure-juiciness-c0e9a0c54854@spud>
- <a043494e-0dd3-4db1-93c7-55f59dbe2d0f@oss.nxp.com>
- <20240924-pulverize-ranging-0ec3fca845a0@spud>
- <b1282273-51d9-436f-bf39-749ff21f4ea2@oss.nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZFjfw7nAe5AnpURTDGyhUBkSTegCx3HYfiHZ+kcXB6FiT3yfzQv7UIxIV9WpagOCPz2mrRDSPfsIvANZoGDvYaMkLZaGAhGxUSZPM54Rf9OPEbq2HdD/hWib+ofG+PdPcMdcE2uUf63R6cPdYJoTGAPRayTC31WcH9dsNrtqnb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=AVuH250i; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e28ac7b12bso1978368b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:27:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1727274467; x=1727879267; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=J9xuDs0O2NIXp8UPqHHqSImvA0i85ajjStdE4N4dJtc=;
+        b=AVuH250i7oln710SKRDZsgy/h52zrqItyk4CFu2VgeokBR8n98i9xYPoCVjUOj0xHR
+         TRKEX+BUM+CA93YOp7WRG+eyCaQDbjSOkbT4J0pf5rtNXy7K/mjvI/suSxbTaKWQ/z7R
+         S5rVVf3e6Q/eJbo7d4QQVSthMKgb4lEgGeqK/oMQufeejZ2Asdh4TSs13s4AeQSzKdVJ
+         JnLejjXX6UIRG5RslhSsPaEct/kzh5a0qW5kT/GazUe4thDrUXgrpMRuttrWisKwV8Mt
+         G6d+6Fnu179ftVpV5x9XppIzbRb/or/nm/B89fmlnbspezmU/04XQfmnmLzsEZVQEF4y
+         AB7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727274467; x=1727879267;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J9xuDs0O2NIXp8UPqHHqSImvA0i85ajjStdE4N4dJtc=;
+        b=XOlT1BuLXK3nsgoF1o7JbU/+jFlxIgSMcjYZ8WnLMFkuxAveCp5rRZKjKOpq54tlt8
+         EtUbp3i3Jg8/gDF9z0zSsZwxeDcRon1r+waZqQfryahV/Ia51W8TQmBtmRE31utEkbYs
+         fJdns+wzI14Qc571lNz0R6KLfOjSALnAkOpJJViY5XpcR5seoIDToWwROBZb6lui9lk3
+         xKkNimp8DpGS04693hsbREDrOpuRRtiYNez7PQetrWnyoQxq0CFVJfczXv43yZwqbOM9
+         pE/TuXLW6UuOjKf7gXCS43M9poAK8J7TjoKkk/wkDbVdCYb1hOCS/sqgyTswMC9zJLgG
+         5Htw==
+X-Gm-Message-State: AOJu0Yz6UU7jljqb4R+6Ht3DCUTdvSjbJEH4mJh8DtQy3/K713a4PirT
+	8RnrHMgNrbTLR0XV2qPO1T46KRdtBe07fiubxo7KcJkirwRqvpIbnHP1HkSdsQ0=
+X-Google-Smtp-Source: AGHT+IEaTCjLpPOwjeSEBlfUhCYq6QmFy5hAPP5pogiSTL8OV99sTcjYg3h7Qxvi1xGvnwwxGYbXtA==
+X-Received: by 2002:a05:6808:13c6:b0:3e2:92ca:92d3 with SMTP id 5614622812f47-3e29b7d23b1mr2090942b6e.34.1727274467067;
+        Wed, 25 Sep 2024 07:27:47 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b5257af1asm16612941cf.36.2024.09.25.07.27.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 07:27:45 -0700 (PDT)
+Date: Wed, 25 Sep 2024 10:27:41 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, yosryahmed@google.com,
+	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com,
+	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com,
+	21cnbao@gmail.com, akpm@linux-foundation.org, nanhai.zou@intel.com,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
+Message-ID: <20240925142741.GD875661@cmpxchg.org>
+References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
+ <20240924011709.7037-7-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="B3l/DQ6TwETtwbP9"
-Content-Disposition: inline
-In-Reply-To: <b1282273-51d9-436f-bf39-749ff21f4ea2@oss.nxp.com>
-
-
---B3l/DQ6TwETtwbP9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240924011709.7037-7-kanchana.p.sridhar@intel.com>
 
-On Tue, Sep 24, 2024 at 06:32:30PM +0300, Ciprian Marian Costea wrote:
-> On 9/24/2024 6:27 PM, Conor Dooley wrote:
-> > On Tue, Sep 24, 2024 at 06:17:11PM +0300, Ciprian Marian Costea wrote:
-> > > On 9/24/2024 6:01 PM, Conor Dooley wrote:
-> > > > On Tue, Sep 24, 2024 at 05:52:13PM +0300, Ciprian Marian Costea wro=
-te:
-> > > > > On 9/24/2024 5:24 PM, Conor Dooley wrote:
-> > > > > > On Tue, Sep 24, 2024 at 05:12:46PM +0300, Ciprian Costea wrote:
-> > > > > > > From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> > > > > > >=20
-> > > > > > > Add clock definitions for NXP LINFlexD UART bindings
-> > > > > > > and update the binding examples with S32G2 node.
-> > > > > > >=20
-> > > > > > > Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@os=
-s.nxp.com>
-> > > > > > > ---
-> > > > > > >     .../bindings/serial/fsl,s32-linflexuart.yaml  | 21 ++++++=
-+++++++++++++
-> > > > > > >     1 file changed, 21 insertions(+)
-> > > > > > >=20
-> > > > > > > diff --git a/Documentation/devicetree/bindings/serial/fsl,s32=
--linflexuart.yaml b/Documentation/devicetree/bindings/serial/fsl,s32-linfle=
-xuart.yaml
-> > > > > > > index 4171f524a928..45fcab9e186d 100644
-> > > > > > > --- a/Documentation/devicetree/bindings/serial/fsl,s32-linfle=
-xuart.yaml
-> > > > > > > +++ b/Documentation/devicetree/bindings/serial/fsl,s32-linfle=
-xuart.yaml
-> > > > > > > @@ -34,6 +34,14 @@ properties:
-> > > > > > >       interrupts:
-> > > > > > >         maxItems: 1
-> > > > > > > +  clocks:
-> > > > > > > +    maxItems: 2
-> > > > > > > +
-> > > > > > > +  clock-names:
-> > > > > > > +    items:
-> > > > > > > +      - const: ipg
-> > > > > > > +      - const: lin
-> > > > > >=20
-> > > > > > Can all devices have 2 clocks, or just the s32g2?
-> > > > > >=20
-> > > > >=20
-> > > > > All devices (S32G2, S32G3 and S32V234) have 2 clocks for LINFlexD=
- module.
-> > > >=20
-> > > > I see. How come the driver is capable of working without them?
-> > > >=20
-> > >=20
-> > > The driver was working because the LINFlexD clocks were configured an=
-d kept
-> > > enabled by the downstream bootloader (TF-A and U-Boot). This is not i=
-deal
-> > > since LINFlexD Linux driver should manage those clocks independently =
-and not
-> > > rely on a previous bootloader configuration (hence the need for this =
-current
-> > > patchset).
-> >=20
-> > I'd also mark them as required in the binding too, but the driver will
-> > still have to account for them being missing, for backwards
-> > compatibility reasons. Add a comment explaining the history to the
-> > commit message when you do that.
->=20
-> Already in the second patch from this patchset the clocking support was
-> added in the LINFlexD driver as optional, indeed for backwards
-> compatibility.
+On Mon, Sep 23, 2024 at 06:17:07PM -0700, Kanchana P Sridhar wrote:
+> zswap_store() will now store mTHP and PMD-size THP folios by compressing
 
-Oh great.
+The hugepage terminology throughout the patches is a bit convoluted.
 
-> I presumed that because of this optional clock enablement, I should not a=
-dd
-> the clocks as required in the bindings, but I will do so in V2. Thanks.
+There is no real distinction in this code between PMD-size THPs and
+sub-PMD-sized mTHPs e.g. In particular, I think "mTHP" made sense when
+they were added, to distinguish them from conventional THPs. But using
+this term going forward just causes confusion, IMO.
 
-IMO required is correct, since it would not have worked properly if the
-bootloader hadn't done the setup.
+We're going through a big effort in the codebase to call all of these
+things simply "folios" - which stands for "one or more pages". If you
+want to emphasize the "more than one page", the convention is to call
+it a "large folio". (If you need to emphasize that it's PMD size -
+which doesn't apply to these patches, but just for the record - the
+convention is "pmd-mappable folio".)
 
---B3l/DQ6TwETtwbP9
-Content-Type: application/pgp-signature; name="signature.asc"
+So what this patch set does is "support large folios in zswap".
 
------BEGIN PGP SIGNATURE-----
+> @@ -1551,51 +1559,63 @@ static bool __maybe_unused zswap_store_page(struct folio *folio, long index,
+>  	return false;
+>  }
+>  
+> +/*
+> + * Modified to store mTHP folios. Each page in the mTHP will be compressed
+> + * and stored sequentially.
+> + */
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvQd1wAKCRB4tDGHoIJi
-0jpzAQC4u1mfSbrQguccpgycXMf3WJfiiUTr6Errb/EdwGB3EwD+NVIBniKKkhll
-1mtG/XuKnspmfTTIWW9UXBLlNyzkpwE=
-=Czve
------END PGP SIGNATURE-----
+This is a changelog, not a code comment ;) Please delete it.
 
---B3l/DQ6TwETtwbP9--
+>  bool zswap_store(struct folio *folio)
+>  {
+>  	long nr_pages = folio_nr_pages(folio);
+>  	swp_entry_t swp = folio->swap;
+>  	pgoff_t offset = swp_offset(swp);
+>  	struct xarray *tree = swap_zswap_tree(swp);
+> -	struct zswap_entry *entry;
+>  	struct obj_cgroup *objcg = NULL;
+>  	struct mem_cgroup *memcg = NULL;
+> +	struct zswap_pool *pool;
+> +	bool ret = false;
+> +	long index;
+>  
+>  	VM_WARN_ON_ONCE(!folio_test_locked(folio));
+>  	VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
+>  
+> -	/* Large folios aren't supported */
+> -	if (folio_test_large(folio))
+> +	/* Storing large folios isn't enabled */
+> +	if (!zswap_mthp_enabled && folio_test_large(folio))
+>  		return false;
+>  
+>  	if (!zswap_enabled)
+> -		goto check_old;
+> +		goto reject;
+>  
+> -	/* Check cgroup limits */
+> +	/*
+> +	 * Check cgroup limits:
+> +	 *
+> +	 * The cgroup zswap limit check is done once at the beginning of an
+> +	 * mTHP store, and not within zswap_store_page() for each page
+> +	 * in the mTHP. We do however check the zswap pool limits at the
+
+Use "folio" and "large folio" as appropriate here and throughout.
 
