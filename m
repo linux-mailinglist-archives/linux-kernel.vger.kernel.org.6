@@ -1,132 +1,162 @@
-Return-Path: <linux-kernel+bounces-338268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8565D9855AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:41:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F7929855BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B174F1C22D38
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:41:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C547828438F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC76158DCA;
-	Wed, 25 Sep 2024 08:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE19515ADA1;
+	Wed, 25 Sep 2024 08:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lXZBOhQZ"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Mo1xlRuh"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D4A158D8D
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598F91552E0;
+	Wed, 25 Sep 2024 08:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727253658; cv=none; b=LZxKDupDU7cBqAsCGeVMyGUa7AzJzsf/+Xm9YyJeXE1KuWeesZIM8G7ONvl2TuGruW+apR5n5zGDNwHEQAwkDGx5XxIup53yuFLrrPusdGOuFC1vyCN2DlUWA1Pmqb78pZzxynj/NKtFefXyffa9vPGKoBzAb1UG674KV87IfPI=
+	t=1727253793; cv=none; b=hzhgx+48/mFtEG/EMRoV1lmMVsjcqnBz1cN5tkH5XWWgxDmTLwnKrfRTXZYmvVJNLc1yCNEELVzbSiJebVb/Iu8mUF2k3+HCWN4Jfd1yisYIObUczPU5B3hJh1YgiTF1cggxMd4/K+Amv2V6c8mGc0cXxr2GnmgnJoRmjD/abuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727253658; c=relaxed/simple;
-	bh=jzyeuOdmRqFn80/1joF8rMUBJXOJ48ZG0kA33e5fids=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GE1KjvOWLuBPTfOBJEhlfY9jWwPuUovzN1y4Ilc6hSVcb8VOS0Rt/TOKuhgNYDD/dC9RXYktVLuIZOm8Yoanun6TQs8IzXRMatIekKtqyoprP8TtiYP+PX0uqvd5gp9NPFaLdqlcz+Hk6+at+2Z1G9qi52BlELTwRxcNw7R+p5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lXZBOhQZ; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso82326595e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:40:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727253655; x=1727858455; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1gWh62e+9y3kqU90XZJ9SkxqBQCkgI99AUyA38n5F+A=;
-        b=lXZBOhQZN+T9yricYMTA2PDuu5+ojKm5mcBblvECYF+zal58qwIhOiUbnMCMYruptJ
-         bVoqXi3u61bQP/ws+AL337hRn22laDcc9nruOB7aBeiZg4D/x6FNmDs/+krCt8B8jsV2
-         OQNU7Ki8FUUDRjwnE5mXlBN4CR5j6CcfGoasC7Qx1m7EA0Tw7EkxVSt3lRGTY82uTswl
-         W0El6VlJWOK/oUaxORJoybhDRM4IJXqgLGtfQqDJSqNaXJa2Uk2DUGyrDh9HGn/TN0pY
-         Z//CCAcjaJi6RJXqtLUDp5YPAdRP11j3Ebmf120SCTKc8xak0QxNAwStBGAzaGj1yOI/
-         KYDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727253655; x=1727858455;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1gWh62e+9y3kqU90XZJ9SkxqBQCkgI99AUyA38n5F+A=;
-        b=BnKpAJY0GPxc+1S29bsmw2g/4gnjmS61SWwlrV/UaaBqiLGzgEin0/wP64x+K9bHOw
-         ncne9mnHaI6GoBScwqVCT7l73/qOL+9c/M+a0irTkgHhUCj1vCnz7E9sTouUr7iCUiMx
-         eVSqiSvf1NOwqKAFWBUM+p4gR/orNqkDl7el6QnX1x0ahuIGCveA4h6XlfDNhxwZ0NOz
-         ol0tvddzxtpS0zRJ9qSo/8xhnEvVl+AwFUOO6bnvuXxaPqPj9Pbs4VAzNw/bFXkumNVa
-         8WInCg6DtA587wQzpy8ArkmfRRr1Y85NYH1+R0nJmipaLdrIjBEo54FSDtfiosRdNmwz
-         YU3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVIgEcqM5ntsitKd3u7ugYUxeObRDbS7ZTI93JXKAN3cm2gymmIrfRNupAeVeAwgMJf+TiQ26759rCOWgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXS/UHG9z/TaE2Iou7/+7HsYRhezsDvR6WUc7n12qTzrA4U+Hv
-	S4FNNBD0fQeeeEz2BZ4bfjSEb2E8l2UPjqixaJcja0bp0rvOGbFP65C8q9KSxZY=
-X-Google-Smtp-Source: AGHT+IH+9QVv57tkAFLswE82YK+fkKh996SQzxAWIqrqV2XZmJ2sMvCo6rPEjeuCpgizS1gmWqKNFQ==
-X-Received: by 2002:a05:600c:4451:b0:426:6e9a:7a1e with SMTP id 5b1f17b1804b1-42e96242baemr14438675e9.35.1727253654873;
-        Wed, 25 Sep 2024 01:40:54 -0700 (PDT)
-Received: from [10.2.5.161] (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a36287sm11223985e9.29.2024.09.25.01.40.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 01:40:54 -0700 (PDT)
-Message-ID: <1ff1aaa7-7478-4b0c-a1ad-c119a11695ba@baylibre.com>
-Date: Wed, 25 Sep 2024 10:40:52 +0200
+	s=arc-20240116; t=1727253793; c=relaxed/simple;
+	bh=dI3IZSn8QJ5+D9rEhSc0z1pZ65+OKrZFPZp75fmOL3c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=N7ZXp4BzEklVosN6lA5c9ixmSZbktNSmjKIqlH+79jqcqC2JHPUdPSrL3Vl2aLKpbuyVVDa0gxjitcY1vgkFKhd878X0qKBZATxQqU+aR0+dFCqgLKsibm4nZZHIcvZHjQlNvYL0eWj5VTT8p9bwoRAkVLWYs9yGJtXjkc3vkuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Mo1xlRuh; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 2e3b99f87b1a11ef8b96093e013ec31c-20240925
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=JrbVtDLJwECuyvPhK0BEV+KwQsj0q8fI1QSWfwxU1nE=;
+	b=Mo1xlRuhAzQobwoV5qygzF6o/nRQm+uZy6LeTFM2p3IOe2WmHz6dsVeJDNQbeqrZu2gPYXicr/MSNhpy55dcIABLvsLL23jFUDrnZdl2OYLehbx+lg+ZudLnvhKEw0lxcgDzu71I3eNwWoyKf2q/faCnTKGXIBth+2ei7hBHJKw=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:664a495c-7254-4e32-b0a8-7a062548c705,IP:0,U
+	RL:0,TC:0,Content:8,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:8
+X-CID-META: VersionHash:6dc6a47,CLOUDID:7490899e-8e9a-4ac1-b510-390a86b53c0a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 2e3b99f87b1a11ef8b96093e013ec31c-20240925
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2138599595; Wed, 25 Sep 2024 16:43:04 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 25 Sep 2024 16:43:02 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n1.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Wed, 25 Sep 2024 16:43:01 +0800
+Message-ID: <2821ef09-1b32-082d-69d1-e09a3a302447@mediatek.com>
+Date: Wed, 25 Sep 2024 16:42:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/10] iio: adc: ad7606: Add compatibility to fw_nodes
-To: David Lechner <dlechner@baylibre.com>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- aardelean@baylibre.com, jstephan@baylibre.com
-References: <20240920-ad7606_add_iio_backend_support-v2-0-0e78782ae7d0@baylibre.com>
- <20240920-ad7606_add_iio_backend_support-v2-7-0e78782ae7d0@baylibre.com>
- <CAMknhBGOn_vhvHJU8g89A2TDmA6yFv9urpZ4A96jOMLdTtR-Bw@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 3/6] dt-bindings: display: mediatek: Fix clocks count
+ constraint for new SoCs
 Content-Language: en-US
-From: Guillaume Stols <gstols@baylibre.com>
-In-Reply-To: <CAMknhBGOn_vhvHJU8g89A2TDmA6yFv9urpZ4A96jOMLdTtR-Bw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Conor Dooley <conor@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, <moudy.ho@mediatek.com>,
+	<macross.chen@mediatek.com>
+CC: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yong Wu
+	<yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
+	<will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Matthias Brugger
+	<matthias.bgg@gmail.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, Alexandre Mergnat
+	<amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, Pablo Sun
+	<pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen Chu
+	<sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>, "MediaTek
+ Chromebook Upstream" <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	Chen-Yu Tsai <wenst@chromium.org>
+References: <20240924103156.13119-1-macpaul.lin@mediatek.com>
+ <20240924103156.13119-3-macpaul.lin@mediatek.com>
+ <ffc1900b-3921-48ca-a2b2-1b798c57e572@collabora.com>
+ <20240924-commute-collision-13ad39717d31@spud>
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+In-Reply-To: <20240924-commute-collision-13ad39717d31@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--11.313000-8.000000
+X-TMASE-MatchedRID: QfHZjzml1E8OwH4pD14DsPHkpkyUphL9Wot5Z16+u76+UkTh6A/DwT8f
+	ilvi6fr90mFsFMx0VZMOYgThO+DmXx2P280ZiGmRdARARTk4h59bAoaK+wS4jRSX1u8BLtZAFRE
+	6l+a4SRTiTN0gJqFURMzVnE1oQDqoavi5Lq9+Ha1s7yIvC2pwGtF9F+XaXgXeZ5yuplze9ptTyk
+	OINBDQU+cQv6iXuAzrwVMUpfyfKUIAwWnlblYdAsxmTzofEWOOazzS+36ix9ybKItl61J/ycnjL
+	TA/UDoAA6QGdvwfwZZWRVlrjsKO8N0H8LFZNFG7bkV4e2xSge75AqQykow+yePbmdtfeypRXtRV
+	FLwJOwOr2TwTTCELzrAUyUg9ogFt
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--11.313000-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: 972967CB0576905A235A1CA79982300AA079E3A940A8E8B2F8C6AB1ADA60F2932000:8
 
 
-On 9/24/24 17:28, David Lechner wrote:
-> On Fri, Sep 20, 2024 at 7:33 PM Guillaume Stols <gstols@baylibre.com> wrote:
->> On the parallel version, the current implementation is only compatible
->> with id tables and won't work with fw_nodes, this commit intends to fix
->> it.
+On 9/25/24 00:00, Conor Dooley wrote:
+> On Tue, Sep 24, 2024 at 01:42:01PM +0200, AngeloGioacchino Del Regno wrote:
+>> Il 24/09/24 12:31, Macpaul Lin ha scritto:
+>>> The display node in mt8195.dtsi was triggering a CHECK_DTBS error due
+>>> to an excessively long 'clocks' property:
+>>>     display@14f06000: clocks: [[31, 14], [31, 43], [31, 44]] is too long
+>>>
+>>> To resolve this issue, add "maxItems: 3" to the 'clocks' property in
+>>> the DT schema.
+>>>
+>>> Fixes: 4ed545e7d100 ("dt-bindings: display: mediatek: disp: split each block to individual yaml")
+>>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+>>> ---
+>>>    .../devicetree/bindings/display/mediatek/mediatek,split.yaml     | 1 +
+>>>    1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
+>>> index e4affc854f3d..42d2d483cc29 100644
+>>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
+>>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
+>>> @@ -57,6 +57,7 @@ properties:
+>>>      clocks:
+>>>        items:
+>>>          - description: SPLIT Clock
 >>
->> Also, chip info is moved in the .h file so to be accessible to all the
->> driver files that can set a pointer to the corresponding chip as the
->> driver data.
-> This sounds like two unrelated changes, so maybe we should have two patches?
-Those changes are closely related to each other, in the sense that we 
-now gather the ad7606_chip_info structure directly from the id or match 
-structure, and not anymore the id which is an index where you can get it 
-as an element. I will update the commit message to highlight it more.
->
->
->>   static const struct of_device_id ad7606_of_match[] = {
->> -       { .compatible = "adi,ad7605-4" },
->> -       { .compatible = "adi,ad7606-4" },
->> -       { .compatible = "adi,ad7606-6" },
->> -       { .compatible = "adi,ad7606-8" },
->> -       { .compatible = "adi,ad7606b" },
->> -       { .compatible = "adi,ad7616" },
->> +       { .compatible = "adi,ad7605-4", &ad7605_4_info },
->> +       { .compatible = "adi,ad7606-4", &ad7606_4_info },
->> +       { .compatible = "adi,ad7606-6", &ad7606_6_info },
->> +       { .compatible = "adi,ad7606-8", &ad7606_8_info },
->> +       { .compatible = "adi,ad7606b", &ad7606b_info },
->> +       { .compatible = "adi,ad7616", &ad7616_info },
-> Since we have .compatible = , we should also have .data = for the chip info.
-ack
+>> That's at least confusing (granted that it works) - either add a description for
+>> each clock and then set `minItems: 1` (preferred), or remove this "SPLIT Clock"
+>> description and allow a maximum of 3 clocks.
+>>
+>> Removing the description can be done - IMO - because "SPLIT Clock" is, well,
+>> saying that the SPLIT block gets a SPLIT clock ... stating the obvious, anyway.
+> 
+> Right, but what are the other two new clocks? Are they as obvious?
+> There's no clock-names here to give any more information as to what the
+> other clocks are supposed to be.
+> 
+> Kinda unrelated, but I think that "SPLIT Clock" probably isn't what the
+> name of the clock in the IP block is anyway, sounds more like the name
+> for it on the provider end..
+
+Thanks for the suggestions. I think Moudy could help on the new fixes
+for both DT schem and mt8195.dtsi. This patch could be separated from
+origin patch set.
+
+Thanks
+Macpaul Lin
 
