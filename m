@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-339474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71FC69865A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:33:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BCB9865AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31D17285BEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:33:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA5A31F25316
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF506E614;
-	Wed, 25 Sep 2024 17:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFD68288F;
+	Wed, 25 Sep 2024 17:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eBqTVA5Z"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="xCZF/620"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303451D5AC0
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501851D5AC0;
+	Wed, 25 Sep 2024 17:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727285624; cv=none; b=USuYb6KvslAhCP2IUxTi1Nv+4KSCS0Pry4vf+kEzll6nuhJHinI/JSnQAu1FMmms8id2BS7V/8SmYbLdWIY9/tvdWLOwM12RoZW4EZ63cXNYJcA8zC6xUtJDOQu6pVbFtU9ko05kHUfnT77/9fSZ2TBa2eghplmMNWE2LKFr+Uw=
+	t=1727285643; cv=none; b=bgg/tE5I4BGKS1pwHz2sllghNWXnmb296XGw2ct/0Yvj6IgCnw7KfdISVkt0kOwlPRPfQKfnxuX7A9uxYTlzWT2ZVtqEHIJPptbhc6XtfAdtTswNY1WAGKgqu3tGcL9bSaw7fkPicgK3vbWkw8d6DukdF1ZwUCLXnV0rcqb4qBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727285624; c=relaxed/simple;
-	bh=sRZR8qh7UzzgZh+dnd71Rif1yJr40LYLdX/AWA02/dw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=foI1H/q1XZD973QrdAezlrFgvAhVKqbAlPpOlCxpo8uysj641i+msMI73EfqaMplPRpn9zxTaS2v1D5OwnoYf3WRf3e/pFiG9DZ90UCIEfzUDPvTY1yJwFn5cvxJ0VlWEdxIDGzbwLD+df8XbE8IKEMQDJ7DxtYUnLjEDwQ3Kho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eBqTVA5Z; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8a7b1c2f2bso18726866b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:33:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727285621; x=1727890421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t0mE3cmG1UxBKNjTv38VsA/8AlwoySypDMzbCz8nx40=;
-        b=eBqTVA5ZQzG/VCDq6Ltrwax38xIt36CpmpJlrTZDU0gjNZ0IDfLim0RoQbMcQ4NvFk
-         N+x2vahRAAb/Ie5CZVd1QoVBmPNlKhFQ/XSAfJjm02NZp2iB6fMwd6Adw2Ykor8+ObCv
-         JexWve7NHIkW1mAsg+4mHxIvKaMRwnvIxUJ9JWoTH6bhIg8x0o8UxvrK1LehR+tCG7n2
-         GhO8hER4yAsaOyxv3bb5M0QMigT+jp+b43j6fSvDy7xNEGAIBrqLhl51UTetddzy0OUp
-         iW/nWCCm3dYi3S21fZeqi+XLghhgXHBybOL598e7XbydkpvBH7sQd5WkKMCWd8xTtweV
-         +pWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727285621; x=1727890421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t0mE3cmG1UxBKNjTv38VsA/8AlwoySypDMzbCz8nx40=;
-        b=FnqDClyNv1/smp0rHw9Kcz9OIBLSxnEdn7pQw6OYyTa0kcAuZrKTck4SGlaGi7NJGJ
-         BfVoMV/G44UoMwIZriz5PIgQB9HDeEdkKc5H9J6N3ZEEGit8ON3wlWSybAII/5+TC53F
-         X1JuCzY7zXt9QwGa8VcINakornfhOS8gI7mNP5af8w7iIcEqKwlgsjoS0C/83EOoZ2rz
-         165W4rku5XOjhxq8gcAq1hoK3B2JI7Ozd1I1bwFZgzlUYGLjTyscGasDM38knm3OQ9M1
-         z2LKdqRWfJTLM2Cdgk/mIoUwDkJ0slBPs0iE8e7i6IBAi7MKAXDSpr9c/YkpSkywjDcC
-         M2jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxb577WUPOFuOvC8T7UIPjnCZHrKH3lMWmJQqyzCPDaV1ruI3zEZclcuZcmOGnt3fNZAHm1JhwvhCANyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHsvHF6DCx57zmuqyo3OKMPmzMkbwudWXN7zg9kGNWMO5QNNMG
-	lqEGeKkLPlq8VHxBhOUTTjUCVBRSEL7TkCdmZhT6aUK/d8xvIx1c5KUtURauFIr1pBodPF6Od1e
-	x19cKHlfUP2IoddQYjavwvkouiQ7Wx+lqscA=
-X-Google-Smtp-Source: AGHT+IEKYCfjzY+zOC7A8PpoeNigo2nDiTdRzgKt6xy0G8xhUHZWn/4IMc8JYMsjLyQdX2eBiO9PWPy+ZE41r41NKV0=
-X-Received: by 2002:a17:907:ea8:b0:a8b:154b:7643 with SMTP id
- a640c23a62f3a-a93a03abebamr302057466b.28.1727285621170; Wed, 25 Sep 2024
- 10:33:41 -0700 (PDT)
+	s=arc-20240116; t=1727285643; c=relaxed/simple;
+	bh=4/NEIAsBtB7blCG4wuSJkRPHzgJJT3t+tm/XzE92nXg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Lsi+x/TsOy294pdz7rmgZqydVeW4ejwpS9ALNO4lXjq2ZQo+TfO4tlKI1G/742DFQlb/oTz3tTy0FeO2v1Wx0mN8Nx+6fO13jhSoocNdTuAR8bjxDUOW95+qv0YDrqauZCEitisZkOsPo5RAmYYIEexcSTYJPslChWFd5XkrMTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=xCZF/620; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727285629; x=1727890429; i=markus.elfring@web.de;
+	bh=Ncba3K1JtxujF8pca90omffguLowNeWnysl8nMmFl3c=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=xCZF/620fc4fEot+ULALOvhqAkDQZSJTP7uknZnnq7J68A0xsRm0fW6if9SC0apW
+	 V3aoi870KiaPuJg9dAS+8MJVQ+RGUF4RvWy75xNYj4iInPKNuy6nPaCTFnPXjf6ZA
+	 5SikgAlBzr02scTMQLM/eGkERQsiQKcHXE9JMqQD3yihDp6HBDkHJjhP4lvdmcGuQ
+	 WmRCW4fZL2hrKpeXcCSA2KyQGVHIsW1funj1T1Bb/TIjnZ9jmE77Vlo6VBWl547ZG
+	 Jwdyge7AckuIsywPjcIY4IpDpGes6Iamohia4ZlMYXqdY/HDHZSJmOOgdro5MB67B
+	 A4YU1/AS5bR8zQMDAA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N30dV-1rvOFc0j0v-012ma3; Wed, 25
+ Sep 2024 19:33:49 +0200
+Message-ID: <a4087943-ee25-4e05-80c4-02a77196848b@web.de>
+Date: Wed, 25 Sep 2024 19:33:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1727191485.git.skhan@linuxfoundation.org>
- <f797bc704d8eb03234a3447c77fa7b704339f89a.1727191485.git.skhan@linuxfoundation.org>
- <CANDhNCpsEQL+S8gadXMjvbE-6r8c6owzz+_DhN6JAVqQ8Hg=_g@mail.gmail.com> <b0647b67-5cba-4e42-9d42-d12ba2aa2174@linuxfoundation.org>
-In-Reply-To: <b0647b67-5cba-4e42-9d42-d12ba2aa2174@linuxfoundation.org>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 25 Sep 2024 10:33:28 -0700
-Message-ID: <CANDhNCr18_+dQxPqjMCvEU3Z4s9iypFYUNFZT3CrONmeGxJZ1Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] selftests: timers: Remove local NSEC_PER_SEC and
- USEC_PER_SEC defines
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: tglx@linutronix.de, sboyd@kernel.org, shuah@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 2/2] usb: typec: ucsi: ccg: Use common code in ccg_read()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: linux-usb@vger.kernel.org, Ajay Gupta <ajayg@nvidia.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Haotien Hsu <haotienh@nvidia.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Utkarsh Patel <utkarsh.h.patel@intel.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
+Content-Language: en-GB
+In-Reply-To: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SsNe3ae79w4xuRU/j0Q+YcQzcKuXPrio8gkoBUw9g0TxFTtZ6Lb
+ rZoT2n2dS1CHwTok3vGHwiPETf1xplcXlfwSG4bYSYMHj0lgBowKWMKB3Iuu2QcnTDbomAG
+ 7o2nFC6fHxRMgTqYnpjKoU22hFm1DCsJMF79vVqI7Pf2mOoc7gRgSc3/uT6xkssxLbTNdwk
+ EXYN0ES3O2n4ye65YID3g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:LLjNEI7QT00=;SyukQnnyxKKbHKL5rqOs3YFLnLN
+ vYuobNYilTJr95eChQ32Oyz1D7CtDGSZOZ2Oc87msTlM9vywRIMmuhSwSXKrR6nhHC0XTOGf0
+ IJ5aeF/zC8nDGosILKxZFnR8dqUSRVXikJ8kL8GujNKcMnrLmkWirbsFkKqYFcuVtyIJYKMdD
+ IF+RiC7bsZvdsOKJfuCmW7gWi2o82Qtp70yOE7kEtRTS+Cx9hNXDdgNUponoGPld1tgn+oNDh
+ 3Naeb5TifBSVtm5FFr6nLPeBoeYcqEEZrWXTKDNMllN6uPnlmmefr/gxFvjLSjixJEGTOMYrf
+ mE2hAVtLsDia/m21IhuCx19jdQVFeGeAorx+6G4V2Y69J4YefeXYWuG5p/De+ZV+0SLWEtyhO
+ fuye036+oOn2TM/11hV29yz73lJ7SjXT0jBhmnHUjgRzzK3EpQk7VXZ9JP4cSK5+ssuWYaNkW
+ zLPB/UH+ILf4xSV7l743pTXQn+91MYrbH/lT01/ZKLE20OyRAVOTp+dd+HOHH89TxqEebQ4HA
+ HSIB38ETeAzBboNO4AwdmKkLTU7dzQpwhVwcGEQADc1c/zzlYo3jrau0xHoPTJjYivsTxUGlM
+ S2yM5r17ai6dm8BSK13N1KnJQbZ/IwB+wN2cP5DZDA7cjTD/4cBZohGCDcA5eyDe+yHjA/44Z
+ 6zMRbeonGpcbB1aY4jO/Tqdli6sU60gS/p9qfdA7oMhT2lMETWbtqBvf3CLymq+PN3iScaVWa
+ 1mASUeORGph3CTnEkWbqpaftmqAk7e8CzBIvMHYOulr0d7UYWRgPPp0AqYA+tXkLzyXCMW02j
+ PFyKoVk10sA9QwAVKv2wgktA==
 
-On Wed, Sep 25, 2024 at 8:20=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.o=
-rg> wrote:
->
-> On 9/24/24 17:59, John Stultz wrote:
-> > On Tue, Sep 24, 2024 at 8:57=E2=80=AFAM Shuah Khan <skhan@linuxfoundati=
-on.org> wrote:
-> >>
-> >> Remove local NSEC_PER_SEC and USEC_PER_SEC defines. Pick them up from
-> >> include/vdso/time64.h. This requires -I $(top_srcdir) to the timers
-> >> Makefile to include the include/vdso/time64.h.
-> >>
-> >> posix_timers test names the defines NSECS_PER_SEC and USECS_PER_SEC.
-> >> Include the include/vdso/time64.h and change NSECS_PER_SEC and
-> >> USECS_PER_SEC references to NSEC_PER_SEC and USEC_PER_SEC respectively=
-.
-> >
-> > Nit: You got the last bit switched there. This patch changes local
-> > NSEC_PER_SEC to the upstream defined NSECS_PER_SEC.
->
-> I think what IO have is correct. posix_timers defines them as NSECS_PER_S=
-EC
-> and USECS_PER_SEC and the header file doesn't have the extra S. It could
-> use rephrasing thought to make it clear.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Sep 2024 19:08:07 +0200
 
-?
-But the patch is removing the local non-plural NSEC_PER_SEC usage in
-posix_timers?
+Add a label so that two statements can be better reused at the end of
+this function implementation.
 
--#define NSEC_PER_SEC           1000000000LL
--#define USEC_PER_SEC           1000000
--
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/usb/typec/ucsi/ucsi_ccg.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-As the headers do have the values with the extra S.
+diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/uc=
+si_ccg.c
+index ed075a403d87..e3850c42583e 100644
+=2D-- a/drivers/usb/typec/ucsi/ucsi_ccg.c
++++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+@@ -269,15 +269,16 @@ static int ccg_read(struct ucsi_ccg *uc, u16 rab, u8=
+ *data, u32 len)
+ 		status =3D i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+ 		if (status < 0) {
+ 			dev_err(uc->dev, "i2c_transfer failed %d\n", status);
+-			pm_runtime_put_sync(uc->dev);
+-			return status;
++			goto put_sync;
+ 		}
+ 		rab +=3D rlen;
+ 		rem_len -=3D rlen;
+ 	}
 
-So I'm confused (sort of my natural state :), but this is a minor nit,
-so apologies and just ignore me if I'm really getting it backwards
-here.
++	status =3D 0;
++put_sync:
+ 	pm_runtime_put_sync(uc->dev);
+-	return 0;
++	return status;
+ }
 
+ static int ccg_write(struct ucsi_ccg *uc, u16 rab, const u8 *data, u32 le=
+n)
+=2D-
+2.46.1
 
-> Is it okay to fix this when I apply the patch or would you like me to sen=
-d v2?
->
-
-I don't need a v2
-
-> >
-> > Overall no objection from me. I've always pushed to have the tests be
-> > mostly self-contained so they can be built outside of the kernel
-> > source, but at this point the current kselftest.h dependencies means
-> > it already takes some work, so this isn't introducing an undue
-> > hardship.
-> >
->
-> Yes. At this point it would be hard to build it outside. DO you think
-> these defines can be part of uapi?
-
-Maybe, though they are so common I fret it would cause folks trouble
-with redefinition collisions.
-
-Thanks for doing this cleanup!
--john
 
