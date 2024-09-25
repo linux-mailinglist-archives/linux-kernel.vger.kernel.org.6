@@ -1,170 +1,187 @@
-Return-Path: <linux-kernel+bounces-337972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4748D9851C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:04:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8821B9851F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A9E7B21F03
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:04:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19954285402
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB7714B94C;
-	Wed, 25 Sep 2024 04:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F06D14C5A3;
+	Wed, 25 Sep 2024 04:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="oAfFL7Su"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazolkn19012056.outbound.protection.outlook.com [52.103.2.56])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JDrQwnqA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6F914B087
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.2.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727237080; cv=fail; b=TCaF19wZvzWtWwM7PrFgqlO6wcn1OIE4E0N9znehnlosFAEWlnPeRkkMySsfOQbajQwUBKcs2QU5eBrOODIJ+uS65PEDrXzx/FgdqP374s9IRVeXr+TDobwS6htTYFBHeelbv7CF5SvSJKqETIDJH7FzbpxZyB5fTryymtCfN0A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727237080; c=relaxed/simple;
-	bh=9iLw96yw0QxetnaqbxuhF5R0hg66bP6DzqFeK9TDbvs=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=uIYI6sBSpnSYR9hsayWdYKvWnYZNC8IulwqYb5HtfyWO3bVO96VbQWJxNptw80mgKlU0ak6OO2P7cmnLg+thMAm4UXcEPtyK9igJXOQsoG7FZExzXY77rcG7t1MgMQu8e4iJmeaGlKUfOr8MSi0J4A9lbQQzvn34gfKug0ioN2s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=oAfFL7Su; arc=fail smtp.client-ip=52.103.2.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XMGtSwd/DRlxOTJGsyQooxHxKgdpbBi5dT3D4PohBN9o7gbQx/ZefrfFQzwM3pMkl6mtG5x8OD/ElQ0otzROpfk12ogEI3Hsbq3lliCIpPY5OCTLxNQK09ghIU8kzK48cFX9QV77ZVzlZCculpFjaWSeUCERcjVPzrsBtkRIq+Lk+12D9YAqgHCtDvQ+yT05gQQjy/vpV/u/By4A7/bqC6eEFecluqkFiGQNh6Ece63TQ1n2N0YRIICj8Sbdjd+AeZSNUiEaXMtAlQOeqr4OiVtUW/TdBFOfy1kT0ugvbxzfPu64Q7WAd1y9cjuxVkW42o05x+LFK94+r3uWh+d2Jw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9spivek/3suXziEE4INSoJZcHsjW1pS0deYXQgM32hI=;
- b=PXLVv7IvBlz4XopgP4j6vgGOAEom19MEtY6xqMhZKaWIwcPBZmDf3HLAY5iFguyhu22nGxcC33xmNazOEN9+tH4vYJcsLRF0FokCDfLpQvEzv3xBD8CwZXRkdFJVBEdKj4VnAL89TAl0+kvmbSZ2f56xWH1EV7kKxkFLA1ko2JXM78t/79un5DTFHuG8rOc4bDrmr5QxIrzMRLCsmAYuhsFL2f66r2/KjE3YVM3mNVb5cYpi7Z1EwezhgkWdpjVi6ZVSr98gX4iXS2Rxu0hOL5s/23/8ejXsaHdeOYgkIPXti6B7oHp7+DrOMxtjLCabtLiVc0cGSHVQ9Z1Q/moM5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9spivek/3suXziEE4INSoJZcHsjW1pS0deYXQgM32hI=;
- b=oAfFL7Su8fRm4qVeMjzwgcmkzenc1g5Wt9rk01BT4s4PX7sERMm5wKtamr+tHISNmMvaswJJkIfcOzdQYflunXQ2/8KKEuNg6L9qsN8bTeqMTXK2LFgJgHPi6oYVncnpZxrtmkg8aJ+E9WfLhEL8cQCY60SNxT0WVtjHUVcSaXcja3If6JpGvkbpl6080SjwsjnpA6sNihEOnYLeG5N8WfdCpgrC0qkwvbvNrmr4gFkBV7n2pWD4+GPFfzxblOeqb1mqn08cVxpZkHr4E45p3ufoUUAnMzZKb2Ah8x/bmSIQro9NOcOXuzmaqXXeWPo+CYUDSUAZ0upc9fCht3d99A==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by CH3PR02MB9554.namprd02.prod.outlook.com (2603:10b6:610:125::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Wed, 25 Sep
- 2024 04:04:35 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.7982.022; Wed, 25 Sep 2024
- 04:04:33 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Thomas Gleixner <tglx@linutronix.de>, "peterz@infradead.org"
-	<peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, Yury Norov
-	<yury.norov@gmail.com>
-CC: "x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Question about num_possible_cpus() and cpu_possible_mask
-Thread-Topic: Question about num_possible_cpus() and cpu_possible_mask
-Thread-Index: AdsO+nSV28XUjpufQ325P0s8gOEPmQ==
-Date: Wed, 25 Sep 2024 04:04:33 +0000
-Message-ID:
- <SN6PR02MB4157210CC36B2593F8572E5ED4692@SN6PR02MB4157.namprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CH3PR02MB9554:EE_
-x-ms-office365-filtering-correlation-id: 4dc780cf-0027-4424-ebc2-08dcdd172a0c
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|8060799006|19110799003|15080799006|5062599005|8062599003|102099032|440099028|3412199025|10035399004;
-x-microsoft-antispam-message-info:
- Ie0XWa+3HvL1jCGh53Z7nJSVHXBx0i+SZ8ucQPyP355jQINL2nF61kqeAa3/ru/ZRag/GVnH8/nCeR9A6/psEEp2gzlMBbzDIJeZRRwCXT+XESKIHuNUPk1iFFGzYBNLV7g+FV3l0x1uZTwlrgUifQbcafLvIExECwvWJRPA/prybw6D4+S9GlmioxmezVNFs0xuaoyiCQoyVaEIvqcpg3Y9uGmntVPMeYXVDPhs1iCS0Wtvgc+df3DqyDz4T5BbUONkaRTf5HLF3ncI3o12C9Yxr6hg9AzN5P50mhWRuTfpVo4dikom2zQwFOlDXIa4nPQyOVJHH/3tJIvmci2HPmP7TD6+BQ4pJwf3cJPiTgaF3U1RufhqE1RzSvy5lfiDidwZgs+2bq/EzpwoE3E7Cqfq9b7BtB1VhH6qrR/8ue0SeEES9ToOfUWLrBXv4z9lshJ9cajUbcWxSTgOqYitoHnBRXp6ZGfKGodW44FH6oWLYuBF7h/mj7w6y8Ry6yvl/EmXgxG29EzdkjE6rZj9loqFqM2OyFJg+ZFCxKjMOXMp5sjRjYfImZNHxrw1KQRHKFQttd7gU5H55mmfJEcgELpn+I1tPRIEeOBzbLfErU7FlacVt5ZE9G+kMpScMi0HxnNZDbloSl+qOJ/qfnMwhZK04yQpVMVun2rFbTdHieo4/8EiHsMgil6ea7+FqYUXVaO95rEvY2HkSqq7PqrqJUuAgDSCMu8kuIdzezihdVvFyS2EPTRE0Bt2PRSY1duhE22/mR9S9JIf4aVGjrclH2w9SB0XMsiL8cuKEoRTUT3lkHGHKkdgQTrabFv/FyEAOUGd3FR6MqYT88HEtf6Ix769a4LjOockl/Y/dj2aF6ty9i52uDRIM87SJA54X/YA
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?oeNONzh4qDVCcnk0VIjbmQ6UsG+6vRRKeJ1SPH/x7jNQOdSvPpTeq3ozxf24?=
- =?us-ascii?Q?eexqvyQq/iisLp2jzc7rnDlVSuFwngISpJuWnrSZ6ZL/hO1EeTQ9cjkxljiV?=
- =?us-ascii?Q?By+fjBGgoVtBJ0c1cv0bfWsfkev9I4R3G5mf8KvibR5f5OIaGMxw+urrZffb?=
- =?us-ascii?Q?scF8WDeXfGrrkj7gUNG5U3Fx125bFMFuJrnNuKkSAE8Zgfr+MWmR0mp0c54j?=
- =?us-ascii?Q?8yjo8/a/5qTbMFB6batUhGtEC2p7HqA0HQYqex4nMJCWNX0JqAAWE5Gd8i9i?=
- =?us-ascii?Q?8YEx9C4lTn4gzioFMUOX5WaJFKrJednfL4lYv4ieuJ6ArJSzuJgxOQKygoE+?=
- =?us-ascii?Q?Q27OuGtAM1QxnXFvaEtgFG1L48RpOGEBgygKP/18E8tD1pjoq5pKe0A5sS1k?=
- =?us-ascii?Q?INHGiKVAC6IXJ8w020HB1LOTdnbELU9Fr17vWfFCBd7OipEw0pVTXHVeWlg8?=
- =?us-ascii?Q?do5wlhIW2yR4+D63Tw03HYbK9dvH/TsnHIdn7I8ODBgT4iWOXTHrWCiZ4DfA?=
- =?us-ascii?Q?+xV8hISesHIiSxS82uX1M0tGSjEvIjneCo8TEa+VkzSGb3J/zudyMvLvre2M?=
- =?us-ascii?Q?PnW9PuqfC+v60LAsA15UilZlqrbJ+v8CWcSFnZldXbir7Qhcs3rV/uIEFFDI?=
- =?us-ascii?Q?bkvPZt5y5UrMCWpkRFO79sBZ+sFINO8UK8y8uw4x+WbzxbcVmyoQSqmqnG8y?=
- =?us-ascii?Q?bf5WZq9A0HAzex8gWzhHPlDm95P0zQnsr+AZM9OxDfp2Ovvts0miMimDOBfV?=
- =?us-ascii?Q?10cVZFoN/LP5xujme3J5IA9qN591epZH5rNoh9Wr58jEu4k31/3S3rr8gPol?=
- =?us-ascii?Q?4ZD+y8k+SR5wGXLQkSjBd+lQkua6o+9Z4WG86/fpEYWc8sd7bVhC4e/2X+YQ?=
- =?us-ascii?Q?yLICiDDNoPK1BkCoLsR/b4r4X+sjCJqHCDOlJzy0jGNoQfjeE5pVF/cxSjID?=
- =?us-ascii?Q?je0rnQXKYQ7pFhrfyi37cPUMvQX4uk/nxZhkqhOLuTXBPg0zIbYGvW/TP4x/?=
- =?us-ascii?Q?GFNc1rernCkN4INekysGi/p7qGr2oU6MtHwyC16SPXEVUSyzjZNOagkronHn?=
- =?us-ascii?Q?9L8OAXAxxVR+Bin58DFMs6zsWX/JkaFTg58De1wtPJdY4euFg0NFxRcuPOJK?=
- =?us-ascii?Q?uBkqW/WfZ/eiOBWfH4P5IxuN2YDiO+SaU4dOQaV8fi2QSCPbieSvexo2iZ7O?=
- =?us-ascii?Q?T9fFWXOkA63d1HlSjgptNrSn70CC1SXmyBbab9YdtTfvTamhMynqumL5cbM?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C10C2CA6;
+	Wed, 25 Sep 2024 04:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727237865; cv=none; b=Q3ZV/nCCy4DmP+JXrdZ0Idse16qXTgp+uzg4CoPrwxkGImCsUb7F0GkCn3tI+DSAN/yiUiaLbWQXd1dP4ZPOQPf6sFjwl5CP+2Tf0EqNsnkatNYHTA4etByE44BE/kUkB9do3uAWZ9iFqcTGKZdeQWr5VZpnuJtsdNhfXJDOIG8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727237865; c=relaxed/simple;
+	bh=KOtJjfbQO25dIwdv+f4iH8x+aV0gECM+IZPInPTm17U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Xi16XM5JDMS+bieJd6aNdBP5krM74RUNcyfuY0IVLyEbqQpFx1NaAMuAxjHA68xGD00OmA8Sg2wCVyCmZYQcfWGvmtT/4E0W1s5nMqj+Qr10uIBQcQNzae1gjd5SJTg/GvdOObfsJzIfzTdTKDMIn3QWPyU8DM4FVtVd7TSeRdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JDrQwnqA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OHOk64006035;
+	Wed, 25 Sep 2024 03:44:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZhbqxxGnNn6iWuWZcW4la2E8zNouyHAN9O3d1uNJ50A=; b=JDrQwnqAeHFbZEBb
+	3cATDigDpyfO5/dAknAPPdebAnb0nHiwdG7exO2p0zv0tM9wgFumjYIEGnsvzGq4
+	AtPbC9naAgNM7XRrPJ4kZPEJYHw4kB4iVz3YWhB1WkaHuTfV0oc/GkovNu042SgT
+	JowtNhBbrKc+TRK5tQgbZzhChVes1d6e4Is0/tzYe4EXMc/IeIZZ7aGFsMqB9IG5
+	11b52V5Ieytr+vtn2tzC+qAlH+zJV7JrD69+H044cu3MioQu2wJ1Vr3JIg27N4sl
+	kB7w0q9R4J6HfhVbM9U7zdrBBP2HteVjIfXWaehSBIOieVJ5FZ83VJbdmhh3/SiP
+	Pb+72Q==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqe9ag98-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 03:44:59 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P3iwj6018823
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 03:44:58 GMT
+Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 24 Sep
+ 2024 20:44:54 -0700
+Message-ID: <3f454d6f-b40e-49e5-89eb-b77bcca35043@quicinc.com>
+Date: Wed, 25 Sep 2024 11:44:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4dc780cf-0027-4424-ebc2-08dcdd172a0c
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2024 04:04:33.8707
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR02MB9554
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/6] PCI: qcom: Add support for X1E80100 SoC
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <abel.vesa@linaro.org>, <quic_msarkar@quicinc.com>,
+        <quic_devipriy@quicinc.com>, <dmitry.baryshkov@linaro.org>,
+        <kw@linux.com>, <lpieralisi@kernel.org>, <neil.armstrong@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
+ <20240924101444.3933828-6-quic_qianyu@quicinc.com>
+ <20240924135021.ybpyoahlpuvedma5@thinkpad>
+Content-Language: en-US
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <20240924135021.ybpyoahlpuvedma5@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: NEvl7Hnmhc16mCowiCBdCrSnCaYaxu0v
+X-Proofpoint-GUID: NEvl7Hnmhc16mCowiCBdCrSnCaYaxu0v
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 spamscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 impostorscore=0 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409250025
 
-Question:  Is there any intention to guarantee that the cpu_possible_mask i=
-s
-"dense", in that all bit positions 0 thru (nr_cpu_ids - 1) are set, with no
-"holes"? If that were true, then num_possible_cpus() would be equal to
-nr_cpu_ids.
 
-x86 always sets up cpu_possible_mask as dense, as does ARM64 with ACPI.
-But it appears there are errors cases on ARM64 with DeviceTree where this
-is not the case. I haven't looked at other architectures.
-
-There's evidence both ways:
-1) A somewhat recent report[1] on SPARC where cpu_possible_mask
-   isn't dense, and there's code assuming that it is dense. This report
-   got me thinking about the question.
- =20
-2) setup_nr_cpu_ids() in kernel/smp.c is coded to *not* assume it is dense
-
-3) But there are several places throughout the kernel that do something lik=
-e
-   the following, which assumes they are dense:
-
-	array =3D kcalloc(num_possible_cpus(), sizeof(<some struct>), GFP_KERNEL);
-	....
-	index into "array" with smp_processor_id()
-
-On balance, I'm assuming that there's no requirement for cpu_possible_mask
-to be dense, and code like #3 above is technically wrong. It should be
-using nr_cpu_ids instead of num_possible_cpus(), which is also faster.
-We get away with it 99.99% of the time because all (or almost all?)
-architectures populate cpu_possible_mask as dense.
-
-There are 6 places in Hyper-V specific code that do #3. And it works becaus=
-e
-Hyper-V code only runs on x86 and ARM64 where cpu_possible_mask is
-always dense. But in the interest of correctness and robustness against
-future changes, I'm planning to fix the Hyper-V code.
-
-There are also a few other places throughout the kernel with the same
-problem, and I may look at fixing those as well.
-
-Or maybe my assumptions are off-base. Any thoughts or guidance before
-I start submitting patches?
+On 9/24/2024 9:50 PM, Manivannan Sadhasivam wrote:
+> On Tue, Sep 24, 2024 at 03:14:43AM -0700, Qiang Yu wrote:
+>> X1E80100 has PCIe ports that support up to Gen4 x8 based on hardware IP
+>> version 1.38.0.
+>>
+>> Currently the ops_1_9_0 which is being used for X1E80100 has config_sid
+>> callback to config BDF to SID table. However, this callback is not
+>> required for X1E80100 because it has smmuv3 support and BDF to SID table
+>> will be not present.
+>>
+>> Hence add support for X1E80100 by introducing a new ops and cfg structures
+>> that don't require the config_sid callback. This could be reused by the
+>> future platforms based on SMMUv3.
+>>
+> Oops... I completely overlooked that you are not adding the SoC support but
+> fixing the existing one :( Sorry for suggesting a commit message that changed
+> the context.
+>
+> For this, you can have something like:
+>
+> "PCI: qcom: Fix the ops for X1E80100 SoC
+>
+> X1E80100 SoC is based on SMMUv3, hence it doesn't need the BDF2SID mapping
+> present in the existing cfg_1_9_0 ops. This is fixed by introducing new ops
+> 'ops_1_38_0' and cfg 'cfg_1_38_0' structures. These are exactly same as the
+> 1_9_0 ones, but they don't have the 'config_sid()' callback that handles the
+> BDF2SID mapping in the hardware. These new structures could also be used by the
+> future SoCs making use of SMMUv3."
+Never mind, thanks for your suggestions. Will update the commit msg in next
+version.
 
 Thanks,
-
-Michael
-
-[1] https://lore.kernel.org/lkml/20240621033005.6mccm7waduelb4m5@oppo.com/
+Qiang Yu
+>
+> - Mani
+>
+>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> ---
+>>   drivers/pci/controller/dwc/pcie-qcom.c | 16 +++++++++++++++-
+>>   1 file changed, 15 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>> index 88a98be930e3..56ba8bc72f78 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>> @@ -1367,6 +1367,16 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
+>>   	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>>   };
+>>   
+>> +/* Qcom IP rev.: 1.38.0 */
+>> +static const struct qcom_pcie_ops ops_1_38_0 = {
+>> +	.get_resources = qcom_pcie_get_resources_2_7_0,
+>> +	.init = qcom_pcie_init_2_7_0,
+>> +	.post_init = qcom_pcie_post_init_2_7_0,
+>> +	.host_post_init = qcom_pcie_host_post_init_2_7_0,
+>> +	.deinit = qcom_pcie_deinit_2_7_0,
+>> +	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>> +};
+>> +
+>>   static const struct qcom_pcie_cfg cfg_1_0_0 = {
+>>   	.ops = &ops_1_0_0,
+>>   };
+>> @@ -1409,6 +1419,10 @@ static const struct qcom_pcie_cfg cfg_sc8280xp = {
+>>   	.no_l0s = true,
+>>   };
+>>   
+>> +static const struct qcom_pcie_cfg cfg_1_38_0 = {
+>> +	.ops = &ops_1_38_0,
+>> +};
+>> +
+>>   static const struct dw_pcie_ops dw_pcie_ops = {
+>>   	.link_up = qcom_pcie_link_up,
+>>   	.start_link = qcom_pcie_start_link,
+>> @@ -1837,7 +1851,7 @@ static const struct of_device_id qcom_pcie_match[] = {
+>>   	{ .compatible = "qcom,pcie-sm8450-pcie0", .data = &cfg_1_9_0 },
+>>   	{ .compatible = "qcom,pcie-sm8450-pcie1", .data = &cfg_1_9_0 },
+>>   	{ .compatible = "qcom,pcie-sm8550", .data = &cfg_1_9_0 },
+>> -	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_1_9_0 },
+>> +	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_1_38_0 },
+>>   	{ }
+>>   };
+>>   
+>> -- 
+>> 2.34.1
+>>
 
