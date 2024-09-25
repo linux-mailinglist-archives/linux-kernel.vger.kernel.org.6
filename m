@@ -1,109 +1,138 @@
-Return-Path: <linux-kernel+bounces-339171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07459986174
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:52:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 846F0986183
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EA64B23F8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:39:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4B8AB2D9EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F63187340;
-	Wed, 25 Sep 2024 13:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F710187877;
+	Wed, 25 Sep 2024 13:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="YCFrBm6k"
-Received: from mail.avm.de (mail.avm.de [212.42.244.120])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="cb9WP9P3"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C6B186E29;
-	Wed, 25 Sep 2024 13:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96139187FF3
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727272304; cv=none; b=mAd6ZelsS4/o3rhH4zoSIDn6YgAftHdEQvT/HD14H6jszrNxygEDfelcUF8cV6t4TTAjsn45zXEvCgM/zfMrTbK0p82aVQbxhoN4+OtotXI63EubiVSYYkKzbUtnl/YSN9Y5Mwg6W+b7Opn9KHdWEp8nlxcWi2wrpCc41y8yQTk=
+	t=1727272317; cv=none; b=GjgkplapAqOAq3ieuqp0s6pFW9GBFG/mEybgMUA18X0eU211wELd9Wi8CF4Uf7dUzaSR70ujLWvmWuaEegLxXvXQ66nHopHlH6q/8DGAlw9m8jDXbUIYbfsoZepDjC9hxr2yfkEr/BvDiPwoC5xRzoYBVGXRRuSyMFvEBqfqfZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727272304; c=relaxed/simple;
-	bh=PZOseGL0iHKfe7J6qxH1nvMXMdEDwAT/Xy9zLCH3rGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mdl/1uyaIniE1eMBxaPrEJxg0Plw9E3Bpw+6ufD8a2gWP/t7Sf1TvRoPPwUtl0C04m8VEmSH2rOuXIIPjAPLdWydrSZROi2vZVuM5Swnw5dyZaVNqA3W9GiQpCUaz8jCpLGlsivVcThIfXErYfdivxnxkedk65zFGk8eXhdKlYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=YCFrBm6k; arc=none smtp.client-ip=212.42.244.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
-	t=1727272292; bh=PZOseGL0iHKfe7J6qxH1nvMXMdEDwAT/Xy9zLCH3rGY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YCFrBm6k6wflnlpVTTulEJyP+GswIxW6YHKbZacOyy1T8Bq/UqYE6csRcyr/s6GIc
-	 RvZVSxEge8lrfQ3rwMMfx4dTKGRZaTu2q6KBo8+iX+mxUaTaK0JUs9lxa4wQOLpccM
-	 fNSfklfb2LAbfmPUTMQZUKRubDy4fxaZ41e/5ew0=
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [IPv6:2001:bf0:244:244::71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Wed, 25 Sep 2024 15:51:32 +0200 (CEST)
-Received: from l-nschier-nb (unknown [61.8.139.63])
-	by mail-auth.avm.de (Postfix) with ESMTPSA id 05BDB8077D;
-	Wed, 25 Sep 2024 15:51:32 +0200 (CEST)
-Date: Wed, 25 Sep 2024 15:51:31 +0200
-From: Nicolas Schier <n.schier@avm.de>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	masahiroy@kernel.org, nathan@kernel.org, devicetree@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH] kbuild: fix a typo dt_binding_schema ->
- dt_binding_schemas
-Message-ID: <ZvQVY6ChCYdJpBEW@l-nschier-nb>
-References: <20240925053230.45606-1-xu.yang_2@nxp.com>
+	s=arc-20240116; t=1727272317; c=relaxed/simple;
+	bh=mWoPMcI7ji8ZME18L6ZMT3RlitxSf5eGF1zuPbBA8hQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FxBMqgOqvFOpa4SiCEIgc9Eo6DaMpZvabhbkmxbRpsvSSeBjuElm7BsmyEf8CD9dP3ElXHr0u1J0VmQoXdRsGSt0bilt2/dZcbyR1dlUJIDJ6EqP2kbmyl9I3qeHjr5rVRtDy3tzJWwd9u7j+S+AYZY1brPk4RJB3kOl1oiFlcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=cb9WP9P3; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1727272316; x=1758808316;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=mWoPMcI7ji8ZME18L6ZMT3RlitxSf5eGF1zuPbBA8hQ=;
+  b=cb9WP9P3QexbGAVOiqPjMBDjxOU6+ZmlnW1asP0JkjGse7fH4soTAjyZ
+   Q0H68OR+cTI+4a7g7A6DoMlpQ/GuasBLjsCD8lV1756j3Ick7rSqJ9TT0
+   05wUTvHAwFE6q8r89O1OGTmqlAFr6O7zxZu4zElpAVe3t/8eg9g+Ul4+8
+   b+5O67RXKRttoQ9Ee24N5Vm3HvIcl4qFFXxyXpGYHvDJ1p6WW6og3VIVS
+   ZNoA7m6XO6aKIPO2w4ILSTB9t7LhV0to2L0YRziwtRa9dwSEmKeDsH4tM
+   gZxoqHMxPnimLC58IXzeveeF4pHBqIuw3SS0qhsT1S1pA10dGQ1tGaaUZ
+   Q==;
+X-CSE-ConnectionGUID: /Z2CJI2IQbCM1FLnYGXUpw==
+X-CSE-MsgGUID: NVKkHTY8TyWYrWAdKupnQg==
+X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
+   d="scan'208";a="263245828"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Sep 2024 06:51:55 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 25 Sep 2024 06:51:26 -0700
+Received: from [10.171.248.56] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 25 Sep 2024 06:51:24 -0700
+Message-ID: <1f1f22de-692c-4428-a754-0aa625294bbd@microchip.com>
+Date: Wed, 25 Sep 2024 15:51:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240925053230.45606-1-xu.yang_2@nxp.com>
-X-purgate-ID: 149429::1727272292-9230AE44-25FB1F99/0/0
-X-purgate-type: clean
-X-purgate-size: 1339
-X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate: clean
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] MAINTAINERS: Update maintainer list for MICROCHIP
+ ASOC, SSC and MCP16502 drivers
+Content-Language: en-US, fr-FR
+To: Andrei Simion <andrei.simion@microchip.com>, <claudiu.beznea@tuxon.dev>
+CC: <linux-kernel@vger.kernel.org>, <cristian.birsan@microchip.com>, "Mark
+ Brown" <broonie@kernel.org>, alsa-devel <alsa-devel@alsa-project.org>
+References: <20240925130711.122950-1-andrei.simion@microchip.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20240925130711.122950-1-andrei.simion@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 25, 2024 at 01:32:30PM +0800, Xu Yang wrote:
-> If we follow "make help" to "make dt_binding_schema", we will see
-> below error:
+(adding Mark and alsa-devel to the thread)
+
+On 25/09/2024 at 15:07, Andrei Simion wrote:
+> To help Claudiu and offload the work, add myself to the maintainer list for
+> those drivers.
 > 
-> $ make dt_binding_schema
-> make[1]: *** No rule to make target 'dt_binding_schema'.  Stop.
-> make: *** [Makefile:224: __sub-make] Error 2
-> 
-> It should be a typo. So this will fix it.
-> 
-> Fixes: 604a57ba9781 ("dt-bindings: kbuild: Add separate target/dependency for processed-schema.json")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+> Acked-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+
+Thanks a lot to both of you to continue this work.
+
+Best regards,
+   Nicolas
+
+> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
 > ---
->  Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> v1 -> v2:
+> - add acked-by tag
+> - adjust commit title
+> - update maintainer list for MICROCHIP SSC DRIVER
+> ---
+>   MAINTAINERS | 3 +++
+>   1 file changed, 3 insertions(+)
 > 
-> diff --git a/Makefile b/Makefile
-> index 265dd990a9b6..7aa71c70305e 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1645,7 +1645,7 @@ help:
->  		echo '* dtbs               - Build device tree blobs for enabled boards'; \
->  		echo '  dtbs_install       - Install dtbs to $(INSTALL_DTBS_PATH)'; \
->  		echo '  dt_binding_check   - Validate device tree binding documents and examples'; \
-> -		echo '  dt_binding_schema  - Build processed device tree binding schemas'; \
-> +		echo '  dt_binding_schemas - Build processed device tree binding schemas'; \
->  		echo '  dtbs_check         - Validate device tree source files';\
->  		echo '')
->  
-> -- 
-> 2.34.1
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 09d0f09c36cc..12e6777bb6b4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15088,6 +15088,7 @@ F:	drivers/spi/spi-at91-usart.c
+>   
+>   MICROCHIP AUDIO ASOC DRIVERS
+>   M:	Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> +M:	Andrei Simion <andrei.simion@microchip.com>
+>   L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+>   S:	Supported
+>   F:	Documentation/devicetree/bindings/sound/atmel*
+> @@ -15196,6 +15197,7 @@ F:	include/video/atmel_lcdc.h
+>   
+>   MICROCHIP MCP16502 PMIC DRIVER
+>   M:	Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> +M:	Andrei Simion <andrei.simion@microchip.com>
+>   L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>   S:	Supported
+>   F:	Documentation/devicetree/bindings/regulator/microchip,mcp16502.yaml
+> @@ -15327,6 +15329,7 @@ F:	drivers/spi/spi-atmel.*
+>   
+>   MICROCHIP SSC DRIVER
+>   M:	Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> +M:	Andrei Simion <andrei.simion@microchip.com>
+>   L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>   S:	Supported
+>   F:	Documentation/devicetree/bindings/misc/atmel-ssc.txt
 > 
+> base-commit: 2b7275670032a98cba266bd1b8905f755b3e650f
 
-Thanks!
-
-Reviewed-by: Nicolas Schier <n.schier@avm.de>
 
