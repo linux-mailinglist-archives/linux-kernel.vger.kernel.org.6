@@ -1,120 +1,109 @@
-Return-Path: <linux-kernel+bounces-339524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA96986667
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:33:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6AC5986669
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F2E328670C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:33:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 013D6B212B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99F413C9C7;
-	Wed, 25 Sep 2024 18:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AEB13E02A;
+	Wed, 25 Sep 2024 18:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="MvyD+L5q"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6O8yCwW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B42C13B792;
-	Wed, 25 Sep 2024 18:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E542417BB4;
+	Wed, 25 Sep 2024 18:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727289205; cv=none; b=T2RbabUFD+8XXXCQ3X5HeGynoybjeMYCRu8R/6VJtK1e7422Wm48T4h958ySVofArZ2+fyR1zfKs97TiMOWypzKjjfzO+oFDJXoytpQ5PlDmrZR4TD3y505DY1MZedhPANLU8/xIJg8Ttja8TzcqEokA1AKVd2lsO/mOh19gXns=
+	t=1727289213; cv=none; b=oSZrp0+329zRlL1k9eXY+ZBwQ9beXqXrEdc3dr4IPICYmsv3wjNU9wxZLK0Swp9ynA9qvMbPExytvKS96g/CHphK+Sv9DoD+NcVd6QcKyai4KgO8x/4geZdcAZ9ZdI47Hy9cnxAJR50ZBqnwEEf2/mIHrV8hxIxkxQ0NCFwfvIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727289205; c=relaxed/simple;
-	bh=OIbBmnELrs++7mtg2YAyqhITWB3pQw7a75MvfNVV7s4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=u0RZPYpBdeDW0m2/bqhieeJoXfQJzcMq6hHy70C4iq+J8rynzyJETVqR1XXme1PR8xprVPJaorLwB2PWW/JskffM9DA/zR56lrWXEhWM5WcO9bLpYQ/Cr6UGi+Gu3ULU5WENe8dBmtOE/D4fZeIhKz9J/4P8Jb9vTSmPbRfV7Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=MvyD+L5q; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.1.130] (BC2491B6.dsl.pool.telekom.hu [188.36.145.182])
-	by mail.mainlining.org (Postfix) with ESMTPSA id F13F9E450F;
-	Wed, 25 Sep 2024 18:33:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1727289201;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qS9SGz8Gf8aJrDJT2DYvbhtIA9CLbibcCwzukfp2DTM=;
-	b=MvyD+L5qPFwCMYR5AQYX8f+N/xtqm9/+3IxTRCPPoYai3u0Wd7Qx+wIF3duH8Sg/h9KTWj
-	VcsmCQiwobgJ+6qGcxYNhr8YFxQdgl0YL51/90c71mzVabL9vn0s8xYhoB6S3idB21LaUt
-	Q3ctmrLhycMqjllpo6bxohD8hR3PGiYwwxeFQ3kanZA7LSCCIdG6244HT0uAlHbqqvg3kH
-	9xWiGxDyWqEswpxL34SYLKJk649XaB/AbqSGaPtMvBDPVEjPEKTZ5ja1Mzg2CSRDkvYabk
-	JZRGp9jwhPpevIBuTldeqrSWP+/1YA8MnJPKV3Qx636hZDKoaJGF1/ROJi+P+A==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Wed, 25 Sep 2024 20:33:20 +0200
-Subject: [PATCH v2] clk: qcom: clk-alpha-pll: Fix pll post div mask when
- width is not set
+	s=arc-20240116; t=1727289213; c=relaxed/simple;
+	bh=dvQzEz3KjBEyGA4yDAkDvOVrPQ/YoWEcvjsUzrXSFXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lrcnt6G0WviweLKdlh76DFtVPpMHayV14VJ4PLo4jFg64Lk74/f9dM0tcTv7w2MwQuCGF31Tnbm+7SC92y2XXympM6/XdoMCiSYrzULt0v8wMsF9R99PICpzFdGrEiX24eB8C5cqUShRy+3SjVLZsQLFmTUQDoVFlgUw/IuXeS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6O8yCwW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71899C4CEC3;
+	Wed, 25 Sep 2024 18:33:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727289211;
+	bh=dvQzEz3KjBEyGA4yDAkDvOVrPQ/YoWEcvjsUzrXSFXU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K6O8yCwW08tYcQZv9oQ6lRnsetCKtXdzuBttLNPlxm3wDBEaC0AaYyiLHh42OX3it
+	 ExUAXzieV28Mn5J0Lb9syJRnfvEhPI9M/dBzfMwgufcog2XhzBx/MxZVQjqA1A6Pit
+	 FcRxbwBjicJgfaU3b9JVdN2KW1e9QpejGY9sXT53zEfgp/RSAW8outrP0zsHBskMmu
+	 e73eCZTOJoYvHXG5cPxwvxFjcrkqcEzv/hZ6qzTDHeyvOhAxF1ZRfzB3B97/epHnrt
+	 OyB4LJ9i6/B48QCW1lMPDCVJGhd4H/o72Nk5P/hJyKy7qXHBk7uxy5WqOsUsKDizAn
+	 XPlAtaLUH/ykQ==
+Date: Wed, 25 Sep 2024 19:33:27 +0100
+From: Simon Horman <horms@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: netdev@vger.kernel.org, yuxuanzhe@outlook.com,
+	Marc Dionne <marc.dionne@auristor.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] rxrpc: Fix a race between socket set up and I/O
+ thread creation
+Message-ID: <20240925183327.GW4029621@kernel.org>
+References: <1210177.1727215681@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240925-fix-postdiv-mask-v2-1-b825048b828b@mainlining.org>
-X-B4-Tracking: v=1; b=H4sIAG9X9GYC/32NQQ6DIBBFr2Jm3WkEIaZd9R7GBeqAk1YwYEgb4
- 91LPUCX7+f/93dIFJkS3KsdImVOHHwBealgnI13hDwVBllLVd+kRstvXEPaJs64mPTEwaiWxkk
- 2ZBooszVS6ZzKri88c9pC/JwPWfzSP7IsUKBt68FobZXQ9FgM+xd79u4aooP+OI4vWif7HbUAA
- AA=
-X-Change-ID: 20240925-fix-postdiv-mask-ba47ecd23ea3
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Abhishek Sahu <absahu@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727289200; l=1539;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=OIbBmnELrs++7mtg2YAyqhITWB3pQw7a75MvfNVV7s4=;
- b=+N3H+rNgpnkxCBDAIzI5nfaKNoc9g7Wib78fCAhevGgGmOhUh50zJemoNfUFLvCwX6UhyDO54
- 024YQf13TitCpRu4HTN5WwvntLjerA00fPu+wJAuSEYS4ZJe5kEQXRL
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1210177.1727215681@warthog.procyon.org.uk>
 
-Many qcom clock drivers do not have .width set. In that case value of
-(p)->width - 1 will be negative which breaks clock tree. Fix this
-by checking if width is zero, and pass 3 to GENMASK if that's the case.
+On Tue, Sep 24, 2024 at 11:08:01PM +0100, David Howells wrote:
+> In rxrpc_open_socket(), it sets up the socket and then sets up the I/O
+> thread that will handle it.  This is a problem, however, as there's a gap
+> between the two phases in which a packet may come into rxrpc_encap_rcv()
+> from the UDP packet but we oops when trying to wake the not-yet created I/O
+> thread.
+> 
+> As a quick fix, just make rxrpc_encap_rcv() discard the packet if there's
+> no I/O thread yet.
+> 
+> A better, but more intrusive fix would perhaps be to rearrange things such
+> that the socket creation is done by the I/O thread.
+> 
+> Fixes: a275da62e8c1 ("rxrpc: Create a per-local endpoint receive queue and I/O thread")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Reviewed-by: Eric Dumazet <edumazet@google.com>
 
-Fixes: 1c3541145cbf ("clk: qcom: support for 2 bit PLL post divider")
-Fixes: 2c4553e6c485 ("clk: qcom: clk-alpha-pll: Fix the pll post div mask")
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
-Changes in v2:
-- Pass 3 to GENMASK instead of 0.
-- Add more Fixes tag for reference root cause.
-- Link to v1: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v1-1-f70ba55f415e@mainlining.org
----
- drivers/clk/qcom/clk-alpha-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+...:wq
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index f9105443d7dbb104e3cb091e59f43df25999f8b3..be9bee6ab65f6e08d5ae764d94a92e395e227fbc 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -40,7 +40,7 @@
- 
- #define PLL_USER_CTL(p)		((p)->offset + (p)->regs[PLL_OFF_USER_CTL])
- # define PLL_POST_DIV_SHIFT	8
--# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width - 1, 0)
-+# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width ? (p)->width - 1 : 3, 0)
- # define PLL_ALPHA_MSB		BIT(15)
- # define PLL_ALPHA_EN		BIT(24)
- # define PLL_ALPHA_MODE		BIT(25)
+> diff --git a/net/rxrpc/io_thread.c b/net/rxrpc/io_thread.c
+> index 0300baa9afcd..5c0a5374d51a 100644
+> --- a/net/rxrpc/io_thread.c
+> +++ b/net/rxrpc/io_thread.c
+> @@ -27,8 +27,9 @@ int rxrpc_encap_rcv(struct sock *udp_sk, struct sk_buff *skb)
+>  {
+>  	struct sk_buff_head *rx_queue;
+>  	struct rxrpc_local *local = rcu_dereference_sk_user_data(udp_sk);
+> +	struct task_struct *io_thread = READ_ONCE(local->io_thread);
 
----
-base-commit: 62f92d634458a1e308bb699986b9147a6d670457
-change-id: 20240925-fix-postdiv-mask-ba47ecd23ea3
+Hi David,
 
-Best regards,
--- 
-Barnabás Czémán <barnabas.czeman@mainlining.org>
+The line above dereferences local.
+But the line below assumes that it may be NULL.
+This seems inconsistent.
 
+Flagged by Smatch.
+
+>  
+> -	if (unlikely(!local)) {
+> +	if (unlikely(!local || !io_thread)) {
+>  		kfree_skb(skb);
+>  		return 0;
+>  	}
 
