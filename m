@@ -1,107 +1,154 @@
-Return-Path: <linux-kernel+bounces-338294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB72B985600
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:02:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 966DF98561B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189071C20CC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:02:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB701F24264
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094DA158DC6;
-	Wed, 25 Sep 2024 09:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BDD15B111;
+	Wed, 25 Sep 2024 09:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i5d5PaEb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cLAfyS83"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DBE136E01
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B86E156257
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727254956; cv=none; b=gILsQYs2JuBOXMi44t0EhzGepQ2SZZDWnfz0u2sjq9kd5Rk++abDX0GERdY5sYg8VkizgWZA62eW0v9inIzr7g+l4Xvm2O74zXFs8CLvFGmx6gSQNklf723LvbanR/Q1FQMkZZb+4odCCHbA2Ts9LTZs4CEIvNeXQmjmct7G9zA=
+	t=1727255457; cv=none; b=gnuQUUdS5wOB1LhEYTJlNH/KE06iAhDq7ehuhggL71cl6+zpcYX6NZRGgm+QDKtRqD2WujV6mq6DsRdpTn9KWqvy+P9euGt87jAwCw0f/5dWOqd8YUDrqzII/SICIY38GXIGEN1flvbkMv4c84HXv8fO4RUOa86CPcK51EFI4fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727254956; c=relaxed/simple;
-	bh=yNvGv1QhYEnAeuF9G8eHDX2x7ouTcNwUvGFKsxZ3Oxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=de1F3kUO5fmF++8qh+qf7LkYcJz9QS3lamA8Af2X0P6KaLt7opAoxx7cdoZR3Z4j1Z1S1MEJoTSE/cOCAKqwuTSvrYflASeFbK/IqbxKwyiCOUIF7xS+nUXvstHUH1nzPQz6zZwilT76BtQxewfa3th89GJ1qjv6poT/JIHF9sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i5d5PaEb; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727254955; x=1758790955;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yNvGv1QhYEnAeuF9G8eHDX2x7ouTcNwUvGFKsxZ3Oxo=;
-  b=i5d5PaEbmr+DuYnHySI8OrGMb3x2caiDdzlR68O89rBAhCw8jP3gW07W
-   t4q8t9lMaHV6m9V11ifIY2+QRe+thNH7fPkNiBx7+hyJWJVVCJ1Mh5358
-   4kxQwicx0+5ehcrUaQMiEpzt6hzbh6avkvDIqiqDH+XfkveQfonWbmYrg
-   Ekt1OaSQ6MGhhEpWBom4RQv8kmvV829XS6y94xeaUDazpN4boE+fVkXhJ
-   oMrR9xh5jrAnn8SJtAHz8J+lCJlypIu1HAm9tRXn5SDxPLwJdGmMdNh++
-   KhOwKKTeO4TXV8sU6Y3A5C2KH9ltPjOCxFhJifNDUk3upSPR6E6O1v/yH
-   Q==;
-X-CSE-ConnectionGUID: 7hGUDrSMRx+s4X4J755W+w==
-X-CSE-MsgGUID: jYziVCbPQ/OWSFQFUML3cw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="26159025"
-X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
-   d="scan'208";a="26159025"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 02:02:35 -0700
-X-CSE-ConnectionGUID: byWFAAZhQ7i1X3I1OMgIiA==
-X-CSE-MsgGUID: ptNiu59rS9WZIrDu2HerIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
-   d="scan'208";a="109166660"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 02:02:32 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1stNuo-0000000Ckw8-1TMJ;
-	Wed, 25 Sep 2024 12:02:30 +0300
-Date: Wed, 25 Sep 2024 12:02:30 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v1 1/1] regmap-irq: Consistently use memset32() in
- regmap_irq_thread()
-Message-ID: <ZvPRpmaUuR3JlUYY@smile.fi.intel.com>
-References: <20240925082726.620622-1-andriy.shevchenko@linux.intel.com>
- <0b7b6ca3-b05b-40f2-86cf-083beb72727c@gmail.com>
+	s=arc-20240116; t=1727255457; c=relaxed/simple;
+	bh=qPOG89odr6nDTu/Y0IRoN41sQE1eJDpORZJc6ao2/mM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qpxHIp34D+jpEBQGYtvQ/BjrRGvUoBhNSAc7jYmgLIaQuvYgP762sesuKZomrJZ2UiRj2WgM7WmvwEuxGKMBa11MN1SJ6R6B23u6BxZOox1dRO+Vhy2v/mUTYkyMS4E6rME/UG0Sw0StUXUcenSLZEM8EVcGDHfJNgQjV1JOYro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cLAfyS83; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727255453;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oNcOfjKU7tZbJlgaRWEUdhjUY7VzCvgYazdTewJBeUM=;
+	b=cLAfyS83tgbMVyk6ddVbF2rKh47lmtTJCfz+5gcDdwzjDoHimv3u2jj2SireheVvE7JTHp
+	YcRsPu3P1ZhH9xJWe3kS2Jl7ek9FZEWgVxV+yjmvC8s7Ut9cH0dmhJEu71Bj+MafntYTrR
+	GdzoJTeSCgKbmjKsDDeNcXK9AzmHoHY=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <sfrench@samba.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tom Talpey <tom@talpey.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2] ksmbd: Annotate struct copychunk_ioctl_req with __counted_by_le()
+Date: Wed, 25 Sep 2024 11:03:13 +0200
+Message-ID: <20240925090313.22310-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b7b6ca3-b05b-40f2-86cf-083beb72727c@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Sep 25, 2024 at 11:55:51AM +0300, Matti Vaittinen wrote:
-> On 9/25/24 11:27, Andy Shevchenko wrote:
+Add the __counted_by_le compiler attribute to the flexible array member
+Chunks to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
 
-...
+Change the data type of the flexible array member Chunks from __u8[] to
+struct srv_copychunk[] for ChunkCount to match the number of elements in
+the Chunks array. (With __u8[], each srv_copychunk would occupy 24 array
+entries and the __counted_by compiler attribute wouldn't be applicable.)
 
-> >   		memset32(data->status_buf, GENMASK(31, 0), chip->num_regs);
+Use struct_size() to calculate the size of the copychunk_ioctl_req.
 
-> > -		memset(data->status_buf, 0, size);
-> > +		memset32(data->status_buf, 0, chip->num_regs);
+Read Chunks[0] after checking that ChunkCount is not 0.
 
-> Can we guarantee the sizeof(unsigned int) == sizeof(uint32_t) on all
-> supported architectures? (The status_buf is unsigned int, right?). If yes,
-> then this looks nice to me.
+Compile-tested only.
 
-Yes as long as we (Linux kernel) support only 32-bit and higher architectures.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+Changes in v2:
+- Change the data type of Chunks from __u8[] to struct srv_copychunk[]
+  as suggested by Tom Talpey
+- Use struct_size()
+- Link to v1: https://lore.kernel.org/linux-kernel/20240924102243.239811-2-thorsten.blum@linux.dev/
+---
+ fs/smb/server/smb2pdu.c |  5 ++---
+ fs/smb/server/smb2pdu.h | 14 +++++++-------
+ 2 files changed, 9 insertions(+), 10 deletions(-)
 
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 7121266daa02..62312c5e790e 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -7566,7 +7566,6 @@ static int fsctl_copychunk(struct ksmbd_work *work,
+ 	ci_rsp->TotalBytesWritten =
+ 		cpu_to_le32(ksmbd_server_side_copy_max_total_size());
+ 
+-	chunks = (struct srv_copychunk *)&ci_req->Chunks[0];
+ 	chunk_count = le32_to_cpu(ci_req->ChunkCount);
+ 	if (chunk_count == 0)
+ 		goto out;
+@@ -7574,12 +7573,12 @@ static int fsctl_copychunk(struct ksmbd_work *work,
+ 
+ 	/* verify the SRV_COPYCHUNK_COPY packet */
+ 	if (chunk_count > ksmbd_server_side_copy_max_chunk_count() ||
+-	    input_count < offsetof(struct copychunk_ioctl_req, Chunks) +
+-	     chunk_count * sizeof(struct srv_copychunk)) {
++	    input_count < struct_size(ci_req, Chunks, chunk_count)) {
+ 		rsp->hdr.Status = STATUS_INVALID_PARAMETER;
+ 		return -EINVAL;
+ 	}
+ 
++	chunks = &ci_req->Chunks[0];
+ 	for (i = 0; i < chunk_count; i++) {
+ 		if (le32_to_cpu(chunks[i].Length) == 0 ||
+ 		    le32_to_cpu(chunks[i].Length) > ksmbd_server_side_copy_max_chunk_size())
+diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
+index 73aff20e22d0..649dacf7e8c4 100644
+--- a/fs/smb/server/smb2pdu.h
++++ b/fs/smb/server/smb2pdu.h
+@@ -190,13 +190,6 @@ struct resume_key_ioctl_rsp {
+ 	__u8 Context[4]; /* ignored, Windows sets to 4 bytes of zero */
+ } __packed;
+ 
+-struct copychunk_ioctl_req {
+-	__le64 ResumeKey[3];
+-	__le32 ChunkCount;
+-	__le32 Reserved;
+-	__u8 Chunks[]; /* array of srv_copychunk */
+-} __packed;
+-
+ struct srv_copychunk {
+ 	__le64 SourceOffset;
+ 	__le64 TargetOffset;
+@@ -204,6 +197,13 @@ struct srv_copychunk {
+ 	__le32 Reserved;
+ } __packed;
+ 
++struct copychunk_ioctl_req {
++	__le64 ResumeKey[3];
++	__le32 ChunkCount;
++	__le32 Reserved;
++	struct srv_copychunk Chunks[] __counted_by_le(ChunkCount);
++} __packed;
++
+ struct copychunk_ioctl_rsp {
+ 	__le32 ChunksWritten;
+ 	__le32 ChunkBytesWritten;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.46.1
 
 
