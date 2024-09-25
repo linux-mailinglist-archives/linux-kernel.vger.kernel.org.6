@@ -1,131 +1,99 @@
-Return-Path: <linux-kernel+bounces-339451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7FD3986543
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:03:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEB75986545
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64384286A18
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:03:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A42071F23CA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A6F61FD8;
-	Wed, 25 Sep 2024 17:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05704644E;
+	Wed, 25 Sep 2024 17:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R4rqDgnq"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="d4IbJdFl"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C954834CC4
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF36E1F94C;
+	Wed, 25 Sep 2024 17:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727283809; cv=none; b=Se3NsCGUy14vwYMcBjAfyoBGiKRKANyZ9E7uwWzFX0EHMw0yXVWYJ5wTnjeHroHK91TlGFQmVcF2/kS2f9lKsxI7otMQnIsMFwpxigNGOGejfhPHUgAzEM44OHnaL+ifMUhB4zCMbZWLgGFDXcu6NH8XJEkesKMVl3aUemnIWVc=
+	t=1727283862; cv=none; b=Z/TXSnxbkzNmfiKl4RJCujPlyuwKLBwybF0QUTEDSg0u8gu6ewwAVjkOXQgHqeC3aUT6uzXyr1L6uA6Jx0t20tBrCEYnD61P3RAQMQEfMr3cZ4pr4eNXEMyUMYQojIQ/E7mQZA/ePcGZb1kedFI/tZBu4dSJNGEOAi4U7TNj4rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727283809; c=relaxed/simple;
-	bh=8+CiQ3ct7rP8E1uUkFTQatMNfRnyfIR+m5/LlxoWnro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PX80Zc3bqjUytCZ+k6aRqSLpvnjemp0nP+Bs3KwdMsU1Zu+om6Iy1A4vcsSncl3e4RLh1RRMc/y9L51cNEqBmnVCwnphVVcuUJK6t24RgrUTOSBE5z37C3B3v55wJOpGDBkPGdAxMSet3D8eKqZeJGrlCctExBT3jEjpE1rjlI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R4rqDgnq; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f8ca33ef19so632131fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:03:26 -0700 (PDT)
+	s=arc-20240116; t=1727283862; c=relaxed/simple;
+	bh=Bq5wCmhzzuQ7d/iEftzkFjM8U+0zxxmrIHVD5NJD+uU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BPMJWNWSZQpg2e3tvY+pZ9pj/8kZyCs3ygCPrhO9cpTP0VFoxJzmMzMPffUJ6sr35s5Jnd0y5SjTHvR3Lpwa5A9TJefwqhK3bLD1Je3OVS6X3Epg/zHa8WEFdzTkVXuXJsZ8S45Q1Or1jVN7XehC0zahLt3wxYzUM0gvC3Taz90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=d4IbJdFl; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-208cf673b8dso79535ad.3;
+        Wed, 25 Sep 2024 10:04:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727283805; x=1727888605; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j6Fg6bmoR8ixQy+AhumLhzrwdCnArsHCxqvb2WDz5gM=;
-        b=R4rqDgnqI/WXe9O4A0UlPLovLq8bhtsUZpYPGrNtekyRUSOfdZ40GJAWDH9qmLpVep
-         dxHJSDVK8hmIjwMpFRnT2yU/4tPIasDgifPs6i5L01Z/Z+VYoN59shrLrC4wAvX9Fx1z
-         jP9N4zUoZRZHgc4YXvpeVGw9U5+aDTiofJF0CVIfuTVk1Gxq++DSmClYUH7A2bgf2KHu
-         8V48i+FXPSh5UJ5yjeRG9xhEKsKZ78dzhmdjLVHpPwuOB+iESoF99O4zzU7uyhDFBIbt
-         z7R/DNOTia2EQhg8/QLswtcq9qpd5oTl8bq1NrTA0rVJXHqI2PRikDBqGFN7TnDCT+3r
-         goqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727283805; x=1727888605;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=googlemail.com; s=20230601; t=1727283860; x=1727888660; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j6Fg6bmoR8ixQy+AhumLhzrwdCnArsHCxqvb2WDz5gM=;
-        b=OZZuFQc797qE/5SJ8uGMS7yiuPuw47Ga2Dp54XFwYYnRHCPkF25fQPtXaigedg/vVz
-         oYUnEv0pXJWUs6iCg0ydYr2UIpb0p7EW/TfbIkbSzvWRtLbcxbcx05taLZsFozNA7V4z
-         3rHnE6El7ELnWWZ8LGJWcshfYdW7OwvTeJiTg2XY9Vh6gVpYwc8gYCXgSuZtzYD4DsIY
-         Byz7Ry0CLXtyVdtRatJFMVfC8kJDAmauznUq7cB61JE4uyiVTB2g74YB/UqlKD7nj9Ev
-         PPzNyXqYo1rdNspld0srER3xQOMs/cPorVFoDrWdWDiMnT0Lpnp6bTptXHdTCNvEq+em
-         r4jA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBShuM+7gA0aPpQMwOn/31AQzh9lBKvjRGS5ktRwBzb9VBrxcaRhQMg5dIE7K0tEBQOsWeN7Yk0BW+74g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfo8STWNeJ3o7IBwW6iXWZarOrDHHmQBBPO4EKfGr3ciCLsvjp
-	TISbUVRA6/gPz0QTiPmKp52MnJmdQohBkRE5Qhrz5ZJtB1Z9iAPMT9L+mN+XXd8=
-X-Google-Smtp-Source: AGHT+IHxEVAWh+SqVB2ZgG9Rr+GdG84Kf38DE8exr5lCzUK2QGxCZsyQeBBosbZOMBl1IwFN7iL+xw==
-X-Received: by 2002:a05:651c:2126:b0:2f7:94d9:426a with SMTP id 38308e7fff4ca-2f91507e2fdmr37353561fa.5.1727283804796;
-        Wed, 25 Sep 2024 10:03:24 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d283b661sm5555621fa.33.2024.09.25.10.03.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 10:03:22 -0700 (PDT)
-Date: Wed, 25 Sep 2024 20:03:19 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Cc: heikki.krogerus@linux.intel.com, tzungbi@kernel.org, jthies@google.com, 
-	pmalani@chromium.org, akuchynski@google.com, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] platform/chrome: cros_ec_typec: Disable auto_enter
-Message-ID: <vnemjw6uo3sydriabdrzwinbnam2xitrezrw3ztcymi63zakep@2rruplyjzuol>
-References: <20240925162513.435177-1-abhishekpandit@chromium.org>
- <20240925092505.8.Ic14738918e3d026fa2d85e95fb68f8e07a0828d0@changeid>
+        bh=Bq5wCmhzzuQ7d/iEftzkFjM8U+0zxxmrIHVD5NJD+uU=;
+        b=d4IbJdFl8kpehs+eIenEMBkwAESQ4MWEP1k8EMikaAAJ0Ba5Pa7TfEjFCmVW2NvjLr
+         tyBe/oRPCJ+laxnZQkI8Tk8KHaWKkXGhw6WZxVgiHuRiRJ6gGSVyke9a13k0lSIG8skz
+         c63TRPS+5d8PzLslbw8oXqUXe+944FRo3fpCV7eHfcFrDRtXKeCI7XphfutFHrr2X5yl
+         utIuvJW7XpTwMO0c2mrwPJTHE+d87GU9H8G7Yn/C8FjizNYsxitVptmZlqIwbRtyzEM6
+         R5kqeuQE25I9rm+Rgr51pJ1MZ/kSt6DrpD3adKFEFTj0XI8TIFwO2lnbJKCemxsqOhA7
+         d/xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727283860; x=1727888660;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bq5wCmhzzuQ7d/iEftzkFjM8U+0zxxmrIHVD5NJD+uU=;
+        b=fSu6Qab5bAwoQXTPUrdLgKf/DmV5/zPdMbMjAmO/YhOkJDptvpSjBrFIz8aFUX+w07
+         HCFrzBVTYkiVcPTBVjaxmsY3WqgMdFh6vyRUPTONEa/7OJLzmqoaW+MMWINx0Ga2pqSr
+         ySHtfvSl3yPw+XoMJ9DlzdOAB5eA6qq/8VrjscrZ/WY+FwGG7cQ5Y+QyrTmZIPbcEDW3
+         pQoKfO4Z/0birrf0s88JLVdMStaiH3qoL9UYVP/89OiG1ox/fb5r73VVjyKqvOXgvhDC
+         pVhN3oT/0ud/H86x3UfIbG3EECidK8bMvWnmqTFPx8rrwlBtEH6Sw8bQt6bmbvoOX+Z1
+         gtxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYXM3bZ5/24oICZEd2wjjsbCJsV8XQjfkvgWkqRI0d0tlZKJjml+8XcwBBOVuiIuVuZOMz8+fHPao=@vger.kernel.org, AJvYcCXxZEfvstbxOAdgJp1oJceQ/MLvraMnS9odugfk/Ag8aP2dMswo33hVYwdPAOO4Xf7Vbxil8zB8IMo5Ipab@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX6/2Q0OKDvlF9a4lZZPTfTi0Cm5sXxM8z6d6WVHRt0TE/uVN+
+	aJ9GocfxxBN4wZAdr9WdAOZ2iGZEvEgH6t1FxTxLbRhi8T7v4N3EmgTXoIlBlpeNd21jeOrCgwR
+	eY/Wjwtfh6stSbwx90zPDuZXcepxf1yQv
+X-Google-Smtp-Source: AGHT+IE2KICxen3r5RdUuJO0lNZf+001DnRTeqMDIWxZGbegnH0vvIeIp8h58FVyHhO5R+jUC0ikKFeuNZleClYHXmM=
+X-Received: by 2002:a17:902:f54e:b0:206:aac4:b844 with SMTP id
+ d9443c01a7336-20afc400e57mr56364895ad.6.1727283859982; Wed, 25 Sep 2024
+ 10:04:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925092505.8.Ic14738918e3d026fa2d85e95fb68f8e07a0828d0@changeid>
+References: <20240925-clk-meson8b-spinlock-v1-1-50b7f2d02d7d@baylibre.com>
+In-Reply-To: <20240925-clk-meson8b-spinlock-v1-1-50b7f2d02d7d@baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Wed, 25 Sep 2024 19:04:08 +0200
+Message-ID: <CAFBinCCMzxf-pskQBZRs10CRczYt0t09xS9Urpp6Cc3cyu+8jg@mail.gmail.com>
+Subject: Re: [PATCH] clk: meson: meson8b: remove spinlock
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 25, 2024 at 09:25:09AM GMT, Abhishek Pandit-Subedi wrote:
-> Altmodes with cros_ec are either automatically entered by the EC or
-> entered by typecd in userspace so we should not auto enter from the
-> kernel.
+On Wed, Sep 25, 2024 at 5:49=E2=80=AFPM Jerome Brunet <jbrunet@baylibre.com=
+> wrote:
+>
+> The spinlock in meson8b clock controller is now only protecting a call to
+> regmap_update_bits().
+>
+> The regmap API already has its own locking system so this spinlock
+> is redundant. Remove it.
+Thank you Jerome!
 
-This makes policy decision for the whole platform. Consider somebody
-running normal Linux distro on chromebooks. Can this be configured by
-the userspace itself?
-
-> 
-> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> ---
-> 
->  drivers/platform/chrome/cros_ec_typec.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-> index ec13d84d11b8..e06a0f2712ce 100644
-> --- a/drivers/platform/chrome/cros_ec_typec.c
-> +++ b/drivers/platform/chrome/cros_ec_typec.c
-> @@ -294,6 +294,7 @@ static int cros_typec_register_port_altmodes(struct cros_typec_data *typec,
->  	desc.svid = USB_TYPEC_DP_SID;
->  	desc.mode = USB_TYPEC_DP_MODE;
->  	desc.vdo = DP_PORT_VDO;
-> +	desc.no_auto_enter = true;
->  	amode = cros_typec_register_displayport(port, &desc,
->  						typec->ap_driven_altmode);
->  	if (IS_ERR(amode))
-> @@ -314,6 +315,7 @@ static int cros_typec_register_port_altmodes(struct cros_typec_data *typec,
->  		memset(&desc, 0, sizeof(desc));
->  		desc.svid = USB_TYPEC_TBT_SID;
->  		desc.mode = TYPEC_ANY_MODE;
-> +		desc.no_auto_enter = true;
->  		amode = cros_typec_register_thunderbolt(port, &desc);
->  		if (IS_ERR(amode))
->  			return PTR_ERR(amode);
-> -- 
-> 2.46.0.792.g87dc391469-goog
-> 
-
--- 
-With best wishes
-Dmitry
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
