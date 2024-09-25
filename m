@@ -1,137 +1,93 @@
-Return-Path: <linux-kernel+bounces-339439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E9C986513
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:44:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C71986515
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01587B22732
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:44:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8A81F25F17
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140A261FDF;
-	Wed, 25 Sep 2024 16:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FE352F76;
+	Wed, 25 Sep 2024 16:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y/uuYsY2"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1ruB+AV"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30AA482EB
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573F83D982;
+	Wed, 25 Sep 2024 16:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727282667; cv=none; b=m3eaAq+m8gBJDlV0Hod6PSKwU3tibgQq+Vr2lxaGVtPnkesTSQAShZgh1ZRfM6DYclfS1DTHAWF0eYHMbMyiMTbK7HfjjMNSZNW3XRBz6lRlEaKusTs44KMZQHAFE9rWeybWrIsKvgEg1YrGtOzZyLIrKQ7TADK30GzyF/K+btM=
+	t=1727282697; cv=none; b=mR4YKM8UwAja53dK07YzM/9X7D/My3KMGZesn/NVJHQG7BFTrGb5nUVnLu9Ro3m/n9UL83ydBTgafowcbYJoONLqhGi+hdw1CqsYGcrXQJYAaXktZYMKw69oRhrqIMxYIIf4e22CollkWOWoAjEaTKW2xi5VIp+U7/jlXqlo5JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727282667; c=relaxed/simple;
-	bh=TshH7x9zoqiXs2k51eKLvVSOTC5Sb2wJvifrkksRdi8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wu/eoLag3R7BcmgYUlLSxXqQUEOGLXuYSaAHTnB9ZM5fQEydfLX7l44/J948FcDCni+gRcpybPUL/iYGl8PF+UaiO4qk7V/IoTgLfEdztB+f2MarsetEkj2MnKC8WxGPk5I6c1wUqp4cG6YxVTBNsWYKi0Atvfv9UjBnsxSXJEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y/uuYsY2; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53653ee23adso44482e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:44:25 -0700 (PDT)
+	s=arc-20240116; t=1727282697; c=relaxed/simple;
+	bh=e4mIbPeUi4IIJOjjjTHV7QDYIBnrUl904pw7QZo72Do=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eCaJEo4+pnuNb0T6DwzONLNSpb4RpP9pV7ZABB109FXHkiNQIBQAGWLqsOyPzxAh1IC5QkrWauqOcb+Vz7UU8gcJwxxjZ1syq8wUIElsRyfEe5we7VDa5DFSAx1ZpeVwHJbOuPje4MQbR4ed/egMFfil0j0MJk2d08U9G5Ty8zQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1ruB+AV; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso18228966b.0;
+        Wed, 25 Sep 2024 09:44:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727282664; x=1727887464; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ul25A0C13KzF8aLZJHoNmg+VKjysDsNktaX7/WFp0nk=;
-        b=y/uuYsY2s01/ZZDQggPHpt1J+xhCnDqTDtOQgOEK1Wjz4s13q4YWmXOZ1o/5ZjeAN/
-         Bxvdeqh8B9Pg7b/OVGvZ7Z2lvm/2gennGfq3OLOrOrFvti2c8gv+lNrM19Cax4IuCZhb
-         WLTM3FNbkBxWzswKn7rUbLyDedHLeIS5JJLG3vozl5myggFVibWECPTbCKhpoNxIRNzw
-         qlTjoepXSMyBrZC8dJv5v1YTT0f+8Hk8t4kR+AEdS45kg2PAm8XpiSlCjY//cvw9GPzg
-         VyzcFb1ZlkhSdZVSoVQvXiSq0LootM2ENxOFrp00eRu70jTh1X72SsMrPyI/kJLy3s+N
-         v4rg==
+        d=gmail.com; s=20230601; t=1727282694; x=1727887494; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e4mIbPeUi4IIJOjjjTHV7QDYIBnrUl904pw7QZo72Do=;
+        b=m1ruB+AVoKzOao9Hy9/n8UgYc+FUunsucla8IiMoYegXXM70pDEF8jiUZ9Y6QKzIAN
+         FxBCFS/lyskFfNZdMYeQtEv5ADbc8PiNSmMxn0R2FsGhxsqcFqxTlLvKa7zPRboaxUDL
+         iVABgZA2cr+OnWnjxcRAfAgG4V8+AduPegIss7ib/KD8XQlhEUOaQZElNXdzVROUjdT7
+         QjGWK8o6ShOSTb9jlqbjqSsb85jXLvxKhzLc1b7aLn7rImhgFYoGH/ape/KpGj0y/m2l
+         VWaDcCqlJkNcU1UOJLfqN00hLr2GDdRpeITwqEd++TuMqAIdrnp5ejPh68smaxDQu6Cm
+         fFDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727282664; x=1727887464;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1727282694; x=1727887494;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ul25A0C13KzF8aLZJHoNmg+VKjysDsNktaX7/WFp0nk=;
-        b=fNdY6SPFj9vJz3eozk+9aZ+N+9Ug2tQKdorlEOsEq8k31CW4sz1cJwAvZKp2xzmQZ8
-         R+1bXKKiAe2saSIOPGXypNG2Q9hlyXfEdCScSCufybdkQZ/Xa10e+hmtwfVdsgb2uaKJ
-         HNqsBIO4j88X2njRoTDn4YvFTzR9U9LcdMrOi5909QXA0NoBXQpp1v5RuaJN62vlCDZ6
-         0YM4//pVgfJ1Fr7TN5LVmlgxV3NRzjC3GayRJa5VSUVTeg0tfmIrzzt66D2raJpeHdgg
-         Y2p3D3tgnaeh12o/FLq7QB9OrIVC5S/YYPZYrleWCIHuNihKd7d2t/o5VdWdRDNZeR/7
-         /XeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgJLBjNzBPe/hH6mSfn7bvkX7971lTsJPMf0fgZK0LNtV7suATx+PbW/3NLiowIYFVSm69tsmU7UIS5pg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLG1AEFulPljbNp+A8SzEklraqGQwY1e2EGkFL4WWIcoU6v0zN
-	1D6MosVsnvVg0pZr7Q02yqQ9ke029y5idohjdKT8J8ardY+1CF73PNJvn0GI9yc=
-X-Google-Smtp-Source: AGHT+IEsOyU76YbfaMTTTpyrt+nka0vAi+uaa31hAz3V96wX3k54ZPs/xtWgUFYWtMGEK/sQyKgZtg==
-X-Received: by 2002:a05:6512:3981:b0:534:3746:c623 with SMTP id 2adb3069b0e04-53877564ad0mr2258741e87.55.1727282663591;
-        Wed, 25 Sep 2024 09:44:23 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a864898asm566022e87.189.2024.09.25.09.44.21
+        bh=e4mIbPeUi4IIJOjjjTHV7QDYIBnrUl904pw7QZo72Do=;
+        b=Zp7uq3pmxd8piIOY5QXGc6xb1pYFYy6wtjMqNkPY6ASVqjjBW3QSSQ+IUcKO+hbPal
+         j9WyQZQa7FRBkZ6F0pYkH1TfnGcLz0IwT5hg1a8zIyZMbvesAIxeYRd+klimmnPhuGUa
+         N3dubz7fMh6aysEUNs7r9QNsUI0DZSAHIg/RNnmwtHVdNZWtWWsjbHruGx73UYfIgjA/
+         zC+QrAWkhRK4FGLIO5Vbb09dshq53Igy0n24RP/ys0rfioi+rL8gFpjLko//d2J4xlE3
+         4wDhfuBvBl3lEtqDS140NrFATsfbAIzyP+pTwgxqev7UXZPQ+Er8nuTONdi+lWaVTO0V
+         mi2A==
+X-Forwarded-Encrypted: i=1; AJvYcCU4fflq5tTwMelpxgmtRxebKTFLCFft2awU0m7GTI58BYoMhOihUCzFoWWdG1SJa0osid/DhUL2b5Kuw9/V@vger.kernel.org, AJvYcCWYBIrPbSmVgrDZu3X/FeSnUOBv2xpi852Ov3tCIbEB4wvJawhN1c5PvnuDJvyL75F7iv37ahFixygEeDbB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIU4kyC/qgxzOKCcZy4z7jQ091yuXCivq+wQbLvNbGAVOfBMXi
+	Bw0/GllkceSGKaLhpA3ILY+qW7iUEI4zFUldQEiA26OnQxv8oRSrMwm7ZOI=
+X-Google-Smtp-Source: AGHT+IG9D0LDfzS3VIl5vBz7iU9wg9X0r6ayH9AnEK8ZPj9L0m8niTNMc6lMyYGHiic4SRAbk1HcFQ==
+X-Received: by 2002:a17:907:f1aa:b0:a8d:4e69:4030 with SMTP id a640c23a62f3a-a93b15f929cmr31248766b.19.1727282694305;
+        Wed, 25 Sep 2024 09:44:54 -0700 (PDT)
+Received: from p183 ([46.53.252.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f36369sm228320066b.42.2024.09.25.09.44.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 09:44:22 -0700 (PDT)
-Date: Wed, 25 Sep 2024 19:44:20 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Fix pll post div mask when
- width is not set
-Message-ID: <jsxbyzdamrgrwob2hqzk2ljgu3o6aoyjd42kzyqbvi64dopicl@y4wgaviudiud>
-References: <20240925-fix-postdiv-mask-v1-1-f70ba55f415e@mainlining.org>
+        Wed, 25 Sep 2024 09:44:54 -0700 (PDT)
+Date: Wed, 25 Sep 2024 19:44:51 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Tycho Andersen <tycho@tycho.pizza>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
+Message-ID: <d559c6d7-5f69-4e86-8616-11d1718ae782@p183>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240925-fix-postdiv-mask-v1-1-f70ba55f415e@mainlining.org>
 
-On Wed, Sep 25, 2024 at 06:09:39PM GMT, Barnabás Czémán wrote:
-> Many qcom clock drivers do not have .width set. In that case value of
-> (p)->width - 1 will be negative which breaks clock tree. Fix this
-> by checking if width is zero, and pass 0 to GENMASK if that's the case.
-> 
-> Fixes: 2c4553e6c485 ("clk: qcom: clk-alpha-pll: Fix the pll post div mask")
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index f9105443d7dbb104e3cb091e59f43df25999f8b3..1f914bc0af5449ed1fb545d850607138a06fab1a 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -40,7 +40,7 @@
->  
->  #define PLL_USER_CTL(p)		((p)->offset + (p)->regs[PLL_OFF_USER_CTL])
->  # define PLL_POST_DIV_SHIFT	8
-> -# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width - 1, 0)
-> +# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width ? (p)->width - 1 : 0, 0)
+> #define AT_EXEC_REASONABLE_COMM 0x200
 
-I think the actual problem is in the different commit. Commit
-1c3541145cbf ("clk: qcom: support for 2 bit PLL post divider") made
-width required, but didn't document it and we did not follow that for a
-significant amount of PLLs.
-
-I think a proper fix should be to return 0xf mask if p->width is 0. In
-other words, p->width ? p->width-1 : 3
-
->  # define PLL_ALPHA_MSB		BIT(15)
->  # define PLL_ALPHA_EN		BIT(24)
->  # define PLL_ALPHA_MODE		BIT(25)
-> 
-> ---
-> base-commit: 62f92d634458a1e308bb699986b9147a6d670457
-> change-id: 20240925-fix-postdiv-mask-ba47ecd23ea3
-> 
-> Best regards,
-> -- 
-> Barnabás Czémán <barnabas.czeman@mainlining.org>
-> 
-
--- 
-With best wishes
-Dmitry
+Please call this AT_ARGV0_COMM or something like that. "Reasonable" is quite
+meaningless word by itself.
 
