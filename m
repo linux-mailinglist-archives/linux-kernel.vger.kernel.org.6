@@ -1,162 +1,148 @@
-Return-Path: <linux-kernel+bounces-339185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55298986130
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:42:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DAC1986134
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A4311F26371
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:42:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24670282649
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C643C8D1;
-	Wed, 25 Sep 2024 14:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAF719047F;
+	Wed, 25 Sep 2024 14:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtDLjpX8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jm2x4cJD"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79762172BDF;
-	Wed, 25 Sep 2024 14:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE339190067
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727272902; cv=none; b=b1udjEM7Zr27tbXAtRgk99IXGY79oly3oKtva/6vzl66En80j0YkPdTFQkcqbu5FoXxBPllclUNuKhsRq8O86ySmjZsEUnkvxI9P18vQ3v3a9LR1lgUf4Jj6H3IeduleObBFVnFN3howG7IzzZHAXf7N55y2219p8WJWYs1CHq0=
+	t=1727272941; cv=none; b=ipGa1B3gBmY+1KKb0Pf4tD6bkQI1inSzEuLc6w5Z5Mee85ZDnVc/TK8dWjV+Vf8rjkaa3pjscvHEFLVDh/epsv2m2kCR+xJeLXjBOj6gkB0EDtG7oh14O9I2TYh6DykFllXAt5mXETKOeILFpJ63dnZ2FJ9SBcZRSyIlCLeONUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727272902; c=relaxed/simple;
-	bh=zzbVxj6ilX+D15ESDzZEfJp/XuGvGmBRWmWm+mk8m5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=neKF0H2IXtriOoO8mIFTTnISsUsRlFCW2G/dHf/jlaa4EAzyBRZWD2vY9LCVFlimvXhx6Dk39NvtLCcRqRiZ6sq4E97qsp0B2OpnX5eAe8EhApHL4vHbTAG06iCeyveHGnjHaaoTQrJofPNpmj987WNS1EZ15pSvGwjVxa+Qggo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtDLjpX8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69C58C4CEC3;
-	Wed, 25 Sep 2024 14:01:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727272902;
-	bh=zzbVxj6ilX+D15ESDzZEfJp/XuGvGmBRWmWm+mk8m5Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gtDLjpX8MjT01xyRdsSoGA4wijV0ZVDv4pzuiRlh/qehfTaWXUh3MlhgB8zHAjmk+
-	 TIiwl5ils+CsyqSbH+6nC/dFjOnhCF53A4OQKBai3s8zBlz9Y45039zULhlVSF4RcE
-	 Ak9zduSGrOAklZK3mZH1nT/ZJNm/9E/My6eR4E19XMBasW9bnAnerBbZLbEO28SVoj
-	 dhaKNi6J/UVDy90bxREa/p7fJIqZ6eplhtNPOr3yp8eqZYfq68dd3WcbZSmTkMFHLi
-	 IIVFu6WcCTfv1ePzjL+/fL35yPfQWNpYr6czRSo9MOjZ8JP9VHpSX5UI+ITWj5c+lf
-	 ErPku1QY+/H4g==
-Message-ID: <5a4a80e7-b6dc-4c01-a16d-ed8ea1aefe44@kernel.org>
-Date: Wed, 25 Sep 2024 16:01:35 +0200
+	s=arc-20240116; t=1727272941; c=relaxed/simple;
+	bh=8YDbIe30UvCTr+iYs9UYlXuVaHXcwLqJ6aCT2H4HVPQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NZG2S28X0qt9qv0CGGLJ5GgG0RxTSGQANRZXtZ6SskO4VvQuP93R3r13XiYFcPcUBs6X8zuWWbwfOQXDhdnlx78mckfpQ9qj0sYeeSkTo1HCFNlcaHS6zDcY/BVa88/yI0b7r2A1PNPtVx1x7fNTNquPqjqOCa9rBSZS9m5hqt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jm2x4cJD; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e1a9dc3efc1so6834022276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:02:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727272939; x=1727877739; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ToUKIzEuriYR9o6QD0qmgl4Fmelj6t2JR4wuG3YJ1Ec=;
+        b=Jm2x4cJDhL9aeCvoBj26hX7AJYtpH28Rw6yhcsDcFUtiyoskD4xT/cVvWWm9k4wHNL
+         ytsm7ISRQritfJidLUZBAbALxSZu5/djTbg5P/KKe/LfNJCmNiiBIdu2nJc5kcWCm7xD
+         HkbEfW38ePft7IMtJFF06W1vT3gnWHtwsUBlmwbwAekUpon7b/hZjLM1LGD84tUOEarL
+         pELarkq7fhcdfw2DK1zgUWeFxLwaeWwLYHcMKgquR4Uj3oIjByZFzaMFruu1lRRuaVVI
+         F8akQ1LfsllfeUk6dU/Am8Vv7EPdP/MiGm7HXYsZCqBvMFnXkvi24Wo8gF1YubBHd57w
+         +efA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727272939; x=1727877739;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ToUKIzEuriYR9o6QD0qmgl4Fmelj6t2JR4wuG3YJ1Ec=;
+        b=wdSR9wgwM7I1EAOEC47CJ6MBTVUPuWNAgSa9ATcpgVkNikOOOv9PGjjP8Z3oB07BiQ
+         F+ADtKRXwUxP+bK2w+1UDM3qMQfbEGqIsWqYHmZTi1WG8X9rC2822LHYC/cfVtHMO0ut
+         F807sguV1oQhqgBEvesZObNkSdgnX8EXd9SGWeuyMJ31FQ4VSER4Y8h+ioXUQnF6AtAP
+         XcZVC1EO+q2CShffnbfO6M5dElGYualQ58vUfX1NBQ27fyxDIkEf9bjg7Gvr+eZVoEns
+         0xCsntvtf80f4S1K9n2kOFaI3qeBSS9vM6qR/G89Flm21JRM02tMuqZgrJ/HWp5Mqbgu
+         M6Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0UYPoZ+D+phF+0oIu2TGXwD620Jxcafx00GLcCfGBWRZgKV2wv7tkf1dqAMshfkdqicltujXlAJYA4UA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZknHg/7470pU34nmgesCJsr87f2ulnhSA3/qHWWXSa7HzQ3aw
+	BO9uOhI5m8zrVTsArJNunphQ3q+fCEOvLaFwEEWNfJBduAdMdvO5lAhnPkGX9CPpD0ZdvaoWkiu
+	3AQ7NJgAlI7An9zdGSCxadCXtuftBFtOLXPCygA==
+X-Google-Smtp-Source: AGHT+IE841pjxIKVha/+JpcEn2ee0Lx4ty464a7C8jVO8vOObnE+8Yr/dOWMzAzJZ++Do5wiVDiWTFPS1iajgW2vevE=
+X-Received: by 2002:a05:690c:67c7:b0:6dd:bcfd:f168 with SMTP id
+ 00721157ae682-6e21d833475mr25994197b3.18.1727272938607; Wed, 25 Sep 2024
+ 07:02:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] Add initial support for QCS8300 SoC and QCS8300
- RIDE board
-To: Jingyi Wang <quic_jingyw@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>
-Cc: quic_tengfan@quicinc.com, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, quic_tingweiz@quicinc.com,
- quic_aiquny@quicinc.com, Zhenhua Huang <quic_zhenhuah@quicinc.com>,
- Xin Liu <quic_liuxin@quicinc.com>, Kyle Deng <quic_chunkaid@quicinc.com>,
- Tingguo Cheng <quic_tingguoc@quicinc.com>,
- Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-References: <20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240826081900.2284-1-liulei.rjpt@vivo.com>
+In-Reply-To: <20240826081900.2284-1-liulei.rjpt@vivo.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 25 Sep 2024 16:01:41 +0200
+Message-ID: <CAPDyKFqJAwr7S9nMywnEica77+UeT9pbbcZ05g7+xmT_1Xtd7Q@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] usb drivers use devm_clk_get_enabled() helpers
+To: Lei Liu <liulei.rjpt@vivo.com>
+Cc: Neal Liu <neal_liu@aspeedtech.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Daniel Mack <daniel@zonque.org>, 
+	Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
+	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
+	Bin Liu <b-liu@ti.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 25/09/2024 12:43, Jingyi Wang wrote:
-> Introduce the Device Tree for the QCS8300 platform.
-> 
-> Features added and enabled:
-> - CPUs with PSCI idle states
-> - Interrupt-controller with PDC wakeup support
-> - Timers, TCSR Clock Controllers
-> - Reserved Shared memory
-> - GCC and RPMHCC
-> - TLMM
-> - Interconnect
-> - QuP with uart
-> - SMMU
-> - QFPROM
-> - Rpmhpd power controller
-> - UFS
-> - Inter-Processor Communication Controller
-> - SRAM
-> - Remoteprocs including ADSP,CDSP and GPDSP
-> - BWMONs
-> 
-> binding dependencies:
-> - remoteproc: https://lore.kernel.org/linux-arm-msm/20240925-qcs8300_remoteproc_binding-v3-1-21b0c52b142b@quicinc.com/
-> - ufs-phy: https://lore.kernel.org/linux-arm-msm/20240925-qcs8300_ufs_phy_binding-v3-1-c1eb5c393b09@quicinc.com/
-> - ufs-controller: https://lore.kernel.org/all/20240911-qcs8300_ufs_binding-v2-1-68bb66d48730@quicinc.com/ - Reviewed
-> - smmu: https://lore.kernel.org/all/20240911-qcs8300_smmu_binding-v2-1-f53dd9c047ba@quicinc.com/ - Applied
-> - ipcc: https://lore.kernel.org/all/20240911-qcs8300_ipcc_binding-v2-1-ca15326c5d0f@quicinc.com/ - Applied
-> - qfprom: https://lore.kernel.org/all/20240911-qcs8300_qfprom_binding-v2-1-d39226887493@quicinc.com/ - Reviewed
-> - tcsr: https://lore.kernel.org/all/20240911-qcs8300_tcsr_binding-v2-1-66eb5336b8d1@quicinc.com/ - Reviewed
-> - rmphpd: https://lore.kernel.org/all/20240920-add_qcs8300_powerdomains_driver_support-v1-1-96a2a08841da@quicinc.com/ - Reviewed
-> - bwmon: https://lore.kernel.org/all/20240925-qcs8300_bwmon_binding-v1-1-a7bfd94b2854@quicinc.com/ - Reviewed
-> - others: https://lore.kernel.org/all/20240911-qcs8300_binding-v2-0-de8641b3eaa1@quicinc.com/ - Reviewed
+On Mon, 26 Aug 2024 at 10:19, Lei Liu <liulei.rjpt@vivo.com> wrote:
+>
+> The devm_clk_get_enabled() helpers:
+>     - call devm_clk_get()
+>     - call clk_prepare_enable() and register what is needed in order to
+>      call clk_disable_unprepare() when needed, as a managed resource.
+>
+> This simplifies the code and avoids calls to clk_disable_unprepare().
 
-Number of new soc patchsets from Qualcomm is quite big recently, so I
-feel like repeating same feedback to same people... although maybe these
-are different threads.
+As I stated on another thread too [1], using devm_clk_get_enabled()
+isn't solely a nice cleanup of the code. It may actually introduce a
+change in behaviour. Therefore, I would not recommend applying that
+kind of changes, unless some of the maintainers acks it or it gets
+tested on real HW.
 
-Anyway, please combine the series targetting the same subsystem. The
-subsystem here is Qcom SoC, so the series above are part of this.
+Kind regards
+Uffe
 
-We requested split per subsystem, not per patch.
+[1]
+https://lore.kernel.org/all/20240827074857.2671808-1-xirui.zhang@vivo.com/
 
-Best regards,
-Krzysztof
-
+>
+> ---
+> version 3 changes
+> Fix the email thread.
+>
+> ---
+> version 2 changes
+>
+> The files ux500.c, mpfs.c, and pxa27x_udc.c have incorrect usage of
+> certain interfaces due to the lack of synchronization during the
+> commit updates. These issues have been corrected in the v1 version.
+>
+> 1.ux500: Incorrect usage of clk_prepare_enable() should be corrected to
+>   devm_clk_get_enabled().
+> 2.mpfs: Incorrect usage of devm_clk_get_enable() should be corrected to
+>   devm_clk_get_enabled().
+> 3.pxa27x_udc: Incorrect usage of clk_prepare_enable() should be
+>   corrected to devm_clk_get_enabled().
+>
+> Lei Liu (5):
+>   usb: aspeed_udc: Use devm_clk_get_enabled() helpers
+>   usb: pxa27x_udc: Use devm_clk_get_enabled() helpers
+>   usb: r8a66597-udc: Use devm_clk_get_enabled() helpers
+>   usb: mpfs: Use devm_clk_get_enabled() helpers
+>   sb: ux500: Use devm_clk_get_enabled() helpers
+>
+>  drivers/usb/gadget/udc/aspeed_udc.c   |  9 +--------
+>  drivers/usb/gadget/udc/pxa27x_udc.c   |  6 +-----
+>  drivers/usb/gadget/udc/r8a66597-udc.c | 16 ++++------------
+>  drivers/usb/musb/mpfs.c               | 22 ++++++----------------
+>  drivers/usb/musb/ux500.c              | 18 ++++--------------
+>  5 files changed, 16 insertions(+), 55 deletions(-)
+>
+> --
+> 2.34.1
+>
+>
 
