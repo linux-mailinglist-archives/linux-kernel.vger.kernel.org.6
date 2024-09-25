@@ -1,215 +1,125 @@
-Return-Path: <linux-kernel+bounces-338362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2EFA9856E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:05:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 336B59856E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F33BB24B17
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:05:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D091E1F211DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA5115E5CC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B67415E5B5;
 	Wed, 25 Sep 2024 10:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IivE4xrD"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1394C3C099;
-	Wed, 25 Sep 2024 10:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A3614AD19;
+	Wed, 25 Sep 2024 10:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727258737; cv=none; b=dBcx1XDZCVrRrEZTPDCGxGxoh1AOSN4nW/PHIWqA/R+k/zwiUiVkfKEXBPbmW2hYscOlfdmrkzSfT7L2ZScDceU74gzVRXFS9lDXQeXD1/m5L+MDzmoOir5PtlsGqBqWUw6w96ZTGegURSE64LLpwCcwzFkoPR66Io7DhK557EQ=
+	t=1727258738; cv=none; b=GV+wh+lXihvi/Qi+kR/xd0v/Jkf3IMMXddkBsJGci5n+uecigo29P1hGEO+b/TkNZgAqNyeMMWQ7IIECv2+rASpgyorZNxVv4QaleQUcYUUH0yf5wf30GE9AtfZ8qbfbpmAO1YX+RUz/eYFuCD8pedqPPEZQh6RE3lcOA9bshCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727258737; c=relaxed/simple;
-	bh=PMGr4ub6WyUP7/n9CvwU9x+gaOcYwN+0wSqoGS1kqJA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sj0l8U6Jbdzfx/nzd5fros+08veqLW4gpfbQSIG1l5KA4aKZRdVPXfy0vN8WF6t37aZKmzGm/xbjQhypyrGdX9nTdYzmUNrzufFw1QZU12Df1v2fz1LAGjciq1k/jKH74fikVDDXh/wPv+e0KUZgSQD6jI/rQo/9SLILng9r/hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IivE4xrD; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb60aff1eso65018285e9.0;
-        Wed, 25 Sep 2024 03:05:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727258734; x=1727863534; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=l9MaGQVXr2fBdIQIs313PlGTY+3M+szp1AAgBMhPxZg=;
-        b=IivE4xrDigE29PrlNcqiulK31HA9IcbbN3+cS/EpnlfM0cmCVd//6K7ROV6+WKoAty
-         159YERCDoeEZhH54n1QQtSDjI9n9qWpBoYUNGDyJD5hC0ENHgTdVTjWFV5liye8OTqsZ
-         MsiyFLAv06gwnQrbrAeFfgpkfanEuZZUzukRrNCpgK6Pi7/o0HUwq6q8hzIu4WRyW5lB
-         3DCzm9BQ2jvENwVZbWS7k2iHEgC0cofuT4JPjQRzjTtRG4FJ1Sq6Mh0JWTuOqUECxFPV
-         JQ3/aWt+i9Cd9lGjvEnAH9CF/XykSTHuBhqnxe6o4FVIEF4aCjRy1j3JmjGjaSoXPyKk
-         QJOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727258734; x=1727863534;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l9MaGQVXr2fBdIQIs313PlGTY+3M+szp1AAgBMhPxZg=;
-        b=pBrIdq/iZE5j84uDhbxNHI7/bPor68L3mrY2ddkRyVQhsKXuo5bWGWtSyg+ezQklnE
-         4Q6wYQIZ+S2aOvgsm1Gb+f+RZPYnWU3GhUWhhxi4EESEMLhSK5MjFuCprt7w8Lmic/5O
-         liw24pyvPLTSzeGF7YLs2b7iQbPL9vUR2OWDydObjF+0uILTdIfk5Q4bdz6bZJE1mrED
-         vE+pSWXSqFqwxDTkluQKag2pS2zciuihVMx83F7ImYPpfwkS4JQDFyZjKKWfbQ+oYcsA
-         liNAR+IsnN2LAxs/4iGrQUmxN1KSlbetxgCxCjGzPeDKT2N85vtfdwtf+A+A0XVsxXqb
-         PUnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQu2PqGcCl3TQeqeS44FSZc7oFHkhH+wN7nlFhaXH51TXxMi6rB/Z2G6ZoFqUMmcFJC+MDL0Hhqm3R@vger.kernel.org, AJvYcCUpBbtvr4+nG6GUFPOuAtXFtCS5AHvW1S607MicZ+T1xZTbGb+fCmL5wrzPRD6oACjkeOnqJ8MATVrTM5bNwQ==@vger.kernel.org, AJvYcCVsQ7G+U5GyH5o+VvSd+Q+pJgiER2di0M3gVJjaIlrRRnzXrubwJSuVwtVoh56B8DJcwBxdkAGpVcKzWa/O@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnZLtjXF/LPSh5qMLOq6IEwS0kDibbvKRHH3QY5Rufr/pwMCNs
-	ktucsFiAnlJzMNCr3uajFs3ibw0UbCUbLQeDVC635hh8CXsLEtwOlhYqdkVyYUPVKGGWuDLff67
-	wKM2azZPRvBfCt9fQWRkufbMN5FkV4ZtCjvI3t+A=
-X-Google-Smtp-Source: AGHT+IFD3rqkaxcetw18lKnk+UeskSAtgzDjLPLjES5a0Y5ajqEQUC4mAc1J7/76mm4qltVqWD6J7AJqjasPotKXRBQ=
-X-Received: by 2002:adf:fc08:0:b0:374:c847:86d with SMTP id
- ffacd0b85a97d-37cc2467801mr1388393f8f.16.1727258733767; Wed, 25 Sep 2024
- 03:05:33 -0700 (PDT)
+	s=arc-20240116; t=1727258738; c=relaxed/simple;
+	bh=qGQI1uV9gNC0+wFAUvqgZd/1D5PbfUTEFlfPnBq4z74=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K3CqNewdwzYmZOrjtjj0eMBG/5PwdrY1ehWrMcLkM3YEhl7VDkIjspmNbyNjSSbuyvDk2Vda22Gfj6siCZUu6Kbpdkyx/EB9t1IphrEiRJPWijw6n51uTj4LXpm1EbUD+d9Oga4nfCtVFWq/Dk5TdDvJn1Dsb+fZrvg65+KyOu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XDC664Lgnz9sSK;
+	Wed, 25 Sep 2024 12:05:34 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id tdRuDw19ZA5l; Wed, 25 Sep 2024 12:05:34 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XDC663XQwz9sRr;
+	Wed, 25 Sep 2024 12:05:34 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 66F1B8B76E;
+	Wed, 25 Sep 2024 12:05:34 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id PJHxtpbIOOEt; Wed, 25 Sep 2024 12:05:34 +0200 (CEST)
+Received: from [192.168.232.90] (PO27091.IDSI0.si.c-s.fr [192.168.232.90])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id CBE218B763;
+	Wed, 25 Sep 2024 12:05:33 +0200 (CEST)
+Message-ID: <f40ea8bf-0862-41a7-af19-70bfbd838568@csgroup.eu>
+Date: Wed, 25 Sep 2024 12:05:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240921163455.12577-1-alex.vinarskis@gmail.com>
- <20240921163455.12577-4-alex.vinarskis@gmail.com> <effqouni7fmzpag6g6e2t6uq4tltjiufynjhym3rmrpylezydt@ipqglqizisqr>
-In-Reply-To: <effqouni7fmzpag6g6e2t6uq4tltjiufynjhym3rmrpylezydt@ipqglqizisqr>
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Date: Wed, 25 Sep 2024 12:05:22 +0200
-Message-ID: <CAMcHhXp=nw8XXNFdw+a7+qcMbJVvkqzBcgZo0fombokBj2tD2Q@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: Add support for X1-based Dell
- XPS 13 9345
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Rob Clark <robdclark@gmail.com>, Peter de Kraker <peterdekraker@umito.nl>
-Content-Type: text/plain; charset="UTF-8"
-
-On Wed, 25 Sept 2024 at 00:15, Bjorn Andersson <andersson@kernel.org> wrote:
->
-> On Sat, Sep 21, 2024 at 06:33:33PM GMT, Aleksandrs Vinarskis wrote:
-> > Initial support for Dell XPS 9345 13" 2024 (Tributo) based on X1E80100.
->
-> Very nice.
->
-> >
-> > Working:
-> > * Touchpad
-> > * Keyboard (only post suspend&resume, i2c-hid patch WIP)
->
-> Hitting scroll lock/unlock on a USB keyboard once fixes this issue for
-> me as well. Looking forward to your WIP patch.
-
-Thanks for your review.
-Just submitted the series [3].
-
->
-> > * eDP, with brightness control
-> > * NVME
-> > * USB Type-C ports in USB2/USB3 (one orientation)
-> > * WiFi
-> > * GPU/aDSP/cDSP firmware loading (requires binaries from Windows)
-> > * Lid switch
-> > * Sleep/suspend, nothing visibly broken on resume
-> >
-> > Not working:
-> > * Speakers (WIP, pin guessing, x4 WSA8845)
-> > * Microphones (WIP, pin guessing)
-> > * Fingerprint Reader (WIP, USB MP with ptn3222)
-> > * USB as DP/USB3 (WIP, PS8830 based)
-> > * Camera
-> > * Battery Info
->
-> Adding the ADSP firmware gave me both battery status and info, but
-> perhaps you're hitting the previously reported issue in pmic_glink?
->
-
-Could you please share a bug report for the mentioned issue?
-
-Were you running with [2] patch reverted or not?
-Without reverting it, I cannot boot Ubuntu at all - it is spamming
-qcom_battmngr errors and holding services back.
-With patch reverted I do not get any battery related info, which I
-guess makes sense.  I tried applying [1], however it did help.
-
-There are a few pmic_glink related errors in dmesg, so perhaps its related.
-
-> >
-> > Should be working, but cannot be tested due to lack of hw:
-> > * Higher res OLED, higher res IPS panels
->
-> I tried closing the lid and opening it again (which I believe is what
-> was reported to not work on the other devices), and that seems to work
-> fine.
->
-> > * Touchscreen
->
-> See below
->
-> >
-> [..]
-> > diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-tributo-13.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-tributo-13.dts
-> [..]
-> > +&i2c8 {
-> > +     clock-frequency = <400000>;
-> > +
-> > +     status = "okay";
-> > +
-> > +     touchscreen@0 {
-> > +             compatible = "hid-over-i2c";
-> > +             reg = <0x0>;
->
-> Make this 0x10 (and update the unit address accordingly) and we have
-> touchscreen.
-
-Awesome, thanks for testing. Will add it.
-Do you have an OLED variant, or high-res IPS? Will update description
-when respinning to include it.
-
-Thinking about it, perhaps depending on the OLED/IPS variant they have
-different touchscreen models with different addresses? I find it weird
-that the address was 0 as per ACPI.
-
-> > +
-> > +             hid-descr-addr = <0x1>;
-> > +             interrupts-extended = <&tlmm 51 IRQ_TYPE_LEVEL_LOW>;
-> > +
-> > +             pinctrl-0 = <&ts0_default>;
-> > +             pinctrl-names = "default";
-> > +     };
-> > +};
-> [..]
-> > +&mdss_dp3 {
-> > +     compatible = "qcom,x1e80100-dp";
->
-> This isn't needed, right?
-
-Indeed. Will fix it.
-
->
-> [..]
-> > +&uart21 {
->
-> This fails to probe, because we don't have an alias for it, which in
-> turn prevents sync_state on interconnects...
->
-
-Indeed. Will fix it.
-
-Thanks,
-Alex
-
-[1] https://lore.kernel.org/all/20240918-x1e-fix-pdm-pdr-v1-1-cefc79bb33d1@linaro.org/
-[2] https://lore.kernel.org/all/20240708-x1e80100-pd-mapper-v1-1-854386af4cf5@linaro.org/
-[3] https://lore.kernel.org/all/20240925100303.9112-1-alex.vinarskis@gmail.com/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 0/7] mm: Use pxdp_get() for accessing page table
+ entries
+To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ "Mike Rapoport (IBM)" <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ x86@kernel.org, linux-m68k@lists.linux-m68k.org,
+ linux-fsdevel@vger.kernel.org, kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240917073117.1531207-1-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-> > +     compatible = "qcom,geni-debug-uart";
-> > +     status = "okay";
-> > +};
-> > +
->
-> Regards,
-> Bjorn
+
+Le 17/09/2024 à 09:31, Anshuman Khandual a écrit :
+> This series converts all generic page table entries direct derefences via
+> pxdp_get() based helpers extending the changes brought in via the commit
+> c33c794828f2 ("mm: ptep_get() conversion"). First it does some platform
+> specific changes for m68k and x86 architecture.
+> 
+> This series has been build tested on multiple architecture such as x86,
+> arm64, powerpc, powerpc64le, riscv, and m68k etc.
+
+Seems like this series imply sub-optimal code with unnecessary reads.
+
+Lets take a simple exemple : function mm_find_pmd() in mm/rmap.c
+
+On a PPC32 platform (2 level pagetables):
+
+Before the patch:
+
+00001b54 <mm_find_pmd>:
+     1b54:	80 63 00 18 	lwz     r3,24(r3)
+     1b58:	54 84 65 3a 	rlwinm  r4,r4,12,20,29
+     1b5c:	7c 63 22 14 	add     r3,r3,r4
+     1b60:	4e 80 00 20 	blr
+
+Here, the function reads mm->pgd, then calculates and returns a pointer 
+to the PMD entry corresponding to the address.
+
+After the patch:
+
+00001b54 <mm_find_pmd>:
+     1b54:	81 23 00 18 	lwz     r9,24(r3)
+     1b58:	54 84 65 3a 	rlwinm  r4,r4,12,20,29
+     1b5c:	7d 49 20 2e 	lwzx    r10,r9,r4	<= useless read
+     1b60:	7c 69 22 14 	add     r3,r9,r4
+     1b64:	7d 49 20 2e 	lwzx    r10,r9,r4	<= useless read
+     1b68:	7d 29 20 2e 	lwzx    r9,r9,r4	<= useless read
+     1b6c:	4e 80 00 20 	blr
+
+Here, the function also reads mm->pgd and still calculates and returns a 
+pointer to the PMD entry corresponding to the address. But in addition 
+to that it reads three times that entry while doing nothing at all with 
+the value read.
+
+On PPC32, PMD/PUD/P4D are single entry tables folded into the 
+corresponding PGD entry, it is therefore pointless to read the 
+intermediate entries.
+
+Christophe
 
