@@ -1,345 +1,144 @@
-Return-Path: <linux-kernel+bounces-338066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30A39852FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:36:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80E3985303
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 845EE284B9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:36:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FB031F24A19
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED57155391;
-	Wed, 25 Sep 2024 06:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7006F1553BB;
+	Wed, 25 Sep 2024 06:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Q6apTrqm"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mq28uiF5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAFB1487FF;
-	Wed, 25 Sep 2024 06:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B53155385
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727246162; cv=none; b=MGaGPpmfRaULA11PCR/w2JRP5GhHl8vr0p5XTfwOz6FcwNW3htG7/tjVyFrc//DqfAbNQEA7ossGoaSrfzeWxgX6lTAnIBPS4iZM3fi561vfBhf0L+RHrFgDNavV1RIlswy4NAFm1Kt/IHBwWhTJuKAK2KEi94nHq1FjLu0uPhA=
+	t=1727246333; cv=none; b=XWv2jSY0P+KY3oN4bE2ut4Yus6FESLLKA2hE6xE1HPvFokyg4ivKZfGVSrzmxFE0LRFNdkYeq079JezE0TCv/k8dcHPIepEfp8Ou9L1z6w31SOIwbqMxrXsX/U5kEaPqgeiPnPOVT6PGrQvO9aJBuRuw7dqayfSYgZkma5+PW7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727246162; c=relaxed/simple;
-	bh=DgyGr6egxcOB39s5l6IEt9vFBGg3lOzqWSScvDkVdx8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ti7Xh4KeD/DkNAFr/zjgZnqYS98fFBPe3qFhG5CsGW11HulqK6D9Ji9Xne2Mdpf/IuIaGzEW5YKBD9nO+su45hMBWp/a5ogII7+kq/c0geyakVffCul5f09JQzcZzw1Uv0cPYs+uAnno1oM6Wm/2AgT5eNxPUPWskFScOrP89hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Q6apTrqm; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727246152;
-	bh=DgyGr6egxcOB39s5l6IEt9vFBGg3lOzqWSScvDkVdx8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q6apTrqmCbkPOJxFrRCMYZqmm2X0FA2Eryzt90uZzGARNknLJHHkfLBzijizaDW2m
-	 ocPI3aTcKEv4X12+W2dAgNhs6KTFfDtLzpaA9drN6EV13LgL5LB1aI9fApYlH81+5b
-	 nZdvgVRXs7vDm/bI9ddaiSgx4IMRs1G/RGZwTBQ18Bx4xqjQv+h78wPglzW6r0XqfE
-	 nIMFqSYN8kRGMeHnKOSYouMUZvtpZo7qkv0Wd3MeeFRpd2046rNuLkAulNsw4SArQ9
-	 O73p+k+uP44jAYiLM6umRC7/JJamqSyCKcf48FCPJNfvyCtTFC1vSO8QLkMUyf8ZSz
-	 KCqCtf4LRyl3Q==
-Received: from [172.24.0.4] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XD6S01yS9z1Lkh;
-	Wed, 25 Sep 2024 02:35:44 -0400 (EDT)
-Message-ID: <48ae741e-98aa-49d9-b677-6c4f8fd1bcb0@efficios.com>
-Date: Wed, 25 Sep 2024 08:35:04 +0200
+	s=arc-20240116; t=1727246333; c=relaxed/simple;
+	bh=6wHn1ZNBI3zflu9447QZxVNpa2XP00kGb6kIjvg9OHc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WkkgSlm7zUJ8BYomqC8C+UyR7F6fB5DvVSPnfm+cwmORC1Ulwtab9Ds6SKpKss3drR/gT41Tdg3wqKFEjkrXQzydQTD5bJcBPU9QGuT+L3qMTzqQ/xDkbnIZvi6X0ihTRpqjdAJbShji0jsizuwF5VNvQNix7FEl9KbQlxGXIu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mq28uiF5; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727246332; x=1758782332;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=6wHn1ZNBI3zflu9447QZxVNpa2XP00kGb6kIjvg9OHc=;
+  b=mq28uiF5rTfKEbKOBckqLKyCzfUvA9ehB3J1zXzyo3khbXQ275BG2j2M
+   lOAoz47bP2K4u/LOY3htAKuqtzAm+51rvf390SngN+jmlJ2/Hrvu5oFKc
+   zESzVMbJWxe4gNXgkPUTCQZAefRECA3NkRhyrktUQ6NVdym0X9aWt/AoK
+   ywuIOXOH3pnlNw0ujAVJmRtiMOYGthQfH46itH3Sh1KdUnN+kgTmtANhi
+   rffPNivBAsCf41KMfeJGkO9wt7z5olhda2lm2Wk/LeeVZdXkfiZQv+E0J
+   fkOGT33Z8UdMlNP2sC7mYP/D691W+FtQTgEZXY0sLwXQIC1rDjQdbvEKw
+   g==;
+X-CSE-ConnectionGUID: SAwW+IJdQUa1xVG1h5yX2A==
+X-CSE-MsgGUID: FLcK54uAR+2rEdlLDYPfiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="36940834"
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="36940834"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 23:38:51 -0700
+X-CSE-ConnectionGUID: Z0w/Ygh3QESI6yjFVM6kuQ==
+X-CSE-MsgGUID: iK+2YeupSDaBoFONzkeRjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="71543955"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 23:38:47 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: <linux-kernel@vger.kernel.org>,  <linux-mm@kvack.org>,
+  <hannes@cmpxchg.org>,  <yosryahmed@google.com>,  <nphamcs@gmail.com>,
+  <chengming.zhou@linux.dev>,  <usamaarif642@gmail.com>,
+  <shakeel.butt@linux.dev>,  <ryan.roberts@arm.com>,  <21cnbao@gmail.com>,
+  <akpm@linux-foundation.org>,  <nanhai.zou@intel.com>,
+  <wajdi.k.feghali@intel.com>,  <vinodh.gopal@intel.com>
+Subject: Re: [PATCH v7 0/8] mm: ZSWAP swap-out of mTHP folios
+In-Reply-To: <20240924011709.7037-1-kanchana.p.sridhar@intel.com> (Kanchana
+	P. Sridhar's message of "Mon, 23 Sep 2024 18:17:01 -0700")
+References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
+Date: Wed, 25 Sep 2024 14:35:14 +0800
+Message-ID: <87v7yks0kd.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/1] hpref: Hazard Pointers with Reference Counter
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Alan Stern
- <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>, rcu@vger.kernel.org, linux-mm@kvack.org,
- lkmm@lists.linux.dev
-References: <20240921164210.256278-1-mathieu.desnoyers@efficios.com>
- <e4721439-8cad-4134-8c07-84b6ecc69573@huaweicloud.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <e4721439-8cad-4134-8c07-84b6ecc69573@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ascii
 
-On 2024-09-25 07:57, Jonas Oberhauser wrote:
-> Hi Mathieu,
-> 
-> interesting idea. Conceptually it looks good.
-> 
-> There's another approach of using hazard pointer to optimize shared 
-> reference counting (to make it lock-free in common cases).
-> 
-> https://github.com/cmuparlay/concurrent_deferred_rc
-> 
-> It doesn't go as far as what you're doing, but they also use the hazard 
-> pointer to protect the refcount (like you do in the promote function).
+Kanchana P Sridhar <kanchana.p.sridhar@intel.com> writes:
 
-Thanks for the reference. Indeed, one use-case of this HP+refcount
-scheme would be to implement something that resembles C++ shared
-pointers. I'm glad to see I'm not alone in seeing potential in this
-approach.
+[snip]
 
-> I haven't read your code in detail but it seems to me you have an ABA 
-> bug: as I explained elsewhere, you could read the same pointer after ABA 
-> but you don't synchronize with the newer store that gave you node2, 
-> leaving you to speculatively read stale values through *ctx->hp.
-> (I am assuming here that ctx->hp is essentially an out parameter used to 
-> let the caller know which node got protected).
+>
+> Case 1: Comparing zswap 4K vs. zswap mTHP
+> =========================================
+>
+> In this scenario, the "before" is CONFIG_THP_SWAP set to off, that results in
+> 64K/2M (m)THP to be split into 4K folios that get processed by zswap.
+>
+> The "after" is CONFIG_THP_SWAP set to on, and this patch-series, that results
+> in 64K/2M (m)THP to not be split, and processed by zswap.
+>
+>  64KB mTHP (cgroup memory.high set to 40G):
+>  ==========================================
+>
+>  -------------------------------------------------------------------------------
+>                     mm-unstable 9-23-2024              zswap-mTHP     Change wrt
+>                         CONFIG_THP_SWAP=N       CONFIG_THP_SWAP=Y       Baseline
+>                                  Baseline
+>  -------------------------------------------------------------------------------
+>  ZSWAP compressor       zstd     deflate-        zstd    deflate-  zstd deflate-
+>                                       iaa                     iaa            iaa
+>  -------------------------------------------------------------------------------
+>  Throughput (KB/s)   143,323      125,485     153,550     129,609    7%       3%
+>  elapsed time (sec)    24.97        25.42       23.90       25.19    4%       1%
+>  sys time (sec)       822.72       750.96      757.70      731.13    8%       3%
+>  memcg_high          132,743      169,825     148,075     192,744
+>  memcg_swap_fail     639,067      841,553       2,204       2,215
+>  pswpin                    0            0           0           0
+>  pswpout                   0            0           0           0
+>  zswpin                  795          873         760         902
+>  zswpout          10,011,266   13,195,137  10,010,017  13,193,554
+>  thp_swpout                0            0           0           0
+>  thp_swpout_               0            0           0           0
+>   fallback
+>  64kB-mthp_          639,065      841,553       2,204       2,215
+>   swpout_fallback
+>  pgmajfault            2,861        2,924       3,054       3,259
+>  ZSWPOUT-64kB            n/a          n/a     623,451     822,268
+>  SWPOUT-64kB               0            0           0           0
+>  -------------------------------------------------------------------------------
+>
 
-You are of course absolutely right. The following change should fix it:
+IIUC, the throughput is the sum of throughput of all usemem processes?
 
-  	cmm_barrier();
--	node2 = uatomic_load(node_p, CMM_RELAXED);	/* Load A */
-+	node2 = rcu_dereference(*node_p);	/* Load A */
+One possible issue of usemem test case is the "imbalance" issue.  That
+is, some usemem processes may swap-out/swap-in less, so the score is
+very high; while some other processes may swap-out/swap-in more, so the
+score is very low.  Sometimes, the total score decreases, but the scores
+of usemem processes are more balanced, so that the performance should be
+considered better.  And, in general, we should make usemem score
+balanced among processes via say longer test time.  Can you check this
+in your test results?
 
-Please let me know if I'm missing anything.
+[snip]
 
-Thanks,
-
-Mathieu
-
-
-> 
-> Have fun,
->    jonas
-> 
->> +/*
->> + * hpref_hp_get: Obtain a reference to a stable object, protected either
->> + *               by hazard pointer (fast-path) or using reference
->> + *               counter as fall-back.
->> + */
->> +static inline
->> +bool hpref_hp_get(struct hpref_node **node_p, struct hpref_ctx *ctx)
->> +{
->> +    int cpu = rseq_current_cpu_raw();
->> +    struct hpref_percpu_slots *cpu_slots = 
->> rseq_percpu_ptr(hpref_percpu_slots, cpu);
->> +    struct hpref_slot *slot = 
->> &cpu_slots->slots[cpu_slots->current_slot];
->> +    bool use_refcount = false;
->> +    struct hpref_node *node, *node2;
->> +    unsigned int next_slot;
->> +
->> +retry:
->> +    node = uatomic_load(node_p, CMM_RELAXED);
->> +    if (!node)
->> +        return false;
->> +    /* Use rseq to try setting current slot hp. Store B. */
->> +    if (rseq_load_cbne_store__ptr(RSEQ_MO_RELAXED, RSEQ_PERCPU_CPU_ID,
->> +                (intptr_t *) &slot->node, (intptr_t) NULL,
->> +                (intptr_t) node, cpu)) {
->> +        slot = &cpu_slots->slots[HPREF_EMERGENCY_SLOT];
->> +        use_refcount = true;
->> +        /*
->> +         * This may busy-wait for another reader using the
->> +         * emergency slot to transition to refcount.
->> +         */
->> +        caa_cpu_relax();
->> +        goto retry;
->> +    }
->> +    /* Memory ordering: Store B before Load A. */
->> +    cmm_smp_mb();
->> +    node2 = uatomic_load(node_p, CMM_RELAXED);    /* Load A */
->> +    if (node != node2) {
->> +        uatomic_store(&slot->node, NULL, CMM_RELAXED);
->> +        if (!node2)
->> +            return false;
->> +        goto retry;
->> +    }
->> +    ctx->type = HPREF_TYPE_HP;
->> +    ctx->hp = node;
->                     ^---- here
-> 
->> +    ctx->slot = slot;
->> +    if (use_refcount) {
->> +        hpref_promote_hp_to_ref(ctx);
->> +        return true;
->> +    }
->> +    /*
->> +     * Increment current slot (racy increment is OK because it is
->> +     * just a position hint). Skip the emergency slot.
->> +     */
->> +    next_slot = uatomic_load(&cpu_slots->current_slot, CMM_RELAXED) + 1;
->> +    if (next_slot >= HPREF_EMERGENCY_SLOT)
->> +        next_slot = 0;
->> +    uatomic_store(&cpu_slots->current_slot, next_slot, CMM_RELAXED);
->> +    return true;
->> +}
->> +
->> +static inline
->> +void hpref_put(struct hpref_ctx *ctx)
->> +{
->> +    if (ctx->type == HPREF_TYPE_REF) {
->> +        urcu_ref_put(&ctx->hp->refcount, hpref_release);
->> +    } else {
->> +        /* Release HP. */
->> +        uatomic_store(&ctx->slot->node, NULL, CMM_RELEASE);
->> +    }
->> +    ctx->hp = NULL;
->> +}
->> +
->> +/*
->> + * hpref_set_pointer: Store pointer @node to @ptr, with RCU publication
->> + *                    guarantees.
->> + */
->> +static inline
->> +void hpref_set_pointer(struct hpref_node **ptr, struct hpref_node *node)
->> +{
->> +    if (__builtin_constant_p(node) && node == NULL)
->> +        uatomic_store(ptr, NULL, CMM_RELAXED);
->> +    else
->> +        uatomic_store(ptr, node, CMM_RELEASE);
->> +}
->> +
->> +/*
->> + * Return the content of the hpref context hazard pointer field.
->> + */
->> +static inline
->> +struct hpref_node *hpref_ctx_pointer(struct hpref_ctx *ctx)
->> +{
->> +    return ctx->hp;
->> +}
->> +
->> +#ifdef __cplusplus
->> +}
->> +#endif
->> +
->> +#endif /* _URCU_HPREF_H */
->> diff --git a/src/Makefile.am b/src/Makefile.am
->> index b555c818..7312c9f7 100644
->> --- a/src/Makefile.am
->> +++ b/src/Makefile.am
->> @@ -19,7 +19,8 @@ RCULFHASH = rculfhash.c rculfhash-mm-order.c 
->> rculfhash-mm-chunk.c \
->>   lib_LTLIBRARIES = liburcu-common.la \
->>           liburcu.la liburcu-qsbr.la \
->>           liburcu-mb.la liburcu-bp.la \
->> -        liburcu-memb.la liburcu-cds.la
->> +        liburcu-memb.la liburcu-cds.la \
->> +        liburcu-hpref.la
->>   #
->>   # liburcu-common contains wait-free queues (needed by call_rcu) as well
->> @@ -50,6 +51,9 @@ liburcu_cds_la_SOURCES = rculfqueue.c rculfstack.c 
->> lfstack.c \
->>       workqueue.c workqueue.h $(RCULFHASH) $(COMPAT)
->>   liburcu_cds_la_LIBADD = liburcu-common.la
->> +liburcu_hpref_la_SOURCES = hpref.c
->> +liburcu_hpref_la_LIBADD = -lrseq
->> +
->>   pkgconfigdir = $(libdir)/pkgconfig
->>   pkgconfig_DATA = liburcu-cds.pc liburcu.pc liburcu-bp.pc 
->> liburcu-qsbr.pc \
->>       liburcu-mb.pc liburcu-memb.pc
->> diff --git a/src/hpref.c b/src/hpref.c
->> new file mode 100644
->> index 00000000..f63530f5
->> --- /dev/null
->> +++ b/src/hpref.c
->> @@ -0,0 +1,78 @@
->> +// SPDX-FileCopyrightText: 2024 Mathieu Desnoyers 
->> <mathieu.desnoyers@efficios.com>
->> +//
->> +// SPDX-License-Identifier: LGPL-2.1-or-later
->> +
->> +/*
->> + * HPREF: Hazard pointers with reference counters
->> + */
->> +
->> +#define _LGPL_SOURCE
->> +#include <urcu/hpref.h>
->> +#include <rseq/mempool.h>    /* Per-CPU memory */
->> +
->> +static struct rseq_mempool *mempool;
->> +struct hpref_percpu_slots *hpref_percpu_slots;
->> +
->> +void hpref_release(struct urcu_ref *ref)
->> +{
->> +    struct hpref_node *node = caa_container_of(ref, struct 
->> hpref_node, refcount);
->> +
->> +    node->release(node);
->> +}
->> +
->> +/*
->> + * hpref_synchronize: Wait for any reader possessing a hazard pointer to
->> + *                    @node to clear its hazard pointer slot.
->> + */
->> +void hpref_synchronize(struct hpref_node *node)
->> +{
->> +    int nr_cpus = rseq_get_max_nr_cpus(), cpu;
->> +
->> +    /* Memory ordering: Store A before Load B. */
->> +    cmm_smp_mb();
->> +    /* Scan all CPUs slots. */
->> +    for (cpu = 0; cpu < nr_cpus; cpu++) {
->> +        struct hpref_percpu_slots *cpu_slots = 
->> rseq_percpu_ptr(hpref_percpu_slots, cpu);
->> +        struct hpref_slot *slot;
->> +        unsigned int i;
->> +
->> +        for (i = 0; i < HPREF_NR_PERCPU_SLOTS; i++) {
->> +            slot = &cpu_slots->slots[i];
->> +            /* Busy-wait if node is found. */
->> +            while (uatomic_load(&slot->node, CMM_ACQUIRE) == node)    
->> /* Load B */
->> +                caa_cpu_relax();
->> +        }
->> +    }
->> +}
->> +
->> +/*
->> + * hpref_synchronize_put: Wait for any reader possessing a hazard
->> + *                        pointer to clear its slot and put reference
->> + *                        count.
->> + */
->> +void hpref_synchronize_put(struct hpref_node *node)
->> +{
->> +    if (!node)
->> +        return;
->> +    hpref_synchronize(node);
->> +    urcu_ref_put(&node->refcount, hpref_release);
->> +}
->> +
->> +static __attribute__((constructor))
->> +void hpref_init(void)
->> +{
->> +    mempool = rseq_mempool_create("hpref", sizeof(struct 
->> hpref_percpu_slots), NULL);
->> +    if (!mempool)
->> +        abort();
->> +    hpref_percpu_slots = rseq_mempool_percpu_zmalloc(mempool);
->> +    if (!hpref_percpu_slots)
->> +        abort();
->> +}
->> +
->> +static __attribute__((destructor))
->> +void hpref_exit(void)
->> +{
->> +    rseq_mempool_percpu_free(hpref_percpu_slots);
->> +    if (rseq_mempool_destroy(mempool))
->> +        abort();
->> +}
-> 
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+--
+Best Regards,
+Huang, Ying
 
