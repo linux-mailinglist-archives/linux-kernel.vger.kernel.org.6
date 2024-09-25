@@ -1,104 +1,104 @@
-Return-Path: <linux-kernel+bounces-338387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9FC985731
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:31:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3745F985737
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 082E2284FCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:31:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 672561C21215
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2E118858F;
-	Wed, 25 Sep 2024 10:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410AC15C12F;
+	Wed, 25 Sep 2024 10:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7cRb2uC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="PeLyz8eX"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4603B1B85DD;
-	Wed, 25 Sep 2024 10:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482331304AB;
+	Wed, 25 Sep 2024 10:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727260283; cv=none; b=nfc4wc6jusYYWSIqxluPaIbY6RXjQWlzjy0hYpcwZpaU9/2xz+KkoodRMcpJ3BsEj/HG+2qasEgbaeMtXeDQxE02u35wZ5W9DiGgvX9zKKvNwcWfuk0wrzl1vv6DGNCc+jGHktgOC7azptWEJX71H6QMkFyRBL2MKa8Sr4d6BSM=
+	t=1727260345; cv=none; b=nE2UXX4jbsGz6zDm9TaX/OxEMrmYeRZUSIucp/KXM5oasn6qkaOVfLie4yKboJjlN2X2aUFqgRzRvQLkDRMYJLK9TGns19I+MKNdc3y9smv5b5oEXYrrq3fBVxcOZA1St8tn3Xlj5Pz/s3pKo1tp8DRrKyY+6YTIptf9PNN0ArM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727260283; c=relaxed/simple;
-	bh=azYpPCRc7Fpbb2pqhBjEq/yVygWme8hOTL1tIFJNaK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vt2AKogIar5jOr1OJCNZXSy/61CZ+eSf7FaDCbOpOXdQFaGgl+HylawSxWryNCzzj/OZv5+pfQTnZRXocpdMpdvezv/0f6aVVhfQJpbDZTlppqcQO9LwzYoGc+E+6jDUccNkpBsyvF20yPeWeWSxIvsJTd2ncMCwDibjWWb7v/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7cRb2uC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D09AC4CEC3;
-	Wed, 25 Sep 2024 10:31:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727260282;
-	bh=azYpPCRc7Fpbb2pqhBjEq/yVygWme8hOTL1tIFJNaK0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U7cRb2uCSSGYlrTYOMEkLkLJVOvOsQCMhJxNZE4VBoyjE7Gq9o6SrUMyXirimlK0E
-	 McSps++Q2aGwn4KdkOIuSMCsy3CbLPaeiyfRhm/l01iDsfhIhlIPhnbfFUZFeYGsKJ
-	 aKZKMFqtRCSipuRw/1WbpImuw9tKxoyA/LAiu+FUsU6K+65c0JDfa5Bwd2UnBcyd5j
-	 3QnFPplvGm09sqRiYq5x5mC5kji/QEtY0ec6n7UoL2uLBp6C8Iy2TEB0wSIVUkMeVP
-	 uy1dTuxxY8VG6XbzT6GVhe1lO/x4nUkht3sJu2EhRJWrPe4wYn0i5oqac34vFn3Rad
-	 ktd405WzhKKSA==
-Date: Wed, 25 Sep 2024 13:31:18 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Eduard Zingerman <eddyz87@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Manu Bretelle <chantr4@gmail.com>, asmadeus@codewreck.org,
-	ceph-devel@vger.kernel.org, christian@brauner.io, ericvh@kernel.org,
-	hsiangkao@linux.alibaba.com, idryomov@gmail.com, jlayton@kernel.org,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
-	netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
-	smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
-	v9fs@lists.linux.dev, willy@infradead.org
-Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
-Message-ID: <20240925103118.GE967758@unreal>
-References: <20240923183432.1876750-1-chantr4@gmail.com>
- <20240814203850.2240469-20-dhowells@redhat.com>
- <1279816.1727220013@warthog.procyon.org.uk>
- <4b5621958a758da830c1cf09c6f6893aed371f9d.camel@gmail.com>
+	s=arc-20240116; t=1727260345; c=relaxed/simple;
+	bh=PEjdN1B8+nauzasTx+oZo2a/P2fqeXtD5HkfhxXmZEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n2hwIHsc6gHFcV6UbOAsbaWB4PNYyhqKx9Fn5XGhmxSnJs+BeEHAV1YwQA3tekVatfM6rHJpM2ARkkncnJvba65KoaNESdJ0SJq9jC2DeprJ2KCf4IiG/XMMYDx0GMnE2Z4v4xiPxhHZS/JQxCt1MRLcAxpE9SVxAOcGPnvZvPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=PeLyz8eX; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=kcWlSC0R569rA7S9bQRoeCCxWKeeKW+3l2wH6VkxOIk=; b=PeLyz8eXctSFlPP0aizM/oPEO0
+	SQsf2XpAFd0oVtamcxXWsRL7XtJVaLDkv+RyExATR/ACYKZBYaf12660ipQLEZEObBVrSMHMGDG3k
+	9YDnjW3Oty/21rXYE9VPmxUl3I+JyrK7aBZWdCDnzkt7v9fKg6ySQSdN0DKC6guMOnN+UBhQtIuxZ
+	jPilQ4gjByTZare0td9Q7r5ueZd7KmIstMNediInPjl4ebbpO1LkD9Coub0OA9ciDEaPfoIR+Dm9S
+	8j1yEKUqPQ5HTU4SzNeTsDiP6FNO147sB/BdQt7cdq8rUdJafpB+Pi//mVM/bwW3EGZlIndfW+fxP
+	B7C33xxA==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1stPJk-000FNr-U2; Wed, 25 Sep 2024 12:32:20 +0200
+Received: from [178.197.249.20] (helo=[192.168.1.114])
+	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1stPJk-000NDC-2I;
+	Wed, 25 Sep 2024 12:32:20 +0200
+Message-ID: <4f58b093-ca1f-426a-8102-4b00ccaf4973@iogearbox.net>
+Date: Wed, 25 Sep 2024 12:32:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4b5621958a758da830c1cf09c6f6893aed371f9d.camel@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] bpftool: Remove llvm-strip from Makefile
+To: patchwork-bot+netdevbpf@kernel.org, Tao Chen <chen.dylane@gmail.com>
+Cc: qmo@kernel.org, ast@kernel.org, andrii@kernel.org, martin.lau@linux.dev,
+ eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+ jolsa@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240924165202.1379930-1-chen.dylane@gmail.com>
+ <172725782851.519668.2924142510144708471.git-patchwork-notify@kernel.org>
+Content-Language: en-US
+From: Daniel Borkmann <daniel@iogearbox.net>
+In-Reply-To: <172725782851.519668.2924142510144708471.git-patchwork-notify@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27409/Wed Sep 25 11:17:07 2024)
 
-On Tue, Sep 24, 2024 at 05:01:13PM -0700, Eduard Zingerman wrote:
-> On Wed, 2024-09-25 at 00:20 +0100, David Howells wrote:
-> > Could you try the attached?  It may help, though this fixes a bug in the
-> > write-side, not the read-side.
-> >
-> 
-> Hi David,
-> 
-> I tried this patch on top of bpf-next but behaviour seems unchanged,
-> dmesg is at [1].
-> 
-> [1] https://gist.github.com/eddyz87/ce45f90453980af6a5fadeb652e109f3
-
-
-BTW, I'm hitting the same issue over Linus's tree now, but unfortunately
-there is no WA in my case as I don't have "cache=mmap" in rootflags.
-https://lore.kernel.org/all/20240924094809.GA1182241@unreal/#t
-
-It came to Linus with Christian Brauner's pull request.
-https://lore.kernel.org/all/20240913-vfs-netfs-39ef6f974061@brauner/
-
-Thanks
-
-> 
-> Thanks,
-> Eduard
-> 
-> [...]
-> 
-> 
+On 9/25/24 11:50 AM, patchwork-bot+netdevbpf@kernel.org wrote:
+> Hello:
+>
+> This patch was applied to bpf/bpf-next.git (master)
+> by Daniel Borkmann <daniel@iogearbox.net>:
+>
+> On Wed, 25 Sep 2024 00:52:02 +0800 you wrote:
+>> As Quentin and Andrri said [0], bpftool gen object strips
+>> out DWARF already, so remove the repeat operation.
+>>
+>> [0] https://github.com/libbpf/bpftool/issues/161
+>>
+>> Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+>> Suggested-by: Quentin Monnet <qmo@kernel.org>
+>> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+>>
+>> [...]
+I'll toss this shortly from the tree again, this missed that bpftool gen 
+object call
+needs to strip out dwarf.
+>> Here is the summary with links:
+>>    - [bpf-next] bpftool: Remove llvm-strip from Makefile
+>>      https://git.kernel.org/bpf/bpf-next/c/25bfc6333e32
+>>
+>> You are awesome, thank you!
 
