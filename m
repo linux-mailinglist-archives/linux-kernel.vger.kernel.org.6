@@ -1,121 +1,162 @@
-Return-Path: <linux-kernel+bounces-338426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA1189857A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:08:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342549857AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7039F28136B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:08:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD3B61F25E85
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A9A15ECDC;
-	Wed, 25 Sep 2024 11:08:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E59915531B;
-	Wed, 25 Sep 2024 11:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6661B1591FC;
+	Wed, 25 Sep 2024 11:10:10 +0000 (UTC)
+Received: from us-smtp-delivery-44.mimecast.com (us-smtp-delivery-44.mimecast.com [207.211.30.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA99421A1C
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 11:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.211.30.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727262501; cv=none; b=lK5MsF0t1Rq2crMEfaOP2ZfIFmqJK0cek4YYmbUdl+FXN2Spt8i57Bee3Kqxbfc/0UDDA7nxGz0jR3a8A5NP041vutlLfwyOFHwQeY6+MjQCBlvduIaS60larkGfKzgWYPDuBSdK6bJPz6GKY178UsbQ0VWnLRUeMEHqcBZeKNo=
+	t=1727262610; cv=none; b=F1Rs7Ev+hPu6yDcceOj6J46z/AW7xUlRPnNWwdSQAi+4KCEGdM24VuphTnhPlW4WdlCXIaMQ8CUCkF0SV01fJPb8C4z7fjuIR2Ky6Gsp+BW4F6Cb3LfjEjjkdueSwzz4HbOvDcvaxGFLdAtTeVBLoTePRa8eQtqW0GynpzbcDQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727262501; c=relaxed/simple;
-	bh=VWkCCMmt+SSlKeFVFSzuMOqde4LRaApjaJXEOTiXnew=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=adTkw35BEKhsDZfWcYuTXDLqGP7hyNvQQRe7v+wy3xShmbytI1NuLO8ZGrZ7zWaaw2ou7hvYeb7QaX/wdec9raVIh9IHNpTSxapSZ8Fj+E724KBu8VT2wSB/cPkAhGR2CM+ekgvuQ1AssjzdxfZZnms7HS34fLSOAVynJbomvKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CB581570;
-	Wed, 25 Sep 2024 04:08:49 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CD0DD3F6A8;
-	Wed, 25 Sep 2024 04:08:17 -0700 (PDT)
-From: Levi Yun <yeoreum.yun@arm.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	james.clark@linaro.org,
-	howardchu95@gmail.com
-Cc: nd@arm.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Levi Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v5 2/2] perf stat: Stop repeating when ref_perf_stat() returns -1
-Date: Wed, 25 Sep 2024 12:08:02 +0100
-Message-Id: <20240925110802.2620613-3-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240925110802.2620613-1-yeoreum.yun@arm.com>
-References: <20240925110802.2620613-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1727262610; c=relaxed/simple;
+	bh=fJk2zjrxTxlUEqwavBdpWd+Dykc8cDQFojaLS+hA+ZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n2s8mPVfy9rB680MMf6dvurXiCWDBP5iAZ8yzOWwJ5mnQHO+nz8YXWb9L/LHWMhpnXWLNRyPiEJqmrsRnU36ChLhtMGnh1EaHgwUkFwhKpdWrAITkuQS/H5jgRdcfmC6O3tStRXonmJSMDcow2gdtwvdYqidu+VG70YWb4Vrs3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=none smtp.mailfrom=queasysnail.net; arc=none smtp.client-ip=207.211.30.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=queasysnail.net
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-359-ytwXiWDXNqSUweQjYaaLlw-1; Wed,
+ 25 Sep 2024 07:08:56 -0400
+X-MC-Unique: ytwXiWDXNqSUweQjYaaLlw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1B83819772D7;
+	Wed, 25 Sep 2024 11:08:55 +0000 (UTC)
+Received: from hog (unknown [10.39.192.29])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 486C030001A4;
+	Wed, 25 Sep 2024 11:08:50 +0000 (UTC)
+Date: Wed, 25 Sep 2024 13:08:48 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: steffen.klassert@secunet.com, pabeni@redhat.com,
+	syzbot <syzbot+cc39f136925517aed571@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] UBSAN: shift-out-of-bounds in
+ xfrm_selector_match (2)
+Message-ID: <ZvPvQMDvWRygp4IC@hog>
+References: <00000000000088906d0622445beb@google.com>
+ <66f33458.050a0220.457fc.001e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <66f33458.050a0220.457fc.001e.GAE@google.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Exit when run_perf_stat() returns an error to avoid continuously
-repeating the same error message. It's not expected that COUNTER_FATAL
-or internal errors are recoverable so there's no point in retrying.
+2024-09-24, 14:51:20 -0700, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    151ac45348af net: sparx5: Fix invalid timestamps
+> git tree:       net-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=15808a80580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=37c006d80708398d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=cc39f136925517aed571
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122ad2a9980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1387b107980000
 
-This fixes the following flood of error messages for permission issues,
-for example when perf_event_paranoid==3:
-  perf stat -r 1044 -- false
+syzbot managed to create an SA with:
 
-  Error:
-  Access to performance monitoring and observability operations is limited.
-  ...
-  Error:
-  Access to performance monitoring and observability operations is limited.
-  ...
-  (repeating for 1044 times).
+usersa.sel.family = 0
+usersa.sel.prefixlen_s = 128
+usersa.family = AF_INET
 
-Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
-Reviewed-by: James Clark <james.clark@linaro.org>
----
- tools/perf/builtin-stat.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Because of the AF_UNSPEC selector, verify_newsa_info doesn't put
+limits on prefixlen_{s,d}. But then copy_from_user_state sets
+x->sel.family to usersa.family (AF_INET).
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 2c46bdbd9914..6cad3435b198 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -968,6 +968,14 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
- 	return err;
- }
+So I think verify_newsa_info should do the same conversion before
+checking prefixlen:
 
-+/*
-+ * Returns -1 for fatal errors which signifies to not continue
-+ * when in repeat mode.
-+ *
-+ * Returns < -1 error codes when stat record is used. These
-+ * result in the stat information being displayed, but writing
-+ * to the file fails and is non fatal.
-+ */
- static int run_perf_stat(int argc, const char **argv, int run_idx)
+
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index 55f039ec3d59..8d06a37adbd9 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -201,6 +201,7 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
  {
- 	int ret;
-@@ -2899,7 +2907,10 @@ int cmd_stat(int argc, const char **argv)
- 			evlist__reset_prev_raw_counts(evsel_list);
-
- 		status = run_perf_stat(argc, argv, run_idx);
--		if (forever && status != -1 && !interval) {
-+		if (status == -1)
-+			break;
+ 	int err;
+ 	u8 sa_dir = attrs[XFRMA_SA_DIR] ? nla_get_u8(attrs[XFRMA_SA_DIR]) : 0;
++	u16 family = p->sel.family;
+ 
+ 	err = -EINVAL;
+ 	switch (p->family) {
+@@ -221,7 +222,10 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
+ 		goto out;
+ 	}
+ 
+-	switch (p->sel.family) {
++	if (!family && !(p->flags & XFRM_STATE_AF_UNSPEC))
++		family = p->family;
 +
-+		if (forever && !interval) {
- 			print_counters(NULL, argc, argv);
- 			perf_stat__reset_stats();
- 		}
---
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
++	switch (family) {
+ 	case AF_UNSPEC:
+ 		break;
+ 
+
+
+Steffen, does that make sense?
+
+
+Without this, we have prefixlen=128 when we get to addr4_match, which
+does a shift of (32 - prefixlen), so we get
+
+UBSAN: shift-out-of-bounds in ./include/net/xfrm.h:900:23
+shift exponent -96 is negative
+
+
+Maybe a check for prefixlen < 128 would also be useful in the
+XFRM_STATE_AF_UNSPEC case, to avoid the same problems with syzbot
+passing prefixlen=200 for an ipv6 SA. I don't know how
+XFRM_STATE_AF_UNSPEC is used, so I'm not sure what restrictions we can
+put. If we end up with prefixlen = 100 used from ipv4 we'll still have
+the same issues.
+
+
+
+>  __ip4_datagram_connect+0x96c/0x1260 net/ipv4/datagram.c:49
+>  __ip6_datagram_connect+0x194/0x1230
+>  ip6_datagram_connect net/ipv6/datagram.c:279 [inline]
+>  ip6_datagram_connect_v6_only+0x63/0xa0 net/ipv6/datagram.c:291
+
+This path also looks a bit dubious. From the reproducer, we have a
+rawv6 socket trying to connect to a v4mapped address, despite having
+ip6_datagram_connect_v6_only as its ->connect.
+
+pingv6 sockets also use ip6_datagram_connect_v6_only and set
+sk->sk_ipv6only=1 (in net/ipv4/ping.c ping_init_sock), but rawv6 don't
+have this, so __ip6_datagram_connect can end up in
+__ip4_datagram_connect. I guess it would make sense to set it in rawv6
+too. rawv6_bind already rejected v4mapped addresses.
+
+And then we could add a DEBUG_NET_WARN_ON_ONCE(!ipv6_only_sock(sk)) in
+ip6_datagram_connect_v6_only, or maybe even call ipv6_addr_type to
+reject v4mapped addresses and reject them like the non-AF_INET6 case.
+
+-- 
+Sabrina
 
 
