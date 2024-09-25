@@ -1,339 +1,78 @@
-Return-Path: <linux-kernel+bounces-339682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85F598690D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:06:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8A598690F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C331F26E88
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:06:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4B611F26EC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF68414AD24;
-	Wed, 25 Sep 2024 22:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44830154435;
+	Wed, 25 Sep 2024 22:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="MUo1T09z"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqoKtCL5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A321D5AD5
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 22:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39061D5AD5;
+	Wed, 25 Sep 2024 22:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727301968; cv=none; b=mX6qvftz569Zi3zvGcB85guHJ+C0HN9qukz9BTwLPRit9ETlTzTej8KH69KBUedr/TVyHvvI5RUgl40uAeCLI/Qylzv1CvFoe/aTEK+SiTkRvobODSN11xgcVFKsRaEhnlnRE9mu/EOAEGU+U4ejd9EOqjaLyNYketqMfEzKqgc=
+	t=1727302053; cv=none; b=Zsao7YtJQT7ZMzd+jsY/n7QeGiDMIIrSzD0gRNUhX/VLpkyrsB8e+aT4ItpoGeYfm9YwkM7dK4ZLbEHIZ8pIB0Ee8p0mlu8C5654A66irCDGwgWTB2ajp0Yrc84CosfKe2piUocg+ZfgyJgCqX8gYFjbpJcF6XG3xUCIoPjUiO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727301968; c=relaxed/simple;
-	bh=+MO9HGvZEmSbAOH+oLFRm8+PdtCoK5Y1UI3uPht4OL4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SnljQDmJdOaJeEue6HuDV/quhGMFzMS3vczKX1q7gfcCZAks//81Zh4wDA77EkG6jrf7IHynFfoKi0UjxOlvI2uZ1Uoli13rwRL2AV/KCEKBbuhJk/cKQP9kIEOHh+nSrg2msrlt4BwEuqqAb9x8xYzbrA0tBchlQW4wRdJiU0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=MUo1T09z; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 805F088BC2;
-	Thu, 26 Sep 2024 00:06:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1727301964;
-	bh=iT0+1DdEgc8DqY5p9VNB9w5GWKBf/wL+H5zqp/TASYY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MUo1T09zAVz8Qzr0LrJ4wsWTYwhmo5pshaAYCDxJGawlx+yTSapof/kyZrRiqsTjl
-	 ylsrol9vCnhFpF0MtH8WUsRvyk00B33xtoeIB/ilmwiZ5DeejZEq2j/kfJOf/eMbf8
-	 83DnqzVQ4Zh/9kW3K+qwsl2MaMMcVD6T9L/ZZQvfaSZRSxazATLUXJzUPwgXG/3XJC
-	 4B5EvW45pm2XrPj0dpglxolpt/HXbkZ3L/fM+LMhFXokfUpQFPGx25QUjj6zt98sR5
-	 ox1wD4orEX8uEIM9In6CCVgCUVNg8tuJxQ5dzbcsiNrEbzKRPKZPPTMLFv+R8pVxe4
-	 upIRNaM1fgSJg==
-From: Marek Vasut <marex@denx.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: kernel@dh-electronics.com,
-	Marek Vasut <marex@denx.de>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] soc: imx8m: Probe the SoC driver as platform driver
-Date: Thu, 26 Sep 2024 00:04:54 +0200
-Message-ID: <20240925220552.149551-1-marex@denx.de>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1727302053; c=relaxed/simple;
+	bh=WNoIkwVmat+ljeoReV4pEd2da3dv5STxiTCLNbW3UDA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=eOV3QSKanVBBXhXVQjfT4tk51BOzn0etec0cU5/AmiV11YHeWUpdfze/qLi+e9UbZf0Kq8ghvfIqYcU6FvQ4dL/E6k3rB4w82uF/ENphsy7qAW8jlJygC77/lEVo9CSdvtvn4cIVfSYynLpsDulXecBYYQ3WzE0I5ehk++OWxsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqoKtCL5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47724C4CEC7;
+	Wed, 25 Sep 2024 22:07:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727302053;
+	bh=WNoIkwVmat+ljeoReV4pEd2da3dv5STxiTCLNbW3UDA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=FqoKtCL58bRpMAXpZxsekwTxJktVQczizxgHyEYY7H90NW5/hUlZESOIlxBS7m5Br
+	 rBTt8bOp9b1+xQ0E3u8q1W24qQxaoDCFy/wIqveWNj+JD2tWoOOQ1nbyWpouw0PgI7
+	 TiF2WCfmpnpNR1JvpgqaSsTcwK826rDoZEg66xztE5thhYHofjkZ4lhkOhvYjnJUrF
+	 14PXlWAWsQIpCAczkTW4AeJfldYZc5TdkZxZi6yBxhl8Dif2XxWNG6Q81vtXyVLwSC
+	 1DOkn+kQICPIu8zcToU6Ew0wlxqggBg2tA9uiC0G0HcaYQJZWQy4YrQQAoehS/tG8z
+	 NzsMjo6b3c7/Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFB73809A80;
+	Wed, 25 Sep 2024 22:07:36 +0000 (UTC)
+Subject: Re: [GIT PULL] SPI fixes for v6.12-merge-window
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <5ae623a059a1f568473204bde232a815.broonie@kernel.org>
+References: <5ae623a059a1f568473204bde232a815.broonie@kernel.org>
+X-PR-Tracked-List-Id: <linux-spi.vger.kernel.org>
+X-PR-Tracked-Message-Id: <5ae623a059a1f568473204bde232a815.broonie@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.12-merge-window
+X-PR-Tracked-Commit-Id: 329ca3eed4a9a161515a8714be6ba182321385c7
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: fe29393877be63363247510b99ae9a8068cacb31
+Message-Id: <172730205543.743114.5778771850041442370.pr-tracker-bot@kernel.org>
+Date: Wed, 25 Sep 2024 22:07:35 +0000
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
 
-With driver_async_probe=* on kernel command line, the following trace is
-produced because on i.MX8M Plus hardware because the soc-imx8m.c driver
-calls of_clk_get_by_name() which returns -EPROBE_DEFER because the clock
-driver is not yet probed. This was not detected during regular testing
-without driver_async_probe.
+The pull request you sent on Wed, 25 Sep 2024 11:00:43 +0200:
 
-Convert the SoC code to platform driver and instantiate a platform device
-in its current device_initcall() to probe the platform driver. Rework
-.soc_revision callback to always return valid error code and return SoC
-revision via parameter. This way, if anything in the .soc_revision callback
-return -EPROBE_DEFER, it gets propagated to .probe and the .probe will get
-retried later.
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.12-merge-window
 
-"
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 1 at drivers/soc/imx/soc-imx8m.c:115 imx8mm_soc_revision+0xdc/0x180
-CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-next-20240924-00002-g2062bb554dea #603
-Hardware name: DH electronics i.MX8M Plus DHCOM Premium Developer Kit (3) (DT)
-pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : imx8mm_soc_revision+0xdc/0x180
-lr : imx8mm_soc_revision+0xd0/0x180
-sp : ffff8000821fbcc0
-x29: ffff8000821fbce0 x28: 0000000000000000 x27: ffff800081810120
-x26: ffff8000818a9970 x25: 0000000000000006 x24: 0000000000824311
-x23: ffff8000817f42c8 x22: ffff0000df8be210 x21: fffffffffffffdfb
-x20: ffff800082780000 x19: 0000000000000001 x18: ffffffffffffffff
-x17: ffff800081fff418 x16: ffff8000823e1000 x15: ffff0000c03b65e8
-x14: ffff0000c00051b0 x13: ffff800082790000 x12: 0000000000000801
-x11: ffff80008278ffff x10: ffff80008209d3a6 x9 : ffff80008062e95c
-x8 : ffff8000821fb9a0 x7 : 0000000000000000 x6 : 00000000000080e3
-x5 : ffff0000df8c03d8 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : fffffffffffffdfb x0 : fffffffffffffdfb
-Call trace:
- imx8mm_soc_revision+0xdc/0x180
- imx8_soc_init+0xb0/0x1e0
- do_one_initcall+0x94/0x1a8
- kernel_init_freeable+0x240/0x2a8
- kernel_init+0x28/0x140
- ret_from_fork+0x10/0x20
----[ end trace 0000000000000000 ]---
-SoC: i.MX8MP revision 1.1
-"
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/fe29393877be63363247510b99ae9a8068cacb31
 
-Signed-off-by: Marek Vasut <marex@denx.de>
----
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Saravana Kannan <saravanak@google.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: imx@lists.linux.dev
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
-V2: Use the platform device approach instead of late_initcall
----
- drivers/soc/imx/soc-imx8m.c | 92 ++++++++++++++++++++++++++++---------
- 1 file changed, 70 insertions(+), 22 deletions(-)
+Thank you!
 
-diff --git a/drivers/soc/imx/soc-imx8m.c b/drivers/soc/imx/soc-imx8m.c
-index fe111bae38c8e..170970d4955c6 100644
---- a/drivers/soc/imx/soc-imx8m.c
-+++ b/drivers/soc/imx/soc-imx8m.c
-@@ -30,7 +30,7 @@
- 
- struct imx8_soc_data {
- 	char *name;
--	u32 (*soc_revision)(void);
-+	int (*soc_revision)(u32 *socrev);
- };
- 
- static u64 soc_uid;
-@@ -51,24 +51,29 @@ static u32 imx8mq_soc_revision_from_atf(void)
- static inline u32 imx8mq_soc_revision_from_atf(void) { return 0; };
- #endif
- 
--static u32 __init imx8mq_soc_revision(void)
-+static int imx8mq_soc_revision(u32 *socrev)
- {
- 	struct device_node *np;
- 	void __iomem *ocotp_base;
- 	u32 magic;
- 	u32 rev;
- 	struct clk *clk;
-+	int ret;
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mq-ocotp");
- 	if (!np)
--		return 0;
-+		return -EINVAL;
- 
- 	ocotp_base = of_iomap(np, 0);
--	WARN_ON(!ocotp_base);
-+	if (!ocotp_base) {
-+		ret = -EINVAL;
-+		goto err_iomap;
-+	}
-+
- 	clk = of_clk_get_by_name(np, NULL);
- 	if (IS_ERR(clk)) {
--		WARN_ON(IS_ERR(clk));
--		return 0;
-+		ret = PTR_ERR(clk);
-+		goto err_clk;
- 	}
- 
- 	clk_prepare_enable(clk);
-@@ -88,32 +93,45 @@ static u32 __init imx8mq_soc_revision(void)
- 	soc_uid <<= 32;
- 	soc_uid |= readl_relaxed(ocotp_base + OCOTP_UID_LOW);
- 
-+	*socrev = rev;
-+
- 	clk_disable_unprepare(clk);
- 	clk_put(clk);
- 	iounmap(ocotp_base);
- 	of_node_put(np);
- 
--	return rev;
-+	return 0;
-+
-+err_clk:
-+	iounmap(ocotp_base);
-+err_iomap:
-+	of_node_put(np);
-+	return ret;
- }
- 
--static void __init imx8mm_soc_uid(void)
-+static int imx8mm_soc_uid(void)
- {
- 	void __iomem *ocotp_base;
- 	struct device_node *np;
- 	struct clk *clk;
-+	int ret = 0;
- 	u32 offset = of_machine_is_compatible("fsl,imx8mp") ?
- 		     IMX8MP_OCOTP_UID_OFFSET : 0;
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mm-ocotp");
- 	if (!np)
--		return;
-+		return -EINVAL;
- 
- 	ocotp_base = of_iomap(np, 0);
--	WARN_ON(!ocotp_base);
-+	if (!ocotp_base) {
-+		ret = -EINVAL;
-+		goto err_iomap;
-+	}
-+
- 	clk = of_clk_get_by_name(np, NULL);
- 	if (IS_ERR(clk)) {
--		WARN_ON(IS_ERR(clk));
--		return;
-+		ret = PTR_ERR(clk);
-+		goto err_clk;
- 	}
- 
- 	clk_prepare_enable(clk);
-@@ -124,31 +142,41 @@ static void __init imx8mm_soc_uid(void)
- 
- 	clk_disable_unprepare(clk);
- 	clk_put(clk);
-+
-+err_clk:
- 	iounmap(ocotp_base);
-+err_iomap:
- 	of_node_put(np);
-+
-+	return ret;
- }
- 
--static u32 __init imx8mm_soc_revision(void)
-+static int imx8mm_soc_revision(u32 *socrev)
- {
- 	struct device_node *np;
- 	void __iomem *anatop_base;
--	u32 rev;
-+	int ret;
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mm-anatop");
- 	if (!np)
--		return 0;
-+		return -EINVAL;
- 
- 	anatop_base = of_iomap(np, 0);
--	WARN_ON(!anatop_base);
-+	if (!anatop_base) {
-+		ret = -EINVAL;
-+		goto err_iomap;
-+	}
- 
--	rev = readl_relaxed(anatop_base + ANADIG_DIGPROG_IMX8MM);
-+	*socrev = readl_relaxed(anatop_base + ANADIG_DIGPROG_IMX8MM);
- 
- 	iounmap(anatop_base);
- 	of_node_put(np);
- 
--	imx8mm_soc_uid();
-+	return imx8mm_soc_uid();
- 
--	return rev;
-+err_iomap:
-+	of_node_put(np);
-+	return ret;
- }
- 
- static const struct imx8_soc_data imx8mq_soc_data = {
-@@ -184,7 +212,7 @@ static __maybe_unused const struct of_device_id imx8_soc_match[] = {
- 	kasprintf(GFP_KERNEL, "%d.%d", (soc_rev >> 4) & 0xf,  soc_rev & 0xf) : \
- 	"unknown"
- 
--static int __init imx8_soc_init(void)
-+static int imx8m_soc_probe(struct platform_device *pdev)
- {
- 	struct soc_device_attribute *soc_dev_attr;
- 	struct soc_device *soc_dev;
-@@ -212,8 +240,11 @@ static int __init imx8_soc_init(void)
- 	data = id->data;
- 	if (data) {
- 		soc_dev_attr->soc_id = data->name;
--		if (data->soc_revision)
--			soc_rev = data->soc_revision();
-+		if (data->soc_revision) {
-+			ret = data->soc_revision(&soc_rev);
-+			if (ret)
-+				goto free_soc;
-+		}
- 	}
- 
- 	soc_dev_attr->revision = imx8_revision(soc_rev);
-@@ -251,6 +282,23 @@ static int __init imx8_soc_init(void)
- 	kfree(soc_dev_attr);
- 	return ret;
- }
-+
-+static struct platform_driver imx8m_soc_driver = {
-+	.probe = imx8m_soc_probe,
-+	.driver = {
-+		.name = "imx8m-soc",
-+	},
-+};
-+module_platform_driver(imx8m_soc_driver);
-+
-+static int __init imx8_soc_init(void)
-+{
-+	struct platform_device *pdev;
-+
-+	pdev = platform_device_register_simple("imx8m-soc", -1, NULL, 0);
-+
-+	return IS_ERR(pdev) ? PTR_ERR(pdev) : 0;
-+}
- device_initcall(imx8_soc_init);
- MODULE_DESCRIPTION("NXP i.MX8M SoC driver");
- MODULE_LICENSE("GPL");
 -- 
-2.45.2
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
