@@ -1,632 +1,470 @@
-Return-Path: <linux-kernel+bounces-339279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57163986209
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:06:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E099861F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90CE1F2A1A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B565D1C27043
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1BD187555;
-	Wed, 25 Sep 2024 14:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAD91448E6;
+	Wed, 25 Sep 2024 14:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="rZJwKY4R"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UT5RF/Jk"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F3F184532;
-	Wed, 25 Sep 2024 14:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37AB13D891;
+	Wed, 25 Sep 2024 14:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727276034; cv=none; b=QL40WBgjR6wqkGFoH9UqKz+AR+NTirQfEecMM3j5kutVE4sDYq76EwSN4uwJtLUQiSf+axgppsB+HPCOgWsJCHo8cmw2gruxl7EiAbvUh5pMEiMzUlYQKTTEvgZ9oEUvwYCLWWUzNw/GvPZUK8pnMFaFhFL6yyRRdQk3JcceDOQ=
+	t=1727275983; cv=none; b=AHVek/dIel6be8UliAf3s+RoTp6geVm5JgaFeByeZGzwM+z2fYb0sUubeTrioKD1SlxnvTxwXZ8jC4Xxd+cswACk3NPEZOiu6HTc9rUaqK+1QoBSmMlhNepAxOwxhrl9SzUqobFWBbFcdO8MsYA4Bb0nuKVvthMJVkPyV9Va36M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727276034; c=relaxed/simple;
-	bh=rKKHbNEk82zvqLDpZSeHb9VNj6iTqmA1Pihea/kiG2g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=BIN5x1EFWwxoyCqRZlLZgmldU8iEpY5cfuAO04qTxPTX+H9jl6LcxsteEgC/jSsuTG7OGJ3h5vyIlBcDvqRxvRQyM+Rf7Gm/fJifQXnp7Izk2FhQCCd32QIRcv1+tjAtN04WPyBEeVa38e7NiuMTOy2w0iZETKf/XfWkzsw125w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=rZJwKY4R; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id B9078120023;
-	Wed, 25 Sep 2024 17:53:40 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru B9078120023
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1727276020;
-	bh=OUUKZHCJdbGKzTK7PdAbRtM9ujeZrTUFCVvR/b2xWsM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:From;
-	b=rZJwKY4RZ6IkeIWxF8tUubbW1BbVtEc8QFm5yvzybLQCGx61yTjT9CTZhtvDdMbBK
-	 VVvgEpt2hycc1lHdtAq3qwXz+N3ESb+k98ZnlvdOBi2PUSiKUL+tGYwGIsJbKwPHCQ
-	 +6cVja+3I/jqCKneot31jmg1fEjK21zEf8Ey3fi/5ervPvM2BBF8GpBw4m/PKyt+ut
-	 unJ7nr+1PcpKWWGSViKeJi/z6gi5QG5Uo1YdItS52bGqqhIzRScMOJUEbBeAZTGsGb
-	 kTmlXDmk2q5wkJWx2iqGxE++Oefg4gglNFH5Q9JLoLJ4otFpPQWy62Mey3HfsRmPkx
-	 CTsBs9hcHelcw==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 25 Sep 2024 17:53:40 +0300 (MSK)
-From: Igor Prusov <ivprusov@salutedevices.com>
-Date: Wed, 25 Sep 2024 17:52:44 +0300
-Subject: [PATCH v3 6/6] ASoC: codecs: Add NeoFidelity NTP8835 codec
+	s=arc-20240116; t=1727275983; c=relaxed/simple;
+	bh=hLCric22CNEYkbsVVF9vR+LHrwmbplFSrUXbWrG3z0g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GAppJ3P61P6ML6vGOP2z/R/EG4aKtKubmfp9P4HfCuqB61NSEBErFuY16IJ5CP2nvn09p0yl2a05acjtu8VnrDXRAypPIGr4Lo6Hm6vgEHgPM+lkono6cY3KNll01QYph+sVo70CgeE0xvR4W6AvK494tgyTTkdfL8+w5hua8nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UT5RF/Jk; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2dee71e47c5so3178114a91.0;
+        Wed, 25 Sep 2024 07:53:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727275981; x=1727880781; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=URux+BlQKOTmnPYbOPO7cMHEzkvt3JkZ4l1c9KS0fJs=;
+        b=UT5RF/JkcDGLFl0jp4FO+f92NdD18EosG+jH15uv1oATAY4W+ouxKRXNz3dmIG/gBr
+         IytbyyrwVp3589K2KcTi+044UfTAb+a5j9fYGVZKyTWkAVU+8yc6BCXlkCK297x11GM2
+         01RU+WQqtsEWUW8HlBjPcefCl7Z6J3tfULM1HntpDFB4DmJcIZPettjWnoSrHcw/T0BX
+         ovI4XTiTXavSynMDKB+7si/NnEqcUM+quhiFOQJoo0Ri8PUsJEQlMZmLpduFvguCqo0N
+         jMzJOH89YSQ4BIMJVmLuoES+mgjdShosUut4p5Wa054rS0VyCmHZRPKeMudKtE9vIa52
+         U4Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727275981; x=1727880781;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=URux+BlQKOTmnPYbOPO7cMHEzkvt3JkZ4l1c9KS0fJs=;
+        b=DSbf7hncia6V7otVxDaVRSBB+hatj5rCD97wEa3S8sHTFLTFOoBSD/OvyBReywrkQc
+         ar09Ud+q1ZDuwDFwSpD6jqSdH5FotZQ3a7Dg+FZ3YTZ82naOMM1h++nwJhE5iGi6NpDr
+         EIW2ZmbZCnO9eTLqqBTeuedwtCnxegrMs3sA5718LT8r7/etbw9md4Okyq8i5uJMn2QO
+         RFTEyizr4V7lV4lgrwGeB5/hQjWarGs4M76TNBMwiTgGkX8ZhzD+Vfq4ICdHRioyBzCq
+         E/6OSLV858/dZ71K2gfYRx2EG1t+O9WjP9ONcHlkzpoMcufeocFvkTXeigEGzeLwPDwG
+         KyDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMmE9WHGYSP7rcw8bT4+6Jw9yVvP0VWI/n+YwrQ8NfvtiJlod32n2d5HCwo8c5jvTMqULQxHO+INrvGOI=@vger.kernel.org, AJvYcCXkFcrn9zHIiig1fEM/1PGlIhx61dkSsjZPhQseyQTVCPYCWhKYWGTEYf75CwU06Bb8876WgU+Ag3Lyb0e8jfh0yYs0PZHx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzztZ03ujLv9cdrrC6M9NzcREFAOMTE6vxy0uKuDf5PLtUbmMgF
+	iMCkysyEResqZM75mdfmrQ4dpMDkf10sApaIAPz1eTgG28F7eXwu
+X-Google-Smtp-Source: AGHT+IGhPUQZ+n7yszk/KE8RG3Zymew7SBluMpTMIvTEWbClRv5v274GFfjA4XG98dYXWJBNZDsnmg==
+X-Received: by 2002:a17:90b:4a4f:b0:2d8:aa9c:e386 with SMTP id 98e67ed59e1d1-2e06ae5e76dmr3991797a91.14.1727275981094;
+        Wed, 25 Sep 2024 07:53:01 -0700 (PDT)
+Received: from localhost.localdomain ([20.37.103.148])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1fedadsm1622558a91.28.2024.09.25.07.52.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 07:53:00 -0700 (PDT)
+From: Shu Han <ebpqwerty472123@gmail.com>
+To: akpm@linux-foundation.org,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	lorenzo.stoakes@oracle.com
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH RFC v3] mm: move the check of READ_IMPLIES_EXEC out of do_mmap()
+Date: Wed, 25 Sep 2024 22:52:49 +0800
+Message-Id: <20240925145249.50-1-ebpqwerty472123@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240925-ntp-amps-8918-8835-v3-6-e2459a8191a6@salutedevices.com>
-References: <20240925-ntp-amps-8918-8835-v3-0-e2459a8191a6@salutedevices.com>
-In-Reply-To: <20240925-ntp-amps-8918-8835-v3-0-e2459a8191a6@salutedevices.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	"Mark Brown" <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi
- Iwai <tiwai@suse.com>, Igor Prusov <ivprusov@salutedevices.com>, Philipp
- Zabel <p.zabel@pengutronix.de>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-sound@vger.kernel.org>, <kernel@salutedevices.com>,
-	<prusovigor@gmail.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187980 [Sep 25 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ivprusov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;www.cpbay.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/09/25 12:44:00
-X-KSMG-LinksScanning: Clean, bases: 2024/09/25 12:44:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/09/25 13:22:00 #26670925
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: 8bit
 
-The NeoFidelity NTP8835 adn NTP8835C are 2.1 channel amplifiers with
-mixer and biquad filters. Both amplifiers have identical programming
-interfaces but differ in output signal characteristics.
+This patch moves the check of READ_IMPLIES_EXEC out of do_mmap(), and
+calls the LSM hooks at the same time. Below is the reason.
 
-Datasheet: https://www.cpbay.com/Uploads/20210225/6037116a3ea91.pdf
-Datasheet: https://www.cpbay.com/Uploads/20210918/61458b2f2631e.pdf
-Signed-off-by: Igor Prusov <ivprusov@salutedevices.com>
+This patch is related to:
+
+1. the personality flag READ_IMPLIES_EXEC, which can be changed in
+   userspace and will add PROT_EXEC to prot in do_mmap() when it is set and
+   some other conditions are met.
+2. the LSM hook security_mmap_file, which requires the prot before and
+   after 1.
+
+For now, this is the mmap() logic that actually executes (only the part
+we care):
+
+1. call security_mmap_file()
+1.1. calculate the final prot in mmap_prot()
+1.2. call hooks by the original prot and the final prot
+2. lock mmap_write_lock
+3. call do_mmap()
+3.1. calculate the final prot again according to the personality flag
+     READ_IMPLIES_EXEC and other conditions
+3.2. do the actual memory map with the final prot
+4. unlock mmap_write_lock
+
+There are 2 problems with them:
+1. The final prot is calculated twice, which is redundant. And currently,
+   the !MMU case won't imply exec if the file's mmap_capabilities do not
+   exist in step 3.1, but step 1.1 is different.
+2. Some other call sites call do_mmap() without step 1, which is still
+   secure if there is no step 3.1 since they map an anonymous page or a
+   private file without PROT_EXEC, which is not cared for by LSM. So, it
+   is implied that it is call sites' duty to do step 1.1 or let step 3.1
+   never take effect(let other conditions not be met, such as marking the
+   mapped file as NO_EXEC).
+
+Especially the implicit duty in problem 2 is rarely noticed by the caller,
+which leads to some security issues(in aio[1] and remap_file_pages[2]).
+It is believed that the future call sites to do_mmap() is easily to harm
+the security if we don't take measures.
+
+The measures in this patch are moving step 3.1 out of do_mmap(), into the
+new function mmap_check_prot(), and calling the LSM hooks in the same
+function. The function is out of the mmap_write_lock.
+
+The measures remove the repeated logic in step 1.1 and let further call
+sites have 2 choices:
+1. call mmap_check_prot() before calling do_mmap(), which is equal to the
+   current steps 1-4.
+2. call do_mmap() directly, which is still secure since there is no
+   step 3.1 in do_mmap() anymore.
+
+The potential harm that remains without precedent is a new caller calls
+do_mmap() with a non-private file and the PROT_EXEC flag, which is
+mentioned in the comment of do_mmap().
+
+The measures have a minor behavior change, which is:
+
+If the call site selects choice 2 and the conditions for READ_IMPLIES_EXEC
+are met, there will be no PROT_EXEC automatically added anymore.
+
+This is all call sites currently and why they should clearly be fine:
+1. mm/util.c: choice 1.
+2. ipc/shm.c: choice 1.
+3. fs/aio.c: the conditions for READ_IMPLIES_EXEC will never be met since
+             the patch for [1] adds the noexec flag.
+4. arch/x86/kernel/shstk.c: must not be intended to have PROT_EXEC, since
+                            shadow stack is a stack that only store return
+                            addresses, executing it is never required.
+5. mm/mmap.c: in the history, remap_file_pages won't change prot, which is
+              changed in the emulation version after the deprecated mark
+              exists. the patch only revert the side effect introduced in
+              the emulation version.
+
+Link: https://project-zero.issues.chromium.org/issues/42452389 [1]
+Link: https://lore.kernel.org/all/20240919080905.4506-2-paul@paul-moore.com/ [2]
+Signed-off-by: Shu Han <ebpqwerty472123@gmail.com>
 ---
- sound/soc/codecs/Kconfig   |   5 +
- sound/soc/codecs/Makefile  |   2 +
- sound/soc/codecs/ntp8835.c | 480 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 487 insertions(+)
+May require a better name for mmap_check_prot().
+v3: Send only one version as lorenzo.stoakes@oracle.com suggested and
+    rewrite the description more clearly.
+    Sorry for the inconvenience caused by v1 and v2.
+v2: Add RFC tag as lorenzo.stoakes@oracle.com suggested, and refine the comment in the patch.
+    https://lore.kernel.org/all/20240925120940.309-1-ebpqwerty472123@gmail.com/
+v1: The original.
+    https://lore.kernel.org/all/20240925063034.169-1-ebpqwerty472123@gmail.com/
+Alternatives:
+1. Add sufficient comments for do_mmap() without code changes.
+   This method remains problem 1 unsolved.
+2. Move security_mmap_file() back into do_mmap().
+   No cases should caller to be taken care anymore, but LSM modules should
+   check their hook for mmap_file works fine in the mmap_write_lock.
+   The detail is in(separating it should be a mistake)
+   https://lore.kernel.org/all/20240925115701.73-1-ebpqwerty472123@gmail.com/
+---
+ include/linux/mm.h       |  2 ++
+ include/linux/security.h |  8 +++----
+ ipc/shm.c                |  2 +-
+ mm/mmap.c                | 42 ++++++++++++++++++++++------------
+ mm/nommu.c               | 49 +++++++++++++++++++++++++++++++---------
+ mm/util.c                |  2 +-
+ security/security.c      | 41 ++++-----------------------------
+ 7 files changed, 78 insertions(+), 68 deletions(-)
 
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 03eb9512d2239782faf1ed3a3315e94c9e583c53..c6c4c7481b4ca4938bdcabb1e22514ddd2bc5ca4 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -2573,6 +2573,11 @@ config SND_SOC_NTP8918
- 	tristate "NeoFidelity NTP8918 amplifier"
- 	depends on I2C
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c4b238a20b76..83f334590b06 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3392,6 +3392,8 @@ get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
+ extern unsigned long mmap_region(struct file *file, unsigned long addr,
+ 	unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
+ 	struct list_head *uf);
++extern int mmap_check_prot(struct file *file, unsigned long *prot,
++	unsigned long flags);
+ extern unsigned long do_mmap(struct file *file, unsigned long addr,
+ 	unsigned long len, unsigned long prot, unsigned long flags,
+ 	vm_flags_t vm_flags, unsigned long pgoff, unsigned long *populate,
+diff --git a/include/linux/security.h b/include/linux/security.h
+index c37c32ebbdcd..e061bc9a0331 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -423,8 +423,8 @@ void security_file_free(struct file *file);
+ int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+ int security_file_ioctl_compat(struct file *file, unsigned int cmd,
+ 			       unsigned long arg);
+-int security_mmap_file(struct file *file, unsigned long prot,
+-			unsigned long flags);
++int security_mmap_file(struct file *file, unsigned long reqprot,
++		       unsigned long prot, unsigned long flags);
+ int security_mmap_addr(unsigned long addr);
+ int security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
+ 			   unsigned long prot);
+@@ -1077,8 +1077,8 @@ static inline int security_file_ioctl_compat(struct file *file,
+ 	return 0;
+ }
  
-+config SND_SOC_NTP8835
-+	select SND_SOC_NTPFW
-+	tristate "NeoFidelity NTP8835 and NTP8835C amplifiers"
-+	depends on I2C
-+
- config SND_SOC_TPA6130A2
- 	tristate "Texas Instruments TPA6130A2 headphone amplifier"
- 	depends on I2C
-diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-index 9e72c28d193b21a0b0ac4fb3dfbaea5e4252a66c..850c6249e3dfedb3d59897b57c6a731b6fbf517e 100644
---- a/sound/soc/codecs/Makefile
-+++ b/sound/soc/codecs/Makefile
-@@ -189,6 +189,7 @@ snd-soc-nau8821-y := nau8821.o
- snd-soc-nau8822-y := nau8822.o
- snd-soc-nau8824-y := nau8824.o
- snd-soc-nau8825-y := nau8825.o
-+snd-soc-ntp8835-y := ntp8835.o
- snd-soc-ntp8918-y := ntp8918.o
- snd-soc-ntpfw-y := ntpfw.o
- snd-soc-hdmi-codec-y := hdmi-codec.o
-@@ -593,6 +594,7 @@ obj-$(CONFIG_SND_SOC_NAU8821)   += snd-soc-nau8821.o
- obj-$(CONFIG_SND_SOC_NAU8822)   += snd-soc-nau8822.o
- obj-$(CONFIG_SND_SOC_NAU8824)   += snd-soc-nau8824.o
- obj-$(CONFIG_SND_SOC_NAU8825)   += snd-soc-nau8825.o
-+obj-$(CONFIG_SND_SOC_NTP8835)	+= snd-soc-ntp8835.o
- obj-$(CONFIG_SND_SOC_NTP8918)	+= snd-soc-ntp8918.o
- obj-$(CONFIG_SND_SOC_NTPFW)	+= snd-soc-ntpfw.o
- obj-$(CONFIG_SND_SOC_HDMI_CODEC)	+= snd-soc-hdmi-codec.o
-diff --git a/sound/soc/codecs/ntp8835.c b/sound/soc/codecs/ntp8835.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..97056d8de2bba334269b4bc07116a174eef2a95c
---- /dev/null
-+++ b/sound/soc/codecs/ntp8835.c
-@@ -0,0 +1,480 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Driver for the NTP8835/NTP8835C Audio Amplifiers
-+ *
-+ * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
-+ *
-+ * Author: Igor Prusov <ivprusov@salutedevices.com>
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/clk.h>
-+#include <linux/bits.h>
-+#include <linux/reset.h>
-+#include <linux/init.h>
-+#include <linux/i2c.h>
-+#include <linux/regmap.h>
-+
-+#include <sound/initval.h>
-+#include <sound/core.h>
-+#include <sound/pcm.h>
-+#include <sound/pcm_params.h>
-+#include <sound/soc.h>
-+#include <sound/soc-component.h>
-+#include <sound/tlv.h>
-+
-+#include "ntpfw.h"
-+
-+#define NTP8835_FORMATS     (SNDRV_PCM_FMTBIT_S16_LE | \
-+			     SNDRV_PCM_FMTBIT_S20_3LE | \
-+			     SNDRV_PCM_FMTBIT_S24_LE | \
-+			     SNDRV_PCM_FMTBIT_S32_LE)
-+
-+#define NTP8835_INPUT_FMT			0x0
-+#define  NTP8835_INPUT_FMT_MASTER_MODE		BIT(0)
-+#define  NTP8835_INPUT_FMT_GSA_MODE		BIT(1)
-+#define NTP8835_GSA_FMT				0x1
-+#define  NTP8835_GSA_BS_MASK			GENMASK(3, 2)
-+#define  NTP8835_GSA_BS(x)			((x) << 2)
-+#define  NTP8835_GSA_RIGHT_J			BIT(0)
-+#define  NTP8835_GSA_LSB			BIT(1)
-+#define NTP8835_MCLK_FREQ_CTRL			0x2
-+#define  NTP8835_MCLK_FREQ_MCF			GENMASK(1, 0)
-+#define NTP8835_SOFT_MUTE			0x26
-+#define  NTP8835_SOFT_MUTE_SM1			BIT(0)
-+#define  NTP8835_SOFT_MUTE_SM2			BIT(1)
-+#define  NTP8835_SOFT_MUTE_SM3			BIT(2)
-+#define NTP8835_PWM_SWITCH			0x27
-+#define  NTP8835_PWM_SWITCH_POF1		BIT(0)
-+#define  NTP8835_PWM_SWITCH_POF2		BIT(1)
-+#define  NTP8835_PWM_SWITCH_POF3		BIT(2)
-+#define NTP8835_PWM_MASK_CTRL0			0x28
-+#define  NTP8835_PWM_MASK_CTRL0_OUT_LOW		BIT(1)
-+#define  NTP8835_PWM_MASK_CTRL0_FPMLD		BIT(2)
-+#define NTP8835_MASTER_VOL			0x2e
-+#define NTP8835_CHNL_A_VOL			0x2f
-+#define NTP8835_CHNL_B_VOL			0x30
-+#define NTP8835_CHNL_C_VOL			0x31
-+#define REG_MAX					NTP8835_CHNL_C_VOL
-+
-+#define NTP8835_FW_NAME				"eq_8835.bin"
-+#define NTP8835_FW_MAGIC			0x38383335	/* "8835" */
-+
-+struct ntp8835_priv {
-+	struct i2c_client *i2c;
-+	struct reset_control *reset;
-+	unsigned int format;
-+	struct clk *mclk;
-+	unsigned int mclk_rate;
-+};
-+
-+static const DECLARE_TLV_DB_RANGE(ntp8835_vol_scale,
-+	0, 1, TLV_DB_SCALE_ITEM(-15000, 0, 0),
-+	2, 6, TLV_DB_SCALE_ITEM(-15000, 1000, 0),
-+	7, 0xff, TLV_DB_SCALE_ITEM(-10000, 50, 0),
-+);
-+
-+static int ntp8835_mute_info(struct snd_kcontrol *kcontrol,
-+			     struct snd_ctl_elem_info *uinfo)
+-static inline int security_mmap_file(struct file *file, unsigned long prot,
+-				     unsigned long flags)
++static inline int security_mmap_file(struct file *file, unsigned long reqprot,
++				     unsigned long prot, unsigned long flags)
+ {
+ 	return 0;
+ }
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 3e3071252dac..f1095ee3796d 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -1636,7 +1636,7 @@ long do_shmat(int shmid, char __user *shmaddr, int shmflg,
+ 	sfd->vm_ops = NULL;
+ 	file->private_data = sfd;
+ 
+-	err = security_mmap_file(file, prot, flags);
++	err = mmap_check_prot(file, &prot, flags);
+ 	if (err)
+ 		goto out_fput;
+ 
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 18fddcce03b8..b979a6055f8e 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1249,8 +1249,36 @@ static inline bool file_mmap_ok(struct file *file, struct inode *inode,
+ 	return true;
+ }
+ 
++int mmap_check_prot(struct file *file, unsigned long *prot,
++		    unsigned long flags)
 +{
-+	uinfo->type = SNDRV_CTL_ELEM_TYPE_BOOLEAN;
-+	uinfo->access =
-+		(SNDRV_CTL_ELEM_ACCESS_TLV_READ | SNDRV_CTL_ELEM_ACCESS_READWRITE);
-+	uinfo->count = 1;
-+
-+	uinfo->value.integer.min = 0;
-+	uinfo->value.integer.max = 1;
-+	uinfo->value.integer.step = 1;
-+
-+	return 0;
-+}
-+
-+static int ntp8835_mute_get(struct snd_kcontrol *kcontrol,
-+			    struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
-+	unsigned int val;
-+
-+	val = snd_soc_component_read(component, NTP8835_SOFT_MUTE);
-+
-+	ucontrol->value.integer.value[0] = val ? 0 : 1;
-+	return 0;
-+}
-+
-+static int ntp8835_mute_put(struct snd_kcontrol *kcontrol,
-+			    struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
-+	unsigned int val;
-+
-+	val = ucontrol->value.integer.value[0] ? 0 : 7;
-+
-+	snd_soc_component_write(component, NTP8835_SOFT_MUTE, val);
-+
-+	return 0;
-+}
-+
-+static const struct snd_kcontrol_new ntp8835_vol_control[] = {
-+	SOC_SINGLE_TLV("Playback Volume", NTP8835_MASTER_VOL, 0,
-+		       0xff, 0, ntp8835_vol_scale),
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Playback Switch",
-+		.info = ntp8835_mute_info,
-+		.access = SNDRV_CTL_ELEM_ACCESS_TLV_READ | SNDRV_CTL_ELEM_ACCESS_READWRITE,
-+		.get = ntp8835_mute_get,
-+		.put = ntp8835_mute_put,
-+	},
-+};
-+
-+static void ntp8835_reset_gpio(struct ntp8835_priv *ntp8835)
-+{
-+	/*
-+	 * Proper initialization sequence for NTP835 amplifier requires driving
-+	 * /RESET signal low during power up for at least 0.1us. The sequence is,
-+	 * according to NTP8835 datasheet, 6.2 Timing Sequence (recommended):
-+	 * Deassert for T2 >= 1ms...
-+	 */
-+	reset_control_deassert(ntp8835->reset);
-+	fsleep(1000);
-+
-+	/* ...Assert for T3 >= 0.1us... */
-+	reset_control_assert(ntp8835->reset);
-+	fsleep(1);
-+
-+	/* ...Deassert, and wait for T4 >= 0.5ms before sound on sequence. */
-+	reset_control_deassert(ntp8835->reset);
-+	fsleep(500);
-+}
-+
-+static const struct reg_sequence ntp8835_sound_on[] = {
-+	{ NTP8835_PWM_MASK_CTRL0,	NTP8835_PWM_MASK_CTRL0_FPMLD },
-+	{ NTP8835_PWM_SWITCH,		0x00 },
-+	{ NTP8835_SOFT_MUTE,		0x00 },
-+};
-+
-+static const struct reg_sequence ntp8835_sound_off[] = {
-+	{ NTP8835_SOFT_MUTE,		NTP8835_SOFT_MUTE_SM1 |
-+					NTP8835_SOFT_MUTE_SM2 |
-+					NTP8835_SOFT_MUTE_SM3 },
-+
-+	{ NTP8835_PWM_SWITCH,		NTP8835_PWM_SWITCH_POF1 |
-+					NTP8835_PWM_SWITCH_POF2 |
-+					NTP8835_PWM_SWITCH_POF3 },
-+
-+	{ NTP8835_PWM_MASK_CTRL0,	NTP8835_PWM_MASK_CTRL0_OUT_LOW |
-+					NTP8835_PWM_MASK_CTRL0_FPMLD },
-+};
-+
-+static int ntp8835_load_firmware(struct ntp8835_priv *ntp8835)
-+{
-+	int ret;
-+
-+	ret = ntpfw_load(ntp8835->i2c, NTP8835_FW_NAME, NTP8835_FW_MAGIC);
-+	if (ret == -ENOENT) {
-+		dev_warn_once(&ntp8835->i2c->dev,
-+			      "Could not find firmware %s\n", NTP8835_FW_NAME);
-+		return 0;
-+	}
-+
-+	return ret;
-+}
-+
-+static int ntp8835_snd_suspend(struct snd_soc_component *component)
-+{
-+	struct ntp8835_priv *ntp8835 = snd_soc_component_get_drvdata(component);
-+
-+	regcache_cache_only(component->regmap, true);
-+
-+	regmap_multi_reg_write_bypassed(component->regmap,
-+					ntp8835_sound_off,
-+					ARRAY_SIZE(ntp8835_sound_off));
++	unsigned long req_prot = *prot;
++	unsigned long new_prot = req_prot;
++	int err;
 +
 +	/*
-+	 * According to NTP8835 datasheet, 6.2 Timing Sequence (recommended):
-+	 * wait after sound off for T6 >= 0.5ms
++	 * Does the application expect PROT_READ to imply PROT_EXEC?
++	 *
++	 * (the exception is when the underlying filesystem is noexec
++	 *  mounted, in which case we don't add PROT_EXEC.)
 +	 */
-+	fsleep(500);
-+	reset_control_assert(ntp8835->reset);
++	if (((req_prot & (PROT_READ | PROT_EXEC)) == PROT_READ) &&
++	    (current->personality & READ_IMPLIES_EXEC) &&
++	    !(file && path_noexec(&file->f_path)))
++		new_prot |= PROT_EXEC;
 +
-+	regcache_mark_dirty(component->regmap);
-+	clk_disable_unprepare(ntp8835->mclk);
++	err = security_mmap_file(file, req_prot, new_prot, flags);
++	if (err)
++		return err;
 +
++	*prot = new_prot;
 +	return 0;
 +}
 +
-+static int ntp8835_snd_resume(struct snd_soc_component *component)
+ /*
+  * The caller must write-lock current->mm->mmap_lock.
++ * The caller must call mmap_check_prot before if
++ * (file && !IS_PRIVATE(file_inode(file)) && (prot & PROT_EXEC)).
+  */
+ unsigned long do_mmap(struct file *file, unsigned long addr,
+ 			unsigned long len, unsigned long prot,
+@@ -1266,16 +1294,6 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+ 	if (!len)
+ 		return -EINVAL;
+ 
+-	/*
+-	 * Does the application expect PROT_READ to imply PROT_EXEC?
+-	 *
+-	 * (the exception is when the underlying filesystem is noexec
+-	 *  mounted, in which case we don't add PROT_EXEC.)
+-	 */
+-	if ((prot & PROT_READ) && (current->personality & READ_IMPLIES_EXEC))
+-		if (!(file && path_noexec(&file->f_path)))
+-			prot |= PROT_EXEC;
+-
+ 	/* force arch specific MAP_FIXED handling in get_unmapped_area */
+ 	if (flags & MAP_FIXED_NOREPLACE)
+ 		flags |= MAP_FIXED;
+@@ -3198,12 +3216,8 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 		flags |= MAP_LOCKED;
+ 
+ 	file = get_file(vma->vm_file);
+-	ret = security_mmap_file(vma->vm_file, prot, flags);
+-	if (ret)
+-		goto out_fput;
+ 	ret = do_mmap(vma->vm_file, start, size,
+ 			prot, flags, 0, pgoff, &populate, NULL);
+-out_fput:
+ 	fput(file);
+ out:
+ 	mmap_write_unlock(mm);
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 7296e775e04e..96761add1295 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -792,12 +792,6 @@ static int validate_mmap_request(struct file *file,
+ 		if (path_noexec(&file->f_path)) {
+ 			if (prot & PROT_EXEC)
+ 				return -EPERM;
+-		} else if ((prot & PROT_READ) && !(prot & PROT_EXEC)) {
+-			/* handle implication of PROT_EXEC by PROT_READ */
+-			if (current->personality & READ_IMPLIES_EXEC) {
+-				if (capabilities & NOMMU_MAP_EXEC)
+-					prot |= PROT_EXEC;
+-			}
+ 		} else if ((prot & PROT_READ) &&
+ 			 (prot & PROT_EXEC) &&
+ 			 !(capabilities & NOMMU_MAP_EXEC)
+@@ -810,11 +804,6 @@ static int validate_mmap_request(struct file *file,
+ 		 * privately mapped
+ 		 */
+ 		capabilities = NOMMU_MAP_COPY;
+-
+-		/* handle PROT_EXEC implication by PROT_READ */
+-		if ((prot & PROT_READ) &&
+-		    (current->personality & READ_IMPLIES_EXEC))
+-			prot |= PROT_EXEC;
+ 	}
+ 
+ 	/* allow the security API to have its say */
+@@ -992,6 +981,44 @@ static int do_mmap_private(struct vm_area_struct *vma,
+ 	return -ENOMEM;
+ }
+ 
++int mmap_check_prot(struct file *file, unsigned long *prot,
++		    unsigned long flags)
 +{
-+	struct ntp8835_priv *ntp8835 = snd_soc_component_get_drvdata(component);
-+	int ret;
++	unsigned long req_prot = *prot;
++	unsigned long new_prot = req_prot;
++	int err;
 +
-+	ntp8835_reset_gpio(ntp8835);
-+	ret = clk_prepare_enable(ntp8835->mclk);
-+	if (ret)
-+		return ret;
-+
-+	regmap_multi_reg_write_bypassed(component->regmap,
-+					ntp8835_sound_on,
-+					ARRAY_SIZE(ntp8835_sound_on));
-+
-+	ret = ntp8835_load_firmware(ntp8835);
-+	if (ret) {
-+		dev_err(&ntp8835->i2c->dev, "Failed to load firmware\n");
-+		return ret;
++	/*
++	 * Does the application expect PROT_READ to imply PROT_EXEC?
++	 *
++	 * (the exception is when the underlying filesystem is noexec
++	 *  mounted or the file does not have NOMMU_MAP_EXEC
++	 * (== VM_MAYEXEC), in which case we don't add PROT_EXEC.)
++	 */
++	if ((req_prot & (PROT_READ | PROT_EXEC)) != PROT_READ)
++		goto check;
++	if (!(current->personality & READ_IMPLIES_EXEC))
++		goto check;
++	if (!file) {
++		new_prot |= PROT_EXEC;
++		goto check;
 +	}
++	if (file->f_op->mmap_capabilities) {
++		unsigned int caps = file->f_op->mmap_capabilities(file);
 +
-+	regcache_cache_only(component->regmap, false);
-+	snd_soc_component_cache_sync(component);
-+
-+	return 0;
-+}
-+
-+static int ntp8835_probe(struct snd_soc_component *component)
-+{
-+	int ret;
-+	struct ntp8835_priv *ntp8835 = snd_soc_component_get_drvdata(component);
-+	struct device *dev = component->dev;
-+
-+	ret = snd_soc_add_component_controls(component, ntp8835_vol_control,
-+					     ARRAY_SIZE(ntp8835_vol_control));
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to add controls\n");
-+
-+	ret = ntp8835_load_firmware(ntp8835);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to load firmware\n");
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_dapm_widget ntp8835_dapm_widgets[] = {
-+	SND_SOC_DAPM_DAC("AIFIN", "Playback", SND_SOC_NOPM, 0, 0),
-+
-+	SND_SOC_DAPM_OUTPUT("OUT1"),
-+	SND_SOC_DAPM_OUTPUT("OUT2"),
-+	SND_SOC_DAPM_OUTPUT("OUT3"),
-+};
-+
-+static const struct snd_soc_dapm_route ntp8835_dapm_routes[] = {
-+	{ "OUT1", NULL, "AIFIN" },
-+	{ "OUT2", NULL, "AIFIN" },
-+	{ "OUT3", NULL, "AIFIN" },
-+};
-+
-+static int ntp8835_set_component_sysclk(struct snd_soc_component *component,
-+				       int clk_id, int source,
-+				       unsigned int freq, int dir)
-+{
-+	struct ntp8835_priv *ntp8835 = snd_soc_component_get_drvdata(component);
-+
-+	switch (freq) {
-+	case 12288000:
-+	case 24576000:
-+	case 18432000:
-+		ntp8835->mclk_rate = freq;
-+		break;
-+	default:
-+		ntp8835->mclk_rate = 0;
-+		dev_err(component->dev, "Unsupported MCLK value: %u", freq);
-+		return -EINVAL;
-+	};
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_component_driver soc_component_ntp8835 = {
-+	.probe = ntp8835_probe,
-+	.suspend = ntp8835_snd_suspend,
-+	.resume = ntp8835_snd_resume,
-+	.dapm_widgets = ntp8835_dapm_widgets,
-+	.num_dapm_widgets = ARRAY_SIZE(ntp8835_dapm_widgets),
-+	.dapm_routes = ntp8835_dapm_routes,
-+	.num_dapm_routes = ARRAY_SIZE(ntp8835_dapm_routes),
-+	.set_sysclk = ntp8835_set_component_sysclk,
-+};
-+
-+static int ntp8835_hw_params(struct snd_pcm_substream *substream,
-+			     struct snd_pcm_hw_params *params,
-+			     struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	struct ntp8835_priv *ntp8835 = snd_soc_component_get_drvdata(component);
-+	unsigned int input_fmt = 0;
-+	unsigned int gsa_fmt = 0;
-+	unsigned int gsa_fmt_mask;
-+	unsigned int mcf;
-+	int ret;
-+
-+	switch (ntp8835->mclk_rate) {
-+	case 12288000:
-+		mcf = 0;
-+		break;
-+	case 24576000:
-+		mcf = 1;
-+		break;
-+	case 18432000:
-+		mcf = 2;
-+		break;
-+	default:
-+		return -EINVAL;
++		if (!(caps & NOMMU_MAP_EXEC))
++			goto check;
++		new_prot |= PROT_EXEC;
 +	}
++check:
++	err = security_mmap_file(file, req_prot, new_prot, flags);
++	if (err)
++		return err;
 +
-+	ret = snd_soc_component_update_bits(component, NTP8835_MCLK_FREQ_CTRL,
-+					    NTP8835_MCLK_FREQ_MCF, mcf);
-+	if (ret)
-+		return ret;
-+
-+	switch (ntp8835->format) {
-+	case SND_SOC_DAIFMT_I2S:
-+		break;
-+	case SND_SOC_DAIFMT_RIGHT_J:
-+		input_fmt |= NTP8835_INPUT_FMT_GSA_MODE;
-+		gsa_fmt |= NTP8835_GSA_RIGHT_J;
-+		break;
-+	case SND_SOC_DAIFMT_LEFT_J:
-+		input_fmt |= NTP8835_INPUT_FMT_GSA_MODE;
-+		break;
-+	}
-+
-+	ret = snd_soc_component_update_bits(component, NTP8835_INPUT_FMT,
-+					    NTP8835_INPUT_FMT_MASTER_MODE |
-+					    NTP8835_INPUT_FMT_GSA_MODE,
-+					    input_fmt);
-+
-+	if (!(input_fmt & NTP8835_INPUT_FMT_GSA_MODE) || ret < 0)
-+		return ret;
-+
-+	switch (params_width(params)) {
-+	case 24:
-+		gsa_fmt |= NTP8835_GSA_BS(0);
-+		break;
-+	case 20:
-+		gsa_fmt |= NTP8835_GSA_BS(1);
-+		break;
-+	case 18:
-+		gsa_fmt |= NTP8835_GSA_BS(2);
-+		break;
-+	case 16:
-+		gsa_fmt |= NTP8835_GSA_BS(3);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	gsa_fmt_mask = NTP8835_GSA_BS_MASK |
-+		       NTP8835_GSA_RIGHT_J |
-+		       NTP8835_GSA_LSB;
-+	return snd_soc_component_update_bits(component, NTP8835_GSA_FMT,
-+					     gsa_fmt_mask, gsa_fmt);
-+}
-+
-+static int ntp8835_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	struct ntp8835_priv *ntp8835 = snd_soc_component_get_drvdata(component);
-+
-+	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-+	case SND_SOC_DAIFMT_I2S:
-+	case SND_SOC_DAIFMT_RIGHT_J:
-+	case SND_SOC_DAIFMT_LEFT_J:
-+		ntp8835->format = fmt & SND_SOC_DAIFMT_FORMAT_MASK;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+	return 0;
-+};
-+
-+static const struct snd_soc_dai_ops ntp8835_dai_ops = {
-+	.hw_params = ntp8835_hw_params,
-+	.set_fmt = ntp8835_set_fmt,
-+};
-+
-+static struct snd_soc_dai_driver ntp8835_dai = {
-+	.name = "ntp8835-amplifier",
-+	.playback = {
-+		.stream_name = "Playback",
-+		.channels_min = 1,
-+		.channels_max = 3,
-+		.rates = SNDRV_PCM_RATE_8000_192000,
-+		.formats = NTP8835_FORMATS,
-+	},
-+	.ops = &ntp8835_dai_ops,
-+};
-+
-+static const struct regmap_config ntp8835_regmap = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = REG_MAX,
-+	.cache_type = REGCACHE_MAPLE,
-+};
-+
-+static int ntp8835_i2c_probe(struct i2c_client *i2c)
-+{
-+	struct ntp8835_priv *ntp8835;
-+	struct regmap *regmap;
-+	int ret;
-+
-+	ntp8835 = devm_kzalloc(&i2c->dev, sizeof(*ntp8835), GFP_KERNEL);
-+	if (!ntp8835)
-+		return -ENOMEM;
-+
-+	ntp8835->i2c = i2c;
-+
-+	ntp8835->reset = devm_reset_control_get_shared(&i2c->dev, NULL);
-+	if (IS_ERR(ntp8835->reset))
-+		return dev_err_probe(&i2c->dev, PTR_ERR(ntp8835->reset),
-+				     "Failed to get reset\n");
-+
-+	ret = reset_control_deassert(ntp8835->reset);
-+	if (ret)
-+		return dev_err_probe(&i2c->dev, PTR_ERR(ntp8835->reset),
-+				     "Failed to deassert reset\n");
-+
-+	dev_set_drvdata(&i2c->dev, ntp8835);
-+
-+	ntp8835_reset_gpio(ntp8835);
-+
-+	regmap = devm_regmap_init_i2c(i2c, &ntp8835_regmap);
-+	if (IS_ERR(regmap))
-+		return dev_err_probe(&i2c->dev, PTR_ERR(regmap),
-+				     "Failed to allocate regmap\n");
-+
-+	ret = devm_snd_soc_register_component(&i2c->dev, &soc_component_ntp8835,
-+					      &ntp8835_dai, 1);
-+	if (ret)
-+		return dev_err_probe(&i2c->dev, ret,
-+				     "Failed to register component\n");
-+
-+	ntp8835->mclk = devm_clk_get_enabled(&i2c->dev, "mclk");
-+	if (IS_ERR(ntp8835->mclk))
-+		return dev_err_probe(&i2c->dev, PTR_ERR(ntp8835->mclk), "failed to get mclk\n");
-+
++	*prot = new_prot;
 +	return 0;
 +}
 +
-+static const struct i2c_device_id ntp8835_i2c_id[] = {
-+	{ "ntp8835", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, ntp8835_i2c_id);
-+
-+static const struct of_device_id ntp8835_of_match[] = {
-+	{.compatible = "neofidelity,ntp8835",},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, ntp8835_of_match);
-+
-+static struct i2c_driver ntp8835_i2c_driver = {
-+	.probe = ntp8835_i2c_probe,
-+	.id_table = ntp8835_i2c_id,
-+	.driver = {
-+		.name = "ntp8835",
-+		.of_match_table = ntp8835_of_match,
-+	},
-+};
-+module_i2c_driver(ntp8835_i2c_driver);
-+
-+MODULE_AUTHOR("Igor Prusov <ivprusov@salutedevices.com>");
-+MODULE_DESCRIPTION("NTP8835 Audio Amplifier Driver");
-+MODULE_LICENSE("GPL");
+ /*
+  * handle mapping creation for uClinux
+  */
+diff --git a/mm/util.c b/mm/util.c
+index bd283e2132e0..2eb4d6037610 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -581,7 +581,7 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
+ 	unsigned long populate;
+ 	LIST_HEAD(uf);
+ 
+-	ret = security_mmap_file(file, prot, flag);
++	ret = mmap_check_prot(file, &prot, flag);
+ 	if (!ret) {
+ 		if (mmap_write_lock_killable(mm))
+ 			return -EINTR;
+diff --git a/security/security.c b/security/security.c
+index 4564a0a1e4ef..25556629f588 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2927,42 +2927,10 @@ int security_file_ioctl_compat(struct file *file, unsigned int cmd,
+ }
+ EXPORT_SYMBOL_GPL(security_file_ioctl_compat);
+ 
+-static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
+-{
+-	/*
+-	 * Does we have PROT_READ and does the application expect
+-	 * it to imply PROT_EXEC?  If not, nothing to talk about...
+-	 */
+-	if ((prot & (PROT_READ | PROT_EXEC)) != PROT_READ)
+-		return prot;
+-	if (!(current->personality & READ_IMPLIES_EXEC))
+-		return prot;
+-	/*
+-	 * if that's an anonymous mapping, let it.
+-	 */
+-	if (!file)
+-		return prot | PROT_EXEC;
+-	/*
+-	 * ditto if it's not on noexec mount, except that on !MMU we need
+-	 * NOMMU_MAP_EXEC (== VM_MAYEXEC) in this case
+-	 */
+-	if (!path_noexec(&file->f_path)) {
+-#ifndef CONFIG_MMU
+-		if (file->f_op->mmap_capabilities) {
+-			unsigned caps = file->f_op->mmap_capabilities(file);
+-			if (!(caps & NOMMU_MAP_EXEC))
+-				return prot;
+-		}
+-#endif
+-		return prot | PROT_EXEC;
+-	}
+-	/* anything on noexec mount won't get PROT_EXEC */
+-	return prot;
+-}
+-
+ /**
+  * security_mmap_file() - Check if mmap'ing a file is allowed
+  * @file: file
++ * @reqprot: protection requested by user
+  * @prot: protection applied by the kernel
+  * @flags: flags
+  *
+@@ -2971,11 +2939,10 @@ static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_mmap_file(struct file *file, unsigned long prot,
+-		       unsigned long flags)
++int security_mmap_file(struct file *file, unsigned long reqprot,
++		       unsigned long prot, unsigned long flags)
+ {
+-	return call_int_hook(mmap_file, file, prot, mmap_prot(file, prot),
+-			     flags);
++	return call_int_hook(mmap_file, file, reqprot, prot, flags);
+ }
+ 
+ /**
 
+base-commit: f89722faa31466ff41aed21bdeb9cf34c2312858
 -- 
 2.34.1
 
