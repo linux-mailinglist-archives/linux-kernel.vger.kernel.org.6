@@ -1,52 +1,47 @@
-Return-Path: <linux-kernel+bounces-339699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 781A2986939
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:41:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F03F5986943
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12374B21EBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:41:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C81A1C22746
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFDB158553;
-	Wed, 25 Sep 2024 22:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCAA15A858;
+	Wed, 25 Sep 2024 22:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lsYqq0Dh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXi+mWOb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A21214A4F7;
-	Wed, 25 Sep 2024 22:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB1814A4F7;
+	Wed, 25 Sep 2024 22:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727304054; cv=none; b=c4tOuoWLo3tie4vJF83UmNsGRuS2yvAUkfYK8fFuSZV++Sy8vYuyzXYkGZmMAHS3IOqN8AXQXp2jsOv5eRFk3v6gT2YWP2Gm4QWnM4HpLpXNEhfO914H/3hqzFzyklpsGy02Eko+CHiHcObngYZDlxP9l2bVUdDxabeApAMj0e0=
+	t=1727304088; cv=none; b=kCZG7dP+g2gepLrlUvHzawSzcYdQb6zY5L5lD1zWF848YaLpGE+tc2LjcHQ389W7nzFbuaBpPDjl78f/VmjnL52zdTrz3uwVCzQXs8asXUNgA8sovxERt3nhizrwtZNgOCmIYcBCL1nGw3HfM5++8FPIfGu1uoznaWTEGXzRL+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727304054; c=relaxed/simple;
-	bh=68EeAkuIjw8YFq+hJ4Srg5xsBshd3CLmVechItMjgwg=;
+	s=arc-20240116; t=1727304088; c=relaxed/simple;
+	bh=f8rgSsrdqhPl8sTal/zHbbynm32osaID12MIGLYJ7hU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tea1GNnUSBq1tUy3KoxxIXORp2zVyc3f6NTsWEkJ4FXPS6RdTg9k6pCtkCEq1fwaxUDhvSO2AkmUvjyYOf9eXqnlMpyFfaRZXWreG1fBbkUSttlAtM/NvAmzHZj8GSP4/0JN0Gqf1UA3iuJCvSw4t6DVzcjKbEnPwcSUqJ3SGVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lsYqq0Dh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A954C4CEC3;
-	Wed, 25 Sep 2024 22:40:53 +0000 (UTC)
+	 MIME-Version:Content-Type; b=fDp7OQVTBUIl6oNtFJroQjXQslOlOQLyswrmRNsAw+7Y3s5q7C67fQVOvZ9bghCEqz/dLKnnsHzNEc9IByGcLU1olOtG7RUcaZuhRT9Pwd8FYYdJX0QIsU8Tp/39ZlbSt6/rPJ+2WGHRRC0uKE8Q+VGRKTs3TwF8dCQ12ws6MyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXi+mWOb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C1A7C4CEC3;
+	Wed, 25 Sep 2024 22:41:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727304054;
-	bh=68EeAkuIjw8YFq+hJ4Srg5xsBshd3CLmVechItMjgwg=;
+	s=k20201202; t=1727304088;
+	bh=f8rgSsrdqhPl8sTal/zHbbynm32osaID12MIGLYJ7hU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lsYqq0Dh7LMIHz3pOxxCvRX5FcUYASltk9jhkJD3+hqHtPqe5Rv8E9iNTVQdmWmsj
-	 RHEKf+rWFsEjCRBvfSF5sIDkzpLyEA/OfcNpCj9VTOUvU1iNTIjYimKQ7nSBbga3JY
-	 GwDoO0XSq/B75Mp5EFr3zvN5Ces1xdLDgpqMLN9TscgSnyU21ql5WsscW4npl41NZy
-	 NIIO7wvXP6Ols+jGaYKDJpF80Wkoty7nFaHhRw6cy5h9/AmwmG61vIvAMr7uJZCA/v
-	 WfGz+5/rf8A8UtJUdiJcd2onhLuydXACenHyV/FSP20ODTblOQmIoRdRodvEYn8eAu
-	 r8+XLLJ+LZhvw==
+	b=lXi+mWObndtA/pVacgk+1v6m8erLJbOBtJxg6xI4e17vlzWC2KK+gwkoMZYeGzn7H
+	 kytY5h7iWxVdOpwCMbbqBA2iUKrg+DIux11UpLD8InbPVQ6Mz7Fns+nuhEHvhpU0G1
+	 bwrJaGiD7pmquRlUF9Cdv9JuQZVAsPnJPc/dade4yslLUCLi5QAwMOMxJnTfRYU3Wi
+	 vcBM7mJ/G+/MQt6Rdop190LTnm/ZBHo9kJL74OqLMEk1qSMCguoeN0JKHjQaLsqbid
+	 MkhAahCbW8P9xaZDV961ZRsNELKH8RoYXj9ZvEeulO98jluMHG33P2VxxCShcy85fF
+	 dJkAl0vl6lk+Q==
 From: Namhyung Kim <namhyung@kernel.org>
-To: linux-perf-users@vger.kernel.org,
-	gankulkarni@os.amperecomputing.com,
-	coresight@lists.linaro.org,
-	leo.yan@arm.com,
-	scclevenger@os.amperecomputing.com,
-	James Clark <james.clark@linaro.org>
+To: Masum Reza <masumrezarock100@gmail.com>
 Cc: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
 	Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -56,23 +51,17 @@ Cc: Peter Zijlstra <peterz@infradead.org>,
 	Ian Rogers <irogers@google.com>,
 	Adrian Hunter <adrian.hunter@intel.com>,
 	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Ben Gainey <ben.gainey@arm.com>,
-	Ruidong Tian <tianruidong@linux.alibaba.com>,
-	Benjamin Gray <bgray@linux.ibm.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/7] perf: cs-etm: Coresight decode and disassembly improvements
-Date: Wed, 25 Sep 2024 15:40:51 -0700
-Message-ID: <172730392640.3246951.12111888445468936288.b4-ty@kernel.org>
+	Ze Gao <zegao2021@gmail.com>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	Yunseong Kim <yskelg@gmail.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf evsel: display dmesg command of showing a hardcoded path
+Date: Wed, 25 Sep 2024 15:41:25 -0700
+Message-ID: <172730392642.3246951.14949475927195901266.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
-In-Reply-To: <20240916135743.1490403-1-james.clark@linaro.org>
-References: <20240916135743.1490403-1-james.clark@linaro.org>
+In-Reply-To: <20240922112619.149429-1-masumrezarock100@gmail.com>
+References: <20240922112619.149429-1-masumrezarock100@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,15 +71,14 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Mon, 16 Sep 2024 14:57:31 +0100, James Clark wrote:
+On Sun, 22 Sep 2024 16:56:16 +0530, Masum Reza wrote:
 
-> A set of changes that came out of the issues reported here [1].
+> In non-FHS compliant distros like NixOS, nothing resides in `/bin`
+> and `/usr/bin`. Instead dynamically symlinked into
+> `/run/current-system/sw/bin/`, the executable resides in `/nix/store`.
 > 
->  * First 2 patches fix a decode bug in Perf and add support for new
->    consistency checks in OpenCSD
->  * The remaining ones make the disassembly script easier to test
->    and use. This also involves adding a new Python binding to
->    Perf to get a config value (perf_config_get())
+> With this patch,`/bin` prefix from the dmesg command in the error
+> message is stripped.
 > 
 > [...]
 
