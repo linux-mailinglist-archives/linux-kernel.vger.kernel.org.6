@@ -1,243 +1,152 @@
-Return-Path: <linux-kernel+bounces-339705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D905398694C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6495D986950
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E54286969
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:59:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 273CD2822CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19AC156677;
-	Wed, 25 Sep 2024 22:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE5F16D33F;
+	Wed, 25 Sep 2024 23:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YV3VqO6p"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IcomXzl5"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456913F9D5
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 22:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F07615B55E
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727305151; cv=none; b=cZ+HeR1nQ63avKTOuhohzpqDeQZY/c8PkjYIEPfMaG4F6m9o/Cu8kGA6eZUTsDcq8bOc+DSzkAbulDdgOVXC/IaM1ewRTd7OiNVU+4cfP6jRDLS6s6H6fIzdCiHgm/NFtLoqF38l432pzGey/dWqg24LXQ0WDnrBH0adpBBvM4s=
+	t=1727305210; cv=none; b=OWo6dfHSvUH6No8M5K1ZXonALbKg/NKN3vDX76huw9vWKmZwhXwSuvuEx+1WfrozWSexN29ShB2XI/KHbUPdA+XKp1kILTaS0E1hp4YtSrrIsnkRAIzF+a8D87J3EanoZWL67w3XjoBas7skXcRSn/gAINAYynpCFWVRb5oWXXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727305151; c=relaxed/simple;
-	bh=O7JiwCuz41E0qOOgcfaHagA5FfzCgmRSsIhCjGasEcA=;
+	s=arc-20240116; t=1727305210; c=relaxed/simple;
+	bh=kQStd7Sr/RrN6skcJm3qMMqtRvr2awicCI5PoWvm6FU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N2lokI/RTlNpdrPejOcR2gKBz9YYFCwI7EOrjUahY/LW4CcejLvg//m8kJfDFx2GqrcJR82JPzrU5IlB8SkTjq/Usv7sUwf970THAD9ctt5C21c1wU0a59wi78FQk8cXFxdilA5U9VeHPgWSAugwbS8YK9ImWUDT5AqlvQCn6Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YV3VqO6p; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5365928acd0so530101e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:59:08 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pTVoY/gQn/icMvrZGwGSvNoZukeBuyEq3rj8JY/mCYLZghKCOjqJfUnYxXu9r4lSWgyllouaH9qlmPl2jtr471+fIX5PVmuYiE2q9kZPDFP5QroMtCLDIbHdGfNKIMk4jryXS1L0Zu+j3CSxUd/SrPw7gvaUiXc7oullJrxZLW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IcomXzl5; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20b061b7299so38625ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:00:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727305147; x=1727909947; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
+        d=google.com; s=20230601; t=1727305209; x=1727910009; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nPHAaStQaII888K+8FlasHr0p/vMD/r1ZG30txthNAs=;
-        b=YV3VqO6pbTd5kFhDguzc+HXYPcMqktwzcsTgf/zwGSmmCEIbFhf7Md84T10ooGi8/V
-         RizwfYGhlaDnr28r6yHLP+Rem2SUojWGdak9rKSs6ti0d0AwU56puyyhlL/ykqC2n+qa
-         JCayIUqz3qq4mndB5cO/OAwnF3spDS3FhGMY8yU5Xj3PH5IVEedwWKOzhdxWjT+EfJ2p
-         z8wlLnYPSXrz+0OrDEDTCIl2T9AZ+qLRUHWoVRxQDuC8bjQBPN+E6XENVttXP6UTChVl
-         vIyAsvsd+GxO6H6wkwDL2b6E3WKwG/lQDifAiAfxnGaTQMj2wwqkEJvLD97rT8KL0khI
-         iR0g==
+        bh=Vl8E5j+ZmDbmKOpu44SNpmShgOamIMtl/ODRrZ2cGY4=;
+        b=IcomXzl5tWEX1JaDgotIOyN48qUKBEo4AgZJF7Vasz2qOzWowsC1mo6dVWq1TxaFpb
+         39rRcbbIQFUkXBSt3uTZ3J9SvWDXYHPOI0o2N/CRlGbJjCWgUNj5z8t6xzKKJaQW3hIt
+         O8L+xJNAdHFNW/3jIYOJ09RLG0CynCiPLCmCkVW8ZfE/DXLjdufok9H2QYvJ+3VXLHav
+         0bYA5jN9/fVjzgflicpwQ7cc7cY1rxGjtr87j7P2Ht/r8T1TZLiGQ2XXwc5+G5eKPKkJ
+         l7I6RWK2QD6aTkRIMfEYiMSfglb+/joCAke+E9V3X7e8y8HbcrwzhLxGwivHD9gTEPrJ
+         UR0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727305147; x=1727909947;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
+        d=1e100.net; s=20230601; t=1727305209; x=1727910009;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nPHAaStQaII888K+8FlasHr0p/vMD/r1ZG30txthNAs=;
-        b=qX1XaDS8j594g27xUBQMmrCCHiv1R3LFPtG85YIx5rlaYlKZO1qh4uwiQeG4i4NGd3
-         ua5uyGrB+WUkNLoY73x/WKeQyE7KV1hKDuoUMj2kvVl64d96hiA6kdQmODlXbgMPlmME
-         oCQgDjGMEK0yVNZzGXphRxRdcPzPqllmwVGiTleeB42kVcBRcv9m7QDPwzbf/55EzFX3
-         pG5oWiokbsFsZ6NXDp9+Af2lMBaKLGJqV7Cc6EgJQdr4u3KhvmemX6pRe5C5zoe33NrI
-         KVphNDb2YCez+BK9ueUUQS4eTiH4sVCOEBclZ4GcfMTMmW2f33S391gWXd+slVJMniB1
-         wuvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSnpZoXoM1InvcBIrgNUJqAi734pcLPrBVMhc6f7tzm7REqlYOpk459paLGHmPKqntdREZSIBL6lvKjjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaevR2OOQqQ+nVZO0NuV83f+7MvZHVBI1DEBS8GgJgBm2YNdyi
-	pdSkCW5SISoWYzPm82IxLkZszHt9n3YFvufQLlGpH2SGdkpzzZme6mkau5j3
-X-Google-Smtp-Source: AGHT+IFh5RcaK0Z1IWIgAeZgenLV2GEOBr1rLWF6USOcFDQF3Fg28CqDAPvm4tYKWZ25FuX1fWFf2g==
-X-Received: by 2002:a05:6512:b03:b0:52c:9383:4c16 with SMTP id 2adb3069b0e04-538704986bamr2828395e87.22.1727305146963;
-        Wed, 25 Sep 2024 15:59:06 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f4faebsm277812166b.52.2024.09.25.15.59.05
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Sep 2024 15:59:05 -0700 (PDT)
-Date: Wed, 25 Sep 2024 22:59:04 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Sid Kumar <sidhartha.kumar@oracle.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
-	maple-tree@lists.infradead.org, linux-mm@kvack.org,
-	akpm@linux-foundation.org, liam.howlett@oracle.com,
-	willy@infradead.org, surenb@google.com
-Subject: Re: [PATCH v4 04/17] maple_tree: introduce mas_wr_store_type()
-Message-ID: <20240925225904.jryrxogfzxsbacsj@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240814161944.55347-1-sidhartha.kumar@oracle.com>
- <20240814161944.55347-5-sidhartha.kumar@oracle.com>
- <20240925020431.joykmu4zzahoglcl@master>
- <f8924491-929b-4b10-b13f-0b6461d28eec@oracle.com>
- <47463235-bc45-46e2-8d9d-b62c201c6215@oracle.com>
+        bh=Vl8E5j+ZmDbmKOpu44SNpmShgOamIMtl/ODRrZ2cGY4=;
+        b=sXsJSutQtSVLtme9Kus9PErks3Rv6SFNI0lZSa8ownPxuuMhRYU24hlCad5NrEVKk3
+         5IWikE+VU8LjIHOHRxUBICfUZZrYtJGKpb87US/jZfaAuMmg9xch705hFuA0LwSW74cM
+         T4eV6QjC2NwJwyy3/hnjOU4eaIcr+0RdLNDY90vFjofyo3zEzy6OPl8fNP173PztTfKJ
+         I7lWIYgyeke/MeE3WsliLdrIucH/LymiB1OrrNUA9zBjAqgCdw2YaluhXYW5w+iIeS/i
+         7ht2c8b8O1UY+IwbLL1PVE+GYNJCeDlP+OyNuJuJJd8jLtPA2443nUn9ELi7MTU6LJHg
+         H09Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUXIuoKGC/U5oyUwa44vGi1oa6wRY8+Mxk2XXZcF+jwoI9zLjAO5uXI0XWJzKEXfhtRn3wFMBpieO0oZhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE+ErQW4ZY0jmpvhguVjhG+WwvfypXmG878MH0IpOQzTtNQ/XY
+	LhUSpJ/EQKjfMtParrmQ1FZuN7MgJEdbmeExppewebaFtcVHFAM1g6QVtYKg0w==
+X-Google-Smtp-Source: AGHT+IFG1pBJvk67WuIMPqXmbr6qCgX/nanvp1+Hex9+YWAbxaQzu9KQp5bWrdANVwkkvt84iFfWmg==
+X-Received: by 2002:a17:902:ec83:b0:206:a87c:2873 with SMTP id d9443c01a7336-20b202f1655mr563355ad.5.1727305208163;
+        Wed, 25 Sep 2024 16:00:08 -0700 (PDT)
+Received: from google.com (164.135.233.35.bc.googleusercontent.com. [35.233.135.164])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc8493cdsm3190227b3a.88.2024.09.25.16.00.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 16:00:07 -0700 (PDT)
+Date: Wed, 25 Sep 2024 23:00:00 +0000
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Matthew Maurer <mmaurer@google.com>
+Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org,
+	gary@garyguo.net, mcgrof@kernel.org,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	Naveen N Rao <naveen@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	neal@gompa.dev, marcan@marcan.st, j@jannau.net,
+	asahi@lists.linux.dev, Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linuxppc-dev@lists.ozlabs.org, linux-modules@vger.kernel.org
+Subject: Re: [PATCH v4 14/16] modules: Support extended MODVERSIONS info
+Message-ID: <20240925230000.GA3176650@google.com>
+References: <20240924212024.540574-1-mmaurer@google.com>
+ <20240924212024.540574-15-mmaurer@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <47463235-bc45-46e2-8d9d-b62c201c6215@oracle.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20240924212024.540574-15-mmaurer@google.com>
 
-On Wed, Sep 25, 2024 at 02:36:21PM -0500, Sid Kumar wrote:
->
->On 9/25/24 2:33 PM, Sid Kumar wrote:
->> 
->> On 9/24/24 9:04 PM, Wei Yang wrote:
->> > On Wed, Aug 14, 2024 at 12:19:31PM -0400, Sidhartha Kumar wrote:
->> > 
->> > Sorry for a late reply, I just see this change.
->> > 
->> > > +
->> > > +/*
->> > > + * mas_wr_store_type() - Set the store type for a given
->> > > + * store operation.
->> > > + * @wr_mas: The maple write state
->> > > + */
->> > > +static inline void mas_wr_store_type(struct ma_wr_state *wr_mas)
->> > > +{
->> > > +    struct ma_state *mas = wr_mas->mas;
->> > > +    unsigned char new_end;
->> > > +
->> > > +    if (unlikely(mas_is_none(mas) || mas_is_ptr(mas))) {
->> > > +        mas->store_type = wr_store_root;
->> > > +        return;
->> > > +    }
->> > > +
->> > > +    if (unlikely(!mas_wr_walk(wr_mas))) {
->> > > +        mas->store_type = wr_spanning_store;
->> > > +        return;
->> > > +    }
->> > > +
->> > > +    /* At this point, we are at the leaf node that needs to be
->> > > altered. */
->> > > +    mas_wr_end_piv(wr_mas);
->> > > +    if (!wr_mas->entry)
->> > > +        mas_wr_extend_null(wr_mas);
->> > > +
->> > > +    new_end = mas_wr_new_end(wr_mas);
->> > > +    if ((wr_mas->r_min == mas->index) && (wr_mas->r_max ==
->> > > mas->last)) {
->> > > +        mas->store_type = wr_exact_fit;
->> > > +        return;
->> > > +    }
->> > > +
->> > > +    if (unlikely(!mas->index && mas->last == ULONG_MAX)) {
->> > > +        mas->store_type = wr_new_root;
->> > > +        return;
->> > > +    }
->> > > +
->> > > +    /* Potential spanning rebalance collapsing a node */
->> > > +    if (new_end < mt_min_slots[wr_mas->type]) {
->> > > +        if (!mte_is_root(mas->node)) {
->> > > +            mas->store_type = wr_rebalance;
->> > > +            return;
->> > > +        }
->> > > +        mas->store_type = wr_node_store;
->> > > +        return;
->> > > +    }
->> > After this check, we are sure new_end >= mt_min_slots[wr_mas->type].
->> > 
->> > > +
->> > > +    if (new_end >= mt_slots[wr_mas->type]) {
->> > > +        mas->store_type = wr_split_store;
->> > > +        return;
->> > > +    }
->> > > +
->> > > +    if (!mt_in_rcu(mas->tree) && (mas->offset == mas->end)) {
->> > > +        mas->store_type = wr_append;
->> > > +        return;
->> > > +    }
->> > > +
->> > > +    if ((new_end == mas->end) && (!mt_in_rcu(mas->tree) ||
->> > > +        (wr_mas->offset_end - mas->offset == 1))) {
->> > > +        mas->store_type = wr_slot_store;
->> > > +        return;
->> > > +    }
->> > > +
->> > > +    if (mte_is_root(mas->node) || (new_end >=
->> > > mt_min_slots[wr_mas->type]) ||
->> > > +        (mas->mas_flags & MA_STATE_BULK)) {
->> > The check (new_end >= mt_min_slots[wr_mas->type]) here seems always
->> > be true.
->> > 
->> > So the if here seems not necessary. Do I miss something?
->> 
->> It is true that at this point new_end >= mt_min_slots[wr_mas->type] must
->> be true but if we remove that check we won't catch this wr_node_store
->> case if !mte_is_root() and !(mas->mas_flags & MA_STATE_BULK).
->> 
->> We could change the default store type to be wr_node_store and get rid of
->> that whole if statement entirely.
->> 
->> This diff passes the tests:
->> 
->> diff --git a/lib/maple_tree.c b/lib/maple_tree.c index
->> 4f34e50c92b5..2ae0c4da9d74 100644 --- a/lib/maple_tree.c +++
->> b/lib/maple_tree.c @@ -4242,14 +4242,7 @@ static inline void
->> mas_wr_store_type(struct ma_wr_state *wr_mas) return; } - if
->> (mte_is_root(mas->node) || (new_end >= mt_min_slots[wr_mas->type]) || -
->> (mas->mas_flags & MA_STATE_BULK)) { - mas->store_type = wr_node_store; -
->> return; - } - - mas->store_type = wr_invalid; - MAS_WARN_ON(mas, 1); +
->> mas->store_type = wr_node_store; }
->> 
->> do you think this makes sense?
->> 
->Sorry this diff wasn't formatted correctly, it should look normal now:
->
->diff --git a/lib/maple_tree.c b/lib/maple_tree.c
->index 4f34e50c92b5..2ae0c4da9d74 100644
->--- a/lib/maple_tree.c
->+++ b/lib/maple_tree.c
->@@ -4242,14 +4242,7 @@ static inline void mas_wr_store_type(struct
->ma_wr_state *wr_mas)
->                return;
->        }
->
->-       if (mte_is_root(mas->node) || (new_end >= mt_min_slots[wr_mas->type])
->||
->-               (mas->mas_flags & MA_STATE_BULK)) {
->-               mas->store_type = wr_node_store;
->-               return;
->-       }
->-
->-       mas->store_type = wr_invalid;
->-       MAS_WARN_ON(mas, 1);
->+       mas->store_type = wr_node_store;
-> }
->
+Hi Matt,
 
-I am ok for this one.
+On Tue, Sep 24, 2024 at 09:19:56PM +0000, Matthew Maurer wrote:
+> +static void dedotify_ext_version_names(char *str_seq, unsigned long size)
+> +{
+> +	unsigned long out = 0;
+> +	unsigned long in;
+> +	char last = '\0';
+> +
+> +	for (in = 0; in < size; in++) {
+> +		if (last == '\0')
+> +			/* Skip one leading dot */
+> +			if (str_seq[in] == '.')
+> +				in++;
 
->> Thanks,
->> 
->> Sid
->> 
->> > > +        mas->store_type = wr_node_store;
->> > > +        return;
->> > > +    }
->> > > +
->> > > +    mas->store_type = wr_invalid;
->> > > +    MAS_WARN_ON(mas, 1);
->> > > +}
->> > > +
+Thanks for addressing Michael's comment, this looks correct to me.
 
--- 
-Wei Yang
-Help you, Help me
+Nit: might be cleaner in a single if statement though:
+
+	/* Skip one leading dot */
+	if (last == '\0' && str_seq[in] == '.')
+		in++;
+
+> +void modversion_ext_start(const struct load_info *info,
+> +			  struct modversion_info_ext *start)
+> +{
+> +	unsigned int crc_idx = info->index.vers_ext_crc;
+> +	unsigned int name_idx = info->index.vers_ext_name;
+> +	Elf_Shdr *sechdrs = info->sechdrs;
+> +
+> +	/*
+> +	 * Both of these fields are needed for this to be useful
+> +	 * Any future fields should be initialized to NULL if absent.
+> +	 */
+> +	if ((crc_idx == 0) || (name_idx == 0))
+> +		start->remaining = 0;
+> +
+> +	start->crc = (const s32 *)sechdrs[crc_idx].sh_addr;
+> +	start->name = (const char *)sechdrs[name_idx].sh_addr;
+> +	start->remaining = sechdrs[crc_idx].sh_size / sizeof(*start->crc);
+> +}
+
+This looks unchanged from v3, so I think my comment from there
+still applies:
+
+https://lore.kernel.org/lkml/CABCJKufJK0WO92wnW09VTLqZk0ODxhuKQG=HbKE-va0urJU1Vg@mail.gmail.com/
+
+Sami
 
