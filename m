@@ -1,203 +1,182 @@
-Return-Path: <linux-kernel+bounces-339567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77029986707
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:38:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA02998670F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34CE4285D55
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:38:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C5211F21183
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD4B146000;
-	Wed, 25 Sep 2024 19:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842A21459E0;
+	Wed, 25 Sep 2024 19:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OdC+XLrF"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W/92CD1p"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6823145323;
-	Wed, 25 Sep 2024 19:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1185A145324
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 19:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727293092; cv=none; b=FIlsM1vzxt9uqToLZ+kOKZmK9SwfMGBn/EKW/LDasug1Tm/LxGTl/NwyoH2MCNLnx8Vj2DTUIUxvJV8WUqKnokjp2cmpu7PwKgIgCcKmnX+4bncuX0XC1CQ569QvJo2gBmohBkpVLe4tOhZK5+k6jgcmqwiXzULhUB+cooK7N3g=
+	t=1727293184; cv=none; b=Xsk9ERUvc5oePUVVYLfp4xDums7YH3+QeNrF6l5OI4BWJdPDNBmsYkJS3hpljD6FQPxixCU+LD6ox7bjBzZxRXqhqIQYfPlqmSg/2vEUPMPJguV0yh51P24+Zk49PVlDD+kPXaADv0Zm1anjGPoYGLDferOBhdM8BYj4KkhcElk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727293092; c=relaxed/simple;
-	bh=L9UkjFM/t+HZ0+yEiCMKoS3dswfBRu7l2ZkM2TfB1OY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FLfJRlQAs/XPkyYysDmgSKqWZfUURe9BDH9t6TS5j5nq4swFV5M6lhvXKAo/2bDmWCER4aKeRh6ttRze2OvlS++z9LDXjOictinnSIIaSrJBUK+IsoZvhmiEjuoMo+88LIpGG3g4JbZd0mNAagnUc6xt+yTNTB29kaOQ1xs/8fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OdC+XLrF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PH5Khx032247;
-	Wed, 25 Sep 2024 19:37:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	s3AUR6RT3W7ulZeQVB8mK8Whtlk2Nz8uCdeZZVxJqR0=; b=OdC+XLrF6+MAEd4I
-	UdBLUurgC2n9ERvqbhydfmELwTI1Zl47ONV5wHIouDAUvPWYSh8sGjIlM+PmC5Dq
-	UKPlqraCjBdyht+iZ/NVu+LOLfIoQM8gIjuHM4UJW27rolrkYT/+9UWb1VTWy7U9
-	WJeOJTPgNyymyodDOxC8LzfaA3mTewzXHsi3CKIcPufUWd1zYfcpKlyPRqGonBVZ
-	0iVbOy4LoxyL5IoolwDtm1TY/XS6dgJKWk++AwOSuonGlNn3g23y1jIZwKTPcao6
-	jIMPKqL6WcFg7TFt6WwcPVmheVtmDyweq6Sjt+9Suf+y0vZJTHziGuqhDpKhUczO
-	epgKuw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sp7unf8e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 19:37:48 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48PJbkX3019291
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 19:37:46 GMT
-Received: from [10.71.115.66] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Sep
- 2024 12:37:46 -0700
-Message-ID: <818bb1b9-facc-4d2a-9959-5e1b4befafbd@quicinc.com>
-Date: Wed, 25 Sep 2024 12:37:45 -0700
+	s=arc-20240116; t=1727293184; c=relaxed/simple;
+	bh=BRf5FDL3l16TNNr46xYNgg62gse3t2K9YAHdsVBG9xo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rL1qp+sWuI46Q1QsEElW55D3A2BIVwt/d47GlSeIfFLpSXjofshKq6RrdHcpD6Mr5sluZi7Cq3AmGyMhhicZxvDJSXLq6SJ7fen08TRhsh9P70qHcLLLq21c2WvWGbiFsj1ilfHeVGAHTqdRr7j7svTqeE568i2xhGLwWS5bfrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W/92CD1p; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8b155b5e9eso30746066b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 12:39:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727293181; x=1727897981; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BRf5FDL3l16TNNr46xYNgg62gse3t2K9YAHdsVBG9xo=;
+        b=W/92CD1pK97SCG6Lc15LejBD7P0WU1cVGVnFHDyi0rKmmhXj654/JTUKK0X2mFEW70
+         0k7hAsnvw1C82LkdD3OtjphatlRqVoFPU3oK3S5fH2uItcnTKLWCaXjhGcmgMQbWnUiJ
+         RdVgvWE/JQCXk/jDKQyisJhXNeuj20yG+DEteVfotTsp/5kfDKGQE5BaESxqbTkizStp
+         7soO+UPTZYABTi//nLczWtvl0WJ55PPgxEG1LfQp9V0dqAGtRizCf1yTCTG47VWqCw24
+         mSsYjiT3oKkNAurVS0866maarqQP4+ntbxAVKJCTUXlZmtpb7zZ0DSeaffgze6ubUcMS
+         o/xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727293181; x=1727897981;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BRf5FDL3l16TNNr46xYNgg62gse3t2K9YAHdsVBG9xo=;
+        b=KFnGdp33i7M/ewW5qelFWzIkswdFeOByHG3HbIM3jqP468aDO5krWeyJNCVdMOL8Tf
+         YENevmRbdIa2QBDJvPCWfaAvis7VnB0qOw66cOUnYZvVb/CkuaadALVIXJxDfeT7vBiF
+         6j+wJF2FHE6vN3q3ztFIiuEjaeN4mv0iVRh9ijc4Rb1vtmGvSl5xrhhjT48/5ZnAFAui
+         QmjBhKFRqRvf3Us9sf8jrLiviF54qgeNTKhChk+DKw+CVsReuk1PQ2iadHDBAWVH9iZ1
+         VjAU3qOu2mWXc5YkN8v/Rr27NQJCG0d0+yB6syQ0RO0wkIO3z1Je0k/7WRvvBtS5107T
+         it6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXr49VLddNp6k+xWSEE3Jq2oAlw310lw5tLrcUiE4qQ4LLQ09gO5g9hDwus4okYhNiR3PrgPbM5Vvlk49A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxklKIgrYBGTQThuZQa1wVTh0H6i/5O7LcC6Yheb9kX7RxMTc2K
+	8ZKwuHr1K/A0QTAEueFJaUTfX545MIiADWvPko/LNjYCrJzkhHVpdLSsqDKP+fm/Xx5rU0p1vJl
+	3Guj8N7ENn+v4ACBXgx6w2sX7iRjCcs/PZ6/p
+X-Google-Smtp-Source: AGHT+IGsm5WipEoFgkl2AHqllylYtlPz5oLoODHf4tgs9ZcjlV4TgkbXAbGUS9vIGnKjvEe+YdDhV3kbUTwueNKFDgc=
+X-Received: by 2002:a17:907:7f20:b0:a8a:cc5a:7f3c with SMTP id
+ a640c23a62f3a-a93a06bd943mr380451066b.58.1727293180940; Wed, 25 Sep 2024
+ 12:39:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v28 30/32] ALSA: usb-audio: Add USB offload route kcontrol
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <tiwai@suse.com>, <krzk+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>,
-        <bgoswami@quicinc.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>
-References: <20240925010000.2231406-1-quic_wcheng@quicinc.com>
- <20240925010000.2231406-31-quic_wcheng@quicinc.com>
- <8bb65adc-e995-443e-80c9-36e9b5d8eee3@linux.intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <8bb65adc-e995-443e-80c9-36e9b5d8eee3@linux.intel.com>
+References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
+ <20240924011709.7037-7-kanchana.p.sridhar@intel.com> <CAJD7tkbd=H+=wx0gnu8sh44hOmx7BE3G3oSxi7zt+o3HKJthkA@mail.gmail.com>
+ <20240925134008.GA875661@cmpxchg.org> <CAJD7tkY8D14j-e6imW9NxZCjTbx8tu_VaKDbRRQMdSeKX_kBuw@mail.gmail.com>
+ <20240925192006.GB876370@cmpxchg.org>
+In-Reply-To: <20240925192006.GB876370@cmpxchg.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 25 Sep 2024 12:39:02 -0700
+Message-ID: <CAJD7tkY-ayU3Ld+dKTLEEG3U72fGnCbiQgZursK+eGMXif_uzA@mail.gmail.com>
+Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, nphamcs@gmail.com, chengming.zhou@linux.dev, 
+	usamaarif642@gmail.com, shakeel.butt@linux.dev, ryan.roberts@arm.com, 
+	ying.huang@intel.com, 21cnbao@gmail.com, akpm@linux-foundation.org, 
+	nanhai.zou@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: J5pod1Ub2q3G-aVUEEhvipnr7QZjPzhz
-X-Proofpoint-ORIG-GUID: J5pod1Ub2q3G-aVUEEhvipnr7QZjPzhz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 bulkscore=0 mlxlogscore=999 mlxscore=0 phishscore=0
- suspectscore=0 impostorscore=0 spamscore=0 malwarescore=0
- priorityscore=1501 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2408220000 definitions=main-2409250139
+Content-Transfer-Encoding: quoted-printable
 
-Hi Pierre,
-
-On 9/25/2024 7:54 AM, Pierre-Louis Bossart wrote:
+On Wed, Sep 25, 2024 at 12:20=E2=80=AFPM Johannes Weiner <hannes@cmpxchg.or=
+g> wrote:
 >
+> On Wed, Sep 25, 2024 at 11:30:34AM -0700, Yosry Ahmed wrote:
+> > Johannes wrote:
+> > > If this ever becomes an issue, we can handle it in a fastpath-slowpat=
+h
+> > > scheme: check the limit up front for fast-path failure if we're
+> > > already maxed out, just like now; then make obj_cgroup_charge_zswap()
+> > > atomically charge against zswap.max and unwind the store if we raced.
+> > >
+> > > For now, I would just keep the simple version we currently have: chec=
+k
+> > > once in zswap_store() and then just go ahead for the whole folio.
+> >
+> > I am not totally against this but I feel like this is too optimistic.
+> > I think we can keep it simple-ish by maintaining an ewma for the
+> > compression ratio, we already have primitives for this (see
+> > DECLARE_EWMA).
+> >
+> > Then in zswap_store(), we can use the ewma to estimate the compressed
+> > size and use it to do the memcg and global limit checks once, like we
+> > do today. Instead of just checking if we are below the limits, we
+> > check if we have enough headroom for the estimated compressed size.
+> > Then we call zswap_store_page() to do the per-page stuff, then do
+> > batched charging and stats updates.
 >
->> +static int
->> +snd_usb_offload_route_get(struct snd_kcontrol *kcontrol,
->> +			  struct snd_ctl_elem_value *ucontrol)
->> +{
->> +	struct device *sysdev = snd_kcontrol_chip(kcontrol);
->> +	int ret;
->> +
->> +	ret = snd_soc_usb_update_offload_route(sysdev,
->> +					       CARD_IDX(kcontrol->private_value),
->> +					       PCM_IDX(kcontrol->private_value),
->> +					       SNDRV_PCM_STREAM_PLAYBACK,
->> +					       ucontrol->value.integer.value);
->> +	if (ret < 0) {
->> +		ucontrol->value.integer.value[0] = -1;
->> +		ucontrol->value.integer.value[1] = -1;
->> +	}
-> well this invalidates again what I understood from the last patch and
-> goes back to what I understood initially: the error code is never
-> returned to higher levels - when offload is not supported the kcontrol
-> values are encoded to the -1 magic value.
-Yes, higher levels won't get an error code when they try to fetch for the kcontrol value, and if say...there is no callback to update the offload route then the -1 values are passed back.  I don't think we would want to return an error code.  We just want to communicate the current mapping of the offload path.
->> +	return 0;
-> and this begs the question if this helper should return a void value.
-This is the registered callback for the .get() call for the kcontrol, so it has to follow the definition below:
-    typedef int (snd_kcontrol_get_t) (struct snd_kcontrol * kcontrol, struct snd_ctl_elem_value * ucontrol)
->> +}
->> +
->> +static int snd_usb_offload_route_info(struct snd_kcontrol *kcontrol,
->> +				      struct snd_ctl_elem_info *uinfo)
->> +{
->> +	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
->> +	uinfo->count = 2;
->> +	uinfo->value.integer.min = -1;
->> +	/* Arbitrary max value, as there is no 'limit' on number of PCM devices */
->> +	uinfo->value.integer.max = 0xff;
->> +
->> +	return 0;
->> +}
->> +
->> +static struct snd_kcontrol_new snd_usb_offload_mapped_ctl = {
->> +	.iface = SNDRV_CTL_ELEM_IFACE_CARD,
->> +	.access = SNDRV_CTL_ELEM_ACCESS_READ,
->> +	.info = snd_usb_offload_route_info,
->> +	.get = snd_usb_offload_route_get,
->> +};
->> +
->> +/**
->> + * snd_usb_offload_create_ctl() - Add USB offload bounded mixer
->> + * @chip - USB SND chip device
->> + *
->> + * Creates a sound control for a USB audio device, so that applications can
->> + * query for if there is an available USB audio offload path, and which
->> + * card is managing it.
->> + */
->> +int snd_usb_offload_create_ctl(struct snd_usb_audio *chip)
->> +{
->> +	struct usb_device *udev = chip->dev;
->> +	struct snd_kcontrol_new *chip_kctl;
->> +	struct snd_usb_substream *subs;
->> +	struct snd_usb_stream *as;
->> +	char ctl_name[37];
-> that's quite a magic value.
+> I'm not sure what you gain from making a non-atomic check precise. You
+> can get a hundred threads determining down precisely that *their*
+> store will fit exactly into the last 800kB before the limit.
 
-Ah, will fix this.  Should be 34 ("USB Offload Playback Route PCM#" [31] + max pcm index[3]).  From past discussions, technically there isn't an upper limit defined for PCM devices, but the above snd_usb_offload_route_info() has it set to 0xff, so I'll be consistent here as well and assume that if we have more than 255 PCM devices for one device, then we won't create further kcontrols. (probably still overkill, but who knows what USB audio devices are out there)
+We just get to avoid overshooting in cases where we know we probably
+can't fit it anyway. If we have 4KB left and we are trying to compress
+a 2MB THP, for example. It just makes the upfront check to avoid
+pointless compression a little bit more meaningful.
 
-Thanks
+>
+> > If you think that's an overkill we can keep doing the limit checks as
+> > we do today,
+>
+> I just don't see how it would make a practical difference.
+>
+> What would make a difference is atomic transactional charging of the
+> compressed size, and unwinding on failure - with the upfront check to
+> avoid pointlessly compressing (outside of race conditions).
+>
+> And I'm not against doing that in general, I am just against doing it
+> per default.
+>
+> It's a lot of complexity, and like I said, the practical usecase for
+> limiting zswap memory to begin with is quite unclear to me. Zswap is
+> not a limited resource. It's just memory. And you already had the
+> memory for the uncompressed copy. So it's a bit strange to me to say
+> "you have compressed your memory enough, so now you get sent to disk
+> (or we declare OOM)". What would be a reason to limit it?
 
-Wesley Cheng
+Technically speaking if we have a global zswap limit, it becomes a
+limited resource and distributing it across workloads can make sense.
+That being said, I am not aware of any existing use cases for that.
 
+The other use case is controlling when writeback kicks in for
+different workloads. It may not make sense for limit-based reclaim,
+because as you mentioned the memory is limited anyway and workloads
+should be free to compress their own memory within their limit as they
+please. But it may make sense for proactive reclaim, controlling how
+much memory we compress vs how much memory we completely evict to
+disk.
 
->> +	int ret;
->> +
->> +	list_for_each_entry(as, &chip->pcm_list, list) {
->> +		subs = &as->substream[SNDRV_PCM_STREAM_PLAYBACK];
->> +		if (!subs->ep_num)
->> +			continue;
->> +
->> +		chip_kctl = &snd_usb_offload_mapped_ctl;
->> +		chip_kctl->count = 1;
->> +		/*
->> +		 * Store the associated USB SND card number and PCM index for
->> +		 * the kctl.
->> +		 */
->> +		chip_kctl->private_value = as->pcm_index |
->> +					  chip->card->number << 16;
->> +		sprintf(ctl_name, "USB Offload Playback Route PCM#%d",
->> +			as->pcm_index);
->> +		chip_kctl->name = ctl_name;
->> +		ret = snd_ctl_add(chip->card, snd_ctl_new1(chip_kctl,
->> +				  udev->bus->sysdev));
->> +		if (ret < 0)
->> +			break;
->> +	}
->> +
->> +	return ret;
->> +}
+Again, not aware of any existing use cases for this as well.
+
+>
+> It sort of makes sense as a binary switch, but I don't get the usecase
+> for a granular limit. (And I blame my own cowardice for making the
+> cgroup knob a limit, to keep options open, instead of a switch.)
+>
+> All that to say, this would be better in a follow-up patch. We allow
+> overshooting now, it's not clear how overshooting by a larger amount
+> makes a categorical difference.
+
+I am not against making this a follow-up, if/when the need arises. My
+whole point was that using EWMA (or similar) we can make the upfront
+check a little bit more meaningful than "We have 1 byte of headroom,
+let's go compress a 2MB THP!". I think it's not a lot of complexity to
+check for headroom based on an estimated compression size, but I
+didn't try to code it, so maybe I am wrong :)
+
+>
+> > but I would still like to see batching of all the limit checks,
+> > charging, and stats updates. It makes little sense otherwise.
+>
+> Definitely. One check, one charge, one stat update per folio.
 
