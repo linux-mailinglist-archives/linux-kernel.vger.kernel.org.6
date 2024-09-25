@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-339416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AECC9864D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:28:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B4E9864CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA7921F25BED
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:28:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EA1D1F254F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F93A12C7FD;
-	Wed, 25 Sep 2024 16:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1DD5381B;
+	Wed, 25 Sep 2024 16:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N6uCIXFT"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HLKkrw16"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562AD481CE;
-	Wed, 25 Sep 2024 16:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2C71BC2A;
+	Wed, 25 Sep 2024 16:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727281607; cv=none; b=PHKF2f4UExHHSnz+vLf97rPra42gyfKhn1pZXe4gYdc4Is7j8xJLE5unITSivIsOtPL/YOtZwgt/LcnXI6E8WKWpkyz+q9l1blCKEHe1b6XooY/R0JWgwuNcYcWNsffckxP/0hblu85C2yDBpCDuWtTONwrMGRqpIK34fd45cMU=
+	t=1727281565; cv=none; b=OV1lLAQkbKVH0h+t9uQChxVReJhLsmUUhl1re3UvsPFtWDr8QFb9AHHvPg5teFv0rPXfe6Z43aMK5GWAJBHW9Ki0ifWeU5FlswluduS7PU9nL+DM/GBshPyBlHm9WZfKjeQC2ZNzsj7Ag6C5TvuvQkhNgkboakBVqqzPmIAfSzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727281607; c=relaxed/simple;
-	bh=/R54fp8hKNPO/2V67vGlkWeekKvDry3xBMaa2KQ2i2Y=;
+	s=arc-20240116; t=1727281565; c=relaxed/simple;
+	bh=cI6lyNFuQzUTS7t+rqJMQnOPi9+rdmD9ZefQND902cI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nmh4KALrK19f1RI888q+mRKe2KatLBAJtumjBDHb+wlI53eYdYiyb8iLULh+mjhKls0qUjU9OsFxtV5qt7dMvIYJfqGVQk0OfF/gPNp4O0RT51MRgljTevCBt9Et2kPjg+JLdH9ztg3hw4rOIRIP2W/U4HiYvOnXRzzBDUSGJS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N6uCIXFT; arc=none smtp.client-ip=209.85.214.182
+	 In-Reply-To:Content-Type; b=ZSFryfJfkGKMbL82wSaqzWKDZ1kHdP5iMw+x6BTGUAzA01AA+2+V7JNebWLbTj0Nf9eYnfYZG1GYRApz9MEixhOB5Yek5/MxMwEU/FemcsVV6Lw6wDxbRpdqmiH+XDdTTmlvj8tQBg292IHzpUJw9SpF8E10KaOc1fGC2W3/Y78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HLKkrw16; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20792913262so81650105ad.3;
-        Wed, 25 Sep 2024 09:26:46 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cbface8d6so88592305e9.3;
+        Wed, 25 Sep 2024 09:26:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727281606; x=1727886406; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VuGWKm5UENWosvHzMemZt6HnQELzPD/LdCepurLCaBk=;
-        b=N6uCIXFT7LaI2Uwcc6fI9jzObgef+VuI5kmwac6LMTR4SW5jqtegxqYJvgVCeQUNsD
-         atTBG8sakgIsa4wJSb34dApUW0sz9U0z+1JOfI7ej7g7x7J4bHEEDlSn17/X+x3ZWxzQ
-         Ka0F0H9rNQRLttRjpBHDAmz3qhrm4UynsBjTlPz+3198tCCVANhUVYysROsDy90MqwM5
-         cevjfqcGzCSA178/cGemR5uMJfrrQIHXMZ8RC9vQyt57M0FEmhJL3aB+MqtXBOEPUMtG
-         8224oX1OUwvWvSaYC1hoIlKzEhu1ou1RoGCQNb360i32JG5WeOBLjfZG3xGjZjX+QssO
-         22zg==
+        d=gmail.com; s=20230601; t=1727281562; x=1727886362; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H/UtXLfeBskg7av7Jxvz+w2dEjZcwNE7yygFxh5xpPU=;
+        b=HLKkrw16Omsmq2k0YWGGgCXCYO4RcVm5KeMv4em2sxcbMITwW/WVX50Bx63l5PrOCr
+         QSzjCgkOkuu0cia4IW34OV17EsAfvmoMdyKh8BxICOdKuhSQQL8ORrWLD7J+V0y0LiFy
+         SxD5VqFB2G5VZm6HhVHvDP+7GRv/vQnOOYWY32AHOi87ui+0oZfhldHU3tKx77vCOKl2
+         N4B0VSzlr5NjuCDt4Q9t0jZh02bpWEI3fOrhUAW7ctLep+O6S3tlsVp0dIFNf4Ge+Y22
+         QinJEDu94h0TBngqgvD77PSLsslcoRdr/59IpTWg3UbHnDv7ZOQF/RqHHO9bBjqSbJ/X
+         MoQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727281606; x=1727886406;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=VuGWKm5UENWosvHzMemZt6HnQELzPD/LdCepurLCaBk=;
-        b=Tk7q7/JTfNph2e+wGdJXmw7TGZsw+Ee+z595ShW+5KRl97S9SsLgcOxfptiQLI1qte
-         bHZf2NlSkmYGoQwMirmca9DIQ+SUHtp4n3ZttEj1a51wq4ZDq5CQT+iuNhPY/L6pVYaN
-         U4YBrFspmNOpVIGXeyhbnRiHZh5P29mWSGVwxq1rEWku1fJC+thRDLTyX0IoQ0BrVSrZ
-         ceMBAlvaChlyzYunbV6+cb8SAXfNpxcZA6tv7aJd+AXfsE4sl/zs1fnHaXG8abru6QRJ
-         xa4gIXbRaTjD1YBki7O5R3jWYn2+trVmtI7PUzRMUKJ4mgqc75M2N5tbm/WGp2HBLUT4
-         p1qA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2DrHTUYHclIUbzZaXV8WlPlH/PE1hsvsue/wsB0FGoV2qNfKNrVudAr/w+yWMw4D0/B2JLCJnErmj7M+n@vger.kernel.org, AJvYcCW6CoAqejcZiJTJicllBF3/fPACyxb9nWhbxDrtYw4oP4NTfXitykrQCGhrDnwbgVsagD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUV+C220pDs2dIS8gRMVwxA+AGgPk8MNDNZ6Npa9lA8Kl2mzZC
-	d+gkYR9k6GBy9MCMvIpAq5PJZeDbXDfPpC7BAeDkS/jGRX6bwP3l
-X-Google-Smtp-Source: AGHT+IFKJxV65iNSlOxlbZu84lyBy1ZAaOgS6UVZBoSWyxARv3dMtCEKeI72k4gPOE5Ffk6sHC9K/w==
-X-Received: by 2002:a17:902:da8e:b0:205:56e8:4a3f with SMTP id d9443c01a7336-20afc654e19mr46462755ad.61.1727281605361;
-        Wed, 25 Sep 2024 09:26:45 -0700 (PDT)
-Received: from [192.168.50.122] ([117.147.91.209])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af1720c98sm26386215ad.73.2024.09.25.09.26.39
+        d=1e100.net; s=20230601; t=1727281562; x=1727886362;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H/UtXLfeBskg7av7Jxvz+w2dEjZcwNE7yygFxh5xpPU=;
+        b=vZyn9yzjGlLyvpd+x5+HDLKp7K4f4X+bFvMaWCk8jMI0P9vga2wge2K3rVvU1qoDob
+         Sw54QIT0c/55X/ZAj8HxjA2xVFvilz5Y0et8y07TNCO9Qza5DCMnPq7saMRNmDGubYu6
+         SOhVdTOSxfXkJGaTxiIkG5MTKNuSmL/XpDZhHjCN7Nh0sk959E+ztj3uu9DvcNBZARLN
+         xyYq2VELD2PWkRrmQgy7kE47kZ7ocNOo9LF3kfUUXo1CTM/Pj8eANYY8JUN8V+2mPOoA
+         04MLZwfqTblXbn9NMVGVNwjUihgcV1gdHGBW8VvRWxOIwMWciGUZsAg7VV+XCJSPp9pC
+         r4GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNkwdc+rDQuQLqLZri9KqnSGKX/xfNUJYBVeRdkwD7NNF3ZMdHTa+DxRZxaPD1esJgYdnaR2GMWlmFHHc=@vger.kernel.org, AJvYcCW8TekLkdkONg9V+xprgNxRzufQ54q+Q4bKj6a1zPMBvEA7xEgtVDZMF6wI03jQQqeY+ETfeoUV@vger.kernel.org, AJvYcCX8CrxdBhkZpRjTZE7nYoBiMHDinQ2H9JIOk6kISEPGI2gV33vC1hbd9z2wf1Mzbh8tcAgMAMWCQZ79yw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6JuHOdrlLI3VE/0MFHb/KB3prrdl4x+TXJ3VJ9Wn4eLoy8ns+
+	pUxbnwpQcAfZZfVK57TM+2laIZGDCUSkLizRim622pEQL/JjCLkK
+X-Google-Smtp-Source: AGHT+IFnUcAaIeFzw5E9a6d4pDhxJA51W3OA4HKs+9mXTYSBF++MSHEBdMd2l1J6YgLA5fH5oKDXlw==
+X-Received: by 2002:a05:600c:1e03:b0:42c:c8be:4215 with SMTP id 5b1f17b1804b1-42e9610252bmr27899125e9.4.1727281562296;
+        Wed, 25 Sep 2024 09:26:02 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:ec17:8f60:3966:3e7b? (2a02-8389-41cf-e200-ec17-8f60-3966-3e7b.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:ec17:8f60:3966:3e7b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ffa3dsm23280735e9.23.2024.09.25.09.25.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 09:26:44 -0700 (PDT)
-Message-ID: <8bc57566-2867-49f5-8b66-7c5f32c1a0c8@gmail.com>
-Date: Thu, 26 Sep 2024 00:25:25 +0800
+        Wed, 25 Sep 2024 09:26:01 -0700 (PDT)
+Message-ID: <70864b3b-ad84-49b2-859c-8c7e6814c3f1@gmail.com>
+Date: Wed, 25 Sep 2024 18:25:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,59 +75,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next] bpftool: Remove llvm-strip from Makefile
-To: Daniel Borkmann <daniel@iogearbox.net>, patchwork-bot+netdevbpf@kernel.org
-Cc: qmo@kernel.org, ast@kernel.org, andrii@kernel.org, martin.lau@linux.dev,
- eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
- jolsa@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240924165202.1379930-1-chen.dylane@gmail.com>
- <172725782851.519668.2924142510144708471.git-patchwork-notify@kernel.org>
- <4f58b093-ca1f-426a-8102-4b00ccaf4973@iogearbox.net>
-From: Tao Chen <chen.dylane@gmail.com>
-In-Reply-To: <4f58b093-ca1f-426a-8102-4b00ccaf4973@iogearbox.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 4/4] selftests: exec: update gitignore for load_address
+To: Shuah Khan <skhan@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Allison Henderson <allison.henderson@oracle.com>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ rds-devel@oss.oracle.com, linux-mm@kvack.org
+References: <20240924-selftests-gitignore-v1-0-9755ac883388@gmail.com>
+ <20240924-selftests-gitignore-v1-4-9755ac883388@gmail.com>
+ <e537539f-85a5-42eb-be8a-8a865db53ca2@linuxfoundation.org>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <e537539f-85a5-42eb-be8a-8a865db53ca2@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-在 2024/9/25 18:32, Daniel Borkmann 写道:
-> On 9/25/24 11:50 AM, patchwork-bot+netdevbpf@kernel.org wrote:
->> Hello:
+On 25/09/2024 17:46, Shuah Khan wrote:
+> On 9/24/24 06:49, Javier Carrasco wrote:
+>> The name of the "load_address" objects has been modified, but the
+>> corresponding entry in the gitignore file must be updated.
 >>
->> This patch was applied to bpf/bpf-next.git (master)
->> by Daniel Borkmann <daniel@iogearbox.net>:
+>> Update the load_address entry in the gitignore file to account for
+>> the new names.
 >>
->> On Wed, 25 Sep 2024 00:52:02 +0800 you wrote:
->>> As Quentin and Andrri said [0], bpftool gen object strips
->>> out DWARF already, so remove the repeat operation.
->>>
->>> [0] https://github.com/libbpf/bpftool/issues/161
->>>
->>> Suggested-by: Andrii Nakryiko <andrii@kernel.org>
->>> Suggested-by: Quentin Monnet <qmo@kernel.org>
->>> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
->>>
->>> [...]
-> I'll toss this shortly from the tree again, this missed that bpftool gen 
-> object call
-> needs to strip out dwarf.
-
-Hi Daniel, i saw linker_sanity_check_elf will ignore the dwarf sec, 
-which means bpftool gen object will strip, is my understanding correct?
-
-static int linker_sanity_check_elf(struct src_obj *obj)
-{
-	...
-	if (is_dwarf_sec_name(sec->sec_name))
-		continue;
-	...
-}
->>> Here is the summary with links:
->>>    - [bpf-next] bpftool: Remove llvm-strip from Makefile
->>>      https://git.kernel.org/bpf/bpf-next/c/25bfc6333e32
->>>
->>> You are awesome, thank you!
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>> ---
+>>   tools/testing/selftests/exec/.gitignore | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/tools/testing/selftests/exec/.gitignore b/tools/testing/
+>> selftests/exec/.gitignore
+>> index 90c238ba6a4b..4d9fb7b20ea7 100644
+>> --- a/tools/testing/selftests/exec/.gitignore
+>> +++ b/tools/testing/selftests/exec/.gitignore
+>> @@ -9,7 +9,7 @@ execveat.ephemeral
+>>   execveat.denatured
+>>   non-regular
+>>   null-argv
+>> -/load_address_*
+>> +/load_address.*
+> 
+> Hmm. This will include the load_address.c which shouldn't
+> be included in the .gitignore?
+> 
+>>   /recursion-depth
+>>   xxxxxxxx*
+>>   pipe
+>>
+> 
+> thanks,
+> -- Shuah
 
 
--- 
-Best Regards
-Dylane Chen
+Hi, the kernel test robot already notified me about that issue, and I
+sent a v2 to fix it shortly after. Please take a look at the newer
+version where I added the exception for load_address.c.
+
+Thanks and best regards,
+Javier Carrasco
 
