@@ -1,158 +1,227 @@
-Return-Path: <linux-kernel+bounces-338290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC3D79855F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:58:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F189855F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DACA28144C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:58:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD9191F26732
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937D415B113;
-	Wed, 25 Sep 2024 08:58:44 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F98815B135;
+	Wed, 25 Sep 2024 09:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="BU5+TVu7"
+Received: from esa20.fujitsucc.c3s2.iphmx.com (esa20.fujitsucc.c3s2.iphmx.com [216.71.158.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843ED139579;
-	Wed, 25 Sep 2024 08:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727254724; cv=none; b=CtfyoN0k9ua21lHF/fJro1HxRAM/11gpjCz6kiprBbwmzUBSE6UCTNXuQ708st0PK+cGpOnx54Pk/WgX2MX8E+yfe/m6wnXAc09LbGxLjcXRrjdOe6rD8Nnvx5o2d9ZWSmz+5BXQ+3VcXdgmnATHgcVOCrgEJ+F4qC+IIZc0uIY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727254724; c=relaxed/simple;
-	bh=77TYbhk3FEQDvRMc1aKR+Jy7UbmeKedsMaovZa0q+Dw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=gol1XSicyEfjehcbjqq+oYdaxvBtx+F5oJAHpBYEh01A4gqMsW2kQcPYl1XxVgkhpZihg/msMrAxuAlv/uTMc+sEs+uImc6pbELNBO94N1GwmHf4Kj4eimbVs/0lpUOE+YmGUE9dykJyaMFQL4cAfFbBZ/RqwZqXCrILIrVkopQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XD9bD1h8Pz1T7y2;
-	Wed, 25 Sep 2024 16:57:12 +0800 (CST)
-Received: from dggpeml500019.china.huawei.com (unknown [7.185.36.137])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1E814180087;
-	Wed, 25 Sep 2024 16:58:37 +0800 (CST)
-Received: from [10.67.121.58] (10.67.121.58) by dggpeml500019.china.huawei.com
- (7.185.36.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 25 Sep
- 2024 16:58:36 +0800
-Message-ID: <09887c82-2813-59c3-2ff2-0b7223b37b9e@hisilicon.com>
-Date: Wed, 25 Sep 2024 16:58:36 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FDD139579
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.158.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727254803; cv=fail; b=biv3Kd3cUG1VfM4L63wIS7LSaTAf04l8ESLoijay/YhUgf/t33+zhUR1ybNuUY/JHoKaw/lJvR9803KQUfKWAsMkQ+P+eV3YNcqRXekoEHC1Zd+KjA0HjfD8ipwhGbGMN273F8OA6HzJZ8hcdauuBDpr4NxnI9UKgDPols3m+js=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727254803; c=relaxed/simple;
+	bh=BY7n8DWYbjvb+6nmiVsJBKFpysPueQ9mu50BEYHGVyc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BfEY6L7slD8DYwWWSmQuhOX1wJPNby6n75UZmR//TQyUd6xLWdLakM9o/wEwSEBypsluOosc3NF/1k2WH7iqvomjDUMs8fOsmNMDGKK4quezDLh1ZMcATYsusXGdVpoVQ4BtSTZ0xA3ut8crD8f4wnzs8QzPGOW68NIOJ+GpDFU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=BU5+TVu7; arc=fail smtp.client-ip=216.71.158.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1727254802; x=1758790802;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=BY7n8DWYbjvb+6nmiVsJBKFpysPueQ9mu50BEYHGVyc=;
+  b=BU5+TVu73rEs5rfwREX13zMU0kbxcOpdmM3dwQ0BQ9Mi9FWSvgk9UX2k
+   qhCfGslpXdmog6S4kyoh3IksxiicIgJP/1/MosZIl/5Ix4zh7k7pFh7il
+   6QLB3nEtk3FLwvS+NdpoxrFjGCHE9acgA9Tbowu34sOXrKosWVZFVtMps
+   XBk0+tYaXdnZPMDtOwuh+3g597rnu5Fy7CEGTgmdzu/2QtqLtxpVoiYSl
+   AcMEQWIEOqLFbqkvtx204Qk5A36jxvyGhy5PUFCUP+dxUpZ+2M4lL1iKE
+   dfE2nIprK34Ga9RmUZEKZKBXqmWn0vR7iTE76E5DKUGW68u6BK9bi16h0
+   g==;
+X-CSE-ConnectionGUID: kQGKTXVjT3Sdkz8uPdWUsQ==
+X-CSE-MsgGUID: TlZVxXrJTPeIzbZdDg9SJQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="131564748"
+X-IronPort-AV: E=Sophos;i="6.10,256,1719846000"; 
+   d="scan'208";a="131564748"
+Received: from mail-japaneastazlp17010002.outbound.protection.outlook.com (HELO TY3P286CU002.outbound.protection.outlook.com) ([40.93.73.2])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 17:59:56 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i+d5xevMhP3U15lxnN3FEMuznj9xcRyEzq6OVA/9rnO003YPo1NneiTvR6UbNjVyIjyFHuKagUGXK1ZRvtZzpJ0S44YPo99PezZBYDsRv0A7KYFNTAY133mXrC9UwDSwXtQaSb9LUVbi5lXKkj2hzxLcYEEvnk9pMq/fgeQLKylXOaAXTxIfRNTukDm/KRGLYt/1FOiMQ/aVtE/zWmLwdsnstEAKrnLwsiAzVAdSvYNQdVRaLSAEU7nzxSs9INjMsqglz3jt6gy/ZPOwoaMuKOGeZ+SpCqt1jYh7yFeIxJGMyZTNb9fsEuijqH0+7U2fQMkvsfG0E7ZxWA4Pdj7SKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BY7n8DWYbjvb+6nmiVsJBKFpysPueQ9mu50BEYHGVyc=;
+ b=QGZSFfGHu8RTFmq9wB524yu2+EIZLcMkWC8gdacKQmdyOKZ7eZFWR0w2nNytfwueGaPS2ZTcf6WODJMu+8x5yymGKe/yNZX3GY2mE+eQD4qfQA1SWK77yx553iZ3DkDQpAprsK1j4ONGBFm/M03b4JXuMbe6BKg1Hc56oUdUAj8TtY5WqUS8LyOFBzvuqaSlDPM75EFTvIUu1xwgt/shqtiIpvcnVTQpEsTbpRBqPDhwGkQbbNzq4LYdHpg27K1fu6z9Grz+aMO+bZPEAwegx14evKCw/Z4Dc3IE94Z8nD/oAEwGnbhFaWH3Ctk0mV2WFtOEdL1ynYxUse49gxa95A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (2603:1096:403:6::12)
+ by TYCPR01MB6718.jpnprd01.prod.outlook.com (2603:1096:400:9f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Wed, 25 Sep
+ 2024 08:59:52 +0000
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::d9ba:425a:7044:6377]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::d9ba:425a:7044:6377%3]) with mapi id 15.20.7982.022; Wed, 25 Sep 2024
+ 08:59:52 +0000
+From: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
+To: "anshuman.khandual@arm.com" <anshuman.khandual@arm.com>
+CC: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"david@redhat.com" <david@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"osalvador@suse.de" <osalvador@suse.de>
+Subject: Re: [PATCH] mm/memory_hotplug: Print the correct pfn in
+ do_migrate_range()
+Thread-Topic: [PATCH] mm/memory_hotplug: Print the correct pfn in
+ do_migrate_range()
+Thread-Index: AQHbDyErxhahfdpSoESWDVgy/wQbc7JoNE2A
+Date: Wed, 25 Sep 2024 08:59:52 +0000
+Message-ID: <a0a73388-3980-478a-979c-f8cbf91d0812@fujitsu.com>
+References: <42545fc6-8c91-4f20-9959-2416b9e112c2@arm.com>
+ <8f48a487-f8b0-7a0a-069a-78706413bd22@fujitsu.com>
+In-Reply-To: <8f48a487-f8b0-7a0a-069a-78706413bd22@fujitsu.com>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY1PR01MB1562:EE_|TYCPR01MB6718:EE_
+x-ms-office365-filtering-correlation-id: a9229aed-b939-4c95-066f-08dcdd406b3d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|1800799024|366016|38070700018|1580799027;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?QTN0YVVSSjl1cElrWXNreEJlb2hIbGNNOGRjUmZEVit5V0lYVHM4RjlPWmpF?=
+ =?utf-8?B?T1grYXRTMlQvVmJCZUVFOEJ2dGN6WDVMUDZLaUFnaWkwWEgvbFo0czJtdzAz?=
+ =?utf-8?B?NFNTa2ZiNVdIdXlDS3YvMTlSMWFqdnpUT0EzYmg5S2VrL3BrdUVreG1EWFBo?=
+ =?utf-8?B?WVA1YWdQSStiQnkzajVZWjY1M1JucHgxWWhmQUthRlVBVEJoWDJOd2sydllp?=
+ =?utf-8?B?WjV2K3pUUEI4NVMyWkliVWVCdGEzODgzOWhNWEZydlJ1WTN6dm5iaGJGMldZ?=
+ =?utf-8?B?QnZuVG0rcEVGc0pERy9Hc29NUENwYXg4TnV5a3ROWTJDL0UrRnBXMWp2ZHZF?=
+ =?utf-8?B?dUdwak5Db0F4Q3J0ZUp4TjUwOXo5dGtxTklYZTlKWE8rSGJ6UTRCdkE0VTdl?=
+ =?utf-8?B?b0h3L2ExZ0dmREt6ZTFXdk5xeVhranAwT3BOYnlkbzB3d0Yzdm9jN1VERnMx?=
+ =?utf-8?B?aW52bERWRVF1M3pvbmZ2SzRjT1lIS1c1SndKamszQW1iZFVMTHJYbVlMR2o2?=
+ =?utf-8?B?MUQ1eE95OG1ZUGRrV01XTTRYSnBYbGo4cnBLTnRzcUhMd29OZGMwbHh2TjJO?=
+ =?utf-8?B?QmczZDVnN0llM3hjSk9saktHTWdwbTUwR1NNdGU4SmVlejJ5VSs1S0lQMGNt?=
+ =?utf-8?B?bmdvU2NUNlBoTDgvSmxIdHhuZ0krRmZ2V2ZEU2JLdHJNUlM2NGlXRmt0SFhW?=
+ =?utf-8?B?M3pqaDd5eVRqS2RuK1lzZlhxRGZuakRWeHF5d2huLzJmRk5xTU5XdVI1TXhY?=
+ =?utf-8?B?bkErRHJ3emNleXlESUpFbVJPVGVPbG5KYXo0dXNQSHI4bUluQWpqdmltZGJM?=
+ =?utf-8?B?OUsrUml1WEQraEE5WlNLT1dTaWloMW5ZMjEra3RGMXAyNVAzNEh4a3BSQ1Ux?=
+ =?utf-8?B?ay9waENNVUVhbHN5REVQNXpoUUludTJobkxKNDhWaG5NUzF0c2QwR1ZSMWlr?=
+ =?utf-8?B?ZHk1bEUzLzZFM0libXlYWXFqL1FSRi9Ia2oxS1VETkpvK2hYTisxS09FYlZs?=
+ =?utf-8?B?NFRaSENYZ255T0dDd2hab1EvbHJyUkZzVmxVbjBIVzhBeTV4czZXVUpNd2d6?=
+ =?utf-8?B?UDV6MlgrenU5MG9ydllkU1BHOE04NFphNFMvZEV2MGxZVkxoV0g4YldITmo2?=
+ =?utf-8?B?QnlieGRVYzVQUlkxWXZXSlBMTUcwN3kwU0RLbndOMjYrWWNhd3A1a3U2TnN5?=
+ =?utf-8?B?aHpSbEIrUkhlS2xyTVNHWE9ZWDBPNHZoUC8vYWdRa1JrdWd5Y25XM1FUWGwv?=
+ =?utf-8?B?cTR4ZmZZV2N2ODVLY2tyaldJdkRudzFJczdlMWdnMVdReUliS1ZMNC8xUVlK?=
+ =?utf-8?B?bDlxeEQ3akJVWkpLS0g1aWlXaU9EMFQ0akdjMWoveGovZnQxRUVzS1AwamJj?=
+ =?utf-8?B?czBQbGl1MWljaG1YR01LZmNuczRPdU4vQmo0bHRzTEdsNUtDdWtrUTNsWWJ2?=
+ =?utf-8?B?TmNQUjFXaUVLTHNZY0xIUDJ6U2d3QXh4cW1RbFFDQXdkQnMxdTMyWHo3MEJF?=
+ =?utf-8?B?bUJ2ZWhrMzNrNmI1LzAxbEg3bzVxVFROeEd4SDZzV3FuTnFIb0ZoSUkyU0NC?=
+ =?utf-8?B?bnd2V3RSZ1FyYU1SanhoWkJSQ2U1TzFqMkJvVkd4ME9Lb3pKU1lrL0NrWHJS?=
+ =?utf-8?B?M0ZDS2lXYWNBQWNEbDFENWtwZkVWUnpQZmFmQmY4TTVlbVlBQ1FtNEdGMDdP?=
+ =?utf-8?B?RDBRcDRhNStyU1RQQkhLQkVkcWoxNWJmZitEdHp0TXRyc1dMd0xQRzhYTE5v?=
+ =?utf-8?B?aGZsOUxPU3dqZXFtNVVKWkdGUy9aMkVQU3JyRWxmdHZ5alNBek9XTlBmbm4r?=
+ =?utf-8?Q?bJr+F7s0R1eVBjA5e4MECf+GUm16oaryj5eFw=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018)(1580799027);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?YkQ1VHNoY1RSTXdZWWhHVkN6SmYrWEdLWTM2ZkJzcmR6bHVBYVZRc3V1MXJE?=
+ =?utf-8?B?Rm9Xc3MyL1Y2Z0R3Z3QvanJER0lxT0kwb090aE9BZGtIRDVsWFR1ZjVnYm4v?=
+ =?utf-8?B?TloranhVTW0rN2NNalJqSmUzeVNnVmlrZ2ZoeVo1bHpjSTBna2d1VllMRlJi?=
+ =?utf-8?B?K1ZWT25EYjVuOTloSWtZQkVqZ0R6YnNtd0FtNUs4ZkY0NXNtVXlmUllrMGtm?=
+ =?utf-8?B?Mi9BUlcwd2VkeVE0NHlXUG0yWWVjRXdRbkFteklERW9EWHdGTHdsT1pPVThF?=
+ =?utf-8?B?NnE1RVpYaldmVnRTanJDNW9lVmlWT3FFOU9NZ1JmL3lIWGI2dWIrMWNwVm14?=
+ =?utf-8?B?WW1zenQySzNLWGtOc0EvOWpCS1RvTml1aWE5RFBLSVVRSUJ2aVMvN2MxOExl?=
+ =?utf-8?B?c2VBOVdmR0drOTlISHVnZ2ZaSndJblBwdFN6TmhISXl0TmF2LzVXM2RSWWVQ?=
+ =?utf-8?B?MFBVVTZpNGlDZXVnSVAxbW5vS2JYQkk5ZTI5UkN6bVliK0VjZm12UDZCdHRR?=
+ =?utf-8?B?WDk5bjdCQXAybi96b2JuVC84c2xCLzhqMHF5c1VRK0hOa3FlbnAwMU9DZWMy?=
+ =?utf-8?B?bnpPT1VLM1NMYVo1QWJlYUw5ODFtRktiY1FnUHhMTDdyeE9mcWZxUHo4RzVF?=
+ =?utf-8?B?VnhkZzgyNVoySGRJV3VMeUh0SzBzcE13aVFSZlF1VGZXQzVjTkx3WkNXbkY0?=
+ =?utf-8?B?eVMzTDdtNE9uR201bFh1M2hLbHpwSVVPK2NmdnIyT3MrNHRYeWVnNEpTT1ZB?=
+ =?utf-8?B?bWp6eHlZdmJiNDZiUUxzcG9OcmNhZk9Kb09mQlhVcE1kUWdOR2lBa0QvZ01P?=
+ =?utf-8?B?ZTcrTzVyckUvSzM5eDlxOHhHWWRqcndiUEVzUVVYb002VmpTVDdlQ1ROUUFI?=
+ =?utf-8?B?WVlIWjR6bzhmM2F0aEJTM3ROcEpNaG1WSmV1dnVoNDhzLzd0UDd6dC9Ya1lH?=
+ =?utf-8?B?ZCsxY29GN1VJRXVoRTEvYXdCNzdmQ2xHRWZScEhCQ2VyRCt6L0o1RVdhY25Z?=
+ =?utf-8?B?U0lGT2xtb1l2eW5hS3RYdE5vTUZSYVZTNmxWdnU5Rm5hYStZOWs0MEFUZTRN?=
+ =?utf-8?B?T2dpeUtqM0RyYWpvRUpvYk02eGd1WGY3SHF1dFNmbVBaeTZXMDhDMUI1VTA4?=
+ =?utf-8?B?RjFhS2NPTmo0M0FNZGtxdUlic3dCWDNzUW8raHNkcTlmdW8yekx2VWIveldi?=
+ =?utf-8?B?ZTQ5MS9zMDNJQ1A1ekFITktTTFM2bEsrWmlRbXVUbjFrNTFXSDRkZ1c4RXNn?=
+ =?utf-8?B?b2trMFFFYWoyK0d6WDg5eGVkT095VldmWEhnMEdqQ2NpTEtjVDdiS3RhdkdF?=
+ =?utf-8?B?WmxKbGhUMjMwNGowOUV6S2ZlVXN1V1UwWFhaZ1R0M20yQURyOUNId3BhdWRE?=
+ =?utf-8?B?WUtWd2luVjJsendEeDk2Q2hxVGJ4RlZRVFlwTkFWN0VnNHQvUmNkeUZtbWpy?=
+ =?utf-8?B?aURLcUxjaTAyMXcrL0U1cE5EODMyNExKRko2U1NVVno0MWQ0VFBOdmFIaUYz?=
+ =?utf-8?B?eGVMNDVkRW9qdXB3enBhUUJOemR2NGZucUIzMlNaRCswZTVPUGQrYmFOcUJT?=
+ =?utf-8?B?M0ttdXhzZHYvbFliZUdCQWxqMERtdFNXNlByYWZZcFdzWWNMRGp6K3IwRkJ4?=
+ =?utf-8?B?QndubDZOVUxaMk1SUVhjWitsamhXVlBPUjFVZDBCVUhJK2ovdWdGM3dUQ0pO?=
+ =?utf-8?B?aW13Q2tnUzZJV1lQdHJ4N3ZoS2ZiOURURGdGY2ZjcUxVSHp5N0dWZzkxcDF0?=
+ =?utf-8?B?TWFJQ0U5aVZPTCtEdTlheWZqekQzSGw0Y2huNXBDZTU3dDIyTGMwY0lXYXBY?=
+ =?utf-8?B?U3B0TlQ5TzVIS21HOWhBNXlhUmZIbWxXc3JtQ0c5RUZrMTBsb1RST1VQdkNX?=
+ =?utf-8?B?TDFUQjBxaVlUNWU1QWhpOHl0OVJHTCtUekljdW80TFFYMnhqL1lQZGxua0pX?=
+ =?utf-8?B?V1RCWXZ3eWJ3eFFJSFNXZFo1S0MxSEphQ2dBcGJXcjRJUDhsdllWOXFSUDlv?=
+ =?utf-8?B?NzAwei9ESmZ0SGJRaDRKeEtnL1o4NzFnd21QV3dvdmJ1Q1ZaNDN1WjNzQVI3?=
+ =?utf-8?B?QXV4ZnhKdGpXWEZyTnRWYzBKdVQvNFY1cUNxMlRzMDhNbnBDUFlOZy9Udmwz?=
+ =?utf-8?B?UW82a01CSzFncE8weXljQ1dEejlvcE9RcjZueDdXa3RsNzU5OGpOeFNWMk55?=
+ =?utf-8?B?c1E9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <05CFF370EBA97C4C9DD1EA3AF6FA2853@jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-From: Jie Zhan <zhanjie9@hisilicon.com>
-Subject: Re: [PATCH v7 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
- sysfs entry
-To: Beata Michalska <beata.michalska@arm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<ionela.voinescu@arm.com>, <sudeep.holla@arm.com>, <will@kernel.org>,
-	<catalin.marinas@arm.com>, <rafael@kernel.org>, <viresh.kumar@linaro.org>
-CC: <sumitg@nvidia.com>, <yang@os.amperecomputing.com>,
-	<vanshikonda@os.amperecomputing.com>, <lihuisong@huawei.com>
-References: <20240913132944.1880703-1-beata.michalska@arm.com>
- <20240913132944.1880703-2-beata.michalska@arm.com>
-In-Reply-To: <20240913132944.1880703-2-beata.michalska@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpeml500019.china.huawei.com (7.185.36.137)
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	ML2x0K/S7h1BemvX8UIVEjcrpOyeo9D6z5evcy/ahF+14xnKTqjOo+uQdtyWRG7k3Un17U7lDH41qdMocYCzQGOvddCyL6xhWVRNRF5Ec8mxKE/j/wwC8JaM6roKkpsmNtXgU7h2DPQygQbuQ9T1enEsyssU+XFFZNPq9q/JMxDftU26nCFN0uaZIc+D/mMDQid83IV+Ti2s129WnXNBqPEMrWtS1+gwxudxVGLsUNxpJojZ1nxMmCdE482hnzzDKeEHEG0/ciwOGzmgN0yn2gCKtWk0yfT9f0WheMPemf/pJMxMwmyDMwRAFvmT87wbzV137LHrJXkJQMdiaW9dW8EzqDVhXabXglNLzk7L9sEOQmkNzPWKQArWZPnbg5w9gkrWfVqxjAdaDUqXpU90sOqA242CEzthq0DMW3HHD7O+0FQ4HZQf8BbHfe2u26A9SPQeW2LZyKhRdPfioHWv2j9WI+xmIrvb+ojInK/XzWnIT3UQfbqE6YVQxqpUyHMNrcb9HKcR7+DQiRFWWNemn8QPMzM2FS96ymxO/B0OHplkrjDLtcNr+D7AuxWIfRCbdsWSy97+wibm5tbh97vrqY0faqSofVw+eXt6TvqpQMuP50M/OGymPYhgdqeUbfCu
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY1PR01MB1562.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9229aed-b939-4c95-066f-08dcdd406b3d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2024 08:59:52.5979
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /hzs2+UTH6/dM8o66Ja2LRjdqyhofn5XNT4mDGhHC+HDIetTq8sJO82XdB8HgnJZq9Xg14TRQ48NP63yOCDPoA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB6718
 
-Hi Beata,
-
-Great thanks for the update.
-
-On 13/09/2024 21:29, Beata Michalska wrote:
-> Currently the CPUFreq core exposes two sysfs attributes that can be used
-> to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
-> and scaling_cur_freq. Both provide slightly different view on the
-> subject and they do come with their own drawbacks.
-> 
-> cpuinfo_cur_freq provides higher precision though at a cost of being
-> rather expensive. Moreover, the information retrieved via this attribute
-> is somewhat short lived as frequency can change at any point of time
-> making it difficult to reason from.
-> 
-> scaling_cur_freq, on the other hand, tends to be less accurate but then
-> the actual level of precision (and source of information) varies between
-> architectures making it a bit ambiguous.
-> 
-> The new attribute, cpuinfo_avg_freq, is intended to provide more stable,
-> distinct interface, exposing an average frequency of a given CPU(s), as
-> reported by the hardware, over a time frame spanning no more than a few
-> milliseconds. As it requires appropriate hardware support, this
-> interface is optional.
-> 
-> Signed-off-by: Beata Michalska <beata.michalska@arm.com>
-> ---
->  Documentation/admin-guide/pm/cpufreq.rst | 10 ++++++++
->  drivers/cpufreq/cpufreq.c                | 31 ++++++++++++++++++++++++
->  include/linux/cpufreq.h                  |  1 +
->  3 files changed, 42 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/pm/cpufreq.rst b/Documentation/admin-guide/pm/cpufreq.rst
-> index fe1be4ad88cb..2204d6132c05 100644
-> --- a/Documentation/admin-guide/pm/cpufreq.rst
-> +++ b/Documentation/admin-guide/pm/cpufreq.rst
-> @@ -248,6 +248,16 @@ are the following:
->  	If that frequency cannot be determined, this attribute should not
->  	be present.
->  
-> +``cpuinfo_avg_freq``
-> +        An average frequency (in KHz) of all CPUs belonging to a given policy,
-> +        derived from a hardware provided feedback and reported on a time frame
-> +        spanning at most few milliseconds.
-
-I don't think it's necessary to put the 'at most few milliseconds'
-limitation on.
-
-It's supposed to be fine for other platforms to implement the interface
-with a longer time period, e.g. a few seconds, in the future.  Otherwise,
-this would probably force the implementation of 'cpuinfo_avg_freq' to be
-binded with the 'scale freq tick' stuff.
-
-> +
-> +        This is expected to be based on the frequency the hardware actually runs
-> +        at and, as such, might require specialised hardware support (such as AMU
-> +        extension on ARM). If one cannot be determined, this attribute should
-> +        not be present.
-> +
->  ``cpuinfo_max_freq``
->  	Maximum possible operating frequency the CPUs belonging to this policy
->  	can run at (in kHz).
-
-...
-
-> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-> index d4d2f4d1d7cb..48262073707e 100644
-> --- a/include/linux/cpufreq.h
-> +++ b/include/linux/cpufreq.h
-> @@ -1195,6 +1195,7 @@ static inline int of_perf_domain_get_sharing_cpumask(int pcpu, const char *list_
->  #endif
->  
->  extern unsigned int arch_freq_get_on_cpu(int cpu);
-> +extern int arch_freq_avg_get_on_cpu(int cpu);
-
-It's werid to have two different functions with mostly the same behaviour,
-i.e. arch_freq_get_on_cpu() and arch_freq_avg_get_on_cpu().
-
-Appreciated that there would be some capatibility work with x86 at the
-moment if merging them, e.g. return type, default implementation, impact on
-some userspace tools, etc.
-
-Anyhow, are they supposed to be merged in the near future?
-
-
-Thanks,
-Jie
->  
->  #ifndef arch_set_freq_scale
->  static __always_inline
+DQpXZWxsLCBwbGVhc2UgaWdub3JlIHRoaXMgcGF0Y2gsIGl0IGhhcyBiZWVuIGZpeGVkIGluIDYu
+MTIgbWVyZ2VkIHdpbmRvd3MNCg0KDQoNCk9uIDI1LzA5LzIwMjQgMTY6MDEsIExpLCBaaGlqaWFu
+L+adjiDmmbrlnZogd3JvdGU6DQo+IFNvcnJ5IGZvciB0aGUgbGF0ZSByZXBseS4gKE15IGNvbXBh
+bnkncyBtYWlsIHNlcnZlciB0aGF0IGVuYWJsaW5nIHRoZQ0KPiBEUk1BQywgc2VlbXMgbm90IHRv
+IGRlbGl2ZXIgc29tZSBtYWlscyB0byBteSBpbmJveCwgSSBoYXZlIHRvIGNoZWNrDQo+IG1haWxz
+IGluIGxvcmUpDQo+IA0KPj4gT24gOS8yNC8yNCAxNTo0NSwgTGkgWmhpamlhbiB3cm90ZToNCj4+
+PiBUaGUgcGZuIHZhbHVlIG5lZWRzIHRvIGJlIHJldHJpZXZlZCBjb3JyZWN0bHkgd2hlbiBQYWdl
+VHJhbnNIdWdlKHBhZ2UpDQo+PiBXaGVyZSB0aGUgcGZuIGNvdWxkIGhhdmUgYmVlbiBtb2RpZmll
+ZCB3aXRoDQo+PiBwZm4gPSBwYWdlX3RvX3BmbihoZWFkKSArIGNvbXBvdW5kX25yKGhlYWQpIC0g
+MQ0KPj4gU28gcmV0cmlldmluZyBmcm9tIHBhZ2Ugd2lsbCBnZXQgdGhlIG9yaWdpbmFsIHBmbiB2
+YWx1ZSA/DQo+IA0KPiBZZXMsIHRoYXQncyB0cnVlLg0KPiBpdCBzaG91bGQgcHJpbnQgdGhlIGFj
+dHVhbCBwZm4gdGhhdGZhaWxlZCB0byBpc29sYXRlLFxcXCBUaGFua3MgWmhpamlhbg0KPiAgICAN
+Cj4gDQo+Pg0KPj4NCj4+PiBpcyB0cnVlLiBGaXggaXQgYnkgcmVwbGFjaW5nIHRoZSB1c2FnZSBv
+ZiAncGZuJyB3aXRoICdwYWdlX3RvX3BmbihwYWdlKScgPiB0byBlbnN1cmUgdGhlIGNvcnJlY3Qg
+cGZuIGlzIHByaW50ZWQgaW4gd2FybmluZyBtZXNzYWdlcyB3aGVuDQo+PiBpc29sYXRpb24gPiBm
+YWlscy4gPiA+IFNpZ25lZC1vZmYtYnk6IExpIFpoaWppYW4NCj4+IDxsaXpoaWppYW5AZnVqaXRz
+dS5jb20+ID4gLS0tID4gbW0vbWVtb3J5X2hvdHBsdWcuYyB8IDIgKy0gPiAxIGZpbGUNCj4+IGNo
+YW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pID4gPiBkaWZmIC0tZ2l0DQo+PiBh
+L21tL21lbW9yeV9ob3RwbHVnLmMgYi9tbS9tZW1vcnlfaG90cGx1Zy5jID4gaW5kZXgNCj4+IDI2
+NzkwYzhkNWI0My4uMDAwNDMwNDA2YTllIDEwMDY0NCA+IC0tLSBhL21tL21lbW9yeV9ob3RwbHVn
+LmMgPiArKysNCj4+IGIvbW0vbWVtb3J5X2hvdHBsdWcuYyA+IEBAIC0xODI5LDcgKzE4MjksNyBA
+QCBzdGF0aWMgdm9pZA0KPj4gZG9fbWlncmF0ZV9yYW5nZSh1bnNpZ25lZCBsb25nIHN0YXJ0X3Bm
+biwgdW5zaWduZWQgbG9uZyBlbmRfcGZuKSA+ID4gfQ0KPj4gZWxzZSB7ID4gaWYgKF9fcmF0ZWxp
+bWl0KCZtaWdyYXRlX3JzKSkgeyA+IC0gcHJfd2FybigiZmFpbGVkIHRvDQo+PiBpc29sYXRlIHBm
+biAlbHhcbiIsIHBmbik7ID4gKyBwcl93YXJuKCJmYWlsZWQgdG8gaXNvbGF0ZSBwZm4gJWx4XG4i
+LA0KPj4gcGFnZV90b19wZm4ocGFnZSkpOyA+IGR1bXBfcGFnZShwYWdlLCAiaXNvbGF0aW9uIGZh
+aWxlZCIpOyA+IH0gPiB9DQo+IA==
 
