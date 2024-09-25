@@ -1,94 +1,95 @@
-Return-Path: <linux-kernel+bounces-339227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040E998617D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:53:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C4C9861A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEAD528AC11
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:53:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96C961F2947E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DA219A2AE;
-	Wed, 25 Sep 2024 14:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED52B1B949;
+	Wed, 25 Sep 2024 14:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mv54xMFA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="LzWdKZDq"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C3619922D;
-	Wed, 25 Sep 2024 14:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A971BDCF;
+	Wed, 25 Sep 2024 14:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727274014; cv=none; b=P5vHe238sbon3Ftu7qBgoLb6Jy4U87nKkN+Qx7QhSEi8jT+yVCn8lylqswMMHT4zvMkvIvHZIia+ps3JzD+irHQ4MEUpIqCz/dYqpdUGg67WGuOf8O/lG/xN/IkhVVXxqS+wGakdBPL8Ct2yLo1XkrX2XdNZCawTv/1feWpXXw4=
+	t=1727274565; cv=none; b=qnKru/ZjETHK+O3IFTx63GUkZ2PpZispDZzi4PlaL1QKSbHUdjAhGql50GbSqwkXgMGBFvO+UicOuvOM9aJaopBVORfPM62xLGIt9eWF6Rcgeh4J+JzE7ZsvRu5jiWGqvh8q5AZQXlo+qwvWVDa+IhEkJoOKD3gp7KVeR4Q/Lks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727274014; c=relaxed/simple;
-	bh=M9KdoTdlnqS+mkVwasUHP0kB5BHjAyz9IxrCDFf+DxM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u2bzcTCqgaZaqM5iRzP0vZmJKoFztyHn2ohr2sAMTaE/Pl1ZAsZoXiCAeqaqhZX9SFkTp8IntTEZB0jxP9rWvaa4r0VhoEbm/3Gd7owz3yD+tLawf/LqUF0wcg/n+6uq1LxUvxkdSrTFrtN8do17P9hYVK+Kr1pUiwj94K3CxfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mv54xMFA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C70C6C4CEC3;
-	Wed, 25 Sep 2024 14:20:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727274013;
-	bh=M9KdoTdlnqS+mkVwasUHP0kB5BHjAyz9IxrCDFf+DxM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mv54xMFAMO5ds4Qy7NBd1w+WG3QNwtHhZIYqc4pF+QGqaTB290afYj4Y4liS6g8M/
-	 KMgLqah7xSGAIqpmV1MZU3rKVjUbpg1IFhexkxxfuleYbhDov6OtJAnBtDCUiaD8dK
-	 rePx1wVL8pXclns5nPIvtCz47GxISUhpkIJhlsIsY8FeplGSxIo72NI0jHbmDW32Sz
-	 hNzGGC/93toJ76kY9rRM++hctyCiduOHr77q2BUpgCXrxQZJaUw0RCxqEGuvX//vWk
-	 qliAPXuR0++Jm3o1sh9HUwcQ/6XPDQ7brid8KvxNJE66MciBKRzPvqGQJSYx5EctZv
-	 RYeLrCYLcIhoQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] rust: cfi: fix `patchable-function-entry` starting version
-Date: Wed, 25 Sep 2024 16:19:44 +0200
-Message-ID: <20240925141944.277936-1-ojeda@kernel.org>
+	s=arc-20240116; t=1727274565; c=relaxed/simple;
+	bh=b2MHpgVxiHOPdZ+iESJIZ3S/QUsPCnoF2Kft7tesW54=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=KUtBariSrseVnwTQ30Ad/iF/X3q4a+4GU1EjNv5QrdJzQunkyA2B7HL+oYpogEv4CTbED2oYXYaGdwzdnmzN46RXycBOFuWsVFNGFydn4Hbskrwa8dn0nHKzMyW2hBkEq4ReTz2tMgjzH+nV+fA7GYplsm9LoiJ2WELzn46ViIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=LzWdKZDq; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4XDJmt66d1z1Fb3f;
+	Wed, 25 Sep 2024 16:21:02 +0200 (CEST)
+Received: from [192.168.0.25] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4XDJmt4mx9z1Fb3q;
+	Wed, 25 Sep 2024 16:21:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=unoeuro; t=1727274062;
+	bh=Yuhv2WooNO44rsge5suSaRjghf7xfquk+37wOWGGdfk=;
+	h=Date:To:Cc:From:Subject;
+	b=LzWdKZDqb6fha9mC8NDhqDJPIASMR4smIsMP2Ytrr6azRjPBLcUtEVsVPLScNoBR7
+	 dT/CvCps4eyJ7/QbjxmhsrEAayGSPwve7OARFCslI8YMVGMv+Vj0N/ZD4so2Lz76qa
+	 nX9HpsAhHCzJSHkfyOk5CgByrZZPfYX+UD7YroSI=
+Message-ID: <5a12dcda-6ac8-47c6-a749-7ce38cfbd2d8@gaisler.com>
+Date: Wed, 25 Sep 2024 16:21:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Miller <davem@davemloft.net>, sparclinux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Andreas Larsson <andreas@gaisler.com>
+Subject: [GIT PULL] sparc updates for v6.12
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The `-Zpatchable-function-entry` flag is available since Rust
-1.81.0, not Rust 1.80.0, i.e. commit ac7595fdb1ee ("Support for -Z
-patchable-function-entry") in upstream Rust.
+Hi Linus,
 
-Fixes: ca627e636551 ("rust: cfi: add support for CFI_CLANG with Rust")
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- init/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 4ea2a161d362..89bbd0b8bdb7 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1911,7 +1911,7 @@ config RUST
- 	depends on !DEBUG_INFO_BTF || PAHOLE_HAS_LANG_EXCLUDE
- 	depends on !CFI_CLANG || RUSTC_VERSION >= 107900 && $(cc-option,-fsanitize=kcfi -fsanitize-cfi-icall-experimental-normalize-integers)
- 	select CFI_ICALL_NORMALIZE_INTEGERS if CFI_CLANG
--	depends on !CALL_PADDING || RUSTC_VERSION >= 108000
-+	depends on !CALL_PADDING || RUSTC_VERSION >= 108100
- 	depends on !KASAN_SW_TAGS
- 	help
- 	  Enables Rust support in the kernel.
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-base-commit: a2f11547052001bd448ccec81dd1e68409078fbb
--- 
-2.46.2
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/alarsson/linux-sparc.git tags/sparc-for-6.12-tag1
+
+for you to fetch changes up to d21dffe51baabf6729a95585181507f24bd695a0:
+
+  arch/sparc: remove unused varible paddrbase in function leon_swprobe() (2024-09-13 20:12:11 +0200)
+
+----------------------------------------------------------------
+This includes the following changes related to sparc for v6.12:
+
+- Remove an unused variable for sparc32
+
+----------------------------------------------------------------
+Alex Shi (1):
+      arch/sparc: remove unused varible paddrbase in function leon_swprobe()
+
+ arch/sparc/mm/leon_mm.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+
+Thanks,
+Andreas
 
