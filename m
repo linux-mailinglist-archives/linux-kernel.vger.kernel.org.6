@@ -1,103 +1,124 @@
-Return-Path: <linux-kernel+bounces-338195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 761CA98549F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:53:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A04089854A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A10B2881E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:53:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 676372881D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94D7157490;
-	Wed, 25 Sep 2024 07:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65196158A00;
+	Wed, 25 Sep 2024 07:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L09mQInY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTTu6Zbp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E43154C19;
-	Wed, 25 Sep 2024 07:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5F0154C19;
+	Wed, 25 Sep 2024 07:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727250788; cv=none; b=rPOgEV1DsrnywXZJYBLxEsYpy81U2LB2B/xZsCF+aJr2p9rcMRkMbuikSktcwWa+JlIgYGDGvZIcj4LOIABTYai38KjhDKyocgjwn/qAbnRLWS44BA/kHsEyY+yw11BraRUuCX3O8tHIxIcdJg8c3/juRu7vwlLoSjcL1xlJa0o=
+	t=1727250793; cv=none; b=REK9XXOj7nynppojYPZBmJsW26l3tziUB88pmahbtu1RHMkCzKMiHMi8AQy9d4dRKLjfkWPvMMh/ge8njHSoPhAJBQam5vImrM1CZwNycCzgctruHO93gjfcnRyRxY4HxiUeKSrJKk0q7ddVDJNIvu81KulsEL+ZIEIoIvS/r0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727250788; c=relaxed/simple;
-	bh=JFD+/TLICslIFiwVPjoesgFsuWrdwIUahgsyCeOj96U=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=YrahciB5Jy6knaudVu4TzS2+j8SdlzYPGztpWtJ4APsrMCDa0eAw4SnihFtmeKPcKMUJ9B6P3LufHuY0Ww44tTHvDZKVhC9s4suYLwN/PqZtgNcF5G+jjlFkZ/ylZyBDhRin9qjeXlDhUxeJEUcHAddE68f3lfXJAb8EkCMfnug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L09mQInY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AACBC4CEC3;
-	Wed, 25 Sep 2024 07:53:07 +0000 (UTC)
+	s=arc-20240116; t=1727250793; c=relaxed/simple;
+	bh=JlkZaCujSCTgJbO5kGZerdxZ8O560A/44Dww/tnh8jg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QVJ1kdigUIcqDWlpmSuUtRoLjgreg0rxHL5cKBJuMRxc0FZW4PQbme4iE3ZyE4d02Yt8O8ivngmDhmAwh9gjvH5boRRmcJLR3jB3hIsHn41j9DVdgAXMxzHJ7FaX3yN1GL97JtAcPy/VGiCecatk7MV+yyVdAKB+GQqrPlq095c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTTu6Zbp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07C1DC4CEC6;
+	Wed, 25 Sep 2024 07:53:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727250787;
-	bh=JFD+/TLICslIFiwVPjoesgFsuWrdwIUahgsyCeOj96U=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=L09mQInYz84uGJZbZpBXxi9BygP+ozfZGhGlnbSuydVvehTh6L9NvfGD2UydxKfhL
-	 MEyFDvEZdwW4ZNQUIc929XNtKRRPo0xzQGqQfAdNbI0NlvNW0B+X7zGN5kmW5hSDC4
-	 yis/qnvflml27pBWUodCn0jc/c3NZc4+B7M6qtxG7CoGXSGnHCKi1DpAfnYkdzPPx5
-	 KL9qWYusc/Uc/H1A6o9JHV+Xl9AeQGGawy6VOADgfxrhLnSrWBmi1UQ110R3BmogeN
-	 3ObjPdwJeCowTRjRUMoTqW0I0y3MBKixy3FBcg7ziotb0kxRNO+LnRJ1Uf2+TOnffk
-	 HW61NjouL8dOQ==
+	s=k20201202; t=1727250793;
+	bh=JlkZaCujSCTgJbO5kGZerdxZ8O560A/44Dww/tnh8jg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RTTu6ZbpEXm+3108C+MCKpOe3cc7GDzplrAVh9usgsndAVm+APjBu7u0CCEnxobUO
+	 2enBjoa2k4bSRynYGNF7lciz7jltxlFxGi5UQSiACYJD2te2ujn9/tPX5DccdPqzg9
+	 UO32kfxRO9oSW/rOCcJNLJ8PKdjk5Em+jkdXxzAr8u1nthoAxJfImVkDnG5A6NG1dR
+	 QNem17diLh6Ivk5lN6rrphnMJ+6yqnbn55Cr9SGkpFe8UqjcX0P3/jf7zN/CQOmiR1
+	 XZM81UADMyTM7BiX6IeHK+nxtbSoAUgrwwAAnmgKgVRkbxlybgufVDhXPByGvTrV6o
+	 eKsLu7JNZd/Yg==
+Message-ID: <2012b494-ce72-455c-a298-85264dd2f648@kernel.org>
+Date: Wed, 25 Sep 2024 09:53:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: interconnect: qcom-bwmon: Document QCS8300
+ bwmon compatibles
+To: Jingyi Wang <quic_jingyw@quicinc.com>, Georgi Djakov <djakov@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: quic_tengfan@quicinc.com, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240925-qcs8300_bwmon_binding-v1-1-a7bfd94b2854@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240925-qcs8300_bwmon_binding-v1-1-a7bfd94b2854@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 25 Sep 2024 10:53:03 +0300
-Message-Id: <D4F7AVX5A3KI.235GJ3NRMGWV@kernel.org>
-Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>,
- <stable@vger.kernel.org>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Peter
- Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 5/5] tpm: flush the auth session only when /dev/tpm0
- is open
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20240921120811.1264985-1-jarkko@kernel.org>
- <20240921120811.1264985-6-jarkko@kernel.org>
- <00cf0bdb3ebfaec7c4607c8c09e55f2e538402f1.camel@HansenPartnership.com>
- <D4EPQPFA8RGN.2PO6UNTDFI6IT@kernel.org>
- <f9e2072909d462af72a9f3833b2d76e50894e70a.camel@HansenPartnership.com>
- <D4EU5PQLA7BO.2J5MI195F8CIF@kernel.org>
- <2b4c10ca905070158a4bc2fb78d5d5b0f32950ad.camel@HansenPartnership.com>
- <D4F72OC53B3R.TJ4FDFPRDC8V@kernel.org>
- <D4F75ZA3WH4X.2LTKNXM4X60KY@kernel.org>
-In-Reply-To: <D4F75ZA3WH4X.2LTKNXM4X60KY@kernel.org>
+Content-Transfer-Encoding: 7bit
 
-On Wed Sep 25, 2024 at 10:46 AM EEST, Jarkko Sakkinen wrote:
-> On Wed Sep 25, 2024 at 10:42 AM EEST, Jarkko Sakkinen wrote:
-> > Fair enough. I can buy this.
-> >
-> > I'll phrase it that (since it was mentioned in the bugzilla comment)
-> > in the bug in question the root is in PCR extend but since in my own
-> > tests I got overhead from trusted keys I also mention that it overally
-> > affects also that and tpm2_get_random().
->
-> I do not want to take null key flushing away although I got the
-> reasoning given the small amount of time is saved (maybe 25-50 ms
-> in my QEMU setup if I recall correctly) but it would make sense to
-> squash it auth session patch.
->
-> I'll also check 1/2 and 2/2 if I'm doing too much in them. Not
-> adding any tags to v6 and it really makes sense to develop=20
-> benchmarks and not rush with the new version now that I got
-> also your feedback, since it is past rc1 timeline.
->
-> Good target rcX would be around rc3.
+On 25/09/2024 09:45, Jingyi Wang wrote:
+> Document QCS8300 BWMONs, which has two BWMONv4 instances for the CPU->LLCC
+> path and one BWMONv5 instance for LLCC->DDR path.
 
-I have to admit this: I had blind spot on that PCR extend comment
-because I did not get hits on that when testing this so it definitely
-needs to be documented. I spotted it only yesterday.
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
-BR, Jarkko
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+
+Best regards,
+Krzysztof
+
 
