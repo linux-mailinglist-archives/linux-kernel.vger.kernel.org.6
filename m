@@ -1,216 +1,148 @@
-Return-Path: <linux-kernel+bounces-338164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2727598542E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:30:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D018B985433
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F1AE1F2175F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:30:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60D0DB22EAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A34156F30;
-	Wed, 25 Sep 2024 07:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8ADE156F3F;
+	Wed, 25 Sep 2024 07:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2w8Fa89"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OqA/bsYj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B00F132114
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490C6132114;
+	Wed, 25 Sep 2024 07:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727249443; cv=none; b=qn2OZERyh5EpJtxJ26BXY6l8cZIpy5kJEnYIMkVeFbjCdyz/9RqFbkYm4w2FE5kmWLH/S2VFZoXBT3IIS1iUcMftq9piqGn9Mw9rcAC3ncjwjpIXxMbCbFcByYlsAZeuMODb3KdiS6qn8nzhax5nZMGXXOwKwpnsMy1Alovsw4w=
+	t=1727249523; cv=none; b=BLtayEsWKtfh7sWiAazeKFUiZ3IHjlb3+0ApO1RWbPIjkKqpKFhznpYbudmzeAc8r6t4PGIU4Tsf5FpgATVx+hZdYsNDk/dXso1lqEiPitygTn4+PEAySnbC3ZY9xUUmaG7iBQ6tAu1OxV4i0iP6hiRoEUVJDyvZUuqxgG2M5co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727249443; c=relaxed/simple;
-	bh=TmrPdn5NEcwKi8+2/Xl+a5iFyHK5ODJ6fs9fiV9ETFk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JCEEA7ifBygLk8nRRxw0LGcGZRafzCEV5QyXcyVMZk297H5qvPGLSLvktb1DCAV9PvHNiG7V4G9EyexpzyXr8ozRwFAKYiJ1StROSsgDHDE1jbGLSdGyk6jAn+nO6sL2m6GL4Ccwowdo3ZcT57ALB1mBdwYveyUP3rkhPQguOI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2w8Fa89; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-277e4327c99so3389626fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 00:30:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727249441; x=1727854241; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oEF//4/TjEDOSnrvBgSi2vP7otKgKVy333EOw4mnEkU=;
-        b=A2w8Fa89YBzIiBMKnJewfj1w7aMugUnw9eau07jjIsAK0KkJ+CHduTKfsBOJSXjc0H
-         GN4D7NGD0hSTr2gk99Baq2fXA0fdynzjEZ713Y10EJLjwO0qRcnUTt/Bm9jV1FpJGIIg
-         N0EzypNcj7Vvb7jNTcNPoR5MRYHn5WtxWo8iM1fDcbWy0g+S1tXFnkVMPVdg3Nj4CKXJ
-         C5t9Ko74L40C1cFiZPhkASUbTjmmVNFheeTVuM4u48GK1DsblralSzLOiuMWymz1KCUT
-         AVXUHNk4L5Rn233/SXr5d2uP6iETA+pmFxC6tQmFsmsmPgxDZz437BqpIqkfwaj2vU/+
-         Wn9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727249441; x=1727854241;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oEF//4/TjEDOSnrvBgSi2vP7otKgKVy333EOw4mnEkU=;
-        b=BWiIcwjilgLBCWvZ5pAhDknDxm5IXtpIumRbRAa+EqifHPmX4TWOQ3D2NlHVCjbDDQ
-         LRA30JAgCtMLErromx376WHRvMd6YQvuB4AnbE2l2U4UQEevUPmzSfSmZQE46NOmG9Zf
-         JXarQmI15XiNShnYsi+maXsR9M3qAdpUYJE+C/hNTZEkZkjF0kkukh0dmNUoPSaHJmac
-         dnX4ihb4OW5tczr7eLOr/TYTHuDjCZf5jU6i+HOOWK++JPOx2BpESPJDdIx35wrZNfjL
-         mc2Wvk+5azs43jcYEv6Qxh7Fg/EJ2iQ5MfMlVwECthu05DJLSxHtGxTcacNDT7+uUnJn
-         fCnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKZGu1ucIACtS2O+//tFz571OtlDUPuKCUUpCosqFLR0/zZU+HJxAY+N+21yTqcoNIpHzPa8BqTzwDunk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDv3V4Rt4xXZ5ANku5yKoBCB+o+qpDp5tXmBeKTQmiQ3DZnLXe
-	utmWrXkjjHo5HdCm/2lBIxTh3YEcr+hPJeraz9oK/SL/WwXUMIpuySEgpO+npIvAcXmOOnCByg5
-	LFRg4S3/hSy0FQ+nwYe5JpFJmZsc=
-X-Google-Smtp-Source: AGHT+IERUFf43OQjqFHBX1wxjsV5rFHY2BjnxHcVaN5zvMxnuLwsk8+tfyrT/vPc8EahpFIWZ7rQIkjn9j8OvTepDXI=
-X-Received: by 2002:a05:6870:a450:b0:277:cb9f:8246 with SMTP id
- 586e51a60fabf-286e160a076mr1465727fac.38.1727249441010; Wed, 25 Sep 2024
- 00:30:41 -0700 (PDT)
+	s=arc-20240116; t=1727249523; c=relaxed/simple;
+	bh=Pa/eKunPXqa7ua1z3jU4AbFzjwA+ncdvQpHv+9FTO1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JL7M69UvmNUw4ggdSRKyY1dTHKu/bhgkZIhumLnGyhy7GToPCXCq87GD6cstrQxQQre5MbFVylarLfYQLqwgWLJGxVjFcOf5KDLbX4Kq/cZpWTcNod6bOM/ypSk6LKOQ0TdpAci0+dPYPwcSWt0OVEmQvPZcx2YkYSgb6uHOUXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OqA/bsYj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D10CDC4CEC3;
+	Wed, 25 Sep 2024 07:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727249522;
+	bh=Pa/eKunPXqa7ua1z3jU4AbFzjwA+ncdvQpHv+9FTO1o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OqA/bsYjgtqEQ+fGJ3zcQXayTcRgpvEFXSNJGG9UkbFyCK0YGvuqjmgYxtx/pGoHK
+	 0QlMHGJrfjwskZGpnfy6F53qQqFNag/IzKuIBRcS2MLtRKF7RAf9uRXyjSo6dQmDJJ
+	 I/MTIYuKHiop5tRnSr2SPj5ro38ES+41IKPenTIMmKaol7j6m9rOfpKpVjlHdhRHGb
+	 EiYYWo+ArBw7yr3SEouODfVG9rnO4k30UJWREJOwO8GvERJ+LH/27fQ3+zdSaHEoXM
+	 LyPD58yjzmlwSA4DG2DGrD+4c+4E2/dtF/S24p3bLRZN4Ax3X/DYo12ejFblfJf3UI
+	 yirTYSIaUtDng==
+Message-ID: <9da1c4c5-8ed7-4dfd-98f8-54616c8576d7@kernel.org>
+Date: Wed, 25 Sep 2024 09:31:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815004617.2325269-1-philipchen@chromium.org>
- <CA+cxXhneUKWr+VGOjmOtWERA53WGcubjWBuFbVBBuJhNhSoBcQ@mail.gmail.com>
- <66d89eaeb0a4b_1e9158294e1@iweiny-mobl.notmuch> <CA+cxXhmexXuXJg2qgbDJO7MXqpJzuDH1_Hru=7Ei9jus=FGwew@mail.gmail.com>
-In-Reply-To: <CA+cxXhmexXuXJg2qgbDJO7MXqpJzuDH1_Hru=7Ei9jus=FGwew@mail.gmail.com>
-From: Pankaj Gupta <pankaj.gupta.linux@gmail.com>
-Date: Wed, 25 Sep 2024 09:30:29 +0200
-Message-ID: <CAM9Jb+gj2e0A-3=gmvUUWWEzjpEHfJhaqnSKPmhg4E4ucXgexg@mail.gmail.com>
-Subject: Re: [PATCH] virtio_pmem: Add freeze/restore callbacks
-To: Philip Chen <philipchen@chromium.org>
-Cc: Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	virtualization@lists.linux.dev, nvdimm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, "Michael S . Tsirkin" <mst@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] Add Framework FRANME0000 dts
+To: Sandie Cao <sandie.cao@deepcomputing.io>,
+ Emil Renner Berthing <kernel@esmil.dk>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Heiko Stuebner <heiko.stuebner@cherry.de>,
+ Neil Armstrong <neil.armstrong@linaro.org>, rafal@milecki.pl,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Michael Zhu <michael.zhu@starfivetech.com>,
+ Drew Fustini <drew@beagleboard.org>, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dhs@frame.work,
+ ams@frame.work, gregkh@linuxfoundation.org, yuning.liang@deepcomputing.io,
+ huiming.qiu@deepcomputing.io
+References: <20240925053123.1364574-1-sandie.cao@deepcomputing.io>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240925053123.1364574-1-sandie.cao@deepcomputing.io>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-+CC MST
+On 25/09/2024 07:31, Sandie Cao wrote:
+> DeepComputing is creating a RISC-V Framework Laptop 13 Mainboard 
+> powered by a StarFive JH7110 processor.This is a developer-focused 
+> product, aimed at making tinkering with RISC-V more accessible.
+> The Mainboard is under development and we'll share more on functionality, 
+> compatibility, and availability as the program progresses.
+> 
+> Framework Model: Framework FRANME0000
+> DeepComputing Model: DeepComputing fm7110
+> 
+> V1:
+> - Add framework dts and config.
 
-> > Philip Chen wrote:
-> > > Hi maintainers,
-> > >
-> > > Can anyone let me know if this patch makes sense?
-> > > Any comment/feedback is appreciated.
-> > > Thanks in advance!
-> >
-> > I'm not an expert on virtio but the code looks ok on the surface.  I've
-> > discussed this with Dan a bit and virtio-pmem is not heavily tested.
->
-> Thanks for your comments.
-> I think this specific patch is not heavily involved with virtio spec deta=
-ils.
-> This patch simply provides the basic freeze/restore PM callbacks for
-> virtio_pmem, like people already did for the other virtio drivers.
->
-> >
-> > Based on our discussion [1] I wonder if there is a way we can recreate =
-this
-> > with QEMU to incorporate into our testing?
->
-> Yes, these are how I test on crosvm, but I believe the same steps can
-> be applied to QEMU:
-> (1) Set pm_test_level to TEST_PLATFORM (build time change)
-> (2) Write something to pmem
-> (3) Make the device go through a freeze/restore cycle by writing
-> `disk` to `/sys/power/state`
-> (4) Validate the data written to pmem in (2) is still preserved
->
-> Note:
-> (a) The freeze/restore PM routines are sometimes called as the backup
-> for suspend/resume PM routines in a suspend/resume cycle.
-> In this case, we can also test freeze/restore PM routines with
-> suspend/resume: i.e. skip (1) and write `mem` to `sys/power/state` in
-> (3).
-> (b) I also tried to set up QEMU for testing. But QEMU crashes when I
-> try to freeze the device even without applying this patch.
-> Since the issue seems to be irrelevant to pmem and most likely a QEMU
-> setup problem on my end, I didn't spend more time enabling QEMU.
+You got two times the same feedback - you send patches incorrectly with
+broken threading. Two times you ignored it.
 
-Thanks for the work!
+This is the third time.
 
-Did you check why QEMU was crashing, maybe because we did not support
-freeze/restore before
-so some missing NULL check? Any back trace you got?
+Making mistake is fine, we all make. Making same mistake twice is wrong.
+Means you do not learn.
 
-If it works in crossVM, it should work in Qemu as well?
+Making same mistake three times, is wasting my time.
 
-Thanks,
-Pankaj
+NAK.
 
->
->
->
-> >
-> > Ira
-> >
-> > [1] https://lore.kernel.org/lkml/CA+cxXhnb2i5O7_BiOfKLth5Zwp5T62d6F6c39=
-vnuT53cUkU_uw@mail.gmail.com/
-> >
-> > >
-> > > On Wed, Aug 14, 2024 at 5:46=E2=80=AFPM Philip Chen <philipchen@chrom=
-ium.org> wrote:
-> > > >
-> > > > Add basic freeze/restore PM callbacks to support hibernation (S4):
-> > > > - On freeze, delete vq and quiesce the device to prepare for
-> > > >   snapshotting.
-> > > > - On restore, re-init vq and mark DRIVER_OK.
-> > > >
-> > > > Signed-off-by: Philip Chen <philipchen@chromium.org>
-> > > > ---
-> > > >  drivers/nvdimm/virtio_pmem.c | 24 ++++++++++++++++++++++++
-> > > >  1 file changed, 24 insertions(+)
-> > > >
-> > > > diff --git a/drivers/nvdimm/virtio_pmem.c b/drivers/nvdimm/virtio_p=
-mem.c
-> > > > index c9b97aeabf85..2396d19ce549 100644
-> > > > --- a/drivers/nvdimm/virtio_pmem.c
-> > > > +++ b/drivers/nvdimm/virtio_pmem.c
-> > > > @@ -143,6 +143,28 @@ static void virtio_pmem_remove(struct virtio_d=
-evice *vdev)
-> > > >         virtio_reset_device(vdev);
-> > > >  }
-> > > >
-> > > > +static int virtio_pmem_freeze(struct virtio_device *vdev)
-> > > > +{
-> > > > +       vdev->config->del_vqs(vdev);
-> > > > +       virtio_reset_device(vdev);
-> > > > +
-> > > > +       return 0;
-> > > > +}
-> > > > +
-> > > > +static int virtio_pmem_restore(struct virtio_device *vdev)
-> > > > +{
-> > > > +       int ret;
-> > > > +
-> > > > +       ret =3D init_vq(vdev->priv);
-> > > > +       if (ret) {
-> > > > +               dev_err(&vdev->dev, "failed to initialize virtio pm=
-em's vq\n");
-> > > > +               return ret;
-> > > > +       }
-> > > > +       virtio_device_ready(vdev);
-> > > > +
-> > > > +       return 0;
-> > > > +}
-> > > > +
-> > > >  static unsigned int features[] =3D {
-> > > >         VIRTIO_PMEM_F_SHMEM_REGION,
-> > > >  };
-> > > > @@ -155,6 +177,8 @@ static struct virtio_driver virtio_pmem_driver =
-=3D {
-> > > >         .validate               =3D virtio_pmem_validate,
-> > > >         .probe                  =3D virtio_pmem_probe,
-> > > >         .remove                 =3D virtio_pmem_remove,
-> > > > +       .freeze                 =3D virtio_pmem_freeze,
-> > > > +       .restore                =3D virtio_pmem_restore,
-> > > >  };
-> > > >
-> > > >  module_virtio_driver(virtio_pmem_driver);
-> > > > --
-> > > > 2.46.0.76.ge559c4bf1a-goog
-> > > >
-> >
-> >
+Start using 'b4' tool if you do not understand how to use 'git
+format-patch'.
+
+Best regards,
+Krzysztof
+
 
