@@ -1,222 +1,242 @@
-Return-Path: <linux-kernel+bounces-339166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF679860FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:37:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20CC9986102
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0D51C25FCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:37:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43E271C25F44
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690C213B2BB;
-	Wed, 25 Sep 2024 13:45:33 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1241459E0;
+	Wed, 25 Sep 2024 13:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZ0tYGu8"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB0D1798C
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B100145346
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727271932; cv=none; b=slQY9gDVyukBUQoGaRRnL3KjzNiOhJhRYZFMS+Lb5lnFvq1dFr/6wemRW1Ek6/FrHANB6LiL0Hyn9Sc6nbfPKqYAqB5NhqPKmd2/FJWqKTJifaNFfuJgs2ZLyINApUpCSsCRArQuaTjvs0vJ36ACuOD6LGSoFAWH/wTYDOGJEv0=
+	t=1727272096; cv=none; b=n1KBBjqnk9KzylhOFNzVtWeaMtRhGlu+s1NGm+lgmI47UpCAs8LA7TGoRqvZQmp9iSi480vH2hbPtCDa2eK7TJ/oIr4F37BU7EnGPxghLoXOMO/wK04WdpytfjBjRGZQL6YwyIMQBxynjPhsPmm7kSlHcGULpITUKYD+XAW+3GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727271932; c=relaxed/simple;
-	bh=+ZKG31H3fAaEzdcyYn09k2egXs3dE0H/T+D5GvxwY9I=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YJkzwo5NA8BHfkw3X5HqAEsiPEW5RHGcWR51h+pVVUoBeN3YMQma+crJG0+OaSlGle0rcrO7Z9Poi/xJxOcL+lR5kopUB88fTgCqn9HKMOEdPYxvMfLc/PJ8pmAzqfScvWeAoyWCmOdZtoAgGxWypGEr1gBk3mlxzohx45ADUWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a1a969fabfso17569365ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:45:30 -0700 (PDT)
+	s=arc-20240116; t=1727272096; c=relaxed/simple;
+	bh=pJk0hDrWj7EqPg1IbLCCScrWpFdajUR4OC5eG7d8t8I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ry75n54KiZIEYgHOKapmlRptzb0pzomPduez/0t5idtlSRM/GyzbUAUXpgHDFwv/onjZQYAlHAPzAvYamuzn1LBMzufc30fmsu/rqcxxAmzarUf19NrW8T5pLmZt5xt3r4WZsTH2KyzdXdj5bTwWLTLSGSG7P1cmj6zNWXoqtAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jZ0tYGu8; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-206aee4073cso72610545ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727272094; x=1727876894; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Ssh+pRrf5L+2e4qG8n4IwFFdzUvMFGa+rHl+gGVC1w=;
+        b=jZ0tYGu8lvcpDJo4sqThNxH/bHE+1fRyiFuWfJnY+hyRhxNV1bq3XP4SgWwgjdR/KC
+         2CT1xailSrh9+BtQw7Qq7XMbU+19LIVyqYBzORTsH2Hmx9HR+XyijqvMm/62GC7gkzZi
+         PbmvwCtKXYX5ILC3NhJZjIds+C5vjT8j8FPipmIRPHFpvl2EYlBRWXkh5MOPD708dGON
+         5q/mjewrHfMd1rOFZ4AORd0T9S0/VVIld4lepscDwhM3hXNYfUhpjnVamTbJPhN7W5NE
+         uANoJTSINiGxQu/vY+t+w/X1bX2vW53YoG88e+d0nTo3Cf0jZ0LsjZXkfRvZY2dFjceR
+         MEhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727271930; x=1727876730;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=is1K5gecx6xdHsjAhZUx+Z6qmkYUnW93aVWBJa+eg4Q=;
-        b=RYiIyEM+Nk6RETKUIjcZj1bm2BH5dpFKgoqOYxi1vSe0T7gM4hMyHIjZtXu+OxrY0Z
-         n8Emfi6U6ygy2gK8rWyp8BctS0LhfnidgQHnnFBOj1BItYuChxLFApHKuf0IEGwO+MDj
-         vk8SPNly0wjKJ2+kIi/E9a0SP4HqqIs1ql786fzgHSg6DV/DGiIJgX+ZJomwmn7VqGFI
-         3NgHdd+48EsGMtaY7uVVS/ElD7ytIwGHciECgy9uMTEcmuHC3WYaeiR46LR1qSgo5Qz4
-         1b5PcPNdHQxUAKUEL3PY5e3Ea1prT62q3zV5g2ioiXQsZro2aKVHkgJ+XBHvH0n0O62o
-         TupQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmAPltHgnomkxInmL+DgEdT4uwAPf9P+4Xbf/oVvOe3Y+FX1ilOj0rZ+px73neq+JCviVh0oMohGLjrv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDktVLaaQmfsvl++n1rrxWoVV8Yag/ef3dg+1W5FexN2Afqs9T
-	P7jnjDiuD3NtnEdBGkIKcyk84HTWaV284EEmdZElcKjpdNca+0hHqMFv6G0xrfd3stwNy23w/HJ
-	MolhNRA4GIkhmDfCWLtT196fakot8LKJj3roCPgNU9YzkMrw/gD7MZbg=
-X-Google-Smtp-Source: AGHT+IGyrBZWFKg0GpuC3WhVxj7WTGQ8sPoK2Ow+DRtwUWnlP5ZssBnuWTy07h4RgwmjzTKdD/f0fkIXBFtgKvyfzomLIIfFBsF7
+        d=1e100.net; s=20230601; t=1727272094; x=1727876894;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5Ssh+pRrf5L+2e4qG8n4IwFFdzUvMFGa+rHl+gGVC1w=;
+        b=SVPKLiiqcoZ1PgsyUocCMbr21559/nOTLVaI/CCbtQDdnrMcF1UIz4qSKS/CDGwKZH
+         KqTiFm500i7fThIIc9j5YaYVlRpyBObAO+DAr3WAh6X5ZVLDiy/BcY3+4I+rpvuQHGTJ
+         lCWap8/nHJYXarfOITmE6yi71E6MWW4NRkmhdyyjdujvC4AgW5zqdilrh3d8hoP3nASb
+         dbJT6RuCmGQCiNw69o8G9euyHrRUXrPbhBxukQagXYGzNp2nqNel9SP0Euh/aCghqRNO
+         rg7Mx24wMQQS3hzo7UE4wngYHvpEdJe5dBTthPZoDqxnY+gHl37PMftvOxih8hZT18Hi
+         nl/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXEN0Dd+vIR30KeGXT8/jLO4DTgXG7QcInKo9TH4KENkAHm94ugHkY2o6PhOU0EOVDtGASYjE7vpenLBcM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfNtopiMyv+WHE7dwQ9tS4FZjFYMtDOJp+It1BLYn/Y8mo8PXZ
+	VUpZKjORUJkK+wTEDp9po3fvPYXFCnIt5CUswgq/Eg/C7LDnpJ50U/bV9eTX
+X-Google-Smtp-Source: AGHT+IFvnb6qaqt/AhKZq9muVdeV36NHVgH5CzP6oOtqs1fRPaV6zcV9zEJsxuZIjVh15Lo5VOT1XA==
+X-Received: by 2002:a17:903:234f:b0:209:dc6d:7697 with SMTP id d9443c01a7336-20afc44865bmr34325865ad.24.1727272093509;
+        Wed, 25 Sep 2024 06:48:13 -0700 (PDT)
+Received: from AHUANG12-3ZHH9X.lenovo.com (220-143-197-103.dynamic-ip.hinet.net. [220.143.197.103])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af16e7f40sm24958805ad.8.2024.09.25.06.48.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 06:48:13 -0700 (PDT)
+From: Adrian Huang <adrianhuang0701@gmail.com>
+X-Google-Original-From: Adrian Huang <ahuang12@lenovo.com>
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>
+Cc: kasan-dev@googlegroups.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Adrian Huang <ahuang12@lenovo.com>
+Subject: [PATCH 1/1] kasan, vmalloc: avoid lock contention when depopulating vmalloc
+Date: Wed, 25 Sep 2024 21:47:32 +0800
+Message-Id: <20240925134732.24431-1-ahuang12@lenovo.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d9d:b0:396:e8b8:88d with SMTP id
- e9e14a558f8ab-3a26d77492amr31042835ab.11.1727271930011; Wed, 25 Sep 2024
- 06:45:30 -0700 (PDT)
-Date: Wed, 25 Sep 2024 06:45:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f413f9.050a0220.211276.0031.GAE@google.com>
-Subject: [syzbot] [iommu?] kernel BUG in trace_dma_map_sg
-From: syzbot <syzbot+d409db2070842f867cd1@syzkaller.appspotmail.com>
-To: hch@lst.de, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	m.szyprowski@samsung.com, robin.murphy@arm.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Adrian Huang <ahuang12@lenovo.com>
 
-syzbot found the following issue on:
+When running the test_vmalloc stress on a 448-core server, the following
+soft/hard lockups were observed and the OS was panicked eventually.
 
-HEAD commit:    1868f9d0260e Merge tag 'for-linux-6.12-ofs1' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d11e9f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d0b35925215243c6
-dashboard link: https://syzkaller.appspot.com/bug?extid=d409db2070842f867cd1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+1) Kernel config
+   CONFIG_KASAN=y
+   CONFIG_KASAN_VMALLOC=y
 
-Unfortunately, I don't have any reproducer for this issue yet.
+2) Reproduced command
+   # modprobe test_vmalloc nr_threads=448 run_test_mask=0x1 nr_pages=8
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1868f9d0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/79ecea60635a/vmlinux-1868f9d0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2e88a1660d19/bzImage-1868f9d0.xz
+3) OS Log: Detail is in [1].
+   watchdog: BUG: soft lockup - CPU#258 stuck for 26s!
+   RIP: 0010:native_queued_spin_lock_slowpath+0x504/0x940
+   Call Trace:
+    do_raw_spin_lock+0x1e7/0x270
+    _raw_spin_lock+0x63/0x80
+    kasan_depopulate_vmalloc_pte+0x3c/0x70
+    apply_to_pte_range+0x127/0x4e0
+    apply_to_pmd_range+0x19e/0x5c0
+    apply_to_pud_range+0x167/0x510
+    __apply_to_page_range+0x2b4/0x7c0
+    kasan_release_vmalloc+0xc8/0xd0
+    purge_vmap_node+0x190/0x980
+    __purge_vmap_area_lazy+0x640/0xa60
+    drain_vmap_area_work+0x23/0x30
+    process_one_work+0x84a/0x1760
+    worker_thread+0x54d/0xc60
+    kthread+0x2a8/0x380
+    ret_from_fork+0x2d/0x70
+    ret_from_fork_asm+0x1a/0x30
+   ...
+   watchdog: Watchdog detected hard LOCKUP on cpu 8
+   watchdog: Watchdog detected hard LOCKUP on cpu 42
+   watchdog: Watchdog detected hard LOCKUP on cpu 10
+   ...
+   Shutting down cpus with NMI
+   Kernel Offset: disabled
+   pstore: backend (erst) writing error (-28)
+   ---[ end Kernel panic - not syncing: Hard LOCKUP ]---
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d409db2070842f867cd1@syzkaller.appspotmail.com
+BTW, the issue can be also reproduced on a 192-core server and a 256-core
+server.
 
-FAULT_INJECTION: forcing a failure.
-name fail_usercopy, interval 1, probability 0, space 0, times 1
-CPU: 0 UID: 0 PID: 5101 Comm: syz.0.0 Not tainted 6.11.0-syzkaller-07462-g1868f9d0260e #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- fail_dump lib/fault-inject.c:52 [inline]
- should_fail_ex+0x3b0/0x4e0 lib/fault-inject.c:153
- _inline_copy_to_user include/linux/uaccess.h:177 [inline]
- _copy_to_user+0x2f/0xb0 lib/usercopy.c:26
- copy_to_user include/linux/uaccess.h:209 [inline]
- simple_read_from_buffer+0xca/0x150 fs/libfs.c:1124
- proc_fail_nth_read+0x1e9/0x250 fs/proc/base.c:1481
- vfs_read+0x201/0xbc0 fs/read_write.c:567
- ksys_read+0x1a0/0x2c0 fs/read_write.c:712
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f145197c93c
-Code: ec 28 48 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 69 8e 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 34 44 89 c7 48 89 44 24 08 e8 bf 8e 02 00 48
-RSP: 002b:00007f1452852030 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 00007f1451b35f80 RCX: 00007f145197c93c
-RDX: 000000000000000f RSI: 00007f14528520a0 RDI: 0000000000000004
-RBP: 00007f1452852090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 0000000000000000 R14: 00007f1451b35f80 R15: 00007ffd70304738
- </TASK>
-------------[ cut here ]------------
-kernel BUG at include/linux/scatterlist.h:171!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5101 Comm: syz.0.0 Not tainted 6.11.0-syzkaller-07462-g1868f9d0260e #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:sg_page include/linux/scatterlist.h:171 [inline]
-RIP: 0010:sg_phys include/linux/scatterlist.h:389 [inline]
-RIP: 0010:perf_trace_dma_map_sg+0xf34/0xf40 include/trace/events/dma.h:178
-Code: 00 00 00 fc ff df e9 60 fc ff ff e8 c6 81 17 00 48 c7 c7 40 84 94 8e 4c 89 f6 e8 a7 70 72 03 e9 e3 f2 ff ff e8 ad 81 17 00 90 <0f> 0b e8 b5 eb 41 0a 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90
-RSP: 0000:ffffc9000308e9e0 EFLAGS: 00010093
-RAX: ffffffff817d3d73 RBX: ffffe8ffffc40d6d RCX: ffff88801fb54880
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc9000308eb40 R08: ffffffff817d33c4 R09: 322e66313a30303a
-R10: dffffc0000000000 R11: fffff91ffff881ae R12: ffff888000ae26a8
-R13: 0000000000000038 R14: 0000000000000008 R15: ffff88804b9e1781
-FS:  00007f14528526c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f14519dc900 CR3: 000000001ffb0000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- trace_dma_map_sg+0x1da/0x240 include/trace/events/dma.h:178
- __dma_map_sg_attrs+0x106/0x1a0 kernel/dma/mapping.c:222
- dma_map_sg_attrs+0x34/0x50 kernel/dma/mapping.c:254
- ata_sg_setup drivers/ata/libata-core.c:4651 [inline]
- ata_qc_issue+0x4cf/0xf40 drivers/ata/libata-core.c:4963
- ata_scsi_translate drivers/ata/libata-scsi.c:1760 [inline]
- __ata_scsi_queuecmd+0x9fb/0x1030 drivers/ata/libata-scsi.c:4189
- ata_scsi_queuecmd+0x3bb/0x530 drivers/ata/libata-scsi.c:4234
- scsi_dispatch_cmd drivers/scsi/scsi_lib.c:1608 [inline]
- scsi_queue_rq+0x1d7c/0x2e90 drivers/scsi/scsi_lib.c:1850
- blk_mq_dispatch_rq_list+0xb89/0x1b30 block/blk-mq.c:2032
- __blk_mq_do_dispatch_sched block/blk-mq-sched.c:170 [inline]
- blk_mq_do_dispatch_sched block/blk-mq-sched.c:184 [inline]
- __blk_mq_sched_dispatch_requests+0xb8a/0x1840 block/blk-mq-sched.c:309
- blk_mq_sched_dispatch_requests+0xcb/0x140 block/blk-mq-sched.c:331
- blk_mq_run_hw_queue+0x9a5/0xae0 block/blk-mq.c:2245
- blk_mq_flush_plug_list+0x1127/0x1890 block/blk-mq.c:2797
- __blk_flush_plug+0x420/0x500 block/blk-core.c:1199
- blk_finish_plug+0x5e/0x80 block/blk-core.c:1226
- read_pages+0x644/0x840 mm/readahead.c:183
- page_cache_ra_unbounded+0x24c/0x8a0 mm/readahead.c:257
- do_sync_mmap_readahead+0x499/0x970
- filemap_fault+0x820/0x1750 mm/filemap.c:3325
- __do_fault+0x135/0x460 mm/memory.c:4670
- do_read_fault mm/memory.c:5076 [inline]
- do_fault mm/memory.c:5206 [inline]
- do_pte_missing mm/memory.c:3962 [inline]
- handle_pte_fault+0x3228/0x7010 mm/memory.c:5536
- __handle_mm_fault mm/memory.c:5679 [inline]
- handle_mm_fault+0x1106/0x1bb0 mm/memory.c:5847
- do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0033:0x7f1451951958
-Code: 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 80 00 00 00 00 62 e2 7d 28 7a ce 89 f8 25 ff 0f 00 00 3d e0 0f 00 00 0f 87 b8 01 00 00 <62> e1 fe 28 6f 17 62 a1 f5 20 ef da 62 a1 6d 20 da db 62 b2 66 20
-RSP: 002b:00007f145284f8b8 EFLAGS: 00010283
-RAX: 0000000000000900 RBX: 00007f145284fe30 RCX: 0000000000000000
-RDX: 00007f1452851f78 RSI: 0000000000000025 RDI: 00007f14519dc900
-RBP: 00000000fbad8004 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f145284fe10
-R13: 00007f1452851f78 R14: 00007f1451b35f80 R15: 00007ffd70304738
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:sg_page include/linux/scatterlist.h:171 [inline]
-RIP: 0010:sg_phys include/linux/scatterlist.h:389 [inline]
-RIP: 0010:perf_trace_dma_map_sg+0xf34/0xf40 include/trace/events/dma.h:178
-Code: 00 00 00 fc ff df e9 60 fc ff ff e8 c6 81 17 00 48 c7 c7 40 84 94 8e 4c 89 f6 e8 a7 70 72 03 e9 e3 f2 ff ff e8 ad 81 17 00 90 <0f> 0b e8 b5 eb 41 0a 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90
-RSP: 0000:ffffc9000308e9e0 EFLAGS: 00010093
-RAX: ffffffff817d3d73 RBX: ffffe8ffffc40d6d RCX: ffff88801fb54880
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc9000308eb40 R08: ffffffff817d33c4 R09: 322e66313a30303a
-R10: dffffc0000000000 R11: fffff91ffff881ae R12: ffff888000ae26a8
-R13: 0000000000000038 R14: 0000000000000008 R15: ffff88804b9e1781
-FS:  00007f14528526c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f14519dc900 CR3: 000000001ffb0000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[Root Cause]
+The tight loop in kasan_release_vmalloc_node() iteratively calls
+kasan_release_vmalloc() to clear the corresponding PTE, which
+acquires/releases "init_mm.page_table_lock" in
+kasan_depopulate_vmalloc_pte().
 
+The lock_stat shows that the "init_mm.page_table_lock" is the first entry
+of top list of the contentions. This lock_stat info is based on the
+following command (in order not to get OS panicked), where the max
+wait time is 600ms:
 
+  # modprobe test_vmalloc nr_threads=150 run_test_mask=0x1 nr_pages=8
+
+<snip>
+------------------------------------------------------------------
+class name con-bounces contentions waittime-min   waittime-max ...
+------------------------------------------------------------------
+init_mm.page_table_lock:  87859653 93020601  0.27 600304.90 ...
+  -----------------------
+  init_mm.page_table_lock  54332301  [<000000008ce229be>] kasan_populate_vmalloc_pte.part.0.isra.0+0x99/0x120
+  init_mm.page_table_lock   6680902  [<000000009c0800ad>] __pte_alloc_kernel+0x9b/0x370
+  init_mm.page_table_lock  31991077  [<00000000180bc35d>] kasan_depopulate_vmalloc_pte+0x3c/0x70
+  init_mm.page_table_lock     16321  [<000000003ef0e79b>] __pmd_alloc+0x1d5/0x720
+  -----------------------
+  init_mm.page_table_lock  50278552  [<000000008ce229be>] kasan_populate_vmalloc_pte.part.0.isra.0+0x99/0x120
+  init_mm.page_table_lock   5725380  [<000000009c0800ad>] __pte_alloc_kernel+0x9b/0x370
+  init_mm.page_table_lock  36992410  [<00000000180bc35d>] kasan_depopulate_vmalloc_pte+0x3c/0x70
+  init_mm.page_table_lock     24259  [<000000003ef0e79b>] __pmd_alloc+0x1d5/0x720
+  ...
+<snip>
+
+[Solution]
+After re-visiting code path about setting the kasan ptep (pte pointer),
+it's unlikely that a kasan ptep is set and cleared simultaneously by
+different CPUs. So, use ptep_get_and_clear() to get rid of the spinlock
+operation.
+
+The result shows the max wait time is 13ms with the following command
+(448 cores are fully stressed):
+
+  # modprobe test_vmalloc nr_threads=448 run_test_mask=0x1 nr_pages=8
+
+<snip>
+------------------------------------------------------------------
+class name con-bounces contentions waittime-min   waittime-max ...
+------------------------------------------------------------------
+init_mm.page_table_lock:  109999304  110008477  0.27  13534.76
+  -----------------------
+  init_mm.page_table_lock 109369156  [<000000001a135943>] kasan_populate_vmalloc_pte.part.0.isra.0+0x99/0x120
+  init_mm.page_table_lock    637661  [<0000000051481d84>] __pte_alloc_kernel+0x9b/0x370
+  init_mm.page_table_lock      1660  [<00000000a492cdc5>] __pmd_alloc+0x1d5/0x720
+  -----------------------
+  init_mm.page_table_lock 109410237  [<000000001a135943>] kasan_populate_vmalloc_pte.part.0.isra.0+0x99/0x120
+  init_mm.page_table_lock    595016  [<0000000051481d84>] __pte_alloc_kernel+0x9b/0x370
+  init_mm.page_table_lock      3224  [<00000000a492cdc5>] __pmd_alloc+0x1d5/0x720
+
+[More verifications on a 448-core server: Passed]
+1) test_vmalloc module
+   * Each test is run sequentially.
+
+2) stress-ng
+   * fork() and exit()
+       # stress-ng --fork 448 --timeout 180
+   * pthread
+       # stress-ng --pthread 448 --timeout 180
+   * fork()/exit() and pthread
+       # stress-ng --pthread 448 --fork 448 --timeout 180
+
+The above verifications were run repeatedly for more than 24 hours.
+
+[1] https://gist.github.com/AdrianHuang/99d12986a465cc33a38c7a7ceeb6f507
+
+Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ mm/kasan/shadow.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
+index 88d1c9dcb507..985356811aee 100644
+--- a/mm/kasan/shadow.c
++++ b/mm/kasan/shadow.c
+@@ -397,17 +397,13 @@ int kasan_populate_vmalloc(unsigned long addr, unsigned long size)
+ static int kasan_depopulate_vmalloc_pte(pte_t *ptep, unsigned long addr,
+ 					void *unused)
+ {
++	pte_t orig_pte = ptep_get_and_clear(&init_mm, addr, ptep);
+ 	unsigned long page;
+ 
+-	page = (unsigned long)__va(pte_pfn(ptep_get(ptep)) << PAGE_SHIFT);
+-
+-	spin_lock(&init_mm.page_table_lock);
+-
+-	if (likely(!pte_none(ptep_get(ptep)))) {
+-		pte_clear(&init_mm, addr, ptep);
++	if (likely(!pte_none(orig_pte))) {
++		page = (unsigned long)__va(pte_pfn(orig_pte) << PAGE_SHIFT);
+ 		free_page(page);
+ 	}
+-	spin_unlock(&init_mm.page_table_lock);
+ 
+ 	return 0;
+ }
+-- 
+2.34.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
