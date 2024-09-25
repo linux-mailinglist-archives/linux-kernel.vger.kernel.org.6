@@ -1,108 +1,148 @@
-Return-Path: <linux-kernel+bounces-339462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7149986575
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:14:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CA9E986586
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B70C28C89D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:14:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EAD71F24679
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8694AEF2;
-	Wed, 25 Sep 2024 17:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D741537F5;
+	Wed, 25 Sep 2024 17:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b6ffPMa5"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AgB/sXzr"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C97C481CE
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE5617C67
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727284435; cv=none; b=DRekTggT2CYO7fIxCYpCDIohgJwb8aKtjdYlFi5f2eWVEFAvacK5vvr7m1HdKjhN7NNtbHRJAZr5wSfC5qSW1Bwf8NKGnXTcRWojactKRzzjmZgnfu5NkItBLXU+5e8nnEHO5O9MUQFTa6SuzROR9DrK/5pB7oxjFXJBQJWgZfk=
+	t=1727284793; cv=none; b=nS/8IikqqI8QsnzpPAFoEijKrZCT627g9YDK1i41cKXa+BqSOmT6H7oPXcvS5sQ1xiqJOJkIaWh2xdC06cOLFdydCos34pn2MtOomHRGe4n2JmRTX0yC86F/y3C2xjQhg9jJquitCUuswbehT5lxcWkYlFQUl/YRnXiGwUeBzL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727284435; c=relaxed/simple;
-	bh=eazsW8ehOZywqFey+Jsuiry/JLzV8qZShMLGcAgepXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ee4XfLdGn8Vq7lvv/3IkRxh94HQKhdTW0cn1R7opUimzBdSlzmlgXwtwO3RzvUBveJsVg8GiWiiYOBoWroR5uCEm4PRCqL9mROWlz1W0sXYMLZRMWQ9pHfdLCLN4ISPClvTRQ6Jb2WudiTLQ1Ir9sAlAHs+20DaZtEYBav7FBfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b6ffPMa5; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so129156e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:13:53 -0700 (PDT)
+	s=arc-20240116; t=1727284793; c=relaxed/simple;
+	bh=d4IpwX5nlSO5cDGSa5aXj5jWaVcOOV64wkjcy4P3qPk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f4xvB+MGcMi/thGwmnRW41FuekJAjMFqW++LuwDUl4E8z5YkFG4Fuc1+AI/X6H0L5MMLgPlvL7OQSlFBBbiY0Xn54mIl/PWjUzXn+vqsIDNugd5ZXGoInwpl+GCGDicfjzsedTlyXUrqxqydJnEmxHtvv5Sh62tiT7edPtXbcE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AgB/sXzr; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8d60e23b33so12640266b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:19:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727284432; x=1727889232; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TUTSdeI7+JosOudQjHg+52ZpkXUi7IWq0P1aLMu3v2c=;
-        b=b6ffPMa5bBvUz/7rajcSB+pSY4PRmjl4cCjyIJYSPSJDp5bSgD4ju22T6hl+1AlQzl
-         FlaIvSyHcBVcXNM+g/9dqjPljliY1QgUevvoDIHhlC2GM21cG9P2UHaf8djsHkA/m/Go
-         RoMxQJ+KXELaQbhS9rsxbTg7PDLFWia7LB1nLViFFGm+yQPgnAVFMK5KZ3OgcBui5YRg
-         81TvOO3zHXGdJiTTdDKBpxX2hUHYKTHWpGrI6Y3suJv5Ng5kPN+MBHWzEmMd5ywei6Iz
-         ETkwb3nTxS9pUrzojrdL4YLhXxMDg+yICoNOndMxgex9GQ3bqzu9/HJVMiRCKiC/QZMw
-         QE+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727284432; x=1727889232;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1727284790; x=1727889590; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TUTSdeI7+JosOudQjHg+52ZpkXUi7IWq0P1aLMu3v2c=;
-        b=pCx3CJP/hRgiNW+wR2bzLxqj0tUitRqwXEnBd5MWY/alqde/HeND8v2GN4N8jTNnJ7
-         yr5iqQ/IJc7m37eexML+wCAh7T5FSxmc1s5+QAcaLBZFVsbc56GA80WFY7R6jrH5TmNc
-         1nL/Pl84iCW2swtNP8ViylAJGJSOyNt7lYXfqM9JzK5nsf3LdfueJA8x/g4sYZ4nzo5y
-         jnEjBpQzLUNT8v7egflhirc3fnFD6JF/kdQC9TrAkIq814JtmlYBK/NOuMjrLDClXFEB
-         ViQzV/x3/ggXidxlgDtCD46sPrYbRDuzO9ZefoSpzpTbMjiCtXArcpL3PlWer1YtCqfV
-         YxOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVjHCrgEIYlb2SiUTaNbXC5X/H4rwA2kP+ZUOZIkZXNkchfK9z3CN9QG5i2E34ty6gHsy5HXBvgNida9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynrIlf+IhxUPGw/JOjfdqYeH5IMBslhZSwxPhICnRzbXSoCLi+
-	G7PW0NfTavMfEBexS/yYAs7KvVXrY/XM3jcRu01jPA8Xn0U6Cw6lmwRvXOGsxro=
-X-Google-Smtp-Source: AGHT+IG4PmHd1hXlytSjkxKrpDsCf4VZ4fji4PJZeek10wMk+0D4DzSIPt8vFZ9pGPQcAUiQ69L38Q==
-X-Received: by 2002:a05:6512:b1f:b0:536:7d6b:e2a9 with SMTP id 2adb3069b0e04-5387755e0c6mr2373160e87.47.1727284432097;
-        Wed, 25 Sep 2024 10:13:52 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85e1284sm578112e87.43.2024.09.25.10.13.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 10:13:51 -0700 (PDT)
-Date: Wed, 25 Sep 2024 20:13:49 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Cc: heikki.krogerus@linux.intel.com, tzungbi@kernel.org, jthies@google.com, 
-	pmalani@chromium.org, akuchynski@google.com, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/8] platform/chrome: cros_ec_typec: Thunderbolt support
-Message-ID: <gqceveqpbvmiv3mg5cs3k3qd4rr6fpb3xksvxvdhkugr52paoj@olks6bqjc436>
-References: <20240925162513.435177-1-abhishekpandit@chromium.org>
- <20240925092505.7.Ic61ced3cdfb5d6776435356061f12307da719829@changeid>
+        bh=RYs3lutzoSncSJnmfL88IPhJU6GFg8JSR7+JveJBSXw=;
+        b=AgB/sXzrTEwLK7GjsG8swbFM3Rm+0BDxm98LCE8iZw1Q+6C6zxO4ISePTDj8/EJ26k
+         tT8Nk4oFKxFZCYF0XK5CcM6YVlX+Zjvprxz2PbVhFoHXKdzchNfkTo1UMZNE3iFz/KQR
+         wz2FVDgyGi/Ma1QYJvndB9PgKeBedGUmOdyMyjAhunVcNYTCt9JdOY3JT8qzsdnFt12C
+         cN+RzVlRFoWX434rQUY/yvJEskg4Gpg+ymAA8cEzz5rpE+DTIyKBZ1L65ktpPTdpxXLW
+         g7iPB5DHEY4tS8FzCjCOfMiw2YvPNzr0HS5IHZszOmb8JhwV11H/1kaMM0duei5ZFXX7
+         dWvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727284790; x=1727889590;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RYs3lutzoSncSJnmfL88IPhJU6GFg8JSR7+JveJBSXw=;
+        b=EMK7yzejd1SflFe7kCLZbUjTTYDK4hlvqhb+bf15AU4WnIgz0IrX2RA9HSqhKKI00F
+         DS1PaPBeov/YVe2hUonrk5/7Ym8YmQdVKeerGGxW/JAfOq77MFIzRlZI9EtmXOnTxj7c
+         xPI59wskEVW3ZeLC6/hQ+oVL5aOF/KvpRxwFNu9QEk4DDB2R1ZgwsNoTfL3K4x9+lJ11
+         6qqHmGR/QChbYuXukVPDoPPws0vU6PZQMZMzAAVuRwUq6X3vWRTBs17oS34BV5X0/5+L
+         GGinSsQSET7p+4frbFf+e54fa4gK+tewrLh3twnctFSXidikeKmWEmpubetzZfgujqXJ
+         Vgwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbYpdZDcclkZvVelrnQ2UXDGP+5yrs6P+zPPZJ3uIGIGrIPrvu8RRHSxxd1LpIiJhJ1iAld8vgVqYasRE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSR3KFXWrXuZJ6N7Er7GiM+1D5htxTcD7wzuBDmecmo1j7nnFU
+	KI93J5d3hlyqud7W1+bQ3FTfCHQ6kYlLHoifXxtOJBV20TB2+dzFnP0uoSvU6+3eQihtgcxj5/V
+	SzbgoPEY0bCGVfSMoQtlHv/aMJQkhjDGmOew=
+X-Google-Smtp-Source: AGHT+IFyn2mf1UVSsCFu8lWRGIXgqLCKvYnu/Kas1apOkizFMWiUjPIRa49FBbVRGqjAVy1cJ0Y6b9lKinYOCGiAhJI=
+X-Received: by 2002:a17:907:960c:b0:a8d:2faf:d333 with SMTP id
+ a640c23a62f3a-a93a03c3fc1mr300475966b.35.1727284790060; Wed, 25 Sep 2024
+ 10:19:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925092505.7.Ic61ced3cdfb5d6776435356061f12307da719829@changeid>
+References: <cover.1727191485.git.skhan@linuxfoundation.org> <4f3a0acd903aeee52fb71acaec1106d513a2e88b.1727191485.git.skhan@linuxfoundation.org>
+In-Reply-To: <4f3a0acd903aeee52fb71acaec1106d513a2e88b.1727191485.git.skhan@linuxfoundation.org>
+From: John Stultz <jstultz@google.com>
+Date: Wed, 25 Sep 2024 10:19:38 -0700
+Message-ID: <CANDhNCoC50Mhyo19O2drqXU7g-3j+wkFteTyi1jg1_5pCyzwYQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] selftests:timers: posix_timers: Fix
+ warn_unused_result in __fatal_error()
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: tglx@linutronix.de, sboyd@kernel.org, shuah@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 25, 2024 at 09:25:08AM GMT, Abhishek Pandit-Subedi wrote:
-> Add support for entering and exiting Thunderbolt alt-mode using AP
-> driven alt-mode.
-> 
-> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+On Tue, Sep 24, 2024 at 8:57=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.o=
+rg> wrote:
+>
+> __fatal_error routine doesn't check strerror_r() return value,
+> which results in the following compile time warning:
+>
+> posix_timers.c: In function =E2=80=98__fatal_error=E2=80=99:
+> posix_timers.c:31:9: warning: ignoring return value of =E2=80=98strerror_=
+r=E2=80=99 declared with attribute =E2=80=98warn_unused_result=E2=80=99 [-W=
+unused-result]
+>    31 |         strerror_r(errno, buf, sizeof(buf));
+>
+> Fix this by adding a check for return value and error handling appropriat=
+e
+> for the GNU-specific strerror_r() in use in __fatal_error(). Check if
+> return string is null and handle accordingly.
+>
+> From Linux strerror_r() manual page:
+>
+> "The GNU-specific strerror_r() returns a pointer to a string containing
+> the error message. This may be either a pointer to a string that the
+> function stores in buf, or a pointer to some (immutable) static string
+> (in which case buf is unused). If the function stores a string in buf,
+> then at most buflen bytes are stored (the string may be truncated if
+> buflen is too small and errnum is unknown). The string always includes
+> a terminating null byte."
+>
+> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 > ---
-> 
->  drivers/platform/chrome/Makefile              |   1 +
->  drivers/platform/chrome/cros_ec_typec.c       |  29 +--
->  drivers/platform/chrome/cros_typec_altmode.h  |  14 ++
->  .../platform/chrome/cros_typec_thunderbolt.c  | 184 ++++++++++++++++++
->  4 files changed, 216 insertions(+), 12 deletions(-)
->  create mode 100644 drivers/platform/chrome/cros_typec_thunderbolt.c
+>  tools/testing/selftests/timers/posix_timers.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/tools/testing/selftests/timers/posix_timers.c b/tools/testin=
+g/selftests/timers/posix_timers.c
+> index 16bd49492efa..ddb1cebc844e 100644
+> --- a/tools/testing/selftests/timers/posix_timers.c
+> +++ b/tools/testing/selftests/timers/posix_timers.c
+> @@ -26,13 +26,17 @@
+>  static void __fatal_error(const char *test, const char *name, const char=
+ *what)
+>  {
+>         char buf[64];
+> +       char *ret_str =3D NULL;
+>
+> -       strerror_r(errno, buf, sizeof(buf));
+> +       ret_str =3D strerror_r(errno, buf, sizeof(buf));
+>
+> -       if (name && strlen(name))
+> -               ksft_exit_fail_msg("%s %s %s %s\n", test, name, what, buf=
+);
+> +       if (name && strlen(name) && ret_str)
+> +               ksft_exit_fail_msg("%s %s %s %s\n", test, name, what, ret=
+_str);
+> +       else if (ret_str)
+> +               ksft_exit_fail_msg("%s %s %s\n", test, what, ret_str);
+>         else
+> -               ksft_exit_fail_msg("%s %s %s\n", test, what, buf);
+> +               ksft_exit_fail_msg("%s %s\n", test, what);
+> +
+>  }
 
-This patch looks like nearly exact 1:1 copy of the previous one. Please
-merge both altmode implementations in the same way as tcpm.c does.
-
--- 
-With best wishes
-Dmitry
+Acked-by: John Stultz <jstultz@google.com>
 
