@@ -1,157 +1,270 @@
-Return-Path: <linux-kernel+bounces-338410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE741985776
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:58:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F4198577A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A35C9285BAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B1261F25120
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E760183CAB;
-	Wed, 25 Sep 2024 10:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17141185B4C;
+	Wed, 25 Sep 2024 10:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pl2BeJNG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kwrMlGXp"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FADC14B94C;
-	Wed, 25 Sep 2024 10:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E87B14B94C;
+	Wed, 25 Sep 2024 10:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727261914; cv=none; b=RfdJeIbCbm/a0O0CIaWjcHMiEQbjkHiVwAkH9LZiDHlmuBMoIWmBqROm+lMiq3WYjvS1lyHyi904xtLrKXzq1Gy7vMzCShvWSHv9zgZvwYETwa08qu0pZ/HoaTIsVGfOE1bisx9jDYhVsLWFHG6zFf3N5WLoEJQzyxouqEBXIJk=
+	t=1727261952; cv=none; b=D6CEsP8Lz7HJpivmIlGm27Dp0+xJLhCsoHr7avkXwjLzRI3mvRBib3yKzj5snw8bebphIlD0q5qbNd0+8jjYCHlwL/967uJjEWl/MaPEo1NNJZQ6XI+rQH/94iVSHufZ6gDWtS31y1k/lqvYOPMEJ6YVLfZ74Lu6iss0co9nJ0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727261914; c=relaxed/simple;
-	bh=xbGkoffuSAvg1OpI731V72OH6zmPBU3cjaqvfly31NY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HZ7yUFJKAC5IxZSbvmmLMAiP5ha2lnk/YyzYSFwaWqnepN1gErKYilmSgEf8RSTWG05zfb01/mcjkhHqevDX28+Yw+mxQysz6OH3/cILdRVyDaF9ykUI5mXlkoGsAt26x4gDaZJkzVLN6J74BmsJWGWK8ntVlTp6qx062ndFjSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pl2BeJNG; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727261914; x=1758797914;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=xbGkoffuSAvg1OpI731V72OH6zmPBU3cjaqvfly31NY=;
-  b=Pl2BeJNGIfKjzWPsNjmNzIe9NqrCUJ4sesPrRXJIKhwp3BQDemPRS8wR
-   vPIR2Wr58gokH09y57azGjIRWCtr3nq09Gp+HiyTqbTNqk+bK+KhTjBDB
-   /OltP+kI7Zhht1PLxGp9UP2ltPYgKs6Ppc89otom4D1gM6xC76C7u92nt
-   BSoDXeMxN+eWowbVj/WSTVwg9qhRzCj7hHvsmymQ57BjxJWHoM8jm7RgA
-   tYu2INZSdSHfngC3o0uQBblpyyJoDrwGIqIyx+vvA6hR32EHi65K9te4V
-   DWZtc13yjuv3Hkg1KUttXdSNzfJXdM4/RjOF3YjQy6mA1uWDmfUoGLFZK
-   w==;
-X-CSE-ConnectionGUID: 9owdnr3ESCKvE6MBsq2W+w==
-X-CSE-MsgGUID: RkY7JtLjQWSpRrjevxjgxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="30093636"
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="30093636"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 03:58:32 -0700
-X-CSE-ConnectionGUID: QnHwRlVARWm5p0J/OMfh2g==
-X-CSE-MsgGUID: qaEesQtKRgG9MypQQT8MUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="102551930"
-Received: from mylly.fi.intel.com (HELO [10.237.72.57]) ([10.237.72.57])
-  by fmviesa001.fm.intel.com with ESMTP; 25 Sep 2024 03:58:28 -0700
-Message-ID: <90f64539-3092-4d3b-bdf2-c6af51e32fdc@linux.intel.com>
-Date: Wed, 25 Sep 2024 13:58:27 +0300
+	s=arc-20240116; t=1727261952; c=relaxed/simple;
+	bh=XGTZ0gqXmMwgEforO4KTxvUcJxOe4Gi7FOr4jUI8f/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j9byAjSxepoaEFtNDvDVcy5zaWxSeeH3Lt9jz3O5hVpx+XoPqbsM/UaoZC6Mpj6gcLNRt4T/Ej55jlFiNqW/8TKHd8pcl/yXQUi8NCZpm/ix/MUf1PCHg7qRJ/GPL2+MBrwzGBP38KXPgJS7E+BqV4iF5nTY/P45oVSDP2Zlo4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kwrMlGXp; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 831B060004;
+	Wed, 25 Sep 2024 10:58:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727261942;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xe5/2RvZiCjpp536f/aZHEPbaWodWphQ8YXt0yFzsUQ=;
+	b=kwrMlGXpIpE2MqDD5Qu/zDMmAK0C/3HSo2JFecxDrBKP56lfbZVieu/Xfpk44AtdTJFDAx
+	OlbOAjTfrOIf0lZkYgq9v6O7C6WpYXdSEJz/hhChrSdh81bahFWwBHHXkxP9+E+xZkVjOK
+	rFaRa9adNy+rsCko+T7ib8RmR9kSpy6jHNS+h9S8z0xp2oL7BERHiXsd8AoK6LXX2QY9tm
+	jRyoq2dlWGJl8lCpeVW6cQRzPQ3JPOujleF1XQ3aUAe6MdttJSjpiwcSE3mgOWqA0+tTOZ
+	Od6HAYTh34B6UHJ8N3qBHK2EOABV8iu5IYGW2N/isUX484jnrYNMJdz9uw/tYw==
+Date: Wed, 25 Sep 2024 12:58:56 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Simona Vetter <simona.vetter@ffwll.ch>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, Paul
+ Kocialkowski <contact@paulk.fr>, =?UTF-8?Q?Herv=C3=A9?= Codina
+ <herve.codina@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Paul
+ Kocialkowski <paul.kocialkowski@bootlin.com>, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v2 0/5] Add support for GE SUNH hot-pluggable connector
+ (was: "drm: add support for hot-pluggable bridges")
+Message-ID: <20240925125856.321f7ef7@booty>
+In-Reply-To: <ZvJ3vUCLsowLr_Mv@phenom.ffwll.local>
+References: <20240510-hotplug-drm-bridge-v2-0-ec32f2c66d56@bootlin.com>
+	<ZkYIeWzYyxkURS79@phenom.ffwll.local>
+	<20240520140148.26b91240@booty>
+	<ZkyND17TGj6y0Wjq@phenom.ffwll.local>
+	<20240823123903.1c793c4b@booty>
+	<Zs4AuPPHaFY0WzBZ@phenom.ffwll.local>
+	<20240909152604.1dd27605@booty>
+	<ZvJ3vUCLsowLr_Mv@phenom.ffwll.local>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] i2c: designware: determine HS tHIGH and tLOW based on
- HW paramters
-To: Michael Wu <michael.wu@kneron.us>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org
-Cc: Andi Shyti <andi.shyti@kernel.org>, Morgan Chang
- <morgan.chang@kneron.us>, linux-kernel@vger.kernel.org
-References: <20240925080432.186408-1-michael.wu@kneron.us>
- <20240925080432.186408-2-michael.wu@kneron.us>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <20240925080432.186408-2-michael.wu@kneron.us>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hi
+Hello Simona,
 
-On 9/25/24 11:04 AM, Michael Wu wrote:
-> In commit 35eba185fd1a ("i2c: designware: Calculate SCL timing
-> parameter for High Speed Mode") hs_hcnt and hs_hcnt are computed based on
-> fixed tHIGH = 160 and tLOW = 320. However, this fixed values only applies
-> to the set of conditions of IC_CAP_LOADING = 400pF and
-> IC_FREQ_OPTIMIZATION = 1. Outside of this conditions set, if this fixed
-> values are still used, the calculated HCNT and LCNT will make the SCL
-> frequency unabled to reach 3.4 MHz.
-> 
-> If hs_hcnt and hs_lcnt are calculated based on fixed tHIGH = 160 and
-> tLOW = 320, SCL frequency may not reach 3.4 MHz when IC_CAP_LOADING is not
-> 400pF or IC_FREQ_OPTIMIZATION is not 1.
-> 
-> Section 3.15.4.5 in DesignWare DW_apb_i2c Databook v2.03 says when
-> IC_CLK_FREQ_OPTIMIZATION = 0,
-> 
->      MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
-> 		     = 120 ns for 3,4 Mbps, bus loading = 400pF
->      MIN_SCL_LOWtime = 160 ns for 3.4 Mbps, bus loading = 100pF
-> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
-> 
-> and section 3.15.4.6 says when IC_CLK_FREQ_OPTIMIZATION = 1,
-> 
->      MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
-> 		     = 160 ns for 3.4 Mbps, bus loading = 400pF
->      MIN_SCL_LOWtime = 120 ns for 3.4 Mbps, bus loading = 100pF
-> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
-> 
-> In order to calculate more accurate hs_hcnt and hs_lcnt, two hardware
-> parameters IC_CAP_LOADING and IC_CLK_FREQ_OPTIMIZATION must be
-> considered together.
-> 
-> Signed-off-by: Michael Wu <michael.wu@kneron.us>
-> ---
->   drivers/i2c/busses/i2c-designware-common.c  | 16 ++++++++++++++
->   drivers/i2c/busses/i2c-designware-core.h    |  8 +++++++
->   drivers/i2c/busses/i2c-designware-master.c  | 24 +++++++++++++++++++--
->   drivers/i2c/busses/i2c-designware-platdrv.c |  2 ++
->   4 files changed, 48 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
-> index e8a688d04aee..f0a7d0ce6fd6 100644
-> --- a/drivers/i2c/busses/i2c-designware-common.c
-> +++ b/drivers/i2c/busses/i2c-designware-common.c
-> @@ -332,6 +332,22 @@ void i2c_dw_adjust_bus_speed(struct dw_i2c_dev *dev)
->   }
->   EXPORT_SYMBOL_GPL(i2c_dw_adjust_bus_speed);
->   
-> +void i2c_dw_parse_of(struct dw_i2c_dev *dev)
-> +{
-> +	int ret;
-> +
-> +	ret = device_property_read_u32(dev->dev, "bus-loading",
-> +				       &dev->bus_loading);
+[+Cc: Dmitry Baryshkov who took part to the LPC discussion]
 
-Like Andy said better name would be bus_capacitance_pf.
+On Tue, 24 Sep 2024 10:26:37 +0200
+Simona Vetter <simona.vetter@ffwll.ch> wrote:
 
-Also i2c_dw_parse_of() sounds too generic and may lead to think all and 
-only device tree related parameters are parsed here.
+> On Mon, Sep 09, 2024 at 03:26:04PM +0200, Luca Ceresoli wrote:
 
-> +	if (ret || dev->bus_loading < 400)
-> +		dev->bus_loading = 100;
-> +	else
-> +		dev->bus_loading = 400;
-> +
+...
 
-I think these are more understandable and robust if no parameter 
-adjustments are not done here but used straight in the if statements in 
-the i2c_dw_set_timings_master(). Less if statements that way and all 
-checked in one place.
+> > There is a fundamental question where your position is not clear to me.
+> > Based on this:
+> >   
+> > > - The last fixed bridges knows that all subsequent bridges are hotplugged.  
+> >     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  
+> > >   Which means instead of just asking for the next bridge, it needs to ask
+> > >   for the fully formed bridge chain, including the connector.
+> > >   
+> > 
+> > and this:
+> >   
+> > > - The hotplug bridge connector code checks every time a new bridge shows  
+> >     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  
+> > >   up whether the chain is now complete. Once that is the case, it creates
+> > >   the connector (with the new bridge design this is no longer the job of
+> > >   the last bridge in the chain, so we need to require that for
+> > >   hotpluggable bridges). Then it can attach all the bridges to that
+> > >   connector, and hand the entire fully formed chain to the last fixed
+> > >   bridge to hotplug insert and register.  
+> > 
+> > The question is: do you think the hotplug-bridge driver should be
+> > present, or not? To me the two above sentences appear to contradict each
+> > other.
+> > 
+> > The reason we decided to implement a hotplug DRM bridge is it allows to
+> > decouple the fixed and the remote segments of the pipeline, in such a
+> > way that all the regular bridge drivers don't need any special handling
+> > to support hotplug.
+> > 
+> > In my work the upstream bridge driver is samsung-dsim.c and the
+> > downstream one is ti-sn65dsi83.c and none of them needed a single line
+> > changed to support hotplug. I think this is useful: virtually any
+> > physical bridge with pins can be used in a hotplug setup, either in the
+> > fixed or in the removable section, so not needing to modify them is
+> > valuable.
+> > 
+> > OTOH in various parts of this and other e-mails you seem to imply that
+> > there should be no hotplug-bridge (not as a struct drm_bridge, not as
+> > a driver, or both). Except for the fact that there is no chip
+> > implementing such a bridge (there is a physical connector though) I do
+> > not see many reasons.  
+> 
+> Yeah you can have a dummy hotplug-bridge driver which just represents the
+> hotplug connector, I don't see an issue with that. And sounds like a
+> reasonable idea if it helps modelling with DT and all that.
+> 
+> What I described above was just focused on the interaction between bridge
+> drivers and the hotplug support code. I think you absolutely need the last
+> bridge driver to be aware that the entire subsequent chain is hotplugged,
+> otherwise it wont work. That last bridge driver can be a special
+> hotplug driver, but it doesn't need to be the case.
+
+I see, that clarifies your position, thanks.
+
+...
+
+> > > Yeah we need special functions, which the last fixed bridge needs to call
+> > > instead of the current set of functions. So instead of of_drm_find_bridge
+> > > we need something like of_drm_register_hotplug_source_bridge or similar.  
+> > 
+> > Continuing on the above topic, are you suggesting that there should be
+> > no hotplug-bridge, and that every bridge that can be used as the "last
+> > fixed bridge" should handle the hotplug case individually?
+> > 
+> > If that is the case, we'd need to modify any bridge driver that people
+> > want to use as "last fixed bridge" to:
+> > 
+> >  1. know they are the "last fixed bridge" (via device tree?)
+> >  2. use of_drm_register_hotplug_source_bridge()
+> >     instead of of_drm_find_bridge() accordingly  
+> 
+> This depends upon the dt design. If the dt design has a separate distinct
+> hotplug node, then we could bind a hotplug bridge against that, which is
+> aware.
+> 
+> But I think for some case (maybe dsi nodes) the dt design would be more an
+> attribute somewhere plus a link to the first hotplugged element. And in
+> that case the last physical bridge driver needs to be aware of that - we
+> simply don't have any dt node we can bind the hotplug bridge driver
+> against. I think the generic bridge hotplug design should not make an
+> assumption about how the dt is designed here and allow both.
+> 
+> Also if the dt design for the approach without a separate hotplug
+> connector is standardized, we can have a of_drm_handle_next_bridge
+> function which does the right thing for both cases automatically. I think
+> that way the impact on existing bridge drivers is minimal.
+
+Pushing this even more, instead of having bridges aware of being the
+last fixed ones, I've been pondering on a structure where every bridge
+assumes the next one could disappear, and works appropriately. So the
+current case (all bridges are fixed) would be just a special case where
+the next bridge is found initially and never disappears.
+
+This would probably be cleaner, no [if (hotplug) {this} else {that}]
+constructs, but I'm concerned about the transition path for old
+poorly-maintained drivers.
+
+...
+
+> > > > > Instead I think that code should be directly in core bridge code (I don't
+> > > > > see the benefit of having this entirely in a separate driver), using drm
+> > > > > locking to make sure there's no races.    
+> > > > 
+> > > > Not sure I got what you mean here. Which one of the following?
+> > > > 
+> > > >  1. The entire hotplug-bridge driver should not exist, and the DRM
+> > > >     core should handle it all (seems not doable, this driver has lots of
+> > > >     device-specific details)
+> > > >  2. The hotplug-driver should exist, but the code to attach/detach the
+> > > >     pipeline on hotplug/unplug should be moved to the core, with the
+> > > >     hotplug-driver providing callbacks for the device-specific aspects
+> > > >  3. Same as 2, but additionally the hotplug-bridge should become a
+> > > >     connector driver (hotplug-connector.c?) -- not sure it can decouple
+> > > >     the two sides without a bridge however
+> > > >  4. None of the above    
+> > > 
+> > > 3, roughly. The connector creation must be in core bridge code, or things
+> > > will go boom.  
+> > 
+> > Based on this I think you mean:
+> > 
+> >  1. the hotplug-*something* driver should exist  
+> 
+> This part I'm not sure is required, see my comments above. I think it
+> depends upon how the dt design ultimately will look like, and I don't have
+> an input on that.
+> 
+> >  2. it should add the fixed connector (DSI in my case) on probe
+> >  3. it should add/remove the removable connector (LVDS) on hot(un)plug  
+> 
+> The new bridge design is that bridges do _not_ create connectors
+> themselves. Instead the driver does that, using the bridge code as helpers
+> to make sure things work correctly.
+> 
+> But aside from that I think this sounds good. I'm not sure you need the
+> connector from step 2, but it shouldn't hurt either. With dp mst we create
+> that connector because dp can also be driven directly without mst, so
+> there we need that connector to be able to do modesets from userspace.
+
+I had a sort of assumption that the fixed connector is needed to even
+populate the card, not sure I was correct. Surely from a high-level API
+it would make sense to remove it.
+
+I'll postpone this aspect to a later moment, and by that time questions
+about the hotplug-bridge will have been clarified. Right now I'm going
+to tackle the drm_bridge refcounting.
+
+> >  4. it should add _no_ bridge (in the sense of struct drm_bridge)
+> >     [not sure it can still decouple the fixed VS addon pipeline parts]  
+> 
+> Yeah that's the tricky part, but definitely those hotplugged bridges
+> should not be part of the currently existing bridge chain, because that
+> cannot cope with hotplugs.
+
+Not sure what you mean here, and what you mean by "the currently
+existing bridge chain".
+
+Do you mean hot-plugged bridges, when present, should not be in the
+global bridge_list? That would make sense, sure.
+
+Best regards,
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
