@@ -1,82 +1,88 @@
-Return-Path: <linux-kernel+bounces-338254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A49A985576
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:28:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D89298557D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:29:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B497CB21D07
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:28:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FE3E1C226F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A9115A87C;
-	Wed, 25 Sep 2024 08:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0184115A864;
+	Wed, 25 Sep 2024 08:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kS/n5gES"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iYxVLF4u"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE041598EE
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A8F1598EE
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727252882; cv=none; b=MuZaaKXffJn2jD9es3gwaxRRRwo04Ir74ULMSJcfmGjSGVqNYRa4m/dBxWpPHNB1Jpn7JpkqpIcEAF37VdWzLyvBrROnvdcaHk4vVfsYEoHXacel//dV4K6xywLwx7RYfV0djDd/vKNaAn21RDSgTs2OXxE4M7r8JgIMouKl0Rg=
+	t=1727252944; cv=none; b=bfB5qF5N8bBHeNe6sW9YlbkUlx/fe6ew0rfNj24a7N0pvLI/nrK8P/aGFTvmI5lVtDq+djFz4KEGhVGBT8o1EvUFvByWwd8AbhU5n6oSLs+4hDceD0FKx1mPFp+n2nNPkm5HA4PcHmNbG1KuZzqnaZKMDfmEcQkDsKPaqxhfXAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727252882; c=relaxed/simple;
-	bh=nF0sfFBbFYVla7AI5yaRpMtwDZALqbKLpYtZvnb2IXI=;
+	s=arc-20240116; t=1727252944; c=relaxed/simple;
+	bh=q29PEj4IlMN9GSxCgG1by5KAX38sxz8FA6VWkjwf1+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lVemr6bQvJIs8cnWsDQiE4nQaulxUslnHJxyYwWr127u+/v38RzVR7WgIX1cmqTIaJkYVdi1aZQV/znqZ+M2aKrzvzKNMWNQWwMMDk9MAeE98Kis+FnEku+9nkzk6DDJT/4pJoVx+U52/eVsc3RWMQb1euWe4BvdB+NBS4JsROo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kS/n5gES; arc=none smtp.client-ip=209.85.208.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=In2EfPBFrJvBnSiGAosNfNaEUtfaupT0vMXjdeGGf+62r22bJDAD5kotOQfqF+dVDn4q0nTv7JCVqj8iiRjm3cVe3qOevErq7QUyrIR4bHn2tdt2DTzB3ZgYiXJCooZ4tBWvQb/MfDoLQSJ/73/3iyl3H7KV9xt+jjyIVU7nAF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iYxVLF4u; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f75aa08a96so66476801fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:27:59 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53654e2ed93so7640762e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:29:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727252878; x=1727857678; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1727252940; x=1727857740; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hOKdJS1KLSJlTg0CCP5JjFGsRZQRYkLqZ4DmWczY9nM=;
-        b=kS/n5gES1qMOJeY8LBmyrY6JoeYILJF0ow1QlaiteeeBvntsOYQgwiA6iVdxZNMpPl
-         3wYFLEEpaUGvjyRTJ3ObI36nWkLmOPJJ7ACod9K5yA3xX0BNudgbD2saZj9QNet+dox6
-         JlsvBcOQns9FFwg2MArtPCre1WqqXiCJogwpXjY2PuRkXY7GcpdNF6SM+yhmgU64I62C
-         J7C8jFXwN6fqRp2tLp8oAr4Gtcqvar/IAJt4hBkHMLgNIWCyP/ThJbYfC2ZfGsfc2q3C
-         /VcqmAgdMPpYdmwd8Km1wwV4qroXqyYZq5Z6mP870OL8lyrGU4qHBMxPZNniaaa7uhgt
-         WZ3g==
+        bh=fJc/ZEonsSpvQx65a5f325f6xswc665KOha+qhiv8i8=;
+        b=iYxVLF4uOOaUooX9pmelWwGNWXXDY/6O5fYHVjSnvArikmH1ULv6LImgfk9uub+B+M
+         9NPsqTDi1cz42N7Hfoxa397tV//PW3j0gxux+7Mk2r8Koy1H3E+q+UlStQvl6Lmr0YCs
+         y/pQY6MgGLYbeu+b31hKHhtVLUW49IelRGigZuTZd3YT3zPK6Pd29sq1QugYtKUmIRVA
+         3kCee9zrOIMwcNQj17nzjFSOeZYX7rs8xfwCJ/4kl6JmH48WQlE/xTKAw8/jv/WTVst9
+         l8VoX6nFhfGvrZqR0epPu3IHD4uILHSSZnUQ7LFuOfYdNQ2vRNI6DLli23RkuE0YIKdZ
+         TJAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727252878; x=1727857678;
+        d=1e100.net; s=20230601; t=1727252940; x=1727857740;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hOKdJS1KLSJlTg0CCP5JjFGsRZQRYkLqZ4DmWczY9nM=;
-        b=gW2r6wQQ28i0USrZ24lSMcSUnftrXpldND9j5dg5KC7ESfYTljBXHaHHXYxEJJ2gLc
-         UifZ2kYO/n/Dk7QQUIqewCk8BtgG5LkF1CghrLaHBVouM2o/hbhzjrFyJ9SoqgkGjICm
-         TjQkHvUAHI9vgLp7NRI3dhO6Q91RP7V5XQMYNv1QMr7YyK82/47navv7IOvWFF73nJW+
-         c7AJaEA0BrVfSLTGKKP1hTfmLcGpHlQ/cHdo9C3+Vz07GJEpmliC6ubkaDDv6QkUKI+a
-         kR3XN33SvoKObyWQLlMwgJ83tQv42mhcVXiXfQ9+PTR1e6pVERLfTI78GXvp0pAFKmH0
-         w4Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuh04EwtAy1CW/22JBIW3bZfjZTsO40UNlZfngDqMOxjvL1aEg/u7mkOVGehmz9ti/kELV9UsJr9ZasBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcWkYaazp3MkLvBlZRUGGBKUn0JRawEZipqk+4TyqucYPhmesY
-	Ae4xPX1xBgFXGycJwja1LskJRJQWpM1P7ab317BScZcb4Y8ebO2Jq5NaqTQ6QxI=
-X-Google-Smtp-Source: AGHT+IEyNLlNKNPuzVS6L2iBVgd1PBFlzz4yy5yLc0ujoQhajP1DHMelGTZ6NiiUvdGv3ibmtbdefA==
-X-Received: by 2002:a05:6512:1101:b0:52e:eacd:bc05 with SMTP id 2adb3069b0e04-538801ac047mr976428e87.61.1727252877875;
-        Wed, 25 Sep 2024 01:27:57 -0700 (PDT)
+        bh=fJc/ZEonsSpvQx65a5f325f6xswc665KOha+qhiv8i8=;
+        b=VtiZ34J930mzm8tQOpEngxbiSiXp4uRuVoqBF0c4IpUlnX7jdjCVe96UGrvVxIRcCC
+         9OzJ0iSTMMtH/cWNwZmJo4jbTv9poc+4ylNntDgfBf8tqm1oPI4OhA164z37PCO/dVut
+         hcaQ+og0S+ITBND5ZSQaK6SES6T/fpU1rATtn1fBj1ppdqz5DeBM21SqMPZ2ttm4U/Rq
+         BgyBVaAVe9eHmHRKvf3CI+9rklNFzyXixMbCNiAEZ/C3kuW88ZvZTEbEOifKLqKaXsSm
+         sEqp1z/6W+g7uMqxFqag3y8XGMdwKyH3znxGfF/h68dFcKXyzrnZyXr//SEGxgM6PM/s
+         uz2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVWXGPLST+njntirFAjs5z+ZCZFrCO+jfvbo4j5JZ/fqfj8YQ+EygOJGy4DEmHo9aTjHC9SwQgnHJhMS9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOBPdTmvqvarwbJZ6cgL0D3i4hLKRQV+nEwfYG8YRUEIEqdRV6
+	EyttJunwX4E9Yw7Py2yfWngaCc/jMjEky84CuzX/wQw2DgBjbjbhPJMlkf+1IX8=
+X-Google-Smtp-Source: AGHT+IFWtR5Spi/hxHDKmyK+yEjL67FVSC0HLJLKUPO8bW2hzqf39SxWRho/7uZXgcWIoMTcw6ko+w==
+X-Received: by 2002:a05:6512:3f07:b0:535:6ba7:7725 with SMTP id 2adb3069b0e04-5387048a6d7mr1170484e87.3.1727252940511;
+        Wed, 25 Sep 2024 01:29:00 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85e5c0bsm452613e87.82.2024.09.25.01.27.56
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a8648d41sm454852e87.224.2024.09.25.01.28.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 01:27:56 -0700 (PDT)
-Date: Wed, 25 Sep 2024 11:27:54 +0300
+        Wed, 25 Sep 2024 01:28:59 -0700 (PDT)
+Date: Wed, 25 Sep 2024 11:28:57 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: srinivas.kandagatla@linaro.org, a39.skl@gmail.com, 
-	linux-sound@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, 
-	tiwai@suse.com, alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, krzysztof.kozlowski@linaro.org, vkoul@kernel.org, 
-	klimov.linux@gmail.com
-Subject: Re: [PATCH REVIEW 1/2] ASoC: codecs: lpass-rx-macro: fix RXn(rx,n)
- macro for DSM_CTL and SEC7 regs
-Message-ID: <czlx4thp7thnb6jrauilpbtzgbq637rmnwlpifxq5b5jfa3lqm@toyy3b2viscr>
-References: <20240925043823.520218-1-alexey.klimov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>, 
+	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH v2 14/22] drm/msm/dpu: Require modeset if clone mode
+ status changes
+Message-ID: <zwxgml3qi3t253y2yhmi5lcpxg5odugrncfgh74y36kwubd4xv@oem2vicytu5i>
+References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
+ <20240924-concurrent-wb-v2-14-7849f900e863@quicinc.com>
+ <yjfe5wajajeqmcp65kbvcttzgkrsfv5rhkbvqvioqx3rwdn6g6@2h2byk2l2imy>
+ <75297d0d-528a-4152-b35f-ba41fbf914dc@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,58 +91,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240925043823.520218-1-alexey.klimov@linaro.org>
+In-Reply-To: <75297d0d-528a-4152-b35f-ba41fbf914dc@quicinc.com>
 
-On Wed, Sep 25, 2024 at 05:38:22AM GMT, Alexey Klimov wrote:
-> Turns out some registers of pre-2.5 version of rxmacro codecs are not
-> located at the expected offsets but 0xc further away in memory.
-> So far the detected registers are CDC_RX_RX2_RX_PATH_SEC7 and
-> CDC_RX_RX2_RX_PATH_DSM_CTL.
+On Tue, Sep 24, 2024 at 05:05:43PM GMT, Abhinav Kumar wrote:
 > 
-> CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n) macro incorrectly generates the address
-> 0x540 for RX2 but it should be 0x54C and it also overwrites
-> CDC_RX_RX2_RX_PATH_SEC7 which is located at 0x540.
-> The same goes for CDC_RX_RXn_RX_PATH_SEC7(rx, n).
 > 
-> Fix this by introducing additional rxn_reg_stride2 offset. For 2.5 version
-> and above this offset will be equal to 0.
-> With such change the corresponding RXn() macros will generate the same
-> values for 2.5 codec version for all RX paths and the same old values
-> for pre-2.5 version for RX0 and RX1. However for the latter case with RX2 path
-> it will also add 2 * rxn_reg_stride2 on top.
+> On 9/24/2024 4:25 PM, Dmitry Baryshkov wrote:
+> > On Tue, Sep 24, 2024 at 03:59:30PM GMT, Jessica Zhang wrote:
+> > > If the clone mode enabled status is changing, a modeset needs to happen
+> > > so that the resources can be reassigned
+> > 
+> > Sima's comment regarding crtc_state->mode_changed seems to be ignored...
+> > 
 > 
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  sound/soc/codecs/lpass-rx-macro.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
-> index 71e0d3bffd3f..9288ddb705fe 100644
-> --- a/sound/soc/codecs/lpass-rx-macro.c
-> +++ b/sound/soc/codecs/lpass-rx-macro.c
-> @@ -202,12 +202,14 @@
->  #define CDC_RX_RXn_RX_PATH_SEC3(rx, n)	(0x042c  + rx->rxn_reg_stride * n)
->  #define CDC_RX_RX0_RX_PATH_SEC4		(0x0430)
->  #define CDC_RX_RX0_RX_PATH_SEC7		(0x0434)
-> -#define CDC_RX_RXn_RX_PATH_SEC7(rx, n)	(0x0434  + rx->rxn_reg_stride * n)
-> +#define CDC_RX_RXn_RX_PATH_SEC7(rx, n)		\
-> +	(0x0434 + rx->rxn_reg_stride * n + n * (n - 1) * rx->rxn_reg_stride2)
+> Not ignored. One of us has to take that up. There is a broader cleanup
+> required for that.
 
-This is a nice hack to rule out n=0 and n=1, but maybe we can be more
-obvious here:
+At least then it should be mentioned in the commit message or under the
+commit message.
 
-(0x0434 + stride * n + (n > 2) ? stride2 : 0)
+> 
+> We can sync up on how to tackle this : whether it needs to be in this series
+> or push another one cleaning up all the instances.
 
->  #define CDC_RX_DSM_OUT_DELAY_SEL_MASK	GENMASK(2, 0)
->  #define CDC_RX_DSM_OUT_DELAY_TWO_SAMPLE	0x2
->  #define CDC_RX_RX0_RX_PATH_MIX_SEC0	(0x0438)
->  #define CDC_RX_RX0_RX_PATH_MIX_SEC1	(0x043C)
-> -#define CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n)	(0x0440  + rx->rxn_reg_stride * n)
-> +#define CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n)	\
-> +	(0x0440 + rx->rxn_reg_stride * n + n * (n - 1) * rx->rxn_reg_stride2)
->  #define CDC_RX_RXn_DSM_CLK_EN_MASK	BIT(0)
->  #define CDC_RX_RX0_RX_PATH_DSM_CTL	(0x0440)
->  #define CDC_RX_RX0_RX_PATH_DSM_DATA1	(0x0444)
+
+Yes, let's sync separately.
+
+> 
+> > > 
+> > > Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> > > ---
+> > >   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 8 ++++++++
+> > >   1 file changed, 8 insertions(+)
+> > > 
+> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > index a7850bf844db..f20e44e9fc05 100644
+> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > @@ -1268,6 +1268,8 @@ static int dpu_crtc_atomic_check(struct drm_crtc *crtc,
+> > >   {
+> > >   	struct drm_crtc_state *crtc_state = drm_atomic_get_new_crtc_state(state,
+> > >   									  crtc);
+> > > +	struct drm_crtc_state *old_crtc_state = drm_atomic_get_old_crtc_state(state,
+> > > +									      crtc);
+> > >   	struct dpu_crtc *dpu_crtc = to_dpu_crtc(crtc);
+> > >   	struct dpu_crtc_state *cstate = to_dpu_crtc_state(crtc_state);
+> > > @@ -1279,6 +1281,8 @@ static int dpu_crtc_atomic_check(struct drm_crtc *crtc,
+> > >   	int rc = 0;
+> > >   	bool needs_dirtyfb = dpu_crtc_needs_dirtyfb(crtc_state);
+> > > +	bool clone_mode_requested = drm_crtc_in_clone_mode(old_crtc_state);
+> > > +	bool clone_mode_enabled = drm_crtc_in_clone_mode(crtc_state);
+> > >   	/* there might be cases where encoder needs a modeset too */
+> > >   	drm_for_each_encoder_mask(drm_enc, crtc->dev, crtc_state->encoder_mask) {
+> > > @@ -1286,6 +1290,10 @@ static int dpu_crtc_atomic_check(struct drm_crtc *crtc,
+> > >   			crtc_state->mode_changed = true;
+> > >   	}
+> > > +	if ((clone_mode_requested && !clone_mode_enabled) ||
+> > > +	    (!clone_mode_requested && clone_mode_enabled))
+> > > +		crtc_state->mode_changed = true;
+> > > +
+> > >   	if (drm_atomic_crtc_needs_modeset(crtc_state)) {
+> > >   		rc = dpu_crtc_assign_resources(crtc, crtc_state);
+> > >   		if (rc < 0)
+> > > 
+> > > -- 
+> > > 2.34.1
+> > > 
+> > 
 
 -- 
 With best wishes
