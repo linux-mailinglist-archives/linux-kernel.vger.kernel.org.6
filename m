@@ -1,105 +1,131 @@
-Return-Path: <linux-kernel+bounces-338282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DE559855E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:54:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE959855F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEEE31C234D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:54:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A24CB2250D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51D415B0FC;
-	Wed, 25 Sep 2024 08:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F6015B115;
+	Wed, 25 Sep 2024 08:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Evv4akEb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="loUMR//m"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6C8157A46;
-	Wed, 25 Sep 2024 08:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646B6158DCC
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727254442; cv=none; b=XO8R5RX8/PURueTYqbzf1I457iz299CZzaPZFQXYvsJqXteGEHSp8c/uCmgs/V6UTwpT2tGo85fu7vfEndpnXarKfFDxkee8UxE0UXDBo5SsBeGqI+AdRrV5MIz/fiaGCF2jO36OgAmojsGQHrkz6lhoxVjvHCbmjrMq+U0yaWU=
+	t=1727254724; cv=none; b=jjRAK8ogncHfyH3rQIhh+mny36BrgyBVbWkYkcZ2uBj8jFYFuNbAeD//9LeltQJBqJneu1Kz5q9igYfw1Q2qLXlYNKPbo+f0Bwjbr5yK+zuW0BrnlxbXw0U7e6Mpvd7sQHWA5rSSzFbQ/0WfT/bW2XcsoPD9QOkbRQjkYKRv8Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727254442; c=relaxed/simple;
-	bh=1zWwlFWmFVwYVAzytW6yvqI5W4QRdh3sKMqwLclSRPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TdGsmB4u2eT84IVzB0UhQs5dAFBboDJRUTUdhdLI+6qXZdztH8myv9f03wCDW8UlJHaxxpdXnGofXQ0zfhfbZO/5hzOlg1Ne2UCmseIfYWjl1g1LZd29cj4U5lpp0UpLr27vbeiFoC9g4MwEu1gnZA63baQs1fCMsxdqzqAYVDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Evv4akEb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15D1DC4CEC3;
-	Wed, 25 Sep 2024 08:54:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727254441;
-	bh=1zWwlFWmFVwYVAzytW6yvqI5W4QRdh3sKMqwLclSRPM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Evv4akEbOILJlNV7aFx1NjrXQX5vMFBvUQXuYWx6lTqjoogKLcK+mJ6vpmFUiGPft
-	 hRawpDFDggiD01yqjpHqZKXfhtvKDqcwuwQQoerRyAPAMZVSVHHSlTt2lg7kgZZ3Ol
-	 Rce5zTXOiLYjHyNKybBGR4P3gRB72YoWHCIZwlNLoPSi4Qup1HyTlPZeflgMgXbXJS
-	 WeRgnlgQgdWIP1eQMwsnJPH39XxnDgF+2j7bz83p0z83SIP7tRURML5qYh6RLlivNS
-	 iYlVawl3a0YUDW2dTIRnPi64KNEAwuhrOTc7uvLs5ckmR+bPNnZDwwQls2ADWIARqf
-	 h9feHkD2TSU0Q==
-Date: Wed, 25 Sep 2024 10:53:57 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Alexey Klimov <alexey.klimov@linaro.org>,
-	srinivas.kandagatla@linaro.org, a39.skl@gmail.com,
-	linux-sound@vger.kernel.org, lgirdwood@gmail.com, perex@perex.cz,
-	tiwai@suse.com, alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	krzysztof.kozlowski@linaro.org, vkoul@kernel.org,
-	klimov.linux@gmail.com
-Subject: Re: [PATCH REVIEW 1/2] ASoC: codecs: lpass-rx-macro: fix RXn(rx,n)
- macro for DSM_CTL and SEC7 regs
-Message-ID: <ZvPPpfobvDmmTCfi@finisterre.sirena.org.uk>
-References: <20240925043823.520218-1-alexey.klimov@linaro.org>
- <czlx4thp7thnb6jrauilpbtzgbq637rmnwlpifxq5b5jfa3lqm@toyy3b2viscr>
+	s=arc-20240116; t=1727254724; c=relaxed/simple;
+	bh=nMARnu08ub4CbQxmYHfbfHObJdrrHv6+xqmDLHZLyVs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ikBgUR66WHlkj36i/f36ZmQLX2DHg9s3iyt1yLWtNdbEUAjWddt/7fcm/ldunjfBRt5j2H7l3F2H1NEsu3gqv2NEzQUnDtDS3lPiNJqp/Y7v9PjhNMiPQFPDUhYT1e87H0gbwKu54zcmEri9LnpYICAUbNzGtuFj/JWPccS1daI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=loUMR//m; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727254722; x=1758790722;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nMARnu08ub4CbQxmYHfbfHObJdrrHv6+xqmDLHZLyVs=;
+  b=loUMR//mCl6cEZuW7RXrE2ZLxGRm/slL8TXd5nyDBTTuSkc5XXWgJTdk
+   CRq2HQb/27WdL46eAUtBtMGBf3ZlWzcAitkvW7CnAyoCv4nAymsS4S9/D
+   vWAlJMxrdSOOn28qyCAKLsbotzf6l8OKyjNCAOGDHqAhcbBQoRVi7zFIW
+   6jAzZPtslb9Ue1VH5TocnXL4HCrTbCYNXixEzSZ6Rj07o+iAP5vKpcLsp
+   Gos2TlyXild+A8+1O09tvmQxqICMvfc5FDxJ+UtxTqPfIxYjvXbkKVR1c
+   y1OG5OyAwEnKw+sOXFGWWFh/Roc7sfMqRnLcs+L6aWI6cFfNsX9KfwsD5
+   w==;
+X-CSE-ConnectionGUID: 7Cg68wBfTBmgXiFqLClmjA==
+X-CSE-MsgGUID: hQM8wf77TwmbITUMtVJFvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="13915175"
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="13915175"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 01:58:42 -0700
+X-CSE-ConnectionGUID: Qph6AFGJT6+3lw3rMFrBcA==
+X-CSE-MsgGUID: RZsV1B2uTUOpHezjNd0U/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="76097964"
+Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
+  by fmviesa005.fm.intel.com with ESMTP; 25 Sep 2024 01:58:38 -0700
+From: Chen Yu <yu.c.chen@intel.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Chunxin Zang <zangchunxin@lixiang.com>,
+	linux-kernel@vger.kernel.org,
+	Chen Yu <yu.chen.surf@gmail.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	kernel test robot <oliver.sang@intel.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>
+Subject: [PATCH v2] sched/eevdf: Fix wakeup-preempt by checking cfs_rq->nr_running
+Date: Wed, 25 Sep 2024 16:54:40 +0800
+Message-Id: <20240925085440.358138-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="irEqxi+ka1OxLIPG"
-Content-Disposition: inline
-In-Reply-To: <czlx4thp7thnb6jrauilpbtzgbq637rmnwlpifxq5b5jfa3lqm@toyy3b2viscr>
-X-Cookie: Editing is a rewording activity.
+Content-Transfer-Encoding: 8bit
 
+Commit 85e511df3cec ("sched/eevdf: Allow shorter slices to wakeup-preempt")
+introduced a mechanism that a wakee with shorter slice could preempt
+the current running task. It also lower the bar for the current task
+to be preempted, by checking the rq->nr_running instead of cfs_rq->nr_running
+when the current task has ran out of time slice. But there is a scenario
+that is problematic. Say, if there is 1 cfs task and 1 rt task, before
+85e511df3cec, update_deadline() will not trigger a reschedule, and after
+85e511df3cec, since rq->nr_running is 2 and resched is true, a resched_curr()
+would happen.
 
---irEqxi+ka1OxLIPG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Some workloads (like the hackbench reported by lkp) do not like
+over-scheduling. We can see that the preemption rate has been
+increased by 2.2%:
 
-On Wed, Sep 25, 2024 at 11:27:54AM +0300, Dmitry Baryshkov wrote:
-> On Wed, Sep 25, 2024 at 05:38:22AM GMT, Alexey Klimov wrote:
+1.654e+08            +2.2%   1.69e+08        hackbench.time.involuntary_context_switches
 
-> > +#define CDC_RX_RXn_RX_PATH_SEC7(rx, n)		\
-> > +	(0x0434 + rx->rxn_reg_stride * n + n * (n - 1) * rx->rxn_reg_stride2)
+Restore its previous check criterion.
 
-> This is a nice hack to rule out n=0 and n=1, but maybe we can be more
-> obvious here:
+Fixes: 85e511df3cec ("sched/eevdf: Allow shorter slices to wakeup-preempt")
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202409231416.9403c2e9-oliver.sang@intel.com
+Suggested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+v1->v2:
+    Check cfs_rq->nr_running instead of rq->nr_running(K Prateek Nayak)
+---
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> (0x0434 + stride * n + (n > 2) ? stride2 : 0)
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 225b31aaee55..53a351b18740 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1247,7 +1247,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
+ 
+ 	account_cfs_rq_runtime(cfs_rq, delta_exec);
+ 
+-	if (rq->nr_running == 1)
++	if (cfs_rq->nr_running == 1)
+ 		return;
+ 
+ 	if (resched || did_preempt_short(cfs_rq, curr)) {
+-- 
+2.25.1
 
-Yes.  We could also use some brackets to make the + and * precedence
-obvious.
-
---irEqxi+ka1OxLIPG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbzz6QACgkQJNaLcl1U
-h9BAYQf/YgiwTSgbZyHotiHwyPV5y+CGjF1uCjiLDGpUl6fQvcBBXnFs7kg0zBGn
-awD0JqOtywgMW7B9hdvskzi9mThnJq4ab8sWB39c9RPvYYKswcsaNj10LxURjxfX
-WWmg08RzTKSnqubd5tijYAdg++OfwcAPbU9C8ZxyHs+xPgJOYNveWH9DUDu7p+ga
-tQSZkc5OArWpAtPNiQJR2r3b7Ys6YIk9vOZfrPWy2WGGM/duR8bvy0V2yyndEWo0
-fA3XF+1HQ4BPmHOVcpvqhBrrGqYunoK2VT1dqhdmWJsu9OS9CedPwbXsx9p7WHbt
-FzSoZOaCJJmax5da7Yx2OpdpQjf+XA==
-=Xc1o
------END PGP SIGNATURE-----
-
---irEqxi+ka1OxLIPG--
 
