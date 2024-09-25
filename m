@@ -1,169 +1,389 @@
-Return-Path: <linux-kernel+bounces-339330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3003498636A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:26:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C3F98636F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3981F2836A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:26:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E142B1F27964
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2BF183CCE;
-	Wed, 25 Sep 2024 15:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE4918661B;
+	Wed, 25 Sep 2024 15:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZEsCmHCj"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sI0FfFu3"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF57E22318
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2836913D891
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727276857; cv=none; b=HBHLxmQ8leVZT6KZED6/soTvjUF4btY6Ml4d23RWIyyYvUClmvcKqopydQAquL6jdK2sNizx+Llhr8jzwDtRMaY7snCaq10BUp8pTpQATcC9vS3PlWKYor8A4GdLfU6qU6j3ik9kEsioROzvslW6WYZAX20uH1PFiBimBVZTVUg=
+	t=1727276928; cv=none; b=mq22gpuDIz7o/ViPb3zzxrcTkc9nlyQ+dq613licaqgH5VD+KI8CL6af6r5tW5+6jGuLYZGFw11IYqZuwjue0wJNvjmCxUtfbbXTMUYJwlNaHcAHGCxc8Jtle+aU58ZC91tr+69051Krmr+VFv0VCEqJHj5+ifbOZfGqUjTw0NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727276857; c=relaxed/simple;
-	bh=WsCh6ssXxMdWFTiE+4Zre6Ax1+Bve0twBDDs58T2ZRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hKER8YAVgyRdSW4h8WLTJjANLfv9vFp0T6zdbdkta9Zo+hUiWcsPXQjoDlRX8rY2vuGoeT/9mxeSTaPsjz4WfEy0e62ByKovkMxYMawJaNDrPcqTyR8NGrGyhvSMBkfDSySYN2ZMO3o0v09oCazKCOVkfmkaPVOb8WGBQ4Lu4us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZEsCmHCj; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cc43454d5so56357095e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:07:35 -0700 (PDT)
+	s=arc-20240116; t=1727276928; c=relaxed/simple;
+	bh=B8GjkZ9KSpAFYR+WSzBhrhjfRNsNrfu9PdiIxSYd2dw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=d+bJ8ue+EluuqgxfStbJdtBi101LZzJAV5v2jTq6wa/lxHy4tw/qPDhYDV854FzPBYwAxsyncdflD+dhvv1Xjl3JThuV7CXKM05U4P5uuHXn59AyQKg2mPpci9fdTQ9lsGM/YUZR2NcocT00nDQ2bNvaWplJ34+kF3wEiugRzZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sI0FfFu3; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7c6a9c1a9b8so4492430a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:08:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727276854; x=1727881654; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DWF83HMoN2Ea7DGvk+6V2CllZTFpJS9ca4WBd4vItNM=;
-        b=ZEsCmHCj3lrnFRi8vjShxG34AysoU5V+qkOFhYEUn8SCCLowq4X2IXZcUm/h9E9HFM
-         cuL3PwVbEHUzrs7VE+sh7GocG2V78AoDZk3pKrPI/QqjuaKchng1AtLBSedyUj+delBG
-         47BOwoepMeSXTank4RQY+x5NkaWOsoEuv1kr1BKwLfRhEA6SHLaaSbM4UvssHZ8W8ORA
-         6ooDuZ7l97JDMCqr8ptjzbRM6KnGscM5UwJFDn1zvvfaY3xjmT/srTg2ru9rX7MOCuCT
-         LbdYYqlh+PypQ3TGAd63lhoiHMLltEVDmTsS2/6YT6LCteupM92p6blD0A7qMi8fNoSE
-         XLPg==
+        d=google.com; s=20230601; t=1727276925; x=1727881725; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CJjlCVLEZdWj934sR01kDIPq+l9ewDRt7kkVfBRkT5A=;
+        b=sI0FfFu3rMHxQ92kip65G0cH48eQKAHZfCu4DJvJ6wegxCGJr5DQGiqK3cGszfdhrS
+         p3j3ztE1pSfRO8MpJ/a7ZkwdF9F8m3khwmuZL1LGd1Jd4DXNYHMBQ4TZY/yekvfXIYfv
+         wp5i8cZYgq13jWqBUP0bGNDgW32NOzSJ/bgNpFoHdLIAG93BV7kOD9UzpogtCaFp26+I
+         EEcUEYm2k6DoFMs+ir1PMkDYY2R4lyt4eZtmxtCkA7GkbcLM1xDt+0T3Hhv9v8jm0NIq
+         /ZhR5SfT1PFnTuBdQ21WfUVP+xr9SRNusA15kn2LRW3rzfky8CdoYCu6uWFHDGKHUPZ2
+         dBiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727276854; x=1727881654;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DWF83HMoN2Ea7DGvk+6V2CllZTFpJS9ca4WBd4vItNM=;
-        b=pJO6nklau/0/Q6W7n1/LJ1xTX+6CGDqlpv82FqN7gJ/tXFSpKs3y4GSCgVzDdSxBgg
-         4fW6bDmerZ7zyEJ6XDntN17AUpOK+gW8ElrIdu8ynElqB9vJL20wJ+ZEHeGW30uEAEW/
-         rVg7WuBQo90mPhGkbVpCDplC1W/w99mWv5gne67Zrvj5wcFekYF9ZXTjjGLlparJkqdA
-         nsP3Nc7oKALbL9d9ttQN6pXPIorymcbD9BG6zYf+GsOp6rYaPJsDeJIPrWYBg6n4C8Wu
-         GWVtS8jHmYu10RFeYE3adNdb5igw1jv9baq+rPaE897a6NXnIGgtUK85rRo2mr68gIh2
-         aALw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsFddqsaUxHIY+qycpGSjmk9BhlYwyRkFt68OduyBIIvcsx3q78Td0EPYbAMTtc0Xb9mLI/j6FoekGfPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvKhIawBHWBmD3tWnHsWCgY6N0vjTeLQOEMWlBonY4Z3Vujka8
-	FsyxQuvod06ZWjyUAZUFLl3BZLW1eB/d0gy+pb2Dj8VihvpSaygYE4SUkLiK1BE=
-X-Google-Smtp-Source: AGHT+IGip3sOgl+bQOmdyqaao7YVehMer8d8+AYC1VqOmcY2i0t8OPHuGhScpGVwZxC3FqSYI+aIsw==
-X-Received: by 2002:a05:600c:470e:b0:42b:a7c7:5667 with SMTP id 5b1f17b1804b1-42e96144a7cmr19014655e9.25.1727276853820;
-        Wed, 25 Sep 2024 08:07:33 -0700 (PDT)
-Received: from localhost (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a52308sm21474945e9.43.2024.09.25.08.07.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 08:07:33 -0700 (PDT)
-Date: Wed, 25 Sep 2024 17:07:32 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Lei Liu <liulei.rjpt@vivo.com>
-Cc: Neal Liu <neal_liu@aspeedtech.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH v3 1/5] usb: aspeed_udc: Use devm_clk_get_enabled()
- helpers
-Message-ID: <zi5lq44bc4vd33y42zkmn7hr7rw64wfxe2rvuvkekola6ctckc@buv7ybvq5skt>
-References: <20240826081900.2284-1-liulei.rjpt@vivo.com>
- <20240826082140.2311-1-liulei.rjpt@vivo.com>
+        d=1e100.net; s=20230601; t=1727276925; x=1727881725;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CJjlCVLEZdWj934sR01kDIPq+l9ewDRt7kkVfBRkT5A=;
+        b=QpiaMaeEyvmrLsPx9lCSQKmTy1NVPmi4d7D6fCur2i/gIVeSFWD7q2JIEdItfnNbfL
+         5YzVTodToGV+zUTd6ynb0bJaIEnlPFa1OdWsHUMUU1AAY9gc/c4Ltk6viHe7RSs1U6l9
+         0hCPuMMlrt/JDNek4qm/8P7bzTUpUph7VujtTb1RVrlvfJCjXgitHRkckzgrAi1BTspI
+         aJ+UPIbpdC8+aX6KeWt5EmhHc1DP9YAeb2JGg52jlqcPUCYE08B6+rANBiN0aqeLPc+u
+         4iAdlQGXWAUufThBgm3BmmLz2Pqk64dy59uIhQDQxVLkzPwGWDYYJg0OOaVuFrG3njn9
+         sDNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlFG5afI9LcjsCgg5Rg7a+aBuaDNAn02O3sHXf8Y3QCh0sOa+bSbg/Jx77w9UGARjU8M1qdhguLqGj1gk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy93Wq+NExl0UbRLXe4f5+DJFsdl60FaSDPYT8l+FzHX2RkIYf9
+	QfDSjbOxaBM82uZu3CjU3OcZtmiJvBXAy8E7R2sKmDn+9H0FpDB63MlRumzKVJPXgLOD2bwPm2E
+	Bnw==
+X-Google-Smtp-Source: AGHT+IHrIyskI5zYC0DBa9u5TteP6HKJCX5qffLdumB5VXa+/HHcwX6qSSRiKGLGGvId15g5lZFKwsrMIKs=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:d503:b0:201:f9c7:632d with SMTP id
+ d9443c01a7336-20afc2cfd1cmr341265ad.0.1727276925273; Wed, 25 Sep 2024
+ 08:08:45 -0700 (PDT)
+Date: Wed, 25 Sep 2024 08:08:43 -0700
+In-Reply-To: <65fe418f079a1f9f59caa170ec0ae5d828486714.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6dsn6gbwes7baogl"
-Content-Disposition: inline
-In-Reply-To: <20240826082140.2311-1-liulei.rjpt@vivo.com>
+Mime-Version: 1.0
+References: <20240725175232.337266-1-mlevitsk@redhat.com> <20240725175232.337266-3-mlevitsk@redhat.com>
+ <ZrF55uIvX2rcHtSW@chao-email> <ZrY1adEnEW2N-ijd@google.com>
+ <61e7e64c615aba6297006dbf32e48986d33c12ab.camel@redhat.com> <65fe418f079a1f9f59caa170ec0ae5d828486714.camel@redhat.com>
+Message-ID: <ZvQne77ycOKQ1nvU@google.com>
+Subject: Re: [PATCH v3 2/2] VMX: reset the segment cache after segment
+ initialization in vmx_vcpu_reset
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, 
+	linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
+On Mon, Sep 09, 2024, Maxim Levitsky wrote:
+> On Mon, 2024-09-09 at 15:11 -0400, Maxim Levitsky wrote:
+> > On Fri, 2024-08-09 at 08:27 -0700, Sean Christopherson wrote:
+> > > > > @@ -4899,6 +4896,9 @@ void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+> > > > > 	vmcs_writel(GUEST_IDTR_BASE, 0);
+> > > > > 	vmcs_write32(GUEST_IDTR_LIMIT, 0xffff);
+> > > > > 
+> > > > > +	vmx_segment_cache_clear(vmx);
+> > > > > +	kvm_register_mark_available(vcpu, VCPU_EXREG_SEGMENTS);
+> > > > 
+> > > > vmx_segment_cache_clear() is called in a few other sites. I think at least the
+> > > > call in __vmx_set_segment() should be fixed, because QEMU may read SS.AR right
+> > > > after a write to it. if the write was preempted after the cache was cleared but
+> > > > before the new value being written into VMCS, QEMU would find that SS.AR held a
+> > > > stale value.
+> > > 
+> > > Ya, I thought the plan was to go for a more complete fix[*]?  This change isn't
+> > > wrong, but it's obviously incomplete, and will be unnecessary if the preemption
+> > > issue is resolved.
+> > 
+> > Hi,
+> > 
+> > I was thinking to keep it simple, since the issue is mostly theoretical
+> > after this fix, but I'll give this another try.
+>
+> This is what I am thinking, after going over this issue again:
+> 
+> Pre-populating the cache and/or adding 'exited_in_kernel' will waste vmreads
+> on *each* vmexit,
 
---6dsn6gbwes7baogl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+FWIW, KVM would only need to do the VMREAD on non-fastpath exits.
 
-Hello,
+> I worry that this is just not worth the mostly theoretical issue that we
+> have.
 
-On Mon, Aug 26, 2024 at 04:21:39PM +0800, Lei Liu wrote:
-> diff --git a/drivers/usb/gadget/udc/aspeed_udc.c b/drivers/usb/gadget/udc=
-/aspeed_udc.c
-> index f4781e611aaa..a362e31f7550 100644
-> --- a/drivers/usb/gadget/udc/aspeed_udc.c
-> +++ b/drivers/usb/gadget/udc/aspeed_udc.c
-> @@ -1459,8 +1459,6 @@ static void ast_udc_remove(struct platform_device *=
-pdev)
->  	ctrl =3D ast_udc_read(udc, AST_UDC_FUNC_CTRL) & ~USB_UPSTREAM_EN;
->  	ast_udc_write(udc, ctrl, AST_UDC_FUNC_CTRL);
-> =20
-> -	clk_disable_unprepare(udc->clk);
-> -
->  	spin_unlock_irqrestore(&udc->lock, flags);
+Yeah.  And cost aside, it's weird and hard to document and use properly because
+it's such an edge case.  E.g. only applies preemptible kernels, and use of
+exited_in_kernel would likely need to be restricted to the sched_out() preempt
+logic, because anything really needs to check the "current" CPL.
 
-Isn't it broken to call clk_disable_unprepare() while holding a
-spinlock?
+> Since the segment and the register cache only optimize the case of reading a
+> same field twice or more, I suspect that reading these fields always is worse
+> performance wise than removing the segment cache altogether and reading these
+> fields again and again.
 
-I guess that means that the remove path is untested in practise and this
-patches fixes a sleep-in-atomic. IMHO this invalidates Ulf's concern in
-his reply to the cover letter for this patch at least.
- =20
->  	if (udc->ep0_buf)
-> @@ -1500,16 +1498,11 @@ static int ast_udc_probe(struct platform_device *=
-pdev)
-> =20
->  	platform_set_drvdata(pdev, udc);
-> =20
-> -	udc->clk =3D devm_clk_get(&pdev->dev, NULL);
-> +	udc->clk =3D devm_clk_get_enabled(&pdev->dev, NULL);
->  	if (IS_ERR(udc->clk)) {
->  		rc =3D PTR_ERR(udc->clk);
+For modern setups, yeah, the segment cache likely isn't helping much, though I
+suspect it still gets a decent number of "hits" on CS.AR_BYTES via is_64_bit_mode().
 
-An error message here would be nice. Something like
+But for older CPUs where KVM needs to emulate large chunks of code, I'm betting
+the segment cache is an absolute must have.
 
-	rc =3D dev_err_probe(&pdev->dev, PTR_ERR(udc->clk), "Failed to get clock\n=
-");
+> Finally all 3 places that read the segment cache, only access one piece of
+> data (SS.AR or RIP), thus it doesn't really matter if they see an old or a
+> new value. 
+> 
+> I mean in theory if userspace changes the SS's AR bytes out of the blue, and
+> then we get a preemption event, in theory as you say the old value is correct
+> but it really doesn't matter.
+> 
+> So IMHO, just ensuring that we invalidate the segment cache right after we do
+> any changes is the simplest solution.
 
-should work.
+But it's not a very maintainable solution.  It fixes the immediate problem, but
+doesn't do anything to help ensure that all future code invalidates the cache
+after writing, nor does it guarantee that all future usage of SS.AR can tolerate
+consuming stale values.
 
->  		goto err;
->  	}
-> -	rc =3D clk_prepare_enable(udc->clk);
-> -	if (rc) {
-> -		dev_err(&pdev->dev, "Failed to enable clock (0x%x)\n", rc);
-> -		goto err;
-> -	}
-> =20
->  	/* Check if we need to limit the HW to USB1 */
->  	max_speed =3D usb_get_maximum_speed(&pdev->dev);
+> I can in addition to that add a warning to kvm_register_is_available and
+> vmx_segment_cache_test_set, that will test that only SS.AR and RIP are read
+> from the interrupt context, so that if in the future someone attempts to read
+> more fields, this issue can be re-evaluated.
 
-Best regards
-Uwe
+There's no need to add anything to vmx_segment_cache_test_set(), because it uses
+kvm_register_is_available().  I.e. adding logic in kvm_register_is_available()
+will suffice.
 
---6dsn6gbwes7baogl
-Content-Type: application/pgp-signature; name="signature.asc"
+If we explicitly allow VMCS accesses from PMI callbacks, which by we *know* can
+tolerate stale data _and_ never run while KVM is updating segments, then we can
+fix the preemption case by forcing a VMREAD and bypassing the cache.
+ 
+And looking to the future, if vcpu->arch.guest_state_protected is moved/exposed
+to common code in some way, then the common PMI code can skip trying to read guest
+state, and the ugliness of open coding that check in the preemption path largely
+goes away.
 
------BEGIN PGP SIGNATURE-----
+If you're ok with the idea, I'll write changelogs and post the below (probably over
+two patches).  I don't love adding another kvm_x86_ops callback, but I couldn't
+come up with anything less ugly.
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmb0JzEACgkQj4D7WH0S
-/k7BAggAkHqZteCrETJY7VyuZN1rZlaLtOcZtOwWhGS/VU77rZ3XggeRv3m4vC47
-hPTn3yyiJND47OJu6fIC9tSLUrY8K1HNI1kZ03J3SiDOrPevc0wzDlNITQCENVL4
-Nc4lAtMYR1ZfCzNJ7+MK0PXCHZGkREp7DF8RLnvp2EOqdSadL6ZOexvONaOp0z2w
-fI+4yzo1++k7+EBuSnnL7xVwk+T55OezIBpcy0cLeQRgcjOrbhPd7Evo8VtyGLAe
-ZkZW3RhxSAIMpu1Kux0lFaFV+0Zp+piZSwYUIet5L87cJhdOy5gKFnSDTQp1U+tk
-RwwyaG8WrFuECHX+T+NlpPRYc0btYw==
-=rUO+
------END PGP SIGNATURE-----
+---
+ arch/x86/include/asm/kvm-x86-ops.h |  1 +
+ arch/x86/include/asm/kvm_host.h    |  1 +
+ arch/x86/kvm/kvm_cache_regs.h      | 17 +++++++++++++++++
+ arch/x86/kvm/svm/svm.c             |  1 +
+ arch/x86/kvm/vmx/main.c            |  1 +
+ arch/x86/kvm/vmx/vmx.c             | 23 ++++++++++++++++++-----
+ arch/x86/kvm/vmx/vmx.h             |  1 +
+ arch/x86/kvm/x86.c                 | 13 ++++++++++++-
+ 8 files changed, 52 insertions(+), 6 deletions(-)
 
---6dsn6gbwes7baogl--
+diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
+index 861d080ed4c6..5aff7222e40f 100644
+--- a/arch/x86/include/asm/kvm-x86-ops.h
++++ b/arch/x86/include/asm/kvm-x86-ops.h
+@@ -34,6 +34,7 @@ KVM_X86_OP(set_msr)
+ KVM_X86_OP(get_segment_base)
+ KVM_X86_OP(get_segment)
+ KVM_X86_OP(get_cpl)
++KVM_X86_OP(get_cpl_no_cache)
+ KVM_X86_OP(set_segment)
+ KVM_X86_OP(get_cs_db_l_bits)
+ KVM_X86_OP(is_valid_cr0)
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 6d9f763a7bb9..3ae90df0a177 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1656,6 +1656,7 @@ struct kvm_x86_ops {
+ 	void (*get_segment)(struct kvm_vcpu *vcpu,
+ 			    struct kvm_segment *var, int seg);
+ 	int (*get_cpl)(struct kvm_vcpu *vcpu);
++	int (*get_cpl_no_cache)(struct kvm_vcpu *vcpu);
+ 	void (*set_segment)(struct kvm_vcpu *vcpu,
+ 			    struct kvm_segment *var, int seg);
+ 	void (*get_cs_db_l_bits)(struct kvm_vcpu *vcpu, int *db, int *l);
+diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
+index b1eb46e26b2e..0370483003f6 100644
+--- a/arch/x86/kvm/kvm_cache_regs.h
++++ b/arch/x86/kvm/kvm_cache_regs.h
+@@ -43,6 +43,18 @@ BUILD_KVM_GPR_ACCESSORS(r14, R14)
+ BUILD_KVM_GPR_ACCESSORS(r15, R15)
+ #endif
+ 
++/*
++ * Using the register cache from interrupt context is generally not allowed, as
++ * caching a register and marking it available/dirty can't be done atomically,
++ * i.e. accesses from interrupt context may clobber state or read stale data if
++ * the vCPU task is in the process of updating the cache.  The exception is if
++ * KVM is handling an IRQ/NMI from guest mode, as that bounded sequence doesn't
++ * touch the cache, it runs after the cache is reset (post VM-Exit), and PMIs
++ * need to several registers that are cacheable.
++ */
++#define kvm_assert_register_caching_allowed(vcpu)		\
++	lockdep_assert_once(in_task() ||			\
++			    READ_ONCE(vcpu->arch.handling_intr_from_guest))
+ /*
+  * avail  dirty
+  * 0	  0	  register in VMCS/VMCB
+@@ -53,24 +65,28 @@ BUILD_KVM_GPR_ACCESSORS(r15, R15)
+ static inline bool kvm_register_is_available(struct kvm_vcpu *vcpu,
+ 					     enum kvm_reg reg)
+ {
++	kvm_assert_register_caching_allowed(vcpu);
+ 	return test_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+ }
+ 
+ static inline bool kvm_register_is_dirty(struct kvm_vcpu *vcpu,
+ 					 enum kvm_reg reg)
+ {
++	kvm_assert_register_caching_allowed(vcpu);
+ 	return test_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
+ }
+ 
+ static inline void kvm_register_mark_available(struct kvm_vcpu *vcpu,
+ 					       enum kvm_reg reg)
+ {
++	kvm_assert_register_caching_allowed(vcpu);
+ 	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+ }
+ 
+ static inline void kvm_register_mark_dirty(struct kvm_vcpu *vcpu,
+ 					   enum kvm_reg reg)
+ {
++	kvm_assert_register_caching_allowed(vcpu);
+ 	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+ 	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
+ }
+@@ -84,6 +100,7 @@ static inline void kvm_register_mark_dirty(struct kvm_vcpu *vcpu,
+ static __always_inline bool kvm_register_test_and_mark_available(struct kvm_vcpu *vcpu,
+ 								 enum kvm_reg reg)
+ {
++	kvm_assert_register_caching_allowed(vcpu);
+ 	return arch___test_and_set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+ }
+ 
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 9df3e1e5ae81..50f6b0e03d04 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -5031,6 +5031,7 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
+ 	.get_segment = svm_get_segment,
+ 	.set_segment = svm_set_segment,
+ 	.get_cpl = svm_get_cpl,
++	.get_cpl_no_cache = svm_get_cpl,
+ 	.get_cs_db_l_bits = svm_get_cs_db_l_bits,
+ 	.is_valid_cr0 = svm_is_valid_cr0,
+ 	.set_cr0 = svm_set_cr0,
+diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
+index 7668e2fb8043..92d35cc6cd15 100644
+--- a/arch/x86/kvm/vmx/main.c
++++ b/arch/x86/kvm/vmx/main.c
+@@ -50,6 +50,7 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
+ 	.get_segment = vmx_get_segment,
+ 	.set_segment = vmx_set_segment,
+ 	.get_cpl = vmx_get_cpl,
++	.get_cpl_no_cache = vmx_get_cpl_no_cache,
+ 	.get_cs_db_l_bits = vmx_get_cs_db_l_bits,
+ 	.is_valid_cr0 = vmx_is_valid_cr0,
+ 	.set_cr0 = vmx_set_cr0,
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index c67e448c6ebd..e2483678eca1 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -3568,16 +3568,29 @@ u64 vmx_get_segment_base(struct kvm_vcpu *vcpu, int seg)
+ 	return vmx_read_guest_seg_base(to_vmx(vcpu), seg);
+ }
+ 
+-int vmx_get_cpl(struct kvm_vcpu *vcpu)
++static int __vmx_get_cpl(struct kvm_vcpu *vcpu, bool no_cache)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	int ar;
+ 
+ 	if (unlikely(vmx->rmode.vm86_active))
+ 		return 0;
+-	else {
+-		int ar = vmx_read_guest_seg_ar(vmx, VCPU_SREG_SS);
+-		return VMX_AR_DPL(ar);
+-	}
++
++	if (no_cache)
++		ar = vmcs_read32(GUEST_SS_AR_BYTES);
++	else
++		ar = vmx_read_guest_seg_ar(vmx, VCPU_SREG_SS);
++	return VMX_AR_DPL(ar);
++}
++
++int vmx_get_cpl(struct kvm_vcpu *vcpu)
++{
++	return __vmx_get_cpl(vcpu, false);
++}
++
++int vmx_get_cpl_no_cache(struct kvm_vcpu *vcpu)
++{
++	return __vmx_get_cpl(vcpu, true);
+ }
+ 
+ static u32 vmx_segment_access_rights(struct kvm_segment *var)
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 2325f773a20b..bcf40c7f3a38 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -385,6 +385,7 @@ void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu);
+ void vmx_set_host_fs_gs(struct vmcs_host_state *host, u16 fs_sel, u16 gs_sel,
+ 			unsigned long fs_base, unsigned long gs_base);
+ int vmx_get_cpl(struct kvm_vcpu *vcpu);
++int vmx_get_cpl_no_cache(struct kvm_vcpu *vcpu);
+ bool vmx_emulation_required(struct kvm_vcpu *vcpu);
+ unsigned long vmx_get_rflags(struct kvm_vcpu *vcpu);
+ void vmx_set_rflags(struct kvm_vcpu *vcpu, unsigned long rflags);
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 83fe0a78146f..941245082647 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5094,7 +5094,13 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+ 	int idx;
+ 
+ 	if (vcpu->preempted) {
+-		vcpu->arch.preempted_in_kernel = kvm_arch_vcpu_in_kernel(vcpu);
++		/*
++		 * Assume protected guests are in-kernel.  Inefficient yielding
++		 * due to false positives is preferable to never yielding due
++		 * to false negatives.
++		 */
++		vcpu->arch.preempted_in_kernel = vcpu->arch.guest_state_protected ||
++						 !kvm_x86_call(get_cpl_no_cache)(vcpu);
+ 
+ 		/*
+ 		 * Take the srcu lock as memslots will be accessed to check the gfn
+@@ -13207,6 +13213,7 @@ void kvm_arch_commit_memory_region(struct kvm *kvm,
+ 
+ bool kvm_arch_vcpu_in_kernel(struct kvm_vcpu *vcpu)
+ {
++	/* TODO: Elide the call in the kvm_guest_get_ip() perf callback. */
+ 	if (vcpu->arch.guest_state_protected)
+ 		return true;
+ 
+@@ -13215,6 +13222,10 @@ bool kvm_arch_vcpu_in_kernel(struct kvm_vcpu *vcpu)
+ 
+ unsigned long kvm_arch_vcpu_get_ip(struct kvm_vcpu *vcpu)
+ {
++	/* TODO: Elide the call in the kvm_guest_get_ip() perf callback. */
++	if (vcpu->arch.guest_state_protected)
++		return 0;
++
+ 	return kvm_rip_read(vcpu);
+ }
+ 
+
+base-commit: 3f8df6285271d9d8f17d733433e5213a63b83a0b
+-- 
+
 
