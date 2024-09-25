@@ -1,201 +1,111 @@
-Return-Path: <linux-kernel+bounces-339223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 000BB9862CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:16:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28DC6986179
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5EE8B2B131
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:52:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552D91C26FE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0BB18990B;
-	Wed, 25 Sep 2024 14:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864D318732A;
+	Wed, 25 Sep 2024 14:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JWlhs6Br"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qGeYFcQg"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB40F282FD;
-	Wed, 25 Sep 2024 14:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2791862BB
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727273845; cv=none; b=p+dOqDDgqinoq7mwc6ltdQ95RwYRe4I+DpKkqKU+mZKfuPSfxTR/vkl6S8vUHZJjdSh5xvCfmq/NeM+uKBSj/Mz6CASIqbHHmqmsMq0ExGXNoVtXKqX929wkX8Wl509iDjYbpPU2jc28ZftEFSZgcn9jq/q0ArDGSIPGm9MF9W0=
+	t=1727273928; cv=none; b=o+S5/9SDLGNOh1Scnz7sXjLPyE1iktUl1z0mT02wfsHIcKNyXfZ1+Hqd1PUOKNcTxal1GojUR2MkUnw23pRg1mureNELZ1aSnomrlGFDIixPvdc4ZXAPW7OoHWYg1UPhIisAms23E/mtljGQVTFsVwGgBQhIs7x4vngf5nLenXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727273845; c=relaxed/simple;
-	bh=OlkeQTPorZrC/+fkJlrtFsckAz58CEKPkG61d+T1guA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BndLcXvfROCsp/sq0Pbi0DDZCzuEqjjsMrZFLIyBpCuzLATkl9nWRBNqMPSI/JBcXpcZr9s2NtaUngXHHa2EcV8ffBg86BcKqpOXtVUNT/gGjCxBH1cCJTWzo5HHFRg0FqJPQXhj7M414FxsqHOod/6cyd0MX6XozZp55NYhhvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JWlhs6Br; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727273844; x=1758809844;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=OlkeQTPorZrC/+fkJlrtFsckAz58CEKPkG61d+T1guA=;
-  b=JWlhs6Bri9SY88SDEJe71/sLOYKfkkpN+R27lubEl/euAvEh110sfW5p
-   1qgymIHd2Ace8KcvANK7IRhD3QIEsBQfeCYJB+1GokwBGlhf/6FiluCVR
-   7SwG0ca78xGs2iz4vjZ8lFabw1FXGzK4FLkf5IuUEYVPlXcVF89u0vN2G
-   vqBh55JMhALXm/RKTvucoLNx6c6YXaYj5QkfBwkBOd3cjkjTKa6Y7Vm/9
-   KKUSyM+tw90L64gvlKRh52yVQEWOg/5C3zf5QRdREBXTH7BSqOY2ohQz+
-   bFqSDW5UgMiVFjoNHydsGSxGISGcuBQ7viFnP4/SDCztWOgbF0IEDK5+4
-   w==;
-X-CSE-ConnectionGUID: 3OI3YHvdTg++8LFHQBWKhQ==
-X-CSE-MsgGUID: plsNVX9tRYaqt7GiJQisog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="37466465"
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="37466465"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 07:17:23 -0700
-X-CSE-ConnectionGUID: GUI/zqUlQ8m7CNfmoi47bg==
-X-CSE-MsgGUID: u4mLht3jRsaQgu7mKP7uxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="102558425"
-Received: from hcaldwel-desk1.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.221.154])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 07:17:18 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, amir73il@gmail.com,
- hu1.chen@intel.com, malini.bhandaru@intel.com, tim.c.chen@intel.com,
- mikko.ylinen@intel.com, lizhen.you@intel.com,
- linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 04/16] overlayfs: Document critical override_creds()
- operations
-In-Reply-To: <20240925-umweht-schiffen-252e157b67f7@brauner>
-References: <20240822012523.141846-1-vinicius.gomes@intel.com>
- <20240822012523.141846-5-vinicius.gomes@intel.com>
- <CAJfpegvx2nyVpp4kHaxt=VwBb3U4=7GM-pjW_8bu+fm_N8diHQ@mail.gmail.com>
- <87wmk2lx3s.fsf@intel.com> <87h6a43gcc.fsf@intel.com>
- <20240925-umweht-schiffen-252e157b67f7@brauner>
-Date: Wed, 25 Sep 2024 11:17:15 -0300
-Message-ID: <87bk0b3jis.fsf@intel.com>
+	s=arc-20240116; t=1727273928; c=relaxed/simple;
+	bh=ZXsHY/N0ib9u2Hl5cFK5B5Evj32BWfZwfPIFrSdPOWc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A/piNkJApOa1o/UpERk1PZSB3OJb0Buvk7WDGpB1Z4Ahi6n+vYrb/dHFyadIdFOnCHWRryXZzVh3WSToDbBaxVRHGaq8iyujtPCx9vpJkaiWLXz2zcR5OARdQ5ROEWgr7xoGzPNG4Tk7DKbTz0AnXzEXvUSqiiuk9KCTP8SSPA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qGeYFcQg; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727273923;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=j1jLzGsVDLJpvcx9eHuYorQp4QLT+Mz2rR2lkvgJUBc=;
+	b=qGeYFcQguJyat4m0Y6rli6DTb6lVeOVti6hvTMdkragSAjHgxBhjwN6/6LrJA5+6dgNiCk
+	hAOU41BfwGN7U4syOz+hI6Vh/s1cKJQCsvE1hsqJPBGsLDvf+V2Ay3fDgpuTI383qbRVR5
+	2+E/pcY3JoBLr04nrI3JspsG8fCFsrM=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Kunwu Chan <chentao@kylinos.cn>,
+	Vinay Belgaumkar <vinay.belgaumkar@intel.com>,
+	Aravind Iddamsetty <aravind.iddamsetty@intel.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Ivan Briano <ivan.briano@intel.com>,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/i915: Use memdup_user() instead of kmalloc() and copy_from_user()
+Date: Wed, 25 Sep 2024 16:17:46 +0200
+Message-ID: <20240925141750.51198-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Christian Brauner <brauner@kernel.org> writes:
+Use memdup_user() instead of kmalloc() followed by copy_from_user() to
+simplify set_context_image().
 
-> On Tue, Sep 24, 2024 at 06:13:39PM GMT, Vinicius Costa Gomes wrote:
->> Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:
->> 
->> > Miklos Szeredi <miklos@szeredi.hu> writes:
->> >
->> >> On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
->> >> <vinicius.gomes@intel.com> wrote:
->> >>>
->> >>> Add a comment to these operations that cannot use the _light version
->> >>> of override_creds()/revert_creds(), because during the critical
->> >>> section the struct cred .usage counter might be modified.
->> >>
->> >> Why is it a problem if the usage counter is modified?  Why is the
->> >> counter modified in each of these cases?
->> >>
->> >
->> > Working on getting some logs from the crash that I get when I convert
->> > the remaining cases to use the _light() functions.
->> >
->> 
->> See the log below.
->> 
->> > Perhaps I was wrong on my interpretation of the crash.
->> >
->> 
->> What I am seeing is that ovl_setup_cred_for_create() has a "side
->> effect", it creates another set of credentials, runs the security hooks
->> with this new credentials, and the side effect is that when it returns,
->> by design, 'current->cred' is this new credentials (a third set of
->> credentials).
->
-> Well yes, during ovl_setup_cred_for_create() the fs{g,u}id needs to be
-> overwritten. But I'm stil confused what the exact problem is as it was
-> always clear that ovl_setup_cred_for_create() wouldn't be ported to
-> light variants.
->
-> /me looks...
->
->> 
->> And this implies that refcounting for this is somewhat tricky, as said
->> in commit d0e13f5bbe4b ("ovl: fix uid/gid when creating over whiteout").
->> 
->> I see two ways forward:
->> 
->> 1. Keep using the non _light() versions in functions that call
->>    ovl_setup_cred_for_create().
->> 2. Change ovl_setup_cred_for_create() so it doesn't drop the "extra"
->>    refcount.
->> 
->> I went with (1), and it still sounds to me like the best way, but I
->> agree that my explanation was not good enough, will add the information
->> I just learned to the commit message and to the code.
->> 
->> Do you see another way forward? Or do you think that I should go with
->> (2)?
->
-> ... ok, I understand. Say we have:
->
-> ovl_create_tmpfile()
-> /* current->cred == ovl->creator_cred without refcount bump /*
-> old_cred = ovl_override_creds_light()
-> -> ovl_setup_cred_for_create()
->    /* Copy current->cred == ovl->creator_cred */
->    modifiable_cred = prepare_creds()
->
->    /* Override current->cred == modifiable_cred */
->    mounter_creds = override_creds(modifiable_cred)
->
->    /*
->     * And here's the BUG BUG BUG where we decrement the refcount on the
->     * constant mounter_creds.
->     */
->    put_cred(mounter_creds) // BUG BUG BUG
->
->    put_cred(modifiable_creds)
->
-> So (1) is definitely the wrong option given that we can get rid of
-> refcount decs and incs in the creation path.
->
-> Imo, you should do (2) and add a WARN_ON_ONC(). Something like the
-> __completely untested__:
->
+Fixes the following Coccinelle/coccicheck warning reported by
+memdup_user.cocci:
 
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index ab65e98a1def..e246e0172bb6 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -571,7 +571,12 @@ static int ovl_setup_cred_for_create(struct dentry *dentry, struct inode *inode,
->                 put_cred(override_cred);
->                 return err;
->         }
-> -       put_cred(override_creds(override_cred));
-> +
-> +       /*
-> +        * We must be called with creator creds already, otherwise we risk
-> +        * leaking creds.
-> +        */
-> +       WARN_ON_ONCE(override_creds(override_cred) != ovl_creds(dentry->d_sb));
->         put_cred(override_cred);
->
->         return 0;
->
+  WARNING opportunity for memdup_user
 
-At first glance, looks good. Going to test it and see how it works.
-Thank you.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/gpu/drm/i915/gem/i915_gem_context.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-For the next version of the series, my plan is to include this
-suggestion/change and remove the guard()/scoped_guard() conversion
-patches from the series.
-
-
-Cheers,
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_context.c b/drivers/gpu/drm/i915/gem/i915_gem_context.c
+index c0543c35cd6a..c1cc41e90502 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_context.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_context.c
+@@ -2159,18 +2159,12 @@ static int set_context_image(struct i915_gem_context *ctx,
+ 		goto out_ce;
+ 	}
+ 
+-	state = kmalloc(ce->engine->context_size, GFP_KERNEL);
+-	if (!state) {
+-		ret = -ENOMEM;
++	state = memdup_user(u64_to_user_ptr(user.image), ce->engine->context_size);
++	if (IS_ERR(state)) {
++		ret = PTR_ERR(state);
+ 		goto out_ce;
+ 	}
+ 
+-	if (copy_from_user(state, u64_to_user_ptr(user.image),
+-			   ce->engine->context_size)) {
+-		ret = -EFAULT;
+-		goto out_state;
+-	}
+-
+ 	shmem_state = shmem_create_from_data(ce->engine->name,
+ 					     state, ce->engine->context_size);
+ 	if (IS_ERR(shmem_state)) {
 -- 
-Vinicius
+2.46.1
+
 
