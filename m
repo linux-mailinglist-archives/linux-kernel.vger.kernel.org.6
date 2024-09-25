@@ -1,212 +1,432 @@
-Return-Path: <linux-kernel+bounces-338568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5437985A64
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:07:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E1E985AB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14C8A281D4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:07:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F821C23BD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A561B5803;
-	Wed, 25 Sep 2024 11:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BDB17CA14;
+	Wed, 25 Sep 2024 11:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FqllnbbT"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2041.outbound.protection.outlook.com [40.107.243.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="bTAgKRY5"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047A41B532F;
-	Wed, 25 Sep 2024 11:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727264537; cv=fail; b=GSoPusOfNOBGybqqcAbiOLLbOspdQZkJu1yDk+2tl+0haCnKLRGYf7Lc4h7Au1f5tlqRoMGZpJNMYJ6GT5XyJQpzxjQPAA4sNVdB/jTjcdk+IanNDbgEZcghzJVhIhISDjAUU7BzDj+RpLxHgZxw7d9Nsnfo1vViq4Rs3pAUgsE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727264537; c=relaxed/simple;
-	bh=nioz/Ed0XzIvKn8k7lHWushH1sJ50T6hQJn5zgBFZW4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PmeptdFIHzBsx5HkBX3a50GvCUc6OE/j89VWdeytQp2980HX9lMVR4swrtz8eVWUGNpnBl657TfQ+NbKKWDnAaJb45p3H1HK3nNpvNWTfRSNwhK0nCZrY15xUxijJtWlrEzrdNc6UbuJRKfZ7iL+RtkX+wcEIIh5yZhMSBNYWTE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FqllnbbT; arc=fail smtp.client-ip=40.107.243.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VUVNj5p3r/kkcSDZ3I0FJ+opA0shrd5+wjeK6660X5bE1enK9c2PmcNeEwfNBRIZH4Rd4UmchgjVa653+wKJSLe6QI0pM8f9mdXmwMjP6y3EuurY2jhhKe89FEQAL9ko34JrM4RO30IPkHH5LWqfpFFqfe7Rj4pseE+0YAf120TrxkChh2NhvRHh1eWyf9DzFVPBhhmU2SGz192KImtd/uPu1ntaNBhA+R/eIRCPEylcjpPy3EDkkKBJD6U3yMQXRHV57Ad9CpxATeagAHL1RGKMqNNfFutRSaBdXY1rAlIs92Cl97vJAgZhLVClSZ0+za2UziABGlReZYtk8iv9Kg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qVueAqTjXInYSbLxcMt6A7IN37qdvCLjhxlk5XsEAPE=;
- b=FSTr2L8fMhb41gP7oQTcus+Qr9hZeTXEBC/mV74D9laXEHw1trm9HYb6+EdZngue7imHKOAcukZpRAPJwjRbNlYfZ02O48IMYK7d34FMwOnZOpxYrPr6fsed9c2wVjTDV/+Ey/KKKFb8QrHGSY6ZF1zAAeZnR7L6h0XE9Oj6m0PPVojh1D2Ia/Bqf36O6mlFab+sQAHNyMcsWukfgpB6yMclBo5Ndd4pMLJVqcWCH+jfknuNG+9FOsSrxsNaNtbeDzy+kZzU+3EOd7AHzZ3UhxWgCbZdVqHSmE1keHQYDmScwDWFfvDCZJx2Kgs/IaQD12yBAlQNYN5+pOxKK2WjPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qVueAqTjXInYSbLxcMt6A7IN37qdvCLjhxlk5XsEAPE=;
- b=FqllnbbTbBP9LhkPMsVmz+ySWmsyLVetyQAA2KkjUZ0q/aGBIuVgYLO750firkBHHBOLqgHTipYgHEu9gpEY8P55qQqSkQf6lP5CF+7IWACyZrFqbCeNm0T3VJ4XHGjGMhteHprR+8sphny4jp6yKMiQMltQJYr+Mdix8WFIiWs=
-Received: from MN0PR04CA0017.namprd04.prod.outlook.com (2603:10b6:208:52d::10)
- by SN7PR12MB6669.namprd12.prod.outlook.com (2603:10b6:806:26f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Wed, 25 Sep
- 2024 11:42:11 +0000
-Received: from BN1PEPF00004684.namprd03.prod.outlook.com
- (2603:10b6:208:52d:cafe::53) by MN0PR04CA0017.outlook.office365.com
- (2603:10b6:208:52d::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.17 via Frontend
- Transport; Wed, 25 Sep 2024 11:42:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN1PEPF00004684.mail.protection.outlook.com (10.167.243.90) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8005.15 via Frontend Transport; Wed, 25 Sep 2024 11:42:10 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Sep
- 2024 06:42:10 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Sep
- 2024 06:42:09 -0500
-Received: from xhdakumarma40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 25 Sep 2024 06:42:05 -0500
-From: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-To: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>
-CC: <michal.simek@amd.com>, <linux-spi@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <git@amd.com>,
-	<amitrkcian2002@gmail.com>, Amit Kumar Mahapatra
-	<amit.kumar-mahapatra@amd.com>
-Subject: [PATCH v2] dt-bindings: spi: zynqmp-qspi: Include two 'reg' properties only for the Zynq UltraScale QSPI
-Date: Wed, 25 Sep 2024 17:12:03 +0530
-Message-ID: <20240925114203.2234735-1-amit.kumar-mahapatra@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECAE18E75B
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 11:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727264685; cv=none; b=lGCEOjSXQD3kM2vpmGBwCRajMX9EDBHUyVGtDZ4FN7svFmmUpqsOgXQmdtGzivdrNmhbE/V53mTABff3D8HmkGvWrZICefnQ9/5plAL6TyEBXf0g0YB4NnjfeBgOjX1yivak93KGXcirtvtg5MuJVMZJYciZh5PmOhOCurIsgmw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727264685; c=relaxed/simple;
+	bh=qYaHVmDPbQzRIGoKKTUolKbbQVQoIpwzT76OHWeXQjk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vFWo5shfOTMHHvuJCyLhFUY8VrcGkpa8uIfOBH4wgQILsXlJGJ0h6W2TDaBSeIuPgNNs5KisONcGa4syKHZGgFVe3es2dX8+JkJkT97JFYYy8t/Eq9m+EHAiTqBztO2m2MadX7rNNgiO8Hz7Q/PwSnI9pUw/DAnr5zCG5LyvKUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=bTAgKRY5; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c42e7adbddso8755459a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:44:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1727264680; x=1727869480; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jW5wRAQT/NW2ZEXTAe4H57yFnYDEvXMtsJrvDGoCnp8=;
+        b=bTAgKRY5zHwQvWkFzw/9p9srOUpxEfQOvnHNDTXtuC4o4zqSFyJO+fsurhd/topDmb
+         NA/KiehTakVGgApahmCax/xoNgbodt/flKYPZHCupOnpR9mSBCFD3PVETmqdhtrjYeFJ
+         XOld18SD6Vd8AMENOfAEfhzyaPu8b4pYqE034=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727264680; x=1727869480;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jW5wRAQT/NW2ZEXTAe4H57yFnYDEvXMtsJrvDGoCnp8=;
+        b=OL2zruOZxq8KHeobSwex9afp3l/MYj18G2nXWdRuPMEbAdsLMBVQ46vfkxPuUpChKp
+         QRwo6LXVYp6pa3ro43eLn7sQvoiHKdj4jxnYlhOq0Wgikio6j2NEfIkr0ErDIb0fXwEx
+         0VV8PA7moVgDXZy1gghR8Xf0mehGEZKu9p6t8a9KBNbF3RdJpegnXY93/MQCz84Mi1e3
+         hG2TgPinXFytC3yaUEKZINg25fgt9boh3s2rvpnajoJFtLIzxrLMGnqu3MdijTLHjQJw
+         ToVEH65vTTvJGuV5zeuCLxjK9oywD0XhukIi4EKuVk0J12UoiYgeAV6JpmWYQm5GgB08
+         noRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWy00w2CdDpHvuqElUoZmJQmt/7+13NPFDRB/nSYaf0hTgBDrnQME8zTXOWPcA3vjrztBMvgdwmRV/f/O4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLlXQPR/wydC5/CnGbBnPKCm5K+KiOHHTg4AghBRAlARSa1L4T
+	JGss6jKskwjYQF4dPvDhQYUUmw6hgiPQj0v+UqhmDBAxg/iqkd8chBuijwPaF9E=
+X-Google-Smtp-Source: AGHT+IHIOa4EFOAn8IjNL5rc8fy+kLCGjgZ8YGFMbVmN6haJU3wmeWL4hRmQsHPilAlf3Yhl96Z3OA==
+X-Received: by 2002:a05:6402:27d2:b0:5bf:50:266b with SMTP id 4fb4d7f45d1cf-5c7206298b7mr1862094a12.19.1727264679937;
+        Wed, 25 Sep 2024 04:44:39 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf4d7a28sm1751162a12.85.2024.09.25.04.44.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 04:44:39 -0700 (PDT)
+Date: Wed, 25 Sep 2024 13:44:37 +0200
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: Simona Vetter <simona.vetter@ffwll.ch>,
+	Felix Kuehling <felix.kuehling@amd.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Philip.Yang@amd.com, akpm@linux-foundation.org,
+	christian.koenig@amd.com
+Subject: Re: [PATCH 1/1] mm/migrate: Trylock device page in do_swap_page
+Message-ID: <ZvP3pWjVviMdezuy@phenom.ffwll.local>
+Mail-Followup-To: Matthew Brost <matthew.brost@intel.com>,
+	Felix Kuehling <felix.kuehling@amd.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Philip.Yang@amd.com, akpm@linux-foundation.org,
+	christian.koenig@amd.com
+References: <20240911030337.870160-2-matthew.brost@intel.com>
+ <87mskehjtc.fsf@nvdebian.thelocal>
+ <ZuS/NH/P8Fl+qptx@DUT025-TGLU.fm.intel.com>
+ <87msk5our1.fsf@nvdebian.thelocal>
+ <ece41917-2ea7-4571-83a5-a50c776c6587@amd.com>
+ <Zu3n3MmtdlEDaXnF@DUT025-TGLU.fm.intel.com>
+ <9a3e62e0-cb62-4d73-9694-7be8893f7206@amd.com>
+ <Zu3wV9FJSTs1E5Vx@DUT025-TGLU.fm.intel.com>
+ <ZvKnDT_bdx_PhAcG@phenom.ffwll.local>
+ <ZvLr66F3VqpMyLlS@DUT025-TGLU.fm.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: amit.kumar-mahapatra@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004684:EE_|SN7PR12MB6669:EE_
-X-MS-Office365-Filtering-Correlation-Id: d6521310-d77f-496f-6d1e-08dcdd5717b4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OhYttNbCTcEBUKxgonPq+83rHXQdYXH9HcRdgpaudoACmdCxntQRElM9WQDc?=
- =?us-ascii?Q?TLaN1n+1pPMeTGJktiRbYTrqz0BIJGkW6BTMEwqeV68oETGvejEBtvW1hFhh?=
- =?us-ascii?Q?vkVL+WMlMk/6WRDGv9N1ZUe2FiOwtsJh/wWOkZW8vbvCgvzkhGGr5yWY8i6Q?=
- =?us-ascii?Q?pmx+WIfDCQgWTzfJoMQ8gulAX47NSwnqePh3Lz7vGkq3g09aQPMjlE2D6NMR?=
- =?us-ascii?Q?TkqVnh5tqWyWyA017vobSzekhLdiN88JS6hCgvaw6dZZxwODk+9ae4acuGYx?=
- =?us-ascii?Q?/JrTid6vb9B8O1RRyCXISxOog76hUSGo/2wpAogRJEnxFCJY7Iy/fXi/z+nD?=
- =?us-ascii?Q?r/BPDPAv9ndAHzkeBHkIyyFluecgGurzKhaap1wy0Nmkp3555Ah94QwUDYlA?=
- =?us-ascii?Q?CMS0F4IFQwbMCL+ZyuPdvzXm3QjuepeQnyL9b0YpRggY8p87kfSJTGjcmvf3?=
- =?us-ascii?Q?HTgBnkZderEVSbqIAcoCX38nCPOGTW3RlvmeK0Qeo7uJYJZQQTCGHamaul87?=
- =?us-ascii?Q?nezo4JO+7OCjTIl9ejMrcANiM18bbSgOztLHdwas690+04AJx6GL+Pl/hGFy?=
- =?us-ascii?Q?FobqWXmQpAEjBdg0FB0d0fxd+wy8XGer+Ey4N0fSdgg8irGZvBx6/TU3be2F?=
- =?us-ascii?Q?UdKGlDfn04zKfAsphJFDNxwh9TVEDysc/kVHAf5o74Yv/FogZRfdt/fbplay?=
- =?us-ascii?Q?eYJMR1cl0a3mtrdr1baON5GncY7Qxcbk7cYqQjuO7W7RzcmGrqYnS+5g+QpG?=
- =?us-ascii?Q?vMQUEaN2vkGEID0eZnOUUvmLrFMlomtzHNcfVULOFiTWlNA4FqGoy3+BkogA?=
- =?us-ascii?Q?tgzSIQohW+KfQssl2y4yRAG8xu4eQSQqoXQlWZ/R909B4tv8DUloaxwMrwpF?=
- =?us-ascii?Q?XqDv+2vDswbJhOAzvwbG2wp7svhGxBz6XYTuFYars07HuUawI9zK9O+/cJJA?=
- =?us-ascii?Q?kgZgKnpieI2hpT1CR1l1FtBOOtnqZrUf67KXVRgMySpEJaeyfVOwbEie/aiY?=
- =?us-ascii?Q?45peiKRROEZC8imABKDv6fX+ZA0grEtXDxaRNi8Wn4Efde7+Rst6Qp5/8hzQ?=
- =?us-ascii?Q?c85YRVSvkWJY+FtM1H20Vqx5VUzQJHEiyZ+tbqrlu1kx54skT6zJewe/E9Ma?=
- =?us-ascii?Q?MZuoPsCkEvnGdP2eG9tKhiOE5CfLM7MiOhFhikh+DKsp/LoqJMCV16eCesXp?=
- =?us-ascii?Q?zFiWp20gmIHVtC5rA6MDPSFaF3VSxA1DdUJjXkxbVXqje/4X4NgkcRegMV6g?=
- =?us-ascii?Q?L4vpN+2rSJVsxUsfYAX5AdqAxbmfwYOA9ibYAapjvmyzcbwmud/Q1NR298dC?=
- =?us-ascii?Q?qQfzt0yOL6UW9ipbXDlGa9oyuKpbuegY06ZKUtLKZ27h/mQRixgHtMMaYw7m?=
- =?us-ascii?Q?EVaORetkCLotqKS+d7nUyrPKZj/f?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 11:42:10.8580
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6521310-d77f-496f-6d1e-08dcdd5717b4
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00004684.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6669
+In-Reply-To: <ZvLr66F3VqpMyLlS@DUT025-TGLU.fm.intel.com>
+X-Operating-System: Linux phenom 6.10.6-amd64 
 
-Linear mode is only supported by the Zynq UltraScale QSPI controller,
-so update the bindings to include two 'reg' properties only for the
-Zynq UltraScale QSPI controller.
+On Tue, Sep 24, 2024 at 04:42:19PM +0000, Matthew Brost wrote:
+> On Tue, Sep 24, 2024 at 01:48:29PM +0200, Simona Vetter wrote:
+> > On Fri, Sep 20, 2024 at 09:59:51PM +0000, Matthew Brost wrote:
+> > > On Fri, Sep 20, 2024 at 05:50:10PM -0400, Felix Kuehling wrote:
+> > > > 
+> > > > On 2024-09-20 17:23, Matthew Brost wrote:
+> > > > > On Fri, Sep 20, 2024 at 04:26:50PM -0400, Felix Kuehling wrote:
+> > > > > > On 2024-09-18 11:10, Alistair Popple wrote:
+> > > > > > > Matthew Brost <matthew.brost@intel.com> writes:
+> > > > > > > 
+> > > > > > > > On Wed, Sep 11, 2024 at 02:53:31PM +1000, Alistair Popple wrote:
+> > > > > > > > > Matthew Brost <matthew.brost@intel.com> writes:
+> > > > > > > > > 
+> > > > > > > > > I haven't seen the same in the NVIDIA UVM driver (out-of-tree, I know)
+> > > > > > > > Still a driver.
+> > > > > > > Indeed, and I'm happy to answer any questions about our implementation.
+> > > > > > > 
+> > > > > > > > > but theoretically it seems like it should be possible. However we
+> > > > > > > > > serialize migrations of the same virtual address range to avoid these
+> > > > > > > > > kind of issues as they can happen the other way too (ie. multiple
+> > > > > > > > > threads trying to migrate to GPU).
+> > > > > > > > > 
+> > > > > > > > > So I suspect what happens in UVM is that one thread wins and installs
+> > > > > > > > > the migration entry while the others fail to get the driver migration
+> > > > > > > > > lock and bail out sufficiently early in the fault path to avoid the
+> > > > > > > > > live-lock.
+> > > > > > > > > 
+> > > > > > > > I had to try hard to show this, doubt an actual user could trigger this.
+> > > > > > > > 
+> > > > > > > > I wrote a test which kicked 8 threads, each thread did a pthread join,
+> > > > > > > > and then tried to read the same page. This repeats in loop for like 512
+> > > > > > > > pages or something. I needed an exclusive lock in migrate_to_ram vfunc
+> > > > > > > > for it to livelock. Without an exclusive lock I think on average I saw
+> > > > > > > > about 32k retries (i.e. migrate_to_ram calls on the same page) before a
+> > > > > > > > thread won this race.
+> > > > > > > > 
+> > > > > > > >   From reading UVM, pretty sure if you tried hard enough you could trigger
+> > > > > > > > a livelock given it appears you take excluvise locks in migrate_to_ram.
+> > > > > > > Yes, I suspect you're correct here and that we just haven't tried hard
+> > > > > > > enough to trigger it.
+> > > > > > > 
+> > > > > > > > > > Cc: Philip Yang <Philip.Yang@amd.com>
+> > > > > > > > > > Cc: Felix Kuehling <felix.kuehling@amd.com>
+> > > > > > > > > > Cc: Christian König <christian.koenig@amd.com>
+> > > > > > > > > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > > > > > > > > Suggessted-by: Simona Vetter <simona.vetter@ffwll.ch>
+> > > > > > > > > > Signed-off-by: Matthew Brost <matthew.brost@intel.com>
+> > > > > > > > > > ---
+> > > > > > > > > >    mm/memory.c         | 13 +++++++---
+> > > > > > > > > >    mm/migrate_device.c | 60 +++++++++++++++++++++++++++++++--------------
+> > > > > > > > > >    2 files changed, 50 insertions(+), 23 deletions(-)
+> > > > > > > > > > 
+> > > > > > > > > > diff --git a/mm/memory.c b/mm/memory.c
+> > > > > > > > > > index 3c01d68065be..bbd97d16a96a 100644
+> > > > > > > > > > --- a/mm/memory.c
+> > > > > > > > > > +++ b/mm/memory.c
+> > > > > > > > > > @@ -4046,10 +4046,15 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> > > > > > > > > >    			 * Get a page reference while we know the page can't be
+> > > > > > > > > >    			 * freed.
+> > > > > > > > > >    			 */
+> > > > > > > > > > -			get_page(vmf->page);
+> > > > > > > > > > -			pte_unmap_unlock(vmf->pte, vmf->ptl);
+> > > > > > > > > > -			ret = vmf->page->pgmap->ops->migrate_to_ram(vmf);
+> > > > > > > > > > -			put_page(vmf->page);
+> > > > > > > > > > +			if (trylock_page(vmf->page)) {
+> > > > > > > > > > +				get_page(vmf->page);
+> > > > > > > > > > +				pte_unmap_unlock(vmf->pte, vmf->ptl);
+> > > > > > > > > This is all beginning to look a lot like migrate_vma_collect_pmd(). So
+> > > > > > > > > rather than do this and then have to pass all this context
+> > > > > > > > > (ie. fault_page) down to the migrate_vma_* functions could we instead
+> > > > > > > > > just do what migrate_vma_collect_pmd() does here? Ie. we already have
+> > > > > > > > > the PTL and the page lock so there's no reason we couldn't just setup
+> > > > > > > > > the migration entry prior to calling migrate_to_ram().
+> > > > > > > > > 
+> > > > > > > > > Obviously calling migrate_vma_setup() would show the page as not
+> > > > > > > > > migrating, but drivers could easily just fill in the src_pfn info after
+> > > > > > > > > calling migrate_vma_setup().
+> > > > > > > > > 
+> > > > > > > > > This would eliminate the whole fault_page ugliness.
+> > > > > > > > > 
+> > > > > > > > This seems like it would work and agree it likely be cleaner. Let me
+> > > > > > > > play around with this and see what I come up with. Multi-tasking a bit
+> > > > > > > > so expect a bit of delay here.
+> > > > > > > > 
+> > > > > > > > Thanks for the input,
+> > > > > > > > Matt
+> > > > > > Thanks! Sorry, I'm late catching up after a vacation. Please keep Philip,
+> > > > > > Christian and myself in the loop with future patches in this area.
+> > > > > > 
+> > > > > Will do. Already have another local patch set which helps drivers dma
+> > > > > map 2M pages for migrations if SRAM is physically contiguous. Seems
+> > > > > helpful for performance on Intel hardware. Probably post that soon for
+> > > > > early feedack.
+> > > > 
+> > > > OK.
+> > > > 
+> > > > 
+> > > > > 
+> > > > > Longer term I thinking 2M migration entries, 2M device pages, and being
+> > > > > able to install 2M THP on VRAM -> SRAM could be really helpful. I'm
+> > > > > finding migrate_vma_* functions take up like 80-90% of the time in the
+> > > > > CPU / GPU fault handlers on a fault (or prefetch) which doesn't seem
+> > > > > ideal. Seems like 2M entries for everything would really help here. No
+> > > > > idea how feasible this is as the core MM stuff gets confusing fast. Any
+> > > > > input on this idea?
+> > > > 
+> > > > I agree with your observations. We found that the migrate_vma_* code was the
+> > > > bottle neck for migration performance as well, and not breaking 2M pages
+> > > > could reduce that overhead a lot. I don't have any specific ideas. I'm not
+> > > > familiar with the details of that code myself. Philip has looked at this
+> > > > (and some old NVidia patches from a few years ago) in the past but never had
+> > > > enough uninterrupted time to make it past prototyping.
+> > > > 
+> > > 
+> > > Cool good to know this isn't some crazy idea. Doubt it happen anytime
+> > > soon as I need to get a working baseline in before anything then start
+> > > applying optimizations and help in get other features to get the design
+> > > complete. But eventually will probably try to look at this. May ping
+> > > Philip and Nvidia when I have time to dig in here.
+> > 
+> > I think the big step will be moving hmm.c and migrate.c apis over from
+> > struct page to folios. That should also give us some nice benefits on the
+> > gpu side, since instead of 4k pages to track we could allocate 2m gpu
+> > pages.
+> > 
+> 
+> I think was thinking just encode the order in the migration PFN like HMM
+> does. Really only Nth order entry in the page array needs to be
+> populated then - HMM populates every entry though which doesn't seem
+> like that is required. Maybe having a folio API makes more sense?
 
-Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
----
-BRANCH: for-next
+Both I'd say, as a first attempt at least. An array of folios, but only
+populate the ones we need and jump over empty entries. A bit wasteful, but
+eh it's just allocations.
 
-Changes in v2:
- - In the if block changed 'maxItems' to 'minItems'.
- - Retained 'reg' property definition and added 'minItems'.
- - Moved the allOf block down to the end of the binding.
----
- .../bindings/spi/spi-zynqmp-qspi.yaml         | 22 ++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+> > Once we have folios at the driver/core mm api level doing all the fancy
+> > thp stuff should be at least a well-contained problem. But I might be
+> > dellusionally optimistic here :-)
+> 
+> I think it contained in the sense is the DRM SVM layer just allocates a
+> THP or large continous device memory and hands it off to migrate layer
+> and that layer does the right thing. The 'right thing' here I believe is
+> a decent amount of core MM work though.
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-zynqmp-qspi.yaml b/Documentation/devicetree/bindings/spi/spi-zynqmp-qspi.yaml
-index e5199b109dad..04d4d3b4916d 100644
---- a/Documentation/devicetree/bindings/spi/spi-zynqmp-qspi.yaml
-+++ b/Documentation/devicetree/bindings/spi/spi-zynqmp-qspi.yaml
-@@ -9,9 +9,6 @@ title: Xilinx Zynq UltraScale+ MPSoC GQSPI controller
- maintainers:
-   - Michal Simek <michal.simek@amd.com>
- 
--allOf:
--  - $ref: spi-controller.yaml#
--
- properties:
-   compatible:
-     enum:
-@@ -19,6 +16,7 @@ properties:
-       - xlnx,zynqmp-qspi-1.0
- 
-   reg:
-+    minItems: 1
-     maxItems: 2
- 
-   interrupts:
-@@ -47,6 +45,24 @@ required:
- 
- unevaluatedProperties: false
- 
-+allOf:
-+  - $ref: spi-controller.yaml#
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: xlnx,zynqmp-qspi-1.0
-+    then:
-+      properties:
-+        reg:
-+          minItems: 2
-+
-+    else:
-+      properties:
-+        reg:
-+          maxItems: 1
-+
- examples:
-   - |
-     #include <dt-bindings/clock/xlnx-zynqmp-clk.h>
+Yeah that's what I meant, once we have switched the interfaces to be
+arrays of folios, where for larger folios we leave the entries in between
+NULL and have some appropriate iterators, then the driver side is done
+mostly.  The core mm side to actually make use of that will be fairly
+gnarly though.
+-Sima
+
+> 
+> Matt
+> 
+> > -Sima
+> > 
+> > > 
+> > > Matt
+> > > 
+> > > > Regards,
+> > > >   Felix
+> > > > 
+> > > > 
+> > > > > 
+> > > > > Matt
+> > > > > 
+> > > > > > Regards,
+> > > > > >    Felix
+> > > > > > 
+> > > > > > 
+> > > > > > > > > > +				ret = vmf->page->pgmap->ops->migrate_to_ram(vmf);
+> > > > > > > > > > +				put_page(vmf->page);
+> > > > > > > > > > +				unlock_page(vmf->page);
+> > > > > > > > > > +			} else {
+> > > > > > > > > > +				pte_unmap_unlock(vmf->pte, vmf->ptl);
+> > > > > > > > > > +			}
+> > > > > > > > > >    		} else if (is_hwpoison_entry(entry)) {
+> > > > > > > > > >    			ret = VM_FAULT_HWPOISON;
+> > > > > > > > > >    		} else if (is_pte_marker_entry(entry)) {
+> > > > > > > > > > diff --git a/mm/migrate_device.c b/mm/migrate_device.c
+> > > > > > > > > > index 6d66dc1c6ffa..049893a5a179 100644
+> > > > > > > > > > --- a/mm/migrate_device.c
+> > > > > > > > > > +++ b/mm/migrate_device.c
+> > > > > > > > > > @@ -60,6 +60,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+> > > > > > > > > >    				   struct mm_walk *walk)
+> > > > > > > > > >    {
+> > > > > > > > > >    	struct migrate_vma *migrate = walk->private;
+> > > > > > > > > > +	struct folio *fault_folio = migrate->fault_page ?
+> > > > > > > > > > +		page_folio(migrate->fault_page) : NULL;
+> > > > > > > > > >    	struct vm_area_struct *vma = walk->vma;
+> > > > > > > > > >    	struct mm_struct *mm = vma->vm_mm;
+> > > > > > > > > >    	unsigned long addr = start, unmapped = 0;
+> > > > > > > > > > @@ -88,11 +90,13 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+> > > > > > > > > >    			folio_get(folio);
+> > > > > > > > > >    			spin_unlock(ptl);
+> > > > > > > > > > -			if (unlikely(!folio_trylock(folio)))
+> > > > > > > > > > +			if (unlikely(fault_folio != folio &&
+> > > > > > > > > > +				     !folio_trylock(folio)))
+> > > > > > > > > >    				return migrate_vma_collect_skip(start, end,
+> > > > > > > > > >    								walk);
+> > > > > > > > > >    			ret = split_folio(folio);
+> > > > > > > > > > -			folio_unlock(folio);
+> > > > > > > > > > +			if (fault_folio != folio)
+> > > > > > > > > > +				folio_unlock(folio);
+> > > > > > > > > >    			folio_put(folio);
+> > > > > > > > > >    			if (ret)
+> > > > > > > > > >    				return migrate_vma_collect_skip(start, end,
+> > > > > > > > > > @@ -192,7 +196,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+> > > > > > > > > >    		 * optimisation to avoid walking the rmap later with
+> > > > > > > > > >    		 * try_to_migrate().
+> > > > > > > > > >    		 */
+> > > > > > > > > > -		if (folio_trylock(folio)) {
+> > > > > > > > > > +		if (fault_folio == folio || folio_trylock(folio)) {
+> > > > > > > > > >    			bool anon_exclusive;
+> > > > > > > > > >    			pte_t swp_pte;
+> > > > > > > > > > @@ -204,7 +208,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+> > > > > > > > > >    				if (folio_try_share_anon_rmap_pte(folio, page)) {
+> > > > > > > > > >    					set_pte_at(mm, addr, ptep, pte);
+> > > > > > > > > > -					folio_unlock(folio);
+> > > > > > > > > > +					if (fault_folio != folio)
+> > > > > > > > > > +						folio_unlock(folio);
+> > > > > > > > > >    					folio_put(folio);
+> > > > > > > > > >    					mpfn = 0;
+> > > > > > > > > >    					goto next;
+> > > > > > > > > > @@ -363,6 +368,8 @@ static unsigned long migrate_device_unmap(unsigned long *src_pfns,
+> > > > > > > > > >    					  unsigned long npages,
+> > > > > > > > > >    					  struct page *fault_page)
+> > > > > > > > > >    {
+> > > > > > > > > > +	struct folio *fault_folio = fault_page ?
+> > > > > > > > > > +		page_folio(fault_page) : NULL;
+> > > > > > > > > >    	unsigned long i, restore = 0;
+> > > > > > > > > >    	bool allow_drain = true;
+> > > > > > > > > >    	unsigned long unmapped = 0;
+> > > > > > > > > > @@ -427,7 +434,8 @@ static unsigned long migrate_device_unmap(unsigned long *src_pfns,
+> > > > > > > > > >    		remove_migration_ptes(folio, folio, false);
+> > > > > > > > > >    		src_pfns[i] = 0;
+> > > > > > > > > > -		folio_unlock(folio);
+> > > > > > > > > > +		if (fault_folio != folio)
+> > > > > > > > > > +			folio_unlock(folio);
+> > > > > > > > > >    		folio_put(folio);
+> > > > > > > > > >    		restore--;
+> > > > > > > > > >    	}
+> > > > > > > > > > @@ -536,6 +544,8 @@ int migrate_vma_setup(struct migrate_vma *args)
+> > > > > > > > > >    		return -EINVAL;
+> > > > > > > > > >    	if (args->fault_page && !is_device_private_page(args->fault_page))
+> > > > > > > > > >    		return -EINVAL;
+> > > > > > > > > > +	if (args->fault_page && !PageLocked(args->fault_page))
+> > > > > > > > > > +		return -EINVAL;
+> > > > > > > > > >    	memset(args->src, 0, sizeof(*args->src) * nr_pages);
+> > > > > > > > > >    	args->cpages = 0;
+> > > > > > > > > > @@ -799,19 +809,13 @@ void migrate_vma_pages(struct migrate_vma *migrate)
+> > > > > > > > > >    }
+> > > > > > > > > >    EXPORT_SYMBOL(migrate_vma_pages);
+> > > > > > > > > > -/*
+> > > > > > > > > > - * migrate_device_finalize() - complete page migration
+> > > > > > > > > > - * @src_pfns: src_pfns returned from migrate_device_range()
+> > > > > > > > > > - * @dst_pfns: array of pfns allocated by the driver to migrate memory to
+> > > > > > > > > > - * @npages: number of pages in the range
+> > > > > > > > > > - *
+> > > > > > > > > > - * Completes migration of the page by removing special migration entries.
+> > > > > > > > > > - * Drivers must ensure copying of page data is complete and visible to the CPU
+> > > > > > > > > > - * before calling this.
+> > > > > > > > > > - */
+> > > > > > > > > > -void migrate_device_finalize(unsigned long *src_pfns,
+> > > > > > > > > > -			unsigned long *dst_pfns, unsigned long npages)
+> > > > > > > > > > +static void __migrate_device_finalize(unsigned long *src_pfns,
+> > > > > > > > > > +				      unsigned long *dst_pfns,
+> > > > > > > > > > +				      unsigned long npages,
+> > > > > > > > > > +				      struct page *fault_page)
+> > > > > > > > > >    {
+> > > > > > > > > > +	struct folio *fault_folio = fault_page ?
+> > > > > > > > > > +		page_folio(fault_page) : NULL;
+> > > > > > > > > >    	unsigned long i;
+> > > > > > > > > >    	for (i = 0; i < npages; i++) {
+> > > > > > > > > > @@ -838,7 +842,8 @@ void migrate_device_finalize(unsigned long *src_pfns,
+> > > > > > > > > >    		src = page_folio(page);
+> > > > > > > > > >    		dst = page_folio(newpage);
+> > > > > > > > > >    		remove_migration_ptes(src, dst, false);
+> > > > > > > > > > -		folio_unlock(src);
+> > > > > > > > > > +		if (fault_folio != src)
+> > > > > > > > > > +			folio_unlock(src);
+> > > > > > > > > >    		if (is_zone_device_page(page))
+> > > > > > > > > >    			put_page(page);
+> > > > > > > > > > @@ -854,6 +859,22 @@ void migrate_device_finalize(unsigned long *src_pfns,
+> > > > > > > > > >    		}
+> > > > > > > > > >    	}
+> > > > > > > > > >    }
+> > > > > > > > > > +
+> > > > > > > > > > +/*
+> > > > > > > > > > + * migrate_device_finalize() - complete page migration
+> > > > > > > > > > + * @src_pfns: src_pfns returned from migrate_device_range()
+> > > > > > > > > > + * @dst_pfns: array of pfns allocated by the driver to migrate memory to
+> > > > > > > > > > + * @npages: number of pages in the range
+> > > > > > > > > > + *
+> > > > > > > > > > + * Completes migration of the page by removing special migration entries.
+> > > > > > > > > > + * Drivers must ensure copying of page data is complete and visible to the CPU
+> > > > > > > > > > + * before calling this.
+> > > > > > > > > > + */
+> > > > > > > > > > +void migrate_device_finalize(unsigned long *src_pfns,
+> > > > > > > > > > +			unsigned long *dst_pfns, unsigned long npages)
+> > > > > > > > > > +{
+> > > > > > > > > > +	return __migrate_device_finalize(src_pfns, dst_pfns, npages, NULL);
+> > > > > > > > > > +}
+> > > > > > > > > >    EXPORT_SYMBOL(migrate_device_finalize);
+> > > > > > > > > >    /**
+> > > > > > > > > > @@ -869,7 +890,8 @@ EXPORT_SYMBOL(migrate_device_finalize);
+> > > > > > > > > >     */
+> > > > > > > > > >    void migrate_vma_finalize(struct migrate_vma *migrate)
+> > > > > > > > > >    {
+> > > > > > > > > > -	migrate_device_finalize(migrate->src, migrate->dst, migrate->npages);
+> > > > > > > > > > +	__migrate_device_finalize(migrate->src, migrate->dst, migrate->npages,
+> > > > > > > > > > +				  migrate->fault_page);
+> > > > > > > > > >    }
+> > > > > > > > > >    EXPORT_SYMBOL(migrate_vma_finalize);
+> > 
+> > -- 
+> > Simona Vetter
+> > Software Engineer, Intel Corporation
+> > http://blog.ffwll.ch
+
 -- 
-2.34.1
-
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
