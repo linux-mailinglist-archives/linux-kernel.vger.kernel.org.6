@@ -1,132 +1,88 @@
-Return-Path: <linux-kernel+bounces-339661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E86C98689E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:48:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B069868A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A342829CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:48:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6CD5280F14
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB350158535;
-	Wed, 25 Sep 2024 21:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EA6156F39;
+	Wed, 25 Sep 2024 21:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KT6z+l38"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oFrOOYO3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9F81534FB;
-	Wed, 25 Sep 2024 21:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6A41534FB;
+	Wed, 25 Sep 2024 21:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727300903; cv=none; b=KOgaRJoD5oNUFa6PusWTNTi4yqOAif55nRj/13nGbn/hv0CCjhermF+u9I7g1iFgUC8OR8W09BZsNjhU475vpdCmx0Wja1dSXaC9+wFaGldvLu6div285ou2J73+uZ+16mCwTQOiKl1heYjBGc3aGCFZ/7QWGtDj8y4EZ9TfKDQ=
+	t=1727300934; cv=none; b=Q0LCbOujOIxH6+ZXUUq7Es2XDB9eTlIv+/jxr8OynmBUhwRITRStZnswC5u2nXBX3mNKB3K/6Jlz2V8zAbfw1Zb391oaYLOjzD4HnQo3WrWmtmTcQFuUGpYsVmwvPqmq1UMx8XheKDsu/lZFlxNuVQQur6nzdKkJ/hpQsDFTQv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727300903; c=relaxed/simple;
-	bh=gIuq3j/vk4QENlsKN1z1Jl50uyrzP5n+cqaLRzVaI4o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q2sWOTX5/2VBL/4Wk2W/p3gpqdVRdjMFWa3yXXnL54eTcF465tXgg8rCqRwG/SJp7pBdGD1blPoDi93W3y5H0WijTYz44FiJ0n8wQwntlOmY7NVYfTaNG181FA6RGFfOKTk6VOS673vw9ylZCGtyWUkYOKOMkOMSJSxOCfW/0Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KT6z+l38; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e28ac7b12bso242468b6e.3;
-        Wed, 25 Sep 2024 14:48:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727300900; x=1727905700; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qgDgTNt1xHEn/31thmR6WrDz9ziq+k5ge1OgcgLtktw=;
-        b=KT6z+l38PLwsdZxUl3PiELi1w1DeQZ9dQ3c8bc6SgjCw4godJKTGh+SW8Ck3Gr2kvg
-         7fEx2hzy7McZxSNUXoKDWrL4pHCCh9uXuwpTjj7FHUq5odruOR3/W3xeZScuhAGp1wVA
-         OyAZx6SGi9bvkzVcdVAN9LAXg4/fzJDaLivMLUoOiZEPEeY/eF5SGDBqFAVejywOUAlf
-         9RBUwAnNrR4/aZ9FN26TIiNYBrIOfkR+gnAwyY7S6HqgIW00epGSjMPV7gkcvRAYZXpM
-         /JxaERqGccx711cAhk9mzAg1TXK9T9Has+GKHOKcEq0gz82f4yZTFHGirrn4PI6o4383
-         qiPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727300900; x=1727905700;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qgDgTNt1xHEn/31thmR6WrDz9ziq+k5ge1OgcgLtktw=;
-        b=lZEMCOyKE+UsncqKVY3+WMAoFQQMvM2cCMKhlCovMeOVBvegID+W+2Vc2LRF0vQA+M
-         f/LBfRBkUKrcCeIZurvVn1fnyDSilXPiYk9maxxTlrjXcqSKWfG7bGabTHtaMnYiNrLT
-         b6Y9CJ3q5CfCLAapdeQWiEuFR4SnrKp4yC3ggT2+y+qqTn8TtO5P2Q/Pnl+AkeOcG/Gd
-         Rncx74xD8Dp73Zmwvf14846Oj+kZbVYI+tHvpiQe31LY0aqTtbQsEVdP/caX3wUxsYc2
-         gVGOuWUV2OkrCI0bp6wMlav4hPhfKEWj+Do0x/PDPOYIORyx0Jb6IBSC6XWxyLPIjMbA
-         +9Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCW2p3xXn3IMqZu2GyNv9VQZRkXDTYrPuv04XBRTkhhN4R1IC8izHzbXE0BWx2peeJIZv8HOSJTUmoK7@vger.kernel.org
-X-Gm-Message-State: AOJu0YztDa3eyZQteLNS5n9qk9QRGJKxh+WMe8zJWMl7YLLGa6U8MYK0
-	xFQlWH6KmxN/ARmZrppFo/zTziEodyyuN4WllPK6vAgX9C65nRi1tpYSlw==
-X-Google-Smtp-Source: AGHT+IG5pmmTp0Mjtgv6/9Ce+4Bz9PndkQcw1XsYxiBQn6xUjDL515OOnzFCxh9/FlWcVr+OJb5+wA==
-X-Received: by 2002:a05:6808:1153:b0:3e0:37ca:1b29 with SMTP id 5614622812f47-3e29b7e50a4mr3436821b6e.46.1727300900527;
-        Wed, 25 Sep 2024 14:48:20 -0700 (PDT)
-Received: from [192.168.1.224] (syn-067-048-091-116.res.spectrum.com. [67.48.91.116])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5e5bcfa1e41sm1179986eaf.6.2024.09.25.14.48.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 14:48:20 -0700 (PDT)
-Message-ID: <9cc0310c-1fbd-4bfc-aad7-f092583bd81b@gmail.com>
-Date: Wed, 25 Sep 2024 16:48:06 -0500
+	s=arc-20240116; t=1727300934; c=relaxed/simple;
+	bh=M5Q7dXBfnlosIgJW0H/IJ7hXVe9PaRFmnYzrF4ELW/U=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=o8Vf/bP39VakmLEeV/ZAyDXa0GF/yrM5Fv5KK0gOShMGVsJf7DC9VpS6S1CiK0H6g4JmKVsnzZU3BSaW9o+BUj+j/t5VEtl6fClzftQ/ghkZJhC14B8IO69QKXm7RJohypfu/fbdFktSrGYfDnh3LoF8KW6JFtyPpEqmPgLGuPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oFrOOYO3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57846C4CEC3;
+	Wed, 25 Sep 2024 21:48:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727300933;
+	bh=M5Q7dXBfnlosIgJW0H/IJ7hXVe9PaRFmnYzrF4ELW/U=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=oFrOOYO3qKhqwd9KvZ59LbIydd/AdfWNMlOMfw+eDUk6mOaIaez+y6u+m2K0SEc0c
+	 o/eZtkdJIuXbOY8HtVH0ZuE/JIEQbQnA+oy1ARNsjYwmpFArXtrmFTpuV+TQxrZHl4
+	 FA11fu6hZwZfmByGg7tHaEInaFNT/MajwzTyRytiWMIAHqXVAgN4Kn+zyzr9LHeWDJ
+	 DQ+eHvxvoqyIPP8ZqixKNW394aT5Xov+W/jY5MiiyxELZ4BuJvXZNT3UmWSLbV2/Nu
+	 iUgqXTr7b1FNDOh4lCNRVeLWWyTE9v/BOA5upALAanbOLpAA8NI7crD8i1BeeQoXgQ
+	 zcrPZEBNPKRhw==
+Date: Wed, 25 Sep 2024 23:48:50 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+cc: Rob Herring <robh@kernel.org>, Charles Wang <charles.goodix@gmail.com>, 
+    dianders@chromium.org, dan.carpenter@linaro.org, conor@kernel.org, 
+    krzk+dt@kernel.org, bentiss@kernel.org, hbarnor@chromium.org, 
+    linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v7 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
+In-Reply-To: <ZvSEkn66qNziJV0M@google.com>
+Message-ID: <nycvar.YFH.7.76.2409252347140.31206@cbobk.fhfr.pm>
+References: <20240814024513.164199-1-charles.goodix@gmail.com> <20240814024513.164199-3-charles.goodix@gmail.com> <CAL_Jsq+QfTtRj_JCqXzktQ49H8VUnztVuaBjvvkg3fwEHniUHw@mail.gmail.com> <CAL_JsqKUDj6vrWMVVBHrDeXdb3ogsMb3NUbV6OjKR-EhLLZuGg@mail.gmail.com>
+ <CAL_Jsq+6fvCaxLexo9c6zs+8vwyfPAOCCVsejw_uKURVU-Md9w@mail.gmail.com> <ZvSEkn66qNziJV0M@google.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: hung tasks on shutdown in linux-next-202409{20,23,24,25}
-To: Bert Karwatzki <spasswolf@web.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-References: <20240925213717.3555-1-spasswolf@web.de>
-Content-Language: en-US
-From: stuart hayes <stuart.w.hayes@gmail.com>
-In-Reply-To: <20240925213717.3555-1-spasswolf@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
+On Wed, 25 Sep 2024, Dmitry Torokhov wrote:
 
+> I see that Krzysztof sent a revert, but what a proper fix would be?
+> Apparently Goodix is using the same product ID gt7986u for both I2C and
+> SPI parts, and covering them in one binding is not really easy (well, I
+> guess it is possible with a big ugly "if"). Do we just slap "-spi"
+> suffix on the compatible, so it becomes "goodix,gt7986u-spi" and go on
+> on our merry way? 
 
-On 9/25/2024 4:37 PM, Bert Karwatzki wrote:
-> I managed to get the complete lockdep output via netconsole:
-> 
-> T1;systemd-shutdown[1]: All filesystems unmounted.
-> T1;systemd-shutdown[1]: Deactivating swaps.
-> T1;systemd-shutdown[1]: All swaps deactivated.
-> T1;systemd-shutdown[1]: Detaching loop devices.
-> T1;systemd-shutdown[1]: All loop devices detached.
-> T1;systemd-shutdown[1]: Stopping MD devices.
-> T1;systemd-shutdown[1]: All MD devices stopped.
-> T1;systemd-shutdown[1]: Detaching DM devices.
-> T1;systemd-shutdown[1]: All DM devices detached.
-> T1;systemd-shutdown[1]: All filesystems, swaps, loop devices, MD devices and DM devices detached.
-> T1;systemd-shutdown[1]: Syncing filesystems and block devices.
-> T1;systemd-shutdown[1]: Rebooting.
-> T3113;psmouse serio1: Failed to disable mouse on isa0060/serio1#012 SUBSYSTEM=serio#012 DEVICE=+serio:serio1
-> 
-> Here I was curious if the failed the psmouse message is related to the deadlock.
-> I checked the locks and I had similar messages on an unaffected kernel
-> (commit 6ec41c442e55) and I had a deadlock in linux-next-20240920 without this
-> message.
-> 
+I actually see this as a viable option, given the circumstances.
 
-Thanks for the info.
+However, given the non-responsiveness of the original author, I am now 
+proceeding with the revert, and we can try to sort it out later.
 
-This definitely appears to be the issue with asynchronous shutdown, which
-shouldn't happen anymore now that Greg has reverted the patches.
+> Is there a better option for such products that support multiple 
+> interfaces/transports?
 
-I'm looking at this now. The async shutdown makes each device wait on children
-and consumers to shutdown before shutting down, but it depends on the
-devices_kset list having those in the correct order.  The "fix async shutdown
-hang" patch fixed a case where suppliers could end up later in this list than
-their consumers, causing a circular dependence (and a hang that looks like what
-you are seeing).
+I unfortunately currently don't see one.
 
-After that, Andrey Skvortsov reported seeing a hang, where it appears that a
-parent device is later in the devices_kset list than a child device, which I
-didn't realize could happen... I know how to fix that, but I'm looking at the
-code more carefully now to try to understand exactly how that could happen
-before I resubmit a new async shutdown patch.
+-- 
+Jiri Kosina
+SUSE Labs
 
 
