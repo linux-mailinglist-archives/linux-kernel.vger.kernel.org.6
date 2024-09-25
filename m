@@ -1,91 +1,84 @@
-Return-Path: <linux-kernel+bounces-337844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB5CE984FA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:00:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C5F98508F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8F37282FD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:00:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 160991F2475D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB8513A863;
-	Wed, 25 Sep 2024 01:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598551428E7;
+	Wed, 25 Sep 2024 01:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="2wG9L15t"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="drUx5ndJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F84D1369BC
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B8A18DF8B;
+	Wed, 25 Sep 2024 01:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727226017; cv=none; b=R76jUhIrZ/YjUYTWdQ9FUJIQj/XrTKIkHYpmeo7Oq2zlMgfZtzoFwOW+ZJkqPc0EYRp1zgvDDasIEigv5Mj1bn0jki368tbvTACyGHcsXXVNu27cXMJ9jfSgKiTUgomhAMOjMDpyo38pF+31t1e2yzrVl7X5DM3W3lTDVEgnZUI=
+	t=1727226115; cv=none; b=tHH9kn8JIQbh8eK9dQbzwHxrl1Xf28I+BIHaGRa70CY5vW7pE3skRJnKXqQWmWrXg5elnPfbp9S45qmHcU+2OS6itr6xUNVKRr6+MHFaQxWNXB72PQYE5RQz3TYwn5+cC2UO/i1JgJFaNozh3zhgtET6xpqOhfEgY3UQ+cYssSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727226017; c=relaxed/simple;
-	bh=xYktIkXQ15frF7P5Q3qcWSwJNgJzoKJz+5SWEqQnc/U=;
+	s=arc-20240116; t=1727226115; c=relaxed/simple;
+	bh=Hnp42PrKfzfKYFo6ILUHY5XMvAkAmXvxiR+pbf7CaC0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W3+wKHG6POFdsWi66wE3slKy4DOKwMMajoKDuljaMLoc628fl5L47OEu7Vf/a2IdcqxqqwgY0m8cID0rCvBIHTp1FSpSizY5lgy3Tk+a0LpAowzBiJWEcU1WrFLmeceYpD9PVingUT/ZrbvPCdyJ1yysCvSsRDw5SR+LunLlhjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=2wG9L15t; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7db1f13b14aso4991808a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:00:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727226016; x=1727830816; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M9P19Dpz8pYn0b02ZYZ9X2FwfHXZd1aOXbrW9qrvHLk=;
-        b=2wG9L15tTOxvrK6jMVP6b+kyz0Z1XArT/rsIiSmUNCvrvwtNNNOfqGbs4DmRz7HjTR
-         ZzSIXS8ttfhXaPnFLNMmlsHl8Iuk2MrghAEpEADypaUWdIcGfX43/5v3Nfh5E6KnrC/b
-         ZjyghOiduGKJvqSA+e5dwkW+arRkG+1AvjOFMtIV263YpptBKdFwVgY8+BHasbK1GHFF
-         Es3iO4zQdUFoYNA1bumJXXggqLIsJSNUTMzCq4NywKKo+v42eQAUL9BZjHYyvcgHtS8i
-         fyXJliaLKOKelGUT4AwOXQlA0GX3XBlcCx4GOuDQrWKfRZGuYP8sJQE5PCp641k4VCi5
-         nDhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727226016; x=1727830816;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M9P19Dpz8pYn0b02ZYZ9X2FwfHXZd1aOXbrW9qrvHLk=;
-        b=gpehTwrB3YMV6HScqBqzNQPwPAxiuKMgActC8ZXB/6ZS3cOHJPHdKk9xHmrjChRJHg
-         isJUTJDvyVH9leatg+687niP6deCdgFvq5avnyNxAVcvve7+arOZAvpTx2Q2mruLYa7K
-         YPLLO/6khg9z6X9bEVAWbATXJTrQM/8QGmwkxSjMnyoF6AMyWTDuOjzPVez0/xQqjQEC
-         a6mlXzZPi9wxvKP6221nSuRoH0LJ+yS7Mw78kdQtNeV/55qd60UG3jx/QgPRbbNI1OFL
-         cAAAPwpi2mpBg3tRlP/FCq1S6gX7ms8ZKqkQPqu0XDW2+rL6FVuxsKPTvCl55JruFj6v
-         XQnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtylQbRDXHqpudD+jaQ766Mfu+YFzBwItu5YDwR+1eSz/Lia0Hlbu4sCR9B864PIYw7JsKhyck6JjUHc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6LJPOA58djguCUlsaF9k29JRbmhEQvrWr/KrNSXPGIhUl435O
-	07c6ZbU2JVya/PsQqVsP5MwUjWM9V8q4zgRVBcxznQwx13HV7arnhPUHA59/79SL9he2siyRdGs
-	H
-X-Google-Smtp-Source: AGHT+IEM7TDZzneq8AdP+jj2pLX3nFkKqcakDcc8T3ybOf+A6xVCkRRDIVO4PWWelkRcfh6Fh4H9EQ==
-X-Received: by 2002:a17:90b:3144:b0:2d4:bf3:428e with SMTP id 98e67ed59e1d1-2e06afe04cbmr1336970a91.37.1727226015679;
-        Tue, 24 Sep 2024 18:00:15 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1c286csm187676a91.17.2024.09.24.18.00.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 18:00:14 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1stGO2-009ede-2D;
-	Wed, 25 Sep 2024 11:00:10 +1000
-Date: Wed, 25 Sep 2024 11:00:10 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
-Message-ID: <ZvNgmoKgWF0TBXP8@dread.disaster.area>
-References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
- <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
- <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
- <ZvIHUL+3iO3ZXtw7@dread.disaster.area>
- <CAHk-=whbD0zwn-0RMNdgAw-8wjVJFQh4o_hGqffazAiW7DwXSQ@mail.gmail.com>
- <74sgzrvtnry4wganaatcmxdsfwauv6r33qggxo27yvricrzxvq@77knsf6cfftl>
- <ZvIzNlIPX4Dt8t6L@dread.disaster.area>
- <dia6l34faugmuwmgpyvpeeppqjwmv2qhhvu57nrerc34qknwlo@ltwkoy7pstrm>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FMnAD2kMWXDLlC6ys4rWPjo+4XYKYZEbb3iC7GICyhdS9oTGBN5velACNkom3UhmqZ45qXy3FtHY7ovxYBwfllTXHIZaeAb1CB4b9hcAfWqEFeHyc/T9gFh85XRqDTfC8FJeI87gTNEq3Wm8zuKQWcSw8j6yi7VWeCBDDAum0xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=drUx5ndJ; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727226114; x=1758762114;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Hnp42PrKfzfKYFo6ILUHY5XMvAkAmXvxiR+pbf7CaC0=;
+  b=drUx5ndJS0usk9W7hhdlzD3JrmSf1fNkcrdSYM4FVBu5+hB3i9hfrUCD
+   qtDmq1QF+G61a3Y59GdNI5TJPnP2aPNdF5CW1oaE1z7l4xANkc6ED1sFa
+   RsPll5gPst8xz4Z5mys9QYi5NbvBV18Np/GNrpulJyW2iN1SSUH8CaHZg
+   YRF6w2d8t5YEmqE94iNMY0s/76LA6tqBLZ94hQCCwgWXI9T0E1x2rcSg9
+   AZnHwLPlke4jKevhLknQ2vjzsI604ZAM8j6er1P+k+Qxb+XyQyfFYSW8C
+   c47ikpcxzWzAb5CSax8dHQkO+UY3p2NxtA8Aw61xKfb8eNSYY8WL2eL5q
+   Q==;
+X-CSE-ConnectionGUID: 0SbvFaTCT9Ojhv8ZKZ8f+Q==
+X-CSE-MsgGUID: scRb83tISBi5w9MVe0GIEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="26202631"
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="26202631"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 18:01:53 -0700
+X-CSE-ConnectionGUID: Cwx/qdCnQKe5Hne8tzPqeA==
+X-CSE-MsgGUID: EdaeGnIYSqWQqwhZhn+3fg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="71896695"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 24 Sep 2024 18:01:49 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1stGPa-000J0D-2h;
+	Wed, 25 Sep 2024 01:01:46 +0000
+Date: Wed, 25 Sep 2024 09:01:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Julian Vetter <jvetter@kalrayinc.com>, Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+	Yann Sionneau <ysionneau@kalrayinc.com>,
+	Julian Vetter <jvetter@kalrayinc.com>
+Subject: Re: [PATCH v5 1/5] Consolidate __memcpy_{to,from}io and __memset_io
+ into iomap_copy.c
+Message-ID: <202409250806.Lq8C7QZr-lkp@intel.com>
+References: <20240924121432.798655-2-jvetter@kalrayinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,69 +87,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dia6l34faugmuwmgpyvpeeppqjwmv2qhhvu57nrerc34qknwlo@ltwkoy7pstrm>
+In-Reply-To: <20240924121432.798655-2-jvetter@kalrayinc.com>
 
-On Mon, Sep 23, 2024 at 11:47:54PM -0400, Kent Overstreet wrote:
-> On Tue, Sep 24, 2024 at 01:34:14PM GMT, Dave Chinner wrote:
-> > On Mon, Sep 23, 2024 at 10:55:57PM -0400, Kent Overstreet wrote:
-> > > But stat/statx always pulls into the vfs inode cache, and that's likely
-> > > worth fixing.
-> > 
-> > No, let's not even consider going there.
-> > 
-> > Unlike most people, old time XFS developers have direct experience
-> > with the problems that "uncached" inode access for stat purposes.
-> > 
-> > XFS has had the bulkstat API for a long, long time (i.e. since 1998
-> > on Irix). When it was first implemented on Irix, it was VFS cache
-> > coherent. But in the early 2000s, that caused problems with HSMs
-> > needing to scan billions inodes indexing petabytes of stored data
-> > with certain SLA guarantees (i.e. needing to scan at least a million
-> > inodes a second).  The CPU overhead of cache instantiation and
-> > teardown was too great to meet those performance targets on 500MHz
-> > MIPS CPUs.
-> > 
-> > So we converted bulkstat to run directly out of the XFS buffer cache
-> > (i.e. uncached from the perspective of the VFS). This reduced the
-> > CPU over per-inode substantially, allowing bulkstat rates to
-> > increase by a factor of 10. However, it introduced all sorts of
-> > coherency problems between cached inode state vs what was stored in
-> > the buffer cache. It was basically O_DIRECT for stat() and, as you'd
-> > expect from that description, the coherency problems were horrible.
-> > Detecting iallocated-but-not-yet-updated and
-> > unlinked-but-not-yet-freed inodes were particularly consistent
-> > sources of issues.
-> > 
-> > The only way to fix these coherency problems was to check the inode
-> > cache for a resident inode first, which basically defeated the
-> > entire purpose of bypassing the VFS cache in the first place.
-> 
-> Eh? Of course it'd have to be coherent, but just checking if an inode is
-> present in the VFS cache is what, 1-2 cache misses? Depending on hash
-> table fill factor...
+Hi Julian,
 
-Sure, when there is no contention and you have CPU to spare. But the
-moment the lookup hits contention problems (i.e. we are exceeding
-the cache lookup scalability capability), we are straight back to
-running a VFS cache speed instead of uncached speed.
+kernel test robot noticed the following build errors:
 
-IOWs, needing to perform the cache lookup defeated the purpose of
-using uncached lookups to avoid the cache scalabilty problems.
+[auto build test ERROR on arnd-asm-generic/master]
+[also build test ERROR on soc/for-next akpm-mm/mm-nonmm-unstable arm64/for-next/core linus/master v6.11 next-20240924]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Keep in mind that not having a referenced inode opens up the code to
-things like pre-emption races. i.e. a cache miss doesn't prevent
-the current task from being preempted before it reads the inode
-information into the user buffer. The VFS inode could bei
-instantiated and modified before the uncached access runs again and
-pulls stale information from the underlying buffer and returns that
-to userspace.
+url:    https://github.com/intel-lab-lkp/linux/commits/Julian-Vetter/Consolidate-__memcpy_-to-from-io-and-__memset_io-into-iomap_copy-c/20240924-202154
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
+patch link:    https://lore.kernel.org/r/20240924121432.798655-2-jvetter%40kalrayinc.com
+patch subject: [PATCH v5 1/5] Consolidate __memcpy_{to,from}io and __memset_io into iomap_copy.c
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20240925/202409250806.Lq8C7QZr-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240925/202409250806.Lq8C7QZr-lkp@intel.com/reproduce)
 
-Those were the sorts of problems we continually had with using low
-level inode information for stat operations vs using the up-to-date
-VFS inode state....
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409250806.Lq8C7QZr-lkp@intel.com/
 
--Dave.
+All errors (new ones prefixed by >>):
+
+>> lib/iomap_copy.c:89:19: error: implicit declaration of function 'IS_ALIGNED' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
+           while (count && !IS_ALIGNED((unsigned long)from, NATIVE_STORE_SIZE)) {
+                            ^
+   lib/iomap_copy.c:121:19: error: implicit declaration of function 'IS_ALIGNED' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
+           while (count && !IS_ALIGNED((unsigned long)to, NATIVE_STORE_SIZE)) {
+                            ^
+   lib/iomap_copy.c:161:19: error: implicit declaration of function 'IS_ALIGNED' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
+           while (count && !IS_ALIGNED((unsigned long)dst, NATIVE_STORE_SIZE)) {
+                            ^
+   3 errors generated.
+
+
+vim +/IS_ALIGNED +89 lib/iomap_copy.c
+
+    84	
+    85	
+    86	#ifndef __memcpy_fromio
+    87	void __memcpy_fromio(void *to, const volatile void __iomem *from, size_t count)
+    88	{
+  > 89		while (count && !IS_ALIGNED((unsigned long)from, NATIVE_STORE_SIZE)) {
+    90			*(u8 *)to = __raw_readb(from);
+    91			from++;
+    92			to++;
+    93			count--;
+    94		}
+    95	
+    96		while (count >= NATIVE_STORE_SIZE) {
+    97	#ifdef CONFIG_64BIT
+    98				put_unaligned(__raw_readq(from), (uintptr_t *)to);
+    99	#else
+   100				put_unaligned(__raw_readl(from), (uintptr_t *)to);
+   101	#endif
+   102	
+   103			from += NATIVE_STORE_SIZE;
+   104			to += NATIVE_STORE_SIZE;
+   105			count -= NATIVE_STORE_SIZE;
+   106		}
+   107	
+   108		while (count) {
+   109			*(u8 *)to = __raw_readb(from);
+   110			from++;
+   111			to++;
+   112			count--;
+   113		}
+   114	}
+   115	EXPORT_SYMBOL(__memcpy_fromio);
+   116	#endif
+   117	
+
 -- 
-Dave Chinner
-david@fromorbit.com
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
