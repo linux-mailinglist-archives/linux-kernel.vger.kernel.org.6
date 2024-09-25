@@ -1,261 +1,125 @@
-Return-Path: <linux-kernel+bounces-338245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A6B98554D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:17:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A044F985556
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8DC21F23F74
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:17:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50ECC281A58
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7364C158868;
-	Wed, 25 Sep 2024 08:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6427C15B12F;
+	Wed, 25 Sep 2024 08:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U7WR0btR"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZzH/hoWL"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2C2149C4F
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3683415921D;
+	Wed, 25 Sep 2024 08:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727252251; cv=none; b=HXzSwmZFSfQXfh+DtqDRGD9KsEwTl6XDbw7lvS5ErkI8TFlRzJ/u5Iu+ITZ+StShvW++VHJWCihzF8flOamSnoNfDPDH1Tq0kJ/TlXlZAFjlB3HUSb62bN3s99Y2AhpNO9lv933ejih0ijeKoVqk92Zembr7Hd1wb2hPhORyGR0=
+	t=1727252314; cv=none; b=Du6Sr3CUqfiQ/HVVJstpZskomqB/ppkin0Wh6uYBdeBxqZcK1OcZSYq7KrVTppu+KjHk6ANMYZIf/IOu+A4WPS5wkQnjVbzyxPgBKASvNhQYE/FKLpXgEFDGG+EGh70Mji2WVniBlSanKjM4Oa2YKoRC2266MiZbyYrL1rsvKzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727252251; c=relaxed/simple;
-	bh=322+YjFSMbCRMWKuIniuIuP8jIehsf+N6cFsyXvO5Sc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DOAaet5995RdVWCu8k0dgC7h7y7OzY9kTeDfWo2aTC9l5FxzjZBd69OQQGg7pqE/Bt+w1FVFkKCEX2mmJwlwPedNbBUB6aZ56nNAGHeTPdeIACnSb8j9HZRL4duqRMaN/DU3H4hTgj+XdslZKkMhNzkFGBfRcY8q0s3X3FLsoG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U7WR0btR; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53659867cbdso9484846e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:17:29 -0700 (PDT)
+	s=arc-20240116; t=1727252314; c=relaxed/simple;
+	bh=1Nk5zw78EsDZtTINVN7tnvRQ3dNjHON4s+1QiENmxCY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g292NMZfDJqB5B6qRgfzEkXfc4W6+5H5eqsuy3teRy6CMP42JBybvs7gnsuUcekMB6/PuVGijIjGUx/Nsyd9zUdSLMQamF6/zSDSMnHNbe/NyrsCG/1gK25oIRyWK6AiXgkX9WZDCvcCHam0Se7brmXhCAcEluzizqYKypBJQOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZzH/hoWL; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f75c0b78fbso65026661fa.1;
+        Wed, 25 Sep 2024 01:18:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727252248; x=1727857048; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PItdsNbKJCVfD2sQE4FIY5JPIF0NlmLuFR81Hxp3WNA=;
-        b=U7WR0btRPu9HyM56o/cFeISUx+u7QL1O5VpEdgAFIx3bi8ToFRSWeXZZHCBnHkmVQQ
-         6gIau0gCvQgC5tOnoQPW0FY9JuR0KKzoC56RsVKQxLDqzJB1HHDLZ88uyDplYIvZ+uQT
-         7pPSiGtUGaPzHJurilAz4MZJghmR3YAXRqXZHN3AT/Uus8u1yAl6RZsvAw9l4P9jnqZb
-         6fEXbPylXteaeeWyUi1ogzEjfX7wyslAYyUsqhcyx4N50DcByLa0z+T5o/MJjpsp5eoU
-         4orh9zpqeeMbVXV5TR6Hm7cyttf/yeTeWOgokmeHV8JaMDm//M0IvSOEXKqnyDoCNTQu
-         GaVw==
+        d=gmail.com; s=20230601; t=1727252311; x=1727857111; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1Nk5zw78EsDZtTINVN7tnvRQ3dNjHON4s+1QiENmxCY=;
+        b=ZzH/hoWLKdAOfTG2BO0mbR8C9StQXevObg687JzwjMzcUfnsgYKm9V8ZnzJa1rJEe/
+         cA4hnY2wVGuI8b7zsbqR1uDbarMfObEszQ9d/Y3oSgReBkE0PBs8v9GyrUZLadcNLNDW
+         XC+pKQrKExWVdkR3hbXBlkUn2kGvna1yvzIkGnss3HAKa6OAbFOq4Tgrz0L8kVxcl5rU
+         BxsnQyTq9bDsla0tIhwowb3j+wbugIt3iJB5sDG+bxxK3Fnvu27kfVYcB/owfBVtRsWs
+         CSFsTUYoo+gj5ooNyqI+N/veh+8skD4DloUxVwszeZMnl+RqyeZ89l92ePw1Ze6XBzJq
+         P+8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727252248; x=1727857048;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PItdsNbKJCVfD2sQE4FIY5JPIF0NlmLuFR81Hxp3WNA=;
-        b=c+J2SrVLoxlqpuvhNrcM7H1HhInkusUZv/aRp+hgOKOVm1ye95UfvEs0l3RZSvFeHX
-         LxdD0HwgE+5ZDfYCXONCINn423rMOmA0bNGwQJKtSE6rC0nSFdDYzAgZV1k8oJewByhn
-         CMWwbpPSstnCWvVpaHTT6oaDG2IR9iM7pmcd2h7w1WWvbl8FI5lMJQ9z/lMetzuekuNb
-         3kXQ+PRVjzRTgak4b6m48auDtut3b5JTh1lG1xxI4ZN+tBqeUAF72T2FxsyEwYIyg8rh
-         tMYcO0Se6Zt5XRGbyVfyDu+ZsL0LX1Ccn7dv5Tc9F4gk4JuGDw0wskGDNWzHFrTMsIU2
-         gVbg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSNzgtEn72bv2ZowB4NcrPDYCGRr8fOQV/p7dbg/vShfVeCmWTjmMTn+pdUwf7dzfFitGu/4IzSMo+g/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQVbTlIWcO6mUymTqAHojcwyGhlEGSxvDXKHmzlRgaJyCaU1y+
-	wU/Z0aMJcRyDMDwB8+oQOK8TgqX0rX36oNklCGUmGO13HQIKhE4itLT4JFv4ZEo=
-X-Google-Smtp-Source: AGHT+IG5Nl0ptMYn5BJw3VOSRd7OvrwuUcJMu7vRDsBX1yDILY+iinhIQlUl9VUjVqNtD0ZEUfaV2Q==
-X-Received: by 2002:a05:6512:33d2:b0:536:7377:7d23 with SMTP id 2adb3069b0e04-5387755cf84mr1477993e87.40.1727252247573;
-        Wed, 25 Sep 2024 01:17:27 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a8640978sm452536e87.126.2024.09.25.01.17.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 01:17:26 -0700 (PDT)
-Date: Wed, 25 Sep 2024 11:17:23 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH v2 06/22] drm/msm/dpu: fill CRTC resources in dpu_crtc.c
-Message-ID: <tr2uoiypchf7wcytayvae3e26ye72vyoq763l2ysclwa25bxz7@ojtglsboe63f>
-References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
- <20240924-concurrent-wb-v2-6-7849f900e863@quicinc.com>
- <4c7spborzltmvjlbd2o4uwknraitjtf34mqt7r3x2ospnaidyn@abvn5zdumvwt>
- <b66264a9-2ff9-482a-96e0-453d55bc651c@quicinc.com>
+        d=1e100.net; s=20230601; t=1727252311; x=1727857111;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1Nk5zw78EsDZtTINVN7tnvRQ3dNjHON4s+1QiENmxCY=;
+        b=ofq1r3KxKbtStjAJ4gq7N+1I8fRjes2XIFI+j8kSTbEyYxHzj1lT9oMow91sldAoAn
+         9eiFsYYtFaNqsx+Y6ho8ndv1COYcGsMWzKtuDNdF3SxUvJNu6dqsIQ88ESeIx1kniBCB
+         ejDudKobluqHUgpIShp+0nr2D3M9mOh1hsoEiV5qjWPds5hdWM4uI2Ej5J6EYaMVVlwm
+         vBuL0Uf1L9S1mqFVtNQqf7M3P+3ojIEr1PwojLX++0KFHwISnsQDCVNjT4Cl1tAk+JGJ
+         nPTcyCbeBQfD44YKurk5pbydj7FKxDOCQNNvqagOZJZb3UAYUgwgjn7mDAbkTjYvaIJ1
+         c1CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9AI3qRnI5qgWCN16YWw+fIyMlCsrW4+a3Bl4zohXE1V7NoUxp/eo3q/cEt6nsc2Tagl5ho+zHqg==@vger.kernel.org, AJvYcCVpjyIg3KG2c2qRWON8TT2dJQj/sxTtMxV9qmjr31aNsuaD1sPY52pf2OIA399lAtF9Z1o9Ox1Zk9WsiFUm@vger.kernel.org, AJvYcCWi6oORtXEYeapcUzhGaNae/3F/ps/CFPL8Es7MwUqn20IA21R7HnGSI09gq5JRawPLExk=@vger.kernel.org, AJvYcCXWBcNOSShwr941RlTTg0MVtpLhkfep/RSH1EYPYuq4ZGnKuJND6ZRXJdiwdK1PRZq2cSOFuxp+AtuIf/kh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYW/zGNLMUUjgRyPfOCzhXAkQ+mDXIKPKq8e2+QxjK3uvmrqOD
+	Z3J4Zfgu6GVidguCQ0YgGxkvu5B7TAbgnMsBQXPXM/gnCLJNkfowWh41nGZn/t+bXOx7EpfcLag
+	1VqHmRrkvIlnkvdlkZqcpdlZaUK0=
+X-Google-Smtp-Source: AGHT+IERKtPYc980lSJ1UEXpI+b66aNtrwATZPdGkwcCyH8NhpOU5uComuDPBZkuyJYi/sYF3vfJcZoUfsiZOy7Rjr8=
+X-Received: by 2002:a2e:a58c:0:b0:2f7:4ea7:300c with SMTP id
+ 38308e7fff4ca-2f91600dae6mr11933971fa.27.1727252310822; Wed, 25 Sep 2024
+ 01:18:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b66264a9-2ff9-482a-96e0-453d55bc651c@quicinc.com>
+References: <20240820085950.200358-1-jirislaby@kernel.org> <ZsSpU5DqT3sRDzZy@krava>
+ <523c1afa-ed9d-4c76-baea-1c43b1b0c682@kernel.org> <c2086083-4378-4503-b3e2-08fb14f8ff37@kernel.org>
+ <7ebee21d-058f-4f83-8959-bd7aaa4e7719@kernel.org> <a45nq7wustxrztjxmkqzevv3mkki5oizfik7b24gqiyldhlkhv@4rpy4tzwi52l>
+ <ZsdYGOS7Yg9pS2BJ@x1> <CA+icZUVL13oPX8KybWirie5zH77qWuzG9-9yTNM7O1CxwhOp1w@mail.gmail.com>
+In-Reply-To: <CA+icZUVL13oPX8KybWirie5zH77qWuzG9-9yTNM7O1CxwhOp1w@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Wed, 25 Sep 2024 10:17:54 +0200
+Message-ID: <CA+icZUUgk3fsmmWTx2ix0HAV=Wagy5AT341SFs2idaCyS2uvtA@mail.gmail.com>
+Subject: Re: [RFC] kbuild: bpf: Do not run pahole with -j on 32bit userspace
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Shung-Hsi Yu <shung-hsi.yu@suse.com>, dwarves@vger.kernel.org, 
+	Jiri Slaby <jirislaby@kernel.org>, Jiri Olsa <olsajiri@gmail.com>, masahiroy@kernel.org, 
+	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	linux-kbuild@vger.kernel.org, bpf@vger.kernel.org, msuchanek@suse.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2024 at 05:37:30PM GMT, Jessica Zhang wrote:
-> 
-> 
-> On 9/24/2024 4:16 PM, Dmitry Baryshkov wrote:
-> > On Tue, Sep 24, 2024 at 03:59:22PM GMT, Jessica Zhang wrote:
-> > > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > 
-> > > Stop poking into CRTC state from dpu_encoder.c, fill CRTC HW resources
-> > > from dpu_crtc_assign_resources().
-> > > 
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > [quic_abhinavk@quicinc.com: cleaned up formatting]
-> > > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> > > [quic_jesszhan@quicinc.com: dropped clearing num_mixers in CRTC disable
-> > > path]
-> > 
-> > Same comment as before: the code is still there.
-> 
-> Hi Dmitry,
-> 
-> I thought the original comment was to move the dropping `num_mixers = 0`
-> chunk from the previous patch to this one?
-> 
-> Sorry if I misunderstood.
+On Mon, Aug 26, 2024 at 12:18=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.com=
+> wrote:
+>
+> On Thu, Aug 22, 2024 at 5:24=E2=80=AFPM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+>
+> > Please let me know if what is in the 'next' branch of:
+> >
+> > https://git.kernel.org/pub/scm/devel/pahole/pahole.git
+> >
+> > Works for you, that will be extra motivation to move it to the master
+> > branch and cut 1.28.
+>
+> For pahole version 1.28 - Please, Go Go Go.
+>
+> -Sedat-
+>
+> pahole 1.27 segfaults when generating BTF for modules built with LTO #203=
+2
+> https://github.com/ClangBuiltLinux/linux/issues/2032
 
-Code move is fine. The commit message should reflect the code though. So
-if you have "dropped clearing num_mixers..." in the commit message, it
-is surprising to see the code actually claring num_mixers.
+Hi Arnaldo,
 
-> 
-> Thanks,
-> 
-> Jessica Zhang
-> 
-> > 
-> > > Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> > > ---
-> > >   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 32 ++++++++++++++++++++++++++---
-> > >   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 24 ++--------------------
-> > >   2 files changed, 31 insertions(+), 25 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > > index b918c80d30b3..d53e986eee54 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > > @@ -1091,9 +1091,6 @@ static void dpu_crtc_disable(struct drm_crtc *crtc,
-> > >   	dpu_core_perf_crtc_update(crtc, 0);
-> > > -	memset(cstate->mixers, 0, sizeof(cstate->mixers));
-> > > -	cstate->num_mixers = 0;
-> > > -
-> > >   	/* disable clk & bw control until clk & bw properties are set */
-> > >   	cstate->bw_control = false;
-> > >   	cstate->bw_split_vote = false;
-> > > @@ -1164,6 +1161,7 @@ static bool dpu_crtc_needs_dirtyfb(struct drm_crtc_state *cstate)
-> > >   }
-> > >   #define MAX_HDISPLAY_SPLIT 1080
-> > > +#define MAX_CHANNELS_PER_CRTC 2
-> > >   static struct msm_display_topology dpu_crtc_get_topology(
-> > >   		struct drm_crtc *crtc,
-> > > @@ -1208,9 +1206,14 @@ static struct msm_display_topology dpu_crtc_get_topology(
-> > >   static int dpu_crtc_assign_resources(struct drm_crtc *crtc, struct drm_crtc_state *crtc_state)
-> > >   {
-> > > +	struct dpu_hw_blk *hw_ctl[MAX_CHANNELS_PER_CRTC];
-> > > +	struct dpu_hw_blk *hw_lm[MAX_CHANNELS_PER_CRTC];
-> > > +	struct dpu_hw_blk *hw_dspp[MAX_CHANNELS_PER_CRTC];
-> > > +	int i, num_lm, num_ctl, num_dspp;
-> > >   	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
-> > >   	struct dpu_global_state *global_state;
-> > >   	struct msm_display_topology topology;
-> > > +	struct dpu_crtc_state *cstate;
-> > >   	int ret;
-> > >   	/*
-> > > @@ -1232,6 +1235,29 @@ static int dpu_crtc_assign_resources(struct drm_crtc *crtc, struct drm_crtc_stat
-> > >   	if (ret)
-> > >   		return ret;
-> > > +	cstate = to_dpu_crtc_state(crtc_state);
-> > > +
-> > > +	num_ctl = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> > > +						crtc, DPU_HW_BLK_CTL, hw_ctl,
-> > > +						ARRAY_SIZE(hw_ctl));
-> > > +	num_lm = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> > > +					       crtc, DPU_HW_BLK_LM, hw_lm,
-> > > +					       ARRAY_SIZE(hw_lm));
-> > > +	num_dspp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> > > +						 crtc, DPU_HW_BLK_DSPP, hw_dspp,
-> > > +						 ARRAY_SIZE(hw_dspp));
-> > > +
-> > > +	for (i = 0; i < num_lm; i++) {
-> > > +		int ctl_idx = (i < num_ctl) ? i : (num_ctl-1);
-> > > +
-> > > +		cstate->mixers[i].hw_lm = to_dpu_hw_mixer(hw_lm[i]);
-> > > +		cstate->mixers[i].lm_ctl = to_dpu_hw_ctl(hw_ctl[ctl_idx]);
-> > > +		if (i < num_dspp)
-> > > +			cstate->mixers[i].hw_dspp = to_dpu_hw_dspp(hw_dspp[i]);
-> > > +	}
-> > > +
-> > > +	cstate->num_mixers = num_lm;
-> > > +
-> > >   	return 0;
-> > >   }
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> > > index ada9119326ca..36b677cf9c7a 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> > > @@ -1049,14 +1049,11 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
-> > >   	struct dpu_encoder_virt *dpu_enc;
-> > >   	struct msm_drm_private *priv;
-> > >   	struct dpu_kms *dpu_kms;
-> > > -	struct dpu_crtc_state *cstate;
-> > >   	struct dpu_global_state *global_state;
-> > >   	struct dpu_hw_blk *hw_pp[MAX_CHANNELS_PER_ENC];
-> > >   	struct dpu_hw_blk *hw_ctl[MAX_CHANNELS_PER_ENC];
-> > > -	struct dpu_hw_blk *hw_lm[MAX_CHANNELS_PER_ENC];
-> > > -	struct dpu_hw_blk *hw_dspp[MAX_CHANNELS_PER_ENC] = { NULL };
-> > >   	struct dpu_hw_blk *hw_dsc[MAX_CHANNELS_PER_ENC];
-> > > -	int num_lm, num_ctl, num_pp, num_dsc;
-> > > +	int num_pp, num_dsc;
-> > >   	unsigned int dsc_mask = 0;
-> > >   	int i;
-> > > @@ -1083,13 +1080,8 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
-> > >   	num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> > >   		drm_enc->crtc, DPU_HW_BLK_PINGPONG, hw_pp,
-> > >   		ARRAY_SIZE(hw_pp));
-> > > -	num_ctl = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> > > -		drm_enc->crtc, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
-> > > -	num_lm = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> > > -		drm_enc->crtc, DPU_HW_BLK_LM, hw_lm, ARRAY_SIZE(hw_lm));
-> > >   	dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> > > -		drm_enc->crtc, DPU_HW_BLK_DSPP, hw_dspp,
-> > > -		ARRAY_SIZE(hw_dspp));
-> > > +			drm_enc->crtc, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
-> > 
-> > Please don't mix reindentation with the actual changes. It makes it
-> > harder to read.
-> > 
-> > >   	for (i = 0; i < MAX_CHANNELS_PER_ENC; i++)
-> > >   		dpu_enc->hw_pp[i] = i < num_pp ? to_dpu_hw_pingpong(hw_pp[i])
-> > > @@ -1115,18 +1107,6 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
-> > >   		dpu_enc->cur_master->hw_cdm = hw_cdm ? to_dpu_hw_cdm(hw_cdm) : NULL;
-> > >   	}
-> > > -	cstate = to_dpu_crtc_state(crtc_state);
-> > > -
-> > > -	for (i = 0; i < num_lm; i++) {
-> > > -		int ctl_idx = (i < num_ctl) ? i : (num_ctl-1);
-> > > -
-> > > -		cstate->mixers[i].hw_lm = to_dpu_hw_mixer(hw_lm[i]);
-> > > -		cstate->mixers[i].lm_ctl = to_dpu_hw_ctl(hw_ctl[ctl_idx]);
-> > > -		cstate->mixers[i].hw_dspp = to_dpu_hw_dspp(hw_dspp[i]);
-> > > -	}
-> > > -
-> > > -	cstate->num_mixers = num_lm;
-> > > -
-> > >   	for (i = 0; i < dpu_enc->num_phys_encs; i++) {
-> > >   		struct dpu_encoder_phys *phys = dpu_enc->phys_encs[i];
-> > > 
-> > > -- 
-> > > 2.34.1
-> > > 
-> > 
-> > -- 
-> > With best wishes
-> > Dmitry
-> 
+Any news for pahole version 1.28 release?
 
--- 
-With best wishes
-Dmitry
+Thanks.
+
+Best regards,
+-Sedat-
 
