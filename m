@@ -1,136 +1,150 @@
-Return-Path: <linux-kernel+bounces-339757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8D66986A25
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:01:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40301986A2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D93A71C246B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:01:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3228281024
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E546815C146;
-	Thu, 26 Sep 2024 00:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE0528FC;
+	Thu, 26 Sep 2024 00:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="faHDMdSv"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LNRWGLgH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045CE1DFE4
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 00:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816AA182;
+	Thu, 26 Sep 2024 00:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727308859; cv=none; b=dAybs0U+g1aZQdcUk6+gcLssaFx9Tt60ss3nEw4S7D0PQF6/DXj6Ea29Jh7EPCOzfIKN1eJE3L7t2y2QxwB4Qk+HGce3VVHFJwlokguSMNOiKVnMXr+l0lOrShDn+2OGtN1jBDNpkFcbzFNfVWKW5ip4ocLUMyVcWMHEoW6BRoU=
+	t=1727308982; cv=none; b=lFLmHWd2d+NdWT1u9RAn/qJ94slfbgzfR99T2YjEM3jTj7/pQWBapcSKP/6XdGFKV0WpTq4NVHKUT8UQNbInnPN9iTlKx7Mw2JGoDwV2KyPk8BkG94mdhZSCbENEJe+bJksaoXqRW+stq9g0RuKc8YqRpgxGdnbUdHgj9UgoCo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727308859; c=relaxed/simple;
-	bh=BRlZIBO2y/xAVIRFSMfbTOWt4y/TMHCA4wppJ2Xy5Xw=;
+	s=arc-20240116; t=1727308982; c=relaxed/simple;
+	bh=7IfVre6eUidj9vxBW0Hmx+hf7FbuM15xvB2SgHu1w/w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UpYZO6OA6bKP08HCSY9v4iY4Aij5KBK77ki049rhBDK4WbxuKgk4++JnXGHF4rQlZGDfRb+gzCf3UIrFhMU9Wa6h27vRor+A4fYZVD8tZTeZ/NWxbzr9BKQZ4g5KuYkwcBft8fJ9oi0HYlXqfxYvAvXC1zxyQcg+RY+sM4ycaNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=faHDMdSv; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2077b48cb09so82505ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:00:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727308857; x=1727913657; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPuMIPtkFUqqXprChJbKt7gTP4JuGanqczP3oBY5vrw=;
-        b=faHDMdSvbX8rqqyfay0OhfYhvUMXi193BkGEo8FEYdNM94AleaUsNar64tqQSmjWS2
-         iwq4kI93R+4iTc8cb3XKyEEw1WwosTeeImZFvIQZB8nL7OJ7gfoY4L+l6RVG/cZ3DqM1
-         IidRJMKuV9P5w2/NvZSLMIKil6wURI30fezkXjOrDKcslJUQbzOBHyTWWo0JlZjmvAN2
-         XLK4jJU/nSgjvTs6al8UHiKTJjQUWsbMj0RVfCyxtzfydeCzhNwJwtsGqhQNz/CfTAGJ
-         rZN9Jt2Yurxr6pfLezelNVYaXeQgLhAGXbvQzFf3W3IZPHLUBoFwcE4W1d80ZASOG3Gg
-         92HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727308857; x=1727913657;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cPuMIPtkFUqqXprChJbKt7gTP4JuGanqczP3oBY5vrw=;
-        b=OyF5npV6iR2UZH/2Rptnp30pGzihi//v68ZqNZZmFaQgUBIitxGQED1YCoZpvWC10B
-         qX4rqrunkbQIs0GxTVwnHli1T4HmKyPbc5hMdKiIk4X43stlyGwpEW3xGI6wgc0ucUeT
-         viNhX0MAk2sU65aKHjyZoMtTtc5Oy1t3DyExfL41AIsTAlgeAZJ2nxHsJwsG9z03x+hb
-         E7IAItlI4chk0NRaRBSwTRYW4a0cvzhyOEBo/WuPvwcwd6mGigzTnwoQXMs9PgDQk5o6
-         KjbzGxomLkLsgD6dKVtPs0O0Ytce7GMKZW6Gmni3uwbRCX9hoqcuvmrQn7jz/6gjFvmw
-         0vvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmeA2q3Mtttm+HgMdvKWB5+sG0jv4smiA1z0YF1x9OamGu0GloDh41RhDAr9j45l1ls4D7iCwXhKrDNVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoEPJsRHCfcNif2Qu41SUe9TGO3Uqfn+/YEQ5j3+TVz6vVkinQ
-	vCgSbKNVzglA1ffisYV+M6UVFw3bui8eSFrqQYwy0GCME+KXr02a5ZP92XMTVw==
-X-Google-Smtp-Source: AGHT+IFhjnkWy3FRA/CwSvG5CGnMdRcwTo96YK+0WkkTkGo3zIVuPlKKZn2oyrmo/1I+PT8z7lwKjA==
-X-Received: by 2002:a17:902:d506:b0:20b:b52:3f7c with SMTP id d9443c01a7336-20b1b47470emr1341395ad.18.1727308856775;
-        Wed, 25 Sep 2024 17:00:56 -0700 (PDT)
-Received: from google.com (164.135.233.35.bc.googleusercontent.com. [35.233.135.164])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af17e1806sm28912165ad.166.2024.09.25.17.00.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 17:00:56 -0700 (PDT)
-Date: Thu, 26 Sep 2024 00:00:53 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Gatlin Newhouse <gatlin.newhouse@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev,
-	linux-kbuild@vger.kernel.org,
-	kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH] cfi: encode cfi normalized integers + kasan/gcov bug in
- Kconfig
-Message-ID: <20240926000053.GA3188344@google.com>
-References: <20240925-cfi-norm-kasan-fix-v1-1-0328985cdf33@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WiHiQelxP3aeW4xykWLG6h1JT46NfEuzhm7WXbXckomglVM+uYpfOnNPUCIe09CsoX2DJAkN/two4Ni/RdfzMFA6EE0ja/6agm65t087P1ozYw4COkvaAyXY8WqyROxTjlBqSfQa/4oWVhGghytea/cpmmcShNuGsBByEwK68t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LNRWGLgH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 773F9C4CEC7;
+	Thu, 26 Sep 2024 00:03:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727308982;
+	bh=7IfVre6eUidj9vxBW0Hmx+hf7FbuM15xvB2SgHu1w/w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LNRWGLgHv8gowFEaZ+yd7a0u0Wa6+Gq1C/Oy6gI3ULldhN9PZqGca2jefBBTZujW3
+	 SyicsWxLGtjTrYuzH+l3fnRVx5kms0obJPmupu1LiwMFGtUUvmJQmmk01ge2sy8aEI
+	 T4GdQnLBYg2LPgFs//eGLykSAVndSEoa242zxnA9vDs5KYrYzT3WHG5SRk4QuyP8Kt
+	 9re9xpH/EVnIn6ZRpZmiR1pxp0eayEZ+cR5syXSQ5ftQTAkoVHjb/4Xk7JKb7mlw+2
+	 TIIqZsNZ0pCwUT9W/JP/C3L8nRdnAOwqFq94MqJcI9NzEgxlqAHMMq0tROVieuWYNo
+	 oOwlJ2jFJMdkw==
+Date: Wed, 25 Sep 2024 17:03:00 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: StefanEne@google.com
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, vinicius.gomes@intel.com,
+	stefan.ene@intel.com, stef_an_ene@outlook.com
+Subject: Re: [RFC v1 0/3] C and Rust support for perf script
+Message-ID: <ZvSktIhEOtnmrvUR@google.com>
+References: <20240919215107.2263552-2-stefan.ene@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240925-cfi-norm-kasan-fix-v1-1-0328985cdf33@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240919215107.2263552-2-stefan.ene@intel.com>
 
-Hi Alice,
+Hello,
 
-On Wed, Sep 25, 2024 at 08:10:18AM +0000, Alice Ryhl wrote:
-> An alternative solution is to inspect a binary created by clang or rustc
-> to see whether the faulty CFI tags are in the binary. This would be a
-> precise check, but it would involve hard-coding the *hashed* version of
-> the CFI tag. This is because there's no way to get clang or rustc to
-> output the unhased version of the CFI tag. Relying on the precise
-> hashing algorithm using by CFI seems too fragile, so I have not pursued
-> this option.
+On Thu, Sep 19, 2024 at 02:51:01PM -0700, StefanEne wrote:
+> From: Stefan Ene <stefan.ene@intel.com>
+> 
+> ============================COVER=LETTER============================
+> 
+> This proposal is addressing the usability and performance of the available scripting languages for custom perf event data processing inside of the perf toolset, specifically with the perf script command.
+> 
+> With the perf-script custom event processing functionality for C and Rust, we noticed between 2x to 5x speed improvement with our new methods compared to the existent Python and Perl scripting methods.
+> 
+> To explain the proposed method, you begin with the C or Rust script we’ve templatized, then just add changes for custom event processing in the preferred language using this provided template, compile the respective script into a dynamic library, then give the resulting .so file as a parameter to the newly implemented perf script option.
+> 
+> List of functionality additions:
+> 
+> 1/ Added new "--new_script" option inside the perf script command that takes in as parameter .so files. Code addition in tools/perf/builtin-script.c
+> 
+> 2/ The functional code for the newly implemented option was added to the tools/perf/util/new_script.c and tools/perf/util/new_script.h files.
+> 
+> 3/ Folder added at tools/perf/new_script_templates, containing C and Rust script templates for the new option, along with compilation instructions.
+> 
+> 4/ Finally, a short bash script for updating the perf tool set within the kernel code was provided in the base-level file update_perf_tools.sh.
+> 
+> 
+> Common Questions
+> 
+> * How can I use the new toolset?
+> 
+>    The new implementations for the perf script have a detailed usage guide inside of the tools/perf/new_script_templates/README file, along with some script templates for C and Rust!
+> 
+> * Why a new option instead of expanding dlfilter?
+> 
+>    The new option gave us the flexibility to make use of the fast dlfilter dynamic library approach, as opposed to implementing another interpreting methodology. This allows for scalability, with great potential to other languages supporting dynamic library calls from the base C code.
+> 
+> * Why use C and Rust instead?
+> 
+>    As of kernel version 6.11, the perf tool has a large overhead for data processing using Python and Perl, given the languages having to use their respective perf built-in interpreters. Furthermore, while Python is widley used in the development comunity, as of 20204, Perl is only used by 2.5 of developers worldwide, while C and Rust are more common, with 20.3% and 12.6% usage, respectively (Source: statista.com).
+> 
+> * What are the actual performance improvements?
+> 
+>    As last tested, the C and Rust approach are anywhere between 2 to 5 times faster than the existent Python and Perl scripting methods, with Rust being the fastest all across!
+> 
+> 
+> Acknowledgements:
+> 
+> This code was completed as part of an Intel summer internship project, under the mentoring of Vinicius Gomes, Intel Linux Kernel Team.
+> 
+> =========================END=COVER=LETTER===========================
+> 
+> 
+> Stefan Ene (3):
+>   add the new perf script option (--new_script) and related changes
+>   added the C sample script
+>   added the Rust sample script
 
-I suppose there would be no need to hardcode hashes in the test,
-it's enough to verify that the hashes for the compiler-emitted
-functions change when integer normalization is enabled. Still, I
-agree that this doesn't sound worth it in this case.
+Thanks for sharing your work.  But I think there are many more work to
+support scripting of native languages properly.  For example, you need
+to resolve symbols and callchains before passing them to user.  And we
+might think about the safety as it can modify the internal state or
+something.
 
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index ee58df8b1080..b8066bf43153 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -829,7 +829,7 @@ config CFI_CLANG
->  config CFI_ICALL_NORMALIZE_INTEGERS
->  	bool "Normalize CFI tags for integers"
->  	depends on CFI_CLANG
-> -	depends on $(cc-option,-fsanitize=kcfi -fsanitize-cfi-icall-experimental-normalize-integers)
-> +	depends on HAVE_CFI_ICALL_NORMALIZE_INTEGERS
->  	help
->  	  This option normalizes the CFI tags for integer types so that all
->  	  integer types of the same size and signedness receive the same CFI
-> @@ -842,6 +842,22 @@ config CFI_ICALL_NORMALIZE_INTEGERS
->  
->  	  This option is necessary for using CFI with Rust. If unsure, say N.
->  
-> +config HAVE_CFI_ICALL_NORMALIZE_INTEGERS
-> +	def_bool !GCOV_KERNEL && !KASAN
-> +	depends on CFI_CLANG
-> +	depends on $(cc-option,-fsanitize=kcfi -fsanitize-cfi-icall-experimental-normalize-integers)
+Thanks,
+Namhyung
 
-This looks reasonable to me. Thanks for the fix!
-
-Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
-
-Sami
+> 
+>  tools/perf/builtin-script.c              |  22 +-
+>  tools/perf/new_script_templates/README   |  65 ++++
+>  tools/perf/new_script_templates/lib.rs   | 108 +++++++
+>  tools/perf/new_script_templates/script.c | 113 +++++++
+>  tools/perf/util/Build                    |   1 +
+>  tools/perf/util/new_script.c             | 376 +++++++++++++++++++++++
+>  tools/perf/util/new_script.h             |  54 ++++
+>  tools/perf/util/new_script_rs_lib.h      |  35 +++
+>  8 files changed, 773 insertions(+), 1 deletion(-)
+>  create mode 100644 tools/perf/new_script_templates/README
+>  create mode 100644 tools/perf/new_script_templates/lib.rs
+>  create mode 100644 tools/perf/new_script_templates/script.c
+>  create mode 100644 tools/perf/util/new_script.c
+>  create mode 100644 tools/perf/util/new_script.h
+>  create mode 100644 tools/perf/util/new_script_rs_lib.h
+> 
+> -- 
+> 2.46.0
+> 
 
