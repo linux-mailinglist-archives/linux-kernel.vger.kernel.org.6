@@ -1,193 +1,114 @@
-Return-Path: <linux-kernel+bounces-340448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9963E98738D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:27:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2F7987391
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8FFD1C24AE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:27:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EC32B26D8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6714617799F;
-	Thu, 26 Sep 2024 12:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E553717BEC7;
+	Thu, 26 Sep 2024 12:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gfIc4cc6"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ifVOkBFs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C32E9474
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0E5156875;
+	Thu, 26 Sep 2024 12:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727353618; cv=none; b=J4M9ewLEWJ7PfzCw7N6bC+Sp05QuJQQjOPbBkyGEyzgcpKA3iZO7zCMiDr4q34pMCVChNUahew76RzaFJhK5GOLkcRhj0cIWz+aHHgrFM50icCbLYiJAwt5wxhunuCgI78keRm3wmL7UFsdW7J48fu5GS0lPqlseo4Mb0GbWR/0=
+	t=1727353659; cv=none; b=JXg0JoQrRWDf5Mu6L6nqBGfubdXm4xnK4U/QuCv1ZYkGA5UOs/sdG8FIKQeOtr19NDmHfW4Qqk7jJV8Rxd6bi30FhMs9GeNWqZKpReffZFu/ZA/Y3/06qhAnN7hteGUZph1armYsKNiE3cT1L5vsrq9ImhzbFZQuyhYmiu2zW8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727353618; c=relaxed/simple;
-	bh=W1K4LUZoM1dpkDf1rPVbHtgMVLSGFsIkoB4l+0nrXWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rJZgIqjzDU5efqAg1/KFkFR0WRPQ5LOPfnHHIro+tibkN/xpm8+iO/pNUUCIOJ7UCHE/034zvG6oWSyqUAFpJ62QjV9GnnudnKsYsHxJl8dI8gClSY/5OdXXOhJ3iyJ4trpKsnIlo/BKvrHQqOGLyksTim3S0JWbNBPW5kYfi8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gfIc4cc6; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d43657255so137555666b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:26:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727353615; x=1727958415; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8eB/LC0WCkLRHYHqq55Ehj0gnBL7BMz7IH9VuKZNge8=;
-        b=gfIc4cc6DjZ34/raLrCgVzIfwqxM6Garlcqf8iQWdmRP7ff8PZ/r+SRoHy6Q7odqtq
-         AiiC6cYY33Ij3nKmeaPloudMJPBYkPBHsySoA6Md8zbAut8ycZNhkof6nJBKVf8NuwOk
-         MZNTOlwYkdhE9dWwNwd2gVRjdC15qipBM0PE5Yj3C7kNsWHQ7TWW/aLUdItd4JRu5IoX
-         1L77maFsgUTWBSKEfHVThIpRcb57eMGRoXEUOfOwT2V0w1FrMZkM8N1oqydaaUQQQg8q
-         31AUzIxY6f3ML1ohnzh5Zlneb8Q5IUWvOWrz7Cns/SXtYmsjZ9n6Y5KFbDwZNnIWPlWE
-         oiIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727353615; x=1727958415;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8eB/LC0WCkLRHYHqq55Ehj0gnBL7BMz7IH9VuKZNge8=;
-        b=e9/KS8ZnD38u3mqcfbIpaYHIb0R8qL/vAtujrpYL+OQ8ovn98Qd69efPul0OZQ9NZ2
-         RBS+fFhkp9LIfmRRXNKQpB4LFVlv9M2lnQf8n/9aFEes1OzciR8WAnT0RWCe0Z1bLzN/
-         kAnprEDl21IBGQryA0NYcoyBsRiy3d+i19DecOJE0cfLCT2NJaY4hiwv18sjCtQdpywa
-         aI+TPX3WVXpAff4UYg/kRMPBhuH51e2foYijLv6J0TpEqbmIqKTBNgSwjBPlrVBFomm4
-         zPPLJv2/5E2axqA/jCygQvW4qKXDa1s+RXb/r2AMneqZLZ1dkdveDfO541esirZg00iz
-         r53A==
-X-Forwarded-Encrypted: i=1; AJvYcCV8eTkTzgPLNvY8Eh1OWAPDvkc+e33ikfNL5VsuOSVx4BPMnlwdU3/SEKEOvQZ8bHXuLYln8Np3omlf78o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6dS1v0TYwW6+7laJbetTNystM3LOUkFXsF3zHyhztpOMBQZBi
-	pM9UaTVoZg8H8l6sn6pja6Wle1wmsOJxAYm9rg3h7PRGubsa3cfZzjWxiof3+hQ=
-X-Google-Smtp-Source: AGHT+IEby6swK1qKmKOhNp9ApnteMBewDC39/Ox0Bk0vbizMEUBN8yjxVubq07e6qVNDHlKPjcMkOw==
-X-Received: by 2002:a17:907:3f99:b0:a86:7fc3:8620 with SMTP id a640c23a62f3a-a93a03fefdfmr593049066b.31.1727353615307;
-        Thu, 26 Sep 2024 05:26:55 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f541e4sm345619666b.66.2024.09.26.05.26.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 05:26:54 -0700 (PDT)
-Message-ID: <55f95839-5403-44e3-968c-ba0cc93bfb73@linaro.org>
-Date: Thu, 26 Sep 2024 13:26:53 +0100
+	s=arc-20240116; t=1727353659; c=relaxed/simple;
+	bh=YnO8jzSwusUqP5MrbcUGwNCHwAl9f2jDtgahK2k07Qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ix62nOlOlrm35B1drG98JzFyK5exgMfx0J2WPmGTWe5+hwAedDZEaUf2Wdc1Ax7Iz1eyUQ5XNWg6dleB7+ipJWH1E45kJ0OwL6tVDZfNjvppj+uwWjIR9WBFgHtThCIuzEGLoc+V//ciGWjSb4QlQ0MMLpsIFGrrbDQKWyXSjWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ifVOkBFs; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727353658; x=1758889658;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YnO8jzSwusUqP5MrbcUGwNCHwAl9f2jDtgahK2k07Qs=;
+  b=ifVOkBFsHWWuvGt5xPGGmfR+z+fp/VdDFltHVrqice1W402H0cj0c/Yk
+   MXXxiiZ3dlc0/mmecO/pEGC6nZhLCw8kbvrssTV3FYFTL3mLRLL4yg4Ud
+   kMqlkHhwOzNgpkcpW3kMVfWNDVsVJ+u1TyxdTgNUdSMjG1hHGOKESTQu6
+   hfixUJJEKDKjVoiQrCgAxvXBjIHj5JZfkyHmv+/puMSUTyNd1uv7hWFgP
+   Mu1v1ofl4UDrE/2P3kbCl7D3NFyCoNspCq4uXACvBl6kndoUpFIcGRfsL
+   aQYQwIWkczkoC6HE58CtpUY/j2vpKht/ermHMzdgvA5nSe5AIi8JZgucw
+   A==;
+X-CSE-ConnectionGUID: RWCEJQ/6Rmql6rmVW3R4tw==
+X-CSE-MsgGUID: 7+nQZ3xEQMKfzAt8WU0kaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26309735"
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="26309735"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 05:27:37 -0700
+X-CSE-ConnectionGUID: DdVHgut6RUqt5LdzA9CnAQ==
+X-CSE-MsgGUID: obOfpQMVTlSJ1ji0jd+aqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="76907851"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 05:27:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1stnal-0000000DC2k-1uEh;
+	Thu, 26 Sep 2024 15:27:31 +0300
+Date: Thu, 26 Sep 2024 15:27:31 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-usb@vger.kernel.org,
+	Ajay Gupta <ajayg@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Haotien Hsu <haotienh@nvidia.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Utkarsh Patel <utkarsh.h.patel@intel.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 0/2] usb: typec: ucsi: ccg: Adjustments for common code
+ in two functions
+Message-ID: <ZvVTMyn9VtuT-tIr@smile.fi.intel.com>
+References: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
+ <jjsbnitbajdw7dc4plkbb55ezl2cdbnrfws7hnoigbzasvdzua@puhrwwlu4lvv>
+ <ZvVPlInCFajkeFy9@smile.fi.intel.com>
+ <CAA8EJpo0Q0Wn-GzqmPeNFfG_Hr-o8E7F_VuO47EbxKx=0OQhyQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 0/7] Event parsing fixes
-To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
-Cc: linux-perf-users@vger.kernel.org, kan.liang@linux.intel.com,
- ak@linux.intel.com, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
- Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Weilin Wang <weilin.wang@intel.com>,
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
- Dominique Martinet <asmadeus@codewreck.org>,
- Colin Ian King <colin.i.king@gmail.com>, Yang Li
- <yang.lee@linux.alibaba.com>, Yang Jihong <yangjihong@bytedance.com>,
- Howard Chu <howardchu95@gmail.com>, Ze Gao <zegao2021@gmail.com>,
- Yanteng Si <siyanteng@loongson.cn>, Jing Zhang <renyu.zj@linux.alibaba.com>,
- Sun Haiyong <sunhaiyong@loongson.cn>, Yicong Yang
- <yangyicong@hisilicon.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240925141357.1033087-1-james.clark@linaro.org>
- <ZvTlUXJs2jVDDL0B@google.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <ZvTlUXJs2jVDDL0B@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpo0Q0Wn-GzqmPeNFfG_Hr-o8E7F_VuO47EbxKx=0OQhyQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Thu, Sep 26, 2024 at 02:20:19PM +0200, Dmitry Baryshkov wrote:
+> On Thu, 26 Sept 2024 at 14:12, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Thu, Sep 26, 2024 at 12:26:24AM +0300, Dmitry Baryshkov wrote:
 
+...
 
-On 26/09/2024 5:38 am, Namhyung Kim wrote:
-> On Wed, Sep 25, 2024 at 03:13:38PM +0100, James Clark wrote:
->> I rebased this one and made some other fixes so that I could test it,
->> so I thought I'd repost it here in case it's helpful. I also added a
->> new test.
->>
->> But for the testing it all looks ok.
->>
->> There is one small difference where it now hides _all_ default
->> <not supported> events, when previously it would only hide some
->> selected subset of events like "stalled-cycles-frontend". I think
->> this is now more consistent across platforms because, for example,
->> Apple M only has cycles and instructions, and the rest of the
->> default events would always show as <not supported> there.
->>
->> Tested on Raptor Lake, Kaby Lake, Juno, N1, Ampere (with the DSU
->> cycles PMU) and I also faked an Apple M on Juno.
+> > but in any case the thing is that kfree()
+> > probably can be done using __free(). Then PM runtime handled differently.
 > 
-> Hmm.. I got a segfault with 'perf stat true' on my Zen2 box.
-> 
->    $ gdb -q -args ./perf stat true
->    Reading symbols from ./perf...
->    (gdb) r
->    Starting program: /home/namhyung/tmp/perf stat true
->    [Thread debugging using libthread_db enabled]
->    Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
->    
->    Program received signal SIGSEGV, Segmentation fault.
->    0x00005555557e04b5 in perf_pmu__is_fake (pmu=0x0) at util/pmu.c:1173
->    1173		return pmu->type == PERF_PMU_TYPE_FAKE;
->    (gdb) bt
->    #0  0x00005555557e04b5 in perf_pmu__is_fake (pmu=0x0) at util/pmu.c:1173
->    #1  0x00005555558c1b8b in evsel__sys_has_perf_metrics (evsel=0x5555560cc4b0) at arch/x86/util/evsel.c:50
->    #2  0x00005555558c1c33 in arch_evsel__must_be_in_group (evsel=0x5555560cc4b0) at arch/x86/util/evsel.c:64
->    #3  0x00005555557773a4 in parse_events__sort_events_and_fix_groups (list=0x7fffffff9ad0) at util/parse-events.c:2098
->    #4  0x0000555555777793 in __parse_events (evlist=0x5555560aa880,
->        str=0x5555558d6498 "context-switches,cpu-migrations,page-faults,instructions,cycles,stalled-cycles-frontend,stalled-cycles-backend,branches,branch-misses", pmu_filter=0x0, err=0x7fffffff9bd0, fake_pmu=false, warn_if_reordered=true, fake_tp=false) at util/parse-events.c:2186
->    #5  0x00005555555c787f in parse_events (evlist=0x5555560aa880,
->        str=0x5555558d6498 "context-switches,cpu-migrations,page-faults,instructions,cycles,stalled-cycles-frontend,stalled-cycles-backend,branches,branch-misses", err=0x7fffffff9bd0) at util/parse-events.h:41
->    #6  0x00005555555cce39 in add_default_events () at builtin-stat.c:1977
->    #7  0x00005555555cf928 in cmd_stat (argc=1, argv=0x7fffffffd840) at builtin-stat.c:2724
->    #8  0x000055555564cb81 in run_builtin (p=0x555556024548 <commands+360>, argc=2, argv=0x7fffffffd840) at perf.c:351
->    #9  0x000055555564ce28 in handle_internal_command (argc=2, argv=0x7fffffffd840) at perf.c:404
->    #10 0x000055555564cf81 in run_argv (argcp=0x7fffffffd63c, argv=0x7fffffffd630) at perf.c:448
->    #11 0x000055555564d2cf in main (argc=2, argv=0x7fffffffd840) at perf.c:562
-> 
-> Thanks,
-> Namhyung
-> 
+> That's a separate cleanup in my opinion.
 
-Oh yeah that's from the rebase. Looks like pmu is never NULL here on Arm 
-and hybrid x86 so I didn't see it, but I do see it on non-hybrid x86. It 
-just needs a NULL check:
+Yes and for that we do not need an intermediate change, right?
 
-   bool evsel__sys_has_perf_metrics(const struct evsel *evsel)
-   {
-   ...
-   	pmu = evsel->pmu;
-	if (pmu && perf_pmu__is_fake(pmu))
-		pmu = NULL;
+-- 
+With Best Regards,
+Andy Shevchenko
 
-I also noticed a new issue though, the change to make all default stat 
-events skippable=true hides permission errors, so now instead of the 
-hint to look at perf_event_paranoid you just get nothing, so I need to 
-fix that:
-
-   $ cat /proc/sys/kernel/perf_event_paranoid
-   4
-
-   $ perf stat true
-
-     Performance counter stats for 'true':
-
-
-        0.000431617 seconds time elapsed
-
-        0.000445000 seconds user
-        0.000000000 seconds sys
-
-I'm thinking it either needs to never skip EPERM or some other errors, 
-or maybe make cycles always non skippable. Probably the first option is 
-better.
-
-James
 
 
