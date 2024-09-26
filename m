@@ -1,114 +1,156 @@
-Return-Path: <linux-kernel+bounces-340453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF4598739E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:32:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 903699873A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FA4628807F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:32:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91290B29D05
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB2729CA;
-	Thu, 26 Sep 2024 12:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F2C2914;
+	Thu, 26 Sep 2024 12:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X07yFnFM"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O989Ilp4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1396C3224
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2EE12B73;
+	Thu, 26 Sep 2024 12:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727353916; cv=none; b=fbPBqDEzkBKuI7mFm5ybIAkRMrBAH9HxrS+eyAA87q6AY/svVYnadDNAYQ+iYUWyevB+qNcQEpYR8WU3yB77SxLi+ZgvFoOcxfT77FroVZguJL7YfbZn9c49c0igFf5cWi62bkNDNpvixItzpmhm1wVUI2lACKR+cPDA2F4eb+k=
+	t=1727353930; cv=none; b=JUHnSx2ZYncImhZt0sOvZTkHPQU8m63gN9JFvCsOSfgR4AFq/UbLhnnRysVOXPs9NQoZvoGcdo1Tt5GwDNUuLqqjWc/M4ljQde12ELnxhprNXDO16Z6GWSmSblI1BLaGSFT9sydyyiurKT5wmnr7iFbLc0LYzE9MXwdPQywbB+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727353916; c=relaxed/simple;
-	bh=mCthW15WhI930vnar/bIOU0gxyKjH6j4NSrfELJCAek=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bkmR8S+593s31u2HkQ0ZzI2fka/Tiny593hXsW25S/SGhEt6fvEkiliiUJEHyJQHwtDw6JArigc8Fs20mXE5fYVWb5JdM137n1lI2IgLHp1n71B0Vl7W9r8p0D7CrxljLstH7n5RFoPLaye50H9Pe9Ii1QHE2W5SW4H0QPeIU9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X07yFnFM; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e2226b9f246so825142276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:31:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727353914; x=1727958714; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=u4a3QtXEUpHAVm+ZK+N+HQKk1DStI8szpt5V5LT2xTA=;
-        b=X07yFnFM8BDYit6JK+glG5G2FA41NQG4MERPLj6TAg2taTUmfOMQeCWoEDmy2p8WdM
-         f3L0qw1d8MVrUdmJ+nuCXV3QqX/M2wsAIFZFiH/M2fEZtAwOMXQ0GDuVa+OwavmA2vZm
-         PKdsfk7vVLBKgitTl/klBomW3MuJZ5re2YjWEqDPjjWmtcLQf+YkwKGUJnJ4AecUsbTT
-         kIqL1GDBBNkaUsAkOh6cHyua2CO6h4lLVcvxnh/B2TA+rwnJvyFqXqcILhuXTeawnN5C
-         sWh/OSsZN5f5+CzPMC/RUFS+nIcxx498qPnRA3uPZep97XfcOsb9xVqcNkY1KE0ltBI3
-         RBbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727353914; x=1727958714;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u4a3QtXEUpHAVm+ZK+N+HQKk1DStI8szpt5V5LT2xTA=;
-        b=WOrTJkUrhu/cBBrjmFT0myWCINKZkt7tB4uNMIESU6HK/NijacycM2YRc53JMw5PXc
-         ZUc9bbvDZr2nh1QRuuAQ9nGw1LtAWXcDMnCBuEdWRXNEGOgBm0xbpOCZtPBQe+iOckcI
-         TR7aWOg7iD1SpA8afmxGaahgs6AuoRhvbxIgoPURjW2HceebK6GbEn/qs1ae6OhfkABu
-         Xq3WNf61XD1Naht/J5Ky38k9Z18eTQx4r8sEuhM4PN+PEFNyXSelxOwQ1VXHKyuGC/Yo
-         Sjj3M4b5Ba4EnteiqyQEZGq9Xg6IufhSK49t4B74v2BVux7gslzHimhOVZqSS2jpIY8a
-         CS9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXh/XTsQ3FNHUqTmcP22xSFLRrkkeTDJN/8HrDebkLjR9xsdLxdL2O8W8qj9XDjcU8+QMVdGHKnu9wzquA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLhTaKamw+KcXpZSmCGurJovd4gC2F3etkCZNLPX0qGNK3E3cI
-	U8p4hskPbDO2Ps1rgY7wOT7BY2zS7AYYgZSv7zudQAVxfCauE6u9B6Hd+lQtMe2J5OR6ROnkhG1
-	Aj/iIlCp++VSM9uGEID3f02OOZzq1n7hN28xImQ==
-X-Google-Smtp-Source: AGHT+IE29PkpeUSyt7nuSyGgj69wjdmICcREmjZKRDgH/DNSmFafaP1zk2QtLSNTp6vj8RrxGQTq1KdSdrzDhYgGe2Q=
-X-Received: by 2002:a05:690c:6789:b0:6db:d5e8:d612 with SMTP id
- 00721157ae682-6e21d86349amr48398477b3.23.1727353914042; Thu, 26 Sep 2024
- 05:31:54 -0700 (PDT)
+	s=arc-20240116; t=1727353930; c=relaxed/simple;
+	bh=EuzHWRCk0RtdtyDt3LqvhZ/AUv65D4/jj//uS4uOgMI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gAwAEnvg/IQ/2H3iFm5Q2xtZWC7QVuuy5iNO88roTQSAC/IbIDUu9w54lWNYwsYbJgHkaZRHQEKy2U/T8NDEThECS4gH53ptgkyO+aK4vFJyGvEze+8rE2xKB/w+iISuSWqnL5hUpgHsDcL6j+mYKeXoTSNdLbeVE36Be52AenQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O989Ilp4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46901C4CEC5;
+	Thu, 26 Sep 2024 12:32:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727353929;
+	bh=EuzHWRCk0RtdtyDt3LqvhZ/AUv65D4/jj//uS4uOgMI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O989Ilp4daFCahAF7IG/IC5nJGrzNPqHZJ9A/Cko1j7FcMcng9Y2MPRpYemHXzkWW
+	 H+89LrkBAIX9vK4XjskV2POZ4+n66cmlF46mVJ+o7DWMNH6+rqYiICyvR5k0EJ0RaY
+	 S7qCWoBXwoFGbbwrxzNJXIMqS/gxO2CBpV4XLiC9UK8YwuDx0wr5wd45ExsI4e0a5g
+	 EBS+LNQbVxOBvWGiCl85httmPkiaUwKAaF6Y5QCdldQGYh9LV6xsumJ3CMsPxCSVs6
+	 9ggejWpFT81rfzt8UuLI5Fm8+kiV7unGeci4wOgR00uuky5d3u30QiCTIPOpnrQUVV
+	 pnFItmCm47uDA==
+Message-ID: <87d49032-cb94-4cf8-a5e0-44eb2ec37111@kernel.org>
+Date: Thu, 26 Sep 2024 14:32:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <b890361e-e99b-43da-8571-7478b5eab475@web.de> <jjsbnitbajdw7dc4plkbb55ezl2cdbnrfws7hnoigbzasvdzua@puhrwwlu4lvv>
- <ZvVPlInCFajkeFy9@smile.fi.intel.com> <CAA8EJpo0Q0Wn-GzqmPeNFfG_Hr-o8E7F_VuO47EbxKx=0OQhyQ@mail.gmail.com>
- <ZvVTMyn9VtuT-tIr@smile.fi.intel.com>
-In-Reply-To: <ZvVTMyn9VtuT-tIr@smile.fi.intel.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 26 Sep 2024 14:31:42 +0200
-Message-ID: <CAA8EJpoqm_n-WrQq+77wStCxVMU1ysQthStReK3kS3MaMaYSUA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] usb: typec: ucsi: ccg: Adjustments for common code in
- two functions
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-usb@vger.kernel.org, 
-	Ajay Gupta <ajayg@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Haotien Hsu <haotienh@nvidia.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Utkarsh Patel <utkarsh.h.patel@intel.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Wolfram Sang <wsa@the-dreams.de>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: jikos@kernel.org, bentiss@kernel.org, hbarnor@chromium.org,
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+References: <20240926044217.9285-1-charles.goodix@gmail.com>
+ <20240926044217.9285-3-charles.goodix@gmail.com>
+ <998ccefa-8d4a-40c1-aacd-0897070190ce@kernel.org>
+ <ZvUwFur1vWYteQMy@ux-UP-WHL01>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZvUwFur1vWYteQMy@ux-UP-WHL01>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 26 Sept 2024 at 14:27, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Sep 26, 2024 at 02:20:19PM +0200, Dmitry Baryshkov wrote:
-> > On Thu, 26 Sept 2024 at 14:12, Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Thu, Sep 26, 2024 at 12:26:24AM +0300, Dmitry Baryshkov wrote:
->
-> ...
->
-> > > but in any case the thing is that kfree()
-> > > probably can be done using __free(). Then PM runtime handled differently.
-> >
-> > That's a separate cleanup in my opinion.
->
-> Yes and for that we do not need an intermediate change, right?
+On 26/09/2024 11:57, Charles Wang wrote:
+>>>  1 file changed, 71 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+>>> new file mode 100644
+>>> index 000000000..849117639
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+>>> @@ -0,0 +1,71 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/input/goodix,gt7986u.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: GOODIX GT7986U SPI HID Touchscreen
+>>> +
+>>> +maintainers:
+>>> +  - Charles Wang <charles.goodix@gmail.com>
+>>> +
+>>> +description: Supports the Goodix GT7986U touchscreen.
+>>> +  This touch controller reports data packaged according to the HID protocol,
+>>> +  but is incompatible with Microsoft's HID-over-SPI protocol.
+>>> +
+>>> +allOf:
+>>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - goodix,gt7986u-spi
+>>
+>> NAK, you duplicate again the binding. You cannot have bus-flavors.
+>> Device is the same.
+>>
+> 
+> Could you provide some suggestions regarding this issue?
 
-I don't have a strong opinion here (and I don't feel a strong need to
-move existing code into using cleanup.h just for the sake of it).
+What is exactly the question or problem? There is a binding for this
+device. Extend it with SPI parts, e.g.
+https://elixir.bootlin.com/linux/v6.4-rc7/source/Documentation/devicetree/bindings/iio/accel/adi,adxl313.yaml#L22
 
--- 
-With best wishes
-Dmitry
+Best regards,
+Krzysztof
+
 
