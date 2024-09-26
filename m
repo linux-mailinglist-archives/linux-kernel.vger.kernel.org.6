@@ -1,153 +1,118 @@
-Return-Path: <linux-kernel+bounces-340896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F8CA9878BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:56:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF5E9878BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0F8228621D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:56:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F16281C4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F84168491;
-	Thu, 26 Sep 2024 17:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92ABD1C6B4;
+	Thu, 26 Sep 2024 17:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FjnM95ds"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lD/B4Gbp"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765AD161311
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7C61494AC
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727373297; cv=none; b=CddNb/rM0GiMWstIiMKOOZHe1U5YlQIekMIOvhhVziR2Datzs3f1BJg8iFnHalKC1AZdwcIdtPMGa3mFdSLP4rB39ySVnSEG8rLJ3K0qs7Mm1hcZf7LzLz7mVcjoLiDNv8bAU24YDWV68jtfYtGvICoSzi1kzAm3A8siNV0T3q4=
+	t=1727373436; cv=none; b=kVUbFSUAAU+0hOIrAMjgw4HwCs7gA0P9KgpUNUrTdcShJi8A4bqhq3ffRtlkzZ0wB0d8ggpi+ykMyJctz6Uk7RoIaq5Wll58NKxlKvATA0h8mw/DizKqSEwzDTglvkDI+363lz+GGr+2Qh3CCRjcCqYp1qLB3qechsj4G/NDNbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727373297; c=relaxed/simple;
-	bh=0aRGTn4qZNYsFHdSLtVVTADgFQWgEkqzVNawgnPQ2i4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MpUO759zZBtcscBYbe45nyAifCJoiKHiTyrLNHrkPPE6ezzyaxN0AakI38avN1vD3PEzVbQuXh1g4UwUyoSXO38O+Jnip4Ttyfh4oFaDsC1vJk7GmXvifbkzBAQe+831Z9uFE+RmDlXc5auX+RGYhDt0C82/BKKaYWK7PKS9MSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FjnM95ds; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727373294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JjoTb3DDkGQpWq+NC7yAzgO/O7gkqyS4FMGzMtxEfpU=;
-	b=FjnM95dsTICfEw4SaYHHeow+RNYk3yMPUZPyK0lc/BIXHGAz24Oqm7GeCkPC/UJaD7b+J+
-	YKqVDBw/nyznmtIjIbAZRu8GUPRjUtCk8jLZLbFFW4xURtrnpiqRTEC3Fjqk6Ag2Zzye7S
-	doI+U1jAF0rcTMVkk3o1GeKGqoYLg+o=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-681-DpDxnIO2Pxyf3u0eMnhOTA-1; Thu, 26 Sep 2024 13:54:53 -0400
-X-MC-Unique: DpDxnIO2Pxyf3u0eMnhOTA-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a8d3085ab6fso71351966b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:54:52 -0700 (PDT)
+	s=arc-20240116; t=1727373436; c=relaxed/simple;
+	bh=yQLTFAI6fm2S6WA1+4rUoCU2eC6pNpVtiygrTZySpg8=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=EPHKMdUm34moSOVtV9SJDeRTNCzimYIF+aEy7VHZwFUZhtSm5mZs2pX982AhP+DPAuvZ3fthagUOSL/GaokBNqUkuxSCwDEx5YLSDUglwxrf4wL36UI1Uil4gC4iFaEvfUvLEDRa4V4ikoMqToO9z6c7fofbtj0p8JVGZDhRx8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lD/B4Gbp; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0353b731b8so1874999276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:57:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727373434; x=1727978234; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=O0i4jjOvP6OpA7ZpA7aNGfOXmC8iMW1XimlebYcMMOw=;
+        b=lD/B4GbpGLEftoTZSyU4450o5OeUq0WSByYTOK6jhW2TIvJI/eJjAMkek0yvPIgqxu
+         /j/RT1+xqLfHuGBwUDbS/XO3X9+g3AVVPfT9pX5QAjV7x1d/EroeeOmv/4mavTrGjbQR
+         2n+tROE8a3tgAEBCMfRhCWZc4xb76E0rcijOZkLmc7xstCW+3ghwazJd0/kdiP+2EJFP
+         N4JoSGbBLXT3DIApzhyr6bn1HVmKmLwPD+fluBJkca9HcDMl1qAHqpCTY6e4kFqBlQ9R
+         imVhsY5TeZiltIKHNPLdy6i9SBiTSDQQxczzwYzekqLr2IeGt5UQ0h4dyAhsg7AApxsm
+         gnVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727373291; x=1727978091;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JjoTb3DDkGQpWq+NC7yAzgO/O7gkqyS4FMGzMtxEfpU=;
-        b=b61X+SKh5EKB3GUI1McHL5p19TF0KHI/rs+5eNPopt5NIQUJq2+SxheCCzcvl1MgTm
-         xvBiQcXkfyN/OAYIzEd1YydVYUy2cNdEw2w8eLFCqvdxRYFf5KasWGfU4oe20T5+UA+k
-         L1/IbmtgvZwJQshe3g5Rk4PsDRH3uSH0cvbS8yZXpT/NnIGV2G1+SEa1SXMjRXw1V0RV
-         y7K5jJ+lbWwyTVo+S4JW6oKKA/gUad0rRHVkwkK4yC0llzF9CRJpLGqOhKAVkm0hlNUg
-         68BROm2ZQ//2ZdojF46gMpDYqo0wY/4z35fKyobl+9E8QHxH86aFHBPlurobVSvqAgAI
-         Huzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkdVj9rfXZvplEvk/6pncPNiGKISxrFbnBMxeyJ3ONEeFaOU8i0q7r9QnyiERMyKn6O2Q5GjTm2AqnObU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2pS8rEzsSLNOJ52bRr0nPyW2LIbR0TmnMR/UfYulirbNzs7fI
-	Jtc40JsbiIoRs92gPfgYrvK+J2V9ECFeOXd1iMcQ52/PoyED46a6XzXAUv4v+/pfY3LygAdj+Vc
-	8Ako2EfD5doGvgCU53GS6Bhi1/jwJ9BSFL2mvf8CvoqujUrLLymHEKXVicYE2oRzb7/B7XyvQPF
-	Y=
-X-Received: by 2002:a17:907:1b96:b0:a93:ae71:994c with SMTP id a640c23a62f3a-a93c4aa6c84mr20387766b.57.1727373291485;
-        Thu, 26 Sep 2024 10:54:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHgJ2ce8we4Rd7DeLh3WEv+xfrahHxGE4lyf2Nkn1gqk5KwScN7/aCChIQ2CyyjKxqasmeoQQ==
-X-Received: by 2002:a17:907:1b96:b0:a93:ae71:994c with SMTP id a640c23a62f3a-a93c4aa6c84mr20386166b.57.1727373291119;
-        Thu, 26 Sep 2024 10:54:51 -0700 (PDT)
-Received: from [10.100.0.2] ([94.101.114.121])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297bcccsm22614166b.173.2024.09.26.10.54.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 10:54:50 -0700 (PDT)
-Message-ID: <f8546c5d-fa2e-416f-8a1b-431025b4df4d@redhat.com>
-Date: Thu, 26 Sep 2024 19:54:48 +0200
+        d=1e100.net; s=20230601; t=1727373434; x=1727978234;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O0i4jjOvP6OpA7ZpA7aNGfOXmC8iMW1XimlebYcMMOw=;
+        b=uHjIAQ7ZfBfi69pbOsF6vfKcWzUf0/LtKmDT98DwVLV9B9YSBwduAcrtebujIH47CY
+         4VAMUvNV3rUA/EElQbgMqjlqfNmKJiVtlGFDICa4FCG17c72F7MHQx8NyILe+cCFWova
+         85rg5qxYOGJzy/tzwylzdm90hmxv6v75TdBijaB1O9ONqD74D2aHEsrymEXWFETHnQGQ
+         hW3VqwNR/p5yQDWGSaryxIMYFYT9BqpHg7obg2PA/srpc/2Bs8mWSGvDl+HArAe88VEA
+         iZwzRMWcPKsooUrmTdjn3y780atmFT9B+OEhejzhhI2SZ2FPV4Oe5VzFkYW3+5XR7ORf
+         C7yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULOnuaJYjHvnix4QXg7lSmhTmnv+ntJtsqw5JTnJIJrvrXH3gQicB8kKeg7aIaX5SOKa5gXSrW4br/a+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4cSePQghlCdIyq5bfLBRrueffIQre6xAQW55p2P5C3oak7Ydr
+	XrxdSyenER1EXm5EXxaURaeqJwqplASUJcNXlQfrCbINnTsQH6itsGugBYUUPGprLmkB9X154Uw
+	F1rhlpw==
+X-Google-Smtp-Source: AGHT+IFrKrFTKYqE8L8NRygtNLax5RL2MI+YZtF6E5IqIoKgsdCqpSLZjmvEJGFP2HwHCduugVzIY5xcDu96
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:6894:6d8b:d227:e5d2])
+ (user=irogers job=sendgmr) by 2002:a25:ce4f:0:b0:e22:5bdf:39c1 with SMTP id
+ 3f1490d57ef6-e2604c883d4mr144276.10.1727373433466; Thu, 26 Sep 2024 10:57:13
+ -0700 (PDT)
+Date: Thu, 26 Sep 2024 10:57:07 -0700
+Message-Id: <20240926175709.410022-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation/tracing: Mention that
- RESET_ATTACK_MITIGATION can clear memory
-To: Steven Rostedt <rostedt@goodmis.org>, LKML
- <linux-kernel@vger.kernel.org>,
- Linux trace kernel <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mike Rapoport <mike.rapoport@gmail.com>, Kees Cook <keescook@chromium.org>,
- Ard Biesheuvel <ardb@kernel.org>
-References: <20240926130159.19e6d0e2@rorschach.local.home>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240926130159.19e6d0e2@rorschach.local.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Subject: [PATCH v4 0/2] Python generated Arm64 metrics
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	Jing Zhang <renyu.zj@linux.alibaba.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	James Clark <james.clark@arm.com>, Leo Yan <leo.yan@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Generate two sets of additional metrics for Arm64, where the topdown
+set decomposes yet further. The metrcs primarily use json events,
+where the json contains architecture standard events. Not all events
+are in the json, such as for a53 where the events are in
+sysfs. Workaround this by adding the sysfs events to the metrics but
+longer-term such events should be added to the json.
 
-On 26-Sep-24 7:01 PM, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> At the 2024 Linux Plumbers Conference, I was talking with Hans de Goede
-> about the persistent buffer to display traces from previous boots. He
-> mentioned that UEFI can clear memory. In my own tests I have not seen
-> this. He later informed me that it requires the config option:
-> 
->  CONFIG_RESET_ATTACK_MITIGATION
-> 
-> It appears that setting this will allow the memory to be cleared on boot
-> up, which will definitely clear out the trace of the previous boot.
-> 
-> Add this information under the trace_instance in kernel-parameters.txt
-> to let people know that this can cause issues.
-> 
-> Link: https://lore.kernel.org/all/20170825155019.6740-2-ard.biesheuvel@linaro.org/
-> 
-> Reported-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+The patches should be applied on top of:
+https://lore.kernel.org/lkml/20240926175035.408668-1-irogers@google.com/
 
-Thanks, patch looks good to me:
+v4. Tweak to build dependencies and rebase.
+v3. Some minor code cleanup changes.
+v2. The cycles metrics are now made common and shared with AMD and
+    Intel, suggested by Kan Liang <kan.liang@linux.intel.com>. This
+    assumes these patches come after the AMD and Intel sets.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Ian Rogers (2):
+  perf jevents: Add collection of topdown like metrics for arm64
+  perf jevents: Add cycles breakdown metric for arm64/AMD/Intel
 
-Regards,
+ tools/perf/pmu-events/Build             |   2 +-
+ tools/perf/pmu-events/amd_metrics.py    |   3 +
+ tools/perf/pmu-events/arm64_metrics.py  | 149 +++++++++++++++++++++++-
+ tools/perf/pmu-events/common_metrics.py |  18 +++
+ tools/perf/pmu-events/intel_metrics.py  |   2 +
+ 5 files changed, 169 insertions(+), 5 deletions(-)
+ create mode 100644 tools/perf/pmu-events/common_metrics.py
 
-Hans
-
-
-
-> ---
->  Documentation/admin-guide/kernel-parameters.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index bb48ae24ae69..f9b79294f84a 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6850,6 +6850,9 @@
->  
->  				reserve_mem=12M:4096:trace trace_instance=boot_map^traceoff^traceprintk@trace,sched,irq
->  
-> +			Note, CONFIG_RESET_ATTACK_MITIGATION can force a memory reset on boot which
-> +			will clear any trace that was stored.
-> +
->  			See also Documentation/trace/debugging.rst
->  
->  
+-- 
+2.46.1.824.gd892dcdcdd-goog
 
 
