@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-340445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC663987384
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:25:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26941987386
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CBD3B290E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB80828265E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C913517ADF0;
-	Thu, 26 Sep 2024 12:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4790C17DFE3;
+	Thu, 26 Sep 2024 12:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KRoqJKeq"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HBVkRqJ5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D76914B94F;
-	Thu, 26 Sep 2024 12:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8975214B94F;
+	Thu, 26 Sep 2024 12:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727353510; cv=none; b=ltZjDO+P1RMsJ23tkdCXkEV2jK6qJ1gDglYW3OE7dCllRfpEB1P6uWBMehTCAawmDSopp9jz5Q80bAOgkMMeWQ4D+kbEC/CzYvU5wg9KodxyHfP3rifEwBYVal0OL4VZxjHMpFTffevsmc3XWnnzIQNFlVx1FelBQxQReCBJFbM=
+	t=1727353515; cv=none; b=bfIwT7VbXjzmsTVQnXYFxa0gutoatlm7LONLVH4XLFz6yZ0bQl/FyT9b8EfELg9EurSKfq62sNU5qnPIk3xQK6JUz/0KGPvISlQFcek5qrcvewkLLQ+Tm3O7zGBC2/p5M8ldGEq9ubNzUmuElldSlz9ov7LhuZIrOTxr1ifNS44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727353510; c=relaxed/simple;
-	bh=FnqH38wRAkVp3EZR3XksgSm/cQELxvlbKSkl27m+g20=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rrI0NnIqohl5V5jJwyEHcjK/BmOic3dA8Xin8vEVFFWBDesgpNc/rSUzpXVCOYHDxVxFWiN1UAhhS9B8cCQtPZFSHe9X8pWDEQvY3/Gu0IQfhGrd3WpPVL7/4CIHEhUQk9DtjMlR64ade4499xMCG++IvRIFYfMKPjqCMnNPeVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KRoqJKeq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A596EC4CEC5;
-	Thu, 26 Sep 2024 12:25:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727353509;
-	bh=FnqH38wRAkVp3EZR3XksgSm/cQELxvlbKSkl27m+g20=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KRoqJKeqZQKGjYxZGqI+vXuvVmUsFs/uWMQSD4pgi6db0n9u2XseKMBWB3qcwNAZ0
-	 iY8Eb+72VLdlsYSNbPPS5pMY3Wfh35+MU0bdqVN3njTHi22TYwn4dh/BXpWiykq6++
-	 39z6hC8sayZlfcdcD+ZkA10oYlBXGIKSGDnGxk16N1K67PXTvRcIAII0f/BVdP/1Bh
-	 Ew3kiL9yFjLwbKm7jxOFf+9/Q9IQ+1Vr0ZMkCOBUAoXXy5J38VGsUHTr9wocW8rQCA
-	 1USiosNVW9COTIIARgdc+VKRPCEvl0eWAIWsf+Yy+oxan9YmABPyoG1Xb2DQslMS/F
-	 VL/abInkJlKxA==
-Message-ID: <e314597a-a779-473d-a406-b233efad2e23@kernel.org>
-Date: Thu, 26 Sep 2024 15:25:03 +0300
+	s=arc-20240116; t=1727353515; c=relaxed/simple;
+	bh=ptQLa6NUscyq7HMtCZsIPnYiLZ2+UzgxKck4gLzgMcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HZH1wrpxIF0Ivv8BdqeF23YRDg2/7vuCvaBngueKAvBe+sZxpNhBfibK1nrmP8xZyFIWTqFCKqbXoJDhYNHBR2oEX/WpkdH2oS7jQL13eCgorBeb4KmSUmFwFZ28UkLeEDaLsjbamNPqA9jJl56jnRW2ic4ht4bDTNjsmoqdJA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HBVkRqJ5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D125C4CEC5;
+	Thu, 26 Sep 2024 12:25:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727353515;
+	bh=ptQLa6NUscyq7HMtCZsIPnYiLZ2+UzgxKck4gLzgMcE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HBVkRqJ5MGHkZlqaVer1kujjAiU5Huvu1ajepO6A0gpXOHB9glcdvF+fl+Z+UvHCC
+	 Vwq+7jzO4sj7VqLjcLOAEHPSkIph6o4qyCoszL6BYsAITQy+JneWevTTJJ8Qm1USx3
+	 DK/KyeMB6hj1DOasxze3ZKSL7gSC1wX5QRdAJIS4=
+Date: Thu, 26 Sep 2024 14:25:11 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Hubert =?utf-8?Q?Buczy=C5=84ski?= <hubert.buczynski94@gmail.com>
+Cc: Prashanth K <quic_prashk@quicinc.com>, balbi@kernel.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"hubert.buczynski" <Hubert.Buczynski.ext@feig.de>
+Subject: Re: [PATCH] usb: gadget: u_serial: fix null-ptr-deref in gs_start_io
+Message-ID: <2024092656-retorted-shelter-e7b1@gregkh>
+References: <20240926064910.17429-1-hubert.buczynski94@gmail.com>
+ <47689c2e-505e-461c-88dd-d178a7fdd087@quicinc.com>
+ <CAJUMw3uOsSQfiPfn8iW-+TkbcsN21fpM0WNp_xy-6QJPktf4sg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: ethernet: ti: am65-cpsw: Fix forever loop in
- cleanup code
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Julien Panis <jpanis@baylibre.com>,
- Chintan Vankar <c-vankar@ti.com>,
- Alexander Sverdlin <alexander.sverdlin@siemens.com>,
- Grygorii Strashko <grygorii.strashko@ti.com>, Simon Horman
- <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJUMw3uOsSQfiPfn8iW-+TkbcsN21fpM0WNp_xy-6QJPktf4sg@mail.gmail.com>
 
-
-
-On 26/09/2024 12:50, Dan Carpenter wrote:
-> This error handling has a typo.  It should i++ instead of i--.  In the
-> original code the error handling will loop until it crashes.
+On Thu, Sep 26, 2024 at 01:17:53PM +0200, Hubert Buczyński wrote:
+> > Commit ffd603f21423 ("usb: gadget: u_serial: Add null pointer check in
+> > gs_start_io") fixed this issue. Please try adding it into your builds.
+> >
+> > Regards,
+> > Prashanth K
 > 
-> Fixes: da70d184a8c3 ("net: ethernet: ti: am65-cpsw: Introduce multi queue Rx")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Thanks for the quick response. Indeed, the commit ffd603f21423
+> ("usb: gadget: u_serial: Add null pointer check in gs_start_io")
+> solves the problem. Sorry for not checking the newest version.
+> 
+> I wonder whether it should also be applied to the LTS v5.15.167.
+> The bug is still present there.
 
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
+Then submit it for inclusion as per the stable kernel rules!
+
+thanks,
+
+greg k-h
 
