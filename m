@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-341151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD46987BD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:37:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFA1987BD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8552A28521C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:37:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A66AB1F227AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736201B07A6;
-	Thu, 26 Sep 2024 23:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25DC1B07B7;
+	Thu, 26 Sep 2024 23:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rUROLiVC"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VQ8vUqUZ"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB071B1416
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 23:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E865B1B07A7
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 23:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727393808; cv=none; b=ois6i+A8c8FePZjelH+225ds1sAAShBlZMF6N/E9sQI8yQ3gY6NG5wV4oCGtKUlEDPGz21NzzXtganMl0480sXl4KLvCPtrqJSLuDamaC/jRltOupnZR9gNsKjTU7RUiAAimbW/N8psCNt5ejA7x47x5Dvz4DOR/9OQPOa3JTIs=
+	t=1727393811; cv=none; b=qIWuAkhZ/MqtxjMZSlIqNybR9POimKpb6OjRx6x0ZNE0jk3FvOhL6+EmXzd7/W0sdJyzNm0sOlOIorHlbReqRLYh00d57qZE3xbgPdf+hwaYbzkLfCy4oabVvI/Dzfs79LAXYcSuZe/0ULZ9YpSZZ4x7798RHPkfq9uSPrrDZPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727393808; c=relaxed/simple;
-	bh=1H/W4FLKV9aI+2tDXe+blK4klm2uA7NNGPRe8emZgy0=;
+	s=arc-20240116; t=1727393811; c=relaxed/simple;
+	bh=3vyvMvkO3Wyq1P4R+cw5CeJ/ZKfVE2YqNvhB7LdkgvE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=C11YKI7R/rVOV15wS3ISsM5ZROzlsyTucs/DHxFPNhkcoQZ3zpIWN/ZQJByywXGsdl4gcQ6aLuOie15OSSjKaQHGT51RHPrNJuUSfTXEvUgQKUUk57pqRS7IeNL4LCLTvcakI8zihau+DTw8XVxGcyJg9S6lX9J3pDiNbGzGFfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rUROLiVC; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=u9yqbQhrvqyCaNFF/GrUZk5clI0xBv9fhSUlSKRNbyff82Ova9iS2ugDBHiH8hWj+CJCqLExt8hIQn4WHM4/GONGvqScI8/Mu/RkCJ4cp2ANnUSfv/yPIDFex3WKKtrNrx2AdaCFB5BKlEMWLeLIvnB24OnXPuyH8+O/hpJKtfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VQ8vUqUZ; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e20e4e55bbso30011627b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:36:47 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e25d494faa4so1113277276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:36:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727393806; x=1727998606; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1727393809; x=1727998609; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sZYDbwRcuTEgG5PxF68wd0LIkZGSaWChtDEKjs+v4lg=;
-        b=rUROLiVCaZ/6WEcM5f4a0xoWS+ZKRfTIqSgmUfCa1NkZ1IHFi5e5q6w6sZYfXJyGJu
-         axMKLhQEVkGiW+op9ptspVb9MvG+QuFZ3Zj5zW8JKl5KvHOA/lnHC52mfNTxnxDL6PZK
-         sSR+iKhvy59NEXdM7NhBCYZnhOOToFV1vc7iechJN07fFMZaL8qsddanQ4NnIf8MzLc1
-         ts2YxWo37bpRhMESiIeQYuYWMJNHNd9mAb9G/kg5wMYnFiIB0wqH380mpE9Go58OszpM
-         BQMqnsMpFG5ZCigfncqGsNE+PuJQhI5C9eeQne3dPF4DGhWOQJZ6nJv6y9xOmb9fRPm8
-         bc4A==
+        bh=/iuxb3h278Dc+JtJQ9VvOQ0vkunN058i5/6AjQ3E3ks=;
+        b=VQ8vUqUZrMX6k/MD35HdssE1ItwSF4rmvDPBiJ9NErWiaQctAKZ2SLNhmGDzI7lc0p
+         AAfeGpTYw6evxroj7TpjwrfxqIOcxpQdD1MoNKGSy0Xg8aUsyzPJscIzokfiltcnwHyJ
+         +PVTdF7TS1rI3Y0ms+ixIKuWqWq1tj5geKxpT8FY6xz9VIdwXAWeZV03sxE6vIq0pJYF
+         P0yfpnvvsrcdKY+x0FzeFqkKM/u3NAUlE+QCdtffH/VOPEkIrgEeEk6NzyHRw+dcRdR2
+         5SbatdeEtawerISrRTBjqjzOYmfBQYV76hjaagKJ1hvVAOOFMslCDRk6IrTNvifpJ4Hg
+         gyxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727393806; x=1727998606;
+        d=1e100.net; s=20230601; t=1727393809; x=1727998609;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sZYDbwRcuTEgG5PxF68wd0LIkZGSaWChtDEKjs+v4lg=;
-        b=Ai5FwyRXzvq2sxzvcCnXS9DWQjL/us7R1rpflhgd6n8g+qBJbUEgPyj11HuGe+tZJk
-         hfIutH/iXmUszbNqb5uld4iAJyih00/9PoxBJK22LbkZyufxKURPrIb4qZLyn3akZWNu
-         6l+vOVxhMcm9eeS8nxd9tjO1FFoihWOPA6nVIbyQaEzEEvJB7rnMTg1PvzPAdE9yELnt
-         WZRjY8qN8LJb9xlDUslxtQv+YWEWsFuNY1kxMcW9zx7PRlFqcAOkUElmfQLajIdhTPlV
-         U49H1kxHV3hmz0mU4dvqsohTEedJvt6+V3/Jg9eAW+HbT8BA3BC0srR4Y4T+GcWnQ5kd
-         m50g==
-X-Gm-Message-State: AOJu0YzyStzSyQyDK/IA2/DFSwP0AEmrSG+hXfXNWMhm0dJU8OD2vtg3
-	Cn9hYlT41z5EZHzVuU4ocbJ2KEsjvR0TwzR9636P4ksHAIqKEV70UxETmGUO1O4FyavxGMvvI5Z
-	faVoHI90i9g==
-X-Google-Smtp-Source: AGHT+IHUpbO3q7cBnv/gB0yirdup4+Tvvd6hv38/XsV96lDFMNN7F3BazQBkKmhQNTboRcKZJDjYAhbtpSu3lQ==
+        bh=/iuxb3h278Dc+JtJQ9VvOQ0vkunN058i5/6AjQ3E3ks=;
+        b=QHVRDkyypBdy1xLTrt+jPHucyjKRMU+sB0rUZRLCO/G0ClQ0yWenL8gWBccpFAnHuG
+         VaCp+bfYWYDd/HocUJe/9NB0Wb5g+Ub2kyJNvwCpBjIsQo/Qzc3nAps9WEx0qWFPPRWE
+         h3kedGPEznhufdFDt7IASx4wy37QztYzz4LC5+zKI5YDSN7q68zsZ2IzTxPtcOzdjf1Y
+         2c0Ddmxx0ZLFe96J7IYvWM4GeeuY+G9YamxlUPfz2FVtBc+9dc059qYyMQdhYtGY/np0
+         d8ayR38W2HCkkEGWD1aQQxhzU69BOweRWM5RdL1lyKhkZDVQrQBk7esek4J42lyL23m3
+         H1bQ==
+X-Gm-Message-State: AOJu0YzZMp3r+b+RPk3NgNt+DGI6YFuVkx3F4W6uFSEq24tGTmq4QgOg
+	OTqaLqat5SfzNdt1L700CMxUDhKzxR1WDlPwDaQXnu9SdqHBtasjYAGG5Z0jiri6weoWlR8GkBz
+	1IcHm+MRzjA==
+X-Google-Smtp-Source: AGHT+IHBVAPawG1xZ8PVs7gjULOKJDTEQX7j5JE8yqCAQXtSxFo6puwM71uXOnRfMu8FHut5bqq89unj6w+mvA==
 X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
- (user=cmllamas job=sendgmr) by 2002:a05:690c:3005:b0:6e2:120b:be57 with SMTP
- id 00721157ae682-6e247604e65mr151807b3.5.1727393806468; Thu, 26 Sep 2024
- 16:36:46 -0700 (PDT)
-Date: Thu, 26 Sep 2024 23:36:14 +0000
+ (user=cmllamas job=sendgmr) by 2002:a25:e906:0:b0:e25:e391:5739 with SMTP id
+ 3f1490d57ef6-e260495ec2amr1466276.0.1727393808817; Thu, 26 Sep 2024 16:36:48
+ -0700 (PDT)
+Date: Thu, 26 Sep 2024 23:36:15 +0000
 In-Reply-To: <20240926233632.821189-1-cmllamas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240926233632.821189-1-cmllamas@google.com>
 X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Message-ID: <20240926233632.821189-4-cmllamas@google.com>
-Subject: [PATCH v2 3/8] binder: fix freeze UAF in binder_release_work()
+Message-ID: <20240926233632.821189-5-cmllamas@google.com>
+Subject: [PATCH v2 4/8] binder: fix BINDER_WORK_FROZEN_BINDER debug logs
 From: Carlos Llamas <cmllamas@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
 	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
@@ -81,70 +81,48 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
 	Yu-Ting Tseng <yutingtseng@google.com>
 Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Alice Ryhl <aliceryhl@google.com>, stable@vger.kernel.org
+	Alice Ryhl <aliceryhl@google.com>, stable@vger.kernel.org, Todd Kjos <tkjos@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-When a binder reference is cleaned up, any freeze work queued in the
-associated process should also be removed. Otherwise, the reference is
-freed while its ref->freeze.work is still queued in proc->work leading
-to a use-after-free issue as shown by the following KASAN report:
+The BINDER_WORK_FROZEN_BINDER type is not handled in the binder_logs
+entries and it shows up as "unknown work" when logged:
 
-  ==================================================================
-  BUG: KASAN: slab-use-after-free in binder_release_work+0x398/0x3d0
-  Read of size 8 at addr ffff31600ee91488 by task kworker/5:1/211
+  proc 649
+  context binder-test
+    thread 649: l 00 need_return 0 tr 0
+    ref 13: desc 1 node 8 s 1 w 0 d 0000000053c4c0c3
+    unknown work: type 10
 
-  CPU: 5 UID: 0 PID: 211 Comm: kworker/5:1 Not tainted 6.11.0-rc7-00382-gfc6c92196396 #22
-  Hardware name: linux,dummy-virt (DT)
-  Workqueue: events binder_deferred_func
-  Call trace:
-   binder_release_work+0x398/0x3d0
-   binder_deferred_func+0xb60/0x109c
-   process_one_work+0x51c/0xbd4
-   worker_thread+0x608/0xee8
+This patch add the freeze work type and is now logged as such:
 
-  Allocated by task 703:
-   __kmalloc_cache_noprof+0x130/0x280
-   binder_thread_write+0xdb4/0x42a0
-   binder_ioctl+0x18f0/0x25ac
-   __arm64_sys_ioctl+0x124/0x190
-   invoke_syscall+0x6c/0x254
-
-  Freed by task 211:
-   kfree+0xc4/0x230
-   binder_deferred_func+0xae8/0x109c
-   process_one_work+0x51c/0xbd4
-   worker_thread+0x608/0xee8
-  ==================================================================
-
-This commit fixes the issue by ensuring any queued freeze work is removed
-when cleaning up a binder reference.
+  proc 637
+  context binder-test
+    thread 637: l 00 need_return 0 tr 0
+    ref 8: desc 1 node 3 s 1 w 0 d 00000000dc39e9c6
+    has frozen binder
 
 Fixes: d579b04a52a1 ("binder: frozen notification")
 Cc: stable@vger.kernel.org
-Acked-by: Todd Kjos <tkjos@android.com>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Acked-by: Todd Kjos <tkjos@google.com>
 Signed-off-by: Carlos Llamas <cmllamas@google.com>
 ---
- drivers/android/binder.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/android/binder.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 8bca2de6fa24..d955135ee37a 100644
+index d955135ee37a..2be9f3559ed7 100644
 --- a/drivers/android/binder.c
 +++ b/drivers/android/binder.c
-@@ -1225,6 +1225,12 @@ static void binder_cleanup_ref_olocked(struct binder_ref *ref)
- 		binder_dequeue_work(ref->proc, &ref->death->work);
- 		binder_stats_deleted(BINDER_STAT_DEATH);
- 	}
-+
-+	if (ref->freeze) {
-+		binder_dequeue_work(ref->proc, &ref->freeze->work);
-+		binder_stats_deleted(BINDER_STAT_FREEZE);
-+	}
-+
- 	binder_stats_deleted(BINDER_STAT_REF);
- }
- 
+@@ -6408,6 +6408,9 @@ static void print_binder_work_ilocked(struct seq_file *m,
+ 	case BINDER_WORK_CLEAR_DEATH_NOTIFICATION:
+ 		seq_printf(m, "%shas cleared death notification\n", prefix);
+ 		break;
++	case BINDER_WORK_FROZEN_BINDER:
++		seq_printf(m, "%shas frozen binder\n", prefix);
++		break;
+ 	default:
+ 		seq_printf(m, "%sunknown work: type %d\n", prefix, w->type);
+ 		break;
 -- 
 2.46.1.824.gd892dcdcdd-goog
 
