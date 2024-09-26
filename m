@@ -1,151 +1,209 @@
-Return-Path: <linux-kernel+bounces-339769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FFF0986A47
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:34:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 826BF986A4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7603B226BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:34:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00D0F1F22C27
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1E416FF25;
-	Thu, 26 Sep 2024 00:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4AB170A30;
+	Thu, 26 Sep 2024 00:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7tbpnj5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VmZO4/xE"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DF116D4E6;
-	Thu, 26 Sep 2024 00:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFDC1E50D;
+	Thu, 26 Sep 2024 00:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727310860; cv=none; b=AccgAU20CiiPnbW9GBiagsDTayfwNCedJAyQ7S4bYfoU34GH2mEscn/d1sBP+iSA9OZk0bM3C/9omjcq9YcGpn+FIXqONlVToVwxFgbptqTgl5B+kL8UUjdZPRAhTWX+BUJ1Nl+8FlUJljh1R6rNd9PWH+zaxHLS6Meaju3Inp0=
+	t=1727311273; cv=none; b=cdw+j9u45HnmIshDCjKrPSFCeikAXSnQuS4yvKdBs+j5GsLxumz8tbRzyqHgqQxerdVOotsncLd2T7Eab9RH0+ccr8vnYod6schb/PexK74ZvHYqwau5lMFqGsTCvnU0/sSoChD3clNWwUWnQJEU+6mudNLltOkRTWsF9L2zWtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727310860; c=relaxed/simple;
-	bh=um2xMlvib2CN05auEw1jp/lh1xunvTfllOnZydnRhQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aph6wM8Qj/NIeGFI2v7hqyvFidxZ2INBkoMxggp+JsIjyaLEqeQITd/Tn0x+MDY8zDD2JwTR8YklfLQsKNtDcht+6VQXuimmAzvL6fa/5HGYXAXcr+yfWCvFel/5dGmCX2bIyM9okb+kakk0EAvZJlMHMJPa29Be8NW9uc2M5zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7tbpnj5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F38FDC4CEC3;
-	Thu, 26 Sep 2024 00:34:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727310858;
-	bh=um2xMlvib2CN05auEw1jp/lh1xunvTfllOnZydnRhQU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F7tbpnj5WOzdHcTEW25rt+QlegitMWjk1hY34B0t7CZLhdK+vySW0gRvov8IG1Hxl
-	 2sjlJ1rjmsB3ZTeFXaXTwLwC6N2HxW95gIOlt3CxqABPSiCfnFCKy7dGtAdZCEwQUN
-	 G/IQseAAb/viBtAa9tcQ+yN/SiZXsf+rPilT7nYgzH/ze+GPkKhPVMHwQyjU051Whv
-	 qe8sRLLWxQOzubtrggvSyArunGu1pfPTn5DQdPcUOdyUn3pK2qhc0ef7K3ttsK/PFQ
-	 28vmvw9I+Adx05wmjVNQsp/LV4HkFtlHh8gXeNpCi+Ldl9TC0cyieDq/pt5SE7L6W1
-	 48MwswGdiny1w==
-Date: Wed, 25 Sep 2024 17:34:15 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Guo Ren <guoren@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>,
-	Guilherme Amadio <amadio@gentoo.org>,
-	Changbin Du <changbin.du@huawei.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Aditya Gupta <adityag@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
-	Kajol Jain <kjain@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
-	Shenlin Liang <liangshenlin@eswincomputing.com>,
-	Atish Patra <atishp@rivosinc.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Chen Pei <cp0613@linux.alibaba.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	Yang Jihong <yangjihong@bytedance.com>
-Subject: Re: [PATCH v1 09/11] perf build: Rename HAVE_DWARF_SUPPORT to
- HAVE_LIBDW_SUPPORT
-Message-ID: <ZvSsB8bT3CTLT4B0@google.com>
-References: <20240924160418.1391100-1-irogers@google.com>
- <20240924160418.1391100-10-irogers@google.com>
+	s=arc-20240116; t=1727311273; c=relaxed/simple;
+	bh=eru3Zk73fV56SpHLEVYT8mrN22oFvMt2bzPtiM7g9yU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m4SyN8ccru+2jpUKfqQOdYhbD39Pra7kg5KawytiTn+IAhSO8qKIEyl1TAMLLmY07T9a3N1Q0a7XjqymFI3nrN9pfR7iUpoydH9lE/vFvCEnT70ryyM2ICwt336ReyxLy7Wi19Tu9yeXrmkXmI7JxV8F71RdBty9GS5HTrOiLcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VmZO4/xE; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727311261; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=/ooxu0myL1NDq78z/zYkSZU901mlk9sLoZWXOrPAioo=;
+	b=VmZO4/xEfm8up29YTn/nCSGZR2XK7QzO6EadJnhDRreAZee9ozQV2huu8jrTxSRPGi77RWtKVaIL8eJ97Vmc+2gBgxRQDTXevKH/lEsr2VFQJe/dCL4G5DvzmmILEeURXYZGqcq0qrfXUk/vAQ8G829DI59LWUnmEgG0/fgNl30=
+Received: from 30.244.99.85(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFlGCJ7_1727311257)
+          by smtp.aliyun-inc.com;
+          Thu, 26 Sep 2024 08:41:00 +0800
+Message-ID: <be7a42b2-ae52-4d51-9b0c-ed0304db3bdf@linux.alibaba.com>
+Date: Thu, 26 Sep 2024 08:40:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240924160418.1391100-10-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
+To: Ariel Miculas <amiculas@cisco.com>
+Cc: Benno Lossin <benno.lossin@proton.me>, Gary Guo <gary@garyguo.net>,
+ Yiyang Wu <toolmanp@tlmp.cc>, rust-for-linux@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc>
+ <20240916135634.98554-4-toolmanp@tlmp.cc>
+ <20240916210111.502e7d6d.gary@garyguo.net>
+ <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
+ <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me>
+ <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
+ <239b5d1d-64a7-4620-9075-dc645d2bab74@proton.me>
+ <20240925154831.6fe4ig4dny2h7lpw@amiculas-l-PF3FCGJH>
+ <80cd0899-f14c-42f4-a0aa-3b8fa3717443@linux.alibaba.com>
+ <20240925214518.fvig2n6cop3sliqy@amiculas-l-PF3FCGJH>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240925214518.fvig2n6cop3sliqy@amiculas-l-PF3FCGJH>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 24, 2024 at 09:04:16AM -0700, Ian Rogers wrote:
-> In Makefile.config for unwinding the name dwarf implies either
-> libunwind or libdw. Make it clearer that HAVE_DWARF_SUPPORT is really
-> just defined when libdw is present by renaming to HAVE_LIBDW_SUPPORT.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/Documentation/perf-check.txt         |  6 +++---
->  tools/perf/Makefile.config                      |  2 +-
->  tools/perf/arch/powerpc/annotate/instructions.c |  4 ++--
->  tools/perf/arch/x86/annotate/instructions.c     |  2 +-
->  tools/perf/builtin-annotate.c                   |  2 +-
->  tools/perf/builtin-check.c                      |  6 +++---
->  tools/perf/builtin-probe.c                      | 12 ++++++------
->  tools/perf/builtin-report.c                     |  4 ++--
->  tools/perf/util/annotate-data.h                 |  8 ++++----
->  tools/perf/util/debuginfo.h                     |  6 +++---
->  tools/perf/util/disasm.c                        |  4 ++--
->  tools/perf/util/disasm.h                        |  4 ++--
->  tools/perf/util/genelf.c                        |  4 ++--
->  tools/perf/util/genelf.h                        |  2 +-
->  tools/perf/util/include/dwarf-regs.h            |  6 +++---
->  tools/perf/util/probe-event.c                   |  4 ++--
->  tools/perf/util/probe-finder.h                  |  4 ++--
->  17 files changed, 40 insertions(+), 40 deletions(-)
-> 
-> diff --git a/tools/perf/Documentation/perf-check.txt b/tools/perf/Documentation/perf-check.txt
-> index 45101a8e4154..31741499e786 100644
-> --- a/tools/perf/Documentation/perf-check.txt
-> +++ b/tools/perf/Documentation/perf-check.txt
-> @@ -47,15 +47,15 @@ feature::
->                  bpf                     /  HAVE_LIBBPF_SUPPORT
->                  bpf_skeletons           /  HAVE_BPF_SKEL
->                  debuginfod              /  HAVE_DEBUGINFOD_SUPPORT
-> -                dwarf                   /  HAVE_DWARF_SUPPORT
-> -                dwarf_getlocations      /  HAVE_DWARF_SUPPORT
-> +                dwarf                   /  HAVE_LIBDW_SUPPORT
-> +                dwarf_getlocations      /  HAVE_LIBDW_SUPPORT
 
-I'm not sure if we really want to display dwarf_getlocatiosn as it's too
-implementation detail IMHO.  Maybe just 'dwarf' or 'libdw' is enough.
+
+On 2024/9/26 05:45, Ariel Miculas wrote:
+> On 24/09/26 12:35, Gao Xiang wrote:
+>> Hi Ariel,
+>>
+>> On 2024/9/25 23:48, Ariel Miculas wrote:
+>>
+
+...
+
+>>
+>> And there are all thoughts for reference [2][3][4][5]:
+>> [2] https://github.com/project-machine/puzzlefs/issues/114#issuecomment-2369872133
+>> [3] https://github.com/opencontainers/image-spec/issues/1190#issuecomment-2138572683
+>> [4] https://lore.kernel.org/linux-fsdevel/b9358e7c-8615-1b12-e35d-aae59bf6a467@linux.alibaba.com/
+>> [5] https://lore.kernel.org/linux-fsdevel/20230609-nachrangig-handwagen-375405d3b9f1@brauner/
+>>
+>> Here still, I do really want to collaborate with you on your
+>> reasonable use cases.  But if you really want to do your upstream
+>> attempt without even any comparsion, please go ahead because I
+>> believe I can only express my own opinion, but I really don't
+>> decide if your work is acceptable for the kernel.
+>>
+> 
+> Thanks for your thoughts on PuzzleFS, I would really like if we could
+> centralize the discussions on the latest patch series I sent to the
+> mailing lists back in May [1]. The reason I say this is because looking
+> at that thread, it seems there is no feedback for PuzzleFS. The feedback
+> exists, it's just scattered throughout different mediums. On top of
+> this, I would also like to engage in the discussions with Dave Chinner,
+> so I can better understand the limitations of PuzzleFS and the reasons
+> for which it might be rejected in the Linux Kernel. I do appreciate your
+> feedback and I need to take my time to respond to the technical issues
+> that you brought up in the github issue.
+
+In short, I really want to avoid open arbitary number files in the
+page fault path regardless of the performance concerns, because
+even there are many cases that mmap_lock is dropped, but IMHO there
+is still cases that mmap_lock will be taken.
+
+IOWs, I think it's controversal for a kernel fs to open random file
+in the page fault context under mmap_lock in the begining.
+Otherwise, it's pretty straight-forward to add some similiar feature
+to EROFS.
+
+> 
+> However, even if it's not upstream, PuzzleFS does use the latest Rust
+> filesystem abstractions and thus it stands as an example of how to use
+> them. And this thread is not about PuzzleFS, but about the Rust
+> filesystem abstractions and how one might start to use them. That's
+> where I offered to help, since I already went through the process of
+> having to use them.
+> 
+> [1] https://lore.kernel.org/all/20240516190345.957477-1-amiculas@cisco.com/
+> 
+>>>
+>>> I'm happy to help you if you decide to go down this route.
+>>
+>> Again, the current VFS abstraction is totally incomplete and broken
+>> [6].
+> 
+> If they're incomplete, we can work together to implement the missing
+> functionalities. Furthermore, we can work to fix the broken stuff. I
+> don't think these are good reasons to completely ignore the work that's
+> already been done on this topic.
+
+I've said, we don't miss any Rust VFS abstraction work, as long as
+some work lands in the Linux kernel, we will switch to use them.
+
+The reason we don't do that is again
+  - I don't have time to work on this because my life is still limited
+    for RFL in any way at least this year; I don't know if Yiyang has
+    time to work on a complete ext2 and a Rust VFS abstraction.
+
+  - We just would like to _use Rust_ for the core EROFS logic, instead
+    of touching any VFS stuff.  I'm not sure why it's called "completely
+    ignore the VFS abstraction", because there is absolutely no
+    relationship between these two things.  Why we need to mix them up?
+
+> 
+> By the way, what is it that's actually broken? You've linked to an LWN
+> article [2] (or at least I think your 6th link was supposed to link to
+> "Rust for filesystems" instead of the "Committing to Rust in the kernel"
+> one), but I'm interested in the specifics. What exactly doesn't work as
+> expected from the filesystem abstractions?
+
+For example, with my current Rust skill, I'm not sure why
+fill_super for "T::SUPER_TYPE, sb::Type::BlockDev" must use
+"new_sb.bdev().inode().mapper()".
+
+It's unnecessary for a bdev-based fs to use bdev inode page
+cache to read metadata;
+
+Also it's unnecessary for a const fs type to be
+sb::Type::BlockDev or sb::Type::Independent as
+
+/// Determines how superblocks for this file system type are keyed.
++    const SUPER_TYPE: sb::Type = sb::Type::Independent;
+
+because at least for the current EROFS use cases, we will
+decide to use get_tree_bdev() or get_tree_nodev() according
+to the mount source or mount options.
+
+> 
+> [2] https://lwn.net/Articles/978738/
+> 
+>>
+>> I believe it should be driven by a full-featured read-write fs [7]
+>> (even like a simple minix fs in pre-Linux 1.0 era) and EROFS will
+> 
+> I do find it weird that you want a full-featured read-write fs
+> implemented in Rust, when erofs is a read-only filesystem.
+
+I'm not sure why it's weird from the sane Rust VFS abstraction
+perspective.
+
+> 
+>> use Rust in "fs/erofs" as the experiment, but I will definitely
+>> polish the Rust version until it looks good before upstreaming.
+> 
+> I honestly don't see how it would look good if they're not using the
+> existing filesystem abstractions. And I'm not convinced that Rust in the
+> kernel would be useful in any way without the many subsystem
+> abstractions which were implemented by the Rust for Linux team for the
+> past few years.
+
+So let's see the next version.
 
 Thanks,
-Namhyung
+Gao Xiang
 
-
->                  dwarf-unwind            /  HAVE_DWARF_UNWIND_SUPPORT
->                  auxtrace                /  HAVE_AUXTRACE_SUPPORT
->                  libaudit                /  HAVE_LIBAUDIT_SUPPORT
->                  libbfd                  /  HAVE_LIBBFD_SUPPORT
->                  libcapstone             /  HAVE_LIBCAPSTONE_SUPPORT
->                  libcrypto               /  HAVE_LIBCRYPTO_SUPPORT
-> -                libdw-dwarf-unwind      /  HAVE_DWARF_SUPPORT
-> +                libdw-dwarf-unwind      /  HAVE_LIBDW_SUPPORT
->                  libelf                  /  HAVE_LIBELF_SUPPORT
->                  libnuma                 /  HAVE_LIBNUMA_SUPPORT
->                  libopencsd              /  HAVE_CSTRACE_SUPPORT
+> 
+> Cheers,
+> Ariel
+> 
 
