@@ -1,138 +1,214 @@
-Return-Path: <linux-kernel+bounces-340076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF282986E55
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:56:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BBAB986E56
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A7F4281338
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:56:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 257301C212F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31AD18C930;
-	Thu, 26 Sep 2024 07:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2259F18EFC6;
+	Thu, 26 Sep 2024 07:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="MnkqGAyu"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="UMZxMpdV"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2060.outbound.protection.outlook.com [40.107.255.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96B8158DC0
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727337409; cv=none; b=lz6Vk9R03T/15+fkzFUVI3fKpaQa0Ge7bhukPOLunuiEMUHXQNE1gW4vIck762GEhWG5GFKjdAZ69UQd6b/ddwITRZBFtYEPjw+DmBpOP4Nc7aBfJZ60HslO6p3yo9nzMBh7gOgepSr1GupXnqaQZilPU4qSx4f5Yr6Kh/GPoqo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727337409; c=relaxed/simple;
-	bh=6R/Ua2GrAH615KyDfF7MwLoRuy3a4TAVfGfL7whhFyg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=q1O+iJv4L44mGQt1Jg2H3oqvP/iEBLP1DTNuTm29ItaNmEHexto2j8AVkbrruQkEDE4hjWD+nJYnaTQPpQLZebzHpqxdYNPtDjg71HYJQsdtBZkE6SK+FwqJZmm31L2QGAEFSHPJErKdrX1NzNP4oMGqkemFoNPZXQXVNLfebns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=MnkqGAyu; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=6R/Ua2GrAH615KyDfF7MwLoRuy3a4TAVfGfL7whhFyg=; b=MnkqGAyuZlHNMUlIqkgnqBiJtG
-	yZW1ZzdcumkCvskeg/4C1dXQHkE5C/KV6LQfkP1ZE4QuT5/0bpCNgDUu9OH4ACw2vt1xbXsraDl38
-	vDPX8/vxhbmFYGjoz5YkkRxR/B9+EhGArLBY4PNNcFuAr+aZ3W+Vn3RDFnPnDSIxVQULQeYWQ+EN/
-	xE74VNtlLzuXG886XZd0c8mjhykb0gaEWFoG9tCgvvCfCqdYRhZSZo08vYfyboDTUeDhGbFtM2Lx7
-	zlpjPMXDGSaoBbj4nfgDQJbASLJ6kPInXaGlCILvC/M9kZMVdsWXIaKO52Px8rkZLuBNsrUsAWOp1
-	kAo0HSlg==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1stjMf-000MkB-63; Thu, 26 Sep 2024 09:56:41 +0200
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1stjMe-000MMl-0M;
-	Thu, 26 Sep 2024 09:56:40 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: "Michael Walle" <mwalle@kernel.org>
-Cc: "Tudor Ambarus" <tudor.ambarus@linaro.org>,  "Pratyush Yadav"
- <pratyush@kernel.org>,  "Miquel Raynal" <miquel.raynal@bootlin.com>,
-  "Richard Weinberger" <richard@nod.at>,  "Vignesh Raghavendra"
- <vigneshr@ti.com>,  "Nicolas Ferre" <nicolas.ferre@microchip.com>,
-  "Alexandre Belloni" <alexandre.belloni@bootlin.com>,  "Claudiu Beznea"
- <claudiu.beznea@tuxon.dev>,  <linux-mtd@lists.infradead.org>,
-  <linux-kernel@vger.kernel.org>,  "Rasmus Villemoes"
- <rasmus.villemoes@prevas.dk>,  <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 00/15] mtd: spi-nor: macronix: workaround for device
- id re-use
-In-Reply-To: <D2NGXHZ2VTK0.M0AOB4CM7MHM@kernel.org> (Michael Walle's message
-	of "Fri, 12 Jul 2024 11:55:08 +0200")
-References: <20240711-macronix-mx25l3205d-fixups-v3-0-99353461dd2d@geanix.com>
-	<D2NGXHZ2VTK0.M0AOB4CM7MHM@kernel.org>
-Date: Thu, 26 Sep 2024 09:56:39 +0200
-Message-ID: <87tte2hmq0.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3221422D4
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727337436; cv=fail; b=MQ1a/j/MzOCtogLAx92EYYCJ4oabHgwzaER7kqdt5OnTJk1NctoSlJXpnS93Z+dhOv/MhDpYbjXdkfUO81m5zkKya2nyaXRjS7oI5XtM/p2B+aTVPBTZvPQCon0hBvAfURpyLxVK8QqHYPPHgm7/SzIOoM0ca5nfC5jVMZX21ZY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727337436; c=relaxed/simple;
+	bh=CNaOkb3vJQElLFni7E2dIixaAHK8DdeMCkmeqNwM2og=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=r1jKueE43/wcMZHyw1OGrnnGmSOmh0J5OLBusGV3mpZlT9+KLb4M7Gkbo60mvMJ02PMUG7dC1ol+VOJseh2MJw9RQl0zwmr1QJ6ALq/idiCU0hwkh5ifPGfVUWytTMsE1AABfLWXUtDURF1WKJvbRkME8gQxryxl/THc1oo2GQs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=UMZxMpdV; arc=fail smtp.client-ip=40.107.255.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Xi9EBJpjNkFNH7n8qoxKhZLaQsMoXQVrCrOTQyBVWujIVYAslu+Qa8RSeajffnav5BRtLvIANnmersqF8ylRAg+tuT45PWknqJSNtu7k0lDEdOM34X+p+0ulwSDlykU78RDe6s1H8fs7jH5pHAYhVL73fYMz6WX5A16wlEHL1Q33o9wPb/RY+NXjzWTDE1qzdzUQG/IG8MXe+CUZjCkHPgdo5MzPQ76Ln5f1ajxCfUaUd7lHHfQFrjGgB68X+BC1Zsr5UZbtqMIgyFy2LNWUSRSK8/yAt9wVE1uK4+tY1bA+6fIRNcQmbvU8WrlAbF7ooR9suH+5xga2PYNVk+JdRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AFSi/6MPl6CjRQBCJt74jpCnidNEs5yyMkUpCOLWOKM=;
+ b=u4qIg9d+c4vFK/mQR6mHDs0ZZ7F0mm8Ki0QSDmkkcJDim35/L59ChCHhGqEql7fMWA++388KWizB97GlbHRrF6iA1BkvG04OKq+0esX5xm1fqEerWg4ERJFcT7S5LeNufqHn9Hqlg19GYiWCKZDWbnvUpiC5F9cPu2ZECFuTCtDmARXmKGuDbuMOivC5L2plHfcsx7388zgKvg0LGIxPny5lhGFkBeOKp7FTD8wzWpglY0d7C7IUlAEGGQndTLOVri5d8kYfKd2kK3Poy0AOS/jlWpvLOgAm+MUcITAmCFHDdjKAWcQtSBocKTLmPEiv8mCg/q8InGHyJm0lVUtxcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AFSi/6MPl6CjRQBCJt74jpCnidNEs5yyMkUpCOLWOKM=;
+ b=UMZxMpdVQylzqICTEMxGf7Eeefm2lFpRedn/+XUcfvbf/5dvImIVx0Q9oQ7tWShXTcDIMDkk9gJE6az0MK2XgdNiC3m1FBIlNODKGuvY5Nqbn83IVVa4sbbchVmZF38rD2rtOoPSikU6g32MkuFLDqL26Grmy9nWUQ/E/SkVCkb/pc1akCa8K06sG/jU5HwqSZWUvYHQ0Gh2jOTTGCMB7N3B7hGDR6wjLzVXQORHpxn3WFmfGizZQ2WWUnL0AmIL2UIVu4i6LEcJanWl5RWI7lujzlLMIdVO8feH8pN4A+2bv7ipGNSYhSG5m9BHLM2JlQAXY/TbitVkgWwNJRJg4g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
+ by SEYPR06MB6484.apcprd06.prod.outlook.com (2603:1096:101:171::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Thu, 26 Sep
+ 2024 07:57:11 +0000
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7982.022; Thu, 26 Sep 2024
+ 07:57:11 +0000
+From: Shen Lichuan <shenlichuan@vivo.com>
+To: dan.j.williams@intel.com,
+	vishal.l.verma@intel.com,
+	dave.jiang@intel.com,
+	ira.weiny@intel.com,
+	pankaj.gupta.linux@gmail.com
+Cc: nvdimm@lists.linux.dev,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Shen Lichuan <shenlichuan@vivo.com>
+Subject: [PATCH v1] nvdimm: Correct some typos in comments
+Date: Thu, 26 Sep 2024 15:57:00 +0800
+Message-Id: <20240926075700.10122-1-shenlichuan@vivo.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0015.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::15) To SEZPR06MB5899.apcprd06.prod.outlook.com
+ (2603:1096:101:e3::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27409/Wed Sep 25 11:17:07 2024)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|SEYPR06MB6484:EE_
+X-MS-Office365-Filtering-Correlation-Id: f03e54c9-0571-4f9f-be11-08dcde00d3dd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vk+PYtKrejafvLAsOMs39Q+v+OYTDD6qFtTQGo9UCE1krbvWJELAFnMLCcUE?=
+ =?us-ascii?Q?y0Gqrh4hsfr5kT52WxUbAV9fVRG4vwjMy6VT53Yd/lrXOMJktIQXZE1+5JM5?=
+ =?us-ascii?Q?yC1Gyq8Y3QRYyd8wrKgTa8QBSBfDEdQlXaCEpEWQ6DbHh0XlQqpIqPXLGfsR?=
+ =?us-ascii?Q?dXcqlgwhj6Bo/GqF7pY/GweXshYicBwNk65xPuE70gmuH86e9ckGI24hO7KK?=
+ =?us-ascii?Q?Cc+0Mkyc3N3+CVMSW55gGYXjpmuAaByWBPBwh8e4FydJkdMePcOF352fr3Eb?=
+ =?us-ascii?Q?S4/j/5+p8G6I6wSebJhcng5XlKpDJzoGwcnzcbxDHxzemeOK/9DIrbLjq6I7?=
+ =?us-ascii?Q?o/3PH27sT8YaQqMtv0LyyhesLlp8kV26Y4H/NC3T/iDE9t/USUiyT4PvuvKg?=
+ =?us-ascii?Q?eeHSULdmoGpjrCuf2WMfj4PQzswiUiZfDKNZq5371CqRUrpJRIzJBTq33Jq3?=
+ =?us-ascii?Q?a5dLs7y/j38RrEqSsa7qPZ8FJCaqlyp/ddpBRKN5exUdmkbu6FEzLh2hPjR5?=
+ =?us-ascii?Q?vLHBuDjOxNAUHuWbWEKwj2jAFs/Vpy7axzhuxu+VhbV2ZKUq3OsSA7gjfQ4U?=
+ =?us-ascii?Q?MBfjy9PCtfRHzSYBFM2k9ynP0+/jREuBxLEBqwa5JXaiRS7GBrubhgu45XKY?=
+ =?us-ascii?Q?7pW4O1jbPam301X8C83wlKqmw03YTKd6e9p7GpGO8+ITe7fBw90yryD8KGe1?=
+ =?us-ascii?Q?KJZnTBs1KgIPzeEoG7qLXPXyD6Py1MDSnnFy6Z3IThNeLHuw9cyLy/XsQy2P?=
+ =?us-ascii?Q?8KNsl/F7G9q/YgYIzixmBGGRKC4UuCznmH998vm05Td2gg0y8NHxDTD8zCh0?=
+ =?us-ascii?Q?6SZMgN13vYtJxlBVvYRNTKIjA/1qjM4Bwhm0rABmnYCvVaNXxGTi6HCfczF+?=
+ =?us-ascii?Q?lQhUbJiSHpBJdZ3ZotDVDZK0rH1opdTgjHLGPyHrIdANAjWjn+H/OOqIfkhI?=
+ =?us-ascii?Q?aDEO/DQdDx2SJej4qJr71q/WU2/cxDUOC9K4u6s7c/sKP5N0mdkgYX5ZDsLm?=
+ =?us-ascii?Q?F6Z5KDc/nYcqH01zCZaxdCqYxk4nAVa1bR+Q2AKSqZ+ZdvAjF8SrNt/VauMa?=
+ =?us-ascii?Q?85nIutaOBeCq9l4wbrZ9xzmD9iM2TqO+s11R5WECmKj2XYk7Zm4dtNlG//4I?=
+ =?us-ascii?Q?588i3IBirLWz3kIbGy7Sk7MtpHRnw758Hx4Ho5m8Z5IPB6qbXGsru2dyg0co?=
+ =?us-ascii?Q?oT77SphIuu+9+ZtMdDx0+rmqn5Zu4nj+cogC/oDnR5i79BsWeCVre2WA6F3M?=
+ =?us-ascii?Q?1nCUqWXRVdr3pJz6P0PwS9prSEkWA9AfKcgZX8tGdmf0fxwuTHB3LeO3SAgD?=
+ =?us-ascii?Q?Wdzdg+wG1Nq2ErLXiY00T4N0yWZLFiufUEwSFIRFCvVrRKXm6bGmuumDXv/e?=
+ =?us-ascii?Q?7uDCYfR5q5rtvv/keuT4ndyGWrJEfpoW0xUBzpWK/eVTzXdu4Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?D+CcQ+VIz8iQy7yW5VJMQQHIH4pyMYuCiiaElz8GDLFaJfTl/wTKOWFuLMW0?=
+ =?us-ascii?Q?WSTsj4+CnoYh+W/lShGqIFDOVMJftzj1EoiKUS3qd41VpsTqSkKTj2zDWiht?=
+ =?us-ascii?Q?5F1H8OXoYOq1D9+psV7JlRIpSWK6eXec9SlFRcBsAPuw+i4A3fMQKtRvmKz8?=
+ =?us-ascii?Q?fki+JpIc42IcSL0ksA4Ec1pAQBqrvRGKflqvM1JeO+KM7UbdV28Ky8fE/ISM?=
+ =?us-ascii?Q?IpDe+0nOdwAZEXQqIGK9vPQCqSfp+JZ/eDs5EkcywB0V1HeXfUQ77hfwfPie?=
+ =?us-ascii?Q?BVcHKhrjLhy969gnCVg1qOqxafSt82yrDgkxnvizPJaRIijcvTOl4QymqSP4?=
+ =?us-ascii?Q?mZDWpzL5T/UZTngRZkE7LjcL1r0aWFx6oft5zw39C8qf8a9gFfuSMKIVEIvt?=
+ =?us-ascii?Q?OERES0J1T9SNlYsrLqm5s62dDeNglt3r3tuUpM64ELnqvrQ6Vdirzc377KGb?=
+ =?us-ascii?Q?gXO3qBhMmh0U8hEUt2xMNGWGFsgWNqjd0z2Cmepr06WKo/DyHbT4HLs1czTw?=
+ =?us-ascii?Q?aGVI8XfY5xa1rY8Md/Hgqv0mFgUDzbEER4NoceOD/gF3sYAUK5Jxl1QcJ+ab?=
+ =?us-ascii?Q?kceRK6iHcF9ULKjMtUq4hz0As13kyR/J0nz7R01jDcc/vRWyvAkVTQbgcy0O?=
+ =?us-ascii?Q?DnTKjFjD4FCsAUIoF9Nm6gRmCwVbHIsDTM0MzxGLlf6Mo7P8yX/PLafoUtWN?=
+ =?us-ascii?Q?UEK1LHI/VEeDTvNnxRWJNgsNy2mZpWAmHJuOiuDznYgj4iuLopW8EuHuq10r?=
+ =?us-ascii?Q?RMpf5w9UW9/lTDAQ+g5KXCIbt36oFsKIKY1Lu4wjRsCpZeGyKsBCf0OOtBYf?=
+ =?us-ascii?Q?lh+8dH9Q27SQ3Y4ER6r9HpgM+vuPijLQr6tvLVFyD9OimHMNyY73t4FVc7z/?=
+ =?us-ascii?Q?oNAuIKSUE68GePIgVXGyTRg4weK77zyKn8XRS0u0hn7eapKU22wXRiwCkezm?=
+ =?us-ascii?Q?5h7e4CjyePwyqhiFefHbdapVUxqhyBQ7qp07e6bryHXXrj/CPLxpbpP9XM71?=
+ =?us-ascii?Q?nLw/b8maZjt9vjh3H6Syzb4A4AsgVb+Ee8Z2ou7lx+pzUKaTk8qZNNL0Sh4F?=
+ =?us-ascii?Q?qJudBZtDWT6hmm0ub9R/Ji+JUNOSGDlO/LjmLWEGUghrgvLk3VtxR9ql+Bpf?=
+ =?us-ascii?Q?asv2zXe4fkpvdCUNvfEyGhCpYskdUIEFpJlAONrya0dznnpAFVb2SNUIJnFJ?=
+ =?us-ascii?Q?FipTW8CfbRXwXZl7cpDdSpWQuSy+m3XYjI9lQRyjIJZ8qaggCjN1oq23ageH?=
+ =?us-ascii?Q?b/7Hzn/LD6SX3LUPiU2gS4Ub8Fjisd9K0JI5evVbJ9dyJLmhSAqVVKLJLQOY?=
+ =?us-ascii?Q?NEsnGn3xVsie4gpf4AQUiXs3AYMN5qRWRhRHIyELATYMUX2pauHuXyCR1XbO?=
+ =?us-ascii?Q?e2UTKiQ4gItwlZWeDDqzhcde52lIGuar8b0YTQKAu5N1ULC2s5lmxnaqFFpL?=
+ =?us-ascii?Q?NGjxrEnYZAT5kUUgT/EaqydPpJfVSzhdnaVu/onpmh2gNaDoYnKDu3GH34as?=
+ =?us-ascii?Q?Lc8FqZHUhwpKLaXHHMipSmcUYyHEY3eNiBY9ixgymG7LQMVOzh4hCO7SnKWw?=
+ =?us-ascii?Q?1ik1J+AmHrmiO+JA+OJGyjR5K0iK68v+KOgo+bU4?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f03e54c9-0571-4f9f-be11-08dcde00d3dd
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 07:57:11.7757
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dBwwfuvIKgqjONaZuXzWkCy7se2nGPiVWeizONHXWWm1c23ZJN8wFku1gvItQBOfGx6phK6fL7ijJ9W77KRzDA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6484
 
-"Michael Walle" <mwalle@kernel.org> writes:
+Fixed some confusing typos that were currently identified with codespell,
+the details are as follows:
 
-> Hi,
->
-> On Thu Jul 11, 2024 at 3:00 PM CEST, Esben Haabendal wrote:
->> As a consequence, the SPI_NOR_SKIP_SFDP flag is no more, and all
->> drivers that have been doing optional SFDP is now marked explicitly to
->> do that using the SPI_NOR_TRY_SFDP.
->
-> First, I haven't looked at your patchset at the moment. But I'd like
-> to take the opportunity to discuss the following (and excuse me that
-> I didn't had this idea before all your work on this).
->
-> First, I'd like to see it the other way around, that is, doing SFDP
-> by default and let the driver opt-out instead of opt-in. This will
-> also align with the current "SFDP only driver", i.e. if a flash is
-> not known we try SFDP anyway. Going forward, I'd say this is also
-> the sane behavior and we don't have to add any flags if someone want
-> to add support for an (older) flash with the same ID but without
-> SFDP. With the current approach, we'd have to add the TRY_SFDP flag.
->
-> Now we might play it safe and add that SPI_NOR_SKIP_SFDP to any
-> flash which doesn't do the SFDP parsing (because it has size != 0
-> and not any of the magic flags set) - or we might just go ahead and
-> do the probing first for *any* flashes. Yes we might issue an
-> unsupported opcode, but we already do that with the generic SFDP
-> flash driver. So no big deal maybe (?). Vendors where we know for a
-> fact that they don't have any SFDP (Everspin I'm looking at you),
-> would of course set the SKIP_SFDP flag.
+-in the code comments:
+drivers/nvdimm/nd_virtio.c:100: repsonse ==> response
+drivers/nvdimm/pfn_devs.c:542: namepace ==> namespace
+drivers/nvdimm/pmem.c:319: reenable ==> re-enable
 
-I like your idea.
+Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+---
+ drivers/nvdimm/nd_virtio.c | 2 +-
+ drivers/nvdimm/pfn_devs.c  | 2 +-
+ drivers/nvdimm/pmem.c      | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Did you discuss this with Tudor?
+diff --git a/drivers/nvdimm/nd_virtio.c b/drivers/nvdimm/nd_virtio.c
+index f55d60922b87..c3f07be4aa22 100644
+--- a/drivers/nvdimm/nd_virtio.c
++++ b/drivers/nvdimm/nd_virtio.c
+@@ -97,7 +97,7 @@ static int virtio_pmem_flush(struct nd_region *nd_region)
+ 		dev_info(&vdev->dev, "failed to send command to virtio pmem device\n");
+ 		err = -EIO;
+ 	} else {
+-		/* A host repsonse results in "host_ack" getting called */
++		/* A host response results in "host_ack" getting called */
+ 		wait_event(req_data->host_acked, req_data->done);
+ 		err = le32_to_cpu(req_data->resp.ret);
+ 	}
+diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+index 586348125b61..cfdfe0eaa512 100644
+--- a/drivers/nvdimm/pfn_devs.c
++++ b/drivers/nvdimm/pfn_devs.c
+@@ -539,7 +539,7 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
+ 
+ 	if (!nd_pfn->uuid) {
+ 		/*
+-		 * When probing a namepace via nd_pfn_probe() the uuid
++		 * When probing a namespace via nd_pfn_probe() the uuid
+ 		 * is NULL (see: nd_pfn_devinit()) we init settings from
+ 		 * pfn_sb
+ 		 */
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 210fb77f51ba..d81faa9d89c9 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -316,7 +316,7 @@ static long pmem_dax_direct_access(struct dax_device *dax_dev,
+  * range, filesystem turns the normal pwrite to a dax_recovery_write.
+  *
+  * The recovery write consists of clearing media poison, clearing page
+- * HWPoison bit, reenable page-wide read-write permission, flush the
++ * HWPoison bit, re-enable page-wide read-write permission, flush the
+  * caches and finally write.  A competing pread thread will be held
+  * off during the recovery process since data read back might not be
+  * valid, and this is achieved by clearing the badblock records after
+-- 
+2.17.1
 
-On 9/23/24 7:04 PM, Tudor Ambarus wrote:
->>> * Always read Macronix chips SFDP, as Macronix replaced all old chips
->>> in the Manufacture table.
->>
->> I'll NACK it unless you prove that the old flavors of flashes are not
->> used anymore in the kernel.
->
-> Even if you can prove that the older flashes are not used in the kernel
-> anymore, we can't just switch to parsing SFDP, because we have seen in
-> the past flashes with wrong SFDP data that made the flashes misbehave.
-> The recommended way is to update just the flashes that you can test.
-
-Does it make sense if I work on a patch implementing the proposal you
-put forward, or is it possible to discuss it further before doing that
-work?
-
-If it will certainly be NACK'ed, I might as well try to find a different
-approach.
-
-/Esben
 
