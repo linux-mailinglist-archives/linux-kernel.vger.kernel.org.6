@@ -1,175 +1,141 @@
-Return-Path: <linux-kernel+bounces-339919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C241986C2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:56:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01937986C2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C90C31F22922
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:56:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3C121F22852
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A73F188A16;
-	Thu, 26 Sep 2024 05:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB84618757D;
+	Thu, 26 Sep 2024 05:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="nprVMNWf";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="lLemQXQ3"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ASb7/1Hx"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6139718757D
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358591865F2
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727330172; cv=none; b=Jt5ZbPrP5nNRCVgju8afyAg4n3GVoJmlYnD/+/VZLAeWuQaWwASGJ9++LtKqh5+R2PGYYoU43iIdOT709/LM5Jnc3wQW8MrAu9JdwQHsUbojfut9Dv+AEwOrdMRnKLqKp+Q8oZvOJaHSOcRO3j6u1LmzBc6iDrSfi9U3tMukVSk=
+	t=1727330237; cv=none; b=XzLW1zykyH2s1ecvACGKDFpxP+p7VNa4WWxMEiCspqdyIO3xAZHPwVk/tFrFlDk7ENee2Y4eFHTnaAVtBGRKe9H0MQ+BCsMlBjZPRz6RWfevAwdxTR8FNPa8DN4TKicNB/7/xpijdsZDERHWfTBsVGgPUeTIUoBauaxV4CPj6xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727330172; c=relaxed/simple;
-	bh=uUoxyJz0oYfHN8wv9/YSFlGaqq3CznQwoGzv/HviPek=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pxhYhd2lXdnOFL5IiqDtaWl3cDZhbrJ3qrxv9/DZYpjQSVlXglLnr5GVyC8G+BQdY8h3uvQfPl4Vcsr7hE1pDfURNRmM9psINcsJcs4/CeTRBAgcRrKews8mSXtmRCu+Fwjavac8DMqc7smYG2Db8IyXj/c6OB5OJZi72ki0hXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=nprVMNWf; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=lLemQXQ3 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1727330237; c=relaxed/simple;
+	bh=ITcZgpSh9LkUnu9Tr5EgQGWrxVVYkLELYOcebU23AL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Szqt5HDekO3b8zfoiRLO01JW6djLkYavOadmxuF7f0ZU5LbLlzb80n8otupFEefK/PqDYtEONRDRRTmLyxDH7kjDXIhSbsbs5XlF1K+yqVbSHOiemw+PY7thZ3Bt3xvpKcffv4C/uums+9e0K10qbmOTVHrXFbiyRRWm2HJvN4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ASb7/1Hx; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso6760305e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 22:57:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1727330170; x=1758866170;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=bLzJtbfa2s5QAjm0ipC22hKl20Uv3y0q/Em4v3hXr0c=;
-  b=nprVMNWfGrtywcyIltJHkfZBJ5uqqfgyHnvZoUJnK/hcMHE+hkVZ+1cQ
-   0aU5SnXBMzWyv2Wma1xWajLYxttm4G+E0znLELgN9aaj1EShHDYbiBZ3W
-   FCZMCkaBH2vf7lZz5LGN6QTHcP8paAVXzdg5/p30DvwGdoGKuHwQzYFwe
-   XcOFnNcxDHoed6XrT3wxGEzr7wxd8t4f/xxNenHKl4r444pbJrBrsvHKB
-   79f6LVEr68YAT+9JqHQC7NvxDfxAlZucBuiafHIsXSJZeahth+LiJs0pe
-   EyXLAJhalXlicMef77Qi8j93S27nkFYEHVAOQBM1AWet9Rk476rsIc8gK
-   g==;
-X-CSE-ConnectionGUID: aU/ZGlV9RNKTAdhj5VL7+g==
-X-CSE-MsgGUID: BALAbA55R4iTxhd71svacw==
-X-IronPort-AV: E=Sophos;i="6.10,259,1719871200"; 
-   d="scan'208";a="39129818"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 26 Sep 2024 07:56:03 +0200
-X-CheckPoint: {66F4F773-16-B62731C4-FB8D8F8A}
-X-MAIL-CPID: 0B3461EE8FD9AE5E753EA9A3C01306C1_3
-X-Control-Analysis: str=0001.0A682F27.66F4F773.00E7,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F06CB160A3D;
-	Thu, 26 Sep 2024 07:55:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1727330159; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=bLzJtbfa2s5QAjm0ipC22hKl20Uv3y0q/Em4v3hXr0c=;
-	b=lLemQXQ3BMrZxixLXAaMhfzBGdx/uHDt++UGsHM032fL6xcM1L7iYRAtkO+4lAWvDG1Wtb
-	158c7GQmzz9yvpCgrxTM9rxJdliCnTAtgapqi4+SiNpSd83+t06bNba79h/vVNAxZ8ALo0
-	Ogv7LLiKOaVj7/ZNb1+tPVzoJAmvdAr1EXw9QwFiAMtJxkUnHqR25NuXZo6aWZ4FliSNVa
-	bM0GggHKYRR/t2jWYhyNu8fyJv4cRRbG3QCYUTk7rlDc483CDuEk/TLc3slEcThQt2mS6d
-	F6ebguRBQDuTsAfIGvzPXVwHeBuGzwhGzp+LMplDw69Cv5UsFiazLvnK5cziHQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@nxp.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Matthias Schiffer <matthias.schiffer@tq-group.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Subject: [PATCH v2 2/2] drm: fsl-dcu: enable PIXCLK on LS1021A
-Date: Thu, 26 Sep 2024 07:55:51 +0200
-Message-Id: <20240926055552.1632448-2-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240926055552.1632448-1-alexander.stein@ew.tq-group.com>
-References: <20240926055552.1632448-1-alexander.stein@ew.tq-group.com>
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727330231; x=1727935031; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ITcZgpSh9LkUnu9Tr5EgQGWrxVVYkLELYOcebU23AL0=;
+        b=ASb7/1HxoTQIj88hAXUBDCH6uSXWN0RRTZQEKUfUo9cNZgVcu80/H1sHZDBYbMz8nQ
+         mwfFbzh8eLRZ0HgOYqBHFEUQSFgZ9DN/zya7ozCQ9TboW8ny5s9xxR+9dX1sbjNfYj2t
+         BSWyxuJuHwiAZtQooeuHfeU+VvwteKwJpZWNA0owlIe/05OWPSgsOjJCYbTlUBFol1fb
+         nmtCvglJJhtRqNK3of1p6Z1KzC2u95GnTjB9sB1f8m5mGX/T2ly+nt3xiFvyNSLPVaNh
+         25vRQ5Xz+BHz4xsGP2A/jEy16kkuiJPTvmYezXMRzzuX6mDXP7/NoSmW/fHflfi5PuFx
+         CJ2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727330231; x=1727935031;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ITcZgpSh9LkUnu9Tr5EgQGWrxVVYkLELYOcebU23AL0=;
+        b=gq9qb5ZZSj3ZGra75+g4lEWYfAvMrTItKSYkiMKf6ymKcm5wZZh0luX+OudpTk5Kd8
+         2Jh4CgwLz2QAAuO/A9R2TdkgkqePG4C2OK8KdqN9iG8ta0pcoMp5RcnIPgRZeifFEfD8
+         rpVUvVTMzZVowrOW9QlNRKMPeTs/S0L7uoT+2IcYAW5cZk2+Bmqm72PoNRR//tqGzoaw
+         QdSfBdF2g5omt/wnyra5Jxxj53I7HeHoseMfO8OgQfiH45ZyQHU12/xFs4gqWzUTRUhJ
+         BdEBg+/L4TDWek/DTUkU0ERg2Xf4Jg7a9Ynsv9B1RuFd27CmorDgJisP7rdIO1pkCZt2
+         SSxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtkCzJlJhN0Ar2O8bCSLBc9OzsiNzY+IPNvU+CXcwdwVq4K0A+pGozYsP2BJ6VcMoN29AyhKWBxZrDOZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3ii1JFXVpbY4ELb75P6z/3NBwFF0TKRwFQNrVGwBgTd5cPcTQ
+	5ClQIc/7UNNo+LzJVtBlIho2gPBL7Z4RzHg9pvDhPf2NqRIicB2g88IrjBOyt4I=
+X-Google-Smtp-Source: AGHT+IExrhrRpSEyITEQj3X4Ht4Gv1XTDE6DLVsIWnD2pFn4X8BvPA3hJa5P+M0yXmuY0mDkKaPOqw==
+X-Received: by 2002:a05:600c:3b87:b0:42c:b62c:9f0d with SMTP id 5b1f17b1804b1-42e96116388mr47382035e9.17.1727330230908;
+        Wed, 25 Sep 2024 22:57:10 -0700 (PDT)
+Received: from localhost (lfbn-nic-1-357-249.w90-116.abo.wanadoo.fr. [90.116.189.249])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a0d8eesm37376845e9.30.2024.09.25.22.57.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 22:57:10 -0700 (PDT)
+Date: Thu, 26 Sep 2024 07:57:08 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+Subject: Re: [PATCH v2 0/3] reset: Requesting pre-deasserted,
+ auto-reasserting reset controls via devres
+Message-ID: <vvthbvqhcvaau2bfvlg7yajpeybrvlvqdmbqzgygk6wyjcf7di@lfwuqmpk2u3z>
+References: <20240925-reset-get-deasserted-v2-0-b3601bbd0458@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2lygf7fyh3o4gbis"
+Content-Disposition: inline
+In-Reply-To: <20240925-reset-get-deasserted-v2-0-b3601bbd0458@pengutronix.de>
 
-From: Matthias Schiffer <matthias.schiffer@tq-group.com>
 
-The PIXCLK needs to be enabled in SCFG before accessing certain DCU
-registers, or the access will hang. For simplicity, the PIXCLK is enabled
-unconditionally, resulting in increased power consumption.
+--2lygf7fyh3o4gbis
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Matthias Schiffer <matthias.schiffer@tq-group.com>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Changes in v2:
-* Add note about power consumption in commit message
-* Add note about power consumption in comment
-* Fix alignment
+Hello Philipp,
 
- drivers/gpu/drm/fsl-dcu/Kconfig           |  1 +
- drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c | 15 +++++++++++++++
- drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.h |  3 +++
- 3 files changed, 19 insertions(+)
+On Wed, Sep 25, 2024 at 06:40:08PM +0200, Philipp Zabel wrote:
+> There is a recurring pattern of drivers requesting a reset control and
+> deasserting the reset during probe, followed by registering a reset
+> assertion via devm_add_action_or_reset().
+>=20
+> We can simplify this by providing devm_reset_control_get_*_deasserted()
+> helpers that return an already deasserted reset control, similarly to
+> devm_clk_get_enabled().
+>=20
+> This doesn't remove a lot of boilerplate at each instance, but there are
+> quite a few of them now.
 
-diff --git a/drivers/gpu/drm/fsl-dcu/Kconfig b/drivers/gpu/drm/fsl-dcu/Kconfig
-index 5ca71ef873259..c9ee98693b48a 100644
---- a/drivers/gpu/drm/fsl-dcu/Kconfig
-+++ b/drivers/gpu/drm/fsl-dcu/Kconfig
-@@ -8,6 +8,7 @@ config DRM_FSL_DCU
- 	select DRM_PANEL
- 	select REGMAP_MMIO
- 	select VIDEOMODE_HELPERS
-+	select MFD_SYSCON if SOC_LS1021A
- 	help
- 	  Choose this option if you have an Freescale DCU chipset.
- 	  If M is selected the module will be called fsl-dcu-drm.
-diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-index dd820f19482ad..63da55fe2eaf8 100644
---- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-+++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-@@ -100,12 +100,27 @@ static void fsl_dcu_irq_uninstall(struct drm_device *dev)
- static int fsl_dcu_load(struct drm_device *dev, unsigned long flags)
- {
- 	struct fsl_dcu_drm_device *fsl_dev = dev->dev_private;
-+	struct regmap *scfg;
- 	int ret;
- 
- 	ret = fsl_dcu_drm_modeset_init(fsl_dev);
- 	if (ret < 0)
- 		return dev_err_probe(dev->dev, ret, "failed to initialize mode setting\n");
- 
-+	scfg = syscon_regmap_lookup_by_compatible("fsl,ls1021a-scfg");
-+	if (PTR_ERR(scfg) != -ENODEV) {
-+		/*
-+		 * For simplicity, enable the PIXCLK unconditionally,
-+		 * resulting in increased power consumption. Disabling
-+		 * the clock in PM or on unload could be implemented as
-+		 * a future improvement.
-+		 */
-+		ret = regmap_update_bits(scfg, SCFG_PIXCLKCR, SCFG_PIXCLKCR_PXCEN,
-+					 SCFG_PIXCLKCR_PXCEN);
-+		if (ret < 0)
-+			return dev_err_probe(dev->dev, ret, "failed to enable pixclk\n");
-+	}
-+
- 	ret = drm_vblank_init(dev, dev->mode_config.num_crtc);
- 	if (ret < 0) {
- 		dev_err(dev->dev, "failed to initialize vblank\n");
-diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.h b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.h
-index e2049a0e8a92a..566396013c04a 100644
---- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.h
-+++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.h
-@@ -160,6 +160,9 @@
- #define FSL_DCU_ARGB4444		12
- #define FSL_DCU_YUV422			14
- 
-+#define SCFG_PIXCLKCR			0x28
-+#define SCFG_PIXCLKCR_PXCEN		BIT(31)
-+
- #define VF610_LAYER_REG_NUM		9
- #define LS1021A_LAYER_REG_NUM		10
- 
--- 
-2.34.1
+I really like it, thanks for respinning!
 
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+
+Two small notes: I think __devm_reset_control_get() could be a bit
+simplified if it used devm_add_action_or_reset() instead of
+devres_alloc() + devres_add(). I also would have prefered an if block
+(or a function pointer) in the release function instead of a ?:
+construct to select the right release function like e.g.
+__devm_clk_get() does it. But that's both subjective I think and
+orthogonal to this patch set.
+
+Best regards
+Uwe
+
+--2lygf7fyh3o4gbis
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmb097EACgkQj4D7WH0S
+/k4qlAf+PJJjeWrIALfzoqWqogeq1qVOmP7PcEPUAiVSKIrfBnzoNlCQ/u1vmIrf
+mKl8hI67Lfix4wciDnW3BZ1kgwAA3r/w+QoGuuC7aDY8j0Exh/fTxdYqH8fxg8zP
+XyZQFxfh5Z96gQSvusyd3C8Fu+d3WWy+5K81gKb4ohN6QZdOUpvw8goESRQVv103
+u64I6rA/iI+DELRdBnI6/1eqWy8RyCa3mDpPTM8sBQDCQRwC9b47i9kpAyJO4sbx
++4X6NJ9iYOE9NlsU/C7WlpoToH7wRWBNkeWUlgTiDCsrw/qBW+ZH1hTPXgazaMMC
+72CKjvcYi+rSpZtGdrAg0APbAM1LwQ==
+=M8Iz
+-----END PGP SIGNATURE-----
+
+--2lygf7fyh3o4gbis--
 
