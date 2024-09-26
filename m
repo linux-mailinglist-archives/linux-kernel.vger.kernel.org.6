@@ -1,180 +1,252 @@
-Return-Path: <linux-kernel+bounces-340315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6084987178
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:26:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698D198717D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B151C24023
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:26:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFB0BB293DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231F21ACE19;
-	Thu, 26 Sep 2024 10:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="magBxSp6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4708C1AD3E0;
+	Thu, 26 Sep 2024 10:27:25 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809CA1AC441
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75961AC441
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727346371; cv=none; b=H6AiZSIbxzOIhNrZlEYJCqa9uDNai80hF3ArmgaDkBPA0cII5NjXqFv2aYaBmY/MAi5jEeiWSyADGuipZ01eOGDqADvi73UUsLUODBuqUUtKNAIl99O5aIaqzxShlvSDXBXFhQxUQAmVYgfMIoMOp+8Ssyygu4952XCzhjI+D6Y=
+	t=1727346444; cv=none; b=E4T+33ddJhX6Xw5Big4VFdqvPKuazuehrWkedJKnXgxCpGftZkJKsOuCCIb9ZDiV6ruELMT2/w3aZ1ZI5nYVSa7g40g0LsW1DeW+YkiZYafiZIerpUS0k1IdWhf35x25sbx3hCvXOiDB7O5JRAqNSRw7OdMrjjslI/0DA8egiN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727346371; c=relaxed/simple;
-	bh=2xiEpAqwiURqhbLx9UQ7eaejJ7Cx2bw8HpjcojrX+M4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WyJ/QL+8MFcKaWmHu/memIkDdRzvYxo5Og5AmFW/+Ih9chotAIT50S3awaZTrswIrLnFeP71tce7fzyS7xgQDWXSAGfBt+aHSEZUTvzUS8ytkRdpM3qjpUP6DlBzfDLsPKxOpdsP3R/Q7beT4FlKAAfwUx5DaBaG0ow6HeSCqSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=magBxSp6; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727346369; x=1758882369;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=2xiEpAqwiURqhbLx9UQ7eaejJ7Cx2bw8HpjcojrX+M4=;
-  b=magBxSp6jJSYq5R30jwvHAwpQAKCyUeiRez0bZnbgdjFAN0523vutbw8
-   Em1mRLQ/pnZ6IsJY/TxfdheFJDbh5vV3OoT/79TxqTu0tx7aAO6e6Spcc
-   n34tzRnreoU4dUJY2zZcllSemgX/q6KritUFaMn+zT+KTIqyLxBdtW54W
-   GqmdlaWbiQhMIJOzbtlOK8faPeh6w3rAcTfnmmBPSq7GmlA7lUW852UDH
-   RHSR1wlTMOMBqxRasGMn04r7nUenL/w+ZrUxsaI3JQuJC859lUA0qXnEw
-   8m4lCgfsKN2mWP5ieyYons0V7ZNd9JVP1pSGq6DYrjlZgxIt1J0Vzbtm9
-   Q==;
-X-CSE-ConnectionGUID: ZMJJSQn+QaqdHQr+qevfig==
-X-CSE-MsgGUID: F0E/i1/7SDW5EVEUQ0JH3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="26295834"
-X-IronPort-AV: E=Sophos;i="6.10,155,1719903600"; 
-   d="scan'208";a="26295834"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 03:26:09 -0700
-X-CSE-ConnectionGUID: GBl5vdDLTrWGZYWGySjx8A==
-X-CSE-MsgGUID: ZXMYfOK2R2+3sCLB+1f5mQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,155,1719903600"; 
-   d="scan'208";a="109570691"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 26 Sep 2024 03:26:07 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1stlhE-000KZ1-2r;
-	Thu, 26 Sep 2024 10:26:04 +0000
-Date: Thu, 26 Sep 2024 18:25:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@rivosinc.com>
-Subject: arch/riscv/kvm/vcpu_sbi_sta.c:58:20: sparse: sparse: cast to
- restricted __le32
-Message-ID: <202409261846.kWf2YRgc-lkp@intel.com>
+	s=arc-20240116; t=1727346444; c=relaxed/simple;
+	bh=RfGLQ2Aaewn4d4r+KOXGIABi2h2jaXvnG74eRLDRiqA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GQcTHGbF1GoscX58qNe/W54bhBVnvqAFu5ayzQB7NyATDooA6zRHoySTW9ugw5JxLcvg/4/ctjk9bcOxVuBTgPTYzaTeFqI/VzeDUxy0pJSHND5mmYNJjPDusruVtnPfPvBrs24rXas9rEFMHmB9hN7Oz2z9VuWirlJ8QyyB4zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a34205e146so2613945ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 03:27:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727346442; x=1727951242;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9A2C4JqlBvXcXy6tg9QhkVzgwPP47FEacCMaF7rh+jM=;
+        b=i+5sQM21YuEFR5j0+JBbVGxQnef2/K6BGuefqjLVc3hkAo1MaSMqQJPY+87aP3Ji7E
+         igqyX0Euq6qbh5kMZ2IAv+Y9hrwtZybrvhpT6jTo9+sVdPO97jF0MZ3kBOG3K3/RP3WZ
+         jO2VnXEv/wIcNvtRwADf1eZAvblUGqxJDReyAu4VXccVIOPAJ8LorEGv8OecVSLyYJx4
+         FJHkbM8kUaQsRtZfM3dxYqNw7mR1rnEAW2OdX9qBi1m5o6zBHf3agfEKq7/ckqO8ztWL
+         ueV+EKMZRINhXaWcy7nwNM0wSAEwmB0AOon2XUaakvBBbeE6X4PnfgCWJMkbeO7dmJi+
+         McgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrUHfCm0vHHALfhyGtvCMz9blk3PjWLWvsu1jsHWp4cq8DTlgOrI3LnDAd7X+kL6ghMFKMTtqXMnJNIKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzJCTVJdWZFbl1zpHup37GglVKBFEqRLpA0P34lqRgmEEiyVw1
+	qGLdBVbgYI3jwIMYDvD5HYHJr2nlIwbhkVFC8EazeSD0FBXPsx6mvv21Rs1CTHy1t6gJoFzdRCH
+	/ozWvIy/FcIuSO/2OPt0kdzKw1MvlbCsCc/z5ZyWqzlTyhEL8eECMJQI=
+X-Google-Smtp-Source: AGHT+IF3kavnIUZ/fQIQPUBzfVcrRJHqH4jovNob9BKTDM5flUX79dkV1qGhAgCZ6MoTcL+BYZ+73nzsZTX3J3NbMWeF+f4iFGJI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Received: by 2002:a92:ca4c:0:b0:3a3:4164:eec9 with SMTP id
+ e9e14a558f8ab-3a34164f2f4mr10040345ab.14.1727346441906; Thu, 26 Sep 2024
+ 03:27:21 -0700 (PDT)
+Date: Thu, 26 Sep 2024 03:27:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f53709.050a0220.211276.0068.GAE@google.com>
+Subject: [syzbot] [bcachefs?] INFO: task hung in bch2_fs_read_only
+From: syzbot <syzbot+c7aacacf99dcfd3475a7@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   11a299a7933e03c83818b431e6a1c53ad387423d
-commit: e9f12b5fff8ad0eefd0340273767d329ef65fd69 RISC-V: KVM: Implement SBI STA extension
-date:   9 months ago
-config: riscv-randconfig-r133-20240926 (https://download.01.org/0day-ci/archive/20240926/202409261846.kWf2YRgc-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 7773243d9916f98ba0ffce0c3a960e4aa9f03e81)
-reproduce: (https://download.01.org/0day-ci/archive/20240926/202409261846.kWf2YRgc-lkp@intel.com/reproduce)
+Hello,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409261846.kWf2YRgc-lkp@intel.com/
+syzbot found the following issue on:
 
-sparse warnings: (new ones prefixed by >>)
-   arch/riscv/kvm/vcpu_sbi_sta.c:55:13: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned int const [noderef] __user *__p @@     got unsigned int [usertype] *[assigned] sequence_ptr @@
-   arch/riscv/kvm/vcpu_sbi_sta.c:55:13: sparse:     expected unsigned int const [noderef] __user *__p
-   arch/riscv/kvm/vcpu_sbi_sta.c:55:13: sparse:     got unsigned int [usertype] *[assigned] sequence_ptr
->> arch/riscv/kvm/vcpu_sbi_sta.c:58:20: sparse: sparse: cast to restricted __le32
-   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned int [noderef] __user *__p @@     got unsigned int [usertype] *[assigned] sequence_ptr @@
-   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse:     expected unsigned int [noderef] __user *__p
-   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse:     got unsigned int [usertype] *[assigned] sequence_ptr
-   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned int __val @@     got restricted __le32 [usertype] @@
-   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse:     expected unsigned int __val
-   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse:     got restricted __le32 [usertype]
-   arch/riscv/kvm/vcpu_sbi_sta.c:64:14: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned long long const [noderef] __user *__p @@     got unsigned long long [usertype] *[assigned] steal_ptr @@
-   arch/riscv/kvm/vcpu_sbi_sta.c:64:14: sparse:     expected unsigned long long const [noderef] __user *__p
-   arch/riscv/kvm/vcpu_sbi_sta.c:64:14: sparse:     got unsigned long long [usertype] *[assigned] steal_ptr
->> arch/riscv/kvm/vcpu_sbi_sta.c:65:25: sparse: sparse: cast to restricted __le64
-   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned long long [noderef] __user *__p @@     got unsigned long long [usertype] *[assigned] steal_ptr @@
-   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse:     expected unsigned long long [noderef] __user *__p
-   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse:     got unsigned long long [usertype] *[assigned] steal_ptr
-   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned long long __val @@     got restricted __le64 [usertype] @@
-   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse:     expected unsigned long long __val
-   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse:     got restricted __le64 [usertype]
-   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned int [noderef] __user *__p @@     got unsigned int [usertype] *[assigned] sequence_ptr @@
-   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse:     expected unsigned int [noderef] __user *__p
-   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse:     got unsigned int [usertype] *[assigned] sequence_ptr
-   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned int __val @@     got restricted __le32 [usertype] @@
-   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse:     expected unsigned int __val
-   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse:     got restricted __le32 [usertype]
+HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.k..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=16f9de9f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=74ffdb3b3fad1a43
+dashboard link: https://syzkaller.appspot.com/bug?extid=c7aacacf99dcfd3475a7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b24e07980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17dfb080580000
 
-vim +58 arch/riscv/kvm/vcpu_sbi_sta.c
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/87eaf0ad6d60/disk-88264981.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/30c01cf8bc82/vmlinux-88264981.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a1407424ea54/bzImage-88264981.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/24e9b0679e2e/mount_0.gz
 
-    24	
-    25	void kvm_riscv_vcpu_record_steal_time(struct kvm_vcpu *vcpu)
-    26	{
-    27		gpa_t shmem = vcpu->arch.sta.shmem;
-    28		u64 last_steal = vcpu->arch.sta.last_steal;
-    29		u32 *sequence_ptr, sequence;
-    30		u64 *steal_ptr, steal;
-    31		unsigned long hva;
-    32		gfn_t gfn;
-    33	
-    34		if (shmem == INVALID_GPA)
-    35			return;
-    36	
-    37		/*
-    38		 * shmem is 64-byte aligned (see the enforcement in
-    39		 * kvm_sbi_sta_steal_time_set_shmem()) and the size of sbi_sta_struct
-    40		 * is 64 bytes, so we know all its offsets are in the same page.
-    41		 */
-    42		gfn = shmem >> PAGE_SHIFT;
-    43		hva = kvm_vcpu_gfn_to_hva(vcpu, gfn);
-    44	
-    45		if (WARN_ON(kvm_is_error_hva(hva))) {
-    46			vcpu->arch.sta.shmem = INVALID_GPA;
-    47			return;
-    48		}
-    49	
-    50		sequence_ptr = (u32 *)(hva + offset_in_page(shmem) +
-    51				       offsetof(struct sbi_sta_struct, sequence));
-    52		steal_ptr = (u64 *)(hva + offset_in_page(shmem) +
-    53				    offsetof(struct sbi_sta_struct, steal));
-    54	
-    55		if (WARN_ON(get_user(sequence, sequence_ptr)))
-    56			return;
-    57	
-  > 58		sequence = le32_to_cpu(sequence);
-    59		sequence += 1;
-    60	
-    61		if (WARN_ON(put_user(cpu_to_le32(sequence), sequence_ptr)))
-    62			return;
-    63	
-    64		if (!WARN_ON(get_user(steal, steal_ptr))) {
-  > 65			steal = le64_to_cpu(steal);
-    66			vcpu->arch.sta.last_steal = READ_ONCE(current->sched_info.run_delay);
-    67			steal += vcpu->arch.sta.last_steal - last_steal;
-    68			WARN_ON(put_user(cpu_to_le64(steal), steal_ptr));
-    69		}
-    70	
-    71		sequence += 1;
-    72		WARN_ON(put_user(cpu_to_le32(sequence), sequence_ptr));
-    73	
-    74		kvm_vcpu_mark_page_dirty(vcpu, gfn);
-    75	}
-    76	
+The issue was bisected to:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+commit 359571c327a726d622786aef3833637dacfd5d38
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Tue Apr 9 04:02:47 2024 +0000
+
+    bcachefs: Fix check_topology() when using node scan
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11203880580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13203880580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15203880580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c7aacacf99dcfd3475a7@syzkaller.appspotmail.com
+Fixes: 359571c327a7 ("bcachefs: Fix check_topology() when using node scan")
+
+INFO: task syz-executor380:5235 blocked for more than 143 seconds.
+      Not tainted 6.11.0-syzkaller-08481-g88264981f208 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor380 state:D stack:23872 pid:5235  tgid:5235  ppid:5232   flags:0x00004002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x1843/0x4ae0 kernel/sched/core.c:6674
+ __schedule_loop kernel/sched/core.c:6751 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6766
+ bch2_fs_read_only+0xa86/0x1220 fs/bcachefs/super.c:346
+ __bch2_fs_stop+0x105/0x540 fs/bcachefs/super.c:618
+ generic_shutdown_super+0x139/0x2d0 fs/super.c:642
+ bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2064
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
+ task_work_run+0x24f/0x310 kernel/task_work.c:228
+ ptrace_notify+0x2d2/0x380 kernel/signal.c:2403
+ ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+ syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
+ syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+ syscall_exit_to_user_mode+0x279/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5044059387
+RSP: 002b:00007fffa46cc3a8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f5044059387
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007fffa46cc460
+RBP: 00007fffa46cc460 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000202 R12: 00007fffa46cd4c0
+R13: 0000555568abe6c0 R14: 0000000000000001 R15: 431bde82d7b634db
+ </TASK>
+
+Showing all locks held in the system:
+5 locks held by kworker/u8:0/11:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6701
+4 locks held by kworker/u8:4/61:
+ #0: ffff888012bc9148 ((wq_completion)btree_node_rewrite){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff888012bc9148 ((wq_completion)btree_node_rewrite){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc900015c7d00 ((work_completion)(&a->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc900015c7d00 ((work_completion)(&a->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffff8880724042c0 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:151 [inline]
+ #2: ffff8880724042c0 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:250 [inline]
+ #2: ffff8880724042c0 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x7de/0xd20 fs/bcachefs/btree_iter.c:3200
+ #3: ffff888072426690 (&c->gc_lock){.+.+}-{3:3}, at: bch2_btree_update_start+0x682/0x14e0 fs/bcachefs/btree_update_interior.c:1197
+2 locks held by getty/4976:
+ #0: ffff88803298a0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
+2 locks held by syz-executor380/5235:
+ #0: ffff88802e0f20e0 (&type->s_umount_key#44){+.+.}-{3:3}, at: __super_lock fs/super.c:56 [inline]
+ #0: ffff88802e0f20e0 (&type->s_umount_key#44){+.+.}-{3:3}, at: __super_lock_excl fs/super.c:71 [inline]
+ #0: ffff88802e0f20e0 (&type->s_umount_key#44){+.+.}-{3:3}, at: deactivate_super+0xb5/0xf0 fs/super.c:505
+ #1: ffff888072400278 (&c->state_lock){+.+.}-{3:3}, at: __bch2_fs_stop+0xfd/0x540 fs/bcachefs/super.c:617
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.11.0-syzkaller-08481-g88264981f208 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xff4/0x1040 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 11 Comm: kworker/u8:0 Not tainted 6.11.0-syzkaller-08481-g88264981f208 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Workqueue: events_unbound toggle_allocation_gate
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+RIP: 0010:rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+RIP: 0010:rcu_is_watching+0x5a/0xb0 kernel/rcu/tree.c:737
+Code: f0 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 f7 e8 ec 56 80 00 48 c7 c3 98 7e 03 00 49 03 1e 48 89 d8 48 c1 e8 03 42 0f b6 04 38 <84> c0 75 22 8b 03 65 ff 0d 11 3f 89 7e 74 10 83 e0 04 c1 e8 02 5b
+RSP: 0018:ffffc90000107618 EFLAGS: 00000802
+RAX: 0000000000000000 RBX: ffff8880b8637e98 RCX: ffffffff8142d66f
+RDX: 0000000000000000 RSI: ffffffff8c5ffc60 RDI: ffffffff8c5ffc20
+RBP: ffffc90000107730 R08: ffffffff901b4b2f R09: 1ffffffff2036965
+R10: dffffc0000000000 R11: fffffbfff2036966 R12: 0000000000000000
+R13: dffffc0000000000 R14: ffffffff8e2faa50 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000557aa7895600 CR3: 000000000e734000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ trace_tlb_flush+0x3e/0x140 include/trace/events/tlb.h:38
+ switch_mm_irqs_off+0x7b0/0xb00
+ unuse_temporary_mm arch/x86/kernel/alternative.c:1831 [inline]
+ __text_poke+0x8f0/0xd30 arch/x86/kernel/alternative.c:1941
+ text_poke arch/x86/kernel/alternative.c:1984 [inline]
+ text_poke_bp_batch+0x59c/0xb30 arch/x86/kernel/alternative.c:2317
+ text_poke_flush arch/x86/kernel/alternative.c:2486 [inline]
+ text_poke_finish+0x30/0x50 arch/x86/kernel/alternative.c:2493
+ arch_jump_label_transform_apply+0x1c/0x30 arch/x86/kernel/jump_label.c:146
+ static_key_disable_cpuslocked+0xd2/0x1c0 kernel/jump_label.c:240
+ static_key_disable+0x1a/0x20 kernel/jump_label.c:248
+ toggle_allocation_gate+0x1bf/0x260 mm/kfence/core.c:854
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.548 msecs
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
