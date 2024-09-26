@@ -1,111 +1,129 @@
-Return-Path: <linux-kernel+bounces-340939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3504987940
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:44:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE81898793F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AAFB2879E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:43:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820E31F22586
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E94171E5F;
-	Thu, 26 Sep 2024 18:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673CE171E5F;
+	Thu, 26 Sep 2024 18:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DIyS4wuc"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CrMCQFrj"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74728171088
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 18:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F338171088
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 18:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727376224; cv=none; b=uhf8Vbq6NY4Z5YhrGvBEHFmZoybnIuOwMFNjnXRXRLOB65SUWGmKII1jNkBAwLtNBm6DmOQzP+uKtBc9V1/RNaYQTpCRnyQvy6TmBGwGPZNdBi6eKDfZJO5gSw1imNCBqJ3PT4KZxFyfmwObaimamjcWRKF6LTBuIjaja6rfEnM=
+	t=1727376217; cv=none; b=vC49QOTZib1YjZShze1lc+yazYKWGer5Q/0LkqvIhsTwT4XB4nj/An1TppIRyCXJkdUyJJIQvymPKN6sWIGnQ1EoNiUkG0QW8ctAbB/I9Ydy+Kq1Wi4OZjYQjAk9wdoi+TyjfmGxwk2e7XdOSTZ6HYaYd8YiykKXvHtz7lq3ERg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727376224; c=relaxed/simple;
-	bh=N47sLM2gPDK8H/UH6Urqt+sRxN8GMBO7RiuFRUvVp90=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wlmh49/gQ97dL2pbbx6k6Q4++KcQnAdAw3iD/FdX5PZktkua9KaQ7n620ZpRSW21chUDBm34TzqSBJhf/No/uwlHM3KRyrOmpVLYikV1P1rdcZeUmpGC53VfSizip6lk6x9gPw/CnPHvG8fTCPUGdnwKmdKIFMEJGZSGYDO78W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DIyS4wuc; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f762de00fbso16634211fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 11:43:42 -0700 (PDT)
+	s=arc-20240116; t=1727376217; c=relaxed/simple;
+	bh=a/5m2zK58zkx4nM/V+xJ6JyzxFdkSfEPu9cHhxirWfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ciRWPK5x7GJOxnbs7ATPAKS7YK/VHAhJGxct6I/XmcF5OFdjjt8QzBjYEYPGpSy7XlZO8gDFmc5/yn+QG2jCtHHnLv2TgMi1LHf+HzdRpJc26Qepv0AAA15dmTOg/Kshw1AKyw1obTOPTKPceXgehDdujXnBBL2JwcNqJYc/7wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=CrMCQFrj; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7a9aec89347so98602885a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 11:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1727376220; x=1727981020; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=t0PzEVEemf5GnI1QTvkx4SdyCDccmGN2z7Xse9jYZ3Y=;
-        b=DIyS4wucKh54IrmmWviKGd6c8Bm9uUUceUYcvdQABiWAbaEyIEGOY9ukWLT+pqGThA
-         P4ink5ZPFL9P8v/OSxL35x6ihV+/nzQ0BHdHWkYK5Aq15ll6wi6C7OrxaAh/D3e6JxPq
-         aTN55nPpIEdixYSsI2RUvutK9frfVm/v050GA=
+        d=ziepe.ca; s=google; t=1727376215; x=1727981015; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KvJvu5IaRTnr9xdXUsqatTaQ8tmdeCfcwtrsxrBZQ1g=;
+        b=CrMCQFrjp3k8NQEJJANc/66ALMaYqp0s3IjxWAaegdxslX0Pol8Ulrn2TNv12Sk6o0
+         /EdRPk52EyZoX536taouv1lVyzj87icX4m7t1JXVDGpO/6kzZ3aFpcBPs1PfEebiZ/cw
+         xvcGdj/DasxCs1qwMZpmDFeJi2SQEb39H9aRLzMDrExT2pHqO8cHVBo0JdkJ/9zWmbff
+         I8hxYl7z0yg2G7lVn7If5NmxoxHiLJRMfK2yZt8jUoLPICGqFOvDp+LAQsVs82inG6JA
+         X+xZIehXGgQyUffAXFZ7drpoljIUiJ/Y+OGVZTQtbxVfeOAH4joc8IPhU8MnXkEsghFm
+         wVhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727376220; x=1727981020;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t0PzEVEemf5GnI1QTvkx4SdyCDccmGN2z7Xse9jYZ3Y=;
-        b=DvPb2rM1p1V5ML2kfvkRfqGxZTh47EEnRNATa4u3CEV6YM/i4k6nij7MYilr82gHFJ
-         Yg9KDtUZkyxaIaH6AZBMFItPOU6U4g3iJ6Khrt6Ac9i7vOxsy9wnIKgdtOzCdV/iIqs2
-         Yv1Bck6OnYiw7zy8TsNCWKXA7hKJwERZAB57QI/Ts1OPftGNBVt+hKDUcPhTWErRi42E
-         HWIeEckAYdOGVazBwA9AOVLZ6zew8gHnoA7Sx4SPWSvPlEynpTLOPPghHridTZbNGRrp
-         qBhdT1Z8s+z68hcj8nBcgBjZPFtYoCHI2oupFX/anm74QiOlXZhbshYXaIkGx1/bD1lz
-         vJpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU20vlqlN6ky0y0HXqDobSoD0S3XyTfqe7j+ax+ugcdqCeruX5b1XZn7rK8RNI1st7tnTyeTQWz6mWThtE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdaJcvb7AvAJhN+M4QCdlJmNe1pHSHAn+02EZvWXxzLfEloXJf
-	moDllBVHnKrwiUS1km0sTavwhNtug/BVsGgydhXZwNtoREbqs2aKcuS6hopJovJDorM7LqYTi8V
-	wUonShA==
-X-Google-Smtp-Source: AGHT+IHgDYi32Gfy2SIKUdmSiSyxyPkJDwcT7J1tNdHiWc49nvOEDma8DlGJgvNnv0IeO2dLt6GcBQ==
-X-Received: by 2002:a2e:a541:0:b0:2f7:cba9:6098 with SMTP id 38308e7fff4ca-2f9d3e78d0bmr4862811fa.19.1727376220190;
-        Thu, 26 Sep 2024 11:43:40 -0700 (PDT)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88240b5bdsm223361a12.34.2024.09.26.11.43.39
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 11:43:39 -0700 (PDT)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a86e9db75b9so206725966b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 11:43:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX4yZ9xVSGakFOPL8/Oxxw31YDcpILQOtsZTnMYQ2dfxYhBn8/AMWgndaDpbLYt4YYNHOeevybnEdLoL9o=@vger.kernel.org
-X-Received: by 2002:a17:907:e89:b0:a7a:a960:99ee with SMTP id
- a640c23a62f3a-a93c492a589mr41084466b.32.1727376218897; Thu, 26 Sep 2024
- 11:43:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727376215; x=1727981015;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KvJvu5IaRTnr9xdXUsqatTaQ8tmdeCfcwtrsxrBZQ1g=;
+        b=c86zeinhgMSgHmcRYKzYL4z1S0k5LKK2UPAZL2Em77JEVeP3W5+pmgdNdGimD9txZU
+         ifvwtoY3lblGyeSYbp7dccMPJ1ZHtzaq8xIjGe41fVofWIa7GdaYoY0goVDe+VbmghFt
+         zlnSiPUK8S3yr9J0Vz6Qbjc6HeXqn+xk9QuQWreLiHVZ5zb36x7jntd+K8RmLuwIfLNQ
+         U7xiUlr6LDMl7WrIGyiQtofWSHN5Ah/EqubRY323k5nqH8RXRtu4p0qVj60nk9pwLhu3
+         hbrtUu0qvnwu3GvOc1BorqSU94cqQ1On6t53aMeGGuB4cyK9hxAXsOwgLjrQJqFnUFrm
+         1rJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWILz4cD+c2zM9wXxKGjJqjEadqB4njQykMIgI3CK7HDXpZq4TyFCKK6OzPL8/U7OeJ/jbj7ZJGek+168Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM92AEaGkZ6g72oRH/BsM2ZhC9fOmMhnrAdlZPhBvOriQ+oNmJ
+	hESGmkh4RFLZpGSRKT6Iux0Zyis1W+mKAmoXQnX9J502hC+eGaovdzWSwLotkbg=
+X-Google-Smtp-Source: AGHT+IHahoaHFJtuu1gsK0aQtYJow2bdyMNiogW2IcChPTuHJqaCLBrGWEI30mWx2ZRm25asoXWR5w==
+X-Received: by 2002:a05:620a:44c2:b0:7a9:b425:6 with SMTP id af79cd13be357-7ae37838380mr75987185a.24.1727376214700;
+        Thu, 26 Sep 2024 11:43:34 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae3782a221sm15168385a.73.2024.09.26.11.43.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 11:43:33 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sttSf-000qCj-2k;
+	Thu, 26 Sep 2024 15:43:33 -0300
+Date: Thu, 26 Sep 2024 15:43:33 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Matthew Rosato <mjrosato@linux.ibm.com>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+	gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com,
+	baolu.lu@linux.intel.com, hca@linux.ibm.com, gor@linux.ibm.com,
+	agordeev@linux.ibm.com, svens@linux.ibm.com, jroedel@suse.de,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org
+Subject: Re: [PATCH v4] iommu/s390: Implement blocking domain
+Message-ID: <20240926184333.GD9634@ziepe.ca>
+References: <20240910211516.137933-1-mjrosato@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202409160138.7E27F1A55@keescook> <d122ece6-3606-49de-ae4d-8da88846bef2@oracle.com>
-In-Reply-To: <d122ece6-3606-49de-ae4d-8da88846bef2@oracle.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 26 Sep 2024 11:43:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiJiePHNw3Whxm9n==h3-JwXojefAN3OiDzT89BO3jDew@mail.gmail.com>
-Message-ID: <CAHk-=wiJiePHNw3Whxm9n==h3-JwXojefAN3OiDzT89BO3jDew@mail.gmail.com>
-Subject: Re: [GIT PULL] execve updates for v6.12-rc1
-To: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	Allen Pais <apais@linux.microsoft.com>, Brian Mak <makb@juniper.net>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, Jeff Xu <jeffxu@chromium.org>, 
-	Roman Kisel <romank@linux.microsoft.com>, regressions@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910211516.137933-1-mjrosato@linux.ibm.com>
 
-On Thu, 26 Sept 2024 at 11:29, Vegard Nossum <vegard.nossum@oracle.com> wrote:
->
-> # first bad commit: [fb97d2eb542faf19a8725afbd75cbc2518903210]
-> binfmt_elf, coredump: Log the reason of the failed core dumps
->
-> I have to admit I don't immediately see what's wrong with the patch.
+On Tue, Sep 10, 2024 at 05:15:16PM -0400, Matthew Rosato wrote:
+> This fixes a crash when surprise hot-unplugging a PCI device. This crash
+> happens because during hot-unplug __iommu_group_set_domain_nofail()
+> attaching the default domain fails when the platform no longer
+> recognizes the device as it has already been removed and we end up with
+> a NULL domain pointer and UAF. This is exactly the case referred to in
+> the second comment in __iommu_device_set_domain() and just as stated
+> there if we can instead attach the blocking domain the UAF is prevented
+> as this can handle the already removed device. Implement the blocking
+> domain to use this handling.  With this change, the crash is fixed but
+> we still hit a warning attempting to change DMA ownership on a blocked
+> device.
+> 
+> Fixes: c76c067e488c ("s390/pci: Use dma-iommu layer")
+> Co-developed-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
+> ---
+> Changes for v4:
+> - fix lockdep assert
+> Changes for v3:
+> - make blocking_domain type iommu_domain
+> - change zdev->s390_domain to type iommu_domain and remove most uses
+> - remove s390_iommu_detach_device, use blocking domain attach
+> - add spinlock to serialize zdev->s390_domain change / access to counters
+> ---
+>  arch/s390/include/asm/pci.h |  4 +-
+>  arch/s390/pci/pci.c         |  3 ++
+>  arch/s390/pci/pci_debug.c   | 10 ++++-
+>  drivers/iommu/s390-iommu.c  | 73 +++++++++++++++++++++++--------------
+>  4 files changed, 59 insertions(+), 31 deletions(-)
 
-That commit looks entirely broken.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-I *suspect* that the problem is the crazy "get_task_comm()" in that
-takes the task lock inside coredump_report_failure().
-
-But honestly, I'm not going to bother even trying to debug this. The
-whole notion was broken. People who have problems with truncated
-core-files should be looking at their debuggers, not asking the kernel
-for help.
-
-               Linus
+Jason
 
