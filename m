@@ -1,181 +1,188 @@
-Return-Path: <linux-kernel+bounces-340153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B62986F23
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:44:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 500E4986F29
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44F36B21F9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:44:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 735961C21D71
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B0E1A7AD8;
-	Thu, 26 Sep 2024 08:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B6D1A4F2B;
+	Thu, 26 Sep 2024 08:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ADgHN8gD"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=kneron.us header.i=@kneron.us header.b="fKYtS9sT"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2138.outbound.protection.outlook.com [40.107.244.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B807E1A727A
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727340247; cv=none; b=D1bL1ZcUpstInQ8/UbxkVw3HZa39ztPqXF4o0TeMr4Etcwa8o6YgC0YRKrHO1XmUoWQAYfDhKZQXLYiyGSMhBxPl7mN9CGszeqLfvJ9u5Tnjyn620enmw7gmEP5kDllt7CvQm+8t8iV25XE4mqe0tHAEoRSv5f2ksMv6Q7lYJ68=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727340247; c=relaxed/simple;
-	bh=YT336u0TzzzyADlaibqjLJo1Q1OzJN93THARgvbawtE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GAuG0J6eVPRRclxUthOLtBgTc9qCtiFdDEMXutLr4rDCaSmeGs1flTk614cOWlgr793YhI0O5d6dfuHhotM1/tHGW3+isCqxHtvMrjurrUqalU0zq005prb+RWVgjWK3nVq1yafsu4XK0/A3kLIymD3ulIWEcO5sLzPphGgKEsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ADgHN8gD; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5365a9574b6so1183033e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 01:44:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727340244; x=1727945044; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gznSMtiYcyR3w+ziWE7zvvdEk/47hMv313+7HUPIjik=;
-        b=ADgHN8gDwTv/XhcSMPLEVtRlJyFz0orDBleKqssoksS7aiBT1UQgH5QpI5ry07rv8P
-         ZeuTCcxXMeXneP4kOf3iR5PNxN0GYvgXGVRAAMUlVcoQpYYau6voQZT9de6MQu5iNrnW
-         br7Kaiptrt4+9rxVeNTL70XK2/mhlQDb1pr/c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727340244; x=1727945044;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gznSMtiYcyR3w+ziWE7zvvdEk/47hMv313+7HUPIjik=;
-        b=VjtHK9L+BKhONYQpKOFDWyP0E/6Tf/c6iv4Gkns2IgfojljF5I/mxmpyhvI+R+8ZD7
-         rYqnPJQ9URjcWns8kzg6WoUWjllFCEfnKEu5wKvvBcNkmgJuABJED7BiQIr4BaYQsxcT
-         q9sSburYiZ5hSgckhRXlizCQiqaaxkacLwLEYMvUO61qTV8g8DVpzw3TWTFyDWrjJCoo
-         Czwf2uR2Gp3tfJqspcOwG4ld6+GQb2WrYZtZuOFSrj6AsS7QeHrPGmLNm/1hdyHMbYTX
-         1vdXtLIapekhEOGNzHgtv5P4xKImk/RuZv/6nVPucTp6O3lCyqhpxmBUNkmhvIF9tKzl
-         Wpjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYwOtQGffVu1ZogBIpeqvmE480P+ulrXxKQYYATUkqpgPM1MtYzvHkENgluxoThpWnUY8+Ro0nRnI87M8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYdnGNFo1H6WrVPEkqzYWXWRGqJTo1grrwGat/7r7Z/a+cl2zi
-	KYZluuetWzGOvyTXQEwKRZ+2DipUR/UOwlDD5M13ZI3vyhmcaxDxHD03BEHKY7jXzst2TCIv/oe
-	9CNQprvHkCibj/SKvNmjIBEit0ht9gXKz8T25
-X-Google-Smtp-Source: AGHT+IHaqH2XD1kwP3As68zb4RqTHQB3YnbJsTJoL46ahD760ygreD1XSQDeJe/F8UpUYLGLJ5vsf+1cWC0dd7Zm+uM=
-X-Received: by 2002:a05:6512:1310:b0:533:483f:9562 with SMTP id
- 2adb3069b0e04-5387755ce6dmr5254176e87.42.1727340243659; Thu, 26 Sep 2024
- 01:44:03 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C14522318;
+	Thu, 26 Sep 2024 08:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727340352; cv=fail; b=XZ7z9xoCzYmU0a5/wRg5jH6BRCt+soqxkxEwdFEfKQ2H94o/Q2EEUCAvCKlhYZCJWof/vEh5CsunXt5Eo6lPPzMfqEGFhSQFjnIceA6FoHNtLqu4kDDWobK0vuI1uA3qGHqy6ORmYRRtlqdS1ZYGxSSdkqDVJLXbqNok3PiMQ9g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727340352; c=relaxed/simple;
+	bh=6Q4jfLPZ4CrZs7lqgUjhLdPZZVh3KOW9V4wrWgQGof8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=aQek0mXEHAGckQwXB7peQV4uRpUiRUzlevGF10Rie6EU2k7RNgp4tFgJlGoMgztbOZMDUECjaeSjeHPgG44qktYx7/u5RQHxbUI05XHtCc30G92t0psARNevvw3U08K2/BBBS9Eh/HH9O0uvRDgcRIc2zP/C8hkiU6FzAhDBD/s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kneron.us; spf=pass smtp.mailfrom=kneron.us; dkim=pass (1024-bit key) header.d=kneron.us header.i=@kneron.us header.b=fKYtS9sT; arc=fail smtp.client-ip=40.107.244.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kneron.us
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kneron.us
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J7Pc46uqPc4Kz4BQC/9t4BAmNWTjDrY4KaF1/A8+tNUBTAdXMwSAzuX0FxG6r7JvOIgAJZ4lS4uvElAO4LL4e936tHl0NwBuhgx8R1U74WBi4Wo+ByqYvUFcJ//1JIX/CQ79Lmg4zTFaJ9s0ZxpqynSoXhGWy7miJeGRUZh2Q64WIdzxTvL7xn4jYEGFGHne96GofUwTU8Wtdg3QOwFQLbwOz3JwQjGu7n2t2ZMUhXmRR8VUs2xwVNHiBxD/6ow59FNPeNXDrlz8yFiqMm2Xm1Stlgo7EOD2itMsnKFWz9w59FIX10lPSpJgEpg/MqqnGe04VbTOq+opxssM3LEGzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tgLWuLQsCyOOMGAlLIHDWqkmDzLzBZLFmXOsnG2OBzM=;
+ b=pU/NfCxS04V6c3VU2GkqkpeFVUtkWx4XtS4czk5Nl2yvKFwZN2ZoMW6+fU5jlm7jNkJUr+ORo+FaUjwAUSK0a5URJOQJ48hzdmJ1kdAFLGJ/8eaR3LP0PIGNBVR2RH7CNlWXOUMgvfm9kB/ZnBQuZg7Qf4cX9NuxuPqO/5ea912+zisS/GvU1lixkalJqtF+QRaQPxhGOvEuD+zQbRn7laLpOCyklNCYZ3ROH+3nLSu0hFkhuavPc4doD/YaYSSy7AFC96IhAqJayZculGRyckob0fdmFg9fZe8uCqb4HOEW91/kF5B8KexKphlqqolMl29LirwQjk2yihIP69lbPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kneron.us; dmarc=pass action=none header.from=kneron.us;
+ dkim=pass header.d=kneron.us; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kneron.us;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tgLWuLQsCyOOMGAlLIHDWqkmDzLzBZLFmXOsnG2OBzM=;
+ b=fKYtS9sT5m9FWhrDcpvJb2tyEgsZ5zBrgHjQrb24YWN3OrOl5cLVzOUDe2k/k7exNVt9IIZAFlEfCjjfyF9hq/9OaWr31Rp2vM5OL2qRk6bWg4hKZ5xVO5YICgiRji/p2RD+IQ7SY4LpOJn9ogudtKNJO6WwXCDx2IgysvCyDNs=
+Received: from IA1PR14MB6224.namprd14.prod.outlook.com (2603:10b6:208:42b::6)
+ by MN6PR14MB7315.namprd14.prod.outlook.com (2603:10b6:208:476::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Thu, 26 Sep
+ 2024 08:45:48 +0000
+Received: from IA1PR14MB6224.namprd14.prod.outlook.com
+ ([fe80::c527:653c:698d:3d94]) by IA1PR14MB6224.namprd14.prod.outlook.com
+ ([fe80::c527:653c:698d:3d94%3]) with mapi id 15.20.8005.021; Thu, 26 Sep 2024
+ 08:45:47 +0000
+From: Michael Wu <Michael.Wu@kneron.us>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: Jarkko Nikula <jarkko.nikula@linux.intel.com>, Mika Westerberg
+	<mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Andi Shyti
+	<andi.shyti@kernel.org>, morgan chang <morgan.chang@kneron.us>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] i2c: designware: determine HS tHIGH and tLOW based on
+ HW paramters
+Thread-Topic: [PATCH 1/2] i2c: designware: determine HS tHIGH and tLOW based
+ on HW paramters
+Thread-Index: AQHbDyGZij9/nSd+SEOB2a6TVXZu/rJoONqAgAABcgCAAYQXIA==
+Date: Thu, 26 Sep 2024 08:45:47 +0000
+Message-ID:
+ <IA1PR14MB6224EAAD5566CC5288CDC0838A6A2@IA1PR14MB6224.namprd14.prod.outlook.com>
+References: <20240925080432.186408-1-michael.wu@kneron.us>
+ <20240925080432.186408-2-michael.wu@kneron.us>
+ <ZvPU2ZEG_8UV3FzF@smile.fi.intel.com> <ZvPWEFWk_MG5SsCg@smile.fi.intel.com>
+In-Reply-To: <ZvPWEFWk_MG5SsCg@smile.fi.intel.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kneron.us;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA1PR14MB6224:EE_|MN6PR14MB7315:EE_
+x-ms-office365-filtering-correlation-id: 8dc125e8-1c14-40b0-5608-08dcde079e10
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|366016|80162021|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?1U7yrJcvJmBAjfN5AN1NIImdvvgiOspfjwFtVHxn0r58/JT90en0ETt9mjLK?=
+ =?us-ascii?Q?fsT8THypYrQRGa9dqEnwINummduFzBE7ondpcrKRxdZSRpxzV3IgFgI1PA2h?=
+ =?us-ascii?Q?428XiwDMNCQlgNH3hdgLgsiQA9ckElsbZs0NNtA5QQrozSO59ynMuxCX/VD8?=
+ =?us-ascii?Q?ezgjgL7RcGwmQrwrn5fVUaPkQICqvEvZ495E+ZHkkRMGVWq/aOaaX7ltqaE4?=
+ =?us-ascii?Q?fsr+2YFpO0zIsjA+Q/LVDL4LVifYQdNaBLfO25p6ZHEIlCF9a7M5u0OTyEMs?=
+ =?us-ascii?Q?O/3vCKhnn86eL+xdGaUw/qh0vX5OlRJ96ub8NLrQoB9bCm+WZEQv7GfsmLqf?=
+ =?us-ascii?Q?DmrdxZPTc94vacy3zTiUcIzjU4doku7cslWXHXqm5x0bELzq3i9mfHAYnGQy?=
+ =?us-ascii?Q?xLQ+4LUVIE33vDgMedbe6InyzEhnSpOAjDH06Y7BJVO6NhvuiwiGAG0C31yo?=
+ =?us-ascii?Q?IEqR4JMlHu8uATfDhSPBItRLYldZij8LD8kUdINV0WnIr+UmA4VsgfWaD7dM?=
+ =?us-ascii?Q?WL5dAB5yOHKny1xtRXI7pswZYC1qRPJjI/v6ot5yhR1K22ANO2RScw36rybg?=
+ =?us-ascii?Q?aiCQp2BgJRMt4W22dS79OJZgBZGheOcI9AkZ5K1pVppYW2qWR2N7DZD1pKQN?=
+ =?us-ascii?Q?Wr68T3SiAGD8RHfGNK707y/cSSHm15trKQ8HlPcCk79Iz4RQtPRit0gKXQn9?=
+ =?us-ascii?Q?RLpSmlYQtvpvn6tEgjLiqXQ9mSBM4upzQkKQSL9Uw9TomPxHJ1F0vMWEqmA0?=
+ =?us-ascii?Q?meTpZ7D2mPV4sdBZdwuAAy76uCvCUmv9Hy3+FSRlkbZ7u6gcOK1xZBgDOYZH?=
+ =?us-ascii?Q?3UJwNny7l2ZJz2zqBXvUyCDORk7c5sDJiQzdThVYpalhd3oGVJ+ph1JGiBg6?=
+ =?us-ascii?Q?Rb+94YE7V7VwIln/PseLlNnCAvc4lHE2HayV2QjTCynU1FMnhmAN6MkGcUOn?=
+ =?us-ascii?Q?UY8Tkg3R9E0TL5Vdoh4ehGXAW4BpskFpG6ITrNoar3eRIUAljSClzaxIW6iM?=
+ =?us-ascii?Q?5GvBvM9plqmCtmTO1WNb0zXz16gHCCoHUCN38QFaCnN5yToxCupk4/Q2hYRw?=
+ =?us-ascii?Q?Upk/8KMQ9qP4UOyHSQyiuLQiyX4ukBGNDJwfG5487+fO5xiEwRH97rd0vbre?=
+ =?us-ascii?Q?OgTg7y/HBrMShOWVbrCrnCX9a4O9cbvlA7orLkUr9e8ZgKJrl40qL9GbuIZZ?=
+ =?us-ascii?Q?eSYoxlu5egm93pu0Ommna7E/bNBfZBUGa7RPurxYRUzpE0Bd4zB1LIinqVWS?=
+ =?us-ascii?Q?QS9S1hSd+V90dCJLNODy3E70/ICrjezaKu4DrB141JAaxbVAl9JdncVrDhXP?=
+ =?us-ascii?Q?8GagMEUjUr0LKTzjSGxWS0avygkNswFO5OIGvC8m4kMCLVAxDJBdyL1EvhKi?=
+ =?us-ascii?Q?jW664Ig=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR14MB6224.namprd14.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(80162021)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?dI6tlQ6OswX7MU9yjodDudHMcbPyk1i7yO/8bxb7j+3gCbYC7zP4vgFCNsBq?=
+ =?us-ascii?Q?4qlMo4Ny8NahOpfsMk7XE9k6WWkQQX7YRRgX2nq7ENenljBejfJ/Bf+uEBYu?=
+ =?us-ascii?Q?43Qv1SNS+bAZkVeQc58eULPEYqdD1IUhRP9CweoqPMiwFwEJA6iSo52Cf/qM?=
+ =?us-ascii?Q?mPg8wq4wpQRvAPTfPgjIYXXNPMrifIpQD9q6sAPlZTecke6mzVsEpfhcZ7h1?=
+ =?us-ascii?Q?CTFbzJuVCGiKmWzAZLwNgrRp8ke/0jsPN9vIXglyTn4G3WZrzVkrrIj/KtXS?=
+ =?us-ascii?Q?fRxcl01gqNMQ8Zn2FZGz3PFAzzTrzLV9TfrjEL5qy5pBeTkf1tKq1YOPYJ5m?=
+ =?us-ascii?Q?kfyhKCqnBdcWZcqTq6wH4aLsKSd1SvUiOF7rKdL+PAVQvDPNWX9zmc2ApxP3?=
+ =?us-ascii?Q?59F5azVe4K9E7n9DAYj2Uy0jH7UKOK5op1Mc1urK4BhXNBuB4MfT4gCu1svT?=
+ =?us-ascii?Q?tOBoHXGmSaKDqaWxDE1q1xLkDi+z8QfaNT+mWTx+ddAMfNi6ulMIxXRqyejW?=
+ =?us-ascii?Q?/pgok3EpqwYYVIXaZfmxEupF79cAnafa9Itig3c8w6RN2YExnuRFunFSINBj?=
+ =?us-ascii?Q?gp1k/zNddQ4NHpmzuViXHb6IXUYLKJr9Uki5VwRzJrp36TTMQdGvI5N340Xh?=
+ =?us-ascii?Q?6yGQHVUznOa6/TAC7eDEwcGbuFh7pidt/gOpe6oBgb8ZW2ndghEsTkFyhtUE?=
+ =?us-ascii?Q?Ol1dWxav/FnqId0VSbHGz7tCJPhYOS8JbIT+NlkvTJ58P2fZ9lUdWEKprGp1?=
+ =?us-ascii?Q?tp80X91GsfGyNtFn4ID7AaUTv8ZWffXzzNrUUCECHqCtURDYQHo/jt0ulMoR?=
+ =?us-ascii?Q?hOeZNijZhZzDKW5+O6MrcXKE6p/gHmZEm8l0SBXaAWM6nqEeJzxDUklxJYb+?=
+ =?us-ascii?Q?jPPChB4KmFxrqrlLjwdD2d8cEekodn3suvU6Uok8lgxfMpCvlMNHNX9BgSjy?=
+ =?us-ascii?Q?bIhJqa5u1cowJ4YLyZ6Y1HYBuNT6o3QZ731zgrRu6Z9JeYnU6QnN0petJum8?=
+ =?us-ascii?Q?0If0z4yvEtJTvKUfv8vkSPNY1UZmjovuJBavyuiuy5fIJWFJSCiPLyKd96rf?=
+ =?us-ascii?Q?q7Y7tX5EX+Tek2aHZXkggLEEKqaoaL54x9emeryeXkKx6J754LVdjVkZ61UD?=
+ =?us-ascii?Q?nPbmtXir2XedLvow3/JdftymTXGafsShB9eP1IldqTcOOYg0csVp8kgqwCa4?=
+ =?us-ascii?Q?2rIQiZf616w28++9n9gQyBLTM7wclNJdGloqAbOoMP3nbAA6gT9dz/9Oq9I7?=
+ =?us-ascii?Q?O/aHzrCrB/o4sQluf3oVB6rM3cEk95NjV0jkSzo2gQWaeuRVqmQfHLNjyO3a?=
+ =?us-ascii?Q?hGcOjwJJVCGGN/zpQP09Lpr3yJNbDOhqcNFKXWmfiMVIB7rGGpiL9No6d9rk?=
+ =?us-ascii?Q?F3j7XBaJbxeJWi2lLfm4meYAbXpi2ANjytvvRj6RGe4OWCQc1VzqQ6eyDENj?=
+ =?us-ascii?Q?oEYhn7oVrSwohwo6zYWPofFLjxtfb1ObKV0QZH3xVeaspnKQM9V+JIaJ/l/S?=
+ =?us-ascii?Q?i/f2PiOUqGFNBAMtZCUfODPVTlazSrVPbvtvdMVPzBftHmkTR69PxcrkjCHK?=
+ =?us-ascii?Q?kghpBldnMUJTxQ5+v14=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925093807.1026949-1-wenst@chromium.org> <20240925093807.1026949-3-wenst@chromium.org>
- <ZvPscRdWlFPmtCyR@smile.fi.intel.com>
-In-Reply-To: <ZvPscRdWlFPmtCyR@smile.fi.intel.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 26 Sep 2024 16:43:52 +0800
-Message-ID: <CAGXv+5Gf9+rc+vLcr-JFhO561G8dw38ksV3drat+DyCfWEVakQ@mail.gmail.com>
-Subject: Re: [PATCH v8 2/3] regulator: Add devres version of of_regulator_get_optional()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Mark Brown <broonie@kernel.org>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
-	Johan Hovold <johan@kernel.org>, Pablo Sun <pablo.sun@mediatek.com>, 
-	Macpaul Lin <macpaul.lin@mediatek.com>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: kneron.us
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR14MB6224.namprd14.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8dc125e8-1c14-40b0-5608-08dcde079e10
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2024 08:45:47.7423
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f92b0f4b-650a-4d8a-bae3-0e64697d65f2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9DLvrNe21nEF5uCtQzSFcsxdWOREpSpIrvUehgQ5K1xIWYu3Xh9Xk9o9e2hnqpF6uEWSA5NKJ8Qymiplnauh/A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR14MB7315
 
-On Wed, Sep 25, 2024 at 6:56=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Wed, Sep 25, 2024 at 05:38:05PM +0800, Chen-Yu Tsai wrote:
-> > There are existing uses for a devres version of of_regulator_get_option=
-al()
-> > in power domain drivers. On MediaTek platforms, power domains may have
-> > regulator supplies tied to them. The driver currently tries to use
-> > devm_regulator_get() to not have to manage the lifecycle, but ends up
-> > doing it in a very hacky way by replacing the device node of the power
-> > domain controller device to the device node of the power domain that is
-> > currently being registered, getting the supply, and reverting the devic=
-e
-> > node.
+> On Wed, Sep 25, 2024 at 12:16:10PM +0300, Andy Shevchenko wrote:
+> > On Wed, Sep 25, 2024 at 04:04:30PM +0800, Michael Wu wrote:
+>=20
+> ...
+>=20
+> > > + * @bus_loading: for high speed mode, the bus loading affects the hi=
+gh
+> and low
+> > > + *	pulse width of SCL
 > >
-> > Provide a better API so that the hack can be replaced.
->
-> ...
->
-> > +#if IS_ENABLED(CONFIG_OF)
->
-> Do we really need this?
+> > This is bad naming, better is bus_capacitance.
+>=20
+> Even more specific bus_capacitance_pf as we usually add physical units to=
+ the
+> variable names, so we immediately understand from the code the order of
+> numbers and their physical meanings.=20
 
-What's the point of going through devres_* stuff if we already know
-_of_regulator_get() is going to fail anyway?
+Sounds good. However, I think the length of "bus_capacitance_pf" is a bit
+long, we may often encounter the limit of more than 80 characters in a
+line when coding. I'll rename it to "bus_cap_pf".
 
-Also, _of_regulator_get() does not have a stub version for !CONFIG_OF.
-
-> > +static struct regulator *_devm_of_regulator_get(struct device *dev, st=
-ruct device_node *node,
-> > +                                             const char *id, int get_t=
-ype)
-> > +{
-> > +     struct regulator **ptr, *regulator;
-> > +
-> > +     ptr =3D devres_alloc(devm_regulator_release, sizeof(*ptr), GFP_KE=
-RNEL);
-> > +     if (!ptr)
-> > +             return ERR_PTR(-ENOMEM);
-> > +
-> > +     regulator =3D _of_regulator_get(dev, node, id, get_type);
-> > +     if (!IS_ERR(regulator)) {
-> > +             *ptr =3D regulator;
-> > +             devres_add(dev, ptr);
-> > +     } else {
-> > +             devres_free(ptr);
-> > +     }
-> > +
-> > +     return regulator;
->
-> Why not using devm_add_action() / devm_add_action_or_reset()
-> (whichever suits better here)?
-
-Cargo cult from _devm_regulator_get() in this file. However since this is
-meant to share the same release function, both functions need to use the
-same mechanism.
-
-I could also argue that this is not an action, but an allocation, and so
-devres_alloc() seems to make more sense.
-
-
-ChenYu
-
-> > +}
->
-> > +#endif
->
-> ...
->
-> > +static inline struct regulator *__must_check devm_of_regulator_get_opt=
-ional(struct device *dev,
-> > +                                                                      =
-   struct device_node *node,
-> > +                                                                      =
-   const char *id)
->
-> I don't know the conventions here, but I find better to have it as
->
-> static inline __must_check struct regulator *
-> devm_of_regulator_get_optional(struct device *dev, struct device_node *no=
-de, const char *id)
->
-> Similar to other stubs and declarations.
-
-I don't think there are any conventions. This file already has three types:
-
-1. Wrap the line with the function name on the second line
-2. Wrap the arguments; wrapped arguments aligned to the left parenthesis.
-3. Wrap the arguments; wrapped arguments aligned with aribtrary number of
-   tabs.
-
-I prefer the way I have put them.
+Thanks & Regards,
+Michael
 
