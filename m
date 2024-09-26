@@ -1,157 +1,158 @@
-Return-Path: <linux-kernel+bounces-339869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA20D986B9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:01:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC13A986B9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89267B2258E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:01:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08BEF1C216EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17501531E3;
-	Thu, 26 Sep 2024 04:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Lz9L3CuL"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DF11D5ABA;
-	Thu, 26 Sep 2024 04:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F50B1D5ABA;
+	Thu, 26 Sep 2024 04:02:29 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887C41D5AC4
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 04:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727323300; cv=none; b=Ku9jIqqElrCGwpLjzUYSpMZWlCzOUaQ2zZjR8jjqII9IqSP794WRN6LS1PEHJUomhHqxQgmk05xAdwiommicSOSFMiixlqsXEZx9HS+tWGnRh6o3r23oBlNUnUQeMY7uRWh5UPeJaddg1tmp1GmeVdobAa1AF2aIpdQPeyw6wXo=
+	t=1727323349; cv=none; b=g99qUuLuIlWS7yQ/rcxC4EwMKBeaKO1hiMkjXO+pETIZYH3g4NVeZa2XUp2WQSP3Y3xtkYQrGClnWl+CYMDQjlS0DJ55l5QypxTJMyu8sZ3RGaAPUb8Pj9Tl3CM3GUW9+/hL8rN3XY3vcTJbuaChV7ET9r/TZ2wmiakQJKobKns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727323300; c=relaxed/simple;
-	bh=b+pg5MV6i6CAMnb4OiQlvsLGKZN4EuDnpQJEXuXR0BQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TTsHWCshrxnJ2yMreyZ+aKgw+GAhykImZU6WKtNu/uIYQBpULV0UU1ywSGNvoUuZSnrlQz11+OiVZyqGpUNnExia7kClqAgt9YFnV8caTJvaq+KpentI/Kx7k1QkICVpQGTuLDjQ/3+J9kg/bhgOX+3Ed0c1Y3GuMfx3951lVPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Lz9L3CuL; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id 5A42120C6B0D; Wed, 25 Sep 2024 21:01:38 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5A42120C6B0D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1727323298;
-	bh=LBBbil0Bs5ohuwul3NCLyRx/1aoBNqmU0JYYGwpBpAM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lz9L3CuLYXxNtnbn9SAJwbYe4ziCgBkEaOGYxvRqGwRqVHreByVwvG6RJT9u2dNsS
-	 py2fItihGWQ6j5RYsy/ph/rF/nHppn6QHiYJ1+SI94JcSOPEU94SrvbHmPBj3WZ+Ll
-	 87GIvsEgOHP4IVM2PsfbCnIRUhRwBJd8LQQNlHJY=
-Date: Wed, 25 Sep 2024 21:01:38 -0700
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Dexuan Cui <decui@microsoft.com>
-Cc: KY Srinivasan <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Long Li <longli@microsoft.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] tools: hv: Fix a complier warning in the fcopy uio daemon
-Message-ID: <20240926040138.GA16982@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20240910004433.50254-1-decui@microsoft.com>
- <20240913073058.GA24840@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <SA1PR21MB13172712A02F3C9EEB156131BF6D2@SA1PR21MB1317.namprd21.prod.outlook.com>
- <20240924182250.GA14242@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	s=arc-20240116; t=1727323349; c=relaxed/simple;
+	bh=fMWPfu9FJkZxYnNqK6kp/28nndQp0mqwMK8Hlmf7660=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TIxGJuBPNiplWeGGhrfjzL5FCzBHDIiaxVFpE5+2DeoV/dTugT4eDTNxOhxskYjGgle1i6Jf0a90HEyoNb5FoidEfmfQU4VcRDHxUqvqDbH1rXqbXFFt0N9cm4VMhZTiQYWaQAwGW4vkPTIQU5iKuEU2CJ0PQtSxNFRuKodlDb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a1e69f6f51so5204915ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:02:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727323346; x=1727928146;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m6AHITBFcHYLvt7nE1Q6Ch127vP6+FBh72zrJdlA9Uw=;
+        b=Nrk3s8aPnWg6MZtXxe+1uiGSnMOp73zSWOOe1bOuYbzmnEHAVAKS3ErbOI4kUD2vdC
+         3WQMCQUJvYHTwUTcAtJZPt0C3lzRaRchnMZ5lS0f5/qFe26bIbJZSp9Z2r64vHwx1mXf
+         vdcwnj8DJanpiD28qWIyuamo21UiPR00WYka4nTKQBqXdNgkBmhPDfAMmrfEIpzT7MEw
+         evvCssCtdUqU0V8PoH2Yn+goU20S17orkFn8cAcauln6s6hDmoBaeiOHj2CSdD1rRy8p
+         QecRWE4nSmGEvw6HfxjdJv/6/5Nk/aG+A7irMWXTmAzoIP7nsVU30tSO4uBuUInVs4S5
+         OKJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMOqN8eJwBxQSKSjJbybqwCTXd/3VvA5uaQTDLAL1T+yaFj/wNQR+E0cHrllZC92/pG0o+uLKreuFfEcY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0XD59ra/hMWl69oPFVviXcm1RaTiKZFF749uPlKEnS/glDqjx
+	GCNnF7o67l03pew2GkXIQDzIXoWrtuZWYVNX/uK7JurNWSJ0BKwvjDPhJyOeklSoxC+RMs7upoE
+	M9tLhS6XFrrsgwVSgQSRkfAwj6nRACA6yBP08MSEzbNNuR2Hf+oCQe/I=
+X-Google-Smtp-Source: AGHT+IEeM7Xdo3aXQnKZvPp9KJctY4UnXNoVObnXe8akTQMzAgghX9EM4hQkFEhbm7X1twlsHPsp0rRwej8gswt/w2pDCnynjHsV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240924182250.GA14242@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Received: by 2002:a05:6e02:1448:b0:3a0:8c5f:90d8 with SMTP id
+ e9e14a558f8ab-3a26d732381mr48110885ab.6.1727323346613; Wed, 25 Sep 2024
+ 21:02:26 -0700 (PDT)
+Date: Wed, 25 Sep 2024 21:02:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f4dcd2.050a0220.211276.003a.GAE@google.com>
+Subject: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_stripe_to_text
+From: syzbot <syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 24, 2024 at 11:22:50AM -0700, Saurabh Singh Sengar wrote:
-> On Sat, Sep 21, 2024 at 01:23:09AM +0000, Dexuan Cui wrote:
-> > > From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-> > > Sent: Friday, September 13, 2024 12:31 AM
-> > > To: Dexuan Cui <decui@microsoft.com>
-> > > Cc: KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
-> > > <haiyangz@microsoft.com>; Wei Liu <wei.liu@kernel.org>; Long Li
-> > > <longli@microsoft.com>; Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org>; open list:Hyper-V/Azure CORE AND DRIVERS
-> > > <linux-hyperv@vger.kernel.org>; open list <linux-kernel@vger.kernel.org>;
-> > > stable@vger.kernel.org
-> > > Subject: Re: [PATCH] tools: hv: Fix a complier warning in the fcopy uio
-> > > daemon
-> > > 
-> > > On Tue, Sep 10, 2024 at 12:44:32AM +0000, Dexuan Cui wrote:
-> > > > hv_fcopy_uio_daemon.c:436:53: warning: '%s' directive output may be
-> > > truncated
-> > > > writing up to 14 bytes into a region of size 10 [-Wformat-truncation=]
-> > > >   436 |  snprintf(uio_dev_path, sizeof(uio_dev_path), "/dev/%s",
-> > > uio_name);
-> > > 
-> > > Makefile today doesn't have -Wformat-truncation flag enabled, I tried to add
-> > > -Wformat-truncation=2 but I don't see any error in this file.
-> > > 
-> > > Do you mind sharing more details how you get this error ?
-> > > 
-> > > - Saurabh
-> > 
-> > This repros in a Ubuntu 20.04 VM:
-> > 
-> > root@decui-u2004-2024-0920:~/linux/tools/hv# cat /etc/os-release
-> > NAME="Ubuntu"
-> > VERSION="20.04.6 LTS (Focal Fossa)"
-> > ...
-> > 
-> > root@decui-u2004-2024-0920:~/linux/tools/hv# gcc --version
-> > gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0
-> > Copyright (C) 2019 Free Software Foundation, Inc.
-> > This is free software; see the source for copying conditions.  There is NO
-> > warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-> > 
-> > root@decui-u2004-2024-0920:~/linux/tools/hv# make clean; make
-> > ...
-> > make -f /root/linux/tools/build/Makefile.build dir=. obj=hv_fcopy_uio_daemon
-> > make[1]: Entering directory '/root/linux/tools/hv'
-> >   CC      hv_fcopy_uio_daemon.o
-> > hv_fcopy_uio_daemon.c: In function 'main':
-> > hv_fcopy_uio_daemon.c:443:53: warning: '%s' directive output may be truncated writing up to 14 bytes into a region of size 10 [-Wformat-truncation=]
-> >   443 |  snprintf(uio_dev_path, sizeof(uio_dev_path), "/dev/%s", uio_name);
-> >       |                                                     ^~   ~~~~~~~~
-> > In file included from /usr/include/stdio.h:867,
-> >                  from hv_fcopy_uio_daemon.c:20:
-> > /usr/include/x86_64-linux-gnu/bits/stdio2.h:67:10: note: '__builtin___snprintf_chk' output between 6 and 20 bytes into a destination of size 15
-> >    67 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
-> >       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >    68 |        __bos (__s), __fmt, __va_arg_pack ());
-> >       |        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >   CC      vmbus_bufring.o
-> >   LD      hv_fcopy_uio_daemon-in.o
-> > make[1]: Leaving directory '/root/linux/tools/hv'
-> >   LINK    hv_fcopy_uio_daemon
-> 
-> Thanks for the details. Looks this is the behaviour of old gcc versions.
-> How about fixing it like this :
-> 
-> --- a/tools/hv/hv_fcopy_uio_daemon.c
-> +++ b/tools/hv/hv_fcopy_uio_daemon.c
-> @@ -35,7 +35,7 @@
->  #define WIN8_SRV_MINOR         1
->  #define WIN8_SRV_VERSION       (WIN8_SRV_MAJOR << 16 | WIN8_SRV_MINOR)
-> 
-> -#define MAX_FOLDER_NAME                15
-> +#define MAX_FOLDER_NAME                10
->  #define MAX_PATH_LEN           15
-> 
-> 
+Hello,
 
-Had a offline discussion with Dexuan.
-The above suggested approach saves few bytes of userspace memory,
-using standard macros for path and folder length would be
-preferable for better code readability
+syzbot found the following issue on:
+
+HEAD commit:    1ec6d097897a Merge tag 's390-6.12-1' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c0b080580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6265dd30e362bb47
+dashboard link: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e58e07980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c0b080580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1ec6d097.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0b74fa2b2b4e/vmlinux-1ec6d097.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1ed852a3c5d1/bzImage-1ec6d097.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/19c2305bd0ee/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
+
+bcachefs (loop0): Doing compatible version upgrade from 1.7: mi_btree_bitmap to 1.12: rebalance_work_acct_fix
+  running recovery passes: check_allocations
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/bcachefs/ec.c:147:2
+shift exponent 108 is too large for 32-bit type 'unsigned int'
+CPU: 0 UID: 0 PID: 5088 Comm: syz-executor278 Not tainted 6.11.0-syzkaller-08068-g1ec6d097897a #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
+ bch2_stripe_to_text+0x899/0x8c0 fs/bcachefs/ec.c:147
+ __bch2_bkey_fsck_err+0x11f/0x230 fs/bcachefs/error.c:429
+ bch2_stripe_validate+0x3ca/0x630 fs/bcachefs/ec.c:116
+ bch2_btree_node_read_done+0x3dc6/0x5d60 fs/bcachefs/btree_io.c:1219
+ btree_node_read_work+0x68b/0x1260 fs/bcachefs/btree_io.c:1323
+ bch2_btree_node_read+0x2433/0x2a10
+ __bch2_btree_root_read fs/bcachefs/btree_io.c:1749 [inline]
+ bch2_btree_root_read+0x626/0x980 fs/bcachefs/btree_io.c:1773
+ read_btree_roots+0x296/0x840 fs/bcachefs/recovery.c:523
+ bch2_fs_recovery+0x24ac/0x38b0 fs/bcachefs/recovery.c:851
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0xd61/0x1700 fs/bcachefs/fs.c:1956
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbcc7b8a8fa
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc0febe3f8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffc0febe410 RCX: 00007fbcc7b8a8fa
+RDX: 0000000020005d80 RSI: 0000000020005dc0 RDI: 00007ffc0febe410
+RBP: 0000000000000004 R08: 00007ffc0febe450 R09: 0000000000005d9a
+R10: 0000000000200400 R11: 0000000000000282 R12: 0000000000200400
+R13: 00007ffc0febe450 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+---[ end trace ]---
 
 
-Please add,
-Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-- Saurabh
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
