@@ -1,78 +1,116 @@
-Return-Path: <linux-kernel+bounces-340679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E057987689
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:33:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D17798769F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FEFF1F26DD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:33:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 281072856FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD58A1459F6;
-	Thu, 26 Sep 2024 15:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93CE1531DB;
+	Thu, 26 Sep 2024 15:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IoJOFzXc"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qBOdu2mQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BEC4D8C8
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF50A4D8C8;
+	Thu, 26 Sep 2024 15:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727364813; cv=none; b=UgWWpCGo76LWU31tqm+Gwpsc/kBxEWqfMxD2fU9MhYokCpeOW6dHgfCTla2f5+aM2P4xcBXHY2FCBmgNDj0Zx6A2+1zNfu6BOG37lDnxJszTVjr/SIrgTEZPO6orQB+AwDCx6lzluyrRm5Ix8oXS1qMzFlVfiuFyXjxmD+w7vx4=
+	t=1727365005; cv=none; b=qeSP387rb2PV8XW4cw4uwv8iZrT1KUKEsFt2SgEKK/flaPuDTeADpKrdwlL0K+YGkk2zn7CfkCbzXq39syGA3Lq6pCFetKkia+hpinJXmuS+gKJEb2V+/CZxwW0Nmlpvr8oy5HqvI2W0A2g0Sv0eVo820pJxBab2MKcAHjN4QeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727364813; c=relaxed/simple;
-	bh=FoutegY6W60lqMf1r5yJ5ozY5nx1SKBj4vqnXfKqYiw=;
+	s=arc-20240116; t=1727365005; c=relaxed/simple;
+	bh=MnHn5Un5GctlEYw8FQfVsnDO6azbNmYGLMtZ416WHA8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ai6Fy6+uL1oscfuaTyk9iP52nN/ghaZWFUiimpChHmBaETB/l7Mb0uCkegjhL/m6eiUQi5nYxLbtpkS5ALy8oX423EpV3hu4HETmb5Bo51E/02Wl/yob9okjb9KY2wbFcEai9nrR6pjmUueDzxzZgIF5lDD7PXbQiygequvZJ8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IoJOFzXc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52245C4CEC5;
-	Thu, 26 Sep 2024 15:33:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727364812;
-	bh=FoutegY6W60lqMf1r5yJ5ozY5nx1SKBj4vqnXfKqYiw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=TdZpeZR8te6KtTJX7MrHu5srBAWGaM65vqooga+55vHk4H1MeezNSG8DZq38iYKSdRSQbSGPLvrETVlDBvp9BqhGlpOvuhoyxP9/qa1zygL6faBsdfkhE0CH7pQOgexfFTmt0Hl9t9c4VOOKMrn0ZArQrzBvDu8o6HBppmLY57Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qBOdu2mQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17978C4CEC5;
+	Thu, 26 Sep 2024 15:36:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727365004;
+	bh=MnHn5Un5GctlEYw8FQfVsnDO6azbNmYGLMtZ416WHA8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IoJOFzXcneIdeFrJv+NmkGHDYs1jU+nVmFwOXhDuZNVbGA6W/Ej2MKNiuuJ74xi28
-	 X0K1otXpU/Agk4b61Nj+WdpiSGw76BWu+0zYmQLyO4koDaL+Naq0i4oZ1eSie27/1I
-	 dlgiins6JM5HZLxM/mgO+hUfXcW9yge7yOn0ubpeULHRYS3Hom1Q3MKFNHw/nYyQm0
-	 DMrWTYzEloQoXEl5hdqA/vm/g0rfAWrKinubupmKBzxhUgnFrUjegIuvztYOAcIfI+
-	 1yLUp6/LuwtG+o0pcqhigxek4NGf72gLlczsfJ4t6L/bncWib7aUmFxDvFUW5HYvUA
-	 hmo4L1h2WN8tQ==
-Date: Thu, 26 Sep 2024 17:33:30 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org, Phil Auld <pauld@redhat.com>
-Subject: Re: [PATCH v4 4/4] sched: Unify HK_TYPE_{TIMER|TICK|MISC} to
- HK_TYPE_KERNEL_NOISE
-Message-ID: <ZvV-ykjU95R9v8Eo@localhost.localdomain>
-References: <20240921190720.106195-1-longman@redhat.com>
- <20240921190720.106195-5-longman@redhat.com>
+	b=qBOdu2mQaW34VK0viO1CHr5mi7XaLWDsdmQj2Llx95tsJec3C1IqknVDGCsoK+fqA
+	 E+EQUeVouFnJ3ljflOzTf85FnnQEFOMTwc15jRFIJ481Mj33Sr32CVpQutCjg9zDve
+	 i6huG2wAlwqAeupmGmUnTbsdkq8YKSIV0AB3e+og=
+Date: Thu, 26 Sep 2024 17:36:41 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] Miscdevices in Rust
+Message-ID: <2024092657-snorkel-unmovable-7a6a@gregkh>
+References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+ <2024092647-subgroup-aqueduct-ec24@gregkh>
+ <CAH5fLgh8DE8cPC+-HPz6vshCwToA2QyGqngj77N9x16cAUfpiQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240921190720.106195-5-longman@redhat.com>
+In-Reply-To: <CAH5fLgh8DE8cPC+-HPz6vshCwToA2QyGqngj77N9x16cAUfpiQ@mail.gmail.com>
 
-Le Sat, Sep 21, 2024 at 03:07:20PM -0400, Waiman Long a écrit :
-> As all the non-domain and non-managed_irq housekeeping types have been
-> unified to HK_TYPE_KERNEL_NOISE, replace all these references in the
-> scheduler to use HK_TYPE_KERNEL_NOISE.
+On Thu, Sep 26, 2024 at 05:20:15PM +0200, Alice Ryhl wrote:
+> On Thu, Sep 26, 2024 at 5:05â€¯PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Thu, Sep 26, 2024 at 02:58:54PM +0000, Alice Ryhl wrote:
+> > > A misc device is generally the best place to start with your first Rust
+> > > driver, so having abstractions for miscdevice in Rust will be important
+> > > for our ability to teach Rust to kernel developers.
+> > >
+> > > I intend to add a sample driver using these abstractions, and I also
+> > > intend to use it in Rust Binder to handle the case where binderfs is
+> > > turned off.
+> > >
+> > > I know that the patchset is still a bit rough. It could use some work on
+> > > the file position aspect. But I'm sending this out now to get feedback
+> > > on the overall approach.
+> >
+> > Very cool!
+> >
+> > > This patchset depends on files [1] and vma [2].
+> > >
+> > > Link: https://lore.kernel.org/all/20240915-alice-file-v10-0-88484f7a3dcf@google.com/ [1]
+> > > Link: https://lore.kernel.org/all/20240806-vma-v5-1-04018f05de2b@google.com/ [2]
+> > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> >
+> > Does it really need all of those dependencies?  I know your development
+> > stack is deep here, but maybe I can unwind a bit of the file stuff to
+> > get this in for the next merge window (6.13-rc1) if those two aren't
+> > going to be planned for there.
 > 
-> Signed-off-by: Waiman Long <longman@redhat.com>
+> Ah, maybe not. The dependency on files is necessary to allow the file
+> to look at its own fields, e.g. whether O_NONBLOCK is set or what the
+> file position is. But we can take that out for now and add it once
+> both miscdevice and file have landed. I'm hoping that file will land
+> for 6.13, but untangling them allows both to land in 6.13.
+> 
+> As for vma, it's needed for mmap, but if I take out the ability to
+> define an mmap operation, I don't need it. We can always add back mmap
+> once both miscdevice and vma have landed.
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Yes, let's drop the mmap interface for now, and probably the seek stuff
+too as most "normal" misc devices do not mess with them at all.
+
+If that makes the dependencies simpler, that would be great.
+
+thanks,
+
+greg k-h
 
