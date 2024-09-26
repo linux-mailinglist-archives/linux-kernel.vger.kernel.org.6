@@ -1,95 +1,104 @@
-Return-Path: <linux-kernel+bounces-340468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8559873CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:48:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 230369873CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D3201C22D53
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:48:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D874D280C43
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF24F374EA;
-	Thu, 26 Sep 2024 12:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F991AD4B;
+	Thu, 26 Sep 2024 12:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ur3tT3uT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPKRwj45"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116AF2AF09;
-	Thu, 26 Sep 2024 12:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6215C46B8;
+	Thu, 26 Sep 2024 12:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727354907; cv=none; b=ib6OcRF3HpPfdDhMUjreCB1J/03LRUuW4id4L55XH5zPjTUFsmQ0nkFbhAH6b76ZBNPjiks+rj5O9g114pd6C2r8uUUwfH1y65dBqw+cg6OkDQnY074MHlg801Cm+u+bu6rOSyW9PicjbvXLS8xDGWGqFWOfksH+bOvSrrKKeJ4=
+	t=1727354927; cv=none; b=LwrqwF0tqNrdZM3NOMMXz3TrVFWEtyqlfBRYgFwXj9M2A3mHtiY3UAAT4NvfHHdlut046EvKbh/HKhJtGd3vA2nuaJVlXN0NPF+fCQ5cbYULEddQmKEFLU1wqPO9G5xV45gwo1jINZOtibgE7ZDIs6Q83k3jHLL7x2ZFKlvcUUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727354907; c=relaxed/simple;
-	bh=Q2WaV/ktXw0NaQlCEEeZFSLduawrmmDUflwBXTLMRgE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hRlfD5TIbjxnuAkk4j7MsJ9AGoY5NLJZb+7RChTZznTa2rdDhAa2+pPdBESP5h+JFWwFY9PHrVT2s8ylh+khk6e3W4MfmsD6FGInkzh3BI2ePxCBcYPC42lKDKKI5AeRUpphuXigsUYgvHrxE1gqHe4pkgVmuAKYdtY+S7MYAjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ur3tT3uT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB324C4CEC5;
-	Thu, 26 Sep 2024 12:48:20 +0000 (UTC)
+	s=arc-20240116; t=1727354927; c=relaxed/simple;
+	bh=ZGl/GnekOemMHBT10unkHnv+q5Jf0EJR/YJCLQr5SXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lZFEWP800LjWBArr1teZ1IgtaeI4HUJ5zVBpTExTQkpxq2U4jOJ0y0UpyyGhy+ESLeqNATybncxP9DkRNxKjXdflwUvaBoe0WZKY2AxSlxLG4eR/KnyOk9vHDdx7pjaKyQEdy00+K/K3DK0sfUu699EuMvEcnPsWfDtBToUkiSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPKRwj45; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50ACEC4CEC5;
+	Thu, 26 Sep 2024 12:48:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727354905;
-	bh=Q2WaV/ktXw0NaQlCEEeZFSLduawrmmDUflwBXTLMRgE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Ur3tT3uTVz9w5MYzg3nrIMO0exEzJul60D79yuwieRkNiXthj5t6QwIvkAu6hwHZY
-	 W838wDJGeDSLGIoQwTm0P7xzNjghfG/NbjALK7OjDQ/7Ax7cap1Icgcyv0H42kFic8
-	 ZHAWsEydDSlAVSPM5RZDYqQrWD5Fcl69JNJKRIsaeF55cLhhmA3TKs2VVtOrymM7jk
-	 nNA5yCCTHEqdgv9W58piLSKkEnG87WC2WFgXIN1ekPFodRM8nWAO5/xh+a1ecEZFho
-	 hBjIuTikYSqPdjLW6PID8A2ynH3+Ex+xMNY0iBnFoQc9/Eut6ykkF0mGW2V+3Qf8+v
-	 pt+uKmtExh4Hg==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] rust: kernel: sort Rust modules
-Date: Thu, 26 Sep 2024 14:47:51 +0200
-Message-ID: <20240926124751.345471-1-ojeda@kernel.org>
+	s=k20201202; t=1727354927;
+	bh=ZGl/GnekOemMHBT10unkHnv+q5Jf0EJR/YJCLQr5SXk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rPKRwj45T19EP+hjSb/YSd+nyM0IjZ97aToitIrL2ks8Hl+SJ05l446olSo+aEq7S
+	 Wk0HCN+kxKWK+9vOGugIVzBSpqP3EszMOwmT97wG/NB5WFilKFzYcDdpIyJTjp/UFM
+	 1Cl/0HCkSDOziOoQiKsr7TVk84IqYv9p2myC4fngICgmmNnhhXDW98KFXR0zOJ0DA5
+	 o03+9MHhRWINpQ8ykQ/Fdr5MO8tgmoyYWNLfwY1NIP7dro58jyloTzwcSKjwN1p5NJ
+	 sDJnH3pji2LtBLsvPy8YlDoSPrFxXf7sJFB/g4Vv7Jiwc/7TYCoLM+hO12IcNnCjOZ
+	 8cEhWTyrM5OCg==
+Date: Thu, 26 Sep 2024 14:48:44 +0200
+From: Bjorn Andersson <andersson@kernel.org>
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, 
+	andi.shyti@kernel.org, linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_srichara@quicinc.com, quic_varada@quicinc.com
+Subject: Re: [PATCH v2 1/1] i2c: qcom-geni: Support systems with 32MHz serial
+ engine clock
+Message-ID: <wfm2xgyf67erkl57d4ztnj7t7cezkeohne2bcz42crtjwmjp5j@wfakrtwjizkq>
+References: <20240926034304.3565278-1-quic_mmanikan@quicinc.com>
+ <def1c338-8e41-4622-83d5-7a377d780d76@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <def1c338-8e41-4622-83d5-7a377d780d76@linaro.org>
 
-Rust modules are intended to be sorted, thus do so.
+On Thu, Sep 26, 2024 at 01:28:37PM GMT, Vladimir Zapolskiy wrote:
+> On 9/26/24 06:43, Manikanta Mylavarapu wrote:
+> > diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+[..]
+> > +
+> >   static int geni_i2c_clk_map_idx(struct geni_i2c_dev *gi2c)
+> >   {
+> >   	int i;
+> > -	const struct geni_i2c_clk_fld *itr = geni_i2c_clk_map;
+> > +	const struct geni_i2c_clk_fld *itr;
+> > +
+> > +	if (clk_get_rate(gi2c->se.clk) == 32 * HZ_PER_MHZ)
+> > +		itr = geni_i2c_clk_map_32mhz;
+> > +	else
+> > +		itr = geni_i2c_clk_map_19p2mhz;
+> > -	for (i = 0; i < ARRAY_SIZE(geni_i2c_clk_map); i++, itr++) {
+> > +	for (i = 0; i < ARRAY_SIZE(geni_i2c_clk_map_19p2mhz); i++, itr++) {
+> 
+> Struct/data organization here is so weak, that here it's implicitly assumed
+> that sizes of two arrays are equal. It could be kept as is of course, just
+> pointing to it.
+> 
 
-This makes `rustfmtcheck` to pass again.
+Thanks for pointing this out, Vladimir.
 
-Fixes: 570172569238 ("Merge tag 'rust-6.12' of https://github.com/Rust-for-Linux/linux")
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- rust/kernel/lib.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'd prefer we fix it by adding a sentinel value to the arrays - because
+this was only spotted due to the rename, the next guy will not be so
+lucky.
 
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 22a3bfa5a9e9..b5f4b3ce6b48 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -44,8 +44,8 @@
- pub mod page;
- pub mod prelude;
- pub mod print;
--pub mod sizes;
- pub mod rbtree;
-+pub mod sizes;
- mod static_assert;
- #[doc(hidden)]
- pub mod std_vendor;
+Regards,
+Bjorn
 
-base-commit: 11a299a7933e03c83818b431e6a1c53ad387423d
--- 
-2.46.2
-
+> >   		if (itr->clk_freq_out == gi2c->clk_freq_out) {
+> >   			gi2c->clk_fld = itr;
+> >   			return 0;
+> 
+> --
+> Best wishes,
+> Vladimir
+> 
 
