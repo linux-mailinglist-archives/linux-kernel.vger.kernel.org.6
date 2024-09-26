@@ -1,730 +1,139 @@
-Return-Path: <linux-kernel+bounces-340636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258E398761E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:58:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDC3987622
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE161F26FEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:58:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D30286514
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7903D14D43D;
-	Thu, 26 Sep 2024 14:58:42 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F0A14D70F;
+	Thu, 26 Sep 2024 14:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ewUJumSc"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA480E56A;
-	Thu, 26 Sep 2024 14:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C9514B959
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727362721; cv=none; b=JbYV/r2fEksLXKNZzFNXnOk4ZAFGO52kIgGvKTpckXL+Nk9Ii+qVDC99ojivuvQ4tYs0l98wB91uoDENghV+UF+LAlyGHyMTjng6h1Xk/M8IaGDqoWgVV9F8CZ8KW5dsu+IB+eN8YTkiFGwwoZXQ7CrOvrrdfnpPAoXSpy2rQ/w=
+	t=1727362777; cv=none; b=ARP8jq2bCcP1yGoMe1Q5yP2QDvu7CKWt8JAFsEEin8mc0RE8WpuoxuMxV25xXXA7FXV2HsDTEDC6bNASg6xqRKj7EKXIKI6kJFQe1LCbTlkiFtl95GpQoJB/RHNLrTVPAYad0w1DzaEO4W4A2QDdCPLSNto4UMzTqCSDNH70mvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727362721; c=relaxed/simple;
-	bh=WXkLoQ+bRaoBgS75iXTKl+e21gQdl6ovFp1A4M+gWbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2o/VDIKdIAzax67IaM/DxN6KKk9OuozvpiYr8f35Es9GO7JrnyThux2w1UhS2BeqjIoIl0s72EL1JqOxM8SQj3227USw34eulHrY77QbGiL8nxQecDKCl05vVS54r5BXfJb4eOeQVMTLFkMyJ/ZJ5Rrbq4zdw9uOe3fkgHrsso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: 1K8fEDczQcCVjcU2bWYqxg==
-X-CSE-MsgGUID: ITyfCvRiSnegGoFSIZc0cA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="14086227"
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="14086227"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 07:58:39 -0700
-X-CSE-ConnectionGUID: zoWFdV53TDeQSZev0wKpNg==
-X-CSE-MsgGUID: Q5l7cEXrSIinncGEbTbXbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="72333076"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 07:58:35 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1stpwu-0000000DENy-1h54;
-	Thu, 26 Sep 2024 17:58:32 +0300
-Date: Thu, 26 Sep 2024 17:58:32 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 3/3] drivers: iio: adc: add support for ad777x family
-Message-ID: <ZvV2mHkl4qxVVmBH@smile.fi.intel.com>
-References: <20240926135418.8342-1-ramona.nechita@analog.com>
- <20240926135418.8342-4-ramona.nechita@analog.com>
+	s=arc-20240116; t=1727362777; c=relaxed/simple;
+	bh=Twk1wQnSBYqUrwPgppU6IblWdyNgBfrFOMFHTIuSYDk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=S9aQoN8B0QFxtPMscUn7vFtwONUHWSRFoPBEmB+W5oqI7hlTcezjNPtG4Au/wBBiO2HKmraoYFC4Hjn4itCfLh6imgcdoQc2X9/QUVQzYDiwaiuJZmVIVmJjHmbhIF3HqyeNGcaSb+B0eDWMtaPDM3Nyyu6usNoqHnJhi1L2G4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ewUJumSc; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e25e3d7f514so131136276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:59:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727362775; x=1727967575; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bmvRPgDoL8QHsBR9jVlHIhzOpjA+hNTzpNM4jcDB5LU=;
+        b=ewUJumScUoSxOntswYgRQ0TE6WGYaddx4Hx7cy8uRwcNHNIi5OTbhPDWtRoM7x9uRF
+         y3EUMQskIZ+UX9ibCm3CdPuTkjhEddkWULtkpI3uNzS8ZpR1w8UVd1fAl/r64jT39ncy
+         ei9V5Vm4Ed1qOErR0LjQOGqaHil2In9Sof8d/bGgpvKpH278apIeJyEL2On4Kg/G9WZu
+         AsBy+YzNY+EJzb8puWV0PofLyJPFwfH8vtQA/kH2P+M6oYKgLXPUq7Is1L/n+IJo+RFR
+         hUA0e5GWoI/XmamDHqlOnkuUKDrpIYdYAJrG5uHLnIHYY0BBB4WNR8Jf02lx5AQJRX5p
+         KXgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727362775; x=1727967575;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bmvRPgDoL8QHsBR9jVlHIhzOpjA+hNTzpNM4jcDB5LU=;
+        b=RuyqnyKxBzpMgpllYNIU/502kqqIyDOO4Q+BOSmEPfzk7ifjP9GNpkUqK7Zhqho1Im
+         Vb18WJnZy4/z7pvZmMqoRqX4CoHY9ScYLN+owW9uy8r0dKyDCQAibJAQ6mtdwGPNvTBq
+         IvyJP3KbhC+mWLa/VnzBNpuOO4QgD5mCyyf3SOy1lBYvK61dEeYtTmDB8cM7Tg5xEaO7
+         so+4tBIoDD3AW8o7maqX6EnGHfntbgC1lyPBYjiyaPgoLflhesBXc2562keWsIwvtl2n
+         d2FtTwgQgsc+HZ1T4WNMi1lYW0AsSM4xyDvfYSVNX4iuIIOGFojOSgfPNFd9EZ19+pL2
+         5j+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXaNe3/hWd/d0Q9BvR92d1ShAG5yjJCZiVH4bK3Lufb6b+nwxB9dWq2bwTuw06OTRB+lHAw1hNx5Y5KfDM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya5HfHUz+xEjrALrjyrK0H6Oz79w2rJZq5GACHYKzDtt2Dhyd1
+	xywxLnXKG0bt62JwP7P9jPhHqESwxmmZc3nrVZtgEPj9pZvcQHJw5puyhW3hG3nCTyEH8EWSbNE
+	Ip59s1UpLt6hHnQ==
+X-Google-Smtp-Source: AGHT+IENP7Kx7M4Vi4Vt/eiie+FqP0nzfwl2y+4Din8XNMrO/5bTMKuLlkVaBOTPlzBeY9KeSKk3Ah2pbeqQc98=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a25:74cc:0:b0:e25:cced:3e3f with SMTP id
+ 3f1490d57ef6-e25cced3f41mr34732276.4.1727362774767; Thu, 26 Sep 2024 07:59:34
+ -0700 (PDT)
+Date: Thu, 26 Sep 2024 14:58:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926135418.8342-4-ramona.nechita@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Thu, Sep 26, 2024 at 04:53:57PM +0300, Ramona Alexandra Nechita wrote:
-> Add support for AD7770, AD7771, AD7779 ADCs. The device is capable of
-> sending out data both on DOUT lines interface,as on the SDO line.
-> The driver currently implements only the SDO data streaming mode. SPI
-> communication is used alternatively for accessing registers and streaming
-> data. Register accesses are protected by crc8.
-
-...
-
-> +struct ad7779_state {
-> +	struct spi_device *spi;
-> +	const struct ad7779_chip_info *chip_info;
-> +	struct clk *mclk;
-> +	struct iio_trigger *trig;
-> +	struct completion completion;
-> +	unsigned int sampling_freq;
-> +	enum ad7779_filter filter_enabled;
-> +	/*
-> +	 * DMA (thus cache coherency maintenance) requires the
-> +	 * transfer buffers to live in their own cache lines.
-> +	 */
-> +	struct {
-> +		u32 chans[8];
-> +		s64 timestamp;
-
-	aligned_s64 timestamp;
-
-while it makes no difference in this case, this makes code aligned inside
-the IIO subsystem.
-
-> +	} data __aligned(IIO_DMA_MINALIGN);
-
-Note, this is different alignment to the above. And isn't the buffer below
-should have it instead?
-
-> +	u32			spidata_tx[8];
-> +	u8			reg_rx_buf[3];
-> +	u8			reg_tx_buf[3];
-> +	u8			reset_buf[8];
-> +};
-
-...
-
-> +static const char * const ad7779_power_supplies[] = {
-> +	"avdd1", "avdd2", "avdd4"
-
-Leave trailing comma.
-
-> +};
-
-...
-
-> +static int ad7779_spi_read(struct ad7779_state *st, u8 reg, u8 *rbuf)
-> +{
-> +	int ret;
-
-> +	int length = 3;
-
-Why signed?
-
-> +	u8 crc_buf[2];
-
-> +	u8 exp_crc = 0;
-
-Redundant assignment.
-
-> +	struct spi_transfer reg_read_tr[] = {
-> +		{
-> +			.tx_buf = st->reg_tx_buf,
-> +			.rx_buf = st->reg_rx_buf,
-> +		},
-> +	};
-> +
-> +	st->reg_tx_buf[0] = AD7779_SPI_READ_CMD | FIELD_GET(AD7779_REG_MSK, reg);
-> +	st->reg_tx_buf[1] = 0;
-> +
-> +	if (reg == AD7779_REG_GEN_ERR_REG_1_EN)
-> +		length = 2;
-> +	else
-> +		st->reg_tx_buf[2] = crc8(ad7779_crc8_table, st->reg_tx_buf, 2, 0);
-
-I would write this as
-
-	if (reg == AD7779_REG_GEN_ERR_REG_1_EN) {
-		length = 2;
-	} else {
-		length = 3;
-		st->reg_tx_buf[2] = crc8(ad7779_crc8_table, st->reg_tx_buf, length - 1, 0);
-	}
-
-> +	reg_read_tr[0].len = length;
-> +
-> +	ret = spi_sync_transfer(st->spi, reg_read_tr, ARRAY_SIZE(reg_read_tr));
-> +	if (ret)
-> +		return ret;
-> +
-> +	crc_buf[0] = AD7779_SPI_READ_CMD | FIELD_GET(AD7779_REG_MSK, reg);
-> +	crc_buf[1] = st->reg_rx_buf[1];
-> +	exp_crc = crc8(ad7779_crc8_table, crc_buf, 2, 0);
-
-ARRAY_SIZE(crc_buf) / sizeof(crc_buf)
-
-
-> +	if (reg != AD7779_REG_GEN_ERR_REG_1_EN && exp_crc != st->reg_rx_buf[2]) {
-> +		dev_err(&st->spi->dev, "Bad CRC %x, expected %x",
-> +			st->reg_rx_buf[2], exp_crc);
-> +		return -EINVAL;
-> +	}
-> +	*rbuf = st->reg_rx_buf[1];
-> +
-> +	return 0;
-> +}
-
-Alternatively you can have a helper
-
-static void ad7779_prepare_buf_with_crc(u8 reg, u8 val, u8 *buf)
-{
-	buf[0] = AD7779_SPI_READ_CMD | FIELD_GET(AD7779_REG_MSK, reg);
-	buf[1] = val;
-	buf[2] = crc8(ad7779_crc8_table, buf, 2, 0);
-}
-
-static int ad7779_spi_read(struct ad7779_state *st, u8 reg, u8 *rbuf)
-{
-	struct spi_transfer t[] = {
-		{
-			.tx_buf = st->reg_tx_buf,
-			.rx_buf = st->reg_rx_buf,
-		},
-	};
-	u8 *buf = t[0].tx_buf;
-	unsigned int length;
-	int ret;
-
-	ad7779_prepare_buf_with_crc(reg, 0, buf);
-
-	if (reg == AD7779_REG_GEN_ERR_REG_1_EN)
-		t[0].len = 2;
-	else
-		t[0].len = 3;
-
-	ret = spi_sync_transfer(st->spi, t, ARRAY_SIZE(t));
-	if (ret)
-		return ret;
-
-	ad7779_prepare_buf_with_crc(reg, t[0].rx_buf[1], buf);
-
-	if (reg != AD7779_REG_GEN_ERR_REG_1_EN && buf[2] != t[0].rx_buf[2]) {
-		dev_err(&st->spi->dev, "Bad CRC %x, expected %x", t[0].rx_buf[2], buf[2]);
-		return -EINVAL;
-	}
-	*rbuf = t[0].rx_buf[1];
-
-	return 0;
-}
-
-...
-
-> +static int ad7779_spi_write(struct ad7779_state *st, u8 reg, u8 val)
-
-Same comments as per _read() above.
-
-...
-
-> +static int ad7779_reg_access(struct iio_dev *indio_dev,
-> +			     unsigned int reg,
-> +			     unsigned int writeval,
-> +			     unsigned int *readval)
-> +{
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-> +
-> +	if (readval)
-
-> +		return ad7779_spi_read(st, reg, (u8 *)readval);
-
-This casting is incorrect as it breaks the big endianess.
-
-> +	return ad7779_spi_write(st, reg, writeval);
-> +}
-
-...
-
-> +	freq_khz = sampling_freq / KILO;
-
-Now it's clear to use HZ_PER_KHZ.
-
-...
-
-> +	if (frac) {
-> +		/*
-> +		* In order to obtain the first three decimals of the decimation
-> +		* the initial number is multiplied with 10^3 prior to the
-> +		* division, then the original division result is subtracted and
-> +		* the number is divided by 10^3.
-> +		*/
-> +		temp = (div * KILO) / freq_khz;
-> +		decimal = ((temp -  dec * KILO) << 16) / KILO;
-
-Unneeded extra space. Can be one line, btw.
-
-		decimal = (((div * KILO) / freq_khz - dec * KILO) << 16) / KILO;
-
-Is it something that mult_frac() from math.h does?
-
-> +		ret = ad7779_spi_write(st, AD7779_REG_SRC_N_MSB,
-> +				       FIELD_GET(AD7779_FREQ_MSB_MSK, decimal));
-> +		if (ret)
-> +			return ret;
-> +		ret = ad7779_spi_write(st, AD7779_REG_SRC_N_LSB,
-> +				       FIELD_GET(AD7779_FREQ_LSB_MSK, decimal));
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		ret = ad7779_spi_write(st, AD7779_REG_SRC_N_MSB,
-> +				       FIELD_GET(AD7779_FREQ_MSB_MSK, 0x0));
-> +		if (ret)
-> +			return ret;
-> +		ret = ad7779_spi_write(st, AD7779_REG_SRC_N_LSB,
-> +				       FIELD_GET(AD7779_FREQ_LSB_MSK, 0x0));
-> +		if (ret)
-> +			return ret;
-> +	}
-
-...
-
-> +	ret = ad7779_spi_write(st, AD7779_REG_SRC_UPDATE, 0x1);
-
-BIT(0) ?
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* SRC update settling time */
-> +	fsleep(15);
-> +
-> +	ret = ad7779_spi_write(st, AD7779_REG_SRC_UPDATE, 0x0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* SRC update settling time */
-> +	fsleep(15);
-> +
-> +	st->sampling_freq = sampling_freq;
-> +
-> +	return 0;
-> +}
-
-...
-
-> +	ret = ad7779_spi_write_mask(st,
-> +				    AD7779_REG_GENERAL_USER_CONFIG_2,
-> +				    AD7779_FILTER_MSK,
-> +				    FIELD_PREP(AD7779_FILTER_MSK, mode));
-> +	if (ret < 0)
-
-In other cases there is no < 0 part, why here?
-
-> +		return ret;
-> +
-> +	ret = ad7779_set_sampling_frequency(st, st->sampling_freq);
-> +	if (ret < 0)
-
-Ditto.
-
-> +		return ret;
-
-...
-
-> +static int ad7779_set_calibscale(struct ad7779_state *st, int channel, int val)
-> +{
-> +	int ret;
-> +	unsigned int gain;
-> +	unsigned long long tmp;
-> +	u8 gain_bytes[3];
-> +
-> +	/*
-> +	 * The gain value is relative to 0x555555, which represents a gain of 1
-> +	 */
-> +	tmp = val * 5592405LL;
-> +	gain = DIV_ROUND_CLOSEST_ULL(tmp, MEGA);
-
-	gain = DIV_ROUND_CLOSEST_ULL((u64)val * 5592405LL, MEGA);
-
-> +	put_unaligned_be24(gain, gain_bytes);
-> +	ret = ad7779_spi_write(st, AD7779_REG_CH_GAIN_UPPER_BYTE(channel),
-> +			       gain_bytes[0]);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ad7779_spi_write(st, AD7779_REG_CH_GAIN_MID_BYTE(channel),
-> +			       gain_bytes[1]);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return ad7779_spi_write(st, AD7779_REG_CH_GAIN_LOWER_BYTE(channel),
-> +				gain_bytes[2]);
-> +}
-
-...
-
-> +static int ad7779_read_raw(struct iio_dev *indio_dev,
-> +			   struct iio_chan_spec const *chan, int *val,
-> +			   int *val2, long mask)
-> +{
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-> +
-> +	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-> +		switch (mask) {
-> +		case IIO_CHAN_INFO_CALIBSCALE:
-> +			*val = ad7779_get_calibscale(st, chan->channel);
-> +			if (*val < 0)
-
-The rule of thumb is try to avoid polluting output in case of error.
-
-> +				return -EINVAL;
-
-Shadowed error code, why?
-
-> +			*val2 = GAIN_REL;
-> +			return IIO_VAL_FRACTIONAL;
-> +		case IIO_CHAN_INFO_CALIBBIAS:
-> +			*val = ad7779_get_calibbias(st, chan->channel);
-> +			if (*val < 0)
-> +				return -EINVAL;
-
-Ditto.
-
-> +			return IIO_VAL_INT;
-> +		case IIO_CHAN_INFO_SAMP_FREQ:
-> +			*val = st->sampling_freq;
-> +			if (*val < 0)
-> +				return -EINVAL;
-
-Ditto.
-
-> +			return IIO_VAL_INT;
-> +		}
-
-> +		return -EINVAL;
-
-Make this to be default case in the switch.
-
-> +	}
-> +	unreachable();
-> +}
-
-...
-
-> +static int ad7779_write_raw(struct iio_dev *indio_dev,
-> +			    struct iio_chan_spec const *chan, int val, int val2,
-> +			    long mask)
-
-long? Not unsigned long?
-
-> +{
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-> +
-> +	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-> +		switch (mask) {
-> +		case IIO_CHAN_INFO_CALIBSCALE:
-> +			return ad7779_set_calibscale(st, chan->channel, val2);
-> +		case IIO_CHAN_INFO_CALIBBIAS:
-> +			return ad7779_set_calibbias(st, chan->channel, val);
-> +		case IIO_CHAN_INFO_SAMP_FREQ:
-> +			return ad7779_set_sampling_frequency(st, val);
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	}
-> +	unreachable();
-> +}
-
-...
-
-> +static irqreturn_t ad7779_trigger_handler(int irq, void *p)
-> +{
-> +	struct iio_poll_func *pf = p;
-> +	struct iio_dev *indio_dev = pf->indio_dev;
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-> +	int ret;
-
-> +
-
-This blank line has to be removed. Doesn't checkpatch complain?
-
-> +	struct spi_transfer sd_readback_tr[] = {
-
-It's the only transfer in the function, name it just 't'.
-
-> +		{
-> +			.rx_buf = st->data.chans,
-> +			.tx_buf = st->spidata_tx,
-> +			.len = AD7779_NUM_CHANNELS * AD7779_CHAN_DATA_SIZE,
-> +		}
-> +	};
-
-> +	st->spidata_tx[0] = AD7779_SPI_READ_CMD;
-
-It's better to use t.tx_buf[0] instead. See above as well, and apply this
-approach to all your functions, so the idea is to make code more robust against
-changes. With this in mind, it will become visible which buffer you operates on
-in the entire function, no need to access it differently.
-
-> +	ret = spi_sync_transfer(st->spi, sd_readback_tr,
-> +				ARRAY_SIZE(sd_readback_tr));
-
-With the above, this is one line.
-
-> +	if (ret) {
-> +		dev_err(&st->spi->dev,
-> +			"spi transfer error in irq handler");
-
-SPI
-IRQ
-
-One line.
-
-> +		goto exit_handler;
-> +	}
-> +
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &st->data, pf->timestamp);
-> +
-> +exit_handler:
-> +	iio_trigger_notify_done(indio_dev->trig);
-> +	return IRQ_HANDLED;
-> +}
-
-...
-
-> +static int ad7779_reset(struct iio_dev *indio_dev, struct gpio_desc *reset_gpio)
-> +{
-
-Same comments as per above function.
-
-> +	struct spi_transfer reg_read_tr[] = {
-> +		{
-> +			.tx_buf = st->reset_buf,
-> +			.len = 8,
-> +		},
-> +	};
-> +
-> +	if (reset_gpio) {
-
-> +		/* Delay for reset to occur is 225 microseconds*/
-
-Missing white space and misplaced comment, should be immediate to fsleep()
-and not here.
-
-> +		gpiod_set_value(reset_gpio, 1);
-> +		fsleep(230);
-> +		return 0;
-> +	} else {
-> +		memset(st->reset_buf, 0xff, sizeof(st->reset_buf));
-> +		ret = spi_sync_transfer(st->spi, reg_read_tr,
-> +					ARRAY_SIZE(reg_read_tr));
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	/* Delay for reset to occur is 225 microseconds*/
-
-Missing white space.
-
-> +	fsleep(230);
-> +
-> +	return 0;
-> +}
-
-...
-
-> +	gpiod_set_value(start_gpio, 0);
-> +	/* Start setup time */
-> +	fsleep(15);
-
-This one is commented...
-
-> +	gpiod_set_value(start_gpio, 1);
-> +	fsleep(15);
-> +	gpiod_set_value(start_gpio, 0);
-> +	fsleep(15);
-
-...but the other two.
-
-...
-
-> +static int ad7779_probe(struct spi_device *spi)
-> +{
-
-	struct device *dev = &spi->dev;
-
-> +	struct iio_dev *indio_dev;
-> +	struct ad7779_state *st;
-> +	struct gpio_desc *reset_gpio, *start_gpio;
-> +	int ret = -EINVAL;
-
-> +	if (!spi->irq)
-> +		return dev_err_probe(&spi->dev, ret,
-> +				     "DRDY irq not present\n");
-
-		return dev_err_probe(dev, ret, "DRDY irq not present\n");
-
-> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-
-	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
-
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	st = iio_priv(indio_dev);
-> +
-> +	ret = devm_regulator_bulk_get_enable(&spi->dev,
-
-	ret = devm_regulator_bulk_get_enable(dev,
-
-> +					     ARRAY_SIZE(ad7779_power_supplies),
-> +					     ad7779_power_supplies);
-> +	if (ret)
-> +		return dev_err_probe(&spi->dev, ret,
-> +				     "failed to get and enable supplies\n");
-
-'dev' here and everywhere below and put this on one line.
-
-> +	st->mclk = devm_clk_get_enabled(&spi->dev, "mclk");
-> +	if (IS_ERR(st->mclk))
-> +		return PTR_ERR(st->mclk);
-> +
-> +	reset_gpio = devm_gpiod_get_optional(&spi->dev, "reset", GPIOD_OUT_LOW);
-> +	if (IS_ERR(reset_gpio))
-> +		return PTR_ERR(reset_gpio);
-> +
-> +	start_gpio = devm_gpiod_get(&spi->dev, "start", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(start_gpio))
-> +		return PTR_ERR(start_gpio);
-> +
-> +	crc8_populate_msb(ad7779_crc8_table, AD7779_CRC8_POLY);
-> +	st->spi = spi;
-> +
-> +	st->chip_info = spi_get_device_match_data(spi);
-> +	if (!st->chip_info)
-> +		return -ENODEV;
-> +
-> +	ret = ad7779_reset(indio_dev, reset_gpio);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ad7779_powerup(st, start_gpio);
-> +	if (ret)
-> +		return ret;
-> +
-> +	indio_dev->name = st->chip_info->name;
-> +	indio_dev->info = &ad7779_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->channels = st->chip_info->channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(ad7779_channels);
-
-> +	st->trig = devm_iio_trigger_alloc(&spi->dev, "%s-dev%d",
-> +					  indio_dev->name, iio_device_id(indio_dev));
-
-At least it will be a room for one more parameter on the first line.
-
-> +	if (!st->trig)
-> +		return -ENOMEM;
-> +
-> +	st->trig->ops = &ad7779_trigger_ops;
-> +
-> +	iio_trigger_set_drvdata(st->trig, st);
-> +
-> +	ret = devm_request_irq(&spi->dev, spi->irq,
-> +			      iio_trigger_generic_data_rdy_poll,
-> +			      IRQF_ONESHOT | IRQF_NO_AUTOEN,
-> +			      indio_dev->name, st->trig);
-
-It will be one line less with 'dev'.
-
-> +	if (ret)
-> +		return dev_err_probe(&spi->dev, ret, "request irq %d failed\n",
-
-IRQ
-
-> +				     st->spi->irq);
-
-One line. Why out of a sudden st-> ?
-
-
-> +	ret = devm_iio_trigger_register(&spi->dev, st->trig);
-> +	if (ret)
-> +		return ret;
-> +
-> +	indio_dev->trig = iio_trigger_get(st->trig);
-> +
-> +	init_completion(&st->completion);
-> +
-> +	ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev,
-> +					      &iio_pollfunc_store_time,
-> +					      &ad7779_trigger_handler,
-> +					      &ad7779_buffer_setup_ops);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ad7779_spi_write_mask(st, AD7779_REG_DOUT_FORMAT,
-> +				    AD7779_DCLK_CLK_DIV_MSK,
-> +				    FIELD_PREP(AD7779_DCLK_CLK_DIV_MSK, 7));
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_iio_device_register(&spi->dev, indio_dev);
-> +}
-
-...
-
-> +static int ad7779_suspend(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-
-	... val = FIELD_PREP(AD7779_MOD_POWERMODE_MSK, AD7779_LOW_POWER));
-
-> +	return ad7779_spi_write_mask(st, AD7779_REG_GENERAL_USER_CONFIG_1,
-> +				    AD7779_MOD_POWERMODE_MSK,
-> +				    FIELD_PREP(AD7779_MOD_POWERMODE_MSK,
-> +					       AD7779_LOW_POWER));
-
-	return ad7779_spi_write_mask(st, AD7779_REG_GENERAL_USER_CONFIG_1,
-				     AD7779_MOD_POWERMODE_MSK, val);
-
-Also note broken indentation in your version.
-
-> +}
-
-> +static int ad7779_resume(struct device *dev)
-
-As per above.
-
-> +{
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-> +
-> +	return ad7779_spi_write_mask(st, AD7779_REG_GENERAL_USER_CONFIG_1,
-> +				    AD7779_MOD_POWERMODE_MSK,
-> +				    FIELD_PREP(AD7779_MOD_POWERMODE_MSK,
-> +					       AD7779_HIGH_POWER));
-> +}
-
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAK529WYC/x2MSwqAIBQAryJvnaAmoV0lWvh51ltkoRCBdPek5
+ cDMNKhYCCvMrEHBmyqduYMcGITd5Q05xc6ghNLCqol7zQ+qIXY3IFfWiRSNHo2X0JurYKLn/y3 r+36p9wRwXwAAAA==
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1434; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=Twk1wQnSBYqUrwPgppU6IblWdyNgBfrFOMFHTIuSYDk=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm9Xa2YUpz8YLZJ0XuLQKBhsgdcDwfS7+0EQz25
+ oN/K01chRaJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZvV2tgAKCRAEWL7uWMY5
+ RjP+D/0VUGUvQuh2G44M+zDxJ4o/WUijMkAgM38lt7KdI0LAw/6fwSoJlZWXOGk563fruQ44SIj
+ kmBZ0MeUs44ENruJXaRPtK/KJIfQT9Le+o+hJ0tCmD9MbBSXZO2xXohqfvIgn6E+4hd+VYaC9JF
+ YzwRRODpoQxeSipt2eBQe8bUmfe8xSg/lJ6QSFlz/c6EwMZUhE/ZL6GVtWZ3UzWgy+nFTi/9++r
+ dib2+PkHcS9CS/KTJn4LhSGRO04d4aen0EknjcZxm1RoKXiW0UZfwAx4Z7xXfiVg1vqrWqmhYuw
+ 6YKNvTq4ldIM4+S8u5X3FnjXP1IqReRbCJUcUYOlNQQnfCoGDGG/DDRB/m8u0YzeFIlZ+QobFAJ
+ A5fQqmiQzW3EPgtkOAewZpR3iA1vdSdDNR9g48Lih3Lia0ClaPRHrl170EpiZQ0jIqVUvAVM0yz
+ exJdZXv2Ik3y8nJH/q/A/9aJmZlSnW8lR/moyHnEZ6zbIYWFEpdHDyYuOJwly5+nmNVqRjpqpXF
+ 3a6LG2lcE1uR0VoV23V/bWVZcTQ7gpH22Lu4p0jLRSHI3CSBjUNu2Sfb/IcHR/r5BczHQUC8Vyr
+ 3f2EALu0SBk5mVbbdC86cCdJjT9EuTG7dWxFVHpGkg3QhLJzEEm2smFu9BSjO4mnQM+W//j9TM/ 1SBYl6jLGALOThA==
+X-Mailer: b4 0.13.0
+Message-ID: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+Subject: [PATCH 0/3] Miscdevices in Rust
+From: Alice Ryhl <aliceryhl@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
+
+A misc device is generally the best place to start with your first Rust
+driver, so having abstractions for miscdevice in Rust will be important
+for our ability to teach Rust to kernel developers.
+
+I intend to add a sample driver using these abstractions, and I also
+intend to use it in Rust Binder to handle the case where binderfs is
+turned off.
+
+I know that the patchset is still a bit rough. It could use some work on
+the file position aspect. But I'm sending this out now to get feedback
+on the overall approach.
+
+This patchset depends on files [1] and vma [2].
+
+Link: https://lore.kernel.org/all/20240915-alice-file-v10-0-88484f7a3dcf@google.com/ [1]
+Link: https://lore.kernel.org/all/20240806-vma-v5-1-04018f05de2b@google.com/ [2]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Alice Ryhl (3):
+      rust: types: add Opaque::try_ffi_init
+      rust: file: add f_pos and set_f_pos
+      rust: miscdevice: add abstraction for defining miscdevices
+
+ rust/bindings/bindings_helper.h |   1 +
+ rust/kernel/fs/file.rs          |  20 ++
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/miscdevice.rs       | 401 ++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/types.rs            |  16 ++
+ 5 files changed, 439 insertions(+)
+---
+base-commit: a6266fcab443f4b6ae31016bd6c3872f8200d5e1
+change-id: 20240926-b4-miscdevice-29a0fd8438b1
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Alice Ryhl <aliceryhl@google.com>
 
 
