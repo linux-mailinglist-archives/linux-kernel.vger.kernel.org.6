@@ -1,131 +1,218 @@
-Return-Path: <linux-kernel+bounces-339843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78C63986B45
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:24:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64BB8986B3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416DF283417
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:24:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5A9E1F23239
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019CC188937;
-	Thu, 26 Sep 2024 03:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D911176231;
+	Thu, 26 Sep 2024 03:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JdEnEsW1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EYWjXQDZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9906D18784C
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 03:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB3915B562;
+	Thu, 26 Sep 2024 03:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727321003; cv=none; b=ntIYsLlAcHrYNkGtH0V3oc6IcxOBWxeUQdaFCVHp4Jr3dvqzjBOYUaMl1AHOkfxAni46xSeDHC/Db/dgLccpOZuzaTx2ftQpzvqU4bv6f7c6gJEHkXyjltIpToZpT9NT29j4cs3SHdJGNovSp3sN8U/ue0UfH2FdFXZD0VtYdqI=
+	t=1727320992; cv=none; b=SRruFuz6xpSVwZ4U6Isbj77ligVWTJUjxSXMQrPNZ7eWS44kZX5mF0UPKvTFgfPCHj/DstPcEZSK6spc7AbK2f9NT/u3Q6eqTdhKiISSAH9DjxQiQ2l2GlvIRGve5nOtgvWqtMPu6RPYo4hQpWI7dthd0e9UuUFhYTaD9FnSyzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727321003; c=relaxed/simple;
-	bh=624SmO8XUNU38mpOIvZAumZSxp/fQT8P4sS1GJiW+pw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Fe4fQg6RGcdnlKp9T4u/M6cpEd0c9xOl2LdyxPx69c9tLY0nwxKfEiIbbGBBxa/PSMg6jIjv6WEJOM3lCYSKIXtbRCkAHSFkbWagtoKkw1+ILj7PA1LNRtSX1B6BACb0aHo2hMDvt4KuJko8dgHe5Km9ANHoxyi2cHNCYByLL20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JdEnEsW1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727320999;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=utrx0K/+VugFVIukkmcrJK6P1DSpckYEB9F1vob9W3U=;
-	b=JdEnEsW1plWAC6HZP0NR+Qfwt/Lj5m3ryUIsyIrpFw10gZWPWm7ocJnUsV5FTIx95crh7B
-	LoHm8riShPrZyXs67cR+MAXdpn+KHbTWUjaBwfX28+KR34y/jnVDgN06KzyjKNJD8ruN/s
-	tWjRT97BINKhb+P9hrvxf4U9NJab+ZM=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-584-7yAz8LruPE6dXZbcRoFGBw-1; Wed,
- 25 Sep 2024 23:23:16 -0400
-X-MC-Unique: 7yAz8LruPE6dXZbcRoFGBw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B8B8E19373E5;
-	Thu, 26 Sep 2024 03:23:14 +0000 (UTC)
-Received: from virt-mtcollins-01.lab.eng.rdu2.redhat.com (unknown [10.8.1.196])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1217A19560A3;
-	Thu, 26 Sep 2024 03:23:11 +0000 (UTC)
-From: Shaoqin Huang <shahuang@redhat.com>
-To: Oliver Upton <oliver.upton@linux.dev>,
-	Marc Zyngier <maz@kernel.org>,
-	kvmarm@lists.linux.dev
-Cc: Eric Auger <eauger@redhat.com>,
-	Sebastian Ott <sebott@redhat.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Shaoqin Huang <shahuang@redhat.com>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [RFC PATCH v1 2/2] KVM: arm64: Allow the RAS feature bit in ID_AA64PFR0_EL1 writable from userspace
-Date: Wed, 25 Sep 2024 23:22:40 -0400
-Message-Id: <20240926032244.3666579-3-shahuang@redhat.com>
-In-Reply-To: <20240926032244.3666579-1-shahuang@redhat.com>
-References: <20240926032244.3666579-1-shahuang@redhat.com>
+	s=arc-20240116; t=1727320992; c=relaxed/simple;
+	bh=fx8pZLczVjXeMg2rh9SYwd31ohW/5zVjlWO7j2A5L1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K1fxR8ltlkvtUs5GXgAoPrfbM9NucpTwU8xNjoJ1qR8QYCV89DNod4x2cdLMJpDg9JkBGeh0CdImcQTq6gkQrPcWwZ3Fw+DY2OnX7clF0az8e5S0IC+lVNeNfLN7oL+/AA+mnpT0xz3ND0X1SunzXrVdt4mhxWu9VsuuiPuY9So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EYWjXQDZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51FB9C4CED1;
+	Thu, 26 Sep 2024 03:23:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727320992;
+	bh=fx8pZLczVjXeMg2rh9SYwd31ohW/5zVjlWO7j2A5L1Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EYWjXQDZvPjfSLqN3QuWR1Ioppqi01WopwbMklWpJ5EvhHefAqLRpftZPJ/85fNau
+	 OzBtgoxghQoZkG1W2aBedUQdy9VXQ4kCRGiCKew/cnrxNv7LhtBePsUsfGrauaoX2z
+	 k6x5sobtQ5JG34qbmqsTBcH9UX8mpKC8yk2QUFMU8TrngWELCwkPfvAhufyrrqSTnb
+	 LJkmFfNNzSBhXpG87PGZNJ3u4GhaEcs04fKxIQ2CZamQx2amkOwWRbn7Ke8/JJfKed
+	 URFy+2nO85b8N6xaOfnPwuCuN1D2q/Zgr+uI1OJfo8aGWutMS5B+9mX5+LuzAt2a3A
+	 gw3SmHiHFhUNw==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f752d9ab62so5245041fa.3;
+        Wed, 25 Sep 2024 20:23:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWm2HGU5x/xkORSl1/gTYuEhwS5mPcw+F9AiVxV5B8ypPzfyNvktC//hesCKnYdP+X5dyPQ12lSxQHr@vger.kernel.org, AJvYcCX3NGIrgAfNAO8SdR80qY9UMlVfjfLwx1gEG3YUMM7dM+HSlQMEF+79Zfr/llj9M81XhDymvKe6xR9kO1U3@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh0R53qKpsNdT+LKvlxMXMsvfx5GBU+nq5mAs76v2GBKNbVZ5B
+	kCDOH2T77JAOE269M5RWqaPlAqmmHoQ4RYnzcWdIYFLtGqeSn2k0uHdC+6QB/koEt3fvlUz8GUT
+	Og1PbrjBTBbzbvyKfvgKkc6JLE0o=
+X-Google-Smtp-Source: AGHT+IEVHn4SeOlm814f8v2WMfQzmUdfbYxE9ZZ+RDruflT0pl0gMYBsSeJIa+1mWZAwcNA8/DmrDT6J0t/IiRM9RwU=
+X-Received: by 2002:a05:6512:138a:b0:52c:9e25:978d with SMTP id
+ 2adb3069b0e04-5387755c9bdmr2742508e87.45.1727320990548; Wed, 25 Sep 2024
+ 20:23:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20240925132420.821473-1-jvetter@kalrayinc.com> <20240925132420.821473-5-jvetter@kalrayinc.com>
+In-Reply-To: <20240925132420.821473-5-jvetter@kalrayinc.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Thu, 26 Sep 2024 11:22:59 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTSuueSutg7tnYfrRbvY40AidnfZh4=ujEKye3sust1sXA@mail.gmail.com>
+Message-ID: <CAJF2gTSuueSutg7tnYfrRbvY40AidnfZh4=ujEKye3sust1sXA@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] csky: Use generic io memcpy functions
+To: Julian Vetter <jvetter@kalrayinc.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org, 
+	loongarch@lists.linux.dev, Yann Sionneau <ysionneau@kalrayinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently FEAT_RAS is not writable, this makes migration fail between
-systems where this feature differ. Allow the FEAT_RAS writable in
-ID_AA64PFR0_EL1 to let the migration possible when the RAS is differ
-between two machines.
+On Wed, Sep 25, 2024 at 9:24=E2=80=AFPM Julian Vetter <jvetter@kalrayinc.co=
+m> wrote:
+>
+> Use the generic __memcpy_{from,to}io and __memset_io functions.
+>
+> Reviewed-by: Yann Sionneau <ysionneau@kalrayinc.com>
+> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
+> ---
+> Changes for v6:
+> - Added proper commit header suffix: 'csky: ...'
+> ---
+>  arch/csky/kernel/Makefile |  2 +-
+>  arch/csky/kernel/io.c     | 91 ---------------------------------------
+>  2 files changed, 1 insertion(+), 92 deletions(-)
+>  delete mode 100644 arch/csky/kernel/io.c
+>
+> diff --git a/arch/csky/kernel/Makefile b/arch/csky/kernel/Makefile
+> index 8a868316b912..de1c3472e8f0 100644
+> --- a/arch/csky/kernel/Makefile
+> +++ b/arch/csky/kernel/Makefile
+> @@ -2,7 +2,7 @@
+>  extra-y :=3D vmlinux.lds
+>
+>  obj-y +=3D head.o entry.o atomic.o signal.o traps.o irq.o time.o vdso.o =
+vdso/
+> -obj-y +=3D power.o syscall.o syscall_table.o setup.o io.o
+> +obj-y +=3D power.o syscall.o syscall_table.o setup.o
+>  obj-y +=3D process.o cpu-probe.o ptrace.o stacktrace.o
+>  obj-y +=3D probes/
+>
+> diff --git a/arch/csky/kernel/io.c b/arch/csky/kernel/io.c
+> deleted file mode 100644
+> index 5883f13fa2b1..000000000000
+> --- a/arch/csky/kernel/io.c
+> +++ /dev/null
+> @@ -1,91 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> -
+> -#include <linux/export.h>
+> -#include <linux/types.h>
+> -#include <linux/io.h>
+> -
+> -/*
+> - * Copy data from IO memory space to "real" memory space.
+> - */
+> -void __memcpy_fromio(void *to, const volatile void __iomem *from, size_t=
+ count)
+> -{
+> -       while (count && !IS_ALIGNED((unsigned long)from, 4)) {
+> -               *(u8 *)to =3D __raw_readb(from);
+> -               from++;
+> -               to++;
+> -               count--;
+> -       }
+> -
+> -       while (count >=3D 4) {
+> -               *(u32 *)to =3D __raw_readl(from);
+> -               from +=3D 4;
+> -               to +=3D 4;
+> -               count -=3D 4;
+> -       }
+> -
+> -       while (count) {
+> -               *(u8 *)to =3D __raw_readb(from);
+> -               from++;
+> -               to++;
+> -               count--;
+> -       }
+> -}
+> -EXPORT_SYMBOL(__memcpy_fromio);
+> -
+> -/*
+> - * Copy data from "real" memory space to IO memory space.
+> - */
+> -void __memcpy_toio(volatile void __iomem *to, const void *from, size_t c=
+ount)
+> -{
+> -       while (count && !IS_ALIGNED((unsigned long)to, 4)) {
+> -               __raw_writeb(*(u8 *)from, to);
+> -               from++;
+> -               to++;
+> -               count--;
+> -       }
+> -
+> -       while (count >=3D 4) {
+> -               __raw_writel(*(u32 *)from, to);
+> -               from +=3D 4;
+> -               to +=3D 4;
+> -               count -=3D 4;
+> -       }
+> -
+> -       while (count) {
+> -               __raw_writeb(*(u8 *)from, to);
+> -               from++;
+> -               to++;
+> -               count--;
+> -       }
+> -}
+> -EXPORT_SYMBOL(__memcpy_toio);
+> -
+> -/*
+> - * "memset" on IO memory space.
+> - */
+> -void __memset_io(volatile void __iomem *dst, int c, size_t count)
+> -{
+> -       u32 qc =3D (u8)c;
+> -
+> -       qc |=3D qc << 8;
+> -       qc |=3D qc << 16;
+> -
+> -       while (count && !IS_ALIGNED((unsigned long)dst, 4)) {
+> -               __raw_writeb(c, dst);
+> -               dst++;
+> -               count--;
+> -       }
+> -
+> -       while (count >=3D 4) {
+> -               __raw_writel(qc, dst);
+> -               dst +=3D 4;
+> -               count -=3D 4;
+> -       }
+> -
+> -       while (count) {
+> -               __raw_writeb(c, dst);
+> -               dst++;
+> -               count--;
+> -       }
+> -}
+> -EXPORT_SYMBOL(__memset_io);
+> --
+> 2.34.1
+>
+>
+>
+>
+>
+Thx for the clean-up.
 
-Also update the kselftest to test the RAS field.
+Acked-by: Guo Ren <guoren@kernel.org>
 
-Signed-off-by: Shaoqin Huang <shahuang@redhat.com>
----
- arch/arm64/kvm/sys_regs.c                         | 1 -
- tools/testing/selftests/kvm/aarch64/set_id_regs.c | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index b09f8ba3525b..51ff66a11793 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -2364,7 +2364,6 @@ static const struct sys_reg_desc sys_reg_descs[] = {
- 	  .val = ~(ID_AA64PFR0_EL1_AMU |
- 		   ID_AA64PFR0_EL1_MPAM |
- 		   ID_AA64PFR0_EL1_SVE |
--		   ID_AA64PFR0_EL1_RAS |
- 		   ID_AA64PFR0_EL1_GIC |
- 		   ID_AA64PFR0_EL1_AdvSIMD |
- 		   ID_AA64PFR0_EL1_FP), },
-diff --git a/tools/testing/selftests/kvm/aarch64/set_id_regs.c b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-index d20981663831..d2dd78ce0e02 100644
---- a/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-+++ b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-@@ -126,6 +126,7 @@ static const struct reg_ftr_bits ftr_id_aa64pfr0_el1[] = {
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR0_EL1, CSV2, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR0_EL1, DIT, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR0_EL1, SEL2, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR0_EL1, RAS, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR0_EL1, EL3, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR0_EL1, EL2, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR0_EL1, EL1, 0),
--- 
-2.40.1
-
+--=20
+Best Regards
+ Guo Ren
 
