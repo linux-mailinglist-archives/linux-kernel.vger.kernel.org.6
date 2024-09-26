@@ -1,115 +1,148 @@
-Return-Path: <linux-kernel+bounces-341119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF32987B85
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:13:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7FF987B88
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 148D61F23D23
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:13:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDF601F23CEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECD21B011B;
-	Thu, 26 Sep 2024 23:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07451B0109;
+	Thu, 26 Sep 2024 23:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DGCRrHpX"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LYVtrQO3"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35999282FA;
-	Thu, 26 Sep 2024 23:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186E4282FA
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 23:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727392392; cv=none; b=tHLtEmzzURQ/Q13iXmBIImK1ZQxkbtJ/ZyDGFZbw9kwfkTu6BJTYvtZgaPlnWHgsaHe+Hh3D9cCwsa/YNnqCyOSz+pnAHI+pDXAtIJ+7yUs4O8+FHEgVBUAn+GyYMDH1trJYI4b7MsYB8EXO+1dh6ldkxvITFufMEZrDjP6/cJk=
+	t=1727392446; cv=none; b=Ex8Kgjzm0NwFtqeTOS5nn/hyWoXt2aZ9qGNZG5TrjkGUOj+Zwru15/KO3PHydPzfsDdSJnrK6Ti52ISHQV7TZCJq7cg/BzAc0WsexD8FSKifJ/B9HOQhpReqwzZzJw3dHKgzLkPE8ruKgoGGZsQQ4RoBCfWhYh/m4lB4ysaZsAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727392392; c=relaxed/simple;
-	bh=+QnUsmj6HlQHE3dHsolrlcWBEAVey350DkJs28RZJuU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g1gYMEGCIxr+I0Hg+sxYRi1npLhIj45Wzxv1iZ6//CBxYz30lRzMnozpwkSCkVoGpQ7gWAkP2XwXan9TbFd2NQHPwRaGOkUa5eeiZrcN4c28iUOYOFWRvkDtW9a4yNlydQGsfdXYgZNSrRMJm/qBqfEXetgTomqv2l0yxrtMOYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DGCRrHpX; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6c582ca168fso10550946d6.2;
-        Thu, 26 Sep 2024 16:13:09 -0700 (PDT)
+	s=arc-20240116; t=1727392446; c=relaxed/simple;
+	bh=gvwcqXnMCj4t203l/VZ0Q5iLXQ+OUfQtfhIjf5MmcSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eWGBPosK0wIqv9gyfdDimjL1E8Tk60Y2scEBbo6Z5ZwSeBE/SfKluQ3aVJqNLqinXyLtP/5OHSYqwR+PUo4o7ZVfEFcLGJ6yalS0HcD2txxyvNkL35Gr1QAmSd6IvRinjrYhGpiVYkV2cXFrVUoRMftH4/GlUyw930exSmdUIXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LYVtrQO3; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f752d9ab62so19069491fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:14:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727392389; x=1727997189; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+QnUsmj6HlQHE3dHsolrlcWBEAVey350DkJs28RZJuU=;
-        b=DGCRrHpX/dxM8pNJx/t49nKffKYWLDlVXp6n4kef6vS3Mya1OeFo3iw+dEmGaenA4x
-         I+tWS4lF8YW6tvj2m+zgHtdkH0tpdqf652djgk3ID+WPuAUWHm/PqgkJdAGRkExiYm3c
-         IwUmjmIC7NXmr51x3ztqTP9vYxYyKSmOU4ylOkiGmc3MT/Ul2ENoQ6emQMF8kqegEAOZ
-         594tPZF8Vohu30F7ljHjIX7MTKe/M9ZFiEHGPX5szzoHmq4l5DYde+HBm44wM1KX3vdo
-         LU+stbQZR9FYBCas9dszTx4smfn7+tLHKJUM4ZWaiF1Za14qGW9F5fZHtmbQsDmGEw5J
-         tVhQ==
+        d=linaro.org; s=google; t=1727392442; x=1727997242; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RKCPXT2SnF217fYCBqO7kVOCMlyaVhnwZH7kFGVlu+A=;
+        b=LYVtrQO3CrYRYnIMESPFiik0+GJSZ5Hv2nJWeLZkiFHchQe+tUqbkOO3eLBNtCLd8j
+         ti3P/9fMPC7HBq2uGlyoHdaGUq4Nrpk1voyFfYpEkklp6v4VsakWYykoGrhGoG3a4u75
+         RaM/n9mEQiNXhpR/RP4LftJGi1i2DYVsLw0QuhgvxhfpI56AXmjAUdeExde823R5kbUq
+         BA0h3/d7lcO2eVz4iFRX37/Sw4wBwzgHScwReN0V9v3zOP3cE7NSOwOjzurOBl7naadr
+         t9xoVzDNMcQAvWAAoaiHMu5bnXdOgT6cBZ2oKrjcV7ab+RbVtSz7ZZuw3mnSGwya4Oft
+         NSFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727392389; x=1727997189;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+QnUsmj6HlQHE3dHsolrlcWBEAVey350DkJs28RZJuU=;
-        b=OEDptL44vB32VnryjKrxN9CHi358d3LPzP+f83OxDKIyY0n5gcxgXIe3MBl1mWHUXG
-         g0Bx9hXKdwQoyCSTjmIlqrJ8ZLQcQPSatmNPf9eTejNFfOj8bWWggBeZ1I+ozyKDFZev
-         7LMPwJbA3Hqc6ctDLADrlfSI2lup0MveVw44i3M88CW55YutW2d3AVrf1lnPerZn+ibf
-         ov2RW9US8mgkOE9BC38np15g6irpnV89lzH8QsB95iV9miQgzto2V6eqN3THAt4RKE/i
-         oKVt4OfLIdkrpBEeqTRqCtMhOjKccVa6vheGPIM3+AvD7ahtEFWlbb2kD4yVH1u2VS7F
-         9OFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWyZuo3rcty8vp1aq91nwNJZ2mIVr8CgrO11gbLznFjG/cbkzUOUppfzNxyGNGYHcDWAUvaH+1p@vger.kernel.org, AJvYcCXtrZtdBte+oXAVfEEe1jrsem0O8ChW+F8zhrzxFlqhZ5mozv3a7HU8A4euJ3NmQiUYpiEedmWwevn7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfb9ZKrSqrLxK0hTGx0yPOg0Y5Z38xybRtTT78vMuHy7qWbEbo
-	RxxmV0Hf/YymLNt5RWERKVUX2X5QnSDObnpQQtLzTXfTO7zPd/ejJwmVa9dBdzvBfU+pgQ/iSbe
-	jvIO6ombZwGKziSK6LtbQYxBtVfk=
-X-Google-Smtp-Source: AGHT+IFwc4f5kyKAfJNVropwB7Maj3cXwYzRuG9QJBw+rGCgZmFQaltgr3CCdn3mYqSHswUhEmCCe+GqKdUxQ6zosuw=
-X-Received: by 2002:a05:6214:3187:b0:6cb:3643:3370 with SMTP id
- 6a1803df08f44-6cb3b5e8b2cmr27343926d6.23.1727392389141; Thu, 26 Sep 2024
- 16:13:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727392442; x=1727997242;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RKCPXT2SnF217fYCBqO7kVOCMlyaVhnwZH7kFGVlu+A=;
+        b=kMlxOb/N4BG8vXRw0mvKT/T1Zg/grsHXSOE60Ft4u3845nAW6gX0OfFI+5sIMyE5kd
+         F9dK9WQdGVJhMJl2Pct6RI5JtUPgNzNXc+U4G5JE8ohNKHWGvB1xFwcGdcMvgbWmof48
+         DJIibs9JiVx59mdPCezQ58IhmlvtcG1aKnyQNTz2GOFxzz1aDVEGPKtST7BqK8Ep3q0O
+         voQFYTetdyyQC8H58fMvwFfMx6t44zxKww3KI0Nl2rqTqGxmiLxRBDRLtczqCh9F5vq/
+         EDG9wRwcIZQQH7q8qtM3IcvNksq0iN3HLc0PXumghFBnAd3cKWmp5LSbhsEh/Fsloh2o
+         MhiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmfclsUvCN+4WKvqxinyVYZPn3D24LgagJ41L0y0Fx0OPKMUwFArmhFozdZ3mqMSr907Xlfzk5J2idC9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQRbPh570UM1y9j0b56mOd/NsRluTfB/36db/6rb6rCgCKJW6E
+	a2lrcPCjpTMVs8t94gbPx8ARuVWRvVYgZcLz5YVrHDAIyzkIjpLFJS6/SXLW+dyH7YHyFDZpO2d
+	xE4D7Dw==
+X-Google-Smtp-Source: AGHT+IFwhlaM9nlI09IsLi+bYAjxYj9r1eOayb5QFxDr4jeBDHgkFOZ8axxQRpGJIerqpsmZEWNF+A==
+X-Received: by 2002:a05:651c:b28:b0:2f7:5914:c22e with SMTP id 38308e7fff4ca-2f9d3e3a30fmr8055681fa.6.1727392441976;
+        Thu, 26 Sep 2024 16:14:01 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f9d4618a80sm949261fa.107.2024.09.26.16.13.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 16:14:00 -0700 (PDT)
+Date: Fri, 27 Sep 2024 02:13:57 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Matthias Schiffer <matthias.schiffer@tq-group.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] drm: fsl-dcu: enable PIXCLK on LS1021A
+Message-ID: <ovzeljss5uv6rymlbdfjolnjox3dklcv3v2km73gqnh6vejxvg@afhyhfwmt3nf>
+References: <20240926055552.1632448-1-alexander.stein@ew.tq-group.com>
+ <20240926055552.1632448-2-alexander.stein@ew.tq-group.com>
+ <tosilxaxfg6hejtqs2fslf6ez5pdg5yxj776pohmodja3bn5jp@4jbdprx52fqx>
+ <2754373.mvXUDI8C0e@steina-w>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926225531.700742-1-intelfx@intelfx.name>
-In-Reply-To: <20240926225531.700742-1-intelfx@intelfx.name>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 26 Sep 2024 16:12:58 -0700
-Message-ID: <CAKEwX=MmCKrOkvDO5Yc_M8EB+k5U9AZ3boEiu4u2HUb7p0z+Kw@mail.gmail.com>
-Subject: Re: [PATCH] zswap: improve memory.zswap.writeback inheritance
-To: Ivan Shapovalov <intelfx@intelfx.name>
-Cc: linux-kernel@vger.kernel.org, Mike Yuan <me@yhndnzj.com>, Tejun Heo <tj@kernel.org>, 
-	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Yosry Ahmed <yosryahmed@google.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Chris Li <chrisl@kernel.org>, cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2754373.mvXUDI8C0e@steina-w>
 
-On Thu, Sep 26, 2024 at 3:55=E2=80=AFPM Ivan Shapovalov <intelfx@intelfx.na=
-me> wrote:
->
-> Improve the inheritance behavior of the `memory.zswap.writeback` cgroup
-> attribute introduced during the 6.11 cycle. Specifically, in 6.11 we
-> walk the parent cgroups until we find a _disabled_ writeback, which does
-> not allow the user to selectively enable zswap writeback while having it
-> disabled by default.
+On Thu, Sep 26, 2024 at 04:09:03PM GMT, Alexander Stein wrote:
+> Hi Dmitry,
+> 
+> Am Donnerstag, 26. September 2024, 08:05:56 CEST schrieb Dmitry Baryshkov:
+> > On Thu, Sep 26, 2024 at 07:55:51AM GMT, Alexander Stein wrote:
+> > > From: Matthias Schiffer <matthias.schiffer@tq-group.com>
+> > > 
+> > > The PIXCLK needs to be enabled in SCFG before accessing certain DCU
+> > > registers, or the access will hang. For simplicity, the PIXCLK is enabled
+> > > unconditionally, resulting in increased power consumption.
+> > 
+> > By this description it looks like a fix. What is the first broken
+> > commit? It needs to be mentioned in the Fixes: tag. Or is it hat
+> > existing devices have been enabling SCFG in some other way?
+> 
+> We discussed this internally and it seems this never worked, unless PIXCLK
+> was already enabled in SCFG by a different way, e.g. firmware, etc.
 
-Is there an actual need for this? This is a theoretical use case I
-thought of (and raised), but I don't think anybody actually wants
-this...?
+My bet was on the firmware, but I never touched Layerscape platforms.
+Anyway,
 
-Besides, most people who want this can just:
+Fixes: 109eee2f2a18 ("drm/layerscape: Add Freescale DCU DRM driver")
+Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-1. Enable zswap writeback on root cgroup (and all non-leaf cgroups).
 
-2. Disable zswap writeback on leaf cgroups on creation by default.
+> 
+> Best regards,
+> Alexander
+> 
+> > > 
+> > > Signed-off-by: Matthias Schiffer <matthias.schiffer@tq-group.com>
+> > > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > > ---
+> > > Changes in v2:
+> > > * Add note about power consumption in commit message
+> > > * Add note about power consumption in comment
+> > > * Fix alignment
+> > > 
+> > 
+> > 
+> 
+> 
+> -- 
+> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+> Amtsgericht München, HRB 105018
+> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+> http://www.tq-group.com/
+> 
+> 
 
-3. Selectively enable zswap writeback for the leaf cgroups.
-
-All of this is quite doable in userspace. It's not even _that_ racy -
-just do this before adding tasks etc. to the cgroup?
+-- 
+With best wishes
+Dmitry
 
