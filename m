@@ -1,164 +1,184 @@
-Return-Path: <linux-kernel+bounces-340567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A32798755D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:22:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514F0987560
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 378DB1C23395
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:22:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42281F275C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04BF136347;
-	Thu, 26 Sep 2024 14:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E3E136349;
+	Thu, 26 Sep 2024 14:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A0Cck2Zn"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3nHKtia"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F362AF1C
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53884D8CB;
+	Thu, 26 Sep 2024 14:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727360522; cv=none; b=mz3BdkU1ZULzFNy9g+mINvEtzbvryKSfplJON7udgsfKOTGeGPsHi1TM38+RklxOEJ0pp1lvXp7hrj84H2cLOLaeouKwTc34vpVaQ0XWmRQplaD464t7/3G7tzPeGxxFrCJledx3nljWcS988WsC1mcomFzsJEczkW9bJ5Pcrv0=
+	t=1727360539; cv=none; b=V3Tx5al8HPbI+tQbkzPy0H8O1/Tzl7xKYBzORlbRJa6/DJgfWcLhBIQ51z54N4UPfhYgzhiuPhwxQUZOtohQPTwcMs4a81GO9PE4+euvn0HanyIQvr8FtLxC7HHtuEB2CesHc+0CbAcSTABZW35+yYc7BQTiert/U1d3WPLh+t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727360522; c=relaxed/simple;
-	bh=+y24IVUxor/kyNBm91ljRSRvsQRxdlhSxfQWOvqLT1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=khl5iYuehsL+vv8VfzJJSLX2zw1qphy2De0wEAOSW+A6Nsul7346eJLQ4mzlpUfL+HyOf/GLULs9jnQPKODArlfgMDHFuqaCzUsh+7bCNtiNCmEiO/r2w3V3Et/TEKWVVOfkmHG3vRZnn7kMrTGcb2dnycLLbcwDgAqzQeFojsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A0Cck2Zn; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-82ce603d8daso37759139f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:22:00 -0700 (PDT)
+	s=arc-20240116; t=1727360539; c=relaxed/simple;
+	bh=/itqqrI17esUdju+hdyYejJ3mMNbnZlGU5JDumt//wg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oMLu9FtU3PYr/ZAPW/sYmUpKoDndC3X7mr0XDBgpmotbUgik5ys4rdij+INrXfzj4ekHobhu6k/AcMhB/YFbK8+xg5FEWBTkOjMDSuYKVBiRZ7JlM/QeJUWyZjCaFptqo5tqAM+LL8LZRooKebj+zOrJp3I+2T1b0GmThxmgAwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S3nHKtia; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5365b71a6bdso1397381e87.2;
+        Thu, 26 Sep 2024 07:22:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727360520; x=1727965320; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SfFiyiH6kgWbgMXEmTeBEyoYGBSUVUt9KtKUrpIaXN4=;
-        b=A0Cck2ZnZPgLFGJEkwcQlZYujALVQfeZ2J+lRM4seQ8SIZWDONkLY0VNKnmEEgvCgO
-         2YRf4vffb4XL43m0AD+sxCHh74WVZHMdf+ByT4rJR0rxRLCK91XB8U5ZL6u8m9euWGqr
-         LT50XV4ttmedigC7WYkEPwCL/zD06/r4Rn2ZhmvTHdITJODpggqSie6u1LqsGSHO0Azr
-         EoR0lLk5NAmH6nWl7Az77o7Vu8VGVduLfMaOQV10bImTce4SlI6+T+I01lhb3gpaEcGv
-         C7dkLrlnXmSnlWhppN0rwJKGGZyCMQevRiGmZMKr1TFs3+MzX/Nh97DtkAd4VFoSsaBx
-         cOdg==
+        d=gmail.com; s=20230601; t=1727360536; x=1727965336; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uvAIAMx0Bh7L4E+SdJ3jfr7mT5ag73sqIgfDL+muc1o=;
+        b=S3nHKtia9JW4g6JLlg3XN+Bx6roa2TtHvw9QpqsHvQaF/f/52miu9vWhYlrXDPQTmd
+         SqfSNRcVYW4A6ekWWKO9olQIudr4Atix2/IzSyOlN5oABeY4daTA+gy/RF5AuR9DoE3z
+         zr2QntBes1B+LHcm1JP7+L11Er+bExXzG2OKrh41vAL9+UnGsdVitUMzxz868f9tQ1UI
+         JT/ob6wOO80PSv218Cap8lHdr4Ic+HqbxXxa5XWMVHfNJY5V5rUnm0fNYklp5YSUVmn/
+         G/5waa1GijyYG5urSEZoWXJz6OYkq6G3obwdYPkhHPIqaYwUvG3bybJFajA3mySuAqvX
+         RaEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727360520; x=1727965320;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SfFiyiH6kgWbgMXEmTeBEyoYGBSUVUt9KtKUrpIaXN4=;
-        b=auw0iE5b2eUBHa88uzg3cvo6TKQ5pZfdoHda/v3FdWkPT6AsCkkXh5m9gXXTtqDhta
-         6rDcyEUO4SsyWmwOFEgE6vLxUQdd73Neq5c/AuG1GrFSEUri991nSj6Orip8KCRBRXu5
-         wFScDrGDvuRk1quXFmytYpYgIGD+JIIqL+Ef7D5C3fgG8FP+6y+PqbJq9r19f5bZ+Mxe
-         giPDHussjE1961bLhv1U1Ax0hmcCr8OkX7CIxgIKplB1zUgtmMaIsPaVQglMQpCr/ASO
-         4YGAnEhHPWiLxfwSYOl7aGFbapZr/o0nfY8ljYsPRegafeRu8G771p1Au1GffYc23UEM
-         Nr1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1FEnCHRjcTG9qIK8Ndsp2dbwTA763MZ/4zOBX4QRQpQTMhpIse99KoaxDX6Xk7O1Vcbf1Ltby/MpFxiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUYycEefiZTQ1Dvlpf1qs6l7xQp6VOocKIr1dgDIPja/yRl1M6
-	zS6uTgqwd5ncB0LGOAQkFQIrxJxH0y16IEZzS9zcQkpOxNNSGjMsxSG5ZtdE4uRmHEFP1kwlI7c
-	ji88+DedeEu8Y4QjBwdcan2XO6lQgUsybf9BP
-X-Google-Smtp-Source: AGHT+IEhYTwkcQOydX6/mPTb/HEwIxwSttcZQgsPb/3Rz68DWYmoZ9QWBU7Za8W38ZpoYqE1eYTtCFXbKkq0PRx3s64=
-X-Received: by 2002:a05:6602:2dd2:b0:81f:8f5d:6e19 with SMTP id
- ca18e2360f4ac-83247ced469mr543953839f.2.1727360519577; Thu, 26 Sep 2024
- 07:21:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727360536; x=1727965336;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uvAIAMx0Bh7L4E+SdJ3jfr7mT5ag73sqIgfDL+muc1o=;
+        b=hDf2LbamiOA9CINsUnUPGpV5jGrBGuah6MGa72zf8qmQhQ0NTwSJ14bn1Rx3A5ZTnf
+         1al0LTzA2kgz5AIF7oz/VeDuUiSNw1X6Z0Lddh5L1azC3NMToRQM3bd3ACL1ES2m8j5+
+         KdkXDby9fUiVimH1NZ+lLgPceiL/kvNF+5vlfwfpjVEkFyz+2xYoSzFuQy0QD1zxSzSV
+         xcaJyJXEKrqbzonUAUy4Ee50tGx3Ksh7KTEgSfZi9lZT9hrdv+1mrbubXhXQd2S7gclg
+         vBLXZdpkdwgZylz12hTxeKDKoUaJNovUER9Mqd0k94tZtjfrMs2MYE2VCe/O2WsXk9fC
+         U9fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdPDMCYdl59o89l7jOuhF2hJPxvurX8lLqCw9tD4BFEkodttJPhBNN195Gq7yllvOINwLZIr27wvmoZPRZ@vger.kernel.org, AJvYcCXipg3tEzzvpbIlrK//d2Nr1XcT/Ok7caMkX+FZzUna2fDuh4/ThiDBnREpoAyhl5RxYwfW66n94UKk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+v9xJK3JIg6TjYTjEvS0q4QjPtpxhd3goSYWE6jQA1QTp7XOL
+	fMkK13REHN10Jq2a6d/pceFGSpu7LkUuxpiz+irkLutocdF3ortS
+X-Google-Smtp-Source: AGHT+IG0d6Lfpejt7NfMU6xe9pBcN3H8fy9mUrC3fQLtKdfK6/00nvRhCq07e5EUgUuYxzvHNm9d5A==
+X-Received: by 2002:a05:6512:3d29:b0:536:a5ee:ac01 with SMTP id 2adb3069b0e04-5387048ab2bmr4224364e87.4.1727360535433;
+        Thu, 26 Sep 2024 07:22:15 -0700 (PDT)
+Received: from [127.0.1.1] (mm-20-1-84-93.mgts.dynamic.pppoe.byfly.by. [93.84.1.20])
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-537a864db1bsm815803e87.267.2024.09.26.07.22.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 07:22:15 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v5 00/12] This is continued work on Samsung S9(SM-9600)
+ starqltechn
+Date: Thu, 26 Sep 2024 17:22:00 +0300
+Message-Id: <20240926-starqltechn_integration_upstream-v5-0-d2084672ff2f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926075646.15592-1-lena.wang@mediatek.com>
- <CANn89iKt-0LCJaJS8udObGOKz530seK67ieUgvmxr5woos+hyQ@mail.gmail.com> <28c0330f1d1827fb61eee26a697cc7cf4735fb15.camel@mediatek.com>
-In-Reply-To: <28c0330f1d1827fb61eee26a697cc7cf4735fb15.camel@mediatek.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 26 Sep 2024 16:21:43 +0200
-Message-ID: <CANn89i+ZGWunObbYkemKE-ZYS3dGqWF0y8MQ8kEn1=fEwbztxw@mail.gmail.com>
-Subject: Re: [PATCH net] tcp: check if skb is true to avoid crash
-To: =?UTF-8?B?TGVuYSBXYW5nICjnjovlqJwp?= <Lena.Wang@mediatek.com>
-Cc: "davem@davemloft.net" <davem@davemloft.net>, "kuba@kernel.org" <kuba@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, 
-	"dsahern@kernel.org" <dsahern@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAhu9WYC/42QzQ6CMBCEX8X0bE1poaAn38MYU8oCTaDothCN4
+ d1d/6I3Pc4k+83sXFkAdBDYZnFlCJMLbvAksuWC2db4BrirSDMpZCp0kvMQDZ66CLb1B+cjNGg
+ i3RzGY4gIpuelLXSRiVLWoBhhShOAl2i8bQnkx64j84hQu/Mjd7cn3boQB7w8akzq7r4Ti9+Jk
+ +KCg6q11lIkubHbpjeuW9mhZ3f4lH6A60T9AUwJKCsJdZXZrMjzb+D8rI9wGmmt+Pphnm9UTWm
+ ZSwEAAA==
+To: cros-qcom-dts-watchers@chromium.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727360533; l=3712;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=/itqqrI17esUdju+hdyYejJ3mMNbnZlGU5JDumt//wg=;
+ b=faDb7sJYIbKeCOi8tbo6yKKE2MzD8fBi4Pix9ol5kw6+SVYGvMqIBYcFpPPtYA3cwfZ2OCvoP
+ QSfpFPwC4hzCdsci4wrf+VWplSUIV3LfyXrIEK1lwM8Y1EEgNwLqC1y
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-On Thu, Sep 26, 2024 at 4:05=E2=80=AFPM Lena Wang (=E7=8E=8B=E5=A8=9C) <Len=
-a.Wang@mediatek.com> wrote:
->
-> On Thu, 2024-09-26 at 11:07 +0200, Eric Dumazet wrote:
-> >
-> > External email : Please do not click links or open attachments until
-> > you have verified the sender or the content.
-> >  On Thu, Sep 26, 2024 at 9:55=E2=80=AFAM Lena Wang <lena.wang@mediatek.=
-com>
-> > wrote:
-> > >
-> > > A kernel NULL pointer dereference reported.
-> > > Backtrace:
-> > > vmlinux tcp_can_coalesce_send_queue_head(sk=3D0xFFFFFF80316D9400,
-> > len=3D755)
-> > > + 28 </alps/OfficialRelease/Of/alps/kernel-
-> > 6.6/net/ipv4/tcp_output.c:2315>
-> > > vmlinux  tcp_mtu_probe(sk=3D0xFFFFFF80316D9400) + 3196
-> > > </alps/OfficialRelease/Of/alps/kernel-
-> > 6.6/net/ipv4/tcp_output.c:2452>
-> > > vmlinux  tcp_write_xmit(sk=3D0xFFFFFF80316D9400, mss_now=3D128,
-> > > nonagle=3D-2145862684, push_one=3D0, gfp=3D2080) + 3296
-> > > </alps/OfficialRelease/Of/alps/kernel-
-> > 6.6/net/ipv4/tcp_output.c:2689>
-> > > vmlinux  tcp_tsq_write() + 172
-> > > </alps/OfficialRelease/Of/alps/kernel-
-> > 6.6/net/ipv4/tcp_output.c:1033>
-> > > vmlinux  tcp_tsq_handler() + 104
-> > > </alps/OfficialRelease/Of/alps/kernel-
-> > 6.6/net/ipv4/tcp_output.c:1042>
-> > > vmlinux  tcp_tasklet_func() + 208
-> > >
-> > > When there is no pending skb in sk->sk_write_queue, tcp_send_head
-> > > returns NULL. Directly dereference of skb->len will result crash.
-> > > So it is necessary to evaluate the skb to be true here.
-> > >
-> > > Fixes: 808cf9e38cd7 ("tcp: Honor the eor bit in tcp_mtu_probe")
-> > > Signed-off-by: Lena Wang <lena.wang@mediatek.com>
-> > > ---
-> >
-> > I am not sure why tcp_send_head() can return NULL.
-> >
-> > Before tcp_can_coalesce_send_queue_head() is called, we have this
-> > code :
-> >
-> > size_needed =3D probe_size + (tp->reordering + 1) * tp->mss_cache;
-> >
-> > /* Have enough data in the send queue to probe? */
-> > if (tp->write_seq - tp->snd_nxt < size_needed)
-> >     return -1;
-> >
-> >
-> >
-> > Do you have a repro ?
-> Hi Eric,
-> It just happens once in monkey test. I can't reproduce it.
->
-> from the dump log, it can see these values:
-> (gdb) p tp->reordering
-> $16 =3D 4
-> (gdb) p tp->mss_cache
-> $17 =3D 128
-> probe_size =3D 755
-> size_needed =3D 755 + (4+1)*128 =3D 1395
->
-> (gdb) p tp->write_seq
-> $18 =3D 1571343838
-> (gdb) p tp->snd_nxt
-> $19 =3D 1571336917
-> tp->write_seq - tp->snd_nxt =3D 1571343838 - 1571336917 =3D 6921 > 1395
+Contains starqltechn device tree changes.
+Add support for new features:
+- sound (headphones and mics only)
+- gpu
+- panel
+- buttons
+- MAX77705 MFD:
+  - charger
+  - fuelgauge
+  - haptic
+  - led
 
-OK thanks.
+Binding Dependencies:
+- s2dos05: https://lore.kernel.org/r/20240617-starqltechn_integration_upstream-v5-0-ea1109029ba5@gmail.com
+- max77705: https://lore.kernel.org/r/20240617-starqltechn_integration_upstream-v5-0-e0033f141d17@gmail.com
+- s6e3ha8 panel: https://lore.kernel.org/r/20240926-starqltechn_integration_upstream-v5-0-1cb0e43e623f@gmail.com
 
-Next question is : with 6921 bytes in the write queue, how
-tcp_send_head could possibly be NULL ?
+Runtime Dependencies:
+- gcc845 gp clock: https://lore.kernel.org/r/20240617-starqltechn_integration_upstream-v5-0-761795ea5084@gmail.com
 
-This would hint at a more serious bug breaking a fundamental invariant.
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v5:
+- Split patchset per subsystem
+- Add links to subsystem patchsets in description
+- Link to v4: https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com
+
+Changes in v4:
+- Rewrite max77705, max77705_charger, max77705_fuel_gauge from scratch
+- Reorder patches:
+  - squash max77705 subdevice bindings in core file because
+    no resources there
+  - split device tree changes
+- Use _ as space for filenames in power/supply like the majority
+- Replace gcc-845 freq_tbl frequencies patch with new approach,
+  based on automatic m/n/pre_div value generation
+- Link to v3: https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com
+
+Changes in version 3:
+- disable crypto patch removed(disabled on distro level)
+- dts framebuffer node along with related patches removed,
+because panel driver added
+- fix 'make O=.output_arm64 CHECK_DTBS=y qcom/sdm845-samsung-starqltechn.dtb'
+errors, but it still complains on 'monitored-battery' and
+'power-supplies' though I have 'power-supply.yaml' link in charger
+and fuel gauge bindings.
+
+---
+Dzmitry Sankouski (12):
+      arm64: dts: qcom: sdm845: enable gmu
+      arm64: dts: qcom: starqltechn: remove wifi
+      arm64: dts: qcom: starqltechn: fix usb regulator mistake
+      arm64: dts: qcom: starqltechn: refactor node order
+      arm64: dts: qcom: starqltechn: remove excess reserved gpios
+      arm64: dts: qcom: starqltechn: add gpio keys
+      arm64: dts: qcom: starqltechn: add max77705 PMIC
+      arm64: dts: qcom: starqltechn: add display PMIC
+      arm64: dts: qcom: starqltechn: add touchscreen support
+      arm64: dts: qcom: starqltechn: add initial sound support
+      arm64: dts: qcom: starqltechn: add graphics support
+      arm64: dts: qcom: starqltechn: add modem support
+
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi                   |   4 -
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts                   |   4 -
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts                      |   4 -
+ arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi          |   4 -
+ arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts      | 573 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts            |   4 -
+ arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi        |   4 -
+ arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi |   4 -
+ arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts           |   4 -
+ arch/arm64/boot/dts/qcom/sdm845.dtsi                         |   2 -
+ arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts         |   4 -
+ 11 files changed, 564 insertions(+), 47 deletions(-)
+---
+base-commit: 92fc9636d1471b7f68bfee70c776f7f77e747b97
+change-id: 20240617-starqltechn_integration_upstream-bc86850b2fe3
+
+Best regards,
+-- 
+Dzmitry Sankouski <dsankouski@gmail.com>
+
 
