@@ -1,141 +1,135 @@
-Return-Path: <linux-kernel+bounces-340095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D884986E81
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:06:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E17986E83
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DACBC283035
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:06:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51E551C23C2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB67D13CABC;
-	Thu, 26 Sep 2024 08:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7442145B10;
+	Thu, 26 Sep 2024 08:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rkXycBby"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A8bChklp"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4D71C6A1
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6604A1C6A1
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727337990; cv=none; b=G+szmBZoMEOuoYRaARKW7neWOXR4MrURcN3Jy6FUE8R9OlxzZdoAIAmvHAOTG7qVGAZbBJN1j1K52I4EpEmb3ZLMtKzf44/kjUWLDn2qBDjdqPdBcwR5wR10LE+DknXQ1BiyuPgHfO4PIP8XSPaWO30MtXIvKu5EhUlwgL9z+bA=
+	t=1727338035; cv=none; b=tsSFPAer8qbYdF/8MrkaC40vv14YMWKIXBw6ZGsZkhOopYMrZbI1l6yOhawkrB+u+02mu70+/tyUb3gocEgtaz1Wn+d3kkisZVhAgBGZRlMK4Q+hmdRbJ3ERK8s8EKn9KVyXjolbSR1tG8vuJb3ic7YZnFk7fwsxczCH8eTkYfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727337990; c=relaxed/simple;
-	bh=biWe9SCPMWB4EBx4lKE9mL17X69k/v0fgz92fvOkNfg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OzJCH5MII7psm/R5wWwGIOoh1xD6LF0/kSKUN9SdSDxJzt3tibZ5TknnRonMVjoYPo828pDxJRyaZyDv5tNZ8wDfSJZQVB8hsU8S3Pa/Itk62OQ0MnCuW6Jaxz1/RS6c8qPI0VfAU90kDuDyhQxPBYAlzfw29QqviqwGGLHX6wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rkXycBby; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb2191107so5549695e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 01:06:28 -0700 (PDT)
+	s=arc-20240116; t=1727338035; c=relaxed/simple;
+	bh=GA3cZN8ozjGkz+owpD+9KyfzOLIloLO2AfCfV5QOsw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NcPLSHcEokB/S5A0SgBUFIUGf9mHQRFLj3uQmqe/Aq25NH3NgqM3eN54zqjrav0CAOg1hlfWbR/fnxRi4UVRsTGfnIjvOX06iFOPWhrlp4+8kUKwlO9eTDQza0/K69S08+iTnyOfU7620EQ/GkceBCPw6craFWUlezxFYHFuBc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A8bChklp; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f77fe7ccc4so7704811fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 01:07:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727337987; x=1727942787; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=biWe9SCPMWB4EBx4lKE9mL17X69k/v0fgz92fvOkNfg=;
-        b=rkXycBbyJl1F4bqOWNsovXohYyj5qf1rUnfMPl9GwZeZxtnsajHFg4ehjvyXwhjyy+
-         feCaJVKI0BXKPUn7ZYtkpVb7y881taFOIuF/DjaqDFT0zP+1UF027FLZh/lVsrUV9VQG
-         kmME17WNno7fftv+tocZomb+QPgP0eR0Rf+MS6wlMA7SD2CgXuiwPL2Wh1shJXjCAM2Y
-         ZovWlgEHneADNNogtpJ71MAflysfYjrYnWLij5edAZwZN09iWrap7bWsMD/MEl6Be3wU
-         Y1l/gaTM03+IzlBwCrNVaOU+uvGyEpUvUE45OgPSG4mK5tyl/la4ccvfS4uFyum+3MAt
-         Kmbg==
+        d=linaro.org; s=google; t=1727338031; x=1727942831; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qcdZF6UL2UXjFioy7LxFleeVQgy9EQrE3cGYWKNYiKA=;
+        b=A8bChklpdc1LtBwJxsFEEYREendj1H2e+CHiYYUHOY1wk1jyQEAql0cTUVey5kuwD9
+         hRhoGMkJsjEyF5wtiB3rAZlqIikQTKWw4RLvKFi2uGofP55F/Nrf91rjZW0QM5xntSfH
+         9sTE9Z3tFD1JL0aGnCLF/KYOfP7HTvt2wkx0d8UdpRASRII0PnyggOJ31OrXX94jRvV1
+         AWgqi2DPq69Ojjb8EYPEY1Vn+ejISu1moBiwoW/oGqN63I9BrWn+XIqkwSsEv1y3CG0M
+         JnZJRwNvgP79iOy2gb2uL+BxKy4n4c/KUdGw4abiWRoXQO5V2czA+CT+6TlNlwco/qCV
+         zXVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727337987; x=1727942787;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=biWe9SCPMWB4EBx4lKE9mL17X69k/v0fgz92fvOkNfg=;
-        b=L3aZcrpzRj/9nL1bb5BjZtWQPwQrL8Gy9NAjD1+IdLM/BuCpvrcD6gHK2uZYTJFcBm
-         nHEZtRSbJXfec+RjjW2rDSdGFzossEzuVZVO20Neg89oJpZmQHuf/93iPMwrDxV9RiEN
-         O9L9hGmLBsLiUzn6ZscUtMg2RwnxzbPYKy83wQMvhVpfDwY7lx5b4scxOksa0LhV1ipk
-         Pnt6OILM9GRImTa1UWwXZeHswD86Iqh285tBxn+/sDDdonjHZYM6mq7SMPVb96WlB3u7
-         SOj2OOxER+N/GVRykrlclxNagxbvWpvdARTMcPCRQLL718TOpCC4bXci2s8IWpW+lfkI
-         Q42Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWypnKHO4y03vBNYn7UNIP9XdR+U7axgMT2XLT/0oLk3n9RMVSOfiPNrtW9E6XZ8jKdNHEuMeTkK82DeSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGEam+V+zdFe2JjC/sh/oQ05hMAgyFyOFXbWy5JPJYij9h8B2v
-	hyV6Dfk6aC4Yrlv8JS9AIPEjuS5x97pgAzCFEyZ0PgvYjuuByZJ5zW8B5M8w74Sqsj1xncs2hP8
-	pRBVuN5aNz7c4LKsVY5mxhiOuQNA5ak629Qk/
-X-Google-Smtp-Source: AGHT+IGQf4MlOYVIyq+fv+nPRs9u8K5eq9suqxgAzZolV8xGTd0n1ASvxWSTxNXpoLbpcjjNRQOQzO0np9ED1wdtB5I=
-X-Received: by 2002:a05:600c:468f:b0:426:5e91:3920 with SMTP id
- 5b1f17b1804b1-42e96248ad6mr39208825e9.29.1727337986691; Thu, 26 Sep 2024
- 01:06:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727338031; x=1727942831;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qcdZF6UL2UXjFioy7LxFleeVQgy9EQrE3cGYWKNYiKA=;
+        b=LMJZLT00EVKgxut1/rLSuAm3pKnrE11hrpFtcg/gD1bz94aU2LYaUR5sSGenfYEPFk
+         sdCjWvIl8vxXy+oyTnXNtmZqCGdYTxyDCxZfJtRgWuB5Mn2MoelYuZTSiuPzsuAPibu0
+         rf96cT/+2OJqfob6nnT3ZjY0e435N+x83GPEOJQJaF22ijlQA7doD3D6y5Zi/3clMrqU
+         2wtkHx1H4fz8TE/If/QqJ65Z0y2CDm/IUr+WY87QfH/d8weUvr6WG72GoO61T+hjO+hV
+         4LrQ/Qet2j0quAxLqTcK92vdmu262S/n3hDJunGGADvkzZBFbCMHENn3seonV2gRjS3E
+         BNNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8r0A3gzHhy1WW07rcgdlswkeC1sc9DL3/1rO+/hsix4ed/FWglbgiZcldCI2WyIzKisQWopu86TEaPDE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLrCJzlYtUKXvyio9fL4Stwy010ccO5S0YC4HtBgJaSMpUlvea
+	o4dLUMu4XlGW++QeWocNWIyUU+Lml3k/5QZHH0ZIZxnuxMHWmRKFM8TeIN+DRRE=
+X-Google-Smtp-Source: AGHT+IGxp5j7kEG4FZr2p9qw6+rAb8iblxhC96ppPWbog+IP2oHA+mgvxre4KxK20PKOjaCpfzsqxQ==
+X-Received: by 2002:a05:651c:19a9:b0:2f7:603c:ef99 with SMTP id 38308e7fff4ca-2f915ff8578mr38803891fa.16.1727338031383;
+        Thu, 26 Sep 2024 01:07:11 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d288e1d5sm7511261fa.90.2024.09.26.01.07.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 01:07:10 -0700 (PDT)
+Date: Thu, 26 Sep 2024 11:07:08 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Hermes Wu <Hermes.Wu@ite.com.tw>
+Cc: Kenneth Hung <Kenneth.hung@ite.com.tw>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Allen Chen <allen.chen@ite.com.tw>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 05/11] drm/bridge: it6505: increase supports of HDCP
+ repeater ksv devices
+Message-ID: <xyi4czye2dwqmh6iaschacduwxm52oaipbt5ulvlmalamkzwbc@6gt5endjo6gl>
+References: <20240926075018.22328-1-Hermes.Wu@ite.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924184401.76043-1-cmllamas@google.com> <20240924184401.76043-3-cmllamas@google.com>
- <CAH5fLghapZJ4PbbkC8V5A6Zay-_sgTzwVpwqk6RWWUNKKyJC_Q@mail.gmail.com>
- <ZvRM6RHstUiTSsk4@google.com> <CAH5fLggK3qZCXezUPg-xodUqeWRsVwZw=ywenvLAtfVRD3AgHw@mail.gmail.com>
- <ZvRRJiRe7zwyPeY7@google.com>
-In-Reply-To: <ZvRRJiRe7zwyPeY7@google.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 26 Sep 2024 10:06:14 +0200
-Message-ID: <CAH5fLgiqgWy9BVpQ8dE6hMNvDopEMVT-4w3DffXONDo3t6NqEw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] binder: fix OOB in binder_add_freeze_work()
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Yu-Ting Tseng <yutingtseng@google.com>, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926075018.22328-1-Hermes.Wu@ite.com.tw>
 
-On Wed, Sep 25, 2024 at 8:06=E2=80=AFPM Carlos Llamas <cmllamas@google.com>=
- wrote:
->
-> On Wed, Sep 25, 2024 at 07:52:37PM +0200, Alice Ryhl wrote:
-> > > > I reviewed some other code paths to verify whether there are other
-> > > > problems with processes dying concurrently with operations on freez=
-e
-> > > > notifications. I didn't notice any other memory safety issues, but =
-I
-> > >
-> > > Yeah most other paths are protected with binder_procs_lock mutex.
-> > >
-> > > > noticed that binder_request_freeze_notification returns EINVAL if y=
-ou
-> > > > try to use it with a node from a dead process. That seems problemat=
-ic,
-> > > > as this means that there's no way to invoke that command without
-> > > > risking an EINVAL error if the remote process dies. We should not
-> > > > return EINVAL errors on correct usage of the driver.
-> > >
-> > > Agreed, this should probably be -ESRCH or something. I'll add it to v=
-2,
-> > > thanks for the suggestion.
-> >
-> > Well, maybe? I think it's best to not return errnos from these
-> > commands at all, as they obscure how many commands were processed.
->
-> This is problematic, particularly when it's a multi-command buffer.
-> Userspace doesn't really know which one failed and if any of them
-> succeeded. Agreed.
->
-> >
-> > Since the node still exists even if the process dies, perhaps we can
-> > just let you create the freeze notification even if it's dead? We can
-> > make it end up in the same state as if you request a freeze
-> > notification and the process then dies afterwards.
->
-> It's a dead node, there is no process associated with it. It would be
-> incorrect to setup the notification as it doesn't have a frozen status
-> anymore. We can't determine the ref->node->proc->is_frozen?
->
-> We could silently fail and skip the notification, but I don't know if
-> userspace will attempt to release it later... and fail with EINVAL.
+On Thu, Sep 26, 2024 at 03:50:14PM GMT, Hermes Wu wrote:
+> From: Hermes Wu <Hermes.wu@ite.com.tw>
+> 
+> A HDCP source shall support max downstream device to 127.
+> 
+> Change definition of MAX_HDCP_DOWN_STREAM_COUNT to 127
 
-I mean, userspace *has* to be able to deal with the case where the
-process dies *right after* the freeze notification is registered. If
-we make the behavior where it's already dead be the same as that case,
-then we're not giving userspace any new things it needs to care about.
+This results in struct it6505 growth by ~0.5 KiB. Please mention it in
+the commit message.
 
-Alice
+Is it really required to have sha1_input in the constantly allocated
+structure? I think it's a temporary data, which isn't necessary after
+processing.
+
+> 
+> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
+> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
+> ---
+>  drivers/gpu/drm/bridge/ite-it6505.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
+> index d1f5220e04a6..5d5ce12cd054 100644
+> --- a/drivers/gpu/drm/bridge/ite-it6505.c
+> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
+> @@ -296,7 +296,7 @@
+>  #define MAX_LANE_COUNT 4
+>  #define MAX_LINK_RATE HBR
+>  #define AUTO_TRAIN_RETRY 3
+> -#define MAX_HDCP_DOWN_STREAM_COUNT 10
+> +#define MAX_HDCP_DOWN_STREAM_COUNT 127
+>  #define MAX_CR_LEVEL 0x03
+>  #define MAX_EQ_LEVEL 0x03
+>  #define AUX_WAIT_TIMEOUT_MS 15
+> -- 
+> 2.34.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
