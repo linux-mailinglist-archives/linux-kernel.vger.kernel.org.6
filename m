@@ -1,95 +1,101 @@
-Return-Path: <linux-kernel+bounces-340458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9719873AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:35:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2819873B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FB631C225F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:35:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E382282410
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1393F9FE;
-	Thu, 26 Sep 2024 12:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62C62595;
+	Thu, 26 Sep 2024 12:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="srSWgb2L"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jmXU9Xu1"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F283B4C66
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA73A611E
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727354120; cv=none; b=VCqMeDts+i6uk/gTFc2uIsSXAGfkuVqR3RfSXCUwmWrW12CVTtRN1iNNrVz5WMoNllv1Fd+XO/IOsWP251T2Lp93qbHoxHcm10iiPjUVJKhYtxjYr0h1CczLZG+nAKfB6wUQfpbDt1AWTUURDiNScT9WTHOLLX0yL7QLh8UpzLI=
+	t=1727354390; cv=none; b=SrMfPbnbD6vsUBJrR3U2TTJmdRnPQ7CIRCs8l+GtO7aKpqAsQv4ml3+5yyBnl+7pTahoZfOIXgyWhxtbEJAkaBpjPj97aqT4jYVXpX5jYHUJ9JN3JbNtgY6U7rvdnoHssIUkPsmFz2+2GHVpOP90K5oQG4RwgnV/4upxO+Q/Me4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727354120; c=relaxed/simple;
-	bh=xqTm2IU401BGZSwAId5NTjaL5szRhRxRZiEZYPgJUQQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To; b=V5CCOplghUDLTKsyFDueA/9F15ioLE34iabyLvspvlcLGzmm/h2GgESh3e2MbKu+e/8jixU9AgpfeIKaayWftyevGv1gUK32vIdJhmuKm0fbOtaHKZ1GPcFYJGlfMR2ahTeOCB3G47gkhjieKlq2Biw/6w7UMXX26MFSt+hG2po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=srSWgb2L; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1727354390; c=relaxed/simple;
+	bh=skLMy7f7c37t0z3nWcLfrDGCEYVCt+S0rBEfQwg9Em0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=akJkBWpW+L+6ZXFhQ5GozL6dq/VHrWbHffkW7O5YlznvRr91tlsjNxMjKrRBKXl6t5nahcPO3CB2Z9GVQGh0u6otpr15nM+7UVMZR/KjgdvOUKCm0lDAGXvlun+/xEkg0xTDx84SKsaMFz2diBioB5w7QQQEEc/NGFn4RFGVz94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jmXU9Xu1; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cb806623eso7902355e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:39:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727354386; x=1727959186; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UQzQys66bp2Ld4WzPHqpjCSslimeJbMa4EBqGsAQRVw=;
+        b=jmXU9Xu1r/c92Y7is6oX9gV7Sk5UzQAGEo799ExfxBFK+bzXJuxhRi5H5h1xEZLtKY
+         14sMsOFdneEYEfNuvZBH5hz99WU2aRbwd79JEVHv+noNmWzOc63cz/smcvNJJptj6qBP
+         42cZ3SSON26syfi3xrSIzOwWrW4M52GDv1RMXilcRq+s3IVbUNcoTOgqPp/Ii08OYTKR
+         zR1k598xESUjmtE2N0nXCFNyZWKcWtHCloYQ2gE+eQuHt386eYkD77NdiWPv8iztuR95
+         D0lPFXZ5DcLs29mso6McY3E6AYzT2C3ntTa5rjo3BhH3jegEYg0lc5OweJdow5gL2+4O
+         rMfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727354386; x=1727959186;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UQzQys66bp2Ld4WzPHqpjCSslimeJbMa4EBqGsAQRVw=;
+        b=ryFbeklcyfBlxcARkHsvTGTSCfgsAa0rp5kTm0Z7UJug2MdZPQ+pWkOcX6YkdGx+3C
+         smSTBPoLdSdej4QY/JJWWFGSOyd6YbNQmCcFRlGCcC+rR3GOkX8pX8UxWis9xbgLpla/
+         vKMtpX1GKa46D44eku6L/Cj0GXzBavlVZCH+dT++9hKlkor1DICshO4f2YwMpwuqMe+I
+         mdCdJj8AB7kN203fbTA3dHEi4VraxJaARKLMzI5KHLV81pOLclUm+PETpde77uI/hW7D
+         W98pQv7jAQHwXdFFVzGqZKC7IehDFhT39zYC7urBz5szGmhyq8hQVOR+UFVGOFsI8wyQ
+         y7+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVxul8EaWRDhxfHwVhy0+3WZqKdnEyF6Q3hwzd4C00TN8KhdtPZccZj4tW3/fR/TQ0Z3PSx9bEUxW2NVa4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8R8QJ9yYteGum28F6jcRlHmgHh5Wo1RY0bmR2TV2ghT74RlBW
+	wkfpIyvWWRek7dwU4jJQce08VVfdA1hpVfeyuYcUWnBXX4+RI5Gk/pVwLZrEuB0=
+X-Google-Smtp-Source: AGHT+IF2ktbSn3Aj00xQyiv3ldfTlz4uwMS6dZVkDgJF576LsJ1mascH418BisllGC9fT21zJh/9dQ==
+X-Received: by 2002:a05:600c:1d17:b0:42c:b309:8d18 with SMTP id 5b1f17b1804b1-42f50d550e3mr31033565e9.19.1727354385700;
+        Thu, 26 Sep 2024 05:39:45 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:4a84:8f2f:8bdb:87])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42e96a0d8eesm47177135e9.30.2024.09.26.05.39.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 05:39:44 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240925-clk-meson8b-spinlock-v1-1-50b7f2d02d7d@baylibre.com>
+References: <20240925-clk-meson8b-spinlock-v1-1-50b7f2d02d7d@baylibre.com>
+Subject: Re: [PATCH] clk: meson: meson8b: remove spinlock
+Message-Id: <172735438430.200072.15149649780547409113.b4-ty@baylibre.com>
+Date: Thu, 26 Sep 2024 14:39:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1727354114;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=6Udtso42v7GuUf6mlt75M6dK/iDKNUeKUeov5Ey7C00=;
-	b=srSWgb2LAyDQnMKdr3ZLmz8RWHUml1H/goD1z8Q+fBIwUBAfp1V3vzY82bjxq4lOm3hxhO
-	rg4aLgs0uPJFBAZezWLM1XKrGN27XevS6DuPblSV1Iv/9ZeEngwhIt7IJq1Ld9I8sYL7c3
-	uUGwdQJtf4bT0/CXydBJt4zO293MP1KLkPI+g0RVnckcW0LvXgDnB9pAS0p/8D/IAHzLT6
-	Bu+/HCD726icWyaHhbg5j5FnIoC2MHDLy7d/iAhMZ8pdQYx+hBKDbW0mOFM2pQLvANEO+S
-	7JZpusPoDJ/EaR5ZiHWb7U1mTHkyVlIT4ANyV8BRD/YdOfbBPnH9xkyIeP6jfA==
-Content-Type: multipart/signed;
- boundary=fb000acc6642996efc1bdf45f79306aa5ed858aba5d29912cb80ee88566d;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Thu, 26 Sep 2024 14:35:05 +0200
-Message-Id: <D4G7XD1WU5GY.D22KFST6MHIT@cknow.org>
-Cc: "Armin Wolf" <W_Armin@gmx.de>, "Guenter Roeck" <linux@roeck-us.net>,
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- <linux-kernel@vger.kernel.org>, "Diederik de Haas" <didi.debian@cknow.org>
-Subject: Error "ee1004 3-0050: probe with driver ee1004 failed with error
- -5" since 6.11
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Arnd Bergmann" <arnd@arndb.de>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
---fb000acc6642996efc1bdf45f79306aa5ed858aba5d29912cb80ee88566d
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Applied to clk-meson (clk-meson-next), thanks!
 
-Hi,
+[1/1] clk: meson: meson8b: remove spinlock
+      https://github.com/BayLibre/clk-meson/commit/e736da1956cf
 
-I updated an amd64 machine to (Debian's) 6.11 kernel and got this error:
-``ee1004 3-0050: probe with driver ee1004 failed with error -5``
+Best regards,
+--
+Jerome
 
-which I didn't get with 6.10.9.
-If needed I could do a git bisect, but maybe you can already directly
-tell with commit would've caused this?
-
-If you need more info, please tell me where to get it as this is a
-(relatively) new system and I actually don't know where the eeprom is.
-
-Cheers,
-  Diederik
-
---fb000acc6642996efc1bdf45f79306aa5ed858aba5d29912cb80ee88566d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZvVU+wAKCRDXblvOeH7b
-bq+SAP9MqGFgIVFhWWdVkGW61p4I9dahmNMHFPG7tJhiNONXdAEAx2Q+GAZRb7Q1
-yEa1cag5ARFAOibeTfXdsvVDX99fKQQ=
-=Lp/S
------END PGP SIGNATURE-----
-
---fb000acc6642996efc1bdf45f79306aa5ed858aba5d29912cb80ee88566d--
 
