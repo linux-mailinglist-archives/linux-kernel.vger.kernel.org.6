@@ -1,150 +1,125 @@
-Return-Path: <linux-kernel+bounces-340024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C19F986D88
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:26:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3F3986D8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8CED1F24D4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:26:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EC0BB24A97
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6717018C900;
-	Thu, 26 Sep 2024 07:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1527A18E37F;
+	Thu, 26 Sep 2024 07:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2HjjNSy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="K8+wIgRu"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFA5185B55;
-	Thu, 26 Sep 2024 07:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5C718E02B;
+	Thu, 26 Sep 2024 07:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727335591; cv=none; b=WEFJGNLbooeTNxwpWg4C5C6ETgQC4paFDzH63ITVAB8kPTYO+mKrlXIcjKBP0Oq94cXp78bugcr3+JSCf/lxpmNsy/EgQylV4xADQPYHsiDwdaVczc7xhzdYAUXGnGr1F47Sbv01nnvP0OCT7FlV7xSF2aqmwxLjq/nPh/j4DXI=
+	t=1727335613; cv=none; b=c4cun1RqYH8N+hdm9xRj9Epf3h7Uchk3syaiohoWyFBAFcLIAfr5X0MABn3ElUW62wAVLu+fxcWK7RIJkr2JQ7vc8DCz0zDq2ih01liRnIOnV2CXpEkkhWy11eBR5cVeP23/p0nEpETeE/dVZEfqZDJIojP3trjjsanHvuO4tHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727335591; c=relaxed/simple;
-	bh=ePa5u/BcnZ/dATlftydtRiE5hN7gmuT0GTtjNoDiKEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qAFyWVqFSYWmAOn0fzviFFeu5sQK1UwAGFs7IqiX12LqPPaSOK1DV5RQFYqm2UvdheDwWQOaxy5JjO/ceaPfDeWPSEsi1nw1fxfHQBH2nPF1qKj6/2y6a5t+oEouZiZz0GVUSJXhnTH7ahgaNTb9or8fiAdu2GrhdqHxXGXl5kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2HjjNSy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD8D4C4CEC5;
-	Thu, 26 Sep 2024 07:26:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727335590;
-	bh=ePa5u/BcnZ/dATlftydtRiE5hN7gmuT0GTtjNoDiKEg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M2HjjNSyNaWEZ1yenHHEyui1RPMh8RJVBscCwUg+TXnkGbJouUPm2CIehBM3+Co6X
-	 VedGYDOORpYZqCXP1lA+ySO90Fwuu1ocnuaf/2z42w+C0bfF8oHdF9o/oTkHsVlwdt
-	 Bf9nj/u01qIShO0iWrBh8GkbROFRYw53rMgHLuBCyUdr+dM6Ch0H1hEOVk1h39MPXE
-	 7xLZP3vgb0rUT9712TiCXty9H7+EMJJ4XbeTqBu35iZX4CcMVSvlhmQeFt1qvfMBRR
-	 ugPSGU54cl34WqVGyPrygkOEOE89m5ePQQ98JoI1Rvhy/0rPTMoiMuolGmKpad2Y37
-	 nywPery26f36Q==
-Date: Thu, 26 Sep 2024 09:26:27 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
-	helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch, robdclark@gmail.com, 
-	guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, deborah.brouwer@collabora.com, 
-	dmitry.baryshkov@linaro.org, rodrigo.vivi@intel.com, linux-mediatek@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] docs/gpu: ci: update flake tests requirements
-Message-ID: <20240926-athletic-gregarious-markhor-cc78ac@houat>
-References: <20240926070653.1773597-1-vignesh.raman@collabora.com>
+	s=arc-20240116; t=1727335613; c=relaxed/simple;
+	bh=fva6FxQLoAXNisGseAdtmn9L1KpB0FiPdwPR6G5fVUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hO0MwLli99U9Lim+I11ecbxpVrDjkPGUq6koZ3X3hQH36NWhsOq56EYUTli3spNzk2QiWzOregrjMZN93vziBKe1qMwF2Xt3QJq8pFbhejEq965KyJeScnP5VWuqSQiS4puqEt+0Qo+wYUwa7y0NCUtbsUkJ6f5YHeU9ha/XHG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=K8+wIgRu; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=fkKQn+szJITzOoWZafm1yExrFg3A8MegVG+DAbo/JSQ=; b=K8+wIgRunqfQ0d4l9TZike/Cmi
+	QXEaehuKUWpbJgl0dPZFVnPZVM3kfD/nMCxhvqk2VOmpKGO538Y5Q9L8fglnMHRhY2Z4kT3KsUxfM
+	fyqEmSshnLRaaFvcuy130yxIVGAJNhha4pHfwHMQ+Z05Zy75Ms1NF1AQXqo2KJz3hnBYIJSdv9JOv
+	f889fnFgREfwSbvtn0kXsPA7UloSzCPkQX7fCsw/PHepN49sCO24zKj650F8KZtzf8qniqnaLFlD8
+	Tag1U7yVT/mp8vc9rG3xc72UE9mne2UOGQUWSiqLdUiBvjQf2aeZCTwbEtuP2oJNohtJJpMFPoH8X
+	eq+qzFRw==;
+Date: Thu, 26 Sep 2024 09:26:43 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, tony@atomide.com, Sebastian
+ Reichel <sre@kernel.org>, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, Conor Dooley
+ <conor+dt@kernel.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: mfd: twl: add charger node also for
+ TWL603x
+Message-ID: <20240926092643.7b8a452d@akair>
+In-Reply-To: <20240921005125.GA165161-robh@kernel.org>
+References: <20240918084132.928295-1-andreas@kemnade.info>
+	<20240918084132.928295-3-andreas@kemnade.info>
+	<c38c9ada-e054-4a14-9265-25065048ae54@kernel.org>
+	<20240921005125.GA165161-robh@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="xmj2ly46kzbkkxma"
-Content-Disposition: inline
-In-Reply-To: <20240926070653.1773597-1-vignesh.raman@collabora.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+Am Fri, 20 Sep 2024 19:51:25 -0500
+schrieb Rob Herring <robh@kernel.org>:
 
---xmj2ly46kzbkkxma
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Wed, Sep 18, 2024 at 12:47:22PM +0200, Krzysztof Kozlowski wrote:
+> > On 18/09/2024 10:41, Andreas Kemnade wrote:  
+> > > Also the TWL603X devices have a charger, so allow to specify it
+> > > here.
+> > > 
+> > > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > > ---
+> > >  .../devicetree/bindings/mfd/ti,twl.yaml        | 18
+> > > ++++++++++++++++++ 1 file changed, 18 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> > > b/Documentation/devicetree/bindings/mfd/ti,twl.yaml index
+> > > e94b0fd7af0f8..4064a228cb0fc 100644 ---
+> > > a/Documentation/devicetree/bindings/mfd/ti,twl.yaml +++
+> > > b/Documentation/devicetree/bindings/mfd/ti,twl.yaml @@ -105,6
+> > > +105,11 @@ allOf: regulator-initial-mode: false
+> > >  
+> > >        properties:
+> > > +        bci:  
+> > 
+> > charger
+> >   
+> > > +          type: object  
+> > 
+> > additionalProperties: true
+> > 
+Thinking again. Why additionalProperties? unevaluatedProperties
+looks more reasonable for me. There are additional properties but
+they should be evaluated by another schema.
 
-On Thu, Sep 26, 2024 at 12:36:49PM GMT, Vignesh Raman wrote:
-> Update the documentation to require linking to a relevant GitLab
-> issue for each new flake entry instead of an email report. Added
-> specific GitLab issue URLs for i915, xe and other drivers.
->=20
-> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
-> ---
->=20
-> v2:
-> - Add gitlab issue link for msm driver.
->=20
-> ---
->  Documentation/gpu/automated_testing.rst | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
->=20
-> diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/=
-automated_testing.rst
-> index 2d5a28866afe..f918fe56f2b0 100644
-> --- a/Documentation/gpu/automated_testing.rst
-> +++ b/Documentation/gpu/automated_testing.rst
-> @@ -67,20 +67,26 @@ Lists the tests that for a given driver on a specific=
- hardware revision are
->  known to behave unreliably. These tests won't cause a job to fail regard=
-less of
->  the result. They will still be run.
-> =20
-> -Each new flake entry must be associated with a link to the email reporti=
-ng the
-> -bug to the author of the affected driver, the board name or Device Tree =
-name of
-> -the board, the first kernel version affected, the IGT version used for t=
-ests,
-> -and an approximation of the failure rate.
-> +Each new flake entry must include a link to the relevant GitLab issue, t=
-he board
-> +name or Device Tree name, the first kernel version affected, the IGT ver=
-sion used
-> +for tests and an approximation of the failure rate.
-> =20
->  They should be provided under the following format::
-> =20
-> -  # Bug Report: $LORE_OR_PATCHWORK_URL
-> +  # Bug Report: $GITLAB_ISSUE
->    # Board Name: broken-board.dtb
->    # Linux Version: 6.6-rc1
->    # IGT Version: 1.28-gd2af13d9f
->    # Failure Rate: 100
->    flaky-test
-> =20
-> +The GitLab issue must include the logs and the pipeline link. Use the ap=
-propriate
-> +link below to create an issue.
-> +https://gitlab.freedesktop.org/drm/i915/kernel/-/issues for i915 driver
-> +https://gitlab.freedesktop.org/drm/xe/kernel/-/issues for xe driver
-> +https://gitlab.freedesktop.org/drm/msm/-/issues for msm driver
-> +https://gitlab.freedesktop.org/drm/misc/kernel/-/issues for other drivers
-> +
+> > Each node must end with additionalProperties or unevaluated. I
+> > think you never tested it, because dtschema reports this.  
+> 
+> This is under an if/then schema is why there's no errors.
+> 
+and then it just accepts anything with compatible twl6032-charger e.g.
+and does not care about anything in patch 2, because it has a different
+compatible.
 
-I can't comment for the others, but drm-misc at least still requires
-reporting issues by mail, so, no, sorry, we can't switch to gitlab only
-for now.
+> This schema probably should have been 3 with a ti,twl-common.yaml
+> schema for the common properties, but I'm not sure it is worth
+> changing now.
+> 
+Or a ti,twl4030.yaml and a ti,twl603X.yaml. 6030 and 6032 have more in
+common than the 4030.
+I would propose that is something for the next more final cleaning
+up/conversion round. First I would like to avoid having drained
+batteries because of no charging, so allow for more automated testing
+and bisecting. 
+I think I will prepare a v2 series on monday.
 
-Maxime
-
---xmj2ly46kzbkkxma
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZvUMowAKCRAnX84Zoj2+
-dmrwAXwJooR80dwdvsWLwVqq5T8Tn9xQ8jXG5egqf3JJs5K3KqLQK01ARZoz96es
-RPNQmi8BgI1h2/qRTFQd2zqn7QgKcGKOtkv4Yc4dQqncavbg/HkcoYrbjgDyP6za
-D5kG4mEAOg==
-=hh9h
------END PGP SIGNATURE-----
-
---xmj2ly46kzbkkxma--
+Regards,
+Andreas
 
