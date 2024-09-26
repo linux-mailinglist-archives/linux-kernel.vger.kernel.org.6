@@ -1,167 +1,105 @@
-Return-Path: <linux-kernel+bounces-340927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B721987920
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:32:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58FA5987923
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B035E1C219B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17957285A5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426E6170A3E;
-	Thu, 26 Sep 2024 18:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D82C1714C9;
+	Thu, 26 Sep 2024 18:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0GffIClt"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="KuodYhZL"
+Received: from msa.smtpout.orange.fr (smtp-73.smtpout.orange.fr [80.12.242.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EB91D5AD0;
-	Thu, 26 Sep 2024 18:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA4C1534E6;
+	Thu, 26 Sep 2024 18:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727375540; cv=none; b=YcoorvJ3+hFhypXHWmrybNkKauu/vArDa3ABSOeEaG07TTFDVIYC1K9llCowVJD4lsxtcSXRe3Mv94UJPsQKY4prRztyecvsC2aF9jPDpxQhdO59y2VWTZb9ikPkj43Q/+cCB/DNvh1pFMC4vr4YsAnespDbzA948eKFz1w0Da0=
+	t=1727375648; cv=none; b=OYIUEvV+hFqgtrV0qLxnnLPJvUUlI1Vn0RiSazqQlf9ORajuDmMZDnUQZTuEiJ1LAWx9XzfeJ/C+0b4zjtI+38KplxJQg+MaojDneEtMEUrkr59zqPL2wILiVewafEJzFIT/DgvHKDE7jcgJmMacOTUg87CoOylkY4PumPx4mgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727375540; c=relaxed/simple;
-	bh=D+2u2aVIXi6x+bhRCjpRClGravjiy4BJH2k4iLCbMVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l+OTA9X6frGXgk1lgVLwwp3WjdNg86OXDMucHagXZSOljmtM4EJ3F/cQzI8W//bmBHi3PRt44RCUOUnVjMGLhmA/rCGMtYC6TQIWdsB6b2fqL13n50/83FsmmLLntikeEU66b7O9wrstkaBgYIyzfhGVCs1JRTesXq/QRW7rguc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0GffIClt; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Rlnyig4rL5kmmCvrq8BcNJP6HH7YItNnR5m32oxXtkA=; b=0GffICltFZ/zEwUglhP4DXBSuj
-	0vVCN2Ik8/1NhLytYwwZ673FN+KI0GCM1LMzZVAxUDAqo9eyL1uZDvfcK3s+AJQ0VJC/C0prNY18j
-	jf8976MR7yA2oRt7/AzCvyQqU7boNqAYYztiOyrLRgDIPsw06JkTvOo3GCNRU1cTpLQg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sttHU-008P5w-EH; Thu, 26 Sep 2024 20:32:00 +0200
-Date: Thu, 26 Sep 2024 20:32:00 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 2/3] net: stmmac: Add glue layer for T-HEAD TH1520 SoC
-Message-ID: <a64eb154-30b9-4321-b3ef-2bcb1e861800@lunn.ch>
-References: <20240926-th1520-dwmac-v2-0-f34f28ad1dc9@tenstorrent.com>
- <20240926-th1520-dwmac-v2-2-f34f28ad1dc9@tenstorrent.com>
+	s=arc-20240116; t=1727375648; c=relaxed/simple;
+	bh=3iuHCMpCaY/5WFrJneLSrvAgOGDV6yGyGWwA8luU3GI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NubtrGF1sQM1N3vwrf+EUrg8PRKm/v/eBB2zxceTiMIclKzvruKWMJAZGS0JyrOaOUSTFjisic9d9BdXbD3sGqDjv01w2e4WFwfFbOosCAxgj0tvG7wmfd3r1/5yAWJx7Nwp16j3gCeEZaC1/R3Aj12L0zjgT5Im9CBW1f3Oisk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=KuodYhZL; arc=none smtp.client-ip=80.12.242.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id ttJMsN3PhfghUttJMstZV4; Thu, 26 Sep 2024 20:33:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1727375637;
+	bh=3QlM06zztQktN3NIJ4DxdnB67HniBEmCvi/NMR3NrVA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=KuodYhZLbK4ZwM/vRiKVcRr+eCUZHWcwycWMRPW63AFa5JtMzyAhZ9aOCFOpkvq9A
+	 Z3PCZBnRBd5eLqYNbVvCCcUfSBjq0Y8xjfe6JIUqxl2PJjs8IJOqd2lsBNN2wiNAdN
+	 7KgSUgrYFEhT/8eyy9bkLTQXVUiZP46KifQwWNMtS0KVQyZmoGIwty/mQVVQ7G4OXM
+	 7z/WfWuuj9haGD92O2WG4Rb8uB4/fsMqD2QnTRE6ClNg97AggiRis54/Ty0I8YTKSZ
+	 OoaHlyz5fZ4+86NlJr6hUj0sv6GjNQtsdBGuQPiBOr70cIP6C5ooN0Xz4GxPel+C6E
+	 u5ZKrk24ih9yA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 26 Sep 2024 20:33:57 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Georgi Djakov <djakov@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pm@vger.kernel.org
+Subject: [PATCH] interconnect: Remove a useless kfree_const() usage
+Date: Thu, 26 Sep 2024 20:33:49 +0200
+Message-ID: <06630f9ec3e153d0e7773b8d97a17e7c53e0d606.1727375615.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926-th1520-dwmac-v2-2-f34f28ad1dc9@tenstorrent.com>
+Content-Transfer-Encoding: 8bit
 
-> +static int thead_dwmac_init(struct platform_device *pdev, void *priv)
-> +{
-> +	struct thead_dwmac *dwmac = priv;
-> +	int ret;
-> +
-> +	ret = thead_dwmac_set_phy_if(dwmac->plat);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = thead_dwmac_set_txclk_dir(dwmac->plat);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(dwmac->apb_regmap, GMAC_RXCLK_DELAY_CTRL,
-> +			   GMAC_RXCLK_DELAY_VAL(dwmac->rx_delay));
-> +	if (ret)
-> +		return dev_err_probe(dwmac->dev, ret,
-> +				     "failed to set GMAC RX clock delay\n");
-> +
-> +	ret = regmap_write(dwmac->apb_regmap, GMAC_TXCLK_DELAY_CTRL,
-> +			   GMAC_TXCLK_DELAY_VAL(dwmac->tx_delay));
-> +	if (ret)
-> +		return dev_err_probe(dwmac->dev, ret,
-> +				     "failed to set GMAC TX clock delay\n");
-> +
-> +	thead_dwmac_fix_speed(dwmac, SPEED_1000, 0);
+"path->name" is allocated in of_icc_get_by_index() using kasprintf(), so
+there is no point in using kfree_const() to free it.
 
-Is this needed? I would expect this to be called when the PHY has link
-and you know the link speed. So why set it here?
+Switch to the more standard kfree() to free this.
 
-> +
-> +	return thead_dwmac_enable_clk(dwmac->plat);
-> +}
-> +
-> +static int thead_dwmac_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct stmmac_resources stmmac_res;
-> +	struct plat_stmmacenet_data *plat;
-> +	struct thead_dwmac *dwmac;
-> +	void __iomem *apb;
-> +	u32 delay;
-> +	int ret;
-> +
-> +	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				     "failed to get resources\n");
-> +
-> +	plat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
-> +	if (IS_ERR(plat))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(plat),
-> +				     "dt configuration failed\n");
-> +
-> +	dwmac = devm_kzalloc(&pdev->dev, sizeof(*dwmac), GFP_KERNEL);
-> +	if (!dwmac)
-> +		return -ENOMEM;
-> +
-> +	/* hardware default is 0 for the rx and tx internal clock delay */
-> +	dwmac->rx_delay = 0;
-> +	dwmac->tx_delay = 0;
-> +
-> +	/* rx and tx internal delay properties are optional */
-> +	if (!of_property_read_u32(np, "thead,rx-internal-delay", &delay)) {
-> +		if (delay > GMAC_RXCLK_DELAY_MASK)
-> +			dev_warn(&pdev->dev,
-> +				 "thead,rx-internal-delay (%u) exceeds max (%lu)\n",
-> +				 delay, GMAC_RXCLK_DELAY_MASK);
-> +		else
-> +			dwmac->rx_delay = delay;
-> +	}
-> +
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
 
-So you keep going, with an invalid value? It is better to use
-dev_err() and return -EINVAL. The DT write will then correct their
-error when the device fails to probe.
+This is not a bug fix.
+kfree_const() works fine here, but is useless. It is equivalent to kfree().
 
-If you decide to keep this... I'm not sure these properties are
-needed.
+Before commit 1597d453289b3 ("interconnect: Add of_icc_get_by_index()
+helper function"), using kfree_const() was needed.
 
-> +MODULE_AUTHOR("Jisheng Zhang <jszhang@kernel.org>");
+For the records, this patch is a clean-up effort related to discussions at:
+  - https://lore.kernel.org/all/ZvHurCYlCoi1ZTCX@skv.local/
+  - https://lore.kernel.org/all/20240924050937.697118-1-senozhatsky@chromium.org/
+---
+ drivers/interconnect/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please add a second author, if you have taken over this driver.
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index 7e9b996b47c8..8a993283da82 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -808,7 +808,7 @@ void icc_put(struct icc_path *path)
+ 	mutex_unlock(&icc_bw_lock);
+ 	mutex_unlock(&icc_lock);
+ 
+-	kfree_const(path->name);
++	kfree(path->name);
+ 	kfree(path);
+ }
+ EXPORT_SYMBOL_GPL(icc_put);
+-- 
+2.46.1
 
-       Andrew
 
