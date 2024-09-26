@@ -1,96 +1,145 @@
-Return-Path: <linux-kernel+bounces-340796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEFA49877FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:58:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0E0898780A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E393286C51
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:58:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B1632835E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1313F15B0FA;
-	Thu, 26 Sep 2024 16:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD66315DBD5;
+	Thu, 26 Sep 2024 16:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E18dPxWR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OyPAll4O"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBFC13A24D;
-	Thu, 26 Sep 2024 16:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67831157E61;
+	Thu, 26 Sep 2024 16:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727369932; cv=none; b=DQRJm/gORYzegr9dTlTTrYqleXpUSyKqWprMPkhktwiQ3Vm6byC6y1dXVGSq63homaNXWBgHGZbi2fZzf11LlnLEqXmj+oxBAzSPqbC6JWQxbUJEPhpUe7zZ1+rizY1DqteDgJ9QFgZ3Vj4ILpnoK8PdZuaqwM2l/Lr+hyZW8bw=
+	t=1727369988; cv=none; b=KFZqSsudVxjUOnB/wp+EfxywikuXBeE8mdaTfQHbAfkgrDzUzZbovkJcKcgG+UsQDjRYSQzd5DAD+8Upt2RWhXNr0SD5LQ2aFp9JdFqjxxmVMao4sWuVt6b6pCd4NFOI0+U+OZSNXRV4cY8O5LFcVyzd8Hzx5Qw3h7Fp0oXmy4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727369932; c=relaxed/simple;
-	bh=WjrrpfRlzHwA2/o8EwWOQ0D0+skYwrSDG5khDdTfqZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jgEv2OXyLc16bZzAzRNBPisNNia6LRtFR4KpgrOA9InWtncCUIGCs3h5o2gI9xr2uwEK7h4tE1Z9nh6Q3d4WNgd7Kgq4epOo7p83eUsuha8PzDE2lmtEfuHUG18fZkI3mp14GEcOkrN3+CqLIvQ99X+IxL2KMMryzoPeWk/6550=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E18dPxWR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAD69C4CEC5;
-	Thu, 26 Sep 2024 16:58:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727369932;
-	bh=WjrrpfRlzHwA2/o8EwWOQ0D0+skYwrSDG5khDdTfqZY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E18dPxWRHyXnrNlbCGdintq6DVFxKwlPRuSSkQ21cQBCMokx9Q5C15zNu4EW/Gbs9
-	 uMeFjL0t2AaedwskIr2ePSnwyY6dlIFQ+hN0AP/PAcdte/VR39P8whMeyiMWNSXaKk
-	 seHyBptnC/aI3v9wufuNWFirNh1C08TeYTpn0E3i3KGJhdDBBmm40yICuQIFM5FK7x
-	 5YjZ4q1zvybUl7dKNBKiR73oEgQUsKZH0Fh6UUOX8p/7rIVbOQDUTN5Rc9PiLRicA/
-	 lUF2kxZ5GwHw3d3DYn/rhJUT16p3FOeIs0kZ4LLegGoTr52QX9j984RF8dddoT+vyP
-	 aCLezXLN8aSBw==
-Date: Thu, 26 Sep 2024 17:58:47 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lokesh Vutla <lokeshvutla@ti.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: interrupt-controller: ti,sci-inta: Add
- missing "#interrupt-cells" to example
-Message-ID: <20240926-schilling-dividing-a84b379c601d@spud>
-References: <20240925173432.1906168-1-robh@kernel.org>
+	s=arc-20240116; t=1727369988; c=relaxed/simple;
+	bh=FvyFBt+Vd5UF2A+sqhYijCe2ynDIwnVNWV+evOwSXP0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B1SiIdFW46NHrhcKA1/acXKyGIfdRGzUO6oJuUKaO7IE995Z9i8dJ/BGNLPEXukuznYmuKMF8u2++mxYIMAZf1zO4VUmYKPWbE0C+E9tQSWDzm1kWYne+2qbSMhCE2v2YiytYXjJQE03FGKxmPteJxz7JnSgnr0CgGvlulVFyuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OyPAll4O; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=vZZTa11CAK73ciRtK/MoLNusDFg6dIj6Gmywiet9pEk=; b=OyPAll4OChxKP8zrcRtGRnwDsS
+	zgKDZwCOCsLmEc3+M7QxVMRw982AGTIfUzIiE0r3n23a11U3UDZEMxLYNM618gxtGhCmRWJP9IslZ
+	9+fiZSZkbwBnKX2dlUHKkc3YWMFduEcnt37crCl9ejx+ykHfIKIsY2xu7mT6c09KLkFB6Nj2shRI/
+	b9o0cncTZMvy1eY9nrSfrqswutAzEmxTAPzp6LD6L9+WM7TNgOssSkIjNUWpwRnM5fRfscLCL093N
+	0O2bR8GyaCgxQdhUQxbDRrz9hy5l7wu9KZI/IeAiNOYxC27i+h5n/x1QgIcty/TPcFVrW1NPOWxWe
+	lyN231og==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1strpz-000000078sX-1WvG;
+	Thu, 26 Sep 2024 16:59:32 +0000
+Message-ID: <fadc1ea2-fb43-41e2-af8c-8a93cf9e7865@infradead.org>
+Date: Thu, 26 Sep 2024 09:59:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TwqPqcXiLo7Hkphr"
-Content-Disposition: inline
-In-Reply-To: <20240925173432.1906168-1-robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 00/11] fs: multigrain timestamp redux
+To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Jonathan Corbet <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+ Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Chuck Lever <chuck.lever@oracle.com>,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org
+References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi Jeff,
+
+On 9/14/24 10:07 AM, Jeff Layton wrote:
+> This is a fairly small update to the v7 set. It seems to pass all of my
+> testing. Again, most of the changes are in the first two patches, but
+> there are some differences in the patch that adds percpu counters as
+> well.
+> 
+> Since the report of a performance regression came just before the merge
+> window, it looks like we're going to have to wait for yet another
+> release, so consider this version v6.13 material.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+
+> ---
+> Jeff Layton (11):
+>       timekeeping: move multigrain timestamp floor handling into timekeeper
+>       fs: add infrastructure for multigrain timestamps
+>       fs: have setattr_copy handle multigrain timestamps appropriately
+>       fs: handle delegated timestamps in setattr_copy_mgtime
+>       fs: tracepoints around multigrain timestamp events
+>       fs: add percpu counters for significant multigrain timestamp events
+>       Documentation: add a new file documenting multigrain timestamps
+>       xfs: switch to multigrain timestamps
+>       ext4: switch to multigrain timestamps
+>       btrfs: convert to multigrain timestamps
+>       tmpfs: add support for multigrain timestamps
+> 
+>  Documentation/filesystems/index.rst         |   1 +
+>  Documentation/filesystems/multigrain-ts.rst | 121 ++++++++++++
+>  fs/attr.c                                   |  60 +++++-
+>  fs/btrfs/file.c                             |  25 +--
+>  fs/btrfs/super.c                            |   3 +-
+>  fs/ext4/super.c                             |   2 +-
+>  fs/inode.c                                  | 278 +++++++++++++++++++++++++---
+>  fs/stat.c                                   |  42 ++++-
+>  fs/xfs/libxfs/xfs_trans_inode.c             |   6 +-
+>  fs/xfs/xfs_iops.c                           |  10 +-
+>  fs/xfs/xfs_super.c                          |   2 +-
+>  include/linux/fs.h                          |  36 +++-
+>  include/linux/timekeeping.h                 |   5 +
+>  include/trace/events/timestamp.h            | 124 +++++++++++++
+>  kernel/time/timekeeping.c                   |  83 +++++++++
+>  kernel/time/timekeeping_debug.c             |  12 ++
+>  kernel/time/timekeeping_internal.h          |   3 +
+>  mm/shmem.c                                  |   2 +-
+>  18 files changed, 742 insertions(+), 73 deletions(-)
+> ---
+> base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
+
+IME it would be better to make this series apply to linux-next-($latest)
+instead of base mainline Linux. for integration reasons.
+
+You can add
+
+Tested-by: Randy Dunlap <rdunlap@infradead.org> # documentation bits
+
+for all patches if you want to.
 
 
---TwqPqcXiLo7Hkphr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Sep 25, 2024 at 12:34:31PM -0500, Rob Herring (Arm) wrote:
-> Enabling dtc interrupt_provider check reveals the example is missing
-> the "#interrupt-cells" property as it is a dependency of
-> "interrupt-controller".
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---TwqPqcXiLo7Hkphr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvWSxwAKCRB4tDGHoIJi
-0otHAQCYu0Pv+khJOqtbBa4wmAOpTuD1kWnfrcdj3GpieayxFAD/YgQcdzimky0d
-pwa6+6Yh/3Is//bAbV0pdBrIuw1syQg=
-=TN6k
------END PGP SIGNATURE-----
-
---TwqPqcXiLo7Hkphr--
+> change-id: 20240913-mgtime-20c98bcda88e
+> 
+> Best regards,
 
