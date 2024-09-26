@@ -1,95 +1,179 @@
-Return-Path: <linux-kernel+bounces-340521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52901987494
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:40:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6CA9874A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0861D1F2351A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:40:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18EF2893F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947814503C;
-	Thu, 26 Sep 2024 13:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA064B5C1;
+	Thu, 26 Sep 2024 13:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TjsX2Bcw"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I3IHAHwX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7413517BD3
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 13:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FC55258;
+	Thu, 26 Sep 2024 13:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727358019; cv=none; b=RCA67XbTX27PUopj6hhT7rYR6pnmQ5hOEtDGfU5i077CJ7tsxUoO988wxh67qdXHcPSdrfWqS5QWaXURuAM3SQpMUYWW1yEH+Gq/JpEV81pUPv/IeUF4su4P4vZpoIuncTr+42T8SB0fab1+pk6fLgBVIfeRnY9JSluVOxzT8is=
+	t=1727358254; cv=none; b=oNfMT2SuOug/vEr+SLmd2MwupAC1OJ2u0zVaYvF4teuQLw8xVT5KKLMDDGbUco1ndPsD/2vKyvoNlf/+Spm5r34W77KYiKV1lfwdHQZ3tFVaZPuN3QdluMrOqYeBz9hTz+NkXlcKnl3m92fO/9+7UUrVHQBNdTgGYUgeqk/p1Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727358019; c=relaxed/simple;
-	bh=wKix4F36LAKU/0XmZkDm7p9mSU7oRAeQs9PfB99udGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l8DAN1pBaqpP89s43K5HVWEF2zJdjYLmjFhZsO1T4pE9y2PRyEnr1aSZtGRV0fI/G5OZ2XgH/Urc1HKVaF4GuP6dJajP1OsVgL68WOw1tCCJrp9zSChJ9/gn3kAssRgjJsMIgnR6Eyti7zJ7kIJkgOXHG1RWOt0lG8NhMjNZTyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TjsX2Bcw; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FxPbI0QvyMKRaRZxxEIytMMMKgGjtJHw/Q/FOqAhZqI=; b=TjsX2BcwwhzvBP7n//axyX50/7
-	06KZeafFuQVk3q2JXRrSPzSDMUaC6VCydBytx+jheTbdYUzUOSsX9tMim2mEC70E+CHDMI+uAeH0k
-	1pQ1HHlxmXKgzQQu/HkYuLtfJrTAC5O9fNcgW6PvDYsPgf/b3ZIy2tzLZAyrudrnauZykDSjH/FIj
-	gPb7v8numy/sexw7C1jaSGeq6HqozTL5Bfr2NUBc9b6rUnr/yvYjrfc5jnmq7GB698/4A0gyN/rNd
-	IX6saKYFnnn4Fvi8STePqbv2+IwlXBknKvU0uzf81snpwzoVtSTDgtTAXNA/IGGrDtI/g5DrH+011
-	a+Xv70xA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1stoix-00000006kkw-1gPv;
-	Thu, 26 Sep 2024 13:40:03 +0000
-Date: Thu, 26 Sep 2024 14:40:03 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Daniel Gomez <da.gomez@samsung.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
-	hughd@google.com, david@redhat.com, wangkefeng.wang@huawei.com,
-	21cnbao@gmail.com, ryan.roberts@arm.com, ioworker0@gmail.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 1/2] mm: shmem: add large folio support to the
- write and fallocate paths
-Message-ID: <ZvVkM0VWK5E_MfJH@casper.infradead.org>
-References: <cover.1727338549.git.baolin.wang@linux.alibaba.com>
- <c03ec1cb1392332726ab265a3d826fe1c408c7e7.1727338549.git.baolin.wang@linux.alibaba.com>
- <CGME20240926121649eucas1p2aec9398cab6db6fee1251a1a61568857@eucas1p2.samsung.com>
- <ZvVQoY8Tn_BNc79T@casper.infradead.org>
- <18532bd8-08bd-4494-a3af-fe252a803380@samsung.com>
+	s=arc-20240116; t=1727358254; c=relaxed/simple;
+	bh=EwWY4YFFiTrI5gaJNADe+HhvhdjLiVd/51E26d97I8s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OFKe4AjrcQPz2wou2Cw14ftw378Ts/5xH26nBRrw64As8weJtu48u+myyz5wa3ecIA8RXnC4Y4bV+M3jMFPFGWLuVWGnkamUXLbmoG1qhpKfoYvi/j0iwMNSqvxyZ8zfPysgKHAo013WSSBD4/Mx5QHOVKlKKF7aZi79nqhYGjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I3IHAHwX; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727358252; x=1758894252;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EwWY4YFFiTrI5gaJNADe+HhvhdjLiVd/51E26d97I8s=;
+  b=I3IHAHwXwPzYqv3LMLAi/WjDnNmqkYb5sB6CF4GYp1SpwUxzmPZ9FvAj
+   ykBv2KOMx8npH4GOpvXqlgUuFUg/bSgYHaGWBNsjIPwAeZ5o8k+Rx99hZ
+   YOsoC0p0ni4dFJl11U0BNGoNVrsJ5LLc7S0gEJkJDXXxaMbacgsquNJ2B
+   pjf3GgbVaDK/eTSPp7CvPS2TPBYTWJk+Hmvvrg4X5ycKVHsDHBsYYF54t
+   ZfbwathN+jdl0znJX/eMVfOdVtaeVWGSVn06BVVU43RXAvqi8IMVsTJGV
+   Tldnvqqlt/nlQxeg3nE+GVfOzZr6mGMvxp8guast6K9fmpYjBpsuqMbNk
+   Q==;
+X-CSE-ConnectionGUID: eqkPpwI6TCCxCJFqOUhtiA==
+X-CSE-MsgGUID: kOVRkQ/0Qd+k2cWhFjII7w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="48983299"
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="48983299"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 06:44:11 -0700
+X-CSE-ConnectionGUID: Kled27RQQFaToMDRYDhwjg==
+X-CSE-MsgGUID: 5PQNCPknRTGIhZFzbvlhWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="72048148"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by orviesa010.jf.intel.com with ESMTP; 26 Sep 2024 06:44:09 -0700
+Received: from pkitszel-desk.tendawifi.com (unknown [10.245.246.101])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id 6B09A28196;
+	Thu, 26 Sep 2024 14:44:06 +0100 (IST)
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+To: linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: amadeuszx.slawinski@linux.intel.com,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	netdev@vger.kernel.org,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>
+Subject: [RFC PATCH] cleanup: make scoped_guard() to be return-friendly
+Date: Thu, 26 Sep 2024 15:41:38 +0200
+Message-ID: <20240926134347.19371-1-przemyslaw.kitszel@intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <18532bd8-08bd-4494-a3af-fe252a803380@samsung.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 26, 2024 at 02:58:31PM +0200, Daniel Gomez wrote:
-> On 9/26/2024 2:16 PM, Matthew Wilcox wrote:
-> > On Thu, Sep 26, 2024 at 04:27:26PM +0800, Baolin Wang wrote:
-> > > +static inline unsigned int
-> > > +shmem_mapping_size_order(struct address_space *mapping, pgoff_t index, size_t size)
-> > > +{
-> > > +	unsigned int order = get_order(max_t(size_t, size, PAGE_SIZE));
-> > 
-> > Why introduce the max_t() call here?  Did nobody read the documentation
-> > or implementation for get_order() before writing this patch?
-> 
-> get_order() result is undefined if the size is 0. I've used max_t() here to
-> avoid that case. Perhaps should we prevent that case before getting here?
+Simply enable one to write code like:
 
-Surely we've handled a length-0 write before we get here?
+int foo(struct my_drv *adapter)
+{
+	scoped_guard(spinlock, &adapter->some_spinlock)
+		return adapter->spinlock_protected_var;
+}
 
-> I think one of my earlier attemps was to use fgf_set_order + FGF_GET_ORDER()
-> as in iomap. But the solution taken there was to share code between shmem
-> and filemap and that wasn't considered a good idea. Shall we just replicate
-> iomap_get_folio()? Or else, what do you suggest here?
+Current scoped_guard() implementation does not support that,
+due to compiler complaining:
+error: control reaches end of non-void function [-Werror=return-type]
 
-We could move three of the four lines from fgf_set_order() into a
-new function and call it from both fgf_set_order() and shmem?
-> 
+One could argue that for such use case it would be better to use
+guard(spinlock)(&adapter->some_spinlock), I disagree. I could also say
+that coding with my proposed locking style is also very pleasant, as I'm
+doing so for a few weeks already.
+
+Technical stuff about the change:
+scoped_guard() macro uses common idiom of using "for" statement to declare
+a scoped variable. Unfortunately, current logic is too hard for compiler
+diagnostics to be sure that there is exactly one loop step; fix that.
+
+To make any loop so trivial that there is no above warning, it must not
+depend on any variable to tell if there are more steps. There is no
+obvious solution for that in C, but one could use the compound statement
+expression with "goto" jumping past the "loop", effectively leaving only
+the subscope part of the loop semantics.
+
+More impl details:
+one more level of macro indirection is now needed to avoid duplicating
+label names;
+I didn't spot any other place that is using
+	if (0) past_the_loop:; else for (...; 1; ({goto past_the_loop}))
+idiom, so it's not packed for reuse what makes actual macros code cleaner.
+
+NAKed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+Signed-off-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+---
+Andy believes that this change is completely wrong C, and wants me
+to keep the following 4 corncers attached (I either don't agree
+or they are irrelevant), but here we go:
+1. wrong usage of scoped_guard().
+   In the described cases the guard() needs to be used.
+2. the code like:
+	int foo(...)
+	{
+		my_macro(...)
+			return X;
+	}
+   without return 0; (which is a known dead code) is counter intuitive
+   from the C language perspective.
+3. [about netdev not liking guard()]
+   I do not buy "too hard" when it's too easy to get a preprocessed *.i
+   file if needed for any diagnosis which makes things quite clear.
+   Moreover, once done the developer will much easier understands how this
+   "magic" works (there is no rocket science, but yes, the initial
+   threshold probably a bit higher than just pure C).
+4. Besides that (if you was following the minmax discussion in LKML) the
+   macro expansion may be problematic and lead to the unbelievable huge .i
+   files that compiles dozens of seconds on modern CPUs (I experienced
+   myself that with AtomISP driver which drove the above mentioned minmax
+   discussion).
+   [Przemek - nested scoped_guard() usage expands linearly]
+---
+ include/linux/cleanup.h | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+index d9e613803df1..6b568a8a7f9c 100644
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -168,9 +168,16 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
+ 
+ #define __guard_ptr(_name) class_##_name##_lock_ptr
+ 
+-#define scoped_guard(_name, args...)					\
+-	for (CLASS(_name, scope)(args),					\
+-	     *done = NULL; __guard_ptr(_name)(&scope) && !done; done = (void *)1)
++#define scoped_guard(_name, args...)	\
++	__scoped_guard_labeled(__UNIQUE_ID(label), _name, args)
++
++#define __scoped_guard_labeled(_label, _name, args...)	\
++	if (0)						\
++		_label: ;				\
++	else						\
++		for (CLASS(_name, scope)(args);		\
++		     __guard_ptr(_name)(&scope), 1;	\
++		     ({ goto _label; }))
+ 
+ #define scoped_cond_guard(_name, _fail, args...) \
+ 	for (CLASS(_name, scope)(args), \
+
+base-commit: 151ac45348afc5b56baa584c7cd4876addf461ff
+-- 
+2.46.0
+
 
