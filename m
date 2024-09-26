@@ -1,148 +1,122 @@
-Return-Path: <linux-kernel+bounces-339917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8890986C26
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:52:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC37986C2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 719801F22931
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:52:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61AED1C2229C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233FE176231;
-	Thu, 26 Sep 2024 05:52:05 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B82187851;
+	Thu, 26 Sep 2024 05:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="nS7Zqod2";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="LUHlaxKZ"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34E4145346;
-	Thu, 26 Sep 2024 05:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67E21865F2
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727329924; cv=none; b=BwsvYu0gVTRCPa+tTIYRpw8HBx7jCoXQVJqimIdk3QR5Fgt7UmSn/I0b84nDzMT/iePOEES94o+Pz4eiNUMf/PMJfJ9p+0sWEnU2U2DFDj+9TdJeyr53Zv77vpYcWdU7fnPY3lbB6yf/BXu8jgRHAl3XjqmLNUI3IHEM1rT/xRU=
+	t=1727330169; cv=none; b=NoB5AnXw3W7ePbKbLZrtOuUOnnkj5t9VgCvmzQAmBF4UACdX6DUgRZKlv13UFJu2fHQ3nalOnwmKRVl/68BZBIrE2vuvdTj5pWa3G5B/hHYElFX9HDZmL3nsw0OfZkxTzrHIe9H/gQmmvk0/YInfLn2pIlviCZrg8ZH24e8pJDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727329924; c=relaxed/simple;
-	bh=pDRHhmxVEt5GUk7JtGPzDbnjf5NNfChyQCgN3YFNodw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FNTRH9nJO5Jsi3TRdNJrLOuf5NEt8RCOXCNLUUT2a0RIieQhYxdF1KW238pY+udcjQw0awwZbzvpezausl3OAFKYzasvadpxeaDJghN90Xg4K7CbuOU6XStNnLmcYiv/7DMtQp6cBU2BaQhQa/WMP9aOpjj5iGSIRgOcQHc95sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XDjQy68Zfz9sSK;
-	Thu, 26 Sep 2024 07:51:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id nIapQb6SH8TJ; Thu, 26 Sep 2024 07:51:54 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XDjQy50hbz9sRy;
-	Thu, 26 Sep 2024 07:51:54 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 92DE98B76E;
-	Thu, 26 Sep 2024 07:51:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id aQV3KcvF_OW9; Thu, 26 Sep 2024 07:51:54 +0200 (CEST)
-Received: from [172.25.230.108] (unknown [172.25.230.108])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3E52B8B763;
-	Thu, 26 Sep 2024 07:51:54 +0200 (CEST)
-Message-ID: <fb5f8856-5753-4b2b-bfed-82b3e3cd589e@csgroup.eu>
-Date: Thu, 26 Sep 2024 07:51:53 +0200
+	s=arc-20240116; t=1727330169; c=relaxed/simple;
+	bh=kDU8VTh+QpT4uXGBVB1w6OZFbPmxBcdAWmuCJKNrgd8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WnuQ6y+DcZSU7g4V0U0snzy8QEJUUSwQ1SL0AKg25V4I0v7rRdHp9Az4ZCmJEK0VCeh0HLaFCRRdoCu8IqI1ukM3T8tse4IabevILEAOnQvZxvglXYbPjA55+gPxS2ogrRYHan6e0IdN1OKCUK+j49WEwx0R9dsHoBY5rukNn+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=nS7Zqod2; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=LUHlaxKZ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1727330166; x=1758866166;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=dcOUiEE5g3NV+cMDqNVSOiaDkO9NmLB5/4wRl4dB+Xg=;
+  b=nS7Zqod2aC0M5qC+4H9DXm0wJmB05htNjUWhpEi3dAPV/CkIKPjqGSkH
+   jDTGLZGQH0XeJueFcfako+bCHiACEBbPkbkmVQBX3Qv0skUNTNG/TkzQO
+   n9U01q/KvfT1ld67IwR7cLscAUxfoyn/+D3pf3+mIxFXfcfDdodRBmavg
+   ru6Jm7oYbBaSHnOru2flkk9yBNVcX8RX0vaxDEd/wtpfBXlPHhm7RPHyL
+   92EjMIxyC8wYpt7PstzvgLbLlmLFihqWgjONH87rBszTG4P4ISmXhUlBM
+   RE4+ndg0JBee3NNEMILlb18jcrEqG6CR8Gmp+fgmmmL+kYSCx/oO5OTZU
+   w==;
+X-CSE-ConnectionGUID: K9ZMYA8PQTOcSOikJnf/gQ==
+X-CSE-MsgGUID: TbSP+5B2T/ixF8n4hw/wdQ==
+X-IronPort-AV: E=Sophos;i="6.10,259,1719871200"; 
+   d="scan'208";a="39129814"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 26 Sep 2024 07:55:58 +0200
+X-CheckPoint: {66F4F76E-8-D1F0B501-D0091591}
+X-MAIL-CPID: 4342E026DBA5EC3A08DE4B8B2B6CDA52_0
+X-Control-Analysis: str=0001.0A682F27.66F4F76E.0068,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D4C13160A3D;
+	Thu, 26 Sep 2024 07:55:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1727330154; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=dcOUiEE5g3NV+cMDqNVSOiaDkO9NmLB5/4wRl4dB+Xg=;
+	b=LUHlaxKZ5SuWy4RwNB2Z0v21/zukRiQGpioZeB0HPEdnHcphzxMGgKFZRlJNN2mNX/tmgR
+	BDJjkGjUMJFQ3weQ7YS3wK/YiyTuGBwQrwFGhbZN0fHLQYh4XNi4hVcdA9rdVmJzcd3zFF
+	uMD4nuYnBzbkr+nj3dtNPtglJf5KcSRtotD0hPI29ghh9LVixu3Rc89C61SyM5NnJhqsl5
+	QxmGwMJ3aNpVpM7fNgydBo1WRlRgaTPHOQHqlv3w3peIw/M9nl+ylczbG3IBwZ8Qp7ebUu
+	qg1ilEUhKznPQ7MV/vX4E00k5ugloIwTPw4oAEH60jIVML2YYXyTUGar2Vfrlw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@nxp.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Matthias Schiffer <matthias.schiffer@tq-group.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] drm: fsl-dcu: Use dev_err_probe
+Date: Thu, 26 Sep 2024 07:55:50 +0200
+Message-Id: <20240926055552.1632448-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] x86: vdso: Introduce asm/vdso/mman.h
-To: Arnd Bergmann <arnd@arndb.de>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240923141943.133551-1-vincenzo.frascino@arm.com>
- <20240923141943.133551-2-vincenzo.frascino@arm.com>
- <626baa55-ca84-49ba-9131-c1657e0c0454@csgroup.eu>
- <fe23745e-a965-4b74-863d-9479fdef239f@app.fastmail.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <fe23745e-a965-4b74-863d-9479fdef239f@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+fsl_dcu_drm_modeset_init can return -EPROBE_DEFER, so use dev_err_probe
+to remove an invalid error message and add it to deferral description.
 
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Changes in v2:
+* None
 
-Le 25/09/2024 à 23:23, Arnd Bergmann a écrit :
-> On Wed, Sep 25, 2024, at 06:51, Christophe Leroy wrote:
->> Le 23/09/2024 à 16:19, Vincenzo Frascino a écrit :
->>> @@ -0,0 +1,15 @@
->>> +
->>> +/* SPDX-License-Identifier: GPL-2.0 */
->>> +#ifndef __ASM_VDSO_MMAN_H
->>> +#define __ASM_VDSO_MMAN_H
->>> +
->>> +#ifndef __ASSEMBLY__
->>> +
->>> +#include <uapi/linux/mman.h>
->>> +
->>> +#define VDSO_MMAP_PROT	PROT_READ | PROT_WRITE
->>> +#define VDSO_MMAP_FLAGS	MAP_DROPPABLE | MAP_ANONYMOUS
->>
->> I still can't see the point with that change.
->>
->> Today 4 architectures implement getrandom and none of them require that
->> indirection. Please leave prot and flags as they are in the code.
->>
->> Then this file is totally pointless, VDSO code can include
->> uapi/linux/mman.h directly.
->>
->> VDSO is userland code, it should be safe to include any UAPI file there.
-> 
-> I think we are hitting an unfortunate corner case in the build
-> system here, based on the way we handle the uapi/ file namespace
-> in the kernel:
-> 
-> include/uapi/linux/mman.h includes three headers: asm/mman.h,
-> asm-generic/hugetlb_encode.h and linux/types.h. Two of these
-> exist in both include/uapi/ and include/, so while building
-> kernel code we end up picking up the non-uapi version which
-> on some architectures includes many other headers.
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Right, and that's the reason why arm64 and powerpc guarded the content 
-of asm/mman.h which an #ifndef BUILD_VDSO.
+diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
+index ab6c0c6cd0e2e..dd820f19482ad 100644
+--- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
++++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
+@@ -103,10 +103,8 @@ static int fsl_dcu_load(struct drm_device *dev, unsigned long flags)
+ 	int ret;
+ 
+ 	ret = fsl_dcu_drm_modeset_init(fsl_dev);
+-	if (ret < 0) {
+-		dev_err(dev->dev, "failed to initialize mode setting\n");
+-		return ret;
+-	}
++	if (ret < 0)
++		return dev_err_probe(dev->dev, ret, "failed to initialize mode setting\n");
+ 
+ 	ret = drm_vblank_init(dev, dev->mode_config.num_crtc);
+ 	if (ret < 0) {
+-- 
+2.34.1
 
-Note that arm64 also has a similar workaround in asm/rwonce.h, brought 
-by commit e35123d83ee3 ("arm64: lto: Strengthen READ_ONCE() to acquire 
-when CONFIG_LTO=y") without explaination on why VDSO builds are excluded.
-
-> 
-> I agree that moving the contents out of uapi/ into vdso/ namespace
-> is not a solution here because that removes the contents from
-> the installed user headers, but we still need to do something
-> to solve the issue.
-
-Should header inclusion be reworked so that only UAPI and VDSO pathes 
-are looked for when including headers in VDSO builds ?
-
-> 
-> The easiest workaround I see for this particular file is to
-> move the contents of arch/{arm,arm64,parisc,powerpc,sparc,x86}/\
-> include/asm/mman.h into a different file to ensure that the
-> only existing file is the uapi/ one. Unfortunately this does
-> not help to avoid it regressing again in the future.
-
-Could we add a check in checkpatch.pl to ensure UAPI headers do not 
-include headers that exist both in UAPI and non-UAPI space in the future ?
-
-Christophe
 
