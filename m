@@ -1,65 +1,91 @@
-Return-Path: <linux-kernel+bounces-340031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74207986DC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:31:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039EB986DC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FE2428383D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:31:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 349EB1C216A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A3F18CC0A;
-	Thu, 26 Sep 2024 07:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E8A18A6CC;
+	Thu, 26 Sep 2024 07:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="oKncEawm"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l+mP8DmK"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F40118638;
-	Thu, 26 Sep 2024 07:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7864818638
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727335879; cv=none; b=j1qnaa3FkgIKnNvSoqVWcsjeCqIaWoPCap2MOEzjy14tMD5SX+uX9P3HsL0fWVPjBntZ4NR9j782+jaNH/xs3stkkAkCbzt5Wv4BYR+Z6+NjIroB8UiaVXwEUho6fPslwQIrRiCl/f5Q4x+3edMU3praEWp0x4mCh+LmoqgWm98=
+	t=1727335969; cv=none; b=ozOGP+3D5lKb6ocUOQ7z4ypPtSyLWX50H5L98HJgD/S9F4St9eYZ9vzWBdxv5FZRt/bjYAG33KUTqmIQM3MhSqT4ULvX3JLwJnyae7RsTnQV31oU/39ZyzPcs665yZA+0Agr72sUVZ5spJkqbnAcPkMWDs3YIldfYOxFFJ4wrrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727335879; c=relaxed/simple;
-	bh=XpdzfcBtOn5omJ6e1kgJ0chhZgkgH8HanLBuFfMLWGM=;
+	s=arc-20240116; t=1727335969; c=relaxed/simple;
+	bh=A+ybC7nGAI2RjbvOZL9cTMg21JT+2vty7+Ly/J9gVTg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P5IWBVxaE5RrM3spps+apGnBrqM5aeBK+L+b/RjXeT9PYNJ4pZl+1ZayELZnYM4f8wLlMseLppcpQqhRfTUFrtCDddhigDBIPr1rINi9oPahuiGiBJDM645FFR4BjPoJyNyT3XSex3z53aVjVNfjzaCvpq52Ll3VBbY/tKtVdxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=oKncEawm; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=VLBUEIw4xCM2TscZwB0GXNiTw1S7gGh1+MNWLvSSRQI=; b=oKncEawmSkWbmJHSunCR5/q5xo
-	09RA20lu3I1Bd1uAtNeGPWFVErDwXVUqiqB2WExudEbMxH5RmOnorkgxE+ohTb8T7zX/B6gurY5Qu
-	edHBzVyIfiy/b8UsB+JLe0HLNvP25ig1e6dvjRDPbLXrXzm8BfTuxWhowAougR2sNHLWP/V6nemNx
-	hSIptuQiGHpaUreKu/01pq5v4OM5M/ZZW5Vs2iGrO5fzaogKiui3NqXhySE6Uw7km/G6f0MmaGwJE
-	/a2rVinRkstNrDT0aqQnbA0tYYDMDIWpgVoe/HEZm4GSWS73bdiSvGwyZwpgUUrx/9LHNdgbUnjN7
-	k4XcTzoQ==;
-Received: from [2001:9e8:9c4:3401:3235:adff:fed0:37e6] (port=34332 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1stixr-008tj2-ER;
-	Thu, 26 Sep 2024 09:31:03 +0200
-Date: Thu, 26 Sep 2024 09:30:58 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Nicolas Schier <n.schier@avm.de>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 12/23] scripts/nsdeps: use VPATH as src_prefix
-Message-ID: <20240926-stirring-talented-boa-1b311a@lindesnes>
-References: <20240917141725.466514-1-masahiroy@kernel.org>
- <20240917141725.466514-13-masahiroy@kernel.org>
- <ZvQb0Bsvrm-HLQ6g@l-nschier-nb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EfMEWYIS9c1bCrQ00tZMenM7eMRhfv2wvkGfkKY9uasrvLq8KzGjUU8+RjLcBrU2FUQOSLopIVeXJCTDzzGHuPSfXf6CmTIn6PpHW8HeHc2vSvIUlg2JuNMCFJYyFqrU25Rbw/I8oE598RFgFZRPAiuWaLCxQ1V5t9o1xCGLHE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l+mP8DmK; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-537a2a2c74fso1649968e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 00:32:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727335965; x=1727940765; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8aonqfZhxhzRCigtKU2JDf5og9fZlc9KKVh/g2kla2I=;
+        b=l+mP8DmKz++HQlkdmkNS8xzKGIacxbXDD1Uc6Ozvew9nROq3m7bxy0BeIsACD2f2VO
+         HB6OQKOg3lWJ/GPvUhAfGROsdXO28E2uY2Y040BFgO2P1+L6Ykwo4XAXDLaewrRu5K/6
+         615NZnKsRQHjGfCeF6edyPG7r26xwtzOTtyzGwoiOnp3TYodBssemnxz3rk/E/HZEFd7
+         VjYJ55/5QjhxCY2rwzNQDRQ0KXBOwWUxxJpHkMagFrghfW9F67FAuH2dcycXc0OLtBsN
+         cHHrKe4AyPDfjZIbCObcE01iW+oNHNDG7LzhCITiA+cqOU7xh81gmuQ4u20e4p3nhfgv
+         GAfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727335965; x=1727940765;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8aonqfZhxhzRCigtKU2JDf5og9fZlc9KKVh/g2kla2I=;
+        b=OxvYTpa87cYMaxwpr/2JVQo2+nsSFzczYmxrGahbnEReApbOXNLRH2B3HRnyD2nSVo
+         nUSZiRmpfiyQWBdRJnJ4exYbapWcNSTdqkEwhqd/P495DXcx3YJzoqAdox7fsV3wfTUR
+         jjPntT1iQMuFVs5n2yhl+OZFqPAj8GN9xLU7FErmbpvykSjHEx2kGcD0iezpABbmeOu2
+         AdwL6uY7ZWHo2Z3D3QDPB99jdWJdqkmjXMSGsfiDr6KM0rx3AOL4fKPOff+ntX8G6/5W
+         87j2yeO+C2N0gT8pBYkQxB7sTjKTF0VyA+eO2xHNKJAhs/opmFhxXSHOVKQ4qR0HL6cY
+         D3jg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOH+XbRvrcDrOxU+8I5IHzV8Ksr6WANdrR4UDnFzIMxJlXFBW7NmXTGQ4f3RMLhiAlubK7tFTZ1fpU2GA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBN7+G2AUXSHS63dFtm3UYXmOQVd6zwfi3bNq1oHqTGKO9GW94
+	/RtsxbkUV75h+aNtxSFkWSZv4BhMXrOHhNMneljD4B7YUer4QkaFpwJjDwlzAcg=
+X-Google-Smtp-Source: AGHT+IFEJ3mGtjqHYi8+hQZO+ABBsYaf7BGxMD8HjL57H5h34gv/88G8VtZ+ToUkoIv8MyINwNfCgw==
+X-Received: by 2002:a05:6512:304d:b0:52f:228:cf91 with SMTP id 2adb3069b0e04-53896bdeadamr669409e87.1.1727335965407;
+        Thu, 26 Sep 2024 00:32:45 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85e13edsm730901e87.10.2024.09.26.00.32.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 00:32:43 -0700 (PDT)
+Date: Thu, 26 Sep 2024 10:32:41 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Jagan Teki <jagan@amarulasolutions.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Stefan Agner <stefan@agner.ch>, 
+	Alison Wang <alison.wang@nxp.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH 0/6] drm: constify read-only regmap structs
+Message-ID: <3i46wd7hqr5u3oxqlgyff4i27vxpg3spewkhby336hxmgbvmon@wijkq64pluzg>
+References: <20240925-drm-const-regmap-v1-0-e609d502401b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,39 +94,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZvQb0Bsvrm-HLQ6g@l-nschier-nb>
+In-Reply-To: <20240925-drm-const-regmap-v1-0-e609d502401b@gmail.com>
 
-On Wed, Sep 25, 2024 at 04:18:56PM +0200, Nicolas Schier wrote:
-> On Tue, Sep 17, 2024 at 11:16:40PM +0900, Masahiro Yamada wrote:
-> > This change allows it to work not only for in-tree modules but also for
-> > external modules, even if they are built in a separate build directory.
-> > 
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
-> > 
-> >  scripts/nsdeps | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/scripts/nsdeps b/scripts/nsdeps
-> > index f1718cc0d700..8b4db63838ce 100644
-> > --- a/scripts/nsdeps
-> > +++ b/scripts/nsdeps
-> > @@ -19,10 +19,10 @@ if ! { echo "$SPATCH_REQ_VERSION"; echo "$SPATCH_VERSION"; } | sort -CV ; then
-> >  	exit 1
-> >  fi
-> >  
-> > -if [ "$KBUILD_EXTMOD" ]; then
-> > +if [ "${VPATH+set}" ]; then
-> >  	src_prefix=
-> >  else
-> > -	src_prefix=$srctree/
-> > +	src_prefix=$VPATH/
+On Wed, Sep 25, 2024 at 05:42:39PM GMT, Javier Carrasco wrote:
+> This series adds the const modifier to the remaining regmap_bus and
+> regmap_config structs under drm/ that are effectively used as const
+> (i.e., only read after their declaration), but kept ad writtable data.
 > 
-> In kbuild, we expect VPATH to be empty or hold one single directory,
-> while make itself allows VPATH to be a list of directories.  Might it
-> make sense to mention this at some place?
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+> Javier Carrasco (6):
+>       drm/bridge: dpc3433: Constify struct regmap_config
+>       drm/fsl-dcu: Constify struct regmap_config
+>       drm/mediatek: dp: Constify struct regmap_config
+>       drm/meson: Constify struct regmap_config
+>       drm/panel: ili9322: Constify struct regmap_bus
+>       drm/sprd: Constify struct regmap_bus
+> 
 
-I'd like to withdraw that question.  VPATH usage is an implementation
-detail and it's probably not helpful to put too much effort into keeping
-such things documentated.
+For the series:
+
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+
+-- 
+With best wishes
+Dmitry
 
