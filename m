@@ -1,250 +1,170 @@
-Return-Path: <linux-kernel+bounces-340717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1456987700
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:53:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15768987701
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 246F9B29181
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:53:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB1BF2879B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CB2159217;
-	Thu, 26 Sep 2024 15:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S5AbWTfl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F576157490;
+	Thu, 26 Sep 2024 15:54:24 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCAB14D71D;
-	Thu, 26 Sep 2024 15:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F9614D71D;
+	Thu, 26 Sep 2024 15:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727366006; cv=none; b=lUOTCK0JKhdk1KEfQq8IhIAEQzdLgIZN1YGeIvQpAdxrjiQ4rtAL0Xk2T9KsJUllxvXXktHlcL4YUEein6Nc8goP4RbUsw3MZyUu5OASOA/eqyr+1EJ4ECpqecikuVQfu5NhPG9kde1vnfkm5yWfKD/rZNQwjt8pz1Y9l+5WNq4=
+	t=1727366063; cv=none; b=NQlrv/LP6nujGaWQHkTzxXQ/HROli+LQth/SPRhk0zFK7pFtMjGxmE8cx4fSu7+3HZxQ3ye+vELQoz4vJDrYa6b6HKexe100nJfAUMMD0i12REfPk/JLUVvK3ehhPrJj2B7So9QqM4rh0dZexlXa2lHVd4qfPGJJqwVqjgZNzUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727366006; c=relaxed/simple;
-	bh=HdUlhmJM33BN01qsO0SdP+QNOHFS0k9N4WEEYcDOsfc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gx/vKqfiUVhB9ah1QS1WnJG7cU0O2ON+w8dUoAiNTyfrbr1W6N54hx5RTJpCfxzQeNlXXaMxjV3UVKvWAEUl28D2QawUdiPuYhaltJFvpIPyqNRsWUijhwlXPj4aESn7MryZ7M8eCv5HejeQ9BcOypnSIeJok0fLFxKFdzUcivE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S5AbWTfl; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727366005; x=1758902005;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HdUlhmJM33BN01qsO0SdP+QNOHFS0k9N4WEEYcDOsfc=;
-  b=S5AbWTfleFHS4fS9xb+U5kJYrVYAC3bOTzN40Cnk6Pih+bFYzIcJoqjk
-   NGfTTObM1V3KZshGjoUM+Zo2IuVxQMLUWSaQeOk54jJ/MU5FeO6+S6vXz
-   oF9yFTvrdacXTf/i6Vk7dORMCiIDVcAJkwU2Qllip4i3TZ27weObXW8L3
-   vE+mR0D8DqzD4MNBq3zY1DClZbUhQMDLcNDUMY0reIHYQjPNfxpb+PtjP
-   DyeDqyY7dIUt80m1hA/2zx5zRF+Rp0m16EfjcPhoDJsahIzS4ihup2Ikt
-   MrCZdR0BqeCnEhgM5/WsrNWubqK5w2JZQvsFtD5qKWD34xQXpJt3fwbbn
-   A==;
-X-CSE-ConnectionGUID: NQeTUwkDSKOHMDLxqm86bw==
-X-CSE-MsgGUID: WWFLR++3T1amEfPuzTwXIA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="30357813"
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="30357813"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 08:53:25 -0700
-X-CSE-ConnectionGUID: L4CB1lYXRECOnuy6xzgwsg==
-X-CSE-MsgGUID: oJnWVjW4T0iLFckNXC60Dw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="76291050"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 08:53:22 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id D47C411F843;
-	Thu, 26 Sep 2024 18:53:19 +0300 (EEST)
-Date: Thu, 26 Sep 2024 15:53:19 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Jason Chen <jason.z.chen@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/4] media: dt-bindings: Add OmniVision OV08X40
-Message-ID: <ZvWDbxzm2cCgC8tP@kekkonen.localdomain>
-References: <20240926-b4-master-24-11-25-ov08x40-v1-0-e4d5fbd3b58a@linaro.org>
- <20240926-b4-master-24-11-25-ov08x40-v1-2-e4d5fbd3b58a@linaro.org>
+	s=arc-20240116; t=1727366063; c=relaxed/simple;
+	bh=pcqEBfLkgGYCPeXstyQ0w7L6Flkbx892UwEEqSHOm/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NERMkpaJqlrU9cexNczhSi/4H9HgPdn46CiTnO1YwmBE4zG+QnIcd+Dfc41lJc1jtV2gb7EDQlr9DZZA/nNHu3HUPqLrwmgVPSTMHkZtxK9XEBEsR8BkFvu/e05UvJlDPGlFkTL0gDYRRqqkPd2AOKZe611v8bjO6pb02IyIVqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XDyM66vpFz9v7J8;
+	Thu, 26 Sep 2024 23:34:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 8F143140392;
+	Thu, 26 Sep 2024 23:54:02 +0800 (CST)
+Received: from [10.45.145.4] (unknown [10.45.145.4])
+	by APP2 (Coremail) with SMTP id GxC2BwAniMiLg_VmEOyyAQ--.33525S2;
+	Thu, 26 Sep 2024 16:54:02 +0100 (CET)
+Message-ID: <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
+Date: Thu, 26 Sep 2024 17:53:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926-b4-master-24-11-25-ov08x40-v1-2-e4d5fbd3b58a@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
+ lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <20240917143402.930114-2-boqun.feng@gmail.com>
+ <55975a55-302f-4c45-bfcc-192a8a1242e9@huaweicloud.com>
+ <ZvPfmAp_2mDkI3ss@boqun-archlinux>
+ <f5aeeeda-c725-422a-9481-4795bd3ade0f@huaweicloud.com>
+ <ZvPp4taB9uu__oSQ@boqun-archlinux>
+ <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
+ <ZvP_H_R43bXpmkMS@boqun-archlinux>
+ <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
+ <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+ <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
+ <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwAniMiLg_VmEOyyAQ--.33525S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar4xWFy3Jw17Kw4kAr48Xrb_yoW8AFy8pr
+	4ftFWxXFWkua1rKwn7ta1UuFW5Jr4xJay5uF95JF18Ars5XF10qF12qryYga4fCr4kX34U
+	tFW5Xry3ZasxJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIF
+	4iUUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-Hi Bryan,
 
-Thanks for the set.
 
-On Thu, Sep 26, 2024 at 04:46:38PM +0100, Bryan O'Donoghue wrote:
-> Add bindings for the already upstream OV08X40 to enable usage of this
-> sensor on dts based systems.
+Am 9/26/2024 um 8:16 AM schrieb Mathieu Desnoyers:
+> On 2024-09-25 15:20, Mathieu Desnoyers wrote:
+> [...]
+>> static inline
+>> bool same_ptr(void *a, void *b)
+>> {
+>>      asm goto (
+>>          "cmpq %[a], %[b]\n\t"
+>>          "jne %l[ne]\n\t"
+>>          : : [a] "r" (a), [b] "r" (b)
+>>          : : ne);
+>>      return true;
+>> ne:
+>>      return false;
+>> }
 > 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->  .../bindings/media/i2c/ovti,ov08x40.yaml           | 130 +++++++++++++++++++++
->  1 file changed, 130 insertions(+)
+> Based on the information provided in this email thread,
+> it appears the only concern when it comes to comparing a
+> pointer loaded by rcu_dereference() with another pointer
+> is the possibility of compiler optimizations.
 > 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov08x40.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov08x40.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..250785f062d0146e8615d8f3e7700aebbd40b1dc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov08x40.yaml
-> @@ -0,0 +1,130 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright (c) 2024 Linaro Ltd.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/i2c/ovti,ov08x40.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Omnivision OV08X40 CMOS Sensor
-> +
-> +maintainers:
-> +  - Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> +
-> +description: |-
-> +  The Omnivision OV08X40 is a 9.2 megapixel, CMOS image sensor which supports.
-> +  - Automatic black level calibration (ABLC)
-> +  - Programmable controls for frame rate, mirror and flip, binning, cropping
-> +    and windowing
-> +  - Output formats 10-bit 4C RGB RAW, 10-bit Bayer RAW
-> +  - 4-lane MIPI D-PHY TX @ 1 Gbps per lane
-> +  - 2-lane MPIP D-PHY TX @ 2 Gbps per lane
-> +  - Dynamic defect pixel cancellation
-> +  - Standard SCCB command interface
-> +
-> +properties:
-> +  compatible:
-> +    const: ovti,ov08x40
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    description:
-> +      Input clock for the sensor.
-> +    items:
-> +      - const: xvclk
-
-This seems redundant.
-
-> +
-> +  clock-frequency:
-> +    description:
-> +      Frequency of the xvclk clock in Hertz.
-
-Could you instead use the frequency already set, using assigned-clock* in
-the example?
-
-> +
-> +  avdd-supply:
-> +    description: Analogue circuit voltage supply.
-> +
-> +  dovdd-supply:
-> +    description: I/O circuit voltage supply.
-> +
-> +  dvdd-supply:
-> +    description: Digital circuit voltage supply.
-> +
-> +  reset-gpios:
-> +    description: Active low GPIO connected to XSHUTDOWN pad of the sensor.
-> +
-> +  port:
-> +    $ref: /schemas/graph.yaml#/$defs/port-base
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      endpoint:
-> +        $ref: /schemas/media/video-interfaces.yaml#
-> +        unevaluatedProperties: false
-> +
-> +        properties:
-> +          data-lanes:
-> +            oneOf:
-> +              - items:
-> +                  - const: 1
-> +                  - const: 2
-> +              - items:
-> +                  - const: 1
-> +                  - const: 2
-> +                  - const: 3
-> +                  - const: 4
-> +
-> +          link-frequencies: true
-> +
-> +        required:
-> +          - data-lanes
-> +          - link-frequencies
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - clock-frequency
-> +  - dovdd-supply
-> +  - avdd-supply
-> +  - dvdd-supply
-> +  - reset-gpios
-> +  - port
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        ov08x40: camera@36 {
-> +            compatible = "ovti,ov08x40";
-> +            reg = <0x36>;
-> +
-> +            reset-gpios = <&tlmm 111 GPIO_ACTIVE_LOW>;
-> +            pinctrl-names = "default";
-> +            pinctrl-0 = <&cam_rgb_defaultt>;
-> +
-> +            clocks = <&ov08x40_clk>;
-> +            clock-names = "xvclk";
-> +            clock-frequency = <19200000>;
-> +
-> +            avdd-supply = <&vreg_l7b_2p8>;
-> +            dvdd-supply = <&vreg_l7b_1p8>;
-> +            dovdd-supply = <&vreg_l3m_1p8>;
-> +
-> +            port {
-> +                ov08x40_ep: endpoint {
-> +                    remote-endpoint = <&csiphy4_ep>;
-> +                    data-lanes = <1 2 3 4>;
-> +                    link-frequencies = /bits/ 64 <400000000>;
-> +                };
-> +            };
-> +        };
-> +    };
-> +...
+> In the specific case of hazard pointer hpref_hp_get(), this
+> function does both loads which are then compared with one
+> another. Therefore, it is not possible for the user to
+> provide a comparison value known at compile-time, except
+> in the unlikely scenario where the hazard pointer would
+> be const, which does not really make much sense.
+> 
+> Therefore, just using rcu_dereference() for the second
+> load should be fine.
+> 
+> Thanks,
+> 
+> Mathieu
 > 
 
--- 
+No, the issue introduced by the compiler optimization (or by your 
+original patch) is that the CPU can speculatively load from the first 
+pointer as soon as it has completeled the load of that poitner:
+
+
+node = ...
+// t's value can be computed here, since the value of node is known
+...
+node2 = ...
+if (node == node2) // just a control dependency, doesn't prevent 
+speculatively loading node
+    t = *node
+
+if we can force the compiler's hand, it will generate this code which 
+provides the necessary ordering at hardware level:
+
+node = ...
+// t can't be computed here since the value of node2 is not known here
+...
+node2 = ...
+// t can be computed here
+if (node == node2)
+    t = *node2
+
+
 Kind regards,
 
-Sakari Ailus
+   jonas
+
 
