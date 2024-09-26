@@ -1,92 +1,163 @@
-Return-Path: <linux-kernel+bounces-340252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227DC987086
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:43:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC8498708A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3E3BB2505F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:43:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 029BB286FB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97251AC898;
-	Thu, 26 Sep 2024 09:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YiSTg62k"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823A81AC883;
+	Thu, 26 Sep 2024 09:43:45 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9044E1A4E97
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146D11AB6EE
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727343775; cv=none; b=nzQNqwLB9y0Fv4Sv9avmBudww2TnI4XXlBceTmvE+FVLOglIb5LCDiqKXl19WmnJE2GNMb+IFtEONTjSHHxnm53M1pNJqujBwGONabzAwESOlKiXBVmCz6OYBc9REt8UWMI8ixuY9WIYmogKxVgj3lYhOXvMFmXX3Nwzh/DCvP0=
+	t=1727343825; cv=none; b=BsCFEsS9Ymi8dICVa9PHfvMAydI+wdOowtITayIj32vGwZ/HL+HbHQjn0zVr6oBPFrY75KdxLiWVRe5KKA9HIbMVfltnGiV/cM9ZtDcVCzG0SqqsqzLY86neSeeD0a+JjejkDJNzeKslVp03NCcr57RT6SicX4jctCp6/0uLI1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727343775; c=relaxed/simple;
-	bh=VRydMshYTcpp89zwvgwY5jyig5NMTUMTx57WtTy7YHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=klbi70P8uUdGDQH9uJ28u7iOWbbFsyOjgvXvfW5h0f5RYil6DH3gG1eA1E8c8S0E6EwFH8TJ7aeLSL2nXHYduKgBDCQcFzfr18RQSUPH4+xaJ8n3yiCi10HTZ2bKf4hdEshlyWf3mRxZwOXQ5qwxsIeFdhSygMhCmBHv4LzCdYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YiSTg62k; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727343771;
-	bh=VRydMshYTcpp89zwvgwY5jyig5NMTUMTx57WtTy7YHY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YiSTg62kMzECHoXWZCj628zq47jQgcqJs9vcJnYXQ6S8GTuRu0MlvBicXD6jKohaC
-	 EtP+4NYFwKGTQXiPGYeaAQH3XW4TpRdouBMhdzrlct1AVkgwAXSXiyyPoopM8SWKnC
-	 MukYsrPKIHdmiiRSPvjmtsDWwTw3PUqsbFowxKCft/pFX9xMg8bJS/8pf6qyA4ltIq
-	 3O9w+qOT3BesCIpOfbmNmhbV2yZ/0yUljpxTE7w3CHQrj3eGWPbUCM4cqUvGhtHOSJ
-	 UNBDfZlG7ea9EcLk+olkbtSGJ1++AGR41is/A0mkXqmfvweTNJqyKxn8Wx/AHH0NDl
-	 x2B21tKXnTQzw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 67ADA17E10AF;
-	Thu, 26 Sep 2024 11:42:51 +0200 (CEST)
-Message-ID: <e44cafc1-b350-4058-976e-13d6fe4fd4b2@collabora.com>
-Date: Thu, 26 Sep 2024 11:42:51 +0200
+	s=arc-20240116; t=1727343825; c=relaxed/simple;
+	bh=J39S9SFF4nvbADpWj4XpcDkFu67NPPxdSgq9yoSez+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o/0h7I0hpGYEwCyRO1mFimdrNtSsKUzdeUodvnhrky1phatscgidpJ6QRzyjIllQ5X9m3r7dH/E5KFksJ4rZ1uCsMOGxQ8Owp+ddXP3zVXfaxPm9m5/5UPYuKNFPmPM5Le21h1/vk3vpqn/246/tec4EgD4rdso/lVuHl4Udjl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1stl1q-0002On-HQ; Thu, 26 Sep 2024 11:43:18 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1stl1n-001ejo-F0; Thu, 26 Sep 2024 11:43:15 +0200
+Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id B47E8342FF1;
+	Thu, 26 Sep 2024 09:43:14 +0000 (UTC)
+Date: Thu, 26 Sep 2024 11:43:13 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Markus Schneider-Pargmann <msp@baylibre.com>, 
+	Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>, "Felipe Balbi (Intel)" <balbi@kernel.org>, 
+	Raymond Tan <raymond.tan@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux@ew.tq-group.com
+Subject: Re: [PATCH v3 2/2] can: m_can: fix missed interrupts with m_can_pci
+Message-ID: <20240926-resilient-arrogant-limpet-98af37-mkl@pengutronix.de>
+References: <ed86ab0d7d2b295dc894fc3e929beb69bdc921f6.1727092909.git.matthias.schiffer@ew.tq-group.com>
+ <4715d1cfed61d74d08dcc6a27085f43092da9412.1727092909.git.matthias.schiffer@ew.tq-group.com>
+ <6qk7fmbbvi5m3evyriyq4txswuzckbg4lmdbdkyidiedxhzye5@av3gw7vweimu>
+ <1a4ed0696cbe222e50b5abdff08a5ce7f8223aae.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] drm/mediatek: Add blend_modes to mtk_plane_init()
- for different SoCs
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
- Alper Nebi Yasak <alpernebiyasak@gmail.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: Shawn Sung <shawn.sung@mediatek.com>, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Singo Chang
- <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20240926083526.24629-1-jason-jh.lin@mediatek.com>
- <20240926083526.24629-3-jason-jh.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240926083526.24629-3-jason-jh.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Il 26/09/24 10:35, Jason-JH.Lin ha scritto:
-> Since some SoCs support premultiplied pixel formats but some do not,
-> the blend_modes parameter is added to mtk_plane_init(), which is
-> obtained from the mtk_ddp_comp_get_blend_modes function implemented
-> in different blending supported components.
-> 
-> The blending supported components can use driver data to set the
-> blend mode capabilities for different SoCs.
-> 
-> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="p64oeuz4yz67h6sr"
+Content-Disposition: inline
+In-Reply-To: <1a4ed0696cbe222e50b5abdff08a5ce7f8223aae.camel@ew.tq-group.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+--p64oeuz4yz67h6sr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On 26.09.2024 11:19:53, Matthias Schiffer wrote:
+> On Tue, 2024-09-24 at 08:08 +0200, Markus Schneider-Pargmann wrote:
+> >=20
+> > On Mon, Sep 23, 2024 at 05:32:16PM GMT, Matthias Schiffer wrote:
+> > > The interrupt line of PCI devices is interpreted as edge-triggered,
+> > > however the interrupt signal of the m_can controller integrated in In=
+tel
+> > > Elkhart Lake CPUs appears to be generated level-triggered.
+> > >=20
+> > > Consider the following sequence of events:
+> > >=20
+> > > - IR register is read, interrupt X is set
+> > > - A new interrupt Y is triggered in the m_can controller
+> > > - IR register is written to acknowledge interrupt X. Y remains set in=
+ IR
+> > >=20
+> > > As at no point in this sequence no interrupt flag is set in IR, the
+> > > m_can interrupt line will never become deasserted, and no edge will e=
+ver
+> > > be observed to trigger another run of the ISR. This was observed to
+> > > result in the TX queue of the EHL m_can to get stuck under high load,
+> > > because frames were queued to the hardware in m_can_start_xmit(), but
+> > > m_can_finish_tx() was never run to account for their successful
+> > > transmission.
+> > >=20
+> > > To fix the issue, repeatedly read and acknowledge interrupts at the
+> > > start of the ISR until no interrupt flags are set, so the next incomi=
+ng
+> > > interrupt will also result in an edge on the interrupt line.
+> > >=20
+> > > Fixes: cab7ffc0324f ("can: m_can: add PCI glue driver for Intel Elkha=
+rt Lake")
+> > > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> >=20
+> > Just a few comment nitpicks below. Otherwise:
+> >=20
+> > Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
+>=20
+>=20
+> We have received a report that while this patch fixes a stuck queue issue=
+ reproducible with cangen,
+> the problem has not disappeared with our customer's application. I will h=
+old off sending a new
+> version of the patch while we're investigating whether there is a separat=
+e issue with the same
+> symptoms or the patch is insufficient.
+>=20
+> Patch 1/2 should be good to go and could be applied independently.
 
+Can you post the reproducer here, too. So that we can add it to the
+patch or at least reference to it.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--p64oeuz4yz67h6sr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmb1LK4ACgkQKDiiPnot
+vG8ygAf9F3z7iuju1FF4PZ5yNHEgp28yZl7t8Ot4b8R7yf5GjLjd4co76AEB+g/d
+Aa1stE3EBANxAalAwDUm+2/Bl6HBmGnU+Z/r6fstpKNjiqh53Cv0GcyEM0ZBDfhU
+YwbGSQab11HGFEcftHMw5gMQUEahdlZUeWuTR7kFERLOjRE1bZHEiigoUsCWqTX1
+29hHXxJuHfis8yA79Le/+77NWvNqm6+uciy1PvVLz9V89u570YVD9WHoBruwobju
+zIMLrqWSZgHoynMyNtYqB7h+ijRnfRHMknaVSTcUhlSFVD236ySX4ACAtU+t38jo
+NY/PAQ1sjmQvTo/RKgp8ywyHs8ETgQ==
+=nMju
+-----END PGP SIGNATURE-----
+
+--p64oeuz4yz67h6sr--
 
