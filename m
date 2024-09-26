@@ -1,75 +1,158 @@
-Return-Path: <linux-kernel+bounces-340157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FE59986F31
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:47:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD76986ED0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C65B72860EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:47:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3FB62833AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8D71A76D9;
-	Thu, 26 Sep 2024 08:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DD91A42B7;
+	Thu, 26 Sep 2024 08:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="evlfkGdn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="llo7TmdY"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF6D1A7256
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC90C1D5ACF;
+	Thu, 26 Sep 2024 08:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727340421; cv=none; b=NvHFF7vFWFACldIk7sR1Zk9XAoxsN8+ziX1drlRore7kP7w9l81Bj9fObQeN+79+vHP9aMTuPVOvuW8kdL5z5u+2W/xWnU2pZsDEWVWBYvB8BKpEpUyTu0X7w4NpuNrn+/Tr2VXTyAfUAHBqa+lYjQDlAAioWCaRmyNAMJlOyy8=
+	t=1727339542; cv=none; b=i+6/SxJBYvjmbMn/weVmrA6ZToxtjzi0eRvTik1lLliN1s//yR2ERevcZKTP1tTwm7UIPWaGV5ZFEcXooikiITQcQ417mGqIxPXiSR0ARJ5MOPPId02bmYu2IKBeaksbRyf1cMSfPs8SR85eVfNV7PTp+MZmjL4/m6p8W/LAZMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727340421; c=relaxed/simple;
-	bh=VKscj+DO76Rzsw+H0qxTe4kRpneZQShQ4hJuK93SmFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=beUKVZYexLwSc7z9fEHaGvQbqB4dia9K5GYS8PYSpesAGLM2G31GS0p+HSw/bLNd9Fn9pURBn+arEY9JJs4Zo+3lCw2nbT0FIHZMTu7qNBXycT5em3jQazdtkw5b7P7c82yf1u8jK4fFIo8IS8Ao6Mp7AwXX06xRnJO460iX0RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=evlfkGdn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A9E9C4CEC7;
-	Thu, 26 Sep 2024 08:47:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727340421;
-	bh=VKscj+DO76Rzsw+H0qxTe4kRpneZQShQ4hJuK93SmFo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=evlfkGdn3XL9XZTWgQBDfJ409VAnt8ug4FLXx+l0Lbrht8EUVCSXyWQwik3ZHYSbs
-	 EyOOWmBhotEUI/bvTRShkQdpNEbacCEmMTQzskl2NkWjDbaX8DnSqTRPoozJPbcLwr
-	 +VNR+oJu9qu35WqzXWQx8EcmlT0poFUopMe9lcjk=
-Date: Thu, 26 Sep 2024 10:30:05 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: liujing <liujing@cmss.chinamobile.com>
-Cc: arnd@arndb.de, W_Armin@gmx.de, jdelvare@suse.de, hkallweit1@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] eeprom: fix spelling of switch
-Message-ID: <2024092632-perjurer-gossip-a710@gregkh>
-References: <20240921134128.16870-1-liujing@cmss.chinamobile.com>
+	s=arc-20240116; t=1727339542; c=relaxed/simple;
+	bh=2q+PoNnVZg0Jk9dK1Vp1DlFTvLPSZXZ39uaGIWjltMk=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=LO/GuIRIE7GbAa0tBg2gkqcLGXYkronxHQU/aTCQKY4GitVBgirW+xM+Pn9THCSJX+BxGXlH+Si7tTdOYvXezcBjr9x6g8MzHbX+LdTsSDMNQ5xOd1/HFotPSMVgf8d7as51X6NxyM176TJ1juV+28zkqmSI8A4apm45Hyo0RME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=llo7TmdY; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240921134128.16870-1-liujing@cmss.chinamobile.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1727339537;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Cujcqo+iQwaB51AOH25qP+3PrnYOZl6IbH7tj3OMjI=;
+	b=llo7TmdY2al+SnSku0mZMt1+FieHQkAnezMq62KeeU6p/7fJQOIXS1nP7/tU+xHVWRa/xb
+	hwENaeddf7y9aF+Iw5PmMobELYUJKAk4AeR4T9ADCaBp57NpVY/+r0/WKrWSLqcAvCUU+F
+	VOMbaN2b72qZs1AGn9KLYtnFjFtEYa4IIePhA4SIVxjrYX8hwKFYQeN7oGyLaFHDA2xMdL
+	Gsslv1OWVZXFnje2Rs0AU2dAIG+sK6RoOvBsn/hOyPQ1pYV7rrqxez0Ib8sevEVG/En2VN
+	QMeZSGMRQPHVJTBNdCdHMVxUpnvfYw+J8KP3HKbU85nka4bnJDdqr9iPFUIIfg==
+Date: Thu, 26 Sep 2024 10:32:17 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Move L3 cache under CPUs in RK356x
+ SoC dtsi
+In-Reply-To: <3938446.fW5hKsROvD@phil>
+References: <da07c30302cdb032dbda434438f89692a6cb0a2d.1727336728.git.dsimic@manjaro.org>
+ <3938446.fW5hKsROvD@phil>
+Message-ID: <57d360d73054d1bad8566e3fe0ee1921@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Sat, Sep 21, 2024 at 09:41:28PM +0800, liujing wrote:
-> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+Hello Heiko,
 
-Please use your full name here.
-
+On 2024-09-26 10:24, Heiko Stuebner wrote:
+> Am Donnerstag, 26. September 2024, 09:49:18 CEST schrieb Dragan Simic:
+>> Move the "l3_cache" node under the "cpus" node in the dtsi file for 
+>> Rockchip
+>> RK356x SoCs.  There's no need for this cache node to be at the higher 
+>> level.
+>> 
+>> Fixes: 8612169a05c5 ("arm64: dts: rockchip: Add cache information to 
+>> the SoC dtsi for RK356x")
+>> Cc: stable@vger.kernel.org
 > 
-> ---
-> V1-V2: fix title description, move cacography to spelling
+> I think the commit message needs a bit more rationale on why this is a
+> stable-worthy fix. Because from the move and commit message it reads
+> like a styling choice ;-) .
+> 
+> I do agree that it makes more sense as child of cpus, but the commit
+> message should also elaborate on why that would matter for stable.
 
-You forgot a "v2" in the subject line.
+Thanks for your feedback!  Perhaps it would be the best to simply drop 
+the
+submission to stable kernels...  Believe it or not, :) I spent a fair 
+amount
+of time deliberating over the submission to stable, but now I think it's
+simply better to omit that and not increase the amount of patches that 
+go
+into stable unnecessary.
 
-Also, for obvious reasons, we can not take changes without any changelog
-text at all.
+Would you like me to send the v2 with no Cc to stable, or would you 
+prefer
+to drop that line yourself?
 
-thanks,
 
-greg k-h
+>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>> ---
+>>  arch/arm64/boot/dts/rockchip/rk356x.dtsi | 24 
+>> ++++++++++++------------
+>>  1 file changed, 12 insertions(+), 12 deletions(-)
+>> 
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi 
+>> b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+>> index 4690be841a1c..9f7136e5d553 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+>> @@ -113,19 +113,19 @@ cpu3: cpu@300 {
+>>  			d-cache-sets = <128>;
+>>  			next-level-cache = <&l3_cache>;
+>>  		};
+>> -	};
+>> 
+>> -	/*
+>> -	 * There are no private per-core L2 caches, but only the
+>> -	 * L3 cache that appears to the CPU cores as L2 caches
+>> -	 */
+>> -	l3_cache: l3-cache {
+>> -		compatible = "cache";
+>> -		cache-level = <2>;
+>> -		cache-unified;
+>> -		cache-size = <0x80000>;
+>> -		cache-line-size = <64>;
+>> -		cache-sets = <512>;
+>> +		/*
+>> +		 * There are no private per-core L2 caches, but only the
+>> +		 * L3 cache that appears to the CPU cores as L2 caches
+>> +		 */
+>> +		l3_cache: l3-cache {
+>> +			compatible = "cache";
+>> +			cache-level = <2>;
+>> +			cache-unified;
+>> +			cache-size = <0x80000>;
+>> +			cache-line-size = <64>;
+>> +			cache-sets = <512>;
+>> +		};
+>>  	};
+>> 
+>>  	cpu0_opp_table: opp-table-0 {
+>> 
+> 
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
