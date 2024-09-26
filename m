@@ -1,189 +1,118 @@
-Return-Path: <linux-kernel+bounces-339909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B2B986C16
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:35:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A54F986C18
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55FCD2829FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:35:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AF531C22027
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232D6171675;
-	Thu, 26 Sep 2024 05:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B716176AC2;
+	Thu, 26 Sep 2024 05:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="i5cT+yIJ"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NNsO25ec"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468DE25777
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FC71171C;
+	Thu, 26 Sep 2024 05:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727328896; cv=none; b=prxRn+K4RQCibbHeL/7XHbQn25nz2/Gl0DSRgjmaIjyRPdRrKngmBYDtDaDT41Pd4iBa2CxoKTPYC5g1Ph3FjUIyt/S5i2fysH4NxaUk8yj8Pj8uKA47PePQ4ScEg+Iq2bpFuoxbvq87umHHrTbe3soMx96Aa+c5RcsEqH3Ifss=
+	t=1727328947; cv=none; b=h20DiivRXvmUvU7XfTcQwJ6Fi5NLlrvfelfKjs+TwioHF04KRtq1KMLuTkmR3BeLMss67cztruxqSfR4Gv18IrmRM29aOmV45zJRQM7YjeRASLT5GIndDNSU1mODkRg8aCl/XtkL+Q4MAwDyG4OufYffJpJMZ1TCCm6k1Xmcmh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727328896; c=relaxed/simple;
-	bh=swXyTAcLgwrpOR7vwZIp8q1pyVRfiEN01n1XjACumU4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=obxE9xd/Sg9ku5/Lo0TL4fxDgYcr1DDhNDuaMGthFCaNq7UyRH1J14eKZUbq4Eb0URg9KMQWO6CWjxTMsWl0oqKrFcvoKyDtrkoI3rOZb7Gs3RCNl3jf6w9ptw4sbIkVUWTPMWqFjLhkl/XqQlnLJ7EsIUXIzCPYJjqB/Ap/YEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=i5cT+yIJ; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240926053452epoutp021d71a289b04ac40e33a422d0930aa2b3~4tHnA_ezb0372403724epoutp02Y
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:34:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240926053452epoutp021d71a289b04ac40e33a422d0930aa2b3~4tHnA_ezb0372403724epoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727328892;
-	bh=swXyTAcLgwrpOR7vwZIp8q1pyVRfiEN01n1XjACumU4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=i5cT+yIJpWuYg8ayC/EMU15wlvMH2VIbUs5utAx6s+jYofMb8ezLl8GYp/4KZqJkH
-	 9GpZipF24hzsqRiE3+7RRyyjJEkYibLG8oOq9+04iC4J43/q62tEh+1KWO5dQdGio1
-	 Rgx12/ACxTAi3YIFTj7pbXw0tTeBKEA6wFk7W23U=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-	20240926053451epcas1p4c26022781b0e48c369a986b2e79b0e02~4tHmcMMla0679906799epcas1p48;
-	Thu, 26 Sep 2024 05:34:51 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.38.237]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XDj3G0Plcz4x9Q8; Thu, 26 Sep
-	2024 05:34:50 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	01.7F.09725.972F4F66; Thu, 26 Sep 2024 14:34:49 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240926053449epcas1p2e8596f64b7ee5d3b8cdf565bacdc6510~4tHkoAwy11368013680epcas1p2f;
-	Thu, 26 Sep 2024 05:34:49 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240926053449epsmtrp115837797407d31f4abe8a41f921962b0~4tHknD2Wt0333203332epsmtrp1I;
-	Thu, 26 Sep 2024 05:34:49 +0000 (GMT)
-X-AuditID: b6c32a37-1f3ff700000025fd-48-66f4f279057b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8F.49.19367.972F4F66; Thu, 26 Sep 2024 14:34:49 +0900 (KST)
-Received: from [10.113.111.204] (unknown [10.113.111.204]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240926053449epsmtip12248e1a358afba040f90ca5bfa99b6d0~4tHkRAQg_0521205212epsmtip1K;
-	Thu, 26 Sep 2024 05:34:49 +0000 (GMT)
-Message-ID: <d2a6b8d16b001b72fd01cfc5b4895e6fee0b7032.camel@samsung.com>
-Subject: Re: [PATCH 6/6] dt-bindings: display: samsung,exynos7-decon: add
- exynos7870 compatible
-From: Kwanghoon Son <k.son@samsung.com>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>, Krzysztof Kozlowski
-	<krzk@kernel.org>
-Cc: airlied@gmail.com, alim.akhtar@samsung.com, conor@kernel.org,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	inki.dae@samsung.com, kyungmin.park@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, robh@kernel.org, simona@ffwll.ch,
-	sw0312.kim@samsung.com,  tzimmermann@suse.de
-Date: Thu, 26 Sep 2024 14:34:49 +0900
-In-Reply-To: <d8f5999921a31d7723e0aa9b12bb9eaf@disroot.org>
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1727328947; c=relaxed/simple;
+	bh=TzrPpScamIQIi5oyPDJQMQjV/sG+yfPS0hLCZagtCzk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fUTpkmezOzt5nYYARWIOUIpdWb9rcV74jKpQ85Fi4IZf6jTsN33DTTxTD4Jqi1ELFaVFFrvRJG8WtRRJop0esQ3VvroJkKp3T66NL+9ob7YpzsWN0eNxLwt4CCLXPTkPYO/p8n2QJH6nFQ/EzO5vBzyudSBFcPcItFrADJOyZg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NNsO25ec; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D74DC4CEC5;
+	Thu, 26 Sep 2024 05:35:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727328946;
+	bh=TzrPpScamIQIi5oyPDJQMQjV/sG+yfPS0hLCZagtCzk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NNsO25ecqCyPe9twcE/ubl7gBVq69x9ucHDhsRncG67U2M9ZQEPGgDghXJ7xcTlkJ
+	 ppXdo3SwA+Trz+9j8mhvqcFTGTS3sqzvNvnahusaL0XqW5+2GLGM9GCErAWgNWgVIr
+	 T8thn4jLwQaKpAiXLGZ1OJY6YGhWp5hnk0Xr7W/3H4KrH//LkenWt+3KNPcvtQrUbt
+	 zmcRyX9yr09bUfltCziwH2MVLuSor7RRuRXArE/2/AzKYRJeivwIaFNeALCK0M8arm
+	 PV/9aeUzjfRMm9OGl14pLK/MTkEQFB37MVJX0bKaJyNsql8DQDQWh9P9Zh1PoGXCDv
+	 7UQR3H7qFrA8A==
+Date: Wed, 25 Sep 2024 22:35:44 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Thomas Richter <tmricht@linux.ibm.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, acme@kernel.org,
+	agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+	hca@linux.ibm.com
+Subject: Re: [PATCH] perf test: Silence perf check subcommand when not
+ supported
+Message-ID: <ZvTysPPKxYKjUMTA@google.com>
+References: <20240911122850.926303-1-tmricht@linux.ibm.com>
+ <f74e73b6-fa0a-4533-a9de-3c5dbc4399f3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNJsWRmVeSWpSXmKPExsWy7bCmnm7lpy9pBgc2WlicuL6IyeLBvG1s
-	FiunrmKzmH/kHKvFla/v2Swm3Z/AYvHn33k2i/PnN7BbnG16w26x6fE1VovLu+awWcw4v4/J
-	YuHHrSwWbZ3LWC3+79nBbjH73X52ixmTX7JZbHkzkdVByOPkus1MHnu/LWDx2DnrLrvHplWd
-	bB7zTgZ63O8+zuSxeUm9R9+WVYwem09Xe3zeJBfAFZVtk5GamJJapJCal5yfkpmXbqvkHRzv
-	HG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQP0k5JCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jE
-	Vim1ICWnwLRArzgxt7g0L10vL7XEytDAwMgUqDAhO2Pd4SmsBRt5Kua8m8DewHiTs4uRk0NC
-	wETi8LMm5i5GLg4hgR2MEkdnrWWBcD4xStzaepUVpArM6Tsa18XIAdax/0IKRM1ORonH109B
-	NbxnlFjWuIMVpIhXwEPi+a8kkF5hgUSJpQtb2UBsNgF1iSVta9lBbBGBKIn7qw+CbWYWWMMs
-	sfH8ZWaQBIuAqsTn30fAFnMKWEu8md3FCGIzC2hLLFv4GqxGVEBeouHhCTCbV0BQ4uTMJ2BH
-	SAh84JBY8LaZCeI3F4nZixawQNjCEq+Ob2GHsKUkXva3QdnZEkc/7mWDsEskrs9axAphG0vs
-	XzqZCeQZZgFNifW79CFu4JN497WHFRIQvBIdbUIQprzErc5yiEZRiTNPP0IN9JB4e/I7EyR4
-	mlgkpt/8zzaBUX4Wkm9mIflgFsKyBYzMqxjFUguKc9NTiw0LjOFxmpyfu4kRnKq1zHcwTnv7
-	Qe8QIxMH4yFGCQ5mJRHeSTc/pgnxpiRWVqUW5ccXleakFh9iNAWG6URmKdHkfGC2yCuJNzSx
-	NDAxMzI2sTA0M1QS5z1zpSxVSCA9sSQ1OzW1ILUIpo+Jg1Oqgalc01zo8tsS98Osj92UAl0E
-	FaNv6zW+ZdosyBktlcaXUzuZ/9Jbjvs/nGctKClvumimKrHM//4ipzniC2zXdM2dbJ3UZX7O
-	0OWZQe3zybEvp3pzf/ZVNG5h+XLudnXgwxyWGb8d9k2VefTsYAb/dLmF5jYdGvIKGdFTZ6+Q
-	vXjGx9c16uTnrJWTF0+VT14QK/ZEunHCf+WmDrFXGyIvcprMjdLrefVjxg2bMIVnn+dWsy7M
-	nj6Ze3rcssNdjiqrZK0EEmf+k3Blu3XSpSl69QbHTottjM3BX/ROJz+b0udinH1B0mPp+3KT
-	M7aPZiv+17yQHHNkcQl/6YXKO+lR4ld5t7oo8D771b9eYfnFR0osxRmJhlrMRcWJAEa0uZRe
-	BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsWy7bCSnG7lpy9pBvf/i1mcuL6IyeLBvG1s
-	FiunrmKzmH/kHKvFla/v2Swm3Z/AYvHn33k2i/PnN7BbnG16w26x6fE1VovLu+awWcw4v4/J
-	YuHHrSwWbZ3LWC3+79nBbjH73X52ixmTX7JZbHkzkdVByOPkus1MHnu/LWDx2DnrLrvHplWd
-	bB7zTgZ63O8+zuSxeUm9R9+WVYwem09Xe3zeJBfAFcVlk5Kak1mWWqRvl8CV0XryBVPBCp6K
-	nptbWRsYL3F2MXJwSAiYSOy/kNLFyMUhJLCdUeLV+adsXYycQHFRiY7LjYwQNcIShw8Xg4SF
-	BN4ySsw5XAAS5hXwkHj+KwkkLCyQKLF0YStYJ5uAusSStrXsILaIQLTE+1cLmUDGMwusZZbo
-	3LWMBSTBIqAq8fn3EVYQm1PAWuLN7C5GiBu2Mks8fXWWGSTBLKAp0br9NzuErS2xbOFrsLio
-	gLxEw8MTYDavgKDEyZlPWCYwCs5C0jILScssJGULGJlXMYqmFhTnpucmFxjqFSfmFpfmpesl
-	5+duYgRHpVbQDsZl6//qHWJk4mA8xCjBwawkwjvp5sc0Id6UxMqq1KL8+KLSnNTiQ4zSHCxK
-	4rzKOZ0pQgLpiSWp2ampBalFMFkmDk6pBia3lwdduHpuX/qfFfaGb7fPT4OexWor7Jb57uyq
-	ePjgAvcta/919yJ//eV5l742rjhEKWKpuuRdN6sl768sbt+reY5H0vuyA9+Mhy8fdf4/sCr6
-	RPhVHp1rdpObvA/8ufX2jUDFjFM9k+b6z7cOuXXHewuXG6fJ6jjP+BseRtvufrVTvLR4pUje
-	9agVF3W8rtq7Vxlsa1Sb0Rm2Le7cnZyGdYczrm5KFdgmc/Z33Zrl8579DbpgF7HxdcSv2xWB
-	cR/tVyvUHM6t+bqb3eu3h0BY3al7pZP/R5b1h+zL/XKYe+uO7wcP852tMglLNN7pLv/i9O8f
-	/Nbf+DbbHb+YNFOu2fFHsWnntYDmPecTGbhPK7EUZyQaajEXFScCAGYfEWY5AwAA
-X-CMS-MailID: 20240926053449epcas1p2e8596f64b7ee5d3b8cdf565bacdc6510
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240926053449epcas1p2e8596f64b7ee5d3b8cdf565bacdc6510
-References: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
-	<20240919-exynosdrm-decon-v1-6-8c3e3ccffad5@disroot.org>
-	<32ae1188-196d-4fe8-8719-968e5149a771@kernel.org>
-	<7e5caaea80390e8cf87ba0a74d9719f0@disroot.org>
-	<1bc0ad48-03c0-4cf6-afb1-2296d1c259b9@kernel.org>
-	<8e0672ad3fd72f69d2bdb5687e778c86@disroot.org>
-	<ef786b8b-32c0-457a-9e14-ed7bd9f04172@kernel.org>
-	<d8f5999921a31d7723e0aa9b12bb9eaf@disroot.org>
-	<CGME20240926053449epcas1p2e8596f64b7ee5d3b8cdf565bacdc6510@epcas1p2.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f74e73b6-fa0a-4533-a9de-3c5dbc4399f3@linaro.org>
 
-On Wed, 2024-09-25 at 20:05 +0000, Kaustabh Chakraborty wrote:
-> On 2024-09-25 19:56, Krzysztof Kozlowski wrote:
-> > On 25/09/2024 21:36, Kaustabh Chakraborty wrote:
-> > > On 2024-09-25 19:25, Krzysztof Kozlowski wrote:
-> > > > On 25/09/2024 20:42, Kaustabh Chakraborty wrote:
-> > > > > On 2024-09-20 12:39, Krzysztof Kozlowski wrote:
-> > > > > > On 19/09/2024 17:20, Kaustabh Chakraborty wrote:
-> > > > > > > Add the compatible string of Exynos7870 to the existing list.
-> > > > > > >=20
-> > > > > > > Signed-off-by: Kaustabh Chakraborty <kauschluss=40disroot.org=
->
-> > > > > >=20
-> > > > > > ... and the DTS is <please provide lore ink in changelog>?
-> > > > >=20
-> > > > > Didn't quite understand. The patch adds the compatible string
-> > > > > for Exynos7870 DECON in documentation. There's no DTS involved
-> > > > > in here, right?
-> > > >=20
-> > > > Provide lore link to the DTS submission.
-> > >=20
-> > > There aren't any DTS submissions *yet* which use the compatible.
-> > > Is that an issue?
-> > >=20
-> >=20
-> > Yeah, users are supposed to be upstream. Not downstream.
->=20
-> I understand that. I had plans to submit it in the future.
-> If that's how it's meant to be done, I'll have to revisit this
-> submission at a later date then.
+On Wed, Sep 11, 2024 at 02:34:27PM +0100, James Clark wrote:
+> 
+> 
+> On 11/09/2024 13:28, Thomas Richter wrote:
+> > Perf subcommand check might not be supported and prints an
+> > error message when used:
+> 
+> Only in verbose mode though. Personally I don't like all the piping to
+> /dev/null in the tests because I have to go and remove them every time a
+> test fails, rather than just doing "-v". But as it's pretty much the pattern
+> used I suppose we should continue.
+> 
+> > 
+> >   # perf check feature -q libtraceevent
+> >   perf: 'check' is not a perf-command. See 'perf --help'.
+> > 
+> >   Did you mean one of these?
+> >          c2c
+> >          sched
 
-Hi, may I ask for reason that you don't submit dts?
-I am asking because I wonder if there is an issue related to DPP.
+I think perf test is supposed to run the latest build so perf check
+command should be available.  Do you see this in the test result or just
+in the command line?
 
-https://lore.kernel.org/linux-samsung-soc/2e4d3d180f535e57d9cb98e7bac1d14b5=
-1ffc5d4.camel=40gmail.com/=23t
+Thanks,
+Namhyung
 
-Best regards,
-kwang.
 
->=20
-> >=20
-> > Best regards,
-> > Krzysztof
-
+> >   #
+> > 
+> > Drop this error message, the return code is sufficient.
+> > 
+> > Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> > ---
+> >   tools/perf/tests/shell/lib/probe_vfs_getname.sh | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+> > index 5c33ec7a5a63..697fbe296a62 100644
+> > --- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+> > +++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+> > @@ -32,7 +32,7 @@ skip_if_no_debuginfo() {
+> >   # check if perf is compiled with libtraceevent support
+> >   skip_no_probe_record_support() {
+> >   	if [ $had_vfs_getname -eq 1 ] ; then
+> > -		perf check feature -q libtraceevent && return 1
+> > +		perf check feature -q libtraceevent >/dev/null 2>&1 && return 1
+> 
+> There's another of the same in tools/perf/tests/shell/test_task_analyzer.sh
+> 
+> With that:
+> 
+> Reviewed-by: James Clark <james.clark@linaro.org>
 
