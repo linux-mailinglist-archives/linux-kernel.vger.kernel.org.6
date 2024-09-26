@@ -1,125 +1,141 @@
-Return-Path: <linux-kernel+bounces-340409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ECFC987310
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:47:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F893987307
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6901F270D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 564C7284142
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F7517CA0A;
-	Thu, 26 Sep 2024 11:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA67F157A72;
+	Thu, 26 Sep 2024 11:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KY61cOFO"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="wuT2djYl"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68BF17BEBD;
-	Thu, 26 Sep 2024 11:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398F012BEBB;
+	Thu, 26 Sep 2024 11:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727351182; cv=none; b=eALkcfNKWkW++kM7gREPv4PqlYInEQ5PT5Dfw7euCwcXR8iH2po40O/SKNbFpC3Sqt++K7LDwQ2LnxhAlbLmnMHQwV62RJg2+4CvQMMYhUvmWyY6T/6EeqWPfCoW7fmKREfV4NYbH1GEmh9nWgNTiXU5+SKoXnkkMZCfCGM4YBI=
+	t=1727351166; cv=none; b=q1LaBj0NjdPkb48nfP9ZpZPoQvYdtQvuXzmunDqmeD1BKBdozmuQBb2IPB6sJ3KTBDTKGxYDRyWc+IsA1R5z1sGeJyGwr7DhYDuM6LPyV1X2qH56CoMs0fsEQ+yURFlNrfx8cRRjyb9GeZeoqVZql1Sz3KV+lyMWdr2P0g1rasM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727351182; c=relaxed/simple;
-	bh=UmZ9Ip7A/TJg7BVUydvbWsc/Ryjqn+a7l0DCi7hkVa4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=A2zyphPG5+uIaXBV7yNOR4pHpRsa/UZDKMYgZ8mFmT2ZmmMr3q3PH2b42o33Tlax3Gj6uvuA5jo6QamCj9U1ZnX5LaqpoOptojlgg1nB5OmojX/d73m2iFywAMJQDimzmKY34HdtzKmnh6d8iATusFyA3XvTcaOWjG0WuBp2JzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KY61cOFO; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727351121; x=1727955921; i=markus.elfring@web.de;
-	bh=0WriWlYUv5/uc9PXmsjfVr90I1kl1JDus5c3wCEcgcY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=KY61cOFOa/3fXrmnGiV5a3uwfoD44aogtDpF1et9K9ONhl2v2rZM1vN9j/9Wmmu2
-	 XNcpeYjOpSZAa6s4rqJTLVY7ZAiKwkD4YFmF5ec/2Uju4jtkaas1WLxpmoSZl+x43
-	 RjsRqjDFMNeE+XQbtceQcphqHRCPl/B4JgOOhI8LrzozkZcro8ObdN+tZMlJggivL
-	 VgnE7YLU8LM3X8iqGe0F9woHSe5+fyP83yxSdoOveM4c8fXlHuuMqBOLVf9irov4O
-	 DZ3HdXOqafiPaKTDmDzFsBT93GIX4NjahtKuo/cJiTQSd7NDUc6NoLkuE8vRmJA80
-	 Mda8SPLQkSUatKNPuA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MuF8x-1s3sdh3nCv-00se3Y; Thu, 26
- Sep 2024 13:45:20 +0200
-Message-ID: <08987123-668c-40f3-a8ee-c3038d94f069@web.de>
-Date: Thu, 26 Sep 2024 13:45:18 +0200
+	s=arc-20240116; t=1727351166; c=relaxed/simple;
+	bh=8aI0kGQIhwa+LpEzandVm20UuyTxqRP9xDt+Dw8EQA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IgqnxuaLHTZHwIzqkSDbtyhgMv3Dk1p3L2xS0SUj2y/nlYdX/Ty7DfqMOS7ZiKatVcQ0WR9LI+EtyqjRjUCw0IevXrYF1aQZpVGGau/WBoC8HzIUcSYdzmjjXF++itf2vy54GvnMgOUGBowr/lpabnvc7QlCIBvsk3utlYArhD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=wuT2djYl; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=gVy15gAavgqrcDP8xE+eSxR0KJiOJ5m7kfVHIJ0BOlk=; b=wuT2djYlIGUqRAS/a7lmjhbDsL
+	v7potOF7LYxwP59Y/CxF4mzj6zkMizBnZwbhpMZHR6znzcwvZbsF7Fk5JDtqmfAc/kavYUALwvX+J
+	AgJYEcjt7Ah+Jjlc+sdrZswl7qO52iMOXn6MtzwmbwJoRU6eHTrXLciWEjTcfjDA0ZUnFN7usTP7B
+	HQO1+XPfm/cK/TJ8u6NIyt2ZGfryE5GI84AsJmVBuSInBsL4HgXsz0gm6lUyiHPfK1KjzIFFSehV0
+	dfjZbhV0onCCsHN5Dnv9wKex4JsjfXDScPEglzRAYYUYF+KKJHK0zmvyTYf6h2MgzPzbCsrEjXfUk
+	jJfwPRcw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56324)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1stmwU-00089O-1j;
+	Thu, 26 Sep 2024 12:45:54 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1stmwP-0008IK-1W;
+	Thu, 26 Sep 2024 12:45:49 +0100
+Date: Thu, 26 Sep 2024 12:45:49 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Abhishek Chauhan <quic_abchauha@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Halaney <ahalaney@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Brad Griffis <bgriffis@nvidia.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, kernel@quicinc.com
+Subject: Re: [PATCH net v3 1/2] net: phy: aquantia: AQR115c fix up PMA
+ capabilities
+Message-ID: <ZvVJbakJ01++YHHG@shell.armlinux.org.uk>
+References: <20240925230129.2064336-1-quic_abchauha@quicinc.com>
+ <20240925230129.2064336-2-quic_abchauha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: bpf@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- Hou Tao <houtao1@huawei.com>, Jiri Olsa <jolsa@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Yonghong Song <yonghong.song@linux.dev>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] bpf: Call kfree(obj) only once in free_one()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:eMy/eZVFbxT56cxaOkV6q3GnYGtHkvXeGrP2QYBfyXCXsVyHwIT
- D/wU1ctL1bLgb0hwrCz14FL0k8aaKfGm884/NYnh3gARJmPUht+KO7HxYvCnj63UosAaI4+
- y3HC0a2fi51ZisGz9DU4902vh+B74/Uh+DlR2uiZ7aDESo4ZHx1kNui57JKfPoqBNsxkHq9
- GrFSPZpjuMHvFx12YK29Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+5iEdOTOxP0=;ZaD2bUfmzzkNuQwW1O9PAgcYIbY
- 7nuWlsMBj1MOo3gA8Q/+obq0d3hCDvK2o3dGXssmDl2xsq9SgrtQjz/xHvBX295QRDBn2azrJ
- R158S1J3U6bF0MWF4VrmpK7T5bYiJEmrY2MRu7ikAo0LMN3DYHdNwPpg+SUfxx2lah6feNE4V
- oN08vQIjas4U++yykUTSm+gjiTz8lq28orjg2xpfB3qEZ7+JKSVl30iKC32AIE1dyrufSSOHc
- RqLXnwjfHrz7LFS5Unwv4AjY5tEBrOGFSzhiZkieLcT9ypXMj0l8gLSejD75BssSWRTFV7m21
- Iq6YRR2nv/1/a80HdN2RggrzjDn6UKuobxGACK7/kl7JewPaHpj2f8uyj4yPJ1Rj5Z8l93IL0
- AN0AOwZ85j8vn0PlaEIqZp/ABJFm7Agr6pnITRNvUt5YVPITMrw21nTyE5DXJt3EppCnb4EfU
- gMDTEc2eNiVkRfJxfL3Y59FHy4rgieoU657MfBziSSOMg7DCd0DyX4irrJZ3ebamzs9BIt1dS
- FDRRekgVHtaayvENgP1ZELExdLyRJ3+/7iwwpKlqrN+VyyJ+vxNoQnlQZCRhPjBLLY4Y0dPN2
- BPfeoH9pvQm2FWcsEXy4a+xyRqZMMklSk8wbwmCHAuxTva6SWoLK9gJscxylPbNRvV7voUPrV
- 2XLEqfnNc4zD5/IS4dPGXgYVFCFMxyo+M+uTghkMfFAE249Da6A1LjbSJ+SDhyAzW/RFNee0Y
- vlpLnB31XNzKFZBP6PCog/jlzGaezqDkMPkYZMgGO+ATl+CSqTIIlCC5CAvfKrITBs9dfB/rP
- 7ns9F3OgdlmfPG1gDGtkplCQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925230129.2064336-2-quic_abchauha@quicinc.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Sep 2024 13:30:42 +0200
+On Wed, Sep 25, 2024 at 04:01:28PM -0700, Abhishek Chauhan wrote:
+> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+> index e982e9ce44a5..88ba12aaf6e0 100644
+> --- a/drivers/net/phy/aquantia/aquantia_main.c
+> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+> @@ -767,6 +767,33 @@ static int aqr111_config_init(struct phy_device *phydev)
+>  	return aqr107_config_init(phydev);
+>  }
+>  
+> +static int aqr115c_get_features(struct phy_device *phydev)
+> +{
+> +	int ret;
+> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported) = { 0, };
 
-A kfree() call is always used at the end of this function implementation.
-Thus specify such a function call only once instead of duplicating it
-in a previous if branch.
+Networking uses reverse-christmas tree ordering for variables. Please
+swap the order of these.
 
-This issue was detected by using the Coccinelle software.
+Also, I think this would be better:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- kernel/bpf/memalloc.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+	unsigned long *supported = phydev->supported;
 
-diff --git a/kernel/bpf/memalloc.c b/kernel/bpf/memalloc.c
-index b3858a76e0b3..1a1b4458114c 100644
-=2D-- a/kernel/bpf/memalloc.c
-+++ b/kernel/bpf/memalloc.c
-@@ -252,11 +252,8 @@ static void alloc_bulk(struct bpf_mem_cache *c, int c=
-nt, int node, bool atomic)
+You don't actually need a separate mask.
 
- static void free_one(void *obj, bool percpu)
- {
--	if (percpu) {
-+	if (percpu)
- 		free_percpu(((void __percpu **)obj)[1]);
--		kfree(obj);
--		return;
--	}
+> +
+> +	/* Normal feature discovery */
+> +	ret = genphy_c45_pma_read_abilities(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* PHY FIXUP */
+> +	/* Although the PHY sets bit 12.18.19.48, it does not support 5G/10G modes */
+> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, phydev->supported);
+> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKX4_Full_BIT, phydev->supported);
+> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKR_Full_BIT, phydev->supported);
+> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, phydev->supported);
 
- 	kfree(obj);
- }
-=2D-
-2.46.1
+For the above four, s/phydev->supported/supported/
 
+> +
+> +	/* Phy supports Speeds up to 2.5G with Autoneg though the phy PMA says otherwise */
+> +	linkmode_copy(supported, phy_gbit_features);
+> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseX_Full_BIT, supported);
+> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
+> +
+> +	linkmode_or(phydev->supported, supported, phydev->supported);
+
+Drop this linkmode_or().
+
+You'll then be modifying phydev->supported directly, which is totally
+fine.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
