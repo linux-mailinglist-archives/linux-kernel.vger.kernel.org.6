@@ -1,285 +1,125 @@
-Return-Path: <linux-kernel+bounces-339929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E594986C4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:12:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30169986C51
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D970D284735
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:12:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0699B2256A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DD3186E37;
-	Thu, 26 Sep 2024 06:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F239175D42;
+	Thu, 26 Sep 2024 06:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2BLsJsk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WaQUaJiz"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18661171C;
-	Thu, 26 Sep 2024 06:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580D41D5AB1;
+	Thu, 26 Sep 2024 06:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727331161; cv=none; b=pxLk3nMKr1Ir7CmKHnFSd1ARpY7A17BT+Z1F7e1Kxc1ASTHztLfSPBo10Eu/DpqIcLHAr5hkSADmFW4a3h2SeCunQzMGROZhjKfrWqWK0JqL/yAxwQRTv3bVsUqIbnL8J23w4ZJPRPBXCGsyo/L+E7cq40j5NmVOnXAaEy+RBng=
+	t=1727331350; cv=none; b=CGXMqNuASmlRTpkMdia1I1dtD8+Y+GwnMT+RLfWniqMYn+aTo6jhadC+tuX8qO2T7rALLSeueDhTxM68LtkTTVxKs9D291tGYDXxsGwSHjm0cewI+ch1OgMI9BlJT1iFKGa+TyRAiNdl7Ss8IXmfMswUGmxMuAQJRNlFnrlsUuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727331161; c=relaxed/simple;
-	bh=vyhvbMXo1ody6rcBI8E09FjxzCy/zj4ub5XtiAxNTHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e73Ld7do0/4MILBh9L1i9ErGenyF92pnmKDJ/B+27XhgLoZIujLROwsULU308ODr9jRlssUzI0464wx++6CyoSp/mWfZHCclWeUNHqfmkE+Ld15U9sEFf+1qnc2ddVY/rxQe/F43g1xiNvxGm8npw04QYky5gEuJkhc9ziP8kYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r2BLsJsk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 477B7C4CEC5;
-	Thu, 26 Sep 2024 06:12:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727331161;
-	bh=vyhvbMXo1ody6rcBI8E09FjxzCy/zj4ub5XtiAxNTHc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r2BLsJskTeJI1aP1XGCAMyahlW0mF2MaYnOVVHQPCaRkpIBDLeGI1bzkkBdSEkJ4B
-	 kS/cGKlT23HLDZ4wdo1Njgc26A2d45DoV9OEfOgzydCWqLhIpQo3mQ3yPvlVFsCe9/
-	 QWkHAZOS6JC4+D8FoUGVw/eT4rLFegj5ePGKA27kNmWxv1V83qM5+MRGlF8xoM5lX1
-	 QBhfknnYj6ZtK15MXDqhjUlbTtpA3/8iuz8qeLGuIxVHgEYGcCdG6kR0j8ZZyHGK6O
-	 oSAxt5cY8EOJSeo5QDe10dneU7WOo+dSXojxHWscs5tLx033Ux+zaC8DlzdFJGqXsr
-	 wnQIuGGdLgI5A==
-Date: Wed, 25 Sep 2024 23:12:38 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	irogers@google.com, swapnil.sapkal@amd.com, yu.c.chen@intel.com,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, rostedt@goodmis.org, vincent.guittot@linaro.org,
-	bristot@redhat.com, adrian.hunter@intel.com, james.clark@arm.com,
-	kan.liang@linux.intel.com, gautham.shenoy@amd.com,
-	kprateek.nayak@amd.com, juri.lelli@redhat.com,
-	yangjihong@bytedance.com, void@manifault.com, tj@kernel.org,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	santosh.shukla@amd.com, ananth.narayan@amd.com,
-	sandipan.das@amd.com
-Subject: Re: [PATCH 2/5] perf sched stats: Add record and rawdump support
-Message-ID: <ZvT7VkSUpNFKfqge@google.com>
-References: <20240916164722.1838-1-ravi.bangoria@amd.com>
- <20240916164722.1838-3-ravi.bangoria@amd.com>
+	s=arc-20240116; t=1727331350; c=relaxed/simple;
+	bh=m+HyFMzlEj5Op01nvjdqUC9n4R25/INTajoDkOy1JiA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o7oRsBcBaLKpMmyD+tysdFUmBMn3Dgc1Pfys8reo5+i4TkkGHGHm4TvZkiI9qtA3Dms7dfUrO6As2oeAvvtBfulU91/mo5FHfcHIRrXk67YTj+CqLWcCies9DWY8RvFIWEPrW5FrDHyOxTICEV58OaxZRMdu1k2/f0zjcHKrul0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WaQUaJiz; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-207115e3056so4397525ad.2;
+        Wed, 25 Sep 2024 23:15:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727331348; x=1727936148; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8FbqXgEe+SvTfiFifD6C5YX3wgD33T4z+C6CH2QuFow=;
+        b=WaQUaJizzmwfGzkcB8/sCGwwZkMPoXskJrwsGE0crlhNKn5PyZPtP0s3TI9zsqZ+YG
+         SZrL4XleemEPjSy/eBleFUaq+ZLRLHp5/t5KYk7Bcs5LArDkw3++jlQO5tI2OGg1sZ50
+         Wv26phInsOgaLlZ/KhjdssygGXGE5EWEMe9vY9Bi08MnksNxFVTg62jDEAWQDM4TRlFg
+         YIs/CSG++758IviQmTCrUvoxOAZOWHKHY/axS0GgHOtae4biVEXGpKBJZDJXuJSgvIM4
+         lL69tPGFioQO7+Dy1/tVg0VZ+ut4Fsvn/pcvh69TuzZXCRW39TJO2JH2PULUH/wvy+R4
+         dPMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727331348; x=1727936148;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8FbqXgEe+SvTfiFifD6C5YX3wgD33T4z+C6CH2QuFow=;
+        b=FTAe7ho3kxZLjC2Pe8Xr6tWX3PXlx14nh/aHqzei/YAnQkhNN03G6oELecUY5EkzzI
+         VCII/0tS9LODYb7O5CzdOnb6IqTIDLr5IUsfu8ftQXt96KStKNEH23jzM6K78QjCNkU9
+         953tOpO8vsaulGzxQvyMzWftsfS1olSF/iXzZjx7Xjbb5KQwOnkSS/tvpBWruvMMbt5M
+         MIRYeg1jL75wdE7pRCWcxNALSRVdbdeB5lu2nV7Ht9x03CjnajmPRIjj3Ia29BJLfw6w
+         AzTgYJlIYa7MKVvvCO73+jGz2D9cp733XZI6EnL0t/Dd0fEwi5EBJFO2jZBV07efWRHT
+         b53w==
+X-Forwarded-Encrypted: i=1; AJvYcCVOie/A/3gTqhCjikINBL95JIBZCT/E8GvrzXGeAKpdSyAP3H+yyYTTpTVTc93/5yJONm4clifIuBiC1UKhNZ6RlcE5@vger.kernel.org, AJvYcCXGPGMWY6yuhfNivFFuPQ2XkF0QgqSu0fNRM27ZgxsDB8T1W9KoygmWMiUKYF4dYPv7SbrzpJ8Mnsaviwc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLZjgeb750kVvLHt00MrRcKtQlyosCq4DkP4KVMeRlfyaUp7+K
+	8SRg4NgBzlrlcf2vceyI7ao1RV+LtN1AHwxfYEUHvQ9t2Q1A7lM9
+X-Google-Smtp-Source: AGHT+IG1deFc7xmIgnl29SkGt8TISnCecgUGJqk90q9EKUfCQEgL++bHCSTAskWv9/p+5knrW7gx0Q==
+X-Received: by 2002:a17:902:ec89:b0:205:968b:31cf with SMTP id d9443c01a7336-20afc4bb564mr78213455ad.33.1727331348514;
+        Wed, 25 Sep 2024 23:15:48 -0700 (PDT)
+Received: from localhost.localdomain ([240d:1a:13a:f00:4b94:68e0:2d8b:3983])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b0f80e5b5sm11996245ad.261.2024.09.25.23.15.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 23:15:48 -0700 (PDT)
+From: Tatsuya S <tatsuya.s2862@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Tatsuya S <tatsuya.s2862@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v2] ftrace: Hide a extra entry in stack trace
+Date: Thu, 26 Sep 2024 15:13:07 +0900
+Message-ID: <20240926061311.25625-1-tatsuya.s2862@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240916164722.1838-3-ravi.bangoria@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 16, 2024 at 04:47:19PM +0000, Ravi Bangoria wrote:
-> From: Swapnil Sapkal <swapnil.sapkal@amd.com>
-> 
-> Define new, perf tool only, sample types and their layouts. Add logic
-> to parse /proc/schedstat, convert it to perf sample format and save
-> samples to perf.data file with `perf sched stats record` command. Also
-> add logic to read perf.data file, interpret schedstat samples and
-> print rawdump of samples with `perf script -D`.
-> 
-> Note that, /proc/schedstat file output is standardized with version
-> number. The patch supports v15 but older or newer version can be added
-> easily.
-> 
-> Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
-> Co-developed-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> ---
->  tools/lib/perf/Documentation/libperf.txt      |   2 +
->  tools/lib/perf/Makefile                       |   2 +-
->  tools/lib/perf/include/perf/event.h           |  42 +++
->  .../lib/perf/include/perf/schedstat-cpu-v15.h |  13 +
->  .../perf/include/perf/schedstat-domain-v15.h  |  40 +++
->  tools/perf/builtin-inject.c                   |   2 +
->  tools/perf/builtin-sched.c                    | 222 +++++++++++++++-
->  tools/perf/util/event.c                       |  98 +++++++
->  tools/perf/util/event.h                       |   2 +
->  tools/perf/util/session.c                     |  20 ++
->  tools/perf/util/synthetic-events.c            | 249 ++++++++++++++++++
->  tools/perf/util/synthetic-events.h            |   3 +
->  tools/perf/util/tool.c                        |  20 ++
->  tools/perf/util/tool.h                        |   4 +-
->  14 files changed, 716 insertions(+), 3 deletions(-)
->  create mode 100644 tools/lib/perf/include/perf/schedstat-cpu-v15.h
->  create mode 100644 tools/lib/perf/include/perf/schedstat-domain-v15.h
-> 
-> diff --git a/tools/lib/perf/Documentation/libperf.txt b/tools/lib/perf/Documentation/libperf.txt
-> index fcfb9499ef9c..39c78682ad2e 100644
-> --- a/tools/lib/perf/Documentation/libperf.txt
-> +++ b/tools/lib/perf/Documentation/libperf.txt
-> @@ -211,6 +211,8 @@ SYNOPSIS
->    struct perf_record_time_conv;
->    struct perf_record_header_feature;
->    struct perf_record_compressed;
-> +  struct perf_record_schedstat_cpu;
-> +  struct perf_record_schedstat_domain;
->  --
->  
->  DESCRIPTION
-> diff --git a/tools/lib/perf/Makefile b/tools/lib/perf/Makefile
-> index 3a9b2140aa04..ebbfea891a6a 100644
-> --- a/tools/lib/perf/Makefile
-> +++ b/tools/lib/perf/Makefile
-> @@ -187,7 +187,7 @@ install_lib: libs
->  		$(call do_install_mkdir,$(libdir_SQ)); \
->  		cp -fpR $(LIBPERF_ALL) $(DESTDIR)$(libdir_SQ)
->  
-> -HDRS := bpf_perf.h core.h cpumap.h threadmap.h evlist.h evsel.h event.h mmap.h
-> +HDRS := bpf_perf.h core.h cpumap.h threadmap.h evlist.h evsel.h event.h mmap.h schedstat-cpu-v15.h schedstat-domain-v15.h
->  INTERNAL_HDRS := cpumap.h evlist.h evsel.h lib.h mmap.h rc_check.h threadmap.h xyarray.h
->  
->  INSTALL_HDRS_PFX := $(DESTDIR)$(prefix)/include/perf
-> diff --git a/tools/lib/perf/include/perf/event.h b/tools/lib/perf/include/perf/event.h
-> index 37bb7771d914..35be296d68d5 100644
-> --- a/tools/lib/perf/include/perf/event.h
-> +++ b/tools/lib/perf/include/perf/event.h
-> @@ -457,6 +457,44 @@ struct perf_record_compressed {
->  	char			 data[];
->  };
->  
-> +struct perf_record_schedstat_cpu_v15 {
-> +#define CPU_FIELD(_type, _name, _ver)		_type _name;
-> +#include "schedstat-cpu-v15.h"
-> +#undef CPU_FIELD
-> +};
-> +
-> +struct perf_record_schedstat_cpu {
-> +	struct perf_event_header header;
-> +	__u16			 version;
-> +	__u64			 timestamp;
-> +	__u32			 cpu;
+A extra entry is shown on stack trace(CONFIG_UNWINDER_ORC=y).
 
-Can you change the layout to minimize the paddings?  Probably better to
-add an explicit field for unused bits.
+    [003] .....   110.171589: vfs_write <-__x64_sys_write
+    [003] .....   110.171600: <stack trace>
+ => XXXXXXXXX (Wrong function name)
+ => vfs_write
+ => __x64_sys_write
+ => do_syscall_64
+ => entry_SYSCALL_64_after_hwframe
 
+To resolve this, increment skip in __ftrace_trace_stack().
+The reason why skip is incremented in __ftrace_trace_stack()
+is because __ftrace_trace_stack() in stack trace is the only function
+that wasn't skipped from anywhere.
 
-> +	union {
-> +		struct perf_record_schedstat_cpu_v15 v15;
-> +	};
-> +};
-> +
-> +struct perf_record_schedstat_domain_v15 {
-> +#define DOMAIN_FIELD(_type, _name, _ver)	_type _name;
-> +#include "schedstat-domain-v15.h"
-> +#undef DOMAIN_FIELD
-> +};
-> +
-> +#define DOMAIN_NAME_LEN		16
-> +
-> +struct perf_record_schedstat_domain {
-> +	struct perf_event_header header;
-> +	__u16			 version;
-> +	__u64			 timestamp;
-> +	__u32			 cpu;
-> +	__u16			 domain;
+Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
+---
+ kernel/trace/trace.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Ditto.
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index c3b2c7dfadef..0f2e255f563c 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2916,10 +2916,8 @@ static void __ftrace_trace_stack(struct trace_buffer *buffer,
+ 	 * Add one, for this function and the call to save_stack_trace()
+ 	 * If regs is set, then these functions will not be in the way.
+ 	 */
+-#ifndef CONFIG_UNWINDER_ORC
+-	if (!regs)
++	if (IS_ENABLED(CONFIG_UNWINDER_ORC) || !regs)
+ 		skip++;
+-#endif
+ 
+ 	preempt_disable_notrace();
+ 
+-- 
+2.46.1
 
-> +	char			 name[DOMAIN_NAME_LEN];
-> +	union {
-> +		struct perf_record_schedstat_domain_v15 v15;
-> +	};
-> +	__u16			 nr_cpus;
-> +	__u8			 cpu_mask[];
-> +};
-> +
->  enum perf_user_event_type { /* above any possible kernel type */
->  	PERF_RECORD_USER_TYPE_START		= 64,
->  	PERF_RECORD_HEADER_ATTR			= 64,
-> @@ -478,6 +516,8 @@ enum perf_user_event_type { /* above any possible kernel type */
->  	PERF_RECORD_HEADER_FEATURE		= 80,
->  	PERF_RECORD_COMPRESSED			= 81,
->  	PERF_RECORD_FINISHED_INIT		= 82,
-> +	PERF_RECORD_SCHEDSTAT_CPU		= 83,
-> +	PERF_RECORD_SCHEDSTAT_DOMAIN		= 84,
->  	PERF_RECORD_HEADER_MAX
->  };
->  
-> @@ -518,6 +558,8 @@ union perf_event {
->  	struct perf_record_time_conv		time_conv;
->  	struct perf_record_header_feature	feat;
->  	struct perf_record_compressed		pack;
-> +	struct perf_record_schedstat_cpu	schedstat_cpu;
-> +	struct perf_record_schedstat_domain	schedstat_domain;
->  };
->  
->  #endif /* __LIBPERF_EVENT_H */
-> diff --git a/tools/lib/perf/include/perf/schedstat-cpu-v15.h b/tools/lib/perf/include/perf/schedstat-cpu-v15.h
-> new file mode 100644
-> index 000000000000..8e4355ee3705
-> --- /dev/null
-> +++ b/tools/lib/perf/include/perf/schedstat-cpu-v15.h
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifdef CPU_FIELD
-> +CPU_FIELD(__u32, yld_count, v15)
-> +CPU_FIELD(__u32, array_exp, v15)
-> +CPU_FIELD(__u32, sched_count, v15)
-> +CPU_FIELD(__u32, sched_goidle, v15)
-> +CPU_FIELD(__u32, ttwu_count, v15)
-> +CPU_FIELD(__u32, ttwu_local, v15)
-> +CPU_FIELD(__u64, rq_cpu_time, v15)
-> +CPU_FIELD(__u64, run_delay, v15)
-> +CPU_FIELD(__u64, pcount, v15)
-> +#endif
-
-Can we have a single schedstat.h containing both CPU fields and domain
-fields?  You might require users to define the macro always and get rid
-of the ifdef condition here.
-
-Also is there any macro magic to handle the version number?  I think you
-can have the number only (15; without 'v') and compare with input if
-needed..
-
-Thanks,
-Namhyung
-
-
-> diff --git a/tools/lib/perf/include/perf/schedstat-domain-v15.h b/tools/lib/perf/include/perf/schedstat-domain-v15.h
-> new file mode 100644
-> index 000000000000..422e713d617a
-> --- /dev/null
-> +++ b/tools/lib/perf/include/perf/schedstat-domain-v15.h
-> @@ -0,0 +1,40 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifdef DOMAIN_FIELD
-> +DOMAIN_FIELD(__u32, idle_lb_count, v15)
-> +DOMAIN_FIELD(__u32, idle_lb_balanced, v15)
-> +DOMAIN_FIELD(__u32, idle_lb_failed, v15)
-> +DOMAIN_FIELD(__u32, idle_lb_imbalance, v15)
-> +DOMAIN_FIELD(__u32, idle_lb_gained, v15)
-> +DOMAIN_FIELD(__u32, idle_lb_hot_gained, v15)
-> +DOMAIN_FIELD(__u32, idle_lb_nobusyq, v15)
-> +DOMAIN_FIELD(__u32, idle_lb_nobusyg, v15)
-> +DOMAIN_FIELD(__u32, busy_lb_count, v15)
-> +DOMAIN_FIELD(__u32, busy_lb_balanced, v15)
-> +DOMAIN_FIELD(__u32, busy_lb_failed, v15)
-> +DOMAIN_FIELD(__u32, busy_lb_imbalance, v15)
-> +DOMAIN_FIELD(__u32, busy_lb_gained, v15)
-> +DOMAIN_FIELD(__u32, busy_lb_hot_gained, v15)
-> +DOMAIN_FIELD(__u32, busy_lb_nobusyq, v15)
-> +DOMAIN_FIELD(__u32, busy_lb_nobusyg, v15)
-> +DOMAIN_FIELD(__u32, newidle_lb_count, v15)
-> +DOMAIN_FIELD(__u32, newidle_lb_balanced, v15)
-> +DOMAIN_FIELD(__u32, newidle_lb_failed, v15)
-> +DOMAIN_FIELD(__u32, newidle_lb_imbalance, v15)
-> +DOMAIN_FIELD(__u32, newidle_lb_gained, v15)
-> +DOMAIN_FIELD(__u32, newidle_lb_hot_gained, v15)
-> +DOMAIN_FIELD(__u32, newidle_lb_nobusyq, v15)
-> +DOMAIN_FIELD(__u32, newidle_lb_nobusyg, v15)
-> +DOMAIN_FIELD(__u32, alb_count, v15)
-> +DOMAIN_FIELD(__u32, alb_failed, v15)
-> +DOMAIN_FIELD(__u32, alb_pushed, v15)
-> +DOMAIN_FIELD(__u32, sbe_count, v15)
-> +DOMAIN_FIELD(__u32, sbe_balanced, v15)
-> +DOMAIN_FIELD(__u32, sbe_pushed, v15)
-> +DOMAIN_FIELD(__u32, sbf_count, v15)
-> +DOMAIN_FIELD(__u32, sbf_balanced, v15)
-> +DOMAIN_FIELD(__u32, sbf_pushed, v15)
-> +DOMAIN_FIELD(__u32, ttwu_wake_remote, v15)
-> +DOMAIN_FIELD(__u32, ttwu_move_affine, v15)
-> +DOMAIN_FIELD(__u32, ttwu_move_balance, v15)
-> +#endif /* DOMAIN_FIELD */
 
