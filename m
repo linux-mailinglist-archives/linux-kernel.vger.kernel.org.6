@@ -1,191 +1,193 @@
-Return-Path: <linux-kernel+bounces-340447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB75398738A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:26:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9963E98738D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AE2C1C22F6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8FFD1C24AE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4436017BB17;
-	Thu, 26 Sep 2024 12:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6714617799F;
+	Thu, 26 Sep 2024 12:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bvOJGYXg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gfIc4cc6"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD329474;
-	Thu, 26 Sep 2024 12:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C32E9474
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727353588; cv=none; b=X+cXfRs2wrILXrYT3hfftLZnsybhEL9Q842rwsXS9diI3qvH6Y4ueMtv3m6tWuk0XgOjTY3HJEpKrDeB9xWnx6UaK3Z43e21B+5jUO06V242/IJrwd3QF7MvfKFtrrgkkqugYG11bwIvlv875fl0UOT+rdFk2Hj+qnUZfZBv58A=
+	t=1727353618; cv=none; b=J4M9ewLEWJ7PfzCw7N6bC+Sp05QuJQQjOPbBkyGEyzgcpKA3iZO7zCMiDr4q34pMCVChNUahew76RzaFJhK5GOLkcRhj0cIWz+aHHgrFM50icCbLYiJAwt5wxhunuCgI78keRm3wmL7UFsdW7J48fu5GS0lPqlseo4Mb0GbWR/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727353588; c=relaxed/simple;
-	bh=rjxzLjusFV53fgrI0naeYMyM31w0t57thRWG/vxGG3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PVgmZh0QDd/oHJbdQXQ755PL+VhAMrNwiQ1/xNWcmwjeTHyNcRsJgTFejlYyql7bVt8aYOVymiP+lG7GUG4/hXcQktKtW+4V2P44JFB6yOXLtpO5if5kDQLJsJgFWFXrTFVlXrf6iwmkAU2iCKilRI3nO5sz2B1PUt6x4wpPavo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bvOJGYXg; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727353587; x=1758889587;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=rjxzLjusFV53fgrI0naeYMyM31w0t57thRWG/vxGG3Y=;
-  b=bvOJGYXgsED5A4iL87jGy1PTqQdypaTxrs1jK5r24dqqHh3g60zuX81q
-   a8h2UXR4HGV7c266LXa2+4/ZkcdL2g+t8Z27Z+BzsPweuiyPAX2MslDZ0
-   yCjzA6zmtT6P/M/cBE2ig/RwMurzEnMd9OrsN2lfD8HWajBQpzH0b2lnw
-   tSkRhkNvdlcCeCPb8x+niIdNtU2vPlTtBfHjqt2G6LFzdPvkRAlfWTcft
-   vRKS1mufXySYeDZ77atNZYn8USIpaIHfh1S1zf0MtMal2gHHC5K4M6/GF
-   CY/v5za1Orvr6CrcxXsd0T6+H0npLU45+9doMtwOwSidpWNM22PhdQA0S
-   g==;
-X-CSE-ConnectionGUID: ypqeeOLTRj+y/e3UcpkMQg==
-X-CSE-MsgGUID: NGGSO8gnRDCKDULXwhgOOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26257347"
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="26257347"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 05:26:26 -0700
-X-CSE-ConnectionGUID: IHjgVfp/QfGwRQ/D1hWGVg==
-X-CSE-MsgGUID: hU7dHfB0Rr2PbmeyHeqmgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="72439183"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 05:26:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1stnZc-0000000DC1D-1rRn;
-	Thu, 26 Sep 2024 15:26:20 +0300
-Date: Thu, 26 Sep 2024 15:26:20 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: Re: [PATCH v8 2/3] regulator: Add devres version of
- of_regulator_get_optional()
-Message-ID: <ZvVS7ITg2t-RIh8C@smile.fi.intel.com>
-References: <20240925093807.1026949-1-wenst@chromium.org>
- <20240925093807.1026949-3-wenst@chromium.org>
- <ZvPscRdWlFPmtCyR@smile.fi.intel.com>
- <CAGXv+5Gf9+rc+vLcr-JFhO561G8dw38ksV3drat+DyCfWEVakQ@mail.gmail.com>
+	s=arc-20240116; t=1727353618; c=relaxed/simple;
+	bh=W1K4LUZoM1dpkDf1rPVbHtgMVLSGFsIkoB4l+0nrXWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rJZgIqjzDU5efqAg1/KFkFR0WRPQ5LOPfnHHIro+tibkN/xpm8+iO/pNUUCIOJ7UCHE/034zvG6oWSyqUAFpJ62QjV9GnnudnKsYsHxJl8dI8gClSY/5OdXXOhJ3iyJ4trpKsnIlo/BKvrHQqOGLyksTim3S0JWbNBPW5kYfi8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gfIc4cc6; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d43657255so137555666b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:26:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727353615; x=1727958415; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8eB/LC0WCkLRHYHqq55Ehj0gnBL7BMz7IH9VuKZNge8=;
+        b=gfIc4cc6DjZ34/raLrCgVzIfwqxM6Garlcqf8iQWdmRP7ff8PZ/r+SRoHy6Q7odqtq
+         AiiC6cYY33Ij3nKmeaPloudMJPBYkPBHsySoA6Md8zbAut8ycZNhkof6nJBKVf8NuwOk
+         MZNTOlwYkdhE9dWwNwd2gVRjdC15qipBM0PE5Yj3C7kNsWHQ7TWW/aLUdItd4JRu5IoX
+         1L77maFsgUTWBSKEfHVThIpRcb57eMGRoXEUOfOwT2V0w1FrMZkM8N1oqydaaUQQQg8q
+         31AUzIxY6f3ML1ohnzh5Zlneb8Q5IUWvOWrz7Cns/SXtYmsjZ9n6Y5KFbDwZNnIWPlWE
+         oiIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727353615; x=1727958415;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8eB/LC0WCkLRHYHqq55Ehj0gnBL7BMz7IH9VuKZNge8=;
+        b=e9/KS8ZnD38u3mqcfbIpaYHIb0R8qL/vAtujrpYL+OQ8ovn98Qd69efPul0OZQ9NZ2
+         RBS+fFhkp9LIfmRRXNKQpB4LFVlv9M2lnQf8n/9aFEes1OzciR8WAnT0RWCe0Z1bLzN/
+         kAnprEDl21IBGQryA0NYcoyBsRiy3d+i19DecOJE0cfLCT2NJaY4hiwv18sjCtQdpywa
+         aI+TPX3WVXpAff4UYg/kRMPBhuH51e2foYijLv6J0TpEqbmIqKTBNgSwjBPlrVBFomm4
+         zPPLJv2/5E2axqA/jCygQvW4qKXDa1s+RXb/r2AMneqZLZ1dkdveDfO541esirZg00iz
+         r53A==
+X-Forwarded-Encrypted: i=1; AJvYcCV8eTkTzgPLNvY8Eh1OWAPDvkc+e33ikfNL5VsuOSVx4BPMnlwdU3/SEKEOvQZ8bHXuLYln8Np3omlf78o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6dS1v0TYwW6+7laJbetTNystM3LOUkFXsF3zHyhztpOMBQZBi
+	pM9UaTVoZg8H8l6sn6pja6Wle1wmsOJxAYm9rg3h7PRGubsa3cfZzjWxiof3+hQ=
+X-Google-Smtp-Source: AGHT+IEby6swK1qKmKOhNp9ApnteMBewDC39/Ox0Bk0vbizMEUBN8yjxVubq07e6qVNDHlKPjcMkOw==
+X-Received: by 2002:a17:907:3f99:b0:a86:7fc3:8620 with SMTP id a640c23a62f3a-a93a03fefdfmr593049066b.31.1727353615307;
+        Thu, 26 Sep 2024 05:26:55 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f541e4sm345619666b.66.2024.09.26.05.26.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Sep 2024 05:26:54 -0700 (PDT)
+Message-ID: <55f95839-5403-44e3-968c-ba0cc93bfb73@linaro.org>
+Date: Thu, 26 Sep 2024 13:26:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXv+5Gf9+rc+vLcr-JFhO561G8dw38ksV3drat+DyCfWEVakQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 0/7] Event parsing fixes
+To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
+Cc: linux-perf-users@vger.kernel.org, kan.liang@linux.intel.com,
+ ak@linux.intel.com, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
+ Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Weilin Wang <weilin.wang@intel.com>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Colin Ian King <colin.i.king@gmail.com>, Yang Li
+ <yang.lee@linux.alibaba.com>, Yang Jihong <yangjihong@bytedance.com>,
+ Howard Chu <howardchu95@gmail.com>, Ze Gao <zegao2021@gmail.com>,
+ Yanteng Si <siyanteng@loongson.cn>, Jing Zhang <renyu.zj@linux.alibaba.com>,
+ Sun Haiyong <sunhaiyong@loongson.cn>, Yicong Yang
+ <yangyicong@hisilicon.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240925141357.1033087-1-james.clark@linaro.org>
+ <ZvTlUXJs2jVDDL0B@google.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <ZvTlUXJs2jVDDL0B@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 26, 2024 at 04:43:52PM +0800, Chen-Yu Tsai wrote:
-> On Wed, Sep 25, 2024 at 6:56 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Wed, Sep 25, 2024 at 05:38:05PM +0800, Chen-Yu Tsai wrote:
 
-...
 
-> > > +#if IS_ENABLED(CONFIG_OF)
-> >
-> > Do we really need this?
+On 26/09/2024 5:38 am, Namhyung Kim wrote:
+> On Wed, Sep 25, 2024 at 03:13:38PM +0100, James Clark wrote:
+>> I rebased this one and made some other fixes so that I could test it,
+>> so I thought I'd repost it here in case it's helpful. I also added a
+>> new test.
+>>
+>> But for the testing it all looks ok.
+>>
+>> There is one small difference where it now hides _all_ default
+>> <not supported> events, when previously it would only hide some
+>> selected subset of events like "stalled-cycles-frontend". I think
+>> this is now more consistent across platforms because, for example,
+>> Apple M only has cycles and instructions, and the rest of the
+>> default events would always show as <not supported> there.
+>>
+>> Tested on Raptor Lake, Kaby Lake, Juno, N1, Ampere (with the DSU
+>> cycles PMU) and I also faked an Apple M on Juno.
 > 
-> What's the point of going through devres_* stuff if we already know
-> _of_regulator_get() is going to fail anyway?
-
-With devm_add_action*() this will be other way around and there are plenty of
-APIs done this way. The ifdeffery is simply ugly in the code.
-
-> Also, _of_regulator_get() does not have a stub version for !CONFIG_OF.
-
-So, what prevents us from adding it?
-
-> > > +static struct regulator *_devm_of_regulator_get(struct device *dev, struct device_node *node,
-> > > +                                             const char *id, int get_type)
-> > > +{
-> > > +     struct regulator **ptr, *regulator;
-> > > +
-> > > +     ptr = devres_alloc(devm_regulator_release, sizeof(*ptr), GFP_KERNEL);
-> > > +     if (!ptr)
-> > > +             return ERR_PTR(-ENOMEM);
-> > > +
-> > > +     regulator = _of_regulator_get(dev, node, id, get_type);
-> > > +     if (!IS_ERR(regulator)) {
-> > > +             *ptr = regulator;
-> > > +             devres_add(dev, ptr);
-> > > +     } else {
-> > > +             devres_free(ptr);
-> > > +     }
-> > > +
-> > > +     return regulator;
-> >
-> > Why not using devm_add_action() / devm_add_action_or_reset()
-> > (whichever suits better here)?
+> Hmm.. I got a segfault with 'perf stat true' on my Zen2 box.
 > 
-> Cargo cult from _devm_regulator_get() in this file. However since this is
-> meant to share the same release function, both functions need to use the
-> same mechanism.
+>    $ gdb -q -args ./perf stat true
+>    Reading symbols from ./perf...
+>    (gdb) r
+>    Starting program: /home/namhyung/tmp/perf stat true
+>    [Thread debugging using libthread_db enabled]
+>    Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+>    
+>    Program received signal SIGSEGV, Segmentation fault.
+>    0x00005555557e04b5 in perf_pmu__is_fake (pmu=0x0) at util/pmu.c:1173
+>    1173		return pmu->type == PERF_PMU_TYPE_FAKE;
+>    (gdb) bt
+>    #0  0x00005555557e04b5 in perf_pmu__is_fake (pmu=0x0) at util/pmu.c:1173
+>    #1  0x00005555558c1b8b in evsel__sys_has_perf_metrics (evsel=0x5555560cc4b0) at arch/x86/util/evsel.c:50
+>    #2  0x00005555558c1c33 in arch_evsel__must_be_in_group (evsel=0x5555560cc4b0) at arch/x86/util/evsel.c:64
+>    #3  0x00005555557773a4 in parse_events__sort_events_and_fix_groups (list=0x7fffffff9ad0) at util/parse-events.c:2098
+>    #4  0x0000555555777793 in __parse_events (evlist=0x5555560aa880,
+>        str=0x5555558d6498 "context-switches,cpu-migrations,page-faults,instructions,cycles,stalled-cycles-frontend,stalled-cycles-backend,branches,branch-misses", pmu_filter=0x0, err=0x7fffffff9bd0, fake_pmu=false, warn_if_reordered=true, fake_tp=false) at util/parse-events.c:2186
+>    #5  0x00005555555c787f in parse_events (evlist=0x5555560aa880,
+>        str=0x5555558d6498 "context-switches,cpu-migrations,page-faults,instructions,cycles,stalled-cycles-frontend,stalled-cycles-backend,branches,branch-misses", err=0x7fffffff9bd0) at util/parse-events.h:41
+>    #6  0x00005555555cce39 in add_default_events () at builtin-stat.c:1977
+>    #7  0x00005555555cf928 in cmd_stat (argc=1, argv=0x7fffffffd840) at builtin-stat.c:2724
+>    #8  0x000055555564cb81 in run_builtin (p=0x555556024548 <commands+360>, argc=2, argv=0x7fffffffd840) at perf.c:351
+>    #9  0x000055555564ce28 in handle_internal_command (argc=2, argv=0x7fffffffd840) at perf.c:404
+>    #10 0x000055555564cf81 in run_argv (argcp=0x7fffffffd63c, argv=0x7fffffffd630) at perf.c:448
+>    #11 0x000055555564d2cf in main (argc=2, argv=0x7fffffffd840) at perf.c:562
 > 
-> I could also argue that this is not an action, but an allocation, and so
-> devres_alloc() seems to make more sense.
-
-It's rather matter of the naming of the devm_add_action*() APIs, but again,
-we have plenty of APIs using it when it's allocation and not strictly speaking
-an action.
-
-> > > +}
-> >
-> > > +#endif
-
-...
-
-> > > +static inline struct regulator *__must_check devm_of_regulator_get_optional(struct device *dev,
-> > > +                                                                         struct device_node *node,
-> > > +                                                                         const char *id)
-> >
-> > I don't know the conventions here, but I find better to have it as
-> >
-> > static inline __must_check struct regulator *
-> > devm_of_regulator_get_optional(struct device *dev, struct device_node *node, const char *id)
-> >
-> > Similar to other stubs and declarations.
+> Thanks,
+> Namhyung
 > 
-> I don't think there are any conventions. This file already has three types:
-> 
-> 1. Wrap the line with the function name on the second line
-> 2. Wrap the arguments; wrapped arguments aligned to the left parenthesis.
-> 3. Wrap the arguments; wrapped arguments aligned with aribtrary number of
->    tabs.
-> 
-> I prefer the way I have put them.
 
-The way you put it despite relaxed limit is slightly harder to read.
-I don't remember many headers that do so-o indented parameters. Besides
-your way defers the burden of resplit to the future in case one more parameter
-needs to be added which will excess the 100 limit.
+Oh yeah that's from the rebase. Looks like pmu is never NULL here on Arm 
+and hybrid x86 so I didn't see it, but I do see it on non-hybrid x86. It 
+just needs a NULL check:
 
-Also __must_check is somehow misplaced in my opinion (talking from my
-experience and this can be simply checked by grepping other headers).
+   bool evsel__sys_has_perf_metrics(const struct evsel *evsel)
+   {
+   ...
+   	pmu = evsel->pmu;
+	if (pmu && perf_pmu__is_fake(pmu))
+		pmu = NULL;
 
-That said, I prefer the way I suggested or something alike.
+I also noticed a new issue though, the change to make all default stat 
+events skippable=true hides permission errors, so now instead of the 
+hint to look at perf_event_paranoid you just get nothing, so I need to 
+fix that:
 
--- 
-With Best Regards,
-Andy Shevchenko
+   $ cat /proc/sys/kernel/perf_event_paranoid
+   4
 
+   $ perf stat true
+
+     Performance counter stats for 'true':
+
+
+        0.000431617 seconds time elapsed
+
+        0.000445000 seconds user
+        0.000000000 seconds sys
+
+I'm thinking it either needs to never skip EPERM or some other errors, 
+or maybe make cycles always non skippable. Probably the first option is 
+better.
+
+James
 
 
