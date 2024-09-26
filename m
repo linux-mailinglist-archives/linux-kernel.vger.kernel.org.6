@@ -1,143 +1,318 @@
-Return-Path: <linux-kernel+bounces-340812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A34F987826
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:07:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEEF5987829
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A00851C21B5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:07:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74D341F215D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B42156880;
-	Thu, 26 Sep 2024 17:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B419A15A85E;
+	Thu, 26 Sep 2024 17:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCFgfG5J"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxibUDhB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877E02837F;
-	Thu, 26 Sep 2024 17:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8B815445E;
+	Thu, 26 Sep 2024 17:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727370432; cv=none; b=BDndG+vJ/DBE/N+qhQO+P5VtAEufSPE7iGRLbtOJu8tFdn+LyxTItLdK3PKlcVukGz7qqH+60bHn2HfV5Aneh4Crjuk1Plongq1sRs2Bz7oYffI64lII0HGEm7EC+naAobOI/8wN8cqgE6/F+ajRC2tz7l9pwVjFcxtToMQIDSE=
+	t=1727370531; cv=none; b=AB+ulPtYFprQ1u4l81nOwgiWk/O7XWNKDRaV1xsxXKAHDhISPFPDeNB8qgupFI+14VAHtk/e3WQfx4Xvhgf7UWa061BCoOQC396UtNvLv3shSi8Ys84SrsxlWHVV7l/+jtJSy8CfY0tQNnzH28MJidRhB9/AGLkpkQLwbYn3l1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727370432; c=relaxed/simple;
-	bh=5iYZJMNJaZKXw4tCr+pREI1qBLnsU3gIXs++lWmTl20=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MHOAVM/f4JHGvMvAuEb+hKL/0Mq7ybYMz9H9jwBoiRKSlAGRkp0W8VmmiC3El0Axr91QJjXZN2KhmIiIOFvSJk3/qGYQ5ua8JrMhckoMpInJRT2L5uAt7vbvNdCon6Wv05iW7StgKeWmG/FWnwFNqlCd14kiOJl1KJJcWdlEXp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CCFgfG5J; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53655b9bbcdso1562642e87.2;
-        Thu, 26 Sep 2024 10:07:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727370429; x=1727975229; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sSW8LKXMvjgCAP+LleMXU69ztDlOwlRznFCMfPkydaM=;
-        b=CCFgfG5J9smb0SgswtDV+CGNJjUG52RrI6VynBVw2KBs9VwIPtS0LC1bLmpt0OXvlX
-         7lWVT3h7XYC6LhGO3ejV1bXlM/C33UB/MM1h+xo6xGInP42ayglV7S3YY4fMsrorzsvE
-         vPLx3tb3CUCsI44s6E3N7JM5nhGhqT+4GYWU+VQPMum7FvKN2gLY7+xHS7jdLPQXPfyU
-         pZep3vIAvgLAYgYCNra+QGZSlY7U5F5vfvGmJFqkUbo/+ez1AkeU1irxC/tSp53ntX+p
-         o4baIhlm9/XgpI7SIcX2nZ9UN7/TomAI9M/PQgEjBjVdDWGrvQ27B0bNHVA6Pgz/RmAV
-         Ct5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727370429; x=1727975229;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sSW8LKXMvjgCAP+LleMXU69ztDlOwlRznFCMfPkydaM=;
-        b=oCs+x6eILvIjAdEUs66wqxIl/7BdyS+T4V4JBSzSdAglE0xRIiKuoT3n339L5TbNMd
-         r9/orZvvQuc1Ma+/pcVTnBqPTgO5pN2Mmtxm6w3msgAoyRpz2++/1ZDMjir96LlQQ30A
-         3SJylZkSd1pGmQ5g3Z5cBWOgxeUUUxKs5+erh1Jgr1fymI8/4fI+OdzFbrzw0kS89w4l
-         KY/eZFvJH3IlwVEeRj9G8M/po6y6sWffm7KnTaly2rP7RfeeNU+wdAurwRL9c4rpP5En
-         rceQsqDFbBhISLrsw6WMwjEfE+nKOwg74vO+LNQJB1FTyhKiHnLXJZkoKJnjNRAok9YP
-         fREQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUn3CQaQFNfWrHSHk3BefsRnja1+wS9ipZctIHi/wMx28/O0ZVlR9GRIun2xdxTc8I6MCX4@vger.kernel.org, AJvYcCVyAdJy0sO3Dj9Ey3Rbytg1WOZs/2A+RZl1srkVsLZx3kAdhFqjyqLcx16GXARDevjfm1buJWkjNZ7USd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRacCymXUVkjjGzFTju4B/X/JglGtkkuyvzxNH7DL1wxa6WYEw
-	xb6sJU1lyB0ZfvODEMYeexJeSk+72zwHwagcz0WNLoFrFY3QFOKp
-X-Google-Smtp-Source: AGHT+IEnamfg1YzMrkN+Y0xDuc7LwiVl+tEE9IblD4TwlLvLyB7usjEJR2zCtegZ59qGLt8W+vQrqw==
-X-Received: by 2002:a05:6512:3093:b0:533:45a1:88fc with SMTP id 2adb3069b0e04-5389fc478c4mr260702e87.30.1727370428211;
-        Thu, 26 Sep 2024 10:07:08 -0700 (PDT)
-Received: from pc636 (host-90-233-216-205.mobileonline.telia.com. [90.233.216.205])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd5e365sm13887e87.79.2024.09.26.10.07.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 10:07:06 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Thu, 26 Sep 2024 19:07:03 +0200
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Uladzislau Rezki <urezki@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	David Rientjes <rientjes@google.com>,
-	Christoph Lameter <cl@linux.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Christian Brauner <brauner@kernel.org>, RCU <rcu@vger.kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>
-Subject: Re: [GIT PULL] slab updates for 6.11
-Message-ID: <ZvWUt2oyXRsvJRNc@pc636>
-References: <8d6c5d10-5750-4472-858c-eadc105453be@suse.cz>
- <CAHk-=wjmu93njmUVqfkAbGKqHaOKFrTmgU2O=UkP3OOmpCjo4Q@mail.gmail.com>
- <CA+KHdyV=0dpJX_v_tcuTQ-_ree-Yb9ch3F_HqfT4YnH8=zyWng@mail.gmail.com>
- <0295538a-4b79-42bf-b0e1-5a905749de1e@suse.cz>
- <ZvWOl1mmBIgi5Vg8@pc636>
- <88ed491f-4ae4-4cfc-9be2-dda3de56813c@suse.cz>
+	s=arc-20240116; t=1727370531; c=relaxed/simple;
+	bh=BUvuluVezPbn/MBlm5xbTYmQB89T/XuMMnn+HpgcRJw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=KYkmv7fhCTszs1dmhwJEgS+PwlIoru3xRZVXfE9WbDiy53UnlSTcqYrD3SRA5Jh6r58dexzLa2xBryYmeUV11pY1fH/hFo3oFvuomLIlqLqzJ2hT+HBqUmLOFZqUrzPmMP8sa0+nNysNqijf9xZrmGrguFW3UgCRUHpafCTXw7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxibUDhB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 137BAC4CEC5;
+	Thu, 26 Sep 2024 17:08:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727370531;
+	bh=BUvuluVezPbn/MBlm5xbTYmQB89T/XuMMnn+HpgcRJw=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=jxibUDhB/wWdwirx6SI4flsPSnT36vR9P6aAZHBiIOEVyX2rT6qLcnyeLEI+0zgbW
+	 fY+4/UbkLF18bsiiFfpbhSyBDxqhJk5cdDGcs2k9/RDuXyYBSYQb4GsSyVznFB/0YZ
+	 5Iw3rn8f9BbT5+fHSqj1ucR3DF8CU5eviFufy/RXfMMJMLVQGYgu6BC7QRm1biDRIz
+	 xcuWxjHnKtx/KHAyMYc1W0Vh+UEWlVOCGm75r/J76Ez2RywHOGk4n913Peun5JfAZq
+	 FkeVsqce4+QzxFVYd0mE/38JxEgZAm7+imCfq+DwHyqCKpe8pqidZRPHBjClJ3hc8e
+	 Ma4Op03jUAOlQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88ed491f-4ae4-4cfc-9be2-dda3de56813c@suse.cz>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 26 Sep 2024 20:08:47 +0300
+Message-Id: <D4GDQXEN0RKN.L4Q48E96DC8H@kernel.org>
+Cc: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <James.Bottomley@HansenPartnership.com>,
+ <roberto.sassu@huaweicloud.com>
+Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
+ key_task_permission
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "chenridong" <chenridong@huawei.com>, "Chen Ridong"
+ <chenridong@huaweicloud.com>, <dhowells@redhat.com>, <paul@paul-moore.com>,
+ <jmorris@namei.org>, <serge@hallyn.com>
+X-Mailer: aerc 0.18.2
+References: <20240913070928.1670785-1-chenridong@huawei.com>
+ <D45Z3J2E2MPX.4SDWNGAP3D41@kernel.org>
+ <4079d020-edcc-4e27-9815-580f83a6c0ca@huaweicloud.com>
+ <D46WU24OP9O4.1Y7EGDV8ZN7NR@kernel.org>
+ <1cfa878e-8c7b-4570-8606-21daf5e13ce7@huaweicloud.com>
+ <D49PLU7VOREK.3UZFD499C96FB@kernel.org>
+ <fbe97a9c-0899-403a-840a-8d86e8730934@huaweicloud.com>
+ <D4G37UXT3VYV.1F8Z50TNGYYBW@kernel.org>
+ <D4G39938DC0V.8PCWJQ73GOK3@kernel.org>
+ <D4G4I4V56OJ3.1AUR56F77OOHU@kernel.org>
+ <eef47f37-6d96-4c60-a00b-e96e6025ef43@huawei.com>
+In-Reply-To: <eef47f37-6d96-4c60-a00b-e96e6025ef43@huawei.com>
 
-On Thu, Sep 26, 2024 at 06:46:29PM +0200, Vlastimil Babka wrote:
-> On 9/26/24 18:40, Uladzislau Rezki wrote:
-> > On Thu, Sep 26, 2024 at 06:35:27PM +0200, Vlastimil Babka wrote:
-> >> On 9/18/24 16:40, Uladzislau Rezki wrote:
-> >> >>
-> >> > Thank you for valuable feedback! Indeed it is hard to follow, even
-> >> > though it works correctly.
-> >> > I will add the comment and also break the loop on first queuing as you
-> >> > suggested!
-> >> > 
-> >> > It does not make sense to loop further because following iterations
-> >> > are never successful
-> >> > thus never overwrite "queued" variable(it never reaches the
-> >> > queue_rcu_work() call).
-> >> > 
-> >> > <snip>
-> >> >          bool queued = false;
-> >> >          ...
-> >> >          for (i = 0; i < KFREE_N_BATCHES; i++) {
-> >> >                 if (need_offload_krc(krcp)) {
-> >> >                          queued = queue_rcu_work(system_wq, &krwp->rcu_work);
-> >> >          ...
-> >> >          return queued;
-> >> > <snip>
-> >> > 
-> >> > if we queued, "if(need_offload_krc())" condition is never true anymore.
-> >> > 
-> >> > Below refactoring makes it clear. I will send the patch to address it.
-> >> 
-> >> Looks good, AFAICT. Can you send the full patch then? Thanks.
-> >> 
-> > I will do so. We can send it from RCU-side for rcX, this merge window or
-> > you can do it.
-> > 
-> > What is the best for you?
-> 
-> Guess I could do via slab tree since the original commit went there too.
-> 
-Make sense. I will send to you then!
+On Thu Sep 26, 2024 at 2:20 PM EEST, chenridong wrote:
+>
+>
+> On 2024/9/26 17:54, Jarkko Sakkinen wrote:
+> > On Thu Sep 26, 2024 at 11:55 AM EEST, Jarkko Sakkinen wrote:
+> >> On Thu Sep 26, 2024 at 11:53 AM EEST, Jarkko Sakkinen wrote:
+> >>> On Thu Sep 26, 2024 at 6:48 AM EEST, Chen Ridong wrote:
+> >>>>
+> >>>> On 2024/9/19 4:57, Jarkko Sakkinen wrote:
+> >>>>> On Wed Sep 18, 2024 at 10:30 AM EEST, Chen Ridong wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>> On 2024/9/15 21:59, Jarkko Sakkinen wrote:
+> >>>>>>> On Sun Sep 15, 2024 at 3:55 AM EEST, Chen Ridong wrote:
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> On 2024/9/14 19:33, Jarkko Sakkinen wrote:
+> >>>>>>>>> On Fri Sep 13, 2024 at 10:09 AM EEST, Chen Ridong wrote:
+> >>>>>>>>>> We meet the same issue with the LINK, which reads memory out o=
+f bounds:
+> >>>>>>>>>
+> >>>>>>>>> Nit: don't use "we" anywhere".
+> >>>>>>>>>
+> >>>>>>>>> Tbh, I really don't understand the sentence above. I don't what
+> >>>>>>>>> "the same issue with the LINK" really is.
+> >>>>>>>>>
+> >>>>>>>>
+> >>>>>>>> Hello, Jarkko.
+> >>>>>>>> I apologize for any confusion caused.
+> >>>>>>>>
+> >>>>>>>> I've encountered a bug reported by syzkaller. I also found the s=
+ame bug
+> >>>>>>>> reported at this LINK:
+> >>>>>>>> https://syzkaller.appspot.com/bug?id=3D68a5e206c2a8e08d317eb83f0=
+5610c0484ad10b9.
+> >>>>>>>>
+> >>>>>>>>>> BUG: KASAN: slab-out-of-bounds in __kuid_val include/linux/uid=
+gid.h:36
+> >>>>>>>>>> BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.=
+h:63 [inline]
+> >>>>>>>>>> BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x=
+410
+> >>>>>>>>>> security/keys/permission.c:54
+> >>>>>>>>>> Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
+> >>>>>>>>>>
+> >>>>>>>>>> CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-gafb=
+ffd6c3ede #15
+> >>>>>>>>>> Call Trace:
+> >>>>>>>>>>      __dump_stack lib/dump_stack.c:82 [inline]
+> >>>>>>>>>>      dump_stack+0x107/0x167 lib/dump_stack.c:123
+> >>>>>>>>>>      print_address_description.constprop.0+0x19/0x170 mm/kasan=
+/report.c:400
+> >>>>>>>>>>      __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
+> >>>>>>>>>>      kasan_report+0x3a/0x50 mm/kasan/report.c:585
+> >>>>>>>>>>      __kuid_val include/linux/uidgid.h:36 [inline]
+> >>>>>>>>>>      uid_eq include/linux/uidgid.h:63 [inline]
+> >>>>>>>>>>      key_task_permission+0x394/0x410 security/keys/permission.=
+c:54
+> >>>>>>>>>>      search_nested_keyrings+0x90e/0xe90 security/keys/keyring.=
+c:793
+> >>>>>>>>>>      keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:92=
+2
+> >>>>>>>>>>      search_cred_keyrings_rcu+0x111/0x2e0 security/keys/proces=
+s_keys.c:459
+> >>>>>>>>>>      search_process_keyrings_rcu+0x1d/0x310 security/keys/proc=
+ess_keys.c:544
+> >>>>>>>>>>      lookup_user_key+0x782/0x12e0 security/keys/process_keys.c=
+:762
+> >>>>>>>>>>      keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:4=
+34
+> >>>>>>>>>>      __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
+> >>>>>>>>>>      __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
+> >>>>>>>>>>      do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+> >>>>>>>>>>      entry_SYSCALL_64_after_hwframe+0x67/0xd1
+> >>>>>>>>>>
+> >>>>>>>>>> However, we can't reproduce this issue.
+> >>>>>>>>>
+> >>>>>>>>> "The issue cannot be easily reproduced but by analyzing the cod=
+e
+> >>>>>>>>> it can be broken into following steps:"
+> >>>>>>>>
+> >>>>>>>> Thank you for your correction.
+> >>>>>>>> Does this patch address the issue correctly? Is this patch accep=
+table?
+> >>>>>>>
+> >>>>>>> I only comment new patch versions so not giving any promises but =
+I can
+> >>>>>>> say that it is I think definitely in the correct direction :-)
+> >>>>>>>
+> >>>>>>> BR, Jarkko
+> >>>>>>
+> >>>>>> Hello, Jarkko. I have reproduced this issue. It can be reproduced =
+by
+> >>>>>> following these steps:
+> >>>>>>
+> >>>>>> 1. Add the helper patch.
+> >>>>>>
+> >>>>>> @@ -205,6 +205,9 @@ static void hash_key_type_and_desc(struct
+> >>>>>> keyring_index_key *index_key)
+> >>>>>>            else if (index_key->type =3D=3D &key_type_keyring && (h=
+ash &
+> >>>>>> fan_mask) !=3D 0)
+> >>>>>>                    hash =3D (hash + (hash << level_shift)) & ~fan_=
+mask;
+> >>>>>>            index_key->hash =3D hash;
+> >>>>>> +       if ((index_key->hash & 0xff) =3D=3D 0xe6) {
+> >>>>>> +                       pr_err("hash_key_type_and_desc: type %s %s
+> >>>>>> 0x%x\n",  index_key->type->name, index_key->description, index_key=
+->hash);
+> >>>>>> +       }
+> >>>>>>     }
+> >>>>>>
+> >>>>>> 2. Pick up the inputs whose hash is xxe6 using the following cmd. =
+If a
+> >>>>>> key's hash is xxe6, it will be printed.
+> >>>>>>
+> >>>>>> for ((i=3D0; i<=3D10000; i++)); do ./test_key user user$i "Some pa=
+yload"; done
+> >>>>>>
+> >>>>>> You have complile test_key whith following code.
+> >>>>>>
+> >>>>>> #include <sys/types.h>
+> >>>>>> #include <keyutils.h>
+> >>>>>> #include <stdint.h>
+> >>>>>> #include <stdio.h>
+> >>>>>> #include <stdlib.h>
+> >>>>>> #include <string.h>
+> >>>>>>
+> >>>>>> int
+> >>>>>> main(int argc, char *argv[])
+> >>>>>> {
+> >>>>>>       key_serial_t key;
+> >>>>>>
+> >>>>>>       if (argc !=3D 4) {
+> >>>>>> 	   fprintf(stderr, "Usage: %s type description payload\n",
+> >>>>>> 			   argv[0]);
+> >>>>>> 	   exit(EXIT_FAILURE);
+> >>>>>>       }
+> >>>>>>
+> >>>>>>       key =3D add_key(argv[1], argv[2], argv[3], strlen(argv[3]),
+> >>>>>> 			   KEY_SPEC_SESSION_KEYRING);
+> >>>>>>       if (key =3D=3D -1) {
+> >>>>>> 	   perror("add_key");
+> >>>>>> 	   exit(EXIT_FAILURE);
+> >>>>>>       }
+> >>>>>>
+> >>>>>>       printf("Key ID is %jx\n", (uintmax_t) key);
+> >>>>>>
+> >>>>>>       exit(EXIT_SUCCESS);
+> >>>>>> }
+> >>>>>>
+> >>>>>>
+> >>>>>> 3. Have more than 32 inputs now. their hashes are xxe6.
+> >>>>>> eg.
+> >>>>>> hash_key_type_and_desc: type user user438 0xe3033fe6
+> >>>>>> hash_key_type_and_desc: type user user526 0xeb7eade6
+> >>>>>> ...
+> >>>>>> hash_key_type_and_desc: type user user9955 0x44bc99e6
+> >>>>>>
+> >>>>>> 4. Reboot and add the keys obtained from step 3.
+> >>>>>> When adding keys to the ROOT that their hashes are all xxe6, and u=
+p to
+> >>>>>> 16, the ROOT has keys with hashes that are not xxe6 (e.g., slot 0)=
+, so
+> >>>>>> the keys are dissimilar. The ROOT will then split NODE A without u=
+sing a
+> >>>>>> shortcut. When NODE A is filled with keys that have hashes of xxe6=
+, the
+> >>>>>> keys are similar. NODE A will split with a shortcut.
+> >>>>>>
+> >>>>>> As my analysis, if a slot of the root is a shortcut(slot 6), it ma=
+y be
+> >>>>>> mistakenly be transferred to a key*, leading to an read out-of-bou=
+nds read.
+> >>>>>>
+> >>>>>>                          NODE A
+> >>>>>>                  +------>+---+
+> >>>>>>          ROOT    |       | 0 | xxe6
+> >>>>>>          +---+   |       +---+
+> >>>>>>     xxxx | 0 | shortcut  :   : xxe6
+> >>>>>>          +---+   |       +---+
+> >>>>>>     xxe6 :   :   |       |   | xxe6
+> >>>>>>          +---+   |       +---+
+> >>>>>>          | 6 |---+       :   : xxe6
+> >>>>>>          +---+           +---+
+> >>>>>>     xxe6 :   :           | f | xxe6
+> >>>>>>          +---+           +---+
+> >>>>>>     xxe6 | f |
+> >>>>>>          +---+
+> >>>>>>
+> >>>>>> 5. cat /proc/keys. and the issue is reproduced.
+> >>>>>
+> >>>>> Hi, I'll try to run through your procedure next week and give my co=
+mments.
+> >>>>> Thanks for doing this.
+> >>>>>
+> >>>>> BR, Jarkko
+> >>>>
+> >>>> Hi, Jarkko, have you run these procedure?
+> >>>> I have tested this patch with LTP and a pressure test(stress-ng --ke=
+y),
+> >>>> and this patch have fixed this issue. Additionally, no new bugs have
+> >>>> been found so far.
+> >>>>
+> >>>> I am looking forward to your reply.
+> >>>>
+> >>>> Best regards,
+> >>>> Ridong
+> >>>
+> >>> Nope because we are apparently stuck with release critical bug:
+> >>>
+> >>> https://lore.kernel.org/linux-integrity/D4EPMF7G3E05.1VHS9CVG3DZDE@ke=
+rnel.org/T/#t
+> >>>
+> >>> Might take several weeks before I look into this.
+> >>
+> >> I was expecting to send a PR early this week since the patch set
+> >> addresses the issue so thus wrong estimation.
+> >=20
+> > I asked David if he could look into this.
+> >=20
+> > BR, Jarkko
+>
+> Thank you very much.
 
---
-Uladzislau Rezki
+Further, I'm switching jobs. Tomorrow is my last day in the current
+job and next week starting a new job so given all these circumastances
+I rather look into this properly hopefully latest after my rc2 PR is
+out, rather than rushing.
+
+In a normal status quo situation this would not be such a huge issue.
+
+Similarly, for the performance bug I want to review James' comments
+etc with time and bake v6 that hopefully satisfies all the
+stateholders.
+
+So thank you for understanding, and I appreciate the work you've done
+on this. I.e. not ignoring this :-)
+
+BR, Jarkko
+
+BR, Jarkko
 
