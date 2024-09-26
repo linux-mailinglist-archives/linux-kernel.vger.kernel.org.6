@@ -1,105 +1,199 @@
-Return-Path: <linux-kernel+bounces-340197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03AE4986FB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:13:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD72986F18
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34B0B1C20A13
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:13:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F99D1F272F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5581AB51C;
-	Thu, 26 Sep 2024 09:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BD21AAE17;
+	Thu, 26 Sep 2024 08:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="qQrcpIGx"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2368208CA;
-	Thu, 26 Sep 2024 09:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="W5ewfJad"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5070417C9B0
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727341988; cv=none; b=rcrv0H3CyIo1OhBalwrqxgDo6QBdcJTRIO7+Y+3P9qPQKuXF55XMWYq4j4c7+F61bzpr+bdsaWGfGBvEM7c/DWy+btcqKB0iMPgFnUFcArg6h24gwEbTlm8ozDHaWSUEHppkjuOqYDEXEoi5je3/QFdIb7f9Lost/lNwdkZKNsg=
+	t=1727340041; cv=none; b=oEOjwcHbqhwt17OM+3OC2duL4ozJkdSK9IWD3S6xUrJruyHpanEsl96z3URyNzuBqOukC6PycaRqDuMgwrnrQjesJhd7z2fmK00suc9C0/06EBvDjf/as+irv//sgr5XvjeHHWrKKwqdyavfPuSP4LKjborKgM3VuURPD/v+YIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727341988; c=relaxed/simple;
-	bh=1DXKU4XVx7IHEGgM38c09bSSv1/QCOHdnFhdWz0h454=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u8QwHqWgsyhaGnPIvqfBlZHs7MlGqkkuqCs+AO4bVqf4ZcxIkoNKENkDiQhthSZGHYc7OFsaJQQqIjREzob9dzgRmrS8iVcFn3JZawodSBh9CeCl6XzOj/li9T7nEhmjPajHNTskeEph6ujpi4lMbwI4Srvfo8Tf1RYrJjdDAbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=qQrcpIGx; arc=none smtp.client-ip=1.95.21.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=3yjqlUTIEAtxbRrw6H5T/QaTD7R7yHaK6W6FA1/EZ6M=;
-	b=qQrcpIGxCVy7R5JFeMwIiA4/WGUJY6PuCGaPFk/nKhdictzIn9es9mhm267iFk
-	5JyA2YAvJcXEN5UNBDDDd9w8rgrD4DcgbP2zecxcABbX1T9NJGaATUmmur/ipUa6
-	LAIRhJUlbjBrj/VzLLHjAj4+n0z3SV2EpO9DZIYJ3dk0E=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgBHx53tHfVm9kctAQ--.42439S3;
-	Thu, 26 Sep 2024 16:40:15 +0800 (CST)
-Date: Thu, 26 Sep 2024 16:40:12 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Esben Haabendal <esben@geanix.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] ARM: imx: Allow user to disable pinctrl
-Message-ID: <ZvUd7PekQ4pVXQGU@dragon>
-References: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
- <20240506-imx-pinctrl-optional-v2-1-bdff75085156@geanix.com>
- <CACRpkdaW14PgLXTRPHUjaLNKfCMRs+hpHrYyMiNaqSs+m0rhqw@mail.gmail.com>
+	s=arc-20240116; t=1727340041; c=relaxed/simple;
+	bh=IUAscQfAPWcGfG5KWz3sDO7VY8+Fmjh5TSIrOr5dzxE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X1Kwmp0TjoYj0iOxDyMbsANSh6FFV5IHDpyK6/6Lg0NMo3d/H2bgzdORirW4MvDfA41UO2ihRURf0H44O1mhA9yXRmGgbz+A83Z61VMvH0/Gyeasc5b2e+5W3cWPxEPMtA+NKXSXbx6k2iklxQ8Yxt4xCv1v71Kt9fuypd5UlKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=W5ewfJad; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f761461150so10772151fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 01:40:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727340036; x=1727944836; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d0MwdR2iQxztDvYXUCkuzrSSEMztnbTW3zli76Rbrj4=;
+        b=W5ewfJadFVuHrLGU5U67j73/k4OSSM/PVpT9JG/89v0YL9M2q6uYkauDY2tmFToih2
+         GFm/948fND6HL7YE0l5/YKqcYYuFJRy+0b4MctVoVlLrvf43GQcY8OZpDL4GFZtrfHIQ
+         Hgu854NNnRFvBMyRWcS6Q0Hf1MEoba6iKptc4ZV5UEmzp5KEu24dV5LthEnsICNWB8Bs
+         CuV824Hyu72Tbs32ZR+yR+DrA0MVxeqLgLyRC6D2X98hlO6NtS/IugENXIZSL6w3KIlt
+         m+1kGl1Mc4Ql1E0FRVAXDI2apbQMMRxZiFXvGX5enTbCkqHtRyTn5dMo30dBKK1j1oeE
+         HqDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727340036; x=1727944836;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d0MwdR2iQxztDvYXUCkuzrSSEMztnbTW3zli76Rbrj4=;
+        b=fthtuIXCAlTsPUjI5d1x8GxOPMHvLxguVhN1TvaU9K6VSgcS31UDK7Oq9NtIiiKfNB
+         0x+nowrEsHCfTqY7Ex4aA1fPf9lbD0ud9A1hYeng9idfH9QR+zCTnZVSEIIbBox46cXN
+         pbc50Piihj/hxUMxjDetWohF1yCInoEPtLb8o+Ir+ym63+pxP8klQgRBro9bDgLZ4Dt4
+         bYGh5IaUAlWeHarVlgv6Kmd8ZOG7FATvBW0qS+zYB2Nm94RmBwu+PMoo3HlSTY5qPmvQ
+         /5XMm9pi0/T/senS5W1KerzTqZJZqa5ymGhmvlIMCjv6ijiLf4LR0aTZiSC59DMVX5JX
+         j28Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVPUoGXk/I2FvVfpm8PG4NvzBQlzKaDWUYWPY5KEw+Vjx4YDnS9ixm+Qt9m/JHMPPccKemHgeULQV6rhs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/wqnxQhEogx1o+rYAhvanuYOj7uxaE7hHVc1NJmgjsHunfkg5
+	E4lvk7oR066d/A4hfkq6WfozHl+clMDKRpSAOJVqSPo6nd+5cLAfVAWLNJ3zb9fv6aKN2VvkPpm
+	tRw8cJwXaqZFPQ1AHF47P57jPY+Z3PTe8iLI/6w==
+X-Google-Smtp-Source: AGHT+IFSr9JkTwhWfLTZdtSxdCUGQdOwjvJTW9XCc1/LTklMn5Fnfo9IeD+hjurOMKjLb+ULnmN5lGQI4m06ZMeZCDU=
+X-Received: by 2002:a05:651c:54c:b0:2ef:2905:f36d with SMTP id
+ 38308e7fff4ca-2f915fde153mr45484221fa.16.1727340036226; Thu, 26 Sep 2024
+ 01:40:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdaW14PgLXTRPHUjaLNKfCMRs+hpHrYyMiNaqSs+m0rhqw@mail.gmail.com>
-X-CM-TRANSID:Ms8vCgBHx53tHfVm9kctAQ--.42439S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZF4DCFW7AFyrXr4DXF4fKrg_yoWDurXE9F
-	4kta97C348CrW7X3Wqyr4avr9YvFW8Kr95Kr90qryrAa4DZFs3JFn5Jr45uw15Ja1kWr9r
-	Ar9Yqr93tFyjqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUn9iSPUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRlmZWb00uLnAgAAsU
+References: <20240923101206.3753-1-antoniu.miclaus@analog.com> <20240923101206.3753-2-antoniu.miclaus@analog.com>
+In-Reply-To: <20240923101206.3753-2-antoniu.miclaus@analog.com>
+From: David Lechner <dlechner@baylibre.com>
+Date: Thu, 26 Sep 2024 10:40:25 +0200
+Message-ID: <CAMknhBHmtpnX-nXxReF-rUW1ks1=iw3m_BmiRUTkf5XckPsvPw@mail.gmail.com>
+Subject: Re: [PATCH 1/7] iio: backend: add API for interface get
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, 
+	Olivier Moysan <olivier.moysan@foss.st.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Marcelo Schmitt <marcelo.schmitt@analog.com>, 
+	Alisa-Dariana Roman <alisadariana@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Dumitru Ceclan <mitrutzceclan@gmail.com>, 
+	=?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>, 
+	Marius Cristea <marius.cristea@microchip.com>, 
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>, Dragos Bogdan <dragos.bogdan@analog.com>, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-pwm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2024 at 09:45:32AM +0200, Linus Walleij wrote:
-> On Mon, May 6, 2024 at 12:24 PM Esben Haabendal <esben@geanix.com> wrote:
-> 
-> > Making pinctrl drivers and subsequently the pinctrl framework
-> > user-controllable, allows building a kernel without this.
-> > While in many (most) cases, this could make the system unbootable, it
-> > does allow building smaller kernels for those situations where picntrl
-> > is not needed.
-> >
-> > One such situation is when building a kernel for NXP LS1021A systems,
-> > which does not have run-time controllable pinctrl, so pinctrl framework
-> > and drivers are 100% dead-weight.
-> >
-> >
-> > Signed-off-by: Esben Haabendal <esben@geanix.com>
-> 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> I guess this needs to be merged through the SoC tree.
+On Mon, Sep 23, 2024 at 12:15=E2=80=AFPM Antoniu Miclaus
+<antoniu.miclaus@analog.com> wrote:
+>
+> Add backend support for obtaining the interface type used.
+>
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+>  drivers/iio/industrialio-backend.c | 24 ++++++++++++++++++++++++
+>  include/linux/iio/backend.h        | 10 ++++++++++
+>  2 files changed, 34 insertions(+)
+>
+> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industriali=
+o-backend.c
+> index efe05be284b6..53ab6bc86a50 100644
+> --- a/drivers/iio/industrialio-backend.c
+> +++ b/drivers/iio/industrialio-backend.c
+> @@ -449,6 +449,30 @@ ssize_t iio_backend_ext_info_set(struct iio_dev *ind=
+io_dev, uintptr_t private,
+>  }
+>  EXPORT_SYMBOL_NS_GPL(iio_backend_ext_info_set, IIO_BACKEND);
+>
+> +/**
+> + * iio_backend_interface_type_get - get the interace type used.
+> + * @back: Backend device
+> + * @type: Interface type
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_interface_type_get(struct iio_backend *back,
+> +                                  enum iio_backend_interface_type *type)
+> +{
+> +       int ret;
+> +
+> +       ret =3D iio_backend_op_call(back, interface_type_get, type);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (*type > IIO_BACKEND_INTERFACE_CMOS)
+> +               return -EINVAL;
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_interface_type_get, IIO_BACKEND);
+> +
+>  /**
+>   * iio_backend_extend_chan_spec - Extend an IIO channel
+>   * @indio_dev: IIO device
+> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+> index 8099759d7242..ba8ad30ac9ba 100644
+> --- a/include/linux/iio/backend.h
+> +++ b/include/linux/iio/backend.h
+> @@ -63,6 +63,11 @@ enum iio_backend_sample_trigger {
+>         IIO_BACKEND_SAMPLE_TRIGGER_MAX
+>  };
+>
+> +enum iio_backend_interface_type {
+> +       IIO_BACKEND_INTERFACE_LVDS,
+> +       IIO_BACKEND_INTERFACE_CMOS
+> +};
+> +
+>  /**
+>   * struct iio_backend_ops - operations structure for an iio_backend
+>   * @enable: Enable backend.
+> @@ -81,6 +86,7 @@ enum iio_backend_sample_trigger {
+>   * @extend_chan_spec: Extend an IIO channel.
+>   * @ext_info_set: Extended info setter.
+>   * @ext_info_get: Extended info getter.
+> + * @interface_type_get: Interface type.
+>   **/
+>  struct iio_backend_ops {
+>         int (*enable)(struct iio_backend *back);
+> @@ -113,6 +119,8 @@ struct iio_backend_ops {
+>                             const char *buf, size_t len);
+>         int (*ext_info_get)(struct iio_backend *back, uintptr_t private,
+>                             const struct iio_chan_spec *chan, char *buf);
+> +       int (*interface_type_get)(struct iio_backend *back,
+> +                                 enum iio_backend_interface_type *type);
+>  };
+>
+>  int iio_backend_chan_enable(struct iio_backend *back, unsigned int chan)=
+;
+> @@ -142,6 +150,8 @@ ssize_t iio_backend_ext_info_set(struct iio_dev *indi=
+o_dev, uintptr_t private,
+>  ssize_t iio_backend_ext_info_get(struct iio_dev *indio_dev, uintptr_t pr=
+ivate,
+>                                  const struct iio_chan_spec *chan, char *=
+buf);
+>
+> +int iio_backend_interface_type_get(struct iio_backend *back,
+> +                                  enum iio_backend_interface_type *type)=
+;
+>  int iio_backend_extend_chan_spec(struct iio_dev *indio_dev,
+>                                  struct iio_backend *back,
+>                                  struct iio_chan_spec *chan);
+> --
+> 2.46.0
+>
 
-Hi Linus,
-
-Reading your comment[1], I was thinking that you will merge the series
-through pinctrl tree, no?
-
-Shawn
-
-[1] https://lore.kernel.org/linux-arm-kernel/CACRpkdYbOTXmap-vJy4JNZSaZnE=yzC35EPD2F=bD8gWdD8-GQ@mail.gmail.com/
-
+This seems very specific to the AD485x chips and the AXI ADC backend.
+Since it is describing how the chip is wired to the AXI DAC IP block,
+I would be tempted to use the devicetree for this info instead of
+adding a new backend function.
 
