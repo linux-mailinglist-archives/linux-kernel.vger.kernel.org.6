@@ -1,106 +1,350 @@
-Return-Path: <linux-kernel+bounces-339816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B30B4986AF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:27:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC72986AF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 137C6B24945
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03268283AD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A03D175D2C;
-	Thu, 26 Sep 2024 02:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8A814B06E;
+	Thu, 26 Sep 2024 02:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZVLq0Vy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QpKYEtHz"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A707C37B;
-	Thu, 26 Sep 2024 02:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9871D5AAD
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 02:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727317645; cv=none; b=gLoWPf0dz4H5YYHIqUAEm1H7E6//tZm6FOIav+ejj3HO6+ykI8LKlv5VAF2W9D/f+xVoQ1o7rpStWmjyhxY58pvgfP3RM5kaM80ZsAAkJnqMQDIfNHnBEr1rldYibsegGAoe+iKEy1GB/mkiaN0UTk9QEoQNWh/vMyLrib6yd5I=
+	t=1727317873; cv=none; b=uA9ClHg+IuBZ5jKoHB/iaKA5QoX9UYiHRREajhY3trDE3tkZuM4S+RjrRuWJ+3s+ZU6PoBYJRv3bXif/pJKS3TxTkem0z4lGSKE4keH3rkQFcYvO/jIp23+8f84aNixtZ7HLuuIKM5P48U5aaqzCP4y9UnQV/woM4VC1wU9Bqhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727317645; c=relaxed/simple;
-	bh=oAyorxBPm/Cikm3nZpdbR5EcjR6Sl2EVi3nU6qHTpJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eNOnXK1n5aGBLikDaXHdsHskOmKo6dRkgNcVA2+G13MWsrQocKiJ/yerk9HtTN3yvnvr1QTv/LRrfHU/Q+BRRYvY8XAEOu+byC3PUXYLTOQwQeKy57GLHn4+qI6XCGsMl99QMWVpos+jebbbtLXiFvemMtc3N/EWP+6BspC1Rs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZVLq0Vy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C276C4CEC3;
-	Thu, 26 Sep 2024 02:27:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727317645;
-	bh=oAyorxBPm/Cikm3nZpdbR5EcjR6Sl2EVi3nU6qHTpJM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MZVLq0Vy+vdaWyht46uOgx/XtHk9NtrDA9rxwmswKHp7HNhxpPntd6umjikaEY9+Y
-	 sIRs3cmIPCvfEiK6DdfiNaIWy/3KyWSZHW58ApaDFvpuQSniX0qKqa8skFnZUbUczm
-	 NIpURJkKWJMEHK/+CNqH8tpb1J4bUbo4qJteFxkIjM1cwWQU3pdeB/euIEMi19XJNW
-	 nT8PX/OpxeYdQpLE4Q7tEsP22wBPKyEift32WVp6NFLJvG7R1x0ml8gRHLC1SZUFLp
-	 +lZRxq7Wxgy6PzwfWItXQtcsBdgyoOF/MbAPyXRhKP8ySbb9OhxaBJJuxyE4WDvGMX
-	 k6cN29VoFUUFQ==
-Date: Wed, 25 Sep 2024 21:27:24 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Sandie Cao <sandie.cao@deepcomputing.io>
-Cc: Heiko Stuebner <heiko.stuebner@cherry.de>, huiming.qiu@deepcomputing.io,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Drew Fustini <drew@beagleboard.org>, devicetree@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>, ams@frame.work,
-	linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-	yuning.liang@deepcomputing.io, Palmer Dabbelt <palmer@dabbelt.com>,
-	dhs@frame.work, Emil Renner Berthing <kernel@esmil.dk>,
-	gregkh@linuxfoundation.org, rafal@milecki.pl,
-	Michael Zhu <michael.zhu@starfivetech.com>,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 2/3] dt-bindings: riscv: starfive: add
- deepcomputing,fm7110
-Message-ID: <172731764343.2408451.17518519713927654729.robh@kernel.org>
-References: <20240925053123.1364574-3-sandie.cao@deepcomputing.io>
+	s=arc-20240116; t=1727317873; c=relaxed/simple;
+	bh=wqUeunnH24DSyREqkvENGRSHzRul/RYRg2ZsoZVBA34=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OCAQfdV8+ewK4eH6QE3b/O0VBnQxrd2YK5dwZ8X770jf9H7wHynYMI3SeNhed9XnKa3LJIYXKIxDpV5FbQxNerlaCnX21x2BTfnMpVLfASzkfCrhul3721D9qaC3qsS376Pk/mtamRCiG+jHnP4+YHHuZU4zH5/Yp7kR50AkJHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QpKYEtHz; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727317867;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+Jq6VURV88x+fuCfGXXrbTg7EOL5oxox8+EDOJdVkd4=;
+	b=QpKYEtHzkaDuB2RiwWq6RturpoEhOGJWMbxSS6vwKSgE6tPkkO2mHa5N5mN5+ua6VGC0Kn
+	YFsDinx4EdwcaRNwFqIRlkBOm5Get2EAA0a0RYU8+VCogkd8b4mU76EGJ0p6Yb1r//PPnh
+	dfjR0YgWQhMfMK3JgEdd7qDHoPa84M4=
+From: Wen Yang <wen.yang@linux.dev>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Wen Yang <wen.yang@linux.dev>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Dave Young <dyoung@redhat.com>,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hwspinlock: fix some comments about 'will never sleep'
+Date: Thu, 26 Sep 2024 10:30:28 +0800
+Message-Id: <20240926023028.774580-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925053123.1364574-3-sandie.cao@deepcomputing.io>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Both __hwspin_trylock and __hwspin_unlock use hwlock->lock,
+with a special annotation:
+function will never sleep.
+However, this requirement is not fulfilled on PREEMPT_RT.
 
-On Wed, 25 Sep 2024 13:31:22 +0800, Sandie Cao wrote:
-> Add deepcomputing,fm7110 into compatible list.
-> 
-> DeepComputing is creating a RISC-V Framework Laptop 13 Mainboard
-> powered by a StarFive JH7110 processor.This is a developer-focused
-> product, aimed at making tinkering with RISC-V more accessible.
-> The Mainboard is under development and we'll share more on functionality,
-> compatibility, and availability as the program progresses.
-> 
-> For this Mainboard, the Model name in Framework is Framework FRANME0000;
-> the Model name in DeepComputing is DeepComputing fm7110.
-> 
-> The board features:
-> 
-> - JH7110 SoC
-> - 8 GiB LPDDR4 DRAM
-> - 1x Type-c(PD3.0:60W Max;usb3.2 Gen1;usb2.0;DP1.4:4K@30Hz/2.5K@60Hz)
-> - 1x Type-c(PD3.0:60W Max,usb3.2 Gen1;usb2.0)
-> - 2x Type-c(usb3.2 Gen1;usb2.0)
-> - 1x eMMC slot Support 32G/128G
-> - 1x MicroSD slot
-> - 1x QSPI Flash
-> - 1x PCIe Wi-Fi (Support AMD RZ616 Wi-Fi 6E,Intel Wi-Fi 6E AX210 No vPro)
-> 
-> Signed-off-by: Sandie Cao <sandie.cao@deepcomputing.io>
-> ---
->  Documentation/devicetree/bindings/riscv/starfive.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Bjorn said:
+: "will never sleep" comment expresses that the function can be called
+: in atomic or irq context, not necessarily that it must not sleep.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+This patch fixes these comments.
+
+Suggested-by: Bjorn Andersson <andersson@kernel.org>
+Signed-off-by: Wen Yang <wen.yang@linux.dev>
+Cc: Bjorn Andersson <andersson@kernel.org>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ Documentation/locking/hwspinlock.rst | 64 ++++++++++++++--------------
+ drivers/hwspinlock/hwspinlock_core.c | 25 +++++------
+ 2 files changed, 46 insertions(+), 43 deletions(-)
+
+diff --git a/Documentation/locking/hwspinlock.rst b/Documentation/locking/hwspinlock.rst
+index 2ffaa3cbd63f..9d20823a21e7 100644
+--- a/Documentation/locking/hwspinlock.rst
++++ b/Documentation/locking/hwspinlock.rst
+@@ -103,14 +103,14 @@ Should be called from a process context (might sleep).
+ Lock a previously-assigned hwspinlock with a timeout limit (specified in
+ msecs). If the hwspinlock is already taken, the function will busy loop
+ waiting for it to be released, but give up when the timeout elapses.
+-Upon a successful return from this function, preemption is disabled so
+-the caller must not sleep, and is advised to release the hwspinlock as
+-soon as possible, in order to minimize remote cores polling on the
+-hardware interconnect.
++Upon a successful return from this function, preemption is disabled on
++non-PREEMPT_RT kernels, so the caller must not sleep, and is advised to
++release the hwspinlock as soon as possible, in order to minimize remote
++cores polling on the hardware interconnect.
+ 
+ Returns 0 when successful and an appropriate error code otherwise (most
+ notably -ETIMEDOUT if the hwspinlock is still busy after timeout msecs).
+-The function will never sleep.
++The function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+@@ -120,12 +120,12 @@ Lock a previously-assigned hwspinlock with a timeout limit (specified in
+ msecs). If the hwspinlock is already taken, the function will busy loop
+ waiting for it to be released, but give up when the timeout elapses.
+ Upon a successful return from this function, preemption and the local
+-interrupts are disabled, so the caller must not sleep, and is advised to
+-release the hwspinlock as soon as possible.
++interrupts are disabled on non-PREEMPT_RT kernels, so the caller must not
++sleep, and is advised to release the hwspinlock as soon as possible.
+ 
+ Returns 0 when successful and an appropriate error code otherwise (most
+ notably -ETIMEDOUT if the hwspinlock is still busy after timeout msecs).
+-The function will never sleep.
++The function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+@@ -137,13 +137,13 @@ msecs). If the hwspinlock is already taken, the function will busy loop
+ waiting for it to be released, but give up when the timeout elapses.
+ Upon a successful return from this function, preemption is disabled,
+ local interrupts are disabled and their previous state is saved at the
+-given flags placeholder. The caller must not sleep, and is advised to
+-release the hwspinlock as soon as possible.
++given flags placeholder on non-PREEMPT_RT kernels. The caller must not sleep,
++and is advised to release the hwspinlock as soon as possible.
+ 
+ Returns 0 when successful and an appropriate error code otherwise (most
+ notably -ETIMEDOUT if the hwspinlock is still busy after timeout msecs).
+ 
+-The function will never sleep.
++The function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+@@ -160,7 +160,7 @@ or sleepable operations under the hardware lock.
+ Returns 0 when successful and an appropriate error code otherwise (most
+ notably -ETIMEDOUT if the hwspinlock is still busy after timeout msecs).
+ 
+-The function will never sleep.
++The function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+@@ -176,7 +176,7 @@ value shall not exceed a few msecs.
+ Returns 0 when successful and an appropriate error code otherwise (most
+ notably -ETIMEDOUT if the hwspinlock is still busy after timeout msecs).
+ 
+-The function will never sleep.
++The function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+@@ -186,14 +186,14 @@ The function will never sleep.
+ Attempt to lock a previously-assigned hwspinlock, but immediately fail if
+ it is already taken.
+ 
+-Upon a successful return from this function, preemption is disabled so
+-caller must not sleep, and is advised to release the hwspinlock as soon as
+-possible, in order to minimize remote cores polling on the hardware
+-interconnect.
++Upon a successful return from this function, preemption is disabled on
++non-PREEMPT_RT kernels so caller must not sleep and is advised to release
++the hwspinlock as soon as possible, in order to minimize remote cores polling
++on the hardware interconnect.
+ 
+ Returns 0 on success and an appropriate error code otherwise (most
+ notably -EBUSY if the hwspinlock was already taken).
+-The function will never sleep.
++The function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+@@ -204,13 +204,13 @@ Attempt to lock a previously-assigned hwspinlock, but immediately fail if
+ it is already taken.
+ 
+ Upon a successful return from this function, preemption and the local
+-interrupts are disabled so caller must not sleep, and is advised to
+-release the hwspinlock as soon as possible.
++interrupts are disabled on non-PREEMPT_RT kernels so caller must not sleep,
++and is advised to release the hwspinlock as soon as possible.
+ 
+ Returns 0 on success and an appropriate error code otherwise (most
+ notably -EBUSY if the hwspinlock was already taken).
+ 
+-The function will never sleep.
++The function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+@@ -221,12 +221,12 @@ it is already taken.
+ 
+ Upon a successful return from this function, preemption is disabled,
+ the local interrupts are disabled and their previous state is saved
+-at the given flags placeholder. The caller must not sleep, and is advised
+-to release the hwspinlock as soon as possible.
++at the given flags placeholder on non-PREEMPT_RT kernels. The caller must
++not sleep, and is advised to release the hwspinlock as soon as possible.
+ 
+ Returns 0 on success and an appropriate error code otherwise (most
+ notably -EBUSY if the hwspinlock was already taken).
+-The function will never sleep.
++The function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+@@ -241,7 +241,7 @@ or sleepable operations under the hardware lock.
+ 
+ Returns 0 on success and an appropriate error code otherwise (most
+ notably -EBUSY if the hwspinlock was already taken).
+-The function will never sleep.
++The function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+@@ -254,14 +254,14 @@ This function shall be called only from an atomic context.
+ 
+ Returns 0 on success and an appropriate error code otherwise (most
+ notably -EBUSY if the hwspinlock was already taken).
+-The function will never sleep.
++The function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+   void hwspin_unlock(struct hwspinlock *hwlock);
+ 
+ Unlock a previously-locked hwspinlock. Always succeed, and can be called
+-from any context (the function never sleeps).
++from any context (the function never sleeps on a non-PREEMPT_RT kernel).
+ 
+ .. note::
+ 
+@@ -277,7 +277,8 @@ The caller should **never** unlock an hwspinlock which is already unlocked.
+ 
+ Doing so is considered a bug (there is no protection against this).
+ Upon a successful return from this function, preemption and local
+-interrupts are enabled. This function will never sleep.
++interrupts are enabled on non-PREEMPT_RT kernels.
++This function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+@@ -290,7 +291,8 @@ The caller should **never** unlock an hwspinlock which is already unlocked.
+ Doing so is considered a bug (there is no protection against this).
+ Upon a successful return from this function, preemption is reenabled,
+ and the state of the local interrupts is restored to the state saved at
+-the given flags. This function will never sleep.
++the given flags on non-PREEMPT_RT kernels.
++This function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+@@ -300,7 +302,7 @@ Unlock a previously-locked hwspinlock.
+ 
+ The caller should **never** unlock an hwspinlock which is already unlocked.
+ Doing so is considered a bug (there is no protection against this).
+-This function will never sleep.
++This function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+@@ -310,7 +312,7 @@ Unlock a previously-locked hwspinlock.
+ 
+ The caller should **never** unlock an hwspinlock which is already unlocked.
+ Doing so is considered a bug (there is no protection against this).
+-This function will never sleep.
++This function will never sleep on a non-PREEMPT_RT kernel.
+ 
+ ::
+ 
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index 6505261e6068..b602d6cf5e1b 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -73,10 +73,10 @@ static DEFINE_MUTEX(hwspinlock_tree_lock);
+  * lock, they need one sleepable lock (like mutex) to protect the operations.
+  *
+  * If the mode is neither HWLOCK_IN_ATOMIC nor HWLOCK_RAW, upon a successful
+- * return from this function, preemption (and possibly interrupts) is disabled,
+- * so the caller must not sleep, and is advised to release the hwspinlock as
+- * soon as possible. This is required in order to minimize remote cores polling
+- * on the hardware interconnect.
++ * return from this function, preemption (and possibly interrupts) is disabled
++ * on non-PREEMPT_RT kernels, so the caller must not sleep, and is advised to
++ * release the hwspinlock as soon as possible. This is required in order to
++ * minimize remote cores polling on the hardware interconnect.
+  *
+  * The user decides whether local interrupts are disabled or not, and if yes,
+  * whether he wants their previous state to be saved. It is up to the user
+@@ -87,7 +87,7 @@ static DEFINE_MUTEX(hwspinlock_tree_lock);
+  * Returns: %0 if we successfully locked the hwspinlock or -EBUSY if
+  * the hwspinlock was already taken.
+  *
+- * This function will never sleep.
++ * This function will never sleep on a non-PREEMPT_RT kernel.
+  */
+ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+ {
+@@ -190,10 +190,10 @@ EXPORT_SYMBOL_GPL(__hwspin_trylock);
+  * is handled with busy-waiting delays, hence shall not exceed few msecs.
+  *
+  * If the mode is neither HWLOCK_IN_ATOMIC nor HWLOCK_RAW, upon a successful
+- * return from this function, preemption (and possibly interrupts) is disabled,
+- * so the caller must not sleep, and is advised to release the hwspinlock as
+- * soon as possible. This is required in order to minimize remote cores polling
+- * on the hardware interconnect.
++ * return from this function, preemption (and possibly interrupts) is disabled
++ * on non-PREEMPT_RT kernels, so the caller must not sleep, and is advised to
++ * release the hwspinlock as soon as possible. This is required in order to
++ * minimize remote cores polling on the hardware interconnect.
+  *
+  * The user decides whether local interrupts are disabled or not, and if yes,
+  * whether he wants their previous state to be saved. It is up to the user
+@@ -204,7 +204,7 @@ EXPORT_SYMBOL_GPL(__hwspin_trylock);
+  * error code otherwise (most notably -ETIMEDOUT if the @hwlock is still
+  * busy after @timeout msecs).
+  *
+- * The function will never sleep.
++ * The function will never sleep on a non-PREEMPT_RT kernel.
+  */
+ int __hwspin_lock_timeout(struct hwspinlock *hwlock, unsigned int to,
+ 					int mode, unsigned long *flags)
+@@ -253,7 +253,8 @@ EXPORT_SYMBOL_GPL(__hwspin_lock_timeout);
+  * @flags: previous caller's interrupt state to restore (if requested)
+  *
+  * This function will unlock a specific hwspinlock, enable preemption and
+- * (possibly) enable interrupts or restore their previous state.
++ * (possibly) enable interrupts or restore their previous state on
++ * non-PREEMPT_RT kernels.
+  * @hwlock must be already locked before calling this function: it is a bug
+  * to call unlock on a @hwlock that is already unlocked.
+  *
+@@ -263,7 +264,7 @@ EXPORT_SYMBOL_GPL(__hwspin_lock_timeout);
+  * same way users decide between spin_unlock, spin_unlock_irq and
+  * spin_unlock_irqrestore.
+  *
+- * The function will never sleep.
++ * The function will never sleep on a non-PREEMPT_RT kernel.
+  */
+ void __hwspin_unlock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+ {
+-- 
+2.25.1
 
 
