@@ -1,250 +1,113 @@
-Return-Path: <linux-kernel+bounces-340689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E7A9876A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:39:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8940E9876A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AD51B26D32
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:38:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 358AB1F26F09
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B9D156F41;
-	Thu, 26 Sep 2024 15:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CD51534E6;
+	Thu, 26 Sep 2024 15:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kT0sjHlx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPJ0Ggc7"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2487A14F9EA;
-	Thu, 26 Sep 2024 15:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10765145B2E;
+	Thu, 26 Sep 2024 15:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727365123; cv=none; b=QEkJEuhHCXegfa3moKfOlIoKXn4G5rP0ZqdO2pYDDuUPjXgSVk3iZU9W5RIJkkQB7WKQWEui6RQ/fMDuMYRCtp3AlR0CNNZ8ze8MvaLpK47IFRxZd9ZXuw5CxiR+s9SdYDrZqFZ5oDitSmpthSAc8sPv64x7Mc2uMQAb+CgaIlQ=
+	t=1727365234; cv=none; b=dagFvGqrFOHc0HO7QLHZb9wKjVAopy6L/mcZJXVFVj2ta9nETx6d/2zcHlR7lg4FF4lVckPOX+DbpZIBJ/PbxmjSscpcuc+7Trg8uIET/QkQucknkGSH6ZUcxBlqmECp14/kQugJyHA+IOJfcGOObPb72cnAalyFAnoLevG7QkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727365123; c=relaxed/simple;
-	bh=FPT2YAGW9+hHu5TfpaI/ztalhhPfkbiDDiuJtItLTMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cWWrrzLPSxuaPoK79bWzZUzHw2MDAS9CiGkcLB8iYFO42DjEvmIoaY9OAGksHP1rAaZ71a9iUg80OCwK6VFgvhFHsMMmkYfngbDxoG+qGOrPXUqBQiXCGpZR+uD60Da6dwRfHdC6vqsU3uZRw+s0mgGppmVT/Z2JDOCw3B/M84Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kT0sjHlx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 421CAC4CEC5;
-	Thu, 26 Sep 2024 15:38:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727365122;
-	bh=FPT2YAGW9+hHu5TfpaI/ztalhhPfkbiDDiuJtItLTMs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kT0sjHlxptVEDKh1a/WtPaYDym9m/flo9vMG/YA4FiNaDb9w/gETJG5bCirboVjnu
-	 KY0whWWWvgBMcvuVJZxrZ2az8NZuo8dXL73pTN7V9MK50GjcOCk1s59/jyoqLuXvoU
-	 Jrt0LTTy5LEj6I7sc94la6XYYxh4rRpZPGpnciHqpAHvrI7WmCsbGL8FgTspvBLdEP
-	 LTiw7+MjJH1r5jX6eQXZ+EFrhxCjtHfe2cDQZ550TfAEhh6vJVn0EPHlwtJ/1tKwTU
-	 MfN8JCrH5KAjAdnZt9bM8yhgCpBwWbjxdKi93E9bmpDwW0LNlB9fHWoLQwVB0qraWH
-	 1rrrwU40i2UGQ==
-Date: Thu, 26 Sep 2024 16:38:37 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>
-Subject: Re: [PATCH v4 2/4] dt-bindings: gpio: add support for NXP
- S32G2/S32G3 SoCs
-Message-ID: <20240926-apricot-unfasten-5577c54a3e2f@spud>
-References: <20240926143122.1385658-1-andrei.stefanescu@oss.nxp.com>
- <20240926143122.1385658-3-andrei.stefanescu@oss.nxp.com>
+	s=arc-20240116; t=1727365234; c=relaxed/simple;
+	bh=eBWvVfsKE4lYCkR9jWhTHTt0x1qkASzl46mhvR//R7U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uLmEMsnfp+8y8YpS6DJwSyAunoylZtqtVpyDLsiA/93g87B61uKG+gs3kl6qb3tQgz/fksk95kjHrMTL7utE1wPzs3W0DRwhhIwuOLUkaBNKzuM2b55Kx4ZRX7p5UCTW/O/iaYbvc10BfJaaOV3ICP23nDmZ2SfuHkh42jkw6zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VPJ0Ggc7; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7c3d415f85eso79958a12.0;
+        Thu, 26 Sep 2024 08:40:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727365232; x=1727970032; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eBWvVfsKE4lYCkR9jWhTHTt0x1qkASzl46mhvR//R7U=;
+        b=VPJ0Ggc7+EjzItIjoFx9C0Am305nY8vagkZYwGfXZwTMIvTX/eGHwyONAf6KSbd4+T
+         yrqOXLPlm1rURrO27B5tIOjAw9wX+Jup1zs7tXYFFqcsTPmujUg4M18AtwAgrKRzMHR+
+         806hQtPjJWL3DGwrPdRzPaFCOeF0tE9eLT8owRa5xPkrpq0HBc6RxKFkxOWbm9+yWBOK
+         NfiJFfpCfZurlQLKnsUPSGhaUFFK+9tv2l+Wek2l3gGNxGebKuqwD1397IMqt8iWxjWv
+         TXImJCgfPfCRHaom12GD2SGayHfcmLh7W9+iaJSa2RDBmvHxQEySk8hiFmipd5PHvBmJ
+         AMmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727365232; x=1727970032;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eBWvVfsKE4lYCkR9jWhTHTt0x1qkASzl46mhvR//R7U=;
+        b=U9wWkObAlfqGHN01oiuVBZlrBx7y9cJjknNV9hx9nKItCLo8GmIFcOPT8264RoBSLS
+         6vVRuTRT/sWQjPsJDzU8W+7+NgLKAZXo3L08aj8pPrDkMMXTF1Qfc53ROYE68JzXzHQB
+         iAY9AoXfM9XOJey7c5CWQvK2Uxk5linESSkN/DwCYwUAlsvqzBo8UueS9otH7CTEcvkb
+         3NdfF/+2RWz3vX/B07T9KT+VJG/8HbkH1syUpwSMccMOrb8XJLz3oi7zvugUAx1qYDxd
+         IVCk7/uBGhk7dDknqR8YoELRB/Qtyk0+LFxetIWHkRDYWAB1GHsNBBaJOlhoZk/Itcsu
+         OcEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDmxjUVGxUJJbhYq+YRPIKNOiu1zTYAKVs9T+3EkkJp/Rq3/Q0gsbR7cRssA2vJCjHk4eR1GRqUexbsUU=@vger.kernel.org, AJvYcCWnv/Qitb1J9CQXh1Kz4594Qu5jqifRhHR9oQvyS/8PZedMsSMANqPgpqIkLwVXHhitWgBEe0VBRKu8L+2z4ao=@vger.kernel.org, AJvYcCXZb8qmFRhKHie2IIibg9zrgmYiot/E3FK1fqvFkIx+hrHhVaHdG+BCjTo+Bs2Qd5I5Brjea2vj@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsclbfKVA8demyp/sy+3L11LILBRjjq3E/H/Ool7A0aFrWWK2z
+	RT8AgZfDdiYGNb+SSfQ96sjoixUcYen4MM1HnBybW0GaMx6Vum9t/semENe2Tx5la5vYT95XE28
+	uHYy1V9f255TNwwPy6VxAmPGkQt4T7ft33BQINA==
+X-Google-Smtp-Source: AGHT+IG0/1g5eMwIe2YWirZf4Ac8fdSnvrNHQArrRR/tnb9tehSWeiCfeqtWgbf9mBS9CWxs1mPUyKjyQDvqh0yUQKk=
+X-Received: by 2002:a05:6a00:891:b0:70b:705f:dda7 with SMTP id
+ d2e1a72fcca58-71b26059671mr157176b3a.4.1727365232203; Thu, 26 Sep 2024
+ 08:40:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="IJQMIqEvPuySmWWm"
-Content-Disposition: inline
-In-Reply-To: <20240926143122.1385658-3-andrei.stefanescu@oss.nxp.com>
-
-
---IJQMIqEvPuySmWWm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240917000848.720765-1-jmontleo@redhat.com> <20240917000848.720765-2-jmontleo@redhat.com>
+ <334EBB3A-6ABF-4FBF-89D2-DF3A6DCCCEA2@kernel.org> <20240917142950.48d800ac@eugeo>
+ <31885EDD-EF6D-4EF1-94CA-276BA7A340B7@kernel.org>
+In-Reply-To: <31885EDD-EF6D-4EF1-94CA-276BA7A340B7@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 26 Sep 2024 17:40:19 +0200
+Message-ID: <CANiq72=KdF2zrcHJEH+YGv9Mn6szsHrZpEWb_y2QkFzButm3Ag@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: Fix building rust when using GCC toolchain
+To: Conor Dooley <conor@kernel.org>
+Cc: Gary Guo <gary@garyguo.net>, Jason Montleon <jmontleo@redhat.com>, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	nathan@kernel.org, ndesaulniers@google.com, morbo@google.com, 
+	justinstitt@google.com, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	llvm@lists.linux.dev, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 05:31:19PM +0300, Andrei Stefanescu wrote:
-> Add support for the GPIO driver of the NXP S32G2/S32G3 SoCs.
->=20
-> Signed-off-by: Phu Luu An <phu.luuan@nxp.com>
-> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+On Tue, Sep 17, 2024 at 5:26=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
+te:
+>
+> Yes, but unfortunately I already knew how it worked. It's not flags I am =
+worried about, it is extensions.
+> Even using a libclang that doesn't match clang could be a problem, but we=
+ can at least declare that unsupported.
+> Not digging it out on an airport bus, but we discussed the lack of GCC su=
+pport on the original patch adding riscv, and decided against it.
 
-What's up with this SoB chain? You're the author what did
-the other 3 people do? Are they missing co-developed-by tags?
+Do you mean you would prefer to avoid supporting the mixed GCC-Clang
+builds? If so, do you mean you would prefer to not pick the patch,
+i.e. avoid supporting this at all? (If so, then perhaps it would be a
+good idea to add a comment there and perhaps a note to
+https://docs.kernel.org/rust/arch-support.html).
 
-> ---
->  .../bindings/gpio/nxp,s32g2-siul2-gpio.yaml   | 110 ++++++++++++++++++
->  1 file changed, 110 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/nxp,s32g2-siul=
-2-gpio.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.=
-yaml b/Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml
-> new file mode 100644
-> index 000000000000..4556505ee9c9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml
-> @@ -0,0 +1,110 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +# Copyright 2024 NXP
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/nxp,s32g2-siul2-gpio.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP S32G2 SIUL2 GPIO controller
-> +
-> +maintainers:
-> +  - Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-> +  - Larisa Grigore <larisa.grigore@nxp.com>
-> +  - Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-> +
-> +description:
-> +  Support for the SIUL2 GPIOs found on the S32G2 and S32G3
-> +  chips. It includes an IRQ controller for all pins which have
-> +  an EIRQ associated.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: nxp,s32g2-siul2-gpio
-> +      - items:
-> +        - const: nxp,s32g3-siul2-gpio
-> +        - const: nxp,s32g2-siul2-gpio
-> +
-> +  reg:
-> +    items:
-> +      - description: PGPDO (output value) registers for SIUL2_0
-> +      - description: PGPDO (output value) registers for SIUL2_1
-> +      - description: PGPDI (input value) registers for SIUL2_0
-> +      - description: PGPDI (input value) registers for SIUL2_1
-> +      - description: EIRQ (interrupt) configuration registers from SIUL2=
-_1
-> +      - description: EIRQ IMCR registers for interrupt muxing between pa=
-ds
-> +
-> +  reg-names:
-> +    items:
-> +      - const: opads0
-> +      - const: opads1
-> +      - const: ipads0
-> +      - const: ipads1
-> +      - const: eirqs
-> +      - const: eirq-imcrs
-> +
-> +  gpio-controller: true
-> +
-> +  '#gpio-cells':
-> +    const: 2
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  "#interrupt-cells":
-> +    const: 2
-> +
-> +  gpio-ranges:
-> +    minItems: 2
-> +    maxItems: 2
-> +
-> +  gpio-reserved-ranges:
-> +    minItems: 2
-> +
-> +patternProperties:
-> +  "-hog(-[0-9]+)?$":
-> +    required:
-> +      - gpio-hog
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - gpio-controller
-> +  - "#gpio-cells"
-> +  - gpio-ranges
-> +  - gpio-reserved-ranges
-> +  - interrupts
-> +  - interrupt-controller
-> +  - "#interrupt-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    gpio@4009d700 {
-> +        compatible =3D "nxp,s32g2-siul2-gpio";
-> +        reg =3D <0x4009d700 0x10>,
-> +              <0x44011700 0x18>,
-> +              <0x4009d740 0x10>,
-> +              <0x44011740 0x18>,
-> +              <0x44010010 0xb4>,
-> +              <0x44011078 0x80>;
-
-Huh, I only noticed this now. Are you sure that this is a correct
-representation of this device, and it is not really part of some syscon?
-The "random" nature of the addresses  and the tiny sizes of the
-reservations make it seem that way. What other devices are in these
-regions?
-
-Additionally, it looks like "opads0" and "ipads0" are in a different
-region to their "1" equivalents. Should this really be represented as
-two disctint GPIO controllers?
-
+Otherwise, please let me know if I am misunderstanding -- thanks!
 
 Cheers,
-Conor.
-
-> +        reg-names =3D "opads0", "opads1", "ipads0",
-> +                    "ipads1", "eirqs", "eirq-imcrs";
-> +        gpio-controller;
-> +        #gpio-cells =3D <2>;
-> +                      /* GPIO 0-101 */
-> +        gpio-ranges =3D <&pinctrl 0 0 102>,
-> +                      /* GPIO 112-190 */
-> +                      <&pinctrl 112 112 79>;
-> +        gpio-reserved-ranges =3D <102 10>, <123 21>;
-> +        interrupts =3D <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>;
-> +        interrupt-controller;
-> +        #interrupt-cells =3D <2>;
-> +    };
-> --=20
-> 2.45.2
->=20
->=20
-
---IJQMIqEvPuySmWWm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvV//QAKCRB4tDGHoIJi
-0uOxAQCvz6m4Nw9QLswXja2k1N2xfO+ZWjULc/Bx8JXrdJFUdwEA6cM/JPQkNWzg
-eS7vasQdUA/KkS2yHj4qhqW9izZk1gQ=
-=aPrA
------END PGP SIGNATURE-----
-
---IJQMIqEvPuySmWWm--
+Miguel
 
