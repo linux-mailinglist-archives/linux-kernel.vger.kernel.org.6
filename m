@@ -1,130 +1,162 @@
-Return-Path: <linux-kernel+bounces-340017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57353986D5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:15:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6318F986D6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00FC31F2171D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:15:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2179D283A94
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DC018D621;
-	Thu, 26 Sep 2024 07:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3BE18C03C;
+	Thu, 26 Sep 2024 07:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ok067OnW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="becLAetR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B0F188907;
-	Thu, 26 Sep 2024 07:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F802224D6;
+	Thu, 26 Sep 2024 07:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727334885; cv=none; b=SupGcanin5LXgHhsdM2XdBm47vGQ9fh8TruPtlyI4zhV4ENVT3Bl8clWOr4PSiMfhquuORmBx4H4RKPFdqgMVMAD18XZn9V8N92YUlV2mRr5GeQgsEjB7+/NK3uqZdOFrvbsM2EFWzJcIOJMDYvgAhWqWDfEAzfBakqO9uvN3ts=
+	t=1727335267; cv=none; b=VK1mHTGwlbd9cFxGwpihhhJ+jJRZNhZlhivScklRExcb6TVJniMaZtg2jIdhx66ByMWO8cjAR1CZCcJwISBG0c9loycr0Z+dVb5MjOuXMh9o9OGNuUT6+LWFbFHUJVPIN2ZVUeIXl9gg05eEVos9Q28BeyDLEpQSF5RkVsfkq6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727334885; c=relaxed/simple;
-	bh=s1QCm+M6EGtkn+pyLctXytbJXiAlK/xwoHv72CVj4vE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IaxG107C3v5W0hPv/orIug5WeNVUqXOcCTrtRFqwBSnN695cRjE6lRUtk0HT5V7wj80vJvP6CkPgFEJBWSV/cGT7I3kbzHss3f9k1I5byKKJj4FqMTaeQ1ewWbktVvG6FTWRp3iYu7+eBo9ERWjf3r055bjlku5sPu3gYiZDrLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ok067OnW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PH5MB9032311;
-	Thu, 26 Sep 2024 07:14:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Z1k2Vp1xBbiHK3RyGJFubNyjnmminq8ylfJH4ImpPLE=; b=Ok067OnWo0/xyRRs
-	9EzexZGhwtsR+KZ7U10m93poUZh6FWqltLB/PWUwt4tQvShavdraCnxFFjQJFXNY
-	Z1OK8UFPb43R1kKG5WwUvpYq3qi5HZAWylVrLJkEooFJHIZpEIIU5DAlWym+hLMu
-	70X7FA6rUPCQpv7t3TKjcoYmYmFBHvrldmvMQKrf9qSuPfz0JOkt4sJuOY3WvlBu
-	nVUPV40t25BeMTvvzey/xWkfbs485eHZZuQsCxRt69i2RQbDWd/TyWkdeX3MtKPr
-	wE2CwjkN/ZeOsNwu4XZfJk9NRP0TQ3aETHflrL8+cDuF2y/FSnaujwkA+gZZop9Q
-	py7aVw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sp7upsf4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Sep 2024 07:14:27 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48Q7EPee026611
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Sep 2024 07:14:25 GMT
-Received: from [10.151.37.100] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 26 Sep
- 2024 00:14:19 -0700
-Message-ID: <3eee6f21-98fb-44ef-be19-75c4048a40ea@quicinc.com>
-Date: Thu, 26 Sep 2024 12:44:16 +0530
+	s=arc-20240116; t=1727335267; c=relaxed/simple;
+	bh=itYl6g578kw6xUZCVYmAQSs22VA2Hmzh6VcRzWPVO4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MiRkU3++4Wr7PBwR08WjenZF8xNCGCPai3GXibKfdTubUDMxn4dywZH8sYE6YTGKk/taNkk7CKdPP7IoZf3B9wtgSPwvWz0VTsr2hRFZXkgh0Y0dJ+iK28b+z0ZLRGO0wyToHQbXVeMPk2lqqGg7Fb8SzKe+e8by8PbxylOjhpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=becLAetR; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727335265; x=1758871265;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=itYl6g578kw6xUZCVYmAQSs22VA2Hmzh6VcRzWPVO4I=;
+  b=becLAetR6FNU7OQS/ne9eiMebZB3QJxgkbXMnoquXsl5tuxkt9V3U7s7
+   bjlF8WrdK+qeR6a/1R09OYtBsyN46rHkmGmH+Hg0osCZbBMV29mfHrt20
+   o8mXiqYMB2p081XEVe8gXE3ARr/ct2CJhN7DUc9sJ05KZN/FxF69z2ZEv
+   Zu423H3pZpip1HEJoLZISSsDsrlNWITuNZn+0Clv+HIXP2qtfxxdJhCxB
+   vGZkPBMzg3Fww55x1DXTzbGqT43TeZkTQ/3fjRSVlRyzLg8+/upWCYm22
+   gmtnL4TWcLPju9D8FFkyu0t1EdN4R7/qoezaRIh4N9OFBF8R+HyjzBHpL
+   w==;
+X-CSE-ConnectionGUID: wa/XsssGRwONBwh5qZwWHg==
+X-CSE-MsgGUID: BH2xUk5dR5qDdfFpjqB3kw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="37770155"
+X-IronPort-AV: E=Sophos;i="6.10,259,1719903600"; 
+   d="scan'208";a="37770155"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 00:21:04 -0700
+X-CSE-ConnectionGUID: rYx1RBzeRPOiwZUQW4dXLw==
+X-CSE-MsgGUID: hWxP0pVgSWCBB7rqCDnTbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,259,1719903600"; 
+   d="scan'208";a="71711597"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 26 Sep 2024 00:21:01 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1stio7-000KON-0V;
+	Thu, 26 Sep 2024 07:20:59 +0000
+Date: Thu, 26 Sep 2024 15:20:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dipendra Khadka <kdipendra88@gmail.com>, florian.fainelli@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	maxime.chevallier@bootlin.com, horms@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Dipendra Khadka <kdipendra88@gmail.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v4] net: systemport: Add error pointer checks in
+ bcm_sysport_map_queues() and bcm_sysport_unmap_queues()
+Message-ID: <202409261447.R2kfrGVq-lkp@intel.com>
+References: <20240925152927.4579-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/8] arm64: defconfig: Enable IPQ5424 SoC base configs
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
-        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
-        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_varada@quicinc.com>
-References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
- <20240913121250.2995351-9-quic_srichara@quicinc.com>
- <4dxqbm4uuuuht5db7kt6faz2pdeodn224hd34np322divs22ba@dzmjveze3b4f>
- <2a16d5a2-17a5-4988-8a25-34ac10ff3d08@quicinc.com>
- <h6ajhgv5rqabxupove4ge4253ywzbjyxoqq75c7ojmauudd3z5@hhhkbbzfmved>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <h6ajhgv5rqabxupove4ge4253ywzbjyxoqq75c7ojmauudd3z5@hhhkbbzfmved>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vSx9peXx521b_oqIPBe2zFZUbiPCPjwV
-X-Proofpoint-ORIG-GUID: vSx9peXx521b_oqIPBe2zFZUbiPCPjwV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 bulkscore=0 mlxlogscore=573 mlxscore=0 phishscore=0
- suspectscore=0 impostorscore=0 spamscore=0 malwarescore=0
- priorityscore=1501 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2408220000 definitions=main-2409260046
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925152927.4579-1-kdipendra88@gmail.com>
+
+Hi Dipendra,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on net/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dipendra-Khadka/net-systemport-Add-error-pointer-checks-in-bcm_sysport_map_queues-and-bcm_sysport_unmap_queues/20240925-233508
+base:   net/main
+patch link:    https://lore.kernel.org/r/20240925152927.4579-1-kdipendra88%40gmail.com
+patch subject: [PATCH net v4] net: systemport: Add error pointer checks in bcm_sysport_map_queues() and bcm_sysport_unmap_queues()
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240926/202409261447.R2kfrGVq-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240926/202409261447.R2kfrGVq-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409261447.R2kfrGVq-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/net/ethernet/broadcom/bcmsysport.c: In function 'bcm_sysport_unmap_queues':
+>> drivers/net/ethernet/broadcom/bcmsysport.c:2401:35: error: expected ';' before ')' token
+    2401 |                 return PTR_ERR(dp));
+         |                                   ^
+         |                                   ;
+>> drivers/net/ethernet/broadcom/bcmsysport.c:2400:9: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+    2400 |         if (IS_ERR(dp))
+         |         ^~
+   drivers/net/ethernet/broadcom/bcmsysport.c:2401:35: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+    2401 |                 return PTR_ERR(dp));
+         |                                   ^
+>> drivers/net/ethernet/broadcom/bcmsysport.c:2401:35: error: expected statement before ')' token
 
 
+vim +2401 drivers/net/ethernet/broadcom/bcmsysport.c
 
-On 9/26/2024 3:01 AM, Dmitry Baryshkov wrote:
-> On Thu, Sep 26, 2024 at 12:34:56AM GMT, Sricharan Ramabadhran wrote:
->>
->>
->> On 9/13/2024 6:23 PM, Dmitry Baryshkov wrote:
->>> On Fri, Sep 13, 2024 at 05:42:50PM GMT, Sricharan R wrote:
->>>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>>>
->>>> Enable the clock and pinctrl configs for Qualcomm IPQ5332 SoC
->>>
->>> Please name the device rather than the platform. The defconfig affects
->>> all users, so it should be justified.
->>>
->> Sorry, to understand correctly, you mean to use the board name here ?
-> 
-> Yes, the board which is generally accessible, if possible. You are
-> increasing kernel size for everybody using defconfig, so at least it
-> should be obvious, who is benefiting from that.
-> 
+  2389	
+  2390	static int bcm_sysport_unmap_queues(struct net_device *dev,
+  2391					    struct net_device *slave_dev)
+  2392	{
+  2393		struct bcm_sysport_priv *priv = netdev_priv(dev);
+  2394		struct bcm_sysport_tx_ring *ring;
+  2395		unsigned int num_tx_queues;
+  2396		unsigned int q, qp, port;
+  2397		struct dsa_port *dp;
+  2398	
+  2399		dp = dsa_port_from_netdev(slave_dev);
+> 2400		if (IS_ERR(dp))
+> 2401			return PTR_ERR(dp));
+  2402	
+  2403		port = dp->index;
+  2404	
+  2405		num_tx_queues = slave_dev->real_num_tx_queues;
+  2406	
+  2407		for (q = 0; q < dev->num_tx_queues; q++) {
+  2408			ring = &priv->tx_rings[q];
+  2409	
+  2410			if (ring->switch_port != port)
+  2411				continue;
+  2412	
+  2413			if (!ring->inspect)
+  2414				continue;
+  2415	
+  2416			ring->inspect = false;
+  2417			qp = ring->switch_queue;
+  2418			priv->ring_map[qp + port * num_tx_queues] = NULL;
+  2419		}
+  2420	
+  2421		return 0;
+  2422	}
+  2423	
 
-ok, will fix subject description accordingly.
-
-Regards,
-  Sricharan
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
