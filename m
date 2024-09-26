@@ -1,133 +1,148 @@
-Return-Path: <linux-kernel+bounces-339916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E667986C24
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:51:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8890986C26
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6341C21F4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:51:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 719801F22931
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA884188CD2;
-	Thu, 26 Sep 2024 05:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WSS7ckOh"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233FE176231;
+	Thu, 26 Sep 2024 05:52:05 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14DA18756D
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34E4145346;
+	Thu, 26 Sep 2024 05:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727329817; cv=none; b=VVcijVweM5EfSrF5Jmt0ozJ4a+Imxau8bPtDdS16nXgWLb7MaOerRyo+8mIt5sU6KTKIJ4p26Xn8dETtPvHwKQsM2UMh5CicWKo4RGKOZfdiiPhzSqiixs/7r2PCguSsbl1L6VIWXiI3FjdfsetcCx6lty3vucgBoVGlvK/YNXc=
+	t=1727329924; cv=none; b=BwsvYu0gVTRCPa+tTIYRpw8HBx7jCoXQVJqimIdk3QR5Fgt7UmSn/I0b84nDzMT/iePOEES94o+Pz4eiNUMf/PMJfJ9p+0sWEnU2U2DFDj+9TdJeyr53Zv77vpYcWdU7fnPY3lbB6yf/BXu8jgRHAl3XjqmLNUI3IHEM1rT/xRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727329817; c=relaxed/simple;
-	bh=bp/AyInNx+sYmGScXTk/dVr8nFraf0tgtMRd3LHHRBg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ifcRvnIPW9lJJvBqDoMV04eNwx28igCELHwUWcaHP4JeECgo5jjJsO+65ZjYZuS+rKt+QLCb4C36HvLNxrxBKRdrocLSTfzPThPsU2GPYcgJfWQtgFaBxV/k9R0k3bxNt0DWmXY9vq9rZafo1NVGUV3sd+9pmeCs/XsEKC9louA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WSS7ckOh; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4582fb3822eso3802071cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 22:50:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727329814; x=1727934614; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1Jte9oqU3bEqLQEq3uaVn2nHKDdidO4uVkSl6injc2E=;
-        b=WSS7ckOh7Rgcph7n8Z2LsZEk84OufCi6Ire0pDgM1fLfl9cILAbeVnpxUys1yMaL1M
-         UoT6k0dJR8xaCvtgaFywqDbzaPhe1T1wLUpUiSg7HPbAQKi7Qm0Bz48cR86NU3Lu9gWb
-         SeOyuibY33nC3nyEIXBcPn0izyvEM70KXUZy0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727329814; x=1727934614;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1Jte9oqU3bEqLQEq3uaVn2nHKDdidO4uVkSl6injc2E=;
-        b=vIGDE8sfC23slFTIox80XH8uQuOZzZj+68/Nk6XbZHDRpENlfW5uV5OMbkV5XXbcu8
-         FzonTQC8hWSWs62wD1yJXkZw2OqNTojmYq7UiZt33G0KYYV5HgEi/HtRygDJZu25pWML
-         nF80HoAGkLz2dy/r7o6BZ0OlLmlUH/WA21Ovuk1Dhq0LdU/fTqIW8jpDmF74I8W63yWd
-         F00SIC/OFr25i8qR9OVQGJjiMUiFNEyszYPW2dSGQuauhYVMro9jelbPuLPXjOmW4tJ0
-         0NgEs8tMdXUBJ+YCSQfgYInHcfQOg4Ty+iY0CdoLfwcC18Smn8MKiiPB0hsi8wSLHSEO
-         t+Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCVa3wXZ+QOTER7uHzN6ybEdoHE4WL05yViPXiieDK/zNpdL39Z2CeOYUHPbORDjCiY7Pz1VyKPQO/qnyhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb024kA9IPaWVGGZKBRm0mjMZN1AbLkYLlIDOHx1+tviePJ4ld
-	2590y8vHzBlY7J31LR5uxsD1UF/EiQf4wtFRVWUPO3l3MVf/Hf6jz6Va+9PysQ==
-X-Google-Smtp-Source: AGHT+IFxCfHwEy321Bw8EBQt293rqr5m34pmJLEgFglHcCaIk+ih11NQYLPeHDvPTI9jJvdqYBjNuQ==
-X-Received: by 2002:ac8:5885:0:b0:456:94fe:dcdf with SMTP id d75a77b69052e-45b5def4674mr65467061cf.35.1727329814538;
-        Wed, 25 Sep 2024 22:50:14 -0700 (PDT)
-Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b5264b629sm22406781cf.64.2024.09.25.22.50.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 22:50:13 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 26 Sep 2024 05:49:59 +0000
-Subject: [PATCH v7 3/3] media: uvcvideo: Exit early if there is not int_urb
+	s=arc-20240116; t=1727329924; c=relaxed/simple;
+	bh=pDRHhmxVEt5GUk7JtGPzDbnjf5NNfChyQCgN3YFNodw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FNTRH9nJO5Jsi3TRdNJrLOuf5NEt8RCOXCNLUUT2a0RIieQhYxdF1KW238pY+udcjQw0awwZbzvpezausl3OAFKYzasvadpxeaDJghN90Xg4K7CbuOU6XStNnLmcYiv/7DMtQp6cBU2BaQhQa/WMP9aOpjj5iGSIRgOcQHc95sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XDjQy68Zfz9sSK;
+	Thu, 26 Sep 2024 07:51:54 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id nIapQb6SH8TJ; Thu, 26 Sep 2024 07:51:54 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XDjQy50hbz9sRy;
+	Thu, 26 Sep 2024 07:51:54 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 92DE98B76E;
+	Thu, 26 Sep 2024 07:51:54 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id aQV3KcvF_OW9; Thu, 26 Sep 2024 07:51:54 +0200 (CEST)
+Received: from [172.25.230.108] (unknown [172.25.230.108])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3E52B8B763;
+	Thu, 26 Sep 2024 07:51:54 +0200 (CEST)
+Message-ID: <fb5f8856-5753-4b2b-bfed-82b3e3cd589e@csgroup.eu>
+Date: Thu, 26 Sep 2024 07:51:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240926-guenter-mini-v7-3-690441953d4a@chromium.org>
-References: <20240926-guenter-mini-v7-0-690441953d4a@chromium.org>
-In-Reply-To: <20240926-guenter-mini-v7-0-690441953d4a@chromium.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Tomasz Figa <tfiga@chromium.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Alan Stern <stern@rowland.harvard.edu>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sean Paul <seanpaul@chromium.org>, 
- Ricardo Ribalda <ribalda@chromium.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] x86: vdso: Introduce asm/vdso/mman.h
+To: Arnd Bergmann <arnd@arndb.de>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-kernel@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>, linux-mm@kvack.org
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20240923141943.133551-1-vincenzo.frascino@arm.com>
+ <20240923141943.133551-2-vincenzo.frascino@arm.com>
+ <626baa55-ca84-49ba-9131-c1657e0c0454@csgroup.eu>
+ <fe23745e-a965-4b74-863d-9479fdef239f@app.fastmail.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <fe23745e-a965-4b74-863d-9479fdef239f@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-If there is no int_urb there is no need to do a clean stop.
 
-Also we avoid calling usb_kill_urb(NULL). It is properly handled by the
-usb framework, but it is not polite.
 
-Now that we are at it, fix the code style in uvc_status_start() for
-consistency.
+Le 25/09/2024 à 23:23, Arnd Bergmann a écrit :
+> On Wed, Sep 25, 2024, at 06:51, Christophe Leroy wrote:
+>> Le 23/09/2024 à 16:19, Vincenzo Frascino a écrit :
+>>> @@ -0,0 +1,15 @@
+>>> +
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +#ifndef __ASM_VDSO_MMAN_H
+>>> +#define __ASM_VDSO_MMAN_H
+>>> +
+>>> +#ifndef __ASSEMBLY__
+>>> +
+>>> +#include <uapi/linux/mman.h>
+>>> +
+>>> +#define VDSO_MMAP_PROT	PROT_READ | PROT_WRITE
+>>> +#define VDSO_MMAP_FLAGS	MAP_DROPPABLE | MAP_ANONYMOUS
+>>
+>> I still can't see the point with that change.
+>>
+>> Today 4 architectures implement getrandom and none of them require that
+>> indirection. Please leave prot and flags as they are in the code.
+>>
+>> Then this file is totally pointless, VDSO code can include
+>> uapi/linux/mman.h directly.
+>>
+>> VDSO is userland code, it should be safe to include any UAPI file there.
+> 
+> I think we are hitting an unfortunate corner case in the build
+> system here, based on the way we handle the uapi/ file namespace
+> in the kernel:
+> 
+> include/uapi/linux/mman.h includes three headers: asm/mman.h,
+> asm-generic/hugetlb_encode.h and linux/types.h. Two of these
+> exist in both include/uapi/ and include/, so while building
+> kernel code we end up picking up the non-uapi version which
+> on some architectures includes many other headers.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_status.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Right, and that's the reason why arm64 and powerpc guarded the content 
+of asm/mman.h which an #ifndef BUILD_VDSO.
 
-diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
-index d8d5b327693f..c7901ac32c26 100644
---- a/drivers/media/usb/uvc/uvc_status.c
-+++ b/drivers/media/usb/uvc/uvc_status.c
-@@ -308,7 +308,7 @@ static int uvc_status_start(struct uvc_device *dev, gfp_t flags)
- {
- 	lockdep_assert_held(&dev->status_lock);
- 
--	if (dev->int_urb == NULL)
-+	if (!dev->int_urb)
- 		return 0;
- 
- 	return usb_submit_urb(dev->int_urb, flags);
-@@ -320,6 +320,9 @@ static void uvc_status_stop(struct uvc_device *dev)
- 
- 	lockdep_assert_held(&dev->status_lock);
- 
-+	if (!dev->int_urb)
-+		return;
-+
- 	/*
- 	 * Prevent the asynchronous control handler from requeing the URB. The
- 	 * barrier is needed so the flush_status change is visible to other
+Note that arm64 also has a similar workaround in asm/rwonce.h, brought 
+by commit e35123d83ee3 ("arm64: lto: Strengthen READ_ONCE() to acquire 
+when CONFIG_LTO=y") without explaination on why VDSO builds are excluded.
 
--- 
-2.46.1.824.gd892dcdcdd-goog
+> 
+> I agree that moving the contents out of uapi/ into vdso/ namespace
+> is not a solution here because that removes the contents from
+> the installed user headers, but we still need to do something
+> to solve the issue.
 
+Should header inclusion be reworked so that only UAPI and VDSO pathes 
+are looked for when including headers in VDSO builds ?
+
+> 
+> The easiest workaround I see for this particular file is to
+> move the contents of arch/{arm,arm64,parisc,powerpc,sparc,x86}/\
+> include/asm/mman.h into a different file to ensure that the
+> only existing file is the uapi/ one. Unfortunately this does
+> not help to avoid it regressing again in the future.
+
+Could we add a check in checkpatch.pl to ensure UAPI headers do not 
+include headers that exist both in UAPI and non-UAPI space in the future ?
+
+Christophe
 
