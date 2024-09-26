@@ -1,188 +1,222 @@
-Return-Path: <linux-kernel+bounces-340154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500E4986F29
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:45:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FCA5986F2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 735961C21D71
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:45:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45F631C2161C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B6D1A4F2B;
-	Thu, 26 Sep 2024 08:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34571A4E8E;
+	Thu, 26 Sep 2024 08:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kneron.us header.i=@kneron.us header.b="fKYtS9sT"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2138.outbound.protection.outlook.com [40.107.244.138])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b2R010Cd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C14522318;
-	Thu, 26 Sep 2024 08:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727340352; cv=fail; b=XZ7z9xoCzYmU0a5/wRg5jH6BRCt+soqxkxEwdFEfKQ2H94o/Q2EEUCAvCKlhYZCJWof/vEh5CsunXt5Eo6lPPzMfqEGFhSQFjnIceA6FoHNtLqu4kDDWobK0vuI1uA3qGHqy6ORmYRRtlqdS1ZYGxSSdkqDVJLXbqNok3PiMQ9g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727340352; c=relaxed/simple;
-	bh=6Q4jfLPZ4CrZs7lqgUjhLdPZZVh3KOW9V4wrWgQGof8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aQek0mXEHAGckQwXB7peQV4uRpUiRUzlevGF10Rie6EU2k7RNgp4tFgJlGoMgztbOZMDUECjaeSjeHPgG44qktYx7/u5RQHxbUI05XHtCc30G92t0psARNevvw3U08K2/BBBS9Eh/HH9O0uvRDgcRIc2zP/C8hkiU6FzAhDBD/s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kneron.us; spf=pass smtp.mailfrom=kneron.us; dkim=pass (1024-bit key) header.d=kneron.us header.i=@kneron.us header.b=fKYtS9sT; arc=fail smtp.client-ip=40.107.244.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kneron.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kneron.us
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J7Pc46uqPc4Kz4BQC/9t4BAmNWTjDrY4KaF1/A8+tNUBTAdXMwSAzuX0FxG6r7JvOIgAJZ4lS4uvElAO4LL4e936tHl0NwBuhgx8R1U74WBi4Wo+ByqYvUFcJ//1JIX/CQ79Lmg4zTFaJ9s0ZxpqynSoXhGWy7miJeGRUZh2Q64WIdzxTvL7xn4jYEGFGHne96GofUwTU8Wtdg3QOwFQLbwOz3JwQjGu7n2t2ZMUhXmRR8VUs2xwVNHiBxD/6ow59FNPeNXDrlz8yFiqMm2Xm1Stlgo7EOD2itMsnKFWz9w59FIX10lPSpJgEpg/MqqnGe04VbTOq+opxssM3LEGzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tgLWuLQsCyOOMGAlLIHDWqkmDzLzBZLFmXOsnG2OBzM=;
- b=pU/NfCxS04V6c3VU2GkqkpeFVUtkWx4XtS4czk5Nl2yvKFwZN2ZoMW6+fU5jlm7jNkJUr+ORo+FaUjwAUSK0a5URJOQJ48hzdmJ1kdAFLGJ/8eaR3LP0PIGNBVR2RH7CNlWXOUMgvfm9kB/ZnBQuZg7Qf4cX9NuxuPqO/5ea912+zisS/GvU1lixkalJqtF+QRaQPxhGOvEuD+zQbRn7laLpOCyklNCYZ3ROH+3nLSu0hFkhuavPc4doD/YaYSSy7AFC96IhAqJayZculGRyckob0fdmFg9fZe8uCqb4HOEW91/kF5B8KexKphlqqolMl29LirwQjk2yihIP69lbPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kneron.us; dmarc=pass action=none header.from=kneron.us;
- dkim=pass header.d=kneron.us; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kneron.us;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tgLWuLQsCyOOMGAlLIHDWqkmDzLzBZLFmXOsnG2OBzM=;
- b=fKYtS9sT5m9FWhrDcpvJb2tyEgsZ5zBrgHjQrb24YWN3OrOl5cLVzOUDe2k/k7exNVt9IIZAFlEfCjjfyF9hq/9OaWr31Rp2vM5OL2qRk6bWg4hKZ5xVO5YICgiRji/p2RD+IQ7SY4LpOJn9ogudtKNJO6WwXCDx2IgysvCyDNs=
-Received: from IA1PR14MB6224.namprd14.prod.outlook.com (2603:10b6:208:42b::6)
- by MN6PR14MB7315.namprd14.prod.outlook.com (2603:10b6:208:476::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Thu, 26 Sep
- 2024 08:45:48 +0000
-Received: from IA1PR14MB6224.namprd14.prod.outlook.com
- ([fe80::c527:653c:698d:3d94]) by IA1PR14MB6224.namprd14.prod.outlook.com
- ([fe80::c527:653c:698d:3d94%3]) with mapi id 15.20.8005.021; Thu, 26 Sep 2024
- 08:45:47 +0000
-From: Michael Wu <Michael.Wu@kneron.us>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: Jarkko Nikula <jarkko.nikula@linux.intel.com>, Mika Westerberg
-	<mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Andi Shyti
-	<andi.shyti@kernel.org>, morgan chang <morgan.chang@kneron.us>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/2] i2c: designware: determine HS tHIGH and tLOW based on
- HW paramters
-Thread-Topic: [PATCH 1/2] i2c: designware: determine HS tHIGH and tLOW based
- on HW paramters
-Thread-Index: AQHbDyGZij9/nSd+SEOB2a6TVXZu/rJoONqAgAABcgCAAYQXIA==
-Date: Thu, 26 Sep 2024 08:45:47 +0000
-Message-ID:
- <IA1PR14MB6224EAAD5566CC5288CDC0838A6A2@IA1PR14MB6224.namprd14.prod.outlook.com>
-References: <20240925080432.186408-1-michael.wu@kneron.us>
- <20240925080432.186408-2-michael.wu@kneron.us>
- <ZvPU2ZEG_8UV3FzF@smile.fi.intel.com> <ZvPWEFWk_MG5SsCg@smile.fi.intel.com>
-In-Reply-To: <ZvPWEFWk_MG5SsCg@smile.fi.intel.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kneron.us;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA1PR14MB6224:EE_|MN6PR14MB7315:EE_
-x-ms-office365-filtering-correlation-id: 8dc125e8-1c14-40b0-5608-08dcde079e10
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|366016|80162021|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?1U7yrJcvJmBAjfN5AN1NIImdvvgiOspfjwFtVHxn0r58/JT90en0ETt9mjLK?=
- =?us-ascii?Q?fsT8THypYrQRGa9dqEnwINummduFzBE7ondpcrKRxdZSRpxzV3IgFgI1PA2h?=
- =?us-ascii?Q?428XiwDMNCQlgNH3hdgLgsiQA9ckElsbZs0NNtA5QQrozSO59ynMuxCX/VD8?=
- =?us-ascii?Q?ezgjgL7RcGwmQrwrn5fVUaPkQICqvEvZ495E+ZHkkRMGVWq/aOaaX7ltqaE4?=
- =?us-ascii?Q?fsr+2YFpO0zIsjA+Q/LVDL4LVifYQdNaBLfO25p6ZHEIlCF9a7M5u0OTyEMs?=
- =?us-ascii?Q?O/3vCKhnn86eL+xdGaUw/qh0vX5OlRJ96ub8NLrQoB9bCm+WZEQv7GfsmLqf?=
- =?us-ascii?Q?DmrdxZPTc94vacy3zTiUcIzjU4doku7cslWXHXqm5x0bELzq3i9mfHAYnGQy?=
- =?us-ascii?Q?xLQ+4LUVIE33vDgMedbe6InyzEhnSpOAjDH06Y7BJVO6NhvuiwiGAG0C31yo?=
- =?us-ascii?Q?IEqR4JMlHu8uATfDhSPBItRLYldZij8LD8kUdINV0WnIr+UmA4VsgfWaD7dM?=
- =?us-ascii?Q?WL5dAB5yOHKny1xtRXI7pswZYC1qRPJjI/v6ot5yhR1K22ANO2RScw36rybg?=
- =?us-ascii?Q?aiCQp2BgJRMt4W22dS79OJZgBZGheOcI9AkZ5K1pVppYW2qWR2N7DZD1pKQN?=
- =?us-ascii?Q?Wr68T3SiAGD8RHfGNK707y/cSSHm15trKQ8HlPcCk79Iz4RQtPRit0gKXQn9?=
- =?us-ascii?Q?RLpSmlYQtvpvn6tEgjLiqXQ9mSBM4upzQkKQSL9Uw9TomPxHJ1F0vMWEqmA0?=
- =?us-ascii?Q?meTpZ7D2mPV4sdBZdwuAAy76uCvCUmv9Hy3+FSRlkbZ7u6gcOK1xZBgDOYZH?=
- =?us-ascii?Q?3UJwNny7l2ZJz2zqBXvUyCDORk7c5sDJiQzdThVYpalhd3oGVJ+ph1JGiBg6?=
- =?us-ascii?Q?Rb+94YE7V7VwIln/PseLlNnCAvc4lHE2HayV2QjTCynU1FMnhmAN6MkGcUOn?=
- =?us-ascii?Q?UY8Tkg3R9E0TL5Vdoh4ehGXAW4BpskFpG6ITrNoar3eRIUAljSClzaxIW6iM?=
- =?us-ascii?Q?5GvBvM9plqmCtmTO1WNb0zXz16gHCCoHUCN38QFaCnN5yToxCupk4/Q2hYRw?=
- =?us-ascii?Q?Upk/8KMQ9qP4UOyHSQyiuLQiyX4ukBGNDJwfG5487+fO5xiEwRH97rd0vbre?=
- =?us-ascii?Q?OgTg7y/HBrMShOWVbrCrnCX9a4O9cbvlA7orLkUr9e8ZgKJrl40qL9GbuIZZ?=
- =?us-ascii?Q?eSYoxlu5egm93pu0Ommna7E/bNBfZBUGa7RPurxYRUzpE0Bd4zB1LIinqVWS?=
- =?us-ascii?Q?QS9S1hSd+V90dCJLNODy3E70/ICrjezaKu4DrB141JAaxbVAl9JdncVrDhXP?=
- =?us-ascii?Q?8GagMEUjUr0LKTzjSGxWS0avygkNswFO5OIGvC8m4kMCLVAxDJBdyL1EvhKi?=
- =?us-ascii?Q?jW664Ig=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR14MB6224.namprd14.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(80162021)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?dI6tlQ6OswX7MU9yjodDudHMcbPyk1i7yO/8bxb7j+3gCbYC7zP4vgFCNsBq?=
- =?us-ascii?Q?4qlMo4Ny8NahOpfsMk7XE9k6WWkQQX7YRRgX2nq7ENenljBejfJ/Bf+uEBYu?=
- =?us-ascii?Q?43Qv1SNS+bAZkVeQc58eULPEYqdD1IUhRP9CweoqPMiwFwEJA6iSo52Cf/qM?=
- =?us-ascii?Q?mPg8wq4wpQRvAPTfPgjIYXXNPMrifIpQD9q6sAPlZTecke6mzVsEpfhcZ7h1?=
- =?us-ascii?Q?CTFbzJuVCGiKmWzAZLwNgrRp8ke/0jsPN9vIXglyTn4G3WZrzVkrrIj/KtXS?=
- =?us-ascii?Q?fRxcl01gqNMQ8Zn2FZGz3PFAzzTrzLV9TfrjEL5qy5pBeTkf1tKq1YOPYJ5m?=
- =?us-ascii?Q?kfyhKCqnBdcWZcqTq6wH4aLsKSd1SvUiOF7rKdL+PAVQvDPNWX9zmc2ApxP3?=
- =?us-ascii?Q?59F5azVe4K9E7n9DAYj2Uy0jH7UKOK5op1Mc1urK4BhXNBuB4MfT4gCu1svT?=
- =?us-ascii?Q?tOBoHXGmSaKDqaWxDE1q1xLkDi+z8QfaNT+mWTx+ddAMfNi6ulMIxXRqyejW?=
- =?us-ascii?Q?/pgok3EpqwYYVIXaZfmxEupF79cAnafa9Itig3c8w6RN2YExnuRFunFSINBj?=
- =?us-ascii?Q?gp1k/zNddQ4NHpmzuViXHb6IXUYLKJr9Uki5VwRzJrp36TTMQdGvI5N340Xh?=
- =?us-ascii?Q?6yGQHVUznOa6/TAC7eDEwcGbuFh7pidt/gOpe6oBgb8ZW2ndghEsTkFyhtUE?=
- =?us-ascii?Q?Ol1dWxav/FnqId0VSbHGz7tCJPhYOS8JbIT+NlkvTJ58P2fZ9lUdWEKprGp1?=
- =?us-ascii?Q?tp80X91GsfGyNtFn4ID7AaUTv8ZWffXzzNrUUCECHqCtURDYQHo/jt0ulMoR?=
- =?us-ascii?Q?hOeZNijZhZzDKW5+O6MrcXKE6p/gHmZEm8l0SBXaAWM6nqEeJzxDUklxJYb+?=
- =?us-ascii?Q?jPPChB4KmFxrqrlLjwdD2d8cEekodn3suvU6Uok8lgxfMpCvlMNHNX9BgSjy?=
- =?us-ascii?Q?bIhJqa5u1cowJ4YLyZ6Y1HYBuNT6o3QZ731zgrRu6Z9JeYnU6QnN0petJum8?=
- =?us-ascii?Q?0If0z4yvEtJTvKUfv8vkSPNY1UZmjovuJBavyuiuy5fIJWFJSCiPLyKd96rf?=
- =?us-ascii?Q?q7Y7tX5EX+Tek2aHZXkggLEEKqaoaL54x9emeryeXkKx6J754LVdjVkZ61UD?=
- =?us-ascii?Q?nPbmtXir2XedLvow3/JdftymTXGafsShB9eP1IldqTcOOYg0csVp8kgqwCa4?=
- =?us-ascii?Q?2rIQiZf616w28++9n9gQyBLTM7wclNJdGloqAbOoMP3nbAA6gT9dz/9Oq9I7?=
- =?us-ascii?Q?O/aHzrCrB/o4sQluf3oVB6rM3cEk95NjV0jkSzo2gQWaeuRVqmQfHLNjyO3a?=
- =?us-ascii?Q?hGcOjwJJVCGGN/zpQP09Lpr3yJNbDOhqcNFKXWmfiMVIB7rGGpiL9No6d9rk?=
- =?us-ascii?Q?F3j7XBaJbxeJWi2lLfm4meYAbXpi2ANjytvvRj6RGe4OWCQc1VzqQ6eyDENj?=
- =?us-ascii?Q?oEYhn7oVrSwohwo6zYWPofFLjxtfb1ObKV0QZH3xVeaspnKQM9V+JIaJ/l/S?=
- =?us-ascii?Q?i/f2PiOUqGFNBAMtZCUfODPVTlazSrVPbvtvdMVPzBftHmkTR69PxcrkjCHK?=
- =?us-ascii?Q?kghpBldnMUJTxQ5+v14=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D98514AD17
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727340420; cv=none; b=nIY2h4xCrSqSbFxpWKm+8VziIPT7CUm+CBCmTHz9q06QWDg1T7ZcohqIUVGFE9317ijSkKSi1BIsR9+g0Wbu4w6Yg1gQpIioVu2l7dg1Ll0PK+8oDJN8+59+7OCj9igdKuKarpEBzygjI7L6l02Su1S2bMBVxDMDbZa6YM1Xn5Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727340420; c=relaxed/simple;
+	bh=nRwl+eY0EgaqedKxTmOknSbhk/ns0RAjZ8bitL8CuQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h4bW3CIkN/HV1/FOD2gwIfTsqQF98+reJMFe5KFwyp4cymr3BZOqulzOxHa1maF2DhBLDJiEfuzNCSU+zsofIfzjAmaoMlI/CliX6SqcityZKziS6Dl1Oeyw0QPewV4Ou4zlZf6wZuvdeAOP4zcN7qxviAmwo4dcvx0v7qmXj2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b2R010Cd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727340417;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=dcdT+Y+JTqgEdFx8AuCpVRjLlJoZMsxN/9BPx+44vCo=;
+	b=b2R010CdmuI448+ZEeEbtzcxWGrIw1lWsFPsOdz2KRHY+Pq6vosutUC9lPCfh2Wkot5/vW
+	rTBX4Z2fgaPhTKhyDQtOMbwJcieNvQ3c8nyvkqAmWSo1+xtsDzkJcQNpt2vZ7HzCC4wrda
+	EEjDF7mg7SMfiRwXGdlpmIhKE/OIjeU=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-594-hM3ah20LPnqlWbqAiRDeFg-1; Thu, 26 Sep 2024 04:46:55 -0400
+X-MC-Unique: hM3ah20LPnqlWbqAiRDeFg-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37ccc57613eso283769f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 01:46:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727340415; x=1727945215;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dcdT+Y+JTqgEdFx8AuCpVRjLlJoZMsxN/9BPx+44vCo=;
+        b=F+K51oNGO4lYx9dpRfV5Gpt7A1o6Hnoa5H8EvRuxVBjuSl6Mtr/8Coo9a0uAriaQJg
+         gHyh5BRzIhdUcSkmJg7t0Hb+SZ4eWodKWug/vc4ABN8qm9kM1Wt8WHz4BkucB6eigbVi
+         wB865ybHdqhCEI1bZN9FfPkW4x717vR7Kll6YqffnrQ88aVoJFauhJCAWsqCSw5Mqa0i
+         TeSOjocnnamGgwxmnWy9AFvFixoHsm9Ysv6nyyeJmqwbbn2B1F161lU2O9iEtYGGrFtG
+         pegRlsDfnlEHL1rUpRWgHA4PRNbrJwIxBelVQtfEQvDCAR/L4dxCSH3Oirhx+2NEAfZD
+         UYZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXME/IIdXdR0bQpjegKaRUDu8eP3ZTbq1ob6Mr9lI3PkyOSDdjx584d1ZOnbABQN+prsDUT1gPoxU8Dv0U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSo95GVSqFHgQthTAiYzmPmpNi/HZFccxIF2BqtSTAdKHI1LK7
+	tCQMMCY2jtoHh9TtvaPAi10ZJpiZ3XFo/ScbfFZn4vPFLOeT0XKPQnPOXt6KDiNoVOUK/pGGBx8
+	/PoJsSoBVhmGNxYRdLaZbghke4GytzwF8f6VM180ebSdSo2R8qWmuIdBzU4yvIA==
+X-Received: by 2002:a5d:4642:0:b0:374:c07c:a49 with SMTP id ffacd0b85a97d-37cc248b745mr3395756f8f.28.1727340414658;
+        Thu, 26 Sep 2024 01:46:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8YDSVOdNq1/t7E3SyZWe5lFPiCsLTZcolGEYAEKQa215yfM+Vw1+QC4KOFxSiwJu3877rJg==
+X-Received: by 2002:a5d:4642:0:b0:374:c07c:a49 with SMTP id ffacd0b85a97d-37cc248b745mr3395735f8f.28.1727340414264;
+        Thu, 26 Sep 2024 01:46:54 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c744:ac00:ef5c:b66d:1075:254a? (p200300cbc744ac00ef5cb66d1075254a.dip0.t-ipconnect.de. [2003:cb:c744:ac00:ef5c:b66d:1075:254a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ffa22sm40374455e9.25.2024.09.26.01.46.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Sep 2024 01:46:53 -0700 (PDT)
+Message-ID: <b7f7f849-00d1-49e5-8455-94eb9b45e273@redhat.com>
+Date: Thu, 26 Sep 2024 10:46:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: kneron.us
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR14MB6224.namprd14.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8dc125e8-1c14-40b0-5608-08dcde079e10
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2024 08:45:47.7423
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f92b0f4b-650a-4d8a-bae3-0e64697d65f2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9DLvrNe21nEF5uCtQzSFcsxdWOREpSpIrvUehgQ5K1xIWYu3Xh9Xk9o9e2hnqpF6uEWSA5NKJ8Qymiplnauh/A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR14MB7315
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] [RFC] mm: Remove MAP_UNINITIALIZED support
+To: Arnd Bergmann <arnd@kernel.org>, linux-mm@kvack.org
+Cc: Arnd Bergmann <arnd@arndb.de>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Ard Biesheuvel <ardb@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Damien Le Moal <dlemoal@kernel.org>, Greg Ungerer <gerg@linux-m68k.org>,
+ Helge Deller <deller@gmx.de>, Kees Cook <kees@kernel.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Vladimir Murzin <vladimir.murzin@arm.com>, Vlastimil Babka <vbabka@suse.cz>,
+ linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arch@vger.kernel.org
+References: <20240925210615.2572360-1-arnd@kernel.org>
+ <20240925210615.2572360-6-arnd@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240925210615.2572360-6-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> On Wed, Sep 25, 2024 at 12:16:10PM +0300, Andy Shevchenko wrote:
-> > On Wed, Sep 25, 2024 at 04:04:30PM +0800, Michael Wu wrote:
->=20
-> ...
->=20
-> > > + * @bus_loading: for high speed mode, the bus loading affects the hi=
-gh
-> and low
-> > > + *	pulse width of SCL
-> >
-> > This is bad naming, better is bus_capacitance.
->=20
-> Even more specific bus_capacitance_pf as we usually add physical units to=
- the
-> variable names, so we immediately understand from the code the order of
-> numbers and their physical meanings.=20
+On 25.09.24 23:06, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> MAP_UNINITIALIZED was added back in 2009 for NOMMU kernels, specifically
+> for blackfin, which is long gone. MAP_HUGE_SHIFT/MAP_HUGE_MASK were
+> added in 2012 for architectures supporting hugepages, which at the time
+> did not overlap with the ones supporting NOMMU.
+> 
+> Adding the macro under an #ifdef was obviously a mistake, which
+> Christoph Hellwig tried to address by making it unconditionally defined
+> to 0x4000000 as part of the series to support RISC-V NOMMU kernels. At
+> this point linux/mman.h contained two conflicting definitions for bit 26,
+> though the two are still mutually exclusive at runtime in all supported
+> configurations.
+> 
+> According to the commit 854e9ed09ded ("mm: support madvise(MADV_FREE)")
+> description, it was previously used internally by facebook, which
+> would have resulted in MAP_HUGE_1MB turning into MAP_HUGE_2MB
+> with MAP_UNINITIALIZED enabled, and every other page size implying
+> MAP_UNINITIALIZED. I assume there are no remaining out of tree users
+> on MMU-enabled kernels today.
+> 
+> I do not see any sensible way to redefine the macros for the ABI in
+> a way avoids breaking something. The only ideas so far are:
+> 
+>   - do nothing, try to document the bug, hope for the best
+> 
+>   - remove the kernel implementation and redefine MAP_UNINITIALIZED to
+>     zero in the header to silently turn it off for everyone. There are
+>     few NOMMU users left, and the ones that do use NOMMU usually turn
+>     off MMAP_ALLOW_UNINITIALIZED, as it still has the potential to cause
+>     bugs and even security issues on systems with a memory protection
+>     unit.
+> 
+>   - remove both the implementation and the macro to force a build
+>     failure for anyone trying to use the feature. This way we can
+>     see who complains and whether we need to put it back in some
+>     form or change the userspace sources to no longer pass the flag.
+> 
 
-Sounds good. However, I think the length of "bus_capacitance_pf" is a bit
-long, we may often encounter the limit of more than 80 characters in a
-line when coding. I'll rename it to "bus_cap_pf".
+The first, uncontroversial step could indeed be to make 
+MAP_UNINITIALIZED a nop, but still leave the definitions in mman.h etc 
+around.
 
-Thanks & Regards,
-Michael
+This is the same we did with MAP_DENYWRITE. There might be some weird 
+user out there, and carelessly reusing the bit could result in trouble. 
+(people might argue that they are not using it with MAP_HUGETLB, so it 
+would work)
+
+Going forward and removing MAP_UNINITIALIZED is a bit more 
+controversial, but maybe there really isn't any other user around. 
+Software that is not getting recompiled cannot be really identified by 
+letting it rest in -next only.
+
+My take would be to leave MAP_UNINITIALIZED in the headers in some form 
+for documentation purposes.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
