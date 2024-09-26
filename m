@@ -1,189 +1,414 @@
-Return-Path: <linux-kernel+bounces-339889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65366986BD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:43:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3C1986BD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 030B1B24DAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:43:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38233B22142
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0729F17BEA0;
-	Thu, 26 Sep 2024 04:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jtoQmLn0"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A510B1D5AA2;
+	Thu, 26 Sep 2024 04:46:30 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B7116FF26;
-	Thu, 26 Sep 2024 04:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF8A1D5ACB
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 04:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727325783; cv=none; b=MVAFUC1NggvOREImBPKEKIoymeJuWwNISM1Nf41//iARcZYGcoC59x/DuLmjCiu/Io5lHuJUUfPFpgoUVaWogcmoDZLCSgX5pYpMcLWMvGL07u9nEl2+yhtfFuXAHJRTY5/EghihE5AER/qHlQkr/5ByUezdhRm9E90YY8SJlQU=
+	t=1727325989; cv=none; b=u/wnyxRnR2sfNuJZnxJln2degB9iCVP3mAdRAFNYYFH1SdP45Ec6F0HOZ+sTKW1tgHYNwYMy7TcOnVpFhRkuK/ItUgMhFDcm8oWalNcGgS+en8KUxeeNlJn22YG+Dys+mRtngeO5PyCABAIvPzb47CZO7NYy5aRz8S1RXMROVW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727325783; c=relaxed/simple;
-	bh=pvyR97GWROMGSDup1dg7LPvjSw+ejcn6mDNV5sqMPHA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JAUZqx0bXs6M99x1NLzzCAoSnRsV+O+m/b69ctsigB3V1WFVIly6YBp7q4syFQ4p2tKGCmTI8iMqFjjA/jAgVZW16lBHaQ1D3Ob5DpP0e5DwvNvdV+4mo1QDrIH4mMgauEWPphLeBK4BkHs7SzyXv0S3RoSXzWnCSbTYvcL2ITg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jtoQmLn0; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7178df70f28so495546b3a.2;
-        Wed, 25 Sep 2024 21:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727325781; x=1727930581; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JW7NVeDKoToVXhIzMtIXfxWOsqG3HHW7/liw5BFTJas=;
-        b=jtoQmLn0TYQBY4uJFlzUjCo38cpB4YaYrFIiD+cjVCBEuhRs+dwUPybJ2PIU/XzR9k
-         rImOtn9vyCn2p5vkXGh2XpLsIi8X562jht2PWuk3zzvnaG71LJOMxRGYilqXeo2qrn1V
-         ANoe6budqqqUwK2PNT4YjffBFKMfiC+ur95Jfbad9Hq4j7xuVQpeglv3r+mypl0nkfOH
-         hntcbtDzTOxX7q4vefocqrnzl0iU3mGhmT03k4AaGt58RSKmDjWz9+cKu8GlveF+6hJB
-         2MPIXeHRCi8vaKjUHqJTyUCFItLoufT0QFcMlWyu86H8HVOfNThl9ppz5Mhd76d6xoRN
-         0Ljg==
+	s=arc-20240116; t=1727325989; c=relaxed/simple;
+	bh=WApdhbPwGf0o+V2YZ5hJNCAkZ4ZlCY7nWkPbZ4zy0Hc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E+gymNGvOk4mrMw2Y9NJkJ9qsDgMr842/Uta/t1a5RE/mUb1hyqlYO+f73LvlptDTfdPBtnrpwNxens24dFFJBTxuzp5zVZbBGbh92ekPRBOkSBDiMCqDmgSK1DNFLIYoron4gsVP2P44Vd/BzYSGOQqtReMRpWFmCVkaa+fHOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82aad3fa5edso60631239f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:46:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727325781; x=1727930581;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JW7NVeDKoToVXhIzMtIXfxWOsqG3HHW7/liw5BFTJas=;
-        b=l+pyb61atwCK6Wjn6HaYKOQ+IoYIy0oRZ3m14tqIHOjifmH/r2T7Cfj1JE++WHjwwn
-         58LWkwloVFA3g6Qdfa8W986u9kyhChzzKoxqW/8rvvP/atMDRjMVn4w2sQHbbwZbCTe+
-         R3yk4GfRT/RJHQEi0NIeZtMz2BY8KAc3niIENvMyGjxlHzWoGadRYBH5n+GVFnrJ6qeR
-         7SVLcCCY8+inxHw88p9gWBuF+NtA0IQaX+BaFdnmf6DS0AJJ7TgExALOoLJ8rIfMfHy7
-         Fz5kwFdRj7uOwG81H/3Ft24Q4MDnV9WHv5RtEpIlNIUg29QA6zza0KxnipPWI7SD6BbO
-         5P/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVmZBzOr5+u2+4ps/DxH4ltA6VBZNTHouluDenE5IoX3KIfZYrifJTKQqkV5Res7oB9CGWDFavmX/F7@vger.kernel.org, AJvYcCVoqktUuxq8xtkJA8vamxR3MGXQlxauAolzP53z38YRhyxWrIJKDXGgCfNsQzA7400of5ypvc32mwCCeJIf@vger.kernel.org, AJvYcCXTQqcGWiS1GHAABiZpeCb+YJ9GTHwKBzIUFZrOwKciH+K1jEPP2BiU5fBs6J8Ib7wlSovvgGZex3R6wXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDeCUgfHZcxDCBsPs8JH71g0DEQGH7RidCrrpoO6qScGvuN8kN
-	IXu/2aIyIPXC7BFJ0FF4YCOr+nVnlo2OSOPYpsX00kjaGtE/vbDb
-X-Google-Smtp-Source: AGHT+IHyw1xwhKRM13Tc2gLZQfqxouRBAQYu6bSDuN5z51/DINcJVO9iJcCF4mKEmaenFXFM2gVpZA==
-X-Received: by 2002:a05:6a20:65a4:b0:1d4:e49b:6c47 with SMTP id adf61e73a8af0-1d4e49b6cc7mr4131801637.27.1727325781143;
-        Wed, 25 Sep 2024 21:43:01 -0700 (PDT)
-Received: from ux-UP-WHL01.. ([120.237.109.178])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc8347fesm3474279b3a.35.2024.09.25.21.42.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 21:43:00 -0700 (PDT)
-From: Charles Wang <charles.goodix@gmail.com>
-To: dmitry.torokhov@gmail.com,
-	dianders@chromium.org,
-	dan.carpenter@linaro.org,
-	conor@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org
-Cc: jikos@kernel.org,
-	bentiss@kernel.org,
-	hbarnor@chromium.org,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Charles Wang <charles.goodix@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v8 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
-Date: Thu, 26 Sep 2024 12:42:17 +0800
-Message-ID: <20240926044217.9285-3-charles.goodix@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240926044217.9285-1-charles.goodix@gmail.com>
-References: <20240926044217.9285-1-charles.goodix@gmail.com>
+        d=1e100.net; s=20230601; t=1727325987; x=1727930787;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C2IQvdemoO9XECzbM4nM3MJZEc4Dqfpv95Y7jq3RMOc=;
+        b=PDFVMNHe6pqQ8QN+PD6ZRblPoPo55xyEgToYpKGtoQMmZuYJN+fI2x8i8Ap1KnZOXW
+         TMJZLHxhBrZTq4FC4/MhuBsN53oPU7IF+GSsi8p+yYumgv8QdEZ2Vu1L7q47loj0P6kq
+         KB6tCUR9m3mQPgWjfqdPg4UXukXyd789EiU9OSzHZXiLvChowZT1kXZej6BftHHrWPod
+         klY/JcMQY5GV3V1VyXheZv5HhkTUHMlzDvnJflrQWgjaFxYTdvFlzLq1NNOFPups/cCf
+         jtNV2JcoHmMh+NOwe1xmnkWFgspSmEx4bGUxnRWJsqSUUU3EYuRSFuz74k2ONqufpfNz
+         SwWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXUOSzxn4kSi7RlmP7Gh6bf95ZQ56LNvaIoi2w0qK1jcftVOYXeScS6AolOHgqFIENCZHw6YOVrgummT9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw874Oc9vqLF5aQoYlMwziqta4YytpCooLSNeEi2kx8OYxwupnU
+	KXb0wmugjaClh/Yeuj6U/EPj9/5IzB00nLL85ppwpJFOzKzD4nBOQIdeLjsuQfaIx9PDdycXh2s
+	S+R2Vl5ZtAU/aooQ/jNKsiJV7TvnvlJidHr1VaW5hVdeP2GOM/AegLUM=
+X-Google-Smtp-Source: AGHT+IHDHypmyv01bskZOHcng03/aTGwGiyJzO5ZkcAoCDwv5tETyqvB9VOHNykJa08YTMrTIw1PAUynl7YwTpuszuI4c1D5ZW3S
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:18cb:b0:3a0:bc6f:c45a with SMTP id
+ e9e14a558f8ab-3a26d7e4a80mr49655465ab.24.1727325986666; Wed, 25 Sep 2024
+ 21:46:26 -0700 (PDT)
+Date: Wed, 25 Sep 2024 21:46:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f4e722.050a0220.211276.003b.GAE@google.com>
+Subject: [syzbot] [kernel?] possible deadlock in hrtimer_start_range_ns (3)
+From: syzbot <syzbot+f949cea3aaf2c22b5e7e@syzkaller.appspotmail.com>
+To: anna-maria@linutronix.de, frederic@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-The Goodix GT7986U touch controller report touch data according to the
-HID protocol through the SPI bus. However, it is incompatible with
-Microsoft's HID-over-SPI protocol.
+Hello,
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+syzbot found the following issue on:
+
+HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.k..
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1580b080580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e851828834875d6f
+dashboard link: https://syzkaller.appspot.com/bug?extid=f949cea3aaf2c22b5e7e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2d770dd8854c/disk-88264981.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/45f6f124e691/vmlinux-88264981.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1ce55044a519/bzImage-88264981.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f949cea3aaf2c22b5e7e@syzkaller.appspotmail.com
+
+FAULT_INJECTION: forcing a failure.
+name fail_usercopy, interval 1, probability 0, space 0, times 0
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-syzkaller-g88264981f208 #0 Not tainted
+------------------------------------------------------
+syz.0.575/7708 is trying to acquire lock:
+ffffffff8e813558 ((console_sem).lock){-...}-{2:2}, at: down_trylock+0x20/0xa0 kernel/locking/semaphore.c:139
+
+but task is already holding lock:
+ffff8880b872c898 (hrtimer_bases.lock){-.-.}-{2:2}, at: lock_hrtimer_base kernel/time/hrtimer.c:175 [inline]
+ffff8880b872c898 (hrtimer_bases.lock){-.-.}-{2:2}, at: hrtimer_start_range_ns+0x109/0xca0 kernel/time/hrtimer.c:1300
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (hrtimer_bases.lock){-.-.}-{2:2}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+       lock_hrtimer_base kernel/time/hrtimer.c:175 [inline]
+       hrtimer_start_range_ns+0x109/0xca0 kernel/time/hrtimer.c:1300
+       hrtimer_start include/linux/hrtimer.h:275 [inline]
+       start_dl_timer+0x36a/0x4d0 kernel/sched/deadline.c:1170
+       enqueue_dl_entity+0x10ed/0x1d60 kernel/sched/deadline.c:2053
+       dl_server_start+0xc9/0x240 kernel/sched/deadline.c:1650
+       enqueue_task_fair+0xb5c/0xea0 kernel/sched/fair.c:7040
+       enqueue_task+0x1a5/0x300 kernel/sched/core.c:2020
+       activate_task kernel/sched/core.c:2062 [inline]
+       wake_up_new_task+0x566/0xc30 kernel/sched/core.c:4816
+       kernel_clone+0x4ee/0x8f0 kernel/fork.c:2818
+       user_mode_thread+0x132/0x1a0 kernel/fork.c:2865
+       rest_init+0x23/0x300 init/main.c:712
+       start_kernel+0x47f/0x500 init/main.c:1105
+       x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:507
+       x86_64_start_kernel+0x9f/0xa0 arch/x86/kernel/head64.c:488
+       common_startup_64+0x13e/0x147
+
+-> #2 (&rq->__lock){-.-.}-{2:2}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
+       raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:593
+       raw_spin_rq_lock kernel/sched/sched.h:1503 [inline]
+       task_rq_lock+0xc6/0x360 kernel/sched/core.c:695
+       cgroup_move_task+0x92/0x2d0 kernel/sched/psi.c:1161
+       css_set_move_task+0x72e/0x950 kernel/cgroup/cgroup.c:898
+       cgroup_post_fork+0x256/0x880 kernel/cgroup/cgroup.c:6692
+       copy_process+0x39e9/0x3d50 kernel/fork.c:2601
+       kernel_clone+0x226/0x8f0 kernel/fork.c:2787
+       user_mode_thread+0x132/0x1a0 kernel/fork.c:2865
+       rest_init+0x23/0x300 init/main.c:712
+       start_kernel+0x47f/0x500 init/main.c:1105
+       x86_64_start_reservations+0x2a/0x30 arch/x86/kernel/head64.c:507
+       x86_64_start_kernel+0x9f/0xa0 arch/x86/kernel/head64.c:488
+       common_startup_64+0x13e/0x147
+
+-> #1 (&p->pi_lock){-.-.}-{2:2}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+       class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:551 [inline]
+       try_to_wake_up+0xb0/0x1480 kernel/sched/core.c:4154
+       up+0x72/0x90 kernel/locking/semaphore.c:191
+       __up_console_sem kernel/printk/printk.c:343 [inline]
+       __console_unlock+0x123/0x1f0 kernel/printk/printk.c:2844
+       __console_flush_and_unlock kernel/printk/printk.c:3241 [inline]
+       console_unlock+0x18f/0x3b0 kernel/printk/printk.c:3279
+       vprintk_emit+0x730/0xa10 kernel/printk/printk.c:2407
+       dev_vprintk_emit+0x2ae/0x330 drivers/base/core.c:4912
+       dev_printk_emit+0xdd/0x120 drivers/base/core.c:4923
+       _dev_warn+0x122/0x170 drivers/base/core.c:4979
+       firmware_fallback_sysfs+0x4cf/0x9e0 drivers/base/firmware_loader/fallback.c:233
+       _request_firmware+0xcf5/0x12b0 drivers/base/firmware_loader/main.c:914
+       request_firmware_work_func+0x12a/0x280 drivers/base/firmware_loader/main.c:1165
+       process_one_work kernel/workqueue.c:3229 [inline]
+       process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #0 ((console_sem).lock){-...}-{2:2}:
+       check_prev_add kernel/locking/lockdep.c:3158 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+       down_trylock+0x20/0xa0 kernel/locking/semaphore.c:139
+       __down_trylock_console_sem+0x109/0x250 kernel/printk/printk.c:326
+       console_trylock kernel/printk/printk.c:2827 [inline]
+       console_trylock_spinning kernel/printk/printk.c:1990 [inline]
+       vprintk_emit+0x3d7/0xa10 kernel/printk/printk.c:2406
+       _printk+0xd5/0x120 kernel/printk/printk.c:2432
+       fail_dump lib/fault-inject.c:46 [inline]
+       should_fail_ex+0x391/0x4e0 lib/fault-inject.c:154
+       strncpy_from_user+0x36/0x2e0 lib/strncpy_from_user.c:118
+       strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
+       bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:215 [inline]
+       ____bpf_probe_read_user_str kernel/trace/bpf_trace.c:224 [inline]
+       bpf_probe_read_user_str+0x2a/0x70 kernel/trace/bpf_trace.c:221
+       bpf_prog_99b56f93a3ca5fea+0x4b/0x4d
+       bpf_dispatcher_nop_func include/linux/bpf.h:1257 [inline]
+       __bpf_prog_run include/linux/filter.h:701 [inline]
+       bpf_prog_run include/linux/filter.h:708 [inline]
+       __bpf_trace_run kernel/trace/bpf_trace.c:2318 [inline]
+       bpf_trace_run2+0x2ec/0x540 kernel/trace/bpf_trace.c:2359
+       __traceiter_hrtimer_start+0x76/0xd0 include/trace/events/timer.h:222
+       trace_hrtimer_start include/trace/events/timer.h:222 [inline]
+       debug_activate kernel/time/hrtimer.c:479 [inline]
+       enqueue_hrtimer+0x35a/0x3c0 kernel/time/hrtimer.c:1085
+       __hrtimer_start_range_ns kernel/time/hrtimer.c:1260 [inline]
+       hrtimer_start_range_ns+0xac8/0xca0 kernel/time/hrtimer.c:1302
+       hrtimer_start include/linux/hrtimer.h:275 [inline]
+       perf_swevent_start_hrtimer kernel/events/core.c:11254 [inline]
+       cpu_clock_event_start kernel/events/core.c:11312 [inline]
+       cpu_clock_event_add+0x180/0x1a0 kernel/events/core.c:11324
+       event_sched_in+0x832/0xe90 kernel/events/core.c:2620
+       group_sched_in kernel/events/core.c:2653 [inline]
+       merge_sched_in kernel/events/core.c:3931 [inline]
+       visit_groups_merge+0x1521/0x2fd0 kernel/events/core.c:3876
+       pmu_groups_sched_in kernel/events/core.c:3958 [inline]
+       __pmu_ctx_sched_in+0x1aa/0x230 kernel/events/core.c:3970
+       ctx_sched_in+0x4c2/0x600 kernel/events/core.c:4021
+       ctx_resched+0x560/0x900 kernel/events/core.c:2807
+       __perf_install_in_context+0x647/0x850 kernel/events/core.c:2882
+       remote_function+0xef/0x170 kernel/events/core.c:92
+       csd_do_func kernel/smp.c:134 [inline]
+       generic_exec_single+0x336/0x9b0 kernel/smp.c:433
+       smp_call_function_single+0x3fa/0x1990 kernel/smp.c:676
+       task_function_call kernel/events/core.c:120 [inline]
+       perf_install_in_context+0x71a/0xb20 kernel/events/core.c:2985
+       __do_sys_perf_event_open kernel/events/core.c:13006 [inline]
+       __se_sys_perf_event_open+0x31c5/0x38d0 kernel/events/core.c:12658
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  (console_sem).lock --> &rq->__lock --> hrtimer_bases.lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(hrtimer_bases.lock);
+                               lock(&rq->__lock);
+                               lock(hrtimer_bases.lock);
+  lock((console_sem).lock);
+
+ *** DEADLOCK ***
+
+6 locks held by syz.0.575/7708:
+ #0: ffff88802960b9d8 (&sig->exec_update_lock){++++}-{3:3}, at: __do_sys_perf_event_open kernel/events/core.c:12797 [inline]
+ #0: ffff88802960b9d8 (&sig->exec_update_lock){++++}-{3:3}, at: __se_sys_perf_event_open+0xe64/0x38d0 kernel/events/core.c:12658
+ #1: ffff88802fa6bca8 (&ctx->mutex){+.+.}-{3:3}, at: __do_sys_perf_event_open kernel/events/core.c:12821 [inline]
+ #1: ffff88802fa6bca8 (&ctx->mutex){+.+.}-{3:3}, at: __se_sys_perf_event_open+0x13f9/0x38d0 kernel/events/core.c:12658
+ #2: ffff8880b87376c8 (&cpuctx_lock){-.-.}-{2:2}, at: __perf_install_in_context+0xdc/0x850 kernel/events/core.c:2843
+ #3: ffff88802fa6bc18 (&ctx->lock){-.-.}-{2:2}, at: __perf_install_in_context+0x110/0x850 kernel/events/core.c:2845
+ #4: ffff8880b872c898 (hrtimer_bases.lock){-.-.}-{2:2}, at: lock_hrtimer_base kernel/time/hrtimer.c:175 [inline]
+ #4: ffff8880b872c898 (hrtimer_bases.lock){-.-.}-{2:2}, at: hrtimer_start_range_ns+0x109/0xca0 kernel/time/hrtimer.c:1300
+ #5: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #5: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #5: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2317 [inline]
+ #5: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: bpf_trace_run2+0x1fc/0x540 kernel/trace/bpf_trace.c:2359
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 7708 Comm: syz.0.575 Not tainted 6.11.0-syzkaller-g88264981f208 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2203
+ check_prev_add kernel/locking/lockdep.c:3158 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+ down_trylock+0x20/0xa0 kernel/locking/semaphore.c:139
+ __down_trylock_console_sem+0x109/0x250 kernel/printk/printk.c:326
+ console_trylock kernel/printk/printk.c:2827 [inline]
+ console_trylock_spinning kernel/printk/printk.c:1990 [inline]
+ vprintk_emit+0x3d7/0xa10 kernel/printk/printk.c:2406
+ _printk+0xd5/0x120 kernel/printk/printk.c:2432
+ fail_dump lib/fault-inject.c:46 [inline]
+ should_fail_ex+0x391/0x4e0 lib/fault-inject.c:154
+ strncpy_from_user+0x36/0x2e0 lib/strncpy_from_user.c:118
+ strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
+ bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:215 [inline]
+ ____bpf_probe_read_user_str kernel/trace/bpf_trace.c:224 [inline]
+ bpf_probe_read_user_str+0x2a/0x70 kernel/trace/bpf_trace.c:221
+ bpf_prog_99b56f93a3ca5fea+0x4b/0x4d
+ bpf_dispatcher_nop_func include/linux/bpf.h:1257 [inline]
+ __bpf_prog_run include/linux/filter.h:701 [inline]
+ bpf_prog_run include/linux/filter.h:708 [inline]
+ __bpf_trace_run kernel/trace/bpf_trace.c:2318 [inline]
+ bpf_trace_run2+0x2ec/0x540 kernel/trace/bpf_trace.c:2359
+ __traceiter_hrtimer_start+0x76/0xd0 include/trace/events/timer.h:222
+ trace_hrtimer_start include/trace/events/timer.h:222 [inline]
+ debug_activate kernel/time/hrtimer.c:479 [inline]
+ enqueue_hrtimer+0x35a/0x3c0 kernel/time/hrtimer.c:1085
+ __hrtimer_start_range_ns kernel/time/hrtimer.c:1260 [inline]
+ hrtimer_start_range_ns+0xac8/0xca0 kernel/time/hrtimer.c:1302
+ hrtimer_start include/linux/hrtimer.h:275 [inline]
+ perf_swevent_start_hrtimer kernel/events/core.c:11254 [inline]
+ cpu_clock_event_start kernel/events/core.c:11312 [inline]
+ cpu_clock_event_add+0x180/0x1a0 kernel/events/core.c:11324
+ event_sched_in+0x832/0xe90 kernel/events/core.c:2620
+ group_sched_in kernel/events/core.c:2653 [inline]
+ merge_sched_in kernel/events/core.c:3931 [inline]
+ visit_groups_merge+0x1521/0x2fd0 kernel/events/core.c:3876
+ pmu_groups_sched_in kernel/events/core.c:3958 [inline]
+ __pmu_ctx_sched_in+0x1aa/0x230 kernel/events/core.c:3970
+ ctx_sched_in+0x4c2/0x600 kernel/events/core.c:4021
+ ctx_resched+0x560/0x900 kernel/events/core.c:2807
+ __perf_install_in_context+0x647/0x850 kernel/events/core.c:2882
+ remote_function+0xef/0x170 kernel/events/core.c:92
+ csd_do_func kernel/smp.c:134 [inline]
+ generic_exec_single+0x336/0x9b0 kernel/smp.c:433
+ smp_call_function_single+0x3fa/0x1990 kernel/smp.c:676
+ task_function_call kernel/events/core.c:120 [inline]
+ perf_install_in_context+0x71a/0xb20 kernel/events/core.c:2985
+ __do_sys_perf_event_open kernel/events/core.c:13006 [inline]
+ __se_sys_perf_event_open+0x31c5/0x38d0 kernel/events/core.c:12658
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe33e17def9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe33ef63038 EFLAGS: 00000246 ORIG_RAX: 000000000000012a
+RAX: ffffffffffffffda RBX: 00007fe33e335f80 RCX: 00007fe33e17def9
+RDX: bfffffffffffffff RSI: 0000000000000000 RDI: 0000000020000180
+RBP: 00007fe33ef63090 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffffffffffffff R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 00007fe33e335f80 R15: 00007ffc48ab6e58
+ </TASK>
+CPU: 1 UID: 0 PID: 7708 Comm: syz.0.575 Not tainted 6.11.0-syzkaller-g88264981f208 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ fail_dump lib/fault-inject.c:53 [inline]
+ should_fail_ex+0x3b0/0x4e0 lib/fault-inject.c:154
+ strncpy_from_user+0x36/0x2e0 lib/strncpy_from_user.c:118
+ strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
+ bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:215 [inline]
+ ____bpf_probe_read_user_str kernel/trace/bpf_trace.c:224 [inline]
+ bpf_probe_read_user_str+0x2a/0x70 kernel/trace/bpf_trace.c:221
+ bpf_prog_99b56f93a3ca5fea+0x4b/0x4d
+ bpf_dispatcher_nop_func include/linux/bpf.h:1257 [inline]
+ __bpf_prog_run include/linux/filter.h:701 [inline]
+ bpf_prog_run include/linux/filter.h:708 [inline]
+ __bpf_trace_run kernel/trace/bpf_trace.c:2318 [inline]
+ bpf_trace_run2+0x2ec/0x540 kernel/trace/bpf_trace.c:2359
+ __traceiter_hrtimer_start+0x76/0xd0 include/trace/events/timer.h:222
+ trace_hrtimer_start include/trace/events/timer.h:222 [inline]
+ debug_activate kernel/time/hrtimer.c:479 [inline]
+ enqueue_hrtimer+0x35a/0x3c0 kernel/time/hrtimer.c:1085
+ __hrtimer_start_range_ns kernel/time/hrtimer.c:1260 [inline]
+ hrtimer_start_range_ns+0xac8/0xca0 kernel/time/hrtimer.c:1302
+ hrtimer_start include/linux/hrtimer.h:275 [inline]
+ perf_swevent_start_hrtimer kernel/events/core.c:11254 [inline]
+ cpu_clock_event_start kernel/events/core.c:11312 [inline]
+ cpu_clock_event_add+0x180/0x1a0 kernel/events/core.c:11324
+ event_sched_in+0x832/0xe90 kernel/events/core.c:2620
+ group_sched_in kernel/events/core.c:2653 [inline]
+ merge_sched_in kernel/events/core.c:3931 [inline]
+ visit_groups_merge+0x1521/0x2fd0 kernel/events/core.c:3876
+ pmu_groups_sched_in kernel/events/core.c:3958 [inline]
+ __pmu_ctx_sched_in+0x1aa/0x230 kernel/events/core.c:3970
+ ctx_sched_in+0x4c2/0x600 kernel/events/core.c:4021
+ ctx_resched+0x560/0x900 kernel/events/core.c:2807
+ __perf_install_in_context+0x647/0x850 kernel/events/core.c:2882
+ remote_function+0xef/0x170 kernel/events/core.c:92
+ csd_do_func kernel/smp.c:134 [inline]
+ generic_exec_single+0x336/0x9b0 kernel/smp.c:433
+ smp_call_function_single+0x3fa/0x1990 kernel/smp.c:676
+ task_function_call kernel/events/core.c:120 [inline]
+ perf_install_in_context+0x71a/0xb20 kernel/events/core.c:2985
+ __do_sys_perf_event_open kernel/events/core.c:13006 [inline]
+ __se_sys_perf_event_open+0x31c5/0x38d0 kernel/events/core.c:12658
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe33e17def9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe33ef63038 EFLAGS: 00000246 ORIG_RAX: 000000000000012a
+RAX: ffffffffffffffda RBX: 00007fe33e335f80 RCX: 00007fe33e17def9
+RDX: bfffffffffffffff RSI: 0000000000000000 RDI: 0000000020000180
+RBP: 00007fe33ef63090 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffffffffffffff R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 00007fe33e335f80 R15: 00007ffc48ab6e58
+ </TASK>
+
+
 ---
- .../bindings/input/goodix,gt7986u.yaml        | 71 +++++++++++++++++++
- 1 file changed, 71 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
-new file mode 100644
-index 000000000..849117639
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/input/goodix,gt7986u.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: GOODIX GT7986U SPI HID Touchscreen
-+
-+maintainers:
-+  - Charles Wang <charles.goodix@gmail.com>
-+
-+description: Supports the Goodix GT7986U touchscreen.
-+  This touch controller reports data packaged according to the HID protocol,
-+  but is incompatible with Microsoft's HID-over-SPI protocol.
-+
-+allOf:
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - goodix,gt7986u-spi
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reset-gpios:
-+    maxItems: 1
-+
-+  goodix,hid-report-addr:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      The register address for retrieving HID report data.
-+      This address is related to the device firmware and may
-+      change after a firmware update.
-+
-+  spi-max-frequency: true
-+
-+additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - reset-gpios
-+  - goodix,hid-report-addr
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    spi {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      touchscreen@0 {
-+        compatible = "goodix,gt7986u-spi";
-+        reg = <0>;
-+        interrupt-parent = <&gpio>;
-+        interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
-+        reset-gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
-+        spi-max-frequency = <10000000>;
-+        goodix,hid-report-addr = <0x22c8c>;
-+      };
-+    };
-+
-+...
--- 
-2.43.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
