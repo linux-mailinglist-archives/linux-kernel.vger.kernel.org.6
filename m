@@ -1,66 +1,62 @@
-Return-Path: <linux-kernel+bounces-340825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E68C2987845
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:28:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15494987846
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FEEF28933F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:28:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C095B28346
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2B115B12A;
-	Thu, 26 Sep 2024 17:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D390715B14D;
+	Thu, 26 Sep 2024 17:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDKa/GyO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gM2sQfbG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C41C154C15;
-	Thu, 26 Sep 2024 17:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC07136337;
+	Thu, 26 Sep 2024 17:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727371695; cv=none; b=m3/Gdgva4eIE22i3miKVFSTQx/6joZkvSVnlq0cQyyyK2XCXcVIGatdD8d+KrZecvltUoC6i3LU0VDZDD91ZMljvhVeCHKkj+/yDQmiSZeVFtymcgkuTTOsVy5hWGwxvL1/DXM3CbHoeTmjZLm2ZkFVpBmcEvZjPy19nuzYwM/0=
+	t=1727371740; cv=none; b=oANiq3AgI+z0uASE5X/FAjqmO1XRpIIdQRbfptSHPHuefKEmuiT2f5TqdurtHmGU5ofUh7vu6/YE961SudjjYR69qwzUV1ZqWaQXPXvP0TVAckrzQFSKStEHivR+mBjIdmaMvRz5d+6S4rJEh5sOKFInlPCeHFmgtSmE4DLYkTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727371695; c=relaxed/simple;
-	bh=ISZTAw2uoP75IGAb5uipFimJViRv4w/H3SFYSZ91kEE=;
+	s=arc-20240116; t=1727371740; c=relaxed/simple;
+	bh=LLDqwerUj7WwDeFcUQ0BMKOjYyZGVE47RFGgqegx4Uo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VAiMF1huuQ0H8j0U7JcIlYF1irbO6+xHioRnXx1rtz5oOaWJ7DzAeJJOroo9Fx6m/gW14fOspPdOQ2KG/ylRuOojw8fNJ60kP/fAbBJFl3+cPjq+JSpyUymyPuYDgurhNMf5r5320s0XlXAhXnkWhoyk4z9Iox66k6UVHzYSMXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDKa/GyO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27B28C4CEC5;
-	Thu, 26 Sep 2024 17:28:14 +0000 (UTC)
+	 MIME-Version:Content-Type; b=TFq8WWRwBaAlgt6NLPeCVv/rlTsAikJcqY7ljTdZ61WmHxliGWzFfWshlTC0PxD8UD8vj5B48STWl/FSzGOX27egyhobyw90bfZfiwCU7wKEdvHFvmleNfCb4Ub2GHbHCS2bqBnSQno8ftALZfJZ6rbok14cIL/q1Y/SV30hqtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gM2sQfbG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6486FC4CEC5;
+	Thu, 26 Sep 2024 17:28:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727371694;
-	bh=ISZTAw2uoP75IGAb5uipFimJViRv4w/H3SFYSZ91kEE=;
+	s=k20201202; t=1727371739;
+	bh=LLDqwerUj7WwDeFcUQ0BMKOjYyZGVE47RFGgqegx4Uo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hDKa/GyOLjKiK//C/OHwnR3R7qzn2f3fdB7JxFX9hmLsQ2SQCETbU0mxq2qlS17dE
-	 3PFehhDZDLz6UtUTJ8CGvSeuRvAUYCfk5ODlmX9VWL9xFuDLtrQ3CqqOhl4pbeGalW
-	 l8BJuWGDtuzOqXAih+jp6h4BRqb3PlQqKEYh2XVy1XRto0/qotVSeSbD1w8slMnV24
-	 7m8ott9QblIMCMOBEuFvgmEcFeBfg3Q/POEu+INELuXLEtcyimuigaxROSXjVu+LDZ
-	 DY0cdS7ho4dIAqy5B8qUVSVXhEvpd6iodAm3XbafyrpvQmkgyInfQAs8gZp5dp3632
-	 7TEMK5rmOOFTQ==
+	b=gM2sQfbGar5KtsCDKRTk14XZjIZohtUepVC9Psf564P0akIO3Oq4HKWM+Sb0NSzrr
+	 4AEeoVy9BNDF62bkhWdyxPZsdRmAxfmNED/R0uYZu/38zMQvMx4QAjy01ECe1Wf2zk
+	 SR0RS4UoFvwx6VWeN/YGKuOHX0RNKkHJfd3BgMSKhC+dUrbctVNT4flen6AvZz41rc
+	 7wNeXCuDOCc/qAtRE3M9QNmbyQnJJHYlf1jW2iAYIVD7ug67clcz6q9az7uUTptfM2
+	 4ls3F2Mtin3eH54KV/Hjm8+G2uzl1wLLqq1h84j+mae1y71tw20v9PUdFZVZcnVYvm
+	 aKKDsasPyarrQ==
 From: Namhyung Kim <namhyung@kernel.org>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	james.clark@linaro.org,
-	howardchu95@gmail.com,
-	Levi Yun <yeoreum.yun@arm.com>
-Cc: nd@arm.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/2] Minor fixes error handling of perf stat
-Date: Thu, 26 Sep 2024 10:28:09 -0700
-Message-ID: <172737165675.3854690.10340683283816348263.b4-ty@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf symbol: Do not fixup end address of labels
+Date: Thu, 26 Sep 2024 10:28:57 -0700
+Message-ID: <172737172354.3854998.16269602769912786358.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-In-Reply-To: <20240925132022.2650180-1-yeoreum.yun@arm.com>
-References: <20240925132022.2650180-1-yeoreum.yun@arm.com>
+In-Reply-To: <20240912224208.3360116-1-namhyung@kernel.org>
+References: <20240912224208.3360116-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,17 +66,14 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 25 Sep 2024 14:20:20 +0100, Levi Yun wrote:
+On Thu, 12 Sep 2024 15:42:08 -0700, Namhyung Kim wrote:
 
-> This patchset fixes two issues that were seen when running
->   "perf stat -r" with perf_event_paranoid=3
+> When it loads symbols from an ELF file, it loads label symbols which is
+> 0 size.  Sometimes it has the same address with other symbols and might
+> shadow the original symbols because it fixes up the size of the symbol.
 > 
->    1. failed with Too many open files.
->      $ perf stat -r 1044 -- false
->      ...
->      failed to create 'go' pipe: Too many open files
->      failed to prepare workload: Too many open files
->      ...
+> For example, in my system __do_softirq is shadowed and only accepts the
+> __softirqentry_text_start instead.  But it should accept __do_softirq.
 > 
 > [...]
 
