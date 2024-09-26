@@ -1,133 +1,131 @@
-Return-Path: <linux-kernel+bounces-340391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5289872B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:18:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0667E987109
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17AFB1C22550
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:18:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0DA1F21E0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8107C189906;
-	Thu, 26 Sep 2024 11:18:00 +0000 (UTC)
-Received: from mail-m118115.qiye.163.com (mail-m118115.qiye.163.com [115.236.118.115])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5AD1AC434;
+	Thu, 26 Sep 2024 10:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z+R/aTmv"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AD9171675;
-	Thu, 26 Sep 2024 11:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.118.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6121A726A
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727349480; cv=none; b=nowfI3613YTZc6Vhkck5NU+eckl8e7vDVFxyabH6hspI8uNGv58/8cZIENr+/vIK+RGQ5A1ygWee+lyO3Uhkl8LnYjlkLB1jfYdTnU6+ayei70ADNxnDCHzE+wAsgnopZIQMuz6TnZ1mbWr9QDamigyeKKZt4WNKbtfoE9eM1jg=
+	t=1727345389; cv=none; b=MTYl/1fHm29px2uzKbYjI8Lzt0HD/vDSly7/UCC2jvVQN0OFLqeOSC+uQIelGE+J5oqu/ujRoYuuhEnlbTbjzE/5arU9y8zh9mj1eV/ZgPAqHKKyOv817xmoZIKQEnQ1JupBOHYonNbCIHTXxT/ejK1EZDnxAudECSpI7Omod9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727349480; c=relaxed/simple;
-	bh=7+DOtoutFds+ShUKf1onXNvwcnmuB08COLWt5VmhY6A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eHoXkpRcyG1IlVkHNEjPzIzM12AH6xvjBn/d+B0el5qg8BVUB2vb1gNq7tzZAut3mL6I3Tjm82AUa5HSw3lEl5/nQm2G/J7zQACaWUKG9/PhGwepB2hP9ZZy1ZBWyP/Y5/my6LHEL4ajh2hGnk1tMcgZ9tNIJv5TtkuNVv1iWCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=senarytech.com; spf=pass smtp.mailfrom=senarytech.com; arc=none smtp.client-ip=115.236.118.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=senarytech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=senarytech.com
-Received: from book-ThinkStation-P328.. (unknown [61.183.143.78])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 9F942940883;
-	Thu, 26 Sep 2024 18:01:39 +0800 (CST)
-From: bo liu <bo.liu@senarytech.com>
-To: perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cs@tuxedo.de,
-	songxiebing@kylinos.cn,
-	wse@tuxedocomputers.com,
-	bo liu <bo.liu@senarytech.com>
-Subject: [PATCH] ALSA: hda/conexant: fix Z60MR100 startup pop issue
-Date: Thu, 26 Sep 2024 18:01:35 +0800
-Message-Id: <20240926100135.36499-1-bo.liu@senarytech.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727345389; c=relaxed/simple;
+	bh=wtmMxPfXHs1lniflSjfhnjJuGeiH2xDRPoiDdQLkAyI=;
+	h=To:Cc:Message-Id:From:Subject:Date; b=e8iHwBFJmq96XPNgkfZ9NgsbuPV/vGqSu64vvEwO5BhhGhMOnXH/XB9nqCWh7woT4v4cCFmBpFEkMPryyoU2seDKQ4PkZnlTRmTjUtm1BIj82GdNJr6CfSinhHF/FY2XEXMsvdF2/ni+hKpKoL3tDnLqRkUOyJkM53+bnH/yQSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z+R/aTmv; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 1AE0D138061E;
+	Thu, 26 Sep 2024 06:09:46 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Thu, 26 Sep 2024 06:09:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm2; t=1727345386; x=1727431786; bh=bvuBPrU/ROkpG
+	h+7LGDsKdbS0WAs5mdFAL8FQjUFZgs=; b=Z+R/aTmvqt1yt2i3z+qdWgjNwXo8T
+	nrZN3tYhJL6W9FPQvXBAmBCXj1VJrP5GmEiHDWNvpYrz09FAU5Y9P6ACx1K3v6+4
+	TplhCxfoyb31N45upBkMRkmMjJu6h9fbeBiMt/4zwY2qs7BDTBEuo0IBmNXcnv/+
+	2/nkSGegfNELYzMearYv8MjkUdaVEif3p8pwSLBXYoPzsEjtiZzFFQ7KFMGKFW6x
+	N/GUMJIhOPV+f/OAkIgEuUeeovbp6VwXk9FUoLdYaeHssos7PB3P/+a23ln7Gxph
+	lA2r8BXSPg7j4HWQc4huBfhiZXw1oHnT3zL7INYlHbWdECQ7aLmtNtzWg==
+X-ME-Sender: <xms:6TL1Zilc_JgZnYrvZdWuGQvRmbOKLFnHx7iBbfezHCMcY2Tyz9zm7w>
+    <xme:6TL1Zp0vAqo-Arm5BJh5eR2LR1d_AzXvDbTUY8HInDJ8ukY97RHa1K2Zl0pmwW8Ht
+    b9rNCdFAPwsd7RU9B4>
+X-ME-Received: <xmr:6TL1Zgqs0Vv3SUC73CAA6aPL7OjFxBasFWfVbVVm8q7bVWeAsfEIOqbpVtQZlP-a9H3UfM8o3v2-Mzk9kK8Do_uIN8XUrNPkvNA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtjedgvdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepvfevkffhufffsedttdertddttddtnecuhfhrohhm
+    pefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqe
+    enucggtffrrghtthgvrhhnpeekffejgfehheehkeekffffveekteevvddvveelhffgffet
+    teefgfeutdehleetheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsth
+    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhhthhgrihhnsehlihhn
+    uhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouh
+    htpdhrtghpthhtohepshhtrggslhgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehg
+    vggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihgrmhdrhhhofi
+    hlvghtthesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqmheikehksehl
+    ihhsthhsrdhlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvg
+    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:6TL1Zmmo8gLhS-6_msm5UytHHfiiyMqWAc66IvYg067tOOybgfZCTQ>
+    <xmx:6TL1Zg3Pr8-D9sSIv__YH2OLq44TmZ45KCc1CTSHjRvpnWzDgF_7eA>
+    <xmx:6TL1ZttywwiAuXKRFyQ9dYGFuOsVcQfCwr8iiFUUgjF--WgUQmbpyg>
+    <xmx:6TL1ZsU66pIRQIAJokIPb0qJXlJS_WjkoJMxi62MrDcfytFEVQTyrw>
+    <xmx:6jL1ZjR9HJk2kwzPDeXTkBfc7oZ7aAPdXeQxt2ngTWOm-1_RX50V-c-q>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 26 Sep 2024 06:09:42 -0400 (EDT)
+To: stable@kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+    Liam Howlett <liam.howlett@oracle.com>,
+    linux-m68k@lists.linux-m68k.org,
+    linux-kernel@vger.kernel.org
+Message-Id: <184ceb0edb5740aa10db7c6f633e434793dd208b.1727345233.git.fthain@linux-m68k.org>
+From: Finn Thain <fthain@linux-m68k.org>
+Subject: [PATCH] m68k: Add missing mmap_read_lock() to sys_cacheflush()
+Date: Thu, 26 Sep 2024 20:07:13 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaS0tLVh4ZS05ISRkaSx1OGFYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlNSlVKQ0hVSk9IVUxDWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
-	VKQktLWQY+
-X-HM-Tid: 0a922dc776f309d1kunm9f942940883
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nj46Kxw5NzIfEDFKFBozE0Ir
-	QgwaFDJVSlVKTElMSE9PQktLTk9MVTMWGhIXVRkUVRcSDjsIHhUaCQIPHhgTVRgUFkVZV1kSC1lB
-	WU1KVUpDSFVKT0hVTENZV1kIAVlBSE9CSDcG
 
-When Z60MR100 startup, speaker will output a pop. To fix this issue,
-we mute codec in bios when startup, and use GPIO1 to unmute codec in
-codec driver.
+From: Liam Howlett <liam.howlett@oracle.com>
 
-Signed-off-by: bo liu <bo.liu@senarytech.com>
+[ Upstream commit f829b4b212a315b912cb23fd10aaf30534bb5ce9 ]
+
+When the superuser flushes the entire cache, the mmap_read_lock() is not
+taken, but mmap_read_unlock() is called.  Add the missing
+mmap_read_lock() call.
+
+Cc: stable@kernel.org # <= 5.7.y
+Fixes: cd2567b6850b1648 ("m68k: call find_vma with the mmap_sem held in sys_cacheflush()")
+Signed-off-by: Liam Howlett <liam.howlett@oracle.com>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Link: https://lore.kernel.org/r/20210407200032.764445-1-Liam.Howlett@Oracle.com
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Finn Thain <fthain@linux-m68k.org>
 ---
- sound/pci/hda/patch_conexant.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+The original commit was backported as far as 5.10.y but never made it into
+4.19.y or 5.4.y.
 
-diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
-index e851785ff058..27758822377f 100644
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -308,6 +308,7 @@ enum {
- 	CXT_FIXUP_HP_MIC_NO_PRESENCE,
- 	CXT_PINCFG_SWS_JS201D,
- 	CXT_PINCFG_TOP_SPEAKER,
-+	CXT_FIXUP_HP_A_U,
- };
- 
- /* for hda_fixup_thinkpad_acpi() */
-@@ -776,6 +777,18 @@ static void cxt_fixup_hp_zbook_mute_led(struct hda_codec *codec,
- 		cxt_setup_mute_led(codec, 0x10, 0x20);
- }
- 
-+static void cxt_fixup_hp_a_u(struct hda_codec *codec,
-+			const struct hda_fixup *fix, int action)
-+{
-+	if (action == HDA_FIXUP_ACT_INIT) {
-+		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DATA, 0);
-+		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_MASK, 2);
-+		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DIRECTION, 2);
-+		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_STICKY_MASK, 0);
-+	}
+mmap_read_lock() was unavailable prior to v5.8, being introduced in commit
+d8ed45c5dcd4 ("mmap locking API: use coccinelle to convert mmap_sem rwsem
+call sites"), so this backport uses down_read() instead.
+---
+ arch/m68k/kernel/sys_m68k.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/m68k/kernel/sys_m68k.c b/arch/m68k/kernel/sys_m68k.c
+index 6363ec83a290..38dcc1a2097d 100644
+--- a/arch/m68k/kernel/sys_m68k.c
++++ b/arch/m68k/kernel/sys_m68k.c
+@@ -388,6 +388,8 @@ sys_cacheflush (unsigned long addr, int scope, int cache, unsigned long len)
+ 		ret = -EPERM;
+ 		if (!capable(CAP_SYS_ADMIN))
+ 			goto out;
 +
-+}
-+
- /* ThinkPad X200 & co with cxt5051 */
- static const struct hda_pintbl cxt_pincfg_lenovo_x200[] = {
- 	{ 0x16, 0x042140ff }, /* HP (seq# overridden) */
-@@ -982,6 +995,10 @@ static const struct hda_fixup cxt_fixups[] = {
- 			{ }
- 		},
- 	},
-+	[CXT_FIXUP_HP_A_U] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = cxt_fixup_hp_a_u,
-+	},
- };
- 
- static const struct snd_pci_quirk cxt5045_fixups[] = {
-@@ -1055,6 +1072,7 @@ static const struct snd_pci_quirk cxt5066_fixups[] = {
- 	SND_PCI_QUIRK(0x103c, 0x8457, "HP Z2 G4 mini", CXT_FIXUP_HP_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x103c, 0x8458, "HP Z2 G4 mini premium", CXT_FIXUP_HP_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1043, 0x138d, "Asus", CXT_FIXUP_HEADPHONE_MIC_PIN),
-+	SND_PCI_QUIRK(0x14f1, 0x0252, "MBX-Z60MR100", CXT_FIXUP_HP_A_U),
- 	SND_PCI_QUIRK(0x14f1, 0x0265, "SWS JS201D", CXT_PINCFG_SWS_JS201D),
- 	SND_PCI_QUIRK(0x152d, 0x0833, "OLPC XO-1.5", CXT_FIXUP_OLPC_XO),
- 	SND_PCI_QUIRK(0x17aa, 0x20f2, "Lenovo T400", CXT_PINCFG_LENOVO_TP410),
-@@ -1100,6 +1118,7 @@ static const struct hda_model_fixup cxt5066_fixup_models[] = {
- 	{ .id = CXT_PINCFG_LENOVO_NOTEBOOK, .name = "lenovo-20149" },
- 	{ .id = CXT_PINCFG_SWS_JS201D, .name = "sws-js201d" },
- 	{ .id = CXT_PINCFG_TOP_SPEAKER, .name = "sirius-top-speaker" },
-+	{ .id = CXT_FIXUP_HP_A_U, .name = "HP-U-support" },
- 	{}
- };
++		down_read(&current->mm->mmap_sem);
+ 	} else {
+ 		struct vm_area_struct *vma;
  
 -- 
-2.34.1
+2.39.5
 
 
