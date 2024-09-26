@@ -1,76 +1,119 @@
-Return-Path: <linux-kernel+bounces-340460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0999873B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:40:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D525F9873BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 427071F23B67
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:40:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0843A1C2309A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AB6E57D;
-	Thu, 26 Sep 2024 12:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D103FD4;
+	Thu, 26 Sep 2024 12:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfZfmJ6V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="RTJoNsOK"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA0EF510;
-	Thu, 26 Sep 2024 12:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82EB290F;
+	Thu, 26 Sep 2024 12:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727354399; cv=none; b=p6n3dPeq5F2H85XlP/p0tp9rK1M41sDxLvPZ3keXmjyvGqQOBNIcXm5XkhZToH5VKy1RagDly5yJDffXaEdmA1/4yaEwZrSYnidQq6E4sZI4+lfuQcwjGKpnTj2pRO1KDt/HCW9EWUmkPhjb6tjeL6JFyaxz0GUrLFPJEGvF6bU=
+	t=1727354517; cv=none; b=gUY+1OtWZ2t/tqlGZDZwFlrJ2VzILeAvVsxBXHPq03yW5kuTRyPzmN5DXfAjamnSVdSYtI44/Ti8iThNGmwnqjVBTuv/TyziHxV0WPA56kSctLNIt4+kWJE0VRkCSf1/I3lFzuXz5fvIU2413sydsuFArSkYlDfZiTpQJJ9eK6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727354399; c=relaxed/simple;
-	bh=X6di7L1Vl/r4MqrcmOwroFyWwMv/8RSXL4kKCm4I0Uw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c63o4UhmWxvKUMSUYQdPrbdbqkHdq4RS5IkajZl9MGhzz2P20/Hxpb5hUpyI/H8IjT9gfOobf1k3sV+uss+IthjXJkPvSI/93XKf5LEz4D6a94MRB7Kt56/rwqFur+Ve7jQfT/E+StzD8R2ZKXvzgdiEJUv29yWbMlnizFKJ8wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EfZfmJ6V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D05AC4CEC5;
-	Thu, 26 Sep 2024 12:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727354398;
-	bh=X6di7L1Vl/r4MqrcmOwroFyWwMv/8RSXL4kKCm4I0Uw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EfZfmJ6VqztDgJbud3JS2fzpq6KH5KeBQkGd2j+5IpGu0weS6uAl615rS+tX7z33G
-	 CXA3F2rsMHblUQ6Vt2aCl+yYu/frnvoSLSCjTuA+XRxMUsx/UB6bUfrFox9OTiCfL1
-	 2bDsCHoV8bzF3KX2hoOnM5722jhhxUALEgJ5KhQ5UOLmZP1kRtQ9Z1Ovbq3x6xkjsi
-	 k5/f7SaSU/EfTm2pqVlo/qoAK1ysZWfKJmY/3Rz3CZqEdC5I7qUXsK6L113nF6KGfr
-	 Oo4A6l503uL4uV1bbDl85CppdrfzhMmzXw+ZsCNfZz+ZoXRQ3wIVlEZ07VAFokjHTB
-	 UmMe4bt4kYo9Q==
-Date: Thu, 26 Sep 2024 14:39:54 +0200
-From: Bjorn Andersson <andersson@kernel.org>
-To: Mahadevan P <quic_mahap@quicinc.com>
-Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com, 
-	dmitry.baryshkov@linaro.org, sean@poorly.run, marijn.suijten@somainline.org, 
-	airlied@gmail.com, daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, swboyd@chromium.org, konrad.dybcio@linaro.org, 
-	danila@jiaxyga.com, bigfoot@classfun.cn, neil.armstrong@linaro.org, 
-	mailingradian@gmail.com, quic_jesszhan@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_kalyant@quicinc.com, quic_jmadiset@quicinc.com, 
-	quic_vpolimer@quicinc.com
-Subject: Re: [PATCH v2 0/5] Display enablement changes for Qualcomm SA8775P
- platform
-Message-ID: <tabzs5jvy54rbwgjjmzodkpwm4emt2oevxjc2kto7znij2i23y@5wn45pstnmiy>
-References: <20240926110308.2201577-1-quic_mahap@quicinc.com>
- <46cd6c25-0a82-46c6-9382-167a44a689ba@quicinc.com>
+	s=arc-20240116; t=1727354517; c=relaxed/simple;
+	bh=4K2IsJ8rjbaXAvDqXcJoz2LYjMzTtpjqNX+d2lF1RLo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D4orQpt62Qm9cyoEddmO/nVDFU86PPdCo2mD35OB4IOgiChTWIeURj1FnJ2B63Abu7xgN0SkTUqqR1V1BIfyRi0gphwc3K+ifL1225cQoZYAZX4ZnWwetPTRvtDoPwr0hivtzSEUOhaLccllmj5hhK11mijuSboqREhrvxQRWMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=RTJoNsOK; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=zMWpMqYSUWO3WcNbImNeHQ05wRolpzxmvjv4f8syXi4=; t=1727354514; x=1727959314; 
+	b=RTJoNsOKYV+CdtVFUdl0g5gTtJDvpgifiYPHpG+g2KrHASjVFHHsk6TFzcZn4wXVIPZ/pTXPOnr
+	A+M6W12FfMsBhN4Hwova+BNGbtLcBczk64ziV8xfURHD3j+kckLRUG6QVRP+ejk/u0eI7KmtCgIZT
+	M4Y/tElDF8OgT9WztZOPwTx1R6eSj5p2GJ+3AGVTwxyvwnVVXRKCkZhvaU6Ew1blg3jRs6b9ZtMNm
+	JYSI2vnKPiJu0AMoUW1pKH+RNE7KUeH4BQy5XR1IvXMXiFfgWIroMlC5+/zf0fZe/RAFD+6c0tmcQ
+	TcVh9tnuS+m8OZDQzGQFItiAUuqayBvdpwDw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1stnod-00000001nHo-3CA8; Thu, 26 Sep 2024 14:41:51 +0200
+Received: from p57bd904e.dip0.t-ipconnect.de ([87.189.144.78] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1stnod-00000003KSH-2GyN; Thu, 26 Sep 2024 14:41:51 +0200
+Message-ID: <fbc596f7ad7ec4b08a5f50da8dcc0a1ce908793d.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v5 0/2] sh: Restructure setup code to reserve memory
+ regions earlier
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>, dalias@libc.org, 
+	ysato@users.sourceforge.jp
+Cc: kernel@quicinc.com, linux-kernel@vger.kernel.org,
+ linux-sh@vger.kernel.org,  robh+dt@kernel.org, Artur Rojek
+ <contact@artur-rojek.eu>, Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Thu, 26 Sep 2024 14:41:50 +0200
+In-Reply-To: <20240718021822.1545976-1-quic_obabatun@quicinc.com>
+References: <20240718021822.1545976-1-quic_obabatun@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <46cd6c25-0a82-46c6-9382-167a44a689ba@quicinc.com>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Thu, Sep 26, 2024 at 04:55:02PM GMT, Mahadevan P wrote:
-> Sorry, Please ignore this thread/coverletter
-> 
+Hi Oreoluwa,
 
-go/upstream and adopt b4, please.
+On Wed, 2024-07-17 at 19:18 -0700, Oreoluwa Babatunde wrote:
+> The unflatten_devicetree() function allocates memory from memblock
+> before the system gets a chance to set aside the regions of memory that
+> are meant to be reserved.
+> This means that there is a possibility for memblock to allocate from
+> these regions, thereby preventing them from being reserved.
+>=20
+> This series makes changes to the arch specific setup code to call the
+> functions responsible for setting aside the reserved memory regions
+> earlier in the init sequence.
+>=20
+> Hence, by the time memblock starts being used to allocate memory, the
+> memory regions that are meant to be carved out would already be set aside=
+.
+>=20
+> Oreoluwa Babatunde (2):
+>   sh: Restructure call site for early_reserve_mem()
+>   sh: Restructure setup code to reserve memory regions earlier
+>=20
+>  arch/sh/include/asm/mmu.h |  1 +
+>  arch/sh/kernel/setup.c    |  3 +++
+>  arch/sh/mm/init.c         | 20 +++++++++-----------
+>  3 files changed, 13 insertions(+), 11 deletions(-)
+
+Apologies for the long silence. Both Artur and Geert (CC'ed) now also own a
+J2 Turtleboard and I would like to have at least either of them test and
+review your changes to make sure nothing breaks.
+
+Thanks,
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
