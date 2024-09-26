@@ -1,127 +1,176 @@
-Return-Path: <linux-kernel+bounces-340750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5143987761
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:13:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E0A987764
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED0991C2197B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:13:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ACBD285AFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3ABB1586F6;
-	Thu, 26 Sep 2024 16:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C229115958E;
+	Thu, 26 Sep 2024 16:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XuGZCNKy"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efMmBCXC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AF0154BF8
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5911581F3;
+	Thu, 26 Sep 2024 16:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727367203; cv=none; b=pbDr50sTic+ZZB6S10VcIg9wCzogSxScoI2+urL07/8CKXtMTWH9G5BzywUfExpUB2yCnEXPNcxilubWiHfVaoApGN0dPPmZ5NuFL68ceAfBikc/gQ0uReGDBxUJSV/NQbnYjDyTy+ragiiNemTeE+ebmYo0g5BRSxzACaxSzYc=
+	t=1727367240; cv=none; b=Xrn3WVGgJUn5X/Yb9l7ZVuOKPit4WhKfeNdxm8QR0yMYjgmcDFUZON/cs2IEZ8Zr3VsBg4aae9mz5+H3UD0O/jLUBWAuFU5BQF31GXu9gDrhOBfPVSww5jeTTi36BCY8JS136V95jAO9Uhv3e2ss7O3uU/22MTcgBq+FAHM6zeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727367203; c=relaxed/simple;
-	bh=b/AkQ6KC/9/lXddy+98mjZVGNz2jCIw0oGNZw2EAKto=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O1MfxIU4kRIcA52Gki+N3F2kB3bfvXUawR9F7b31S3ZwCdDuiSq9emxFriSl5DEj4vt5EmeO0/bWslqofSbqbXslWrX9KTx/IDnN8MpFQLITCKVJE4xZOwwUv4K7IR3IUqrEtSbtKWrEUiHYKcDUxBG9s2JsO2GIgwOXxsqNTTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XuGZCNKy; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5365a9574b6so2018688e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:13:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1727367199; x=1727971999; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QXnBUq/9ghYv0bNYvo4uDCfOpMdq8coMpre7nUUI9wE=;
-        b=XuGZCNKyThI6pV+XtGz/YSJWu/BbCfILCXOy/06ICqmP5E9NkI0MrLvOE338o1NPGm
-         Y5asItQWnqG5HBzIr22HrluLeJLREAR8pszbeyRWGw8grp5pV+Ey+RBtKe9rAzushAsb
-         xUZJ+3+NExCx41Y3V02LOJMZnuzONYQtqd5rQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727367199; x=1727971999;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QXnBUq/9ghYv0bNYvo4uDCfOpMdq8coMpre7nUUI9wE=;
-        b=fRhmBvslIPzbTXmq8GGD0T/6b0pvjF1SItrKM02h89bTatdtAsngbje7eCVajxjPQo
-         1mcAAKPN7ZThd/kOKYVxLiWpQenl0ZtxTFfk7qrUBBlZeXuoVoOBMOwyb1sySPy+ywry
-         SZvwvhcjQHcczRDYcZSW6vWiP9hTQHkM/Bhapdw9Yj6aHS/y1Apl4GEKSpo+RQ9Q4un6
-         ltIsSmc51xhjB38zUbbfOZnYIBDP8VxiIvBpGvStkfgMpRVOT0n5iiv5dYnWIEPgwGpM
-         d3dgbc9ZxhUZQmPd++1TNkb6zs1pNdYbR7xuxDhZFq72ww1KEltwla9vvnflkN4ph8ws
-         8Z/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVgTslLfLBmQtVSgWc/gEfvDGIbgqQfHLHA2L1bv05YGczMKsXXsnILeAaVx5WDQKKSsFB5hB2JUEGsuVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyb+/wKtCvuWllu6oPQPa1MCLCudNgpoYbr53jqyGVIF2c6FlF
-	Nc9+cGWx6xnb+I/fw4vw6TJYUcDXlttt/0YDRJgZZ/5t7DtetdtiRp6iMOXIiXzYzHr5+XCXQbT
-	TDE99xw==
-X-Google-Smtp-Source: AGHT+IH3FgGeQASmj22evWTI6ojXb5hgioegciqCnxrjZz5CKQA3pl+t5HkcYWGksdrq64Nw87jmYA==
-X-Received: by 2002:a05:6512:158d:b0:533:4497:9f29 with SMTP id 2adb3069b0e04-5389fc4b107mr142527e87.31.1727367199466;
-        Thu, 26 Sep 2024 09:13:19 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-538a04323a4sm799e87.144.2024.09.26.09.13.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 09:13:17 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5365aa568ceso1431631e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:13:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXrWi7tpBYOMqS52hwY7hV7v6Q6dGY2zpcwCeCZY6V1HwyZfqueXPW8GCTQl4d/3+b6+axJebWIqCcc9cE=@vger.kernel.org
-X-Received: by 2002:a05:6512:1113:b0:536:53e3:feae with SMTP id
- 2adb3069b0e04-5389fc34426mr138492e87.11.1727367195995; Thu, 26 Sep 2024
- 09:13:15 -0700 (PDT)
+	s=arc-20240116; t=1727367240; c=relaxed/simple;
+	bh=7vn8F+i4bEeKF3b0bUuklVycjsEm0yuEh18P9WeIlLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S+F+6REWmGGtfbbSD86+sLxLI9grBE9P1RZG0pybkvzClZytVSGxxX9jymbFfUbiDutouQDMjejnReVezgWUPUtl0qMy5/9VX53jWoqoRLz6mu0QNMcuKa8GPPs2l0HFEhyWHFpdPdBMeVEVoj7YknVkNukXLNAAPHj75LuFXQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efMmBCXC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66511C4CEC5;
+	Thu, 26 Sep 2024 16:13:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727367239;
+	bh=7vn8F+i4bEeKF3b0bUuklVycjsEm0yuEh18P9WeIlLc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=efMmBCXCAt1k+tJ4J0c/ZlREBJtvswL3y3/vVBLcHSZTL9+uM0q+u9ekHfDC6Ax1N
+	 WUqY3S66gL3mnDjul84umvldE8zXjRdmgR3AK5EUlgUT+1058rPS+jDh39+D2im9Tw
+	 v5QVVtWC4R+a/zNPyVgmMDo7w9xrJCQvM3QMpJBMRiIBveZAz8RbQL6OOB0gxzRnlC
+	 sF6TaBckQw7KgwCKQgQfkUHevZc8SzRyCGntesISjkGJkNeWcS53ExkdamzUj7qfYl
+	 u1lDUL4nktfZJ/2IdUT8TYGuD75MYFzwHovmvD6iyYKsP0a+jBNQVrNa1SfSY1kRPb
+	 OJVlmVuK3UnAg==
+Date: Thu, 26 Sep 2024 17:13:55 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andy-ld Lu <andy-ld.lu@mediatek.com>
+Cc: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+	matthias.bgg@gmail.com, wenbin.mei@mediatek.com,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 2/2] dt-bindings: mmc: mtk-sd: Add support for MT8196
+Message-ID: <20240926-footprint-faster-4263120d0b83@spud>
+References: <20240926070405.20212-1-andy-ld.lu@mediatek.com>
+ <20240926070405.20212-3-andy-ld.lu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917143402.930114-1-boqun.feng@gmail.com> <20240917143402.930114-2-boqun.feng@gmail.com>
- <55975a55-302f-4c45-bfcc-192a8a1242e9@huaweicloud.com> <ZvPfmAp_2mDkI3ss@boqun-archlinux>
- <f5aeeeda-c725-422a-9481-4795bd3ade0f@huaweicloud.com> <ZvPp4taB9uu__oSQ@boqun-archlinux>
- <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com> <ZvP_H_R43bXpmkMS@boqun-archlinux>
- <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com> <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
- <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com> <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
- <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
-In-Reply-To: <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 26 Sep 2024 09:12:58 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
-Message-ID: <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard pointers
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org, 
-	lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
-	Joel Fernandes <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, 
-	Uladzislau Rezki <urezki@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Kent Overstreet <kent.overstreet@gmail.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com, 
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rTdKX9h0An540zaG"
+Content-Disposition: inline
+In-Reply-To: <20240926070405.20212-3-andy-ld.lu@mediatek.com>
 
-On Thu, 26 Sept 2024 at 08:54, Jonas Oberhauser
-<jonas.oberhauser@huaweicloud.com> wrote:
->
-> No, the issue introduced by the compiler optimization (or by your
-> original patch) is that the CPU can speculatively load from the first
-> pointer as soon as it has completed the load of that pointer:
 
-You mean the compiler can do it. The inline asm has no impact on what
-the CPU does. The conditional isn't a barrier for the actual hardware.
-But once the compiler doesn't try to do it, the data dependency on the
-address does end up being an ordering constraint on the hardware too
-(I'm happy to say that I haven't heard from the crazies that want
-value prediction in a long time).
+--rTdKX9h0An540zaG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Just use a barrier.  Or make sure to use the proper ordered memory
-accesses when possible. Don't use an inline asm for the compare - we
-don't even have anything insane like that as a portable helper, and we
-shouldn't have it.
+On Thu, Sep 26, 2024 at 03:03:18PM +0800, Andy-ld Lu wrote:
+> Extend the devicetree bindings to include the MT8196 mmc controller
+> by adding the compatible string 'mediatek,msdc-v2', which could be
+> also used for future compatible SoCs that support new tx/rx.
+>=20
+> Add three properties for MT8196 settings:
+> - 'mediatek,prohibit-gate-cg', indicate if the source clock CG could
+>   be disabled when CPU access IP registers.
+>=20
+> - 'mediatek,stop-dly-sel', configure read data clock stops at block gap.
+>=20
+> - 'mediatek,pop-en-cnt', configure the margins of write and read
+>   pointers while begin to pop data transfer.
+>=20
+> Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
+> ---
+>  .../devicetree/bindings/mmc/mtk-sd.yaml       | 26 +++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Document=
+ation/devicetree/bindings/mmc/mtk-sd.yaml
+> index c532ec92d2d9..82d1a9fac67c 100644
+> --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+> @@ -25,6 +25,7 @@ properties:
+>            - mediatek,mt8173-mmc
+>            - mediatek,mt8183-mmc
+>            - mediatek,mt8516-mmc
+> +          - mediatek,msdc-v2
+>        - items:
+>            - const: mediatek,mt7623-mmc
+>            - const: mediatek,mt2701-mmc
+> @@ -154,6 +155,30 @@ properties:
+>      enum: [32, 64]
+>      default: 32
+> =20
+> +  mediatek,stop-dly-sel:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Some SoCs need to set appropriate stop-dly-sel to configure read d=
+ata clock
+> +      stops at block gap. The valid range is from 0 to 0xf.
 
-                   Linus
+If you used a specific compatible for these devices, which you should,
+you would not require either this or "pop-en-cnt".
+
+> +    minimum: 0
+> +    maximum: 0xf
+> +
+> +  mediatek,pop-en-cnt:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Some SoCs need to set appropriate pop-en-cnt to configure the marg=
+ins of write
+> +      and read pointers while begin to pop data transfer. The valid rang=
+e is from 0
+> +      to 0xf.
+> +    minimum: 0
+> +    maximum: 0xf
+> +
+> +  mediatek,prohibit-gate-cg:
+
+This is also probably detectable from a specific compatible, if you had
+one?
+TL;DR specific compatibles please, non of this "msdc-v2" stuff, sorry.
+
+Thanks,
+Conor.
+
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Decide if source clock CG could be disabled when CPU access IP reg=
+isters.
+> +      If present, source clock CG could not be disabled.
+> +      If not present, source clock CG could be disabled.
+> +
+>    resets:
+>      maxItems: 1
+> =20
+> @@ -191,6 +216,7 @@ allOf:
+>              - mediatek,mt8188-mmc
+>              - mediatek,mt8195-mmc
+>              - mediatek,mt8516-mmc
+> +            - mediatek,msdc-v2
+>      then:
+>        properties:
+>          clocks:
+> --=20
+> 2.46.0
+>=20
+>=20
+
+--rTdKX9h0An540zaG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvWIQwAKCRB4tDGHoIJi
+0p62AQC7zWy8sxC+DpKsViZDlAuVYx19RGJZLpxLCCMrqTjtggEA47f0DiCOzh8l
+0cDhA/a8DytL3SRUlW08RURFaOLoWAo=
+=qF+N
+-----END PGP SIGNATURE-----
+
+--rTdKX9h0An540zaG--
 
