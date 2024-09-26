@@ -1,133 +1,170 @@
-Return-Path: <linux-kernel+bounces-341082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114C6987B39
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:47:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 359AD987B3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F38B1C22CD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:47:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84A70B26536
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A121AFB3E;
-	Thu, 26 Sep 2024 22:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C951AFB2E;
+	Thu, 26 Sep 2024 22:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="kORpHkZ8"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9O1E/e6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C4514AD17;
-	Thu, 26 Sep 2024 22:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B6518EFD4
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 22:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727390864; cv=none; b=Hy8e9UFkIv1+oumBZG0Nm07jBfY3z81m5kT1WgU/PJLWvAbOAaAnl0d2We3EyGWjGg8pXwuU326c6n/wRx8fDPlbtFn4lgScGYRKuLVr8eQ4x1wPf6wrsSzmJBhcldZQvR7LZLboIahsbT1O9tvTLwuWn9V3BKTpQhOT31FMZMo=
+	t=1727390956; cv=none; b=l3cphM9Pc9C3Gx0nYuAAjvqkB0APSjALxwsI5rfv2r7Dig/kOghgRwplIzyAh9I2nBfRiONs8WmfxXI3kLyQ1iPY8U92iuQtewcTDvMBKaxNekmgDJn6GoGl9BzlQO1zoF9dLNShbMg9529Eo/yFwL6jaSj4VWj6SwFyaUV+izU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727390864; c=relaxed/simple;
-	bh=dr7ELgjvEaJ6VuB9mzRh+8/cUyjY3mocp5rd32TBmWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dd3BDCCJHqeiKGZhuvSuxxxp39VoXIx/uA6OYA5M6oU8N3fyZX6+135ruZ05qWsnkpmyaCdv1vT0kxkQOfDRS1cd5e3304z4NtcWgXyHLFNr0jhcJArZttZ4WjLuhtCh8LO/FigKqyRTw3e7y+UM4HanloCnqHUAHpfQWeZgjhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=kORpHkZ8; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=qcBcLSP1fjlBBBA9Tv4weRx5CH25aglzEfNgzqEp4pU=; b=kORpHkZ8LqP4ZoRWpzM0AzW7JT
-	8b1FZUXpInsEIjC+WYSQIZ1fiBXVj1ibGCILpYyOY4nP1TOnjhITdznULV4KaSToIJL/ett/hredF
-	VuvfbYnml3oC7iDfNXfaJmc/QGmYa7SUMMxGI2SA7CVnnmg9fpA9DKJOgz3bW7lPdC3X+1D1Qb6Bf
-	kayGDa4NqK+jM9mNNkSAnoc66GEA5v438cIO175ay86J/wGgXiNLZQF1jAR0PvBPil8V5z0ODmeUW
-	wmAebKzjvjvPlfL6twxgT6ijhI8TLNVrDeec/EMGmpMuADR6hJ83lQvQSYqZ0YDOTx7bjBblHOxGt
-	nhcD6vlA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1stxGn-0000000FnzF-3SWQ;
-	Thu, 26 Sep 2024 22:47:33 +0000
-Date: Thu, 26 Sep 2024 23:47:33 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] rust: file: add f_pos and set_f_pos
-Message-ID: <20240926224733.GQ3550746@ZenIV>
-References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
- <20240926-b4-miscdevice-v1-2-7349c2b2837a@google.com>
- <20240926220821.GP3550746@ZenIV>
+	s=arc-20240116; t=1727390956; c=relaxed/simple;
+	bh=UVWqd8JCyJZfI34n8W5YWdpj7Ne7Q02mox/PTG8iVws=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GWPC5FvYKEVgk9pK+6MCUYPewUPh/uOBkRccYevD2N6M8N/MyKCUX+tD0j+kqf6qIXxMoAfxywR50KA0lJM+5EIQPMUrNgzFmTM8KA7rgQvdpmGzF0gPVwTtb0rR+ssKXl+FM3TPHc+o4wlCawzBOcHrcq6GNXz4sr8abEZxXAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9O1E/e6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 896A3C4CEC5;
+	Thu, 26 Sep 2024 22:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727390955;
+	bh=UVWqd8JCyJZfI34n8W5YWdpj7Ne7Q02mox/PTG8iVws=;
+	h=From:To:Cc:Subject:Date:From;
+	b=a9O1E/e6vdfNhh6/L+Xm3iLWW5POV6AmVZNr1OnkPhjinxGzwHNHVSeOfSlVEzBNE
+	 GpmjJSCvRZNoLilGgXLk7nNj5+Rqma5wUB7mRq/VXEFRIFjWBLTv4xqDdh67+q3H7d
+	 /rVfozKGlM4B8DQVyFGPMHft4t/XszLYgvTgTTqBrXjUxb8yzT7le3tAt35NbXqXqU
+	 nfElEZPhjAPV8QoWtg7W0H7VaKuvnG40M8JHcb8bjOwNb6gAX8GZW3PAr+8mnEeBZJ
+	 CtGoq7rJgc/ko4GBmN4oDStE6DR6mm5y8ivrtH9JUIWYGxT1g/9vXV9y+ct0bHP2U5
+	 kZYbrjh8prX4A==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH 00/20] kthread: Introduce preferred affinity v4
+Date: Fri, 27 Sep 2024 00:48:48 +0200
+Message-ID: <20240926224910.11106-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926220821.GP3550746@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 26, 2024 at 11:08:21PM +0100, Al Viro wrote:
-> On Thu, Sep 26, 2024 at 02:58:56PM +0000, Alice Ryhl wrote:
-> > Add accessors for the file position. Most of the time, you should not
-> > use these methods directly, and you should instead use a guard for the
-> > file position to prove that you hold the fpos lock. However, under
-> > limited circumstances, files are allowed to choose a different locking
-> > strategy for their file position. These accessors can be used to handle
-> > that case.
-> > 
-> > For now, these accessors are the only way to access the file position
-> > within the llseek and read_iter callbacks.
-> 
-> You really should not do that within ->read_iter().  If your method
-> does that, it has the wrong signature.
-> 
-> If nothing else, it should be usable for preadv(2), so what file position
-> are you talking about?
+Affining kthreads follow either of 4 existing different patterns:
 
-To elaborate: ->llseek() is the only method that has any business accessing
-->f_pos (and that - possibly not forever).  Note, BTW, that most of the
-time ->llseek() should be using one of the safe instances from fs/libfs.c
-or helpers from the same place; direct ->f_pos access in drivers is
-basically for things like
-static loff_t cfam_llseek(struct file *file, loff_t offset, int whence)
-{
-        switch (whence) {
-	case SEEK_CUR:
-		break;
-	case SEEK_SET:
-		file->f_pos = offset;
-		break;
-	default:
-		return -EINVAL;
-	}
+1) Per-CPU kthreads must stay affine to a single CPU and never execute
+   relevant code on any other CPU. This is currently handled by smpboot
+   code which takes care of CPU-hotplug operations.
 
-	return offset;
-}
-which is... really special.  Translation: lseek(fd, n, SEEK_CUR) - return n
-and do nothing.  lseek(fd, n, SEEK_SET) - usual semantics.  Anything else
-- fail with EINVAL.  The mind-boggling part is SEEK_CUR, but that's
-userland ABI of that particular driver; if the authors can be convinced that
-we don't need to preserve that wart, it can be replaced with use of
-no_seek_end_llseek.  If their very special userland relies upon it...
-not much we can do.
+2) Kthreads that _have_ to be affine to a specific set of CPUs and can't
+   run anywhere else. The affinity is set through kthread_bind_mask()
+   and the subsystem takes care by itself to handle CPU-hotplug operations.
 
-Anything else outside of core VFS should not touch the damn thing, unless
-they have a very good reason and are willing to explain what makes them
-special.
+3) Kthreads that _prefer_ to be affine to a specific NUMA node.
 
-From quick grep through the tree, we seem to have grown a bunch of bogosities
-in vfio (including one in samples, presumably responsible for that infestation),
-there's a few strange ioctls that reset it to 0 or do other unnatural things
-(hell, VFAT has readdir() variant called that way), there are _really_ shitty
-cases in HFS, HFS+ and HPFS, where things like unlink() while somebody has the
-parent directory open will modify the current position(s), and then there's
-whatever ksmbd is playing at.
+4) Similar to the previous point but kthreads have a _preferred_ affinity
+   different than a node. It is set manually like any other task and
+   CPU-hotplug is supposed to be handled by the relevant subsystem so
+   that the task is properly reaffined whenever a given CPU from the
+   preferred affinity comes up or down. Also care must be taken so that
+   the preferred affinity doesn't cross housekeeping cpumask boundaries.
 
-We really should not expose ->f_pos - that can't be done on the C side (yet),
-but let's not spread that idiocy.
+Currently the preferred affinity patterns (3 and 4) have at least 4
+identified users, with more or less success when it comes to handle
+CPU-hotplug operations and CPU isolation.
+
+This is a infrastructure proposal to handle this (after cleanups from 01
+to 10).
+
+Changes since v3:
+
+_ Handle CPU down from scheduler fallback (new patch 11/20), suggested
+  by Michal Hocko
+_ Simplify accordlingly 13/20 and 16/20
+_ Add acks
+
+Frederic Weisbecker (20):
+  arm/bL_switcher: Use kthread_run_on_cpu()
+  x86/resctrl: Use kthread_run_on_cpu()
+  firmware: stratix10-svc: Use kthread_run_on_cpu()
+  scsi: bnx2fc: Use kthread_create_on_cpu()
+  scsi: bnx2i: Use kthread_create_on_cpu()
+  scsi: qedi: Use kthread_create_on_cpu()
+  soc/qman: test: Use kthread_run_on_cpu()
+  kallsyms: Use kthread_run_on_cpu()
+  lib: test_objpool: Use kthread_run_on_cpu()
+  net: pktgen: Use kthread_create_on_node()
+  sched: Handle CPU isolation on last resort fallback rq selection
+  kthread: Make sure kthread hasn't started while binding it
+  kthread: Default affine kthread to its preferred NUMA node
+  mm: Create/affine kcompactd to its preferred node
+  mm: Create/affine kswapd to its preferred node
+  kthread: Implement preferred affinity
+  rcu: Use kthread preferred affinity for RCU boost
+  kthread: Unify kthread_create_on_cpu() and
+    kthread_create_worker_on_cpu() automatic format
+  treewide: Introduce kthread_run_worker[_on_cpu]()
+  rcu: Use kthread preferred affinity for RCU exp kworkers
+
+ arch/arm/common/bL_switcher.c                 |  10 +-
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c     |  28 +--
+ arch/x86/kvm/i8254.c                          |   2 +-
+ crypto/crypto_engine.c                        |   2 +-
+ drivers/cpufreq/cppc_cpufreq.c                |   2 +-
+ drivers/firmware/stratix10-svc.c              |   9 +-
+ drivers/gpu/drm/drm_vblank_work.c             |   2 +-
+ .../drm/i915/gem/selftests/i915_gem_context.c |   2 +-
+ drivers/gpu/drm/i915/gt/selftest_execlists.c  |   2 +-
+ drivers/gpu/drm/i915/gt/selftest_hangcheck.c  |   2 +-
+ drivers/gpu/drm/i915/gt/selftest_slpc.c       |   2 +-
+ drivers/gpu/drm/i915/selftests/i915_request.c |   8 +-
+ drivers/gpu/drm/msm/disp/msm_disp_snapshot.c  |   2 +-
+ drivers/gpu/drm/msm/msm_atomic.c              |   2 +-
+ drivers/gpu/drm/msm/msm_gpu.c                 |   2 +-
+ drivers/gpu/drm/msm/msm_kms.c                 |   2 +-
+ .../platform/chips-media/wave5/wave5-vpu.c    |   2 +-
+ drivers/net/dsa/mv88e6xxx/chip.c              |   2 +-
+ drivers/net/ethernet/intel/ice/ice_dpll.c     |   2 +-
+ drivers/net/ethernet/intel/ice/ice_gnss.c     |   2 +-
+ drivers/net/ethernet/intel/ice/ice_ptp.c      |   2 +-
+ drivers/platform/chrome/cros_ec_spi.c         |   2 +-
+ drivers/ptp/ptp_clock.c                       |   2 +-
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c             |   7 +-
+ drivers/scsi/bnx2i/bnx2i_init.c               |   7 +-
+ drivers/scsi/qedi/qedi_main.c                 |   6 +-
+ drivers/soc/fsl/qbman/qman_test_stash.c       |   6 +-
+ drivers/spi/spi.c                             |   2 +-
+ drivers/usb/typec/tcpm/tcpm.c                 |   2 +-
+ drivers/vdpa/vdpa_sim/vdpa_sim.c              |   2 +-
+ drivers/watchdog/watchdog_dev.c               |   2 +-
+ fs/erofs/zdata.c                              |   2 +-
+ include/linux/cpuhotplug.h                    |   1 +
+ include/linux/kthread.h                       |  56 ++++-
+ kernel/kallsyms_selftest.c                    |   4 +-
+ kernel/kthread.c                              | 201 ++++++++++++++++--
+ kernel/rcu/tree.c                             |  94 ++------
+ kernel/rcu/tree_plugin.h                      |  11 +-
+ kernel/sched/core.c                           |  17 +-
+ kernel/sched/ext.c                            |   2 +-
+ kernel/workqueue.c                            |   2 +-
+ lib/test_objpool.c                            |  19 +-
+ mm/compaction.c                               |  43 +---
+ mm/vmscan.c                                   |   8 +-
+ net/core/pktgen.c                             |   7 +-
+ net/dsa/tag_ksz.c                             |   2 +-
+ net/dsa/tag_ocelot_8021q.c                    |   2 +-
+ net/dsa/tag_sja1105.c                         |   2 +-
+ 48 files changed, 339 insertions(+), 261 deletions(-)
+
+-- 
+2.46.0
+
 
