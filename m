@@ -1,315 +1,342 @@
-Return-Path: <linux-kernel+bounces-340674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 061E898767D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:26:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1904B987682
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89B891F271C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:26:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 187111C2294A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DA215886D;
-	Thu, 26 Sep 2024 15:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980E414BF8B;
+	Thu, 26 Sep 2024 15:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vq74IETz"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="B7Sgwx0N"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B2714831C;
-	Thu, 26 Sep 2024 15:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A569D132139
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727364377; cv=none; b=BjdM6aWK8nDBRMg5VbtXnlk7IESIcxxWkHjb6LZyHazOP4x/dZ2BOmO9p0qmD6XtTJBOMDfMdcIAv0sprcw/SiLG92XNBs+mShJOinHUz+oSfGJKvMnuE2PKA70Oo3o+ajgYDWa44RdPe1Zlx/V1M2XTR3NqMIB/ua0OYAuBZ2k=
+	t=1727364508; cv=none; b=GK5wzVtUY0hPFqcgP8SFpejgMIeun5IVqyfr84JuWUwaYQFXoSIlqg6sX4gMxNzZv0gSu5u0S7FbuH93hHAWVFv/Eck0skbhQHkuc9JTmER9CwTDF9VuzM8ENdmLxEPGcTY+hByx98GKfjYa+Zx/9CRPS/y0Vh4kypYdgbNXiCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727364377; c=relaxed/simple;
-	bh=oY4Re+7yWR5ejxf3mKC3i9fyf3AdqNYQvJ5hHnZnU48=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W/T25nxQH7rCDx+9s3+XqlZVDBOrw/t9IW8jRAWCSSQOo2aAsAqJTrHpAYjyP0Rgsc1rcAxIWjOLmtFQFXd7S19f4s4o/oaSE/2hQKxwoLuHuKDTv+C0aEsp0JG2i+CQUO13bxNsptwBSIBSb4DMM65ftS8y3I6KsQViGwxkE1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vq74IETz; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C4A6E169;
-	Thu, 26 Sep 2024 17:24:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727364285;
-	bh=oY4Re+7yWR5ejxf3mKC3i9fyf3AdqNYQvJ5hHnZnU48=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vq74IETz1bxEylrKNBpdULuQ8SPUCz7LaoGYnlskcRU2j8tzacqfQXPJLg0X/C0Fz
-	 6jBh4rM4Ng+3D2RB+XWCtxnDcghCoSXF6MN3yGsiqE57gkI0jdz2GHmjr4fsvebdIX
-	 dIeVXF7jFzvIZbg6HaLUxPAiFIEZHCIioxet7D24=
-Message-ID: <51fb2ba0-ae49-4799-9450-98bb90c4b36d@ideasonboard.com>
-Date: Thu, 26 Sep 2024 18:26:09 +0300
+	s=arc-20240116; t=1727364508; c=relaxed/simple;
+	bh=hGj7hX36Yz6M3veE82IYXrpCynqOObaJaFlI9sts9SU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=SKkPWRZPgazjWBILjyD1CGz7A5g4dCQPuNEiKxtOsxocZLs9lCx07vwY0L7BrJ7STxnBJo0bZLoER/sZcxbfafmQ0wBdroYmVLbjEvqbNpgc5aVOZAEimIb/9YrA2a9i5OIexbIy61XQeSVQZ16JZlNzgUFjzItn21W/i6t2p+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=B7Sgwx0N; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37cd2cb5615so49277f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:28:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1727364505; x=1727969305; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ujah04x8nIeo+ZJVnSmRgsAnsQNseuvKhLfM99ELf1g=;
+        b=B7Sgwx0NK1+QC7WQylQTR23Mzt/N4LwBHWA9dj+6Lt8B91KSnHZQEDDwAW0Ik7x2m1
+         U2aBh5EEQ2lajw/IjAyNKkAN8p1jKsGfWOfoiSm4tCN0Nk5Yx8n3tP+89RaPPgeqNjbw
+         NQYRg7q9cY8Fx50uzlEiLBatSnIymoephx29NIT9aKni9c+O20NyX+EDsZUcov9Ja1J/
+         dMRKbJdzkzU8K3+OZAHCHm41c9hSiKqMTCyLLVCAv8jvIuELZrVnrrie72dYTR7LkXoS
+         7doQHHTIoQ40ee9FgzcfgZguHx/FSdsjRdJvDb2/66FK1bwMB7YV2WaHxh3lF+rHFPiJ
+         y5MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727364505; x=1727969305;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ujah04x8nIeo+ZJVnSmRgsAnsQNseuvKhLfM99ELf1g=;
+        b=rugFWXIo6OS42jY17mAZlmsiGmc04d+GMrdHrvQ7n1E7IUK7m67fawVD2BhfAleZcr
+         B7Hn757N1GTqcGZfdlIQnEFDmYca6zNJqlIwQ1x6/651++EgWwcrFbmJC4wNDDsT8uwf
+         LWBZljYkFLf0OMT4UCrDUQiVVTz0JnLyC/N87jWIoKcc8EJeN7gzet0+02k/VJqbfZeX
+         kqkQlYMymlGyMmmGNwBmH34lrRN5MyI+ObTvq9ZEakqlWQZS3pkGp+bPqZ4WAF80mlZ3
+         B5Ynpo1MOfKp+73+rbql2rnmKsZQi3Vs78isX6wiXLu8EeeXQcRoTBe/ItExJH52D+D1
+         z75g==
+X-Forwarded-Encrypted: i=1; AJvYcCXME4RFfb8gEPzvi2jD/7ldjHuCWl2Hu5+fuP2k2a0I+iKxFz9ncEoQuMEgsh4seEmyuFhbTU9H4nXj3wQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDq1jVgVLJ/nToX8RuKZqLY/2Y1HQk2iR9dNY8gEDgIyh/XoiC
+	zV572ybvVqRo7FQhCjWNR7YbX9AIczT4+IjS7HmWugjm/9594mJYVsJ+v3vAzkk=
+X-Google-Smtp-Source: AGHT+IGb54gpQXHIK5WVhFAxiWUX0pTAcoXPTPGYb+V9PZ+3h5CW50RH6c2Tm93VTkR/cI8wrS8tRg==
+X-Received: by 2002:a05:6000:144a:b0:37c:d515:7674 with SMTP id ffacd0b85a97d-37cd51579cbmr187523f8f.6.1727364504649;
+        Thu, 26 Sep 2024 08:28:24 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:a4f:301:82f:3680:12cb:d924])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c5c26sm10125566b.80.2024.09.26.08.28.23
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Sep 2024 08:28:24 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] media: v4l2-subdev: Add cleanup macros for active
- state
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-References: <20240917-scoped-state-v1-0-b8ba3fbe5952@ideasonboard.com>
- <20240917-scoped-state-v1-1-b8ba3fbe5952@ideasonboard.com>
- <20240924171736.GE30551@pendragon.ideasonboard.com>
- <9d150a98-5147-459f-8277-79e108ff6b30@ideasonboard.com>
- <20240925163530.GC27666@pendragon.ideasonboard.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
- wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
- Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
- eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
- LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
- G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
- DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
- 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
- rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
- Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
- aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
- ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
- PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
- VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
- 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
- uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
- R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
- sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
- Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
- PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
- dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
- qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
- hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
- DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
- KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
- 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
- xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
- UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
- /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
- 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
- 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
- mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
- 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
- suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
- xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
- m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
- CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
- CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
- 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
- ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
- yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
- 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <20240925163530.GC27666@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <ZvV6X5FPBBW7CO1f@archlinux>
+Date: Thu, 26 Sep 2024 17:28:12 +0200
+Cc: kent.overstreet@linux.dev,
+ regressions@lists.linux.dev,
+ linux-bcachefs@vger.kernel.org,
+ linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+References: <ZvV6X5FPBBW7CO1f@archlinux>
+To: Jan Hendrik Farr <kernel@jfarr.cc>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On 25/09/2024 19:35, Laurent Pinchart wrote:
-> Hi Tomi,
-> 
-> On Tue, Sep 24, 2024 at 08:53:38PM +0300, Tomi Valkeinen wrote:
->> On 24/09/2024 20:17, Laurent Pinchart wrote:
->>> On Tue, Sep 17, 2024 at 05:09:29PM +0300, Tomi Valkeinen wrote:
->>>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>>>
->>>> Add cleanup macros for active state. These can be used to call
->>>> v4l2_subdev_lock_and_get_active_state() and manage the unlocking either
->>>> in unscoped or scoped fashion:
->>>>
->>>> This locks the state, gets it to the 'state' variable, and unlocks when
->>>> exiting the surrounding scope:
->>>>
->>>> CLASS(v4l2_subdev_lock_and_get_active_state, state)(subdev);
->>>>
->>>> This does the same, but inside the given scope:
->>>>
->>>> scoped_v4l2_subdev_lock_and_get_active_state(subdev) {
->>>> }
->>>>
->>>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>>> ---
->>>>    include/media/v4l2-subdev.h | 10 ++++++++++
->>>>    1 file changed, 10 insertions(+)
->>>>
->>>> diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
->>>> index bd235d325ff9..699007cfffd7 100644
->>>> --- a/include/media/v4l2-subdev.h
->>>> +++ b/include/media/v4l2-subdev.h
->>>> @@ -8,6 +8,7 @@
->>>>    #ifndef _V4L2_SUBDEV_H
->>>>    #define _V4L2_SUBDEV_H
->>>>    
->>>> +#include <linux/cleanup.h>
->>>>    #include <linux/types.h>
->>>>    #include <linux/v4l2-subdev.h>
->>>>    #include <media/media-entity.h>
->>>> @@ -1854,6 +1855,15 @@ v4l2_subdev_lock_and_get_active_state(struct v4l2_subdev *sd)
->>>>    	return sd->active_state;
->>>>    }
->>>>    
->>>> +DEFINE_CLASS(v4l2_subdev_lock_and_get_active_state, struct v4l2_subdev_state *,
->>>> +	     v4l2_subdev_unlock_state(_T),
->>>> +	     v4l2_subdev_lock_and_get_active_state(sd), struct v4l2_subdev *sd);
->>>> +
->>>> +#define scoped_v4l2_subdev_lock_and_get_active_state(sd)              \
->>>> +	for (CLASS(v4l2_subdev_lock_and_get_active_state, state)(sd), \
->>>> +	     *done = NULL;                                            \
->>>> +	     !done; done = (void *)1)
->>>
->>> That a very long name :-S Could this be done using the scoped_guard()
->>> macro instead ? For instance, with spinlocks you can do
->>>
->>> 	scoped_guard(spinlock_irqsave, &dev->lock) {
->>> 		...
->>> 	}
->>>
->>> It would be nice to be able to write
->>>
->>> 	scoped_guard(v4l2_subdev_state, sd) {
->>
->> This can be done but then you need to pass the state to it, not sd. Or
->> perhaps it would be possible to implicitly turn the sd into active
->> state, but I don't like that at all...
->>
->> Or maybe:
->>
->> scoped_guard(v4l2_subdev_state, v4l2_subdev_get_unlocked_active_state(sd))
->>
->> Not very short either...
-> 
-> That's not very nice. Are there other examples in the kernel of
-> scoped_*() macros magically creating variables that are then used within
-> the scope ? I have a feeling we shouldn't do it here.
+Hi Jan,
 
-I'm not aware of any other scoped macros than scoped_guard. Or if there 
-are similar macros creating a variable.
+On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+>=20
+> Hi Kent,
+>=20
+> found a strange regression in the patch set for 6.12.
+>=20
+> First bad commit is: 86e92eeeb23741a072fe7532db663250ff2e726a
+> bcachefs: Annotate struct bch_xattr with __counted_by()
+>=20
+> When compiling with clang 18.1.8 (also with latest llvm main branch) =
+and
+> CONFIG_FORTIFY_SOURCE=3Dy my rootfs does not mount because there is an =
+erroneous
+> detection of a buffer overflow.
+>=20
+> The __counted_by attribute is supposed to be supported starting with =
+gcc 15,
+> not sure if it is implemented yet so I haven't tested with gcc trunk =
+yet.
+>=20
+> Here's the relevant section of dmesg:
+>=20
+> [    6.248736] bcachefs (nvme1n1p2): starting version 1.12: =
+rebalance_work_acct_fix
+> [    6.248744] bcachefs (nvme1n1p2): recovering from clean shutdown, =
+journal seq 1305969
+> [    6.252374] ------------[ cut here ]------------
+> [    6.252375] memchr: detected buffer overflow: 12 byte read of =
+buffer size 0
+> [    6.252379] WARNING: CPU: 18 PID: 511 at lib/string_helpers.c:1033 =
+__fortify_report+0x45/0x50
+> [    6.252383] Modules linked in: bcachefs lz4hc_compress lz4_compress =
+hid_generic usbhid btrfs crct10dif_pclmul libcrc32c crc32_pclmul =
+crc32c_generic polyval_clmulni crc32c_intel polyval_generic raid6_pq =
+ghash_clmulni_intel xor sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni_intel =
+gf128mul nvme crypto_simd ccp xhci_pci cryptd sp5100_tco =
+xhci_pci_renesas nvme_core nvme_auth video wmi ip6_tables ip_tables =
+x_tables i2c_dev
+> [    6.252404] CPU: 18 UID: 0 PID: 511 Comm: mount Not tainted =
+6.11.0-10065-g6fa6588e5964 #98 d8e0beb515d91b387aa60970de7203f35ddd182c
+> [    6.252406] Hardware name: Micro-Star International Co., Ltd. =
+MS-7D78/PRO B650-P WIFI (MS-7D78), BIOS 1.C0 02/06/2024
+> [    6.252407] RIP: 0010:__fortify_report+0x45/0x50
+> [    6.252409] Code: 48 8b 34 c5 30 92 21 87 40 f6 c7 01 48 c7 c0 75 =
+1b 0a 87 48 c7 c1 e1 93 07 87 48 0f 44 c8 48 c7 c7 ef 03 10 87 e8 0b c2 =
+9b ff <0f> 0b e9 cf 5d 9e 00 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 =
+90
+> [    6.252410] RSP: 0018:ffffbb3d03aff350 EFLAGS: 00010246
+> [    6.252412] RAX: 4ce590fb7c372800 RBX: ffff98d559a400e8 RCX: =
+0000000000000027
+> [    6.252413] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: =
+ffff98e43db21a08
+> [    6.252414] RBP: ffff98d559a400d0 R08: 0000000000001fff R09: =
+ffff98e47ddcd000
+> [    6.252415] R10: 0000000000005ffd R11: 0000000000000004 R12: =
+ffff98d559a40000
+> [    6.252416] R13: ffff98d54abf1320 R14: ffffbb3d03aff430 R15: =
+0000000000000000
+> [    6.252417] FS:  00007efc82117800(0000) GS:ffff98e43db00000(0000) =
+knlGS:0000000000000000
+> [    6.252418] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    6.252419] CR2: 000055d96658ea80 CR3: 000000010a12c000 CR4: =
+0000000000f50ef0
+> [    6.252420] PKRU: 55555554
+> [    6.252421] Call Trace:
+> [    6.252423]  <TASK>
+> [    6.252425]  ? __warn+0xd5/0x1d0
+> [    6.252427]  ? __fortify_report+0x45/0x50
+> [    6.252429]  ? report_bug+0x144/0x1f0
+> [    6.252431]  ? __fortify_report+0x45/0x50
+> [    6.252433]  ? handle_bug+0x6a/0x90
+> [    6.252435]  ? exc_invalid_op+0x1a/0x50
+> [    6.252436]  ? asm_exc_invalid_op+0x1a/0x20
+> [    6.252440]  ? __fortify_report+0x45/0x50
+> [    6.252441]  __fortify_panic+0x9/0x10
+> [    6.252443]  bch2_xattr_validate+0x13b/0x140 [bcachefs =
+8361179bbfcc59e669df38aec976f02d7211a659]
+> [    6.252463]  bch2_btree_node_read_done+0x125a/0x17a0 [bcachefs =
+8361179bbfcc59e669df38aec976f02d7211a659]
+> [    6.252482]  btree_node_read_work+0x202/0x4a0 [bcachefs =
+8361179bbfcc59e669df38aec976f02d7211a659]
+> [    6.252499]  bch2_btree_node_read+0xa8d/0xb20 [bcachefs =
+8361179bbfcc59e669df38aec976f02d7211a659]
+> [    6.252514]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [    6.252515]  ? pcpu_alloc_noprof+0x741/0xb50
+> [    6.252517]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [    6.252519]  ? time_stats_update_one+0x75/0x1f0 [bcachefs =
+8361179bbfcc59e669df38aec976f02d7211a659]
+>=20
+> ...
+>=20
+>=20
+> The memchr in question is at:
+> =
+https://github.com/torvalds/linux/blob/11a299a7933e03c83818b431e6a1c53ad38=
+7423d/fs/bcachefs/xattr.c#L99
+>=20
+> There is not actually a buffer overflow here, I checked with gdb that
+> xattr.v->x_name does actually contain a string of the correct length =
+and
+> xattr.v->x_name_len contains the correct length and should be used to =
+determine
+> the length when memchr uses __struct_size for bounds-checking due to =
+the
+> __counted_by annotation.
+>=20
+> I'm at the point where I think this is probably a bug in clang. I have =
+a patch
+> that does fix (more like bandaid) the problem and adds some print =
+statements:
+>=20
+> --
+> diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
+> index 56c8d3fe55a4..8d7e749b7dda 100644
+> --- a/fs/bcachefs/xattr.c
+> +++ b/fs/bcachefs/xattr.c
+> @@ -74,6 +74,7 @@ int bch2_xattr_validate(struct bch_fs *c, struct =
+bkey_s_c k,
+>       enum bch_validate_flags flags)
+> {
+> struct bkey_s_c_xattr xattr =3D bkey_s_c_to_xattr(k);
+> + const struct bch_xattr *v =3D (void *)k.v;
+> unsigned val_u64s =3D xattr_val_u64s(xattr.v->x_name_len,
+>   le16_to_cpu(xattr.v->x_val_len));
+> int ret =3D 0;
+> @@ -94,9 +95,12 @@ int bch2_xattr_validate(struct bch_fs *c, struct =
+bkey_s_c k,
+>=20
+> bkey_fsck_err_on(!bch2_xattr_type_to_handler(xattr.v->x_type),
+> c, xattr_invalid_type,
+> - "invalid type (%u)", xattr.v->x_type);
+> + "invalid type (%u)", v->x_type);
+>=20
+> - bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_name_len),
+> + pr_info("x_name_len: %d", v->x_name_len);
+> + pr_info("__struct_size(x_name): %ld", __struct_size(v->x_name));
+> + pr_info("__struct_size(x_name): %ld", =
+__struct_size(xattr.v->x_name));
+> + bkey_fsck_err_on(memchr(v->x_name, '\0', v->x_name_len),
+> c, xattr_name_invalid_chars,
+> "xattr name has invalid characters");
+> fsck_err:
+> --
+>=20
+>=20
+> Making memchr access via a pointer created with
+> const struct bch_xattr *v =3D (void *)k.v fixes it. =46rom the print =
+statements I
+> can see that __struct_size(xattr.v->x_name) incorrectly returns 0, =
+while
+> __struct_size(v->x_name) correctly returns 10 in this case (the value =
+of
+> x_name_len).
+>=20
+> The generated assembly illustrates what is going wrong. Below is an =
+excerpt
+> of the assembly clang generated for the bch2_xattr_validate function:
+>=20
+> mov r13d, ecx
+> mov r15, rdi
+> mov r14, rsi
+> mov rdi, offset .L.str.3
+> mov rsi, offset .L__func__.bch2_xattr_validate
+> mov rbx, rdx
+> mov edx, eax
+> call _printk
+> movzx edx, byte ptr [rbx + 1]
+> mov rdi, offset .L.str.4
+> mov rsi, offset .L__func__.bch2_xattr_validate
+> call _printk
+> movzx edx, bh
+> mov rdi, offset .L.str.4
+> mov rsi, offset .L__func__.bch2_xattr_validate
+> call _printk
+> lea rdi, [rbx + 4]
+> mov r12, rbx
+> movzx edx, byte ptr [rbx + 1]
+> xor ebx, ebx
+> xor esi, esi
+> call memchr
+>=20
+> At the start of this rdx contains k.v (and is moved into rbx). The =
+three calls
+> to printk are the ones you can see in my patch. You can see that for =
+the
+> print that uses __struct_size(v->x_name) the compiler correctly uses
+> movzx edx, byte ptr [rbx + 1]
+> to load x_name_len into edx.
+>=20
+> For the printk call that uses __struct_size(xattr.v->x_name) however =
+the
+> compiler uses
+> movzx edx, bh
+> So it will print the high 8 bits of the lower 16 bits (second least
+> significant byte) of the memory address of xattr.v->x_type. This is =
+obviously
+> completely wrong.
+>=20
+> It is then doing the correct call of memchr because this is using my =
+patch.
+> Without my patch it would be doing the same thing for the call to =
+memchr where
+> it uses the second least significant byte of the memory address of =
+x_type as the
+> length used for the bounds-check.
+>=20
+>=20
+>=20
+> The LLVM IR also shows the same problem:
+>=20
+> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, =
+ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
+>  [...]
+>  %51 =3D ptrtoint ptr %2 to i64
+>  %52 =3D lshr i64 %51, 8
+>  %53 =3D and i64 %52, 255
+>=20
+> This is the IR for the incorrect behavior. It simply converts the =
+pointer to an
+> int, shifts right by 8 bits, then and with 0xFF. If it did a load (to =
+i64)
+> instead of ptrtoint this would actually work, as the second least =
+significant
+> bit of an i64 loaded from that memory address does contain the value =
+of
+> x_name_len. It's as if clang forgot to dereference a pointer here.
+>=20
+> Correct IR does this (for the other printk invocation):
+>=20
+> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, =
+ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
+>  [...]
+>  %4 =3D getelementptr inbounds %struct.bch_xattr, ptr %1, i64 0, i32 1
+>  %5 =3D load i8, ptr %4, align 8
+>  [...]
+>  %48 =3D load i8, ptr %5, align 4
+>  %49 =3D zext i8 %48 to i64
+>=20
+> Best Regards
+> Jan
 
-I think creating the variable inside the macro is one of the main points 
-with scoped_v4l2_subdev_lock_and_get_active_state(), so that not only 
-the locking of the state of scoped, also the variable is scoped. It 
-hasn't been just once or twice when I have accidentally used a variable 
-that was supposed to be only used inside a scope.
+I suspect it's the same Clang __bdos() "bug" as in [1] and [2].
 
->>> 		...
->>> 	}
->>>
->>> This being said, we would then end up with the state variable being
->>> named scope, which wouldn't be great.
->>
->> No, it wouldn't.
->>
->>> This is actually one of my issues with the above macros, and especially
->>> scoped_v4l2_subdev_lock_and_get_active_state(). It creates a local state
->>> variable in the scope, which makes the code less readable in my opinion.
->>
->> It's trivial to add a variable name there, as mentioned in the intro letter.
->>
->> You mentioned the const/non-const state issue in the other email. I
->> wonder if some macro-magic could be done for that... Or we can always
->> just add "scoped_v4l2_subdev_lock_and_get_active_state_const()"! =)
-> 
-> And that's supposed to be an improvement ? :D
-> 
->> Also, it's not like we have to use these _everywhere_. So maybe if you
->> want a const state, don't use the scoped or the class.
-> 
-> Looking at the rest of your series there are very few instances of
-> scoped_v4l2_subdev_lock_and_get_active_state(), so I'm tempted to simply
-
-The changes in this series were just a few examples for a couple of 
-drivers I've been working on lately. I didn't do any kind of thorough 
-study how many users we have for these.
-
-> leave it out. When one writes
-> 
-> 	scoped_guard(spinlock_irqsave, &dev->lock) {
-> 	}
-> 
-> It's clear that you're locking the lock for the scope using
-> spinlock_irqsave. The scoped guard performs a scoped action on an
-> existing object. The V4L2 subdev active state is different, I don't
-> think scoped_guard() gives the right semantics.
-
-Hmm so are you here referring specifically to using scoped_guard() for 
-the active state locking, or do you refer to the 
-scoped_v4l2_subdev_lock_and_get_active_state()?
-
->>> We could keep the class and drop
->>> scoped_v4l2_subdev_lock_and_get_active_state(). I think I would like to
->>> shorten the class name then.
->>>
->>> Another option is to use DEFINE_FREE() and __free() instead.
->>
->> That can be added too. I had them, but I didn't consider them as useful
->> when I already added the class and scoped.
->>
->> I have to say I don't particularly like the look of either the scoped or
->> the class, or even the free. But they're so useful wrt. error handling
->> that I don't care if the syntax annoys me =).
-> 
-> CLASS() is a bit better once we'll get used to it, as the name of the
-> variable is explicit. It however doesn't solve the const issue.
-
-Again, we can add the variable name to 
-scoped_v4l2_subdev_lock_and_get_active_state(), it's a trivial change.
-
-I don't really see the const issue as a major thing. Missing the const 
-here never breaks anything. You can pass the non-const state to 
-functions that take const state. And you never have to use these 
-helpers, you can do it all manually.
-
-Adding const versions is possible. In some way the code has to tell the 
-macros that "I want const state", so adding a __const() version of the 
-macro sounds fine to me. Except the length of the name quickly becomes a 
-problem =).
-
-> Furthermore, its semantics is meant to represent creation of an object
-> with automatic destruction when it leaves the scope, while with the
-> subdev active state you're not creating an object. That's why I think
-
-The lock guards use CLASS(), and they're not creating any new objects. 
-They do hide the use of CLASS, though. But we can do the same by just 
-creating our own macro that directly uses CLASS.
-
-> that an explicit variable with a __free() annotation may be the best
-> option for this.
-
-But __free() does a different thing. It can, of course, be used in a 
-scoped fashion by adding a scope with { }, like:
-
-	{
-		struct v4l2_subdev_state *state __free(v4l2_subdev_state_lock) = 
-v4l2_subdev_lock_and_get_active_state(sd);
-
-		// use state
-	}
-
-but I don't very often see that style used. "__free()" there also makes 
-me think the state will be freed... And the line above is definitely not 
-short...
-
-If we come up with a suitable short name, this is quite a bit cleaner 
-looking:
-
-	hopefully_somewhat_short_name(sd, state) {
-		// use state
-	}
-
-But all that said, I have to say I don't know if we have enough users 
-for these to make these worthwhile. Looking at the single 
-scoped_v4l2_subdev_lock_and_get_active_state() use I added to 
-rzg2l-csi2.c... That's not really needed, as the original code is not 
-right: the rzg2l_csi2_calc_mbps() shouldn't lock the active state, it 
-should be passed the (locked) active state.
-
-  Tomi
-
+[1] =
+https://lore.kernel.org/linux-kernel/3D0816D1-0807-4D37-8D5F-3C55CA910FAA@=
+linux.dev/
+[2] https://lore.kernel.org/all/20240913164630.GA4091534@thelio-3990X/=
 
