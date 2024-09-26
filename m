@@ -1,135 +1,145 @@
-Return-Path: <linux-kernel+bounces-340115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA10F986EB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:25:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 393AF986EBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FCC4281D60
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:25:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69E141C21255
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39E71A4E76;
-	Thu, 26 Sep 2024 08:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199411A4F39;
+	Thu, 26 Sep 2024 08:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="lnOot4Ci"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EvL2P/Kb"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF736188CB8;
-	Thu, 26 Sep 2024 08:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3710188CB8;
+	Thu, 26 Sep 2024 08:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727339109; cv=none; b=KaY6XJ0Bh7S16amkZScYYHgUVH40snKgy47eyZUgje29cxrr0D1J3VjgfA20QcuTKNnCeBZDzktIxQYnHSBNw8E3l0ZwqZR2fGv/oT1frAXHxRCWGTDGRVan2EG+ciqFusuFBbezc8jdBGO/1o2bAwh2l3YQqXYeR2Az/jmwO3U=
+	t=1727339117; cv=none; b=ZijmI5OHduWcnwB3RfJ5bqJBXL6P5uJHl/UXfE/crHl+fJDA8D3z7RCAnjlKRzi2i5ujcl/odr3i0umLIIAvIuGFV+hqYDjAaV52C14t53jSTVn2DIUR9fuqfZjfKMP9Esa9V5wVsJcmR2CcGW3dQDXtPjOubF4lwIHgKA/i2kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727339109; c=relaxed/simple;
-	bh=nzAJ58vyoHQtO3NGE8PRselJtg6kTzIF26rnk3ElbXE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DWfSd9KjzdrvB9BBcZMbv7F+JaJq2UG1Hq/PmPlDKpMt8r+HVpt4/7dHVVxgspFbpLDyVohSbBycbU4fgx8ZKOhsSItHRSCftKEiOqC5EnABlp9CQnfm/hMqmwm0uo/UykmpwIi+dtzyvGOuwmZJTf2GkBwNeH5wZ0FKSCWVits=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=lnOot4Ci; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=iBsC3mABl+He9E398zbyg48Y1tA2wfpFLTdtcZVXHtw=; b=lnOot4CiQs6jGk5N9O6UHusTzf
-	tvYsmgjHyv9XLkoSuitf8eT7HDY5YYLgia0z0d3nLQjR5w0ONlV+THk+5btwcvK1AossjagBYT04Q
-	36QKSrnVjx6fzIuEwCitbw9rAUEPuq2K3UaHmTTEInfHIGYF7LvN8XHRGhylDaI/rAzGCVh6Hbdo2
-	lR8CKW/yC+j2BIRi/lYeDjsCBGhMnoC6BnuepvEbkcbXzDJtOrzEZJhH7AkoM0KVGq9+JBL6klYme
-	Lprgc7g7kRcFIMIH0AYMFdzKCLvJhv684BMiN07OhWgMpJT8s1psLwLwfAhF3SVGRHcHme8Q3oGQ4
-	xYRmqqxA==;
-Received: from 85-160-70-253.reb.o2.cz ([85.160.70.253] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1stjnu-0001ez-D4; Thu, 26 Sep 2024 10:24:50 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org, Dragan Simic <dsimic@manjaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, stable@vger.kernel.org
-Subject:
- Re: [PATCH] arm64: dts: rockchip: Move L3 cache under CPUs in RK356x SoC dtsi
-Date: Thu, 26 Sep 2024 10:24:49 +0200
-Message-ID: <3938446.fW5hKsROvD@phil>
-In-Reply-To:
- <da07c30302cdb032dbda434438f89692a6cb0a2d.1727336728.git.dsimic@manjaro.org>
-References:
- <da07c30302cdb032dbda434438f89692a6cb0a2d.1727336728.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1727339117; c=relaxed/simple;
+	bh=Dk3nLSd80JhfGjSp5EHO2aPMGizzZ4RiwipSe4RcKSk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FeXgTFtiwnzlwTrBGvUpgWHG6oVxPThg4FbusWMLgY5braf9W1sVMq0slEvvhsIUo53J1pjG+ehsR2DVhD1Ko65JzIbkIZvrLZ7NT3Jk5saTlLbf7XLmYDsFfN7SiqDZ1JSIhijmK2UH6KRSIqoxwA2cvajnV+hO4ZWsD7C39Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EvL2P/Kb; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727339111; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=PKsWARor3DVvs3wWB30YmVXctqsq0fmGOIDstG8XMAg=;
+	b=EvL2P/KbM+qkrmSGBt2iny2gM3F+5rs6x9bFeO0vlmoKZbGKgHr9P2ggVy4Kr4cFXk8MCeCnXXuo+nMt7RFlf2TyzJ19pilQar6IasM0cP6fwUEipWmUQfo5Faom/wbLxC+6/1IjrXg6WVjMfBe82aPTpfyqfUiGHo9EWrfNfnI=
+Received: from 30.221.129.247(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFmjSo-_1727339109)
+          by smtp.aliyun-inc.com;
+          Thu, 26 Sep 2024 16:25:10 +0800
+Message-ID: <54bf7cc6-a62a-44e9-9ff0-ca2e334d364f@linux.alibaba.com>
+Date: Thu, 26 Sep 2024 16:25:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
+To: Ariel Miculas <amiculas@cisco.com>
+Cc: Benno Lossin <benno.lossin@proton.me>, Gary Guo <gary@garyguo.net>,
+ Yiyang Wu <toolmanp@tlmp.cc>, rust-for-linux@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20240916210111.502e7d6d.gary@garyguo.net>
+ <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
+ <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me>
+ <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
+ <239b5d1d-64a7-4620-9075-dc645d2bab74@proton.me>
+ <20240925154831.6fe4ig4dny2h7lpw@amiculas-l-PF3FCGJH>
+ <80cd0899-f14c-42f4-a0aa-3b8fa3717443@linux.alibaba.com>
+ <20240925214518.fvig2n6cop3sliqy@amiculas-l-PF3FCGJH>
+ <be7a42b2-ae52-4d51-9b0c-ed0304db3bdf@linux.alibaba.com>
+ <0ca4a948-589a-4e2c-9269-827efb3fb9ef@linux.alibaba.com>
+ <20240926081007.6amk4xfuo6l4jhsc@amiculas-l-PF3FCGJH>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240926081007.6amk4xfuo6l4jhsc@amiculas-l-PF3FCGJH>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Am Donnerstag, 26. September 2024, 09:49:18 CEST schrieb Dragan Simic:
-> Move the "l3_cache" node under the "cpus" node in the dtsi file for Rockchip
-> RK356x SoCs.  There's no need for this cache node to be at the higher level.
+
+
+On 2024/9/26 16:10, Ariel Miculas wrote:
+> On 24/09/26 09:04, Gao Xiang wrote:
+>>
+
+
+...
+
 > 
-> Fixes: 8612169a05c5 ("arm64: dts: rockchip: Add cache information to the SoC dtsi for RK356x")
-> Cc: stable@vger.kernel.org
-
-I think the commit message needs a bit more rationale on why this is a
-stable-worthy fix. Because from the move and commit message it reads
-like a styling choice ;-) .
-
-I do agree that it makes more sense as child of cpus, but the commit
-message should also elaborate on why that would matter for stable.
-
-
-Heiko
-
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> ---
->  arch/arm64/boot/dts/rockchip/rk356x.dtsi | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
+> And here [4] you can see the space savings achieved by PuzzleFS. In
+> short, if you take 10 versions of Ubuntu Jammy from dockerhub, they take
+> up 282 MB. Convert them to PuzzleFS and they only take up 130 MB (this
+> is before applying any compression, the space savings are only due to
+> the chunking algorithm). If we enable compression (PuzzleFS uses Zstd
+> seekable compression), which is a fairer comparison (considering that
+> the OCI image uses gzip compression), then we get down to 53 MB for
+> storing all 10 Ubuntu Jammy versions using PuzzleFS.
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-> index 4690be841a1c..9f7136e5d553 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-> @@ -113,19 +113,19 @@ cpu3: cpu@300 {
->  			d-cache-sets = <128>;
->  			next-level-cache = <&l3_cache>;
->  		};
-> -	};
->  
-> -	/*
-> -	 * There are no private per-core L2 caches, but only the
-> -	 * L3 cache that appears to the CPU cores as L2 caches
-> -	 */
-> -	l3_cache: l3-cache {
-> -		compatible = "cache";
-> -		cache-level = <2>;
-> -		cache-unified;
-> -		cache-size = <0x80000>;
-> -		cache-line-size = <64>;
-> -		cache-sets = <512>;
-> +		/*
-> +		 * There are no private per-core L2 caches, but only the
-> +		 * L3 cache that appears to the CPU cores as L2 caches
-> +		 */
-> +		l3_cache: l3-cache {
-> +			compatible = "cache";
-> +			cache-level = <2>;
-> +			cache-unified;
-> +			cache-size = <0x80000>;
-> +			cache-line-size = <64>;
-> +			cache-sets = <512>;
-> +		};
->  	};
->  
->  	cpu0_opp_table: opp-table-0 {
+> Here's a summary:
+> # Steps
 > 
+> * I’ve downloaded 10 versions of Jammy from hub.docker.com
+> * These images only have one layer which is in tar.gz format
+> * I’ve built 10 equivalent puzzlefs images
+> * Compute the tarball_total_size by summing the sizes of every Jammy
+>    tarball (uncompressed) => 766 MB (use this as baseline)
+> * Sum the sizes of every oci/puzzlefs image => total_size
+> * Compute the total size as if all the versions were stored in a single
+>    oci/puzzlefs repository => total_unified_size
+> * Saved space = tarball_total_size - total_unified_size
+> 
+> # Results
+> (See [5] if you prefer the video format)
+> 
+> | Type | Total size (MB) | Average layer size (MB) | Unified size (MB) | Saved (MB) / 766 MB |
+> | --- | --- | --- | --- | --- |
+> | Oci (uncompressed) | 766 | 77 | 766 | 0 (0%) |
+> | PuzzleFS uncompressed | 748 | 74 | 130 | 635 (83%) |
+> | Oci (compressed) | 282 | 28 | 282 | 484 (63%) |
+> | PuzzleFS (compressed) | 298 | 30 | 53 | 713 (93%) |
+> 
+> Here's the script I used to download the Ubuntu Jammy versions and
+> generate the PuzzleFS images [6] to get an idea about how I got to these
+> results.
+> 
+> Can we achieve these results with the current erofs features?  I'm
+> referring specifically to this comment: "EROFS already supports
+> variable-sized chunks + CDC" [7].
 
+Please see
+https://erofs.docs.kernel.org/en/latest/comparsion/dedupe.html
 
+	                Total Size (MiB)	Average layer size (MiB)	Saved / 766.1MiB
+Compressed OCI (tar.gz)	282.5	28.3	63%
+Uncompressed OCI (tar)	766.1	76.6	0%
+Uncomprssed EROFS	109.5	11.0	86%
+EROFS (DEFLATE,9,32k)	46.4	4.6	94%
+EROFS (LZ4HC,12,64k)	54.2	5.4	93%
 
+I don't know which compression algorithm are you using (maybe Zstd?),
+but from the result is
+   EROFS (LZ4HC,12,64k)  54.2
+   PuzzleFS compressed   53?
+   EROFS (DEFLATE,9,32k) 46.4
 
+I could reran with EROFS + Zstd, but it should be smaller. This feature
+has been supported since Linux 6.1, thanks.
+
+Thanks,
+Gao Xiang
 
