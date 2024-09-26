@@ -1,184 +1,159 @@
-Return-Path: <linux-kernel+bounces-340248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6156598707A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:42:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 629C4987081
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EB4E1C2491E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:42:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE1A3B289B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134F51ABECE;
-	Thu, 26 Sep 2024 09:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="m5CWey+7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IHE1jY+h"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6721AC89E;
+	Thu, 26 Sep 2024 09:42:25 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652941D5AB0;
-	Thu, 26 Sep 2024 09:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9981D5AB0;
+	Thu, 26 Sep 2024 09:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727343734; cv=none; b=S6ukqdqrtBUTp73cffluvcHlXAaf7b1QCz7vlXAG7tSZkk8EyaAmyD/LhFX327gredvMZoK//SBf8ZBxTry3fKvvyivZwrxuLDGeZ+8rPQX9u5flZ46Aqt0dGbt0rOogfczFXmRvEw/lFrs9CjWuza2xF3ttUadGY/ssN3KRcTU=
+	t=1727343744; cv=none; b=r+uMtbTinp952zdp6tfhwmUPp4QKu8AoYf0K1WboV7XJRUMs8XFQEtuG0+C2XiG1KuGDjMcchzcIbiv4TNV1mfzYAa++sDLhdiFwZj/bfWhVhmIW1UAroSqgXgchmFjtT46Belna//KAMJBlpTZtbjjubhfjuirX3Rw/DkEJ7FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727343734; c=relaxed/simple;
-	bh=nBrTsd6U6ryig1qB0in/czytk47gYLOayKDOMxrwbBo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=J44JCrr3h5vyVoBS8PN+r2/8erWv+21hfG3P5OzLCxdKrcIiJhT3xQ7DCNwQu6/ph5szR0eVly9NlcfDGk1OP3tCUj7fA17bOYTm2TE0jFB36f2f5eO1DdFtzLve+xMoStUogltCc8yWw+HPIDdGPZ308LLli/TkhWaaC7OC4t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=m5CWey+7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IHE1jY+h; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 3DB5811401E9;
-	Thu, 26 Sep 2024 05:42:11 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 26 Sep 2024 05:42:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727343731;
-	 x=1727430131; bh=Iz/f4ZHWxcDHUsU3hchNxxVI0CA6JwJ/25nEB88OEYc=; b=
-	m5CWey+73vWL67jCVJR3EmjZDDiNiCw6MO+Ot1XUWYv5UfyjS8s3pN8TAbLQff25
-	Sg6lrqUj15QUnRMNC9xx+OWfhvgvgrksQWBj9T71HyGavK79/2CaQa0kUPqTh7DC
-	Fvt6VTvqyu15O2wq2P1yNKc9kYs1KYLNWqvusXnHo+loaICAWCuREXIa0dAhwayW
-	dzUsDVdiFBIkIpUPDYOS+MBbIfIgIpzznF12mOowuL5GFdjCASs+wKfoomMiWhwN
-	5YOjy90Pt4UmI8r1l6CNvouZkNU3ehNp/5NfSx7fSEgs+Nxpdha1xWTGdlfviajT
-	usv+4HhF6PYFGOYEoLiD5Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727343731; x=
-	1727430131; bh=Iz/f4ZHWxcDHUsU3hchNxxVI0CA6JwJ/25nEB88OEYc=; b=I
-	HE1jY+hK5ssV7obuCeyf3Vdk60sSKieOqkFdb5lrwkWZHYABR3YVlRs6krmSEFhR
-	q4sSUNNhZbsHn6M2VmRhDf3Z5+MPJKHd8mkW26jIvRkhlwzFTTY1jlGq2olCFpoK
-	aWSBwihRg70fnc1s9rjayXphF2frGbXouJWg09xfG7mEc+Kdy8K1gHZyo+ZSTt5r
-	e86m+2uanNC+DEvI+o3C3DXeF84aBM79rZ4i/0Fy/t+h3XW/Hv6bhrdLmj7F1BTU
-	oewFEEcmhImsDH8zdXehWqQCIFsGSoo53UAFQiHEJkZykxgQK5fdC4c48kS6PUzp
-	LswjblX5lMItVKprSRK1Q==
-X-ME-Sender: <xms:cSz1Zhtw1sfZrN0_xZrFwtJRo2ly2-IIkoRYRf9XSecslFFW1Yf4Tw>
-    <xme:cSz1ZqcZ4Mn_-B479ffF-LvgWpgZ28YanTE9yczZDJSgIjZuifQSHXPL-CQJDm_Ml
-    BRD_QTArWMmc59cnzA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtjedgudelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfeef
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrg
-    drfhhrrghnkhgvnhdruggvpdhrtghpthhtohepvhhlrgguihhmihhrrdhmuhhriihinhes
-    rghrmhdrtghomhdprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsgh
-    hrohhuphdrvghupdhrtghpthhtohepmhhpvgesvghllhgvrhhmrghnrdhiugdrrghupdhr
-    tghpthhtoheprghlvgigrghnughrvgdrthhorhhguhgvsehfohhsshdrshhtrdgtohhmpd
-    hrtghpthhtoheprghnughrvggrshesghgrihhslhgvrhdrtghomhdprhgtphhtthhopehj
-    tghmvhgskhgstgesghhmrghilhdrtghomhdprhgtphhtthhopehmrghtthhsthekkeesgh
-    hmrghilhdrtghomhdprhgtphhtthhopehnphhighhgihhnsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:cSz1ZkxOy7rSDphLVTS9LNfuz-xZ0DcXkD6LyC43AmZN667_3xHB2A>
-    <xmx:cSz1ZoMK3Ivf8CmyIKLE6hKsYKr-YNbjQG7uuStVPR-pjZccy0tKbQ>
-    <xmx:cSz1Zh_wKcXgopX3k4tdeJ6efe46wxmqzIDVda7tQ8Fy8BZtjp_XKA>
-    <xmx:cSz1ZoWzEWCkfV0KRcfMRcpDM2Bi9GmS53CNCbQ-fY7gzvdDbHuemw>
-    <xmx:cyz1Zi1TkI4jfNUeOagyzusT7o8TNSwRW2Vz9A5SbAkc5TgSR8JAE3m1>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 333EE2220071; Thu, 26 Sep 2024 05:42:09 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727343744; c=relaxed/simple;
+	bh=1A66KUQny3XYl3qfAxlytmnNKD9XatLJzpTiE30l9Oc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nNFZgxRwTnD3MQaN+L/BxBCniK4LOVStNa4rmzKyA2viA1yLNDBKG7CpusoZ7E0zKgtU4vPwTvJz9iegJ3/T6jpMDyycCnCLut8b16SokwXOYPwL6fb7ZpQHmOyymI50cIegevouj2AvHofuwWPBJO0swi15c1iWcOLr0Bs5yoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XDp602Rvxz9v7N8;
+	Thu, 26 Sep 2024 17:22:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 6593514097F;
+	Thu, 26 Sep 2024 17:42:08 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwA3yC9jLPVmEMGqAQ--.33238S2;
+	Thu, 26 Sep 2024 10:42:07 +0100 (CET)
+Message-ID: <a991cf4187bced19485e28a5542ac446b92f864e.camel@huaweicloud.com>
+Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Herbert Xu
+	 <herbert@gondor.apana.org.au>
+Cc: dhowells@redhat.com, dwmw2@infradead.org, davem@davemloft.net, 
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, zohar@linux.ibm.com, 
+	linux-integrity@vger.kernel.org, roberto.sassu@huawei.com, 
+	linux-security-module@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 26 Sep 2024 11:41:51 +0200
+In-Reply-To: <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com>
+References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au>
+	 <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
+	 <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com>
+	 <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
+	 <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 26 Sep 2024 09:41:48 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Helge Deller" <deller@gmx.de>, "Arnd Bergmann" <arnd@kernel.org>,
- linux-mm@kvack.org
-Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Alexandre Torgue" <alexandre.torgue@foss.st.com>,
- "Andreas Larsson" <andreas@gaisler.com>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Ard Biesheuvel" <ardb@kernel.org>,
- "Christian Brauner" <brauner@kernel.org>,
- "Christoph Hellwig" <hch@lst.de>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Damien Le Moal" <dlemoal@kernel.org>,
- "David Hildenbrand" <david@redhat.com>,
- "Greg Ungerer" <gerg@linux-m68k.org>, "Kees Cook" <kees@kernel.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Matt Turner" <mattst88@gmail.com>, "Max Filippov" <jcmvbkbc@gmail.com>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Michal Hocko" <mhocko@suse.com>, "Nicholas Piggin" <npiggin@gmail.com>,
- "Richard Henderson" <richard.henderson@linaro.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Vladimir Murzin" <vladimir.murzin@arm.com>,
- "Vlastimil Babka" <vbabka@suse.cz>,
- linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, Linux-Arch <linux-arch@vger.kernel.org>
-Message-Id: <a44eb23a-97cf-4920-8cee-5197754d28f6@app.fastmail.com>
-In-Reply-To: <b27eb97b-cb76-4fa8-8b8a-66d3bec655ae@gmx.de>
-References: <20240925210615.2572360-1-arnd@kernel.org>
- <20240925210615.2572360-2-arnd@kernel.org>
- <b27eb97b-cb76-4fa8-8b8a-66d3bec655ae@gmx.de>
-Subject: Re: [PATCH 1/5] asm-generic: cosmetic updates to uapi/asm/mman.h
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwA3yC9jLPVmEMGqAQ--.33238S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGFWfKF4fWFWUAF18CrW3Jrb_yoW5AF1Upa
+	9YqF1Ykr1kJr4Ikws2k3WUZryF9ws3Ja45Wr93J34rA3yYvF12vr1I9F43XF129r1xGa1U
+	trsIqF90ka4qv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgASBGb0w30FQQAAs8
 
-On Thu, Sep 26, 2024, at 09:21, Helge Deller wrote:
-> On 9/25/24 23:06, Arnd Bergmann wrote:
+On Sun, 2024-09-15 at 10:40 +0200, Linus Torvalds wrote:
+> On Sun, 15 Sept 2024 at 10:08, Herbert Xu <herbert@gondor.apana.org.au> w=
+rote:
+> >=20
+> > If the aformentioned EFI use-case is bogus, then distro package
+> > verification is going to be the only application for PGP keys in
+> > the kernel.
+>=20
+> So I haven't actually seen _that_ series, but as mentioned it does
+> smell pretty conceptually broken to me.
+>=20
+> But hey, code talks, bullshit walks. People can most certainly try to
+> convince me.
 
->> -/* not used by linux, but here to make sure we don't clash with OSF/1 defines */
->> -#define _MAP_HASSEMAPHORE 0x0200
->> -#define _MAP_INHERIT	0x0400
->> -#define _MAP_UNALIGNED	0x0800
->
-> I suggest to keep ^^ those. It's useful information which isn't
-> easily visible otherwise.
+The solution has three parts.
 
-Fair enough. I removed them in order to bring the differences
-between files to an absolute minimum, but since at the end
-of the series the files only contain the map values, there is
-no real harm in keeping them, and they may help.
+1. The kernel verifies the RPM header with a PGP key embedded in the
+kernel, and provided by the Linux distribution vendor.
 
->> -/* not used by linux, but here to make sure we don't clash with ABI defines */
->> -#define MAP_RENAME	0x020		/* Assign page to file */
->> -#define MAP_AUTOGROW	0x040		/* File may grow by writing */
->> -#define MAP_LOCAL	0x080		/* Copy on fork/sproc */
->> -#define MAP_AUTORSRV	0x100		/* Logical swap reserved on demand */
->
-> same here. I think they should be preserved.
+2. The Integrity Digest Cache parses the verified RPM header in the
+kernel and feeds one of the existing LSMs (IMA, IPE and BPF LSM) with
+the digests extracted from the RPM header.
 
-Right.
+3. The LSMs compare the fsverity digest they find in the filesystem
+with the authenticated ones from the RPM header, and might deny access
+to the file if the digests don't match.
 
->>   /* 0x01 - 0x03 are defined in linux/mman.h */
->> -#define MAP_TYPE	0x00f		/* Mask for type of mapping */
->> -#define MAP_FIXED	0x010		/* Interpret addr exactly */
->> +#define MAP_TYPE	0x0f		/* Mask for type of mapping */
->> +#define MAP_FIXED	0x10		/* Interpret addr exactly */
->>
->> -/* not used by linux, but here to make sure we don't clash with ABI defines */
->> -#define MAP_RENAME	0x020		/* Assign page to file */
->> -#define MAP_AUTOGROW	0x040		/* File may grow by writing */
->> -#define MAP_LOCAL	0x080		/* Copy on fork/sproc */
->> -#define MAP_AUTORSRV	0x100		/* Logical swap reserved on demand */
->
-> If xtensa had those, those should be kept as well IMHO.
+At this point, RPM headers don't contain fsverity digests, only file
+content digests, but this is an orthogonal problem.
 
-The thing with xtensa is that the file was blindly copied from
-mips, so I'm sure it never had these, but there may be value
-in keeping the two files in sync anyway. The only difference
-at the moment is MAP_UNINITIALIZED, which is potentially
-used on xtensa-nommu.
 
-Let's see if Max Filippov has an opinion on this, otherwise I'd
-keep it the same as mips.
+I had a look at previous threads on similar topics, to find your
+position on the matter.
 
-      Arnd
+I got that you would not be probably against (1), and maybe not (3).
+
+However, we still need a source telling whether the fsverity digest in
+the filesystem is the same of one calculated by Linux distributions
+during build. That is what the Integrity Digest Cache provides.
+
+Regarding (2), maybe I'm missing something fundamental, but isn't
+parsing the ELF format of kernel modules from the kernel similar?
+
+Cannot really go to user space at this point, since the authenticated
+fsverity digests are directly consumed by LSMs. Also, as David pointed
+out in this thread [1], there is no obligation for user space to call
+any signature verification function before executing a file, this task
+must be done by an LSM.
+
+I'm aware that we should not run unnecessary code in the kernel. I
+tried to mitigate this issue by striping the parsing functionality to
+the minimum (220 LOC), and formally verifying it with the Frama-C
+static analyzer. The parser is available here [2].
+
+I'm also aware that this is not the long term solution, but I didn't
+find much support on the alternatives, like a trustworthy user mode
+driver [3][4] (isolated from other root processes) and signed eBPF
+programs [5].
+
+What it would be the right way to proceed, in your opinion?
+
+Thanks
+
+Roberto
+
+[1] https://lore.kernel.org/linux-kernel/32081.1171560770@redhat.com/
+[2] https://lore.kernel.org/linux-integrity/20240905150543.3766895-9-robert=
+o.sassu@huaweicloud.com/
+[3] https://lore.kernel.org/lkml/20230317145240.363908-1-roberto.sassu@huaw=
+eicloud.com/#t
+[4] https://lore.kernel.org/linux-integrity/eb31920bd00e2c921b0aa6ebed8745c=
+b0130b0e1.camel@huaweicloud.com/
+[5] https://lwn.net/Articles/853489/
+
 
