@@ -1,138 +1,100 @@
-Return-Path: <linux-kernel+bounces-340164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2209986F45
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:49:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D4F986F4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ED63281D28
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:49:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32AFCB20A1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3745B1A4E9A;
-	Thu, 26 Sep 2024 08:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9926A1A7256;
+	Thu, 26 Sep 2024 08:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZWrGjzRK"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T7zMMok6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54665192B65
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8E41A4E9A;
+	Thu, 26 Sep 2024 08:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727340573; cv=none; b=skOVqNWChFBHovL+SvnnGDhLbtC3xE6ROmI29S8YCkPJEJIuTLmiW5v4pgR/Xg7WZivBenDnQ5yArGZQrZbiNEDNmaNiUNXM0AQ2Wky51dGjb5xy6ANpgI7KsHtnSk+puWiyoLoIeHXRBqxYzgpx6EkuksL6afpB3F/Ok4xZlt0=
+	t=1727340629; cv=none; b=bdytDbgl7IDP7EBSk+lRqcZALDt3w+F3DONB+3UQEl7PVFjR5NWV21D9sSOlVsfPaNZOlxyh/DTA4wJODArmAsdwPyR7keimftOJ1W0LtvtPAtkqRObhh1zJsMfwTKLF7zpjYuu7/dF4t5sTecnZ0JbD+eoWNFn/HFITb1p8Ibw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727340573; c=relaxed/simple;
-	bh=VkmyKeJbbl1/2z1Z9AJgFGaPL3xZWZNmJN2oUjDGqSc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j90tj92FtNdXMPRHJXQHSVA4LjhGA4EL+WhMjh+dlj4sWzhMZ4zjuJaUbNO0kGOwts3OJcRRFRJ42QxqwBd6Dz/8s9kDEiuOp9fcXyYbny4tbgURoz8A2I2uGCPh1LmBGXbKBNw+/GTITmhIYx54dEwAIRMgN0KZ0fKGxZPSSa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZWrGjzRK; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727340568;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=4dVe70RgPk0ZG8aStObAj77CwBE4FEBPox+y/iSU2CY=;
-	b=ZWrGjzRK/US/n2XhRafj2A407ngD1jHeKGYL5hjlC/yhtdfPxEw2UHUqanqJn5hL/4V8jZ
-	yCYz4zrDfRNqvEuokU0PQfv5hcq0MIIPCvxFL1Ku/DkWYYNacws5nKfxdJcvAfjbhQ8sjE
-	8y0KBzVpIFSQxIOJnsu2tCMchyXL7zA=
-From: Jackie Liu <liu.yun@linux.dev>
-To: surenb@google.com
-Cc: kent.overstreet@linux.dev,
-	linux-kernel@vger.kernel.org,
-	liu.yun@linux.dev
-Subject: [RFC PATCH] codetag: ensure module memory has been freed
-Date: Thu, 26 Sep 2024 16:49:01 +0800
-Message-ID: <20240926084901.9014-1-liu.yun@linux.dev>
+	s=arc-20240116; t=1727340629; c=relaxed/simple;
+	bh=GcRYZc0aYdKjKzm8dqTZs423b3rVkDA/yBEu7aO4lvc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=bh8t1HzeaJQFQw7+hCFyPZSj5KIAX7/HcT+xKkHglQZZLeoYcE2rDc3FWlBLs+lExdh01twNOCSr/dTfyEWck+s98xazrw8/ca7bcnlOj9izmm6h8Cb3FnLbJKAGkbSq2nd9JI15hGAOwBhKMg95xwSh9MXAvQpCYi6etzJ9Xgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T7zMMok6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B68C4CEC7;
+	Thu, 26 Sep 2024 08:50:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727340628;
+	bh=GcRYZc0aYdKjKzm8dqTZs423b3rVkDA/yBEu7aO4lvc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=T7zMMok6AL8MgOS0GZUb2ZO196/h+wGaqUznwue4pQ1u0n66dxxYn2zOfohwAYSlJ
+	 t5ZCa0rrb4FGKZVoJQN6mrYZkm2BvBijKW0EHSicYUTsAWYtwO4LdzNb/xeDaQz2hE
+	 WpgBxpT2JYnliPPbOQs2ACce8ulAlU3MSVDazNzXktBkwo2GmbAAx1nzPbDskXVPSx
+	 w41Q93K1IAsLRGDwziTcFHN1LV6mzw7dY23pmPA6wYylz7TJDQgLiEwGhiZtmKJj7m
+	 HJVV9387mm3EtlpOdJGtCjc6ZKRUlCMCGjhbHpxD7H6Xb8ZUBOwktmQftoLxqSH2op
+	 18/D98E1mvlpg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D22380DBF5;
+	Thu, 26 Sep 2024 08:50:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Subject: Re: [PATCH net v2] net: stmmac: set PP_FLAG_DMA_SYNC_DEV only if XDP is
+ enabled
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172734063104.1173335.1175532614664829516.git-patchwork-notify@kernel.org>
+Date: Thu, 26 Sep 2024 08:50:31 +0000
+References: <20240919121028.1348023-1-0x1207@gmail.com>
+In-Reply-To: <20240919121028.1348023-1-0x1207@gmail.com>
+To: Furong Xu <0x1207@gmail.com>
+Cc: boon.leong.ong@intel.com, davem@davemloft.net,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+ jpinto@synopsys.com, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ rmk+kernel@armlinux.org.uk, linux@armlinux.org.uk, xfr@outlook.com
 
-From: Jackie Liu <liuyun01@kylinos.cn>
+Hello:
 
-We found a problem that can be quickly reproduced using the self-test
-script [1], (the latest version of the test script no longer releases
-the module immediately). There will be a warning message that the module
-memory has not been released. In fact, it is released through kree_rcu,
-and its memory will eventually be released, so this warning message is
-incorrect.
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-I don’t think this is a correct solution. I tried to use rcu_barrier for
-synchronization, but it didn’t work. After using schedule(), the warning
-message disappeared. It ensures that kfree has been called, so the counter
-will be cleared.
+On Thu, 19 Sep 2024 20:10:28 +0800 you wrote:
+> Commit 5fabb01207a2 ("net: stmmac: Add initial XDP support") sets
+> PP_FLAG_DMA_SYNC_DEV flag for page_pool unconditionally,
+> page_pool_recycle_direct() will call page_pool_dma_sync_for_device()
+> on every page even the page is not going to be reused by XDP program.
+> 
+> When XDP is not enabled, the page which holds the received buffer
+> will be recycled once the buffer is copied into new SKB by
+> skb_copy_to_linear_data(), then the MAC core will never reuse this
+> page any longer. Always setting PP_FLAG_DMA_SYNC_DEV wastes CPU cycles
+> on unnecessary calling of page_pool_dma_sync_for_device().
+> 
+> [...]
 
-The specific error message is as follows:
+Here is the summary with links:
+  - [net,v2] net: stmmac: set PP_FLAG_DMA_SYNC_DEV only if XDP is enabled
+    https://git.kernel.org/netdev/net/c/b514c47ebf41
 
-[   76.756915] ------------[ cut here ]------------
-[   76.756921] drivers/net/bonding/bond_main.c:5122 module bonding func:bond_update_slave_arr has 320 allocated at module unload
-[   76.756991] WARNING: CPU: 0 PID: 5503 at lib/alloc_tag.c:168 alloc_tag_module_unload+0x1a8/0x238
-[   76.757371]  aes_neon_bs aes_ce_blk [last unloaded: bonding]
-[   76.757379] CPU: 0 PID: 5503 Comm: modprobe Kdump: loaded Not tainted 6.6.52+ #7
-[   76.757383] Source Version: d828af5b77f6a3d3a91203e6d60a02c83ce77d74
-[   76.757385] Hardware name: QEMU QEMU Virtual Machine, BIOS 0.0.0 02/06/2015
-[   76.757387] pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-[   76.757390] pc : alloc_tag_module_unload+0x1a8/0x238
-[   76.757395] lr : alloc_tag_module_unload+0x1a8/0x238
-[   76.757398] sp : ffff800081f07890
-[   76.757400] x29: ffff800081f07890 x28: 0000000000000008 x27: ffff6fc980b10000
-[   76.757405] x26: ffff800081f07930 x25: ffffb2b6c410ef00 x24: 0000000000001402
-[   76.757410] x23: ffffb2b72ed28500 x22: 0000000000000140 x21: ffffb2b72ed23a40
-[   76.757415] x20: ffffb2b6c40edca0 x19: ffffb2b6c410ef80 x18: 0000000000000000
-[   76.757419] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-[   76.757424] x14: 0000000000000000 x13: 0000000000000001 x12: ffff645015cef093
-[   76.757428] x11: 1fffe45015cef092 x10: ffff645015cef092 x9 : dfff800000000000
-[   76.757433] x8 : 00009bafea310f6e x7 : ffff2280ae778493 x6 : 0000000000000001
-[   76.757438] x5 : ffff2280ae778490 x4 : ffff645015cef093 x3 : dfff800000000000
-[   76.757442] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff2280113be400
-[   76.757447] Call trace:
-[   76.757452]  alloc_tag_module_unload+0x1a8/0x238
-[   76.757455]  codetag_unload_module+0x184/0x218
-[   76.757458]  free_module+0x30/0x270
-[   76.757470]  __do_sys_delete_module.constprop.0+0x2c4/0x408
-[   76.757473]  __arm64_sys_delete_module+0x28/0x40
-[   76.757476]  invoke_syscall+0xb0/0x190
-[   76.757479]  el0_svc_common.constprop.0+0x80/0x150
-[   76.757482]  do_el0_svc+0x38/0x50
-[   76.757485]  el0_svc+0x40/0xe0
-[   76.757501]  el0t_64_sync_handler+0x100/0x130
-[   76.757504]  el0t_64_sync+0x1a4/0x1a8
-[   76.757511] Kernel panic - not syncing: kernel: panic_on_warn set ...
-
-I think this problem occurs not only in the bonding module, but also
-because the memory allocation profiling does not take the kfree_rcu
-situation into consideration.
-
-Fixes: 47a92dfbe01f ("lib: prevent module unloading if memory is not freed")
-Signed-off-by: Jackie Liu <liuyun01@kylinos.cn>
----
- lib/codetag.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/lib/codetag.c b/lib/codetag.c
-index afa8a2d4f317..7eab77e99381 100644
---- a/lib/codetag.c
-+++ b/lib/codetag.c
-@@ -228,6 +228,9 @@ bool codetag_unload_module(struct module *mod)
- 	if (!mod)
- 		return true;
- 
-+	/* Make sure all module's rcu memory is released */
-+	schedule();
-+
- 	mutex_lock(&codetag_lock);
- 	list_for_each_entry(cttype, &codetag_types, link) {
- 		struct codetag_module *found = NULL;
+You are awesome, thank you!
 -- 
-2.46.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
