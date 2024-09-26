@@ -1,85 +1,138 @@
-Return-Path: <linux-kernel+bounces-341011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B10987A2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:47:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018AC987A35
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CECE1F2447C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:47:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2455F1C22ADF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE4416131A;
-	Thu, 26 Sep 2024 20:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A82183CCD;
+	Thu, 26 Sep 2024 20:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="V/rDDouB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="dB8fSNHs"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBC3282FA
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 20:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9884017BB33
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 20:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727383633; cv=none; b=jg4RNt2bTzeJUJ/kC8VMhSYYhVTGmjzCkw6KDW6PmqJMgnMObl/7YtQLb7t5PVhKE4h4IyTm7cu8sU+JOk79vH3l57kqjJJSoMHqvGuAIBaKOPEJjISKK32IummsjaPcBTuHuBNFZeH/YieUmSQez8L3BMbsO/aX6JiCIMBsSZk=
+	t=1727383943; cv=none; b=oQvpvmExZtrEs/4g7DEEY1Ie88VshY02xOP62u9ZYccW58L/UPklJamMlbtKbEHC6SdudXDK3q0JKULOueFjtRSKxFIhOZaYvS8vZeEay73lRZ7ujQhKmhTrVfWDc7jthq+05LCGX/swh5/XQliqSHjE8SgMOXSWqh+aMoRSngk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727383633; c=relaxed/simple;
-	bh=p6BEhbVfq/NrBLwnvfSaWcgE4gJvgiGMTyCgFQpBgUg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=WcjLFj0/aVtSmi+jBpAfjrbhh7HhL4xNBIIMg9g/c4p2kf9cLBUEd9E+2xIVNRNAa4SPkHbW5eF8Y0JXzp/LRs/ovYvVedwB19FGkI/zQi5QFYuHVVh9SfSmFuhrWjKuOsUlVg5N1mcEBWDXBeQgi6Y9t+AVbltVuJdGO0nPYjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=V/rDDouB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22DB6C4CEC5;
-	Thu, 26 Sep 2024 20:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1727383633;
-	bh=p6BEhbVfq/NrBLwnvfSaWcgE4gJvgiGMTyCgFQpBgUg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=V/rDDouBjdNcWrH6JRKCAugyirykGI0GU3NrrFCydFRtIPRfxbo/o6ccW2wnYBML9
-	 F0NZond9aRczQtzs2iKYknjEaoOxEMeA4fMPl6CPl/5YsIbJPz0kNuknftuDQObJm0
-	 /s9i3PW04taTy6e3rjXlCGE7yCduOvFlZsrrfSgM=
-Date: Thu, 26 Sep 2024 13:47:12 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: syzbot <syzbot+645f216781b26a92a732@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- pasha.tatashin@soleen.com, syzkaller-bugs@googlegroups.com, Peter Xu
- <peterx@redhat.com>
-Subject: Re: [syzbot] [mm?] kernel BUG in page_table_check_clear (2)
-Message-Id: <20240926134712.e99b7e7068ecc45f7cd00f16@linux-foundation.org>
-In-Reply-To: <66f4f173.050a0220.211276.003c.GAE@google.com>
-References: <66f4f173.050a0220.211276.003c.GAE@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727383943; c=relaxed/simple;
+	bh=CFVZk9PbcIyWENme2tejWi5yO0fGTir0Yb3Q4V+tEl8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=TcK7GfziYeWFNizsCzFEHDtR4Doxgt4X5GOyjUpLYT95kWuB0LKaypcRK0M7BTFSjblpOf9svW5Y+CwjJzqOyVObMG1UKkIGs6bgJRt19aiJU2izjlIDzBJ4v1upXaU532e2XRwoR/cFaINbao+L9IeKyzTKCGHFtmBzGElGTtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=dB8fSNHs; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 2DCDF2C0613;
+	Fri, 27 Sep 2024 08:52:18 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1727383938;
+	bh=CFVZk9PbcIyWENme2tejWi5yO0fGTir0Yb3Q4V+tEl8=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=dB8fSNHsGNb+VZ9rNVaxvr0I1zSspQHOh0syuCj2JCdStvr8ibBZ69M/WWImv6qMo
+	 CDbhJwIXJ0rOQKu5ONu0MMcDH57xVYhgdDr4J8ptY1+8wSKPTBYgt0PImVO5QJJqLW
+	 FTvd5tMHdGGsSsFBJDrRAAKsmd80YcTxcWVGFjTNS+Rt+0/YuY0e8fuNWlyp3Tg1/Y
+	 GaO/kJFKxPbejZ1qtKhXW9YU3S9U6KYSinI3O063CnuC6RA4GZgU+whs2OVoc0FW3N
+	 K/EEmc1XDgtOy+QFbMBdMgMREaFqC49oCzNtFOGPFZYYLKk7gw/5SYj0vuN6FcI8Uy
+	 sHgum9XUx8hig==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B66f5c9820000>; Fri, 27 Sep 2024 08:52:18 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Fri, 27 Sep 2024 08:52:17 +1200
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with Microsoft
+ SMTP Server (TLS) id 15.0.1497.48; Fri, 27 Sep 2024 08:52:17 +1200
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.011; Fri, 27 Sep 2024 08:52:17 +1200
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: "andi.shyti@kernel.org" <andi.shyti@kernel.org>, "robh@kernel.org"
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "lee@kernel.org"
+	<lee@kernel.org>, "sre@kernel.org" <sre@kernel.org>,
+	"tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH v5 5/6] mips: dts: realtek: Add I2C controllers
+Thread-Topic: [PATCH v5 5/6] mips: dts: realtek: Add I2C controllers
+Thread-Index: AQHbD5ZF+7xT76Qpf0aJJZ+4/y1OGbJo1NYAgADuxIA=
+Date: Thu, 26 Sep 2024 20:52:17 +0000
+Message-ID: <3d39d12b-a206-46e2-b3fa-001914a68165@alliedtelesis.co.nz>
+References: <20240925215847.3594898-1-chris.packham@alliedtelesis.co.nz>
+ <20240925215847.3594898-6-chris.packham@alliedtelesis.co.nz>
+ <euqypyub7f3bd7wa7w6axdt6mrvmbvckptvrum2rou3ni6sqdf@ouwm7zjuarni>
+In-Reply-To: <euqypyub7f3bd7wa7w6axdt6mrvmbvckptvrum2rou3ni6sqdf@ouwm7zjuarni>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A45B31A9E944204B81CA8C4EDEE1563F@atlnz.lc>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=66f5c982 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=KKAkSRfTAAAA:8 a=wTsGNWAvS5ChLd09A-EA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=p9w29zTGHJRujDE_EBod:22 a=cvBusfyB2V15izCimMoJ:22
+X-SEG-SpamProfiler-Score: 0
 
-On Wed, 25 Sep 2024 22:30:27 -0700 syzbot <syzbot+645f216781b26a92a732@syzkaller.appspotmail.com> wrote:
-
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    1ec6d097897a Merge tag 's390-6.12-1' of git://git.kernel.o..
-
-Thanks.
-
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=173cdca9980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=6265dd30e362bb47
-> dashboard link: https://syzkaller.appspot.com/bug?extid=645f216781b26a92a732
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12fcb080580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b76c27980000
-
-Seems to be memfd-related.
-
-Will the bot be performing a bisection search?
-
->
-> ...
->
+DQpPbiAyNi8wOS8yNCAxODozNywgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4gT24gVGh1
+LCBTZXAgMjYsIDIwMjQgYXQgMDk6NTg6NDZBTSArMTIwMCwgQ2hyaXMgUGFja2hhbSB3cm90ZToN
+Cj4+IEFkZCB0aGUgSTJDIGNvbnRyb2xsZXJzIHRoYXQgYXJlIHBhcnQgb2YgdGhlIFJUTDkzMDAg
+U29DLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IENocmlzIFBhY2toYW0gPGNocmlzLnBhY2toYW1A
+YWxsaWVkdGVsZXNpcy5jby5uej4NCj4+IC0tLQ0KPj4NCj4+IE5vdGVzOg0KPj4gICAgICBDaGFu
+Z2VzIGluIHY1Og0KPj4gICAgICAtIFVwZGF0ZSBjb21wYXRpYmxlcw0KPj4gICAgICBDaGFuZ2Vz
+IGluIHY0Og0KPj4gICAgICAtIFNraXBwZWQgZHVlIHRvIGNvbWJpbmluZyBwYXRjaCBzZXJpZXMN
+Cj4+ICAgICAgQ2hhbmdlcyBpbiB2MzoNCj4+ICAgICAgLSBOb25lDQo+PiAgICAgIENoYW5nZXMg
+aW4gdjI6DQo+PiAgICAgIC0gVXNlIHJlZyBwcm9wZXJ0eQ0KPj4NCj4+ICAgYXJjaC9taXBzL2Jv
+b3QvZHRzL3JlYWx0ZWsvcnRsOTMwMmMuZHRzaSB8ICA4ICsrKysrKysrDQo+PiAgIGFyY2gvbWlw
+cy9ib290L2R0cy9yZWFsdGVrL3J0bDkzMHguZHRzaSAgfCAxNiArKysrKysrKysrKysrKysrDQo+
+PiAgIDIgZmlsZXMgY2hhbmdlZCwgMjQgaW5zZXJ0aW9ucygrKQ0KPj4NCj4+IGRpZmYgLS1naXQg
+YS9hcmNoL21pcHMvYm9vdC9kdHMvcmVhbHRlay9ydGw5MzAyYy5kdHNpIGIvYXJjaC9taXBzL2Jv
+b3QvZHRzL3JlYWx0ZWsvcnRsOTMwMmMuZHRzaQ0KPj4gaW5kZXggODBkOWY0MDdlNzU4Li41NmMz
+NWU4YjhiNjIgMTAwNjQ0DQo+PiAtLS0gYS9hcmNoL21pcHMvYm9vdC9kdHMvcmVhbHRlay9ydGw5
+MzAyYy5kdHNpDQo+PiArKysgYi9hcmNoL21pcHMvYm9vdC9kdHMvcmVhbHRlay9ydGw5MzAyYy5k
+dHNpDQo+PiBAQCAtNSwzICs1LDExIEBADQo+PiAgICZzd2l0Y2gwIHsNCj4+ICAgCWNvbXBhdGli
+bGUgPSAicmVhbHRlayxydGw5MzAyYy1zd2l0Y2giLCAicmVhbHRlayxydGw5MzAwLXN3aXRjaCIs
+ICJzeXNjb24iLCAic2ltcGxlLW1mZCI7DQo+PiAgIH07DQo+PiArDQo+PiArJmkyYzAgew0KPj4g
+Kwljb21wYXRpYmxlID0gInJlYWx0ZWsscnRsOTMwMmMtaTJjIiwgInJlYWx0ZWsscnRsOTMwMC1p
+MmMiOw0KPj4gK307DQo+PiArDQo+PiArJmkyYzEgew0KPj4gKwljb21wYXRpYmxlID0gInJlYWx0
+ZWsscnRsOTMwMmMtaTJjIiwgInJlYWx0ZWsscnRsOTMwMC1pMmMiOw0KPj4gK307DQo+PiBkaWZm
+IC0tZ2l0IGEvYXJjaC9taXBzL2Jvb3QvZHRzL3JlYWx0ZWsvcnRsOTMweC5kdHNpIGIvYXJjaC9t
+aXBzL2Jvb3QvZHRzL3JlYWx0ZWsvcnRsOTMweC5kdHNpDQo+PiBpbmRleCA4OWI4ODU0NTk2Y2Qu
+LjJmYjg0NjFhZjU3NSAxMDA2NDQNCj4+IC0tLSBhL2FyY2gvbWlwcy9ib290L2R0cy9yZWFsdGVr
+L3J0bDkzMHguZHRzaQ0KPj4gKysrIGIvYXJjaC9taXBzL2Jvb3QvZHRzL3JlYWx0ZWsvcnRsOTMw
+eC5kdHNpDQo+PiBAQCAtNDEsNiArNDEsMjIgQEAgcmVib290QGMgew0KPj4gICAJCQlyZWcgPSA8
+MHgwYyAweDQ+Ow0KPj4gICAJCQl2YWx1ZSA9IDwweDAxPjsNCj4+ICAgCQl9Ow0KPj4gKw0KPj4g
+KwkJaTJjMDogaTJjQDM2YyB7DQo+PiArCQkJY29tcGF0aWJsZSA9ICJyZWFsdGVrLHJ0bDkzMDAt
+aTJjIjsNCj4+ICsJCQlyZWcgPSA8MHgzNmMgMHgxND47DQo+PiArCQkJc3RhdHVzID0gImRpc2Fi
+bGVkIjsNCj4gVXN1YWwgY29udmVudGlvbiBpcyB0byBoYXZlIHN0YXR1cyB0aGUgbGFzdC4gTWF5
+YmUgTUlQUyBoYXMgZGlmZmVyZW50LA0KPiBzbyBrZWVwIHdoYXRldmVyIGlzIGNvbnNpc3RlbnQg
+aW4geW91ciBjYXNlLg0KDQpJJ2xsIHNlbmQgb3V0IGEgZml4dXAgcGF0Y2ggdGhhdCBjYW4gYmUg
+Zm9sZGVkIGludG8gdGhpcy4gSG9wZWZ1bGx5IA0KVGhvbWFzIGNhbiBjb21iaW5lIHRoZW0gYXQg
+aGlzIGVuZCAob3IgaWYgdGhlcmUgaXMgYSBuZWVkIGZvciBhIHY2IEkgY2FuKS4NCg0KSSdsbCBw
+cm9iYWJseSBoYXZlIG90aGVyIHNlcmllcyB0b3VjaGluZyB0aGlzIGZpbGUgc28gaWYgdGhlIGZp
+eHVwIA0KZG9lc24ndCBtYWtlIGl0IG5vdyBJIGNhbiBpbmNsdWRlIGl0IGluIGEgZnV0dXJlIHNl
+cmllcy4NCg0KPg0KPiBBbnl3YXk6DQo+DQo+IFJldmlld2VkLWJ5OiBLcnp5c3p0b2YgS296bG93
+c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+DQo+DQo+IEJlc3QgcmVnYXJkcywN
+Cj4gS3J6eXN6dG9mDQo+
 
