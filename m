@@ -1,134 +1,131 @@
-Return-Path: <linux-kernel+bounces-340472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA6C9873D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:50:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5113F9873D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 947BA1C22846
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:50:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A31280C33
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B811BC4E;
-	Thu, 26 Sep 2024 12:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4A11C6B2;
+	Thu, 26 Sep 2024 12:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIduKR7e"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Y2rUqbGJ"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3B7288DB;
-	Thu, 26 Sep 2024 12:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55BEA93D
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727355001; cv=none; b=sYKW1s/OSy7Ky0ooQLfcu+CSIH1aqCeBuvhAzDlwd5jtRHMm2EHh/HbYPDsOAvPLIRlojFnBoNen8Op0I/2XBJsRrFOdIjMI1WhucpmyMDdRXl0e0yFhQbTGgCv0Cma9xLoo9WLamjaR0S101gwowcAgBj74Yh+oltymhFYFbeo=
+	t=1727354986; cv=none; b=Q5Nir9ZElVgsua+EUOVoqltL6nQcLGW4klhrZxY46nC4S0/qdHYRdwcJSsA89m104JJP7XUUNmXprVjU4y4/Covj0S3lcb0GBrrVz1u/XbF+ZWqKjZGPXIYr4POSrBWQJ5LnjRNRnxanVzMpChZG5ghGl3QBeo9bolcDjKE9L/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727355001; c=relaxed/simple;
-	bh=EZw4fBaLr5FMYfV0028IiojpFf2Ur4LZl3P/nAyp5dE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s1dos5DURKx43np8rjxZIFxzzi0z8MHyEgTrWbhIy3Z3SNk5NMnHD4ClB73U1SkUJ3blSyk/GnkaVl2S8vB1wf1KxfZ3gxvZIpW1c558oDc22rDPCj80npzMmi4THpcgMI3XGo1MSs13jlZzpgokrAP/Nj4Jvtq1JV9AR9dQcfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIduKR7e; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f75c6ed397so9791171fa.2;
-        Thu, 26 Sep 2024 05:49:59 -0700 (PDT)
+	s=arc-20240116; t=1727354986; c=relaxed/simple;
+	bh=PcAQFQWF3yzOYCy67M0riQ3CDorxWvR8/K5Mqap2swo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EtslcOofP3rSOzs9oVRx6IS3vO7TleLMU5LuGs69tZfs3KtaDbXjixGqveEspA8MXzkIEIr7fUElAvZw3qv9D4QZIx5eP5v0Yq73NHKSHRzIVjGXayUPwPj8gUpCmmg18Wo+KFAF1bL5bTBo4WaS0BNPEbwCx304WBxoel2fJhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Y2rUqbGJ; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d43657255so141078766b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:49:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727354998; x=1727959798; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rnmdj6n8vjWULrb6hV13qc7mZVBYRPme0bXE0ktZ3qU=;
-        b=XIduKR7e+JpUqv7IifgsxMpTvDTWm/7wxH+Ob1IY8JTvaC0xEMzz+sLCsZZBjGE2cL
-         MdFI+lXhBrrXbgV3iQcjMpWtAZaIdSre7aWCrXtuOwG0+TTnN8M1Y/vSByy5uc1LDWme
-         YA/3WLxEE5JNMx4EcaCkJbgWMyGrkAr3bjUdMQA4djTvMzlBnbD738wXnKwvKyhhyztU
-         CqsbqhjO+3JobYF9DTiBoHYZ76VjVR6aGdSp48OvLSgiFavQlxM8q26zzJvBjWL8Bg+y
-         q9kajL+0jHligh2tRIxOQzVN1xMYe480SCrV+y2+JpnjZ85dXPhSYOkur+NAW4IHMQrs
-         JMuQ==
+        d=suse.com; s=google; t=1727354983; x=1727959783; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MjJsOvgildp9H/xsUULy2gDxt7xA3HkFuJwBFtYzD/o=;
+        b=Y2rUqbGJ9qUCknmaN6j9ClDZN+q4Edfm819Rzm5JVvata0NDa8rBR4hHV6mry6+ND2
+         93JLjme4Y65aL84cV7kvoBQIhp+eD0RqpH9k7rMFOa3xWXqFXmOIJ+llDjAMs/aC2+YS
+         7Z6FU7Z8e2PU2VMUUeVeE/0psEQkRj4s2M19Lg4MP5ELwWbVBCellgUUX0h4tQxwXAQu
+         g2V5u/Yf9sBY665WuJ8L6EuDEkoW5DxWL7rhPH0TPT/0pEvfofTVORvDpmxXVdJVcX13
+         NeITXlHwkKLNtWQZm/jTK59RC3QDz/Kw+ghklxj3TiydkYcSdrm6PN1QGg/hNlIyVRvg
+         Ymvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727354998; x=1727959798;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rnmdj6n8vjWULrb6hV13qc7mZVBYRPme0bXE0ktZ3qU=;
-        b=BFvHskamgmcIDXkKj1Qo2KfBuLGhm5rJWTY69EXCwgnVLZvq2gyhbxRpdXwj2SjpDL
-         juvIEfJkuxDs9a87X+zLtFmSivrVfLMpvpxXdLbp06oRrTuI01jHEpuV8/FAChsl8o9D
-         Vwj/Zk0blCog4qHfF21exSgnqw3laGnTJ+fWIus4xVay1tJ2X9Yl3t4p9E+EzO3XuBoG
-         L/co2qGkejV9MDvPmhsE7ddV9S5YtfCwjszlm3c1UBn0uJhYtn6ybHqA7U5XgI+vPkyL
-         mmLZCDfJcTeqP/n33GKQLXZNfILYdCEHF9wiFakovRprj6DarIo4rYWYgwfDHixEwqnv
-         a68A==
-X-Forwarded-Encrypted: i=1; AJvYcCUzazU4B1TNp42oY53mWyVL7GSOOhhzeTqP5fVQurCwJLB+jFycfKk9wgNpAr4UVOguICcM/AeN8VgqOJM=@vger.kernel.org, AJvYcCXEtm7u1F3v8HczRkY9+XV+B+n+W0V4sefMWx3jZBV9Xx4wMFP9MDRLY+h+5rYpAvrWHgcpKlG+qBdWmw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YznjMt3tQDQC/5edZmUclgsubLo9bf9TnnO+XL2gqyo74oghun0
-	vOFE2xgxLVuiiFAyyam+POkPAzPMGbpBMu1xPkAD0dPUaOmqyN0dGUrVAmzYO4BpX6TO09WI8Mi
-	rMYDIYBFv6H2Qaj8r+oTHwb9FT8QZDDC8
-X-Google-Smtp-Source: AGHT+IELOa1KW5SBW8THpjjm/S+T+xeog5VQLkErikETsJOSn2t0DI32m79zXjYYlEWwYqzQn6ArZtmLnAJ+TF+h5EM=
-X-Received: by 2002:a2e:a995:0:b0:2f3:ecdd:2b8d with SMTP id
- 38308e7fff4ca-2f915fdd4f6mr42461641fa.16.1727354997413; Thu, 26 Sep 2024
- 05:49:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727354983; x=1727959783;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MjJsOvgildp9H/xsUULy2gDxt7xA3HkFuJwBFtYzD/o=;
+        b=R/xJv3hl8lxll8e7LuVQmtGS/KiAyVnJR30qfaAYov+2veCeCQ+Ho7n7aZTsjdkW6e
+         KCt7zythmk4hPekw7g9FriOsBBgELFLOcWy8BfEPKg8FnvXiDXOY+7QGa/Nz8MnPxHtx
+         Z8Jdm7DfV7s8ag/9w0W66YtH9t4WtgmZxc9r9eYkdNuaOV9dWq2Fhqv+lFFFQnnSilkb
+         jstJjN628Br2m+0ikgQNw86Nx2eF92o9P0eYH/YJ5JycUKp8UsoqMd2l3UhFR94dostX
+         6DaHCNtnmVvOX30UyyXxpigPUip8GZJV/FLf1dqKX7q+K/NcOXrIUX4qrGVjahTfRkxI
+         VjPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQARiOtmzqV9JW12E198a8KsmQ7coxgE3KH4OiMSnhiV62mD++IXfcwfI8IdePEiJgdnJhnycWbwDQz7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjYJZAWXyIv5ygh3XJr/4ihSSwjr5jHNsXmNqbXtGEFP3X2yRy
+	09GVkW1agn+sUketzKlIdrsqx2Xk4sTr8S+rur2SYfr5+/RMT05ihElnr55tABA=
+X-Google-Smtp-Source: AGHT+IG5oXINx2+BHWwqkm9/6dgecwNYSEzGznLHq9dYTb8oZDl/WOd28v49JduwM7ansKFgf/vIqw==
+X-Received: by 2002:a17:907:31c8:b0:a7a:9144:e23a with SMTP id a640c23a62f3a-a93a063338bmr572804466b.43.1727354982994;
+        Thu, 26 Sep 2024 05:49:42 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93a1a8c71csm232348666b.87.2024.09.26.05.49.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 05:49:42 -0700 (PDT)
+Date: Thu, 26 Sep 2024 14:49:41 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
+	longman@redhat.com, chenridong@huawei.com, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/3] workqueue: doc: Add a note saturating the
+ system_wq is not permitted
+Message-ID: <ipabgusdd5zhnp5724ycc5t4vbraeblhh3ascyzmbkrxvwpqec@pdy3wk5hokru>
+References: <20240923114352.4001560-1-chenridong@huaweicloud.com>
+ <20240923114352.4001560-3-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926100434.45d58861@canb.auug.org.au> <CAH5fLgjRVZA3Gmb7Ogs+Y65T38EpNVeVEqmg93ZB4dn0Y7J3aA@mail.gmail.com>
- <20240926181348.3965b040@canb.auug.org.au> <CANiq72kFH125Pk6K-JaswWDFmcvtP2GKx2-3ZAULF4PmpW7M-w@mail.gmail.com>
-In-Reply-To: <CANiq72kFH125Pk6K-JaswWDFmcvtP2GKx2-3ZAULF4PmpW7M-w@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Thu, 26 Sep 2024 14:49:21 +0200
-Message-ID: <CA+icZUUWBiZj67VxO=LPS5_Bt+i_g6s-HFT9Ts4UmmuPNk2kbA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of Linus' tree
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Alice Ryhl <aliceryhl@google.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Matthew Maurer <mmaurer@google.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Gatlin Newhouse <gatlin.newhouse@gmail.com>, 
-	Kees Cook <kees@kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Marco Elver <elver@google.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3iq4bhwwm5dfsvhf"
+Content-Disposition: inline
+In-Reply-To: <20240923114352.4001560-3-chenridong@huaweicloud.com>
 
-On Thu, Sep 26, 2024 at 10:24=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Thu, Sep 26, 2024 at 10:13=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.=
-org.au> wrote:
-> >
-> > Thanks.  I will replace the reverts in my fixes tree with that until it
-> > is applied to Linus' tree.
->
-> Thanks! I will apply it to rust-fixes now, so in principle you will
-> get it through that branch for tomorrow, in case it helps.
->
-> Cheers,
-> Miguel
->
 
-Do you offer a (an optimized - optimized for kernel-builds) prebuilt
-RUST toolchain - preferable for x86-64 hosts - like Nathan +
-LLVM/Clang folk offer (see [1],[2])?
-Maybe I have missed in [3] or overlooked.
+--3iq4bhwwm5dfsvhf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-INFO: I use LLVM/Clang-19 from [2] for my latest Linux v6.11 builds.
-It's faster (20-25% in build-time) than distro LLVM toolchain (here:
-Debian/unstable AMD64).
+On Mon, Sep 23, 2024 at 11:43:51AM GMT, Chen Ridong <chenridong@huaweicloud.com> wrote:
+> +  Note: If something is expected to generate a large number of concurrent
+> +  works, it should utilize its own dedicated workqueue rather than
+> +  system wq. Because this may saturate system_wq and potentially lead
+> +  to deadlock.
 
-[ Provocative ]
-Can I REALLY use a RUST-compiled Linux-kernel on BARE METAL?
-Do I need special hardware?
-Do you have a working in sense of bootable linux-config file?
-^^ This is a real question - not interested in any "technical preview".
-^^ You do NOT need to answer all this!
-[ /Provocative ]
+How does "large number of concurrent" translate practically?
 
-Thanks.
+The example with released cgroup_bpf from
+  cgroup_destroy_locked
+    cgroup_bpf_offline
+which is serialized under cgroup_mutex as argued previously. So this
+generates a single entry at a time and it wouldn't hint towards the
+creation of cgroup_bpf_destroy_wq.
 
-BR,
--Sedat-
+I reckon the argument could be something like the processing rate vs
+production rate of entry items should be such that number of active
+items is bound. But I'm not sure it's practical since users may not know
+the comparison result and they would end up always creating a dedicated
+workqueue.
 
-[1] https://mirrors.edge.kernel.org/pub/tools/llvm/
-[2] https://mirrors.edge.kernel.org/pub/tools/llvm/files/
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/rust/
+
+Michal
+
+--3iq4bhwwm5dfsvhf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZvVYYwAKCRAt3Wney77B
+ST+MAP0fDxXvbUEc5ey/TpWnTsLmyHSf/YiXugOiki+455jukQEAmF+vWJTMxP4R
+1GYHr3HW1PTyXSE4IM+96+DNdw9C3w0=
+=qxwb
+-----END PGP SIGNATURE-----
+
+--3iq4bhwwm5dfsvhf--
 
