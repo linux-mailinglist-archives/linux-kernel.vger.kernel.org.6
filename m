@@ -1,136 +1,166 @@
-Return-Path: <linux-kernel+bounces-340658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FA9987658
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:18:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E908398765B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29B5B1C22AB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:18:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91EDB1F291D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F0414B959;
-	Thu, 26 Sep 2024 15:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghv63Q3a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA87155756;
+	Thu, 26 Sep 2024 15:18:09 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18B24F21D;
-	Thu, 26 Sep 2024 15:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C6A4F21D;
+	Thu, 26 Sep 2024 15:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727363881; cv=none; b=rSv1gmKv4bSg+OtR0IUWVBWBkt5LC+PFaw/1+cDOXp0H3T92okG9d8pf5DAScGN2Navg7DCxKNJydy3JINboYaIieTSVA85kvRchw2G1MoriA61hiGRTa/76gcCqtGWJG6imQ00z4SDIOh8nmgVf0hifBSCOAUnrC1Iq4MQcw8M=
+	t=1727363889; cv=none; b=LK059DGJ6nCtK9Pp7wPHhtDfsre7oN2ELlWLMOrlZzZUFXFeu6dB0tkBNNnRvi8hsdO4xR+05nnyJSpZ4kSH49VhBLt9l7oN/ZIn4L68j3YpYZvdfbFjc/wQn8caapaj30NC8P7jS5wY+28Mzj3Mb2I/LbQSjFGYwKz+eVMpqG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727363881; c=relaxed/simple;
-	bh=35anoPTx9RLAi1Mfm1XxL/WF5AXSs+T4/mD5yvvmXBo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pBT757EhHNz9C3tffdIvMqxYxUNN9B7Q5q3NeENyFDbcOORB36JNZaInpi2yNgNjc0QiJw9KeDyqQb9KMSaid+nGO/nWZgk6ZJywBwdP4mxQkXU2lHz79aRx4so6BelG4rxOzPDw/EFSmWhnyYgFDuN2RxNUra+ptC8nw1ztGOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghv63Q3a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3D1BC4CEC5;
-	Thu, 26 Sep 2024 15:17:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727363880;
-	bh=35anoPTx9RLAi1Mfm1XxL/WF5AXSs+T4/mD5yvvmXBo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ghv63Q3a6acCVgUWmgSDrmaEgWcc45PuPOHbIhIZvMSb0GM+zZxH+levuBD4SRFwR
-	 gfjVrj6p34ffQ2/Jef7PlN6zfu2TsLprgibXbl1RWjFQ+lj9yUernBuGUeAKlAqtBI
-	 qZRwb4RK+ibFCOm3OYjPuFWQWyCJvnOD8FIQZorC/WZO3DdMhyPf+eoln8kx/ObjtH
-	 4pB79OdAdOF5bSSjo+q3avxaW1WSwJwx/TE1xR7Awti4yM3oxlOtf4s3hZNa4aRHB1
-	 mCyxY+tEQCz7UHRgrUu8i+u0fBtXz77M+wOcgv2fY1Oi6JDS/wR6RoCJ2/MyfqSNVz
-	 ihuqiHIwduinw==
-Message-ID: <efca6c13-e1d4-4148-8c41-4983b8fca032@kernel.org>
-Date: Thu, 26 Sep 2024 10:17:58 -0500
+	s=arc-20240116; t=1727363889; c=relaxed/simple;
+	bh=TCL06OTau/rgWgOh2hhmMvRSYfdo/Vj+wi/zZJ/ezeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ki0+JXgWJvSJ+4uEC/ivm2ICcLIgEP1jb6yyWGjP5RVt0/Ep2U6/IzgJJFtACauoBsIc0hGHvvypQxQLvBXtC0K2/30K6oVCjjCQVrHi1NsrBAb1MtdKBhPbPVrxOC3j5wttUxo4WbW+leel3f88qUsRJVITdxIIe/MR1X/9oa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=57678 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1stqFl-001gm6-C9; Thu, 26 Sep 2024 17:18:03 +0200
+Date: Thu, 26 Sep 2024 17:18:00 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, rbc@meta.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org
+Subject: Re: [PATCH nf-next v5 0/2] netfilter: Make IP_NF_IPTABLES_LEGACY
+ selectable
+Message-ID: <ZvV7KFHXx3V30HEH@calendula>
+References: <20240909084620.3155679-1-leitao@debian.org>
+ <Zuq12avxPonafdvv@calendula>
+ <Zuq3ns-Ai05Hcooj@calendula>
+ <ZvVBawvMot9nu2jE@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/9] platform/x86: asus-armoury: add panel_hd_mode
- attribute
-To: "Luke D. Jones" <luke@ljones.dev>, linux-kernel@vger.kernel.org
-Cc: linux-input@vger.kernel.org, bentiss@kernel.org, jikos@kernel.org,
- platform-driver-x86@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
- hdegoede@redhat.com, corentin.chary@gmail.com
-References: <20240926092952.1284435-1-luke@ljones.dev>
- <20240926092952.1284435-5-luke@ljones.dev>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20240926092952.1284435-5-luke@ljones.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZvVBawvMot9nu2jE@gmail.com>
+X-Spam-Score: -1.9 (-)
 
-On 9/26/2024 04:29, Luke D. Jones wrote:
-> Add panel_hd_mode to toggle the panel mode between single and high
-> definition modes.
+On Thu, Sep 26, 2024 at 04:11:39AM -0700, Breno Leitao wrote:
+> Hello Pablo,
 > 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
-
-This patch looks good to me.
-
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-
----
-
-But that being said; mostly to satisfy my curiosity could you share more 
-about what this actually does?
-
-Does it change the EDID exposed in the BIOS in ACPI _DDC?  At least for 
-AMD platforms that would mean it only works with this patch (which is on 
-it's way):
-
-https://lore.kernel.org/amd-gfx/20240918213845.158293-11-mario.limonciello@amd.com/
-
-> ---
->   drivers/platform/x86/asus-armoury.c        | 6 +++++-
->   include/linux/platform_data/x86/asus-wmi.h | 1 +
->   2 files changed, 6 insertions(+), 1 deletion(-)
+> On Wed, Sep 18, 2024 at 01:21:02PM +0200, Pablo Neira Ayuso wrote:
+> > Single patch to update them all should be fine.
 > 
-> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
-> index 39e422b16b8e..15eab4d45b81 100644
-> --- a/drivers/platform/x86/asus-armoury.c
-> +++ b/drivers/platform/x86/asus-armoury.c
-> @@ -106,7 +106,8 @@ static struct kobj_attribute pending_reboot = __ATTR_RO(pending_reboot);
->   
->   static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
->   {
-> -	return !strcmp(attr->attr.name, "gpu_mux_mode");
-> +	return !strcmp(attr->attr.name, "gpu_mux_mode") ||
-> +	       !strcmp(attr->attr.name, "panel_hd_mode");
->   }
->   
->   /**
-> @@ -429,6 +430,8 @@ ATTR_GROUP_BOOL_RW(mcu_powersave, "mcu_powersave", ASUS_WMI_DEVID_MCU_POWERSAVE,
->   		   "Set MCU powersaving mode");
->   ATTR_GROUP_BOOL_RW(panel_od, "panel_overdrive", ASUS_WMI_DEVID_PANEL_OD,
->   		   "Set the panel refresh overdrive");
-> +ATTR_GROUP_BOOL_RW(panel_hd_mode, "panel_hd_mode", ASUS_WMI_DEVID_PANEL_HD,
-> +		   "Set the panel HD mode to UHD<0> or FHD<1>");
->   ATTR_GROUP_BOOL_RO(egpu_connected, "egpu_connected", ASUS_WMI_DEVID_EGPU_CONNECTED,
->   		   "Show the eGPU connection status");
->   
-> @@ -442,6 +445,7 @@ static const struct asus_attr_group armoury_attr_groups[] = {
->   	{ &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
->   	{ &mcu_powersave_attr_group, ASUS_WMI_DEVID_MCU_POWERSAVE },
->   	{ &panel_od_attr_group, ASUS_WMI_DEVID_PANEL_OD },
-> +	{ &panel_hd_mode_attr_group, ASUS_WMI_DEVID_PANEL_HD },
->   };
->   
->   static int asus_fw_attr_add(void)
-> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-> index 6ea4dedfb85e..7caf2c7ed8c9 100644
-> --- a/include/linux/platform_data/x86/asus-wmi.h
-> +++ b/include/linux/platform_data/x86/asus-wmi.h
-> @@ -73,6 +73,7 @@
->   #define ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY_VIVO 0x00110019
->   
->   /* Misc */
-> +#define ASUS_WMI_DEVID_PANEL_HD		0x0005001C
->   #define ASUS_WMI_DEVID_PANEL_OD		0x00050019
->   #define ASUS_WMI_DEVID_CAMERA		0x00060013
->   #define ASUS_WMI_DEVID_LID_FLIP		0x00060062
+> I am planning to send the following patch, please let me know if you
+> have any concern before I send it:
+> 
+> Author: Breno Leitao <leitao@debian.org>
+> Date:   Thu Aug 29 02:51:02 2024 -0700
+> 
+>     netfilter: Make legacy configs user selectable
+>     
+>     This option makes legacy Netfilter Kconfig user selectable, giving users
+>     the option to configure iptables without enabling any other config.
 
+LGTM, a few cosmetic nitpicks below.
+
+>     Make the following KConfig entries user selectable:
+>      * BRIDGE_NF_EBTABLES_LEGACY
+>      * IP_NF_ARPTABLES
+>      * IP_NF_IPTABLES_LEGACY
+>      * IP6_NF_IPTABLES_LEGACY
+>     
+>     Signed-off-by: Breno Leitao <leitao@debian.org>
+> 
+> diff --git a/net/bridge/netfilter/Kconfig b/net/bridge/netfilter/Kconfig
+> index 104c0125e32e..b7bdb094f708 100644
+> --- a/net/bridge/netfilter/Kconfig
+> +++ b/net/bridge/netfilter/Kconfig
+> @@ -41,7 +41,13 @@ config NF_CONNTRACK_BRIDGE
+>  
+>  # old sockopt interface and eval loop
+>  config BRIDGE_NF_EBTABLES_LEGACY
+> -	tristate
+> +	tristate "Legacy EBTABLES support"
+> +	depends on BRIDGE && NETFILTER_XTABLES
+> +	default n
+> +	help
+> +	 Legacy ebtable packet/frame classifier.
+                ^^^^^^^
+                ebtables
+
+> +	 This is not needed if you are using ebtables over nftables
+> +	 (iptables-nft).
+>  
+>  menuconfig BRIDGE_NF_EBTABLES
+>  	tristate "Ethernet Bridge tables (ebtables) support"
+> diff --git a/net/ipv4/netfilter/Kconfig b/net/ipv4/netfilter/Kconfig
+> index 1b991b889506..2c4d42b5bed1 100644
+> --- a/net/ipv4/netfilter/Kconfig
+> +++ b/net/ipv4/netfilter/Kconfig
+> @@ -12,7 +12,13 @@ config NF_DEFRAG_IPV4
+>  
+>  # old sockopt interface and eval loop
+>  config IP_NF_IPTABLES_LEGACY
+> -	tristate
+> +	tristate "Legacy IP tables support"
+> +	default	n
+> +	select NETFILTER_XTABLES
+> +	help
+> +	  iptables is a legacy packet classifier.
+> +	  This is not needed if you are using iptables over nftables
+> +	  (iptables-nft).
+>  
+>  config NF_SOCKET_IPV4
+>  	tristate "IPv4 socket lookup support"
+> @@ -318,7 +324,13 @@ endif # IP_NF_IPTABLES
+>  
+>  # ARP tables
+>  config IP_NF_ARPTABLES
+> -	tristate
+> +	tristate "Legacy ARPTABLE support"
+                         ^^^^^^^^
+                         ARPTABLES
+
+> +	depends on NETFILTER_XTABLES
+> +	default n
+> +	help
+> +	  arptables is a legacy packet classifier.
+> +	  This is not needed if you are using arptables over nftables
+> +	  (iptables-nft).
+>  
+>  config NFT_COMPAT_ARP
+>  	tristate
+> diff --git a/net/ipv6/netfilter/Kconfig b/net/ipv6/netfilter/Kconfig
+> index f3c8e2d918e1..e087a8e97ba7 100644
+> --- a/net/ipv6/netfilter/Kconfig
+> +++ b/net/ipv6/netfilter/Kconfig
+> @@ -8,7 +8,14 @@ menu "IPv6: Netfilter Configuration"
+>  
+>  # old sockopt interface and eval loop
+>  config IP6_NF_IPTABLES_LEGACY
+> -	tristate
+> +	tristate "Legacy IP6 tables support"
+> +	depends on INET && IPV6
+> +	select NETFILTER_XTABLES
+> +	default n
+> +	help
+> +	  ip6tables is a legacy packet classifier.
+> +	  This is not needed if you are using iptables over nftables
+> +	  (iptables-nft).
+>  
+>  config NF_SOCKET_IPV6
+>  	tristate "IPv6 socket lookup support"
 
