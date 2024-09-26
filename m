@@ -1,119 +1,176 @@
-Return-Path: <linux-kernel+bounces-340020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3661A986D6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:23:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB3F8986D6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDAE21F23133
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:23:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE33EB22096
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBA418C03C;
-	Thu, 26 Sep 2024 07:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E76189F30;
+	Thu, 26 Sep 2024 07:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="naSGEHnf"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LK+9hoAF"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A37185B55
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC5B18DF89
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727335415; cv=none; b=ERU8I9QwjcekitAJDJxTSOkUMW5XnuanLD4XLBA30njMyOQyds9z0dYKk9MknPsznB7vHhl8ZknaKMe26B5vKlNce3lXgL3uklc9W/CjbzXVr79UAYS73JwZRTxMGjLgOrLUMW0ZUXafYR9D0JUtR6qUHqXXBJ07LRhh7Dxhq2A=
+	t=1727335421; cv=none; b=oGL5/2SPbYUzo+HCNrVruMLEi7tsz3eJELUldIh8P0HFBzXHPe6cIHkmUAGqtgvUojAljz7aj8ozIBKUhkhQuHSLapXMs+lpG87YXjKSuiADra5uEupf4KR0/I3Q8xMFE6fZxoMZuLzntRW/76bhMqnPyP9swz5R/1KqZcK7Zw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727335415; c=relaxed/simple;
-	bh=tYV2H5br9kWhzl96UUGjXTWhmlY2Pw4qsC37WMIpyJY=;
-	h=From:To:Cc:Subject:References:Date:Message-ID:MIME-Version:
-	 Content-Type; b=FyMz/HNfh5eleOL2+UiL2VyK6bsekcTNvJvWHbD4Ree6zu//w5roD0NWR964hUgV9rlC6Fs7bP0+nnObPLbsEG+Bvk9oxUyNVCfeGLLXx6wc3y8qLoEZHmdDelZwWFEQ62Ib/ilaXor7VpkQ6vXV/XCah6Q9x9o7oCelOzTP6+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=naSGEHnf; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 62BD742B29
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1727335412; bh=djX+5aMk6cq7Bv8YpnuHUZZBh5ZZwldaGICdubCGOsQ=;
-	h=From:To:Cc:Subject:References:Date:From;
-	b=naSGEHnf3vNT7gz4mncLIHkOI/n5CcmMT6ToDgWAjCVYUgAXVtxHoS3RZF4ZSnTks
-	 fgu03mkJgh7zuo+PZCbMC5cu+kpbuA/CuRDDOjhM+6Q0UTAcqRu7PRdhpKGmgOZ2GC
-	 9AcCouBkNSLEYLFnPKfNrZJGAB9lwjIyrIzga5qO1QUGXiNCgc60jN5478ViUOiwrT
-	 Sr1YVbT94iSkli3iIJhnXW1QLtswvoeiV+ev/I2mpqmC+Fmalnn+pi9m2Cw8/1JJuj
-	 IfWTnw9CdZ/28ImEa2etgGTktuoTqqoSrX8TCrnbO5FyiuTLU4Zwa11LpdB9AFlyiP
-	 qNlsJe/w4zdug==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 62BD742B29;
-	Thu, 26 Sep 2024 07:23:31 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- tech-board-discuss@lists.linuxfoundation.org
-Cc: tab-elections@lists.linux.dev
-Subject: Last reminder: TAB voting closes September 27
-References: <871q1enx0g.fsf@trenco.lwn.net>
-Date: Thu, 26 Sep 2024 01:23:28 -0600
-Message-ID: <874j62g9ov.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1727335421; c=relaxed/simple;
+	bh=2ioXvhnYQmBXk12dSBLdQoAJznJnVZ4GhTtw8CVkreA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HDHcFYLI+nmZTBXfBnFC5bcC2y58zDkYaflCpeLeiSKjD0me5H2fez6T4bz0y2rVA4/L7PDCqD/dNuKjhOXwWvzA7iz2qI35PP2vvroRFfR4wf+uSgLy0BJbyZ98qy1kiBvbwbXMU1ubDsRiwPPeOOrHCZAa+21Pjt9iLVBaFTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LK+9hoAF; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 26 Sep 2024 09:23:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727335417;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M74QGAwrZ1qMfz1BFpXYDpWU8+8YmkAu637hCGvBle4=;
+	b=LK+9hoAFd4m/K1ZOZML//fwnZLwPZLLrjFSfwYCU+EZEhXJI4akJZyd4He3SFuzAQg0SaF
+	/v1oPBieCSTaZ8r4j5KphkM7JlW+/taETVooh0+ECPFnS0yD31NemiDIZe1Gw3RNK43m2V
+	rtdc7pn3k/BCUybEnYN+v4aDw8M/RWo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Shaoqin Huang <shahuang@redhat.com>
+Cc: Marc Zyngier <maz@kernel.org>, kvmarm@lists.linux.dev,
+	Eric Auger <eauger@redhat.com>, Sebastian Ott <sebott@redhat.com>,
+	Cornelia Huck <cohuck@redhat.com>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Fuad Tabba <tabba@google.com>,
+	Mark Brown <broonie@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+	Kristina Martsenko <kristina.martsenko@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 1/2] KVM: arm64: Use kvm_has_feat() to check if
+ FEAT_RAS is advertised to the guest
+Message-ID: <ZvUL9SrVo4hn3aR0@linux.dev>
+References: <20240926032244.3666579-1-shahuang@redhat.com>
+ <20240926032244.3666579-2-shahuang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926032244.3666579-2-shahuang@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-One last reminder that voting for members of the Linux Foundation
-Technical Advisory Board is open; it will end after September 27,
-anywhere on earth.  I'll post the results shortly thereafter, and then
-I'll stop spamming you all about this - honest.
+On Wed, Sep 25, 2024 at 11:22:39PM -0400, Shaoqin Huang wrote:
+> diff --git a/arch/arm64/kvm/handle_exit.c b/arch/arm64/kvm/handle_exit.c
+> index d7c2990e7c9e..99f256629ead 100644
+> --- a/arch/arm64/kvm/handle_exit.c
+> +++ b/arch/arm64/kvm/handle_exit.c
+> @@ -405,7 +405,7 @@ int handle_exit(struct kvm_vcpu *vcpu, int exception_index)
+>  void handle_exit_early(struct kvm_vcpu *vcpu, int exception_index)
+>  {
+>  	if (ARM_SERROR_PENDING(exception_index)) {
+> -		if (this_cpu_has_cap(ARM64_HAS_RAS_EXTN)) {
+> +		if (kvm_has_feat(vcpu->kvm, ID_AA64PFR0_EL1, RAS, IMP)) {
+>  			u64 disr = kvm_vcpu_get_disr(vcpu);
+>  
+>  			kvm_handle_guest_serror(vcpu, disr_to_esr(disr));
 
-If you have not yet voted, you still have a bit more time to get it
-done.
+This is wrong; this is about handling *physical* SErrors, not virtual
+ones.
 
+So it really ought to be keyed off of the host cpucap.
+
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
+> index 37ff87d782b6..bf176a3cc594 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/switch.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
+> @@ -272,7 +272,7 @@ static inline void ___activate_traps(struct kvm_vcpu *vcpu, u64 hcr)
+>  
+>  	write_sysreg(hcr, hcr_el2);
+>  
+> -	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN) && (hcr & HCR_VSE))
+> +	if (kvm_has_feat(vcpu->kvm, ID_AA64PFR0_EL1, RAS, IMP) && (hcr & HCR_VSE))
+>  		write_sysreg_s(vcpu->arch.vsesr_el2, SYS_VSESR_EL2);
+>  }
+
+I don't think this should be conditioned on guest visibility either. If
+FEAT_RAS is implemented in hardware, ESR_EL1 is set to the value of
+VSESR_EL2 when the vSError is taken, no matter what.
+
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> index 4c0fdabaf8ae..98526556d4e5 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> @@ -105,6 +105,8 @@ static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
+>  
+>  static inline void __sysreg_save_el2_return_state(struct kvm_cpu_context *ctxt)
+>  {
+> +	struct kvm_vcpu *vcpu = ctxt_to_vcpu(ctxt);
+> +
+>  	ctxt->regs.pc			= read_sysreg_el2(SYS_ELR);
+>  	/*
+>  	 * Guest PSTATE gets saved at guest fixup time in all
+> @@ -113,7 +115,7 @@ static inline void __sysreg_save_el2_return_state(struct kvm_cpu_context *ctxt)
+>  	if (!has_vhe() && ctxt->__hyp_running_vcpu)
+>  		ctxt->regs.pstate	= read_sysreg_el2(SYS_SPSR);
+>  
+> -	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
+> +	if (kvm_has_feat(vcpu->kvm, ID_AA64PFR0_EL1, RAS, IMP))
+>  		ctxt_sys_reg(ctxt, DISR_EL1) = read_sysreg_s(SYS_VDISR_EL2);
+>  }
+>  
+> @@ -220,6 +222,7 @@ static inline void __sysreg_restore_el2_return_state(struct kvm_cpu_context *ctx
+>  {
+>  	u64 pstate = to_hw_pstate(ctxt);
+>  	u64 mode = pstate & PSR_AA32_MODE_MASK;
+> +	struct kvm_vcpu *vcpu = ctxt_to_vcpu(ctxt);
+>  
+>  	/*
+>  	 * Safety check to ensure we're setting the CPU up to enter the guest
+> @@ -238,7 +241,7 @@ static inline void __sysreg_restore_el2_return_state(struct kvm_cpu_context *ctx
+>  	write_sysreg_el2(ctxt->regs.pc,			SYS_ELR);
+>  	write_sysreg_el2(pstate,			SYS_SPSR);
+>  
+> -	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
+> +	if (kvm_has_feat(vcpu->kvm, ID_AA64PFR0_EL1, RAS, IMP))
+>  		write_sysreg_s(ctxt_sys_reg(ctxt, DISR_EL1), SYS_VDISR_EL2);
+>  }
+
+These registers are still stateful no matter what, we cannot prevent an
+ESB instruction inside the VM from consuming a pending vSError.
+
+Keep in mind the ESB instruction is a NOP without FEAT_RAS, so it is
+still a legal instruction for a VM w/o FEAT_RAS.
+
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 31e49da867ff..b09f8ba3525b 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -4513,7 +4513,7 @@ static void vcpu_set_hcr(struct kvm_vcpu *vcpu)
+>  
+>  	if (has_vhe() || has_hvhe())
+>  		vcpu->arch.hcr_el2 |= HCR_E2H;
+> -	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN)) {
+> +	if (kvm_has_feat(kvm, ID_AA64PFR0_EL1, RAS, IMP)) {
+>  		/* route synchronous external abort exceptions to EL2 */
+>  		vcpu->arch.hcr_el2 |= HCR_TEA;
+>  		/* trap error record accesses */
+
+No, we want external aborts to be taken to EL2. Wouldn't this also have
+the interesting property of allowing a VM w/o FEAT_RAS to access the
+error record registers?
+
+-- 
 Thanks,
-
-jon
-
--------------------- Start of forwarded message --------------------
-From: Jonathan Corbet <corbet@lwn.net>
-To: ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- tech-board-discuss@lists.linuxfoundation.org
-Cc: tab-elections@lists.linux.dev
-Subject: TAB election 2024 voting started
-Date: Fri, 20 Sep 2024 09:51:59 -0600
-
-In the end, we had eleven nominations for this year's TAB election:
-
- - Amit Shah
- - Dan Williams
- - Daniel Borkmann
- - Dave Hansen
- - Jakub Kicinski
- - Jiri Kosina
- - Kees Cook
- - Lorenzo Pieralisi
- - Miguel Ojeda
- - Ricardo Neri
- - Shuah Khan
-
-Voting has begun, and everybody who is eligible for an automatic ballot,
-or who has requested a ballot, should have received voting instructions
-from the CIVS system.  If you were expecting a ballot and did not get
-it, then:
-
-- Perhaps it ended up in your spam folder?
-
-- Have you enabled your email address in the CIVS system?  It will not
-  send you anything until you have done that.  The place to enable an
-  address is https://civs1.civs.us/cgi-bin/opt_in.pl
-
-Please contact us at tab-elections@lists.linux.dev if you have
-difficulties or questions.
-
-Voting will remain open through September 27.
-
-Thanks,
-
-The TAB elections team
--------------------- End of forwarded message --------------------
+Oliver
 
