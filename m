@@ -1,140 +1,468 @@
-Return-Path: <linux-kernel+bounces-341055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E87CC987ACE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:46:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A48DB987AD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A67FC2858A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:46:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3329D1F24B7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5E218893A;
-	Thu, 26 Sep 2024 21:46:34 +0000 (UTC)
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE542188A0E;
+	Thu, 26 Sep 2024 21:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="nbB7TSZV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QhQ/cAMN"
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C1A183CA8
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 21:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F854D8C8;
+	Thu, 26 Sep 2024 21:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727387194; cv=none; b=szYNeOUmjY3u4eQ2JMyzGfKXx+X2iK+oKT/+SsFGkwm42+NoM44yeU1a3GB28eAZpLBf901hRwTj15uUJo92oSIgAYsW8BTSiaDxnJqkug6Xz39FOUOk2Yg9a2fpnrjs6FLfeZwHOTSYP27QV6y6MUabTp4jyRvOxWvVl8t/wiQ=
+	t=1727387254; cv=none; b=XjnBQvbb8Fc5w/opwaYtMFZo7U3bojoJmqNopGfgQYfZe5ggJZDoECcUfjCNrGbQVPNx9KAyEh64u5wjm/1SQqFHR1GzzA9/umuyKkq6eXP4gyKJjW+sr9AqHnKqFL9LmT7wXbeYO9Q2GukVyJEEUzm1YFYLgMa60NfQ2V4KSSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727387194; c=relaxed/simple;
-	bh=E966zOVGM0snUqG9UPSQxI6Gs86xHm49tpD/Qy0qKsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jsgiC+fJJu61rjKTZukbPAxxZFJPez2tfuBjpWwXiz7kLalKXw3qg5zpSMOMRjRGfEeJwn32uCi4BOq55qE3xUn6i5mkg6cu2DxY4R3Qnes5TmOZQddOu9ENZx7AYE0kicAC1yjT/b3HpK5pQ2fMbLtfT94GZ+2ENqof70i+hbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a0c9ff90b1so5660645ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:46:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727387190; x=1727991990;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=upRWdmCxdcckjFmQlbmjdQ/KhqZ3NpGBkL+5+yEDx/8=;
-        b=QmAb8E6jnMM8YlbS2aMKKktQNmf84rHp2ubSWxaMijPYEcw1CQv3/KFQd66DYFBh00
-         A3QygYBI/wTmHjpIf2tEV/FQHIVxMdOXrFnAuXafRClfsdXRvzHLkd+y459iIJ20sgzZ
-         wivMRga/A0zgkJ12+ZNHRbHdlwdI38VJ8ytSMFH0+BhfYF5n4dU8lvRg71qMoYL29eCt
-         u/qFtX/RTvaLLi7avmk30JKR/CT/jEam3knvQI/8b1IvufvkWyzU9mINRamcg13IzRyG
-         tLbEvgfj7QFAqITXVhMTDrWiBbDSmfk8GK7PDvLjLkUP+XXrrk5DkmCTGZGuKZU4XhI1
-         XiMg==
-X-Forwarded-Encrypted: i=1; AJvYcCU632tbErVDW1aut9gldCEtFeDlGH+PzzPNvJg/O8ocrr7qEtBnlg0vnn/xGycqK/XVqumt8B1hYAQ9B4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCQkVuaJ+uXisr+DO0OaiOtMBGbciru7vBFB/QJyAdcyhpX8/B
-	+1Tsl1m3utRkXm2TrzrHxxzlPS51TVS0ELPWLNCpVVQdbaYqifkJPQXtEAwH
-X-Google-Smtp-Source: AGHT+IFZQ/3KjKRA3EqQdFG6SsmXqGGlDHh4FJzJ1IoF3569oMTaIGpykEW1Mnpo4/3uDhS0mrx2bA==
-X-Received: by 2002:a05:6e02:b4d:b0:39f:5e18:239d with SMTP id e9e14a558f8ab-3a34517aa22mr8686555ab.15.1727387190466;
-        Thu, 26 Sep 2024 14:46:30 -0700 (PDT)
-Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a344de1fa6sm1524675ab.64.2024.09.26.14.46.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 14:46:29 -0700 (PDT)
-Date: Thu, 26 Sep 2024 16:46:27 -0500
-From: David Vernet <void@manifault.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org, sched-ext@meta.com
-Subject: Re: [PATCH 3/5] sched_ext: Relocate find_user_dsq()
-Message-ID: <20240926214627.GE26346@maniforge>
-References: <20240925000622.1972325-1-tj@kernel.org>
- <20240925000622.1972325-4-tj@kernel.org>
+	s=arc-20240116; t=1727387254; c=relaxed/simple;
+	bh=LI4w2zm0P5ZMPsFv4UC/hdemqevp7H7pDgVDOguaPMM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=n6n/P4IOVEM20ggNePlWF/LD8FFu6qU1vpz1my8X3hWBeMqLFU+6pd08i1bVDLLCJ++maZgHD6vl0o7V+f2hQ2paeHl6YpPDjvqHri97QmmjrBl6/80Uh07qxg/rxiYtBGxhbs5XehRVgPiKxIAv+K58YYgjf4xWyFclgJq4Q1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=nbB7TSZV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QhQ/cAMN; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id ADFF611401BF;
+	Thu, 26 Sep 2024 17:47:31 -0400 (EDT)
+Received: from phl-imap-01 ([10.202.2.91])
+  by phl-compute-08.internal (MEProxy); Thu, 26 Sep 2024 17:47:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1727387251;
+	 x=1727473651; bh=AwG1PcZ7YoaBhoQTouwI+/OvHxqNA8hqVoFWg8K89ws=; b=
+	nbB7TSZVp9Fe8Wayt2AuwAS27UEZt1g5V32/1Gp0AnUbL8iEfUmXN5HRBum1dzLm
+	2omjEOKIFsml/1jInFomOuaIt9OCVbtlSF9cqRHZbUQRNs3VqEEeVLDCZPqnVQyM
+	41a2pawOkgNmORRZXzBeKobDDRH02L3Ca5qMP+oJC+lPx7tI61LhbFtFBj6ZAYrV
+	NVvEkQeA6UwgfOFT1VcqwQE51Axnjh1WOBOZqf80lrHvHIJMalF7hEyGH7gYJcCG
+	likEU5kD9s/2WpcaC5qJN/sEvWi4MJqeWDxsUTUbGECe580q3v3sx4xFbRA5HOk1
+	1T74bsrhAyUP1f6rtNUeGA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727387251; x=
+	1727473651; bh=AwG1PcZ7YoaBhoQTouwI+/OvHxqNA8hqVoFWg8K89ws=; b=Q
+	hQ/cAMNkzFkNLHDd5VlXT07NtcELZ+lwA6sWO8q5EC4U3GFbHajoLdg6V/Te5297
+	HnHg3Vj5E+LLLiF81TSHOEY5lzO/3YvNYOxf2O3nGqw6ognNNhIAfboTcwhbFgNV
+	zzgB3jnPpvICCrSLwGP9X86/BOcTmxR7GXNjAiLWag92gNtepeLiKx+UrXW4loDW
+	jEH6+/BdND75NUglBx6nHJ5cM3qINNXqx3QKAD9zjpGTiFUM119cQ7+hBe3hdxJE
+	gDQGM4sYTO9IMxYheXhJaITQFZzVeUKprvf96a6lq+0mRoroj961BH0n2ZYuTULT
+	m/51j7M8AUaICTuH3dJZA==
+X-ME-Sender: <xms:c9b1Ziuj0NVkDnZqJVTo6ZAkUPgxqy8780F952J4g9D8M2-40yyYTQ>
+    <xme:c9b1Znc3CHrX-5Jhv15laC3_Gj-IoeUj5AKk4a76aTPJJVTe_fqujniqHtUYGnxIR
+    oQ-JBR5_I5a-FdOMlM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtkedgtdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedfnfhukhgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvg
+    hvqeenucggtffrrghtthgvrhhnpefgieffhedtgffhtedtiedutdefkedvjefgveehhfff
+    vedthfejleegfeffkedvveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtphhtthhopeel
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegtohhrvghnthhinhdrtghhrghrhi
+    esghhmrghilhdrtghomhdprhgtphhtthhopegsvghnthhishhssehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehjihhkohhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsuh
+    hpvghrmhdusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehilhhpohdrjhgrrhhvihhn
+    vghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohephhguvghgohgvuggvse
+    hrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtsehvghgvrhdr
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrh
+    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdq
+    giekieesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:c9b1ZtzfaKKQRQgSlTd7o6o9hgMemlFqCMEyKfYK3lU9uLMO445jxg>
+    <xmx:c9b1ZtNkestd2k1JC5gcgnwbMH_Ao_-6GdXlZ5Ph6LkG6Cs-u2M3aw>
+    <xmx:c9b1Zi9EesLMYNSWeyWnTqIHLHry1Qdssx7zXArwrlOIfsdN-v6zoQ>
+    <xmx:c9b1ZlXei8VMePEVC-DFYEGdXOlrRavTbsoFzD7zAq1hM-c7wq9mXQ>
+    <xmx:c9b1ZnON2sC3e3-iXdLu0bEjtcRPB0-3xSnspTsVmQEJvqts7iqXZxlI>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 5BBA73360077; Thu, 26 Sep 2024 17:47:31 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f4OJyBJY2qmPrUwK"
-Content-Disposition: inline
-In-Reply-To: <20240925000622.1972325-4-tj@kernel.org>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+Date: Fri, 27 Sep 2024 09:47:01 +1200
+From: "Luke Jones" <luke@ljones.dev>
+To: "Mario Limonciello" <superm1@kernel.org>, linux-kernel@vger.kernel.org
+Cc: linux-input@vger.kernel.org, "Benjamin Tissoires" <bentiss@kernel.org>,
+ "Jiri Kosina" <jikos@kernel.org>, platform-driver-x86@vger.kernel.org,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Hans de Goede" <hdegoede@redhat.com>, corentin.chary@gmail.com
+Message-Id: <a5cccd62-f9a5-4fa0-ac0a-d3dbe8217737@app.fastmail.com>
+In-Reply-To: <afd5769c-65fe-4fb7-97bc-1fc578cf2bd7@kernel.org>
+References: <20240926092952.1284435-1-luke@ljones.dev>
+ <20240926092952.1284435-9-luke@ljones.dev>
+ <afd5769c-65fe-4fb7-97bc-1fc578cf2bd7@kernel.org>
+Subject: Re: [PATCH v4 8/9] platform/x86: asus-armoury: add core count control
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+Resend, sorry. My email client defaults to HTML
 
---f4OJyBJY2qmPrUwK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 27 Sep 2024, at 3:30 AM, Mario Limonciello wrote:
+> On 9/26/2024 04:29, Luke D. Jones wrote:
+> > Implement Intel core enablement under the asus-armoury module using the
+> > fw_attributes class.
+> > 
+> > This allows users to enable or disable preformance or efficiency cores
+> > depending on their requirements. After change a reboot is required.
+> > 
+> > Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> > ---
+> >   drivers/platform/x86/asus-armoury.c        | 219 +++++++++++++++++++++
+> >   drivers/platform/x86/asus-armoury.h        |  28 +++
+> >   include/linux/platform_data/x86/asus-wmi.h |   4 +
+> >   3 files changed, 251 insertions(+)
+> > 
+> > diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
+> > index a0022dcee3a4..ce1facb40bd5 100644
+> > --- a/drivers/platform/x86/asus-armoury.c
+> > +++ b/drivers/platform/x86/asus-armoury.c
+> > @@ -40,6 +40,21 @@
+> >   #define ASUS_MINI_LED_2024_STRONG 0x01
+> >   #define ASUS_MINI_LED_2024_OFF 0x02
+> >   
+> > +#define ASUS_POWER_CORE_MASK GENMASK(15, 8)
+> > +#define ASUS_PERF_CORE_MASK GENMASK(7, 0)
+> > +
+> > +enum cpu_core_type {
+> > + CPU_CORE_PERF = 0,
+> > + CPU_CORE_POWER,
+> > +};
+> > +
+> > +enum cpu_core_value {
+> > + CPU_CORE_DEFAULT = 0,
+> > + CPU_CORE_MIN,
+> > + CPU_CORE_MAX,
+> > + CPU_CORE_CURRENT,
+> > +};
+> > +
+> >   /* Default limits for tunables available on ASUS ROG laptops */
+> >   #define PPT_CPU_LIMIT_MIN 5
+> >   #define PPT_CPU_LIMIT_MAX 150
+> > @@ -85,6 +100,13 @@ struct rog_tunables {
+> >   u32 dgpu_tgp_min;
+> >   u32 dgpu_tgp_max;
+> >   u32 dgpu_tgp;
+> > +
+> > + u32 cur_perf_cores;
+> > + u32 min_perf_cores;
+> > + u32 max_perf_cores;
+> > + u32 cur_power_cores;
+> > + u32 min_power_cores;
+> > + u32 max_power_cores;
+> >   };
+> >   
+> >   static const struct class *fw_attr_class;
+> > @@ -143,6 +165,8 @@ static struct kobj_attribute pending_reboot = __ATTR_RO(pending_reboot);
+> >   static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
+> >   {
+> >   return !strcmp(attr->attr.name, "gpu_mux_mode") ||
+> > +        !strcmp(attr->attr.name, "cores_performance") ||
+> > +        !strcmp(attr->attr.name, "cores_efficiency") ||
+> >          !strcmp(attr->attr.name, "panel_hd_mode");
+> >   }
+> >   
+> > @@ -569,6 +593,198 @@ static ssize_t apu_mem_possible_values_show(struct kobject *kobj, struct kobj_at
+> >   }
+> >   ATTR_GROUP_ENUM_CUSTOM(apu_mem, "apu_mem", "Set available system RAM (in GB) for the APU to use");
+> >   
+> > +static int init_max_cpu_cores(void)
+> > +{
+> > + u32 cores;
+> > + int err;
+> > +
+> > + asus_armoury.rog_tunables->min_perf_cores = 4;
+> > + asus_armoury.rog_tunables->max_perf_cores = 4;
+> > + asus_armoury.rog_tunables->cur_perf_cores = 4;
+> > + asus_armoury.rog_tunables->min_power_cores = 0;
+> > + asus_armoury.rog_tunables->max_power_cores = 8;
+> > + asus_armoury.rog_tunables->cur_power_cores = 8;
+> 
+> This seems like it's going to be dependent upon "specific" CPU SKU, no?
 
-On Tue, Sep 24, 2024 at 02:06:05PM -1000, Tejun Heo wrote:
-> To prepare for the addition of find_global_dsq(). No functional changes.
->=20
-> Signed-off-by: tejun heo <tj@kernel.org>
+It is yeah. I was trying to set some sort of default but forgot about it after the fact.
 
-Acked-by: David Vernet <void@manifault.com>
+> If you can't detect the bounds from the WMI API I think it would be 
+> smarter to use the CPU vendor specific CPUID/MSR APIs to discover the 
+> topology and how many cores of the different types exist.
 
-> ---
->  kernel/sched/ext.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->=20
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index ed2b914c42d1..acb4db7827a4 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -1029,6 +1029,11 @@ static bool u32_before(u32 a, u32 b)
->  	return (s32)(a - b) < 0;
->  }
-> =20
-> +static struct scx_dispatch_q *find_user_dsq(u64 dsq_id)
-> +{
-> +	return rhashtable_lookup_fast(&dsq_hash, &dsq_id, dsq_hash_params);
-> +}
-> +
->  /*
->   * scx_kf_mask enforcement. Some kfuncs can only be called from specific=
- SCX
->   * ops. When invoking SCX ops, SCX_CALL_OP[_RET]() should be used to ind=
-icate
-> @@ -1803,11 +1808,6 @@ static void dispatch_dequeue(struct rq *rq, struct=
- task_struct *p)
->  		raw_spin_unlock(&dsq->lock);
->  }
-> =20
-> -static struct scx_dispatch_q *find_user_dsq(u64 dsq_id)
-> -{
-> -	return rhashtable_lookup_fast(&dsq_hash, &dsq_id, dsq_hash_params);
-> -}
-> -
->  static struct scx_dispatch_q *find_dsq_for_dispatch(struct rq *rq, u64 d=
-sq_id,
->  						    struct task_struct *p)
->  {
-> --=20
-> 2.46.0
->=20
+Thinking about it now I would rather set it as an error and disable the ability to set cores. What do you think?
 
---f4OJyBJY2qmPrUwK
-Content-Type: application/pgp-signature; name="signature.asc"
+> Furthermore what about LP cores?  I guess those can't be turned and off 
+> from this API?
 
------BEGIN PGP SIGNATURE-----
+power/efficiency cores? They can be.
 
-iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZvXWMwAKCRBZ5LhpZcTz
-ZDJSAPwKSl76uiMI795l+q0WEDcN2glSyRCQDpKrPXLg7snO3QD/YfZIhHWSjdG7
-0vW2/g+2JH26tqGBBfh8pE9CO0RSnw0=
-=Sv2/
------END PGP SIGNATURE-----
-
---f4OJyBJY2qmPrUwK--
+> > +
+> > + err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES_MAX, &cores);
+> > + if (err)
+> > + return err;
+> > +
+> > + cores &= ~ASUS_WMI_DSTS_PRESENCE_BIT;
+> > + asus_armoury.rog_tunables->max_power_cores = FIELD_GET(ASUS_POWER_CORE_MASK, cores);
+> > + asus_armoury.rog_tunables->max_perf_cores = FIELD_GET(ASUS_PERF_CORE_MASK, cores);
+> > +
+> > + cores = 0;
+> > + err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES, &cores);
+> > + if (err)
+> > + return err;
+> > +
+> > + asus_armoury.rog_tunables->cur_perf_cores = FIELD_GET(ASUS_PERF_CORE_MASK, cores);
+> > + asus_armoury.rog_tunables->cur_power_cores = FIELD_GET(ASUS_POWER_CORE_MASK, cores);
+> > +
+> > + return 0;
+> > +}
+> > +
+> > +static ssize_t cores_value_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf,
+> > + enum cpu_core_type core_type, enum cpu_core_value core_value)
+> > +{
+> > + u32 cores;
+> > +
+> > + switch (core_value) {
+> > + case CPU_CORE_DEFAULT:
+> > + case CPU_CORE_MAX:
+> > + if (core_type == CPU_CORE_PERF)
+> > + return sysfs_emit(buf, "%d\n",
+> > +   asus_armoury.rog_tunables->max_perf_cores);
+> > + else
+> > + return sysfs_emit(buf, "%d\n",
+> > +   asus_armoury.rog_tunables->max_power_cores);
+> > + case CPU_CORE_MIN:
+> > + if (core_type == CPU_CORE_PERF)
+> > + return sysfs_emit(buf, "%d\n",
+> > +   asus_armoury.rog_tunables->min_perf_cores);
+> > + else
+> > + return sysfs_emit(buf, "%d\n",
+> > +   asus_armoury.rog_tunables->min_power_cores);
+> > + default:
+> > + break;
+> > + }
+> > +
+> > + if (core_type == CPU_CORE_PERF)
+> > + cores = asus_armoury.rog_tunables->cur_perf_cores;
+> > + else
+> > + cores = asus_armoury.rog_tunables->cur_power_cores;
+> > +
+> > + return sysfs_emit(buf, "%d\n", cores);
+> > +}
+> > +
+> > +static ssize_t cores_current_value_store(struct kobject *kobj, struct kobj_attribute *attr,
+> > + const char *buf, enum cpu_core_type core_type)
+> > +{
+> > + int result, err;
+> > + u32 new_cores, perf_cores, powr_cores, out_val, min, max;
+> > +
+> > + result = kstrtou32(buf, 10, &new_cores);
+> > + if (result)
+> > + return result;
+> > +
+> > + if (core_type == CPU_CORE_PERF) {
+> > + perf_cores = new_cores;
+> > + powr_cores = out_val = asus_armoury.rog_tunables->cur_power_cores;
+> > + min = asus_armoury.rog_tunables->min_perf_cores;
+> > + max = asus_armoury.rog_tunables->max_perf_cores;
+> > + } else {
+> > + perf_cores = asus_armoury.rog_tunables->cur_perf_cores;
+> > + powr_cores = out_val = new_cores;
+> > + min = asus_armoury.rog_tunables->min_power_cores;
+> > + max = asus_armoury.rog_tunables->max_power_cores;
+> > + }
+> > +
+> > + if (new_cores < min || new_cores > max)
+> > + return -EINVAL;
+> > +
+> > + out_val = 0;
+> > + out_val |= FIELD_PREP(ASUS_PERF_CORE_MASK, perf_cores);
+> > + out_val |= FIELD_PREP(ASUS_POWER_CORE_MASK, powr_cores);
+> > +
+> > + mutex_lock(&asus_armoury.mutex);
+> > + err = asus_wmi_set_devstate(ASUS_WMI_DEVID_CORES, out_val, &result);
+> > + mutex_unlock(&asus_armoury.mutex);
+> > +
+> > + if (err) {
+> > + pr_warn("Failed to set CPU core count: %d\n", err);
+> > + return err;
+> > + }
+> > +
+> > + if (result > 1) {
+> > + pr_warn("Failed to set CPU core count (result): 0x%x\n", result);
+> > + return -EIO;
+> > + }
+> > +
+> > + pr_info("CPU core count changed, reboot required\n");
+> > + sysfs_notify(kobj, NULL, attr->attr.name);
+> > + asus_set_reboot_and_signal_event();
+> > +
+> > + return 0;
+> > +}
+> > +
+> > +static ssize_t cores_performance_min_value_show(struct kobject *kobj,
+> > + struct kobj_attribute *attr, char *buf)
+> > +{
+> > + return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_MIN);
+> > +}
+> > +
+> > +static ssize_t cores_performance_max_value_show(struct kobject *kobj,
+> > + struct kobj_attribute *attr, char *buf)
+> > +{
+> > + return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_MAX);
+> > +}
+> > +
+> > +static ssize_t cores_performance_default_value_show(struct kobject *kobj,
+> > +     struct kobj_attribute *attr, char *buf)
+> > +{
+> > + return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_DEFAULT);
+> > +}
+> > +
+> > +static ssize_t cores_performance_current_value_show(struct kobject *kobj,
+> > +     struct kobj_attribute *attr, char *buf)
+> > +{
+> > + return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_CURRENT);
+> > +}
+> > +
+> > +static ssize_t cores_performance_current_value_store(struct kobject *kobj,
+> > +      struct kobj_attribute *attr,
+> > +      const char *buf, size_t count)
+> > +{
+> > + int err;
+> > +
+> > + err = cores_current_value_store(kobj, attr, buf, CPU_CORE_PERF);
+> > + if (err)
+> > + return err;
+> > +
+> > + return count;
+> > +}
+> > +ATTR_GROUP_CORES_RW(cores_performance, "cores_performance",
+> > +     "Set the max available performance cores");
+> > +
+> > +static ssize_t cores_efficiency_min_value_show(struct kobject *kobj, struct kobj_attribute *attr,
+> > +        char *buf)
+> > +{
+> > + return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_MIN);
+> > +}
+> > +
+> > +static ssize_t cores_efficiency_max_value_show(struct kobject *kobj, struct kobj_attribute *attr,
+> > +        char *buf)
+> > +{
+> > + return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_MAX);
+> > +}
+> > +
+> > +static ssize_t cores_efficiency_default_value_show(struct kobject *kobj,
+> > +    struct kobj_attribute *attr, char *buf)
+> > +{
+> > + return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_DEFAULT);
+> > +}
+> > +
+> > +static ssize_t cores_efficiency_current_value_show(struct kobject *kobj,
+> > +    struct kobj_attribute *attr, char *buf)
+> > +{
+> > + return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_CURRENT);
+> > +}
+> > +
+> > +static ssize_t cores_efficiency_current_value_store(struct kobject *kobj,
+> > +     struct kobj_attribute *attr, const char *buf,
+> > +     size_t count)
+> > +{
+> > + int err;
+> > +
+> > + err = cores_current_value_store(kobj, attr, buf, CPU_CORE_POWER);
+> > + if (err)
+> > + return err;
+> > +
+> > + return count;
+> > +}
+> > +ATTR_GROUP_CORES_RW(cores_efficiency, "cores_efficiency",
+> > +     "Set the max available efficiency cores");
+> > +
+> >   /* Simple attribute creation */
+> >   ATTR_GROUP_ROG_TUNABLE(ppt_pl1_spl, "ppt_pl1_spl", ASUS_WMI_DEVID_PPT_PL1_SPL, cpu_default,
+> >          cpu_min, cpu_max, 1, "Set the CPU slow package limit");
+> > @@ -625,6 +841,8 @@ static const struct asus_attr_group armoury_attr_groups[] = {
+> >   { &dgpu_base_tgp_attr_group, ASUS_WMI_DEVID_DGPU_BASE_TGP },
+> >   { &dgpu_tgp_attr_group, ASUS_WMI_DEVID_DGPU_SET_TGP },
+> >   { &apu_mem_attr_group, ASUS_WMI_DEVID_APU_MEM },
+> > + { &cores_efficiency_attr_group, ASUS_WMI_DEVID_CORES_MAX },
+> > + { &cores_performance_attr_group, ASUS_WMI_DEVID_CORES_MAX },
+> >   
+> >   { &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
+> >   { &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
+> > @@ -802,6 +1020,7 @@ static int __init asus_fw_init(void)
+> >   return -ENOMEM;
+> >   
+> >   init_rog_tunables(asus_armoury.rog_tunables);
+> > + init_max_cpu_cores();
+> >   
+> >   err = asus_fw_attr_add();
+> >   if (err)
+> > diff --git a/drivers/platform/x86/asus-armoury.h b/drivers/platform/x86/asus-armoury.h
+> > index a5f95e806b4b..f400e3af24be 100644
+> > --- a/drivers/platform/x86/asus-armoury.h
+> > +++ b/drivers/platform/x86/asus-armoury.h
+> > @@ -167,6 +167,34 @@ static ssize_t enum_type_show(struct kobject *kobj, struct kobj_attribute *attr,
+> >   .name = _fsname, .attrs = _attrname##_attrs               \
+> >   }
+> >   
+> > +/* CPU core attributes need a little different in setup */
+> > +#define ATTR_GROUP_CORES_RW(_attrname, _fsname, _dispname)              \
+> > + __ATTR_SHOW_FMT(scalar_increment, _attrname, "%d\n", 1);        \
+> > + __ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);    \
+> > + static struct kobj_attribute attr_##_attrname##_current_value = \
+> > + __ASUS_ATTR_RW(_attrname, current_value);               \
+> > + static struct kobj_attribute attr_##_attrname##_default_value = \
+> > + __ASUS_ATTR_RO(_attrname, default_value);               \
+> > + static struct kobj_attribute attr_##_attrname##_min_value =     \
+> > + __ASUS_ATTR_RO(_attrname, min_value);                   \
+> > + static struct kobj_attribute attr_##_attrname##_max_value =     \
+> > + __ASUS_ATTR_RO(_attrname, max_value);                   \
+> > + static struct kobj_attribute attr_##_attrname##_type =          \
+> > + __ASUS_ATTR_RO_AS(type, int_type_show);                 \
+> > + static struct attribute *_attrname##_attrs[] = {                \
+> > + &attr_##_attrname##_current_value.attr,                 \
+> > + &attr_##_attrname##_default_value.attr,                 \
+> > + &attr_##_attrname##_min_value.attr,                     \
+> > + &attr_##_attrname##_max_value.attr,                     \
+> > + &attr_##_attrname##_scalar_increment.attr,              \
+> > + &attr_##_attrname##_display_name.attr,                  \
+> > + &attr_##_attrname##_type.attr,                          \
+> > + NULL                                                    \
+> > + };                                                              \
+> > + static const struct attribute_group _attrname##_attr_group = {  \
+> > + .name = _fsname, .attrs = _attrname##_attrs             \
+> > + }
+> > +
+> >   /*
+> >    * ROG PPT attributes need a little different in setup as they
+> >    * require rog_tunables members.
+> > diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> > index e1aeafdf05d5..8964e601543a 100644
+> > --- a/include/linux/platform_data/x86/asus-wmi.h
+> > +++ b/include/linux/platform_data/x86/asus-wmi.h
+> > @@ -134,6 +134,10 @@
+> >   /* dgpu on/off */
+> >   #define ASUS_WMI_DEVID_DGPU 0x00090020
+> >   
+> > +/* Intel E-core and P-core configuration in a format 0x0[E]0[P] */
+> > +#define ASUS_WMI_DEVID_CORES 0x001200D2
+> > + /* Maximum Intel E-core and P-core availability */
+> > +#define ASUS_WMI_DEVID_CORES_MAX 0x001200D3
+> >   #define ASUS_WMI_DEVID_DGPU_BASE_TGP 0x00120099
+> >   #define ASUS_WMI_DEVID_DGPU_SET_TGP 0x00120098
+> >   #define ASUS_WMI_DEVID_APU_MEM 0x000600C1
+> 
+> 
 
