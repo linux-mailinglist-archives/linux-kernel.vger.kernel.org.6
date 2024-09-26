@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-340936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23000987939
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:41:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31B198793D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 992431C216F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D83F61C21576
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2238E1714D9;
-	Thu, 26 Sep 2024 18:40:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B90513777E;
-	Thu, 26 Sep 2024 18:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A4A1714B3;
+	Thu, 26 Sep 2024 18:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="xq0zJf1s"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CD813777E
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 18:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727376051; cv=none; b=dQaOqIWOFk0H4Vw4P91Nz+yow/b5PGg8yKuaeovBiWRm7RSJl7G2+MQcyT4jLc3iy+viPTQ1aVon8XS7f/XaIDDUaoc6r5012bgHvvFF0uJjpJaS9v+1aYK9Wj+QyZdHd/lr/b6nmxybAS2kvJ2sKsHk+u9wLmAuTiQWGf5aZN8=
+	t=1727376193; cv=none; b=B6rCL8OJJYcZpdJD7z9Kl2J5Lnx6AzvbCTzslGLZNTDUCWXWbfU6atQhYsXKp2Llu7JP4+XQM2FdaZ8ZBTQ29qYXdUK7Q3pahk7zWELLe+YpB+NzIJCu4vmkNWmOMzifARr/FbV3vyQ5jx7729JPtvIt4JnHbu8GZbtmT+/42uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727376051; c=relaxed/simple;
-	bh=epz6jRXFedkq8RZkzym6M6z9oDDMZfQ2lvyT+uetk40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aficHS6r7gzCka2NqfIHrtHvsPrV7E1Gjp/ty6DKCFnM9RDtmKNpMx7t4kvO9IJaB47CYK7e0jfQzu1mApdD6JRPr1m75ZJDHP6o5YXcmpfK1OudxB7XhtLeaqUOr3+ucz9hykmn0l4RqZx++oQYRRav7ePuX0AhCeLsbrbHWis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2B5F14BF;
-	Thu, 26 Sep 2024 11:41:17 -0700 (PDT)
-Received: from [10.57.20.191] (unknown [10.57.20.191])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E38A3F6A8;
-	Thu, 26 Sep 2024 11:40:46 -0700 (PDT)
-Message-ID: <221f3995-34e4-42a9-a18d-faaa7cf542d1@arm.com>
-Date: Thu, 26 Sep 2024 19:40:31 +0100
+	s=arc-20240116; t=1727376193; c=relaxed/simple;
+	bh=6apcyRjHAlEfiRdDkFRiLnxMOOdeyJ6eoqAeJ5VTlQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CuDaichkutsD/FUhUl6WsMP9X3aeR2/5hND7Qg8usBy2E4OkA5g71JoTtN1q6I8fQQKmUw65cfQbyMBWUT/FmElaA/gjJ5J4hVJ1r/m03Jnv28AdMZE7PFS+zA0ncduSjM+upfLcqAm8MbP1Gggcbt/BAA/4p7LJYDWjhVakwTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=xq0zJf1s; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7a9a30a0490so129020385a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 11:43:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1727376189; x=1727980989; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XWABK7jevZz6PaZEJkjW9C/kJozsqZzz0c8Gpnqfp4o=;
+        b=xq0zJf1sf1QVcsxGG6e2RecFYfs6KBEdItKD9prRSJ/ByyvnElEohgsjkjLMuHSp7U
+         u8xm3DpC6SVtkEIJu0nlRK9/nZE1K2ySWU9L9t2iWH2HAq4yyGMp/ehhJ+NdWaBVrk5O
+         Fg5cI/+29gqgKBpDEMzTV3R4mqwFuiahAsB21ZOt9GR/ONKCNXm2IeY9Or8LHchYJqGQ
+         rQYlbBpVSzDoo7fmTICU9qRQx08ucpHdpWu+cPIdut/xu8OukuFhOCrFRl0+i+5oD/wD
+         oXOme7/qCP5FLgkVjyAatBiAS5X/6urDkc6sWjf6jmTwcd/2C/4a7nHjMiyOTCPAkEMu
+         c7cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727376189; x=1727980989;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XWABK7jevZz6PaZEJkjW9C/kJozsqZzz0c8Gpnqfp4o=;
+        b=JNWUmlLHHazTWlaSHIP4C+oUzdhBHAtWKKYCLS9JApoCfM9+RJ+lQu1JvdHBbB/c91
+         AJ0pcPDLO8GTxIJKtXkE8VMtogjJhXlybEJ9WV4SR5v+La9mJ66XDPxltD17lj/+Ad86
+         66zbUoFQZUv1rus9+EDcdn0hTrK5N2E+8vmnVF5u3fWWpfKYvKCrZO2GT0lmy22yOQHO
+         YIpOXwAyoPPzWNWbsECy+sD3xz9E8guXYxrV/wBcnbb7OX5PZcE+YFXSborXUm+Y6xdY
+         XOR35bVvg4IAcRiaFUSbQF4v35ksPtMuxeJpIuaYRUXBIP3ZmCZJoPlOlXhPTEotdrIw
+         1WiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX61iLdB912MwsjQJyN/kgMgY/f7+Cnm3wl/NrAl8CfdxL4yCAE4Gx/thEfxMuoUy7+2l8hXIbZTsScexA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5eZWR7IKnxZKp3C9d+FF42VcI+4JQF1aDgGGMGwJCFjVvFfly
+	lbOS5nXlFhoKizVRf0YWbaziQr5O/7MNu+4Lx2c2i2Eesis4i51rzxzxtIBwZ7k=
+X-Google-Smtp-Source: AGHT+IHlDIyeTzt5qrb/mt8UJBp4ewh+Zi6tjiab4F3KqBIB1hz93JrCVMgux1Kls/nP3C6CgkJDFw==
+X-Received: by 2002:a05:620a:2956:b0:7a9:c146:a9e9 with SMTP id af79cd13be357-7ae3783b6d1mr78752785a.15.1727376189046;
+        Thu, 26 Sep 2024 11:43:09 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45c9f2f5e89sm1346751cf.55.2024.09.26.11.43.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 11:43:07 -0700 (PDT)
+Date: Thu, 26 Sep 2024 14:43:01 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"nphamcs@gmail.com" <nphamcs@gmail.com>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
+	"shakeel.butt@linux.dev" <shakeel.butt@linux.dev>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"Zou, Nanhai" <nanhai.zou@intel.com>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
+Message-ID: <20240926184301.GA883850@cmpxchg.org>
+References: <20240925192006.GB876370@cmpxchg.org>
+ <CAJD7tkY-ayU3Ld+dKTLEEG3U72fGnCbiQgZursK+eGMXif_uzA@mail.gmail.com>
+ <20240925201323.GA880690@cmpxchg.org>
+ <CAJD7tkbCDe1Y__0vUKt9q0dz_sXM74fKGQo2Zgq9CJ8=FEjH3w@mail.gmail.com>
+ <SJ0PR11MB5678EC9681960F39427EABFFC9692@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <SJ0PR11MB56781A134838ADDD04731AA3C96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkYtVR6fi1R2O+jAxVfj7BJ2EKWbXHke9fkv_m=mf5pkFQ@mail.gmail.com>
+ <SJ0PR11MB56785027ED6FCF673A84CEE6C96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkaRjrPTdCCAA0zSVyAZ2sCKiJUC36J0fsajdtp1i_JZeg@mail.gmail.com>
+ <SJ0PR11MB56781678BE55278052EB590CC96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf mem: Fix printing PERF_MEM_LVLNUM_{L2_MHB|MSC}
-To: Thomas Falcon <thomas.falcon@intel.com>, peterz@infradead.org,
- mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240926144040.77897-1-thomas.falcon@intel.com>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <20240926144040.77897-1-thomas.falcon@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SJ0PR11MB56781678BE55278052EB590CC96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
 
-On 9/26/2024 3:40 PM, Thomas Falcon wrote:
+On Thu, Sep 26, 2024 at 05:29:30PM +0000, Sridhar, Kanchana P wrote:
+> > > 3) Keep the approach in v7 where obj_cgroup_get/put is localized to
+> > >     zswap_store_page for both success and error conditions, and any
+> > unwinding
+> > >     state in zswap_store will take care of dropping references obtained from
+> > >     prior successful writes (from this or prior invocations of zswap_store).
+> > 
+> > I am also fine with doing that and doing the reference batching as a follow up.
 > 
-> With commit 8ec9497d3ef34 ("tools/include: Sync uapi/linux/perf.h
-> with the kernel sources"), 'perf mem report' gives an incorrect memory
-> access string.
-> ...
-> 0.02%   1       3644    L5 hit  [.] 0x0000000000009b0e  mlc     [.] 0x00007fce43f59480
-> ...
-> 
-> This occurs because, if no entry exists in mem_lvlnum, perf_mem__lvl_scnprintf
-> will default to 'L%d, lvl', which in this case for PERF_MEM_LVLNUM_L2_MHB is 0x05.
-> Add entries for PERF_MEM_LVLNUM_L2_MHB and PERF_MEM_LVLNUM_MSC to mem_lvlnum,
-> so that the correct strings are printed.
-> ...
-> 0.02%   1       3644    L2 MHB hit      [.] 0x0000000000009b0e  mlc     [.] 0x00007fce43f59480
-> ...
-> 
-> Fixes: 8ec9497d3ef34 ("tools/include: Sync uapi/linux/perf.h with the kernel sources")
-> Suggested-by: Kan Liang <kan.liang@linux.intel.com>
-> Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
-> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+> I think so too! We could try and improve upon (3) with reference batching
+> in a follow-up patch.
 
-Reviewed-by: Leo Yan <leo.yan@arm.com>
+Yeah, I agree. The percpu-refcounts are not that expensive, we should
+be able to live with per-page ops for now.
 
-> ---
-> v2: Leo Yan suggested adding PERF_MEM_LVLNUM_L{1-4} to mem_lvlnum
->     and printing a clearer message in the case of an unknown level
->     to more easily catch similar issues in the future
-> ---
->  tools/perf/util/mem-events.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
-> index 051feb93ed8d..bf5090f5220b 100644
-> --- a/tools/perf/util/mem-events.c
-> +++ b/tools/perf/util/mem-events.c
-> @@ -366,6 +366,12 @@ static const char * const mem_lvl[] = {
->  };
-> 
->  static const char * const mem_lvlnum[] = {
-> +       [PERF_MEM_LVLNUM_L1] = "L1",
-> +       [PERF_MEM_LVLNUM_L2] = "L2",
-> +       [PERF_MEM_LVLNUM_L3] = "L3",
-> +       [PERF_MEM_LVLNUM_L4] = "L4",
-> +       [PERF_MEM_LVLNUM_L2_MHB] = "L2 MHB",
-> +       [PERF_MEM_LVLNUM_MSC] = "Memory-side Cache",
->         [PERF_MEM_LVLNUM_UNC] = "Uncached",
->         [PERF_MEM_LVLNUM_CXL] = "CXL",
->         [PERF_MEM_LVLNUM_IO] = "I/O",
-> @@ -448,7 +454,7 @@ int perf_mem__lvl_scnprintf(char *out, size_t sz, const struct mem_info *mem_inf
->                 if (mem_lvlnum[lvl])
->                         l += scnprintf(out + l, sz - l, mem_lvlnum[lvl]);
->                 else
-> -                       l += scnprintf(out + l, sz - l, "L%d", lvl);
-> +                       l += scnprintf(out + l, sz - l, "Unknown level %d", lvl);
-> 
->                 l += scnprintf(out + l, sz - l, " %s", hit_miss);
->                 return l;
-> --
-> 2.46.0
-> 
+One thing you *can* do from the start is tryget a pool reference in
+zswap_store(), to prevent the pools untimely demise while you work on
+it, and then in zswap_store_page() you can do gets instead of trygets.
+
+You'd have to rename zswap_pool_get() to zswap_pool_tryget() (which is
+probably for the best) and implement the trivial new zswap_pool_get().
 
