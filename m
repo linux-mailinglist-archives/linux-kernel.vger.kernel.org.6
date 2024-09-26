@@ -1,165 +1,117 @@
-Return-Path: <linux-kernel+bounces-340483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 425429873F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:58:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387EC9873F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 646BA1C22D56
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:58:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED28528229B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512851CAB8;
-	Thu, 26 Sep 2024 12:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116AA208D7;
+	Thu, 26 Sep 2024 12:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VKJ1HVFn"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nSSiPCgS"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E571C6A5
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9705A46B8;
+	Thu, 26 Sep 2024 12:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727355524; cv=none; b=f3G2B1E+Am/wJSfb7muWz//JbkGVLboO4O7UhR6v8vl6T/Y2wgqnnfT5hXQWU2YypCucoA+5dGZhQFAaXXvw/wR4LcdZBj6Al/qPsWRElc/+fcUeJ4mDupGneR2Q7faqwwIQcTMjd1lIhtGdliYwe911xOhShAEbPtGnUvtKxsY=
+	t=1727355555; cv=none; b=sKfrXXJB01Nti2K/QslRammrJzGw+ASeveNcj1lN1PJxLy8Yi6Ni2sbWvX3l3Q91gNVvheezmQtPQCs60Ca9OTjBFdpfqURIFrB+D5uAt6mmUMK4THjSKE7Y+yLNdN948B+6ZQUABgxCvvX3OQ8qUMpYabhj+wLjO90/5sQgUhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727355524; c=relaxed/simple;
-	bh=SmtIA7XYQx4nX6+fGbTqnqCSm7yRmL3RORcONRWqcWw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:From:In-Reply-To:
-	 Content-Type:References; b=mdtgkd5WAwVg2hiVVRGrudSxQhQIi5IqEh2To/Jg40/nt3yhaT0zAhgWoHEL0PWbb7O/QrBAL+tOGGdJ0V8trmr0pgmcIPDs5JznLp7xtXoUtAjDB+x3HKSvQinK4MbJRAiZ5IfpKtKNXM6sIhCf23re5D4i/T36JwLYmtCTARM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VKJ1HVFn; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240926125833euoutp01acb87cc3f5966ba5e9cf20930e5df610~4zLAeO1UV3237432374euoutp01G
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:58:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240926125833euoutp01acb87cc3f5966ba5e9cf20930e5df610~4zLAeO1UV3237432374euoutp01G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727355513;
-	bh=da4ojY3FKYoZj4Metcz6gYoYuDUssygQUDpJ4V+FW2E=;
-	h=Date:Subject:To:CC:From:In-Reply-To:References:From;
-	b=VKJ1HVFnPZeq8nQMYmyC+lMUhP8B1KnE8EWyHrSqLEuLnIWjA1Y1jgqGFtrelpsoJ
-	 tM2mErwTNcT+DPgRem2GWVl1CH7tTBaINNGNLFImbzIeB+ubF7gI+I4sChKu3/IoGD
-	 gqBFR1G2Iw4i9jGM+9lxS+dnIQmMdvqRbKfIcHJQ=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240926125833eucas1p25553c8da37e5630ef564cb2acbd36260~4zLAMjar72928829288eucas1p2t;
-	Thu, 26 Sep 2024 12:58:33 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id BE.1C.09624.97A55F66; Thu, 26
-	Sep 2024 13:58:33 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240926125833eucas1p16d318f89b21db92af582be778eedde4c~4zK-rIBcH1657916579eucas1p1I;
-	Thu, 26 Sep 2024 12:58:33 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240926125833eusmtrp26c051f0c4eba6a7cea62b08023158779~4zK-pSTV31891318913eusmtrp2T;
-	Thu, 26 Sep 2024 12:58:33 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-d1-66f55a79a688
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id C7.90.14621.87A55F66; Thu, 26
-	Sep 2024 13:58:32 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240926125832eusmtip28fa82999f1ebdbf9b8ef66fbadcb8178~4zK-dGYMa0982809828eusmtip2c;
-	Thu, 26 Sep 2024 12:58:32 +0000 (GMT)
-Received: from [106.110.32.87] (106.110.32.87) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Thu, 26 Sep 2024 13:58:31 +0100
-Message-ID: <18532bd8-08bd-4494-a3af-fe252a803380@samsung.com>
-Date: Thu, 26 Sep 2024 14:58:31 +0200
+	s=arc-20240116; t=1727355555; c=relaxed/simple;
+	bh=ZdAhJ21QIG7zDxsr1ekfjLiEacNTsOqySk9F470vs8o=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=enQK2NGvw/S0bXsrkEAWPFhovpOH3BZbC0j2Avcd/GIi9wZDJWziw++BbMZ9vrr5kxxHhH8nlKdgFjzAJFnfzeNB76WD11sK59ERzBPM0TuPw7PpRRi2y3MHEVem9Xe2hd/y3J2D0CTCUPWoFDpT2mMGppHylDyQbZNV6KP8Viw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nSSiPCgS; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e09fe0a878so374120a91.1;
+        Thu, 26 Sep 2024 05:59:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727355553; x=1727960353; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=BF/l0giiWeqh3E8td9Oj70/mWfqZQ+JFj8iInRlZrCs=;
+        b=nSSiPCgSF4MsuiajiTGjwAWfeBuR9G4zRSbeeW0LZsQBUG2anpWP48sA3A7DXPPc1V
+         mbTIFx6BfRkTglpSSQWwTEkp8ZVvfPe3Pw25f5V8SnOSlk+Oa2UG2kOg9ct2IWPXir40
+         kX0CaqsVfWiLofKC4P79YHN+0OnFEhcEPOaVsqqg3saBDe0Sk6e5QyMQAlaantMeDodu
+         Ge4191QyS5V17gmB4wJ1sHzPWZNmLo+Z4b+OGeMKEEvk6YqtAKarUMrojR0lO+Z1KAO2
+         pRRF0r37SchVzZ4Hrrzco46JR9TetHEpTVmFI8x3hxk8Bu0PwQaylTFHbDma8xWun0Om
+         Zuug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727355553; x=1727960353;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BF/l0giiWeqh3E8td9Oj70/mWfqZQ+JFj8iInRlZrCs=;
+        b=YHqx8/FBZHPiTuBq/j0NfshWAmxgskXM9mYTXW+L89Yzc49Nqgsmuk9r8bfBvw/1ZQ
+         cylpQv1sIPJpQjoaIKvTXYv05eLZTVMfmidA1/BpsOpUksCSgDU0Rfz9s0IgYO9n0AfQ
+         1qjztxpJSNaR8l6UGxy4pcRv9ZxAbjGWhoZ9bQIFkn90i7bZ7LlitYcG2SoMiC8uEc+N
+         /HV9RBI+07SM2Q/Tjcg0x3w9ScAWKURKDH3dstPGDiSIIirBxyMYlLRVXpDJS47EQs1Q
+         lJ9LufTX43P4wYZfcp3e45nj4WJnvLB6K8IHPxbjS79PZjVn8j0zYtHbR9lC/SBneH3G
+         JK0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUSaNYX4zATroqH7Lg0t4Z57gApfL/C1Q0723Wdu4ouNMYMb+oWd+vUNFjVk4mttsDD8oZFvxCtUmo4XOQ=@vger.kernel.org, AJvYcCW9HEnaOnYo5LUxrQI2GknksJ7omNgIRFMExAFATjZXdwiAfAoGOuIRATNsjIwgReBEsmYDbYRji7fd@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeUNzDngNWGH0wXxTh2AtKVlop8lfEeAeNNbtd6BYxlY9Ls24v
+	AkqTjYQAj3+f+/nuMmD1Gheg3oUJ2brNc2EBX4cxgTlUmDkDvXUg
+X-Google-Smtp-Source: AGHT+IGCEmdD/303ltSrV1xAx1icEtx6TH4RwTjDUqd/D4uDqZkClrgU5DgSVOGX6N9Nryl5ewehtg==
+X-Received: by 2002:a17:90a:a789:b0:2dd:4f6b:6394 with SMTP id 98e67ed59e1d1-2e06ae73c2dmr7266993a91.19.1727355552646;
+        Thu, 26 Sep 2024 05:59:12 -0700 (PDT)
+Received: from localhost (220-135-95-34.hinet-ip.hinet.net. [220.135.95.34])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e05b57dff9sm2393314a91.1.2024.09.26.05.59.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 05:59:11 -0700 (PDT)
+Sender: AceLan Kao <acelan@gmail.com>
+From: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: pciehp: Fix system hang on resume after hot-unplug during suspend
+Date: Thu, 26 Sep 2024 20:59:09 +0800
+Message-ID: <20240926125909.2362244-1-acelan.kao@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 1/2] mm: shmem: add large folio support to the
- write and fallocate paths
-Content-Language: en-GB
-To: Matthew Wilcox <willy@infradead.org>, Baolin Wang
-	<baolin.wang@linux.alibaba.com>
-CC: <akpm@linux-foundation.org>, <hughd@google.com>, <david@redhat.com>,
-	<wangkefeng.wang@huawei.com>, <21cnbao@gmail.com>, <ryan.roberts@arm.com>,
-	<ioworker0@gmail.com>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-From: Daniel Gomez <da.gomez@samsung.com>
-In-Reply-To: <ZvVQoY8Tn_BNc79T@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGKsWRmVeSWpSXmKPExsWy7djPc7qVUV/TDP79kbH4fFfIYs76NWwW
-	//ceY7T4uv4Xs8XTT30sFot+G1tc3jWHzeLemv+sFj27pzJaNH6+z2jx+8ccNgdujzXz1jB6
-	7Jx1l91jwaZSj5Yjb1k9Nq/Q8tj0aRK7x4kZv1k8dj609Hi/7yqbx+dNcgFcUVw2Kak5mWWp
-	Rfp2CVwZTYdWsRY846xofH+DqYHxPXsXIyeHhICJxImFX1i7GLk4hARWMEp8u/qFBcL5wiix
-	Z9UtNgjnM6PE1Ia7cC3Plv9igkgsZ5Q49XsHI1zVolcHoIbtZJTYPuUBG0gLr4CdREvrEbB2
-	FgFViYstS1kg4oISJ2c+AbNFBeQl7t+aAVYjLJAq8fLvfzCbWUBcounLSlYQW0QgXOLUkoVg
-	BzILPGaUWP/6A1iCTUBTYt/JTWANnED3Td7wiLmLkQOoyEpi+glPiDnyEtvfzmGGeEFRYsbE
-	lSwQdq3EqS23mCDs3ZwSc3cpQtguEtNmLYSKC0u8Or4F6n0Zif8750PF0yWWrJsFNadAYs/t
-	WawgayUErCX6zuRAhB0l+tafZ4MI80nceCsIcQ2fxKRt05knMKrOQgqIWUgenoVw/ywk9y9g
-	ZFnFKJ5aWpybnlpsmJdarlecmFtcmpeul5yfu4kRmNRO/zv+aQfj3Fcf9Q4xMnEwHmKU4GBW
-	EuGddPNjmhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe1RT5VCGB9MSS1OzU1ILUIpgsEwenVANT
-	3q73Zb9OcJ+KiJT0zRcr/5Pi9cN4xyNB009i8g+Le47P9xEXm5ea16y/96KruBZ75LTgm3cf
-	SfRPVPvRu3B2itr8zfzCE1dNj/0RVuuzbvmhSon6zQebgrpq3TiP6exzkrgUpcRQkRC2XuTk
-	b70EkzSXa//ZPS6J1JZyaQZ8FFx9lONg7a3Zguu+3PwRefT8N152M97rlWVzvQIXfU60CKqq
-	2xcQ1GEdNfVprubckNsOmrdnH2DX23i04GeOxGblTTG7844tjf/4TuRo9EI+q+OHQuQkW7br
-	J38pflG/39nlYsDG8oRFxiu6Vb09zqjGHhZkOei50UHttqKZTVZ25Pv/Ort3XBKVX/lh4gUl
-	luKMREMt5qLiRADymlZs2QMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPIsWRmVeSWpSXmKPExsVy+t/xe7oVUV/TDF72W1h8vitkMWf9GjaL
-	/3uPMVp8Xf+L2eLppz4Wi0W/jS0u75rDZnFvzX9Wi57dUxktGj/fZ7T4/WMOmwO3x5p5axg9
-	ds66y+6xYFOpR8uRt6wem1doeWz6NInd48SM3yweOx9aerzfd5XN4/MmuQCuKD2bovzSklSF
-	jPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MpkOrWAuecVY0vr/B
-	1MD4nr2LkZNDQsBE4tnyX0xdjFwcQgJLGSW2z5/MBpGQkdj45SorhC0s8edaFxtE0UdGib2H
-	TjFCODsZJW5d6WMEqeIVsJNoaT0CNpZFQFXiYstSFoi4oMTJmU/AbFEBeYn7t2aA1QgLpEq8
-	/PsfzGYWEJdo+rISbJuIQLjEqSULWUAWMAs8ZpRY//oDK8S2GUwSq5d+B9vGJqApse/kJrBu
-	TqAnJm94xAwxyUJi8ZuDUFPlJba/ncMM8YOixIyJK1kg7FqJz3+fMU5gFJ2F5MBZSA6ZhWTU
-	LCSjFjCyrGIUSS0tzk3PLTbUK07MLS7NS9dLzs/dxAhMCduO/dy8g3Heq496hxiZOBgPMUpw
-	MCuJ8E66+TFNiDclsbIqtSg/vqg0J7X4EKMpMJQmMkuJJucDk1JeSbyhmYGpoYmZpYGppZmx
-	kjiv2+XzaUIC6YklqdmpqQWpRTB9TBycUg1MzVXRXdu8QzVaDj0/3MLXu4yz1MBAQZf9kwbf
-	8anbOLX3nV0dw2XjxG0vd9V/673G+vAWrvdnvd8ui8gNroq2Sl7B3iCcstb85tzHXp8/rNy0
-	Ltkw6OjaXf+rYx0Pzvth/1SJWVr9ya3nURUJ2dFuxxfen8MorOh+8dILi8330ozUd/j1bzj2
-	teKS+z92x22556qyvfbereJ1W9J/7sShp73dBxZqN/6SXcOl9sLM625QWuuqYwtE/hXn5jjv
-	PzPj8JGY/C6F1kdnyhgU2i3k738V9Gp7z7wo/uOjZds28h89lZs87bKFx/xA8YLFE+bP2P3g
-	kN7GbFvjImG7lz56zovlY6R5rv36feZh8159JZbijERDLeai4kQAmuoMhJIDAAA=
-X-CMS-MailID: 20240926125833eucas1p16d318f89b21db92af582be778eedde4c
-X-Msg-Generator: CA
-X-RootMTR: 20240926121649eucas1p2aec9398cab6db6fee1251a1a61568857
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240926121649eucas1p2aec9398cab6db6fee1251a1a61568857
-References: <cover.1727338549.git.baolin.wang@linux.alibaba.com>
-	<c03ec1cb1392332726ab265a3d826fe1c408c7e7.1727338549.git.baolin.wang@linux.alibaba.com>
-	<CGME20240926121649eucas1p2aec9398cab6db6fee1251a1a61568857@eucas1p2.samsung.com>
-	<ZvVQoY8Tn_BNc79T@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On 9/26/2024 2:16 PM, Matthew Wilcox wrote:
-> On Thu, Sep 26, 2024 at 04:27:26PM +0800, Baolin Wang wrote:
->> +static inline unsigned int
->> +shmem_mapping_size_order(struct address_space *mapping, pgoff_t index, size_t size)
->> +{
->> +	unsigned int order = get_order(max_t(size_t, size, PAGE_SIZE));
-> 
-> Why introduce the max_t() call here?  Did nobody read the documentation
-> or implementation for get_order() before writing this patch?
+Remove unnecessary pci_walk_bus() call in pciehp_resume_noirq(). This
+fixes a system hang that occurs when resuming after a Thunderbolt dock
+with attached thunderbolt storage is unplugged during system suspend.
 
-get_order() result is undefined if the size is 0. I've used max_t() here 
-to avoid that case. Perhaps should we prevent that case before getting here?
+The PCI core already handles setting the disconnected state for devices
+under a port during suspend/resume. The redundant bus walk was
+interfering with proper hardware state detection during resume, causing
+a system hang when hot-unplugging daisy-chained Thunderbolt devices.
 
-> 
-> Besides, get_order() is wrong (at least relative to other filesystems).
-> get_order() rounds up instead of down, so what should we do for a write()
-> of size 512 * 1024 + 1 byte?  Other filesystems allocate an order-8 folio
-> plus an order-0 folio.  This code would have us allocate an order-9 folio.
-> I think that's a bad idea.
-> 
+Fixes: 9d573d19547b ("PCI: pciehp: Detect device replacement during system sleep")
+Signed-off-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
+---
+ drivers/pci/hotplug/pciehp_core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-I think one of my earlier attemps was to use fgf_set_order + 
-FGF_GET_ORDER() as in iomap. But the solution taken there was to share 
-code between shmem and filemap and that wasn't considered a good idea. 
-Shall we just replicate iomap_get_folio()? Or else, what do you suggest 
-here?
+diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
+index ff458e692fed..c1c3f7e2bc43 100644
+--- a/drivers/pci/hotplug/pciehp_core.c
++++ b/drivers/pci/hotplug/pciehp_core.c
+@@ -330,8 +330,6 @@ static int pciehp_resume_noirq(struct pcie_device *dev)
+ 		 */
+ 		if (pciehp_device_replaced(ctrl)) {
+ 			ctrl_dbg(ctrl, "device replaced during system sleep\n");
+-			pci_walk_bus(ctrl->pcie->port->subordinate,
+-				     pci_dev_set_disconnected, NULL);
+ 			pciehp_request(ctrl, PCI_EXP_SLTSTA_PDC);
+ 		}
+ 	}
+-- 
+2.43.0
 
-Daniel
 
