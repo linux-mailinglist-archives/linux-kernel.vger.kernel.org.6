@@ -1,154 +1,110 @@
-Return-Path: <linux-kernel+bounces-340737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3099198773D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:06:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E5E987748
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95080B2B074
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:06:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E70911F2737D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C423C15958E;
-	Thu, 26 Sep 2024 16:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C006A15A4B0;
+	Thu, 26 Sep 2024 16:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KjSHFzFV"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S8qCmsUh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C576F158552;
-	Thu, 26 Sep 2024 16:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA7415B57D
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727366724; cv=none; b=ZxUdQe/v+hYJTkgZIFwB9/19UuTi+2KFB1tuB44eNx+BSWy9JjR9uswxJPh3VhNfMrrYjE8E9EUjOFymM5u9zzlhL86GKLGM3RdSAlgY9dEUjIzteioTrTIoexqLzN+oiaa7BhWpIgWu+nImSv0smE8cZjBRMFM0QaFqKuW/jYA=
+	t=1727366930; cv=none; b=Sf6PPvao/59aEJDCW/cRrCv+o5inbJyvnL9ffC/8ThHJ4laaKncL5KyIBdRuxbXTKe9W84sq+3jxkxICR0Xh4KFTF9D8XpXGMFElfuSVOG3EMG6nhsJ0b1o3mTKbQ5+FRpUEQUy2velqCj7rwOX2sBnAiDJTYr/XdJBGsCAhS2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727366724; c=relaxed/simple;
-	bh=gknbzGZxjpw2CXS/PQNahlHmXMU1BTGcOerm6JEQ10A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lI6qT7tiHhzd5h7SGu4hCjjq/6jFHMNA7yfXfDAQdGsATmFH6ynvpLD3RT7kX50L2QIclMNVQ9aA35yR7QALIy/pH8qlCLBVrB93LbcBq7hQTNHof5TS48zpiZcXU2Ljz1DeXnnKZ1orrXsmoj5IefPvd08VoOkpEdSI5elT7SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KjSHFzFV; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-205909afad3so11550465ad.2;
-        Thu, 26 Sep 2024 09:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727366722; x=1727971522; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2pa/TWuTtJPirDcDBc/YlDUH5VGKlyuUuv6pDARm7Hs=;
-        b=KjSHFzFV5SfBbcMmqYOyBsQA/MaJMa283MBWuZvbOig230RfSXQ8zKCCcwEkjaYVyV
-         ZHQRJ5D2PMTnG0mz+Wp4kuE/I4QW4LmjKdslmilaBEM3pA0iz8BiT67kst2zWZJtiomD
-         7pEae+ccTxuzxiS74e/+5SZWqnl8VRSq4lzBGPLqHqI7FRIEKlyHWHjJgo9BYc+kJn3T
-         RcY3qDjBYaU6X/4ajMBiZ6/dcIhJh3X0GAcryjOOzqBHCnhuBEgyXyc/64ks/W0a+4tV
-         okcoLU5dkPVPupLLplc9TRlzJbYy7/sgQ0gp+WME0PaH00DD8aQFKR3miDzuMvaWVn20
-         OuLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727366722; x=1727971522;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2pa/TWuTtJPirDcDBc/YlDUH5VGKlyuUuv6pDARm7Hs=;
-        b=a2eY/CiJDS+AciQlaBtCrub7Fgo/EW7nVZsyS682rL9T1zqWyOpOAlzDJMQOYhX/lC
-         6HtBefQpPvOuMaL/4z4hIcrs2QlWLQZI/N/wEvHW/ZgQD6jQH10sWjOG+5CUmaVai5ya
-         tuwOydIAvgi4/VJXTZ4Wd/QUTT5mqtA3ZyG+iU1wmI6cr/hkXKf5EE91xB/PPYsSJESk
-         /YXwcew+rj4ft5df7rmgtLehg3r9DCSrJ+XfUOQHg8PsJhM+VQiU7ZJ0RrQaF4dIKDMT
-         32b2lIeRrLv3DlCFgwvTwHuifgT4uVSvh0+ZNiw5h9wTW5TkRCD6rCilT5PfpHJFqX3W
-         id6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWkGo1cvQzWkyxh8HAiU1TfF98xHJSK13E48k8f8lXsFj6g3oe7ZYxGX90iFIJyJNQjM6P+bKkE5KhUViE=@vger.kernel.org, AJvYcCXVfMxw0PB4PI3+wKCJHtfWUhiTiZQrqo2HYDoGJc3PAA5uZITq8IkBFDMc6w3/9slDMaNuhd6J@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL8AHZUfDilyMYNHAsESqkrTOcw+7MtMSnLiPYpD88wRZ24pFQ
-	eqjhzf6AgSdZyZqZ+IfTHsO/4DYpYMKwCIHxDV0aws/staLNV6eI
-X-Google-Smtp-Source: AGHT+IE5QvZjfX4FN9dhLCk2nP5iL8ta9IysDy96i4ZfL3fey/npuCinZULm9eTYn8V2G8lVAJtBTg==
-X-Received: by 2002:a17:902:eb8a:b0:206:adc8:2dcb with SMTP id d9443c01a7336-20b36ec98c9mr2523255ad.25.1727366721677;
-        Thu, 26 Sep 2024 09:05:21 -0700 (PDT)
-Received: from ubuntu.worldlink.com.np ([27.34.65.236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e61e14sm224295ad.279.2024.09.26.09.05.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 09:05:19 -0700 (PDT)
-From: Dipendra Khadka <kdipendra88@gmail.com>
-To: florian.fainelli@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	maxime.chevallier@bootlin.com,
-	horms@kernel.org
-Cc: Dipendra Khadka <kdipendra88@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v5] net: systemport: Add error pointer checks in bcm_sysport_map_queues() and bcm_sysport_unmap_queues()
-Date: Thu, 26 Sep 2024 16:05:12 +0000
-Message-ID: <20240926160513.7252-1-kdipendra88@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727366930; c=relaxed/simple;
+	bh=Tye5qerO5CBCY8lsDm6znBw3VH/UFoDPiSxLCCPG9w4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gfyGUp3NIS4YO6zEx9DBKds1Aokqow9aHS8/g3Q952iHyckPxU78eGe8MteDOKHM1KIz3k3l7gJnZA3yL+Qv0ny39cZuw+aL3yvOTdc130sOjKatUbMKUE0z+8NQJj5egG7hk/YcJr7vjRY/1dJBeCnt/8bW9g0PSU8ox+OV1Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S8qCmsUh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727366927;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tye5qerO5CBCY8lsDm6znBw3VH/UFoDPiSxLCCPG9w4=;
+	b=S8qCmsUh7nvukf/56QwaWlcwsoPzNusxbMQlfVYE4di0wE+l/s/vA+3Gj+2VK3W6+9XZ34
+	eziHzaGmvYJxJ3/6PliYSrHjmCfdzLYONR4i0r/JKM19+++qMi7/aeLcJAxyQmtLYQCjiX
+	7oPmCjr76Dsn6t+7AwV4juxPYfcBAT0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-FPkTXSsUOLG-ml5MbKYVPg-1; Thu,
+ 26 Sep 2024 12:08:44 -0400
+X-MC-Unique: FPkTXSsUOLG-ml5MbKYVPg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2D04419792DE;
+	Thu, 26 Sep 2024 16:08:42 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.133])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 7C22E195605A;
+	Thu, 26 Sep 2024 16:08:38 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 26 Sep 2024 18:08:28 +0200 (CEST)
+Date: Thu, 26 Sep 2024 18:08:24 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Liao, Chang" <liaochang1@huawei.com>
+Cc: Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>, mhiramat@kernel.org,
+	peterz@infradead.org, mark.rutland@arm.com,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
+Message-ID: <20240926160823.GA2592@redhat.com>
+References: <20240919121719.2148361-1-liaochang1@huawei.com>
+ <20240919141824.GB12149@redhat.com>
+ <41fdfc47-4161-d2e4-6528-4079b660424f@huawei.com>
+ <Zu2VdYrLWTJbVOAt@arm.com>
+ <b90ce6f1-0d47-2429-5536-a8d5d91d6a70@huawei.com>
+ <20240923071856.GA31866@willie-the-truck>
+ <20240923105228.GB20793@redhat.com>
+ <522284d3-9655-3703-00e9-33f358dbc78d@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <522284d3-9655-3703-00e9-33f358dbc78d@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Add error pointer checks in bcm_sysport_map_queues() and
-bcm_sysport_unmap_queues() after calling dsa_port_from_netdev().
+On 09/26, Liao, Chang wrote:
+>
+> 在 2024/9/23 18:52, Oleg Nesterov 写道:
+> > On 09/23, Will Deacon wrote:
+> >>
+> >> However, we should use __GFP_ZERO anyway
+> >> because I don't think it's a good idea to map an uninitialised page into
+> >> userspace.
+> >
+> > Agreed, and imo this even needs a separate "fix info leak" patch.
+>
+> Do you mean to fill the entire page with CPU specific illegal instructions
+> in this patch?
 
-Fixes: 1593cd40d785 ("net: systemport: use standard netdevice notifier to detect DSA presence")
-Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
----
-v5: 
- -Removed extra parentheses
-v4: https://lore.kernel.org/all/20240925152927.4579-1-kdipendra88@gmail.com/
- - Removed wrong and used correct Fixes: tag
-v3: https://lore.kernel.org/all/20240924185634.2358-1-kdipendra88@gmail.com/
- - Updated patch subject
- - Updated patch description
- - Added Fixes: tags
- - Fixed typo from PRT_ERR to PTR_ERR
- - Error is checked just after  assignment
-v2: https://lore.kernel.org/all/20240923053900.1310-1-kdipendra88@gmail.com/
- - Change the subject of the patch to net
-v1: https://lore.kernel.org/all/20240922181739.50056-1-kdipendra88@gmail.com/
- drivers/net/ethernet/broadcom/bcmsysport.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+Hmm. Why?? No... OK, I'll write the changelog and send the trivial patch
+in a minute.
 
-diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
-index c9faa8540859..a7ad829f11d4 100644
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -2331,11 +2331,15 @@ static const struct net_device_ops bcm_sysport_netdev_ops = {
- static int bcm_sysport_map_queues(struct net_device *dev,
- 				  struct net_device *slave_dev)
- {
--	struct dsa_port *dp = dsa_port_from_netdev(slave_dev);
- 	struct bcm_sysport_priv *priv = netdev_priv(dev);
- 	struct bcm_sysport_tx_ring *ring;
- 	unsigned int num_tx_queues;
- 	unsigned int q, qp, port;
-+	struct dsa_port *dp;
-+
-+	dp = dsa_port_from_netdev(slave_dev);
-+	if (IS_ERR(dp))
-+		return PTR_ERR(dp);
- 
- 	/* We can't be setting up queue inspection for non directly attached
- 	 * switches
-@@ -2386,11 +2390,15 @@ static int bcm_sysport_map_queues(struct net_device *dev,
- static int bcm_sysport_unmap_queues(struct net_device *dev,
- 				    struct net_device *slave_dev)
- {
--	struct dsa_port *dp = dsa_port_from_netdev(slave_dev);
- 	struct bcm_sysport_priv *priv = netdev_priv(dev);
- 	struct bcm_sysport_tx_ring *ring;
- 	unsigned int num_tx_queues;
- 	unsigned int q, qp, port;
-+	struct dsa_port *dp;
-+
-+	dp = dsa_port_from_netdev(slave_dev);
-+	if (IS_ERR(dp))
-+		return PTR_ERR(dp);
- 
- 	port = dp->index;
- 
--- 
-2.43.0
+Oleg.
 
 
