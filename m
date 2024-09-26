@@ -1,181 +1,169 @@
-Return-Path: <linux-kernel+bounces-340517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43BE987484
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:38:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9889D987491
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0735CB24BFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:38:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B632DB272F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82B54503C;
-	Thu, 26 Sep 2024 13:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591FB12F399;
+	Thu, 26 Sep 2024 13:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJ56hdDS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFpkbNET"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DC9322B;
-	Thu, 26 Sep 2024 13:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC353B7A8;
+	Thu, 26 Sep 2024 13:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727357883; cv=none; b=Uoq5J/UtHR/tOfszhV+MHxYQT31tDNtIuhq3RfmSaZqNnR0zUA5OjJ4VV5Rk3oWQo6WAQsKk5dOsZRdnKq/Qga47uhibd6Wq2hEFwrSTx0pDgxmbECfm4UJ0z24xlOJ/9JkKR8FWM6KJStoD+yoFArkSXldk2dSpnOhqk9Y1G64=
+	t=1727357922; cv=none; b=WCQQi4vbwCkxQDml/CRvbeQDevm6pzMmgT8GZOr8FtNxmS4QoTRACLUN8ABTytP+SI/n91zc4zDvMyOCHunldtQdzoegVou12BwJv9jFH9HHg03FtbeEGrc6rMr9wO3QA3Px6cOLB0P2qSy2beFv8GAckQ/uvjjiI8sYPkzAL2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727357883; c=relaxed/simple;
-	bh=INf4Wsw9kIU4k07p5ZXbzAn6HdnkbBEj2ln9NIVYgPs=;
+	s=arc-20240116; t=1727357922; c=relaxed/simple;
+	bh=OPIQS2t62p13UwMnk1FiF+unfRr5Zwe9MubLOeGiJyM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s/kl2kFiyS64blp8kAocQRXUhNbCBK9+su6PySvxSoFdItyO3umAlXJYBsUtg1GyngkdJf0gNme1YkAuNiS/AT6ACdsfB9fnHdEV5cdsRuBS3lqrf5xiwbeDsS7M1twyxAAM8u2LrmZ7w//72/AyXDrhzS74L/U8WV/U5hm8TKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJ56hdDS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A626DC4CECE;
-	Thu, 26 Sep 2024 13:38:02 +0000 (UTC)
+	 To:Cc:Content-Type; b=SWI4Ov3/hPpmp4ekefjXgITt1acMdx2JHaai2YW3K++Jlnhk++5i0P+tQeLR5cckoEm+Y8I8qPrbkPzhS/p3c9jXKyw8/v7oh6LfGDbNLRoKKEc5idpk11WTZtEEigmpwQj72fMED3moCd6l+C2DMO5b5F5TLYKA1fRV81s9rYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFpkbNET; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D596EC4CECE;
+	Thu, 26 Sep 2024 13:38:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727357882;
-	bh=INf4Wsw9kIU4k07p5ZXbzAn6HdnkbBEj2ln9NIVYgPs=;
+	s=k20201202; t=1727357921;
+	bh=OPIQS2t62p13UwMnk1FiF+unfRr5Zwe9MubLOeGiJyM=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=vJ56hdDSTfalngNbsSNkZk5plwhxw1nCrDOA+D7dO9twrH4SiVLKvpm/Yuwpo60H5
-	 XrsxmDWrRB21+5MbIb554Wc+FPhWAkGV7W9RaQiBadkLjDYA+7nOlJdF7rLvQlz3Vy
-	 N2flUqrDjpyyubEnoozGSBAHue+Ucwx6+oYeIYGpzrDQ6tmnTSzJbTJxXa2kP0MIBK
-	 YvpgSiNN0z5YTEENwM/4p9NZdu41LqrgZ1i+BfzdCjTGa6QBqrM5N3JNr+28vXTkbE
-	 MEsKEzOjn7o5wuFyQrpXk+i5RV1QUrqJW2OJ6UeNJZ3Op6OewHeih3DSMA+rQTRr5+
-	 /RD1ffvUSW5gQ==
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c42384c517so1028387a12.3;
-        Thu, 26 Sep 2024 06:38:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVl0dKcPw0SoCR5ODZDjJv/CcZ0tM05DhEMzncblpGM7yPDKKy8Mr+jEKtBFGAM9GRK8/QecGh3ZwD7xvNI@vger.kernel.org, AJvYcCWEB4p1voFDYDntJWmcQgXnEQ1Xq49X6a/v0wk8774xfnTP0+ijGrv9qAp15W/LCe/20WxAXNgGo1bmdQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYOKkrFYzF4S9Vkf9GxpM2d60yknWzfmWj/WJVMlnXX9eloTQi
-	EiSdIpunBknmhvXfIWnGihGPvHjeHoe1VLC+u1YqH+zZkv/YWxAQ3VVCR8G/M41xoZzs6EyDZZz
-	EUwgO8OLOz0LxnCRoNsi8r4BW5SI=
-X-Google-Smtp-Source: AGHT+IEd1oXxQPnDgGCZL4fiofB/Dtsie6w4KrDfXQC2Nm37gq8acxWSWuVYs7AFIxr1+1qZH2lHgxsoZB7lR5PJuV8=
-X-Received: by 2002:a17:907:8688:b0:a86:78fd:1df0 with SMTP id
- a640c23a62f3a-a93a03c32c2mr536927266b.34.1727357881250; Thu, 26 Sep 2024
- 06:38:01 -0700 (PDT)
+	b=tFpkbNET0czPRtMPovfI/tw3gSCaREnEFLqAxcDb3uZoTaN1MUsL6oFQbeAJWaXFI
+	 CeZWZV2EQC3jkUVUyeFkJ+3vTNfdldDlcwSemGpaMMeK9dMpCn+eo3NwP7qHalae2l
+	 VkYErS8T+eLlgBYIpVtrHU2I5PcdP6mhLc1DUl1KUsQKtRR5hqOVwbYWqQHd51bOSc
+	 0RXX9eQm9K7Euav9Ek8BEAPCErl0m7IiVuV8uXmMnTrDNFw9GHP2lFmVOsqkL2L43u
+	 cjWMgiSR1KtLVxjFC81BklSOZDD2JwvftlNBn0/eOD6Pyn0J+4KRnR0e//rfp7F508
+	 d7FbSWxfvv7MQ==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f75aaaade6so11868661fa.1;
+        Thu, 26 Sep 2024 06:38:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUXGse6vbc6FpYz4lgSlKDQJ3qHeN8YH1qg4ceNUpAOgf2a3chMjIK0ENodL3waku7Y6v9btiPZYwo=@vger.kernel.org, AJvYcCVHSf69uGrWCz6BRS1+JmcB0WwHMJusjUz5DzJz6OyyNCwKaGdkiV6aC7dllcXHLJDaeF58Iu+R6pkWfkE5@vger.kernel.org, AJvYcCVTuIuwxeKYKbgD/ed5IBfUTO7U1Ejx7RhUMhftttnafsBMVSpnvTc9K/Q5OeTJhgPJkdtAzjFih+qoU3yY@vger.kernel.org, AJvYcCVtRQGxusNOZWYtaUh1loOVtMx1E0c7HHDguIWYo9ealgtYxuWTRpJmBSWUo7f5zHlNPOM1Gw8mgXFiZ8mY@vger.kernel.org, AJvYcCWnzRX1k3MUWDUeu7WRrtNXnuRWLBPxMs1hH9mzwU5NkneQMn6dD/qskBYd2ZFzC5TMylmYyoNk3rnPXw==@vger.kernel.org, AJvYcCWwRwkLEtUjeqDHvxaVwTFatpqwvjxPRnP0dO3vppSWiwK189Ows6GwGumhRSpTmyH4CWEalcL0gdCD@vger.kernel.org, AJvYcCX2LMIhQ6EVmnkECm5H1xOqA26099cMKqZHDLb3snQOaHAII2I5pbbgC2ScvY2UAJCHWL9K3nvrFknz1qONp+CPMw==@vger.kernel.org, AJvYcCXc6rBX4B7tDEFX89zlzTTdnMaKavPMzO6FCLF0Fp51dWzHpePLktp9KpDsTPBEb2azHKHXUxYL49arAuSU2bQ=@vger.kernel.org, AJvYcCXgB42XCutcroFoVKxqmQ3xVd06k4oIAcHRUvkIUAQRtVdVKECbH9h9M9zw29dh6Av1J9g=@vger.kernel.org, AJvYcCXvi5cxeCUvrafei1Um
+ rndmyryPFc3Yjd/XjPlDWE8wKBKBqfauz/iR5f6TXTsiAmqgA/04JIOBiM57@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywss9HWQbBVgJHtvIqk1Wu4DkB/i43GOJbJ7pSBIffBAxWqmqfp
+	RPSo3fNJedto7dlLNTrd34VBZVBaW6YphvSAysX7nCs1Y6E5lZVzu/a9j9jwmABqE2Bgu0nLqyB
+	6em3OiiG3xXVqSuX9z1jAxXZ5Yl4=
+X-Google-Smtp-Source: AGHT+IGDysp0zVaI/G56jPcUmenrli6iDQ7ZCklZUQ9W3MAWEI6d8p2NALI8I7dIlWV2Pg4Oztsl5Tqp++gl5gafuuo=
+X-Received: by 2002:a2e:4a0a:0:b0:2ef:1784:a20 with SMTP id
+ 38308e7fff4ca-2f91ca68786mr32564001fa.38.1727357920170; Thu, 26 Sep 2024
+ 06:38:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926115935.20631-1-jth@kernel.org>
-In-Reply-To: <20240926115935.20631-1-jth@kernel.org>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Thu, 26 Sep 2024 14:37:23 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H57KKwPWH0HYVZ+Hmo7GiWULkJkR7Hc83Zu47uE5x+-zQ@mail.gmail.com>
-Message-ID: <CAL3q7H57KKwPWH0HYVZ+Hmo7GiWULkJkR7Hc83Zu47uE5x+-zQ@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: remove code duplication in ordered extent finishing
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <20240925150059.3955569-30-ardb+git@google.com>
+ <20240925150059.3955569-57-ardb+git@google.com> <4eca972d-a462-4cc5-9238-5d63485e1af4@oracle.com>
+In-Reply-To: <4eca972d-a462-4cc5-9238-5d63485e1af4@oracle.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 26 Sep 2024 15:38:27 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEOFDwoYrLH9f-d46HRPMw7HjWRQGNdMu5_D_Ny3UtPxg@mail.gmail.com>
+Message-ID: <CAMj1kXEOFDwoYrLH9f-d46HRPMw7HjWRQGNdMu5_D_Ny3UtPxg@mail.gmail.com>
+Subject: Re: [RFC PATCH 27/28] x86/kernel: Switch to PIE linking for the core kernel
+To: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Uros Bizjak <ubizjak@gmail.com>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Christoph Lameter <cl@linux.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Keith Packard <keithp@keithp.com>, 
+	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-doc@vger.kernel.org, 
+	linux-pm@vger.kernel.org, kvm@vger.kernel.org, xen-devel@lists.xenproject.org, 
+	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 1:27=E2=80=AFPM Johannes Thumshirn <jth@kernel.org>=
- wrote:
+On Wed, 25 Sept 2024 at 22:25, Vegard Nossum <vegard.nossum@oracle.com> wrote:
 >
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 >
-> Remove the duplicated transaction joining, block reserve setting and raid
-> extent inserting in btrfs_finish_ordered_extent().
+> On 25/09/2024 17:01, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > Build the kernel as a Position Independent Executable (PIE). This
+> > results in more efficient relocation processing for the virtual
+> > displacement of the kernel (for KASLR). More importantly, it instructs
+> > the linker to generate what is actually needed (a program that can be
+> > moved around in memory before execution), which is better than having to
+> > rely on the linker to create a position dependent binary that happens to
+> > tolerate being moved around after poking it in exactly the right manner.
+> >
+> > Note that this means that all codegen should be compatible with PIE,
+> > including Rust objects, so this needs to switch to the small code model
+> > with the PIE relocation model as well.
+> >
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > ---
+> >   arch/x86/Kconfig                        |  2 +-
+> >   arch/x86/Makefile                       | 11 +++++++----
+> >   arch/x86/boot/compressed/misc.c         |  2 ++
+> >   arch/x86/kernel/vmlinux.lds.S           |  5 +++++
+> >   drivers/firmware/efi/libstub/x86-stub.c |  2 ++
+> >   5 files changed, 17 insertions(+), 5 deletions(-)
+> >
+...
 >
-> While at it, also abort the transaction in case inserting a RAID
-> stripe-tree entry fails.
+> This patch causes a build failure here (on 64-bit):
 >
-> Suggested-by: Naohiro Aota <naohiro.aota@wdc.com>
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
->  fs/btrfs/inode.c | 45 ++++++++++++++++-----------------------------
->  1 file changed, 16 insertions(+), 29 deletions(-)
+>    LD      .tmp_vmlinux2
+>    NM      .tmp_vmlinux2.syms
+>    KSYMS   .tmp_vmlinux2.kallsyms.S
+>    AS      .tmp_vmlinux2.kallsyms.o
+>    LD      vmlinux
+>    BTFIDS  vmlinux
+> WARN: resolve_btfids: unresolved symbol bpf_lsm_key_free
+> FAILED elf_update(WRITE): invalid section entry size
+> make[5]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 255
+> make[5]: *** Deleting file 'vmlinux'
+> make[4]: *** [Makefile:1153: vmlinux] Error 2
+> make[3]: *** [debian/rules:74: build-arch] Error 2
+> dpkg-buildpackage: error: make -f debian/rules binary subprocess
+> returned exit status 2
+> make[2]: *** [scripts/Makefile.package:121: bindeb-pkg] Error 2
+> make[1]: *** [/home/opc/linux-mainline-worktree2/Makefile:1544:
+> bindeb-pkg] Error 2
+> make: *** [Makefile:224: __sub-make] Error 2
 >
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 353fb58c83da..35a03a671fc6 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -3068,34 +3068,6 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_=
-extent *ordered_extent)
->                         goto out;
->         }
+> The parent commit builds fine. With V=1:
 >
-> -       if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
-> -               BUG_ON(!list_empty(&ordered_extent->list)); /* Logic erro=
-r */
-> -
-> -               btrfs_inode_safe_disk_i_size_write(inode, 0);
-> -               if (freespace_inode)
-> -                       trans =3D btrfs_join_transaction_spacecache(root)=
-;
-> -               else
-> -                       trans =3D btrfs_join_transaction(root);
-> -               if (IS_ERR(trans)) {
-> -                       ret =3D PTR_ERR(trans);
-> -                       trans =3D NULL;
-> -                       goto out;
-> -               }
-> -               trans->block_rsv =3D &inode->block_rsv;
-> -               ret =3D btrfs_update_inode_fallback(trans, inode);
-> -               if (ret) /* -ENOMEM or corruption */
-> -                       btrfs_abort_transaction(trans, ret);
-> -
-> -               ret =3D btrfs_insert_raid_extent(trans, ordered_extent);
-> -               if (ret)
-> -                       btrfs_abort_transaction(trans, ret);
-> -
-> -               goto out;
-> -       }
-> -
-> -       clear_bits |=3D EXTENT_LOCKED;
-> -       lock_extent(io_tree, start, end, &cached_state);
-> -
->         if (freespace_inode)
->                 trans =3D btrfs_join_transaction_spacecache(root);
->         else
-> @@ -3109,8 +3081,23 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_=
-extent *ordered_extent)
->         trans->block_rsv =3D &inode->block_rsv;
+> + ldflags='-m elf_x86_64 -z noexecstack --pie -z text -z
+> call-nop=suffix-nop -z max-page-size=0x200000 --build-id=sha1
+> --orphan-handling=warn --script=./arch/x86/kernel/vmlinux.lds
+> -Map=vmlinux.map'
+> + ld -m elf_x86_64 -z noexecstack --pie -z text -z call-nop=suffix-nop
+> -z max-page-size=0x200000 --build-id=sha1 --orphan-handling=warn
+> --script=./arch/x86/kernel/vmlinux.lds -Map=vmlinux.map -o vmlinux
+> --whole-archive vmlinux.a .vmlinux.export.o init/version-timestamp.o
+> --no-whole-archive --start-group --end-group .tmp_vmlinux2.kallsyms.o
+> .tmp_vmlinux1.btf.o
+> + is_enabled CONFIG_DEBUG_INFO_BTF
+> + grep -q '^CONFIG_DEBUG_INFO_BTF=y' include/config/auto.conf
+> + info BTFIDS vmlinux
+> + printf '  %-7s %s\n' BTFIDS vmlinux
+>    BTFIDS  vmlinux
+> + ./tools/bpf/resolve_btfids/resolve_btfids vmlinux
+> WARN: resolve_btfids: unresolved symbol bpf_lsm_key_free
+> FAILED elf_update(WRITE): invalid section entry size
 >
->         ret =3D btrfs_insert_raid_extent(trans, ordered_extent);
-> -       if (ret)
-> +       if (ret) {
-> +               btrfs_abort_transaction(trans, ret);
-> +               goto out;
-> +       }
-> +
-> +       if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
-> +               BUG_ON(!list_empty(&ordered_extent->list)); /* Logic erro=
-r */
-> +
-> +               btrfs_inode_safe_disk_i_size_write(inode, 0);
-> +               ret =3D btrfs_update_inode_fallback(trans, inode);
-> +               if (ret) /* -ENOMEM or corruption */
+> I can send the full config off-list if necessary, but looks like it
+> might be enough to set CONFIG_DEBUG_INFO_BTF=y.
+>
 
-While at it we can change the comment to comply with the preferred
-style, to leave it on the line above or inside the if:
+Thanks for the report. Turns out that adding the GOT to .rodata bumps
+the section's sh_entsize to 8, and libelf complains if the section
+size is not a multiple of the entry size.
 
-if (ret) {
-   /* -ENOMEM or corruption */
-  btrfs_abort_transaction(trans, ret);
-}
-
-Same for the other comment after the BUG_ON() (and we could change the
-BUG_ON() to ASSERT() plus abort transaction maybe, but that probably
-as a separate patch).
-
-Otherwise it looks fine, thanks.
-
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-
-
-> +                       btrfs_abort_transaction(trans, ret);
->                 goto out;
-> +       }
-> +
-> +       clear_bits |=3D EXTENT_LOCKED;
-> +       lock_extent(io_tree, start, end, &cached_state);
->
->         if (test_bit(BTRFS_ORDERED_COMPRESSED, &ordered_extent->flags))
->                 compress_type =3D ordered_extent->compress_type;
-> --
-> 2.43.0
->
->
+I'll include a fix in the next revision.
 
