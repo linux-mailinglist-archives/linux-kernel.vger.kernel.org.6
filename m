@@ -1,158 +1,160 @@
-Return-Path: <linux-kernel+bounces-340849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06B4987876
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:39:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F15B987877
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EED47B2A361
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:39:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B2401F21B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D080015C146;
-	Thu, 26 Sep 2024 17:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F1E15D5D8;
+	Thu, 26 Sep 2024 17:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XS7pwpsz"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FgDAA4pT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2811494AC
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8ED31494AC
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727372217; cv=none; b=ANU34PhFn22hVDXUiMR5zZD3k6OqaRzm9y2Lf5HAvFAT5u95a87akQzzge4GIuQelQ6KatO0vjH2Sof8dt2y7Eds2Qd/73JJg2WRSZNf5HOeS/o7ZctEYSXXfyfw6rBkjB+TwuWquXzC5TawU3AeJypMUZoud5Ux/tjtfZqeJfU=
+	t=1727372229; cv=none; b=G099hCSoWhhd5h4BcRBMjC6YEE7o332pBWrCDjfZ84fdOOhDRUwkkkgVJCYRX9peF3HV6XdrsJ5KKwUI5KXxcOXoXOKU7DS1j3aG7MCuVRQpGc1qF2KxBgKngIIrsLKnpYfvuWHZRU7/GkyIciftzCW3cXZ4DwPPRov3Ye/ONzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727372217; c=relaxed/simple;
-	bh=gZ/DZtOFtotCg2ZJqvPPQrBo5e4ZN34v/Lvt1y7BlBE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QnyRTAlBoQJr5ORgZJNqa19aVZzVNyw0X2obExUkg0/WBo0N4QDArjotUTdQMiCHQNfqHhID5hB8WdT8ZNexPl9T7eHYIWdD2bKZON3SyMvWtdjU15fMflVPyte9ZZ+w+fl/KFAxoV3ePFvA/ayumZUmsSRcfjopE/ASzcbji9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XS7pwpsz; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso938856a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:36:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727372215; x=1727977015; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HIlWLLARj2D0f2/wbtG4ZzKXxUsNafh4f+v/Gl8dtfg=;
-        b=XS7pwpszqYs1PHx1dq8P9fnhIb9WTbdtMAw4aaj8JsEmE3XsAnTD+WDGtp92+di6YF
-         Wm9m+LFEArJOQXamwJQGYP3Mt5rMz/MtlVhWmtWstJOUOwLEWmehsg9txB6A35NUrnJo
-         wFG0Rl7a503nnSyuGozJq/MKlR+ClKOsrEpvzBuP9LyyCrXlwxfDnZbQv2Y0v7jzYJCr
-         cWXVwuW6SXSfUodGbBuHX5dEJs54z1pV2JwcBKba/nGvjnl+HjadTWX4KDs6Dnii0J43
-         U8tGz/cTKOFRasRzB58wKmd/DPoMX3CcxyuUfwbBqHvTeEeTUMrq+Jvh6rljBuUJictA
-         GsFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727372215; x=1727977015;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HIlWLLARj2D0f2/wbtG4ZzKXxUsNafh4f+v/Gl8dtfg=;
-        b=VvnvsBM8HjFmwz1UMwu3ZdMZufOBapNm1YeqTXf0KpLB0zcapVJd7h5qYk4T7Xv+X2
-         jOECu3wH5jLjuVGIlBuRrTWz6mH4qTggn1ytHbGL0qhR+y/zWTk5Oghh5uujfvYQrSG3
-         XoKsb+gRkuu0bAlhugcHXW/sm5tgcS6vbZY7mK0lao4dTqoSZ/8FmvYQ5gAFZU6bkjSX
-         qzbv+Ns+x0EC0gxD4Xmo4gHzceESSz+UsuUpLxykbboyCSj8JOMd8s14m20iG85tK26R
-         Hu+PFymsiEerlILXm44NZq6iIyLJcGLBEcDkseyaLT+RcNLUVH7HT3y3tIeuluL2vfbK
-         mCnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfX9hjOVMyUq2LPXyXHEoiB22GBYXmFRSs7zsPouWXNooF404GqBGxy478EIb3gCnpLp+N9TmqCuiXJTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxuic3YQ9IJKvgxJ5dpS6rLd1ojsRo2ZqppX5UKukNoTNJ40REw
-	7/MwqBuiOsaRnB1YGfZE/9EOImeAdNkMlow0jXRRRNNTWfVPKUSC9bq+QJqHvIbGBimnnWczlWk
-	MMaEyWnUTVd8665WVp2HHlgmWKK79CVkQZzed
-X-Google-Smtp-Source: AGHT+IFyoM14p1xkZjGDkib3ISbqBw/ob1Vg+aQY6MCOB0meJl2EfUTPQX5rZCw3U6NYwXQhw75iHjrBgwnKb1Dc4o4=
-X-Received: by 2002:a05:6a20:c6c2:b0:1cf:1251:9a47 with SMTP id
- adf61e73a8af0-1d4fa78fd0amr609270637.31.1727372214561; Thu, 26 Sep 2024
- 10:36:54 -0700 (PDT)
+	s=arc-20240116; t=1727372229; c=relaxed/simple;
+	bh=skEFNNIPc0eTzIDP7gYtmFITHdxbV8SjNb8BVSpjCeY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RRAxjQmzGCYe2HgLHidTu3q7KAJAV6ng76eFrnhNjCA7JNuVGE2x7TyUF3XmHxhfIaAU94pygx8F1JNU7ocmq6afbwLvms2N/jen7+xcvl5KQIqqO/HSICgveVb6qp0yfF00jEOaQFKmoWTd2eyXM8uvNX332o4HgorVqgyGRMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FgDAA4pT; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727372228; x=1758908228;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=skEFNNIPc0eTzIDP7gYtmFITHdxbV8SjNb8BVSpjCeY=;
+  b=FgDAA4pTuzqNWsZio8Lo362qAb+g1D19PF4G3/UhZ8zKagvkvJXBPvKy
+   fBWLkGmndnG6jH+QGFWjmrDYQqzxf+vpuvpRGC0ZoWiyyh+Ax1Ek3lF9Y
+   wTX2BIjRdJxNsk4BxLRe8HQpCptim35uH7DfJQEj3kI/XumiNt3hRErjI
+   CC6hEIO6PTVoTQWW0/KOxU98nQUmtmqPaqsd/Tgzd9MAJwIEhwl5fSnME
+   2p3Xza5xjwFh33ywdZF/la/BxlSXyKp+pWu7uipRYJ9m6UAeoInuI+HGz
+   cVTekuXSQkNRsmaGmD3YCL2o4+ZBf9MaEfP4fEkNAr+dJh9E37ItgK3te
+   w==;
+X-CSE-ConnectionGUID: KYGMa7stSyiuQ5BedNEXRg==
+X-CSE-MsgGUID: Snkw+1WaR+27ZGFds5QCJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26000563"
+X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
+   d="scan'208";a="26000563"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 10:37:07 -0700
+X-CSE-ConnectionGUID: yAJJ9VIjSMWCqMak/rafGQ==
+X-CSE-MsgGUID: SSEFupPwR7axz82SHDgMRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
+   d="scan'208";a="72681203"
+Received: from bmurrell-mobl.amr.corp.intel.com (HELO [10.124.222.36]) ([10.124.222.36])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 10:37:07 -0700
+Message-ID: <1a0fd968-15a0-401f-a683-e8989c2df669@intel.com>
+Date: Thu, 26 Sep 2024 10:37:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925220552.149551-1-marex@denx.de> <a9967a8c-8e03-44c2-8f79-14c6dd5d74af@app.fastmail.com>
-In-Reply-To: <a9967a8c-8e03-44c2-8f79-14c6dd5d74af@app.fastmail.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 26 Sep 2024 10:36:16 -0700
-Message-ID: <CAGETcx8opbQ=+dBkSWwfCoqGsvUBftJm7VaGULZhC5DNyuktJQ@mail.gmail.com>
-Subject: Re: [PATCH v2] soc: imx8m: Probe the SoC driver as platform driver
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Marek Vasut <marex@denx.de>, linux-arm-kernel@lists.infradead.org, 
-	kernel@dh-electronics.com, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Fabio Estevam <festevam@gmail.com>, Jeff Johnson <quic_jjohnson@quicinc.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, imx@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 2/2] x86/mm: Don't disable PCID if the kernel is
+ running on a hypervisor
+To: Xi Ruoyao <xry111@xry111.site>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Michael Kelley <mhklinux@outlook.com>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org,
+ Sean Christopherson <seanjc@google.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>
+References: <20240522020625.69418-1-xry111@xry111.site>
+ <20240522020625.69418-2-xry111@xry111.site>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240522020625.69418-2-xry111@xry111.site>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 25, 2024 at 11:28=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrot=
-e:
->
-> On Wed, Sep 25, 2024, at 22:04, Marek Vasut wrote:
-> > With driver_async_probe=3D* on kernel command line, the following trace=
- is
-> > produced because on i.MX8M Plus hardware because the soc-imx8m.c driver
-> > calls of_clk_get_by_name() which returns -EPROBE_DEFER because the cloc=
-k
-> > driver is not yet probed. This was not detected during regular testing
-> > without driver_async_probe.
-> >
-> > Convert the SoC code to platform driver and instantiate a platform devi=
-ce
-> > in its current device_initcall() to probe the platform driver. Rework
-> > .soc_revision callback to always return valid error code and return SoC
-> > revision via parameter. This way, if anything in the .soc_revision call=
-back
-> > return -EPROBE_DEFER, it gets propagated to .probe and the .probe will =
-get
-> > retried later.
->
-> Thanks for the new version, that was quick!
->
-> > +static struct platform_driver imx8m_soc_driver =3D {
-> > +     .probe =3D imx8m_soc_probe,
-> > +     .driver =3D {
-> > +             .name =3D "imx8m-soc",
-> > +     },
-> > +};
-> > +module_platform_driver(imx8m_soc_driver);
-> > +
-> > +static int __init imx8_soc_init(void)
-> > +{
-> > +     struct platform_device *pdev;
-> > +
-> > +     pdev =3D platform_device_register_simple("imx8m-soc", -1, NULL, 0=
-);
-> > +
-> > +     return IS_ERR(pdev) ? PTR_ERR(pdev) : 0;
-> > +}
-> >  device_initcall(imx8_soc_init);
->
-> Did you run into problems with the method I suggested first?
->
-> I don't like the way that this version still registers both the
-> device and driver regardless of the hardware it runs on, I'd
-> prefer to leave the platform check in the initcall and
-> only register them if we are actually on an imx8 machine.
->
-> Having two initcalls also makes it impossible to build this
-> as a loadable module, which is why I suggested
-> platform_create_bundle().
+On 5/21/24 19:06, Xi Ruoyao wrote:
+> -	invlpg_miss_match = x86_match_cpu(invlpg_miss_ids);
+> +	/* Only bare-metal is affected.  PCIDs in guests are OK.  */
+> +	if (!boot_cpu_has(X86_FEATURE_HYPERVISOR))
+> +		invlpg_miss_match = x86_match_cpu(invlpg_miss_ids);
 
-That particular helper doesn't seem to like probe deferral because it
-allows for some of the code to be in init sections. So, it gets
-dropped after module load is complete. So, Marek will still have to
-register the device and driver separately. But I agree that it might
-be better to NOT register the device and driver if the basic
-conditions aren't met.
+So, surely, the common case is hypervisors that set
+X86_FEATURE_HYPERVISOR are running the guest under VMX.  But it doesn't
+cover everything, either.
 
--Saravana
+The guest could be running under regular old QEMU without KVM.  Or it
+could be one of the hypervisors that has a sense of humor and runs guest
+ring0 in hardware ring3.  But those setups aren't vulnerable in the
+first place because they don't actually execute INVLPG directly on the
+hardware.
 
-> I think you can keep the
-> of_device_id lookup and pass the imx8_soc_data pointer
-> as the platform_data to platform_create_bundle.
->
->     Arnd
+That said, if this check goes wrong (like seeing a
+X86_FEATURE_HYPERVISOR==0 under VMX) the worst that can happen is that
+PCIDs get disabled without a good reason.
+
+So I think the patch is correct, but I don't like the idea that
+X86_FEATURE_HYPERVISOR has any kind of strict connection to VMX.
+
+I'd rather just say:
+
+	Hypervisors lie about CPUID making model and microcode version
+	checks worthless. Just assume all guests are immune either
+	because they can't use INVLPG directly or are running under VMX
+	and are unaffected.
 
