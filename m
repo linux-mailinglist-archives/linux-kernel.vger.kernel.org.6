@@ -1,227 +1,139 @@
-Return-Path: <linux-kernel+bounces-340668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BDE0987670
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:25:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96ADD987676
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 407321C23605
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:25:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32FC11F2744B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042FC14F126;
-	Thu, 26 Sep 2024 15:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4D91531DB;
+	Thu, 26 Sep 2024 15:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZxZM6Hb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KY4U4I7h"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4145743AB9;
-	Thu, 26 Sep 2024 15:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E6213B5B4
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727364314; cv=none; b=M9IBAJSWzIXLdu5dR5j/0jLQo++x0+HBh86RpuGYHahjZ7uwMDUtas8kDoRHD0+d31sA1/p8pHNjHBQrlkW47E0OekDUjs45N2sOwFFbxsUGveh5V0a8XMLIeTdfO6Q9GWuFMnrTqE+g3MCgZaHu8PiFa7US3Cnze3RpXJmCHqk=
+	t=1727364363; cv=none; b=iC5MtyIJv2GYxbpr4fFbjRAxdJ83Il1a4Ytw4JEcIlAYkYS5EkbbiQu9bR3NJ0u2VadZHCOUIipg6/YmSKbOJZs4ntGe+5qH3bHE+RG1CLL3srhY93cHnew0dcHcOxtzLlVK/W/jnGxHz5CIRLNkLFa4ZDuOPUQQR7crCVOlnY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727364314; c=relaxed/simple;
-	bh=TPt93JDjmbuI4Gvk/WBTVqtehfFofxIUzKliPwY8Qt8=;
+	s=arc-20240116; t=1727364363; c=relaxed/simple;
+	bh=8O97gAQSQMSTIA1LZZJBwR/Vypo4UoHG527XvQ/bhCI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZKdeGKXY/xxFAaBghxsM63CnepXt5z9SXnhFikq4jMWqezcTF0ngLjUT4Ne2FIIkD6L0w1f38b0Vl/HdBczYeywABHOJ3MsmAQTSPytc8XTopSXjg+25PpBfMwCBuiqpCEZeSOzs5QSBD0FBoCItEG0qgu/R0weAtn+MJIKbU1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZxZM6Hb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B97FC4CEC5;
-	Thu, 26 Sep 2024 15:25:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727364313;
-	bh=TPt93JDjmbuI4Gvk/WBTVqtehfFofxIUzKliPwY8Qt8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MZxZM6HbIf9Oui7WM7xWvF3yHPoSDip2tEFFtpHJrwQZ1tIFnIhOAW6MlSW4eIJHP
-	 WcBIfXcv2lODsvOyRv9HOayqww29WlwvTs+K2Jh0aQ98UVhAXwOE+XFdJwsgspy3va
-	 kxuYoEFoZ8kr1+k0pUjHB3ezi78A5u0Qu+t0E+QfrHJGsPLH9v4RaSvy+qnkm1m5Wc
-	 l/2vmfM0b50WyVqekKKubRYhZJmCZ3W5jRk/NEGPsQco/zL4IZis/0Rw6+c92F/mXc
-	 tgsklVtoyWWKROM4kWKYNoXNFBZA+AaU+cqoEFJwYegSjMY70l/J7vmiXLaEZH+Gfc
-	 e/JBnzRmRr6Ig==
-Message-ID: <b23a03d6-16c4-42ed-a99f-519b9ca8408d@kernel.org>
-Date: Thu, 26 Sep 2024 10:25:12 -0500
+	 In-Reply-To:Content-Type; b=UvJlVe/tY75wmemBRWRBgc/nVGU39UR9s3dvpxVpFFqQbWQXXVCRbsoKYEhAHnN+Zfjh573LAGh0Nq8IUeSNY9sriwAOhqQBj1irBVFjLmuOUs0JETRAp/nqo0m00m9AnhyFJsB5XLUof4+uHTLiNyCa80K0hlzD6xIteWGBjo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KY4U4I7h; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <8d19d735-c2a8-456a-ac97-7f8d86cd7ed1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727364359;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z4ZlEW2hvu2WiB0zyG9qp5Yw8aOdRlroBQryAcoNJJ4=;
+	b=KY4U4I7hrDGJSp6YKullSWSD5lP2OkyMVPJoqQhWbnI4jzplUfAvFTcH639OiAiefibyig
+	EzCYgm91vBGkKuRpLuN/KhwHYK/O42gr6CaSUJTQEZAxRtOSKYdnq+NwFp6FmlTkJW++Bd
+	m/OHo6S1IFun6CIEdK6Zrm2+S87b158=
+Date: Thu, 26 Sep 2024 23:25:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/9] platform/x86: asus-armoury: add apu-mem control
- support
-To: "Luke D. Jones" <luke@ljones.dev>, linux-kernel@vger.kernel.org
-Cc: linux-input@vger.kernel.org, bentiss@kernel.org, jikos@kernel.org,
- platform-driver-x86@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
- hdegoede@redhat.com, corentin.chary@gmail.com
-References: <20240926092952.1284435-1-luke@ljones.dev>
- <20240926092952.1284435-8-luke@ljones.dev>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20240926092952.1284435-8-luke@ljones.dev>
+Subject: Re: [MAINLINE 0/2] Enable DIM for legacy ULPs and use it in RDS
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Haakon Bugge <haakon.bugge@oracle.com>,
+ Christoph Hellwig <hch@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Allison Henderson <allison.henderson@oracle.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ OFED mailing list <linux-rdma@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "rds-devel@oss.oracle.com" <rds-devel@oss.oracle.com>
+References: <Zuwyf0N_6E6Alx-H@infradead.org>
+ <C00EA178-ED20-4D56-B6F2-200AC72F3A39@oracle.com>
+ <Zu191hsvJmvBlJ4J@infradead.org>
+ <525e9a31-31ee-4acf-a25c-8bf3a617283f@linux.dev>
+ <ZvFY_4mCGq2upmFl@infradead.org>
+ <aea6b986-2d25-4ebc-93e8-05da9c6f3ba2@linux.dev>
+ <ZvJiKGtuX62jkIwY@infradead.org>
+ <1ad540cb-bf1b-456b-be2d-6c35999bdaa8@linux.dev>
+ <66A7418F-4989-4765-AC0F-1D23342C6950@oracle.com>
+ <5b86861b-60f7-4c90-bc0e-d863b422850f@linux.dev>
+ <20240925092645.GD967758@unreal>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20240925092645.GD967758@unreal>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 9/26/2024 04:29, Luke D. Jones wrote:
-> Implement the APU memory size control under the asus-armoury module using
-> the fw_attributes class.
+在 2024/9/25 17:26, Leon Romanovsky 写道:
+> On Wed, Sep 25, 2024 at 10:04:21AM +0800, Zhu Yanjun wrote:
+>> 在 2024/9/24 23:16, Haakon Bugge 写道:
+>>>
+>>>
+>>>> On 24 Sep 2024, at 15:59, Zhu Yanjun <yanjun.zhu@linux.dev> wrote:
+>>>>
+>>>> 在 2024/9/24 14:54, Christoph Hellwig 写道:
+>>>>> On Tue, Sep 24, 2024 at 09:58:24AM +0800, Zhu Yanjun wrote:
+>>>>>> The users that I mentioned is not in the kernel tree.
+>>>>> And why do you think that would matter the slightest?
+>>>>
+>>>> I noticed that the same cq functions are used. And I also made tests with this patch series. Without this patch series, dim mechanism will not be invoked.
+>>>
+>>> Christoph alluded to say: Do not modify the old cq_create_cq() code in order to support DIM, it is better to change the ULP to use ib_alloc_cq(), and get DIM enabled that way.
+>>
+>> Hi, Haakon
+>>
+>> To be honest, I like your original commit that enable DIM for legacy ULPs
+>> because this can fix this problem once for all and improve the old
+>> ib_create_cq function.
+>>
+>> The idea from Christoph will cause a lot of changes in ULPs. I am not very
+>> sure if these changes cause risks or not.
+>>
+>> Thus, I prefer to your original commit. But I will follow the advice from
+>> Leon and Jason.
 > 
-> This allows the APU allocated memory size to be adjusted depending on
-> the users priority. A reboot is required after change.
-> 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> Christoph was very clear and he summarized our position very well. We
+> said similar thing to SMC folks in 2022 [1] and RDS is no different here.
 
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+Thanks, Leon. I will read this link carefully.
 
-> ---
->   drivers/platform/x86/asus-armoury.c        | 114 +++++++++++++++++++++
->   include/linux/platform_data/x86/asus-wmi.h |   1 +
->   2 files changed, 115 insertions(+)
 > 
-> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
-> index 0f67b5deb629..a0022dcee3a4 100644
-> --- a/drivers/platform/x86/asus-armoury.c
-> +++ b/drivers/platform/x86/asus-armoury.c
-> @@ -456,6 +456,119 @@ static ssize_t egpu_enable_current_value_store(struct kobject *kobj, struct kobj
->   WMI_SHOW_INT(egpu_enable_current_value, "%d\n", ASUS_WMI_DEVID_EGPU);
->   ATTR_GROUP_BOOL_CUSTOM(egpu_enable, "egpu_enable", "Enable the eGPU (also disables dGPU)");
->   
-> +/* Device memory available to APU */
-> +
-> +static ssize_t apu_mem_current_value_show(struct kobject *kobj, struct kobj_attribute *attr,
-> +					  char *buf)
-> +{
-> +	int err;
-> +	u32 mem;
-> +
-> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_APU_MEM, &mem);
-> +	if (err)
-> +		return err;
-> +
-> +	switch (mem) {
-> +	case 0x100:
-> +		mem = 0;
-> +		break;
-> +	case 0x102:
-> +		mem = 1;
-> +		break;
-> +	case 0x103:
-> +		mem = 2;
-> +		break;
-> +	case 0x104:
-> +		mem = 3;
-> +		break;
-> +	case 0x105:
-> +		mem = 4;
-> +		break;
-> +	case 0x106:
-> +		/* This is out of order and looks wrong but is correct */
-> +		mem = 8;
-> +		break;
-> +	case 0x107:
-> +		mem = 5;
-> +		break;
-> +	case 0x108:
-> +		mem = 6;
-> +		break;
-> +	case 0x109:
-> +		mem = 7;
-> +		break;
-> +	default:
-> +		mem = 4;
-> +		break;
-> +	}
-> +
-> +	return sysfs_emit(buf, "%u\n", mem);
-> +}
-> +
-> +static ssize_t apu_mem_current_value_store(struct kobject *kobj, struct kobj_attribute *attr,
-> +					   const char *buf, size_t count)
-> +{
-> +	int result, err;
-> +	u32 requested, mem;
-> +
-> +	result = kstrtou32(buf, 10, &requested);
-> +	if (result)
-> +		return result;
-> +
-> +	switch (requested) {
-> +	case 0:
-> +		mem = 0x000;
-> +		break;
-> +	case 1:
-> +		mem = 0x102;
-> +		break;
-> +	case 2:
-> +		mem = 0x103;
-> +		break;
-> +	case 3:
-> +		mem = 0x104;
-> +		break;
-> +	case 4:
-> +		mem = 0x105;
-> +		break;
-> +	case 5:
-> +		mem = 0x107;
-> +		break;
-> +	case 6:
-> +		mem = 0x108;
-> +		break;
-> +	case 7:
-> +		mem = 0x109;
-> +		break;
-> +	case 8:
-> +		/* This is out of order and looks wrong but is correct */
-> +		mem = 0x106;
-> +		break;
-> +	default:
-> +		return -EIO;
-> +	}
-> +
-> +	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_APU_MEM, mem, &result);
-> +	if (err) {
-> +		pr_warn("Failed to set apu_mem: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	pr_info("APU memory changed to %uGB, reboot required\n", requested);
-> +	sysfs_notify(kobj, NULL, attr->attr.name);
-> +
-> +	asus_set_reboot_and_signal_event();
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t apu_mem_possible_values_show(struct kobject *kobj, struct kobj_attribute *attr,
-> +					    char *buf)
-> +{
-> +	return sysfs_emit(buf, "0;1;2;3;4;5;6;7;8\n");
-> +}
-> +ATTR_GROUP_ENUM_CUSTOM(apu_mem, "apu_mem", "Set available system RAM (in GB) for the APU to use");
-> +
->   /* Simple attribute creation */
->   ATTR_GROUP_ROG_TUNABLE(ppt_pl1_spl, "ppt_pl1_spl", ASUS_WMI_DEVID_PPT_PL1_SPL, cpu_default,
->   		       cpu_min, cpu_max, 1, "Set the CPU slow package limit");
-> @@ -511,6 +624,7 @@ static const struct asus_attr_group armoury_attr_groups[] = {
->   	{ &nv_temp_target_attr_group, ASUS_WMI_DEVID_NV_THERM_TARGET },
->   	{ &dgpu_base_tgp_attr_group, ASUS_WMI_DEVID_DGPU_BASE_TGP },
->   	{ &dgpu_tgp_attr_group, ASUS_WMI_DEVID_DGPU_SET_TGP },
-> +	{ &apu_mem_attr_group, ASUS_WMI_DEVID_APU_MEM },
->   
->   	{ &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
->   	{ &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
-> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-> index 86629e621c61..e1aeafdf05d5 100644
-> --- a/include/linux/platform_data/x86/asus-wmi.h
-> +++ b/include/linux/platform_data/x86/asus-wmi.h
-> @@ -136,6 +136,7 @@
->   
->   #define ASUS_WMI_DEVID_DGPU_BASE_TGP	0x00120099
->   #define ASUS_WMI_DEVID_DGPU_SET_TGP	0x00120098
-> +#define ASUS_WMI_DEVID_APU_MEM		0x000600C1
->   
->   /* gpu mux switch, 0 = dGPU, 1 = Optimus */
->   #define ASUS_WMI_DEVID_GPU_MUX		0x00090016
+> So no, "old ib_create_cq" shouldn't be used by ULPs.
+
+Got it. I have replaced ib_create_cq with ib cq pool APIs. Perhaps 
+drivers/infiniband/ulp/srpt/ib_srpt.c is a good example to use ib cq 
+pool APIs.
+
+Best Regards,
+Zhu Yanjun
+
+> 
+> Thanks
+> 
+> [1] https://lore.kernel.org/netdev/YePesYRnrKCh1vFy@unreal/
+> 
+>>
+>> Zhu Yanjun
+>>
+>>>
+>>>
+>>> Thxs, Håkon
+>>>
+>>
+>>
 
 
