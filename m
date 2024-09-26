@@ -1,109 +1,114 @@
-Return-Path: <linux-kernel+bounces-340047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ABD4986DFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:47:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE47986DF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84E361C21846
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:47:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30BC7B2335F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB73F18E37F;
-	Thu, 26 Sep 2024 07:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C96018FDBE;
+	Thu, 26 Sep 2024 07:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kaq3xLT0"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="qJ1T80oo"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7788D14F10E;
-	Thu, 26 Sep 2024 07:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C65186E47;
+	Thu, 26 Sep 2024 07:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727336845; cv=none; b=J5HWxIXMQ6Z2Vj3zNhsUxaah9L5qozsARmfU5lAt/UHl1sCAm61HX+X/9EKGFuHhsDSMG+3bIGHWs1yX/sNP/8VBCkwQnPStgjRkMvwNHGaKT0ex89dWowyKqsnCWZGOm1/D7SMKTAjNglc8WLW0Lu5/PZo0vf8i5g9BR6SW9fA=
+	t=1727336795; cv=none; b=kmu6FNIhYzHpCZikTVwKUvO4CHAi+/tkNeMlvlM6ZW64Mi5eEWQqWThR3SHlEjr3tnuMLDr7fNjMIllfRGqQI++xJOcA1MIfZ9OZhZSgM/BCjmVzUjsowPzu+yaE7qlwlAV2qdHcci2oerILKHpjY+iv9wNfIJsHKLqtSHaWruA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727336845; c=relaxed/simple;
-	bh=sbp35loG1dkiN3K6+DS+J207tNv9+/xCv8SXqYl3Gjs=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BgMHCKvJsOgfO0+L/qCs7lDuW9+i/pxpX3zJ5308OONrRmp2fWN8AoW91SMu1nTAlpZAp+aU9O4o9JwgytD4WAC2wZVzF2w1yDmyxPVwdhrcwzyBQBD8KZYKrVGktPnzw+gYp8sXEgYUCHtxgShWKYNAxqHISqy8LJybibNm2bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kaq3xLT0; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8a7b1c2f2bso102621466b.0;
-        Thu, 26 Sep 2024 00:47:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727336841; x=1727941641; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VXgcQt/t3gCBiL6CrVkztXkAMt0TnTUvjHyyD1p//ys=;
-        b=kaq3xLT0qYKCIME2Gl8lgp/SceSTZZFSP6gzEqM8VrX0/SoBDsMI1BF+Mh3XG4LGw7
-         Il2ziRzpzg8eqSv7WZEI50J6vfBU1Zzn97jf6pKuj+mbPx8h1DnvLg0PAcF8RNeS4gOv
-         h8bxqNatGoZEDb7i78RaMmBKjwq1G2h7lrCxTWaeY0SrBBPCHw3FCoalWQ0lrBx8mEhl
-         vauJGKw7+aifeVnsoyrb7ASbVyP3vrd0vGyB0+X/o1vYpvrbmuUDcOzm+WZfQGbGWfVI
-         swqMaOiKlqKCEUncIFshM/wZUfJGr+gN7PuUsC5oURINxWcYg3rgR9+k2I8njqzYSKh3
-         r8hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727336841; x=1727941641;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VXgcQt/t3gCBiL6CrVkztXkAMt0TnTUvjHyyD1p//ys=;
-        b=xEnKsJ8RFl+zYuMWu4ujXwMFaNK3LrddKzGGevju6+wLzNdfNkfx+/gH8VipKKvgod
-         vPr5tdRYJcsGNmoagIIfeAgAP8xhB8vS5YRHS3+l2YfkAWF/ZK7FCMZUO+5VOb0pSrUG
-         hkZp01Ev4wA30aXGNfu6dCJAdw/CNaVCn054SXjTDrfOQ8vXCE4p6CSIqs0P+pTh64LY
-         2t7y6phwlPLsr5Fch/ms6xEOUz9UTGToSS7IDh7EFlpLEetyFjYZtsHd9rfp99AZRlaH
-         frbm7om7tl3a6aOyp3DNRNA6EADbPqoPtT1yeVz10CajBALaVSMaEYlmERFkjMZW+Qor
-         sdfw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/eGt6j6JtvmFZfqAkQkuzO9DmLCtcV3mjPxnsI/HEmYmXKa65M7QY6qKge+hQ3ZNK4yoRfbdW83108g==@vger.kernel.org, AJvYcCXWO1VW0CTNbXM+tzPNIDsPzURARpQKk0mzbN0YiahGY2YiDOr8X4pDQQf+hggZYmFo+U/cBu6Tj2AMUazj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3HVs3V0AMP6/jY5Sq5sLIfcRMWhhEZbbKUTtcVs0BzC5AmpVj
-	36/Q552jnu3urEZx4HA1wEp1pGlBGW7cChXSp/n9zPgveV+TtlQj
-X-Google-Smtp-Source: AGHT+IEJXaXg4njtPdRpa2+FF2h/xySF67hNU5lrTkwJ03kFktgRk6Pd9eooA6tbBFdzJPIFxUaJFw==
-X-Received: by 2002:a17:907:31c9:b0:a83:94bd:d913 with SMTP id a640c23a62f3a-a93a03202f3mr572242566b.10.1727336841193;
-        Thu, 26 Sep 2024 00:47:21 -0700 (PDT)
-Received: from localhost ([217.151.144.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930c8a98sm317428966b.124.2024.09.26.00.47.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 00:47:20 -0700 (PDT)
-From: Oliver Graute <oliver.graute@gmail.com>
-X-Google-Original-From: Oliver Graute <oliver.graute@kococonnector.com>
-Date: Thu, 26 Sep 2024 09:46:18 +0200
-To: Yu Jiaoliang <yujiaoliang@vivo.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Joel Selvaraj <joelselvaraj.oss@gmail.com>,
-	ye xingchen <ye.xingchen@zte.com.cn>,
-	Felix Kaechele <felix@kaechele.ca>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	John Keeping <jkeeping@inmusicbrands.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	patches@opensource.cirrus.com, opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] input: Fix typos in comments across various files
-Message-ID: <ZvURSswZLdAakNU6@graute-think>
-References: <20240926031457.3479350-1-yujiaoliang@vivo.com>
+	s=arc-20240116; t=1727336795; c=relaxed/simple;
+	bh=k5daxyw5dgBcLX3lcS28REaQRjV+ba1N+8xCEP6hh7U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=X9kslp2Q7rZSyf1PdfyKifSfQx4C6x3pc1LbUdEJmat9aMZt2gH0MUlY77QXQNunaIYM5TavHDgwrmliQZaLq5547CcLKw9f4gMhxwsYLa0xWZswnYLBo+mD/zf/nLsWozPu5DwPpmYBFyXgCvoHI2C/9ytLEeCgjlt92PPLqtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=qJ1T80oo; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=k5daxyw5dgBcLX3lcS28REaQRjV+ba1N+8xCEP6hh7U=; b=qJ1T80ooP1ors58dxzYmUWDqVU
+	+BgnE9C3YJP5aeFtokGXmaaiSUMxx4p2hycsji/zKjwvXpCvCmpMcWNFAS40k/Ler5dgdKfOx7WS1
+	0exRRVt+O0O44XCxY4llRJwjaD2PiPlB04FE9BXQO1CyWzTNgDSjHKY82rzI4LyleTrCnvu2fhOfm
+	28FaLj8Nv3xcuct4jRHOrWy69vuWiMy3p4Y0QdSl+gP2isAMVrl4pcBLZ1NrWqm463139oLVWRUqI
+	0Y/TmERury7vcQ6EdNiHt+IiNbJeHBFLO03RZaL4AgduMjP71MNd7PGFfMcQDWZEnOsc6OBqx7m0B
+	tg1BQO3g==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1stjCo-000Kzy-Tl; Thu, 26 Sep 2024 09:46:30 +0200
+Received: from [185.17.218.86] (helo=localhost)
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1stjCn-0001Ra-2f;
+	Thu, 26 Sep 2024 09:46:30 +0200
+From: Esben Haabendal <esben@geanix.com>
+To: Erez <erezgeva2@gmail.com>
+Cc: Michael Walle <mwalle@kernel.org>,  Tudor Ambarus
+ <tudor.ambarus@linaro.org>,  Erez Geva <erezgeva@nwtime.org>,
+  linux-mtd@lists.infradead.org,  Pratyush Yadav <pratyush@kernel.org>,
+  linux-kernel@vger.kernel.org,  Miquel Raynal <miquel.raynal@bootlin.com>,
+  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  devicetree@vger.kernel.org,  Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
+ Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v5 1/5] mtd: spi-nor: core: add manufacturer flags
+In-Reply-To: <CANeKEMO1nyzEKGCt8N8_UCmAcQ3L53=H8U07AdJzcnFaVuwjGQ@mail.gmail.com>
+	(Erez's message of "Mon, 23 Sep 2024 18:31:04 +0200")
+References: <20240920181231.20542-1-erezgeva@nwtime.org>
+	<20240920181231.20542-2-erezgeva@nwtime.org>
+	<4e0cf43c-4843-451c-ac6f-86775dbccb2b@linaro.org>
+	<CANeKEMOmhAPM1j1_ihzcC2wL6jKsWXPCGfZs+euS8mRvtqgE5A@mail.gmail.com>
+	<D4DLQGLJSKPB.3OOW4RU9Q3K5O@kernel.org>
+	<CANeKEMPSoUu7GW5bL8nuyC5xCKG7Tt0=SvWTL_CcX5oebqN_YA@mail.gmail.com>
+	<D4DSTDA3HE2B.20ACE70SQAL7A@kernel.org>
+	<CANeKEMO1nyzEKGCt8N8_UCmAcQ3L53=H8U07AdJzcnFaVuwjGQ@mail.gmail.com>
+Date: Thu, 26 Sep 2024 09:46:29 +0200
+Message-ID: <87y13ehn6y.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926031457.3479350-1-yujiaoliang@vivo.com>
+Content-Type: text/plain
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27409/Wed Sep 25 11:17:07 2024)
 
-On 26/09/24, Yu Jiaoliang wrote:
-> This commit fixes several typographical errors in comments within
-> the driver/input directory. No functional changes are made.
-> 
-> Detected using codespell.
-> 
-> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+Erez <erezgeva2@gmail.com> writes:
 
-Reviewed-by: Oliver Graute <oliver.graute@kococonnector.com>
+> On Mon, 23 Sept 2024 at 18:19, Michael Walle <mwalle@kernel.org> wrote:
+>>
+>> > > > I would gladly remove the obsolete mx25l12805d.
+>> > > Why? I don't see any need for that.
+>> > Maybe because we do not want compatibility table?
+>>
+>> I don't get this? Anyway, we do not remove support for older
+>> flashes for no reason.
+>
+> I did not insist, you asked.
+> Macronix stopped selling these chips 15 year ago.
+> How long do you want to support old chips?
+
+It is not unusual for embedded products to have a support span of more
+than 20 years. And chips such as these flashes might not be entirely new
+when the product is introduced. So dropping support for SPI-NOR flashes
+that are newer than 25-30 years is definitely a risk. Somebody out there
+might not be able to upgrade to latest kernel versions anymore, which is
+not a position we should put anyone in. With the increasing pressure to
+upgrade product for better security, we definitely should not make it
+more difficult to run newer kernel versions than absolutely necessary.
+
+/Esben
 
