@@ -1,202 +1,118 @@
-Return-Path: <linux-kernel+bounces-340995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C6C987A02
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:13:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4828F987A04
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 159581F22A0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:13:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 743F51C226AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB3C17F4F7;
-	Thu, 26 Sep 2024 20:13:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCB31BC58;
-	Thu, 26 Sep 2024 20:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5261218308A;
+	Thu, 26 Sep 2024 20:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h/6Ib0Zv"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192521BC58
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 20:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727381589; cv=none; b=Vd8dEems5cz7p8IwzSX25jM6/QVUaHtV5ZGCfbARMq0l5XvDOUA0ToHZAtuVh1KwMjLixCqYMajRN+aKwXAetm17sbbt37K9YtK2OuarZycD2EVbbjkE4QDVMemDQvH3ULoNpF4S+iDjyl9wADLpsIoBY0AUsa11Eqvsny9JUEo=
+	t=1727381655; cv=none; b=NMEQ22hqyiNO9LmBQ78HYU/dP56sU8lEuNXmtSqlmwHYIatf4JXPcBGN6a+Ckm/zZUKQgtlCtCWdB64l7KjA8rOaE6lQ6e/WINVoLN0uSHgAS4Anzjcb3DIFBLzaajSlrRxZGRRVDOPhswxXtq7ZTjpWQ5/kz7ABh7J9orezcIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727381589; c=relaxed/simple;
-	bh=DfUkjGWOlcvpaVhHWXCIGOf0Wy4ZOw6Knk8goDl7nUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ByjmH0hJwQvoPo6BYgqrq4YAOV9t+Vv7IxzR8ZErZJUVIpf5mDBvmQwxPiCKXACtt02oeYax9ljQCS7+SaKou/9si2bRYDJCz4TYLTvJGXOmCUTxW/Mo/25ImX4pr14A65S63XkigLxlMt8RhNCFjCaOts49x8VsxY3TDiSsRi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB45314BF;
-	Thu, 26 Sep 2024 13:13:35 -0700 (PDT)
-Received: from [10.57.20.191] (unknown [10.57.20.191])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 599EB3F587;
-	Thu, 26 Sep 2024 13:13:03 -0700 (PDT)
-Message-ID: <e9c77ce7-0bfb-41cf-9034-2d96359a30a8@arm.com>
-Date: Thu, 26 Sep 2024 21:12:57 +0100
+	s=arc-20240116; t=1727381655; c=relaxed/simple;
+	bh=SywJ6IY4/ZKra54DmIZi64FJeAqVuZ29u2cS0EvQAT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WILTPUXLO41Uwf056d5a23YKNumiCqIeYlCz4BbnkXHgjnMHuVU8VP5GOg4rX9RJ/IVxpY2jUhzz1wzb2VatZMWtsy9R5TUDtaPCj5Zwh2tyYIf5t09wfJGSMjg6/VTneBzgPz/u70AYToKyIcmV6fO4yOpgm/Ef+3bZ4eOxkYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h/6Ib0Zv; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cae102702so11842055e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 13:14:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727381652; x=1727986452; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=adNp+ex0aTTFAqiWEedrw/mOZftL/ye5N6g7vAI0S0g=;
+        b=h/6Ib0Zv1Qywp9YTBqrFaOk7L2Qcd9IMpfc5FotB22f+1oRgnYJ/j/DtPcdlSqup+3
+         ygN71C1KgfZtMLp6bLNIlYG1Pb/Ds0gsGjyHKgCbxQj7d/Z+JgK+Uz0+FAE8OHpwm/p6
+         sMojjiOsU+XvfNC7NLr2b/9ZudJVMTxUQ+ZqIeQUigo2f1jSpY4AanF7oyo69Bj+Q6tX
+         cOBZoqzbXEl7FALaQ0MQn60KmdDenZMb+NggDpQuHmjKjLFGPkWY7/DchaYRJ9x+AgkL
+         JOuTTiQ8pq+8EHhkO5lfGmSVtyNAx+W853wtoJm78bqELph437Kigw0N7uu2WHOHCV7a
+         p00g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727381652; x=1727986452;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=adNp+ex0aTTFAqiWEedrw/mOZftL/ye5N6g7vAI0S0g=;
+        b=PWDOtC4G3/MIModtg681ox9AudlsvmaW7AkgN1LhrJ0nuwXs1iaudxKxoMe5bviJHN
+         QCMNEZBc2GRITDMVfp+gGY2o9Rq5UhT+G3Hu3/I10lr7Erp1ts0WSsXAKF9IkDw5+ikr
+         GQNmvWP4ZH8XcuqacDVTJGVElswiy9Hh5i56v5C9N2EHvI4SHYiFNQo4EUtsQQh6xTC+
+         wH7I9mnOusvLFMnDy8Sg6tc6JFVNx2XpraUwg5DnI7FnGYdHnJ01YqLx7srSSKS2Wo1B
+         HBYRoxO/nfuomdBQr2tjcIUV5EQlAQuSGaAdFJeV+iCMlD14XO2SY/UVPTyLeLqwNqMk
+         SD4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWM5Fq6U5vh3snDuQ+1EF+0x+xHv08QEkc7q2YTKQO50Yuka+a+Uat6CC/vvS+nyH5CssUZTWWZu7nMix8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyhWvIAs5eH2NeCfyGChamGLLqiQc1lSo1xmYcb0I40nsN1jPq
+	nkUYcZ9kYSLIKeFIxJ+7ahXq2nRT9gftUZ3APXEYmHM4Fht9l/AKiPfANjOrt54=
+X-Google-Smtp-Source: AGHT+IHAVUKzMTH3MGv+LwYbAamyJU3xln7iWwZfpcoO7AqGhQqz3MkJaGIrNcTuk0zibF2YaiT2bw==
+X-Received: by 2002:a05:600c:3b04:b0:425:5ec3:570b with SMTP id 5b1f17b1804b1-42f58497da0mr3800515e9.35.1727381652444;
+        Thu, 26 Sep 2024 13:14:12 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57dec19bsm8350185e9.26.2024.09.26.13.14.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 13:14:11 -0700 (PDT)
+Date: Thu, 26 Sep 2024 23:14:07 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Simon Horman <horms@kernel.org>
+Cc: Roger Quadros <rogerq@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Julien Panis <jpanis@baylibre.com>,
+	Chintan Vankar <c-vankar@ti.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] net: ethernet: ti: am65-cpsw: Fix forever loop in
+ cleanup code
+Message-ID: <5ed2cd4e-cb50-4a21-93e2-8ba8d627f20a@stanley.mountain>
+References: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
+ <20240926155139.GG4029621@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] perf jevents: Add cycles breakdown metric for
- arm64/AMD/Intel
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Jing Zhang <renyu.zj@linux.alibaba.com>,
- Thomas Richter <tmricht@linux.ibm.com>, James Clark <james.clark@arm.com>,
- Leo Yan <leo.yan@linux.dev>
-References: <20240926175709.410022-1-irogers@google.com>
- <20240926175709.410022-3-irogers@google.com>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <20240926175709.410022-3-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926155139.GG4029621@kernel.org>
 
-On 9/26/2024 6:57 PM, Ian Rogers wrote:
+On Thu, Sep 26, 2024 at 04:51:39PM +0100, Simon Horman wrote:
+> On Thu, Sep 26, 2024 at 12:50:45PM +0300, Dan Carpenter wrote:
+> > This error handling has a typo.  It should i++ instead of i--.  In the
+> > original code the error handling will loop until it crashes.
+> > 
+> > Fixes: da70d184a8c3 ("net: ethernet: ti: am65-cpsw: Introduce multi queue Rx")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > 
-> Breakdown cycles to user, kernel and guest. Add a common_metrics.py
-> file for such metrics.
+> Hi Dan,
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/pmu-events/Build             |  2 +-
->  tools/perf/pmu-events/amd_metrics.py    |  3 +++
->  tools/perf/pmu-events/arm64_metrics.py  |  2 ++
->  tools/perf/pmu-events/common_metrics.py | 18 ++++++++++++++++++
->  tools/perf/pmu-events/intel_metrics.py  |  2 ++
->  5 files changed, 26 insertions(+), 1 deletion(-)
->  create mode 100644 tools/perf/pmu-events/common_metrics.py
-> 
-> diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Build
-> index f3bc6c093360..91b6837e32c9 100644
-> --- a/tools/perf/pmu-events/Build
-> +++ b/tools/perf/pmu-events/Build
-> @@ -37,7 +37,7 @@ $(OUTPUT)pmu-events/arch/%: pmu-events/arch/%
->         $(call rule_mkdir)
->         $(Q)$(call echo-cmd,gen)cp $< $@
-> 
-> -GEN_METRIC_DEPS := pmu-events/metric.py
-> +GEN_METRIC_DEPS := pmu-events/metric.py pmu-events/common_metrics.py
-> 
->  # Generate AMD Json
->  ZENS = $(shell ls -d pmu-events/arch/x86/amdzen*)
-> diff --git a/tools/perf/pmu-events/amd_metrics.py b/tools/perf/pmu-events/amd_metrics.py
-> index 422b119553ff..ccc8ebf13e08 100755
-> --- a/tools/perf/pmu-events/amd_metrics.py
-> +++ b/tools/perf/pmu-events/amd_metrics.py
-> @@ -4,6 +4,7 @@ from metric import (d_ratio, has_event, max, Event, JsonEncodeMetric,
->                      JsonEncodeMetricGroupDescriptions, Literal, LoadEvents,
->                      Metric, MetricGroup, Select)
->  import argparse
-> +from common_metrics import Cycles
->  import json
->  import math
->  import os
-> @@ -571,6 +572,7 @@ def AmdUpc() -> Metric:
->    return Metric("upc", "Micro-ops retired per core cycle (higher is better)",
->                  upc, "uops/cycle")
-> 
-> +
->  def Idle() -> Metric:
->    cyc = Event("msr/mperf/")
->    tsc = Event("msr/tsc/")
-> @@ -652,6 +654,7 @@ def main() -> None:
->        AmdHwpf(),
->        AmdSwpf(),
->        AmdUpc(),
-> +      Cycles(),
->        Idle(),
->        Rapl(),
->        UncoreL3(),
-> diff --git a/tools/perf/pmu-events/arm64_metrics.py b/tools/perf/pmu-events/arm64_metrics.py
-> index bfac570600d9..5285a22ff0c8 100755
-> --- a/tools/perf/pmu-events/arm64_metrics.py
-> +++ b/tools/perf/pmu-events/arm64_metrics.py
-> @@ -3,6 +3,7 @@
->  from metric import (d_ratio, Event, JsonEncodeMetric, JsonEncodeMetricGroupDescriptions,
->                      LoadEvents, Metric, MetricGroup)
->  import argparse
-> +from common_metrics import Cycles
->  import json
->  import os
->  from typing import Optional
-> @@ -171,6 +172,7 @@ def main() -> None:
-> 
->    all_metrics = MetricGroup("",[
->        Arm64Topdown(),
-> +      Cycles(),
->    ])
-> 
->    if _args.metricgroups:
-> diff --git a/tools/perf/pmu-events/common_metrics.py b/tools/perf/pmu-events/common_metrics.py
-> new file mode 100644
-> index 000000000000..74c58f9ab020
-> --- /dev/null
-> +++ b/tools/perf/pmu-events/common_metrics.py
-> @@ -0,0 +1,18 @@
-> +# SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-> +from metric import (d_ratio, Event, Metric, MetricGroup)
-> +
-> +def Cycles() -> MetricGroup:
-> +  cyc_k = Event("cycles:kHh")
+> Unfortunately this patch didn't apply cleanly to net
+> which throws our CI off. So, unfortunately, I think it needs to
+> be rebased and reposted (after the 24h grace period).
 
-I am confused that these modifiers should be OR operation or AND operation.
+It's not a matter of rebasing...  I guess I accidentally deleted a space
+character at the start of the first line of the diff?  Weird.
 
-Seems to me, 'k' / 'H' modifiers are AND operation for tracing host and
-kernel. But for 'h', it is OR operation with rest modifiers, as we want to
-trace for both host kernel and hypervisor.
+Anyway, I'll resend.
 
-Sorry I might ask a duplicate question which has been discussed before.
+regards,
+dan carpenter
 
-The patch itself looks good to me.
-
-Thanks for working on this.
-Leo
-
-> +  cyc_g = Event("cycles:G")
-> +  cyc_u = Event("cycles:uH")
-> +  cyc = cyc_k + cyc_g + cyc_u
-> +
-> +  return MetricGroup("cycles", [
-> +      Metric("cycles_total", "Total number of cycles", cyc, "cycles"),
-> +      Metric("cycles_user", "User cycles as a percentage of all cycles",
-> +             d_ratio(cyc_u, cyc), "100%"),
-> +      Metric("cycles_kernel", "Kernel cycles as a percentage of all cycles",
-> +             d_ratio(cyc_k, cyc), "100%"),
-> +      Metric("cycles_guest", "Hypervisor guest cycles as a percentage of all cycles",
-> +             d_ratio(cyc_g, cyc), "100%"),
-> +  ], description = "cycles breakdown per privilege level (users, kernel, guest)")
-> diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
-> index a3a317d13841..4b7668e25e54 100755
-> --- a/tools/perf/pmu-events/intel_metrics.py
-> +++ b/tools/perf/pmu-events/intel_metrics.py
-> @@ -5,6 +5,7 @@ from metric import (d_ratio, has_event, max, source_count, CheckPmu, Event,
->                      Literal, LoadEvents, Metric, MetricConstraint, MetricGroup,
->                      MetricRef, Select)
->  import argparse
-> +from common_metrics import Cycles
->  import json
->  import math
->  import os
-> @@ -1050,6 +1051,7 @@ def main() -> None:
->    LoadEvents(directory)
-> 
->    all_metrics = MetricGroup("", [
-> +      Cycles(),
->        Idle(),
->        Rapl(),
->        Smi(),
-> --
-> 2.46.1.824.gd892dcdcdd-goog
-> 
-> 
 
