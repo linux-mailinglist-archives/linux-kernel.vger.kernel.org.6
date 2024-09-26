@@ -1,172 +1,141 @@
-Return-Path: <linux-kernel+bounces-339911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854F1986C1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:42:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1827986C1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 080981F22447
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:42:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5A941F22499
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D617D17B4FA;
-	Thu, 26 Sep 2024 05:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D35C17A591;
+	Thu, 26 Sep 2024 05:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TWfYV9w3"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KbLSCC6+"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC55A1171C;
-	Thu, 26 Sep 2024 05:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90869BE6C;
+	Thu, 26 Sep 2024 05:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727329341; cv=none; b=f3gQHv8pRW/rHcO2XoIcAGVosElkMgdT60Utpkymodp2Uw944CrXqLSFqV9kvAwJSI5MNv+EHceH5BCIuaigZRRuCsGQcTbDB4+8AX7JqH4g2WeSwGX1BTrf54nW015K04RQtYgFzkb1FTm2tHA5pUyM/W+Q9BHUeI4XaL1fRcI=
+	t=1727329438; cv=none; b=i1rgUhBQuXQMQVeuD4j5nBlT23HPcn4qx6X7Shy0HNMzhUGkrRYk0BOFWPedGIL6XyFm45vAjsCJPslbtRwgi/FJKrYhTei5cH8Ji5XoRQj1lPgbSDoKc4oy09PEU5er5citnlbTiNoS+PjiTCLOVrjPXyPVcL2sl9hq7R75peI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727329341; c=relaxed/simple;
-	bh=OMbQrqbQj4X6e2bryijPlq9YJFUeZSyo/0sQ6oBZbiE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=To40szaoT9KPDSEWKcE1mBXGSjpTYVrDBiQmr3f3xWOt4OlTmFh+m4lmL5zieBP0BWw8cRx/zWZWwdTUlOD0CBmnkN2l7rEESIbLSgaacZNk/dr0pC03t8oxfuvq4MnGLeKBClUa+PpErJzN/fbFLVuiZTtmmF2+++sIdF73om8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TWfYV9w3; arc=none smtp.client-ip=209.85.221.181
+	s=arc-20240116; t=1727329438; c=relaxed/simple;
+	bh=2Cr2KzDGaxjlbO5pCjOqBbTHIf1+/wa+oaWdDL5bYR0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bz8gaDvezrQ4JIva8A5PQtQMxl9EP6vwaUxO/biq2diRIDJMlid64WDgxceU1P5PZxjp7lT3Z5XdGrK0eVdwCZ3aUnx5haJGEVxRsQyrqO7rADOngA8zixEOCd+KW2C0c6n/HbVHjf2bbsdzVVu3XbxvTw0TGcG7/mhpAbLRNG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KbLSCC6+; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-503f943f115so203348e0c.0;
-        Wed, 25 Sep 2024 22:42:18 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2068a7c9286so5502845ad.1;
+        Wed, 25 Sep 2024 22:43:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727329337; x=1727934137; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iLLnvZ8Qnw5olhuTraYaLYgbkUKswojzU6UirKeGBGE=;
-        b=TWfYV9w31tVJmlBcSNXwGOXpVB/YDamJvb2P3RqMhCrbDRF2gurvLOIViWiYa94vZe
-         x6hIvtV3TAgTnC7xKgrZnAU2iGT/BVGq8rAV/Q0sMckyn3+mGWnMtbDppzUEUwmlI+46
-         bfZc8FAj2jRbktiSuVV/5R9j/MhLXP2ukqFTbQxy7HNOWharPVR9JHY4YJ2jmgT7Qlep
-         xu/5A7Zh4xlXp7A3fOww6d5IBV18dOt5Z1gn8FnGvyMStzDtLBlke35gaTFDxb43WdbR
-         BoY9ebrgJTrTC1GlpSva5VWz04w8r8fDY9RoEVSL/qQ220mGcF/y4qeipyUoFbZnVj0Z
-         zHjg==
+        d=gmail.com; s=20230601; t=1727329437; x=1727934237; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oSQOf0hpG7uYa1+knVWX4FcAmjCoDX0KudBYIIYGWgw=;
+        b=KbLSCC6+4kmFuvAH9VMjz132FJJvY0VqUG/ct66rgDdCkj+SmZG75JsblhZUDCad94
+         2W7xNkM5SWdkTAgaKry6bcsz1WKQAzYue72FZCW76fAKGl6nuPZMVODuWkkauhZ+bSoj
+         9dpMY0yAppQmOW/TrLdTQdeG7QRoyp/RJ3mZGntiUBvbwa9VSBtuysW3mjEmjIOLwdtu
+         91/31dtFmGUmFQM+guUZ15oiv3xm5VHMmFyKMnLpw/DNTpzsLJHSOdhJKwanWcOAYw+4
+         qRH/qT220YB4ggZey6oz9yNa4qj3j3X66G4xW895lx2g1dx56W0K9zhDDFCwGBJAd8tv
+         qHNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727329337; x=1727934137;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iLLnvZ8Qnw5olhuTraYaLYgbkUKswojzU6UirKeGBGE=;
-        b=Y5fybGrVuVnzS2BsRLTzOKHQUh9ObU9Xd8KJP30c2EZnvnaUSKqXjzrDhi7OtEC+Sy
-         qToNM0ClHpjXChmAkgjT/4IPkW8oE/98tb3bkXOmq1rVkGMF2GPQWn78avtxhXBASeea
-         OLtYv2CAMo4xaXX8rXkn7H2mSW4tCsQKoee2vlFvax6/2LvGWR8Y16FlUqYJk0hS2gUz
-         YWh7k5rwLthAIDJSgG69gI8z63AsUEemh4WBq8JPTNMimTWPgZOhJt5rhX/HV5X6bMQr
-         8WoEZ6cJxOILB9av6cmXX31zLChSZq8OYxLfALRmUgKW4eQxXOsy6XdBlL8RwtkSwLVV
-         0UTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWp+/Kf8CVKzlyCS5IgSaYQojCxaCeogoIZ4hrHnlUClg+vcLtEl93NGdgKJ2JHdR7i0I98r5Do@vger.kernel.org, AJvYcCXNrS2m80zKfQx5Lg/096dq2d8EMcS006ax4bxylS5CuOhlowWyf2aV+KNqnwQUY3Uo9sYj8uGCVsXjfhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypPyLvyEm3nfapclKQEaK3NaNDAgpAvyKKTRC05E59jYrzHjYu
-	keI4yqpdD3r7jxY6x6f6FGQDrtzyorWjOrIrRG+0pQSArOLHeIPDsAyJRvLomZIQ50i3FHoHdwF
-	G0Eubdh2H3j+zp1FbcwDUZG514RRs6zV7GC8=
-X-Google-Smtp-Source: AGHT+IHK+I1v3MgXmnb9d2IhwgJ2kjr9VPoI7BOk1peZbrqGdQkdA+GYW0TAD3QD2EMjZBEpOFzJ3mIRynz5704kUBU=
-X-Received: by 2002:a05:6122:20a6:b0:4f5:22cc:71b9 with SMTP id
- 71dfb90a1353d-505c1d96569mr4378359e0c.5.1727329337427; Wed, 25 Sep 2024
- 22:42:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727329437; x=1727934237;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oSQOf0hpG7uYa1+knVWX4FcAmjCoDX0KudBYIIYGWgw=;
+        b=qXUjkij8aIfcm8FksaZBKlwjDy1vuogqVZAi2aBMrTO0NLZEZjkcPH1R/fzylAyKJW
+         VJevlT8rgLvG23pWAmE4HvvZJHO6NXayaZkI809r+2IPt6YFoTUQ+cyRY8T7xoO4ultG
+         hkOf/DxPmMwAsOAK1/7CyXg57Kx5Mt9CjB6PZugwcNwgaQAz/Lv31z7V32jtJVARUF1j
+         xDAw4/UCx9uRiEGzxMdlMCHFUTUWnp1Qb2Pyzk4CPRMOgu84Yp6S7PQa+AhbDoFDUZfM
+         hw3/YAYC1bOHzWr8RLHUgg7YuFCsdSdWkq3+e9YG5K/wv3sc4hKWUWrXT/SJFDtxPWMJ
+         Dc0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVlgQXVY5CSqbRcxJk6OKV9A1VCM882OlReRLz9E7vZZzwwmAVszVe2pB14wNgnTmpN67X8rNisydfTJ1b3o2+H8gaR@vger.kernel.org, AJvYcCWg8dMV1OFC8DH01BbH0Wqlia0Pfr7BiSYf7tWGEkdlA79J+tWrsF5sIq3LjM4vKPPCZwJPrkducrzJWKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxztN3P1d1i1JxrZiLc4XXQfpBDt0ainorrlQZBB0YMrndOOnzY
+	a1vKhZLxn09CgcVoGy/pcfFyYwa2iAQhbClljLCP5941P3pVEH2xvQVKZGJg
+X-Google-Smtp-Source: AGHT+IGBodmZxULb1BNXRB/AoWDHT3kpIo/bP9IgJgEGNyBi862p8ZZ5gS2fMrcRbfU8igvHTcLL9A==
+X-Received: by 2002:a17:903:191:b0:202:3bda:6f31 with SMTP id d9443c01a7336-20afc43806dmr80143765ad.14.1727329436681;
+        Wed, 25 Sep 2024 22:43:56 -0700 (PDT)
+Received: from ?IPV6:240d:1a:13a:f00:4b94:68e0:2d8b:3983? ([240d:1a:13a:f00:4b94:68e0:2d8b:3983])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af185a8casm31465895ad.285.2024.09.25.22.43.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2024 22:43:56 -0700 (PDT)
+Message-ID: <5298f02a-406b-4f1e-bc1d-f34217eb20bc@gmail.com>
+Date: Thu, 26 Sep 2024 14:43:56 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923113135.4366-1-kdipendra88@gmail.com> <20240924071026.GB4029621@kernel.org>
- <CAEKBCKPw=uwN+MCLenOe6ZkLBYiwSg35eQ_rk_YeNBMOuqvVOw@mail.gmail.com>
- <20240924155812.GR4029621@kernel.org> <CAEKBCKO45g4kLm-YPZHpbcS5AMUaqo6JHoDxo8QobaP_kxQn=w@mail.gmail.com>
- <20240924181458.GT4029621@kernel.org> <CAEKBCKPz=gsLbUWNDinVVHD8t760jW+wt1GtFgJW_5cHCj0XbQ@mail.gmail.com>
-In-Reply-To: <CAEKBCKPz=gsLbUWNDinVVHD8t760jW+wt1GtFgJW_5cHCj0XbQ@mail.gmail.com>
-From: Dipendra Khadka <kdipendra88@gmail.com>
-Date: Thu, 26 Sep 2024 11:27:06 +0545
-Message-ID: <CAEKBCKOykRKyBGzBA6vC0Z7eM8q5yiND64fa4Xxk5s5vCufXtA@mail.gmail.com>
-Subject: Re: [PATCH net] net: ethernet: marvell: octeontx2: nic: Add error
- pointer check in otx2_ethtool.c
-To: Simon Horman <horms@kernel.org>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com, 
-	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ftrace: Hide a extra entry in stack trace
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20240923035916.6567-1-tatsuya.s2862@gmail.com>
+ <20240926010536.5fe73463@rorschach.local.home>
+Content-Language: en-US
+From: ts <tatsuya.s2862@gmail.com>
+In-Reply-To: <20240926010536.5fe73463@rorschach.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Simon,
+On 9/26/24 2:05 PM, Steven Rostedt wrote:
 
-On Wed, 25 Sept 2024 at 12:07, Dipendra Khadka <kdipendra88@gmail.com> wrote:
+> On Mon, 23 Sep 2024 12:59:15 +0900
+> Tatsuya S <tatsuya.s2862@gmail.com> wrote:
 >
-> On Wed, 25 Sept 2024 at 00:00, Simon Horman <horms@kernel.org> wrote:
-> >
-> > On Tue, Sep 24, 2024 at 11:42:58PM +0545, Dipendra Khadka wrote:
-> > > Hi Simon,
-> > >
-> > > On Tue, 24 Sept 2024 at 21:43, Simon Horman <horms@kernel.org> wrote:
-> > > >
-> > > > On Tue, Sep 24, 2024 at 08:39:47PM +0545, Dipendra Khadka wrote:
-> > > > > Hi Simon,
-> > > > >
-> > > > > On Tue, 24 Sept 2024 at 12:55, Simon Horman <horms@kernel.org> wrote:
-> > > > > >
-> > > > > > On Mon, Sep 23, 2024 at 11:31:34AM +0000, Dipendra Khadka wrote:
-> > > > > > > Add error pointer check after calling otx2_mbox_get_rsp().
-> > > > > > >
-> > > > > >
-> > > > > > Hi Dipendra,
-> > > > > >
-> > > > > > Please add a fixes tag here (no blank line between it and your
-> > > > > > Signed-off-by line).
-> > > > > > > Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
-> > > > > >
-> > > > > > As you have posted more than one patch for this driver, with very similar,
-> > > > > > not overly complex or verbose changes, it might make sense to combine them
-> > > > > > into a single patch. Or, if not, to bundle them up into a patch-set with a
-> > > > > > cover letter.
-> > > > > >
-> > > > > > Regarding the patch subject, looking at git history, I think
-> > > > > > an appropriate prefix would be 'octeontx2-pf:'. I would go for
-> > > > > > something like this:
-> > > > > >
-> > > > > >   Subject: [PATCH net v2] octeontx2-pf: handle otx2_mbox_get_rsp errors
-> > > > > >
-> > > > >
-> > > > > If I bundle all the patches for the
-> > > > > drivers/net/ethernet/marvell/octeontx2/ , will this subject without v2
-> > > > > work? Or do I need to change anything? I don't know how to send the
-> > > > > patch-set with the cover letter.
-> > > >
-> > > > Given that one of the patches is already at v2, probably v3 is best.
-> > > >
-> > > > If you use b4, it should send a cover letter if the series has more than 1
-> > > > patch.  You can use various options to b4 prep to set the prefix
-> > > > (net-next), version, and edit the cover (letter).  And you can use various
-> > > > options to b4 send, such as -d, to test your submission before sending it
-> > > > to the netdev ML.
-> > > >
-> > >
-> > > I did not get this -d and testing? testing in net-next and sending to net?
-> >
-> > I meant that b4 prep -d allows you to see the emails that would be sent
-> > without actually sending them. I find this quite useful myself.
-> >
-> > >
-> > > > Alternatively the following command will output 3 files: a cover letter and
-> > > > a file for each of two patches, with v3 and net-next in the subject of each
-> > > > file. You can edit these files and send them using git send-email.
-> > > >
-> > > > git format-patch --cover-letter -2 -v3 --subject-prefix="PATCH net-next"
-> > > >
-
-Do I need to maintain patch history below  Signed-off-by for each
-patch when I send them in the patch set? If so, what to do with those
-which have v1 but no v2 but the patch-set in v3?
-
-> > >
-> > > Should I send it to net-next or net?
-> >
-> > Sorry for the confusion. I wrote net-next in my example,
-> > but I think this patch-set would be for net.
-> >
-> > ...
+>> A extra entry is shown on stack trace(CONFIG_UNWINDER_ORC=y).
+>>
+>>      [003] .....   110.171589: vfs_write <-__x64_sys_write
+>>      [003] .....   110.171600: <stack trace>
+>>   => XXXXXXXXX (Wrong function name)
+>>   => vfs_write
+>>   => __x64_sys_write
+>>   => do_syscall_64
+>>   => entry_SYSCALL_64_after_hwframe
+>>
+>> To resolve this, increment skip in __ftrace_trace_stack().
+>> The reason why skip is incremented in __ftrace_trace_stack()
+>> is because __ftrace_trace_stack() in stack trace is the only function
+>> that wasn't skipped from anywhere.
+>>
+>> Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
+>> ---
+>>   kernel/trace/trace.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+>> index c3b2c7dfadef..e0d98621ff23 100644
+>> --- a/kernel/trace/trace.c
+>> +++ b/kernel/trace/trace.c
+>> @@ -2919,6 +2919,8 @@ static void __ftrace_trace_stack(struct trace_buffer *buffer,
+>>   #ifndef CONFIG_UNWINDER_ORC
+>>   	if (!regs)
+>>   		skip++;
+>> +#else
+>> +	skip++;
+>>   #endif
+> The above #ifdef block should be removed and replaced with;
 >
-> Thank you Simon for everything.
 >
-> Best regards,
-> Dipendra
+> 	if (IS_ENABLED(CONFIG_UNWINDER_ORC) || !regs)
+> 		skip++;
+>
+>>   
+>>   	preempt_disable_notrace();
+> -- Steve
 
-Best regards,
-Dipendra
+  I will submit a new patch to fix it.
+
+Thanks.
+
 
