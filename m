@@ -1,68 +1,71 @@
-Return-Path: <linux-kernel+bounces-339993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF6E986D0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:57:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB916986D0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 761CF1C24664
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:57:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 184461C227DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839C118950D;
-	Thu, 26 Sep 2024 06:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB8D18BC1F;
+	Thu, 26 Sep 2024 06:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="R+wIwy0B"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="BC/yuJOI"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5382F1A4B7B
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7AA18C006
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727333745; cv=none; b=sar0V4PuwKaGKMqyFEd8VBYWY/LGtGzHWkqItVcQ/BCjRodijqvXNNsJFcCAJQCAkKVRL10G/B4g98pLyCf4lFy7I2Au9IGHdGjeWkPS9Ef/wrN9qRd2I06+XM36UtSs4Jql03UvmJh7a3LlzLOTtSU33RrUjliTdDYeiUX4TpA=
+	t=1727333754; cv=none; b=sC1Jh0MBnEb0rb8h3Tcdd/VlRfd4CFR6dP8SoQmLuRa3QDVvESHUM8nfKqDKapFfMvqiYB8Fxm8jdoYN74dojgwP3K6TekImvYenkvOXWWeXuCXfPKEiJQaNSaD5kTY9Ag8HSXF8p5aiB7VoN6TyzWHlPzbSulZCRv2AEMevQio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727333745; c=relaxed/simple;
-	bh=V5qAw7P+eqzi/1Duiuys4SRbwKIjG57n1EAbl6sKbjA=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=bTz1OinnL35BbkMiSDDbt0mwB4r1p0wWhf9jvl4sGVhdku5zxWCfmayPll1Rhs18bJQrZS0AA8sxwRsB9uYt+1ASdCe0zWieUcts3g3YMeZhJ7v9OeTlxxqs43CaguTBcuS1qMmdWSR5Dw79IK4qNi6EeWTCetMpKW6o1Ox08eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=R+wIwy0B; arc=none smtp.client-ip=209.85.210.45
+	s=arc-20240116; t=1727333754; c=relaxed/simple;
+	bh=FBGeqsWhtUXKanzZVpX8tx8GNN2ZBAo6zLyDQdumH5Y=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=AWvt1i/Zj/f3HJku1HyT6RuBqSKU1eLHvu202rs/oLJ5VrVsQELzeTWV2heBGy4VTltiDpRv1Q41OtItKA9xSndHeIGMBdgduNECxjUvjBt4gp/z0FYXC2UDs4N5at2AZa+JO4486U+our/ufpODlnOyZquOmvuJSOUGKTea/PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=BC/yuJOI; arc=none smtp.client-ip=209.85.166.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-71116d8504bso373022a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:55:44 -0700 (PDT)
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a056727fdfso2582185ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:55:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1727333743; x=1727938543; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MzHfWrObFTebylfAMReMmx0H/fNyKd6EWjjqrhs5YS8=;
-        b=R+wIwy0BqFZfZ1ot5/7EyBWZ8e1cxDQ3kUYDN+jU6e1K+oKi1rKeSvnhwlcF00/C9r
-         MN9hJJbxH2ETUhzUJyaoMhxTnq8N5FbaFloE6mCw7yryW3y/Vji/quSRtqNllJMIQto0
-         jWWHPPLa+O3BZiyDYmxBQpz94pzIJx07LudcOy6mqkf+5T4Clk8SpFBSy1TKuKfz63v7
-         7B7u+BMyS0Jq1ixTXfWuQ2+mPT6b21Xlve8XyrQmJJiYekhEA4dDNRZF3Cz949x8JdFc
-         pAd8SbWYlntCM9JaWUx8imsMZSINYhYxaFzffAZqM0KFFv4lNQlQ5GyX6DjmKnyqvJOX
-         S6iQ==
+        d=sifive.com; s=google; t=1727333752; x=1727938552; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dz6nXOQPpHKKg/2POW9sH3ldlFQk4LGlQ9pIvX2kgEo=;
+        b=BC/yuJOI/LdgNCbiAaFwxIatqiKzv1jzovilRe5+LrbqAv+8Rg99WcXpfSerVFm3rE
+         2L+PiMI79BZU5XNE0GGGSy32xvUp1CbT82/XF07jKd7JaVV3OPs8uCUv0Ntr0yhfcCKU
+         umLqT//XCZYF56KGffTtvdEzFsUnBAiYuvQj1z8Sdv5ykMf/rtyP1LuN5b5+cWBkpMZm
+         LyFfiytW6gR49TARKGSRJBs2IsKuJjdv3kSmR0B64vDLDQOX97B2qJn/VqVe4H9sFEY3
+         4fTwFQVJycQwwzKzLxHJ4Vy/uN6sZWIrHuI+0nsIl30PA35piKJTFah+IhGvgmdrooCK
+         Z55w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727333743; x=1727938543;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MzHfWrObFTebylfAMReMmx0H/fNyKd6EWjjqrhs5YS8=;
-        b=WBI4hgEQhbsNJGcNYTTSkh2cuKPcnXZe85d20FoU2lPP1CxiUbubSuDUH/kr9q/IsW
-         rCKSSBszYk5qN6J0DsA6LjUio8zkA6F8OdPXKzaLTTA/BvxtsNc17VJNnh3LrtUqtzvA
-         CD9+3qTtVJDbN2KIJMLRqei69y+2UiPBym15yeQ5jgAEB/63dIVVyktiYUKPltp/dGtq
-         +LOZDlJk0VfHuc4Jc6pP0ULwy+PQlFrKzRwk+0bxm9gc8+V5aw2E+wqZHCXLKwwDdbVP
-         EzctigKaD0cszmLnMIqvLXTK7qnfrqIW4DFtYOlI5tUseN9OYve9yHK0OwUfjSZZZI7v
-         t5Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCVw3KB2tHLq+AkSfh0H5okLFar3MSTQLxvmmxT0T6LBZ5lPxahswwQhWJWqbkzY4KSbvnzOv2UBxyfAwUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7WDv8r0pZ+qB3c3O9q5ZmS8w9yfPAFRFTJLX6w6nX0JGiS6x+
-	r3JkKG59su3IJwPcFRqnGc7ZopVOok4qGrXgcaLVsrqQAsdExw5osYTfNyY0uBE=
-X-Google-Smtp-Source: AGHT+IFJjm9aCyo95+9/VI6IL66etpFOV0OLThx3WyZZ7tnWZyAbNEO+PfCso5aAFQN+3KjsS0OA1A==
-X-Received: by 2002:a05:6830:6e99:b0:711:c8:1a39 with SMTP id 46e09a7af769-713c7dc1258mr4573597a34.16.1727333743142;
-        Wed, 25 Sep 2024 23:55:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727333752; x=1727938552;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dz6nXOQPpHKKg/2POW9sH3ldlFQk4LGlQ9pIvX2kgEo=;
+        b=gZ90Jg9rX+QeFuehiBLYY9LEvkDL8eLYh7thPpOEsHdJb3+4FASiEFgg3lkZvW6mKX
+         wByD9jO4jrq7WJs9IU0od2huNea2B4gf1ylY+CJaTWvwO89KRc6j3+sWePz8GGuBCfpd
+         p5H7Ln3sJesiT6Kl2tlV8gIR/FBHhIAe7iXukvkNNY1M3XflUW7jDgCPFs8mmE+DWl4e
+         go0wgp+xON7dGOmmEHe/qcWm5YlwJq2KZHuSghjSqxdCqKkahWL7QXgsa5UBwuaRxq4W
+         1wEi3YKfMaat/45eudnCGxPIt2bLhOPn5PQsR//aannLq6N9ya3irtj8vpTt37fXRWzF
+         3gRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXopPdSi0C1ranvnlCFACKeTfn1fLc5IMuHwyxOm4tvCQdDCDAWJf/Bw8AismT5Kzn+XuSbEE+QfFUwVQA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrVJHh56VMtzRvl4qy6uR+ND4Zn1AibR6j+hfx7sQOX/CS1pkG
+	UZNEoShZs+sE1d4dc/wDZqKlF23UrPPPTGTpUBaOSBqeRYAuY06UMlson7I9iKI=
+X-Google-Smtp-Source: AGHT+IE5HtHveKKLfQie2ZdRESQAIt2gsyCcJcr3zDTArzQG0bYH4n5mBiG2zxUxyKL4arsG6HYvQg==
+X-Received: by 2002:a05:6e02:1fee:b0:3a0:9ed2:67b8 with SMTP id e9e14a558f8ab-3a26d6fc9a9mr60527305ab.4.1727333751901;
+        Wed, 25 Sep 2024 23:55:51 -0700 (PDT)
 Received: from hsinchu35-syssw01.internal.sifive.com (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6b7c73120sm3592352a12.68.2024.09.25.23.55.39
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6b7c73120sm3592352a12.68.2024.09.25.23.55.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 23:55:42 -0700 (PDT)
+        Wed, 25 Sep 2024 23:55:51 -0700 (PDT)
 From: Nick Hu <nick.hu@sifive.com>
 To: greentime.hu@sifive.com,
 	zong.li@sifive.com,
@@ -75,20 +78,22 @@ To: greentime.hu@sifive.com,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Anup Patel <anup@brainfault.org>,
 	Andrew Jones <ajones@ventanamicro.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
 	Mayuresh Chitale <mchitale@ventanamicro.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
 	Atish Patra <atishp@rivosinc.com>,
+	Samuel Ortiz <sameo@rivosinc.com>,
 	Samuel Holland <samuel.holland@sifive.com>,
 	Nick Hu <nick.hu@sifive.com>,
-	Samuel Ortiz <sameo@rivosinc.com>,
 	Sunil V L <sunilvl@ventanamicro.com>,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-pm@vger.kernel.org
-Subject: [PATCH v2 0/3] Support SSTC while PM operations
-Date: Thu, 26 Sep 2024 14:54:15 +0800
-Message-Id: <20240926065422.226518-1-nick.hu@sifive.com>
+Subject: [PATCH v2 1/3] riscv: Add csr_read/write_hi_lo support
+Date: Thu, 26 Sep 2024 14:54:16 +0800
+Message-Id: <20240926065422.226518-2-nick.hu@sifive.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240926065422.226518-1-nick.hu@sifive.com>
+References: <20240926065422.226518-1-nick.hu@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,27 +102,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When the cpu is going to be hotplug, stop the stimecmp to prevent pending
-interrupt.
-When the cpu is going to be suspended, save the stimecmp before entering
-the suspend state and restore it in the resume path.
+In RV32, we may have the need to read both low 32 bit and high 32 bit of
+the CSR. Therefore adding the csr_read_hi_lo() and csr_write_hi_lo() to
+support such case.
 
-changes in v2:
-1. Add csr_read/write_hi_lo operations
-2. Apply the suggestion from Anup.
-link: https://lore.kernel.org/lkml/20240829033904.477200-3-nick.hu@sifive.com/T/#u
+Suggested-by: Andrew Jones <ajones@ventanamicro.com>
+Suggested-by: Zong Li <zong.li@sifive.com>
+Signed-off-by: Nick Hu <nick.hu@sifive.com>
+---
+ arch/riscv/include/asm/csr.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-Nick Hu (3):
-  riscv: Add csr_read/write_hi_lo support
-  riscv: Add stimecmp save and restore
-  clocksource/drivers/timer-riscv: Stop stimecmp when cpu hotplug
-
- arch/riscv/include/asm/csr.h      | 22 ++++++++++++++++++++++
- arch/riscv/include/asm/suspend.h  |  1 +
- arch/riscv/kernel/suspend.c       |  6 ++++++
- drivers/clocksource/timer-riscv.c |  6 ++++++
- 4 files changed, 35 insertions(+)
-
+diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+index 25966995da04..54198284eb22 100644
+--- a/arch/riscv/include/asm/csr.h
++++ b/arch/riscv/include/asm/csr.h
+@@ -501,6 +501,17 @@
+ 	__v;							\
+ })
+ 
++#if __riscv_xlen < 64
++#define csr_read_hi_lo(csr)					\
++({								\
++	u32 hi = csr_read(csr##H);				\
++	u32 lo = csr_read(csr);					\
++	lo | ((u64)hi << 32);					\
++})
++#else
++#define csr_read_hi_lo	csr_read
++#endif
++
+ #define csr_write(csr, val)					\
+ ({								\
+ 	unsigned long __v = (unsigned long)(val);		\
+@@ -509,6 +520,17 @@
+ 			      : "memory");			\
+ })
+ 
++#if __riscv_xlen < 64
++#define csr_write_hi_lo(csr, val)				\
++({								\
++	u64 _v = (u64)(val);					\
++	csr_write(csr##H, (_v) >> 32);				\
++	csr_write(csr, (_v));					\
++})
++#else
++#define csr_write_hi_lo	csr_write
++#endif
++
+ #define csr_read_set(csr, val)					\
+ ({								\
+ 	unsigned long __v = (unsigned long)(val);		\
 -- 
 2.34.1
 
