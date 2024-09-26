@@ -1,61 +1,92 @@
-Return-Path: <linux-kernel+bounces-340608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580229875CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:40:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2939875CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D93FC1F221F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:40:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A9D280F87
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256BA142624;
-	Thu, 26 Sep 2024 14:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DED115098E;
+	Thu, 26 Sep 2024 14:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bx/ex1jO"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PPmBFAez"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85267A13A;
-	Thu, 26 Sep 2024 14:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8C213632B
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727361586; cv=none; b=nmF127ceQDp8YSzCCgKweWxwANcVErxU24jVNTFg+xVI8QNm48tXADKr8cdybCd6fAQ7pOFBi4YhmI6/geY5HSRDNBFJ2+yurOA6+ceGFNB4uxihF9kuct3SNNNF3+MoQs7gAJBFo/vv1jMGqErP04z7uI4yC32lvL1yI+D+JFo=
+	t=1727361592; cv=none; b=C1BdVutgTM1398ilTvrWOBhzdZdCS2uRg98Gh3KmmqVImUnE2Z4dvCXBzs11xETceBDSCVExXM1wL4CDDVfT0Qck/nD853w+ZJMgClSNVIzQ3tKluSDuOa4fSD2o1ItWxb1w38mOJQw0HcqiSEyyLEdkcZwypsyjdZNQX/p/RZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727361586; c=relaxed/simple;
-	bh=bkYkLOAw713fILsyCYM13JpHUst94SgvFIH1CgWWuX8=;
+	s=arc-20240116; t=1727361592; c=relaxed/simple;
+	bh=wfIyskPySyjPNW1pLmibdEptSD2xFwaJ+VXx4/SJsw8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AIqmh348mfjDDj3iRQfiE6WFJKYyCR1bqGdE3diH+w880a3BEk+oQKnIFrFVfo+wg5wMmvDaYiYM+lU3EF2ohd77ghMr699DDiboZ+5Xmz9Jlmlh4JHuqSkVj4qzgcMiAA3CKRT79leg5SMrUGUhK3ydrZWVecRF+HvHJvQJHAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bx/ex1jO; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3D26E8D4;
-	Thu, 26 Sep 2024 16:38:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727361494;
-	bh=bkYkLOAw713fILsyCYM13JpHUst94SgvFIH1CgWWuX8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bx/ex1jO75gq7J+rLJjqdQRCH9ckfvbYx8N5WMpQgL3sktG3/iSnSI2dkvsgKQUiu
-	 T53GrRN5/4CRW2L8c/zQYot8DDorM0DxP0jfd8WUhDAWQTqiwCZPcrkPtV95ODpQV2
-	 cXm4FAuZNPty9ccktaOmpzpNIzBrFWKg/bpF1h2Y=
-Date: Thu, 26 Sep 2024 17:39:40 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sean Paul <seanpaul@chromium.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v7 1/3] media: uvcvideo: Refactor the status irq API
-Message-ID: <20240926143940.GI21788@pendragon.ideasonboard.com>
-References: <20240926-guenter-mini-v7-0-690441953d4a@chromium.org>
- <20240926-guenter-mini-v7-1-690441953d4a@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JD7mqqsDYwl6h2A4GgNoSZEE8KJmCj3rc4CTBtClKe3sPzrelx7mMfTxisfJtelEqe0qKJtBzEuPT9GfeQ5E5a3yOEJH8h6VsPLSz5peslHUaZmfOm0UZqMpy6drI2NDUoNAJ+jvoxd4/VLB3HHfR9XHLe3LlYH/ELExgihLtBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PPmBFAez; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-207349fa3d7so198995ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:39:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727361590; x=1727966390; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=h9Kx4TvG8rWCki80hYYN6JcEZKQM9F21l0z7iQwPKdk=;
+        b=PPmBFAezVUdIZRkycEmCJ52yvEPMuniL2kJYVxDGGc1WMv5t1V68AQq0jCnC5uLq+A
+         L8hbcvQva9U4tYs19r5EpW4jasw7gdXAEzEx3jxEArA7Pf3iATi/HRNxuC8ZFJB8EG2O
+         cpq0dhKCjoVaJO9WwbQ2uKQofZbDwRuRycDsZx7gmCxrUYzTzCbJZWQU5FzUSXYAUgu+
+         SwGl69NPYk4gXWqBq2LgkZuDopNPDSak17d/p4RSR/Jv6JdcvrYpnojw/Hg8CFzAhSQ3
+         pMZHJdm5HvdiOBk827xel/SxJOKLF+S30AB5aSud9I2lk3ITKEntaODrMoh4O6p6pfDD
+         hI7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727361590; x=1727966390;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h9Kx4TvG8rWCki80hYYN6JcEZKQM9F21l0z7iQwPKdk=;
+        b=ksasTCzdipVKanm9BaCMu06Xm3mv9D55nUpftUnhs9sDbbx1PwpO6GGRz9IO5MYUwo
+         edGSNSTxlKapRiajt/vxRDfZ1HQr4Lbtzl7euMyA9+hug+9MZ9ykXIXXAgFf2t3AE2pF
+         D7WFtRrfsPAzf2XMAxC0x+hm4VgycGj2HBrWQCvK6I2EiD4L1C7bVuOgqQxbZV0JY0TV
+         npn0JuvDta0pfCp6TW745FtV8fkvlP6Sa7qk9aAaX3+GvRFz/utHimsVPi/NNP+AaUMu
+         3bUst6UhKFl1SiizQikSYBETu9dOHoRZ8Wg0baxt1heV4tfKsYVDxe96LBF6DrtOBNow
+         xEAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKHWaLQVslSaUZlO0zRA0J8y+Ievm4/hDaaaccz1y7adBnBco+Oiid0vu1C8vgi+HScRfgIaneCXD4nEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7hbTJfW2+B8oPIsPnwsXTvmHWjoMMrSX6rbPz5BHUBwcDrbcw
+	16oRVpeu14qNxA8X7NRQSmnpTVsgmRxZcj590YeoNpfBl4LZp9d9Nh3tFwo6zw==
+X-Google-Smtp-Source: AGHT+IGqEw3AUY+vCnhHKos8GOabvXEypIRu6p3mjprWFoppCBU2eR5CREeDDbhv652YGeOXfhzoGg==
+X-Received: by 2002:a17:903:41ca:b0:201:e2db:7be3 with SMTP id d9443c01a7336-20b20390211mr2538525ad.21.1727361590132;
+        Thu, 26 Sep 2024 07:39:50 -0700 (PDT)
+Received: from google.com (201.215.168.34.bc.googleusercontent.com. [34.168.215.201])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af185482asm39276555ad.244.2024.09.26.07.39.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 07:39:49 -0700 (PDT)
+Date: Thu, 26 Sep 2024 14:39:45 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yu-Ting Tseng <yutingtseng@google.com>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/4] binder: fix OOB in binder_add_freeze_work()
+Message-ID: <ZvVyHCZituk8fhi-@google.com>
+References: <20240924184401.76043-1-cmllamas@google.com>
+ <20240924184401.76043-3-cmllamas@google.com>
+ <CAH5fLghapZJ4PbbkC8V5A6Zay-_sgTzwVpwqk6RWWUNKKyJC_Q@mail.gmail.com>
+ <ZvRM6RHstUiTSsk4@google.com>
+ <CAH5fLggK3qZCXezUPg-xodUqeWRsVwZw=ywenvLAtfVRD3AgHw@mail.gmail.com>
+ <ZvRRJiRe7zwyPeY7@google.com>
+ <CAH5fLgiqgWy9BVpQ8dE6hMNvDopEMVT-4w3DffXONDo3t6NqEw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,256 +95,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240926-guenter-mini-v7-1-690441953d4a@chromium.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgiqgWy9BVpQ8dE6hMNvDopEMVT-4w3DffXONDo3t6NqEw@mail.gmail.com>
 
-Hi Ricardo,
-
-Thank you for the patch.
-
-On Thu, Sep 26, 2024 at 05:49:57AM +0000, Ricardo Ribalda wrote:
-> There are two different use-cases of uvc_status():
+On Thu, Sep 26, 2024 at 10:06:14AM +0200, Alice Ryhl wrote:
+> On Wed, Sep 25, 2024 at 8:06 PM Carlos Llamas <cmllamas@google.com> wrote:
+> >
+> > On Wed, Sep 25, 2024 at 07:52:37PM +0200, Alice Ryhl wrote:
+> > > > > I reviewed some other code paths to verify whether there are other
+> > > > > problems with processes dying concurrently with operations on freeze
+> > > > > notifications. I didn't notice any other memory safety issues, but I
+> > > >
+> > > > Yeah most other paths are protected with binder_procs_lock mutex.
+> > > >
+> > > > > noticed that binder_request_freeze_notification returns EINVAL if you
+> > > > > try to use it with a node from a dead process. That seems problematic,
+> > > > > as this means that there's no way to invoke that command without
+> > > > > risking an EINVAL error if the remote process dies. We should not
+> > > > > return EINVAL errors on correct usage of the driver.
+> > > >
+> > > > Agreed, this should probably be -ESRCH or something. I'll add it to v2,
+> > > > thanks for the suggestion.
+> > >
+> > > Well, maybe? I think it's best to not return errnos from these
+> > > commands at all, as they obscure how many commands were processed.
+> >
+> > This is problematic, particularly when it's a multi-command buffer.
+> > Userspace doesn't really know which one failed and if any of them
+> > succeeded. Agreed.
+> >
+> > >
+> > > Since the node still exists even if the process dies, perhaps we can
+> > > just let you create the freeze notification even if it's dead? We can
+> > > make it end up in the same state as if you request a freeze
+> > > notification and the process then dies afterwards.
+> >
+> > It's a dead node, there is no process associated with it. It would be
+> > incorrect to setup the notification as it doesn't have a frozen status
+> > anymore. We can't determine the ref->node->proc->is_frozen?
+> >
+> > We could silently fail and skip the notification, but I don't know if
+> > userspace will attempt to release it later... and fail with EINVAL.
 > 
-> - adding/removing a user when the camera is open/closed
-> - stopping/starting when the camera is suspended/resumed
-> 
-> Make the API reflect these two use-cases and move all the refcounting
-> and locking logic to the uvc_status.c file.
-> 
-> No functional change is expected from this patch.
-> 
-> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/usb/uvc/uvc_driver.c | 13 ++--------
->  drivers/media/usb/uvc/uvc_status.c | 53 ++++++++++++++++++++++++++++++++++++--
->  drivers/media/usb/uvc/uvc_v4l2.c   | 22 +++++-----------
->  drivers/media/usb/uvc/uvcvideo.h   | 10 ++++---
->  4 files changed, 65 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index f0febdc08c2d..31e8942f1ef8 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -2116,7 +2116,6 @@ static int uvc_probe(struct usb_interface *intf,
->  	INIT_LIST_HEAD(&dev->streams);
->  	kref_init(&dev->ref);
->  	atomic_set(&dev->nmappings, 0);
-> -	mutex_init(&dev->lock);
->  
->  	dev->udev = usb_get_dev(udev);
->  	dev->intf = usb_get_intf(intf);
-> @@ -2288,10 +2287,7 @@ static int uvc_suspend(struct usb_interface *intf, pm_message_t message)
->  	/* Controls are cached on the fly so they don't need to be saved. */
->  	if (intf->cur_altsetting->desc.bInterfaceSubClass ==
->  	    UVC_SC_VIDEOCONTROL) {
-> -		mutex_lock(&dev->lock);
-> -		if (dev->users)
-> -			uvc_status_stop(dev);
-> -		mutex_unlock(&dev->lock);
-> +		uvc_status_suspend(dev);
->  		return 0;
->  	}
->  
-> @@ -2322,12 +2318,7 @@ static int __uvc_resume(struct usb_interface *intf, int reset)
->  				return ret;
->  		}
->  
-> -		mutex_lock(&dev->lock);
-> -		if (dev->users)
-> -			ret = uvc_status_start(dev, GFP_NOIO);
-> -		mutex_unlock(&dev->lock);
-> -
-> -		return ret;
-> +		return uvc_status_resume(dev);
->  	}
->  
->  	list_for_each_entry(stream, &dev->streams, list) {
-> diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
-> index a78a88c710e2..e438ae5af2e8 100644
-> --- a/drivers/media/usb/uvc/uvc_status.c
-> +++ b/drivers/media/usb/uvc/uvc_status.c
-> @@ -257,6 +257,8 @@ int uvc_status_init(struct uvc_device *dev)
->  	unsigned int pipe;
->  	int interval;
->  
-> +	mutex_init(&dev->status_lock);
-> +
->  	if (ep == NULL)
->  		return 0;
->  
-> @@ -302,18 +304,22 @@ void uvc_status_cleanup(struct uvc_device *dev)
->  	kfree(dev->status);
->  }
->  
-> -int uvc_status_start(struct uvc_device *dev, gfp_t flags)
-> +static int uvc_status_start(struct uvc_device *dev, gfp_t flags)
->  {
-> +	lockdep_assert_held(&dev->status_lock);
-> +
->  	if (dev->int_urb == NULL)
->  		return 0;
->  
->  	return usb_submit_urb(dev->int_urb, flags);
->  }
->  
-> -void uvc_status_stop(struct uvc_device *dev)
-> +static void uvc_status_stop(struct uvc_device *dev)
->  {
->  	struct uvc_ctrl_work *w = &dev->async_ctrl;
->  
-> +	lockdep_assert_held(&dev->status_lock);
-> +
->  	/*
->  	 * Prevent the asynchronous control handler from requeing the URB. The
->  	 * barrier is needed so the flush_status change is visible to other
-> @@ -350,3 +356,46 @@ void uvc_status_stop(struct uvc_device *dev)
->  	 */
->  	smp_store_release(&dev->flush_status, false);
->  }
-> +
-> +int uvc_status_resume(struct uvc_device *dev)
-> +{
-> +	guard(mutex)(&dev->status_lock);
-> +
-> +	if (dev->status_users)
-> +		return  uvc_status_start(dev, GFP_NOIO);
+> I mean, userspace *has* to be able to deal with the case where the
+> process dies *right after* the freeze notification is registered. If
+> we make the behavior where it's already dead be the same as that case,
+> then we're not giving userspace any new things it needs to care about.
 
-Double space afer return. I'll fix when applying.
+This is a fair point. To make it happen though, we would need to modify
+the behavior of the request a bit. If the node is dead, we could still
+attach the freeze notification to the reference but then we would skip
+sending the "current" frozen state. This last bit won't be guaranteed
+anymore. I _suppose_ this is ok, since as you mention, userspace should
+have to deal with the process dying anyway.
 
-> +
-> +	return 0;
-> +}
-> +
-> +void uvc_status_suspend(struct uvc_device *dev)
-> +{
-> +	guard(mutex)(&dev->status_lock);
-> +
-> +	if (dev->status_users)
-> +		uvc_status_stop(dev);
-> +}
-> +
-> +int uvc_status_get(struct uvc_device *dev)
-> +{
-> +	int ret = 0;
-> +
-> +	guard(mutex)(&dev->status_lock);
-> +
-> +	if (!dev->status_users)
-> +		ret = uvc_status_start(dev, GFP_KERNEL);
-> +	if (!ret)
-> +		dev->status_users++;
+I honestly don't really like this "fake successful" approach but then we
+don't handle driver errors very well either. So it might be worth it to
+avoid propagating this "dead node" error if we can. I'll do this for v2.
 
-Thanks for the scoped guard, we can write
-
-	if (!dev->status_users) {
-		int ret = uvc_status_start(dev, GFP_KERNEL);
-		if (ret)
-			return ret;
-	}
-
-	dev->status_users++;
-
-	return 0;
-
-which I think is nicer to read. If that's fine with you I'll do this
-locally, not need to a new version.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +
-> +	return ret;
-> +}
-> +
-> +void uvc_status_put(struct uvc_device *dev)
-> +{
-> +	guard(mutex)(&dev->status_lock);
-> +
-> +	if (dev->status_users == 1)
-> +		uvc_status_stop(dev);
-> +	WARN_ON(!dev->status_users);
-> +	if (dev->status_users)
-> +		dev->status_users--;
-> +}
-> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> index f4988f03640a..97c5407f6603 100644
-> --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> @@ -628,20 +628,13 @@ static int uvc_v4l2_open(struct file *file)
->  		return -ENOMEM;
->  	}
->  
-> -	mutex_lock(&stream->dev->lock);
-> -	if (stream->dev->users == 0) {
-> -		ret = uvc_status_start(stream->dev, GFP_KERNEL);
-> -		if (ret < 0) {
-> -			mutex_unlock(&stream->dev->lock);
-> -			usb_autopm_put_interface(stream->dev->intf);
-> -			kfree(handle);
-> -			return ret;
-> -		}
-> +	ret = uvc_status_get(stream->dev);
-> +	if (ret) {
-> +		usb_autopm_put_interface(stream->dev->intf);
-> +		kfree(handle);
-> +		return ret;
->  	}
->  
-> -	stream->dev->users++;
-> -	mutex_unlock(&stream->dev->lock);
-> -
->  	v4l2_fh_init(&handle->vfh, &stream->vdev);
->  	v4l2_fh_add(&handle->vfh);
->  	handle->chain = stream->chain;
-> @@ -670,10 +663,7 @@ static int uvc_v4l2_release(struct file *file)
->  	kfree(handle);
->  	file->private_data = NULL;
->  
-> -	mutex_lock(&stream->dev->lock);
-> -	if (--stream->dev->users == 0)
-> -		uvc_status_stop(stream->dev);
-> -	mutex_unlock(&stream->dev->lock);
-> +	uvc_status_put(stream->dev);
->  
->  	usb_autopm_put_interface(stream->dev->intf);
->  	return 0;
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index b7d24a853ce4..07f9921d83f2 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -563,8 +563,6 @@ struct uvc_device {
->  
->  	const struct uvc_device_info *info;
->  
-> -	struct mutex lock;		/* Protects users */
-> -	unsigned int users;
->  	atomic_t nmappings;
->  
->  	/* Video control interface */
-> @@ -586,6 +584,8 @@ struct uvc_device {
->  	struct usb_host_endpoint *int_ep;
->  	struct urb *int_urb;
->  	struct uvc_status *status;
-> +	struct mutex status_lock; /* Protects status_users */
-> +	unsigned int status_users;
->  	bool flush_status;
->  
->  	struct input_dev *input;
-> @@ -752,8 +752,10 @@ int uvc_register_video_device(struct uvc_device *dev,
->  int uvc_status_init(struct uvc_device *dev);
->  void uvc_status_unregister(struct uvc_device *dev);
->  void uvc_status_cleanup(struct uvc_device *dev);
-> -int uvc_status_start(struct uvc_device *dev, gfp_t flags);
-> -void uvc_status_stop(struct uvc_device *dev);
-> +int uvc_status_resume(struct uvc_device *dev);
-> +void uvc_status_suspend(struct uvc_device *dev);
-> +int uvc_status_get(struct uvc_device *dev);
-> +void uvc_status_put(struct uvc_device *dev);
->  
->  /* Controls */
->  extern const struct v4l2_subscribed_event_ops uvc_ctrl_sub_ev_ops;
-
--- 
-Regards,
-
-Laurent Pinchart
+Thanks,
+Carlos Llamas
 
