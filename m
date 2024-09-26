@@ -1,234 +1,162 @@
-Return-Path: <linux-kernel+bounces-340012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E86986D4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:13:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23120986D60
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A4B1F23CF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6EEE283236
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246AC18BC21;
-	Thu, 26 Sep 2024 07:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6279918E76E;
+	Thu, 26 Sep 2024 07:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="t71QJoRz"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PMoB2KNR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WLetWrJ+"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E73224D6;
-	Thu, 26 Sep 2024 07:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B84B18E37A;
+	Thu, 26 Sep 2024 07:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727334816; cv=none; b=YtdX9kAQgZ22piGcFG5u0FpDCmg8TqPiDK82K6X5uNnqEiQWensItfDZnPgduzKMiOM34PfVJbxj7oQ3uhhATFeYnnRpXST+u/dyRBEkF+cGPTsywo+Oq0wt27vmqcDKQaWWnTE0CIY2N04mM2glNi2KT8j6SA9+YW5JZ/RiGs4=
+	t=1727334892; cv=none; b=AWjQhssvbQugraNnwiIv+2VIzsfFe5CBlpXR5VyGaxUm07hNwYMhxwEk/1c3jDOYnMwzoIJLBTi+lARoZ4HpP++z1JgBktkLu5bMM6DAEXQ+A1oM2Wu8ifxD+dgLpnLbT2hMV8dRBJ9cQEaVReV6rcxXem2Qie0YO9X7zTselpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727334816; c=relaxed/simple;
-	bh=mxaesniZDobVQDHBLuX45uEc5YOxQMsEkUYYRn1BU5U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k/UuxnU2MxjB1OQaPLNoM99o0tNeGj11QPoam9GduAr6tliK9m/kBMuVzvfpCwLRXHtpABwTsM4ORkNGZDHATMmyMkX7p6E+gz72ghDKgi7BqaQl0FU18MTry68UeipfvLs75z+C4JmpK9NQIF6rxyNfE6f1dbOVQsYboPefQMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=t71QJoRz; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 809D08D4;
-	Thu, 26 Sep 2024 09:12:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727334724;
-	bh=mxaesniZDobVQDHBLuX45uEc5YOxQMsEkUYYRn1BU5U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t71QJoRzOLEw29qfeCw81IqtOVhV9hv5IZLt3g7s4A+lP8CGTnN+mGSYHEXvYdBmX
-	 nWyYfra0jKDB+OmRJh0QM94S0Sfl1Y76484QLht0pNxFnvcCygEyTPOSFxIAZPw6/i
-	 CajO1wihAmPiiGarwlpNVDaL3qFncMsnFqFp7Mno=
-Message-ID: <fe968dc7-67a5-40be-871e-fe682dc60d70@ideasonboard.com>
-Date: Thu, 26 Sep 2024 10:13:29 +0300
+	s=arc-20240116; t=1727334892; c=relaxed/simple;
+	bh=WlY3d7SLr1N+C4pY/PP84LyM8TYT0prgnbu6pk4uLws=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=gPiM5ONStcMeepPaqw9yYqHRFnbp0upWWEv80WssA3ZIQEpLiaG8AwUyj/QghjUfMUNxIe3k9DFwV6aYtj9m9n0sTAe70peLZxOX/cL46Zl6HUg+YMP9ikXIUfu/R+Mc09XYimemWX9Jz/sbwBq73CjpNbw1UVnmlJeOmUaPFME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PMoB2KNR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WLetWrJ+; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 1CDF41140253;
+	Thu, 26 Sep 2024 03:14:49 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 26 Sep 2024 03:14:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727334889;
+	 x=1727421289; bh=/T6ar3F0gXR/zaU63AYT1uaAqMFPYcSq6bUl+9VYhuk=; b=
+	PMoB2KNRK9uvldBimKptBz1a/ORdeC/+Gxczc773IY6wYopp2EcC1/sEN9DA6p0N
+	2fxL2DNJwCKxKwhZrc6EjD7WL6wXEO8O+zdNkwIKs53mZre2IlNt/VE+/zd5jyUI
+	O50fDTunzBE2W14JSglvOTdJs2IjH8fM0P/VGARZjdO69tRDp8yefmbv83EB9hCS
+	dsURRAWGVZHDxxA39oapMPieNrqWMRcUjeFtLq0xCkof8ZhUGH0Cj7BIt8txVHth
+	r4tlHRAofzbcl+JqC/JZRQzYVctZemqBbbDCUQ4TzrJi6gYUkHO+jBDved8X2ck1
+	y5k+6uz6Hv7+ztiEqd/Byw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727334889; x=
+	1727421289; bh=/T6ar3F0gXR/zaU63AYT1uaAqMFPYcSq6bUl+9VYhuk=; b=W
+	LetWrJ+UEuB+QV3R8zA+ndQHa/X8JiMW000u2v3zKIbNdwZJ7dCrydDwSK9qw3nf
+	C/f0Wmdl1L7xiXMRJZ8W8Y8lRvQVd6E0NOhBqqUmbO7S0DaH3+EN0hdXuI4GhjZW
+	JvbYgFF4VS+gFtcXXWI98+9EuVufxnOBrah+HCKBtHp/tDHWix36qy74VKnLzuny
+	VcS+bCfM5vSXNmVWIDW+89NOibk25D7hCIC2tlkysAWRbTb9rb94miMJkCfd1PVr
+	yTXR+60BaKmVdnYBq9ZMmreyQs3i76fG1NWSKnd9Gveyv31n5uFIc/QAGmPATPJ0
+	X4Ts3OHE50gojGoU6/ooQ==
+X-ME-Sender: <xms:6An1Zt_8OU-jE5gqCRt953O8HbkA53-0EtwRHk08x352CPjcoZ6IZA>
+    <xme:6An1Zhsha5yiVnlFd719MH1sktDIbDxF0-h3yjFyDdNyvoffY0lQX8j4v857VxlNU
+    j_8MPtkvV1kcMZxZeY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtiedguddukecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    vddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinh
+    grshesrghrmhdrtghomhdprhgtphhtthhopehjvhgvthhtvghrsehkrghlrhgrhihinhgt
+    rdgtohhmpdhrtghpthhtohephihsihhonhhnvggruheskhgrlhhrrgihihhntgdrtghomh
+    dprhgtphhtthhopegthhgvnhhhuhgrtggriheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepghhuohhrvghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllheskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihho
+    nhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtsh
+    drihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlohhonhhgrghrtghhsehlihhs
+    thhsrdhlihhnuhigrdguvghv
+X-ME-Proxy: <xmx:6An1ZrCyn79DMvSAuCcgCq6i_t4gnthLW4in2IXB3c4NIZKg1EOy-w>
+    <xmx:6An1ZhehrLA4MoqEwTf2EophW8Qe17hKoVYNoFMqnTTJxvviG3M07A>
+    <xmx:6An1ZiMFswFt_m-jCYqNHf3vdlKihK4C50z0YrL_H_tKz2CyfGlDoA>
+    <xmx:6An1Zjk-ASdXuvHyok7bvh6S-q-BvtZDgg_VnQzxoTeWJ5ZlDG4NJA>
+    <xmx:6Qn1ZjlRN7popDqYqT9mNyGxuA75CHGpFDWh-avqB8KQkTZErTQ-4pT0>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2B2142220071; Thu, 26 Sep 2024 03:14:48 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/4] media: raspberrypi: Support RPi5's CFE
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Naushir Patuck <naush@raspberrypi.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-References: <20240910-rp1-cfe-v5-0-9ab4c4c8eace@ideasonboard.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
- wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
- Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
- eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
- LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
- G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
- DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
- 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
- rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
- Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
- aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
- ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
- PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
- VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
- 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
- uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
- R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
- sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
- Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
- PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
- dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
- qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
- hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
- DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
- KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
- 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
- xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
- UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
- /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
- 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
- 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
- mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
- 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
- suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
- xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
- m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
- CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
- CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
- 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
- ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
- yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
- 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <20240910-rp1-cfe-v5-0-9ab4c4c8eace@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Date: Thu, 26 Sep 2024 07:14:16 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Julian Vetter" <jvetter@kalrayinc.com>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ guoren <guoren@kernel.org>, "Huacai Chen" <chenhuacai@kernel.org>,
+ "WANG Xuerui" <kernel@xen0n.name>,
+ "Andrew Morton" <akpm@linux-foundation.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ loongarch@lists.linux.dev, "Yann Sionneau" <ysionneau@kalrayinc.com>
+Message-Id: <f47e66f9-ec20-4e75-b88f-d412339e797d@app.fastmail.com>
+In-Reply-To: <20240925132420.821473-2-jvetter@kalrayinc.com>
+References: <20240925132420.821473-1-jvetter@kalrayinc.com>
+ <20240925132420.821473-2-jvetter@kalrayinc.com>
+Subject: Re: [PATCH v6 1/5] Consolidate __memcpy_{to,from}io and __memset_io into
+ iomap_copy.c
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 10/09/2024 11:07, Tomi Valkeinen wrote:
-> This series adds support to the CFE hardware block on RaspberryPi 5. The
-> CFE (Camera Front End) contains a CSI-2 receiver and Front End, a small
-> ISP.
-> 
-> To run this, you need the basic RPi5 kernel support plus relevant dts
-> changes to enable the cfe and camera. My work branch with everything
-> needed to run CFE can be found from:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git rp1-cfe
-> 
-> A few notes about the patches:
-> 
-> - The original work was done by RaspberryPi, mostly by Naushir Patuck.
-> - The second video node only sets V4L2_CAP_META_CAPTURE instead of both
->    V4L2_CAP_META_CAPTURE and V4L2_CAP_META_CAPTURE like the other nodes.
->    This is a temporary workaround for userspace (libcamera), and
->    hopefully can be removed soon.
-> 
-> I have tested this with:
-> - A single IMX219 sensor connected to the RPi5's CSI-2 port
-> - Arducam's UB960 FPD-Link board with four imx219 sensors connected
-> 
->   Tomi
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+On Wed, Sep 25, 2024, at 13:24, Julian Vetter wrote:
+> Various architectures have almost the same implementations for
+> __memcpy_{to,from}io and __memset_io functions. So, consolidate them
+> into the existing lib/iomap_copy.c.
+>
+> Reviewed-by: Yann Sionneau <ysionneau@kalrayinc.com>
+> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
 > ---
-> Changes in v5:
-> - Add "depends on PM". The platforms that use CFE will always have PM in
->    practice, and it's not worth supporting both the PM and !PM cases as
->    it adds complexity to the driver.
-> - Link to v4: https://lore.kernel.org/r/20240904-rp1-cfe-v4-0-f1b5b3d69c81@ideasonboard.com
+> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
 
-Is this solution to the PM issue ok for everyone? It feels most sensible 
-to me. Any other comments?
+You have a duplicated signoff here.
 
-  Tomi
 
-> Changes in v4:
-> - Drop unnecessary clock-lanes from the DT bindings
-> - Drop unnecessary linux-media from MAINTAINERS entry
-> - Drop unnecessary conversion to bool with !!
-> - Don't set cap->bus_info in cfe_querycap()
-> - Make debugfs files not readable by the world
-> - Check the return value of v4l2_fwnode_endpoint_parse()
-> - Remove the code dealing with remote_ep_fwnode. Instead use
->    v4l2_create_fwnode_links_to_pad() and media_pad_remote_pad_unique() to
->    create the link and get the pad index.
-> - Add cfe/csi2/fe/dphy argument to the respective dbg/info/err print
->    macros.
-> - Drop some debug prints and add a few, clarifying the prints for
->    enabling and disabling the streams.
-> - Some cosmetic changes (linefeed, drop unnecessary assignment, move a
->    define)
-> - Link to v3: https://lore.kernel.org/r/20240815-rp1-cfe-v3-0-e15a979db327@ideasonboard.com
-> 
-> Changes in v3:
-> - Based on v6.11-rc3. The PiSP BE series is now in upstream so no extra
->    dependencies are needed.
-> - Fixed cfe_remove() return value, as the .remove hook has changed
-> - Added Krzysztof's Rb.
-> - Link to v2: https://lore.kernel.org/r/20240620-rp1-cfe-v2-0-b8b48fdba3b3@ideasonboard.com
-> 
-> Changes in v2:
-> - Change the compatible string back to raspberrypi,rp1-cfe from raspberrypi,rpi5-rp1-cfe
-> - Drop the references to rp1 headers in the DT binding example. This
->    allows compiling the example without the rp1 support.
-> - Fix missing remap lines for mono formats
-> - Fix csi2_pad_set_fmt() so that the format can be changed back to the
->    sink's format from 16-bit or compressed format.
-> - Link to v1: https://lore.kernel.org/r/20240318-rp1-cfe-v1-0-ac6d960ff22d@ideasonboard.com
-> 
-> ---
-> Tomi Valkeinen (4):
->        media: uapi: Add meta formats for PiSP FE config and stats
->        dt-bindings: media: Add bindings for raspberrypi,rp1-cfe
->        media: raspberrypi: Add support for RP1-CFE
->        media: admin-guide: Document the Raspberry Pi CFE (rp1-cfe)
-> 
->   .../admin-guide/media/raspberrypi-rp1-cfe.dot      |   27 +
->   .../admin-guide/media/raspberrypi-rp1-cfe.rst      |   78 +
->   Documentation/admin-guide/media/v4l-drivers.rst    |    1 +
->   .../bindings/media/raspberrypi,rp1-cfe.yaml        |   93 +
->   .../userspace-api/media/v4l/meta-formats.rst       |    1 +
->   .../userspace-api/media/v4l/metafmt-pisp-fe.rst    |   39 +
->   MAINTAINERS                                        |    7 +
->   drivers/media/platform/raspberrypi/Kconfig         |    1 +
->   drivers/media/platform/raspberrypi/Makefile        |    1 +
->   drivers/media/platform/raspberrypi/rp1-cfe/Kconfig |   15 +
->   .../media/platform/raspberrypi/rp1-cfe/Makefile    |    6 +
->   .../media/platform/raspberrypi/rp1-cfe/cfe-fmts.h  |  332 +++
->   .../media/platform/raspberrypi/rp1-cfe/cfe-trace.h |  196 ++
->   drivers/media/platform/raspberrypi/rp1-cfe/cfe.c   | 2487 ++++++++++++++++++++
->   drivers/media/platform/raspberrypi/rp1-cfe/cfe.h   |   43 +
->   drivers/media/platform/raspberrypi/rp1-cfe/csi2.c  |  583 +++++
->   drivers/media/platform/raspberrypi/rp1-cfe/csi2.h  |   89 +
->   drivers/media/platform/raspberrypi/rp1-cfe/dphy.c  |  180 ++
->   drivers/media/platform/raspberrypi/rp1-cfe/dphy.h  |   27 +
->   .../media/platform/raspberrypi/rp1-cfe/pisp-fe.c   |  581 +++++
->   .../media/platform/raspberrypi/rp1-cfe/pisp-fe.h   |   53 +
->   drivers/media/v4l2-core/v4l2-ioctl.c               |    2 +
->   .../uapi/linux/media/raspberrypi/pisp_fe_config.h  |  273 +++
->   .../linux/media/raspberrypi/pisp_fe_statistics.h   |   64 +
->   include/uapi/linux/videodev2.h                     |    2 +
->   25 files changed, 5181 insertions(+)
-> ---
-> base-commit: 431c1646e1f86b949fa3685efc50b660a364c2b6
-> change-id: 20240314-rp1-cfe-142b628b7214
-> 
-> Best regards,
+> +#ifndef __memcpy_fromio
+> +void __memcpy_fromio(void *to, const volatile void __iomem *from, 
+> size_t count);
+> +#endif
+> +
+> +#ifndef __memcpy_toio
+> +void __memcpy_toio(volatile void __iomem *to, const void *from, size_t 
+> count);
+> +#endif
+> +
+> +#ifndef __memset_io
+> +void __memset_io(volatile void __iomem *dst, int c, size_t count);
+> +#endif
 
+I'm not entirely sure about the purpose of the #ifdef here, since
+nothing ever overrides the double-underscore versions, both before
+and after your patches.
+
+Unless I'm missing something here, I think a more logical
+sequence would be:
+
+1. add the definitions in this file without the underscores,
+   as memcpy_fromio/memcpy_toio/memset_io, with the #ifdef
+   for that name that is always set at this point
+
+2. replace the default implementation in asm-generic/io.h
+   with extern prototypes, remove the #define from those
+
+3. convert the other architectures, removing both the
+   implementations and the prototypes.
+
+     Arnd
 
