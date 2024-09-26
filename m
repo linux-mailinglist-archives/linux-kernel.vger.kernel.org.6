@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-339939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E72986C66
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:21:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D14986C6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABE23B25492
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 001B02827AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25BD188014;
-	Thu, 26 Sep 2024 06:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CD5188A32;
+	Thu, 26 Sep 2024 06:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="H2LOkvf6"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="X7wcS/3p"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317E1185941
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EB81D5AB1
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727331681; cv=none; b=JiJm84mhRbiGMmbWif6KoMVh1+jrjNO3xXVW09RiQCd/bndXPL8OwqN1G5ggNT60Zr57Q6FUVJb9tvGeR2Qisp8M9QGAOhsoQudxB8I9y40WYqX02VOAulUQtCvo50bGCu19Ly+T+QG/N3Rn993KLzKR8n+fINwG8JrwYsmasJM=
+	t=1727332028; cv=none; b=drPYIzOUBNAMq3MBRr75bqdiAVOZC8Yop+t/JAkGc2uw99vmxa1FAKtWin7J47AG+bU1619b7ouzl+7J3QkJghsZATtB32nqiVlHieFnXej0xTveHbRSHOjc3FhAoA2N6uoBGX8UwzY5e+KLQdxBAS7UkM5/4dVCI/AuARzkYpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727331681; c=relaxed/simple;
-	bh=1pLxbC8I7m5jJNxnqEC6sj7C1ca8cV6A29jVK2+lQFo=;
+	s=arc-20240116; t=1727332028; c=relaxed/simple;
+	bh=6fbhbxf6IoUQMR/4ZCUq9VkfWTkQmOsWs1P3OR8ipKk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZIp/PL0Sg1YdIehrZmhOhrmedOOHA8WsJ2hJVGzNlmYEOVVIRLjyDZ6TLyhcB3Vihkmnk3vOqAcRH3lhWex63xPVCvRqqJ1iG8IoQXGZNAeCSzQ/dNnWZZP4h71SdeT/Trx5Lb0Swotug1lI8v8PRP1MAKo3RUJEafQsikQ5yWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=H2LOkvf6; arc=none smtp.client-ip=209.85.218.46
+	 In-Reply-To:Content-Type; b=ewF5l5KO40pgGbaD1kyELXGjnWtkNOIaXQ8XnbJicEmOeYgecvQWNpnwvRJyy8RSybDcuzb8qdsF7BHQpzufoOT2UwRrgfuOXo5PyvoGlw1G4FsmnYN0iRDLIOQEL1bS+VfN9UpaDzQJfdA24OokVygxffVL1ZCtubDv7M8rujk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=X7wcS/3p; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d100e9ce0so62911166b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:21:18 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53568ffc525so752578e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:27:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727331677; x=1727936477; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1727332023; x=1727936823; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oYMCwkQPVxKJ+cMHOHVL5c+5ytaGE64SeE8g5ixOBss=;
-        b=H2LOkvf6723jQxMkj0NU2J6eql+i7LeBQKQvCat1N7UMPIXKjsNbUWeeW8xqmLtalZ
-         NZ8rlt+785Jqhuc12DOF0JjbBzQaR6PD718oHoOfWD1ZsxdlKQtOsPT0B3YLuP8/4/2T
-         n7tgZzoebTKdVmEbXKqTnqSsCs3V5/jdM0SfvylZf15iABMHkpFm3vfEjNizE+95QqTH
-         yt+L22pElkbXqpnic8SBF9ElsSAiwtEU7NkRrkHEXcY11CMpnlu1waIQ6fflEd0bKWqZ
-         wKsC5itTeWWkz1iT0fAixEHenRgtdobaFuBIxfPoG4D6s+f0OYURqbGs10k46QBrBAHS
-         AxTw==
+        bh=iJyq5r7owmQ4fSxu3qvbINvtGvihvArgf60IEDytVxw=;
+        b=X7wcS/3pG1/bHllqVoD5usiwkIPEtgFtusdi0MGU19D6n2JhUF0zeI0gPAGcmmCMR5
+         YL6FUkOU6KL0XY8ODen5z+aXr9lf+UEQTPo6M44Qs+Hs3MO/h8arFG+vW4p+hJ6HVMMo
+         V3dQbYNv5YhOEh6xtUckewWGCku6ZBQgTL2JyyXce/Xx89GPcWDAFHwC5LI6VhJvQoFK
+         iJ6Q4Y8Yl0KZxgV8VTwItkS80eLa+90ieHPRWp+1vj/6C6Xaouq+86lma2gx7OCjjU8w
+         0gMLqSOl6vc7KnzKNEeL5AjYwmESbytdaoggUEtdBkSgVXdWYshXWnL0QEejMAnBc3p+
+         91ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727331677; x=1727936477;
+        d=1e100.net; s=20230601; t=1727332023; x=1727936823;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oYMCwkQPVxKJ+cMHOHVL5c+5ytaGE64SeE8g5ixOBss=;
-        b=HCm7TyAj5Rx9jn8nNGVqJzHF/V6wULrKB+avzWQa8ub2dJdu2N8SViZG/adqm0H8J/
-         te69NwQ1OKQzWvBPrCUXvimUsXQilrH0nl/QKgSMSva40K37WWQar0pqn4up/3GwXIYJ
-         NNVzTsMForV44GHPPv4OnQQJOT5EZt0L0/aZyoDmpbUoNW3evrWRp+qUJuFDzjiJwMqv
-         WHpGob/XIOW5gCmby1jj8T3QNZsYOm0MyaZe9XPbiWVNjhW3d+IfTPGBjxtv+7xUU2oV
-         /WZO9Hm7/YnFMWyvOihEatoa28H0umuuWGrFwlOaUmLaUcP0sECQMkJMjBDh53/8rYVV
-         y9Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnb0WObyl3fNZmpazbTo7pUfa1eFsJsSJDco9r+nZ3y3ZD/rqU1XWlUoOr/gPgm8IFsDohiBYBnnSTgNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIBm3QVPVGK8KPDKW+gDWRmYjde6izs++J+Wgb+YDms0krA1Dr
-	kxWAxI/Q2rPztzrlH66nNs+H6kUfD5bkJZyKmI99g3ejr3qIzh5dSEPGdIsPZUQ=
-X-Google-Smtp-Source: AGHT+IGq6JdSzSznwPxVPi2beVS6+2KfvKJjCPl73nGi+bdpGccswpYOVUmzs63z0PbobAmD2I0QlQ==
-X-Received: by 2002:a17:907:940c:b0:a86:bb90:93fa with SMTP id a640c23a62f3a-a93a05e7e73mr470458966b.44.1727331677393;
-        Wed, 25 Sep 2024 23:21:17 -0700 (PDT)
+        bh=iJyq5r7owmQ4fSxu3qvbINvtGvihvArgf60IEDytVxw=;
+        b=nplfpnZgQADKccdH3qBhPoAtlldbbXbT4OIkcPs/P4k/qc8H2sEDa7IkRKday2YoX/
+         2hDbcTjQMbe08wlY/jcNCD+pEiLxX8lUbwmMtiPDY/aGXjOnD3I6jmBBSKZJ6tpHXijo
+         P3CSYz0JSiqFBlbbFzjQJVvNQnFi7lkzbHmB3TcV92rF/mwv3XHBQ4aUepJC9Ldf9wuF
+         mwd6wDZGSNaB0DGLQK5qvoghWxDkLZYo6IYACMWOPTyxngbT688CqIKYFkxLMGamqy0x
+         MnUsakHA4vfNTegOAQ7/goAvDWhKiRj7VPUKuKotbcscu0ZsmS5mJg0WSotRuos4B26N
+         spug==
+X-Forwarded-Encrypted: i=1; AJvYcCXSqTr7KKbCRoMo+EKVVqWELarCSC6ly7f8ouMgXH8Vz+UMTr1bncXSCPtk+1nL3Xc5L7V68Ow9FYCFXdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5976uJpslQP1RaOTI0w6pwqOxteKxcHrE1vvR9y/6EutyQyJH
+	zAmGzx2pc4rNIPdj9NhnzaY+HvZJVd1XzyxQXoM77ulqW9c7vPV3e1IKJ50u95g=
+X-Google-Smtp-Source: AGHT+IEia7ugddIZ5i+C+qOLJmpmYAtyNjasa7jKxw0AtxbpnJ3u4LiXkycHhFhzq4yqO8GzFxLoSA==
+X-Received: by 2002:a05:6512:3044:b0:52e:a68a:6076 with SMTP id 2adb3069b0e04-538775670eamr3406420e87.49.1727332022769;
+        Wed, 25 Sep 2024 23:27:02 -0700 (PDT)
 Received: from ?IPV6:2a10:bac0:b000:75b8:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:75b8:7285:c2ff:fedd:7e3a])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f34076sm308151066b.7.2024.09.25.23.21.16
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf48c40asm2783859a12.1.2024.09.25.23.27.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 23:21:17 -0700 (PDT)
-Message-ID: <d8351d41-b7ee-48b4-a11c-5d1cd7f39ae2@suse.com>
-Date: Thu, 26 Sep 2024 09:21:15 +0300
+        Wed, 25 Sep 2024 23:27:02 -0700 (PDT)
+Message-ID: <fce898e6-0296-4c5e-9e6a-6b5e3fc87b95@suse.com>
+Date: Thu, 26 Sep 2024 09:27:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,8 +75,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/8] x86/virt/tdx: Start to track all global metadata
- in one structure
+Subject: Re: [PATCH v4 3/8] x86/virt/tdx: Prepare to support reading other
+ global metadata fields
 To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
  kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
  peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
@@ -84,10 +84,10 @@ To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
 Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
  rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, adrian.hunter@intel.com
 References: <cover.1727173372.git.kai.huang@intel.com>
- <014302e0bd2f0797aa7d27ed8b730603d2859c2d.1727173372.git.kai.huang@intel.com>
+ <101f6f252db860ad7a7433596006da0d210dd5cb.1727173372.git.kai.huang@intel.com>
 From: Nikolay Borisov <nik.borisov@suse.com>
 Content-Language: en-US
-In-Reply-To: <014302e0bd2f0797aa7d27ed8b730603d2859c2d.1727173372.git.kai.huang@intel.com>
+In-Reply-To: <101f6f252db860ad7a7433596006da0d210dd5cb.1727173372.git.kai.huang@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
@@ -96,44 +96,65 @@ Content-Transfer-Encoding: 8bit
 On 24.09.24 г. 14:28 ч., Kai Huang wrote:
 > The TDX module provides a set of "Global Metadata Fields".  They report
 > things like TDX module version, supported features, and fields related
-> to create/run TDX guests and so on.
+> to create/run TDX guests and so on.  TDX supports 8/16/32/64 bits
+> metadata field element sizes.  For a given metadata field, the element
+> size is encoded in the metadata field ID.
 > 
-> Currently the kernel only reads "TD Memory Region" (TDMR) related fields
-> for module initialization.  There are immediate needs which require the
-> TDX module initialization to read more global metadata including module
-> version, supported features and "Convertible Memory Regions" (CMRs).
+> For now the kernel only reads "TD Memory Region" (TDMR) related metadata
+> fields and they are all 16-bit.  Thus the kernel only has one primitive
+> __read_sys_metadata_field16() to read 16-bit metadata field and the
+> macro, read_sys_metadata_field16(), which does additional build-time
+> check of the field ID makes sure the field is indeed 16-bit.
 > 
-> Also, KVM will need to read more metadata fields to support baseline TDX
-> guests.  In the longer term, other TDX features like TDX Connect (which
-> supports assigning trusted IO devices to TDX guest) may also require
-> other kernel components such as pci/vt-d to access global metadata.
+> Future changes will need to read more metadata fields with different
+> element sizes.  Choose to provide one primitive for each element size to
+> support that.  Similar to the build_mmio_read() macro, reimplement the
+> body of __read_sys_metadata_field16() as a macro build_sysmd_read(_size)
+> in size-agnostic way, so it can be used to generate one primitive for
+> each element size:
 > 
-> To meet all those requirements, the idea is the TDX host core-kernel to
-> to provide a centralized, canonical, and read-only structure for the
-> global metadata that comes out from the TDX module for all kernel
-> components to use.
+>    build_sysmd_read(8)
+>    build_sysmd_read(16)
+>    ..
 > 
-> As the first step, introduce a new 'struct tdx_sys_info' to track all
-> global metadata fields.
-> 
-> TDX categories global metadata fields into different "Classes".  E.g.,
-> the TDMR related fields are under class "TDMR Info".  Instead of making
-> 'struct tdx_sys_info' a plain structure to contain all metadata fields,
-> organize them in smaller structures based on the "Class".
-> 
-> This allows those metadata fields to be used in finer granularity thus
-> makes the code more clear.  E.g., the construct_tdmr() can just take the
-> structure which contains "TDMR Info" metadata fields.
-> 
-> Add a new function get_tdx_sys_info() as the placeholder to read all
-> metadata fields, and call it at the beginning of init_tdx_module().  For
-> now it only calls get_tdx_sys_info_tdmr() to read TDMR related fields.
-> 
-> Note there is a functional change: get_tdx_sys_info_tdmr() is moved from
-> after build_tdx_memlist() to before it, but it is fine to do so.
+> Also extend read_sys_metadata_field16() take the '_size' as argument
+> (and rename it to read_sys_metadata_field() to make it size-agnostic) to
+> allow the READ_SYS_INFO() macro to choose which primitive to use.
 > 
 > Signed-off-by: Kai Huang <kai.huang@intel.com>
-> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+<snip>
+
+> +#define build_sysmd_read(_size)							\
+> +static int __read_sys_metadata_field##_size(u64 field_id, u##_size *val)	\
+> +{										\
+> +	u64 tmp;								\
+> +	int ret;								\
+> +										\
+> +	ret = tdh_sys_rd(field_id, &tmp);					\
+> +	if (ret)								\
+> +		return ret;							\
+> +										\
+> +	*val = tmp;								\
+> +										\
+> +	return 0;								\
+>   }
+>   
+> -#define read_sys_metadata_field16(_field_id, _val)		\
+> +build_sysmd_read(16)
+
+nit: Generally the unwritten convention for this kind of macro 
+definition is to capitalize them and be of the from:
+
+DEFINE_xxxxx - similar to how event classes are defined.
+
+perhaps naming this macro:
+
+DEFINE_TDX_METADATA_READER() ought to be more descriptive, also the
+"md" contraction of metadata also seems a bit quirky (at least to me).
+
+It's not a deal breaker but if there is going to be another posting this 
+might be something to consider.
+
+<snip>
 
