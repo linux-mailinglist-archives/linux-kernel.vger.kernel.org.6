@@ -1,124 +1,191 @@
-Return-Path: <linux-kernel+bounces-339801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B0D986AC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:50:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF84F986AC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA5BA1F2269A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:50:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201B7282EB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8850F1714B2;
-	Thu, 26 Sep 2024 01:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77C8171E68;
+	Thu, 26 Sep 2024 01:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MriBpR3J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J5nJQGju"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D61C125;
-	Thu, 26 Sep 2024 01:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DC6C125;
+	Thu, 26 Sep 2024 01:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727315426; cv=none; b=gr1PvCEvZZ0LpZ6HxzY77ndI3Q9j0zidXJLgL21OqqoqjprMKc6luFkuPdLlfkxgYo84n38AFR07uhgOt2cfEihRLPyXWu5hU04FwOEVt0nPeJAT2ACarYGiq2K64BSXEJeOzeJ44iMKiC+vSIbnXvkA3dK/rY9DEiJCfyaj4qo=
+	t=1727315490; cv=none; b=pwOGgxW7jpFEswTLIqcQl5N4BaMWB1Thh116kDODi/P9TXx4T0mmpHaHZVSNdfzr4BUEtxUxshJHN4yPILinWsoLYLbtsd1cxYG/1Z3oB36t5PbRPBdAPpgNVSvCotD/yAx/J+F1Uv4aSW+4h3Ct2bLN3bAkHQ5QK5BiS4CHiRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727315426; c=relaxed/simple;
-	bh=SVN/xnAwYRntnu4COhrWlYvc1k7DTNxN8qZdWnWoQGk=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=QDf/bEJVVpKyQRzK90kUtjnOWoDfa3fd+SX2zaCFhsFZWStq6JHqDWZZBZcYXC5vMeXLmSjfUefYJZgY2vVMYVXVLXhGFoL8EP7n2VY1+YNaNk/KrZyBLBAF9FxmB3TsUtWsaxbp6B0Khk7EEosMXz1s56y1Aw9d2lsClbx5pCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MriBpR3J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E2B8C4CEC3;
-	Thu, 26 Sep 2024 01:50:25 +0000 (UTC)
+	s=arc-20240116; t=1727315490; c=relaxed/simple;
+	bh=zmniUrX/60l3nZXiIX8G/+d8ERVzLHFShiCtMEjBaT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=It7xppQ4bsDQVecNXdMKDHsLILJCfZfkB6ucVjNTFsxZNQsKmWXIJsRo3VYQ2+rBEFYjf33DK4AbYe3pi8wMLtFtRwTgZAuyr2dpqUzsM2XQTx9uT6JISUF6/gXi6Z74nJS2/dBgQ00RBBdmKJ9NLyqXQlfkzRTjY/83g+bpQpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J5nJQGju; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D188C4CECD;
+	Thu, 26 Sep 2024 01:51:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727315425;
-	bh=SVN/xnAwYRntnu4COhrWlYvc1k7DTNxN8qZdWnWoQGk=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=MriBpR3J6key0RjEL0crJV0BKK8K+hBK3ZjhYkKZafuLkqAnjgL4FBh4KJqR3HoMS
-	 kONaxwAtt4tkuGMrjnJqH5vrp1tDing102YranbIyLq+WD3SeDbAtrQtwToP+9f9fX
-	 W+ZBIfobXbwSDa20iKXhyLOfFMdwl5cNDxGLScnkxcYVIodzfF6dMbqzLJqV+S427R
-	 +6QmAJT4G6LjMWLmnWMQJ2GVGXkEwlfBJ/AXA0yXAZQrnOeutoEqUxtfSLZgI5VzZ0
-	 jBvceL5odd06wZcWG8/w0RESQifxKOJ6N9cCzsPl2Be3SsI+pDlabGyZTYiJ9At0+1
-	 SRs+gOVRAd1Cw==
-Date: Wed, 25 Sep 2024 20:50:24 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1727315489;
+	bh=zmniUrX/60l3nZXiIX8G/+d8ERVzLHFShiCtMEjBaT8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=J5nJQGjuJYG/3kIjQ3GPWUsXVnLGL3NloFzCG8kfXJ1IrV2cn8SUM6/IyBSwAsvAL
+	 zOmqpRQH7lsRKH2bfmMSOUg8XZdnypj3w1Wr4pKyBoTQtIWGTbGSbejYb8HjOvPqp3
+	 yyLeExErPvmcVJx+oBD+XVmN1xX+GC/XPMeuwNdlRqvZ/b+Wvw5WxjSKJ1T54yJd6w
+	 sPhwWh6cocDP5zBfdI1Srqju7vlyJvLJO+qccFb31Jme4JMEgqRYP+9Hu14A1EOIrk
+	 3COkiW1gGzf/o0FBY8ddLdrDwCRJeNygk7s0ACvV/EXT2ZRgt55eaDYAdyCIUFKgLY
+	 NB3LN4CRV5chg==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5356bb55224so622012e87.0;
+        Wed, 25 Sep 2024 18:51:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW7fNn4iA/qhDQPHTPS4PCPSAMMWIMedA3hAf4WSEqgFExIQYMQeNmWaVDDINQ5vQqudNafu/R8l0Sj@vger.kernel.org, AJvYcCWa5SmnNPgMqOSgiqDQK41F1s/INzyiw+yEVv8M6qFtY02Vz+Qhs6M6EqkDIW4vNftsihDYaJv8nLUYXzjW@vger.kernel.org, AJvYcCXgxZpQGXvMcT7IbvefpyDTP5AB3DdS2wzo7CsOA1vv4zkejLTSlnHPdGct6k75QckWua1ubzn3gNzMQHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyHStwvjKVrhE+LIcRT89Xz2t6W2dmFOhuOIwSz2ESvRoBz+/F
+	C6gouYmXxR7rsm8GJZYsJ4u0dC8WxNehzrByo+iJmfvoL60SvI8ZXIocdg/aFOSx/B3Bw4fGLvc
+	SQLOKOWI7fjF5eF77T3r79gCHzA==
+X-Google-Smtp-Source: AGHT+IGCt9Yyj748HQEDuTnOEpxj1vC8ZiYgiNLWVgA7RN5u4PsNuE0keloke/9LPArWb/GCufESyC1kuypAjFsG2us=
+X-Received: by 2002:a05:6512:401e:b0:537:a864:dca7 with SMTP id
+ 2adb3069b0e04-53877565c70mr2813506e87.55.1727315487750; Wed, 25 Sep 2024
+ 18:51:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, Shawn Guo <shawnguo@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
- linux-kernel@vger.kernel.org, Iuliana Prodan <iuliana.prodan@nxp.com>, 
- devicetree@vger.kernel.org, imx@lists.linux.dev, 
- Daniel Baluta <daniel.baluta@nxp.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>
-In-Reply-To: <20240925232008.205802-2-laurentiumihalcea111@gmail.com>
-References: <20240925232008.205802-1-laurentiumihalcea111@gmail.com>
- <20240925232008.205802-2-laurentiumihalcea111@gmail.com>
-Message-Id: <172731542455.2226102.16295733328701144555.robh@kernel.org>
-Subject: Re: [PATCH v2 1/6] dt-bindings: dsp: fsl,dsp: fix power domain
- count
+References: <20240814024513.164199-1-charles.goodix@gmail.com>
+ <20240814024513.164199-3-charles.goodix@gmail.com> <CAL_Jsq+QfTtRj_JCqXzktQ49H8VUnztVuaBjvvkg3fwEHniUHw@mail.gmail.com>
+ <CAL_JsqKUDj6vrWMVVBHrDeXdb3ogsMb3NUbV6OjKR-EhLLZuGg@mail.gmail.com>
+ <CAL_Jsq+6fvCaxLexo9c6zs+8vwyfPAOCCVsejw_uKURVU-Md9w@mail.gmail.com> <ZvSEkn66qNziJV0M@google.com>
+In-Reply-To: <ZvSEkn66qNziJV0M@google.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 25 Sep 2024 20:51:14 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJhchCn8QbT2kV7hPfgtYP=-32YE4WT51fy_5iSOLMZ=g@mail.gmail.com>
+Message-ID: <CAL_JsqJhchCn8QbT2kV7hPfgtYP=-32YE4WT51fy_5iSOLMZ=g@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Charles Wang <charles.goodix@gmail.com>, dianders@chromium.org, 
+	dan.carpenter@linaro.org, conor@kernel.org, krzk+dt@kernel.org, 
+	jikos@kernel.org, bentiss@kernel.org, hbarnor@chromium.org, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Sep 25, 2024 at 4:46=E2=80=AFPM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> On Wed, Sep 25, 2024 at 12:40:56PM -0500, Rob Herring wrote:
+> > On Tue, Sep 10, 2024 at 5:41=E2=80=AFPM Rob Herring <robh@kernel.org> w=
+rote:
+> > >
+> > > On Fri, Sep 6, 2024 at 3:28=E2=80=AFPM Rob Herring <robh@kernel.org> =
+wrote:
+> > > >
+> > > > On Tue, Aug 13, 2024 at 9:45=E2=80=AFPM Charles Wang <charles.goodi=
+x@gmail.com> wrote:
+> > > > >
+> > > > > The Goodix GT7986U touch controller report touch data according t=
+o the
+> > > > > HID protocol through the SPI bus. However, it is incompatible wit=
+h
+> > > > > Microsoft's HID-over-SPI protocol.
+> > > > >
+> > > > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > > > > Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> > > > > ---
+> > > > >  .../bindings/input/goodix,gt7986u.yaml        | 71 +++++++++++++=
+++++++
+> > > > >  1 file changed, 71 insertions(+)
+> > > > >  create mode 100644 Documentation/devicetree/bindings/input/goodi=
+x,gt7986u.yaml
+> > > > >
+> > > > > diff --git a/Documentation/devicetree/bindings/input/goodix,gt798=
+6u.yaml b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+> > > > > new file mode 100644
+> > > > > index 000000000..a7d42a5d6
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+> > > > > @@ -0,0 +1,71 @@
+> > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > > +%YAML 1.2
+> > > > > +---
+> > > > > +$id: http://devicetree.org/schemas/input/goodix,gt7986u.yaml#
+> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > > +
+> > > > > +title: GOODIX GT7986U SPI HID Touchscreen
+> > > > > +
+> > > > > +maintainers:
+> > > > > +  - Charles Wang <charles.goodix@gmail.com>
+> > > > > +
+> > > > > +description: Supports the Goodix GT7986U touchscreen.
+> > > > > +  This touch controller reports data packaged according to the H=
+ID protocol,
+> > > > > +  but is incompatible with Microsoft's HID-over-SPI protocol.
+> > > > > +
+> > > > > +allOf:
+> > > > > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > > > > +
+> > > > > +properties:
+> > > > > +  compatible:
+> > > > > +    enum:
+> > > > > +      - goodix,gt7986u
+> > > >
+> > > > This is already documented in goodix,gt7375p.yaml. Now linux-next h=
+as warnings:
+> > > >
+> > > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/input=
+/goodix,gt7986u.example.dtb:
+> > > > touchscreen@0: compatible: 'oneOf' conditional failed, one must be
+> > > > fixed:
+> > > >         ['goodix,gt7986u'] is too short
+> > > >         'goodix,gt7375p' was expected
+> > > >         from schema $id:
+> > > > http://devicetree.org/schemas/input/goodix,gt7375p.yaml#
+> > > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/input=
+/goodix,gt7986u.example.dtb:
+> > > > touchscreen@0: reg:0:0: 0 is not one of [93, 20]
+> > > >         from schema $id:
+> > > > http://devicetree.org/schemas/input/goodix,gt7375p.yaml#
+> > > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/input=
+/goodix,gt7986u.example.dtb:
+> > > > touchscreen@0: 'vdd-supply' is a required property
+> > > >         from schema $id:
+> > > > http://devicetree.org/schemas/input/goodix,gt7375p.yaml#
+> > > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/input=
+/goodix,gt7986u.example.dtb:
+> > > > touchscreen@0: 'goodix,hid-report-addr', 'spi-max-frequency' do not
+> > > > match any of the regexes: 'pinctrl-[0-9]+'
+> > > >         from schema $id:
+> > > > http://devicetree.org/schemas/input/goodix,gt7375p.yaml#
+> > > >
+> > > > Please sort this out and send a fix.
+> > >
+> > > I should add that it is intermittent whether you see this error or
+> > > not. The tools select a single schema based on the compatible string
+> > > and it is undefined which of the 2 schemas you will get.
+> >
+> > Still an issue and no response. Please fix or revert the series.
+>
+> I see that Krzysztof sent a revert, but what a proper fix would be?
+> Apparently Goodix is using the same product ID gt7986u for both I2C and
+> SPI parts, and covering them in one binding is not really easy (well, I
+> guess it is possible with a big ugly "if"). Do we just slap "-spi"
+> suffix on the compatible, so it becomes "goodix,gt7986u-spi" and go on
+> on our merry way? Is there a better option for such products that
+> support multiple interfaces/transports?
 
-On Wed, 25 Sep 2024 19:20:03 -0400, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> 
-> Per the current binding, QM/QXP DSPs are supposed to have 4
-> power domains, while the rest just 1. For QM/QXP, the 4 power
-> domains are: DSP, DSP_RAM, MU13A, MU13B.
-> 
-> First off, drop MU13A from the count. This is attached to the
-> platform device of lsio_mu13. This decreases the count to 3.
-> 
-> Secondly, drop DSP and DSP_RAM from the count for QXP. These
-> are attached to the platform devices of the lpcgs (used as clock
-> providers for the DSP).
-> 
-> With this in mind, the number of required power domains for QXP
-> is 1 (MU13B), while for QM it's 3 (MU13B, DSP, DSP_RAM).
-> 
-> Additionally, two extra power domains may be required in the case
-> of QM/QXP DSPs. These are IRQSTR_DSP and MU2A. For the nodes using
-> the "-hifi4" compatibles these PDs are optional, while for nodes using
-> the "-dsp" compatibles these are mandatory.
-> 
-> These changes reflect all of this information.
-> 
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> ---
->  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 62 +++++++++++++++----
->  1 file changed, 49 insertions(+), 13 deletions(-)
-> 
+Generally we just have 1 compatible and 1 schema for both. The schema
+can reference spi-peripheral-props.yaml unconditionally. If someone
+wants to put SPI properties in a node for I2C connected device, then
+that would be allowed, but who cares.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+There's been some discussion about having some sort of pseudo property
+similar to $nodename to define the bus for a node and then we could
+use that.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mailbox/arm,mhuv2.example.dtb: dsp@596e8000: power-domains: [[4294967295, 0], [4294967295, 1], [4294967295, 2], [4294967295, 3]] is too long
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240925232008.205802-2-laurentiumihalcea111@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Rob
 
