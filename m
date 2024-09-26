@@ -1,195 +1,126 @@
-Return-Path: <linux-kernel+bounces-340291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32D0998711C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:16:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA1B987121
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9AC1282A3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:16:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68FF41C24824
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C4E1AC8BD;
-	Thu, 26 Sep 2024 10:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7111AC895;
+	Thu, 26 Sep 2024 10:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lygcrPFK"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="af3OcDMn"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397805647F;
-	Thu, 26 Sep 2024 10:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFC75647F;
+	Thu, 26 Sep 2024 10:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727345807; cv=none; b=NI8IlGK6ucX4wB9zvEtIO9L1TjhSlWF4sKKt/eJsQWi+Eq0TfDJZt2+oCgdXXZTKb4qV70WgcWF73LmZ7ukmqWB6mF80xPskgYZWtu6hdg1PFi4OaY7/STqh4dYZRDQYngHs/FIkjThHhjr9tmmDubJyT2drDiNwaSooFLSN40k=
+	t=1727345896; cv=none; b=ss46BHOHBrOLrQnPYVfvCtbomN+M5uvpNM3jpMRjdCCaxg6k4o5S48XGV/iu40tKRYHhky3B0l7jmbE6QBSVNKtY17F/n/15QSvJyiTui1/KOkXtSNjISEQYnr51PV6cRqv9mrAg/fyrTEd7SCqhXN1ToQyD1z8I9At86tG/CYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727345807; c=relaxed/simple;
-	bh=tpvaoQfbFT+eHDEpIsf1F1wUwNkqOvgEpvT10S4K0jY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uNG6bsG6wASimMRs4MmW87gMfVwcsQd8kPZhVVBayMFBis4f+f9R4GvhSzBPEEZR3F5FUDxHYWtwONSzwnPBLZSAZ8ZE1BQHQv67yBrrYpW5nbbPnDlNpc6zyGKRcgiAGAOzvFgg5hAKCur/zZuCW3tLNb45oFstlNFd4QjCC9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lygcrPFK; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-500fcf0b32fso175898e0c.1;
-        Thu, 26 Sep 2024 03:16:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727345805; x=1727950605; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3/i5t2uxUT8cFIitTXnab6lbLA8GH+FQPNpxPleTeFc=;
-        b=lygcrPFKMnHPv4gWLGncpYY9weV57LJ/pnzMGISkRvK3nllHen/Y6OBE3qjJTHNJBR
-         uMa0eyJ42JGEdkA17UJ1nHOllrhW1w/YELQgvKhPUs5aTpNXr/vezp3o4G0Bk0MNKwb1
-         cqLyLdeNlYF4qThTSSbafbwrD4mCUNPD8+Yvh/VyXQvUiUQkE9TnIjU6ZuEoHtqn6GId
-         sPcQI6ZvScYLgtsjcz//7ZzgDcmgsMw6IGiI8E++GWrK3sYwqM1qUu6cmHBVLhE32OWe
-         Jm1kgInHWswAQ/tBZdDfRl4e13yvF43gHDL98xAh0iFAPewIBYdPg4IOiyrISxOAqTMC
-         1g0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727345805; x=1727950605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3/i5t2uxUT8cFIitTXnab6lbLA8GH+FQPNpxPleTeFc=;
-        b=kY7SPpygqU4wLTwmPS/YA2++0QNegsmAJgKGGhUgWoUU5oejGLcxjjz7vwtM6+Rvw1
-         jaquI+22d+7vnoaLCFy7OMd+fS6ZFNgtYDFhFhwKyzWpV6u2O20yTBbJOYzO75WEfVML
-         5SJBz43GvQME7EeHNms9I/9apAWXrbAMLPn05KwdWOxt67FPW/UyiMbOyFYqW9O0h36C
-         nk26PfcCbUcLM+bqbIzAyK2Cn/KLwwswr3/rOf+7ikIM4WtVEuCfZVaRu83rynt8AAn8
-         ip+c2fYlCj9hw8xA5kADhcAJx2kZwkxxGD8qoMg6477JhmXZUIbK0KPb0xOJ73LiBjAV
-         U7Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCXG3PaSeyPDLdxE1dgDNqoQGblaoahSNDa/89zWe/lGtbBM4ZK96RgpTkvMbK7dIdXZQqQvP3e+HF8QL7g=@vger.kernel.org, AJvYcCXnviHjibi71TH5dnqH6w2RfyHcaUGxZSKIsOoucumWwZazv8g3QBl5cNiGnHp86vm6BXU0Uw6K1fkaB1U=@vger.kernel.org, AJvYcCXu38eV9JxJcHpL4oSTLc9auX5+HHX341As7XYllNKxzSxYs4aj5u+rN5YLxiTUAGwyzQAhNuv4/mTnJHJPFdUvG/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqggP5xoe55n1fjPBnkN5A3gYk3sqOuTtHO0JB0vRccJIrYIXN
-	Bv8OFGZwMRDhrKclbCAztRhbT+E+vfpB5/cCFJYfh+uANWS/jafZOMPDqS3/697Vot4UukQzyHB
-	gbFxrvJMPkCVJAm8eMuDN673TwFU=
-X-Google-Smtp-Source: AGHT+IGHBOsTmgPkbv7uo3NZBAXRZWhYPUtM1em9SrEVWULUxo5+IdE2T+tH6UpQv7P+gZJ4Kf415Zl4FWpEv+sdSe4=
-X-Received: by 2002:a05:6122:3c41:b0:4fe:bce9:8f4f with SMTP id
- 71dfb90a1353d-505c20706a7mr4586255e0c.9.1727345804699; Thu, 26 Sep 2024
- 03:16:44 -0700 (PDT)
+	s=arc-20240116; t=1727345896; c=relaxed/simple;
+	bh=XYFP3IPDFQ17dSiD/ivf1Py9ChMzzg5xJsZj1GNhtGQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pQXPgcHQCcKCtPpDQJb8KFMNOx2xKVA/TizkgDGRJVNlVK5niSUj31r7jzoUkH4Ym0yrDFNx7kDNxpKHd0Stg/BpTzBJ4qbV8PnJSLaNi/W1GEUEd9KcWtdpqHRfhaJtbM6IiEn7YAOR8BqZqiEsBwbdQTjgAKWaSPzzPZbaOxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=af3OcDMn; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: a1ab26027bf011efb66947d174671e26-20240926
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=qu2egUCkJQDE46OKXnqkitrgmSISMSmEZahKNKYjMHM=;
+	b=af3OcDMnzffx+frNu9Pq/YY/MVflkVskv/2sCRdNXKFZY4xSHmHBhYtk9NfGIX5+uHPdZim4S1slIH8uRW8qgd9OCxPbXtdZy4kegqS32+AlstZvypQU3o2Pi+C6TRAitTEb657Ezp4/UfmAKABrjHW8LkkyduqaySS7mEBycSg=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:789e684e-395a-49a1-8866-05f4a8587dae,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:235fced0-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: a1ab26027bf011efb66947d174671e26-20240926
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 772244510; Thu, 26 Sep 2024 18:18:10 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 26 Sep 2024 18:18:07 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 26 Sep 2024 18:18:07 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, "Sen
+ Chu" <sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
+	<wenst@chromium.org>
+Subject: [PATCH] dt-bindings: phy: mediatek: tphy: add a property for power-domains
+Date: Thu, 26 Sep 2024 18:18:04 +0800
+Message-ID: <20240926101804.22471-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240910170610.226189-12-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240925162619.GB27666@pendragon.ideasonboard.com>
-In-Reply-To: <20240925162619.GB27666@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 26 Sep 2024 11:16:18 +0100
-Message-ID: <CA+V-a8vO2sP9--owHdZDiwNhtw=Oie0sjPf096BzP7CD6WWYBA@mail.gmail.com>
-Subject: Re: [PATCH v2 11/11] media: i2c: ov5645: Report streams using frame descriptors
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Kieran Bingham <kieran.bingham@ideasonboard.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--3.840300-8.000000
+X-TMASE-MatchedRID: XzZoR/QBx5m8aDXGBxCZo1z+axQLnAVBKhNpTcvbdULfUZT83lbkEEhh
+	ikD15t6m7VjbVyT2Ad2lEtDJyVR88h8TzIzimOwPlpYqKNmWxsHZs3HUcS/scCq2rl3dzGQ1aF/
+	EtaBAwFWbVqoswFQwtJfRwwQjoSTh1txDceTZ+1HrkA2hZUjItQyV3cXn6+Blaw1OSeQJJi+D+k
+	H1c5vos1G8Wbi/c9wz5KDH/uB+cKzzYaPZALfIbSyZdUr8fx4fMbuyvvGhtIDNwMS8lpRKBQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--3.840300-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	99C1402EEBB0849B7D597AED9FC97AA0B972F04B5C9D1A008EC5ABFF7C2A62862000:8
+X-MTK: N
 
-Hi Laurent,
+Some platforms requires a dependency for power-domains.
+So we add property 'power-domains' and set 'maxItems: 1' in the
+DT Schema.
 
-Thank you for the review.
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+---
+ Documentation/devicetree/bindings/phy/mediatek,tphy.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-On Wed, Sep 25, 2024 at 5:26=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patch.
->
-> On Tue, Sep 10, 2024 at 06:06:10PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Implement the .get_frame_desc() subdev operation to report information
-> > about streams to the connected CSI-2 receiver. This is required to let
-> > the CSI-2 receiver driver know about virtual channels and data types fo=
-r
-> > each stream.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  drivers/media/i2c/ov5645.c | 28 ++++++++++++++++++++++++++++
-> >  1 file changed, 28 insertions(+)
-> >
-> > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-> > index 7f1133292ffc..c24eb6e7a7b5 100644
-> > --- a/drivers/media/i2c/ov5645.c
-> > +++ b/drivers/media/i2c/ov5645.c
-> > @@ -28,6 +28,7 @@
-> >  #include <linux/regulator/consumer.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/types.h>
-> > +#include <media/mipi-csi2.h>
-> >  #include <media/v4l2-ctrls.h>
-> >  #include <media/v4l2-event.h>
-> >  #include <media/v4l2-fwnode.h>
-> > @@ -829,6 +830,32 @@ static const struct v4l2_ctrl_ops ov5645_ctrl_ops =
-=3D {
-> >       .s_ctrl =3D ov5645_s_ctrl,
-> >  };
-> >
-> > +static int ov5645_get_frame_desc(struct v4l2_subdev *sd, unsigned int =
-pad,
-> > +                              struct v4l2_mbus_frame_desc *fd)
-> > +{
-> > +     const struct v4l2_mbus_framefmt *fmt;
-> > +     struct v4l2_subdev_state *state;
-> > +
-> > +     if (pad !=3D OV5645_PAD_SOURCE)
-> > +             return -EINVAL;
-> > +
-> > +     state =3D v4l2_subdev_lock_and_get_active_state(sd);
-> > +     fmt =3D v4l2_subdev_state_get_format(state, OV5645_PAD_SOURCE, 0)=
-;
-> > +     v4l2_subdev_unlock_state(state);
->
-> Once you unlock the state fmt could change, so you should instead do
->
->         state =3D v4l2_subdev_lock_and_get_active_state(sd);
->         code =3D v4l2_subdev_state_get_format(state, OV5645_PAD_SOURCE, 0=
-)->code;
->         v4l2_subdev_unlock_state(state);
->
-Ok, I will update the above.
+diff --git a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+index 423b7c4e62f2..c77fe43c224a 100644
+--- a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
++++ b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+@@ -125,6 +125,9 @@ properties:
+     $ref: /schemas/types.yaml#/definitions/uint32
+     default: 28
+ 
++  power-domains:
++    maxItems: 1
++
+ # Required child node:
+ patternProperties:
+   "^(usb|pcie|sata)-phy@[0-9a-f]+$":
+-- 
+2.45.2
 
-Cheers,
-Prabhakar
-
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->
-> > +
-> > +     fd->type =3D V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-> > +     fd->num_entries =3D 1;
-> > +
-> > +     memset(fd->entry, 0, sizeof(fd->entry));
-> > +
-> > +     fd->entry[0].pixelcode =3D fmt->code;
-> > +     fd->entry[0].stream =3D 0;
-> > +     fd->entry[0].bus.csi2.vc =3D 0;
-> > +     fd->entry[0].bus.csi2.dt =3D MIPI_CSI2_DT_YUV422_8B;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >  static int ov5645_enum_mbus_code(struct v4l2_subdev *sd,
-> >                                struct v4l2_subdev_state *sd_state,
-> >                                struct v4l2_subdev_mbus_code_enum *code)
-> > @@ -1062,6 +1089,7 @@ static const struct v4l2_subdev_video_ops ov5645_=
-video_ops =3D {
-> >  };
-> >
-> >  static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops =3D {
-> > +     .get_frame_desc =3D ov5645_get_frame_desc,
-> >       .enum_mbus_code =3D ov5645_enum_mbus_code,
-> >       .enum_frame_size =3D ov5645_enum_frame_size,
-> >       .get_fmt =3D v4l2_subdev_get_fmt,
->
-> --
-> Regards,
->
-> Laurent Pinchart
 
