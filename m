@@ -1,177 +1,284 @@
-Return-Path: <linux-kernel+bounces-339904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03EF7986C09
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:30:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB7B986C0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C2D9283D3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:30:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 310451C216EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFDA176227;
-	Thu, 26 Sep 2024 05:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D735C145346;
+	Thu, 26 Sep 2024 05:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQA/5T4/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mf63IE0Q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F6E101EE;
-	Thu, 26 Sep 2024 05:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361FDBE6C
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727328595; cv=none; b=AkTG2Y1aJUTXOWRHO/EcmFFhvajv2+Faqp97T2qCD6IdLsfRrvMNCj4MsWowf+BF1G7NNOXv3fB/jLkRazz3gnzatW9vb2SmkRObbXubLaGDCih6n+LMPFjDQhmf/x+KgF5DuQWuN9wikiVzWSN+7BlqotCvqCN3M4I4eHwNIZA=
+	t=1727328659; cv=none; b=XNVbjGotaKh3HRq23puYaLvchdcs2wdd6aMH9AykmjG+JmpHVozsRXpUAt6SZyH1SFWVqE1CNn6U0fl3t5TF7hGTuEHBBZBcDfNaa9yiUSkakfSePr46gI1J+PMMnIINvs6uZpJF51TowAwTBJn+zSO7FWdJPxXUrcagX+WlixM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727328595; c=relaxed/simple;
-	bh=REew6xXOENI9VHTFXgTcUmyaGcQo+B+fjty0o+i0lFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dYcH//inXqx+EkqdoTdVG3qNUzE9VhJ+Sp0Qc/uZgdwYAm6dU9Aa0vtDTtHqfOojtI0R/1jqy71ZGhph/TIFk2L1Nl+7wtn6RmpQCLZfG6Cb1BN8A+fvpzXYGhMCZKPYOWLXvdcr+3kid91g5hD2cPB8fPtM4cp2yWa3nIJyfLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HQA/5T4/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8864AC4CEC5;
-	Thu, 26 Sep 2024 05:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727328595;
-	bh=REew6xXOENI9VHTFXgTcUmyaGcQo+B+fjty0o+i0lFg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HQA/5T4/EJIWMRVdrgO/TMXzcRKphD6lwSjh++DVTI1cF7IrOJt/ReJPl7g7vHHTA
-	 uEB+KAdsDkP+pfQVHezwtI95OtH0NW3vhgvNIMfg75dfKaIrcldej5Nx1/klPfsTRY
-	 DCIdz7t0BRySuYF/yiazYy/mfNc/zTd13+/DbgtHUyFX3DeEW/PwtLgHvnOB+WA/K9
-	 pdOnCGojjHCjyJvXP0DLUFu4XR4UDjVckobNT9L3fLa1NyfMHetoLq0LNHH2StXpQh
-	 f9B/2NIv4IcuzHMhhXf+sr2D0NbsRvbQYU2zS4slP7Qye/EyfDsH/uKpXVmr3+/Zir
-	 DoP1V4DQN61SA==
-Date: Wed, 25 Sep 2024 22:29:53 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] libperf: Add perf_evsel__id() function
-Message-ID: <ZvTxUXoyIO8Z_9xp@google.com>
-References: <20240909-perf_evsel_get_id-v2-1-b26eae02f606@rivosinc.com>
+	s=arc-20240116; t=1727328659; c=relaxed/simple;
+	bh=wi+lZEKVfnMDwPJWZ6EsPdPU8lpTtutkGDkNNCbV8bM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=krX8ev6wtBzZdolAamTlgsZUedFVKlJu8tP70jm+r8bLnmX45tsddihTy0+Y+hdNDzjB1viNRpjLSn8uoE73rzxAr5zzNLKUGgJkj1zNJWUWXF58nJSx13EM8YcZBi8AjtNzNTRKR2ImlrvD3JjMIU5+jnYlZMK0JLH8mueIOZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mf63IE0Q; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727328658; x=1758864658;
+  h=date:from:to:cc:subject:message-id;
+  bh=wi+lZEKVfnMDwPJWZ6EsPdPU8lpTtutkGDkNNCbV8bM=;
+  b=Mf63IE0QOUZ9WKTkAZaRn3OkXyk1A4LuAy4tW2e/wNSGYNLoNN3wxvCV
+   qBjOK/kesfuxn6LOgabUmH1hEya2Y+dmPiLsPOV0AiQMJT7ZNJzR8ldAQ
+   rVu2/EO7iP2biMzrTfVEXfhjxW+XpEjlviz+Kr5HQZ8h9tHkOrY5xAHMU
+   l1ka/PU1E1o/A7Zu222y7dgiNAPDXyMqx9Nzek9Ik/DK3l0tsGxSdOwSF
+   9b4sGdB9sOtXxleZgMPVTE61AWHp4QiTrpzD30Hh9ztL4qUDfAs07MeXa
+   gTAbfpWVhFhLMrtJp7W/yPvjE/9H23iJUZCjo3lXr/mLYaFxGJ1kju6v6
+   w==;
+X-CSE-ConnectionGUID: phCjQC6nS1ivz4I60eFtVg==
+X-CSE-MsgGUID: 3CCGBjuCT4WNECeeIcVssw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="36969569"
+X-IronPort-AV: E=Sophos;i="6.10,259,1719903600"; 
+   d="scan'208";a="36969569"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 22:30:57 -0700
+X-CSE-ConnectionGUID: iowWevfySlG/AueFWIMQKQ==
+X-CSE-MsgGUID: Ba5zLjmxSMu5gINzlU4+LA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,259,1719903600"; 
+   d="scan'208";a="102773117"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 25 Sep 2024 22:30:55 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sth5Z-000KJ5-0a;
+	Thu, 26 Sep 2024 05:30:53 +0000
+Date: Thu, 26 Sep 2024 13:30:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ f441318ec664d99d7cb03b08557ed3b04d9af67f
+Message-ID: <202409261309.HaSo5cAg-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240909-perf_evsel_get_id-v2-1-b26eae02f606@rivosinc.com>
 
-Hello Charlie,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: f441318ec664d99d7cb03b08557ed3b04d9af67f  Merge branch into tip/master: 'x86/splitlock'
 
-Sorry for the late reply.
+elapsed time: 1098m
 
-On Mon, Sep 09, 2024 at 11:26:52PM -0700, Charlie Jenkins wrote:
-> Introduce perf_evsel__id() to collect the id of an evsel. This allows
-> applications to determine the allocated id of an evsel for each fd. The
-> "ids" argument is expected to be an array the size of the number of open
-> fd's for the evsel.  This will allow applications to link the id
-> returned by PERF_SAMPLE_ID to the event being sampled.
-> 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
-> Changes in v2:
-> - Replaced id argument with array of ids for perf_evsel__id() to support
->   the id for each fd.
-> - Link to v1: https://lore.kernel.org/r/20240823-perf_evsel_get_id-v1-1-0ffa204c4164@rivosinc.com
-> ---
->  tools/lib/perf/Documentation/libperf.txt |  2 ++
->  tools/lib/perf/evsel.c                   | 10 ++++++++++
->  tools/lib/perf/include/perf/evsel.h      |  1 +
->  3 files changed, 13 insertions(+)
-> 
-> diff --git a/tools/lib/perf/Documentation/libperf.txt b/tools/lib/perf/Documentation/libperf.txt
-> index fcfb9499ef9c..754c103f7b13 100644
-> --- a/tools/lib/perf/Documentation/libperf.txt
-> +++ b/tools/lib/perf/Documentation/libperf.txt
-> @@ -94,6 +94,8 @@ SYNOPSIS
->    void perf_evlist__enable(struct perf_evlist *evlist);
->    void perf_evlist__disable(struct perf_evlist *evlist);
->  
-> +  void perf_evsel__id(struct perf_evsel *evsel, __u64 ids[]);
-> +
->    #define perf_evlist__for_each_evsel(evlist, pos)
->  
->    void perf_evlist__set_maps(struct perf_evlist *evlist,
-> diff --git a/tools/lib/perf/evsel.c b/tools/lib/perf/evsel.c
-> index c07160953224..d10dfcb605ba 100644
-> --- a/tools/lib/perf/evsel.c
-> +++ b/tools/lib/perf/evsel.c
-> @@ -484,6 +484,16 @@ int perf_evsel__disable(struct perf_evsel *evsel)
->  	return err;
->  }
->  
-> +int perf_evsel__id(struct perf_evsel *evsel, __u64 ids[])
-> +{
-> +	int i;
-> +	int err = 0;
-> +
-> +	for (i = 0; i < xyarray__max_x(evsel->fd) && !err; i++)
-> +		err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ID, (unsigned long)&ids[i], i);
+configs tested: 192
+configs skipped: 3
 
-This won't work correctly since perf_evsel__run_ioctl() has a loop
-inside.  You should traverse xyarray correctly.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Now I think about the interface and it should look like this.
+tested configs:
+alpha                             allnoconfig    gcc-14.1.0
+alpha                            allyesconfig    clang-20
+alpha                            allyesconfig    gcc-13.3.0
+alpha                               defconfig    gcc-14.1.0
+arc                              allmodconfig    clang-20
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-14.1.0
+arc                              allyesconfig    clang-20
+arc                              allyesconfig    gcc-13.2.0
+arc                                 defconfig    gcc-14.1.0
+arc                   randconfig-001-20240926    gcc-14.1.0
+arc                   randconfig-002-20240926    gcc-14.1.0
+arm                              allmodconfig    clang-20
+arm                              allmodconfig    gcc-14.1.0
+arm                               allnoconfig    gcc-14.1.0
+arm                              allyesconfig    clang-20
+arm                              allyesconfig    gcc-14.1.0
+arm                                 defconfig    gcc-14.1.0
+arm                          moxart_defconfig    gcc-14.1.0
+arm                       multi_v4t_defconfig    gcc-14.1.0
+arm                   randconfig-001-20240926    gcc-14.1.0
+arm                   randconfig-002-20240926    gcc-14.1.0
+arm                   randconfig-003-20240926    gcc-14.1.0
+arm                   randconfig-004-20240926    gcc-14.1.0
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.1.0
+arm64                               defconfig    gcc-14.1.0
+arm64                 randconfig-001-20240926    gcc-14.1.0
+arm64                 randconfig-002-20240926    gcc-14.1.0
+arm64                 randconfig-003-20240926    gcc-14.1.0
+arm64                 randconfig-004-20240926    gcc-14.1.0
+csky                              allnoconfig    gcc-14.1.0
+csky                                defconfig    gcc-14.1.0
+csky                  randconfig-001-20240926    gcc-14.1.0
+csky                  randconfig-002-20240926    gcc-14.1.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.1.0
+hexagon                          allyesconfig    clang-20
+hexagon                             defconfig    gcc-14.1.0
+hexagon               randconfig-001-20240926    gcc-14.1.0
+hexagon               randconfig-002-20240926    gcc-14.1.0
+i386                             allmodconfig    clang-18
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    clang-18
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    clang-18
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20240926    gcc-12
+i386        buildonly-randconfig-002-20240926    gcc-12
+i386        buildonly-randconfig-003-20240926    gcc-12
+i386        buildonly-randconfig-004-20240926    gcc-12
+i386        buildonly-randconfig-005-20240926    gcc-12
+i386        buildonly-randconfig-006-20240926    gcc-12
+i386                                defconfig    clang-18
+i386                  randconfig-001-20240926    gcc-12
+i386                  randconfig-002-20240926    gcc-12
+i386                  randconfig-003-20240926    gcc-12
+i386                  randconfig-004-20240926    gcc-12
+i386                  randconfig-005-20240926    gcc-12
+i386                  randconfig-006-20240926    gcc-12
+i386                  randconfig-011-20240926    gcc-12
+i386                  randconfig-012-20240926    gcc-12
+i386                  randconfig-013-20240926    gcc-12
+i386                  randconfig-014-20240926    gcc-12
+i386                  randconfig-015-20240926    gcc-12
+i386                  randconfig-016-20240926    gcc-12
+loongarch                        allmodconfig    gcc-14.1.0
+loongarch                         allnoconfig    gcc-14.1.0
+loongarch                           defconfig    gcc-14.1.0
+loongarch             randconfig-001-20240926    gcc-14.1.0
+loongarch             randconfig-002-20240926    gcc-14.1.0
+m68k                             allmodconfig    gcc-14.1.0
+m68k                              allnoconfig    gcc-14.1.0
+m68k                             allyesconfig    gcc-14.1.0
+m68k                         amcore_defconfig    gcc-14.1.0
+m68k                                defconfig    gcc-14.1.0
+m68k                        m5307c3_defconfig    gcc-14.1.0
+m68k                        m5407c3_defconfig    gcc-14.1.0
+m68k                           sun3_defconfig    gcc-14.1.0
+microblaze                       allmodconfig    gcc-14.1.0
+microblaze                        allnoconfig    gcc-14.1.0
+microblaze                       allyesconfig    gcc-14.1.0
+microblaze                          defconfig    gcc-14.1.0
+mips                              allnoconfig    gcc-14.1.0
+mips                           ip32_defconfig    gcc-14.1.0
+nios2                             allnoconfig    gcc-14.1.0
+nios2                               defconfig    gcc-14.1.0
+nios2                 randconfig-001-20240926    gcc-14.1.0
+nios2                 randconfig-002-20240926    gcc-14.1.0
+openrisc                          allnoconfig    clang-20
+openrisc                          allnoconfig    gcc-14.1.0
+openrisc                         allyesconfig    gcc-14.1.0
+openrisc                            defconfig    gcc-12
+parisc                           allmodconfig    gcc-14.1.0
+parisc                            allnoconfig    clang-20
+parisc                            allnoconfig    gcc-14.1.0
+parisc                           allyesconfig    gcc-14.1.0
+parisc                              defconfig    gcc-12
+parisc                randconfig-001-20240926    gcc-14.1.0
+parisc                randconfig-002-20240926    gcc-14.1.0
+parisc64                            defconfig    gcc-14.1.0
+powerpc                          allmodconfig    gcc-14.1.0
+powerpc                           allnoconfig    clang-20
+powerpc                           allnoconfig    gcc-14.1.0
+powerpc                          allyesconfig    clang-20
+powerpc                          allyesconfig    gcc-14.1.0
+powerpc                   bluestone_defconfig    gcc-14.1.0
+powerpc                       maple_defconfig    gcc-14.1.0
+powerpc               randconfig-001-20240926    gcc-14.1.0
+powerpc               randconfig-002-20240926    gcc-14.1.0
+powerpc               randconfig-003-20240926    gcc-14.1.0
+powerpc                     stx_gp3_defconfig    gcc-14.1.0
+powerpc                     tqm5200_defconfig    gcc-14.1.0
+powerpc                     tqm8548_defconfig    gcc-14.1.0
+powerpc                     tqm8555_defconfig    gcc-14.1.0
+powerpc                         wii_defconfig    gcc-14.1.0
+powerpc64             randconfig-001-20240926    gcc-14.1.0
+powerpc64             randconfig-002-20240926    gcc-14.1.0
+powerpc64             randconfig-003-20240926    gcc-14.1.0
+riscv                            allmodconfig    clang-20
+riscv                            allmodconfig    gcc-14.1.0
+riscv                             allnoconfig    clang-20
+riscv                             allnoconfig    gcc-14.1.0
+riscv                            allyesconfig    clang-20
+riscv                            allyesconfig    gcc-14.1.0
+riscv                               defconfig    gcc-12
+riscv                 randconfig-001-20240926    gcc-14.1.0
+riscv                 randconfig-002-20240926    gcc-14.1.0
+s390                             alldefconfig    gcc-14.1.0
+s390                             allmodconfig    clang-20
+s390                             allmodconfig    gcc-14.1.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.1.0
+s390                                defconfig    gcc-12
+s390                  randconfig-001-20240926    gcc-14.1.0
+s390                  randconfig-002-20240926    gcc-14.1.0
+sh                               allmodconfig    gcc-14.1.0
+sh                                allnoconfig    gcc-14.1.0
+sh                               allyesconfig    gcc-14.1.0
+sh                         ap325rxa_defconfig    gcc-14.1.0
+sh                                  defconfig    gcc-12
+sh                    randconfig-001-20240926    gcc-14.1.0
+sh                    randconfig-002-20240926    gcc-14.1.0
+sparc                            allmodconfig    gcc-14.1.0
+sparc64                             defconfig    gcc-12
+sparc64               randconfig-001-20240926    gcc-14.1.0
+sparc64               randconfig-002-20240926    gcc-14.1.0
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-17
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                               allyesconfig    gcc-12
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20240926    gcc-14.1.0
+um                    randconfig-002-20240926    gcc-14.1.0
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-18
+x86_64                           allyesconfig    clang-18
+x86_64      buildonly-randconfig-001-20240926    gcc-11
+x86_64      buildonly-randconfig-002-20240926    gcc-11
+x86_64      buildonly-randconfig-003-20240926    gcc-11
+x86_64      buildonly-randconfig-004-20240926    gcc-11
+x86_64      buildonly-randconfig-005-20240926    gcc-11
+x86_64      buildonly-randconfig-006-20240926    gcc-11
+x86_64                              defconfig    clang-18
+x86_64                              defconfig    gcc-11
+x86_64                                  kexec    clang-18
+x86_64                                  kexec    gcc-12
+x86_64                randconfig-001-20240926    gcc-11
+x86_64                randconfig-002-20240926    gcc-11
+x86_64                randconfig-003-20240926    gcc-11
+x86_64                randconfig-004-20240926    gcc-11
+x86_64                randconfig-005-20240926    gcc-11
+x86_64                randconfig-006-20240926    gcc-11
+x86_64                randconfig-011-20240926    gcc-11
+x86_64                randconfig-012-20240926    gcc-11
+x86_64                randconfig-013-20240926    gcc-11
+x86_64                randconfig-014-20240926    gcc-11
+x86_64                randconfig-015-20240926    gcc-11
+x86_64                randconfig-016-20240926    gcc-11
+x86_64                randconfig-071-20240926    gcc-11
+x86_64                randconfig-072-20240926    gcc-11
+x86_64                randconfig-073-20240926    gcc-11
+x86_64                randconfig-074-20240926    gcc-11
+x86_64                randconfig-075-20240926    gcc-11
+x86_64                randconfig-076-20240926    gcc-11
+x86_64                               rhel-8.3    gcc-12
+x86_64                          rhel-8.3-rust    clang-18
+xtensa                            allnoconfig    gcc-14.1.0
+xtensa                randconfig-001-20240926    gcc-14.1.0
+xtensa                randconfig-002-20240926    gcc-14.1.0
 
-  struct perf_cpu_map *cpus = perf_evsel__cpus(evsel);
-  struct perf_thread_map *threads = perf_evsel__threads(evsel);
-  int x, y;
-  u64 id;
-
-  for (x = 0; x < perf_cpu_map__nr(cpus); x++) {
-    for (y = 0; y < perf_thread_map__nr(threads); y++)
-      perf_evsel__get_id(evsel, x, y, &id);
-  }
-
-I also found there's perf_evsel__{alloc,free}_id() but it doesn't seem
-like to be exposed as API.  Maybe we can just use it internally to run
-the ioctl and save the result.
-
-Also it has the sample_id xyarray and id array (with ids size) but I
-think they are the same and we need to get rid of one.
-
-This is the implementation details and can be done separately.  For now
-you can simply do like below:
-
-  int perf_evsel__get_id(struct perf_evsel *evsel, int cpu_map_idx, int thread, u64 *id)
-  {
-      return perf_evsel__ioctl(evsel, PERF_EVENT_IOC_ID, id, cpu_map_idx, thread);
-  }
-
-Thanks,
-Namhyung
-
-
-> +	return err;
-> +}
-> +
->  int perf_evsel__apply_filter(struct perf_evsel *evsel, const char *filter)
->  {
->  	int err = 0, i;
-> diff --git a/tools/lib/perf/include/perf/evsel.h b/tools/lib/perf/include/perf/evsel.h
-> index 6f92204075c2..13f19189839a 100644
-> --- a/tools/lib/perf/include/perf/evsel.h
-> +++ b/tools/lib/perf/include/perf/evsel.h
-> @@ -41,6 +41,7 @@ LIBPERF_API int perf_evsel__enable_cpu(struct perf_evsel *evsel, int cpu_map_idx
->  LIBPERF_API int perf_evsel__enable_thread(struct perf_evsel *evsel, int thread);
->  LIBPERF_API int perf_evsel__disable(struct perf_evsel *evsel);
->  LIBPERF_API int perf_evsel__disable_cpu(struct perf_evsel *evsel, int cpu_map_idx);
-> +LIBPERF_API int perf_evsel__id(struct perf_evsel *evsel, __u64 ids[]);
->  LIBPERF_API struct perf_cpu_map *perf_evsel__cpus(struct perf_evsel *evsel);
->  LIBPERF_API struct perf_thread_map *perf_evsel__threads(struct perf_evsel *evsel);
->  LIBPERF_API struct perf_event_attr *perf_evsel__attr(struct perf_evsel *evsel);
-> 
-> ---
-> base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
-> change-id: 20240822-perf_evsel_get_id-f7e11f15504b
-> -- 
-> - Charlie
-> 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
