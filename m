@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-339934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF1D4986C59
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:16:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DE0986C5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AF781F229AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:16:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47CDF1F24F56
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3623E188A32;
-	Thu, 26 Sep 2024 06:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF6318453A;
+	Thu, 26 Sep 2024 06:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWyW51A6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aeSDg/kC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D31414B959;
-	Thu, 26 Sep 2024 06:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0578F1D5AB1
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727331389; cv=none; b=X4pVXLEEcjuRKNbM5GXXW73PoTDFgsiypNoGNTvN+uMmfeyGwS73s2iekjWIrlwub33ikxFCRXqAROJ4aijrJADUMmuKlPmfmMDHKQaMvTXW0+IZlwofmGJxOjTvIye3ywvLEAXyl/HhRdjp9N5v4FRalPazRlvN/Z6MSvzDfYQ=
+	t=1727331456; cv=none; b=KHaf0095d5P7H0puhu1lC+eNH/z5LdrJiTQNRo83ej4duWk5lsLQQrCdq0zDIj833gly3sFHRBemTwye7MaiXMzvQWchRKncDbcMVpDWf4wzFeH9vOK2rflZYuAOg0yMOfs56o7k2QMuF7+wG7VxsXOx74k4KjjJHj4lvUPN59g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727331389; c=relaxed/simple;
-	bh=3Vs65vxF0JYd2tOmEA+pE3SUApfli6KPsD8WX6RvMsA=;
+	s=arc-20240116; t=1727331456; c=relaxed/simple;
+	bh=UwJjkGTs6GMhSh+yt9JEe1ACkLVsUU4et5srRi0TH9Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AzbQaGFDBwyxu+knlf+AFBQxSltLzeroltfJ1KYk1kJn5XbCP0x+AQeBk1PP2m4XezHXgdtKtgwEXQAzR+QtPq/vFmkMoPFfcggj43mbqzmlUbXxj99jWA2W/bWnsmcINbPcXI8NFmna+MYL9urhcXztTJMkA3elfns7xdzqhJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWyW51A6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D516C4CEC6;
-	Thu, 26 Sep 2024 06:16:21 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=XjEKLVCTSk/xtd0Mjma/ACnRxpNK+NtQI2ZcmCtrEoD+1TbP8WtCxUrbGS3JiFv+Azj0AC6QVcoWm8eC2k/rZ1C5f4T2dok8H2SJVdUiRoY6l8BcgMv5pywvD/sBj7FfyTu1QPmXaYO8VyRyDPFsoiUm5NnB0EHAzS+93g5nE5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aeSDg/kC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227A8C4CEC5;
+	Thu, 26 Sep 2024 06:17:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727331389;
-	bh=3Vs65vxF0JYd2tOmEA+pE3SUApfli6KPsD8WX6RvMsA=;
+	s=k20201202; t=1727331455;
+	bh=UwJjkGTs6GMhSh+yt9JEe1ACkLVsUU4et5srRi0TH9Y=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tWyW51A6NurOK+svHi0PTid99U8HRGdeI2eRuw85eFiHMLc0UkeTTSxq97OzHLTZt
-	 8SnIk3thGNsDuKzpJNLTTQNm39ZA43c3YfGeddHBNSU9pHP0nfGUw8rjlwMcissVHl
-	 YS+5sEU+BDDoM6aNIbJWFQmITTfRUlvl5XEv2Hl0zn/SCosDxegxeAAjaYAQlfa4xD
-	 nEXUCeeuPx8WQTY3ZOj6nV3ipwpEGRWxqV9wsZp29FPjFCSHBNv/d8G7gkcCspRsAx
-	 PTQL0E3hexJSzeeONkLq7tQjbrIHJ5tBfukynDIneCX/WmrFzpVYtBm7/oY182QTZD
-	 neaHCmLVtkakw==
-Message-ID: <fd29fd5e-ad24-49a5-ab5a-549b455489f5@kernel.org>
-Date: Thu, 26 Sep 2024 08:16:19 +0200
+	b=aeSDg/kCE0r7U4ivNFRGNgGnMmPDGS115lCW8jds6MGCDrotnlye/a8t4NLW3Ge4E
+	 3bivBFNDF/3UwzKj5IjimQTajMbBNciKJe2XVfmiuRpQj1L+FIB9cicaCMgcEchSe8
+	 /GIBz79ggwzm1kfynncx5xTjO2ocVLgFobZvQ3yRX4hDFTRcedbWT8Wg8RbrlfH5PX
+	 fjcWIEhGnhttWRr/N+E53bo/nYoswNaTkonTp+lqBCmz3MsMUqPVWa7MvsmsVFmQEk
+	 tZk25cXyZuYAF80RJI/I+bYuFS8ieagG0p1hL3j23GwL+yKsNvubcei6SHtDZsgikx
+	 Fvb41+mx5pU4g==
+Message-ID: <7633425b-af03-468e-96de-2491ff2fbe3e@kernel.org>
+Date: Thu, 26 Sep 2024 08:17:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,29 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: Fix array property constraints
-To: "Rob Herring (Arm)" <robh@kernel.org>, Conor Dooley <conor@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Paul Elder <paul.elder@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Andy Gross <agross@kernel.org>
-Cc: Jim Quinlan <james.quinlan@broadcom.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20240925232409.2208515-1-robh@kernel.org>
+Subject: Re: [GIT PULL] HID for 6.12
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>,
+ Charles Wang <charles.goodix@gmail.com>
+References: <nycvar.YFH.7.76.2409181132240.31206@cbobk.fhfr.pm>
+ <73f1a21c-1db1-49ce-951e-a2694567c1c6@kernel.org>
+ <nycvar.YFH.7.76.2409252247400.31206@cbobk.fhfr.pm>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -117,26 +102,33 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240925232409.2208515-1-robh@kernel.org>
+In-Reply-To: <nycvar.YFH.7.76.2409252247400.31206@cbobk.fhfr.pm>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/09/2024 01:24, Rob Herring (Arm) wrote:
-> Schemas for array properties should only have 1 level of array
-> constraints (e.g. items, maxItems, minItems). Sometimes the old
-> encoding of all properties into a matrix leaked into the schema, and
-> didn't matter for validation. Now the inner constraints are just
-> silently ignored as json-schema array keywords are ignored on scalar
-> values.
+On 25/09/2024 22:49, Jiri Kosina wrote:
+> On Wed, 25 Sep 2024, Krzysztof Kozlowski wrote:
 > 
-> Generally, keep the inner constraints and drop the outer "items". With
-> gicv3 "mbi-alias" property, it is more appropriately a uint32 or uint64
-> as it is an address and size depends on "#address-cells".
+>> On September 6, Rob reported that this is broken and should be fixed or
+>> reverted.
+>> https://lore.kernel.org/all/CAL_Jsq+QfTtRj_JCqXzktQ49H8VUnztVuaBjvvkg3fwEHniUHw@mail.gmail.com/
+>>
+>> On September 10, Rob reminded that it is still broken.
+>>
+>> Author ignored the problem, so the maintainer should revert this.. or at
+>> least not send these further for RC inclusion.
+>>
+>> If no one wants to fix this code, no one cares, we are not supposed to
+>> take it into kernel release, right?
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
+> Yeah, sorry for that, mea culpa; I have been sort of busy for the past 
+> period, and sort of hoped that Charles would pick it up in meantime and 
+> send a fix.
+> 
+> That didn't happen, so I am just applying your revert and will be sending 
+> it to Linus tomorrow.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thank you.
 
 Best regards,
 Krzysztof
