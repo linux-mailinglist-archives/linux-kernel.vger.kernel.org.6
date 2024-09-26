@@ -1,272 +1,133 @@
-Return-Path: <linux-kernel+bounces-340835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC9F987862
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:35:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11AE6987869
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35053281D05
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:35:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 877D1B25E12
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C7E15AD90;
-	Thu, 26 Sep 2024 17:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191B915C137;
+	Thu, 26 Sep 2024 17:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WbiuCnV3"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zk2Zw7fU"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBCA4C79
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F68D156665
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727372131; cv=none; b=FJ+vX2Kj4/KVcQmfl8FHKB/sCW5dNSneNqi+E4RbLNu3C4F86pbFmuCPWYRib+ZR7CEXVTxFJgBp5o81NtaEJkJH5y1GCvpeqWK4I7z1UFmpmNQsPEBhz51ekePxeaTAwgd6nIRMIurPx0j0BBKazYhM0SBpYQ+CzYMzMytCQpM=
+	t=1727372168; cv=none; b=gRVgIz+z+A1kwSy68qOSUy0i+574IXfpqQjR6omLB17P9TM4wQF31OM/z4005B2OjvshauqR8e2HryAOSBZ5EHu9q0QE8BSX+1iqYujwGYdniT2KI0vmOgapLGwYH5IOOJCaN9pXhzQvh/V0ddak/GEbvBrIA7eTDIMPhVlvVb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727372131; c=relaxed/simple;
-	bh=zS86IsArpNHyqGCSkjDVIoWEohbMnW+q5pfpZ5Ynxzc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q42EsY3AwujJ2849DA5MLJOHEJuLYv8Xa6+4CiKl+gEx2Ifya9EG/gmGkLBa3IJNDeRQ3liQRyJZXupktEYHY01S44wP9wTjJlsR5Ix5RF+0/s6X6Al4Uajl6ZABxtvltctKeIc/Vpp8rA/ETqvLnCx8NF6JS56UI5K+oBh8FZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WbiuCnV3; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1727372168; c=relaxed/simple;
+	bh=qcy+RpV2vbrVmrGURYFWlXNt7s+hWt135vi8pUWprCc=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=EUkl88GykS8v4mj81FZtRVyj5IeSytpUufv/TEenBnglQxidrU3k9VmAX+pt2KhOdoSKjyoViCkBRJnigrJrBitSq+T1UgISSKHMul9ES5LpSEOwUxF1yxwiuhQFH1vxdf86fMKB2jjowuAimwMADw85ACfQN/LCUDeyCxJnyeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zk2Zw7fU; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d446adf6eso172562066b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:35:29 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d9e31e66eeso30796287b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:36:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727372128; x=1727976928; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=90Zj4vWTFKM9hGI/ZhiBg+/nwuUtOIRWahkWQsv/IQo=;
-        b=WbiuCnV3vLn5oB2j8/t7RVpQCWql+9lmoqsUc7xRT5FfN7SYjMNtb8rfL91WwmeUjT
-         Rks5QBkn3JhbtgB39/YZE2mINgY5+yR8kdb7Vsxor0FWG2pSMKNjTG/QfB/4LPHiv4G1
-         X+EamEwfxBFlkYKfCtzFA+RJpXoiWokJa1HfudGgEsDrlFQ9BVQAdQegkXK67q6olW+Y
-         x1tVYz28BIOo5xRqe/L4rIr+pJix9ymVDXrEk5ysG7+orEKJaITWfQ8kZoRcdAIJ5j8r
-         6eZjTUUesRp/GgAnX7HkhTNBrDCEGHaT+KSdXkLf8ODYip8LmZARsbggE66hjlCdkv9c
-         RLIQ==
+        d=google.com; s=20230601; t=1727372166; x=1727976966; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yxYcIYohZlas4VM7SOhVCX8bDWL8M8YuZQaG8xAXc/s=;
+        b=zk2Zw7fUqK6nxD3PizqVwqTjXfDqWOQuktQJh3XZLGZYmvK5cljlT+G5RMy+EeKc0s
+         eTPxEkPDx7F5pdf/tDbt2AptkmrFcfa25g/+x7xVMI1cL6WLAgTjYM5cpZURbgPp5S4O
+         gB8CUjdvEUk3EF5qahUtOD1COPxbvwUofqVlAKtcj6VM5FfINIMX0DpXvVf+qNsyU8/N
+         QRl99BxvkhFEOQ1JqzI5FM743n+gtZ69Ehvpoix38r84oe0W7sGUIbKt6wULFcKLBKyZ
+         SETAlZUnzZ96HYWMFhEhlh7XATYVkibcol7v7xzVWH2i2KqEXI5cTyKk9ySH9fVRAwVQ
+         YDKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727372128; x=1727976928;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=90Zj4vWTFKM9hGI/ZhiBg+/nwuUtOIRWahkWQsv/IQo=;
-        b=argwickq/FW8aWW3LXCvK946CploSIIU2MF0qCvN3Uvt8zFc3Gt52Ll1V3LpVjfoyO
-         cCBL+zqN/yzC9jpaFnLKN9LqNR8IBSKQ9vJIJzqEH/ymNBURMt2NyHGxqSh/akCdgdEK
-         gjIB/zMWm/MymMAoJ6wM7YfQ4MC5fgwD0eB8LBz8QTmsFf8E1oWG1kMeamYEC3ZwxdJO
-         HZo3TMdxRTRP5rbkFsEhrSoMz8y3gz16gzwM5UVv3cz/kZb4ZYN6uePkeQ7CATi0QQAH
-         hgg7bIrZ2dXpsPHXoPUIUhF21LMUa+dyStkhwL+14KpOraQDOkGFqUpek/Pt985qoQ3t
-         YKgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpO8LJ+PjKSR0j64ggkq63pzdxJruK9fM8uueg5/WsaHpOhXkntpYKi3B2cDyU8POYi/cIBpVNNRW9EX4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWO7rsRKuhvMvZItQrusovj7AHR4DeHevOzy0pfm9yyuE4Yo/V
-	T4bTTZ2EmcW73jNLE5Zyh/U3gVdv/8DZciylCoD2/iXnBZvVCvSdXJxXBgbuLeI9op7kL2L5fpo
-	zQr9jfn3/TBGc3zjkiozYl9bZ4UqNlRiP4IIR
-X-Google-Smtp-Source: AGHT+IHCP+Zznjpd3YjrmHAE50PhdAm4vSwOqQym8ahagT8NDlpt1wX9i/4gffYt0cbbR2b6ytzqgY8SXtldqDcxqhs=
-X-Received: by 2002:a17:907:e91:b0:a7d:c148:ec85 with SMTP id
- a640c23a62f3a-a93c4aa6b89mr25072866b.62.1727372127804; Thu, 26 Sep 2024
- 10:35:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727372166; x=1727976966;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yxYcIYohZlas4VM7SOhVCX8bDWL8M8YuZQaG8xAXc/s=;
+        b=C6kD/dj5MNkaSVI/77vJZIInrxI2g1y+XphOIphdP5FQJW+903tcp2FyWd/k9DL1tW
+         AdGAFleLtyCLfS2dHRAlmiP5kiztZTQE7AX3o1neGsqvoVY6FWN4/N3pFuHBTh2aAyOD
+         bxKIUj5MpyrvVaMuN32XHISv//Q/3bm/UADNpAj0Jve6m6DhJfOLKiheESSIoZScKJZY
+         h+OFCZw3KOyYWBq+LHPu/HfisHQjNWwL5ahPrHPd3Mtn26kwDHeKBZOhJ9+w433C7ey8
+         qXiQwB8NGk2MHO4Z3pj5Yp/8cP137p2t7DAivOUDHa2SP3EY6bzFivt98gnjig8hBESl
+         pBvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJJFmaiyiou7tcI45RVQ2HOC0SOp3K6W5sKsBW0DjsFfV7Hf57pnT2HLhvHPZk0BTzEij8pjtG1U+etrs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybwJmbyS9K3yJ0TT2O9proZpChs0tgUKC2UTptLQlXzIqLm4j/
+	wMHZinn6u2ul/doELczQZfDVPzdYfnyQ6ZPd7CIXfMc/D8ncRFVp2HoiCC7m9+EAJpouHoSOb8T
+	rSBB7dQ==
+X-Google-Smtp-Source: AGHT+IEyd4n02CVR6nEreiqxHqV8a9sHCLgR24twhhVBcHmDoVskxT38W8/3BBhxdfBHRwZ891T8PiGhoHBg
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:8872:3585:18ed:a056])
+ (user=irogers job=sendgmr) by 2002:a25:ce85:0:b0:e1d:2043:da46 with SMTP id
+ 3f1490d57ef6-e2604b2b428mr147276.3.1727372165851; Thu, 26 Sep 2024 10:36:05
+ -0700 (PDT)
+Date: Thu, 26 Sep 2024 10:35:42 -0700
+Message-Id: <20240926173554.404411-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
- <20240924011709.7037-7-kanchana.p.sridhar@intel.com> <CAJD7tkbd=H+=wx0gnu8sh44hOmx7BE3G3oSxi7zt+o3HKJthkA@mail.gmail.com>
- <20240925134008.GA875661@cmpxchg.org> <CAJD7tkY8D14j-e6imW9NxZCjTbx8tu_VaKDbRRQMdSeKX_kBuw@mail.gmail.com>
- <20240925192006.GB876370@cmpxchg.org> <CAJD7tkY-ayU3Ld+dKTLEEG3U72fGnCbiQgZursK+eGMXif_uzA@mail.gmail.com>
- <20240925201323.GA880690@cmpxchg.org> <CAJD7tkbCDe1Y__0vUKt9q0dz_sXM74fKGQo2Zgq9CJ8=FEjH3w@mail.gmail.com>
- <SJ0PR11MB5678EC9681960F39427EABFFC9692@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <SJ0PR11MB56781A134838ADDD04731AA3C96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAJD7tkYtVR6fi1R2O+jAxVfj7BJ2EKWbXHke9fkv_m=mf5pkFQ@mail.gmail.com>
- <SJ0PR11MB56785027ED6FCF673A84CEE6C96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAJD7tkaRjrPTdCCAA0zSVyAZ2sCKiJUC36J0fsajdtp1i_JZeg@mail.gmail.com> <SJ0PR11MB56781678BE55278052EB590CC96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
-In-Reply-To: <SJ0PR11MB56781678BE55278052EB590CC96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 26 Sep 2024 10:34:49 -0700
-Message-ID: <CAJD7tkaU4pdGZ4yJrn2z+dECrsbpByrWSc0XcrE6zA_QjSZBSg@mail.gmail.com>
-Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"nphamcs@gmail.com" <nphamcs@gmail.com>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "shakeel.butt@linux.dev" <shakeel.butt@linux.dev>, 
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"Zou, Nanhai" <nanhai.zou@intel.com>, "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, 
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Subject: [PATCH v4 00/12] Foundations for metric generation with Python
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
+	Jing Zhang <renyu.zj@linux.alibaba.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Benjamin Gray <bgray@linux.ibm.com>, Xu Yang <xu.yang_2@nxp.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 10:29=E2=80=AFAM Sridhar, Kanchana P
-<kanchana.p.sridhar@intel.com> wrote:
->
-> > -----Original Message-----
-> > From: Yosry Ahmed <yosryahmed@google.com>
-> > Sent: Thursday, September 26, 2024 10:20 AM
-> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> > Cc: Johannes Weiner <hannes@cmpxchg.org>; linux-kernel@vger.kernel.org;
-> > linux-mm@kvack.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
-> > usamaarif642@gmail.com; shakeel.butt@linux.dev; ryan.roberts@arm.com;
-> > Huang, Ying <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-
-> > foundation.org; Zou, Nanhai <nanhai.zou@intel.com>; Feghali, Wajdi K
-> > <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
-> > Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in
-> > zswap_store().
-> >
-> > On Thu, Sep 26, 2024 at 9:40=E2=80=AFAM Sridhar, Kanchana P
-> > <kanchana.p.sridhar@intel.com> wrote:
-> > >
-> > > > -----Original Message-----
-> > > > From: Yosry Ahmed <yosryahmed@google.com>
-> > > > Sent: Wednesday, September 25, 2024 9:52 PM
-> > > > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> > > > Cc: Johannes Weiner <hannes@cmpxchg.org>; linux-
-> > kernel@vger.kernel.org;
-> > > > linux-mm@kvack.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
-> > > > usamaarif642@gmail.com; shakeel.butt@linux.dev;
-> > ryan.roberts@arm.com;
-> > > > Huang, Ying <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-
-> > > > foundation.org; Zou, Nanhai <nanhai.zou@intel.com>; Feghali, Wajdi =
-K
-> > > > <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
-> > > > Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in
-> > > > zswap_store().
-> > > >
-> > > > [..]
-> > > > >
-> > > > > One thing I realized while reworking the patches for the batched =
-checks
-> > is:
-> > > > > within zswap_store_page(), we set the entry->objcg and entry->poo=
-l
-> > before
-> > > > > adding it to the xarray. Given this, wouldn't it be safer to get =
-the objcg
-> > > > > and pool reference per sub-page, locally in zswap_store_page(), r=
-ather
-> > than
-> > > > > obtaining batched references at the end if the store is successfu=
-l? If we
-> > > > want
-> > > > > zswap_store_page() to be self-contained and correct as far as the=
- entry
-> > > > > being created and added to the xarray, it seems like the right th=
-ing to
-> > do?
-> > > > > I am a bit apprehensive about the entry being added to the xarray
-> > without
-> > > > > a reference obtained on the objcg and pool, because any page-
-> > > > faults/writeback
-> > > > > that occur on sub-pages added to the xarray before the entire fol=
-io has
-> > been
-> > > > > stored, would run into issues.
-> > > >
-> > > > We definitely should not obtain references to the pool and objcg af=
-ter
-> > > > initializing the entries with them. We can obtain all references in
-> > > > zswap_store() before zswap_store_page(). IOW, the batching in this
-> > > > case should be done before the per-page operations, not after.
-> > >
-> > > Thanks Yosry. IIUC, we should obtain all references to the objcg and =
-to the
-> > > zswap_pool at the start of zswap_store.
-> > >
-> > > In the case of error on any sub-page, we will unwind state for potent=
-ially
-> > > only the stored pages or the entire folio if it happened to already b=
-e in
-> > zswap
-> > > and is being re-written. We might need some additional book-keeping t=
-o
-> > > keep track of which sub-pages were found in the xarray and
-> > zswap_entry_free()
-> > > got called (nr_sb). Assuming I define a new "obj_cgroup_put_many()", =
-I
-> > would need
-> > > to call this with (folio_nr_pages() - nr_sb).
-> > >
-> > > As far as zswap_pool_get(), there is some added complexity if we want=
- to
-> > > keep the existing implementation that calls "percpu_ref_tryget()", an=
-d
-> > assuming
-> > > this is extended to provide a new "zswap_pool_get_many()" that calls
-> > > "percpu_ref_tryget_many()". Is there a reason we use percpu_ref_tryge=
-t()
-> > instead
-> > > of percpu_ref_get()? Reason I ask is, with tryget(), if for some reas=
-on the
-> > pool->ref
-> > > is 0, no further increments will be made. If so, upon unwinding state=
- in
-> > > zswap_store(), I would need to special-case to catch this before call=
-ing a
-> > new
-> > > "zswap_pool_put_many()".
-> > >
-> > > Things could be a little simpler if zswap_pool_get() can use
-> > "percpu_ref_get()"
-> > > which will always increment the refcount. Since the zswap pool->ref i=
-s
-> > initialized
-> > > to "1", this seems Ok, but I don't know if there will be unintended
-> > consequences.
-> > >
-> > > Can you please advise on what is the simplest/cleanest approach:
-> > >
-> > > 1) Proceed with the above changes without changing percpu_ref_tryget =
-in
-> > >      zswap_pool_get. Needs special-casing in zswap_store to detect po=
-ol-
-> > >ref
-> > >     being "0" before calling zswap_pool_put[_many].
-> >
-> > My assumption is that we can reorder the code such that if
-> > zswap_pool_get_many() fails we don't call zswap_pool_put_many() to
-> > begin with (e.g. jump to a label after zswap_pool_put_many()).
->
-> However, the pool refcount could change between the start and end of
-> zswap_store.
+Metrics in the perf tool come in via json. Json doesn't allow
+comments, line breaks, etc. making it an inconvenient way to write
+metrics. Further, it is useful to detect when writing a metric that
+the event specified is supported within the event json for a model.
 
-I am not sure what you mean. If zswap_pool_get_many() fails then we
-just do not call zswap_pool_put_many() at all and abort.
+These patches introduce infrastructure and fixes for the addition of
+metrics written in python for Arm64, AMD Zen and Intel CPUs. Later
+patches will introduce the metrics split apart by the vendor.
 
->
-> >
-> > > 2) Modify zswap_pool_get/zswap_pool_get_many to use
-> > percpu_ref_get_many
-> > >     and avoid special-casing to detect pool->ref being "0" before cal=
-ling
-> > >     zswap_pool_put[_many].
-> >
-> > I don't think we can simply switch the tryget to a get, as I believe
-> > we can race with the pool being destroyed.
->
-> That was my initial thought as well, but I figured this couldn't happen
-> since the pool->ref is initialized to "1", and based on the existing
-> implementation. In any case, I can understand the intent of the use
-> of "tryget"; it is just that it adds to the considerations for reference
-> batching.
+v4. Rebase and small Build/Makefile tweak
+v3. Some code tidying, make the input directory a command line
+    argument, but no other functional or output changes.
+v2. Fixes two type issues in the python code but no functional or
+    output changes.
 
-The initial ref can be dropped in __zswap_param_set() if a new pool is
-created (see the call to ercpu_ref_kill(()).
+Ian Rogers (12):
+  perf jevents: Allow multiple metricgroups.json files
+  perf jevents: Update metric constraint support
+  perf jevents: Add descriptions to metricgroup abstraction
+  perf jevents: Allow metric groups not to be named
+  perf jevents: Support parsing negative exponents
+  perf jevents: Term list fix in event parsing
+  perf jevents: Add threshold expressions to Metric
+  perf jevents: Move json encoding to its own functions
+  perf jevents: Drop duplicate pending metrics
+  perf jevents: Skip optional metrics in metric group list
+  perf jevents: Build support for generating metrics from python
+  perf jevents: Add load event json to verify and allow fallbacks
 
->
-> >
-> > > 3) Keep the approach in v7 where obj_cgroup_get/put is localized to
-> > >     zswap_store_page for both success and error conditions, and any
-> > unwinding
-> > >     state in zswap_store will take care of dropping references obtain=
-ed from
-> > >     prior successful writes (from this or prior invocations of zswap_=
-store).
-> >
-> > I am also fine with doing that and doing the reference batching as a fo=
-llow up.
->
-> I think so too! We could try and improve upon (3) with reference batching
-> in a follow-up patch.
+ tools/perf/.gitignore                  |   2 +
+ tools/perf/Makefile.perf               |  23 +++-
+ tools/perf/pmu-events/Build            |  62 +++++++++-
+ tools/perf/pmu-events/amd_metrics.py   |  42 +++++++
+ tools/perf/pmu-events/arm64_metrics.py |  43 +++++++
+ tools/perf/pmu-events/intel_metrics.py |  42 +++++++
+ tools/perf/pmu-events/jevents.py       |   6 +-
+ tools/perf/pmu-events/metric.py        | 162 +++++++++++++++++++++----
+ tools/perf/pmu-events/metric_test.py   |   4 +
+ 9 files changed, 348 insertions(+), 38 deletions(-)
+ create mode 100755 tools/perf/pmu-events/amd_metrics.py
+ create mode 100755 tools/perf/pmu-events/arm64_metrics.py
+ create mode 100755 tools/perf/pmu-events/intel_metrics.py
 
-SGTM.
+-- 
+2.46.1.824.gd892dcdcdd-goog
+
 
