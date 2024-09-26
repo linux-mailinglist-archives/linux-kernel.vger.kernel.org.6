@@ -1,156 +1,138 @@
-Return-Path: <linux-kernel+bounces-340457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052399873AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:35:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24629873A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 830A81F272A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:35:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48619B23E34
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3411CA81;
-	Thu, 26 Sep 2024 12:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F0B5672;
+	Thu, 26 Sep 2024 12:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l+MZZeDh"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjkthlS2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E36179A7
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929DE3FD4;
+	Thu, 26 Sep 2024 12:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727354090; cv=none; b=ELyblGIswjRV9EGRPD6phym1nBau2DkvwkMyQUewK9jLpggz/eaRbvlJe+YPW94GzcsbxGqYkUUu35AV8ylNEaB1j8M6SaQPM4xNWjZsQotT+GHker6jXuxF+nWrHTXT8uH/xs8L2ePhi2qdAv9LSC2jVHqTEw5x3bXEZ4tH14o=
+	t=1727354070; cv=none; b=IfXUJlAF9UWxMcyIEtUxcT1AJTD3n/DbCSFCddECVcN2+ZQgCoFuRZEHDkTZ2zLQMX+t9wVfBGLkZVR3nPETh7VxsQ97Z6y4fkuaCp3IMNc1zSVVg+V3T4nGgwOcc2AfYqxnxseHptpA5PAqN+fvew3VcUAEnHlWmYA0+++AJyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727354090; c=relaxed/simple;
-	bh=R+AVNuX7PeYNeVcTYh9MlS+PE88iVKNLvuUPNyPnYOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Db9e2GivOfM3HXb2100YDsWPbNm0Gn52K5q/aOO9lMksHF225zNyL5Fv/w4YiTM2NP65Lb6JLqv13BvXdrlM9eFcHOhQsrPqZeJEdw3BadUzFVCJIhMJpcdmfVfMuQ6PXtVsxUG1IZsXSJaTA+vKQrEklBYH5qLhhLEVJ625pZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l+MZZeDh; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4585e250f9dso4348701cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:34:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727354087; x=1727958887; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=mK6odaXRz60I1rRxbik+9gCy6tGx5/Tz5tdyicGSfdU=;
-        b=l+MZZeDhvIryr3RwksMJiBZjAFOk/og9yooMbKMLMITv/5JddqgSrj1ERtkuR1dIuA
-         5pXtLDtDI7DZ6e3cDz/1NqyGTGoTBbBscRjAZNTLCzGYAHgvDT/ehxq1DIJ75tgSADaT
-         tcDI/GY/lyN+xU4wtzqZ5gOcQJgRBt2l8K/C5VQ4alKkroVMLHWy5XDOocQi00OrFSqB
-         GBGaWbw4f4i2PkbMs/+H+CjAEFWK/Q7E7t1q3h5LUeEkk+RImJtLcNCOjFQBILUhq58w
-         /ZlSmpw/MR45GwQSBcDLS/d319l+Z9yPigh2mfx4YDFpMYBJmcjMIB3fTqSFLSLITxJC
-         OMRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727354087; x=1727958887;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mK6odaXRz60I1rRxbik+9gCy6tGx5/Tz5tdyicGSfdU=;
-        b=l3FsGILaMGO0g8a/jraQMvIWH+rRbyxIJrzDqmmpX9yId4jhPZ6m8nlGFh+zaUWKqE
-         l08wfmEzArtkQuMosma1GuzenwNiF2NRABxWt+4JconGP70Q09O20MrdcMjcWpl1PHXj
-         v4AW6/qEwMuW8+xF1ojIzwk025hAfiUncD81UROXotUlcIYBCBX4Nq6+l7xNEQpRe/OZ
-         s2CPQdSOK1gs9O7UcA9+B9C1vTUM9QHATmBcFBtdEhJzk69dx6NNI0lkCnp7h/AIw1Sm
-         1otd3MZfUuzdIDQsn3K7lkb3/4b7neexFuP1dhCONRKZuCKG8rgtVhwGs+B/T+KlRb0t
-         mlZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCEwnU2awwVTvubY+1JtPO6O19eDCskN0uACof6CWCj9r6iz5Vkw4rLn5pB/Pdqr8ErZ4hVGlb7rAtRV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvR+fPlTcmQoQZ4cIeNmr9PKR+whBWHaZu/IUmbk3nLDHzpUpw
-	BjUgYmkMWWn2X5pvbEuxJtCjuoaMJtgSRQO9JHMjnBUex/zcxiEz
-X-Google-Smtp-Source: AGHT+IHBeMmmMU5b0xGui2qfhKVafApU5IL3Kx5FZ6xy1eEWuyfdR/Nk4Mdu6yUyWNAB0ySzb+QgOQ==
-X-Received: by 2002:ac8:5895:0:b0:456:7e2e:45ef with SMTP id d75a77b69052e-45b5dedf228mr75060441cf.16.1727354087341;
-        Thu, 26 Sep 2024 05:34:47 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b525b517bsm25410541cf.51.2024.09.26.05.34.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 05:34:46 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 9BC971200043;
-	Thu, 26 Sep 2024 08:34:46 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 26 Sep 2024 08:34:46 -0400
-X-ME-Sender: <xms:5lT1Zt28D7d-1GjcFe8XokEywROzK3hj23ABmuVZDALaSW3cOqEyfA>
-    <xme:5lT1ZkEUFB82EXax-K8heyjCUG7X2NRX75tzZquKJvrmpZLjnYdYAAfd6YHmW4BZs
-    T6HnhtKIi68xTU17w>
-X-ME-Received: <xmr:5lT1Zt5dC0ekNa_2A91HaS_qa4cJNzzMf4ctejpbiGZUlpwO4pNc85TU1FxaiA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtjedgheegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddu
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnheptdegheelveffudejffegvdelgffhhfelkeei
-    ieefgeevteejvdegveeuffeihefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeelpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegufihmfidvsehinhhfrhgruggvrggurdhorh
-    hgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohep
-    phgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepmhhinhhgohesrh
-    gvughhrghtrdgtohhmpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehlohhnghhmrghnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuh
-    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjghhr
-    ohhsshesshhushgvrdgtohhmpdhrtghpthhtohepsghoqhhunhesfhhigihmvgdrnhgrmh
-    gv
-X-ME-Proxy: <xmx:5lT1Zq3Xt8d3bns30PriRuRHw2WrpYxVDdKKy0wbIfzKgLFlL8umCw>
-    <xmx:5lT1ZgEHzEqKBDYKuMrswjX8LyqJeudKN_Ub7A-jrHZHcUkxoRwWdA>
-    <xmx:5lT1Zr99_PopXNFSgkUrmmReyIZydkTGZQE4oXV-D0hYFMH_XgOblg>
-    <xmx:5lT1Ztm1LLcKYQRxOOT0EHm4x0okpuqwTxskZEUE5E50u8IlhTGCTg>
-    <xmx:5lT1ZkEwJwSxXnBwRKhYfoRJLc3aA8WcpOjNrdgOJNxXPfiTYOZWaUlD>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 26 Sep 2024 08:34:46 -0400 (EDT)
-Date: Thu, 26 Sep 2024 05:34:00 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Juergen Gross <jgross@suse.com>
-Subject: Re: [PATCH v3] lockdep: add lockdep_cleanup_dead_cpu()
-Message-ID: <ZvVUuOq7dLd6_f09@boqun-archlinux>
-References: <e5ba02138c31da60daf91ce505ac3860d022332b.camel@infradead.org>
- <635fa006e8f3816b4a36b964d6281f0d8efa789b.camel@infradead.org>
- <2b8c36376fa01fa6a1bac9570eb7d41e7e232a29.camel@infradead.org>
- <1da59ef5df8e8a2bebd31535fa13264113a316ff.camel@infradead.org>
- <ZvVO3F7BJW7OwbEg@boqun-archlinux>
- <ec2ec6b7682b33f0ddf06c3d3c2e23c9c5971b67.camel@infradead.org>
+	s=arc-20240116; t=1727354070; c=relaxed/simple;
+	bh=m+m/3s0/CVqCQPYMO71jOIA5IOHOwjtSlfkxiW7PG1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RniRL0u54Q9zDtSce/HVzeL+qTE0qhredfXJ9k68ciSsqv0aWNo1A52GawzhMvsfbsxvfP9yE4kgOtLxGrcITipwk5ibiFEt5srGhcat55KtnUeCUDmd5+E0DHQQq19LGdQPm1QG2IjhKKfgWe6HqVue1maESN+nZjJUwSXlJs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjkthlS2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0BCCC4CEC9;
+	Thu, 26 Sep 2024 12:34:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727354070;
+	bh=m+m/3s0/CVqCQPYMO71jOIA5IOHOwjtSlfkxiW7PG1Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TjkthlS2zMN4U4dat+6LFbPMRbXHxynWSnbz7aAAdEzqYg+yb66Pny+Ip/yFMYkhU
+	 x+5b6jIp5CAv2CMtY6useE4QAK3VRMjj9XvAUl0Yr7MYgAzYeFj0ydkEKZYirRi2bD
+	 oDj3C1TsCUZFPy7VAvSt3O8e1dA+hY0PrELATtCUDpoiGBGuETPC3Whhso6DqSfPOI
+	 SvpobcyU8axZYBmTEV2nGu7SsZ76d1oVgK1MCCLgW8VFI57/Du2vptUC91wigxWhAm
+	 dkDXOWH9LNer5zWxJFaxx70vW0lKBD2EwcQXixuiOSGCVfrEHgQ7A/8RV0q+Ti8ipl
+	 i8r8eAbbWFfnw==
+Message-ID: <43447165-37f9-4b35-ace6-8d32760f75a8@kernel.org>
+Date: Thu, 26 Sep 2024 14:34:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ec2ec6b7682b33f0ddf06c3d3c2e23c9c5971b67.camel@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Add framework for user controlled driver probes
+To: Nayeemahmed Badebade <nayeemahmed.badebade@sony.com>,
+ Greg KH <gregkh@linuxfoundation.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ rafael@kernel.org, yoshihiro.toyama@sony.com, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240911142319.3435746-1-nayeemahmed.badebade@sony.com>
+ <2024091327-repacking-avatar-ec23@gregkh>
+ <ZulGr8Ul7y0T0NkQ@NAB-HP-ProDesk-600sony.com>
+ <26fed82b-7c60-4fda-8951-b22654728743@kernel.org>
+ <2024091747-monorail-unbutton-7ebd@gregkh>
+ <ZvVAiVBlBjkMhHMY@NAB-HP-ProDesk-600sony.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZvVAiVBlBjkMhHMY@NAB-HP-ProDesk-600sony.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 26, 2024 at 01:16:32PM +0100, David Woodhouse wrote:
-> On Thu, 2024-09-26 at 05:09 -0700, Boqun Feng wrote:
-> > 
-> > 
-> > I think this is already fixed by:
-> > 
-> >         9bb69ba4c177 ("ACPI: processor_idle: use raw_safe_halt() in acpi_idle_play_dead()")
-> > 
-> > , no?
+On 26/09/2024 13:07, Nayeemahmed Badebade wrote:
+>>
+>>>> not required at the time of booting.
+>>>> Example: drivers/pci/controller/dwc/pci-imx6.c
+>>
+>> Just this one?  I don't see anything obvious that can't turn that into a
+>> module, have you tried?  What went wrong?
+>>
 > 
-> That patch fixed the bug.
-> 
-> *This* patch fixes the fact that lockdep didn't *tell* us about the bug.
+> Yes we have tried building it as a module.
+> This driver currently registers abort handler for pci using function
+> hook_fault_code() on arm. This function is not exported and marked with __init
+> tag. So we can't use it post boot.
 
-But I thought along with the above commit, Peter also made it possible
-that objtool can detect leaving noinstr section in the offline path? Do
-you have a case where you can alter hardirqs_enabled flag in offline
-path but don't hit the objtool warning?
+Then this is something to fix.
 
-Anyway, the commit log needs a rework.
+> Also from past attempt made to modularize this driver in community, we saw the
+> hook is not safe to be used post boot.
+> Reference:
+>  https://lore.kernel.org/linux-arm-kernel/1454889644-27830-2-git-send-email-paul.gortmaker@windriver.com/T/#m8995c6dcc40c54baef0665a7ee16d4209cb59655
 
-Regards,
-Boqun
+
+Best regards,
+Krzysztof
+
 
