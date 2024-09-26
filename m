@@ -1,125 +1,150 @@
-Return-Path: <linux-kernel+bounces-340025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9442986D8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C19F986D88
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751CD1F25200
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8CED1F24D4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83A018C013;
-	Thu, 26 Sep 2024 07:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6717018C900;
+	Thu, 26 Sep 2024 07:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LykKmUkC"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2HjjNSy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95EE185B55;
-	Thu, 26 Sep 2024 07:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFA5185B55;
+	Thu, 26 Sep 2024 07:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727335603; cv=none; b=syUn1AOBZAcEk9zRdlkusLrr7167HQ9VgOZnHKotSObioQIunfGy1M7CpZb88NwWs0SuPtZPFoxuDPQDMWUEB5WP3YCu+kQo+rTBebnK3zdMZEotgMJ6J8ukoZGpsJV5wvRcdO4xTqcpDpksSY6OqJAtbrtu0Vb6M4mLYQezEZI=
+	t=1727335591; cv=none; b=WEFJGNLbooeTNxwpWg4C5C6ETgQC4paFDzH63ITVAB8kPTYO+mKrlXIcjKBP0Oq94cXp78bugcr3+JSCf/lxpmNsy/EgQylV4xADQPYHsiDwdaVczc7xhzdYAUXGnGr1F47Sbv01nnvP0OCT7FlV7xSF2aqmwxLjq/nPh/j4DXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727335603; c=relaxed/simple;
-	bh=juqhsBDgk/qJ2OoFwalVGkUMzZ8OxYXE80kYUkcez+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T7qUlsmx06j1m2U+UH5ULGQUqWqtNVOdAHluV0m+zTV0v7y4bTZzLYKtiNmyE1R2/t7ps0NDn46U3HBQz5nmZDDRrKfPcIoUVhScRnk+tNM/G4eCz9XSTuQAYiM0zMYJg/TVj43eavsz0T1KeSFVlO/bzChshAC8hKxRG1iBHEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LykKmUkC; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-710e910dd7dso408554a34.2;
-        Thu, 26 Sep 2024 00:26:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727335600; x=1727940400; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BCku12FFLOCaOziMj0MbSv/94Oa74+TUIaChEUsPCYg=;
-        b=LykKmUkCF8y3RHYYlbVFNTuIxXHzlDWr1+xDQ2wExGDDMM7QnogX8zgQs/GNZpNruC
-         Vk8D5uPPX+q7mlVaaRX+9Ipm2+F46LCeQHX2LDQIP7lRcZG8GLWpQ2kjCjYAAUbZeQoh
-         brfmaghMaI/1x88bP+d9b8GGcJsdBtCd4phc3ZHjDcVSfRQzsktIFZWNL3fyZ5fW0MNE
-         Kpnn7H71r9xDZXOyebpynzrOqHo+OldBQtOHfQ7dZ3BM0FBmquO6jw/dE5Vy0D/CweOq
-         0jVknt8v90FxGFEpzkGJe96Dd/k1PFKLKgKgrd4SJIu1e1cbRwhIHdGbxN+66pvY2E7L
-         DgaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727335600; x=1727940400;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BCku12FFLOCaOziMj0MbSv/94Oa74+TUIaChEUsPCYg=;
-        b=hOq+EKRBeWrls62Jv/0iWGVigdNlI7YfV6NQp0uozMWJYlHIohBJTV9k8wWu9VPxEs
-         79vFW/fvEzSbiHWdq09NQadtjH20tHtPwaaAZT5pALYI6KKbt1Nzx7u70rtqnsmgPJ4z
-         S23I98voBsAPFpu+nti98+qsn/Pfyj1efU7KJaW5+9x3QYzOt0AP7jrDCpPe1CNViOt2
-         RyqxG5btUpit/Gj7Hhs/Ub/AajqOpqx5+2BtxYSUjaSKb6OOm3IxOTqcDxjxVXrBN9jA
-         KxR0XlpsFuNsq6xPk0G1IKEnB8AuSsiyvGw1NNe3JAkPebzyetDg7j7qN5T3XNBwP6xz
-         tQVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqc3UKVXaRKh3Ht4BGdGc4u/33XCvRv4p9hlMpQiEw3Z1K+sjVArCZ2hYfEgX4eLk2oVfGQ2+t5fTBZGXH@vger.kernel.org, AJvYcCWgnB3zfEXpBK3UJ27eDCZAKSGzk7U80JtejCh/SdPNKik+325NO1avrbVSSDECNa4M6MQdqoXVH3lvZg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5U7sao1EmYHHMqJac/JYh1ek7D0W897rdzabo7M4wCk6gbXLb
-	05/P5Bii4HGmvuzCPaNwK0cwDrbnEW/DXvu4Xn5fcMYSHtoNdXSQ
-X-Google-Smtp-Source: AGHT+IFpp0aO2P1B8GMYF8tHd6ozNiC6/E6EZFKELYRx2rZeoWtrD+VyBcOu2IxWQF2JR5BsSDHgCQ==
-X-Received: by 2002:a05:6830:6206:b0:710:e61c:7a4c with SMTP id 46e09a7af769-713c7f344ffmr5085007a34.29.1727335600670;
-        Thu, 26 Sep 2024 00:26:40 -0700 (PDT)
-Received: from localhost.localdomain ([240d:1a:13a:f00:4b94:68e0:2d8b:3983])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc9c78eesm3708899b3a.210.2024.09.26.00.26.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 00:26:40 -0700 (PDT)
-From: Tatsuya S <tatsuya.s2862@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Cc: Tatsuya S <tatsuya.s2862@gmail.com>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: Add reserved item tag for main items
-Date: Thu, 26 Sep 2024 16:25:40 +0900
-Message-ID: <20240926072541.109493-1-tatsuya.s2862@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1727335591; c=relaxed/simple;
+	bh=ePa5u/BcnZ/dATlftydtRiE5hN7gmuT0GTtjNoDiKEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qAFyWVqFSYWmAOn0fzviFFeu5sQK1UwAGFs7IqiX12LqPPaSOK1DV5RQFYqm2UvdheDwWQOaxy5JjO/ceaPfDeWPSEsi1nw1fxfHQBH2nPF1qKj6/2y6a5t+oEouZiZz0GVUSJXhnTH7ahgaNTb9or8fiAdu2GrhdqHxXGXl5kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2HjjNSy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD8D4C4CEC5;
+	Thu, 26 Sep 2024 07:26:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727335590;
+	bh=ePa5u/BcnZ/dATlftydtRiE5hN7gmuT0GTtjNoDiKEg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M2HjjNSyNaWEZ1yenHHEyui1RPMh8RJVBscCwUg+TXnkGbJouUPm2CIehBM3+Co6X
+	 VedGYDOORpYZqCXP1lA+ySO90Fwuu1ocnuaf/2z42w+C0bfF8oHdF9o/oTkHsVlwdt
+	 Bf9nj/u01qIShO0iWrBh8GkbROFRYw53rMgHLuBCyUdr+dM6Ch0H1hEOVk1h39MPXE
+	 7xLZP3vgb0rUT9712TiCXty9H7+EMJJ4XbeTqBu35iZX4CcMVSvlhmQeFt1qvfMBRR
+	 ugPSGU54cl34WqVGyPrygkOEOE89m5ePQQ98JoI1Rvhy/0rPTMoiMuolGmKpad2Y37
+	 nywPery26f36Q==
+Date: Thu, 26 Sep 2024 09:26:27 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
+	helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch, robdclark@gmail.com, 
+	guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, deborah.brouwer@collabora.com, 
+	dmitry.baryshkov@linaro.org, rodrigo.vivi@intel.com, linux-mediatek@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] docs/gpu: ci: update flake tests requirements
+Message-ID: <20240926-athletic-gregarious-markhor-cc78ac@houat>
+References: <20240926070653.1773597-1-vignesh.raman@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="xmj2ly46kzbkkxma"
+Content-Disposition: inline
+In-Reply-To: <20240926070653.1773597-1-vignesh.raman@collabora.com>
 
-For main items, separate warning of reserved item tag from
-warning of unknown item tag.
----
- drivers/hid/hid-core.c | 6 +++++-
- include/linux/hid.h    | 2 ++
- 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 30de92d0bf0f..1793edb6239d 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -629,7 +629,11 @@ static int hid_parser_main(struct hid_parser *parser, struct hid_item *item)
- 		ret = hid_add_field(parser, HID_FEATURE_REPORT, data);
- 		break;
- 	default:
--		hid_warn(parser->device, "unknown main item tag 0x%x\n", item->tag);
-+		if (item->tag >= HID_MAIN_ITEM_TAG_RESERVED_MIN &&
-+			item->tag <= HID_MAIN_ITEM_TAG_RESERVED_MAX)
-+			hid_warn(parser->device, "reserved main item tag 0x%x\n", item->tag);
-+		else
-+			hid_warn(parser->device, "unknown main item tag 0x%x\n", item->tag);
- 		ret = 0;
- 	}
- 
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index 121d5b8bc867..e3894f38bd96 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -81,6 +81,8 @@ struct hid_item {
- #define HID_MAIN_ITEM_TAG_FEATURE		11
- #define HID_MAIN_ITEM_TAG_BEGIN_COLLECTION	10
- #define HID_MAIN_ITEM_TAG_END_COLLECTION	12
-+#define HID_MAIN_ITEM_TAG_RESERVED_MIN		13
-+#define HID_MAIN_ITEM_TAG_RESERVED_MAX		15
- 
- /*
-  * HID report descriptor main item contents
--- 
-2.46.1
+--xmj2ly46kzbkkxma
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 26, 2024 at 12:36:49PM GMT, Vignesh Raman wrote:
+> Update the documentation to require linking to a relevant GitLab
+> issue for each new flake entry instead of an email report. Added
+> specific GitLab issue URLs for i915, xe and other drivers.
+>=20
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+> ---
+>=20
+> v2:
+> - Add gitlab issue link for msm driver.
+>=20
+> ---
+>  Documentation/gpu/automated_testing.rst | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/=
+automated_testing.rst
+> index 2d5a28866afe..f918fe56f2b0 100644
+> --- a/Documentation/gpu/automated_testing.rst
+> +++ b/Documentation/gpu/automated_testing.rst
+> @@ -67,20 +67,26 @@ Lists the tests that for a given driver on a specific=
+ hardware revision are
+>  known to behave unreliably. These tests won't cause a job to fail regard=
+less of
+>  the result. They will still be run.
+> =20
+> -Each new flake entry must be associated with a link to the email reporti=
+ng the
+> -bug to the author of the affected driver, the board name or Device Tree =
+name of
+> -the board, the first kernel version affected, the IGT version used for t=
+ests,
+> -and an approximation of the failure rate.
+> +Each new flake entry must include a link to the relevant GitLab issue, t=
+he board
+> +name or Device Tree name, the first kernel version affected, the IGT ver=
+sion used
+> +for tests and an approximation of the failure rate.
+> =20
+>  They should be provided under the following format::
+> =20
+> -  # Bug Report: $LORE_OR_PATCHWORK_URL
+> +  # Bug Report: $GITLAB_ISSUE
+>    # Board Name: broken-board.dtb
+>    # Linux Version: 6.6-rc1
+>    # IGT Version: 1.28-gd2af13d9f
+>    # Failure Rate: 100
+>    flaky-test
+> =20
+> +The GitLab issue must include the logs and the pipeline link. Use the ap=
+propriate
+> +link below to create an issue.
+> +https://gitlab.freedesktop.org/drm/i915/kernel/-/issues for i915 driver
+> +https://gitlab.freedesktop.org/drm/xe/kernel/-/issues for xe driver
+> +https://gitlab.freedesktop.org/drm/msm/-/issues for msm driver
+> +https://gitlab.freedesktop.org/drm/misc/kernel/-/issues for other drivers
+> +
+
+I can't comment for the others, but drm-misc at least still requires
+reporting issues by mail, so, no, sorry, we can't switch to gitlab only
+for now.
+
+Maxime
+
+--xmj2ly46kzbkkxma
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZvUMowAKCRAnX84Zoj2+
+dmrwAXwJooR80dwdvsWLwVqq5T8Tn9xQ8jXG5egqf3JJs5K3KqLQK01ARZoz96es
+RPNQmi8BgI1h2/qRTFQd2zqn7QgKcGKOtkv4Yc4dQqncavbg/HkcoYrbjgDyP6za
+D5kG4mEAOg==
+=hh9h
+-----END PGP SIGNATURE-----
+
+--xmj2ly46kzbkkxma--
 
