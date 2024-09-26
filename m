@@ -1,274 +1,135 @@
-Return-Path: <linux-kernel+bounces-340799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92406987807
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:00:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 641BE987810
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06A41F27A7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:00:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F04BC1F2644D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D632161319;
-	Thu, 26 Sep 2024 16:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eC+y/PCC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B04158205;
+	Thu, 26 Sep 2024 17:01:21 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCDB157E61;
-	Thu, 26 Sep 2024 16:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525324C7E;
+	Thu, 26 Sep 2024 17:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727369994; cv=none; b=iCQBksB/dfALCxMErUdI9n4E9+VOboBq9y1XfvlXPvVVTaJO512fyRU6/7TwbXA1Zc3eDiKnLPpmRgQQVmJNd8yQQH5HiMYWMoQLqEEvYx7MsUdhu7WHbjNvfPxiwndAhC74Rwt1GybXmEU4dpvlalTSOgedhohB2CWAZf9GrFk=
+	t=1727370081; cv=none; b=qeFSWpVqpmA2RrpeZhaBbb2eXzU5FFP2POkGneOigaRl9+uZUDlCpDuXgcwPN/hpY7qUXa4fnEcu8bP8l34hZfVjWSqe6qwkqY3ZQiChKxqNhH2mKzL3QYNeu1LtBSk1iNJNynyvgNtYJjl7TpMQDruqzBtzSBSaHzHR5Y3JLgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727369994; c=relaxed/simple;
-	bh=vPvgBe3mw7ij6EWPxzCtYi/zm7pChh1S1SaduXREqY0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ljRIvpQhdhyrYaERoppJlIj9562thKeLXlIWU1DOQCdTo2V0fIsLv623O3IR5MMOc4bOprmpOdg3FYicduyJ55BgDQRyeWq4H5zPCOWhKmTJLgtjbSTEN9O4jMcmRnWmqfBBN+0GhutFT8jjpgXPGLfSLNOC+DN7V/FTGRQssxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eC+y/PCC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48QG9mNY002811;
-	Thu, 26 Sep 2024 16:59:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=tvzhxFqCJihUkn/P80INKj06
-	dHZresCsObz3w7UIExQ=; b=eC+y/PCCfHZamEpPCoKuSQLbWYgJTRaPzqZ+hMPT
-	/vnI1pX5c34HhSkPRdZ5CnYJu4ZUP+d7lQSBgUnjMzgZfNOvZ16MbcSSc/Iskcy2
-	0kYVh+f1bpyGnROETgsJRL+lVRKelT8wbkDiguhm+2T/dH/PLdhHEeY7dnZWnXII
-	lhQzh7csdtMSzVuYyjoeJ7qNRFqkHB6LMDOX9lhaddf1qQ1VmMoKlEbABeBXCvYy
-	H7qcwZEAlUq/6BofTRjhR/4QiXLumkuZOaO1mXaB1VED+pzXv2HZeEmzKlhJa2V5
-	PlwPuLrRx2SlfV5zaF2iTosDdNIooznnypd55A98w6e2dw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqakqunx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Sep 2024 16:59:46 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48QGxjog004981
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Sep 2024 16:59:45 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 26 Sep 2024 09:59:45 -0700
-Date: Thu, 26 Sep 2024 09:59:44 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: <jens.glathe@oldschoolsolutions.biz>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Merck Hung <merckhung@gmail.com>
-Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: sc8280xp-wdk2023: dt definition
- for WDK2023
-Message-ID: <ZvWTAEwEcmh76Xhe@hu-bjorande-lv.qualcomm.com>
-References: <20240920-jg-blackrock-for-upstream-v2-0-9bf2f1b2191c@oldschoolsolutions.biz>
- <20240920-jg-blackrock-for-upstream-v2-1-9bf2f1b2191c@oldschoolsolutions.biz>
+	s=arc-20240116; t=1727370081; c=relaxed/simple;
+	bh=8v/etHDv+isUrL4AUTKHpMW0uEnB6HsK/Yj7P0aTW78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Z1Gfq2vvmrclKG10kjMeBKyeWmBIC0PeUgEVfzyoRROFzblucUAe3DdFGyxZ2/nt0FCJEsKZhui1RhMAUH8gpFmzohnYPfHusX0CxifYCc+hbNtZ3Y5d+Khl2kEExiHPTmx3/ArINuLbtt0ym2hz1o+JUsNNHWfY6wboQE9jmZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.100] (213.87.132.137) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 26 Sep
+ 2024 20:01:01 +0300
+Message-ID: <a5e93c28-bb7b-fdca-fd6b-a44eb3454980@omp.ru>
+Date: Thu, 26 Sep 2024 20:01:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240920-jg-blackrock-for-upstream-v2-1-9bf2f1b2191c@oldschoolsolutions.biz>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: mafrqRkiVENE7hQsK_qg5LAUqEgzF7iQ
-X-Proofpoint-GUID: mafrqRkiVENE7hQsK_qg5LAUqEgzF7iQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- bulkscore=0 impostorscore=0 suspectscore=0 phishscore=0 adultscore=0
- clxscore=1011 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409260118
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v1] ata: Fix typo in the comment
+Content-Language: en-US
+To: Yan Zhen <yanzhen@vivo.com>, <dlemoal@kernel.org>, <cassel@kernel.org>,
+	<shawnguo@kernel.org>, <s.hauer@pengutronix.de>
+CC: <kernel@pengutronix.de>, <festevam@gmail.com>,
+	<linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<opensource.kernel@vivo.com>
+References: <20240926093755.3983833-1-yanzhen@vivo.com>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+In-Reply-To: <20240926093755.3983833-1-yanzhen@vivo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/26/2024 16:46:57
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 188019 [Sep 26 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
+ 8a1fac695d5606478feba790382a59668a4f0039
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.132.137 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.132.137 in (user)
+ dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	127.0.0.199:7.1.2;omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.132.137
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/26/2024 16:49:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/26/2024 2:22:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Fri, Sep 20, 2024 at 07:47:24PM +0200, Jens Glathe via B4 Relay wrote:
-[..]
-> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dts b/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dts
-[..]
-> +/ {
-> +	model = "Windows Dev Kit 2023";
-> +	compatible = "microsoft,blackrock", "qcom,sc8280xp";
-> +
-> +	aliases {
-> +		i2c4 = &i2c4;
-> +		i2c21 = &i2c21;
-> +		serial1 = &uart2;
-> +	};
-> +
-> +	wcd938x: audio-codec {
-> +		compatible = "qcom,wcd9380-codec";
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&wcd_default>;
-> +
-> +		reset-gpios = <&tlmm 106 GPIO_ACTIVE_LOW>;
-> +
-> +		vdd-buck-supply = <&vreg_s10b>;
-> +		vdd-rxtx-supply = <&vreg_s10b>;
-> +		vdd-io-supply = <&vreg_s10b>;
-> +		vdd-mic-bias-supply = <&vreg_bob>;
-> +
-> +		qcom,micbias1-microvolt = <1800000>;
-> +		qcom,micbias2-microvolt = <1800000>;
-> +		qcom,micbias3-microvolt = <1800000>;
-> +		qcom,micbias4-microvolt = <1800000>;
-> +		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000 500000 500000>;
-> +		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
-> +		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
-> +		qcom,rx-device = <&wcd_rx>;
-> +		qcom,tx-device = <&wcd_tx>;
-> +
-> +		#sound-dai-cells = <1>;
-> +	};
-> +
-> +	firmware {
-> +		qseecom {
-> +			compatible = "qcom,qseecom-sc8280xp", "qcom,qseecom";
-> +			qcom,scm = <&scm>;
-> +		};
-> +	};
-> +
-> +	pmic-glink {
-[..]
-> +	};
-> +
-> +	dp1-connector@0 {
+Hello!
 
-Please keep nodes sorted by {address, node name, label}, i.e. this
-should move 2 steps up.
+   Should be s/typo/typos/ in the subject...
 
-Also the unit address (i.e. the "@0" part) should be dropped, right?
+On 9/26/24 12:37, Yan Zhen wrote:
 
-> +		compatible = "dp-connector";
-> +		label = "DP1";
-> +		type = "mini";
-> +
-> +		dp-pwr-supply = <&vreg_misc_3p3>;
-> +
-> +		//hpd-gpios = <&tlmm 2 GPIO_ACTIVE_HIGH>;
-> +
-> +		port {
-> +			dp1_connector_in: endpoint {
-> +				remote-endpoint = <&mdss0_dp2_phy_out>;
-> +			};
-> +		};
-> +	};
-> +
-[..]
-> +&mdss0_dp2 {
-> +  compatible = "qcom,sc8280xp-dp";
-> +
-> +  data-lanes = <0 1 2 3>;
-> +
-> +	status = "okay";
+> Correctly spelled comments make it easier for the reader to understand
 
-Indentation looks off here.
+   Makes. :-)
 
-> +
-> +	ports {
-> +		port@1 {
-> +			reg = <1>;
-> +			mdss0_dp2_phy_out: endpoint {
-> +				remote-endpoint = <&dp1_connector_in>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&mdss0_dp2_phy {
-> +	compatible = "qcom,sc8280xp-dp-phy";
-> +
-> +	vdda-phy-supply = <&vreg_l3b>;
-> +	phy-supply = <&vreg_l3b>;
-> +	vdda-pll-supply = <&vreg_l6b>;
-> +	pll-supply = <&vreg_l6b>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&pcie2a {
-> +	aspm-no-l0s;
-> +	max-link-speed = <16>;
-> +
-> +	perst-gpios = <&tlmm 143 GPIO_ACTIVE_LOW>;
-> +	wake-gpios = <&tlmm 145 GPIO_ACTIVE_LOW>;
-> +
-> +	vddpe-3v3-supply = <&vreg_nvme>;
-> +	pcie-vdda-supply = <&vreg_l7d>;
-> +	vdda-supply = <&vreg_l7d>;
-> +
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie2a_default>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&pcie2a_phy {
-> +	vdda-phy-supply = <&vreg_l4d>;
-> +	phy-supply = <&vreg_l4d>;
-> +	vdda-pll-supply = <&vreg_l6d>;
-> +	pll-supply = <&vreg_l6d>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&pcie4 {
-> +	max-link-speed = <2>;
-> +	aspm-no-l0s;
+> the code.
+> 
+> Fix typos:
+> 'multipe' ==> 'multiple',
+> 'Paremeters' ==> 'Parameters',
+> 'recieved' ==> 'received',
+> 'realted' ==> 'related',
+> 'evaulated' ==> 'evaluated',
+> 'programing' ==> 'programming',
+> 'coninue' ==> 'continue',
+> 'Decriptor' ==> 'Descriptor',
+> 'Lable' ==> 'Label',
+> 'transmiting' ==> 'transmitting',
+> 'correspondance' ==> 'correspondence',
+> 'claculation' ==> 'calculation',
+> 'everone' ==> 'everyone',
+> 'contruct' ==> 'construct'.
+> 
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
 
-It would be nice if these two followed the same order here and in
-pcie2a. (Don't know if we have a preferred order...)
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 
-> +
-> +	perst-gpios = <&tlmm 141 GPIO_ACTIVE_LOW>;
-> +	wake-gpios = <&tlmm 139 GPIO_ACTIVE_LOW>;
-> +
-> +	vddpe-3v3-supply = <&vreg_wlan>;
-> +	pcie-vdda-supply = <&vreg_l7d>;
-> +	vdda-supply = <&vreg_l7d>;
-> +
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie4_default>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&pcie4_port0 {
-> +	wifi@0 {
-> +		compatible = "pci17cb,1103";
-> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
-> +
-> +		qcom,ath11k-calibration-variant = "volterra";
+[...]
 
-Can you please confirm that this matches what has landed in
-linux-firmware?
+MBR, Sergey
 
-> +	};
-> +};
-> +
-[..]
-> +&remoteproc_adsp {
-> +	firmware-name = "qcom/sc8280xp/MICROSOFT/DEVKIT23/qcadsp8280.mbn";
-
-Perhaps use blackrock here instead?
-
-> +
-> +	status = "okay";
-> +};
-
-Regards,
-Bjorn
 
