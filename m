@@ -1,109 +1,120 @@
-Return-Path: <linux-kernel+bounces-341036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5E7B987A9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:20:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DEF987A9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F017B25882
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:19:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E538E1F2420A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB530187568;
-	Thu, 26 Sep 2024 21:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D5D18787E;
+	Thu, 26 Sep 2024 21:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aNY7D4YN"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OC2w0nR0"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2837186285;
-	Thu, 26 Sep 2024 21:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F61187870;
+	Thu, 26 Sep 2024 21:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727385537; cv=none; b=Y77Yflg9fwT0lF29Ym3XJIqZ/DveubV2C3xYcoM2Kerq9psg4ep7Woo6VTpOEtsz27/e7nsd3qIWkjrAkjhoqGI9vak1ccbh9pQidLq/3k37UI4/xyz8YMQKzi4v1+U1QWoGaqbpl353qY16Vz5nXRUixfF1QnjqJmGoAfzeD3o=
+	t=1727385547; cv=none; b=AoDsrFxQ3VQiqFmTXp4L6kup/V4r7aDcD+OmHOYcwVFSaSZzYQwDv79VqrwipNlJqW3KA8F55UfaSKE9mVA+euW3dmHAPqjOgAPim8KnHy3SJUfT49NfVLR8ioWDCnBmvc67ke1v/r1/i/2ZSJfiB1rt441ScGpaEhx4KovYR6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727385537; c=relaxed/simple;
-	bh=LGh5AsLI6sNnLV9SP7iQOLWKOrIBJ3RbUytzbBRYuHk=;
+	s=arc-20240116; t=1727385547; c=relaxed/simple;
+	bh=AvcDnkUmv2DqPh64tRKzMWvmnXubSlYFjN4hVlRNLk0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gd4aqlOZVi8NNoFrZeiY28tdRslSUJNvqoW6TF/am6OUvw2F/bdw3flDTYMDtPPaAq/hDFjf780j8aEzTYlYJL7f1ns8gY8/oxJRPJDXr/cFrbGmd1WsS/3QAql31zO0QaRuZjyUD3mqBJK5jK65VA+EyQ9T6pLhiIkHITqGcr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aNY7D4YN; arc=none smtp.client-ip=209.85.216.50
+	 To:Cc:Content-Type; b=VHP+pNWd3bJmuBCHdf2wF46p2Te+n5xXyGmRxP9TqmMcbUruXdn+bX4gojl94YlIaDkTm3cAjxlkK3gGKHyqpt4AMsm7+3GpVG4ZWs5yPr5lEZXes9/pwBaGsPcO1mEDcwwpyoqDsD5PNcTglG18MKE2XbbREHjhsu4+BIspjxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OC2w0nR0; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e0a47fda44so167003a91.1;
-        Thu, 26 Sep 2024 14:18:55 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71829963767so191763b3a.1;
+        Thu, 26 Sep 2024 14:19:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727385535; x=1727990335; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727385545; x=1727990345; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LGh5AsLI6sNnLV9SP7iQOLWKOrIBJ3RbUytzbBRYuHk=;
-        b=aNY7D4YNqMeYhfSNUZ8Bj6EQ1OmFWZSyOJ2HJ+Cs9EftHrRSlnZOzjUdoKKabhGST0
-         JzzYJFT7F7IQhVrIV0OeEYX73LxUycdWVlyFfFxFhQ7i8nqtY5uH9hvnIVlFgL1pSCO4
-         g1/22mPkmebW0J6Du7kBGe4d8LFiBTxAXv/jTQDbH4D2LN9ehmbbgx9gRIa5UujuLbae
-         XuNa5XA8N0aaDa6nf2aKuef4uoW0QOILpQfJqZiXEZ+unAD9XnOseDe7eT1GeGY/slwV
-         uMlga4nFe/wb/0a77dziGH0MuDLvqGVPZ+NBWhrpHmpSscnXf+v0Gult7/L3B1zAFRdK
-         4Zdg==
+        bh=jiL/43w7xPDMaXqaTLOfu6ipmJ7ueyEd94vFcLFVt94=;
+        b=OC2w0nR05ubb1ZwnW4Zk3yHSAyZSc4gZ+4kgqL9wp7SfQBRTQw4TPfk4gv9is1vHG/
+         9AJcmxK4E1pzNjNz7N101mL/NOXxapoAyT5C+vm4GXr//QNahpaTZWbIxWnUSeedIfnK
+         fWj9y/z3fdBORTa8W5WTc/uxTv9RfieYptQ/fzp/4Zl8D+67m+xI1nZ7T00ar3QcmqkG
+         yHYQW9uAAzfyj0GMJdeRoewE8QimkzDZEUtFT2u+xR9Xp5dtZZaSE4rch+ILw3vKA1Qv
+         y1rkOgnxiRqrRpU//NXEoOQwoKImRktfMqQyFhaLEtYllPKcvyxJWof2wZtHKOM+uhaV
+         Xh8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727385535; x=1727990335;
+        d=1e100.net; s=20230601; t=1727385545; x=1727990345;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LGh5AsLI6sNnLV9SP7iQOLWKOrIBJ3RbUytzbBRYuHk=;
-        b=hDmNOl9nuUQZfNF/OqKFQJJfivEo8V02bGuXBO+8qb1mqzmtkgeEFxXMLHj+RMBz3E
-         IYHGtcS7JaZOqumpjJllu8uml7D57f0CdX90cZR75d1SO1Mf5SmVqB19NiChA6Mnajly
-         CJY9cL40l55MYY+mTko6DdwhZqGNgwuFga8v9anKuGd2uNtZCsnqwwTReY6Y79J0QkZc
-         FARdtidtuB42m891uCOLnG7wYQaRninIPcsKnVzwxxakloq62k6acEeUUb7VcJuNOBGb
-         a8EEeqr5pqKNTl7uuAvTOwdbA5Uj9oCDiw6dSoymiJf9gDpqzpkPyitBXI1NRk6h3xEw
-         dEnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFXkINVgquy3YVg6fsLcqiSIUaYAbatPkiNcd3/zG5+/2ohcW/pHIVdiq09PsxuILUTfs2GGvIgrBEGMU=@vger.kernel.org, AJvYcCUrhswl38WcdTDhG4eQRg756Pmxc9r6idtmFzuX4E2qi95guW5XCzrlwlV2g/du+xB+8Hqn6laL@vger.kernel.org, AJvYcCVQVbisLzOyGFcBQsCq2m0oYVEu96PxKXtTQCesNdgv5+faHEGe8qxv5booP+ZUYIHJdWCJOFhbwWxvk5vT9HA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdqFGOiYRYt22QXEq1t55pePg1Cdc2o4f+97fZY5DRKOBM0yeo
-	MAjQPGMNgAfy8Y9YbA8MQF/wdUyjxXGOEKgTBWjHxQSVpxt5yOivBFcPwM416B2JeqADxk/l9yq
-	1ue/8ng9x4ZDMgMDMDGxs2XYEuWI=
-X-Google-Smtp-Source: AGHT+IGFtmXJkGXxZMp0hLont/4szEaqvFF8nPib6ydvuDhzQc3QsxRdvYh7ZnuMYvt371eM5bxZUq+fjBGol09742c=
-X-Received: by 2002:a17:90a:ee87:b0:2e0:9d3d:3666 with SMTP id
- 98e67ed59e1d1-2e0b87701a0mr542895a91.2.1727385535065; Thu, 26 Sep 2024
- 14:18:55 -0700 (PDT)
+        bh=jiL/43w7xPDMaXqaTLOfu6ipmJ7ueyEd94vFcLFVt94=;
+        b=B/eaOILp/czaKwCtMjUtB0xj4CLZ4o2rS8028ZBvkJBZqyKOaUxnKc5GecYCz1/Q7M
+         FvWYqJ98oh6xFSU50o4ebrz1afF3maaa3zKA7By+GYuAGvW9MF5TWLNblyeyooJBruc8
+         SzgYQiQX54cysAIO1RLB451AgKjAfj8ozSNSAvzWWy7VFt3DcCozH3T7LtI9SfyovGoQ
+         t0ybjbioawWVU86DWy+cfhAJqXybdyipAGkpwJeuaFK01xcYGFKrqOsRkHz6P7Pd7P/9
+         Ze8VfMaANXflwQXcJFKEpiJxTn0VfqQ9cHVJKfM6yojE9IyVnQGDd17jqVO4bfmLrcxy
+         R2kA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4GVtUYqV//RwUyfu1supi5lJkGL1jffYS5L9jFT+gUcPVLGcrXQHfC9k8GD3ufg2PhYy8cyaIpQ7AnkV+szw=@vger.kernel.org, AJvYcCXjmjvfrtu4Ea5mCM484a0hRF8flNajPFkLx0UI0XTKPTNKDZHFlKx89GIOBb47KqQ+AzPMTLLXnfWY1M4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAdSRFi5aYWZSM0/6Vto61WVESkF+n433wq2CFLoKDUXqebJ37
+	2l83Iuko0vpoKjR2JN7BBXTwa+DMcYyuqFUgJfQ79iAa+ESrFnmaLW8NgBYCl2Uly1tJPDY1nzI
+	q8WMQH+RkXgKXTmv+Ayu3sf6shkQ=
+X-Google-Smtp-Source: AGHT+IE6Z5Ugs5d9ud90HsPwabxzrmKDL6pJfCR6F+I4Hb2fAl23W6NAluXCqFPTFKmt/02r4eYWF2KDbgYnvtdh4g4=
+X-Received: by 2002:a05:6a20:8415:b0:1cf:46ff:973d with SMTP id
+ adf61e73a8af0-1d4fa78e94fmr838750637.9.1727385545304; Thu, 26 Sep 2024
+ 14:19:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240915-locked-by-sync-fix-v2-1-1a8d89710392@google.com>
-In-Reply-To: <20240915-locked-by-sync-fix-v2-1-1a8d89710392@google.com>
+References: <202409160804.eSg9zh1e-lkp@intel.com> <20240916003347.1744345-1-gary@garyguo.net>
+In-Reply-To: <20240916003347.1744345-1-gary@garyguo.net>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 26 Sep 2024 23:18:41 +0200
-Message-ID: <CANiq72mTnHNTzCX_FtSp53cjUj0rF-yCAoShN77RotMcz0L4Hw@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: sync: require `T: Sync` for `LockedBy::access`
-To: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+Date: Thu, 26 Sep 2024 23:18:50 +0200
+Message-ID: <CANiq72=qRGkXJoTin69KDgz0YHDaY8uB0vfX=GDZeR7TbhaTdA@mail.gmail.com>
+Subject: Re: [PATCH] rust: fix `ARCH_SLAB_MINALIGN` multiple definition error
+To: Gary Guo <gary@garyguo.net>
+Cc: lkp@intel.com, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
 	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
 	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Trevor Gross <tmgross@umich.edu>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, conor.dooley@microchip.com, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	oe-kbuild-all@lists.linux.dev, palmer@rivosinc.com, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 15, 2024 at 4:41=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
+On Mon, Sep 16, 2024 at 1:09=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
 >
-> The `LockedBy::access` method only requires a shared reference to the
-> owner, so if we have shared access to the `LockedBy` from several
-> threads at once, then two threads could call `access` in parallel and
-> both obtain a shared reference to the inner value. Thus, require that
-> `T: Sync` when calling the `access` method.
+> We use const helpers in form of
 >
-> An alternative is to require `T: Sync` in the `impl Sync for LockedBy`.
-> This patch does not choose that approach as it gives up the ability to
-> use `LockedBy` with `!Sync` types, which is okay as long as you only use
-> `access_mut`.
+>     const size_t RUST_CONST_HELPER_ARCH_SLAB_MINALIGN =3D ARCH_SLAB_MINAL=
+IGN;
 >
-> Cc: stable@vger.kernel.org
-> Fixes: 7b1f55e3a984 ("rust: sync: introduce `LockedBy`")
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> to aid generation of constants by bindgen because it is otherwise a
+> macro definition of an expression and bindgen doesn't expand the
+> constant. The helpers are then have `RUST_CONST_HELPER` prefix stripped
+> and exposed to Rust code as if `ARCH_SLAB_MISALIGN` is generated
+> natively by bindgen.
+>
+> This works well for most constants, but on RISC-V, `ARCH_SLAB_MINALIGN`
+> is defined directly as literal constant if `!CONFIG_MMU`, and bindgen
+> would generate `ARCH_SLAB_MINALIGN` directly, thus conflict with the
+> one generated through the helper.
+>
+> To fix this, we simply need to block bindgen from generating directly
+> without going through helper.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202409160804.eSg9zh1e-lkp@i=
+ntel.com/
+> Signed-off-by: Gary Guo <gary@garyguo.net>
 
-Applied to `rust-fixes` with Boqun's Suggested-by -- thanks!
+Applied to `rust-fixes` -- thanks!
 
 Cheers,
 Miguel
