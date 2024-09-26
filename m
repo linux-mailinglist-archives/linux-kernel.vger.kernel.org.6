@@ -1,187 +1,158 @@
-Return-Path: <linux-kernel+bounces-340198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F4D8986FBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:15:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323BA986FBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D91FAB251C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:15:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E432838CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A609B1AB6EE;
-	Thu, 26 Sep 2024 09:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5C11A76D9;
+	Thu, 26 Sep 2024 09:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EyUaenZD"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m541ZdnN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A26415532A;
-	Thu, 26 Sep 2024 09:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0E413D62B;
+	Thu, 26 Sep 2024 09:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727342101; cv=none; b=CduheW2hvAyNPBGz+V4N97UHk9FOuquLrV9aDSUU/4Bp3Y3Icon6TKx5Uls60eNqf4IU379Zw7Q5odGWXRcr+u16lcgKRic1Dlpt7F0LY/s36IucpNCknyGNeADx64CbpI9iHdgrHK/ZOi5c26EoaJg/P2KJDO+UC5a2OHoadSg=
+	t=1727342132; cv=none; b=CIPOloS9NvI7/JjYDsQNk7R3EBxRSthTkEd4Il4xtDOtmbyIV6zbv/9y+oowtfGb3+lpBvcsiDTcjvixsTDpQfQjfqGSqJumQmS++TeXyZ3j1mlq5bOSQKqcws3GHkybqIyMi1gwANO9/4BM9vNtbgiRBufSFN4BqK7mhFuKa3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727342101; c=relaxed/simple;
-	bh=5CRALTb60twaABfzMtifOzQaiO9ApKULKNiRaSr55Og=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=K4NP6UkdIZYCc1gjFbqqlpNf8VnFLZJ7hohoDMiSux8GBo5jaNHIj7eSXGoMsQJSeKPuSb/BPbo3dGC+y98p/XwAUyfiD3UuECAUTXPVCKqHi/pzM8BNBaL7i57+9daa/eoiCkuUCvgfl71Q5RCJ4Brd4MXIuVJHQVC7iZnopbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EyUaenZD; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a90188ae58eso93188266b.1;
-        Thu, 26 Sep 2024 02:14:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727342097; x=1727946897; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5CRALTb60twaABfzMtifOzQaiO9ApKULKNiRaSr55Og=;
-        b=EyUaenZDmPVWrlL7GXFz7XO9GlyuRiFdDZxwXmDklH9zMo0o2B034aHrhmFO6KOA9T
-         7ZuHgBLy0eofILEy8AJRCtAy5eEFbV7edO5834DOFBpoQ4lnwzSYIDotN8KNcymVowCD
-         R2+t+D1GUrYD4PByygV9jyHz4dUYxIa6XZjKu4byTgomI9JwqaZoNf2sPUQYY5GkYQaP
-         EW/8/i6gZdjG31IivudzxvTJG+7PIm/fo4BCoZ+JOtFcj/OzqekKaGdkVnXgwGTXghk/
-         5XulnRFgHmWlTWxSQOuIZ3h8/DDasJdjH5N/2Cz3kJnozPUk3fxryufx2CbCzg5ngHE8
-         pO+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727342097; x=1727946897;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5CRALTb60twaABfzMtifOzQaiO9ApKULKNiRaSr55Og=;
-        b=ZP83C6GXywtvI9dHdiJ9+eZGZUJVknsZwe9zyyyVZgZOitMQ2JhEbeo9yiq0CkpM4C
-         tDtVZxi69v6Wfppabwrkhspn1f+7G755kyTYzCD+aDdU6xde5rjwPJdnTB8e4fK8NKaJ
-         ASGFdmm2NsroTE0BJahI4uBCu0PTt4xhfhJ5Olgbf3iGQw4dRkiWLn9ed/72gNsAy022
-         Oed1zq27vabTI5X6xEr+r5SXmOMXKWovXn49Zjm/3Qv4l/5w4fY5LL4/Ok089nXsaAuz
-         7j4vz65T8wSNkdkP/xxW+d6Zow5YtkdLyQGe0CizkORC96VzqaDw6GsDd9/DQHeaWmG8
-         jrWA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6ePmPedJ/F7Us8vPXQasxmRmdNv9kS/mzFO5lgflRh6FHCARmtzlZHWVO0VuAp3C1oBQ=@vger.kernel.org, AJvYcCUcGRLWD+6yU6vmjTtYQ5javLsUoGFIjGsiGrVosPiESql8EIHnMb8STPScHJFBw0/crvlaRbwzIDEG@vger.kernel.org, AJvYcCVJk0Vkr98UA/6qTNh65ER74Zl70OlhuxIT3LPl0fxDM6/jrYF6ZD1bNmI3CsRJ9kKObAwNWyNKUrSS0PTr@vger.kernel.org, AJvYcCVPAn0k/HdWYrz67U2wkxn4OBiS6t8ds1K6IJy7zYZ8P0UqWf7WbzTLJbXR8AvTA07KP3kio+DYXcNDG6UhPegM@vger.kernel.org, AJvYcCXmjXYOBZav78RpDtK9X+7UseGwIZL7mImpMnwPCHSh8eWSnrX+jInNsgNuMH2151V4OnKObsVsycI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZHjNJsiTVCl2sD0ntlMpijgt2IdQV9IqQgRdbsWqRAntNtMYf
-	c2J/avguajjhFqyQRges1bKz+Q0X97kDPowkk7PAvvluSRGshqo1
-X-Google-Smtp-Source: AGHT+IFuQpCkW97RwiXsH3H+4pPmO2s5+Udb73F6RcjEM6YRZ3bpHYtgsjXjgkpzlG78J1VZAoyE3w==
-X-Received: by 2002:a17:907:7d8a:b0:a8b:6ee7:ba29 with SMTP id a640c23a62f3a-a93a05e7e95mr521203166b.44.1727342097231;
-        Thu, 26 Sep 2024 02:14:57 -0700 (PDT)
-Received: from ?IPv6:2001:b07:5d29:f42d:438a:71d4:3b8a:6ddf? ([2001:b07:5d29:f42d:438a:71d4:3b8a:6ddf])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93931336b4sm322256666b.188.2024.09.26.02.14.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 02:14:56 -0700 (PDT)
-Message-ID: <709968e9b2a947787177f7ea3eefcc89546bffd2.camel@gmail.com>
-Subject: Re: [PATCH v4 2/6] KVM: arm64: Add PSCI v1.3 SYSTEM_OFF2 function
- for hibernation
-From: Francesco Lavra <francescolavra.fl@gmail.com>
-To: David Woodhouse <dwmw2@infradead.org>, Paolo Bonzini
- <pbonzini@redhat.com>,  Jonathan Corbet <corbet@lwn.net>, Marc Zyngier
- <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, James Morse
- <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui
- Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Lorenzo
- Pieralisi <lpieralisi@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Shuah Khan
- <shuah@kernel.org>, David Woodhouse <dwmw@amazon.co.uk>,
- kvm@vger.kernel.org,  linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev,  linux-pm@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Date: Thu, 26 Sep 2024 11:14:54 +0200
-In-Reply-To: <20240924160512.4138879-2-dwmw2@infradead.org>
-References: <20240924160512.4138879-1-dwmw2@infradead.org>
-	 <20240924160512.4138879-2-dwmw2@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1727342132; c=relaxed/simple;
+	bh=t52b6eEVFeh7vAeNYk36NpJtPvi1jrH1+vPlodx9txE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AyxXvF8m8yXqQBbRfZaO06A0INUCAvFeo/IWMDUD9Vy44UjAkHdo6rsEGc48MTyNTCcavzYTZf15696OF+fTB7Zgn8yzAb4qbEgJ6rg1SB3XoBswIQxICqyXDAlSZbbz4yA2uNzM0txmVEmShFCfevX24r0MuYeC7kayB8vrxFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m541ZdnN; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727342131; x=1758878131;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t52b6eEVFeh7vAeNYk36NpJtPvi1jrH1+vPlodx9txE=;
+  b=m541ZdnNf+ULLTIQHchHCGFUSPK6+IsKpyI62K/FIQXRcnWQAMQNgCH0
+   biwA6tPc2Nwjx+h9MAZ29qTMD8v4QkJwXbv7dsPNW/72dDsRBQ2sQOf3Z
+   vVIa3nWEAyFZ0FNTyEaxX0F+VGdZUL6XYBDWqgMW0yNFNaxVEdHOxnsdj
+   riAX6kDmB69PyBbQCFUamFVCpBsiH68Q4KfAbi1dpu2F2ArPkjbXhbM1g
+   6DWrN82nHOWWUErrdCRwkdggnwWbEgo65aDo4gn72SWYBGWVE4hDyglBu
+   OH2Mc2Rc+Zh7LES0j3SNsx1RL3ChH3bX+8DtaanZNI8dsbi4FvjiERQL8
+   Q==;
+X-CSE-ConnectionGUID: LPNlnmx1SMCF1g7r7JmscQ==
+X-CSE-MsgGUID: ZyQ4Muu6Qg2Y1lpyLJKLjA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="36988984"
+X-IronPort-AV: E=Sophos;i="6.10,260,1719903600"; 
+   d="scan'208";a="36988984"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 02:15:30 -0700
+X-CSE-ConnectionGUID: 9OFVUKdLRm6pTw+dhT+qfA==
+X-CSE-MsgGUID: xXJSVCtHRMah9HuTwI3otQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,260,1719903600"; 
+   d="scan'208";a="76888054"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 02:15:27 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 5F63611F843;
+	Thu, 26 Sep 2024 12:15:23 +0300 (EEST)
+Date: Thu, 26 Sep 2024 09:15:23 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Naushir Patuck <naush@raspberrypi.com>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v5 0/4] media: raspberrypi: Support RPi5's CFE
+Message-ID: <ZvUmK3wGvcrytqg-@kekkonen.localdomain>
+References: <20240910-rp1-cfe-v5-0-9ab4c4c8eace@ideasonboard.com>
+ <fe968dc7-67a5-40be-871e-fe682dc60d70@ideasonboard.com>
+ <yj5zt4a275pjedrxvs4ys2wgp5heblisihal6jrqdryoq3ydph@6rriiytwpkpq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yj5zt4a275pjedrxvs4ys2wgp5heblisihal6jrqdryoq3ydph@6rriiytwpkpq>
 
-On Tue, 2024-09-24 at 17:05 +0100, David Woodhouse wrote:
-> From: David Woodhouse <dwmw@amazon.co.uk>
->=20
-> The PSCI v1.3 specification (alpha) adds support for a SYSTEM_OFF2
+Hi Jacopo,
 
-Can remove (alpha).
+On Thu, Sep 26, 2024 at 11:04:36AM +0200, Jacopo Mondi wrote:
+> Hi Tomi
+> 
+> On Thu, Sep 26, 2024 at 10:13:29AM GMT, Tomi Valkeinen wrote:
+> > Hi,
+> >
+> > On 10/09/2024 11:07, Tomi Valkeinen wrote:
+> > > This series adds support to the CFE hardware block on RaspberryPi 5. The
+> > > CFE (Camera Front End) contains a CSI-2 receiver and Front End, a small
+> > > ISP.
+> > >
+> > > To run this, you need the basic RPi5 kernel support plus relevant dts
+> > > changes to enable the cfe and camera. My work branch with everything
+> > > needed to run CFE can be found from:
+> > >
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git rp1-cfe
+> > >
+> > > A few notes about the patches:
+> > >
+> > > - The original work was done by RaspberryPi, mostly by Naushir Patuck.
+> > > - The second video node only sets V4L2_CAP_META_CAPTURE instead of both
+> > >    V4L2_CAP_META_CAPTURE and V4L2_CAP_META_CAPTURE like the other nodes.
+> > >    This is a temporary workaround for userspace (libcamera), and
+> > >    hopefully can be removed soon.
+> > >
+> > > I have tested this with:
+> > > - A single IMX219 sensor connected to the RPi5's CSI-2 port
+> > > - Arducam's UB960 FPD-Link board with four imx219 sensors connected
+> > >
+> > >   Tomi
+> > >
+> > > Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> > > ---
+> > > Changes in v5:
+> > > - Add "depends on PM". The platforms that use CFE will always have PM in
+> > >    practice, and it's not worth supporting both the PM and !PM cases as
+> > >    it adds complexity to the driver.
+> > > - Link to v4: https://lore.kernel.org/r/20240904-rp1-cfe-v4-0-f1b5b3d69c81@ideasonboard.com
+> >
+> > Is this solution to the PM issue ok for everyone? It feels most sensible to
+> > me. Any other comments?
+> 
+> There was consensus at the media summit that platform drivers are
+> allowed to depend on PM.
 
-> function
-> which is analogous to ACPI S4 state. This will allow hosting
-> environments
-> to determine that a guest is hibernated rather than just powered off,
-> and
-> ensure that they preserve the virtual environment appropriately to
-> allow
-> the guest to resume safely (or bump the hardware_signature in the
-> FACS to
-> trigger a clean reboot instead).
->=20
-> The beta version will be changed to say that PSCI_FEATURES returns a
-> bit
-> mask of the supported hibernate types, which is implemented here.
+I'd say you should have generally a good idea these devices aren't found in
+systems without runtime PM support and that mostly applies to platform
+drivers.
 
-Since the final spec has been released, we can revise or remove the
-above wording.
+> 
+> I'll do the same for my latest PiSP BE series.
 
-> Although this new feature is inflicted unconditionally on unexpecting
-> userspace, it ought to be mostly OK because it still results in the
-> same
-> KVM_SYSTEM_EVENT_SHUTDOWN event, just with a new flag which hopefully
-> won't cause userspace to get unhappy.
->=20
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> ---
-> =C2=A0Documentation/virt/kvm/api.rst=C2=A0=C2=A0=C2=A0 | 11 +++++++++
-> =C2=A0arch/arm64/include/uapi/asm/kvm.h |=C2=A0 6 +++++
-> =C2=A0arch/arm64/kvm/psci.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 37
-> +++++++++++++++++++++++++++++++
-> =C2=A03 files changed, 54 insertions(+)
->=20
-> diff --git a/Documentation/virt/kvm/api.rst
-> b/Documentation/virt/kvm/api.rst
-> index b3be87489108..2918898b7047 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -6840,6 +6840,10 @@ the first `ndata` items (possibly zero) of the
-> data array are valid.
-> =C2=A0=C2=A0=C2=A0 the guest issued a SYSTEM_RESET2 call according to v1.=
-1 of the
-> PSCI
-> =C2=A0=C2=A0=C2=A0 specification.
-> =C2=A0
-> + - for arm64, data[0] is set to
-> KVM_SYSTEM_EVENT_SHUTDOWN_FLAG_PSCI_OFF2
-> +=C2=A0=C2=A0 if the guest issued a SYSTEM_OFF2 call according to v1.3 of=
- the
-> PSCI
-> +=C2=A0=C2=A0 specification.
-> +
-> =C2=A0 - for RISC-V, data[0] is set to the value of the second argument o=
-f
-> the
-> =C2=A0=C2=A0=C2=A0 ``sbi_system_reset`` call.
-> =C2=A0
-> @@ -6873,6 +6877,13 @@ either:
-> =C2=A0 - Deny the guest request to suspend the VM. See ARM DEN0022D.b
-> 5.19.2
-> =C2=A0=C2=A0=C2=A0 "Caller responsibilities" for possible return values.
-> =C2=A0
-> +Hibernation using the PSCI SYSTEM_OFF2 call is enabled when PSCI
-> v1.3
-> +is enabled. If a guest invokes the PSCI SYSTEM_OFF2 function, KVM
-> will
-> +exit to userspace with the KVM_SYSTEM_EVENT_SHUTDOWN event type and
-> with
-> +data[0] set to KVM_SYSTEM_EVENT_SHUTDOWN_FLAG_PSCI_OFF2. The only
-> +supported hibernate type for the SYSTEM_OFF2 function is
-> HIBERNATE_OFF
-> +0x0).
+Ack.
 
-The spec says that the HIBERNATE_OFF parameter value is 0x1, not 0x0
-(which is kind of unfortunate because it doesn't match the
-corresponding bit in the feature flags).
-So, either the BIT(PSCI_1_3_HIBERNATE_TYPE_OFF) value should be used
-for the SYSTEM_OFF2 functions in the code, or the definition should be
-changed in the header file (unless the text in the spec is wrong).
+-- 
+Kind regards,
 
+Sakari Ailus
 
