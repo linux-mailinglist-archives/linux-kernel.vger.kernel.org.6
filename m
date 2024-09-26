@@ -1,135 +1,317 @@
-Return-Path: <linux-kernel+bounces-340218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6002F987015
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:27:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6EE7987017
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258AA2854CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:27:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F4101F27722
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAB01AAE15;
-	Thu, 26 Sep 2024 09:27:14 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FF11AB6E4;
+	Thu, 26 Sep 2024 09:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PUWd1cqe"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C801E146596
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B374146596;
+	Thu, 26 Sep 2024 09:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727342834; cv=none; b=WV8sxuPhyuUmJHGyeECPV060XneE00Z6o7vwgTXNO/v3mkjwrYJEnfbhMcauxkp++vbsGj16ckccPLXyS+/m5zxcJCBNEhIj6X/61Ztlt3CoVaDNX0wIJb2HeF/w/401jlIQl94t3IfPjU3/fIXYkNdCIf3O3py2EHocCe7ik2Q=
+	t=1727342855; cv=none; b=Z53uCqFCkCTZ1E0r87Fhj6UXsv/5/ev8rGpTEZ7c68c/zJ/6Tj7CKP+iFnmccGr/qYCSq2l7ddksaraBHTYhEaI3IX7Ov696dr4VZKvWkgriTpG0SjCm1Uewzp63RFKneGp+IURn/4lE0XKtq7AajXdQW7wlFj/6pxm15nv6Nd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727342834; c=relaxed/simple;
-	bh=2oJS0dqs3dzFGrMjrE2KNkacP8RMJBWZ1mFfNaWdjkI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=MH8jf8nx29choFeXLIeH+AdhnNShZCW1g9HnzE9CGOLYEWb/fCq91NObO2xPX7dLLVGajh/dZaEYfxNKm0vjU+kSQIOVkCWvKycGWC+RcQnHg1f6Wj6XCSYgwYBhXZNzIz3pS4QPzEOvP+Qbb7QxkyHHfqe14/7+mpSMDi5jbhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cde6b5094so6983615e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 02:27:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727342831; x=1727947631;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RCYimulyplJ/QBbQZDyNZ6PC7/nIgszRvvPJOLK6CQQ=;
-        b=hZXGD9cuUtc233f4CY1QTWoIcR+/p2HKZ9n2FQWn3HIqghogdjbe25Z8hMqCPoAGVS
-         Yog3KaXHfPUHcTDGEzR5GYIwFnsMTpKzvVONi8XD+LmikNhp5vCvZw7QqbvaFEACQJiz
-         l50ePgZ8qgzEY9zuj9UdJf3YtY/RgWdCDyVoHi4bG03maCTwjHsH2P+q1yPLSMoGiAPb
-         VOm+le2x6BqrU3QAyJTGRJRNF3iiRti9UZMEtA5Lp88F/XndzpSjX+W+jhivrQMHbG28
-         R25za8C0aAlEHLsAmkHAIBUzKi5cJVd/t8T1ky03NufisxXal6lQ6HYqIaka+AhJyvsI
-         wX+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWX4z/eIvVy8CR6FNe1fsJ2FskO1HR0ubih5zd+ct3qkGsveG9CjNTjkgql1DN/QDSRsuxch4hkFEh21v4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywtFxhZJ2eSWr3ZbSEuSjl9C2TwzUsuTixvVZmr1+sZfbyDkiv
-	HzUQOjx6ocgPlp56JHH9HIxZMXHIUvNcdTwTE9n31GQf1sDb4XEl
-X-Google-Smtp-Source: AGHT+IEQT+Ooa0Yhm5wcyTD5XpZt+dDp7YMYJ24i3C/+E8lwiSV5RucDIsttkrKOgzUYqqlOQF+FRQ==
-X-Received: by 2002:adf:f1ca:0:b0:374:c8cc:1bb1 with SMTP id ffacd0b85a97d-37cc24b575bmr3660406f8f.39.1727342830761;
-        Thu, 26 Sep 2024 02:27:10 -0700 (PDT)
-Received: from costa-tp.redhat.com ([2a00:a041:e281:f300:ddd7:8878:b93d:7c0b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2cd263sm5938075f8f.48.2024.09.26.02.27.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 02:27:10 -0700 (PDT)
-From: Costa Shulyupin <costa.shul@redhat.com>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] powerpc/xive: Use cpumask_intersects()
-Date: Thu, 26 Sep 2024 12:26:22 +0300
-Message-ID: <20240926092623.399577-2-costa.shul@redhat.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1727342855; c=relaxed/simple;
+	bh=WszBCde+EyMT4WBEAxT2xIQ69xHlvKCrC89Es5BKJOo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dhi2fyQNuDOqSYm9vOO2VD/3IFJaLAqQZhRfrBWtcZ24CeOMMNbeRQRjQ79mJp+faZb/pR6O6KQo0MvIa4ngFZYarBpHtmI1LoisNBuR4WpiEXO/vEpBGS1JFduukKn1zcson8qNSAi2oU5U1mPhQ87qpUj1uxUZycivhMtFhI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PUWd1cqe; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727342851;
+	bh=WszBCde+EyMT4WBEAxT2xIQ69xHlvKCrC89Es5BKJOo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PUWd1cqesMv/VLO1Bg+GaG4NUi08+6S/4GRiWxRBlFTqF3na0Vml5mu4v0NL/p2o7
+	 Dp0eOYFUN7+Y7p1S/30vgv8WI8XaxtsVk+AJMSV6wfPQa+aeufzfr/E+EJJOiz37wb
+	 h3wtN0+vob2qHBMrx87IEtPnoXleQom91jT1mDL1VWHG/kCq3Q2nQhLu5fBGvZXfPu
+	 4A9gfEnGeQj8xt4pLhHqKG7Xus/2/vuds9JtvNN0ttAAwQNJ6FFFBiGte0FD6hRduW
+	 RHT7OMVxuoJBktRCciyuJz9U6W0oF5HMTJRwB5OGSCf4iLR4hdDRPqVpGm38aqGyYy
+	 dUB3LOdERVeNQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AD1EC17E1063;
+	Thu, 26 Sep 2024 11:27:30 +0200 (CEST)
+Message-ID: <bbf023c7-f08b-4f9d-8770-08e63074fb4c@collabora.com>
+Date: Thu, 26 Sep 2024 11:27:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: mediate: Introduce MT8186
+ Chinchou/Chinchou360 Chromebooks
+To: =?UTF-8?Q?Albert_Jakie=C5=82a?= <jakiela@google.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+ wenst@chromium.org, rafal@milecki.pl, hsinyi@chromium.org,
+ nfraprado@collabora.com, macpaul.lin@mediatek.com, sean.wang@mediatek.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240925080353.2362879-1-jakiela@google.com>
+ <20240925080353.2362879-2-jakiela@google.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240925080353.2362879-2-jakiela@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Replace `cpumask_any_and(a, b) >= nr_cpu_ids`
-with the more readable `!cpumask_intersects(a, b)`.
+Il 25/09/24 10:03, Albert Jakieła ha scritto:
+> The MT8186 Chinchou/Chinchou360, also known as the Asus Chromebook
+> CZ12/CZ11 Flip, is a clamshell or convertible device with touchscreen,
+> stylus and extra buttons.
+> 
+> Signed-off-by: Albert Jakieła <jakiela@google.com>
+> ---
+>   arch/arm64/boot/dts/mediatek/Makefile         |   3 +
+>   .../mediatek/mt8186-corsola-chinchou-sku0.dts |  18 +
+>   .../mediatek/mt8186-corsola-chinchou-sku1.dts |  34 ++
+>   .../mt8186-corsola-chinchou-sku16.dts         |  28 ++
+>   .../dts/mediatek/mt8186-corsola-chinchou.dtsi | 445 ++++++++++++++++++
+>   5 files changed, 528 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku0.dts
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku1.dts
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku16.dts
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+> index 8fd7b2bb7a15..0db7770e8907 100644
+> --- a/arch/arm64/boot/dts/mediatek/Makefile
+> +++ b/arch/arm64/boot/dts/mediatek/Makefile
+> @@ -55,6 +55,9 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-kodama-sku32.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-krane-sku0.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-krane-sku176.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-pumpkin.dtb
+> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-chinchou-sku0.dtb
+> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-chinchou-sku1.dtb
+> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-chinchou-sku16.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-magneton-sku393216.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-magneton-sku393217.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-magneton-sku393218.dtb
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku0.dts b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku0.dts
+> new file mode 100644
+> index 000000000000..29dd92318da1
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku0.dts
+> @@ -0,0 +1,18 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright 2023 Google LLC
+> + */
+> +
+> +/dts-v1/;
+> +#include "mt8186-corsola-chinchou.dtsi"
+> +
+> +/ {
+> +	model = "Google chinchou sku0 board";
+> +	compatible = "google,chinchou-sku0", "google,chinchou-sku2",
+> +			"google,chinchou-sku4", "google,chinchou-sku5",
+> +			"google,chinchou", "mediatek,mt8186";
+> +};
+> +
+> +&gpio_keys {
+> +	status = "disabled";
+> +};
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku1.dts b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku1.dts
+> new file mode 100644
+> index 000000000000..8ba31f81d9ad
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku1.dts
+> @@ -0,0 +1,34 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright 2023 Google LLC
+> + */
+> +
+> +/dts-v1/;
+> +#include "mt8186-corsola-chinchou.dtsi"
+> +
+> +/ {
+> +	model = "Google chinchou sku1/sku17 board";
+> +	compatible = "google,chinchou-sku1", "google,chinchou-sku17",
+> +			"google,chinchou-sku3", "google,chinchou-sku6",
+> +			"google,chinchou-sku7", "google,chinchou-sku20",
+> +			"google,chinchou-sku22", "google,chinchou-sku23",
+> +			"mediatek,mt8186";
+> +};
+> +
+> +&i2c1 {
+> +	i2c-scl-internal-delay-ns = <10000>;
+> +
+> +	touchscreen: touchscreen@41 {
+> +		compatible = "ilitek,ili2901";
+> +		reg = <0x41>;
+> +		interrupts-extended = <&pio 12 IRQ_TYPE_LEVEL_LOW>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&touchscreen_pins>;
+> +		reset-gpios = <&pio 60 GPIO_ACTIVE_LOW>;
+> +		vccio-supply = <&pp1800_tchscr_report_disable>;
+> +	};
+> +};
+> +
+> +&gpio_keys {
+> +	status = "disabled";
+> +};
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku16.dts b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku16.dts
+> new file mode 100644
+> index 000000000000..d3378d7ad096
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku16.dts
+> @@ -0,0 +1,28 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright 2023 Google LLC
+> + */
+> +
+> +/dts-v1/;
+> +#include "mt8186-corsola-chinchou.dtsi"
+> +
+> +/ {
+> +	model = "Google chinchou sku16/sku2147483647 board";
+> +	compatible = "google,chinchou-sku16", "google,chinchou-sku18",
+> +			"google,chinchou-sku19", "google,chinchou-sku21",
+> +			"google,chinchou-sku2147483647", "mediatek,mt8186";
+> +};
+> +
+> +&i2c1 {
+> +	i2c-scl-internal-delay-ns = <10000>;
+> +
+> +	touchscreen: touchscreen@41 {
+> +		compatible = "ilitek,ili2901";
+> +		reg = <0x41>;
+> +		interrupts-extended = <&pio 12 IRQ_TYPE_LEVEL_LOW>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&touchscreen_pins>;
+> +		reset-gpios = <&pio 60 GPIO_ACTIVE_LOW>;
+> +		vccio-supply = <&pp1800_tchscr_report_disable>;
+> +	};
+> +};
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
+> new file mode 100644
+> index 000000000000..c77cc43f8442
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
 
-Comparison between cpumask_any_and() and cpumask_intersects()
+..snip..
 
-The cpumask_any_and() function expands using FIND_FIRST_BIT(),
-resulting in a loop that iterates through each bit of the bitmask:
+> +
+> +&mmc1_pins_default {
+> +	pins-clk {
+> +		drive-strength = <MTK_DRIVE_8mA>;
 
-for (idx = 0; idx * BITS_PER_LONG < sz; idx++) {
-	val = (FETCH);
-	if (val) {
-		sz = min(idx * BITS_PER_LONG + __ffs(MUNGE(val)), sz);
-		break;
-	}
-}
+Please stop using the meaningless MTK_DRIVE_(x)mA macro.
 
-The cpumask_intersects() function expands using __bitmap_intersects(),
-resulting in that the first loop iterates through each long word of the bitmask,
-and the second through each bit within a long word:
+drive-strength = <8>; is enough :-)
 
-unsigned int k, lim = bits/BITS_PER_LONG;
-for (k = 0; k < lim; ++k)
-	if (bitmap1[k] & bitmap2[k])
-		return true;
+Cheers,
+Angelo
 
-if (bits % BITS_PER_LONG)
-	if ((bitmap1[k] & bitmap2[k]) & BITMAP_LAST_WORD_MASK(bits))
-		return true;
+> +	};
+> +
+> +	pins-cmd-dat {
+> +		drive-strength = <MTK_DRIVE_8mA>;
+> +	};
+> +};
+> +
+> +&mmc1_pins_uhs {
+> +	pins-clk {
+> +		drive-strength = <MTK_DRIVE_8mA>;
+> +	};
+> +
+> +	pins-cmd-dat {
+> +		drive-strength = <MTK_DRIVE_8mA>;
+> +	};
+> +};
+> +
+> +&sound {
+> +	status = "okay";
+> +
+> +	compatible = "mediatek,mt8186-mt6366-rt5650-sound";
 
-Conclusion: cpumask_intersects() is at least as efficient as cpumask_any_and(),
-if not more so, as it typically performs fewer loops and comparisons.
+You don't need to change this compatible, as the only thing that changes in the
+actual driver are the dapm_routes. I implemented support for that nice dai-link
+(standard, kind of) graph so that we stop getting a thousand compatibles for no
+reason other than routing :-)
 
-Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+This should work with (99.9% confident it will, but please test):
 
----
+	model = "mt8186_rt5650";
+	status = "okay";
 
-v2: add comparison between cpumask_any_and() and cpumask_intersects()
+> +	mediatek,adsp = <&adsp>;
 
----
- arch/powerpc/sysdev/xive/common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This property is already set in the node that you're inheriting from
+mt8186-corsola.dtsi, please drop.
 
-diff --git a/arch/powerpc/sysdev/xive/common.c b/arch/powerpc/sysdev/xive/common.c
-index fa01818c1972c..a6c388bdf5d08 100644
---- a/arch/powerpc/sysdev/xive/common.c
-+++ b/arch/powerpc/sysdev/xive/common.c
-@@ -726,7 +726,7 @@ static int xive_irq_set_affinity(struct irq_data *d,
- 	pr_debug("%s: irq %d/0x%x\n", __func__, d->irq, hw_irq);
- 
- 	/* Is this valid ? */
--	if (cpumask_any_and(cpumask, cpu_online_mask) >= nr_cpu_ids)
-+	if (!cpumask_intersects(cpumask, cpu_online_mask))
- 		return -EINVAL;
- 
- 	/*
--- 
-2.45.0
+> +
+> +	audio-routing =
+> +		"Headphone", "HPOL",
+> +		"Headphone", "HPOR",
+> +		"HDMI1", "TX";
+> +
+> +	hs-playback-dai-link {
+> +		codec {
+> +			sound-dai = <&rt5650>;
+> +		};
+> +	};
+> +
+> +	hs-capture-dai-link {
+> +		codec {
+> +			sound-dai = <&rt5650>;
+> +		};
+> +	};
+> +
+> +	spk-share-dai-link {
+> +	};
+
+Empty nodes are meaningless (and you're inheriting this dai link from
+mt8186-corsola.dtsi as well). Drop.
+
+> +
+> +	spk-hdmi-playback-dai-link {
+> +		codec {
+> +			sound-dai = <&it6505dptx>;
+> +		};
+> +	};
+> +};
+> +
+> +&wifi_enable_pin {
+> +	pins-wifi-enable {
+> +		pinmux = <PINMUX_GPIO51__FUNC_GPIO51>;
+> +	};
+> +};
+> +
+> +&wifi_pwrseq {
+> +	reset-gpios = <&pio 51 GPIO_ACTIVE_LOW>;
+> +};
+> +
+
+..snip..
+
+> +
+> +&pen_insert {
+> +	wakeup-event-action = <EV_ACT_ANY>;
+
+Why is this set to EV_ACT_ANY on Chinchou but not on the other Corsola devices?
+Is there any specific reason?
+
+Cheers,
+Angelo
 
 
