@@ -1,176 +1,134 @@
-Return-Path: <linux-kernel+bounces-340751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E0A987764
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:14:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB0F98776B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ACBD285AFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:14:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CD67B21D97
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C229115958E;
-	Thu, 26 Sep 2024 16:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0938A1552E4;
+	Thu, 26 Sep 2024 16:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efMmBCXC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Oztb0/WS"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5911581F3;
-	Thu, 26 Sep 2024 16:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571BE34CC4
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727367240; cv=none; b=Xrn3WVGgJUn5X/Yb9l7ZVuOKPit4WhKfeNdxm8QR0yMYjgmcDFUZON/cs2IEZ8Zr3VsBg4aae9mz5+H3UD0O/jLUBWAuFU5BQF31GXu9gDrhOBfPVSww5jeTTi36BCY8JS136V95jAO9Uhv3e2ss7O3uU/22MTcgBq+FAHM6zeU=
+	t=1727367471; cv=none; b=jvytrHvUWYil/HJcVB+MhyQoENkIrnVV6WSQTjEC1/bk1bosV4ajuZmwG5DJXzab79gI0oTGLbYlqw77wXcOozpL8o4T8UqcBzDC18/Io2+9LZZ1jw/RkEkr2I/K2Gbi40xDkf+LJa8F0ql3mzIkqrVC9mUBC6byBuVJ+gIxRrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727367240; c=relaxed/simple;
-	bh=7vn8F+i4bEeKF3b0bUuklVycjsEm0yuEh18P9WeIlLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S+F+6REWmGGtfbbSD86+sLxLI9grBE9P1RZG0pybkvzClZytVSGxxX9jymbFfUbiDutouQDMjejnReVezgWUPUtl0qMy5/9VX53jWoqoRLz6mu0QNMcuKa8GPPs2l0HFEhyWHFpdPdBMeVEVoj7YknVkNukXLNAAPHj75LuFXQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efMmBCXC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66511C4CEC5;
-	Thu, 26 Sep 2024 16:13:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727367239;
-	bh=7vn8F+i4bEeKF3b0bUuklVycjsEm0yuEh18P9WeIlLc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=efMmBCXCAt1k+tJ4J0c/ZlREBJtvswL3y3/vVBLcHSZTL9+uM0q+u9ekHfDC6Ax1N
-	 WUqY3S66gL3mnDjul84umvldE8zXjRdmgR3AK5EUlgUT+1058rPS+jDh39+D2im9Tw
-	 v5QVVtWC4R+a/zNPyVgmMDo7w9xrJCQvM3QMpJBMRiIBveZAz8RbQL6OOB0gxzRnlC
-	 sF6TaBckQw7KgwCKQgQfkUHevZc8SzRyCGntesISjkGJkNeWcS53ExkdamzUj7qfYl
-	 u1lDUL4nktfZJ/2IdUT8TYGuD75MYFzwHovmvD6iyYKsP0a+jBNQVrNa1SfSY1kRPb
-	 OJVlmVuK3UnAg==
-Date: Thu, 26 Sep 2024 17:13:55 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Andy-ld Lu <andy-ld.lu@mediatek.com>
-Cc: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-	matthias.bgg@gmail.com, wenbin.mei@mediatek.com,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 2/2] dt-bindings: mmc: mtk-sd: Add support for MT8196
-Message-ID: <20240926-footprint-faster-4263120d0b83@spud>
-References: <20240926070405.20212-1-andy-ld.lu@mediatek.com>
- <20240926070405.20212-3-andy-ld.lu@mediatek.com>
+	s=arc-20240116; t=1727367471; c=relaxed/simple;
+	bh=7gDjgu4wElEbQxuDgDh35dLOIRlB1xp7/51JxMwantQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eiTilfMPQ/wiXnHnzspHMYZWVopPL4BXF99pXFxTTjWFv7W54URwGV4ZkHr4tF8opXYL2Ek/+ji3oVt8Axm1iYVhrjG4a+3pudECREuG0IM1GQWrCXQlzyZAraHaSumsJLGe++C2japbmbUEn7dS6/ClDKnIJub4djvXkDbOi3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Oztb0/WS; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 8AD6E3F2FC
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727367444;
+	bh=b1Yy5Y+O/8SNdOfIY1NdJ3kg1DxrF1aZEa29oc+RxsM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+	b=Oztb0/WS04iM+MTpN9XLV0YJBWobEOIOA+zZw9TMj+AJgRVb/cVXv4oVY+VA24nux
+	 9c0nvNjat1VVe/Qpmzz49J/xjBk3a9baVUV9Hw7/51nB3RbGEGJQpNmNwhfMSscAqf
+	 6HCHIAdAvkTLNq2UL7FXgn1GfkGuRBVKUPeUFtJVVCOL/BMvbm5gGYeuqCeRfRlywn
+	 iRXZlczQtHtauBxfg3nxXdOKXXfj2/iBfCmN8k74ue5oE7bGaI6H7v/6DTqriMCxNW
+	 5twVgh1kqD+qpjtnIKBK4aIBV3+NZUb+DgEK768i1YHaz9IpkNtZmukIp3nkJDsAYD
+	 IjE8bvwC4X6jA==
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb940cd67so11146045e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:17:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727367438; x=1727972238;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b1Yy5Y+O/8SNdOfIY1NdJ3kg1DxrF1aZEa29oc+RxsM=;
+        b=BM/PD1ds6IAAk0tScyhPUA6m0OWSNfOU7f8PlbgPvz/ezrw/qVPdto1ArXM7A8kbIF
+         UVkhWjc4gp/ZSjNWe0MncEHQCQSrqII5FgV4FxdjQ2amsRc+gCXqiExcKibTznHE5ulg
+         Qmyv03uS84EpLzGdbHRlTTaN4yuvJ28KDd+u1rk20Czt0niW95ywmXq7pQDLohhfqF8r
+         6L4hTzRXudn64/M6ZxedlC962sTHJM+TOqPfRBOkzNLzlH1oMt/ZcaotNx0gbjQy9btS
+         9ZUl+spQ2zNz8c8H/oCsInk3hLXVPhS/Q7ZwDhgPDZBgy8KSOwq58UJ/AWWCyOULkQau
+         dQ7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVYehuZNcmPR/0SaKEfyxysGfdIEofMTYoMmYK+GmQVn3U9b4Ukbm0S79jAVDvghB7cK3krKDZOpwsniVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7iPKX0q/l0DZiIlBXggwB/REy/ey79h0aZdMHm4wZG4hSLEYp
+	NiviqVWsEk01inidK0Uh4wgHxH6x3j13LelDZ/1L50Mv5Xs12HDQTulfQIHsCsc8dvtRuE0RBiG
+	KVzgCAcAICXB7Gvi++73vYoXpS+cLc00PoqDuFeyG2XjZzh514CyfQaH49zqetScTj/4MAerNw2
+	kmXw==
+X-Received: by 2002:a05:600c:1d88:b0:426:5e1c:1ac2 with SMTP id 5b1f17b1804b1-42f58433478mr169585e9.8.1727367437786;
+        Thu, 26 Sep 2024 09:17:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHzaX27OdIk12RXul9FuGgRDD+iCxKpGs0uDOQekLQVHE70zEjsFFHKV6Qz72FM1jylL5Re6g==
+X-Received: by 2002:a05:600c:1d88:b0:426:5e1c:1ac2 with SMTP id 5b1f17b1804b1-42f58433478mr169345e9.8.1727367437454;
+        Thu, 26 Sep 2024 09:17:17 -0700 (PDT)
+Received: from amikhalitsyn.lan ([188.192.113.77])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2948231sm14104266b.99.2024.09.26.09.17.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 09:17:17 -0700 (PDT)
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: stefanha@redhat.com
+Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	kvm@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] vhost/vsock: specify module version
+Date: Thu, 26 Sep 2024 18:16:40 +0200
+Message-Id: <20240926161641.189193-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rTdKX9h0An540zaG"
-Content-Disposition: inline
-In-Reply-To: <20240926070405.20212-3-andy-ld.lu@mediatek.com>
+Content-Transfer-Encoding: 8bit
 
+Add an explicit MODULE_VERSION("0.0.1") specification
+for a vhost_vsock module. It is useful because it allows
+userspace to check if vhost_vsock is there when it is
+configured as a built-in.
 
---rTdKX9h0An540zaG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Without this change, there is no /sys/module/vhost_vsock directory.
 
-On Thu, Sep 26, 2024 at 03:03:18PM +0800, Andy-ld Lu wrote:
-> Extend the devicetree bindings to include the MT8196 mmc controller
-> by adding the compatible string 'mediatek,msdc-v2', which could be
-> also used for future compatible SoCs that support new tx/rx.
->=20
-> Add three properties for MT8196 settings:
-> - 'mediatek,prohibit-gate-cg', indicate if the source clock CG could
->   be disabled when CPU access IP registers.
->=20
-> - 'mediatek,stop-dly-sel', configure read data clock stops at block gap.
->=20
-> - 'mediatek,pop-en-cnt', configure the margins of write and read
->   pointers while begin to pop data transfer.
->=20
-> Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
-> ---
->  .../devicetree/bindings/mmc/mtk-sd.yaml       | 26 +++++++++++++++++++
->  1 file changed, 26 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Document=
-ation/devicetree/bindings/mmc/mtk-sd.yaml
-> index c532ec92d2d9..82d1a9fac67c 100644
-> --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-> @@ -25,6 +25,7 @@ properties:
->            - mediatek,mt8173-mmc
->            - mediatek,mt8183-mmc
->            - mediatek,mt8516-mmc
-> +          - mediatek,msdc-v2
->        - items:
->            - const: mediatek,mt7623-mmc
->            - const: mediatek,mt2701-mmc
-> @@ -154,6 +155,30 @@ properties:
->      enum: [32, 64]
->      default: 32
-> =20
-> +  mediatek,stop-dly-sel:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Some SoCs need to set appropriate stop-dly-sel to configure read d=
-ata clock
-> +      stops at block gap. The valid range is from 0 to 0xf.
+With this change:
+$ ls -la /sys/module/vhost_vsock/
+total 0
+drwxr-xr-x   2 root root    0 Sep 26 15:59 .
+drwxr-xr-x 100 root root    0 Sep 26 15:59 ..
+--w-------   1 root root 4096 Sep 26 15:59 uevent
+-r--r--r--   1 root root 4096 Sep 26 15:59 version
 
-If you used a specific compatible for these devices, which you should,
-you would not require either this or "pop-en-cnt".
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+---
+ drivers/vhost/vsock.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +    minimum: 0
-> +    maximum: 0xf
-> +
-> +  mediatek,pop-en-cnt:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Some SoCs need to set appropriate pop-en-cnt to configure the marg=
-ins of write
-> +      and read pointers while begin to pop data transfer. The valid rang=
-e is from 0
-> +      to 0xf.
-> +    minimum: 0
-> +    maximum: 0xf
-> +
-> +  mediatek,prohibit-gate-cg:
+diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+index 802153e23073..287ea8e480b5 100644
+--- a/drivers/vhost/vsock.c
++++ b/drivers/vhost/vsock.c
+@@ -956,6 +956,7 @@ static void __exit vhost_vsock_exit(void)
+ 
+ module_init(vhost_vsock_init);
+ module_exit(vhost_vsock_exit);
++MODULE_VERSION("0.0.1");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Asias He");
+ MODULE_DESCRIPTION("vhost transport for vsock ");
+-- 
+2.34.1
 
-This is also probably detectable from a specific compatible, if you had
-one?
-TL;DR specific compatibles please, non of this "msdc-v2" stuff, sorry.
-
-Thanks,
-Conor.
-
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Decide if source clock CG could be disabled when CPU access IP reg=
-isters.
-> +      If present, source clock CG could not be disabled.
-> +      If not present, source clock CG could be disabled.
-> +
->    resets:
->      maxItems: 1
-> =20
-> @@ -191,6 +216,7 @@ allOf:
->              - mediatek,mt8188-mmc
->              - mediatek,mt8195-mmc
->              - mediatek,mt8516-mmc
-> +            - mediatek,msdc-v2
->      then:
->        properties:
->          clocks:
-> --=20
-> 2.46.0
->=20
->=20
-
---rTdKX9h0An540zaG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvWIQwAKCRB4tDGHoIJi
-0p62AQC7zWy8sxC+DpKsViZDlAuVYx19RGJZLpxLCCMrqTjtggEA47f0DiCOzh8l
-0cDhA/a8DytL3SRUlW08RURFaOLoWAo=
-=qF+N
------END PGP SIGNATURE-----
-
---rTdKX9h0An540zaG--
 
