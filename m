@@ -1,148 +1,107 @@
-Return-Path: <linux-kernel+bounces-340101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6762C986E8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:11:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ED87986E93
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 922791C20D57
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:11:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F4DD1C20967
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC84D14601F;
-	Thu, 26 Sep 2024 08:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3324F1A3BCA;
+	Thu, 26 Sep 2024 08:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IH/OFrly"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Pi4Y0Ho0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62211A3BD8
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E009F1A08BB;
+	Thu, 26 Sep 2024 08:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727338253; cv=none; b=Z6RBQf2KRkkGK6459pJq5JGMC7zqXaoDprbIRYpBNXGi7trCDwGvemZJuHLbc/iy9v83d2gwa87aRrrLjfPY+zoVsEQjaxREGPE+3otay/cvHLO/YXtrq1yoetcZS+6qoHveIS/sFlALDazFPVBapPf4b4v2FsCrESsCw1Ys/cw=
+	t=1727338436; cv=none; b=BKR62H9hAFQmNfypj9ISwlbx0HWUHISzQi3YseaNV5+2MjecAxX9MduOAhe4NRyQTnE3qhz2jibbF60E5i3bbX0L5w9Qgi9H8w+hJliv2HksgoH4hdTcG72HpZ3gKVBwDE0kr51qEfJCaDzcvnTOlwaULSAMfRKWTeh9W5ELW6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727338253; c=relaxed/simple;
-	bh=lxbGnKzNxAlEHkVmGibriHagBg2+KYdrG5h4MLCOzUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MtAT+MrHJ5feOR2ZRIYvjw5YDxczZskPUr6+IqgfG4MDMBDIxzFPlcOYm/QTg4dpa9k7aSVE/ybErzKEBqASKV9m/PDlcqpyVg0Z/+HmcPP2uPVdJazTu6Tes2WoDSusWN3Ky4/B8YAu0709m5p1AhQNG6dmHwzVI4br0mXwB1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IH/OFrly; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727338249;
-	bh=lxbGnKzNxAlEHkVmGibriHagBg2+KYdrG5h4MLCOzUQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IH/OFrly7KyNJM3izl402DU+OkutbiZ9hhj4w0KGD8xoILvUAudbQLfzOi2mBbOkd
-	 DDEgeh5pybfqoUqOsP93zJL0mYtVAR/Hg8lE7q0ExuNaOTyu0AKxiKGeAQktFGAYp4
-	 AdHhpkd0SLG0EdK4FuLVAoMC0O4Sd79pBYqpxUjAEXi0Z6dLD45jVzjHpNMdy0JPxV
-	 R6/VZ23aa5e8CB8sSf2UZfTa2u9/KM61KWkW8+OgRVtv1UClCvEF+lA6Ow8UCZyuqD
-	 bi6cLf9+qk73KKYEhB/bj0hNVCdP00FJhR2kjvpbhg8OvSRRiBWuXjilOXp9Ubm5JG
-	 E79ZM+zSMHeGQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	s=arc-20240116; t=1727338436; c=relaxed/simple;
+	bh=gtfhf8OezGsXsNL+7JC62abo2IXzA5iCeRDFTRqvKE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ni+WgRPECfpCo/4jFAL+GCfXVFC/TDMEhxxdQVHfyeQ/K8mSSXpBuRiPrSU68kPxEUxs51N8IRBxngLsRHz8QtzRFWQAagJYkT7OSRAs4hdv85P6GocNHfZ0SrYKQ42dkKb6GBDrdmcwIWMApgwmICDM2laUFna76d8M/1kgaD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Pi4Y0Ho0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1727338430;
+	bh=PEnf7XQ3pwhmzyYD2FyKOM1aDZEWGYfAC5GE1QdrxBI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Pi4Y0Ho0/8V7vhQBlVixJx3z186hIAbJPyANIVocU9e926ZdF8m0B4IHakCE00S50
+	 Zos9wa4N2MG+MIvhIpUH5T2PYvqqnUggt3HuCdidtItu4WN6CTTlhbdcjZeTyDQoP5
+	 ZFMbq2XiKLXMb816lBlQnlsvZPyxuw95ngdoxGsA3QCdZjbOzW1JkUeI9Gs2ppPcAe
+	 QjoGcxTsm/ssCXP1/RD5Szz7UN2paAzJXPZI6YbDIELccpYukgtysDKxwEZLs473jC
+	 sBQyCaB8k42hfo/LyBuvSxS+i0sBbn3In7TySuYh3vMrtqUlkBrmIoXxAicfMfRK5s
+	 T2Nhu0Ue9OZsA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 51FE517E1091;
-	Thu, 26 Sep 2024 10:10:49 +0200 (CEST)
-Message-ID: <16833ec2-d6bf-4d7f-9385-1430277fc047@collabora.com>
-Date: Thu, 26 Sep 2024 10:10:49 +0200
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XDmZj5FsQz4xKl;
+	Thu, 26 Sep 2024 18:13:49 +1000 (AEST)
+Date: Thu, 26 Sep 2024 18:13:48 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Matthew Maurer
+ <mmaurer@google.com>, Sami Tolvanen <samitolvanen@google.com>, Gatlin
+ Newhouse <gatlin.newhouse@gmail.com>, Kees Cook <kees@kernel.org>, "Peter
+ Zijlstra (Intel)" <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Andrey Konovalov <andreyknvl@gmail.com>, Marco Elver <elver@google.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of Linus' tree
+Message-ID: <20240926181348.3965b040@canb.auug.org.au>
+In-Reply-To: <CAH5fLgjRVZA3Gmb7Ogs+Y65T38EpNVeVEqmg93ZB4dn0Y7J3aA@mail.gmail.com>
+References: <20240926100434.45d58861@canb.auug.org.au>
+	<CAH5fLgjRVZA3Gmb7Ogs+Y65T38EpNVeVEqmg93ZB4dn0Y7J3aA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/11] drm/bridge: it6505: fix aux operation for edid
- read
-To: Hermes Wu <Hermes.Wu@ite.com.tw>
-Cc: Kenneth Hung <Kenneth.hung@ite.com.tw>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Allen Chen <allen.chen@ite.com.tw>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240926074755.22176-1-Hermes.Wu@ite.com.tw>
- <20240926074755.22176-3-Hermes.Wu@ite.com.tw>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240926074755.22176-3-Hermes.Wu@ite.com.tw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/pN1NbLx4JOEoDEryvbIQbMg";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Il 26/09/24 09:47, Hermes Wu ha scritto:
-> From: Hermes Wu <Hermes.wu@ite.com.tw>
-> 
-> The EDID read operation can reach the maximum size of the AUX FIFO buffer.
-> 
-> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
-> ---
->   drivers/gpu/drm/bridge/ite-it6505.c | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-> index 28a8043229d3..b451d3c2ac1d 100644
-> --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> @@ -1078,8 +1078,11 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
->   	int i, ret_size, ret = 0, request_size;
+--Sig_/pN1NbLx4JOEoDEryvbIQbMg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-int fifo_max_sz = (cmd == CMD_AUX_I2C_EDID_READ) ?
-		  AUX_FIFO_MAX_SIZE : 4;
+Hi Alice,
 
-which later becomes
+On Thu, 26 Sep 2024 09:36:56 +0200 Alice Ryhl <aliceryhl@google.com> wrote:
+>
+> Sorry about that! The fix is here:
+> https://lore.kernel.org/all/20240925141944.277936-1-ojeda@kernel.org/
 
-int fifo_max_sz = (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) ?
-		  AUX_FIFO_MAX_SIZE : 4;
-
-otherwise you can do it "the long way"...
-
-if (cmd == .....)
-	fifo_max_sz = AUX_FIFO_MAX_SIZE;
-else
-	fifo_max_sz = 4;
-
-The point is, cmd won't change during iterations, so it's useless to put that if
-branch inside of that loop below.
-
->   
->   	mutex_lock(&it6505->aux_lock);
-> -	for (i = 0; i < size; i += 4) {
-> -		request_size = min((int)size - i, 4);
-
-		request_size = min_t(int, (int)size - i, fifo_max_sz);
-
-P.S.: Also, I'd consider changing this to a do-while instead...
-
+Thanks.  I will replace the reverts in my fixes tree with that until it
+is applied to Linus' tree.
+--=20
 Cheers,
-Angelo
+Stephen Rothwell
 
-> +	for (i = 0; i < size; ) {
-> +		if (cmd == CMD_AUX_I2C_EDID_READ)
-> +			request_size = min_t(int, (int)size - i, AUX_FIFO_MAX_SIZE);
-> +		else
-> +			request_size = min_t(int, (int)size - i, 4);
->   		ret_size = it6505_aux_operation(it6505, cmd, address + i,
->   						buffer + i, request_size,
->   						reply);
-> @@ -1088,6 +1091,7 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
->   			goto aux_op_err;
->   		}
->   
-> +		i += request_size;
->   		ret += ret_size;
->   	}
->   
+--Sig_/pN1NbLx4JOEoDEryvbIQbMg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb1F7wACgkQAVBC80lX
+0Gz6Tgf/WBZ7AJXYAwSd8rfWq7qev4kEyLz4CoY2Xh/ii7xWucmrUKVjDDJshsVT
+WKbxLxqY1GpWbwD7h4MIMlyVy1lgmFPoyuvxEU6py+TsWL4cW0BKYY27LDgDMuTe
+7Vj7elkvYhnRtO3qSzqO5uwOL1mLxUwkPo5697UTj7GNq1ZKBCKux9CuHanAtOir
+FOHWzPev9P8lNRX9eHp/Jl+crPPGffhBRgHUL49E6dXYECkoqBCExZc2+oSM+sIP
+JMe28A/Cyy3i8DR5ghc19rkfAC8Owbi50NLj/YAEa8FSWu+9JYMZnNOB1uFhPEFK
+8AfQK68ozOVVPnNYdgF6J7Bvrp4alg==
+=Xx9a
+-----END PGP SIGNATURE-----
 
+--Sig_/pN1NbLx4JOEoDEryvbIQbMg--
 
