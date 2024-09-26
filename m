@@ -1,184 +1,83 @@
-Return-Path: <linux-kernel+bounces-341109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7629987B67
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:55:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8948987B68
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 672C11F25A27
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:55:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD4F1F24BA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC611B0130;
-	Thu, 26 Sep 2024 22:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65981AFB3C;
+	Thu, 26 Sep 2024 22:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="XEdH2ijv"
-Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C1JDtdoH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73021AFB28;
-	Thu, 26 Sep 2024 22:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CA218CBFB
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 22:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727391287; cv=none; b=QAJUdy/DOB0AiXOlK2MsQpel66dsNT57jqPI+dAYSjr1hkjlj3tJ7frhhrb5V54ub8lwZsM6HAPdL6NvWdh9Opkvv0feJ4JkCcZOSv76V5kVWGT/a1bLlOa63OtvT8JaBBMAlf7I5CXY4TvSPZQ/lZ4ZKnjIMlFmIPdSxDrustk=
+	t=1727391311; cv=none; b=RKO1h5D+hNXwUnOK9kkcj3MbjuGYdGoKNJAEdSu6n0tv2jsZX+jf3aOZkA7fx/AWtRzBguPzgeaQNZwXXdvUVr56kX7eGo1Ir5FjsslEFl/Zcd4AYJFFji0hnbVTv4SqV9pEXwOt6aDMZpfCOG/bv7TC4hxGFJOn0ByPkJ1ARfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727391287; c=relaxed/simple;
-	bh=kbf1Hx2X9g0pcS4tCElPoL2MRBJu6qAAlywYMNvf7FM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rWw/XK8Kf18rS2ORC9BNGyRy1WVont8trHCKIRtHjTE/WycKfDQ99qYqKoIqL0+8jQ/9aeZe1eWT7GHPw7EzvRDJloR0X3xn/QJDqihRI0bOv2VkMKSYLb96XHRLp4h5dAxk2edTjU01kHelRGx6jGhBS7GF8wAqZZvuZ0oHupQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=XEdH2ijv; arc=none smtp.client-ip=185.226.149.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
-	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1stxNR-0093sf-SH; Fri, 27 Sep 2024 00:54:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
-	Cc:To:From:Subject:MIME-Version:Date:Message-ID;
-	bh=gGA/yVdCAgObbnRJuDAOi7HXx6TBon3dkl4vpZ3i2Ug=; b=XEdH2ijv9mbK07E12Fu8xI8ebG
-	ftG8UGjOFGpmfzw/hhy+zt4BnnPAcpF9svYZKlTZO3moG9LMrwcde3AEW5N0FxxwHBKAnGM1+XdlS
-	uSQBA/jTwsm4/kchg7Ijlp91U7nzpiTYKPqzoKKSSMthi4qIVSb8nBv0Bwb61OQTnAij2Ag5EUpw0
-	Q6rcUzccl2BmK3V2lwo3vEtnpNw0VsaZOOy8x56Bw+68tXWEaPBpXw7qZquWsmIVqVzlbhhRcqdPs
-	Ynu4rtdHqqOc/YOYJVBHIibejnP7jbha738N1bczrdNy6wyACHszseNZ7vpHmoIAhnDbdU8xAEced
-	u91RpQqg==;
-Received: from [10.9.9.73] (helo=submission02.runbox)
-	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1stxNM-00083Q-49; Fri, 27 Sep 2024 00:54:20 +0200
-Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1stxN8-00CsW5-KT; Fri, 27 Sep 2024 00:54:06 +0200
-Message-ID: <0d4edea2-f989-484f-88bc-d8fb6acd7572@rbox.co>
-Date: Fri, 27 Sep 2024 00:54:04 +0200
+	s=arc-20240116; t=1727391311; c=relaxed/simple;
+	bh=WMXPRZzo59CP0UpkEWojVNgiU2Xg9xr9CCQsjpjxczE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uoorANFOvffjhqdhXzF1eoNsWlYfj4pQ/nmA1YuFtkyJYh9an+LtgBOaEJq7Dn02PgLrULoBwQLdwc1Wl15sHZyhm9bYFQMriyKpSIVIdCAkTHeZhv/2oWl0mUiFnsqqlUTsv2UXy/gmCqi3ZNRI2buxEVIYBvQ+ePDBBcQ5f6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C1JDtdoH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71716C4CEC5;
+	Thu, 26 Sep 2024 22:55:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727391310;
+	bh=WMXPRZzo59CP0UpkEWojVNgiU2Xg9xr9CCQsjpjxczE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C1JDtdoHssWjzc/IxtddiCj4WUxV+bS/LgqfFENi3s4N+8L2/wPpAqxan/9r52HeA
+	 KmMLtDwQXdKnDxxcRatfRnocsnnIXnNVn02jzPAXv4p7g1J9TndqZzcQEpwY7Z8zUu
+	 wkKSOyxjirBDpmO+ndzZVgx51YVSVCtbSjF0vaEwaLxrQRpWKUzI8dCykZOmFzhKsO
+	 xLCCQLNxmvAC0hzbrc0RZAGezlg04G06C6ExP99qXR64GSP+8PxIxYwGTv6njIjJqg
+	 ZnTYoe7GiLlu+6Lc7rcKjVTq5sc2LL8sieYOTTaWhgaML0Y/GXNXa7eFhnT47X6UDX
+	 b4EjlT5+33IlA==
+Date: Thu, 26 Sep 2024 12:55:09 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org, sched-ext@meta.com
+Subject: Re: [PATCH 5/5] sched_ext: Use shorter slice while bypassing
+Message-ID: <ZvXmTaOjlgGYacpn@slm.duckdns.org>
+References: <20240925000622.1972325-1-tj@kernel.org>
+ <20240925000622.1972325-6-tj@kernel.org>
+ <20240926220721.GG26346@maniforge>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2 0/6] selftests/bpf: Various sockmap-related
- fixes
-From: Michal Luczaj <mhal@rbox.co>
-To: Jakub Sitnicki <jakub@cloudflare.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co>
- <87y159yi5m.fsf@cloudflare.com>
- <249a7dc3-34e2-4579-aae7-8b38b145e4bb@rbox.co>
- <87ttfxy28s.fsf@cloudflare.com>
- <42939687-20f9-4a45-b7c2-342a0e11a014@rbox.co>
- <877cccqnvj.fsf@cloudflare.com>
- <e78254c5-8f2f-4dc5-bf81-401caefabdd1@rbox.co>
-Content-Language: pl-PL, en-GB
-In-Reply-To: <e78254c5-8f2f-4dc5-bf81-401caefabdd1@rbox.co>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926220721.GG26346@maniforge>
 
-On 9/24/24 12:25, Michal Luczaj wrote:
-> On 8/19/24 22:05, Jakub Sitnicki wrote:
->> On Wed, Aug 14, 2024 at 06:14 PM +02, Michal Luczaj wrote:
->>> On 8/6/24 19:45, Jakub Sitnicki wrote:
->>>> On Tue, Aug 06, 2024 at 07:18 PM +02, Michal Luczaj wrote:
->>>>> Great, thanks for the review. With this completed, I guess we can unwind
->>>>> the (mail) stack to [1]. Is that ingress-to-local et al. something you
->>>>> wanted to take care of yourself or can I give it a try?
->>>>> [1] https://lore.kernel.org/netdev/87msmqn9ws.fsf@cloudflare.com/
->>>>
->>>> I haven't stated any work on. You're welcome to tackle that.
->>>>
->>>> All I have is a toy test that I've used to generate the redirect matrix.
->>>> Perhaps it can serve as inspiration:
->>>>
->>>> https://github.com/jsitnicki/sockmap-redir-matrix
->>>
->>> All right, please let me know if this is more or less what you meant and
->>> I'll post the whole series for a review (+patch to purge sockmap_listen of
->>> redir tests, fix misnomers). [...]
->>
->> Gave it a look as promised. It makes sense to me as well to put these
->> tests in a new module. There will be some overlap with sockmap_listen,
->> which has diverged from its inital scope, but we can dedup that later.
->>
->> One thought that I had is that it could make sense to test the not
->> supported redirect combos (and expect an error). Sometimes folks make
->> changes and enable some parts of the API by accient.
-> 
-> All right, so I did what sockmap_listen does: check
-> test_sockmap_listen.c:verdict_map[SK_PASS] to see if the redirect took
-> place for a given combo. And that works well... except for skb/msg to
-> ingress af_vsock. Even though this is unsupported and no redirect
-> actually happens, verdict appears to be SK_PASS. Is this correct?
+Hello,
 
-Here's a follow up: my guess is that some checks are missing. I'm not sure
-if it's the best approach, but this fixes things for me:
+On Thu, Sep 26, 2024 at 05:07:21PM -0500, David Vernet wrote:
+...
+> My vote would be to just update SCX_SLICE_DFL to be 5ms, but this is fine as
+> well if you'd prefer to leave the default slice as something that observably
+> works well for throughput in fair schedulers.
 
-diff --git a/include/net/sock.h b/include/net/sock.h
-index c58ca8dd561b..c87295f3476d 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -2715,6 +2715,11 @@ static inline bool sk_is_stream_unix(const struct sock *sk)
- 	return sk->sk_family == AF_UNIX && sk->sk_type == SOCK_STREAM;
- }
- 
-+static inline bool sk_is_vsock(const struct sock *sk)
-+{
-+	return sk->sk_family == AF_VSOCK;
-+}
-+
- /**
-  * sk_eat_skb - Release a skb if it is no longer needed
-  * @sk: socket to eat this skb from
-diff --git a/net/core/sock_map.c b/net/core/sock_map.c
-index 242c91a6e3d3..07d6aa4e39ef 100644
---- a/net/core/sock_map.c
-+++ b/net/core/sock_map.c
-@@ -647,6 +647,8 @@ BPF_CALL_4(bpf_sk_redirect_map, struct sk_buff *, skb,
- 	sk = __sock_map_lookup_elem(map, key);
- 	if (unlikely(!sk || !sock_map_redirect_allowed(sk)))
- 		return SK_DROP;
-+	if ((flags & BPF_F_INGRESS) && sk_is_vsock(sk))
-+		return SK_DROP;
- 
- 	skb_bpf_set_redir(skb, sk, flags & BPF_F_INGRESS);
- 	return SK_PASS;
-@@ -675,6 +677,8 @@ BPF_CALL_4(bpf_msg_redirect_map, struct sk_msg *, msg,
- 		return SK_DROP;
- 	if (!(flags & BPF_F_INGRESS) && !sk_is_tcp(sk))
- 		return SK_DROP;
-+	if (sk_is_vsock(sk))
-+		return SK_DROP;
- 
- 	msg->flags = flags;
- 	msg->sk_redir = sk;
-@@ -1249,6 +1253,8 @@ BPF_CALL_4(bpf_sk_redirect_hash, struct sk_buff *, skb,
- 	sk = __sock_hash_lookup_elem(map, key);
- 	if (unlikely(!sk || !sock_map_redirect_allowed(sk)))
- 		return SK_DROP;
-+	if ((flags & BPF_F_INGRESS) && sk_is_vsock(sk))
-+		return SK_DROP;
- 
- 	skb_bpf_set_redir(skb, sk, flags & BPF_F_INGRESS);
- 	return SK_PASS;
-@@ -1277,6 +1283,8 @@ BPF_CALL_4(bpf_msg_redirect_hash, struct sk_msg *, msg,
- 		return SK_DROP;
- 	if (!(flags & BPF_F_INGRESS) && !sk_is_tcp(sk))
- 		return SK_DROP;
-+	if (sk_is_vsock(sk))
-+		return SK_DROP;
- 
- 	msg->flags = flags;
- 	msg->sk_redir = sk;
+20ms originally came from experimenting with simple FIFO scheduling on web
+server workloads. Even with a scheduling policy as simple as FIFO, if CPUs
+are not left idle and the scheduler doesn't induce unnecessary context
+switches, many workloads do reasonably well. So, 20ms is the long-ish slice
+which doesn't trigger involuntary context switches too much. We can shorten
+it but it will have downstream effects as multiple scheudlers still make
+some use of the default slice duration. Unless there are strong reasons to
+change, it'd probably be better to leave it as-is.
 
+Thanks.
+
+-- 
+tejun
 
