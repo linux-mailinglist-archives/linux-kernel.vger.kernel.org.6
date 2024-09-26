@@ -1,123 +1,137 @@
-Return-Path: <linux-kernel+bounces-340558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDAB987538
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:12:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1090798753C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9402CB28C79
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:12:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBEE22885C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D816F13698F;
-	Thu, 26 Sep 2024 14:12:19 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3CE136351;
+	Thu, 26 Sep 2024 14:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="JtbDKFIQ"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6FD26296;
-	Thu, 26 Sep 2024 14:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7B31C687;
+	Thu, 26 Sep 2024 14:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727359939; cv=none; b=leHNvu8m8oiveDcEAyw7zks2nAEdgaSmZGy4kkuRZzRzqL2R8Ej/6dxkWK5QqAkGDlphNCiArME55pSXANjdtrY8/5SCRMLRpCfIOwqki0m9Ck6weqAboQUkNbfFf9Dkg5ZePe+gFxx8a+1G3CE4utit6LI0YfcRUcp0rgppBhg=
+	t=1727359988; cv=none; b=glRT82g6VDTZTuAm2lkf3tlqLNqzSR7HkCQmmDlr6WT038iDhWmJwJoITs8W6pxr9e9phERfTZclZRy86knfDmXsuCnKBstUmqLwq35tUjx0l6HzHEKEy+F1aZzkFeOwo8ZdrBf7xBtpyhxztdfnPld5AvHmdlPZg2tY/Wg1iic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727359939; c=relaxed/simple;
-	bh=2nhtvdFj51Zs02wrpcBijb6ad+R6L05k2rianj2S1tM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YUXKOLb4yyavIsad0nqL8GqPjKpJo8wMjUpY3esvOOP7gmCocXqK2Cxc9xogz/UCLNK8hh65PC9N1qiI/pkEtSxfejqFXsdZWxNke+zpDx6Tffl6eUikKfsqJYBOqkcc9jQJiTDGc3LJgD5FUDaceLEwcCbMDxpFh6RMXjOaEtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: 7Udm/fb4SwGMvc3IHD6Q9A==
-X-CSE-MsgGUID: NcAND5wTQ5uiXWDKVqXEDQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26595452"
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="26595452"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 07:12:09 -0700
-X-CSE-ConnectionGUID: iV47HJ+RRnSx71Rt6yhgMg==
-X-CSE-MsgGUID: vQHYOvx/TQmvpv1A/Llysg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="76941762"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 07:12:06 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1stpDu-0000000DDeC-0hey;
-	Thu, 26 Sep 2024 17:12:02 +0300
-Date: Thu, 26 Sep 2024 17:12:01 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 2/3] Documentation: ABI: added filter mode doc in
- sysfs-bus-iio
-Message-ID: <ZvVrsXrm8XBYGeRn@smile.fi.intel.com>
-References: <20240926135418.8342-1-ramona.nechita@analog.com>
- <20240926135418.8342-3-ramona.nechita@analog.com>
+	s=arc-20240116; t=1727359988; c=relaxed/simple;
+	bh=dNtQDEMIXSeoVjO6VaJGbMN68UxgpHk7Y8wk54MuGU0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uZINhfYNlvW1mJkObs1t7NgOJGOxVM7tKs5UqEeOAWvt3UVlOvHmrhFFySjAEFqlpQxHH31wi23xwgIenkkz9J6AdNxZ6WPSuJZJc3MkEu+P/m1KyQ2HO0peL46ZDCRl7VDg9bgU6KcRS1gSTXOk9iRKBWkdC2ub2ejsJyAi8Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=JtbDKFIQ; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id D737A1FA5E;
+	Thu, 26 Sep 2024 16:12:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1727359974;
+	bh=WppZHrQT1Rzii/cRjg1/sys9dUOQvw27vjIghFpwOKo=; h=From:To:Subject;
+	b=JtbDKFIQ7A+dY2lmKEEZ+uVqqrJ6iY2eL7pXVIWk0kGf9TFuk1wPYbaxvleZLvjPo
+	 n8fYAj+o0nNu1sVyNStPHZ1XkVev1N7eqk6TwLmE9fRfyFVwFVhFBs16NtBhtkYDL6
+	 /sT6U1ZYdjjlP51d2c0XOKGneqsqYjD/I9VbdP0VoVNPnMXB9OkgYFXIg19/oz59vH
+	 bjE+hhey4jihlgM+7NRWvJ9P6WfDR8D7L5tAACr+g2OKLD20DQ9J5jrA3NZZcn60kR
+	 rFCTFqnAs+4EVp6i8iCDoEAmmCDCmNeeXo+ArwqraW1F4OJrNv+6bIysL4xWoPvzIM
+	 LMRmytBMkWBlA==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v1] drm/bridge: tc358768: Fix DSI command tx
+Date: Thu, 26 Sep 2024 16:12:46 +0200
+Message-Id: <20240926141246.48282-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926135418.8342-3-ramona.nechita@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 26, 2024 at 04:53:56PM +0300, Ramona Alexandra Nechita wrote:
-> The filter mode / filter type property is used for ad4130
-> and ad7779 drivers, therefore the ABI doc file for ad4130
-> was removed, merging both of them in the sysfs-bus-iio.
-> Since one of the drivers is available from 6.1, the version
-> has been set to 6.1 for these attributes.
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-...
+Wait for the command transmission to be completed in the DSI transfer
+function polling for the dc_start bit to go back to idle state after the
+transmission is started.
 
-> +Description:
-> +		Reading returns a list with the possible filter modes. Options
-> +		for the attribute:
-> +			* "sinc3"	- The digital sinc3 filter. Moderate 1st conversion time.
-> +		    Good noise performance.
-> +			* "sinc4"       - Sinc 4. Excellent noise performance. Long
-> +			1st conversion time.
-> +			* "sinc5"	- The digital sinc5 filter. Excellent noise performance
-> +			* "sinc4+sinc1" - Sinc4 + averaging by 8. Low 1st conversion
-> +		    time.
-> +			* "sinc3+rej60" - Sinc3 + 60Hz rejection.
-> +			* "sinc3+sinc1" - Sinc3 + averaging by 8. Low 1st conversion
-> +		    time.
-> +			* "sinc3+pf1"   - Sinc3 + device specific Post Filter 1.
-> +			* "sinc3+pf2"   - Sinc3 + device specific Post Filter 2.
-> +			* "sinc3+pf3"   - Sinc3 + device specific Post Filter 3.
-> +			* "sinc3+pf4"   - Sinc3 + device specific Post Filter 4.
+This is documented in the datasheet and failures to do so lead to
+commands corruption.
 
-I still think that a compromise to leave the existing values as an example in
-the existing bindings is a good to have.
+Fixes: ff1ca6397b1d ("drm/bridge: Add tc358768 driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+---
+ drivers/gpu/drm/bridge/tc358768.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-But if Jonathan thinks otherwise, I'm not against it.
-For the rest
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-
+diff --git a/drivers/gpu/drm/bridge/tc358768.c b/drivers/gpu/drm/bridge/tc358768.c
+index 0e8813278a2f..bb1750a3dab0 100644
+--- a/drivers/gpu/drm/bridge/tc358768.c
++++ b/drivers/gpu/drm/bridge/tc358768.c
+@@ -125,6 +125,9 @@
+ #define TC358768_DSI_CONFW_MODE_CLR	(6 << 29)
+ #define TC358768_DSI_CONFW_ADDR_DSI_CONTROL	(0x3 << 24)
+ 
++/* TC358768_DSICMD_TX (0x0600) register */
++#define TC358768_DSI_CMDTX_DC_START	BIT(0)
++
+ static const char * const tc358768_supplies[] = {
+ 	"vddc", "vddmipi", "vddio"
+ };
+@@ -229,6 +232,21 @@ static void tc358768_update_bits(struct tc358768_priv *priv, u32 reg, u32 mask,
+ 		tc358768_write(priv, reg, tmp);
+ }
+ 
++static void tc358768_dsicmd_tx(struct tc358768_priv *priv)
++{
++	u32 val;
++
++	/* start transfer */
++	tc358768_write(priv, TC358768_DSICMD_TX, TC358768_DSI_CMDTX_DC_START);
++	if (priv->error)
++		return;
++
++	/* wait transfer completion */
++	priv->error = regmap_read_poll_timeout(priv->regmap, TC358768_DSICMD_TX, val,
++					       (val & TC358768_DSI_CMDTX_DC_START) == 0,
++					       100, 100000);
++}
++
+ static int tc358768_sw_reset(struct tc358768_priv *priv)
+ {
+ 	/* Assert Reset */
+@@ -516,8 +534,7 @@ static ssize_t tc358768_dsi_host_transfer(struct mipi_dsi_host *host,
+ 		}
+ 	}
+ 
+-	/* start transfer */
+-	tc358768_write(priv, TC358768_DSICMD_TX, 1);
++	tc358768_dsicmd_tx(priv);
+ 
+ 	ret = tc358768_clear_error(priv);
+ 	if (ret)
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.39.5
 
 
