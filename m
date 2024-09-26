@@ -1,153 +1,157 @@
-Return-Path: <linux-kernel+bounces-341013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E4E4987A38
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:52:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41CF6987A3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6280E28718D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:52:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE27528711F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD70183CB4;
-	Thu, 26 Sep 2024 20:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5743B183CCD;
+	Thu, 26 Sep 2024 20:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="Wa3BLzB4"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=lunnova.dev header.i=@lunnova.dev header.b="KMpCJPLv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pLnniWVU"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C2C17A938;
-	Thu, 26 Sep 2024 20:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B8E282FA;
+	Thu, 26 Sep 2024 20:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727383956; cv=none; b=Ge+Zq+Z6H4ASVBAFcOzO+SujscXM+gWHchc9GYvivCKct7dOJW8pvB9BuTyAHvl5MH9KbS8yQAoqcckTafV0evsctAaDWk6AwrMSDJMPsSLcGlPdETQkhg0WiEw9EyVcLNaSQBVzBrVh+cWwSrYI6YXg1cx4o2QGnmIkwf4V67A=
+	t=1727384209; cv=none; b=YgZbv3j7D7w7G5J4xRzV3IqLA8SC6axgVjGYzy8zApULfvkRDUj/F1OS400avCOzzkgjtF0MKA+JYd8RzsRFFsMB23qKAgx0jMOTCQyM4dIENTI1fwMU97aGFfR85eob8yqErWEEacJHEk6JKHd5vL6MtSeNy7vjHVF62c7PAoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727383956; c=relaxed/simple;
-	bh=2quMK0yMCIuSgqe96zZ3SWNSss/+1orOAKmEa2WwBUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JLH47eMh7X2jCLT8aEiCab8eCCTBokqe5pxwqyiOqqoZa120cIAXlW5OhjtWkX/QnDf2NlahufIWks/xK1KtBrusgVl2WTcVv/8Xu1arKj8cL0L9iH/nDoJNOpF5Sv/Q1voZVTbVjCtRFCZ1x79mLXmBjDXmDMouT3amnL2mjuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=Wa3BLzB4; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 092E21C00B3; Thu, 26 Sep 2024 22:52:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1727383951;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jMhMO4FPAfkTMbs7d+Q6qQGCH4J/LL74pLoTL/dsHXk=;
-	b=Wa3BLzB4o4dVII2QzveLiXz4zSP/g0dP+29Hv03JOb431wnwMVoDjsURy3KZ5KsFw1+aVA
-	JWmPiUEvmqGpuOf03pbtWRsaHs79bmIa0durkcAm4+rIGW6g+POd4Bybq79Q42VScfo6SU
-	gnu6sR707pE3Qw0m33Mh4joEgIeLsCs=
-Date: Thu, 26 Sep 2024 22:52:29 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux@leemhuis.info,
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Bricked Thinkpad x220 with 6.12-rc0
-Message-ID: <ZvXJjU7gpAchSqiy@amd.ucw.cz>
-References: <ZvW9e8qBiAT5e0Ke@amd.ucw.cz>
- <CAHk-=whj9dbJD0mT6VUW7i16Les5waxWBb1o_XsDKrtQ9iBO1g@mail.gmail.com>
+	s=arc-20240116; t=1727384209; c=relaxed/simple;
+	bh=nCTe6xxgFafPRrhXtLLOil5UTMuKeSLdkKeeEkFsivc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=BvF53l0Vj8RpR1cHCTtcOYFnLTUI3eJQTGtyecHzgMJoAJX5SpAwOaKyVR4tNKd/2HDOusOR0aNutaoBmG0Hb+CW3XWYiIlHxFQidFUK1DEswz05XkAXF2V6RIgO5aLnPVkt7wfOOI/pGlgI8Hcd94Vm1x1HI1DCJ2UkrxoCInQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lunnova.dev; spf=pass smtp.mailfrom=lunnova.dev; dkim=pass (2048-bit key) header.d=lunnova.dev header.i=@lunnova.dev header.b=KMpCJPLv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pLnniWVU; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lunnova.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunnova.dev
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9467013801FA;
+	Thu, 26 Sep 2024 16:56:45 -0400 (EDT)
+Received: from phl-imap-07 ([10.202.2.97])
+  by phl-compute-02.internal (MEProxy); Thu, 26 Sep 2024 16:56:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lunnova.dev; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1727384205;
+	 x=1727470605; bh=Jbyef7Ry4FiH3z6OqiBS5SR02boeDGnaYLC8FiS59Kk=; b=
+	KMpCJPLviVcs3IEWU832tsrpE9vWuXPgDa7iRuP05tN45SskaxIVYNApyL9JQko7
+	/V+hhLkuRFzlue2bOASheazAK6sAdAD0CG7bxMlAx3wLHNPfasALZOv+Xvffz9C4
+	7yQl5j3IkF46lHi9xKkPh6GetlGvsJaqTrnO/aWExnHKXPJsubrYGl5rAmu8cU7z
+	cZu1eD14Ao0yb38YFAG/6vxw3bel8MnkPVa/+2DRZlmt5meuv7JtY6XZJJ9OPHEB
+	q6Vz6qbkXJ+s8x/PtpcqsDs6w9n0dQN4GSWPDt1Aw5CnIhYVbNvR/APWLiqm87RA
+	ci+qMdnEw36BsV2cO1J3EA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727384205; x=
+	1727470605; bh=Jbyef7Ry4FiH3z6OqiBS5SR02boeDGnaYLC8FiS59Kk=; b=p
+	LnniWVUCVoY/31idWJMmTiEn1fNUFXyMyT+BUUtL1uczqJSYEEcdcarB8SK3O0/F
+	t4SU2GgH2ZLJYd3MDGqhLteZ5ret4/D1qAexsTyOPDEhcnTdREviEip5GN44WS/a
+	r5hA+EQFLrhrtDZ0tKze4WaoYObkk1VpK93XM+Ddbv9WYO4XY+ecf5RHt8NsiZak
+	sVd97Q2+P7b1suLbFRdPGyWiGOBnu66NQ+jwcrCPobrXd0L5nqWI2LPWpY0js3/Y
+	Wa0ojaohCGfnsfR+lQIKkYc8BRQWfkaRJjCEa8HmuZibjO+cI9y82JX1v8BpCOft
+	k8lQJfMtcUSeTLTN7ZhNw==
+X-ME-Sender: <xms:jcr1ZrUDD-9MtIG867VJq-zres9hbWu_NYuvp1-UJ1uvccXbc5To-A>
+    <xme:jcr1ZjlOi-8IGnNS4ycYjH1LE5VlBSP7eOGiF9Twq8aWTqEt4K-F9mgwe0qHiSbvH
+    k9mdOkPpEw9HgLYmiM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtjedgudehjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdfnuhhnrgcupfhovhgrfdcuoehlihhsthhssehluhhnnhhovhgrrd
+    guvghvqeenucggtffrrghtthgvrhhnpeejheffueeghffgueettddugeeffeejvddufefh
+    udejveeutdfhteeileeliefgkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehlihhsthhssehluhhnnhhovhgrrdguvghvpdhnsggprhgtphht
+    thhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopedttddutdejtdekvdesud
+    eifedrtghomhdprhgtphhtthhopeigihgrohhjihgrnhdrughusegrmhgurdgtohhmpdhr
+    tghpthhtohepghgruhhthhgrmhdrshhhvghnohihsegrmhgurdgtohhmpdhrtghpthhtoh
+    epphgvrhhrhidrhihurghnsegrmhgurdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgv
+    rhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqph
+    hmsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:jcr1Znbcg6gdTCH-ZeCCF8aPTZIq_4qlMY6AzT3vcKByNRtXdyx0qA>
+    <xmx:jcr1ZmVO4g363bLubcYvtXvY4Vu-Gnj66tqYbfMqt2HCne8f9-o8jQ>
+    <xmx:jcr1ZlnjKVM4LGhGjoTmbYv6_OaKlmFEcPJ734JWxdaU8VbG_pY5IA>
+    <xmx:jcr1ZjdfClB02-TUDxhLHG-CycyQRUUcxtwjoeQOMvnuAgNgIIyWWQ>
+    <xmx:jcr1ZouCsr8JIfPuTLOGKvUWk8FrUUQu81SF-pAzVoxQU-El86b0Fi_A>
+Feedback-ID: i41c648a4:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 4ADCBBA006E; Thu, 26 Sep 2024 16:56:45 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jb5XaZHlj7qzygoz"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whj9dbJD0mT6VUW7i16Les5waxWBb1o_XsDKrtQ9iBO1g@mail.gmail.com>
+Date: Thu, 26 Sep 2024 13:56:21 -0700
+From: "Luna Nova" <lists@lunnova.dev>
+To: "Gautham R.Shenoy" <gautham.shenoy@amd.com>
+Cc: perry.yuan@amd.com, Xiaojian.Du@amd.com, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, "David Wang" <00107082@163.com>
+Message-Id: <df99663b-23bd-43ac-b277-cd6700f16809@app.fastmail.com>
+In-Reply-To: <87v80jbjpj.fsf@BLR-5CG11610CF.amd.com>
+References: <20240730140111.4491-1-00107082@163.com>
+ <87zfpxsweb.fsf@BLR-5CG11610CF.amd.com>
+ <2f793cc8.a13d.19108df0a58.Coremail.00107082@163.com>
+ <87v80jbjpj.fsf@BLR-5CG11610CF.amd.com>
+Subject: Re: [Regression] 6.11.0-rc1: AMD CPU boot with error when CPPC feature
+ disabled by BIOS
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+Hi Gautham,
 
---jb5XaZHlj7qzygoz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm seeing the same message on a server board with an EPYC Rome 7K62 CPU.
+CPPC is set to enabled in the UEFI firmware settings.
 
-Hi!
+Kernel: 6.11.0 (6.11.0 #1-NixOS SMP PREEMPT_DYNAMIC Sun Sep 15 14:57:56 UTC 2024 x86_64 GNU/Linux)
+Board: Gigabyte MZ22-G20-00 Rev 1.0 (in a G292-Z20 Rev 100)
+UEFI Firwmare: R23_F01 (2021-09-06, latest available version at time of this message)
+AGESA PI Version 1.0.0.C.
 
-> > When I press power button, it starts producing some noise (hdd
-> > spinning up), but power light goes pulsating, not on, and I stare at
-> > black screen.
->=20
-> No beep?
+CONFIG_ACPI_CPPC_LIB=y
+CONFIG_X86_AMD_PSTATE=y
+CONFIG_X86_AMD_PSTATE_DEFAULT_MODE=3
+CONFIG_X86_AMD_PSTATE_UT=m
 
-No beep. And no beep when I tried booting with RAM removed.
+$ cat /proc/cmdline
+initrd=\EFI\nixos\z16gakzlwypxbjzm5y93x10cjmxjvial-initrd-linux-6.11-initrd.efi init=/nix/store/cqhw9x7w7dc3avwri4i2lk0mgc31arll-nixos-system-tsukiakari-nixos-24.11/init sysrq_always_enabled fsck.mode=force loglevel=4 audit=0 amd_pstate=guided amd_pstate.shared_mem=1 amdgpu.lockup_timeout=10000,10000,10000,10000
+$ sudo dmesg | grep pstate
+amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
+(Repeats for each core)
+amd_pstate: failed to register with return -19
+stage-1-init: [Thu Sep 26 20:04:53 UTC 2024] loading module amd_pstate_ut...
+amd_pstate_ut: 1    amd_pstate_ut_acpi_cpc_valid  success!
+amd_pstate_ut: 2    amd_pstate_ut_check_enabled   success!
+amd_pstate_ut: 3    amd_pstate_ut_check_perf      success!
+amd_pstate_ut: 4    amd_pstate_ut_check_freq      success!
 
-> > I removed everything, let it sit for a while, but behaviour was the
-> > same. I'm now letting machine "cool" with everything removed,
-> > but... It seems EC is very confused.
-> >
-> > Should I try removing CMOS battery?
->=20
-> It probably won't help. Last time I had something like that, it was
-> the EFI variables being messed up and messing up the boot as a result.
-> That's all in flash.
+It seems odd that amd_pstate fails to load but amd_pstate_ut reports success for all checks.
 
-EFI variables. Ouch. But those really should be later in the boot.
+> it appears that the CPPC version on your platform is v2 which does not
+> advertise the nominal_freq and the lowest_freq. In the absence of these,
+> it is not possible for the amd-pstate driver to infer the
+> min/max_freq. Which is why the driver bails at this later stage.
 
-> The CMOS battery these days tends to really just be for maintaining
-> the real-time clock.
->=20
-> But if it's easy to get at, it won't hurt to try either.
+> The way around it is to add a quirk for your BIOS as done in this commit
+> from Perry:
+> eb8b6c368202 ("cpufreq: amd-pstate: Add quirk for the pstate CPPC capabilities missing")
 
-I thought it was under RAM cover, but it is not.
+Perry's patch you referenced as an example above targets the same 7K62 CPU but requires one specific BIOS version.
+Should I submit a patch adding the version on this system to that quirk?
 
-> > Is there some magic combination I can hold during boot?
->=20
-> I don't see anything  about keys during power-on in
->=20
->   https://download.lenovo.com/ibmdl/pub/pc/pccbbs/mobiles_pdf/0a60739_04.=
-pdf
->=20
-> but you can try the usual suspects (hold ESC / Fn / etc during power-on).
->=20
-> But that lenovo pdf says
->  1. Make sure that every connector is connected tightly and correctly.
->  2. DIMM.
->  3. System board.
->=20
-> for your symptoms.
->=20
-> That said, my first suspicion would be a dead harddisk, just because
-> they happen and you hear noise (but it migth just be the disk getting
-> power on its own, and making noise even with a dead system board).
+I'm confused by the quirk code: it's called "AMD EPYC 7K62" but it matches by BIOS revision and doesn't check the CPU model.
+An earlier version of the quirk included `boot_cpu_data.x86 == 0x17 && boot_cpu_data.x86_model == 0x31` to check the model; it now uses the nominal frequencies for a 7K62 regardless of the CPU model if the BIOS revision matches.
 
-I suspect it is disk spinning up on its own. Confused bios and
-harddisk dying at the same time seems like a lot of coincidence. (And
-it dies before initializing RAM, normally disk is way after that).
-
-I have spinning rust which is easy to reach, plus SSD which is not. I
-removed HDD, and now only reaction on power button is that power LED
-starts blinking.
-
-Nothing else, no CPU fan, nothing. No beeps with removed
-RAMs. I'd expect BIOS to initialize RAM, and then to access EFI
-variables. AFAICT it does not get there. So either hardware died, or
-EC is very confused and fails to boot main CPU.
-
-Not sure how EC keeps its state (not from CMOS battery -- right?) so I
-guess I should leave it without power for several hours hoping it
-clears the fault...?
-
-Best regards (and thanks for help),
-								Pavel
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
-
---jb5XaZHlj7qzygoz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZvXJjQAKCRAw5/Bqldv6
-8vZfAJsHyENTc9pKYkhV0AMdn0b2pOtxoACgiy1airpdlLOe3b0cCOKdSKVbqs8=
-=E/Hs
------END PGP SIGNATURE-----
-
---jb5XaZHlj7qzygoz--
+Best,
+Luna
 
