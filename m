@@ -1,320 +1,138 @@
-Return-Path: <linux-kernel+bounces-340057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B47986E30
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC9D8986E32
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0DD1F24266
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:50:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DE3A1F24190
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30FD194141;
-	Thu, 26 Sep 2024 07:50:40 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB6D1990BB;
+	Thu, 26 Sep 2024 07:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAwNF9G3"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA7D19341E
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32161422D4;
+	Thu, 26 Sep 2024 07:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727337040; cv=none; b=j/3nLJmkD3u/vkKmGyLsqoYrtXCqldScR96uQWKVrVLql6ZDeg1eZclfjqmzjHn7Ihia7BgS5Zdvsa6WOVfh7f54xcZwGVftVUOq1J7WGlUlu5eHJC4XZ0j6ZUCUi1u8ijGJ/orefssdClsXmy/B9rstKMEMKcw+6nS2j2C4J8o=
+	t=1727337048; cv=none; b=GfoUwMWzrYx7YIEh3PzLcoVH1VpFiFpH5CaHLf02cnGL4skyNouVharzbpuYSbqa4k2H8nUsvdSNXIq++fYIcDLhEbXB6Q1kVJeYm3t9w0Su4D9tEnNlk6d0Uw6L5TESR1VwpDANA1SCkD2yQEUz6dXrMHOzQpbHeIONkCmfUzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727337040; c=relaxed/simple;
-	bh=Hi9Dm9bHtr/nU89VigzpFVOj84iRJ07qjg1yUVHkIVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZV9XsbOw9g272Hc2kxtbmgW7tweA4h6ET5H/PtRwLRvc0wRSbAbPxnejoTIyh2RoZiInRgOni9INp14nxXsaTzssbAwB07sWKF3ts9BMNCm7jo85uFrH2xUhSzauE67TkL11WRDJOSCAOa/Tjqa2jugKNQaefLHdp2/e7OrAwEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1stjGc-0001MC-VD; Thu, 26 Sep 2024 09:50:26 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1stjGb-001dUm-1u; Thu, 26 Sep 2024 09:50:25 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1stjGa-00D7UJ-32;
-	Thu, 26 Sep 2024 09:50:24 +0200
-Date: Thu, 26 Sep 2024 09:50:24 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Walle <mwalle@kernel.org>, devicetree@vger.kernel.org,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Mathieu Othacehe <m.othacehe@gmail.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	s=arc-20240116; t=1727337048; c=relaxed/simple;
+	bh=iZmqX7cYZa5BDpJwqyTtwvsYmacCypWtpX0oana+mck=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ouiI5ZPTEpIMHhKlEcAbGTvQhQUi8q147ow2KLLOi4zJnwJZMBAy6ZTG+AOeJ3cQZT5sCaypeDhE2Avl0lpwRRPfBFKZCqCGA8WN+TNy3oCbhY1ABgwiDizeYwz80ReD575n28gklnv2wMqqiSBGpTDfVR366PCo9PnnqpBqKfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAwNF9G3; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e09a276ec6so329639a91.0;
+        Thu, 26 Sep 2024 00:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727337045; x=1727941845; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K0qzff08z3q5a8E7EP1BIypHJUEty88aRUrntwACuH0=;
+        b=AAwNF9G3aI1YUHedmfRNaAV3uN031detsxO8p1kqqoCunozXMkaNlpMJ/89iILire7
+         kVzTIatlafl5hpLMKiqV8bkXpevJuMTuYcLy9Kp+6b60m4s9gAfsat+j7FZ2+2dOyKBO
+         Guu90Nr2M7p/6CgLq4AkxdNovfiviN93ycmWllkYyK1wykHKLqAh52g74Wp53r2A8Ue+
+         xXkh4D7+/cMpHyiY5DnXXxigh8d9yh3zyn5qdZObhg9krufgxcoX5AUqiidyT9bCUe5Y
+         ndVzxYCZ+2eXrmTp+y7YOHIZd3CEohp+bmTkPhEqO0Aw2Dt3DtBVKyCKUef2gWrPVIWY
+         xPyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727337045; x=1727941845;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K0qzff08z3q5a8E7EP1BIypHJUEty88aRUrntwACuH0=;
+        b=jaRACxUQMDLAHAjLztzSQvRN5RNup9w3Grkm7uDqsnLxZ15GzCcs5HKqVwDFefRXMh
+         bsHf5p/aBOm6NvZTRIcUCbC711SU5f88vHTr6YmNWVLQZjODTUhvrG/S83JcVZe+f2Ym
+         p8KvS/KvML8mEHIbUORBaS1NVU+1FptIl4dRxCOMxS7Ti9piWwvrb/efLzfEuY+//qug
+         aobG+umo6S4uxOlBTXEGVqkgm23jwBwKsJxitSLJSd5asJwDG4bOFLwhrfnn3TJ4QQzy
+         jhQm9t/Dj/XBiDUx4tXLqoA5IAwqEhkmqGjzOPqh6r6U1XJ6MENTyKKLV7Ier3cjpUfa
+         g9fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4uVxWYYa0ahdjNtRpvQigkskWONkDN8EJgKku9Tfg9uz1eryZw/fu47xhkeARIA/wcwT5F1Ic4LmSeHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmUFYx0vxNA8OTlMAz1QZ3sJjIMxpf1wY/S63jl3u9NWsoyubc
+	3it2TIhker49WRhiUJzYy+FXq5XMLMmri+YkYSRIGt1wvK0AkksS
+X-Google-Smtp-Source: AGHT+IHh02LZbLC1YokYpQ8+bTGsaA4JedI4hRFAoFSG4HVpWGLVoaOphOY2Epf+jOJQbqx18AzStw==
+X-Received: by 2002:a17:90b:205:b0:2e0:9168:2b43 with SMTP id 98e67ed59e1d1-2e091682d01mr2652063a91.16.1727337045019;
+        Thu, 26 Sep 2024 00:50:45 -0700 (PDT)
+Received: from fedora.. ([106.219.166.49])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1bb004sm2761784a91.19.2024.09.26.00.50.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 00:50:44 -0700 (PDT)
+From: Riyan Dhiman <riyandhiman14@gmail.com>
+To: clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Herburger <gregor.herburger@ew.tq-group.com>,
-	Petr Benes <petr.benes@ysoft.com>, linux-usb@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, imx@lists.linux.dev,
-	Shawn Guo <shawnguo@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 2/2] arm64: dts: imx: Add imx8mp-iota2-lumpy board
-Message-ID: <20240926075024.777bdooiqd5myv3v@pengutronix.de>
-References: <20240924103941.1729061-1-michal.vokac@ysoft.com>
- <20240924103941.1729061-3-michal.vokac@ysoft.com>
- <ZvLXenqG/++AR4We@lizhi-Precision-Tower-5810>
- <20240924173714.qxxkhn6wscze7q5n@pengutronix.de>
- <87980643-44b4-4df9-9eb7-1583b5074bdd@ysoft.com>
- <ZvQ5O553E0QFvced@lizhi-Precision-Tower-5810>
+	Riyan Dhiman <riyandhiman14@gmail.com>
+Subject: [PATCH] btrfs: remove redundant stop_loop variable in scrub_stripe()
+Date: Thu, 26 Sep 2024 13:20:34 +0530
+Message-ID: <20240926075034.39475-1-riyandhiman14@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZvQ5O553E0QFvced@lizhi-Precision-Tower-5810>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 24-09-25, Frank Li wrote:
-> On Wed, Sep 25, 2024 at 01:30:31PM +0200, Michal Vokáč wrote:
-> > On 24. 09. 24 19:37, Marco Felsch wrote:
-> > > Hi Frank,
-> > >
-> > > On 24-09-24, Frank Li wrote:
-> > > > On Tue, Sep 24, 2024 at 12:39:41PM +0200, Michal Vokáč wrote:
-> > > > > The IOTA2 Lumpy board is based on the i.MX8MPlus EVK.
-> > > > >
-> > > > > Basic features are:
-> > > > > - 4GB LPDDR4
-> > > > > - 64GB eMMC
-> > > > > - 2x 1GB Ethernet
-> > > > > - USB 3.0 Type-C dual role port, without power delivery
-> > > > > - USB 3.0 Type-A host port
-> > > > > - RGB LED - PWM driven
-> > > > > - speaker - PWM driven
-> > > > > - RTC with super capacitor backup
-> > > > >
-> > > > > Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
-> > > > > ---
-> > > > > v4:
-> > > > > - Moved the iomuxc node to the end of the file.
-> > > > > - Moved the bus-width and non-removeable properties below
-> > > > >    the pinctrl-* properties in &usdhc3 node.
-> > > > > - Moved the fsl,ext-reset-output below the pinctrl-* properties
-> > > > >    in &wdog1 node.
-> > > > > v3:
-> > > > > - Dropped pinctrl-names property from &usb_dwc3_1 node.
-> > > > > v2:
-> > > > > - Dropped unused property from pwm4 node.
-> > > > > - Sorted all nodes and properties using dt-format tool from Frank.
-> > > > >
-> > > > >   arch/arm64/boot/dts/freescale/Makefile        |   1 +
-> > > > >   .../boot/dts/freescale/imx8mp-iota2-lumpy.dts | 423 ++++++++++++++++++
-> > > >
-> > > > Suggest use https://github.com/lznuaa/dt-format
-> > > > sort node. any issue, let me know.
-> > >
-> > > Thanks for the link :) would be nice to have this script to be part of
-> > > the kernel.
-> 
-> It depend on how much people like and use it.
+The variable stop_loop was originally introduced in commit
+625f1c8dc66d7 (Btrfs: improve the loop of scrub_stripe). It was initialized
+to 0 in commit 3b080b2564287 (Btrfs: scrub raid56 stripes in the right way).
+However, in a later commit 18d30ab961497 (btrfs: scrub: use scrub_simple_mirror()
+to handle RAID56 data stripe scrub), the code that modified stop_loop was removed,
+making the variable redundant.
 
-I don't see any reason why the kernel shouldn't have such a script, it
-makes the life easier for all of us (incl. the dt-maintainers). By that
-I mean the idea of having such a script since I actually didn't looked
-into your code.
+Currently, stop_loop is only initialized with 0 and is never used or modified
+within the scrub_stripe() function. As a result, this patch removes the
+stop_loop variable to clean up the code and eliminate unnecessary redundancy.
 
-> >> The script follows the rules in [1] I'm just used to have
-> > > common properties like pinctrl-* in front of the device specific
-> > > properties e.g. "enable-active-high". But this rule is not part of [1]
-> > > so I can't blame the script.
-> 
-> I just write it. Not 100% align order-of-properties-in-device-node yet.
-> Some propertiy need special treated. Thank you provide the feedback.
-> 
-> I push change, enable-active-high and gpio will after regulator*.
+This change has no impact on functionality, as stop_loop was never utilized
+in any meaningful way in the final version of the code.
 
-:) Thank you!
+Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+---
+Compile tested only
 
-Regards,
-  Marco
+ fs/btrfs/scrub.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-> 
-> Frank
-> 
-> > >
-> > > Regards,
-> > >    Marco
-> > >
-> > > [1] https://docs.kernel.org/devicetree/bindings/dts-coding-style.html#order-of-properties-in-device-node
-> >
-> > Thank you for the review Frank & Marco.
-> > I quickly went through the file again and found another few properties
-> > that could be better ordered according to the kernel documentation [1].
-> >
-> > > > >   2 files changed, 424 insertions(+)
-> > > > >   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
-> > > > >
-> > > > > diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> > > > > index 9d3df8b218a2..aa26a50b7bb4 100644
-> > > > > --- a/arch/arm64/boot/dts/freescale/Makefile
-> > > > > +++ b/arch/arm64/boot/dts/freescale/Makefile
-> > > > > @@ -171,6 +171,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk2.dtb
-> > > > >   dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk3.dtb
-> > > > >   dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
-> > > > >   dtb-$(CONFIG_ARCH_MXC) += imx8mp-icore-mx8mp-edimm2.2.dtb
-> > > > > +dtb-$(CONFIG_ARCH_MXC) += imx8mp-iota2-lumpy.dtb
-> > > > >   dtb-$(CONFIG_ARCH_MXC) += imx8mp-msc-sm2s-ep1.dtb
-> > > > >   dtb-$(CONFIG_ARCH_MXC) += imx8mp-navqp.dtb
-> > > > >   dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk.dtb
-> > > > > diff --git a/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
-> > > > > new file mode 100644
-> > > > > index 000000000000..9eb58e818dc7
-> > > > > --- /dev/null
-> > > > > +++ b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
-> > > > > @@ -0,0 +1,423 @@
-> > > > > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> > > > > +/*
-> > > > > + * Copyright 2023 Y Soft
-> > > > > + */
-> > > > > +
-> > > > > +/dts-v1/;
-> > > > > +
-> > > > > +#include "imx8mp.dtsi"
-> > > > > +
-> > > > > +/ {
-> > > > > +	compatible = "ysoft,imx8mp-iota2-lumpy", "fsl,imx8mp";
-> > > > > +	model = "Y Soft i.MX8MPlus IOTA2 Lumpy board";
-> > > > > +
-> > > > > +	beeper {
-> > > > > +		compatible = "pwm-beeper";
-> > > > > +		pwms = <&pwm4 0 500000 0>;
-> > > > > +	};
-> > > > > +
-> > > > > +	chosen {
-> > > > > +		stdout-path = &uart2;
-> > > > > +	};
-> > > > > +
-> > > > > +	gpio_keys: gpio-keys {
-> > > > > +		compatible = "gpio-keys";
-> > > > > +		pinctrl-0 = <&pinctrl_gpio_keys>;
-> > > > > +		pinctrl-names = "default";
-> > > > > +
-> > > > > +		button-reset {
-> > > > > +			gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
-> > > > > +			label = "Factory RESET";
-> > > > > +			linux,code = <BTN_0>;
-> > > > > +		};
-> > > > > +	};
-> > > > > +
-> > > > > +	reg_usb_host: regulator-usb-host {
-> > > > > +		compatible = "regulator-fixed";
-> > > > > +		enable-active-high;
-> > > > > +		gpio = <&gpio1 14 GPIO_ACTIVE_HIGH>;
-> >
-> > The enable-active-high and gpio should go bellow regulator-*.
-> >
-> > > > > +		pinctrl-0 = <&pinctrl_usb_host_vbus>;
-> > > > > +		pinctrl-names = "default";
-> > > > > +		regulator-max-microvolt = <5000000>;
-> > > > > +		regulator-min-microvolt = <5000000>;
-> > > > > +		regulator-name = "usb-host";
-> > > > > +	};
-> > > > > +
-> > > > > +	memory@40000000 {
-> > > > > +		reg = <0x0 0x40000000 0 0x80000000>,
-> > > > > +		      <0x1 0x00000000 0 0x80000000>;
-> > > > > +		device_type = "memory";
-> > > > > +	};
-> > > > > +};
-> > > > > +
-> > > > > +&A53_0 {
-> > > > > +	cpu-supply = <&reg_arm>;
-> > > > > +};
-> > > > > +
-> > > > > +&A53_1 {
-> > > > > +	cpu-supply = <&reg_arm>;
-> > > > > +};
-> > > > > +
-> > > > > +&A53_2 {
-> > > > > +	cpu-supply = <&reg_arm>;
-> > > > > +};
-> > > > > +
-> > > > > +&A53_3 {
-> > > > > +	cpu-supply = <&reg_arm>;
-> > > > > +};
-> > > > > +
-> > > > > +&eqos {
-> > > > > +	phy-handle = <&ethphy0>;
-> > > > > +	phy-mode = "rgmii-id";
-> > > > > +	pinctrl-0 = <&pinctrl_eqos>;
-> > > > > +	pinctrl-names = "default";
-> > > > > +	status = "okay";
-> > > > > +
-> > > > > +	mdio {
-> > > > > +		compatible = "snps,dwmac-mdio";
-> > > > > +		#address-cells = <1>;
-> > > > > +		#size-cells = <0>;
-> > > > > +
-> > > > > +		ethphy0: ethernet-phy@0 {
-> > > > > +			reg = <0>;
-> > > > > +			interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
-> > > > > +			interrupt-parent = <&gpio3>;
-> > > > > +			micrel,led-mode = <0>;
-> >
-> > The micrel,* is a vendor specific property. It should go bellow the reset-*.
-> >
-> > > > > +			pinctrl-0 = <&pinctrl_ethphy0>;
-> > > > > +			pinctrl-names = "default";
-> > > > > +			reset-assert-us = <1000>;
-> > > > > +			reset-deassert-us = <1000>;
-> > > > > +			reset-gpios = <&gpio3 22 GPIO_ACTIVE_LOW>;
-> > > > > +		};
-> > > > > +	};
-> > > > > +};
-> > > > > +
-> > > > > +&fec {
-> > > > > +	fsl,magic-packet;
-> > > > > +	phy-handle = <&ethphy1>;
-> > > > > +	phy-mode = "rgmii-id";
-> > > > > +	pinctrl-0 = <&pinctrl_fec>;
-> > > > > +	pinctrl-names = "default";
-> > > > > +	status = "okay";
-> > > > > +
-> > > > > +	mdio {
-> > > > > +		#address-cells = <1>;
-> > > > > +		#size-cells = <0>;
-> > > > > +
-> > > > > +		ethphy1: ethernet-phy@0 {
-> > > > > +			reg = <0>;
-> > > > > +			interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
-> > > > > +			interrupt-parent = <&gpio3>;
-> > > > > +			micrel,led-mode = <0>;
-> >
-> > Same as above, micrel,* should go bellow common properties.
-> > I will send a v5 with these fixed.
-> >
-> > Michal
-> >
-> > > > > +			pinctrl-0 = <&pinctrl_ethphy1>;
-> > > > > +			pinctrl-names = "default";
-> > > > > +			reset-assert-us = <1000>;
-> > > > > +			reset-deassert-us = <1000>;
-> > > > > +			reset-gpios = <&gpio3 20 GPIO_ACTIVE_LOW>;
-> > > > > +		};
-> > > > > +	};
-> > > > > +};
-> > > > > +
-> 
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index 3a3427428074..43431065d981 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -2256,7 +2256,6 @@ static noinline_for_stack int scrub_stripe(struct scrub_ctx *sctx,
+ 	/* Offset inside the chunk */
+ 	u64 offset;
+ 	u64 stripe_logical;
+-	int stop_loop = 0;
+ 
+ 	/* Extent_path should be released by now. */
+ 	ASSERT(sctx->extent_path.nodes[0] == NULL);
+@@ -2370,14 +2369,8 @@ static noinline_for_stack int scrub_stripe(struct scrub_ctx *sctx,
+ 		logical += increment;
+ 		physical += BTRFS_STRIPE_LEN;
+ 		spin_lock(&sctx->stat_lock);
+-		if (stop_loop)
+-			sctx->stat.last_physical =
+-				map->stripes[stripe_index].physical + dev_stripe_len;
+-		else
+-			sctx->stat.last_physical = physical;
++		sctx->stat.last_physical = physical;
+ 		spin_unlock(&sctx->stat_lock);
+-		if (stop_loop)
+-			break;
+ 	}
+ out:
+ 	ret2 = flush_scrub_stripes(sctx);
+-- 
+2.46.1
+
 
