@@ -1,141 +1,189 @@
-Return-Path: <linux-kernel+bounces-340159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5463D986F3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:47:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B4C4986F34
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F246D1F21D4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:47:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAE912867A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13D11A7256;
-	Thu, 26 Sep 2024 08:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08491A7254;
+	Thu, 26 Sep 2024 08:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="W7qGOs/W"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lNTazN9P"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DD71A4F2B;
-	Thu, 26 Sep 2024 08:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A822214884C;
+	Thu, 26 Sep 2024 08:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727340461; cv=none; b=NIdNX8ImFgEKm7Qf8UUXevnE0t3d3aTCYy1qiFDn/Q43DhAb8OVDFbQUQMTkR1t5PS/s9rBdfdly0SRJOLECHDC9NaGbnZ37Nt7ntY6oiQrck3iH8KfVrh043spUVBsaz2Mx3SCgvdZTB0WZehYNnTJeJJuc1Iv+pP8onvw1Gos=
+	t=1727340445; cv=none; b=JL12vieBiFaU7qccMDAqjykP8D+BqOa42tgvl4WnFeA4twyI1UCKP2t56YvhrEnt44QBfeFBtH+ZoeGNALnhuhDLXq1b1kIcdfNuHpK2buA8LUJGBAKP9N0AUMH/iGhj5fkLWpKU63vBWH24vvmjZTZnMJPPmVP76TBFaJp4cFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727340461; c=relaxed/simple;
-	bh=Vvzgd1LgiFFFjFTb0+aUplSVjTmllj9XrlLOmFGWpvw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CgCiXHQFVa1+16IrGqmsspUYZKmMA6DPUbEJ896HP8rGkhASngCMaVROyr6LkBmyaIwfMrCZaImVxLm4xUTC61m+9QOdZK+i65P2oa8rfs8P6zQCxh6wLCAJjiXGXnYsnTkpdx1FZ+M99Opqugen3cHFcqquugll9pPTh++A9os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=W7qGOs/W; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727340457;
-	bh=Vvzgd1LgiFFFjFTb0+aUplSVjTmllj9XrlLOmFGWpvw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W7qGOs/WXTcXx3RVTvEB2eSz0bFlxfIYGcY9VZKLpS7wzZyyKhJEQKdhfCBCZWKv9
-	 9M5yQ2aIMD9mnlwpL3oETbnJqGqSCa7DWtGW9smRY1pQ9sA2H6SXCxDrGePgnGnV6B
-	 G7LV/i6hn/yhLeyBfU5SgJw4bZrVOAfBb/FVNK2qn08z9tV1PotXjmwBrJxNjvEv+O
-	 C0DoHfqKT8zEw7l+OIobUsRFyHZTP5RgvXDTRAmsqOnK8I+f4QN33YFAnmdJL8ykb+
-	 X8sROyY544rjCZ5yvcOvQdlCNze3jQuNlxypIAGUuOIi+k4iULFsbHZFUgYhmh4Qn/
-	 sPYjix2VxY4Vg==
-Received: from [192.168.50.250] (unknown [171.76.80.165])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 50E1317E1048;
-	Thu, 26 Sep 2024 10:47:34 +0200 (CEST)
-Message-ID: <9470f582-7873-42c6-b5a5-35f841e4f693@collabora.com>
-Date: Thu, 26 Sep 2024 14:17:04 +0530
+	s=arc-20240116; t=1727340445; c=relaxed/simple;
+	bh=U4bxZTwT2YaLl+cJuAaGnd5Xz6gw3YAeiyLLHefNmK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bt+FCcOliBX0ji2wqnq4gBgQI4bpkoZqRSAp6XQOFYgkgW4q/+eRoO5GXXx1UcerZWCj6MRMgBqR+twSZpTT7MpswnR5UhYH6yq7/SYfh9oij3rysADJyQsNu0B+EkZt0bjDUByMZDmNdCFsuWV0yrPaeWcnTOEnnBoW03sHoz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lNTazN9P; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0E8701C000F;
+	Thu, 26 Sep 2024 08:47:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727340435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hZ9Wisee95FqaPjfkdd5lfW+HMn3+ekkbZ+x5uP4V4E=;
+	b=lNTazN9P1SF3c5yc3oqWbAwmS4Vrtxmw84oD7vL/mJ+IN9lAFDW2RyOxgCfbVHDAfYjD+a
+	tSO9CXIhduKnVg20dNubp5tU3KTS0ISP+Kceeem6osuYCUdq7X8rWL0tUQI2+koHt//nBP
+	usHWfv2yqp+Tx9yL9KctHMk1KoC0gXipG9lbtIANK6/OOs47+jSS9RpHCoYcPb/HtSpwlo
+	MBOwNAlEEsC2UGQWWsJmRJLTgT1MaofX6IOnIaAxuqYsed2/Yc+6Gq8dwLPk97MIbhW7/l
+	HEtm9godSlOjhX9es9tLluZiGBAR+PGzOgqGnEOsL9m8Jvd4/zm4C7+Tg07UBA==
+Date: Thu, 26 Sep 2024 10:47:12 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
+ kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
+ Cochran <richardcochran@gmail.com>, Radu Pirea
+ <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
+ Gospodarek <andy@greyhouse.net>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, donald.hunter@gmail.com,
+ danieller@nvidia.com, ecree.xilinx@gmail.com, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+ Willem de Bruijn <willemb@google.com>, Shannon Nelson
+ <shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>
+Subject: Re: [PATCH net-next v17 13/14] net: ethtool: Add support for
+ tsconfig command to get/set hwtstamp config
+Message-ID: <20240926104712.6a55d263@kmaincent-XPS-13-7390>
+In-Reply-To: <20240715075926.7f3e368c@kernel.org>
+References: <20240709-feature_ptp_netnext-v17-0-b5317f50df2a@bootlin.com>
+ <20240709-feature_ptp_netnext-v17-13-b5317f50df2a@bootlin.com>
+ <20240715075926.7f3e368c@kernel.org>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs/gpu: ci: update flake tests requirements
-To: Maxime Ripard <mripard@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
- helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch,
- robdclark@gmail.com, guilherme.gallo@collabora.com,
- sergi.blanch.torne@collabora.com, deborah.brouwer@collabora.com,
- dmitry.baryshkov@linaro.org, rodrigo.vivi@intel.com,
- linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-rockchip@lists.infradead.org, amd-gfx@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240926070653.1773597-1-vignesh.raman@collabora.com>
- <20240926-athletic-gregarious-markhor-cc78ac@houat>
-Content-Language: en-US
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <20240926-athletic-gregarious-markhor-cc78ac@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Hi Maxime,
+Hello Jakub,=20
 
-On 26/09/24 12:56, Maxime Ripard wrote:
-> On Thu, Sep 26, 2024 at 12:36:49PM GMT, Vignesh Raman wrote:
->> Update the documentation to require linking to a relevant GitLab
->> issue for each new flake entry instead of an email report. Added
->> specific GitLab issue URLs for i915, xe and other drivers.
->>
->> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
->> ---
->>
->> v2:
->> - Add gitlab issue link for msm driver.
->>
->> ---
->>   Documentation/gpu/automated_testing.rst | 16 +++++++++++-----
->>   1 file changed, 11 insertions(+), 5 deletions(-)
->>
->> diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/automated_testing.rst
->> index 2d5a28866afe..f918fe56f2b0 100644
->> --- a/Documentation/gpu/automated_testing.rst
->> +++ b/Documentation/gpu/automated_testing.rst
->> @@ -67,20 +67,26 @@ Lists the tests that for a given driver on a specific hardware revision are
->>   known to behave unreliably. These tests won't cause a job to fail regardless of
->>   the result. They will still be run.
->>   
->> -Each new flake entry must be associated with a link to the email reporting the
->> -bug to the author of the affected driver, the board name or Device Tree name of
->> -the board, the first kernel version affected, the IGT version used for tests,
->> -and an approximation of the failure rate.
->> +Each new flake entry must include a link to the relevant GitLab issue, the board
->> +name or Device Tree name, the first kernel version affected, the IGT version used
->> +for tests and an approximation of the failure rate.
->>   
->>   They should be provided under the following format::
->>   
->> -  # Bug Report: $LORE_OR_PATCHWORK_URL
->> +  # Bug Report: $GITLAB_ISSUE
->>     # Board Name: broken-board.dtb
->>     # Linux Version: 6.6-rc1
->>     # IGT Version: 1.28-gd2af13d9f
->>     # Failure Rate: 100
->>     flaky-test
->>   
->> +The GitLab issue must include the logs and the pipeline link. Use the appropriate
->> +link below to create an issue.
->> +https://gitlab.freedesktop.org/drm/i915/kernel/-/issues for i915 driver
->> +https://gitlab.freedesktop.org/drm/xe/kernel/-/issues for xe driver
->> +https://gitlab.freedesktop.org/drm/msm/-/issues for msm driver
->> +https://gitlab.freedesktop.org/drm/misc/kernel/-/issues for other drivers
->> +
-> 
-> I can't comment for the others, but drm-misc at least still requires
-> reporting issues by mail, so, no, sorry, we can't switch to gitlab only
-> for now.
+On Mon, 15 Jul 2024 07:59:26 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-In https://gitlab.freedesktop.org/drm/ we have xe, i915, msm, nouveau, 
-and amd (only for issues). In drm-ci we test i915, msm and amd.
-So I will add GitLab links for these and for other drivers use email 
-reporting. I will reword this section. Thanks.
+Thanks for the review and sorry for the late reply.
+
+> On Tue, 09 Jul 2024 15:53:45 +0200 Kory Maincent wrote:
+> > +	/* Get the hwtstamp config from netlink */
+> > +	if (tb[ETHTOOL_A_TSCONFIG_TX_TYPES]) {
+> > +		ret =3D ethnl_parse_bitset(&req_tx_type, &mask,
+> > +					 __HWTSTAMP_TX_CNT,
+> > +					 tb[ETHTOOL_A_TSCONFIG_TX_TYPES],
+> > +					 ts_tx_type_names, info->extack);
+> > +		if (ret < 0)
+> > +			goto err_clock_put;
+> > +
+> > +		/* Select only one tx type at a time */
+> > +		if (ffs(req_tx_type) !=3D fls(req_tx_type)) {
+> > +			ret =3D -EINVAL;
+> > +			goto err_clock_put;
+> > +		}
+> > +
+> > +		hwtst_config.tx_type =3D ffs(req_tx_type) - 1;
+> > +	}
+> > +	if (tb[ETHTOOL_A_TSCONFIG_RX_FILTERS]) {
+> > +		ret =3D ethnl_parse_bitset(&req_rx_filter, &mask,
+> > +					 __HWTSTAMP_FILTER_CNT,
+> > +					 tb[ETHTOOL_A_TSCONFIG_RX_FILTERS],
+> > +					 ts_rx_filter_names, info->extack);
+> > +		if (ret < 0)
+> > +			goto err_clock_put;
+> > +
+> > +		/* Select only one rx filter at a time */
+> > +		if (ffs(req_rx_filter) !=3D fls(req_rx_filter)) {
+> > +			ret =3D -EINVAL;
+> > +			goto err_clock_put;
+> > +		}
+> > +
+> > +		hwtst_config.rx_filter =3D ffs(req_rx_filter) - 1;
+> > +	}
+> > +	if (tb[ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS]) {
+> > +		ret =3D nla_get_u32(tb[ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS]);
+> > +		if (ret < 0)
+> > +			goto err_clock_put;
+> > +		hwtst_config.flags =3D ret;
+> > +	} =20
+>=20
+> We should be tracking mod on these, too. Separately from the provider
+> mod bit, let's not call the driver and send notification if nothing
+> changed.
+
+Ok
+=20
+> > +	ret =3D net_hwtstamp_validate(&hwtst_config);
+> > +	if (ret)
+> > +		goto err_clock_put;
+> > +
+> > +	/* Disable current time stamping if we try to enable another one */
+> > +	if (mod && (hwtst_config.tx_type || hwtst_config.rx_filter)) {
+> > +		struct kernel_hwtstamp_config zero_config =3D {0};
+> > +
+> > +		ret =3D dev_set_hwtstamp_phylib(dev, &zero_config,
+> > info->extack);
+> > +		if (ret < 0)
+> > +			goto err_clock_put;
+> > +	}
+> > +
+> > +	/* Changed the selected hwtstamp source if needed */
+> > +	if (mod) {
+> > +		struct hwtstamp_provider *__hwtstamp;
+> > +
+> > +		__hwtstamp =3D rcu_replace_pointer_rtnl(dev->hwtstamp,
+> > hwtstamp);
+> > +		if (__hwtstamp)
+> > +			call_rcu(&__hwtstamp->rcu_head,
+> > +				 remove_hwtstamp_provider);
+> > +	}
+> > +
+> > +	ret =3D dev_set_hwtstamp_phylib(dev, &hwtst_config, info->extack);
+> > +	if (ret < 0)
+> > +		return ret; =20
+>=20
+> We can't unwind to old state here?
+
+Yes indeed we could unwind old state here. I will update it in next version.
+
+> Driver can change hwtst_config right? "upgrade" the rx_filter=20
+> to a broader one, IIRC. Shouldn't we reply to the set command with=20
+> the resulting configuration, in case it changed? Basically provide=20
+> the same info as the notification would.
+
+Yes, the driver does that.
+Indeed that's a good idea to report the resulting configuration.
+I will take a look at how I can do that.
 
 Regards,
-Vignesh
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
