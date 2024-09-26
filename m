@@ -1,198 +1,137 @@
-Return-Path: <linux-kernel+bounces-339807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44A9986AD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:09:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB30986B12
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DC9A283464
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:09:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D64283B28
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC9C173346;
-	Thu, 26 Sep 2024 02:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYN3jqPo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2167C176ABA;
+	Thu, 26 Sep 2024 02:45:24 +0000 (UTC)
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54F4156C71;
-	Thu, 26 Sep 2024 02:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334A21D5AAE;
+	Thu, 26 Sep 2024 02:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727316547; cv=none; b=BqhMfCrLTm6NF6oHWA8yzHP3MBs+ortgDT3D3HGrJph63DLRjmJU3ULL/SrvFk2s29YSLaUVKxE6bpt7+N/LzdqMEkE0FDnwyoxmrFSVZLz0Kf0+M2sIbbjY9hCVSbCzQMUfNSUqqWW0djjNWunnYvcy1UYcqTBC6fOs8X1E9kg=
+	t=1727318723; cv=none; b=QXpsC8jIL8o5BlfvFMzCvMh6U2FnZPUXRIpsjIU3LDhGpVWgD3FpY6iEbOjCQWrXswKqOA+H9gkp9U+O38mqfURpdha3RpQj8wDdZMKQcaXffpn3RCAedtwL/aQNOJyMb0m+ueqqbnYz+EfYpCQMShKsYlXjOXEJeMaJpM9q+rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727316547; c=relaxed/simple;
-	bh=M6ISVRGWt2YWY2xkGb/Zh1/Y2FhcZIYx1Ll7zaW+C08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PtHwVL149MOgg1jOW9Fdv3oPVTmoVs/OBxgrSbm1kKtWUYViuOgjSdYOWCc9BGyWCdnElMR8uys/iYwuXm5s1JhmHgPWumjSJXAjKTp82/U/qaKTOdLTS/1yzD0ob/Xq+4meswqDKHaU8Zvi2/avSgysPf5J3zIbhTWCp0UNWXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYN3jqPo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04BC2C4CEC3;
-	Thu, 26 Sep 2024 02:09:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727316547;
-	bh=M6ISVRGWt2YWY2xkGb/Zh1/Y2FhcZIYx1Ll7zaW+C08=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lYN3jqPoNP5YDqf60G7WyiKAO2OBv9hpFUejKtuQCgTrhIdYCmuW0sxrN7wCGp5fL
-	 2YAm9Jye8BOUTlUjMPlVM/zx8zuEWV4OKbEzPGdw3nLqAPPsmwM0HGCbWf78gjRFe7
-	 Cy89DDGvSF2EG3set4sjEAVMuUXf83MW+Yy7hYJxQSRUHV6hAwDv+G7LIzHG6kFp3R
-	 TWiL7jLgKkxi737wRPytv/lsAWBKHiHB6I0v6EVmWpSv0MVao5WJ8SzN16rV4KiQ+5
-	 AygH/X0HluzBMr4VcLlPsrSBcNmI5cfx1nUYLKmWlsuad6izgrsKMZ7gI0KB30R0GZ
-	 u3rceLwUs4x1w==
-Date: Wed, 25 Sep 2024 21:09:06 -0500
-From: Rob Herring <robh@kernel.org>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: dsp: fsl,dsp: fix power domain count
-Message-ID: <20240926020906.GA2246040-robh@kernel.org>
-References: <20240925232008.205802-1-laurentiumihalcea111@gmail.com>
- <20240925232008.205802-2-laurentiumihalcea111@gmail.com>
+	s=arc-20240116; t=1727318723; c=relaxed/simple;
+	bh=XlJDVay2cRa4S19npJjYLMt5x9m4ip4Jc3BifmP0yE0=;
+	h=From:To:Cc:References:Date:Message-ID:MIME-Version:Content-Type:
+	 Subject; b=ajghQRKraL4fVh3ryufeEiIaHUfHoyJcfp/fJEYx6vkcy6oHmExtBGMq8UMeRTaK+bW0l46Ju287HFFQ7OeNiKsjStK7onBSyxORs+GerUxH2kHD7YJp7caXNka+QHVRuerhaxEIoY5rN+nyX4PZrIqmoRGG2eFcgqDAL4kb04w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:43028)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1stdxJ-001jjo-HT; Wed, 25 Sep 2024 20:10:09 -0600
+Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:60542 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1stdxI-0092mE-JA; Wed, 25 Sep 2024 20:10:09 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Tycho Andersen <tycho@tycho.pizza>
+Cc: Aleksa Sarai <cyphar@cyphar.com>,  Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,  Jan
+ Kara <jack@suse.cz>,  Kees Cook <kees@kernel.org>,  Jeff Layton
+ <jlayton@kernel.org>,  Chuck Lever <chuck.lever@oracle.com>,  Alexander
+ Aring <alex.aring@gmail.com>,  linux-fsdevel@vger.kernel.org,
+  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,  Tycho Andersen
+ <tandersen@netflix.com>,  Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?=
+ <zbyszek@in.waw.pl>
+References: <20240924141001.116584-1-tycho@tycho.pizza>
+	<87msjx9ciw.fsf@email.froward.int.ebiederm.org>
+	<20240925.152228-private.conflict.frozen.trios-TdUGhuI5Sb4v@cyphar.com>
+	<ZvR+k3D1KGALOIWt@tycho.pizza>
+Date: Wed, 25 Sep 2024 21:09:18 -0500
+Message-ID: <878qvf17zl.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925232008.205802-2-laurentiumihalcea111@gmail.com>
+Content-Type: text/plain
+X-XM-SPF: eid=1stdxI-0092mE-JA;;;mid=<878qvf17zl.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/r7gePPtcWACfkta5ly/kAAypuqpcvQ0I=
+X-Spam-Level: 
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4152]
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Tycho Andersen <tycho@tycho.pizza>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 366 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 4.4 (1.2%), b_tie_ro: 3.0 (0.8%), parse: 1.12
+	(0.3%), extract_message_metadata: 11 (2.9%), get_uri_detail_list: 1.30
+	(0.4%), tests_pri_-2000: 10 (2.8%), tests_pri_-1000: 2.2 (0.6%),
+	tests_pri_-950: 1.00 (0.3%), tests_pri_-900: 0.79 (0.2%),
+	tests_pri_-90: 124 (33.9%), check_bayes: 121 (33.0%), b_tokenize: 4.8
+	(1.3%), b_tok_get_all: 44 (12.1%), b_comp_prob: 1.67 (0.5%),
+	b_tok_touch_all: 67 (18.3%), b_finish: 0.81 (0.2%), tests_pri_0: 199
+	(54.4%), check_dkim_signature: 0.37 (0.1%), check_dkim_adsp: 3.1
+	(0.8%), poll_dns_idle: 1.71 (0.5%), tests_pri_10: 2.5 (0.7%),
+	tests_pri_500: 7 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: zbyszek@in.waw.pl, tandersen@netflix.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, alex.aring@gmail.com, chuck.lever@oracle.com, jlayton@kernel.org, kees@kernel.org, jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, cyphar@cyphar.com, tycho@tycho.pizza
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-On Wed, Sep 25, 2024 at 07:20:03PM -0400, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> 
-> Per the current binding, QM/QXP DSPs are supposed to have 4
-> power domains, while the rest just 1. For QM/QXP, the 4 power
-> domains are: DSP, DSP_RAM, MU13A, MU13B.
-> 
-> First off, drop MU13A from the count. This is attached to the
-> platform device of lsio_mu13. This decreases the count to 3.
-> 
-> Secondly, drop DSP and DSP_RAM from the count for QXP. These
-> are attached to the platform devices of the lpcgs (used as clock
-> providers for the DSP).
+Tycho Andersen <tycho@tycho.pizza> writes:
 
-What's a platform device? Sounds like some Linux implementation detail.
+> Yep, I did this for the test above, and it worked fine:
+>
+>         if (bprm->fdpath) {
+>                 /*
+>                  * If fdpath was set, execveat() made up a path that will
+>                  * probably not be useful to admins running ps or similar.
+>                  * Let's fix it up to be something reasonable.
+>                  */
+>                 struct path root;
+>                 char *path, buf[1024];
+>
+>                 get_fs_root(current->fs, &root);
+>                 path = __d_path(&bprm->file->f_path, &root, buf, sizeof(buf));
+>
+>                 __set_task_comm(me, kbasename(path), true);
+>         } else {
+>                 __set_task_comm(me, kbasename(bprm->filename), true);
+>         }
+>
+> obviously we don't want a stack allocated buffer, but triggering on
+> ->fdpath != NULL seems like the right thing, so we won't need a flag
+> either.
+>
+> The question is: argv[0] or __d_path()?
 
-The number of power islands for a h/w block shouldn't be changing.
+You know.  I think we can just do:
 
-> 
-> With this in mind, the number of required power domains for QXP
-> is 1 (MU13B), while for QM it's 3 (MU13B, DSP, DSP_RAM).
-> 
-> Additionally, two extra power domains may be required in the case
-> of QM/QXP DSPs. These are IRQSTR_DSP and MU2A. For the nodes using
-> the "-hifi4" compatibles these PDs are optional, while for nodes using
-> the "-dsp" compatibles these are mandatory.
-> 
-> These changes reflect all of this information.
-> 
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> ---
->  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 62 +++++++++++++++----
->  1 file changed, 49 insertions(+), 13 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-> index 9af40da5688e..e2f016af1048 100644
-> --- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-> +++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-> @@ -51,8 +51,6 @@ properties:
->      description:
->        List of phandle and PM domain specifier as documented in
->        Documentation/devicetree/bindings/power/power_domain.txt
-> -    minItems: 1
-> -    maxItems: 4
+	BUILD_BUG_ON(DNAME_INLINE_LEN >= TASK_COMM_LEN);
+	__set_task_comm(me, bprm->file->f_path.dentry->d_name.name, true);
 
-Top level should be the range of domains that covers all variants.
+Barring cache misses that should be faster and more reliable than what
+we currently have and produce the same output in all of the cases we
+like, and produce better output in all of the cases that are a problem
+today.
 
->  
->    mboxes:
->      description:
-> @@ -97,16 +95,55 @@ allOf:
->        properties:
->          compatible:
->            contains:
-> -            enum:
-> -              - fsl,imx8qxp-dsp
-> -              - fsl,imx8qm-dsp
-> -              - fsl,imx8qxp-hifi4
-> -              - fsl,imx8qm-hifi4
-> +            const: fsl,imx8qxp-hifi4
->      then:
->        properties:
->          power-domains:
-> -          minItems: 4
-> -    else:
-> +          maxItems: 3
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: fsl,imx8qxp-dsp
-> +    then:
-> +      properties:
-> +        power-domains:
-> +          minItems: 3
-> +          maxItems: 3
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: fsl,imx8qm-dsp
-> +    then:
-> +      properties:
-> +        power-domains:
-> +          minItems: 5
-> +          maxItems: 5
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: fsl,imx8qm-hifi4
-> +    then:
-> +      properties:
-> +        power-domains:
-> +          minItems: 3
-> +          maxItems: 5
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - fsl,imx8mp-dsp
-> +              - fsl,imx8mp-hifi4
-> +              - fsl,imx8ulp-dsp
-> +              - fsl,imx8ulp-hifi4
-> +    then:
->        properties:
->          power-domains:
->            maxItems: 1
-> @@ -157,10 +194,9 @@ examples:
->                   <&adma_lpcg IMX_ADMA_LPCG_OCRAM_IPG_CLK>,
->                   <&adma_lpcg IMX_ADMA_LPCG_DSP_CORE_CLK>;
->          clock-names = "ipg", "ocram", "core";
-> -        power-domains = <&pd IMX_SC_R_MU_13A>,
-> -                        <&pd IMX_SC_R_MU_13B>,
-> -                        <&pd IMX_SC_R_DSP>,
-> -                        <&pd IMX_SC_R_DSP_RAM>;
-> +        power-domains = <&pd IMX_SC_R_MU_13B>,
-> +                        <&pd IMX_SC_R_IRQSTR_DSP>,
-> +                        <&pd IMX_SC_R_MU_2A>;
->          mbox-names = "txdb0", "txdb1", "rxdb0", "rxdb1";
->          mboxes = <&lsio_mu13 2 0>, <&lsio_mu13 2 1>, <&lsio_mu13 3 0>, <&lsio_mu13 3 1>;
->          memory-region = <&dsp_reserved>;
-> -- 
-> 2.34.1
-> 
+Does anyone see any problem with that?
+
+Eric
 
