@@ -1,365 +1,269 @@
-Return-Path: <linux-kernel+bounces-340744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8531987752
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:10:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D62E987756
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A30282872
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:10:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B832B22F0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B597159217;
-	Thu, 26 Sep 2024 16:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0789315886D;
+	Thu, 26 Sep 2024 16:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="BeFrtj+h"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Bt+rZ7yw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PK9eMoqD"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0781552E4
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0172813B5B4
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727367012; cv=none; b=NTeblNRSizvUxntYyOswtDRHY2HQQUi8ZYDQWPVV6SWsTgOeV1HiCbIo77Ca6aSnwXH9p1QXugZmtqAwyEJ6NLDLatjokeJGhM4ih2LiRu/Y/youJncXKUsJ0eCfmslupyvegDOOgn/zQX3vYWRfQbZb1MFrTmld9oqNnoBW++A=
+	t=1727367035; cv=none; b=ISvdgbZniC5mRp2BopNGrgMcnmN55UtmnhxfG/0bWDW7OQWCK/CeqcXJKyOdcsltua9x35IFFRZ2npgjDACSDJjxQTL6XPoPUXy2Nc6S7+hEwpN3iMeP0QPZrlptUAjLEuRA3S9sF+XtLYzMA6EKNIAyAdc417aAx6DnpU1/sow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727367012; c=relaxed/simple;
-	bh=f4L3Pr657lBd3fyOul34qHTxj2UdBG04VUvdr5BBB3c=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=VLoGThdGRVMfYYZjTk9CvtOc10tr2u9QzEOzG1/iw8DGpb6SBjJpXxF6144iqZ07cgh4KOWzu42F2bbZ08Uh0NbUy1uZzphOL/wdiRMbEIgf2D0MXHQCdq+eGDhgRDunDSkWuPPMmzRV5D4l6ayvDb7MEX9mklyeNDrCwA1eX+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=BeFrtj+h; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d302b6b30so15196166b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:10:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1727367009; x=1727971809; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Bn/mqTcRvJrwPZazblc0vCi2AEX8oQ7gBnHiDBLn/w=;
-        b=BeFrtj+hJUJLowJ8fR/Tg0S1EUqSo/C1PFmiBykSLH9eH3S4QtFl9w1Wx+hWnzk193
-         ttD9ipzA95Sg98fEeic79VurW+4WGplsoBbIu7J7ZOAK13sXvqq/gJO5l27r8jzWU0En
-         4dfwKYJguCZOxNYinS5D5Dupe4+GlcyhuhvuWYaRclkIZS5RkVh6A1QEtyg150GYkAkY
-         PP9fgHYbgH0ji1c/AlLstYSLv2OazkRNUJYK4UQJyquKyarB4S5eEzvBhBbLfYTYlZhN
-         dg4VGzmPfYCHrMUKyps0p4KidBDIEC6zDu8nDX5MFC0prWFnTAf+S+sHG66GcyHle31C
-         rO8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727367009; x=1727971809;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Bn/mqTcRvJrwPZazblc0vCi2AEX8oQ7gBnHiDBLn/w=;
-        b=BJe8Ee1T5NndHtVdpCh9LI81D5NSuYE66i5MwjD+plQ6qUGdIrKi3DZJhhdqL0gdaH
-         MH8Xa3poY5WxAudZ33zwQWBm44Yo/LwRwcvxKRek8xELf94cFKFI6P/qkLpWXtohfDQp
-         kJ1acM58Yrwy5sYoRuFhtah+FBHod507nN5swYwF78d0/FAYWqzCtvCW/juoPZ3L1+NQ
-         ek2WcDSF/NBSoRJLPgd0jqX5Jtnd1aze5aigIxrRE51vrP87Pz9Fld2kOFmVmRP5Opby
-         SqxizK6KICN2x3o+tN7juI7vnpgqdQ0JHBFCW6yy7Zzv9LbaFklypWbSqH2mLciB1L2e
-         lI2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ2MtHiO1TSVvw1TWKRhIKRyOsfhoRdPQFCFbSx4fvWagX857cp+8TAdq48f+ujA3pZKdyMRoEIYxN3rY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvVClwCrQc1kuaBDMd/IFegmy0Pw34T4jVnq2jipjfhwiTW1HU
-	OniNsradzlhItS9jRH8zomZW6HqSlmFnzAQx2fYhgHEX0He8vYPjrRnaz6Xsl6g=
-X-Google-Smtp-Source: AGHT+IG7PAd/1hf/zr74d9c8aFmDg6lm7QV1Hb/m0XkPYtwRQJ0/YeHQ5Rmjqejbv+22FR826V7V2w==
-X-Received: by 2002:a17:907:7e8c:b0:a86:a694:aaff with SMTP id a640c23a62f3a-a93c48f857dmr1280866b.1.1727367008779;
-        Thu, 26 Sep 2024 09:10:08 -0700 (PDT)
-Received: from smtpclient.apple ([2001:a61:a4f:301:82f:3680:12cb:d924])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c5c5dsm14057366b.72.2024.09.26.09.10.07
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Sep 2024 09:10:08 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1727367035; c=relaxed/simple;
+	bh=PuLMPjF+kQb9j9PHLY/qTIbTgDYwv8IGF9Q4WjGEuoM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=EmO1sO0/+OV0jFOhoBpinTnpPPsALBU5qagri09DSsSafXjIms0UyJuAG6FW/pg1vE2rqxMGtU9mBzbAdwsKY+CfIsZFLtiHwyfDDiJAPNPDjdQctZKVGBTlc2Ghzx353gTxC4e3pN2Ucw6PNYkb2B02+8+Bxn5gjbLMctdBcVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Bt+rZ7yw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PK9eMoqD; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id DB7BB1140241;
+	Thu, 26 Sep 2024 12:10:31 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 26 Sep 2024 12:10:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1727367031; x=1727453431; bh=Jc
+	06wMqbMsMMM6Dedeo8uuj0dOH8ar9SCNKrEWOiBQk=; b=Bt+rZ7yw84q2CcM/zp
+	PIHze68AA+Ocma2mxYkJUJ/WZtGwA9+fq/J4YGpGXYxNuiwtNLkb3WHe7mXvBdnT
+	DmeXtgKo8lEmHBVHZNalCqj1mLfHMZ0GVLMEjjeV7pY5att1+MjthTIURbhPftS3
+	8SQpYbPohv0+D391XkP/WzOO/ICzmfdxYI8yqP1kdXgS8B//VJxCYnEAt/NWSp/K
+	m1087u668C39/1kinBtytwG0ZzM9pZvrQ4qt+6DsdR4vcWBB7JMyXBmxg4u1MXn7
+	WgcwLNx2CAfMldH43Cl19jgnhmm3XS/v7Ep72wcWVbB3bFAfoloYVe3gMwdSfgbD
+	gOlQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm2; t=1727367031; x=1727453431; bh=Jc06wMqbMsMMM
+	6Dedeo8uuj0dOH8ar9SCNKrEWOiBQk=; b=PK9eMoqDnJFoHt5KwcbIK7jq4Fm1E
+	re+eOz5fsr2s5tJhDAFIboDAfaI/5LTYPr3zG+auU3AeCrSlJnlD/3wSjXovQepG
+	zUSR9qHoAIxpMHjGwQqPbuZi0hvMo89+MZx/nbUV/jO8ad7GqJs5sHM3K4NG6TPp
+	Nxydw7yBEq8GbAHiT1KJc7YHhEbMuBhxZLmQlZ7Du4Oigc8VOwgnJpO6tIWZuEwb
+	uEuPXZkmF1nUka9bidGUW1wfbOj/r8BqjYhOdj1qjxsGDu6vknFJhyPBtx+9vR3g
+	W7aFkMXSFfUmzACXNshQ9/D5q7OKSnLcZ69+kEAMhwWB+kjsd9QWzyK/g==
+X-ME-Sender: <xms:d4f1ZnX-bh_ltdDXFC0e_7Q6TITuRVIvhRuB155_GrEZsaaeYDDlgQ>
+    <xme:d4f1ZvmRsWxqYyRegzKEPLKlNpIpg7YCqbJ-AydP-BxbbG1qrSCVEpaxhUdWJvHPq
+    kW343js1iMDr-klLVo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtjedgleelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkffutgfgsehtjeertdertddtnecu
+    hfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvg
+    eqnecuggftrfgrthhtvghrnhepudelieegkeevueegtedtjedttdelgeehhfdvhfeuheet
+    hfduleffuddvueelveetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgu
+    sgdruggvpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopegrlhgvgigrnhguvghrrdhsvhgvrhgulhhinhesghhmrghilhdrtghomhdprhgtphht
+    thhopehsohgtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtohhrvhgrlhgusheslh
+    hinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghr
+    mhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
+    epnhhikhhithgrrdhshhhusghinhesmhgrqhhuvghfvghlrdhmvgdprhgtphhtthhopehl
+    ihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:d4f1ZjY1rUe5zD0SD4rOFIxfL2BkRX2wxGG6MuNy8Lpz2lorrfLKQw>
+    <xmx:d4f1ZiWYOUm4qb83O5f_K-kwLF4ovdMigwhAG6EyoQiIQrvgjKCwTA>
+    <xmx:d4f1ZhnKloCE--ZoWTz5YceRZQ4AT-SrpsMNLGk9Byc9JIbLyeHTLw>
+    <xmx:d4f1Zvceube8MSE53_ATTWWK5dAuazVbiw86JZKb_UfRGK0ysKG0Zg>
+    <xmx:d4f1ZkugUylkPBpxOeOAkJ-Ak4SQnujs3hKxVXl_0cgKBy1hqsuwk38M>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 47A6B2220072; Thu, 26 Sep 2024 12:10:31 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
-Date: Thu, 26 Sep 2024 18:09:57 +0200
-Cc: kent.overstreet@linux.dev,
- regressions@lists.linux.dev,
- linux-bcachefs@vger.kernel.org,
- linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
-References: <ZvV6X5FPBBW7CO1f@archlinux>
- <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
-To: Jan Hendrik Farr <kernel@jfarr.cc>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Date: Thu, 26 Sep 2024 18:10:12 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: "Nikita Shubin" <nikita.shubin@maquefel.me>,
+ "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ soc@kernel.org
+Message-Id: <6c10bab5-e5a5-4969-b28d-11d8a1d5d587@app.fastmail.com>
+Subject: [GIT PULL] soc: convert ep93xx to devicetree
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On 26. Sep 2024, at 17:28, Thorsten Blum <thorsten.blum@toblux.com> =
-wrote:
-> On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
->>=20
->> Hi Kent,
->>=20
->> found a strange regression in the patch set for 6.12.
->>=20
->> First bad commit is: 86e92eeeb23741a072fe7532db663250ff2e726a
->> bcachefs: Annotate struct bch_xattr with __counted_by()
->>=20
->> When compiling with clang 18.1.8 (also with latest llvm main branch) =
-and
->> CONFIG_FORTIFY_SOURCE=3Dy my rootfs does not mount because there is =
-an erroneous
->> detection of a buffer overflow.
->>=20
->> The __counted_by attribute is supposed to be supported starting with =
-gcc 15,
->> not sure if it is implemented yet so I haven't tested with gcc trunk =
-yet.
->>=20
->> Here's the relevant section of dmesg:
->>=20
->> [    6.248736] bcachefs (nvme1n1p2): starting version 1.12: =
-rebalance_work_acct_fix
->> [    6.248744] bcachefs (nvme1n1p2): recovering from clean shutdown, =
-journal seq 1305969
->> [    6.252374] ------------[ cut here ]------------
->> [    6.252375] memchr: detected buffer overflow: 12 byte read of =
-buffer size 0
->> [    6.252379] WARNING: CPU: 18 PID: 511 at lib/string_helpers.c:1033 =
-__fortify_report+0x45/0x50
->> [    6.252383] Modules linked in: bcachefs lz4hc_compress =
-lz4_compress hid_generic usbhid btrfs crct10dif_pclmul libcrc32c =
-crc32_pclmul crc32c_generic polyval_clmulni crc32c_intel polyval_generic =
-raid6_pq ghash_clmulni_intel xor sha512_ssse3 sha256_ssse3 sha1_ssse3 =
-aesni_intel gf128mul nvme crypto_simd ccp xhci_pci cryptd sp5100_tco =
-xhci_pci_renesas nvme_core nvme_auth video wmi ip6_tables ip_tables =
-x_tables i2c_dev
->> [    6.252404] CPU: 18 UID: 0 PID: 511 Comm: mount Not tainted =
-6.11.0-10065-g6fa6588e5964 #98 d8e0beb515d91b387aa60970de7203f35ddd182c
->> [    6.252406] Hardware name: Micro-Star International Co., Ltd. =
-MS-7D78/PRO B650-P WIFI (MS-7D78), BIOS 1.C0 02/06/2024
->> [    6.252407] RIP: 0010:__fortify_report+0x45/0x50
->> [    6.252409] Code: 48 8b 34 c5 30 92 21 87 40 f6 c7 01 48 c7 c0 75 =
-1b 0a 87 48 c7 c1 e1 93 07 87 48 0f 44 c8 48 c7 c7 ef 03 10 87 e8 0b c2 =
-9b ff <0f> 0b e9 cf 5d 9e 00 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 =
-90
->> [    6.252410] RSP: 0018:ffffbb3d03aff350 EFLAGS: 00010246
->> [    6.252412] RAX: 4ce590fb7c372800 RBX: ffff98d559a400e8 RCX: =
-0000000000000027
->> [    6.252413] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: =
-ffff98e43db21a08
->> [    6.252414] RBP: ffff98d559a400d0 R08: 0000000000001fff R09: =
-ffff98e47ddcd000
->> [    6.252415] R10: 0000000000005ffd R11: 0000000000000004 R12: =
-ffff98d559a40000
->> [    6.252416] R13: ffff98d54abf1320 R14: ffffbb3d03aff430 R15: =
-0000000000000000
->> [    6.252417] FS:  00007efc82117800(0000) GS:ffff98e43db00000(0000) =
-knlGS:0000000000000000
->> [    6.252418] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [    6.252419] CR2: 000055d96658ea80 CR3: 000000010a12c000 CR4: =
-0000000000f50ef0
->> [    6.252420] PKRU: 55555554
->> [    6.252421] Call Trace:
->> [    6.252423]  <TASK>
->> [    6.252425]  ? __warn+0xd5/0x1d0
->> [    6.252427]  ? __fortify_report+0x45/0x50
->> [    6.252429]  ? report_bug+0x144/0x1f0
->> [    6.252431]  ? __fortify_report+0x45/0x50
->> [    6.252433]  ? handle_bug+0x6a/0x90
->> [    6.252435]  ? exc_invalid_op+0x1a/0x50
->> [    6.252436]  ? asm_exc_invalid_op+0x1a/0x20
->> [    6.252440]  ? __fortify_report+0x45/0x50
->> [    6.252441]  __fortify_panic+0x9/0x10
->> [    6.252443]  bch2_xattr_validate+0x13b/0x140 [bcachefs =
-8361179bbfcc59e669df38aec976f02d7211a659]
->> [    6.252463]  bch2_btree_node_read_done+0x125a/0x17a0 [bcachefs =
-8361179bbfcc59e669df38aec976f02d7211a659]
->> [    6.252482]  btree_node_read_work+0x202/0x4a0 [bcachefs =
-8361179bbfcc59e669df38aec976f02d7211a659]
->> [    6.252499]  bch2_btree_node_read+0xa8d/0xb20 [bcachefs =
-8361179bbfcc59e669df38aec976f02d7211a659]
->> [    6.252514]  ? srso_alias_return_thunk+0x5/0xfbef5
->> [    6.252515]  ? pcpu_alloc_noprof+0x741/0xb50
->> [    6.252517]  ? srso_alias_return_thunk+0x5/0xfbef5
->> [    6.252519]  ? time_stats_update_one+0x75/0x1f0 [bcachefs =
-8361179bbfcc59e669df38aec976f02d7211a659]
->>=20
->> ...
->>=20
->>=20
->> The memchr in question is at:
->> =
-https://github.com/torvalds/linux/blob/11a299a7933e03c83818b431e6a1c53ad38=
-7423d/fs/bcachefs/xattr.c#L99
->>=20
->> There is not actually a buffer overflow here, I checked with gdb that
->> xattr.v->x_name does actually contain a string of the correct length =
-and
->> xattr.v->x_name_len contains the correct length and should be used to =
-determine
->> the length when memchr uses __struct_size for bounds-checking due to =
-the
->> __counted_by annotation.
->>=20
->> I'm at the point where I think this is probably a bug in clang. I =
-have a patch
->> that does fix (more like bandaid) the problem and adds some print =
-statements:
->>=20
->> --
->> diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
->> index 56c8d3fe55a4..8d7e749b7dda 100644
->> --- a/fs/bcachefs/xattr.c
->> +++ b/fs/bcachefs/xattr.c
->> @@ -74,6 +74,7 @@ int bch2_xattr_validate(struct bch_fs *c, struct =
-bkey_s_c k,
->>      enum bch_validate_flags flags)
->> {
->> struct bkey_s_c_xattr xattr =3D bkey_s_c_to_xattr(k);
->> + const struct bch_xattr *v =3D (void *)k.v;
->> unsigned val_u64s =3D xattr_val_u64s(xattr.v->x_name_len,
->>  le16_to_cpu(xattr.v->x_val_len));
->> int ret =3D 0;
->> @@ -94,9 +95,12 @@ int bch2_xattr_validate(struct bch_fs *c, struct =
-bkey_s_c k,
->>=20
->> bkey_fsck_err_on(!bch2_xattr_type_to_handler(xattr.v->x_type),
->> c, xattr_invalid_type,
->> - "invalid type (%u)", xattr.v->x_type);
->> + "invalid type (%u)", v->x_type);
->>=20
->> - bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', =
-xattr.v->x_name_len),
->> + pr_info("x_name_len: %d", v->x_name_len);
->> + pr_info("__struct_size(x_name): %ld", __struct_size(v->x_name));
->> + pr_info("__struct_size(x_name): %ld", =
-__struct_size(xattr.v->x_name));
->> + bkey_fsck_err_on(memchr(v->x_name, '\0', v->x_name_len),
->> c, xattr_name_invalid_chars,
->> "xattr name has invalid characters");
->> fsck_err:
->> --
->>=20
->>=20
->> Making memchr access via a pointer created with
->> const struct bch_xattr *v =3D (void *)k.v fixes it. =46rom the print =
-statements I
->> can see that __struct_size(xattr.v->x_name) incorrectly returns 0, =
-while
->> __struct_size(v->x_name) correctly returns 10 in this case (the value =
-of
->> x_name_len).
->>=20
->> The generated assembly illustrates what is going wrong. Below is an =
-excerpt
->> of the assembly clang generated for the bch2_xattr_validate function:
->>=20
->> mov r13d, ecx
->> mov r15, rdi
->> mov r14, rsi
->> mov rdi, offset .L.str.3
->> mov rsi, offset .L__func__.bch2_xattr_validate
->> mov rbx, rdx
->> mov edx, eax
->> call _printk
->> movzx edx, byte ptr [rbx + 1]
->> mov rdi, offset .L.str.4
->> mov rsi, offset .L__func__.bch2_xattr_validate
->> call _printk
->> movzx edx, bh
->> mov rdi, offset .L.str.4
->> mov rsi, offset .L__func__.bch2_xattr_validate
->> call _printk
->> lea rdi, [rbx + 4]
->> mov r12, rbx
->> movzx edx, byte ptr [rbx + 1]
->> xor ebx, ebx
->> xor esi, esi
->> call memchr
->>=20
->> At the start of this rdx contains k.v (and is moved into rbx). The =
-three calls
->> to printk are the ones you can see in my patch. You can see that for =
-the
->> print that uses __struct_size(v->x_name) the compiler correctly uses
->> movzx edx, byte ptr [rbx + 1]
->> to load x_name_len into edx.
->>=20
->> For the printk call that uses __struct_size(xattr.v->x_name) however =
-the
->> compiler uses
->> movzx edx, bh
->> So it will print the high 8 bits of the lower 16 bits (second least
->> significant byte) of the memory address of xattr.v->x_type. This is =
-obviously
->> completely wrong.
->>=20
->> It is then doing the correct call of memchr because this is using my =
-patch.
->> Without my patch it would be doing the same thing for the call to =
-memchr where
->> it uses the second least significant byte of the memory address of =
-x_type as the
->> length used for the bounds-check.
->>=20
->>=20
->>=20
->> The LLVM IR also shows the same problem:
->>=20
->> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, =
-ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
->> [...]
->> %51 =3D ptrtoint ptr %2 to i64
->> %52 =3D lshr i64 %51, 8
->> %53 =3D and i64 %52, 255
->>=20
->> This is the IR for the incorrect behavior. It simply converts the =
-pointer to an
->> int, shifts right by 8 bits, then and with 0xFF. If it did a load (to =
-i64)
->> instead of ptrtoint this would actually work, as the second least =
-significant
->> bit of an i64 loaded from that memory address does contain the value =
-of
->> x_name_len. It's as if clang forgot to dereference a pointer here.
->>=20
->> Correct IR does this (for the other printk invocation):
->>=20
->> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, =
-ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
->> [...]
->> %4 =3D getelementptr inbounds %struct.bch_xattr, ptr %1, i64 0, i32 1
->> %5 =3D load i8, ptr %4, align 8
->> [...]
->> %48 =3D load i8, ptr %5, align 4
->> %49 =3D zext i8 %48 to i64
->>=20
->> Best Regards
->> Jan
->=20
-> I suspect it's the same Clang __bdos() "bug" as in [1] and [2].
->=20
-> [1] =
-https://lore.kernel.org/linux-kernel/3D0816D1-0807-4D37-8D5F-3C55CA910FAA@=
-linux.dev/
-> [2] https://lore.kernel.org/all/20240913164630.GA4091534@thelio-3990X/
+The following changes since commit 706ae6446494b4523d33b0d96ea1fd9d50ca9be6:
 
-Could you try this and see if it resolves the problem?
+  clk: fixed-rate: add devm_clk_hw_register_fixed_rate_parent_data() (2024-09-05 13:48:00 -0700)
 
-diff --git a/include/linux/compiler_types.h =
-b/include/linux/compiler_types.h
-index 1a957ea2f4fe..b09759f31789 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -413,7 +413,7 @@ struct ftrace_likely_data {
-  * When the size of an allocated object is needed, use the best =
-available
-  * mechanism to find it. (For cases where sizeof() cannot be used.)
-  */
--#if __has_builtin(__builtin_dynamic_object_size)
-+#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
- #define __struct_size(p)	__builtin_dynamic_object_size(p, 0)
- #define __member_size(p)	__builtin_dynamic_object_size(p, 1)
- #else
+are available in the Git repository at:
 
-Thanks,
-Thorsten=
+  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-ep93xx-dt-6.12
+
+for you to fetch changes up to e3eb39e6bab564ed430172f37be835f84e923c23:
+
+  dt-bindings: gpio: ep9301: Add missing "#interrupt-cells" to examples (2024-09-26 14:23:42 +0000)
+
+----------------------------------------------------------------
+soc: convert ep93xx to devicetree
+
+This concludes a long journey towards replacing the old
+board files with devicetree description on the Cirrus Logic
+EP93xx platform.
+
+Nikita Shubin has been working on this for a long time,
+for details see the last post on
+https://lore.kernel.org/lkml/20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me/
+
+----------------------------------------------------------------
+
+There are a few trivial merge conflicts here since this includes
+the driver changes for bisectability. There were still a few
+issues reported by last week, but I expect we are mostly done
+with those.
+
+Alexander Sverdlin (4):
+      ASoC: ep93xx: Drop legacy DMA support
+      ARM: dts: ep93xx: Add EDB9302 DT
+      ASoC: cirrus: edb93xx: Delete driver
+      dmaengine: cirrus: use snprintf() to calm down gcc 13.3.0
+
+Arnd Bergmann (3):
+      Merge branch 'ep93xx/clk-dependency' into ep93xx/dt-conversion
+      clk: ep93xx: add module license
+      spi: ep93xx: update kerneldoc comments for ep93xx_spi
+
+Dan Carpenter (3):
+      ep93xx: clock: Fix off by one in ep93xx_div_recalc_rate()
+      clk: ep93xx: Fix off by one in ep93xx_div_recalc_rate()
+      dmaengine: ep93xx: Fix a NULL vs IS_ERR() check in probe()
+
+Lukas Bulwahn (1):
+      soc: ep93xx: drop reference to removed EP93XX_SOC_COMMON config
+
+Nikita Shubin (36):
+      gpio: ep93xx: split device in multiple
+      ARM: ep93xx: add regmap aux_dev
+      clk: ep93xx: add DT support for Cirrus EP93xx
+      pinctrl: add a Cirrus ep93xx SoC pin controller
+      power: reset: Add a driver for the ep93xx reset
+      dt-bindings: soc: Add Cirrus EP93xx
+      soc: Add SoC driver for Cirrus ep93xx
+      dt-bindings: dma: Add Cirrus EP93xx
+      dmaengine: cirrus: Convert to DT for Cirrus EP93xx
+      dt-bindings: pwm: Add Cirrus EP93xx
+      pwm: ep93xx: add DT support for Cirrus EP93xx
+      dt-bindings: spi: Add Cirrus EP93xx
+      spi: ep93xx: add DT support for Cirrus EP93xx
+      dt-bindings: net: Add Cirrus EP93xx
+      net: cirrus: add DT support for Cirrus EP93xx
+      dt-bindings: mtd: Add ts7200 nand-controller
+      mtd: rawnand: add support for ts72xx
+      dt-bindings: ata: Add Cirrus EP93xx
+      ata: pata_ep93xx: add device tree support
+      dt-bindings: input: Add Cirrus EP93xx keypad
+      input: keypad: ep93xx: add DT support for Cirrus EP93xx
+      wdt: ts72xx: add DT support for ts72xx
+      gpio: ep93xx: add DT support for gpio-ep93xx
+      ASoC: dt-bindings: ep93xx: Document DMA support
+      ASoC: dt-bindings: ep93xx: Document Audio Port support
+      ARM: dts: add Cirrus EP93XX SoC .dtsi
+      ARM: dts: ep93xx: add ts7250 board
+      ARM: ep93xx: DT for the Cirrus ep93xx SoC platforms
+      pwm: ep93xx: drop legacy pinctrl
+      ata: pata_ep93xx: remove legacy pinctrl use
+      ARM: ep93xx: delete all boardfiles
+      ARM: ep93xx: soc: drop defines
+      dmaengine: cirrus: remove platform code
+      pinctrl: ep93xx: Fix raster pins typo
+      net: cirrus: use u8 for addr to calm down sparse
+      MAINTAINERS: Update EP93XX ARM ARCHITECTURE maintainer
+
+Rob Herring (1):
+      dt-bindings: gpio: ep9301: Add missing "#interrupt-cells" to examples
+
+ .../bindings/arm/cirrus/cirrus,ep9301.yaml         |   38 +
+ .../bindings/ata/cirrus,ep9312-pata.yaml           |   42 +
+ .../bindings/dma/cirrus,ep9301-dma-m2m.yaml        |   84 ++
+ .../bindings/dma/cirrus,ep9301-dma-m2p.yaml        |  144 ++
+ .../devicetree/bindings/gpio/gpio-ep9301.yaml      |    9 +-
+ .../bindings/input/cirrus,ep9307-keypad.yaml       |   87 ++
+ .../devicetree/bindings/mtd/technologic,nand.yaml  |   45 +
+ .../devicetree/bindings/net/cirrus,ep9301-eth.yaml |   59 +
+ .../devicetree/bindings/pwm/cirrus,ep9301-pwm.yaml |   53 +
+ .../bindings/soc/cirrus/cirrus,ep9301-syscon.yaml  |   94 ++
+ .../bindings/sound/cirrus,ep9301-i2s.yaml          |   16 +
+ .../devicetree/bindings/spi/cirrus,ep9301-spi.yaml |   70 +
+ MAINTAINERS                                        |    1 +
+ arch/arm/Makefile                                  |    1 -
+ arch/arm/boot/dts/cirrus/Makefile                  |    4 +
+ arch/arm/boot/dts/cirrus/ep93xx-bk3.dts            |  125 ++
+ arch/arm/boot/dts/cirrus/ep93xx-edb9302.dts        |  181 +++
+ arch/arm/boot/dts/cirrus/ep93xx-ts7250.dts         |  145 ++
+ arch/arm/boot/dts/cirrus/ep93xx.dtsi               |  444 ++++++
+ arch/arm/mach-ep93xx/Kconfig                       |   20 +-
+ arch/arm/mach-ep93xx/Makefile                      |   11 -
+ arch/arm/mach-ep93xx/clock.c                       |  733 ----------
+ arch/arm/mach-ep93xx/core.c                        | 1018 --------------
+ arch/arm/mach-ep93xx/dma.c                         |  114 --
+ arch/arm/mach-ep93xx/edb93xx.c                     |  368 -----
+ arch/arm/mach-ep93xx/ep93xx-regs.h                 |   38 -
+ arch/arm/mach-ep93xx/gpio-ep93xx.h                 |  111 --
+ arch/arm/mach-ep93xx/hardware.h                    |   25 -
+ arch/arm/mach-ep93xx/irqs.h                        |   76 --
+ arch/arm/mach-ep93xx/platform.h                    |   42 -
+ arch/arm/mach-ep93xx/soc.h                         |  212 ---
+ arch/arm/mach-ep93xx/timer-ep93xx.c                |  143 --
+ arch/arm/mach-ep93xx/ts72xx.c                      |  422 ------
+ arch/arm/mach-ep93xx/ts72xx.h                      |   94 --
+ arch/arm/mach-ep93xx/vision_ep9307.c               |  321 -----
+ drivers/ata/pata_ep93xx.c                          |  107 +-
+ drivers/clk/Kconfig                                |    8 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-ep93xx.c                           |  850 ++++++++++++
+ drivers/dma/ep93xx_dma.c                           |  287 +++-
+ drivers/gpio/gpio-ep93xx.c                         |  345 ++---
+ drivers/input/keyboard/ep93xx_keypad.c             |   74 +-
+ drivers/mtd/nand/raw/Kconfig                       |    6 +
+ drivers/mtd/nand/raw/Makefile                      |    1 +
+ drivers/mtd/nand/raw/technologic-nand-controller.c |  222 +++
+ drivers/net/ethernet/cirrus/ep93xx_eth.c           |   65 +-
+ drivers/pinctrl/Kconfig                            |    7 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/pinctrl-ep93xx.c                   | 1434 ++++++++++++++++++++
+ drivers/power/reset/Kconfig                        |   10 +
+ drivers/power/reset/Makefile                       |    1 +
+ drivers/power/reset/ep93xx-restart.c               |   84 ++
+ drivers/pwm/pwm-ep93xx.c                           |   26 +-
+ drivers/soc/Kconfig                                |    1 +
+ drivers/soc/Makefile                               |    1 +
+ drivers/soc/cirrus/Kconfig                         |   17 +
+ drivers/soc/cirrus/Makefile                        |    2 +
+ drivers/soc/cirrus/soc-ep93xx.c                    |  252 ++++
+ drivers/spi/spi-ep93xx.c                           |   68 +-
+ drivers/watchdog/ts72xx_wdt.c                      |    8 +
+ include/dt-bindings/clock/cirrus,ep9301-syscon.h   |   46 +
+ include/linux/clk-provider.h                       |   14 +
+ include/linux/platform_data/dma-ep93xx.h           |   94 --
+ include/linux/platform_data/eth-ep93xx.h           |   10 -
+ include/linux/platform_data/keypad-ep93xx.h        |   32 -
+ include/linux/platform_data/spi-ep93xx.h           |   15 -
+ include/linux/soc/cirrus/ep93xx.h                  |   47 +-
+ sound/soc/cirrus/Kconfig                           |    9 -
+ sound/soc/cirrus/Makefile                          |    4 -
+ sound/soc/cirrus/edb93xx.c                         |  116 --
+ sound/soc/cirrus/ep93xx-i2s.c                      |   19 -
+ sound/soc/cirrus/ep93xx-pcm.c                      |   19 +-
+ 72 files changed, 5138 insertions(+), 4555 deletions(-)
 
