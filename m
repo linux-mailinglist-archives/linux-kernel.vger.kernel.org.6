@@ -1,76 +1,72 @@
-Return-Path: <linux-kernel+bounces-340560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E87D598753F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:13:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004E498754A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EDC6B28064
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:13:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB09F1F223B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20A013E3F5;
-	Thu, 26 Sep 2024 14:13:18 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54271136357;
+	Thu, 26 Sep 2024 14:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7B2f0rc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7698267A0D;
-	Thu, 26 Sep 2024 14:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966E69474;
+	Thu, 26 Sep 2024 14:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727359998; cv=none; b=e3pPHQ9ivBeYz6ky3r3JVMgsUq3dGg2XmfTNiqVLWtp12ynQsBc/agZG/tQLhyB/s8wg95pb/ne3/3qkW6kV+jOtL4B74j1NTUBNJTRLqow5t1juRpKwTaCpsO3tAvPI1I3UTPbmv4C11PWIVY6z+feQwz2sfJexzqjnDwq16NM=
+	t=1727360142; cv=none; b=r/0oeG0UQ0C+OpFDkDn4iL+y49jlK3mws52567W9+Ode5wh8+enben3ijCCky37YZvfFnxzm73HMU+BWEUZ3A+yH1c6sLBZDLc4bVrNb5uQLx1ce6zhepmgQNWfU7s5ZsBF7FQm4zG/gy0apzLbosjHqzS+ZL5cuLjpgSpUuBSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727359998; c=relaxed/simple;
-	bh=bUsqSxfTTdLhGI0lndn1enj7zbOey/NMjNPBHQSerzU=;
+	s=arc-20240116; t=1727360142; c=relaxed/simple;
+	bh=Kv1Cdy6l+gouokDZ3e4xVwNd6beXKTj/+T6t59ybc2A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oXuig31wgmKrukxEu4ICqfftHR3BJzbMSwlxJcNozq0X80PdTj4PrdZ5oj4jL95ptUqQxJitHc9PcbLHq6Ja0EB/ShKhUdrSGggXhKYybvVqMhNz8HfYPsIy2/wcs013VbaUbr1URoIlTKbhhv4Ww6t99Z4Lbv3+VhlIDFNVLcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: kDBfr1TMT5Cpe3oF3A4pNQ==
-X-CSE-MsgGUID: iTGaCSmQTt+i90FxRWLSLg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="14076020"
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="14076020"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 07:12:58 -0700
-X-CSE-ConnectionGUID: PLtiYzTVTteSXp/8UUONgQ==
-X-CSE-MsgGUID: zzFgYcMWQlO6u4NhSnopKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="76530400"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 07:12:54 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1stpEh-0000000DDfI-0sY5;
-	Thu, 26 Sep 2024 17:12:51 +0300
-Date: Thu, 26 Sep 2024 17:12:50 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=LBjac+CexHR0HAFZlQ30Vng14sRpVgZnAUrVs0haY7+xDLTIEauLdA+0EEIxgzUxrL1gKJHyP2QoaqVyeTaG+W+zbXgg5W57VisUMryU3WzLF9pFBn9O8hoPFDbzPOR9o8CgzuegFbNiYnmqvC/Kpnm0Frq5kvTwNJm0UnEsTI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7B2f0rc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DECBCC4CEC5;
+	Thu, 26 Sep 2024 14:15:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727360142;
+	bh=Kv1Cdy6l+gouokDZ3e4xVwNd6beXKTj/+T6t59ybc2A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j7B2f0rcTDtiVBhyi6eeIT3fTA82VCjbUR0AY1bfVe8pnmhl8uVy+JDFnVDxuikdY
+	 blzfgrjf+udZhHHqnk5feo9ATaHui45Hp3V9VvMylh8yxWbARg/0VreYeJ4uOnDX+/
+	 BErfw9UvWnepSpuMxj5lmJ5due2iWYH5iUNrBwU5+iEpru8pYYGem9HZjr1/CM4jQ0
+	 n2/r+GERvb58j5IGvJq4I1gWuUDOiWT8f3oi8L2xhQU+InsAO2GWA1zXZdwkWtAtyA
+	 UfKZd0SNxWLg46UCZ1vKg8jlsxeaOHjSVuE9qNgD2HA2OKj2MVQDBd5KIMTIeowgmD
+	 fCg9LNU/RxXKQ==
+Date: Thu, 26 Sep 2024 09:15:41 -0500
+From: Rob Herring <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 2/3] Documentation: ABI: added filter mode doc in
- sysfs-bus-iio
-Message-ID: <ZvVr4nu_UgsmyWnE@smile.fi.intel.com>
-References: <20240926135418.8342-1-ramona.nechita@analog.com>
- <20240926135418.8342-3-ramona.nechita@analog.com>
- <ZvVrsXrm8XBYGeRn@smile.fi.intel.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Simon Glass <sjg@chromium.org>,
+	INAGAKI Hiroshi <musashino.open@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Christian Heusel <christian@heusel.eu>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+	Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: Re: [RFC PATCH v2 5/5] dt-bindings: mmc: Document support for
+ partition table in mmc-card
+Message-ID: <20240926141541.GA2625953-robh@kernel.org>
+References: <20240925214544.6114-1-ansuelsmth@gmail.com>
+ <20240925214544.6114-6-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,42 +75,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZvVrsXrm8XBYGeRn@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240925214544.6114-6-ansuelsmth@gmail.com>
 
-On Thu, Sep 26, 2024 at 05:12:02PM +0300, Andy Shevchenko wrote:
-> On Thu, Sep 26, 2024 at 04:53:56PM +0300, Ramona Alexandra Nechita wrote:
-
-...
-
-> > +Description:
-> > +		Reading returns a list with the possible filter modes. Options
-> > +		for the attribute:
-> > +			* "sinc3"	- The digital sinc3 filter. Moderate 1st conversion time.
-> > +		    Good noise performance.
-> > +			* "sinc4"       - Sinc 4. Excellent noise performance. Long
-> > +			1st conversion time.
-> > +			* "sinc5"	- The digital sinc5 filter. Excellent noise performance
-> > +			* "sinc4+sinc1" - Sinc4 + averaging by 8. Low 1st conversion
-> > +		    time.
-> > +			* "sinc3+rej60" - Sinc3 + 60Hz rejection.
-> > +			* "sinc3+sinc1" - Sinc3 + averaging by 8. Low 1st conversion
-> > +		    time.
-> > +			* "sinc3+pf1"   - Sinc3 + device specific Post Filter 1.
-> > +			* "sinc3+pf2"   - Sinc3 + device specific Post Filter 2.
-> > +			* "sinc3+pf3"   - Sinc3 + device specific Post Filter 3.
-> > +			* "sinc3+pf4"   - Sinc3 + device specific Post Filter 4.
+On Wed, Sep 25, 2024 at 11:45:25PM +0200, Christian Marangi wrote:
+> Document support for defining a partition table in the mmc-card node.
 > 
-> I still think that a compromise to leave the existing values as an example in
+> This is needed if the eMMC doesn't have a partition table written and
+> the bootloader of the device load data by using absolute offset of the
+> block device. This is common on embedded device that have eMMC installed
+> to save space and have non removable block devices.
+> 
+> If an OF partition table is detected, any partition table written in the
+> eMMC will be ignored and won't be parsed.
+> 
+> eMMC provide a generic disk for user data and if supported (JEDEC 4.4+)
+> also provide two additional disk ("boot0" and "boot1") for special usage
+> of boot operation where normally is stored the bootloader or boot info.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../devicetree/bindings/mmc/mmc-card.yaml     | 57 +++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/mmc-card.yaml b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
+> index fd347126449a..58b6593a0f60 100644
+> --- a/Documentation/devicetree/bindings/mmc/mmc-card.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
+> @@ -13,6 +13,10 @@ description: |
+>    This documents describes the devicetree bindings for a mmc-host controller
+>    child node describing a mmc-card / an eMMC.
+>  
+> +  It's possible to define a fixed partition table for an eMMC for the user
+> +  partition and one of the 2 boot partition (boot0/boot1) if supported by the
+> +  eMMC.
+> +
+>  properties:
+>    compatible:
+>      const: mmc-card
+> @@ -26,6 +30,30 @@ properties:
+>        Use this to indicate that the mmc-card has a broken hpi
+>        implementation, and that hpi should not be used.
+>  
+> +  "#address-cells":
+> +    const: 0
+> +
+> +  "#size-cells":
+> +    const: 0
 
-> the existing bindings is a good to have.
+Don't need these properties.
 
-s/existing/generic/
+> +
+> +patternProperties:
+> +  "^partitions(-boot[01])?$":
+> +    $ref: /schemas/block/partitions/partitions.yaml
+> +
+> +    patternProperties:
+> +      "^partition@[0-9a-f]+$":
+> +        $ref: /schemas/block/partitions/partition.yaml
+> +
+> +        properties:
+> +          reg:
+> +            multipleOf: 512
 
+I was going to suggest this, but I think it won't actually work because 
+it could be 2 cells for address and/or size.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Rob
 
