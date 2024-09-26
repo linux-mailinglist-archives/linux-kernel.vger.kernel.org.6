@@ -1,190 +1,192 @@
-Return-Path: <linux-kernel+bounces-340348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4302F9871E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:44:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC73C9871EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07EFD28A4A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:44:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 113911C23345
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD571AF4E4;
-	Thu, 26 Sep 2024 10:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332391AD9D3;
+	Thu, 26 Sep 2024 10:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="csL3aoqw"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b="ZQsixcDH"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2104.outbound.protection.outlook.com [40.107.95.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648E71AE847;
-	Thu, 26 Sep 2024 10:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727347439; cv=none; b=F4s0boYaDgJJDl4iNqi4bd4Afoh6UHnLQywcnsXiRvoB7kND6SJtJAx9h8zBrFkH7/T6o7nw0UZEwbkGF573QNR6bwJZNIEfW661o2Jda7NNl6vWushUtu39+UVfHiY/5TQ2C9QJasPYfEkOmqHwHo/LPHpHnnlra1KFLvLAm8k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727347439; c=relaxed/simple;
-	bh=QSefnkYbeJQLKEl46cPPnS84RWiz8yqsgAOOcJvZ+S8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=avj8knzNpsgrIydUEQz/irUi65RV8GSWw7TvwB+jrmDc+Tx0j+gfEvzDLikgaYGRGD2UPP6Lv2QnHtBBueoVRnTMYA57/CIYaOJy6H0KjDBg4I/+R2QHZbjqOkBhD6Wf5gvjSaSneRyQWZyH0unqs2imHFqN614VfscJx97RbX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=csL3aoqw; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727347435;
-	bh=QSefnkYbeJQLKEl46cPPnS84RWiz8yqsgAOOcJvZ+S8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=csL3aoqwJ2tZ5c2MZm1ia7VW8ud4ZlEYUx3VGM/D/VqTvUrDibvpRjS5go5uzJ+j/
-	 qiqdpHDH/uVCMFT2tTRSda0PCpyM1TpDv8TRumghyVKQlpDX6GwfvHeLKXhTfAD2By
-	 XjLxH3U92QeQPRzfd05wbBgYntw99aKsuVlvnoVzFvIIjFE18Lwga1a3Ar4Ya1coZu
-	 RANyFomHuSrVHS+Zra/iPX/S83ubjNBjcZXDq9/P7dM0pSd2IjLsovapuVcpzHtH5Q
-	 /rOKUbElLsee7nKvCABXPQnZXAkN69lUjrE9jmKNvaqzyAus5eFJNvXFQimGT28XY7
-	 Ox3Y0PZ77CQlQ==
-Received: from localhost (unknown [IPv6:2a01:e0a:d1a:1250:792b:136f:2a18:fd70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8BDB917E121F;
-	Thu, 26 Sep 2024 12:43:55 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Thu, 26 Sep 2024 13:43:23 +0300
-Subject: [PATCH v2 4/4] clk: Drop obsolete devm_clk_bulk_get_all_enable()
- helper
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95311AD416;
+	Thu, 26 Sep 2024 10:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.104
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727347465; cv=fail; b=ooo2JFVxWOc8ODzU8jYa3z+/OgHhifUqeb8q/z04gRrgvjJkfjj+MsgfoFognYPz8zZCeEIQdUdUYCVg/tX8A0C0BGd0hWOwOvKuxIxClGcaRgeHw/wEQWlHkKHaWXBwTA6rwqn+Omi3XyFOeqB5V8oUC2cP19oClRIRgWUwagM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727347465; c=relaxed/simple;
+	bh=dFoVSTXViHVpCWRtRzr6RjHEu91RU9r4brWLT7BpXjI=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=rhtkIaD0tWaDmjzUGBK1bk6/RlVSYp6pmrba+yigPV+PK3SsMvxYNNMAt9SzZSXPS/Cs8xK7faLSRMmGFVJScKPXyea8Rr/Q07YHohtl40oD9ywbgv9GskscQ86xZPnBLRhimOxZCrlOYu7arPCr95IRRRpTHi8KwUw+9JQzYmY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com; spf=pass smtp.mailfrom=inmusicbrands.com; dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b=ZQsixcDH; arc=fail smtp.client-ip=40.107.95.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inmusicbrands.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SbFSoSD0VTwNQs+MXSKQVb1Eu/yF6xWP1eDxx8vVk+UizULzIqyas9CWdpnfiE0t10Db06KUMWPs7QMyTKJUDQciX/MGzClUmHj9ySTtPOGwIzewo6wihDgqHc3USDPMZmK77K3OqCxR3hPzI3WZj4X/SuOpAhSkpi5Yy+Rmir4/9QVKBGfbWScYXbX91HDLpqWBsvbkOYMKq1QOST80G7jh4KsapR2GDpHD94ci7KJYAG9123V4p9KcKJ7BzjrYINBz4lUAKr4cGsoDGabfKyBryJfB/woXTuRk0XgDONS+GVO6dMm7G435mzklaRWscF05uZb5NGtfy0rZwdRP4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6/CoUEyLPqdyUI+PBq+uGlXaosEAqgWzTJPL4RwROkY=;
+ b=pK8U1UOuM6RdjeUMepDiEKV8mZ0OsApcNrUQN2kDradA+qZNyokT6CWXWd/iuyl0zGCUUsocOj2Z5KXRdrJNLY2uR/k5oMNYg5pAr/pm878s8ZtP7qYESNV71vuKiLnwAgz5IxP2jhSqy+SkJ25QOHXPm8sUj4RS6YmjdhxroF9dOiAlcUwR+5kyAGk37vUt8uHKG8hKxHkmQhPAJ0R7n6HQr0b4KbI21VmYQOfrncUSfF5Gxg4XxNPyCfOrAvS29xgECqWGhLXbjiZxTG3VDletGWkkm81WysEy0GeHeIc3/8ru4KMywWC9b0URWXR+EU+63bp2PkkdnbQ7QZdmGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=inmusicbrands.com; dmarc=pass action=none
+ header.from=inmusicbrands.com; dkim=pass header.d=inmusicbrands.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=inmusicbrands.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6/CoUEyLPqdyUI+PBq+uGlXaosEAqgWzTJPL4RwROkY=;
+ b=ZQsixcDHwDurrU2qOJzAlbUQSTEJ8qM8PYum8GskYC5x0WkYco482M1oJXlKOBv+yq0vLfnaTnyuh65Zh3RdDHRxwTZAcEvFcbX8nSm9281cuDT+/rfRspwEpvOcGLBO7+qI3xBv0/dg8e1/02aCnziag3GqSywmFQF2WCD5ll4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=inmusicbrands.com;
+Received: from MW4PR08MB8282.namprd08.prod.outlook.com (2603:10b6:303:1bd::18)
+ by CO1PR08MB7000.namprd08.prod.outlook.com (2603:10b6:303:f3::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Thu, 26 Sep
+ 2024 10:44:20 +0000
+Received: from MW4PR08MB8282.namprd08.prod.outlook.com
+ ([fe80::55b3:31f1:11c0:4401]) by MW4PR08MB8282.namprd08.prod.outlook.com
+ ([fe80::55b3:31f1:11c0:4401%6]) with mapi id 15.20.7982.022; Thu, 26 Sep 2024
+ 10:44:20 +0000
+From: John Keeping <jkeeping@inmusicbrands.com>
+To: linux-sound@vger.kernel.org
+Cc: John Keeping <jkeeping@inmusicbrands.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Johan Hovold <johan@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Elder <elder@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Lee Jones <lee@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Daniel Kaehn <kaehndan@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: serial-generic: explicitly disable flow control
+Date: Thu, 26 Sep 2024 11:44:03 +0100
+Message-ID: <20240926104404.3527124-1-jkeeping@inmusicbrands.com>
+X-Mailer: git-send-email 2.46.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P123CA0164.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18a::7) To MW4PR08MB8282.namprd08.prod.outlook.com
+ (2603:10b6:303:1bd::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240926-clk_bulk_ena_fix-v2-4-9c767510fbb5@collabora.com>
-References: <20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com>
-In-Reply-To: <20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Jingoo Han <jingoohan1@gmail.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org
-X-Mailer: b4 0.14.1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR08MB8282:EE_|CO1PR08MB7000:EE_
+X-MS-Office365-Filtering-Correlation-Id: 37df8c2f-e9e0-46df-1be3-08dcde182d42
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Q07YJSMoI+bvef8PW1lvZl6/Nxje7ugbqoKC9ilDS1iAmPSsuh9OUaNiWHrg?=
+ =?us-ascii?Q?BjBPUovlVKh0nASJYx/0cTmaGkwmMqzzb6LNqJUzTTsxOR5eVjFyFnn/fRMU?=
+ =?us-ascii?Q?Fp+8AnV4Hy+uiJ9G4Ao7pUTrcRiAEg9vaidmxRqFmCzwUJkzHcqy8IOY13GA?=
+ =?us-ascii?Q?GmFK2eFxMANQGXgK9+FIqCA/jsQ/2O8J57KVSuKGsdD+C1URyEIN/NaJ1X6p?=
+ =?us-ascii?Q?gKmW8eCRYoQnfaGoXZ8TmhHxOKZK6FiiPBqD2Rdzd4KcDDVLsptTh5izZkPj?=
+ =?us-ascii?Q?gbmND3YBNEeBbXJfflzA5L60WOTBWVboyAe0AecH0g5/zzUwonAwDGYaRzDE?=
+ =?us-ascii?Q?w098mCSD7fekAm32hwWzE9cEGbPV8kUAIHDQhvLQuRzvJZRl3ORybhnmRoSS?=
+ =?us-ascii?Q?8BlvFQAJhYG/nLB/C+l0HiqY4qQHqYVjPSqd7VL+SWubVk2QJQKhqdjWHEaK?=
+ =?us-ascii?Q?HB+Py///jYuIyo/I2txB6wpAhmWAW1inidetZIhJNH7WjhnksKFPuxdKd9J2?=
+ =?us-ascii?Q?fy/+ZwGqKoHrI03/zjavhJ3cIgxFzZEjgY4xtpf18jj9OsByZP5a4d+tOziy?=
+ =?us-ascii?Q?S8V+uCpXyAwNxK/6iEY6yUJ96nsCH7VqIJak/ma1i8WO2lXu4D5KSLEYVz3h?=
+ =?us-ascii?Q?9D6FVaH786UuOHmTSswVqBhCUU9AJO/qNRPJaYGj7QYTaPUp9rgN9NNL345e?=
+ =?us-ascii?Q?6hnP8qyod3NL/uM/+GYhrZgKh+qgEgkDi68wMvJ0jN+wXrayLhT88Lq2HEer?=
+ =?us-ascii?Q?FPADZGfPlX0djgqOpWaANE+i6RFOE0BDdLqRlozJrX86V3eKqZeMmFoIdsPf?=
+ =?us-ascii?Q?eBvwhr8hdbS85zK0stZWB8boXkcCgODxjdYnvpKWlRKvkEN4JiOz6ePeIvcY?=
+ =?us-ascii?Q?+BDdhN8vvB9z1gotCYDVm9f1gRmuyaDYvkDnkmWVa7Fb1c2jlgiP7yjnSv4o?=
+ =?us-ascii?Q?1YtmLD9hgVqwphPfGy/WbLaDlbOR0FwhtfZuzspZhdoVbKSjW0NKBQKm8/Xq?=
+ =?us-ascii?Q?Q8XbaykRovqXhP0Iie7oA8yNBT4bOW1a07AU3sTZ3X0fXx6GKngGTc4BTAzp?=
+ =?us-ascii?Q?GXHJB1SJQHJXMPj+nr4wciEtiUrFdtPFPzywRALvRl9xd2ZNvxlrq4OBWe2U?=
+ =?us-ascii?Q?AQNMxsLFF4WRSY+GItTYL0n/BHwfSmvQNKI17BrpcKfubIUrb9p73Obd273O?=
+ =?us-ascii?Q?HS8YRi7oVwVtqAiqOqnIUR9l3DyK18MiBY8w2l2H7x/wSPsPNutObxmNOKkC?=
+ =?us-ascii?Q?oVcCM6jj1mGE06uIkeQUV3WjVY/44jMaeQn8yRLin5GVXy1slsYnvcCOtXAj?=
+ =?us-ascii?Q?zGFwMhAjZYjUpep7kI0y4tW1RBGwcuvOWDDEctoA4F+Vkw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR08MB8282.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zF9inagIA97p+L4K1ByJvvf6u6h0U4lzBUMJ7Do7m2B8j+DiBuImN2T9HLyj?=
+ =?us-ascii?Q?YDI4cQJFKCz7XX+OOyHQqe+Wt2dA84rN4DcnHvVe6Swrzvg2IqpHD05dRiFw?=
+ =?us-ascii?Q?JZbAKYGzS9113KbhTa8+l18TAxQMaON0Cbtv0kXJ7iLazpX9um4nM3poOLzk?=
+ =?us-ascii?Q?gLlfc9WbeA9fjztlHnuKDuC8/Z8LfwDveumwHcylGZOuRbQt6xRcUzfzbV4I?=
+ =?us-ascii?Q?3yWAuAKj+whIhAjuQ3Yxop2b7PE4XBpy0ew+2+qeGwnmUODuJA2/f8nafCIj?=
+ =?us-ascii?Q?80jhgOd9Vey0+p2+ZPFJXJW4tHTJgv8jx+8Bh31uF8zVuxOwRL+M0Z8W7fVp?=
+ =?us-ascii?Q?AgT84Ivxj/gDDUDF1/GGGyH8mnh8BK/Hc1fbgpo5A2qVEeqCLylwYGhg061G?=
+ =?us-ascii?Q?nGuQtMjtETFyKYhxW6WJyBKT78TiHpwSaryT5gIO6mDj2ck8rAn3ZLMO46VN?=
+ =?us-ascii?Q?RLCbPfuxTWzccoR0Qbx/ja7i3LdmgHtYorXFoDePDqYTwGtHH1bMEWSv78Iq?=
+ =?us-ascii?Q?2vDhdruGqKf26eclo7DLGsFIqkqQ1/J4OOx+1obwr/Oep9Ymr6iI/hXF9Gg7?=
+ =?us-ascii?Q?c5YIaR5zkCXeBDvcV1pOBJ4+sPrk7in31ZGiqjrPpdsfMzHnWSQYjSDpzgHs?=
+ =?us-ascii?Q?maXWlk5OlG82UBXuwbRrz1hbcf+63a4lZhXlkVsRIti9VzwMFm+oBXEB53oJ?=
+ =?us-ascii?Q?bBs349rNEwpBzAVbkJRjf6rL9Loa+VC5/f8OvVDVZmasMoALjgwCP9onnZDe?=
+ =?us-ascii?Q?W1Eo1TAlDL7ya7hfIFRs1LH1GR3CPv9LM40DfQcfoOXHm5l9V+D/VX6iqmQB?=
+ =?us-ascii?Q?E2y71VatDBbYJ6LCo87+XYzmuYnpdpO5yfPec2Vfvf6ZwSRs9risFvjpcQsD?=
+ =?us-ascii?Q?6mjS/Q0ZQ8tWgTCwMpNWQ2hg4Qbkh/PHZotPdgJRAWJgf3jESLysCLGnlGQa?=
+ =?us-ascii?Q?dMz0EX44NQw0EzU6rfphxXTCQamaaE+X7kgODDj1gzNo9wOx36iB8ecuC8XJ?=
+ =?us-ascii?Q?d+7AQa9E9GiMnC256WSjCEkQQXVhAZ6cKPKUCeIoiD5LtZkZ6EFxoR2U5N/4?=
+ =?us-ascii?Q?7chaKLXCn63taAXiqN4DLcAbqvwL4EmATrn5aqq7/Ce3B9WOlOPtnBMaA6+5?=
+ =?us-ascii?Q?vmR+KnyivPF2VUHn61HKuv6kd/WNzrzFPJGJDhczQ3soTCjg2fk2Xrry546M?=
+ =?us-ascii?Q?RUZWf0/viQLfBRxvkmbyUUPTS0OUJOB7wuN5UvHPy4aLC0ARXaYfhtm6xtsK?=
+ =?us-ascii?Q?2l1Y5DW0iznKACPkbIBe7yYSllLYKLGVK+UWSp3q+q75Ey9Unf8tucyg56AF?=
+ =?us-ascii?Q?MhlnAzc9w7i5B6udZSmZ2A9a96Bw5IseL+R8LMqS8h+u8shaVQvZTwwtXXzO?=
+ =?us-ascii?Q?1mX7PT9sjLUPBcfk7niti3I5YZDY6DnbHcFRiUPcRmlcOAcQcLOTXwQKAfhY?=
+ =?us-ascii?Q?k09RtLIxbpThDh3p+P4H4oDHzyz7NUf5MojD0acXygpDkJzSwT86yNvRD0Jf?=
+ =?us-ascii?Q?cDWujH9LW+DG0GxnSebCVxVMfdRvriJpIMjJRtTrFcQ/Dl0DaUrrISIZvrFH?=
+ =?us-ascii?Q?jH4aknfS8b9tsSGon14qYTV/K3zvCz6jAYxJe9a4SZjbYRZOinZSFrW+dG4K?=
+ =?us-ascii?Q?xg=3D=3D?=
+X-OriginatorOrg: inmusicbrands.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37df8c2f-e9e0-46df-1be3-08dcde182d42
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR08MB8282.namprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 10:44:20.2954
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 24507e43-fb7c-4b60-ab03-f78fafaf0a65
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RXpiYjuaYZzXvZpQJWKddcWFhVuHB4ROnRP1PE1b4Q9t/fZvZUBK4Xgw9Az/Bbye8ZOsmL875JE6pd2raosjLusziQM5vDnkXrdMphNHOgY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR08MB7000
 
-Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
-clocks") added devm_clk_bulk_get_all_enable() function, but missed to
-return the number of clocks stored in the clk_bulk_data table referenced
-by the clks argument.  Without knowing the number, it's not possible to
-iterate these clocks when needed, hence the argument is useless and
-could have been simply removed.
+The serdev subsystem does not specify the default state of flow control
+when opening a device.  Surveying other drivers using serdev shows the
+vast majority of these set flow control explicitly after opening the
+device.
 
-A new helper devm_clk_bulk_get_all_enabled() has been introduced, which
-is consistent with devm_clk_bulk_get_all() in terms of the returned
-value.
+MIDI does not use flow control, so ensure it is disabled.
 
-Drop the obsolete function since all users switched to the new helper.
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Fixes: 542350509499f ("ALSA: Add generic serial MIDI driver using serial bus API")
+Signed-off-by: John Keeping <jkeeping@inmusicbrands.com>
 ---
- drivers/clk/clk-devres.c | 32 --------------------------------
- include/linux/clk.h      | 22 ----------------------
- 2 files changed, 54 deletions(-)
+ sound/drivers/serial-generic.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 4203aaaa7544..14a657f336fe 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -218,38 +218,6 @@ static void devm_clk_bulk_release_all_enable(struct device *dev, void *res)
- 	clk_bulk_put_all(devres->num_clks, devres->clks);
- }
+diff --git a/sound/drivers/serial-generic.c b/sound/drivers/serial-generic.c
+index 36409a56c675e..322b5029ea49f 100644
+--- a/sound/drivers/serial-generic.c
++++ b/sound/drivers/serial-generic.c
+@@ -139,6 +139,8 @@ static int snd_serial_generic_ensure_serdev_open(struct snd_serial_generic *drvd
+ 			drvdata->baudrate, drvdata->card->shortname, actual_baud);
+ 	}
  
--int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
--					      struct clk_bulk_data **clks)
--{
--	struct clk_bulk_devres *devres;
--	int ret;
--
--	devres = devres_alloc(devm_clk_bulk_release_all_enable,
--			      sizeof(*devres), GFP_KERNEL);
--	if (!devres)
--		return -ENOMEM;
--
--	ret = clk_bulk_get_all(dev, &devres->clks);
--	if (ret > 0) {
--		*clks = devres->clks;
--		devres->num_clks = ret;
--	} else {
--		devres_free(devres);
--		return ret;
--	}
--
--	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
--	if (!ret) {
--		devres_add(dev, devres);
--	} else {
--		clk_bulk_put_all(devres->num_clks, devres->clks);
--		devres_free(devres);
--	}
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
--
- int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
- 					       struct clk_bulk_data **clks)
- {
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 158c5072852e..b607482ca77e 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -495,22 +495,6 @@ int __must_check devm_clk_bulk_get_optional(struct device *dev, int num_clks,
- int __must_check devm_clk_bulk_get_all(struct device *dev,
- 				       struct clk_bulk_data **clks);
- 
--/**
-- * devm_clk_bulk_get_all_enable - Get and enable all clocks of the consumer (managed)
-- * @dev: device for clock "consumer"
-- * @clks: pointer to the clk_bulk_data table of consumer
-- *
-- * Returns success (0) or negative errno.
-- *
-- * This helper function allows drivers to get all clocks of the
-- * consumer and enables them in one operation with management.
-- * The clks will automatically be disabled and freed when the device
-- * is unbound.
-- */
--
--int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
--					      struct clk_bulk_data **clks);
--
- /**
-  * devm_clk_bulk_get_all_enabled - Get and enable all clocks of the consumer (managed)
-  * @dev: device for clock "consumer"
-@@ -1052,12 +1036,6 @@ static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
++	serdev_device_set_flow_control(drvdata->serdev, false);
++
  	return 0;
  }
  
--static inline int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
--						struct clk_bulk_data **clks)
--{
--	return 0;
--}
--
- static inline int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
- 						struct clk_bulk_data **clks)
- {
-
 -- 
-2.46.1
+2.46.2
 
 
