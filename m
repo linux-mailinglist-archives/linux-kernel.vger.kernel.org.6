@@ -1,135 +1,183 @@
-Return-Path: <linux-kernel+bounces-340405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA8D59872EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:37:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02EEF9872ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 888861F25BD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:37:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BF07283C25
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4209315696E;
-	Thu, 26 Sep 2024 11:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862B9156228;
+	Thu, 26 Sep 2024 11:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="0lMH6yYG"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jWw/AZ6Z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C69B347B4;
-	Thu, 26 Sep 2024 11:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6870B1420D8
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 11:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727350634; cv=none; b=BeNiV2pmr2ekI711YCtJFNwHK452l8roje4qkaeUBpvZJdyhzHTSJF8ffhkGdy6vnSs2lFQNNrUFwMVeNDkwTsZUDNT2b+v54UiUFNAqrHy/FHL3kG+BpZ25ikZIs1WIy20lB9EcR9y9Fe5Kqrw0dd+RlZP4WTPDNr9vvAGYxDA=
+	t=1727350755; cv=none; b=SWfwk+ZXoyknm7KUEysfpBufBETjXyKN9GUFYaK4ZifK7+FXobfhDRFaSUR0yJitGRovYIhce5Kv+XKAZrfx3v6vPk7MLLtSanxX34Df/iSULVHGGAqSMJcsjPtoDR1BvBu6h7PqIxIoHi7CpNBr7u7Ba1azUvBNlUHwBt7aKRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727350634; c=relaxed/simple;
-	bh=27So1y0Tw3n5pcBmG73qYguDZqInIea/FrfW7bNIYYQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=spm7cnYsrXV8B3bojxoEyTBlt7A6FB+vG3F0zlotvOFtPdfNByuEp871531ThqBc5aYiZacfnfNRvfEHo9zzpznNAhfvfEA6kT9IpCT8uXDiNKBBDe7lPoTlP92lnwUrReQLVLPlHlYJyWvSJjF7H8IT1vIWzUoRKnLOyL2O2g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=0lMH6yYG; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=27So1y0Tw3n5pcBmG73qYguDZqInIea/FrfW7bNIYYQ=; b=0lMH6yYGufwT291GnfQL9ss0KO
-	Ko9M/L3VppDmvWSJOCi6U0wb0t/4WtNModopiUMIuylJdZZsuI+5Bz5P08MqU9ik4s8L3sEf0ql5B
-	PymFOYnc+XoVRI3s7KvGaEvItySpmBkHSjA62c/O7TIVRBrmOdwQL/gUKcbqUW5vYlxopfhH8vwvn
-	SEsAloNZWjj8HIsNV0fCwcTIbFLHVPDxjbFND8HdsSjUh73d0bbvAiP3aY+wH8zaJck4HN9vDv+fE
-	UdamI+O2YqEoyB12DV2+e0M5hrdQiseBSLdjVcjlYdTc2+T6LefCwMUhIy36PGowOidog3nNADZpC
-	5cddSqyg==;
-Received: from sslproxy01.your-server.de ([78.46.139.224])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1stmnz-000AQH-NR; Thu, 26 Sep 2024 13:37:07 +0200
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1stmnz-0005VT-1r;
-	Thu, 26 Sep 2024 13:37:06 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Erez <erezgeva2@gmail.com>
-Cc: Michael Walle <mwalle@kernel.org>,  Tudor Ambarus
- <tudor.ambarus@linaro.org>,  Erez Geva <erezgeva@nwtime.org>,
-  linux-mtd@lists.infradead.org,  Pratyush Yadav <pratyush@kernel.org>,
-  linux-kernel@vger.kernel.org,  Miquel Raynal <miquel.raynal@bootlin.com>,
-  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  devicetree@vger.kernel.org,  Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
- Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v5 1/5] mtd: spi-nor: core: add manufacturer flags
-In-Reply-To: <CANeKEMMcZ+Y-f8Kty_4Nk-kRu+F7ZXBbxpAG1Bd_P1vcju1mUA@mail.gmail.com>
-	(Erez's message of "Thu, 26 Sep 2024 13:08:59 +0200")
-References: <20240920181231.20542-1-erezgeva@nwtime.org>
-	<20240920181231.20542-2-erezgeva@nwtime.org>
-	<4e0cf43c-4843-451c-ac6f-86775dbccb2b@linaro.org>
-	<CANeKEMOmhAPM1j1_ihzcC2wL6jKsWXPCGfZs+euS8mRvtqgE5A@mail.gmail.com>
-	<D4DLQGLJSKPB.3OOW4RU9Q3K5O@kernel.org>
-	<CANeKEMPSoUu7GW5bL8nuyC5xCKG7Tt0=SvWTL_CcX5oebqN_YA@mail.gmail.com>
-	<D4DSTDA3HE2B.20ACE70SQAL7A@kernel.org>
-	<CANeKEMO1nyzEKGCt8N8_UCmAcQ3L53=H8U07AdJzcnFaVuwjGQ@mail.gmail.com>
-	<87y13ehn6y.fsf@geanix.com>
-	<CANeKEMMcZ+Y-f8Kty_4Nk-kRu+F7ZXBbxpAG1Bd_P1vcju1mUA@mail.gmail.com>
-Date: Thu, 26 Sep 2024 13:37:06 +0200
-Message-ID: <8734lmhcil.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1727350755; c=relaxed/simple;
+	bh=cDwf0sosdWgnNGxpCFsNiapuoGPvqeBjbKGPfpjYstA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ixq6n3dh3HRgCUo1nIhydq61+LJUFfPGcJNUkXcovTe9YDCZYsSWrPV0OFZ+S2pquCXu1Zm4Ji37edhYOblisDPdRCYW8MyVn/YwGsP1aeTOBl0Gye7T5IuDwjjVi7+M6gCn/sf2DKvYYh0wIgO20vJTSMeq7WWXDnQLmwX2nIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jWw/AZ6Z; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727350753; x=1758886753;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=cDwf0sosdWgnNGxpCFsNiapuoGPvqeBjbKGPfpjYstA=;
+  b=jWw/AZ6Z3APESIttOSlug3h3cllrcb0ItQpklyVjWNHC0TtAV1QWwSh+
+   MeBKSBvjETVcg+42doOfmqjaG5R8xX6GW2MJLVMJwB+1He0OdgSdxxp2d
+   t3l1+eOPWFG2eWSdhEtZva9733c+520PsdMIplrxzNldcEUEGwlmUA5Az
+   9TUj2ue/yszsThW+8gkh+NIG6TYveKNXeFpZ3W9Z5L0X5ifTJLUrNP1TM
+   PRSJbei5ch7Qz6L4Xy84FK14Ok+hOEpjZTu5Dj7wdEqH9BCWk70W2eXOR
+   lwZoYMw3HoWt9/AKu838/xcbVEAGJKpK1nz1PcUiDl7anuokHvyFLjH5B
+   g==;
+X-CSE-ConnectionGUID: y3uLTbP5SiukmGaGG7Vn3w==
+X-CSE-MsgGUID: baHmPPJBRQa02R9g061c9Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="43908711"
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="43908711"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 04:39:13 -0700
+X-CSE-ConnectionGUID: DSupI+IXSPabMBb5arzqpg==
+X-CSE-MsgGUID: /gqk3Uy7Sai4I89ojJjznw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="76615969"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 26 Sep 2024 04:39:11 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1stmpx-000Ke8-0S;
+	Thu, 26 Sep 2024 11:39:09 +0000
+Date: Thu, 26 Sep 2024 19:38:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: drivers/ata/pata_buddha.c:75:27: sparse: sparse: incorrect type in
+ argument 1 (different address spaces)
+Message-ID: <202409261948.Zj19OPgQ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27410/Thu Sep 26 11:30:46 2024)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Erez <erezgeva2@gmail.com> writes:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   11a299a7933e03c83818b431e6a1c53ad387423d
+commit: c7db3832ff19a9a1116c1b3d435c9db165a2f2f8 m68k: io: Mark mmio read addresses as const
+date:   12 months ago
+config: m68k-randconfig-r121-20240926 (https://download.01.org/0day-ci/archive/20240926/202409261948.Zj19OPgQ-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20240926/202409261948.Zj19OPgQ-lkp@intel.com/reproduce)
 
-> On Thu, 26 Sept 2024 at 09:46, Esben Haabendal <esben@geanix.com> wrote:
->>
->> Erez <erezgeva2@gmail.com> writes:
->>
->> > On Mon, 23 Sept 2024 at 18:19, Michael Walle <mwalle@kernel.org> wrote:
->> >>
->> >> > > > I would gladly remove the obsolete mx25l12805d.
->> >> > > Why? I don't see any need for that.
->> >> > Maybe because we do not want compatibility table?
->> >>
->> >> I don't get this? Anyway, we do not remove support for older
->> >> flashes for no reason.
->> >
->> > I did not insist, you asked.
->> > Macronix stopped selling these chips 15 year ago.
->> > How long do you want to support old chips?
->>
->> It is not unusual for embedded products to have a support span of more
->> than 20 years. And chips such as these flashes might not be entirely new
->> when the product is introduced. So dropping support for SPI-NOR flashes
->> that are newer than 25-30 years is definitely a risk. Somebody out there
->> might not be able to upgrade to latest kernel versions anymore, which is
->> not a position we should put anyone in. With the increasing pressure to
->> upgrade product for better security, we definitely should not make it
->> more difficult to run newer kernel versions than absolutely necessary.
->
-> I do not insist. Nor send any patch in this direction.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409261948.Zj19OPgQ-lkp@intel.com/
 
-I did not say or imply that you did any such thing.
+sparse warnings: (new ones prefixed by >>)
+   drivers/ata/pata_buddha.c:75:27: sparse: sparse: cast removes address space '__iomem' of expression
+>> drivers/ata/pata_buddha.c:75:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short const volatile [noderef] [usertype] __iomem *port @@     got unsigned short [usertype] * @@
+   drivers/ata/pata_buddha.c:75:27: sparse:     expected unsigned short const volatile [noderef] [usertype] __iomem *port
+   drivers/ata/pata_buddha.c:75:27: sparse:     got unsigned short [usertype] *
+   drivers/ata/pata_buddha.c:77:28: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/ata/pata_buddha.c:77:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short volatile [noderef] [usertype] __iomem *port @@     got unsigned short [usertype] * @@
+   drivers/ata/pata_buddha.c:77:28: sparse:     expected unsigned short volatile [noderef] [usertype] __iomem *port
+   drivers/ata/pata_buddha.c:77:28: sparse:     got unsigned short [usertype] *
+   drivers/ata/pata_buddha.c:87:35: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/ata/pata_buddha.c:87:35: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short const volatile [noderef] [usertype] __iomem *port @@     got unsigned short [usertype] * @@
+   drivers/ata/pata_buddha.c:87:35: sparse:     expected unsigned short const volatile [noderef] [usertype] __iomem *port
+   drivers/ata/pata_buddha.c:87:35: sparse:     got unsigned short [usertype] *
+   drivers/ata/pata_buddha.c:91:36: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/ata/pata_buddha.c:91:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short volatile [noderef] [usertype] __iomem *port @@     got unsigned short [usertype] * @@
+   drivers/ata/pata_buddha.c:91:36: sparse:     expected unsigned short volatile [noderef] [usertype] __iomem *port
+   drivers/ata/pata_buddha.c:91:36: sparse:     got unsigned short [usertype] *
+   drivers/ata/pata_buddha.c:236:37: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/ata/pata_buddha.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
+   include/linux/page-flags.h:242:46: sparse: sparse: self-comparison always evaluates to false
+--
+   drivers/ata/pata_gayle.c:53:27: sparse: sparse: cast removes address space '__iomem' of expression
+>> drivers/ata/pata_gayle.c:53:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short const volatile [noderef] [usertype] __iomem *port @@     got unsigned short [usertype] * @@
+   drivers/ata/pata_gayle.c:53:27: sparse:     expected unsigned short const volatile [noderef] [usertype] __iomem *port
+   drivers/ata/pata_gayle.c:53:27: sparse:     got unsigned short [usertype] *
+   drivers/ata/pata_gayle.c:55:28: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/ata/pata_gayle.c:55:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short volatile [noderef] [usertype] __iomem *port @@     got unsigned short [usertype] * @@
+   drivers/ata/pata_gayle.c:55:28: sparse:     expected unsigned short volatile [noderef] [usertype] __iomem *port
+   drivers/ata/pata_gayle.c:55:28: sparse:     got unsigned short [usertype] *
+   drivers/ata/pata_gayle.c:65:35: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/ata/pata_gayle.c:65:35: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short const volatile [noderef] [usertype] __iomem *port @@     got unsigned short [usertype] * @@
+   drivers/ata/pata_gayle.c:65:35: sparse:     expected unsigned short const volatile [noderef] [usertype] __iomem *port
+   drivers/ata/pata_gayle.c:65:35: sparse:     got unsigned short [usertype] *
+   drivers/ata/pata_gayle.c:69:36: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/ata/pata_gayle.c:69:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short volatile [noderef] [usertype] __iomem *port @@     got unsigned short [usertype] * @@
+   drivers/ata/pata_gayle.c:69:36: sparse:     expected unsigned short volatile [noderef] [usertype] __iomem *port
+   drivers/ata/pata_gayle.c:69:36: sparse:     got unsigned short [usertype] *
+   drivers/ata/pata_gayle.c:181:29: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/ata/pata_gayle.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
+   include/linux/page-flags.h:242:46: sparse: sparse: self-comparison always evaluates to false
 
-You asked an open question, and I gave my response. Nothing more,
-nothing less.
+vim +75 drivers/ata/pata_buddha.c
 
-> Each project can define the extent of backward compatibility.
-> In terms of compilers, linkers and tools, i.e. build environment.
-> In terms of standards like the C standard we use.
-> In terms of network protocols.
-> And also what Hardware do we support.
->
-> There is no harm in asking where the boundaries are.
-> All projects move their boundaries all the time.
-> The Linux kernel is no exception.
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  62  
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  63  /* FIXME: is this needed? */
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  64  static unsigned int pata_buddha_data_xfer(struct ata_queued_cmd *qc,
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  65  					 unsigned char *buf,
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  66  					 unsigned int buflen, int rw)
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  67  {
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  68  	struct ata_device *dev = qc->dev;
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  69  	struct ata_port *ap = dev->link->ap;
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  70  	void __iomem *data_addr = ap->ioaddr.data_addr;
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  71  	unsigned int words = buflen >> 1;
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  72  
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  73  	/* Transfer multiple of 2 bytes */
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  74  	if (rw == READ)
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07 @75  		raw_insw((u16 *)data_addr, (u16 *)buf, words);
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  76  	else
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  77  		raw_outsw((u16 *)data_addr, (u16 *)buf, words);
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  78  
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  79  	/* Transfer trailing byte, if any. */
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  80  	if (unlikely(buflen & 0x01)) {
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  81  		unsigned char pad[2] = { };
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  82  
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  83  		/* Point buf to the tail of buffer */
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  84  		buf += buflen - 1;
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  85  
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  86  		if (rw == READ) {
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  87  			raw_insw((u16 *)data_addr, (u16 *)pad, 1);
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  88  			*buf = pad[0];
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  89  		} else {
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  90  			pad[0] = *buf;
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  91  			raw_outsw((u16 *)data_addr, (u16 *)pad, 1);
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  92  		}
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  93  		words++;
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  94  	}
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  95  
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  96  	return words << 1;
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  97  }
+740c68a0cd42aa Bartlomiej Zolnierkiewicz 2019-02-07  98  
+
+:::::: The code at line 75 was first introduced by commit
+:::::: 740c68a0cd42aab21ad9aaae092ff8a2215966b1 ata: add Buddha PATA controller driver
+
+:::::: TO: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+:::::: CC: Jens Axboe <axboe@kernel.dk>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
