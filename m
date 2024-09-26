@@ -1,203 +1,150 @@
-Return-Path: <linux-kernel+bounces-339849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA0E986B59
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:29:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56EDA986B60
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8EE4283865
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 022B81F21CB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F329189509;
-	Thu, 26 Sep 2024 03:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E8617ADFF;
+	Thu, 26 Sep 2024 03:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="J55nHojH"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010071.outbound.protection.outlook.com [52.101.128.71])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cSmY+3ly"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28EB188939;
-	Thu, 26 Sep 2024 03:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727321322; cv=fail; b=a5zPcP3kJunZM/bAIR9TijJOKPtwbfB28AfpfchMvp43FFlqNBPPJZSjEYowjJlwzBwzJLpeh+54Q+ifDituBgtZV125XGVigx95otN+g5Q8IR5IHid71ygrFaUd3tRU9yr74dnkpi8JWrQGECWy2zRIrOV5yUPw+j6yYKXXgTo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727321322; c=relaxed/simple;
-	bh=tgD1BYp0PnHXgVpJqko32siJ7bKTo6ZEAE2v+scyGOw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RsJn1CeYwx+T0/UDn9AZZ3cJp1z2CkiWdNdMOlySXnP2lZ5euw2gPzVBZeg5TnQpfcDmEvR6TT9VJogh8fHl3SHk6/TnwjWjuP0iMN8FF5E5TAq+QaTMfJy5UykmOkyaQ5oE/fuWUuBPu3Iq9r0cska623PaHqiLP5F9yxvH6ao=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=J55nHojH; arc=fail smtp.client-ip=52.101.128.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eQsS3MBYVc1WmVRCzwlFCRKSg5IEZfdVfe/zoei8/3M0LzPc9OM+JoXI5/F3flDa+S7kfdlROifUJsEO60gmtdagP0AJXDxeQ24B46muySa7qoj8uGT/Ts9T2y4ai8klC0xDxXxEF+QkvoSAwR0DTua7pYAaMF9PRS2zvqjWGPmPGQ6wug2XEb5VzVKQhL77bCPKzzc4SlD3MNXywVnzs54wEuWjhhI5/QLicpgrEnppCjz5wHc1tsjLMZLXnnuJr9kBDb7jPHIdic1TCWESif4NTbCwECtPyEuFKblNiqJAvxZF6Nenq/XlF25ilpbU/KcrW9AR9eHQo+rn4K4Ivg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AR1SsfuaDtJuUM11jKKgeG1FQIwUxjS6cqjv5SFPDDQ=;
- b=PiKZQggwTtHr4JTjbAmXp4tCyfVH6cB6TKhGKIKHyu0EgMdeYFdY5+/G6gkrEJ1sjYHvHNHdpEFhcbxZL0v+uwlGA9ha+WDAr6zBm25b6kMYWqMbmGihkUtURk04rwqnwL0pjKK3gkt4/XyqZjtrb1QZDTmrK1vRUgqJW166DaDkkNan72NtFSzx43tnSLkULyRiFDQ1ibpGuyfXseW4rRxkvQV9y3RTXTkqcaXZ6ICzaPfGdKAI5nxIAkjMp402QOgYhTRPLDqu6VkTvwvtADaOV92NUpRdOUtjpD9QRn3AZm/5u/an/4MeN+fcykbmrt4YHIV+k8JSZTAFMCDmng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
- (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AR1SsfuaDtJuUM11jKKgeG1FQIwUxjS6cqjv5SFPDDQ=;
- b=J55nHojHvKhIh1X6WAFkaelHzkojy8R01QUYfGVdzkXwkycvH9rwxKzTzSvt2Y7Zk6zwysBosUuA9MRT1VeDKC8GKOBsSJYCPZSUAQs2tUEbYZxIiStAOVndBwjbctVv6Z+M+xNu/HkSmeLItKZfQMP4n5brMVNo+APfvXUFxkBPMATlAp7pqsjJEYgTuZasrGtj4gkb7eYxcUIwyJJUn5uwsmK25ETF5g0E0gG6ICSZNYBYwZr2BwzvUVobu/eXqPyqM6NN3D+Pcmt8EkBik0zDhnoQTMHhIuqTKvHOIox96FAQ9uKl7MGbYxMiMtRc5hXGzOHu7CDNRhYrUu/c+w==
-Received: from SG2P153CA0018.APCP153.PROD.OUTLOOK.COM (2603:1096::28) by
- SEZPR04MB6855.apcprd04.prod.outlook.com (2603:1096:101:e8::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7982.27; Thu, 26 Sep 2024 03:28:36 +0000
-Received: from SG2PEPF000B66CC.apcprd03.prod.outlook.com
- (2603:1096::cafe:0:0:b7) by SG2P153CA0018.outlook.office365.com
- (2603:1096::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.3 via Frontend
- Transport; Thu, 26 Sep 2024 03:28:35 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
- smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
-Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
- designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
- client-ip=211.20.1.79; helo=localhost.localdomain;
-Received: from localhost.localdomain (211.20.1.79) by
- SG2PEPF000B66CC.mail.protection.outlook.com (10.167.240.25) with Microsoft
- SMTP Server id 15.20.8005.15 via Frontend Transport; Thu, 26 Sep 2024
- 03:28:35 +0000
-From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-To: patrick@stwcx.xyz,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 5/5] ARM: dts: aspeed: yosemite4: Add i2c-mux for ADC monitor on Spider Board
-Date: Thu, 26 Sep 2024 11:28:21 +0800
-Message-Id: <20240926032821.4171466-6-Delphine_CC_Chiu@wiwynn.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240926032821.4171466-1-Delphine_CC_Chiu@wiwynn.com>
-References: <20240926032821.4171466-1-Delphine_CC_Chiu@wiwynn.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6E817A906;
+	Thu, 26 Sep 2024 03:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727321358; cv=none; b=hcATuM6AF1j6/RfOaUUGfePrVQAn6Fli9C1qESHvZMtmgOucdZqtsnTyaoMjo2H3X3SqQk0LQvIneBoda/nnIA5+9ks4FZcuWEI31Zk+l3kyS40Ww7RWF/BYCEIlV0j0cSEA0gAHLWO1US88VodNgG+TEtCQ/vR/3QFASSiz6bo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727321358; c=relaxed/simple;
+	bh=dJJpTpC8neKIIdCL9K3nrvbU0U5yGX0NezevEXECupk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HGhbD//oerqkyWPUpW5MjbrkK9qEHIrZbvr6YlbghdY3UbniSv/zM6imKYuBXU7+NrMGDL4hRKrbPQQDykyZ5Ts/wBhp0zu5/EceETvnRlO1VBZ2CbWaMM+F9lG4+yqtmbVdE+G4cK+cd8DKo3PlZ5l14YcDOVJrdVhxABZXMVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cSmY+3ly; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PH5Jk7012529;
+	Thu, 26 Sep 2024 03:29:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	XO/bmxI3kq9zcxVosDo1vUKLoZdAKrP1FIrKbyXHCfk=; b=cSmY+3lyCajULmB8
+	2ypYm7GXrvfmwfjxTWOgQSZesgCvXRJQlkqhvFDL54AxE0PRsNyraiU7eVXnMDDw
+	+VYyPPb+Xjbb8OCBVKQm3WRlJtXyOWJ0U5EwDpCJBr32a/W8/stmVDkfVZ7lOysi
+	ph30aNFqosZIOc3kgw7d1cd0Q6REL1cTS90jOWhnID41g1mat4HH/lB4jfEhgmif
+	KY3Zq9+FTtm4FozkbAHKgAybygItNgrstSZNOCMgJMi7aEIaSsuXb72hq+qMqwJP
+	YD3kH9KNUKAyOxltBMaPrbBVprwuQKtTkf57lW36DwKPp2ays1PiDHn8yaUPil4A
+	EA956Q==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41skgnekw5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Sep 2024 03:29:01 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48Q3T0Fg011881
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Sep 2024 03:29:00 GMT
+Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Sep
+ 2024 20:28:54 -0700
+Message-ID: <1419ba07-5163-4126-8869-2213eea6c492@quicinc.com>
+Date: Thu, 26 Sep 2024 11:28:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CC:EE_|SEZPR04MB6855:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 64826c1b-1c57-409e-5777-08dcdddb4e1e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wvRjxKQWG2sewg2YKSyz0MtIrNamJh5t6kVpvrJ6WNmvR1aAEOU2+R0bEyRM?=
- =?us-ascii?Q?ed1iZYL49jeGt4yfxpJjdVcsak/3MuB30+vsb2oAJA1JVA+Wl0tfHPUwdO/A?=
- =?us-ascii?Q?D9rF9NmXLnjJeDzF8CBN/nfmAwCYiyPmRx4Z8IEwV8EHmihRcuVV4qcBGESm?=
- =?us-ascii?Q?kVFV3bRJQDjVfv87AfreU1Fb1YkpYMQFzFx8c8TrlKlMcjklTnTCXwMK8upP?=
- =?us-ascii?Q?yZX4Sv8WG8NGoUHkK006i4syxqT/aWS2RV/xWr9tlMHXMJxdalUmMwsTD6Yy?=
- =?us-ascii?Q?rjn9fAiHQ9Nf/qHQyRbRIMiBWGG9V/sXrrSK9FmlW39c90IjLWA3E7YHg/JK?=
- =?us-ascii?Q?L7uO09yh7hk2LU3629ibNjb1m/ho7CvE+Aeam4+KT3L82gaQU7lww5Wm4tAo?=
- =?us-ascii?Q?F05CyH6CkEfZmJsyWkLUo0YnW9E+Xz0Zd60CzM9kcT9mJP1dKWmoZOaBjsTg?=
- =?us-ascii?Q?2RwsHe9xFjDY1OLWParFJjyFMGp3cdOKI+SWpSp+R/NYUWbJG7MeQtjYzj+s?=
- =?us-ascii?Q?bXtJgqe+OmeZXDHJYrmfk4DFiUZq8UVLdJifG5vItzSKjkGCTGkPOYn84Ggl?=
- =?us-ascii?Q?FDCLabmYatYMy5WFwlcyeph7/9pByAZGe93nJCv4NSbLfm0BneQSj6652X8G?=
- =?us-ascii?Q?I6w8fDzcZqXjo0NpJz62iIXg10O+xfwywlb9Rt3xK93Ef8ekc0oIWRFXAuQ2?=
- =?us-ascii?Q?z41l++XjiGWL8Uk+TFvjLyvRm191asMj7h4CXaLKTRrRvvdnPB+WBjcGehDz?=
- =?us-ascii?Q?/vftMAbsj1zmUweUQ++U41l2cmoPUyQXvSvG75gZYnNt7pDKkGijhbdy+ObK?=
- =?us-ascii?Q?3RgMRSbuPftiFYXEtjdP0xh2Acpcagn4dbcITE2j7TGpGEjpL1Dwk8E5+7RV?=
- =?us-ascii?Q?VkrVeJWRn48vORCKqQ9N/6HkZL1c0vHS6Dk1Ty2vfYO4OXIVTZrQyFuauszl?=
- =?us-ascii?Q?h68C3YL58uEVDu2PsMQaRDVcuFKPUWOph9FFQrSL7onQXUu2s9N7QUmuKL9L?=
- =?us-ascii?Q?kSeW35Bm1wVFLTOoMYO6pIiQuGlYWXI0TfW27O5Pv31l6MyKNEsX3ZA3qQ3Q?=
- =?us-ascii?Q?fRDC+58Rif111LzyKX1P7AQkA4kFIseKVH/MqZs2UNIilNyWbjNBMugzfAbz?=
- =?us-ascii?Q?8TO+ulQCH7ci3Dl50N1slrA7hI6DIbv3IR4R7dYwnkeCJ/udbSWv4USYi+uj?=
- =?us-ascii?Q?q+m/ILS/XnuC6fnDj5ZWSnsBli9uWDLmsVPAl8DtBMWisyXrmdRY29J6B0kc?=
- =?us-ascii?Q?xvi8lppN1g95MpY59mJDkX049ed1NHuM15HCXjefgYpNAObdOIWsWJOWwkGp?=
- =?us-ascii?Q?g7F3mFpsmJnfWDf7d5+UTV33FPcApwEe5sjE8T+yymn3RRhdPHb1630SV0cV?=
- =?us-ascii?Q?dohpilRu7Abl3rmEK5F2cWX4f3Mo?=
-X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 03:28:35.0611
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64826c1b-1c57-409e-5777-08dcdddb4e1e
-X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG2PEPF000B66CC.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR04MB6855
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/6] PCI: qcom: Add support for X1E80100 SoC
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: Johan Hovold <johan@kernel.org>, <vkoul@kernel.org>, <kishon@kernel.org>,
+        <robh@kernel.org>, <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <abel.vesa@linaro.org>, <quic_msarkar@quicinc.com>,
+        <quic_devipriy@quicinc.com>, <dmitry.baryshkov@linaro.org>,
+        <kw@linux.com>, <lpieralisi@kernel.org>, <neil.armstrong@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
+ <20240924101444.3933828-6-quic_qianyu@quicinc.com>
+ <20240924135021.ybpyoahlpuvedma5@thinkpad>
+ <ZvLX_wkh7_y7sjPZ@hovoldconsulting.com>
+ <4368503f-fb33-4e6a-bef4-517e2b959400@quicinc.com>
+ <20240925080724.vgkgmnqc44aoiarv@thinkpad>
+Content-Language: en-US
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <20240925080724.vgkgmnqc44aoiarv@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: CGPIGE7oYXMUFjcpnQm54XHv_eN8lSCW
+X-Proofpoint-GUID: CGPIGE7oYXMUFjcpnQm54XHv_eN8lSCW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ mlxlogscore=999 adultscore=0 suspectscore=0 phishscore=0 impostorscore=0
+ spamscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409260020
 
-From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
 
-Add I2C mux for ADC monitor on Spider Board.
+On 9/25/2024 4:07 PM, Manivannan Sadhasivam wrote:
+> On Wed, Sep 25, 2024 at 11:47:02AM +0800, Qiang Yu wrote:
+>> On 9/24/2024 11:17 PM, Johan Hovold wrote:
+>>> On Tue, Sep 24, 2024 at 03:50:21PM +0200, Manivannan Sadhasivam wrote:
+>>>> On Tue, Sep 24, 2024 at 03:14:43AM -0700, Qiang Yu wrote:
+>>>>> X1E80100 has PCIe ports that support up to Gen4 x8 based on hardware IP
+>>>>> version 1.38.0.
+>>>>>
+>>>>> Currently the ops_1_9_0 which is being used for X1E80100 has config_sid
+>>>>> callback to config BDF to SID table. However, this callback is not
+>>>>> required for X1E80100 because it has smmuv3 support and BDF to SID table
+>>>>> will be not present.
+>>>>>
+>>>>> Hence add support for X1E80100 by introducing a new ops and cfg structures
+>>>>> that don't require the config_sid callback. This could be reused by the
+>>>>> future platforms based on SMMUv3.
+>>>>>
+>>>> Oops... I completely overlooked that you are not adding the SoC support but
+>>>> fixing the existing one :( Sorry for suggesting a commit message that changed
+>>>> the context.
+>>>>
+>>>> For this, you can have something like:
+>>>>
+>>>> "PCI: qcom: Fix the ops for X1E80100 SoC
+>>>>
+>>>> X1E80100 SoC is based on SMMUv3, hence it doesn't need the BDF2SID mapping
+>>>> present in the existing cfg_1_9_0 ops. This is fixed by introducing new ops
+>>>> 'ops_1_38_0' and cfg 'cfg_1_38_0' structures. These are exactly same as the
+>>>> 1_9_0 ones, but they don't have the 'config_sid()' callback that handles the
+>>>> BDF2SID mapping in the hardware. These new structures could also be used by the
+>>>> future SoCs making use of SMMUv3."
+>>> Don't we need something like this for sc8280xp and other platforms using
+>>> SMMUv3 as well?
+>>  From what I know, sc8280xp and other qcom platforms are not using SMMUv3.
+> sc8280xp indeed has SMMUv3 for PCIe, but I'm not sure how it is configured. So
+> not completely sure whether we can avoid the mapping table or not.
+>
+> Qiang, please check with the hw team and let us know.
+Sure, will update once I get any response from hw team.
 
-Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
-Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
----
- .../dts/aspeed/aspeed-bmc-facebook-yosemite4.dts | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-index 29dd109ebd08..40f6090fcb36 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-@@ -20,6 +20,8 @@ aliases {
- 
- 		i2c30 = &imux30;
- 		i2c31 = &imux31;
-+		i2c32 = &imux32;
-+		i2c33 = &imux33;
- 	};
- 
- 	chosen {
-@@ -447,29 +449,25 @@ eeprom@51 {
- 
- 	i2c-mux@73 {
- 		compatible = "nxp,pca9544";
-+		reg = <0x73>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--
--		idle-state = <0>;
- 		i2c-mux-idle-disconnect;
--		reg = <0x73>;
- 
--		i2c@0 {
-+		imux32: i2c@0 {
-+			reg = <0>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			reg = <0>;
--
- 			adc@35 {
- 				compatible = "maxim,max11617";
- 				reg = <0x35>;
- 			};
- 		};
- 
--		i2c@1 {
-+		imux33: i2c@1 {
-+			reg = <1>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			reg = <0>;
--
- 			adc@35 {
- 				compatible = "maxim,max11617";
- 				reg = <0x35>;
--- 
-2.25.1
-
+Thanks,
+Qiang
+>
+> - Mani
+>
 
