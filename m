@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-340893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF9A9878B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:55:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13EEB9878BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD3F91F27175
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:55:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0C71F27CD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4CE18873E;
-	Thu, 26 Sep 2024 17:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793FE188A05;
+	Thu, 26 Sep 2024 17:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e2Z5fSAY"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CcbnQ+/A"
 Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9361318872D
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7E5188913
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727373096; cv=none; b=iwbtet3UegN5SXJvK8C/TTi/Huo0j7GDxl734vfLen9v8pQu/pZLSfEChFvRlWLHlz4LCyZTi1+7I1OR2iFws+LZuXl2lyNsTOTfzFionWqzFjqNBxQG6/0mHBEw6tZCre3FL5n/VGDTVFZ1yV0qSRrbBDcY1bSp15Oc3vD8oG8=
+	t=1727373098; cv=none; b=ex9olx8DbCY6pwHnYuXmVE+jv1+YjkpmuhQVDwHz3PmNPHdp7AuDxs/KTJMQ86v1SXs9ysgNDELZrqVNcwdHKoUZiYhsQmlrny3TfupAsmUVnq49KjhkDpnYEAAimrgcvWCWijePb5BDnPuQP8+c+GRU9rEUr05nNOIaT5LZ+ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727373096; c=relaxed/simple;
-	bh=gERZzLCzc2fWcCvVz8qmuopBQ0MicZBfE0/WEjrEEsQ=;
+	s=arc-20240116; t=1727373098; c=relaxed/simple;
+	bh=Ls3BV45TZcAZatf7hz/8jKq+TlX9gDn82lEPiNxKmIk=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=C0Ivfk0KPAF7+LQBAPs2/H0sAY//Ak7y/KASOIcOHQbkNDxxcCT3yLWjPc734hkmJdZ1RtUimaCAMQCkzsL63GW7gG2XU3jUpZurx5uePq1TUhvoB5nErTR6v+oVOiRGDoJNF1i/n69gpbAvVVlI2kg0coY9B6Vkzt60hIo7e1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e2Z5fSAY; arc=none smtp.client-ip=209.85.128.202
+	 To:Content-Type; b=svkQUqZJeljXEUrcOE1pHNGeKkXOFjFHMzkEk4zE3pRVCV5xo9WW4sQvmLcSye225Ii87m9LQN4AA4AjPnnv2KlM9No7P7K/iArLkk+RY3cktyzjgfqniCYpt9hI5kgZAQpWseapOI56QZZKX3GdpP30xHYYtH8g68ogX0DThj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CcbnQ+/A; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e0082c1dd0so30039127b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:51:34 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e2146737ccso26091757b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:51:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727373093; x=1727977893; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1727373096; x=1727977896; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dJ+kNXYQ6ijjlJjPvv7tl9Ibe8Ne8BhermJ+ZjD0JCw=;
-        b=e2Z5fSAYENS8f0XEDgpJqXzGNozBI6/wuWGb/vJUu+GyguBHov6fUoVnutlIH1uzsw
-         53lqa2OxD9eC+EPqcyd6igiTisLp2tHHRjoWTtqA6ypNt/DOGP/eKQecVGTB1OcCtPXw
-         KCs/VIim232LSxMXYQvLkXdAg2PqwEt6VNaLGfquacH/52U+1XePFlzIC2Qk/bhweTTV
-         qQBCVV6bKbg2dzNTplz7LVTjja4c00sgP47knASFCzcQfzyEnHaPPsmQ/K8VjrIkPxfH
-         AomiD6+trmIZqsF197l9kTsJl4upFx7OItTDtmFSAtEhe/HMAPZ12bomqJl6PVQWUQQ5
-         qpNg==
+        bh=Ib2PVE8H+9AGyufbgRCqenlI2T4GVXk8qqbLWLe6R1s=;
+        b=CcbnQ+/AcB5/sH8fqbBOf/oyqClAD+EL0eqLt+7ikuo8TVIXS0wqi/68MFQHTKL+Uy
+         /jw/dVz+dbj5lQPsHUhOCC8X8QmB0UrC4xYdJqlc8X/8UKsyaOGTUyhUsogxb+DJ+D31
+         JsDyIJmH448UJLvBwGnajOfosnVuyEeSpA+7+i2WMzdHbyMkesR3ZAWU4q4uKPcCaUJG
+         u3afojYP6nor3JNQzjLRnkKBrFUHVrR5WvzAHrE3MBzbhZLuSHD7qLwLNwmDJiWYmY8E
+         BQyEqHt4H+J48S3ZOJ3QO79eWuNlybtUgVRHJSGBrVAOjyB1D3RjtaqcLOJ9paBdmeiJ
+         Vn4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727373093; x=1727977893;
+        d=1e100.net; s=20230601; t=1727373096; x=1727977896;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dJ+kNXYQ6ijjlJjPvv7tl9Ibe8Ne8BhermJ+ZjD0JCw=;
-        b=gBRNuty5ZjMtHAvJlCvpmOQsWwjUORhJRKzJwik29vfOkfZMJMpV3SodfKGDzjgup5
-         vs+QdSR1qoJCZgL8W1dYje5PoOgt+HsZw6fQwmJQx6UFOZ/+Lyb5Dq9TJ8vpifzj3L4m
-         JlMgKOzoAPk0D+Sz7pfLPhCjoHEa1aL0kjGT34On+iGJlaogwqgLar0DDvekPii3B1re
-         9G7P8J1xJfOkchSKQkRor6vAXFif2G3lzO7ajOQZKGUjvYFsB2e+qvkdLDne2XINHPsR
-         HdmzFumVwLdoJSzlQDrwA9fB9rE3VvEK4FL2tR3p4qHJgR+03OuCG3CK/+qD1UzTPoQG
-         ZWAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgqwFrdl8MB3InyyQsImfsjscwWt5wHhXcB5ddFdzpdwOfbWysMpdNAWTzt4EFNqJ0cZISOG+atLCVu1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYQG/ffYAalymt412AKv/lsPxgIHVxJDJR8JXGpHg5erMjZ6hm
-	mZbN3ARDOooVbl/ztDk6dz5Y+mFM/pFZACBVY4wohCVFEeYxsVRGPR6asHhTP2QC0Xi6rwUWPge
-	ZgYf6Wg==
-X-Google-Smtp-Source: AGHT+IF76900gFgipr9S/AeWEr7e87McD4QtSxG6frbbqn+BrqutYPpn4+Qbx6r73jI9yX+PrPpjA4Fl2z72
+        bh=Ib2PVE8H+9AGyufbgRCqenlI2T4GVXk8qqbLWLe6R1s=;
+        b=CZpdDWhwh3Dwl7Vx8BN20PLbjDduqI8ZOK06kXmOxusdxEv3H6vW1NVQSYhYHFVQeW
+         wQkX7sVPeI79bYpTn3k18mPuGYACSMw1v7bt/0cK4MwAy+lWt+OhWsjx3ekpF09QU+0i
+         AHHmGRkvrQ0VyCn0LSPGi5FnIeKorv+eWV7S3lg+8rwrWKxjpPRF9w+jFXJheKjFXR/B
+         5zcE+WWOQs/SGqbnWXiGe1DW0mrTcZBBRv/GnzTS9siAGfCkt0x9DUHftNoXqyJjyF7U
+         mdjUb08YqjwOhdW3JvB6zci6RsiuAXichL3F+3KFVCMFB24XFBSexZ6oNacbKeufA7Mz
+         Rd3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWwuJCW8IWq5txTVTkBvKY3X+tELQp7144Zxf81kaloweaJMC/7Z+/IFi/JGkJSWA+pBCuyPw0QDWSm3l4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws8t4yDkQlXHPUcFb0amo6Lhkx4W35dz10zTa+Ow24FI5j+RXf
+	Vq4+loQv1CYQT3+v554qDaGi3l7a3jjCc9SfxveUlDbMSvo93emjBNt9UyWo3jC7hPHx9n5M7jg
+	e2Yy+jw==
+X-Google-Smtp-Source: AGHT+IGIGYU2itVrBwRCZqwxpU9Mv+8tKNEFB2tNcgZikidnBmP88FvNQPNNK50LYkpYnFHCKzZoom7Wj486
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:6894:6d8b:d227:e5d2])
- (user=irogers job=sendgmr) by 2002:a05:690c:4810:b0:6e2:ef1:2551 with SMTP id
- 00721157ae682-6e2475dd143mr27147b3.8.1727373093569; Thu, 26 Sep 2024 10:51:33
- -0700 (PDT)
-Date: Thu, 26 Sep 2024 10:50:34 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:4a05:b0:648:fc8a:cd23 with SMTP
+ id 00721157ae682-6e2474e176fmr53217b3.2.1727373095880; Thu, 26 Sep 2024
+ 10:51:35 -0700 (PDT)
+Date: Thu, 26 Sep 2024 10:50:35 -0700
 In-Reply-To: <20240926175035.408668-1-irogers@google.com>
-Message-Id: <20240926175035.408668-22-irogers@google.com>
+Message-Id: <20240926175035.408668-23-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240926175035.408668-1-irogers@google.com>
 X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Subject: [PATCH v4 21/22] perf jevents: Add upi_bw metric for Intel
+Subject: [PATCH v4 22/22] perf jevents: Add mesh bandwidth saturation metric
+ for Intel
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -87,52 +88,49 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Break down UPI read and write bandwidth using uncore_upi counters.
+Memory bandwidth saturation from CBOX/CHA events present in
+broadwellde, broadwellx, cascadelakex, haswellx, icelakex, skylakex
+and snowridgex.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/pmu-events/intel_metrics.py | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ tools/perf/pmu-events/intel_metrics.py | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
-index ec15653e2cb6..8e1c0bc17b8a 100755
+index 8e1c0bc17b8a..a3a317d13841 100755
 --- a/tools/perf/pmu-events/intel_metrics.py
 +++ b/tools/perf/pmu-events/intel_metrics.py
-@@ -990,6 +990,27 @@ def UncoreMemBw() -> Optional[MetricGroup]:
+@@ -990,6 +990,22 @@ def UncoreMemBw() -> Optional[MetricGroup]:
    ], description = "Memory Bandwidth")
  
  
-+def UncoreUpiBw() -> Optional[MetricGroup]:
++def UncoreMemSat() -> Optional[Metric]:
 +  try:
-+    upi_rds = Event("UNC_UPI_RxL_FLITS.ALL_DATA")
-+    upi_wrs = Event("UNC_UPI_TxL_FLITS.ALL_DATA")
++    clocks = Event("UNC_CHA_CLOCKTICKS", "UNC_C_CLOCKTICKS")
++    sat = Event("UNC_CHA_DISTRESS_ASSERTED.VERT", "UNC_CHA_FAST_ASSERTED.VERT",
++                "UNC_C_FAST_ASSERTED")
 +  except:
 +    return None
 +
-+  upi_total = upi_rds + upi_wrs
-+
-+  # From "Uncore Performance Monitoring": When measuring the amount of
-+  # bandwidth consumed by transmission of the data (i.e. NOT including
-+  # the header), it should be .ALL_DATA / 9 * 64B.
-+  scale = (64 / 9) / 1_000_000
-+  return MetricGroup("upi_bw", [
-+      Metric("upi_bw_read", "UPI read bandwidth",
-+             d_ratio(upi_rds, interval_sec), f"{scale}MB/s"),
-+      Metric("upi_bw_write", "DDR memory write bandwidth",
-+             d_ratio(upi_wrs, interval_sec), f"{scale}MB/s"),
-+  ], description = "UPI Bandwidth")
++  desc = ("Mesh Bandwidth saturation (% CBOX cycles with FAST signal asserted, "
++          "include QPI bandwidth saturation), lower is better")
++  if "UNC_CHA_" in sat.name:
++    desc = ("Mesh Bandwidth saturation (% CHA cycles with FAST signal asserted, "
++            "include UPI bandwidth saturation), lower is better")
++  return Metric("mem_sat", desc, d_ratio(sat, clocks), "100%")
 +
 +
- def main() -> None:
-   global _args
- 
-@@ -1031,6 +1052,7 @@ def main() -> None:
+ def UncoreUpiBw() -> Optional[MetricGroup]:
+   try:
+     upi_rds = Event("UNC_UPI_RxL_FLITS.ALL_DATA")
+@@ -1052,6 +1068,7 @@ def main() -> None:
        UncoreDir(),
        UncoreMem(),
        UncoreMemBw(),
-+      UncoreUpiBw(),
++      UncoreMemSat(),
+       UncoreUpiBw(),
    ])
- 
  
 -- 
 2.46.1.824.gd892dcdcdd-goog
