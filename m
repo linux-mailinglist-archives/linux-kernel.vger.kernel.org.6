@@ -1,580 +1,204 @@
-Return-Path: <linux-kernel+bounces-340295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 878A1987124
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:19:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 717AA987123
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44924283116
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:19:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E838F1F23A2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C191AC8BD;
-	Thu, 26 Sep 2024 10:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2372A1AC8AB;
+	Thu, 26 Sep 2024 10:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFuXCF/a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="lITTgP2M"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070181ABEBC
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818145647F;
+	Thu, 26 Sep 2024 10:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727345962; cv=none; b=DTDi+uAyJY0HDTxpXPKK9Y5r3pxQmSZBzI/mnr476/wOSa1pXX78I1LTABks8KPug/nM2KzdtXNRxFhVizyGkjW3XhcEDQF2JPPkUdur3SG0+fuIqUspNAo4u643yb7ia6gSziQHHUhwXxxcAE+3mESwl5DVjfXmUkkpyNZx7EI=
+	t=1727345941; cv=none; b=OywEBd+8Vs9qJODrTczL3Be9QRF50d9yFBFPHXxg1hGiIHhZRe/Wqs01Jz39yUBv8YVpyvE/IuGGeUr455Sd4ak6nD80oCbMUtwzzI1lwlXdV2c+9twBFK8oI9KkBj5gy3VbnwCCtAnuEPVYJpw3CiT7U2oAGL6q4KBP5O+js9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727345962; c=relaxed/simple;
-	bh=YZTVi6NsRh8F0R9fOHuPpd2nGsJu83XnTYyzXELkgNk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QmUXuSt2daxAeyKtkdqpXOb8g0wG8NojHCdh9ubjyXgDlbKOSPxs9LUHSg2gvjd3LeztX9U9pzUEuUA0H9bSzHeH5e5WSPU/zW32CUKsegNO9Mj2rJCGpCUQNfYt1rVvaPXUxHg+ZeYqFkZ/jxRS1vCEh7XG5EuwWAkHCoC5QV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFuXCF/a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47E74C4CEC9;
-	Thu, 26 Sep 2024 10:19:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727345961;
-	bh=YZTVi6NsRh8F0R9fOHuPpd2nGsJu83XnTYyzXELkgNk=;
-	h=From:Date:Subject:To:Cc:From;
-	b=SFuXCF/a4UTrO4tKB0Qv0WJSJt3KPjtOwIrpFBSKi8tLd3oM0OzhOp3h/ZiNVLH2r
-	 RacJ4awSWth0MjfLe+a2m9TLuQukre1hnh5eV3RnpvIkVVFTaitzkrG4Pqgd2jQQom
-	 WjFignLLaQuczwCRY/3bwK4PVBLTEZTnkJXdd1gPNn9kvibGcmqlTP6KVk7sZwwiy3
-	 LQzXL5D9bgJIPdXOwzhiqe2ckob4+aAj+RWpeWimYmw52s2zGBTlZQ2qA2csB3dU9X
-	 LWvX+lxlNnMOASWJMkpIS3gDp7oB60JSXYVwNi6RKY3BXwXr1xc7D2tZQbfJSOcXSs
-	 +uWMt2l4kIECQ==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 26 Sep 2024 12:18:41 +0200
-Subject: [PATCH] regcache: Store values more directly in maple trees
+	s=arc-20240116; t=1727345941; c=relaxed/simple;
+	bh=jofM7Q5aS76ZNLfcMgMBEeX3gAqN6j6s3g02UtRiWa4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UQHWew/bOGaMNdSX5ZAuKKOSxQCQpPS7eyRS3CQOeVuH3lywog2vzQn+MDjV2lmwx2sBHRIiAadPS/kbnSbpbqDLIhP5R1zZNHwi7L31W0au8cqssTvyz3nV0+hcazJFDU63I3m3vzI244btNiOonKxE8XtI9sfaOU4eFhSdGpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=lITTgP2M; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=vcQOEOghojEEcKzBYWCBaalez3tMu6zJ0B+RBH5pf0I=; t=1727345939;
+	x=1727777939; b=lITTgP2M+/SrjouAGVJ7kNtAol4InXfuHxYQwHbBUMIOwZXJCAGKIWAp4dcj2
+	88vzSpmq/h+ctAtfEjJbJoF77iQN8d5+25dPlJnQt1eaIJYy6ybY8hWlEo1wZzP1QOzM+gntkHvL2
+	qTtkfantvnMSatP7Q12RR0IHk8FRYdgvJFCGQnU7rmqiSoxL8GODx/PDU/Qusc3ojb5UsvAYZK9vS
+	hY6A3XCZx2D2gp2A64aWZMvIG7blf6LtPSvmK2w6JDz1+PsciGdMBcg5Tvm1N+/u+JZYQHU1YhtE2
+	wJgUsnTJ4LeY0zWXxl/+tgv32uyOvSAo57fb1aTdeu+eh1/ATg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1stlaG-0006Jr-33; Thu, 26 Sep 2024 12:18:52 +0200
+Message-ID: <7ce7f7cc-870f-4f7f-98c6-95eb784008ff@leemhuis.info>
+Date: Thu, 26 Sep 2024 12:18:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI: resource: Skip IRQ override on Asus Vivobook Go
+ E1404GAB
+To: Hans de Goede <hdegoede@redhat.com>, Tamim Khan <tamim@fusetak.com>,
+ linux-acpi@vger.kernel.org
+Cc: rafael@kernel.org, lenb@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20240903014317.38858-1-tamim@fusetak.com>
+ <c73420b7-c186-4b5d-a074-961b35ed829c@leemhuis.info>
+ <f79854bd-b338-458f-bc04-466376d05a65@leemhuis.info>
+ <87cf24b3-5ddd-4532-b186-dd1dcc62f712@leemhuis.info>
+ <c1276139-d26f-457a-8a73-7f17538dbd28@redhat.com>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <c1276139-d26f-457a-8a73-7f17538dbd28@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240926-regmap-maple-idiomatic-v1-1-685258a00a05@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAA19WYC/x2MwQqAIBAFfyX2nJCWhP1KdFBba6EyNCIQ/z3rM
- IdheC9BxEAYYagSBLwpkj+K8LoCu+pjQUZzcRCN6BolJAu47Ppkhe1r5Hd9kWVOqVb2RjnDEcr
- 4DOjo+Y/HKecXLFXnLWgAAAA=
-To: linux-kernel@vger.kernel.org
-Cc: Liam Howlett <liam.howlett@oracle.com>, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13513; i=broonie@kernel.org;
- h=from:subject:message-id; bh=YZTVi6NsRh8F0R9fOHuPpd2nGsJu83XnTYyzXELkgNk=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm9TUnSd1mMA5tOIvW0x0qIrLvqnku4+w0tns5G
- GLB6+tZdCGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZvU1JwAKCRAk1otyXVSH
- 0H09B/0bvC5GdSvXw12IGnOIpYBMaaAlrdtM3hLYsXxOnEdGn2dWGHAaKS3wITU1Bdecbhkq8N/
- wKtJnl+HMxj/WfV5eAGD54YyOm6RdxIv0MBcyRl1IB9PHduI0TF5xT6O7+YwYiclokYIoA9IRHD
- IORB8PmL+3WvEkPa41ox3G5jsaHnknkVYPsqEDFYRCHPuxn2CHEYdGEZJ88nBchky5RJIdAc2wO
- 2ksvBf0wKPMjEAfik+6FjPC3A3Win+bUqkLyjIYOAHtqfMPASBBCerP4SYs3afhTpOp02R1nfPC
- tOiRQnZ88qCGKzhUIZCzXKy1TdsXxZL53wEig+4SToXm/50l
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1727345939;5d8a54f4;
+X-HE-SMSGID: 1stlaG-0006Jr-33
 
-Currently the regmap usage of the maple tree is a bit non-idomatic, rather
-than storing register values directly we allocate arrays of contiguous
-register values and store pointers to those arrays. This is all quite
-fiddly, especially around adding values (where we may need to combine a new
-allocation with adjacent ones) or dropping values (where we may have to
-keep parts of a contiguous block). One reason for doing this is that the
-maple tree wants to store pointers rather than integers, and in particular
-has some problems when we want to store 0 as a value.
+On 25.09.24 16:31, Hans de Goede wrote:
+> 
+> On 25-Sep-24 1:56 PM, Thorsten Leemhuis wrote:
+>> [CCing Hans]
+> Can you next time maybe also add a bit of text explaining why ?
 
-For 64 bit systems we can take advantage of the fact that regmap only
-supports 32 bit values and store values with an extra high bit set in the
-maple tree, avoiding the special cases with 0 and allowing us to save a
-layer of indirection. This approach was suggested by Liam Howlett.
+Sorry, yes, you are right, will keep that in mind.
 
-That doesn't help 32 bit systems though since we don't have any non-value bits there. For those we
-can keep the same code structure by switching to do a separate allocation
-for each value. The resulting data structure is not a thing of beauty but
-the code is much less complicated, and should be able to make better use of
-the slab allocator in cases where contiguous blocks of registers are not
-powers of 2.
+>> On 05.09.24 12:45, Thorsten Leemhuis wrote:
+>>> On 05.09.24 11:51, Thorsten Leemhuis wrote:
+>>>> On 03.09.24 03:43, Tamim Khan wrote:
+>>>>> Like other Asus Vivobooks, the Asus Vivobook Go E1404GAB has a DSDT
+>>>>> that describes IRQ 1 as ActiveLow, while the kernel overrides to Edge_High.
+>>>>> This override prevents the internal keyboard from working. This patch fixes
+>>>>> this problem by adding this laptop to the table that prevents the kernel from
+>>>>> overriding the IRQ.
+>>>>>
+>>>>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219212
+>>>> Thx for that. FWIW, I by chance noticed another such report about the
+>>>> E1404GA: https://bugzilla.kernel.org/show_bug.cgi?id=219224
+>>>
+>>> TWIMC, shortly after sending this mail I noticed there is another request
+>>> for a quirk that was send to the list, bug afaics fall through the
+>>> cracks. See here:
+>>> https://lore.kernel.org/all/1226760b-4699-4529-bf57-6423938157a3@wanadoo.fr/
+>>>
+>>> It afaics add a X1704VAP:
+> [...]
+> 
+> Ok, I wonder did you Cc me so that I can write / submit patches upstream
+> for these ones?
 
-Let's implement these two approaches, using CONFIG_64BIT to choose between
-direct storage and allocating per-register storage. The end result is much
-simpler, making more direct usage of the maple tree API and the detailed
-optimisation work that goes into it's implementation. One indication of
-the simplifications is that even with having the two different allocation
-strategies we still have an overall negative diffstat.
+Not really. Of course it would be nice if you or someone else took care
+of that one and...
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/base/regmap/regcache-maple.c | 320 +++++++++++++++--------------------
- 1 file changed, 133 insertions(+), 187 deletions(-)
+> It seems that there are 3 missing models:
+> - E1404GA: https://bugzilla.kernel.org/show_bug.cgi?id=219224
+> - X1704VAP https://lore.kernel.org/all/1226760b-4699-4529-bf57-6423938157a3@wanadoo.fr/
+> - B2502CV: https://bugzilla.kernel.org/show_bug.cgi?id=217760#c12
+> 
+> Which someone needs to submit upstream, right ?
 
-diff --git a/drivers/base/regmap/regcache-maple.c b/drivers/base/regmap/regcache-maple.c
-index 2dea9d259c49..e1495326369b 100644
---- a/drivers/base/regmap/regcache-maple.c
-+++ b/drivers/base/regmap/regcache-maple.c
-@@ -13,26 +13,53 @@
- 
- #include "internal.h"
- 
--static int regcache_maple_read(struct regmap *map,
--			       unsigned int reg, unsigned int *value)
-+#if IS_ENABLED(CONFIG_64BIT)
-+/*
-+ * On 64 bit systems uintptr_t will be 64 bit but unsigned long 32 bit
-+ * so we can store the register values directly in the maple tree.  We
-+ * need to always set an out of bounds bit due to maple tree's
-+ * handling of NULL.
-+ */
-+#define REGCACHE_MAPLE_NONZERO (1UL << 32)
-+
-+static unsigned long regcache_maple_entry_to_value(void *entry)
-+{
-+	return (uintptr_t)entry & ~REGCACHE_MAPLE_NONZERO;
-+}
-+
-+static int regcache_maple_write(struct regmap *map, unsigned int reg,
-+				unsigned int val)
- {
- 	struct maple_tree *mt = map->cache;
- 	MA_STATE(mas, mt, reg, reg);
--	unsigned long *entry;
-+	uintptr_t entry = val | REGCACHE_MAPLE_NONZERO;
-+	int ret;
- 
--	rcu_read_lock();
-+	/*
-+	 * This is safe because the regmap lock means the Maple lock
-+	 * is redundant, but we need to take it due to lockdep asserts
-+	 * in the maple tree code.
-+	 */
-+	mas_lock(&mas);
- 
--	entry = mas_walk(&mas);
--	if (!entry) {
--		rcu_read_unlock();
--		return -ENOENT;
--	}
-+	mas_set_range(&mas, reg, reg);
-+	ret = mas_store_gfp(&mas, (void *)entry, map->alloc_flags);
- 
--	*value = entry[reg - mas.index];
-+	mas_unlock(&mas);
- 
--	rcu_read_unlock();
-+	return ret;
-+}
- 
--	return 0;
-+#else
-+
-+/*
-+ * On 32 bit systems we can't distingush between NULL and a valid 0
-+ * value in a 32 bit register so kmalloc() extra storage for the
-+ * values.
-+ */
-+static unsigned long regcache_maple_entry_to_value(unsigned long *entry)
-+{
-+	return *entry;
- }
- 
- static int regcache_maple_write(struct regmap *map, unsigned int reg,
-@@ -40,49 +67,24 @@ static int regcache_maple_write(struct regmap *map, unsigned int reg,
- {
- 	struct maple_tree *mt = map->cache;
- 	MA_STATE(mas, mt, reg, reg);
--	unsigned long *entry, *upper, *lower;
--	unsigned long index, last;
--	size_t lower_sz, upper_sz;
-+	unsigned long *entry;
- 	int ret;
- 
- 	rcu_read_lock();
- 
- 	entry = mas_walk(&mas);
- 	if (entry) {
--		entry[reg - mas.index] = val;
-+		*entry = val;
- 		rcu_read_unlock();
- 		return 0;
- 	}
- 
--	/* Any adjacent entries to extend/merge? */
--	mas_set_range(&mas, reg - 1, reg + 1);
--	index = reg;
--	last = reg;
--
--	lower = mas_find(&mas, reg - 1);
--	if (lower) {
--		index = mas.index;
--		lower_sz = (mas.last - mas.index + 1) * sizeof(unsigned long);
--	}
--
--	upper = mas_find(&mas, reg + 1);
--	if (upper) {
--		last = mas.last;
--		upper_sz = (mas.last - mas.index + 1) * sizeof(unsigned long);
--	}
--
- 	rcu_read_unlock();
- 
--	entry = kmalloc((last - index + 1) * sizeof(unsigned long),
--			map->alloc_flags);
-+	entry = kmalloc(sizeof(unsigned long), map->alloc_flags);
- 	if (!entry)
- 		return -ENOMEM;
--
--	if (lower)
--		memcpy(entry, lower, lower_sz);
--	entry[reg - index] = val;
--	if (upper)
--		memcpy(&entry[reg - index + 1], upper, upper_sz);
-+	*entry = val;
- 
- 	/*
- 	 * This is safe because the regmap lock means the Maple lock
-@@ -91,97 +93,75 @@ static int regcache_maple_write(struct regmap *map, unsigned int reg,
- 	 */
- 	mas_lock(&mas);
- 
--	mas_set_range(&mas, index, last);
-+	mas_set_range(&mas, reg, reg);
- 	ret = mas_store_gfp(&mas, entry, map->alloc_flags);
- 
- 	mas_unlock(&mas);
- 
--	if (ret == 0) {
--		kfree(lower);
--		kfree(upper);
--	}
-+	if (ret != 0)
-+		kfree(entry);
- 	
- 	return ret;
- }
-+#endif
-+
-+static int regcache_maple_read(struct regmap *map,
-+			       unsigned int reg, unsigned int *value)
-+{
-+	struct maple_tree *mt = map->cache;
-+	MA_STATE(mas, mt, reg, reg);
-+	void *entry;
-+
-+	rcu_read_lock();
-+
-+	entry = mas_walk(&mas);
-+	if (!entry) {
-+		rcu_read_unlock();
-+		return -ENOENT;
-+	}
-+
-+	*value = regcache_maple_entry_to_value(entry);
-+
-+	rcu_read_unlock();
-+
-+	return 0;
-+}
- 
- static int regcache_maple_drop(struct regmap *map, unsigned int min,
- 			       unsigned int max)
- {
- 	struct maple_tree *mt = map->cache;
- 	MA_STATE(mas, mt, min, max);
--	unsigned long *entry, *lower, *upper;
--	/* initialized to work around false-positive -Wuninitialized warning */
--	unsigned long lower_index = 0, lower_last = 0;
--	unsigned long upper_index, upper_last;
-+	unsigned long *entry;
- 	int ret = 0;
- 
--	lower = NULL;
--	upper = NULL;
--
- 	mas_lock(&mas);
- 
- 	mas_for_each(&mas, entry, max) {
-+		if (WARN_ON_ONCE(mas.index != mas.last)) {
-+			ret = -EFAULT;
-+			goto out;
-+		}
-+
-+		if (mas.index < min || mas.last > max)
-+			continue;
-+
- 		/*
- 		 * This is safe because the regmap lock means the
- 		 * Maple lock is redundant, but we need to take it due
- 		 * to lockdep asserts in the maple tree code.
- 		 */
--		mas_unlock(&mas);
--
--		/* Do we need to save any of this entry? */
--		if (mas.index < min) {
--			lower_index = mas.index;
--			lower_last = min -1;
--
--			lower = kmemdup_array(entry,
--					      min - mas.index, sizeof(*lower),
--					      map->alloc_flags);
--			if (!lower) {
--				ret = -ENOMEM;
--				goto out_unlocked;
--			}
--		}
--
--		if (mas.last > max) {
--			upper_index = max + 1;
--			upper_last = mas.last;
--
--			upper = kmemdup_array(&entry[max - mas.index + 1],
--					      mas.last - max, sizeof(*upper),
--					      map->alloc_flags);
--			if (!upper) {
--				ret = -ENOMEM;
--				goto out_unlocked;
--			}
-+		if (!IS_ENABLED(CONFIG_64BIT)) {
-+			mas_unlock(&mas);
-+			kfree(entry);
-+			mas_lock(&mas);
- 		}
- 
--		kfree(entry);
--		mas_lock(&mas);
- 		mas_erase(&mas);
--
--		/* Insert new nodes with the saved data */
--		if (lower) {
--			mas_set_range(&mas, lower_index, lower_last);
--			ret = mas_store_gfp(&mas, lower, map->alloc_flags);
--			if (ret != 0)
--				goto out;
--			lower = NULL;
--		}
--
--		if (upper) {
--			mas_set_range(&mas, upper_index, upper_last);
--			ret = mas_store_gfp(&mas, upper, map->alloc_flags);
--			if (ret != 0)
--				goto out;
--			upper = NULL;
--		}
- 	}
- 
- out:
- 	mas_unlock(&mas);
--out_unlocked:
--	kfree(lower);
--	kfree(upper);
- 
- 	return ret;
- }
-@@ -191,6 +171,7 @@ static int regcache_maple_sync_block(struct regmap *map, unsigned long *entry,
- 				     unsigned int min, unsigned int max)
- {
- 	void *buf;
-+	unsigned int v;
- 	unsigned long r;
- 	size_t val_bytes = map->format.val_bytes;
- 	int ret = 0;
-@@ -211,19 +192,25 @@ static int regcache_maple_sync_block(struct regmap *map, unsigned long *entry,
- 		}
- 
- 		/* Render the data for a raw write */
--		for (r = min; r < max; r++) {
--			regcache_set_val(map, buf, r - min,
--					 entry[r - mas->index]);
-+		for (r = min; r < max + 1; r++) {
-+			ret = regcache_maple_read(map, r, &v);
-+			if (ret != 0) {
-+				kfree(buf);
-+				goto out;
-+			}
-+			regcache_set_val(map, buf, r - min, v);
- 		}
- 
--		ret = _regmap_raw_write(map, min, buf, (max - min) * val_bytes,
-+		ret = _regmap_raw_write(map, min, buf, (max - min + 1) * val_bytes,
- 					false);
- 
- 		kfree(buf);
- 	} else {
--		for (r = min; r < max; r++) {
--			ret = _regmap_write(map, r,
--					    entry[r - mas->index]);
-+		for (r = min; r < max + 1; r++) {
-+			ret = regcache_maple_read(map, r, &v);
-+			if (ret != 0)
-+				goto out;
-+			ret = _regmap_write(map, r, v);
- 			if (ret != 0)
- 				goto out;
- 		}
-@@ -241,9 +228,7 @@ static int regcache_maple_sync(struct regmap *map, unsigned int min,
- 	struct maple_tree *mt = map->cache;
- 	unsigned long *entry;
- 	MA_STATE(mas, mt, min, max);
--	unsigned long lmin = min;
--	unsigned long lmax = max;
--	unsigned int r, v, sync_start;
-+	unsigned int v, last, sync_start;
- 	int ret = 0;
- 	bool sync_needed = false;
- 
-@@ -252,34 +237,39 @@ static int regcache_maple_sync(struct regmap *map, unsigned int min,
- 	rcu_read_lock();
- 
- 	mas_for_each(&mas, entry, max) {
--		for (r = max(mas.index, lmin); r <= min(mas.last, lmax); r++) {
--			v = entry[r - mas.index];
--
--			if (regcache_reg_needs_sync(map, r, v)) {
--				if (!sync_needed) {
--					sync_start = r;
--					sync_needed = true;
--				}
--				continue;
--			}
--
--			if (!sync_needed)
--				continue;
--
-+		/* Flush if we hit a gap in the cache */
-+		if (sync_needed && mas.index != last + 1) {
- 			ret = regcache_maple_sync_block(map, entry, &mas,
--							sync_start, r);
-+							sync_start, last);
- 			if (ret != 0)
- 				goto out;
- 			sync_needed = false;
- 		}
- 
--		if (sync_needed) {
--			ret = regcache_maple_sync_block(map, entry, &mas,
--							sync_start, r);
--			if (ret != 0)
--				goto out;
--			sync_needed = false;
-+		v = regcache_maple_entry_to_value(entry);
-+
-+		if (regcache_reg_needs_sync(map, mas.index, v)) {
-+			if (!sync_needed) {
-+				sync_start = mas.index;
-+				sync_needed = true;
-+			}
-+			last = mas.index;
-+			continue;
- 		}
-+
-+		if (!sync_needed)
-+			continue;
-+
-+		ret = regcache_maple_sync_block(map, entry, &mas,
-+						sync_start, last);
-+		if (ret != 0)
-+			goto out;
-+		sync_needed = false;
-+	}
-+
-+	if (sync_needed) {
-+		ret = regcache_maple_sync_block(map, entry, &mas,
-+						sync_start, last);
- 	}
- 
- out:
-@@ -301,8 +291,10 @@ static int regcache_maple_exit(struct regmap *map)
- 		return 0;
- 
- 	mas_lock(&mas);
--	mas_for_each(&mas, entry, UINT_MAX)
--		kfree(entry);
-+	if (!IS_ENABLED(CONFIG_64BIT)) {
-+		mas_for_each(&mas, entry, UINT_MAX)
-+			kfree(entry);
-+	}
- 	__mt_destroy(mt);
- 	mas_unlock(&mas);
- 
-@@ -312,41 +304,11 @@ static int regcache_maple_exit(struct regmap *map)
- 	return 0;
- }
- 
--static int regcache_maple_insert_block(struct regmap *map, int first,
--					int last)
--{
--	struct maple_tree *mt = map->cache;
--	MA_STATE(mas, mt, first, last);
--	unsigned long *entry;
--	int i, ret;
--
--	entry = kcalloc(last - first + 1, sizeof(unsigned long), map->alloc_flags);
--	if (!entry)
--		return -ENOMEM;
--
--	for (i = 0; i < last - first + 1; i++)
--		entry[i] = map->reg_defaults[first + i].def;
--
--	mas_lock(&mas);
--
--	mas_set_range(&mas, map->reg_defaults[first].reg,
--		      map->reg_defaults[last].reg);
--	ret = mas_store_gfp(&mas, entry, map->alloc_flags);
--
--	mas_unlock(&mas);
--
--	if (ret)
--		kfree(entry);
--
--	return ret;
--}
--
- static int regcache_maple_init(struct regmap *map)
- {
- 	struct maple_tree *mt;
- 	int i;
- 	int ret;
--	int range_start;
- 
- 	mt = kmalloc(sizeof(*mt), GFP_KERNEL);
- 	if (!mt)
-@@ -355,30 +317,14 @@ static int regcache_maple_init(struct regmap *map)
- 
- 	mt_init(mt);
- 
--	if (!map->num_reg_defaults)
--		return 0;
--
--	range_start = 0;
--
--	/* Scan for ranges of contiguous registers */
--	for (i = 1; i < map->num_reg_defaults; i++) {
--		if (map->reg_defaults[i].reg !=
--		    map->reg_defaults[i - 1].reg + 1) {
--			ret = regcache_maple_insert_block(map, range_start,
--							  i - 1);
--			if (ret != 0)
--				goto err;
--
--			range_start = i;
--		}
-+	for (i = 0; i < map->num_reg_defaults; i++) {
-+		ret = regcache_maple_write(map,
-+					   map->reg_defaults[i].reg,
-+					   map->reg_defaults[i].def);
-+		if (ret != 0)
-+			goto err;
- 	}
- 
--	/* Add the last block */
--	ret = regcache_maple_insert_block(map, range_start,
--					  map->num_reg_defaults - 1);
--	if (ret != 0)
--		goto err;
--
- 	return 0;
- 
- err:
+...these as well -- and ideally would even be willing to act as go-to
+person from now on in case more of these quirk entries are needed, which
+I guess will be the case. But given the backstory (see below) I don't
+think you or anyone else is obliged to do this, even if the current
+situation is parlty caused by regressions and recent fixes for them.
 
----
-base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
-change-id: 20240925-regmap-maple-idiomatic-f99357b9fb1e
+>> """
+>>> adding this section to file drivers/acpi/resource.c helped; if someone could do an official patch it would be great :-|
+>>>
+>>>         {
+>>>                 /* Asus ExpertBook B2502CVA */
+>>>                 .matches = {
+>>>                         DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+>>>                         DMI_MATCH(DMI_BOARD_NAME, "B2502CVA"),
+>>>                 },
+>> """
+>>
+>> This is not a regression, but given how frequently I notice these issues
+>> please as a bystander allow me to ask: is there maybe some way to
+>> improve the situation so that we do not have to add all these and likely
+>> many other Asus Laptops to that file?
+> 
+> This has been discussed before and unfortunately there is no other way
+> to deal with this. There has been some discussion about reading back
+> the polarity and edge/level from the hardware for the keyboard IRQ
+> to get the values which the BIOS has setup. But it is uncertain if this
+> will work and no one is working on this.
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+A refresher like this was more what I was fishing for. Thx for this.
 
+Now that you wrote it, it makes me think: given the amount of quirk
+entries we apparently need I wonder if it might be wise to revisit this
+at some point in the not to distant future, as I suspect otherwise
+sooner or later Linus might yell at all of us with something along the
+lines of "the kernel is clearly broken, why did we work around this with
+lots of quirk entries instead of fixing this for real". Something like
+that happened in a somewhat (but not exactly) similar situation a year
+ago, and it iirc was not the first time.
+
+Writing this lead to another thought: does anyone have contacts to Asus
+and could just ask if there is some generic way to detect which of their
+Laptops need a quirk?
+
+Ciao, Thorsten
 
