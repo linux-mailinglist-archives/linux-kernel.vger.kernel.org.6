@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-339913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB4E986C1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:50:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB14986C21
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E3191C21FBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:50:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E34FB24E9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432B0176231;
-	Thu, 26 Sep 2024 05:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC6A186E47;
+	Thu, 26 Sep 2024 05:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QvYy3Opo"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SK1uKoUz"
 Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3DB145346
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C5E1531E3
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727329812; cv=none; b=p9n7JsjLMtBa0k6+iBor8zHLb4XODNSh0Rl3U68azkvCvK7sZI6iQbfqd/YFVwiHcg0X9dF87c+eT8bHtrRrfGh7nmgOHiohJ+HJOCqm+eIfKPDfvzQ9Fz5F41Mc9UTV4BYMQEm5yq8L8R34xrfhJexw6wkyQgQ+ojeXPdOFnDE=
+	t=1727329814; cv=none; b=n2pdveJ/w7usIafYQMX6fN5sPeNCqlpVbDSnc3+0g/rr2SUutzVBtEcUlg/LgtxIVNSiMUrDVXJmxq7Fxd0JIqoUPjiRd0c6aJeFdOmVgrKybqY2HpBoGuyZmi+XtW1ZSUQB8s5+lvfPBpiSemBvarmEnypPkLt3XcbnYD4DYqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727329812; c=relaxed/simple;
-	bh=5qE3HPbGnmGnq/bfKidr8OAmix2zZTfS4euuqEGtj04=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZCNU7VVrvIeTzxqOQld9j65LKHFxADQL2d6ySqPk7gyQ/AVZXIqDavdDrJRocgoyQ8FRgVC4QXc20Hhd53LxWJxcrI+L5G5Bd4VgROmw+hbH5i3H6dd1eytT5ztOZ36nU0Rl3e6dZZYqXuQ3QjZDUC6BTKuvy2moLVj9Puaiujo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QvYy3Opo; arc=none smtp.client-ip=209.85.160.172
+	s=arc-20240116; t=1727329814; c=relaxed/simple;
+	bh=gWqOpuNGrrOnjJXc15ru2E59HKMuTUnNVS2eBMpuErg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=apyxI3trZuFdVyxmq1mYs74QGVmKXer9/fFHpSP94fJ/YCYgoUdSdVD5aQPWDmET8DMGojaOVfq6Xq7tBMgwXVldIWAAtFR2l4hX3tdpCqzHM5LkEtJ/uG5jVw2UzJjUjICJsli1Cq9sOxQ1UNXAHAkuabIWgursrw7zgxVUqW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SK1uKoUz; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4581d2b0fbaso3856111cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 22:50:10 -0700 (PDT)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4585e25f42bso4551641cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 22:50:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727329809; x=1727934609; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TmnwbRZXt68sKfwx65b7/DqmMES69Nh+rYd0FR9ZPAk=;
-        b=QvYy3OpoGqRluyPk6EwBlCZBll1QogaVdnSH88lsJD6d18TlSpbvJjdouYXrdZnbRg
-         R8KC4bLFGxl3i15SFskCODZEL645cnfbWffpYmr8wbONiSzDy5RVC/qcz6Sz0+v/oJaJ
-         uHYFneXQM+8R9AaQnY08vNyv4veoaVi8z6G6w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727329809; x=1727934609;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=chromium.org; s=google; t=1727329811; x=1727934611; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TmnwbRZXt68sKfwx65b7/DqmMES69Nh+rYd0FR9ZPAk=;
-        b=EKP8UG0mfaidd8g/XsBwLI5OfS1xYlTyTBB/NrEXFY+VUdn0aEVHml7yL1lOcrdFZr
-         jL9jcPn3ESarhM3ugDf/GUDlra1OJSOeGOqYGMNRLHRNmAj/j++3zouHn4EeQ+0ua3yJ
-         KGElHJbuh424ygF0Sey8r+FU2JOutjes3sQIEZWosFzAfVrefSGIvbQSi6bTreUphXsi
-         uewBZwouQwZIKPH9ZJ6DhQMQsD6AjV6zp44nv7qL9h/Tgkkf+OuZHLO1jmRHCkC0Nxk9
-         /lGw3rEAGaW7rk/Ra8OMYcdFNI10bktykHrynpM0VxZgJUM/s8xbqYw0IqIpYMbQsI8I
-         aTmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWO6wUtiERbRYKhW20FyhWvyDyntkQFoC29+SfSHPt8D8ZruNKHch2iUxNAQehlZyYh/HVTmU8T0hEnhA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMNOzVu/b4q8ZSBYWl2S7zUQzbrBx8At3WlC+hU8cSiiWGlNbD
-	Wz25wJm/TgfUtrzfKg39BmVXAB0to9+ofTgvKJa5Wka7z8k4Uj1j4+p+pYNxezfKdOjr/NQxbxw
-	=
-X-Google-Smtp-Source: AGHT+IENl+VmG/2isMIysOo5vyR+UhZoDqUMSdlMlZmQjAqG7+OkwQvoHL7sMK4Afl4NqR1+u7AuUQ==
-X-Received: by 2002:a05:622a:1896:b0:458:4bf1:1f42 with SMTP id d75a77b69052e-45b5e096c82mr80975001cf.45.1727329809165;
-        Wed, 25 Sep 2024 22:50:09 -0700 (PDT)
+        bh=5R3jeoC+JoIkoCMlX58x+koThQrbjgmlcnr2nfF31vI=;
+        b=SK1uKoUz6kcqkwZLy+ncgszmjEPDSTEWgsv5twozkodCawIB8iv1SmMLE1suSIJM8z
+         C1zMHjyUUHeh/yZ409uvNuwTAf27Q97AMoMCpybbRX73SEZ74tb5y4jauZD/Df2vmbjh
+         7q/q6NyPOiGnSD75ACOlctESVzKve56It04v8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727329811; x=1727934611;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5R3jeoC+JoIkoCMlX58x+koThQrbjgmlcnr2nfF31vI=;
+        b=nsVzPrzw+zOWuu1+6oyg1ExBmdp5euwdT9IGQwFUcSmo874r5gaQF9IcelBvNAiuT5
+         dvy5cIKx4+QseACHrejfCa/fXxwmQXVBS8DyYbU/SXYaRWGKwdODxllHhTBBcdhEPY2N
+         PWp3y+OH0hYbiZkshbfp872IBLTuUnxK+AlwbBR8DQab231zbGjAtZ8jR+nT+hrWzKq/
+         Ugsg5uLL4/3Q03CNaIwTG29w2JtX4wZ2Gku40EZnmHuOywlER2sjKK8+jK0GTO9almRo
+         zG4wnyA1HzLnnbx3fFWAmoqBepZzb6k3l7TtbxcTs/BSGHXG5P2gmiupjSTe7JQv29mp
+         cGMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQCqJ8Re9xgcyGicjCqBo1z/mlKoVqM+kYMu8QzMiWspPoWWpKGxEaL0N6msKZAgOP6SOpQCMnXSmhAvA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc2yUbO/IbkGGLtqB6YEvKdr25m1ft5cfK1zWD/ImGl07Vl6Ba
+	5LzwniCf6i3vvi+b/Pqbnay0MELMaKKvQfEfH42veavVjdd5cZ6DF6DkrIpY3A==
+X-Google-Smtp-Source: AGHT+IGgk05kC/TahyF9M/owtAg5RjgPRrJ8XBEO9Pn6N3lVjtrLE8EQvrkLA+fJYpM1tZpJ60/CWg==
+X-Received: by 2002:ac8:58c2:0:b0:458:2756:fd8 with SMTP id d75a77b69052e-45b5e02b09fmr84774081cf.40.1727329810605;
+        Wed, 25 Sep 2024 22:50:10 -0700 (PDT)
 Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b5264b629sm22406781cf.64.2024.09.25.22.50.08
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b5264b629sm22406781cf.64.2024.09.25.22.50.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 22:50:08 -0700 (PDT)
+        Wed, 25 Sep 2024 22:50:09 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Subject: [PATCH v7 0/3] uvcvideo: Attempt N to land UVC race conditions
- fixes
-Date: Thu, 26 Sep 2024 05:49:56 +0000
-Message-Id: <20240926-guenter-mini-v7-0-690441953d4a@chromium.org>
+Date: Thu, 26 Sep 2024 05:49:57 +0000
+Subject: [PATCH v7 1/3] media: uvcvideo: Refactor the status irq API
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,11 +74,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAT29GYC/33PS2rEMAwG4KsMXtdFfsez6j1KF7GtJIaJA/YkU
- IbcvaJQOoS0K/ELPj0erGHN2Nj18mAVt9zyUii4lwuLU19G5DlRZhKkAgWejyuWO1Y+55J55zs
- rAnQaB8GIhL4hD7UvcSJU1tuNmlNu96V+fq/YBJX3P6ZtggO30iUBcbDo7Vuc6jLndX5d6sg+a
- NYm//OSPFotIBkPSasTr368BiXNwSvyUYdoRaKX4MzrZ+8OXpPX3hsThe+wxxNvfr0V4uANedA
- u2AFNgi6cePvs9cFb8i64IUUVpAjH+/d9/wISMTMR8AEAAA==
+Message-Id: <20240926-guenter-mini-v7-1-690441953d4a@chromium.org>
+References: <20240926-guenter-mini-v7-0-690441953d4a@chromium.org>
+In-Reply-To: <20240926-guenter-mini-v7-0-690441953d4a@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: Guenter Roeck <linux@roeck-us.net>, Tomasz Figa <tfiga@chromium.org>, 
  Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -91,96 +88,227 @@ Cc: Guenter Roeck <linux@roeck-us.net>, Tomasz Figa <tfiga@chromium.org>,
  Sergey Senozhatsky <senozhatsky@chromium.org>
 X-Mailer: b4 0.13.0
 
-Back in 2020 Guenter published a set of patches to fix some race
-conditions in UVC:
-https://lore.kernel.org/all/20200917022547.198090-5-linux@roeck-us.net/
+There are two different use-cases of uvc_status():
 
-That kind of race conditions are not only seen in UVC, but are a common
-seen in almost all the kernel, so this is what it was decided back then
-that we should try to fix them at higher levels.
+- adding/removing a user when the camera is open/closed
+- stopping/starting when the camera is suspended/resumed
 
-After that. A lot of video_is_registered() were added to the core:
+Make the API reflect these two use-cases and move all the refcounting
+and locking logic to the uvc_status.c file.
 
-```
-ribalda@alco:~/work/linux$ git grep is_registered drivers/media/v4l2-core/
-drivers/media/v4l2-core/v4l2-compat-ioctl32.c:  if (!video_is_registered(vdev))
-drivers/media/v4l2-core/v4l2-dev.c:     if (video_is_registered(vdev))
-drivers/media/v4l2-core/v4l2-dev.c:     if (video_is_registered(vdev))
-drivers/media/v4l2-core/v4l2-dev.c:     if (video_is_registered(vdev)) {
-drivers/media/v4l2-core/v4l2-dev.c:             if (video_is_registered(vdev))
-drivers/media/v4l2-core/v4l2-dev.c:     if (!video_is_registered(vdev))
-drivers/media/v4l2-core/v4l2-dev.c:     if (video_is_registered(vdev))
-drivers/media/v4l2-core/v4l2-dev.c:     if (vdev == NULL || !video_is_registered(vdev)) {
-drivers/media/v4l2-core/v4l2-dev.c:             if (video_is_registered(vdev))
-drivers/media/v4l2-core/v4l2-dev.c:     if (!vdev || !video_is_registered(vdev))
-drivers/media/v4l2-core/v4l2-ioctl.c:   if (!video_is_registered(vfd)) {
-drivers/media/v4l2-core/v4l2-subdev.c:  if (video_is_registered(vdev)) {
-```
+No functional change is expected from this patch.
 
-And recently Sakari is trying to land:
-https://lore.kernel.org/linux-media/20230201214535.347075-1-sakari.ailus@linux.intel.com/
-
-Which will make obsolete a lot off (all?) of the video_is_registered() checks in
-Guenter's patches.
-
-Besides those checks, there were some other valid races fixed in his
-patches.
-
-This patchset tries to fix the races still present in our code.
-
-Thanks!
-
+Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
-Changes in v7: Thanks Laurent
-- Split "media: uvcvideo: Stop stream during unregister" into a separate
-  patchset.
-- Use guards.
-- Improve naming and comments.
-- Link to v6: https://lore.kernel.org/r/20240614-guenter-mini-v6-0-7b7fdc3b21b3@chromium.org
-
-Changes in v6: Thanks Hans
-- s/uvc_queue_streamoff/uvc_queue_release/
-- Link to v5: https://lore.kernel.org/r/20240611-guenter-mini-v5-0-047b6fe5d08b@chromium.org
-
-Changes in v5: Thanks Hans!
-- Refactor unregister as vb2_video_unregister_device
-- I have tested the first patch independently from the others, so it
-  could be merged in two steps if needed.
-- Link to v4: https://lore.kernel.org/r/20240327-guenter-mini-v4-0-49955c198eae@chromium.org
-
-Changes in v4: Thanks Sergey and Guenter
-- Fix typos
-- Move location of mutex_init
-- Split patch to make the suspend change explicit
-- Link to v3: https://lore.kernel.org/r/20240325-guenter-mini-v3-0-c4bc61d84e03@chromium.org
-
-Changes in v3: Thanks Hans!
-- Stop streaming during uvc_unregister()
-- Refactor the uvc_status code
-- Link to v2: https://lore.kernel.org/r/20230309-guenter-mini-v2-0-e6410d590d43@chromium.org
-
-Changes in v2:
-- Actually send the series to the ML an not only to individuals.
-- Link to v1: https://lore.kernel.org/r/20230309-guenter-mini-v1-0-627d10cf6e96@chromium.org
-
----
-Ricardo Ribalda (3):
-      media: uvcvideo: Refactor the status irq API
-      media: uvcvideo: Avoid race condition during unregister
-      media: uvcvideo: Exit early if there is not int_urb
-
- drivers/media/usb/uvc/uvc_driver.c | 13 ++-------
- drivers/media/usb/uvc/uvc_status.c | 60 +++++++++++++++++++++++++++++++++++---
- drivers/media/usb/uvc/uvc_v4l2.c   | 22 ++++----------
+ drivers/media/usb/uvc/uvc_driver.c | 13 ++--------
+ drivers/media/usb/uvc/uvc_status.c | 53 ++++++++++++++++++++++++++++++++++++--
+ drivers/media/usb/uvc/uvc_v4l2.c   | 22 +++++-----------
  drivers/media/usb/uvc/uvcvideo.h   | 10 ++++---
- 4 files changed, 70 insertions(+), 35 deletions(-)
----
-base-commit: 81ee62e8d09ee3c7107d11c8bbfd64073ab601ad
-change-id: 20230309-guenter-mini-89861b084ef1
+ 4 files changed, 65 insertions(+), 33 deletions(-)
 
-Best regards,
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index f0febdc08c2d..31e8942f1ef8 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -2116,7 +2116,6 @@ static int uvc_probe(struct usb_interface *intf,
+ 	INIT_LIST_HEAD(&dev->streams);
+ 	kref_init(&dev->ref);
+ 	atomic_set(&dev->nmappings, 0);
+-	mutex_init(&dev->lock);
+ 
+ 	dev->udev = usb_get_dev(udev);
+ 	dev->intf = usb_get_intf(intf);
+@@ -2288,10 +2287,7 @@ static int uvc_suspend(struct usb_interface *intf, pm_message_t message)
+ 	/* Controls are cached on the fly so they don't need to be saved. */
+ 	if (intf->cur_altsetting->desc.bInterfaceSubClass ==
+ 	    UVC_SC_VIDEOCONTROL) {
+-		mutex_lock(&dev->lock);
+-		if (dev->users)
+-			uvc_status_stop(dev);
+-		mutex_unlock(&dev->lock);
++		uvc_status_suspend(dev);
+ 		return 0;
+ 	}
+ 
+@@ -2322,12 +2318,7 @@ static int __uvc_resume(struct usb_interface *intf, int reset)
+ 				return ret;
+ 		}
+ 
+-		mutex_lock(&dev->lock);
+-		if (dev->users)
+-			ret = uvc_status_start(dev, GFP_NOIO);
+-		mutex_unlock(&dev->lock);
+-
+-		return ret;
++		return uvc_status_resume(dev);
+ 	}
+ 
+ 	list_for_each_entry(stream, &dev->streams, list) {
+diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
+index a78a88c710e2..e438ae5af2e8 100644
+--- a/drivers/media/usb/uvc/uvc_status.c
++++ b/drivers/media/usb/uvc/uvc_status.c
+@@ -257,6 +257,8 @@ int uvc_status_init(struct uvc_device *dev)
+ 	unsigned int pipe;
+ 	int interval;
+ 
++	mutex_init(&dev->status_lock);
++
+ 	if (ep == NULL)
+ 		return 0;
+ 
+@@ -302,18 +304,22 @@ void uvc_status_cleanup(struct uvc_device *dev)
+ 	kfree(dev->status);
+ }
+ 
+-int uvc_status_start(struct uvc_device *dev, gfp_t flags)
++static int uvc_status_start(struct uvc_device *dev, gfp_t flags)
+ {
++	lockdep_assert_held(&dev->status_lock);
++
+ 	if (dev->int_urb == NULL)
+ 		return 0;
+ 
+ 	return usb_submit_urb(dev->int_urb, flags);
+ }
+ 
+-void uvc_status_stop(struct uvc_device *dev)
++static void uvc_status_stop(struct uvc_device *dev)
+ {
+ 	struct uvc_ctrl_work *w = &dev->async_ctrl;
+ 
++	lockdep_assert_held(&dev->status_lock);
++
+ 	/*
+ 	 * Prevent the asynchronous control handler from requeing the URB. The
+ 	 * barrier is needed so the flush_status change is visible to other
+@@ -350,3 +356,46 @@ void uvc_status_stop(struct uvc_device *dev)
+ 	 */
+ 	smp_store_release(&dev->flush_status, false);
+ }
++
++int uvc_status_resume(struct uvc_device *dev)
++{
++	guard(mutex)(&dev->status_lock);
++
++	if (dev->status_users)
++		return  uvc_status_start(dev, GFP_NOIO);
++
++	return 0;
++}
++
++void uvc_status_suspend(struct uvc_device *dev)
++{
++	guard(mutex)(&dev->status_lock);
++
++	if (dev->status_users)
++		uvc_status_stop(dev);
++}
++
++int uvc_status_get(struct uvc_device *dev)
++{
++	int ret = 0;
++
++	guard(mutex)(&dev->status_lock);
++
++	if (!dev->status_users)
++		ret = uvc_status_start(dev, GFP_KERNEL);
++	if (!ret)
++		dev->status_users++;
++
++	return ret;
++}
++
++void uvc_status_put(struct uvc_device *dev)
++{
++	guard(mutex)(&dev->status_lock);
++
++	if (dev->status_users == 1)
++		uvc_status_stop(dev);
++	WARN_ON(!dev->status_users);
++	if (dev->status_users)
++		dev->status_users--;
++}
+diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+index f4988f03640a..97c5407f6603 100644
+--- a/drivers/media/usb/uvc/uvc_v4l2.c
++++ b/drivers/media/usb/uvc/uvc_v4l2.c
+@@ -628,20 +628,13 @@ static int uvc_v4l2_open(struct file *file)
+ 		return -ENOMEM;
+ 	}
+ 
+-	mutex_lock(&stream->dev->lock);
+-	if (stream->dev->users == 0) {
+-		ret = uvc_status_start(stream->dev, GFP_KERNEL);
+-		if (ret < 0) {
+-			mutex_unlock(&stream->dev->lock);
+-			usb_autopm_put_interface(stream->dev->intf);
+-			kfree(handle);
+-			return ret;
+-		}
++	ret = uvc_status_get(stream->dev);
++	if (ret) {
++		usb_autopm_put_interface(stream->dev->intf);
++		kfree(handle);
++		return ret;
+ 	}
+ 
+-	stream->dev->users++;
+-	mutex_unlock(&stream->dev->lock);
+-
+ 	v4l2_fh_init(&handle->vfh, &stream->vdev);
+ 	v4l2_fh_add(&handle->vfh);
+ 	handle->chain = stream->chain;
+@@ -670,10 +663,7 @@ static int uvc_v4l2_release(struct file *file)
+ 	kfree(handle);
+ 	file->private_data = NULL;
+ 
+-	mutex_lock(&stream->dev->lock);
+-	if (--stream->dev->users == 0)
+-		uvc_status_stop(stream->dev);
+-	mutex_unlock(&stream->dev->lock);
++	uvc_status_put(stream->dev);
+ 
+ 	usb_autopm_put_interface(stream->dev->intf);
+ 	return 0;
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index b7d24a853ce4..07f9921d83f2 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -563,8 +563,6 @@ struct uvc_device {
+ 
+ 	const struct uvc_device_info *info;
+ 
+-	struct mutex lock;		/* Protects users */
+-	unsigned int users;
+ 	atomic_t nmappings;
+ 
+ 	/* Video control interface */
+@@ -586,6 +584,8 @@ struct uvc_device {
+ 	struct usb_host_endpoint *int_ep;
+ 	struct urb *int_urb;
+ 	struct uvc_status *status;
++	struct mutex status_lock; /* Protects status_users */
++	unsigned int status_users;
+ 	bool flush_status;
+ 
+ 	struct input_dev *input;
+@@ -752,8 +752,10 @@ int uvc_register_video_device(struct uvc_device *dev,
+ int uvc_status_init(struct uvc_device *dev);
+ void uvc_status_unregister(struct uvc_device *dev);
+ void uvc_status_cleanup(struct uvc_device *dev);
+-int uvc_status_start(struct uvc_device *dev, gfp_t flags);
+-void uvc_status_stop(struct uvc_device *dev);
++int uvc_status_resume(struct uvc_device *dev);
++void uvc_status_suspend(struct uvc_device *dev);
++int uvc_status_get(struct uvc_device *dev);
++void uvc_status_put(struct uvc_device *dev);
+ 
+ /* Controls */
+ extern const struct v4l2_subscribed_event_ops uvc_ctrl_sub_ev_ops;
+
 -- 
-Ricardo Ribalda <ribalda@chromium.org>
+2.46.1.824.gd892dcdcdd-goog
 
 
