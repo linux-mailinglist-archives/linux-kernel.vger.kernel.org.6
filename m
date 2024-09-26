@@ -1,171 +1,320 @@
-Return-Path: <linux-kernel+bounces-340063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8045986E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:52:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39B47986E30
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D4E21F26A5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:52:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0DD1F24266
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C369C1A4E96;
-	Thu, 26 Sep 2024 07:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="VuLFxpwi"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30FD194141;
+	Thu, 26 Sep 2024 07:50:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F681A42C7
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA7D19341E
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727337054; cv=none; b=lqxuQdTYdL3enYf8dMbR31YOt85WwbAgJM4dmJ3y8G/yJWqCgVEolZkH8OxdyIwhUTPZiKUn1n16SAkrC3oy/pf8rLQ/w3Yf0kUWP45Rz0xm1VIZwPwii0ZCtzXclAjk92EOUvm/MmPfol2873efnqRrYBpim7BvHt1zSPfxTq0=
+	t=1727337040; cv=none; b=j/3nLJmkD3u/vkKmGyLsqoYrtXCqldScR96uQWKVrVLql6ZDeg1eZclfjqmzjHn7Ihia7BgS5Zdvsa6WOVfh7f54xcZwGVftVUOq1J7WGlUlu5eHJC4XZ0j6ZUCUi1u8ijGJ/orefssdClsXmy/B9rstKMEMKcw+6nS2j2C4J8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727337054; c=relaxed/simple;
-	bh=RdtE22sfwzMy9kGkxePstF4A7F3IOC0pC9KXUlRwnXc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N6AToSDwXLYvZRRyuLwNPEp1O0w6/WY8BueZqid5PXIxlncFhOXrDXwzuYmtvl3d7i2SEgWmHWCdKDa3GyxTP80J7uM6zk/lPg/DDl7JeUnVyvPDjXQ/7RMEO/8bM61wWW8PBtGCTB2qlYSjST6e8AjqgjlqkEv16N4ydmTEQY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=VuLFxpwi reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=PVCP9MilW7q0jvEx6yj/TAztvdKdeQdCKopzqtpx9To=;
-  b=VuLFxpwizmaOsXbVb5j1AqYj35wPsTgdFXVHaIaNo7XITtKUi589QQwA
-   S9F15yZaKWMgyxFSbidnfH8DUaIOtxc0ijGjeRb5Q6yYdw3V9IilDkX8t
-   HBA5yOFiBJVdAnqb2cei4jyDfEZMsMykWhvhDKfvvyTZPkeX0BMaeW1rQ
-   5C0ekYkUAiBCyKHGQkaI8vcvCNzJVW6A1N1C/SLRQtXd9FvSxUiOwy56k
-   iXAbpU5zVVm7DlNcfsrtL9Rr6b/TgwfPEymBbqYSa6K+Mg5f3Jh3eJ23D
-   Qdb7kBTGCV9hJsivbKSfz7+JvsMmdMR20FQlWhzoU2hFloqcEYAsJb+WM
-   A==;
-X-CSE-ConnectionGUID: hzqdQBP2RYCcZyo2BK80ig==
-X-CSE-MsgGUID: kMUHUBlaT2OCASFKfFNbvg==
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 26 Sep 2024 15:50:44 +0800
-Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
-	by mse.ite.com.tw with ESMTP id 48Q7odcn044841;
-	Thu, 26 Sep 2024 15:50:39 +0800 (GMT-8)
-	(envelope-from Hermes.Wu@ite.com.tw)
-Received: from LAPTOP-C4GM1L3U.localdomain (192.168.82.6) by
- TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 26 Sep 2024 15:50:39 +0800
-From: Hermes Wu <Hermes.Wu@ite.com.tw>
-To: hermes wu <Hermes.wu@ite.com.tw>
-CC: Kenneth Hung <Kenneth.hung@ite.com.tw>,
-        Andrzej Hajda
-	<andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert
- Foss <rfoss@kernel.org>,
-        Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej
- Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Hermes Wu <hermes.wu@ite.com.tw>, Allen Chen
-	<allen.chen@ite.com.tw>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-        "open list:DRM DRIVERS"
-	<dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 09/11] drm/bridge: it6505: fix HDCP CTS compare V matching  without retry
-Date: Thu, 26 Sep 2024 15:50:18 +0800
-Message-ID: <20240926075018.22328-5-Hermes.Wu@ite.com.tw>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240926075018.22328-1-Hermes.Wu@ite.com.tw>
-References: <20240926075018.22328-1-Hermes.Wu@ite.com.tw>
+	s=arc-20240116; t=1727337040; c=relaxed/simple;
+	bh=Hi9Dm9bHtr/nU89VigzpFVOj84iRJ07qjg1yUVHkIVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZV9XsbOw9g272Hc2kxtbmgW7tweA4h6ET5H/PtRwLRvc0wRSbAbPxnejoTIyh2RoZiInRgOni9INp14nxXsaTzssbAwB07sWKF3ts9BMNCm7jo85uFrH2xUhSzauE67TkL11WRDJOSCAOa/Tjqa2jugKNQaefLHdp2/e7OrAwEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1stjGc-0001MC-VD; Thu, 26 Sep 2024 09:50:26 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1stjGb-001dUm-1u; Thu, 26 Sep 2024 09:50:25 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1stjGa-00D7UJ-32;
+	Thu, 26 Sep 2024 09:50:24 +0200
+Date: Thu, 26 Sep 2024 09:50:24 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Walle <mwalle@kernel.org>, devicetree@vger.kernel.org,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Mathieu Othacehe <m.othacehe@gmail.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	linux-kernel@vger.kernel.org,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Herburger <gregor.herburger@ew.tq-group.com>,
+	Petr Benes <petr.benes@ysoft.com>, linux-usb@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, imx@lists.linux.dev,
+	Shawn Guo <shawnguo@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 2/2] arm64: dts: imx: Add imx8mp-iota2-lumpy board
+Message-ID: <20240926075024.777bdooiqd5myv3v@pengutronix.de>
+References: <20240924103941.1729061-1-michal.vokac@ysoft.com>
+ <20240924103941.1729061-3-michal.vokac@ysoft.com>
+ <ZvLXenqG/++AR4We@lizhi-Precision-Tower-5810>
+ <20240924173714.qxxkhn6wscze7q5n@pengutronix.de>
+ <87980643-44b4-4df9-9eb7-1583b5074bdd@ysoft.com>
+ <ZvQ5O553E0QFvced@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TPEMAIL1.internal.ite.com.tw (192.168.15.58) To
- TPEMAIL1.internal.ite.com.tw (192.168.15.58)
-X-TM-SNTS-SMTP:
-	F540AC4C29CA116440D3FC655CC1D324E7A8F68FF7EB7EE80D0BDD5B931A56BE2002:8
-X-MAIL:mse.ite.com.tw 48Q7odcn044841
+In-Reply-To: <ZvQ5O553E0QFvced@lizhi-Precision-Tower-5810>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Hermes Wu <Hermes.wu@ite.com.tw>
+On 24-09-25, Frank Li wrote:
+> On Wed, Sep 25, 2024 at 01:30:31PM +0200, Michal Vokáč wrote:
+> > On 24. 09. 24 19:37, Marco Felsch wrote:
+> > > Hi Frank,
+> > >
+> > > On 24-09-24, Frank Li wrote:
+> > > > On Tue, Sep 24, 2024 at 12:39:41PM +0200, Michal Vokáč wrote:
+> > > > > The IOTA2 Lumpy board is based on the i.MX8MPlus EVK.
+> > > > >
+> > > > > Basic features are:
+> > > > > - 4GB LPDDR4
+> > > > > - 64GB eMMC
+> > > > > - 2x 1GB Ethernet
+> > > > > - USB 3.0 Type-C dual role port, without power delivery
+> > > > > - USB 3.0 Type-A host port
+> > > > > - RGB LED - PWM driven
+> > > > > - speaker - PWM driven
+> > > > > - RTC with super capacitor backup
+> > > > >
+> > > > > Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> > > > > ---
+> > > > > v4:
+> > > > > - Moved the iomuxc node to the end of the file.
+> > > > > - Moved the bus-width and non-removeable properties below
+> > > > >    the pinctrl-* properties in &usdhc3 node.
+> > > > > - Moved the fsl,ext-reset-output below the pinctrl-* properties
+> > > > >    in &wdog1 node.
+> > > > > v3:
+> > > > > - Dropped pinctrl-names property from &usb_dwc3_1 node.
+> > > > > v2:
+> > > > > - Dropped unused property from pwm4 node.
+> > > > > - Sorted all nodes and properties using dt-format tool from Frank.
+> > > > >
+> > > > >   arch/arm64/boot/dts/freescale/Makefile        |   1 +
+> > > > >   .../boot/dts/freescale/imx8mp-iota2-lumpy.dts | 423 ++++++++++++++++++
+> > > >
+> > > > Suggest use https://github.com/lznuaa/dt-format
+> > > > sort node. any issue, let me know.
+> > >
+> > > Thanks for the link :) would be nice to have this script to be part of
+> > > the kernel.
+> 
+> It depend on how much people like and use it.
 
-When HDCP negotiation with a repeater device. Checking SHA V' matching
-must retry 3 times before restarting HDCP.  
+I don't see any reason why the kernel shouldn't have such a script, it
+makes the life easier for all of us (incl. the dt-maintainers). By that
+I mean the idea of having such a script since I actually didn't looked
+into your code.
 
+> >> The script follows the rules in [1] I'm just used to have
+> > > common properties like pinctrl-* in front of the device specific
+> > > properties e.g. "enable-active-high". But this rule is not part of [1]
+> > > so I can't blame the script.
+> 
+> I just write it. Not 100% align order-of-properties-in-device-node yet.
+> Some propertiy need special treated. Thank you provide the feedback.
+> 
+> I push change, enable-active-high and gpio will after regulator*.
 
-Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
----
- drivers/gpu/drm/bridge/ite-it6505.c | 32 +++++++++++++++++------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
+:) Thank you!
 
-diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-index 143d58ed1b0e..e75bc1575aa8 100644
---- a/drivers/gpu/drm/bridge/ite-it6505.c
-+++ b/drivers/gpu/drm/bridge/ite-it6505.c
-@@ -2055,7 +2055,7 @@ static bool it6505_hdcp_part2_ksvlist_check(struct it6505 *it6505)
- {
- 	struct device *dev = it6505->dev;
- 	u8 av[5][4], bv[5][4];
--	int i, err;
-+	int i, err, retry;
- 
- 	i = it6505_setup_sha1_input(it6505, it6505->sha1_input);
- 	if (i <= 0) {
-@@ -2064,22 +2064,28 @@ static bool it6505_hdcp_part2_ksvlist_check(struct it6505 *it6505)
- 	}
- 
- 	it6505_sha1_digest(it6505, it6505->sha1_input, i, (u8 *)av);
-+	/*1B-05 V' must retry 3 times */
-+	for (retry = 0; retry < 3; retry++) {
-+		err = it6505_get_dpcd(it6505, DP_AUX_HDCP_V_PRIME(0), (u8 *)bv,
-+				      sizeof(bv));
- 
--	err = it6505_get_dpcd(it6505, DP_AUX_HDCP_V_PRIME(0), (u8 *)bv,
--			      sizeof(bv));
-+		if (err < 0) {
-+			dev_err(dev, "Read V' value Fail %d", retry);
-+			continue;
-+		}
- 
--	if (err < 0) {
--		dev_err(dev, "Read V' value Fail");
--		return false;
--	}
-+		for (i = 0; i < 5; i++) {
-+			if (bv[i][3] != av[i][0] || bv[i][2] != av[i][1] ||
-+			    av[i][1] != av[i][2] || bv[i][0] != av[i][3])
-+				break;
- 
--	for (i = 0; i < 5; i++)
--		if (bv[i][3] != av[i][0] || bv[i][2] != av[i][1] ||
--		    bv[i][1] != av[i][2] || bv[i][0] != av[i][3])
--			return false;
-+			DRM_DEV_DEBUG_DRIVER(dev, "V' all match!! %d, %d", retry, i);
-+			return true;
-+		}
-+	}
- 
--	DRM_DEV_DEBUG_DRIVER(dev, "V' all match!!");
--	return true;
-+	DRM_DEV_DEBUG_DRIVER(dev, "V' NOT match!! %d", retry);
-+	return false;
- }
- 
- static void it6505_hdcp_wait_ksv_list(struct work_struct *work)
--- 
-2.34.1
+Regards,
+  Marco
 
+> 
+> Frank
+> 
+> > >
+> > > Regards,
+> > >    Marco
+> > >
+> > > [1] https://docs.kernel.org/devicetree/bindings/dts-coding-style.html#order-of-properties-in-device-node
+> >
+> > Thank you for the review Frank & Marco.
+> > I quickly went through the file again and found another few properties
+> > that could be better ordered according to the kernel documentation [1].
+> >
+> > > > >   2 files changed, 424 insertions(+)
+> > > > >   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
+> > > > >
+> > > > > diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> > > > > index 9d3df8b218a2..aa26a50b7bb4 100644
+> > > > > --- a/arch/arm64/boot/dts/freescale/Makefile
+> > > > > +++ b/arch/arm64/boot/dts/freescale/Makefile
+> > > > > @@ -171,6 +171,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk2.dtb
+> > > > >   dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk3.dtb
+> > > > >   dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
+> > > > >   dtb-$(CONFIG_ARCH_MXC) += imx8mp-icore-mx8mp-edimm2.2.dtb
+> > > > > +dtb-$(CONFIG_ARCH_MXC) += imx8mp-iota2-lumpy.dtb
+> > > > >   dtb-$(CONFIG_ARCH_MXC) += imx8mp-msc-sm2s-ep1.dtb
+> > > > >   dtb-$(CONFIG_ARCH_MXC) += imx8mp-navqp.dtb
+> > > > >   dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk.dtb
+> > > > > diff --git a/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
+> > > > > new file mode 100644
+> > > > > index 000000000000..9eb58e818dc7
+> > > > > --- /dev/null
+> > > > > +++ b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
+> > > > > @@ -0,0 +1,423 @@
+> > > > > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> > > > > +/*
+> > > > > + * Copyright 2023 Y Soft
+> > > > > + */
+> > > > > +
+> > > > > +/dts-v1/;
+> > > > > +
+> > > > > +#include "imx8mp.dtsi"
+> > > > > +
+> > > > > +/ {
+> > > > > +	compatible = "ysoft,imx8mp-iota2-lumpy", "fsl,imx8mp";
+> > > > > +	model = "Y Soft i.MX8MPlus IOTA2 Lumpy board";
+> > > > > +
+> > > > > +	beeper {
+> > > > > +		compatible = "pwm-beeper";
+> > > > > +		pwms = <&pwm4 0 500000 0>;
+> > > > > +	};
+> > > > > +
+> > > > > +	chosen {
+> > > > > +		stdout-path = &uart2;
+> > > > > +	};
+> > > > > +
+> > > > > +	gpio_keys: gpio-keys {
+> > > > > +		compatible = "gpio-keys";
+> > > > > +		pinctrl-0 = <&pinctrl_gpio_keys>;
+> > > > > +		pinctrl-names = "default";
+> > > > > +
+> > > > > +		button-reset {
+> > > > > +			gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
+> > > > > +			label = "Factory RESET";
+> > > > > +			linux,code = <BTN_0>;
+> > > > > +		};
+> > > > > +	};
+> > > > > +
+> > > > > +	reg_usb_host: regulator-usb-host {
+> > > > > +		compatible = "regulator-fixed";
+> > > > > +		enable-active-high;
+> > > > > +		gpio = <&gpio1 14 GPIO_ACTIVE_HIGH>;
+> >
+> > The enable-active-high and gpio should go bellow regulator-*.
+> >
+> > > > > +		pinctrl-0 = <&pinctrl_usb_host_vbus>;
+> > > > > +		pinctrl-names = "default";
+> > > > > +		regulator-max-microvolt = <5000000>;
+> > > > > +		regulator-min-microvolt = <5000000>;
+> > > > > +		regulator-name = "usb-host";
+> > > > > +	};
+> > > > > +
+> > > > > +	memory@40000000 {
+> > > > > +		reg = <0x0 0x40000000 0 0x80000000>,
+> > > > > +		      <0x1 0x00000000 0 0x80000000>;
+> > > > > +		device_type = "memory";
+> > > > > +	};
+> > > > > +};
+> > > > > +
+> > > > > +&A53_0 {
+> > > > > +	cpu-supply = <&reg_arm>;
+> > > > > +};
+> > > > > +
+> > > > > +&A53_1 {
+> > > > > +	cpu-supply = <&reg_arm>;
+> > > > > +};
+> > > > > +
+> > > > > +&A53_2 {
+> > > > > +	cpu-supply = <&reg_arm>;
+> > > > > +};
+> > > > > +
+> > > > > +&A53_3 {
+> > > > > +	cpu-supply = <&reg_arm>;
+> > > > > +};
+> > > > > +
+> > > > > +&eqos {
+> > > > > +	phy-handle = <&ethphy0>;
+> > > > > +	phy-mode = "rgmii-id";
+> > > > > +	pinctrl-0 = <&pinctrl_eqos>;
+> > > > > +	pinctrl-names = "default";
+> > > > > +	status = "okay";
+> > > > > +
+> > > > > +	mdio {
+> > > > > +		compatible = "snps,dwmac-mdio";
+> > > > > +		#address-cells = <1>;
+> > > > > +		#size-cells = <0>;
+> > > > > +
+> > > > > +		ethphy0: ethernet-phy@0 {
+> > > > > +			reg = <0>;
+> > > > > +			interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
+> > > > > +			interrupt-parent = <&gpio3>;
+> > > > > +			micrel,led-mode = <0>;
+> >
+> > The micrel,* is a vendor specific property. It should go bellow the reset-*.
+> >
+> > > > > +			pinctrl-0 = <&pinctrl_ethphy0>;
+> > > > > +			pinctrl-names = "default";
+> > > > > +			reset-assert-us = <1000>;
+> > > > > +			reset-deassert-us = <1000>;
+> > > > > +			reset-gpios = <&gpio3 22 GPIO_ACTIVE_LOW>;
+> > > > > +		};
+> > > > > +	};
+> > > > > +};
+> > > > > +
+> > > > > +&fec {
+> > > > > +	fsl,magic-packet;
+> > > > > +	phy-handle = <&ethphy1>;
+> > > > > +	phy-mode = "rgmii-id";
+> > > > > +	pinctrl-0 = <&pinctrl_fec>;
+> > > > > +	pinctrl-names = "default";
+> > > > > +	status = "okay";
+> > > > > +
+> > > > > +	mdio {
+> > > > > +		#address-cells = <1>;
+> > > > > +		#size-cells = <0>;
+> > > > > +
+> > > > > +		ethphy1: ethernet-phy@0 {
+> > > > > +			reg = <0>;
+> > > > > +			interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
+> > > > > +			interrupt-parent = <&gpio3>;
+> > > > > +			micrel,led-mode = <0>;
+> >
+> > Same as above, micrel,* should go bellow common properties.
+> > I will send a v5 with these fixed.
+> >
+> > Michal
+> >
+> > > > > +			pinctrl-0 = <&pinctrl_ethphy1>;
+> > > > > +			pinctrl-names = "default";
+> > > > > +			reset-assert-us = <1000>;
+> > > > > +			reset-deassert-us = <1000>;
+> > > > > +			reset-gpios = <&gpio3 20 GPIO_ACTIVE_LOW>;
+> > > > > +		};
+> > > > > +	};
+> > > > > +};
+> > > > > +
+> 
 
