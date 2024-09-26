@@ -1,72 +1,59 @@
-Return-Path: <linux-kernel+bounces-340041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E5E0986DE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:43:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3661A986D6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553B81F22D3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:43:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDAE21F23133
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD2918E76E;
-	Thu, 26 Sep 2024 07:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBA418C03C;
+	Thu, 26 Sep 2024 07:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="P4WGfk4W"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="naSGEHnf"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E34224D6
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A37185B55
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727336620; cv=none; b=HVNDOg8UKDJqKSjmV0nHjJOeLkbZn6dkljyMSiyKbSRJkFizOlCNlsxbPeeMLfXWN8ShsaQNX+FHCN/DtGSJM4HBHWof8FSgwdiZQk1TSj3S6RBsGg82W5zxXl+6bg5FY802SSC8AaRr1RNSH7XMqsIi+jP/4/p2jv37xY0FZgU=
+	t=1727335415; cv=none; b=ERU8I9QwjcekitAJDJxTSOkUMW5XnuanLD4XLBA30njMyOQyds9z0dYKk9MknPsznB7vHhl8ZknaKMe26B5vKlNce3lXgL3uklc9W/CjbzXVr79UAYS73JwZRTxMGjLgOrLUMW0ZUXafYR9D0JUtR6qUHqXXBJ07LRhh7Dxhq2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727336620; c=relaxed/simple;
-	bh=+dyrPIj/vXms6g9F84iGi46agOb2XG4/wT0OCKqAhX8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mDQuwAZExhf/lf3+WItPk/N2OGU9DIAUycZBi7hJV3qaPRsN1JUbumgWaicUaSXylxdy1JZU/8Iemo0ipEmMgYwWLxozPMbKJWk1oPdb6mkKSyCK4BHl4jagfv3TH+8qWLvejBYxeqYePgodbKekerOLprbEzZjA2HX9gjSNmEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=P4WGfk4W; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=+dyrPIj/vXms6g9F84iGi46agOb2XG4/wT0OCKqAhX8=; b=P4WGfk4W21jGA+KQF2E7ENNW80
-	DGXb61/M28w6va7RE9m0PTWo3M9JGRKW6vzSQvU+S3bzWPQ4zysnZFliZScgTHkvmjfXamVE8JULx
-	6zNUwk/39N30rrQ3veqlG5N1xpelWOnsuVq91WKO75v2KitmcAFu0lV8yP/IwYaTd0hrQrz712W9c
-	8V5q7QAP755w/aIrGwNtAZZN1HeHnfoutlBNr1WXJbgaewhOqqTElUQXNJDicygSKBEvFYOa1kq8J
-	ITZRCRMH3OS+5+akSFcZGscn8koXj7d+pDDHSYykt2VqWMzSViTEo1Mf9t1MJuD/tkLLHyp+pk3Ax
-	je7/K0hw==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1stipe-000GeR-FH; Thu, 26 Sep 2024 09:22:34 +0200
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1stipe-000DhP-0F;
-	Thu, 26 Sep 2024 09:22:33 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Erez Geva <erezgeva@nwtime.org>
-Cc: linux-mtd@lists.infradead.org,  Tudor Ambarus
- <tudor.ambarus@linaro.org>,  Pratyush Yadav <pratyush@kernel.org>,
-  Michael Walle <mwalle@kernel.org>,  linux-kernel@vger.kernel.org,  Miquel
- Raynal <miquel.raynal@bootlin.com>,  Richard Weinberger <richard@nod.at>,
-  Vignesh Raghavendra <vigneshr@ti.com>,  Erez Geva <ErezGeva2@gmail.com>
-Subject: Re: [PATCH 0/2] mtd: spi-nor: macronix: reading SFDP by all
- Macronix chips
-In-Reply-To: <20240925074903.1983601-1-erezgeva@nwtime.org> (Erez Geva's
-	message of "Wed, 25 Sep 2024 09:49:01 +0200")
-References: <20240925074903.1983601-1-erezgeva@nwtime.org>
-Date: Thu, 26 Sep 2024 09:22:33 +0200
-Message-ID: <877cayj2va.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1727335415; c=relaxed/simple;
+	bh=tYV2H5br9kWhzl96UUGjXTWhmlY2Pw4qsC37WMIpyJY=;
+	h=From:To:Cc:Subject:References:Date:Message-ID:MIME-Version:
+	 Content-Type; b=FyMz/HNfh5eleOL2+UiL2VyK6bsekcTNvJvWHbD4Ree6zu//w5roD0NWR964hUgV9rlC6Fs7bP0+nnObPLbsEG+Bvk9oxUyNVCfeGLLXx6wc3y8qLoEZHmdDelZwWFEQ62Ib/ilaXor7VpkQ6vXV/XCah6Q9x9o7oCelOzTP6+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=naSGEHnf; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 62BD742B29
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1727335412; bh=djX+5aMk6cq7Bv8YpnuHUZZBh5ZZwldaGICdubCGOsQ=;
+	h=From:To:Cc:Subject:References:Date:From;
+	b=naSGEHnf3vNT7gz4mncLIHkOI/n5CcmMT6ToDgWAjCVYUgAXVtxHoS3RZF4ZSnTks
+	 fgu03mkJgh7zuo+PZCbMC5cu+kpbuA/CuRDDOjhM+6Q0UTAcqRu7PRdhpKGmgOZ2GC
+	 9AcCouBkNSLEYLFnPKfNrZJGAB9lwjIyrIzga5qO1QUGXiNCgc60jN5478ViUOiwrT
+	 Sr1YVbT94iSkli3iIJhnXW1QLtswvoeiV+ev/I2mpqmC+Fmalnn+pi9m2Cw8/1JJuj
+	 IfWTnw9CdZ/28ImEa2etgGTktuoTqqoSrX8TCrnbO5FyiuTLU4Zwa11LpdB9AFlyiP
+	 qNlsJe/w4zdug==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 62BD742B29;
+	Thu, 26 Sep 2024 07:23:31 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ tech-board-discuss@lists.linuxfoundation.org
+Cc: tab-elections@lists.linux.dev
+Subject: Last reminder: TAB voting closes September 27
+References: <871q1enx0g.fsf@trenco.lwn.net>
+Date: Thu, 26 Sep 2024 01:23:28 -0600
+Message-ID: <874j62g9ov.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,36 +61,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27409/Wed Sep 25 11:17:07 2024)
 
-Erez Geva <erezgeva@nwtime.org> writes:
+One last reminder that voting for members of the Linux Foundation
+Technical Advisory Board is open; it will end after September 27,
+anywhere on earth.  I'll post the results shortly thereafter, and then
+I'll stop spamming you all about this - honest.
 
-> From: Erez Geva <ErezGeva2@gmail.com>
->
-> Add reading SFDP to all Macronix chips.
-> All chips in the Macronix competabilites table
-> have a replacement chip that support SFDP.
-> Macronix stop producing any chip without SFDP 15 years ago.
-> The benefit of reading SFDP is by supporting
-> fater op-codes for newer chips.
->
-> This patch do not add an all flashes support.
-> This patch extend the already support of SFDP to all Macronix chips.
-> The new chips that reuse JEDEC IDs and chips that
-> are absend from the Macronix competabilites table.
-> The patch just remove the restriction!
+If you have not yet voted, you still have a bit more time to get it
+done.
 
-Hi Erez
+Thanks,
 
-Did you see the response I got to the last revision of my patch series
-that tries to resolve the same problem that you are adressing?
+jon
 
-https://lore.kernel.org/all/D2NGXHZ2VTK0.M0AOB4CM7MHM@kernel.org/
+-------------------- Start of forwarded message --------------------
+From: Jonathan Corbet <corbet@lwn.net>
+To: ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ tech-board-discuss@lists.linuxfoundation.org
+Cc: tab-elections@lists.linux.dev
+Subject: TAB election 2024 voting started
+Date: Fri, 20 Sep 2024 09:51:59 -0600
 
-I think we should try go go in that direction. It sounds like it would
-be a simple solution that would improve the overall situation, not just
-for Macronix.
+In the end, we had eleven nominations for this year's TAB election:
 
-/Esben
+ - Amit Shah
+ - Dan Williams
+ - Daniel Borkmann
+ - Dave Hansen
+ - Jakub Kicinski
+ - Jiri Kosina
+ - Kees Cook
+ - Lorenzo Pieralisi
+ - Miguel Ojeda
+ - Ricardo Neri
+ - Shuah Khan
+
+Voting has begun, and everybody who is eligible for an automatic ballot,
+or who has requested a ballot, should have received voting instructions
+from the CIVS system.  If you were expecting a ballot and did not get
+it, then:
+
+- Perhaps it ended up in your spam folder?
+
+- Have you enabled your email address in the CIVS system?  It will not
+  send you anything until you have done that.  The place to enable an
+  address is https://civs1.civs.us/cgi-bin/opt_in.pl
+
+Please contact us at tab-elections@lists.linux.dev if you have
+difficulties or questions.
+
+Voting will remain open through September 27.
+
+Thanks,
+
+The TAB elections team
+-------------------- End of forwarded message --------------------
 
