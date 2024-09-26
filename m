@@ -1,130 +1,114 @@
-Return-Path: <linux-kernel+bounces-340177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B16986F6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:56:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C64986F6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18EC0B221FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:56:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54C561C226B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6ED1A76D6;
-	Thu, 26 Sep 2024 08:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2AD1A7AF0;
+	Thu, 26 Sep 2024 08:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KM6AilHz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VzH3qq4J"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1849A1A7252;
-	Thu, 26 Sep 2024 08:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3CF1A7256;
+	Thu, 26 Sep 2024 08:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727340973; cv=none; b=nFW0pPs2AgIx9OQx/PhUCoQjz6/86sak6VGlPBJZGldEh0lWcCjoVRGizc6EAmQu49nf8gsUiMdcxADWDwR/Z/EVDV70z1b9pNW428WoZtv9JvT/Zsse9jcz+cCLHg+eSeTl/OqUiM4sGLVGCktiG03dDHTzUNcOOzOO0E3M8Tw=
+	t=1727340963; cv=none; b=tkVwcn7PumCQrc3w+q0Oxj9HwD3ExvtAOvn9JKgdVqENL9PujdzEqzuvUF3muGhVJlDBnrt3DnUK2MhtClKcY6Ye1tyw3DPRiDcZAcO1oNRDRp8VN/QlLspa/psw6ZXFkM2UYIjbUB/OEdPwKkLNMSMIKmYqZowbEjmt3Umt1WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727340973; c=relaxed/simple;
-	bh=vpkXEpKybJDncqHsEf/0PLLjsfAU3N4qHOv8jxozlLI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R7ZCcBUgiNd2AHrirYjM1gFS93nuMC5UZJYwlD1hSrsjWN+FNNrZJj2kSStF1UGl9D9TOLEat+OfpmUo7uhiJqddTnDfU0NcHRxKJpadOjahy96wlXJgyOO2MDaXa+IikQe1lCuwlB+j/5Ztzymshzu4qT74Fdob7GNK7PxCmMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KM6AilHz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F8FBC4CECF;
-	Thu, 26 Sep 2024 08:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727340972;
-	bh=vpkXEpKybJDncqHsEf/0PLLjsfAU3N4qHOv8jxozlLI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KM6AilHzA+NTD5jm/gvAgFZuByWPwMiI3yvn2vkUc4eB4jHrWwwIwHSOPGRbY50Pa
-	 jqCywrf8WbEikc2f7yv5e+cs7FvifHu/UvBo2f282B3o/81Dai0et/PswZKdE2mqkk
-	 ryoACtIN3ixnz8B02xed10K/Q/X1/XWFlBuweek+9BsUHmRDHNxhO166LFYN0n6PFy
-	 pwqJE06njaBds+jdkBkfD0XKtGIykOTRiVCCfbVBBWWXHeyGPDdlatu/ZQZvcbNfIq
-	 YQu8XdMKfTuWLzxeQSMMRQWVgshyg/3k/ah4u+OomYi+i+VoCrefBab0j4Ef5nfKKz
-	 4VpvMYzWmLtow==
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d64b27c45so105758566b.3;
-        Thu, 26 Sep 2024 01:56:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVX/Q2OWXDIY+B4QCXwQ97Pi9j+Qbt+rrIsmrU80j2LGhOrNSlIlIJpY0lsN0Wajo7zThCpAY7Pv7n0/Wgx@vger.kernel.org, AJvYcCWfQlOpJEMu0wRKkmG7ZvXTAZ+Ks25bZwznakcmrx6WpnHFlAiNWeCehzeWRTWuPIHPi+IumUp8Q6i8kA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz43/dSrIiULLrCVO3QOBCXFTTYBL1iLXqN1Fu8ggQBGUFVRmzp
-	kD33x/foCM/D8uNmbr+Nls7kPf0F/z4+Hw7D68S73Nk2Pc13EASVLf0ShYZgD+G9aZromkHVN0i
-	ASYh+XPs8Gan/kWfsxxMssnRlm38=
-X-Google-Smtp-Source: AGHT+IGwv5COqIIkFVRj/th/Gliz1VNcfblucTvd75jdXUBdE/ZzldXRuUWkKawJ5ytm0JBF7ajrBugQU6DIQSlgRyo=
-X-Received: by 2002:a17:907:f199:b0:a90:348f:fad7 with SMTP id
- a640c23a62f3a-a93a03b45d1mr501420366b.38.1727340970990; Thu, 26 Sep 2024
- 01:56:10 -0700 (PDT)
+	s=arc-20240116; t=1727340963; c=relaxed/simple;
+	bh=N/MdxSZRRgXw6t3FZKYPDKlvTtCCPAM4Bq/l5Av5B0Q=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tnrCTXF/jqrBFrHmb1s6KAHTQ1U0mT+kfUiu67EJqN7auixqb4WnJ0jZ1NI90PH+NKhQz+UrCigv1qHrO3Dm7Qn0VXy+89WJW8N7k0jbFUTxE6vHOccsY7PzI/CiZKlv5WshFq5DuXtu0IgKi6oFyiZssP95jvI2LWAozaDqRTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VzH3qq4J; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5365c512b00so877098e87.3;
+        Thu, 26 Sep 2024 01:56:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727340960; x=1727945760; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N/MdxSZRRgXw6t3FZKYPDKlvTtCCPAM4Bq/l5Av5B0Q=;
+        b=VzH3qq4J6UhrWLgoEJy+061mlEkDyf+60fk4+psrb2zsYRr7+Ik0/jleeJnYpwwTLh
+         1yTVrvlG3Mxl1P+VMfBr4krYO7VMFrL+Pxf6sPSdYeasaCukVTLcqcdmJs4jy6AXyBCW
+         H1JuubBJRvI8WP34ME/trQXJ2Xcqm/598E4ASh2Q1YreFaBddHYBcz7nD9J8qwtazXhU
+         yqQdUU0Fv9jamXdL541TzGiT5rlHjUrnZz7Rl9J0ZdZSuktXg63nj7LHfAiosIt71wkI
+         XYEPkLjEFe+AruqBjpgi9x8pupvgfmWLkJAkjEe4CpHSusATN8BLfLL8JIacdwcha0+0
+         YxTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727340960; x=1727945760;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=N/MdxSZRRgXw6t3FZKYPDKlvTtCCPAM4Bq/l5Av5B0Q=;
+        b=elVbZc9Fq7RjLDxQMlccj2weUE3bksBRF5oIBVP3r9KFd4QSQhAdjCa7kqFCfvW1qB
+         vd5Pn2xdcsne/BWPeGZ1p/tBH6oyhHN5rm3SKemd+uI7HtwsP9i0yRQ7lo+CpjUiliRE
+         KqbucLJbS3oynLspFtyjQWbu2bsTfcvRozvfl01rim1rPFN3/ouW9LcAP81f44ewleVS
+         wI+7oPMTRJ0aGAbDo6KuuZLZtneN7PRqaHocGwbQ0EpDlIEcGr+ulRKXMGERh1YVTJLS
+         YQOrqXN043njMXy4aoYtahzpqVZe8icb7ikSopk+Xdtu2UsmlJMH93uHijKrQonf1djd
+         kjdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKhj1i2SXAcflFtVpAKqWFtBPeUfBrPDn/ZhlCu2+DM260AjhqTiTJQizPKqwCiEk9pOPzcScLbDtr@vger.kernel.org, AJvYcCVdSWFCTSdV8GBzmKngJEcbfNCsWvDOBtJTwdpQcpNdJRzSJqJ/nr/5OmN4fsemP/RNalyXyPVBi3pKc1eC@vger.kernel.org, AJvYcCW4x7TJibjXQWPaJqKP8QbJkdzbrX9SR17yyQQxaEDRUivz7EB0L8uvIQj4KG/LRa5OmW8=@vger.kernel.org, AJvYcCWh6a2ViwT43xpy0invLvDdOqHbjPEEevnW4n88rqmdyP6VrqRlwaHAM8wQz6EqaaLZ3F6xIDnGwuQ=@vger.kernel.org, AJvYcCWqTUNxlfN9WCa8pHE6ngboze6zKXaTG0rwOEz2xf6jhIHltbeEKVJuu/qa8RUyyryQHS0DlRjjqvUyKR7cOuWW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrAftNrIBVkGaMDFtLpASnRoqAl8FmZCzarXeU+IfSca2G6RMU
+	t5yMJQzG5lXh6iZgej5KpFfqYkyjSsFq/w1lHMX3hBwUBBIuZqCm
+X-Google-Smtp-Source: AGHT+IHhrS4QXSILHTgsdhqbb5hO7tNCXVRYEYz1SUiLl+OS5YyvI4GPgvxdfXnxwqpZqVHN5fGjFQ==
+X-Received: by 2002:a05:6512:33cc:b0:536:55cc:9641 with SMTP id 2adb3069b0e04-53877538012mr3938709e87.16.1727340959984;
+        Thu, 26 Sep 2024 01:55:59 -0700 (PDT)
+Received: from ?IPv6:2001:b07:5d29:f42d:438a:71d4:3b8a:6ddf? ([2001:b07:5d29:f42d:438a:71d4:3b8a:6ddf])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf4c52aesm2878777a12.59.2024.09.26.01.55.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 01:55:59 -0700 (PDT)
+Message-ID: <15f38d57ca10606e444ca422f802e0961908f02f.camel@gmail.com>
+Subject: Re: [PATCH v4 1/6] firmware/psci: Add definitions for PSCI v1.3
+ specification
+From: Francesco Lavra <francescolavra.fl@gmail.com>
+To: David Woodhouse <dwmw2@infradead.org>, Paolo Bonzini
+ <pbonzini@redhat.com>,  Jonathan Corbet <corbet@lwn.net>, Marc Zyngier
+ <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, James Morse
+ <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui
+ Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Lorenzo
+ Pieralisi <lpieralisi@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Shuah Khan
+ <shuah@kernel.org>, David Woodhouse <dwmw@amazon.co.uk>,
+ kvm@vger.kernel.org,  linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev,  linux-pm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Date: Thu, 26 Sep 2024 10:55:57 +0200
+In-Reply-To: <20240924160512.4138879-1-dwmw2@infradead.org>
+References: <20240924160512.4138879-1-dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926074947.39415-1-riyandhiman14@gmail.com>
-In-Reply-To: <20240926074947.39415-1-riyandhiman14@gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Thu, 26 Sep 2024 09:55:34 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H5vV1MLODuCHr1p4Dx6tMGOMeqxDnTGMsDz290kw8Vsew@mail.gmail.com>
-Message-ID: <CAL3q7H5vV1MLODuCHr1p4Dx6tMGOMeqxDnTGMsDz290kw8Vsew@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: add missing NULL check in btrfs_free_tree_block()
-To: Riyan Dhiman <riyandhiman14@gmail.com>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 8:50=E2=80=AFAM Riyan Dhiman <riyandhiman14@gmail.c=
-om> wrote:
->
-> In commit 3ba2d3648f9dc (btrfs: reflow btrfs_free_tree_block), the block
-> group lookup using btrfs_lookup_block_group() was added in btrfs_free_tre=
-e_block().
-> However, the return value of this function is not checked for a NULL resu=
-lt,
-> which can lead to null pointer dereferences if the block group is not fou=
-nd.
->
-> This patch adds a check to ensure that if btrfs_lookup_block_group() retu=
-rns
-> NULL, the function will gracefully exit, preventing further operations th=
-at
-> rely on a valid block group pointer.
->
-> Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
-> ---
-> Compile tested only
->
->  fs/btrfs/extent-tree.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-> index a5966324607d..7782d4436ca0 100644
-> --- a/fs/btrfs/extent-tree.c
-> +++ b/fs/btrfs/extent-tree.c
-> @@ -3454,6 +3454,8 @@ int btrfs_free_tree_block(struct btrfs_trans_handle=
- *trans,
->         }
->
->         bg =3D btrfs_lookup_block_group(fs_info, buf->start);
-> +       if (!bg)
-> +               goto out;
+On Tue, 2024-09-24 at 17:05 +0100, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+>=20
+> The v1.3 PSCI spec (https://developer.arm.com/documentation/den0022)
+> adds
+> SYSTEM_OFF2, CLEAN_INV_MEMREGION and CLEAN_INV_MEMREGION_ATTRIBUTES
+> functions. Add definitions for them and their parameters, along with
+> the
+> new TIMEOUT, RATE_LIMITED and BUSY error values.
 
-We are supposed to be able to always find the block group to which the
-extent buffer belongs to.
-If we don't, it means we have a serious corruption or bug.
-
-If that happens we want it to be noisy so that it gets reported and we
-look at it.
-Letting a NULL pointer dereference happen is one way of getting our attenti=
-on.
-
-O more gentle and explicit way would be to have a:    ASSERT(bg !=3D NULL);
-
-But certainly not ignoring the problem.
-
-Thanks.
-
->
->         if (btrfs_header_flag(buf, BTRFS_HEADER_FLAG_WRITTEN)) {
->                 pin_down_extent(trans, bg, buf->start, buf->len, 1);
-> --
-> 2.46.1
->
->
+The CLEAN_INV_MEMREGION and CLEAN_INV_MEMREGION_ATTRIBUTES
+functions were added in the alpha release of the spec but have been
+dropped in the beta release, and are not included in the final spec. So
+IMO the uapi header file should not contain these definitions.
+The same goes for the TIMEOUT, RATE_LIMITED and BUSY error values.
 
