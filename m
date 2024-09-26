@@ -1,179 +1,180 @@
-Return-Path: <linux-kernel+bounces-340316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F0998717A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6084987178
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AB891C20CAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:26:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B151C24023
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F731AD3E8;
-	Thu, 26 Sep 2024 10:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231F21ACE19;
+	Thu, 26 Sep 2024 10:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a81soMie"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="magBxSp6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BDD17BB30;
-	Thu, 26 Sep 2024 10:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809CA1AC441
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727346382; cv=none; b=e8UNTnGsgCt0xr+zYSkygdvJFxXzzihDWiAsW2RxxrlDMj9hobuOTu9aIG7uiMGAyDln3+NYbmgkahqGnwfyZGAfzhhybtjkgI7gOgLRV+VgHNOTXBpVhqqTfhNrXiqKuF6J+vyTRIPyWmC+zVIHPODIj/HA6CH28uCrpUZIqW4=
+	t=1727346371; cv=none; b=H6AiZSIbxzOIhNrZlEYJCqa9uDNai80hF3ArmgaDkBPA0cII5NjXqFv2aYaBmY/MAi5jEeiWSyADGuipZ01eOGDqADvi73UUsLUODBuqUUtKNAIl99O5aIaqzxShlvSDXBXFhQxUQAmVYgfMIoMOp+8Ssyygu4952XCzhjI+D6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727346382; c=relaxed/simple;
-	bh=n/OnCOMQpH7yJoun9cx3L1qSfqtkSEskvdDm3Mlu0DA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kdv61PKWyq39o+pIQeohyYGRHTM8h+QGNu8pxbmDCcxhoRJHVAof/6SyDswKdlNUbEAjTRu94jj/ULvqMKAG9nz69QAh+i7TvlpZq7aXQRwM5u9MZahg9h3JcMTbm64HPmxtEhPB8GttBnQu9fQ05uEKIHtXbpwO8JH+1L0hE70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=a81soMie; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48QAQAKR001304;
-	Thu, 26 Sep 2024 05:26:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727346370;
-	bh=93SVfvx8unRQzfXSqspJM+q3lBL9z0dAs26DFmVqSeo=;
-	h=From:To:CC:Subject:Date;
-	b=a81soMie7a0VNvz+4DpZHXrbSK8pB9rnsqIDip1/AclOnkPdE0X3VVZtDNxKIBFlZ
-	 buxMt8lIZfkoitW/CBoGXVnfq/5dpomx6dqzWoF0Q0uwpRavRSbUSbbiYcrKrcyGHa
-	 rq2QtcNHe39s7c3pwAOUS06IOuvjbgiVJjjdKV4o=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48QAQARN124558
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 26 Sep 2024 05:26:10 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 26
- Sep 2024 05:26:09 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 26 Sep 2024 05:26:09 -0500
-Received: from PSDKL-Workstation0.dhcp.ti.com (psdkl-workstation0.dhcp.ti.com [172.24.227.91])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48QAQ5rr057254;
-	Thu, 26 Sep 2024 05:26:06 -0500
-From: Aniket Limaye <a-limaye@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <mranostay@ti.com>,
-        <conor+dt@kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
-        <kristo@kernel.org>, <vigneshr@ti.com>, <nm@ti.com>
-CC: <u-kumar1@ti.com>, Jared McArthur <j-mcarthur@ti.com>,
-        Aniket Limaye
-	<a-limaye@ti.com>
-Subject: [PATCH v2] arm64: dts: ti: k3-j7200: Fix register map for main domain pmx
-Date: Thu, 26 Sep 2024 15:55:33 +0530
-Message-ID: <20240926102533.398139-1-a-limaye@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727346371; c=relaxed/simple;
+	bh=2xiEpAqwiURqhbLx9UQ7eaejJ7Cx2bw8HpjcojrX+M4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WyJ/QL+8MFcKaWmHu/memIkDdRzvYxo5Og5AmFW/+Ih9chotAIT50S3awaZTrswIrLnFeP71tce7fzyS7xgQDWXSAGfBt+aHSEZUTvzUS8ytkRdpM3qjpUP6DlBzfDLsPKxOpdsP3R/Q7beT4FlKAAfwUx5DaBaG0ow6HeSCqSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=magBxSp6; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727346369; x=1758882369;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=2xiEpAqwiURqhbLx9UQ7eaejJ7Cx2bw8HpjcojrX+M4=;
+  b=magBxSp6jJSYq5R30jwvHAwpQAKCyUeiRez0bZnbgdjFAN0523vutbw8
+   Em1mRLQ/pnZ6IsJY/TxfdheFJDbh5vV3OoT/79TxqTu0tx7aAO6e6Spcc
+   n34tzRnreoU4dUJY2zZcllSemgX/q6KritUFaMn+zT+KTIqyLxBdtW54W
+   GqmdlaWbiQhMIJOzbtlOK8faPeh6w3rAcTfnmmBPSq7GmlA7lUW852UDH
+   RHSR1wlTMOMBqxRasGMn04r7nUenL/w+ZrUxsaI3JQuJC859lUA0qXnEw
+   8m4lCgfsKN2mWP5ieyYons0V7ZNd9JVP1pSGq6DYrjlZgxIt1J0Vzbtm9
+   Q==;
+X-CSE-ConnectionGUID: ZMJJSQn+QaqdHQr+qevfig==
+X-CSE-MsgGUID: F0E/i1/7SDW5EVEUQ0JH3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="26295834"
+X-IronPort-AV: E=Sophos;i="6.10,155,1719903600"; 
+   d="scan'208";a="26295834"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 03:26:09 -0700
+X-CSE-ConnectionGUID: GBl5vdDLTrWGZYWGySjx8A==
+X-CSE-MsgGUID: ZXMYfOK2R2+3sCLB+1f5mQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,155,1719903600"; 
+   d="scan'208";a="109570691"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 26 Sep 2024 03:26:07 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1stlhE-000KZ1-2r;
+	Thu, 26 Sep 2024 10:26:04 +0000
+Date: Thu, 26 Sep 2024 18:25:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@rivosinc.com>
+Subject: arch/riscv/kvm/vcpu_sbi_sta.c:58:20: sparse: sparse: cast to
+ restricted __le32
+Message-ID: <202409261846.kWf2YRgc-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Jared McArthur <j-mcarthur@ti.com>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   11a299a7933e03c83818b431e6a1c53ad387423d
+commit: e9f12b5fff8ad0eefd0340273767d329ef65fd69 RISC-V: KVM: Implement SBI STA extension
+date:   9 months ago
+config: riscv-randconfig-r133-20240926 (https://download.01.org/0day-ci/archive/20240926/202409261846.kWf2YRgc-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 7773243d9916f98ba0ffce0c3a960e4aa9f03e81)
+reproduce: (https://download.01.org/0day-ci/archive/20240926/202409261846.kWf2YRgc-lkp@intel.com/reproduce)
 
-Commit 0d0a0b441346 ("arm64: dts: ti: k3-j7200: fix main pinmux
-range") split the main_pmx0 into two nodes: main_pmx0 and main_pmx1
-due to a non-addressable region, but incorrectly represented the
-ranges. As a result, the memory map for the pinctrl is incorrect. Fix
-this by introducing the correct ranges.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409261846.kWf2YRgc-lkp@intel.com/
 
-The ranges are taken from the J7200 TRM [1] (Table 5-695. CTRL_MMR0
-Registers).
+sparse warnings: (new ones prefixed by >>)
+   arch/riscv/kvm/vcpu_sbi_sta.c:55:13: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned int const [noderef] __user *__p @@     got unsigned int [usertype] *[assigned] sequence_ptr @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:55:13: sparse:     expected unsigned int const [noderef] __user *__p
+   arch/riscv/kvm/vcpu_sbi_sta.c:55:13: sparse:     got unsigned int [usertype] *[assigned] sequence_ptr
+>> arch/riscv/kvm/vcpu_sbi_sta.c:58:20: sparse: sparse: cast to restricted __le32
+   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned int [noderef] __user *__p @@     got unsigned int [usertype] *[assigned] sequence_ptr @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse:     expected unsigned int [noderef] __user *__p
+   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse:     got unsigned int [usertype] *[assigned] sequence_ptr
+   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned int __val @@     got restricted __le32 [usertype] @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse:     expected unsigned int __val
+   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse:     got restricted __le32 [usertype]
+   arch/riscv/kvm/vcpu_sbi_sta.c:64:14: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned long long const [noderef] __user *__p @@     got unsigned long long [usertype] *[assigned] steal_ptr @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:64:14: sparse:     expected unsigned long long const [noderef] __user *__p
+   arch/riscv/kvm/vcpu_sbi_sta.c:64:14: sparse:     got unsigned long long [usertype] *[assigned] steal_ptr
+>> arch/riscv/kvm/vcpu_sbi_sta.c:65:25: sparse: sparse: cast to restricted __le64
+   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned long long [noderef] __user *__p @@     got unsigned long long [usertype] *[assigned] steal_ptr @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse:     expected unsigned long long [noderef] __user *__p
+   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse:     got unsigned long long [usertype] *[assigned] steal_ptr
+   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned long long __val @@     got restricted __le64 [usertype] @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse:     expected unsigned long long __val
+   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse:     got restricted __le64 [usertype]
+   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned int [noderef] __user *__p @@     got unsigned int [usertype] *[assigned] sequence_ptr @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse:     expected unsigned int [noderef] __user *__p
+   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse:     got unsigned int [usertype] *[assigned] sequence_ptr
+   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned int __val @@     got restricted __le32 [usertype] @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse:     expected unsigned int __val
+   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse:     got restricted __le32 [usertype]
 
-Padconfig starting addresses and ranges:
--  0 to 66: 0x11c000, 0x10c
--       68: 0x11c110, 0x004
-- 71 to 73: 0x11c11c, 0x00c
-- 89 to 90: 0x11c164, 0x008
+vim +58 arch/riscv/kvm/vcpu_sbi_sta.c
 
-The datasheet [2] doesn't contain PADCONFIG63 (Table 6-106. Pin
-Multiplexing), but the pin is necessary for enabling the MMC1 CLKLP
-pad loopback and should be included in the pinmux register map.
+    24	
+    25	void kvm_riscv_vcpu_record_steal_time(struct kvm_vcpu *vcpu)
+    26	{
+    27		gpa_t shmem = vcpu->arch.sta.shmem;
+    28		u64 last_steal = vcpu->arch.sta.last_steal;
+    29		u32 *sequence_ptr, sequence;
+    30		u64 *steal_ptr, steal;
+    31		unsigned long hva;
+    32		gfn_t gfn;
+    33	
+    34		if (shmem == INVALID_GPA)
+    35			return;
+    36	
+    37		/*
+    38		 * shmem is 64-byte aligned (see the enforcement in
+    39		 * kvm_sbi_sta_steal_time_set_shmem()) and the size of sbi_sta_struct
+    40		 * is 64 bytes, so we know all its offsets are in the same page.
+    41		 */
+    42		gfn = shmem >> PAGE_SHIFT;
+    43		hva = kvm_vcpu_gfn_to_hva(vcpu, gfn);
+    44	
+    45		if (WARN_ON(kvm_is_error_hva(hva))) {
+    46			vcpu->arch.sta.shmem = INVALID_GPA;
+    47			return;
+    48		}
+    49	
+    50		sequence_ptr = (u32 *)(hva + offset_in_page(shmem) +
+    51				       offsetof(struct sbi_sta_struct, sequence));
+    52		steal_ptr = (u64 *)(hva + offset_in_page(shmem) +
+    53				    offsetof(struct sbi_sta_struct, steal));
+    54	
+    55		if (WARN_ON(get_user(sequence, sequence_ptr)))
+    56			return;
+    57	
+  > 58		sequence = le32_to_cpu(sequence);
+    59		sequence += 1;
+    60	
+    61		if (WARN_ON(put_user(cpu_to_le32(sequence), sequence_ptr)))
+    62			return;
+    63	
+    64		if (!WARN_ON(get_user(steal, steal_ptr))) {
+  > 65			steal = le64_to_cpu(steal);
+    66			vcpu->arch.sta.last_steal = READ_ONCE(current->sched_info.run_delay);
+    67			steal += vcpu->arch.sta.last_steal - last_steal;
+    68			WARN_ON(put_user(cpu_to_le64(steal), steal_ptr));
+    69		}
+    70	
+    71		sequence += 1;
+    72		WARN_ON(put_user(cpu_to_le32(sequence), sequence_ptr));
+    73	
+    74		kvm_vcpu_mark_page_dirty(vcpu, gfn);
+    75	}
+    76	
 
-Due to the change in pinmux node addresses, change the pinmux node for
-the USB0_DRVVBUS pin to main_pmx2. The offset has not changed since the
-new main_pmx2 node has the same base address and range as the original
-main_pmx1 node. All other pinmuxing done within J7200 dts or dtso files
-only uses main_pmx0 which has not changed.
-
-[1] https://www.ti.com/lit/pdf/spruiu1
-[2] https://www.ti.com/lit/gpn/dra821u
-
-Fixes: 0d0a0b441346 ("arm64: dts: ti: k3-j7200: fix main pinmux range")
-Signed-off-by: Aniket Limaye <a-limaye@ti.com>
-Signed-off-by: Jared McArthur <j-mcarthur@ti.com>
----
-Changes in v2:
-- Explains why PADCONFIG63 is included in the pinmux ranges when it
-  doesn't appear in the datasheet.
-
-* Nishanth
-- Use cannonical links in commit msg for the TRM and Datasheet
-- Explains the reason for the offset not changing for the USB0_DRVVBUS
-  pin and why there are no changes to other pins.
-
-- Link to v1: https://lore.kernel.org/all/20240829071208.2172825-1-a-limaye@ti.com/
----
- .../dts/ti/k3-j7200-common-proc-board.dts     |  2 +-
- arch/arm64/boot/dts/ti/k3-j7200-main.dtsi     | 22 +++++++++++++++++--
- 2 files changed, 21 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-index 6593c5da82c06..df39f2b1ff6ba 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-@@ -254,7 +254,7 @@ J721E_IOPAD(0x38, PIN_OUTPUT, 0) /* (Y21) MCAN3_TX */
- 	};
- };
- 
--&main_pmx1 {
-+&main_pmx2 {
- 	main_usbss0_pins_default: main-usbss0-default-pins {
- 		pinctrl-single,pins = <
- 			J721E_IOPAD(0x04, PIN_OUTPUT, 0) /* (T4) USB0_DRVVBUS */
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-index 9386bf3ef9f68..41adfa64418d0 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-@@ -426,10 +426,28 @@ main_pmx0: pinctrl@11c000 {
- 		pinctrl-single,function-mask = <0xffffffff>;
- 	};
- 
--	main_pmx1: pinctrl@11c11c {
-+	main_pmx1: pinctrl@11c110 {
- 		compatible = "ti,j7200-padconf", "pinctrl-single";
- 		/* Proxy 0 addressing */
--		reg = <0x00 0x11c11c 0x00 0xc>;
-+		reg = <0x00 0x11c110 0x00 0x004>;
-+		#pinctrl-cells = <1>;
-+		pinctrl-single,register-width = <32>;
-+		pinctrl-single,function-mask = <0xffffffff>;
-+	};
-+
-+	main_pmx2: pinctrl@11c11c {
-+		compatible = "ti,j7200-padconf", "pinctrl-single";
-+		/* Proxy 0 addressing */
-+		reg = <0x00 0x11c11c 0x00 0x00c>;
-+		#pinctrl-cells = <1>;
-+		pinctrl-single,register-width = <32>;
-+		pinctrl-single,function-mask = <0xffffffff>;
-+	};
-+
-+	main_pmx3: pinctrl@11c164 {
-+		compatible = "ti,j7200-padconf", "pinctrl-single";
-+		/* Proxy 0 addressing */
-+		reg = <0x00 0x11c164 0x00 0x008>;
- 		#pinctrl-cells = <1>;
- 		pinctrl-single,register-width = <32>;
- 		pinctrl-single,function-mask = <0xffffffff>;
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
