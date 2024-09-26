@@ -1,170 +1,149 @@
-Return-Path: <linux-kernel+bounces-339979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4EB4986CE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:50:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F64986CE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842222839F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:50:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592D71F209B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D3418D64D;
-	Thu, 26 Sep 2024 06:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9FF1898E5;
+	Thu, 26 Sep 2024 06:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPDVaXvX"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tf+WJbj9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D7C18784C;
-	Thu, 26 Sep 2024 06:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8150D13CAA5;
+	Thu, 26 Sep 2024 06:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727333373; cv=none; b=D8fROLNiOqu7Fh5bLIfWAixPAK0LQC7PwGYAmz3ucElf9rUatzYaPxqgyrYCdawmN0tEXts7mpMC4pxn8Ao3s1BjSFKnQNdXjeNExNx2QFuJKHGFAtd1jQNyZwjG0HUwgVoG9r3ngUwbWVlVT0eAnSzWB69AJPVhRwnjoqY6n/Q=
+	t=1727333409; cv=none; b=q63hlsnxkM3HZNuqa2mlbsr3a0IPQvfOfph+n9wdChCt1IvkzLVdBBi9hlogGGWhsiQM4VLpsEi1GYkWZkwwtj4Mc4D1XNqXneZM5BZfQakKA87n1cWQFa1qDoK5xm5d4o8xXNTHLRcNupT8LDtV3iCu0UPcgVyf3ELQNRRq9U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727333373; c=relaxed/simple;
-	bh=2EjaJgg2Kh6R0gxzcs4CAsn7s9mMpxxHU4F/8eBHY6U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=f7UeGvsyqNK3+R95fxIBPxCIyNfuQmlVfizsnRv72CYwDYCgrPyOUqli4ZtMa8TpbJeqhJ4c2YYvNKsEN1c9kijbrXWTZO0mV9D+7DZPlxN++vz2r40RYGTVocrm+6o4Vs4l+Tkq5RkpMDePb00LrsoZ4Vk9zIMPXPSrT8ztPWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HPDVaXvX; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso883313e87.2;
-        Wed, 25 Sep 2024 23:49:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727333370; x=1727938170; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zgnMrzwynFba1wRhjzmjE2vkGb+mgPFEdtMaT9NIW6g=;
-        b=HPDVaXvX/7T65pYAIxQboWcgJino+ytesBwHPSBhvjC4lrbdrB0zMhPeaWd0md5+OQ
-         nNsIAMoU9q0FGZxo/jSJob451Kjiiqbsx4YpQzBub3XF8x6RPwJzZw5SpfkSJj2ztyc+
-         jO4mrF/sG8alW3avlEMOa6WFTBaQWfSkYTbF6dCHF8pldESrjzvchoeY77N0Sc9yjnvA
-         UPsks8kApAqLJ/sNVvPs7agE2P9WDW7nMK3Q6FwfKV90YsD2fJVRBwCWi56VhsLkRCtm
-         di3O6w5q+Yhx28zMNU/2Ns0AEFgKegH0iz/80GZpU5UbnhMAY2AkbmSTW7wiLIBimcbj
-         LBfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727333370; x=1727938170;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zgnMrzwynFba1wRhjzmjE2vkGb+mgPFEdtMaT9NIW6g=;
-        b=i/69Qdt5cqzkIhJGwxafv2Px152ioF+4Qo6UmTwWVRzoQs1xxSSmA/MrR6oOyVtfsK
-         7EiDCsVVmeI0367GoH4CmRbhAio/BQHdDYIS/H+0iyJ0kAOJSEvimjOoGUw9Z5tTovh5
-         RhK82fecNSxmNQUSo1ohSu7CCToPrmod6ZCplIFOAdbui71Wqr5Ak2XJyG98feDd7LGM
-         PVFRZUb6L0jyB0xo+qz4UZRifB7k/xZ/I/4ywWsbzWlnS/z01wmSYbvxfNqSmu5ARTZQ
-         pzZesFe8XDWckgqZKysdbrgPh0Ud5OdGAm1Iqe047JWh6LiRD7n+r40st4uANyMbuYJM
-         rP3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVxrGz/Qnmjn2wtA3MUotqff1BlB80SIBQcv5qiRC51Tk8EZZtJnLibQzJ7KF/nBlZEnbWNJDqdIjO9iyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycTfWHot8LbS66bObQrHkN9jtIWlgVS5anXycsum+TpEKOvY9d
-	FNUXIUE68fGsNdY8N3Z7v/s6O7M+uVMB4/AtJe+9xFKqnCfpo2qpaeCfiyDJcKo=
-X-Google-Smtp-Source: AGHT+IGINfmXa3fp+xYx2jyAcimsm+PlqF9Wd1CFn0DOqYt9akL49L/Iq8d75aTSQFCui0F5um3MQQ==
-X-Received: by 2002:a05:6512:687:b0:536:a695:9414 with SMTP id 2adb3069b0e04-5387048aa60mr4984849e87.6.1727333369711;
-        Wed, 25 Sep 2024 23:49:29 -0700 (PDT)
-Received: from hubert.. (89-72-184-222.dynamic.chello.pl. [89.72.184.222])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93931340b5sm309691266b.190.2024.09.25.23.49.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 23:49:29 -0700 (PDT)
-From: hbuczynski <hubert.buczynski94@gmail.com>
-To: balbi@kernel.org,
-	gregkh@linuxfoundation.org,
-	quic_prashk@quicinc.com
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"hubert.buczynski" <Hubert.Buczynski.ext@feig.de>
-Subject: [PATCH] usb: gadget: u_serial: fix null-ptr-deref in gs_start_io
-Date: Thu, 26 Sep 2024 08:49:10 +0200
-Message-Id: <20240926064910.17429-1-hubert.buczynski94@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727333409; c=relaxed/simple;
+	bh=E4LSLy4ULIrcghVqgh+TGHWhILmrnkPWnCzjV0nJ3fI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a60D6WVY3R6iU8ny+eQwOea4Jb2P9j5dLrP9aWi9/iKTjfZoBJQQARPuN0I5YH9AoQI6T3w7qbGW1doLWXLt+aZp0xkK01GYQ53PSD9djRXKrCOkz9EUGNz5xmqG9B3HYwYpX+Outb1aE+xb8KXEBNkfgagHnvE+RfGz+TDrxzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tf+WJbj9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7512C4CEC5;
+	Thu, 26 Sep 2024 06:50:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727333409;
+	bh=E4LSLy4ULIrcghVqgh+TGHWhILmrnkPWnCzjV0nJ3fI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tf+WJbj9GXHUjBOxp65CWoWk7KbCgi42pUzog0Y/WGBNY90dB+i8a584tNBVxtl/I
+	 Mi7/Q7mPOPB1wreflrd6Hc3d2t1leT6Ew8fOfnbHqeXpV9tjKHf0nrSihChV5CjSsH
+	 E7eTpq/ZFDFGeGO0DqJre1NtsgASjwG8Y2GzOqVagxAGO4lMwoxAOr1MNhQnwIKs/u
+	 4DLpqdq6ceetdtZlOXv8rb9iJmk1+1XhCx4L4srO/X6Ws3iSkIx6MRpcabYQ1te63L
+	 bO01gDTueke8wbAl0twTeJvG9r3SsB1ji6Wtn3Jmr9zavQKLmWQePf5ZSGhPbIRKTl
+	 +Lq0aUv7tA7ug==
+Message-ID: <5fb1bb74-4e10-4593-aa45-04a1570c933e@kernel.org>
+Date: Thu, 26 Sep 2024 08:50:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: trivial-devices: add onnn,adt7462
+To: Chanh Nguyen <chanh@os.amperecomputing.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
+ Peter Yin <peteryin.openbmc@gmail.com>, Noah Wang
+ <noahwang.wang@outlook.com>, Marek Vasut <marex@denx.de>,
+ Fabio Estevam <festevam@gmail.com>, Lukas Wunner <lukas@wunner.de>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Cc: Phong Vo <phong@os.amperecomputing.com>,
+ Thang Nguyen <thang@os.amperecomputing.com>,
+ Quan Nguyen <quan@os.amperecomputing.com>,
+ Khanh Pham <khpham@amperecomputing.com>,
+ Open Source Submission <patches@amperecomputing.com>
+References: <20240923093800.892949-1-chanh@os.amperecomputing.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240923093800.892949-1-chanh@os.amperecomputing.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-From: "hubert.buczynski" <Hubert.Buczynski.ext@feig.de>
+On 23/09/2024 11:38, Chanh Nguyen wrote:
+> The adt7462 supports monitoring and controlling up to
+> four PWM Fan drive outputs and eight TACH inputs measures.
+> The adt7462 supports reading a single on chip temperature
+> sensor and three remote temperature sensors. There are up
+> to 13 voltage monitoring inputs.
+> 
+> Add device tree bindings for the adt7462 device.
+> 
+> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
+> ---
+> Change in v2:
+>    - Add onnn,adt7462 to the list of trivial devices       [Guenter]
+> ---
+>  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+> index 0108d7507215..15f89d7ecf73 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -311,6 +311,8 @@ properties:
+>            - nuvoton,w83773g
+>              # OKI ML86V7667 video decoder
+>            - oki,ml86v7667
+> +            # ON Semiconductor ADT7462 Temperature, Voltage Monitor and Fan Controller
+> +          - onnn,adt7462
 
-The commit "5a444bea usb: gadget: u_serial: Set start_delayed during
-suspend" caused invocation of the gs_start_io in the gserial_resume.
-The gs_start_io doesn't check the ptr of the 'port.tty'. As a result, the
-tty_wakeup function is passed on to the NULL ptr causing kernel panic.
+I suggest to add the compatible to the driver, for explicit matching via OF.
 
-There is a deterministic scenario leading to the kernel error:
-1. Set the device in peripheral OTG mode.
-2. Attach the USB cable to the host.
-3. Do not take any action on the host side.
-4. Send data to the host, for example:
-$ echo "hello\n" > /dev/ttyGS0
-5. Disconnect the USB cable.
-6. Connect the USB cable and the kernel panic should be visible.
-
-Fragment of the kernel panic log message:
-
-Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-Modules linked in:
-CPU: 0 PID: 0 Comm: swapper/0 Tainted: P O 5.15.166 #88
-Hardware name: STM32 hDevice Tree Support)
-PC is at tty_wakeup+0x8/0x5c
-LR is at gs_start_io+0x90/0xdc
-pc : [<c0623f74>]    lr : [<c083eeac>]    psr: 60010193
-sp : c1001da0  ip : c32e6944  fp : 80000000
-r10: c32e6934  r9 : c32e6928  r8 : c32e68ec
-r7 : c32e68e0  r6 : c2be6c40  r5 : 00000000  r4 : 00000000
-r3 : 00000000  r2 : 00000000  r1 : 60010193  r0 : 00000000
-Flags: nZC»  IRQs off  FIQs on  Mode SVC_32  ISA ARM Segment none
-Control: 10c5387d  Table: c3ac406a  DAC: 00000051
-Register r0 information: NULL pointer
-Register r1 information: non-paged memory
-Register r2 information: NULL pointer
-Register r3 information: NULL pointer
-Register r4 information: NULL pointer
-Register r5 information: NULL pointer
-[<c0623f74>] (tty_wakeup) from [<c083eeac>] (gs_start_io+0x90/0xdc)
-[<c083eeac>] (gs_start_io) from [<c083f0c0>](gserial_resume+0x6c/0xd4)
-[<c083f0c0>] (gserial_resume) from [<c082a35c>] (composite_resume+0x70/0x10c)
-[<c082a35c>] (composite_resume) from [<c082d668>] (configfs_composite_resume+0x54/0x64)
-[<c082d668>] (configfs_composite_resume) from [<c07c26c4>] (dwc2_handle_wakeup_detected_intr+0x15c/0x2e8)
-[<c07c26c4>] (dwc2_handle_wakeup_detected_intr) from [<c07c2c74>] (dwc2_handle_common_intr+0x424/0x630)
-[<c07c2c74>] (dwc2_handle_common_intr) from [<c0190168>] (__handle_irq_event_percpu+0x50/0x250)
-[<c0190168>] (__handle_irq_event_percpu) from [<c0190440>] (handle_irq_event+0x58/0xc4)
-[<c0190440>] (handle_irq_event) from [<c0194f9c>] (handle_fasteoi_irq+0x9c/0x204)
-[<c0194f9c>] (handle_fasteoi_irq) from [<c018fb2c>] (handle_domain_irq+0x58/0x74)
-[<c018fb2c>] (handle_domain_irq) from [<c0101328>] (gic_handle_irq+0x7c/0x90)
-[<c0101328>] (gic_handle_irq) from [<c0100b7c>] (__irq_svc+0x5c/0x90)
-
-If the device sends data and does not receive msg from the host then the
-field port->read_started contains a positive value. After disconnecting
-the cable, gserial_suspend() is invoked and the port->start_delayed is set
-to true. Connecting the cable again causes invocation of the
-gserial_resume().
-The callstack after connecting the cable looks like the following:
-gserial_resume()
-  --> gs_start_io()
-    --> tty_wakeup() - with NULL argument
-
-Fixes: 5a444bea37e2 ("usb: gadget: u_serial: Set start_delayed during suspend")
-
-Signed-off-by: hubert.buczynski <Hubert.Buczynski.ext@feig.de>
----
- drivers/usb/gadget/function/u_serial.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
-index 5111fcc0cac3..384f219fe01d 100644
---- a/drivers/usb/gadget/function/u_serial.c
-+++ b/drivers/usb/gadget/function/u_serial.c
-@@ -564,7 +564,7 @@ static int gs_start_io(struct gs_port *port)
- 	port->n_read = 0;
- 	started = gs_start_rx(port);
- 
--	if (started) {
-+	if (started && port->port.tty) {
- 		gs_start_tx(port);
- 		/* Unblock any pending writes into our circular buffer, in case
- 		 * we didn't in gs_start_tx() */
--- 
-2.25.1
+Best regards,
+Krzysztof
 
 
