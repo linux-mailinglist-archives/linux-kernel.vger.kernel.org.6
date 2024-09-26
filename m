@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-340337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFA99871C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:42:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058D99871C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37FE1F28834
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:42:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A2F1C23345
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C0B1AE860;
-	Thu, 26 Sep 2024 10:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC001AED29;
+	Thu, 26 Sep 2024 10:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SNwe2MLg"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tZBldBfx"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE761AE846
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF5A1AE85F
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727347318; cv=none; b=Y8g0/DNHj/Jebbor9/M7AkxxHPlTU+dxLe2gZ7x3f//5pLjCr9LOsmKOW7AI8SrmcXA9V62LAGq0psYhobE1YVY+R2tmoXwQo9PzlHLhipiYvPDeG33ZzkwWyMl0fPl0FDaX08HYdq7P7J315BSg33kdb8tLDP+RVgnJv1OJpQA=
+	t=1727347320; cv=none; b=RBpCSUmI2dkKs/6T/iXnqcixaNu4wBIuTut/TEV0WkkjC1TXDBnZDeYRooMI+LR9Wuj07TtFutL7lFoYXq/FnIxzcrCAaRKmhnPVSUXvTspnP38OizagA9piBPyHJPqdnmlpwx6zjWxWSgFBxSHFz6Au0e3RaE41q7BkpgPVGOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727347318; c=relaxed/simple;
-	bh=tW34OQN35HutnyCCgx6UGHb/nOO3+lpYGFU76sIkQMc=;
+	s=arc-20240116; t=1727347320; c=relaxed/simple;
+	bh=ofM5Tz88RWUMVPKc1VbBBI5JtPzQ4eU6jClTGK23pCc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Fom0RgYk5mc/RzvGbeRFhSRC8G4kBnUk3kEKuKGAQsvghwqB5CN4pZ5CTif7EM1EcIXi9tj2zeRQGPAFr3bvhqkqus4Q/wiNuCiOGYL4nVCZj1TfG86SW3sAI3Jsv6D9JyaeKOAdK+Hqna7QGj8sCHEMtigGfVSF75Jfd0e5UMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SNwe2MLg; arc=none smtp.client-ip=209.85.221.74
+	 To:Cc:Content-Type; b=IdX15Whx71rVFfIZzT1+Y/HemqIZCIXTlM6h5hjt9O310Oy44Oddp6yDmv2iuSQcQxZ9uEK8J0et7y9simt5bpUiv5VShdc6bB4BjEHUHNnhXmjXH6/JOOaVMtIRgIjkoB8tD7Zrn7oR7LvwUl1OHwZuf50ZVdzdQxnZE5weWZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tZBldBfx; arc=none smtp.client-ip=209.85.218.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-374c90d24e3so462412f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 03:41:56 -0700 (PDT)
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-a8d1095442cso62224966b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 03:41:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727347314; x=1727952114; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1727347317; x=1727952117; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iGUWykkQN0qvnmtiNNnHPsRB647HBGhIOvWdjI4gnIE=;
-        b=SNwe2MLgH2PuIBVYtFS/TSXWr5wehfrVoY+k/Z6KMeiGMyM0m8EZ6WFKNOMv/MO/lT
-         xqTcjoXzcJcuv1zqGWFtgx8tjiqnm9F8N5INQw6b9F8C9r2/97Q3PHSwVerEzYTwFijB
-         CMG8qYRfD+F/yspIPpx7CdxMgZFwcjtINBU1LPRKEq5nRv7pLoqugU634FKmt32JgqAQ
-         oasXT2XanKocG+vp3AV4RStkrrYvXwqNnZNMKWoeRBlwXK4rZPCalZUyTimmnAvdOkDl
-         c2HQCoE1ukaWC+gq/pD+NaFW7J3BqUDUxYGnHQvGniPQNKAVQZ/RTvoga+v3dTWVd3x3
-         kCwg==
+        bh=ownyzv9FvJUARNva8kkWN7DdL7kgRVlMI6W55f3d3tc=;
+        b=tZBldBfx510SyguFnKbfQw9/93R0XAX+sS48Bnmi9kccE0Cyd+yqN42RUJhWfUbATY
+         yVPROwfbGaekPF5qHbsPthwYcNhpD25X3Suz1uRB/8M2tkBt0dps2mhQn6iae3B6pqtx
+         CXtNBU/YZiNxKSuQOZlllunln8OySvwNPBVBLJAgk1GmcHuE7ZIx0/ZzxMDuggsKsYez
+         88EFJMnzkhZAgjB+PO58uKm4YizasKAZvlt4SGbhkGvVDmBuFA4/8gmxuhZg9xnO4uqJ
+         hpSUmwO919GfxCotKO+nHFhu+3ywqmBnbFQVPexGRNhc7X6R7qpfVz9UvcCbB0wQOI7v
+         rSCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727347314; x=1727952114;
+        d=1e100.net; s=20230601; t=1727347317; x=1727952117;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iGUWykkQN0qvnmtiNNnHPsRB647HBGhIOvWdjI4gnIE=;
-        b=GbXIbi+8dNwY7BQCoNQhFTFssVBQuxpT+ftmgq+AiudO92KA9hrKqj3SwsbyxAWwZz
-         BEszhxw2rqmu3kijzWt+ratPz4xgmi/l/mlJsu4+R62CdXy+cl8/OYGCy8E9aqH1GIeW
-         NVz+2tiX3JQP6U+NpTeeGA2Hpc2nqkB7JUYManL6gi9Z+CDkyFm2H3OjbQdBBpCFirki
-         FDha05D2STKV62MQUmnwXkk2CeTcU5EcIey+Fv3NNG9mfR73nuRJ+zPIIXom6CSQOCwM
-         2xNB7hfEyrBZC6GeO6bRQ4UO37NG6ot0aXMfeiatewY7hRwneck2sMFpPNdDzDd96EV4
-         XIQA==
-X-Gm-Message-State: AOJu0YzaYdNM/CR6lGNE0K88bEyZV6lMTNsTGIj3nraplZM1ShgdBdYM
-	0Up4XT7rSghn79tjArspGOrE+yBKRn17TJFmn5Ht0w7bTRHtC3aCSC57O1CjU2zvJsqX38hVX9a
-	LlLDeh0u8jplJxp40dXzdmxq8HKa/c96gwnqoL1jwRQC0eV7aDocbqOnnsAVEr2f5R973uAKHcb
-	puLrgEpWjLrzu4LWTcmz+7pVNn09vtRA==
-X-Google-Smtp-Source: AGHT+IEW8daEir8doMTYKMTvqxc57QBSWijUw3aucG3twtEOjb20bOmmyd2zxDXhxhBNFQdIHerVpIzL
+        bh=ownyzv9FvJUARNva8kkWN7DdL7kgRVlMI6W55f3d3tc=;
+        b=PMAOwKpC1KXpjRE9eJCumB3rDNX3cMxWraJJUC68qi6FqedFKMLJGJeptfzBFJ+WTF
+         6d3Tib2vL4YHBFVq6E1nsb6+EJLdKifkZmj01PaFPxXvxBWkJ2jxP8sH47280kYs5JKS
+         18guIKcapztVh5jbs6lMq1/M50xMj4UjigO5mbHvxQPP65qghEzUsGfWShCDm47bKmu4
+         SIy26hfTp8E93+Dii3a+IHls6eZ53sXEV9vZ4Rqj9ycjCXKrV1kZrUz4vZjyR8WXebdo
+         LgVN8Vtejtvb+4jsUEzSqzSU7zRz/G1IWpGbWNlA74868gGtaeVxq1LlYTgLkmbmUWO0
+         4YTA==
+X-Gm-Message-State: AOJu0Yx39hGkI87roT0yYXjqYwHvSTAzcUVQatTaJbe2ZCDrYcq94jlY
+	65dATySvUdLDXYWS+oC8uMwhtNVFNswQQIYgifmmqeCHKGupV6V5I/tQhyDA4frkuYkFhZGVwUz
+	x3DcHR8HmqDmDABPF21Ukk3oydthHUX5/nODhJ8+7s6e8sDGOo2mKS/zE9YomW9+ZS2TZtA6RHy
+	bPDO8lH9mWMj9ZTimZ7yJk39ehajTMhQ==
+X-Google-Smtp-Source: AGHT+IGy82jujwPzArGAUf1MuUGtrrrgAoLRL/QZd4vc5rXaUoeqVqj+O60HWt1N3meFf9X0ymoxcaJv
 X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
- (user=ardb job=sendgmr) by 2002:adf:f5cc:0:b0:374:ba5c:d59 with SMTP id
- ffacd0b85a97d-37cc22c28c9mr3799f8f.0.1727347313937; Thu, 26 Sep 2024 03:41:53
+ (user=ardb job=sendgmr) by 2002:a17:906:1642:b0:a7d:e176:71d1 with SMTP id
+ a640c23a62f3a-a93a05c19a3mr293266b.9.1727347316493; Thu, 26 Sep 2024 03:41:56
  -0700 (PDT)
-Date: Thu, 26 Sep 2024 12:41:16 +0200
+Date: Thu, 26 Sep 2024 12:41:17 +0200
 In-Reply-To: <20240926104113.80146-7-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,14 +73,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240926104113.80146-7-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=738; i=ardb@kernel.org;
- h=from:subject; bh=duJbwDYusVICSqLA5fZPaN2Y/gts1cbjl01DSFcZijg=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIe2rle/zunAFTQ8uo0anZz3lB82OHO8LP3L+2lmd1bueh
- fjq+tl0lLIwiHEwyIopsgjM/vtu5+mJUrXOs2Rh5rAygQxh4OIUgIk8O8XwT5P3of6psH2Nt6wt
- 14S9Tru+QX3jdqMNE9bvFVnYGfCEdT0jwxaP/S0RDQ9cdv5L82B1q3ql4Zzkajwh8LCzSIzBPTM mXgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=904; i=ardb@kernel.org;
+ h=from:subject; bh=SK89jirZxlyhNPfrfzxj4qoYkybGiruH5hLSJPLATEs=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIe2rlZ/E9V0L29KWOv/h8NISPt5Qf6nif2NoSM088ZqgV
+ b0Oy9Z1lLIwiHEwyIopsgjM/vtu5+mJUrXOs2Rh5rAygQxh4OIUgIl81WD4Z7rxIf/2XQpOzxxi
+ q5977XTzWHJUoKvkSs5y83eJYekuDxkZev2uM8t8FD0tYzvjxseQtEWvZX8cSOZMLDU648yRJyn GDwA=
 X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
-Message-ID: <20240926104113.80146-9-ardb+git@google.com>
-Subject: [PATCH 2/5] x86/pvh: Use correct size value in GDT descriptor
+Message-ID: <20240926104113.80146-10-ardb+git@google.com>
+Subject: [PATCH 3/5] x86/pvh: Omit needless clearing of phys_base
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: Ard Biesheuvel <ardb@kernel.org>, Jason Andryuk <jason.andryuk@amd.com>, 
@@ -90,27 +90,36 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-The size field in a GDT descriptor is offset by 1, so subtract 1 from
-the calculated range.
+Since commit
+
+  d9ec1158056b ("x86/boot/64: Use RIP_REL_REF() to assign 'phys_base'")
+
+phys_base is assigned directly rather than added to, so it is no longer
+necessary to clear it after use.
 
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/x86/platform/pvh/head.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/platform/pvh/head.S | 7 -------
+ 1 file changed, 7 deletions(-)
 
 diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
-index 98ddd552885a..f09e0fb832e4 100644
+index f09e0fb832e4..592747f2d731 100644
 --- a/arch/x86/platform/pvh/head.S
 +++ b/arch/x86/platform/pvh/head.S
-@@ -223,7 +223,7 @@ SYM_CODE_END(pvh_start_xen)
- 	.section ".init.data","aw"
- 	.balign 8
- SYM_DATA_START_LOCAL(gdt)
--	.word gdt_end - gdt_start
-+	.word gdt_end - gdt_start - 1
- 	.long _pa(gdt_start) /* x86-64 will overwrite if relocated. */
- 	.word 0
- SYM_DATA_END(gdt)
+@@ -179,13 +179,6 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
+ 	ANNOTATE_RETPOLINE_SAFE
+ 	call *%rax
+ 
+-	/*
+-	 * Clear phys_base.  __startup_64 will *add* to its value,
+-	 * so reset to 0.
+-	 */
+-	xor  %rbx, %rbx
+-	movq %rbx, phys_base(%rip)
+-
+ 	/* startup_64 expects boot_params in %rsi. */
+ 	lea pvh_bootparams(%rip), %rsi
+ 	jmp startup_64
 -- 
 2.46.0.792.g87dc391469-goog
 
