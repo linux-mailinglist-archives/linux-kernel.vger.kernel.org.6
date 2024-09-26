@@ -1,105 +1,173 @@
-Return-Path: <linux-kernel+bounces-340649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557FD987644
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:12:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AABD987645
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8CE92898D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:12:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C10381F2892D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CAA14D452;
-	Thu, 26 Sep 2024 15:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E1414A4DE;
+	Thu, 26 Sep 2024 15:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JpuJXO08"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hGNgUEQ3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F784D8C8;
-	Thu, 26 Sep 2024 15:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C61A60DCF
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727363519; cv=none; b=L1TzQK3BLMyadhhEHwNbLzVMI620nm0CcrTuwq07ew8yKQqKG2Ea1/39mYVE1bFqdiBv1yhMSOxyCZWAwoi5Pfpt6ZgP57Ak1MtVqxmOEEiIbcyUGOV8rCir0S8SzVvHC7RrQIXOGdXsUlc94BVopN5eqSReDVoy0O1vEGAl09U=
+	t=1727363614; cv=none; b=lIKsJ3GIqBiZkGHnXXqlWi12WdEQbjdmq16YDTswL4nghJmTaoDCHQqH6Mwh+SdAfPYHcsD3UvzqCilreVyK8UrpdhOsZsEKH6A03KCyBCT9eNZ32zybe7J3Py9E04of+BvbBFkkwDBZN2BXVmpdKav7HDz7CXN4Ar5X/d4iI7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727363519; c=relaxed/simple;
-	bh=+JN1XomXh/stXMdVt7+mNw2llVeHY0Fee3qmN8UNh0k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uEM+20RQVIiOd7D6AFmkEvpnaCTkLGS0oYu1FuTpwCeYdHQLb0DLV/zc2tNocgPC7OmzbDqlSKFIjjYSyuuKn5OPQzC3HR5iMg4cqq0tNRQzySfpJ5ggw/TcFF32nKs9oPu5WzPqpLRMzlmuxu6mg6dVbJKojA/KtTPLg1kLo40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JpuJXO08; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7e6b38088f6so48405a12.1;
-        Thu, 26 Sep 2024 08:11:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727363516; x=1727968316; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RJV7o6ijTzGBnAQQO67SJKTMld4SYzCD0D2hOI0kxeQ=;
-        b=JpuJXO08StQ13uWbF+SrskmWaghbilaVONltF8ltAzq1dXUlPUL3tfhRpIxzK7cwy6
-         inOLPEU0UP73cBvIDFvKq/RmbBQdfGOeC1r7UQuSTAIwNQdINk2HvecP5/HjKdFThery
-         eYkQUOvj5/5d51W2ibXa0Dd4haM1cnJs2vCsvbE7pTtJ/+ikyYTagpidvf8lmUUXW6Dn
-         F4sgg5J4eP69YUj486uYYm0dQA5cVkoXQq4Gl1Dn85vGMKgPQ4ENT3LBlUe5M64KF6VF
-         YwJFVjQDapi0+wtsqM11XBeJDFdmEVZVlebrE9zSsWAevng6V80x4XF3Vf8SsI1SOWfD
-         +FZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727363516; x=1727968316;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RJV7o6ijTzGBnAQQO67SJKTMld4SYzCD0D2hOI0kxeQ=;
-        b=Cql1ZiczWX+V/W76ckusfWZd+U7R35vnBPmBN580FYX1TJ0jw0HHg+q9kmmMg67wF6
-         8iSwd7PW7WFZWCVra/9wNsu9w8ZGaJR3DFNfgf1LDwMkAzomW4qkCM6YJ6thqcpC01RS
-         eM8lhxuWiD+5Cgx8GyCiss7cZFvQucrtTxzkp/Nj52OZnsDKOUJ8nRwqtSnMK9BbPCfk
-         i+qKlZRRmB9Vqu+mTaF/X8GLIkOsqmZ98VCe1e7LXszcIlVL8vULFOQYbalOUXhzjx9n
-         +OwtRmeoSqE7OskfLv0iWxFgLxigELNR86UNR6bje7ChIpme+OlbyFoyIvGbDSonliKi
-         ixGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBQ9NGr4K3uWUXceZABxgk5165GnsWYRP0B4u0D8aaqdMzkYbzHCzSmMbW1PLhf9OmFgg9gWCV1JWN0E57@vger.kernel.org, AJvYcCWAn+mylDtFGsZ5yrB672ZGmKaw97hcg2jc4+F0pijYFXBbLVTYezKD/oKqXhpgs2gvkODmdVhza0Ra0UFxPUU=@vger.kernel.org, AJvYcCWJ1MqvmdgU4g8MCDDWJw0skQsfx2TkZhXhcD0/njD/lSPTr6R1O9j7lCNsdzTiRBA2sSq14H+7A6YQnJuu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1vtXAXWeE/xce/Zq7NiSDvjt4r+4t40vvJRphUK7+HZ8z+p1Z
-	Q8qQ17LBUGPFKhN0g+564FUYvBIhI+flWMWRpj7nIFDsfHBjRgBRsZL0eRAz3xq41+lDyxqqrqh
-	+sWI6Q9t3z6Ocrq0u/aIY3B5WI9g=
-X-Google-Smtp-Source: AGHT+IFwmkd7MiiYoHfU8/8xM9Q+N8K1XQrqj6/87iUkvMv9WLtMRVWAaGv/cJU4RHKBGG2ah/MF19K2IMN0hL++MU4=
-X-Received: by 2002:a05:6a21:9989:b0:1cf:2be2:8dd2 with SMTP id
- adf61e73a8af0-1d4fa7ae0efmr40997637.11.1727363516385; Thu, 26 Sep 2024
- 08:11:56 -0700 (PDT)
+	s=arc-20240116; t=1727363614; c=relaxed/simple;
+	bh=VgVZKBR+ShthNo9tWwwPYxFabzZPSMP/C2zc3AXerfI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GSRzPv19b5EtaAJhq5imonCGar9SdFDi3JZZWLhCQUfpUN4qNzJakcviAJBDq9OpZPKUG1T5fGw10FSaWtjJ44W1PD6k7CnZ8sNfQEjX+rpo3Jw5v7vEKoRaPqS1j/HWylLIHwEhecS9usQybMyR9MwtZJbPTnEPqb7F4+47qRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hGNgUEQ3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727363610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HNVhyp3DiUzwqhlUAv5fpptFKCMzsQUkgeQCcaP9hDI=;
+	b=hGNgUEQ38QJtrz6o7QOdMJbnd7c/Rc66GBFskhdfXdt0XZJENDDg52gQJNbV+f8v+0LPoN
+	L3PbqJr459y+zbi6ftCCUTXi+jUwjgNtjd18A+C0O0dFfXbO6lPovKeHoZ/EXt/Wk/z1H/
+	oanyPS9ycwYzjS+8Y6uG1WK3suSo38o=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-608-X9k_sB6XMGCJKNdgUcfdfg-1; Thu,
+ 26 Sep 2024 11:13:26 -0400
+X-MC-Unique: X9k_sB6XMGCJKNdgUcfdfg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C275218F38C6;
+	Thu, 26 Sep 2024 15:13:25 +0000 (UTC)
+Received: from llong.com (unknown [10.2.16.69])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 971A31954B0E;
+	Thu, 26 Sep 2024 15:13:23 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Luis Goncalves <lgoncalv@redhat.com>,
+	Chunyu Hu <chuhu@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH] locking/rtmutex: Always use trylock in rt_mutex_trylock()
+Date: Thu, 26 Sep 2024 11:13:15 -0400
+Message-ID: <20240926151315.507905-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com> <2024092647-subgroup-aqueduct-ec24@gregkh>
-In-Reply-To: <2024092647-subgroup-aqueduct-ec24@gregkh>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 26 Sep 2024 17:11:43 +0200
-Message-ID: <CANiq72n81-20t13O_mrx0ZPS=JBDwC-vz1dHRhU0NAts_cw99g@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Miscdevices in Rust
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Brauner <brauner@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, Sep 26, 2024 at 5:05=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> stack is deep here, but maybe I can unwind a bit of the file stuff to
-> get this in for the next merge window (6.13-rc1) if those two aren't
-> going to be planned for there.
+One reason to use a trylock is to avoid a ABBA deadlock in case we need
+to use a locking sequence that is not in the expected locking order. That
+requires the use of trylock all the ways in the abnormal locking
+sequence. Unfortunately, this is not the case for rt_mutex_trylock() as
+it uses a raw_spin_lock_irqsave() to acquire the lock->wait_lock. That
+will cause a lockdep splat like the following in a PREEMPT_RT kernel:
 
-I think Christian wanted to merge the file abstractions in 6.13, he
-has them here:
+[   63.695668] -> #0 (&lock->wait_lock){-...}-{2:2}:
+[   63.695674]        check_prev_add+0x1bd/0x1310
+[   63.695678]        validate_chain+0x6cf/0x7c0
+[   63.695682]        __lock_acquire+0x879/0xf40
+[   63.695686]        lock_acquire.part.0+0xfa/0x2d0
+[   63.695690]        _raw_spin_lock_irqsave+0x46/0x90
+[   63.695695]        rt_mutex_slowtrylock+0x3f/0xb0
+[   63.695699]        rt_spin_trylock+0x13/0xc0
+[   63.695702]        rmqueue_pcplist+0x5b/0x180
+[   63.695705]        rmqueue+0xb01/0x1040
+[   63.695708]        get_page_from_freelist+0x1d0/0xa00
+[   63.695712]        __alloc_pages_noprof+0x19a/0x450
+[   63.695716]        alloc_pages_mpol_noprof+0xaf/0x1e0
+[   63.695721]        stack_depot_save_flags+0x4db/0x520
+[   63.695727]        kasan_save_stack+0x3f/0x50
+[   63.695731]        __kasan_record_aux_stack+0x8e/0xa0
+[   63.695736]        task_work_add+0x1ad/0x240
+[   63.695741]        sched_tick+0x1c7/0x500
+[   63.695744]        update_process_times+0xf1/0x130
+[   63.695750]        tick_nohz_handler+0xf7/0x230
+[   63.695754]        __hrtimer_run_queues+0x13b/0x7b0
+[   63.695758]        hrtimer_interrupt+0x1c2/0x350
+[   63.695763]        __sysvec_apic_timer_interrupt+0xdb/0x340
+[   63.695770]        sysvec_apic_timer_interrupt+0x9c/0xd0
+[   63.695774]        asm_sysvec_apic_timer_interrupt+0x1a/0x20
+[   63.695780]        __asan_load8+0x8/0xa0
+[   63.695784]        mas_wr_end_piv+0x28/0x2c0
+[   63.695789]        mas_preallocate+0x3a8/0x680
+[   63.695793]        vma_shrink+0x180/0x3f0
+[   63.695799]        shift_arg_pages+0x219/0x2c0
+[   63.695804]        setup_arg_pages+0x343/0x5e0
+[   63.695807]        load_elf_binary+0x5ac/0x15d0
+[   63.695813]        search_binary_handler+0x125/0x370
+[   63.695818]        exec_binprm+0xc9/0x3d0
+[   63.695821]        bprm_execve+0x103/0x230
+[   63.695824]        kernel_execve+0x187/0x1c0
+[   63.695828]        call_usermodehelper_exec_async+0x145/0x1e0
+[   63.695832]        ret_from_fork+0x31/0x60
+[   63.695836]        ret_from_fork_asm+0x1a/0x30
+[   63.695840]
+[   63.695840] other info that might help us debug this:
+[   63.695840]
+[   63.695842] Chain exists of:
+[   63.695842]   &lock->wait_lock --> &p->pi_lock --> &rq->__lock
+[   63.695842]
+[   63.695850]  Possible unsafe locking scenario:
+[   63.695850]
+[   63.695851]        CPU0                    CPU1
+[   63.695852]        ----                    ----
+[   63.695854]   lock(&rq->__lock);
+[   63.695857]                                lock(&p->pi_lock);
+[   63.695861]                                lock(&rq->__lock);
+[   63.695864]   lock(&lock->wait_lock);
+[   63.695868]
+[   63.695868]  *** DEADLOCK ***
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=3Dvf=
-s.rust.file
+Fix it by using raw_spin_trylock_irqsave() instead.
 
-Cheers,
-Miguel
+Fixes: 23f78d4a03c5 ("[PATCH] pi-futex: rt mutex core")
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/locking/rtmutex.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index ebebd0eec7f6..a32bc2bb5d5e 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1381,10 +1381,13 @@ static int __sched rt_mutex_slowtrylock(struct rt_mutex_base *lock)
+ 		return 0;
+ 
+ 	/*
+-	 * The mutex has currently no owner. Lock the wait lock and try to
+-	 * acquire the lock. We use irqsave here to support early boot calls.
++	 * The mutex has currently no owner. Try to lock the wait lock first.
++	 * If successful, try to acquire the lock. We use irqsave here to
++	 * support early boot calls. Trylock is used all the way to avoid
++	 * circular lock dependency.
+ 	 */
+-	raw_spin_lock_irqsave(&lock->wait_lock, flags);
++	if (!raw_spin_trylock_irqsave(&lock->wait_lock, flags))
++		return 0;
+ 
+ 	ret = __rt_mutex_slowtrylock(lock);
+ 
+-- 
+2.43.5
+
 
