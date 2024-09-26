@@ -1,98 +1,85 @@
-Return-Path: <linux-kernel+bounces-341010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 325A7987A23
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:39:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B10987A2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 869A51C21FC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:39:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CECE1F2447C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7C2183CA8;
-	Thu, 26 Sep 2024 20:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE4416131A;
+	Thu, 26 Sep 2024 20:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwXk5ZWb"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="V/rDDouB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85319176FDB;
-	Thu, 26 Sep 2024 20:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBC3282FA
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 20:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727383154; cv=none; b=A5dBghDYiF4kVnwme5oX+ku0/4mSfqyHWsQAfPgCXSSKr0AlhQD6fIBvixzXlR2s3hZ7XhEVpYRf7vD3vM+jw3Ra2FmSNtO9+MD5y7Ee12TmphjwoQ5dlkCdDsdEeXXYQhjfs7Sa9g2Kqmxz2aB8aBzfSjUkf/VMKwMa0Mcb1K0=
+	t=1727383633; cv=none; b=jg4RNt2bTzeJUJ/kC8VMhSYYhVTGmjzCkw6KDW6PmqJMgnMObl/7YtQLb7t5PVhKE4h4IyTm7cu8sU+JOk79vH3l57kqjJJSoMHqvGuAIBaKOPEJjISKK32IummsjaPcBTuHuBNFZeH/YieUmSQez8L3BMbsO/aX6JiCIMBsSZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727383154; c=relaxed/simple;
-	bh=XkZjDabZH9X7UmAPJUU+KbDCKrMrsT238AURGpTtgqE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PZB2b2tomKDUnO3308jBTYeNnxqz4Hdki9eSkPWTdWsrBlbtxWnFO8hMxe1JvcKObvKQ7JXHSB0pWl7KC27uaYaTnLTEum6EbW4c1sJ5Q0miqIDuZc7WFQRFThd+iKws8aHPxAjFYOmYXTgxBN0X7ka7AAFk7Hdf06vzvcifVK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwXk5ZWb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71502C4CEC5;
-	Thu, 26 Sep 2024 20:39:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727383154;
-	bh=XkZjDabZH9X7UmAPJUU+KbDCKrMrsT238AURGpTtgqE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=uwXk5ZWbRJn/EHpC97A+8wLvBzCnflPHrRS9LxGcuqj4uKdKyZ8YSgm4iFHN84qUQ
-	 CAiNs8PkDP2jCsLopcT0g4MCloV9Shr/erop5TUVs2C9ksStKyDBAefO5LrbKFm9WS
-	 /IInhhGuKQpAyCKywCEDLNygICzuDb6Sg8zwUNFxKCf9HbEECGtwpz/kHIVlGtm1qo
-	 4g1aUqoybtem943/XlN8rKqu65S9LEPwj0mK64Hk410mbvK8ppUZ/FlHK5AtvUOMvP
-	 3aQi7uNKZ9L8x0yBMebRDUhPPYepTPGlnY0r8ZtmniXvvFc+SG9F40iUSkynMnkI7o
-	 dpHdwZzLxXzrQ==
-Date: Thu, 26 Sep 2024 22:39:11 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Dave Airlie <airlied@gmail.com>
-cc: Aditya Garg <gargaditya08@live.com>, 
-    "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-    "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
-    "mripard@kernel.org" <mripard@kernel.org>, 
-    "daniel@ffwll.ch" <daniel@ffwll.ch>, 
-    "bentiss@kernel.org" <bentiss@kernel.org>, 
-    =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <thomas@t-8ch.de>, 
-    Orlando Chamberlain <orlandoch.dev@gmail.com>, 
-    Kerem Karabay <kekrby@gmail.com>, 
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-    "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
-    "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-    "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
-Subject: Re: [WHY SUCH DELAY!] Touch Bar support for T2 Macs
-In-Reply-To: <CAPM=9tw9Dns-fjeQmqLDyf5P99+Dq77R5xktvsFbO0crC5b5oQ@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.2409262238310.31206@cbobk.fhfr.pm>
-References: <DD9C41AD-6543-47CE-8504-69E4992229B2@live.com> <MA0P287MB02176175318B96135BE3E320B8902@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM> <nycvar.YFH.7.76.2409111420040.31206@cbobk.fhfr.pm> <MA0P287MB0217A06CA89D6A7D0631466EB86A2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <nycvar.YFH.7.76.2409262001520.31206@cbobk.fhfr.pm> <CAPM=9tw9Dns-fjeQmqLDyf5P99+Dq77R5xktvsFbO0crC5b5oQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1727383633; c=relaxed/simple;
+	bh=p6BEhbVfq/NrBLwnvfSaWcgE4gJvgiGMTyCgFQpBgUg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=WcjLFj0/aVtSmi+jBpAfjrbhh7HhL4xNBIIMg9g/c4p2kf9cLBUEd9E+2xIVNRNAa4SPkHbW5eF8Y0JXzp/LRs/ovYvVedwB19FGkI/zQi5QFYuHVVh9SfSmFuhrWjKuOsUlVg5N1mcEBWDXBeQgi6Y9t+AVbltVuJdGO0nPYjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=V/rDDouB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22DB6C4CEC5;
+	Thu, 26 Sep 2024 20:47:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1727383633;
+	bh=p6BEhbVfq/NrBLwnvfSaWcgE4gJvgiGMTyCgFQpBgUg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=V/rDDouBjdNcWrH6JRKCAugyirykGI0GU3NrrFCydFRtIPRfxbo/o6ccW2wnYBML9
+	 F0NZond9aRczQtzs2iKYknjEaoOxEMeA4fMPl6CPl/5YsIbJPz0kNuknftuDQObJm0
+	 /s9i3PW04taTy6e3rjXlCGE7yCduOvFlZsrrfSgM=
+Date: Thu, 26 Sep 2024 13:47:12 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: syzbot <syzbot+645f216781b26a92a732@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ pasha.tatashin@soleen.com, syzkaller-bugs@googlegroups.com, Peter Xu
+ <peterx@redhat.com>
+Subject: Re: [syzbot] [mm?] kernel BUG in page_table_check_clear (2)
+Message-Id: <20240926134712.e99b7e7068ecc45f7cd00f16@linux-foundation.org>
+In-Reply-To: <66f4f173.050a0220.211276.003c.GAE@google.com>
+References: <66f4f173.050a0220.211276.003c.GAE@google.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, 27 Sep 2024, Dave Airlie wrote:
+On Wed, 25 Sep 2024 22:30:27 -0700 syzbot <syzbot+645f216781b26a92a732@syzkaller.appspotmail.com> wrote:
 
-> > > It has been more than a month since I've sent this patch set and I
-> > > haven't got a clear yes or not for the same. I understand maintainers
-> > > are busy people, but I'd really appreciate if I get some response for
-> > > this series of patches from the HID and DRM maintainers.
-> >
-> > Just to reiterate -- I am waiting for Ack from the DRM people and will
-> > then take it through hid.git.
-> >
-> > Dave, who'd be the best person to do this from the DRM side please?
-> >
+> Hello,
 > 
-> I think Thomas or Maxime could take a look, though it might be easier
-> to submit this in pieces, does it really need to all go in at once?
+> syzbot found the following issue on:
+> 
+> HEAD commit:    1ec6d097897a Merge tag 's390-6.12-1' of git://git.kernel.o..
 
-I'm fine either way, once DRM folks either give their Ack, or express 
-their desire to separate it out, I'll follow :)
+Thanks.
 
-Thanks,
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=173cdca9980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=6265dd30e362bb47
+> dashboard link: https://syzkaller.appspot.com/bug?extid=645f216781b26a92a732
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12fcb080580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b76c27980000
 
--- 
-Jiri Kosina
-SUSE Labs
+Seems to be memfd-related.
 
+Will the bot be performing a bisection search?
+
+>
+> ...
+>
 
