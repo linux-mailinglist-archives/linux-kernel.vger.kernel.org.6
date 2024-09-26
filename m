@@ -1,174 +1,194 @@
-Return-Path: <linux-kernel+bounces-341069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B5E987B0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:12:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD8E987B0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4F36283749
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:12:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDE3A1F25876
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7563B189911;
-	Thu, 26 Sep 2024 22:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B10189904;
+	Thu, 26 Sep 2024 22:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BVcYjpdb"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="b8btWt63";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gPESNlmU"
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F37C18953C;
-	Thu, 26 Sep 2024 22:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01E318953C;
+	Thu, 26 Sep 2024 22:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727388721; cv=none; b=i4Nw+z1iSlhq/zhNXH087endEyejqYfUfsQ5CoxR6XuHZBi68dvb5uiDphAe/jkKHX3BLPU2Ow1tdd6jI1P4V11cybz0e6mzSnkoI3TqqOc9VGQZpLiIh9FQE097e093NZLIhQtMxyTi0fMgyQr+SiSz1J8TrMWVb2aA889neo0=
+	t=1727388774; cv=none; b=PhZblQHBLACs9tw8SeMcql3gyJSQOR9HZFapEmZJtq7hwTB/Gp37XHGALTOmPFq4Bwcz+b+Gzkn74ncULXk3tdNX7dpEyplH80LTZsDTzGVgLsxjkMZvK2+7mEbka88xHIUdefY5TzvpBCrplXxHuS5TWFVEWjZ9yFKeOQAoNCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727388721; c=relaxed/simple;
-	bh=QvMnrSEOtedu7hG4MUQWbtF0q2dHoP30sYkapiOoAzQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TxHIwtTKrgqvmSK/o1mCX9bT0k3g4IVD3Ju6zNNbgnh825nIYuGzBIhK+WWOtuLWfEM1FJJpgK8ji4E2H50O1gdQsYpzyEnDfvFwBZ3Fdg+0yurW/IGx6hroHfPzUyV7QKjQOaBpbBmUWH/Zw6EsCEYER6aPfHyPRHUm6J1B7n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BVcYjpdb; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37cc846fbc4so1085428f8f.2;
-        Thu, 26 Sep 2024 15:11:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727388718; x=1727993518; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bHIdz8N5X9UxsI9bI03NQBXIlayyWD0jMXQux7dbgDU=;
-        b=BVcYjpdbg5NZ+3nJj/bH1FMJCAguiX76MceRRXLXHejGGtofDNmG900Vg3SUND54zB
-         qTv4WGlji1aiwzhZXdsV1KCmYsG2SFsdYsrV9tBRQN0jlasgU1k8Jy4guRDnW7AR9mWA
-         N2/Bb7s9oKEP9hRgY2pYKHpNLAqnq/HQfQjUZPZGFfhYl4bqsB8qdbMLYajHqdFRPAav
-         TRrQ4Zv0gBfBrZI5B+uKonC8avJTZbmAF0nISUIsEsMWcgaS1jIJRAXOLXzgsbXGIeM6
-         ksp0EWg6ZQ58pCpjOcveNH38NFoYLmWV3DxrBxNMzja16eqc4MGNlSWldJU6ArlLz66B
-         wePA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727388718; x=1727993518;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bHIdz8N5X9UxsI9bI03NQBXIlayyWD0jMXQux7dbgDU=;
-        b=kEY5wms0WpBX4xy7ypkrl+GCO8fbE9xgYWinOzUuopq/n5HveDqlRi6a/RurBEdWHJ
-         gZ6Z/5hvw0SHJ5N1ijgiuWC9qF0wjU5BOyT2gYvL+1+xVwOQRcTtdYwBIMcHdXkNSLkZ
-         /P4e3JpYldBALSyD4gkhCH59NoPzdDvxHDPxmeM8zj8dtQ55cFClUXR3bt6Xq1vnq7WZ
-         bwVdOtyKLTmgyUIfZGgLAipmWi7XAS9szYxV763suewsHXp4LfN65WKyLsyDU1fZMToA
-         fWDU7CajVUauw32thLnluWlDr+Pq1y3IK7s5kj8yRvXoXcrpqLPquRkXhGCpi88hJHE0
-         PKNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbeEKfruzNUi8T+xazGMi57xxO5SzS+cm1BjOPphZrAQVnI3OmLoCPldhA2yI0gl/Y6fytZIEe+OaFkSruyg==@vger.kernel.org, AJvYcCVYdosVBZZVNin42xot3lJS5LLDHo7FYDnc9ILNTKGHUCrh1NsDLNPEW93TQ7kf6RriMBinqhtWoVeVUd3F@vger.kernel.org, AJvYcCVwF9oCuNw+MuwA5tW0/K7Eg6HAlR4EDKlkcVbZEbkH11onmV6puKpzMej8uD8Y13vSnrCN2s1n4Gh5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya1T6BMwzA7SaSDnrdFWbIAmlfwMbsCWkyVYawBW+MGGffvFi0
-	XLf5DlnYPdQNE+70IGX+yC4YmOnNosDS2RRCgA8n5I238NKgiRGd
-X-Google-Smtp-Source: AGHT+IG/KC9gXXC16YMbOycDvJ10Ha9WW5a5iCqjVhQ2Z+c4Jy04olCzirNgoZ+IubDFVcOz1hhoeA==
-X-Received: by 2002:a5d:4e0e:0:b0:368:3731:1613 with SMTP id ffacd0b85a97d-37cd5a9eaddmr740525f8f.13.1727388718160;
-        Thu, 26 Sep 2024 15:11:58 -0700 (PDT)
-Received: from Max.. ([5.29.180.248])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e6587sm851091f8f.47.2024.09.26.15.11.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 15:11:57 -0700 (PDT)
-From: Max Brener <linmaxi@gmail.com>
-To: tytso@mit.edu
-Cc: adilger.kernel@dilger.ca,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Max Brener <linmaxi@gmail.com>
-Subject: [PATCH] [PATCH] vfs/ext4: Fixed a potential problem related to an infinite loop
-Date: Fri, 27 Sep 2024 01:11:03 +0300
-Message-ID: <20240926221103.24423-1-linmaxi@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727388774; c=relaxed/simple;
+	bh=1jVR9D4uQRhEXQTseRxLfWFBp0eTVXtPSHsFAQxrK4c=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=lvH4eZrTTgsRhSxk7vYcqFlokUjWjzE5/BY/cvB8uh76voAVWq1P40NNvmZAvnQezTlNDGEp9WcQYkvcMV8kCdmUw0qfTuaKQ6VvnQyc43osr72X2IFAk6Gt/sHGtN5Bkv5fT/tlV8Z5Kd4F35iXS8TPxCGxeEneNhtKJqSG6Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=b8btWt63; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gPESNlmU; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 1C59E114008A;
+	Thu, 26 Sep 2024 18:12:52 -0400 (EDT)
+Received: from phl-imap-01 ([10.202.2.91])
+  by phl-compute-08.internal (MEProxy); Thu, 26 Sep 2024 18:12:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1727388772;
+	 x=1727475172; bh=LP/jaPiaEKpPzJsX3OavnXIiAIbKlz2Tgyju4UAacnM=; b=
+	b8btWt63ZD2pWoJlYmeM0ZbzW6zPhZXe2WnmKcIhXlVIyDNM/tYAMr2pK2D+aigx
+	p7xxeOgC1o+6McPwCQqt5HhoQi+jMaTUXpYel0yybMyJtyb1CmoK9Pv7Ty5h9p6u
+	gaSqzOzrdlpfqvoo3A0vlk64T7ZXkh5BZTEjZFXcTAAkI+fLTQ/MtrRQALd5Hc3U
+	Db1S20NblE2V7EE/bRu4t8lKzx6i6hCr1q7fVQJrIkNz/WP+UCoYtVszfv6VziLC
+	I+Q2fuSXcCMjiEJeuZPzvNwID2CuPIXI7Qru/WoDpS/RvuW9fGroQmROn5Jfca5h
+	uugOpsdhEPnchDskITmCoA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727388772; x=
+	1727475172; bh=LP/jaPiaEKpPzJsX3OavnXIiAIbKlz2Tgyju4UAacnM=; b=g
+	PESNlmU7L1XN3uUP3ybTpg7OFadoYfD7ig1v7xyookRiRsI75GPmNi7USIMxZ1tE
+	/MIDjXyiFONt/fDyGSRpQtE5/jacuxc/ArnyPPCBPyvBX8oYkQUxddRQCsFnuHoT
+	/80d9Uow+9PCoqR51GbJ44rxtfpoL8GPAb1n1skLpoN/T7I58BtnziIrGqtckea4
+	3xuQM1wQcd4nKHk94Ytuo6YPUqkZc3x26JWLeVKF0ZBBTqDQLYcIOkwUTwLUktKW
+	0/N7GJFdJimFLkBiR4ljcVVC7J0IxTBUKlOrYFtYrsC3UVbSPW5dYKIo6QwqUtCf
+	wZ4orxhzLwsLZGmr0eiSA==
+X-ME-Sender: <xms:Y9z1ZvKQ6ucvN3XgjeyITrPFHn3Xz7R92ZmkODrGpxRR9QRzvN2vgQ>
+    <xme:Y9z1ZjI_J0Ad3GgEszLfMgg-GaGoG9csORQDPWu_WDTRrmA3dyM1ql2QKbrpJ3DZP
+    91JGznPEx-r1GtljUE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtkedgtdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedfnfhukhgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvg
+    hvqeenucggtffrrghtthgvrhhnpeevteelkeefueeuleejveetueetvefggfeuledvhfdv
+    gedvheelfeelkefhgfetheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhho
+    nhgvshdruggvvhdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthht
+    ohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepshhuphgvrhhmudeskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtg
+    homhdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrghtrdgtohhmpdhrtghpthht
+    oheplhhinhhugidqihhnphhuthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehplhgrthhfohhrmhdqughrihhvvghrqdigkeeisehvghgvrhdrkhgvrhhnvghlrd
+    horhhg
+X-ME-Proxy: <xmx:Y9z1Znss9Sio38eft2s0uv6jLK38a2PVyTllqtmVSSVEvipB_em2JQ>
+    <xmx:Y9z1ZobeoabrmZVHPeavDt8n5olTFh1PcH0taU1bLYdl751BYVzg4w>
+    <xmx:Y9z1Zmbno_R3tBGFEbHXHc0hUo_ZdKfekLR1tlfX857zfDxxeZ7U7w>
+    <xmx:Y9z1ZsDGnbJFFE3kyP9LE78u-h7t-chiANOfReuaEiK4vk8HpyPyPw>
+    <xmx:ZNz1Zu75hu3i8ePYfBhwysRzyHdZQrgqx6nDrpQfWrxi7SAKqLcostCL>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A82223360077; Thu, 26 Sep 2024 18:12:51 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Fri, 27 Sep 2024 10:12:31 +1200
+From: "Luke Jones" <luke@ljones.dev>
+To: "Mario Limonciello" <superm1@kernel.org>, linux-kernel@vger.kernel.org
+Cc: linux-input@vger.kernel.org, "Benjamin Tissoires" <bentiss@kernel.org>,
+ "Jiri Kosina" <jikos@kernel.org>, platform-driver-x86@vger.kernel.org,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Hans de Goede" <hdegoede@redhat.com>, corentin.chary@gmail.com
+Message-Id: <b08c3c2c-d663-46fa-b795-df83371c9ebf@app.fastmail.com>
+In-Reply-To: <efca6c13-e1d4-4148-8c41-4983b8fca032@kernel.org>
+References: <20240926092952.1284435-1-luke@ljones.dev>
+ <20240926092952.1284435-5-luke@ljones.dev>
+ <efca6c13-e1d4-4148-8c41-4983b8fca032@kernel.org>
+Subject: Re: [PATCH v4 4/9] platform/x86: asus-armoury: add panel_hd_mode attribute
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219306
+On Fri, 27 Sep 2024, at 3:17 AM, Mario Limonciello wrote:
+> On 9/26/2024 04:29, Luke D. Jones wrote:
+> > Add panel_hd_mode to toggle the panel mode between single and high
+> > definition modes.
+> > 
+> > Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> 
+> This patch looks good to me.
+> 
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 
-This patch fixes a potential infinite journal-truncate-print problem.
-When systemd's journald is called, ftruncate syscall is called. If anywhere down the call stack of ftruncate a printk of some sort happens, it triggers journald again
-therefore an infinite loop is established. Some example of such situation (aside from the example given in the added link): ext4_es_print_tree(struct inode*) is one of
-the functions being called as a part of the call stack of ftruncate (System.journal is an extent file). In this function, some debug prints occur.
-There can be more printk statements down the call stack (and if not, then there might be in the future). 
-This patch does two things: prevents an infinite loop, and optimizes truncate operation by avoiding doing it if it is a no-op call.
+Thank you.
 
-To fix this issue:
-Add  a new inode flag S_TRUNCATED which helps in stopping such an infinite loop by marking an in-memory inode as already truncated.
-When ext4_setattr() is triggered, it won't call ext4_truncate() if the size of the file is unchanged and the file was truncated at least once
-(which might be necessary for removing preallocated blocks). 
-Calling truncate for the second time with no size change, is a no-op call, therefore the call is avoided.
-Next, turn on the flag of the inode if it is truncated in ext4_truncate().
-In ext4_setattr, avoid calling ext4_truncate if the inode is already truncated and the size of the file is not meant to change in the current call.
-Finally, zero S_TRUNCATED flag of the inode at fallocate() when it is being called with FALLOC_FL_KEEP_SIZE flag.
+> ---
+> 
+> But that being said; mostly to satisfy my curiosity could you share more 
+> about what this actually does?
+> 
+> Does it change the EDID exposed in the BIOS in ACPI _DDC?  At least for 
+> AMD platforms that would mean it only works with this patch (which is on 
+> it's way):
+> 
+> https://lore.kernel.org/amd-gfx/20240918213845.158293-11-mario.limonciello@amd.com/
 
-Signed-off-by: Max Brener <linmaxi@gmail.com>
----
- fs/ext4/inode.c    | 5 ++++-
- fs/open.c          | 3 +++
- include/linux/fs.h | 2 ++
- 3 files changed, 9 insertions(+), 1 deletion(-)
+I don't have access to the hardware so what it does is learned entirely thirdhand. What I do know is that it must be rebooted after and it seems to switch some internal thingy.
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 54bdd4884fe6..c2a9e9be23e2 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4193,6 +4193,8 @@ int ext4_truncate(struct inode *inode)
- 	if (IS_SYNC(inode))
- 		ext4_handle_sync(handle);
- 
-+	inode->i_flags |= S_TRUNCATED;
-+
- out_stop:
- 	/*
- 	 * If this was a simple ftruncate() and the file will remain alive,
-@@ -5492,7 +5494,8 @@ int ext4_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		 * Call ext4_truncate() even if i_size didn't change to
- 		 * truncate possible preallocated blocks.
- 		 */
--		if (attr->ia_size <= oldsize) {
-+		if (attr->ia_size < oldsize ||
-+			(attr->ia_size == oldsize && !IS_TRUNCATED(inode))) {
- 			rc = ext4_truncate(inode);
- 			if (rc)
- 				error = rc;
-diff --git a/fs/open.c b/fs/open.c
-index daf1b55ca818..3f34dda79479 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -329,6 +329,9 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 	if (!file->f_op->fallocate)
- 		return -EOPNOTSUPP;
- 
-+	if (mode & FALLOC_FL_MODE_MASK & FALLOC_FL_KEEP_SIZE)
-+		inode->i_flags &= (~S_TRUNCATED);
-+
- 	file_start_write(file);
- 	ret = file->f_op->fallocate(file, mode, offset, len);
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6b8df574729c..ae613481dc29 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2272,6 +2272,7 @@ struct super_operations {
- #define S_CASEFOLD	(1 << 15) /* Casefolded file */
- #define S_VERITY	(1 << 16) /* Verity file (using fs/verity/) */
- #define S_KERNEL_FILE	(1 << 17) /* File is in use by the kernel (eg. fs/cachefiles) */
-+#define S_TRUNCATED (1 << 18) /* Is the file truncated */
- 
- /*
-  * Note that nosuid etc flags are inode-specific: setting some file-system
-@@ -2328,6 +2329,7 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
- 
- #define IS_WHITEOUT(inode)	(S_ISCHR(inode->i_mode) && \
- 				 (inode)->i_rdev == WHITEOUT_DEV)
-+#define IS_TRUNCATED(inode)	((inode)->i_flags & S_TRUNCATED)
- 
- static inline bool HAS_UNMAPPED_ID(struct mnt_idmap *idmap,
- 				   struct inode *inode)
--- 
-2.43.0
+"UHD 120Hz and FHD 240Hz modes" is what I gather from reviewing some of Sergei's code in his ghelper project (windows armoury crate replacement).
 
+> 
+> > ---
+> >   drivers/platform/x86/asus-armoury.c        | 6 +++++-
+> >   include/linux/platform_data/x86/asus-wmi.h | 1 +
+> >   2 files changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
+> > index 39e422b16b8e..15eab4d45b81 100644
+> > --- a/drivers/platform/x86/asus-armoury.c
+> > +++ b/drivers/platform/x86/asus-armoury.c
+> > @@ -106,7 +106,8 @@ static struct kobj_attribute pending_reboot = __ATTR_RO(pending_reboot);
+> >   
+> >   static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
+> >   {
+> > - return !strcmp(attr->attr.name, "gpu_mux_mode");
+> > + return !strcmp(attr->attr.name, "gpu_mux_mode") ||
+> > +        !strcmp(attr->attr.name, "panel_hd_mode");
+> >   }
+> >   
+> >   /**
+> > @@ -429,6 +430,8 @@ ATTR_GROUP_BOOL_RW(mcu_powersave, "mcu_powersave", ASUS_WMI_DEVID_MCU_POWERSAVE,
+> >      "Set MCU powersaving mode");
+> >   ATTR_GROUP_BOOL_RW(panel_od, "panel_overdrive", ASUS_WMI_DEVID_PANEL_OD,
+> >      "Set the panel refresh overdrive");
+> > +ATTR_GROUP_BOOL_RW(panel_hd_mode, "panel_hd_mode", ASUS_WMI_DEVID_PANEL_HD,
+> > +    "Set the panel HD mode to UHD<0> or FHD<1>");
+> >   ATTR_GROUP_BOOL_RO(egpu_connected, "egpu_connected", ASUS_WMI_DEVID_EGPU_CONNECTED,
+> >      "Show the eGPU connection status");
+> >   
+> > @@ -442,6 +445,7 @@ static const struct asus_attr_group armoury_attr_groups[] = {
+> >   { &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
+> >   { &mcu_powersave_attr_group, ASUS_WMI_DEVID_MCU_POWERSAVE },
+> >   { &panel_od_attr_group, ASUS_WMI_DEVID_PANEL_OD },
+> > + { &panel_hd_mode_attr_group, ASUS_WMI_DEVID_PANEL_HD },
+> >   };
+> >   
+> >   static int asus_fw_attr_add(void)
+> > diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> > index 6ea4dedfb85e..7caf2c7ed8c9 100644
+> > --- a/include/linux/platform_data/x86/asus-wmi.h
+> > +++ b/include/linux/platform_data/x86/asus-wmi.h
+> > @@ -73,6 +73,7 @@
+> >   #define ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY_VIVO 0x00110019
+> >   
+> >   /* Misc */
+> > +#define ASUS_WMI_DEVID_PANEL_HD 0x0005001C
+> >   #define ASUS_WMI_DEVID_PANEL_OD 0x00050019
+> >   #define ASUS_WMI_DEVID_CAMERA 0x00060013
+> >   #define ASUS_WMI_DEVID_LID_FLIP 0x00060062
+> 
+> 
 
