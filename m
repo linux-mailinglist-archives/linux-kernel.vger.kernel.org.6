@@ -1,127 +1,171 @@
-Return-Path: <linux-kernel+bounces-340147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5520986F0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:39:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DE5986F14
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A05028A88D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:39:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA081C218BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480901A4F18;
-	Thu, 26 Sep 2024 08:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFDC1A4F2B;
+	Thu, 26 Sep 2024 08:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="IegiOTK0"
-Received: from ironport.ite.com.tw (HC210-202-87-179.vdslpro.static.apol.com.tw [210.202.87.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="IY7aM5vm"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FF413CFA1
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.202.87.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CC81D5ACF;
+	Thu, 26 Sep 2024 08:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727339978; cv=none; b=n8O5urbHL+LHu9t+aGil6I7BStAaYrxK0s7hHvwwOwGcQzmIaQcvmNS9aMCSCsVajW9KDdIh1BcAahoYY9dn3F+JYPUZ2Gf8aRLZ9+oBT/4OYnH8IsjZfAYfeaU2Xc+Lv9OOcNikMFsnAAMQiKJ1Jk5PUZcW3WelIf1RDKSSzR8=
+	t=1727340039; cv=none; b=RPRAMG70z1uJ8PzOo0QBXHlVHbD/UTaa5+8XdOmIz1AYTBAQHvyqJYTis864fbtuqWrMZRKHmUNC5F0SA7FefcXXJe3lhQCgx7AQZb4TIJ0YIbdugAiOSJdjtnTIVbNHW6eWJVcmg6rYKMED3i3HFtXlFT8UduDY8edJueEEmDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727339978; c=relaxed/simple;
-	bh=trOpQeIhuIuWT721yj96jjNl6Dwn+AWIxX9cOC/c9Ko=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=gwHDPiUzYL9hcescI08axfqgzgaaehoP8KanDWcpPwsCfYsyGr1rZ+m7H9l6mrTqbkW8myP0ezxbi3KPT/3Flc3CKdb2NkEyBBd+FQxoNjJlnZWjGIEsVYK2bPTNzx2jFNap/iOym3Yiffqq/W0lYk7OTex3mykjc1WxAxpiSvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=IegiOTK0 reason="key not found in DNS"; arc=none smtp.client-ip=210.202.87.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=trOpQeIhuIuWT721yj96jjNl6Dwn+AWIxX9cOC/c9Ko=;
-  b=IegiOTK0JB2ByK5MyB6yJfp41O+9JBAxNuLNCdH/nDd2nlmDOdPCaWsw
-   svIHNGKU2bpBSQ/MJApcohhYCJldAbU/zQAqOAuVIMIDsh2CN5V2qb0LH
-   +8kB/QwiH/kjQDrFlqCkER9CtFgnw1UXMlaZOiaA9RDPdpFP1Whr4Sof+
-   4QHPlk9QVFx4onCPu37OcwQ5v32sxbf7YDhzlA3fbM76zp7SOM0Gu/Z7k
-   7Dr6NCmHQ0yVCLjFz9dR7Yc6k0YvA335utVJe6V1oepM51cAT+3MkK0Wv
-   BeKAnLVas1ZCmlTrAhBUbhl0UeV2rQN2E93bQpjjxyToE5aQKC4idOCUJ
-   g==;
-X-CSE-ConnectionGUID: JhVijtkCQcSUDaCli9zZ5g==
-X-CSE-MsgGUID: 95cejNIQSSGWtgMN6l01KQ==
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 26 Sep 2024 16:39:34 +0800
-Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
-	by mse.ite.com.tw with ESMTP id 48Q8dVHj081730;
-	Thu, 26 Sep 2024 16:39:31 +0800 (GMT-8)
-	(envelope-from Hermes.Wu@ite.com.tw)
-Received: from TPEMAIL1.internal.ite.com.tw (192.168.15.58) by
- TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 26 Sep 2024 16:39:30 +0800
-Received: from TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68]) by
- TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68%6]) with mapi id
- 15.01.2507.039; Thu, 26 Sep 2024 16:39:30 +0800
-From: <Hermes.Wu@ite.com.tw>
-To: <dmitry.baryshkov@linaro.org>
-CC: <Kenneth.Hung@ite.com.tw>, <andrzej.hajda@intel.com>,
-        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-        <simona@ffwll.ch>, <angelogioacchino.delregno@collabora.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4 10/11] drm/bridge: it6505: fix HDCP CTS ksv wait timer
-Thread-Topic: [PATCH v4 10/11] drm/bridge: it6505: fix HDCP CTS ksv wait timer
-Thread-Index: AQHbD+0B5FoTbAplhUmD/lCKfYxq0rJpvvzA
-Date: Thu, 26 Sep 2024 08:39:30 +0000
-Message-ID: <7ac7de7a5c7e417484bc2a4a1ad59ac3@ite.com.tw>
-References: <20240926075134.22394-1-Hermes.Wu@ite.com.tw>
- <7pazkukfrskc6o2zd23h6o4wyt7ougjjgnmogy2effr2lof7di@7opphoswhebf>
-In-Reply-To: <7pazkukfrskc6o2zd23h6o4wyt7ougjjgnmogy2effr2lof7di@7opphoswhebf>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tm-snts-smtp: 0D28B248CBFA2A82A0B39AFFF6C0CB0C08EFB7AB209D04BBF8C3EF6EDE0645682002:8
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1727340039; c=relaxed/simple;
+	bh=TORR6vSdlthDV3D7Mttqa6Y0d3EA/9COCIbgvfYa20w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=elpnZJo8ONzUoRWp8/ZfWj7rrA2VHJgkCQpHFZopXxwlcjza32XgNCIAG0WUxAng+OWRKDo0XXDu81I5AEIsfAdI/CjE4fAzR4ClPybrDQplmkAArTJNewpNtQiDdrpWPQ3aYsXFpObOtN6ku9gFq6KdrfmvB5KVIZg9NTnA5aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=IY7aM5vm; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 191E32E08154;
+	Thu, 26 Sep 2024 11:40:24 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1727340025;
+	bh=pCwNv+obHIaPpwKmIRsp2qsyEXFkpXtUdABVsbUprLg=;
+	h=Received:From:Subject:To;
+	b=IY7aM5vmd9EQ5EZTaPikKAwPD3zBsPiyx7rbvX6ahzQ1vDpgSUjHypBMTIfrc3Zzo
+	 0clJ8YLAt6uFOlwRu91Qj9OlLufSio1hrV9taekD6PeR+Nx2dfmnzbv6yGpEQAmvbZ
+	 6O32vS9qh+Do/KmlnhlEZsjPgutKANR4ejvhVRNs=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.182) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f182.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f182.google.com with SMTP id
+ 38308e7fff4ca-2f762de00fbso8350191fa.2;
+        Thu, 26 Sep 2024 01:40:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVCnQF6ED35rk67M7WEskN71SmIA6tdNuTzcTA40xz1O6Qsgzx+HkYhXEZQMUx5apMiu5n/3tTdBGIs@vger.kernel.org,
+ AJvYcCVzN6N2BzWNlFEF1a0jtxcg0d76RRd35UayiFwyIgs0hLcbm36hFmRWkK8Dp/6/mtSiqLxMDJTsukmdAdPhGm7cVceNUw==@vger.kernel.org,
+ AJvYcCXw/amEBeQKRH/TDGf5fgSejzdYHNbRMzlRH8vYN+y58fVNIyZlm4GMSAO8/KrHOpxxk2APpF1feGC7HA4B@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Ot5x62o2u/LHE9WPSKVS/tAFWA8LrTslTJhKrBRcLMgljAVQ
+	+OkXEsZ57pk7pRNZo19aU73oxsxfejcEDjT9O/VmVhX0LpX121OPWDyzJETRYLxridoog13FbSS
+	NmoJi7hfo9PWxUjXMDwMoQmWjprE=
+X-Google-Smtp-Source: 
+ AGHT+IHX/DXvRxsjnzkx9rGoyfzY+jG7EkBujq7y+0Eqs8DUTTnaxO4ZZjatpypglmAPIyo007/yI2+OCOhosiMuHf0=
+X-Received: by 2002:a2e:819:0:b0:2ef:2344:deec with SMTP id
+ 38308e7fff4ca-2f91ca61108mr22667141fa.45.1727340023091; Thu, 26 Sep 2024
+ 01:40:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MAIL:mse.ite.com.tw 48Q8dVHj081730
+References: <20240926025955.1728766-1-superm1@kernel.org>
+In-Reply-To: <20240926025955.1728766-1-superm1@kernel.org>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Thu, 26 Sep 2024 10:40:11 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwFW-YfVb-CW0uVuZ4wG+Kw9oZaRNkMAZfjvQC98BYxp8Q@mail.gmail.com>
+Message-ID: 
+ <CAGwozwFW-YfVb-CW0uVuZ4wG+Kw9oZaRNkMAZfjvQC98BYxp8Q@mail.gmail.com>
+Subject: Re: [RFC 0/2] "custom" ACPI platform profile support
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Luke D . Jones" <luke@ljones.dev>, Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>,
+	me@kylegospodneti.ch, Denis Benato <benato.denis96@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <172734002453.18578.3074044221983098740@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-Pk9uIFRodSwgU2VwIDI2LCAyMDI0IGF0IDAzOjUxOjMzUE0gR01ULCBIZXJtZXMgV3Ugd3JvdGU6
-DQo+PiBGcm9tOiBIZXJtZXMgV3UgPEhlcm1lcy53dUBpdGUuY29tLnR3Pg0KPj4gDQo+PiBXaGVu
-IHJ1bm5pbmcgdGhlIEhEQ1AgQ1RTIHRlc3Qgb24gVU5JR1JBRiBEUFItMTAwLg0KPj4gSERDUCBt
-dXN0IGRpc2FibGVkIGFmdGVyIHdhaXRpbmcgS1NWIGZvciA1cy4NCj4+IENvbnNpZGVyIHN5c3Rl
-bSBrc3Ygd29yayBzY2hlZHVsZXMuIFRoZSBvcmlnaW5hbCB0aW1lciBoYXMgYSBjaGFuY2UgdG8g
-ZXhwaXJlLg0KPg0KPkkgY2FuJ3QgdW5kZXJzdGFuZCB0d28gbGFzdCBzZW50ZW5jZXMsIGV4Y3Vz
-ZSBtZS4NCj4NCj5OaXQ6IEtTViwgbm90IGtzdg0KDQpGb3JtIEhEQ1AgQ1RTLCBEVVQgc2hvdWxk
-IHdhaXQgZG93bnN0cmVhbSBLU1YgbGlzdCBhdCBsZWFzdCA1cy4NCkFuZCBkcml2ZXIgdXNlIGEg
-d2hpbGUgbG9vcCB3aXRoIGEgMjBtcyBzbGVlcCB0byByZWFjaCB0aGUgc2NvcGUuDQpUaGUgdHJ1
-ZSB3YWl0IHRpbWVyIHdpbGwgcmVhY2ggMTBzIHdoaWNoIGlzIG11Y2ggbG9uZ2VyIHRoZW4gaXQg
-c3VwcG9zZWQgdG8uDQoNCkl0IHNob3VsZCBiZXR0ZXIgdXNlIG90aGVyIEFQSXMgdG8gaW1wbGVt
-ZW50IHRoaXMgd2FpdGluZywgcmF0aGVyIHRoYW4ganVzdCByZWR1Y2UgdGhlIGNvdW50ZXIuDQoN
-Cgl0aW1lb3V0IC89IDIwOw0KCXdoaWxlICh0aW1lb3V0ID4gMCkgew0KCQlpZiAoIWl0NjUwNV9n
-ZXRfc2lua19ocGRfc3RhdHVzKGl0NjUwNSkpDQoJCQlyZXR1cm47DQoNCgkJYnN0YXR1cyA9IGl0
-NjUwNV9kcGNkX3JlYWQoaXQ2NTA1LCBEUF9BVVhfSERDUF9CU1RBVFVTKTsNCg0KCQlpZiAoYnN0
-YXR1cyAmIERQX0JTVEFUVVNfUkVBRFkpDQoJCQlicmVhazsNCg0KCQltc2xlZXAoMjApOw0KCQl0
-aW1lb3V0LS07DQoJfQ0KDQo+PiANCj4+IEZpeGVzOiBiNWM4NGE5ZWRjZDQgKCJkcm0vYnJpZGdl
-OiBhZGQgaXQ2NTA1IGRyaXZlciIpDQo+PiBTaWduZWQtb2ZmLWJ5OiBIZXJtZXMgV3UgPEhlcm1l
-cy53dUBpdGUuY29tLnR3Pg0KPj4gLS0tDQo+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9pdGUt
-aXQ2NTA1LmMgfCAzICsrLQ0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEg
-ZGVsZXRpb24oLSkNCj4+IA0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uv
-aXRlLWl0NjUwNS5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9pdGUtaXQ2NTA1LmMNCj4+IGlu
-ZGV4IGU3NWJjMTU3NWFhOC4uMjJkOWJlYzNmYWVhIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL2JyaWRnZS9pdGUtaXQ2NTA1LmMNCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlk
-Z2UvaXRlLWl0NjUwNS5jDQo+PiBAQCAtMjA5Myw3ICsyMDkzLDggQEAgc3RhdGljIHZvaWQgaXQ2
-NTA1X2hkY3Bfd2FpdF9rc3ZfbGlzdChzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndvcmspDQo+PiAgCXN0
-cnVjdCBpdDY1MDUgKml0NjUwNSA9IGNvbnRhaW5lcl9vZih3b3JrLCBzdHJ1Y3QgaXQ2NTA1LA0K
-Pj4gIAkJCQkJICAgICBoZGNwX3dhaXRfa3N2X2xpc3QpOw0KPj4gIAlzdHJ1Y3QgZGV2aWNlICpk
-ZXYgPSBpdDY1MDUtPmRldjsNCj4+IC0JdW5zaWduZWQgaW50IHRpbWVvdXQgPSA1MDAwOw0KPj4g
-KwkvKiAxQi0wNCBmYWlsLCB3YWl0IHRvIGxvbmcgdG8gU3RvcCBlbmNyaXB0aW9uKDVzLT4zcyku
-ICovDQo+DQo+ZW5jcnlwdGlvbiwgbW9zdCBsaWtlbHkgaXQncyBhbHNvICJ0b28gbG9uZyIuDQo+
-DQo+PiArCXVuc2lnbmVkIGludCB0aW1lb3V0ID0gMzAwMDsNCj4NCj5XaGF0IGlzIHRoZSB0aW1l
-b3V0IHBlciB0aGUgc3RhbmRhcmQ/DQo+DQo+PiAgCXU4IGJzdGF0dXMgPSAwOw0KPj4gIAlib29s
-IGtzdl9saXN0X2NoZWNrOw0KPj4gIA0KPj4gLS0gDQo+PiAyLjM0LjENCj4+IA0KPg0KPi0tIA0K
-PldpdGggYmVzdCB3aXNoZXMNCj5EbWl0cnkNCj4NCg==
+Hi Mario,
+Indeed, the proposal looks good but has a few rough edges that would
+make it unsuitable to use currently. Well, for the handheld use-case
+at least.
+
+This relates to issues of auto-discovery and how the kernel taint is
+applied. For the kernel taint, see my comments on patch 2.
+
+> There are two major ways to tune platform performance in Linux:
+>  * ACPI platform profile
+>  * Manually tuning APU performance
+>
+> Changing the ACPI platform profile is a "one stop shop" to change
+> performance limits and fan curves all at the same time.
+
+For laptops. A majority of users of handhelds find 3 settings too limiting.
+
+> On AMD systems the manual tuning methods typically involve changing
+> values of settings such as fPPT, sPPT or SPL.
+
+Those names are amd-pmf specific and this proposal does not allow for
+auto-discovery.
+
+Instead, expose attributes `custom_mode` and `custom_mode_choices`,
+that allow for querying the system for available custom modes and
+whether userspace can use them.
+
+In this case, the modes for amd-pmf could be `amd-pmf-spl` and `amd-pmf-user`.
+
+`amd-pmf-spl` could export the attrs {spl_min, spl_max, spl} and allow
+setting TDP using a slider a la Steam Deck. Here, manufacturers should
+be given complete control, e.g., with a LUT and the kernel should not
+taint.
+
+`amd-pmf-user` would expose what is shown in this proposal and taint
+the kernel. Unfortunately, without manufacturer intervention, this
+would be the default for the foreseeable future for boutique devices
+(e.g., GPD, OneXPlayer, Ayaneo).
+
+> The problem with changing these settings manually is that the definition
+> of the ACPI platform profile if supported by the hardware is no longer
+> accurate.  At best this can cause misrepresenting the state of the
+> platform to userspace and at worst can cause the state machine into an
+> invalid state.
+>
+> The existence and continued development of projects such as ryzenadj which
+> manipulate debugging interfaces show there is a demand for manually tuning
+> performance.
+
+-demand- -> requirement. Over 90% of handheld users will end up using a slider.
+
+> Furthermore some systems (such as ASUS and Lenovo handhelds) offer an
+> ACPI-WMI interface for changing these settings. If using anything outside
+> that WMI interface the state will be wrong.  If using that WMI interface
+> the platform profile will be wrong.
+>
+> This series introduces a "custom" ACPI platform profile and adds support
+> for the AMD PMF driver to use it when a user has enabled manual
+> adjustments.
+>
+> If agreeable a similar change should be made to asus-armoury and any other
+> drivers that export the ability to change these settings but also a
+> platform profile.
+
+Indeed, it would be nice if such a change could be made for all
+manufacturer drivers. Much of this proposal would lower the need for
+something like asus-armoury, as asus-wmi would be fully capable of
+supporting this with few changes and around 70% of the asus-armoury
+attrs would then live under /sys/platform.
+
+This also gives us the opportunity for a much needed rename of the variables.
+
+I can speak with the out-of-tree Lenovo Legion Linux's maintainers and
+see if they would like to collaborate on this as well.
+
+Antheas
 
