@@ -1,108 +1,111 @@
-Return-Path: <linux-kernel+bounces-340865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE04987889
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:44:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E280098788F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C6E1C21ED5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:44:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98ED22849AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC2915B96C;
-	Thu, 26 Sep 2024 17:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5DF15C126;
+	Thu, 26 Sep 2024 17:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TR1exI49"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="pHjOHqES"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C00C3FF1;
-	Thu, 26 Sep 2024 17:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF381D5AAB;
+	Thu, 26 Sep 2024 17:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727372639; cv=none; b=UwX5Hwx74hSW4TBL8PDUNJWdXYZqJ3csX7bp33ic0voiUcMd5zQsvI4Xrjj4YXM/PERLwapvEGElAHtxGN5gcr2iIaxkHkVo9n5NHgx/NnyngjCjTY7zqrvjOQ94/Gj8oR4hfMRj5SrzXCFagkxUsz5hQEx3/QWXqVe1YLnZlWI=
+	t=1727372672; cv=none; b=RDgYXQlZXmhVHYNRBvM2tn/Oc+sU2kFgQr8GLwOgYm1yJidwYhnpgdcHCkmAlGdG5TSk2cckP6FN0l35hOU8u4BiH4GWK4oQeYseX/EJh9nIf+78CJdicYnNL67R/nDaRYDELJgIk5O0tm2XoRFsiVetBVyTGi4TXnsPyKaM4A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727372639; c=relaxed/simple;
-	bh=nSJMx1a3h0ylmepdIO+5mpI1+TXEC1yBnwRtqqbSKog=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=uAfIV7aGmmmTwrZQR8/hP70PrySlrE694suMyq42neax+H3cYzzA8XOgOEdBCkF62KjszMP3q+E1Rt+aAQu13uMMhC/4mUMAIUJtxaY80cz/yErTZkWe0XfkKQaY+JIF9QDavrdfyUi/u6IinKQKEyS+V23XsLn7Gi7jtPb6pNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TR1exI49; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6C91C4CEC5;
-	Thu, 26 Sep 2024 17:43:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727372639;
-	bh=nSJMx1a3h0ylmepdIO+5mpI1+TXEC1yBnwRtqqbSKog=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=TR1exI49vooulKRvJ3WH61RfLu4XXJY31khci3K/pY1pVXQ2B5s5umfCDOdyR8FXv
-	 l+y/0mD1wxdA7p3Tj/lJgLDOQb+zizpRBGTPrOwTj2/naItEvR98SKllUHOKxVX4u3
-	 60dIvEhBbvt+ekP2pA8ZScgaOF94F0MkPnybmkevBMojBpb01bM4knqk9o3ZtidviM
-	 YI8vGltAP2AUMJYcdR4xLPL0ZFhYuUvWFy4OXA2376A3A96cHTm9Bk1v5aanMKZUSh
-	 IpvbWaJsGkMn/S1HuofkVbQCu5qEnryOZwOFToG8tuP0s5U60Z7h5xXwB7K5cO+d5z
-	 4EeqxWVU2TKiA==
-Date: Thu, 26 Sep 2024 12:43:58 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1727372672; c=relaxed/simple;
+	bh=UvqNi//U5wpTfXilNRRlc85z5yE3eJG6ObZ848q/sB0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MMfthrakebOCvIR+/3FQqMLPWUjUDJy6eiGbsZcOkAK3ZOvIKD1+6XSe8hxOtmUiaARgrrs2Zu/fDYZfaJF+4dUASzIj00R4b3abYYVdfiJvaaSuomyk1AI/i6ZuOFQO8IA2HubSrthBNyQjn54qLVjpyDTUL2JvoZRO03E4sVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=pHjOHqES; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from wse.fritz.box (pd9e59da1.dip0.t-ipconnect.de [217.229.157.161])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 0B05B2FC004A;
+	Thu, 26 Sep 2024 19:44:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1727372666;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=H9x97eDU1PbyOXF3v/R8RWr8/PHzoFtqdxlXc7gdyN4=;
+	b=pHjOHqESqmMGfH/HwRdNXvirvmdk0Cb7VAux7obRQqlQrN8ldcFalwCDXAseP/ViksCopa
+	Nthj70LPG8L6X15wGqIz4laUGuViBeAdK2DvXIkSaBG1M+O/KueagrF2YnhNTs+azowVaE
+	/6sax7iDYHuF7It/ipL3XcY9FW4kAzg=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: 
+Cc: bentiss@kernel.org,
+	dri-devel@lists.freedesktop.org,
+	hdegoede@redhat.com,
+	jelle@vdwaa.nl,
+	jikos@kernel.org,
+	lee@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	miguel.ojeda.sandonis@gmail.com,
+	ojeda@kernel.org,
+	onitake@gmail.com,
+	pavel@ucw.cz
+Subject: [PATCH 0/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO NB04
+Date: Thu, 26 Sep 2024 19:44:04 +0200
+Message-Id: <20240926174405.110748-1-wse@tuxedocomputers.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Cc: Matthias Brugger <mbrugger@suse.com>, NXP S32 Linux Team <s32@nxp.com>, 
- Chester Lin <chester62515@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
- devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, 
- Enric Balletbo <eballetb@redhat.com>, linux-gpio@vger.kernel.org, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20240926143122.1385658-3-andrei.stefanescu@oss.nxp.com>
-References: <20240926143122.1385658-1-andrei.stefanescu@oss.nxp.com>
- <20240926143122.1385658-3-andrei.stefanescu@oss.nxp.com>
-Message-Id: <172737263813.2649710.12417820280324530724.robh@kernel.org>
-Subject: Re: [PATCH v4 2/4] dt-bindings: gpio: add support for NXP
- S32G2/S32G3 SoCs
+Content-Transfer-Encoding: 8bit
 
+Hi,
+took some time but now a first working draft of the suggested new way of
+handling per-key RGB keyboard backlights is finished. See:
+https://lore.kernel.org/all/1fb08a74-62c7-4d0c-ba5d-648e23082dcb@tuxedocomputers.com/
+First time for me sending a whole new driver to the LKML, so please excuse
+mistakes I might have made.
 
-On Thu, 26 Sep 2024 17:31:19 +0300, Andrei Stefanescu wrote:
-> Add support for the GPIO driver of the NXP S32G2/S32G3 SoCs.
-> 
-> Signed-off-by: Phu Luu An <phu.luuan@nxp.com>
-> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-> ---
->  .../bindings/gpio/nxp,s32g2-siul2-gpio.yaml   | 110 ++++++++++++++++++
->  1 file changed, 110 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml
-> 
+Known bugs:
+- The device has a lightbar which is currently not implemented and
+  therefore stuck to blue once the first backlight control command is send.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+What is still missing:
+- The leds fallback
+- Lightbar control
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml:25:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+Some general noob questions:
 
-dtschema/dtc warnings/errors:
+Initially I though it would be nice to have 2 modules, one jsut being the
+wmi initialization and utility stuff and one just being the backlight logic
+stuff, being loaded automatically via module_alias, but that would still
+require me to create the virtual hid device during the wmi_ab probe, and
+that already needs the ll_driver, so i guess I have to do it statically
+like i did now?
+Or in other words: I would have liked to have a module dependency graph
+like this:
+    tuxedo_nb04_lamp_array depends on tuxedo_nb04_platform (combining *_wmi_init and *_wmi_utility)
+but if i currently split it into modules i would get this:
+    tuxedo_nb04_wmi_ab_init dpends on tuxedo_nb04_wmi_ab_lamp_array depends on tuxedo_nb04_wmi_utility
 
-doc reference errors (make refcheckdocs):
+Currently after creating the virtual hdev in the wmi init probe function I
+have to keep track of it and manually destroy it during the wmi init
+remove. Can this be automated devm_kzalloc-style?
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240926143122.1385658-3-andrei.stefanescu@oss.nxp.com
+Kind regards,
+Werner Sembach
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
 
 
