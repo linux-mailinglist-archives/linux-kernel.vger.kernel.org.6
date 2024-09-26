@@ -1,134 +1,256 @@
-Return-Path: <linux-kernel+bounces-340512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B841987475
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:31:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4176987477
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC2E22869B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:31:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A88228643E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975EA3A8F7;
-	Thu, 26 Sep 2024 13:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDCC27470;
+	Thu, 26 Sep 2024 13:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wQiSklLO"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bI/P9NlI"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F525258;
-	Thu, 26 Sep 2024 13:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4F45258
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 13:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727357461; cv=none; b=A9LQYsqFczkuborGNzHaxfjHYwT7Jew0q+wP3EzaFU30d6XFG+neQmvWRi2xs2PvUe+RGosTsSSMzCA4Nkg37TVPzHcHIod4CMNWWim1GQPJiMIJdFtslELMbhEkF4Ca1Dc3NWIViETkNtIqTygYshDapw/rY1FQpm6m9DC0/so=
+	t=1727357529; cv=none; b=txjo/zH/l9dBfEsc+0TJESDXM8kAUZ2y9LydrFAkPp7zXBrg1Auy3p2pdjmdGUELpmX2Le1bd2bUgMU31qOueA2rVj+Tox3dde8hWAfVs9m1YzNtCf41kvnlvJShmiJXdYp9evPQ0voXCityG9XT9kbb2vI+4y/ClwB5O2UXcTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727357461; c=relaxed/simple;
-	bh=8D2Y6WGTjAXKFg4Ac21d/3s/libBT4mfFHN/VTNVv18=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=A5jzMhxol18xtc0ASYoLsz+UVumrSmUkTScqqyUe961fxu4nSTIFcx+WZSM4FJwRgkPE7SArb1fwCfcCXxM/h6+cuoj6mXkfcpfhzPhOeFOpHvdaqpuGPZxsG8xe9lZCBEo4JjzcfGi7ujnHqrN6IjJBpXOSI4ULYsocjE5a/20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wQiSklLO; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727357425; x=1727962225; i=markus.elfring@web.de;
-	bh=nOEM71AyOr4nfT0t970wYpqeIO6G8tPBN1vASVmd/So=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=wQiSklLOVXr8Hhip5gGtQB5tfKog6OWPZcSiPPtHF9r6GPzBZY1SMLD+vLJEGqzj
-	 RPO3f0hS/B2YDL9OKYmoFf+VtsL7ryyEI0h7egqkrCcVkGGVCcXEQ7E261ZqSV51K
-	 f2pRiD0K4sYqBmKGo5Of7HSwl1FiQcNs3UAffgUA4cYEy6tLDw22v6Cs+YQJWYyj2
-	 I09a6WgeN43MNqveOkbBo5bGCE5CIEe3arjovykekSxQDDu9CuJv0P53cTNv2hXE9
-	 JUqPXUASJQaCeaioRqAOwbK9LLP3riOMKxuWjJPd2Tx5l0rD/W/s916dywIMlb80F
-	 JNwfrxrOONfqwsSPCQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MiuSs-1sFH9h3Oom-00hy5l; Thu, 26
- Sep 2024 15:30:25 +0200
-Message-ID: <6c4afcdc-fa86-4f0a-a6c1-ec8265190fd0@web.de>
-Date: Thu, 26 Sep 2024 15:30:12 +0200
+	s=arc-20240116; t=1727357529; c=relaxed/simple;
+	bh=LJcl/qBbQr5c5xL/kcM8bQSP0urCItkfmZWapAIECEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nsa1l0B85ON6LzaF6pwJd9XRCHejlNAdan3VkgjGWctUpWiJ157jTT2plB2doej+FFUistSDJe9erTabmuugxTuUilBfg24SN2KtJF0+7BPd4/ZEYfJLM28T0mpxDBXH3bzvAMiUTaA/LKTb6Y6erem1Z+b9GPQ7aMGFJC7q5y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bI/P9NlI; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8d0d0aea3cso135705866b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:32:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727357526; x=1727962326; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V6B4L9PguQXpZvu7wod8xXLrp4XbiyR0NJvOfDo+9EQ=;
+        b=bI/P9NlId4Tw5bF/v7trlRCKXRceLn7qhBqZyHVPRVtGqLNvXoqmemRImQb1P6Ec7a
+         qkb3Es2Cybbrdtt/42tKPs3mulEsVziEn1JybJzMk2QcEqaUlUtWIghWMIf5Is1pQCJy
+         BP3lY6QRsWk4u8j3tBjQ0U47kseezuJkDiRM2gt7xZGmZ36SsNA7vOAdQ9vsxvpqIofK
+         moXbqFocjDIhDoNi5YPCCb5t8ONUiRk8tRM2vP+X7H8i5tsum69+VO7lOL//PV8rH2tm
+         LFf34bFY8h+PBkqquJnMA2W0addPptfU3wrM5+hSRI36aV/NdujoCxKyRyzYpM3JHQ7J
+         VZEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727357526; x=1727962326;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V6B4L9PguQXpZvu7wod8xXLrp4XbiyR0NJvOfDo+9EQ=;
+        b=tGNHqA441B8EU9z1o2Aeqy70OfG1Z+srGDqzqpUoeplW6+wS0eGs9oBhDzmecv7h9i
+         dGkZO+hjoiljoJfJBuM2JrevZ1nUvSGGLvE4do/qMyeMge5WbFmczQSpS1dED5Web91j
+         5MoZY3T+YGPhyxew/QeCK+XUottekKkLyPOxfLAj5fThaNcRv0mwtcRkZD7bb0W3E17Q
+         N207l7/mcFvrue02FqtFuT/ME2wYvkyCytgg78/7OgfzBTpFgzmfB7/IGCgyDn09jDFK
+         KAGbLJ3rRjDXLqM8BHe0lKZhmXlKjTu0WrNXWi+UKH+Syu5qw0dml49kdpKz5QM1bJX9
+         2FiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWafvYsV7xBGgmwzd66qu4XDWidUR07KJKlJIbECGmzRkpbz4OSk6b11JWk3YUIAcjrdXIjMHF6te5oRK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN4TlMCP8lywOnZNEVHsrBmfegXO6dRGYhyW/yROqiQoLVysKR
+	hdKw2GVYOtMBylPLJU7ToJTzy2j17341eEJcrAHPHZoVY+YJU5LeFqSc+XXG24E=
+X-Google-Smtp-Source: AGHT+IG4oNQmzrTlb2jF8ndi4FRoYPKIyxkpvaaZ1r8v34GV2vOajwHLhGhi5V/QZz74Pv2R/KsRLQ==
+X-Received: by 2002:a17:907:7fa0:b0:a91:158c:8057 with SMTP id a640c23a62f3a-a93a0682353mr725893266b.54.1727357525616;
+        Thu, 26 Sep 2024 06:32:05 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f346e0sm358252266b.11.2024.09.26.06.32.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 06:32:05 -0700 (PDT)
+Date: Thu, 26 Sep 2024 15:32:03 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: John Ogness <john.ogness@linutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [next-20240925] possible circular locking: uart vs kmemleak
+Message-ID: <ZvViU8vmNiXhCjKX@pathway.suse.cz>
+References: <20240926040715.GC11458@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: kernel-janitors@vger.kernel.org, Barret Rhoden <brho@google.com>,
- Ben Segall <bsegall@google.com>, David Vernet <void@manifault.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
- Josh Don <joshdon@google.com>, Juri Lelli <juri.lelli@redhat.com>,
- Hao Luo <haoluo@google.com>, Mel Gorman <mgorman@suse.de>,
- Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
- Tejun Heo <tj@kernel.org>, Valentin Schneider <vschneid@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrea Righi <andrea.righi@canonical.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] sched_ext: Call put_task_struct() only once in
- scx_ops_enable()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:N1c6y1Yj0TUu9WDWBqn0PyHHTgWKUGD/64HdV190odsvuWqhLT+
- 2/KlR2ZLWL0NXSd6WNesSyL1dUdmY0EqYaj1eanwdoeXkvtrdT7kgYDWsq4SUyEHjXJu8Oi
- S99b/FufIRXf+mqYvqpMC19/GsTeIk6O2+U16B7uCC2H6nkqueRVAQqui9JaNHJ6KGO3GSs
- +aHDeQCH8/R33qBV9Sg0g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:R8or0bQMyog=;w7RC1hpJ5ZaVX2dTD0fS7EjxMSt
- YjV2w71YTe/vA8fl2RP5LnW+Iwk3DIkdku0Q7JzzO6lCy9rtO0eu6XK6LsXhH9YK4VwKVeF0c
- bh/HhNbm2Opc6wiS6HBUe1MxOtXeMFQgog8/VJiF0WCBk2lrJvD+Fy0/+kk+Io3cwyzDQJZyK
- dkiR8s0GDBUzy5N28gyKM2EFlebGuza8kbzv5ma1xPPG3PS0STVJPh5t61GUZi7l6FYdtgGuc
- m6HSbGY97bwDbsQcm+YjNBB8qFqSPObvTPN1P9tP7mF33/ZjTHpnvWGwplEVr4dNAA5CVbO/s
- nYbSWBAvUqx3wkFZKJXG+qrWJ6rJTcyL6DRDPfrbeZ53PsGRR4cIPtkGLNLMexw62mdPtmtK1
- kVdEUvtEHz8lejEy4je9OFCFBnArS+CSfsvCFFKwrVb3H+9paEid74z+6vhycMsnW2vv1IrwN
- PV1y4/aJjCX5LQR/WfvjgvyDYJcQwaIX9OoRja3n71+186WKyMMT0jLkquSD3U4cOWUk0+wKA
- 2tbqGstvbw7XCz3UxVnRsCDGm7RTBfFTQatW3TL3t5/8A5m7salpRG8zKrAgI/XNR2E9umDlV
- AB7YaRbpgbj5UnFa9L3gggaGQdYaehUdQP4vChjd78P30qSB+T+ma9aKKgdrNIS/Bl6sWVkIg
- DOlOYHyFnroSIBdJQAslNg48q2+m9kgE7DAf1JGod91bWaw9TVIkh3lnOgW3UAwah/PeJF3a9
- 5ylQ4I6Korbpgfuc/an6M7xJsNWbN8X2RqBillsTiOjYAtQULgLmPQ7cvwuzScJ17rTKu2CSW
- NF/YQi1b7w6mTNU7jO4vcbpw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926040715.GC11458@google.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Sep 2024 14:51:07 +0200
+On Thu 2024-09-26 13:07:15, Sergey Senozhatsky wrote:
+> Greetings,
+> 
+> Ran into the following issue today.  It's sort of interesting, not sure
+> what even to do about it.  The
+> 
+> 	uart -> tty -> mm /* kmalloc -> kmemleak */
+> 
+> chain looks problematic, it certainly overlaps with
+> 
+> 	mm -> printk -> uart  /* which can kmalloc and re-enter mm -> kmemleak? */
 
-A put_task_struct() call was immediately used after a return value check
-for a scx_ops_init_task() call in this function implementation.
-Thus call such a function only once instead directly before the check.
+I believe that it will get solved by the uart console driver
+conversion to nbcon. I should remove the path:
 
-This issue was detected by using the Coccinelle software.
+	printk -> uart
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- kernel/sched/ext.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+or more precisely, it should remove the path:
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 9ee5a9a261cc..4b89ea20e355 100644
-=2D-- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -5091,8 +5091,8 @@ static int scx_ops_enable(struct sched_ext_ops *ops,=
- struct bpf_link *link)
- 		spin_unlock_irq(&scx_tasks_lock);
+	console_owner --> &port_lock_key
 
- 		ret =3D scx_ops_init_task(p, task_group(p), false);
-+		put_task_struct(p);
- 		if (ret) {
--			put_task_struct(p);
- 			spin_lock_irq(&scx_tasks_lock);
- 			scx_task_iter_exit(&sti);
- 			spin_unlock_irq(&scx_tasks_lock);
-@@ -5101,7 +5101,6 @@ static int scx_ops_enable(struct sched_ext_ops *ops,=
- struct bpf_link *link)
- 			goto err_disable_unlock_all;
- 		}
+The patchset with the uart 8250 console driver conversion is still
+pending a review, see the last version at
+https://lore.kernel.org/r/20240913140538.221708-1-john.ogness@linutronix.de
 
--		put_task_struct(p);
- 		spin_lock_irq(&scx_tasks_lock);
- 	}
- 	scx_task_iter_exit(&sti);
-=2D-
-2.46.1
+Best Regards,
+Petr
 
+> chain.
+> 
+> [   40.056844] ======================================================
+> [   40.056845] WARNING: possible circular locking dependency detected
+> [   40.056847] 6.11.0-next-20240925+ #729 Tainted: G        W        N
+> [   40.056849] ------------------------------------------------------
+> [   40.056850] modprobe/431 is trying to acquire lock:
+> [   40.056851] ffffffff83cef3e0 (console_owner){-...}-{0:0}, at: console_flush_all+0xd9/0x9d0
+> [   40.056859]
+> [   40.056859] but task is already holding lock:
+> [   40.056859] ffffffff83ed97d8 (kmemleak_lock){-.-.}-{2:2}, at: kmemleak_free+0x2e/0x70
+> [   40.056866]
+> [   40.056866] which lock already depends on the new lock.
+> [   40.056866]
+> [   40.056867]
+> [   40.056867] the existing dependency chain (in reverse order) is:
+> [   40.056868]
+> [   40.056868] -> #2 (kmemleak_lock){-.-.}-{2:2}:
+> [   40.056872]        _raw_spin_lock_irqsave+0x76/0xb0
+> [   40.056876]        __create_object+0x3a/0x110
+> [   40.056878]        __kmalloc_noprof+0x1ff/0x390
+> [   40.056882]        __tty_buffer_request_room+0x18b/0x4e0
+> [   40.056887]        __tty_insert_flip_string_flags+0x8b/0x3c0
+> [   40.056889]        uart_insert_char+0x211/0x7f0
+> [   40.056893]        serial8250_handle_irq+0x34a/0xb10
+> [   40.056897]        serial8250_default_handle_irq+0xaa/0x170
+> [   40.056900]        serial8250_interrupt+0xa7/0x130
+> [   40.056902]        __handle_irq_event_percpu+0x1e1/0x680
+> [   40.056904]        handle_irq_event+0x87/0x1c0
+> [   40.056906]        handle_edge_irq+0x201/0x9b0
+> [   40.056910]        __common_interrupt+0xb4/0x120
+> [   40.056914]        common_interrupt+0x78/0x90
+> [   40.056917]        asm_common_interrupt+0x22/0x40
+> [   40.056921]        default_idle+0xb/0x10
+> [   40.056924]        default_idle_call+0x6e/0xa0
+> [   40.056927]        do_idle+0x172/0x3c0
+> [   40.056930]        cpu_startup_entry+0x45/0x60
+> [   40.056932]        start_secondary+0x12b/0x130
+> [   40.056935]        common_startup_64+0x12c/0x137
+> [   40.056938]
+> [   40.056938] -> #1 (&port_lock_key){-.-.}-{2:2}:
+> [   40.056942]        _raw_spin_lock_irqsave+0x76/0xb0
+> [   40.056945]        serial8250_console_write+0xf5/0x1b10
+> [   40.056947]        console_flush_all+0x4fd/0x9d0
+> [   40.056949]        console_unlock+0x99/0x230
+> [   40.056952]        vprintk_emit+0x3b6/0x650
+> [   40.056955]        _printk+0x59/0x7b
+> [   40.056958]        register_console+0x7fb/0xb40
+> [   40.056960]        univ8250_console_init+0x3b/0x6b
+> [   40.056965]        console_init+0x11a/0x3bb
+> [   40.056970]        start_kernel+0x22a/0x39b
+> [   40.056975]        x86_64_start_reservations+0x26/0x2b
+> [   40.056979]        copy_bootdata+0x0/0xb0
+> [   40.056981]        common_startup_64+0x12c/0x137
+> [   40.056983]
+> [   40.056983] -> #0 (console_owner){-...}-{0:0}:
+> [   40.056986]        __lock_acquire+0x3790/0x7830
+> [   40.056992]        lock_acquire+0x140/0x3b0
+> [   40.056994]        console_flush_all+0x482/0x9d0
+> [   40.056996]        console_unlock+0x99/0x230
+> [   40.056999]        vprintk_emit+0x3b6/0x650
+> [   40.057001]        _printk+0x59/0x7b
+> [   40.057003]        __find_and_remove_object+0x106/0x120
+> [   40.057005]        kmemleak_free+0x3d/0x70
+> [   40.057007]        free_large_kmalloc+0x4d/0xb0
+> [   40.057009]        init_module+0x12/0xffb [zram]
+> [   40.057016]        do_one_initcall+0x130/0x450
+> [   40.057018]        do_init_module+0x36a/0x890
+> [   40.057021]        __se_sys_finit_module+0x513/0x7e0
+> [   40.057022]        do_syscall_64+0x71/0x110
+> [   40.057024]        entry_SYSCALL_64_after_hwframe+0x4b/0x53
+> [   40.057027]
+> [   40.057027] other info that might help us debug this:
+> [   40.057027]
+> [   40.057028] Chain exists of:
+> [   40.057028]   console_owner --> &port_lock_key --> kmemleak_lock
+> [   40.057028]
+> [   40.057032]  Possible unsafe locking scenario:
+> [   40.057032]
+> [   40.057033]        CPU0                    CPU1
+> [   40.057033]        ----                    ----
+> [   40.057034]   lock(kmemleak_lock);
+> [   40.057035]                                lock(&port_lock_key);
+> [   40.057037]                                lock(kmemleak_lock);
+> [   40.057039]   lock(console_owner);
+> [   40.057040]
+> [   40.057040]  *** DEADLOCK ***
+> [   40.057040]
+> [   40.057041] 3 locks held by modprobe/431:
+> [   40.057043]  #0: ffffffff83ed97d8 (kmemleak_lock){-.-.}-{2:2}, at: kmemleak_free+0x2e/0x70
+> [   40.057048]  #1: ffffffff83cef440 (console_lock){+.+.}-{0:0}, at: _printk+0x59/0x7b
+> [   40.057053]  #2: ffffffff83cef050 (console_srcu){....}-{0:0}, at: console_flush_all+0xd9/0x9d0
+> [   40.057057]
+> [   40.057057] stack backtrace:
+> [   40.057059] CPU: 11 UID: 0 PID: 431 Comm: modprobe Tainted: G        W        N 6.11.0-next-20240925+ #729
+> [   40.057063] Tainted: [W]=WARN, [N]=TEST
+> [   40.057065] Call Trace:
+> [   40.057066]  <TASK>
+> [   40.057067]  dump_stack_lvl+0xa3/0xeb
+> [   40.057071]  print_circular_bug+0x136/0x1b0
+> [   40.057074]  check_noncircular+0x26a/0x370
+> [   40.057078]  __lock_acquire+0x3790/0x7830
+> [   40.057085]  lock_acquire+0x140/0x3b0
+> [   40.057087]  ? console_flush_all+0xd9/0x9d0
+> [   40.057090]  ? console_flush_all+0xd9/0x9d0
+> [   40.057092]  console_flush_all+0x482/0x9d0
+> [   40.057094]  ? console_flush_all+0xd9/0x9d0
+> [   40.057096]  ? console_flush_all+0xd9/0x9d0
+> [   40.057100]  console_unlock+0x99/0x230
+> [   40.057103]  vprintk_emit+0x3b6/0x650
+> [   40.057107]  _printk+0x59/0x7b
+> [   40.057110]  __find_and_remove_object+0x106/0x120
+> [   40.057113]  kmemleak_free+0x3d/0x70
+> [   40.057115]  free_large_kmalloc+0x4d/0xb0
+> [   40.057118]  init_module+0x12/0xffb [zram]
+> [   40.057125]  do_one_initcall+0x130/0x450
+> [   40.057127]  ? __cfi_init_module+0x5/0x5 [zram]
+> [   40.057133]  ? stack_depot_save_flags+0x25/0x700
+> [   40.057136]  ? stack_trace_save+0xb3/0x150
+> [   40.057140]  ? kasan_save_track+0x3c/0x60
+> [   40.057143]  ? kasan_save_track+0x2b/0x60
+> [   40.057145]  ? __kasan_kmalloc+0x6e/0x80
+> [   40.057147]  ? do_init_module+0x16e/0x890
+> [   40.057149]  ? __se_sys_finit_module+0x513/0x7e0
+> [   40.057151]  ? do_syscall_64+0x71/0x110
+> [   40.057156]  ? entry_SYSCALL_64_after_hwframe+0x4b/0x53
+> [   40.057160]  ? stack_depot_save_flags+0x25/0x700
+> [   40.057162]  ? stack_trace_save+0xb3/0x150
+> [   40.057165]  ? __create_object+0x62/0x110
+> [   40.057168]  ? do_raw_spin_unlock+0x5a/0x950
+> [   40.057170]  ? __create_object+0x62/0x110
+> [   40.057173]  ? _raw_spin_unlock_irqrestore+0x31/0x40
+> [   40.057176]  ? __create_object+0x62/0x110
+> [   40.057179]  ? kasan_unpoison+0x49/0x70
+> [   40.057182]  ? __asan_register_globals+0x54/0x70
+> [   40.057184]  do_init_module+0x36a/0x890
+> [   40.057189]  __se_sys_finit_module+0x513/0x7e0
+> [   40.057195]  do_syscall_64+0x71/0x110
+> [   40.057197]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
 
