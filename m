@@ -1,171 +1,105 @@
-Return-Path: <linux-kernel+bounces-340149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1DE5986F14
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:40:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03AE4986FB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA081C218BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:40:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34B0B1C20A13
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFDC1A4F2B;
-	Thu, 26 Sep 2024 08:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5581AB51C;
+	Thu, 26 Sep 2024 09:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="IY7aM5vm"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CC81D5ACF;
-	Thu, 26 Sep 2024 08:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="qQrcpIGx"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2368208CA;
+	Thu, 26 Sep 2024 09:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727340039; cv=none; b=RPRAMG70z1uJ8PzOo0QBXHlVHbD/UTaa5+8XdOmIz1AYTBAQHvyqJYTis864fbtuqWrMZRKHmUNC5F0SA7FefcXXJe3lhQCgx7AQZb4TIJ0YIbdugAiOSJdjtnTIVbNHW6eWJVcmg6rYKMED3i3HFtXlFT8UduDY8edJueEEmDQ=
+	t=1727341988; cv=none; b=rcrv0H3CyIo1OhBalwrqxgDo6QBdcJTRIO7+Y+3P9qPQKuXF55XMWYq4j4c7+F61bzpr+bdsaWGfGBvEM7c/DWy+btcqKB0iMPgFnUFcArg6h24gwEbTlm8ozDHaWSUEHppkjuOqYDEXEoi5je3/QFdIb7f9Lost/lNwdkZKNsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727340039; c=relaxed/simple;
-	bh=TORR6vSdlthDV3D7Mttqa6Y0d3EA/9COCIbgvfYa20w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=elpnZJo8ONzUoRWp8/ZfWj7rrA2VHJgkCQpHFZopXxwlcjza32XgNCIAG0WUxAng+OWRKDo0XXDu81I5AEIsfAdI/CjE4fAzR4ClPybrDQplmkAArTJNewpNtQiDdrpWPQ3aYsXFpObOtN6ku9gFq6KdrfmvB5KVIZg9NTnA5aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=IY7aM5vm; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 191E32E08154;
-	Thu, 26 Sep 2024 11:40:24 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1727340025;
-	bh=pCwNv+obHIaPpwKmIRsp2qsyEXFkpXtUdABVsbUprLg=;
-	h=Received:From:Subject:To;
-	b=IY7aM5vmd9EQ5EZTaPikKAwPD3zBsPiyx7rbvX6ahzQ1vDpgSUjHypBMTIfrc3Zzo
-	 0clJ8YLAt6uFOlwRu91Qj9OlLufSio1hrV9taekD6PeR+Nx2dfmnzbv6yGpEQAmvbZ
-	 6O32vS9qh+Do/KmlnhlEZsjPgutKANR4ejvhVRNs=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.208.182) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f182.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f182.google.com with SMTP id
- 38308e7fff4ca-2f762de00fbso8350191fa.2;
-        Thu, 26 Sep 2024 01:40:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCVCnQF6ED35rk67M7WEskN71SmIA6tdNuTzcTA40xz1O6Qsgzx+HkYhXEZQMUx5apMiu5n/3tTdBGIs@vger.kernel.org,
- AJvYcCVzN6N2BzWNlFEF1a0jtxcg0d76RRd35UayiFwyIgs0hLcbm36hFmRWkK8Dp/6/mtSiqLxMDJTsukmdAdPhGm7cVceNUw==@vger.kernel.org,
- AJvYcCXw/amEBeQKRH/TDGf5fgSejzdYHNbRMzlRH8vYN+y58fVNIyZlm4GMSAO8/KrHOpxxk2APpF1feGC7HA4B@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2Ot5x62o2u/LHE9WPSKVS/tAFWA8LrTslTJhKrBRcLMgljAVQ
-	+OkXEsZ57pk7pRNZo19aU73oxsxfejcEDjT9O/VmVhX0LpX121OPWDyzJETRYLxridoog13FbSS
-	NmoJi7hfo9PWxUjXMDwMoQmWjprE=
-X-Google-Smtp-Source: 
- AGHT+IHX/DXvRxsjnzkx9rGoyfzY+jG7EkBujq7y+0Eqs8DUTTnaxO4ZZjatpypglmAPIyo007/yI2+OCOhosiMuHf0=
-X-Received: by 2002:a2e:819:0:b0:2ef:2344:deec with SMTP id
- 38308e7fff4ca-2f91ca61108mr22667141fa.45.1727340023091; Thu, 26 Sep 2024
- 01:40:23 -0700 (PDT)
+	s=arc-20240116; t=1727341988; c=relaxed/simple;
+	bh=1DXKU4XVx7IHEGgM38c09bSSv1/QCOHdnFhdWz0h454=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u8QwHqWgsyhaGnPIvqfBlZHs7MlGqkkuqCs+AO4bVqf4ZcxIkoNKENkDiQhthSZGHYc7OFsaJQQqIjREzob9dzgRmrS8iVcFn3JZawodSBh9CeCl6XzOj/li9T7nEhmjPajHNTskeEph6ujpi4lMbwI4Srvfo8Tf1RYrJjdDAbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=qQrcpIGx; arc=none smtp.client-ip=1.95.21.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=3yjqlUTIEAtxbRrw6H5T/QaTD7R7yHaK6W6FA1/EZ6M=;
+	b=qQrcpIGxCVy7R5JFeMwIiA4/WGUJY6PuCGaPFk/nKhdictzIn9es9mhm267iFk
+	5JyA2YAvJcXEN5UNBDDDd9w8rgrD4DcgbP2zecxcABbX1T9NJGaATUmmur/ipUa6
+	LAIRhJUlbjBrj/VzLLHjAj4+n0z3SV2EpO9DZIYJ3dk0E=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgBHx53tHfVm9kctAQ--.42439S3;
+	Thu, 26 Sep 2024 16:40:15 +0800 (CST)
+Date: Thu, 26 Sep 2024 16:40:12 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Esben Haabendal <esben@geanix.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] ARM: imx: Allow user to disable pinctrl
+Message-ID: <ZvUd7PekQ4pVXQGU@dragon>
+References: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
+ <20240506-imx-pinctrl-optional-v2-1-bdff75085156@geanix.com>
+ <CACRpkdaW14PgLXTRPHUjaLNKfCMRs+hpHrYyMiNaqSs+m0rhqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926025955.1728766-1-superm1@kernel.org>
-In-Reply-To: <20240926025955.1728766-1-superm1@kernel.org>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Thu, 26 Sep 2024 10:40:11 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwFW-YfVb-CW0uVuZ4wG+Kw9oZaRNkMAZfjvQC98BYxp8Q@mail.gmail.com>
-Message-ID: 
- <CAGwozwFW-YfVb-CW0uVuZ4wG+Kw9oZaRNkMAZfjvQC98BYxp8Q@mail.gmail.com>
-Subject: Re: [RFC 0/2] "custom" ACPI platform profile support
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Luke D . Jones" <luke@ljones.dev>, Mark Pearson <mpearson-lenovo@squebb.ca>,
-	"open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>,
-	me@kylegospodneti.ch, Denis Benato <benato.denis96@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <172734002453.18578.3074044221983098740@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdaW14PgLXTRPHUjaLNKfCMRs+hpHrYyMiNaqSs+m0rhqw@mail.gmail.com>
+X-CM-TRANSID:Ms8vCgBHx53tHfVm9kctAQ--.42439S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZF4DCFW7AFyrXr4DXF4fKrg_yoWDurXE9F
+	4kta97C348CrW7X3Wqyr4avr9YvFW8Kr95Kr90qryrAa4DZFs3JFn5Jr45uw15Ja1kWr9r
+	Ar9Yqr93tFyjqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUn9iSPUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRlmZWb00uLnAgAAsU
 
-Hi Mario,
-Indeed, the proposal looks good but has a few rough edges that would
-make it unsuitable to use currently. Well, for the handheld use-case
-at least.
+On Tue, Sep 24, 2024 at 09:45:32AM +0200, Linus Walleij wrote:
+> On Mon, May 6, 2024 at 12:24 PM Esben Haabendal <esben@geanix.com> wrote:
+> 
+> > Making pinctrl drivers and subsequently the pinctrl framework
+> > user-controllable, allows building a kernel without this.
+> > While in many (most) cases, this could make the system unbootable, it
+> > does allow building smaller kernels for those situations where picntrl
+> > is not needed.
+> >
+> > One such situation is when building a kernel for NXP LS1021A systems,
+> > which does not have run-time controllable pinctrl, so pinctrl framework
+> > and drivers are 100% dead-weight.
+> >
+> >
+> > Signed-off-by: Esben Haabendal <esben@geanix.com>
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> I guess this needs to be merged through the SoC tree.
 
-This relates to issues of auto-discovery and how the kernel taint is
-applied. For the kernel taint, see my comments on patch 2.
+Hi Linus,
 
-> There are two major ways to tune platform performance in Linux:
->  * ACPI platform profile
->  * Manually tuning APU performance
->
-> Changing the ACPI platform profile is a "one stop shop" to change
-> performance limits and fan curves all at the same time.
+Reading your comment[1], I was thinking that you will merge the series
+through pinctrl tree, no?
 
-For laptops. A majority of users of handhelds find 3 settings too limiting.
+Shawn
 
-> On AMD systems the manual tuning methods typically involve changing
-> values of settings such as fPPT, sPPT or SPL.
+[1] https://lore.kernel.org/linux-arm-kernel/CACRpkdYbOTXmap-vJy4JNZSaZnE=yzC35EPD2F=bD8gWdD8-GQ@mail.gmail.com/
 
-Those names are amd-pmf specific and this proposal does not allow for
-auto-discovery.
-
-Instead, expose attributes `custom_mode` and `custom_mode_choices`,
-that allow for querying the system for available custom modes and
-whether userspace can use them.
-
-In this case, the modes for amd-pmf could be `amd-pmf-spl` and `amd-pmf-user`.
-
-`amd-pmf-spl` could export the attrs {spl_min, spl_max, spl} and allow
-setting TDP using a slider a la Steam Deck. Here, manufacturers should
-be given complete control, e.g., with a LUT and the kernel should not
-taint.
-
-`amd-pmf-user` would expose what is shown in this proposal and taint
-the kernel. Unfortunately, without manufacturer intervention, this
-would be the default for the foreseeable future for boutique devices
-(e.g., GPD, OneXPlayer, Ayaneo).
-
-> The problem with changing these settings manually is that the definition
-> of the ACPI platform profile if supported by the hardware is no longer
-> accurate.  At best this can cause misrepresenting the state of the
-> platform to userspace and at worst can cause the state machine into an
-> invalid state.
->
-> The existence and continued development of projects such as ryzenadj which
-> manipulate debugging interfaces show there is a demand for manually tuning
-> performance.
-
--demand- -> requirement. Over 90% of handheld users will end up using a slider.
-
-> Furthermore some systems (such as ASUS and Lenovo handhelds) offer an
-> ACPI-WMI interface for changing these settings. If using anything outside
-> that WMI interface the state will be wrong.  If using that WMI interface
-> the platform profile will be wrong.
->
-> This series introduces a "custom" ACPI platform profile and adds support
-> for the AMD PMF driver to use it when a user has enabled manual
-> adjustments.
->
-> If agreeable a similar change should be made to asus-armoury and any other
-> drivers that export the ability to change these settings but also a
-> platform profile.
-
-Indeed, it would be nice if such a change could be made for all
-manufacturer drivers. Much of this proposal would lower the need for
-something like asus-armoury, as asus-wmi would be fully capable of
-supporting this with few changes and around 70% of the asus-armoury
-attrs would then live under /sys/platform.
-
-This also gives us the opportunity for a much needed rename of the variables.
-
-I can speak with the out-of-tree Lenovo Legion Linux's maintainers and
-see if they would like to collaborate on this as well.
-
-Antheas
 
