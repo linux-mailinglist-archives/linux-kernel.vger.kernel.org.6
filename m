@@ -1,131 +1,87 @@
-Return-Path: <linux-kernel+bounces-340173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443E3986F5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:54:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1614B986F61
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B12B280A46
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:54:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D95E1C21927
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1304C1A7269;
-	Thu, 26 Sep 2024 08:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D142A1A7256;
+	Thu, 26 Sep 2024 08:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="l2uaZcye"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="dMko6XWw"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396C318C32D
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC291A4E9C;
+	Thu, 26 Sep 2024 08:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727340836; cv=none; b=bznhnmOc0eW7oYQvztTRHTChGVvL+S85Ac8U3U9DkoU11iM23kSaZ87OqkU5ZENkOMzO4w4ddtHJspoMMHO23c4ZVnewwkGnHpSMv+UwDAs+CVOLeJ0KiAMsmL1f9YslsJen+3SqZx/4N1MPJf70uLRAwH4ZS78WMxHfLbM6mmI=
+	t=1727340911; cv=none; b=ERiSVYRGdXLGF3mnKJ51PNvwnB6/fT0G+bk48w/EApTe/KLOfUy5uskfHXIsjEIKRJJYLnsryLdz+DzK+/o/3wD5wncwfBQN1f3jrq8f9YBtJNeb35f4hQaBFnzz5DBV4LWuxmlow/2wq6YX2bjY2b14jy+O5vCihJhC1Qu/RdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727340836; c=relaxed/simple;
-	bh=RxLiI92bh+rBDaKRwGtrPAnYkdyJvpCBNsdjO8fda/Q=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=p9PwfQEkL2t8QjGGqh4ebrtPfx/Px7gl6nvEQUkD6UvCucwpvSWLZc7yqDhxOI4hRPkKhLJxH1ewkY2cPiyn6aIdRywatYZSuuxsTLP5XYYDqysfMqrkRsxEQ0RmqR9/GrwzAbhnF3MLKcAmh3HnmFrEDzO4rvhwGfM+Z0L1Jc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=l2uaZcye reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=RxLiI92bh+rBDaKRwGtrPAnYkdyJvpCBNsdjO8fda/Q=;
-  b=l2uaZcyeKwmWyBsRjGC5E9DBQWuvfgM12EZWTzIptUwQGESPeJppYFT0
-   G7wHB19o6geoQns1nPPow3bFI22hyHEWZZ/nJ2f0WyR6xNaopjjtDWFmO
-   9kNZroCrhn+joI9FadTv6qcrmcFvBos+ejWuvoTjPr69xwak889GbkQ/W
-   LdnJO8ND+EQXojPN4+RZHMcEa7vHzfxihAKowiFT9/dqFSSmMZWb1HviG
-   xVltbRNgQmmEFkuobZ7JH4c8e0/BMu3yiHFYcUlZyJGORQRzVNxN4NEWI
-   g4c9q8R06W9k5dJ82qpZGhnOO5cUg3tYHdv+eNLsRNjX5GVVaak2xFZLv
-   A==;
-X-CSE-ConnectionGUID: bAaNbmiuRSG+15CVc8SXVg==
-X-CSE-MsgGUID: yHPTxz8UQPOmdFKSY1O7IQ==
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 26 Sep 2024 16:53:52 +0800
-Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
-	by mse.ite.com.tw with ESMTP id 48Q8roh1095201;
-	Thu, 26 Sep 2024 16:53:50 +0800 (GMT-8)
-	(envelope-from Hermes.Wu@ite.com.tw)
-Received: from TPEMAIL1.internal.ite.com.tw (192.168.15.58) by
- TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 26 Sep 2024 16:53:50 +0800
-Received: from TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68]) by
- TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68%6]) with mapi id
- 15.01.2507.039; Thu, 26 Sep 2024 16:53:50 +0800
-From: <Hermes.Wu@ite.com.tw>
-To: <dmitry.baryshkov@linaro.org>
-CC: <Kenneth.Hung@ite.com.tw>, <andrzej.hajda@intel.com>,
-        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-        <simona@ffwll.ch>, <allen.chen@ite.com.tw>,
-        <angelogioacchino.delregno@collabora.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4 04/11] drm/bridge: it6505: fix aux command write to aux
- operaction register
-Thread-Topic: [PATCH v4 04/11] drm/bridge: it6505: fix aux command write to
- aux operaction register
-Thread-Index: AQHbD+pLHLYgwpqN9kqTXj10q/tqCbJpwu4w
-Date: Thu, 26 Sep 2024 08:53:50 +0000
-Message-ID: <f0626a7af4654d56b7f45b4b56ce3cd2@ite.com.tw>
-References: <20240926074755.22176-1-Hermes.Wu@ite.com.tw>
- <20240926074755.22176-5-Hermes.Wu@ite.com.tw>
- <fcy6i4cfmtpsgnvuqfjm7pwlkyuno65rij5w32snmjbudma6wp@ht2jqtj2rsxq>
-In-Reply-To: <fcy6i4cfmtpsgnvuqfjm7pwlkyuno65rij5w32snmjbudma6wp@ht2jqtj2rsxq>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tm-snts-smtp: 387984F609DA5C82751C7A2D7CADA9EFBBE6EBAD5A7B3A17B4D0760563D8AAF22002:8
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1727340911; c=relaxed/simple;
+	bh=pefF9FupOX3fcU18qX6EZA/ZGO1UAFIaKMKhdWk9q9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p1rNbs+6l+E3LCKF26knscMgSDZU5u5SZp+XKBwPXHydeCvF1ArP1OeRiQm/2viuCyECHBuOTlAwDdZBolLMw9OmBMU5aCuPxpnwdrI3BQrmzD87+i5fJd/qw7G+GkHjCXoin7MUejNFRSg29uub64XZiyBxaLSWaN2ilcE9o2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=dMko6XWw; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=lK1Yk/2ult1Hx8RcFihNnAte3glD+3mv3Tmf7ao1aR8=; b=dMko6XWwUdJhtSeWOyby+IQghr
+	ecGOcea60fou56SJQnvJCgPYbYXSorztJxkUJNGSABpxr91Fgyd1t43QmoOa8vR9LYXBd6MqloJ4y
+	tPUhQuna1z+UjV2RplZgiCOs/QVhL6aLxjAdgdfPAeAIOBExUXcT4FCcVOo0vc8OjVrUYBhfj2hC6
+	x1E5giRQ7lJXFg3zHoy/c+PlFSP/yRc8aRqfDlom+2F2d8yAnNVKoVqu/9mhlxXeeoYlMoRnXhNvC
+	hSjFOyqfYRz8cjYp5USm78pdKMdQ5uAMrxvClPKc5PXGQkiiHJ7HrzptLUJDONXUwCJqnjV4OZOCD
+	2xPGIdPg==;
+Received: from 85-160-70-253.reb.o2.cz ([85.160.70.253] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1stkH8-0001qX-4Q; Thu, 26 Sep 2024 10:55:02 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-spi@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ Dragan Simic <dsimic@manjaro.org>
+Cc: broonie@kernel.org, oss@helene.moe, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] spi: rockchip: Don't check for failed get_fifo_len()
+Date: Thu, 26 Sep 2024 10:55:01 +0200
+Message-ID: <2382990.BjyWNHgNrj@phil>
+In-Reply-To:
+ <ce2e7f90e62b15adc2bed1f53122ad39c3a9b5ac.1727337732.git.dsimic@manjaro.org>
+References:
+ <cover.1727337732.git.dsimic@manjaro.org>
+ <ce2e7f90e62b15adc2bed1f53122ad39c3a9b5ac.1727337732.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MAIL:mse.ite.com.tw 48Q8roh1095201
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Pk9uIFRodSwgU2VwIDI2LCAyMDI0IGF0IDAzOjQ3OjU0UE0gR01ULCBIZXJtZXMgV3Ugd3JvdGU6
-DQo+PiBGcm9tOiBIZXJtZXMgV3UgPEhlcm1lcy53dUBpdGUuY29tLnR3Pg0KPj4gDQo+PiBUaGUg
-YXV4IGNvbnRyb2wgcmVnaXN0ZXIgY29tbWFuZCBpcyA0IGJpdHMgTFNCIG9ubHksIGFkZGluZyBh
-IE1BQ1JPIHRvIA0KPj4gZ2V0IGNvcnJlY3Qgb3BlcmFjdGlvbiBjb21tYW5kLg0KPg0KPk5pdDog
-QVVYLCBhZGQgKG5vdCBhZGRpbmcpLCBtYWNyby4NCj4NCj5XaGF0IGhhcHBlbnMgaWYgdGhlIGRy
-aXZlciBkb2Vzbid0IGxpbWl0IHRoZSBmaWVsZD8gTGV0IG1lIGd1ZXNzLCB0aGUgS1NWIHJlYWRp
-bmcgY29tbWFuZCBpcyAweDEwIChpdCBzaG91bGQgaGF2ZSBiZWVuIGEgcGFydCBvZiB0aGUgY29t
-bWl0IG1lc3NhZ2UsIEJUVyksIHNvIGl0IG92ZXJyaWRlcyBzb21lIG90aGVyIGJpdHM/IEluIHN1
-Y2ggYSBjYXNlIHRoaXMgZWl0aGVyIHNob3VsZCBiZSBhIHBhcnQgb2YgdGhlIHByZXZpb3VzIGNv
-bW1pdCwgb3IsIGF0IGxlYXN0LCBjb21lIGJlZm9yZSBpdC4NCj4NCg0KTm90aGluZyBIYXBwZW5z
-Lg0KDQpUaGUgQVVYIGNvbnRyb2wgY29tbWFuZCBhdCBjb250cm9sIHJlZ2lzdGVyIFJFR19BVVhf
-Q01EX1JFUSBpcyA0IGJpdHMgTFNCIG9ubHksIGFuZCBiWzc6NF0gaXMgcmVhZHkgb25seS4NCkFV
-WCBGSUZPIGFjY2VzcyBjYW5ub3QgcmVhY2ggYWxsIERQQ0QgYXJlYSwgb25seSBLU1YgRklGTyBh
-dCBEUENEKDB4NjgwMkMpLg0KVGhlIGNvbW1lbmQgZGVmaW5lIHVzZSBbNzo0XSB0byBleHRlbmQg
-b3JpZ2luYWwgQVVYX05BVElWRV9SRUFEKDApIGFzIEFVWF9OQVRJVkVfUkVBRCB3aXRoIEFVWCBG
-SUZPDQoNCkl0IHNob3VsZCBiZSBhIHBhcnQgb2YgcHJldmlvdXMgY29tbWl0Lg0KDQo+PiBGaXhl
-czogYjVjODRhOWVkY2Q0ICgiZHJtL2JyaWRnZTogYWRkIGl0NjUwNSBkcml2ZXIiKQ0KPj4gU2ln
-bmVkLW9mZi1ieTogSGVybWVzIFd1IDxIZXJtZXMud3VAaXRlLmNvbS50dz4NCj4+IC0tLQ0KPj4g
-IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvaXRlLWl0NjUwNS5jIHwgNCArKystDQo+PiAgMSBmaWxl
-IGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPj4gDQo+PiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9pdGUtaXQ2NTA1LmMgDQo+PiBiL2RyaXZlcnMv
-Z3B1L2RybS9icmlkZ2UvaXRlLWl0NjUwNS5jDQo+PiBpbmRleCAwNTgzYWJkY2E3NWYuLmQxZjUy
-MjBlMDRhNiAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvaXRlLWl0NjUw
-NS5jDQo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2l0ZS1pdDY1MDUuYw0KPj4gQEAg
-LTMyOSw2ICszMjksOCBAQCBlbnVtIGF1eF9jbWRfdHlwZSB7DQo+PiAgCUNNRF9BVVhfR0VUX0tT
-Vl9MSVNUID0gMHgxMCwNCj4+ICB9Ow0KPj4gIA0KPj4gKyNkZWZpbmUgR0VUX0FVWF9DT05UUk9M
-X0NPREUoY21kKSAoKGNtZCkgJiAweDBGKQ0KPj4gKw0KPj4gIGVudW0gYXV4X2NtZF9yZXBseSB7
-DQo+PiAgCVJFUExZX0FDSywNCj4+ICAJUkVQTFlfTkFDSywNCj4+IEBAIC0xMDAwLDcgKzEwMDIs
-NyBAQCBzdGF0aWMgc3NpemVfdCBpdDY1MDVfYXV4X29wZXJhdGlvbihzdHJ1Y3QgaXQ2NTA1ICpp
-dDY1MDUsDQo+PiAgCQkJCSAgc2l6ZSk7DQo+PiAgDQo+PiAgCS8qIEF1eCBGaXJlICovDQo+PiAt
-CWl0NjUwNV93cml0ZShpdDY1MDUsIFJFR19BVVhfQ01EX1JFUSwgY21kKTsNCj4+ICsJaXQ2NTA1
-X3dyaXRlKGl0NjUwNSwgUkVHX0FVWF9DTURfUkVRLCBHRVRfQVVYX0NPTlRST0xfQ09ERShjbWQp
-KTsNCj4+ICANCj4+ICAJcmV0ID0gaXQ2NTA1X2F1eF93YWl0KGl0NjUwNSk7DQo+PiAgCWlmIChy
-ZXQgPCAwKQ0KPj4gLS0NCj4+IDIuMzQuMQ0KPj4gDQo+DQo+LS0gDQo+V2l0aCBiZXN0IHdpc2hl
-cw0KPkRtaXRyeQ0KPg0KDQpCUiwNCkhlcm1lcw0KDQo=
+Am Donnerstag, 26. September 2024, 10:38:14 CEST schrieb Dragan Simic:
+> Since commit 13a96935e6f6 ("spi: rockchip: Support 64-location deep FIFOs"),
+> function get_fifo_len() can no longer return zero, so delete the redundant
+> check for zero in function rockchip_spi_probe().
+> 
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+
+Didn't this topic come up in another recent patch too?
+
+Anyway, having looked up the what the current get_fifo_len does,
+the 0 case should never happen, as you describe, so
+
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+
 
