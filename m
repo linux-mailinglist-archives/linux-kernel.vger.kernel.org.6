@@ -1,106 +1,103 @@
-Return-Path: <linux-kernel+bounces-340754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0ACF987772
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:19:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D66987776
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70A581F21C5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:19:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90EC41C21C2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E003515B0FA;
-	Thu, 26 Sep 2024 16:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BtcMOiNb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276BF34CC4;
-	Thu, 26 Sep 2024 16:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E872156665;
+	Thu, 26 Sep 2024 16:20:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B5534CC4;
+	Thu, 26 Sep 2024 16:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727367565; cv=none; b=SRAG4z8lWQWz1XV08IfR4Iw2gFP9YKcWWTVzbkdQ6xKEhEY4GDTmYads+1Xy0yEtWrBGPqYseQgNPqvRAnZ7h2GwV6HOXkeUVzf0GH2UU4wTktLKooOhd+MuG3qFbL82So4Md1AW6Tq4ezi5aBv9akfgOioZFZpp96hOtlrALuY=
+	t=1727367654; cv=none; b=JAf+mXbipLOZpFYxPOuthhA06mwTz0lWfcQRVzMaZdRVp6IpPvjif62OyS/0ZPpt+sdUnHKdqFBStcWWeViuS6GVGmjHf/Aa3Bh4owXiWlpyRHjSjZaaANO7hQsDk4K9zlaHj4RNs4R/WHZulHkOb/gv42zoK/38qrM0vgNzOyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727367565; c=relaxed/simple;
-	bh=lqXmhMEXuZKcNpBi/56TghcTSSMM2Wi1sUMY+o2nTWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fbnu8uPVPQ63XMkuOM/UYTBkSYPPc9NiKo9ORcTwuymIaLRSpTiDf+3eKgOawFF8A7xVuZWb5eUoVdvaikCrMBw2H2JDfehXlRyywat7FfZ90YveQFIWgeDaKKP+muMGCS+Os0hXLgsch1N5qXzltl0pWqXOtpO0iLriV+5MCyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BtcMOiNb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD817C4CEC5;
-	Thu, 26 Sep 2024 16:19:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727367564;
-	bh=lqXmhMEXuZKcNpBi/56TghcTSSMM2Wi1sUMY+o2nTWs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BtcMOiNb/9SmfFSSi/zUiW/TWgAPJ3p6Us5pPzmDB0PGq6xxSKB82IIHHbnFIFE6L
-	 xWmHcSFWdTxpmSYgzhjgK1Q9juzsfMnqicS31CNyR7eJolSZCElsQ05PiCPmW0mlOY
-	 I12iukt5rTiHGJZgUqzQeljNJORYRJ8nm15fgLyuo+iM5fRD/Gebl41T47t1aoxBtM
-	 FIg49JKG71a6fLQONoo5jfcuu493Edjp7UVvBI3lPAHEU5fDk8AcDO9AOuqAUncX1K
-	 mdhk8p+G3EjlGTzBn8A1yhDbs82Z6qma2s22OYIKBJG+bfKVfwv6ISbxlOjf5D1qCL
-	 UJGSe2etyLwMw==
-Date: Thu, 26 Sep 2024 06:19:23 -1000
-From: Tejun Heo <tj@kernel.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Chao Yu <chao@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, willy@infradead.org,
-	Josef Bacik <josef@toxicpanda.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>, akpm@linux-foundation.org,
-	Christian Brauner <brauner@kernel.org>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	cgroups@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, mcgrof@kernel.org,
-	gost.dev@samsung.com, linux-doc@vger.kernel.org,
-	linux-xfs@vger.kernel.org, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH] fs/writeback: convert wbc_account_cgroup_owner to take a
- folio
-Message-ID: <ZvWJiyEREyfZN-NW@slm.duckdns.org>
-References: <20240926140121.203821-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1727367654; c=relaxed/simple;
+	bh=Y2G/WXuKiqm9T1EpZsV8QDwOciR45eh0MwY7zfNYeug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=H62kBhO2AKBwewbhEEUBKH40HFILmCXzWydSMQDK5DOms5QQMF5S4u8NgUUEfDit0+ppe+cubzdeuiWXjHpuer5lwxHeD9Y1c/s6nCOck5+sREMIP0lo2BevHSq8d3Lk+NQYX6BntUaR/uZ878pbnGigOTtCbD5q5r4wDe9MdUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47E1214BF;
+	Thu, 26 Sep 2024 09:21:21 -0700 (PDT)
+Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4EC473F587;
+	Thu, 26 Sep 2024 09:20:50 -0700 (PDT)
+Message-ID: <61d9e213-d2ca-48c9-b176-03e7d01524c9@arm.com>
+Date: Thu, 26 Sep 2024 17:20:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926140121.203821-1-kernel@pankajraghav.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] perf arm-spe: Introduce metadata version 2
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>,
+ Will Deacon <will@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240914215458.751802-1-leo.yan@arm.com>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <20240914215458.751802-1-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 26, 2024 at 04:01:21PM +0200, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
+On 9/14/24 22:54, Leo Yan wrote:
+> This patch series enhances Arm SPE metadata in the Perf file to a
+> version 2 format and maintains backward compatibility for metadata v1.
 > 
-> Most of the callers of wbc_account_cgroup_owner() are converting a folio
-> to page before calling the function. wbc_account_cgroup_owner() is
-> converting the page back to a folio to call mem_cgroup_css_from_folio().
+> The version 2 metadata contains a global structure with fields for
+> metadata header version number, header size, CPU numbers. It also
+> expands to store per-CPU metadata, which includes the CPU logical
+> number in the kernel, MIDR, and capacity values associated with Arm SPE.
 > 
-> Convert wbc_account_cgroup_owner() to take a folio instead of a page,
-> and convert all callers to pass a folio directly except f2fs.
+> This patch set has been tested the perf to decode the Arm SPE metadata
+> v1 and v2.
 > 
-> Convert the page to folio for all the callers from f2fs as they were the
-> only callers calling wbc_account_cgroup_owner() with a page. As f2fs is
-> already in the process of converting to folios, these call sites might
-> also soon be calling wbc_account_cgroup_owner() with a folio directly in
-> the future.
-> 
-> No functional changes. Only compile tested.
-> 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> Changes from v1:
+> - Dropped LDS bit exposing from Arm SPE driver (Will Deacon).
+> - To simplify the change, this series did not include multiple AUX event
+>    support.
 
-From cgroup writeback POV:
+Hi Arnaldo, Namhyung,
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Gentle ping. There is a bit backlog for Arm SPE patches, so I would
+like to bring up this series and the series [1] for the Arm SPE data
+source refactoring (which is dependent on the current series).
 
-Thanks.
+Please kindly review and pick it up if it is fine for you.
 
--- 
-tejun
+Thanks,
+Leo
+
+[1] https://lore.kernel.org/linux-perf-users/20240914220901.756177-1-leo.yan@arm.com/
+
+
+> Leo Yan (5):
+>    perf arm-spe: Define metadata header version 2
+>    perf arm-spe: Calculate meta data size
+>    perf arm-spe: Save per CPU information in metadata
+>    perf arm-spe: Support metadata version 2
+>    perf arm-spe: Dump metadata with version 2
+> 
+>   tools/perf/arch/arm64/util/arm-spe.c | 106 ++++++++++++++++++-
+>   tools/perf/util/arm-spe.c            | 151 +++++++++++++++++++++++++--
+>   tools/perf/util/arm-spe.h            |  38 ++++++-
+>   3 files changed, 281 insertions(+), 14 deletions(-)
+> 
 
