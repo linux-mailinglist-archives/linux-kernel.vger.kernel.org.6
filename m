@@ -1,101 +1,79 @@
-Return-Path: <linux-kernel+bounces-339823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F318986B06
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:40:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D78E986B00
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAF24283B2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:40:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC0AE1C21409
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700A4176AA0;
-	Thu, 26 Sep 2024 02:39:55 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B248617335E;
+	Thu, 26 Sep 2024 02:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNdtdmRk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BB41D5AAD;
-	Thu, 26 Sep 2024 02:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164FC1D5AAD;
+	Thu, 26 Sep 2024 02:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727318395; cv=none; b=gLrI4MBdc0qT9P5kWdqSt5zRL7/MwlJ9/ElprzofwdB3VRuMBY+wPaAX5f6U7csq7wF+8pk2ORZMjGbCdFh+rtUpuXkRBZbHO3LX8V5dkQ8sYgBwx7p8W2/iMi4exibTCSQMDgzanFMSz3EXSmihyC1kCQEKN1SNrokZ1RfYkuM=
+	t=1727318330; cv=none; b=mPxUmtHY+Aewm8kTXvh5aYaaep7u2fMCzzkvNHupXzIIPfikAtnqFbcXUtur4CelNPVKukhRSJ0WZlKClAwUibhEJ8g46t5LDCBDYerTUR21uEAsw9F11HzzuPV1RY71Kjr0KHUhkOPnrR4y9ucOf0M+Fggo5Un4q0m9/Xt21BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727318395; c=relaxed/simple;
-	bh=UcRyjEvuYZA1EQbXIPMIZLGxbD1x8oDGMLqpKk4T8KM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fbUH4vJsgirD1Tr1dkBTtcAmNBJYgbPrOAR8Fmf8P3uL2CbdUe8BzVL6Vrln3okEj5SNr0GKeKkN88yJYL+gwzjW7uJka0xrEaABgb7eN4khhFNO1j5AZDubBh78negQQG8J78aKq+wLVaSyFzxj9sWq5EnKATNkl5RxH5Js3SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowACnu0BdyfRmJEshAQ--.9304S2;
-	Thu, 26 Sep 2024 10:39:25 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH bpf-next] libbpf: Remove unneeded semicolon
-Date: Thu, 26 Sep 2024 10:38:23 +0800
-Message-Id: <20240926023823.3632993-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1727318330; c=relaxed/simple;
+	bh=5YN/e4f7Ol+pHChfEu6Nb5WpsJGf0EbQqwIayzD5/KI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d3s4/vQfOuSedAw+75fvcSDb8AGL1dBaKXvKA0qa0984WNw8FoJWV0huCNCTbeXPfnLBkYrnsHdm3Dy2/9gU4bF131zO5kyNduIXSxxLlAA6bJ1Na9kKAWXE4Q9r5xlyF5KZVrNqoerwpw4fTad7r5odru8tTSG5gd4/KFwPA9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNdtdmRk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65743C4CEC3;
+	Thu, 26 Sep 2024 02:38:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727318329;
+	bh=5YN/e4f7Ol+pHChfEu6Nb5WpsJGf0EbQqwIayzD5/KI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oNdtdmRkrHq0e9akIbBTtxq9FsRk8UaByU7Vb/w9XEknlaK9yqFTJebB7mODYL7K9
+	 /6yk2hJp+di1kZPHIdUKrFAWPrG5dV0e/2y70yI2e+rlNQUJSRxrFScmerdiVL8RbV
+	 jA8xLBjeQFrnN17PTIqd1oAm6r8tHnSZ8Zol3kuHOSCt+ErfKmmwCdyrVSayOtCxnu
+	 TvLaiFoUlbRoDoTZchcJfR1BtTcBcgu3u/mx366ip1qLtSBO3beuRQVzJakjQL6mh0
+	 QB234ZTmvGYbj1hvImBnoedNqwwodAaWOL6UWmXCSfBfvD4vfwarBrVVVvNc0IIpxH
+	 Dggu5feMqdA/A==
+Date: Wed, 25 Sep 2024 21:38:48 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Igor Prusov <ivprusov@salutedevices.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, prusovigor@gmail.com,
+	devicetree@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+	Takashi Iwai <tiwai@suse.com>, kernel@salutedevices.com,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v3 5/6] ASoC: dt-bindings: Add NeoFidelity NTP8835
+Message-ID: <172731832778.2420974.16007828304915406222.robh@kernel.org>
+References: <20240925-ntp-amps-8918-8835-v3-0-e2459a8191a6@salutedevices.com>
+ <20240925-ntp-amps-8918-8835-v3-5-e2459a8191a6@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowACnu0BdyfRmJEshAQ--.9304S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYu7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc2xSY4AK67AK6r4UMxAIw28IcxkI7VAKI48JMx
-	Aqzxv26xkF7I0En4kS14v26r1q6r43MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
-	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8Zw
-	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1sY
-	FtUUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925-ntp-amps-8918-8835-v3-5-e2459a8191a6@salutedevices.com>
 
-Remove unneeded semicolon in zip_archive_open().
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- tools/lib/bpf/zip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 25 Sep 2024 17:52:43 +0300, Igor Prusov wrote:
+> Add dt-bindings for NeoFidelity NTP8835C/NTP8835C Amplifiers
+> 
+> Signed-off-by: Igor Prusov <ivprusov@salutedevices.com>
+> ---
+>  .../bindings/sound/neofidelity,ntp8835.yaml        | 73 ++++++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+> 
 
-diff --git a/tools/lib/bpf/zip.c b/tools/lib/bpf/zip.c
-index 3f26d629b2b4..88c376a8348d 100644
---- a/tools/lib/bpf/zip.c
-+++ b/tools/lib/bpf/zip.c
-@@ -223,7 +223,7 @@ struct zip_archive *zip_archive_open(const char *path)
- 	if (!archive) {
- 		munmap(data, size);
- 		return ERR_PTR(-ENOMEM);
--	};
-+	}
- 
- 	archive->data = data;
- 	archive->size = size;
--- 
-2.25.1
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
