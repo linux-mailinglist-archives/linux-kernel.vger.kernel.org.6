@@ -1,200 +1,221 @@
-Return-Path: <linux-kernel+bounces-340418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B959E987331
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:01:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81F1E987333
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7573A281EA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:01:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8196B20D20
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AAC177998;
-	Thu, 26 Sep 2024 12:01:03 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E907170A3E;
+	Thu, 26 Sep 2024 12:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fuu0tsT6"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B031741F0
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87B41547D5;
+	Thu, 26 Sep 2024 12:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727352063; cv=none; b=Yarlm7mmR86oC05CwnX20Cvk9OZbSa+JkBF1kh5Xr/CUvUGomA0fstwIXUI+3IYfo1lbwtFRX+aGSjskKNdduFF0CW039nVcRmyxmXonaheBvtutYiWJ3vymbzNqIC4Ho1zob/dWP4yDcU04KKExcGa9pUqPd660GXk7tn+u1Oo=
+	t=1727352104; cv=none; b=ippnOk5l6vacY0v9fmr5rm4nhN+kDBV2Wp52WtHf0RGUYsMZTHyGnems1pHfvuDoVhZHDuF6mmiTzUjhBqdN5PK6utJpONO+fBNTR5XzsNlotO9z4buMZfAP9oVxIqmOpQ4/D3oSuoZt8BAy+rQlZgxg8HVlV3pgbMIZFRsB7Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727352063; c=relaxed/simple;
-	bh=Qo4RxcudXypmYwICcrVSlrgLaG8mPa++K/0cPQwmWFA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JNsNi5mEPAV5DdIhMyKeosxHFSyP7yxMAcSxSZnjgL3Mvyc+eAWX925CY2RfvUvf94JvNNezFSXcmz4WkJ4OUG73myaQKqjOdkird3D/th90fUN46OO7AnihHsqFLsMxDRLVCtpa+YxhgxptcbTMAZ6p5s0Wijk7djcYGbN75U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XDsXB37Rpz6LDcy;
-	Thu, 26 Sep 2024 19:56:58 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id D3B771401F3;
-	Thu, 26 Sep 2024 20:00:57 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 26 Sep
- 2024 14:00:57 +0200
-Date: Thu, 26 Sep 2024 13:00:56 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
-	Dongjiu Geng <gengdongjiu1@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
-Subject: Re: [PATCH 09/15] acpi/ghes: make the GHES record generation more
- generic
-Message-ID: <20240926130056.00001e12@Huawei.com>
-In-Reply-To: <9b256923695e2202f549cbbb11dc22982cb22abf.1727236561.git.mchehab+huawei@kernel.org>
-References: <cover.1727236561.git.mchehab+huawei@kernel.org>
-	<9b256923695e2202f549cbbb11dc22982cb22abf.1727236561.git.mchehab+huawei@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1727352104; c=relaxed/simple;
+	bh=Qtejn4ejaDVxmir4gnJLy1kmqVogaotwsTP/3Zg5i3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=igEmncMoDZJErc4COcOqBOhkufddwDI2yQXcbeUqKFU+V9LnRebxqsaPvS6GBaEtk4KdOrt7+GiRHw6/CKnSASGJkINmvC3oqkNBC0cnnaT6hADM9avEMbf+HGqjvJQAD0J/AzLAUqgce38SVAJz49BJf76KUvZ9NXBvC1rV9mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fuu0tsT6; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f761461150so13958781fa.0;
+        Thu, 26 Sep 2024 05:01:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727352101; x=1727956901; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VJFMXan8tq9MCYTMLc/4X+wh6+u+NZsDcvLMiDaglKs=;
+        b=fuu0tsT6K7LIAkBC4H4p2YjYNugmGi48fDzCq6aM3jAU4VfZ6n9bTZh1AcULZpGH7E
+         N2l/zfDtRuYCdTK6nA8o0/T51e6BK14Nbyhx2mIGwGeaaNvYOHeEh4+teZ6nbmL5FibY
+         MwefFL3SO0xn3+rG6WDgYvZf0htXOd0kqhbGbklkrpkesh4DvOhSlkOJ0qP2oC1Xi8iK
+         T5a6luw3e/HoF1K/5YTJw2ZKT4wj57CGsDFbkVWCgHzXUmLwTdFU4jKYrVXWep0GQ9CY
+         wnfA/zIv4g7L01z54jetFGKhNw1vjMy8UNDUxCPWs9YRjSWpuCI/76a00tSWnOT2whLy
+         0Ivw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727352101; x=1727956901;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VJFMXan8tq9MCYTMLc/4X+wh6+u+NZsDcvLMiDaglKs=;
+        b=qQS64/99R2iQLcAcZZY+bhP7xXb/rZ+ZTt0/kz6Xq+AkNl84+7df8jxqlU+6frxRO4
+         vuheXQ/0eKV/ZGgBZvg3oUPX8Sny5GtOGQqdO2ZqfRJWaelkA7FctUjexEw8N2BNJVIi
+         yc3gWS2EvaaKEVoWWbzgv790Y61b9BLdquSal8SItzCtFnD+9oyQFgIM68yTmBamsPAj
+         q6JdCPtPzZPOKylnlW+tMoBXwEJlD6NEjUiJGxv+6jh6eNDCNcbz6lX5+TpMbeRGTXFQ
+         4dtfz3aB3pOhAue7DPkwAurhM5sIUON05vm0zPSWRleb7QQTDZznBKR9fQrQMmFuW/04
+         tVDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUn9SDAFOmBE27QdbDrHRAqKfuFX4lY2pUba+WarX0QmjRRiVWK/bZG4DzOU/CYscQ/9SblrSpbVB7mjjI=@vger.kernel.org, AJvYcCXYlQNmeKmwug3DVVslolqYXfA08q0oq1Pw8S7rrxDqXuOdRgTLY/Q8CExwxRmZyRP5Cabyw1JpSfM2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmMh3BULyiRPt8xSPxfNAdbRMiy+JQSPAlie+f4v8zeFaj1vtn
+	lkouIn/M6X6OVBNZVFTdlnSqOob+eVTHEZWj7n80bDANoGMbv4SBfGl88Q==
+X-Google-Smtp-Source: AGHT+IFRYQrVx1ENjdeuxcQCQvovc1lCDV1v4+bjnOOhUSNllWE/tkhsYsczQSxLEeQzY/4TwrL3UQ==
+X-Received: by 2002:ac2:4f13:0:b0:536:73b5:d961 with SMTP id 2adb3069b0e04-53877566349mr5700929e87.54.1727352100306;
+        Thu, 26 Sep 2024 05:01:40 -0700 (PDT)
+Received: from fedora ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85e04a6sm780427e87.38.2024.09.26.05.01.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 05:01:37 -0700 (PDT)
+Date: Thu, 26 Sep 2024 15:01:13 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Lee Jones <lee@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: [PATCH] mfd: rtc: bd7xxxx Drop IC name from IRQ
+Message-ID: <ZvVNCfk10ih0YFLW@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="AWcGuu0+Dem7phy0"
+Content-Disposition: inline
 
-On Wed, 25 Sep 2024 06:04:14 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-> Split the code into separate functions to allow using the
-> common CPER filling code by different error sources.
-> 
-> The generic code was moved to ghes_record_cper_errors(),
-> and ghes_gen_err_data_uncorrectable_recoverable() now contains
-> only a logic to fill GEGB part of the record.
-> 
-> The remaining code to generate a memory error now belongs to
-> acpi_ghes_record_errors() function.
-> 
-> A further patch will give it a better name.
+--AWcGuu0+Dem7phy0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That bit is fine, I'm less sure about
-ghes_gen_err_data_uncorrectable_recoverable()
-Maybe you refactor that later, but I'd suggest doing so in this
-patch to make it 
-ghes_gen_data() with the uncorrectable and recoverable bits
-passed in as parameters.
+A few ROHM PMICs have an RTC block which can be controlled by the
+rtc-bd70528 driver. The RTC driver needs the alarm interrupt information
+=66rom the parent MFD driver. The MFD driver provides the interrupt
+information as a set of named interrupts, where the name is of form:
+<PMIC model>-rtc-alm-<x>, where x is an alarm block number.
 
-Jonathan
+=46rom the RTC driver point of view it is irrelevant what the PMIC name
+is. It is sufficient to know this is alarm interrupt for a block X. The
+PMIC model information is carried to RTC via the platform device ID.
+Hence, having the PMIC model in the interrupt name is only making things
+more complex because the RTC driver needs to request differently named
+interrupts on different PMICs, making code unnecessary complicated.
 
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  hw/acpi/ghes.c         | 118 +++++++++++++++++++++++++----------------
->  include/hw/acpi/ghes.h |   3 ++
->  2 files changed, 74 insertions(+), 47 deletions(-)
-> 
-> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> index 340a0263faf8..307b5a41d539 100644
-> --- a/hw/acpi/ghes.c
-> +++ b/hw/acpi/ghes.c
-> @@ -181,51 +181,30 @@ static void acpi_ghes_build_append_mem_cper(GArray *table,
->      build_append_int_noprefix(table, 0, 7);
->  }
->  
-> -static int acpi_ghes_record_mem_error(uint64_t error_block_address,
-> -                                      uint64_t error_physical_addr)
-> +static void
-> +ghes_gen_err_data_uncorrectable_recoverable(GArray *block,
-> +                                            const uint8_t *section_type,
-> +                                            int data_length)
->  {
+Simplify this slightly by always using the RTC driver name 'bd70528' as
+the prefix for alarm interrupts, no matter what the exact PMIC model is,
+and always request the alarm interrupts of same name no matter what the
+PMIC model is.
 
-That's an ugly name .  Suggestion below on instead passing parameters
-for the uncorrectable and recoverable parts and amking this
-ghes_gen_err_data()
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-> -    GArray *block;
-> -
-> -    /* Memory Error Section Type */
-> -    const uint8_t uefi_cper_mem_sec[] =
-> -          UUID_LE(0xA5BC1114, 0x6F64, 0x4EDE, 0xB8, 0x63, 0x3E, 0x83, \
-> -                  0xED, 0x7C, 0x83, 0xB1);
-> -
->      /* invalid fru id: ACPI 4.0: 17.3.2.6.1 Generic Error Data,
->       * Table 17-13 Generic Error Data Entry
->       */
->      QemuUUID fru_id = {};
-> -    uint32_t data_length;
->  
-> -    block = g_array_new(false, true /* clear */, 1);
-> -
-> -    /* This is the length if adding a new generic error data entry*/
-> -    data_length = ACPI_GHES_DATA_LENGTH + ACPI_GHES_MEM_CPER_LENGTH;
->      /*
-> -     * It should not run out of the preallocated memory if adding a new generic
-> -     * error data entry
-> +     * Calculate the size with this block. No need to check for
-> +     * too big CPER, as CPER size is checked at ghes_record_cper_errors()
->       */
-> -    assert((data_length + ACPI_GHES_GESB_SIZE) <=
-> -            ACPI_GHES_MAX_RAW_DATA_LENGTH);
-> +    data_length += ACPI_GHES_GESB_SIZE;
->  
->      /* Build the new generic error status block header */
->      acpi_ghes_generic_error_status(block, ACPI_GEBS_UNCORRECTABLE,
->          0, 0, data_length, ACPI_CPER_SEV_RECOVERABLE);
->  
->      /* Build this new generic error data entry header */
-> -    acpi_ghes_generic_error_data(block, uefi_cper_mem_sec,
-> +    acpi_ghes_generic_error_data(block, section_type,
->          ACPI_CPER_SEV_RECOVERABLE, 0, 0,
->          ACPI_GHES_MEM_CPER_LENGTH, fru_id, 0);
-Maybe should just pass in ACPI_CPER_SEV_RECOVERABLE 
-and ACPI_GEBS_UNCORRECTABLE in parameters.
+---
+This contains both the RTC and MFD changes in order to not break the
+functionality between commits to different subsystems.
 
-Main advantage being that should allow reuse for other combinations
-and it gets rid of the nasty function name!
+Changes are based to stuff being merged in for v6.12-rc1. I can rebase
+and re-spin when 6.12-rc1 is out if needed.
+---
+ drivers/mfd/rohm-bd71828.c | 12 ++++++------
+ drivers/rtc/rtc-bd70528.c  |  5 +----
+ 2 files changed, 7 insertions(+), 10 deletions(-)
 
-> -
-> -    /* Build the memory section CPER for above new generic error data entry */
-> -    acpi_ghes_build_append_mem_cper(block, error_physical_addr);
-> -
-> -    /* Write the generic error data entry into guest memory */
-> -    cpu_physical_memory_write(error_block_address, block->data, block->len);
-> -
-> -    g_array_free(block, true);
-> -
-> -    return 0;
->  }
->  
->  /*
-> @@ -399,14 +378,19 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
->      ags->present = true;
->  }
->  
-> -int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
-> +void ghes_record_cper_errors(const void *cper, size_t len,
-> +                             uint16_t source_id, Error **errp)
->  {
+diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-bd71828.c
+index 39f7514aa3d8..738d8b3b9ffe 100644
+--- a/drivers/mfd/rohm-bd71828.c
++++ b/drivers/mfd/rohm-bd71828.c
+@@ -32,15 +32,15 @@ static struct gpio_keys_platform_data bd71828_powerkey_=
+data =3D {
+ };
+=20
+ static const struct resource bd71815_rtc_irqs[] =3D {
+-	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC0, "bd71815-rtc-alm-0"),
+-	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC1, "bd71815-rtc-alm-1"),
+-	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC2, "bd71815-rtc-alm-2"),
++	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC0, "bd70528-rtc-alm-0"),
++	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC1, "bd70528-rtc-alm-1"),
++	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC2, "bd70528-rtc-alm-2"),
+ };
+=20
+ static const struct resource bd71828_rtc_irqs[] =3D {
+-	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC0, "bd71828-rtc-alm-0"),
+-	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC1, "bd71828-rtc-alm-1"),
+-	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC2, "bd71828-rtc-alm-2"),
++	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC0, "bd70528-rtc-alm-0"),
++	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC1, "bd70528-rtc-alm-1"),
++	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC2, "bd70528-rtc-alm-2"),
+ };
+=20
+ static struct resource bd71815_power_irqs[] =3D {
+diff --git a/drivers/rtc/rtc-bd70528.c b/drivers/rtc/rtc-bd70528.c
+index 59b627fc1ecf..954ac4ef53e8 100644
+--- a/drivers/rtc/rtc-bd70528.c
++++ b/drivers/rtc/rtc-bd70528.c
+@@ -236,7 +236,6 @@ static int bd70528_probe(struct platform_device *pdev)
+ {
+ 	struct bd70528_rtc *bd_rtc;
+ 	const struct rtc_class_ops *rtc_ops;
+-	const char *irq_name;
+ 	int ret;
+ 	struct rtc_device *rtc;
+ 	int irq;
+@@ -259,7 +258,6 @@ static int bd70528_probe(struct platform_device *pdev)
+=20
+ 	switch (chip) {
+ 	case ROHM_CHIP_TYPE_BD71815:
+-		irq_name =3D "bd71815-rtc-alm-0";
+ 		bd_rtc->reg_time_start =3D BD71815_REG_RTC_START;
+=20
+ 		/*
+@@ -276,7 +274,6 @@ static int bd70528_probe(struct platform_device *pdev)
+ 		hour_reg =3D BD71815_REG_HOUR;
+ 		break;
+ 	case ROHM_CHIP_TYPE_BD71828:
+-		irq_name =3D "bd71828-rtc-alm-0";
+ 		bd_rtc->reg_time_start =3D BD71828_REG_RTC_START;
+ 		bd_rtc->bd718xx_alm_block_start =3D BD71828_REG_RTC_ALM_START;
+ 		hour_reg =3D BD71828_REG_RTC_HOUR;
+@@ -286,7 +283,7 @@ static int bd70528_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 	}
+=20
+-	irq =3D platform_get_irq_byname(pdev, irq_name);
++	irq =3D platform_get_irq_byname(pdev, "bd70528-rtc-alm-0");
+=20
+ 	if (irq < 0)
+ 		return irq;
 
-> -    return ret;
-> +    read_ack_register = cpu_to_le64(0);
-> +    /*
-> +        * Clear the Read Ack Register, OSPM will write it to 1 when
-> +        * it acknowledges this error.
-> +        */
+base-commit: abf2050f51fdca0fd146388f83cddd95a57a008d
+--=20
+2.45.2
 
-Indent issue.
 
-> +    cpu_physical_memory_write(read_ack_register_addr,
-> +        &read_ack_register, sizeof(uint64_t));
-> +
-> +    /* Write the generic error data entry into guest memory */
-> +    cpu_physical_memory_write(error_block_addr, cper, len);
-> +
-> +    return;
-> +}
+--=20
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =3D]=20
+
+--AWcGuu0+Dem7phy0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmb1TPYACgkQeFA3/03a
+ocXM2wf/TJsvnxsoKL3yZQ7TUg2mD3Z5ZPUBICLPmvYDzTClzXG2QyAFNtk+4uXf
+XsnP1/gyrdHogyprRA+0B7vFlCT8F7ZS+GXRlOH++nCF+OxJWURLDB4CMh2F5Ib9
+gaBvjN/bOPP+cvXdgHmFIyp0pAc8Jd1mlYjweUXxNwyjK7qNzxImAPc8EOpOReY6
+9gG6xRFnae20+DID56GszMuHhgYEUWU392rSSJmecSeq3HuS5PZ+fdKKHmesJN28
+Gqc7YaP2pQQXroRQ0++DclxHLwBpCqePa96qBY3idkWL2U6i+e+MgviNzFBzDMri
+stv5XDac4cxEyGj63r2MHNe46LL5rQ==
+=9uG7
+-----END PGP SIGNATURE-----
+
+--AWcGuu0+Dem7phy0--
 
