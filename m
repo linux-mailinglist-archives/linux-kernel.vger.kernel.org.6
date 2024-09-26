@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-340386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2259A987299
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:15:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F85C9872A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE1361F2559C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:15:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52CF01C246B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75AE1AD9C9;
-	Thu, 26 Sep 2024 11:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC01B1AD9C9;
+	Thu, 26 Sep 2024 11:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="QJ9Ocagr"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="kLJbUNqT"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8041AED32;
-	Thu, 26 Sep 2024 11:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663131AFB16;
+	Thu, 26 Sep 2024 11:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727349309; cv=none; b=dJcHLhXpqkXKWtsS7agSYIAGQI0lX6usP2uA0N050cMdZYt00ylYMpzJjrY//QFP/GfBkwllsNJCZVxPaSMHdcFT20oiT+z9dNE0LMnXklvvNmaRXpWvfYWJx8bbUnL+gRB7iVq+patgISxLgo+cgsstjs2iV3TBkOBXhIMYqA8=
+	t=1727349314; cv=none; b=gEOm0PenbwrwWJHYc4eRrqbPvY6GXQ2ra4hT4zR70D427Rcp4gKKQADXn201SUQhA5jRdHWyxE6nCzgANGc6UjenM5sT5+Qw8+4CDdkcSg8VxTNFtYZXm57hSFEXThnbofbCD4TSQN62d+2XDVzlPcZ8FWXj45jJ17VHj442io0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727349309; c=relaxed/simple;
-	bh=3V8NW/rf9vOn+TKOTwB2fVQqT9nY2zvg8hK1TlxmwKA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tZ62TSzwY2VRGq4r0xeFWMr6R7hZONLgp3l+yQV24/pC4O/9zRKWzsM1yC9nm6qZuo9HR0EQv3kPpqXoc8u+gls3VYov40tEjPA5eOtpTlsLQmKrFqA8HglMHaIawx3BZqWluBl+llgsuPk6zKyvjCz/eHfZCSxJnpdlQH80i6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=QJ9Ocagr; arc=none smtp.client-ip=210.61.82.184
+	s=arc-20240116; t=1727349314; c=relaxed/simple;
+	bh=RuWwgIrp4FSS2bB+jFh4ZS3m2FyzwojlU2dvrFwJNxQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aEe2hJAq3hjEYyxVXbQRQi3ZwsbBXK7ZcF3jOyS0QHhuZwodxJCudpjk0wccPap4BPWqB8cjJoxBpNTWxghSzq2pUoRcj/x6Yx0C43ob/M9A30SpVimXIONSQoYw1sGlVFRHlRXkd/hYJl3+Zb+6spAEKwnSbiL1F8/qApIBtWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=kLJbUNqT; arc=none smtp.client-ip=60.244.123.138
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 92e03a607bf811ef8b96093e013ec31c-20240926
+X-UUID: 9472d3c47bf811efb66947d174671e26-20240926
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=/DUrsgWKLdIMOKdjcGOMZqy/MrbuUyNopMqTRi0qj/4=;
-	b=QJ9OcagrU5LB+6KO7amvQttH1HSLVhF3i219T5Lv8JaHYn4WQbxX+fL+bDsY012X5fX+RGhmux7+SWObcmojLvOCe0FdvVypKUUEarmqFD6QeGDNsXJjEaYrdrc/nPePZzumEfrXqdQrjKGtdk5EfyLljw8NHXcjok6/4hay+hU=;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=0qs5n6aiVKXUZ4oPXJXzyukG/oL76swZuP9snTdQB3c=;
+	b=kLJbUNqTtw3xcBRt0Q7WkR+TX5IfmbarZW+ENV7wMfS0pRstIOYDF4UM/EtvJhnlGQ3zR0FBh5tktRUOyczPTlfZGjmtsIwvUfEcgZjXB4ScYjzLAQySA2p1tAygvZGpCgmo0FeME2Zg9ewaNB79WBoKCGTkLDPA2VEQnM/3PuE=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:6e6c23f6-a96f-44e8-948b-8379b9ea3437,IP:0,U
+X-CID-O-INFO: VERSION:1.1.41,REQID:f220c28a-cc58-4c35-9245-c3930c10c348,IP:0,U
 	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
 	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:4df49a9e-8e9a-4ac1-b510-390a86b53c0a,B
+X-CID-META: VersionHash:6dc6a47,CLOUDID:77f49a9e-8e9a-4ac1-b510-390a86b53c0a,B
 	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
 	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
 	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
 X-CID-BVR: 0
 X-CID-BAS: 0,_,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 92e03a607bf811ef8b96093e013ec31c-20240926
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
+X-UUID: 9472d3c47bf811efb66947d174671e26-20240926
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
 	(envelope-from <macpaul.lin@mediatek.com>)
 	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 522043508; Thu, 26 Sep 2024 19:15:01 +0800
+	with ESMTP id 345388608; Thu, 26 Sep 2024 19:15:04 +0800
 Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1118.26; Thu, 26 Sep 2024 19:15:00 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
@@ -62,8 +63,8 @@ To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
 	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>, Joerg
- Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
+	Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>, "Joerg
+ Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
 	<robin.murphy@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>,
 	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, CK Hu
 	<ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>, Tinghan Shen
@@ -75,14 +76,16 @@ To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
 	<linux-arm-kernel@lists.infradead.org>, Alexandre Mergnat
 	<amergnat@baylibre.com>
 CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>, Chris-qj
- chen <chris-qj.chen@mediatek.com>, MediaTek Chromebook Upstream
+	Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>, "Chris-qj
+ chen" <chris-qj.chen@mediatek.com>, MediaTek Chromebook Upstream
 	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
 	<wenst@chromium.org>
-Subject: [PATCH v2 1/5] arm64: dts: mt8195: Fix dtbs_check error for infracfg_ao node
-Date: Thu, 26 Sep 2024 19:14:45 +0800
-Message-ID: <20240926111449.9245-1-macpaul.lin@mediatek.com>
+Subject: [PATCH v2 2/5] dt-bindings: iommu: mediatek: Fix interrupt count constraint for new SoCs
+Date: Thu, 26 Sep 2024 19:14:46 +0800
+Message-ID: <20240926111449.9245-2-macpaul.lin@mediatek.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20240926111449.9245-1-macpaul.lin@mediatek.com>
+References: <20240926111449.9245-1-macpaul.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,40 +94,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10-1.215000-8.000000
+X-TMASE-MatchedRID: P0y1Pz0bU7nwBTQ+XvV6VYzb2GR6Ttd3MZm0+sEE9msY0A95tjAn+9EQ
+	LJPlYQqE0KHDXPxFjpD1VmTZnVKT+CaIC0lz+Wv3rQcmzcV8ovxbAoaK+wS4jUS/boWSGMtdi3N
+	TyIt6V8peAwsJFuYQ4wTqbINU49IGbC1/2cudIH8SS5pQAyYxiqAPS3vFyaW6SSUXkvSVAdxZoZ
+	UwtnkREuLzNWBegCW2wgn7iDBesS0qyYS0oyUVZrz092AhSRMerXqvQ7Xsx4NYyfd5fyfN9NdvP
+	HFMK5cWUMepMtjA+idw3nV6gQuaZHRLk7foSK6ptbu7GfNV+t87DHWNfN2q6oSVUZZHNLr+RgV6
+	Hsqyx11QaONuZ6Jr4g9k3l8EaYIcOQLK/ZH4rlaeqD9WtJkSIw==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10-1.215000-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	3C0E2BE1189122A4A3757AF41D63E367D739BF21E4BD2B17129FB16398AB53EB2000:8
 X-MTK: N
 
-The infracfg_ao node in mt8195.dtsi was causing a dtbs_check error.
-The error message was:
+The infra-iommu node in mt8195.dtsi was triggering a CHECK_DTBS error due
+to an excessively long 'interrupts' property. The error message was:
 
-syscon@10001000: compatible: ['mediatek,mt8195-infracfg_ao', 'syscon',
-                 'simple-mfd'] is too long
+  infra-iommu@10315000: interrupts: [[0, 795, 4, 0], [0, 796, 4, 0],
+                     [0, 797, 4, 0], [0, 798, 4, 0], [0, 799, 4, 0]]
+                     is too long
 
-To resolve this, remove 'simple-mfd' from the 'compatible' property of the
-infracfg_ao node.
+To address this issue, add "minItems: 1" and "maxItems: 5" constraints to
+the 'interrupts' property in the DT binding schema. This change allows for
+flexibility in the number of interrupts for new SoCs.
+The purpose of these 5 interrupts is also added.
 
-Fixes: 37f2582883be ("arm64: dts: Add mediatek SoC mt8195 and evaluation board")
+Fixes: bca28426805d ("dt-bindings: iommu: mediatek: Convert IOMMU to DT schema")
 Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8195.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/iommu/mediatek,iommu.yaml        | 25 ++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
 Changes for v2:
- - no change.
+ - commit message: re-formatting and add a description of adding 5 interrupts.
+ - add 'description' and 'maxItems: 5' for 'interrupt' property of
+   'mt8195-iommu-infra'
+ - others keeps 'maxItems: 1'
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-index e89ba384c4aa..2e1b41359b43 100644
---- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-@@ -487,7 +487,7 @@ topckgen: syscon@10000000 {
- 		};
+diff --git a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
+index ea6b0f5f24de..fdd2996d2a31 100644
+--- a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
++++ b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
+@@ -96,7 +96,8 @@ properties:
+     maxItems: 1
  
- 		infracfg_ao: syscon@10001000 {
--			compatible = "mediatek,mt8195-infracfg_ao", "syscon", "simple-mfd";
-+			compatible = "mediatek,mt8195-infracfg_ao", "syscon";
- 			reg = <0 0x10001000 0 0x1000>;
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
+   interrupts:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 5
+ 
+   clocks:
+     items:
+@@ -210,6 +211,28 @@ allOf:
+       required:
+         - mediatek,larbs
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - mediatek,mt8195-iommu-infra
++
++    then:
++      properties:
++        interrupts:
++          description: |
++            The IOMMU of MT8195 has 5 banks: 0/1/2/3/4.
++            Each bank has a set of APB registers corresponding to the
++            normal world, protected world 1/2/3, and secure world, respectively.
++            Therefore, 5 interrupt numbers are needed.
++          maxItems: 5
++
++    else:
++      properties:
++        interrupts:
++          maxItems: 1
++
+ additionalProperties: false
+ 
+ examples:
 -- 
 2.45.2
 
