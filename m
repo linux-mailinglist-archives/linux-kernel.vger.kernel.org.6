@@ -1,114 +1,117 @@
-Return-Path: <linux-kernel+bounces-340449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2F7987391
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:27:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3EDE987395
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EC32B26D8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:27:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F4151F272B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E553717BEC7;
-	Thu, 26 Sep 2024 12:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B9517BB17;
+	Thu, 26 Sep 2024 12:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ifVOkBFs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TF3BC4rZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0E5156875;
-	Thu, 26 Sep 2024 12:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725F89474;
+	Thu, 26 Sep 2024 12:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727353659; cv=none; b=JXg0JoQrRWDf5Mu6L6nqBGfubdXm4xnK4U/QuCv1ZYkGA5UOs/sdG8FIKQeOtr19NDmHfW4Qqk7jJV8Rxd6bi30FhMs9GeNWqZKpReffZFu/ZA/Y3/06qhAnN7hteGUZph1armYsKNiE3cT1L5vsrq9ImhzbFZQuyhYmiu2zW8w=
+	t=1727353790; cv=none; b=uzVIQh4h0+P6y4DHy2U3d9Mul8cpIrKxA56snNqhLhKbeEkkVqoz5I6BieQ3TosNd0QMVCR8jgFwkfZ4q7dMzCr7fb+lccB2zCrt+x5btd0KaF++8lFaUH+VUKVPb7f1kUDJMka5qNE2R0qUGV+zUsGq8+2G7SDAR60mkGMcrjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727353659; c=relaxed/simple;
-	bh=YnO8jzSwusUqP5MrbcUGwNCHwAl9f2jDtgahK2k07Qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ix62nOlOlrm35B1drG98JzFyK5exgMfx0J2WPmGTWe5+hwAedDZEaUf2Wdc1Ax7Iz1eyUQ5XNWg6dleB7+ipJWH1E45kJ0OwL6tVDZfNjvppj+uwWjIR9WBFgHtThCIuzEGLoc+V//ciGWjSb4QlQ0MMLpsIFGrrbDQKWyXSjWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ifVOkBFs; arc=none smtp.client-ip=198.175.65.19
+	s=arc-20240116; t=1727353790; c=relaxed/simple;
+	bh=4o9N701hsXjuJDGiYmXoSpYXfkYkrSo/UF/Lil/I1PU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PBXEYIOZOyjDuZO4z4Ma/F4IIYZ7mu8mmT6cJyGG8xbbzmWMsIM+eGXe7wqTXds7G1WFpZXq1faBbshVP3jFHdjRkSrsqly97Aba6o9fRNTIypxqHdWL4sG0VnIqsFp6OAe8bnF297LPlKTTLLCnFen0f1HT2wetjNRsvehaKM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TF3BC4rZ; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727353658; x=1758889658;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YnO8jzSwusUqP5MrbcUGwNCHwAl9f2jDtgahK2k07Qs=;
-  b=ifVOkBFsHWWuvGt5xPGGmfR+z+fp/VdDFltHVrqice1W402H0cj0c/Yk
-   MXXxiiZ3dlc0/mmecO/pEGC6nZhLCw8kbvrssTV3FYFTL3mLRLL4yg4Ud
-   kMqlkHhwOzNgpkcpW3kMVfWNDVsVJ+u1TyxdTgNUdSMjG1hHGOKESTQu6
-   hfixUJJEKDKjVoiQrCgAxvXBjIHj5JZfkyHmv+/puMSUTyNd1uv7hWFgP
-   Mu1v1ofl4UDrE/2P3kbCl7D3NFyCoNspCq4uXACvBl6kndoUpFIcGRfsL
-   aQYQwIWkczkoC6HE58CtpUY/j2vpKht/ermHMzdgvA5nSe5AIi8JZgucw
+  t=1727353789; x=1758889789;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=4o9N701hsXjuJDGiYmXoSpYXfkYkrSo/UF/Lil/I1PU=;
+  b=TF3BC4rZzMaHhDX50qtxBsKvXC/shSlZgiE35YXFwwLHHBLXXeeyEReD
+   HDFL+VrtEZJH53jcwgyeqrh0TFskTmRlI0T379SiEOmD9qMz4riQQWowB
+   YuARDyEIqjeWQ57hmXd+hMmF9mm81fw53B9/YLW4PN2Piw1soRwYXIRPv
+   vfukodpcWvL1s8bbG92Z6maUMkaVZGMdE3b0bfap48Xza5D0ceG22qhEV
+   nsBAn2rv5nEgXbjARUzCXp9rrnzzwbYHL3/kilu2iA6YJd5P1NuiA4o5g
+   N8SN+0WTmwCUqsSoNJKK3Ks7orz5KNy1atrzkQg0FAl52dnWEv3hredug
    A==;
-X-CSE-ConnectionGUID: RWCEJQ/6Rmql6rmVW3R4tw==
-X-CSE-MsgGUID: 7+nQZ3xEQMKfzAt8WU0kaQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26309735"
+X-CSE-ConnectionGUID: Tlj2SzzcTuKWrU8k+cFTYA==
+X-CSE-MsgGUID: FFpPgyPJQaK6t6JsveEcow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26566823"
 X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="26309735"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 05:27:37 -0700
-X-CSE-ConnectionGUID: DdVHgut6RUqt5LdzA9CnAQ==
-X-CSE-MsgGUID: obOfpQMVTlSJ1ji0jd+aqg==
+   d="scan'208";a="26566823"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 05:29:49 -0700
+X-CSE-ConnectionGUID: JS51xHClSNSl5Xfh1EO8tw==
+X-CSE-MsgGUID: sJtWsRhHRY2L7oL2CusJ/g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="76907851"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 05:27:34 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1stnal-0000000DC2k-1uEh;
-	Thu, 26 Sep 2024 15:27:31 +0300
-Date: Thu, 26 Sep 2024 15:27:31 +0300
+   d="scan'208";a="102949819"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 26 Sep 2024 05:29:47 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 2CC03432; Thu, 26 Sep 2024 15:29:46 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-usb@vger.kernel.org,
-	Ajay Gupta <ajayg@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Haotien Hsu <haotienh@nvidia.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Utkarsh Patel <utkarsh.h.patel@intel.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 0/2] usb: typec: ucsi: ccg: Adjustments for common code
- in two functions
-Message-ID: <ZvVTMyn9VtuT-tIr@smile.fi.intel.com>
-References: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
- <jjsbnitbajdw7dc4plkbb55ezl2cdbnrfws7hnoigbzasvdzua@puhrwwlu4lvv>
- <ZvVPlInCFajkeFy9@smile.fi.intel.com>
- <CAA8EJpo0Q0Wn-GzqmPeNFfG_Hr-o8E7F_VuO47EbxKx=0OQhyQ@mail.gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v2 1/1] usb: typec: stusb160x: Make use of i2c_get_match_data()
+Date: Thu, 26 Sep 2024 15:29:15 +0300
+Message-ID: <20240926122944.1251923-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8EJpo0Q0Wn-GzqmPeNFfG_Hr-o8E7F_VuO47EbxKx=0OQhyQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 26, 2024 at 02:20:19PM +0200, Dmitry Baryshkov wrote:
-> On Thu, 26 Sept 2024 at 14:12, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, Sep 26, 2024 at 12:26:24AM +0300, Dmitry Baryshkov wrote:
+Get matching data in one step by switching to use i2c_get_match_data().
+As a positive side effect the matching data is qualified as a constant.
 
-...
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: fixed rebase issue which led to the compilation error (LKP)
+ drivers/usb/typec/stusb160x.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-> > but in any case the thing is that kfree()
-> > probably can be done using __free(). Then PM runtime handled differently.
-> 
-> That's a separate cleanup in my opinion.
-
-Yes and for that we do not need an intermediate change, right?
-
+diff --git a/drivers/usb/typec/stusb160x.c b/drivers/usb/typec/stusb160x.c
+index f3140fc04c12..6d85b25b40bc 100644
+--- a/drivers/usb/typec/stusb160x.c
++++ b/drivers/usb/typec/stusb160x.c
+@@ -633,9 +633,8 @@ MODULE_DEVICE_TABLE(of, stusb160x_of_match);
+ 
+ static int stusb160x_probe(struct i2c_client *client)
+ {
++	const struct regmap_config *regmap_config;
+ 	struct stusb160x *chip;
+-	const struct of_device_id *match;
+-	struct regmap_config *regmap_config;
+ 	struct fwnode_handle *fwnode;
+ 	int ret;
+ 
+@@ -645,8 +644,8 @@ static int stusb160x_probe(struct i2c_client *client)
+ 
+ 	i2c_set_clientdata(client, chip);
+ 
+-	match = i2c_of_match_device(stusb160x_of_match, client);
+-	regmap_config = (struct regmap_config *)match->data;
++	regmap_config = i2c_get_match_data(client);
++
+ 	chip->regmap = devm_regmap_init_i2c(client, regmap_config);
+ 	if (IS_ERR(chip->regmap)) {
+ 		ret = PTR_ERR(chip->regmap);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0.rc1.1336.g36b5255a03ac
 
 
