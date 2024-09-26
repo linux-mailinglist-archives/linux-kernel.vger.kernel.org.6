@@ -1,160 +1,165 @@
-Return-Path: <linux-kernel+bounces-339940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D14986C6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:27:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19509986C6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 001B02827AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:27:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C07B1C2175E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CD5188A32;
-	Thu, 26 Sep 2024 06:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF86318786D;
+	Thu, 26 Sep 2024 06:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="X7wcS/3p"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jXN2Au9O";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MDw1giAo"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EB81D5AB1
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868DA1D5AA2
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727332028; cv=none; b=drPYIzOUBNAMq3MBRr75bqdiAVOZC8Yop+t/JAkGc2uw99vmxa1FAKtWin7J47AG+bU1619b7ouzl+7J3QkJghsZATtB32nqiVlHieFnXej0xTveHbRSHOjc3FhAoA2N6uoBGX8UwzY5e+KLQdxBAS7UkM5/4dVCI/AuARzkYpI=
+	t=1727332121; cv=none; b=TrU7er0LKm3lXoRM2tT941q+GRkv38nZCNlfKm9ROAiKq+yig+oRXRM2C1RQktucCjhpPHrOG7riMg4Rw90rQguYZHaS/2ad+2TSwxGUeD4ujqhY9GtPbX/ngQUZ3rIyuD/7SrSwuSbmxbIVSduFczXqb3Jixgfv0BZB5eiCvXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727332028; c=relaxed/simple;
-	bh=6fbhbxf6IoUQMR/4ZCUq9VkfWTkQmOsWs1P3OR8ipKk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ewF5l5KO40pgGbaD1kyELXGjnWtkNOIaXQ8XnbJicEmOeYgecvQWNpnwvRJyy8RSybDcuzb8qdsF7BHQpzufoOT2UwRrgfuOXo5PyvoGlw1G4FsmnYN0iRDLIOQEL1bS+VfN9UpaDzQJfdA24OokVygxffVL1ZCtubDv7M8rujk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=X7wcS/3p; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53568ffc525so752578e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727332023; x=1727936823; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iJyq5r7owmQ4fSxu3qvbINvtGvihvArgf60IEDytVxw=;
-        b=X7wcS/3pG1/bHllqVoD5usiwkIPEtgFtusdi0MGU19D6n2JhUF0zeI0gPAGcmmCMR5
-         YL6FUkOU6KL0XY8ODen5z+aXr9lf+UEQTPo6M44Qs+Hs3MO/h8arFG+vW4p+hJ6HVMMo
-         V3dQbYNv5YhOEh6xtUckewWGCku6ZBQgTL2JyyXce/Xx89GPcWDAFHwC5LI6VhJvQoFK
-         iJ6Q4Y8Yl0KZxgV8VTwItkS80eLa+90ieHPRWp+1vj/6C6Xaouq+86lma2gx7OCjjU8w
-         0gMLqSOl6vc7KnzKNEeL5AjYwmESbytdaoggUEtdBkSgVXdWYshXWnL0QEejMAnBc3p+
-         91ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727332023; x=1727936823;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iJyq5r7owmQ4fSxu3qvbINvtGvihvArgf60IEDytVxw=;
-        b=nplfpnZgQADKccdH3qBhPoAtlldbbXbT4OIkcPs/P4k/qc8H2sEDa7IkRKday2YoX/
-         2hDbcTjQMbe08wlY/jcNCD+pEiLxX8lUbwmMtiPDY/aGXjOnD3I6jmBBSKZJ6tpHXijo
-         P3CSYz0JSiqFBlbbFzjQJVvNQnFi7lkzbHmB3TcV92rF/mwv3XHBQ4aUepJC9Ldf9wuF
-         mwd6wDZGSNaB0DGLQK5qvoghWxDkLZYo6IYACMWOPTyxngbT688CqIKYFkxLMGamqy0x
-         MnUsakHA4vfNTegOAQ7/goAvDWhKiRj7VPUKuKotbcscu0ZsmS5mJg0WSotRuos4B26N
-         spug==
-X-Forwarded-Encrypted: i=1; AJvYcCXSqTr7KKbCRoMo+EKVVqWELarCSC6ly7f8ouMgXH8Vz+UMTr1bncXSCPtk+1nL3Xc5L7V68Ow9FYCFXdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5976uJpslQP1RaOTI0w6pwqOxteKxcHrE1vvR9y/6EutyQyJH
-	zAmGzx2pc4rNIPdj9NhnzaY+HvZJVd1XzyxQXoM77ulqW9c7vPV3e1IKJ50u95g=
-X-Google-Smtp-Source: AGHT+IEia7ugddIZ5i+C+qOLJmpmYAtyNjasa7jKxw0AtxbpnJ3u4LiXkycHhFhzq4yqO8GzFxLoSA==
-X-Received: by 2002:a05:6512:3044:b0:52e:a68a:6076 with SMTP id 2adb3069b0e04-538775670eamr3406420e87.49.1727332022769;
-        Wed, 25 Sep 2024 23:27:02 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:75b8:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:75b8:7285:c2ff:fedd:7e3a])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf48c40asm2783859a12.1.2024.09.25.23.27.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 23:27:02 -0700 (PDT)
-Message-ID: <fce898e6-0296-4c5e-9e6a-6b5e3fc87b95@suse.com>
-Date: Thu, 26 Sep 2024 09:27:00 +0300
+	s=arc-20240116; t=1727332121; c=relaxed/simple;
+	bh=WlIFDJInKZtVYW0PXevAogwdC0j2srxDEHaooRYGe2Q=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=SYJ8WI3exwZSWHL6ukUcPp+WuAp2AG3gvIGt8FOu4BmThrYBQPysumXEsQ++KNOWmT2RdlsCf1Hk++QLgcCVdnIJ5m7ysqfRrVVK9MfupBa1lJHgkfn7zc4X7Tlgs1nvCWyN4lETI/F2cX3BqK2rWrQZ+IXB9R6aoD9GOFPQW/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jXN2Au9O; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MDw1giAo; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 90C32138031A;
+	Thu, 26 Sep 2024 02:28:38 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 26 Sep 2024 02:28:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727332118;
+	 x=1727418518; bh=Wzu0f2mKdw7/gLDCyB3jOvx4YvyPoGu6VkYjr384628=; b=
+	jXN2Au9OVv20ZKrPPLIirBd0pgHwKGvcPQBdo4FrdT0TmBfNGG34u9uH0waVJWmd
+	jOBnUNHH5reAdZHXGKIm/EufOM4a7rDN2YMQFn//O+nZCuVE+OpgvnR9MS7dejWH
+	ImRHziWEDNVaSu4xmqa3nOF6pfnyJzsmeoZNcixS9YQ1USDkzcq2KeaU50f5sy8I
+	D0kB3z2NzCFTCuW/5TmLKdr+4ygEtM5NT3wvd2KDOFWWMMFd6ulGeE/SuBbes3mD
+	5EYmsVnItzewJo8BLOCFn6Hg/PhV6d581cp27pz195uknRmyhOG4qzfJvbnP8DN6
+	ekTd7Rs0BiEL+DLR2gElzg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727332118; x=
+	1727418518; bh=Wzu0f2mKdw7/gLDCyB3jOvx4YvyPoGu6VkYjr384628=; b=M
+	Dw1giAojHOOcoc0/97rxAUKXxtD1OJYPpli3IbNmIJAadHgXzzknGjN7b7SNLKNx
+	OevP3amQoANPXGrIBEnJOMLHkKQ5o6QPGwUBaOpXTDslf2bSw2jIYIVV8ZfFLvNf
+	CmG+Mnejyy4mJcAqIrPu6on1UOnHixKghsi6thxWxltp0baWeO1YcwQWqjioWZ9y
+	2iB9NuZHup1JcEPwCNVh/lCZhpxMwqcO2Qd9rCpRvZWfTXCOTHKG+of9YbOGQmIq
+	RBCKovm5ohmQ4FQPDK3HIpntlXl0gMo3S/Z4a8IEOpxU2BQ5a3RmXwd54xDtihNO
+	n6wn/uQBd0WdGFDH6wf7w==
+X-ME-Sender: <xms:Ff_0ZmXzArUg8wHwTCxI5q-eCM74op_jz4dfcAnbbva7rAIIknHItA>
+    <xme:Ff_0Zil8APh_9m7PWKdFKcF5aUM1QdLJnzUZ2-fLZ3CQag5wBAICAGWLK3itSrIYv
+    yw0KovnqIELWQ73dPk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtiedguddtlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    fedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnghgvlhhoghhiohgrtggthh
+    hinhhordguvghlrhgvghhnohestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopehm
+    rghrvgigseguvghngidruggvpdhrtghpthhtohepkhgvrhhnvghlseguhhdqvghlvggtth
+    hrohhnihgtshdrtghomhdprhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtgho
+    mhdprhgtphhtthhopehsrghrrghvrghnrghksehgohhoghhlvgdrtghomhdprhgtphhtth
+    hopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvihhlrdgr
+    rhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrh
+    hmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthho
+    pehimhigsehlihhsthhsrdhlihhnuhigrdguvghv
+X-ME-Proxy: <xmx:Ff_0ZqYL7gJFQgYTbq4XKTWPzA33Ez5cc_pV0VM0EtmdOySSlv14Jg>
+    <xmx:Fv_0ZtWFvROHTrT8XSIFc1HJomVaKRwqa5O19DgQBmgbNy2TCAbdxA>
+    <xmx:Fv_0ZgkejwAgXtA-VFGR78U16hmQkbCQeqjthtgasNXgMuBbGp1Tkg>
+    <xmx:Fv_0Zid8HtFeyjrw2ulnAEv_WJQn57dFJjiIG80kZ4qXzdtpuUhUbg>
+    <xmx:Fv_0Zr_ChVDjaaK5_SJPGIwMYYqhOBY0SmI74mQ-8hEuuEs8n1CY5MKz>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id DBE0F2220071; Thu, 26 Sep 2024 02:28:37 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/8] x86/virt/tdx: Prepare to support reading other
- global metadata fields
-To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
- kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
- peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
- dan.j.williams@intel.com, seanjc@google.com, pbonzini@redhat.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, adrian.hunter@intel.com
-References: <cover.1727173372.git.kai.huang@intel.com>
- <101f6f252db860ad7a7433596006da0d210dd5cb.1727173372.git.kai.huang@intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <101f6f252db860ad7a7433596006da0d210dd5cb.1727173372.git.kai.huang@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Date: Thu, 26 Sep 2024 06:28:17 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Marek Vasut" <marex@denx.de>, linux-arm-kernel@lists.infradead.org
+Cc: kernel@dh-electronics.com,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Fabio Estevam" <festevam@gmail.com>,
+ "Jeff Johnson" <quic_jjohnson@quicinc.com>,
+ "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ "Saravana Kannan" <saravanak@google.com>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Message-Id: <a9967a8c-8e03-44c2-8f79-14c6dd5d74af@app.fastmail.com>
+In-Reply-To: <20240925220552.149551-1-marex@denx.de>
+References: <20240925220552.149551-1-marex@denx.de>
+Subject: Re: [PATCH v2] soc: imx8m: Probe the SoC driver as platform driver
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+On Wed, Sep 25, 2024, at 22:04, Marek Vasut wrote:
+> With driver_async_probe=* on kernel command line, the following trace is
+> produced because on i.MX8M Plus hardware because the soc-imx8m.c driver
+> calls of_clk_get_by_name() which returns -EPROBE_DEFER because the clock
+> driver is not yet probed. This was not detected during regular testing
+> without driver_async_probe.
+>
+> Convert the SoC code to platform driver and instantiate a platform device
+> in its current device_initcall() to probe the platform driver. Rework
+> .soc_revision callback to always return valid error code and return SoC
+> revision via parameter. This way, if anything in the .soc_revision callback
+> return -EPROBE_DEFER, it gets propagated to .probe and the .probe will get
+> retried later.
 
+Thanks for the new version, that was quick!
 
-On 24.09.24 г. 14:28 ч., Kai Huang wrote:
-> The TDX module provides a set of "Global Metadata Fields".  They report
-> things like TDX module version, supported features, and fields related
-> to create/run TDX guests and so on.  TDX supports 8/16/32/64 bits
-> metadata field element sizes.  For a given metadata field, the element
-> size is encoded in the metadata field ID.
-> 
-> For now the kernel only reads "TD Memory Region" (TDMR) related metadata
-> fields and they are all 16-bit.  Thus the kernel only has one primitive
-> __read_sys_metadata_field16() to read 16-bit metadata field and the
-> macro, read_sys_metadata_field16(), which does additional build-time
-> check of the field ID makes sure the field is indeed 16-bit.
-> 
-> Future changes will need to read more metadata fields with different
-> element sizes.  Choose to provide one primitive for each element size to
-> support that.  Similar to the build_mmio_read() macro, reimplement the
-> body of __read_sys_metadata_field16() as a macro build_sysmd_read(_size)
-> in size-agnostic way, so it can be used to generate one primitive for
-> each element size:
-> 
->    build_sysmd_read(8)
->    build_sysmd_read(16)
->    ..
-> 
-> Also extend read_sys_metadata_field16() take the '_size' as argument
-> (and rename it to read_sys_metadata_field() to make it size-agnostic) to
-> allow the READ_SYS_INFO() macro to choose which primitive to use.
-> 
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> +static struct platform_driver imx8m_soc_driver = {
+> +	.probe = imx8m_soc_probe,
+> +	.driver = {
+> +		.name = "imx8m-soc",
+> +	},
+> +};
+> +module_platform_driver(imx8m_soc_driver);
+> +
+> +static int __init imx8_soc_init(void)
+> +{
+> +	struct platform_device *pdev;
+> +
+> +	pdev = platform_device_register_simple("imx8m-soc", -1, NULL, 0);
+> +
+> +	return IS_ERR(pdev) ? PTR_ERR(pdev) : 0;
+> +}
+>  device_initcall(imx8_soc_init);
 
-<snip>
+Did you run into problems with the method I suggested first?
 
-> +#define build_sysmd_read(_size)							\
-> +static int __read_sys_metadata_field##_size(u64 field_id, u##_size *val)	\
-> +{										\
-> +	u64 tmp;								\
-> +	int ret;								\
-> +										\
-> +	ret = tdh_sys_rd(field_id, &tmp);					\
-> +	if (ret)								\
-> +		return ret;							\
-> +										\
-> +	*val = tmp;								\
-> +										\
-> +	return 0;								\
->   }
->   
-> -#define read_sys_metadata_field16(_field_id, _val)		\
-> +build_sysmd_read(16)
+I don't like the way that this version still registers both the
+device and driver regardless of the hardware it runs on, I'd
+prefer to leave the platform check in the initcall and
+only register them if we are actually on an imx8 machine.
 
-nit: Generally the unwritten convention for this kind of macro 
-definition is to capitalize them and be of the from:
+Having two initcalls also makes it impossible to build this
+as a loadable module, which is why I suggested
+platform_create_bundle(). I think you can keep the
+of_device_id lookup and pass the imx8_soc_data pointer
+as the platform_data to platform_create_bundle.
 
-DEFINE_xxxxx - similar to how event classes are defined.
-
-perhaps naming this macro:
-
-DEFINE_TDX_METADATA_READER() ought to be more descriptive, also the
-"md" contraction of metadata also seems a bit quirky (at least to me).
-
-It's not a deal breaker but if there is going to be another posting this 
-might be something to consider.
-
-<snip>
+    Arnd
 
