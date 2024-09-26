@@ -1,91 +1,120 @@
-Return-Path: <linux-kernel+bounces-340422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FCC198733B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:06:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B95498733C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8029B224F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:06:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B33E1C24BA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585A81714C6;
-	Thu, 26 Sep 2024 12:06:49 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C72B1714CC;
+	Thu, 26 Sep 2024 12:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AbbmnWO6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E9A16DEDF;
-	Thu, 26 Sep 2024 12:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE29314F10E
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727352409; cv=none; b=jI+nCYXsx+TrALCb6AqUGYGOwA6Ynzjv1fn5K/sNBVgrFkw5wv3DbiFkJhtHrBfaBnkqEDWMimabpEsBGsCziyj++vjvugdrF+F4cSzjOqT6O25eYucPhUsEtE4vp4acmxqdQ7zXLEpr3vUMPtUgHjvw//6EI2jsLdJdxJ0qrV4=
+	t=1727352429; cv=none; b=F3vYjOg3IzmMr6IexCsU06Gi+DPhjxJZRUhTrnoocRO/ZLcgQ56WBPkChd73GP9w04tvGViYADz1r4zeTQNrRKh17sl5Uo3pLvH2KnwsRN9ZOogG4olKXZRNHbTpSWP5lFfcGnILabdMSpI/1lHluTKVsY8LIDF41kTvwLdoByI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727352409; c=relaxed/simple;
-	bh=ipbzAXPO1w8/QYpLl0+R477rPH88FMON4C9d+cpGzyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qr7Kj9fyS+YfVyrtHJT3RqeOen88yg0j6UGpGsV+m7EaYIhCuvcKm6I12IR4oPZrGo5ZgOWgGHnmBDNsxsQ/ky0lYLRITrip7lOWZuiol/sXSsF4p4ynY2V8mEQL0R6H3B8mdM3L2E5IYOx32VjmKXZUFAj5eKnXZGaFjR5DBAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XDslT1BjRz1ymPr;
-	Thu, 26 Sep 2024 20:06:45 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4DE101402CD;
-	Thu, 26 Sep 2024 20:06:43 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 26 Sep 2024 20:06:42 +0800
-Message-ID: <522284d3-9655-3703-00e9-33f358dbc78d@huawei.com>
-Date: Thu, 26 Sep 2024 20:06:42 +0800
+	s=arc-20240116; t=1727352429; c=relaxed/simple;
+	bh=5Xv0CHe9cZFQj3XnHPKJAwA0oKrXCrWvJZ6HeBE69JM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nIuZlvCy+GgJr9F8Z5wTgSZH1KlV3uBKVIpIhdCFl/6hAkjfYm8EXOKYwCDXzfTMd/P2viLdKQxPNUwl0k4ZMIu2Pn1xWHTaLx+dmvV9jN7jxd2ZV9P8oZXHvRtOlSm+g1Og32n28xcMOiF7arkB8sOnu/GK8nnZqUprBg8hel8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AbbmnWO6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC3F3C4CEC5;
+	Thu, 26 Sep 2024 12:07:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727352429;
+	bh=5Xv0CHe9cZFQj3XnHPKJAwA0oKrXCrWvJZ6HeBE69JM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AbbmnWO6SHfooL8lKl5OJihJ7ooMWSRppzaoUgreCQzQmuaum7NZwKaAjsA3YPJ5r
+	 NwzTieDRODZsqDa6h9Lm03xnvYuwWuAqf4A+6j8nqWsxdS33w+ZCuKquavWOWSIe2j
+	 oqWk6tym8BoS2fskVVA4U/4m856vCvSAgN0X7Omxn6SM/XaBX20gVaeIdbmIV+/1Cj
+	 bgVRN9hPRQw+Jx2z51m/LOwWhQ2GoO8wdMRG+IGdmrGzKmnuvPmva0JwdnDhCEAI9L
+	 VGb9+KGb1xITwJWqB+GpFvL/Q3+FFbB/tJ7yiRgFU6LWYJsTKPWIhBWOZfadvZEQ+H
+	 2W3FMt3GWsRbQ==
+Date: Thu, 26 Sep 2024 14:07:06 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Hillf Danton <hdanton@sina.com>,
+	Tejun Heo <tj@kernel.org>,
+	syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com
+Subject: Re: [PATCH] kthread: Unpark only parked kthread
+Message-ID: <ZvVOaljXvQeUF-Fw@localhost.localdomain>
+References: <20240913214634.12557-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
-To: Oleg Nesterov <oleg@redhat.com>, Will Deacon <will@kernel.org>
-CC: Catalin Marinas <catalin.marinas@arm.com>, <mhiramat@kernel.org>,
-	<peterz@infradead.org>, <mark.rutland@arm.com>,
-	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-References: <20240919121719.2148361-1-liaochang1@huawei.com>
- <20240919141824.GB12149@redhat.com>
- <41fdfc47-4161-d2e4-6528-4079b660424f@huawei.com> <Zu2VdYrLWTJbVOAt@arm.com>
- <b90ce6f1-0d47-2429-5536-a8d5d91d6a70@huawei.com>
- <20240923071856.GA31866@willie-the-truck> <20240923105228.GB20793@redhat.com>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <20240923105228.GB20793@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+In-Reply-To: <20240913214634.12557-1-frederic@kernel.org>
 
+Gentle Ping?
 
-
-在 2024/9/23 18:52, Oleg Nesterov 写道:
-> On 09/23, Will Deacon wrote:
->>
->> However, we should use __GFP_ZERO anyway
->> because I don't think it's a good idea to map an uninitialised page into
->> userspace.
+Le Fri, Sep 13, 2024 at 11:46:34PM +0200, Frederic Weisbecker a �crit :
+> Calling into kthread unparking unconditionally is mostly harmless when
+> the kthread is already unparked. The wake up is then simply ignored
+> because the target is not in TASK_PARKED state.
 > 
-> Agreed, and imo this even needs a separate "fix info leak" patch.
-
-Do you mean to fill the entire page with CPU specific illegal instructions
-in this patch?
-
+> However if the kthread is per CPU, the wake up is preceded by a call
+> to kthread_bind() which expects the task to be inactive and in
+> TASK_PARKED state, which obviously isn't the case if it is unparked.
 > 
-> Oleg.
+> As a result, calling kthread_stop() on an unparked per-cpu kthread
+> triggers such a warning:
 > 
+> 	WARNING: CPU: 0 PID: 11 at kernel/kthread.c:525 __kthread_bind_mask kernel/kthread.c:525
+> 	 <TASK>
+> 	 kthread_stop+0x17a/0x630 kernel/kthread.c:707
+> 	 destroy_workqueue+0x136/0xc40 kernel/workqueue.c:5810
+> 	 wg_destruct+0x1e2/0x2e0 drivers/net/wireguard/device.c:257
+> 	 netdev_run_todo+0xe1a/0x1000 net/core/dev.c:10693
+> 	 default_device_exit_batch+0xa14/0xa90 net/core/dev.c:11769
+> 	 ops_exit_list net/core/net_namespace.c:178 [inline]
+> 	 cleanup_net+0x89d/0xcc0 net/core/net_namespace.c:640
+> 	 process_one_work kernel/workqueue.c:3231 [inline]
+> 	 process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+> 	 worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+> 	 kthread+0x2f0/0x390 kernel/kthread.c:389
+> 	 ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+> 	 ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 	 </TASK>
 > 
-
--- 
-BR
-Liao, Chang
+> Fix this with skipping unecessary unparking while stopping a kthread.
+> 
+> Reported-and-tested-by: syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> ---
+>  kernel/kthread.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/kernel/kthread.c b/kernel/kthread.c
+> index f7be976ff88a..5e2ba556aba8 100644
+> --- a/kernel/kthread.c
+> +++ b/kernel/kthread.c
+> @@ -623,6 +623,8 @@ void kthread_unpark(struct task_struct *k)
+>  {
+>  	struct kthread *kthread = to_kthread(k);
+>  
+> +	if (!test_bit(KTHREAD_SHOULD_PARK, &kthread->flags))
+> +		return;
+>  	/*
+>  	 * Newly created kthread was parked when the CPU was offline.
+>  	 * The binding was lost and we need to set it again.
+> -- 
+> 2.46.0
+> 
 
