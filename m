@@ -1,116 +1,282 @@
-Return-Path: <linux-kernel+bounces-340685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D17798769F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:36:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB0D29876A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 281072856FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:36:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C40A11C244CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93CE1531DB;
-	Thu, 26 Sep 2024 15:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175D51531C2;
+	Thu, 26 Sep 2024 15:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qBOdu2mQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ym23BIDl"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF50A4D8C8;
-	Thu, 26 Sep 2024 15:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC153156F23
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727365005; cv=none; b=qeSP387rb2PV8XW4cw4uwv8iZrT1KUKEsFt2SgEKK/flaPuDTeADpKrdwlL0K+YGkk2zn7CfkCbzXq39syGA3Lq6pCFetKkia+hpinJXmuS+gKJEb2V+/CZxwW0Nmlpvr8oy5HqvI2W0A2g0Sv0eVo820pJxBab2MKcAHjN4QeY=
+	t=1727365107; cv=none; b=T+C0oIdvfTwNP6bm0Ta3GWAOwSjV0PX9PReOggW796oTy3e/5QxklPvoahKU0h5EAmA493GWFgDxjrZEnQVS2LV6M7eTmrGBDmBb0QB6kFJ+eTifYkmpw9T51U+KBnjZMAVKZ8TX4/0ihGmN3NRA1qO+zdDtAcZPxda1btQn11A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727365005; c=relaxed/simple;
-	bh=MnHn5Un5GctlEYw8FQfVsnDO6azbNmYGLMtZ416WHA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TdZpeZR8te6KtTJX7MrHu5srBAWGaM65vqooga+55vHk4H1MeezNSG8DZq38iYKSdRSQbSGPLvrETVlDBvp9BqhGlpOvuhoyxP9/qa1zygL6faBsdfkhE0CH7pQOgexfFTmt0Hl9t9c4VOOKMrn0ZArQrzBvDu8o6HBppmLY57Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qBOdu2mQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17978C4CEC5;
-	Thu, 26 Sep 2024 15:36:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727365004;
-	bh=MnHn5Un5GctlEYw8FQfVsnDO6azbNmYGLMtZ416WHA8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qBOdu2mQaW34VK0viO1CHr5mi7XaLWDsdmQj2Llx95tsJec3C1IqknVDGCsoK+fqA
-	 E+EQUeVouFnJ3ljflOzTf85FnnQEFOMTwc15jRFIJ481Mj33Sr32CVpQutCjg9zDve
-	 i6huG2wAlwqAeupmGmUnTbsdkq8YKSIV0AB3e+og=
-Date: Thu, 26 Sep 2024 17:36:41 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Miscdevices in Rust
-Message-ID: <2024092657-snorkel-unmovable-7a6a@gregkh>
-References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
- <2024092647-subgroup-aqueduct-ec24@gregkh>
- <CAH5fLgh8DE8cPC+-HPz6vshCwToA2QyGqngj77N9x16cAUfpiQ@mail.gmail.com>
+	s=arc-20240116; t=1727365107; c=relaxed/simple;
+	bh=MtnIYrVef/9wlQ5Bbhe08rBUgCkg/svBpTGTyJoh1kA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p9TECX7eQALi9X+xlTMDmYJ7rIptRIkQdw4SLg4jdbhI50EvvRbMSFZ86tLo59t7kYdv2/JFokgTafrzcrwbX6XkvPb+Wk4DYqwHO7V3221J5ryHAw43GWzqp0272oCLnB/rtIqXbejocwR7E8/FnY/p4yCOYprbUAqHd/YR8QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ym23BIDl; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a1a662a633so301135ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727365105; x=1727969905; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TSri9JL680J91pgRRJJsc/rmEXXxa1PyovY5FHVdhDU=;
+        b=Ym23BIDlA6UHv0tRTpvCVGGbV3QGN0BirvP23SV3l+GF3N6bXq0kb0lTAxYyVsABQS
+         jd5sQWt7GL520E83o4o8sde13m66lbeEmEpdh/3J3Up/cYFSw8USSMt5Z+BcgtMKLsJY
+         fnbjd29SsWTazI4xX0XOx5Mx9S6lg4znJOf/3Q+x0VtvF2GmkyYUHbaQ5mBM/0lZcqLq
+         1DUUI6alwEdvXMk0qOvAHFaNXk7J8vAnLI3JZULiL6TimStY4KtdO1YG5HbHSJBH8m5w
+         WtNDQX6uXUc7WFCoYZcODIukQkiwQnHJkiPQOKKwgWYcnI8w8kFQaPvFiw2y+dVoq38F
+         O0VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727365105; x=1727969905;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TSri9JL680J91pgRRJJsc/rmEXXxa1PyovY5FHVdhDU=;
+        b=HCGlCzz4fSMGLvBiJSNuVqAquMdcyXtO7EPFA1rulVrSUivSfRNV0CjO4L8ocSwrmi
+         YCcxKXyjOpM/P84O+/3QEF274KvsFd1Md90goTBGJV82EDEc5/kTNAglCFN3SuwJrFlh
+         tHg2cGeImy2NK8xLexPL2IcQ8xZp0ydmLUHmAvkI+MZOfdpKS8ZwAgJ/p8XKdo+uOU84
+         1XA2+Gm5GUPHD0MYdzIa/6H56wdfrJcVh+SX1u37j+GIunbgwXr+mXRf1N01Ju+J4GZq
+         I+Yqx3bOw4N4EPt8vXBfoOg8+PtOPoNyfAxF/l7ypJM+6JbKeXvcBqbdEKJ9qQZeN0Xu
+         PjPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOCfMdKPkpFnXax30y1aAj0HWto4y3MW76j1hMsh6AJpFRa8eQxVK2y2CkmAtPqJWZMKC2hOGUL7PPDzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiDeQ9EVfIuL53OEIdnetkVcL3tWCQ/bA861MICaLPwmZsNcBy
+	/5hCQQ6qx/l0nVCUOAyD0Mp+pRyB88HNFlRIlzgzQlG5zdwQsT5QA3kr8amdHnNC4WiQ2YjzKJH
+	PEFZRGV69+x1t0iEUnn40iLKeQ6/bi3tkcQvA
+X-Google-Smtp-Source: AGHT+IE3N9U8tdbhUlxIIB8MdRCQVW9qGJcOYMmpnFzzoYwGPnvng+GiHqYqAABVIO1rsCaeFX34UA1ILBkpv6PKOHg=
+X-Received: by 2002:a05:6e02:198e:b0:3a0:922f:8e9b with SMTP id
+ e9e14a558f8ab-3a31b666110mr3754735ab.11.1727365104620; Thu, 26 Sep 2024
+ 08:38:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgh8DE8cPC+-HPz6vshCwToA2QyGqngj77N9x16cAUfpiQ@mail.gmail.com>
+References: <20240924160418.1391100-1-irogers@google.com> <20240924160418.1391100-4-irogers@google.com>
+ <ZvSqkGVhD1ETzkDH@google.com>
+In-Reply-To: <ZvSqkGVhD1ETzkDH@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 26 Sep 2024 08:37:51 -0700
+Message-ID: <CAP-5=fVvG1h+OA5cO8f=fHX0J-0vDLM190cM178oFYE+i-v5Tg@mail.gmail.com>
+Subject: Re: [PATCH v1 03/11] perf build: Rename test-dwarf to test-libdw
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+	Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>, 
+	Guilherme Amadio <amadio@gentoo.org>, Changbin Du <changbin.du@huawei.com>, 
+	"Steinar H. Gunderson" <sesse@google.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
+	Bibo Mao <maobibo@loongson.cn>, Kajol Jain <kjain@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>, Shenlin Liang <liangshenlin@eswincomputing.com>, 
+	Atish Patra <atishp@rivosinc.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Chen Pei <cp0613@linux.alibaba.com>, Dima Kogan <dima@secretsauce.net>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller" <davem@davemloft.net>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Yang Jihong <yangjihong@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 05:20:15PM +0200, Alice Ryhl wrote:
-> On Thu, Sep 26, 2024 at 5:05 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
+On Wed, Sep 25, 2024 at 5:28=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Tue, Sep 24, 2024 at 09:04:10AM -0700, Ian Rogers wrote:
+> > Be more intention revealing that the dwarf test is actually testing
+> > for libdw support.
 > >
-> > On Thu, Sep 26, 2024 at 02:58:54PM +0000, Alice Ryhl wrote:
-> > > A misc device is generally the best place to start with your first Rust
-> > > driver, so having abstractions for miscdevice in Rust will be important
-> > > for our ability to teach Rust to kernel developers.
-> > >
-> > > I intend to add a sample driver using these abstractions, and I also
-> > > intend to use it in Rust Binder to handle the case where binderfs is
-> > > turned off.
-> > >
-> > > I know that the patchset is still a bit rough. It could use some work on
-> > > the file position aspect. But I'm sending this out now to get feedback
-> > > on the overall approach.
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/build/Makefile.feature                     |  6 +++---
+> >  tools/build/feature/Makefile                     | 16 ++++++++--------
+> >  tools/build/feature/test-all.c                   |  6 +++---
+> >  .../build/feature/{test-dwarf.c =3D> test-libdw.c} |  0
+> >  tools/perf/Makefile.config                       |  6 +++---
+> >  5 files changed, 17 insertions(+), 17 deletions(-)
+> >  rename tools/build/feature/{test-dwarf.c =3D> test-libdw.c} (100%)
 > >
-> > Very cool!
+> > diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.featur=
+e
+> > index ffd117135094..6025810cc346 100644
+> > --- a/tools/build/Makefile.feature
+> > +++ b/tools/build/Makefile.feature
+> > @@ -30,7 +30,7 @@ endef
+> >  #
+> >  FEATURE_TESTS_BASIC :=3D                  \
+> >          backtrace                       \
+> > -        dwarf                           \
+> > +        libdw                           \
+> >          dwarf_getlocations              \
+> >          dwarf_getcfi                    \
+> >          eventfd                         \
+> > @@ -120,7 +120,7 @@ ifeq ($(FEATURE_TESTS),all)
+> >  endif
 > >
-> > > This patchset depends on files [1] and vma [2].
-> > >
-> > > Link: https://lore.kernel.org/all/20240915-alice-file-v10-0-88484f7a3dcf@google.com/ [1]
-> > > Link: https://lore.kernel.org/all/20240806-vma-v5-1-04018f05de2b@google.com/ [2]
-> > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> >  FEATURE_DISPLAY ?=3D              \
+> > -         dwarf                  \
+> > +         libdw                  \
+> >           dwarf_getlocations     \
+> >           glibc                  \
+> >           libbfd                 \
+> > @@ -233,7 +233,7 @@ endef
 > >
-> > Does it really need all of those dependencies?  I know your development
-> > stack is deep here, but maybe I can unwind a bit of the file stuff to
-> > get this in for the next merge window (6.13-rc1) if those two aren't
-> > going to be planned for there.
-> 
-> Ah, maybe not. The dependency on files is necessary to allow the file
-> to look at its own fields, e.g. whether O_NONBLOCK is set or what the
-> file position is. But we can take that out for now and add it once
-> both miscdevice and file have landed. I'm hoping that file will land
-> for 6.13, but untangling them allows both to land in 6.13.
-> 
-> As for vma, it's needed for mmap, but if I take out the ability to
-> define an mmap operation, I don't need it. We can always add back mmap
-> once both miscdevice and vma have landed.
+> >  #
+> >  # generates feature value assignment for name, like:
+> > -#   $(call feature_assign,dwarf) =3D=3D feature-dwarf=3D1
+> > +#   $(call feature_assign,libdw) =3D=3D feature-libdw=3D1
+> >  #
+> >  feature_assign =3D feature-$(1)=3D$(feature-$(1))
+> >
+> > diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefil=
+e
+> > index 5938cf799dc6..bece326ac93b 100644
+> > --- a/tools/build/feature/Makefile
+> > +++ b/tools/build/feature/Makefile
+> > @@ -5,7 +5,7 @@ FILES=3D                                          \
+> >           test-all.bin                           \
+> >           test-backtrace.bin                     \
+> >           test-bionic.bin                        \
+> > -         test-dwarf.bin                         \
+> > +         test-libdw.bin                         \
+> >           test-dwarf_getlocations.bin            \
+> >           test-dwarf_getcfi.bin                  \
+> >           test-eventfd.bin                       \
+> > @@ -168,9 +168,9 @@ $(OUTPUT)test-libopencsd.bin:
+> >       $(BUILD) # -lopencsd_c_api -lopencsd provided by
+> >                # $(FEATURE_CHECK_LDFLAGS-libopencsd)
+> >
+> > -DWARFLIBS :=3D -ldw
+> > +DWLIBS :=3D -ldw
+> >  ifeq ($(findstring -static,${LDFLAGS}),-static)
+> > -  DWARFLIBS +=3D -lelf -lz -llzma -lbz2 -lzstd
+> > +  DWLIBS +=3D -lelf -lz -llzma -lbz2 -lzstd
+> >
+> >    LIBDW_VERSION :=3D $(shell $(PKG_CONFIG) --modversion libdw)
+> >    LIBDW_VERSION_1 :=3D $(word 1, $(subst ., ,$(LIBDW_VERSION)))
+> > @@ -179,18 +179,18 @@ ifeq ($(findstring -static,${LDFLAGS}),-static)
+> >    # Elfutils merged libebl.a into libdw.a starting from version 0.177,
+> >    # Link libebl.a only if libdw is older than this version.
+> >    ifeq ($(shell test $(LIBDW_VERSION_2) -lt 177; echo $$?),0)
+> > -    DWARFLIBS +=3D -lebl
+> > +    DWLIBS +=3D -lebl
+> >    endif
+> >  endif
+> >
+> > -$(OUTPUT)test-dwarf.bin:
+> > -     $(BUILD) $(DWARFLIBS)
+> > +$(OUTPUT)test-libdw.bin:
+> > +     $(BUILD) $(DWLIBS)
+> >
+> >  $(OUTPUT)test-dwarf_getlocations.bin:
+> > -     $(BUILD) $(DWARFLIBS)
+> > +     $(BUILD) $(DWLIBS)
+> >
+> >  $(OUTPUT)test-dwarf_getcfi.bin:
+> > -     $(BUILD) $(DWARFLIBS)
+> > +     $(BUILD) $(DWLIBS)
+> >
+> >  $(OUTPUT)test-libelf-getphdrnum.bin:
+> >       $(BUILD) -lelf
+> > diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-=
+all.c
+> > index 6f4bf386a3b5..d60e072b6eca 100644
+> > --- a/tools/build/feature/test-all.c
+> > +++ b/tools/build/feature/test-all.c
+> > @@ -38,8 +38,8 @@
+> >  # include "test-glibc.c"
+> >  #undef main
+> >
+> > -#define main main_test_dwarf
+> > -# include "test-dwarf.c"
+> > +#define main main_test_libdw
+> > +# include "test-libdw.c"
+> >  #undef main
+> >
+> >  #define main main_test_dwarf_getlocations
+> > @@ -187,7 +187,7 @@ int main(int argc, char *argv[])
+> >       main_test_get_current_dir_name();
+> >       main_test_gettid();
+> >       main_test_glibc();
+> > -     main_test_dwarf();
+> > +     main_test_libdw();
+> >       main_test_dwarf_getlocations();
+> >       main_test_eventfd();
+> >       main_test_libelf_getphdrnum();
+> > diff --git a/tools/build/feature/test-dwarf.c b/tools/build/feature/tes=
+t-libdw.c
+> > similarity index 100%
+> > rename from tools/build/feature/test-dwarf.c
+> > rename to tools/build/feature/test-libdw.c
+> > diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> > index 182e14e39cd5..c8e157cc0c5e 100644
+> > --- a/tools/perf/Makefile.config
+> > +++ b/tools/perf/Makefile.config
+> > @@ -159,8 +159,8 @@ ifeq ($(findstring -static,${LDFLAGS}),-static)
+> >      DWARFLIBS +=3D -lebl
+> >    endif
+> >  endif
+> > -FEATURE_CHECK_CFLAGS-dwarf :=3D $(LIBDW_CFLAGS)
+> > -FEATURE_CHECK_LDFLAGS-dwarf :=3D $(LIBDW_LDFLAGS) $(DWARFLIBS)
+> > +FEATURE_CHECK_CFLAGS-libdw :=3D $(LIBDW_CFLAGS)
+> > +FEATURE_CHECK_LDFLAGS-libdw :=3D $(LIBDW_LDFLAGS) $(DWARFLIBS)
+>
+> s/DWARFLIBS/DWLIBS/ ?
 
-Yes, let's drop the mmap interface for now, and probably the seek stuff
-too as most "normal" misc devices do not mess with them at all.
+The patch is changing the name of a feature test. It is possible to
+change this Makefile.config variable in the same patch but I think
+they are distinct things and the variable rename is follow up work.
 
-If that makes the dependencies simpler, that would be great.
+Thanks,
+Ian
 
-thanks,
-
-greg k-h
+>
+> >  FEATURE_CHECK_CFLAGS-libdw-dwarf-unwind :=3D $(LIBDW_CFLAGS)
+> >  FEATURE_CHECK_LDFLAGS-libdw-dwarf-unwind :=3D $(LIBDW_LDFLAGS) $(DWARF=
+LIBS)
+>
+> Ditto.
+>
+> Thanks,
+> Namhyung
+>
+>
+> >  FEATURE_CHECK_CFLAGS-dwarf_getlocations :=3D $(LIBDW_CFLAGS)
+> > @@ -470,7 +470,7 @@ else
+> >          $(warning No libdw DWARF unwind found, Please install elfutils=
+-devel/libdw-dev >=3D 0.158 and/or set LIBDW_DIR)
+> >        endif
+> >      endif
+> > -    ifneq ($(feature-dwarf), 1)
+> > +    ifneq ($(feature-libdw), 1)
+> >        ifndef NO_LIBDW
+> >          $(warning No libdw.h found or old libdw.h found or elfutils is=
+ older than 0.138, disables dwarf support. Please install new elfutils-deve=
+l/libdw-dev)
+> >          NO_LIBDW :=3D 1
+> > --
+> > 2.46.0.792.g87dc391469-goog
+> >
 
