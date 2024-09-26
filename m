@@ -1,216 +1,95 @@
-Return-Path: <linux-kernel+bounces-340520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9580987493
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:39:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52901987494
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7401288F6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:39:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0861D1F2351A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A9A3B7A8;
-	Thu, 26 Sep 2024 13:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947814503C;
+	Thu, 26 Sep 2024 13:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bNR9EdMj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TjsX2Bcw"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAB54D8AD
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 13:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7413517BD3
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 13:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727357988; cv=none; b=Ti1M4xMW49rONGGV0p7ToZaBjYbGMFDGSm+tQo3zUOFikNfUhu0S7w/7gvEvQoLSeEKyp2IYtgKCSwpSZoZD2SMT1KX85H56ef2HAk3pTrhkVm0GVs2T40EPmo3SvUHF8XykiFJUD7xnWuUmsBOAx7zDIwxqL0ZSimMjOUpmlKo=
+	t=1727358019; cv=none; b=RCA67XbTX27PUopj6hhT7rYR6pnmQ5hOEtDGfU5i077CJ7tsxUoO988wxh67qdXHcPSdrfWqS5QWaXURuAM3SQpMUYWW1yEH+Gq/JpEV81pUPv/IeUF4su4P4vZpoIuncTr+42T8SB0fab1+pk6fLgBVIfeRnY9JSluVOxzT8is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727357988; c=relaxed/simple;
-	bh=oAf0NwzQ3QmouSyP6H440AZ79XLW/wUP/mrX3oEeTlM=;
+	s=arc-20240116; t=1727358019; c=relaxed/simple;
+	bh=wKix4F36LAKU/0XmZkDm7p9mSU7oRAeQs9PfB99udGM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LcQJky8WBtSI1teU6GbICD5I4YZAhnQejInefzjKUqFeChAnt26SJDNsLPovVASG5BXNO9UUS999ndpJtTex6VZa3/rzb8qDjBNA+CHdbjthNBrLEIir8lam5qsFFaEir+B260ss2YlOfsV1QaN3sd1oghuMPIyUtnN9ywN0YCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bNR9EdMj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727357985;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NP3xVwUHECq3mYbUhkAhql8+7RvmrTr41ZucVz/QUbY=;
-	b=bNR9EdMjjp9GkbeMo6ecTVUwmyREWWbpWTIN5tW/cZ7ES1vjo+ehs4Q2njGBtl69ougEKA
-	O00XyxOP4yeKlZFytKRyawWj8nxFcNBNfowGqEHqIRiot8WffPWOXSDrmVOxEIm21ThsxS
-	Jm+2Hrz8PbVCYv8gpchG3gwRBb64bA8=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-74-P5FEJ8RTOwKExzNoQTg4TQ-1; Thu, 26 Sep 2024 09:39:44 -0400
-X-MC-Unique: P5FEJ8RTOwKExzNoQTg4TQ-1
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4585482ca78so16730831cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:39:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727357984; x=1727962784;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NP3xVwUHECq3mYbUhkAhql8+7RvmrTr41ZucVz/QUbY=;
-        b=mXnNmbgkjlYHpmRV0LYi2eV3QdVxLJ5zXq+H0rTOuQpGnd7/7pZb1TPMsxxPPXNycm
-         0PggYmzjwlsQuDsHrvPzJ0hAmh/n77JKeBhuWECBQOJrmSdXQNiDWabjgF/SwWQNJKnV
-         X2edyZ0kVHRQvy7LPX7VsGu2qUasAntRrcWBKs6DzQVXplAWEJB6LT4KiQBWMZs6VYYA
-         pL/15xsj1bp31pnN+Hy6ucWyrzBl41mgF50ZQrsx2Z4VvtX3ZgOLq4UboVUwsKuSSKP9
-         H/1CyUlPpc8GFfoVbkUxDpXB0t6AY7az7w3AGsDj/S7jbLgVz9nDynr7bJFNS+yCi7g3
-         bnLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWm83Gw1NtJHEozcybdBjBvhVocGj/zVDqEkuLtPwi65EI0LCHAWr68Kq8WW9ZR1MiWrcULs+xHp9+4e10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkD8oplcWS0/LHAGFgYJ7AH6q5ZqjWxYkGO6vEUTS2GXAE2b+j
-	DBHA4ic0EVFl2yUv0WbaN3fZKNDC6hOzNMt96k5XRbYUxyi2jg1cjNK3HfBmMOOQNBrZyovCfpV
-	LhiJGDyR5JODvksHKUog6f8RWJ5f6yzcZyZCrYI6grTuwEzh6Y6GAkfyxfKVEBQ==
-X-Received: by 2002:a05:622a:5b8e:b0:458:2b7b:c45c with SMTP id d75a77b69052e-45b5e02c71dmr99988861cf.39.1727357983988;
-        Thu, 26 Sep 2024 06:39:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGlgkMdRbCIjZgM2jAU3EsasilPQSNVYQpC12otQiRQwzMqn0cbvcQHcFFaNZ2vnTph4U0i1A==
-X-Received: by 2002:a05:622a:5b8e:b0:458:2b7b:c45c with SMTP id d75a77b69052e-45b5e02c71dmr99988491cf.39.1727357983497;
-        Thu, 26 Sep 2024 06:39:43 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b526aac64sm25778181cf.92.2024.09.26.06.39.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 06:39:42 -0700 (PDT)
-Date: Thu, 26 Sep 2024 09:39:39 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: syzbot <syzbot+bf2c35fa302ebe3c7471@syzkaller.appspotmail.com>,
-	akpm@linux-foundation.org, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, jgg@ziepe.ca,
-	leitao@debian.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	mingo@redhat.com, rppt@kernel.org, syzkaller-bugs@googlegroups.com,
-	tglx@linutronix.de, x86@kernel.org
-Subject: Re: [syzbot] [mm?] WARNING in copy_huge_pmd
-Message-ID: <ZvVkG4aSxS9rNoRd@x1n>
-References: <66f15c8d.050a0220.c23dd.000f.GAE@google.com>
- <4f96130c-12b7-4afa-ada3-bec354576112@redhat.com>
- <ZvRBYpCrSZj9YZoF@x1n>
- <60e29e62-4864-4393-b899-01489ee73b91@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l8DAN1pBaqpP89s43K5HVWEF2zJdjYLmjFhZsO1T4pE9y2PRyEnr1aSZtGRV0fI/G5OZ2XgH/Urc1HKVaF4GuP6dJajP1OsVgL68WOw1tCCJrp9zSChJ9/gn3kAssRgjJsMIgnR6Eyti7zJ7kIJkgOXHG1RWOt0lG8NhMjNZTyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TjsX2Bcw; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FxPbI0QvyMKRaRZxxEIytMMMKgGjtJHw/Q/FOqAhZqI=; b=TjsX2BcwwhzvBP7n//axyX50/7
+	06KZeafFuQVk3q2JXRrSPzSDMUaC6VCydBytx+jheTbdYUzUOSsX9tMim2mEC70E+CHDMI+uAeH0k
+	1pQ1HHlxmXKgzQQu/HkYuLtfJrTAC5O9fNcgW6PvDYsPgf/b3ZIy2tzLZAyrudrnauZykDSjH/FIj
+	gPb7v8numy/sexw7C1jaSGeq6HqozTL5Bfr2NUBc9b6rUnr/yvYjrfc5jnmq7GB698/4A0gyN/rNd
+	IX6saKYFnnn4Fvi8STePqbv2+IwlXBknKvU0uzf81snpwzoVtSTDgtTAXNA/IGGrDtI/g5DrH+011
+	a+Xv70xA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1stoix-00000006kkw-1gPv;
+	Thu, 26 Sep 2024 13:40:03 +0000
+Date: Thu, 26 Sep 2024 14:40:03 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+	hughd@google.com, david@redhat.com, wangkefeng.wang@huawei.com,
+	21cnbao@gmail.com, ryan.roberts@arm.com, ioworker0@gmail.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 1/2] mm: shmem: add large folio support to the
+ write and fallocate paths
+Message-ID: <ZvVkM0VWK5E_MfJH@casper.infradead.org>
+References: <cover.1727338549.git.baolin.wang@linux.alibaba.com>
+ <c03ec1cb1392332726ab265a3d826fe1c408c7e7.1727338549.git.baolin.wang@linux.alibaba.com>
+ <CGME20240926121649eucas1p2aec9398cab6db6fee1251a1a61568857@eucas1p2.samsung.com>
+ <ZvVQoY8Tn_BNc79T@casper.infradead.org>
+ <18532bd8-08bd-4494-a3af-fe252a803380@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <60e29e62-4864-4393-b899-01489ee73b91@redhat.com>
+In-Reply-To: <18532bd8-08bd-4494-a3af-fe252a803380@samsung.com>
 
-On Thu, Sep 26, 2024 at 12:48:19PM +0200, David Hildenbrand wrote:
-> On 25.09.24 18:59, Peter Xu wrote:
-> > On Tue, Sep 24, 2024 at 04:45:00PM +0200, David Hildenbrand wrote:
-> > > On 23.09.24 14:18, syzbot wrote:
-> > > > Hello,
-> > > > 
-> > > > syzbot found the following issue on:
-> > > > 
-> > > > HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.k..
-> > > > git tree:       upstream
-> > > > console+strace: https://syzkaller.appspot.com/x/log.txt?x=16c36c27980000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=e851828834875d6f
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=bf2c35fa302ebe3c7471
-> > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12773080580000
-> > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ed5e9f980000
-> > > > 
-> > > > Downloadable assets:
-> > > > disk image: https://storage.googleapis.com/syzbot-assets/0e011ac37c93/disk-88264981.raw.xz
-> > > > vmlinux: https://storage.googleapis.com/syzbot-assets/f5c65577e19e/vmlinux-88264981.xz
-> > > > kernel image: https://storage.googleapis.com/syzbot-assets/984d963c8ea1/bzImage-88264981.xz
-> > > > 
-> > > > The issue was bisected to:
-> > > > 
-> > > > commit 75182022a0439788415b2dd1db3086e07aa506f7
-> > > > Author: Peter Xu <peterx@redhat.com>
-> > > > Date:   Mon Aug 26 20:43:51 2024 +0000
-> > > > 
-> > > >       mm/x86: support large pfn mappings
-> > > > 
-> > > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17df9c27980000
-> > > > final oops:     https://syzkaller.appspot.com/x/report.txt?x=143f9c27980000
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=103f9c27980000
-> > > > 
-> > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > > Reported-by: syzbot+bf2c35fa302ebe3c7471@syzkaller.appspotmail.com
-> > > > Fixes: 75182022a043 ("mm/x86: support large pfn mappings")
-> > > > 
-> > > > ------------[ cut here ]------------
-> > > > WARNING: CPU: 1 PID: 5508 at mm/huge_memory.c:1602 copy_huge_pmd+0x102c/0x1c60 mm/huge_memory.c:1602
-> > > 
-> > > This is the
-> > > 
-> > > VM_WARN_ON_ONCE(is_cow_mapping(src_vma->vm_flags) && pmd_write(pmd))
-> > > 
-> > > So we have a special-marked PMD in a COW mapping.
-> > > 
-> > > The reproducer seems to involve fuse, but not sure if that makes a
-> > > difference here.
+On Thu, Sep 26, 2024 at 02:58:31PM +0200, Daniel Gomez wrote:
+> On 9/26/2024 2:16 PM, Matthew Wilcox wrote:
+> > On Thu, Sep 26, 2024 at 04:27:26PM +0800, Baolin Wang wrote:
+> > > +static inline unsigned int
+> > > +shmem_mapping_size_order(struct address_space *mapping, pgoff_t index, size_t size)
+> > > +{
+> > > +	unsigned int order = get_order(max_t(size_t, size, PAGE_SIZE));
 > > 
-> > That chunk of code seems to be there only making sure the test won't get
-> > blocked due to any fused based fs being stuck, via writting to the "abort"
-> > file:
-> > 
-> >        snprintf(abort, sizeof(abort), "/sys/fs/fuse/connections/%s/abort",
-> >                 ent->d_name);
-> >        int fd = open(abort, O_WRONLY);
-> >        if (fd == -1) {
-> >          continue;
-> >        }
-> >        if (write(fd, abort, 1) < 0) {
-> >        }
-> >        close(fd);
-> > 
-> > So far looks not relevant to this issue indeed.
-> > 
-> > Unfortunately I cannot reproduce it even with the reproducer.  So this one
-> > is a bit tricky..
-> > 
-> > What confuses me yet is how that special bit is set, if it's only used so
-> > far with vfio-pci, and this test doesn't seem to have it involved.
-> > 
-> > The test keeps invoking processes, then threads, doing concurrent accesses
-> > over a few stuff (madvise, mremap, migrate_pages, munmap, etc.) on the
-> > pre-mapped areas, but none of them seem to create new memory that can
-> > provide hint on how special bit can start to occur.
-> > 
-> > I wonder if some of these operations can race in a way that mm can wrongly
-> > create the special bit (alone with it being writable).. and then it could
-> > be a historical bug, only captured by this patchset due to the newly added
-> > WARN_ON_ONCE somehow, then it could mean that it's not the WRITE bit that
-> > is not intended, but the SPECIAL bit altogether.
+> > Why introduce the max_t() call here?  Did nobody read the documentation
+> > or implementation for get_order() before writing this patch?
 > 
-> I assume you are missing a check for present/non-swap pmds. Assume you have
-> a migration entry and end up using the special bit -- which is perfectly
-> fine -- your code would assume it's a present PMD with the special bit set.
+> get_order() result is undefined if the size is 0. I've used max_t() here to
+> avoid that case. Perhaps should we prevent that case before getting here?
+
+Surely we've handled a length-0 write before we get here?
+
+> I think one of my earlier attemps was to use fgf_set_order + FGF_GET_ORDER()
+> as in iomap. But the solution taken there was to share code between shmem
+> and filemap and that wasn't considered a good idea. Shall we just replicate
+> iomap_get_folio()? Or else, what do you suggest here?
+
+We could move three of the four lines from fgf_set_order() into a
+new function and call it from both fgf_set_order() and shmem?
 > 
-> Maybe for the time being something like:
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 0580ac9e47b9..e55efcad1e6c 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1586,7 +1586,7 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct
-> mm_struct *src_mm,
->         int ret = -ENOMEM;
-> 
->         pmd = pmdp_get_lockless(src_pmd);
-> -       if (unlikely(pmd_special(pmd))) {
-> +       if (unlikely(pmd_present(pmd) && pmd_special(pmd))) {
->                 dst_ptl = pmd_lock(dst_mm, dst_pmd);
->                 src_ptl = pmd_lockptr(src_mm, src_pmd);
->                 spin_lock_nested(src_ptl, SINGLE_DEPTH_NESTING);
-
-Good catch!
-
-I definitely overlooked it, and I did check the config has THP_MIGRATION
-set indeed.  So it's very possible relevant.
-
-Do you want to send a formal patch?  You can also push a branch with "#syz
-test", looks like syzbot can constantly reproduce.
-
-Thanks!
-
--- 
-Peter Xu
-
 
