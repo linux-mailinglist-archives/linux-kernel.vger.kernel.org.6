@@ -1,133 +1,319 @@
-Return-Path: <linux-kernel+bounces-340606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7849875C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:39:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580229875CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8DA71F22361
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:39:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D93FC1F221F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29A37A13A;
-	Thu, 26 Sep 2024 14:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256BA142624;
+	Thu, 26 Sep 2024 14:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TNvo4CQ4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bx/ex1jO"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05A35258
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85267A13A;
+	Thu, 26 Sep 2024 14:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727361571; cv=none; b=UTL8wFPUZKiyGqB2UXq+85nVTsqNsyJt9s3MOrHQFfYQCD3BcGHN/qwdCbOslNttDEUnxbSHKAn/5CYfA1nYeDLZyL02ojRMJnhtBf/eHSsidWpdKpmEq502u/Rp3+6YVM2vZ90WZWc5zproxzMXoyCXgMFNOdQV7hWcynWg59I=
+	t=1727361586; cv=none; b=nmF127ceQDp8YSzCCgKweWxwANcVErxU24jVNTFg+xVI8QNm48tXADKr8cdybCd6fAQ7pOFBi4YhmI6/geY5HSRDNBFJ2+yurOA6+ceGFNB4uxihF9kuct3SNNNF3+MoQs7gAJBFo/vv1jMGqErP04z7uI4yC32lvL1yI+D+JFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727361571; c=relaxed/simple;
-	bh=k1NzGdqi/1CdRfu06i6s5EEkUq1fDdKCX8ueCHY7wxY=;
+	s=arc-20240116; t=1727361586; c=relaxed/simple;
+	bh=bkYkLOAw713fILsyCYM13JpHUst94SgvFIH1CgWWuX8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PSADpbZz1lA061ONxy4k2QdqQNVUKkDoWXIFmnrszgh4SVK915y0AbmT+eRgajcgq1oznScKFy4X/UKkEeFuVf3bLm06fCcGoJMjohjRhfIoNEeNv5AGbkWKYCUu+CYBgiBZHJSyGZ2x7GS9K5Q89xPteDjqtwNdcOse5otyH3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TNvo4CQ4; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727361570; x=1758897570;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=k1NzGdqi/1CdRfu06i6s5EEkUq1fDdKCX8ueCHY7wxY=;
-  b=TNvo4CQ4RvOjkysp1QXxLaQxg3TAHIa7c86DNxS1/lBcp8ycVYu7ot7V
-   iwdoNR1FJNeOeWleY2tNQefn+Fr5aNQmAZVnBxtOamyeztboohLk/8eCJ
-   rUdwZzjHZp+DZx8AsxlAIKvyMC1l9xItDh4u9SkSKn2fMS1H9+FJ+uh0r
-   5bq2napPjNPCbo63cZ3nFokLSvWy/HpMta6zMeXo9FhQ2rvR/Wc1OQM4S
-   gcSg7nQcSSK86STpybjjQyT3cbbjymTdCchaPRgmYsd0BJ6m5th+cjs+9
-   fMrFVRBaWrMyvEjIM5On0Ut3l89HNDOxqw9Pb8rQYOK4kBtd49v15E5oS
-   w==;
-X-CSE-ConnectionGUID: 2OadwWXWQNCwj0LRWp4NDA==
-X-CSE-MsgGUID: /zaqqz/ASCaCYuOvtOTh+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26641730"
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="26641730"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 07:39:29 -0700
-X-CSE-ConnectionGUID: lMnTIVepT+eFDDxu6UbKfw==
-X-CSE-MsgGUID: cJO6Hum0TkuMxq5JTcV5xg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="102993567"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa001.fm.intel.com with SMTP; 26 Sep 2024 07:39:26 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 26 Sep 2024 17:39:24 +0300
-Date: Thu, 26 Sep 2024 17:39:24 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Cc: tzungbi@kernel.org, jthies@google.com, pmalani@chromium.org,
-	akuchynski@google.com, Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/8] platform/chrome: cros_ec_typec: Displayport support
-Message-ID: <ZvVyHD-QVQm5W6uy@kuha.fi.intel.com>
-References: <20240925162513.435177-1-abhishekpandit@chromium.org>
- <20240925092505.6.I142fc0c09df58689b98f0cebf1c5e48b9d4fa800@changeid>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AIqmh348mfjDDj3iRQfiE6WFJKYyCR1bqGdE3diH+w880a3BEk+oQKnIFrFVfo+wg5wMmvDaYiYM+lU3EF2ohd77ghMr699DDiboZ+5Xmz9Jlmlh4JHuqSkVj4qzgcMiAA3CKRT79leg5SMrUGUhK3ydrZWVecRF+HvHJvQJHAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bx/ex1jO; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3D26E8D4;
+	Thu, 26 Sep 2024 16:38:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727361494;
+	bh=bkYkLOAw713fILsyCYM13JpHUst94SgvFIH1CgWWuX8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bx/ex1jO75gq7J+rLJjqdQRCH9ckfvbYx8N5WMpQgL3sktG3/iSnSI2dkvsgKQUiu
+	 T53GrRN5/4CRW2L8c/zQYot8DDorM0DxP0jfd8WUhDAWQTqiwCZPcrkPtV95ODpQV2
+	 cXm4FAuZNPty9ccktaOmpzpNIzBrFWKg/bpF1h2Y=
+Date: Thu, 26 Sep 2024 17:39:40 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Tomasz Figa <tfiga@chromium.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sean Paul <seanpaul@chromium.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v7 1/3] media: uvcvideo: Refactor the status irq API
+Message-ID: <20240926143940.GI21788@pendragon.ideasonboard.com>
+References: <20240926-guenter-mini-v7-0-690441953d4a@chromium.org>
+ <20240926-guenter-mini-v7-1-690441953d4a@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240925092505.6.I142fc0c09df58689b98f0cebf1c5e48b9d4fa800@changeid>
+In-Reply-To: <20240926-guenter-mini-v7-1-690441953d4a@chromium.org>
 
-> diff --git a/drivers/platform/chrome/cros_typec_altmode.h b/drivers/platform/chrome/cros_typec_altmode.h
-> new file mode 100644
-> index 000000000000..a8b37a18c83a
-> --- /dev/null
-> +++ b/drivers/platform/chrome/cros_typec_altmode.h
-> @@ -0,0 +1,34 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +
-> +#ifndef __CROS_TYPEC_ALTMODE_H__
-> +#define __CROS_TYPEC_ALTMODE_H__
-> +
-> +struct cros_typec_port;
-> +struct typec_altmode;
-> +struct typec_altmode_desc;
-> +struct typec_displayport_data;
-> +
-> +#if IS_ENABLED(CONFIG_TYPEC_DP_ALTMODE)
-> +struct typec_altmode *
-> +cros_typec_register_displayport(struct cros_typec_port *port,
-> +				struct typec_altmode_desc *desc,
-> +				bool ap_mode_entry);
-> +
-> +int cros_typec_displayport_status_update(struct typec_altmode *altmode,
-> +					 struct typec_displayport_data *data);
-> +#else
-> +struct typec_altmode *
+Hi Ricardo,
 
-static inline struct typec_altmode *
+Thank you for the patch.
 
-> +cros_typec_register_displayport(struct cros_typec_port *port,
-> +				struct typec_altmode_desc *desc,
-> +				bool ap_mode_entry)
+On Thu, Sep 26, 2024 at 05:49:57AM +0000, Ricardo Ribalda wrote:
+> There are two different use-cases of uvc_status():
+> 
+> - adding/removing a user when the camera is open/closed
+> - stopping/starting when the camera is suspended/resumed
+> 
+> Make the API reflect these two use-cases and move all the refcounting
+> and locking logic to the uvc_status.c file.
+> 
+> No functional change is expected from this patch.
+> 
+> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c | 13 ++--------
+>  drivers/media/usb/uvc/uvc_status.c | 53 ++++++++++++++++++++++++++++++++++++--
+>  drivers/media/usb/uvc/uvc_v4l2.c   | 22 +++++-----------
+>  drivers/media/usb/uvc/uvcvideo.h   | 10 ++++---
+>  4 files changed, 65 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index f0febdc08c2d..31e8942f1ef8 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -2116,7 +2116,6 @@ static int uvc_probe(struct usb_interface *intf,
+>  	INIT_LIST_HEAD(&dev->streams);
+>  	kref_init(&dev->ref);
+>  	atomic_set(&dev->nmappings, 0);
+> -	mutex_init(&dev->lock);
+>  
+>  	dev->udev = usb_get_dev(udev);
+>  	dev->intf = usb_get_intf(intf);
+> @@ -2288,10 +2287,7 @@ static int uvc_suspend(struct usb_interface *intf, pm_message_t message)
+>  	/* Controls are cached on the fly so they don't need to be saved. */
+>  	if (intf->cur_altsetting->desc.bInterfaceSubClass ==
+>  	    UVC_SC_VIDEOCONTROL) {
+> -		mutex_lock(&dev->lock);
+> -		if (dev->users)
+> -			uvc_status_stop(dev);
+> -		mutex_unlock(&dev->lock);
+> +		uvc_status_suspend(dev);
+>  		return 0;
+>  	}
+>  
+> @@ -2322,12 +2318,7 @@ static int __uvc_resume(struct usb_interface *intf, int reset)
+>  				return ret;
+>  		}
+>  
+> -		mutex_lock(&dev->lock);
+> -		if (dev->users)
+> -			ret = uvc_status_start(dev, GFP_NOIO);
+> -		mutex_unlock(&dev->lock);
+> -
+> -		return ret;
+> +		return uvc_status_resume(dev);
+>  	}
+>  
+>  	list_for_each_entry(stream, &dev->streams, list) {
+> diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
+> index a78a88c710e2..e438ae5af2e8 100644
+> --- a/drivers/media/usb/uvc/uvc_status.c
+> +++ b/drivers/media/usb/uvc/uvc_status.c
+> @@ -257,6 +257,8 @@ int uvc_status_init(struct uvc_device *dev)
+>  	unsigned int pipe;
+>  	int interval;
+>  
+> +	mutex_init(&dev->status_lock);
+> +
+>  	if (ep == NULL)
+>  		return 0;
+>  
+> @@ -302,18 +304,22 @@ void uvc_status_cleanup(struct uvc_device *dev)
+>  	kfree(dev->status);
+>  }
+>  
+> -int uvc_status_start(struct uvc_device *dev, gfp_t flags)
+> +static int uvc_status_start(struct uvc_device *dev, gfp_t flags)
+>  {
+> +	lockdep_assert_held(&dev->status_lock);
+> +
+>  	if (dev->int_urb == NULL)
+>  		return 0;
+>  
+>  	return usb_submit_urb(dev->int_urb, flags);
+>  }
+>  
+> -void uvc_status_stop(struct uvc_device *dev)
+> +static void uvc_status_stop(struct uvc_device *dev)
+>  {
+>  	struct uvc_ctrl_work *w = &dev->async_ctrl;
+>  
+> +	lockdep_assert_held(&dev->status_lock);
+> +
+>  	/*
+>  	 * Prevent the asynchronous control handler from requeing the URB. The
+>  	 * barrier is needed so the flush_status change is visible to other
+> @@ -350,3 +356,46 @@ void uvc_status_stop(struct uvc_device *dev)
+>  	 */
+>  	smp_store_release(&dev->flush_status, false);
+>  }
+> +
+> +int uvc_status_resume(struct uvc_device *dev)
 > +{
-> +	return typec_port_register_altmode(port->port, desc);
-> +}
+> +	guard(mutex)(&dev->status_lock);
 > +
-> +int cros_typec_displayport_status_update(struct typec_altmode *altmode,
-> +					 struct typec_displayport_data *data)
+> +	if (dev->status_users)
+> +		return  uvc_status_start(dev, GFP_NOIO);
 
-static inline int
+Double space afer return. I'll fix when applying.
 
-> +{
+> +
 > +	return 0;
 > +}
-> +#endif
-> +#endif /* __CROS_TYPEC_ALTMODE_H__ */
+> +
+> +void uvc_status_suspend(struct uvc_device *dev)
+> +{
+> +	guard(mutex)(&dev->status_lock);
+> +
+> +	if (dev->status_users)
+> +		uvc_status_stop(dev);
+> +}
+> +
+> +int uvc_status_get(struct uvc_device *dev)
+> +{
+> +	int ret = 0;
+> +
+> +	guard(mutex)(&dev->status_lock);
+> +
+> +	if (!dev->status_users)
+> +		ret = uvc_status_start(dev, GFP_KERNEL);
+> +	if (!ret)
+> +		dev->status_users++;
 
-thanks,
+Thanks for the scoped guard, we can write
+
+	if (!dev->status_users) {
+		int ret = uvc_status_start(dev, GFP_KERNEL);
+		if (ret)
+			return ret;
+	}
+
+	dev->status_users++;
+
+	return 0;
+
+which I think is nicer to read. If that's fine with you I'll do this
+locally, not need to a new version.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> +
+> +	return ret;
+> +}
+> +
+> +void uvc_status_put(struct uvc_device *dev)
+> +{
+> +	guard(mutex)(&dev->status_lock);
+> +
+> +	if (dev->status_users == 1)
+> +		uvc_status_stop(dev);
+> +	WARN_ON(!dev->status_users);
+> +	if (dev->status_users)
+> +		dev->status_users--;
+> +}
+> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> index f4988f03640a..97c5407f6603 100644
+> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> @@ -628,20 +628,13 @@ static int uvc_v4l2_open(struct file *file)
+>  		return -ENOMEM;
+>  	}
+>  
+> -	mutex_lock(&stream->dev->lock);
+> -	if (stream->dev->users == 0) {
+> -		ret = uvc_status_start(stream->dev, GFP_KERNEL);
+> -		if (ret < 0) {
+> -			mutex_unlock(&stream->dev->lock);
+> -			usb_autopm_put_interface(stream->dev->intf);
+> -			kfree(handle);
+> -			return ret;
+> -		}
+> +	ret = uvc_status_get(stream->dev);
+> +	if (ret) {
+> +		usb_autopm_put_interface(stream->dev->intf);
+> +		kfree(handle);
+> +		return ret;
+>  	}
+>  
+> -	stream->dev->users++;
+> -	mutex_unlock(&stream->dev->lock);
+> -
+>  	v4l2_fh_init(&handle->vfh, &stream->vdev);
+>  	v4l2_fh_add(&handle->vfh);
+>  	handle->chain = stream->chain;
+> @@ -670,10 +663,7 @@ static int uvc_v4l2_release(struct file *file)
+>  	kfree(handle);
+>  	file->private_data = NULL;
+>  
+> -	mutex_lock(&stream->dev->lock);
+> -	if (--stream->dev->users == 0)
+> -		uvc_status_stop(stream->dev);
+> -	mutex_unlock(&stream->dev->lock);
+> +	uvc_status_put(stream->dev);
+>  
+>  	usb_autopm_put_interface(stream->dev->intf);
+>  	return 0;
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index b7d24a853ce4..07f9921d83f2 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -563,8 +563,6 @@ struct uvc_device {
+>  
+>  	const struct uvc_device_info *info;
+>  
+> -	struct mutex lock;		/* Protects users */
+> -	unsigned int users;
+>  	atomic_t nmappings;
+>  
+>  	/* Video control interface */
+> @@ -586,6 +584,8 @@ struct uvc_device {
+>  	struct usb_host_endpoint *int_ep;
+>  	struct urb *int_urb;
+>  	struct uvc_status *status;
+> +	struct mutex status_lock; /* Protects status_users */
+> +	unsigned int status_users;
+>  	bool flush_status;
+>  
+>  	struct input_dev *input;
+> @@ -752,8 +752,10 @@ int uvc_register_video_device(struct uvc_device *dev,
+>  int uvc_status_init(struct uvc_device *dev);
+>  void uvc_status_unregister(struct uvc_device *dev);
+>  void uvc_status_cleanup(struct uvc_device *dev);
+> -int uvc_status_start(struct uvc_device *dev, gfp_t flags);
+> -void uvc_status_stop(struct uvc_device *dev);
+> +int uvc_status_resume(struct uvc_device *dev);
+> +void uvc_status_suspend(struct uvc_device *dev);
+> +int uvc_status_get(struct uvc_device *dev);
+> +void uvc_status_put(struct uvc_device *dev);
+>  
+>  /* Controls */
+>  extern const struct v4l2_subscribed_event_ops uvc_ctrl_sub_ev_ops;
 
 -- 
-heikki
+Regards,
+
+Laurent Pinchart
 
