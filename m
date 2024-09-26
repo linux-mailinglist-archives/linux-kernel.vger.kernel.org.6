@@ -1,92 +1,128 @@
-Return-Path: <linux-kernel+bounces-340757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 776F998777B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:22:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE4898777D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9051F220CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:22:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08BEF1C227BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5C0156968;
-	Thu, 26 Sep 2024 16:22:12 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6333158DCC;
+	Thu, 26 Sep 2024 16:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="og4sylJb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD826F510
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C632F510;
+	Thu, 26 Sep 2024 16:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727367732; cv=none; b=Yce0JYsSn4fEyllES/1e5R1M437hhzL63i0mhtKPD+N7wB4pwIK/rzhwVrQSLopYxA9qXX0N3jBKmazb7HlvOGvUqKOPDEnCklBSV4lZZkgiq4gRzpkfOKgubbYWUgfi9lfvshGhe/GIDN3DSPmJ4nKS91p6EyGOdNB0snrGnuo=
+	t=1727367923; cv=none; b=sWZZEYFU/i+8ryQRuXoAuWQb2uFWlOUh43Izf7E8u8li4kU6GDEtVP4VgsEL1TegNbVdUSYWMsww9KuiucuF+DSm/YSVRRC7ztvAuGUNrFG2pTG8IpWjyFinEBAytcIMiDAYpCnZKhnV4mu0EM+3TlCv9e0qTfsofGQyHmOXSqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727367732; c=relaxed/simple;
-	bh=O6+YVeNDRTi0JnhIKBZA5TXaFxsqhvlhr61gALTh0Bs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=FOG8raiM2f0s83EfS0VlYEfLaVhjeqTr6j/Z79hgfaBxwdPBmEMe6cePkWCU8wTvWrLLN5L67ERBEndPU8NgFil6oHf9tngrHxNvv6FLNl9U1bGAQZ64mFnzykq1mLvcvrLTc1zgx1+sktf2aFv06a+ZOHXN4o7fL1KJY2pzkX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-266-SFvXZk6PPUOdnKT3Tr7TnQ-1; Thu, 26 Sep 2024 17:22:00 +0100
-X-MC-Unique: SFvXZk6PPUOdnKT3Tr7TnQ-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 26 Sep
- 2024 17:21:12 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Thu, 26 Sep 2024 17:21:12 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Vinicius Peixoto' <vpeixoto@lkcamp.dev>, =?utf-8?B?QW5kcsOpIEFsbWVpZGE=?=
-	<andrealmeid@riseup.net>
-CC: Brendan Higgins <brendan.higgins@linux.dev>, "~lkcamp/patches@lists.sr.ht"
-	<~lkcamp/patches@lists.sr.ht>, Rae Moar <rmoar@google.com>, David Gow
-	<davidgow@google.com>, Andrew Morton <akpm@linux-foundation.org>,
-	"kunit-dev@googlegroups.com" <kunit-dev@googlegroups.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Subject: RE: [PATCH 0/1] Add KUnit tests for lib/crc16.c
-Thread-Topic: [PATCH 0/1] Add KUnit tests for lib/crc16.c
-Thread-Index: AQHbDtY1vq0etu3wdUK8sqieRnvh+bJqPLsw
-Date: Thu, 26 Sep 2024 16:21:12 +0000
-Message-ID: <7f67ae7f15524e4eab6b15cdfd750a04@AcuMS.aculab.com>
-References: <20240922232643.535329-1-vpeixoto@lkcamp.dev>
- <8291c6eb-750a-4ab2-8904-65d723d034dd@riseup.net>
- <6d3025ed-e00d-4f8a-bab7-256cf78774af@lkcamp.dev>
-In-Reply-To: <6d3025ed-e00d-4f8a-bab7-256cf78774af@lkcamp.dev>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1727367923; c=relaxed/simple;
+	bh=B8iLCJEN9rehuLkyemSP/P0mW8WiYBdBMfgJGeUjnWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTZ2jXYg9o7RN3iQnytE/PEryEudff7lA5jevZ2ASN6RGOlC/mRQ+6X2rKwluwVebJ8YasCLbNkc2rcooxnIr5ZudBKahR486u6weB4fQAKAizpKQD9nhRkOni87e4OXHZbzbbZ04lqJYz29lMkPFv3ONxmAqLsMCE1cVQxvP0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=og4sylJb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB22C4CEC5;
+	Thu, 26 Sep 2024 16:25:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727367922;
+	bh=B8iLCJEN9rehuLkyemSP/P0mW8WiYBdBMfgJGeUjnWM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=og4sylJbjpQArFQWkV0WlbDkKWm5S/6OIp5xqEim/YHTSRlIRxqagCoFCJkHEF/7h
+	 8fuNRyBDLfqBXLXzZw7xao5Dn8roveccwUeNDitiF/jDERq4cRKlXK9di9+Ga3hu4x
+	 7voxgZewV890lp+47MOpuXekGsFRIGWir0xg4K6Hox3yxhUfOKq778YhhKYhiXlbCX
+	 xgxi3uQRVIZ58B0qAhbUVB3J801qiiGsnwCe+FEEaLfKWoO/+hee6BV1UE+c9a06d0
+	 4QSaa5guU5Mva/qHKSUQKMPfz4t6NcxgI04cqiqwpE6SSyRNIhIBNOEZLbG/W1U3oI
+	 3bBRY7c1IqihQ==
+Date: Thu, 26 Sep 2024 17:25:16 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Alexandre Mergnat <amergnat@baylibre.com>,
+	Bear Wang <bear.wang@mediatek.com>,
+	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
+	Sen Chu <sen.chu@mediatek.com>,
+	Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH] dt-bindings: phy: mediatek: tphy: add a property for
+ power-domains
+Message-ID: <20240926-treadmill-purr-b2e3279a14a4@spud>
+References: <20240926101804.22471-1-macpaul.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="w3rN3Cezyqcq/8tm"
+Content-Disposition: inline
+In-Reply-To: <20240926101804.22471-1-macpaul.lin@mediatek.com>
 
-Li4uDQo+IFRoZSBjaGVja3N1bXMgZm9yIHRoZSByYW5kb21seS1nZW5lcmF0ZWQgdGVzdCBjYXNl
-cyB3ZXJlIGNhbGN1bGF0ZWQNCj4gdXNpbmcgYSByZWZlcmVuY2UgaW1wbGVtZW50YXRpb24gWzFd
-IGFuZCB0aGlzIHRlc3QgY29tcGFyZXMgdGhlbSBhZ2FpbnN0DQo+IHRoZSB2YWx1ZXMgeWllbGRl
-ZCBieSB0aGUga2VybmVsJ3MgaW1wbGVtZW50YXRpb24uDQoNCkknZCBqdXN0IHVzZSBhIG5hw692
-ZSBpbXBsZW1lbnRhdGlvbiAtIGRvZXNuJ3QgcmVhbGx5IG1hdHRlcg0KaWYgaXQgaXMgYSBiaXQg
-c2xvdy4NCg0KU2xvdyBpcyByZWxhdGl2ZSAtIHRoaXMgY29kZSBvbmx5IHRha2VzIDM1bXMgdG8g
-Y3JjLTY0IG92ZXIgNU1CIG9mIGRhdGEuDQoNCnsNCiAgICB2b2xhdGlsZSBjb25zdCB1aW50MzJf
-dCAqciA9IChjb25zdCB2b2lkICopYnVmOw0KICAgIGZvciAoY3JjID0gMDsgciA8IChjb25zdCB1
-aW50MzJfdCAqKWJ1Zl9lbmQ7IHIrKykgew0KICAgICAgICB1aW50NjRfdCB2YWwgPSBsZTMydG9o
-KCpyKTsNCiAgICAgICAgY3JjIF49IGJzd2FwNjQodmFsKTsNCiAgICAgICAgZm9yIChpID0gMDsg
-aSA8IDMyOyBpKyspIHsNCiAgICAgICAgICAgIGlmIChjcmMgJiAoMXVsbCA8PCA2MykpDQogICAg
-ICAgICAgICAgICAgY3JjID0gKGNyYyA8PCAxKSBeIDB4NDJmMGUxZWJhOWVhMzY5M3VsbDsNCiAg
-ICAgICAgICAgIGVsc2UNCiAgICAgICAgICAgICAgICBjcmMgPSBjcmMgPDwgMTsNCiAgICAgICAg
-fQ0KICAgIH0NCn0NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwg
-QnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVn
-aXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
+--w3rN3Cezyqcq/8tm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Sep 26, 2024 at 06:18:04PM +0800, Macpaul Lin wrote:
+> Some platforms requires a dependency for power-domains.
+
+Some, so not all? Why isn't this restricted on a per compatible basis?
+
+> So we add property 'power-domains' and set 'maxItems: 1' in the
+> DT Schema.
+>=20
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> ---
+>  Documentation/devicetree/bindings/phy/mediatek,tphy.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml b/D=
+ocumentation/devicetree/bindings/phy/mediatek,tphy.yaml
+> index 423b7c4e62f2..c77fe43c224a 100644
+> --- a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+> @@ -125,6 +125,9 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+>      default: 28
+> =20
+> +  power-domains:
+> +    maxItems: 1
+> +
+>  # Required child node:
+>  patternProperties:
+>    "^(usb|pcie|sata)-phy@[0-9a-f]+$":
+> --=20
+> 2.45.2
+>=20
+
+--w3rN3Cezyqcq/8tm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvWK7AAKCRB4tDGHoIJi
+0n83AQDmlf3s79564V1ZUYmAOBOtHb3MjKIx+OlxbtvzS1/hPwD/d3J9i90sPxTf
+lSL+nqfbpB2W2qroRWWrLyD2axXVpQw=
+=2EfV
+-----END PGP SIGNATURE-----
+
+--w3rN3Cezyqcq/8tm--
 
