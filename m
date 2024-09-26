@@ -1,114 +1,223 @@
-Return-Path: <linux-kernel+bounces-339773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333CB986A5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:04:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B2D0986A5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FCB21C21605
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:04:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A6CC1F220F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE40A171099;
-	Thu, 26 Sep 2024 01:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03D6170828;
+	Thu, 26 Sep 2024 01:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UjZejoKC"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KUqGxOpB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B837B139B;
-	Thu, 26 Sep 2024 01:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715BD139B;
+	Thu, 26 Sep 2024 01:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727312659; cv=none; b=gSrOPyZG/lbwC0NBtIXrLtFwV+CBQLlI2enz5lvRRZY9q7rKMJua58vIPIqJKD+n0RZEFYnNtGNqI2p5+7eVEGhKoDrpdnV97+hlRxSDDNPkdc0/mZAKtDg+OG67ygHPlY+WMD0zAQUS7mhX+wU+0W4c/edg/uhfaLFOT6fAA6A=
+	t=1727312691; cv=none; b=mOB//SAoj1XgvE+ADaRfMo7u0bXl6X3pImu4ZuGd7ml86C3hn/TxGXy9huWj619hPVS2FmLb0ZHiQw2ff/UgeiNBI7RVUHi2pmwl95mRLeqE056O3mB8VfJKFKsaboIYZZsBMTiWxZA5m3RzJPHkZ9Q/b+IfuCyqX0w2JQGV/yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727312659; c=relaxed/simple;
-	bh=OTXtnIyXvv3ctTfp1uZptvfnkaFLbGK9hNEOisZ33s0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JfX+qgLz5x9cRbn8oVa6eRd4cogOkgqHrZVRvrISR6JsGioeXB5tPyeqqBnKXqzdTCUxrHqzkQdbDrP5ieSe7h8yjS0R2tWgq6bDu1eU01u/P7e+cG/XXXVEicuRho+nMmdOs7J+kMZTTU4kOfqpV9DDrAjIdZXhPRlbgeph6jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UjZejoKC; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1727312653; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=Fwd7Ybo+H+LowOXsq8VU7uRzWXWrPpIwnjgLH/1cB08=;
-	b=UjZejoKCB0DGk1D6Kb2BON+NvvvxmnC+IFLoLiGCzvl6mQK8SWBvMJXlCxSWXyFqssHyNnaP+Due/zgx0pvJ/TRg79bvX+s76Seq1FC/e2SKRJWzqnzJ0C4N5amq+8L+XLACIjoUIWeb8ce497fnbFNhMzp5myKrgLwmOkJdsg8=
-Received: from 30.244.99.85(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFlPsQC_1727312650)
-          by smtp.aliyun-inc.com;
-          Thu, 26 Sep 2024 09:04:12 +0800
-Message-ID: <0ca4a948-589a-4e2c-9269-827efb3fb9ef@linux.alibaba.com>
-Date: Thu, 26 Sep 2024 09:04:10 +0800
+	s=arc-20240116; t=1727312691; c=relaxed/simple;
+	bh=QvlnnNUVYxnwOzsWATvhGRZbzYi5uagbR8NvXqupzlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g8MFuYGRe1O5Dlm0AvsYgwFJRNolQkOl4/IdNDj8pxxHINVbPhNNeR1l0pyAbL6rLG2Kce+K7HWzyq7cTDGZnSFdxMJXJgE1xx0L3lXl3gq4HaGB22YtVDoPQGl9syRXXw7zLjZTt0C5xOIvsyzVdqEqZME46Xcqn5lbRyxMY5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KUqGxOpB; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727312690; x=1758848690;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=QvlnnNUVYxnwOzsWATvhGRZbzYi5uagbR8NvXqupzlg=;
+  b=KUqGxOpBe8yYq28AynK4ks+UkIjDRur489NY/XDD/XcRxQE9wNsQzR0I
+   equtXXV6LHpVjKdf1ztwdHn8GLIwB/bxbD4jezVAluD3u0Anzrz1ko1Nj
+   kfXgViqCVj22wEnKqRW77RRZPCeE8d4qTcXum5OCmdjJyzdYOYotqxkhT
+   4TxUBTf1n6xLGflP86FC0JW/BxcC66DLXszvHsJzb4RKojKB0TpF8G61O
+   cBv5Qnrz9umq93WpOOFwlJaQ4vxNygkNZdASyq+ru1jJF1/0JnzXpjgII
+   tqXtm3Y0L91ALuBo9kXGrAHF/+EpuQ8uUtcJ3/ZLodVATsnPfWqg7hK+A
+   g==;
+X-CSE-ConnectionGUID: PPfHcGvFSxam1+lTEB0f6g==
+X-CSE-MsgGUID: 9z6gcjKnTMqpA85QW/rOzg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="48921163"
+X-IronPort-AV: E=Sophos;i="6.10,258,1719903600"; 
+   d="scan'208";a="48921163"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 18:04:48 -0700
+X-CSE-ConnectionGUID: E+yqVkt4SDGhw4Bu6ten7A==
+X-CSE-MsgGUID: tksoldQWT+SDIQabVb+4HA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,258,1719903600"; 
+   d="scan'208";a="72752985"
+Received: from fecarpio-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.229])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 18:04:47 -0700
+Date: Wed, 25 Sep 2024 18:04:40 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Robert Gill <rtgill82@gmail.com>,
+	Jari Ruusu <jariruusu@protonmail.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	antonio.gomez.iglesias@linux.intel.com,
+	daniel.sneddon@linux.intel.com, stable@vger.kernel.org
+Subject: Re: [PATCH v7 3/3] x86/bugs: Use code segment selector for VERW
+ operand
+Message-ID: <20240926010440.oz42o7onxmmkejvn@desk>
+References: <20240925-fix-dosemu-vm86-v7-0-1de0daca2d42@linux.intel.com>
+ <20240925-fix-dosemu-vm86-v7-3-1de0daca2d42@linux.intel.com>
+ <5703f2d8-7ca0-4f01-a954-c0eb1de930b4@citrix.com>
+ <20240925234616.2ublphj3vbluawb3@desk>
+ <20240926001729.2unwdxtcnnkf3k3t@desk>
+ <4ca44b13-2442-4d59-8716-df43c3692a8a@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Ariel Miculas <amiculas@cisco.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, Gary Guo <gary@garyguo.net>,
- Yiyang Wu <toolmanp@tlmp.cc>, rust-for-linux@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
- linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
- <20240916135634.98554-4-toolmanp@tlmp.cc>
- <20240916210111.502e7d6d.gary@garyguo.net>
- <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
- <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me>
- <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
- <239b5d1d-64a7-4620-9075-dc645d2bab74@proton.me>
- <20240925154831.6fe4ig4dny2h7lpw@amiculas-l-PF3FCGJH>
- <80cd0899-f14c-42f4-a0aa-3b8fa3717443@linux.alibaba.com>
- <20240925214518.fvig2n6cop3sliqy@amiculas-l-PF3FCGJH>
- <be7a42b2-ae52-4d51-9b0c-ed0304db3bdf@linux.alibaba.com>
-In-Reply-To: <be7a42b2-ae52-4d51-9b0c-ed0304db3bdf@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4ca44b13-2442-4d59-8716-df43c3692a8a@citrix.com>
 
-
-
-On 2024/9/26 08:40, Gao Xiang wrote:
+On Thu, Sep 26, 2024 at 01:32:19AM +0100, Andrew Cooper wrote:
+> On 26/09/2024 1:17 am, Pawan Gupta wrote:
+> > On Wed, Sep 25, 2024 at 04:46:23PM -0700, Pawan Gupta wrote:
+> >> On Thu, Sep 26, 2024 at 12:29:00AM +0100, Andrew Cooper wrote:
+> >>> On 25/09/2024 11:25 pm, Pawan Gupta wrote:
+> >>>> Robert Gill reported below #GP in 32-bit mode when dosemu software was
+> >>>> executing vm86() system call:
+> >>>>
+> >>>>   general protection fault: 0000 [#1] PREEMPT SMP
+> >>>>   CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
+> >>>>   Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
+> >>>>   EIP: restore_all_switch_stack+0xbe/0xcf
+> >>>>   EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
+> >>>>   ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
+> >>>>   DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
+> >>>>   CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
+> >>>>   Call Trace:
+> >>>>    show_regs+0x70/0x78
+> >>>>    die_addr+0x29/0x70
+> >>>>    exc_general_protection+0x13c/0x348
+> >>>>    exc_bounds+0x98/0x98
+> >>>>    handle_exception+0x14d/0x14d
+> >>>>    exc_bounds+0x98/0x98
+> >>>>    restore_all_switch_stack+0xbe/0xcf
+> >>>>    exc_bounds+0x98/0x98
+> >>>>    restore_all_switch_stack+0xbe/0xcf
+> >>>>
+> >>>> This only happens in 32-bit mode when VERW based mitigations like MDS/RFDS
+> >>>> are enabled. This is because segment registers with an arbitrary user value
+> >>>> can result in #GP when executing VERW. Intel SDM vol. 2C documents the
+> >>>> following behavior for VERW instruction:
+> >>>>
+> >>>>   #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
+> >>>> 	   FS, or GS segment limit.
+> >>>>
+> >>>> CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
+> >>>> space. Use %cs selector to reference VERW operand. This ensures VERW will
+> >>>> not #GP for an arbitrary user %ds.
+> >>>>
+> >>>> Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
+> >>>> Cc: stable@vger.kernel.org # 5.10+
+> >>>> Reported-by: Robert Gill <rtgill82@gmail.com>
+> >>>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
+> >>>> Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
+> >>>> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+> >>>> Suggested-by: Brian Gerst <brgerst@gmail.com>
+> >>>> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> >>>> ---
+> >>>>  arch/x86/include/asm/nospec-branch.h | 6 ++++--
+> >>>>  1 file changed, 4 insertions(+), 2 deletions(-)
+> >>>>
+> >>>> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> >>>> index ff5f1ecc7d1e..e18a6aaf414c 100644
+> >>>> --- a/arch/x86/include/asm/nospec-branch.h
+> >>>> +++ b/arch/x86/include/asm/nospec-branch.h
+> >>>> @@ -318,12 +318,14 @@
+> >>>>  /*
+> >>>>   * Macro to execute VERW instruction that mitigate transient data sampling
+> >>>>   * attacks such as MDS. On affected systems a microcode update overloaded VERW
+> >>>> - * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
+> >>>> + * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %cs
+> >>>> + * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
+> >>>> + * 32-bit mode.
+> >>>>   *
+> >>>>   * Note: Only the memory operand variant of VERW clears the CPU buffers.
+> >>>>   */
+> >>>>  .macro CLEAR_CPU_BUFFERS
+> >>>> -	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+> >>>> +	ALTERNATIVE "", __stringify(verw %cs:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+> >>>>  .endm
+> >>> People ought rightly to double-take at this using %cs and not %ss. 
+> >>> There is a good reason, but it needs describing explicitly.  May I
+> >>> suggest the following:
+> >>>
+> >>> *...
+> >>> * In 32bit mode, the memory operand must be a %cs reference.  The data
+> >>> segments may not be usable (vm86 mode), and the stack segment may not be
+> >>> flat (espfix32).
+> >>> *...
+> >> Thanks for the suggestion. I will include this.
+> >>
+> >>>  .macro CLEAR_CPU_BUFFERS
+> >>> #ifdef __x86_64__
+> >>>     ALTERNATIVE "", "verw mds_verw_sel(%rip)", X86_FEATURE_CLEAR_CPU_BUF
+> >>> #else
+> >>>     ALTERNATIVE "", "verw %cs:mds_verw_sel", X86_FEATURE_CLEAR_CPU_BUF
+> >>> #endif
+> >>>  .endm
+> >>>
+> >>> This also lets you drop _ASM_RIP().  It's a cute idea, but is more
+> >>> confusion than it's worth, because there's no such thing in 32bit mode.
+> >>>
+> >>> "%cs:_ASM_RIP(mds_verw_sel)" reads as if it does nothing, because it
+> >>> really doesn't in 64bit mode.
+> >> Right, will drop _ASM_RIP() in 32-bit mode and %cs in 64-bit mode.
+> > Its probably too soon for next version, pasting the patch here:
+> >
+> > ---8<---
+> > diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> > index e18a6aaf414c..4228a1fd2c2e 100644
+> > --- a/arch/x86/include/asm/nospec-branch.h
+> > +++ b/arch/x86/include/asm/nospec-branch.h
+> > @@ -318,14 +318,21 @@
+> >  /*
+> >   * Macro to execute VERW instruction that mitigate transient data sampling
+> >   * attacks such as MDS. On affected systems a microcode update overloaded VERW
+> > - * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %cs
+> > - * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
+> > - * 32-bit mode.
+> > + * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
+> >   *
+> >   * Note: Only the memory operand variant of VERW clears the CPU buffers.
+> >   */
+> >  .macro CLEAR_CPU_BUFFERS
+> > -	ALTERNATIVE "", __stringify(verw %cs:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+> > +#ifdef CONFIG_X86_64
+> > +	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+> > +#else
+> > +	/*
+> > +	 * In 32bit mode, the memory operand must be a %cs reference. The data
+> > +	 * segments may not be usable (vm86 mode), and the stack segment may not
+> > +	 * be flat (ESPFIX32).
+> > +	 */
 > 
-> 
-> On 2024/9/26 05:45, Ariel Miculas wrote:
+> I was intending for this to replace the "Using %cs" sentence, as a new
+> paragraph in that main comment block.
 
-...
-
->>
->> I honestly don't see how it would look good if they're not using the
->> existing filesystem abstractions. And I'm not convinced that Rust in the
->> kernel would be useful in any way without the many subsystem
->> abstractions which were implemented by the Rust for Linux team for the
->> past few years.
-> 
-> So let's see the next version.
-
-Some more words, regardless of in-tree "fs/xfs/libxfs",
-you also claimed "Another goal is to share the same code between user
-space and kernel space in order to provide one secure implementation."
-for example in [1].
-
-I wonder Rust kernel VFS abstraction is forcely used in your userspace
-implementation, or (somewhat) your argument is still broken here.
-
-[1] https://lore.kernel.org/r/20230609-feldversuch-fixieren-fa141a2d9694@brauner
-
-Thanks,
-Gao Xiang
-
-> 
-> Thanks,
-> Gao Xiang
-> 
->>
->> Cheers,
->> Ariel
->>
-
+The reason I added the comment to 32-bit leg is because most readers will
+not care about 32-bit mode. The comment will mostly be a distraction for
+majority. People who care about 32-bit mode will read the comment in 32-bit
+leg. I can move the comment to main block if you still want.
 
