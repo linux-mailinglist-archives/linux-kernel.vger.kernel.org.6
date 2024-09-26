@@ -1,114 +1,157 @@
-Return-Path: <linux-kernel+bounces-340729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1515C987722
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:59:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3B4987726
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E4C11C252E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:59:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90C9AB2AC26
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D24158552;
-	Thu, 26 Sep 2024 15:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1E3158D6A;
+	Thu, 26 Sep 2024 15:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ik7OxE0U"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEauHDz/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B0A14AD25
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5215C4C7E;
+	Thu, 26 Sep 2024 15:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727366349; cv=none; b=rJ8Vtj0gn4onRwPh5xkwl5g/6xaqHI/13Uhka//Gr0F2rzjXcUwgoH6etKpnnhN/idHRrp/8goHENmQHI5ecuHVoReQk/JYZhDqTpp5J0i/j/IL5TWkMePFGo/4F0PmUfPZhnEDoLOTGtVdfx7tb2DSCXtlOt7Y9NYK0e3Hb/SM=
+	t=1727366388; cv=none; b=djgX0nsQiZ5gQD2O3SX77vgCHJbwBo1iF51TsJNAkOvYK5WPYqLEh3jj2M7eNAY3HFkcPnzzaetpPJ95e43j/qh+pk9ghrp0usUf+blFul1wyk3gE4XYXc59dHgUTtW+48gov5Mo3vt/LUx7/BsyCeQjzt3xlbR2H1m4SKs4QSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727366349; c=relaxed/simple;
-	bh=2v2nI+JCWRDdjouZniI/NESZgicyvP+07ZPHhBMP+pU=;
+	s=arc-20240116; t=1727366388; c=relaxed/simple;
+	bh=5WPiZotTJNjDA/yWMHXdhILtKuuGmQdF3mrjZNA821k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y4/l+XYQri94ADnyN0tJx8BawhySvtUz7991kRHI07j4AgZpQGWeFmyal4uj9/An6LRQk9d204YrIHAMJWoFmZR4dYTfEY+RdQOudWyxNQ6c+wq2LdsYwyv2OolVT1ZwGCJMWozUjFybT8A1YM1zXg/K+lpgoy/+NXVxFSeVg7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ik7OxE0U; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727366346;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gFAsLAn7aoKzo71RR9rydtziNxEzX6MqXWWWxfPqW18=;
-	b=Ik7OxE0UbaGS34gmSgmP/gkXBg6TBP0rJjQYFXHVS+8Um1ZVXewAPeTv2QCulVXrNSq0LP
-	CkgpoNDVT87pKLHlEcaDdf6KOylDsB56rWDmg4ZXRFJx5IYBWfImbLLEVrXTyaxNXhRBL6
-	HkeXe+mdiG8yZdBULOxlT5G0iMBnQGc=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-359-K1UzhgOrNZG6e6r9Dx0AnA-1; Thu, 26 Sep 2024 11:59:05 -0400
-X-MC-Unique: K1UzhgOrNZG6e6r9Dx0AnA-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7acb118ba04so238856185a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:59:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727366344; x=1727971144;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gFAsLAn7aoKzo71RR9rydtziNxEzX6MqXWWWxfPqW18=;
-        b=wJPXhFsuV004zYjQpqiJY9ilQ8mCV/iU4TM/eaWky5/YYlbI89M3jgNyW1pRTBpZPT
-         XJU0m58aY+aFYZe10w0et7+I6Svx8ZxIv2593z5UUi8Co1LToi7yYvqGuZLz5CsbUOgG
-         u/OHeSAA1+RMLhGf7B4shiKze+qnipnTPCehfL72j/xbEFLyODqk3NbIfwYVgoaCb7LQ
-         xRkud1enrISfwEdEA9DOrSUPm6G2L8RYTOHBimIkxm6xdso8T992ojy7vv30+m8QHd+E
-         tWPMdO7sbzbHVqBTpvJJDloS2lBcEzhklq+s+RjHUgSfeEb0dBFnkT+XRwYTiiY3b9uX
-         qgpA==
-X-Gm-Message-State: AOJu0YyjBFBttU5BIMzzKuJRbEoGB8avHvR95FtmE4F3CV5TchmQ2LIS
-	XKgVwFMr+Q1oOvTrdEXM+xyLQjCXOgq8pB2i04KNCMNwqZNiYKHdy4qEvQyZk/L07gGnMduF5D7
-	BU95CCIx//irJQHT68hrKVcN4MbbhZvaYclHnwPeZSPHjsei/iwK4B/R+ITdYniPkPpTkiyRk
-X-Received: by 2002:a05:620a:3907:b0:7ac:c348:6a55 with SMTP id af79cd13be357-7ae3785aa4dmr7320785a.38.1727366344018;
-        Thu, 26 Sep 2024 08:59:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGRrdxCsCY8RTL63d/BLOR3iT34tGRFX8LGr+whBimlqLf5fLkvQQDVmOR5aqdwd7HjXAlecA==
-X-Received: by 2002:a05:620a:3907:b0:7ac:c348:6a55 with SMTP id af79cd13be357-7ae3785aa4dmr7318385a.38.1727366343632;
-        Thu, 26 Sep 2024 08:59:03 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae377ecc96sm2434085a.68.2024.09.26.08.59.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 08:59:03 -0700 (PDT)
-Date: Thu, 26 Sep 2024 11:59:00 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	syzbot+bf2c35fa302ebe3c7471@syzkaller.appspotmail.com
-Subject: Re: [PATCH v1] mm/huge_memory: check pmd_special() only after
- pmd_present()
-Message-ID: <ZvWExCqCM7qzydP1@x1n>
-References: <20240926154234.2247217-1-david@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YxQFPHoCUUANRQqlMvsadLKITBGmDoz+I2ipPUqo2eQRD83f9qF3m93JQG55g7s/o7SVlcGNGOp5r/BTn4nihJeom87zq1ez+gnCOUC90ARxzgxsdyYCAX7gL9QjOuW17rERy4WpmVjH7TzrLq1lmA6sRI5zmosrs9y0R9rW1vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEauHDz/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2596DC4CEC5;
+	Thu, 26 Sep 2024 15:59:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727366387;
+	bh=5WPiZotTJNjDA/yWMHXdhILtKuuGmQdF3mrjZNA821k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GEauHDz/vBRh7M8Li+EvWJ4ck1kr2Is+EqOj9sPiez6/KYucxWXoVT1x40jwiRhef
+	 SkdDhc63WWETfh82y06j5gywdfdpE/K9C3RqdiqfFy2XNhHdvLIL5UIK0v31NpxkgD
+	 63H9Amiwokhi7Jzk9BjiyrwgFxN+pLHppfNyqQYbo6SxWX4hTF/MppGveN3p6sBhYN
+	 SXT87+siB6j3SV8VUh8tI6EHMfqREe4POKBt7P8DiPFH/UQscKZQ1rMtvFClXK0Y5l
+	 eDjQLnMqfHLOBN4kwc/I4slu0Mp5Ry9f4NWAtugJWqYY3f9foMZph03OeDmBUGrxxD
+	 y7kr8m7kRvbMQ==
+Date: Thu, 26 Sep 2024 16:59:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>,
+	Tinghan Shen <tinghan.shen@mediatek.com>,
+	Seiya Wang <seiya.wang@mediatek.com>,
+	Ben Lok <ben.lok@mediatek.com>,
+	"Nancy . Lin" <nancy.lin@mediatek.com>,
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Alexandre Mergnat <amergnat@baylibre.com>,
+	Bear Wang <bear.wang@mediatek.com>,
+	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
+	Sen Chu <sen.chu@mediatek.com>,
+	Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH v2 5/5] dt-bindings: display: mediatek: dpi: Add mt8195
+ support in power domains
+Message-ID: <20240926-visible-harmonica-a7cda103ff70@spud>
+References: <20240926111449.9245-1-macpaul.lin@mediatek.com>
+ <20240926111449.9245-5-macpaul.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="IMup/vqcFMn6Sn9a"
 Content-Disposition: inline
-In-Reply-To: <20240926154234.2247217-1-david@redhat.com>
+In-Reply-To: <20240926111449.9245-5-macpaul.lin@mediatek.com>
 
-On Thu, Sep 26, 2024 at 05:42:34PM +0200, David Hildenbrand wrote:
-> We should only check for pmd_special() after we made sure that we
-> have a present PMD. For example, if we have a migration PMD,
-> pmd_special() might indicate that we have a special PMD although we
-> really don't.
-> 
-> This fixes confusing migration entries as PFN mappings, and not
-> doing what we are supposed to do in the "is_swap_pmd()" case further
-> down in the function -- including messing up COW, page table handling
-> and accounting.
-> 
-> Reported-by: syzbot+bf2c35fa302ebe3c7471@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/lkml/66f15c8d.050a0220.c23dd.000f.GAE@google.com/
-> Fixes: bc02afbd4d73 ("mm/fork: accept huge pfnmap entries")
-> Cc: Peter Xu <peterx@redhat.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Reviewed-by: Peter Xu <peterx@redhat.com>
+--IMup/vqcFMn6Sn9a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Peter Xu
+On Thu, Sep 26, 2024 at 07:14:49PM +0800, Macpaul Lin wrote:
+> Add power domain binding to the mediatek DPI controller for MT8185.
 
+This wording is confusing, no binding is being added here, you're just
+allowing one property.
+
+> The dpi node in mt8195.dtsi was triggering a dtbs_check error:
+>   dp-intf@1c113000: power-domains: False schema does not allow [[44, 18]]
+
+And while it is good to have the warning, it would be better to explain
+here that there are actually power domains, since the dts could be wrong
+here also.
+
+Otherwise,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+> Fixes: 5474d49b2f79 ("dt-bindings: display: mediatek: dpi: Add power doma=
+ins")
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> ---
+>  .../devicetree/bindings/display/mediatek/mediatek,dpi.yaml       | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> Changes for v2:
+>  - Because of the corresponding dts fix has been reviewed with a Reviewed=
+-by: tag.
+>    [1] https://lore.kernel.org/all/20240925080515.16377-1-macpaul.lin@med=
+iatek.com/
+>    We still need this change to fix the 2 dtbs_check errors.
+>    So keeps no change here.
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,=
+dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.=
+yaml
+> index 3a82aec9021c..07acc8a76bfc 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> @@ -89,6 +89,7 @@ allOf:
+>                  - mediatek,mt6795-dpi
+>                  - mediatek,mt8173-dpi
+>                  - mediatek,mt8186-dpi
+> +                - mediatek,mt8195-dp-intf
+>      then:
+>        properties:
+>          power-domains: false
+> --=20
+> 2.45.2
+>=20
+
+--IMup/vqcFMn6Sn9a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvWE6gAKCRB4tDGHoIJi
+0o8/AQDZGYmuC7hP+2xaTqwKXghh85TysD+qSjWhvV4FfeR+gQD8DbK1R1oHhLRL
+a08ypff9VkE92E4iJH4I3W5M8tHjQQc=
+=C4PU
+-----END PGP SIGNATURE-----
+
+--IMup/vqcFMn6Sn9a--
 
