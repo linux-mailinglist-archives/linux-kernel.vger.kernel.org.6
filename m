@@ -1,152 +1,130 @@
-Return-Path: <linux-kernel+bounces-340443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03DC298737C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:22:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB6D987380
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBE3F2835E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:22:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9EFC283291
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D2817A5A6;
-	Thu, 26 Sep 2024 12:22:44 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4889017799F;
+	Thu, 26 Sep 2024 12:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YAkxGYQA"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243C51714BD;
-	Thu, 26 Sep 2024 12:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2116D176ADF
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727353364; cv=none; b=X2x0wFuHtx6g0UvHm7Z+qrtMmrNSBoemSJA06jXuWp5Ps0zIpis/Bnyj6qKrbMn0k0wSy2CDRK3wOyHehomxiG228zvc0MnhC+JQae7vPJ7keanzWE3Wo7AhvPPQH5H2jc1h0FODCdQaE7uYx8sWbHk7C6xPPx7eiFGZv51HXkE=
+	t=1727353389; cv=none; b=JjLCMz2Np0dphCIbCoag4kex4JFM+fQK6Fcy2kHKFMEoUZj/LUFXvhx7POPrjiuUWG2I2uNrFlqrmGpN0PkI26YYGQdNkXT/VPT7L11+J9HoftFhxPKuH+CAhKJtQV3LSKyGHJ/Q9l8EJdtdGsqykAql2SV6ZyEzmsQWTYl0QEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727353364; c=relaxed/simple;
-	bh=YZzBmMO9bp4raxlf9pje1ASVpTpnjxF5iuLUpm5tYIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EFvy+uSn2o5+9a/ns7gWs0pZgHDB1ilrJzK1/bjVKFxMjDdeNNvUghvh1iyV6DTzBT9OWD0WY7oEyrsmoSzEIJNR0/cqRarqFWXv3EEeBHywzlUqExdWtMTUz/Loxdj5ydjUFrt7QHkqUhjsvrFkAb/fgFHKaqeXi5LnmnhskDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XDt5q71Kdz9sSL;
-	Thu, 26 Sep 2024 14:22:39 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id SeWZDw47vw6L; Thu, 26 Sep 2024 14:22:39 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XDt5q5zDDz9sRy;
-	Thu, 26 Sep 2024 14:22:39 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B71BE8B76E;
-	Thu, 26 Sep 2024 14:22:39 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id cW2IzJlvTqAb; Thu, 26 Sep 2024 14:22:39 +0200 (CEST)
-Received: from [172.25.230.108] (unknown [172.25.230.108])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 63CB08B763;
-	Thu, 26 Sep 2024 14:22:39 +0200 (CEST)
-Message-ID: <b31c74c1-0c19-4bc4-b1af-db817977748d@csgroup.eu>
-Date: Thu, 26 Sep 2024 14:22:39 +0200
+	s=arc-20240116; t=1727353389; c=relaxed/simple;
+	bh=epnQDLbxKMM02W75YmUnm6Rh7M3jGgN2mMkawj0gCf8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DrDGo0bRJmkH75b2cPNoCWgBgIKdFwAbbBKcy9PU+R0wWnmZCiTzf51xLPi2xRBjgjXlUp79IPScbS2cftc3Go+PHn6321DjeZbmtnSq4EOoDCE5tU/747ml8mm1woOQPYI7gPiuxib+QoKDKvGn9VenO1ZcXEBhJ7ID+OLXT/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YAkxGYQA; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c40aea5c40so1703484a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:23:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727353386; x=1727958186; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OOtAdGSLmtU0Tl9JOnUIzkV8dLA7+CwP/jLQK5eAiLU=;
+        b=YAkxGYQABkadWmVxflNZRCNvWRIFuG1WLlu9PZfkKccPNT5fRwDD7bMR2myWDPysTA
+         6R5tZ07TV71IdGJOLpPqPe9utywTI2pM4qT14UvQy6fwqiegQjpq4t3t5VBCO+2vNxEH
+         PtaftTFJkW3gavE/YNZ380rQDXdUzKByR28nOI+HZjpuuMXPweX78IlyKmOf8nnO4arS
+         0qWShkR76jD95ddEO24ThV0rSdKY1b0hCq6T8WJd8aBKiiIVtsWy+ZVjjmLu7mtFJM7z
+         xNRAsWoc++YO8M/F0X2kPaV1hro3DhvwoEgrmmmC82K0XS+d1LdX/gsElYyKbCQOftYC
+         gOvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727353386; x=1727958186;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OOtAdGSLmtU0Tl9JOnUIzkV8dLA7+CwP/jLQK5eAiLU=;
+        b=USu8neAQiyJyj41fWENlYwpvQuik6btej/Mr3xjIZai7Qbw4CVNXgr7jzQp23ouIEA
+         MVzt2UFYm0UBk2QDqW9BesTA5SkuEZ9FJL8m3nUKFmN5A7F4WcKhXUZjhiYWyq3l59Y5
+         kRRYCkX1oPif7SjrJ7U4Y97Cl5kFVQb3zwgR3Y5FYAuR4ecwzDSzVIsowmU5O+TdPTZ1
+         MEjfFdJGR7920lqH8XsAQTW3/J1wgeBaa0haz6zyjItYujQ9TpQLkv+e2UZYaEVAJARM
+         2ftZ4Bwez9bijy6YWoePDsQTNB7xrYkI5uCqhF1PTGWuu3ihT4ukuK1h/6JzhH4mlnI+
+         nRpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXiCFbY6oEifRllzjAkh2jPL4l3wT0m8g0PcVVDCMKd3c2DfaWoFUV7Yas8O2Eh0f+B1FZcAvyDne6l4sE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy24KLtTmQSiKk1/WKAituq2PuUAsHiq57ajAAari+YlttKkETn
+	ZIcVkb5cbab6yl0prFgW57VGJ1l16xJlZnoxCMJwrryKHVWWfQrNMRrm31DROKscIKX9sJzOsGF
+	oicCUnm4f5rlkB3G+rksGTRqqIM8=
+X-Google-Smtp-Source: AGHT+IER0I/Mcrqs3P0SR1Afg5c32qaZvfGnypuc9N4ejqf4RJMfQxSgsS2aY5Ti4IQH0claNSiUXpiO6MeuC7PgVaw=
+X-Received: by 2002:a05:6402:40d2:b0:5c7:2209:dedb with SMTP id
+ 4fb4d7f45d1cf-5c8777b59c1mr3107804a12.8.1727353385705; Thu, 26 Sep 2024
+ 05:23:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 14/16] modules: Support extended MODVERSIONS info
-To: Matthew Maurer <mmaurer@google.com>, masahiroy@kernel.org,
- ndesaulniers@google.com, ojeda@kernel.org, gary@garyguo.net,
- mcgrof@kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
- Alex Gaynor <alex.gaynor@gmail.com>, Benjamin Gray <bgray@linux.ibm.com>,
- Naveen N Rao <naveen@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, neal@gompa.dev, marcan@marcan.st,
- j@jannau.net, asahi@lists.linux.dev, linux-modules@vger.kernel.org,
- Nicholas Piggin <npiggin@gmail.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Boqun Feng <boqun.feng@gmail.com>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, linuxppc-dev@lists.ozlabs.org
-References: <20240925233854.90072-1-mmaurer@google.com>
- <20240925233854.90072-15-mmaurer@google.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240925233854.90072-15-mmaurer@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240925134732.24431-1-ahuang12@lenovo.com> <20240925134706.2a0c2717a41a338d938581ff@linux-foundation.org>
+In-Reply-To: <20240925134706.2a0c2717a41a338d938581ff@linux-foundation.org>
+From: Huang Adrian <adrianhuang0701@gmail.com>
+Date: Thu, 26 Sep 2024 20:22:54 +0800
+Message-ID: <CAHKZfL0D6UXvhuiq_GQgCwdKZAQ7CEkajJPpZJ40_e+ZfvHvcw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] kasan, vmalloc: avoid lock contention when
+ depopulating vmalloc
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Uladzislau Rezki <urezki@gmail.com>, kasan-dev@googlegroups.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Adrian Huang <ahuang12@lenovo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 26, 2024 at 4:47=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Wed, 25 Sep 2024 21:47:32 +0800 Adrian Huang <adrianhuang0701@gmail.co=
+m> wrote:
+>
+> >
+> > ...
+> >
+> > From: Adrian Huang <ahuang12@lenovo.com>
+> > After re-visiting code path about setting the kasan ptep (pte pointer),
+> > it's unlikely that a kasan ptep is set and cleared simultaneously by
+> > different CPUs. So, use ptep_get_and_clear() to get rid of the spinlock
+> > operation.
+>
+> "unlikely" isn't particularly comforting.  We'd prefer to never corrupt
+> pte's!
+>
+> I'm suspecting we need a more thorough solution here.
+>
+> btw, for a lame fix, did you try moving the spin_lock() into
+> kasan_release_vmalloc(), around the apply_to_existing_page_range()
+> call?  That would at least reduce locking frequency a lot.  Some
+> mitigation might be needed to avoid excessive hold times.
 
+I did try it before. That didn't help. In this case, each iteration in
+kasan_release_vmalloc_node() only needs to clear one pte. However,
+vn->purge_list is the long list under the heavy load: 128 cores (128
+vmap_nodes) execute kasan_release_vmalloc_node() to clear the corresponding
+pte(s) while other cores allocate vmalloc space (populate the page table
+of the vmalloc address) and populate vmalloc shadow page table. Lots of
+cores contend init_mm.page_table_lock.
 
-Le 26/09/2024 à 01:38, Matthew Maurer a écrit :
-> Adds a new format for MODVERSIONS which stores each field in a separate
-> ELF section. This initially adds support for variable length names, but
-> could later be used to add additional fields to MODVERSIONS in a
-> backwards compatible way if needed. Any new fields will be ignored by
-> old user tooling, unlike the current format where user tooling cannot
-> tolerate adjustments to the format (for example making the name field
-> longer).
-> 
-> Since PPC munges its version records to strip leading dots, we reproduce
-> the munging for the new format. Other architectures do not appear to
-> have architecture-specific usage of this information.
-> 
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
-> ---
->   arch/powerpc/kernel/module_64.c | 23 ++++++++-
->   kernel/module/internal.h        | 11 ++++
->   kernel/module/main.c            | 92 ++++++++++++++++++++++++++++++---
->   kernel/module/version.c         | 45 ++++++++++++++++
->   4 files changed, 161 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/module_64.c b/arch/powerpc/kernel/module_64.c
-> index e9bab599d0c2..4e7b156dd8b2 100644
-> --- a/arch/powerpc/kernel/module_64.c
-> +++ b/arch/powerpc/kernel/module_64.c
-> @@ -355,6 +355,23 @@ static void dedotify_versions(struct modversion_info *vers,
->   		}
->   }
->   
-> +static void dedotify_ext_version_names(char *str_seq, unsigned long size)
-> +{
-> +	unsigned long out = 0;
-> +	unsigned long in;
-> +	char last = '\0';
-> +
-> +	for (in = 0; in < size; in++) {
-> +		/* Skip one leading dot */
-> +		if (last == '\0' && str_seq[in] == '.')
-> +			in++;
-> +		last = str_seq[in];
-> +		str_seq[out++] = last;
-> +	}
+For a lame fix, adding cond_resched() in the loop of
+kasan_release_vmalloc_node() is an option.
 
-Why do you need a loop here ?
+Any suggestions and comments about this issue?
 
-Can't you just do something like:
+Thanks.
 
-	if (str_seq[0] == '.')
-		memmove(str_seq, str_seq + 1, size);
-
-
-> +	/* Zero the trailing portion of the names table for robustness */
-> +	memset(&str_seq[out], 0, size - out);
-
-This seems unneeded.
-
-> +}
-> +
->   /*
->    * Undefined symbols which refer to .funcname, hack to funcname. Make .TOC.
->    * seem to be defined (value set later).
-
-
-
-Christophe
+-- Adrian
 
