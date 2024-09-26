@@ -1,270 +1,234 @@
-Return-Path: <linux-kernel+bounces-340011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69AE6986D48
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:12:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E86986D4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17651F22A78
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:12:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A4B1F23CF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F3B1891B9;
-	Thu, 26 Sep 2024 07:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246AC18BC21;
+	Thu, 26 Sep 2024 07:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bV50kE1W"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="t71QJoRz"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1C71E86E
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E73224D6;
+	Thu, 26 Sep 2024 07:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727334764; cv=none; b=npC3iRoeUf4px/gxwPgyU4pSK3WfVgWXOpbW1Vd/MXzSrxTwaUBWM7IIkD4s515X+QAiyzB3W8sea9S5E4BYPqMBc0KehjnWMlxid4yrGz9OCoCp5NVmCmNbOo2w138cMvwfLOsnvMxaEuC01R8HMIV5zury8G293KMVzEWs2UA=
+	t=1727334816; cv=none; b=YtdX9kAQgZ22piGcFG5u0FpDCmg8TqPiDK82K6X5uNnqEiQWensItfDZnPgduzKMiOM34PfVJbxj7oQ3uhhATFeYnnRpXST+u/dyRBEkF+cGPTsywo+Oq0wt27vmqcDKQaWWnTE0CIY2N04mM2glNi2KT8j6SA9+YW5JZ/RiGs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727334764; c=relaxed/simple;
-	bh=4E/LOetIXYYf1xhxxq7AjZVsnp9dikavxzLX+hmzCUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nhxwCL/x0wtso7SQ6eWcNWKqo3fNeWJEHVDQV5IBOi/DAAp7stVf3Fv4lWAnN9YzvHblg5ojqPrO6y0Bkudk80pBXkgX75LUoWyfZfVg+DH21Sa4hdlPagXG0xerXtBv6pohBq8a+THpxzxusb5421XQ9MwGmogCBeTREhkHlI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bV50kE1W; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53659867cbdso981658e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 00:12:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727334761; x=1727939561; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8s1pVCKNQ5LijTwwwKbqt+TsjnjxLMGQpEOKi95VGHE=;
-        b=bV50kE1Wq5FAiSONd5Gyd3Ztgdq8f96AsygNOvL286/36DQrbBlOa8iKBv/WwKk2XK
-         SJwFi2oSqA54dQ6CQsGH+HVuIf7DPo3c3qeWAiMCmIgzDEY39g4lHN6nZC+nu0IkFCCi
-         wcdbxCTmlk7xgq2J9LMy7kJ0eNtieiIUeFSzdGT2V8YchS5sb2eTTF2qpve/d35c28HT
-         yUNqGwl/GJoyKM5e0npI9GSX6ilnGancpZ98Zuu8pmFA09W0HoyncdmEuJ6aGRjur6xW
-         IVA24sEc6mpQ5i2USpzlT7JqpA6hGIxdCUBD2lGFF79wXW5/j6RyjIN/TXButs6zHc+/
-         huSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727334761; x=1727939561;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8s1pVCKNQ5LijTwwwKbqt+TsjnjxLMGQpEOKi95VGHE=;
-        b=LstSOT/XrN0jiEC038u/7g9FteA0xL0TO+23GERalMg4hfVyn3rH3VAViyQaBtWL8n
-         kIhxTVGVT96p5vfVTr2FQnrlgZ5LYcdwznbkJ4qsZPTOAz/vG1Ip7JYi1N2229Bv0PTp
-         3vqH1S0CijJiWF462hMPU2GWCgwGCFC1f//X70VNl2NUBoYAg5+eqdnTb70EJSDWybLk
-         ctTNG5LDjCiXh1ax1wkuB9Imhc93hzpgWBgWVhOC6a6Uf8aBjeyIQhhF4mFawEpngriz
-         SKDvm0OebAcxm2XLzQX0aRXMMMNku6w9iQpq1Oq9JBLUyPWZX3938+aW+/cnYkp3JK4x
-         OczA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNM1uex6zNXZ2x58w123A/flMeWD3lrK+4VU6FsKryw55vo14ZTFTwe179iN+nJET5ZS4Vm8yZlUnqczo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx23mS/9lqug/K4HdJn6ZIkh0oqZQQCR4FYpxAEvb3C83ftLKgX
-	cCIpdV2mRA/Odq+SJyfPGH2Gj+bjBqO/w+gyjoVSaTKNUAuJlkVEZJUkVHC0rB8=
-X-Google-Smtp-Source: AGHT+IEvLEJJDB6OVRh8ic+vi9uidxlX2tWayQauVJPNPmxbj5VEoP9OS3HkVp0PnEHowSwNvC2pog==
-X-Received: by 2002:a05:6512:3b0e:b0:536:7b56:6ba0 with SMTP id 2adb3069b0e04-538775666a3mr4753353e87.57.1727334760529;
-        Thu, 26 Sep 2024 00:12:40 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85e0b8dsm720824e87.61.2024.09.26.00.12.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 00:12:39 -0700 (PDT)
-Date: Thu, 26 Sep 2024 10:12:37 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH v2 05/22] drm/msm/dpu: move resource allocation to CRTC
-Message-ID: <w53qtqnbibnw2kekn56afrf75udl3hbrk6kfavv7imqac6eqvo@lpgdvxncpfep>
-References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
- <20240924-concurrent-wb-v2-5-7849f900e863@quicinc.com>
- <dv5iij6v76ieprfckdjo4yksrjrgqw73v2lh7u4xffpu7rdrf3@zgjcp3a2hlxo>
- <24a11f4c-d848-4f1b-afbd-35b135fa3105@quicinc.com>
- <CAA8EJpraspHpgGvJxe7dXx-hN+yirs_+AacjkrHvPWuEvrLJ-w@mail.gmail.com>
- <b3830573-1f39-4729-be58-c2659a37d689@quicinc.com>
+	s=arc-20240116; t=1727334816; c=relaxed/simple;
+	bh=mxaesniZDobVQDHBLuX45uEc5YOxQMsEkUYYRn1BU5U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k/UuxnU2MxjB1OQaPLNoM99o0tNeGj11QPoam9GduAr6tliK9m/kBMuVzvfpCwLRXHtpABwTsM4ORkNGZDHATMmyMkX7p6E+gz72ghDKgi7BqaQl0FU18MTry68UeipfvLs75z+C4JmpK9NQIF6rxyNfE6f1dbOVQsYboPefQMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=t71QJoRz; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 809D08D4;
+	Thu, 26 Sep 2024 09:12:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727334724;
+	bh=mxaesniZDobVQDHBLuX45uEc5YOxQMsEkUYYRn1BU5U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=t71QJoRzOLEw29qfeCw81IqtOVhV9hv5IZLt3g7s4A+lP8CGTnN+mGSYHEXvYdBmX
+	 nWyYfra0jKDB+OmRJh0QM94S0Sfl1Y76484QLht0pNxFnvcCygEyTPOSFxIAZPw6/i
+	 CajO1wihAmPiiGarwlpNVDaL3qFncMsnFqFp7Mno=
+Message-ID: <fe968dc7-67a5-40be-871e-fe682dc60d70@ideasonboard.com>
+Date: Thu, 26 Sep 2024 10:13:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b3830573-1f39-4729-be58-c2659a37d689@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/4] media: raspberrypi: Support RPi5's CFE
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Naushir Patuck <naush@raspberrypi.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+References: <20240910-rp1-cfe-v5-0-9ab4c4c8eace@ideasonboard.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20240910-rp1-cfe-v5-0-9ab4c4c8eace@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 25, 2024 at 02:49:48PM GMT, Abhinav Kumar wrote:
-> On 9/25/2024 2:11 PM, Dmitry Baryshkov wrote:
-> > On Wed, 25 Sept 2024 at 22:39, Jessica Zhang <quic_jesszhan@quicinc.com> wrote:
-> > > On 9/24/2024 4:13 PM, Dmitry Baryshkov wrote:
-> > > > On Tue, Sep 24, 2024 at 03:59:21PM GMT, Jessica Zhang wrote:
-> > > > > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > 
-> > > > > All resource allocation is centered around the LMs. Then other blocks
-> > > > > (except DSCs) are allocated basing on the LMs that was selected, and LM
-> > > > > powers up the CRTC rather than the encoder.
-> > > > > 
-> > > > > Moreover if at some point the driver supports encoder cloning,
-> > > > > allocating resources from the encoder will be incorrect, as all clones
-> > > > > will have different encoder IDs, while LMs are to be shared by these
-> > > > > encoders.
-> > > > > 
-> > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > [quic_abhinavk@quicinc.com: Refactored resource allocation for CDM]
-> > > > > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> > > > > [quic_jesszhan@quicinc.com: Changed to grabbing exising global state]
-> > > > > Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> > > > > ---
-> > > > >    drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    |  86 ++++++++++++
-> > > > >    drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 201 +++++++++++-----------------
-> > > > >    drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h |  19 +++
-> > > > >    3 files changed, 183 insertions(+), 123 deletions(-)
-> > > > > 
-> > > > > @@ -544,159 +542,117 @@ void dpu_encoder_helper_split_config(
-> > > > >       }
-> > > > >    }
-> > > > > 
-> > > > > -bool dpu_encoder_use_dsc_merge(struct drm_encoder *drm_enc)
-> > > > > +void dpu_encoder_update_topology(struct drm_encoder *drm_enc,
-> > > > > +                             struct msm_display_topology *topology,
-> > > > > +                             struct drm_atomic_state *state,
-> > > > > +                             const struct drm_display_mode *adj_mode)
-> > > > >    {
-> > > > >       struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
-> > > > > -    int i, intf_count = 0, num_dsc = 0;
-> > > > > +    struct drm_connector *connector;
-> > > > > +    struct drm_connector_state *conn_state;
-> > > > > +    struct msm_display_info *disp_info;
-> > > > > +    struct drm_framebuffer *fb;
-> > > > > +    struct msm_drm_private *priv;
-> > > > > +    int i;
-> > > > > 
-> > > > >       for (i = 0; i < MAX_PHYS_ENCODERS_PER_VIRTUAL; i++)
-> > > > >               if (dpu_enc->phys_encs[i])
-> > > > > -                    intf_count++;
-> > > > > +                    topology->num_intf++;
-> > > > > 
-> > > > > -    /* See dpu_encoder_get_topology, we only support 2:2:1 topology */
-> > > > > +    /* We only support 2 DSC mode (with 2 LM and 1 INTF) */
-> > > > >       if (dpu_enc->dsc)
-> > > > > -            num_dsc = 2;
-> > > > > +            topology->num_dsc += 2;
-> > > > > 
-> > > > > -    return (num_dsc > 0) && (num_dsc > intf_count);
-> > > > > -}
-> > > > > +    connector = drm_atomic_get_new_connector_for_encoder(state, drm_enc);
-> > > > > +    if (!connector)
-> > > > > +            return;
-> > > > > +    conn_state = drm_atomic_get_new_connector_state(state, connector);
-> > > > > +    if (!conn_state)
-> > > > > +            return;
-> > > > > 
-> > > > > -struct drm_dsc_config *dpu_encoder_get_dsc_config(struct drm_encoder *drm_enc)
-> > > > > -{
-> > > > > -    struct msm_drm_private *priv = drm_enc->dev->dev_private;
-> > > > > -    struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
-> > > > > -    int index = dpu_enc->disp_info.h_tile_instance[0];
-> > > > > +    disp_info = &dpu_enc->disp_info;
-> > > > > 
-> > > > > -    if (dpu_enc->disp_info.intf_type == INTF_DSI)
-> > > > > -            return msm_dsi_get_dsc_config(priv->dsi[index]);
-> > > > > +    priv = drm_enc->dev->dev_private;
-> > > > > 
-> > > > > -    return NULL;
-> > > > > +    /*
-> > > > > +     * Use CDM only for writeback or DP at the moment as other interfaces cannot handle it.
-> > > > > +     * If writeback itself cannot handle cdm for some reason it will fail in its atomic_check()
-> > > > > +     * earlier.
-> > > > > +     */
-> > > > > +    if (disp_info->intf_type == INTF_WB && conn_state->writeback_job) {
-> > > > > +            fb = conn_state->writeback_job->fb;
-> > > > > +
-> > > > > +            if (fb && MSM_FORMAT_IS_YUV(msm_framebuffer_format(fb)))
-> > > > > +                    topology->needs_cdm = true;
-> > > > > +    } else if (disp_info->intf_type == INTF_DP) {
-> > > > > +            if (msm_dp_is_yuv_420_enabled(priv->dp[disp_info->h_tile_instance[0]], adj_mode))
-> > > > > +                    topology->needs_cdm = true;
-> > > > > +    }
-> > > > 
-> > > > Just to note, the needs_cdm is not enough once you introduce CWB
-> > > > support. E.g. DP/YUV420 + WB/YUV case requires two CDM blocks (which we
-> > > > don't have), but this doesn't get reflected in the topology.
-> > > 
-> > > Hi Dmitry,
-> > > 
-> > > Ack. I can add something to make atomic_check fail if the input FB is
-> > > YUV format and CWB is enabled.
-> > 
-> > I'd prefer for this to be more natural rather than just checking for
-> > the DP && DP_YUV420 && WB && WB_FMT_YUV. In the worst case, count CDM
-> > requests and then in RM check them against the catalog. But I had a
-> > more logical (although more intrusive) implementation on my mind:
-> > 
-> > struct msm_display_topology {
-> >      struct {
-> >        u32 num_intf;
-> >        u32 num_wb;
-> >        u32 num_dsc;
-> >        bool needs_cdm;
-> >      } outputs[MAX_OUTPUTS];
-> >      u32 num_lm;
-> > };
-> > 
-> > WDYT?
-> > 
+Hi,
+
+On 10/09/2024 11:07, Tomi Valkeinen wrote:
+> This series adds support to the CFE hardware block on RaspberryPi 5. The
+> CFE (Camera Front End) contains a CSI-2 receiver and Front End, a small
+> ISP.
 > 
-> the struct msm_display_topology was originally designed as a per-encoder
-> struct (dpu_encoder_get_topology() indicates the same). Making this an array
-> of outputs was not needed as there is expected to be one struct
-> msm_display_topology for each virt encoder's requested topology and the
-> blocks inside of it other than LM, are "encoder" hw blocks.
+> To run this, you need the basic RPi5 kernel support plus relevant dts
+> changes to enable the cfe and camera. My work branch with everything
+> needed to run CFE can be found from:
 > 
-> needs_cdm was made a boolean instead of a num_cdm_count like other hardware
-> blocks because till the most recent chipset, we have only one CDM block.
-> Whenever we do have more CDM blocks why will introducing num_cdm to the
-> topology struct not solve your problem rather than making it an array of
-> outputs?
+> git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git rp1-cfe
 > 
-> Because then, RM will know that the request exceeds the max blocks.
+> A few notes about the patches:
 > 
-> I think what you are trying to do now is make struct msm_display_topology's
-> encoder parts per-encoder and rest like num_lm per "RM session".
+> - The original work was done by RaspberryPi, mostly by Naushir Patuck.
+> - The second video node only sets V4L2_CAP_META_CAPTURE instead of both
+>    V4L2_CAP_META_CAPTURE and V4L2_CAP_META_CAPTURE like the other nodes.
+>    This is a temporary workaround for userspace (libcamera), and
+>    hopefully can be removed soon.
 > 
-> The thought is not wrong but at the same time seems a bit of an overkill
-> because its mostly already like that. Apart from CDM for which I have no
-> indication of another one getting added, rest of the blocks are already
-> aligned towards a per-encoder model and not a "RM session" model.
-
-But we should be leaning towards RM session.
-
+> I have tested this with:
+> - A single IMX219 sensor connected to the RPi5's CSI-2 port
+> - Arducam's UB960 FPD-Link board with four imx219 sensors connected
 > 
-> Even if we end up doing it this way, most of the model is kind of unused
-> really because each encoder will request its own topology anyway, there is
-> just no aggregation for CDM which at this point is not needed as there is no
-> HW we are aware of needing this.
-
-With the resource allocation shifted to the CRTC individual encoders
-do not request their own topology (as it is now a property of the full
-output pipeline, not just an encoder). Yes, CDM aggregation into num_cdm
-seems unnecessary as there is just one CDM block.
-
-> I think the atomic_check validation is needed either way because if two
-> encoders request cdm, we cannot do clone mode as there is only one cdm block
-> today. Its just that we are not tracking num_cdm today due to reasons
-> explained above but basically doing something like below seems right to me:
+>   Tomi
 > 
-> if (enc_is_in_clone_mode && needs_cdm)
-> 	return -ENOTSUPPORTED;
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> ---
+> Changes in v5:
+> - Add "depends on PM". The platforms that use CFE will always have PM in
+>    practice, and it's not worth supporting both the PM and !PM cases as
+>    it adds complexity to the driver.
+> - Link to v4: https://lore.kernel.org/r/20240904-rp1-cfe-v4-0-f1b5b3d69c81@ideasonboard.com
 
-This check is incorrect in my opinion. The hardware should be able to
-support DP/YUV420 + WB/RGB and DP/RGB + WB/YUV combinations. Please
-correct me if I'm wrong.
+Is this solution to the PM issue ok for everyone? It feels most sensible 
+to me. Any other comments?
 
-> When we add more cdm_blocks, we can drop this check and making needs_cdm a
-> num_cdm will make it naturally fail.
+  Tomi
 
--- 
-With best wishes
-Dmitry
+> Changes in v4:
+> - Drop unnecessary clock-lanes from the DT bindings
+> - Drop unnecessary linux-media from MAINTAINERS entry
+> - Drop unnecessary conversion to bool with !!
+> - Don't set cap->bus_info in cfe_querycap()
+> - Make debugfs files not readable by the world
+> - Check the return value of v4l2_fwnode_endpoint_parse()
+> - Remove the code dealing with remote_ep_fwnode. Instead use
+>    v4l2_create_fwnode_links_to_pad() and media_pad_remote_pad_unique() to
+>    create the link and get the pad index.
+> - Add cfe/csi2/fe/dphy argument to the respective dbg/info/err print
+>    macros.
+> - Drop some debug prints and add a few, clarifying the prints for
+>    enabling and disabling the streams.
+> - Some cosmetic changes (linefeed, drop unnecessary assignment, move a
+>    define)
+> - Link to v3: https://lore.kernel.org/r/20240815-rp1-cfe-v3-0-e15a979db327@ideasonboard.com
+> 
+> Changes in v3:
+> - Based on v6.11-rc3. The PiSP BE series is now in upstream so no extra
+>    dependencies are needed.
+> - Fixed cfe_remove() return value, as the .remove hook has changed
+> - Added Krzysztof's Rb.
+> - Link to v2: https://lore.kernel.org/r/20240620-rp1-cfe-v2-0-b8b48fdba3b3@ideasonboard.com
+> 
+> Changes in v2:
+> - Change the compatible string back to raspberrypi,rp1-cfe from raspberrypi,rpi5-rp1-cfe
+> - Drop the references to rp1 headers in the DT binding example. This
+>    allows compiling the example without the rp1 support.
+> - Fix missing remap lines for mono formats
+> - Fix csi2_pad_set_fmt() so that the format can be changed back to the
+>    sink's format from 16-bit or compressed format.
+> - Link to v1: https://lore.kernel.org/r/20240318-rp1-cfe-v1-0-ac6d960ff22d@ideasonboard.com
+> 
+> ---
+> Tomi Valkeinen (4):
+>        media: uapi: Add meta formats for PiSP FE config and stats
+>        dt-bindings: media: Add bindings for raspberrypi,rp1-cfe
+>        media: raspberrypi: Add support for RP1-CFE
+>        media: admin-guide: Document the Raspberry Pi CFE (rp1-cfe)
+> 
+>   .../admin-guide/media/raspberrypi-rp1-cfe.dot      |   27 +
+>   .../admin-guide/media/raspberrypi-rp1-cfe.rst      |   78 +
+>   Documentation/admin-guide/media/v4l-drivers.rst    |    1 +
+>   .../bindings/media/raspberrypi,rp1-cfe.yaml        |   93 +
+>   .../userspace-api/media/v4l/meta-formats.rst       |    1 +
+>   .../userspace-api/media/v4l/metafmt-pisp-fe.rst    |   39 +
+>   MAINTAINERS                                        |    7 +
+>   drivers/media/platform/raspberrypi/Kconfig         |    1 +
+>   drivers/media/platform/raspberrypi/Makefile        |    1 +
+>   drivers/media/platform/raspberrypi/rp1-cfe/Kconfig |   15 +
+>   .../media/platform/raspberrypi/rp1-cfe/Makefile    |    6 +
+>   .../media/platform/raspberrypi/rp1-cfe/cfe-fmts.h  |  332 +++
+>   .../media/platform/raspberrypi/rp1-cfe/cfe-trace.h |  196 ++
+>   drivers/media/platform/raspberrypi/rp1-cfe/cfe.c   | 2487 ++++++++++++++++++++
+>   drivers/media/platform/raspberrypi/rp1-cfe/cfe.h   |   43 +
+>   drivers/media/platform/raspberrypi/rp1-cfe/csi2.c  |  583 +++++
+>   drivers/media/platform/raspberrypi/rp1-cfe/csi2.h  |   89 +
+>   drivers/media/platform/raspberrypi/rp1-cfe/dphy.c  |  180 ++
+>   drivers/media/platform/raspberrypi/rp1-cfe/dphy.h  |   27 +
+>   .../media/platform/raspberrypi/rp1-cfe/pisp-fe.c   |  581 +++++
+>   .../media/platform/raspberrypi/rp1-cfe/pisp-fe.h   |   53 +
+>   drivers/media/v4l2-core/v4l2-ioctl.c               |    2 +
+>   .../uapi/linux/media/raspberrypi/pisp_fe_config.h  |  273 +++
+>   .../linux/media/raspberrypi/pisp_fe_statistics.h   |   64 +
+>   include/uapi/linux/videodev2.h                     |    2 +
+>   25 files changed, 5181 insertions(+)
+> ---
+> base-commit: 431c1646e1f86b949fa3685efc50b660a364c2b6
+> change-id: 20240314-rp1-cfe-142b628b7214
+> 
+> Best regards,
+
 
