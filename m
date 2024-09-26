@@ -1,155 +1,90 @@
-Return-Path: <linux-kernel+bounces-341047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F23987ABF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:37:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A48987AC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896C5281559
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:37:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5023A28331D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2676918871E;
-	Thu, 26 Sep 2024 21:37:06 +0000 (UTC)
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B9B188732;
+	Thu, 26 Sep 2024 21:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8EslHzm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C10518871A
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 21:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4527E18870F;
+	Thu, 26 Sep 2024 21:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727386625; cv=none; b=Fd0BCSLRt3tngUNj+F/FPfFI9rC/+qwwr5spCzwwviipevPF0bIr5uzPpV1/cfv3oryo1qPuOy2SPr2Oq7fZUPU+aB0y/sGZzrpC++KtRP17xZk2PQlvRQ5nLV2H67w53WN1WOwbj/hFF6glhAJ/iY6U47eDKNEg59lr4jURu6E=
+	t=1727387020; cv=none; b=OQrecE5MEwFoMhMzYJNPNb8WiPJZz82XtVDmuRYuLD2ynykczAkp+qI7b/9lMYkdQfaGrDGVTFHuU+j5EC67aXTqE4rLyNyWijUssbl1FAXJO8W9sTZtmakILSLNoWy6NeyJAQcQ7VkgPMdsEqv1MVCN3kOGYzJYi06zHT+SzPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727386625; c=relaxed/simple;
-	bh=yxg9EPFXKmtbf/lHj0s4HsfwkV/vuZolJfG/hidMz1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tbNp1P2bIPYJldeBRy5s7b0XIH40xRwTk5p0AMC+oB+qMqUE+SYEKyxy/YQL0qZ//xhxiiUp4i2DculmkXigsx5H3np2f3UjsGM66hfkzqOyuVSWhXBF2zttjSWxNspvj4b8dOmUoQ38CjCmRBmsc5Kz8xlRfbdXkiIKle07Te0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a2759a1b71so6400845ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:37:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727386623; x=1727991423;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yxg9EPFXKmtbf/lHj0s4HsfwkV/vuZolJfG/hidMz1M=;
-        b=FYXur+AGKdsjcU+nupwl7fvtIyn/PfXKJ1laH0yUKwzMprLbHnWye0ckxhNuoJbEFI
-         VeygGDa+MQ+v/pKH970zOW/U+KyFwGlvpeN/uR3nlneMBziUfCofkThMpI/ASsjRNFUA
-         QfaHiWdL8oDZXmVzuHOYjrYzZk76AlcOssPTOH8fQuTF5W11b2ETCRlx6kMwagv2gbj1
-         s4eB8ehI3D9Arr/IOkoyVKUPDghhHdujgDurjFO6XRbIuQ0n/yB/I9UB0wRKW268aED5
-         YYjR5mRNKnPQVeSakHP7TEQcW4Po37TaNwCIWk+cCYvjitRaaT/NWgv62djVoGID9BoG
-         9w6w==
-X-Forwarded-Encrypted: i=1; AJvYcCW7LqWz+T+CUgIPxvcIoCYCvdV+47RHau4izpr4fWCiWTHxZu1B9iw3lKr7Yx6VWX1j59l44Mc4Vktsw/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcOQiguQQ/+/EScwQcK5o0Y+3dntOSl70suBG4IXW3499qruR2
-	tfJRRrB+6PoMtvdXFHwn2/4IgYuoOb2jKWuOM935lOo0/Sg6K5Zw
-X-Google-Smtp-Source: AGHT+IEw8pN0e5JjkbY2wU8/YAG3dLRppNaSov2Z0e1AQ0wPfYaiycEY+bP6DZocBWDgCG+ht7MYFg==
-X-Received: by 2002:a05:6e02:1948:b0:3a1:a759:b3c0 with SMTP id e9e14a558f8ab-3a34517160emr10636455ab.8.1727386623052;
-        Thu, 26 Sep 2024 14:37:03 -0700 (PDT)
-Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d88884a66dsm146488173.53.2024.09.26.14.37.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 14:37:02 -0700 (PDT)
-Date: Thu, 26 Sep 2024 16:36:59 -0500
-From: David Vernet <void@manifault.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org, sched-ext@meta.com
-Subject: Re: [PATCH 2/5] sched_ext: Allow only user DSQs for
- scx_bpf_consume(), scx_bpf_dsq_nr_queued() and bpf_iter_scx_dsq_new()
-Message-ID: <20240926213659.GD26346@maniforge>
-References: <20240925000622.1972325-1-tj@kernel.org>
- <20240925000622.1972325-3-tj@kernel.org>
- <20240925170956.GC26346@maniforge>
- <ZvR6z9WoThpP5pWo@slm.duckdns.org>
+	s=arc-20240116; t=1727387020; c=relaxed/simple;
+	bh=mK3EP9N38PN6Fd6hVdbTpmZtsfhGzxlZo54RVJ6YRQQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LhxFe6t0TRewRZS4nFggPkBFHzyeoE84G/5O1+ZIkWhxzuFH+f5rwDbsMAMXPEyqseSj1nb2+8v+7xrvp6fqTBxDeCJ6cxzyHNEi2DDQortP7sKDy0TUt+nUeDAGh3bCmpc/tQTkW3v1HXSlnZKY/WhjPLc/HT3LawZOzuUaW94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8EslHzm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72F92C4CEC5;
+	Thu, 26 Sep 2024 21:43:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727387019;
+	bh=mK3EP9N38PN6Fd6hVdbTpmZtsfhGzxlZo54RVJ6YRQQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=s8EslHzmEoyy0fU6rtDJsExMtEvceolnCJpY2hCVhsepR/y++YGyw0u373kSK6OdX
+	 P9EqaQuJMS1E3iSixQsHWK3EktD4nsHwPkiMTbVGlztVYmMKZYVk9IcRk+t5OLO64q
+	 xxZzt58zN8DHiTVNchFDcBL3Vn57Ga49OW3HrM12Mc60hnqE9zg4Z7K4LqI92Dx2P9
+	 80Fh0B7nrO1VZr2PevyppZUGrrpaTLRohDBuxqcunb7+t/ncfovDNNYo/wpJCBkFaJ
+	 kOExlUDYqddpMB/IMYZZAFAWr3IvkluFOyj31iy3a2ks8jRKV2YrG24OFFZmd0yjIQ
+	 IGcZehIv9+dUA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Sebastian Reichel <sre@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Caleb Connolly <caleb.connolly@linaro.org>
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: power/supply: qcom,pmi8998-charger: Drop incorrect "#interrupt-cells" from example
+Date: Thu, 26 Sep 2024 16:37:26 -0500
+Message-ID: <20240926213727.3064977-1-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="51Md3y/RnkcraZ7s"
-Content-Disposition: inline
-In-Reply-To: <ZvR6z9WoThpP5pWo@slm.duckdns.org>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+Content-Transfer-Encoding: 8bit
 
+Enabling dtc interrupt_provider check reveals the example is missing
+the "interrupt-controller" property as it is a dependency of
+"#interrupt-cells". However, the PMIC parent node is not an interrupt
+controller at all, so the "#interrupt-cells" is erroneous.
 
---51Md3y/RnkcraZ7s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+v2:
+ - Drop "#interrupt-cells" rather than add "interrupt-controller"
+---
+ .../devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml   | 1 -
+ 1 file changed, 1 deletion(-)
 
-On Wed, Sep 25, 2024 at 11:04:15AM -1000, Tejun Heo wrote:
-> Hello,
->=20
-> On Wed, Sep 25, 2024 at 12:09:56PM -0500, David Vernet wrote:
-> > On Tue, Sep 24, 2024 at 02:06:04PM -1000, Tejun Heo wrote:
-> ...
-> > This API impedance where you can dispatch but not consume feels unnatur=
-al, and
-> > a bit leaky. I understand why we don't want to allow BPF to consume it =
--- we're
-> > already doing it for the user as part of (and before) the dispatch loop=
-=2E That's
-> > also one-off logic that's separate from the normal interface for DSQs t=
-hough,
-> > and because of that, SCX_DSQ_GLOBAL imposes a cognitive overhead that I=
-MO
-> > arguably outweighs the convenience it provides.
->=20
-> I don't know. One can also argue that this makes all built-in DSQs behave
-> more consistently as the local DSQs can only be dispatched to too. Either
-> way, I don't think it makes meaningful differences.
+diff --git a/Documentation/devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml b/Documentation/devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml
+index 277c47e048b6..a0f9d49ff8fb 100644
+--- a/Documentation/devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml
++++ b/Documentation/devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml
+@@ -60,7 +60,6 @@ examples:
+     pmic {
+       #address-cells = <1>;
+       #size-cells = <0>;
+-      #interrupt-cells = <4>;
+ 
+       charger@1000 {
+         compatible = "qcom,pmi8998-charger";
+-- 
+2.45.2
 
-That's a good point r.e. making it consistent with local. I don't think it
-makes a big difference one way or the other, but this is something that fol=
-ks
-seem to get consistently confused about. To your point, maybe that won't be=
- the
-case now that you can't consume.
-
-> > I'm still of the opinion that we should just hide SCX_DSQ_GLOBAL from t=
-he user
-> > altogether. It makes sense why we'd need it as a backup DSQ for when we=
-'re e.g.
-> > unloading the scheduler, but as a building block that's provided by the=
- kernel
-> > to the user, I'm not sure. In a realistic production scenario where you=
-'re
-> > doing something like running a scheduler that's latency sensitive and c=
-ares
-> > about deadlines, I'm not sure it would be viable or ever the optimal de=
-cision
-> > to throw the task in a global DSQ and tolerate it being consumed before=
- other
-> > higher-priority tasks that were enqueued in normal DSQs. Or at the very=
- least,
-> > I could see users being surprised by the semantics, and having instead =
-expected
-> > it to function as just a built-in / pre-created DSQ that functions norm=
-ally
-> > otherwise.
->=20
-> Maybe we can further block it in the future but it doesn't seem material
-> either way and I tend to prefer not putting extra restrictions unless
-> necessary.
-
-Fine with me, patch LG otherwise:
-
-Acked-by: David Vernet <void@manifault.com>
-
---51Md3y/RnkcraZ7s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZvXT+wAKCRBZ5LhpZcTz
-ZC1BAP4qu/qvZyYTjQcay4eZRzcqiGASR5W+w4TdCOKSerXTwwD/QRTmSHCrNhRQ
-PtisOTPwuYbyM0Np9mwbXOPqbHFGRgM=
-=rVLE
------END PGP SIGNATURE-----
-
---51Md3y/RnkcraZ7s--
 
