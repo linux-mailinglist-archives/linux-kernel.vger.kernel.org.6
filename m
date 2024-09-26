@@ -1,144 +1,99 @@
-Return-Path: <linux-kernel+bounces-340388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D140C98729F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:15:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946979872B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9736528666A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:15:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B2B1C22DC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3331AED46;
-	Thu, 26 Sep 2024 11:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A8C18EFD0;
+	Thu, 26 Sep 2024 11:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="uGYNDIOd"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QntDWOam"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6377417C223;
-	Thu, 26 Sep 2024 11:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43EF171675;
+	Thu, 26 Sep 2024 11:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727349311; cv=none; b=Zz/cRZs3lwqP/WMvRZL0OUqTxPn2Maj3Pb/WqHD3XSG83elvLN9XbJoWrdrPO5ctnGcdSN+SlL91pTB5F2TxMzLdbrmlx1RjFCwMolFAXKEi6wle1wesVD2Mxmfo5RdvClHrpuuwDvQSaZwTPkoVfQ0LzSyys/LI7dsaEFtIzTc=
+	t=1727349487; cv=none; b=MH7qJG3z+TEY+vW8CpLu5wXqfAoFKtMJZ8biP8n+XuA8A0gd58gPgD/kX6pj72BEs4PMWcEbrl9N5gSWUljnqImCtdkNrz44oW/lgpspS6RNV2Ytdr+CkYHOxVgwUD/+l7oyV4JMZsKcpr6hc3NbztVafBmfvp6kk71DOcWixeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727349311; c=relaxed/simple;
-	bh=PLAmmMmytHk023+f96FToohXJVTV2bZ1vmhDlatkkFA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dWlNLQmkH6tMJjr9RLVKVfxZ84WhYyUuN3UXMS2/PL2hrva1JWy18GBCyRNS8HC/sG+ire+Mquf+GHH8kFLuNrZIVR4xsrpevZfGWzotN0AHQdWkC/fz6UNIGlDDlcI5s6xzqhJeL6GQqNJAz35dle4jGZDsfovzJbRVoUdQxjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=uGYNDIOd; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 9451517c7bf811ef8b96093e013ec31c-20240926
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=8TucMTel3hohwxs6kGcphC2e2kM6zgmyC1hJadPP2us=;
-	b=uGYNDIOdBVGkCpGXyCkd607b//ZF9MDO3UvGSAIJ93OOCY3/W8woSLU5Gu+Me7tQXqZ2fjui9UXXPtOONAha2aRWGNEgFI2pycuXtamqf22knGVY3/4fxgg1xJyGGkDT3Kv2Zqpl4NoKgAFz/LlH8079Vt5Gw++wBaoxpMk+DGI=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:1015f5ea-52b0-41af-a105-975204ac3de2,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:ba964b18-b42d-49a6-94d2-a75fa0df01d2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
-X-UUID: 9451517c7bf811ef8b96093e013ec31c-20240926
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2142787173; Thu, 26 Sep 2024 19:15:04 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 26 Sep 2024 19:15:01 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 26 Sep 2024 19:15:01 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>, "Joerg
- Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, CK Hu
-	<ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>, Tinghan Shen
-	<tinghan.shen@mediatek.com>, Seiya Wang <seiya.wang@mediatek.com>, Ben Lok
-	<ben.lok@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>, "Nancy . Lin"
-	<nancy.lin@mediatek.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, Alexandre Mergnat
-	<amergnat@baylibre.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>, "Chris-qj
- chen" <chris-qj.chen@mediatek.com>, MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
-	<wenst@chromium.org>
-Subject: [PATCH v2 5/5] dt-bindings: display: mediatek: dpi: Add mt8195 support in power domains
-Date: Thu, 26 Sep 2024 19:14:49 +0800
-Message-ID: <20240926111449.9245-5-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20240926111449.9245-1-macpaul.lin@mediatek.com>
-References: <20240926111449.9245-1-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1727349487; c=relaxed/simple;
+	bh=Va9TLPbDkDpIMZW36nzPnHJ5cnNZE++54X9BH+sCIoI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=diGC1WXtaRIP07h0gc3MDaGFRbZs0PkUGJAx2cX1Qi2Reufl6US3+i9u7PXvZ4BTaqxeXdF6lP1svRYdAlO1SXzi9He4HWmdffC8Jevra90Df/o3IlI52IY/3aV0wJHYSxygnj266o9Z2avMQhtrU2DxTJmdxb1mc9j5OBwt5oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QntDWOam; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-84ea1e5e964so294170241.0;
+        Thu, 26 Sep 2024 04:18:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727349484; x=1727954284; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Va9TLPbDkDpIMZW36nzPnHJ5cnNZE++54X9BH+sCIoI=;
+        b=QntDWOampSBuReBA2pRL8q+pOgCnXkv2CmUpZwkQJbSul3d1MzyQ01gIqW6VnyO3Qm
+         gbsljX56p+cF2IsNHZAaPT7Jh2QYD5/RPHblZ3u9aHxGVTQJz1aIy7fO6/UUl7cHyk0E
+         ZBqubbGSDdlfE/RIF3hUzPxrqLNFlY+WEgcSrsDCVeWTZfg2t+suj+3BRLuKRmaZ3hMt
+         E62LwD361b2S2/HzgNVdfgWIFy1QDqlYwBNnMs2+l4MmWRV1G36MaYHvYHnaKzaP3NkJ
+         EF60ErPegDclhrcoLv1Nt+BQxmbq4SCZDbQYNQU1de5Vvtcog6aHA4GmPTdp8KX1+DhG
+         YAVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727349484; x=1727954284;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Va9TLPbDkDpIMZW36nzPnHJ5cnNZE++54X9BH+sCIoI=;
+        b=Gto+Cz7bCl8qR/2JEmixYZ+saYdYl/b9D4/xY6qcN8HlStzoKigVVlZ6Kq7E6LAe5S
+         0UCkaY0yPxmwDUYwLIDEDNGPnZBe1ew0kOJ4Dj20HUVZlZDzFFyrnaOW7v1MFj4KxMBZ
+         kYajhzws527vKKiGJtuO/b4aLEqunho3+gzdY8fX3scxCiTa3EZGG3vf7vxooRF/x5Gg
+         fiisU9y3gw0S7kyNQ0m4EHkCFrWny7vKR4lf+GUnUCfYgNVI1GM3fLu0Wvi4mKLj0ES6
+         KMZZGkqn8EHtO4y3MqSzDcTGz7ZDuZWdKlQYtKRUS3aDVVrBDC3dR/LrmFAAvglAtQH8
+         uC4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV08IXdO4k4gFm2AYMK323UQGxA6KDMDwrgHnEyM1DcZKFjORCsLu2WgGgf9bW+UsyS+/AhLmrBjmtk@vger.kernel.org, AJvYcCXfWnPxclZJeA2AuDbl4xG9XxNkxX5JG9brKE8XfvrgYvyiikEy0DDCA8unnxpCTDJU4Bu/HzGy6OVcXJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBxybA7x57ed0mF5QLBcBQhpOZz3bu6TomZc0EqXiyYHbjAVgN
+	NDJyXw8tvUlIskZ2hq8xca5AvD51QJ6/sUv2ZCMA6M5w+V51iyRsM2Q1+45teJy+pOW8sPfp0Qr
+	AkdK//9ga2RFre3bYkK7LUUVJFWU=
+X-Google-Smtp-Source: AGHT+IEOmvguJqT35U5zy7I0t+U+ujuM7WdKorBYOvZNAcXgqarn0kPmdq01T3AhX/8/OzG1YjzeecAC08OQJnmAYB0=
+X-Received: by 2002:a05:6122:a0e:b0:4f5:312a:6573 with SMTP id
+ 71dfb90a1353d-5074b77c4f8mr2127415e0c.5.1727349484616; Thu, 26 Sep 2024
+ 04:18:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--2.896300-8.000000
-X-TMASE-MatchedRID: k8Cd32tj8sEDFgoHQs6fmo7Su3QulAZ5AWQaZTMSP87fUZT83lbkEOSZ
-	Xqpiw34H8gMEd8ypEKNwN7+iItfSth9J5bZqJbIJwCZxkTHxccnJ5SXtoJPLyL6majHNXd7Go8W
-	MkQWv6iXBcIE78YqRWo6HM5rqDwqtqghXpaTf3SrfCJlZUJnnduI+qs8eq/YRT6HjoeF/jdcsN6
-	OqbCF1maekXSEz/hmVJtoaSBlm7M9iXRhtqPi8cH0de3y1eaDB4sOrsb4iT/K/bbEolHIgZUOc7
-	GjOamnWv5a9cmIodEszD8HZ4XvJ2ZRMZUCEHkRt
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--2.896300-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	4C671D08952117956573CDFA07FA76C03FDDA8D6790DA04E86A4B8DFED1EE75C2000:8
-X-MTK: N
+References: <20240926064910.17429-1-hubert.buczynski94@gmail.com> <47689c2e-505e-461c-88dd-d178a7fdd087@quicinc.com>
+In-Reply-To: <47689c2e-505e-461c-88dd-d178a7fdd087@quicinc.com>
+From: =?UTF-8?Q?Hubert_Buczy=C5=84ski?= <hubert.buczynski94@gmail.com>
+Date: Thu, 26 Sep 2024 13:17:53 +0200
+Message-ID: <CAJUMw3uOsSQfiPfn8iW-+TkbcsN21fpM0WNp_xy-6QJPktf4sg@mail.gmail.com>
+Subject: Re: [PATCH] usb: gadget: u_serial: fix null-ptr-deref in gs_start_io
+To: Prashanth K <quic_prashk@quicinc.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"hubert.buczynski" <Hubert.Buczynski.ext@feig.de>
+Content-Type: text/plain; charset="UTF-8"
 
-Add power domain binding to the mediatek DPI controller for MT8185.
+> Commit ffd603f21423 ("usb: gadget: u_serial: Add null pointer check in
+> gs_start_io") fixed this issue. Please try adding it into your builds.
+>
+> Regards,
+> Prashanth K
 
-The dpi node in mt8195.dtsi was triggering a dtbs_check error:
-  dp-intf@1c113000: power-domains: False schema does not allow [[44, 18]]
+Thanks for the quick response. Indeed, the commit ffd603f21423
+("usb: gadget: u_serial: Add null pointer check in gs_start_io")
+solves the problem. Sorry for not checking the newest version.
 
-Fixes: 5474d49b2f79 ("dt-bindings: display: mediatek: dpi: Add power domains")
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
----
- .../devicetree/bindings/display/mediatek/mediatek,dpi.yaml       | 1 +
- 1 file changed, 1 insertion(+)
+I wonder whether it should also be applied to the LTS v5.15.167.
+The bug is still present there.
 
-Changes for v2:
- - Because of the corresponding dts fix has been reviewed with a Reviewed-by: tag.
-   [1] https://lore.kernel.org/all/20240925080515.16377-1-macpaul.lin@mediatek.com/
-   We still need this change to fix the 2 dtbs_check errors.
-   So keeps no change here.
-
-diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-index 3a82aec9021c..07acc8a76bfc 100644
---- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-+++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-@@ -89,6 +89,7 @@ allOf:
-                 - mediatek,mt6795-dpi
-                 - mediatek,mt8173-dpi
-                 - mediatek,mt8186-dpi
-+                - mediatek,mt8195-dp-intf
-     then:
-       properties:
-         power-domains: false
--- 
-2.45.2
-
+Best Regards
+Hubert
 
