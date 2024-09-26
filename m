@@ -1,243 +1,213 @@
-Return-Path: <linux-kernel+bounces-340112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BC26986EAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:22:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6464E986E9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDFBF2814F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:22:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4E17B20D02
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB481A4B8F;
-	Thu, 26 Sep 2024 08:22:22 +0000 (UTC)
-Received: from smtp.cecloud.com (unknown [1.203.97.246])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB40D135A53;
-	Thu, 26 Sep 2024 08:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.246
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727338942; cv=none; b=Hk4lQF/p819F1Cg/8r5b37T96F73GO9itDM9R5cIcDwaCiG0rLQeSTISXs6haqNT2xeqju++L3V5CiM4BAAHQP5RHVWAVzrdA4QGX0tGh5PmWgPGMZk/9kW+7ogTpvQP8mkQRFwRcqJbMrUsHm6YhVJ3GH2DsEUqsRnL3KhjSsQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727338942; c=relaxed/simple;
-	bh=o1HxEOa7ZElU232Wap1VVTtRwgNaKZpdoFF/YeEDG9U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tkydIBPQ+tDe8NY5M/8X6DnIgLKWMMc2X46yGcAbvvUlFqs4qdG3+tUgWAPbCNd1u5O2hDeO6uqheBqEh0QdaGmHIDmf2yTQY1pnJ/PnWUjsou3Eppjq7saEk5KlSGUg3dtaBuRxmY9Rk/3w5khoSGvyQmlmf80m/08siR+GUwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.cecloud.com (Postfix) with ESMTP id A8BE37C0112;
-	Thu, 26 Sep 2024 16:16:14 +0800 (CST)
-X-MAIL-GRAY:0
-X-MAIL-DELIVERY:1
-X-SKE-CHECKED:1
-X-ANTISPAM-LEVEL:2
-Received: from localhost.localdomain (unknown [111.48.58.13])
-	by smtp.cecloud.com (postfix) whith ESMTP id P880592T281472258535792S1727338573831404_;
-	Thu, 26 Sep 2024 16:16:14 +0800 (CST)
-X-IP-DOMAINF:1
-X-RL-SENDER:zhangyanjun@cestc.cn
-X-SENDER:zhangyanjun@cestc.cn
-X-LOGIN-NAME:zhangyanjun@cestc.cn
-X-FST-TO:trondmy@kernel.org
-X-RCPT-COUNT:5
-X-LOCAL-RCPT-COUNT:1
-X-MUTI-DOMAIN-COUNT:0
-X-SENDER-IP:111.48.58.13
-X-ATTACHMENT-NUM:0
-X-UNIQUE-TAG:<c9d9773cff1ab99be92cafefd1c1adf5>
-X-System-Flag:0
-From: zhangyanjun@cestc.cn
-To: trondmy@kernel.org,
-	anna@kernel.org
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yanjun Zhang <zhangyanjun@cestc.cn>
-Subject: [PATCH] NFSv4: fix possible NULL-pointer dereference in nfs42_complete_copies after state recovery failed
-Date: Thu, 26 Sep 2024 16:16:11 +0800
-Message-Id: <20240926081611.148894-1-zhangyanjun@cestc.cn>
-X-Mailer: git-send-email 2.31.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39C21A4B70;
+	Thu, 26 Sep 2024 08:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="FziVE3ZG"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2079.outbound.protection.outlook.com [40.107.102.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933EA143C4C;
+	Thu, 26 Sep 2024 08:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727338636; cv=fail; b=gX1lhmQMCzNu++T/qpBCvCnwX501F78nUbiIu2SFtqyvEQwOWtAzdVHTJS3wpgf4BUBKwcdLMxGHUmfxImmRikD58opiyboec/HE4siJTZkIZfPMeUUf5pJbsHsWhnfSHPe3y9UjI3x59gEu653CcHNbigwvFF53OKpKXZdtgDA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727338636; c=relaxed/simple;
+	bh=0Gz1T2OKZPe4N0W3TXe1Ff9ua1xFidRwn7t4RJI5+Aw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rTvs0mlb+o7psM1yfRCZKKYABizhf+N+SJT4XtlEU92Lc5ukQtcX/hhQKW2DO5TFb+1ToakmJcZ74TVE8zrDHbju7kZRz/ToBsYaqxRf9qSdHRZn2/tAZ9sL7+0OdFdv0PVsGKM9zqRWdj9/61cHM4V6PcvffUCoCFUeQhJwZL0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=FziVE3ZG; arc=fail smtp.client-ip=40.107.102.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XRAixUBhlsGE+RXpm+imMCFsd76MalUZS26jPEoXGws1F9rKou2QquQXxfvUaXaFYWoVoy28ipc1AiDsFdOpnbuxlQgYiyPPdRXG0Tr6F+gc9Egt1O0K5dZOtp2fvEUSKlIwGwUv3siteptqGg0rxTBUtFKyPevatgWeu9j+YhS/60X9V7AvTZ6+f+VIUneGi4HdcpnxHd2TqxHnEdUflh56+xwZh3j49f78zmPsM2pchYHtKexNvOsJ+pbRqVYdFmUJrL16+Eilm6PkuD3w4d4qLW6v8VxwpKy6XvMGYmF9fZ/je7lqRcmWzyIYQa8oPv4aKiPWYQ9Ca+jJyr25oQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0Gz1T2OKZPe4N0W3TXe1Ff9ua1xFidRwn7t4RJI5+Aw=;
+ b=wNxPwhdFsnmAPgZ4GfgY9E6gu0MTYHnaM9i4pnhwsSBjtUF9SpLFFmrmS8aYJzrL0SEGkxFVzdzOX1hJdwfQw9xZFvp8JfaVjv2+7PNWe9a9v/XvyxDi2SvZ4vvyCXvC4DQyzyIkgj9fzIKmhi7pg0rTJvQov9gJ9/rQsJqEUSnoJtpEVXp1ytTNgbWFi7p5TsLrQEzrYB95VTFetA9X3kjlxWdi3NX7kk1ZqwIKCDFFRJrlqRIGTp5nQKFZceUKTF2BJzU1WxlMldZX1neXZuAf48ZEwX8ccaLPcz2OcyV93zMPMyItZdCuZ81bCjk+IluVxV5yDxUXxL563FRMuw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0Gz1T2OKZPe4N0W3TXe1Ff9ua1xFidRwn7t4RJI5+Aw=;
+ b=FziVE3ZGfmZLvyF6Sn0fq+LBG6uzvemIaZwDrVsP+evrBblC4ONRxrqO0qQvVcnDoJ4BXtplm+Uc+cqcDhRUxlk4PmeFNx83GyP2M2+X+J2TssaOg34ikV5cPw8o49wWfNtudHyOK8K87b0wkumb3rH5YWh9smL7+OSsIEU7SSWjHMTzkRJS/ZkvJ7Mndw191nr7zkl/x0yFyQSW0yMieUMGP5F3Cr45ZDgzCGCaiF+QCQcb5fNNiKNT2g72OmdTg3oa6Cj+BQHYWhBjc7sfJvTQtVP4qryEBDe9OPaV5eOgStS+6haj07YExUbw3tJPktPkq72lKZg9i3XyDRbn4Q==
+Received: from PH8PR11MB6609.namprd11.prod.outlook.com (2603:10b6:510:1cc::16)
+ by CY5PR11MB6536.namprd11.prod.outlook.com (2603:10b6:930:40::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.26; Thu, 26 Sep
+ 2024 08:17:11 +0000
+Received: from PH8PR11MB6609.namprd11.prod.outlook.com
+ ([fe80::ebc1:5d63:a07c:60d]) by PH8PR11MB6609.namprd11.prod.outlook.com
+ ([fe80::ebc1:5d63:a07c:60d%4]) with mapi id 15.20.7982.022; Thu, 26 Sep 2024
+ 08:17:09 +0000
+From: <Manikandan.M@microchip.com>
+To: <dmitry.baryshkov@linaro.org>
+CC: <neil.armstrong@linaro.org>, <quic_jesszhan@quicinc.com>,
+	<airlied@gmail.com>, <simona@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <thierry.reding@gmail.com>,
+	<sam@ravnborg.org>, <dri-devel@lists.freedesktop.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<Dharma.B@microchip.com>
+Subject: Re: [PATCH v2 2/2] drm/panel: simple: Add Microchip AC69T88A LVDS
+ Display panel
+Thread-Topic: [PATCH v2 2/2] drm/panel: simple: Add Microchip AC69T88A LVDS
+ Display panel
+Thread-Index: AQHbCnSYAKfSHYvzgEG+hCzJDy3M9bJg0qeAgAQRYgCAAATmAIAE2xwA
+Date: Thu, 26 Sep 2024 08:17:09 +0000
+Message-ID: <17b5a11c-b9a8-4172-831e-d52f1a4270e9@microchip.com>
+References: <20240919091548.430285-1-manikandan.m@microchip.com>
+ <20240919091548.430285-2-manikandan.m@microchip.com>
+ <zognzunciriytm3uvoolxjsvu43v3m2lnctsz5swusnmm3aj2z@ag7zkncccdmf>
+ <83e9d20d-f294-4303-b570-816ebc989bcf@microchip.com>
+ <f4z2egmrcoh7kih2pyr3mq7fzuwtvod6vxlzzim2iw3ly7jcr3@2uxiyzlfixhp>
+In-Reply-To: <f4z2egmrcoh7kih2pyr3mq7fzuwtvod6vxlzzim2iw3ly7jcr3@2uxiyzlfixhp>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH8PR11MB6609:EE_|CY5PR11MB6536:EE_
+x-ms-office365-filtering-correlation-id: 0d7bb681-a937-4280-6dfb-08dcde039de5
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB6609.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?K3NaZnpCdE1KN0ZLOE40OVlVZXZkMHVaZGw1TkpoaTErZXBKbmpjOStOMk8r?=
+ =?utf-8?B?WkhsT3RCcC9nOHZzRTBHeU94eUVsS2JSTDhrSEdPNE1XRFMxTXlDazVKN2FP?=
+ =?utf-8?B?YVVlT1RyMDhSZ05Wc3FrNDY5akdFcUVzVGtsZUNBQ2J1Q2JRWmNaZnd5Y3Qv?=
+ =?utf-8?B?ZVROQ3FycEZ5Y2MreXVDTkMwVWlHZktIWjF5bTZHeFdtRm8xalExYXBNeDRJ?=
+ =?utf-8?B?L2lsNEVLUGFYdlh3TlVMSU52S1k3OERqTTFvdDBMWTRuaTNaU2VmakZxZytz?=
+ =?utf-8?B?UHE1dlphOWQ5MjFCUGZnSlpMQWk0NTFRN1FKZDllMi9BZHNiUW1LTUFiTXZW?=
+ =?utf-8?B?eFM5dExoTmNKT3FmNE9vQ0dkeVUyWlNHUEpoOUlIc2EyZHVwMlIvTDV0QXVx?=
+ =?utf-8?B?aVJKZHc0blkzL0lxU1ZZZEU0bjdMOEpiTHNnRGxPZjFUeGpWTnlhb0hZVWtz?=
+ =?utf-8?B?MG9UQ3ovTXNyQkorY0ZrT0dJMUtIZ3VXME1JMFhrenhzUXYvNjNVK3BMY0dH?=
+ =?utf-8?B?bHF6RzlwWGkrbHgrQm1lK1hSaXA0TWRmN2V4MTJYbTM2eFZDRXR5QlpSYmZC?=
+ =?utf-8?B?Umd5R1V6T2dNR3p1d2dmRk10ZHJQQXVHY21qY040bWthM3pUWkVnY2dOZmpC?=
+ =?utf-8?B?ajRHMnhITUFMaUwzdTRZSThwaGJRTlpGeUNLWXFqUlZmL1F6LzBjQXNuMG5I?=
+ =?utf-8?B?a3VRS3RoWGJzcWtmdVlWallqOHhWRTZpeVYxS0JpUTBBYS9YNEdwZUVLWWtx?=
+ =?utf-8?B?dm1ZNC9EMVNweVp0Q1Flc0lNT21ySUdyRmF3djNOc2MvMlBjUHpRMmNucFlK?=
+ =?utf-8?B?bUdNbUZjblZlWlJ3N0ZLL0pFb3R5MjB1WU1lTmFSRlc0Nld3dWpYTXdGQ0E5?=
+ =?utf-8?B?QU1KMkxuNmUwSXp1U2xwM0ZEbGhKVW9zTHBPR1A4S3dRVWkwd1ZqRTBaK2ZI?=
+ =?utf-8?B?d3VDYjBjUFNVWlNrVXQwcTRqL2l6ditJRmx1WmcvY2hvVUhzbzhRbC9xam5r?=
+ =?utf-8?B?VjFjUjAwUUpiL3V3aGtRM1M4Y1JDSFVpMWQ1c2xaeENVb1FveGVBaENNS09H?=
+ =?utf-8?B?ekRWNFF0M2Nid1ZlUlRXQXUxUFpqeFhGNEhoRlB1WHBBSXFWSmNUSFVBRXVR?=
+ =?utf-8?B?OGRPcFB6K3QwaTloQzdUU3Zvb0xzR3BQT05mazlNaHZoeWM5M3gwa0E3N09R?=
+ =?utf-8?B?UXZOeUVNNFRsUmVJUWRmalg3QmpoVjdhUlRxZk03a1k3YlNZU29aM3dhcmR0?=
+ =?utf-8?B?ZGovZDlLWFRBWnoyRHhiK2tESkxNak1BWmtreTREaW1HVGxhcmlFK3AzWWxY?=
+ =?utf-8?B?NlhXVzM3dlEvMTg5b3NTMFptbzFaUm5hSTlsdFJDT3k1R3V3QzA5cGo0aFhM?=
+ =?utf-8?B?VmdlMEs2eGwzelhSVmkwbkUvUDg3S1dwZW1CL1cvcERXWkJCVHBHbFpwbEpX?=
+ =?utf-8?B?WEFQT1Q1L2g5Q0kvc0JLcXNjc2Q0dm8zYUFBZUV6NW81SEJLWWpWWlRYNkpE?=
+ =?utf-8?B?TlFvUTIzSlViT3ZoelVOekkzWWtqMXJ4MmZLUlhjTkdibzFQV3pTblRocEFx?=
+ =?utf-8?B?MDFpWUhoRTlublhOSzFDb2pmR3pLTUs0aGc3MXJCUUU4SW9KNm11Ylo5RVNm?=
+ =?utf-8?B?WnFvNUlteFlHU1NWdFJyci9GU1laZ3dnaXlhUnNJYnRyL3c2a0dDNlRsOThX?=
+ =?utf-8?B?ZnM0ckx4M3d4dkIrU1RnSXBPck9OMjhwNGlRY0xkVzBJY1ZKTVFDYVBnPT0=?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?UmJmdHRZTTByL2xlc2FSbDNSRXpGYVIrT0Q0eXBwM1R3VG5Pa0hFZ3lxNGpJ?=
+ =?utf-8?B?SE1aMlkxSUowZWEyT0JLYk9Oa2JOd1Y0Qld2WXJlam1WQXNSd3F0cmZYWGJD?=
+ =?utf-8?B?aDJpN2lTKzNpeGdDQUJ4RlQrQ3R1dlhBWnZZUG1VVzN2TUozaWlPMVJyN3hi?=
+ =?utf-8?B?M25RZUcyZXp6Rlp1RG4wQUhmK1o2YlNWQjZHV1dsQm54SXd4Y0JWR1YvbVJ3?=
+ =?utf-8?B?Wnl6dmpiYlNiZEJNOEZWekpNNGZDUzdQRUhUM0M2SjhGNi9ydGRXaEFSWGVw?=
+ =?utf-8?B?UWgrR0ZFOTRzTW9QV2hrcklsTkl4NDZIY3J1Y0lMNjBXUEZteEFJc2IyNDVw?=
+ =?utf-8?B?VTkvME85L2cycXNVM3VVdmxlNlZ3WEVybnVuVDlhYldYaGdydUhSNXJiQ0pT?=
+ =?utf-8?B?c3VFRHlwRlVFL3NwbytuUEZnUW1RQkxvaksyZVZzSHZTL3ZwSUFKOHlrUUt2?=
+ =?utf-8?B?d2MrbWtOWVRUMWthcmo3cC9EcGFqb1BxUWV5SG1vTFMxajIyNGJLTFYxdFlu?=
+ =?utf-8?B?Nk9uV2E2TkJ1MjFuQWpLUm1vMDJJM0hNTXdVRFI5Y0UvQ1g3dGF2VEV2dTZz?=
+ =?utf-8?B?ZjZyaXRxRzFoVVZ4MVFNcDhEaDh3a1JQSzFTUzNCOUFOb2pIUGVja2FycW9H?=
+ =?utf-8?B?TE1oRWh3Qlg4bUlqNHRWdjZDT1gvdVc3aE5uYlVrNm9CclY0eW94c2NnOW5B?=
+ =?utf-8?B?ekw5dHFMK05xNTA5VjExdVprUUtOekVURnMxNXUxdVdBSWxERkxjR0hyZDVZ?=
+ =?utf-8?B?YzZ5N3BjeCs5WW1VeU1ZdU11MDlJT3hjQVNFalRyZXZYVWZFbzh1SXhwMWoz?=
+ =?utf-8?B?bDFJQUVESWFJQmdLNll6MFl6eGdCa0FJTC9tOThkdDIxVHN5Sk1PR3Mvc1p2?=
+ =?utf-8?B?dWFEUDF2NjVaeWNUc3RCOGdkN0sxWjNnRzQ0c3JQbEU3czltVXpVa1l1U3h1?=
+ =?utf-8?B?bzE4NVpKMW1hLy9DN2tNNDVoR0twdVNOUWNuS0tlRWpRdDhOVGVuSzVZQVFM?=
+ =?utf-8?B?NDJCQmdySkgxK0VBaVJoSnl2WlZqWEdDNTJFb2NwcHVybldOdU9nbzAxWitS?=
+ =?utf-8?B?RE1LVzV5dERxRENOTmpVWUlodWdJeEJ3bXF2Y2hiYUJTMlUxWnprVDVkd0lh?=
+ =?utf-8?B?N1VsbzFENnd0aW5iTlVxanF0cHZ2K3FsOG92SVV0akM0UTdrMjNXVkRqRXpv?=
+ =?utf-8?B?UFhLVG9FYlhPazdyZEdueXNSdlFmRWZ2T0tmUDdqcHBxTjJyZGxVVGhJODlv?=
+ =?utf-8?B?UE1YYncwMmdQWWNSc0VEd3lOQVpuVnp6OGdQT0dhQlVjWk5aT1dqTXVua1RH?=
+ =?utf-8?B?ZFo0S2dybzQyRTJSYy9WMXJ0VE5mV2hROFlza0FnUmovZ1I3bDhDZXl2UFI0?=
+ =?utf-8?B?cWJhYkdsdS82eGVZM1k0Q3hmUHNoWWVEc2pvLzRwVUZWSVdKTlV0ZDRWVlFn?=
+ =?utf-8?B?L1pLWGxXVCtBbVJLc0tkQ3VPSEN4K2xQSmsycktOdXE1WjIvSXkybGdLTkM4?=
+ =?utf-8?B?RXdWeUp3OS9BQ0lpN0d6Q256V0pRbEVtMVJqbUdZRndlbWxlTjd3UERkM1Nq?=
+ =?utf-8?B?MHJtbUNIdzlQdHNUenRPRmFvdURYODBSc3dwTU5ZejI0d1lINHVFK1NpMEJ4?=
+ =?utf-8?B?aFhhbE9YR21VdnVRU2JzSGttbTRBNm50UlJVQ3hPdjNJdFlaQkZUM01qNVdm?=
+ =?utf-8?B?bk0xR2FBZG5IbVlWL1pDMUVnZG40S0ZJc1ZFNWt1Q3JCNkFuM2taUGQzb0hx?=
+ =?utf-8?B?NjRwNzZTcXE5QVZtbGdTTXlQdmJLV2VGeUMxWEJUTDlGalBISjFVYzRYSmpL?=
+ =?utf-8?B?dHpFN3ZkdEFFdGwvTVlWQUpkOGd3MUNNL2JLQmdZaGI2Y09Ia3c4WTc5T1Ir?=
+ =?utf-8?B?V200MERhbklFOWtKMUp1ajJLcUxnTU03VW5aV1ZsbStzSnhJVU9taFpxUThQ?=
+ =?utf-8?B?K3c3V0o2RWxqbGRLcUFHcURUZThvUFIweTlOdTQ3ZXdZUHBpZkF5SE9DWDla?=
+ =?utf-8?B?YVdaQVJXQmVVSlJiVFp1NnlacDhzYlFmQzF4S3M2MzU1WTd1QmVwdU43bWdu?=
+ =?utf-8?B?QVQzSW9vQlpOdmpmdFo4WXBLR3BtOVhyRXFhcmhWUkpYdisvdnU1Qi9PZHFO?=
+ =?utf-8?Q?hra6ep+sjKCiQcuY86tAf6QyO?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A60915D7A982A54EAF1793DA74AFA37E@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB6609.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d7bb681-a937-4280-6dfb-08dcde039de5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2024 08:17:09.4899
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: a183gIBaTzZtQOlmSmAtL4MAXdcNXMhYXidW41HCHGkXpt5AQaulAxsnWi3TBMng1awdLGEk0vkjClQXMFcxUENI2oLEbkfbf72QbXGfsbU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6536
 
-From: Yanjun Zhang <zhangyanjun@cestc.cn>
-
-On the node of an nfs client, some files saved in the mountpoint of the nfs=
- server was coping within
-the same nfs server. Accidentally, the nfs42_complete_copies get a NULL-poi=
-nter dereference crash, as
-can be seen in following syslog:
-
-[232064.838881] NFSv4: state recovery failed for open file nfs/pvc-12b5200d=
--cd0f-46a3-b9f0-af8f4fe0ef64.qcow2, error =3D -116
-[232064.839360] NFSv4: state recovery failed for open file nfs/pvc-12b5200d=
--cd0f-46a3-b9f0-af8f4fe0ef64.qcow2, error =3D -116
-[232066.588183] Unable to handle kernel NULL pointer dereference at virtual=
- address 0000000000000058
-[232066.588586] Mem abort info:
-[232066.588701]   ESR =3D 0x0000000096000007
-[232066.588862]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-[232066.589084]   SET =3D 0, FnV =3D 0
-[232066.589216]   EA =3D 0, S1PTW =3D 0
-[232066.589340]   FSC =3D 0x07: level 3 translation fault
-[232066.589559] Data abort info:
-[232066.589683]   ISV =3D 0, ISS =3D 0x00000007
-[232066.589842]   CM =3D 0, WnR =3D 0
-[232066.589967] user pgtable: 64k pages, 48-bit VAs, pgdp=3D00002000956ff400
-[232066.590231] [0000000000000058] pgd=3D08001100ae100003, p4d=3D08001100ae=
-100003, pud=3D08001100ae100003, pmd=3D08001100b3c00003, pte=3D0000000000000=
-000
-[232066.590757] Internal error: Oops: 96000007 [#1] SMP
-[232066.590958] Modules linked in: rpcsec_gss_krb5 auth_rpcgss nfsv4 dns_re=
-solver nfs lockd grace fscache netfs ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm=
- vhost_net vhost vhost_iotlb tap tun ipt_rpfilter xt_multiport ip_set_hash_=
-ip ip_set_hash_net xfrm_interface xfrm6_tunnel tunnel4 tunnel6 esp4 ah4 wir=
-eguard libcurve25519_generic veth xt_addrtype xt_set nf_conntrack_netlink i=
-p_set_hash_ipportnet ip_set_hash_ipportip ip_set_bitmap_port ip_set_hash_ip=
-port dummy ip_set ip_vs_sh ip_vs_wrr ip_vs_rr ip_vs iptable_filter sch_ingr=
-ess nfnetlink_cttimeout vport_gre ip_gre ip_tunnel gre vport_geneve geneve =
-vport_vxlan vxlan ip6_udp_tunnel udp_tunnel openvswitch nf_conncount dm_rou=
-nd_robin dm_service_time dm_multipath xt_nat xt_MASQUERADE nft_chain_nat nf=
-_nat xt_mark xt_conntrack xt_comment nft_compat nft_counter nf_tables nfnet=
-link ocfs2 ocfs2_nodemanager ocfs2_stackglue iscsi_tcp libiscsi_tcp libiscs=
-i scsi_transport_iscsi ipmi_ssif nbd overlay 8021q garp mrp bonding tls rfk=
-ill sunrpc ext4 mbcache jbd2
-[232066.591052]  vfat fat cas_cache cas_disk ses enclosure scsi_transport_s=
-as sg acpi_ipmi ipmi_si ipmi_devintf ipmi_msghandler ip_tables vfio_pci vfi=
-o_pci_core vfio_virqfd vfio_iommu_type1 vfio dm_mirror dm_region_hash dm_lo=
-g dm_mod nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge stp=
- llc fuse xfs libcrc32c ast drm_vram_helper qla2xxx drm_kms_helper syscopya=
-rea crct10dif_ce sysfillrect ghash_ce sysimgblt sha2_ce fb_sys_fops cec sha=
-256_arm64 sha1_ce drm_ttm_helper ttm nvme_fc igb sbsa_gwdt nvme_fabrics drm=
- nvme_core i2c_algo_bit i40e scsi_transport_fc megaraid_sas aes_neon_bs
-[232066.596953] CPU: 6 PID: 4124696 Comm: 10.253.166.125- Kdump: loaded Not=
- tainted 5.15.131-9.cl9_ocfs2.aarch64 #1
-[232066.597356] Hardware name: Great Wall .\x93\x8e...RF6260 V5/GWMSSE2GL1T=
-, BIOS T656FBE_V3.0.18 2024-01-06
-[232066.597721] pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=
-=3D--)
-[232066.598034] pc : nfs4_reclaim_open_state+0x220/0x800 [nfsv4]
-[232066.598327] lr : nfs4_reclaim_open_state+0x12c/0x800 [nfsv4]
-[232066.598595] sp : ffff8000f568fc70
-[232066.598731] x29: ffff8000f568fc70 x28: 0000000000001000 x27: ffff21003d=
-b33000
-[232066.599030] x26: ffff800005521ae0 x25: ffff0100f98fa3f0 x24: 0000000000=
-000001
-[232066.599319] x23: ffff800009920008 x22: ffff21003db33040 x21: ffff21003d=
-b33050
-[232066.599628] x20: ffff410172fe9e40 x19: ffff410172fe9e00 x18: 0000000000=
-000000
-[232066.599914] x17: 0000000000000000 x16: 0000000000000004 x15: 0000000000=
-000000
-[232066.600195] x14: 0000000000000000 x13: ffff800008e685a8 x12: 00000000ea=
-c0c6e6
-[232066.600498] x11: 0000000000000000 x10: 0000000000000008 x9 : ffff800005=
-4e5828
-[232066.600784] x8 : 00000000ffffffbf x7 : 0000000000000001 x6 : 000000000a=
-9eb14a
-[232066.601062] x5 : 0000000000000000 x4 : ffff70ff8a14a800 x3 : 0000000000=
-000058
-[232066.601348] x2 : 0000000000000001 x1 : 54dce46366daa6c6 x0 : 0000000000=
-000000
-[232066.601636] Call trace:
-[232066.601749]  nfs4_reclaim_open_state+0x220/0x800 [nfsv4]
-[232066.601998]  nfs4_do_reclaim+0x1b8/0x28c [nfsv4]
-[232066.602218]  nfs4_state_manager+0x928/0x10f0 [nfsv4]
-[232066.602455]  nfs4_run_state_manager+0x78/0x1b0 [nfsv4]
-[232066.602690]  kthread+0x110/0x114
-[232066.602830]  ret_from_fork+0x10/0x20
-[232066.602985] Code: 1400000d f9403f20 f9402e61 91016003 (f9402c00)
-[232066.603284] SMP: stopping secondary CPUs
-[232066.606936] Starting crashdump kernel...
-[232066.607146] Bye!
-
-With the vmcore, we know that nfs4_copy_state listed by destination nfs_ser=
-ver->ss_copies was added with
-the field copies in the handle_async_copy, and we found that waiting copy p=
-rocess with the stack as:
-PID: 3511963  TASK: ffff710028b47e00  CPU: 0   COMMAND: "cp"
- #0 [ffff8001116ef740] __switch_to at ffff8000081b92f4
- #1 [ffff8001116ef760] __schedule at ffff800008dd0650
- #2 [ffff8001116ef7c0] schedule at ffff800008dd0a00
- #3 [ffff8001116ef7e0] schedule_timeout at ffff800008dd6aa0
- #4 [ffff8001116ef860] __wait_for_common at ffff800008dd166c
- #5 [ffff8001116ef8e0] wait_for_completion_interruptible at ffff800008dd1898
- #6 [ffff8001116ef8f0] handle_async_copy at ffff8000055142f4 [nfsv4]
- #7 [ffff8001116ef970] _nfs42_proc_copy at ffff8000055147c8 [nfsv4]
- #8 [ffff8001116efa80] nfs42_proc_copy at ffff800005514cf0 [nfsv4]
- #9 [ffff8001116efc50] __nfs4_copy_file_range.constprop.0 at ffff8000054ed6=
-94 [nfsv4]
-
-We found that the NULL-pointer dereference was due to nfs42_complete_copies=
- list the nfs_server->ss_copies
-by the filed ss_copies of nfs4_copy_state. So the nfs4_copy_state address f=
-fff0100f98fa3f0 is offset by 0x10
-and the data accessed through this pointer is also incorrect. Generally, th=
-e nfs4_state_owner->so_states
-list is ordered and open(O_RDWR) or open(O_WRITE) states are reclaimed firs=
-tly by nfs4_reclaim_open_state.
-But when destination state was reclaimed failed with NFS_STATE_RECOVERY_FAI=
-LED and copies were not deleted
-in nfs_server->ss_copies, the source state may be taken into nfs42_complete=
-_copies earlier resulting in this
-situation. To solve this, we newly add a list_head nfs_server->ds_copies fo=
-r a server-to-server copy specially.
-
-Fixes: b1a0913adbef ("NFS: handle source server reboot")
-Signed-off-by: Yanjun Zhang <zhangyanjun@cestc.cn>
----
- fs/nfs/nfs42proc.c        | 2 +-
- fs/nfs/nfs4state.c        | 2 +-
- include/linux/nfs_fs_sb.h | 1 +
- 3 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
-index 28704f924..5a55a1b20 100644
---- a/fs/nfs/nfs42proc.c
-+++ b/fs/nfs/nfs42proc.c
-@@ -218,7 +218,7 @@ static int handle_async_copy(struct nfs42_copy_res *res,
-=20
- 	if (dst_server !=3D src_server) {
- 		spin_lock(&src_server->nfs_client->cl_lock);
--		list_add_tail(&copy->src_copies, &src_server->ss_copies);
-+		list_add_tail(&copy->src_copies, &src_server->ds_copies);
- 		spin_unlock(&src_server->nfs_client->cl_lock);
- 	}
-=20
-diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
-index 877f682b4..7b4fbba84 100644
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -1596,7 +1596,7 @@ static void nfs42_complete_copies(struct nfs4_state_o=
-wner *sp, struct nfs4_state
- 			complete(&copy->completion);
- 		}
- 	}
--	list_for_each_entry(copy, &sp->so_server->ss_copies, src_copies) {
-+	list_for_each_entry(copy, &sp->so_server->ds_copies, src_copies) {
- 		if ((test_bit(NFS_CLNT_SRC_SSC_COPY_STATE, &state->flags) &&
- 				!nfs4_stateid_match_other(&state->stateid,
- 				&copy->parent_src_state->stateid)))
-diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
-index 1df86ab98..f07448c85 100644
---- a/include/linux/nfs_fs_sb.h
-+++ b/include/linux/nfs_fs_sb.h
-@@ -240,6 +240,7 @@ struct nfs_server {
- 	struct list_head	layouts;
- 	struct list_head	delegations;
- 	struct list_head	ss_copies;
-+	struct list_head	ds_copies;
-=20
- 	unsigned long		delegation_gen;
- 	unsigned long		mig_gen;
---=20
-2.31.1
-
-
-
+T24gMjMvMDkvMjQgMTE6MzcgYW0sIERtaXRyeSBCYXJ5c2hrb3Ygd3JvdGU6DQo+IEVYVEVSTkFM
+IEVNQUlMOiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91
+IGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZQ0KPiANCj4gT24gTW9uLCBTZXAgMjMsIDIwMjQgYXQg
+MDU6NTA6MjJBTSBHTVQsIE1hbmlrYW5kYW4uTUBtaWNyb2NoaXAuY29tIHdyb3RlOg0KPj4gT24g
+MjAvMDkvMjQgOToxMyBwbSwgRG1pdHJ5IEJhcnlzaGtvdiB3cm90ZToNCj4+PiBFWFRFUk5BTCBF
+TUFJTDogRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMgdW5sZXNzIHlvdSBr
+bm93IHRoZSBjb250ZW50IGlzIHNhZmUNCj4+Pg0KPj4+IE9uIFRodSwgU2VwIDE5LCAyMDI0IGF0
+IDAyOjQ1OjQ4UE0gR01ULCBNYW5pa2FuZGFuIE11cmFsaWRoYXJhbiB3cm90ZToNCj4+Pj4gQWRk
+IHN1cHBvcnQgZm9yIE1pY3JvY2hpcCBBQzY5VDg4QSA1IGluY2ggVEZUIExDRCA4MDB4NDgwDQo+
+Pj4+IERpc3BsYXkgbW9kdWxlIHdpdGggTFZEUyBpbnRlcmZhY2UuVGhlIHBhbmVsIHVzZXMgdGhl
+IFNpdHJvbml4DQo+Pj4+IFNUNzI2MiA4MDB4NDgwIERpc3BsYXkgZHJpdmVyDQo+Pj4NCj4+PiBB
+QzY5VDg4QSBzZWVtcyB0byBiZSBhIG1vZHVsZSBuYW1lLCByYXRoZXIgdGhhbiBhIHBhbmVsIG5h
+bWUuIFdoYXQgaXMNCj4+PiB0aGUgYWN0dWFsIHBhbmVsIG5hbWUgcHJlc2VudCBvbiB0aGlzIG1v
+ZHVsZT8NCj4+IEJvdGggbmFtZXMsICJNaWNyb2NoaXAgQUM2OVQ4OEEiIGFuZCAiTVBVMzItTFZE
+Uy1ESVNQTEFZLVdWR0EiIGFyZQ0KPj4gcHJlc2VudCBvbiB0aGUgZGlzcGxheSBtb2R1bGUNCj4g
+DQo+IFdoaWNoIHBhbmVsIHdhcyB1c2VkIGZvciB0aGUgbW9kdWxlPyBJIGRvbid0IHRoaW5rIHRo
+YXQgTWljcm9jaGlwDQo+IHByb2R1Y2VzIExWRFMgcGFuZWxzLg0KSXRzIGEgbmV3IExWRFMgZGlz
+cGxheSBmcm9tIE1pY3JvY2hpcCB0aGF0IHVzZXMgU2l0cm9uaXggU1Q3MjYyIFRGVCBMQ0QgDQpk
+cml2ZXINCg0KaHR0cHM6Ly93d3cuY3J5c3RhbGZvbnR6LmNvbS9jb250cm9sbGVycy9kYXRhc2hl
+ZXQtdmlld2VyLnBocD9pZD00ODYNCj4gDQo+Pj4NCj4+Pj4NCj4+Pj4gU2lnbmVkLW9mZi1ieTog
+TWFuaWthbmRhbiBNdXJhbGlkaGFyYW4gPG1hbmlrYW5kYW4ubUBtaWNyb2NoaXAuY29tPg0KPj4+
+PiBTaWduZWQtb2ZmLWJ5OiBEaGFybWEgQmFsYXN1YmlyYW1hbmkgPGRoYXJtYS5iQG1pY3JvY2hp
+cC5jb20+DQo+Pj4+IC0tLQ0KPj4+PiBjaGFuZ2VzIGluIHYyOg0KPj4+PiAtIHJlcGxhY2UgbWlj
+cm9jaGlwLGFjNjl0ODhhLWx2ZHMtcGFuZWwgd2l0aA0KPj4+PiBtaWNyb2NoaXAsYWM2OXQ4OGEN
+Cj4+Pj4gLS0tDQo+Pj4+ICAgIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zaW1wbGUuYyB8
+IDI4ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4+Pj4gICAgMSBmaWxlIGNoYW5nZWQs
+IDI4IGluc2VydGlvbnMoKykNCj4+Pj4NCj4+Pg0KPj4+IC0tDQo+Pj4gV2l0aCBiZXN0IHdpc2hl
+cw0KPj4+IERtaXRyeQ0KPj4NCj4+IC0tDQo+PiBUaGFua3MgYW5kIFJlZ2FyZHMsDQo+PiBNYW5p
+a2FuZGFuIE0uDQo+Pg0KPiANCj4gLS0NCj4gV2l0aCBiZXN0IHdpc2hlcw0KPiBEbWl0cnkNCg0K
+LS0gDQpUaGFua3MgYW5kIFJlZ2FyZHMsDQpNYW5pa2FuZGFuIE0uDQoNCg==
 
