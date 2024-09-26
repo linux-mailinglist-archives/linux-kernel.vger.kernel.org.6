@@ -1,147 +1,349 @@
-Return-Path: <linux-kernel+bounces-339765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4B8986A40
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:27:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA51986A3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2AB01F226FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:26:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12BB71C20E4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABC316B748;
-	Thu, 26 Sep 2024 00:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7D516B75B;
+	Thu, 26 Sep 2024 00:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHugjOrU"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFI/lJDl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F4D1D5AB1
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 00:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FC71D5AB1;
+	Thu, 26 Sep 2024 00:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727310414; cv=none; b=AIbW+guKOY7Hqa6bRb+4r9FsKk6ezuFYYm0pgpfO8a+fnvhUCDYrRpVFSYtwSPzdQXmEGRel/MaOf95Dl3WX1nm5WgRJM2QOWnaYSwvjJyZKwVSm8lMXZpff6vUVRh2S7nvuzfWWeUCysfXl88ibCuheCMf13tvppnrRkUNR6VY=
+	t=1727310393; cv=none; b=ZP9VDaMn473CLhuZvf6apQxoj9ckSI4HMY/rqt2l8u+PAwgixDPhqyn+94CRwGPIoqJ30NmMz6sY1f5D265wggc0x6iILXqVP3v2djxj639pUTwLZX6Iq+AlSuXPQfkh0a0yWnUs88uyrjZ/QhVuBV+DWLFUPfCPVEI9zpnBJ9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727310414; c=relaxed/simple;
-	bh=eAiQtJBAcrSyMxCXhV2DPYPjQFK0zG0qlWB4H62qWwg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KMDSDyZFZsNw5LjUpILH+5+4SG7xEij2Y4KBBnb8u8IBdKfCqWm+am3uAOkuFOLAPH6K6lUqylrc1is0F3NaPL1v6QFRvBrh8y5YH72mRNPLc2GTkTfsI3TbVg0v5IO/AqUUeS9UsD4aktSQoc1jD+nPq2Svr1nBvFMgCn8Sgys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHugjOrU; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a0cad8a0a5so1905435ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:26:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727310412; x=1727915212; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4h71KNl97QvEZ5noXaz7sknDoxojg3IEoQ/oR2jE0tY=;
-        b=LHugjOrUZqmfPad+xut9Ku2Urb0AFO8bWbC9k2OKVZM7KNk8pT9rBFttVhvZ0NDi55
-         rTq96wLEkFD6n01hNPVLsIU71h5JPkDuk8cMaLvyaQPBuc2H2pO5D3ebLURm8gbvLG4w
-         cLEHWXBvk5E0MYJ54icGySUfEGemt1SPoYIVjp3yFr3A3u5AMbNiNLecnQK/hebDMjdg
-         yw898T2r2nxMu4VH+x8xYdNPmXjiCqYIsEYWRFRKIb+Er3bUjeo6PspAodqmEyFeYRsF
-         ceRyTmb+KkWnub4L+IK5mLPgPn82ibQKI19HzJoYGI4aJQ+FLcVLOpPuJ7qaE2tbZXSc
-         ZGig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727310412; x=1727915212;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4h71KNl97QvEZ5noXaz7sknDoxojg3IEoQ/oR2jE0tY=;
-        b=rAgePpBabdA5AmGSh6pXVFrjOlbtKVKsuln22rDX5GjLXCHzjgEUgxpFX205mpjMk9
-         7wx8dNIsXrgC/GqRJD5ukGdUGncxi399ygrhIHzrFvSeELAxBXC2eGiiHQilw943J5ES
-         9aEXTomfZRcHw64ZSP3gvDeXEwsRGL+7tEY2KC1q4fUBYFs4z0A7sTjVwkkdEJpSQK8G
-         2eLkRSihvZaOlfAHH6V83mLaZokGkqToyqo80Vd9v5MDc4iYER+EIRTsbxPIAzA3vKWC
-         r/JVUfDfJJ82IkMrIhTcpJ4mEsu5vlUXqlLC+DlhZofBEFceZX5AbqV7MNGjeYUglg07
-         95AA==
-X-Forwarded-Encrypted: i=1; AJvYcCXe0IGzY8eg/jsHPy1q4WJMvxh0DqLNg+ZgSdNr4zd9q6i/RTGFtFc3QSSuQRuWzJf7kWITq/piOZYSJy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp4tFuGL4DbNEtKTLO5YwmYG0tSoGXIpAx9mRkdS28Bz6r6jeD
-	pJHyclvV2CkIMOriC/tIx5JAQfLeoBdAPuKGSJvTqcF1xaSpn5jm
-X-Google-Smtp-Source: AGHT+IHgTXutoVNi8aDqPPP/+KgfDCgrksJCESMS/68BZDMFkdIdxvC3YnaBA0YfWndNPVbYHVlGDQ==
-X-Received: by 2002:a05:6e02:164d:b0:3a2:6cd7:3254 with SMTP id e9e14a558f8ab-3a26d78f4c9mr48930055ab.14.1727310411822;
-        Wed, 25 Sep 2024 17:26:51 -0700 (PDT)
-Received: from localhost.localdomain (24-220-248-19-dynamic.midco.net. [24.220.248.19])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d40ed005a8sm1407875173.0.2024.09.25.17.26.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 17:26:51 -0700 (PDT)
-From: Benjamin Hoefs <bendhoefs@gmail.com>
-To: jani.nikula@linux.intel.com
-Cc: rodrigo.vivi@intel.com,
-	joonas.lahtinen@linux.intel.com,
-	tursulin@ursulin.net,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Benjamin Hoefs <bendhoefs@gmail.com>
-Subject: [PATCH] i915: Fix HBLANK Expansion Quirk Causing Modeset Failure on Dell WD19TB Dock at 3440x1440@100Hz
-Date: Wed, 25 Sep 2024 19:25:34 -0500
-Message-ID: <20240926002533.10153-2-bendhoefs@gmail.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727310393; c=relaxed/simple;
+	bh=f3tS1U6dBvSCMNObFPyBViscoCK1jULQw/fp/P//qew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s8iRxsr7RurZMc7uhGB+aTnEQKos2d8idMMJsI/sUiMY0v63d69TwtuFryJwRbiBcZlbygDm7r2Hf0cqM1J/HR/sXxVlNqalf6gR3qTDwWOWL+mRo+fm/BG24iV4P0oNhDTmRaVA7COHmtgdb10awYeNOIN+bPNZqMahNWjh3g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFI/lJDl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC4D9C4CEC3;
+	Thu, 26 Sep 2024 00:26:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727310393;
+	bh=f3tS1U6dBvSCMNObFPyBViscoCK1jULQw/fp/P//qew=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZFI/lJDlvQUF4gMACagO3d2jiEsdPQDgayPBW3NSlx8uevjxaJMPa40v3QczSww4M
+	 7Jt73HhBInXjyJPO+7Q84q3SlRXwk+EWnBaJwfPVKBjQyB9TXNmi7M/uX83pmfmsRe
+	 1OEu3k4gy8io5SCGn/OVwBShoLBsaGwp4VHt8hs0btYaTMaZahWu++sXakpdrwPE8n
+	 QD1nY7kHiFfIgS6pXk1Dc3gR7jvdWlgNtaNmVJBzPYIXv4Vq2r0cG8S3VaOAh5bAxY
+	 +HtGYRzI6HT+93D5p46zzeCPxLTCQBzKR7+C7wzItDgrThdBp1ndTqq7hkfIW1ctwc
+	 LcUsG4v+XryVg==
+Date: Wed, 25 Sep 2024 17:26:30 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Guo Ren <guoren@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>,
+	Guilherme Amadio <amadio@gentoo.org>,
+	Changbin Du <changbin.du@huawei.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Aditya Gupta <adityag@linux.ibm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
+	Kajol Jain <kjain@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
+	Shenlin Liang <liangshenlin@eswincomputing.com>,
+	Atish Patra <atishp@rivosinc.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Chen Pei <cp0613@linux.alibaba.com>,
+	Dima Kogan <dima@secretsauce.net>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	Yang Jihong <yangjihong@bytedance.com>
+Subject: Re: [PATCH v1 01/11] perf build: Rename NO_DWARF to NO_LIBDW
+Message-ID: <ZvSqNqNKKysw_309@google.com>
+References: <20240924160418.1391100-1-irogers@google.com>
+ <20240924160418.1391100-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240924160418.1391100-2-irogers@google.com>
 
-Hello,
+On Tue, Sep 24, 2024 at 09:04:08AM -0700, Ian Rogers wrote:
+> NO_DWARF could mean more than NO_LIBDW support, in particular no
+> libunwind support. Rename to be more intention revealing.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/Makefile.config         | 16 ++++++++--------
+>  tools/perf/Makefile.perf           |  2 +-
+>  tools/perf/arch/arm/Makefile       |  2 +-
+>  tools/perf/arch/arm64/Makefile     |  2 +-
+>  tools/perf/arch/csky/Makefile      |  2 +-
+>  tools/perf/arch/loongarch/Makefile |  2 +-
+>  tools/perf/arch/mips/Makefile      |  2 +-
+>  tools/perf/arch/powerpc/Makefile   |  2 +-
+>  tools/perf/arch/riscv/Makefile     |  2 +-
+>  tools/perf/arch/s390/Makefile      |  2 +-
+>  tools/perf/arch/sh/Makefile        |  2 +-
+>  tools/perf/arch/sparc/Makefile     |  2 +-
+>  tools/perf/arch/x86/Makefile       |  2 +-
+>  tools/perf/arch/xtensa/Makefile    |  2 +-
+>  tools/perf/builtin-probe.c         |  2 +-
+>  15 files changed, 22 insertions(+), 22 deletions(-)
+> 
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index 5e26d3a91b36..55a39211496d 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -429,7 +429,7 @@ ifeq ($(feature-file-handle), 1)
+>  endif
+>  
+>  ifdef NO_LIBELF
+> -  NO_DWARF := 1
+> +  NO_LIBDW := 1
+>    NO_LIBUNWIND := 1
+>    NO_LIBDW_DWARF_UNWIND := 1
+>    NO_LIBBPF := 1
+> @@ -471,9 +471,9 @@ else
+>        endif
+>      endif
+>      ifneq ($(feature-dwarf), 1)
+> -      ifndef NO_DWARF
+> +      ifndef NO_LIBDW
+>          $(warning No libdw.h found or old libdw.h found or elfutils is older than 0.138, disables dwarf support. Please install new elfutils-devel/libdw-dev)
+> -        NO_DWARF := 1
+> +        NO_LIBDW := 1
+>        endif
+>      else
+>        ifneq ($(feature-dwarf_getlocations), 1)
+> @@ -496,7 +496,7 @@ ifeq ($(feature-libaio), 1)
+>    endif
+>  endif
+>  
+> -ifdef NO_DWARF
+> +ifdef NO_LIBDW
+>    NO_LIBDW_DWARF_UNWIND := 1
+>  endif
+>  
+> @@ -574,17 +574,17 @@ ifndef NO_LIBELF
+>      endif
+>    endif
+>  
+> -  ifndef NO_DWARF
+> +  ifndef NO_LIBDW
+>      ifeq ($(origin PERF_HAVE_DWARF_REGS), undefined)
+>        $(warning DWARF register mappings have not been defined for architecture $(SRCARCH), DWARF support disabled)
+> -      NO_DWARF := 1
+> +      NO_LIBDW := 1
+>      else
+>        CFLAGS += -DHAVE_DWARF_SUPPORT $(LIBDW_CFLAGS)
+>        LDFLAGS += $(LIBDW_LDFLAGS)
+>        EXTLIBS += ${DWARFLIBS}
+>        $(call detected,CONFIG_DWARF)
+>      endif # PERF_HAVE_DWARF_REGS
+> -  endif # NO_DWARF
+> +  endif # NO_LIBDW
+>  
+>    ifndef NO_LIBBPF
+>      ifeq ($(feature-bpf), 1)
+> @@ -633,7 +633,7 @@ ifdef PERF_HAVE_JITDUMP
+>  endif
+>  
+>  ifeq ($(SRCARCH),powerpc)
+> -  ifndef NO_DWARF
+> +  ifndef NO_LIBDW
+>      CFLAGS += -DHAVE_SKIP_CALLCHAIN_IDX
+>    endif
+>  endif
+> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> index 9dd2e8d3f3c9..a144bfaf8aeb 100644
+> --- a/tools/perf/Makefile.perf
+> +++ b/tools/perf/Makefile.perf
+> @@ -40,7 +40,7 @@ include ../scripts/utilities.mak
+>  #
+>  # Define EXTRA_PERFLIBS to pass extra libraries to PERFLIBS.
+>  #
+> -# Define NO_DWARF if you do not want debug-info analysis feature at all.
+> +# Define NO_LIBDW if you do not want debug-info analysis feature at all.
 
-I am using a Dell WD19TB dock with a 3440x1440 monitor. Using it at
-100Hz used to work but recently I tried it again and discovered it no longer
-did, specifically the modeset seems to silently fail with no error message in
-userspace utilities like kscreen-doctor and xrandr and no output in dmesg.
-I found the problematic commit using git bisect to be
-55eaef164174480df6827edeac15620f3cbcd52b "Handle the Synaptics HBlank
-expansion quirk".
+Can we keep NO_DWARF for compatibility and set NO_LIBDW=1 internally?
+I think it's fine to change it here to advertise NO_LIBDW over NO_DWARF
+but still want to support NO_DWARF as well.
 
-I found the issue to be the hblank_expasion_quirk_needs_dsc function which uses
-the following comparison in the current kernel tree:
+Also it seem we don't have an entry in the tests/make for no-dwarf
+build.  Can you please add one too?
 
-if (mode_hblank_period_ns(adjusted_mode) > hblank_limit)
-	return false;
+Thanks,
+Namhyung
 
-with hblank_limit being earlier set as
 
-int hblank_limit = is_uhbr_sink ? 500 : 300;
-
-However, my monitor's HBLANK period in the 3440x1440@100Hz mode is
-exactly 300 ns as verified by this printk immediately before the
-problematic comparison.
-
-printk(KERN_INFO "Hello, kernel world! %i\n",
-	mode_hblank_period_ns(adjusted_mode));
-[   38.429839] Hello, kernel world! 300
-
-With the attached change the modeset works as expected at 100Hz. Would it be
-acceptable to modify the comparison from > to >= here?
-
-I'll do my best to provide any additional details you may need although
-that printk and '=' sign is the only kernel code I've written, so my best may
-not be great :).
-
-Signed-off-by: Benjamin D. Hoefs <bendhoefs@gmail.com>
----
- drivers/gpu/drm/i915/display/intel_dp_mst.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i915/display/intel_dp_mst.c b/drivers/gpu/drm/i915/display/intel_dp_mst.c
-index 15541932b809..052c5a67df93 100644
---- a/drivers/gpu/drm/i915/display/intel_dp_mst.c
-+++ b/drivers/gpu/drm/i915/display/intel_dp_mst.c
-@@ -446,7 +446,7 @@ hblank_expansion_quirk_needs_dsc(const struct intel_connector *connector,
- 	if (is_uhbr_sink && !drm_dp_is_uhbr_rate(limits->max_rate))
- 		return false;
- 
--	if (mode_hblank_period_ns(adjusted_mode) > hblank_limit)
-+	if (mode_hblank_period_ns(adjusted_mode) >= hblank_limit)
- 		return false;
- 
- 	return true;
--- 
-2.46.2
-
+>  #
+>  # Define WERROR=0 to disable treating any warnings as errors.
+>  #
+> diff --git a/tools/perf/arch/arm/Makefile b/tools/perf/arch/arm/Makefile
+> index 1d88fdab13bf..9b164d379548 100644
+> --- a/tools/perf/arch/arm/Makefile
+> +++ b/tools/perf/arch/arm/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> -ifndef NO_DWARF
+> +ifndef NO_LIBDW
+>  PERF_HAVE_DWARF_REGS := 1
+>  endif
+>  PERF_HAVE_JITDUMP := 1
+> diff --git a/tools/perf/arch/arm64/Makefile b/tools/perf/arch/arm64/Makefile
+> index 5735ed4479bb..8a5ffbfe809f 100644
+> --- a/tools/perf/arch/arm64/Makefile
+> +++ b/tools/perf/arch/arm64/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -ifndef NO_DWARF
+> +ifndef NO_LIBDW
+>  PERF_HAVE_DWARF_REGS := 1
+>  endif
+>  PERF_HAVE_JITDUMP := 1
+> diff --git a/tools/perf/arch/csky/Makefile b/tools/perf/arch/csky/Makefile
+> index 88c08eed9c7b..119b06a64bed 100644
+> --- a/tools/perf/arch/csky/Makefile
+> +++ b/tools/perf/arch/csky/Makefile
+> @@ -1,4 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> -ifndef NO_DWARF
+> +ifndef NO_LIBDW
+>  PERF_HAVE_DWARF_REGS := 1
+>  endif
+> diff --git a/tools/perf/arch/loongarch/Makefile b/tools/perf/arch/loongarch/Makefile
+> index c89d6bb6b184..1cc5eb01f32b 100644
+> --- a/tools/perf/arch/loongarch/Makefile
+> +++ b/tools/perf/arch/loongarch/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -ifndef NO_DWARF
+> +ifndef NO_LIBDW
+>  PERF_HAVE_DWARF_REGS := 1
+>  endif
+>  PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET := 1
+> diff --git a/tools/perf/arch/mips/Makefile b/tools/perf/arch/mips/Makefile
+> index cd0b011b3be5..733f7b76f52d 100644
+> --- a/tools/perf/arch/mips/Makefile
+> +++ b/tools/perf/arch/mips/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -ifndef NO_DWARF
+> +ifndef NO_LIBDW
+>  PERF_HAVE_DWARF_REGS := 1
+>  endif
+>  
+> diff --git a/tools/perf/arch/powerpc/Makefile b/tools/perf/arch/powerpc/Makefile
+> index bf6d323574f6..7672d555f6cd 100644
+> --- a/tools/perf/arch/powerpc/Makefile
+> +++ b/tools/perf/arch/powerpc/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -ifndef NO_DWARF
+> +ifndef NO_LIBDW
+>  PERF_HAVE_DWARF_REGS := 1
+>  endif
+>  
+> diff --git a/tools/perf/arch/riscv/Makefile b/tools/perf/arch/riscv/Makefile
+> index 90c3c476a242..4664a78a1afd 100644
+> --- a/tools/perf/arch/riscv/Makefile
+> +++ b/tools/perf/arch/riscv/Makefile
+> @@ -1,4 +1,4 @@
+> -ifndef NO_DWARF
+> +ifndef NO_LIBDW
+>  PERF_HAVE_DWARF_REGS := 1
+>  endif
+>  PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET := 1
+> diff --git a/tools/perf/arch/s390/Makefile b/tools/perf/arch/s390/Makefile
+> index 56994e63b43a..3f66e2ede3f7 100644
+> --- a/tools/perf/arch/s390/Makefile
+> +++ b/tools/perf/arch/s390/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> -ifndef NO_DWARF
+> +ifndef NO_LIBDW
+>  PERF_HAVE_DWARF_REGS := 1
+>  endif
+>  HAVE_KVM_STAT_SUPPORT := 1
+> diff --git a/tools/perf/arch/sh/Makefile b/tools/perf/arch/sh/Makefile
+> index 88c08eed9c7b..119b06a64bed 100644
+> --- a/tools/perf/arch/sh/Makefile
+> +++ b/tools/perf/arch/sh/Makefile
+> @@ -1,4 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> -ifndef NO_DWARF
+> +ifndef NO_LIBDW
+>  PERF_HAVE_DWARF_REGS := 1
+>  endif
+> diff --git a/tools/perf/arch/sparc/Makefile b/tools/perf/arch/sparc/Makefile
+> index 4031db72ba71..7741184894c8 100644
+> --- a/tools/perf/arch/sparc/Makefile
+> +++ b/tools/perf/arch/sparc/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> -ifndef NO_DWARF
+> +ifndef NO_LIBDW
+>  PERF_HAVE_DWARF_REGS := 1
+>  endif
+>  
+> diff --git a/tools/perf/arch/x86/Makefile b/tools/perf/arch/x86/Makefile
+> index 67b4969a6738..9aa58acb5564 100644
+> --- a/tools/perf/arch/x86/Makefile
+> +++ b/tools/perf/arch/x86/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -ifndef NO_DWARF
+> +ifndef NO_LIBDW
+>  PERF_HAVE_DWARF_REGS := 1
+>  endif
+>  HAVE_KVM_STAT_SUPPORT := 1
+> diff --git a/tools/perf/arch/xtensa/Makefile b/tools/perf/arch/xtensa/Makefile
+> index 88c08eed9c7b..119b06a64bed 100644
+> --- a/tools/perf/arch/xtensa/Makefile
+> +++ b/tools/perf/arch/xtensa/Makefile
+> @@ -1,4 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> -ifndef NO_DWARF
+> +ifndef NO_LIBDW
+>  PERF_HAVE_DWARF_REGS := 1
+>  endif
+> diff --git a/tools/perf/builtin-probe.c b/tools/perf/builtin-probe.c
+> index 003a3bcebfdf..91672bb3047c 100644
+> --- a/tools/perf/builtin-probe.c
+> +++ b/tools/perf/builtin-probe.c
+> @@ -616,7 +616,7 @@ __cmd_probe(int argc, const char **argv)
+>  	set_option_flag(options, 'L', "line", PARSE_OPT_EXCLUSIVE);
+>  	set_option_flag(options, 'V', "vars", PARSE_OPT_EXCLUSIVE);
+>  #else
+> -# define set_nobuild(s, l, c) set_option_nobuild(options, s, l, "NO_DWARF=1", c)
+> +# define set_nobuild(s, l, c) set_option_nobuild(options, s, l, "NO_LIBDW=1", c)
+>  	set_nobuild('L', "line", false);
+>  	set_nobuild('V', "vars", false);
+>  	set_nobuild('\0', "externs", false);
+> -- 
+> 2.46.0.792.g87dc391469-goog
+> 
 
