@@ -1,56 +1,60 @@
-Return-Path: <linux-kernel+bounces-340795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF179877F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEFA49877FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40346286E4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:57:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E393286C51
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9A115B552;
-	Thu, 26 Sep 2024 16:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1313F15B0FA;
+	Thu, 26 Sep 2024 16:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ORb3UPhS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E18dPxWR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C0D13A24D;
-	Thu, 26 Sep 2024 16:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBFC13A24D;
+	Thu, 26 Sep 2024 16:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727369848; cv=none; b=nWKu5AiMFWCFfMlBGgacn8Ir+v1fn7Y4uGYu6FqDnl3zLxV12oKyJ7PLNli2xw5URf0cLMcOhrL90RQ2F7HW5W50qAmvNlA8LPPMNFuY+ooBL5CCzoiPptY0PtoUN0K/aKfzxtjcshcO5dosTigHa+cb5S1lqGnbURVC7HGsx6Y=
+	t=1727369932; cv=none; b=DQRJm/gORYzegr9dTlTTrYqleXpUSyKqWprMPkhktwiQ3Vm6byC6y1dXVGSq63homaNXWBgHGZbi2fZzf11LlnLEqXmj+oxBAzSPqbC6JWQxbUJEPhpUe7zZ1+rizY1DqteDgJ9QFgZ3Vj4ILpnoK8PdZuaqwM2l/Lr+hyZW8bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727369848; c=relaxed/simple;
-	bh=4fxs8NFpD3AWmeQlTcIxMrYZLvtu7wE0b6VfF3mHwR4=;
+	s=arc-20240116; t=1727369932; c=relaxed/simple;
+	bh=WjrrpfRlzHwA2/o8EwWOQ0D0+skYwrSDG5khDdTfqZY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j5hPbkV0SkrauVgt61zIre1fst6yzHPVnAXGuDsg5mq7bGwmwUE3KmeElLf1kMA9R7PvbC5/9wvsYNQhXYdIywQUIR17MyEiKdVCxXcDVc9hojzo1g0+Th2VFJ+3xksgL2KfpGydnwtqrpjhYtyMXdiuJrMHP72VsW/aZc5Wg5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ORb3UPhS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A255C4CEC5;
-	Thu, 26 Sep 2024 16:57:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jgEv2OXyLc16bZzAzRNBPisNNia6LRtFR4KpgrOA9InWtncCUIGCs3h5o2gI9xr2uwEK7h4tE1Z9nh6Q3d4WNgd7Kgq4epOo7p83eUsuha8PzDE2lmtEfuHUG18fZkI3mp14GEcOkrN3+CqLIvQ99X+IxL2KMMryzoPeWk/6550=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E18dPxWR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAD69C4CEC5;
+	Thu, 26 Sep 2024 16:58:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727369847;
-	bh=4fxs8NFpD3AWmeQlTcIxMrYZLvtu7wE0b6VfF3mHwR4=;
+	s=k20201202; t=1727369932;
+	bh=WjrrpfRlzHwA2/o8EwWOQ0D0+skYwrSDG5khDdTfqZY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ORb3UPhSxx3cc5HLrF6knwmVlvhuX9IGcUxS70mnclC3cqHwxWdLPUNa4ItY9SwYN
-	 V7SaikqGKP5ZJgbxjVkxS6uuAxsynSWbXF4CqMef0/hQPsze+Lg5Rzb7I870+toqcJ
-	 BiD5fuo+xMBo/ZFmPRHRLSLMO5SbKNa3Ncq0nRET3ty9R6P5tGjTPSUMT6tClQU+Dh
-	 hkn16ahGiEl845QrmSq8pCMtCce6A3JKANjAkYze5UcmOvcJuDDEwUQGFSourl+9Mm
-	 3dWiN1bHVeFk86AFNjV3nkS6Bg+EVbhPr3abhHHWkPonzqAPAbHLsHFuc76wYs18WL
-	 s9TjVpIAeCPJw==
-Date: Thu, 26 Sep 2024 17:57:24 +0100
+	b=E18dPxWRHyXnrNlbCGdintq6DVFxKwlPRuSSkQ21cQBCMokx9Q5C15zNu4EW/Gbs9
+	 uMeFjL0t2AaedwskIr2ePSnwyY6dlIFQ+hN0AP/PAcdte/VR39P8whMeyiMWNSXaKk
+	 seHyBptnC/aI3v9wufuNWFirNh1C08TeYTpn0E3i3KGJhdDBBmm40yICuQIFM5FK7x
+	 5YjZ4q1zvybUl7dKNBKiR73oEgQUsKZH0Fh6UUOX8p/7rIVbOQDUTN5Rc9PiLRicA/
+	 lUF2kxZ5GwHw3d3DYn/rhJUT16p3FOeIs0kZ4LLegGoTr52QX9j984RF8dddoT+vyP
+	 aCLezXLN8aSBw==
+Date: Thu, 26 Sep 2024 17:58:47 +0100
 From: Conor Dooley <conor@kernel.org>
 To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
+Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: interrupt-controller: fsl,mu-msi: Drop
- "interrupt-controller" property
-Message-ID: <20240926-glorious-spongy-29007d254703@spud>
-References: <20240925173438.1906339-1-robh@kernel.org>
+	Conor Dooley <conor+dt@kernel.org>,
+	Lokesh Vutla <lokeshvutla@ti.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: interrupt-controller: ti,sci-inta: Add
+ missing "#interrupt-cells" to example
+Message-ID: <20240926-schilling-dividing-a84b379c601d@spud>
+References: <20240925173432.1906168-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,39 +62,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7jj447Zq6p9po9oO"
+	protocol="application/pgp-signature"; boundary="TwqPqcXiLo7Hkphr"
 Content-Disposition: inline
-In-Reply-To: <20240925173438.1906339-1-robh@kernel.org>
+In-Reply-To: <20240925173432.1906168-1-robh@kernel.org>
 
 
---7jj447Zq6p9po9oO
+--TwqPqcXiLo7Hkphr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 25, 2024 at 12:34:38PM -0500, Rob Herring (Arm) wrote:
-> The Freescale MU-MSI is an MSI provider, not an interrupt provider, so
-> drop the "interrupt-controller" property. This fixes dtc "interrupt_provi=
-der"
-> warning.
+On Wed, Sep 25, 2024 at 12:34:31PM -0500, Rob Herring (Arm) wrote:
+> Enabling dtc interrupt_provider check reveals the example is missing
+> the "#interrupt-cells" property as it is a dependency of
+> "interrupt-controller".
 >=20
 > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> If this is not correct, then #interrupt-cells needs to be added.
 
-Seems it is correct, per Frank.
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---7jj447Zq6p9po9oO
+--TwqPqcXiLo7Hkphr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvWSdAAKCRB4tDGHoIJi
-0iFQAQDfVqdXimRSvdjiD0b2TLlQWPDybzi8qU1cNrVQZ06n6wD8CvCJmt3yptQe
-6kKQrrDDKKAmKStmMLz00bazUo3W9gY=
-=R14F
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvWSxwAKCRB4tDGHoIJi
+0otHAQCYu0Pv+khJOqtbBa4wmAOpTuD1kWnfrcdj3GpieayxFAD/YgQcdzimky0d
+pwa6+6Yh/3Is//bAbV0pdBrIuw1syQg=
+=TN6k
 -----END PGP SIGNATURE-----
 
---7jj447Zq6p9po9oO--
+--TwqPqcXiLo7Hkphr--
 
