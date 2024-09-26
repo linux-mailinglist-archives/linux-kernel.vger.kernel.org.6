@@ -1,293 +1,272 @@
-Return-Path: <linux-kernel+bounces-340834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDCAA987860
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:32:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC9F987862
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DF131F24B00
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:32:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35053281D05
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D7E17BED3;
-	Thu, 26 Sep 2024 17:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C7E15AD90;
+	Thu, 26 Sep 2024 17:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XuCF6/8c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WbiuCnV3"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F8E166F06;
-	Thu, 26 Sep 2024 17:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBCA4C79
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727371850; cv=none; b=EK3SvyA8lDE5PejNifoZlwcPhXw951EAghdJrHp2w9RacpXGjl8qgmvlmuarCdXxWNYgStphc8Is5IxGP8dC6O7JjZmU7+5WbCXBKO2L3Qj4rDaIFo250y524JBpPUvA2usMEZpDS4Q0acvvsgtrQrpH+efxc93keLSf3mWmu5c=
+	t=1727372131; cv=none; b=FJ+vX2Kj4/KVcQmfl8FHKB/sCW5dNSneNqi+E4RbLNu3C4F86pbFmuCPWYRib+ZR7CEXVTxFJgBp5o81NtaEJkJH5y1GCvpeqWK4I7z1UFmpmNQsPEBhz51ekePxeaTAwgd6nIRMIurPx0j0BBKazYhM0SBpYQ+CzYMzMytCQpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727371850; c=relaxed/simple;
-	bh=xuqwGLHjdr30dQ1lPi12br1Zy+HpIC4MWNhfUuOvRbQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ft3HiNCcVBZQw8wmG1smQX9MSeCd6jHtig5df8oPZKxvdwSca8+k0tKANtlQilkfU3Nfv3ttBmyzKilCZlBPOCPTTL45m17fqj2wzmFhnmn9fF7YkymLJ31TeFkwlAnXeleSurJ4qk2YOO6lyW3M4N9SvtgJLi05R6DycBNDbDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XuCF6/8c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1ED4C4CECF;
-	Thu, 26 Sep 2024 17:30:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727371850;
-	bh=xuqwGLHjdr30dQ1lPi12br1Zy+HpIC4MWNhfUuOvRbQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=XuCF6/8csFYR+p4s+T13eTD0qj7XcQO3vN0Q7Pb0m7ggcUPa3/q93o63VTnceYYFx
-	 jT/Rej/SAbHsnlAx2ROmTo/7kdmf7JALbsuPlDJ8gzdBtU5EfpgG6FG2Nglo+L5dbj
-	 2pMT+NrFyFr/QU5pZcNrRc+Zr04mYT11KFNCpLt+wEWql//bOLRCgbkif1IiDRQ1NS
-	 h7hzTYMcTcEqh9ZMoYk6vDsLw0ZZtcq85KXDHO/lEngIXEZJ9fI+pLfpOKLtyYAONS
-	 0jXDD0BqtgSjDOKNDhp/HgKkEx/51c/R4bET+8CMnw+jVvHvGpmXt7eVz7LkEe2rew
-	 9paTmqoJl61Ow==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Thu, 26 Sep 2024 19:30:24 +0200
-Subject: [PATCH bpf-next/net v7 3/3] selftests/bpf: Add mptcp subflow
- subtest
+	s=arc-20240116; t=1727372131; c=relaxed/simple;
+	bh=zS86IsArpNHyqGCSkjDVIoWEohbMnW+q5pfpZ5Ynxzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q42EsY3AwujJ2849DA5MLJOHEJuLYv8Xa6+4CiKl+gEx2Ifya9EG/gmGkLBa3IJNDeRQ3liQRyJZXupktEYHY01S44wP9wTjJlsR5Ix5RF+0/s6X6Al4Uajl6ZABxtvltctKeIc/Vpp8rA/ETqvLnCx8NF6JS56UI5K+oBh8FZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WbiuCnV3; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d446adf6eso172562066b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:35:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727372128; x=1727976928; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=90Zj4vWTFKM9hGI/ZhiBg+/nwuUtOIRWahkWQsv/IQo=;
+        b=WbiuCnV3vLn5oB2j8/t7RVpQCWql+9lmoqsUc7xRT5FfN7SYjMNtb8rfL91WwmeUjT
+         Rks5QBkn3JhbtgB39/YZE2mINgY5+yR8kdb7Vsxor0FWG2pSMKNjTG/QfB/4LPHiv4G1
+         X+EamEwfxBFlkYKfCtzFA+RJpXoiWokJa1HfudGgEsDrlFQ9BVQAdQegkXK67q6olW+Y
+         x1tVYz28BIOo5xRqe/L4rIr+pJix9ymVDXrEk5ysG7+orEKJaITWfQ8kZoRcdAIJ5j8r
+         6eZjTUUesRp/GgAnX7HkhTNBrDCEGHaT+KSdXkLf8ODYip8LmZARsbggE66hjlCdkv9c
+         RLIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727372128; x=1727976928;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=90Zj4vWTFKM9hGI/ZhiBg+/nwuUtOIRWahkWQsv/IQo=;
+        b=argwickq/FW8aWW3LXCvK946CploSIIU2MF0qCvN3Uvt8zFc3Gt52Ll1V3LpVjfoyO
+         cCBL+zqN/yzC9jpaFnLKN9LqNR8IBSKQ9vJIJzqEH/ymNBURMt2NyHGxqSh/akCdgdEK
+         gjIB/zMWm/MymMAoJ6wM7YfQ4MC5fgwD0eB8LBz8QTmsFf8E1oWG1kMeamYEC3ZwxdJO
+         HZo3TMdxRTRP5rbkFsEhrSoMz8y3gz16gzwM5UVv3cz/kZb4ZYN6uePkeQ7CATi0QQAH
+         hgg7bIrZ2dXpsPHXoPUIUhF21LMUa+dyStkhwL+14KpOraQDOkGFqUpek/Pt985qoQ3t
+         YKgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpO8LJ+PjKSR0j64ggkq63pzdxJruK9fM8uueg5/WsaHpOhXkntpYKi3B2cDyU8POYi/cIBpVNNRW9EX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWO7rsRKuhvMvZItQrusovj7AHR4DeHevOzy0pfm9yyuE4Yo/V
+	T4bTTZ2EmcW73jNLE5Zyh/U3gVdv/8DZciylCoD2/iXnBZvVCvSdXJxXBgbuLeI9op7kL2L5fpo
+	zQr9jfn3/TBGc3zjkiozYl9bZ4UqNlRiP4IIR
+X-Google-Smtp-Source: AGHT+IHCP+Zznjpd3YjrmHAE50PhdAm4vSwOqQym8ahagT8NDlpt1wX9i/4gffYt0cbbR2b6ytzqgY8SXtldqDcxqhs=
+X-Received: by 2002:a17:907:e91:b0:a7d:c148:ec85 with SMTP id
+ a640c23a62f3a-a93c4aa6b89mr25072866b.62.1727372127804; Thu, 26 Sep 2024
+ 10:35:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240926-upstream-bpf-next-20240506-mptcp-subflow-test-v7-3-d26029e15cdd@kernel.org>
-References: <20240926-upstream-bpf-next-20240506-mptcp-subflow-test-v7-0-d26029e15cdd@kernel.org>
-In-Reply-To: <20240926-upstream-bpf-next-20240506-mptcp-subflow-test-v7-0-d26029e15cdd@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
- Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
- Geliang Tang <geliang@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6499; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=amjFCzfj2zTqypTjATD/9IUdR8Z/IjIKIf9BGZz5Jbw=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBm9Zo260GeawutDlv38rtlu+FTaCTBSDzsrUF4C
- egYQLmfs3CJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZvWaNgAKCRD2t4JPQmmg
- c8GWD/9jS3jl5phtJkZQFpEA4U0Cox68GLXuqP5WEHmhngkXVMG2eThOdx9RosWAaAp2mIqZihT
- 0M4I9909JHgumQDTCI3vAWcmXQmP1nYIEG9KiHDdKmwfJrR8HldEJ9G1TSUTyHwc8Fo+mnM2zx2
- kaeS9MTqzLDetFTNyACCS/3XmZTbZQXr8fx1TaOzfXMiB4mmVG9dCqdbvPovGavdbFSvLpe5PXv
- aJ2yNASSEwGa9zrUevHTdDcc5JIf++AokonAGeZX5i1medODIc1GuNnmbAdSqTZwf6WEoNEJNTM
- 40Qghw9cEZrlK+1081c8X/9z7wRBEjEQpurIPdvA/VrsEJ8LZZiQSojd1PXtdVRO+ZS5EWHV5Mx
- o0asTgEG7UNNvy2DGOSt39InE/pf7duZ6kYS9OORKSSv2N70z80t/Na6zkiuwdW3FTckPc4CNRV
- Zal9TQ1i+L0B8QFke6fdks1qXNUrHGxoe4sfBJihBnSb9F+fzipljDysVr1cpznE2raFbBp+r1O
- QlUPcIplnkFjbDmbJYJL0eOhNB1YBw0g4bVW5TL0if1WqrGb9WmpGZ1zIs/4wf3AMEkmYECWgJb
- 16AjgMAoQkYAFbeWU1qzMYgZULMvzk+/sL6InO5f28JVHbz/cvw1y0FTlrkKtW9DrNF06HlRS0/
- NtCktoFWGIQvD0A==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
+ <20240924011709.7037-7-kanchana.p.sridhar@intel.com> <CAJD7tkbd=H+=wx0gnu8sh44hOmx7BE3G3oSxi7zt+o3HKJthkA@mail.gmail.com>
+ <20240925134008.GA875661@cmpxchg.org> <CAJD7tkY8D14j-e6imW9NxZCjTbx8tu_VaKDbRRQMdSeKX_kBuw@mail.gmail.com>
+ <20240925192006.GB876370@cmpxchg.org> <CAJD7tkY-ayU3Ld+dKTLEEG3U72fGnCbiQgZursK+eGMXif_uzA@mail.gmail.com>
+ <20240925201323.GA880690@cmpxchg.org> <CAJD7tkbCDe1Y__0vUKt9q0dz_sXM74fKGQo2Zgq9CJ8=FEjH3w@mail.gmail.com>
+ <SJ0PR11MB5678EC9681960F39427EABFFC9692@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <SJ0PR11MB56781A134838ADDD04731AA3C96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkYtVR6fi1R2O+jAxVfj7BJ2EKWbXHke9fkv_m=mf5pkFQ@mail.gmail.com>
+ <SJ0PR11MB56785027ED6FCF673A84CEE6C96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkaRjrPTdCCAA0zSVyAZ2sCKiJUC36J0fsajdtp1i_JZeg@mail.gmail.com> <SJ0PR11MB56781678BE55278052EB590CC96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+In-Reply-To: <SJ0PR11MB56781678BE55278052EB590CC96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 26 Sep 2024 10:34:49 -0700
+Message-ID: <CAJD7tkaU4pdGZ4yJrn2z+dECrsbpByrWSc0XcrE6zA_QjSZBSg@mail.gmail.com>
+Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"nphamcs@gmail.com" <nphamcs@gmail.com>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "shakeel.butt@linux.dev" <shakeel.butt@linux.dev>, 
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"Zou, Nanhai" <nanhai.zou@intel.com>, "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, 
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Geliang Tang <tanggeliang@kylinos.cn>
+On Thu, Sep 26, 2024 at 10:29=E2=80=AFAM Sridhar, Kanchana P
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> > -----Original Message-----
+> > From: Yosry Ahmed <yosryahmed@google.com>
+> > Sent: Thursday, September 26, 2024 10:20 AM
+> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>; linux-kernel@vger.kernel.org;
+> > linux-mm@kvack.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
+> > usamaarif642@gmail.com; shakeel.butt@linux.dev; ryan.roberts@arm.com;
+> > Huang, Ying <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-
+> > foundation.org; Zou, Nanhai <nanhai.zou@intel.com>; Feghali, Wajdi K
+> > <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
+> > Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in
+> > zswap_store().
+> >
+> > On Thu, Sep 26, 2024 at 9:40=E2=80=AFAM Sridhar, Kanchana P
+> > <kanchana.p.sridhar@intel.com> wrote:
+> > >
+> > > > -----Original Message-----
+> > > > From: Yosry Ahmed <yosryahmed@google.com>
+> > > > Sent: Wednesday, September 25, 2024 9:52 PM
+> > > > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+> > > > Cc: Johannes Weiner <hannes@cmpxchg.org>; linux-
+> > kernel@vger.kernel.org;
+> > > > linux-mm@kvack.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
+> > > > usamaarif642@gmail.com; shakeel.butt@linux.dev;
+> > ryan.roberts@arm.com;
+> > > > Huang, Ying <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-
+> > > > foundation.org; Zou, Nanhai <nanhai.zou@intel.com>; Feghali, Wajdi =
+K
+> > > > <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
+> > > > Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in
+> > > > zswap_store().
+> > > >
+> > > > [..]
+> > > > >
+> > > > > One thing I realized while reworking the patches for the batched =
+checks
+> > is:
+> > > > > within zswap_store_page(), we set the entry->objcg and entry->poo=
+l
+> > before
+> > > > > adding it to the xarray. Given this, wouldn't it be safer to get =
+the objcg
+> > > > > and pool reference per sub-page, locally in zswap_store_page(), r=
+ather
+> > than
+> > > > > obtaining batched references at the end if the store is successfu=
+l? If we
+> > > > want
+> > > > > zswap_store_page() to be self-contained and correct as far as the=
+ entry
+> > > > > being created and added to the xarray, it seems like the right th=
+ing to
+> > do?
+> > > > > I am a bit apprehensive about the entry being added to the xarray
+> > without
+> > > > > a reference obtained on the objcg and pool, because any page-
+> > > > faults/writeback
+> > > > > that occur on sub-pages added to the xarray before the entire fol=
+io has
+> > been
+> > > > > stored, would run into issues.
+> > > >
+> > > > We definitely should not obtain references to the pool and objcg af=
+ter
+> > > > initializing the entries with them. We can obtain all references in
+> > > > zswap_store() before zswap_store_page(). IOW, the batching in this
+> > > > case should be done before the per-page operations, not after.
+> > >
+> > > Thanks Yosry. IIUC, we should obtain all references to the objcg and =
+to the
+> > > zswap_pool at the start of zswap_store.
+> > >
+> > > In the case of error on any sub-page, we will unwind state for potent=
+ially
+> > > only the stored pages or the entire folio if it happened to already b=
+e in
+> > zswap
+> > > and is being re-written. We might need some additional book-keeping t=
+o
+> > > keep track of which sub-pages were found in the xarray and
+> > zswap_entry_free()
+> > > got called (nr_sb). Assuming I define a new "obj_cgroup_put_many()", =
+I
+> > would need
+> > > to call this with (folio_nr_pages() - nr_sb).
+> > >
+> > > As far as zswap_pool_get(), there is some added complexity if we want=
+ to
+> > > keep the existing implementation that calls "percpu_ref_tryget()", an=
+d
+> > assuming
+> > > this is extended to provide a new "zswap_pool_get_many()" that calls
+> > > "percpu_ref_tryget_many()". Is there a reason we use percpu_ref_tryge=
+t()
+> > instead
+> > > of percpu_ref_get()? Reason I ask is, with tryget(), if for some reas=
+on the
+> > pool->ref
+> > > is 0, no further increments will be made. If so, upon unwinding state=
+ in
+> > > zswap_store(), I would need to special-case to catch this before call=
+ing a
+> > new
+> > > "zswap_pool_put_many()".
+> > >
+> > > Things could be a little simpler if zswap_pool_get() can use
+> > "percpu_ref_get()"
+> > > which will always increment the refcount. Since the zswap pool->ref i=
+s
+> > initialized
+> > > to "1", this seems Ok, but I don't know if there will be unintended
+> > consequences.
+> > >
+> > > Can you please advise on what is the simplest/cleanest approach:
+> > >
+> > > 1) Proceed with the above changes without changing percpu_ref_tryget =
+in
+> > >      zswap_pool_get. Needs special-casing in zswap_store to detect po=
+ol-
+> > >ref
+> > >     being "0" before calling zswap_pool_put[_many].
+> >
+> > My assumption is that we can reorder the code such that if
+> > zswap_pool_get_many() fails we don't call zswap_pool_put_many() to
+> > begin with (e.g. jump to a label after zswap_pool_put_many()).
+>
+> However, the pool refcount could change between the start and end of
+> zswap_store.
 
-This patch adds a subtest named test_subflow in test_mptcp to load and
-verify the newly added MPTCP subflow BPF program. To goal is to make
-sure it is possible to set different socket options per subflows, while
-the userspace socket interface only lets the application to set the same
-socket options for the whole MPTCP connection and its multiple subflows.
+I am not sure what you mean. If zswap_pool_get_many() fails then we
+just do not call zswap_pool_put_many() at all and abort.
 
-To check that, a client and a server are started in a dedicated netns,
-with veth interfaces to simulate multiple paths. They will exchange data
-to allow the creation of an additional subflow.
+>
+> >
+> > > 2) Modify zswap_pool_get/zswap_pool_get_many to use
+> > percpu_ref_get_many
+> > >     and avoid special-casing to detect pool->ref being "0" before cal=
+ling
+> > >     zswap_pool_put[_many].
+> >
+> > I don't think we can simply switch the tryget to a get, as I believe
+> > we can race with the pool being destroyed.
+>
+> That was my initial thought as well, but I figured this couldn't happen
+> since the pool->ref is initialized to "1", and based on the existing
+> implementation. In any case, I can understand the intent of the use
+> of "tryget"; it is just that it adds to the considerations for reference
+> batching.
 
-When the different subflows are being created, the new MPTCP subflow BPF
-program will set some socket options: marks and TCP CC. The validation
-is done by the same program, when the userspace checks the value of the
-modified socket options. On the userspace side, it will see that the
-default values are still being used on the MPTCP connection, while the
-BPF program will see different options set per subflow of the same MPTCP
-connection.
+The initial ref can be dropped in __zswap_param_set() if a new pool is
+created (see the call to ercpu_ref_kill(()).
 
-Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/76
-Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
-Notes:
- - v2 -> v3:
-   - Use './mptcp_pm_nl_ctl' instead of 'ip mptcp', not supported by the
-     BPF CI running IPRoute 5.5.0.
-   - Use SYS_NOFAIL() in _ss_search() instead of calling system()
- - v3 -> v4:
-   - Drop './mptcp_pm_nl_ctl', but skip this new test if 'ip mptcp' is
-     not supported.
- - v4 -> v5:
-   - Note that this new test is no longer skipped on the BPF CI, because
-     'ip mptcp' is now supported after the switch from Ubuntu 20.04 to
-     22.04.
-   - Update the commit message, reflecting the latest version.
-   - The validations are no longer done using 'ss', but using the new
-     BPF program added in the previous patch, to reduce the use of
-     external dependences. (Martin)
- - v5 -> v6:
-   - Use usleep() instead of sleep().
- - v6 -> v7:
-   - Drop mptcp_subflow__attach(), use bpf_program__attach_cgroup()
-     instead of bpf_prog_attach(), plus assign the returned value to
-     skel->links.* directly. (Martin)
----
- tools/testing/selftests/bpf/prog_tests/mptcp.c | 121 +++++++++++++++++++++++++
- 1 file changed, 121 insertions(+)
+>
+> >
+> > > 3) Keep the approach in v7 where obj_cgroup_get/put is localized to
+> > >     zswap_store_page for both success and error conditions, and any
+> > unwinding
+> > >     state in zswap_store will take care of dropping references obtain=
+ed from
+> > >     prior successful writes (from this or prior invocations of zswap_=
+store).
+> >
+> > I am also fine with doing that and doing the reference batching as a fo=
+llow up.
+>
+> I think so too! We could try and improve upon (3) with reference batching
+> in a follow-up patch.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-index d2ca32fa3b21e686d6ef2673b5953d5417edfedb..b61f26b8cdf2540a34e28ddb8a5f1f2378cf8c06 100644
---- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
-+++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-@@ -5,12 +5,17 @@
- #include <linux/const.h>
- #include <netinet/in.h>
- #include <test_progs.h>
-+#include <unistd.h>
- #include "cgroup_helpers.h"
- #include "network_helpers.h"
- #include "mptcp_sock.skel.h"
- #include "mptcpify.skel.h"
-+#include "mptcp_subflow.skel.h"
- 
- #define NS_TEST "mptcp_ns"
-+#define ADDR_1	"10.0.1.1"
-+#define ADDR_2	"10.0.1.2"
-+#define PORT_1	10001
- 
- #ifndef IPPROTO_MPTCP
- #define IPPROTO_MPTCP 262
-@@ -335,10 +340,126 @@ static void test_mptcpify(void)
- 	close(cgroup_fd);
- }
- 
-+static int endpoint_init(char *flags)
-+{
-+	SYS(fail, "ip -net %s link add veth1 type veth peer name veth2", NS_TEST);
-+	SYS(fail, "ip -net %s addr add %s/24 dev veth1", NS_TEST, ADDR_1);
-+	SYS(fail, "ip -net %s link set dev veth1 up", NS_TEST);
-+	SYS(fail, "ip -net %s addr add %s/24 dev veth2", NS_TEST, ADDR_2);
-+	SYS(fail, "ip -net %s link set dev veth2 up", NS_TEST);
-+	if (SYS_NOFAIL("ip -net %s mptcp endpoint add %s %s", NS_TEST, ADDR_2, flags)) {
-+		printf("'ip mptcp' not supported, skip this test.\n");
-+		test__skip();
-+		goto fail;
-+	}
-+
-+	return 0;
-+fail:
-+	return -1;
-+}
-+
-+static void wait_for_new_subflows(int fd)
-+{
-+	socklen_t len;
-+	u8 subflows;
-+	int err, i;
-+
-+	len = sizeof(subflows);
-+	/* Wait max 1 sec for new subflows to be created */
-+	for (i = 0; i < 10; i++) {
-+		err = getsockopt(fd, SOL_MPTCP, MPTCP_INFO, &subflows, &len);
-+		if (!err && subflows > 0)
-+			break;
-+
-+		usleep(100000); /* 0.1s */
-+	}
-+}
-+
-+static void run_subflow(void)
-+{
-+	int server_fd, client_fd, err;
-+	char new[TCP_CA_NAME_MAX];
-+	char cc[TCP_CA_NAME_MAX];
-+	unsigned int mark;
-+	socklen_t len;
-+
-+	server_fd = start_mptcp_server(AF_INET, ADDR_1, PORT_1, 0);
-+	if (!ASSERT_OK_FD(server_fd, "start_mptcp_server"))
-+		return;
-+
-+	client_fd = connect_to_fd(server_fd, 0);
-+	if (!ASSERT_OK_FD(client_fd, "connect_to_fd"))
-+		goto close_server;
-+
-+	send_byte(client_fd);
-+	wait_for_new_subflows(client_fd);
-+
-+	len = sizeof(mark);
-+	err = getsockopt(client_fd, SOL_SOCKET, SO_MARK, &mark, &len);
-+	if (ASSERT_OK(err, "getsockopt(client_fd, SO_MARK)"))
-+		ASSERT_EQ(mark, 0, "mark");
-+
-+	len = sizeof(new);
-+	err = getsockopt(client_fd, SOL_TCP, TCP_CONGESTION, new, &len);
-+	if (ASSERT_OK(err, "getsockopt(client_fd, TCP_CONGESTION)")) {
-+		get_msk_ca_name(cc);
-+		ASSERT_STREQ(new, cc, "cc");
-+	}
-+
-+	close(client_fd);
-+close_server:
-+	close(server_fd);
-+}
-+
-+static void test_subflow(void)
-+{
-+	struct mptcp_subflow *skel;
-+	struct nstoken *nstoken;
-+	int cgroup_fd;
-+
-+	cgroup_fd = test__join_cgroup("/mptcp_subflow");
-+	if (!ASSERT_OK_FD(cgroup_fd, "join_cgroup: mptcp_subflow"))
-+		return;
-+
-+	skel = mptcp_subflow__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_open_load: mptcp_subflow"))
-+		goto close_cgroup;
-+
-+	skel->bss->pid = getpid();
-+
-+	skel->links.mptcp_subflow =
-+		bpf_program__attach_cgroup(skel->progs.mptcp_subflow, cgroup_fd);
-+	if (!ASSERT_OK_PTR(skel->links.mptcp_subflow, "attach mptcp_subflow"))
-+		goto skel_destroy;
-+
-+	skel->links._getsockopt_subflow =
-+		bpf_program__attach_cgroup(skel->progs._getsockopt_subflow, cgroup_fd);
-+	if (!ASSERT_OK_PTR(skel->links._getsockopt_subflow, "attach _getsockopt_subflow"))
-+		goto skel_destroy;
-+
-+	nstoken = create_netns();
-+	if (!ASSERT_OK_PTR(nstoken, "create_netns: mptcp_subflow"))
-+		goto skel_destroy;
-+
-+	if (endpoint_init("subflow") < 0)
-+		goto close_netns;
-+
-+	run_subflow();
-+
-+close_netns:
-+	cleanup_netns(nstoken);
-+skel_destroy:
-+	mptcp_subflow__destroy(skel);
-+close_cgroup:
-+	close(cgroup_fd);
-+}
-+
- void test_mptcp(void)
- {
- 	if (test__start_subtest("base"))
- 		test_base();
- 	if (test__start_subtest("mptcpify"))
- 		test_mptcpify();
-+	if (test__start_subtest("subflow"))
-+		test_subflow();
- }
-
--- 
-2.45.2
-
+SGTM.
 
