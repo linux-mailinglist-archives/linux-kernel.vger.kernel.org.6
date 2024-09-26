@@ -1,94 +1,102 @@
-Return-Path: <linux-kernel+bounces-340113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF469986EB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:23:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EEACE986EB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C0B0B20CF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:23:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8342DB2108E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FE91A4B9A;
-	Thu, 26 Sep 2024 08:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D918C135A53;
+	Thu, 26 Sep 2024 08:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AWTj59Ld";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qK3iL5dN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bt0ziwDs"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA604135A53;
-	Thu, 26 Sep 2024 08:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1071719F123;
+	Thu, 26 Sep 2024 08:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727338982; cv=none; b=dOmScow7CpoHwpQoVBdBbJBy3gTkyJOoA4tRd0sL640i0YEnRqAQ9/wITYdhQboklz2TTZh4ZSflf1ajSSrlKk5xRJ2RRTWmMFBfI5b/jll5gHqS+Dp+Y8Wb4/0vCv1oofqs85pQkPVFipqt/SzhLeCvA/fTPPDAQwj5L71yIE0=
+	t=1727339066; cv=none; b=Qbw55fjjtmVvUpnJHvRf48XfHV+IgU1F2HbwwDVzzw596BObDR29PRtZgAiwVCPWZUDlHm3wMPQa2GiFXiXe51pynU6fl+Xpju308i9ka/HShNO1whR8OGzQDFY1l2U43C07t4jqm2XARVpPKEbBXEv0/ieo7+YEXs43qyZ0RRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727338982; c=relaxed/simple;
-	bh=BKPWbWN24FoK9KsV/z/F3U4oIOnS6c9QrVCQANQcabw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DuoVDGdJ9rpzYcXzFj8EltbD8ezBUvc3QTnZ65RjLwxrV4/bm2lmZJLMZ/TULxn4lH1RBMLFahTYagMQq1EoMTOFgVBcVYOoBrR7a0DrwtkiN+yPMNk8C8lW0Bpc/vECwIPaoSUlrfUnE0mGLEHuHAuDj21bkAAiViYQxO1Yjgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AWTj59Ld; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qK3iL5dN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 26 Sep 2024 10:22:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727338972;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z+XFNNNRJ73lg4ySG+mZ+blQuT3Nd/avtVdwrcLT8Bg=;
-	b=AWTj59LdyVvKg/QOXbbZRd0SfNwXwOthWwn66r10prUCFdJJzePZPET/t7lDWo2ASP3L78
-	6v+85TvnxgfsOkyMbDO+g9OQXAxmkxbih9QojOTLyQz4yoK8eQ7364mW/qxagpbI02FEhD
-	KubyqL/jhBFyeYrzozuOcoLgjoOyy0pzXA/p0LUZkCsXDWf7bSwV3HKlZZbvzFSziwIF8o
-	sWs+z7LSf3QjdRRnSCiS3/93f8ODJn+ezLehP9otYhW6XjVO6/DomvVcmFIjwivq5fuDcX
-	rLKapPYDDSIaZYWyPEg7O1BXy3yhS85ly3q7eXvn6Dum336b4/uFM+JQqLxZ/g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727338972;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z+XFNNNRJ73lg4ySG+mZ+blQuT3Nd/avtVdwrcLT8Bg=;
-	b=qK3iL5dNKrCmQnA3sCvVVl1NfoJf7p1Xo9tB7rScsTLmKq1lZgprv65E9z5RmU7eoCvyfV
-	G0KNtQUmhoCB9gDw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Mikhail Arkhipov <m.arhipov@rosa.ru>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Felipe Balbi <balbi@ti.com>, Mike Frysinger <vapier@gentoo.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: Re: [PATCH v2] usb: gadget: r8a66597-udc: Fix double free in
- r8a66597_probe
-Message-ID: <20240926082251.5jacwNgE@linutronix.de>
-References: <20240923202019.37875-1-m.arhipov@rosa.ru>
+	s=arc-20240116; t=1727339066; c=relaxed/simple;
+	bh=/Z2XIG86WdY+jEgqJgqZCAMogLmoLb2+X5zN5NeXU+4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pNPCgLvcTaXahXst58qk8a46WouMQLy+pM8Hgw/tu8k3Ky0VVuqEu7Jwklhmo9VB3MueoV13Fy/VlvGkvTVCr3vEkDVmJXLLT5FT86QGXNtCGbzsZQYdyqb60Y3BmP0JlB0S40GUUaA7EEujGjEO1qA32P7GLHxiPV6YRFEEBC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bt0ziwDs; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e0a4eebdcfso44496a91.0;
+        Thu, 26 Sep 2024 01:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727339064; x=1727943864; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Agw4mfcYu0+felgqBCno2VGLAfNAP2sDrnMAdk9QiyA=;
+        b=Bt0ziwDsxoSvr/KEs7a+sGVgpi2F74+m5NZzlu47AoK0ffmWS+LU2bKeZ2wfz7FICr
+         lNOcotj3aiAIwOdMxuu3vmVXJ28N6LbUfpE/awmYQK2VnbaLKNxVmad433dP07625k7g
+         /WiRLo4nhvDf6rmsEIsK5IXHVkhtenGzGe6XnbxpHEjZLCdQN6D7j2n0CYbWi7mozgkj
+         IPHcumD1gTuVoz8XxOqIIvwSOS6Gr7bxOTnjLNMU/imHXrng966SrDRsGyyt5HwHE57Q
+         vXr7qeT/qUH1wQSeBqgRMuYhhWLZO0L0lbE0N4DwJFAe1h8q0JXNP6ihmKAZkjpIcSy2
+         AkSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727339064; x=1727943864;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Agw4mfcYu0+felgqBCno2VGLAfNAP2sDrnMAdk9QiyA=;
+        b=Nnzj4ry+tD2fwHQqXpQ7NNSre4XDCXmhQZGjvbPVPiQKceh7616w2IP8DudQKNVNIe
+         uEOLVsgneeMHpvmbmI9pRLp8t+xBOVdnnwLW+i53qDiyA3gZPrVpnWIAtguFcVUSJElf
+         Eli1D3L73ygUR2/LFSx9nyo1fTUtO1KBJNc0AZrob3ZgT3VerumzoIDrU/+NL+p5NpHg
+         UmKLGN6p7fHFEFdv4Vits4oI3c0MkjMA6SKIncAbzqzjGP++WNnkjGq+PhCc+OZ09OwN
+         4YDIdDgKgexEgf/+4UgR8xChbxXd3Hk/m7XwkCCAEJ6mgqp4f3UJH1S6Utr+s9eb0j/A
+         7nNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUq2nWsX3muimgBnETK/z72U4ORmj7vE9BZPsYvLznhX7itis0dn7vdnMKcgiVz2aoNRVeU5azK7ivDpA==@vger.kernel.org, AJvYcCVG12Ul00rHZ5ZJ3NkpQSiidoGXHP3P2G3zPsE/HFTJ7nfezbtmZK35Q7OUe+piKymRIhHPzyCc/o+M+Ps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHUy57ij6U6gy/R1uxIAgL3nhst/VlwDvu6Kvs8mpXud49PtW9
+	K1P091cajX07dccxCwtJ4qNAMVfdB3q1xksbZUKQIUD25xK411GGnNIHQQVMZwrQWVeYdWgviQ6
+	409LPJRbQSMpm+/49O1EdSHk5STc=
+X-Google-Smtp-Source: AGHT+IGN5a2LjedSz/nV25OOsTamVwRf6epN8mrSZq263ZT0rjnM/n7nBjLzueNprcFSVf79mIDhHgqRY74DdBkDVn8=
+X-Received: by 2002:a05:6a21:6d82:b0:1c6:bed1:bbd0 with SMTP id
+ adf61e73a8af0-1d4bed1b9dfmr3876946637.0.1727339064378; Thu, 26 Sep 2024
+ 01:24:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240923202019.37875-1-m.arhipov@rosa.ru>
+References: <20240926100434.45d58861@canb.auug.org.au> <CAH5fLgjRVZA3Gmb7Ogs+Y65T38EpNVeVEqmg93ZB4dn0Y7J3aA@mail.gmail.com>
+ <20240926181348.3965b040@canb.auug.org.au>
+In-Reply-To: <20240926181348.3965b040@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 26 Sep 2024 10:24:10 +0200
+Message-ID: <CANiq72kFH125Pk6K-JaswWDFmcvtP2GKx2-3ZAULF4PmpW7M-w@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of Linus' tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alice Ryhl <aliceryhl@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Matthew Maurer <mmaurer@google.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Gatlin Newhouse <gatlin.newhouse@gmail.com>, Kees Cook <kees@kernel.org>, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Marco Elver <elver@google.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-09-23 23:20:19 [+0300], Mikhail Arkhipov wrote:
-> The function r8a66597_free_request is already called in the err_add_udc
-> block, and freeing r8a66597->ep0_req twice may lead to a double free error.
-> 
-> If the probe process fails and the r8a66597_probe function subsequently
-> goes through its error handling path. Since r8a66597_free_request is called
-> multiple times in different error handling sections, it leads to an attempt
-> to free the same memory twice.
-> 
-> Remove the redundant call to r8a66597_free_request in the clean_up2 block.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: 0f91349b89f3 ("usb: gadget: convert all users to the new udc infrastructure")
-> Signed-off-by: Mikhail Arkhipov <m.arhipov@rosa.ru>
+On Thu, Sep 26, 2024 at 10:13=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.or=
+g.au> wrote:
+>
+> Thanks.  I will replace the reverts in my fixes tree with that until it
+> is applied to Linus' tree.
 
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Thanks! I will apply it to rust-fixes now, so in principle you will
+get it through that branch for tomorrow, in case it helps.
 
-Sebastian
+Cheers,
+Miguel
 
