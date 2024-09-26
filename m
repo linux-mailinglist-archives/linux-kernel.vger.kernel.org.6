@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-340938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE81898793F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:43:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA34B987962
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820E31F22586
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:43:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D89BB271BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673CE171E5F;
-	Thu, 26 Sep 2024 18:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C50217BB33;
+	Thu, 26 Sep 2024 18:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CrMCQFrj"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gMLu+cJI"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F338171088
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 18:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA4918660D
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 18:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727376217; cv=none; b=vC49QOTZib1YjZShze1lc+yazYKWGer5Q/0LkqvIhsTwT4XB4nj/An1TppIRyCXJkdUyJJIQvymPKN6sWIGnQ1EoNiUkG0QW8ctAbB/I9Ydy+Kq1Wi4OZjYQjAk9wdoi+TyjfmGxwk2e7XdOSTZ6HYaYd8YiykKXvHtz7lq3ERg=
+	t=1727376372; cv=none; b=YnXo5aJMP9RpsHxnF3ztRDAV/irgKXerCpgYRNgds/d3NoRwAQ0tAplmqwQyMoPCoHYsh1p+XDrp3AAA1DJ+UtKxTYGiYSUAuWZPi8uOkF1fQPZOmOnlcQ8v7G/x73xsAKrkS5emr+Y+bzt7ln+h0s6fXLuEvh7GID0xrzE0/C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727376217; c=relaxed/simple;
-	bh=a/5m2zK58zkx4nM/V+xJ6JyzxFdkSfEPu9cHhxirWfc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ciRWPK5x7GJOxnbs7ATPAKS7YK/VHAhJGxct6I/XmcF5OFdjjt8QzBjYEYPGpSy7XlZO8gDFmc5/yn+QG2jCtHHnLv2TgMi1LHf+HzdRpJc26Qepv0AAA15dmTOg/Kshw1AKyw1obTOPTKPceXgehDdujXnBBL2JwcNqJYc/7wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=CrMCQFrj; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7a9aec89347so98602885a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 11:43:35 -0700 (PDT)
+	s=arc-20240116; t=1727376372; c=relaxed/simple;
+	bh=Wkjsf6OaIHAMxqZEX13iA4RkR7BrPEoXhjBy8uqk7m8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s3/2elahe9gAAuSKbWwVGF++7K2hPrkB1ObFk0//lCd4SyUX9W1+o7JvikeiRuqR/4LcGDoSWO6W4fvqSDh5yZPxiYXa079D75D2KiJXvo4u32nFOesEiXB/3uv41z65gsFA4yFq6jOFKPo2YZXspXe9W/p8BGtGWwt2FE3nv2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gMLu+cJI; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c5bca59416so1353084a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 11:46:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1727376215; x=1727981015; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KvJvu5IaRTnr9xdXUsqatTaQ8tmdeCfcwtrsxrBZQ1g=;
-        b=CrMCQFrjp3k8NQEJJANc/66ALMaYqp0s3IjxWAaegdxslX0Pol8Ulrn2TNv12Sk6o0
-         /EdRPk52EyZoX536taouv1lVyzj87icX4m7t1JXVDGpO/6kzZ3aFpcBPs1PfEebiZ/cw
-         xvcGdj/DasxCs1qwMZpmDFeJi2SQEb39H9aRLzMDrExT2pHqO8cHVBo0JdkJ/9zWmbff
-         I8hxYl7z0yg2G7lVn7If5NmxoxHiLJRMfK2yZt8jUoLPICGqFOvDp+LAQsVs82inG6JA
-         X+xZIehXGgQyUffAXFZ7drpoljIUiJ/Y+OGVZTQtbxVfeOAH4joc8IPhU8MnXkEsghFm
-         wVhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727376215; x=1727981015;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1727376369; x=1727981169; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KvJvu5IaRTnr9xdXUsqatTaQ8tmdeCfcwtrsxrBZQ1g=;
-        b=c86zeinhgMSgHmcRYKzYL4z1S0k5LKK2UPAZL2Em77JEVeP3W5+pmgdNdGimD9txZU
-         ifvwtoY3lblGyeSYbp7dccMPJ1ZHtzaq8xIjGe41fVofWIa7GdaYoY0goVDe+VbmghFt
-         zlnSiPUK8S3yr9J0Vz6Qbjc6HeXqn+xk9QuQWreLiHVZ5zb36x7jntd+K8RmLuwIfLNQ
-         U7xiUlr6LDMl7WrIGyiQtofWSHN5Ah/EqubRY323k5nqH8RXRtu4p0qVj60nk9pwLhu3
-         hbrtUu0qvnwu3GvOc1BorqSU94cqQ1On6t53aMeGGuB4cyK9hxAXsOwgLjrQJqFnUFrm
-         1rJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWILz4cD+c2zM9wXxKGjJqjEadqB4njQykMIgI3CK7HDXpZq4TyFCKK6OzPL8/U7OeJ/jbj7ZJGek+168Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM92AEaGkZ6g72oRH/BsM2ZhC9fOmMhnrAdlZPhBvOriQ+oNmJ
-	hESGmkh4RFLZpGSRKT6Iux0Zyis1W+mKAmoXQnX9J502hC+eGaovdzWSwLotkbg=
-X-Google-Smtp-Source: AGHT+IHahoaHFJtuu1gsK0aQtYJow2bdyMNiogW2IcChPTuHJqaCLBrGWEI30mWx2ZRm25asoXWR5w==
-X-Received: by 2002:a05:620a:44c2:b0:7a9:b425:6 with SMTP id af79cd13be357-7ae37838380mr75987185a.24.1727376214700;
-        Thu, 26 Sep 2024 11:43:34 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae3782a221sm15168385a.73.2024.09.26.11.43.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 11:43:33 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sttSf-000qCj-2k;
-	Thu, 26 Sep 2024 15:43:33 -0300
-Date: Thu, 26 Sep 2024 15:43:33 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Matthew Rosato <mjrosato@linux.ibm.com>
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
-	gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com,
-	baolu.lu@linux.intel.com, hca@linux.ibm.com, gor@linux.ibm.com,
-	agordeev@linux.ibm.com, svens@linux.ibm.com, jroedel@suse.de,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org
-Subject: Re: [PATCH v4] iommu/s390: Implement blocking domain
-Message-ID: <20240926184333.GD9634@ziepe.ca>
-References: <20240910211516.137933-1-mjrosato@linux.ibm.com>
+        bh=Sk4UTkfwIuITGHz9uOfYgqgRx4tdqdVUB6KNEJ6hUiA=;
+        b=gMLu+cJI+5mLcLxcHhY/JPhJ5fvTjN1bxyssx0ZAAOxAjwJcVUvwmMa4NiS85CGcp8
+         o065e9ePo0Q65elaE4+4JYi+/knMPvnWKMjRlbdd0ENHiARtvDyUWugG6uHiDICH/F4C
+         Na2IRAHClRLqm8xznuvpddG2wkEkDLqEy8MJe/byX78tnR1+7mk0FyxtURIwr+U7jX1c
+         Kp+kZaLwWBuJGAMjDKpOkXe+LD2UlcZqd4oJAPXasogOoy8KDAuxDkZHcaH/CZeqSrt0
+         aerRzmsGm+P0iQ6cg+8x0OghGzhaMz3tamZozJleOyYjEISUXpPN8rQMJoQeYYq3zQg7
+         nGIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727376369; x=1727981169;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Sk4UTkfwIuITGHz9uOfYgqgRx4tdqdVUB6KNEJ6hUiA=;
+        b=GkX+t/lUm90aD2SLE4kHCAG810BWmJfu2JYyvb4iSJszTXkpDw7X1Vo01fTGuCfu5E
+         Rp0YgN4j1PEyo49p91InKRgZd49dldqbSBLxFhGBC7eqM87PfoeddGzrUMLUlliEZAQ6
+         7Q8YEOZfOpvnCG6my2pFVJicZVxN6/nZWdlPwWG/24F7byQGwPn+r/hVZhVSDd/T/h01
+         oQKurY3pv9YtyaRlhdwYY/fSFebsbQQi2HKxjahxTCN7LPRoOm7ExLwBLCzazaDWuMZ1
+         zMwo9pJqxDAUMGWfthDlA02/S7fre6ut6Gh2AyvR+zyEA9UgpmFq2MKAmg0sGvWaVtjr
+         Ka5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVefiwGJ5zB4ygQ6MvKpBnYoCRfHclS365j4FlUvXmKqvex9dMUFRiYarsrE1OwL2DF/KW2DFMh1sx2mX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk37QeUent3GQdw6GGqBszUamPYetmZcNIVQfr0TQjnaQD++Aa
+	T0tVW73nRMC5XGZgIMppl9UGuKM78W5ZQwVHWFKomn8t83Yws0X3Y3vLK161xB76ZicwnncVVSq
+	u7LyLZA44Wmaz6xmU6uLBtnSTRExW7o7Srftb
+X-Google-Smtp-Source: AGHT+IF6mjmm9+8cOinmmP7Rpa+erJ49P6fmsyYj/zNyOkhh4bzdxLi7MHTNWAUoTVFqdTQOykj5Qcy3TD1iHOvIWAo=
+X-Received: by 2002:a17:906:dac8:b0:a8d:4b02:334c with SMTP id
+ a640c23a62f3a-a93c4c284b7mr41231566b.64.1727376369220; Thu, 26 Sep 2024
+ 11:46:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910211516.137933-1-mjrosato@linux.ibm.com>
+References: <20240925192006.GB876370@cmpxchg.org> <CAJD7tkY-ayU3Ld+dKTLEEG3U72fGnCbiQgZursK+eGMXif_uzA@mail.gmail.com>
+ <20240925201323.GA880690@cmpxchg.org> <CAJD7tkbCDe1Y__0vUKt9q0dz_sXM74fKGQo2Zgq9CJ8=FEjH3w@mail.gmail.com>
+ <SJ0PR11MB5678EC9681960F39427EABFFC9692@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <SJ0PR11MB56781A134838ADDD04731AA3C96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkYtVR6fi1R2O+jAxVfj7BJ2EKWbXHke9fkv_m=mf5pkFQ@mail.gmail.com>
+ <SJ0PR11MB56785027ED6FCF673A84CEE6C96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkaRjrPTdCCAA0zSVyAZ2sCKiJUC36J0fsajdtp1i_JZeg@mail.gmail.com>
+ <SJ0PR11MB56781678BE55278052EB590CC96A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <20240926184301.GA883850@cmpxchg.org>
+In-Reply-To: <20240926184301.GA883850@cmpxchg.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 26 Sep 2024 11:45:32 -0700
+Message-ID: <CAJD7tkZTBLbx3-RUwUv8UpUt=-XiMd1mzUzC387dNTyreyFrJA@mail.gmail.com>
+Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"nphamcs@gmail.com" <nphamcs@gmail.com>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "shakeel.butt@linux.dev" <shakeel.butt@linux.dev>, 
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"Zou, Nanhai" <nanhai.zou@intel.com>, "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, 
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 05:15:16PM -0400, Matthew Rosato wrote:
-> This fixes a crash when surprise hot-unplugging a PCI device. This crash
-> happens because during hot-unplug __iommu_group_set_domain_nofail()
-> attaching the default domain fails when the platform no longer
-> recognizes the device as it has already been removed and we end up with
-> a NULL domain pointer and UAF. This is exactly the case referred to in
-> the second comment in __iommu_device_set_domain() and just as stated
-> there if we can instead attach the blocking domain the UAF is prevented
-> as this can handle the already removed device. Implement the blocking
-> domain to use this handling.  With this change, the crash is fixed but
-> we still hit a warning attempting to change DMA ownership on a blocked
-> device.
-> 
-> Fixes: c76c067e488c ("s390/pci: Use dma-iommu layer")
-> Co-developed-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
-> ---
-> Changes for v4:
-> - fix lockdep assert
-> Changes for v3:
-> - make blocking_domain type iommu_domain
-> - change zdev->s390_domain to type iommu_domain and remove most uses
-> - remove s390_iommu_detach_device, use blocking domain attach
-> - add spinlock to serialize zdev->s390_domain change / access to counters
-> ---
->  arch/s390/include/asm/pci.h |  4 +-
->  arch/s390/pci/pci.c         |  3 ++
->  arch/s390/pci/pci_debug.c   | 10 ++++-
->  drivers/iommu/s390-iommu.c  | 73 +++++++++++++++++++++++--------------
->  4 files changed, 59 insertions(+), 31 deletions(-)
+On Thu, Sep 26, 2024 at 11:43=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.or=
+g> wrote:
+>
+> On Thu, Sep 26, 2024 at 05:29:30PM +0000, Sridhar, Kanchana P wrote:
+> > > > 3) Keep the approach in v7 where obj_cgroup_get/put is localized to
+> > > >     zswap_store_page for both success and error conditions, and any
+> > > unwinding
+> > > >     state in zswap_store will take care of dropping references obta=
+ined from
+> > > >     prior successful writes (from this or prior invocations of zswa=
+p_store).
+> > >
+> > > I am also fine with doing that and doing the reference batching as a =
+follow up.
+> >
+> > I think so too! We could try and improve upon (3) with reference batchi=
+ng
+> > in a follow-up patch.
+>
+> Yeah, I agree. The percpu-refcounts are not that expensive, we should
+> be able to live with per-page ops for now.
+>
+> One thing you *can* do from the start is tryget a pool reference in
+> zswap_store(), to prevent the pools untimely demise while you work on
+> it, and then in zswap_store_page() you can do gets instead of trygets.
+>
+> You'd have to rename zswap_pool_get() to zswap_pool_tryget() (which is
+> probably for the best) and implement the trivial new zswap_pool_get().
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-
-Jason
+Yeah I was actually planning to send a follow-up patch to do exactly
+that until we figure out proper patching for the refcounts. Even
+better if Kanchana incorporates it in the next version :)
 
