@@ -1,223 +1,205 @@
-Return-Path: <linux-kernel+bounces-339774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B2D0986A5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:04:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C08EA986A60
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A6CC1F220F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:04:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 289241F22656
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03D6170828;
-	Thu, 26 Sep 2024 01:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C1E16FF25;
+	Thu, 26 Sep 2024 01:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KUqGxOpB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cfz/QO9d"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715BD139B;
-	Thu, 26 Sep 2024 01:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE040139B
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 01:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727312691; cv=none; b=mOB//SAoj1XgvE+ADaRfMo7u0bXl6X3pImu4ZuGd7ml86C3hn/TxGXy9huWj619hPVS2FmLb0ZHiQw2ff/UgeiNBI7RVUHi2pmwl95mRLeqE056O3mB8VfJKFKsaboIYZZsBMTiWxZA5m3RzJPHkZ9Q/b+IfuCyqX0w2JQGV/yE=
+	t=1727313130; cv=none; b=asBGI9pDNnIQyOAUgUpHyBphQEd+iURSllsMlbfbu4r9mH97boSJI7tT3dJjWaejPIDuPRMl3eQ+ylIPk3CNoWgS560W86ldzk2eGrslKHuptq3Ij/yNbonnTCAm3UmSs7Jc1RkDc4I5Hcy87FA9/34NgsU4Cj4DynzVW86VeJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727312691; c=relaxed/simple;
-	bh=QvlnnNUVYxnwOzsWATvhGRZbzYi5uagbR8NvXqupzlg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g8MFuYGRe1O5Dlm0AvsYgwFJRNolQkOl4/IdNDj8pxxHINVbPhNNeR1l0pyAbL6rLG2Kce+K7HWzyq7cTDGZnSFdxMJXJgE1xx0L3lXl3gq4HaGB22YtVDoPQGl9syRXXw7zLjZTt0C5xOIvsyzVdqEqZME46Xcqn5lbRyxMY5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KUqGxOpB; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727312690; x=1758848690;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=QvlnnNUVYxnwOzsWATvhGRZbzYi5uagbR8NvXqupzlg=;
-  b=KUqGxOpBe8yYq28AynK4ks+UkIjDRur489NY/XDD/XcRxQE9wNsQzR0I
-   equtXXV6LHpVjKdf1ztwdHn8GLIwB/bxbD4jezVAluD3u0Anzrz1ko1Nj
-   kfXgViqCVj22wEnKqRW77RRZPCeE8d4qTcXum5OCmdjJyzdYOYotqxkhT
-   4TxUBTf1n6xLGflP86FC0JW/BxcC66DLXszvHsJzb4RKojKB0TpF8G61O
-   cBv5Qnrz9umq93WpOOFwlJaQ4vxNygkNZdASyq+ru1jJF1/0JnzXpjgII
-   tqXtm3Y0L91ALuBo9kXGrAHF/+EpuQ8uUtcJ3/ZLodVATsnPfWqg7hK+A
-   g==;
-X-CSE-ConnectionGUID: PPfHcGvFSxam1+lTEB0f6g==
-X-CSE-MsgGUID: 9z6gcjKnTMqpA85QW/rOzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="48921163"
-X-IronPort-AV: E=Sophos;i="6.10,258,1719903600"; 
-   d="scan'208";a="48921163"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 18:04:48 -0700
-X-CSE-ConnectionGUID: E+yqVkt4SDGhw4Bu6ten7A==
-X-CSE-MsgGUID: tksoldQWT+SDIQabVb+4HA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,258,1719903600"; 
-   d="scan'208";a="72752985"
-Received: from fecarpio-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.229])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 18:04:47 -0700
-Date: Wed, 25 Sep 2024 18:04:40 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Robert Gill <rtgill82@gmail.com>,
-	Jari Ruusu <jariruusu@protonmail.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-	antonio.gomez.iglesias@linux.intel.com,
-	daniel.sneddon@linux.intel.com, stable@vger.kernel.org
-Subject: Re: [PATCH v7 3/3] x86/bugs: Use code segment selector for VERW
- operand
-Message-ID: <20240926010440.oz42o7onxmmkejvn@desk>
-References: <20240925-fix-dosemu-vm86-v7-0-1de0daca2d42@linux.intel.com>
- <20240925-fix-dosemu-vm86-v7-3-1de0daca2d42@linux.intel.com>
- <5703f2d8-7ca0-4f01-a954-c0eb1de930b4@citrix.com>
- <20240925234616.2ublphj3vbluawb3@desk>
- <20240926001729.2unwdxtcnnkf3k3t@desk>
- <4ca44b13-2442-4d59-8716-df43c3692a8a@citrix.com>
+	s=arc-20240116; t=1727313130; c=relaxed/simple;
+	bh=JouCtz1bAgNfJJimZrClUw2Oj0wCjbQPjYKrZeYdBfc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=AN7KLP6k7b17Ux9mcPycUfZniiXpXPHHZd+7U32QdWwbX3VvZxx7fBLCHLle3GFrzIA5yqor1h8DpI428T7TeOwmyOgHVByaZDAmJJ1riuAiwLLePmqsskusGa1BWQxOFK68eDzeg7UZPwu6ny1x6cMTP06uaFZk1BR1F1XNiJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cfz/QO9d; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e22f0be237so9989967b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 18:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727313127; x=1727917927; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=w+L1GgvztnyP2D6nEfBPSziP/NrnIC1NcqFMQT4UV7s=;
+        b=Cfz/QO9d6u99ruLkPyqq7/8JrbzGwHYpNz6liXZZaYmKpE9h/zz2gTnYyii4asJ3b7
+         JzLZe21J3UlC8BDCUXodUzQMfqhLusWU+5KB8YNLrVkl7gaX++/7vzxgYwpe+7ZQMTsA
+         sMGf+Y/UtuVA9EH/Kp8bwg/4uFSLDkroN82TI8AnJnLeNNVTvtDJUFGXb6xXLllCxiwq
+         MVB7fGGZkHij5s9Oix77gD8lOvmBnZhSv7VtRUapCNJc+zyOV7rOQosohwYVrq++26io
+         kVb4kZo76DlSLEVugXRbGHVRtQ7nCPaeuhQuCp+8L7gcbhjEdN3MN6iFk2awg2JuwVQj
+         j3Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727313127; x=1727917927;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w+L1GgvztnyP2D6nEfBPSziP/NrnIC1NcqFMQT4UV7s=;
+        b=vB4eR8/zjY0T0GnrfKdZ/XhNDWdS2ZuJq9S4r7q/5qkOHIZieBVhh6OU3g/48tVX9C
+         3h3PufoVN6AP5szB9PsTNGunRXNJGw1lyMtIW6aHWxx0hTVpFjWdKl0k0BJoULOPYUl5
+         Kt0wDYHldfT4UOdoBebgFUzEpBaJcsHm4Ah4Z638ySco7LKwMlj2PFCO8YxcT4w23fYg
+         4CSfj1FUDzcSpoTIBKp55wvl9ac8tjFTHdHpynMRMhTkTMdFkj8IFpdDTRLq6Z1S9QZP
+         d/m41kha0KDZlTU2mFL1a4YSdsZmWC7yNTFrsWN8TbitIN2mXGBKnXVFeswqszAT9X4e
+         dVrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJvs61aycGPNn+T29RCNP3Ua3bkMP/GfPPKv8zGVuFR1HHklrsgbumzO1ru0cOfe9fp6Ucqy2F40Bp3BA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy04iGGrQcfyYW8H/FG76Zq3m1ZkFMJZgNyIUKItmp1dElSih1G
+	wI5Dcg0Oben8tj95RJvMcwxjW0vDsFOWfqOZzVz2YPG41VrTo9jlnUz52oUCLgmXLuci+z76p6D
+	5kdqWoje/FZL6NmoJ4dN1fRBYDpIHCzcowA==
+X-Google-Smtp-Source: AGHT+IG4V/WGnH5ptx2fC82gdmnNt7RontcMIAhfpe9sbCskmRCcX2FuYHtxRBkViBeH+t2zC0Cpmj6IbMZ17JP6muJtBg==
+X-Received: from isaacmanjarres.irv.corp.google.com ([2620:15c:2d:3:fe3c:589e:ea33:ed67])
+ (user=isaacmanjarres job=sendgmr) by 2002:a25:ad61:0:b0:e25:5cb1:77d8 with
+ SMTP id 3f1490d57ef6-e255cb17917mr2730276.6.1727313127458; Wed, 25 Sep 2024
+ 18:12:07 -0700 (PDT)
+Date: Wed, 25 Sep 2024 18:12:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4ca44b13-2442-4d59-8716-df43c3692a8a@citrix.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Message-ID: <20240926011203.1472798-1-isaacmanjarres@google.com>
+Subject: [PATCH v1] printk: Improve memory usage logging during boot
+From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
+To: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	John Ogness <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: surenb@google.com, "Isaac J. Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 26, 2024 at 01:32:19AM +0100, Andrew Cooper wrote:
-> On 26/09/2024 1:17 am, Pawan Gupta wrote:
-> > On Wed, Sep 25, 2024 at 04:46:23PM -0700, Pawan Gupta wrote:
-> >> On Thu, Sep 26, 2024 at 12:29:00AM +0100, Andrew Cooper wrote:
-> >>> On 25/09/2024 11:25 pm, Pawan Gupta wrote:
-> >>>> Robert Gill reported below #GP in 32-bit mode when dosemu software was
-> >>>> executing vm86() system call:
-> >>>>
-> >>>>   general protection fault: 0000 [#1] PREEMPT SMP
-> >>>>   CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
-> >>>>   Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
-> >>>>   EIP: restore_all_switch_stack+0xbe/0xcf
-> >>>>   EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
-> >>>>   ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
-> >>>>   DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
-> >>>>   CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
-> >>>>   Call Trace:
-> >>>>    show_regs+0x70/0x78
-> >>>>    die_addr+0x29/0x70
-> >>>>    exc_general_protection+0x13c/0x348
-> >>>>    exc_bounds+0x98/0x98
-> >>>>    handle_exception+0x14d/0x14d
-> >>>>    exc_bounds+0x98/0x98
-> >>>>    restore_all_switch_stack+0xbe/0xcf
-> >>>>    exc_bounds+0x98/0x98
-> >>>>    restore_all_switch_stack+0xbe/0xcf
-> >>>>
-> >>>> This only happens in 32-bit mode when VERW based mitigations like MDS/RFDS
-> >>>> are enabled. This is because segment registers with an arbitrary user value
-> >>>> can result in #GP when executing VERW. Intel SDM vol. 2C documents the
-> >>>> following behavior for VERW instruction:
-> >>>>
-> >>>>   #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
-> >>>> 	   FS, or GS segment limit.
-> >>>>
-> >>>> CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
-> >>>> space. Use %cs selector to reference VERW operand. This ensures VERW will
-> >>>> not #GP for an arbitrary user %ds.
-> >>>>
-> >>>> Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
-> >>>> Cc: stable@vger.kernel.org # 5.10+
-> >>>> Reported-by: Robert Gill <rtgill82@gmail.com>
-> >>>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
-> >>>> Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
-> >>>> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-> >>>> Suggested-by: Brian Gerst <brgerst@gmail.com>
-> >>>> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> >>>> ---
-> >>>>  arch/x86/include/asm/nospec-branch.h | 6 ++++--
-> >>>>  1 file changed, 4 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-> >>>> index ff5f1ecc7d1e..e18a6aaf414c 100644
-> >>>> --- a/arch/x86/include/asm/nospec-branch.h
-> >>>> +++ b/arch/x86/include/asm/nospec-branch.h
-> >>>> @@ -318,12 +318,14 @@
-> >>>>  /*
-> >>>>   * Macro to execute VERW instruction that mitigate transient data sampling
-> >>>>   * attacks such as MDS. On affected systems a microcode update overloaded VERW
-> >>>> - * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
-> >>>> + * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %cs
-> >>>> + * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
-> >>>> + * 32-bit mode.
-> >>>>   *
-> >>>>   * Note: Only the memory operand variant of VERW clears the CPU buffers.
-> >>>>   */
-> >>>>  .macro CLEAR_CPU_BUFFERS
-> >>>> -	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
-> >>>> +	ALTERNATIVE "", __stringify(verw %cs:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
-> >>>>  .endm
-> >>> People ought rightly to double-take at this using %cs and not %ss. 
-> >>> There is a good reason, but it needs describing explicitly.  May I
-> >>> suggest the following:
-> >>>
-> >>> *...
-> >>> * In 32bit mode, the memory operand must be a %cs reference.  The data
-> >>> segments may not be usable (vm86 mode), and the stack segment may not be
-> >>> flat (espfix32).
-> >>> *...
-> >> Thanks for the suggestion. I will include this.
-> >>
-> >>>  .macro CLEAR_CPU_BUFFERS
-> >>> #ifdef __x86_64__
-> >>>     ALTERNATIVE "", "verw mds_verw_sel(%rip)", X86_FEATURE_CLEAR_CPU_BUF
-> >>> #else
-> >>>     ALTERNATIVE "", "verw %cs:mds_verw_sel", X86_FEATURE_CLEAR_CPU_BUF
-> >>> #endif
-> >>>  .endm
-> >>>
-> >>> This also lets you drop _ASM_RIP().  It's a cute idea, but is more
-> >>> confusion than it's worth, because there's no such thing in 32bit mode.
-> >>>
-> >>> "%cs:_ASM_RIP(mds_verw_sel)" reads as if it does nothing, because it
-> >>> really doesn't in 64bit mode.
-> >> Right, will drop _ASM_RIP() in 32-bit mode and %cs in 64-bit mode.
-> > Its probably too soon for next version, pasting the patch here:
-> >
-> > ---8<---
-> > diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-> > index e18a6aaf414c..4228a1fd2c2e 100644
-> > --- a/arch/x86/include/asm/nospec-branch.h
-> > +++ b/arch/x86/include/asm/nospec-branch.h
-> > @@ -318,14 +318,21 @@
-> >  /*
-> >   * Macro to execute VERW instruction that mitigate transient data sampling
-> >   * attacks such as MDS. On affected systems a microcode update overloaded VERW
-> > - * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %cs
-> > - * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
-> > - * 32-bit mode.
-> > + * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
-> >   *
-> >   * Note: Only the memory operand variant of VERW clears the CPU buffers.
-> >   */
-> >  .macro CLEAR_CPU_BUFFERS
-> > -	ALTERNATIVE "", __stringify(verw %cs:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
-> > +#ifdef CONFIG_X86_64
-> > +	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
-> > +#else
-> > +	/*
-> > +	 * In 32bit mode, the memory operand must be a %cs reference. The data
-> > +	 * segments may not be usable (vm86 mode), and the stack segment may not
-> > +	 * be flat (ESPFIX32).
-> > +	 */
-> 
-> I was intending for this to replace the "Using %cs" sentence, as a new
-> paragraph in that main comment block.
+When the initial printk ring buffer size is updated, setup_log_buf()
+allocates a new ring buffer, as well as a set of meta-data structures
+for the new ring buffer. The function also emits the new size of the
+ring buffer, but not the size of the meta-data structures.
 
-The reason I added the comment to 32-bit leg is because most readers will
-not care about 32-bit mode. The comment will mostly be a distraction for
-majority. People who care about 32-bit mode will read the comment in 32-bit
-leg. I can move the comment to main block if you still want.
+This makes it difficult to assess how changing the log buffer size
+impacts memory usage during boot.
+
+For instance, increasing the ring buffer size from 512 KB to 1 MB
+through the command line yields an increase of 2304 KB in reserved
+memory at boot, while the only obvious change is the 512 KB
+difference in the ring buffer sizes:
+
+log_buf_len=512K:
+
+printk: log_buf_len: 524288 bytes
+Memory: ... (... 733252K reserved ...)
+
+log_buf_len=1M:
+
+printk: log_buf_len: 1048576 bytes
+Memory: ... (... 735556K reserved ...)
+
+This is because of how the size of the meta-data structures scale with
+the size of the ring buffer.
+
+Even when there aren't changes to the printk ring buffer size (i.e. the
+initial size ==  1 << CONFIG_LOG_BUF_SHIFT), it is impossible to tell
+how much memory is consumed by the printk ring buffer during boot.
+
+Therefore, unconditionally log the sizes of the printk ring buffer
+and its meta-data structures, so that it's easier to understand
+how changing the log buffer size (either through the command line or
+by changing CONFIG_LOG_BUF_SHIFT) affects boot time memory usage.
+
+With the new logs, it is much easier to see exactly why the memory
+increased by 2304 KB:
+
+log_buf_len=512K:
+
+printk: log_buf_len: 524288 bytes
+printk: prb_descs size: 393216 bytes
+printk: printk_infos size: 1441792 bytes
+Memory: ... (... 733252K reserved ...)
+
+log_buf_len=1M:
+
+printk: log_buf_len: 1048576 bytes
+printk: prb_descs size: 786432 bytes
+printk: printk_infos size: 2883584 bytes
+Memory: ... (... 735556K reserved ...)
+
+Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+---
+ kernel/printk/printk.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index beb808f4c367..0c169c28fa37 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1156,6 +1156,17 @@ static unsigned int __init add_to_rb(struct printk_ringbuffer *rb,
+ 
+ static char setup_text_buf[PRINTKRB_RECORD_MAX] __initdata;
+ 
++static void print_log_buf_usage_stats(void)
++{
++	unsigned int descs_count = log_buf_len >> PRB_AVGBITS;
++	size_t descs_size = descs_count * sizeof(struct prb_desc);
++	size_t infos_size = descs_count * sizeof(struct printk_info);
++
++	pr_info("log_buf_len: %u bytes\n", log_buf_len);
++	pr_info("prb_descs size: %zu bytes\n", descs_size);
++	pr_info("printk_infos size: %zu bytes\n", infos_size);
++}
++
+ void __init setup_log_buf(int early)
+ {
+ 	struct printk_info *new_infos;
+@@ -1186,19 +1197,19 @@ void __init setup_log_buf(int early)
+ 		log_buf_add_cpu();
+ 
+ 	if (!new_log_buf_len)
+-		return;
++		goto out;
+ 
+ 	new_descs_count = new_log_buf_len >> PRB_AVGBITS;
+ 	if (new_descs_count == 0) {
+ 		pr_err("new_log_buf_len: %lu too small\n", new_log_buf_len);
+-		return;
++		goto out;
+ 	}
+ 
+ 	new_log_buf = memblock_alloc(new_log_buf_len, LOG_ALIGN);
+ 	if (unlikely(!new_log_buf)) {
+ 		pr_err("log_buf_len: %lu text bytes not available\n",
+ 		       new_log_buf_len);
+-		return;
++		goto out;
+ 	}
+ 
+ 	new_descs_size = new_descs_count * sizeof(struct prb_desc);
+@@ -1261,7 +1272,7 @@ void __init setup_log_buf(int early)
+ 		       prb_next_seq(&printk_rb_static) - seq);
+ 	}
+ 
+-	pr_info("log_buf_len: %u bytes\n", log_buf_len);
++	print_log_buf_usage_stats();
+ 	pr_info("early log buf free: %u(%u%%)\n",
+ 		free, (free * 100) / __LOG_BUF_LEN);
+ 	return;
+@@ -1270,6 +1281,8 @@ void __init setup_log_buf(int early)
+ 	memblock_free(new_descs, new_descs_size);
+ err_free_log_buf:
+ 	memblock_free(new_log_buf, new_log_buf_len);
++out:
++	print_log_buf_usage_stats();
+ }
+ 
+ static bool __read_mostly ignore_loglevel;
+-- 
+2.46.1.824.gd892dcdcdd-goog
+
 
