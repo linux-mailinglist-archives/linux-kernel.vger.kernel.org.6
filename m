@@ -1,210 +1,250 @@
-Return-Path: <linux-kernel+bounces-340686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6C19876A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:38:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E7A9876A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D1601F21248
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:38:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AD51B26D32
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AD21531F9;
-	Thu, 26 Sep 2024 15:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B9D156F41;
+	Thu, 26 Sep 2024 15:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bmxOofb7"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kT0sjHlx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA311531C2
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2487A14F9EA;
+	Thu, 26 Sep 2024 15:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727365088; cv=none; b=Gbt8FQEbyej7TOauT38M28zsrmO7HQHnrKNVgtUcq2EJsRv29xosgE41PRp5ijxVSxX8xDg0q2+5eKoNOT7yfPFxFfCd97WM7rVU27g2FOHJOsnuUNl0H+3qVYS1S2v0sfSQ4HFeLXLw8+4Eczhwo0we2H9JxYTV6i3NjACwkyw=
+	t=1727365123; cv=none; b=QEkJEuhHCXegfa3moKfOlIoKXn4G5rP0ZqdO2pYDDuUPjXgSVk3iZU9W5RIJkkQB7WKQWEui6RQ/fMDuMYRCtp3AlR0CNNZ8ze8MvaLpK47IFRxZd9ZXuw5CxiR+s9SdYDrZqFZ5oDitSmpthSAc8sPv64x7Mc2uMQAb+CgaIlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727365088; c=relaxed/simple;
-	bh=k7SUI2wbrfzNQf1bDisVBY8K2sO9Wpzee+1TS5XAcuE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Yfd7nUiTt2UNLwync7N4GV0WivPfJgM5vmvAUqGncaTZp3JdhLj1ig0j1uOTOUHDqGgfFxadvothbIxQYb5A05P4zJ8wUoKz+8DClxId2f+zlyYsYYwbgim5ArC/RJf6nv9u3mOw4gFXy8apC7Y0CMIRz+RtP4ITWMJtFdjWgsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bmxOofb7; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=k7SUI2wbrfzNQf1bDisVBY8K2sO9Wpzee+1TS5XAcuE=; b=bmxOofb7HrxXnOlt91aboMnEj2
-	FF47Y+YYAKGjgn+o+JeEF1dGdPz+WYNz289WKPSvFfQ/lL1FyfmVNIpmdTjqaCh3Auo/JGL+7NHfC
-	kkaAmg0e5s95qh6TAxW1YNcBJ9TkujyxQ675zLT45P1g5Q9OniL+Hq3n7jAG52xb/G+93uL1BAx0r
-	iAcGNNhQXQzL5uwHyXhToketnNTQTg6qJXF89H4MLgHfIx55GjCMH6qqmLHaqDmn5vlmcFNrwSTD2
-	WGamgjtPqWYoOB1BpHXT/yXwdAn0PGS74ZVfdUJQdGYwkdEYhimu24h7t+khC/W1Bk6YpueG0ycx2
-	j12KVI4Q==;
-Received: from [2001:8b0:10b:5:16cf:fc6a:25d9:f696] (helo=u3832b3a9db3152.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1stqZ7-00000006yc8-2RhQ;
-	Thu, 26 Sep 2024 15:38:02 +0000
-Message-ID: <d8d60da94b52622e7efa280218eca22e2e7b9954.camel@infradead.org>
-Subject: Re: [PATCH v3] lockdep: add lockdep_cleanup_dead_cpu()
-From: David Woodhouse <dwmw2@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra
- <peterz@infradead.org>,  Ingo Molnar <mingo@redhat.com>, Will Deacon
- <will@kernel.org>, Waiman Long <longman@redhat.com>,  linux-kernel
- <linux-kernel@vger.kernel.org>, Juergen Gross <jgross@suse.com>
-Date: Thu, 26 Sep 2024 16:38:00 +0100
-In-Reply-To: <ZvV6Kg-qe4e4DigZ@boqun-archlinux>
-References: <e5ba02138c31da60daf91ce505ac3860d022332b.camel@infradead.org>
-	 <635fa006e8f3816b4a36b964d6281f0d8efa789b.camel@infradead.org>
-	 <2b8c36376fa01fa6a1bac9570eb7d41e7e232a29.camel@infradead.org>
-	 <1da59ef5df8e8a2bebd31535fa13264113a316ff.camel@infradead.org>
-	 <ZvVO3F7BJW7OwbEg@boqun-archlinux>
-	 <ec2ec6b7682b33f0ddf06c3d3c2e23c9c5971b67.camel@infradead.org>
-	 <ZvVUuOq7dLd6_f09@boqun-archlinux>
-	 <53d3d2e143eac428312ea74c8e6209aef1737a63.camel@infradead.org>
-	 <ZvV6Kg-qe4e4DigZ@boqun-archlinux>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-/rxAdSQxjg+pvWQ8uzjE"
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1727365123; c=relaxed/simple;
+	bh=FPT2YAGW9+hHu5TfpaI/ztalhhPfkbiDDiuJtItLTMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cWWrrzLPSxuaPoK79bWzZUzHw2MDAS9CiGkcLB8iYFO42DjEvmIoaY9OAGksHP1rAaZ71a9iUg80OCwK6VFgvhFHsMMmkYfngbDxoG+qGOrPXUqBQiXCGpZR+uD60Da6dwRfHdC6vqsU3uZRw+s0mgGppmVT/Z2JDOCw3B/M84Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kT0sjHlx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 421CAC4CEC5;
+	Thu, 26 Sep 2024 15:38:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727365122;
+	bh=FPT2YAGW9+hHu5TfpaI/ztalhhPfkbiDDiuJtItLTMs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kT0sjHlxptVEDKh1a/WtPaYDym9m/flo9vMG/YA4FiNaDb9w/gETJG5bCirboVjnu
+	 KY0whWWWvgBMcvuVJZxrZ2az8NZuo8dXL73pTN7V9MK50GjcOCk1s59/jyoqLuXvoU
+	 Jrt0LTTy5LEj6I7sc94la6XYYxh4rRpZPGpnciHqpAHvrI7WmCsbGL8FgTspvBLdEP
+	 LTiw7+MjJH1r5jX6eQXZ+EFrhxCjtHfe2cDQZ550TfAEhh6vJVn0EPHlwtJ/1tKwTU
+	 MfN8JCrH5KAjAdnZt9bM8yhgCpBwWbjxdKi93E9bmpDwW0LNlB9fHWoLQwVB0qraWH
+	 1rrrwU40i2UGQ==
+Date: Thu, 26 Sep 2024 16:38:37 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: gpio: add support for NXP
+ S32G2/S32G3 SoCs
+Message-ID: <20240926-apricot-unfasten-5577c54a3e2f@spud>
+References: <20240926143122.1385658-1-andrei.stefanescu@oss.nxp.com>
+ <20240926143122.1385658-3-andrei.stefanescu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="IJQMIqEvPuySmWWm"
+Content-Disposition: inline
+In-Reply-To: <20240926143122.1385658-3-andrei.stefanescu@oss.nxp.com>
 
 
---=-/rxAdSQxjg+pvWQ8uzjE
-Content-Type: text/plain; charset="UTF-8"
+--IJQMIqEvPuySmWWm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-09-26 at 08:13 -0700, Boqun Feng wrote:
+On Thu, Sep 26, 2024 at 05:31:19PM +0300, Andrei Stefanescu wrote:
+> Add support for the GPIO driver of the NXP S32G2/S32G3 SoCs.
 >=20
-> Given that Peter did send a POC for static checking:
+> Signed-off-by: Phu Luu An <phu.luuan@nxp.com>
+> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
+> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+
+What's up with this SoB chain? You're the author what did
+the other 3 people do? Are they missing co-developed-by tags?
+
+> ---
+>  .../bindings/gpio/nxp,s32g2-siul2-gpio.yaml   | 110 ++++++++++++++++++
+>  1 file changed, 110 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/nxp,s32g2-siul=
+2-gpio.yaml
 >=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0https://lore.kernel.org/l=
-kml/20231030111724.GA12604@noisy.programming.kicks-ass.net/
+> diff --git a/Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.=
+yaml b/Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml
+> new file mode 100644
+> index 000000000000..4556505ee9c9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml
+> @@ -0,0 +1,110 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +# Copyright 2024 NXP
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/nxp,s32g2-siul2-gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP S32G2 SIUL2 GPIO controller
+> +
+> +maintainers:
+> +  - Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+> +  - Larisa Grigore <larisa.grigore@nxp.com>
+> +  - Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> +
+> +description:
+> +  Support for the SIUL2 GPIOs found on the S32G2 and S32G3
+> +  chips. It includes an IRQ controller for all pins which have
+> +  an EIRQ associated.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: nxp,s32g2-siul2-gpio
+> +      - items:
+> +        - const: nxp,s32g3-siul2-gpio
+> +        - const: nxp,s32g2-siul2-gpio
+> +
+> +  reg:
+> +    items:
+> +      - description: PGPDO (output value) registers for SIUL2_0
+> +      - description: PGPDO (output value) registers for SIUL2_1
+> +      - description: PGPDI (input value) registers for SIUL2_0
+> +      - description: PGPDI (input value) registers for SIUL2_1
+> +      - description: EIRQ (interrupt) configuration registers from SIUL2=
+_1
+> +      - description: EIRQ IMCR registers for interrupt muxing between pa=
+ds
+> +
+> +  reg-names:
+> +    items:
+> +      - const: opads0
+> +      - const: opads1
+> +      - const: ipads0
+> +      - const: ipads1
+> +      - const: eirqs
+> +      - const: eirq-imcrs
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    const: 2
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  interrupt-controller: true
+> +
+> +  "#interrupt-cells":
+> +    const: 2
+> +
+> +  gpio-ranges:
+> +    minItems: 2
+> +    maxItems: 2
+> +
+> +  gpio-reserved-ranges:
+> +    minItems: 2
+> +
+> +patternProperties:
+> +  "-hog(-[0-9]+)?$":
+> +    required:
+> +      - gpio-hog
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - gpio-controller
+> +  - "#gpio-cells"
+> +  - gpio-ranges
+> +  - gpio-reserved-ranges
+> +  - interrupts
+> +  - interrupt-controller
+> +  - "#interrupt-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    gpio@4009d700 {
+> +        compatible =3D "nxp,s32g2-siul2-gpio";
+> +        reg =3D <0x4009d700 0x10>,
+> +              <0x44011700 0x18>,
+> +              <0x4009d740 0x10>,
+> +              <0x44011740 0x18>,
+> +              <0x44010010 0xb4>,
+> +              <0x44011078 0x80>;
+
+Huh, I only noticed this now. Are you sure that this is a correct
+representation of this device, and it is not really part of some syscon?
+The "random" nature of the addresses  and the tiny sizes of the
+reservations make it seem that way. What other devices are in these
+regions?
+
+Additionally, it looks like "opads0" and "ipads0" are in a different
+region to their "1" equivalents. Should this really be represented as
+two disctint GPIO controllers?
+
+
+Cheers,
+Conor.
+
+> +        reg-names =3D "opads0", "opads1", "ipads0",
+> +                    "ipads1", "eirqs", "eirq-imcrs";
+> +        gpio-controller;
+> +        #gpio-cells =3D <2>;
+> +                      /* GPIO 0-101 */
+> +        gpio-ranges =3D <&pinctrl 0 0 102>,
+> +                      /* GPIO 112-190 */
+> +                      <&pinctrl 112 112 79>;
+> +        gpio-reserved-ranges =3D <102 10>, <123 21>;
+> +        interrupts =3D <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>;
+> +        interrupt-controller;
+> +        #interrupt-cells =3D <2>;
+> +    };
+> --=20
+> 2.45.2
 >=20
-> Maybe you could explain why this is needed even though static checking
-> is technically possible? Thanks!
+>=20
 
-If Peter wants to finish that approach and get it merged, that's fine
-by me.
+--IJQMIqEvPuySmWWm
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvV//QAKCRB4tDGHoIJi
+0uOxAQCvz6m4Nw9QLswXja2k1N2xfO+ZWjULc/Bx8JXrdJFUdwEA6cM/JPQkNWzg
+eS7vasQdUA/KkS2yHj4qhqW9izZk1gQ=
+=aPrA
+-----END PGP SIGNATURE-----
 
---=-/rxAdSQxjg+pvWQ8uzjE
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwOTI2MTUzODAwWjAvBgkqhkiG9w0BCQQxIgQgWbpUKzfP
-D8kNeD7hneIkVWwxZMGOieboRXsjPHuJU3Qwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgCIBpL37T/dVx1+K65n2/bRq9hfGkSUYewC
-jzzMXkvTNflW45ga4HlOBVZlve5LNnJjKS+ge6qaoLiKd2rmel7sCuR7gfxUYVfMJ+nes/3rUyvI
-qD/gneTKttYbYbthrarX795ggZFnkqNXcQAm0EHNR5y/TEG4o7TCr6hFjt3BLE/UHFqhKw8GMrEN
-nakST4sCYFpuMa6nsoNtZrgVZ9W5oNGazRmh6/IHaCXWgcmUB+2TrYmTBDhaV9GJaw4FMoWH5ris
-8cN1fHJYq1gQq2qtDwQxjm2HXUMNXvekz7HCDGl1I1UnWzCViN7BRe7ADATks2+Z42ZJg1ndK0+g
-+bqHuViAYNurpdI8HyjgJlaJsxqZuwRCYTrS5QupDYLvEkMp64QPnesxYFBoprxgWtg9Jg5psHqd
-DdnuoXWx1f1tWJXqfrjFl9qyjwd2+O+ymvigXcriqa7q5QOWnw3j2qK0kJb2P81/t6Y7pIFXUKm0
-827u6lOtBefV/qksVFOSBCUYfpXW7lFtxVeuZgLV76bANJvv7CP3u1P2Y4+QEldqDwSrgymKsPl8
-6Wx0smvD8ZJg3G1+l/fRAvmPOHToN3+235suNQZ2P0dyWd0RMOlCDSFDOClUrkN7Zn3RiroUCZyt
-QrOFgHOF/VLVMHA26jRjiTG4ZP3usGVzQ9JuBEeA6gAAAAAAAA==
-
-
---=-/rxAdSQxjg+pvWQ8uzjE--
+--IJQMIqEvPuySmWWm--
 
