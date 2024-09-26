@@ -1,168 +1,133 @@
-Return-Path: <linux-kernel+bounces-340343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712F09871D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:43:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F40F39871D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 936171C248A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:43:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 715A5B29C7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94AD1AE87F;
-	Thu, 26 Sep 2024 10:43:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B17B1AD3E9;
-	Thu, 26 Sep 2024 10:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7761AE84D;
+	Thu, 26 Sep 2024 10:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iU7qsenh"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0E61ACE12;
+	Thu, 26 Sep 2024 10:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727347394; cv=none; b=n8t/UvqE31OFfuUKxf23yqTv70hLsHvdibinr8GZA+IJO6iWx1nzp1rK2opyS+b+6sosvc8ZlECXptIiQC9L0ZLdTv0hYSXMo4mbMsop88yI3lYhKP0/zXasRiOIyrJWuBbQ0C1aEzHQcQxsh5BOaFsk3m2cQnzfEObxkENDkRA=
+	t=1727347436; cv=none; b=mxLki87TvM+45kq4J3/iRFL5YIeVdZPFtWj43K9r0RnBkeKvnsbp94f+hWUSycKG1ZDuo4g3EuRVVI5itxvVwVNnKCF1BWgl+i9BSIEZkIAs1xIw5XQwEx4PEyJJugYXYcH6x3t/+OAxgTO2hFF4do3jr3aJbIwVOFc8hLhnUeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727347394; c=relaxed/simple;
-	bh=40lVeyvzc1LeHlOl9oiwkD/ayqXzJZn8V+yxkrlXn4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hpYtTKjSuILIjMVoCDO2O4EEJRdJTyZSdaxgslsXDCfMjj0jADaWiJkoQAHeAqlVJ6nFotSlRBWJgatVRhqWShYPi1B+YvvpEFcLGsjPGqpnovv1GIGM7ZO2xXGbU2Kap9sbrf+O7vmbXRBxpRKySGEZm2LrWQlmsoPaDA+AG70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A62D14BF;
-	Thu, 26 Sep 2024 03:43:41 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 436D93F6A8;
-	Thu, 26 Sep 2024 03:43:08 -0700 (PDT)
-Date: Thu, 26 Sep 2024 12:42:45 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Jie Zhan <zhanjie9@hisilicon.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, ionela.voinescu@arm.com,
-	sudeep.holla@arm.com, will@kernel.org, catalin.marinas@arm.com,
-	rafael@kernel.org, viresh.kumar@linaro.org, sumitg@nvidia.com,
-	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com,
-	lihuisong@huawei.com
-Subject: Re: [PATCH v7 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
- sysfs entry
-Message-ID: <ZvU6pdjAljs55dqH@arm.com>
-References: <20240913132944.1880703-1-beata.michalska@arm.com>
- <20240913132944.1880703-2-beata.michalska@arm.com>
- <09887c82-2813-59c3-2ff2-0b7223b37b9e@hisilicon.com>
+	s=arc-20240116; t=1727347436; c=relaxed/simple;
+	bh=4m2OXplHfxIq+GC25lbDBxaJd+vMADGPxeGrykpTKOA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mvuAjLowHwiRa39lMdB/nCFE3fTCZK10EnbS/9/uhmSLM0kblOEiuHacCxRE+wXW6Q7K1Z+3H4UUy7oLK4WJj43/9e4urKxzaGt/rWlIcuIusIdFyhJBzFLn2V3WpXSsyczTCq2CZwZnZmIQxzBCFthj7WbguZ2w1mwxXDG2cM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iU7qsenh; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727347433;
+	bh=4m2OXplHfxIq+GC25lbDBxaJd+vMADGPxeGrykpTKOA=;
+	h=From:Subject:Date:To:Cc:From;
+	b=iU7qsenh4tXIkR0yvVb6YKXedRnlnTbUI0l93efQBDcikiB7CU+XnPsQn5aN0mIne
+	 ZumR272isg24Hrd+3QrUmbRYlq+dBNVeJTHI30rhqgJx1WYAgJ/w1Bum7NDwDY7g8F
+	 eVEnXGH3mHr+QwALBhGp5d8buLX+QpffwjBw4D2Of+4lKJexNIoZM1d3yi0qn6g3ZR
+	 Ckiuam8AQFSj8clRGD7veWgW396ClyunBLtaeHL8S8FVKUoXPAMN5EADD9mzuRMMUA
+	 r95X38ncegP1jtOdWYM5xCBYuu0tASZ7ZHLXBFuVyU3ogRRJLQzhwy+7MT0jYIwNBS
+	 VWkltm4qyvarg==
+Received: from localhost (unknown [IPv6:2a01:e0a:d1a:1250:792b:136f:2a18:fd70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 00CAF17E11E2;
+	Thu, 26 Sep 2024 12:43:52 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v2 0/4] Provide devm_clk_bulk_get_all_enabled() helper
+Date: Thu, 26 Sep 2024 13:43:19 +0300
+Message-Id: <20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <09887c82-2813-59c3-2ff2-0b7223b37b9e@hisilicon.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMc69WYC/2WNywrCMBREf6XctZEkbZrqyv+QUvK4tcHaSKJBK
+ fl3Y8GVm4EzMGdWiBgcRjhWKwRMLjq/FOC7CsyklgsSZwsDp7yhB8aJma+DfpbARQ2jexHWaiV
+ lLTprRyize8BSb8pzX3hy8eHDe3tI7Nv+ZM2/LDFCicFa1FJ0wtD2ZPw8K+2D2ht/gz7n/AEjP
+ KnRtAAAAA==
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Jingoo Han <jingoohan1@gmail.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org
+X-Mailer: b4 0.14.1
 
-On Wed, Sep 25, 2024 at 04:58:36PM +0800, Jie Zhan wrote:
-> Hi Beata,
-Hi Jie
-> 
-> Great thanks for the update.
-> 
-> On 13/09/2024 21:29, Beata Michalska wrote:
-> > Currently the CPUFreq core exposes two sysfs attributes that can be used
-> > to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
-> > and scaling_cur_freq. Both provide slightly different view on the
-> > subject and they do come with their own drawbacks.
-> > 
-> > cpuinfo_cur_freq provides higher precision though at a cost of being
-> > rather expensive. Moreover, the information retrieved via this attribute
-> > is somewhat short lived as frequency can change at any point of time
-> > making it difficult to reason from.
-> > 
-> > scaling_cur_freq, on the other hand, tends to be less accurate but then
-> > the actual level of precision (and source of information) varies between
-> > architectures making it a bit ambiguous.
-> > 
-> > The new attribute, cpuinfo_avg_freq, is intended to provide more stable,
-> > distinct interface, exposing an average frequency of a given CPU(s), as
-> > reported by the hardware, over a time frame spanning no more than a few
-> > milliseconds. As it requires appropriate hardware support, this
-> > interface is optional.
-> > 
-> > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
-> > ---
-> >  Documentation/admin-guide/pm/cpufreq.rst | 10 ++++++++
-> >  drivers/cpufreq/cpufreq.c                | 31 ++++++++++++++++++++++++
-> >  include/linux/cpufreq.h                  |  1 +
-> >  3 files changed, 42 insertions(+)
-> > 
-> > diff --git a/Documentation/admin-guide/pm/cpufreq.rst b/Documentation/admin-guide/pm/cpufreq.rst
-> > index fe1be4ad88cb..2204d6132c05 100644
-> > --- a/Documentation/admin-guide/pm/cpufreq.rst
-> > +++ b/Documentation/admin-guide/pm/cpufreq.rst
-> > @@ -248,6 +248,16 @@ are the following:
-> >  	If that frequency cannot be determined, this attribute should not
-> >  	be present.
-> >  
-> > +``cpuinfo_avg_freq``
-> > +        An average frequency (in KHz) of all CPUs belonging to a given policy,
-> > +        derived from a hardware provided feedback and reported on a time frame
-> > +        spanning at most few milliseconds.
-> 
-> I don't think it's necessary to put the 'at most few milliseconds'
-> limitation on.
-> 
-> It's supposed to be fine for other platforms to implement the interface
-> with a longer time period, e.g. a few seconds, in the future.  Otherwise,
-> this would probably force the implementation of 'cpuinfo_avg_freq' to be
-> binded with the 'scale freq tick' stuff.
-Actually the sched_tick was intentionally omitted from the description
-to avoid associating one with another.
-Not really sure how useful it would be to have a longer time-frames for the
-average frequency though.
-It is still intended to be rather accurate - thus the 'at most few
-milliseconds' statement. Extending that period reduces the accuracy.
-If we allow that - meaning getting average frequency over different time-frame
-spans , we introduce yet again platform specific behaviour for common interface,
-which might not be that desired.
+Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+return the number of clocks stored in the clk_bulk_data table referenced
+by the clks argument.
 
-> 
-> > +
-> > +        This is expected to be based on the frequency the hardware actually runs
-> > +        at and, as such, might require specialised hardware support (such as AMU
-> > +        extension on ARM). If one cannot be determined, this attribute should
-> > +        not be present.
-> > +
-> >  ``cpuinfo_max_freq``
-> >  	Maximum possible operating frequency the CPUs belonging to this policy
-> >  	can run at (in kHz).
-> 
-> ...
-> 
-> > diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-> > index d4d2f4d1d7cb..48262073707e 100644
-> > --- a/include/linux/cpufreq.h
-> > +++ b/include/linux/cpufreq.h
-> > @@ -1195,6 +1195,7 @@ static inline int of_perf_domain_get_sharing_cpumask(int pcpu, const char *list_
-> >  #endif
-> >  
-> >  extern unsigned int arch_freq_get_on_cpu(int cpu);
-> > +extern int arch_freq_avg_get_on_cpu(int cpu);
-> 
-> It's werid to have two different functions with mostly the same behaviour,
-> i.e. arch_freq_get_on_cpu() and arch_freq_avg_get_on_cpu().
-> 
-> Appreciated that there would be some capatibility work with x86 at the
-> moment if merging them, e.g. return type, default implementation, impact on
-> some userspace tools, etc.
-The intention here was indeed to have a clean distinction between the two.
-> 
-> Anyhow, are they supposed to be merged in the near future?
-That depends on any further comments on that new sysfs attribute I guess.
+That is required in case there is a need to iterate these clocks later,
+therefore I couldn't see any use case of this parameter and should have
+been simply removed from the function declaration.
+
+The first patch in the series provides devm_clk_bulk_get_all_enabled()
+variant, which is consistent with devm_clk_bulk_get_all() in terms of
+the returned value:
+
+ > 0 if one or more clocks have been stored
+ = 0 if there are no clocks
+ < 0 if an error occurred
+
+Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
+the past form of 'enable'.
+
+The next two patches switch existing users of devm_clk_get_enable() to
+the new helper - there were only two, as of next-20240913.
+
+The last patch drops the now obsolete devm_clk_bulk_get_all_enable()
+helper.
+
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v2:
+- Dropped references to 'broken' API in commit descriptions, per Mani's
+  suggestion
+- Added R-b tags from Angelo and Mani
+- Link to v1:
+  https://lore.kernel.org/r/20240914-clk_bulk_ena_fix-v1-0-ce3537585c06@collabora.com
 
 ---
-Thanks
-Beata
-> 
-> 
-> Thanks,
-> Jie
-> >  
-> >  #ifndef arch_set_freq_scale
-> >  static __always_inline
+Cristian Ciocaltea (4):
+      clk: Provide devm_clk_bulk_get_all_enabled() helper
+      soc: mediatek: pwrap: Switch to devm_clk_bulk_get_all_enabled()
+      PCI: exynos: Switch to devm_clk_bulk_get_all_enabled()
+      clk: Drop obsolete devm_clk_bulk_get_all_enable() helper
+
+ drivers/clk/clk-devres.c                | 30 ++++++++++++++++--------------
+ drivers/pci/controller/dwc/pci-exynos.c |  2 +-
+ drivers/soc/mediatek/mtk-pmic-wrap.c    |  4 ++--
+ include/linux/clk.h                     | 12 +++++++-----
+ 4 files changed, 26 insertions(+), 22 deletions(-)
+---
+base-commit: 5acd9952f95fb4b7da6d09a3be39195a80845eb6
+change-id: 20240912-clk_bulk_ena_fix-16ba77358ddf
+
 
