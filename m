@@ -1,265 +1,158 @@
-Return-Path: <linux-kernel+bounces-340362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 921B598720D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:53:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B9E98720E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D40286373
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:53:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7DC11F21144
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDD81AD3F4;
-	Thu, 26 Sep 2024 10:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673E01AED42;
+	Thu, 26 Sep 2024 10:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B8Frapnu"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OPDNrmPm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5082F1AD9E3;
-	Thu, 26 Sep 2024 10:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2A41AED32
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727347965; cv=none; b=jYhkv85CvkzGcIPLUVausrby7xH8uCIjSuz5PSFa2cVhYl//OPwYeuuBt1WVGER/pS4dPDNEbbWAkk1NAYrBkV4gNEtQ8BKlKK1Vf6m15Ww5iXFtpGIRMDm1YiWMrLHMBU257ymdBmILmP3FDVMxXmyf8s2fRZgp/1IOhBD7mpA=
+	t=1727347969; cv=none; b=hj297hjvyLm+XCYqXfLK1YCzb2NdkMIRo1ZlDhVuSg/mPegi+NnxYcu1Kf8guoWIl+hNHktwuU7xE727BAeRHgS7cy/Fsn6vLJuUYo6xB1lhknVFEEIeyWlKwuRaCiixuC358Y0z72ZIEJpnE5/+JKaD1F2AAaFhouwXXUqc7Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727347965; c=relaxed/simple;
-	bh=rNLSkaEd7oDUKlk8fUcvYr/AJfk6k2J1D0qkHx1VVI8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eQ+ZW2KcbDGRxmqA87vGsm22vtkXEvwgnDMKpZYpVXFScoymHRCisOTPmFmvPuTfWFZZTjdKvUK9Mb3M8cdXkjGgM/b302yvMPRzusC5/7An9iph7v4rEBArsOQIBuc1xP/YvmrdKISkAXJlbrVrl8Pqt6/CqVNBXdbAKLk/EEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B8Frapnu; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d6d0fe021so137162666b.1;
-        Thu, 26 Sep 2024 03:52:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727347961; x=1727952761; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rNLSkaEd7oDUKlk8fUcvYr/AJfk6k2J1D0qkHx1VVI8=;
-        b=B8FrapnuhKSSh8TS3j1PiqLveNu2BD9Kpsa4hg37bXNzaZQI7FAFUfDOUSrf2YYwHH
-         MhcV8M1fz7Vzo95idRdo9xeTM866UwupCUkJ6Zl9jGXb3Y5kTyFQNpsDRCPPGKg999Bw
-         6e9+f3Fwovc26Caia4uEX50Jrpz4eJSxC7/CBsLsuVjDHMZun6aOdmJdpo7KISLwdzd6
-         2VKqC5SbDgbcsfsP72DYL1raX6tcRhDC/s/FYxIDR4QMSG2kFNAflcDluiWwjBXYEiR6
-         oLX+qXbEnTMvn5UayHCMlSH5kw8mSM3ysbfo5aoYPKwOitk4xDrHZfdO0CikPlGitQKn
-         eV6Q==
+	s=arc-20240116; t=1727347969; c=relaxed/simple;
+	bh=oNwUAYrdPTqWOMZ1yhG/bB6c6Sae3i8waJv8HPi87zs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r+LZg2yHng76cSeOrzO3aLljqZf9q2ZNL+8EA2pmRBN21INZB033b5GzCeVa7vuM5rAQE2SvBhuZURORBkkEP6s2xQueuLz+5dVms32wA4aHvEbEu9HXklqdoX2wgJvl8SGsjgC6H5o1j2MprMjELJvAo1c4/yiTcgGFavIr/p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OPDNrmPm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727347967;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Ouv8Zzqknb0V2lbE/zGEjZxariyc9TjT1QaL4V8Hr5s=;
+	b=OPDNrmPmnzimolXaItjiNqohXjfLKGO61CHtNhErP3ZS3+vsDoLzpdHiqCshd4rA5dhHn0
+	Mx8nkXw4uAg5Evlep/xUx12MIFzt0eTsn9Z+hFdNzfxKWHiH6Anp1HlLNUeYWdYaLHM8M4
+	zVAYScvHnGpeB6zhfcdqoxaKxLAO2Wo=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-684-1mXo2TMiN--czFLsu63ARg-1; Thu, 26 Sep 2024 06:52:45 -0400
+X-MC-Unique: 1mXo2TMiN--czFLsu63ARg-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5c87a2a8535so312326a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 03:52:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727347961; x=1727952761;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rNLSkaEd7oDUKlk8fUcvYr/AJfk6k2J1D0qkHx1VVI8=;
-        b=GJQnqUBhekHd4MjpqHSt4WCJJ+tatKqTPZ7n3AreBYUeVCJuoyCu13YiF1X52TMNxF
-         24qRCyoTDd2EFn8CzR5S39P8w9kDxJE+X6uWqMku/c/fUAxFF9KunTkzMnSq/4cvQxgg
-         /Xu++ZPQa2gIgD+ZikfBBJ0K+UBdkF7H8pqSkd5NmGV7LjqGtlMIGyDAc3xYgI5iPA3V
-         XmLJGBe6WM1Uv//axMCv5xwcvRB7ox1Ickn2aXLnRFZS/B42SgASK3ogSj0lRYqNS/Z6
-         1CBwY7hbB9fjhDx+lQgLVODTI+qiG4dZLOguTDChzYSgfjM5Yox4BdiwHcny0LklhXKT
-         6akQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSdG7uUR8FAz9jp/Se/jbwX3cuQXACkTejubAocZXxWTPWuEl7g4XoyA2BSTveAJ9tLOMDJSGmGj9MNAW1@vger.kernel.org, AJvYcCW9wQCHIMf2QIB9BVZ2GU0egMyOQkCWfyPud1ftbpp5+QkhNE9H4OfWvnuVdfEVEWBb2l631N3CpMt4@vger.kernel.org, AJvYcCXen2r7H7oO/tivAVX4GBjJwE/zLqH8V4/z5F0x4aoncgO0KeVS/rbr05jtD0bVtM86/rI6EwPLAsqq@vger.kernel.org, AJvYcCXnMPgiatLKU6gu+gv/d4EEaHeGsTvKN9YDAcQ0sIegmknp3G0JLI57DUPkBRhGdydPlzMLQo+xnAJn@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJpWsTVJxx1Qb3mX5z6IIU/EfY2YzbdEP4wHbZq5XqObXpIiS8
-	IAcCHzo4etGR1OsXHTSXUTpYDQTK1kwidtaMXx5sWR/ITrnEp7Y1
-X-Google-Smtp-Source: AGHT+IFEqLjZ85oYoyLQbtQFM71BDt+U30LBxiyP+dOTJVzn/sVZoFDhT1nJPJ4DAiUCLcjVwrOm0w==
-X-Received: by 2002:a17:907:2cc4:b0:a8a:913e:418b with SMTP id a640c23a62f3a-a93a0369e7bmr538221366b.20.1727347961226;
-        Thu, 26 Sep 2024 03:52:41 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:341e:1201:c434:b5b1:98a6:efed])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93a1a8c71csm221130666b.87.2024.09.26.03.52.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 03:52:40 -0700 (PDT)
-Message-ID: <83cf3c3eb1cc5fcc06ce72cab14cc0da3bd817b6.camel@gmail.com>
-Subject: Re: [PATCH 1/7] iio: backend: add API for interface get
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Antoniu Miclaus
-	 <antoniu.miclaus@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>,  Michael Hennerich <Michael.Hennerich@analog.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, Olivier Moysan
- <olivier.moysan@foss.st.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
- <ukleinek@kernel.org>, Andy Shevchenko <andy@kernel.org>, Marcelo Schmitt
- <marcelo.schmitt@analog.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
-  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,  =?ISO-8859-1?Q?Jo=E3o?= Paulo
- =?ISO-8859-1?Q?Gon=E7alves?= <joao.goncalves@toradex.com>, Marius Cristea
- <marius.cristea@microchip.com>,  Sergiu Cuciurean
- <sergiu.cuciurean@analog.com>, Dragos Bogdan <dragos.bogdan@analog.com>,
- linux-iio@vger.kernel.org,  linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org,  linux-pwm@vger.kernel.org
-Date: Thu, 26 Sep 2024 12:52:39 +0200
-In-Reply-To: <CAMknhBHmtpnX-nXxReF-rUW1ks1=iw3m_BmiRUTkf5XckPsvPw@mail.gmail.com>
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
-	 <20240923101206.3753-2-antoniu.miclaus@analog.com>
-	 <CAMknhBHmtpnX-nXxReF-rUW1ks1=iw3m_BmiRUTkf5XckPsvPw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        d=1e100.net; s=20230601; t=1727347964; x=1727952764;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ouv8Zzqknb0V2lbE/zGEjZxariyc9TjT1QaL4V8Hr5s=;
+        b=Ak69xFdAT6N3IuMBjjH2LHIPePZX/NDTIBAI9YgDwkEsw3YnjmAIFZzTEcVtO+Wms5
+         c+UhYdQBum3pS22ME8Q1+KmdrHhFkinQdQ2/xoGcjBwbVgX1vsECdeGBQZmk+lpyhuaw
+         62k0Iw3q5gYJrOTSO5rFIaoNGCKTXZrmiBI/zmbrbsrZTb/xf/mR9HDA6esc+35gI8fY
+         Brtfgpn1RS6P+NUpLtEpy5SIJ7dSYYsK7zgM+N+77jO4bspW+IWho40+OrCwFCiPNrKd
+         bC0TfNx/YldaUp6Av1D3uQ1g9nmv3QlMfvsE6qOgN3zvosST1lhe9NWUS4tAflHtHjqx
+         btJw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8Zk5hNfm6pjMW3FM3ukZqJ8hTjaIffv/LCsmx5Tfw8F/NHMeg0TSOfp8VozYRcQu2TsgMvjr9LO6vS1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHY2sPoSj2G/QaxbbyN7w3JMIJ1qJccwQSvYS8xxz6iGiMTGYu
+	lviWI71V7IhG0vpQ7RU+qMOPmM1BF1zSsMfJlZJxXHriIgiMxZvS27OAnykO6w2zUqOuM1eFVMM
+	aXcii0xfGRRi7e9WvuXJUvxkSU9vavwS3l9jbXnY5w9i7CkS4VQTZ64glKY13xw==
+X-Received: by 2002:a05:6402:5112:b0:5c5:c4b9:e68f with SMTP id 4fb4d7f45d1cf-5c72060acb7mr4078252a12.5.1727347964603;
+        Thu, 26 Sep 2024 03:52:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE6z189+9QhyD6RuhJS64kmHg28XGC+pd4BPspVUOuxom2n4FPDxMaEXtVoVtQ6mk2tGtWsuQ==
+X-Received: by 2002:a05:6402:5112:b0:5c5:c4b9:e68f with SMTP id 4fb4d7f45d1cf-5c72060acb7mr4078237a12.5.1727347964209;
+        Thu, 26 Sep 2024 03:52:44 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c744:ac00:ef5c:b66d:1075:254a? (p200300cbc744ac00ef5cb66d1075254a.dip0.t-ipconnect.de. [2003:cb:c744:ac00:ef5c:b66d:1075:254a])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf4d78b1sm3060184a12.87.2024.09.26.03.52.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Sep 2024 03:52:42 -0700 (PDT)
+Message-ID: <52e958f1-150e-4f77-b031-772e636eb25b@redhat.com>
+Date: Thu, 26 Sep 2024 12:52:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/cma.c: To better understand cma area during debugging,
+ add total and used count logs to in cma_alloc
+To: Xiang Gao <gxxa03070307@gmail.com>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ gaoxiang17 <gaoxiang17@xiaomi.com>
+References: <20240918124325.109236-1-gxxa03070307@gmail.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240918124325.109236-1-gxxa03070307@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2024-09-26 at 10:40 +0200, David Lechner wrote:
-> On Mon, Sep 23, 2024 at 12:15=E2=80=AFPM Antoniu Miclaus
-> <antoniu.miclaus@analog.com> wrote:
-> >=20
-> > Add backend support for obtaining the interface type used.
-> >=20
-> > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> > ---
-> > =C2=A0drivers/iio/industrialio-backend.c | 24 ++++++++++++++++++++++++
-> > =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 10 ++++++++++
-> > =C2=A02 files changed, 34 insertions(+)
-> >=20
-> > diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industria=
-lio-
-> > backend.c
-> > index efe05be284b6..53ab6bc86a50 100644
-> > --- a/drivers/iio/industrialio-backend.c
-> > +++ b/drivers/iio/industrialio-backend.c
-> > @@ -449,6 +449,30 @@ ssize_t iio_backend_ext_info_set(struct iio_dev *i=
-ndio_dev,
-> > uintptr_t private,
-> > =C2=A0}
-> > =C2=A0EXPORT_SYMBOL_NS_GPL(iio_backend_ext_info_set, IIO_BACKEND);
-> >=20
-> > +/**
-> > + * iio_backend_interface_type_get - get the interace type used.
-> > + * @back: Backend device
-> > + * @type: Interface type
-> > + *
-> > + * RETURNS:
-> > + * 0 on success, negative error number on failure.
-> > + */
-> > +int iio_backend_interface_type_get(struct iio_backend *back,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_int=
-erface_type *type)
-> > +{
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D iio_backend_op_call(back,=
- interface_type_get, type);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 return ret;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (*type > IIO_BACKEND_INTERFACE=
-_CMOS)
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 return -EINVAL;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(iio_backend_interface_type_get, IIO_BACKEND);
-> > +
-> > =C2=A0/**
-> > =C2=A0 * iio_backend_extend_chan_spec - Extend an IIO channel
-> > =C2=A0 * @indio_dev: IIO device
-> > diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
-> > index 8099759d7242..ba8ad30ac9ba 100644
-> > --- a/include/linux/iio/backend.h
-> > +++ b/include/linux/iio/backend.h
-> > @@ -63,6 +63,11 @@ enum iio_backend_sample_trigger {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_BACKEND_SAMPLE_TRIGGER_M=
-AX
-> > =C2=A0};
-> >=20
-> > +enum iio_backend_interface_type {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_BACKEND_INTERFACE_LVDS,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_BACKEND_INTERFACE_CMOS
-> > +};
-> > +
-> > =C2=A0/**
-> > =C2=A0 * struct iio_backend_ops - operations structure for an iio_backe=
-nd
-> > =C2=A0 * @enable: Enable backend.
-> > @@ -81,6 +86,7 @@ enum iio_backend_sample_trigger {
-> > =C2=A0 * @extend_chan_spec: Extend an IIO channel.
-> > =C2=A0 * @ext_info_set: Extended info setter.
-> > =C2=A0 * @ext_info_get: Extended info getter.
-> > + * @interface_type_get: Interface type.
-> > =C2=A0 **/
-> > =C2=A0struct iio_backend_ops {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int (*enable)(struct iio_bac=
-kend *back);
-> > @@ -113,6 +119,8 @@ struct iio_backend_ops {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 const char *buf, size_t len);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int (*ext_info_get)(struct i=
-io_backend *back, uintptr_t private,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 const struct iio_chan_spec *chan, char *buf);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int (*interface_type_get)(struct =
-iio_backend *back,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_interface=
-_type *type);
-> > =C2=A0};
-> >=20
-> > =C2=A0int iio_backend_chan_enable(struct iio_backend *back, unsigned in=
-t chan);
-> > @@ -142,6 +150,8 @@ ssize_t iio_backend_ext_info_set(struct iio_dev *in=
-dio_dev,
-> > uintptr_t private,
-> > =C2=A0ssize_t iio_backend_ext_info_get(struct iio_dev *indio_dev, uintp=
-tr_t private,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct iio_chan_spec=
- *chan, char *buf);
-> >=20
-> > +int iio_backend_interface_type_get(struct iio_backend *back,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_int=
-erface_type *type);
-> > =C2=A0int iio_backend_extend_chan_spec(struct iio_dev *indio_dev,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_backend *back,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_chan_spec *chan=
-);
-> > --
-> > 2.46.0
-> >=20
->=20
-> This seems very specific to the AD485x chips and the AXI ADC backend.
-> Since it is describing how the chip is wired to the AXI DAC IP block,
-> I would be tempted to use the devicetree for this info instead of
-> adding a new backend function.
+On 18.09.24 14:43, Xiang Gao wrote:
+> From: gaoxiang17 <gaoxiang17@xiaomi.com>
+> 
 
-Not sure If I'm following your point but I think this is the typical case w=
-here the
-chip (being it a DAC or ADC) supports both CMOS and LVDS interfaces. Natura=
-lly you
-only use one on your system and this is a synthesis parameter on the FPGA I=
-P core.
-Therefore, it makes sense for the frontend to have way to ask for this info=
-rmation to
-the backend.
+Please move some of $subject into $description, to make it shorter.
 
-That said, we could also have a DT parameter but, ideally, we would then ne=
-ed a way
-to match the parameter with the backend otherwise we could have DT stating =
-LVDS and
-the backend built with CMOS.
+Maybe use the subject:
 
-Other thing that we could think about is a new devm_iio_backend_get_with_in=
-fo() where
-the frontend would get some constant and static info about the backend (the=
- interface
-type would an ideal match for something like this). But I feel it's still e=
-arly days
-for something like this :)
+"mm/cma: print total and used count in cma_alloc()"
 
-- Nuno S=C3=A1
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
