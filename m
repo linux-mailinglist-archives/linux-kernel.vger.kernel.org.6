@@ -1,155 +1,184 @@
-Return-Path: <linux-kernel+bounces-341108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0758A987B62
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:55:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7629987B67
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C4B8284858
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:55:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 672C11F25A27
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13431B07A9;
-	Thu, 26 Sep 2024 22:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC611B0130;
+	Thu, 26 Sep 2024 22:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bc6cYDys"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="XEdH2ijv"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEA31AFB2E
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 22:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73021AFB28;
+	Thu, 26 Sep 2024 22:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727391269; cv=none; b=MTgJ+FH8nEHWZA+FdcSLHBfQTA+aY5zx9RA/vCa6ncbEbp6TlbhN0ceD/egzJPjYrUFUfUYRKCIFiafMbG3u9aG+RWCnV3bvkx7FNz4zb5TUEEInxyyfyJA37q1XsE+XHkJ6uAu5iMJN/fAALnK04zbj7x26vXr1PDEKn8pYBqA=
+	t=1727391287; cv=none; b=QAJUdy/DOB0AiXOlK2MsQpel66dsNT57jqPI+dAYSjr1hkjlj3tJ7frhhrb5V54ub8lwZsM6HAPdL6NvWdh9Opkvv0feJ4JkCcZOSv76V5kVWGT/a1bLlOa63OtvT8JaBBMAlf7I5CXY4TvSPZQ/lZ4ZKnjIMlFmIPdSxDrustk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727391269; c=relaxed/simple;
-	bh=YuvKxWBIf7PNXBTj+RM1pbAN0oV60CL2MBBZiDs+evU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=skfHMos4ckF0/hC1BbxjAtEaPjOBgwe0Dh9gx3GlfHwzsbhrxuVeVSyxZ+LtGSS3LeiGb4aiNDTTUCBe5jba2tYPkX16hoOc0NiivR/EbR0w36maSO1cLttAF8AddcRvRSE50JPbtRpKYD4qf2sQ6lMW4/hQgcf+DqoSaTQEKR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bc6cYDys; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4582a5b495cso60941cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:54:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727391266; x=1727996066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tl35wLMOPE0pkWqTWWx9ZXc6WTLidbwzi9Ei5sRpi+0=;
-        b=bc6cYDys6zAG1+ILi2ilodlVaOpgELYU/EGY0zqehDIsl8BL2XRWNTfGVBuSCmfyAb
-         fJ8H17IUerhohL6ZneXhDZF05P/16ovxaDSSA/fUKpsPFwDJGUziWMtvnI9OBvoUMBpn
-         OGjSuxdztE0TV23wz/hVm7EZGGUDksTd+mS6os9uLOB5gJGusMQhQnUHm5OVI5zzaiMt
-         qO7gSQfSuUdRstpjgBtHbQoB9sPxPAH1ztWfTy6Sdky/G0rO2ja4reVQQ+vA3urCPqJp
-         nYduI+5W46GbLN+LNoksEWIxwc5H30wbHHyk50shQmTPK5+vW/XSdL3HMVSUTCPUCfUH
-         JVgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727391266; x=1727996066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tl35wLMOPE0pkWqTWWx9ZXc6WTLidbwzi9Ei5sRpi+0=;
-        b=g+KBXxVUdddRlQyTq/Ec0UPOOX+IqfwPOpW/T6vD5FJptF53yE8MubRFApRR5thAp/
-         XOplXJ/WPURNZRgwqx6trsXmFpa0Z82W/gffveYdE/ZHLSow/1HJXdaKY+lOxvffgDfi
-         kpNSbGwmLQv7J4vjRokXDv7sPWR3e5bkKcrY9S5LebhNaAjksaUyNErCdJMF7oJIhPPN
-         EMljx2Km1VvsYJnxLJ/8w5MP05IeBTlssEqkKBS0dRFPLu3/2nqEtNNLldFB6+7e83hT
-         HYEBbi2ZgMRorRQnrkyYNgvA549HuzB7oluPT391yJA8iByj0Dpj9UGgj+uuXJeImBOF
-         Ihzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHGEAX4IzGaNysoAW0uG262wnFDKhp93XKLCqSxki0ibvFPBLseC/Bxr4Pep5PPUcZwdLKLt+916euYlo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkTqYbZ3/pR8j4bml0jkjB93oKAuOht2rQz8tg1ZqljM1+X3k9
-	3L7sOc0hwYzr63LWtyadkjZfKtrJA2TpgNldUGclRF1PXIgyjQrLL60cK9PIh1fLbh+mZJLAjF0
-	h5N0rSrtM0oe40qBStCUKFGE18pPplFQ7m7i9
-X-Google-Smtp-Source: AGHT+IEUgS0ctjnhwyGFehblCt5Cuf6U9AZbfKffDPTgdSnQTEOj8Qmniu9tARJUyM5u8ykfq5FPxoUB/AlQ+bM4WgI=
-X-Received: by 2002:a05:622a:a78d:b0:45c:9e26:ae3 with SMTP id
- d75a77b69052e-45ca1b03e0amr517501cf.27.1727391265943; Thu, 26 Sep 2024
- 15:54:25 -0700 (PDT)
+	s=arc-20240116; t=1727391287; c=relaxed/simple;
+	bh=kbf1Hx2X9g0pcS4tCElPoL2MRBJu6qAAlywYMNvf7FM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rWw/XK8Kf18rS2ORC9BNGyRy1WVont8trHCKIRtHjTE/WycKfDQ99qYqKoIqL0+8jQ/9aeZe1eWT7GHPw7EzvRDJloR0X3xn/QJDqihRI0bOv2VkMKSYLb96XHRLp4h5dAxk2edTjU01kHelRGx6jGhBS7GF8wAqZZvuZ0oHupQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=XEdH2ijv; arc=none smtp.client-ip=185.226.149.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1stxNR-0093sf-SH; Fri, 27 Sep 2024 00:54:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:From:Subject:MIME-Version:Date:Message-ID;
+	bh=gGA/yVdCAgObbnRJuDAOi7HXx6TBon3dkl4vpZ3i2Ug=; b=XEdH2ijv9mbK07E12Fu8xI8ebG
+	ftG8UGjOFGpmfzw/hhy+zt4BnnPAcpF9svYZKlTZO3moG9LMrwcde3AEW5N0FxxwHBKAnGM1+XdlS
+	uSQBA/jTwsm4/kchg7Ijlp91U7nzpiTYKPqzoKKSSMthi4qIVSb8nBv0Bwb61OQTnAij2Ag5EUpw0
+	Q6rcUzccl2BmK3V2lwo3vEtnpNw0VsaZOOy8x56Bw+68tXWEaPBpXw7qZquWsmIVqVzlbhhRcqdPs
+	Ynu4rtdHqqOc/YOYJVBHIibejnP7jbha738N1bczrdNy6wyACHszseNZ7vpHmoIAhnDbdU8xAEced
+	u91RpQqg==;
+Received: from [10.9.9.73] (helo=submission02.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1stxNM-00083Q-49; Fri, 27 Sep 2024 00:54:20 +0200
+Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1stxN8-00CsW5-KT; Fri, 27 Sep 2024 00:54:06 +0200
+Message-ID: <0d4edea2-f989-484f-88bc-d8fb6acd7572@rbox.co>
+Date: Fri, 27 Sep 2024 00:54:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925233854.90072-1-mmaurer@google.com>
-In-Reply-To: <20240925233854.90072-1-mmaurer@google.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Thu, 26 Sep 2024 22:53:46 +0000
-Message-ID: <CABCJKudA=EvCE7vv44VDMqHjFv+5vyJ1ZfqG+TSPc49vtmT9RA@mail.gmail.com>
-Subject: Re: [PATCH v5 00/16] Extended MODVERSIONS Support
-To: Matthew Maurer <mmaurer@google.com>
-Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org, 
-	gary@garyguo.net, mcgrof@kernel.org, Alex Gaynor <alex.gaynor@gmail.com>, 
-	rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, neal@gompa.dev, marcan@marcan.st, j@jannau.net, 
-	asahi@lists.linux.dev, linux-modules@vger.kernel.org, 
-	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v2 0/6] selftests/bpf: Various sockmap-related
+ fixes
+From: Michal Luczaj <mhal@rbox.co>
+To: Jakub Sitnicki <jakub@cloudflare.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
+ <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co>
+ <87y159yi5m.fsf@cloudflare.com>
+ <249a7dc3-34e2-4579-aae7-8b38b145e4bb@rbox.co>
+ <87ttfxy28s.fsf@cloudflare.com>
+ <42939687-20f9-4a45-b7c2-342a0e11a014@rbox.co>
+ <877cccqnvj.fsf@cloudflare.com>
+ <e78254c5-8f2f-4dc5-bf81-401caefabdd1@rbox.co>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <e78254c5-8f2f-4dc5-bf81-401caefabdd1@rbox.co>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Matt,
+On 9/24/24 12:25, Michal Luczaj wrote:
+> On 8/19/24 22:05, Jakub Sitnicki wrote:
+>> On Wed, Aug 14, 2024 at 06:14 PM +02, Michal Luczaj wrote:
+>>> On 8/6/24 19:45, Jakub Sitnicki wrote:
+>>>> On Tue, Aug 06, 2024 at 07:18 PM +02, Michal Luczaj wrote:
+>>>>> Great, thanks for the review. With this completed, I guess we can unwind
+>>>>> the (mail) stack to [1]. Is that ingress-to-local et al. something you
+>>>>> wanted to take care of yourself or can I give it a try?
+>>>>> [1] https://lore.kernel.org/netdev/87msmqn9ws.fsf@cloudflare.com/
+>>>>
+>>>> I haven't stated any work on. You're welcome to tackle that.
+>>>>
+>>>> All I have is a toy test that I've used to generate the redirect matrix.
+>>>> Perhaps it can serve as inspiration:
+>>>>
+>>>> https://github.com/jsitnicki/sockmap-redir-matrix
+>>>
+>>> All right, please let me know if this is more or less what you meant and
+>>> I'll post the whole series for a review (+patch to purge sockmap_listen of
+>>> redir tests, fix misnomers). [...]
+>>
+>> Gave it a look as promised. It makes sense to me as well to put these
+>> tests in a new module. There will be some overlap with sockmap_listen,
+>> which has diverged from its inital scope, but we can dedup that later.
+>>
+>> One thought that I had is that it could make sense to test the not
+>> supported redirect combos (and expect an error). Sometimes folks make
+>> changes and enable some parts of the API by accient.
+> 
+> All right, so I did what sockmap_listen does: check
+> test_sockmap_listen.c:verdict_map[SK_PASS] to see if the redirect took
+> place for a given combo. And that works well... except for skb/msg to
+> ingress af_vsock. Even though this is unsupported and no redirect
+> actually happens, verdict appears to be SK_PASS. Is this correct?
 
-On Wed, Sep 25, 2024 at 11:39=E2=80=AFPM Matthew Maurer <mmaurer@google.com=
-> wrote:
->
-> This patch series is intended for use alongside the Implement
-> MODVERSIONS for RUST [1] series as a replacement for the symbol name
-> hashing approach used there to enable RUST and MODVERSIONS at the same
-> time.
->
-> Elsewhere, we've seen a desire for long symbol name support for LTO
-> symbol names [2], and the previous series came up [3] as a possible
-> solution rather than hashing, which some have objected [4] to.
->
-> This series adds a MODVERSIONS format which uses a section per column.
-> This avoids userspace tools breaking if we need to make a similar change
-> to the format in the future - we would do so by adding a new section,
-> rather than editing the struct definition. In the new format, the name
-> section is formatted as a concatenated sequence of NUL-terminated
-> strings, which allows for arbitrary length names.
->
-> Currently, this series emits both the extended format and the current
-> format on all modules, and prefers the extended format when checking if
-> present. I'm open to various other policies via Kconfig knobs, but this
-> seemed like a good initial default.
->
-> The refactor to MODVERSIONS is prefixed to this series as result of an
-> explicit request [5] by Luis in response to the original patchset.
->
-> If you are testing this patch alongside RUST by manually removing the
-> !MODVERSIONS restriction (this series doesn't remove it, because the
-> CRCs don't mean what we'd want them to yet, we need the DWARF patch for
-> that) and have kernel hardening enabled, you may need the CPU
-> Mitigations [6] series. Without it, the foo.mod.o file produced by the
-> C compiler will reference __x86_return_thunk, but foo.o will not.
-> This means that the version table will not contain a version for
-> __x86_return_thunk, but foo.ko will reference it, which will result
-> in a version check failure.
->
-> [1] https://lore.kernel.org/all/20240617175818.58219-17-samitolvanen@goog=
-le.com/
-> [2] https://lore.kernel.org/lkml/20240605032120.3179157-1-song@kernel.org=
-/
-> [3] https://lore.kernel.org/lkml/ZoxbEEsK40ASi1cY@bombadil.infradead.org/
-> [4] https://lore.kernel.org/lkml/0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@sus=
-e.com/
-> [5] https://lore.kernel.org/lkml/ZVZNh%2FPA5HiVRkeb@bombadil.infradead.or=
-g/
-> [6] https://lore.kernel.org/all/20240725183325.122827-1-ojeda@kernel.org/
->
-> Changes in v5:
-> - Addresses Sami's comments from v3 that I missed in v4 (missing early
->   return, extra parens)
+Here's a follow up: my guess is that some checks are missing. I'm not sure
+if it's the best approach, but this fixes things for me:
 
-v5 looks good to me, thank you for fixing these issues. I tested this
-with my latest Rust modversions patches [1] and everything seems to
-work for me (on x86_64, arm64, and riscv64 w/ clang).  For the series:
+diff --git a/include/net/sock.h b/include/net/sock.h
+index c58ca8dd561b..c87295f3476d 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -2715,6 +2715,11 @@ static inline bool sk_is_stream_unix(const struct sock *sk)
+ 	return sk->sk_family == AF_UNIX && sk->sk_type == SOCK_STREAM;
+ }
+ 
++static inline bool sk_is_vsock(const struct sock *sk)
++{
++	return sk->sk_family == AF_VSOCK;
++}
++
+ /**
+  * sk_eat_skb - Release a skb if it is no longer needed
+  * @sk: socket to eat this skb from
+diff --git a/net/core/sock_map.c b/net/core/sock_map.c
+index 242c91a6e3d3..07d6aa4e39ef 100644
+--- a/net/core/sock_map.c
++++ b/net/core/sock_map.c
+@@ -647,6 +647,8 @@ BPF_CALL_4(bpf_sk_redirect_map, struct sk_buff *, skb,
+ 	sk = __sock_map_lookup_elem(map, key);
+ 	if (unlikely(!sk || !sock_map_redirect_allowed(sk)))
+ 		return SK_DROP;
++	if ((flags & BPF_F_INGRESS) && sk_is_vsock(sk))
++		return SK_DROP;
+ 
+ 	skb_bpf_set_redir(skb, sk, flags & BPF_F_INGRESS);
+ 	return SK_PASS;
+@@ -675,6 +677,8 @@ BPF_CALL_4(bpf_msg_redirect_map, struct sk_msg *, msg,
+ 		return SK_DROP;
+ 	if (!(flags & BPF_F_INGRESS) && !sk_is_tcp(sk))
+ 		return SK_DROP;
++	if (sk_is_vsock(sk))
++		return SK_DROP;
+ 
+ 	msg->flags = flags;
+ 	msg->sk_redir = sk;
+@@ -1249,6 +1253,8 @@ BPF_CALL_4(bpf_sk_redirect_hash, struct sk_buff *, skb,
+ 	sk = __sock_hash_lookup_elem(map, key);
+ 	if (unlikely(!sk || !sock_map_redirect_allowed(sk)))
+ 		return SK_DROP;
++	if ((flags & BPF_F_INGRESS) && sk_is_vsock(sk))
++		return SK_DROP;
+ 
+ 	skb_bpf_set_redir(skb, sk, flags & BPF_F_INGRESS);
+ 	return SK_PASS;
+@@ -1277,6 +1283,8 @@ BPF_CALL_4(bpf_msg_redirect_hash, struct sk_msg *, msg,
+ 		return SK_DROP;
+ 	if (!(flags & BPF_F_INGRESS) && !sk_is_tcp(sk))
+ 		return SK_DROP;
++	if (sk_is_vsock(sk))
++		return SK_DROP;
+ 
+ 	msg->flags = flags;
+ 	msg->sk_redir = sk;
 
-Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
-Tested-by: Sami Tolvanen <samitolvanen@google.com>
-
-[1] https://github.com/samitolvanen/linux/commits/rustmodversions-v3
-
-Sami
 
