@@ -1,158 +1,137 @@
-Return-Path: <linux-kernel+bounces-340870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C2C987898
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:48:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07AE98789C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9A94281288
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA26B1C22987
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D633316130B;
-	Thu, 26 Sep 2024 17:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3738215FCE5;
+	Thu, 26 Sep 2024 17:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uzqXQvja"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FcrfJlq/"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF414A24;
-	Thu, 26 Sep 2024 17:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6B11494AC
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727372908; cv=none; b=YCQFD+/K2g78+dGFxcyDRr2mD/8tSPgnel2ky18h+ydXkjb+gvKIjHj1F4vPw1/+JlA8yWXPLh427s8VE1mJocFTaEILezsPpK0Z/eA0pqPQoBH5/3JaCZMM3m3yV13Cu33CHgQ770HGMdZ0PmaBsuDAKyx4SdnoJQTtKegEs+I=
+	t=1727373045; cv=none; b=la4lFdDcAf71Adjx1Z1ftzjpC/EX/Ap7uam6jd93QMtwZwIWZtCa8PXDqzv05EPduC7faxYuwZIQDHLMLDmc3Ej/+9+vCzi6rCLV/p+AT+5N0WclB9hJmMnPX3YBktTBowgr1qMO6iAQq0NMIYNEv9A/92Ve4AxJs/7cuDhinlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727372908; c=relaxed/simple;
-	bh=GqLH4dC8Wk7BOLguF4xiTuSKGoyO7U82IHOcy3yXBCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AOsXX1pC5uWQCKsJ2rubwQdqQwtQDFclQB5Zs16bXaJ3nLGx35vdNV46+jnJz4QzDXORKZRTGjXUljTDQeOxZbbWQvepFLmNM7hnXpXoGwMthFs32qnYncUFTTrwYt5I8SvdAI1jhDVaU3wtn/yq8lT3LBQKgYZCMuOxpTf1L6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uzqXQvja; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7658E163;
-	Thu, 26 Sep 2024 19:46:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727372813;
-	bh=GqLH4dC8Wk7BOLguF4xiTuSKGoyO7U82IHOcy3yXBCE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uzqXQvjaPSRAQUGls3RL8ziGEY1+tU4SRdEp6aLdU821q78nuw0QJfrcnhSUP+jaC
-	 u/Zxc5nLxDbWO17cVZkH47a4gjmGk4H4KYtPopKhIDoOFdhOnWgx7I7CMiW0acUNDP
-	 A6bBds09S2i0BmNPQ/9RqFxMXUU+jq4Vm+5FaPm4=
-Date: Thu, 26 Sep 2024 20:48:19 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Prabhakar <prabhakar.csengg@gmail.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 11/11] media: i2c: ov5645: Report streams using frame
- descriptors
-Message-ID: <20240926174819.GK21788@pendragon.ideasonboard.com>
-References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240910170610.226189-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <ZvWBlivUaZ92KoAI@kekkonen.localdomain>
+	s=arc-20240116; t=1727373045; c=relaxed/simple;
+	bh=ov/TAlvdMAcCcocKl4WI6KQsu/GEvEkh2XbLm61JsHI=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=ZdJgnJ7tRWUHzR0U7fb68x78wElmq9lhuSIg1iWfHa2R4KFA8gEGT7cChIV420ONq/vO2EChC/ZylJKkN0OxHy+TIOnjzdC74xYThk5kEU1Stb/vMzm8mQ5YBbK7LPUg5wckOEZgQjV4xuaznS6OZu8mKoK+LV4votywuyzOSFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FcrfJlq/; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e03b3f48c65so1821185276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:50:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727373043; x=1727977843; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JvSamZqIAhjdfYEY8+najrPm2eihOyHwiLOs5JRJ4Gc=;
+        b=FcrfJlq/oW4a0eRILyvNfgdgRb89uaKLHvffE+oiDx/1u42hRw8go+IWrQK4LGn0Au
+         n+LX25FwAhKsYApanmE6pylTox/LgV+C6zHC9jNbcB60tGFqZlKVOhzfCA+yxlG1hHsA
+         Ay1+vuOqPBa2zBIfT4Wr6DXedYsNR7iNsh9sBqZJ0zXfWXiFqNvZKYx2IXrw9I/SFYVw
+         D50yfDL2C1wxudDJ0Ci7hxAJzkfEG7+yop3Z2mAmkXa9BVSND4uo5brBJz5jEC0U2zA6
+         9gLUixOraknHckVNcxvhVuQtYpvJZSC46tQXdz4fbP7aBeTKjpAze2cGsVHIsO7uuFWb
+         oVyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727373043; x=1727977843;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JvSamZqIAhjdfYEY8+najrPm2eihOyHwiLOs5JRJ4Gc=;
+        b=Nolkn6d0DMPNXYKoCPqIxPDlmhI9yqdAz8cCoy6QK+OMVXElK7Mumj4DzdpoyYcJ1H
+         Lzu3nUMy11XD1kMo3DGAK/vgHSIVFMGHtoYGzQKJ9psYPeMTD23s47YN20TlpvUBUsvY
+         zTgA8nm0VxinLfupQAMytBdZKZroSWBW85mgLacTM2PKK6JPK268ehXlYCuPDXb6ZatD
+         4YWYW8oIpEDGE1x7w79fVizeUg/4epNucH8GvlvCD13SpCXfT9zrdIiICYIgI+8+Yjof
+         1tWU+RtoP9P8sYcRn3pci+1zspTIIJ1QsSksWsn47J6z6FybNhFpdk8fWOwuH71/1mQ9
+         Bv3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVjb5aW9LXKpRCiTQGSnENYgHFIbHrJZ94stZ0HkE0+X0Ns2Vp8iL6D25z2FVZjsUkH9+E797GF5A6//Ls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSoDL0F7jcxi8+7+5KyZD0cp0tOnOWU5Sh+K4PYHV+fzlGYFYc
+	KHw6UhOaOtHXJVHdI8TqyZQVsMJ1oee+pu7wSl7T4Gq5QGJagVRgYf6xJP7kfxZN2YJBjeHMcnQ
+	e+IThUw==
+X-Google-Smtp-Source: AGHT+IE94gNIgVpsH2JG372X3pJtADKswnMsg7TvS0BThvzWmkQiPK4fbz8enpa0vH5yOF+Hp9JB+rFTzvYS
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:8872:3585:18ed:a056])
+ (user=irogers job=sendgmr) by 2002:a25:26cc:0:b0:e1d:7ce:4844 with SMTP id
+ 3f1490d57ef6-e2604b3bbd2mr342276.4.1727373043021; Thu, 26 Sep 2024 10:50:43
+ -0700 (PDT)
+Date: Thu, 26 Sep 2024 10:50:13 -0700
+Message-Id: <20240926175035.408668-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZvWBlivUaZ92KoAI@kekkonen.localdomain>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Subject: [PATCH v4 00/22] Python generated Intel metrics
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Perry Taylor <perry.taylor@intel.com>, 
+	Samantha Alt <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 26, 2024 at 03:45:26PM +0000, Sakari Ailus wrote:
-> Hi Prabhakar,
-> 
-> Thanks for the set. It looks largely very nice to me, after addressing
-> Laurent's comments. A few comments here and possibly on other patches...
-> 
-> On Tue, Sep 10, 2024 at 06:06:10PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > 
-> > Implement the .get_frame_desc() subdev operation to report information
-> > about streams to the connected CSI-2 receiver. This is required to let
-> > the CSI-2 receiver driver know about virtual channels and data types for
-> > each stream.
-> > 
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  drivers/media/i2c/ov5645.c | 28 ++++++++++++++++++++++++++++
-> >  1 file changed, 28 insertions(+)
-> > 
-> > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-> > index 7f1133292ffc..c24eb6e7a7b5 100644
-> > --- a/drivers/media/i2c/ov5645.c
-> > +++ b/drivers/media/i2c/ov5645.c
-> > @@ -28,6 +28,7 @@
-> >  #include <linux/regulator/consumer.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/types.h>
-> > +#include <media/mipi-csi2.h>
-> >  #include <media/v4l2-ctrls.h>
-> >  #include <media/v4l2-event.h>
-> >  #include <media/v4l2-fwnode.h>
-> > @@ -829,6 +830,32 @@ static const struct v4l2_ctrl_ops ov5645_ctrl_ops = {
-> >  	.s_ctrl = ov5645_s_ctrl,
-> >  };
-> >  
-> > +static int ov5645_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-> > +				 struct v4l2_mbus_frame_desc *fd)
-> > +{
-> > +	const struct v4l2_mbus_framefmt *fmt;
-> > +	struct v4l2_subdev_state *state;
-> > +
-> > +	if (pad != OV5645_PAD_SOURCE)
-> > +		return -EINVAL;
-> 
-> As you have a single source pad, and pretty much all sensor drivers will, I
-> think it'd be nice to add a check for this (that it's not an internal pad)
-> to the caller side in v4l2-subdev.c. And of course drop this one.
+Generate twenty sets of additional metrics for Intel. Rapl and Idle
+metrics aren't specific to Intel but are placed here for ease and
+convenience. Smi and tsx metrics are added so they can be dropped from
+the per model json files. There are four uncore sets of metrics and
+eleven core metrics. Add a CheckPmu function to metric to simplify
+detecting the presence of hybrid PMUs in events. Metrics with
+experimental events are flagged as experimental in their description.
 
-What check would you add, just verifying that the pad is a source pad ?
+The patches should be applied on top of:
+https://lore.kernel.org/lkml/20240926174101.406874-1-irogers@google.com/
 
-> > +
-> > +	state = v4l2_subdev_lock_and_get_active_state(sd);
-> > +	fmt = v4l2_subdev_state_get_format(state, OV5645_PAD_SOURCE, 0);
-> > +	v4l2_subdev_unlock_state(state);
-> > +
-> > +	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-> > +	fd->num_entries = 1;
-> > +
-> > +	memset(fd->entry, 0, sizeof(fd->entry));
-> > +
-> > +	fd->entry[0].pixelcode = fmt->code;
-> > +	fd->entry[0].stream = 0;
-> > +	fd->entry[0].bus.csi2.vc = 0;
-> > +	fd->entry[0].bus.csi2.dt = MIPI_CSI2_DT_YUV422_8B;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int ov5645_enum_mbus_code(struct v4l2_subdev *sd,
-> >  				 struct v4l2_subdev_state *sd_state,
-> >  				 struct v4l2_subdev_mbus_code_enum *code)
-> > @@ -1062,6 +1089,7 @@ static const struct v4l2_subdev_video_ops ov5645_video_ops = {
-> >  };
-> >  
-> >  static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
-> > +	.get_frame_desc = ov5645_get_frame_desc,
-> >  	.enum_mbus_code = ov5645_enum_mbus_code,
-> >  	.enum_frame_size = ov5645_enum_frame_size,
-> >  	.get_fmt = v4l2_subdev_get_fmt,
-> > 
+v4. Experimental metric descriptions. Add mesh bandwidth metric. Rebase.
+v3. Swap tsx and CheckPMU patches that were in the wrong order. Some
+    minor code cleanup changes. Drop reference to merged fix for
+    umasks/occ_sel in PCU events and for cstate metrics.
+v2. Drop the cycles breakdown in favor of having it as a common
+    metric, spelling and other improvements suggested by Kan Liang
+    <kan.liang@linux.intel.com>.
+
+Ian Rogers (22):
+  perf jevents: Add RAPL metrics for all Intel models
+  perf jevents: Add idle metric for Intel models
+  perf jevents: Add smi metric group for Intel models
+  perf jevents: Add CheckPmu to see if a PMU is in loaded json events
+  perf jevents: Mark metrics with experimental events as experimental
+  perf jevents: Add tsx metric group for Intel models
+  perf jevents: Add br metric group for branch statistics on Intel
+  perf jevents: Add software prefetch (swpf) metric group for Intel
+  perf jevents: Add ports metric group giving utilization on Intel
+  perf jevents: Add L2 metrics for Intel
+  perf jevents: Add load store breakdown metrics ldst for Intel
+  perf jevents: Add ILP metrics for Intel
+  perf jevents: Add context switch metrics for Intel
+  perf jevents: Add FPU metrics for Intel
+  perf jevents: Add Miss Level Parallelism (MLP) metric for Intel
+  perf jevents: Add mem_bw metric for Intel
+  perf jevents: Add local/remote "mem" breakdown metrics for Intel
+  perf jevents: Add dir breakdown metrics for Intel
+  perf jevents: Add C-State metrics from the PCU PMU for Intel
+  perf jevents: Add local/remote miss latency metrics for Intel
+  perf jevents: Add upi_bw metric for Intel
+  perf jevents: Add mesh bandwidth saturation metric for Intel
+
+ tools/perf/pmu-events/intel_metrics.py | 1046 +++++++++++++++++++++++-
+ tools/perf/pmu-events/metric.py        |   52 ++
+ 2 files changed, 1095 insertions(+), 3 deletions(-)
 
 -- 
-Regards,
+2.46.1.824.gd892dcdcdd-goog
 
-Laurent Pinchart
 
