@@ -1,143 +1,223 @@
-Return-Path: <linux-kernel+bounces-340193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A84986FA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:10:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D1E986FAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0EBF1C21D51
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:10:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888462853C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2221AB50F;
-	Thu, 26 Sep 2024 09:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1081ABEB9;
+	Thu, 26 Sep 2024 09:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="aU57QyCA"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fNVmxQJi"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B831B1A7256
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA6E1AB6CA
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727341819; cv=none; b=M1YPF5j8mSBFgD12Cdmbuu2jvJVMS7FszpSGDSUi5MUivy/0ToETPppxITz4h0COh/Pw6P784JlgSeq9dze46AxDs239EVX64AzIC3MPNIxm25G32ELKfH2nUBDd0ZYuPhrFET5D/B1BCVqNZs7ETSWoNhlGiEsyFsap0r7SQOc=
+	t=1727341839; cv=none; b=cazqQ/p4hlBOImIp0rgZUZ55wH4xFM9j5VSEgbC4ljeiPC6MbzbWe82twx8y+EM7uvxc6ql0ARa4PYSRN6oT9csGADCjtqa3QXbleLr9WvdubtKVAqx2glhbDIqrmn9/0uvmor0VltvybQLZtdmdT1fewvfrG0U83gIT4SdCvck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727341819; c=relaxed/simple;
-	bh=2GGzbBOZzMalzfQuVIFstcxqsDH6UHQRgJ518ClGRvA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a6pCRGaDn5EkVXnK4p9u8ObgbGQbkw0TjbhfHgyjjov8mGRLbT3YsX3u74NKoOnUcU05OefEGtdqaY1bUKYTN2I7huc+Ex+JjVStMjGYwS2oKiMv7QgwBOlOY0W6o4xswWR/qnaJrnfjRz0I+O1/B5tYGOX70VzK7n8PvUuE+g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=aU57QyCA; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f6580c2bbfso15421671fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 02:10:16 -0700 (PDT)
+	s=arc-20240116; t=1727341839; c=relaxed/simple;
+	bh=STUbkF2D7PEb9w5HvCgXGFkhOaSDqLJXd2v/oBb+YHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YYyIAwFQ6lhaJiB4wl6n6+gHpddKUbAObYTfsoUEX5oTGKQcD743f9RIiq6zKMYrrz48gdkkr+SARPq4qj3ddNcsVC6PKyqad0T4lpxZBr4R87TshN++CgVqKoVP/5XQrH0erAdv5LvxHepGqP/+cquXZIRjlzc6L81pBXC3o8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fNVmxQJi; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8a7903cb7dso51487066b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 02:10:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727341815; x=1727946615; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nwh2O4COiSTp2jISjGLzQlyIogx86g9K0lfDOU1b2Qc=;
-        b=aU57QyCAQyWNse3uraCdSS8HASfDFceGfxuVu9CuJ90/ToHfTW29ULdTIX4SSUqoQi
-         YIsNHCMa4+8JS5rda0+JTzHEA5PMD/LwHTwyDXOv8HWQHtKpBvoJsMfKQv47cXK9Tnp0
-         voDieSgY2a5cPc34vipd4uZp5Y1AcLkJ0cbiRsrHjKxAt/JijapI7RHHJQik+5bWd+TY
-         2i9gt1amGIUApA9gxHlZiOdIHZmdn7mCsrVe1lkTUoB0vUTen++Zw9jEdeVVgCh/bI97
-         pOAv8K+XIPJfsr3WEV95JIBHEVN0R8exYpveLOi4fMe/TmHF7vAEG3JfW77idSuTsNX+
-         ZxKQ==
+        d=google.com; s=20230601; t=1727341836; x=1727946636; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SPCfLW65Bgc+pcLtC24hW0h6koYw5G/rTnRxS3iZa8U=;
+        b=fNVmxQJiPqq5a0VAAUtl08DmrlILP3X+QUi++8bOffQxbKlJW6zMvQpZNSbMmh/IND
+         5if32OaX3yr+mq/JshSUfCVScR7rVzlUFZ49j5cpBAjFZVyTXA8e1N284FiEzqywNnmx
+         dHnspFSU9YRMs8ozcWwtZJJNx4YLmgRAhWatPpQbjV3/80tXpoqDKHV5znNgtLjB43Li
+         AHQs3VcF+DyZLidjaeNIsgoyAnGhFlHoum79/tucLUwe0MArnHBTC16Xvgvz9Du1dhHX
+         ee8glfixRK9iO2P13NKp+KEM8TnqSx/xPQwNL7KSSn+YmRg2i38pAzRRnwMIXxb0Ae2C
+         aK1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727341815; x=1727946615;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nwh2O4COiSTp2jISjGLzQlyIogx86g9K0lfDOU1b2Qc=;
-        b=Zwz/ybJ71XOk8M8Biptnx9H2RMgN1nl1Q/wRI2ZhVhSe8Ha9jJ5pD2Q0zE3wzygO3f
-         4bLg7134PrpwkIqwaQEqWyDnHZ5arVp+mtQbnDkk4RvmBNX+KMIJeMIR0tdq5NpRniQ7
-         1dXsHSHYANTeOMZvTS02sy47ChKS78ikqjV6OUmNvX650TRQPNtygKjcA9ZuMZ6J2thS
-         vILVEGwg+FLRplDJO9B0qy6ZZxxl/l3OJw+7aP1zpikdmgpOYRGCUnRDyO+zzf2eYDqa
-         pVaoRa2Jcj+GnbwXI1GmYkJQ8nov2grlqBz7ihjeSRLH8dpfk3IPp0ufm0ILYmnAsoms
-         DLIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVF1dVCUf7uaJBPiQPn2x80xK8XcCxyyt5CDUZG6Meql3QCfB9tcjPoA7OoxA9YmmRZK3+4pHI2hdBZc9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzvn65WGd+Ri0QIJB3A6I/Sw5sUZwreEsEyaIrLcB0YyZlMBHkS
-	fVa/8afSn51NobakI5oiVjgKki6fjnrOYXNZyW1EdjBTzlEC/TgYnPM5t1Pxsjxd+hg/fJHVRQa
-	85uPSk+9wrTPRtyltrJD8TuuD/BI+TbTfaxTbJw==
-X-Google-Smtp-Source: AGHT+IEffVwqOiWH1hm4Kg4Qry51yeVEtAnmunyG4DBFSMVAq4X/LjJCgqD44Gbtme3TRPo5Fe1cXvksBoGdctM3PwE=
-X-Received: by 2002:a2e:e0a:0:b0:2f7:5bf9:117c with SMTP id
- 38308e7fff4ca-2f9c6d5b8c5mr5881681fa.21.1727341814639; Thu, 26 Sep 2024
- 02:10:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727341836; x=1727946636;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SPCfLW65Bgc+pcLtC24hW0h6koYw5G/rTnRxS3iZa8U=;
+        b=cC8UUzciXE/UfWFP4S8e12Z9CSEFWE9eis48lX38hLmHiNFU6SxioS5Jpknx0rYTZp
+         OMApXa4NTbVOmwfFqF1t2NseywSMnDmgZ1eEjR2tJqqTAye3JyDiTEeNAGtzZeS9qEXv
+         kBX098E5ex/PqFRh+jJ6vuSzId/0Q2UsI5Z9UPFA9i38aB4pWQcPqI3WSXRptHLsqyup
+         NgFN2LmwF+z913PlYCZ0kZIlzdQditdnixdogX9sFsG0hi3ZvqCWvt3JCScMh+BV/6g4
+         PK3n9Zd43uo4Fa60UWdJD5KaMS4LX7hBzSRSTl0ttixxVeOQfgN3JiZs9XwIc1xJMpqS
+         ynYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhadEM2PpPRe0EkhqmI+iXjMAPNqD2HXfh3eKdN4OqkPQtr62qeV+McAT/7IljXw+6AQcIlrU/G/KWLYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY6Y5ISyXOav73+q3yyM44e1rNnZPFtH5WeGieEmLLBTBisGJx
+	1rVUPrqumbEQSppQoy5ktoeFNWT3VF59iZ9AYIuggGqAOw6her7UpVn0J3CLBg==
+X-Google-Smtp-Source: AGHT+IF1zGbZgJtThysJsgJ9f7i/Gra9R+oVe06RBTw0xlDlNU/cBu54lHZO5DFMJCBAU+mCOVYL8Q==
+X-Received: by 2002:a05:6402:1e92:b0:5c4:1d22:9f65 with SMTP id 4fb4d7f45d1cf-5c72074d053mr5723990a12.24.1727341835299;
+        Thu, 26 Sep 2024 02:10:35 -0700 (PDT)
+Received: from google.com (118.240.90.34.bc.googleusercontent.com. [34.90.240.118])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf49dbbdsm2910522a12.57.2024.09.26.02.10.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 02:10:34 -0700 (PDT)
+Date: Thu, 26 Sep 2024 09:10:31 +0000
+From: Quentin Perret <qperret@google.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com,
+	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
+	qyousef@layalina.io, hongyan.xia2@arm.com
+Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
+Message-ID: <ZvUlB8s-zIkDQji7@google.com>
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+ <20240830130309.2141697-5-vincent.guittot@linaro.org>
+ <Zu2gHOv7mqArWXLZ@google.com>
+ <CAKfTPtCvwPq+8pQcTZePiee9EXxKAQS=J57X2OavWFrQwkDt5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com> <20240923101206.3753-3-antoniu.miclaus@analog.com>
-In-Reply-To: <20240923101206.3753-3-antoniu.miclaus@analog.com>
-From: David Lechner <dlechner@baylibre.com>
-Date: Thu, 26 Sep 2024 11:10:03 +0200
-Message-ID: <CAMknhBFS3To1X4BBmaxLJPid5M=tjFv-9cQqG7Z0g0ndF24MpA@mail.gmail.com>
-Subject: Re: [PATCH 2/7] iio: backend: add support for data size set
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, 
-	Olivier Moysan <olivier.moysan@foss.st.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Marcelo Schmitt <marcelo.schmitt@analog.com>, 
-	=?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>, 
-	Dumitru Ceclan <mitrutzceclan@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Alisa-Dariana Roman <alisadariana@gmail.com>, Marius Cristea <marius.cristea@microchip.com>, 
-	Sergiu Cuciurean <sergiu.cuciurean@analog.com>, Dragos Bogdan <dragos.bogdan@analog.com>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pwm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtCvwPq+8pQcTZePiee9EXxKAQS=J57X2OavWFrQwkDt5A@mail.gmail.com>
 
-On Mon, Sep 23, 2024 at 12:16=E2=80=AFPM Antoniu Miclaus
-<antoniu.miclaus@analog.com> wrote:
->
-> Add backend support for setting the data size used.
->
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
->  drivers/iio/industrialio-backend.c | 21 +++++++++++++++++++++
->  include/linux/iio/backend.h        |  3 +++
->  2 files changed, 24 insertions(+)
->
-> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industriali=
-o-backend.c
-> index 53ab6bc86a50..a6a6bedce7f1 100644
-> --- a/drivers/iio/industrialio-backend.c
-> +++ b/drivers/iio/industrialio-backend.c
-> @@ -473,6 +473,27 @@ int iio_backend_interface_type_get(struct iio_backen=
-d *back,
->  }
->  EXPORT_SYMBOL_NS_GPL(iio_backend_interface_type_get, IIO_BACKEND);
->
-> +/**
-> + * iio_backend_data_size_set - set the data width/size in the data bus.
-> + * @back: Backend device
-> + * @size: Size in bits
-> + *
-> + * Some frontend devices can dynamically control the word/data size on t=
-he
-> + * interface/data bus. Hence, the backend device needs to be aware of it=
- so
-> + * data can be correctly transferred.
-> + *
-> + * RETURNS:
-> + * 0 on success, negative error number on failure.
-> + */
-> +ssize_t iio_backend_data_size_set(struct iio_backend *back, ssize_t size=
-)
+Hi Vincent,
 
-Why signed size? When will it be < 0?
+On Wednesday 25 Sep 2024 at 15:27:45 (+0200), Vincent Guittot wrote:
+> On Fri, 20 Sept 2024 at 18:17, Quentin Perret <qperret@google.com> wrote:
+> >
+> > Hi Vincent,
+> >
+> > On Friday 30 Aug 2024 at 15:03:08 (+0200), Vincent Guittot wrote:
+> > > Keep looking for an energy efficient CPU even when the system is
+> > > overutilized and use the CPU returned by feec() if it has been able to find
+> > > one. Otherwise fallback to the default performance and spread mode of the
+> > > scheduler.
+> > > A system can become overutilized for a short time when workers of a
+> > > workqueue wake up for a short background work like vmstat update.
+> > > Continuing to look for a energy efficient CPU will prevent to break the
+> > > power packing of tasks.
+> > >
+> > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > > ---
+> > >  kernel/sched/fair.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > > index 2273eecf6086..e46af2416159 100644
+> > > --- a/kernel/sched/fair.c
+> > > +++ b/kernel/sched/fair.c
+> > > @@ -8505,7 +8505,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
+> > >                   cpumask_test_cpu(cpu, p->cpus_ptr))
+> > >                       return cpu;
+> > >
+> > > -             if (!is_rd_overutilized(this_rq()->rd)) {
+> > > +             if (sched_energy_enabled()) {
+> >
+> > As mentioned during LPC, when there is no idle time on a CPU, the
+> > utilization value of the tasks running on it is no longer a good
+> > approximation for how much the tasks want, it becomes an image of how
+> > much CPU time they were given. That is particularly problematic in the
+> > co-scheduling case, but not just.
+> 
+> Yes, this is not always true when overutilized and  true after a
+> certain amount of time. When a CPU is fully utilized without any idle
+> time anymore, feec() will not find a CPU for the task
 
-> +{
-> +       if (!size)
-> +               return -EINVAL;
-> +
-> +       return iio_backend_op_call(back, data_size_set, size);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(iio_backend_data_size_set, IIO_BACKEND);
-> +
+Well the problem is that is might actually find a CPU for the task -- a
+co-scheduled task can obviously look arbitrarily small from a util PoV.
+
+> >
+> > IOW, when we're OU, the util values are bogus, so using feec() is frankly
+> > wrong IMO. If we don't have a good idea of how long tasks want to run,
+> 
+> Except that the CPU is not already fully busy without idle time when
+> the system is overutilized. We have  ~20% margin on each CPU which
+> means that system are overutilized as soon as one CPU is more than 80%
+> utilized which is far from not having idle time anymore. So even when
+> OU, it doesn't mean that all CPUs don't have idle time and most of the
+> time the opposite happens and feec() can still make a useful decision.
+
+My problem with the proposed change here is that it doesn't at all
+distinguish between the truly overloaded case (when we have more compute
+demand that resources) from a system with a stable-ish utilization at
+90%. If you're worried about the latter, then perhaps we should think
+about redefining the OU threshold some other way (either by simply
+making higher or configurable, or changing its nature to look at the
+last time we actually got idle time in the system). But I'm still rather
+opinionated that util-based placement is wrong for the former.
+
+And for what it's worth, in my experience if any of the big CPUs get
+anywhere near the top of their OPP range, given that the power/perf
+curve is exponential it's being penny-wise and pound-foolish to
+micro-optimise the placement of the other smaller tasks from an energy
+PoV at the same time. But if we can show that it helps real use-cases,
+then why not.
+
+> Also, when there is no idle time on a CPU, the task doesn't fit and
+> feec() doesn't return a CPU.
+
+It doesn't fit on that CPU but might still (incorrectly) fit on another
+CPU right?
+
+> Then, the old way to compute invariant utilization was particularly
+> sensible to the overutilized state because the utilization was capped
+> and asymptotically converging to max cpu compute capacity but this is
+> not true with the new pelt and we can go above compute capacity of the
+> cpu and remain correct as long as we are able to increase the compute
+> capacity before that there is no idle time. In theory, the utilization
+> "could" be correct until we reach 1024 (for utilization or runnable)
+> and there is no way to catch up the temporary under compute capacity.
+> 
+> > the EM just can't help us with anything so we should stay away from it.
+> >
+> > I understand how just plain bailing out as we do today is sub-optimal,
+> > but whatever we do to improve on that can't be doing utilization-based
+> > task placement.
+> >
+> > Have you considered making the default (non-EAS) wake-up path a little
+> > more reluctant to migrations when EAS is enabled? That should allow us
+> > to maintain a somewhat stable task placement when OU is only transient
+> > (e.g. due to misfit), but without using util values when we really
+> > shouldn't.
+> >
+> > Thoughts?
+> 
+> As mentioned above OU doesn't mean no idle time anymore and in this
+> case utilization is still relevant
+
+OK, but please distinguish this from the truly overloaded case somehow,
+I really don't think we can 'break' it just to help with the corner case
+when we've got 90% ish util.
+
+> In would be in favor of adding
+> more performance related decision into feec() similarly to have is
+> done in patch 3 which would be for example that if a cpu doesn't fit
+> we could still return  a CPU with more performance focus
+
+Fine with me in principle as long as we stop using utilization as a
+proxy for how much a task wants when it really isn't that any more.
+
+Thanks!
+Quentin
+
+> >
+> > Thanks,
+> > Quentin
+> >
+> > >                       new_cpu = find_energy_efficient_cpu(p, prev_cpu);
+> > >                       if (new_cpu >= 0)
+> > >                               return new_cpu;
+> > > --
+> > > 2.34.1
+> > >
+> > >
 
