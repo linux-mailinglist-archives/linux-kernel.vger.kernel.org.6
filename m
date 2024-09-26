@@ -1,139 +1,167 @@
-Return-Path: <linux-kernel+bounces-340622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B57839875F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:50:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC5C9875FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A1D4B24299
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:50:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D33F91C24F2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE74314D71D;
-	Thu, 26 Sep 2024 14:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nsjk5IvD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AD714AD2D;
+	Thu, 26 Sep 2024 14:51:26 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B8014B95F;
-	Thu, 26 Sep 2024 14:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93299146A7A
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727362224; cv=none; b=jVSfPDKrdYnECSKZhvsXfoLo3/gwMjawkQK0V8kZdih2NejTEOiN0+sstYFuEB1nidKPuqCUiNe7pKA2DZTCMMRzrIDC/+Ncp8geoOFDQu1YIcZvIG2IWbHHhJHbkD4TjWSDQHhNmReHLq54RU+sNbVMgHimoUQDfzm88y0SfNE=
+	t=1727362286; cv=none; b=shIvAO44xsoCttxAWGEA7JhT9lNI/3+HG1/TyVWI5nbHGCGKBSikYHyUy+EKYdUJceWa2/sqfr2tWXpcdLAYqMIVNdxhNrnmnlPjoMzXCnYdaraoXsQgEeDIBRzPV48iukGT52Jw7MLHFxSSEzFFM7tvD9FnRPt87ZBF1Ot3R88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727362224; c=relaxed/simple;
-	bh=DpikC1E27zuL0wCIKPi24YtRVZOUfVZJKoLwsdwtr1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ITvjUk5ifHQxfZ4q5nT+0UIfBYAlu2szalsr32y7d5PxG0XXUj82qfZDECoW66OWb/H16xaMVh1E2S35r1Zx513kkt7Wxc7EZIWd7hSsYhnWhFdX27V0qwJjse07BSv8F+Q3CHFXwnHwXxAKTWe+S1bFeuC5HXceyI52g4mBo08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nsjk5IvD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0819C4CEC5;
-	Thu, 26 Sep 2024 14:50:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727362223;
-	bh=DpikC1E27zuL0wCIKPi24YtRVZOUfVZJKoLwsdwtr1o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Nsjk5IvDJ2Gr4XhWdQVtMRs41XXCXrmT/DzNqdDGnURk6lVwqVvagaFkRDtAUJUC7
-	 q0wZRMKXCladO8qoRBi7FDRNI+iV7TcJTkMBzlGqzVbxPeSkTts9OFULWZJwPESnFo
-	 js8PyAYNW/XSu9kfWIc56rQpPjub4UGsUrbQjymEoX1M2AbydpHuIHgWKAY3nMLf3k
-	 rCuMpGjqBly/dSgjcxfIvPv1u7rCxcd6kJa0XHFNJKkxOmxy3hHayrtkfr0dfjMMB0
-	 sUZx3h228tKtCGmkV6r/rah/lZ4N57l7jVsO2SoJFxK0HoGiRDLRyuA7lM7cdmp/Lc
-	 F7l1PBoyHbQWg==
-Message-ID: <6a6ed991-ac15-4b2b-99b9-cd14314a98aa@kernel.org>
-Date: Thu, 26 Sep 2024 09:50:16 -0500
+	s=arc-20240116; t=1727362286; c=relaxed/simple;
+	bh=tfyLEcxwApaUw4J3qs9B/uHIRaFGr1MiOAr/a5jrMP4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=R3orUPJuEIPmBtNb3gbhf5Fv7gLO68pgy3FQzXI3tvGRfSeWMwmpn1jNB9jhGdLHMhYwZev7b+61Tmewbi39ya0DiAdPFrdHG/MLaOF6avpnHe8OFeyGoSK+vSDhfDFndFWjMQJ9yy2ROh8ibMu0C85ALN/VvwkUIuGfyu+lQ5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82aa499f938so168794039f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:51:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727362284; x=1727967084;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v1HQ/Lfsohoktuql0HRG6JowL8qNEgFtC2kvN5vfDVU=;
+        b=USTdgG2zT5lieplphz4AmyadzvmeUW6A2UBbyfZFYD8bKro4XapiPYxPDKJDYTTglq
+         ksJ9P/a+QmO5YZ82okn44pN/b0MbyJANJyZ78c8xzZdADn5Yjp7dqPO+HjoIb4fdn9gu
+         aiD6GIdUXCJDoUHnkGnJ1hQC+9UWLx05nbMLVn6eqMH7Ak5/SiLEQYiCCrF0niFX3Kv/
+         sPcS4u3yUXDTdDf/+vV+y1dV9guQEEjJICr9ksM7rw9Esscahxzq1if5Ere7TWpqaiLc
+         4qRvsyAdRytnwbWcQ4cbinYDLAoQLznjVnD9QUdB49BoASBCuysOUkgU7kRtGjRS1pNR
+         YdGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvprPyo9chobCfazToNm5R3hOfdgbWPo9qYHq7gSYIT4szH1FvuHVEUllSE4kEHKJ64BivgEFMYsVFYL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo8z5gDbrCevFJpfp0Z/RNUvhj5jOeexIAT9Z4x474U+JNCpzn
+	SZnWe5hJOPVjWFqf3UoUNexOERoubd99Jvxv3UZeO0iwpwxOwd0l567QeF0kqUG1zho+JJZ2mJP
+	5CsGcrztv2RZjuhjpGpPVFLHKX5Vaf28c6ON4P8n3ZKYtkfCYf9e7yHw=
+X-Google-Smtp-Source: AGHT+IE5q8iTzvKiO24R57q2O7GmO1h/ZNs41BSE8SMYpnLA8b3W75tM6glYDROpVifs1zn3q78v+3IXimthoVSSuXThGBoF/eU+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/9] platform/x86: introduce asus-armoury driver
-To: "Luke D. Jones" <luke@ljones.dev>, linux-kernel@vger.kernel.org
-Cc: linux-input@vger.kernel.org, bentiss@kernel.org, jikos@kernel.org,
- platform-driver-x86@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
- hdegoede@redhat.com, corentin.chary@gmail.com
-References: <20240926092952.1284435-1-luke@ljones.dev>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20240926092952.1284435-1-luke@ljones.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1d91:b0:3a1:f6ac:621e with SMTP id
+ e9e14a558f8ab-3a344607de1mr646225ab.7.1727362283749; Thu, 26 Sep 2024
+ 07:51:23 -0700 (PDT)
+Date: Thu, 26 Sep 2024 07:51:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f574eb.050a0220.211276.0076.GAE@google.com>
+Subject: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer dereference
+ in read_cache_folio
+From: syzbot <syzbot+4089e577072948ac5531@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/26/2024 04:29, Luke D. Jones wrote:
-> his is the first major patch I've ever done with the intention of
+Hello,
 
-s/his/This/
+syzbot found the following issue on:
 
-> introducing a new module, so it's highly likely I've made some mistakes
-> or misunderstood something.
-> 
-> TL;DR:
-> 1. introduce new module to contain bios attributes, using fw_attributes_class
-> 2. deprecate all possible attributes from asus-wmi that were added ad-hoc
-> 3. remove those in the next LTS cycle
-> 
-> The idea for this originates from a conversation with Mario Limonciello
-> https://lore.kernel.org/platform-driver-x86/371d4109-a3bb-4c3b-802f-4ec27a945c99@amd.com/
-> 
-> It is without a doubt much cleaner to use, easier to discover, and the
-> API is well defined as opposed to the random clutter of attributes I had
-> been placing in the platform sysfs.
-> 
-> There is some discussion on-going regarding the way tuning knobs such as
-> the PPT_* should work with platform_profile. This may result in the creation
-> of an extra profile type "Custom" to signify that the user has adjusted
-> things away from the defaults used by profiles such as "balanced" or "quiet".
+HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16084107980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ba9c4620d9519d1f
+dashboard link: https://syzkaller.appspot.com/bug?extid=4089e577072948ac5531
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11084107980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a0d880580000
 
-Yeah this is under discussion on my RFC patch series.  Based on the 
-outcome of that we can modify asus-armoury later on for it.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-88264981.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e96d7b6835d2/vmlinux-88264981.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0e1e66778641/Image-88264981.gz.xz
 
-> 
-> Regards,
-> Luke
-> 
-> Changelog:
-> - v1
->    - Initial submission
-> - v2
->    - Too many changes to list, but all concerns raised in previous submission addressed.
->    - History: https://lore.kernel.org/platform-driver-x86/20240716051612.64842-1-luke@ljones.dev/
-> - v3
->    - All concerns addressed.
->    - History: https://lore.kernel.org/platform-driver-x86/20240806020747.365042-1-luke@ljones.dev/
-> - v4
->    - Use EXPORT_SYMBOL_NS_GPL() for the symbols required in this patch series
->    - Add patch for hid-asus due to the use of EXPORT_SYMBOL_NS_GPL()
->    - Split the PPT knobs out to a separate patch
->    - Split the hd_panel setting out to a new patch
->    - Clarify some of APU MEM configuration and convert int to hex
->    - Rename deprecated Kconfig option to ASUS_WMI_DEPRECATED_ATTRS
->    - Fixup cyclic dependency in Kconfig
-> 
-> Luke D. Jones (9):
->    platform/x86: asus-wmi: export symbols used for read/write WMI
->    hid-asus: Add MODULE_IMPORT_NS(ASUS_WMI)
->    platform/x86: asus-armoury: move existing tunings to asus-armoury
->      module
->    platform/x86: asus-armoury: add panel_hd_mode attribute
->    platform/x86: asus-armoury: add the ppt_* and nv_* tuning knobs
->    platform/x86: asus-armoury: add dgpu tgp control
->    platform/x86: asus-armoury: add apu-mem control support
->    platform/x86: asus-armoury: add core count control
->    platform/x86: asus-wmi: deprecate bios features
-> 
->   .../ABI/testing/sysfs-platform-asus-wmi       |   17 +
->   drivers/hid/hid-asus.c                        |    1 +
->   drivers/platform/x86/Kconfig                  |   22 +
->   drivers/platform/x86/Makefile                 |    1 +
->   drivers/platform/x86/asus-armoury.c           | 1051 +++++++++++++++++
->   drivers/platform/x86/asus-armoury.h           |  257 ++++
->   drivers/platform/x86/asus-wmi.c               |  185 ++-
->   include/linux/platform_data/x86/asus-wmi.h    |   19 +
->   8 files changed, 1520 insertions(+), 33 deletions(-)
->   create mode 100644 drivers/platform/x86/asus-armoury.c
->   create mode 100644 drivers/platform/x86/asus-armoury.h
-> 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
 
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+Mem abort info:
+  ESR = 0x0000000086000006
+  EC = 0x21: IABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x06: level 2 translation fault
+user pgtable: 4k pages, 52-bit VAs, pgdp=00000000462cce00
+[0000000000000000] pgd=080000004468e003, p4d=08000000466cc003, pud=0800000046cd6003, pmd=0000000000000000
+Internal error: Oops: 0000000086000006 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 UID: 0 PID: 3265 Comm: syz-executor218 Tainted: G    B              6.11.0-syzkaller-08481-g88264981f208 #0
+Tainted: [B]=BAD_PAGE
+Hardware name: linux,dummy-virt (DT)
+pstate: 61400809 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=-c)
+pc : 0x0
+lr : filemap_read_folio+0x44/0xf4 mm/filemap.c:2363
+sp : ffff800088e6bac0
+x29: ffff800088e6bac0 x28: f1f000000474e000 x27: 0000000020ffd000
+x26: 0000000000000000 x25: 0000000000000000 x24: 0000000002100cca
+x23: f6f0000006cd5c00 x22: 0000000000000000 x21: f6f0000006cd5c00
+x20: 0000000000000000 x19: ffffc1ffc02e3300 x18: ffff800088e6bc20
+x17: ffff8000804fee60 x16: ffff80008052fe10 x15: 0000000000000001
+x14: 0000000000000000 x13: 0000000000000003 x12: 00000000000706a3
+x11: 0000000000000001 x10: ffff800081f19060 x9 : 0000000000000000
+x8 : fff07ffffd1f0000 x7 : fff000007f8e9d60 x6 : 0000000000000002
+x5 : ffffc1ffc02e3300 x4 : 0000000000000000 x3 : faf0000005491240
+x2 : 0000000000000000 x1 : ffffc1ffc02e3300 x0 : f6f0000006cd5c00
+Call trace:
+ 0x0
+ do_read_cache_folio+0x18c/0x29c mm/filemap.c:3821
+ read_cache_folio+0x14/0x20 mm/filemap.c:3853
+ freader_get_folio+0x1a8/0x1f8 lib/buildid.c:72
+ freader_fetch+0x44/0x164 lib/buildid.c:115
+ __build_id_parse.isra.0+0x98/0x2a8 lib/buildid.c:300
+ build_id_parse+0x18/0x24 lib/buildid.c:354
+ do_procmap_query+0x670/0x7a0 fs/proc/task_mmu.c:534
+ procfs_procmap_ioctl+0x2c/0x44 fs/proc/task_mmu.c:613
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __arm64_sys_ioctl+0xac/0xf0 fs/ioctl.c:893
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x48/0x110 arch/arm64/kernel/syscall.c:49
+ el0_svc_common.constprop.0+0x40/0xe0 arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x1c/0x28 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x34/0xec arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x100/0x12c arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x19c/0x1a0 arch/arm64/kernel/entry.S:598
+Code: ???????? ???????? ???????? ???????? (????????) 
+---[ end trace 0000000000000000 ]---
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
