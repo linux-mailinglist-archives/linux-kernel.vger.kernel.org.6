@@ -1,153 +1,142 @@
-Return-Path: <linux-kernel+bounces-340241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43BF987066
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:38:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB78987069
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DDC61F28976
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:38:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0E1F1C2486C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792E21AC422;
-	Thu, 26 Sep 2024 09:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6EF1AB6D1;
+	Thu, 26 Sep 2024 09:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HZGLDGGc"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DNDwJOTT"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119CE192595;
-	Thu, 26 Sep 2024 09:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E3D1AAE15
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727343507; cv=none; b=J6qpfhghf1tWrAjjgmK4g0bcF8mrsQkA0pIoakhDylPC3Mp0SkOPi5QuJ6lzKUNbemLHUNkPW1jVxMZ61+z189XhyuVDG1T1YYIuiORWKIpJbiPzFu0jQHdlv2znZaih39K+avPQ3Vt8mWzaUfKGFFXWYuURg05I1AulyWGrIvs=
+	t=1727343544; cv=none; b=GKJDsklWF2kCePdzXa71LEowmePBUtxIus5tNX4/Dl2KfLlXmBfYm+EtJmWJDGLwPyIBq9Yoo+Pq06UCuKbax9ydifhp06CDNALLz+Vv1eE9W/9K/hHwQY921adDIxvnODTobhnPMt+PeBXeiv2paYSfEHQ5boVnwS0r9gvpRpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727343507; c=relaxed/simple;
-	bh=7p82Z+0K/eh4XfuDiQGpTvGvbH3Kqj994es0zyo9h2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V/q8S6canAXas/+Hpu8Zh63A0QxXkz4xmud9oLNjx2UXMvhH1z/LxE0hlHwEVKlhe2RQLnI6lGaOzmpJAMXp8lczj//eElk+lpiKrBHIxRQDg3nnrPO26AuthEKHnevmPbSUd3FK0Ps9oNtXXtfZ9kmvDho0nuaZ6ygbyaeQbGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HZGLDGGc; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727343503;
-	bh=7p82Z+0K/eh4XfuDiQGpTvGvbH3Kqj994es0zyo9h2o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HZGLDGGcTzSqmFrsD6xl58A2Yj+XdU/wYAjesI8ExXUhHFBFFPXDYHLguwq/Qmh9j
-	 zhw+ZoLkrcGpwTWsV9LzzD0CUaZUKZI+6V4BbdiaAj0pKYa1PiFfBmgliB8/c74O0C
-	 j468Yl+8mDdbBU9b0OsZcPfwd5/CqnNCfp91OauB6YwsUc486MARmTYQPeIoweIgWU
-	 5oG7xbgOX0pwfO0n2eJlL8gBwpwQKqaOZwoyWuaYbig1wcFpPn16FEGhIkSmsNqJgV
-	 qbopcnutnivTro5SNGl4CssyrbK3dO7XkhLD3qL+K1BvLqKxUpZW/jcUexE012XBoM
-	 elcSX6ScQOYFg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 36D2117E10AF;
-	Thu, 26 Sep 2024 11:38:22 +0200 (CEST)
-Message-ID: <7a1315ef-4be5-4528-858b-9f07c814636d@collabora.com>
-Date: Thu, 26 Sep 2024 11:38:21 +0200
+	s=arc-20240116; t=1727343544; c=relaxed/simple;
+	bh=44hQx7AWS11P7gR6JRYZM6ZBLNvn/Mupzf7ndbZKPl0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sCdBpkrG4bMvo1g2ZBzMJCMB/EpqijlwAB6wp23mDGBkBK9T/ndU7V4ctSdI9fsG0/gQ/uNk4wTSi88cxo3aSJSxpQtSmPEgEsmY/tyNR9Ywsocmyv+GBDLrUtEi4SmFqwoevNG0xq/TAuaJIDK2CwSwRKpWeghacrX3oW51eS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DNDwJOTT; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e22f0be237so14552527b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 02:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727343542; x=1727948342; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ycHQDAR/krWFA5kAhgmXvoNx6Yn5beF8hwbiGL9F7lk=;
+        b=DNDwJOTT1pue19yJUKDo/TO66aqv9ZvnFTe1LetpFDJ4LS3jo9hWAA9mq/EkRQfEPP
+         nEzYqlntc4eVDvPNes25vEU77uqdeVBXKzkTrCrISJEEpAWJCyOLoTyzAOsn62I5IN4e
+         a2Ui03ELTuVJ+spCI2zq8KaJD1QxxQW7FFfKFHujMuMUoEMmBcXZikfIegFMthF65XEh
+         uEJPUK4IyhQ+lFlJyWJ08btkDY3w+xRyNkyDnsTIoS1F6dobNkt0QqSzqMMFDFX6zWgL
+         QpcaRx0V6D9AgL4ypK3WI5ftCAFzP/niTltJVQJlNm+C/pW7xK8xUMX5+0o7pDejw/Yr
+         GCeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727343542; x=1727948342;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ycHQDAR/krWFA5kAhgmXvoNx6Yn5beF8hwbiGL9F7lk=;
+        b=Od62koFt05cWHu2+lziNsU7TjlcmX97bVUjixI8BH+U86j8MLiQCyZoSXUuy1Ympun
+         1OrLO+5xIvcXHBZjBirjnstlOIhmSC6ytUkHVXIb/zlWZcLjM58K1efLYIMirAFeBCai
+         RELg+6Co0ZBFiXM3CyJogIBlTo/svTvUxwvwNrOQyRIYp8HfW/+ALQlN4iP4UjHc866x
+         SagTKd0J+9y87h/+X1qV9f5ZxzH2r8kx40s6Y27Aj2yoXEatez2rsXQP2JuPimrmAgj4
+         U9kKEFTxt16i5gQam/+r/Eq5U7EltbulaG9hfl+Hh8buiTnhrnokeyLotqIiJiBzoUZF
+         /EIg==
+X-Forwarded-Encrypted: i=1; AJvYcCW740WuWKEZFa6mN8B7gfJ/ThGQrtCB2thMPay19xe5fcfAHjcSeuA/ovm60qW5dMRPuzibMN8zTqGzkLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEbmcpld3z/FHhoOFdmEeQsmqf07Q0xZ3gBcOB0cw6Zc0cDjIW
+	rBgUK4LIZcJoJYiPboV4lYZvfJxjPvCPp+9vOxNjwqcSbiDF+03AukC7oBrE0i6s+AEtBAkZSxl
+	ip+/zmmIke7B4pw==
+X-Google-Smtp-Source: AGHT+IGI4hqzrkhhJCbBX+0u1jgbq7QHbvPabBeCXkjShlZKlKGw2LZ89Vl5DG9ttbS7pImuenmlt1hsPJbX6tk=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a05:690c:64c3:b0:6dd:d138:d823 with SMTP
+ id 00721157ae682-6e21da1b6c6mr159737b3.8.1727343541682; Thu, 26 Sep 2024
+ 02:39:01 -0700 (PDT)
+Date: Thu, 26 Sep 2024 09:38:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] dt-bindings: display: mediatek: Fix clocks count
- constraint for new SoCs
-To: Conor Dooley <conor@kernel.org>, Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: moudy.ho@mediatek.com, macross.chen@mediatek.com,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org,
- Alexandre Mergnat <amergnat@baylibre.com>, Bear Wang
- <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
- Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>,
- Chris-qj chen <chris-qj.chen@mediatek.com>,
- MediaTek Chromebook Upstream
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-References: <20240924103156.13119-1-macpaul.lin@mediatek.com>
- <20240924103156.13119-3-macpaul.lin@mediatek.com>
- <ffc1900b-3921-48ca-a2b2-1b798c57e572@collabora.com>
- <20240924-commute-collision-13ad39717d31@spud>
- <2821ef09-1b32-082d-69d1-e09a3a302447@mediatek.com>
- <20240925-satisfy-epidermal-bd414891479a@spud>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240925-satisfy-epidermal-bd414891479a@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1650; i=aliceryhl@google.com;
+ h=from:subject; bh=44hQx7AWS11P7gR6JRYZM6ZBLNvn/Mupzf7ndbZKPl0=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm9StxLN2fyMJC8RkoiaRnVJ3U0C1IVmyAN7TNW
+ HhO0NvF9rGJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZvUrcQAKCRAEWL7uWMY5
+ RhpeD/9glYj/FpR0nzvYFBXYuU8aJNGdb7wa6fsW2XhjYMVw9JdRch0Ucrshe8mTuWl5JJ7QmvU
+ kaf/bPzLi2tkyHOvmSGX7qbqdlMAFwe+93OU9HZ0Fi9S0yfmS3utVQbRBOiQfgNjmVXbhSuR9qE
+ fa2v7n23faAumTsZG0KlwdvqHxNOm2Q/PUkCU8lEbD3RqAFhaoTDbKeqVfnvQahg/2mXNkT1ECu
+ vOdKuIkeNgP270KhzqSSr4KtQ8U7Mn9ISW7BLcfQutbvmaUQsg3BpJiV1+HiQqasKpwgT15Bnx3
+ dx0QePxcwA5jyn/9chocy7livqXv36Dt/iH3WK4wxV6rDrvJGBdBN7ZO3ymDXj8Ry8YRzjWh3Ro
+ s//K/tsXgYnME+NLId5qNta9o+0U3jqhRTT9DMC1UJxWLsYrfgjKQVHqcU8pBdrlatsrWDv2jj9
+ W9ak11xGM86HfxH/Arfb/s5CK+x0tthRhHSM8d+pGFtx4T4w/sPfRXiiokUlD3nYWeiGKjgOybI
+ dsLsmHd+rijr1dnkMCytT2EcmLw9z5RRUgcyOXku9IIbL6kOubLjb8yLbyTYHTnPXvotk6p+DAf
+ ipYapLHDDxI9mqQm6Ha3X9wjm9lR6bwpHLQ2nnvLF3Wr3TZiHI/uxz3dpkd7RDz5h2VFummtUv6 E8TD6vt692NwG3g==
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
+Message-ID: <20240926093849.1192264-1-aliceryhl@google.com>
+Subject: [PATCH] rust: KASAN+RETHUNK requires rustc 1.83.0
+From: Alice Ryhl <aliceryhl@google.com>
+To: ojeda@kernel.org
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, gary@garyguo.net, hpa@zytor.com, 
+	jpoimboe@kernel.org, linux-kernel@vger.kernel.org, masahiroy@kernel.org, 
+	mingo@redhat.com, nathan@kernel.org, nicolas@fjasle.eu, 
+	patches@lists.linux.dev, peterz@infradead.org, rust-for-linux@vger.kernel.org, 
+	tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Il 25/09/24 16:34, Conor Dooley ha scritto:
-> On Wed, Sep 25, 2024 at 04:42:59PM +0800, Macpaul Lin wrote:
->>
->> On 9/25/24 00:00, Conor Dooley wrote:
->>> On Tue, Sep 24, 2024 at 01:42:01PM +0200, AngeloGioacchino Del Regno wrote:
->>>> Il 24/09/24 12:31, Macpaul Lin ha scritto:
->>>>> The display node in mt8195.dtsi was triggering a CHECK_DTBS error due
->>>>> to an excessively long 'clocks' property:
->>>>>      display@14f06000: clocks: [[31, 14], [31, 43], [31, 44]] is too long
->>>>>
->>>>> To resolve this issue, add "maxItems: 3" to the 'clocks' property in
->>>>> the DT schema.
->>>>>
->>>>> Fixes: 4ed545e7d100 ("dt-bindings: display: mediatek: disp: split each block to individual yaml")
->>>>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
->>>>> ---
->>>>>     .../devicetree/bindings/display/mediatek/mediatek,split.yaml     | 1 +
->>>>>     1 file changed, 1 insertion(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
->>>>> index e4affc854f3d..42d2d483cc29 100644
->>>>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
->>>>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
->>>>> @@ -57,6 +57,7 @@ properties:
->>>>>       clocks:
->>>>>         items:
->>>>>           - description: SPLIT Clock
->>>>
->>>> That's at least confusing (granted that it works) - either add a description for
->>>> each clock and then set `minItems: 1` (preferred), or remove this "SPLIT Clock"
->>>> description and allow a maximum of 3 clocks.
->>>>
->>>> Removing the description can be done - IMO - because "SPLIT Clock" is, well,
->>>> saying that the SPLIT block gets a SPLIT clock ... stating the obvious, anyway.
->>>
->>> Right, but what are the other two new clocks? Are they as obvious?
->>> There's no clock-names here to give any more information as to what the
->>> other clocks are supposed to be.
->>>
->>> Kinda unrelated, but I think that "SPLIT Clock" probably isn't what the
->>> name of the clock in the IP block is anyway, sounds more like the name
->>> for it on the provider end..
->>
->> Thanks for the suggestions. I think Moudy could help on the new fixes
->> for both DT schem and mt8195.dtsi. This patch could be separated from
->> origin patch set.
-> 
-> Not sure what you mean about separating it, if you mean correcting the
-> description for the split clock sure. The other stuff I mentioned needs
-> to be resolved before I'm willing to ack this.
+When enabling both KASAN and RETHUNK, objtool emits the following
+warnings:
 
-He means separating this patch from the rest of the series that he pushed - which
-is okay, as it's a bit mixed anyway :-)
+    rust/core.o: warning: objtool: asan.module_ctor+0x13: 'naked' return found in MITIGATION_RETHUNK build
+    rust/core.o: warning: objtool: asan.module_dtor+0x13: 'naked' return found in MITIGATION_RETHUNK build
 
-Besides ... Moudy, can you please help to clarify the description of those clocks?
+This is caused by the -Zfunction-return=thunk-extern flag in rustc not
+properly informing LLVM about the mitigation, which means that the KASAN
+functions asan.module_ctor and asan.module_dtor are generated without
+the rethunk mitigation.
 
-Cheers,
-Angelo
+The other mitigations that we enabled for Rust (SLS, RETPOLINE) do not
+have the same bug, as they're being applied through the target-feature
+functionality instead.
+
+This is being fixed for rustc 1.83.0, so update Kconfig to reject this
+configuration on older compilers.
+
+Link: https://github.com/rust-lang/rust/pull/130824
+Fixes: d7868550d573 ("x86/rust: support MITIGATION_RETHUNK")
+Reported-by: Miguel Ojeda <ojeda@kernel.org>
+Closes: https://lore.kernel.org/all/CANiq72myZL4_poCMuNFevtpYYc0V0embjSuKb7y=C+m3vVA_8g@mail.gmail.com/
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ init/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/init/Kconfig b/init/Kconfig
+index fa734a144589..9a2bcba426c5 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1950,6 +1950,7 @@ config RUST
+ 	select CFI_ICALL_NORMALIZE_INTEGERS if CFI_CLANG
+ 	depends on !CALL_PADDING || RUSTC_VERSION >= 108100
+ 	depends on !KASAN_SW_TAGS
++	depends on !(MITIGATION_RETHUNK && KASAN) || RUSTC_VERSION >= 108300
+ 	help
+ 	  Enables Rust support in the kernel.
+ 
+-- 
+2.46.0.792.g87dc391469-goog
+
 
