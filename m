@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-339938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 957C8986C65
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:21:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E72986C66
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 027BBB252F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:21:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABE23B25492
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998F5188919;
-	Thu, 26 Sep 2024 06:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25BD188014;
+	Thu, 26 Sep 2024 06:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iX33sO8o"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="H2LOkvf6"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F459178397
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317E1185941
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727331652; cv=none; b=WplOItFHyCVOuciUpe3sgSdixSqCri/WJ0FS07d4dmeIgRC/+dZXR7RjZvO2EhrEDmXHAbLWAuL5TNCrhmOHnHurCS1dBWEVhWbXeXoFoM34+/0paDaHYLs+GamP/oe30lymOXbU9MVg5uTDfteIn+qrOiP/JK8ZJw7Fxm6dR9w=
+	t=1727331681; cv=none; b=JiJm84mhRbiGMmbWif6KoMVh1+jrjNO3xXVW09RiQCd/bndXPL8OwqN1G5ggNT60Zr57Q6FUVJb9tvGeR2Qisp8M9QGAOhsoQudxB8I9y40WYqX02VOAulUQtCvo50bGCu19Ly+T+QG/N3Rn993KLzKR8n+fINwG8JrwYsmasJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727331652; c=relaxed/simple;
-	bh=/NSdZP4J7/FYuBnftGWiw3R56u6cmpOjtZ5oYGrVELw=;
+	s=arc-20240116; t=1727331681; c=relaxed/simple;
+	bh=1pLxbC8I7m5jJNxnqEC6sj7C1ca8cV6A29jVK2+lQFo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NxYqCg5wXU2rS3isXtI36jO4WzG5TWcykRZy5HOBCp8hx9T+rPzi3yw0f5fBW5dvTWsME+gHHihjLST2J8GWnkxWUFC0ziVpWr33njgaGRF7fUav76CQXZ5CzIKw41Fb+mhXVi6l+AcdxsmIHz0iRwpvf+/5JJAMB6tqVwCVg8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iX33sO8o; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c87915e4f1so41539a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:20:50 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=ZIp/PL0Sg1YdIehrZmhOhrmedOOHA8WsJ2hJVGzNlmYEOVVIRLjyDZ6TLyhcB3Vihkmnk3vOqAcRH3lhWex63xPVCvRqqJ1iG8IoQXGZNAeCSzQ/dNnWZZP4h71SdeT/Trx5Lb0Swotug1lI8v8PRP1MAKo3RUJEafQsikQ5yWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=H2LOkvf6; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d100e9ce0so62911166b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:21:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727331649; x=1727936449; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=cQWy5A5BXxaneTnVxcRvOvXGhuaSax7wWVjqlQFgoNw=;
-        b=iX33sO8ov3bZBMTMvwk6BgkD/hx4fMH+QcNhag6MZlr+VY9Z4Gp5LvbDziKNMyzp7Y
-         uxizf2ExfLwvDqbgMBGnP8XhgOJFnvAvLGNhUwaZSqj6LlXpF1f8wQjO5K1W6vQUsOQo
-         94+THZbJNIp4ulAmiaW4csFMR0PuPin7mTHnXJor8wqJ1RP1SZ9vCdOr7mxgpZf7eUiW
-         Qfs8iIjXlHcw2cQ6WUiipcJwnqwehoW00Jw5fM+J2rj++64p646JfqNcY4bIM1KdJqz0
-         XiqxOHjuoFIFn9BkJPnnJFgARhEuS/2okUDOwWx0FBbnNMgZez6NNuflC1QMSS08Q6hl
-         5RBQ==
+        d=suse.com; s=google; t=1727331677; x=1727936477; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oYMCwkQPVxKJ+cMHOHVL5c+5ytaGE64SeE8g5ixOBss=;
+        b=H2LOkvf6723jQxMkj0NU2J6eql+i7LeBQKQvCat1N7UMPIXKjsNbUWeeW8xqmLtalZ
+         NZ8rlt+785Jqhuc12DOF0JjbBzQaR6PD718oHoOfWD1ZsxdlKQtOsPT0B3YLuP8/4/2T
+         n7tgZzoebTKdVmEbXKqTnqSsCs3V5/jdM0SfvylZf15iABMHkpFm3vfEjNizE+95QqTH
+         yt+L22pElkbXqpnic8SBF9ElsSAiwtEU7NkRrkHEXcY11CMpnlu1waIQ6fflEd0bKWqZ
+         wKsC5itTeWWkz1iT0fAixEHenRgtdobaFuBIxfPoG4D6s+f0OYURqbGs10k46QBrBAHS
+         AxTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727331649; x=1727936449;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cQWy5A5BXxaneTnVxcRvOvXGhuaSax7wWVjqlQFgoNw=;
-        b=bwrrSzZP4WGSOX8p/pcMWhPSys+xf63+xptpukCz08p0feOFZBREViRwXRBUIgYekZ
-         csTdfq9fTZgW2P6s1UjOUSFr0vj2HIHH3RQ3xl9gKVf1wXvDfDX4syxc/zFhwLOilXjT
-         v/8lY60Q19rkr/hslegyjCVzSef1HgHWewfvfzK6Y/Zcd6JWfeck3bh4UfipycmsJnog
-         ZoGY/MVyHVCgC+154flXnQLLQ/cJP9k6o1jKdqgfTmppd4JVWWKZJ5p/dvWAElMlpmLr
-         e6dUjHGKePQ2o7wdPlbaw+e7rXp9QM6YWCmEaXarYa14G5geaVdB/cTJnauGH/xufmNZ
-         xR1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUy0jYDWdv+jWejLhBW3LP1JtmxhenLOZSGR5NlP3VqRye2ARc55Mo1KOMEyyAo/r7In54KnxmQ8Q+pK+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy3QIDJnWMiSU1g+CY80NE1aQf62VDCgEIkNoHoDzDWy9Wvq+k
-	/wbQXbZz7vPonZUofqone8Ize8wxwFx3Hb5xDPrsIJcafUk66ccFuz0d43IdfGg=
-X-Google-Smtp-Source: AGHT+IFMPVWih8ET0UJY6wrc9291Mk1AekrhcJOny1Lnev3ooTXoMRPIZqminSsIbWenrEiBF+C3IA==
-X-Received: by 2002:a05:6402:26c2:b0:5c3:eb29:5400 with SMTP id 4fb4d7f45d1cf-5c72075fec8mr1673859a12.8.1727331649354;
-        Wed, 25 Sep 2024 23:20:49 -0700 (PDT)
-Received: from [192.168.0.18] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf4d7a02sm2766357a12.84.2024.09.25.23.20.47
+        d=1e100.net; s=20230601; t=1727331677; x=1727936477;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oYMCwkQPVxKJ+cMHOHVL5c+5ytaGE64SeE8g5ixOBss=;
+        b=HCm7TyAj5Rx9jn8nNGVqJzHF/V6wULrKB+avzWQa8ub2dJdu2N8SViZG/adqm0H8J/
+         te69NwQ1OKQzWvBPrCUXvimUsXQilrH0nl/QKgSMSva40K37WWQar0pqn4up/3GwXIYJ
+         NNVzTsMForV44GHPPv4OnQQJOT5EZt0L0/aZyoDmpbUoNW3evrWRp+qUJuFDzjiJwMqv
+         WHpGob/XIOW5gCmby1jj8T3QNZsYOm0MyaZe9XPbiWVNjhW3d+IfTPGBjxtv+7xUU2oV
+         /WZO9Hm7/YnFMWyvOihEatoa28H0umuuWGrFwlOaUmLaUcP0sECQMkJMjBDh53/8rYVV
+         y9Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnb0WObyl3fNZmpazbTo7pUfa1eFsJsSJDco9r+nZ3y3ZD/rqU1XWlUoOr/gPgm8IFsDohiBYBnnSTgNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIBm3QVPVGK8KPDKW+gDWRmYjde6izs++J+Wgb+YDms0krA1Dr
+	kxWAxI/Q2rPztzrlH66nNs+H6kUfD5bkJZyKmI99g3ejr3qIzh5dSEPGdIsPZUQ=
+X-Google-Smtp-Source: AGHT+IGq6JdSzSznwPxVPi2beVS6+2KfvKJjCPl73nGi+bdpGccswpYOVUmzs63z0PbobAmD2I0QlQ==
+X-Received: by 2002:a17:907:940c:b0:a86:bb90:93fa with SMTP id a640c23a62f3a-a93a05e7e73mr470458966b.44.1727331677393;
+        Wed, 25 Sep 2024 23:21:17 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:75b8:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:75b8:7285:c2ff:fedd:7e3a])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f34076sm308151066b.7.2024.09.25.23.21.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 23:20:48 -0700 (PDT)
-Message-ID: <039c8de5-4599-468a-9f15-986bf2d3641e@linaro.org>
-Date: Thu, 26 Sep 2024 08:20:47 +0200
+        Wed, 25 Sep 2024 23:21:17 -0700 (PDT)
+Message-ID: <d8351d41-b7ee-48b4-a11c-5d1cd7f39ae2@suse.com>
+Date: Thu, 26 Sep 2024 09:21:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,103 +75,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: input: Revert "dt-bindings: input:
- Goodix SPI HID Touchscreen"
-To: Jiri Kosina <jikos@kernel.org>, Charles Wang <charles.goodix@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
- linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240925194921.18933-1-krzysztof.kozlowski@linaro.org>
- <20240925194921.18933-2-krzysztof.kozlowski@linaro.org>
- <nycvar.YFH.7.76.2409252306420.31206@cbobk.fhfr.pm>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v4 5/8] x86/virt/tdx: Start to track all global metadata
+ in one structure
+To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
+ kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+ peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
+ dan.j.williams@intel.com, seanjc@google.com, pbonzini@redhat.com
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, adrian.hunter@intel.com
+References: <cover.1727173372.git.kai.huang@intel.com>
+ <014302e0bd2f0797aa7d27ed8b730603d2859c2d.1727173372.git.kai.huang@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <nycvar.YFH.7.76.2409252306420.31206@cbobk.fhfr.pm>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <014302e0bd2f0797aa7d27ed8b730603d2859c2d.1727173372.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 25/09/2024 23:07, Jiri Kosina wrote:
-> On Wed, 25 Sep 2024, Krzysztof Kozlowski wrote:
+
+
+On 24.09.24 г. 14:28 ч., Kai Huang wrote:
+> The TDX module provides a set of "Global Metadata Fields".  They report
+> things like TDX module version, supported features, and fields related
+> to create/run TDX guests and so on.
 > 
->> This reverts commit 9184b17fbc23 ("dt-bindings: input: Goodix SPI HID
->> Touchscreen") because it duplicates existing binding leadings to errors:
->>
->>   goodix,gt7986u.example.dtb:
->>   touchscreen@0: compatible: 'oneOf' conditional failed, one must be fixed:
->>         ['goodix,gt7986u'] is too short
->>         'goodix,gt7375p' was expected
->>
->> This was reported on mailing list on 6th of September, but no reaction
->> happened from contributor or maintainer to fix it.
->>
->> Therefore let's drop binding which breaks and duplicates existing one.
->>
->> Fixes: 9184b17fbc23 ("dt-bindings: input: Goodix SPI HID Touchscreen")
->> Reported-by: Rob Herring <robh@kernel.org>
->> Closes: https://lore.kernel.org/all/CAL_Jsq+QfTtRj_JCqXzktQ49H8VUnztVuaBjvvkg3fwEHniUHw@mail.gmail.com/
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Currently the kernel only reads "TD Memory Region" (TDMR) related fields
+> for module initialization.  There are immediate needs which require the
+> TDX module initialization to read more global metadata including module
+> version, supported features and "Convertible Memory Regions" (CMRs).
 > 
-> I've applied both patches now and will expedite them to Linus.
+> Also, KVM will need to read more metadata fields to support baseline TDX
+> guests.  In the longer term, other TDX features like TDX Connect (which
+> supports assigning trusted IO devices to TDX guest) may also require
+> other kernel components such as pci/vt-d to access global metadata.
+> 
+> To meet all those requirements, the idea is the TDX host core-kernel to
+> to provide a centralized, canonical, and read-only structure for the
+> global metadata that comes out from the TDX module for all kernel
+> components to use.
+> 
+> As the first step, introduce a new 'struct tdx_sys_info' to track all
+> global metadata fields.
+> 
+> TDX categories global metadata fields into different "Classes".  E.g.,
+> the TDMR related fields are under class "TDMR Info".  Instead of making
+> 'struct tdx_sys_info' a plain structure to contain all metadata fields,
+> organize them in smaller structures based on the "Class".
+> 
+> This allows those metadata fields to be used in finer granularity thus
+> makes the code more clear.  E.g., the construct_tdmr() can just take the
+> structure which contains "TDMR Info" metadata fields.
+> 
+> Add a new function get_tdx_sys_info() as the placeholder to read all
+> metadata fields, and call it at the beginning of init_tdx_module().  For
+> now it only calls get_tdx_sys_info_tdmr() to read TDMR related fields.
+> 
+> Note there is a functional change: get_tdx_sys_info_tdmr() is moved from
+> after build_tdx_memlist() to before it, but it is fine to do so.
+> 
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Thanks Jiri,
-
-Charles,
-If you ever receive a report about an issue in your patch, you should
-respond to it and address it. Regardless whether it is on the lists only
-or already merged.
-If you do not respond to issues reported for your commits, it might
-cause impression that you only care about getting your stuff into the
-kernel and whatever after does not matter. As maintainer I would not
-take more patches from you in such case, I bet other maintainers would
-be reluctant to take them too.
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
 
