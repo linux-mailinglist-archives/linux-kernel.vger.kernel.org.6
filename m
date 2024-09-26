@@ -1,96 +1,124 @@
-Return-Path: <linux-kernel+bounces-339898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857CD986BEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:05:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC7D6986BEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 206011F23442
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:05:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB7DB1C21DE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5463D13B7BE;
-	Thu, 26 Sep 2024 05:05:42 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94E013BC11;
+	Thu, 26 Sep 2024 05:08:14 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC943175B1;
-	Thu, 26 Sep 2024 05:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424B5175B1
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727327142; cv=none; b=Jw3OR9oWzM49w2OzQtsoE+vJ0xEIhRf1F4KSgU5L4NUCGnOlxOEIBCcP9ITVRwdmSL2Mj07doOyxtWZsJcKr74FxsipZ7eDUy5QAAlV5Lxkx+3QrtZO2d8N7fHFxEc0SB/ocyOjBt798qfvc6q+ERlQZgh797gaWH863Yjz05Yw=
+	t=1727327294; cv=none; b=ON4iaSGr+MZtY9WSf0oSj4UOPC7+n45XklSMAp7EBCPC8sIL6dQPKEHJbJqiePscA8+2ZG02SxstJGS+NsASfzSZ9mmhR0a72rP/N6kz1uNLgD8nlb45+f9KVtA96E0V//AP+1x423pGWE2iQHW3I6oofw9WJ3FMdnOsqu9hJnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727327142; c=relaxed/simple;
-	bh=ruX8CnA4KyJIXgGd6Bi3t1j73QPQbIk2N8BOPvX17jQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oMUn8ARFlSQmnI4+gTCGLZ0SzJPRxkYh8H7Nw3c9V9HZHPoBOXyvyHs9/bdFfe3joszQo2mZKRGMiWZUdgfNcvTHlo0xAqf0Vm9rorF6yLFvBOPIe5hLGbYC7RD+A2lfe24RAIgQxAM/e5TZyX1FaaPauzGR7NqK21E7zTuAT98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35F10C4CEC5;
-	Thu, 26 Sep 2024 05:05:40 +0000 (UTC)
-Date: Thu, 26 Sep 2024 01:05:36 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tatsuya S <tatsuya.s2862@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] ftrace: Hide a extra entry in stack trace
-Message-ID: <20240926010536.5fe73463@rorschach.local.home>
-In-Reply-To: <20240923035916.6567-1-tatsuya.s2862@gmail.com>
-References: <20240923035916.6567-1-tatsuya.s2862@gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727327294; c=relaxed/simple;
+	bh=neRQVJi7dhlczwjmB81gvaayslK0+ufZDzHrc4veOUQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qTy052r7xlZAoMSLMuAFFlWi/Z8WmyCgh0QRPM2rOgh7EF2ApuKHSes3SUlIGraYoFjeDCTmxvEUwaehq0hpu2/J8dlZAqD0aBUxuzxer/QcX+oVkoodLCTFBPQGL2mMqbiBhhHiFnSN9e1ilX08aQ/L51zuEHb2Sqpl7C+0rnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 48Q56wbN046190;
+	Thu, 26 Sep 2024 13:06:58 +0800 (+08)
+	(envelope-from zhaoyang.huang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4XDhG81T1sz2QHlsf;
+	Thu, 26 Sep 2024 12:59:12 +0800 (CST)
+Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Thu, 26 Sep 2024 13:06:56 +0800
+From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand
+	<david@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, Yu Zhao
+	<yuzhao@google.com>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
+Subject: [PATCHv2] mm: migrate LRU_REFS_MASK bits in folio_migrate_flags
+Date: Thu, 26 Sep 2024 13:06:47 +0800
+Message-ID: <20240926050647.5653-1-zhaoyang.huang@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 48Q56wbN046190
 
-On Mon, 23 Sep 2024 12:59:15 +0900
-Tatsuya S <tatsuya.s2862@gmail.com> wrote:
+From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 
-> A extra entry is shown on stack trace(CONFIG_UNWINDER_ORC=y).
-> 
->     [003] .....   110.171589: vfs_write <-__x64_sys_write
->     [003] .....   110.171600: <stack trace>
->  => XXXXXXXXX (Wrong function name)
->  => vfs_write
->  => __x64_sys_write
->  => do_syscall_64
->  => entry_SYSCALL_64_after_hwframe  
-> 
-> To resolve this, increment skip in __ftrace_trace_stack().
-> The reason why skip is incremented in __ftrace_trace_stack()
-> is because __ftrace_trace_stack() in stack trace is the only function
-> that wasn't skipped from anywhere.
-> 
-> Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
-> ---
->  kernel/trace/trace.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index c3b2c7dfadef..e0d98621ff23 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -2919,6 +2919,8 @@ static void __ftrace_trace_stack(struct trace_buffer *buffer,
->  #ifndef CONFIG_UNWINDER_ORC
->  	if (!regs)
->  		skip++;
-> +#else
-> +	skip++;
->  #endif
+Bits of LRU_REFS_MASK are not inherited during migration which lead to
+new folio start from tier0 when MGLRU enabled. Try to bring as much bits
+of folio->flags as possible since compaction and alloc_contig_range
+which introduce migration do happen at times.
 
-The above #ifdef block should be removed and replaced with;
+Suggested-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+---
+v2: modification as Yu Zhao suggested
+---
+---
+ include/linux/mm_inline.h | 10 ++++++++++
+ mm/migrate.c              |  1 +
+ 2 files changed, 11 insertions(+)
 
+diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
+index f4fe593c1400..6f801c7b36e2 100644
+--- a/include/linux/mm_inline.h
++++ b/include/linux/mm_inline.h
+@@ -291,6 +291,12 @@ static inline bool lru_gen_del_folio(struct lruvec *lruvec, struct folio *folio,
+ 	return true;
+ }
+ 
++static inline void folio_migrate_refs(struct folio *new, struct folio *old)
++{
++	unsigned long refs = READ_ONCE(old->flags) & LRU_REFS_MASK;
++
++	set_mask_bits(&new->flags, LRU_REFS_MASK, refs);
++}
+ #else /* !CONFIG_LRU_GEN */
+ 
+ static inline bool lru_gen_enabled(void)
+@@ -313,6 +319,10 @@ static inline bool lru_gen_del_folio(struct lruvec *lruvec, struct folio *folio,
+ 	return false;
+ }
+ 
++static inline void folio_migrate_refs(struct folio *new, struct folio *old)
++{
++
++}
+ #endif /* CONFIG_LRU_GEN */
+ 
+ static __always_inline
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 923ea80ba744..60c97e235ae7 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -618,6 +618,7 @@ void folio_migrate_flags(struct folio *newfolio, struct folio *folio)
+ 	if (folio_test_idle(folio))
+ 		folio_set_idle(newfolio);
+ 
++	folio_migrate_refs(newfolio, folio);
+ 	/*
+ 	 * Copy NUMA information to the new page, to prevent over-eager
+ 	 * future migrations of this same page.
+-- 
+2.25.1
 
-	if (IS_ENABLED(CONFIG_UNWINDER_ORC) || !regs)
-		skip++;
-
->  
->  	preempt_disable_notrace();
-
--- Steve
 
