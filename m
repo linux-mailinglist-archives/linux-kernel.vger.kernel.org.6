@@ -1,100 +1,137 @@
-Return-Path: <linux-kernel+bounces-340166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94D4F986F4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:50:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23488986F4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32AFCB20A1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF2D71F21240
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9926A1A7256;
-	Thu, 26 Sep 2024 08:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T7zMMok6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA891A76C1;
+	Thu, 26 Sep 2024 08:50:48 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8E41A4E9A;
-	Thu, 26 Sep 2024 08:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7862E1A4E9A;
+	Thu, 26 Sep 2024 08:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727340629; cv=none; b=bdytDbgl7IDP7EBSk+lRqcZALDt3w+F3DONB+3UQEl7PVFjR5NWV21D9sSOlVsfPaNZOlxyh/DTA4wJODArmAsdwPyR7keimftOJ1W0LtvtPAtkqRObhh1zJsMfwTKLF7zpjYuu7/dF4t5sTecnZ0JbD+eoWNFn/HFITb1p8Ibw=
+	t=1727340648; cv=none; b=L9QHTAGLQvO9EmasCrLj/PbvZKC0hkiOV4ukxRA963+ZrHiAG4srIvmFmYg+DUX40mtYtgGB1KdFW0egAF2LeOQQ8dhXDbIeVGpqEH6q9hlvTSfFyw06D7v2hhxqNPyOQkIL6X3oVxeVLGOC76tV8W3BWNxdAA5gy6sy/wGORjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727340629; c=relaxed/simple;
-	bh=GcRYZc0aYdKjKzm8dqTZs423b3rVkDA/yBEu7aO4lvc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=bh8t1HzeaJQFQw7+hCFyPZSj5KIAX7/HcT+xKkHglQZZLeoYcE2rDc3FWlBLs+lExdh01twNOCSr/dTfyEWck+s98xazrw8/ca7bcnlOj9izmm6h8Cb3FnLbJKAGkbSq2nd9JI15hGAOwBhKMg95xwSh9MXAvQpCYi6etzJ9Xgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T7zMMok6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B68C4CEC7;
-	Thu, 26 Sep 2024 08:50:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727340628;
-	bh=GcRYZc0aYdKjKzm8dqTZs423b3rVkDA/yBEu7aO4lvc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=T7zMMok6AL8MgOS0GZUb2ZO196/h+wGaqUznwue4pQ1u0n66dxxYn2zOfohwAYSlJ
-	 t5ZCa0rrb4FGKZVoJQN6mrYZkm2BvBijKW0EHSicYUTsAWYtwO4LdzNb/xeDaQz2hE
-	 WpgBxpT2JYnliPPbOQs2ACce8ulAlU3MSVDazNzXktBkwo2GmbAAx1nzPbDskXVPSx
-	 w41Q93K1IAsLRGDwziTcFHN1LV6mzw7dY23pmPA6wYylz7TJDQgLiEwGhiZtmKJj7m
-	 HJVV9387mm3EtlpOdJGtCjc6ZKRUlCMCGjhbHpxD7H6Xb8ZUBOwktmQftoLxqSH2op
-	 18/D98E1mvlpg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D22380DBF5;
-	Thu, 26 Sep 2024 08:50:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1727340648; c=relaxed/simple;
+	bh=JMPDumpRjcYG80x8wTNbelHGSUF2apdzW2w1r/QDfU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HFiyASG86BQP8v2rsdzc6iwK6acekiDIKXdJI/6evtNerUEnFaaQcsriXwj7IAF9Jd8J8/i/DVMva1lVcWL6QFj/CbZ3+1XsX8E/WBmUyAZlRKsGrWaL5IKCTTvlZTCDf1ySTBAdUVtrD59R+uvZTa6zQJzOCr1YE/yVQ/Qu+GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XDnNK449Zz1SBrV;
+	Thu, 26 Sep 2024 16:49:53 +0800 (CST)
+Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
+	by mail.maildlp.com (Postfix) with ESMTPS id ACC2E140360;
+	Thu, 26 Sep 2024 16:50:42 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.174) by dggpeml100021.china.huawei.com
+ (7.185.36.148) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 26 Sep
+ 2024 16:50:42 +0800
+Message-ID: <dcda93dd-f2ef-4419-ae73-7d3c55b5df8f@huawei.com>
+Date: Thu, 26 Sep 2024 16:50:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] ext4: fix crash on BUG_ON in ext4_alloc_group_tables
+To: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, Jan Kara
+	<jack@suse.cz>
+CC: <tytso@mit.edu>, <stable@vger.kernel.org>, Andreas Dilger
+	<adilger.kernel@dilger.ca>, =?UTF-8?Q?St=C3=A9phane_Graber?=
+	<stgraber@stgraber.org>, Christian Brauner <brauner@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-ext4@vger.kernel.org>, Wesley Hershberger
+	<wesley.hershberger@canonical.com>, Yang Erkun <yangerkun@huawei.com>
+References: <20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com>
+ <20240925143325.518508-2-aleksandr.mikhalitsyn@canonical.com>
+ <20240925155706.zad2euxxuq7h6uja@quack3>
+ <CAEivzxfjnKq2fgCfYwhZukAO-ZfoUiC5n0Y5yaUpuz-y7kDf+g@mail.gmail.com>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <CAEivzxfjnKq2fgCfYwhZukAO-ZfoUiC5n0Y5yaUpuz-y7kDf+g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net: stmmac: set PP_FLAG_DMA_SYNC_DEV only if XDP is
- enabled
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172734063104.1173335.1175532614664829516.git-patchwork-notify@kernel.org>
-Date: Thu, 26 Sep 2024 08:50:31 +0000
-References: <20240919121028.1348023-1-0x1207@gmail.com>
-In-Reply-To: <20240919121028.1348023-1-0x1207@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: boon.leong.ong@intel.com, davem@davemloft.net,
- alexandre.torgue@foss.st.com, joabreu@synopsys.com, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
- jpinto@synopsys.com, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- rmk+kernel@armlinux.org.uk, linux@armlinux.org.uk, xfr@outlook.com
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml100021.china.huawei.com (7.185.36.148)
 
-Hello:
+On 2024/9/26 0:17, Aleksandr Mikhalitsyn wrote:
+> On Wed, Sep 25, 2024 at 5:57 PM Jan Kara <jack@suse.cz> wrote:
+>> On Wed 25-09-24 16:33:24, Alexander Mikhalitsyn wrote:
+>>> [   33.882936] EXT4-fs (dm-5): mounted filesystem 8aaf41b2-6ac0-4fa8-b92b-77d10e1d16ca r/w with ordered data mode. Quota mode: none.
+>>> [   33.888365] EXT4-fs (dm-5): resizing filesystem from 7168 to 786432 blocks
+>>> [   33.888740] ------------[ cut here ]------------
+>>> [   33.888742] kernel BUG at fs/ext4/resize.c:324!
+>> Ah, I was staring at this for a while before I understood what's going on
+>> (it would be great to explain this in the changelog BTW).  As far as I
+>> understand commit 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation
+>> in alloc_flex_gd()") can actually make flex_gd->resize_bg larger than
+>> flexbg_size (for example when ogroup = flexbg_size, ngroup = 2*flexbg_size
+>> - 1) which then confuses things. I think that was not really intended and
+> Hi Jan,
+>
+> First of all, thanks for your reaction/review on this one ;-)
+>
+> You are absolutely right, have just checked with our reproducer and
+> this modification:
+>
+> diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
+> index e04eb08b9060..530a918f0cab 100644
+> --- a/fs/ext4/resize.c
+> +++ b/fs/ext4/resize.c
+> @@ -258,6 +258,8 @@ static struct ext4_new_flex_group_data
+> *alloc_flex_gd(unsigned int flexbg_size,
+>                  flex_gd->resize_bg = 1 << max(fls(last_group - o_group + 1),
+>                                                fls(n_group - last_group));
+>
+> +       BUG_ON(flex_gd->resize_bg > flexbg_size);
+> +
+>          flex_gd->groups = kmalloc_array(flex_gd->resize_bg,
+>                                          sizeof(struct ext4_new_group_data),
+>                                          GFP_NOFS);
+>
+> and yes, it crashes on this BUG_ON. So it looks like instead of making
+> flex_gd->resize_bg to be smaller
+> than flexbg_size in most cases we can actually have an opposite effect
+> here. I guess we really need to fix alloc_flex_gd() too.
+>
+>> instead of fixing up ext4_alloc_group_tables() we should really change
+>> the logic in alloc_flex_gd() to make sure flex_gd->resize_bg never exceeds
+>> flexbg size. Baokun?
+> At the same time, if I understand the code right, as we can have
+> flex_gd->resize_bg != flexbg_size after
+> 5d1935ac02ca5a ("ext4: avoid online resizing failures due to oversized
+> flex bg") and
+> 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation in alloc_flex_gd()")
+> we should always refer to flex_gd->resize_bg value which means that
+> ext4_alloc_group_tables() fix is needed too.
+> Am I correct in my understanding?
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Hi Alex,
 
-On Thu, 19 Sep 2024 20:10:28 +0800 you wrote:
-> Commit 5fabb01207a2 ("net: stmmac: Add initial XDP support") sets
-> PP_FLAG_DMA_SYNC_DEV flag for page_pool unconditionally,
-> page_pool_recycle_direct() will call page_pool_dma_sync_for_device()
-> on every page even the page is not going to be reused by XDP program.
-> 
-> When XDP is not enabled, the page which holds the received buffer
-> will be recycled once the buffer is copied into new SKB by
-> skb_copy_to_linear_data(), then the MAC core will never reuse this
-> page any longer. Always setting PP_FLAG_DMA_SYNC_DEV wastes CPU cycles
-> on unnecessary calling of page_pool_dma_sync_for_device().
-> 
-> [...]
+These two are not exactly equivalent.
 
-Here is the summary with links:
-  - [net,v2] net: stmmac: set PP_FLAG_DMA_SYNC_DEV only if XDP is enabled
-    https://git.kernel.org/netdev/net/c/b514c47ebf41
+The flex_gd->resize_bg is only used to determine how many block groups we
+allocate memory to, i.e., the maximum number of block groups per resize.
+And the flexbg_size is used to make some judgement on flexible block
+groups, for example, the BUG_ON triggered in the issue is to make sure
+src_group and last_group must be in the same flexible block group.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
 
+Regards,
+Baokun
 
 
