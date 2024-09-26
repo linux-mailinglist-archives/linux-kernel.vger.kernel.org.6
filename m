@@ -1,336 +1,332 @@
-Return-Path: <linux-kernel+bounces-340545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D18987504
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:02:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7151987509
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A671F251F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:02:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9E501C24D11
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0259139597;
-	Thu, 26 Sep 2024 14:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023B0132139;
+	Thu, 26 Sep 2024 14:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="B/hzg0lE"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pTNyHu2K"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2078.outbound.protection.outlook.com [40.107.95.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66FC136337;
-	Thu, 26 Sep 2024 14:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727359304; cv=none; b=GhAV1Cy85pxWTfHuLTwi8DRWDDKp2orI2OR8q9tbeYinr7QN7Ba4PKsDyJnzZ7Wm8QxWyHGXvTFNEwsAgo/f4bnTviaISAH2WxqjWlqojxl537i4CxMN2/Vgrxor22BaiCEgjJojJtXY/1q3OqOhEc+w3Al4Tf5sPKvuX8PmD8Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727359304; c=relaxed/simple;
-	bh=EmMCExrHRfEXVznU1fY4zpfSermDkzsBD7jQQ70mRZ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LwNJQxmMiLMs7naiYsG8opiy0TaSfyufSnzYkMkxp+eAvkrwY+/dHKD5kKL3jTMyl9n5Y2uLmuBBmrQ/2T13mfPXZi2Vt+UfLM79reX5GZVJjqAMVoJ/3w2hdHAHH4t8aX9LAW8IP0LbfFBmrgyf6NWuLlXY4ZtvxeBwXRM52KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=B/hzg0lE; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4XDwHx69cbz9v1R;
-	Thu, 26 Sep 2024 16:01:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1727359293;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=w3yVqcJ29OEQ9vfqFMLDk33CQ5+GhguYzGm7fkCs0Fo=;
-	b=B/hzg0lEblt0XlID897/ZRjsqDcP0jLjdHy9khrBa2XGuPS4avvtELj0OpJGDbeioi61t7
-	IeK7Uva9eqJjQJNAQtFL/osMaWw++FQkcMI5eaZcWmv8r1oYWl6Cd3MhhXzqO33Vy6lzR4
-	U9/k9KdJ1kENR8gfdRKxiBTsRxkcE0LFTdySUBPmIeExlE00t/iw/169IF3eYxskcdFDe5
-	ymmTPoKPSUEmOGSWxpnolvT7Ngwdty5KQb5HzdShLfad2IeycqmAo5Scf8CpSBiM+TPSeF
-	4JNbWZqKFOT0cFl1qDt6C2Q/TSYsVSFRun1ld1P+Hl7fJ+YcXxaDFpk3T79qCA==
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Theodore Ts'o <tytso@mit.edu>,
-	Chao Yu <chao@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	willy@infradead.org,
-	Josef Bacik <josef@toxicpanda.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Tejun Heo <tj@kernel.org>,
-	akpm@linux-foundation.org,
-	Christian Brauner <brauner@kernel.org>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>
-Cc: cgroups@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	linux-doc@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	kernel@pankajraghav.com,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH] fs/writeback: convert wbc_account_cgroup_owner to take a folio
-Date: Thu, 26 Sep 2024 16:01:21 +0200
-Message-ID: <20240926140121.203821-1-kernel@pankajraghav.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F812E659;
+	Thu, 26 Sep 2024 14:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727359389; cv=fail; b=DnXbnCve+FH/Nnrc1h9PCJfcljDBg+lEPNPPpqvsSY256O+wGNLga5sVWSvb5dMFHPbNZpcctuJ39W4E62ABb1/uGLTascHnnCHu9Bwpv2CSQDFvgyBYk00y6xz8KICC02jOYyll452evFeGzwANigTz0SjxbrTme9WDEdoyews=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727359389; c=relaxed/simple;
+	bh=1DvKC/g3AnxSs6RooVCknBkJZ37gl1mxHJ9du98w/do=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kzDvFAAcJi7yvjZyRIddWZMe14u2z/KAIKVT6L2/CU1pPUlOWLxR0v5UubLCBx9n2CGGSPpjZqA+NtVF0m1A+XlnPqFh0v27BDRi3tO2VdCl8dKkOD35MMI+cpMK+0I/8Vyp3CDckteS9V6xdK+5ZGwfjrTivXdLAGfKJkx9PuM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pTNyHu2K; arc=fail smtp.client-ip=40.107.95.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NumZetP54zJxEXatUijV5SpvxmDvKbF5r60qWcnBXE6IY1XGdC59xGTwwp+eYluqtY1Ay6FuLpX7i887Ex+j77i3AfCosIzNrLhpm3a1cbfyTNZ+yvRWpWB3fEC3HzvUyjH+juj5upKIePznnp2qDTRUSI+aYoS89gzAYkgLTCN41eblD3rw/yZEkbQjSgz/Mix0AZ8XR20e1MEW+aC0umEi8gZ6nrcvJtTWcJmhN+hHLAh3q0T9GJUF3M6PLPDGaPuHpAH3lWqbGCFN5Tdhfb8SrVHjakRUzRqps0RBketMXq8eqPoq2AC803ulAjKQ8c4x6jrn0676EmIHZttnrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j5Mfrckd316V4KsIdx/7169r/Hjdgl14NZcp2/IsiE0=;
+ b=euHw+6yi42y65mdi6XtzjuGYH9ZquEau20ECIxqGydP1SvNVFf0NMENveVyhvDHf/L6uBK2Ssjr6pXFRGsRlz/c6Zey/9JeMARnToDdLJ6f8CEZwiEwcCJwV6PSmVTgvkAkEjXPSHmRO613uqrja2FMLQHobiGI45xzQ3ZJ/BTFUKh5tKePJ1gcGl3l+ENaIRtXtrlo98N9nq1yL8Xw6IuHLUOy4RSIUg02LbbWi/of4s/d0MuZ8dSw7EB1g6iBjDwzak8RuXKS0C7hgUu4fWAWY2ya3IGNtw5Sy3We+d2lKaMnZJzfNu16fIKo6kBPDKb8FOChNVCeEivOQGoKRZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j5Mfrckd316V4KsIdx/7169r/Hjdgl14NZcp2/IsiE0=;
+ b=pTNyHu2KsB8OY1rx8x5lv358HXAr6oBAIie/vBbkmMnPxv9GLFVXCOZfY/QzyTyZ0taOf66noXGiy/nDF15de4S9ZLQc9WPfd+cS5fMRlxdvvgYctL6rtxLPqnYfOFsfij4q4TNyXYrxWq8KybYbnyugDI44+qkFcAEWIQA4bBs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by SA1PR12MB8699.namprd12.prod.outlook.com (2603:10b6:806:389::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Thu, 26 Sep
+ 2024 14:03:03 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.8005.020; Thu, 26 Sep 2024
+ 14:03:03 +0000
+Message-ID: <2ab11399-ffa0-4940-a965-fb95a5f3b20e@amd.com>
+Date: Thu, 26 Sep 2024 16:02:45 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Linaro-mm-sig] Re: [RFC PATCH 0/4] Linaro restricted heap
+To: Sumit Garg <sumit.garg@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
+Cc: Andrew Davis <afd@ti.com>, Jens Wiklander <jens.wiklander@linaro.org>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Olivier Masse <olivier.masse@nxp.com>,
+ Thierry Reding <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T . J . Mercier" <tjmercier@google.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+References: <20240830070351.2855919-1-jens.wiklander@linaro.org>
+ <dhxvyshwi4qmcmwceokhqey2ww4azjcs6qrpnkgivdj7tv5cke@r36srvvbof6q>
+ <d8e0cb78-7cfb-42bf-b3a5-f765592e8dd4@ti.com>
+ <mzur3odofwwrdqnystozjgf3qtvb73wqjm6g2vf5dfsqiehaxk@u67fcarhm6ge>
+ <e967e382-6cca-4dee-8333-39892d532f71@gmail.com>
+ <lk7a2xuqrctyywuanjwseh5lkcz3soatc2zf3kn3uwc43pdyic@edm3hcd2koas>
+ <04caa788-19a6-4336-985c-4eb191c24438@amd.com>
+ <2f9a4abe-b2fc-4bc7-9926-1da2d38f5080@linaro.org>
+ <CAFA6WYMd46quafJoGXjkCiPOKpYoDZdXwrNbG3QekyjB3_2FTA@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <CAFA6WYMd46quafJoGXjkCiPOKpYoDZdXwrNbG3QekyjB3_2FTA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR2P281CA0073.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9a::15) To SJ0PR12MB5673.namprd12.prod.outlook.com
+ (2603:10b6:a03:42b::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4XDwHx69cbz9v1R
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SA1PR12MB8699:EE_
+X-MS-Office365-Filtering-Correlation-Id: 22ae5aae-454d-4c65-fcce-08dcde33ef95
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L3ltcWtWU1J2SGNXWHZXYWFFYUR2Lzk0V2xNYnUvOVZRL0lQR0dxVDlJY080?=
+ =?utf-8?B?NjJZaVNxZW1hQjJrNzEwYkdNQUNtTUNoQUk4WGpPbWF3ZE11U0FqSGF3S1Ry?=
+ =?utf-8?B?SHdHVlFYS3gyN2EvUWpxanVpQlRiQ0pyR1NZZytMODBuM1NXMEVKWndZNXQ0?=
+ =?utf-8?B?QWJ0Z0N0TWU5cWtWeCtHenhMR3o1dGc5NXJEbXNUcXQzNkxYUjZHOHJ2dXFp?=
+ =?utf-8?B?ZTMrOGJrN1BPMnlGaTlLNHNuUCs0dVBlM3FpeTNQaUhjK3BRei83WXNZQnNv?=
+ =?utf-8?B?VVRJMWhZZ21vcWxBblFoYUx4QUVybzh0QWd6bVFWR05SOXhxZ1FRN2IrL24z?=
+ =?utf-8?B?THRMTUJHb1hkM3RKT0d5VlUvaWNMc0NML1JUcWdDZnA3SlM4bHhBUFRGY3Ir?=
+ =?utf-8?B?QkFSK1hWTkhIamRQMXlzcEFhR1lvTXZtb2RjR2RnWXRSbHdqcGs4dnFneTFl?=
+ =?utf-8?B?ZmdKeTI5K1g5YkYwKzlsNFR1SXBpanVkRGFxRk9VUUFMZDhRVWwxbk5nbzVL?=
+ =?utf-8?B?ZzZUT3hXeSttUmswRWpNdldheGFKTjNoQTRIOS82anNNT3luYVZrMzdiVnNl?=
+ =?utf-8?B?S0pFM29oRHROR1pCT05XdjVaSFFtUXl1dGw3b3JGbU9kbS9Ddy9NQlVraUNK?=
+ =?utf-8?B?dmR3dmlnZHVWSjZPQjVDMmQ1YTJkc21RNVJZaytRRjE1TEJJcDVvaGdWa2pQ?=
+ =?utf-8?B?Z0FMTHhtTHBmVVVHeEdBdVdBN21LKzBnbjI4ZG15WDFPMUdSeXVYTm1CNkFi?=
+ =?utf-8?B?ZmJabUFvNkZUV3JUdkJ2c2IzaXRSMG45NzZmWFltNVRLVXNmYmFYUHdITWN3?=
+ =?utf-8?B?RUdVazZ5WldwcktYL280b3dlWmRZN2UraEFMaEY1M1BHZzJ1VDBBdjFOQnox?=
+ =?utf-8?B?SVRQWVdFaDl0TmRjMWg3QXU5SmxCMDJiS0Zoai9XTGd6YXdGZWNuRzR5OGFC?=
+ =?utf-8?B?MkZibytNQTJtU1NZYVlIMGpvREFoWC9PUllpZXF1Yy85THJja2s3Nk9sYVBV?=
+ =?utf-8?B?K2NhV3NTVHhoNm1jSGx2ekUxdmpSVnE3YUZxbk1xM2ZMQjdwUTZFUldRV0Ux?=
+ =?utf-8?B?WGZaYm9zd2p5MVM4Ri9TQTZqWHUwMXNrVERmRTJyQW1uZGhuVWZ4anljNUF3?=
+ =?utf-8?B?OWZrM2M3WXNRMFJaRHZ2MmZ5Qm1hVWVBdjgxWlRXNWttYmFiN0NtSmJCNlRy?=
+ =?utf-8?B?bHRHQ2l5ZkJXODZuWjAzdWtkZTdNWGhhTm9tS1pocUpxVkJSVGxBeWV2TG5t?=
+ =?utf-8?B?SVdkRUdQVGo2c0E5Ymk5ZXZCM3NwdHFNeE1FVisramJRS2haZmEzZllWd05o?=
+ =?utf-8?B?WVIyMkszMjF6V3loajJTYlRXTmR2NjV5TzRaSXRBalZaMGtZS0swUUhLUmdV?=
+ =?utf-8?B?dGZqWDNYbytaTWllVVlyVWdkSHBTWnB6aEtZZVphYmlEcHpQT0FPWUc4MEZt?=
+ =?utf-8?B?aDZpY282YXkrOFdWYzBXbWZxWThVTU1PeFBzTnhJNHN4cktwM0swcnVpbDBu?=
+ =?utf-8?B?ZmVDVk45ZDZaMzNTNkxWZTRlRkxvZkMzQjNxNms2djc0U3VjSnE0T0FaSXVK?=
+ =?utf-8?B?NVM0ZkkySnFaQzBDZjhXL0JjMTVuNXhYdmVHb1BrejByV2FrWEdTMk9RZTRa?=
+ =?utf-8?B?bjA4WXNDekZmYTVENHFOcm8ycUI0UjJ6VUI0Mm5qaTlvTVJPczNPVVlCVVpu?=
+ =?utf-8?B?TjQ5ZVFhUDA5cHR0Qng5b3FHNzFwVktMdStZbjhrOU9HMFVoa3laTE5RPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V01kaGpEVVZFeDhIcUFlaGpacStUVjhpS1BqSTRsMVdVbnRROGZsMzc5TTgy?=
+ =?utf-8?B?TW8xYU4ycmdYNXBqcU1ZU3VvR1BJeHVyVERKRGlCcW9tOEpZSDJ6cWM0NS95?=
+ =?utf-8?B?eVpGVm5pR011dzZ2SzRObjJDUlB3QTJnU3F1OXI4UEoyeUVTRG5qRm5QcTU1?=
+ =?utf-8?B?TW8yMGg3NkxQUGJCZWZBSUNXMDlmZmtLOVA3NnZYS3h1R3gvbWhqaHFXa2E2?=
+ =?utf-8?B?emp4b3dQMktOQkUzV01ZSFRzT3hkWllIdVFURHNmcWFSdi90RE5pWnpnVmFm?=
+ =?utf-8?B?dWlPSDNiVGRhNWpZSjhLUVkxakhXL1VxQkNnckczZCtXZmxsK0FwUG1hSGc4?=
+ =?utf-8?B?TVZQSnZ4dXByTWRIekNHV002cUdxQkZFc3psUi9QL3hkaTNwQjBZcTZ0M2FE?=
+ =?utf-8?B?OU5MSEFiVVUvQU5Pc3pGSHpuMXdEa0dqcE16SmFxUXZWdXNkMHc2ZWluL01u?=
+ =?utf-8?B?MGNzenduREFtQmZRNVB4OUZLYm9odnJPb2N2a09IMDYzbnNKbGV6bXoyaWdJ?=
+ =?utf-8?B?ajEzblZ6T2RsUjFVVUlIajN3ejhIOU9IbUExUmZPTDdkUUxITzM0UDJkMXZQ?=
+ =?utf-8?B?Z3ZKOWd0NytNQ2dqZ1BxWE11QnpVMHhuUkxMUUpOK1ltQXFLbkUzWWhwUTJT?=
+ =?utf-8?B?U1JKUk96TTVBYnRwOUsyaGhwQjlXTzN1c2ZWZzNWT0dDeXByL3NoaXlxb2Zv?=
+ =?utf-8?B?djU2c2dIci9XM0YzZ0FTdkRDSHJmQUtLOVQyVzl0NTQvY0thTThDMjNDcnI1?=
+ =?utf-8?B?a0VLVFNxbGZQQVJKNzZMa3c0dXBsR3pZREwwbnNvZFNuYWxyOWl1bkpFQWtH?=
+ =?utf-8?B?UWRBeTNxYitxV2QyWmJYVTRQdlc0SFhGQStBZm1IeDdQM3dpTzlIZTI5MHkx?=
+ =?utf-8?B?L3ordlA2cGwxUEJSbzJiUStTaW43L0V3QjJWWVVrYktEc1BPcVBPYUpqMFJB?=
+ =?utf-8?B?ZFAzN0VQZjRJeEJrbHYzN1lFeTJsVjA1clc3NC9KaDhFT3V6cTBtSU12MHEx?=
+ =?utf-8?B?UkFlTnJtMmhzSXUxMWtTekIycFNPUklBQWEvYmRKMTBvSk5UZmd0VTYrUnB4?=
+ =?utf-8?B?a2pJK0FPSlNyMStycElqRXp4SnNRWVYyRXNTRDV6OTNCVzNoT1N6VDNiNnJH?=
+ =?utf-8?B?TWphOWRrd1d1OUV0UGdwaXI0SlloS3M2MCtEK2IwUFNZK3pzWkZURVMxNHU3?=
+ =?utf-8?B?dDZQbEY0d2ZpWGF2UUl1OFpqejZmc0tXbHdScU1VRzJMOE4vQ0RpZUVqMEw4?=
+ =?utf-8?B?KzFLUVhTWFZ4WFNlYmZZaHhNWGhKQkJIdEJKQ2R4QVdhUVp2ckZXQjZKVGFa?=
+ =?utf-8?B?NkdBZHJsaE5CVldjUGVRWG1rSG1QWDJ6V2NveVd5dEJCbFdubGI1VEVwWlBp?=
+ =?utf-8?B?cUVGYnJieStFMmRsSnFaazVXVlhXRTh2VG9kK1VGWjhoNTBaK2xCMno0THRO?=
+ =?utf-8?B?Q1FaUElEczlQVFVKa1kwSTBwUnhPZS9sMWNaSWI5b2FlWDVoWm9HSi9wdmMy?=
+ =?utf-8?B?L1YxQm03QVhlWXFod3NkZThWSkNseHRSN3Q3WVVHV0UyOE1IdTlNRmpHTmpU?=
+ =?utf-8?B?M3pvTXdUYTcyV0RleFhISDRJQzlJMWliRVpaUEZ5WitHODdtak9aUjlxZkZ4?=
+ =?utf-8?B?UUJ6eUkyNEFpVTZBaTZMTWE2M1ArRTlJNnBOMU54ZURyUzIxVWJ1UkVQR0tp?=
+ =?utf-8?B?K3UvanFRQ2ZZMHdGa2hmNUk0UkowaE0wN3NLaDF3ZHBORjVpN3J2NUw5YU9t?=
+ =?utf-8?B?K1VDdzZ2QjUvQyszQ3NsdmMrQnUxdjJzeHRDdmJRcFYyelFZYnNZTDd6ZUdT?=
+ =?utf-8?B?cVYrOWYycEZHb010QUtqeWFPTDNndlgzT0dzOUFnWXdlRzltQm1vSGhhMEZD?=
+ =?utf-8?B?Ymo2V2VCbFVRMnJXUUJNNzIrQW1DcFdXSHBSV0FoQlc5dmo0blpQV1UrYnJW?=
+ =?utf-8?B?OFA1UVNJTmM0L3VVODI5cFUwbUwyYTBFM3JQSHJDaWVyTTRNbFNqY01MdUlX?=
+ =?utf-8?B?RDh4aFJtRmhHWFJtR0NWSllCa3dUT3VrQWoybWZvUnExTmd6Q1BOSE40UGVU?=
+ =?utf-8?B?SG53MTB6ZXJhTGxhdCt3UWorV3BaMWI5VUdGbGtZY1BJUEg3MkZkbDdLY0Q2?=
+ =?utf-8?Q?u8jA=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22ae5aae-454d-4c65-fcce-08dcde33ef95
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5673.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 14:03:03.4161
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lSpUjBUP2I84eC8+dvk/Lfn8GyVgbBtaBXjcoQng3JCV5y/JrQ/9uA3hCVL86cBw
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8699
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+Am 26.09.24 um 15:52 schrieb Sumit Garg:
+> [Resend in plain text format as my earlier message was rejected by
+> some mailing lists]
+>
+> On Thu, 26 Sept 2024 at 19:17, Sumit Garg <sumit.garg@linaro.org> wrote:
+>> On 9/25/24 19:31, Christian König wrote:
+>>
+>> Am 25.09.24 um 14:51 schrieb Dmitry Baryshkov:
+>>
+>> On Wed, Sep 25, 2024 at 10:51:15AM GMT, Christian König wrote:
+>>
+>> Am 25.09.24 um 01:05 schrieb Dmitry Baryshkov:
+>>
+>> On Tue, Sep 24, 2024 at 01:13:18PM GMT, Andrew Davis wrote:
+>>
+>> On 9/23/24 1:33 AM, Dmitry Baryshkov wrote:
+>>
+>> Hi,
+>>
+>> On Fri, Aug 30, 2024 at 09:03:47AM GMT, Jens Wiklander wrote:
+>>
+>> Hi,
+>>
+>> This patch set is based on top of Yong Wu's restricted heap patch set [1].
+>> It's also a continuation on Olivier's Add dma-buf secure-heap patch set [2].
+>>
+>> The Linaro restricted heap uses genalloc in the kernel to manage the heap
+>> carvout. This is a difference from the Mediatek restricted heap which
+>> relies on the secure world to manage the carveout.
+>>
+>> I've tried to adress the comments on [2], but [1] introduces changes so I'm
+>> afraid I've had to skip some comments.
+>>
+>> I know I have raised the same question during LPC (in connection to
+>> Qualcomm's dma-heap implementation). Is there any reason why we are
+>> using generic heaps instead of allocating the dma-bufs on the device
+>> side?
+>>
+>> In your case you already have TEE device, you can use it to allocate and
+>> export dma-bufs, which then get imported by the V4L and DRM drivers.
+>>
+>> This goes to the heart of why we have dma-heaps in the first place.
+>> We don't want to burden userspace with having to figure out the right
+>> place to get a dma-buf for a given use-case on a given hardware.
+>> That would be very non-portable, and fail at the core purpose of
+>> a kernel: to abstract hardware specifics away.
+>>
+>> Unfortunately all proposals to use dma-buf heaps were moving in the
+>> described direction: let app select (somehow) from a platform- and
+>> vendor- specific list of dma-buf heaps. In the kernel we at least know
+>> the platform on which the system is running. Userspace generally doesn't
+>> (and shouldn't). As such, it seems better to me to keep the knowledge in
+>> the kernel and allow userspace do its job by calling into existing
+>> device drivers.
+>>
+>> The idea of letting the kernel fully abstract away the complexity of inter
+>> device data exchange is a completely failed design. There has been plenty of
+>> evidence for that over the years.
+>>
+>> Because of this in DMA-buf it's an intentional design decision that
+>> userspace and *not* the kernel decides where and what to allocate from.
+>>
+>> Hmm, ok.
+>>
+>> What the kernel should provide are the necessary information what type of
+>> memory a device can work with and if certain memory is accessible or not.
+>> This is the part which is unfortunately still not well defined nor
+>> implemented at the moment.
+>>
+>> Apart from that there are a whole bunch of intentional design decision which
+>> should prevent developers to move allocation decision inside the kernel. For
+>> example DMA-buf doesn't know what the content of the buffer is (except for
+>> it's total size) and which use cases a buffer will be used with.
+>>
+>> So the question if memory should be exposed through DMA-heaps or a driver
+>> specific allocator is not a question of abstraction, but rather one of the
+>> physical location and accessibility of the memory.
+>>
+>> If the memory is attached to any physical device, e.g. local memory on a
+>> dGPU, FPGA PCIe BAR, RDMA, camera internal memory etc, then expose the
+>> memory as device specific allocator.
+>>
+>> So, for embedded systems with unified memory all buffers (maybe except
+>> PCIe BARs) should come from DMA-BUF heaps, correct?
+>>
+>>
+>>  From what I know that is correct, yes. Question is really if that will stay this way.
+>>
+>> Neural accelerators look a lot stripped down FPGAs these days and the benefit of local memory for GPUs is known for decades.
+>>
+>> Could be that designs with local specialized memory see a revival any time, who knows.
+>>
+>> If the memory is not physically attached to any device, but rather just
+>> memory attached to the CPU or a system wide memory controller then expose
+>> the memory as DMA-heap with specific requirements (e.g. certain sized pages,
+>> contiguous, restricted, encrypted, ...).
+>>
+>> Is encrypted / protected a part of the allocation contract or should it
+>> be enforced separately via a call to TEE / SCM / anything else?
+>>
+>>
+>> Well that is a really good question I can't fully answer either. From what I know now I would say it depends on the design.
+>>
+> IMHO, I think Dmitry's proposal to rather allow the TEE device to be
+> the allocator and exporter of DMA-bufs related to restricted memory
+> makes sense to me. Since it's really the TEE implementation (OP-TEE,
+> AMD-TEE, TS-TEE or future QTEE) which sets up the restrictions on a
+> particular piece of allocated memory. AFAIK, that happens after the
+> DMA-buf gets allocated and then user-space calls into TEE to set up
+> which media pipeline is going to access that particular DMA-buf. It
+> can also be a static contract depending on a particular platform
+> design.
+>
+> As Jens noted in the other thread, we already manage shared memory
+> allocations (from a static carve-out or dynamically mapped) for
+> communications among Linux and TEE that were based on DMA-bufs earlier
+> but since we didn't required them to be shared with other devices, so
+> we rather switched to anonymous memory.
+>
+>  From user-space perspective, it's cleaner to use TEE device IOCTLs for
+> DMA-buf allocations since it already knows which underlying TEE
+> implementation it's communicating with rather than first figuring out
+> which DMA heap to use for allocation and then communicating with TEE
+> implementation.
 
-Most of the callers of wbc_account_cgroup_owner() are converting a folio
-to page before calling the function. wbc_account_cgroup_owner() is
-converting the page back to a folio to call mem_cgroup_css_from_folio().
++1
 
-Convert wbc_account_cgroup_owner() to take a folio instead of a page,
-and convert all callers to pass a folio directly except f2fs.
+I'm not that deeply into the functionality the TEE device IOCTLs expose, 
+so can't judge if what's said above is correct or not.
 
-Convert the page to folio for all the callers from f2fs as they were the
-only callers calling wbc_account_cgroup_owner() with a page. As f2fs is
-already in the process of converting to folios, these call sites might
-also soon be calling wbc_account_cgroup_owner() with a folio directly in
-the future.
+But in general building on top of existing infrastructure and 
+information is a really strong argument for a design.
 
-No functional changes. Only compile tested.
+So from my 10 mile high point of view that sounds like the way to go.
 
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
- Documentation/admin-guide/cgroup-v2.rst | 2 +-
- fs/btrfs/extent_io.c                    | 7 +++----
- fs/btrfs/inode.c                        | 2 +-
- fs/buffer.c                             | 4 ++--
- fs/ext4/page-io.c                       | 2 +-
- fs/f2fs/data.c                          | 9 ++++++---
- fs/fs-writeback.c                       | 8 +++-----
- fs/iomap/buffered-io.c                  | 2 +-
- fs/mpage.c                              | 2 +-
- include/linux/writeback.h               | 4 ++--
- 10 files changed, 21 insertions(+), 21 deletions(-)
+Regards,
+Christian.
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 69af2173555fb..064012ea6f366 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -2945,7 +2945,7 @@ following two functions.
- 	a queue (device) has been associated with the bio and
- 	before submission.
- 
--  wbc_account_cgroup_owner(@wbc, @page, @bytes)
-+  wbc_account_cgroup_owner(@wbc, @folio, @bytes)
- 	Should be called for each data segment being written out.
- 	While this function doesn't care exactly when it's called
- 	during the writeback session, it's the easiest and most
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 39c9677c47d5a..4667d1e034e0e 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -785,7 +785,7 @@ static void submit_extent_folio(struct btrfs_bio_ctrl *bio_ctrl,
- 		}
- 
- 		if (bio_ctrl->wbc)
--			wbc_account_cgroup_owner(bio_ctrl->wbc, &folio->page,
-+			wbc_account_cgroup_owner(bio_ctrl->wbc, folio,
- 						 len);
- 
- 		size -= len;
-@@ -1707,7 +1707,7 @@ static noinline_for_stack void write_one_eb(struct extent_buffer *eb,
- 		ret = bio_add_folio(&bbio->bio, folio, eb->len,
- 				    eb->start - folio_pos(folio));
- 		ASSERT(ret);
--		wbc_account_cgroup_owner(wbc, folio_page(folio, 0), eb->len);
-+		wbc_account_cgroup_owner(wbc, folio, eb->len);
- 		folio_unlock(folio);
- 	} else {
- 		int num_folios = num_extent_folios(eb);
-@@ -1721,8 +1721,7 @@ static noinline_for_stack void write_one_eb(struct extent_buffer *eb,
- 			folio_start_writeback(folio);
- 			ret = bio_add_folio(&bbio->bio, folio, eb->folio_size, 0);
- 			ASSERT(ret);
--			wbc_account_cgroup_owner(wbc, folio_page(folio, 0),
--						 eb->folio_size);
-+			wbc_account_cgroup_owner(wbc, folio, eb->folio_size);
- 			wbc->nr_to_write -= folio_nr_pages(folio);
- 			folio_unlock(folio);
- 		}
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index edac499fd83d2..eb64f04755c23 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1729,7 +1729,7 @@ static bool run_delalloc_compressed(struct btrfs_inode *inode,
- 			 * need full accuracy.  Just account the whole thing
- 			 * against the first page.
- 			 */
--			wbc_account_cgroup_owner(wbc, &locked_folio->page,
-+			wbc_account_cgroup_owner(wbc, locked_folio,
- 						 cur_end - start);
- 			async_chunk[i].locked_folio = locked_folio;
- 			locked_folio = NULL;
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 1fc9a50def0b5..32bd0f4c42236 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2803,7 +2803,7 @@ static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
- 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
- 	bio->bi_write_hint = write_hint;
- 
--	__bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
-+	bio_add_folio_nofail(bio, bh->b_folio, bh->b_size, bh_offset(bh));
- 
- 	bio->bi_end_io = end_bio_bh_io_sync;
- 	bio->bi_private = bh;
-@@ -2813,7 +2813,7 @@ static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
- 
- 	if (wbc) {
- 		wbc_init_bio(wbc, bio);
--		wbc_account_cgroup_owner(wbc, bh->b_page, bh->b_size);
-+		wbc_account_cgroup_owner(wbc, bh->b_folio, bh->b_size);
- 	}
- 
- 	submit_bio(bio);
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index ad5543866d215..b7b9261fec3b5 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -421,7 +421,7 @@ static void io_submit_add_bh(struct ext4_io_submit *io,
- 		io_submit_init_bio(io, bh);
- 	if (!bio_add_folio(io->io_bio, io_folio, bh->b_size, bh_offset(bh)))
- 		goto submit_and_retry;
--	wbc_account_cgroup_owner(io->io_wbc, &folio->page, bh->b_size);
-+	wbc_account_cgroup_owner(io->io_wbc, folio, bh->b_size);
- 	io->io_next_block++;
- }
- 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 94f7b084f6016..e3ce763cce18f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -711,7 +711,8 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 	}
- 
- 	if (fio->io_wbc && !is_read_io(fio->op))
--		wbc_account_cgroup_owner(fio->io_wbc, fio->page, PAGE_SIZE);
-+		wbc_account_cgroup_owner(fio->io_wbc, page_folio(fio->page),
-+					 PAGE_SIZE);
- 
- 	inc_page_count(fio->sbi, is_read_io(fio->op) ?
- 			__read_io_type(page) : WB_DATA_TYPE(fio->page, false));
-@@ -911,7 +912,8 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 	}
- 
- 	if (fio->io_wbc)
--		wbc_account_cgroup_owner(fio->io_wbc, fio->page, PAGE_SIZE);
-+		wbc_account_cgroup_owner(fio->io_wbc, page_folio(fio->page),
-+					 PAGE_SIZE);
- 
- 	inc_page_count(fio->sbi, WB_DATA_TYPE(page, false));
- 
-@@ -1011,7 +1013,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 	}
- 
- 	if (fio->io_wbc)
--		wbc_account_cgroup_owner(fio->io_wbc, fio->page, PAGE_SIZE);
-+		wbc_account_cgroup_owner(fio->io_wbc, page_folio(fio->page),
-+					 PAGE_SIZE);
- 
- 	io->last_block_in_bio = fio->new_blkaddr;
- 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index d8bec3c1bb1fa..2391b09f4cede 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -890,17 +890,16 @@ EXPORT_SYMBOL_GPL(wbc_detach_inode);
- /**
-  * wbc_account_cgroup_owner - account writeback to update inode cgroup ownership
-  * @wbc: writeback_control of the writeback in progress
-- * @page: page being written out
-+ * @folio: folio being written out
-  * @bytes: number of bytes being written out
-  *
-- * @bytes from @page are about to written out during the writeback
-+ * @bytes from @folio are about to written out during the writeback
-  * controlled by @wbc.  Keep the book for foreign inode detection.  See
-  * wbc_detach_inode().
-  */
--void wbc_account_cgroup_owner(struct writeback_control *wbc, struct page *page,
-+void wbc_account_cgroup_owner(struct writeback_control *wbc, struct folio *folio,
- 			      size_t bytes)
- {
--	struct folio *folio;
- 	struct cgroup_subsys_state *css;
- 	int id;
- 
-@@ -913,7 +912,6 @@ void wbc_account_cgroup_owner(struct writeback_control *wbc, struct page *page,
- 	if (!wbc->wb || wbc->no_cgroup_owner)
- 		return;
- 
--	folio = page_folio(page);
- 	css = mem_cgroup_css_from_folio(folio);
- 	/* dead cgroups shouldn't contribute to inode ownership arbitration */
- 	if (!(css->flags & CSS_ONLINE))
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 11ea747228aee..3d1fae7d3a64e 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1833,7 +1833,7 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
- 	if (ifs)
- 		atomic_add(len, &ifs->write_bytes_pending);
- 	wpc->ioend->io_size += len;
--	wbc_account_cgroup_owner(wbc, &folio->page, len);
-+	wbc_account_cgroup_owner(wbc, folio, len);
- 	return 0;
- }
- 
-diff --git a/fs/mpage.c b/fs/mpage.c
-index b5b5ddf9d513d..82aecf3727437 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -606,7 +606,7 @@ static int __mpage_writepage(struct folio *folio, struct writeback_control *wbc,
- 	 * the confused fail path above (OOM) will be very confused when
- 	 * it finds all bh marked clean (i.e. it will not write anything)
- 	 */
--	wbc_account_cgroup_owner(wbc, &folio->page, folio_size(folio));
-+	wbc_account_cgroup_owner(wbc, folio, folio_size(folio));
- 	length = first_unmapped << blkbits;
- 	if (!bio_add_folio(bio, folio, length, 0)) {
- 		bio = mpage_bio_submit_write(bio);
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index d6db822e4bb30..641a057e04132 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -217,7 +217,7 @@ void wbc_attach_and_unlock_inode(struct writeback_control *wbc,
- 				 struct inode *inode)
- 	__releases(&inode->i_lock);
- void wbc_detach_inode(struct writeback_control *wbc);
--void wbc_account_cgroup_owner(struct writeback_control *wbc, struct page *page,
-+void wbc_account_cgroup_owner(struct writeback_control *wbc, struct folio *folio,
- 			      size_t bytes);
- int cgroup_writeback_by_id(u64 bdi_id, int memcg_id,
- 			   enum wb_reason reason, struct wb_completion *done);
-@@ -324,7 +324,7 @@ static inline void wbc_init_bio(struct writeback_control *wbc, struct bio *bio)
- }
- 
- static inline void wbc_account_cgroup_owner(struct writeback_control *wbc,
--					    struct page *page, size_t bytes)
-+					    struct folio *folio, size_t bytes)
- {
- }
- 
-
-base-commit: 92fc9636d1471b7f68bfee70c776f7f77e747b97
--- 
-2.44.1
+>
+> -Sumit
 
 
