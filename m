@@ -1,149 +1,120 @@
-Return-Path: <linux-kernel+bounces-340466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B49919873C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:45:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CDA59873CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43070280BF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:45:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8F47B2550B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F6817BD3;
-	Thu, 26 Sep 2024 12:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469A9134B6;
+	Thu, 26 Sep 2024 12:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BOkMMkrQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hforSMyS"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3ABC149;
-	Thu, 26 Sep 2024 12:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514A612B73
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727354690; cv=none; b=ZcQWdZ9carRQ1fzQxz1qGhogtTG7fL0Z9LnrQcVTtW6lDWXZgTzvFigun2IeFxejFflMUa/kHi1b35KqMb3ngg5r3xIm/4c12w/13PXIbx83jqo98Aj/VPbXRJ0SxdqVsrq3AccYAKXCHY8D7A3EFLiyoUquzGbQaONKzh8ZggE=
+	t=1727354853; cv=none; b=jbM53ZgIGCbQJzDaazD9xdSKv6WopokISHZvXuAvAN1rY7QV+jmxG4wxa6AM2bSTaIuE13JjjCZ1CjqBRg1+DQv9wHhhUld8+WO0w+D/mdWa4/xw/TLxcImp5nUGniJ7z60ajUMkaLLGl2kLHN3vMO/21E2mbvzEbxSIB8fXUfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727354690; c=relaxed/simple;
-	bh=GkIY3c3npPTD0w2O0sRGPXuhmHmcjOpIsk+qPP4jbhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LrUhvIWql/EqT6o2oYvlQwJ0AF+uDXu59d9Vi7LNwhqsez6WEjomSHxqPkhLrOKPl7Md0vnBdRxQOLMiFnwM1TnbWF1Eaxvp6PvtzyNRtZj52htTxYoVH0Iz9u5ogkqdiYpmS2QaM2yAo+2t4eIvCuoWZjzZWYK+OvZlYhquuVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BOkMMkrQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBB0AC4CEC9;
-	Thu, 26 Sep 2024 12:44:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727354689;
-	bh=GkIY3c3npPTD0w2O0sRGPXuhmHmcjOpIsk+qPP4jbhM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BOkMMkrQQaxoqX/hX//yP/nO872WQZaE6UDewg8kR3sbhm98jQ2PmsbJvF+v9HzlX
-	 uWspBbn7kvyrMrCP8zhk3KKjxCCb76O/S5H7J15b9vQ0Cna6oetAxnztZ/SkJUU5pZ
-	 R3siVhK/1l+zygsLyUk//NGexKxa7zr2PeIFtDgX8CAIg5jv9ndCL6vh9ZbQ81NZKK
-	 QAEvEnUOct/Id39auxI6G2bBb1x8ZAAjzHHyyP0eQTM2YTP/dF5MVYWqU7B/dtrhmo
-	 /W0701hLo2EAphNFq6uLo+oJBtLbynHzuZYW3hZ2+Jdo0TM6iAetlZiqkB1QV9yeyi
-	 efPM+LuqoSY1Q==
-Date: Thu, 26 Sep 2024 14:44:47 +0200
-From: Bjorn Andersson <andersson@kernel.org>
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Cc: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, 
-	andi.shyti@kernel.org, linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_srichara@quicinc.com, quic_varada@quicinc.com
-Subject: Re: [PATCH v2 1/1] i2c: qcom-geni: Support systems with 32MHz serial
- engine clock
-Message-ID: <epgcibdthvaicvoao6vuvged4cfohmz4sbrubp7rkn5wh4l3zq@qdg52odoy6db>
-References: <20240926034304.3565278-1-quic_mmanikan@quicinc.com>
- <732bdb12-a52b-4abe-8edb-afed44406011@quicinc.com>
+	s=arc-20240116; t=1727354853; c=relaxed/simple;
+	bh=fyJKuZVK0pU5Fqrwlw0rK18hA89S7OCk8Zi/KbuJDu0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=trmjqBrWRoaVHfo0c8Mm3hxJzLB5YceZ1ePTlM5PtluXlN55xh7eyj3GP1seDeRO5WtixcBDNzy8BNPoWKkcLOvky3oKCMVe8tfbKTorunTirTC/RW0OR+MeBoN/k4d8nFOGCO+xn5PH+eB35kZUXaliKHsLMZzi4RPh74yDWpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hforSMyS; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a1a4f2cc29so179595ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:47:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727354851; x=1727959651; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B0YaFbmNZZQ27EGzEPqm3xDYI+YQcc7orYNQOKUIa6A=;
+        b=hforSMySCYG+QYOm7PwSRP7tpcLKiHTDPQS4QvpSBLtvy3dmWm2vRp4rXCuohYTRNV
+         HKM8/ANPvUmRtIPw/5oInl2oK2vejyu9uuwjaQKxXuibx3pWb5LUCpmCTEZ/ivl3eFmk
+         YptOESiXEEJPqmj3TrMExRZTPLKcGWb8CpFCKLU9FhhOY7zZIAhpdJkhsVgwFtFl4Lhr
+         cuyi07JAxRd4iqYYlWxoFw1qqPmdpM9MnPA+4EatwsFJmhRuEsYhNT6tLSozwZSpWsUG
+         lNO5lqzXRW9dBzP023pUWu4k19ECB9+d/Y8K0+uXWCe2ODnLfSY6nx9r1W7yiEYl6Wjk
+         VcZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727354851; x=1727959651;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B0YaFbmNZZQ27EGzEPqm3xDYI+YQcc7orYNQOKUIa6A=;
+        b=JWVz/2fykcxcfiI21+ayXHvrn9lF7gK8tsQOZh/Tvza6Lgmky0Kr50lMIZ2JRQCgah
+         ctYtQfK/AUUqg0kTIztA0dTUKDvrXiUHhuLfaa64ySdFSzTnezD5mYnne20zdQJOg+XJ
+         Jb12CXZ8NlvZTwGwmYakZyFWFTvAEm3l2+n0ZFpTP7PQ4U7Cj3xAhPm54eO3tC91MJLD
+         d7ICuq0ruNVAO4/c1OrC2jdJOU2FncS0YLjh+j6VgvAmgwIQk11b0A/GjeHW5Zqh7wtQ
+         TjQ73QOX4nWepL9kNUaRNFA2AqzJo2ELiaXzsJiLq4oHVI48lUeEIrX6lzPGiePfwiQF
+         Lyvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVu+hH7nNbgIITQ4vvuB/9/Bh69Oz+N8W1/3ZIYa/jh2/14R4aYrs/854nio2wFFOSL0oVY8UFD/TYaeIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMUHF3TVGHawnvw5FJrPA/fVxO6ETE1DAW9qFGVOzBfgSkBfU6
+	6puRY0NSDf7VvHnnJV04ojDM0OPejaQoknfBqfl6Zo9mF16IonAj0B3pX0qpGn6tyXO8cxcY1g4
+	oq91hhDPlEkNdiQ6mtqXTuSv7ay9ZxcoSqepY
+X-Google-Smtp-Source: AGHT+IFMqRnqwjKxa87XgLmW7djRVdBS3k0K+n7Ne06XPBn+bzv5sGNN+Zof85NBIEtS+boDmLekH2h0LRsTzu1U784=
+X-Received: by 2002:a05:6e02:1c08:b0:3a0:b597:3e30 with SMTP id
+ e9e14a558f8ab-3a295eb02ebmr4428815ab.8.1727354851210; Thu, 26 Sep 2024
+ 05:47:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <732bdb12-a52b-4abe-8edb-afed44406011@quicinc.com>
+References: <20240924160418.1391100-1-irogers@google.com> <20240924160418.1391100-12-irogers@google.com>
+ <ZvTUo_nbr_gKaJrs@google.com>
+In-Reply-To: <ZvTUo_nbr_gKaJrs@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 26 Sep 2024 05:47:16 -0700
+Message-ID: <CAP-5=fVQVEgSK55Y_38KXyp3CJ1ssPOcqkA2JKwMDVYJe8iztA@mail.gmail.com>
+Subject: Re: [PATCH v1 11/11] perf build: Rename PERF_HAVE_DWARF_REGS to PERF_HAVE_LIBDW_REGS
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+	Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>, 
+	Guilherme Amadio <amadio@gentoo.org>, Changbin Du <changbin.du@huawei.com>, 
+	"Steinar H. Gunderson" <sesse@google.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
+	Bibo Mao <maobibo@loongson.cn>, Kajol Jain <kjain@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>, Shenlin Liang <liangshenlin@eswincomputing.com>, 
+	Atish Patra <atishp@rivosinc.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Chen Pei <cp0613@linux.alibaba.com>, Dima Kogan <dima@secretsauce.net>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller" <davem@davemloft.net>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Yang Jihong <yangjihong@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 11:44:20AM GMT, Mukesh Kumar Savaliya wrote:
-> Hi Manikanta, My suggestion:
-> 
-> i2c: qcom-geni: Support systems with 32MHz serial engine clock
-> [Derive i2c clock from 32MHz Sourced clock]
+On Wed, Sep 25, 2024 at 8:27=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Tue, Sep 24, 2024 at 09:04:18AM -0700, Ian Rogers wrote:
+> > The name dwarf can imply libunwind support, whereas
+> > PERF_HAVE_DWARF_REGS is only enabled with libdw support. Rename to
+> > make it clearer there is a libdw connection.
+>
+> While it only covers libdw, I think the idea of this macro is whether
+> the arch has register mappings defined in DWARF standard.  So I think
+> it's better to keep the name for this case.
 
-I'm fine with a more accurate subject, but to me your sentence indicates
-"there's a choice of where the i2c clock is sourced from, now make it
-come from the 32MHz clock".
+How can the dwarf standard exist for an arch but not define registers?
 
-Is this really what's going on? (Patch content and commit message
-indicates no)
-
-Is the "Sourced clock" the name of specific clock? Why does it have a
-capital 'S'?
-
-Regards,
-Bjorn
-
-> 
-> On 9/26/2024 9:13 AM, Manikanta Mylavarapu wrote:
-> > In existing socs, I2C serial engine is sourced from XO (19.2MHz).
-> > Where as in IPQ5424, I2C serial engine is sourced from GPLL0 (32MHz).
-> > 
-> > The existing map table is based on 19.2MHz. This patch incorporate
-> incorporate/s/incorporates
-> > the clock map table to derive the SCL clock from the 32MHz source
-> > clock frequency.
-> > 
-> > Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> > ---
-> > Changes in v2:
-> > 	- Dropped IPQ5424 from the commit title
-> > 	- Added else part to assign geni_i2c_clk_map_19p2mhz to itr
-> > 	- Dropped MHZ macro and used HZ_PER_MHZ macro
-> > 	- Expanded SE to serial engine
-> > 	- Added the reason for 32MHz clock in commit message
-> > 
-> >   drivers/i2c/busses/i2c-qcom-geni.c | 19 ++++++++++++++++---
-> >   1 file changed, 16 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> > index 212336f724a6..22f2a0d83641 100644
-> > --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> > +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> > @@ -16,6 +16,7 @@
-> >   #include <linux/pm_runtime.h>
-> >   #include <linux/soc/qcom/geni-se.h>
-> >   #include <linux/spinlock.h>
-> > +#include <linux/units.h>
-> >   #define SE_I2C_TX_TRANS_LEN		0x26c
-> >   #define SE_I2C_RX_TRANS_LEN		0x270
-> > @@ -146,18 +147,30 @@ struct geni_i2c_clk_fld {
-> >    * clk_freq_out = t / t_cycle
-> >    * source_clock = 19.2 MHz
-> >    */
-> > -static const struct geni_i2c_clk_fld geni_i2c_clk_map[] = {
-> > +static const struct geni_i2c_clk_fld geni_i2c_clk_map_19p2mhz[] = {
-> >   	{KHZ(100), 7, 10, 11, 26},
-> >   	{KHZ(400), 2,  5, 12, 24},
-> >   	{KHZ(1000), 1, 3,  9, 18},
-> >   };
-> > +/* source_clock = 32 MHz */
-> > +static const struct geni_i2c_clk_fld geni_i2c_clk_map_32mhz[] = {
-> > +	{KHZ(100), 7, 14, 18, 40},
-> > +	{KHZ(400), 4,  3, 11, 20},
-> > +	{KHZ(1000), 4, 3,  6, 15},
-> > +};
-> > +
-> >   static int geni_i2c_clk_map_idx(struct geni_i2c_dev *gi2c)
-> >   {
-> >   	int i;
-> > -	const struct geni_i2c_clk_fld *itr = geni_i2c_clk_map;
-> > +	const struct geni_i2c_clk_fld *itr;
-> > +
-> > +	if (clk_get_rate(gi2c->se.clk) == 32 * HZ_PER_MHZ)
-> > +		itr = geni_i2c_clk_map_32mhz;
-> > +	else
-> > +		itr = geni_i2c_clk_map_19p2mhz;
-> > -	for (i = 0; i < ARRAY_SIZE(geni_i2c_clk_map); i++, itr++) {
-> > +	for (i = 0; i < ARRAY_SIZE(geni_i2c_clk_map_19p2mhz); i++, itr++) {
-> >   		if (itr->clk_freq_out == gi2c->clk_freq_out) {
-> >   			gi2c->clk_fld = itr;
-> >   			return 0;
-> 
+Thanks,
+Ian
 
