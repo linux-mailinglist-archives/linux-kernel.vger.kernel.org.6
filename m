@@ -1,149 +1,101 @@
-Return-Path: <linux-kernel+bounces-340956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C0798797A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C9C98797D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3121B287113
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:57:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE4B28747D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874EA176AD7;
-	Thu, 26 Sep 2024 18:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D169C17A591;
+	Thu, 26 Sep 2024 18:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GoV+tMtp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="eNmc+Qah"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB0C15B98E;
-	Thu, 26 Sep 2024 18:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F36B15B98E;
+	Thu, 26 Sep 2024 18:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727377057; cv=none; b=Ex79cYw9O82gMCY4HX2PQJmi99q/8iNeIIUeGt9qNixkinyUU7QYHQjtotgF3YoXipDdv3xAtv6tkPKPa1BvJEMEvn0e3OP6iC2SVZrW1hF1ZEQWEKPMthW1/EXFmhjZTQtwrFYcLEPSt5XKNBRDR/QnsQhEx47sz99X+EJ4rNI=
+	t=1727377101; cv=none; b=AHgHPsUvuoTVtfvC4OjlJF+BRkD7si0VUZJSswn2rcyRLdJWSkrViyrDsvOPi+3pk8ztBbt63VN24fui5ehc09hujHe8DRkv0DY9b5NLykj1kI5W1r8JbazWHrkUC8LT7FR5aoTLgrTuiWp/pcghyLu3Sl3EsPf7MG7t3G3zg0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727377057; c=relaxed/simple;
-	bh=0omD3fzYrOSjwEjXMO2jmFjlFDpokzhSrIuQ7Z0EIjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aB8/1/jSjWq+PQC3R7d8sb87CcKhHXbSgREp/FYB2QXMGlSSkRMoQe+BSM3i0+us7RhD6wtx6PAfaZJzjo5gH57MqbpbiISpzuOhCLDul/ajvnuBx/bSSi7X5Dc5Q6rxHVbnhGiVaUTSZr3spfn8NDVjC4Kf21nGM1k/pCHy/oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GoV+tMtp; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727377056; x=1758913056;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0omD3fzYrOSjwEjXMO2jmFjlFDpokzhSrIuQ7Z0EIjQ=;
-  b=GoV+tMtpO/bGSaNEQmTzZ+k0bu2i7NR03QMRQeT2XRE2pQlJ84xs0R+K
-   SaRBnCEW3f5t6RG4IEqwEJYCJxroCD5IvTIXkZCH5EQQ94H8P2Byft0+s
-   IXPckri5306LHVRi1y3J30iILK1lW82hoXDPwU/Qx8UrG+od3IVJlOHJ5
-   5nViQS/Qp6W0Nj+Oka4281HKHcuOsv1rke5qya0IHr5M1ROA1HucC2m2Z
-   P598EgEdgZSsF+uF7schhPdz5RhYH6DiK69Y1O6z1LFMS3seJ7VtWfmrp
-   V4J7YcRCQxJtmg1HJRGlJAduMjD089lJRHF253za6eFuAHsvjAB/eT0GJ
-   w==;
-X-CSE-ConnectionGUID: BhIXFjH2QB62IUezKCmNag==
-X-CSE-MsgGUID: Y3shEXNLSNyxCrdtJstDMg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26448688"
-X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
-   d="scan'208";a="26448688"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 11:57:35 -0700
-X-CSE-ConnectionGUID: hgu0IQX0TTOFpSYxdEpA2g==
-X-CSE-MsgGUID: wd/12+7yTV6utez+McuSwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
-   d="scan'208";a="71865853"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 11:57:31 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 5679611F843;
-	Thu, 26 Sep 2024 21:57:29 +0300 (EEST)
-Date: Thu, 26 Sep 2024 18:57:29 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Prabhakar <prabhakar.csengg@gmail.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 11/11] media: i2c: ov5645: Report streams using frame
- descriptors
-Message-ID: <ZvWumaGsMPGGwPaS@kekkonen.localdomain>
-References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240910170610.226189-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <ZvWBlivUaZ92KoAI@kekkonen.localdomain>
- <20240926174819.GK21788@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1727377101; c=relaxed/simple;
+	bh=nFOuKnkaTmIkn6GiEorRCB9FV+6ha31zO84j5crpkY0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m6XLt4R+jLQg8Y82Hjeac/NCkCyKMrRmScPgMHUNi+RtYbOTh0HF8BiPnPb05H8rGGLhJz3Se8xYqqy1OhoXyFgE9fn7RU7TUEXy120Ec7rK4dA0s/kasrRcLXEvjLzEpDGHmJOGK8AJ1S2qMkdqtztcamf8r6H+GaBCjhtB2fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=eNmc+Qah; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1727377096; x=1727636296;
+	bh=MY/ZvB0yi1dIucSZzljqvB4KqcbC9zKa10VJMi+Shxg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=eNmc+Qah1iuFhuit9fCzpb6eaSuWVKd/NfqP3FMLfrcWo4BUWyIeXuCFbpIrEmxVN
+	 9PMyLF922uEhwE7eiMZHag8WGBlNsQOqwWcZt+3rja8XdjSmJLkEQ0RjHWM6wfFGgE
+	 RP4JfL83yNIbpWEYFWqyTXlTzURzyorjQdoxGLgEmXn9oOqewdqdYbZ0+gILeLVU4x
+	 on5u9vzC4nnwCPY1GcXPprlpelP0o23FE0G8ceUoyCEf0gl7XbDUa6Hvh9Y6gVDkqe
+	 1T2bf4uU5JlWcjdWyX1sJ/D7eVnB4P47r/5HxtcyFNX6/3uQqt7DBxtBmuOM1t7cVD
+	 I/XatSfu55B1w==
+Date: Thu, 26 Sep 2024 18:58:10 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] Miscdevices in Rust
+Message-ID: <f7820784-9d9c-4ab9-8c84-b010fead8321@proton.me>
+In-Reply-To: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: b96f335b3237fcac0256ede9a308460b398ca769
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926174819.GK21788@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 08:48:19PM +0300, Laurent Pinchart wrote:
-> On Thu, Sep 26, 2024 at 03:45:26PM +0000, Sakari Ailus wrote:
-> > Hi Prabhakar,
-> > 
-> > Thanks for the set. It looks largely very nice to me, after addressing
-> > Laurent's comments. A few comments here and possibly on other patches...
-> > 
-> > On Tue, Sep 10, 2024 at 06:06:10PM +0100, Prabhakar wrote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > 
-> > > Implement the .get_frame_desc() subdev operation to report information
-> > > about streams to the connected CSI-2 receiver. This is required to let
-> > > the CSI-2 receiver driver know about virtual channels and data types for
-> > > each stream.
-> > > 
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > ---
-> > >  drivers/media/i2c/ov5645.c | 28 ++++++++++++++++++++++++++++
-> > >  1 file changed, 28 insertions(+)
-> > > 
-> > > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-> > > index 7f1133292ffc..c24eb6e7a7b5 100644
-> > > --- a/drivers/media/i2c/ov5645.c
-> > > +++ b/drivers/media/i2c/ov5645.c
-> > > @@ -28,6 +28,7 @@
-> > >  #include <linux/regulator/consumer.h>
-> > >  #include <linux/slab.h>
-> > >  #include <linux/types.h>
-> > > +#include <media/mipi-csi2.h>
-> > >  #include <media/v4l2-ctrls.h>
-> > >  #include <media/v4l2-event.h>
-> > >  #include <media/v4l2-fwnode.h>
-> > > @@ -829,6 +830,32 @@ static const struct v4l2_ctrl_ops ov5645_ctrl_ops = {
-> > >  	.s_ctrl = ov5645_s_ctrl,
-> > >  };
-> > >  
-> > > +static int ov5645_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-> > > +				 struct v4l2_mbus_frame_desc *fd)
-> > > +{
-> > > +	const struct v4l2_mbus_framefmt *fmt;
-> > > +	struct v4l2_subdev_state *state;
-> > > +
-> > > +	if (pad != OV5645_PAD_SOURCE)
-> > > +		return -EINVAL;
-> > 
-> > As you have a single source pad, and pretty much all sensor drivers will, I
-> > think it'd be nice to add a check for this (that it's not an internal pad)
-> > to the caller side in v4l2-subdev.c. And of course drop this one.
-> 
-> What check would you add, just verifying that the pad is a source pad ?
+On 26.09.24 16:58, Alice Ryhl wrote:
+> A misc device is generally the best place to start with your first Rust
+> driver, so having abstractions for miscdevice in Rust will be important
+> for our ability to teach Rust to kernel developers.
 
-I think you could add that, too, besides the absence of the internal flag.
+Sounds good!
 
--- 
-Sakari Ailus
+> I intend to add a sample driver using these abstractions, and I also
+> intend to use it in Rust Binder to handle the case where binderfs is
+> turned off.
+>=20
+> I know that the patchset is still a bit rough. It could use some work on
+> the file position aspect. But I'm sending this out now to get feedback
+> on the overall approach.
+>=20
+> This patchset depends on files [1] and vma [2].
+>=20
+> Link: https://lore.kernel.org/all/20240915-alice-file-v10-0-88484f7a3dcf@=
+google.com/ [1]
+> Link: https://lore.kernel.org/all/20240806-vma-v5-1-04018f05de2b@google.c=
+om/ [2]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+> Alice Ryhl (3):
+>       rust: types: add Opaque::try_ffi_init
+>       rust: file: add f_pos and set_f_pos
+>       rust: miscdevice: add abstraction for defining miscdevices
+
+I recall that we had a sample miscdev driver in the old rust branch. Can
+you include that in this series, or is there still some stuff missing? I
+think it would be really useful for people that want to implement such a
+driver to have something to look at.
+
+---
+Cheers,
+Benno
+
 
