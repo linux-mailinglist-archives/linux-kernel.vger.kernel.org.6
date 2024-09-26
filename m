@@ -1,193 +1,119 @@
-Return-Path: <linux-kernel+bounces-340356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F29EC9871FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:49:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0F9987200
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A936628C597
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:49:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE81D28C593
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E541ACE12;
-	Thu, 26 Sep 2024 10:49:31 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92461AD9CB;
+	Thu, 26 Sep 2024 10:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qMhC3dtQ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5941AB6E7
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB861F95C;
+	Thu, 26 Sep 2024 10:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727347771; cv=none; b=jNi8Oo1nvt79/rxMO7gk1aU89YxcUto0fUbUbKVAFg2O2izdgEnUNE1N0SU163x65+FB7RnaA2C7OHBMiiSsj2Jcmoip2oHSzk24g/ZBx42YqfhmSyzaiaw5kHd5PIkWytRjLSADyKDTgdiYfWf5NV6UO7GCPtaaC3UYSZhWWhs=
+	t=1727347793; cv=none; b=cOicv7wbYunSMzrFScC0Nrek7hgJp6/kzvifn9/nqGwOeqRqSivOAmXmyB4GcHZyHnn0FBWWbrGOwWPzwrwgJvhRm6v/j1qrqvcuRLNeixbp8uHtYbhiLfqoTaPI7srQGazLoxx3wQ3D9ZMPs6Pd98p2kW9N9VzfnhRnoGdbWew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727347771; c=relaxed/simple;
-	bh=KEawcTrJFiGdBZY0yAY/PMd6jxyoUx+5CAO7Zh1V9R4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OsW8P+dT1lBjDjDds9r1E5AnlSA64dhH+tt4lE6m71bpcNAdw6Ieh6o3Gp8umfipv1Kzvw3lafnZhiIURx7byCVKroCMvMd6R6zCCHZgS/FfP3MIxCpZLsPNp5MLypExx2JLWkirUlXT2yW1gFLwjKT/+EXhWr9pmrCPbxwp734=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a045e7ed57so9285035ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 03:49:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727347768; x=1727952568;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xr3Jdh4lzyM+gHqoLJWzrwPHI0SDfvfxvRci18QnFi0=;
-        b=LvV4sP9Yxp+/TIuK2QcXgkMcDfRiI05ZGvw1qNrUcPu306unRwtVpBGzL7yXxQGI67
-         DHV7tRsTuoaCP/LVDPhRSvBDKnKx72ty5RgDGS7kFqnP43SmhyGzCroi8oTlQwLZMaN/
-         44ceTExrBv/3NzEnXWlgDubLYE1QByrxIVr5SuyqT9fLFKNg36e0h57JXx8zJ/f27ZVk
-         yRePhX7F4O3f1iZclUrDlqbrYdzVgRrxnDt+mb5faWDoa85Tp+JvBBnWpo8YgD9eE4Lx
-         i3ZxAhIvLLP0rUx/tvSfcwMyKwsdTG0PwXNYeqEFmvThsJPNTvhurBNa5cTcDxjfMY63
-         b6kw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpZ8wtJ5bVVRe43q6CTqF3O6fC468l1PW12h9kGATnia+lqMmT3ls9+2UoKOdxpY5WDUTHan8Izwp9wN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNywCjCX9fH1Zi2TjGd1qDGRfwIEi+UYWgWddAjGvpQdLLkQt3
-	ZwbKluoaqTm602+6VthG9HWjkZTx0A2IC2bB8C7FF5qQKAB/nKgn9Jf4xfzzvop8QdXe8K1I006
-	67/q0RD6KreJNSzdGCwSAAZ1fE+YoeVsetpOLwZNCT1S+MOhuIAH41NQ=
-X-Google-Smtp-Source: AGHT+IGoZaOeI4L7kAj69IlfSEUZcwlaeAkURhARdEfyyIisH0G/Zhhb8FuuvGdClg9hZLZjVI1NN75B4Kj4Fk9ZL8vcNXzeCkmJ
+	s=arc-20240116; t=1727347793; c=relaxed/simple;
+	bh=5z7SiMhJTEAuTswaoEaoXppBt9EGx2gS7cFSH/7/tow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IFcjc5ZDMAG9moXrH4v+IFPcYntP2vdw9hMoWOxzBmmGGu4/IuvuosZQ4chaZ/IisJWAZKMgKMJBH1VC7B85qLYfCW10IuSC385w5tsICRpjptNq+YSekeuTuRDhslDmeA06PssJXGCykBuudzx8cQlRhfgpLBCloh5FPutquuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qMhC3dtQ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727347789;
+	bh=5z7SiMhJTEAuTswaoEaoXppBt9EGx2gS7cFSH/7/tow=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qMhC3dtQcM1PnqulvZCIkjIpriv/j4NY6o6x597yg0HfYV+VJRVOQZ162gpZO+OGA
+	 OBfpQsR3mRtzjSQcGeTqIiYFxCjWFOKJOYS2N31M1dPN/bm96phcxq4GgpY51KnoSI
+	 eEYbb6I8ZALbhUNpH4yOqaa4ytTLa0Cx1iMZJOVSBlN8mlWUbnL1pyZGScI4zVpcp6
+	 fENYo3TyyD3YRxff3cd1o6q8OKgOenw6A/0Sbb++RuCML5MkbfNLmnMLN+aYp2YmBF
+	 fjHyq95v2p+BEZnJA+hJltFc4qEpxL7trtLhmjTKBTr9JC5+PgUmxPZuN90P4jLxer
+	 +aTpTpuNcQ95A==
+Received: from [IPV6:2a01:e0a:d1a:1250:792b:136f:2a18:fd70] (unknown [IPv6:2a01:e0a:d1a:1250:792b:136f:2a18:fd70])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0E59417E11F6;
+	Thu, 26 Sep 2024 12:49:49 +0200 (CEST)
+Message-ID: <227a813a-0586-4072-b6de-9dfddfe2d060@collabora.com>
+Date: Thu, 26 Sep 2024 13:49:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1ca2:b0:3a3:41cf:f594 with SMTP id
- e9e14a558f8ab-3a341cff716mr6694975ab.12.1727347768582; Thu, 26 Sep 2024
- 03:49:28 -0700 (PDT)
-Date: Thu, 26 Sep 2024 03:49:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f53c38.050a0220.211276.0069.GAE@google.com>
-Subject: [syzbot] [bcachefs?] general protection fault in bch2_alloc_read
-From: syzbot <syzbot+a1b59c8e1a3f022fd301@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Provide devm_clk_bulk_get_all_enabled() helper
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Jingoo Han
+ <jingoohan1@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, kernel@collabora.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20240914-clk_bulk_ena_fix-v1-0-ce3537585c06@collabora.com>
+ <20240924143634.pqpdsewoqxn3liqi@thinkpad>
+ <70a24964-990b-4606-bdc8-4dd42c44785a@collabora.com>
+ <20240925075654.f2pefosdspqiakvj@thinkpad>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <20240925075654.f2pefosdspqiakvj@thinkpad>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 9/25/24 10:56 AM, Manivannan Sadhasivam wrote:
+> On Wed, Sep 25, 2024 at 09:52:44AM +0200, AngeloGioacchino Del Regno wrote:
+>> Il 24/09/24 16:36, Manivannan Sadhasivam ha scritto:
+>>> On Sat, Sep 14, 2024 at 09:04:53PM +0300, Cristian Ciocaltea wrote:
+>>>> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+>>>> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+>>>> return the number of clocks stored in the clk_bulk_data table referenced
+>>>> by the clks argument.
+>>>>
+>>>> That is required in case there is a need to iterate these clocks later,
+>>>> therefore I couldn't see any use case of this parameter and should have
+>>>> been simply removed from the function declaration.
+>>>>
+>>>
+>>> Is there an user that currerntly does this?
+>>>
+>>
+>> Yes and the patch wasn't sent upstream yet, but anyway, regardless of that,
+>> this series is fixing inconsistency with both naming and usage between the
+>> clock (bulk) API functions, with that being the only function acting
+>> different from the others, at best confusing people.
+>>
+> 
+> I agree with the 'inconsistency' part of the API, but I wouldn't call it as
+> *broken* as this series does. Please fix that and you can have my:
+> 
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-syzbot found the following issue on:
+Thanks Angelo and Mani for reviewing this.
 
-HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a3de9f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e851828834875d6f
-dashboard link: https://syzkaller.appspot.com/bug?extid=a1b59c8e1a3f022fd301
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=167ddca9980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a3de9f980000
+I've submitted v2:
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-88264981.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/df2a0a047a7a/vmlinux-88264981.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/bbdb25081712/bzImage-88264981.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2bfe5d0e1da4/mount_0.gz
+https://lore.kernel.org/lkml/20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a1b59c8e1a3f022fd301@syzkaller.appspotmail.com
-
-bcachefs (loop0): accounting_read... done
-bcachefs (loop0): alloc_read...
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5100 Comm: syz-executor420 Not tainted 6.11.0-syzkaller-08481-g88264981f208 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:bch2_alloc_read+0x17d9/0x24f0 fs/bcachefs/alloc_background.c:625
-Code: 0f b6 04 10 84 c0 4c 8d a4 24 b0 02 00 00 49 89 d7 0f 85 78 04 00 00 48 8b 33 48 8b 3c 24 e8 5e 14 00 00 48 89 c3 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 74 04 00 00 0f b6 44 24 30 88 03 48 8b
-RSP: 0018:ffffc90002d8f0e0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff89011e18963c
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 0000008100000014
-RBP: ffffc90002d8f4c8 R08: ffffffff8409ef0e R09: 0000000000000000
-R10: ffffc90002d8f450 R11: fffff520005b1e8c R12: ffffc90002d8f390
-R13: 000000000000001c R14: ffffc90002d8f200 R15: dffffc0000000000
-FS:  00005555882c4380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000558280275240 CR3: 000000001205e000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:183
- bch2_run_recovery_passes+0x19e/0x820 fs/bcachefs/recovery_passes.c:230
- bch2_fs_recovery+0x24f9/0x38b0 fs/bcachefs/recovery.c:859
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
- bch2_fs_get_tree+0xd61/0x1700 fs/bcachefs/fs.c:1956
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0c704b9dea
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd5754dfb8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffd5754dfd0 RCX: 00007f0c704b9dea
-RDX: 00000000200058c0 RSI: 0000000020005900 RDI: 00007ffd5754dfd0
-RBP: 0000000000000004 R08: 00007ffd5754e010 R09: 002c61746f757172
-R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
-R13: 00007ffd5754e010 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_alloc_read+0x17d9/0x24f0 fs/bcachefs/alloc_background.c:625
-Code: 0f b6 04 10 84 c0 4c 8d a4 24 b0 02 00 00 49 89 d7 0f 85 78 04 00 00 48 8b 33 48 8b 3c 24 e8 5e 14 00 00 48 89 c3 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 74 04 00 00 0f b6 44 24 30 88 03 48 8b
-RSP: 0018:ffffc90002d8f0e0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff89011e18963c
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 0000008100000014
-RBP: ffffc90002d8f4c8 R08: ffffffff8409ef0e R09: 0000000000000000
-R10: ffffc90002d8f450 R11: fffff520005b1e8c R12: ffffc90002d8f390
-R13: 000000000000001c R14: ffffc90002d8f200 R15: dffffc0000000000
-FS:  00005555882c4380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f4c02468cda CR3: 000000001205e000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	0f b6 04 10          	movzbl (%rax,%rdx,1),%eax
-   4:	84 c0                	test   %al,%al
-   6:	4c 8d a4 24 b0 02 00 	lea    0x2b0(%rsp),%r12
-   d:	00
-   e:	49 89 d7             	mov    %rdx,%r15
-  11:	0f 85 78 04 00 00    	jne    0x48f
-  17:	48 8b 33             	mov    (%rbx),%rsi
-  1a:	48 8b 3c 24          	mov    (%rsp),%rdi
-  1e:	e8 5e 14 00 00       	call   0x1481
-  23:	48 89 c3             	mov    %rax,%rbx
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 0f b6 04 38       	movzbl (%rax,%r15,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	0f 85 74 04 00 00    	jne    0x4ab
-  37:	0f b6 44 24 30       	movzbl 0x30(%rsp),%eax
-  3c:	88 03                	mov    %al,(%rbx)
-  3e:	48                   	rex.W
-  3f:	8b                   	.byte 0x8b
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Regards,
+Cristian
 
