@@ -1,138 +1,153 @@
-Return-Path: <linux-kernel+bounces-341012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018AC987A35
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:52:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E4E4987A38
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2455F1C22ADF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:52:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6280E28718D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A82183CCD;
-	Thu, 26 Sep 2024 20:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD70183CB4;
+	Thu, 26 Sep 2024 20:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="dB8fSNHs"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="Wa3BLzB4"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9884017BB33
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 20:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C2C17A938;
+	Thu, 26 Sep 2024 20:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727383943; cv=none; b=oQvpvmExZtrEs/4g7DEEY1Ie88VshY02xOP62u9ZYccW58L/UPklJamMlbtKbEHC6SdudXDK3q0JKULOueFjtRSKxFIhOZaYvS8vZeEay73lRZ7ujQhKmhTrVfWDc7jthq+05LCGX/swh5/XQliqSHjE8SgMOXSWqh+aMoRSngk=
+	t=1727383956; cv=none; b=Ge+Zq+Z6H4ASVBAFcOzO+SujscXM+gWHchc9GYvivCKct7dOJW8pvB9BuTyAHvl5MH9KbS8yQAoqcckTafV0evsctAaDWk6AwrMSDJMPsSLcGlPdETQkhg0WiEw9EyVcLNaSQBVzBrVh+cWwSrYI6YXg1cx4o2QGnmIkwf4V67A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727383943; c=relaxed/simple;
-	bh=CFVZk9PbcIyWENme2tejWi5yO0fGTir0Yb3Q4V+tEl8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TcK7GfziYeWFNizsCzFEHDtR4Doxgt4X5GOyjUpLYT95kWuB0LKaypcRK0M7BTFSjblpOf9svW5Y+CwjJzqOyVObMG1UKkIGs6bgJRt19aiJU2izjlIDzBJ4v1upXaU532e2XRwoR/cFaINbao+L9IeKyzTKCGHFtmBzGElGTtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=dB8fSNHs; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 2DCDF2C0613;
-	Fri, 27 Sep 2024 08:52:18 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1727383938;
-	bh=CFVZk9PbcIyWENme2tejWi5yO0fGTir0Yb3Q4V+tEl8=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=dB8fSNHsGNb+VZ9rNVaxvr0I1zSspQHOh0syuCj2JCdStvr8ibBZ69M/WWImv6qMo
-	 CDbhJwIXJ0rOQKu5ONu0MMcDH57xVYhgdDr4J8ptY1+8wSKPTBYgt0PImVO5QJJqLW
-	 FTvd5tMHdGGsSsFBJDrRAAKsmd80YcTxcWVGFjTNS+Rt+0/YuY0e8fuNWlyp3Tg1/Y
-	 GaO/kJFKxPbejZ1qtKhXW9YU3S9U6KYSinI3O063CnuC6RA4GZgU+whs2OVoc0FW3N
-	 K/EEmc1XDgtOy+QFbMBdMgMREaFqC49oCzNtFOGPFZYYLKk7gw/5SYj0vuN6FcI8Uy
-	 sHgum9XUx8hig==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B66f5c9820000>; Fri, 27 Sep 2024 08:52:18 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Fri, 27 Sep 2024 08:52:17 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with Microsoft
- SMTP Server (TLS) id 15.0.1497.48; Fri, 27 Sep 2024 08:52:17 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Fri, 27 Sep 2024 08:52:17 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: "andi.shyti@kernel.org" <andi.shyti@kernel.org>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "lee@kernel.org"
-	<lee@kernel.org>, "sre@kernel.org" <sre@kernel.org>,
-	"tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v5 5/6] mips: dts: realtek: Add I2C controllers
-Thread-Topic: [PATCH v5 5/6] mips: dts: realtek: Add I2C controllers
-Thread-Index: AQHbD5ZF+7xT76Qpf0aJJZ+4/y1OGbJo1NYAgADuxIA=
-Date: Thu, 26 Sep 2024 20:52:17 +0000
-Message-ID: <3d39d12b-a206-46e2-b3fa-001914a68165@alliedtelesis.co.nz>
-References: <20240925215847.3594898-1-chris.packham@alliedtelesis.co.nz>
- <20240925215847.3594898-6-chris.packham@alliedtelesis.co.nz>
- <euqypyub7f3bd7wa7w6axdt6mrvmbvckptvrum2rou3ni6sqdf@ouwm7zjuarni>
-In-Reply-To: <euqypyub7f3bd7wa7w6axdt6mrvmbvckptvrum2rou3ni6sqdf@ouwm7zjuarni>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A45B31A9E944204B81CA8C4EDEE1563F@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1727383956; c=relaxed/simple;
+	bh=2quMK0yMCIuSgqe96zZ3SWNSss/+1orOAKmEa2WwBUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JLH47eMh7X2jCLT8aEiCab8eCCTBokqe5pxwqyiOqqoZa120cIAXlW5OhjtWkX/QnDf2NlahufIWks/xK1KtBrusgVl2WTcVv/8Xu1arKj8cL0L9iH/nDoJNOpF5Sv/Q1voZVTbVjCtRFCZ1x79mLXmBjDXmDMouT3amnL2mjuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=Wa3BLzB4; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 092E21C00B3; Thu, 26 Sep 2024 22:52:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1727383951;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jMhMO4FPAfkTMbs7d+Q6qQGCH4J/LL74pLoTL/dsHXk=;
+	b=Wa3BLzB4o4dVII2QzveLiXz4zSP/g0dP+29Hv03JOb431wnwMVoDjsURy3KZ5KsFw1+aVA
+	JWmPiUEvmqGpuOf03pbtWRsaHs79bmIa0durkcAm4+rIGW6g+POd4Bybq79Q42VScfo6SU
+	gnu6sR707pE3Qw0m33Mh4joEgIeLsCs=
+Date: Thu, 26 Sep 2024 22:52:29 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux@leemhuis.info,
+	ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Bricked Thinkpad x220 with 6.12-rc0
+Message-ID: <ZvXJjU7gpAchSqiy@amd.ucw.cz>
+References: <ZvW9e8qBiAT5e0Ke@amd.ucw.cz>
+ <CAHk-=whj9dbJD0mT6VUW7i16Les5waxWBb1o_XsDKrtQ9iBO1g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=66f5c982 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=KKAkSRfTAAAA:8 a=wTsGNWAvS5ChLd09A-EA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=p9w29zTGHJRujDE_EBod:22 a=cvBusfyB2V15izCimMoJ:22
-X-SEG-SpamProfiler-Score: 0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jb5XaZHlj7qzygoz"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whj9dbJD0mT6VUW7i16Les5waxWBb1o_XsDKrtQ9iBO1g@mail.gmail.com>
 
-DQpPbiAyNi8wOS8yNCAxODozNywgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4gT24gVGh1
-LCBTZXAgMjYsIDIwMjQgYXQgMDk6NTg6NDZBTSArMTIwMCwgQ2hyaXMgUGFja2hhbSB3cm90ZToN
-Cj4+IEFkZCB0aGUgSTJDIGNvbnRyb2xsZXJzIHRoYXQgYXJlIHBhcnQgb2YgdGhlIFJUTDkzMDAg
-U29DLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IENocmlzIFBhY2toYW0gPGNocmlzLnBhY2toYW1A
-YWxsaWVkdGVsZXNpcy5jby5uej4NCj4+IC0tLQ0KPj4NCj4+IE5vdGVzOg0KPj4gICAgICBDaGFu
-Z2VzIGluIHY1Og0KPj4gICAgICAtIFVwZGF0ZSBjb21wYXRpYmxlcw0KPj4gICAgICBDaGFuZ2Vz
-IGluIHY0Og0KPj4gICAgICAtIFNraXBwZWQgZHVlIHRvIGNvbWJpbmluZyBwYXRjaCBzZXJpZXMN
-Cj4+ICAgICAgQ2hhbmdlcyBpbiB2MzoNCj4+ICAgICAgLSBOb25lDQo+PiAgICAgIENoYW5nZXMg
-aW4gdjI6DQo+PiAgICAgIC0gVXNlIHJlZyBwcm9wZXJ0eQ0KPj4NCj4+ICAgYXJjaC9taXBzL2Jv
-b3QvZHRzL3JlYWx0ZWsvcnRsOTMwMmMuZHRzaSB8ICA4ICsrKysrKysrDQo+PiAgIGFyY2gvbWlw
-cy9ib290L2R0cy9yZWFsdGVrL3J0bDkzMHguZHRzaSAgfCAxNiArKysrKysrKysrKysrKysrDQo+
-PiAgIDIgZmlsZXMgY2hhbmdlZCwgMjQgaW5zZXJ0aW9ucygrKQ0KPj4NCj4+IGRpZmYgLS1naXQg
-YS9hcmNoL21pcHMvYm9vdC9kdHMvcmVhbHRlay9ydGw5MzAyYy5kdHNpIGIvYXJjaC9taXBzL2Jv
-b3QvZHRzL3JlYWx0ZWsvcnRsOTMwMmMuZHRzaQ0KPj4gaW5kZXggODBkOWY0MDdlNzU4Li41NmMz
-NWU4YjhiNjIgMTAwNjQ0DQo+PiAtLS0gYS9hcmNoL21pcHMvYm9vdC9kdHMvcmVhbHRlay9ydGw5
-MzAyYy5kdHNpDQo+PiArKysgYi9hcmNoL21pcHMvYm9vdC9kdHMvcmVhbHRlay9ydGw5MzAyYy5k
-dHNpDQo+PiBAQCAtNSwzICs1LDExIEBADQo+PiAgICZzd2l0Y2gwIHsNCj4+ICAgCWNvbXBhdGli
-bGUgPSAicmVhbHRlayxydGw5MzAyYy1zd2l0Y2giLCAicmVhbHRlayxydGw5MzAwLXN3aXRjaCIs
-ICJzeXNjb24iLCAic2ltcGxlLW1mZCI7DQo+PiAgIH07DQo+PiArDQo+PiArJmkyYzAgew0KPj4g
-Kwljb21wYXRpYmxlID0gInJlYWx0ZWsscnRsOTMwMmMtaTJjIiwgInJlYWx0ZWsscnRsOTMwMC1p
-MmMiOw0KPj4gK307DQo+PiArDQo+PiArJmkyYzEgew0KPj4gKwljb21wYXRpYmxlID0gInJlYWx0
-ZWsscnRsOTMwMmMtaTJjIiwgInJlYWx0ZWsscnRsOTMwMC1pMmMiOw0KPj4gK307DQo+PiBkaWZm
-IC0tZ2l0IGEvYXJjaC9taXBzL2Jvb3QvZHRzL3JlYWx0ZWsvcnRsOTMweC5kdHNpIGIvYXJjaC9t
-aXBzL2Jvb3QvZHRzL3JlYWx0ZWsvcnRsOTMweC5kdHNpDQo+PiBpbmRleCA4OWI4ODU0NTk2Y2Qu
-LjJmYjg0NjFhZjU3NSAxMDA2NDQNCj4+IC0tLSBhL2FyY2gvbWlwcy9ib290L2R0cy9yZWFsdGVr
-L3J0bDkzMHguZHRzaQ0KPj4gKysrIGIvYXJjaC9taXBzL2Jvb3QvZHRzL3JlYWx0ZWsvcnRsOTMw
-eC5kdHNpDQo+PiBAQCAtNDEsNiArNDEsMjIgQEAgcmVib290QGMgew0KPj4gICAJCQlyZWcgPSA8
-MHgwYyAweDQ+Ow0KPj4gICAJCQl2YWx1ZSA9IDwweDAxPjsNCj4+ICAgCQl9Ow0KPj4gKw0KPj4g
-KwkJaTJjMDogaTJjQDM2YyB7DQo+PiArCQkJY29tcGF0aWJsZSA9ICJyZWFsdGVrLHJ0bDkzMDAt
-aTJjIjsNCj4+ICsJCQlyZWcgPSA8MHgzNmMgMHgxND47DQo+PiArCQkJc3RhdHVzID0gImRpc2Fi
-bGVkIjsNCj4gVXN1YWwgY29udmVudGlvbiBpcyB0byBoYXZlIHN0YXR1cyB0aGUgbGFzdC4gTWF5
-YmUgTUlQUyBoYXMgZGlmZmVyZW50LA0KPiBzbyBrZWVwIHdoYXRldmVyIGlzIGNvbnNpc3RlbnQg
-aW4geW91ciBjYXNlLg0KDQpJJ2xsIHNlbmQgb3V0IGEgZml4dXAgcGF0Y2ggdGhhdCBjYW4gYmUg
-Zm9sZGVkIGludG8gdGhpcy4gSG9wZWZ1bGx5IA0KVGhvbWFzIGNhbiBjb21iaW5lIHRoZW0gYXQg
-aGlzIGVuZCAob3IgaWYgdGhlcmUgaXMgYSBuZWVkIGZvciBhIHY2IEkgY2FuKS4NCg0KSSdsbCBw
-cm9iYWJseSBoYXZlIG90aGVyIHNlcmllcyB0b3VjaGluZyB0aGlzIGZpbGUgc28gaWYgdGhlIGZp
-eHVwIA0KZG9lc24ndCBtYWtlIGl0IG5vdyBJIGNhbiBpbmNsdWRlIGl0IGluIGEgZnV0dXJlIHNl
-cmllcy4NCg0KPg0KPiBBbnl3YXk6DQo+DQo+IFJldmlld2VkLWJ5OiBLcnp5c3p0b2YgS296bG93
-c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+DQo+DQo+IEJlc3QgcmVnYXJkcywN
-Cj4gS3J6eXN6dG9mDQo+
+
+--jb5XaZHlj7qzygoz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> > When I press power button, it starts producing some noise (hdd
+> > spinning up), but power light goes pulsating, not on, and I stare at
+> > black screen.
+>=20
+> No beep?
+
+No beep. And no beep when I tried booting with RAM removed.
+
+> > I removed everything, let it sit for a while, but behaviour was the
+> > same. I'm now letting machine "cool" with everything removed,
+> > but... It seems EC is very confused.
+> >
+> > Should I try removing CMOS battery?
+>=20
+> It probably won't help. Last time I had something like that, it was
+> the EFI variables being messed up and messing up the boot as a result.
+> That's all in flash.
+
+EFI variables. Ouch. But those really should be later in the boot.
+
+> The CMOS battery these days tends to really just be for maintaining
+> the real-time clock.
+>=20
+> But if it's easy to get at, it won't hurt to try either.
+
+I thought it was under RAM cover, but it is not.
+
+> > Is there some magic combination I can hold during boot?
+>=20
+> I don't see anything  about keys during power-on in
+>=20
+>   https://download.lenovo.com/ibmdl/pub/pc/pccbbs/mobiles_pdf/0a60739_04.=
+pdf
+>=20
+> but you can try the usual suspects (hold ESC / Fn / etc during power-on).
+>=20
+> But that lenovo pdf says
+>  1. Make sure that every connector is connected tightly and correctly.
+>  2. DIMM.
+>  3. System board.
+>=20
+> for your symptoms.
+>=20
+> That said, my first suspicion would be a dead harddisk, just because
+> they happen and you hear noise (but it migth just be the disk getting
+> power on its own, and making noise even with a dead system board).
+
+I suspect it is disk spinning up on its own. Confused bios and
+harddisk dying at the same time seems like a lot of coincidence. (And
+it dies before initializing RAM, normally disk is way after that).
+
+I have spinning rust which is easy to reach, plus SSD which is not. I
+removed HDD, and now only reaction on power button is that power LED
+starts blinking.
+
+Nothing else, no CPU fan, nothing. No beeps with removed
+RAMs. I'd expect BIOS to initialize RAM, and then to access EFI
+variables. AFAICT it does not get there. So either hardware died, or
+EC is very confused and fails to boot main CPU.
+
+Not sure how EC keeps its state (not from CMOS battery -- right?) so I
+guess I should leave it without power for several hours hoping it
+clears the fault...?
+
+Best regards (and thanks for help),
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--jb5XaZHlj7qzygoz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZvXJjQAKCRAw5/Bqldv6
+8vZfAJsHyENTc9pKYkhV0AMdn0b2pOtxoACgiy1airpdlLOe3b0cCOKdSKVbqs8=
+=E/Hs
+-----END PGP SIGNATURE-----
+
+--jb5XaZHlj7qzygoz--
 
