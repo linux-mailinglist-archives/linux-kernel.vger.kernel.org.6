@@ -1,138 +1,272 @@
-Return-Path: <linux-kernel+bounces-340894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13EEB9878BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:56:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9D99878CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0C71F27CD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:56:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE4C228338B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793FE188A05;
-	Thu, 26 Sep 2024 17:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CcbnQ+/A"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AFE166F16;
+	Thu, 26 Sep 2024 18:01:45 +0000 (UTC)
+Received: from mailout04.t-online.de (mailout04.t-online.de [194.25.134.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7E5188913
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8530F1A702;
+	Thu, 26 Sep 2024 18:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.25.134.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727373098; cv=none; b=ex9olx8DbCY6pwHnYuXmVE+jv1+YjkpmuhQVDwHz3PmNPHdp7AuDxs/KTJMQ86v1SXs9ysgNDELZrqVNcwdHKoUZiYhsQmlrny3TfupAsmUVnq49KjhkDpnYEAAimrgcvWCWijePb5BDnPuQP8+c+GRU9rEUr05nNOIaT5LZ+ro=
+	t=1727373705; cv=none; b=NxKOIEUZs+zjiUuaQwnWrwRXFtWXsl0sIbS16FZ9KwLNarRPK5KwiPzGez+bXbypN2biFgZuSJn6cBz+daVSDFlTAidjS101pMR7q1AO+cP4bMcOvVotTcj4L2F11JuWEr1cF+i4z8qxFazMfVBrUJyos4lF4qfEgcQEsGNSYHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727373098; c=relaxed/simple;
-	bh=Ls3BV45TZcAZatf7hz/8jKq+TlX9gDn82lEPiNxKmIk=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=svkQUqZJeljXEUrcOE1pHNGeKkXOFjFHMzkEk4zE3pRVCV5xo9WW4sQvmLcSye225Ii87m9LQN4AA4AjPnnv2KlM9No7P7K/iArLkk+RY3cktyzjgfqniCYpt9hI5kgZAQpWseapOI56QZZKX3GdpP30xHYYtH8g68ogX0DThj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CcbnQ+/A; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e2146737ccso26091757b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:51:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727373096; x=1727977896; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ib2PVE8H+9AGyufbgRCqenlI2T4GVXk8qqbLWLe6R1s=;
-        b=CcbnQ+/AcB5/sH8fqbBOf/oyqClAD+EL0eqLt+7ikuo8TVIXS0wqi/68MFQHTKL+Uy
-         /jw/dVz+dbj5lQPsHUhOCC8X8QmB0UrC4xYdJqlc8X/8UKsyaOGTUyhUsogxb+DJ+D31
-         JsDyIJmH448UJLvBwGnajOfosnVuyEeSpA+7+i2WMzdHbyMkesR3ZAWU4q4uKPcCaUJG
-         u3afojYP6nor3JNQzjLRnkKBrFUHVrR5WvzAHrE3MBzbhZLuSHD7qLwLNwmDJiWYmY8E
-         BQyEqHt4H+J48S3ZOJ3QO79eWuNlybtUgVRHJSGBrVAOjyB1D3RjtaqcLOJ9paBdmeiJ
-         Vn4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727373096; x=1727977896;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ib2PVE8H+9AGyufbgRCqenlI2T4GVXk8qqbLWLe6R1s=;
-        b=CZpdDWhwh3Dwl7Vx8BN20PLbjDduqI8ZOK06kXmOxusdxEv3H6vW1NVQSYhYHFVQeW
-         wQkX7sVPeI79bYpTn3k18mPuGYACSMw1v7bt/0cK4MwAy+lWt+OhWsjx3ekpF09QU+0i
-         AHHmGRkvrQ0VyCn0LSPGi5FnIeKorv+eWV7S3lg+8rwrWKxjpPRF9w+jFXJheKjFXR/B
-         5zcE+WWOQs/SGqbnWXiGe1DW0mrTcZBBRv/GnzTS9siAGfCkt0x9DUHftNoXqyJjyF7U
-         mdjUb08YqjwOhdW3JvB6zci6RsiuAXichL3F+3KFVCMFB24XFBSexZ6oNacbKeufA7Mz
-         Rd3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWwuJCW8IWq5txTVTkBvKY3X+tELQp7144Zxf81kaloweaJMC/7Z+/IFi/JGkJSWA+pBCuyPw0QDWSm3l4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws8t4yDkQlXHPUcFb0amo6Lhkx4W35dz10zTa+Ow24FI5j+RXf
-	Vq4+loQv1CYQT3+v554qDaGi3l7a3jjCc9SfxveUlDbMSvo93emjBNt9UyWo3jC7hPHx9n5M7jg
-	e2Yy+jw==
-X-Google-Smtp-Source: AGHT+IGIGYU2itVrBwRCZqwxpU9Mv+8tKNEFB2tNcgZikidnBmP88FvNQPNNK50LYkpYnFHCKzZoom7Wj486
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:6894:6d8b:d227:e5d2])
- (user=irogers job=sendgmr) by 2002:a05:690c:4a05:b0:648:fc8a:cd23 with SMTP
- id 00721157ae682-6e2474e176fmr53217b3.2.1727373095880; Thu, 26 Sep 2024
- 10:51:35 -0700 (PDT)
-Date: Thu, 26 Sep 2024 10:50:35 -0700
-In-Reply-To: <20240926175035.408668-1-irogers@google.com>
-Message-Id: <20240926175035.408668-23-irogers@google.com>
+	s=arc-20240116; t=1727373705; c=relaxed/simple;
+	bh=mEV8JFw8qbJLqzs4umPKQk8RShH0/ZlMVSGlyTU885Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZXkbiRTkQ9NF/rNpJ0O1MsIeC0u1Xj4R5JzZm+CMXcnz8laW2I1Cr85tICFS56fGCYp2gEPwuuRs0NcybCaSmhjelGVVm4pYT5ND6LqyXuhJfjnBWXhHrduNG18NA/7qncqPZa1Ba8DBxUhk41ANuFWgoRtDOpxL1NtUKxGZK6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-online.de; spf=pass smtp.mailfrom=t-online.de; arc=none smtp.client-ip=194.25.134.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-online.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-online.de
+Received: from fwd79.aul.t-online.de (fwd79.aul.t-online.de [10.223.144.105])
+	by mailout04.t-online.de (Postfix) with SMTP id 57EFA1D60F;
+	Thu, 26 Sep 2024 19:53:54 +0200 (CEST)
+Received: from dino2.dhome ([77.47.123.226]) by fwd79.t-online.de
+	with (TLSv1.3:TLS_AES_256_GCM_SHA384 encrypted)
+	esmtp id 1stsgb-1icZjV0; Thu, 26 Sep 2024 19:53:54 +0200
+Message-ID: <8a97a7d7be1b94fb4a92c486c458530792d0107a.camel@t-online.de>
+Subject: Re: [PATCH v4 1/1] drivers/rtc: rtc-sun6i: AutoCal Internal OSC
+From: Alois Fertl <A.Fertl@t-online.de>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: a.zummo@towertech.it, alexandre.belloni@bootlin.com, wens@csie.org, 
+	jernej.skrabec@gmail.com, samuel@sholland.org, linux-rtc@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Date: Thu, 26 Sep 2024 19:53:45 +0200
+In-Reply-To: <20240530181022.6fbc5a7d@donnerap.manchester.arm.com>
+References: <20240522182826.6824-1-a.fertl@t-online.de>
+	 <20240530181022.6fbc5a7d@donnerap.manchester.arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240926175035.408668-1-irogers@google.com>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Subject: [PATCH v4 22/22] perf jevents: Add mesh bandwidth saturation metric
- for Intel
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Perry Taylor <perry.taylor@intel.com>, 
-	Samantha Alt <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-TOI-EXPURGATEID: 150726::1727373234-EF7FC5A0-584B78DD/0/0 CLEAN NORMAL
+X-TOI-MSGID: 3b30e07f-32f6-41af-83cd-c1ac5275b1e2
 
-Memory bandwidth saturation from CBOX/CHA events present in
-broadwellde, broadwellx, cascadelakex, haswellx, icelakex, skylakex
-and snowridgex.
+On Thu, 2024-05-30 at 18:10 +0100, Andre Przywara wrote:
+> On Wed, 22 May 2024 20:28:26 +0200
+> Alois Fertl <a.fertl@t-online.de> wrote:
+>=20
+> > I have a M98-8K PLUS Magcubic TV-Box based on the Allwinner H618
+> > SOC.
+> > On board is a Sp6330 wifi/bt module that requires a 32kHz clock to
+> > operate correctly. Without this change the clock from the SOC is
+> > ~29kHz and BT module does not start up. The patch enables the
+> > Internal
+> > OSC Clock Auto Calibration of the H616/H618 which than provides the
+> > necessary 32kHz and the BT module initializes successfully.
+> > Add a flag and set it for H6.
+> > Also the code is developed on the H618 board it only modifies the
+> > H6 as
+> > there is no support for H616/H618 in the current code.
+>=20
+> I am a bit confused: so this patch doesn't fix your problem then,
+> because
+> the code you touch is not used on the H616/H618?
+> Actually I would have expected your patch to only change
+> drivers/clk/sunxi-ng/ccu-sun6i-rtc.c, since that's the only RTC clock
+> driver relevant for the H616.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/pmu-events/intel_metrics.py | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Thanks for your comment ans sorry for my late reaction.
 
-diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
-index 8e1c0bc17b8a..a3a317d13841 100755
---- a/tools/perf/pmu-events/intel_metrics.py
-+++ b/tools/perf/pmu-events/intel_metrics.py
-@@ -990,6 +990,22 @@ def UncoreMemBw() -> Optional[MetricGroup]:
-   ], description = "Memory Bandwidth")
- 
- 
-+def UncoreMemSat() -> Optional[Metric]:
-+  try:
-+    clocks = Event("UNC_CHA_CLOCKTICKS", "UNC_C_CLOCKTICKS")
-+    sat = Event("UNC_CHA_DISTRESS_ASSERTED.VERT", "UNC_CHA_FAST_ASSERTED.VERT",
-+                "UNC_C_FAST_ASSERTED")
-+  except:
-+    return None
-+
-+  desc = ("Mesh Bandwidth saturation (% CBOX cycles with FAST signal asserted, "
-+          "include QPI bandwidth saturation), lower is better")
-+  if "UNC_CHA_" in sat.name:
-+    desc = ("Mesh Bandwidth saturation (% CHA cycles with FAST signal asserted, "
-+            "include UPI bandwidth saturation), lower is better")
-+  return Metric("mem_sat", desc, d_ratio(sat, clocks), "100%")
-+
-+
- def UncoreUpiBw() -> Optional[MetricGroup]:
-   try:
-     upi_rds = Event("UNC_UPI_RxL_FLITS.ALL_DATA")
-@@ -1052,6 +1068,7 @@ def main() -> None:
-       UncoreDir(),
-       UncoreMem(),
-       UncoreMemBw(),
-+      UncoreMemSat(),
-       UncoreUpiBw(),
-   ])
- 
--- 
-2.46.1.824.gd892dcdcdd-goog
+I was using a community maintained version of drivers/rtc/rtc-sun6i.c
+which adds support for the H616 into this file. The proposed change is
+than common for H6 AND H616 based on the introduced flag has_auto_cal.
+It does fix my problem.
+The patch however is based on mainline and therefor does not have the
+H616 extension.
+
+>=20
+> > Signed-off-by: Alois Fertl <a.fertl@t-online.de>
+> > ---
+> >=20
+> > v1->v2
+> > - add flag and activate for H6 AND H616
+> >=20
+> > v2->v3
+> > - correct findings from review
+> >=20
+> > v3->v4
+> > - adjust to mainline tree
+> >=20
+> > I have also tried to test this using the new driver in sunxi-ng
+> > manually injecting the reverted patch
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/?id=3D60d9f050da63b
+>=20
+> So this was done on a H6 device? Because out of the box rtc-sun6i.c
+> is
+> used on the H6 only, and ccu-sun6i-rtc.c is only used on the H616.
+>=20
+> Maybe I am missing something here ...
+
+Please see above.
+>=20
+> > The code in drivers/clk/sunxi-ng/ccu-sun6i-rtc.c is being called
+> > and it
+> > initializes the relevant registers to the same values as the old
+> > driver,
+> > but the change ends up with a system that often hangs during
+> > booting and
+> > only ocasionally reaches the login state (one out of 10).
+> > The main difference I see adhoc is that the old drivers init is
+> > done
+> > using CLK_OF_DECLARE_DRIVER so initialization is done very early.
+> > The new driver does the initialisation via probe which is quite
+> > some
+> > time later.
+> > Can't tell if this is the cause for the problems.
+>=20
+> That sounds odd, can you post your changes somewhere?
+>=20
+
+Just recently I was able to get the code in drivers/clk/sunxi-ng/ccu-
+sun6i-rtc.c working for my H618 box. It requires a change in just this
+ccu-sun6i-rtc.c file. Unfortunatly it is based on try and error picking
+and I don't understand why it is required.
+
+The change is that the name "osc32k-out" is now equal tho the string
+used in drivers/rtc/rtc-sun6i.c.
+
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+@@ -202,7 +202,7 @@ static const struct clk_hw *osc32k_parents[] =3D {
+ };
+=20
+ static struct clk_init_data osc32k_init_data =3D {
+-       .name           =3D "osc32k",
++       .name           =3D "osc32k-out",
+        .ops            =3D &ccu_mux_ops,
+        .parent_hws     =3D osc32k_parents,
+        .num_parents    =3D ARRAY_SIZE(osc32k_parents), /* updated during
+probe */
+@@ -271,13 +271,13 @@ static struct ccu_mux osc32k_fanout_clk =3D {
+ };
+=20
+May be someone has a clue on this?
+
+> Generally, without a proper problem and without further testing, I
+> would
+> not like to touch the H6 RTC code needlessly.
+> For the H616 we have a concrete problem at hand, that justifies a
+> change,
+> also it's the proper driver for new devices, so that's where the
+> change
+> should happen.
+
+So the PATCH requested here looses importance because for the H6 it
+would improve RTC only in the rare case where there is no external 32k
+oscillator or when the external oscillator fails.
+
+Probably not worth the effort.
+
+Regards,
+Alois
+>=20
+> Cheers,
+> Andre
+>=20
+> >=20
+> > ---
+> > =C2=A0drivers/rtc/rtc-sun6i.c | 16 +++++++++++++++-
+> > =C2=A01 file changed, 15 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
+> > index 8e0c66906..57aa52d3b 100644
+> > --- a/drivers/rtc/rtc-sun6i.c
+> > +++ b/drivers/rtc/rtc-sun6i.c
+> > @@ -42,6 +42,11 @@
+> > =C2=A0
+> > =C2=A0#define SUN6I_LOSC_CLK_PRESCAL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x0008
+> > =C2=A0
+> > +#define SUN6I_LOSC_CLK_AUTO_CAL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x000c
+> > +#define SUN6I_LOSC_CLK_AUTO_CAL_16MS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0BIT(2)
+> > +#define SUN6I_LOSC_CLK_AUTO_CAL_ENABLE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0BIT(1)
+> > +#define SUN6I_LOSC_CLK_AUTO_CAL_SEL_CAL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0BIT(0)
+> > +
+> > =C2=A0/* RTC */
+> > =C2=A0#define SUN6I_RTC_YMD=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x0010
+> > =C2=A0#define SUN6I_RTC_HMS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x0014
+> > @@ -126,7 +131,6 @@
+> > =C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0 registers (R40, H6)
+> > =C2=A0 *=C2=A0=C2=A0 - SYS power domain controls (R40)
+> > =C2=A0 *=C2=A0=C2=A0 - DCXO controls (H6)
+> > - *=C2=A0=C2=A0 - RC oscillator calibration (H6)
+> > =C2=A0 *
+> > =C2=A0 * These functions are not covered by this driver.
+> > =C2=A0 */
+> > @@ -137,6 +141,7 @@ struct sun6i_rtc_clk_data {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int has_out_cl=
+k : 1;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int has_losc_e=
+n : 1;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int has_auto_s=
+wt : 1;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int has_auto_cal : =
+1;
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0#define RTC_LINEAR_DAY=C2=A0BIT(0)
+> > @@ -267,6 +272,14 @@ static void __init sun6i_rtc_clk_init(struct
+> > device_node *node,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0writel(reg, rtc->base +=
+ SUN6I_LOSC_CTRL);
+> > =C2=A0
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rtc->data->has_auto_cal)=
+ {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0/* Enable internal OSC clock auto calibration */
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0reg =3D SUN6I_LOSC_CLK_AUTO_CAL_16MS |
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0SUN6I_=
+LOSC_CLK_AUTO_CAL_ENABLE |
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0SUN6I_=
+LOSC_CLK_AUTO_CAL_SEL_CAL;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0writel(reg, rtc->base + SUN6I_LOSC_CLK_AUTO_CAL);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > +
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Yes, I know, this is=
+ ugly. */
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sun6i_rtc =3D rtc;
+> > =C2=A0
+> > @@ -374,6 +387,7 @@ static const struct sun6i_rtc_clk_data
+> > sun50i_h6_rtc_data =3D {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.has_out_clk =3D 1,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.has_losc_en =3D 1,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.has_auto_swt =3D 1,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.has_auto_cal =3D 1,
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0static void __init sun50i_h6_rtc_clk_init(struct device_node
+> > *node)
+>=20
 
 
