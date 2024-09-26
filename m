@@ -1,129 +1,333 @@
-Return-Path: <linux-kernel+bounces-340514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D05A98747B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:33:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E3E987480
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0925C286935
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:33:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AECC52868EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D40825569;
-	Thu, 26 Sep 2024 13:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QZcDB8FE"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA9649634;
+	Thu, 26 Sep 2024 13:34:30 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3569D4D8AD
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 13:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070315258
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 13:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727357587; cv=none; b=T1Skwj6Zj+uBWfOB7/F21PP1PD10YnA+32W9hgiJ8XBuay9VnFe3i2lKFdYXlifIH8HXjByXGt08JlweQaBCBU2IoO+taz1ERjC+IDa6TPzSZ/LdhvsSrmgof7WnhJ6HUvn0ZQ1x5iRafSpsHo2aEz92AVoOtam8GSr+5NM1QRw=
+	t=1727357669; cv=none; b=pJz99p5MYVamdCxgbCFjK3ukmuszbHO2/58srA6+BlDtsNx1eEgITXwVIM93JwfTs5cA1mZEmh54fv4+ZC8Jm/+9Ll8Vd37Xvof7LZXX4rI4npwUqlCY5nYY03TVta0uRRWpffAzRktHZU/I1gBVz81jAmcBF+S6fXkaPPhrpuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727357587; c=relaxed/simple;
-	bh=6DjgITxuxMnJtFqiZJDNNiIBfC6aRD7xowfyalj+wAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XJZV4gQdnHaz8Ko3YIunH/Gixww60r4wmPLA4hb0MLSgG7MK61hU9LathI69HaI5nAn7gMtEbEfl9cB/azYUscMKHXLAS3cv1B+yKcfQPFBS03RTZq7XI92KRkp5o00f6a/IA35KH5E8w3eICoTGc9GxfLCWcJrYg9Ia4j2ZfSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QZcDB8FE; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f75aa08a96so10537801fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:33:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727357584; x=1727962384; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SLMfEvh5MiHDpi2ZSu3TA3jK6yRE8rSCehYhzQ/c1wk=;
-        b=QZcDB8FEfR1Pm9VdQTd/kkCdAWsOPHCflEoXEAcHsqc5aNJ4a8yk6F4OWUCEIofmkJ
-         gUk2WoTmsuNYmXUjyhLmHs070aHMCtJf4WrDa7u7aPLUYFbPG+2QNw60NluA6Ra2H7vo
-         4LK+LfhMOMZKfuNGeOrXNca8qiK0d80v93fb/giu7TuSu/fSjw4yNiNIc7OhuOeLvBdu
-         i1n9DHI8LniEIwUvqv+0S1ST05nvoqAK/hgnyPQh7y7BpyDTDorHRnNhHQzPLpZ4sQoU
-         XBKQ081NLCB1cxm9JnQunGRA0njKRveNy/1ABAZONBTEey9Y7vAWxG/XL+2jgUSq+b5M
-         dT1g==
+	s=arc-20240116; t=1727357669; c=relaxed/simple;
+	bh=a6m31fOn0563FxegYjNkYtJJ2MYanowmp0G3zF4IfC4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tFqDhZ3Lq7i4HEs7sHcohw51tnwwr52dUIbqJlRtpr4G0K/9HNOzgBn2RUBoKJ3tPy9LF852i5lkYxwfq8HtrSgs5ljBJIlqzDW8Q3qNzrg+WK8DAwFCE1G4krfBl2UuVOtJ3H91lkRYq4J6346qOWj6HekqxKRFJ3XxbZXsIDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39f5328fd5eso9601905ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:34:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727357584; x=1727962384;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SLMfEvh5MiHDpi2ZSu3TA3jK6yRE8rSCehYhzQ/c1wk=;
-        b=dUDCGldz3przMNcN8e9RX0HFXqvs7vF58V3sBoomHFzWq11WTRN7TwbpqwTx16StsX
-         +cXg2LPxk70sy/veF8V0+KSrgarIsPPhyIkv/KucZdzc8BXx0pCUjWGPyQxuKOTkIRPf
-         D6Gts6qOxhsqAgGTmAPQXKmITvee9VUSPITU6gUmTdKo9thJUf1x2DJMyebLBfgW2MzZ
-         IlBiRbhji8XDQHXfUiCT95ORh5CSqYZFbQ+MQ7DGpjIlfjwO5lQD5xcNHDfDaLY06FIk
-         HW5b0jEH7lD6PlxEI4KMbl8SpQCt0HF9mXZRZe4yXNGA2IBt9MwrGUvab1ii1imXPOZV
-         HlTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXI/Xb6TRnLtGCDrVxWQe2G6SiCG8dnPncKUM4E80YhXQ0ZqzUAVKr3FQ0Fx4Ne03D4plPUKpfVry5ACRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHTtkuGJ/dIsjYfR55deKecE+idGMJ0bXSzT2kUZ5IToHSWBQV
-	l+7yoKNdXSxxutkOWdgu3KDeL1+13Xm/2yULa7hei3pKzTUezqg3Tw1/Jqj6wu8=
-X-Google-Smtp-Source: AGHT+IGe3R/1B3NKEaxLfS+X89tuylS/2rdHSlIFy6HqcIaJi19L7E/oXqDbrjVb+1syadc4RQIWPQ==
-X-Received: by 2002:a2e:5152:0:b0:2f7:4e8c:9bfa with SMTP id 38308e7fff4ca-2f91ca6eee3mr34240621fa.33.1727357584260;
-        Thu, 26 Sep 2024 06:33:04 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d283c0easm8253391fa.52.2024.09.26.06.33.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 06:33:02 -0700 (PDT)
-Date: Thu, 26 Sep 2024 16:32:59 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Manikandan.M@microchip.com
-Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
-	airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, thierry.reding@gmail.com, sam@ravnborg.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dharma.B@microchip.com
-Subject: Re: [PATCH v2 2/2] drm/panel: simple: Add Microchip AC69T88A LVDS
- Display panel
-Message-ID: <quxjqmx5yc27cxmjvnq6irltr36josag4yltxbiweh4femqbqo@j34pxmfxglc5>
-References: <20240919091548.430285-1-manikandan.m@microchip.com>
- <20240919091548.430285-2-manikandan.m@microchip.com>
- <zognzunciriytm3uvoolxjsvu43v3m2lnctsz5swusnmm3aj2z@ag7zkncccdmf>
- <83e9d20d-f294-4303-b570-816ebc989bcf@microchip.com>
- <f4z2egmrcoh7kih2pyr3mq7fzuwtvod6vxlzzim2iw3ly7jcr3@2uxiyzlfixhp>
- <17b5a11c-b9a8-4172-831e-d52f1a4270e9@microchip.com>
+        d=1e100.net; s=20230601; t=1727357667; x=1727962467;
+        h=content-transfer-encoding:to:from:subject:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SVeAGo70zZtSpVDsgBykvZ6PETeTcad9jGV2NcaOtPg=;
+        b=s+xSgryf6exb4AK5cFjHBVcjhh8/PHBieT3tGPLsjBjR809P18sk9k8Ssl2nYaZxa4
+         +Rw9rmKwc5T6GUM5EtiXyvmRLaSY6LiirbFFPVt+4MrEtXXmZNEjX5wyES5TsdQdWWgq
+         gckfX9impXO1j6DqKFu3Jkrp3gIFJGvpfTmcJYIfTmurA+VJhCGyQ0Q1AzMnm8D68leh
+         tppHDpWBEvSUunDwDJCnotmezUCh440xBI7DrLxncObHm1JlRSFXGEDNZ0ZqeZ/NBMnt
+         3TLpfSosqmARmFLu5l3d2G4dmJeaS56WDefDlpsqh32jrndM2xLw+xw7XpKO0aOUyiMb
+         83qg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8sDX4tfiJnpz9fiV/li4PaTzM+4LSnIrBIFOPNR7QkipxuYvXZ9oHE8L90TJQzEV9gWNML6TnBviECmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiR7VpFjIcYn7g3S6H7u40hIsRSYyEKGvXdUku3tFq1MfGMC/f
+	edEF5s/Iqu8OoPwkZ0OHkAAJ0LoVHY4rfuu/71qWniJLtAlFNAYZt8bsCl39MwnZSs6/uocQoyO
+	m7AgiPetCNoos9T8L62BJs859PmK/k905j/b6xCMA4oh43Gz9IoJk2VA=
+X-Google-Smtp-Source: AGHT+IH+3GMJAKgvknGEdjKCbKDb5b6TCwuuRjZLo3u+bh5/K4KC+5mFCcyLbBrlj/L2TuBLFiZH75794o7w5+K9FC4Me6HbniZE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17b5a11c-b9a8-4172-831e-d52f1a4270e9@microchip.com>
+X-Received: by 2002:a92:ca4d:0:b0:3a0:49da:8f6d with SMTP id
+ e9e14a558f8ab-3a26d7e482cmr66702355ab.22.1727357667059; Thu, 26 Sep 2024
+ 06:34:27 -0700 (PDT)
+Date: Thu, 26 Sep 2024 06:34:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f562e3.050a0220.211276.0074.GAE@google.com>
+Subject: [syzbot] [rdma?] possible deadlock in siw_create_listen (2)
+From: syzbot <syzbot+3eb27595de9aa3cf63c3@syzkaller.appspotmail.com>
+To: bmt@zurich.ibm.com, jgg@ziepe.ca, leon@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 08:17:09AM GMT, Manikandan.M@microchip.com wrote:
-> On 23/09/24 11:37 am, Dmitry Baryshkov wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> > 
-> > On Mon, Sep 23, 2024 at 05:50:22AM GMT, Manikandan.M@microchip.com wrote:
-> >> On 20/09/24 9:13 pm, Dmitry Baryshkov wrote:
-> >>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> >>>
-> >>> On Thu, Sep 19, 2024 at 02:45:48PM GMT, Manikandan Muralidharan wrote:
-> >>>> Add support for Microchip AC69T88A 5 inch TFT LCD 800x480
-> >>>> Display module with LVDS interface.The panel uses the Sitronix
-> >>>> ST7262 800x480 Display driver
-> >>>
-> >>> AC69T88A seems to be a module name, rather than a panel name. What is
-> >>> the actual panel name present on this module?
-> >> Both names, "Microchip AC69T88A" and "MPU32-LVDS-DISPLAY-WVGA" are
-> >> present on the display module
-> > 
-> > Which panel was used for the module? I don't think that Microchip
-> > produces LVDS panels.
-> Its a new LVDS display from Microchip that uses Sitronix ST7262 TFT LCD 
-> driver
-> 
-> https://www.crystalfontz.com/controllers/datasheet-viewer.php?id=486
+Hello,
 
-Ok. Anyway if somebody ends up looking for the panel, they'll probably
-find the module and vice versa.
+syzbot found the following issue on:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+HEAD commit:    5f5673607153 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.g=
+it for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D149fdca9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3Ddedbcb1ff438797=
+2
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D3eb27595de9aa3cf6=
+3c3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+userspace arch: arm64
 
--- 
-With best wishes
-Dmitry
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/40172aed5414/disk-=
+5f567360.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/58372f305e9d/vmlinux-=
+5f567360.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d2aae6fa798f/Ima=
+ge-5f567360.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:
+Reported-by: syzbot+3eb27595de9aa3cf63c3@syzkaller.appspotmail.com
+
+iwpm_register_pid: Unable to send a nlmsg (client =3D 2)
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+WARNING: possible circular locking dependency detected
+6.11.0-rc7-syzkaller-g5f5673607153 #0 Not tainted
+------------------------------------------------------
+syz.4.157/7931 is trying to acquire lock:
+ffff0000ee056458 (sk_lock-AF_INET){+.+.}-{0:0}, at: siw_create_listen+0x164=
+/0xd70 drivers/infiniband/sw/siw/siw_cm.c:1776
+
+but task is already holding lock:
+ffff800091c21ea8 (lock#7){+.+.}-{3:3}, at: cma_add_one+0x510/0xab4 drivers/=
+infiniband/core/cma.c:5354
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (lock#7){+.+.}-{3:3}:
+       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+       __mutex_lock kernel/locking/mutex.c:752 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+       cma_init+0x2c/0x158 drivers/infiniband/core/cma.c:5438
+       do_one_initcall+0x24c/0x9c0 init/main.c:1267
+       do_initcall_level+0x154/0x214 init/main.c:1329
+       do_initcalls+0x58/0xac init/main.c:1345
+       do_basic_setup+0x8c/0xa0 init/main.c:1364
+       kernel_init_freeable+0x324/0x478 init/main.c:1578
+       kernel_init+0x24/0x2a0 init/main.c:1467
+       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+
+-> #2 (rtnl_mutex){+.+.}-{3:3}:
+       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+       __mutex_lock kernel/locking/mutex.c:752 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+       rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
+       do_ip_setsockopt+0xe8c/0x346c net/ipv4/ip_sockglue.c:1077
+       ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
+       tcp_setsockopt+0xcc/0xe8 net/ipv4/tcp.c:3768
+       sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
+       smc_setsockopt+0x204/0x10fc net/smc/af_smc.c:3072
+       do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
+       __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
+       __do_sys_setsockopt net/socket.c:2356 [inline]
+       __se_sys_setsockopt net/socket.c:2353 [inline]
+       __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+-> #1 (&smc->clcsock_release_lock){+.+.}-{3:3}:
+       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+       __mutex_lock kernel/locking/mutex.c:752 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+       smc_switch_to_fallback+0x48/0xa80 net/smc/af_smc.c:902
+       smc_sendmsg+0xfc/0x9f8 net/smc/af_smc.c:2779
+       sock_sendmsg_nosec net/socket.c:730 [inline]
+       __sock_sendmsg net/socket.c:745 [inline]
+       __sys_sendto+0x374/0x4f4 net/socket.c:2204
+       __do_sys_sendto net/socket.c:2216 [inline]
+       __se_sys_sendto net/socket.c:2212 [inline]
+       __arm64_sys_sendto+0xd8/0xf8 net/socket.c:2212
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+-> #0 (sk_lock-AF_INET){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3133 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+       validate_chain kernel/locking/lockdep.c:3868 [inline]
+       __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
+       lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
+       lock_sock_nested net/core/sock.c:3543 [inline]
+       lock_sock include/net/sock.h:1607 [inline]
+       sock_set_reuseaddr+0x58/0x154 net/core/sock.c:782
+       siw_create_listen+0x164/0xd70 drivers/infiniband/sw/siw/siw_cm.c:177=
+6
+       iw_cm_listen+0x14c/0x204 drivers/infiniband/core/iwcm.c:585
+       cma_iw_listen drivers/infiniband/core/cma.c:2668 [inline]
+       rdma_listen+0x774/0xae4 drivers/infiniband/core/cma.c:3953
+       cma_listen_on_dev+0x320/0x64c drivers/infiniband/core/cma.c:2727
+       cma_add_one+0x5ec/0xab4 drivers/infiniband/core/cma.c:5357
+       add_client_context+0x45c/0x7d0 drivers/infiniband/core/device.c:727
+       enable_device_and_get+0x1a8/0x3e8 drivers/infiniband/core/device.c:1=
+338
+       ib_register_device+0xe40/0x108c drivers/infiniband/core/device.c:142=
+6
+       siw_device_register drivers/infiniband/sw/siw/siw_main.c:72 [inline]
+       siw_newlink+0x80c/0xc2c drivers/infiniband/sw/siw/siw_main.c:489
+       nldev_newlink+0x49c/0x4fc drivers/infiniband/core/nldev.c:1794
+       rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
+       rdma_nl_rcv+0x5c4/0x858 drivers/infiniband/core/netlink.c:259
+       netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+       netlink_unicast+0x668/0x8a4 net/netlink/af_netlink.c:1357
+       netlink_sendmsg+0x7a4/0xa8c net/netlink/af_netlink.c:1901
+       sock_sendmsg_nosec net/socket.c:730 [inline]
+       __sock_sendmsg net/socket.c:745 [inline]
+       ____sys_sendmsg+0x56c/0x840 net/socket.c:2597
+       ___sys_sendmsg net/socket.c:2651 [inline]
+       __sys_sendmsg+0x26c/0x33c net/socket.c:2680
+       __do_sys_sendmsg net/socket.c:2689 [inline]
+       __se_sys_sendmsg net/socket.c:2687 [inline]
+       __arm64_sys_sendmsg+0x80/0x94 net/socket.c:2687
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+other info that might help us debug this:
+
+Chain exists of:
+  sk_lock-AF_INET --> rtnl_mutex --> lock#7
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(lock#7);
+                               lock(rtnl_mutex);
+                               lock(lock#7);
+  lock(sk_lock-AF_INET);
+
+ *** DEADLOCK ***
+
+6 locks held by syz.4.157/7931:
+ #0: ffff8000974142d8 (&rdma_nl_types[idx].sem){.+.+}-{3:3}, at: rdma_nl_rc=
+v_msg drivers/infiniband/core/netlink.c:164 [inline]
+ #0: ffff8000974142d8 (&rdma_nl_types[idx].sem){.+.+}-{3:3}, at: rdma_nl_rc=
+v_skb drivers/infiniband/core/netlink.c:239 [inline]
+ #0: ffff8000974142d8 (&rdma_nl_types[idx].sem){.+.+}-{3:3}, at: rdma_nl_rc=
+v+0x330/0x858 drivers/infiniband/core/netlink.c:259
+ #1: ffff800091c0e870 (link_ops_rwsem){++++}-{3:3}, at: nldev_newlink+0x358=
+/0x4fc drivers/infiniband/core/nldev.c:1784
+ #2: ffff800091bff210 (devices_rwsem){++++}-{3:3}, at: enable_device_and_ge=
+t+0x104/0x3e8 drivers/infiniband/core/device.c:1328
+ #3: ffff800091bff510 (clients_rwsem){++++}-{3:3}, at: enable_device_and_ge=
+t+0x160/0x3e8 drivers/infiniband/core/device.c:1336
+ #4: ffff0000d61505d0 (&device->client_data_rwsem){++++}-{3:3}, at: add_cli=
+ent_context+0x424/0x7d0 drivers/infiniband/core/device.c:725
+ #5: ffff800091c21ea8 (lock#7){+.+.}-{3:3}, at: cma_add_one+0x510/0xab4 dri=
+vers/infiniband/core/cma.c:5354
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 7931 Comm: syz.4.157 Not tainted 6.11.0-rc7-syzkaller-g5=
+f5673607153 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
+gle 08/06/2024
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:319
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:326
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
+ dump_stack+0x1c/0x28 lib/dump_stack.c:128
+ print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2059
+ check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2186
+ check_prev_add kernel/locking/lockdep.c:3133 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+ validate_chain kernel/locking/lockdep.c:3868 [inline]
+ __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
+ lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
+ lock_sock_nested net/core/sock.c:3543 [inline]
+ lock_sock include/net/sock.h:1607 [inline]
+ sock_set_reuseaddr+0x58/0x154 net/core/sock.c:782
+ siw_create_listen+0x164/0xd70 drivers/infiniband/sw/siw/siw_cm.c:1776
+ iw_cm_listen+0x14c/0x204 drivers/infiniband/core/iwcm.c:585
+ cma_iw_listen drivers/infiniband/core/cma.c:2668 [inline]
+ rdma_listen+0x774/0xae4 drivers/infiniband/core/cma.c:3953
+ cma_listen_on_dev+0x320/0x64c drivers/infiniband/core/cma.c:2727
+ cma_add_one+0x5ec/0xab4 drivers/infiniband/core/cma.c:5357
+ add_client_context+0x45c/0x7d0 drivers/infiniband/core/device.c:727
+ enable_device_and_get+0x1a8/0x3e8 drivers/infiniband/core/device.c:1338
+ ib_register_device+0xe40/0x108c drivers/infiniband/core/device.c:1426
+ siw_device_register drivers/infiniband/sw/siw/siw_main.c:72 [inline]
+ siw_newlink+0x80c/0xc2c drivers/infiniband/sw/siw/siw_main.c:489
+ nldev_newlink+0x49c/0x4fc drivers/infiniband/core/nldev.c:1794
+ rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
+ rdma_nl_rcv+0x5c4/0x858 drivers/infiniband/core/netlink.c:259
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x668/0x8a4 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x7a4/0xa8c net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg net/socket.c:745 [inline]
+ ____sys_sendmsg+0x56c/0x840 net/socket.c:2597
+ ___sys_sendmsg net/socket.c:2651 [inline]
+ __sys_sendmsg+0x26c/0x33c net/socket.c:2680
+ __do_sys_sendmsg net/socket.c:2689 [inline]
+ __se_sys_sendmsg net/socket.c:2687 [inline]
+ __arm64_sys_sendmsg+0x80/0x94 net/socket.c:2687
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+infiniband syz1: RDMA CMA: cma_listen_on_dev, error -98
+overlay: ./file0 is not a directory
+xt_nfacct: accounting object `sy=05' does not exists
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
