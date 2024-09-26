@@ -1,136 +1,128 @@
-Return-Path: <linux-kernel+bounces-340168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857F3986F50
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:51:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63038986F53
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41898281FF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:51:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4EE7B209FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49FF21A76C9;
-	Thu, 26 Sep 2024 08:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603C61A7269;
+	Thu, 26 Sep 2024 08:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l9vnhjzP"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="m+q4TPNx"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F7E192586
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788F418BC10;
+	Thu, 26 Sep 2024 08:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727340661; cv=none; b=EaRfN4jRw4VOMDxcNdF5QG4DzHeG+3ND2U5eVZ8NCeO+49nOqPVNr3FwE7qF/FPcONmeQTy9hOpNoN9Bss1cWabO/nz053ubVOI7ZQo6DOweFgpfPdOaTL9wcWlmtjcxkLpmyYvR6bal3yoYOt4VmzSnYMm7ylOQvwi6CU3wzAs=
+	t=1727340761; cv=none; b=nDyPz7RK27+uauWdpWIWsabTxiATbn/6GCmOfayITWsBvd7Qkl/YL8yd0Jck5T9Bm7VDFAES8LkqN5S65VRda6pKywX+RuvL0i/j/9XpEhqQ2ns8ifljYEQAQ48CqrXfhVyjoGvz8KmducdB5ick6jht3q+OJzJ5FcLOEOmFBMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727340661; c=relaxed/simple;
-	bh=yETufZoS0lRHCNMnbOu73O3jdm0VL2jpK1Sf5cEA47A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LWsT0G6orB9atx7mSYiCwqWGEANE/lRTyM35HGcOEelCshdMGAD6WkSTo9r/BWjaFEPOQbQ/cVEEHDfJjIOnIbBCD4/9mPgG0oCwaAjRf96pavNsZsyFRfaMgBrfEWl5Fku87Qo5N819l/ql7mBPSn3LuL9j1eQkrUT2n//oa+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l9vnhjzP; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0aab72d9-1bb2-4ac7-b66f-2a337fb9cd1e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727340657;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e+rnWrZWAWlC75h2sJyhYvkZZruzDFMIY7aTo2ro+yk=;
-	b=l9vnhjzPHKFQ2FhUiZBAfGoi32jGnh0vPcS5EqNJ+DKr9/LRBPK1D3lvLUlKLojtUCvFX8
-	2zOtT2SgaU8xhZ1F7ocGrnSNxVxRaTYY8yzwXZcI+hkUXLhKC/qANX0ogCPAF7wBg7mRWd
-	e7/NinIYjmoynFMIN9W77tlCd52YZJ0=
-Date: Thu, 26 Sep 2024 09:50:52 +0100
+	s=arc-20240116; t=1727340761; c=relaxed/simple;
+	bh=oy18m8RZaRVgX9n5xHBRwSbGnBlqfFvRdv6wRivv1Wk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XQxIoPgEi1l2oho5JUxGPdWHy1PWgaAazU+b8i0+5hgQq69g78XMuS8FOQOd5TK1czSsxt7Sc9eGCyvts/fRixlbHZpWHnnetiKaQ4rSjj0pVOC1xa3BYBXol2AL7zxlDHrdE4KZ6ubjpdMyh695Na7RghHE7N9mp4kWLW98HCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=m+q4TPNx; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 6285C2E0866B;
+	Thu, 26 Sep 2024 11:52:36 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1727340757;
+	bh=U9ttzOWoUk0/DwNWB+B0Z0m7t2cu/R4OCUjEwwIRAaM=;
+	h=Received:From:Subject:To;
+	b=m+q4TPNxuzAnLyA+mvOSyZ/J8XjnVaQksd2KjQO1IoJGFbZOkC1IH+tf3mLv1jc81
+	 rUk/D6Ozk8AE4Gxm7yUNAy1RVt1hOC2bwx9929jpf0ipPQOEvACUTsYhO3BN2zwQsu
+	 mzOB7nlcZp/yy1OFogfagH35XS5Jj9LfRP/0RfIk=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.167.44) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lf1-f44.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lf1-f44.google.com with SMTP id
+ 2adb3069b0e04-535694d67eeso793039e87.0;
+        Thu, 26 Sep 2024 01:52:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWJ4rcla0xz6Ul+7aV/W9+iA+5yC23E6PCGGckwO+0ai2cGUGgfp3rT0hqca9Yz/6xVevyRQcJKADUX@vger.kernel.org,
+ AJvYcCWMSpp5JwmFNyRAxiR0Cd6S1ljW7DGrHNLJ70HgeafvQMd8ippFjdVE1OYPbQ7T5j1ZOQxEZNk1hyHhdC3N@vger.kernel.org,
+ AJvYcCWnlbD+v7MIJsezggW13lsxwSGDx/dmwdbffavAX8aQ8U1uHDk3KMrwbFtep4hoycv7OtjN9eapmlo/eDp9rA1usTvtlg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLVVAxRBV2l0ioLRzQtyTCtQHA7dRlYOsHL3lRX2D52PkGucvj
+	LuGL8sPXsUkMcDvzLnCnr7FtfsrRE3ZVgYQ06+ZPU8ULihgcWWYVKmmsgI3NYRKHQuthHDxeM17
+	LYnPftdfrU9qXZkz7Yf4uBpz/B4c=
+X-Google-Smtp-Source: 
+ AGHT+IHdD2hQ09b5fe6DdTTWvoDOTymvDNCOHOE1wydutsdimeFOVJ6d0EgfXT1nRc0pXvXLWJB3wiMZe2evT85mmRQ=
+X-Received: by 2002:a05:6512:1287:b0:533:4322:d03e with SMTP id
+ 2adb3069b0e04-53896c0e20bmr656423e87.25.1727340755762; Thu, 26 Sep 2024
+ 01:52:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net] tcp: check if skb is true to avoid crash
-To: Lena Wang <lena.wang@mediatek.com>, edumazet@google.com,
- davem@davemloft.net, dsahern@kernel.org, pabeni@redhat.com, kuba@kernel.org
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <20240926075646.15592-1-lena.wang@mediatek.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20240926075646.15592-1-lena.wang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240926025955.1728766-1-superm1@kernel.org>
+ <20240926025955.1728766-3-superm1@kernel.org>
+In-Reply-To: <20240926025955.1728766-3-superm1@kernel.org>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Thu, 26 Sep 2024 10:52:24 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwGXh1RV96hvSEd3HQoKGY+DeRPrhcKMxJUu7STRZURsmg@mail.gmail.com>
+Message-ID: 
+ <CAGwozwGXh1RV96hvSEd3HQoKGY+DeRPrhcKMxJUu7STRZURsmg@mail.gmail.com>
+Subject: Re: [RFC 2/2] platform/x86/amd: pmf: Add manual control support
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Luke D . Jones" <luke@ljones.dev>, Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>,
+	me@kylegospodneti.ch, Denis Benato <benato.denis96@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <172734075684.2819.17467176703074109703@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-On 26/09/2024 08:56, Lena Wang wrote:
-> A kernel NULL pointer dereference reported.
-> Backtrace:
-> vmlinux tcp_can_coalesce_send_queue_head(sk=0xFFFFFF80316D9400, len=755)
-> + 28 </alps/OfficialRelease/Of/alps/kernel-6.6/net/ipv4/tcp_output.c:2315>
-> vmlinux  tcp_mtu_probe(sk=0xFFFFFF80316D9400) + 3196
-> </alps/OfficialRelease/Of/alps/kernel-6.6/net/ipv4/tcp_output.c:2452>
-> vmlinux  tcp_write_xmit(sk=0xFFFFFF80316D9400, mss_now=128,
-> nonagle=-2145862684, push_one=0, gfp=2080) + 3296
-> </alps/OfficialRelease/Of/alps/kernel-6.6/net/ipv4/tcp_output.c:2689>
-> vmlinux  tcp_tsq_write() + 172
-> </alps/OfficialRelease/Of/alps/kernel-6.6/net/ipv4/tcp_output.c:1033>
-> vmlinux  tcp_tsq_handler() + 104
-> </alps/OfficialRelease/Of/alps/kernel-6.6/net/ipv4/tcp_output.c:1042>
-> vmlinux  tcp_tasklet_func() + 208
-> 
-> When there is no pending skb in sk->sk_write_queue, tcp_send_head
-> returns NULL. Directly dereference of skb->len will result crash.
-> So it is necessary to evaluate the skb to be true here.
-> 
-> Fixes: 808cf9e38cd7 ("tcp: Honor the eor bit in tcp_mtu_probe")
-> Signed-off-by: Lena Wang <lena.wang@mediatek.com>
-> ---
->   net/ipv4/tcp_output.c | 20 +++++++++++---------
->   1 file changed, 11 insertions(+), 9 deletions(-)
-> 
-> diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-> index 4fd746bd4d54..12cde5d879c5 100644
-> --- a/net/ipv4/tcp_output.c
-> +++ b/net/ipv4/tcp_output.c
-> @@ -2338,17 +2338,19 @@ static bool tcp_can_coalesce_send_queue_head(struct sock *sk, int len)
->   	struct sk_buff *skb, *next;
->   
->   	skb = tcp_send_head(sk);
-> -	tcp_for_write_queue_from_safe(skb, next, sk) {
-> -		if (len <= skb->len)
-> -			break;
-> +	if (skb) {
-> +		tcp_for_write_queue_from_safe(skb, next, sk) {
-> +			if (len <= skb->len)
-> +				break;
+Hi Mario,
 
-Hi Lena!
+It is fine to require a module parameter for turning on custom profiles.
 
-I believe the patch can be simplified by using "fast return"
+However, distributions such as Bazzite use per-device kernel
+parameters, which, while user accessible, will not be modified by the
+user for 95% of use-cases. In fact, the Bazzite update system manages
+the kernel parameters of devices automatically.
 
-if (!skb)
-	return true;
+What this would mean in practice is that for devices where this custom
+control may be used, the module parameter will be set globally for all
+of them and taint their kernels.
 
-This will make less changes and can simplify further bisecting.
+Instead, only taint the kernel when entering custom mode. If combined
+with something such as `custom_mode_choices`, only taint the kernel if
+`amd-pmf-user` is selected after that.
 
-Thanks,
-Vadim
+> +{
+> +       add_taint(TAINT_CPU_OUT_OF_SPEC, LOCKDEP_STILL_OK);
+> +       pr_crit("Manual PMF control is enabled, please disable it before "
+> +               "reporting any bugs unrelated to PMF.\n");
+> +}
 
-> -		if (unlikely(TCP_SKB_CB(skb)->eor) ||
-> -		    tcp_has_tx_tstamp(skb) ||
-> -		    !skb_pure_zcopy_same(skb, next) ||
-> -		    skb_frags_readable(skb) != skb_frags_readable(next))
-> -			return false;
-> +			if (unlikely(TCP_SKB_CB(skb)->eor) ||
-> +			    tcp_has_tx_tstamp(skb) ||
-> +			    !skb_pure_zcopy_same(skb, next) ||
-> +			    skb_frags_readable(skb) != skb_frags_readable(next))
-> +				return false;
->   
-> -		len -= skb->len;
-> +			len -= skb->len;
-> +		}
->   	}
->   
->   	return true;
+"Manual PMF control is enabled. If the device supports other ways of
+thermal management, please use those before reporting any bugs
+unrelated to PMF. If not, only if setting TDP is required for testing
+(e.g., under load in specific thermal conditions), proceed with the
+understanding that this module may cause interference, especially with
+the amd-gpu driver, the suspend process, and, if the parameters are
+out of spec, general stability of the system."
 
+Antheas
 
