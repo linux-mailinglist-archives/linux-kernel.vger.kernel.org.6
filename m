@@ -1,90 +1,100 @@
-Return-Path: <linux-kernel+bounces-340288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D815987111
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:15:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7F598711A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED67D1F255D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:15:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C1D1C24C22
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BDA1ACDF6;
-	Thu, 26 Sep 2024 10:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA41D1ACDE1;
+	Thu, 26 Sep 2024 10:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="HXrrveUW"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="qQv7Goea"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258D11A726A;
-	Thu, 26 Sep 2024 10:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CFC1ACDE0;
+	Thu, 26 Sep 2024 10:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727345692; cv=none; b=KjRqEA7k2yXKeHe+JfGfYyWl28jDGZ7F9KR08lP5EYEsGNSgZ165Q5cM5kc3Bm0BGpHbqlwKtmhJw3tf8rq5/RsiQ/p0M/shYyf4GUvfT+WCfur46Dw2Sxw/QNE9y1sskzDHiBv5BA57yRUkMEmu3bD4nuyz61pa1iN615GpouM=
+	t=1727345708; cv=none; b=JQA0ySKd0masGjIEtWLhguRyiTw77ineerEd/n2kgYrXX+yYGU+V0pfEjenktm3K01sQUWzE/xySJRqhy+I5VOEihCp61TPkVbadZQo325bl/NuN/KCNTQQDU0Z1+if/JN4UZQjp4/leuveZ7A8uAPHnJi0GbjLt7W8/W0pSkAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727345692; c=relaxed/simple;
-	bh=Mz8/Ket6/rraVDbhe+ybdmv1uxs13o2brm9qVs+a+ac=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=l8C0WxNplWSuXPocKu8ZwtUuvlExTcFevI/GTwmMVynsvqjD/UxQqv4+1p6xUWh705gok6g2iOj8bCBIAUPlIj2bdFrHGVuzRLR24GS+803+NVFREQANYtmOIrE3zF6jHWJA9QeiDANRM2zdvu3QLthkotVM/3zoC6XC+MNcOZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=HXrrveUW; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1727345708; c=relaxed/simple;
+	bh=R3ayNeRktz75FfKcJCKAxHTEP/YEfX3ZwqwbQEA0I4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z3eFcJrt1g9CD4HWtUOgi2lORel6PqB/oZNlT8X2EI8vJdUX8uYdOjWUNmukxeHS074CWNU2nuxK3lKnKZvdMvtHB0v42GbqEHCDlyuzZmukdYA13Sw88hE2Q99/ICxtkvs+zBXEICYrW3EMeAPhyGKugXEgVD2W/IiVptTycl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=qQv7Goea; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 968F71C00AD; Thu, 26 Sep 2024 12:14:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1727345696;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dCkLjYWr6d0kz4iEcqf7wg1l72cdr7fXFAnDo9rCERM=;
+	b=qQv7GoeaeXZEjpbQllsUMunSDPl1w8iA+VfAIUZ9kg53KB0buZZ9ZTLbkWcaKS2nKDfwMn
+	PMYdIIAgqTp8SZaTTIbj0bGgG3RmKztfNjWTx0tkHBqgfxDqg2V1lRkGPC55jVyWMNNkF/
+	yRTmSfPvrhF19Xie41QkwNzOq8ILCpE=
+Date: Thu, 26 Sep 2024 12:14:56 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: avel@ucw.cz, ee@kernel.org, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: leds: replace divide condition 'shift / 16'
+ with 'shift >= 16'
+Message-ID: <ZvU0IAbrloI5KQNj@duo.ucw.cz>
+References: <20240922174020.49856-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1727345688;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wS665X+guWUxjV3EiTZ06q5mRi1Mtf5MqZtjy3COO8E=;
-	b=HXrrveUW3XFAOFVeKTPflURf5fOTiN16H6NZ0C5PspX8myut3HFRuWc8WczyVqILMWDFXA
-	D3n6/11crhP6NZEora/R6801VldyAkpB0dsynkN/ksKTZTt+GoGQF+LaO7CZL7+Cn72jh4
-	QEJYQ9tC5mBqxzeHjc/N4f6nggwB258aPbm3wCdRKwEuT4JaRl13sBs9pBijUjjafZ/80C
-	OvkRn1V4a+DpHI1Dc8UJ3zLeUgB7NsiSdfvwMmxFDqtv06W2Dc9CpjZzyXBRYftfJPr09k
-	+JgIOV0EtRtkKfYtFrZFCV98/rh3W/hA43k9Dxdc1PHq4miMFtNg9f+ihz4U3Q==
-Date: Thu, 26 Sep 2024 12:14:48 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, linux-spi@vger.kernel.org,
- linux-rockchip@lists.infradead.org, oss@helene.moe,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] spi: rockchip: Don't check for failed get_fifo_len()
-In-Reply-To: <ZvUmk48R4hZYlO71@finisterre.sirena.org.uk>
-References: <cover.1727337732.git.dsimic@manjaro.org>
- <ce2e7f90e62b15adc2bed1f53122ad39c3a9b5ac.1727337732.git.dsimic@manjaro.org>
- <2382990.BjyWNHgNrj@phil> <ZvUmk48R4hZYlO71@finisterre.sirena.org.uk>
-Message-ID: <cec7e3f531d936ab34486d52bd16daee@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1NQp9owI+IEKvH/M"
+Content-Disposition: inline
+In-Reply-To: <20240922174020.49856-1-kdipendra88@gmail.com>
 
-Hello Mark,
 
-On 2024-09-26 11:17, Mark Brown wrote:
-> On Thu, Sep 26, 2024 at 10:55:01AM +0200, Heiko Stuebner wrote:
->> Am Donnerstag, 26. September 2024, 10:38:14 CEST schrieb Dragan Simic:
->> > Since commit 13a96935e6f6 ("spi: rockchip: Support 64-location deep FIFOs"),
->> > function get_fifo_len() can no longer return zero, so delete the redundant
->> > check for zero in function rockchip_spi_probe().
-> 
->> Didn't this topic come up in another recent patch too?
-> 
->> Anyway, having looked up the what the current get_fifo_len does,
->> the 0 case should never happen, as you describe, so
-> 
-> One of the people doing random cleanups posted the same patch which I
-> pushed back on since probe() isn't a hot path and it means if
-> get_fifo_len() changes again it could silently break things.
+--1NQp9owI+IEKvH/M
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the clarification, it makes sense to keep the check for
-future proofing.  I'll drop this patch in the v2 of this series.
+On Sun 2024-09-22 17:40:19, Dipendra Khadka wrote:
+> Smatch reported following:
+> '''
+> drivers/leds/leds-bcm6328.c:116 bcm6328_led_mode() warn: replace divide c=
+ondition 'shift / 16' with 'shift >=3D 16'
+> drivers/leds/leds-bcm6328.c:360 bcm6328_led() warn: replace divide condit=
+ion 'shift / 16' with 'shift >=3D 16'
+> '''
+> Replacing 'shift / 16' with 'shift >=3D 16'.
+>=20
+> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+
+Reviewed-by: Pavel Machek <pavel@ucw.cz>
+
+BR,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--1NQp9owI+IEKvH/M
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZvU0IAAKCRAw5/Bqldv6
+8gIhAKDEwwLrurCUqvkAUUVd5EcwZRKUCACghzK4mHfuBb7dj4qe5NGqp6k0Ohc=
+=TcrR
+-----END PGP SIGNATURE-----
+
+--1NQp9owI+IEKvH/M--
 
