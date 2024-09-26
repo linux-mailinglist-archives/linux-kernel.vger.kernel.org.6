@@ -1,221 +1,102 @@
-Return-Path: <linux-kernel+bounces-339882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8E3986BB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:18:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F3A986BC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 651DC1F22FBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:18:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62FC11F23DA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BBE1D554;
-	Thu, 26 Sep 2024 04:18:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB6B4C79
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 04:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEE115B543;
+	Thu, 26 Sep 2024 04:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IxMvyYAk"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C552F5B
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 04:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727324292; cv=none; b=o6P8p2qwUV4s/a/EeYrL4C86HfJwT0sWRjWR23kxqU/d23SSVB+6C1rKSnJAfgIxJpg6WCcldX6qT4U5GK0hxzX6RBZXYgUj8Au/S/3RMa8/VbbQHWO/qVmnXKzHAHm8XBgHE30cCb+4BFnUDkNFsKa1CXObRma2jmVp/8H0K2k=
+	t=1727325246; cv=none; b=Oi888Rhd5If5pl+AQIg8QHg3UoejNj/zfFsTOn49mR6CpyDNah8mcc+LyIgegB6bsp18L1aSaMIN36IF14+9PAvC1sJiCcb/BsoEvjneXJny2lWoPU4cwY9eyWCdDzJlOy+v8vLNgaNxkfyz5JfSYfNJnY0Bffv8hjcwiSx3MYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727324292; c=relaxed/simple;
-	bh=0TjdrucShvr7QUbd5OwG9DXgoM0NPmZ8qTPdh6Q0qns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=htVFQdLuvGQkpaLkIlpJwBPJgdby6sMHIZrHqwMoDuvV0DXamiEpupurntp0G8GALNguCFvLoNvpDyjbyr2Mklb+F+roNTGYnP39mdLC6I9yCpY9JVELUfHUpK5rDs1aCbDZT9YNcfwD2a4EzP8z+a/GnjcQUiz/idJ/P0CyfYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C367615A1;
-	Wed, 25 Sep 2024 21:18:36 -0700 (PDT)
-Received: from [10.163.35.5] (unknown [10.163.35.5])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1DF693F528;
-	Wed, 25 Sep 2024 21:18:03 -0700 (PDT)
-Message-ID: <97c9f027-0162-4093-a5d7-0dc561ea28c7@arm.com>
-Date: Thu, 26 Sep 2024 09:48:00 +0530
+	s=arc-20240116; t=1727325246; c=relaxed/simple;
+	bh=5QaxRtO+rvsOKCMKZhiVUHkG5EXV12pJLC3tOZSTRq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4qk3a2KsAoxDFVw1pUxELUtaCDABvzaZFF9veDtKWhcd2Fi5VLs7kXcnqpb+FAGYbUj5p5I7I/i4CC2f7+lZuDsbfu65wD+nrNs8/QKzlgFmafP38EW3CdODSoecygOKQ74klLCoQeVWs55SBIZDLQ70Xeu9SW7EqpqwsiEFJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IxMvyYAk; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2055a3f80a4so3103345ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:34:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727325245; x=1727930045; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=a8wKFA6z0EGqLgUDfi7jAr3CSIIRzG58X2FAI944fjM=;
+        b=IxMvyYAkAyhfym2xFmffE9V3DMaGF0TzkM/agyXqItpn5+YfHnfOXj4hGFtwi/wZLc
+         ZgYV7ViNgoEmgu8Fb6v1Qxc8vmEXqex8ipdBT3dN43Pe/dOrY4EbOhYO6clXAuNSd0Jf
+         9cxCx9qssgeVDKMSsOL6JbMdhkAoo1qUYnwtY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727325245; x=1727930045;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a8wKFA6z0EGqLgUDfi7jAr3CSIIRzG58X2FAI944fjM=;
+        b=GEv/SVMG4XahYyNjv6OXYU/9vDtGfEgFJytkiSgdHBxOX0OwbAiHp9oND+qL6Rc5C4
+         f2z/t9E/T5ljCICG0QG90xRmTafVomNbKU13dGnmrF3lXcIdhO+OaVSv28L9oSfcIYK1
+         LQLYCZSN2pxYIG8Czt1LwffSKWju74agNJIzj6a+W7tLBcqS7Cs1Gkkmf+s97SAWeppQ
+         VLVvLCNfK2+YJx3UP9yA77XSY+lCikSjPj5VYtQUJg6vpcO4twNuDVNGOLtlQUpg8Awi
+         DYr+wOEp2tGl8r30SroMxfcraB9Klm+FZ/+f00UFxQhjpBOYytx3viwWxKOwxxo9/Vkg
+         8/bg==
+X-Forwarded-Encrypted: i=1; AJvYcCXo6S6yvgEfARw82WoAOds9lDH/vjax108bDq+A3AeCEpX88kgrDOekzuj1fDVYAlM9C6OqqvT0Qyc1CEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxloguBG9PhNUYz+WSjh1a9lNft9QAvoicVl38U97QdVwBQdgCH
+	L4VcY6stAmdIurh4siVgPh4JTnUTlHMiFq7Pu/EJ6OvH+43FyInETK5JVUlnAg==
+X-Google-Smtp-Source: AGHT+IGbEwOBfZ5TByxl82LaGD3iOlIihFjX79877NArTr0fFnqTtlSPCRwVaJBJ74ui3K9S5JMocQ==
+X-Received: by 2002:a17:902:f54e:b0:206:c911:9d86 with SMTP id d9443c01a7336-20afc42ac6fmr76804585ad.3.1727325244833;
+        Wed, 25 Sep 2024 21:34:04 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:1560:84f:e0c8:d5d6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af17dffdasm30812165ad.176.2024.09.25.21.34.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 21:34:04 -0700 (PDT)
+Date: Thu, 26 Sep 2024 13:33:58 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: senozhatsky@chromium.org, axboe@kernel.dk, gost.dev@samsung.com,
+	kernel@pankajraghav.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, minchan@kernel.org,
+	p.raghav@samsung.com
+Subject: Re: [PATCH 0/5] Improve zram writeback performance
+Message-ID: <20240926043358.GD11458@google.com>
+References: <20230919003338.GA3748@google.com>
+ <20240925155314.107632-1-jassisinghbrar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Move set_pxd_safe() helpers from generic to platform
-To: linux-mm@kvack.org, akpm@linux-foundation.org,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- x86@kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240920053017.2514920-1-anshuman.khandual@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20240920053017.2514920-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925155314.107632-1-jassisinghbrar@gmail.com>
 
-
-
-On 9/20/24 11:00, Anshuman Khandual wrote:
-> set_pxd_safe() helpers that serve a specific purpose for both x86 and riscv
-> platforms, do not need to be in the common memory code. Otherwise they just
-> unnecessarily make the common API more complicated. This moves the helpers
-> from common code to platform instead.
+On (24/09/25 10:53), Jassi Brar wrote:
+> Hi Sergey, Hi Minchan,
 > 
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: x86@kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
->  arch/riscv/include/asm/pgtable.h | 19 ++++++++++++++++
->  arch/x86/include/asm/pgtable.h   | 37 +++++++++++++++++++++++++++++++
->  include/linux/pgtable.h          | 38 --------------------------------
->  3 files changed, 56 insertions(+), 38 deletions(-)
-> 
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-> index 089f3c9f56a3..39ca652c5ebe 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -957,6 +957,25 @@ void misc_mem_init(void);
->  extern unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)];
->  #define ZERO_PAGE(vaddr) (virt_to_page(empty_zero_page))
->  
-> +/*
-> + * Use set_p*_safe(), and elide TLB flushing, when confident that *no*
-> + * TLB flush will be required as a result of the "set". For example, use
-> + * in scenarios where it is known ahead of time that the routine is
-> + * setting non-present entries, or re-setting an existing entry to the
-> + * same value. Otherwise, use the typical "set" helpers and flush the
-> + * TLB.
-> + */
-> +#define set_p4d_safe(p4dp, p4d) \
-> +({ \
-> +	WARN_ON_ONCE(p4d_present(*p4dp) && !p4d_same(*p4dp, p4d)); \
-> +	set_p4d(p4dp, p4d); \
-> +})
-> +
-> +#define set_pgd_safe(pgdp, pgd) \
-> +({ \
-> +	WARN_ON_ONCE(pgd_present(*pgdp) && !pgd_same(*pgdp, pgd)); \
-> +	set_pgd(pgdp, pgd); \
-> +})
->  #endif /* !__ASSEMBLY__ */
->  
->  #endif /* _ASM_RISCV_PGTABLE_H */
-> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-> index e39311a89bf4..fefb52bb6b4d 100644
-> --- a/arch/x86/include/asm/pgtable.h
-> +++ b/arch/x86/include/asm/pgtable.h
-> @@ -1701,6 +1701,43 @@ bool arch_is_platform_page(u64 paddr);
->  #define arch_is_platform_page arch_is_platform_page
->  #endif
->  
-> +/*
-> + * Use set_p*_safe(), and elide TLB flushing, when confident that *no*
-> + * TLB flush will be required as a result of the "set". For example, use
-> + * in scenarios where it is known ahead of time that the routine is
-> + * setting non-present entries, or re-setting an existing entry to the
-> + * same value. Otherwise, use the typical "set" helpers and flush the
-> + * TLB.
-> + */
-> +#define set_pte_safe(ptep, pte) \
-> +({ \
-> +	WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
-> +	set_pte(ptep, pte); \
-> +})
-> +
-> +#define set_pmd_safe(pmdp, pmd) \
-> +({ \
-> +	WARN_ON_ONCE(pmd_present(*pmdp) && !pmd_same(*pmdp, pmd)); \
-> +	set_pmd(pmdp, pmd); \
-> +})
-> +
-> +#define set_pud_safe(pudp, pud) \
-> +({ \
-> +	WARN_ON_ONCE(pud_present(*pudp) && !pud_same(*pudp, pud)); \
-> +	set_pud(pudp, pud); \
-> +})
-> +
-> +#define set_p4d_safe(p4dp, p4d) \
-> +({ \
-> +	WARN_ON_ONCE(p4d_present(*p4dp) && !p4d_same(*p4dp, p4d)); \
-> +	set_p4d(p4dp, p4d); \
-> +})
-> +
-> +#define set_pgd_safe(pgdp, pgd) \
-> +({ \
-> +	WARN_ON_ONCE(pgd_present(*pgdp) && !pgd_same(*pgdp, pgd)); \
-> +	set_pgd(pgdp, pgd); \
-> +})
->  #endif	/* __ASSEMBLY__ */
->  
->  #endif /* _ASM_X86_PGTABLE_H */
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 2a6a3cccfc36..0bf88e505aad 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -1050,44 +1050,6 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
->  }
->  #endif
->  
-> -/*
-> - * Use set_p*_safe(), and elide TLB flushing, when confident that *no*
-> - * TLB flush will be required as a result of the "set". For example, use
-> - * in scenarios where it is known ahead of time that the routine is
-> - * setting non-present entries, or re-setting an existing entry to the
-> - * same value. Otherwise, use the typical "set" helpers and flush the
-> - * TLB.
-> - */
-> -#define set_pte_safe(ptep, pte) \
-> -({ \
-> -	WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
-> -	set_pte(ptep, pte); \
-> -})
-> -
-> -#define set_pmd_safe(pmdp, pmd) \
-> -({ \
-> -	WARN_ON_ONCE(pmd_present(*pmdp) && !pmd_same(*pmdp, pmd)); \
-> -	set_pmd(pmdp, pmd); \
-> -})
-> -
-> -#define set_pud_safe(pudp, pud) \
-> -({ \
-> -	WARN_ON_ONCE(pud_present(*pudp) && !pud_same(*pudp, pud)); \
-> -	set_pud(pudp, pud); \
-> -})
-> -
-> -#define set_p4d_safe(p4dp, p4d) \
-> -({ \
-> -	WARN_ON_ONCE(p4d_present(*p4dp) && !p4d_same(*p4dp, p4d)); \
-> -	set_p4d(p4dp, p4d); \
-> -})
-> -
-> -#define set_pgd_safe(pgdp, pgd) \
-> -({ \
-> -	WARN_ON_ONCE(pgd_present(*pgdp) && !pgd_same(*pgdp, pgd)); \
-> -	set_pgd(pgdp, pgd); \
-> -})
-> -
->  #ifndef __HAVE_ARCH_DO_SWAP_PAGE
->  static inline void arch_do_swap_page_nr(struct mm_struct *mm,
->  				     struct vm_area_struct *vma,
+> >> Gentle ping Minchan and Sergey.
+> >
+> May I please know where we are with the rework? Is there somewhere I
+> could look up the compressed-writeback work-in-progress code?
 
-Hello Dave/Palmer,
+There is no code for that nor any progress that can be shared,
+as far as I'm concerned.
 
-Unless there is still any more objection from x86 or riscv, could this
-patch be pulled ?
+The most recent writeback-related patch series (WIP) reworks
+how writeback and re-compression select target slots for
+post-processing [1]
 
-- Anshuman
+[1] https://lore.kernel.org/linux-kernel/20240917021020.883356-1-senozhatsky@chromium.org
 
