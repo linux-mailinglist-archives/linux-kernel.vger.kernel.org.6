@@ -1,315 +1,245 @@
-Return-Path: <linux-kernel+bounces-340138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18BF986EF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:37:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78E5986EFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DA891F21918
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:37:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B351C241BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575AA1AD3E8;
-	Thu, 26 Sep 2024 08:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FFD1ACDFD;
+	Thu, 26 Sep 2024 08:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ed55ZDd0"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DBecXBrH"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D09C1A7AF0
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C1C1A76DF;
+	Thu, 26 Sep 2024 08:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727339783; cv=none; b=udqkTZjf+L9KA1BapC5+W3vveoh4bEf9wKs4fIN/sSWMrn8h+sVTxMYq/lOVCD2vVJOZx16AtG/fhiwOYfkzVHWrgcR04S8ChyNSaKf811qjk9ZlGNGkhmVIomCuPaIPV3uHrrkl07exv7yP5Xp6j5c9HHIM9lxUI/KO6Loe7gg=
+	t=1727339784; cv=none; b=sNTSdVCUpepO3O8PoVE9lg4C9JzanEZrFhIOb7pBE1XdHbyEGtZFhqbroeeq8CC6ecUlDm3zPI7yayLazwBO/nxl9Tuj85RUyAlLO2JFhGbGXgc2UAsm0NlHyvvbAc/l5isQaJfLxqYrqeL8lvZsSjoIKXidrsRAnsAZlN45yOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727339783; c=relaxed/simple;
-	bh=P0j7TA1DWoUNo5o1xO8QdlKKvhmndHOsdGtzWL2Sj6E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BYc6ofFxZ6+Ejm+vuQreySqXOk5A7yiV2YSii0QadXU0RPFTw26sds1SrZ+Ow8/Alxq+7GHuU+FK6lTQe6GawiLq/6rdQoOc1wTW425VV6vzyRZ/lIiyRVvM3MdiDBeQuVvVN0SYUM+1k0oXsC6Cry1/dMlPQ0pRzMH71p5sJq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ed55ZDd0; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 64a21dd27be211ef8b96093e013ec31c-20240926
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Y+x368pkPQZYgeGCH0jIfPkwPIXM2GZWYbtTKr5XBjc=;
-	b=ed55ZDd0u0qE7ILsXdAGUbvaZy9Zyc6tLKPw86vDtMWk9JupfDtX/JkFaV/SEa99fh5eh/i7ZCKcOiJjgved4WGS3LPySpFgoiDp6WFOx0jInuM7Kt4vSNpyqhUY8z/6zcZiD7m1MW8LOsKPygjLkIN33RdFAyQo2t1aVjQeTRw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:3f1c3b17-4a89-47af-8853-97d659ec5c5d,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:6dc6a47,CLOUDID:61864918-b42d-49a6-94d2-a75fa0df01d2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 64a21dd27be211ef8b96093e013ec31c-20240926
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2013710365; Thu, 26 Sep 2024 16:36:15 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 26 Sep 2024 16:36:12 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 26 Sep 2024 16:36:12 +0800
-From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-To: Alper Nebi Yasak <alpernebiyasak@gmail.com>, Chun-Kuang Hu
-	<chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: Shawn Sung <shawn.sung@mediatek.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, "Jason-JH . Lin"
-	<jason-jh.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, "Nancy
- Lin" <nancy.lin@mediatek.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v6 2/2] drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
-Date: Thu, 26 Sep 2024 16:35:26 +0800
-Message-ID: <20240926083526.24629-3-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20240926083526.24629-1-jason-jh.lin@mediatek.com>
-References: <20240926083526.24629-1-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1727339784; c=relaxed/simple;
+	bh=0vx2wLHIP341Fcw6qUhYwA5kM6D965fe51U5NDuNykk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G5SfY7IiZbxUm309tSk3epAhTSWi24rD4JaC28BYvPuD3rs84gvOliRIQ17vUhzc08+dqqXlWOqT5DZhr4JCDTliYcuZPpxPMTaWg1WtEuTzAXcK3pYS59qzUlGyFbvoFYmD392sdfNeVwulOy4TALPnMbmv/US8RdtQYY6/gqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DBecXBrH; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CFCEF169;
+	Thu, 26 Sep 2024 10:34:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727339692;
+	bh=0vx2wLHIP341Fcw6qUhYwA5kM6D965fe51U5NDuNykk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DBecXBrHZnJ73ugoSwlvEFZl5HNOOcuYbIIdgLX1AkDR6PH7vK9Arte2y8mICEzuh
+	 DXLodimMtWBjICZsq8QJw6rUDxSmTNStU9keIPkEqgc1e45rvdlA7HJY/31ZgKMTlG
+	 9tBNMwgZHEvdG1BfpH27Ivag8bjqyiquObr5/TM0=
+Date: Thu, 26 Sep 2024 11:36:17 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Andy Gross <agross@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Jim Quinlan <james.quinlan@broadcom.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Fix array property constraints
+Message-ID: <20240926083617.GA29582@pendragon.ideasonboard.com>
+References: <20240925232409.2208515-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--12.128000-8.000000
-X-TMASE-MatchedRID: As59EB+03ZJe0FYiuVD/cPSZ/2axrnPBqQzUsXJNLuEGW3hFnC9N1dpn
-	hpe4D1hOFzjo+TNgpJdApkCDZ8Q62p4dOTBCL+zXQ4srjeRbxTZKPIx+MJF9o99RlPzeVuQQkmi
-	3zE7HIvkKYu/xaKWCX1EnfB+90ISXD0VXqQ1iI8cSEYfcJF0pRYfsPVs/8Vw6R2YNIFh+clHt8r
-	FozbGqQHeH2KM+kAtWGufNCK9RUZJccQ8eam5EfRRFJJyf5BJe3QfwsVk0UbtuRXh7bFKB7mnG2
-	YkwpcKzU999WbfbBSWOweeH7eq+DaZXh3S2a/WnsBTJSD2iAW0=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--12.128000-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	A62E3E994F0A8C2EC857F54A1FB1BE7DAE08E0CB6B3EAE0EF9852B3109CCEFAC2000:8
-X-MTK: N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240925232409.2208515-1-robh@kernel.org>
 
-Since some SoCs support premultiplied pixel formats but some do not,
-the blend_modes parameter is added to mtk_plane_init(), which is
-obtained from the mtk_ddp_comp_get_blend_modes function implemented
-in different blending supported components.
+Hi Rob,
 
-The blending supported components can use driver data to set the
-blend mode capabilities for different SoCs.
+Thank you for the patch.
 
-Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_crtc.c             |  1 +
- drivers/gpu/drm/mediatek/mtk_ddp_comp.c         |  2 ++
- drivers/gpu/drm/mediatek/mtk_ddp_comp.h         | 10 ++++++++++
- drivers/gpu/drm/mediatek/mtk_disp_drv.h         |  2 ++
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c         |  7 +++++++
- drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c |  7 +++++++
- drivers/gpu/drm/mediatek/mtk_ethdr.c            |  7 +++++++
- drivers/gpu/drm/mediatek/mtk_ethdr.h            |  1 +
- drivers/gpu/drm/mediatek/mtk_plane.c            | 15 +++++++--------
- drivers/gpu/drm/mediatek/mtk_plane.h            |  4 ++--
- 10 files changed, 46 insertions(+), 10 deletions(-)
+On Wed, Sep 25, 2024 at 06:24:06PM -0500, Rob Herring (Arm) wrote:
+> Schemas for array properties should only have 1 level of array
+> constraints (e.g. items, maxItems, minItems). Sometimes the old
+> encoding of all properties into a matrix leaked into the schema, and
+> didn't matter for validation. Now the inner constraints are just
+> silently ignored as json-schema array keywords are ignored on scalar
+> values.
+> 
+> Generally, keep the inner constraints and drop the outer "items". With
+> gicv3 "mbi-alias" property, it is more appropriately a uint32 or uint64
+> as it is an address and size depends on "#address-cells".
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediatek/mtk_crtc.c
-index 175b00e5a253..b65f196f2015 100644
---- a/drivers/gpu/drm/mediatek/mtk_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
-@@ -913,6 +913,7 @@ static int mtk_crtc_init_comp_planes(struct drm_device *drm_dev,
- 				BIT(pipe),
- 				mtk_crtc_plane_type(mtk_crtc->layer_nr, num_planes),
- 				mtk_ddp_comp_supported_rotations(comp),
-+				mtk_ddp_comp_get_blend_modes(comp),
- 				mtk_ddp_comp_get_formats(comp),
- 				mtk_ddp_comp_get_num_formats(comp), i);
- 		if (ret)
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-index be66d94be361..edc6417639e6 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-@@ -363,6 +363,7 @@ static const struct mtk_ddp_comp_funcs ddp_ovl = {
- 	.layer_config = mtk_ovl_layer_config,
- 	.bgclr_in_on = mtk_ovl_bgclr_in_on,
- 	.bgclr_in_off = mtk_ovl_bgclr_in_off,
-+	.get_blend_modes = mtk_ovl_get_blend_modes,
- 	.get_formats = mtk_ovl_get_formats,
- 	.get_num_formats = mtk_ovl_get_num_formats,
- };
-@@ -416,6 +417,7 @@ static const struct mtk_ddp_comp_funcs ddp_ovl_adaptor = {
- 	.disconnect = mtk_ovl_adaptor_disconnect,
- 	.add = mtk_ovl_adaptor_add_comp,
- 	.remove = mtk_ovl_adaptor_remove_comp,
-+	.get_blend_modes = mtk_ovl_adaptor_get_blend_modes,
- 	.get_formats = mtk_ovl_adaptor_get_formats,
- 	.get_num_formats = mtk_ovl_adaptor_get_num_formats,
- 	.mode_valid = mtk_ovl_adaptor_mode_valid,
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-index ecf6dc283cd7..79562af1180f 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-@@ -80,6 +80,7 @@ struct mtk_ddp_comp_funcs {
- 	void (*ctm_set)(struct device *dev,
- 			struct drm_crtc_state *state);
- 	struct device * (*dma_dev_get)(struct device *dev);
-+	const u32 (*get_blend_modes)(struct device *dev);
- 	const u32 *(*get_formats)(struct device *dev);
- 	size_t (*get_num_formats)(struct device *dev);
- 	void (*connect)(struct device *dev, struct device *mmsys_dev, unsigned int next);
-@@ -266,6 +267,15 @@ static inline struct device *mtk_ddp_comp_dma_dev_get(struct mtk_ddp_comp *comp)
- 	return comp->dev;
- }
- 
-+static inline
-+const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
-+{
-+	if (comp->funcs && comp->funcs->get_blend_modes)
-+		return comp->funcs->get_blend_modes(comp->dev);
-+
-+	return 0;
-+}
-+
- static inline
- const u32 *mtk_ddp_comp_get_formats(struct mtk_ddp_comp *comp)
- {
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_drv.h b/drivers/gpu/drm/mediatek/mtk_disp_drv.h
-index 082ac18fe04a..defa500cd64f 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_drv.h
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_drv.h
-@@ -103,6 +103,7 @@ void mtk_ovl_register_vblank_cb(struct device *dev,
- void mtk_ovl_unregister_vblank_cb(struct device *dev);
- void mtk_ovl_enable_vblank(struct device *dev);
- void mtk_ovl_disable_vblank(struct device *dev);
-+const u32 mtk_ovl_get_blend_modes(struct device *dev);
- const u32 *mtk_ovl_get_formats(struct device *dev);
- size_t mtk_ovl_get_num_formats(struct device *dev);
- 
-@@ -131,6 +132,7 @@ void mtk_ovl_adaptor_start(struct device *dev);
- void mtk_ovl_adaptor_stop(struct device *dev);
- unsigned int mtk_ovl_adaptor_layer_nr(struct device *dev);
- struct device *mtk_ovl_adaptor_dma_dev_get(struct device *dev);
-+const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
- const u32 *mtk_ovl_adaptor_get_formats(struct device *dev);
- size_t mtk_ovl_adaptor_get_num_formats(struct device *dev);
- enum drm_mode_status mtk_ovl_adaptor_mode_valid(struct device *dev,
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index 0cf7b80f612e..8592c6078bb1 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -215,6 +215,13 @@ void mtk_ovl_disable_vblank(struct device *dev)
- 	writel_relaxed(0x0, ovl->regs + DISP_REG_OVL_INTEN);
- }
- 
-+const u32 mtk_ovl_get_blend_modes(struct device *dev)
-+{
-+	struct mtk_disp_ovl *ovl = dev_get_drvdata(dev);
-+
-+	return ovl->data->blend_modes;
-+}
-+
- const u32 *mtk_ovl_get_formats(struct device *dev)
- {
- 	struct mtk_disp_ovl *ovl = dev_get_drvdata(dev);
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-index c6768210b08b..93dc9c200705 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-@@ -400,6 +400,13 @@ void mtk_ovl_adaptor_disable_vblank(struct device *dev)
- 	mtk_ethdr_disable_vblank(ovl_adaptor->ovl_adaptor_comp[OVL_ADAPTOR_ETHDR0]);
- }
- 
-+const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev)
-+{
-+	struct mtk_disp_ovl_adaptor *ovl_adaptor = dev_get_drvdata(dev);
-+
-+	return mtk_ethdr_get_blend_modes(ovl_adaptor->ovl_adaptor_comp[OVL_ADAPTOR_ETHDR0]);
-+}
-+
- const u32 *mtk_ovl_adaptor_get_formats(struct device *dev)
- {
- 	struct mtk_disp_ovl_adaptor *ovl_adaptor = dev_get_drvdata(dev);
-diff --git a/drivers/gpu/drm/mediatek/mtk_ethdr.c b/drivers/gpu/drm/mediatek/mtk_ethdr.c
-index d1d9cf8b10e1..5532740e17ba 100644
---- a/drivers/gpu/drm/mediatek/mtk_ethdr.c
-+++ b/drivers/gpu/drm/mediatek/mtk_ethdr.c
-@@ -145,6 +145,13 @@ static irqreturn_t mtk_ethdr_irq_handler(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+const u32 mtk_ethdr_get_blend_modes(struct device *dev)
-+{
-+	return BIT(DRM_MODE_BLEND_PREMULTI) |
-+	       BIT(DRM_MODE_BLEND_COVERAGE) |
-+	       BIT(DRM_MODE_BLEND_PIXEL_NONE);
-+}
-+
- void mtk_ethdr_layer_config(struct device *dev, unsigned int idx,
- 			    struct mtk_plane_state *state,
- 			    struct cmdq_pkt *cmdq_pkt)
-diff --git a/drivers/gpu/drm/mediatek/mtk_ethdr.h b/drivers/gpu/drm/mediatek/mtk_ethdr.h
-index 81af9edea3f7..c2c7d56fb429 100644
---- a/drivers/gpu/drm/mediatek/mtk_ethdr.h
-+++ b/drivers/gpu/drm/mediatek/mtk_ethdr.h
-@@ -13,6 +13,7 @@ void mtk_ethdr_clk_disable(struct device *dev);
- void mtk_ethdr_config(struct device *dev, unsigned int w,
- 		      unsigned int h, unsigned int vrefresh,
- 		      unsigned int bpc, struct cmdq_pkt *cmdq_pkt);
-+const u32 mtk_ethdr_get_blend_modes(struct device *dev);
- void mtk_ethdr_layer_config(struct device *dev, unsigned int idx,
- 			    struct mtk_plane_state *state,
- 			    struct cmdq_pkt *cmdq_pkt);
-diff --git a/drivers/gpu/drm/mediatek/mtk_plane.c b/drivers/gpu/drm/mediatek/mtk_plane.c
-index 7d2cb4e0fafa..8a48b3b0a956 100644
---- a/drivers/gpu/drm/mediatek/mtk_plane.c
-+++ b/drivers/gpu/drm/mediatek/mtk_plane.c
-@@ -320,8 +320,8 @@ static const struct drm_plane_helper_funcs mtk_plane_helper_funcs = {
- 
- int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
- 		   unsigned long possible_crtcs, enum drm_plane_type type,
--		   unsigned int supported_rotations, const u32 *formats,
--		   size_t num_formats, unsigned int plane_idx)
-+		   unsigned int supported_rotations, const u32 blend_modes,
-+		   const u32 *formats, size_t num_formats, unsigned int plane_idx)
- {
- 	int err;
- 
-@@ -366,12 +366,11 @@ int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
- 	if (err)
- 		DRM_ERROR("failed to create property: alpha\n");
- 
--	err = drm_plane_create_blend_mode_property(plane,
--						   BIT(DRM_MODE_BLEND_PREMULTI) |
--						   BIT(DRM_MODE_BLEND_COVERAGE) |
--						   BIT(DRM_MODE_BLEND_PIXEL_NONE));
--	if (err)
--		DRM_ERROR("failed to create property: blend_mode\n");
-+	if (blend_modes) {
-+		err = drm_plane_create_blend_mode_property(plane, blend_modes);
-+		if (err)
-+			DRM_ERROR("failed to create property: blend_mode\n");
-+	}
- 
- 	drm_plane_helper_add(plane, &mtk_plane_helper_funcs);
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_plane.h b/drivers/gpu/drm/mediatek/mtk_plane.h
-index 5b177eac67b7..3b13b89989c7 100644
---- a/drivers/gpu/drm/mediatek/mtk_plane.h
-+++ b/drivers/gpu/drm/mediatek/mtk_plane.h
-@@ -48,6 +48,6 @@ to_mtk_plane_state(struct drm_plane_state *state)
- 
- int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
- 		   unsigned long possible_crtcs, enum drm_plane_type type,
--		   unsigned int supported_rotations, const u32 *formats,
--		   size_t num_formats, unsigned int plane_idx);
-+		   unsigned int supported_rotations, const u32 blend_modes,
-+		   const u32 *formats, size_t num_formats, unsigned int plane_idx);
- #endif
+I haven't followed what changed in the validation tools, but this is
+definitely less confusing. Thanks for improving the experience.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/cache/l2c2x0.yaml  |  5 ++---
+>  .../devicetree/bindings/dma/dma-common.yaml          |  7 +++----
+>  .../bindings/interrupt-controller/arm,gic-v3.yaml    | 12 +++++-------
+>  .../devicetree/bindings/media/i2c/thine,thp7312.yaml |  3 +--
+>  .../bindings/memory-controllers/exynos-srom.yaml     |  5 ++---
+>  .../devicetree/bindings/pci/brcm,stb-pcie.yaml       |  5 ++---
+>  .../devicetree/bindings/soc/qcom/qcom,smp2p.yaml     |  3 +--
+>  7 files changed, 16 insertions(+), 24 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/cache/l2c2x0.yaml b/Documentation/devicetree/bindings/cache/l2c2x0.yaml
+> index d7840a5c4037..10c1a900202f 100644
+> --- a/Documentation/devicetree/bindings/cache/l2c2x0.yaml
+> +++ b/Documentation/devicetree/bindings/cache/l2c2x0.yaml
+> @@ -100,9 +100,8 @@ properties:
+>        filter. Addresses in the filter window are directed to the M1 port. Other
+>        addresses will go to the M0 port.
+>      $ref: /schemas/types.yaml#/definitions/uint32-array
+> -    items:
+> -      minItems: 2
+> -      maxItems: 2
+> +    minItems: 2
+> +    maxItems: 2
+>  
+>    arm,io-coherent:
+>      description: indicates that the system is operating in an hardware
+> diff --git a/Documentation/devicetree/bindings/dma/dma-common.yaml b/Documentation/devicetree/bindings/dma/dma-common.yaml
+> index ea700f8ee6c6..fde5160b5d29 100644
+> --- a/Documentation/devicetree/bindings/dma/dma-common.yaml
+> +++ b/Documentation/devicetree/bindings/dma/dma-common.yaml
+> @@ -32,10 +32,9 @@ properties:
+>        The first item in the array is for channels 0-31, the second is for
+>        channels 32-63, etc.
+>      $ref: /schemas/types.yaml#/definitions/uint32-array
+> -    items:
+> -      minItems: 1
+> -      # Should be enough
+> -      maxItems: 255
+> +    minItems: 1
+> +    # Should be enough
+> +    maxItems: 255
+>  
+>    dma-channels:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
+> index 5f051c666cbe..f3247a47f9ee 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
+> @@ -132,10 +132,9 @@ properties:
+>        Address property. Base address of an alias of the GICD region containing
+>        only the {SET,CLR}SPI registers to be used if isolation is required,
+>        and if supported by the HW.
+> -    $ref: /schemas/types.yaml#/definitions/uint32-array
+> -    items:
+> -      minItems: 1
+> -      maxItems: 2
+> +    oneOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +      - $ref: /schemas/types.yaml#/definitions/uint64
+>  
+>    ppi-partitions:
+>      type: object
+> @@ -223,9 +222,8 @@ patternProperties:
+>            (u32, u32) tuple describing the untranslated
+>            address and size of the pre-ITS window.
+>          $ref: /schemas/types.yaml#/definitions/uint32-array
+> -        items:
+> -          minItems: 2
+> -          maxItems: 2
+> +        minItems: 2
+> +        maxItems: 2
+>  
+>      required:
+>        - compatible
+> diff --git a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
+> index 535acf2b88a9..bc339a7374b2 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
+> +++ b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
+> @@ -135,8 +135,7 @@ properties:
+>  
+>            data-lanes:
+>              $ref: /schemas/media/video-interfaces.yaml#/properties/data-lanes
+> -            items:
+> -              maxItems: 4
+> +            maxItems: 4
+>              description:
+>                This property is for lane reordering between the THP7312 and the imaging
+>                sensor that it is connected to.
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
+> index 10a2d97e5f8b..a5598ade399f 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
+> @@ -66,9 +66,8 @@ patternProperties:
+>  
+>        samsung,srom-timing:
+>          $ref: /schemas/types.yaml#/definitions/uint32-array
+> -        items:
+> -          minItems: 6
+> -          maxItems: 6
+> +        minItems: 6
+> +        maxItems: 6
+>          description: |
+>            Array of 6 integers, specifying bank timings in the following order:
+>            Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
+> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> index 0925c520195a..2ad1652c2584 100644
+> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> @@ -92,9 +92,8 @@ properties:
+>        may have two component regions -- base and extended -- so
+>        this information cannot be deduced from the dma-ranges.
+>      $ref: /schemas/types.yaml#/definitions/uint64-array
+> -    items:
+> -      minItems: 1
+> -      maxItems: 3
+> +    minItems: 1
+> +    maxItems: 3
+>  
+>    resets:
+>      minItems: 1
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.yaml
+> index 141d666dc3f7..1ba1d419e83b 100644
+> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.yaml
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.yaml
+> @@ -55,8 +55,7 @@ properties:
+>  
+>    qcom,smem:
+>      $ref: /schemas/types.yaml#/definitions/uint32-array
+> -    items:
+> -      maxItems: 2
+> +    maxItems: 2
+>      description:
+>        Two identifiers of the inbound and outbound smem items used for this edge.
+>  
+
 -- 
-2.43.0
+Regards,
 
+Laurent Pinchart
 
