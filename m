@@ -1,170 +1,321 @@
-Return-Path: <linux-kernel+bounces-341105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E6C987B5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:54:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D47987B5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1C171F21F3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:54:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C05EB27A74
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5314F1B07D7;
-	Thu, 26 Sep 2024 22:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A733219F460;
+	Thu, 26 Sep 2024 22:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SexKBv/n"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QgqHhmbK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE81A1B07D1
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 22:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D5F1AFB28;
+	Thu, 26 Sep 2024 22:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727391063; cv=none; b=n0uuBURI6D+C30kcfW6R3Ghq8WQv0pk+6uKyyTtlmV4nmegJMk5lW5pPjxUofy6WRNIzc0cKZSgfHfEdx43EXn47tww0VoL0Do9NWwca/dXAKPknIYTzn9CmtDO6FzyIi/C+Gev7tvZqjbvEe7bxtstECaKCxgjc879bOQ4p87g=
+	t=1727391129; cv=none; b=C7ipUHzjIGgJiUAWzpof4Q6AxQKGxyHiA3adwDFIaUZxg79hf/CSZiAFcW7T7cutnKbzu5oxjgF+bi5YjAemZqNp+NiLPvOwDo/8wNvHdr5/p22U2YzWo/JA5Gy1WQtb8NqUN3V7ejEYmJRdx2qHU6hsovEOPNvrvR764qbrFIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727391063; c=relaxed/simple;
-	bh=wM4Em3VEhJtp/Xtz11kJP1Szcv6f2nMy2+C7W0mDoOs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=En6gnarFB76cGAHn4BjdlMZOLWfr3AFIPGSeLkPuKyMKWiQSxIWXfE7hhDdn7CdvFh6ozd2ZrCzSDGremjDvt830Ih1voxJUXcif2yr9K/P2sr9yjmh6t6tgODqQTaVZqGMwPg1UHlJXk2DQDb8SlNM/7/ZYRW7q5+qFYBxbNNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=SexKBv/n; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71798a15ce5so1987181b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:51:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1727391060; x=1727995860; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=tZtkH1NS24sPLOlh1XDiIBzgFeoWNq8FUIPBUR+lBZ8=;
-        b=SexKBv/nj4ILmDUD1vbx9gDLsKMpjnsOumj7zLZ8nniTEQcnk58pVi2R258+ZY8nH6
-         7Z1JnaxYPBcvnGN/Kg1KiZVd++Gf8RGU+l9k9W7CzqQE9G5F9lj/xUR08eSraGOfLtho
-         pJ7N0Qq75t0eW7oqt1gXEjpeuO/ZFMc1CULrI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727391060; x=1727995860;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tZtkH1NS24sPLOlh1XDiIBzgFeoWNq8FUIPBUR+lBZ8=;
-        b=raDie02eG7OTN5b0QI4AYJoMjR6mkiR8bWOYY2gWKbcpXub4I0krwJj+Dver9U6Kl3
-         k1XNj0DfsQK6ysorqOdtX08M+FjcTfqqDQRXBuV6IkmDYvxvy+EpZTr5d/aPPLs5/rJN
-         EB6ah/4sHPzaUiSB8tQObGHMLiuYS/r+Pjdkasa14WAUPaNoGlHcePtfdFu+WdnLyUd0
-         n6Kvsk3QibcmGiyUiaQLNKwwEEv3jZj0xNAMqt/E/QtnxAdRMbI+m+WLPBDUUs+FFLy5
-         TDSiIer10JeNhOGypBd7CHLidKK04VfJRM6D+5HO2Ym5fves10Zh9h5GSlhZOIhpsoqm
-         ckIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfZGyXC40Ivrb5fQOXQUtoUq2iiyzlMNX4CLrb/fWrPXug0NAi0TNAXX4+YKqGGMufKssHROkXcQDOiiQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMgCfb5HWgZ4aNLE9xde5STxQ9O459lcSWjs/O7fSaQk1cdLaS
-	Toxvqx1OIKZ0bW+V63/QWLTuFliH5gEuCBb/r5p7HRggCMKpXAFPldUbP35IGw==
-X-Google-Smtp-Source: AGHT+IH/vjkfYVf/N8MGKQtye03lkEIKFc7xzp9osU8CMet+HP+YJiMnMjJend8DrbLfyOCvenmUzw==
-X-Received: by 2002:a05:6a00:91a6:b0:718:dda3:d7fe with SMTP id d2e1a72fcca58-71b193ee37dmr6637622b3a.12.1727391059968;
-        Thu, 26 Sep 2024 15:50:59 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26515ef9sm403643b3a.134.2024.09.26.15.50.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 15:50:59 -0700 (PDT)
-Message-ID: <543df2e3-dcb4-4a5d-b781-e2b39d62715a@broadcom.com>
-Date: Thu, 26 Sep 2024 15:50:57 -0700
+	s=arc-20240116; t=1727391129; c=relaxed/simple;
+	bh=xWSyJmSNI7LoWC9io0Tr2oy4PCGj81bWcyGaTIVCR3U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qYHIjehVy+H6i+WYFaLFT2sT2oPzhvnPf2FOA7lD9dK2BZC/ktpCY9ww0qtQZuiyPfdTRNlS8E0H0QgjoRrQZkCzFtbiqJMa7xdxSePl5z0a/MnLpJOCTUIEUUJrzsEcOCH8cGjVr9k5wC+xe+rOQaBFeGggMDTmLj8IgatB42s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QgqHhmbK; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727391126; x=1758927126;
+  h=message-id:subject:from:reply-to:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=xWSyJmSNI7LoWC9io0Tr2oy4PCGj81bWcyGaTIVCR3U=;
+  b=QgqHhmbKiV+wN06QMwypEjTDuicG23yr8RzJ77Sjcjk5a8D9ZJNMNKqV
+   nw4E29aDCN5z4H54QZJ17sTTe1VPafu17eIKsdpMsE5JxO2SLxNCGJIQA
+   +0B2kRKb6stEqAJG1beuNeSfXMrH0sBYuJ03GUl0d3nYH8XiDWPyJoAs0
+   8nquGJboh8HebL+YtabC2rmnaRjrwKfOjvLlCDsu7+UNFnXkZWuDLBY0C
+   f1oQpSEplET78VJf4gfd2/UcxQoLxvioN69AvaTxBYJDy6hv4ODUEQgVd
+   YBplTU82wQsn83WJ/IzRwB8bkDuzx2bubD/khSlGfpJvHD/WzxZ2IcNGq
+   g==;
+X-CSE-ConnectionGUID: nqDQQt9IRayjMFf1uleE9w==
+X-CSE-MsgGUID: 0MJrqqMDSjuWgMiqSIzYew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="37106240"
+X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
+   d="scan'208";a="37106240"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 15:52:05 -0700
+X-CSE-ConnectionGUID: CklOJncpQby2szYTjo+emw==
+X-CSE-MsgGUID: Ybj5evWJTAW1w6yJ3BaxAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
+   d="scan'208";a="72410576"
+Received: from inaky-mobl1.amr.corp.intel.com ([10.125.111.247])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 15:52:05 -0700
+Message-ID: <0308080557f305710be243380fe5b9da02b8b421.camel@linux.intel.com>
+Subject: Re: [PATCH v9 3/3] PCI: vmd: Save/restore PCIe bridge states
+ before/after pci_reset_bus()
+From: "David E. Box" <david.e.box@linux.intel.com>
+Reply-To: david.e.box@linux.intel.com
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Jian-Hong Pan <jhp@endlessos.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Johan Hovold <johan@kernel.org>, 
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ Nirmal Patel <nirmal.patel@linux.intel.com>, Jonathan Derrick
+ <jonathan.derrick@linux.dev>, linux-pci@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, linux@endlessos.org
+Date: Thu, 26 Sep 2024 15:52:04 -0700
+In-Reply-To: <44275137-97fc-3da9-c01a-6e747c236c8e@linux.intel.com>
+References: <20240924070551.14976-2-jhp@endlessos.org>
+	 <20240924072858.15929-3-jhp@endlessos.org>
+	 <8050f9d4cb851fc301cc35b4fb5a839ff71fdcae.camel@linux.intel.com>
+	 <CAPpJ_ed09KJY9Gw2qGwOHdKFw4-BAMyG6jOyWHnV7brJutwfVw@mail.gmail.com>
+	 <44275137-97fc-3da9-c01a-6e747c236c8e@linux.intel.com>
+Organization: David E. Box
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.0-1build2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tty: rp2: Fix reset with non forgiving PCIe host bridges
-To: Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org
-Cc: Jim Quinlan <james.quinlan@broadcom.com>,
- Kevin Cernekee <cernekee@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- John Ogness <john.ogness@linutronix.de>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- "open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>
-References: <20240906225435.707837-1-florian.fainelli@broadcom.com>
- <051fdbe1-e5d9-4d5d-bc1a-921d8d3d4a9e@kernel.org>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <051fdbe1-e5d9-4d5d-bc1a-921d8d3d4a9e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 9/23/24 02:44, Jiri Slaby wrote:
-> On 07. 09. 24, 0:54, Florian Fainelli wrote:
->> The write to RP2_GLOBAL_CMD followed by an immediate read of
->> RP2_GLOBAL_CMD in rp2_reset_asic() is intented to flush out the write,
->> however by then the device is already in reset and cannot respond to a
->> memory cycle access.
->>
->> On platforms such as the Raspberry Pi 4 and others using the
->> pcie-brcmstb.c driver, any memory access to a device that cannot respond
->> is met with a fatal system error, rather than being substituted with all
->> 1s as is usually the case on PC platforms.
->>
->> Swapping the delay and the read ensures that the device has finished
->> resetting before we attempt to read from it.
->>
->> Fixes: 7d9f49afa451 ("serial: rp2: New driver for Comtrol RocketPort 2 
->> cards")
->> Suggested-by: Jim Quinlan <james.quinlan@broadcom.com>
->> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
->> ---
->>   drivers/tty/serial/rp2.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/tty/serial/rp2.c b/drivers/tty/serial/rp2.c
->> index 4132fcff7d4e..8bab2aedc499 100644
->> --- a/drivers/tty/serial/rp2.c
->> +++ b/drivers/tty/serial/rp2.c
->> @@ -577,8 +577,8 @@ static void rp2_reset_asic(struct rp2_card *card, 
->> unsigned int asic_id)
->>       u32 clk_cfg;
->>       writew(1, base + RP2_GLOBAL_CMD);
->> -    readw(base + RP2_GLOBAL_CMD);
->>       msleep(100);
->> +    readw(base + RP2_GLOBAL_CMD);
-> 
-> The read was there to force PCI posting to really flush the write to the 
-> device before the sleep (and not to post). How is this ensured now? (In 
-> fact, instead of the move, you could have deleted it completely.)
-> 
-> Can you actually read another register which a resetting device would 
-> reply?
+On Thu, 2024-09-26 at 13:52 +0300, Ilpo J=C3=A4rvinen wrote:
+> On Thu, 26 Sep 2024, Jian-Hong Pan wrote:
+>=20
+> > David E. Box <david.e.box@linux.intel.com> =E6=96=BC 2024=E5=B9=B49=E6=
+=9C=8826=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=8810:51=E5=AF=AB=E9=81=
+=93=EF=BC=9A
+> > >=20
+> > > Hi Jian-Hong,
+> > >=20
+> > > On Tue, 2024-09-24 at 15:29 +0800, Jian-Hong Pan wrote:
+> > > > PCI devices' parameters on the VMD bus have been programmed properl=
+y
+> > > > originally. But, cleared after pci_reset_bus() and have not been
+> > > > restored
+> > > > correctly. This leads the link's L1.2 between PCIe Root Port and ch=
+ild
+> > > > device gets wrong configs.
+> > > >=20
+> > > > Here is a failed example on ASUS B1400CEAE with enabled VMD. Both P=
+CIe
+> > > > bridge and NVMe device should have the same LTR1.2_Threshold value.
+> > > > However, they are configured as different values in this case:
+> > > >=20
+> > > > 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core
+> > > > Processor
+> > > > PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
+> > > > =C2=A0 ...
+> > > > =C2=A0 Capabilities: [200 v1] L1 PM Substates
+> > > > =C2=A0=C2=A0=C2=A0 L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ A=
+SPM_L1.1+
+> > > > L1_PM_Substates+
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PortCommonModeRestoreTime=3D45us Por=
+tTPowerOnTime=3D50us
+> > > > =C2=A0=C2=A0=C2=A0 L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ =
+ASPM_L1.1-
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 T_CommonMode=3D0us LTR1.2_Threshold=
+=3D0ns
+> > > > =C2=A0=C2=A0=C2=A0 L1SubCtl2: T_PwrOn=3D0us
+> > > >=20
+> > > > 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp W=
+D
+> > > > Blue
+> > > > SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
+> > > > =C2=A0 ...
+> > > > =C2=A0 Capabilities: [900 v1] L1 PM Substates
+> > > > =C2=A0=C2=A0=C2=A0 L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ A=
+SPM_L1.1-
+> > > > L1_PM_Substates+
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PortCommonModeRestoreTime=3D32us Por=
+tTPowerOnTime=3D10us
+> > > > =C2=A0=C2=A0=C2=A0 L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ =
+ASPM_L1.1-
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 T_CommonMode=3D0us LTR1.2_Threshold=
+=3D101376ns
+> > > > =C2=A0=C2=A0=C2=A0 L1SubCtl2: T_PwrOn=3D50us
+> > > >=20
+> > > > Here is VMD mapped PCI device tree:
+> > > >=20
+> > > > -+-[0000:00]-+-00.0=C2=A0 Intel Corporation Device 9a04
+> > > > =C2=A0| ...
+> > > > =C2=A0=C2=A5-[10000:e0]-+-06.0-[e1]----00.0=C2=A0 Sandisk Corp WD B=
+lue SN550 NVMe SSD
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 =C2=A5-17.0=C2=A0 Intel Corporation Tiger Lake-LP SATA Control=
+ler
+> > > >=20
+> > > > When pci_reset_bus() resets the bus [e1] of the NVMe, it only saves=
+ and
+> > > > restores NVMe's state before and after reset. Because bus [e1] has =
+only
+> > > > one
+> > > > device: 10000:e1:00.0 NVMe. The PCIe bridge is missed. However, whe=
+n it
+> > > > restores the NVMe's state, it also restores the ASPM L1SS between t=
+he
+> > > > PCIe
+> > > > bridge and the NVMe by pci_restore_aspm_l1ss_state(). The NVMe's L1=
+SS is
+> > > > restored correctly. But, the PCIe bridge's L1SS is restored with th=
+e
+> > > > wrong
+> > > > value 0x0. Becuase, the PCIe bridge's state is not saved before res=
+et.
+> > > > That is why pci_restore_aspm_l1ss_state() gets the parent device (P=
+CIe
+> > > > bridge)'s saved state capability data and restores L1SS with value =
+0.
+> > > >=20
+> > > > So, save the PCIe bridge's state before pci_reset_bus(). Then, rest=
+ore
+> > > > the
+> > > > state after pci_reset_bus(). The restoring state also consumes the
+> > > > saving
+> > > > state.
+> > > >=20
+> > > > Link: https://www.spinics.net/lists/linux-pci/msg159267.html
+> > > > Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
+> > > > ---
+> > > > v9:
+> > > > - Drop the v8 fix about drivers/pci/pcie/aspm.c. Use this in VMD
+> > > > instead.
+> > > >=20
+> > > > =C2=A0drivers/pci/controller/vmd.c | 7 +++++++
+> > > > =C2=A01 file changed, 7 insertions(+)
+> > > >=20
+> > > > diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/=
+vmd.c
+> > > > index 11870d1fc818..2820005165b4 100644
+> > > > --- a/drivers/pci/controller/vmd.c
+> > > > +++ b/drivers/pci/controller/vmd.c
+> > > > @@ -938,9 +938,16 @@ static int vmd_enable_domain(struct vmd_dev *v=
+md,
+> > > > unsigned long features)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 if (!list_empty(&child->devices)) {
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev =3D list_f=
+irst_entry(&child->devices,
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct pci_dev, bus_list);
+> > >=20
+> > > Newline here
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* To avoid pci_rese=
+t_bus restore wrong ASPM L1SS
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * configuratio=
+n due to missed saving parent
+> > > > device's
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * states, save=
+ & restore the parent device's
+> > > > states
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * as well.
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > >=20
+> > > No text on first line of comment.
+> >=20
+> > Oops!=C2=A0 Thanks
+> >=20
+> > > =C2=A0=C2=A0=C2=A0 /*
+> > > =C2=A0=C2=A0=C2=A0=C2=A0 * To avoid pci_reset_bus restore wrong ASPM =
+L1SS
+> > > =C2=A0=C2=A0=C2=A0=C2=A0 * ...
+> > > =C2=A0=C2=A0=C2=A0=C2=A0 */
+> > >=20
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pci_save_state(dev->=
+bus->self);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D pci_re=
+set_bus(dev);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pci_warn(dev, "can't reset device: %d=C2=
+=A5n",
+> > > > ret);
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pci_restore_state(de=
+v->bus->self);
+> > >=20
+> > > I think Ilpo's point was that pci_save_aspm_l1ss_state() and
+> > > pci_restore_aspm_l1ss_state() should be more symmetric. If
+> > > pci_save_aspm_l1ss_state() is changed to also handle the state for th=
+e
+> > > device
+> > > and its parent in the same call, then no change is needed here. But t=
+hat
+> > > would
+> > > only handle L1SS settings and not anything else that might need to be
+> > > restored
+> > > after the bus reset. So I'm okay with it either way.
+>=20
+> Why would something else need to be restored? The spec explicitly says th=
+e=20
+> bus reset should not cause config changes on the parent other than=20
+> to status bits.
+>=20
+> Based on what is seen so far, the problem here is not the reset itself=
+=20
+> breaking parent's config but ASPM code restoring values from state beyond=
+=20
+> what it had saved and thus it programs pseudogarbage into the L1SS=20
+> settings.
 
-Sure I can do that, give me a couple more days to get back to you.
--- 
-Florian
+I see. This must be an earlier state. If I had to guess, the parent (maybe =
+the
+child too) were saved before L1SS was configured and only the child was sav=
+ed
+during the bus reset leading to a mismatch in what was restored.
+
+David
+
+>=20
+> > Yes, that made me think the whole day before I sent out this patch. I
+> > do not know what is the best reset bus procedure, especially how other
+> > drivers reset the bus.
+> >=20
+> > If trace the code path:
+> > pci_reset_bus()
+> > =C2=A0 __pci_reset_bus()
+> > =C2=A0=C2=A0=C2=A0 pci_bus_reset()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pci_bus_save_and_disable_locked()
+> >=20
+> > pci_bus_save_and_disable_locked()'s comment shows "Save and disable
+> > devices from the top of the tree down while holding the @dev mutex
+> > lock for the entire tree". I think that means the PCI(e) bridge should
+> > save state first, then the following bus' devices. However, VMD resets
+> > the child device (10000:e1:00.0 NVMe)'s bus first and only saves the
+> > child device (10000:e1:00.0 NVMe)'s state. It does not visit the tree
+> > from the top to down. So, it misses the PCIe bridge.=C2=A0 Therefore, I
+> > make it save & restore its parent (10000:e0:06.0 PCIe bridge)'s state
+> > as compensation.
+>=20
+> The problem with your fix is it only takes care of part of the cases (i.e=
+.=20
+> VMD). But there are other callers of pci_reset_bus() which would also=20
+> restore incorrect L1SS settings, no?
+>=20
+> I'd suggest making the L1SS code symmetric on this, even if it means=20
+> saving the register value twice when walking the tree downwards (it seems=
+=20
+> harmless to write the same value twice).
+>=20
+
 
