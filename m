@@ -1,169 +1,185 @@
-Return-Path: <linux-kernel+bounces-340509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E6E987461
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:24:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796C3987467
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F0CE1F2108B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:24:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973DB1C21C55
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6599B3B1A2;
-	Thu, 26 Sep 2024 13:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C914595B;
+	Thu, 26 Sep 2024 13:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cg1USL/m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jNFYLAM+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C134819BBC;
-	Thu, 26 Sep 2024 13:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860953A8F7;
+	Thu, 26 Sep 2024 13:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727357085; cv=none; b=lYO+SniutfgEMA9aB9ApNnuCwFAaz9ZxFv2VvFwm9pYqYVnhvvVh+klcCB37MBPYr79ZWbV90SVOr6aBXmFZSTQighsTJKcvUOxu6azILJZBNvcGCxgBqSfwPidjGVBD6qJCWM9GyH3zhJWTuKmFEAMwLYaTjPynikwF80et6R8=
+	t=1727357103; cv=none; b=c+3yg1+95HdNuo7z0ioC7d1kI4MLkdpaHx/9ptX8oiSBfvPzZ65bMtMpa6mMXXt6I9/61/1wKuuJNzcL6g3xmMxr29+T14ZEan9+Tr/xXYZIehjzFj6fdzTjutOCBQpTJx9Kfcay3/D/Q3SOPWLNFVep1i0j6jgulOe46BAwX9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727357085; c=relaxed/simple;
-	bh=Ev17E6HPXrIHJ7KiVzlg4fQjIPKFzPlo86lB1LBlExk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mpIKSBcgOXypr6NN+4u+0GCBQDjcuhyVZfHaJLeSLEm2o/LsXKiHB+ejTnxjkvxiFJjj27txx7DCyA0ij6BBln5xoyMP6IgKHBjkUUw8EuAXvzLsUYHo6pYTE297KjVv4ZMoM3t5bKq+prnfrTdo7qRJUTKIvRKBbHUsp2wp1Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cg1USL/m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F14C4CEC5;
-	Thu, 26 Sep 2024 13:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727357085;
-	bh=Ev17E6HPXrIHJ7KiVzlg4fQjIPKFzPlo86lB1LBlExk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cg1USL/mXifPqA4Z1NOvsq+zHXfVpI2bTeRIDkUWo2bABYniXHcmWIUt9ViZCHysJ
-	 DxFBnIXXo9OuWcRNmcSlp7YGQFemv2X5g3k72HpE9i8uKNXAzmRthE9eeu3JAhHX//
-	 aOPtGZ7vxPtoTgC5sxiXml54vy8MuMx/6SPPqUYM2kupjT+7ta1NcsaXdbtZOQ/sW+
-	 TkW/tB7jhX2Q1mCWVL4c9I4P7tvMGcwz6VlVK1B/oyGxAaP8oMgkIoLMmd3/xkZP9Q
-	 2jPmsE0J+pkjLrMx/4/+AVP77eBj4d/p10+60+wQpPGZDRXD8F/x0W1/ZAKy8NGOcn
-	 aMGI/5y2gYzHQ==
-Date: Thu, 26 Sep 2024 15:24:26 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v7 04/26] rust: alloc: implement `Allocator` for `Kmalloc`
-Message-ID: <ZvVgimoQPoL1trmJ@cassiopeiae>
-References: <20240911225449.152928-1-dakr@kernel.org>
- <20240911225449.152928-5-dakr@kernel.org>
- <15f42ddd-b011-4136-b2e4-bc266fab25b6@proton.me>
+	s=arc-20240116; t=1727357103; c=relaxed/simple;
+	bh=V9RE/M+gbMJverjB0d1riqFqnVlY5qZURgqdDU9n43k=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jzGzUPxbwSlRewwo7CIfRxB9n4cmLSRXqVPwskZ+gYZ3mO8w9Tyl85h1EpG9ebRGH4jAfeQBaPH1CduxhS+m9XYjOwWtfoWLzFgXZe6Hq6tfS5yDdpIMmOQUkuwfh/kFYuRnITPt5aKSnNSbVEXB5bYhc/Cur4wz6KnETrgEcbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jNFYLAM+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48Q7Y0sq008702;
+	Thu, 26 Sep 2024 13:24:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=R5l2Vl8aHn8BISv5XlT5lhXk
+	lhnZr7wW2up5Cp71eMc=; b=jNFYLAM+B7aiP4/GbCTI/eKGOJFSBTJJTPRgcpIB
+	x7l2KQCVbTlvQ3wU846CgH3NVm6lWEhx6lJtweAy1MZWZNoHSZm7siVx3FOJIVHA
+	xGhU5ZFfV3sEc+GHt0NXXhJdJFSN0LFzYp2O0E4uRoy6yn7Ot3QnRZoeqPoK+v1j
+	Z5TRCT6vN3tjCyX69NcBGrIrjyeKISGLo38AEPuvGu6XmhWosLRJJaroI9cGdGep
+	amNf+tujJChJyWBbkyyZopMZpHxmea/EYpKw3YjF7D24Ywhp2XlTfkRZwtzx4hfz
+	BlmAttG1O/ixsaTklq9TXIxOGxX0yNN4wQZTuXP5xX2Jbw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41snfh7tjq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Sep 2024 13:24:43 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48QDOfwI002756
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Sep 2024 13:24:41 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 26 Sep 2024 06:24:41 -0700
+Date: Thu, 26 Sep 2024 06:24:40 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: Mahadevan <quic_mahap@quicinc.com>
+CC: <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>,
+        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
+        <marijn.suijten@somainline.org>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
+        <mripard@kernel.org>, <tzimmermann@suse.de>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <swboyd@chromium.org>,
+        <konrad.dybcio@linaro.org>, <danila@jiaxyga.com>,
+        <bigfoot@classfun.cn>, <neil.armstrong@linaro.org>,
+        <mailingradian@gmail.com>, <quic_jesszhan@quicinc.com>,
+        <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_kalyant@quicinc.com>, <quic_jmadiset@quicinc.com>,
+        <quic_vpolimer@quicinc.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: display/msm: Document MDSS on SA8775P
+Message-ID: <ZvVgmFUs2bwfEoWD@hu-bjorande-lv.qualcomm.com>
+References: <20240926110137.2200158-1-quic_mahap@quicinc.com>
+ <20240926110137.2200158-2-quic_mahap@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <15f42ddd-b011-4136-b2e4-bc266fab25b6@proton.me>
+In-Reply-To: <20240926110137.2200158-2-quic_mahap@quicinc.com>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: WpEB8sxuQbq_9Vrku2F-q9Hnql4jCzpI
+X-Proofpoint-GUID: WpEB8sxuQbq_9Vrku2F-q9Hnql4jCzpI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ lowpriorityscore=0 priorityscore=1501 malwarescore=0 mlxscore=0
+ suspectscore=0 impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409260092
 
-On Thu, Sep 26, 2024 at 01:00:58PM +0000, Benno Lossin wrote:
-> On 12.09.24 00:52, Danilo Krummrich wrote:
-> > +/// # Invariants
-> > +///
-> > +/// One of the following `krealloc`, `vrealloc`, `kvrealloc`.
-> > +struct ReallocFunc(
-> > +    unsafe extern "C" fn(*const core::ffi::c_void, usize, u32) -> *mut core::ffi::c_void,
-> > +);
-> > +
-> > +impl ReallocFunc {
-> > +    // INVARIANT: `krealloc` satisfies the type invariants.
-> > +    const KREALLOC: Self = Self(bindings::krealloc);
-> > +
-> > +    /// # Safety
-> > +    ///
-> > +    /// This method has the same safety requirements as [`Allocator::realloc`].
-> > +    ///
-> > +    /// # Guarantees
-> > +    ///
-> > +    /// This method has the same guarantees as `Allocator::realloc`. Additionally
-> > +    /// - it accepts any pointer to a valid memory allocation allocated by this function.
-> > +    /// - memory allocated by this function remains valid until it is passed to this function.
-> > +    unsafe fn call(
-> > +        &self,
-> > +        ptr: Option<NonNull<u8>>,
-> > +        layout: Layout,
-> > +        flags: Flags,
-> > +    ) -> Result<NonNull<[u8]>, AllocError> {
-> > +        let size = aligned_size(layout);
-> > +        let ptr = match ptr {
-> > +            Some(ptr) => ptr.as_ptr(),
-> > +            None => ptr::null(),
-> > +        };
-> > +
-> > +        // SAFETY:
-> > +        // - `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc` and thus only requires that
-> > +        //   `ptr` is NULL or valid.
-> > +        // - `ptr` is either NULL or valid by the safety requirements of this function.
-> > +        //
-> > +        // GUARANTEE:
-> > +        // - `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc`.
-> > +        // - Those functions provide the guarantees of this function.
-> > +        let raw_ptr = unsafe {
-> > +            // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
-> > +            self.0(ptr.cast(), size, flags.0).cast()
-> > +        };
-> > +
-> > +        let ptr = if size == 0 {
-> > +            NonNull::dangling()
-> > +        } else {
-> > +            NonNull::new(raw_ptr).ok_or(AllocError)?
-> > +        };
-> > +
-> > +        Ok(NonNull::slice_from_raw_parts(ptr, size))
-> > +    }
-> > +}
+On Thu, Sep 26, 2024 at 04:31:33PM +0530, Mahadevan wrote:
+> Document the MDSS hardware found on the Qualcomm SA8775P platform.
 > 
-> I remember asking you to split this into a different commit. I think you
-> argued that it would be better to keep it in the same commit when
-> bisecting. I don't think that applies in this case, are there any other
-> disadvantages?
+> Signed-off-by: Mahadevan <quic_mahap@quicinc.com>
+> ---
+> 
+> [v2]
+> - Use fake DISPCC nodes to avoid clock dependencies in dt-bindings. [Dmitry]
+> - Update bindings by fixing dt_binding_check tool errors (update includes in example),
+>   adding proper spacing and indentation in binding example, dropping unused labels,
+>   dropping status disable, adding reset node. [Dmitry, Rob, Krzysztof]
 
-I don't really like the intermediate `#[expect(dead_code)]`, plus it's
-additional work you didn't really give me a motivation for, i.e. you did not
-mention what would be the advantage.
-
-But sure, I will change it for the next version.
+No concerns with the changelog, but please adopt b4 (go/upstream has
+instructions) for sending patches upstream.
 
 > 
 > ---
-> Cheers,
-> Benno
+>  .../display/msm/qcom,sa8775p-mdss.yaml        | 239 ++++++++++++++++++
+>  1 file changed, 239 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
 > 
-> > +
-> > +// SAFETY: `realloc` delegates to `ReallocFunc::call`, which guarantees that
-> > +// - memory remains valid until it is explicitly freed,
-> > +// - passing a pointer to a valid memory allocation is OK,
-> > +// - `realloc` satisfies the guarantees, since `ReallocFunc::call` has the same.
-> > +unsafe impl Allocator for Kmalloc {
-> > +    #[inline]
-> > +    unsafe fn realloc(
-> > +        ptr: Option<NonNull<u8>>,
-> > +        layout: Layout,
-> > +        flags: Flags,
-> > +    ) -> Result<NonNull<[u8]>, AllocError> {
-> > +        // SAFETY: `ReallocFunc::call` has the same safety requirements as `Allocator::realloc`.
-> > +        unsafe { ReallocFunc::KREALLOC.call(ptr, layout, flags) }
-> > +    }
-> > +}
-> 
-> 
-> > +
-> >  unsafe impl GlobalAlloc for Kmalloc {
-> >      unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-> >          // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero size by the function safety
-> > --
-> > 2.46.0
-> > 
-> 
+> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
+> new file mode 100644
+> index 000000000000..e610b66ffa9f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
+> @@ -0,0 +1,239 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/msm/qcom,sa8775p-mdss.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Technologies, Inc. SA87755P Display MDSS
+> +
+> +maintainers:
+> +  - Mahadevan <quic_mahap@quicinc.com>
+
+Please use Firstname Lastname, if possible
+
+> +
+> +description:
+> +  SA8775P MSM Mobile Display Subsystem(MDSS), which encapsulates sub-blocks like
+> +  DPU display controller, DP interfaces and EDP etc.
+> +
+> +$ref: /schemas/display/msm/mdss-common.yaml#
+> +
+[..]
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interconnect/qcom,icc.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
+> +    #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
+> +    #include <dt-bindings/power/qcom,rpmhpd.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+> +
+> +    display-subsystem@ae00000 {
+> +        compatible = "qcom,sa8775p-mdss";
+> +        reg = <0 0x0ae00000 0 0x1000>;
+
+#address-cells and #size-cells are 1 in the example root node, so drop
+the two 0 entries.
+
+> +        reg-names = "mdss";
+> +
+> +        /* same path used twice */
+
+What do you mean? All three paths below are unique.
+
+> +        interconnects = <&mmss_noc MASTER_MDP0 0 &mc_virt SLAVE_EBI1 0>,
+> +                        <&mmss_noc MASTER_MDP1 0 &mc_virt SLAVE_EBI1 0>,
+> +                        <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
+> +                        &config_noc SLAVE_DISPLAY_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
+> +        interconnect-names = "mdp0-mem",
+> +                             "mdp1-mem",
+> +                             "cpu-cfg";
+> +
+> +
+
+Regards,
+Bjorn
 
