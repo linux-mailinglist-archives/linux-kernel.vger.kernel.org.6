@@ -1,166 +1,138 @@
-Return-Path: <linux-kernel+bounces-340163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B99986F44
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:49:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2209986F45
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7600B1F21824
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:49:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ED63281D28
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F321A7260;
-	Thu, 26 Sep 2024 08:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3745B1A4E9A;
+	Thu, 26 Sep 2024 08:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IGGNyu2G"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZWrGjzRK"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83E014AD17;
-	Thu, 26 Sep 2024 08:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54665192B65
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727340540; cv=none; b=jIe5uTVd2dHPzHjF7vbMKcImbxNB4Jwsh9IPrCz17Ze2AyPD8gmd8MbtUm+TtMcxA5x9CpJhZshi3Kx0TvSw2stfMjAljFJ0RVMG47RQhmv8jmPlvbwaccvDde4+1EdNWOyJNe+I5DLx6y8KOYmA6eXw1qdSVJYcYeFEcHfHebc=
+	t=1727340573; cv=none; b=skOVqNWChFBHovL+SvnnGDhLbtC3xE6ROmI29S8YCkPJEJIuTLmiW5v4pgR/Xg7WZivBenDnQ5yArGZQrZbiNEDNmaNiUNXM0AQ2Wky51dGjb5xy6ANpgI7KsHtnSk+puWiyoLoIeHXRBqxYzgpx6EkuksL6afpB3F/Ok4xZlt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727340540; c=relaxed/simple;
-	bh=0H4dM9NzilQ5XHmjN1qEbEUXxix/9JrmttrPTQq+uvI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZbegXg8JJ0wb2QkEBE0Nvt8PsI9DuQY3c6TKrk8Xu3XaldFkFLL1Ywji5Id7VJqeDgPKBqLYG9HBOf4KtAiOmnwtg2dPC4qd+U1+GOYqRllaO3qKes5Q7oudNbQT8qIIYLOFV7n2szvmTYHhHDzFP6QSL67uMEliTfICpZFCidU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IGGNyu2G; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727340537;
-	bh=0H4dM9NzilQ5XHmjN1qEbEUXxix/9JrmttrPTQq+uvI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IGGNyu2GGhL861wp8iuj8doPxLtpFHdGi+14N43mzCZfjm5A5rwcPIYKHY1VMQXhr
-	 aggqvQMkA7uulzyzM1aBKZZ2yRP2uF3rjA8qHkaRJxSRzjrkFsWai5YAkG5Cqqeg45
-	 3Ycgkq5ttycO9PjosJ+zp6gIxNP3cNYhNEAFHKNTfZ/xGP+6AFnBbn6jq5rHF/Tl4p
-	 6E1XqaooOWMIA3YoFskEJkzmczduIivnTIqspTnh1tuRShqiTcFmrqlYGWCyb4X5HS
-	 IN75tPtPoNPClqOcM7CNdas3CVEC+40k9KEK4+3vVMTzeMBQ4x/sdlWJMD/yEvPAP9
-	 aZceBE4nfxWag==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A9D5717E107A;
-	Thu, 26 Sep 2024 10:48:56 +0200 (CEST)
-Message-ID: <e3eabcc4-1174-4a58-a084-d37467f63ced@collabora.com>
-Date: Thu, 26 Sep 2024 10:48:56 +0200
+	s=arc-20240116; t=1727340573; c=relaxed/simple;
+	bh=VkmyKeJbbl1/2z1Z9AJgFGaPL3xZWZNmJN2oUjDGqSc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j90tj92FtNdXMPRHJXQHSVA4LjhGA4EL+WhMjh+dlj4sWzhMZ4zjuJaUbNO0kGOwts3OJcRRFRJ42QxqwBd6Dz/8s9kDEiuOp9fcXyYbny4tbgURoz8A2I2uGCPh1LmBGXbKBNw+/GTITmhIYx54dEwAIRMgN0KZ0fKGxZPSSa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZWrGjzRK; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727340568;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4dVe70RgPk0ZG8aStObAj77CwBE4FEBPox+y/iSU2CY=;
+	b=ZWrGjzRK/US/n2XhRafj2A407ngD1jHeKGYL5hjlC/yhtdfPxEw2UHUqanqJn5hL/4V8jZ
+	yCYz4zrDfRNqvEuokU0PQfv5hcq0MIIPCvxFL1Ku/DkWYYNacws5nKfxdJcvAfjbhQ8sjE
+	8y0KBzVpIFSQxIOJnsu2tCMchyXL7zA=
+From: Jackie Liu <liu.yun@linux.dev>
+To: surenb@google.com
+Cc: kent.overstreet@linux.dev,
+	linux-kernel@vger.kernel.org,
+	liu.yun@linux.dev
+Subject: [RFC PATCH] codetag: ensure module memory has been freed
+Date: Thu, 26 Sep 2024 16:49:01 +0800
+Message-ID: <20240926084901.9014-1-liu.yun@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/3] pmdomain: mediatek: Use OF-specific regulator API
- to get power domain supply
-To: Chen-Yu Tsai <wenst@chromium.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
- Johan Hovold <johan@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-References: <20240925093807.1026949-1-wenst@chromium.org>
- <20240925093807.1026949-4-wenst@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240925093807.1026949-4-wenst@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Il 25/09/24 11:38, Chen-Yu Tsai ha scritto:
-> The MediaTek power domain driver contains a hack that assigns the device
-> node of the power domain to the struct device of the power domain
-> controller in order to use the devres regulator API.
-> 
-> Now that there is a proper OF-specific regulator API, and even a devres
-> version, replace the hack with proper code.
-> 
-> This change is incompatible with incomplete device trees. Instead of
-> assigning the dummy regulator in cases where the power domain requires
-> a supply but the device tree does not provide one, the driver will just
-> error out. This will be seen on the MT8390 EVK, which is missing
-> supplies for the IMG_VCORE and CAM_VCORE domains. And likely all the
-> MediaTek EVBs, which have no power domain supplies specified. This is
-> however the correct behavior. If the power domain's supply is missing,
-> then it should not work. Relying on other parts of the system to keep
-> the unattached regulator enabled is likely to break in ways less easier
-> to understand.
-> 
+From: Jackie Liu <liuyun01@kylinos.cn>
 
-Breaking something that was "working" (not really working though) before is a
-hard thing to justify, but I feel like this is one of the cases in which we
-have to swallow the pill.
+We found a problem that can be quickly reproduced using the self-test
+script [1], (the latest version of the test script no longer releases
+the module immediately). There will be a warning message that the module
+memory has not been released. In fact, it is released through kree_rcu,
+and its memory will eventually be released, so this warning message is
+incorrect.
 
-This is a hack that I've always been angry about, and causing all sorts of
-random issues on MediaTek SoCs from time to time... that was fixed multiple
-times by hacking the previous hack which was needed for this hack to still
-work in a way or another.
+I don’t think this is a correct solution. I tried to use rcu_barrier for
+synchronization, but it didn’t work. After using schedule(), the warning
+message disappeared. It ensures that kfree has been called, so the counter
+will be cleared.
 
-I am tempted to give you a R-b right now, but let me carefully test this on
-multiple devices before that.
+The specific error message is as follows:
 
-Meanwhile, I just wanted to say that I agree with you about this commit and
-wanted to give a bit more context to people reading "this breaks things" so
-that they can understand what's going on (and that we're not crazy! ..or at
-least, not *that* much :-P).
+[   76.756915] ------------[ cut here ]------------
+[   76.756921] drivers/net/bonding/bond_main.c:5122 module bonding func:bond_update_slave_arr has 320 allocated at module unload
+[   76.756991] WARNING: CPU: 0 PID: 5503 at lib/alloc_tag.c:168 alloc_tag_module_unload+0x1a8/0x238
+[   76.757371]  aes_neon_bs aes_ce_blk [last unloaded: bonding]
+[   76.757379] CPU: 0 PID: 5503 Comm: modprobe Kdump: loaded Not tainted 6.6.52+ #7
+[   76.757383] Source Version: d828af5b77f6a3d3a91203e6d60a02c83ce77d74
+[   76.757385] Hardware name: QEMU QEMU Virtual Machine, BIOS 0.0.0 02/06/2015
+[   76.757387] pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+[   76.757390] pc : alloc_tag_module_unload+0x1a8/0x238
+[   76.757395] lr : alloc_tag_module_unload+0x1a8/0x238
+[   76.757398] sp : ffff800081f07890
+[   76.757400] x29: ffff800081f07890 x28: 0000000000000008 x27: ffff6fc980b10000
+[   76.757405] x26: ffff800081f07930 x25: ffffb2b6c410ef00 x24: 0000000000001402
+[   76.757410] x23: ffffb2b72ed28500 x22: 0000000000000140 x21: ffffb2b72ed23a40
+[   76.757415] x20: ffffb2b6c40edca0 x19: ffffb2b6c410ef80 x18: 0000000000000000
+[   76.757419] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+[   76.757424] x14: 0000000000000000 x13: 0000000000000001 x12: ffff645015cef093
+[   76.757428] x11: 1fffe45015cef092 x10: ffff645015cef092 x9 : dfff800000000000
+[   76.757433] x8 : 00009bafea310f6e x7 : ffff2280ae778493 x6 : 0000000000000001
+[   76.757438] x5 : ffff2280ae778490 x4 : ffff645015cef093 x3 : dfff800000000000
+[   76.757442] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff2280113be400
+[   76.757447] Call trace:
+[   76.757452]  alloc_tag_module_unload+0x1a8/0x238
+[   76.757455]  codetag_unload_module+0x184/0x218
+[   76.757458]  free_module+0x30/0x270
+[   76.757470]  __do_sys_delete_module.constprop.0+0x2c4/0x408
+[   76.757473]  __arm64_sys_delete_module+0x28/0x40
+[   76.757476]  invoke_syscall+0xb0/0x190
+[   76.757479]  el0_svc_common.constprop.0+0x80/0x150
+[   76.757482]  do_el0_svc+0x38/0x50
+[   76.757485]  el0_svc+0x40/0xe0
+[   76.757501]  el0t_64_sync_handler+0x100/0x130
+[   76.757504]  el0t_64_sync+0x1a4/0x1a8
+[   76.757511] Kernel panic - not syncing: kernel: panic_on_warn set ...
 
-Cheers,
-Angelo
+I think this problem occurs not only in the bonding module, but also
+because the memory allocation profiling does not take the kfree_rcu
+situation into consideration.
 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
-> Changes since v7:
-> - New patch
-> 
-> The other option is to follow what Rockchip will be doing: getting the
-> regulator supply upon first use / enable [1]. This will result in less
-> breakage: only the power domain that is missing its supplies will fail
-> to be attached.
-> 
-> [1] https://lore.kernel.org/all/20240919091834.83572-6-sebastian.reichel@collabora.com/
-> ---
->   drivers/pmdomain/mediatek/mtk-pm-domains.c | 12 +-----------
->   1 file changed, 1 insertion(+), 11 deletions(-)
-> 
-> diff --git a/drivers/pmdomain/mediatek/mtk-pm-domains.c b/drivers/pmdomain/mediatek/mtk-pm-domains.c
-> index 88406e9ac63c..3580913f25d3 100644
-> --- a/drivers/pmdomain/mediatek/mtk-pm-domains.c
-> +++ b/drivers/pmdomain/mediatek/mtk-pm-domains.c
-> @@ -353,7 +353,6 @@ generic_pm_domain *scpsys_add_one_domain(struct scpsys *scpsys, struct device_no
->   {
->   	const struct scpsys_domain_data *domain_data;
->   	struct scpsys_domain *pd;
-> -	struct device_node *root_node = scpsys->dev->of_node;
->   	struct device_node *smi_node;
->   	struct property *prop;
->   	const char *clk_name;
-> @@ -388,16 +387,7 @@ generic_pm_domain *scpsys_add_one_domain(struct scpsys *scpsys, struct device_no
->   	pd->scpsys = scpsys;
->   
->   	if (MTK_SCPD_CAPS(pd, MTK_SCPD_DOMAIN_SUPPLY)) {
-> -		/*
-> -		 * Find regulator in current power domain node.
-> -		 * devm_regulator_get() finds regulator in a node and its child
-> -		 * node, so set of_node to current power domain node then change
-> -		 * back to original node after regulator is found for current
-> -		 * power domain node.
-> -		 */
-> -		scpsys->dev->of_node = node;
-> -		pd->supply = devm_regulator_get(scpsys->dev, "domain");
-> -		scpsys->dev->of_node = root_node;
-> +		pd->supply = devm_of_regulator_get_optional(scpsys->dev, node, "domain");
->   		if (IS_ERR(pd->supply))
->   			return dev_err_cast_probe(scpsys->dev, pd->supply,
->   				      "%pOF: failed to get power supply.\n",
+Fixes: 47a92dfbe01f ("lib: prevent module unloading if memory is not freed")
+Signed-off-by: Jackie Liu <liuyun01@kylinos.cn>
+---
+ lib/codetag.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-
+diff --git a/lib/codetag.c b/lib/codetag.c
+index afa8a2d4f317..7eab77e99381 100644
+--- a/lib/codetag.c
++++ b/lib/codetag.c
+@@ -228,6 +228,9 @@ bool codetag_unload_module(struct module *mod)
+ 	if (!mod)
+ 		return true;
+ 
++	/* Make sure all module's rcu memory is released */
++	schedule();
++
+ 	mutex_lock(&codetag_lock);
+ 	list_for_each_entry(cttype, &codetag_types, link) {
+ 		struct codetag_module *found = NULL;
+-- 
+2.46.2
 
 
