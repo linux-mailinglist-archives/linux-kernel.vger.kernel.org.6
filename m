@@ -1,287 +1,142 @@
-Return-Path: <linux-kernel+bounces-340655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EA998764F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:15:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23D83987650
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26DBA1C229D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:15:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBCD1B28FBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7124C4D8C8;
-	Thu, 26 Sep 2024 15:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843EE12AAE2;
+	Thu, 26 Sep 2024 15:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="q+y2XI0t";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OIb4ly90"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T3alerrp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839BE14D2AC;
-	Thu, 26 Sep 2024 15:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568FD71750
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727363686; cv=none; b=iKIHuDR5BazChevi5RFIm8jin/ZT/xvNjPYSj0QmayydlLTMx9EGS6uN5zbctadobMcTQST06+yAIw2weEzRtkxK8jxoEfZ3V+lJIMa/6oztHgHotMKGUwKmlSEUnzm1wN6ZvneyueHEOv9W2g7DGqiyB12+ceskkVoTGclvC0I=
+	t=1727363720; cv=none; b=uaWo6WTQtnwAgxQBhIhdN6dABQNEU9GdRorKRuS8tnQbWs86A7f+KjLGGUo6BmJXtyHpqBo3qdLlyIPPwDYJoBM+JjS+djPu2FOSwu46f9xobhbpb8ir0MSuvoPpMdkDp0NviHAPctlwemmsCrIlYiazFjtybKe5PcM8TBfwX2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727363686; c=relaxed/simple;
-	bh=oD0KetFqzImm6YqyQK7j6erfD0j6+NQYDgJBUTSSa/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WQYLmywbTwosbRHbMlyHQzap0HhLpcti9fesctRIUheBxU++HDm77fzOM+21C3K8AyO+9jT70xaJSSnVaD0e5RgsSBF/MAArzhwwtaif/PD2aEr1ZgIaWkCN7nMes8PxATuY7mEK5QT2v8FabnH7sNVUFfhRsSIF9WH2NSf9EAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=q+y2XI0t; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OIb4ly90; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id A97DB1380128;
-	Thu, 26 Sep 2024 11:14:42 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Thu, 26 Sep 2024 11:14:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm1;
-	 t=1727363682; x=1727450082; bh=ku6sIPz5PeT7EPPJmtdRdU16MTUqX82X
-	ZDEq364bwbI=; b=q+y2XI0tpmpc+7eTiBqvEaZu634GjJJIE3CCJp8Cx8ue1QPn
-	aXqLl/a+bgXaDTArQwEWZ5ziTU9rQK2o9ZZukcfCV/e6Sxlb2cEaeUWlMS7sfw9j
-	Y14bY8KXt3kn07Dztys9I8F2AFL6QITL++93Fk3BnYxFE10uSWSGxFCGWWZj8mLx
-	dnOLO+uYE0UCsPQt0/JxqVzeA6cGae4niziY8nmRItdOTWq6juqVXZJcAoz2qrnC
-	0sj0gm86EGDo6OwD6pk3a9VQiGmgRQ/RssZjOcVzvaui/5W5Dosj6SdXk3pJ0mno
-	YAGRCwsa7S410AmcYiYMzFKv4E0MqLQSUZIidg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:message-id
-	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1727363682; x=1727450082; bh=ku6sIPz5PeT7EPPJmtdRdU16MTUqX82XZDE
-	q364bwbI=; b=OIb4ly90ypp3UMO8CPZ3BFk19/d0EHxrnf0rG3VJR8nWxruiV1u
-	4xi0XR/em+S7Bk4WE1L2m8EXyW0ok8ndM1Jb/PeTGvfuIPtg+9+YhullbLLTh2Zl
-	Ti2b3hnM9EMjG04bLDNhzZnivIxbLWqY/hKhmPMGlsBcCmAGVYVL/X1zzZMPgXHk
-	l7JkaL7vqn5hs4L4hwfXYo0JGy+9mB/20PbZ1eKyTZ39BfeiOjQKGLs7smt16Jpd
-	1/wgRhxhz9MGZH941ccVd3HMkBJTpCllwd24eTN2HpIAx9ruKhs9wt+TfcUpj3yO
-	rBk+uQahq/EpBcvItdxPHZprLXUSDwaqJ/A==
-X-ME-Sender: <xms:Ynr1Zo9MzdWnHuEZ_2rk9YvSnkjC-9RWs1YKj2szveROXHY2B8KxZw>
-    <xme:Ynr1Zgsv_FhmRpIGWX6TltdDjGr_eqaqbzcTnx29wogkcSEwCudkg_rV29WiUMxZw
-    cfSVypjjBSUP3aCU6A>
-X-ME-Received: <xmr:Ynr1ZuBBKFWUxdwP1EwRlxEmOX5OYVVSlOAO1nCTryt6wkJsrIZCLtqQWclQdu48JLU3bfwaxfRH8HZc6c6UFCY3Ri_8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtjedgkeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucgfrhhlucfvnfffucdlud
-    ehmdenucfjughrpeffhffvvefukfggtggusehttdertddttddvnecuhfhrohhmpeflrghn
-    ucfjvghnughrihhkucfhrghrrhcuoehkvghrnhgvlhesjhhfrghrrhdrtggtqeenucggtf
-    frrghtthgvrhhnpefhleffuedvueekgeetgedukeeiheejtdfhfeefveeukedugfefjeet
-    udejgefgkeenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhgvrhhnvghlsehjfhgrrhhrrdgt
-    tgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepkh
-    gvnhhtrdhovhgvrhhsthhrvggvtheslhhinhhugidruggvvhdprhgtphhtthhopehthhho
-    rhhsthgvnhdrsghluhhmsehtohgslhhugidrtghomhdprhgtphhtthhopehrvghgrhgvsh
-    hsihhonhhssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidq
-    sggtrggthhgvfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqhhgrrhguvghnihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:Ynr1Zoe4tqymgUvVpHXcvoswfv0dzMgeWWHvMi0jnn35YWusGWsjCg>
-    <xmx:Ynr1ZtOfTR47i5UxrqBdUtlur7q_udAkOYcvqtvzyKOSIXU2xtWl6g>
-    <xmx:Ynr1Zik7D3a-7GV66fLE4RwSndm-X1JjZ5tq2WfXGcsmMDWkKtz2nw>
-    <xmx:Ynr1ZvuXDH4yozW0W-yoSeo4pX7K7UPfO1aG29hkFn6yTEwEn_hyLw>
-    <xmx:Ynr1ZpDz8t-pw1c8V6dnQyGLa0WpUGwMYATgTip5YTZaKR6ndde19gkv>
-Feedback-ID: i01d149f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 26 Sep 2024 11:14:41 -0400 (EDT)
-Date: Thu, 26 Sep 2024 17:14:39 +0200
-From: Jan Hendrik Farr <kernel@jfarr.cc>
-To: kent.overstreet@linux.dev
-Cc: thorsten.blum@toblux.com, regressions@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <ZvV6X5FPBBW7CO1f@archlinux>
+	s=arc-20240116; t=1727363720; c=relaxed/simple;
+	bh=YPzxdxvGESKuT97Yzzwzz/CT+lFMvs+6MCOdn6nyo/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E3zS6aW0oB3h3P/B2K9XArkFdyTvkD26gi5uFpPITMtOcCjbmkyAyT7NqNqxI426RAaINQgd6sLeeq2rIQjSW197cAcgyAv7uz+PLB+fqgAJnkTuXao7ipq8l6R1a2fRWDQ+/jc/5HKSvrOXc1KnypRGebutFjSeQuI7f+azTN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T3alerrp; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727363718; x=1758899718;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=YPzxdxvGESKuT97Yzzwzz/CT+lFMvs+6MCOdn6nyo/Q=;
+  b=T3alerrpbVOifndGEYmQkLnF6tZPQifumU4ftppBsStN7Dp7EAtlUhvo
+   wcGiTv3XAargUCx1btb3xCy/w5eygPuiN18RJm78pCQFa/fuy/TVEsi99
+   PNP+RIrRIbQCMo/KMNqOwgX9WvO/A1wSmYMnNFMOoMNl32Z2ad2rV2Kr9
+   RcsByuprKHcU4m1S7nc0AxtrnDE+Yc5OZrKKf4g+bSZrgeSB5jLw6Fjz0
+   IfXzbMPUa8C/MDUYI4PVAH3pRMT9sKRjOK4vuxCm0hfW/eVPZeAfPqMID
+   Ox31xZbi0wAZy5ICNpd1I5EUouM32Ud78P7fHF6j3PfP30BYsseVSZ0h8
+   Q==;
+X-CSE-ConnectionGUID: tX/Z/+eIQ1uzDRv8dYuTmQ==
+X-CSE-MsgGUID: lw/Ke/iDR0GM7rRZv2++Sw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26564374"
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="26564374"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 08:15:17 -0700
+X-CSE-ConnectionGUID: QVu2zMJ1RGaWVukMqY8elA==
+X-CSE-MsgGUID: cZ/L4QykRWCZlO3gJeTlvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="77023727"
+Received: from agladkov-desk.ger.corp.intel.com (HELO [10.125.111.194]) ([10.125.111.194])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 08:15:18 -0700
+Message-ID: <fe8bc21c-b684-4a51-a1c4-2b58412a38d1@intel.com>
+Date: Thu, 26 Sep 2024 08:15:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Kent,
-
-found a strange regression in the patch set for 6.12.
-
-First bad commit is: 86e92eeeb23741a072fe7532db663250ff2e726a
-bcachefs: Annotate struct bch_xattr with __counted_by()
-
-When compiling with clang 18.1.8 (also with latest llvm main branch) and
-CONFIG_FORTIFY_SOURCE=y my rootfs does not mount because there is an erroneous
-detection of a buffer overflow.
-
-The __counted_by attribute is supposed to be supported starting with gcc 15,
-not sure if it is implemented yet so I haven't tested with gcc trunk yet.
-
-Here's the relevant section of dmesg:
-
-[    6.248736] bcachefs (nvme1n1p2): starting version 1.12: rebalance_work_acct_fix
-[    6.248744] bcachefs (nvme1n1p2): recovering from clean shutdown, journal seq 1305969
-[    6.252374] ------------[ cut here ]------------
-[    6.252375] memchr: detected buffer overflow: 12 byte read of buffer size 0
-[    6.252379] WARNING: CPU: 18 PID: 511 at lib/string_helpers.c:1033 __fortify_report+0x45/0x50
-[    6.252383] Modules linked in: bcachefs lz4hc_compress lz4_compress hid_generic usbhid btrfs crct10dif_pclmul libcrc32c crc32_pclmul crc32c_generic polyval_clmulni crc32c_intel polyval_generic raid6_pq ghash_clmulni_intel xor sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni_intel gf128mul nvme crypto_simd ccp xhci_pci cryptd sp5100_tco xhci_pci_renesas nvme_core nvme_auth video wmi ip6_tables ip_tables x_tables i2c_dev
-[    6.252404] CPU: 18 UID: 0 PID: 511 Comm: mount Not tainted 6.11.0-10065-g6fa6588e5964 #98 d8e0beb515d91b387aa60970de7203f35ddd182c
-[    6.252406] Hardware name: Micro-Star International Co., Ltd. MS-7D78/PRO B650-P WIFI (MS-7D78), BIOS 1.C0 02/06/2024
-[    6.252407] RIP: 0010:__fortify_report+0x45/0x50
-[    6.252409] Code: 48 8b 34 c5 30 92 21 87 40 f6 c7 01 48 c7 c0 75 1b 0a 87 48 c7 c1 e1 93 07 87 48 0f 44 c8 48 c7 c7 ef 03 10 87 e8 0b c2 9b ff <0f> 0b e9 cf 5d 9e 00 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90
-[    6.252410] RSP: 0018:ffffbb3d03aff350 EFLAGS: 00010246
-[    6.252412] RAX: 4ce590fb7c372800 RBX: ffff98d559a400e8 RCX: 0000000000000027
-[    6.252413] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffff98e43db21a08
-[    6.252414] RBP: ffff98d559a400d0 R08: 0000000000001fff R09: ffff98e47ddcd000
-[    6.252415] R10: 0000000000005ffd R11: 0000000000000004 R12: ffff98d559a40000
-[    6.252416] R13: ffff98d54abf1320 R14: ffffbb3d03aff430 R15: 0000000000000000
-[    6.252417] FS:  00007efc82117800(0000) GS:ffff98e43db00000(0000) knlGS:0000000000000000
-[    6.252418] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    6.252419] CR2: 000055d96658ea80 CR3: 000000010a12c000 CR4: 0000000000f50ef0
-[    6.252420] PKRU: 55555554
-[    6.252421] Call Trace:
-[    6.252423]  <TASK>
-[    6.252425]  ? __warn+0xd5/0x1d0
-[    6.252427]  ? __fortify_report+0x45/0x50
-[    6.252429]  ? report_bug+0x144/0x1f0
-[    6.252431]  ? __fortify_report+0x45/0x50
-[    6.252433]  ? handle_bug+0x6a/0x90
-[    6.252435]  ? exc_invalid_op+0x1a/0x50
-[    6.252436]  ? asm_exc_invalid_op+0x1a/0x20
-[    6.252440]  ? __fortify_report+0x45/0x50
-[    6.252441]  __fortify_panic+0x9/0x10
-[    6.252443]  bch2_xattr_validate+0x13b/0x140 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-[    6.252463]  bch2_btree_node_read_done+0x125a/0x17a0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-[    6.252482]  btree_node_read_work+0x202/0x4a0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-[    6.252499]  bch2_btree_node_read+0xa8d/0xb20 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-[    6.252514]  ? srso_alias_return_thunk+0x5/0xfbef5
-[    6.252515]  ? pcpu_alloc_noprof+0x741/0xb50
-[    6.252517]  ? srso_alias_return_thunk+0x5/0xfbef5
-[    6.252519]  ? time_stats_update_one+0x75/0x1f0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-
-...
-
-
-The memchr in question is at:
-https://github.com/torvalds/linux/blob/11a299a7933e03c83818b431e6a1c53ad387423d/fs/bcachefs/xattr.c#L99
-
-There is not actually a buffer overflow here, I checked with gdb that
-xattr.v->x_name does actually contain a string of the correct length and
-xattr.v->x_name_len contains the correct length and should be used to determine
-the length when memchr uses __struct_size for bounds-checking due to the
-__counted_by annotation.
-
-I'm at the point where I think this is probably a bug in clang. I have a patch
-that does fix (more like bandaid) the problem and adds some print statements:
-
---
-diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
-index 56c8d3fe55a4..8d7e749b7dda 100644
---- a/fs/bcachefs/xattr.c
-+++ b/fs/bcachefs/xattr.c
-@@ -74,6 +74,7 @@ int bch2_xattr_validate(struct bch_fs *c, struct bkey_s_c k,
- 		       enum bch_validate_flags flags)
- {
- 	struct bkey_s_c_xattr xattr = bkey_s_c_to_xattr(k);
-+	const struct bch_xattr *v = (void *)k.v;
- 	unsigned val_u64s = xattr_val_u64s(xattr.v->x_name_len,
- 					   le16_to_cpu(xattr.v->x_val_len));
- 	int ret = 0;
-@@ -94,9 +95,12 @@ int bch2_xattr_validate(struct bch_fs *c, struct bkey_s_c k,
- 
- 	bkey_fsck_err_on(!bch2_xattr_type_to_handler(xattr.v->x_type),
- 			 c, xattr_invalid_type,
--			 "invalid type (%u)", xattr.v->x_type);
-+			 "invalid type (%u)", v->x_type);
- 
--	bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_name_len),
-+	pr_info("x_name_len: %d", v->x_name_len);
-+	pr_info("__struct_size(x_name): %ld", __struct_size(v->x_name));
-+	pr_info("__struct_size(x_name): %ld", __struct_size(xattr.v->x_name));
-+	bkey_fsck_err_on(memchr(v->x_name, '\0', v->x_name_len),
- 			 c, xattr_name_invalid_chars,
- 			 "xattr name has invalid characters");
- fsck_err:
- --
-
-
-Making memchr access via a pointer created with
-const struct bch_xattr *v = (void *)k.v fixes it. From the print statements I
-can see that __struct_size(xattr.v->x_name) incorrectly returns 0, while
-__struct_size(v->x_name) correctly returns 10 in this case (the value of
-x_name_len).
-
-The generated assembly illustrates what is going wrong. Below is an excerpt
-of the assembly clang generated for the bch2_xattr_validate function:
-
-	mov	r13d, ecx
-	mov	r15, rdi
-	mov	r14, rsi
-	mov	rdi, offset .L.str.3
-	mov	rsi, offset .L__func__.bch2_xattr_validate
-	mov	rbx, rdx
-	mov	edx, eax
-	call	_printk
-	movzx	edx, byte ptr [rbx + 1]
-	mov	rdi, offset .L.str.4
-	mov	rsi, offset .L__func__.bch2_xattr_validate
-	call	_printk
-	movzx	edx, bh
-	mov	rdi, offset .L.str.4
-	mov	rsi, offset .L__func__.bch2_xattr_validate
-	call	_printk
-	lea	rdi, [rbx + 4]
-	mov	r12, rbx
-	movzx	edx, byte ptr [rbx + 1]
-	xor	ebx, ebx
-	xor	esi, esi
-	call	memchr
-
-At the start of this rdx contains k.v (and is moved into rbx). The three calls
-to printk are the ones you can see in my patch. You can see that for the
-print that uses __struct_size(v->x_name) the compiler correctly uses
-	movzx	edx, byte ptr [rbx + 1]
-to load x_name_len into edx.
-
-For the printk call that uses __struct_size(xattr.v->x_name) however the
-compiler uses
-	movzx	edx, bh
-So it will print the high 8 bits of the lower 16 bits (second least
-significant byte) of the memory address of xattr.v->x_type. This is obviously
-completely wrong.
-
-It is then doing the correct call of memchr because this is using my patch.
-Without my patch it would be doing the same thing for the call to memchr where
-it uses the second least significant byte of the memory address of x_type as the
-length used for the bounds-check.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] nvdimm: Correct some typos in comments
+To: Shen Lichuan <shenlichuan@vivo.com>, dan.j.williams@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, pankaj.gupta.linux@gmail.com
+Cc: nvdimm@lists.linux.dev, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+References: <20240926075700.10122-1-shenlichuan@vivo.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240926075700.10122-1-shenlichuan@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-The LLVM IR also shows the same problem:
+On 9/26/24 12:57 AM, Shen Lichuan wrote:
+> Fixed some confusing typos that were currently identified with codespell,
+> the details are as follows:
+> 
+> -in the code comments:
+> drivers/nvdimm/nd_virtio.c:100: repsonse ==> response
+> drivers/nvdimm/pfn_devs.c:542: namepace ==> namespace
+> drivers/nvdimm/pmem.c:319: reenable ==> re-enable
+> 
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
 
-define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
-  [...]
-  %51 = ptrtoint ptr %2 to i64
-  %52 = lshr i64 %51, 8
-  %53 = and i64 %52, 255
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
-This is the IR for the incorrect behavior. It simply converts the pointer to an
-int, shifts right by 8 bits, then and with 0xFF. If it did a load (to i64)
-instead of ptrtoint this would actually work, as the second least significant
-bit of an i64 loaded from that memory address does contain the value of
-x_name_len. It's as if clang forgot to dereference a pointer here.
-
-Correct IR does this (for the other printk invocation):
-
-define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
-  [...]
-  %4 = getelementptr inbounds %struct.bch_xattr, ptr %1, i64 0, i32 1
-  %5 = load i8, ptr %4, align 8
-  [...]
-  %48 = load i8, ptr %5, align 4
-  %49 = zext i8 %48 to i64
-
-Best Regards
-Jan
+> ---
+>  drivers/nvdimm/nd_virtio.c | 2 +-
+>  drivers/nvdimm/pfn_devs.c  | 2 +-
+>  drivers/nvdimm/pmem.c      | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/nvdimm/nd_virtio.c b/drivers/nvdimm/nd_virtio.c
+> index f55d60922b87..c3f07be4aa22 100644
+> --- a/drivers/nvdimm/nd_virtio.c
+> +++ b/drivers/nvdimm/nd_virtio.c
+> @@ -97,7 +97,7 @@ static int virtio_pmem_flush(struct nd_region *nd_region)
+>  		dev_info(&vdev->dev, "failed to send command to virtio pmem device\n");
+>  		err = -EIO;
+>  	} else {
+> -		/* A host repsonse results in "host_ack" getting called */
+> +		/* A host response results in "host_ack" getting called */
+>  		wait_event(req_data->host_acked, req_data->done);
+>  		err = le32_to_cpu(req_data->resp.ret);
+>  	}
+> diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+> index 586348125b61..cfdfe0eaa512 100644
+> --- a/drivers/nvdimm/pfn_devs.c
+> +++ b/drivers/nvdimm/pfn_devs.c
+> @@ -539,7 +539,7 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
+>  
+>  	if (!nd_pfn->uuid) {
+>  		/*
+> -		 * When probing a namepace via nd_pfn_probe() the uuid
+> +		 * When probing a namespace via nd_pfn_probe() the uuid
+>  		 * is NULL (see: nd_pfn_devinit()) we init settings from
+>  		 * pfn_sb
+>  		 */
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index 210fb77f51ba..d81faa9d89c9 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -316,7 +316,7 @@ static long pmem_dax_direct_access(struct dax_device *dax_dev,
+>   * range, filesystem turns the normal pwrite to a dax_recovery_write.
+>   *
+>   * The recovery write consists of clearing media poison, clearing page
+> - * HWPoison bit, reenable page-wide read-write permission, flush the
+> + * HWPoison bit, re-enable page-wide read-write permission, flush the
+>   * caches and finally write.  A competing pread thread will be held
+>   * off during the recovery process since data read back might not be
+>   * valid, and this is achieved by clearing the badblock records after
 
 
