@@ -1,202 +1,96 @@
-Return-Path: <linux-kernel+bounces-341004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A62987A15
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:31:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D20B987A14
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC4991C21FE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:31:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59FCE283A52
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611DE13EFF3;
-	Thu, 26 Sep 2024 20:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973891741C9;
+	Thu, 26 Sep 2024 20:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nvD5nDbi"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2081.outbound.protection.outlook.com [40.107.92.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mHWQPEUe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F290A1D5AC5
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 20:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727382687; cv=fail; b=g1r2JPr+flqAPYwgAKXYsYtcjlE7kUREh+0++JQOrrThY1gzJuTrEOnUoIRponUUGj56NMzIQugoNrewh2Ea7/iRHOp49FtaNF5zxwCvr33nFZPCaUeoXquBxHRmxOO4dMhu83HKi7AZt9WgdNYkHzirWbzk87CHV3lkeCSG2Do=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727382687; c=relaxed/simple;
-	bh=B058M7U/Z2SnMFbV2lee4im8P9lyq/Zbv3pTyE8OjME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hlf6rrGgff5URA5SFLAkC23sgu4df0VxzGUjWMBT14CC03VnfLLGLVk0DjsWlEfmbuoKn7qW8YWmgZPt5/VLCfUDP3U/YSEQgSDBfIS52NiSrMT4jkJDM+w3WMw9xxWqiOS6Fg0pBhHY9Ea0XF10VvU1mSmd3aSUumrLzadfkvg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nvD5nDbi; arc=fail smtp.client-ip=40.107.92.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FLO6FIlb72n7zU7GEuNN4xQ5tMO1aurRVYOQuQqEzJz94pbN0vAvjevjUaigLCWvOIUhZPzh0SMB/WFlpG2DlHmmo4DDAmPp0qtDWoeiSbvIEXNc0KWaOXwirvzWEbKNr9qVKDhDNOD/KamqcKMXQ7FOvAkv+td5fUvytMqcA/OqoB05OfdJLBPXL06AnurAzdq+EpX8Isq/3vf7OjGjOhzfg/Uth6lwO/Q1peifK8ovtfeINfvi0zbL6M26gzHtZ3iw5mEnbaXeiyTgx6687p/9erpTPQ/k+Zkl8v6wuNCeQxgZt18rZbSymLyjjIolTYESuzAV+ZOpbRbOvwGWQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3T8JIBd7rq5lswK9R4woRdCqL5SsqEyTDaVhyz0YUtc=;
- b=Rou5+F/judTOqiH9sBY/vvog/awJQITeTvrdIPzIdMMIr3lv7sq5z/kTBM9r5JbBZQpPZPuohe6UDE1N4LQwuY4MrrU+fQPaBOJjOTvi9FlS4oeKHJ2A5adZxV03Xid2XrPOavTVF3CeX7h1zdimXswiSFqnjrHKb57Ccq2TZ7BBZ6xqe1leabIycEnPYo1A6G1xvBn9pMZAUeThd0p6q6exLUBoL1k6cKgTM/ojC2lWkaCh6V0W+TOoH9CVqPQ6GXKzDtHmD36Pa6/zw0Lp7i/eV5FohrW2/YVDuI7wvgH/+1Vk8v+Y/J2QjbsIKTcWPqqsTJjiIvRe77h5AyZjIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3T8JIBd7rq5lswK9R4woRdCqL5SsqEyTDaVhyz0YUtc=;
- b=nvD5nDbiMclEAbmfxKrB4KrSacgNyYNSogtxEKXdbvTKFSxP1mSPZ61H3/vT4COq5ASarzHi7EAzmna8YrZiR2UC7yIKMPY47Yb160LpZNqRva0J5O3XshVpvsnISnhcTNQ3dlO/1hBmNx3BCYOMyfrVoMnR0DbIw8ItKY5vJQk=
-Received: from SJ0PR05CA0138.namprd05.prod.outlook.com (2603:10b6:a03:33d::23)
- by MN2PR12MB4061.namprd12.prod.outlook.com (2603:10b6:208:19a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.21; Thu, 26 Sep
- 2024 20:31:21 +0000
-Received: from SJ5PEPF000001E8.namprd05.prod.outlook.com
- (2603:10b6:a03:33d:cafe::71) by SJ0PR05CA0138.outlook.office365.com
- (2603:10b6:a03:33d::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.18 via Frontend
- Transport; Thu, 26 Sep 2024 20:31:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001E8.mail.protection.outlook.com (10.167.242.196) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8005.15 via Frontend Transport; Thu, 26 Sep 2024 20:31:20 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Sep
- 2024 15:30:06 -0500
-Received: from [172.18.112.153] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Thu, 26 Sep 2024 15:29:52 -0500
-Message-ID: <06f800e1-f0b1-4040-83f8-7c026ca17268@amd.com>
-Date: Thu, 26 Sep 2024 16:29:54 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06EB33C9;
+	Thu, 26 Sep 2024 20:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727382632; cv=none; b=a42IoO6JtrE7HIFxhdHrBKbk0zk5M7VD64s+k58p9tz8LvyigNYA4Gxn3yK0qpK128+7iQXZkj40AhoEoqv3b/trOKI9h8gSqvtRFmcNTJTXGyHuX1W0i173lPCdS/i9uHK0fp9zrRVHWbX+3QUyK/n8/jgA6j5nwkuQ+Sx0dzY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727382632; c=relaxed/simple;
+	bh=JQxdFgmwCweBu0HFCk0fdL+4lGYfUnMWrrjqi7JcZ8g=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=rqEYTigBjiYhNYT0f0ju9hI1XY7ETCPTmsLw1OlpwrafBMxQnLBnZP3k9DtGNKviUQk9cEbFdX/Qn/Ge465jBno0VbKl/KuIgLrAgpKzM+XffRsJ2806u12MfqktfUNPmfvVhyiBRK4KMZTAjQRBc2pB68cPzrCnHsd5LJEJckU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mHWQPEUe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7405C4CEC5;
+	Thu, 26 Sep 2024 20:30:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727382629;
+	bh=JQxdFgmwCweBu0HFCk0fdL+4lGYfUnMWrrjqi7JcZ8g=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=mHWQPEUeQZEqyPJ2/VrVqIX7IbgV/GUWDDRhxaLFbLMNUj/UKcdmJqY9OAFjmLY0j
+	 eiYQxNjbpF4dDYBdlOwGzdcWHtbUArIX1LkrPtwoZZd2x2prvYJkCJyvLWPZ7uusmh
+	 ZAlBmXmXaSjZMVD1XlXQP90iUOlr+VFCS5XuvdXplcggm+FOOs4kiu6ULHztZ/cTMg
+	 LKKZnfFhOEMwjO4wG+7yDmTpoidBMfBMqsdM4IcsOLlsBeIS8BBahThJ8TFRf23x8H
+	 t5dMuxW+SgD6ZhZVJTdQJc0pAmHe4o+H4UBF/9abEMBcOb3dQgikKRKxouEFA4oCBD
+	 2TY3mMEIoEKhw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F4F39EFB74;
+	Thu, 26 Sep 2024 20:30:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] x86/pvh: Call C code via the kernel virtual mapping
-To: Ard Biesheuvel <ardb@kernel.org>, Ard Biesheuvel <ardb+git@google.com>
-CC: <linux-kernel@vger.kernel.org>, Juergen Gross <jgross@suse.com>, Boris
- Ostrovsky <boris.ostrovsky@oracle.com>, <x86@kernel.org>,
-	<xen-devel@lists.xenproject.org>
-References: <20240926104113.80146-7-ardb+git@google.com>
- <20240926104113.80146-8-ardb+git@google.com>
- <CAMj1kXGQhj4RK=Ks_WD59hG1FzX=vsEkugDEW1tmzJzjahrB4g@mail.gmail.com>
-Content-Language: en-US
-From: Jason Andryuk <jason.andryuk@amd.com>
-In-Reply-To: <CAMj1kXGQhj4RK=Ks_WD59hG1FzX=vsEkugDEW1tmzJzjahrB4g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB04.amd.com: jason.andryuk@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001E8:EE_|MN2PR12MB4061:EE_
-X-MS-Office365-Filtering-Correlation-Id: b22733ce-00da-450a-c5f0-08dcde6a2ea0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V1E2MHZyTFdWOXQzbDBmWVMvb25kbGVTUzZaVzhIUnVMWWRoRExkaFJBdGhv?=
- =?utf-8?B?N21xem9xWEUvSmdGU25veTVaUDZGRUxXeUZjWERvalc3L1JBb01zN1pKdzFr?=
- =?utf-8?B?clBodzNGemR2V3l3NkxMdXVrLzF1OU03NmN5K1dUSTFINldOQ1VsblFjeUlz?=
- =?utf-8?B?aU5NR2V1Z25YQzFoUlhnSzZ0RDBVeVp4QWY0bGhrSVlqRFQrNVZkNTVHNU1G?=
- =?utf-8?B?SGhqaVFqQ1N5WkR0RVdBbW93OEpVTDUveHlKdXhQZCtXUzlxL2d2OGVDUCs4?=
- =?utf-8?B?aUFFK1IzWGFIZmxSd3JlRk1tUjZKVDRTaGZLZ2xqTW5uOU1taTVoUURMV1p6?=
- =?utf-8?B?bGdPZHZkUm9ReE51c05HaDFiWGlqczQ0SHpvNmJhNStoSHlVbnhwRGFQU0NK?=
- =?utf-8?B?SzJjdnVjRDJ1STY3QllIV0Jzd3pOeWlqb1dGTHdNRC82dWN0UnNEWHNNYmVN?=
- =?utf-8?B?V0Y5Rkt4VnJyOHhhUEMvQ1hNdDhrMXMxWWIwSHhUU1dCNmJUVXlSWHZiTG1D?=
- =?utf-8?B?bWYydWhrcUVZazBqVGVTUlNtWFNrTnIra0JqeXRMT1gxeVVBWnlZSkM1TVZu?=
- =?utf-8?B?VWhEQ3psVkp6bzNSVVNWb3EvdVdkT3Z4ZThNVm9tL0FwK1lnVGI3ZndMMzYx?=
- =?utf-8?B?aUpncmFYOHorUGx1VDVxc1JXc1ZYaWhBVG5IdUU3T2tJemgxZ2dMYkVXd1pJ?=
- =?utf-8?B?d1ZsbEtvNVBHMGlJK3dJby9aM0I1MmlUU0ZRUllyR1ZZNlFqZjV0ZWU5ZEEv?=
- =?utf-8?B?K29OUHJ0RGdNNkhyaTFGZVd0K2E3Ui9DcGhZS0I2QWVCVVMzaEphRndxVldi?=
- =?utf-8?B?WitRWFVNclk4cVJLa0s5bFNZTzljYzNxems5NmhUcjRsVGY5VjV3MTZMZ3JF?=
- =?utf-8?B?SVMvSGRlSzR4SnBiWURBUU94OUg2b2tRUHQzSXB6Nk9adnlVMXNsU0NqclRN?=
- =?utf-8?B?Y0lZSmhTK3NNV3pva3BwQjNaZkF6QWp1Znk1U29Cd00xVmtCNDRUWFB6ekky?=
- =?utf-8?B?UjBUTVRzUDRIWVhmSzVqWkJaTGxERmk2OW1GV042TzBEOEhBbEM1NWxwNks0?=
- =?utf-8?B?NFh6VUlkZmRoejRQODQyTDAwWnFFUzVCVy9Jcmp2Q0hFcHQ4bFJweTBUb2h6?=
- =?utf-8?B?c3dGZ0lSYlM1WmNXc0RPN1NWMS8yOEorUVZpZnVsOFVERUU3UlBmQnFtaW5Q?=
- =?utf-8?B?M2FxR29rSmxqODAyR3lVRFNhMnJmRHlod24vNTJ5WXkvVDQ3MmROWGUrQ0dw?=
- =?utf-8?B?OU94NDRqNG5DN3VrUzFkK0RKR3U4bUY3Y2dpZ1Z0MkF2bXBvSmVXektXRnV0?=
- =?utf-8?B?MXgxK3owaWJIeDJtVzM3SkZmem90QXhMeVZIZ2wwR0lEakphZ21hZ1RacjlM?=
- =?utf-8?B?YllFRmYzSXNrN0F5WU1EN0NvejlRZitJMUczUmdSN3U4bTAvWEVHSDlFdlFr?=
- =?utf-8?B?NWJremRlQnlwTXNHRjZSNzF4eTNja3VpQ3U1bUNIR1ZMOWtrT0d4RDVrL3Ru?=
- =?utf-8?B?cTJMM0Q4aFZBTjk2RmU5TWVURENBM1B4UkNYTzdMQlRpTkt0N0NhRlNPazJN?=
- =?utf-8?B?dWlvcFcvNndiNWtLZHRBUlZtSUNZdCtaLy9CQTR2TXREbVF4VEczVjdJQzQr?=
- =?utf-8?B?WTRwYlo5bHFyUmFYN21sWThqQitsSDB6am15S2RiM3ZRN08xc2pMVm05THNZ?=
- =?utf-8?B?WHJmcm5SV0hXR1BhOWhIQXIrT3k4bi9QY2x6Mkl4aU41aWlGRk5zNUducS9E?=
- =?utf-8?B?bnRpbVVnYzNBUGdWeVhtMWd2Z3dKQVh2azlnN0xrZWdvblRGbkh0aXRMMStP?=
- =?utf-8?B?dS80WEJWMFRXMjFXMktyS3pSdW5kRmNBdm05S0hEV1BCYUNKNWg4aHJrM1dj?=
- =?utf-8?B?T1lpdzBxSjFrNXBvSHlzMEdUc2s5am41MVNIbG5mbFNlNHIxbDRGTXBIdnh0?=
- =?utf-8?Q?yQ5/R8GyRH8fnmrY5MTjVhavYXOonlzl?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 20:31:20.8237
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b22733ce-00da-450a-c5f0-08dcde6a2ea0
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001E8.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4061
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 1/2] Bluetooth: btnxpuart: Drop _v0 suffix from FW names
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <172738263200.1385049.5849692333167490001.git-patchwork-notify@kernel.org>
+Date: Thu, 26 Sep 2024 20:30:32 +0000
+References: <20240926040757.375999-1-neeraj.sanjaykale@nxp.com>
+In-Reply-To: <20240926040757.375999-1-neeraj.sanjaykale@nxp.com>
+To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ amitkumar.karwar@nxp.com, rohit.fule@nxp.com, yuzhi.jin@nxp.com,
+ sherry.sun@nxp.com, ziniu.wang_1@nxp.com, haibo.chen@nxp.com,
+ LnxRevLi@nxp.com
 
-On 2024-09-26 06:55, Ard Biesheuvel wrote:
-> On Thu, 26 Sept 2024 at 12:41, Ard Biesheuvel <ardb+git@google.com> wrote:
->>
->> From: Ard Biesheuvel <ardb@kernel.org>
->>
->> Calling C code via a different mapping than it was linked at is
->> problematic, because the compiler assumes that RIP-relative and absolute
->> symbol references are interchangeable. GCC in particular may use
->> RIP-relative per-CPU variable references even when not using -fpic.
->>
->> So call xen_prepare_pvh() via its kernel virtual mapping on x86_64, so
->> that those RIP-relative references produce the correct values. This
->> matches the pre-existing behavior for i386, which also invokes
->> xen_prepare_pvh() via the kernel virtual mapping before invoking
->> startup_32 with paging disabled again.
->>
->> Fixes: 7243b93345f7 ("xen/pvh: Bootstrap PVH guest")
->> Tested-by: Jason Andryuk <jason.andryuk@amd.com>
->> Reviewed-by: Jason Andryuk <jason.andryuk@amd.com>
->> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
->> ---
->>   arch/x86/platform/pvh/head.S | 8 +++++++-
->>   1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
->> index 64fca49cd88f..98ddd552885a 100644
->> --- a/arch/x86/platform/pvh/head.S
->> +++ b/arch/x86/platform/pvh/head.S
->> @@ -172,7 +172,13 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
->>          movq %rbp, %rbx
->>          subq $_pa(pvh_start_xen), %rbx
->>          movq %rbx, phys_base(%rip)
->> -       call xen_prepare_pvh
->> +
->> +       /* Call xen_prepare_pvh() via the kernel virtual mapping */
->> +       leaq xen_prepare_pvh(%rip), %rax
+Hello:
+
+This series was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+
+On Thu, 26 Sep 2024 09:37:56 +0530 you wrote:
+> This updates all FW names by dropping the _v0 suffix.
+> Its been decided that all NXP BT/ WiFi FW names won't support _v0 suffix.
+> The suffix would be kept for next HW versions such as v1, v2 and so on,
+> which do not have backward compatible FW.
 > 
-> Just realized that we probably need
+> This change affects W8987, IW416 and IW615 chipsets, out of which new FW
+> files for W8987 and IW615 are yet to be released to broad market.
 > 
-> +       subq phys_base(%rip), %rax
+> [...]
 
-Yes, this is necessary when phys_base is non-0.  I intended to test a 
-non-0 case yesterday, but it turns out I didn't.  Re-testing, I have 
-confirmed this subq is necessary.
+Here is the summary with links:
+  - [v2,1/2] Bluetooth: btnxpuart: Drop _v0 suffix from FW names
+    https://git.kernel.org/bluetooth/bluetooth-next/c/0d9899d4df63
+  - [v2,2/2] Bluetooth: btnxpuart: Rename IW615 to IW610
+    https://git.kernel.org/bluetooth/bluetooth-next/c/394cf44ded5e
 
-Thanks,
-Jason
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
