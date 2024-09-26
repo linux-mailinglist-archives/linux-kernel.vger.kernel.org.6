@@ -1,185 +1,134 @@
-Return-Path: <linux-kernel+bounces-340510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796C3987467
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:25:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B841987475
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973DB1C21C55
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:25:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC2E22869B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C914595B;
-	Thu, 26 Sep 2024 13:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975EA3A8F7;
+	Thu, 26 Sep 2024 13:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jNFYLAM+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wQiSklLO"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860953A8F7;
-	Thu, 26 Sep 2024 13:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F525258;
+	Thu, 26 Sep 2024 13:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727357103; cv=none; b=c+3yg1+95HdNuo7z0ioC7d1kI4MLkdpaHx/9ptX8oiSBfvPzZ65bMtMpa6mMXXt6I9/61/1wKuuJNzcL6g3xmMxr29+T14ZEan9+Tr/xXYZIehjzFj6fdzTjutOCBQpTJx9Kfcay3/D/Q3SOPWLNFVep1i0j6jgulOe46BAwX9s=
+	t=1727357461; cv=none; b=A9LQYsqFczkuborGNzHaxfjHYwT7Jew0q+wP3EzaFU30d6XFG+neQmvWRi2xs2PvUe+RGosTsSSMzCA4Nkg37TVPzHcHIod4CMNWWim1GQPJiMIJdFtslELMbhEkF4Ca1Dc3NWIViETkNtIqTygYshDapw/rY1FQpm6m9DC0/so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727357103; c=relaxed/simple;
-	bh=V9RE/M+gbMJverjB0d1riqFqnVlY5qZURgqdDU9n43k=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jzGzUPxbwSlRewwo7CIfRxB9n4cmLSRXqVPwskZ+gYZ3mO8w9Tyl85h1EpG9ebRGH4jAfeQBaPH1CduxhS+m9XYjOwWtfoWLzFgXZe6Hq6tfS5yDdpIMmOQUkuwfh/kFYuRnITPt5aKSnNSbVEXB5bYhc/Cur4wz6KnETrgEcbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jNFYLAM+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48Q7Y0sq008702;
-	Thu, 26 Sep 2024 13:24:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=R5l2Vl8aHn8BISv5XlT5lhXk
-	lhnZr7wW2up5Cp71eMc=; b=jNFYLAM+B7aiP4/GbCTI/eKGOJFSBTJJTPRgcpIB
-	x7l2KQCVbTlvQ3wU846CgH3NVm6lWEhx6lJtweAy1MZWZNoHSZm7siVx3FOJIVHA
-	xGhU5ZFfV3sEc+GHt0NXXhJdJFSN0LFzYp2O0E4uRoy6yn7Ot3QnRZoeqPoK+v1j
-	Z5TRCT6vN3tjCyX69NcBGrIrjyeKISGLo38AEPuvGu6XmhWosLRJJaroI9cGdGep
-	amNf+tujJChJyWBbkyyZopMZpHxmea/EYpKw3YjF7D24Ywhp2XlTfkRZwtzx4hfz
-	BlmAttG1O/ixsaTklq9TXIxOGxX0yNN4wQZTuXP5xX2Jbw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41snfh7tjq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Sep 2024 13:24:43 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48QDOfwI002756
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Sep 2024 13:24:41 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 26 Sep 2024 06:24:41 -0700
-Date: Thu, 26 Sep 2024 06:24:40 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Mahadevan <quic_mahap@quicinc.com>
-CC: <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>,
-        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <swboyd@chromium.org>,
-        <konrad.dybcio@linaro.org>, <danila@jiaxyga.com>,
-        <bigfoot@classfun.cn>, <neil.armstrong@linaro.org>,
-        <mailingradian@gmail.com>, <quic_jesszhan@quicinc.com>,
-        <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_kalyant@quicinc.com>, <quic_jmadiset@quicinc.com>,
-        <quic_vpolimer@quicinc.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: display/msm: Document MDSS on SA8775P
-Message-ID: <ZvVgmFUs2bwfEoWD@hu-bjorande-lv.qualcomm.com>
-References: <20240926110137.2200158-1-quic_mahap@quicinc.com>
- <20240926110137.2200158-2-quic_mahap@quicinc.com>
+	s=arc-20240116; t=1727357461; c=relaxed/simple;
+	bh=8D2Y6WGTjAXKFg4Ac21d/3s/libBT4mfFHN/VTNVv18=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=A5jzMhxol18xtc0ASYoLsz+UVumrSmUkTScqqyUe961fxu4nSTIFcx+WZSM4FJwRgkPE7SArb1fwCfcCXxM/h6+cuoj6mXkfcpfhzPhOeFOpHvdaqpuGPZxsG8xe9lZCBEo4JjzcfGi7ujnHqrN6IjJBpXOSI4ULYsocjE5a/20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wQiSklLO; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727357425; x=1727962225; i=markus.elfring@web.de;
+	bh=nOEM71AyOr4nfT0t970wYpqeIO6G8tPBN1vASVmd/So=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=wQiSklLOVXr8Hhip5gGtQB5tfKog6OWPZcSiPPtHF9r6GPzBZY1SMLD+vLJEGqzj
+	 RPO3f0hS/B2YDL9OKYmoFf+VtsL7ryyEI0h7egqkrCcVkGGVCcXEQ7E261ZqSV51K
+	 f2pRiD0K4sYqBmKGo5Of7HSwl1FiQcNs3UAffgUA4cYEy6tLDw22v6Cs+YQJWYyj2
+	 I09a6WgeN43MNqveOkbBo5bGCE5CIEe3arjovykekSxQDDu9CuJv0P53cTNv2hXE9
+	 JUqPXUASJQaCeaioRqAOwbK9LLP3riOMKxuWjJPd2Tx5l0rD/W/s916dywIMlb80F
+	 JNwfrxrOONfqwsSPCQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MiuSs-1sFH9h3Oom-00hy5l; Thu, 26
+ Sep 2024 15:30:25 +0200
+Message-ID: <6c4afcdc-fa86-4f0a-a6c1-ec8265190fd0@web.de>
+Date: Thu, 26 Sep 2024 15:30:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240926110137.2200158-2-quic_mahap@quicinc.com>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: WpEB8sxuQbq_9Vrku2F-q9Hnql4jCzpI
-X-Proofpoint-GUID: WpEB8sxuQbq_9Vrku2F-q9Hnql4jCzpI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- lowpriorityscore=0 priorityscore=1501 malwarescore=0 mlxscore=0
- suspectscore=0 impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409260092
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+To: kernel-janitors@vger.kernel.org, Barret Rhoden <brho@google.com>,
+ Ben Segall <bsegall@google.com>, David Vernet <void@manifault.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
+ Josh Don <joshdon@google.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Hao Luo <haoluo@google.com>, Mel Gorman <mgorman@suse.de>,
+ Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Tejun Heo <tj@kernel.org>, Valentin Schneider <vschneid@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andrea Righi <andrea.righi@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] sched_ext: Call put_task_struct() only once in
+ scx_ops_enable()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:N1c6y1Yj0TUu9WDWBqn0PyHHTgWKUGD/64HdV190odsvuWqhLT+
+ 2/KlR2ZLWL0NXSd6WNesSyL1dUdmY0EqYaj1eanwdoeXkvtrdT7kgYDWsq4SUyEHjXJu8Oi
+ S99b/FufIRXf+mqYvqpMC19/GsTeIk6O2+U16B7uCC2H6nkqueRVAQqui9JaNHJ6KGO3GSs
+ +aHDeQCH8/R33qBV9Sg0g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:R8or0bQMyog=;w7RC1hpJ5ZaVX2dTD0fS7EjxMSt
+ YjV2w71YTe/vA8fl2RP5LnW+Iwk3DIkdku0Q7JzzO6lCy9rtO0eu6XK6LsXhH9YK4VwKVeF0c
+ bh/HhNbm2Opc6wiS6HBUe1MxOtXeMFQgog8/VJiF0WCBk2lrJvD+Fy0/+kk+Io3cwyzDQJZyK
+ dkiR8s0GDBUzy5N28gyKM2EFlebGuza8kbzv5ma1xPPG3PS0STVJPh5t61GUZi7l6FYdtgGuc
+ m6HSbGY97bwDbsQcm+YjNBB8qFqSPObvTPN1P9tP7mF33/ZjTHpnvWGwplEVr4dNAA5CVbO/s
+ nYbSWBAvUqx3wkFZKJXG+qrWJ6rJTcyL6DRDPfrbeZ53PsGRR4cIPtkGLNLMexw62mdPtmtK1
+ kVdEUvtEHz8lejEy4je9OFCFBnArS+CSfsvCFFKwrVb3H+9paEid74z+6vhycMsnW2vv1IrwN
+ PV1y4/aJjCX5LQR/WfvjgvyDYJcQwaIX9OoRja3n71+186WKyMMT0jLkquSD3U4cOWUk0+wKA
+ 2tbqGstvbw7XCz3UxVnRsCDGm7RTBfFTQatW3TL3t5/8A5m7salpRG8zKrAgI/XNR2E9umDlV
+ AB7YaRbpgbj5UnFa9L3gggaGQdYaehUdQP4vChjd78P30qSB+T+ma9aKKgdrNIS/Bl6sWVkIg
+ DOlOYHyFnroSIBdJQAslNg48q2+m9kgE7DAf1JGod91bWaw9TVIkh3lnOgW3UAwah/PeJF3a9
+ 5ylQ4I6Korbpgfuc/an6M7xJsNWbN8X2RqBillsTiOjYAtQULgLmPQ7cvwuzScJ17rTKu2CSW
+ NF/YQi1b7w6mTNU7jO4vcbpw==
 
-On Thu, Sep 26, 2024 at 04:31:33PM +0530, Mahadevan wrote:
-> Document the MDSS hardware found on the Qualcomm SA8775P platform.
-> 
-> Signed-off-by: Mahadevan <quic_mahap@quicinc.com>
-> ---
-> 
-> [v2]
-> - Use fake DISPCC nodes to avoid clock dependencies in dt-bindings. [Dmitry]
-> - Update bindings by fixing dt_binding_check tool errors (update includes in example),
->   adding proper spacing and indentation in binding example, dropping unused labels,
->   dropping status disable, adding reset node. [Dmitry, Rob, Krzysztof]
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Sep 2024 14:51:07 +0200
 
-No concerns with the changelog, but please adopt b4 (go/upstream has
-instructions) for sending patches upstream.
+A put_task_struct() call was immediately used after a return value check
+for a scx_ops_init_task() call in this function implementation.
+Thus call such a function only once instead directly before the check.
 
-> 
-> ---
->  .../display/msm/qcom,sa8775p-mdss.yaml        | 239 ++++++++++++++++++
->  1 file changed, 239 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-> new file mode 100644
-> index 000000000000..e610b66ffa9f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-> @@ -0,0 +1,239 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/msm/qcom,sa8775p-mdss.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Technologies, Inc. SA87755P Display MDSS
-> +
-> +maintainers:
-> +  - Mahadevan <quic_mahap@quicinc.com>
+This issue was detected by using the Coccinelle software.
 
-Please use Firstname Lastname, if possible
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ kernel/sched/ext.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> +
-> +description:
-> +  SA8775P MSM Mobile Display Subsystem(MDSS), which encapsulates sub-blocks like
-> +  DPU display controller, DP interfaces and EDP etc.
-> +
-> +$ref: /schemas/display/msm/mdss-common.yaml#
-> +
-[..]
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interconnect/qcom,icc.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
-> +    #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
-> +    #include <dt-bindings/power/qcom,rpmhpd.h>
-> +    #include <dt-bindings/power/qcom-rpmpd.h>
-> +
-> +    display-subsystem@ae00000 {
-> +        compatible = "qcom,sa8775p-mdss";
-> +        reg = <0 0x0ae00000 0 0x1000>;
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 9ee5a9a261cc..4b89ea20e355 100644
+=2D-- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -5091,8 +5091,8 @@ static int scx_ops_enable(struct sched_ext_ops *ops,=
+ struct bpf_link *link)
+ 		spin_unlock_irq(&scx_tasks_lock);
 
-#address-cells and #size-cells are 1 in the example root node, so drop
-the two 0 entries.
+ 		ret =3D scx_ops_init_task(p, task_group(p), false);
++		put_task_struct(p);
+ 		if (ret) {
+-			put_task_struct(p);
+ 			spin_lock_irq(&scx_tasks_lock);
+ 			scx_task_iter_exit(&sti);
+ 			spin_unlock_irq(&scx_tasks_lock);
+@@ -5101,7 +5101,6 @@ static int scx_ops_enable(struct sched_ext_ops *ops,=
+ struct bpf_link *link)
+ 			goto err_disable_unlock_all;
+ 		}
 
-> +        reg-names = "mdss";
-> +
-> +        /* same path used twice */
+-		put_task_struct(p);
+ 		spin_lock_irq(&scx_tasks_lock);
+ 	}
+ 	scx_task_iter_exit(&sti);
+=2D-
+2.46.1
 
-What do you mean? All three paths below are unique.
-
-> +        interconnects = <&mmss_noc MASTER_MDP0 0 &mc_virt SLAVE_EBI1 0>,
-> +                        <&mmss_noc MASTER_MDP1 0 &mc_virt SLAVE_EBI1 0>,
-> +                        <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-> +                        &config_noc SLAVE_DISPLAY_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
-> +        interconnect-names = "mdp0-mem",
-> +                             "mdp1-mem",
-> +                             "cpu-cfg";
-> +
-> +
-
-Regards,
-Bjorn
 
