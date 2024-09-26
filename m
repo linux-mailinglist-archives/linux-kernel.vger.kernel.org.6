@@ -1,166 +1,280 @@
-Return-Path: <linux-kernel+bounces-339931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39BD4986C4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:14:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B013986C4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF78A1F22BFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:14:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9FDD1F216F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9367A188A16;
-	Thu, 26 Sep 2024 06:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31CB1891B9;
+	Thu, 26 Sep 2024 06:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cDo5ZVQd"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQRlMKyB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5831171C;
-	Thu, 26 Sep 2024 06:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42E8183CDF;
+	Thu, 26 Sep 2024 06:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727331271; cv=none; b=BmENZ9SH+RtCAbAVvWAWrpQCn6EEl6OYrj7wZMstz//jJ3L1fBG2Fw9O56sZhQ3fFlWVMIaIOcY4RrctF0wo1BXGVk2r0avWFhJYvkE9omGpcZt/13usSxiDcCRDnMOkIn1RJ0hr54eZy/PBGZu3IZsx1GF9kIwiw594UPHs0IQ=
+	t=1727331302; cv=none; b=n1bXN55/R1ASe0BCO8fDNZJE8Lnv598YSuzLS4jfUHak54JfprUv/G53ZOcEvtJ7HT0eUi88t2W5wKLiLWdFMlXFLpO8wYfwGIKXQn3bypYbt41RGyz/oDbT19FtvKAGUZlLvKuUZlePpGl3Ju4qNSx2M7P7tRUKYqDQ+gAqeAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727331271; c=relaxed/simple;
-	bh=HasklfQSottO4Xv0zSSTdIpsqVG+FNdJYzgNz8Dcn/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RaiWgcAUvn6zEBy/77ny1FHzd0Ct1GrmQKDm1qBwvMVIAzrFi6ulbGtIuaMs+fTnKJDQWLL4gh8isgQYI4JJxhuPy84KnLpzsNh2ZLNbTKrYlg6MhpXOJ5/aXaW+SlxIp6AL9ZefpkycDERxuDn6y6Vzf4aQj8sQSdouyAIgIqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cDo5ZVQd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PH5Ck2005925;
-	Thu, 26 Sep 2024 06:14:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lZygEXnaaKw8altOzhWYu/B7xNi6LaS0krxd35RZj8o=; b=cDo5ZVQdvUfdUhQm
-	aV660xcV6TbxNDDlDFHVYwMzcBwdzfedSHNEBn8fBj3j8JqDv/OmBw8kt6J6DYzT
-	YxEwu3meZLSfVUbfqcEpa/diC2CDkVUPlzRXMU12x/pWzHvyumItx9PL4r7hUwbx
-	39/S7uNx82Kmqt295AdXi4f4jFOWpPi5niet+dEyloatR+Ou8AJt4i3puZMY0qXT
-	4NTuHMVqi+D3J+wXptNAHirgZndTV84hzrrAHjeYN4+FcGic+BLPdLj18Tjl7OMd
-	Fd+aC9X0L8LYOWA9im9cPaXpsMhEB2fsQDKAcz0A3R5c6nXmh9wzev4SGzWLb+r8
-	RuQZ0Q==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqe9e80b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Sep 2024 06:14:26 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48Q6EP68021246
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Sep 2024 06:14:25 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Sep
- 2024 23:14:23 -0700
-Message-ID: <732bdb12-a52b-4abe-8edb-afed44406011@quicinc.com>
-Date: Thu, 26 Sep 2024 11:44:20 +0530
+	s=arc-20240116; t=1727331302; c=relaxed/simple;
+	bh=PIh0pjjy1l9a+BtzF/0FpC5z0gHFa9Z7fDcDVIaMXyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJd46C9j9FwNh3Ooby+Tri2/ODKJNHa6iy9i0d0lZwLb1lUmS7ANC362Qbp+p5GXYyJkLZC4UbY5UYuOEPBSZ0hWaYPSaqvK+bfSCKsa35f62v8PQcjCeAqKHXxwtovSkREa9yxgTqIApr8r/8Oxobyfa3pGTBemTggzhBrvFb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQRlMKyB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63FD3C4CEC5;
+	Thu, 26 Sep 2024 06:15:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727331302;
+	bh=PIh0pjjy1l9a+BtzF/0FpC5z0gHFa9Z7fDcDVIaMXyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GQRlMKyBqnoSOso0fWnuem/LsOMzYLMl+j7mxRy9QRZJ2td9ufcrTfQS1KNbrPOEl
+	 G0/eSe3GBSq4v7xrzcsnlOC/baRoZvHhJ1COXMu9SBZqOy0uMR/4YBlcf+FoZQAwAK
+	 XLelyjqydnh5kK+CP+Z9KXVTFKYMRMRo9uchQkoAml/4HDK+upJQMQ+gXMtPLoHr2F
+	 1dbjUnC4j/qcKAkIFWcOovt58rCDZPWJ4SPUkpN6ez7jezUsVIxnrAlF0F+OGlefz4
+	 V94u481IsPJCHzPM5VW8G0Se+Hg9E1iNVHPB/pkm2YooEgLlubt1zFnrQ2291zU3FC
+	 CTGOYDH54lW8g==
+Date: Wed, 25 Sep 2024 23:14:59 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	irogers@google.com, swapnil.sapkal@amd.com, yu.c.chen@intel.com,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, rostedt@goodmis.org, vincent.guittot@linaro.org,
+	bristot@redhat.com, adrian.hunter@intel.com, james.clark@arm.com,
+	kan.liang@linux.intel.com, gautham.shenoy@amd.com,
+	kprateek.nayak@amd.com, juri.lelli@redhat.com,
+	yangjihong@bytedance.com, void@manifault.com, tj@kernel.org,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	santosh.shukla@amd.com, ananth.narayan@amd.com,
+	sandipan.das@amd.com
+Subject: Re: [PATCH 3/5] perf sched stats: Add schedstat v16 support
+Message-ID: <ZvT74_Sp1bQZvqbO@google.com>
+References: <20240916164722.1838-1-ravi.bangoria@amd.com>
+ <20240916164722.1838-4-ravi.bangoria@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] i2c: qcom-geni: Support systems with 32MHz serial
- engine clock
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, <andi.shyti@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20240926034304.3565278-1-quic_mmanikan@quicinc.com>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <20240926034304.3565278-1-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 7zSXD4aCOa117VjYjWKgErTDL1HSFwrb
-X-Proofpoint-GUID: 7zSXD4aCOa117VjYjWKgErTDL1HSFwrb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 phishscore=0 impostorscore=0 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409260039
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240916164722.1838-4-ravi.bangoria@amd.com>
 
-Hi Manikanta, My suggestion:
-
-i2c: qcom-geni: Support systems with 32MHz serial engine clock
-[Derive i2c clock from 32MHz Sourced clock]
-
-On 9/26/2024 9:13 AM, Manikanta Mylavarapu wrote:
-> In existing socs, I2C serial engine is sourced from XO (19.2MHz).
-> Where as in IPQ5424, I2C serial engine is sourced from GPLL0 (32MHz).
+On Mon, Sep 16, 2024 at 04:47:20PM +0000, Ravi Bangoria wrote:
+> From: Swapnil Sapkal <swapnil.sapkal@amd.com>
 > 
-> The existing map table is based on 19.2MHz. This patch incorporate
-incorporate/s/incorporates
-> the clock map table to derive the SCL clock from the 32MHz source
-> clock frequency.
+> /proc/schedstat file output is standardized with version number.
+> Add support to record and raw dump v16 version layout.
+
+How many difference between v15 and v16?  Can we have it in the same
+file with a different version number?
+
+Thanks,
+Namhyung
+
 > 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
+> Co-developed-by: Ravi Bangoria <ravi.bangoria@amd.com>
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
 > ---
-> Changes in v2:
-> 	- Dropped IPQ5424 from the commit title
-> 	- Added else part to assign geni_i2c_clk_map_19p2mhz to itr
-> 	- Dropped MHZ macro and used HZ_PER_MHZ macro
-> 	- Expanded SE to serial engine
-> 	- Added the reason for 32MHz clock in commit message
+>  tools/lib/perf/Makefile                       |  2 +-
+>  tools/lib/perf/include/perf/event.h           | 14 +++++++
+>  .../lib/perf/include/perf/schedstat-cpu-v16.h | 13 ++++++
+>  .../perf/include/perf/schedstat-domain-v16.h  | 40 +++++++++++++++++++
+>  tools/perf/util/event.c                       |  6 +++
+>  tools/perf/util/synthetic-events.c            |  6 +++
+>  6 files changed, 80 insertions(+), 1 deletion(-)
+>  create mode 100644 tools/lib/perf/include/perf/schedstat-cpu-v16.h
+>  create mode 100644 tools/lib/perf/include/perf/schedstat-domain-v16.h
 > 
->   drivers/i2c/busses/i2c-qcom-geni.c | 19 ++++++++++++++++---
->   1 file changed, 16 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> index 212336f724a6..22f2a0d83641 100644
-> --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> @@ -16,6 +16,7 @@
->   #include <linux/pm_runtime.h>
->   #include <linux/soc/qcom/geni-se.h>
->   #include <linux/spinlock.h>
-> +#include <linux/units.h>
->   
->   #define SE_I2C_TX_TRANS_LEN		0x26c
->   #define SE_I2C_RX_TRANS_LEN		0x270
-> @@ -146,18 +147,30 @@ struct geni_i2c_clk_fld {
->    * clk_freq_out = t / t_cycle
->    * source_clock = 19.2 MHz
->    */
-> -static const struct geni_i2c_clk_fld geni_i2c_clk_map[] = {
-> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_19p2mhz[] = {
->   	{KHZ(100), 7, 10, 11, 26},
->   	{KHZ(400), 2,  5, 12, 24},
->   	{KHZ(1000), 1, 3,  9, 18},
->   };
->   
-> +/* source_clock = 32 MHz */
-> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_32mhz[] = {
-> +	{KHZ(100), 7, 14, 18, 40},
-> +	{KHZ(400), 4,  3, 11, 20},
-> +	{KHZ(1000), 4, 3,  6, 15},
+> diff --git a/tools/lib/perf/Makefile b/tools/lib/perf/Makefile
+> index ebbfea891a6a..de0f4ffd9e16 100644
+> --- a/tools/lib/perf/Makefile
+> +++ b/tools/lib/perf/Makefile
+> @@ -187,7 +187,7 @@ install_lib: libs
+>  		$(call do_install_mkdir,$(libdir_SQ)); \
+>  		cp -fpR $(LIBPERF_ALL) $(DESTDIR)$(libdir_SQ)
+>  
+> -HDRS := bpf_perf.h core.h cpumap.h threadmap.h evlist.h evsel.h event.h mmap.h schedstat-cpu-v15.h schedstat-domain-v15.h
+> +HDRS := bpf_perf.h core.h cpumap.h threadmap.h evlist.h evsel.h event.h mmap.h schedstat-cpu-v15.h schedstat-domain-v15.h schedstat-cpu-v16.h schedstat-domain-v16.h
+>  INTERNAL_HDRS := cpumap.h evlist.h evsel.h lib.h mmap.h rc_check.h threadmap.h xyarray.h
+>  
+>  INSTALL_HDRS_PFX := $(DESTDIR)$(prefix)/include/perf
+> diff --git a/tools/lib/perf/include/perf/event.h b/tools/lib/perf/include/perf/event.h
+> index 35be296d68d5..c332d467c9c9 100644
+> --- a/tools/lib/perf/include/perf/event.h
+> +++ b/tools/lib/perf/include/perf/event.h
+> @@ -463,6 +463,12 @@ struct perf_record_schedstat_cpu_v15 {
+>  #undef CPU_FIELD
+>  };
+>  
+> +struct perf_record_schedstat_cpu_v16 {
+> +#define CPU_FIELD(_type, _name, _ver)		_type _name;
+> +#include "schedstat-cpu-v16.h"
+> +#undef CPU_FIELD
 > +};
 > +
->   static int geni_i2c_clk_map_idx(struct geni_i2c_dev *gi2c)
->   {
->   	int i;
-> -	const struct geni_i2c_clk_fld *itr = geni_i2c_clk_map;
-> +	const struct geni_i2c_clk_fld *itr;
+>  struct perf_record_schedstat_cpu {
+>  	struct perf_event_header header;
+>  	__u16			 version;
+> @@ -470,6 +476,7 @@ struct perf_record_schedstat_cpu {
+>  	__u32			 cpu;
+>  	union {
+>  		struct perf_record_schedstat_cpu_v15 v15;
+> +		struct perf_record_schedstat_cpu_v16 v16;
+>  	};
+>  };
+>  
+> @@ -479,6 +486,12 @@ struct perf_record_schedstat_domain_v15 {
+>  #undef DOMAIN_FIELD
+>  };
+>  
+> +struct perf_record_schedstat_domain_v16 {
+> +#define DOMAIN_FIELD(_type, _name, _ver)	_type _name;
+> +#include "schedstat-domain-v16.h"
+> +#undef DOMAIN_FIELD
+> +};
 > +
-> +	if (clk_get_rate(gi2c->se.clk) == 32 * HZ_PER_MHZ)
-> +		itr = geni_i2c_clk_map_32mhz;
-> +	else
-> +		itr = geni_i2c_clk_map_19p2mhz;
->   
-> -	for (i = 0; i < ARRAY_SIZE(geni_i2c_clk_map); i++, itr++) {
-> +	for (i = 0; i < ARRAY_SIZE(geni_i2c_clk_map_19p2mhz); i++, itr++) {
->   		if (itr->clk_freq_out == gi2c->clk_freq_out) {
->   			gi2c->clk_fld = itr;
->   			return 0;
+>  #define DOMAIN_NAME_LEN		16
+>  
+>  struct perf_record_schedstat_domain {
+> @@ -490,6 +503,7 @@ struct perf_record_schedstat_domain {
+>  	char			 name[DOMAIN_NAME_LEN];
+>  	union {
+>  		struct perf_record_schedstat_domain_v15 v15;
+> +		struct perf_record_schedstat_domain_v16 v16;
+>  	};
+>  	__u16			 nr_cpus;
+>  	__u8			 cpu_mask[];
+> diff --git a/tools/lib/perf/include/perf/schedstat-cpu-v16.h b/tools/lib/perf/include/perf/schedstat-cpu-v16.h
+> new file mode 100644
+> index 000000000000..f3a55131a05a
+> --- /dev/null
+> +++ b/tools/lib/perf/include/perf/schedstat-cpu-v16.h
+> @@ -0,0 +1,13 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifdef CPU_FIELD
+> +CPU_FIELD(__u32, yld_count, v16)
+> +CPU_FIELD(__u32, array_exp, v16)
+> +CPU_FIELD(__u32, sched_count, v16)
+> +CPU_FIELD(__u32, sched_goidle, v16)
+> +CPU_FIELD(__u32, ttwu_count, v16)
+> +CPU_FIELD(__u32, ttwu_local, v16)
+> +CPU_FIELD(__u64, rq_cpu_time, v16)
+> +CPU_FIELD(__u64, run_delay, v16)
+> +CPU_FIELD(__u64, pcount, v16)
+> +#endif /* CPU_FIELD */
+> diff --git a/tools/lib/perf/include/perf/schedstat-domain-v16.h b/tools/lib/perf/include/perf/schedstat-domain-v16.h
+> new file mode 100644
+> index 000000000000..d6ef895c9d32
+> --- /dev/null
+> +++ b/tools/lib/perf/include/perf/schedstat-domain-v16.h
+> @@ -0,0 +1,40 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifdef DOMAIN_FIELD
+> +DOMAIN_FIELD(__u32, busy_lb_count, v16)
+> +DOMAIN_FIELD(__u32, busy_lb_balanced, v16)
+> +DOMAIN_FIELD(__u32, busy_lb_failed, v16)
+> +DOMAIN_FIELD(__u32, busy_lb_imbalance, v16)
+> +DOMAIN_FIELD(__u32, busy_lb_gained, v16)
+> +DOMAIN_FIELD(__u32, busy_lb_hot_gained, v16)
+> +DOMAIN_FIELD(__u32, busy_lb_nobusyq, v16)
+> +DOMAIN_FIELD(__u32, busy_lb_nobusyg, v16)
+> +DOMAIN_FIELD(__u32, idle_lb_count, v16)
+> +DOMAIN_FIELD(__u32, idle_lb_balanced, v16)
+> +DOMAIN_FIELD(__u32, idle_lb_failed, v16)
+> +DOMAIN_FIELD(__u32, idle_lb_imbalance, v16)
+> +DOMAIN_FIELD(__u32, idle_lb_gained, v16)
+> +DOMAIN_FIELD(__u32, idle_lb_hot_gained, v16)
+> +DOMAIN_FIELD(__u32, idle_lb_nobusyq, v16)
+> +DOMAIN_FIELD(__u32, idle_lb_nobusyg, v16)
+> +DOMAIN_FIELD(__u32, newidle_lb_count, v16)
+> +DOMAIN_FIELD(__u32, newidle_lb_balanced, v16)
+> +DOMAIN_FIELD(__u32, newidle_lb_failed, v16)
+> +DOMAIN_FIELD(__u32, newidle_lb_imbalance, v16)
+> +DOMAIN_FIELD(__u32, newidle_lb_gained, v16)
+> +DOMAIN_FIELD(__u32, newidle_lb_hot_gained, v16)
+> +DOMAIN_FIELD(__u32, newidle_lb_nobusyq, v16)
+> +DOMAIN_FIELD(__u32, newidle_lb_nobusyg, v16)
+> +DOMAIN_FIELD(__u32, alb_count, v16)
+> +DOMAIN_FIELD(__u32, alb_failed, v16)
+> +DOMAIN_FIELD(__u32, alb_pushed, v16)
+> +DOMAIN_FIELD(__u32, sbe_count, v16)
+> +DOMAIN_FIELD(__u32, sbe_balanced, v16)
+> +DOMAIN_FIELD(__u32, sbe_pushed, v16)
+> +DOMAIN_FIELD(__u32, sbf_count, v16)
+> +DOMAIN_FIELD(__u32, sbf_balanced, v16)
+> +DOMAIN_FIELD(__u32, sbf_pushed, v16)
+> +DOMAIN_FIELD(__u32, ttwu_wake_remote, v16)
+> +DOMAIN_FIELD(__u32, ttwu_move_affine, v16)
+> +DOMAIN_FIELD(__u32, ttwu_move_balance, v16)
+> +#endif /* DOMAIN_FIELD */
+> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+> index c9bc8237e3fa..d138e4a5787c 100644
+> --- a/tools/perf/util/event.c
+> +++ b/tools/perf/util/event.c
+> @@ -566,6 +566,9 @@ size_t perf_event__fprintf_schedstat_cpu(union perf_event *event, FILE *fp)
+>  	if (version == 15) {
+>  #include <perf/schedstat-cpu-v15.h>
+>  		return size;
+> +	} else if (version == 16) {
+> +#include <perf/schedstat-cpu-v16.h>
+> +		return size;
+>  	}
+>  #undef CPU_FIELD
+>  
+> @@ -641,6 +644,9 @@ size_t perf_event__fprintf_schedstat_domain(union perf_event *event, FILE *fp)
+>  	if (version == 15) {
+>  #include <perf/schedstat-domain-v15.h>
+>  		return size;
+> +	} else if (version == 16) {
+> +#include <perf/schedstat-domain-v16.h>
+> +		return size;
+>  	}
+>  #undef DOMAIN_FIELD
+>  
+> diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
+> index 9d8450b6eda9..73b2492a4cde 100644
+> --- a/tools/perf/util/synthetic-events.c
+> +++ b/tools/perf/util/synthetic-events.c
+> @@ -2546,6 +2546,8 @@ static union perf_event *__synthesize_schedstat_cpu(struct io *io, __u16 version
+>  
+>  	if (version == 15) {
+>  #include <perf/schedstat-cpu-v15.h>
+> +	} else if (version == 16) {
+> +#include <perf/schedstat-cpu-v16.h>
+>  	}
+>  #undef CPU_FIELD
+>  
+> @@ -2667,6 +2669,8 @@ static union perf_event *__synthesize_schedstat_domain(struct io *io, __u16 vers
+>  
+>  	if (version == 15) {
+>  #include <perf/schedstat-domain-v15.h>
+> +	} else if (version == 16) {
+> +#include <perf/schedstat-domain-v16.h>
+>  	}
+>  #undef DOMAIN_FIELD
+>  
+> @@ -2709,6 +2713,8 @@ int perf_event__synthesize_schedstat(const struct perf_tool *tool,
+>  
+>  	if (!strcmp(line, "version 15\n")) {
+>  		version = 15;
+> +	} else if (!strcmp(line, "version 16\n")) {
+> +		version = 16;
+>  	} else {
+>  		pr_err("Unsupported /proc/schedstat version: %s", line + 8);
+>  		goto out_free_line;
+> -- 
+> 2.46.0
+> 
 
