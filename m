@@ -1,285 +1,256 @@
-Return-Path: <linux-kernel+bounces-340761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D03A987788
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:28:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A385A987787
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFD301C22190
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:28:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24F071F24FF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8A915A85B;
-	Thu, 26 Sep 2024 16:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCB315A85B;
+	Thu, 26 Sep 2024 16:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g2LsPEQM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="LkEsorXo"
+Received: from mail-lf1-f65.google.com (mail-lf1-f65.google.com [209.85.167.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE67522A
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727368113; cv=fail; b=Q4RalbyNQ3hQYpmAYim99avDY+CAOVNnwx4VWZtAJloa+v64CHxrBIHP1xuRjRmzY4pSsVQVv6EsG+ljloJ87PFuT1sBjuiLG/epM3VR0+Bo+AEIRJSOJ9+NkwMZnrbJBQ1Drtxz8k83XztUQgFGF4vuSOrdRIO94MfFWTHMWzc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727368113; c=relaxed/simple;
-	bh=Hw5mPXBvHE1V+6yG85+9iTHZEAwUL1X13u2DPczdWmc=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=k2e9eNW2gz7nzRrCMzpnhpJ1KR5OurdbGgemExyDBRcW4EHcyQrcT2EXz/wuqmnVeblUGbaaGirqXUoQFf/DEyezBHwbj/AOOjXslv6CO01dqG5XCjvGnKVjzXir5HfOMm3icEs2I1Yz3Rna5uCSUMLWZs4TKEPfKqHh+fV3d+8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g2LsPEQM; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727368112; x=1758904112;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Hw5mPXBvHE1V+6yG85+9iTHZEAwUL1X13u2DPczdWmc=;
-  b=g2LsPEQMIp2VfwvTmcFrtvD0oYd+Efe3vZFLzmEqcoYu//uICcqGXDqx
-   WS0o5U+E7gQF+QsFWCetkfJFWdQZbfWE/XSoE7Y4Z+W6cxX8yQuj2Ec/a
-   AVcyRtZpMsERFBG32Q+7l4mi7R3/Rbiw7lt8Q+qQu+54iejSUCBX4Esdl
-   5FWg8C0hVrNLSE+49v7hNMQQOqjHXqdokxRz/N6A/TPK9b8KAcMsyfWsB
-   IE6XkB4T+r8j0OJRFOvxvzDSlNetLj0qPWgAfhnRbK3VRGShzyOx94Lmz
-   avCrdShn15MSnO4x8Tq+hZYHFlfm4JYBPm6ZEvDPKSP0sNyxnVYIrZFBV
-   w==;
-X-CSE-ConnectionGUID: bYrravx/QAeEM9KnUfJhMw==
-X-CSE-MsgGUID: heniq3hIRtu/j2XGSb8Xag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="37621873"
-X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
-   d="scan'208";a="37621873"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 09:28:00 -0700
-X-CSE-ConnectionGUID: d4TrCOtMRUy1fRuyVBspzw==
-X-CSE-MsgGUID: ajVYwJXpTP21HYotMuZKzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
-   d="scan'208";a="76728708"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Sep 2024 09:27:59 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 26 Sep 2024 09:27:59 -0700
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 26 Sep 2024 09:27:59 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 26 Sep 2024 09:27:59 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.46) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 26 Sep 2024 09:27:58 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dj7FE6Jkh2L4onggtFSD/bvx0XqF8OeIMbivzDREvd/rY7iucaGVhsYlQbrwCIJKSLcDf+aaKq3NfWQx9HkCML0sx09CSWFAnSCXItpZ/tfPjeWYwscR8aDOI4wA4zxALKTP1NewwdlEq6a3krigtZ47V6rELqHKbu1SL/1MShVUUmNVeoXLvyMVCvZ+pKwSZmpfLC2ahovuz108fJgJanxLrPOPG5ZAoyN3sZbRsNZcCn5pNZ7mc04Jsw7MUBcS2x1kX6p3e1yTLznHi973cNze6sxaKxn7sTc5ELOkC+V6y+3aMB/aVn1X3NuckmmPn+RIMnxrWh4ED5ASyiU2Tg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bf9PGGEk6+ruJQTX8eqe0V+dey6nqJs+l1fOzd9fK5o=;
- b=ooYIaJKKeHfRQBhhrrRzJaTw/DkM+5ulbJfav6gD0Cse6lOElYnVPpLepzBGcVyOWq3qUhz4DndA7oUd1ikdmcxTaO7usA4aM5ZJxsBVYQ3CVsvGCc2PD+EQFqBs5PDCcJmYj3yB306uUrz0/T5UW39umtU/Q5nsF0MfQgVWTyZF0GBFbjIb+iWC0lEEfSSoMyD5Ca50UlFdNzFoP9xPtedmaTIGIJsfsfFIlgPg2F3s+LhYgBMCvBxxiYoaPsInbm/XEqvq8uJ3atSXXitsSmF4MzNiMTqk00gHDpdEijT546mGDb5huo+myhLe8sAqxSkJBU8kCAxRlSF4irVBnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by SJ0PR11MB6767.namprd11.prod.outlook.com (2603:10b6:a03:47e::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Thu, 26 Sep
- 2024 16:27:56 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7982.022; Thu, 26 Sep 2024
- 16:27:56 +0000
-Message-ID: <6324595f-99e6-4eb4-ae40-af1bb765079c@intel.com>
-Date: Thu, 26 Sep 2024 09:27:54 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] x86/resctrl: Avoid overflow in MB settings in
- bw_validate()
-To: Martin Kletzander <nert.pinx@gmail.com>
-CC: Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>, <linux-kernel@vger.kernel.org>
-References: <8d028c5f6f23e92fb83cbf20599366e896abc5b5.1727167989.git.nert.pinx@gmail.com>
- <a7c80676-0761-4618-ac07-0b53434b1a9b@intel.com>
- <ZvVZoOm7R-dZ4N0_@wheatley.k8r.cz>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <ZvVZoOm7R-dZ4N0_@wheatley.k8r.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW4PR03CA0165.namprd03.prod.outlook.com
- (2603:10b6:303:8d::20) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDB515667E
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.65
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727368092; cv=none; b=vGb093m7/xhwDhzePDg0AbsDPhwwFyU0M+0D2Lkybx2q0iRj0blDItaqV7K8H0RY7yKmXz9acWgnX0C7RBP346j2hLuPbv+Y/utoCJbXxXvGwNP+A33rWLObQ3px++335qff71OIlkS0gl/AC/r9EdSIiQ1e0TZ8e4ojvWq6fKA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727368092; c=relaxed/simple;
+	bh=mEm1zA5qR8TPXAZ/j8ma4Q5lr0/WE8b87OmoVmlC7Eo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HnBzlMGgzBVS2HoPgARGWEPQBzRzDKB7uXzlpDpLPY8BTFnKUBP3hF4l+J8z9ZQ+tkH8D90xOqJdPg311N10wqGOdnXqnkAU2XUw5YcpGSHebiC1nL21ZBVuLnqSTCXsLy4G0PrsjWYLmqA6mb1pvaVdYk4m7D+pnCkKjY0FEa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=LkEsorXo; arc=none smtp.client-ip=209.85.167.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-lf1-f65.google.com with SMTP id 2adb3069b0e04-5365c512b00so1557191e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:28:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1727368089; x=1727972889; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=CIxjEKqTmFld63wZ5uaJhMTjf7dLJV3EOglZ0vA99MI=;
+        b=LkEsorXowZCSeL93jg5l7fRizl7eABw9qqj9hXHWTjEo9Ds1SzGnrKdar98q/SMKlO
+         UTtqBcTo5TlSRGKL0r6ibVof9NQCeGbMxCL1iQvolgEcQgzRvj4Qnl76Lj/VG5Kkuw7M
+         MljiobojnAnvIxkQi4/0cm3l1i8SPemRlCtQY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727368089; x=1727972889;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CIxjEKqTmFld63wZ5uaJhMTjf7dLJV3EOglZ0vA99MI=;
+        b=pVfC3pFNlvR/jD2zvcuHLCkWxOGKX8tpDsdSszCSSK0oEfT+44JjAxlhCsH7mSvdFe
+         KJPwehr7OFI57BN4FBG6GRcN/rPeSdh8sqXKSKdAi0eNHwMkLbd17zA00uvadGRnN6aT
+         y7la+Vj8QQFZn0Rxc53cUe7EvWqTtOvlQ4+x0V2S1lf5XNn3fJrhVrtZi6Z3MEfqiRCC
+         IpsyB0ysdyGR9z9otxDjSRhKgD4KzmTwgdqnw5EjjUyZuuwpivkVWZEEN1AFOj/Li+OL
+         lp/02JWtNFp/Noxm6C+TPtDtFOZl7uPvHLn6zIeAmHmQWdktE4k2Q7D/2ShFCtM9ixVX
+         cT/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWUcaT92VVT7ML2S0bwQFvIzwNZesP3Pfh21kudau1MTb8D1d+tcf/zE9q8hPK5Idc+ugzQjFuNsxUPabo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO2yPNz49gtIAcWcJva0+c6dyVnlUdsoFwSF7AVbIYdmgDn9RF
+	agGHHswvkaWPtiAUc4AovFdE46QPmGtjwRoT3FbBZHittkiICaCIdZSVXl4YLHA=
+X-Google-Smtp-Source: AGHT+IE3jPgukJH1K8BJQv4arbonytAcsMUM3OByhz192tL4DKuB/tQ+75/GqDjAcfbNJ8eMEEuljA==
+X-Received: by 2002:a05:6512:2207:b0:536:52ec:2870 with SMTP id 2adb3069b0e04-5389fc43e99mr156882e87.28.1727368088430;
+        Thu, 26 Sep 2024 09:28:08 -0700 (PDT)
+Received: from [10.125.226.166] ([185.25.67.249])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8824949f6sm91011a12.82.2024.09.26.09.28.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Sep 2024 09:28:07 -0700 (PDT)
+Message-ID: <acea2233-0975-4449-952c-8eb05b075d8c@citrix.com>
+Date: Thu, 26 Sep 2024 17:28:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SJ0PR11MB6767:EE_
-X-MS-Office365-Filtering-Correlation-Id: 23f38aa1-81af-44fc-dc17-08dcde482d59
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bG40Qkkrb1JNUXBDMlVtZFUzZk9oWTFZRXIxU3B5NWZjNVE1MEl5Q0ZmWkdh?=
- =?utf-8?B?Nm9oKy85YU9hWG5HR0x5QThDaTBZZ2JmdUdmUHlVanFrWWhlRnVRWGFMNFEz?=
- =?utf-8?B?a2JkdnZMOGtpTFJrazJxQnBISlZlejIycStPY1FXalRBcWNHZllNMVQrbHBQ?=
- =?utf-8?B?N0g1OGtDWHd2dWkxdjVTbnV3cEg1MStPbEJEVWMwRXZGaVNpclEvc3Jzdnpj?=
- =?utf-8?B?bndsS09HOEN2L1FmMUdlTHVldG5SaCs5d0tnMmRxbS92eXgwWnZlQTdUTzlE?=
- =?utf-8?B?L0lqRmJrMmdNOVBFelFGTnRtU0VmM28xd0RsTjZJbTNpeTltb1F6SkZVc2sr?=
- =?utf-8?B?MUlBcVRsR3BjSmtKWEtpSWFoSXR4aEdvTFZRTysyMWgzQ2I2eVdEMyt3cW5H?=
- =?utf-8?B?cXE3SmNLMWFxTUJwOFJrdTVkV2RkZ05LVkdJWlVvTFJscDI2bjVzaDBDZDA3?=
- =?utf-8?B?V1REMlNDc3FqcGJqbElEWDh4aWVzbXpmK2JVQ2NFM3N5RW1zWTBwSVo5MllR?=
- =?utf-8?B?dGltVDd4WVlwQ2gzU3ZHNk9qUkJ6L0hMbnc1YVlNZ3o5Mi9uU3J3ZDlhVkFQ?=
- =?utf-8?B?azZ6N0pxZm5VemlKVlFHQ1NPWEpNUm5GTDBldXZwMUlEckRtZjRiVUVDeTF6?=
- =?utf-8?B?RjRhL3p4K3hyT2JBU0RJN3hXT0lHSDVMTG52NE1zeU9ETld5SHhWM3Y5ZlBi?=
- =?utf-8?B?cUpLb3hyK0lVYVVBN1FZVlVtMVVENHlRN3FtdHppeDcyVUlnaUlJZVVkYmJl?=
- =?utf-8?B?WGZvUXBZSXRrNFMyNm1rSTVUYnhXdFBjM3Q2MjVmbEJPMStZamp4Ti9WZUV0?=
- =?utf-8?B?SlVWdEduekJkTnB0U1BNc0lhcktmaHMwV0xUVmJiUzltR25nUkNlaWdwOHpj?=
- =?utf-8?B?YUVJdFcwZWdKek1UZHMzemR4WDI3VjhLeThaeGlQeDJWMU1XakdmaXVoQlNv?=
- =?utf-8?B?eEZMc0RxMndkRk9ZcWhxdms5Yk12aVY2WThDcHMrZkc0Yk5EZTgrKy8yVnlU?=
- =?utf-8?B?Rm8zbmdtTEVMUE1tZWFsVUxOeXJZdGtCek9ibWwrZE01SFZrNTNTOU9nR2di?=
- =?utf-8?B?M3M0K1crZ1I3MEZqL29tRzBFQ1NwQlpWSCs4Z2lUOWRhMEZsYzZ6MnVZdzF6?=
- =?utf-8?B?Q1cxbUJTc2ZDKzdwR1BVMnZvdW94a3pmak9FckVUckd5djJYbktHOHNQODll?=
- =?utf-8?B?NmVKZ3c2VEd1MUdFV3RzN2NsWXdsZjBMeHZ6ZHBaK05sWDZuM25PY0tBS2tF?=
- =?utf-8?B?MlNLamE1ZGhwQ1M2ZkNteHoxUjlQNXIwa1RlMmtGdllxUUlZalpOY2hYUlB5?=
- =?utf-8?B?eVQzSDRpMUpUOW9veEZOdHJUWGYrR2RUQmpzUmlsR3lCVXUwSXdURnFrSnZq?=
- =?utf-8?B?VHAxYnV4Rlo5alZFZnNQRGpld2hPWW4zZkw2L3lTby9rdnZ5VDdYOWRjc0cw?=
- =?utf-8?B?bHBnQzNXbWFsRm5JYm42N3pma21rRUJZM09yd3FyREJiQnBOYkhXM3V6d09q?=
- =?utf-8?B?ZDlSVjFFenlRb0M5L0NOMkkrdHAraVd3TkNEbDI2dnNTYTNXWlRnUjJ5c3lN?=
- =?utf-8?B?MHlwSTZmNlFsOXJ4RkQ5VzRCZzVqdk1oL2pibFM4eXJpZWRITk9TSEo4OGU2?=
- =?utf-8?B?R2sxRlZwS1hUNWs4Q25pZENJZmZ1a1FqbStjMjlCTnpNVXY2cEFNdm1wVDMv?=
- =?utf-8?B?S214eVN1eHpjTW1TRG55UUpHbDVDMzl5M0ZyZmU3NkRjUTZLZ2xzTEswbEo5?=
- =?utf-8?B?YUVQZGFLWDhybTg5WXVMZHcyYVBGa0g5MWV5bjhQV0NZelZDRi9RSkc1dXRk?=
- =?utf-8?B?UlJlS2lUVm9lMURjOFF4QT09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aHlNMzhnT20wQWY4eGhwSlVmYkFqd055VUhQN1JaQzYwYjM2d1ZzU0hYVWNq?=
- =?utf-8?B?bVBJdVZBS1lTWjBOTS90YlQrTzBGTW82RXhocmdxRkhwdVdRQjhhTEZSOWVL?=
- =?utf-8?B?eTRVajZVVjNJM21Ma0FCbWVyZW5pOEV0Wmk0QTRRQjNQRkJISW1rUXVIcVR4?=
- =?utf-8?B?VmthMGZ4b2xLajROWmwwY0QxeWg1MExZSDZlQ0hMZU10OHlyeGc1N3JTVVRH?=
- =?utf-8?B?UHdVdERWcjN6bzRWeDAveUhYVHdZVDkwRElOc2xUdlhXeWQ1YW0wa3l4TW10?=
- =?utf-8?B?bUxrZ29va21hQWpsVjdXSFRFVHZyUUNtYk8wTnBsenRHdk5GQnhTaUw3aEx0?=
- =?utf-8?B?VFV3Y2ZwWFZSelhhSFczVGF1NVkxalRaRWVsWkdXanNHT2N6SlY0UFlkbDk4?=
- =?utf-8?B?dHZ2TlliL3dXZm5yQ1NwS3VzYVNlK25LSy9PTXFtYlVXRXJYaXFxcGp3WDYx?=
- =?utf-8?B?UStDaEduME9mQVFDUW1WWjAveXAxb2h2aWZUbDQ1bVpHbkdBK3daUExNbzhp?=
- =?utf-8?B?N080WTRCSEdzZi9CVG1Gb3NaZUk4VytuR2dzZ0V2WGUwaytrQnVDRnJVV2ZJ?=
- =?utf-8?B?bG8ybUJhazNXbzhhOXNlalpMamhJUnhYazlXdXh2VmNwTFJTaGpNdlNwSzMx?=
- =?utf-8?B?OGFmUG80MlFGZFZ2V0xqQkJEaGdRNC81R2VtaGVMSExTa3pMMURvYUdmT1cx?=
- =?utf-8?B?emZKZTcyUU96aFlMS21VMWRzNm5UMUowZU5WQU1rcEovRFhzQ2ZkRnAvV1Jw?=
- =?utf-8?B?MTg5eDFveVZSQnhpNDRlMWYrSGw2K3NtU1paekpnNThLWFQ4Q2U5ZThXUmhC?=
- =?utf-8?B?RkpMUm4rZnI0TFNJVnBrcDN1dWJWaGVHT1oxS1RYNFM3Uzl2MVNKWlVQaGZP?=
- =?utf-8?B?OHQrb2JiRFhoTjRlVjUwTWgwRTU4QzR5QzEvNks5OEY4NWRrcFl2NWdWenNq?=
- =?utf-8?B?K2xmQWRSQVRFMklNaHQrMzdIUzlhKzFpdDA1L0VodExjTE9EQW5NYWJ6R0Z5?=
- =?utf-8?B?akdEMDd3TDVxQnJXL0xLSktFWTZZV3MvWTVVM29xdldLRWlCaENaUVFpTHVY?=
- =?utf-8?B?b2dZaDFOcU1aNkhJSFBDSURjU1Y4eUtwZ3VWN2cyRjdDdFBNWnRYVi96UXNn?=
- =?utf-8?B?dlViSGtLcXV5aTd6OTZiVExrK2U3c2c5UEUxVmZibVlmKzVEUlQvNUdDbmRm?=
- =?utf-8?B?ZU9aUFZHYStxbTZJbENjdWdJZitFZFFZbi9zWnZzZnhISTgyMFFoTXdLaDFX?=
- =?utf-8?B?c25WbTEyRWxxOWY0dTgxaHhERG9xVm1GQU4wQ0V3Vkx3T0U4RVcxR2t6MWJC?=
- =?utf-8?B?SkM0U1JvQnhlVCt0UnZXa3Y4KzEySjBpRVkvU2NOMTQ5alJPSDl6cXpwRklH?=
- =?utf-8?B?WFN5ekc3aTV3UWxyaGhsRjhIa005eXpUTzVyeDh3Vmpza0VRcE9OWDZZcExH?=
- =?utf-8?B?aktxK0pjWk1NUFlQK0FSNkoyTU5DRkNyK08vOEFPUFBEQmFTeFZXaUVlUyth?=
- =?utf-8?B?R0U3a05Ibm9pUGtTWFFaa2YxM04xV1JNeFUyR3FRbWdTWDNZSkxpMENMZklx?=
- =?utf-8?B?TFdjcGVEQW5Obmx3QkRUQWN0VWlTR0xTRVFLYkM0RDFycXg1dVcvNFFzdjdp?=
- =?utf-8?B?WXZmOVROY29TaVhpRndLVWFHMkcwYXp4R1MzVmhxV0FWWGo4b1lDRUJkMlc0?=
- =?utf-8?B?TEgxdTE5V0hCVFZqNkw0Ri9aeC9KdUk3S044TDk1RU5ZU3MzMm8vMUNpNm5r?=
- =?utf-8?B?Y21GRG1Ub3pqbWRkdC9lR1J6T2Izb1FsSXBVWTRId2FQNzE0U1ZQdU10WVBU?=
- =?utf-8?B?ZWkyMnVjc3Jhby9WRWtKYk4vdk9pdkJYY1JRMkZrSSszK09nTnFrZHhhUlFJ?=
- =?utf-8?B?RThmdWQrMEVWVVd4VUVZR09MdTRZeFdjUkJaQlpkZ2FIWmxBM0tDYVNHaXlS?=
- =?utf-8?B?UnF3VXNaRVBhQWIzRm5tTU1HdlNHTzMyUEZQaGJ3R0VoSnBzejA5STFYRW5q?=
- =?utf-8?B?YjlXdVVjZDAyS3dFdE05MHJsWFBHbjk0T3RwZWtWNDRZOHo3aHhFejdKWUFq?=
- =?utf-8?B?dDZ2dGIrWHVZRERLalRDT0ZXTktSSnFZR1gyYjdRaUpseHh5WFVza014R2xz?=
- =?utf-8?B?WWROQ1dSdExVZk5BbFVnWUhGcjB1eFpucDZBNUw3aWhENTVmQyt0c0QrYWxH?=
- =?utf-8?B?TEE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23f38aa1-81af-44fc-dc17-08dcde482d59
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 16:27:56.0657
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BWbg4Rw/C3/YXuyWQvYFcmg56z3ZWA3KLjktpFK874jI0myLi2tEZ8TqjLaAjqmh7d49KFJQYJBy3MslOOj4XZXAE99VXtRYXgB2imB/RJY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6767
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 3/3] x86/bugs: Use code segment selector for VERW
+ operand
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Uros Bizjak <ubizjak@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org, x86@kernel.org,
+ Robert Gill <rtgill82@gmail.com>, Jari Ruusu <jariruusu@protonmail.com>,
+ Brian Gerst <brgerst@gmail.com>,
+ "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+ antonio.gomez.iglesias@linux.intel.com, daniel.sneddon@linux.intel.com,
+ stable@vger.kernel.org
+References: <20240925-fix-dosemu-vm86-v7-0-1de0daca2d42@linux.intel.com>
+ <20240925-fix-dosemu-vm86-v7-3-1de0daca2d42@linux.intel.com>
+ <5703f2d8-7ca0-4f01-a954-c0eb1de930b4@citrix.com>
+ <20240925234616.2ublphj3vbluawb3@desk> <20240926001729.2unwdxtcnnkf3k3t@desk>
+ <555e220d-7ff5-58e4-7ca8-282ca88d8392@gmail.com>
+ <20240926161031.dcohgbkbqs4bk32n@desk>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <20240926161031.dcohgbkbqs4bk32n@desk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Martin,
+On 26/09/2024 5:10 pm, Pawan Gupta wrote:
+> On Thu, Sep 26, 2024 at 04:52:53PM +0200, Uros Bizjak wrote:
+>>> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+>>> index e18a6aaf414c..4228a1fd2c2e 100644
+>>> --- a/arch/x86/include/asm/nospec-branch.h
+>>> +++ b/arch/x86/include/asm/nospec-branch.h
+>>> @@ -318,14 +318,21 @@
+>>>   /*
+>>>    * Macro to execute VERW instruction that mitigate transient data sampling
+>>>    * attacks such as MDS. On affected systems a microcode update overloaded VERW
+>>> - * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %cs
+>>> - * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
+>>> - * 32-bit mode.
+>>> + * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
+>>>    *
+>>>    * Note: Only the memory operand variant of VERW clears the CPU buffers.
+>>>    */
+>>>   .macro CLEAR_CPU_BUFFERS
+>>> -	ALTERNATIVE "", __stringify(verw %cs:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+>>> +#ifdef CONFIG_X86_64
+>>> +	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+>> You should drop _ASM_RIP here and direclty use (%rip). This way, you also
+>> won't need __stringify:
+>>
+>> ALTERNATIVE "", "verw mds_verw_sel(%rip)", X86_FEATURE_CLEAR_CPU_BUF
+>>
+>>> +#else
+>>> +	/*
+>>> +	 * In 32bit mode, the memory operand must be a %cs reference. The data
+>>> +	 * segments may not be usable (vm86 mode), and the stack segment may not
+>>> +	 * be flat (ESPFIX32).
+>>> +	 */
+>>> +	ALTERNATIVE "", __stringify(verw %cs:mds_verw_sel), X86_FEATURE_CLEAR_CPU_BUF
+>> Also here, no need for __stringify:
+>>
+>> ALTERNATIVE "", "verw %cs:mds_verw_sel", X86_FEATURE_CLEAR_CPU_BUF
+>>
+>> This is in fact what Andrew proposed in his review.
+> Thanks for pointing out, I completely missed that part. Below is how it
+> looks like with stringify gone:
+>
+> --- >8 ---
+> Subject: [PATCH] x86/bugs: Use code segment selector for VERW operand
+>
+> Robert Gill reported below #GP in 32-bit mode when dosemu software was
+> executing vm86() system call:
+>
+>   general protection fault: 0000 [#1] PREEMPT SMP
+>   CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
+>   Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
+>   EIP: restore_all_switch_stack+0xbe/0xcf
+>   EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
+>   ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
+>   DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
+>   CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
+>   Call Trace:
+>    show_regs+0x70/0x78
+>    die_addr+0x29/0x70
+>    exc_general_protection+0x13c/0x348
+>    exc_bounds+0x98/0x98
+>    handle_exception+0x14d/0x14d
+>    exc_bounds+0x98/0x98
+>    restore_all_switch_stack+0xbe/0xcf
+>    exc_bounds+0x98/0x98
+>    restore_all_switch_stack+0xbe/0xcf
+>
+> This only happens in 32-bit mode when VERW based mitigations like MDS/RFDS
+> are enabled. This is because segment registers with an arbitrary user value
+> can result in #GP when executing VERW. Intel SDM vol. 2C documents the
+> following behavior for VERW instruction:
+>
+>   #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
+> 	   FS, or GS segment limit.
+>
+> CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
+> space. Use %cs selector to reference VERW operand. This ensures VERW will
+> not #GP for an arbitrary user %ds.
+>
+> Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
+> Cc: stable@vger.kernel.org # 5.10+
+> Reported-by: Robert Gill <rtgill82@gmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
+> Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
+> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Suggested-by: Brian Gerst <brgerst@gmail.com>
+> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> ---
+>  arch/x86/include/asm/nospec-branch.h | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> index ff5f1ecc7d1e..96b410b1d4e8 100644
+> --- a/arch/x86/include/asm/nospec-branch.h
+> +++ b/arch/x86/include/asm/nospec-branch.h
+> @@ -323,7 +323,16 @@
+>   * Note: Only the memory operand variant of VERW clears the CPU buffers.
+>   */
+>  .macro CLEAR_CPU_BUFFERS
+> -	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+> +#ifdef CONFIG_X86_64
+> +	ALTERNATIVE "", "verw mds_verw_sel(%rip)", X86_FEATURE_CLEAR_CPU_BUF
+> +#else
+> +	/*
+> +	 * In 32bit mode, the memory operand must be a %cs reference. The data
+> +	 * segments may not be usable (vm86 mode), and the stack segment may not
+> +	 * be flat (ESPFIX32).
+> +	 */
+> +	ALTERNATIVE "", "verw %cs:mds_verw_sel", X86_FEATURE_CLEAR_CPU_BUF
+> +#endif
 
-On 9/26/24 5:54 AM, Martin Kletzander wrote:
-> On Tue, Sep 24, 2024 at 10:46:10AM -0700, Reinette Chatre wrote:
->> Hi Martin,
->>
->> On 9/24/24 1:53 AM, Martin Kletzander wrote:
->>> The memory bandwidth value was parsed as unsigned long, but later on
->>> rounded up and stored in u32.  That could result in an overflow,
->>> especially if resctrl is mounted with the "mba_MBps" option.
->>>
->>> Switch the variable right to u32 and parse it as such.
->>>
->>> Since the granularity and minimum bandwidth are not used when the
->>> software controller is used (resctrl is mounted with the "mba_MBps"),
->>> skip the rounding up as well and return early from bw_validate().
->>
->> Since this patch will flow via the tip tree the changelog needs
->> to meet the requirements documented in Documentation/process/maintainer-tip.rst
->> Here is an example how the changelog can be when taking into account
->> that context, problem, solution needs to be clearly separated with
->> everything written in imperative mood:
->>
->>     The resctrl schemata file supports specifying memory bandwidth
->>     associated with the Memory Bandwidth Allocation (MBA) feature
->>     via a percentage (this is the default) or bandwidth in MiBps
->>     (when resctrl is mounted with the "mba_MBps" option). The allowed
->>     range for the bandwidth percentage is from
->>     /sys/fs/resctrl/info/MB/min_bandwidth to 100, using a granularity
->>     of /sys/fs/resctrl/info/MB/bandwidth_gran. The supported range for
->>     the MiBps bandwidth is 0 to U32_MAX.
->>
->>     There are two issues with parsing of MiBps memory bandwidth:
->>     * The user provided MiBps is mistakenly round up to the granularity
->>       that is unique to percentage input.
->>     * The user provided MiBps is parsed using unsigned long (thus accepting
->>       values up to ULONG_MAX), and then assigned to u32 that could result in
->>       overflow.
->>
->>     Do not round up the MiBps value and parse user provided bandwidth as
->>     the u32 it is intended to be. Use the appropriate kstrtou32() that
->>     can detect out of range values.
->>
-> 
-> Great, can I use your commit message then?  I wouldn't be able to write
-> it as nicely =)
+You should also delete _ASM_RIP() as you're removing the only user of it.
 
-Sure.
-
-> 
->>
->> This needs "Fixes" tags. Looks like the following are appropriate:
->> Fixes: 8205a078ba78 ("x86/intel_rdt/mba_sc: Add schemata support")
->> Fixes: 6ce1560d35f6 ("x86/resctrl: Switch over to the resctrl mbps_val list")
->>
-> 
-> It seems to me like this should've been handled in commit 8205a078ba78
-> ("x86/intel_rdt/mba_sc: Add schemata support") which added support for
-> mba_sc and kept the rounding up of the value while skipping the range
-> validation.
-
-Right. That commit additionally suffers from the overflow problem by, after
-rounding up the value, assigning the unsigned long result to a u32 (struct
-rdt_domain.newctrl).
-
-I added 6ce1560d35f6, not because of the rounding issue, but instead 
-of it switching the destination of assignment to struct rdt_domain.mbps_val,
-which also happens to be a u32.
-
-I included both commits with the goal to help anybody that may be looking
-at backporting this fix.
-
-Reinette
+But yes, with that, Reviewed-by: Andrew Cooper
+<andrew.cooper3@citrix.com> FWIW.
 
