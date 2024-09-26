@@ -1,181 +1,115 @@
-Return-Path: <linux-kernel+bounces-341043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FC2987AB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:35:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 178DE987ABA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2C67283F5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:35:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF25D2858A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0039188719;
-	Thu, 26 Sep 2024 21:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E234D18873E;
+	Thu, 26 Sep 2024 21:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gvnfKl52"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ntYvYQ3V"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A5F18870F
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 21:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CC418870F;
+	Thu, 26 Sep 2024 21:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727386500; cv=none; b=Hyc+F7dRPN5nAZsO3n4ZDGVuGthkmhP+zgjSRQRlD65ZabW5211ZjiZUTfVd/9B1sELMoWgtnXX+njwtgjzuigG3URNK/c4DeWexHb6QkxCsO1+23QHDNNglY67YjIBnOl07j384ADCPr4wFoP0N0boEVWginPdnekP971nAjqM=
+	t=1727386525; cv=none; b=goQJBRrRmkqgtyjkuhqlNcfmLj145m638QfMynP66R43xq6hJqSxjzhA8mNlnbjBMWTuMILU4IVk3/QPtjSrXfnqFiq2HMebgSRVsQUs3mGhHBrNS4jgvbvo/xy4oBf2W2O2Td1+LceQFE4HnFVUeN2lwoBYmSqXToaT/Dy9xvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727386500; c=relaxed/simple;
-	bh=sXuVaKEonPIKosH2orXhpZe2Ha1PuBdnIKyXUyo1xxw=;
+	s=arc-20240116; t=1727386525; c=relaxed/simple;
+	bh=1/AF0ye1aEDqbRIMOiqu2UP5rEYyIqLBgduhnkT/Gq8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KFyraTs/g01ACrrVx3ripAtvSEnJANQ57H0UTYmPO09XazaEwVUAGVuqeWXWwJ7D5HQO7i+LtMhlBsVA4B3Ck2+8H2d+yN/+mcxdJ+cOUroZdmoc8qGm07Z+bDDDsfr5Y/5g4+grsEkFM91Y6l2TtGf/uOifiLObgAPyUQgNLBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gvnfKl52; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a2769d774cso66865ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:34:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=HBJfh/5Z7VEQxAgZ34fM/Fcum9KV9uRA4YIPjdwVhv1SKHj5FlBKtaFrY9UklpOXb6tj9a24Ppj0UNskaOvLs1phEpW4M0T3GA05X3E3GzoES+ZHys+EPON/W5TX4FRw1SnZ4EYkHV1ZwW9wX5nfulw3klh0rZgUbhtG3nAQFJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ntYvYQ3V; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e0b467da03so91493a91.2;
+        Thu, 26 Sep 2024 14:35:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727386497; x=1727991297; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727386523; x=1727991323; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R3ys5pi3iJKdCNJc+dP6UG9C7uKed6bzhlzubnhFXj0=;
-        b=gvnfKl52SFo7RFvRzhZ9l36UJ1ABym2VriSGG6sX22RDBBDEBVUv9dRvMzURqeGOnh
-         cxBNagmMB+xHEywlCoUDDAR0awrkS2HKY+2ahVh5HK1Hniqcq7Ahq43kq1F2EoPbK6Vl
-         DFlQPxeSja7N1zeJBd82ANxzhtqA9EJOp28n2ueeZ/RgECY6Mjufh+tI6NqB2w4QOljV
-         oMrrYpMNb4xEjczUahwdeNBaWhhm90TKgKnVqEllUZRToPLzpyP1cBJfIa79fc4PQvEX
-         xphcXwk1FrfZ5+FXd4EyqQ4ASmC/6eW3NXtzYHAAElW0zUut8gtczylRQTlvnl9dvb7X
-         Tv4g==
+        bh=YN3ZIl0AHdW2Pc3ccHhFRbQ1ihSm5IEdT9WChsNSY6k=;
+        b=ntYvYQ3VzjrPQRjO0RTjOTbXP7/4NP5rjwPgNkr9vH/XeTJuyjkJQ6j8P1Q5+uxnST
+         F3wPdxptRRuXH4IYlyP+1oLBMPEpsloYKCpFimcgj0k4lN/GD1KdZTGRrH/xAwUoC1V3
+         rJPs6Qhurc32eEX7Nw6W0yg9ypx4H8Kn2SL2FF0rDnTsbAewQk6cqpJ0OzCNZ9fG7s2K
+         jkChH3VAIV2ScpQ7p6vD/ekIMTj99jeg/1W8R/4uC1LACZ3XKgZEkEjh99yXfdBqpnAL
+         uIKAImU9QAzLmdcHL1trZc/BPKjgl7Z0W/ek20wLJnfUeFDbJ/kOre9Cpwh2jgN/OLHt
+         egVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727386497; x=1727991297;
+        d=1e100.net; s=20230601; t=1727386523; x=1727991323;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=R3ys5pi3iJKdCNJc+dP6UG9C7uKed6bzhlzubnhFXj0=;
-        b=PPrK6GFokF8c69o9QdEiVN7UlN41WWiVh5zCHHqrC7VSCH0CVe0m1fizMkaVEoA0AN
-         R5znrUGvsJUZcJ69ZRbpBOTXybUlNcsJBr1jbjRdhHyXWzWLSOGuDdhV/6YT2ymjoSj+
-         5L8k3ASNdUMqxXeohEVAe0h+bUBO0PsRbhVzXgAoJ+i/3prJWYOuXeN/qmCvoO4MwWXm
-         rxb6kOGLupzbQMdBNx+YsRPr37Fu0ChuEVfE5qb2J3/4vv7XYjk07/htKTDdUJsjqTJ6
-         QL5UY1ce79y3vpZJKmUhFoP9ywACt3pZzZfjyvWazad3EswcLZWmKsVp7tG0AAqwhYUM
-         nt7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWvbCazqttyd7WAW9OXjwlv1LstwG+ADuhNMqal8Iij4JwvQH8FO7NxPCRJi09wiHCd+SCLlhl3HVdLCKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyyubdj4AwlJaaavesRkjHXAnR7CK+4h1uCzE6DpLqBWaxAxI9F
-	4XC6yZsQ7yjzWaECWConLuj6VQYi6XPdh6s8/+DEAQBfTCMyhG7Nl+gP3QR4Q0tvCDm79cN1N4+
-	Xf2IXz1iiiQZ2hYlDyLTs7JK00U12lrYcfSyN
-X-Google-Smtp-Source: AGHT+IHKYt5N4DuFIgfp9EMxSz5/JuHxq92sIthoPP6ktmct3B7k9c3RHD41qO3fS+kr7PHhzEB5jCnfi3lNPUFvpWU=
-X-Received: by 2002:a05:6e02:1a6e:b0:3a0:926a:8d35 with SMTP id
- e9e14a558f8ab-3a346b6faf0mr279735ab.17.1727386497334; Thu, 26 Sep 2024
- 14:34:57 -0700 (PDT)
+        bh=YN3ZIl0AHdW2Pc3ccHhFRbQ1ihSm5IEdT9WChsNSY6k=;
+        b=nnmJKkgcACozVDSpFBzUMkQb5Y3qgChkkOHFmpcaO+WyoEmG2yQ/DJaaT+0E6OKhbL
+         4edl7pBfS0KSuCN4J17TXsxaCijX0wFOl1McewxcYnkjHlppDaDtIlmk7BeLqo9spMzd
+         GvQfWJWmckzL3ysFqmQAywMzd6OfMCvStz6XrMLPgqsx9qF7zAWvuUCxyMl7I4LO5asF
+         tY2iqMCX1KyOtyQXSAx70zzQ3QgQ3QFPJnt3mvVfTYp7DTTgIKuR5JjAdUGM1vIhG5rn
+         wAdcVhSIglqIO2ATJ+gekoA6j5ux3+Xp6qrTXWyeWX5Hr9kk6/60rCGS1ehKqpiZANFI
+         G0JA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDJ8RvVdvqtHN3lX1txbKSEmzjS+sQLqz6QZbKSBcpkEsBUAeUwf4nTqbN03vw4GXyiD9iQZArXil9IuPBiXw=@vger.kernel.org, AJvYcCUh1EnD+hD2C3vzqWv60QHnERNsPDZPvtTXZIO5sRiraXir9igXESaPEYdxkZd9i9XAYroDQMEZrC9cLvE6@vger.kernel.org, AJvYcCUidN0lHrF9iOqSPJ8IctwwAfwAs07OQfJTDdO/ZULHyFNBpvg0hyVrQCV6KMoggxOswxI=@vger.kernel.org, AJvYcCV5D5TsQSXjcHuycgk/6XXYltPQlUyoOj0RhDcW5nuV2PC/tj/Q2JUE4o2CUQJvBvD97N7k7sFVZCk9WEHGDPyghQ==@vger.kernel.org, AJvYcCVOLC6+65mOqcNjHRp1+tV/XssjpTX8h+9F4YBiY8/h9aWXzBKFdg2eK7772upIEAdFSiQJEmnzVgkk6g==@vger.kernel.org, AJvYcCVsqpEA1X34JgSSy+zWUs7+fSAIlED2wx+FoF0zXBxfBa0ReVabMdfI1p7J84be8lizTJ6y/uqbQToD@vger.kernel.org, AJvYcCVyOHlVKllui6A90Q42IfKbLrvLtdZnjC+4kVdVZSOG4aRB5tquRkPsdIouUdZ5cjLcKniIJa85fW8=@vger.kernel.org, AJvYcCWIeHXSn79E1pba2uaZgabrN6egSq3hKQJvvQyqA0ncZ3poR1endScJFmYMlQD9tOmBDQRNsnt7bGe0@vger.kernel.org, AJvYcCXTmNdlSb1QBFTlgk2/mbOW9A2NT3p8kXvs3x58YZP4/N+DnfQhUq/gJiG6xW7mj8KHqe8jHlQq55VTo3hn@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCTZ3zsxEiGOsdmhyvylg0pTMM/FgSGOmCyMfxDfM9CSVwTjhW
+	AAPO1FdxgZ+AUbsMCKMSJLJBPk64IXPEa9Zxwq805/7NayLOfWOsl5gSodJeflPB/OilgtRCS/O
+	Gj38jwHBTYzU7aYb/AVVUkzDXAIw=
+X-Google-Smtp-Source: AGHT+IFP+qclc+DwNk0VcbiLZGtyseD1sfEmeyqBVla3e/ZDfuly9waYm3g7wRqfrKuy03nGqriwsOXLp8FvWSa4ibk=
+X-Received: by 2002:a17:90b:3698:b0:2db:60b:eee with SMTP id
+ 98e67ed59e1d1-2e0b8ed348emr498104a91.9.1727386523117; Thu, 26 Sep 2024
+ 14:35:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716132951.1748662-1-kan.liang@linux.intel.com>
- <CAP-5=fVZVU7kMOHz7CC7O1+2dX844dHqhqMebzEKWMA=59am-g@mail.gmail.com> <Zqo8kVXkN_UaTp6f@x1>
-In-Reply-To: <Zqo8kVXkN_UaTp6f@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 26 Sep 2024 14:34:43 -0700
-Message-ID: <CAP-5=fX=QR66nQ6VKRMFfiFdueiC1EUGmxSbT9RCkW8dz67e6w@mail.gmail.com>
-Subject: Re: [PATCH] perf jevents: Don't stop at the first matched pmu when
- searching a events table
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: kan.liang@linux.intel.com, namhyung@kernel.org, adrian.hunter@intel.com, 
-	peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org, 
-	kernel test robot <oliver.sang@intel.com>
+References: <20240925150059.3955569-30-ardb+git@google.com> <20240925150059.3955569-32-ardb+git@google.com>
+In-Reply-To: <20240925150059.3955569-32-ardb+git@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 26 Sep 2024 23:35:10 +0200
+Message-ID: <CANiq72=z6A=50QO3V0S3Kgx6XQT93GxbB_LN6PFAQCmNgy370A@mail.gmail.com>
+Subject: Re: [RFC PATCH 02/28] Documentation: Bump minimum GCC version to 8.1
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Uros Bizjak <ubizjak@gmail.com>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Christoph Lameter <cl@linux.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Keith Packard <keithp@keithp.com>, 
+	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-doc@vger.kernel.org, 
+	linux-pm@vger.kernel.org, kvm@vger.kernel.org, xen-devel@lists.xenproject.org, 
+	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 6:31=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
+On Wed, Sep 25, 2024 at 5:10=E2=80=AFPM Ard Biesheuvel <ardb+git@google.com=
+> wrote:
 >
-> On Tue, Jul 16, 2024 at 09:30:01AM -0700, Ian Rogers wrote:
-> > On Tue, Jul 16, 2024 at 6:29=E2=80=AFAM <kan.liang@linux.intel.com> wro=
-te:
-> > >
-> > > From: Kan Liang <kan.liang@linux.intel.com>
-> > >
-> > > The "perf all PMU test" fails on a Coffee Lake machine.
-> > >
-> > > The failure is caused by the below change in the commit e2641db83f18
-> > > ("perf vendor events: Add/update skylake events/metrics").
-> > >
-> > > +    {
-> > > +        "BriefDescription": "This 48-bit fixed counter counts the UC=
-LK cycles",
-> > > +        "Counter": "FIXED",
-> > > +        "EventCode": "0xff",
-> > > +        "EventName": "UNC_CLOCK.SOCKET",
-> > > +        "PerPkg": "1",
-> > > +        "PublicDescription": "This 48-bit fixed counter counts the U=
-CLK cycles.",
-> > > +        "Unit": "cbox_0"
-> > >      }
-> > >
-> > > The other cbox events have the unit name "CBOX", while the fixed coun=
-ter
-> > > has a unit name "cbox_0". So the events_table will maintain separate
-> > > entries for cbox and cbox_0.
-> > >
-> > > The perf_pmus__print_pmu_events() calculates the total number of even=
-ts,
-> > > allocate an aliases buffer, store all the events into the buffer, sor=
-t,
-> > > and print all the aliases one by one.
-> > >
-> > > The problem is that the calculated total number of events doesn't mat=
-ch
-> > > the stored events in the aliases buffer.
-> > >
-> > > The perf_pmu__num_events() is used to calculate the number of events.=
- It
-> > > invokes the pmu_events_table__num_events() to go through the entire
-> > > events_table to find all events. Because of the
-> > > pmu_uncore_alias_match(), the suffix of uncore PMU will be ignored. S=
-o
-> > > the events for cbox and cbox_0 are all counted.
-> > >
-> > > When storing events into the aliases buffer, the
-> > > perf_pmu__for_each_event() only process the events for cbox.
-> > >
-> > > Since a bigger buffer was allocated, the last entry are all 0.
-> > > When printing all the aliases, null will be outputted, and trigger th=
-e
-> > > failure.
-> > >
-> > > The mismatch was introduced from the commit e3edd6cf6399 ("perf
-> > > pmu-events: Reduce processed events by passing PMU"). The
-> > > pmu_events_table__for_each_event() stops immediately once a pmu is se=
-t.
-> > > But for uncore, especially this case, the method is wrong and mismatc=
-h
-> > > what perf does in the perf_pmu__num_events().
-> > >
-> > > With the patch,
-> > > $ perf list pmu | grep -A 1 clock.socket
-> > >    unc_clock.socket
-> > >         [This 48-bit fixed counter counts the UCLK cycles. Unit: unco=
-re_cbox_0
-> > > $ perf test "perf all PMU test"
-> > >   107: perf all PMU test                                             =
-  : Ok
-> > >
-> > > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > Closes: https://lore.kernel.org/all/202407101021.2c8baddb-oliver.sang=
-@intel.com/
-> > > Fixes: e3edd6cf6399 ("perf pmu-events: Reduce processed events by pas=
-sing PMU")
-> > > Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> >
-> > Awesome sauce, thanks!
-> >
-> > Reviewed-by: Ian Rogers <irogers@google.com>
->
-> Thanks, applied to tmp.perf-tools-next,
+>  Documentation/admin-guide/README.rst | 2 +-
+>  Documentation/process/changes.rst    | 2 +-
 
-Did this get applied? I'm not seeing it in perf-tools-next:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/lo=
-g/tools/perf/pmu-events/jevents.py?h=3Dperf-tools-next
+This should update scripts/min-tool-version.sh too. With that:
 
-Thanks,
-Ian
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
+
+As Arnd says, the cleanups can be done afterwards.
+
+Cheers,
+Miguel
 
