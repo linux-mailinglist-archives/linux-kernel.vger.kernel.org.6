@@ -1,138 +1,148 @@
-Return-Path: <linux-kernel+bounces-340707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB979876E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:50:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43719876EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D70BB23286
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:50:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 640F12818B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D782206E;
-	Thu, 26 Sep 2024 15:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA028156C74;
+	Thu, 26 Sep 2024 15:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BKqJIntv"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="qCMQJyI1"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148D713B5B4
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB93A14B086
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727365795; cv=none; b=rryjUWzmwElByIzn0Mp4+PNCJvX/bELHgy7SYTxdkUuZ3JI/4QDNNPdbGw6xKGjenS5j/9cikkMlB8z3cbgnVR7sn87Wc2sqUBmJWWaCyWVgFpW4kRcF+wO9gMHcecasgnRujseNEP4hT2Ol43J/tqJpSs+QQBoUDbjW7cYQcXw=
+	t=1727365848; cv=none; b=IPpz/qW9Rbdf6Eq4WY/nwd0NCCQ2kQDPVLEt2TDxZZY4Gs+q12PBdjfAhNANWEqYh8PPxbrwoeoxXJURN30PZh1aW9ip0Ii6C3/iO7CjDX1Y4BKk9GDkKhZEIMyBYuwsgsxvies58I4mSW7MkqF6wJj5sZceFhhMLUp9xh135yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727365795; c=relaxed/simple;
-	bh=w14sq6XUk0SsNzgK6mSSVRdxP/9svZ9tMx+UgCkG04M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dZSLnfY40kekac/ujHcK19GCinb6R1IFc8Ees6iP5VrT9p9m47cxDJbv1VzK1P2XGIZaY9uamneB2gA82th7vK5thxCz+AI3GUtqL7vabsZUOk3V+XTunBFbFaJKLKbJQ9Mjpgthv6JkqvHxZ0wHGT3OtL09+dmX7aPF8GWM5y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BKqJIntv; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e25ccd64be9so967209276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:49:53 -0700 (PDT)
+	s=arc-20240116; t=1727365848; c=relaxed/simple;
+	bh=IX0EuvDMjTW+YNQmUoVlvdmyaeGBf+T2lnX/5x4GabA=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AcRIyhyjFk+Chqa8/YD1mHEX2fJu3Mb6eAjUQthH7h126uz60Ebi3gVlIurtd9yObIrCnH60ibTsKokzsX665ncl28xJnPA2F1UYIThshC2HeeKz4f5GkAxU5+/MSBxq33NFO7kz58mcQgb/bYg2uPO3XgjEK824AZOLHIcrGEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=qCMQJyI1; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7191fb54147so868224b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:50:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727365793; x=1727970593; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=q/C6W+i03PB1ReYtpl5/qyhBiUgWpLGUr9VE1GQJcEg=;
-        b=BKqJIntvXVws/7R07F/j1FCDPj6qOhKIpd2KmHUBJcuxaUWEVjjEo5dgDkZDgZCv+V
-         2cO5x/OUEKRKZ2Vu0b0jaqAMA4donXKuj0/fFGC71k4IcRAy1mH0oP/5lIJOW+CZo3ad
-         V34y+/BkWraJHHk9qr6uRr+JIN342aBSHSFw+zBvQ6WHqyRyK2om3lQUryeCrQd2MZwt
-         EdKkSQr+jB4M/JRiIayMxqjJnuGlCOq5XKURAFFvMsfjj4qZidLlKNOlXwrBHtk0/HIW
-         uy9lOl/tDUs7pWlcJBFNRtU4+nSidi5Hs4ylXld0uclgPazBRrgrUFGM1E3ZSxtbSsWO
-         lVIQ==
+        d=fastly.com; s=google; t=1727365846; x=1727970646; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4497cyjKPRI1PPIEvp39I++CetYP4FngtyziYodhtfk=;
+        b=qCMQJyI1GDf0SH3eEx37kOU3qJBk233wTdGaXJkCCahOpjB5jTy7dH24xjtojwdACV
+         rcYSw4DpcB8CLxk8u0Za/YQDHIWqjTq/lAmCGj7WFK/2orfC+z7nkEZGw2dAwtohOKop
+         2E2sAQiK4VaUwtx+GYb/D69D2KiIovJdCKz6E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727365793; x=1727970593;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q/C6W+i03PB1ReYtpl5/qyhBiUgWpLGUr9VE1GQJcEg=;
-        b=egYorDfu5x3n4qIfFpZloxhShZV2ijbe78GiXeFOiNsteEY1ofqPdv0lMD5A8qqK0w
-         35A8lSNZbbYGb6Vact7QwsLnvx551db/KjgedXg6Oj9L0R/Ty8L73CmIl/Y2vEene0A3
-         QGCpho4cI3212IWjkvOMR8BeC3jD6x+9JkMzcG8qAuGflW4acb+lcm4RWC51YTyn4M8x
-         YFMy+mHg6vh/Ac25uz8XGNmqlMWzaPUl/+y/+cTSRWtbvNqLFK+yyZ9DFT5YQNjNqHD2
-         P9kPRTP9IcazLJG8hcLfTZ0JsPAb4AxpAN+4ZLjK3IBRXUYKZ1z9z7tEpiavXfX39JWH
-         MTEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdRhMHEYywcFCjWGbDRKo0IdQW32mrzAPox5AWar+1x/fY/D6rYuHUteoJJkkMB5z7UfmslYddaoD3dZw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCa0jA8PjBYdX3ULb9el0NVp1IvroF7kucAruTpeH2MPJgMnlM
-	pXIUjGZNsNkgzynt1zEK9NBNkOmZipvWgSPEAc4SpHd13ViMfPFoK0Ub0hBcgbj/1MVxg2pRVd1
-	ieLzogEjVJ8tH4I4JFF69palAutAMYbqbEsDzmw==
-X-Google-Smtp-Source: AGHT+IFqqGJreMRNFfnsSuthz64Gd/N9P25tYQ9qT6LFx4CM65znxx9CuUuNf/VeLj3Ht2p1xv5M9snqdM0j4M8TDec=
-X-Received: by 2002:a05:6902:2583:b0:e25:e2f5:38ce with SMTP id
- 3f1490d57ef6-e25e2f539e1mr696097276.37.1727365793039; Thu, 26 Sep 2024
- 08:49:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727365846; x=1727970646;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4497cyjKPRI1PPIEvp39I++CetYP4FngtyziYodhtfk=;
+        b=NZlE0xQydTwvS9jBS4RxmqYigO1Zegky+B+2/VMni9QjbTtJDkBysD1hmSM9fxP57J
+         Bc+52CnRA3oCt9+fkifXQ2CfRPBmkKwgzc+id4Z8yrCpwfuxqPbgHTN5FSiioPhSu4H7
+         RxBTvy7PXj1KpPG6Day8he8byXmCKi54i0BlVWQ8RU0Fpe/OFVzSJk1MnGN3LgfCFI7z
+         PSMJCOjjNu2Xv7BjFVKyZr6QpyPdrWKL1GXeHnML/DSWMBafWwTftt/YirjyZjeuQwWV
+         zAU1lpWot+Ii2TZLJgUW2MlWXn6VfIzmOb39oBCQS9HoZ+PcYk4R+uvT6Gw0sf9ihbCD
+         ofJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZYbL/S1xyHUUUpRlOMu8Z/xqfjTrYzKzCZHaQ/kyAl3bLuTLXrifkdkZhSLhlTY693zBCNn1wVTb8edY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdezmJE2R9VhYXZWCKpj5EoideiOAnzHIg89cBxOwumVbBXDWU
+	eh2J2ABevIvieJn4zpgfY0T+fZAtP57cgvHeZzxZGWuf3iJz8TUvDEfdwzHRD+k=
+X-Google-Smtp-Source: AGHT+IEkQhkhz8M9XhbdcUG2MNIeKwnGlhXroclU7cIvREbDFN+d/Ne8bE0fjVwVOeH3tYuVP+gwkg==
+X-Received: by 2002:a05:6a00:10d5:b0:717:8deb:c195 with SMTP id d2e1a72fcca58-71b2604937emr366312b3a.21.1727365845970;
+        Thu, 26 Sep 2024 08:50:45 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b2653717esm40742b3a.204.2024.09.26.08.50.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 08:50:45 -0700 (PDT)
+Date: Thu, 26 Sep 2024 08:50:42 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next 1/1] hv_netvsc: Link queues to NAPIs
+Message-ID: <ZvWC0mhTW-y--X3a@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240924234851.42348-1-jdamato@fastly.com>
+ <20240924234851.42348-2-jdamato@fastly.com>
+ <20240926151024.GE4029621@kernel.org>
+ <ZvWA6BjwVfYXnDcA@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925093807.1026949-1-wenst@chromium.org>
-In-Reply-To: <20240925093807.1026949-1-wenst@chromium.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 26 Sep 2024 17:49:16 +0200
-Message-ID: <CAPDyKFqoqppLipOG1vK-8oU_6cMdZ3DV5Gxqhs5-+7+cQJ6=qQ@mail.gmail.com>
-Subject: Re: [PATCH v8 0/3] Add of_regulator_get_optional() and Fix MTK Power
- Domain Driver
-To: Chen-Yu Tsai <wenst@chromium.org>, Mark Brown <broonie@kernel.org>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>, Johan Hovold <johan@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Pablo Sun <pablo.sun@mediatek.com>, 
-	Macpaul Lin <macpaul.lin@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZvWA6BjwVfYXnDcA@LQ3V64L9R2>
 
-On Wed, 25 Sept 2024 at 11:38, Chen-Yu Tsai <wenst@chromium.org> wrote:
->
-> Hi folks,
->
-> This series is split off from my "DT hardware prober" series [1].
->
-> Changes since v7:
-> - Added stub versions for of_regulator_get_optional() for !CONFIG_OF
->   and !CONFIG_REGULATOR
-> - Added new patches for devres version and converting MTK pmdomain
->   driver
->
-> At ELCE, Sebastian told me about his recent work on adding regulator
-> supply support to the Rockchip power domain driver [2], how the MediaTek
-> driver has been using the existing devm_regulator_get() API and
-> reassigning different device nodes to the device doing the lookup, and
-> how the new of_regulator_get_optional() is the proper fit for this.
->
-> Patch 1 adds a new of_regulator_get_optional() function to look up
-> regulator supplies using device tree nodes.
->
-> Patch 2 adds a devres version of the aforementioned function at
-> Sebastian's request for the two power domain drivers.
->
-> Patch 3 converts the MediaTek power domain driver to use function.
->
->
-> Each of the latter two patches depend on the previous one at build time.
-> Mark, would it be possible for you to put the two regulator patches
-> on an immutable branch / tag? Otherwise we could have Ulf ack the
-> pmdomain patch and merge it through your tree. Sebastian was fine
-> with converting the rockchip pmdomain some time later.
+On Thu, Sep 26, 2024 at 08:42:32AM -0700, Joe Damato wrote:
+> On Thu, Sep 26, 2024 at 04:10:24PM +0100, Simon Horman wrote:
+> > On Tue, Sep 24, 2024 at 11:48:51PM +0000, Joe Damato wrote:
+> > > Use netif_queue_set_napi to link queues to NAPI instances so that they
+> > > can be queried with netlink.
+> > > 
+> > > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > > ---
+> > >  drivers/net/hyperv/netvsc.c       | 11 ++++++++++-
+> > >  drivers/net/hyperv/rndis_filter.c |  9 +++++++--
+> > >  2 files changed, 17 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
+> > > index 2b6ec979a62f..ccaa4690dba0 100644
+> > > --- a/drivers/net/hyperv/netvsc.c
+> > > +++ b/drivers/net/hyperv/netvsc.c
+> > > @@ -712,8 +712,11 @@ void netvsc_device_remove(struct hv_device *device)
+> > >  	for (i = 0; i < net_device->num_chn; i++) {
+> > >  		/* See also vmbus_reset_channel_cb(). */
+> > >  		/* only disable enabled NAPI channel */
+> > > -		if (i < ndev->real_num_rx_queues)
+> > > +		if (i < ndev->real_num_rx_queues) {
+> > > +			netif_queue_set_napi(ndev, i, NETDEV_QUEUE_TYPE_TX, NULL);
+> > > +			netif_queue_set_napi(ndev, i, NETDEV_QUEUE_TYPE_RX, NULL);
+> > 
+> > Hi Joe,
+> > 
+> > When you post a non-RFC version of this patch, could you consider
+> > line-wrapping the above to 80 columns, as is still preferred for
+> > Networking code?
+> > 
+> > There is an option to checkpatch that will warn you about this.
+> 
+> Thanks for letting me know.
+> 
+> I run checkpatch.pl --strict and usually it seems to let me know if
+> I am over 80, but maybe there's another option I need?
 
-Thanks for providing some context!
+Ah, I see:
 
-In my opinion I would prefer an immutable branch/tag of the regulator
-core changes, so I can carry the pmdomain changes for MTK through my
-pmdomain tree, but also because I would prefer if Sebastian could make
-the corresponding conversion for the Rockchip pmdomain driver. If this
-can get queued soon, there is really no need to have an intermediate
-step for Rockchip, I think.
+--max-line-length=n set the maximum line length, (default 100)
 
-Does it make sense - or do you prefer another way forward?
-
-[...]
-
-Kind regards
-Uffe
+I didn't realize the checkpatch default was 100. Sorry about that,
+will make sure to pass that flag in the future; thanks for letting
+me know.
 
