@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-339957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D40D986CA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:37:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87AA0986CAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 150351F26F5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:37:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5F65B2550E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9829418952E;
-	Thu, 26 Sep 2024 06:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D72D189509;
+	Thu, 26 Sep 2024 06:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blmOmNvh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9YMxSAu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5911AAC4;
-	Thu, 26 Sep 2024 06:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3351AAC4;
+	Thu, 26 Sep 2024 06:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727332667; cv=none; b=DI/sTaB+TwaDKiRcciNhse4avey5ccAYMgD3tQ3UoW17yPrSVKREJ8fF4baE4fCBvRe87CT5phr5C/xtPb6LfdFRprpMRnVlrY447LeXsFlPLMROID0vQKIBO/eVR3tG3JrskPeWA4B4UVGSRzz0P+cDcUyv4poTln0zhPyajkE=
+	t=1727332856; cv=none; b=tMvzVFkht1UE9i+fHmAKA7gpTYo2dT2xSOkbJrJQiEJir3klPNamm5ay2W3WxhN2X+qCGU3WkkJQRa1icay+QZQJEgJlJUacnAkpz3eWPvkFmgjVK6HK6vQnX2ePeE6bj9mvI/n1Pgg7IXl7Wb1ouJIxuRfw8ImGCiaDLF2y63I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727332667; c=relaxed/simple;
-	bh=wOx3VDnN+2V5jk81bW4SKY4gtNi3PB26Lkiz+mCXQvc=;
+	s=arc-20240116; t=1727332856; c=relaxed/simple;
+	bh=SbNFfNGwz76DV7PUYKZJ2oHIFY3WANEOgbwiTTyYNvA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZkkWy8V2p/Ve2JKVPZB3KZoV4Gvk7QIAyHmssvoaEfhd0WhBAcK/48sbZLOAE52qAB2KKW8vQC0E9S/Ke5juinhbyc0GCCIupUOd7JK/cpNBSY1/Js33FCtrRaJghZKGSBwe7cyPnuYoJF3Il+f0kmIUsefKomsoauy3dJbnFQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blmOmNvh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 073FAC4CEC5;
-	Thu, 26 Sep 2024 06:37:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=g07L2/E8YuEmx9PO4ucCIBupTrkuvtb/6ds5d7dg+IkHJ9Egf7rx6ZIyEEFkI//xzeccZZ+m7DOlz3XB1R2Q5s9KDXVIILUnIaVwJidovayVXNTGbxPB7Nh5nfMBSYWZJN5eipEU1UHhJ3fHPv8qpWmKoHxffe2rkqglQPj9Ifw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9YMxSAu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 192A1C4CEC5;
+	Thu, 26 Sep 2024 06:40:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727332665;
-	bh=wOx3VDnN+2V5jk81bW4SKY4gtNi3PB26Lkiz+mCXQvc=;
+	s=k20201202; t=1727332855;
+	bh=SbNFfNGwz76DV7PUYKZJ2oHIFY3WANEOgbwiTTyYNvA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=blmOmNvhW6JmOiLUqwznaWXbNMXydDDV0n2TTTvP+qr5zFslhYUrZ9VazPfTNYUrG
-	 y/2QDRYPB/zoPYX3igZYY02ezQfrljlrw3u7zfVt7Hj1DJcsTqntprfWzc1LXReYlU
-	 YoEZq1Ht1F24fty55RN6q6RY9NpgsW13jRVWq/rn5q0gwiP8MsDvAQk2tP6w6vgpya
-	 wt6AAcWjPZmFDuZQa0i30ACYmEAJLijf8gDFzzITMzW9HELtnZguqSlz5cgeM+1daw
-	 tgYVXo/GS5drpRDCu9YHV41J0m8bKTGJtd9awjdOdypkfpDT5HlFEp1pgs9H5nr+E2
-	 oIfyLbxSQ7OpA==
-Date: Thu, 26 Sep 2024 08:37:42 +0200
+	b=G9YMxSAudiuPIPAJg0cwf1jq7LB1fyVWHKEhP/CqiS5O20EErccYVqZhVOLZGP38n
+	 xvX4256BJq4xS1QxOiJBDuWqHJnw/GcjPGn9HmrpV2rbUowf2sm0VTdfe3090RXRje
+	 51kKkKQ66lrczuLxOXsG+oI8fiJ2pz7DjO9ShxkV6rdlrPd8ZhL14Xp8jb/5RrOlbW
+	 x7oXBPE5Z7TGrbqJPDP7pp+YyBUut4Ki38Txq9AmzNkDUBh7vrJUfOsBvx03ny0nua
+	 h0GQ4E4AOf0iwe/G82jdeCE9uPXyADluldvs01ri+tc/XWkT+FOyiLc7ISyKWKlg4U
+	 W7dWTCyMZdwFg==
+Date: Thu, 26 Sep 2024 08:40:52 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, lee@kernel.org, sre@kernel.org, tsbogend@alpha.franken.de, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-mips@vger.kernel.org
-Subject: Re: [PATCH v5 5/6] mips: dts: realtek: Add I2C controllers
-Message-ID: <euqypyub7f3bd7wa7w6axdt6mrvmbvckptvrum2rou3ni6sqdf@ouwm7zjuarni>
-References: <20240925215847.3594898-1-chris.packham@alliedtelesis.co.nz>
- <20240925215847.3594898-6-chris.packham@alliedtelesis.co.nz>
+To: Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, quic_tengfan@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Xin Liu <quic_liuxin@quicinc.com>
+Subject: Re: [PATCH v3] dt-bindings: remoteproc: qcom,sa8775p-pas: Document
+ QCS8300 remoteproc
+Message-ID: <rch5bhvg2tghg4d2hqzlmwwibx4i3zrxmiisxzdfuwo7zmcmap@6n5x5sweddfu>
+References: <20240925-qcs8300_remoteproc_binding-v3-1-21b0c52b142b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,62 +61,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240925215847.3594898-6-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20240925-qcs8300_remoteproc_binding-v3-1-21b0c52b142b@quicinc.com>
 
-On Thu, Sep 26, 2024 at 09:58:46AM +1200, Chris Packham wrote:
-> Add the I2C controllers that are part of the RTL9300 SoC.
+On Wed, Sep 25, 2024 at 03:21:37PM +0800, Jingyi Wang wrote:
+> Document the components used to boot the ADSP, CDSP and GPDSP on the
+> Qualcomm QCS8300 SoC. Use fallback to indicate the compatibility of the
+> remoteproc on the QCS8300 with that on the SA8775P.
 > 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
+> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
 > ---
-> 
-> Notes:
->     Changes in v5:
->     - Update compatibles
->     Changes in v4:
->     - Skipped due to combining patch series
->     Changes in v3:
->     - None
->     Changes in v2:
->     - Use reg property
-> 
->  arch/mips/boot/dts/realtek/rtl9302c.dtsi |  8 ++++++++
->  arch/mips/boot/dts/realtek/rtl930x.dtsi  | 16 ++++++++++++++++
->  2 files changed, 24 insertions(+)
-> 
-> diff --git a/arch/mips/boot/dts/realtek/rtl9302c.dtsi b/arch/mips/boot/dts/realtek/rtl9302c.dtsi
-> index 80d9f407e758..56c35e8b8b62 100644
-> --- a/arch/mips/boot/dts/realtek/rtl9302c.dtsi
-> +++ b/arch/mips/boot/dts/realtek/rtl9302c.dtsi
-> @@ -5,3 +5,11 @@
->  &switch0 {
->  	compatible = "realtek,rtl9302c-switch", "realtek,rtl9300-switch", "syscon", "simple-mfd";
->  };
-> +
-> +&i2c0 {
-> +	compatible = "realtek,rtl9302c-i2c", "realtek,rtl9300-i2c";
-> +};
-> +
-> +&i2c1 {
-> +	compatible = "realtek,rtl9302c-i2c", "realtek,rtl9300-i2c";
-> +};
-> diff --git a/arch/mips/boot/dts/realtek/rtl930x.dtsi b/arch/mips/boot/dts/realtek/rtl930x.dtsi
-> index 89b8854596cd..2fb8461af575 100644
-> --- a/arch/mips/boot/dts/realtek/rtl930x.dtsi
-> +++ b/arch/mips/boot/dts/realtek/rtl930x.dtsi
-> @@ -41,6 +41,22 @@ reboot@c {
->  			reg = <0x0c 0x4>;
->  			value = <0x01>;
->  		};
-> +
-> +		i2c0: i2c@36c {
-> +			compatible = "realtek,rtl9300-i2c";
-> +			reg = <0x36c 0x14>;
-> +			status = "disabled";
-
-Usual convention is to have status the last. Maybe MIPS has different,
-so keep whatever is consistent in your case.
-
-Anyway:
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
