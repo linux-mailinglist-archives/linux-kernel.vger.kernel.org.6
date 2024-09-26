@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-339976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7898D986CDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:49:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E49986CDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F45C1F2486D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:49:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BF27B25AEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E4D18E35C;
-	Thu, 26 Sep 2024 06:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B9618C03C;
+	Thu, 26 Sep 2024 06:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Jc1DqtAp"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="DdvRyMbm"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF62C13D276
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7659418C013
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727333302; cv=none; b=rXbrOceCbr8kdtTCiuANxCw8E2/NRS0UgXFgG9XXgOqlPLlp5GSEeOH4EdjbtL0EodIxRgPGvEj9On4xzAxc+4WxceCodCt1U2LM59npyh92YBh0rTTdEmvrSUXgQjSkdojC+8B116Kg0w0wl2QBoJp1C44Jvj17p/jcUy0DO8Y=
+	t=1727333310; cv=none; b=NSruVibWd4q+skO7R0oPu9tc9HzRI8PrxC99teD+XLAbFCgy9x/1OCpY4NPcQLnrLvzOXPihd0bn06gLTb8awzYX7i1ElsM/bwiHmnCFf03nTL2M3mZgPi8TUjBKF7NzEtixVD/R7un3lYqU1gAqS9Xb29XQEey6//xmOJJfnZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727333302; c=relaxed/simple;
-	bh=KpepB6xnCL6q51Rr8wjzoDqqKsBPVm70U61A9qPEoYc=;
+	s=arc-20240116; t=1727333310; c=relaxed/simple;
+	bh=extMSNBrZETWpUQUJhKJu/3q7Zw4ufuaAk1jyXFXQTg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jUB61BhouImyNJ0jydJv1lLR9MqFFKEutnYX2C0Vk9R1EeMJqLwa4/Z6yP+1zGq7i1UnEeIj2TENbPTjqHPo/Wzzvopuj/ZQICUzq7fYPEUuIHR9OLIuMng6gUA2qdYtY8uc7RCZVeO+A7KKGSez1Hq8G/ZXYGshg7uqLXFY3Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Jc1DqtAp; arc=none smtp.client-ip=209.85.160.176
+	 MIME-Version; b=aUjiJlOL3U9aHmLMf63MuUrsWWkNUDmj/UtQdzBUStTzraftFcbEGjt1g+uGEU61gmVNc0WZO15Z+ZnS8uqiv0VpzF2QklTvMm2diyMWBaMolpvYUByc1CFORVQPaq1htLD4S2NrLvrMJfCp010BuE6MfyvQBzt5+7Wr4w5dQNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=DdvRyMbm; arc=none smtp.client-ip=209.85.222.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-458311b338eso4504891cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:48:20 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a99fdf2e1aso75144685a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:48:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1727333300; x=1727938100; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1727333307; x=1727938107; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wKWf8ZYo9tlbP3964sEqp7HhdDy32FNbDdGL8iSt+Ok=;
-        b=Jc1DqtApy/SbXyTgs0vmdhDWkpAG72ca1vOOMrZHwwaVMjvLCl62d1MS+lUBqV/7wd
-         b9staiftbiSvo61J+bDD7RMymty/bZHE55ZuT8stCiht/3BIO8NU/HyZEEHdnY24ewVD
-         Rc/p1hHIz0HVG2wIrLZ8jfSbfIRMtwfdcTWS+NJkDIJb8KspENIeNEy7WChbaTMybOnA
-         as7FJ1cqnmxdIbtCK+Q1o0aO/efy2jWHrhWpWVnkoefQ2GwWyhcmvyCsb8kXdIlOYMWf
-         Jizcnj+OMmALaNCshsrYw36RcY+3ko1AZ15s/cql6hSePm+HlBY30rY4jHo2ab1ZFwhE
-         zcKA==
+        bh=XK9xLAd1aeWWLl9nHV9gcamA18VQvE5iTgorpb3Ql3Q=;
+        b=DdvRyMbmuRpYlAWdqR7eSOgytLQTCWEIRd1lSnf2R8XLRjt8o7vD5p3k28/65dzuGi
+         HcsuBLrv5fS+Huw+440SfjyBxi+durdgb0OSdVQYR7m8hVM8IKedaTYOYF95hcBHcNjC
+         nu1NinOapX55OHGRbBZyR6j3mybcZn6LL4RmEAbI9qww1T4T+R4DhKpuTQlPplPqmu+t
+         tQzzrAI8mtw71U6BXnOi/BkDCc0D+izQ5sEFdTALYEKO2tFYiRmHPfib6BoaG78ghbAW
+         POw5duGX9JmT6SlM1Eb51uEjv/MlLjz+I2QLx6ogJmty8pUkUrASZJO9iT52PNXZ5LTZ
+         cZkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727333300; x=1727938100;
+        d=1e100.net; s=20230601; t=1727333307; x=1727938107;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wKWf8ZYo9tlbP3964sEqp7HhdDy32FNbDdGL8iSt+Ok=;
-        b=Rdrsc8FVcnH4wxTFAz1dB4YuPTcLKqgZaavTmoTEiyINisrKuOnHun+FYuFuywJpzy
-         ZEvgV3UHfveBrhsXqv/LBkOR4E6iyA9X7TyRmp33kcv7/AtJTg/pmhlcgI8opdFW+59n
-         PEqNLuhuQ69kYv96VHZgD3BAbFlJy5rgeAgyDV/9UCSPzi7x00MzABJz2SYYZhHa2NS6
-         G50U6RB4OrQq+XOiZLjLoBjZZ/xyRv0EXHB0lFnaTSaGRF7R8c8cvCFx3jyC2nMHhioc
-         H/iZu2UPSd3h/5VUn+IlLNRRjhNHFyCs5cddjOTlj8AAK9noHdBrP9KDhpmldtFnhPKS
-         Jg1w==
-X-Gm-Message-State: AOJu0YzC3SvLMA3klyNi4EuMiqcAtIcGbULL+nmhXk7OAQM7kgNRaLla
-	dPvqCPzrQT/fP4CiZ1YcCVcC1pWVdgwjrPGdimsxJcVEX+UbgK6ZV/F/bwVSkhU=
-X-Google-Smtp-Source: AGHT+IH0PykjARYOlhRdYD8Ei00ntSXkZvlp+w/DvL/wK29HFMzX/PK1qWz6iq3HMQhndU3PBLr5iA==
-X-Received: by 2002:a05:622a:51:b0:458:3e20:65d3 with SMTP id d75a77b69052e-45b5e06627amr81705351cf.60.1727333299714;
-        Wed, 25 Sep 2024 23:48:19 -0700 (PDT)
+        bh=XK9xLAd1aeWWLl9nHV9gcamA18VQvE5iTgorpb3Ql3Q=;
+        b=gPYR/JQd4Jzhntwma2ESDQyHfuJZbxEap8m17FUdoYb3JVMkD/MIZ23SWOWCgpQrM4
+         jcGyNT1WptMjXRWVezNFvMusioLTKbnDNN1YY86G4g8938pO1fO+Z7S385s4GvR6mIKG
+         DEzVf9Psoi4aaj48TTo2y2s2i4aLlAZ0nK3+xAwAWIHyFxh8/FsXkHeSPbWgJUKgZXZU
+         ePAah3AiHMpLOT7/hrfkk8nN1RdvOQ+o6M6TH4cpUYMLJ3GbaLpNgQ4r4F9ZmBqrJcNO
+         /gd/ZoB55mpDKb9D62Rqzy+pv77p3y+FCCLQ5uxFRFYFJljmPHi4QBh3q6UJaURgS5wy
+         jaWw==
+X-Gm-Message-State: AOJu0Yx2ycauafjM26dxd2uU0u/y+5GCq/ZUxSXMeRztW7VFNgJnmvMI
+	8JxgvWEZs+SNW8KDD2bvLb+AUobYT5bqEJhz51AzqNSRCsxLM2ZjQ1aXcMe4iXA=
+X-Google-Smtp-Source: AGHT+IHnYRThLjQtuqQ25g++f96or6jGXpOGKBOHjBYtOEzyfC2Zv3m6NDV/6g7eYEpePNjEvQY05w==
+X-Received: by 2002:a05:622a:2996:b0:458:37c6:46fa with SMTP id d75a77b69052e-45b5def2036mr66535021cf.28.1727333307294;
+        Wed, 25 Sep 2024 23:48:27 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.150])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b5257ff1esm23024611cf.38.2024.09.25.23.48.12
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b5257ff1esm23024611cf.38.2024.09.25.23.48.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 23:48:19 -0700 (PDT)
+        Wed, 25 Sep 2024 23:48:26 -0700 (PDT)
 From: Qi Zheng <zhengqi.arch@bytedance.com>
 To: david@redhat.com,
 	hughd@google.com,
@@ -82,9 +82,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linuxppc-dev@lists.ozlabs.org,
 	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v5 12/13] mm: multi-gen LRU: walk_pte_range() use pte_offset_map_rw_nolock()
-Date: Thu, 26 Sep 2024 14:46:25 +0800
-Message-Id: <7e9c194a5efacc9609cfd31abb9c7df88b53b530.1727332572.git.zhengqi.arch@bytedance.com>
+Subject: [PATCH v5 13/13] mm: pgtable: remove pte_offset_map_nolock()
+Date: Thu, 26 Sep 2024 14:46:26 +0800
+Message-Id: <d04f9bbbcde048fb6ffa6f2bdbc6f9b22d5286f9.1727332572.git.zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <cover.1727332572.git.zhengqi.arch@bytedance.com>
 References: <cover.1727332572.git.zhengqi.arch@bytedance.com>
@@ -96,46 +96,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In walk_pte_range(), we may modify the pte entry after holding the ptl, so
-convert it to using pte_offset_map_rw_nolock(). At this time, the
-pte_same() check is not performed after the ptl held, so we should get
-pmdval and do pmd_same() check to ensure the stability of pmd entry.
+Now no users are using the pte_offset_map_nolock(), remove it.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 Reviewed-by: Muchun Song <muchun.song@linux.dev>
 Acked-by: David Hildenbrand <david@redhat.com>
 ---
- mm/vmscan.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ Documentation/mm/split_page_table_lock.rst |  3 ---
+ include/linux/mm.h                         |  2 --
+ mm/pgtable-generic.c                       | 21 ---------------------
+ 3 files changed, 26 deletions(-)
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 749cdc110c745..bdca94e663bc5 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3375,8 +3375,10 @@ static bool walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
- 	struct pglist_data *pgdat = lruvec_pgdat(walk->lruvec);
- 	DEFINE_MAX_SEQ(walk->lruvec);
- 	int old_gen, new_gen = lru_gen_from_seq(max_seq);
-+	pmd_t pmdval;
+diff --git a/Documentation/mm/split_page_table_lock.rst b/Documentation/mm/split_page_table_lock.rst
+index 08d0e706a32db..581446d4a4eba 100644
+--- a/Documentation/mm/split_page_table_lock.rst
++++ b/Documentation/mm/split_page_table_lock.rst
+@@ -16,9 +16,6 @@ There are helpers to lock/unlock a table and other accessor functions:
+  - pte_offset_map_lock()
+ 	maps PTE and takes PTE table lock, returns pointer to PTE with
+ 	pointer to its PTE table lock, or returns NULL if no PTE table;
+- - pte_offset_map_nolock()
+-	maps PTE, returns pointer to PTE with pointer to its PTE table
+-	lock (not taken), or returns NULL if no PTE table;
+  - pte_offset_map_ro_nolock()
+ 	maps PTE, returns pointer to PTE with pointer to its PTE table
+ 	lock (not taken), or returns NULL if no PTE table;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 46828b9a74f2c..60a55b28cf679 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3015,8 +3015,6 @@ static inline pte_t *pte_offset_map_lock(struct mm_struct *mm, pmd_t *pmd,
+ 	return pte;
+ }
  
--	pte = pte_offset_map_nolock(args->mm, pmd, start & PMD_MASK, &ptl);
-+	pte = pte_offset_map_rw_nolock(args->mm, pmd, start & PMD_MASK, &pmdval,
-+				       &ptl);
- 	if (!pte)
- 		return false;
- 	if (!spin_trylock(ptl)) {
-@@ -3384,6 +3386,11 @@ static bool walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
- 		return false;
- 	}
+-pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
+-			unsigned long addr, spinlock_t **ptlp);
+ pte_t *pte_offset_map_ro_nolock(struct mm_struct *mm, pmd_t *pmd,
+ 				unsigned long addr, spinlock_t **ptlp);
+ pte_t *pte_offset_map_rw_nolock(struct mm_struct *mm, pmd_t *pmd,
+diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+index daa08b91ab6b2..5297dcc38c37a 100644
+--- a/mm/pgtable-generic.c
++++ b/mm/pgtable-generic.c
+@@ -305,18 +305,6 @@ pte_t *__pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
+ 	return NULL;
+ }
  
-+	if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(pmd)))) {
-+		pte_unmap_unlock(pte, ptl);
-+		return false;
-+	}
-+
- 	arch_enter_lazy_mmu_mode();
- restart:
- 	for (i = pte_index(start), addr = start; addr != end; i++, addr += PAGE_SIZE) {
+-pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
+-			     unsigned long addr, spinlock_t **ptlp)
+-{
+-	pmd_t pmdval;
+-	pte_t *pte;
+-
+-	pte = __pte_offset_map(pmd, addr, &pmdval);
+-	if (likely(pte))
+-		*ptlp = pte_lockptr(mm, &pmdval);
+-	return pte;
+-}
+-
+ pte_t *pte_offset_map_ro_nolock(struct mm_struct *mm, pmd_t *pmd,
+ 				unsigned long addr, spinlock_t **ptlp)
+ {
+@@ -372,15 +360,6 @@ pte_t *pte_offset_map_rw_nolock(struct mm_struct *mm, pmd_t *pmd,
+  * and disconnected table.  Until pte_unmap(pte) unmaps and rcu_read_unlock()s
+  * afterwards.
+  *
+- * pte_offset_map_nolock(mm, pmd, addr, ptlp), above, is like pte_offset_map();
+- * but when successful, it also outputs a pointer to the spinlock in ptlp - as
+- * pte_offset_map_lock() does, but in this case without locking it.  This helps
+- * the caller to avoid a later pte_lockptr(mm, *pmd), which might by that time
+- * act on a changed *pmd: pte_offset_map_nolock() provides the correct spinlock
+- * pointer for the page table that it returns.  In principle, the caller should
+- * recheck *pmd once the lock is taken; in practice, no callsite needs that -
+- * either the mmap_lock for write, or pte_same() check on contents, is enough.
+- *
+  * pte_offset_map_ro_nolock(mm, pmd, addr, ptlp), above, is like pte_offset_map();
+  * but when successful, it also outputs a pointer to the spinlock in ptlp - as
+  * pte_offset_map_lock() does, but in this case without locking it.  This helps
 -- 
 2.20.1
 
