@@ -1,200 +1,169 @@
-Return-Path: <linux-kernel+bounces-340508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724CD98745F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:24:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E6E987461
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B6B21C21677
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:24:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F0CE1F2108B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCC73B1A2;
-	Thu, 26 Sep 2024 13:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6599B3B1A2;
+	Thu, 26 Sep 2024 13:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="PaK2SFbV"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012051.outbound.protection.outlook.com [52.101.66.51])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cg1USL/m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6291CAB8
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 13:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727357058; cv=fail; b=ioFcEPBhTJJArTu1gRS7EoxOSVZeFrmh8wgDXCJR8grD5EoGwcJfWDNU6y/zPEJm7uo82mscvLrEXMYga33PJ4z3uIuUI2MK4H5e2VUkSZXsxjuVdhl1WKhuSZEZoG0mtHOkmZJBUi00JW5lgZ0hE0jEqrjGKQpMeGY52w8463E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727357058; c=relaxed/simple;
-	bh=5aIGlUiGXfAacJRHbZ9e3RhMP3qRKtIhXipdPoYli3Q=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Hc+j9venlHNggvbdpwwgj662OGy/5vQN7OeBqjRcKjL0sdsraNliaccYJNmEQ950PYxCZdJCLdLgJI28UFF/ozXppdYPlt9jo9e0iSnSpgXI68M+iN4yuaLliCSBEBivLLoXmldSGaefFrZcUhPjDF6Ibir/Bd/AHpgp5O8r+fI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=PaK2SFbV; arc=fail smtp.client-ip=52.101.66.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lAVtQLAxIzYOXnyMYOh4qqRhhEnS0TPfBmnEcHaCYeUpH8WoC4QFOb8usYMltiOl6WhnHYsWN1qumiX0b2zjFS35LGOmoDADuxWLItwgnxQMM+ji+niRLvH5TPqH0dUTSOkJgc0dDabIXGyxO6+sSLOCWN81XKWfxz9zzfUp4hfKhAaUJ3vy+NJtpZfFXsb3Rh/AqehpetzWLHm94vbDV/0seBIcov4nwl9flNJZSa4tIw2CObHoe2G3FdDSUgqKkAmLV/pY6BEZQ/xp6uwst3Ws/pIrzqCy48y8R1XJT9DR7+OTNzKWvOaAjH0zcDYWJQni248kWyRYBnN5SywVhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qOjxMfnROhx3hkUrh3ixB7iWQE98sdnn/RyVTTFuP6M=;
- b=BVgIuzjY0Fp/yhjQVQ4CqmGcWYRVpkNsUOiocL8h+Effp9juzfkIzSYdbYmEwYeU+IvF2U8ezgCwNevX6ma6doEYZCcPWbrVNJ8t8aQ6E4eEZXjbMNaZ+0wEjOx4A/+3rqkgvASwwnY49Cg357HvXYeVzGA+XA1PdiSHhjxGoHgNa0Osuuwhwc7GngWDY3IgN43/0NsvlgT4mkCecaYK93w2iHRAOHuHw91wYJFcN1+imdE6cbvaRe/4UIPFmpqpBgIKzMiJQHCIGkVQp5KbBLHWaQdIdzKYe+7aq9G8X51LBvANhpcpd2J2Rp1eI7ET0ID7cbR2l2o2irBMdVJczw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qOjxMfnROhx3hkUrh3ixB7iWQE98sdnn/RyVTTFuP6M=;
- b=PaK2SFbVeJk4AWcPmbytFp+mo6vUJNFVzJGT5i+7rYXMQaJR9tuczsIFekdX59VpMqed7zaxi8U6igGNXaYhkZ4tYnHap0kEOdx6CYN7yWOm96Z6kkwFh3F575MPnp4ZEwPBsSTHz9AkDG0fx4VSyY8Ximmrveg6Q73PPkhyyT8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AM9PR04MB8906.eurprd04.prod.outlook.com (2603:10a6:20b:409::9)
- by GV1PR04MB9101.eurprd04.prod.outlook.com (2603:10a6:150:20::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Thu, 26 Sep
- 2024 13:24:04 +0000
-Received: from AM9PR04MB8906.eurprd04.prod.outlook.com
- ([fe80::d379:5378:b1:cea]) by AM9PR04MB8906.eurprd04.prod.outlook.com
- ([fe80::d379:5378:b1:cea%2]) with mapi id 15.20.7918.024; Thu, 26 Sep 2024
- 13:24:04 +0000
-Message-ID: <050724b3-aed6-41d3-b2b4-18b90fbf0ad3@cherry.de>
-Date: Thu, 26 Sep 2024 15:24:03 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: rockchip: add attiny_rst_gate to Ringneck
-To: Jakob Unterwurzacher <jakobunt@gmail.com>
-Cc: heiko@sntech.de, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org,
- Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>
-References: <69f79284-b52e-496e-a286-d7e5ce3d90ce@cherry.de>
- <20240926132028.21910-1-jakob.unterwurzacher@cherry.de>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20240926132028.21910-1-jakob.unterwurzacher@cherry.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0209.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ad::6) To AM9PR04MB8906.eurprd04.prod.outlook.com
- (2603:10a6:20b:409::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C134819BBC;
+	Thu, 26 Sep 2024 13:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727357085; cv=none; b=lYO+SniutfgEMA9aB9ApNnuCwFAaz9ZxFv2VvFwm9pYqYVnhvvVh+klcCB37MBPYr79ZWbV90SVOr6aBXmFZSTQighsTJKcvUOxu6azILJZBNvcGCxgBqSfwPidjGVBD6qJCWM9GyH3zhJWTuKmFEAMwLYaTjPynikwF80et6R8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727357085; c=relaxed/simple;
+	bh=Ev17E6HPXrIHJ7KiVzlg4fQjIPKFzPlo86lB1LBlExk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mpIKSBcgOXypr6NN+4u+0GCBQDjcuhyVZfHaJLeSLEm2o/LsXKiHB+ejTnxjkvxiFJjj27txx7DCyA0ij6BBln5xoyMP6IgKHBjkUUw8EuAXvzLsUYHo6pYTE297KjVv4ZMoM3t5bKq+prnfrTdo7qRJUTKIvRKBbHUsp2wp1Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cg1USL/m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F14C4CEC5;
+	Thu, 26 Sep 2024 13:24:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727357085;
+	bh=Ev17E6HPXrIHJ7KiVzlg4fQjIPKFzPlo86lB1LBlExk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cg1USL/mXifPqA4Z1NOvsq+zHXfVpI2bTeRIDkUWo2bABYniXHcmWIUt9ViZCHysJ
+	 DxFBnIXXo9OuWcRNmcSlp7YGQFemv2X5g3k72HpE9i8uKNXAzmRthE9eeu3JAhHX//
+	 aOPtGZ7vxPtoTgC5sxiXml54vy8MuMx/6SPPqUYM2kupjT+7ta1NcsaXdbtZOQ/sW+
+	 TkW/tB7jhX2Q1mCWVL4c9I4P7tvMGcwz6VlVK1B/oyGxAaP8oMgkIoLMmd3/xkZP9Q
+	 2jPmsE0J+pkjLrMx/4/+AVP77eBj4d/p10+60+wQpPGZDRXD8F/x0W1/ZAKy8NGOcn
+	 aMGI/5y2gYzHQ==
+Date: Thu, 26 Sep 2024 15:24:26 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v7 04/26] rust: alloc: implement `Allocator` for `Kmalloc`
+Message-ID: <ZvVgimoQPoL1trmJ@cassiopeiae>
+References: <20240911225449.152928-1-dakr@kernel.org>
+ <20240911225449.152928-5-dakr@kernel.org>
+ <15f42ddd-b011-4136-b2e4-bc266fab25b6@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR04MB8906:EE_|GV1PR04MB9101:EE_
-X-MS-Office365-Filtering-Correlation-Id: 418a807e-de5b-454f-9838-08dcde2e7e2f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bk5VQjJHNkZIUUZNcWh5NU01aTJNMERWdi9ndnFFZ2EwRzlacWtBOGQrdVI0?=
- =?utf-8?B?ZURmRzJqTDJnYmFXeFNPOWJLcm5NMk5NUjVxSU5XUjVoQk1GSzYxT3Vrb3Z6?=
- =?utf-8?B?ODhSZ3pHZGVvaW1XL3YxZWQ1eWlWZlpoTWx6aGU4bUhyT2pjK0dNLzd6ZlpV?=
- =?utf-8?B?RGQ3SW5GdWVRUklyNDZHZlFudHhXaWZIOGhsMXZCc3V5WDlDakg4ZmRuNC9U?=
- =?utf-8?B?MTJibGMxbDZrT1JLa3ljSkNNZTlhWUhBbmNsdGNBTDY2M1J6bHVyN0YwVEht?=
- =?utf-8?B?WnZzVXRNdnVHT0c1M0NtU2t0U3ZZbVhaV0NoUHNvd3N4YWZpQlY3VTJOSjZX?=
- =?utf-8?B?Wm1zQUNvQ3dEamc2MmlQS3dna21qZVpWbTMxTk45Tk0yUEg1Rm5zY3BSeVFF?=
- =?utf-8?B?bnRxSGRHK0tzd09wRnpTZk1hdG9yMVZDS2s0YjJyU1dBT0xXTC9GVmkyZ0ZG?=
- =?utf-8?B?UDNFQ0R4Yys3WTdWQWdSNzRaWXVFQkpiYy8wc2RqS1hiQ0RaTXYrY2l1VnBI?=
- =?utf-8?B?Q2tsbTJjd20wcXR5T1VVL2lxdUc0OENXVUt3Wlo4aHF4ZVpWandJaXFSSmo5?=
- =?utf-8?B?azFvTlN2WTA4azR5MnUwYm1ybU1NY281Ly91bUk0WGNLTVlZc2xuSXV1UDJu?=
- =?utf-8?B?NlYvR081MFNFN2RjMDczR2I5Q2FEemlSai95Z05hN2Vyb0orejFTQmo2M3VH?=
- =?utf-8?B?M2dUQkRONndCWEViWDJCeXVnT3c5NTlyKzg2UnMvZ1ZXeEg3NDZSeVEwTEcy?=
- =?utf-8?B?bktGSGUrTjFyOWdaWXNUWEplb0RZMk9nUmMvK3JDNlc4bng2UktnQnprS3Y1?=
- =?utf-8?B?S05jbEVRSEdTS2FRMDBPUVZmWVFYR2lsZnU2dVJtdHJ0R1NKNUhVeVMxdklu?=
- =?utf-8?B?UjRaVTVuajYwNVFTT05uTGVqTmRVNkMyelVLa3VQOXV1Z3hYOWF6SE5wdUlw?=
- =?utf-8?B?T05OQjV4RGRDU1ZxaVgxQzBYUHhNb3EyYTlpRDZVSlUvc0JhK1NYTlBWcnZL?=
- =?utf-8?B?ZllaS2N4UUVRWXd6a3J5NzJwcTY0TUpybDZpS0lqWlVOL3FSNWZ0aFNJZ2dn?=
- =?utf-8?B?UUQ4dmptb1AyWjkzejBxRSt5cmpSVWVQemxOZExjTmI2b0x3VW56Tm5LdU9q?=
- =?utf-8?B?Qzltc01rbENkeWYzcWVXTTR4VkhhcVQwYjhoWitYR0tWVk5RZFVtL3o5OVls?=
- =?utf-8?B?TUJiM2JtL1RJNjAzVElZR09WcGh5T1FLcnNwZDd4STdnUFoyUUdzTFV0QjlZ?=
- =?utf-8?B?dDNsRWtPVkJlR2pxZ0haZ3ArM3NqQUk3VzBJSGtDRE15RzVsVllzQ0dRWHFx?=
- =?utf-8?B?YnJmS0gyUm90N1paUUNwWWptaFZwekt3Q1l4SXhaUU83MjBLS2w4ZjFVVnp5?=
- =?utf-8?B?c3RwUmc1bGZOZmtjMGxaODk0Mk9VeW9mZ3Z6Y1E5c0Y1QlRzaERUb2N2K2pO?=
- =?utf-8?B?WXdSdEN5eDc0dnkwSDNoMzJHSEsydWkzeFBqaVNrUkloQTNtYVhUbkMrbU13?=
- =?utf-8?B?SEZBblRLQ0VWMk9tTlhTalRLL2REaVN6SHRUQWZtVWtuWi94V21YRFN5cGNL?=
- =?utf-8?B?WWxVdkFGSlUvR3JweFcrSkV0K09YMDd2YUVnYlNEaFM1YVUxWUNUZ1BtRUNM?=
- =?utf-8?B?a0ZhNVc0YVdFcUFZNUJKaGVvZzFmTXhtTC91MlRFMmMrOW1Ia2NBQnFHakZC?=
- =?utf-8?B?UFZwTmhCQ2RxUWJmSEtmdnkrVmhrWnFFMUx2OFFHU0JVZ0VaY2M5V0lRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8906.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dC9adkU3RFEvK09YdW1nOVZRaDl6cUI3S0p5SGxHM25Kb2M5T3FUcGxqeU84?=
- =?utf-8?B?MFM0cWc2THN4VXRqMWdLZzg4OTY1c0hJWmFlbkxENGphMWJUMU9RL0RNMnV5?=
- =?utf-8?B?OTJBK1AxTXV2UEJWZTNmcWVrb3k4QThLYmE5KzdQUlFkN0VtTWY3em5sRnJw?=
- =?utf-8?B?dzBjdVVrVENaRkJ0U3l4MGZBRTRiY2cvdGtwaFhTcFJIb0ROQitqU1Jqa0dH?=
- =?utf-8?B?cXBzV2dFRHJnNVpiK3N0R21lMkNLam1YOEE4aXRTQjVmYys4TU1XaXBjS1N4?=
- =?utf-8?B?SjdIdVdiRXpFS1JXcU9EQ3BST3ZhV2hRVTlsQUpHNGF3Q1pjYkpPUTc0VmNR?=
- =?utf-8?B?WDFSdk1UMlliOVl4eEI2a1o3VTNIbFJRVDBRMDJoRzJyNzB4Q25maHd0V0FB?=
- =?utf-8?B?dzVyTlZtcWVoTWpjR1dvdllvU0pHV0I0STc3dFRlYlpzeGlzZkpaQXFPeGt0?=
- =?utf-8?B?RDJhbXFELzdHNkJYR1pLMk4vdDN6SjF5V2tsNzY1d2JaYm1TTU1iZVVwellF?=
- =?utf-8?B?cHJqdHpYLzIxUFRob0QwNkdDQzRXbGRIbmc4eVBob2NQU0JnSnUyQldidnd4?=
- =?utf-8?B?dUlNaUJzVm9ZeGtQUGxtbTN1T3BIVWIybVZQOXJ3aldyTUVaek1JRVlTenhj?=
- =?utf-8?B?U1R0bHExQmRLN2FjMVN0ZTBZUE5QR0NXNStOMW1sNnpIM2hZS3MwYyswRmNS?=
- =?utf-8?B?cEFKbmQwdXBwSm9ESUVWTlY3WVAwMktWaEtMUEtBZGkrakl5SnRNM29FSnJm?=
- =?utf-8?B?Y1VKVzdwa0RUVmx3c3dJUnY0dGQyYU8zK3gvdXhMS1k2ZmllakVTV1ZRTnc2?=
- =?utf-8?B?N29OOGpDSVo3NVYvdE5TTnA3UGZNNHNUZzBabURXZ01xamt0SW9wc2R3KzN2?=
- =?utf-8?B?QlZBMSt6em1mVEpYQlhxMDYzSWhwN2xoRHZnWUF4Tm5wYTVlNzVuUlM5QjVY?=
- =?utf-8?B?SU1SekhVU2JvSzVzczcwclhaK1NqTEdKbUVxQTlMWUpaN2NzcXZpQ214T2pR?=
- =?utf-8?B?YzJsemEzNW5STnM1emdON2FUaHZnQzRuR0VBdWdZWjBZNk00cTZVdHJVVW1M?=
- =?utf-8?B?QjNEOCtNMUM5a25pcFhPTFF2aFlrWmQ2TUR0cUlIemdFUGZIcHhuYjZQSDJi?=
- =?utf-8?B?QU5jRTZEQ1M5aTNLT0hsbW9SQW0xbysvNnliUEhWa1dxWld6MVVuN1VNSEJo?=
- =?utf-8?B?ZEhDY3VYM1E2ajJVQTZzOTd5VzdTOFhCK1FHeXBZVm9LS0RjMktQRThiSFFV?=
- =?utf-8?B?c1R5aE15NlNHUUR0QW9NVG5qeUR2MDl4NjVoUGxGaHhxZ2Q3bnlrK1E2UWla?=
- =?utf-8?B?cUNqTlpldVkyNWF2S0FPaENRVHdNSTdDaUJSazdYTHgzZnRES2pwSmJ1R01C?=
- =?utf-8?B?ZVJ0cW1rVzRKRjdHNEdJRWg5eEdmRitWWWZhckpKbFdqc24ySGpwK2dtS1RQ?=
- =?utf-8?B?bjhhRno5UkxzSm9ucWw4dkt6ZTRIM0pLbFdFMVdsQ1RqVEdJWUxxc3N2aktJ?=
- =?utf-8?B?cndGQncxRTBJTmc4N3JzSUpFZXJDN29EdGNmUXhycXpEY056Wjg1MC84NUZ4?=
- =?utf-8?B?dTlTV1h5RG1YWnptTXh0cnkvd3d3eTlrZUVXWS9PNnR0Ung4RkxqMVg3Kzlo?=
- =?utf-8?B?VDFZVm14cG9KbXVPWjM3Vy82M0k0STJldUN0cWxYTjRYcXlVYUhKb0NUeVM1?=
- =?utf-8?B?VFlac2gxbmliUVVXazhmZVBXeWhzOWJHOHZ4T095YWFkeGlHL2RNSzl4TmZU?=
- =?utf-8?B?dWpSMEsybk5CZlhhMjBoRXlqL2Vtcms4NlBrWWxzZUZEcmE0QUVjNTRMd1Rz?=
- =?utf-8?B?NmNOU2x5ZFA2RDBFVlhwaWdsYU8vQXB1d0FUVElqMVIyUTFqd2ZnVklDaDU0?=
- =?utf-8?B?RGJ1U2tHM3VqYWRwUlh1Tk55V0VYZG5URlh1cDEzMzE5UkdPV1RYbVhHWit6?=
- =?utf-8?B?d0tUU0s1aG9mbjN4VStsUzVOWUlneTJ3dVNuY2UxZ3pIaTBaNmxjbDdTTUVJ?=
- =?utf-8?B?aVRMaGc0U3ByampCVXl2bWNrczdMc0FLT3FMbjh2dTJWMjc5SkhDTnk3eGpt?=
- =?utf-8?B?MzBMdkVFQU1KcUFuWXlaNm4wV1FUTm81WkpQSXl5ajJIMUw5alZkeG1FdFVq?=
- =?utf-8?B?bGV0VlAxUjd2M0dGaWxEVlhlY2lVTG5QUzRyUjlHS3E2UFpBWDJ0K2d3bFFp?=
- =?utf-8?B?N1E9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 418a807e-de5b-454f-9838-08dcde2e7e2f
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8906.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 13:24:04.7763
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /1TLEcWzxm2Q+2hefGqR+ztTYdhQsMgHLIHjWT/RMFPwWNqt+YCQNKiTAUEEnnm1c+X6mCTT2RgG4YfclNFKn2vvxnMUb8nF6Dkc8/eMacI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9101
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <15f42ddd-b011-4136-b2e4-bc266fab25b6@proton.me>
 
-Hi Jakob,
-
-On 9/26/24 3:20 PM, Jakob Unterwurzacher wrote:
-> Ringneck v1.4 can contain (placement option) an on-board ATtiny
-> microcontroller instead of an STM32. In normal operation, this
-> is transparent to the software, as both microcontrollers emulate
-> the same ICs (amc6821 and isl1208).
+On Thu, Sep 26, 2024 at 01:00:58PM +0000, Benno Lossin wrote:
+> On 12.09.24 00:52, Danilo Krummrich wrote:
+> > +/// # Invariants
+> > +///
+> > +/// One of the following `krealloc`, `vrealloc`, `kvrealloc`.
+> > +struct ReallocFunc(
+> > +    unsafe extern "C" fn(*const core::ffi::c_void, usize, u32) -> *mut core::ffi::c_void,
+> > +);
+> > +
+> > +impl ReallocFunc {
+> > +    // INVARIANT: `krealloc` satisfies the type invariants.
+> > +    const KREALLOC: Self = Self(bindings::krealloc);
+> > +
+> > +    /// # Safety
+> > +    ///
+> > +    /// This method has the same safety requirements as [`Allocator::realloc`].
+> > +    ///
+> > +    /// # Guarantees
+> > +    ///
+> > +    /// This method has the same guarantees as `Allocator::realloc`. Additionally
+> > +    /// - it accepts any pointer to a valid memory allocation allocated by this function.
+> > +    /// - memory allocated by this function remains valid until it is passed to this function.
+> > +    unsafe fn call(
+> > +        &self,
+> > +        ptr: Option<NonNull<u8>>,
+> > +        layout: Layout,
+> > +        flags: Flags,
+> > +    ) -> Result<NonNull<[u8]>, AllocError> {
+> > +        let size = aligned_size(layout);
+> > +        let ptr = match ptr {
+> > +            Some(ptr) => ptr.as_ptr(),
+> > +            None => ptr::null(),
+> > +        };
+> > +
+> > +        // SAFETY:
+> > +        // - `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc` and thus only requires that
+> > +        //   `ptr` is NULL or valid.
+> > +        // - `ptr` is either NULL or valid by the safety requirements of this function.
+> > +        //
+> > +        // GUARANTEE:
+> > +        // - `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc`.
+> > +        // - Those functions provide the guarantees of this function.
+> > +        let raw_ptr = unsafe {
+> > +            // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
+> > +            self.0(ptr.cast(), size, flags.0).cast()
+> > +        };
+> > +
+> > +        let ptr = if size == 0 {
+> > +            NonNull::dangling()
+> > +        } else {
+> > +            NonNull::new(raw_ptr).ok_or(AllocError)?
+> > +        };
+> > +
+> > +        Ok(NonNull::slice_from_raw_parts(ptr, size))
+> > +    }
+> > +}
 > 
-> For flashing the ATtiny, the SWITCH_REG1 regulator of the board's PMIC is
-> used to enable the ATtiny UPDI debug interface. If the STM32 is placed, or if
-> we are running on an older Ringneck revision, SWITCH_REG1 is not connected
-> and has no effect.
-> 
-> Add attiny-updi-gate-regulator so userspace can control it via sysfs
-> (needs CONFIG_REGULATOR_USERSPACE_CONSUMER):
-> 
->    echo enabled > /sys/devices/platform/attiny-updi-gate-regulator/state
-> 
-> Signed-off-by: Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>
-> Tested-by: Quentin Schulz <quentin.schulz@cherry.de>
+> I remember asking you to split this into a different commit. I think you
+> argued that it would be better to keep it in the same commit when
+> bisecting. I don't think that applies in this case, are there any other
+> disadvantages?
 
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+I don't really like the intermediate `#[expect(dead_code)]`, plus it's
+additional work you didn't really give me a motivation for, i.e. you did not
+mention what would be the advantage.
 
-This is a candidate for backporting to stable branches as well I assume, 
-@Heiko?
+But sure, I will change it for the next version.
 
-Thanks!
-Quentin
+> 
+> ---
+> Cheers,
+> Benno
+> 
+> > +
+> > +// SAFETY: `realloc` delegates to `ReallocFunc::call`, which guarantees that
+> > +// - memory remains valid until it is explicitly freed,
+> > +// - passing a pointer to a valid memory allocation is OK,
+> > +// - `realloc` satisfies the guarantees, since `ReallocFunc::call` has the same.
+> > +unsafe impl Allocator for Kmalloc {
+> > +    #[inline]
+> > +    unsafe fn realloc(
+> > +        ptr: Option<NonNull<u8>>,
+> > +        layout: Layout,
+> > +        flags: Flags,
+> > +    ) -> Result<NonNull<[u8]>, AllocError> {
+> > +        // SAFETY: `ReallocFunc::call` has the same safety requirements as `Allocator::realloc`.
+> > +        unsafe { ReallocFunc::KREALLOC.call(ptr, layout, flags) }
+> > +    }
+> > +}
+> 
+> 
+> > +
+> >  unsafe impl GlobalAlloc for Kmalloc {
+> >      unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+> >          // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero size by the function safety
+> > --
+> > 2.46.0
+> > 
+> 
 
