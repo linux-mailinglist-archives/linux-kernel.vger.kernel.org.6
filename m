@@ -1,158 +1,124 @@
-Return-Path: <linux-kernel+bounces-340363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B9E98720E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:53:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 955D0987217
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7DC11F21144
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:53:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE1C01C22916
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673E01AED42;
-	Thu, 26 Sep 2024 10:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E4C1AD5D9;
+	Thu, 26 Sep 2024 10:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OPDNrmPm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4OpDABY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2A41AED32
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D9213AA53
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727347969; cv=none; b=hj297hjvyLm+XCYqXfLK1YCzb2NdkMIRo1ZlDhVuSg/mPegi+NnxYcu1Kf8guoWIl+hNHktwuU7xE727BAeRHgS7cy/Fsn6vLJuUYo6xB1lhknVFEEIeyWlKwuRaCiixuC358Y0z72ZIEJpnE5/+JKaD1F2AAaFhouwXXUqc7Dg=
+	t=1727348129; cv=none; b=DAEa+SlXpaHpJavjA2PExbnNgRfzVTDw1WVy9MnzkNCcNA+mES0IPs3B04Hc+yDvTHQsfMNFT6YIEjrXNpWrVicuAgaWjTDC7Ufm+31LgR79UPQlWQ5TO/7SAbTdAnCsyp9CAZF4/pJ6ysHtjb9iAgFd0Mc65vAgv+GyTuctj+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727347969; c=relaxed/simple;
-	bh=oNwUAYrdPTqWOMZ1yhG/bB6c6Sae3i8waJv8HPi87zs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r+LZg2yHng76cSeOrzO3aLljqZf9q2ZNL+8EA2pmRBN21INZB033b5GzCeVa7vuM5rAQE2SvBhuZURORBkkEP6s2xQueuLz+5dVms32wA4aHvEbEu9HXklqdoX2wgJvl8SGsjgC6H5o1j2MprMjELJvAo1c4/yiTcgGFavIr/p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OPDNrmPm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727347967;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ouv8Zzqknb0V2lbE/zGEjZxariyc9TjT1QaL4V8Hr5s=;
-	b=OPDNrmPmnzimolXaItjiNqohXjfLKGO61CHtNhErP3ZS3+vsDoLzpdHiqCshd4rA5dhHn0
-	Mx8nkXw4uAg5Evlep/xUx12MIFzt0eTsn9Z+hFdNzfxKWHiH6Anp1HlLNUeYWdYaLHM8M4
-	zVAYScvHnGpeB6zhfcdqoxaKxLAO2Wo=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-684-1mXo2TMiN--czFLsu63ARg-1; Thu, 26 Sep 2024 06:52:45 -0400
-X-MC-Unique: 1mXo2TMiN--czFLsu63ARg-1
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5c87a2a8535so312326a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 03:52:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727347964; x=1727952764;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ouv8Zzqknb0V2lbE/zGEjZxariyc9TjT1QaL4V8Hr5s=;
-        b=Ak69xFdAT6N3IuMBjjH2LHIPePZX/NDTIBAI9YgDwkEsw3YnjmAIFZzTEcVtO+Wms5
-         c+UhYdQBum3pS22ME8Q1+KmdrHhFkinQdQ2/xoGcjBwbVgX1vsECdeGBQZmk+lpyhuaw
-         62k0Iw3q5gYJrOTSO5rFIaoNGCKTXZrmiBI/zmbrbsrZTb/xf/mR9HDA6esc+35gI8fY
-         Brtfgpn1RS6P+NUpLtEpy5SIJ7dSYYsK7zgM+N+77jO4bspW+IWho40+OrCwFCiPNrKd
-         bC0TfNx/YldaUp6Av1D3uQ1g9nmv3QlMfvsE6qOgN3zvosST1lhe9NWUS4tAflHtHjqx
-         btJw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8Zk5hNfm6pjMW3FM3ukZqJ8hTjaIffv/LCsmx5Tfw8F/NHMeg0TSOfp8VozYRcQu2TsgMvjr9LO6vS1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHY2sPoSj2G/QaxbbyN7w3JMIJ1qJccwQSvYS8xxz6iGiMTGYu
-	lviWI71V7IhG0vpQ7RU+qMOPmM1BF1zSsMfJlZJxXHriIgiMxZvS27OAnykO6w2zUqOuM1eFVMM
-	aXcii0xfGRRi7e9WvuXJUvxkSU9vavwS3l9jbXnY5w9i7CkS4VQTZ64glKY13xw==
-X-Received: by 2002:a05:6402:5112:b0:5c5:c4b9:e68f with SMTP id 4fb4d7f45d1cf-5c72060acb7mr4078252a12.5.1727347964603;
-        Thu, 26 Sep 2024 03:52:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE6z189+9QhyD6RuhJS64kmHg28XGC+pd4BPspVUOuxom2n4FPDxMaEXtVoVtQ6mk2tGtWsuQ==
-X-Received: by 2002:a05:6402:5112:b0:5c5:c4b9:e68f with SMTP id 4fb4d7f45d1cf-5c72060acb7mr4078237a12.5.1727347964209;
-        Thu, 26 Sep 2024 03:52:44 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c744:ac00:ef5c:b66d:1075:254a? (p200300cbc744ac00ef5cb66d1075254a.dip0.t-ipconnect.de. [2003:cb:c744:ac00:ef5c:b66d:1075:254a])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf4d78b1sm3060184a12.87.2024.09.26.03.52.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 03:52:42 -0700 (PDT)
-Message-ID: <52e958f1-150e-4f77-b031-772e636eb25b@redhat.com>
-Date: Thu, 26 Sep 2024 12:52:40 +0200
+	s=arc-20240116; t=1727348129; c=relaxed/simple;
+	bh=XCI2d6zOGn8vcBsyrqcPXVXGQlDNXAR3n+2+vnXTTQg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YbezMtO7oOdqVb/uxmd9zD4uElT5L3NuSilT/0vf8wq4Xk1Lb8k9yehxMlESDNkjI33RM2xjwyPyNEEJHt+kwAdmT4LGn2gFVR3HjvVNunDTrapr0GrkllXReQckTMFdcuyQgF3dvez1WXQoe7f8LGUx+YjbMoqpG9U0hl0a7rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4OpDABY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 986AFC4CECE
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:55:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727348128;
+	bh=XCI2d6zOGn8vcBsyrqcPXVXGQlDNXAR3n+2+vnXTTQg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=S4OpDABYE1wCiLgIXdZbu83lruYEQ01KQl5udAtsM0GVIdkvwzjDz94UuZfHnU7eY
+	 Wep2L8zNz011G6KDH8KRKRc7t4F7B1Cq8DtswMmVIvbk94n6Wt9LSElagi1X9aiY8s
+	 E/I9uWhA6wxauuWak+TVTPo4jGdNpp3EH8WxEwUwpotthAHP8brAG5SpfLi21HHHU/
+	 gx3w5dCIFQnTXmQD1n1CdlcsztuFEVDuvYjot1ACrxolR533tuHTrs/US2BumWu6r4
+	 /fuEwyAakBFyae2Ky10q0/u9ox7Z/HAf5Z6TsRZKWxrkoia4swi/cUUJaGvLW2LVWv
+	 NNnlzqK/yQfGA==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f66423686bso8349681fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 03:55:28 -0700 (PDT)
+X-Gm-Message-State: AOJu0YziPWvc3qCqlAFj5NgmzcXJHHsc2U4tgzOo871gsD0sK5xkIVpr
+	QnXvme5Qmt+eymkVnRsMW19Ovx/Y8M2/lQW2ksnphrq1fS8/EhNjTiJtogR3U5YfvXPLK18QmAB
+	Px1WwugvDAAJXeAk3yKobnjMcdB0=
+X-Google-Smtp-Source: AGHT+IFuhl6qwq8nl2RSBrT3s7O5uxpJjtC+zwMU2JDoUkVTJsUk+tGX1p500y3w9bc9d55KP8bhUYqCcZcUrXiWCmA=
+X-Received: by 2002:a05:651c:54c:b0:2f7:5dad:1433 with SMTP id
+ 38308e7fff4ca-2f915fdbb05mr41627421fa.11.1727348126883; Thu, 26 Sep 2024
+ 03:55:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/cma.c: To better understand cma area during debugging,
- add total and used count logs to in cma_alloc
-To: Xiang Gao <gxxa03070307@gmail.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- gaoxiang17 <gaoxiang17@xiaomi.com>
-References: <20240918124325.109236-1-gxxa03070307@gmail.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240918124325.109236-1-gxxa03070307@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240926104113.80146-7-ardb+git@google.com> <20240926104113.80146-8-ardb+git@google.com>
+In-Reply-To: <20240926104113.80146-8-ardb+git@google.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 26 Sep 2024 12:55:15 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGQhj4RK=Ks_WD59hG1FzX=vsEkugDEW1tmzJzjahrB4g@mail.gmail.com>
+Message-ID: <CAMj1kXGQhj4RK=Ks_WD59hG1FzX=vsEkugDEW1tmzJzjahrB4g@mail.gmail.com>
+Subject: Re: [PATCH 1/5] x86/pvh: Call C code via the kernel virtual mapping
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, Jason Andryuk <jason.andryuk@amd.com>, 
+	Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, x86@kernel.org, 
+	xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 18.09.24 14:43, Xiang Gao wrote:
-> From: gaoxiang17 <gaoxiang17@xiaomi.com>
-> 
+On Thu, 26 Sept 2024 at 12:41, Ard Biesheuvel <ardb+git@google.com> wrote:
+>
+> From: Ard Biesheuvel <ardb@kernel.org>
+>
+> Calling C code via a different mapping than it was linked at is
+> problematic, because the compiler assumes that RIP-relative and absolute
+> symbol references are interchangeable. GCC in particular may use
+> RIP-relative per-CPU variable references even when not using -fpic.
+>
+> So call xen_prepare_pvh() via its kernel virtual mapping on x86_64, so
+> that those RIP-relative references produce the correct values. This
+> matches the pre-existing behavior for i386, which also invokes
+> xen_prepare_pvh() via the kernel virtual mapping before invoking
+> startup_32 with paging disabled again.
+>
+> Fixes: 7243b93345f7 ("xen/pvh: Bootstrap PVH guest")
+> Tested-by: Jason Andryuk <jason.andryuk@amd.com>
+> Reviewed-by: Jason Andryuk <jason.andryuk@amd.com>
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+>  arch/x86/platform/pvh/head.S | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
+> index 64fca49cd88f..98ddd552885a 100644
+> --- a/arch/x86/platform/pvh/head.S
+> +++ b/arch/x86/platform/pvh/head.S
+> @@ -172,7 +172,13 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
+>         movq %rbp, %rbx
+>         subq $_pa(pvh_start_xen), %rbx
+>         movq %rbx, phys_base(%rip)
+> -       call xen_prepare_pvh
+> +
+> +       /* Call xen_prepare_pvh() via the kernel virtual mapping */
+> +       leaq xen_prepare_pvh(%rip), %rax
 
-Please move some of $subject into $description, to make it shorter.
+Just realized that we probably need
 
-Maybe use the subject:
++       subq phys_base(%rip), %rax
 
-"mm/cma: print total and used count in cma_alloc()"
+here (or grab phys_base from %rbx, but the above is more obvious and
+less likely to get broken in the future)
 
-
--- 
-Cheers,
-
-David / dhildenb
-
+> +       addq $__START_KERNEL_map, %rax
+> +       ANNOTATE_RETPOLINE_SAFE
+> +       call *%rax
+> +
+>         /*
+>          * Clear phys_base.  __startup_64 will *add* to its value,
+>          * so reset to 0.
+> --
+> 2.46.0.792.g87dc391469-goog
+>
 
