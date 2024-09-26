@@ -1,165 +1,169 @@
-Return-Path: <linux-kernel+bounces-340907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247B19878DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:09:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D30199878EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD8641F215A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:09:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9542D284F4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E76D165F0C;
-	Thu, 26 Sep 2024 18:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653951662E7;
+	Thu, 26 Sep 2024 18:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYBfYdyt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UIF7QQB7"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533BB26AE6;
-	Thu, 26 Sep 2024 18:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D7D15F308
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 18:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727374153; cv=none; b=hmwVY9MqPRPKuc8phfBBUeSGHEI1QmVlizBDovm7b/6sIUPibMJZjSZRUL+uqJXGww0Omqj+DxVW/eIsr3qOvOaygwNOTeooHMjKlilODdJdUGV5XDVG/jbq6SnHKIOcattHUHgJfts59XFgtEHfxpOf9J2WL9EqZa5m8M0ZosE=
+	t=1727374218; cv=none; b=PstcVcO3t9CyuBw5aFC4SIDNmYpfkMyoQq9xtJqKSeg2gvnVUkQzaChKqycd+ljgI5pSd4t4cq5IYcW4Cq8wzny87t1LfIQ8M2mSeat7ZSB2QBAHuo11wKIdCrZnfr5tiijVTFBwIFfg7gkgiaKKU4prSQ7HMwityrBkhAD/0E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727374153; c=relaxed/simple;
-	bh=aW4HaPysR4BZas3D4OloyZPYqiYG/jzTmy8XMsvWbl8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S3LK+zYuVXr5MGoBt8TTaF1b+qU+t2hz4qWlvDbVX6cduCsf0La1GYKj0nXBZT249vK4BZFY2p77HT3uVVas3DwiyuSTQgUtBH0X1SJqih42AQRo/n15M3rjGYpof5w+5feOLgvE9v4/tbv7KzgritKavnZXd3jK+EcnoMEwHus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYBfYdyt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA5C9C4CEC5;
-	Thu, 26 Sep 2024 18:09:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727374152;
-	bh=aW4HaPysR4BZas3D4OloyZPYqiYG/jzTmy8XMsvWbl8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VYBfYdytYSCzvYc0a63DTb856RytSGeqMrFAn2CjqZqGFIiDvr4h95sEJfF1L7xk/
-	 WEEU4HwkhQJ7ooD7JJR0WRi2hsVrRtjjuwDFHPu8EBBCaagN1ga3hvo9n8zqsa2lsc
-	 SMu+QP267XP+N2P/sGDSwhkomyceKYOSoTYyUrzDeLtw8MBqyGOul5e7mYZPga6gw1
-	 M1nT7TR33X4qeLqb2XVzUXsRnjozivnxTAPLxycsWFbLd3xljC27BgalJhwLBWWcns
-	 mq8zVWepdu/kL4InsZzxohTX41Z12s8+HqtIXbVOKqND9r44fofFGCV/O4E9iqfGbC
-	 KdEc7PKRg7Vtg==
-Message-ID: <f516dd07-7d7b-403e-a55e-6bf21dbea9b4@kernel.org>
-Date: Thu, 26 Sep 2024 13:09:10 -0500
+	s=arc-20240116; t=1727374218; c=relaxed/simple;
+	bh=qpVU4XxBpLxpVoXpPAGlozVOH5+EVpvozVpRmm79Z30=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jbBohhIg9TkUEqb+oNbkYSf/Qi4AtYMr/tG7q9SDv+PLb53UayGb8UVHUvLfWhdH+MHbhei66aCLvinqBciUyue6t9eZZbpAWIEvSk7xK3HsiMQWKjn/BV88hVEMiFMiCovNddb78zRuUfjPH5MoQqih+LYTvBee6bfT73cPnqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UIF7QQB7; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d51a7d6f5so165276966b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 11:10:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727374215; x=1727979015; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fdLUqsRCgKs9xu0yc5QAq44cfc/XbnINgvpnk0KSrKU=;
+        b=UIF7QQB7DlJMY+XWeGj40Vk+FCghvKNqq3JvBnuTBpdMP9mYk6lgwqGVCbTx7CdQca
+         XNc4TdKfWDUFBs8eUI5ETyGA7bA+QHF0oT+OK4p4EavoFwDtchtp92dKMZ7N6imezmGo
+         tCMEx4ToENa1znyrYCxFiSZqPm9hoLKcH8T4bfEvndylaSD5DUEdgsUjomKRFCQCgHj0
+         sYfcxjq84qesc6LeyDK5GvrWXl54k45uoOu0vm7RRqhoiua1YIiPvXtjh1QhuGoTjkU0
+         RSdmZi4PcuPRptWtxLUJaPXVPhjoLZgm6P8G/rvsYxwSAQ9IsMVW20/i5Pjm50GTRc6w
+         +MVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727374215; x=1727979015;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fdLUqsRCgKs9xu0yc5QAq44cfc/XbnINgvpnk0KSrKU=;
+        b=QqYjlNtJMWQ5Aspxp8niz1J5XL+Eh2WdKZULxQdofyqHxaW2UVGj2nJmfL6e66Ggte
+         Jy2qLbL0T/cacMgrDFltLdu78udcBwD7gbNvE+7w+gdqSmW0oLlyQpU6bubD+UsJf0DV
+         0MRabHqzHnVK+74tm7atBkmkBBuNHx21pQ0xM418fLJmTBSjLOJUY498A7PijPsxWc0a
+         sK3PupWLcu+tIcQ4ItdaqmjruC29DV7y0Tp0If09hmQ9CKz37dEYM0CI+co1gOtsUFGX
+         E3Mpv8dWJsJMBRl/UNNc9VpYyI85Mq/osvLT6USRsrjsC4ZVDP8zvc6/I2crACNAx7HI
+         fxUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFTd3fCLQqPY5OMH6UpeLFbb1Q//Eve8wHVFPRQkcgqDoqPNwYmZkx8Vgc5WqKvHjFZgm6Gm5aWtKwkds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoHw/QIj6LP1rjYcgQ/REOlKsaQK+4zsHj7oUCezrsFPC+bt9/
+	AsJxO3MJudZRriKuYy9cJ08gz+yx9Gea1NGXwr5r5KSxEspqyPF23PXl4vspyOk=
+X-Google-Smtp-Source: AGHT+IFniY8fmaUhZ/fnujb4SqS4NPVhEDpJ1jgTM0BVn+LDEqv2jyzNVfGZ7xDl1iKSQOvNI8Ys0g==
+X-Received: by 2002:a17:907:9444:b0:a8f:f799:e7db with SMTP id a640c23a62f3a-a93c49180a3mr38338966b.16.1727374215173;
+        Thu, 26 Sep 2024 11:10:15 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2948fd6sm23625566b.101.2024.09.26.11.10.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 11:10:14 -0700 (PDT)
+Date: Thu, 26 Sep 2024 20:10:13 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: tj@kernel.org, cgroups@vger.kernel.org, hannes@cmpxchg.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, lizefan.x@bytedance.com, 
+	shuah@kernel.org
+Subject: Re: [PATCH v3 2/2] cgroup/rstat: Selftests for niced CPU statistics
+Message-ID: <xmayvi6p6brlx3whqcgv2wzniggrfdfqq7wnl3ojzme5kvfwpy@65ijmy7s2tye>
+References: <20240923142006.3592304-1-joshua.hahnjy@gmail.com>
+ <20240923142006.3592304-3-joshua.hahnjy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 2/2] platform/x86/amd: pmf: Add manual control support
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Luke D . Jones" <luke@ljones.dev>, Mark Pearson
- <mpearson-lenovo@squebb.ca>,
- "open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>, me@kylegospodneti.ch,
- Denis Benato <benato.denis96@gmail.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20240926025955.1728766-1-superm1@kernel.org>
- <20240926025955.1728766-3-superm1@kernel.org>
- <5a75b73f-dcb1-4a45-9526-194a3451b5c6@amd.com>
- <CAGwozwGtqwOOfrUpjLghW4JCKqcFk9ut-X0MBvHAm37YVS51tw@mail.gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <CAGwozwGtqwOOfrUpjLghW4JCKqcFk9ut-X0MBvHAm37YVS51tw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="t2f3kmuusie7grq4"
+Content-Disposition: inline
+In-Reply-To: <20240923142006.3592304-3-joshua.hahnjy@gmail.com>
 
-On 9/26/2024 06:00, Antheas Kapenekakis wrote:
-> Hi Shyam,
-> 
->> I appreciate the proposal, but giving users this control seems similar
->> to using tools like Ryzenadj or Ryzen Master, which are primarily for
->> overclocking. Atleast Ryzen Master has a dedicated mailbox with PMFW.
-> 
-> In the laptop market I agree with you. However, in the handheld
-> market, users expect to be able to lower the power envelope of the
-> device on demand in a granular fashion. As the battery drop is
-> measured in Watts, tying a slider to Watts is a natural solution.
-> 
-> Most of the time, when those controls are used it is to limit the
-> thermal envelope of the device, not exceed it. We want to remove the
-> use of these tools and allow manufacturers the ability to customise
-> the power envelope they offer to users.
-> 
->> While some existing PMF mailboxes are being deprecated, and SPL has
->> been removed starting with Strix[1] due to the APTS method.
 
-Hmm, what do you think about about offering a wrapper for this for 
-people to manipulate?
+--t2f3kmuusie7grq4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->>
->> It's important to use some settings together rather than individually
->> (which the users might not be aware of). For instance, updating SPL
->> requires corresponding updates to STT limits to avoid negative outcomes.
-> 
+On Mon, Sep 23, 2024 at 07:20:06AM GMT, Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
+> +/*
+> + * Creates a nice process that consumes CPU and checks that the elapsed
+> + * usertime in the cgroup is close to the expected time.
+> + */
+> +static int test_cpucg_nice(const char *root)
+> +{
+> +	int ret = KSFT_FAIL;
+> +	int status;
+> +	long user_usec, nice_usec;
+> +	long usage_seconds = 2;
+> +	long expected_nice_usec = usage_seconds * USEC_PER_SEC;
+> +	char *cpucg;
+> +	pid_t pid;
+> +
+> +	cpucg = cg_name(root, "cpucg_test");
+> +	if (!cpucg)
+> +		goto cleanup;
+> +
+> +	if (cg_create(cpucg))
+> +		goto cleanup;
+> +
+> +	user_usec = cg_read_key_long(cpucg, "cpu.stat", "user_usec");
+> +	nice_usec = cg_read_key_long(cpucg, "cpu.stat", "nice_usec");
+> +	if (user_usec != 0 || nice_usec != 0)
+> +		goto cleanup;
 
-The tough part about striking the balance here is how would an end user 
-know what values to set in tandem.  I think a lot of people just assume 
-they can "just change SPL" and that's it and have a good experience.
+Can you please distinguish a check between non-zero nice_usec and
+non-existent nice_usec (KSFT_FAIL vs KSFT_SKIP)? So that the selftest is
+usable on older kernels too.
 
-> This suggestion was referring to a combined slider, much like the
-> suggestion below. So STT limits would be modified in tandem,
-> respecting manufacturer profiles. See comments below.
-> 
-> If you find the name SPL disagreeable, it could be named {tdp,
-> tdp_min, tdp_max}. This is the solution used by Valve on the Steam
-> Deck (power1_cap{+min,max}, power2_cap{+min,max}).
+> +
+> +	/*
+> +	 * We fork here to create a new process that can be niced without
+> +	 * polluting the nice value of other selftests
+> +	 */
+> +	pid = fork();
+> +	if (pid < 0) {
+> +		goto cleanup;
+> +	} else if (pid == 0) {
+> +		struct cpu_hog_func_param param = {
+> +			.nprocs = 1,
+> +			.ts = {
+> +				.tv_sec = usage_seconds,
+> +				.tv_nsec = 0,
+> +			},
+> +			.clock_type = CPU_HOG_CLOCK_PROCESS,
+> +		};
+> +
+> +		/* Try to keep niced CPU usage as constrained to hog_cpu as possible */
+> +		nice(1);
+> +		cg_run(cpucg, hog_cpus_timed, (void *)&param);
 
-It's not so much that it's disagreeable term but Shyam is pointing out 
-that SPL is no longer a valid argument to the platform mailbox.
+Notice that cg_run() does fork itself internally.
+So you can call hog_cpus_timed(cpucg, (void *)&param) directly, no
+need for the fork with cg_run(). (Alternatively substitute fork in this
+test with the fork in cg_run() but with extension of cpu_hog_func_params
+with the nice value.)
 
-> 
-> In addition, boost is seen as detrimental to handheld devices, with
-> most users disliking and disabling it. Steam Deck does not use boost.
-> It is disabled by Steam (power1_cap == power2_cap). So STT and STAPM
-> are not very relevant. In addition, Steam Deck van gogh has a more
-> linear response so TDP limits are less required.
-> 
->> Additionally, altering these parameters can exceed thermal limits and
->> potentially void warranties.
->>
->> Considering CnQF, why not let OEMs opt-in and allow the algorithm to
->> manage power budgets, rather than providing these controls to users
->> from the kernel when userspace tools already exist?
 
-The problem is all of the RE tools rely upon PCI config space access or 
-/dev/mem access to manipulate undocumented register offsets.
+Thanks,
+Michal
 
-When the system is under kernel lockdown (such as with distro kernel 
-when UEFI secure boot is turned on) then those interfaces are 
-intentionally locked down.
+--t2f3kmuusie7grq4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-That's why I'm hoping we can strike some sort of balance at the request 
-for some advanced users being able to tune values in a predictable 
-fashion while also allowing OEMs to configure policies like CNQF or 
-Smart PC when users for users that don't tinker.
+-----BEGIN PGP SIGNATURE-----
 
->>
->> Please note that on systems with Smart PC enabled, if users manually
->> adjust the system thermals, it can lead to the thermal controls
->> becoming unmanageable.
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZvWjggAKCRAt3Wney77B
+SXAPAPwLI2zDUVdxqbLYo39+smefNll+tXGO41EZkNjzc/aAmAD/cC0yuzrf+NQ/
+v/jEJxSx3OpRtUzyq9zehnGulc5RhgA=
+=VLNq
+-----END PGP SIGNATURE-----
 
-Yeah; that's why as this RFC patch I didn't let CNQF, ITS or Smart PC 
-initialize.  Basically if manual control is enabled then "SPS" and 
-manual sysfs control is the only thing available.
-
-> 
-> Much like you, we dislike AutoTDP solutions that use e.g., RyzenAdj, as they:
->   1) Do not respect manufacturer limits
->   2) Cause system instability such as stutters when setting values
->   3) Can cause crashes if they access the mailbox at the same time as
-> the AMD drm driver.
-> 
-
-Yes.  Exactly why I feel that if we offer an interface instead people 
-can use such an interface instead of these tools.
+--t2f3kmuusie7grq4--
 
