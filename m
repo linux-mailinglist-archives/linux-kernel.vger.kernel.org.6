@@ -1,173 +1,152 @@
-Return-Path: <linux-kernel+bounces-340543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5839F9874F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:59:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B62379874FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 638FC1C2111A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:59:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 482ECB271E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E998861FCE;
-	Thu, 26 Sep 2024 13:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AF71292CE;
+	Thu, 26 Sep 2024 14:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="ltdR0C40";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="d41l0W2W"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="eKDJA8Zs"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B161B43AA9;
-	Thu, 26 Sep 2024 13:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9511C6B2
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727359154; cv=none; b=PNYJN82Vp0B0xYZ4/59lfeWrULF5q/bGlTEAsPThdJ05rhwD2boI7qPeW+ZVDSC0d01J9OKM77ugCOIDxiczrW7oyWE8dtfdhfqq9jJqCcP7Lh5vO1crRqDxTKrQIUOjiAnkldAcWWn+JN71jjMCGxnAnvAg/BQWpZRRrG0b6ro=
+	t=1727359258; cv=none; b=kYv7SNNu91r/Odyz1c32SSV/xbg6Zws0u1iLjeJQVC0s3bgMr9k+lw9SZMKvWnJWFtBtCsE4m9u95QnrAHM8lP4XVtc5iRlTpFPP281gZcx0zApm8fug05H2tE/l5ge2iRHp0biV+l/gSD5bgt4Ehcxx33mn9xxD+zLUFLLsvaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727359154; c=relaxed/simple;
-	bh=QEu5DqaOtx8qz8TFmnVAti29F7Qxc7meqVeCJk5ssG4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=qw+IZXW8H2jiFxlM/KbFp7b3WbiwLq8giX7Hf6Y4bI7YDk4vvC+L4uPzi7GMwoFWizlmCqxIkAxLk6w6t9gPRVj2C4Oqk8YUshYTZOzNd9Imius9klDVNcpTwI9dADitCg3f3rUKIcV6jqxgA9kHXzncyPXMA/5bSLkFV81m21A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=ltdR0C40; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=d41l0W2W; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id BA39113802AA;
-	Thu, 26 Sep 2024 09:59:10 -0400 (EDT)
-Received: from phl-imap-10 ([10.202.2.85])
-  by phl-compute-02.internal (MEProxy); Thu, 26 Sep 2024 09:59:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1727359150;
-	 x=1727445550; bh=84+mwDfyDZSdx1IUW7exFBbe4aENBWcv2GSlmNEglTg=; b=
-	ltdR0C40VZgznstqFxG25d4BINry7NifFCtbg6t0idTmCqFefcKN2nB9Co954LrQ
-	hsqo/xWm/Pwq+4LYAlTkRvmiqrPC9zOWLu4ghZc88+bS4AAKlWOb9upi8e11AxAz
-	F7qqiMindnsM9G4ZNzp8WvO/Xp92w3+XeybIJFWvEAteZJwcWccZfokPF85KerYz
-	XOufQYEWySOicUIvaLuli0spo6cPqoxBka0JVEwKunMEQ1eAkgne0AwLb/WSVBym
-	rCaSF/9lb7kyaBwEwZG5W96NYhFsMeOMf6AGnjTAv2yDsTWH5Yl7B3s69LTAv0Id
-	Vl6ZobkYSbw33sCVOroYaw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727359150; x=
-	1727445550; bh=84+mwDfyDZSdx1IUW7exFBbe4aENBWcv2GSlmNEglTg=; b=d
-	41l0W2Wu8rd/qcZBWiIAi+1eaIy32sxnz9XcDCL7GbmTktceiPxZv28LPmEhqUK6
-	H4kRRhed8sHWLPUSGSaL6dI521OXw9GywXlhlY8K4GgO0Deo7zenfwQMlgUYxy2p
-	SYsMVf0ONmhxvy37+oAM8VTxSHHnHLf8PP1EqYLCMdAZMx0aHvJ63AbHF2lFoaMn
-	apMdAvOtQFanShBc8g7mvRRkW/ILAy8vvF7XYLr4l2mwYd67CZc0702SetFNIoHn
-	yPhww/mtfktUo3dqkU5ZfNhtBai7Lxtq6NCVzYJR638Y4eDesM7P/YHKarwbP15c
-	f2xZNe/zbgcbu/AncFxoA==
-X-ME-Sender: <xms:rmj1ZhK6LH2pNCjqd7fE8SfKkl9ZpzlYolJG0t12BPS_ag1wqN13CA>
-    <xme:rmj1ZtKBxedNPLI4oow0f4Gn0f72-ShnUQ3V0kzxxKP-4l5g-PEa4I2c8dw6YN46a
-    F6asAydTUhhIJzReH0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtjedgjeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedfofgrrhhkucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnh
-    hovhhosehsqhhuvggssgdrtggrqeenucggtffrrghtthgvrhhnpefhuedvheetgeehtdeh
-    tdevheduvdejjefggfeijedvgeekhfefleehkeehvdffheenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhho
-    sehsqhhuvggssgdrtggrpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmhhtphhouh
-    htpdhrtghpthhtohepshhhhigrmhdqshhunhgurghrrdhsqdhksegrmhgurdgtohhmpdhr
-    tghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdprhgtph
-    htthhopehlkhhmlhesrghnthhhvggrshdruggvvhdprhgtphhtthhopegsvghnrghtohdr
-    uggvnhhishelieesghhmrghilhdrtghomhdprhgtphhtthhopeguvghrvghkjhhohhhnrd
-    gtlhgrrhhksehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehsuhhpvghrmhdusehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehmvgeskhihlhgvghhoshhpohgunhgvthhirdgthhdprhgtphhtthhopehilhhp
-    ohdrjhgrrhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:rmj1ZptKs-LGt8Z4KtOM4MvK_ik1IUQ7820dsjsadN3YBTCIbquVVw>
-    <xmx:rmj1ZiZyJRF-YUDjNAawbgMlUDr_-BAlCag0OaxZEvvTgJ_GVLWuPA>
-    <xmx:rmj1ZoaCy1yWqoheFLjoAXl4g4_6vtM7cVmgL2VmAu1ZmNMnfA4eEQ>
-    <xmx:rmj1ZmCTWWJTx9XMlMsWeHj2wJBUo4Kq68iKFIOMiAdX5PGqeptDqw>
-    <xmx:rmj1Zoqbiqqt_kn0NJ_DQgS84eOIqrMAsCAtB-95DWNG6sjfYmYovxY6>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id EA5C63C0066; Thu, 26 Sep 2024 09:59:09 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727359258; c=relaxed/simple;
+	bh=qgBaXqfX83aV77/+rHU79HQLVsBXPykW7+xvP58AVYs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YD+FnhHUpep2OwEslz39c2lzsmo+EplEzPcCJVNs+gMc0bEjwCK7ZFoVSbfk4aAXzzitp6BFCfHWELBssOvdcihgPZd8aAvnQj5l2Uf6/7C0leYG7reGAaOMIM7tWjRhwJKFcTem99rJ1If01TDbOUIvJb00nRCLDGp7lRsNLlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=eKDJA8Zs; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1727359254; x=1727618454;
+	bh=+WWEUbHKcNY3jXi+az00t/iEtyJ5NJxJuuESqUIiLvI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=eKDJA8ZsepSStAinu05nkqg9IxmoQzqO19goRvSM9tAkpt6BivEWMEcIHZc7TSd3Y
+	 V0PTL13PuYuNRxYy6eV2HMJmXV/ygh0lB9aGOKyT4iZhIBA+m7nHJHbJa3aM7LSWjK
+	 ZKMJLJmA7zZ7H4QisuM1oY5rgLzDIcM741TlsZDDBnte5RewhCDPAhCv3ouwdjP38k
+	 GRJkAmn1aVi/MFUpxjuIidFvQ9kw4M9bSTsq5rXFw+h7iYrDcDjYenUMqbxM2CYMw0
+	 ghn2MRllwCSHH2d3DmV4lDgBn/iteg9XaZDhQ7K0FkoQeJzTLMv+hNre58R3IphviK
+	 3i/8ItehQCiYA==
+Date: Thu, 26 Sep 2024 14:00:50 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v7 04/26] rust: alloc: implement `Allocator` for `Kmalloc`
+Message-ID: <cfc4e3e4-6df6-43e2-bd2d-e2928dffe8c3@proton.me>
+In-Reply-To: <ZvVgimoQPoL1trmJ@cassiopeiae>
+References: <20240911225449.152928-1-dakr@kernel.org> <20240911225449.152928-5-dakr@kernel.org> <15f42ddd-b011-4136-b2e4-bc266fab25b6@proton.me> <ZvVgimoQPoL1trmJ@cassiopeiae>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: a662ef8837cfaa33d2d32dd6e8dc52cc57197097
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 26 Sep 2024 09:58:47 -0400
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Mario Limonciello" <superm1@kernel.org>,
- "Shyam Sundar S K" <Shyam-sundar.S-k@amd.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Hans de Goede" <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Luke D . Jones" <luke@ljones.dev>
-Cc: 
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- "open list" <linux-kernel@vger.kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>,
- "Antheas Kapenekakis" <lkml@antheas.dev>, me@kylegospodneti.ch,
- "Denis Benato" <benato.denis96@gmail.com>,
- "Limonciello, Mario" <mario.limonciello@amd.com>
-Message-Id: <2d07d31e-87f6-4576-977d-336f3d0bbc81@app.fastmail.com>
-In-Reply-To: <20240926025955.1728766-1-superm1@kernel.org>
-References: <20240926025955.1728766-1-superm1@kernel.org>
-Subject: Re: [RFC 0/2] "custom" ACPI platform profile support
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Mario,
+On 26.09.24 15:24, Danilo Krummrich wrote:
+> On Thu, Sep 26, 2024 at 01:00:58PM +0000, Benno Lossin wrote:
+>> On 12.09.24 00:52, Danilo Krummrich wrote:
+>>> +/// # Invariants
+>>> +///
+>>> +/// One of the following `krealloc`, `vrealloc`, `kvrealloc`.
+>>> +struct ReallocFunc(
+>>> +    unsafe extern "C" fn(*const core::ffi::c_void, usize, u32) -> *mut=
+ core::ffi::c_void,
+>>> +);
+>>> +
+>>> +impl ReallocFunc {
+>>> +    // INVARIANT: `krealloc` satisfies the type invariants.
+>>> +    const KREALLOC: Self =3D Self(bindings::krealloc);
+>>> +
+>>> +    /// # Safety
+>>> +    ///
+>>> +    /// This method has the same safety requirements as [`Allocator::r=
+ealloc`].
+>>> +    ///
+>>> +    /// # Guarantees
+>>> +    ///
+>>> +    /// This method has the same guarantees as `Allocator::realloc`. A=
+dditionally
+>>> +    /// - it accepts any pointer to a valid memory allocation allocate=
+d by this function.
+>>> +    /// - memory allocated by this function remains valid until it is =
+passed to this function.
+>>> +    unsafe fn call(
+>>> +        &self,
+>>> +        ptr: Option<NonNull<u8>>,
+>>> +        layout: Layout,
+>>> +        flags: Flags,
+>>> +    ) -> Result<NonNull<[u8]>, AllocError> {
+>>> +        let size =3D aligned_size(layout);
+>>> +        let ptr =3D match ptr {
+>>> +            Some(ptr) =3D> ptr.as_ptr(),
+>>> +            None =3D> ptr::null(),
+>>> +        };
+>>> +
+>>> +        // SAFETY:
+>>> +        // - `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc` an=
+d thus only requires that
+>>> +        //   `ptr` is NULL or valid.
+>>> +        // - `ptr` is either NULL or valid by the safety requirements =
+of this function.
+>>> +        //
+>>> +        // GUARANTEE:
+>>> +        // - `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc`.
+>>> +        // - Those functions provide the guarantees of this function.
+>>> +        let raw_ptr =3D unsafe {
+>>> +            // If `size =3D=3D 0` and `ptr !=3D NULL` the memory behin=
+d the pointer is freed.
+>>> +            self.0(ptr.cast(), size, flags.0).cast()
+>>> +        };
+>>> +
+>>> +        let ptr =3D if size =3D=3D 0 {
+>>> +            NonNull::dangling()
+>>> +        } else {
+>>> +            NonNull::new(raw_ptr).ok_or(AllocError)?
+>>> +        };
+>>> +
+>>> +        Ok(NonNull::slice_from_raw_parts(ptr, size))
+>>> +    }
+>>> +}
+>>
+>> I remember asking you to split this into a different commit. I think you
+>> argued that it would be better to keep it in the same commit when
+>> bisecting. I don't think that applies in this case, are there any other
+>> disadvantages?
+>=20
+> I don't really like the intermediate `#[expect(dead_code)]`, plus it's
+> additional work you didn't really give me a motivation for, i.e. you did =
+not
+> mention what would be the advantage.
 
-On Wed, Sep 25, 2024, at 10:59 PM, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
->
-> There are two major ways to tune platform performance in Linux:
->  * ACPI platform profile
->  * Manually tuning APU performance
->
-> Changing the ACPI platform profile is a "one stop shop" to change
-> performance limits and fan curves all at the same time.
->
-> On AMD systems the manual tuning methods typically involve changing
-> values of settings such as fPPT, sPPT or SPL.
->
-> The problem with changing these settings manually is that the definition
-> of the ACPI platform profile if supported by the hardware is no longer
-> accurate.  At best this can cause misrepresenting the state of the
-> platform to userspace and at worst can cause the state machine into an
-> invalid state.
->
-> The existence and continued development of projects such as ryzenadj which
-> manipulate debugging interfaces show there is a demand for manually tuning
-> performance.
->
-> Furthermore some systems (such as ASUS and Lenovo handhelds) offer an
-> ACPI-WMI interface for changing these settings. If using anything outside
-> that WMI interface the state will be wrong.  If using that WMI interface
-> the platform profile will be wrong.
->
-> This series introduces a "custom" ACPI platform profile and adds support
-> for the AMD PMF driver to use it when a user has enabled manual
-> adjustments.
->
-> If agreeable a similar change should be made to asus-armoury and any other
-> drivers that export the ability to change these settings but also a
-> platform profile.
->
+The advantage would be that it's easier to review (granted it probably
+is a bit late for that). I got confused a couple of times (but that's
+probably on me).
 
-As someone who supports customers on Lenovo devices and hits the occasional situation where a user has made strange tweaks to different power related settings, and then complains about power or thermal issues - I love the idea that it can be made clear the system has been 'adjusted' in a non standard way. I can also see why users would want interfaces to do those changes.
+> But sure, I will change it for the next version.
 
-Some suggestions:
+Thanks
 
-I'm wondering if we can make it so a driver can register only a 'custom' profile as an extra profile handler?
+---
+Cheers,
+Benno
 
-The thinking here is the custom setting in this series is implemented for the amd sps driver, and therefore on a regular Lenovo laptop wouldn't be used, as the thinkpad_acpi driver will grab the profile slot, Users on Lenovo systems aren't going to be able to get at these extra tweaks (unless they unload thinkpad_acpi, which has other side effects).
-
-If the sps driver can offer a custom mode, separately from thinkpad_acpi, then users can tweak settings to their hearts content but get back to regular mode when done.
-
-I also think there needs to be a way that when you switch from custom back to a 'regular' profile that it would do a clean up of anything tweaked. e.g. when switching away from custom the ppd driver should call a 'custom mode cleanup' function, so things can be undone and returned to how they were when it was started.
-
-Mark
 
