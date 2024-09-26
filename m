@@ -1,80 +1,45 @@
-Return-Path: <linux-kernel+bounces-340393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEDEC9872B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C9ED9872BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BCBC1C21B5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:18:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B79321C2276B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B83718CBE0;
-	Thu, 26 Sep 2024 11:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cY5jHOrw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B35318C90B;
+	Thu, 26 Sep 2024 11:20:33 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE16918C024
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 11:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34707158553;
+	Thu, 26 Sep 2024 11:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727349528; cv=none; b=kHSEEwrxKBiR/aGnQlkwJzox+fUoB1MtM3nl4Nm4gJCGpoVUvf9IvKOwZEfCXa2q32Ix83dXMyS6pBRLsqdPZcaOjzDXTl6VJjCJBwWLMZA2c+pxpu6V3xvTAZxyPDulQEYSdLJB1uZ+UgqebPRI6RhDOOBcdUxtkjFVVYZhtNc=
+	t=1727349632; cv=none; b=SIbf329hUm61BY7raMHzbg2SWSBl+P2SDmvN4e0Gpe1BvqSgwiBpPEeVZVh6GXff3bFq+YSMZoqCdJgu36gJwtv9xmVn/utgafNyDdkBrK+4tNNwdRb+gaKs6nEDKdHfmxtitN33a+82uxWhfA/7cvzjaTB3tETvZGp1XVAdWDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727349528; c=relaxed/simple;
-	bh=y7v1uzI8DNYSaj9CNPwAFayQIaeASIUKegOl84PWcPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tyXadQ/3EqbtQqIwY15eopmQMEfCJx1uvws0YmyE1R/+30uQT5KpGrjQWu7N9fGNYvIuKUSl9CzYXK0TmtRXQq62YCsTC6rNdhn/zkx9Syk/70Hx4mrcIHsoDrfNOMomC+z9hCS90YBdkIdTgTcmrnVYwtFAkKNtFTv6oID/cDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cY5jHOrw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727349525;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2MtDhDnhijbrjDYpjKVDoJwPwAmM392gFwthG6+A0BU=;
-	b=cY5jHOrwWh+ji+tnthOzoWlDaFs7UH4LOQQhzE6AB3ghWT5llN7WZwQv7ioi0+f5oLpbxP
-	qbZMGuI3TawMCL1BLDBJt6Pt9OWuTV9BdFrvWvo5VtygOp5Iw0tEdk3KJGxUXZrYO1wXQS
-	CtGmj4dj01C1etX8B03XzNyMgIWgQ+Y=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-122-Ap1fgRslMjeKEiwPxJ07KQ-1; Thu, 26 Sep 2024 07:18:44 -0400
-X-MC-Unique: Ap1fgRslMjeKEiwPxJ07KQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb6dc3365so5978395e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 04:18:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727349523; x=1727954323;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2MtDhDnhijbrjDYpjKVDoJwPwAmM392gFwthG6+A0BU=;
-        b=ZDlnF2m5p3+4/po7gey3alXSiF1oxaVTwzStGT2PYk73XveNw5LQ6V5/pMF6RzbDFb
-         7eqwLfUir2qgMzH1WNV+VzyzlKQlS/O5L1iJG1ia4gdMpOML1q9ilwvyEAq/RmT33/uD
-         rvxVX7qSbn+EayzpCNGZbl2AW4iMMCrmHADcaKFgeQohYt58b0oXFMNElSLVibNOBj9A
-         r7AUo+cp/1a5Lx9K5K4CKILaGAwEX2o/gV7k9JQUxCGQjuy04P0QKRfMaI005nHPszIV
-         RGHAIaOq2qUs6+vme8MQadDXNe/hUlAy01S4kWZwnr398PG939323spqsVYKLHEyaIkd
-         H4rw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNM3DeDe2fiyJcfdDDrfYcXmy6BW72SOmfOusW1ipOK82DP//yR2fU5iu07EFYqGreKu6zF27teGZw0E8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc9vV22doHmADyUbF9HD1InfeX0JKttQqx5hrY5z8o+PSnx3a9
-	E7imtcZ/dm2LZ/Yssz5lX7zUi7zw5hcL/BURHIsjoPSInHzy/HJXl6+Uzu+aTjM0n5SpxY7uIyQ
-	/Tv1aVnebHp76okIcvbrj/Z1oxcUyDppKbvJ6euQB8yWpD9a4okeiNwOWcnogng==
-X-Received: by 2002:a5d:5244:0:b0:374:c90c:226 with SMTP id ffacd0b85a97d-37cc245aec3mr3500460f8f.9.1727349523062;
-        Thu, 26 Sep 2024 04:18:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHtyHOQYW8XPXNu09FJ1U9vvMp2FaPjMpKPAvATaIwNI4Fiyr79bWf+gP5/vTE2Vd5teJwrAA==
-X-Received: by 2002:a5d:5244:0:b0:374:c90c:226 with SMTP id ffacd0b85a97d-37cc245aec3mr3500437f8f.9.1727349522541;
-        Thu, 26 Sep 2024 04:18:42 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c744:ac00:ef5c:b66d:1075:254a? (p200300cbc744ac00ef5cb66d1075254a.dip0.t-ipconnect.de. [2003:cb:c744:ac00:ef5c:b66d:1075:254a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a08da2sm44257595e9.24.2024.09.26.04.18.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 04:18:42 -0700 (PDT)
-Message-ID: <b036d16a-8af8-44b1-b4cb-5ca10a51728b@redhat.com>
-Date: Thu, 26 Sep 2024 13:18:40 +0200
+	s=arc-20240116; t=1727349632; c=relaxed/simple;
+	bh=01gYD2rhX1Ne4fKjXw+yyfDj6Fh98zIOEkFwA3ErBdA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=L78/Fnvfrq+0NiKK8LOWEWwSVnvxlJSXAPGfC6GYB4gVlwW/oeAOZsQOPQbUEq0pADtHJj0yOwlfm5zYPM/wXdeNgw2HBrnZ3uokueO/Fk18z4NmMGvc5678YsAsEjup5shdT6/+jmkWli46+59x1YGAqT4jz823BdvRROoeTxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XDrj55pcJz1SBkS;
+	Thu, 26 Sep 2024 19:19:37 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0F39F1402C6;
+	Thu, 26 Sep 2024 19:20:27 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 26 Sep
+ 2024 19:20:26 +0800
+Message-ID: <eef47f37-6d96-4c60-a00b-e96e6025ef43@huawei.com>
+Date: Thu, 26 Sep 2024 19:20:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,136 +47,223 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: migrate: annotate data-race in migrate_folio_unmap()
-To: Jeongjun Park <aha310510@gmail.com>, akpm@linux-foundation.org,
- willy@infradead.org
-Cc: wangkefeng.wang@huawei.com, ziy@nvidia.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
- stable@vger.kernel.org
-References: <20240924130053.107490-1-aha310510@gmail.com>
+Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
+ key_task_permission
+To: Jarkko Sakkinen <jarkko@kernel.org>, Chen Ridong
+	<chenridong@huaweicloud.com>, <dhowells@redhat.com>, <paul@paul-moore.com>,
+	<jmorris@namei.org>, <serge@hallyn.com>
+CC: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <James.Bottomley@HansenPartnership.com>,
+	<roberto.sassu@huaweicloud.com>
+References: <20240913070928.1670785-1-chenridong@huawei.com>
+ <D45Z3J2E2MPX.4SDWNGAP3D41@kernel.org>
+ <4079d020-edcc-4e27-9815-580f83a6c0ca@huaweicloud.com>
+ <D46WU24OP9O4.1Y7EGDV8ZN7NR@kernel.org>
+ <1cfa878e-8c7b-4570-8606-21daf5e13ce7@huaweicloud.com>
+ <D49PLU7VOREK.3UZFD499C96FB@kernel.org>
+ <fbe97a9c-0899-403a-840a-8d86e8730934@huaweicloud.com>
+ <D4G37UXT3VYV.1F8Z50TNGYYBW@kernel.org>
+ <D4G39938DC0V.8PCWJQ73GOK3@kernel.org>
+ <D4G4I4V56OJ3.1AUR56F77OOHU@kernel.org>
 Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240924130053.107490-1-aha310510@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <D4G4I4V56OJ3.1AUR56F77OOHU@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-On 24.09.24 15:00, Jeongjun Park wrote:
-> I found a report from syzbot [1]
-> 
-> This report shows that the value can be changed, but in reality, the
-> value of __folio_set_movable() cannot be changed because it holds the
-> folio refcount.
-> 
-> Therefore, it is appropriate to add an annotate to make KCSAN
-> ignore that data-race.
-> 
-> [1]
-> 
-> ==================================================================
-> BUG: KCSAN: data-race in __filemap_remove_folio / migrate_pages_batch
-> 
-> write to 0xffffea0004b81dd8 of 8 bytes by task 6348 on cpu 0:
->   page_cache_delete mm/filemap.c:153 [inline]
->   __filemap_remove_folio+0x1ac/0x2c0 mm/filemap.c:233
->   filemap_remove_folio+0x6b/0x1f0 mm/filemap.c:265
->   truncate_inode_folio+0x42/0x50 mm/truncate.c:178
->   shmem_undo_range+0x25b/0xa70 mm/shmem.c:1028
->   shmem_truncate_range mm/shmem.c:1144 [inline]
->   shmem_evict_inode+0x14d/0x530 mm/shmem.c:1272
->   evict+0x2f0/0x580 fs/inode.c:731
->   iput_final fs/inode.c:1883 [inline]
->   iput+0x42a/0x5b0 fs/inode.c:1909
->   dentry_unlink_inode+0x24f/0x260 fs/dcache.c:412
->   __dentry_kill+0x18b/0x4c0 fs/dcache.c:615
->   dput+0x5c/0xd0 fs/dcache.c:857
->   __fput+0x3fb/0x6d0 fs/file_table.c:439
->   ____fput+0x1c/0x30 fs/file_table.c:459
->   task_work_run+0x13a/0x1a0 kernel/task_work.c:228
->   resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->   exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
->   exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
->   __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->   syscall_exit_to_user_mode+0xbe/0x130 kernel/entry/common.c:218
->   do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> read to 0xffffea0004b81dd8 of 8 bytes by task 6342 on cpu 1:
->   __folio_test_movable include/linux/page-flags.h:699 [inline]
->   migrate_folio_unmap mm/migrate.c:1199 [inline]
->   migrate_pages_batch+0x24c/0x1940 mm/migrate.c:1797
->   migrate_pages_sync mm/migrate.c:1963 [inline]
->   migrate_pages+0xff1/0x1820 mm/migrate.c:2072
->   do_mbind mm/mempolicy.c:1390 [inline]
->   kernel_mbind mm/mempolicy.c:1533 [inline]
->   __do_sys_mbind mm/mempolicy.c:1607 [inline]
->   __se_sys_mbind+0xf76/0x1160 mm/mempolicy.c:1603
->   __x64_sys_mbind+0x78/0x90 mm/mempolicy.c:1603
->   x64_sys_call+0x2b4d/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:238
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> value changed: 0xffff888127601078 -> 0x0000000000000000
-> 
-> Reported-by: syzbot <syzkaller@googlegroups.com>
-> Cc: stable@vger.kernel.org
 
-Hmm, why stable?
 
-> Fixes: 7e2a5e5ab217 ("mm: migrate: use __folio_test_movable()")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
+On 2024/9/26 17:54, Jarkko Sakkinen wrote:
+> On Thu Sep 26, 2024 at 11:55 AM EEST, Jarkko Sakkinen wrote:
+>> On Thu Sep 26, 2024 at 11:53 AM EEST, Jarkko Sakkinen wrote:
+>>> On Thu Sep 26, 2024 at 6:48 AM EEST, Chen Ridong wrote:
+>>>>
+>>>> On 2024/9/19 4:57, Jarkko Sakkinen wrote:
+>>>>> On Wed Sep 18, 2024 at 10:30 AM EEST, Chen Ridong wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 2024/9/15 21:59, Jarkko Sakkinen wrote:
+>>>>>>> On Sun Sep 15, 2024 at 3:55 AM EEST, Chen Ridong wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 2024/9/14 19:33, Jarkko Sakkinen wrote:
+>>>>>>>>> On Fri Sep 13, 2024 at 10:09 AM EEST, Chen Ridong wrote:
+>>>>>>>>>> We meet the same issue with the LINK, which reads memory out of bounds:
+>>>>>>>>>
+>>>>>>>>> Nit: don't use "we" anywhere".
+>>>>>>>>>
+>>>>>>>>> Tbh, I really don't understand the sentence above. I don't what
+>>>>>>>>> "the same issue with the LINK" really is.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Hello, Jarkko.
+>>>>>>>> I apologize for any confusion caused.
+>>>>>>>>
+>>>>>>>> I've encountered a bug reported by syzkaller. I also found the same bug
+>>>>>>>> reported at this LINK:
+>>>>>>>> https://syzkaller.appspot.com/bug?id=68a5e206c2a8e08d317eb83f05610c0484ad10b9.
+>>>>>>>>
+>>>>>>>>>> BUG: KASAN: slab-out-of-bounds in __kuid_val include/linux/uidgid.h:36
+>>>>>>>>>> BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.h:63 [inline]
+>>>>>>>>>> BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
+>>>>>>>>>> security/keys/permission.c:54
+>>>>>>>>>> Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
+>>>>>>>>>>
+>>>>>>>>>> CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-gafbffd6c3ede #15
+>>>>>>>>>> Call Trace:
+>>>>>>>>>>      __dump_stack lib/dump_stack.c:82 [inline]
+>>>>>>>>>>      dump_stack+0x107/0x167 lib/dump_stack.c:123
+>>>>>>>>>>      print_address_description.constprop.0+0x19/0x170 mm/kasan/report.c:400
+>>>>>>>>>>      __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
+>>>>>>>>>>      kasan_report+0x3a/0x50 mm/kasan/report.c:585
+>>>>>>>>>>      __kuid_val include/linux/uidgid.h:36 [inline]
+>>>>>>>>>>      uid_eq include/linux/uidgid.h:63 [inline]
+>>>>>>>>>>      key_task_permission+0x394/0x410 security/keys/permission.c:54
+>>>>>>>>>>      search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
+>>>>>>>>>>      keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:922
+>>>>>>>>>>      search_cred_keyrings_rcu+0x111/0x2e0 security/keys/process_keys.c:459
+>>>>>>>>>>      search_process_keyrings_rcu+0x1d/0x310 security/keys/process_keys.c:544
+>>>>>>>>>>      lookup_user_key+0x782/0x12e0 security/keys/process_keys.c:762
+>>>>>>>>>>      keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:434
+>>>>>>>>>>      __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
+>>>>>>>>>>      __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
+>>>>>>>>>>      do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+>>>>>>>>>>      entry_SYSCALL_64_after_hwframe+0x67/0xd1
+>>>>>>>>>>
+>>>>>>>>>> However, we can't reproduce this issue.
+>>>>>>>>>
+>>>>>>>>> "The issue cannot be easily reproduced but by analyzing the code
+>>>>>>>>> it can be broken into following steps:"
+>>>>>>>>
+>>>>>>>> Thank you for your correction.
+>>>>>>>> Does this patch address the issue correctly? Is this patch acceptable?
+>>>>>>>
+>>>>>>> I only comment new patch versions so not giving any promises but I can
+>>>>>>> say that it is I think definitely in the correct direction :-)
+>>>>>>>
+>>>>>>> BR, Jarkko
+>>>>>>
+>>>>>> Hello, Jarkko. I have reproduced this issue. It can be reproduced by
+>>>>>> following these steps:
+>>>>>>
+>>>>>> 1. Add the helper patch.
+>>>>>>
+>>>>>> @@ -205,6 +205,9 @@ static void hash_key_type_and_desc(struct
+>>>>>> keyring_index_key *index_key)
+>>>>>>            else if (index_key->type == &key_type_keyring && (hash &
+>>>>>> fan_mask) != 0)
+>>>>>>                    hash = (hash + (hash << level_shift)) & ~fan_mask;
+>>>>>>            index_key->hash = hash;
+>>>>>> +       if ((index_key->hash & 0xff) == 0xe6) {
+>>>>>> +                       pr_err("hash_key_type_and_desc: type %s %s
+>>>>>> 0x%x\n",  index_key->type->name, index_key->description, index_key->hash);
+>>>>>> +       }
+>>>>>>     }
+>>>>>>
+>>>>>> 2. Pick up the inputs whose hash is xxe6 using the following cmd. If a
+>>>>>> key's hash is xxe6, it will be printed.
+>>>>>>
+>>>>>> for ((i=0; i<=10000; i++)); do ./test_key user user$i "Some payload"; done
+>>>>>>
+>>>>>> You have complile test_key whith following code.
+>>>>>>
+>>>>>> #include <sys/types.h>
+>>>>>> #include <keyutils.h>
+>>>>>> #include <stdint.h>
+>>>>>> #include <stdio.h>
+>>>>>> #include <stdlib.h>
+>>>>>> #include <string.h>
+>>>>>>
+>>>>>> int
+>>>>>> main(int argc, char *argv[])
+>>>>>> {
+>>>>>>       key_serial_t key;
+>>>>>>
+>>>>>>       if (argc != 4) {
+>>>>>> 	   fprintf(stderr, "Usage: %s type description payload\n",
+>>>>>> 			   argv[0]);
+>>>>>> 	   exit(EXIT_FAILURE);
+>>>>>>       }
+>>>>>>
+>>>>>>       key = add_key(argv[1], argv[2], argv[3], strlen(argv[3]),
+>>>>>> 			   KEY_SPEC_SESSION_KEYRING);
+>>>>>>       if (key == -1) {
+>>>>>> 	   perror("add_key");
+>>>>>> 	   exit(EXIT_FAILURE);
+>>>>>>       }
+>>>>>>
+>>>>>>       printf("Key ID is %jx\n", (uintmax_t) key);
+>>>>>>
+>>>>>>       exit(EXIT_SUCCESS);
+>>>>>> }
+>>>>>>
+>>>>>>
+>>>>>> 3. Have more than 32 inputs now. their hashes are xxe6.
+>>>>>> eg.
+>>>>>> hash_key_type_and_desc: type user user438 0xe3033fe6
+>>>>>> hash_key_type_and_desc: type user user526 0xeb7eade6
+>>>>>> ...
+>>>>>> hash_key_type_and_desc: type user user9955 0x44bc99e6
+>>>>>>
+>>>>>> 4. Reboot and add the keys obtained from step 3.
+>>>>>> When adding keys to the ROOT that their hashes are all xxe6, and up to
+>>>>>> 16, the ROOT has keys with hashes that are not xxe6 (e.g., slot 0), so
+>>>>>> the keys are dissimilar. The ROOT will then split NODE A without using a
+>>>>>> shortcut. When NODE A is filled with keys that have hashes of xxe6, the
+>>>>>> keys are similar. NODE A will split with a shortcut.
+>>>>>>
+>>>>>> As my analysis, if a slot of the root is a shortcut(slot 6), it may be
+>>>>>> mistakenly be transferred to a key*, leading to an read out-of-bounds read.
+>>>>>>
+>>>>>>                          NODE A
+>>>>>>                  +------>+---+
+>>>>>>          ROOT    |       | 0 | xxe6
+>>>>>>          +---+   |       +---+
+>>>>>>     xxxx | 0 | shortcut  :   : xxe6
+>>>>>>          +---+   |       +---+
+>>>>>>     xxe6 :   :   |       |   | xxe6
+>>>>>>          +---+   |       +---+
+>>>>>>          | 6 |---+       :   : xxe6
+>>>>>>          +---+           +---+
+>>>>>>     xxe6 :   :           | f | xxe6
+>>>>>>          +---+           +---+
+>>>>>>     xxe6 | f |
+>>>>>>          +---+
+>>>>>>
+>>>>>> 5. cat /proc/keys. and the issue is reproduced.
+>>>>>
+>>>>> Hi, I'll try to run through your procedure next week and give my comments.
+>>>>> Thanks for doing this.
+>>>>>
+>>>>> BR, Jarkko
+>>>>
+>>>> Hi, Jarkko, have you run these procedure?
+>>>> I have tested this patch with LTP and a pressure test(stress-ng --key),
+>>>> and this patch have fixed this issue. Additionally, no new bugs have
+>>>> been found so far.
+>>>>
+>>>> I am looking forward to your reply.
+>>>>
+>>>> Best regards,
+>>>> Ridong
+>>>
+>>> Nope because we are apparently stuck with release critical bug:
+>>>
+>>> https://lore.kernel.org/linux-integrity/D4EPMF7G3E05.1VHS9CVG3DZDE@kernel.org/T/#t
+>>>
+>>> Might take several weeks before I look into this.
+>>
+>> I was expecting to send a PR early this week since the patch set
+>> addresses the issue so thus wrong estimation.
+> 
+> I asked David if he could look into this.
+> 
+> BR, Jarkko
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Thank you very much.
 
--- 
-Cheers,
-
-David / dhildenb
-
+Best regards,
+Ridong
 
