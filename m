@@ -1,119 +1,124 @@
-Return-Path: <linux-kernel+bounces-341147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F23A987BCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:31:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A8F987BD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310541F23A0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:31:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75E931F226FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F0A1B07A7;
-	Thu, 26 Sep 2024 23:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FB01B012B;
+	Thu, 26 Sep 2024 23:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FuPan7vj"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3gET8Axi"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADEE15AAD6
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 23:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBAC15A87A
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 23:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727393476; cv=none; b=Tv8MKKQPwixJZNw0vwlGg55/XLfxiXNV/aBGj6gzKjvgcd8CoTQ4gNfjYLI0Dd3UEfaW0OLoNg33FJ020qkr9Q74Cf9tAhOM2RipVvVitlYGXlhiprp4BKkFxEck6MoMmNFArvagiIokwvgtCP9P7j5G4rp67oGJAarpet8H5Dk=
+	t=1727393802; cv=none; b=humjhhm1nvBy3SC21zjTtmU3dqwG6yB4x8nnQWUavBzqdQvWZ1+8Uvr/SOTAZx3dZKRoxLJr14EfVITcdnux1IrnMt4Fq6RJAg5EI/Egy6DlY8oy5eAf/Lv48KYT8xyy8f+azXAHrv1QFqVhYfrIX7BxEFyjy/i5uA7hGFpmmik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727393476; c=relaxed/simple;
-	bh=7hoodPtwf3xVI9JLDfUA40Je1A7R9N7HAhxABPfVdZw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DLLiiDJEKddccPIN6a5iNxVmfIZCa/hoGThXfd88naiGUM3UqLuEJVYLgBJoFGNvbePlHisxHksYkVKrhdXLQeYH/3aQKg8q6+2PH4O5VB43lkhk0nc/E+Ua29yu0KAZI1OyX5jgn/k8ynObSsz+L+TJALwmF7vFmMH6f+mhLd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FuPan7vj; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so491749066b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:31:14 -0700 (PDT)
+	s=arc-20240116; t=1727393802; c=relaxed/simple;
+	bh=btuG0rdXl4iycnF0syedQgjixOF4epBMnIrgHcGRgko=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=VUJllCyVvMb2nz8L3emjYZTWhNnaR7VWfFDZTsSftOGxglVv9KNx0tvcDAkGMyQDtG3qB3QTHxZA7x7T2r8jm4Q+icdBqRa7d5EJ3+rY0LvmiUN5LGUPj+yw2m1zDCd5GAYcEfKwe3KeHzE4zBWBvHPN9UzocNWhmFm++Hbxmd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3gET8Axi; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71926732629so1661036b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:36:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727393473; x=1727998273; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=toinFhJP3tFAS9cxuoVAyU9xS2LGZOz1oWCsjvSfxfs=;
-        b=FuPan7vjGzjNg/5OSMpWCYC1sumidyiShL/lj8Xt8Ux1XwjXI9Kn9fGNlLONLXZM+d
-         /vejY1QUXXA24crJIMZQsrBHk1RRXAnX0imLUS/RLeInV+8rkdyLDOWPfutTeBVbciD+
-         6mWyWOJupfgQxsUKW60bjFaAIru7CIYm+jh2JLzuYl+HaI5broD4wIsLUTzoia7FCRZO
-         s2El5rDNTM15AOqRocOHPJm7UMHaYmNbF91v4cUENdZ5HENgapgKMLBza7V6sxWJ0vO9
-         bZu3y1lYMSlR47CJ6dRVB6kmMis9tK8My+hWrb2eK7PoUnaCIut6NukDv2WDvOtOz3/F
-         uFKQ==
+        d=google.com; s=20230601; t=1727393799; x=1727998599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3zA+NTTDrNsYiLWyeaQyWbu0C8Sd9VhUHtR4/aWFrb0=;
+        b=3gET8AxiM0J+OkjELMWE89de13/XGyCPhebRHe0cAhqg52vZXhE+dfQqO0c2uvwUmd
+         ginoXg8KFDmdWiiIvzUeQAGCp6zw3I7Q8TqVPKixFpxy7j47hBS/OULmyGTFO6FQAVqE
+         aMHp6g64WnbkzNCZrl/3PYjUNg2V4nWIUlfoZP4uIjikAOlecfO9AIwyAzdYvkHcI9zt
+         HjrN1mwsH4/Hj6Abnq0lbsLuRIV6qiB04BRx9WG5MNhVRR3E0Lk+sv1uFhJXOCcol+3Z
+         vvYVuDdIKtofHKAzOhgrUhyWdnzQPT8/y5jxBMuW+9oHJmYpZAmMx7vwOvSBGPJv96Sm
+         rCpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727393473; x=1727998273;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=toinFhJP3tFAS9cxuoVAyU9xS2LGZOz1oWCsjvSfxfs=;
-        b=WmHl2BlUPBPwRnIZf4vlWNU5nN7qyyGzyRTKWusLlmEBQRnCYDT2d5NervhlyWOzmS
-         yaUjOJN/PTLja/V66QNk4PME2QAP0TjDqgtzyg4PRCSkWpY/6r79bFguCP152xOS1iOn
-         H0sQW3/v6VkKqa4Q1Pn2MZC1kp+5hMKIto7AXSbC9IukdECPhFlNv1inAB7AAD/fwgTa
-         +OZii0oFxDdKmM3GH2DAs1YWRtjcaoZuSwybho5OYh2kDOd8bhKlvC0Q9OnaSOowDapm
-         Ir1eT9tHyr0iK7Odi5o4Z5cfwuNX78XSUgI/IWfcpmclH8EzVJszo2XblYwZWeguzZ4f
-         lr7w==
-X-Forwarded-Encrypted: i=1; AJvYcCW1A259ZGy6jVVu/OjXq1vMLmuSQ7Fx5U/ee9eGdfaF8odDBgWcC7jclZlOM/F0fHcp7QPenEja67cKzg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxemc3zXXfB6L8Gq0is/LFjKRkaC7SUlJ7JffgByA+1QXnLkGJP
-	WIRpl+cmy/kZIH4zb+qpbrCVymjbaNy7TXlGev1XULbrgABoF5/CuuBcbIr2Wd0=
-X-Google-Smtp-Source: AGHT+IHpF5KFnQN0CqvNcoR4PK5z3SNZf94773yelZyvSjGnVMyQcOdZgke9pl/b//B22gsfh2xSAw==
-X-Received: by 2002:a17:907:7d8c:b0:a91:15ba:7c4d with SMTP id a640c23a62f3a-a93c3211997mr146447066b.33.1727393472757;
-        Thu, 26 Sep 2024 16:31:12 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c5af5sm50749266b.70.2024.09.26.16.31.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 16:31:12 -0700 (PDT)
-Message-ID: <86bf9cb5-a0bb-46d5-8deb-f0e8a86932e4@linaro.org>
-Date: Fri, 27 Sep 2024 00:31:11 +0100
+        d=1e100.net; s=20230601; t=1727393799; x=1727998599;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3zA+NTTDrNsYiLWyeaQyWbu0C8Sd9VhUHtR4/aWFrb0=;
+        b=Pfcxl7WvgkHGF2GJNS/b3F2xIj1yGjJzftzyxZ4qaw51dDhadsdfT8rOaL1JgJ32Pm
+         T34uSNw8wxL3U8gJRU+rrChF/c1dfS91INR5Fq4xaDfe+CsnaAhXTFSBvT9jNmsSTWz9
+         TqPJav/pKdmSDgk9nWnr9uZME73Llim/JleI8lwUI7qzdOpI4mkWR3vqmam7Ldepy1nB
+         BSCnpTKDqGQwuqUxIjjwlZrQI0J1fYv0Xp41IPjNgzVwIXtScLjpqbi1jFv18mEcNLkH
+         2WSug4ndDFFKfDKjyGYzcv/IGKKPRb/6nSg91DXWeU2Rv43hys5nE6mBgtkqa0RMS87h
+         y/aA==
+X-Gm-Message-State: AOJu0YxYqElrTbEtWCECMUDQshjCqabJh81UdkZZQrC0av+2S2eGaYIp
+	1CWSfkG0owG/+rLkU3a7pI4F3J0jwSWPzc9/PyxrXWs+xGXGFer2B4UJg8eBlPMN/g+V+O4sdCS
+	zCbJMeChm1A==
+X-Google-Smtp-Source: AGHT+IGCxy+wJv8OHzbyv/7j+8lY+SUfQRcB6l5MQseGCOvdCvySd0fiWD3iueTVvTRZKAMAXhW61Dy8Pss2bw==
+X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
+ (user=cmllamas job=sendgmr) by 2002:aa7:8b46:0:b0:717:9865:235e with SMTP id
+ d2e1a72fcca58-71b25f3520cmr4837b3a.2.1727393798608; Thu, 26 Sep 2024 16:36:38
+ -0700 (PDT)
+Date: Thu, 26 Sep 2024 23:36:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] media: dt-bindings: Add OmniVision OV08X40
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Jason Chen <jason.z.chen@intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240926-b4-master-24-11-25-ov08x40-v1-0-e4d5fbd3b58a@linaro.org>
- <20240926-b4-master-24-11-25-ov08x40-v1-2-e4d5fbd3b58a@linaro.org>
- <ZvWDbxzm2cCgC8tP@kekkonen.localdomain>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <ZvWDbxzm2cCgC8tP@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Message-ID: <20240926233632.821189-1-cmllamas@google.com>
+Subject: [PATCH v2 0/8] binder: several fixes for frozen notification
+From: Carlos Llamas <cmllamas@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Alice Ryhl <aliceryhl@google.com>, stable@vger.kernel.org, 
+	Carlos Llamas <cmllamas@google.com>, Yu-Ting Tseng <yutingtseng@google.com>, 
+	Todd Kjos <tkjos@google.com>, Martijn Coenen <maco@google.com>, 
+	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Viktor Martensson <vmartensson@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26/09/2024 16:53, Sakari Ailus wrote:
->> +      - const: xvclk
-> This seems redundant.
+These are all fixes for the frozen notification patch [1], which as of
+today hasn't landed in mainline yet. As such, this patchset is rebased
+on top of the char-misc-next branch.
 
-Right so you're saying you'd prefer something like this
+[1] https://lore.kernel.org/all/20240709070047.4055369-2-yutingtseng@google=
+.com/
 
-drivers/media/i2c/ov8865.c
+Cc: stable@vger.kernel.org
+Cc: Yu-Ting Tseng <yutingtseng@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Martijn Coenen <maco@google.com>
+Cc: Arve Hj=C3=B8nnev=C3=A5g <arve@android.com>
+Cc: Viktor Martensson <vmartensson@google.com>
 
-I can drop the dependency on "xvclk" as a dependency in this series.
+v1: https://lore.kernel.org/all/20240924184401.76043-1-cmllamas@google.com/
 
->> +
->> +  clock-frequency:
->> +    description:
->> +      Frequency of the xvclk clock in Hertz.
-> Could you instead use the frequency already set, using assigned-clock* in
-> the example?
+v2:
+  * debug output for BINDER_WORK_CLEAR_FREEZE_NOTIFICATION (Alice)
+  * allow notifications for dead nodes instead of EINVAL (Alice)
+  * add fix for memleak of proc->delivered_freeze
+  * add proc->delivered_freeze to debug output
+  * collect tags
 
-Almost certainly yes.
+Carlos Llamas (8):
+  binder: fix node UAF in binder_add_freeze_work()
+  binder: fix OOB in binder_add_freeze_work()
+  binder: fix freeze UAF in binder_release_work()
+  binder: fix BINDER_WORK_FROZEN_BINDER debug logs
+  binder: fix BINDER_WORK_CLEAR_FREEZE_NOTIFICATION debug logs
+  binder: allow freeze notification for dead nodes
+  binder: fix memleak of proc->delivered_freeze
+  binder: add delivered_freeze to debugfs output
 
-Yeah, I do that so.
+ drivers/android/binder.c | 64 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 49 insertions(+), 15 deletions(-)
 
----
-bod
+--=20
+2.46.1.824.gd892dcdcdd-goog
 
