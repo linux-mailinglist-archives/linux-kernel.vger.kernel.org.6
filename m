@@ -1,87 +1,55 @@
-Return-Path: <linux-kernel+bounces-340709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A829876EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:51:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F07259876F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 530EE1C254AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:51:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99464280E98
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D85453368;
-	Thu, 26 Sep 2024 15:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHLunHlC"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BB54C7E;
-	Thu, 26 Sep 2024 15:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021D514AD25;
+	Thu, 26 Sep 2024 15:52:03 +0000 (UTC)
+Received: from chessie.everett.org (chessie.fmt1.pfcs.com [66.220.13.234])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E7014F126;
+	Thu, 26 Sep 2024 15:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.220.13.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727365882; cv=none; b=Hg1X/rBd25Opu00oFFwroKsasyqkJTVYcn3eT9h5+PepAvJJCVlpO4vO5VdTVg9ACSNg8Su3jqr8v0AiPrU+xslAayiz/1pTtAZoYCYE8qS5XcDSADiuLQo8uCyMPluZE+yQT8J03kHGXlm+e5ToYI8eYT/jFyWUafQ88mqtWEU=
+	t=1727365922; cv=none; b=IdH8dvmtJ1gJzlkjCwJvV64m4FXMaa8BKwIQZgLqhDyk3Ig+eKfkLXeHhlez0iHWxspR3gz8DaKZzbeq87booVeTJ0BRiNW6i3a5uLCP0zL/KpQzKITP6fbUd1cwIIvdyIdytlmEXZ5O2lTN6KkhN4W4fa+z+MOAVHvqI6xCGUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727365882; c=relaxed/simple;
-	bh=6Mu+YMPvlbBaORVQ0gZ41JhwRZDq6iMkN6MOQwDkgT4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Bnn71LTz0W33lwSQVd9RrcVqiodlm9cTT0t5N6DlK5Cmz42kzWNczko23NZfRaz5VG7UHyfb3gTVUxoTTlHy7Mpr/z6PHmjIPESo7pAmp6yUIJFyzBrmfZb3C7OeqACJdjzgp3PDsulnG05wxfaLdkehENCmJMfrfjFYfwKjS00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHLunHlC; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-717934728adso895524b3a.2;
-        Thu, 26 Sep 2024 08:51:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727365881; x=1727970681; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=549jvhNUSwmwk8eXbBGBDthSFtsG88x9HMrxQ9/pgi0=;
-        b=AHLunHlCqMaPdDvuVMRElQ2n5S9xAvfPPth8zGkVEOtbysSYiwgijg1hv1bSkMgKiX
-         Cswg23yTeUNVA3SEMyciiyxKxVpuIv3HS9Jp5TX4Clx2KY94QnTc+c7Qjyw0TpOvUC/D
-         3quNRcvLL7+rygGyH6qE1Nci/FpwCFbYqvZT3asQG56Ppet6HyfWTI/FQ47A+JKjS9ES
-         EXxMv6fiUHyLuB+nW0I+QCva5b6igm22Mh/rksWyDJSVKbtHsr8/bp7Ety1c9NHBkdUJ
-         f9JSdhM2pgtOUuuSOtu7oqmO9C17J3gOIxInyBVil50rkd7IsEYwBdXYEqpTbYFu29gB
-         Zeeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727365881; x=1727970681;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=549jvhNUSwmwk8eXbBGBDthSFtsG88x9HMrxQ9/pgi0=;
-        b=G3a2tI31PYNYRfbGT8PXeMOWigjC6zfvKnR5w+kIgTwebZXPgYd9q2lLs5vCfD12Fv
-         wEAfrIF2DZy9G6UyEEK1F5gAgAu/r1HhUXbsSEe37Cexnh+4opgdpHFFmLn/tbhwkKQM
-         hMV4zTaRCDP5dGYT2oqd1XtuoWPm5Od3r9/TtGdANCmF+1jMarmgK/GZh/7CZ0tp84hc
-         kyRpmDaqy7SPsbtjoY5tNtF+VbHmKanZL36EtNuqnqREO9jB9UbOeToQ4x4CiIMoqHzd
-         P+yhGb6d86Fhj9xNuOWlHCEia6ymrvWWa1aFHvrNMc+es2SJp0XcgDLgDOnZqhadKYVo
-         26/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUcZjor//2BBjyc9tkoGhNBp1m33hR1ZA8ZTRHR8IJpvKxgok7lIcpspzBEGmBIYZ0YTK55HN8FmyTU5wI=@vger.kernel.org, AJvYcCWIbDnOjjeUQjtqanLuUdTXfS9pvcHhSt7gugBPF7zGXfLpxxx9Ke43F+gasiHx8yHCh0SVZhON4nLDlSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7YteBGoTBAprib01cNXrRHby46QuSf9MLIqm5+6JzQh6Vn3Oz
-	MYJvLBMp/nxEW1b0ILgSjmwvKGRkxbZenpwdXmyY/bIMcsF0fmAp
-X-Google-Smtp-Source: AGHT+IFQFvdF/l8IwPlfBuA1Jc6fzNmrDCqYkEtP4KOoCVi+D3ALqMOzJ4eFY/jsBtanCC4Lpipwtg==
-X-Received: by 2002:a05:6a00:2383:b0:714:1e28:da95 with SMTP id d2e1a72fcca58-71b25f45aabmr335398b3a.7.1727365880634;
-        Thu, 26 Sep 2024 08:51:20 -0700 (PDT)
-Received: from embed-PC.. ([2401:4900:1cb4:e707:a7e0:2397:b605:4104])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db5eb40bsm51249a12.69.2024.09.26.08.51.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 08:51:20 -0700 (PDT)
-From: Abhishek Tamboli <abhishektamboli9@gmail.com>
-To: perex@perex.cz,
-	tiwai@suse.com
-Cc: kailang@realtek.com,
-	sbinding@opensource.cirrus.com,
-	simont@opensource.cirrus.com,
-	josh@joshuagrisham.com,
-	foss@athaariq.my.id,
-	rf@opensource.cirrus.com,
-	skhan@linuxfoundation.org,
-	rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: hda/realtek: Add a quirk for HP Pavilion 15z-ec200
-Date: Thu, 26 Sep 2024 21:21:12 +0530
-Message-Id: <20240926155112.8079-1-abhishektamboli9@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727365922; c=relaxed/simple;
+	bh=CxQY6aXsL1t8BJwX9KZmsKV/ZLGtIfokbmdRVVgDDYM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sar97f6dE28KzvnXRIZPgUce/nBLgdqdZKxZjSdicUCnZ4V1KPBhuJQtKECDOyRxmpwN6eQEfUWR4z8+TnaqleIba1hDDQ4d238hR7Ftw/JlM7dZ2bTQoANGFbeAFwIv3n6E5PIwfFyTtU6cCqsGfUNApXEOeyaVWtMcWDwXTok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org; spf=pass smtp.mailfrom=nwtime.org; arc=none smtp.client-ip=66.220.13.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nwtime.org
+Received: from localhost.localdomain (ip-77-25-16-238.web.vodafone.de [77.25.16.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by chessie.everett.org (Postfix) with ESMTPSA id 4XDyl71svwzMQYm;
+	Thu, 26 Sep 2024 15:51:47 +0000 (UTC)
+From: Erez Geva <erezgeva@nwtime.org>
+To: linux-mtd@lists.infradead.org,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Michael Walle <mwalle@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Esben Haabendal <esben@geanix.com>,
+	Erez Geva <ErezGeva2@gmail.com>
+Subject: [PATCH v6 0/3] Add support for SPI-NOR Macronix OTP
+Date: Thu, 26 Sep 2024 17:51:24 +0200
+Message-Id: <20240926155127.2450246-1-erezgeva@nwtime.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,30 +58,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the quirk for HP Pavilion Gaming laptop 15z-ec200 for
-enabling the mute led. The fix apply the ALC285_FIXUP_HP_MUTE_LED
-quirk for this model.
+From: Erez Geva <ErezGeva2@gmail.com>
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=219303
+Add support for SPI-NOR Macronix OTP.
 
-Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
----
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
+v2:
+Improve description of mx25l12833f.
+Add note about mx25l12833f using the same JEDEC ID as mx25l12805d.
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 4ca66234e561..94125a977f08 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10315,6 +10315,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x103c, 0x8786, "HP OMEN 15", ALC285_FIXUP_HP_MUTE_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8787, "HP OMEN 15", ALC285_FIXUP_HP_MUTE_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8788, "HP OMEN 15", ALC285_FIXUP_HP_MUTE_LED),
-+	SND_PCI_QUIRK(0x103c, 0x88DD, "HP Pavilion 15z-ec200", ALC285_FIXUP_HP_MUTE_LED),
- 	SND_PCI_QUIRK(0x103c, 0x87b7, "HP Laptop 14-fq0xxx", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
- 	SND_PCI_QUIRK(0x103c, 0x87c8, "HP", ALC287_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x87d3, "HP Laptop 15-gw0xxx", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
+v3:
+Improve description.
+Rename _nor_send_cmd() to spi_nor_send_cmd_internal().
+Remove MX25L12833F specific changes.
+Add reading SFDP to all Macronix chips.
+Add support of reading OTP parameters from device tree.
+Reorgenize patches to 2 SPI-NOR patches and 2 Macronix patches.
+Testing with MX25L3233F using BeagleBone Black.
+Test results are in "mtd: spi-nor: macronix: add manufacturer flags" patch.
+
+v4:
+Add DT bindings of new OTP parameters.
+Test OTP with 'flash_otp_write' and 'flash_otp_lock'.
+Fix macronix_nor_otp_lock() and macronix_nor_otp_is_locked(),
+Macronix uses a single flag for all regions.
+
+v5:
+Fix DT binding errors.
+Fix functions description of Macronix OTP functions.
+
+v6:
+Remove DT.
+The patch contain the Macronix OTP functions.
+But this patch seria do not contain any means to configure the OTP.
+As a proper way to do it was not concluded!
+I think we do need dynamic OTP for future use.
+
+Erez Geva (3):
+  mtd: spi-nor: core: make OTP configuration dynamic
+  mtd: spi-nor: core: add generic functions
+  mtd: spi-nor: macronix: add support for OTP
+
+ drivers/mtd/spi-nor/core.c     | 134 +++++++++++++++++++-------
+ drivers/mtd/spi-nor/core.h     |  29 +-----
+ drivers/mtd/spi-nor/macronix.c | 167 +++++++++++++++++++++++++++++++++
+ drivers/mtd/spi-nor/otp.c      |   6 +-
+ drivers/mtd/spi-nor/winbond.c  |   2 +-
+ include/linux/mtd/spi-nor.h    |   9 ++
+ 6 files changed, 283 insertions(+), 64 deletions(-)
+
 -- 
-2.34.1
+2.39.5
 
 
