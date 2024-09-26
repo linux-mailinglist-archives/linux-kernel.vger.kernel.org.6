@@ -1,158 +1,94 @@
-Return-Path: <linux-kernel+bounces-340124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD76986ED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:32:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE30986ED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3FB62833AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:32:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D27351C215CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DD91A42B7;
-	Thu, 26 Sep 2024 08:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12571A38E6;
+	Thu, 26 Sep 2024 08:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="llo7TmdY"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="C5bTtQEg"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC90C1D5ACF;
-	Thu, 26 Sep 2024 08:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735F61D5ACF;
+	Thu, 26 Sep 2024 08:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727339542; cv=none; b=i+6/SxJBYvjmbMn/weVmrA6ZToxtjzi0eRvTik1lLliN1s//yR2ERevcZKTP1tTwm7UIPWaGV5ZFEcXooikiITQcQ417mGqIxPXiSR0ARJ5MOPPId02bmYu2IKBeaksbRyf1cMSfPs8SR85eVfNV7PTp+MZmjL4/m6p8W/LAZMs=
+	t=1727339617; cv=none; b=RL7JLu9wV5cu/ySlvbaJlwqpOKCN1/0edyy4zZMphs2Dk6gy1ekBh5RkFi2STn/If7QONlKG+HUBSazvyl/ffkCbYomFit0TgII7Cc8mOTYpO8OaXQRGlrvKfZmTHSqUQGVHOPWadYIN/HNXwIDo4TvrnjhQDshxexebYuOXXAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727339542; c=relaxed/simple;
-	bh=2q+PoNnVZg0Jk9dK1Vp1DlFTvLPSZXZ39uaGIWjltMk=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=LO/GuIRIE7GbAa0tBg2gkqcLGXYkronxHQU/aTCQKY4GitVBgirW+xM+Pn9THCSJX+BxGXlH+Si7tTdOYvXezcBjr9x6g8MzHbX+LdTsSDMNQ5xOd1/HFotPSMVgf8d7as51X6NxyM176TJ1juV+28zkqmSI8A4apm45Hyo0RME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=llo7TmdY; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1727339617; c=relaxed/simple;
+	bh=WGV+agiKTtPA0Ge5SGRdpcV8ZcMmyIWbdZE/9GX+HNc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j75alA1ocQnIXNLMsfUL/5qqLwBVFJ0aIxEZmP74UdHMo9Nnmmg+QB0khTkLQR0YaZkeo8ZSlLDpeuLlU3+l/hGP3n20wQQN1DnZxZz+QeBzqG6XDCaRk2rDrOCcBgDHz8k4qJ4dXUowJ0UISEGomjOrmEeVSwxUob58a+nW0Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=C5bTtQEg; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727339613;
+	bh=WGV+agiKTtPA0Ge5SGRdpcV8ZcMmyIWbdZE/9GX+HNc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=C5bTtQEggxgaIb/jTTwwZJy38BVXND3Rfq6giqM2mBpzjUwAPJ5FWynNbevkEiZ0f
+	 5Hwgt9phM66U4MDXlwxGB9FS+uGQ/GsE6Y1up0pW4PiX+XwiCW7d4x2jQOjvs+rdNY
+	 a98odkFXSypo3Weoz5PWbYHbcip3YgQgU3B74HQlTFHK4mWstmfC7in89IjcmB83iJ
+	 pEbLPFRH8Lt3NGMn35GGXV3lPoh/OzHFLdfaR/BDExYGiL2HOVKVVBAgq7qO+8x0WR
+	 NWxMAoUJpATmV1fAddKc6Jr4GQsP3ymuKOMinARnZqGeSqy5BNTwigjfjlDrWzQ9oJ
+	 6aLzPe55b1/VA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4544417E1048;
+	Thu, 26 Sep 2024 10:33:33 +0200 (CEST)
+Message-ID: <3191519f-0228-4d40-be38-8ab8a4970ad3@collabora.com>
+Date: Thu, 26 Sep 2024 10:33:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1727339537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Cujcqo+iQwaB51AOH25qP+3PrnYOZl6IbH7tj3OMjI=;
-	b=llo7TmdY2al+SnSku0mZMt1+FieHQkAnezMq62KeeU6p/7fJQOIXS1nP7/tU+xHVWRa/xb
-	hwENaeddf7y9aF+Iw5PmMobELYUJKAk4AeR4T9ADCaBp57NpVY/+r0/WKrWSLqcAvCUU+F
-	VOMbaN2b72qZs1AGn9KLYtnFjFtEYa4IIePhA4SIVxjrYX8hwKFYQeN7oGyLaFHDA2xMdL
-	Gsslv1OWVZXFnje2Rs0AU2dAIG+sK6RoOvBsn/hOyPQ1pYV7rrqxez0Ib8sevEVG/En2VN
-	QMeZSGMRQPHVJTBNdCdHMVxUpnvfYw+J8KP3HKbU85nka4bnJDdqr9iPFUIIfg==
-Date: Thu, 26 Sep 2024 10:32:17 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Move L3 cache under CPUs in RK356x
- SoC dtsi
-In-Reply-To: <3938446.fW5hKsROvD@phil>
-References: <da07c30302cdb032dbda434438f89692a6cb0a2d.1727336728.git.dsimic@manjaro.org>
- <3938446.fW5hKsROvD@phil>
-Message-ID: <57d360d73054d1bad8566e3fe0ee1921@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] arm64: dts: mediatek: mt8188: Update vppsys node
+ names to syscon
+To: Fei Shao <fshao@chromium.org>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20240925110044.3678055-1-fshao@chromium.org>
+ <20240925110044.3678055-7-fshao@chromium.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240925110044.3678055-7-fshao@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hello Heiko,
-
-On 2024-09-26 10:24, Heiko Stuebner wrote:
-> Am Donnerstag, 26. September 2024, 09:49:18 CEST schrieb Dragan Simic:
->> Move the "l3_cache" node under the "cpus" node in the dtsi file for 
->> Rockchip
->> RK356x SoCs.  There's no need for this cache node to be at the higher 
->> level.
->> 
->> Fixes: 8612169a05c5 ("arm64: dts: rockchip: Add cache information to 
->> the SoC dtsi for RK356x")
->> Cc: stable@vger.kernel.org
+Il 25/09/24 12:57, Fei Shao ha scritto:
+> The MediaTek mmsys is more than just a clock controller; it's a
+> system controller. In addition to clock controls, it provides display
+> pipeline routing controls and other miscellaneous control registers.
 > 
-> I think the commit message needs a bit more rationale on why this is a
-> stable-worthy fix. Because from the move and commit message it reads
-> like a styling choice ;-) .
+> On the MT8188 and MT8195 SoCs, the mmsys blocks utilize the same mmsys
+> driver but have been aliased to "vdosys" and "vppsys", likely to better
+> represent their actual functionality.
 > 
-> I do agree that it makes more sense as child of cpus, but the commit
-> message should also elaborate on why that would matter for stable.
+> Update the vppsys node names and compatibles in MT8188 DT to reflect
+> that and fix dtbs_check errors against mediatek/mt8188-evb.dtb.
+> 
+> Signed-off-by: Fei Shao <fshao@chromium.org>
 
-Thanks for your feedback!  Perhaps it would be the best to simply drop 
-the
-submission to stable kernels...  Believe it or not, :) I spent a fair 
-amount
-of time deliberating over the submission to stable, but now I think it's
-simply better to omit that and not increase the amount of patches that 
-go
-into stable unnecessary.
+Fair point.
 
-Would you like me to send the v2 with no Cc to stable, or would you 
-prefer
-to drop that line yourself?
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
->> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->> ---
->>  arch/arm64/boot/dts/rockchip/rk356x.dtsi | 24 
->> ++++++++++++------------
->>  1 file changed, 12 insertions(+), 12 deletions(-)
->> 
->> diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi 
->> b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
->> index 4690be841a1c..9f7136e5d553 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
->> +++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
->> @@ -113,19 +113,19 @@ cpu3: cpu@300 {
->>  			d-cache-sets = <128>;
->>  			next-level-cache = <&l3_cache>;
->>  		};
->> -	};
->> 
->> -	/*
->> -	 * There are no private per-core L2 caches, but only the
->> -	 * L3 cache that appears to the CPU cores as L2 caches
->> -	 */
->> -	l3_cache: l3-cache {
->> -		compatible = "cache";
->> -		cache-level = <2>;
->> -		cache-unified;
->> -		cache-size = <0x80000>;
->> -		cache-line-size = <64>;
->> -		cache-sets = <512>;
->> +		/*
->> +		 * There are no private per-core L2 caches, but only the
->> +		 * L3 cache that appears to the CPU cores as L2 caches
->> +		 */
->> +		l3_cache: l3-cache {
->> +			compatible = "cache";
->> +			cache-level = <2>;
->> +			cache-unified;
->> +			cache-size = <0x80000>;
->> +			cache-line-size = <64>;
->> +			cache-sets = <512>;
->> +		};
->>  	};
->> 
->>  	cpu0_opp_table: opp-table-0 {
->> 
-> 
-> 
-> 
-> 
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
