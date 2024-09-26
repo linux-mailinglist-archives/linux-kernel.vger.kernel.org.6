@@ -1,150 +1,257 @@
-Return-Path: <linux-kernel+bounces-339854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F24986B67
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:35:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80136986B69
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 127091F22332
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:35:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A8221C21A60
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340641741C6;
-	Thu, 26 Sep 2024 03:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA4417335E;
+	Thu, 26 Sep 2024 03:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d9TOdf48"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="0E9Acv91"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2062.outbound.protection.outlook.com [40.107.117.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE221D5ADF;
-	Thu, 26 Sep 2024 03:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727321695; cv=none; b=cMWoAImFpKXUmmBLp2q4yJmLGp7dmlpUdaIq7r0NPnfh9uYhXdPeCrjl97DuF+L09zhO3Os4UQn4/L/rK2j7CFlSUZVM6c2yiVsC1ThdN4HYx975B33o9oyaypu/O044ViVqx+mzpqcCWbLGf1NLGxPKvrLWqCxevToXGndDIBM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727321695; c=relaxed/simple;
-	bh=/At0ZfQKDRKqgXRUC/2vl4ZDoABUmTw1R9MYz/wjx+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OQX4DsKRzBrRHGb9XRtCdFm5VVtboN2fyMfJzCy38ThzvJTJ+feay60iss69V7WtwGjHjMZdYjNgJhL2zwL2XJNBD2L9giGzQMnT1DeWRQpNavreyAZkkHRy4PhJRZG49Xrna2W52Me66V1lvDAcbeBuEcWbBRTLoVC2rRtjEPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d9TOdf48; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727321694; x=1758857694;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/At0ZfQKDRKqgXRUC/2vl4ZDoABUmTw1R9MYz/wjx+o=;
-  b=d9TOdf48uLPTm1rsMciPPTm4q9ftkflen3WdYqAEwZYr6JU8f2An0/dt
-   vMdAD6HaoeSn+FDvnza2l6LPMmPlv2Dhe2qUE2r+gLeTFNSR6bz1lOO35
-   FAeSERrrLc6t7K7Q7EbtLtHDUEDoptktQwMWgsDSdxh3+aY3r4sEgdUDl
-   GRSccWaCoXr0eqoQ6yzWzE0wRJnisP2ywsB1d4KPfh+O+qvPFxBeYJkW9
-   oLXPEoDKAc6VIs0viVZC0uu4hpoQLOVvkUvCjZxyfs/mTxp9dc6ksIlhA
-   RdoU6tcl3y1vn4qEaXap6YaiBPMELpJhZI8n7d0b+oDJYC1JdD9RqIXqX
-   w==;
-X-CSE-ConnectionGUID: hu5gJIagS8qAEHeF4rTUgw==
-X-CSE-MsgGUID: r0+/JxJZQ1+Ln0/NCQdXvQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="37543177"
-X-IronPort-AV: E=Sophos;i="6.10,259,1719903600"; 
-   d="scan'208";a="37543177"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 20:34:53 -0700
-X-CSE-ConnectionGUID: wfbmaoPlRAyGIvvLNywPQw==
-X-CSE-MsgGUID: ncJ91KxCR6G2NdMIJoaDeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,259,1719903600"; 
-   d="scan'208";a="102818880"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 25 Sep 2024 20:34:49 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1stfHC-000KB5-39;
-	Thu, 26 Sep 2024 03:34:46 +0000
-Date: Thu, 26 Sep 2024 11:34:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Eric Yan <eric.yan@oppo.com>, ast@kernel.org, daniel@iogearbox.net,
-	andrii@kernel.org, martin.lau@linux.dev, yonghong.song@linux.dev,
-	song@kernel.org, john.fastabend@gmail.com, kpsingh@kernel.org,
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, eric.yan@oppo.com
-Subject: Re: [PATCH] Add BPF Kernel Function bpf_ptrace_vprintk
-Message-ID: <202409261116.risxWG3M-lkp@intel.com>
-References: <20240925100254.436-1-eric.yan@oppo.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965511F61C;
+	Thu, 26 Sep 2024 03:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727321742; cv=fail; b=ZZbOv2aEwBWQP90SVRlCjMda1zfATQNiilmykIXjDXxokbDQ2FdMmpNmeYGsTnF/epzAYxTmIsAyHX6recmglQbrUCrijV8iTk2/032soGlkpftOvZIQ0Y6YaZLNZ9xSV2V7kE3KH+6/IY2F8xyX3TUaYwTOE0WFTjUgfJZofsM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727321742; c=relaxed/simple;
+	bh=irLnByNM3ynI9eegtY9kbj/ImX8stkiMdsWUf6sCwG4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XE8PIkor/q/XA+aJi0COnlEF9ewTmLWG3mJZ2MMG00cgCCstdxzlDipm2+V74kH8gxW+QfmEP9Z9jQ8bvlMWhRUtUuu50jPxHKeWW00OR5Nitb1b+e8lLps80Fh3TthHghPj3qMg2SSsJgB2I9Srl/GPaTt05BaoSMsqoiNBK+Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=0E9Acv91; arc=fail smtp.client-ip=40.107.117.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NNK2QbsvMDeD8Wbr9t2UyXnvkTL+plfEcYWeYYA40rowKyjyRxsBDeuHxAQJkgyxwysn7zi6pWmeIBDYfk4wT6xi/m1ZZZhs/kjHDYk6Fcc7wV99aEm7gs8gPMDJibzdWRLZy9nH2PCopko6pLx7TwPvyVUIU8WS1N1ezAR/Tn1gKDZKq65zbVhLkunvsFwQY6Uv0nvrwykoWC8rfDoiUBENB/VVzHV3E5ZmIa+j59fymPdx9+Nn/brJigJeuzhr0YgTZJXHFUAuERyX+z5RKqZVSLHpSlIJLv9OYHf2XUFksgH+a+Hu9+/owN2hoiR+De9lFDemjE9vmNbo62941A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jsXIwyIUN9NziDpxCqaKPL0RZdSJ+2HnJW7nsdwhxIE=;
+ b=MZgJpA5zvT6+uwdt+lkXH2YqAvSlWaDVsN9DEJjJrkMLbuSh9vvvY7sY1l6o48R2oLYYUDatQl48l812qDs3ye6dvn0WcG7Y6Wq3fePyvHF5zZegHntQMbx/SAAAJlp9FSLp+KUN3cBRSSzPd5q0F6YoMtxh0TjL4zwP75xzBwOQnzuHpD3m3idEHM+KoltP7OY8x+h416gtNz5uJIWRNO73CXZEmxhI6Iv6zewmmeDCJ7UgqjUi0OZr7g1s64K49p+HjDDheUo9otRzGvgiHDF8kLQKoAfn3ZM4GB5SBGaUM6dn2v9FANVRrzV+RVx3xOU4RcrYfbj2ht9AGc5tUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
+ (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jsXIwyIUN9NziDpxCqaKPL0RZdSJ+2HnJW7nsdwhxIE=;
+ b=0E9Acv91ePHPQUHDs+4N58l4deczZgkevVAYkxiErZeJRrYx4tHhd0cD7ANsV3i/fmBCP6veSHJOXHk5qLW/xgGBJmBaLs5tBvsjb6LUwgWYNxuWQCJiaVEK4Db5upxTzyl+sJ5RlM3FG8aOjZpsim545+rMDprNEW+ZXhtm8yB1mZGc8ZN795X1VaTdJU9CKYcRiVjccrNBtGZgrGyqbSCXKuyBrAOwZ8HT4WLCdsGj10hFfcCvMxSbNmh4cvxTrVWCOsNS0Y56WIeNfnPEM68dP+Qjaejz4jxFjTjLjzNiiMZIWr4qdzu3Ccc3TVooaBRI4Hgp1rDLBu7x25BhLA==
+Received: from SI1PR02CA0036.apcprd02.prod.outlook.com (2603:1096:4:1f6::20)
+ by JH0PR04MB7604.apcprd04.prod.outlook.com (2603:1096:990:6f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Thu, 26 Sep
+ 2024 03:35:36 +0000
+Received: from HK2PEPF00006FB4.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6:cafe::87) by SI1PR02CA0036.outlook.office365.com
+ (2603:1096:4:1f6::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.30 via Frontend
+ Transport; Thu, 26 Sep 2024 03:35:36 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
+ smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
+Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
+ designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
+ client-ip=211.20.1.79; helo=localhost.localdomain;
+Received: from localhost.localdomain (211.20.1.79) by
+ HK2PEPF00006FB4.mail.protection.outlook.com (10.167.8.10) with Microsoft SMTP
+ Server id 15.20.7918.13 via Frontend Transport; Thu, 26 Sep 2024 03:35:35
+ +0000
+From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+To: patrick@stwcx.xyz,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] ARM: dts: aspeed: yosemite4: Add i2c-mux for Management Board
+Date: Thu, 26 Sep 2024 11:35:33 +0800
+Message-Id: <20240926033534.4174707-1-Delphine_CC_Chiu@wiwynn.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925100254.436-1-eric.yan@oppo.com>
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB4:EE_|JH0PR04MB7604:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 8a9ae576-de50-4709-699f-08dcdddc487e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|7416014|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bNopIWk2Cg/B5z3XYFOymA4r1swY5EiqL52FZn4HOMnZsFYoCD07M6GWAcY4?=
+ =?us-ascii?Q?ww4pV7WDiA6mZlKEbuRam+iMJyhEnj/esQRkL3raYbqBnluKnshUNbYTeUV+?=
+ =?us-ascii?Q?b16YJPLbOGq1XOH36iA8n2pz8im/oFqlgjHJlxwCFfJQqvU24sY2vr8kYu3X?=
+ =?us-ascii?Q?MEnR51FHhF2yfsdgLuScZzo8j3p2Dh+mRXQ9QuA1W5RkkQe0vhdFMEB6dOpw?=
+ =?us-ascii?Q?KwOnZaSohOe6BEtl0fivJhOopbiDTG379KgUkENi9am4DPXl084lP/XrKQgh?=
+ =?us-ascii?Q?jPNive61KcIN961r9glAaK950j1so3/F++UFDUkHA3g76v8CaTyXkmRKmYyg?=
+ =?us-ascii?Q?oNEIXiN3Ip6Vzb9unmjFSPP8aDg6PyEXq7fDwwZ82OImqUvZJ6OziiSyCyHr?=
+ =?us-ascii?Q?JmVp8163tbd80bN1EIq3xv/gwAgEHeAboWwOuWbt0potRy7PVhfFs1R7DPLs?=
+ =?us-ascii?Q?QJ17ZW5qbMZoKGoIOVFCApfNGiB5vwL6JnXiQ5TnRNvF8EJXhspMT63pfTXW?=
+ =?us-ascii?Q?B8Uv3BFXCzdXGfwuRUM5DkllRfyHhNtQR+qBFbMXJ/WBT079XgIlLod3sLDh?=
+ =?us-ascii?Q?2iAyxHC44UKrulKKXbqqZA4UbW/XrMPwaUlHCYAZ5dAp344paM9nsHvX2fmZ?=
+ =?us-ascii?Q?TZxMO7JM2/D+rR9WE/ukQL/nm34IOVbs7p/QYKH1vcSfoEipe5BiQtECmizi?=
+ =?us-ascii?Q?8Gx7QTGyDR3ITW2v6gXN9U+gCnDUVnNGpE5Uy9wLMrRLc/cMzJV+5QSqDYLr?=
+ =?us-ascii?Q?9HI6q3kWGli66t8A8V4K62KFH6Cl2kdbEfzQLclrbHhcCu1env+914h9YV5D?=
+ =?us-ascii?Q?V0yaSOZJTx+44niGvWBF53tBCiU5h5f3/PqaKO/TaiFjEQ59RTmftUEAIfnb?=
+ =?us-ascii?Q?wAFfRrk9GnUMYkz3BwmxzucV8kgvoSja5cO65vi/C9+6e76CW4/IZyJjyU9S?=
+ =?us-ascii?Q?rf7klEB9/kVhOBNYK9RpEfp5YJzibgwL5yeYsHIrHZavjRgmssp/Pba1300U?=
+ =?us-ascii?Q?sPZxUSGbkK30FHkC5A1rpiHkM4FmcG7uIGcq9kNJvevHH180vIGBtP0qC1dL?=
+ =?us-ascii?Q?aNmioL271QZLAYoxvspt9J4uLDDcPqi44Gocql/Z3WLyb3h5e98XVUTsjf/h?=
+ =?us-ascii?Q?kC1k7l8MO6cUOXs5RMWgLEmknisWvAxVnBTApnTMpZwR8ZN/GKlka13re77M?=
+ =?us-ascii?Q?VYE/DDSMLPtjNDh6EcSA/bcm0v/Xp74hJgK515TA0wHhP4IHVZ2bPHTh773m?=
+ =?us-ascii?Q?PRmKRg5585UVTy5ePaWEkQhDSzCoTuB2xryT6LMd2krieXtXR7czmu5iC8MY?=
+ =?us-ascii?Q?4/fv0601G/qhtyYmyuCxrXXxrM5mMOTMFCU6GASpHBtDbV948BEsZNgaquFH?=
+ =?us-ascii?Q?J4/vTVfmfF8NW5tmGO9niyT873vY?=
+X-Forefront-Antispam-Report:
+	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: wiwynn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 03:35:35.6055
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a9ae576-de50-4709-699f-08dcdddc487e
+X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK2PEPF00006FB4.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR04MB7604
 
-Hi Eric,
+From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
 
-kernel test robot noticed the following build warnings:
+Add I2C mux for Management Board to separate the I2C bus 35 for
+updating CPLD firmware and I2C bus 34 for the other devices.
 
-[auto build test WARNING on bpf-next/master]
-[also build test WARNING on bpf/master linus/master next-20240925]
-[cannot apply to v6.11]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+---
+ .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 80 ++++++++++++++++---
+ 1 file changed, 69 insertions(+), 11 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Eric-Yan/Add-BPF-Kernel-Function-bpf_ptrace_vprintk/20240925-180530
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20240925100254.436-1-eric.yan%40oppo.com
-patch subject: [PATCH] Add BPF Kernel Function bpf_ptrace_vprintk
-config: x86_64-buildonly-randconfig-003-20240926 (https://download.01.org/0day-ci/archive/20240926/202409261116.risxWG3M-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240926/202409261116.risxWG3M-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409261116.risxWG3M-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> kernel/bpf/helpers.c:2530: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * same as bpf_trace_vprintk, except for a trace_marker format requirement
-
-
-vim +2530 kernel/bpf/helpers.c
-
-  2528	
-  2529	/**
-> 2530	 * same as bpf_trace_vprintk, except for a trace_marker format requirement
-  2531	 */
-  2532	__bpf_kfunc int bpf_ptrace_vprintk(char *fmt, u32 fmt_size, const void *args, u32 args__sz)
-  2533	{
-  2534		struct bpf_bprintf_data data = {
-  2535			.get_bin_args	= true,
-  2536			.get_buf	= true,
-  2537		};
-  2538		int ret, num_args;
-  2539	
-  2540		if (args__sz & 7 || args__sz > MAX_BPRINTF_VARARGS * 8 || (args__sz && !args))
-  2541			return -EINVAL;
-  2542		num_args = args__sz / 8;
-  2543	
-  2544		ret = bpf_bprintf_prepare(fmt, fmt_size, args, num_args, &data);
-  2545		if (ret < 0)
-  2546			return ret;
-  2547	
-  2548		ret = bstr_printf(data.buf, MAX_BPRINTF_BUF, fmt, data.bin_args);
-  2549	
-  2550		tracing_mark_write(data.buf);
-  2551	
-  2552		bpf_bprintf_cleanup(&data);
-  2553	
-  2554		return ret;
-  2555	}
-  2556	
-
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+index 98477792aa00..234ce7019fca 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+@@ -17,6 +17,9 @@ aliases {
+ 		serial6 = &uart7;
+ 		serial7 = &uart8;
+ 		serial8 = &uart9;
++
++		i2c34 = &imux34;
++		i2c35 = &imux35;
+ 	};
+ 
+ 	chosen {
+@@ -348,22 +351,77 @@ eeprom@54 {
+ };
+ 
+ &i2c12 {
++	#address-cells = <1>;
++	#size-cells = <0>;
+ 	status = "okay";
+ 	bus-frequency = <400000>;
+ 
+-	temperature-sensor@48 {
+-		compatible = "ti,tmp75";
+-		reg = <0x48>;
+-	};
++	i2c-mux@70 {
++		compatible = "nxp,pca9544";
++		reg = <0x70>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		i2c-mux-idle-disconnect;
+ 
+-	eeprom@50 {
+-		compatible = "atmel,24c128";
+-		reg = <0x50>;
+-	};
++		imux34: i2c@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			temperature-sensor@48 {
++				compatible = "ti,tmp75";
++				reg = <0x48>;
++			};
++
++			eeprom@50 {
++				compatible = "atmel,24c128";
++				reg = <0x50>;
++			};
++
++			eeprom@54 {
++				compatible = "atmel,24c64";
++				reg = <0x54>;
++			};
++
++			rtc@6f {
++				compatible = "nuvoton,nct3018y";
++				reg = <0x6f>;
++			};
++
++			gpio@20 {
++				compatible = "nxp,pca9506";
++				reg = <0x20>;
++				gpio-controller;
++				#gpio-cells = <2>;
++			};
++
++			gpio@21 {
++				compatible = "nxp,pca9506";
++				reg = <0x21>;
++				gpio-controller;
++				#gpio-cells = <2>;
++			};
++
++			gpio@22 {
++				compatible = "nxp,pca9506";
++				reg = <0x22>;
++				gpio-controller;
++				#gpio-cells = <2>;
++			};
++
++			gpio@23 {
++				compatible = "nxp,pca9506";
++				reg = <0x23>;
++				gpio-controller;
++				#gpio-cells = <2>;
++			};
++		};
+ 
+-	rtc@6f {
+-		compatible = "nuvoton,nct3018y";
+-		reg = <0x6f>;
++		imux35: i2c@1 {
++			reg = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
+ 	};
+ };
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
