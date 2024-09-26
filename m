@@ -1,116 +1,96 @@
-Return-Path: <linux-kernel+bounces-340384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4AC987288
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:13:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 771B2987290
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EDCB1F22754
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:13:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A85D51C21EB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CB71AE871;
-	Thu, 26 Sep 2024 11:13:11 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5731F1AED36;
+	Thu, 26 Sep 2024 11:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bkIPvqrz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061961AD5EB;
-	Thu, 26 Sep 2024 11:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE941AE873;
+	Thu, 26 Sep 2024 11:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727349191; cv=none; b=scXFKRRM+ebWBiqXt0C1eOUuO2CgIMla/dTqmoP7ZsekON0LEVQT9JVB8YogOV72wJzbehZmtPDAPAY4Qw+HTu40Im/K8qLYd+6B1i0KyrXaYz8siyxjUXqzCEFH3BRyBClXl18gZ4XQEvPWYQYYFL0twAVIVNULwfU7eIY5Wkw=
+	t=1727349244; cv=none; b=t995ib83YoKovuNVMoDNGXzDt7Z9XmrTLQ88w+56+g1MDgOGYMQN0Wkp3136LQcOED/jyhwz69fhEvK566gmgJLSFYaKGxLG4yZBbvTDnUlpFjo4SArDApdmZy7F+YwHLG9tgiUN50j/+UIiWhngSvR6154s3PQAVK3Z4jcsbzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727349191; c=relaxed/simple;
-	bh=DqF2P0uN7eo/a6JC+6vSVVzAhjnsN970IyPss9bgTCI=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=eVxxCJUTfN0fR9aUYCEOgFpHE8t87rDRJhFu2qTeqAdkFkr/+7/Rbjax1wLugfpEAHIsDIsHPQnBNgM8Rm718sxM0PbeMUypXmazXhtWja5mRC5jEfAbVITx72Sm4zxTp5VdzXSHO9yBHpXqKsE+oig0UMLTwXFqgdG7RisTU0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XDrY74Sk8zFqqd;
-	Thu, 26 Sep 2024 19:12:43 +0800 (CST)
-Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 409D7140390;
-	Thu, 26 Sep 2024 19:13:06 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 26 Sep 2024 19:13:05 +0800
-Subject: Re: [PATCH 2/2] ubifs: Reduce kfree() calls in ubifs_purge_xattrs()
-To: Markus Elfring <Markus.Elfring@web.de>, <linux-mtd@lists.infradead.org>,
-	Richard Weinberger <richard@nod.at>
-CC: LKML <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <ff787fb9-a9fc-4798-8460-3ec310e6cd9f@web.de>
- <fc35a4b0-9a41-4f14-9558-99fc0b7e2ad8@web.de>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <2012c8b6-b960-d597-481d-5f051686ffe1@huawei.com>
-Date: Thu, 26 Sep 2024 19:13:04 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1727349244; c=relaxed/simple;
+	bh=GfdmnkTR2lyNTVysAy7FcooIJNtcfTaWPhkccLC2EUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TP53BO1lLO5eem8FrhC/fAyzNHAcr7GXnRjmFG5cx3jawy/nsXBe0wYLfzYJKD6tnrdEHa1hs/yjWO+KgFMI2MMsLj80RseWha2MI9DG4XB0ir1ts1uxf6dAdh153fx8btOfmj4u6d9J1/FnAWjHIT+XNmJPR1FaGtejHjS3Tw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bkIPvqrz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA297C4CEC5;
+	Thu, 26 Sep 2024 11:14:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727349244;
+	bh=GfdmnkTR2lyNTVysAy7FcooIJNtcfTaWPhkccLC2EUQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bkIPvqrzPg0mdGyJPNg1LrgPdGCTTomSyOEwQu+/gUktclMrdpytdIQiDI9mT8iry
+	 emReRw9MdBT21/Q4Vvf3ydJ2RWWZxA4WLA+ztcwxqLtB0hFUt2yDI/LOMJ89Wn2GL7
+	 NK24a8lDCk8t0+Vz7do3vPpT9c9Pir8LsTCmxA4dtRqz/ZrNwDLYyDhrlt0TL+Y+1g
+	 5UWoL2fFOJ1hitGnywKUT0uSEzNwM3nN5p8U9DpBku8tXUDikOmsuOomcn5p426JSQ
+	 yf2G/DEWxbfb9kNYQm3/KGKOVqk2C5rT2v6WevuQtqa+dskolk6S0SbsMb03g/NMox
+	 hqd4TkwGQwPHg==
+Date: Thu, 26 Sep 2024 12:13:59 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: dmitry.torokhov@gmail.com, dianders@chromium.org,
+	dan.carpenter@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+	jikos@kernel.org, bentiss@kernel.org, hbarnor@chromium.org,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v8 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
+Message-ID: <20240926-password-cadmium-87ccdf950fd1@spud>
+References: <20240926044217.9285-1-charles.goodix@gmail.com>
+ <20240926044217.9285-3-charles.goodix@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <fc35a4b0-9a41-4f14-9558-99fc0b7e2ad8@web.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm000013.china.huawei.com (7.193.23.81)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="uUWCvzz8nDTGstS0"
+Content-Disposition: inline
+In-Reply-To: <20240926044217.9285-3-charles.goodix@gmail.com>
 
-在 2024/9/26 17:50, Markus Elfring 写道:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 26 Sep 2024 11:28:48 +0200
-> 
-> Move a pair of kfree() calls behind the label “out_err”
-> so that two statements can be better reused at the end of
-> this function implementation.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   fs/ubifs/xattr.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
-> 
 
-Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> diff --git a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
-> index 7757959e9f09..a514dc4dc535 100644
-> --- a/fs/ubifs/xattr.c
-> +++ b/fs/ubifs/xattr.c
-> @@ -532,8 +532,6 @@ int ubifs_purge_xattrs(struct inode *host)
->   			ubifs_err(c, "dead directory entry '%s', error %d",
->   				  xent->name, err);
->   			ubifs_ro_mode(c, err);
-> -			kfree(pxent);
-> -			kfree(xent);
->   			goto out_err;
->   		}
-> 
-> @@ -543,8 +541,6 @@ int ubifs_purge_xattrs(struct inode *host)
->   		err = remove_xattr(c, host, xino, &nm);
->   		iput(xino);
->   		if (err) {
-> -			kfree(pxent);
-> -			kfree(xent);
->   			ubifs_err(c, "cannot remove xattr, error %d", err);
->   			goto out_err;
->   		}
-> @@ -564,6 +560,8 @@ int ubifs_purge_xattrs(struct inode *host)
->   	return 0;
-> 
->   out_err:
-> +	kfree(pxent);
-> +	kfree(xent);
->   	up_write(&ubifs_inode(host)->xattr_sem);
->   	return err;
->   }
-> --
-> 2.46.1
-> 
-> .
-> 
+--uUWCvzz8nDTGstS0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 26, 2024 at 12:42:17PM +0800, Charles Wang wrote:
+> The Goodix GT7986U touch controller report touch data according to the
+> HID protocol through the SPI bus. However, it is incompatible with
+> Microsoft's HID-over-SPI protocol.
+>=20
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+
+Please remove my reviewed by, I didn't review this new "spi"
+compatible.
+
+--uUWCvzz8nDTGstS0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvVB9wAKCRB4tDGHoIJi
+0lopAP0S+yDwzvKIJmNWzqKdm5InSTHF3O99utkw1ANIRxDk6QEAsHrFJKxdfYen
+qyT0qu+6M5uQCT2fbA4PsRe8UoFx1QI=
+=wdQ/
+-----END PGP SIGNATURE-----
+
+--uUWCvzz8nDTGstS0--
 
