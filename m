@@ -1,133 +1,171 @@
-Return-Path: <linux-kernel+bounces-341005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC44987A16
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:31:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34614987A18
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8412A1F22BE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:31:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55BD71C2225E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DDD13CABC;
-	Thu, 26 Sep 2024 20:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A54F183CAD;
+	Thu, 26 Sep 2024 20:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TyAl67OE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="l3xAagw6"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2089.outbound.protection.outlook.com [40.107.93.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7D41D5AC5;
-	Thu, 26 Sep 2024 20:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727382707; cv=none; b=sbmnSyqjwltl5kKQ64cPsqYiWFuX4/cPI5jEMY/I8sNblSwZEGeSxyaYwg8hAZtC8iZg7i0WODpdEg2ZRaAkXvSR0xFL/z7quP3R+fICdpvKjq/gV7Es1Z4lrZfZvQwk4Q/IxYzcfuvfSSXsiaO7gUmXCoOayR5h9wHDHHB9C54=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727382707; c=relaxed/simple;
-	bh=iZH+ElxSkR/k3giY3/bChPya9hqtm05vBd05Dre3eCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hC12E4gGlSBYcPxtSIcJvT2g/thvf5MAzYo45dASu1egnJGcADvANBvBwPIevca5ZHkSDtvuwQMzOgnyb4C4yIR19AcG8TkFsQ+ViAs8o93D2j9HMc4F0xP0hz0mT4fmOCaMqND1K+WNL2QXBgaXFkBGWLEBmVr2J//sQR3QUWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TyAl67OE; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727382705; x=1758918705;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iZH+ElxSkR/k3giY3/bChPya9hqtm05vBd05Dre3eCo=;
-  b=TyAl67OEANA3PQv3xNuIFhp/dVKrO8KMUlsjh13fbnQUBRdKSU8V0+ZC
-   2/nDT4nrOJ1G6KmdOXOkba3Xrf1TWr8GcPzT5AzByePH1sEBEeN8wAZFF
-   AE95K72rAPZLjnb+3apbrwUO+iC9T0ZETuQqGijJd/N90rMUnlGaaREvA
-   v7rcHNyIHhzI/Wu7R0+Xv+tirco3nK42wIWYeggALW2U8Ut39Eyd/E05/
-   aqvk2auxQYd8oGjBeO/oyo9vkApkH1Fgqn5XAldK4pb/yC605CbHnJvzi
-   9Kcaj2etxI03ZFQw+ScGy5qr62klXLJX4UcrrpqWbz1WBGQULP+9MTJJm
-   w==;
-X-CSE-ConnectionGUID: FmDZhE5oQGqH46ZBSheuug==
-X-CSE-MsgGUID: Y3GThOwMRxqce+XBBFxZzw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26690288"
-X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
-   d="scan'208";a="26690288"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 13:31:45 -0700
-X-CSE-ConnectionGUID: gldxkRZZR7+N+/ya0A+Skg==
-X-CSE-MsgGUID: Zerset9BTJazvYoEY6zslw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
-   d="scan'208";a="76657648"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 26 Sep 2024 13:31:42 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1stv9H-000LAt-1X;
-	Thu, 26 Sep 2024 20:31:39 +0000
-Date: Fri, 27 Sep 2024 04:31:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Greg KH <greg@kroah.com>, Simona Vetter <simona.vetter@ffwll.ch>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] rust: add untrusted data abstraction
-Message-ID: <202409270303.kUIAmOmY-lkp@intel.com>
-References: <20240925205244.873020-2-benno.lossin@proton.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F121E13CABC
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 20:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727382765; cv=fail; b=IrE8tcqs8bMbWe0F6XCx+pHzzQHTx050t5AJg/WQYjRBu7austEiykrDFU31KNPMzDUAOPaokyl9o7LNBvmrS6O8zLvcWlXj2UGSbXLAgAkPaehXjNRBWRj+XEt3r04z8+G+mhrNYZK6RSwCygoe9AqkNIjgPOmqt4k6WN3pmA0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727382765; c=relaxed/simple;
+	bh=cClC8jF8FaJWGrm/PwM24G7L9Zjt4MXH4zUFUSwPrQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=l0Hhc7BynU9M9Bec02OkIDxYDaEF9RN57cAYe8Fciq4jMHpajdJmskXnO1oEb6MZtKaqKn39ifKNs7SiRK6vErGlbRuAH66R6bJcKcl5Hjbue0rq/cwcIh65fxn5unrI/La5vQ5VwhmqMSFkD0b159vMuMwd40y/5vKEpjMpcBk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=l3xAagw6; arc=fail smtp.client-ip=40.107.93.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KyyfybYYh8hNeDkQi6s9PC3wNRwR6sQcXCc3NwinEHNyIabgv012ZDpTIcycOBhYgdphFaEujVPIESIgoKEWa7moVgu7OIPmSUrX/pqYn/eewUIta1tRjp/tfREMQun7ID5TFau+y67EVW0QoqNdbFb+7zq1ugbRZAbHVbpRzVLB6ytSEO58ppWdwc5uxUfGz2rL+JIrYL5Pf/PXZdt85BswE8JYuT/9Tod2pClNQwVLiQb1E5VnqhwZ/jaZkNyoDJHLtq/qVx2tO7j4i7UOa6kV0dkG54BWF+WV3NJE4RmBXbcMAXfCrsAUYsmL7tJCmKmuWRTLkvhms4eOx6o7Og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GTZZx5uMewNrXXhZ+45ESL4qqdZtuN2DWJ2yhQpeT+4=;
+ b=bvUMrbdDTlvMzgXYXU021WWQ71FGFdbKYhEDMXYFS2zw6ZHTnAKyIYqYCrVm6LjVPKeXAiSxwqJOPdLPC/QjJm1WRo802gFePG7Rw9K0SXdCerbVgx9B6F/m0jAMbeo05e5KI4GejxyCAIu+SYFRHPcpr5Jfk5WJhy4Qfvk8xQheUose0CNnaj7woOyG9eZpk8v5YUS00mm1jAA8Z/0PkW74+psm3tiLwdim4YEdYrUZP4sQbECXw9Xkh/k3B5DlB5GdUpmO0BmWP8Wxo+V8eFd/9B/W6upbHpg+dXr2/7CXCBG+NVcbOaF+wISWVAQGWdeFwv22n/vI0BGgNKtxWQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GTZZx5uMewNrXXhZ+45ESL4qqdZtuN2DWJ2yhQpeT+4=;
+ b=l3xAagw6fGAhzRs6ZOFOTlSO0M5hFNphUVKHMp0xwgb7hi24D+smtGqrctK0Z3N2DRCMv4cuDT1oIz4LLNvG1m1FiuMMqVm6xGFDFsC671s7M3/azUgXdVDMUN4sjLOc643wlTggZeXVb3mWpBkwtfx8WEKCnCk8BjkXACx0y2k=
+Received: from BYAPR08CA0046.namprd08.prod.outlook.com (2603:10b6:a03:117::23)
+ by PH7PR12MB6666.namprd12.prod.outlook.com (2603:10b6:510:1a8::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Thu, 26 Sep
+ 2024 20:32:40 +0000
+Received: from CO1PEPF000044F3.namprd05.prod.outlook.com
+ (2603:10b6:a03:117:cafe::b1) by BYAPR08CA0046.outlook.office365.com
+ (2603:10b6:a03:117::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.22 via Frontend
+ Transport; Thu, 26 Sep 2024 20:32:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CO1PEPF000044F3.mail.protection.outlook.com (10.167.241.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8005.15 via Frontend Transport; Thu, 26 Sep 2024 20:32:40 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Sep
+ 2024 15:32:28 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Sep
+ 2024 15:32:28 -0500
+Received: from [172.18.112.153] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 26 Sep 2024 15:32:27 -0500
+Message-ID: <e122e077-ac13-4c2a-b911-28d0c7cf50b8@amd.com>
+Date: Thu, 26 Sep 2024 16:32:29 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925205244.873020-2-benno.lossin@proton.me>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] x86/pvh: Use correct size value in GDT descriptor
+To: Ard Biesheuvel <ardb+git@google.com>, <linux-kernel@vger.kernel.org>
+CC: Ard Biesheuvel <ardb@kernel.org>, Juergen Gross <jgross@suse.com>, "Boris
+ Ostrovsky" <boris.ostrovsky@oracle.com>, <x86@kernel.org>,
+	<xen-devel@lists.xenproject.org>
+References: <20240926104113.80146-7-ardb+git@google.com>
+ <20240926104113.80146-9-ardb+git@google.com>
+Content-Language: en-US
+From: Jason Andryuk <jason.andryuk@amd.com>
+In-Reply-To: <20240926104113.80146-9-ardb+git@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB05.amd.com: jason.andryuk@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F3:EE_|PH7PR12MB6666:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8dfd573a-c9ad-4c90-a9c8-08dcde6a5e2b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a0l0TmpTY2VGSVo2eFBncGNTL1lBOEZCRWdWWldyUXVHVmVjOHBoVzdFYmZK?=
+ =?utf-8?B?aWtzWkY4UTFvYkNsd29GazdpZTZ4bUJtWnJPSWR5Vjl3T0V2RXhXMS9SSjBz?=
+ =?utf-8?B?RnBxU1NYMHBEeUVob2VtbFdJWmxFY3pSNks5OGo2NENXQUFZOHh2b2xRUzFh?=
+ =?utf-8?B?OGlwQXJyVUJ1dGt5aWRKM3V6SDE0U01lN2doTTVWUXpXRWFSZ2hiL2xuNmhU?=
+ =?utf-8?B?S1NnWDZDRnJOeFN3WHdCbWpsNHdDZnRpdXh2UVZmL1RGSVJjcUxpREprV0w0?=
+ =?utf-8?B?cGZiNmx5N0pMengvUzNKVFlmb0taZVFhQVJSaWc1OTNFRVFKTlFRaWhVejdT?=
+ =?utf-8?B?a0k2V3R5dUo2d3VZdEt5N2Vhamw3a2V0d3JVbytsZ0FGZlFZWjZ5SDdTT1ll?=
+ =?utf-8?B?am9SdU5Za2t5dGZDSFFwWDcrb2NSSGxmNUQyRlZCZ29JN25CQ2RHK3RiVko1?=
+ =?utf-8?B?L1I2SnJJQzh5VlA2eE5WdW04a3htcWVPekdqSTRaNkk4SjJlTU5SMGxxazJH?=
+ =?utf-8?B?R3VEaHNiNGhLRnB3MllLbXVORnJURkZDZlQxVlRKeXJlUEJER3J4Zk5yd3JG?=
+ =?utf-8?B?dkY2R2RQdlVQdW5jVldKd0phKzBtcitiUkFmUkVZay9QZTNMSUtoTlR5a0s3?=
+ =?utf-8?B?RDBzYUJTaDczK0NveTdpSVVyS2c2NlhrL1BPN0JIRFl6TmhFOEFMMDdNaGt2?=
+ =?utf-8?B?Z0xWcm02cS9ybkdkeFUreEJEaDZ1N2I4VFdVOVBoeVhlSXlSYjFMSFVxWHk0?=
+ =?utf-8?B?Rmc1ay9seG9nWmRSd1NPYmJ0UEIwZXduMVNFcUZGTlV4KytTOTJLa2VHdVND?=
+ =?utf-8?B?WFlBR3dVbFhuMVBVaDRxSzNsNjRMUGtrajFtVmNjcUgvZWc3ZVB6RTh6SFlv?=
+ =?utf-8?B?ZjhuSlpod2granV2V1FMZ25pYmJiWVB5Z1c0R3p6UlYxekVvNGV3KzMzWWNR?=
+ =?utf-8?B?NE9lZVo1cjY2ZEJjQ2ZVTEFRMXQwZUFMemgwS01ITklENHR1aDhLam1aeXNP?=
+ =?utf-8?B?V1RTdFhNRDdUa2hqeHppS216d04xUEdqOFBSTW82MHNsQWJuUHlVQ0ErZ2k2?=
+ =?utf-8?B?YWRwK3BTRUYrS2JLYkRWTDBxMENUV1NSc2c3NHBzaXFjc2NpRVZWM25lQ1li?=
+ =?utf-8?B?NWlSTVJIWVNPNFhrVTFuK05KanBaN0ZOZkV5OFFKL1hvdEhFY01LT1E2UURC?=
+ =?utf-8?B?K2toNEpHdFMxMy9zbDhrSHA4RG9qQ1VYY0lOQ2EwaVlBWDcyTHFONzM0QmJo?=
+ =?utf-8?B?WWV5MjNFV3k4QUphVjFhLy9JbmdlS1Fjb2JTZzRTbnRlTmNyajh6YnVsUEoz?=
+ =?utf-8?B?Rmc0THRRb05Pdnp5djdGMjlNR1lwOFRzc1lNUWJrd2EraE9zbGszUzk4YXQ5?=
+ =?utf-8?B?NllYODh6ekVDY2ZqTmgzZnRmaWdJeHFlNlJJWFF1U2pCK2s2L3ZCNDl1L3BH?=
+ =?utf-8?B?TFMwNGsvTitzeDZFU2VVNWhGUitVQXJodjh4R2daQUY2ZnE3c0RxQkdOYVVG?=
+ =?utf-8?B?dzAreisrSUJtWWJjVGh6T0l0VzN5eWRNaEVMSW5GWmNaTTBra3hUU1JPVVB1?=
+ =?utf-8?B?SUU5REZWNHczRlVjUWpGSmR1ejBVYUFITzROQVlYM0k4M3p2elR2Q2w0L2ZN?=
+ =?utf-8?B?TWtQM0RzZThKVm9lN2thY1RFVHAxZEE1VnpyS1dXcURsaDdBT0M3Wm1OcW8z?=
+ =?utf-8?B?OEtyZ05LYlU3ZUQvelhoVExmcStYbkhmMGRHcnZ6UHRjQVZ2MGtpZUVhL00w?=
+ =?utf-8?B?cGl4dXBMdjkvS3Y2TUE1cVQwZG5hditXNnk4cnVVMHlhbWtkZUhURGFNZHpU?=
+ =?utf-8?Q?D9m7/iKBMv4stpf0HTWMx3i4wIAMNFFr0iOWg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 20:32:40.5868
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8dfd573a-c9ad-4c90-a9c8-08dcde6a5e2b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6666
 
-Hi Benno,
+On 2024-09-26 06:41, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
+> 
+> The size field in a GDT descriptor is offset by 1, so subtract 1 from
+> the calculated range.
+> 
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 
-kernel test robot noticed the following build errors:
+I guess with s/size/limit/ per Andrew.
 
-[auto build test ERROR on a2f11547052001bd448ccec81dd1e68409078fbb]
+Reviewed-by: Jason Andryuk <jason.andryuk@amd.com>
+Tested-by: Jason Andryuk <jason.andryuk@amd.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Benno-Lossin/rust-add-untrusted-data-abstraction/20240926-045445
-base:   a2f11547052001bd448ccec81dd1e68409078fbb
-patch link:    https://lore.kernel.org/r/20240925205244.873020-2-benno.lossin%40proton.me
-patch subject: [PATCH v2 1/2] rust: add untrusted data abstraction
-config: x86_64-buildonly-randconfig-002-20240927 (https://download.01.org/0day-ci/archive/20240927/202409270303.kUIAmOmY-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240927/202409270303.kUIAmOmY-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409270303.kUIAmOmY-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> error[E0004]: non-exhaustive patterns: `Err(_)` not covered
-   --> rust/kernel/validate.rs:188:15
-   |
-   188 |         match unsafe { value.__init(ptr) } {
-   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ pattern `Err(_)` not covered
-   |
-   note: `core::result::Result<(), Infallible>` defined here
-   --> /opt/cross/rustc-1.78.0-bindgen-0.65.1/rustup/toolchains/1.78.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/result.rs:502:1
-   |
-   502 | pub enum Result<T, E> {
-   | ^^^^^^^^^^^^^^^^^^^^^
-   ...
-   511 |     Err(#[stable(feature = "rust1", since = "1.0.0")] E),
-   |     --- not covered
-   = note: the matched value is of type `core::result::Result<(), Infallible>`
-   help: ensure that all possible cases are being handled by adding a match arm with a wildcard pattern or an explicit pattern as shown
-   |
-   189 ~             Ok(()) => {},
-   190 +             Err(_) => todo!()
-   |
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Jason
 
