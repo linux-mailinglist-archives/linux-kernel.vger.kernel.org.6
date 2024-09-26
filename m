@@ -1,138 +1,113 @@
-Return-Path: <linux-kernel+bounces-340693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5B0F9876BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:42:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCB49876BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EE11B2745B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:42:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94AB41C21111
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852AE155756;
-	Thu, 26 Sep 2024 15:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C831C15350B;
+	Thu, 26 Sep 2024 15:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="YEXEwj5s"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XFlPTLWr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBBC14D71D
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09C514D71D
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727365358; cv=none; b=KXREEPM6MUEnfFSZJBIo7+rSiLfXr3w5Y2F5ZuEgW8o8K3y9Vf/6rILPglGgV6ayahZ3Cnwt2kGkRezXcrsfh8iG1DTvkahygXiJ+FLaxQdmD9lQ/zEaQCCEX9+7qYv6LaxCt4TJWgTURLNW+FtEyqrsLvpE1GqKyvF0JgnEy5w=
+	t=1727365366; cv=none; b=IRmdVceBVJhMExmhjPEWPACwSghF8bFy2Xb6vO0UAojs8eJj0+CM3WcPIGdqBmy/JJCDoBH1pjXnI/RlJ9GKbI9W8Z/lCI3VeLzaHKd6TCWO39Z1rtD53hPdUBp3Sqa6mssQ3tzYgoErN630MgqRasszoVKtXE6KIbi2pPNZwGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727365358; c=relaxed/simple;
-	bh=YuuuYFG9J6VIce5wSFAppgfU6UAh20cdv9dMb/gRV8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RtwBRleTHuu5NtaMnjeyP1UvR4OzvjZFEhqlDhjAF2+/WcSjpvYZZ10VpxXSm3eD4frycQUdZ7sJfts0A896/sN7xuGbjosdKBE0VkWDmVtYntrl4jVR8Jx74WpS2zu9F1rLAwSgI/vpsc2biBHebHlJqXKf+4nWM7h3/rhA3x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=YEXEwj5s; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e053f42932so892047a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:42:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1727365357; x=1727970157; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0Mlojj9wGfJRRsMDZ0gQ5kDpNUAhG0uppHae6Ab1B3Y=;
-        b=YEXEwj5sSkdReSdTFRYnpGAAUl4aIMuDl9WwhAV006NHTSFEomnjWRFx3cjZE4BhE3
-         0HtJyVuWy6OkKRLdTHF/aVZgXC36jlzqTu4vy6IRmVDEPnKRDCb4WPwFpHqvWbAkInlN
-         d/7YIxb9iR0HyQQHPIixJp55APwq9hF1F+70U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727365357; x=1727970157;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Mlojj9wGfJRRsMDZ0gQ5kDpNUAhG0uppHae6Ab1B3Y=;
-        b=t+oc4y/u7vDdTkn66an01lSUex/NbRgPQDYE0YbJuQPxPBTFIX+vGBX0JRff1igrgC
-         1kWHtqY+qzDy24XP6xAVCAaDnAAdTUDnOW7TMTgjNKUXMPIUTfogBhLFlIErX/GZsTwU
-         pTCyHXQmQm9wCu3m251Khr63AKyxL+6rGqSXhMiAgOvXhNVIG1FVn3aU79hkzzKEm62F
-         n3FBGwFgr4grCgOVWUK33ADv7DrJUK0TCxyhadqWBoa/VuUDHje96PyaMw/CtZ4mAq9J
-         Tvn/DoQqc8ftgrOf12kVZRCVo8HHCROOOvZKiKOV+a/P62ZTW+A4IdlupSPLSwY0WrYa
-         mSQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmSD8ruUzPb9F5Ha4XtS4jO2OBBeRMj43IM0sPFUAHo1oqGW9gYPOSlTqsdTU26YzPBTp99HclEItIvxk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVlHGxtXZ2V5PvvOp+zH0BapO7iHGdupmWfn5BZNnVC38oxPlY
-	2y10R1FDOVPr45JAuimZJl+48csOwM20OcuyPWOq/dbc8TwiZpUUhdY97bjV52E=
-X-Google-Smtp-Source: AGHT+IHV6GaKXHNCkoA4zPQtCf/BXs58H6nmWQupzcXJs+pFzHTxNVQD3FC8Qak4VmK6OdZr0R4qqg==
-X-Received: by 2002:a17:90a:f989:b0:2d3:c976:dd80 with SMTP id 98e67ed59e1d1-2e0b8ee02admr111057a91.39.1727365356836;
-        Thu, 26 Sep 2024 08:42:36 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1bb004sm3684740a91.19.2024.09.26.08.42.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 08:42:35 -0700 (PDT)
-Date: Thu, 26 Sep 2024 08:42:32 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next 1/1] hv_netvsc: Link queues to NAPIs
-Message-ID: <ZvWA6BjwVfYXnDcA@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240924234851.42348-1-jdamato@fastly.com>
- <20240924234851.42348-2-jdamato@fastly.com>
- <20240926151024.GE4029621@kernel.org>
+	s=arc-20240116; t=1727365366; c=relaxed/simple;
+	bh=AmEBfJ3O4AmNv+bXXAupVkm9jBGx/su12GiScKSpURo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hxADea0TCfa5NeCxFNIEou4LgpCS2+02b1vJZQrVw1BJZwcfkGO5/uu1pnNw9f3k7SZVEed88Pp+UYPc+HJhfpPUlFm9eb6SUSGxQGOr4vQsRBXtvcZamA5YbNqFFBJTBRpEnFdhK/JZ+W4ygyc3YRKISi5wBbtIo6GKxNzyki0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XFlPTLWr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727365363;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QzpXW0kqGG/nfjNuZXnte9cVrtF0I2kkpQcSvMv8nk8=;
+	b=XFlPTLWrc/v9exiNtjLNP452X4mm3tt6aHZJLCgGcbLvlOlV3f5Nke0pwR4HSNSqR2ep89
+	5/817e9fF6Fn+oLDBDZk799t62p0qOX6cUXL0abxSVumgBmEi3g3AH25208phHXvkzHnlw
+	FuY4SVRU/t99tOBYhAYetlWg5EJsOpY=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-272-P_ZYmrDuOzSD45jTD3BBiQ-1; Thu,
+ 26 Sep 2024 11:42:39 -0400
+X-MC-Unique: P_ZYmrDuOzSD45jTD3BBiQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9555F1903080;
+	Thu, 26 Sep 2024 15:42:38 +0000 (UTC)
+Received: from t14s.fritz.box (unknown [10.22.16.71])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 198AA3003DEC;
+	Thu, 26 Sep 2024 15:42:35 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	syzbot+bf2c35fa302ebe3c7471@syzkaller.appspotmail.com,
+	Peter Xu <peterx@redhat.com>
+Subject: [PATCH v1] mm/huge_memory: check pmd_special() only after pmd_present()
+Date: Thu, 26 Sep 2024 17:42:34 +0200
+Message-ID: <20240926154234.2247217-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926151024.GE4029621@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Sep 26, 2024 at 04:10:24PM +0100, Simon Horman wrote:
-> On Tue, Sep 24, 2024 at 11:48:51PM +0000, Joe Damato wrote:
-> > Use netif_queue_set_napi to link queues to NAPI instances so that they
-> > can be queried with netlink.
-> > 
-> > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > ---
-> >  drivers/net/hyperv/netvsc.c       | 11 ++++++++++-
-> >  drivers/net/hyperv/rndis_filter.c |  9 +++++++--
-> >  2 files changed, 17 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
-> > index 2b6ec979a62f..ccaa4690dba0 100644
-> > --- a/drivers/net/hyperv/netvsc.c
-> > +++ b/drivers/net/hyperv/netvsc.c
-> > @@ -712,8 +712,11 @@ void netvsc_device_remove(struct hv_device *device)
-> >  	for (i = 0; i < net_device->num_chn; i++) {
-> >  		/* See also vmbus_reset_channel_cb(). */
-> >  		/* only disable enabled NAPI channel */
-> > -		if (i < ndev->real_num_rx_queues)
-> > +		if (i < ndev->real_num_rx_queues) {
-> > +			netif_queue_set_napi(ndev, i, NETDEV_QUEUE_TYPE_TX, NULL);
-> > +			netif_queue_set_napi(ndev, i, NETDEV_QUEUE_TYPE_RX, NULL);
-> 
-> Hi Joe,
-> 
-> When you post a non-RFC version of this patch, could you consider
-> line-wrapping the above to 80 columns, as is still preferred for
-> Networking code?
-> 
-> There is an option to checkpatch that will warn you about this.
+We should only check for pmd_special() after we made sure that we
+have a present PMD. For example, if we have a migration PMD,
+pmd_special() might indicate that we have a special PMD although we
+really don't.
 
-Thanks for letting me know.
+This fixes confusing migration entries as PFN mappings, and not
+doing what we are supposed to do in the "is_swap_pmd()" case further
+down in the function -- including messing up COW, page table handling
+and accounting.
 
-I run checkpatch.pl --strict and usually it seems to let me know if
-I am over 80, but maybe there's another option I need?
+Reported-by: syzbot+bf2c35fa302ebe3c7471@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/lkml/66f15c8d.050a0220.c23dd.000f.GAE@google.com/
+Fixes: bc02afbd4d73 ("mm/fork: accept huge pfnmap entries")
+Cc: Peter Xu <peterx@redhat.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+
+I yet have to do more testing, but sending this out already.
+
+---
+ mm/huge_memory.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 0580ac9e47b9..e55efcad1e6c 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1586,7 +1586,7 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+ 	int ret = -ENOMEM;
+ 
+ 	pmd = pmdp_get_lockless(src_pmd);
+-	if (unlikely(pmd_special(pmd))) {
++	if (unlikely(pmd_present(pmd) && pmd_special(pmd))) {
+ 		dst_ptl = pmd_lock(dst_mm, dst_pmd);
+ 		src_ptl = pmd_lockptr(src_mm, src_pmd);
+ 		spin_lock_nested(src_ptl, SINGLE_DEPTH_NESTING);
+-- 
+2.46.1
+
 
