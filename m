@@ -1,138 +1,139 @@
-Return-Path: <linux-kernel+bounces-340058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9D8986E32
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:51:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0F4986E3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DE3A1F24190
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:51:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24B1B2864A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB6D1990BB;
-	Thu, 26 Sep 2024 07:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AEF1925A2;
+	Thu, 26 Sep 2024 07:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAwNF9G3"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vwDHolJV"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32161422D4;
-	Thu, 26 Sep 2024 07:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499A739AD6
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727337048; cv=none; b=GfoUwMWzrYx7YIEh3PzLcoVH1VpFiFpH5CaHLf02cnGL4skyNouVharzbpuYSbqa4k2H8nUsvdSNXIq++fYIcDLhEbXB6Q1kVJeYm3t9w0Su4D9tEnNlk6d0Uw6L5TESR1VwpDANA1SCkD2yQEUz6dXrMHOzQpbHeIONkCmfUzs=
+	t=1727337082; cv=none; b=KsmI4s1hcf2OFP+6wGUbQOzr39ObBYKwF8zIeu5PDjHKcWVRrqjCEHB0r+OWWQEigwe7ZcYB2i7iOWH3sq/4J07kkY+R7NcW1vLdH3/GxsxbSjsZ45VM0uMk7Zr/jMhvsuToCiZScbDWJX846bHTk+Nmg1dOE72wSpO5Rcb2Rio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727337048; c=relaxed/simple;
-	bh=iZmqX7cYZa5BDpJwqyTtwvsYmacCypWtpX0oana+mck=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ouiI5ZPTEpIMHhKlEcAbGTvQhQUi8q147ow2KLLOi4zJnwJZMBAy6ZTG+AOeJ3cQZT5sCaypeDhE2Avl0lpwRRPfBFKZCqCGA8WN+TNy3oCbhY1ABgwiDizeYwz80ReD575n28gklnv2wMqqiSBGpTDfVR366PCo9PnnqpBqKfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAwNF9G3; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e09a276ec6so329639a91.0;
-        Thu, 26 Sep 2024 00:50:45 -0700 (PDT)
+	s=arc-20240116; t=1727337082; c=relaxed/simple;
+	bh=m3yk4PX4aDBnAGBazX/D7ESE0aEJmB06+3azJ3iYtvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IkGIjZSPn+lTAzqWUEho2H25PrtIXlv6hfckhj/zFq6DiUO95TlnQRxytvgfZ4Y59TsuUW5gV7TJtej9iTepKgFecAxP+1FlwUfoXvqxvm1+PJjoZgzsL5ecHwuyxOUXCqrzAbDwVbwhvGRt9F2kAJPGNgpZ/WcVNztcH/1VY6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vwDHolJV; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53568ffc525so842975e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 00:51:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727337045; x=1727941845; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=K0qzff08z3q5a8E7EP1BIypHJUEty88aRUrntwACuH0=;
-        b=AAwNF9G3aI1YUHedmfRNaAV3uN031detsxO8p1kqqoCunozXMkaNlpMJ/89iILire7
-         kVzTIatlafl5hpLMKiqV8bkXpevJuMTuYcLy9Kp+6b60m4s9gAfsat+j7FZ2+2dOyKBO
-         Guu90Nr2M7p/6CgLq4AkxdNovfiviN93ycmWllkYyK1wykHKLqAh52g74Wp53r2A8Ue+
-         xXkh4D7+/cMpHyiY5DnXXxigh8d9yh3zyn5qdZObhg9krufgxcoX5AUqiidyT9bCUe5Y
-         ndVzxYCZ+2eXrmTp+y7YOHIZd3CEohp+bmTkPhEqO0Aw2Dt3DtBVKyCKUef2gWrPVIWY
-         xPyA==
+        d=linaro.org; s=google; t=1727337078; x=1727941878; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NHAvOI9KtDOsvvoP0nLPdvZRSpWG4zkKmMmJKwdeN1g=;
+        b=vwDHolJVCsK8R3TcdQe3a6VUzfQuZ4GCaFx3mF9iMibGxhXXgFshH/mf4dvWws1KMR
+         epHmO65Hv+8uu8qtfvqtKGqvd2CG4m1GPQZg3QCc8ymTcLbcewQB4/diKmAQudG2XjwN
+         mNci1poEwN2u/SvIbCiXpwBsdy834HY9Bo9+ljbPPGVu8o765FojqjICDu6ont8H1CR9
+         6rSS/uqvZ8a4LwXMOe0jZZQCAqCJ5CdBWXIlBs2cGe/QZtOvP8NyBwj6IwTPrXe5mZVX
+         H2jPXEwhdHLeNVTU9bqIMxjOpyObaLoXkJ1j7EZ3PJxrBoKxZNuj5iJ2V0hN61JbREXY
+         7nnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727337045; x=1727941845;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K0qzff08z3q5a8E7EP1BIypHJUEty88aRUrntwACuH0=;
-        b=jaRACxUQMDLAHAjLztzSQvRN5RNup9w3Grkm7uDqsnLxZ15GzCcs5HKqVwDFefRXMh
-         bsHf5p/aBOm6NvZTRIcUCbC711SU5f88vHTr6YmNWVLQZjODTUhvrG/S83JcVZe+f2Ym
-         p8KvS/KvML8mEHIbUORBaS1NVU+1FptIl4dRxCOMxS7Ti9piWwvrb/efLzfEuY+//qug
-         aobG+umo6S4uxOlBTXEGVqkgm23jwBwKsJxitSLJSd5asJwDG4bOFLwhrfnn3TJ4QQzy
-         jhQm9t/Dj/XBiDUx4tXLqoA5IAwqEhkmqGjzOPqh6r6U1XJ6MENTyKKLV7Ier3cjpUfa
-         g9fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4uVxWYYa0ahdjNtRpvQigkskWONkDN8EJgKku9Tfg9uz1eryZw/fu47xhkeARIA/wcwT5F1Ic4LmSeHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmUFYx0vxNA8OTlMAz1QZ3sJjIMxpf1wY/S63jl3u9NWsoyubc
-	3it2TIhker49WRhiUJzYy+FXq5XMLMmri+YkYSRIGt1wvK0AkksS
-X-Google-Smtp-Source: AGHT+IHh02LZbLC1YokYpQ8+bTGsaA4JedI4hRFAoFSG4HVpWGLVoaOphOY2Epf+jOJQbqx18AzStw==
-X-Received: by 2002:a17:90b:205:b0:2e0:9168:2b43 with SMTP id 98e67ed59e1d1-2e091682d01mr2652063a91.16.1727337045019;
-        Thu, 26 Sep 2024 00:50:45 -0700 (PDT)
-Received: from fedora.. ([106.219.166.49])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1bb004sm2761784a91.19.2024.09.26.00.50.42
+        d=1e100.net; s=20230601; t=1727337078; x=1727941878;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NHAvOI9KtDOsvvoP0nLPdvZRSpWG4zkKmMmJKwdeN1g=;
+        b=iEqBm0duyzh3/r2YmabIvdnmyJCXebSKRJ6tUOzxsxKLiQSzxYxHg3ZOV8bFXm305Y
+         Wyr2wUkPNDzXwacH69YBKpNS+s1wmvtuTwlRn0mothRYVd32uiARgRGAHA6zbJSOZLka
+         s+paY9AILxLVQpHNeFaenV9hGD9hQfVDlnsVaNXHi0jVjQbZJWtTo9YUvs7u0CuxBv2T
+         Vo1qiPfnxZ4Dp8Iww/aa2cU2+V2LgdRb6hYeP8/RYiLLClQm1za9iLe9CaPQ2BvhpcQY
+         6LN0ElQpoLlC7mA3ont5Y/mJMfKZCbiSyqm7V1hj8X8PZXUFgFPQ+sU/Gt0+JtVHYyYN
+         ZN+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUfHFN2b2bDBYY1ph3T5WqHJ55DliKltjcTUFsurfWAQl7CyzIVCqTOiy8wQsseDJA36ubkFG0HEBql7tQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiYFPY9T0TopONV1sVhSJLEGSWZucZYgkfiYAi4dBxG2kj9Chq
+	rOyHKjKlk65+WlsNPcFw21TVNro/8FEmPbixzq7tY3mLw5G8Tqs1+IGMtGLqplQ=
+X-Google-Smtp-Source: AGHT+IE+7m6XCC6v6ZYiN9hpBuRWnJx0f4RfFAHw9nxz2LmGjqyw0t5+Pl7rzPZhQiLQH5hnMVD8Bg==
+X-Received: by 2002:a05:6512:3a8b:b0:530:abec:9a1b with SMTP id 2adb3069b0e04-5387049804cmr3430821e87.13.1727337078217;
+        Thu, 26 Sep 2024 00:51:18 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85e6356sm728310e87.89.2024.09.26.00.51.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 00:50:44 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: clm@fb.com,
-	josef@toxicpanda.com,
-	dsterba@suse.com
-Cc: linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH] btrfs: remove redundant stop_loop variable in scrub_stripe()
-Date: Thu, 26 Sep 2024 13:20:34 +0530
-Message-ID: <20240926075034.39475-1-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.1
+        Thu, 26 Sep 2024 00:51:16 -0700 (PDT)
+Date: Thu, 26 Sep 2024 10:51:15 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Hermes Wu <Hermes.Wu@ite.com.tw>
+Cc: Kenneth Hung <Kenneth.hung@ite.com.tw>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Allen Chen <allen.chen@ite.com.tw>, 
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 01/11] drm/bridge: it6505: change aux max fifo size
+Message-ID: <o4ecmdk52j46sa47cfah564b44rvwvebgf4fhegrefehghhve3@v6yrj7nkzpbt>
+References: <20240926074755.22176-1-Hermes.Wu@ite.com.tw>
+ <20240926074755.22176-2-Hermes.Wu@ite.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926074755.22176-2-Hermes.Wu@ite.com.tw>
 
-The variable stop_loop was originally introduced in commit
-625f1c8dc66d7 (Btrfs: improve the loop of scrub_stripe). It was initialized
-to 0 in commit 3b080b2564287 (Btrfs: scrub raid56 stripes in the right way).
-However, in a later commit 18d30ab961497 (btrfs: scrub: use scrub_simple_mirror()
-to handle RAID56 data stripe scrub), the code that modified stop_loop was removed,
-making the variable redundant.
+On Thu, Sep 26, 2024 at 03:47:51PM GMT, Hermes Wu wrote:
+> From: Hermes Wu <Hermes.wu@ite.com.tw>
+> 
+> The hardware aux fifo is 16 byte
 
-Currently, stop_loop is only initialized with 0 and is never used or modified
-within the scrub_stripe() function. As a result, this patch removes the
-stop_loop variable to clean up the code and eliminate unnecessary redundancy.
+Nit: AUX, FIFO
 
-This change has no impact on functionality, as stop_loop was never utilized
-in any meaningful way in the final version of the code.
+> 
+> Change definition of AUX_FIFO_MAX_SIZE to 16
+> 
+> 
+> 
 
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
----
-Compile tested only
+Nit: no need for so many empty lines.
 
- fs/btrfs/scrub.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-index 3a3427428074..43431065d981 100644
---- a/fs/btrfs/scrub.c
-+++ b/fs/btrfs/scrub.c
-@@ -2256,7 +2256,6 @@ static noinline_for_stack int scrub_stripe(struct scrub_ctx *sctx,
- 	/* Offset inside the chunk */
- 	u64 offset;
- 	u64 stripe_logical;
--	int stop_loop = 0;
- 
- 	/* Extent_path should be released by now. */
- 	ASSERT(sctx->extent_path.nodes[0] == NULL);
-@@ -2370,14 +2369,8 @@ static noinline_for_stack int scrub_stripe(struct scrub_ctx *sctx,
- 		logical += increment;
- 		physical += BTRFS_STRIPE_LEN;
- 		spin_lock(&sctx->stat_lock);
--		if (stop_loop)
--			sctx->stat.last_physical =
--				map->stripes[stripe_index].physical + dev_stripe_len;
--		else
--			sctx->stat.last_physical = physical;
-+		sctx->stat.last_physical = physical;
- 		spin_unlock(&sctx->stat_lock);
--		if (stop_loop)
--			break;
- 	}
- out:
- 	ret2 = flush_scrub_stripes(sctx);
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+
+> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
+> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
+> ---
+>  drivers/gpu/drm/bridge/ite-it6505.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
+> index f372c05360f2..28a8043229d3 100644
+> --- a/drivers/gpu/drm/bridge/ite-it6505.c
+> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
+> @@ -300,7 +300,7 @@
+>  #define MAX_CR_LEVEL 0x03
+>  #define MAX_EQ_LEVEL 0x03
+>  #define AUX_WAIT_TIMEOUT_MS 15
+> -#define AUX_FIFO_MAX_SIZE 32
+> +#define AUX_FIFO_MAX_SIZE 16
+>  #define PIXEL_CLK_DELAY 1
+>  #define PIXEL_CLK_INVERSE 0
+>  #define ADJUST_PHASE_THRESHOLD 80000
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.46.1
-
+With best wishes
+Dmitry
 
