@@ -1,123 +1,167 @@
-Return-Path: <linux-kernel+bounces-340111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D57D986EAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:21:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9302986EAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A6D228104B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:21:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80AC3280FF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426EB1A76BD;
-	Thu, 26 Sep 2024 08:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qMNIH1KY"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60621A4F16;
+	Thu, 26 Sep 2024 08:20:54 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7821A704B;
-	Thu, 26 Sep 2024 08:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3059B143C4C;
+	Thu, 26 Sep 2024 08:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727338857; cv=none; b=nJdHB4Y103F+7XUf2EpiOGnpxNeZ1s0gXYQzoKsnCchg2q1hibW3CJFgxOPTo1/hvrNqv3c+5yginmfs4cTzaDe2M6jDOdAFyjRVm8LMJV6OPXyzJINHPUZyjCrGbIWILcj+2F+VGKK2E4A40BKa30FxQvsBGW7Q4a3kZ2rhaUU=
+	t=1727338854; cv=none; b=RF4C/YH0NzIv4OMkXqsomXS3bkKpn80ZQN35m2wsp9Fy7Z+jGKE7OT2iC/ryMF5qRzpMON1b4bILFY8c6h9VVNY//2CtOhutAKGX/ZplVrZeoNzD7dkbPrBbYnRS9mck6L+bHuDE7/ieE+2GJvQZsg/qz8FkoGiok7nIkKlISKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727338857; c=relaxed/simple;
-	bh=DDb8C4BtA74QmAAeFYR18zjm0Ie12PG4cmEwax1hWiU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jPwo8MrNcXTePa//P3azonKN2EPgSwnUt4gV+tnO63QkBETRTo8D5/OP91OmaaJHjXU0N9oL20oRqrt/J45gr8faCS9MI1BKNmw6BNTqenum3BCXxvL53v4IRTkYSVogEjRs5CrfpzvSU4ML3KQbt+K2ESwX0nN6Vww7v94OvQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qMNIH1KY; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727338835; x=1727943635; i=markus.elfring@web.de;
-	bh=sB6yRJmW44vEhF2xRcb8ZnnullLqQ80g/LRUvvWZUBI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=qMNIH1KYHG4V1vMq2T5N5iZJZ5T9lVw3VZiGEFENegvVz2QjRlad1CbDtqDsP4Uj
-	 rcAZ0SOUnPPvv8/K20XlA+GfR4gelgcPsvwqUTy06Iwl9yqrPI+LiNmCq1Aaq8HVB
-	 +XWNMOIzah7rFcLkEu8bdBE38b5DeDS44ixHmPGYDekbw41gfof7yZnutyMoPKSr6
-	 u0IcKspa10DAtNP6xoVqYzOJjcJsKstAcNiHIf7IEOKMxC8sEk4TL5KICNZbngLPa
-	 yDFJpA37wqS31XwgIhr2OuJEhMGw6H35aYJZlQu6T+Lc/hl+NxfjcytF44ZkX6eHq
-	 /UfUlxGqo0cK9+PSQQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjBRn-1sEt8g3Lt7-00hh4G; Thu, 26
- Sep 2024 10:20:35 +0200
-Message-ID: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
-Date: Thu, 26 Sep 2024 10:20:34 +0200
+	s=arc-20240116; t=1727338854; c=relaxed/simple;
+	bh=5SG9w7Q4WnBvy27ddGc1bzdc8ZHjDro5bwU/EkO6oNQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MqwFNRjo4aNn/UzjR/9w+y1QNfoA6oX6zHrBiLNXiAx4IBhN5rWq34MTG8/H5VGGodJyDn+lHt4D03s35hl5OWFjcUhVqRubXAFlWg0vXGKDKSrVTOwsciXWflBU/dp5QRE6Yo4069mYlMCAOuRY45LIVKt8IAdg3pVp1dF20aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 3787687c7be011efa216b1d71e6e1362-20240926
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT
+	HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
+	SA_UNTRUSTED, SA_LOWREP, SA_EXISTED, SN_UNTRUSTED, SN_LOWREP
+	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
+	CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1
+	AMN_GOOD, AMN_C_TI, AMN_C_BU
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:7c3be859-750f-40b3-914d-316f1a05d482,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-INFO: VERSION:1.1.38,REQID:7c3be859-750f-40b3-914d-316f1a05d482,IP:0,URL
+	:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:-5
+X-CID-META: VersionHash:82c5f88,CLOUDID:b629355be24ee38a092c299d6801b1bb,BulkI
+	D:240925144023207KTES0,BulkQuantity:13,Recheck:0,SF:64|66|17|19|102,TC:nil
+	,Content:0,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,COL:
+	0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_OBB
+X-UUID: 3787687c7be011efa216b1d71e6e1362-20240926
+X-User: dengjie03@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <dengjie03@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 866411718; Thu, 26 Sep 2024 16:20:40 +0800
+From: Deng Jie <dengjie03@kylinos.cn>
+To: gregkh@linuxfoundation.org
+Cc: rafael@kernel.org,
+	pavel@ucw.cz,
+	len.brown@intel.com,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	xiehongyu1@kylinos.cn,
+	duanchenghao@kylinos.cn,
+	xiongxin@kylinos.cn
+Subject: Re: [PATCH v2] USB: Fix the issue of S4 wakeup queisce phase where task resumption fails due to USB status
+Date: Thu, 26 Sep 2024 16:20:36 +0800
+Message-Id: <20240926082036.312203-1-dengjie03@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <2024092525-envision-impotency-c1a6@gregkh>
+References: <2024092525-envision-impotency-c1a6@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
- Joel Granados <j.granados@samsung.com>, Kees Cook <kees@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] sysctl: Reduce dput(child) calls in proc_sys_fill_cache()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:O2kMMIfoFcVsourDbG7GiTIPrn1lHkbfbdxpYI2Z95rvexXu6jo
- A5EfaFwEeN13eC+KfCcuhXKPGkvyJH7xHixhBFHoE0aXTE+Rx9HaO6vj5+HS/w/QqhaDeaP
- 5eTmV/90y8PQgKPXTMNi86Kssr5cr4e9NeqslS3UQbla8EjduvGMfXMRWYzjD6E/kemsdqG
- pj2iki9WUimK8CXzzB0+Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9YxArM8zdCI=;hfdzJK4Klm1i6lAuyUUQoOXp45f
- nLrhDEPkFOPR4RWLTV6hruoiE81rOLem0Z1vfYOzcmPyK71ncngCxHj//tU4Akn6y6s6/E9I5
- RiQMaSNJTiNEwgwwVmdyyPJfZJlwCv9lWOMvRUEz0G3E9LWaiZD6BrNnYnJADSTDZzuvlTySH
- FYkHaVGSe7e1Evy+HN6JBYIleh/rTQX4fAY9LAXGRKZoYTt3zjnAjeOVXFuP5krI7oGFnRMrC
- yJVhJR7XB2FoUwo/FXFKjQx/WNuIG4NtArDqG4LD6X8qAOVfZGrxf+x8U43sYFtFh1ZBzbVt7
- 4D+OmWot0c4Od60kIRDCwSx3dTv4uZKHnX/2+g1gpwVkxk1PdaCelViCEe6S772GBKbkRA7Z7
- +T856hSX2aXM/mS+kT6PZzcgl35swtmK9LiFnjDItlvhGZgWbB39dymT880x2L2yvMXn2TMrK
- I0YbwoOiqat583O2f4vVrVoFU0wxjmrkVoK5a/vC2RxdMtVEicN87WPu5hBjxbDm6uDWGthdx
- P3VUtgnmsdQhrUmXXqMHqeBQpugoh6d48EzSHt17Si9BX9e3HaX2y10/hg0Z+DlZkuOymbe8N
- f0aCEV0EWjnCQ6L3etwetN3MzRv9gB0jlIO5BtgujrXIaN9qSQI9d0cMTvEZox0chGcLAs9yh
- cfhzNB+0XsQBxxTu+bt55zyPmiqOuQzc4x/nJv3mdBlVBedTDboeI3cJIC/cdUzX9Up3uMkoS
- cHa0BHiINvtCVXimk9Dv3Xb2czJ4iR64iElqwfJFjtyYZg9VDN857dgf95nwDzMy7BBR1zm9l
- Hr06K9n8pwuIJfpHwURNChbQ==
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Sep 2024 10:10:33 +0200
+Hi Greg,
+Do you think this plan is feasible? Do I need to add more explanations?
 
-A dput(child) call was immediately used after an error pointer check
-for a d_splice_alias() call in this function implementation.
-Thus call such a function instead directly before the check.
+Thanks,
 
-This issue was transformed by using the Coccinelle software.
+Deng Jie
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/proc/proc_sysctl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index d11ebc055ce0..97547de58218 100644
-=2D-- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -698,11 +698,11 @@ static bool proc_sys_fill_cache(struct file *file,
- 			res =3D d_splice_alias(inode, child);
- 			d_lookup_done(child);
- 			if (unlikely(res)) {
--				if (IS_ERR(res)) {
--					dput(child);
--					return false;
--				}
- 				dput(child);
-+
-+				if (IS_ERR(res))
-+					return false;
-+
- 				child =3D res;
- 			}
- 		}
-=2D-
-2.46.1
-
+>---
+>v2:
+>	* Fix the formatting issues and function naming conventions in the v1 patch.
+>v1:
+>	* USB: Fix the issue of S4 wakeup queisce phase where task resumption fails
+> 	   due to USB status.
+>---
+>
+>diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+>index fb4d18a0b185..7723e7082a36 100644
+>--- a/drivers/base/power/main.c
+>+++ b/drivers/base/power/main.c
+>@@ -559,6 +559,11 @@ bool dev_pm_may_skip_resume(struct device *dev)
+> 	return !dev->power.must_resume && pm_transition.event != PM_EVENT_RESTORE;
+> }
+> 
+>+bool pm_event_is_queisce(void)
+>+{
+>+	return pm_transition.event == PM_EVENT_QUIESCE;
+>+}
+>+
+> static pm_callback_t dpm_subsys_resume_noirq_cb(struct device *dev,
+> 						pm_message_t state,
+> 						const char **info_p)
+>diff --git a/drivers/usb/core/hcd-pci.c b/drivers/usb/core/hcd-pci.c
+>index 77830f120834..af2c60049e4a 100644
+>--- a/drivers/usb/core/hcd-pci.c
+>+++ b/drivers/usb/core/hcd-pci.c
+>@@ -456,18 +456,25 @@ static int suspend_common(struct device *dev, bool do_wakeup)
+> 		/* Optimization: Don't suspend if a root-hub wakeup is
+> 		 * pending and it would cause the HCD to wake up anyway.
+> 		 */
+>-		if (do_wakeup && HCD_WAKEUP_PENDING(hcd))
+>-			return -EBUSY;
+>-		if (do_wakeup && hcd->shared_hcd &&
+>-				HCD_WAKEUP_PENDING(hcd->shared_hcd))
+>+		/* Considering the restore process that occurs after
+>+		 * the quiesce phase during S4 wakeup, which essentially
+>+		 * resets all root hubs,checking this wakeup pending status
+>+		 * in USB suspend_common() during the quiesce phase is of
+>+		 * little significance and should therefore be filtered out.
+>+		 */
+>+		if (!pm_event_is_queisce() && do_wakeup &&
+>+		    (HCD_WAKEUP_PENDING(hcd) ||
+>+		     (hcd->shared_hcd &&
+>+		      HCD_WAKEUP_PENDING(hcd->shared_hcd))))
+> 			return -EBUSY;
+> 		retval = hcd->driver->pci_suspend(hcd, do_wakeup);
+> 		suspend_report_result(hcd->driver->pci_suspend, retval);
+> 
+> 		/* Check again in case wakeup raced with pci_suspend */
+>-		if ((retval == 0 && do_wakeup && HCD_WAKEUP_PENDING(hcd)) ||
+>-				(retval == 0 && do_wakeup && hcd->shared_hcd &&
+>-				 HCD_WAKEUP_PENDING(hcd->shared_hcd))) {
+>+		if (retval == 0 && !pm_event_is_queisce() && do_wakeup &&
+>+		    (HCD_WAKEUP_PENDING(hcd) ||
+>+		     (hcd->shared_hcd &&
+>+		      HCD_WAKEUP_PENDING(hcd->shared_hcd)))) {
+> 			if (hcd->driver->pci_resume)
+> 				hcd->driver->pci_resume(hcd, false);
+> 			retval = -EBUSY;
+>diff --git a/include/linux/pm.h b/include/linux/pm.h
+>index 4c441be03079..dad87c9ecfee 100644
+>--- a/include/linux/pm.h
+>+++ b/include/linux/pm.h
+>@@ -758,6 +758,7 @@ extern void pm_generic_complete(struct device *dev);
+> 
+> extern bool dev_pm_may_skip_resume(struct device *dev);
+> extern bool dev_pm_smart_suspend_and_suspended(struct device *dev);
+>+extern bool pm_event_is_queisce(void);
+> 
+> #else /* !CONFIG_PM_SLEEP */
+>
 
