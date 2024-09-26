@@ -1,256 +1,349 @@
-Return-Path: <linux-kernel+bounces-340354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A50C9871F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:48:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 490CC9871F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E8DC1F2AAE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:48:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BE5D1C210A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF2F1AD3F4;
-	Thu, 26 Sep 2024 10:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992181AD9F1;
+	Thu, 26 Sep 2024 10:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FMw0TCFx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="JRhBS/GN"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0933D1AB6E7
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B421F95C;
+	Thu, 26 Sep 2024 10:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727347709; cv=none; b=EiTqIZ/Vx5YOuyCmxEjLzN/M6Nn2jhyOZYETSL18h6p2nGBz7HtFON/3ZOPlfDDEpO1PioZCb85hQtpQB+kbwRR2nbgaW8h/L2kkZxQmIn8DaioffcHoNz3uXulneXPPGRa/H6WV9fqDKYKLJtqSDg8H4gwlYscMv0OKj4FBqhc=
+	t=1727347724; cv=none; b=QVl+Jao0byAD06XUich2pbawRm6QudO+NY1ibzjm6rvHA1acROIlQUg2XCTjjnBGrzfRZck5BiXYV6ovD01O6cg8CcH3j/xYqX9F3rLspZfz/+mVEJ4wlN6P14bqylAHWI7MpBCyi1pjehulCq4YvOQWvvwo3keowlelIPiTjDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727347709; c=relaxed/simple;
-	bh=6iROOjEaXSQVAmDKbZ6LrSVz3vGhRhwymBuWahdoJVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qyjFqNo9oSwYmqCOshYSVPE7qtnHjo8hNAlUNoyjiLbiXJA1k+rsb06X6ilRZ6dl6zQACUNgYMPDqmGNXl7SSFeA6A/KSy7qHt5BnibirePMo490Zdw7bdJcV9XMFeYHRx/bgl89b9jvCe82fNJGERkugyYlh/7lwYeEdIBwXzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FMw0TCFx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727347706;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6eJpX/Jo95Jq88zZL40gE7uihtOddebPcPuwzbDVJKM=;
-	b=FMw0TCFxuG/A1m/ENkO2pvRIKeH0ai6LCtwD/MxbYgaVUYAb3lYN4SmWQVptX6itLs0ku2
-	hMBjbtWk7pXIE0gOLLdFZ64sFhGLhWnTckjMVkCdiSAYyaRrtUij9XfKe6HCLpSRFc9Ex6
-	pywQBYjq6abcSSCpWPotFOPT8YSrRnA=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-121-S5OhsTf0O7ihUuXg2Pc91w-1; Thu, 26 Sep 2024 06:48:23 -0400
-X-MC-Unique: S5OhsTf0O7ihUuXg2Pc91w-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42e8bf0f5e8so5106485e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 03:48:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727347702; x=1727952502;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6eJpX/Jo95Jq88zZL40gE7uihtOddebPcPuwzbDVJKM=;
-        b=aUJ957Gh9SfJv1tB6WOeln6luJhZf2neo6J2tFLs/SGt7ibzGron4G1FyBe34DUaKS
-         l9Wb3Q3c6KvsKi1F903ACSqZmsMZWqS3+t+l+DRbbIVeFoMzy+DAG1LA4aX28dvc6Qfy
-         AWhQxDOQ2gOTpvNCYYjiwc5g7hGy95o+MG/Vs9H4NCZ8hIR/tZvqNV6M81EkxBLAni5/
-         KD13PXmlcpnKGhk7CloFAOovGLKNRu9N9vyg+bgEXdbk7ZubaMG41YsICRn4NC/ZaZXt
-         VLvTpijW34BMYDu8FnBzoXk9nuE95CWwaTyK90GxPiQLM0RMrf561Ff7n9Q2NNFjBJBj
-         UngQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqNvZrHYvA8fImEMQFd8YIy91OrhbEnekgBnhHiOYYOdrO1btr5OLxiRUlxjnkpw79G2h+sAAivqXYOCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXvacc32Y+zEOeGYMShFTwKiBIL477aHgLxrUJklt/B4HBh/4W
-	n4DI1klgx2dGQJJAjtBDp/WLmLxJ7Y80TqXu6pPvjHbrzv0HO0tQvEEcceYveJqTiYG2sQZZtPN
-	BrS9sDxze1fGSd0TWJ+Zv1KyLhQKlKKOvzpoTA7pFsDAXHhVq0jmgA4sgpt6aiA==
-X-Received: by 2002:a05:600c:3b17:b0:42c:b63e:fe8f with SMTP id 5b1f17b1804b1-42e9610c337mr36087395e9.13.1727347701612;
-        Thu, 26 Sep 2024 03:48:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFt7uBbw5Bw7CvfvM/z8c7BNwFwbfpY7L+/1Q6L0phMDnhCIzBOZ8VCm+Md2bS6LvFJkgLmPg==
-X-Received: by 2002:a05:600c:3b17:b0:42c:b63e:fe8f with SMTP id 5b1f17b1804b1-42e9610c337mr36087165e9.13.1727347701112;
-        Thu, 26 Sep 2024 03:48:21 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c744:ac00:ef5c:b66d:1075:254a? (p200300cbc744ac00ef5cb66d1075254a.dip0.t-ipconnect.de. [2003:cb:c744:ac00:ef5c:b66d:1075:254a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ccca61e15sm2657340f8f.88.2024.09.26.03.48.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 03:48:20 -0700 (PDT)
-Message-ID: <60e29e62-4864-4393-b899-01489ee73b91@redhat.com>
-Date: Thu, 26 Sep 2024 12:48:19 +0200
+	s=arc-20240116; t=1727347724; c=relaxed/simple;
+	bh=I+cQCruRtcbgvl2B5ua7+vEXO+xfL7ptucecZqP1qrY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=poQ+QNX/nT+/p7vDKlpVLVU7PzJSHEvAhyCmKSy2HPIKNxGyXYHKmt8oiBLIVasl38A7gj12EEScL0vE4AmwElJyiwY93KSiOPmCNdKW8oAivdgNtcLmvzavVOMGb8yfR1R4aOxILNxxN8/vdHrVNMuUF0lYf+AxzoXWn41ksl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=JRhBS/GN; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ZXkf1wTdQhc/mYJKrKkTTXfk+s8Dy/Zc2oNs+XEaIEY=; b=JRhBS/GNZFIjJaYKgT9LpIVjGR
+	Q9hFSbGvviFL+Zz5W355wtych5DzSBE2HiGSl+g+puZoiepARAau0zZEETJ7Sqn6uk7wbiBO3MvRC
+	P8PnUkUOUP142QZ9bS42bZ2Po51jpUZ+ryW+ghO3vnbk6MJN5gByaZQQtzu0O/cHDu2NN+bbYOrWc
+	WH02heJDAZtBUJI2byDL29nDsERDMfGOaXG3Pcu8c5YI5fTxbCAfvKVThr/RLsAVT2DVSaxIbmDOf
+	GENzq2Of53KrmyTZ8Jp/7E8EVn+pT9+M3LvQxa+pGgBgHr7wFf4DwiFSDzl3t2Rtgmoh9WDelnq2q
+	4f3Ea9QA==;
+Received: from 85-160-70-253.reb.o2.cz ([85.160.70.253] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1stm34-0002XP-12; Thu, 26 Sep 2024 12:48:38 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, Frank Wang <frawang.cn@gmail.com>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
+ tim.chen@rock-chips.com, frank.wang@rock-chips.com
+Subject:
+ Re: [PATCH v3 2/2] phy: rockchip: inno-usb2: Add usb2 phys support for rk3576
+Date: Thu, 26 Sep 2024 12:48:36 +0200
+Message-ID: <10867555.aFP6jjVeTY@phil>
+In-Reply-To: <20240926103223.29538-2-frawang.cn@gmail.com>
+References:
+ <20240926103223.29538-1-frawang.cn@gmail.com>
+ <20240926103223.29538-2-frawang.cn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [mm?] WARNING in copy_huge_pmd
-To: Peter Xu <peterx@redhat.com>
-Cc: syzbot <syzbot+bf2c35fa302ebe3c7471@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
- hpa@zytor.com, jgg@ziepe.ca, leitao@debian.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, mingo@redhat.com,
- rppt@kernel.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
- x86@kernel.org
-References: <66f15c8d.050a0220.c23dd.000f.GAE@google.com>
- <4f96130c-12b7-4afa-ada3-bec354576112@redhat.com> <ZvRBYpCrSZj9YZoF@x1n>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZvRBYpCrSZj9YZoF@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 25.09.24 18:59, Peter Xu wrote:
-> On Tue, Sep 24, 2024 at 04:45:00PM +0200, David Hildenbrand wrote:
->> On 23.09.24 14:18, syzbot wrote:
->>> Hello,
->>>
->>> syzbot found the following issue on:
->>>
->>> HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.k..
->>> git tree:       upstream
->>> console+strace: https://syzkaller.appspot.com/x/log.txt?x=16c36c27980000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=e851828834875d6f
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=bf2c35fa302ebe3c7471
->>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12773080580000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ed5e9f980000
->>>
->>> Downloadable assets:
->>> disk image: https://storage.googleapis.com/syzbot-assets/0e011ac37c93/disk-88264981.raw.xz
->>> vmlinux: https://storage.googleapis.com/syzbot-assets/f5c65577e19e/vmlinux-88264981.xz
->>> kernel image: https://storage.googleapis.com/syzbot-assets/984d963c8ea1/bzImage-88264981.xz
->>>
->>> The issue was bisected to:
->>>
->>> commit 75182022a0439788415b2dd1db3086e07aa506f7
->>> Author: Peter Xu <peterx@redhat.com>
->>> Date:   Mon Aug 26 20:43:51 2024 +0000
->>>
->>>       mm/x86: support large pfn mappings
->>>
->>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17df9c27980000
->>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=143f9c27980000
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=103f9c27980000
->>>
->>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>> Reported-by: syzbot+bf2c35fa302ebe3c7471@syzkaller.appspotmail.com
->>> Fixes: 75182022a043 ("mm/x86: support large pfn mappings")
->>>
->>> ------------[ cut here ]------------
->>> WARNING: CPU: 1 PID: 5508 at mm/huge_memory.c:1602 copy_huge_pmd+0x102c/0x1c60 mm/huge_memory.c:1602
->>
->> This is the
->>
->> VM_WARN_ON_ONCE(is_cow_mapping(src_vma->vm_flags) && pmd_write(pmd))
->>
->> So we have a special-marked PMD in a COW mapping.
->>
->> The reproducer seems to involve fuse, but not sure if that makes a
->> difference here.
+Am Donnerstag, 26. September 2024, 12:32:23 CEST schrieb Frank Wang:
+> From: William Wu <william.wu@rock-chips.com>
 > 
-> That chunk of code seems to be there only making sure the test won't get
-> blocked due to any fused based fs being stuck, via writting to the "abort"
-> file:
+> The RK3576 SoC has two independent USB2.0 PHYs, and each PHY has
+> one port.
 > 
->        snprintf(abort, sizeof(abort), "/sys/fs/fuse/connections/%s/abort",
->                 ent->d_name);
->        int fd = open(abort, O_WRONLY);
->        if (fd == -1) {
->          continue;
->        }
->        if (write(fd, abort, 1) < 0) {
->        }
->        close(fd);
+> This change also converts the clock management from single to bulk
+> as some Rockchip SoCs (e.g RK3576) have more than one clock.
 > 
-> So far looks not relevant to this issue indeed.
+> Signed-off-by: William Wu <william.wu@rock-chips.com>
+> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+> ---
+> Changelog:
+> v3:
+>  - amend the commit log adds clocks converting.
+>  - retrieve the clock by "clks.id" in *_clk480m_register() function.
 > 
-> Unfortunately I cannot reproduce it even with the reproducer.  So this one
-> is a bit tricky..
+> v2:
+>  - no changes.
+> v1:
+>  - https://patchwork.kernel.org/project/linux-phy/patch/20240923025326.10467-2-frank.wang@rock-chips.com/
 > 
-> What confuses me yet is how that special bit is set, if it's only used so
-> far with vfio-pci, and this test doesn't seem to have it involved.
+>  drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 139 +++++++++++++++++-
+>  1 file changed, 131 insertions(+), 8 deletions(-)
 > 
-> The test keeps invoking processes, then threads, doing concurrent accesses
-> over a few stuff (madvise, mremap, migrate_pages, munmap, etc.) on the
-> pre-mapped areas, but none of them seem to create new memory that can
-> provide hint on how special bit can start to occur.
+> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> index 4f71373ae6e1..642c7857c5ae 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> @@ -229,9 +229,10 @@ struct rockchip_usb2phy_port {
+>   * @dev: pointer to device.
+>   * @grf: General Register Files regmap.
+>   * @usbgrf: USB General Register Files regmap.
+> - * @clk: clock struct of phy input clk.
+> + * @clks: array of phy input clocks.
+>   * @clk480m: clock struct of phy output clk.
+>   * @clk480m_hw: clock struct of phy output clk management.
+> + * @num_clks: number of phy input clocks.
+>   * @phy_reset: phy reset control.
+>   * @chg_state: states involved in USB charger detection.
+>   * @chg_type: USB charger types.
+> @@ -246,9 +247,10 @@ struct rockchip_usb2phy {
+>  	struct device	*dev;
+>  	struct regmap	*grf;
+>  	struct regmap	*usbgrf;
+> -	struct clk	*clk;
+> +	struct clk_bulk_data	*clks;
+>  	struct clk	*clk480m;
+>  	struct clk_hw	clk480m_hw;
+> +	int			num_clks;
+>  	struct reset_control	*phy_reset;
+>  	enum usb_chg_state	chg_state;
+>  	enum power_supply_type	chg_type;
+> @@ -376,7 +378,9 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
+>  {
+>  	struct device_node *node = rphy->dev->of_node;
+>  	struct clk_init_data init;
+> +	struct clk *refclk = NULL;
+>  	const char *clk_name;
+> +	int i;
+>  	int ret = 0;
+>  
+>  	init.flags = 0;
+> @@ -386,8 +390,15 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
+>  	/* optional override of the clockname */
+>  	of_property_read_string(node, "clock-output-names", &init.name);
+>  
+> -	if (rphy->clk) {
+> -		clk_name = __clk_get_name(rphy->clk);
+> +	for (i = 0; i < rphy->num_clks; i++) {
+> +		if (!strncmp(rphy->clks[i].id, "phyclk", 6)) {
+> +			refclk = rphy->clks[i].clk;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!IS_ERR(refclk)) {
+> +		clk_name = __clk_get_name(refclk);
+>  		init.parent_names = &clk_name;
+>  		init.num_parents = 1;
+>  	} else {
+> @@ -1406,22 +1417,29 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
+>  	if (IS_ERR(rphy->phy_reset))
+>  		return PTR_ERR(rphy->phy_reset);
+>  
+> -	rphy->clk = devm_clk_get_optional_enabled(dev, "phyclk");
+> -	if (IS_ERR(rphy->clk)) {
+> -		return dev_err_probe(&pdev->dev, PTR_ERR(rphy->clk),
+> +	ret = devm_clk_bulk_get_all(dev, &rphy->clks);
+> +	if (ret == -EPROBE_DEFER) {
+> +		return dev_err_probe(&pdev->dev, -EPROBE_DEFER,
+>  				     "failed to get phyclk\n");
+>  	}
+>  
+> +	/* Clocks are optional */
+> +	rphy->num_clks = ret < 0 ? 0 : ret;
+> +
+>  	ret = rockchip_usb2phy_clk480m_register(rphy);
+>  	if (ret) {
+>  		dev_err(dev, "failed to register 480m output clock\n");
+>  		return ret;
+>  	}
+>  
+> +	ret = clk_bulk_prepare_enable(rphy->num_clks, rphy->clks);
+> +	if (ret)
+> +		return ret;
+> +
+
+Do you actually need that separate enable step?
+There exists devm_clk_bulk_get_all_enable() 
+
+https://elixir.bootlin.com/linux/v6.11/source/include/linux/clk.h#L511
+
+which you could use above. Especially as otherwise you'd need a remove
+callback to disable the clock on driver unbind?
+
+
+>  	if (rphy->phy_cfg->phy_tuning) {
+>  		ret = rphy->phy_cfg->phy_tuning(rphy);
+>  		if (ret)
+> -			return ret;
+> +			goto disable_clks;
+>  	}
+>  
+>  	index = 0;
+> @@ -1484,6 +1502,8 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
+>  
+>  put_child:
+>  	of_node_put(child_np);
+> +disable_clks:
+> +	clk_bulk_disable_unprepare(rphy->num_clks, rphy->clks);
+>  	return ret;
+>  }
+>  
+> @@ -1495,6 +1515,30 @@ static int rk3128_usb2phy_tuning(struct rockchip_usb2phy *rphy)
+>  				BIT(2) << BIT_WRITEABLE_SHIFT | 0);
+>  }
+
+
+I still maintain, that this maybe should be two separate patches.
+And you even seem to have nice "cut-here" in it ;-)
+
+The code above converts the driver to use clk_bulk to handle
+multiple clocks for controller variants needing it.
+
+
+And the code below adds the rk3576-specific data to the driver.
+
+
+
+> +static int rk3576_usb2phy_tuning(struct rockchip_usb2phy *rphy)
+> +{
+> +	int ret;
+> +	u32 reg = rphy->phy_cfg->reg;
+> +
+> +	/* Deassert SIDDQ to power on analog block */
+> +	ret = regmap_write(rphy->grf, reg + 0x0010, GENMASK(29, 29) | 0x0000);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Do reset after exit IDDQ mode */
+> +	ret = rockchip_usb2phy_reset(rphy);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* HS DC Voltage Level Adjustment 4'b1001 : +5.89% */
+> +	ret |= regmap_write(rphy->grf, reg + 0x000c, GENMASK(27, 24) | 0x0900);
+> +
+> +	/* HS Transmitter Pre-Emphasis Current Control 2'b10 : 2x */
+> +	ret |= regmap_write(rphy->grf, reg + 0x0010, GENMASK(20, 19) | 0x0010);
+> +
+> +	return ret;
+> +}
+> +
+>  static int rk3588_usb2phy_tuning(struct rockchip_usb2phy *rphy)
+>  {
+>  	int ret;
+> @@ -1923,6 +1967,84 @@ static const struct rockchip_usb2phy_cfg rk3568_phy_cfgs[] = {
+>  	{ /* sentinel */ }
+>  };
+>  
+> +static const struct rockchip_usb2phy_cfg rk3576_phy_cfgs[] = {
+> +	{
+> +		.reg = 0x0,
+> +		.num_ports	= 1,
+> +		.phy_tuning	= rk3576_usb2phy_tuning,
+> +		.clkout_ctl	= { 0x0008, 0, 0, 1, 0 },
+> +		.port_cfgs	= {
+> +			[USB2PHY_PORT_OTG] = {
+> +				.phy_sus	= { 0x0000, 8, 0, 0, 0x1d1 },
+> +				.bvalid_det_en	= { 0x00c0, 1, 1, 0, 1 },
+> +				.bvalid_det_st	= { 0x00c4, 1, 1, 0, 1 },
+> +				.bvalid_det_clr = { 0x00c8, 1, 1, 0, 1 },
+> +				.ls_det_en	= { 0x00c0, 0, 0, 0, 1 },
+> +				.ls_det_st	= { 0x00c4, 0, 0, 0, 1 },
+> +				.ls_det_clr	= { 0x00c8, 0, 0, 0, 1 },
+> +				.disfall_en	= { 0x00c0, 6, 6, 0, 1 },
+> +				.disfall_st	= { 0x00c4, 6, 6, 0, 1 },
+> +				.disfall_clr	= { 0x00c8, 6, 6, 0, 1 },
+> +				.disrise_en	= { 0x00c0, 5, 5, 0, 1 },
+> +				.disrise_st	= { 0x00c4, 5, 5, 0, 1 },
+> +				.disrise_clr	= { 0x00c8, 5, 5, 0, 1 },
+> +				.utmi_avalid	= { 0x0080, 1, 1, 0, 1 },
+> +				.utmi_bvalid	= { 0x0080, 0, 0, 0, 1 },
+> +				.utmi_ls	= { 0x0080, 5, 4, 0, 1 },
+> +			}
+> +		},
+> +		.chg_det = {
+> +			.cp_det		= { 0x0080, 8, 8, 0, 1 },
+> +			.dcp_det	= { 0x0080, 8, 8, 0, 1 },
+> +			.dp_det		= { 0x0080, 9, 9, 1, 0 },
+> +			.idm_sink_en	= { 0x0010, 5, 5, 1, 0 },
+> +			.idp_sink_en	= { 0x0010, 5, 5, 0, 1 },
+> +			.idp_src_en	= { 0x0010, 14, 14, 0, 1 },
+> +			.rdm_pdwn_en	= { 0x0010, 14, 14, 0, 1 },
+> +			.vdm_src_en	= { 0x0010, 7, 6, 0, 3 },
+> +			.vdp_src_en	= { 0x0010, 7, 6, 0, 3 },
+> +		},
+> +	},
+> +	{
+> +		.reg = 0x2000,
+> +		.num_ports	= 1,
+> +		.phy_tuning	= rk3576_usb2phy_tuning,
+> +		.clkout_ctl	= { 0x2008, 0, 0, 1, 0 },
+> +		.port_cfgs	= {
+> +			[USB2PHY_PORT_OTG] = {
+> +				.phy_sus	= { 0x2000, 8, 0, 0, 0x1d1 },
+> +				.bvalid_det_en	= { 0x20c0, 1, 1, 0, 1 },
+> +				.bvalid_det_st	= { 0x20c4, 1, 1, 0, 1 },
+> +				.bvalid_det_clr = { 0x20c8, 1, 1, 0, 1 },
+> +				.ls_det_en	= { 0x20c0, 0, 0, 0, 1 },
+> +				.ls_det_st	= { 0x20c4, 0, 0, 0, 1 },
+> +				.ls_det_clr	= { 0x20c8, 0, 0, 0, 1 },
+> +				.disfall_en	= { 0x20c0, 6, 6, 0, 1 },
+> +				.disfall_st	= { 0x20c4, 6, 6, 0, 1 },
+> +				.disfall_clr	= { 0x20c8, 6, 6, 0, 1 },
+> +				.disrise_en	= { 0x20c0, 5, 5, 0, 1 },
+> +				.disrise_st	= { 0x20c4, 5, 5, 0, 1 },
+> +				.disrise_clr	= { 0x20c8, 5, 5, 0, 1 },
+> +				.utmi_avalid	= { 0x2080, 1, 1, 0, 1 },
+> +				.utmi_bvalid	= { 0x2080, 0, 0, 0, 1 },
+> +				.utmi_ls	= { 0x2080, 5, 4, 0, 1 },
+> +			}
+> +		},
+> +		.chg_det = {
+> +			.cp_det		= { 0x2080, 8, 8, 0, 1 },
+> +			.dcp_det	= { 0x2080, 8, 8, 0, 1 },
+> +			.dp_det		= { 0x2080, 9, 9, 1, 0 },
+> +			.idm_sink_en	= { 0x2010, 5, 5, 1, 0 },
+> +			.idp_sink_en	= { 0x2010, 5, 5, 0, 1 },
+> +			.idp_src_en	= { 0x2010, 14, 14, 0, 1 },
+> +			.rdm_pdwn_en	= { 0x2010, 14, 14, 0, 1 },
+> +			.vdm_src_en	= { 0x2010, 7, 6, 0, 3 },
+> +			.vdp_src_en	= { 0x2010, 7, 6, 0, 3 },
+> +		},
+> +	},
+> +	{ /* sentinel */ }
+> +};
+> +
+>  static const struct rockchip_usb2phy_cfg rk3588_phy_cfgs[] = {
+>  	{
+>  		.reg = 0x0000,
+> @@ -2094,6 +2216,7 @@ static const struct of_device_id rockchip_usb2phy_dt_match[] = {
+>  	{ .compatible = "rockchip,rk3366-usb2phy", .data = &rk3366_phy_cfgs },
+>  	{ .compatible = "rockchip,rk3399-usb2phy", .data = &rk3399_phy_cfgs },
+>  	{ .compatible = "rockchip,rk3568-usb2phy", .data = &rk3568_phy_cfgs },
+> +	{ .compatible = "rockchip,rk3576-usb2phy", .data = &rk3576_phy_cfgs },
+>  	{ .compatible = "rockchip,rk3588-usb2phy", .data = &rk3588_phy_cfgs },
+>  	{ .compatible = "rockchip,rv1108-usb2phy", .data = &rv1108_phy_cfgs },
+>  	{}
 > 
-> I wonder if some of these operations can race in a way that mm can wrongly
-> create the special bit (alone with it being writable).. and then it could
-> be a historical bug, only captured by this patchset due to the newly added
-> WARN_ON_ONCE somehow, then it could mean that it's not the WRITE bit that
-> is not intended, but the SPECIAL bit altogether.
-
-I assume you are missing a check for present/non-swap pmds. Assume you 
-have a migration entry and end up using the special bit -- which is 
-perfectly fine -- your code would assume it's a present PMD with the 
-special bit set.
-
-Maybe for the time being something like:
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 0580ac9e47b9..e55efcad1e6c 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1586,7 +1586,7 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct 
-mm_struct *src_mm,
-         int ret = -ENOMEM;
-
-         pmd = pmdp_get_lockless(src_pmd);
--       if (unlikely(pmd_special(pmd))) {
-+       if (unlikely(pmd_present(pmd) && pmd_special(pmd))) {
-                 dst_ptl = pmd_lock(dst_mm, dst_pmd);
-                 src_ptl = pmd_lockptr(src_mm, src_pmd);
-                 spin_lock_nested(src_ptl, SINGLE_DEPTH_NESTING);
 
 
--- 
-Cheers,
 
-David / dhildenb
 
 
