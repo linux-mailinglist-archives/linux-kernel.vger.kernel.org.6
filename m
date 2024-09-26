@@ -1,192 +1,122 @@
-Return-Path: <linux-kernel+bounces-340437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC94987366
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:17:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4889298736A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 947B01F276C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:17:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00A791C20B95
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED401607AC;
-	Thu, 26 Sep 2024 12:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD2B17557E;
+	Thu, 26 Sep 2024 12:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LMnPKVgg"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="amZG26hA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74589156230
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6E9156230;
+	Thu, 26 Sep 2024 12:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727353046; cv=none; b=KXDXdzhKoyp+CvmydMJ0oQgsr2DVUNrfaENWdds0bTA6s+cdOHcdtgViwN+xQuxxQxXYtHPD58ta4OrtavTBmuICdvUnf5il5GDN1vtZNbv4k1B0vFEIsYalMgBOpXm8wCOTRxGRPIDOH0W2Lar454JhN4DuB4+SCL0eNT42zj4=
+	t=1727353114; cv=none; b=aeN7TZek2QJO7qwaCQ5oU2p901hGPK0KYoHLEjPc5bhkBKXN2NSA2jwdfrIAaElPV5NsyhRldxVBu52JF7nwadCkUEFMRkb88jsVnDLiILJfT7lSa2XfkEZNCcondKzFDO943hBKaQ8OZsk/5btKYG0xus4nzHm62xXKlFrfDMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727353046; c=relaxed/simple;
-	bh=bxqIEtDWn+T+6asE2sTMSLX9tiHbJL2z3tCo1iFjeC0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W6cwWHoD4T93FdZF9NJqrsPZEBI1zdLHEjjKQstKaleWxktE0b5jEk2LvhUfgEB4mlVD5Ms/0TxNlv5LmD49MX3XncA1zeSWcGGmtTOfTbaz214jc9GLKli1nQuULJbEDHRBdC004CGpFgeYcs4jLMIy8/4HIAoYqRV7TigMlyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LMnPKVgg; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6d6891012d5so8454137b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:17:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727353043; x=1727957843; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oPezUo7IHtau4M8aP14bhxHN2HJlm7hObFAj6Hq/cNU=;
-        b=LMnPKVggvq+uHvNZsK94wkoDp5uV3K4FAJZOwjf4hlXCJfckghbE7SAwN2XP+ep/M6
-         nru1EdmeFUENPZw+3lmhfavvmKMc4VXjv3rq8zamkTNTI3YTiFjFJvjnzoMSyzBy5pbL
-         JRvHovER2mtJPYwWzZp9vjthmREIaprzsHMXjmBbOnbeagBRctah1J74+HftWDT+SD+E
-         OzlxpYfbBVcun6Q/+AXBz4DyCMYXE6PSlRUcW8kEFH+H0Plmvef3IVv9TH1kVYddlfSj
-         6KnE0wYwOT4Q1UCVp/l0XbzjmheS+3bXOLk2eei7qBh140GUYkJpPQUTIOztzz4106kV
-         Oc6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727353043; x=1727957843;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oPezUo7IHtau4M8aP14bhxHN2HJlm7hObFAj6Hq/cNU=;
-        b=NtT4fnTmtmuwBDBxwt1FS9OjGG2c8XqTEHm2yoGSbCa61tlql9CW0G02KdOzfrYyP6
-         PLWK6rY4vnE3V5JBPgEXpJXxcvvESSrrkZSRuaVRUtuHZEKtqtN5jTXIHWM9vGDl9E4W
-         P+InUy+tEWouo7UH3kwnYz59Ui4qQmm1/A0ozzVADK7ZmKjmtX5PwOSPQV5lyF/RXAkL
-         WyyDG0f1z+eYsSGmCshSxLzItFazfNchNGxO+XgiaOdcw/Ny/MlGhWxqgAkZv3yGQHR5
-         VOshKWEticWXBbK7yTK+BBrQeOjgNcXXfDifKWyGZuPcxzwleaFefLIKi2AOkvG4feN6
-         eDFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVA0+pJo6hlDzhkgh5Rj+4NTgYqjduRu2bT2OlwfEJqZdyNqM0rIClETGpotPOHm9/nqNmFA+3SxGYMziU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAgtOasq+lmtDN8w8DTyieVfC56mHRWyL5Pi3914Uc03daQCNs
-	3PM+NTsU0apa9IkWIWp9I5XGNZwr0Z/AxECksqKWlfXs7UNm/XcW3jqjC7wWlWXDfgegMZ2gf6P
-	r9Irmdz5MZxKXqk/3PyIUaq8ovpbUf4YkhBcmoA==
-X-Google-Smtp-Source: AGHT+IERFZTphSck/X7sBSRVdUIASeIlELvO6WJqk5lXaPQza+9zNfYdoiFEcn/lLJ7tRwG/6daz91b90kSXoMscyIk=
-X-Received: by 2002:a05:690c:ecf:b0:6e2:1626:fc4a with SMTP id
- 00721157ae682-6e21d6c605fmr51978797b3.9.1727353043318; Thu, 26 Sep 2024
- 05:17:23 -0700 (PDT)
+	s=arc-20240116; t=1727353114; c=relaxed/simple;
+	bh=HQXO7o3riQdPFesFSwYSfdIhvpIGm+oI7H5ultkxg68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mWr5WMkGLAmn0oly65GxuB1Lsteix80x+dgRYZ2EL5IGMlZT/1QDEQXxGOZvenc8wy4SYE4x+r9opIz7EgimCOnOwOTVKQ+eg5ocltXv0eg8YFgDzhlwEwtWZHcd8DNW1gmRg+3n0BYav8jJQu/ZgCG4zfONhPgu46g4luYc8FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=amZG26hA; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727353112; x=1758889112;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HQXO7o3riQdPFesFSwYSfdIhvpIGm+oI7H5ultkxg68=;
+  b=amZG26hA2O1TiESnVjQigkneZY/VfLnr5szJO/3rrl296lkvHX/QD7nG
+   byAflHlIirdy9EW7eIyU6cHeJv5qqRzI650nlgpOWpvkGgxdT/X+8gxKh
+   bHBoDpmYLIVnNT8KbxudG5yQkEytePyOQ1BxTyneUsvXrQwqiqx0H7wdR
+   yPHkAB4+scQyKbbfEL2vz4rSpHQ0wHcqICT4xJub+Oj+5m13fyT6FwSWT
+   VVLoZVckiDwFeCBGiUnYCTZEakgPdqv1Q/FDgWtvOBbkjbaXR3UyKEsUz
+   Sr8p9so3f11LE+3tyr2z/eZ8XXVMlvtl3XlIDbDM/mA2BT+hooNL/nD4v
+   w==;
+X-CSE-ConnectionGUID: tFgYtaZZSwGVByKE4hixug==
+X-CSE-MsgGUID: YocG60MJQAaCM5dDKoXpEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="26580797"
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="26580797"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 05:18:30 -0700
+X-CSE-ConnectionGUID: 7zPqT07DS3qnzhChXgjLWw==
+X-CSE-MsgGUID: fhP+BA3NQPW8PAkaOjXaqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="77050993"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 05:18:29 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1stnRx-0000000DBu5-21Zi;
+	Thu, 26 Sep 2024 15:18:25 +0300
+Date: Thu, 26 Sep 2024 15:18:25 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Michael Wu <Michael.Wu@kneron.us>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	morgan chang <morgan.chang@kneron.us>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] i2c: designware: determine HS tHIGH and tLOW based
+ on HW paramters
+Message-ID: <ZvVREcwQSKZb5IU2@smile.fi.intel.com>
+References: <20240925080432.186408-1-michael.wu@kneron.us>
+ <20240925080432.186408-2-michael.wu@kneron.us>
+ <ZvPU2ZEG_8UV3FzF@smile.fi.intel.com>
+ <ZvPWEFWk_MG5SsCg@smile.fi.intel.com>
+ <IA1PR14MB6224EAAD5566CC5288CDC0838A6A2@IA1PR14MB6224.namprd14.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926074755.22176-1-Hermes.Wu@ite.com.tw> <20240926074755.22176-4-Hermes.Wu@ite.com.tw>
- <acpumgqlyjyt5ql2imnhrv32apdjzluahnx77xpqu2lzltko4q@j6fhqrb7sxai> <2b3d3295278c47b8a79c9ff9b10cc7de@ite.com.tw>
-In-Reply-To: <2b3d3295278c47b8a79c9ff9b10cc7de@ite.com.tw>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 26 Sep 2024 14:17:13 +0200
-Message-ID: <CAA8EJppErpCagvTQ4TTnBvUbAFci=BvMEmoeOxT1YmPdOPwu-w@mail.gmail.com>
-Subject: Re: [PATCH v4 03/11] drm/bridge: it6505: add aux operation for HDCP
- ksv list read
-To: Hermes.Wu@ite.com.tw
-Cc: Kenneth.Hung@ite.com.tw, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, angelogioacchino.delregno@collabora.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <IA1PR14MB6224EAAD5566CC5288CDC0838A6A2@IA1PR14MB6224.namprd14.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, 26 Sept 2024 at 11:46, <Hermes.Wu@ite.com.tw> wrote:
->
-> >On Thu, Sep 26, 2024 at 03:47:53PM GMT, Hermes Wu wrote:
-> >> From: Hermes Wu <Hermes.wu@ite.com.tw>
-> >>
-> >> Add aux operaction command which supports read DPCD KSV FIFO with aux
-> >> fifo.
-> >
-> >Nit: AUX, FIFO. Please be consistent in your commit messages.
-> >
-> >>
-> >>
-> >> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-> >
-> >Why is this considered to be a fix? From the commit message it sounds like a new feature.
->
-> It will be a necessary change for HDCP reads KSV FIFO.
+On Thu, Sep 26, 2024 at 08:45:47AM +0000, Michael Wu wrote:
+> > On Wed, Sep 25, 2024 at 12:16:10PM +0300, Andy Shevchenko wrote:
+> > > On Wed, Sep 25, 2024 at 04:04:30PM +0800, Michael Wu wrote:
 
-First of all, it should be a part of the commit message, because the
-patch itself doesn't fix an issue.
-Judging by the amount and the intrusivity of the patches, I'd say that
-all KSV / HDCP-related patches constitute a new development, rather
-than a bugfix.
+...
 
->
->
-> >
-> >LGTM otherwise
-> >
-> >> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
-> >> ---
-> >>  drivers/gpu/drm/bridge/ite-it6505.c | 12 ++++++++----
-> >>  1 file changed, 8 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c
-> >> b/drivers/gpu/drm/bridge/ite-it6505.c
-> >> index b451d3c2ac1d..0583abdca75f 100644
-> >> --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> >> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> >> @@ -324,6 +324,9 @@ enum aux_cmd_type {
-> >>      CMD_AUX_NATIVE_READ = 0x0,
-> >>      CMD_AUX_NATIVE_WRITE = 0x5,
-> >>      CMD_AUX_I2C_EDID_READ = 0xB,
-> >> +
-> >> +    /* KSV list read using AUX native read with FIFO */
-> >> +    CMD_AUX_GET_KSV_LIST = 0x10,
-> >>  };
-> >>
-> >>  enum aux_cmd_reply {
-> >> @@ -965,7 +968,8 @@ static ssize_t it6505_aux_operation(struct it6505 *it6505,
-> >>      it6505_set_bits(it6505, REG_AUX_CTRL, AUX_USER_MODE, AUX_USER_MODE);
-> >>
-> >>  aux_op_start:
-> >> -    if (cmd == CMD_AUX_I2C_EDID_READ) {
-> >> +    /* HW AUX FIFO supports only EDID and DCPD KSV FIFO aread */
-> >> +    if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) {
-> >>              /* AUX EDID FIFO has max length of AUX_FIFO_MAX_SIZE bytes. */
-> >>              size = min_t(size_t, size, AUX_FIFO_MAX_SIZE);
-> >>              /* Enable AUX FIFO read back and clear FIFO */ @@ -1030,7 +1034,7
-> >> @@ static ssize_t it6505_aux_operation(struct it6505 *it6505,
-> >>              goto aux_op_start;
-> >>      }
-> >>
-> >> -    if (cmd == CMD_AUX_I2C_EDID_READ) {
-> >> +    if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) {
-> >>              for (i = 0; i < size; i++) {
-> >>                      ret = it6505_read(it6505, REG_AUX_DATA_FIFO);
-> >>                      if (ret < 0)
-> >> @@ -1055,7 +1059,7 @@ static ssize_t it6505_aux_operation(struct it6505 *it6505,
-> >>      ret = i;
-> >>
-> >>  aux_op_err:
-> >> -    if (cmd == CMD_AUX_I2C_EDID_READ) {
-> >> +    if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) {
-> >>              /* clear AUX FIFO */
-> >>              it6505_set_bits(it6505, REG_AUX_CTRL,
-> >>                              AUX_EN_FIFO_READ | CLR_EDID_FIFO, @@ -1079,7 +1083,7 @@ static
-> >> ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
-> >>
-> >>      mutex_lock(&it6505->aux_lock);
-> >>      for (i = 0; i < size; ) {
-> >> -            if (cmd == CMD_AUX_I2C_EDID_READ)
-> >> +            if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST)
-> >>                      request_size = min_t(int, (int)size - i, AUX_FIFO_MAX_SIZE);
-> >>              else
-> >>                      request_size = min_t(int, (int)size - i, 4);
-> >> --
-> >> 2.34.1
-> >>
-> >
-> >--
-> >With best wishes
-> >Dmitry
-> >
->
-> BR,
-> Hermes
->
+> > > > + * @bus_loading: for high speed mode, the bus loading affects the high
+> > and low
+> > > > + *	pulse width of SCL
+> > >
+> > > This is bad naming, better is bus_capacitance.
+> > 
+> > Even more specific bus_capacitance_pf as we usually add physical units to the
+> > variable names, so we immediately understand from the code the order of
+> > numbers and their physical meanings. 
+> 
+> Sounds good. However, I think the length of "bus_capacitance_pf" is a bit
+> long, we may often encounter the limit of more than 80 characters in a
+> line when coding. I'll rename it to "bus_cap_pf".
 
+Limit had been relaxed to 100. I still think we may use temporary variables,
+if needed, in order to make code neater. That said, I slightly prefer
+bus_capacitance_pf over the shortened variant.
 
 -- 
-With best wishes
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
