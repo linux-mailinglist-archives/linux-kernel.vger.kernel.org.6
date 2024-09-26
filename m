@@ -1,131 +1,134 @@
-Return-Path: <linux-kernel+bounces-340470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452239873D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:49:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA6C9873D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352B01C22EE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:49:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 947BA1C22846
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3821B813;
-	Thu, 26 Sep 2024 12:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B811BC4E;
+	Thu, 26 Sep 2024 12:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IbY4Xff/"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIduKR7e"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DB84436E
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3B7288DB;
+	Thu, 26 Sep 2024 12:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727354959; cv=none; b=H3nrNvPDp6OoiK/8+J35WcBmCv+q9hjyzxq/78N3JL381Z+kFISFZZ73s6rbn0rPrMHwdObTmj05GzBKzX8seaHmko079fMjApknC4SOhYCMW8ba2M1daiokJ3Bfe7sP5S2MuJhT06hNIvUhSYiM6HLNQyyoijR6jrTLj7hlVek=
+	t=1727355001; cv=none; b=sYKW1s/OSy7Ky0ooQLfcu+CSIH1aqCeBuvhAzDlwd5jtRHMm2EHh/HbYPDsOAvPLIRlojFnBoNen8Op0I/2XBJsRrFOdIjMI1WhucpmyMDdRXl0e0yFhQbTGgCv0Cma9xLoo9WLamjaR0S101gwowcAgBj74Yh+oltymhFYFbeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727354959; c=relaxed/simple;
-	bh=0vFgW8iaVyfkEzvfu/sDFbw+qsP6jr/5nM6bnT35wsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mQbP1tx1FfqvA6sykPpx4CYcQGRnm9sSTgpK0yf0u+BqtB561QuWAfcwk3Y/f9NHnjSQl+BTsp7RqxjmE60Eg7atq0Tr9i1EcL7mGRZEZ8v8HbC2v2WbaEps6XR7HsEjKy7Y511pkFgE5ISuMCOOp+A4S4XDIzUe91FFeMaWLcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IbY4Xff/; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a90188ae58eso118431966b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:49:17 -0700 (PDT)
+	s=arc-20240116; t=1727355001; c=relaxed/simple;
+	bh=EZw4fBaLr5FMYfV0028IiojpFf2Ur4LZl3P/nAyp5dE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s1dos5DURKx43np8rjxZIFxzzi0z8MHyEgTrWbhIy3Z3SNk5NMnHD4ClB73U1SkUJ3blSyk/GnkaVl2S8vB1wf1KxfZ3gxvZIpW1c558oDc22rDPCj80npzMmi4THpcgMI3XGo1MSs13jlZzpgokrAP/Nj4Jvtq1JV9AR9dQcfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIduKR7e; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f75c6ed397so9791171fa.2;
+        Thu, 26 Sep 2024 05:49:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727354956; x=1727959756; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uEzNs5X2U+4QjOcoEN5NdXTrAWb0DjjOJ5JvokADoHo=;
-        b=IbY4Xff/BQJKa93eli/SR3WOT2HV6g4ZeFdzI5J6a1AV+fbwEM50AedmgZ1n9hC8cT
-         4B4rtaG+EyLMoXht6AZumwDZxgdH4ISOGjvV+BbXxCawRMp09MqBxBfHuED/N8HWw4nD
-         JrmF7yF5iYwpTaL/KAyy1uwU5uPbkE2vAi3+UAyMIzB0g9jQF9ycQBGqd2Ph/Uy808UU
-         8dgmimVIGlKAXz1d0K13cxXQLGuWu1hxy9nUBj1lkERTBFRPTDthkaDsJNIm2Tf03LH4
-         pGsM9TuYNgdGuI47X/67IPwOp/cQOyx5T2A/jGVf9DeRJKXhIETnG912JZ55bfu4c98n
-         Lt0A==
+        d=gmail.com; s=20230601; t=1727354998; x=1727959798; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rnmdj6n8vjWULrb6hV13qc7mZVBYRPme0bXE0ktZ3qU=;
+        b=XIduKR7e+JpUqv7IifgsxMpTvDTWm/7wxH+Ob1IY8JTvaC0xEMzz+sLCsZZBjGE2cL
+         MdFI+lXhBrrXbgV3iQcjMpWtAZaIdSre7aWCrXtuOwG0+TTnN8M1Y/vSByy5uc1LDWme
+         YA/3WLxEE5JNMx4EcaCkJbgWMyGrkAr3bjUdMQA4djTvMzlBnbD738wXnKwvKyhhyztU
+         CqsbqhjO+3JobYF9DTiBoHYZ76VjVR6aGdSp48OvLSgiFavQlxM8q26zzJvBjWL8Bg+y
+         q9kajL+0jHligh2tRIxOQzVN1xMYe480SCrV+y2+JpnjZ85dXPhSYOkur+NAW4IHMQrs
+         JMuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727354956; x=1727959756;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uEzNs5X2U+4QjOcoEN5NdXTrAWb0DjjOJ5JvokADoHo=;
-        b=oKDyC+IMhNkf9VQbswWxVlfn2u1lf7erTOPNG6ryyW0aW/jXs0KEVYxGrMuolxFPZX
-         u8nEMKr1M4YPk75WXKcMkk+7wff43Y6KykC9zKeYr5fTsnSv2YxNDW/9ija+v3mAVkVd
-         vL3dWHHYqdm+GLnU7SI1PVQNriShYE/aWE2IN3rMddP6OsqYb3nURwQnz2SiNcI3ACgx
-         damk3sOBD6wVcqqrEZRlkI4NTQF34GItMTdVAxH87K4UylRCaQL8h7ibd01DNp2L1tes
-         SqbCa0BpB3O3bf2EESA4KhL+60j9cyFH0vVOZfyASuOgjgEEoFOR2v3w/ortw4tgYiS3
-         osuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdSX828GNd+PCd88YT/CklRvzZXvK2T5cOCd/P9355s2yPFzVoci5NC51tfJ498MMG+kpwc7TDssP6zrU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyxYJobNX3Np5i3++xuXoddChrvW4s05O8z/cJcGsCzFXqMcQO
-	uLwXMBKgJVcatl8jBuTnrtiT2/PS3Uqz4fSlgKxFJlmxUbI6M2cpjsFcNakFT3Y=
-X-Google-Smtp-Source: AGHT+IHQL6L8P4lVbv+zBuFEYqMPsmJPuuAAnpGA8A07t/THwIG4m97Qhdhb4gKZs+R2fHDtX5g60w==
-X-Received: by 2002:a17:906:dc90:b0:a90:b73f:61ce with SMTP id a640c23a62f3a-a93a00ffb79mr491568766b.0.1727354955847;
-        Thu, 26 Sep 2024 05:49:15 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93a5b82fbasm203728666b.103.2024.09.26.05.49.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 05:49:15 -0700 (PDT)
-Date: Thu, 26 Sep 2024 14:49:14 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
-	longman@redhat.com, chenridong@huawei.com, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] cgroup/bpf: use a dedicated workqueue for cgroup
- bpf destruction
-Message-ID: <24rp7n32rtzdszc7zxwmeitfmtib5yu7wo432b7uxjkvbdtrxp@kemt7l74yich>
-References: <20240923114352.4001560-1-chenridong@huaweicloud.com>
- <20240923114352.4001560-2-chenridong@huaweicloud.com>
+        d=1e100.net; s=20230601; t=1727354998; x=1727959798;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rnmdj6n8vjWULrb6hV13qc7mZVBYRPme0bXE0ktZ3qU=;
+        b=BFvHskamgmcIDXkKj1Qo2KfBuLGhm5rJWTY69EXCwgnVLZvq2gyhbxRpdXwj2SjpDL
+         juvIEfJkuxDs9a87X+zLtFmSivrVfLMpvpxXdLbp06oRrTuI01jHEpuV8/FAChsl8o9D
+         Vwj/Zk0blCog4qHfF21exSgnqw3laGnTJ+fWIus4xVay1tJ2X9Yl3t4p9E+EzO3XuBoG
+         L/co2qGkejV9MDvPmhsE7ddV9S5YtfCwjszlm3c1UBn0uJhYtn6ybHqA7U5XgI+vPkyL
+         mmLZCDfJcTeqP/n33GKQLXZNfILYdCEHF9wiFakovRprj6DarIo4rYWYgwfDHixEwqnv
+         a68A==
+X-Forwarded-Encrypted: i=1; AJvYcCUzazU4B1TNp42oY53mWyVL7GSOOhhzeTqP5fVQurCwJLB+jFycfKk9wgNpAr4UVOguICcM/AeN8VgqOJM=@vger.kernel.org, AJvYcCXEtm7u1F3v8HczRkY9+XV+B+n+W0V4sefMWx3jZBV9Xx4wMFP9MDRLY+h+5rYpAvrWHgcpKlG+qBdWmw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YznjMt3tQDQC/5edZmUclgsubLo9bf9TnnO+XL2gqyo74oghun0
+	vOFE2xgxLVuiiFAyyam+POkPAzPMGbpBMu1xPkAD0dPUaOmqyN0dGUrVAmzYO4BpX6TO09WI8Mi
+	rMYDIYBFv6H2Qaj8r+oTHwb9FT8QZDDC8
+X-Google-Smtp-Source: AGHT+IELOa1KW5SBW8THpjjm/S+T+xeog5VQLkErikETsJOSn2t0DI32m79zXjYYlEWwYqzQn6ArZtmLnAJ+TF+h5EM=
+X-Received: by 2002:a2e:a995:0:b0:2f3:ecdd:2b8d with SMTP id
+ 38308e7fff4ca-2f915fdd4f6mr42461641fa.16.1727354997413; Thu, 26 Sep 2024
+ 05:49:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7ujd33ujj2wpmyg5"
-Content-Disposition: inline
-In-Reply-To: <20240923114352.4001560-2-chenridong@huaweicloud.com>
+References: <20240926100434.45d58861@canb.auug.org.au> <CAH5fLgjRVZA3Gmb7Ogs+Y65T38EpNVeVEqmg93ZB4dn0Y7J3aA@mail.gmail.com>
+ <20240926181348.3965b040@canb.auug.org.au> <CANiq72kFH125Pk6K-JaswWDFmcvtP2GKx2-3ZAULF4PmpW7M-w@mail.gmail.com>
+In-Reply-To: <CANiq72kFH125Pk6K-JaswWDFmcvtP2GKx2-3ZAULF4PmpW7M-w@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Thu, 26 Sep 2024 14:49:21 +0200
+Message-ID: <CA+icZUUWBiZj67VxO=LPS5_Bt+i_g6s-HFT9Ts4UmmuPNk2kbA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of Linus' tree
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Alice Ryhl <aliceryhl@google.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Matthew Maurer <mmaurer@google.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Gatlin Newhouse <gatlin.newhouse@gmail.com>, 
+	Kees Cook <kees@kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Marco Elver <elver@google.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 26, 2024 at 10:24=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Thu, Sep 26, 2024 at 10:13=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.=
+org.au> wrote:
+> >
+> > Thanks.  I will replace the reverts in my fixes tree with that until it
+> > is applied to Linus' tree.
+>
+> Thanks! I will apply it to rust-fixes now, so in principle you will
+> get it through that branch for tomorrow, in case it helps.
+>
+> Cheers,
+> Miguel
+>
 
---7ujd33ujj2wpmyg5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Do you offer a (an optimized - optimized for kernel-builds) prebuilt
+RUST toolchain - preferable for x86-64 hosts - like Nathan +
+LLVM/Clang folk offer (see [1],[2])?
+Maybe I have missed in [3] or overlooked.
 
-Hello.
+INFO: I use LLVM/Clang-19 from [2] for my latest Linux v6.11 builds.
+It's faster (20-25% in build-time) than distro LLVM toolchain (here:
+Debian/unstable AMD64).
 
-On Mon, Sep 23, 2024 at 11:43:50AM GMT, Chen Ridong <chenridong@huaweicloud.com> wrote:
-> +static int __init cgroup_bpf_wq_init(void)
-> +{
-> +	cgroup_bpf_destroy_wq = alloc_workqueue("cgroup_bpf_destroy", 0, 1);
-> +	WARN_ON_ONCE(!cgroup_bpf_destroy_wq);
-> +	return 0;
-> +}
-> +core_initcall(cgroup_bpf_wq_init);
+[ Provocative ]
+Can I REALLY use a RUST-compiled Linux-kernel on BARE METAL?
+Do I need special hardware?
+Do you have a working in sense of bootable linux-config file?
+^^ This is a real question - not interested in any "technical preview".
+^^ You do NOT need to answer all this!
+[ /Provocative ]
 
-I think hard fail (panic() if you want to avoid BUG_ON) would be
-warranted here and mere warning would leave system exposed to worse
-errors later (and _ONCE in an initcall looks unnecessary).
+Thanks.
 
-Maybe look at other global wqs. I see that returning -ENOMEM might be an
-option, however, I don't see that initcall's return value would be
-processed anywhere currently :-/
+BR,
+-Sedat-
 
-Besides this allocation failpath this is a sensible change to me.
-
-Thanks,
-Michal
-
---7ujd33ujj2wpmyg5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZvVYRwAKCRAt3Wney77B
-Sc5ZAQDIAIHbAI5dt6odKSDav3lvJqhWvF548b3q6BwxebKNdAEA76WvMEO6J3xy
-ihOXcWJdjwb1sxv9Yi42mX4HKCz1OwQ=
-=8iZS
------END PGP SIGNATURE-----
-
---7ujd33ujj2wpmyg5--
+[1] https://mirrors.edge.kernel.org/pub/tools/llvm/
+[2] https://mirrors.edge.kernel.org/pub/tools/llvm/files/
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/rust/
 
