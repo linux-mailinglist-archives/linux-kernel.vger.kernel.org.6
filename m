@@ -1,226 +1,160 @@
-Return-Path: <linux-kernel+bounces-340966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3043B98799F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:28:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 852C09879A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B24B91F23615
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:28:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5F87B22723
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E6A1741E8;
-	Thu, 26 Sep 2024 19:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8463D17A591;
+	Thu, 26 Sep 2024 19:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LtCE+Z49"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="09rsAE21"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128A31D5AD0;
-	Thu, 26 Sep 2024 19:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CB8175B1;
+	Thu, 26 Sep 2024 19:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727378894; cv=none; b=IAOUxZjFfJgK3uIO6kH9PEWGDAOslRlb/kJ4ToXHfejULsgcH6B5qLUk7Uu91hndJDl8FYLUgpvHZbyRF/k7ScB5h0V91q6LDym9WZ+gNKOds2LSzJ/NwYWRm5lcnR45oXeJ8rLEJkrh1FTLymH2v/z51RDCBf41dhUxBuIh/uo=
+	t=1727379051; cv=none; b=Z0S+C/JF9RPjk0MYzqtuqAfGGjDP7eL75zR0dejPXYd3dCUT7mE9kIl5F5zaOLTEIOMVElXPTuoxqAzpOEMqPj6hHqw3/ZsJszr0eMvROybMv46mPCJCUjZLZXFEBjkNCuPzODd8CfYun3lZ62XS0kws7ZY+kw+89tm0am81qV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727378894; c=relaxed/simple;
-	bh=N8BavcGn2zxjNEV0Y6P+p7CjpbR4j1G560dlPX38ImI=;
+	s=arc-20240116; t=1727379051; c=relaxed/simple;
+	bh=e3IbxgDmI4jWbKJnnbHhi/u05wo038NjANuVe9/wFO0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gE9TRz/BEpjomUfxB0/lTFelTW3TotCNyxKGfcn4BRdNZKZ7RBpPqGcLowUIFuayfs8qfOLqosLS1T+hBMsJQK5ONOV5ws8K5mbdCQu1zpu1Wpv2c+rXi1JF03sGdmOvqFwTsW/4ty3ZG2B7krnJXcdyGOvwsEDPM5qoT8yrRK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LtCE+Z49; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AD24C4CEC6;
-	Thu, 26 Sep 2024 19:28:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727378893;
-	bh=N8BavcGn2zxjNEV0Y6P+p7CjpbR4j1G560dlPX38ImI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LtCE+Z49xEw784+6deCejBazcKlZ8BbrAx2laZFqNgkuHzES3O+vnR16pSJTEh/y4
-	 ezBo3LEBvjD40NcGljd3jq4ANFb3f4rh8LjGJ5hISWbP4Pv/t663PvaIe1bTp49uPQ
-	 aaztbYvNlshzp2UTYKBOEIE0GCGCLZjO2SqSfv9okn5sOu7snxM1BSXu1Uwm9EPkFR
-	 54NQ7suQlCrySlTtO9hVPQqclaCRWj9MPZ0e619VFCQiEjFVzaM4tkLjxe1N3TKn7l
-	 S5rSa4zpFenLJs42f4mD/Chs5KZnJsN7bSMCEem/klHT6l7cfm9joa9epMC9zFF6Us
-	 TqUGDaCG3trsQ==
-Date: Thu, 26 Sep 2024 12:28:09 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Guo Ren <guoren@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZLBwdZpwmGo+Bc0T3b5qJBnGGgKidudKHvBRdZX5b2tkfPiXDMWg2KQGIiqo2NtIycDET8pIq9FogppO9qFXXTEHZO3chxZgCwA6gVIIYlyCJFuTDdgPevYeSw6MwFrtN7Ttjf1TLoyCGO1W+eg3Gwr0ldIuG5tEHI+IS7Fd8xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=09rsAE21; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=97rXd1MBkbPp1jSwK9uUij1xCT6lwGsNcUi1XGXYkNU=; b=09rsAE21J5GAwQPBlHTy2pwgiE
+	axFWDn2gmyE0MCTdb6q0WpzVX2N0d4GXJH/exOZPAC1XNtf81SWp7VHMIPUdAAhF5iAutYcK5qmnc
+	/O46i3sSo2Gl688xtwM+5n6PMAYNNAWvervVMz6NqPFHnSYnJRawM0D4wyMZHPI8qN0c=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1stuC8-008PNA-1h; Thu, 26 Sep 2024 21:30:32 +0200
+Date: Thu, 26 Sep 2024 21:30:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Drew Fustini <dfustini@tenstorrent.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>,
 	Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>,
-	Guilherme Amadio <amadio@gentoo.org>,
-	Changbin Du <changbin.du@huawei.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Aditya Gupta <adityag@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
-	Kajol Jain <kjain@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
-	Shenlin Liang <liangshenlin@eswincomputing.com>,
-	Atish Patra <atishp@rivosinc.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Chen Pei <cp0613@linux.alibaba.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	Yang Jihong <yangjihong@bytedance.com>
-Subject: Re: [PATCH v1 01/11] perf build: Rename NO_DWARF to NO_LIBDW
-Message-ID: <ZvW1yYrmHEDUIOkr@google.com>
-References: <20240924160418.1391100-1-irogers@google.com>
- <20240924160418.1391100-2-irogers@google.com>
- <ZvSqNqNKKysw_309@google.com>
- <CAP-5=fUf40_4LbsYOavy45L=153bAVuwK_km8UKNQ3imSQ-_2w@mail.gmail.com>
+	Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] riscv: dts: thead: Add TH1520 ethernet nodes
+Message-ID: <0b49b681-2289-412a-8969-d134ffcfb7fc@lunn.ch>
+References: <20240926-th1520-dwmac-v2-0-f34f28ad1dc9@tenstorrent.com>
+ <20240926-th1520-dwmac-v2-3-f34f28ad1dc9@tenstorrent.com>
+ <3e26f580-bc5d-448e-b5bd-9b607c33702b@lunn.ch>
+ <ZvWyQo+2mwsC1HS6@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUf40_4LbsYOavy45L=153bAVuwK_km8UKNQ3imSQ-_2w@mail.gmail.com>
+In-Reply-To: <ZvWyQo+2mwsC1HS6@x1>
 
-On Thu, Sep 26, 2024 at 08:02:45AM -0700, Ian Rogers wrote:
-> On Wed, Sep 25, 2024 at 5:26 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Tue, Sep 24, 2024 at 09:04:08AM -0700, Ian Rogers wrote:
-> > > NO_DWARF could mean more than NO_LIBDW support, in particular no
-> > > libunwind support. Rename to be more intention revealing.
-> > >
-> > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > ---
-> > >  tools/perf/Makefile.config         | 16 ++++++++--------
-> > >  tools/perf/Makefile.perf           |  2 +-
-> > >  tools/perf/arch/arm/Makefile       |  2 +-
-> > >  tools/perf/arch/arm64/Makefile     |  2 +-
-> > >  tools/perf/arch/csky/Makefile      |  2 +-
-> > >  tools/perf/arch/loongarch/Makefile |  2 +-
-> > >  tools/perf/arch/mips/Makefile      |  2 +-
-> > >  tools/perf/arch/powerpc/Makefile   |  2 +-
-> > >  tools/perf/arch/riscv/Makefile     |  2 +-
-> > >  tools/perf/arch/s390/Makefile      |  2 +-
-> > >  tools/perf/arch/sh/Makefile        |  2 +-
-> > >  tools/perf/arch/sparc/Makefile     |  2 +-
-> > >  tools/perf/arch/x86/Makefile       |  2 +-
-> > >  tools/perf/arch/xtensa/Makefile    |  2 +-
-> > >  tools/perf/builtin-probe.c         |  2 +-
-> > >  15 files changed, 22 insertions(+), 22 deletions(-)
-> > >
-> > > diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> > > index 5e26d3a91b36..55a39211496d 100644
-> > > --- a/tools/perf/Makefile.config
-> > > +++ b/tools/perf/Makefile.config
-> > > @@ -429,7 +429,7 @@ ifeq ($(feature-file-handle), 1)
-> > >  endif
-> > >
-> > >  ifdef NO_LIBELF
-> > > -  NO_DWARF := 1
-> > > +  NO_LIBDW := 1
-> > >    NO_LIBUNWIND := 1
-> > >    NO_LIBDW_DWARF_UNWIND := 1
-> > >    NO_LIBBPF := 1
-> > > @@ -471,9 +471,9 @@ else
-> > >        endif
-> > >      endif
-> > >      ifneq ($(feature-dwarf), 1)
-> > > -      ifndef NO_DWARF
-> > > +      ifndef NO_LIBDW
-> > >          $(warning No libdw.h found or old libdw.h found or elfutils is older than 0.138, disables dwarf support. Please install new elfutils-devel/libdw-dev)
-> > > -        NO_DWARF := 1
-> > > +        NO_LIBDW := 1
-> > >        endif
-> > >      else
-> > >        ifneq ($(feature-dwarf_getlocations), 1)
-> > > @@ -496,7 +496,7 @@ ifeq ($(feature-libaio), 1)
-> > >    endif
-> > >  endif
-> > >
-> > > -ifdef NO_DWARF
-> > > +ifdef NO_LIBDW
-> > >    NO_LIBDW_DWARF_UNWIND := 1
-> > >  endif
-> > >
-> > > @@ -574,17 +574,17 @@ ifndef NO_LIBELF
-> > >      endif
-> > >    endif
-> > >
-> > > -  ifndef NO_DWARF
-> > > +  ifndef NO_LIBDW
-> > >      ifeq ($(origin PERF_HAVE_DWARF_REGS), undefined)
-> > >        $(warning DWARF register mappings have not been defined for architecture $(SRCARCH), DWARF support disabled)
-> > > -      NO_DWARF := 1
-> > > +      NO_LIBDW := 1
-> > >      else
-> > >        CFLAGS += -DHAVE_DWARF_SUPPORT $(LIBDW_CFLAGS)
-> > >        LDFLAGS += $(LIBDW_LDFLAGS)
-> > >        EXTLIBS += ${DWARFLIBS}
-> > >        $(call detected,CONFIG_DWARF)
-> > >      endif # PERF_HAVE_DWARF_REGS
-> > > -  endif # NO_DWARF
-> > > +  endif # NO_LIBDW
-> > >
-> > >    ifndef NO_LIBBPF
-> > >      ifeq ($(feature-bpf), 1)
-> > > @@ -633,7 +633,7 @@ ifdef PERF_HAVE_JITDUMP
-> > >  endif
-> > >
-> > >  ifeq ($(SRCARCH),powerpc)
-> > > -  ifndef NO_DWARF
-> > > +  ifndef NO_LIBDW
-> > >      CFLAGS += -DHAVE_SKIP_CALLCHAIN_IDX
-> > >    endif
-> > >  endif
-> > > diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-> > > index 9dd2e8d3f3c9..a144bfaf8aeb 100644
-> > > --- a/tools/perf/Makefile.perf
-> > > +++ b/tools/perf/Makefile.perf
-> > > @@ -40,7 +40,7 @@ include ../scripts/utilities.mak
-> > >  #
-> > >  # Define EXTRA_PERFLIBS to pass extra libraries to PERFLIBS.
-> > >  #
-> > > -# Define NO_DWARF if you do not want debug-info analysis feature at all.
-> > > +# Define NO_LIBDW if you do not want debug-info analysis feature at all.
-> >
-> > Can we keep NO_DWARF for compatibility and set NO_LIBDW=1 internally?
-> > I think it's fine to change it here to advertise NO_LIBDW over NO_DWARF
-> > but still want to support NO_DWARF as well.
+On Thu, Sep 26, 2024 at 12:13:06PM -0700, Drew Fustini wrote:
+> On Thu, Sep 26, 2024 at 08:39:29PM +0200, Andrew Lunn wrote:
+> > > +&mdio0 {
+> > > +	phy0: ethernet-phy@1 {
+> > > +		reg = <1>;
+> > > +	};
+> > > +
+> > > +	phy1: ethernet-phy@2 {
+> > > +		reg = <2>;
+> > > +	};
+> > > +};
+> > 
+> > Two PHYs on one bus...
 > 
-> This would be actively confusing. NO_DWARF should really imply
-> NO_LIBUNWIND, it is like removing the ability for "perf record
-> --call-graph dwarf" to work - dwarf meaning libdw or libunwind in the
-> tool. Having NO_DWARF control NO_LIBDW, I'm not sure what I'm being
-> asked to do. The point of this clean up is to make the names mean what
-> they should mean and not something potentially confusingly broader,
-> but you're asking for the confusingly broader case to mean just libdw.
-> I don't follow and I don't see how it serves the purpose of the
-> cleanup.
+> Thanks for pointing this out. I will move phy1 to mdio1.
 
-I have no idea how many people use NO_DWARF actually.  We can probably
-ignore such users and convert it to NO_LIBDW.
+???
 
-What I actually thought was
+Are you saying the two PHYs are not on the same bus?
 
-  ifeq ($(NO_DWARF),1)
-    NO_LIBDW := 1
-    NO_LIBUNWIND := 1
-  endif
+> > > +		gmac1: ethernet@ffe7060000 {
+> > > +			compatible = "thead,th1520-gmac", "snps,dwmac-3.70a";
+> > > +			reg = <0xff 0xe7060000 0x0 0x2000>, <0xff 0xec004000 0x0 0x1000>;
+> > > +			reg-names = "dwmac", "apb";
+> > > +			interrupts = <67 IRQ_TYPE_LEVEL_HIGH>;
+> > > +			interrupt-names = "macirq";
+> > > +			clocks = <&clk CLK_GMAC_AXI>, <&clk CLK_GMAC_AXI>;
+> > > +			clock-names = "stmmaceth", "pclk";
+> > > +			snps,pbl = <32>;
+> > > +			snps,fixed-burst;
+> > > +			snps,multicast-filter-bins = <64>;
+> > > +			snps,perfect-filter-entries = <32>;
+> > > +			snps,axi-config = <&stmmac_axi_config>;
+> > > +			status = "disabled";
+> > > +
+> > > +			mdio1: mdio {
+> > > +				compatible = "snps,dwmac-mdio";
+> > > +				#address-cells = <1>;
+> > > +				#size-cells = <0>;
+> > > +			};
+> > > +		};
+> > > +
+> > > +		gmac0: ethernet@ffe7070000 {
+> > > +			compatible = "thead,th1520-gmac", "snps,dwmac-3.70a";
+> > > +			reg = <0xff 0xe7070000 0x0 0x2000>, <0xff 0xec003000 0x0 0x1000>;
+> > > +			reg-names = "dwmac", "apb";
+> > > +			interrupts = <66 IRQ_TYPE_LEVEL_HIGH>;
+> > > +			interrupt-names = "macirq";
+> > > +			clocks = <&clk CLK_GMAC_AXI>, <&clk CLK_GMAC_AXI>;
+> > 
+> > And the MACs are listed in opposite order. Does gmac1 probe first,
+> > find the PHY does not exist, and return -EPROBE_DEFER. Then gmac0
+> > probes successfully, and then sometime later gmac1 then reprobes?
+> > 
+> > I know it is normal to list nodes in address order, but you might be
+> > able to avoid the EPROBE_DEFER if you reverse the order.
+> 
+> The probe order seems to always be the ethernet@ffe7060000 (gmac1) first
+> and then ethernet@ffe7070000 (gmac0). I do not see any probe deferral
+> in the boot log [1].
 
-but it'd break the compatibility too. :(
+> [1] https://gist.github.com/pdp7/02a44b024bdb6be5fe61ac21303ab29a
 
-Thanks,
-Namhyung
+So two PHYs are found, so they must be on the same bus.
 
+It could well be that this MAC driver does not connect to the PHY
+until the interface is opened. That is a good 30 seconds after the
+driver probes in this log message. So there has been plenty of time
+for the PHYs to be found.
+
+What would be interesting is if you used NFS root. Then the interface
+would be opened much faster, and you might see an EPROBE_DEFER. But
+i'm just speculating. If it works for you, there is no need to do
+more.
+
+      Andrew
 
