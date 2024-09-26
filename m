@@ -1,124 +1,127 @@
-Return-Path: <linux-kernel+bounces-340749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8084398775F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:12:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5143987761
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F051F29590
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:12:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED0991C2197B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631F11552E4;
-	Thu, 26 Sep 2024 16:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3ABB1586F6;
+	Thu, 26 Sep 2024 16:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CXF3isln"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XuGZCNKy"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AC5288DB
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AF0154BF8
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727367127; cv=none; b=KHnsWNpz5QSHfiRfe6N2XJ1caySQQineqiWamt8nxKtoltIxAae/jrmo1Gfu+Osc+GyNb+D2L5LKP/MJedC3gxl4TMaurP4ry3bltks1ykA1galpxnDZ5REH26KQnUKlwifpF9Sg+B4edT56n0G4Efr382kDQvcIG3DbW91dN34=
+	t=1727367203; cv=none; b=pbDr50sTic+ZZB6S10VcIg9wCzogSxScoI2+urL07/8CKXtMTWH9G5BzywUfExpUB2yCnEXPNcxilubWiHfVaoApGN0dPPmZ5NuFL68ceAfBikc/gQ0uReGDBxUJSV/NQbnYjDyTy+ragiiNemTeE+ebmYo0g5BRSxzACaxSzYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727367127; c=relaxed/simple;
-	bh=nkkwDyXoxEAKcaBvqfwuPFrD/PqXfR9ogYM2RBVmcOs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MHgGbkNTXeEpyuZa2q5yT8sLnL8xkwWl8QVSwcVoZl1fabKNFx5EgV17Fo/vlsCZf5NOlZiQq0+cUeqRFu05euKr3Egod9uPrROEoTZjDpKEdsNiZBTObcrtNzLn1UOnE4VTUge0dtQI+eOrjQG/P3qvKXZHicOLpbLsE6MgyK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CXF3isln; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+	s=arc-20240116; t=1727367203; c=relaxed/simple;
+	bh=b/AkQ6KC/9/lXddy+98mjZVGNz2jCIw0oGNZw2EAKto=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O1MfxIU4kRIcA52Gki+N3F2kB3bfvXUawR9F7b31S3ZwCdDuiSq9emxFriSl5DEj4vt5EmeO0/bWslqofSbqbXslWrX9KTx/IDnN8MpFQLITCKVJE4xZOwwUv4K7IR3IUqrEtSbtKWrEUiHYKcDUxBG9s2JsO2GIgwOXxsqNTTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XuGZCNKy; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-82aa7c3b482so45695839f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:12:05 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5365a9574b6so2018688e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:13:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727367125; x=1727971925; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OXe4I9fA3wiOsNFl3/de9Hw6T1XdMoOh/1M8Lx+MHF0=;
-        b=CXF3isln96IEGJmWdm9kFAXjW8uZC0nGfZ2ZJMvVJz0vsX9Gk8svvfUn7nYceC5LoK
-         QUO1O91yoEFjLG+sKaWFoKjUsi28wEZcPWcRuH5dWGB1MYthu+XqV4B58gkp2BiioAkB
-         iB4xdMrbcl/cTa8SilKSfkCYyGHBzasJpCRzw=
+        d=linux-foundation.org; s=google; t=1727367199; x=1727971999; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QXnBUq/9ghYv0bNYvo4uDCfOpMdq8coMpre7nUUI9wE=;
+        b=XuGZCNKyThI6pV+XtGz/YSJWu/BbCfILCXOy/06ICqmP5E9NkI0MrLvOE338o1NPGm
+         Y5asItQWnqG5HBzIr22HrluLeJLREAR8pszbeyRWGw8grp5pV+Ey+RBtKe9rAzushAsb
+         xUZJ+3+NExCx41Y3V02LOJMZnuzONYQtqd5rQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727367125; x=1727971925;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OXe4I9fA3wiOsNFl3/de9Hw6T1XdMoOh/1M8Lx+MHF0=;
-        b=EURd6yzkBAlKnEs7C2dNHgT0A+wXcgQQlHHCc8244N6OrU7Zh5jHAZRCxrXUSQHM+u
-         L0fg85mDajWBpFVd/vZOWHfvHWbgDczanWJPe/wcVcbCvuaJryZGNgi4igmtV120KndJ
-         2VSE4KBWiMzmwt6k0foGRoGMm1XJ01tZIMnBX5fUvg1fDPLxla7oiTbLBVM8oByfQRz8
-         Epc8g/9d0+iUK0RFXY221VemvFsruTyTZ08fzJ1zuXNX7/lQ9h+hhtUNUASURtgFcM67
-         6QnKGX3VULJL0CnO5MAw/T3l7pVfneO/gZfrCOyVRwkZ5TkeOR245ucTI7vwvSUZyGEu
-         l4Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJljzrcBBTRMK/chVc1wvM9ujlNYDGrVq0xJkkTWyskzntX2jVzG6WwoeeTy7fZgNltlrTH2+ScJoTVic=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyuo2h+ZoUU3Sg7MDzHL4wLT0vqKOKwuBmVsAGZNQORS7mX5fY9
-	jeIvZk9UMACKdT0xS2hwUdKX0yksSZzXRM9YwA7UT48BJIbT37Wkkk0ZEdznZ5E=
-X-Google-Smtp-Source: AGHT+IEvE6107yExovZjcFsUxizIxC4rtlHj+wopr6Fb1m++dX51+cu1X/5Rl1UB0wF4yNFN/S/dGQ==
-X-Received: by 2002:a05:6e02:1c47:b0:3a0:bc39:2d8c with SMTP id e9e14a558f8ab-3a26d7d0a87mr70629835ab.25.1727367125014;
-        Thu, 26 Sep 2024 09:12:05 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a344df422dsm101335ab.81.2024.09.26.09.12.04
+        d=1e100.net; s=20230601; t=1727367199; x=1727971999;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QXnBUq/9ghYv0bNYvo4uDCfOpMdq8coMpre7nUUI9wE=;
+        b=fRhmBvslIPzbTXmq8GGD0T/6b0pvjF1SItrKM02h89bTatdtAsngbje7eCVajxjPQo
+         1mcAAKPN7ZThd/kOKYVxLiWpQenl0ZtxTFfk7qrUBBlZeXuoVoOBMOwyb1sySPy+ywry
+         SZvwvhcjQHcczRDYcZSW6vWiP9hTQHkM/Bhapdw9Yj6aHS/y1Apl4GEKSpo+RQ9Q4un6
+         ltIsSmc51xhjB38zUbbfOZnYIBDP8VxiIvBpGvStkfgMpRVOT0n5iiv5dYnWIEPgwGpM
+         d3dgbc9ZxhUZQmPd++1TNkb6zs1pNdYbR7xuxDhZFq72ww1KEltwla9vvnflkN4ph8ws
+         8Z/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVgTslLfLBmQtVSgWc/gEfvDGIbgqQfHLHA2L1bv05YGczMKsXXsnILeAaVx5WDQKKSsFB5hB2JUEGsuVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyb+/wKtCvuWllu6oPQPa1MCLCudNgpoYbr53jqyGVIF2c6FlF
+	Nc9+cGWx6xnb+I/fw4vw6TJYUcDXlttt/0YDRJgZZ/5t7DtetdtiRp6iMOXIiXzYzHr5+XCXQbT
+	TDE99xw==
+X-Google-Smtp-Source: AGHT+IH3FgGeQASmj22evWTI6ojXb5hgioegciqCnxrjZz5CKQA3pl+t5HkcYWGksdrq64Nw87jmYA==
+X-Received: by 2002:a05:6512:158d:b0:533:4497:9f29 with SMTP id 2adb3069b0e04-5389fc4b107mr142527e87.31.1727367199466;
+        Thu, 26 Sep 2024 09:13:19 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-538a04323a4sm799e87.144.2024.09.26.09.13.16
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 09:12:04 -0700 (PDT)
-Message-ID: <ad6b7073-4fcf-41f9-b6ff-e01bf7089017@linuxfoundation.org>
-Date: Thu, 26 Sep 2024 10:12:03 -0600
+        Thu, 26 Sep 2024 09:13:17 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5365aa568ceso1431631e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:13:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXrWi7tpBYOMqS52hwY7hV7v6Q6dGY2zpcwCeCZY6V1HwyZfqueXPW8GCTQl4d/3+b6+axJebWIqCcc9cE=@vger.kernel.org
+X-Received: by 2002:a05:6512:1113:b0:536:53e3:feae with SMTP id
+ 2adb3069b0e04-5389fc34426mr138492e87.11.1727367195995; Thu, 26 Sep 2024
+ 09:13:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ALSA: hda/realtek: Add a quirk for HP Pavilion 15z-ec200
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>, perex@perex.cz,
- tiwai@suse.com
-Cc: kailang@realtek.com, sbinding@opensource.cirrus.com,
- simont@opensource.cirrus.com, josh@joshuagrisham.com, foss@athaariq.my.id,
- rf@opensource.cirrus.com, rbmarliere@gmail.com,
- linux-kernel-mentees@lists.linuxfoundation.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240926155112.8079-1-abhishektamboli9@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240926155112.8079-1-abhishektamboli9@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240917143402.930114-1-boqun.feng@gmail.com> <20240917143402.930114-2-boqun.feng@gmail.com>
+ <55975a55-302f-4c45-bfcc-192a8a1242e9@huaweicloud.com> <ZvPfmAp_2mDkI3ss@boqun-archlinux>
+ <f5aeeeda-c725-422a-9481-4795bd3ade0f@huaweicloud.com> <ZvPp4taB9uu__oSQ@boqun-archlinux>
+ <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com> <ZvP_H_R43bXpmkMS@boqun-archlinux>
+ <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com> <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+ <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com> <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
+ <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
+In-Reply-To: <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 26 Sep 2024 09:12:58 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
+Message-ID: <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard pointers
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org, 
+	lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Joel Fernandes <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, 
+	Uladzislau Rezki <urezki@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Waiman Long <longman@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Kent Overstreet <kent.overstreet@gmail.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com, 
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/26/24 09:51, Abhishek Tamboli wrote:
-> Add the quirk for HP Pavilion Gaming laptop 15z-ec200 for
-> enabling the mute led. The fix apply the ALC285_FIXUP_HP_MUTE_LED
-> quirk for this model.
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219303
+On Thu, 26 Sept 2024 at 08:54, Jonas Oberhauser
+<jonas.oberhauser@huaweicloud.com> wrote:
+>
+> No, the issue introduced by the compiler optimization (or by your
+> original patch) is that the CPU can speculatively load from the first
+> pointer as soon as it has completed the load of that pointer:
 
-Were you able to test  this on HP Pavilion Gaming laptop? If so
-please add that to the change log.
-> 
-> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
-> ---
->   sound/pci/hda/patch_realtek.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-> index 4ca66234e561..94125a977f08 100644
-> --- a/sound/pci/hda/patch_realtek.c
-> +++ b/sound/pci/hda/patch_realtek.c
-> @@ -10315,6 +10315,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
->   	SND_PCI_QUIRK(0x103c, 0x8786, "HP OMEN 15", ALC285_FIXUP_HP_MUTE_LED),
->   	SND_PCI_QUIRK(0x103c, 0x8787, "HP OMEN 15", ALC285_FIXUP_HP_MUTE_LED),
->   	SND_PCI_QUIRK(0x103c, 0x8788, "HP OMEN 15", ALC285_FIXUP_HP_MUTE_LED),
-> +	SND_PCI_QUIRK(0x103c, 0x88DD, "HP Pavilion 15z-ec200", ALC285_FIXUP_HP_MUTE_LED),
->   	SND_PCI_QUIRK(0x103c, 0x87b7, "HP Laptop 14-fq0xxx", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
->   	SND_PCI_QUIRK(0x103c, 0x87c8, "HP", ALC287_FIXUP_HP_GPIO_LED),
->   	SND_PCI_QUIRK(0x103c, 0x87d3, "HP Laptop 15-gw0xxx", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
+You mean the compiler can do it. The inline asm has no impact on what
+the CPU does. The conditional isn't a barrier for the actual hardware.
+But once the compiler doesn't try to do it, the data dependency on the
+address does end up being an ordering constraint on the hardware too
+(I'm happy to say that I haven't heard from the crazies that want
+value prediction in a long time).
 
-Looks like this has been fixed:
+Just use a barrier.  Or make sure to use the proper ordered memory
+accesses when possible. Don't use an inline asm for the compare - we
+don't even have anything insane like that as a portable helper, and we
+shouldn't have it.
 
-https://lore.kernel.org/lkml/20220918171300.24693-1-dhould3@gmail.com/t/#m0c6aeebe5cc89c9a4228d49f56f4a0a4c516e012
-
-thanks,
--- Shuah
+                   Linus
 
