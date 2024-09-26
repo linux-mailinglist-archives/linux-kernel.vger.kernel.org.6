@@ -1,47 +1,70 @@
-Return-Path: <linux-kernel+bounces-340525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE3139874AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:46:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4989874B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D268B2662D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:46:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500BC1F21A67
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67D153368;
-	Thu, 26 Sep 2024 13:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D934D8C8;
+	Thu, 26 Sep 2024 13:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t7Rjd97x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AT0bN/AX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E421C6B2;
-	Thu, 26 Sep 2024 13:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E06130AC8;
+	Thu, 26 Sep 2024 13:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727358400; cv=none; b=LzR0iTyGwbPtL7yPSBjQ3D3zpim+DEzZIYE8UcO9M3N4guEaqPcfFd2yzCCCfraDA/ydfWDkFVJepk4JkzGg0VVg5qbTaRnyllWuSm9ou/sbMCK/bdstAl9mCyimg7ZrNt8wnlM6gGvcBNCQgGXaCpkiyJR37Zf2NnYFwfe2vsY=
+	t=1727358431; cv=none; b=IPfSUmL9h/m5orFJeYl4d0jtx7IgOrncWv7PZdzHbZ3oOPfjmXXwk7klSWFAZAS7A+EheRAyaniCQ7vKkV6o105I+5xK0WSHTldYp6p++fLQ4XBB1LfXMGc2jehuzVn//VpIyDRQpURi9IwrjZXi0MJ78dQkPd+MC+dBOZpfAzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727358400; c=relaxed/simple;
-	bh=bKUjr69zcsUdK2oKTJD5UCxC6KYMfReEka8KTEAO/qk=;
+	s=arc-20240116; t=1727358431; c=relaxed/simple;
+	bh=fALjRuQb0xkZ7zFXpTRrbmjmRrSKWtCjHTE340Dogfg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TJ9neFvNV1FO7DWcvbfcQWIPaKHeqJWrt0Bce6BimgoWO6ZEs1/PZjs2xARm3ZZOIzBmuiATAjLu4qI0Sli/E7BcniBcF5GAJpQdFeZLJnpgSN6jpvac8NKND4sj9gVfJqGMyWC/zmmHQL+BAYLeoQIsORf743z5ttaGDpOr/kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t7Rjd97x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB54EC4CEC5;
-	Thu, 26 Sep 2024 13:46:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727358399;
-	bh=bKUjr69zcsUdK2oKTJD5UCxC6KYMfReEka8KTEAO/qk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t7Rjd97xFaYa8f65fwlePEnSmw8YVpLh+bm3QgH06w47wACAca5kO0KzDtq3k4RO3
-	 r+Inwe6lLNeCBTaFtTUI8/Q7aWIlbB6xfswYJB9BHzgeN7ul1YVmw9Ve5EYWBW186X
-	 4X1fslBtRq3mPSHl0n97ABQ9qQ0WmrK0jnaxIVZGc0AbbL5VBv+3K+caE01IJteouc
-	 H7ak37Lq7TdIkXnRj+Irl2gCd/URqBQ4WtbP22Dd/QdgZJYks3TZObh7VDqiId6Kw3
-	 R1IzU0/CzrXDkV6cyk1C3KN21vwKjsDKOj8oCyRerZwISxBuX9HYe+bOR4Loh2v4Bd
-	 yT2qyUbO7zsfQ==
-Message-ID: <fa7becd1-a068-49ef-9d45-13d70661c7a4@kernel.org>
-Date: Thu, 26 Sep 2024 15:46:30 +0200
+	 In-Reply-To:Content-Type; b=OrJUjy3i7S34YgHE3hUhW8Nw2PEUof3IdxtSG+6VT3UJJdklRZhaz71qPZdRBFLkA3KFcO8eng2TvT5GRwRsyWECmM8+iuKorAHw3V2sWvuNW3o6kd1+SQF6MQoYmydol4UlAcRUvCukm89KIx4IwzwrWqkTGAtgxtO4u8TVVjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AT0bN/AX; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727358429; x=1758894429;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=fALjRuQb0xkZ7zFXpTRrbmjmRrSKWtCjHTE340Dogfg=;
+  b=AT0bN/AX0gLO7873ZHlTpYTJDnaawipTGhMSVQSiloNekOpFGMxHdz1Y
+   xOjQ+Ko+L/KtuGFktbZn3KUNNghwJ0QU8RQwFu+zyyI7jmoD1Dfm+WOD/
+   1rcyFXVHtR7eP3HlL6/o5WLlOcJptXcHxPbeJhQCOUbuh5q6vXLJCWI7s
+   7HQSOC1VaB/ckL2LMzjS7OASAy1FA8WY8m2r2cCjVtIaexmy1JoSvbrGQ
+   vtQmMYi2mIPFrLPgpizAg5ZhzNU6ba4GNqLCchLvXgD1SfnmbtTNdGKC2
+   QIlqsEJa87kSUfYVV0N0UvXDNMjr5abXOyu/i/gFDF6x0a6FmdEG+198L
+   g==;
+X-CSE-ConnectionGUID: PGgwTBA6Sh2LbcHaovO/XQ==
+X-CSE-MsgGUID: httPp4YsTCyn0AKSG3ysDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26317656"
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="26317656"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 06:47:08 -0700
+X-CSE-ConnectionGUID: pPK5iMDBR1GkpEzXrAST9g==
+X-CSE-MsgGUID: bfAy7dsiQbiYD+9cBTE0ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="72161922"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 06:47:09 -0700
+Received: from [10.212.70.42] (kliang2-mobl1.ccr.corp.intel.com [10.212.70.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id E695E20CFEDF;
+	Thu, 26 Sep 2024 06:47:05 -0700 (PDT)
+Message-ID: <1cf53e52-657b-4b73-bee4-30da208d7321@linux.intel.com>
+Date: Thu, 26 Sep 2024 09:47:04 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,99 +72,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: display/msm: Document MDSS on SA8775P
-To: Mahadevan <quic_mahap@quicinc.com>, robdclark@gmail.com,
- quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org, sean@poorly.run,
- marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- swboyd@chromium.org, konrad.dybcio@linaro.org, danila@jiaxyga.com,
- bigfoot@classfun.cn, neil.armstrong@linaro.org, mailingradian@gmail.com,
- quic_jesszhan@quicinc.com, andersson@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_kalyant@quicinc.com,
- quic_jmadiset@quicinc.com, quic_vpolimer@quicinc.com
-References: <20240926110137.2200158-1-quic_mahap@quicinc.com>
- <20240926110137.2200158-2-quic_mahap@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: =?UTF-8?B?UmU6IOWbnuWkje+8muWbnuWkje+8mltQQVRDSF0gcGVyZi94ODYvaW50?=
+ =?UTF-8?Q?el/uncore=3A_Enable_uncore_on_vCPUs_when_using_uncore_discovery?=
+To: =?UTF-8?B?6ZmI5Z+56bi/KOS5mOm4vyk=?= <chenpeihong.cph@alibaba-inc.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86 <x86@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ linux-perf-users <linux-perf-users@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>
+Cc: =?UTF-8?B?6YOR57+UKOato+e/lCk=?= <zx283061@alibaba-inc.com>,
+ =?UTF-8?B?6LW155Sf6b6Z?= <shenglong.zsl@alibaba-inc.com>,
+ chenpeihong <chenpeihong@linux.alibaba.com>
+References: <d420bcf0-5651-41f7-81c9-1c8155bd6bcc.chenpeihong.cph@alibaba-inc.com>
+ <73e999cd-93c3-49e0-bac2-0e2c6efe4110@linux.intel.com>
+ <b8b078bb-c8d7-428b-8a74-b3977563e6d4.chenpeihong.cph@alibaba-inc.com>
+ <a7ce5e22-c9ac-46a0-b870-1438dac3affc@linux.intel.com>
+ <bd65cf32-c2f8-42e4-a01d-fcd927000c24.chenpeihong.cph@alibaba-inc.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240926110137.2200158-2-quic_mahap@quicinc.com>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <bd65cf32-c2f8-42e4-a01d-fcd927000c24.chenpeihong.cph@alibaba-inc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 26/09/2024 13:01, Mahadevan wrote:
-> +
-> +  clocks:
-> +    items:
-> +      - description: Display AHB
-> +      - description: Display hf AXI
-> +      - description: Display core
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  interconnects:
-> +    maxItems: 3
-> +
-> +  interconnect-names:
-> +    maxItems: 3
-> +
-> +patternProperties:
-> +  "^display-controller@[0-9a-f]+$":
-> +    type: object
-> +    properties:
-> +      compatible:
-> +        const: qcom,sa8775p-dpu
 
-Which binding did you used as an example?
 
-On which kernel was this developed?
+On 2024-09-25 10:07 p.m., 陈培鸿(乘鸿) wrote:
+>>>>> With uncore discovery, kvm can choose to expose a subset of
+>>>>> uncore related MSRs it wants to guest by emulate the uncore
+>>>>> discovery device. 
+>>>>
+>>>> I don't hear that the KVM has started to support uncore vPMU.
+>>>> Can you please point me to patches?
+>>> There are no such uncore vPMU related patches so far, which may
+>>> be supported some day in future. I’m now working on this.
+>>
+>> I think the patch should be part of the future KVM patch set.
+>> Otherwise, It seems like a security hole because of the lack of
+>> underlying support.
+> I think this patch and the upcomming kvm patch set address two
+> different issues. This patch enables uncore vPMU on hypervisors 
+> with uncore discovery emulated, not limited just to QEMU/KVM.
+> While it's true that the current QEMU/KVM setup lacks uncore vPMU
+> support, it does not represent a security vulnerability. Instead,
+> it simply allows guests on platforms utilizing uncore discovery,
+> e.g., SPR/EMR/GNR, to access uncore capabilities via the emulated
+> uncore discovery device. If there is no such device present, the
+> uncore module remains inactive.
 
-Best regards,
-Krzysztof
+That's an ideal case. There is no mechanism to prevent a broken emulated
+uncore discovery device is created, right?
 
+You ask to expose some capabilities, but there is no real user for now.
+I don't see a reason why we want to do it.
+
+Thanks,
+Kan
+> Thanks,
+> Chen
+>>
+>> Thanks,
+>> Kan
+>>
+>>>> The default of uncore_no_discover is 0. So it bypasses the HYPERVISOR
+>>>> check unless the user specially sets the value. It could be a problem
+>>>> for the earlier platforms which don't support discovery
+>>>> table. How do you plan to emulate the devices on earlier platforms?
+>>>>
+>>> U R right, I should make a more strict check here.
+>>> diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+>>> index 33776df95aa4..ca510c476895 100644
+>>> --- a/arch/x86/events/intel/uncore.c
+>>> +++ b/arch/x86/events/intel/uncore.c
+>>> @@ -1919,8 +1919,9 @@ static int __init intel_uncore_init(void)
+>>> const struct x86_cpu_id *id;
+>>> struct intel_uncore_init_fun *uncore_init;
+>>> int pret = 0, cret = 0, mret = 0, ret;
+>>> + bool in_guest = boot_cpu_has(X86_FEATURE_HYPERVISOR);
+>>> - if (uncore_no_discover && boot_cpu_has(X86_FEATURE_HYPERVISOR))
+>>> + if (uncore_no_discover && in_guest)
+>>> return -ENODEV;
+>>> __uncore_max_dies =
+>>> @@ -1936,8 +1937,10 @@ static int __init intel_uncore_init(void)
+>>> uncore_init = (struct intel_uncore_init_fun *)id->driver_data;
+>>> if (uncore_no_discover && uncore_init->use_discovery)
+>>> return -ENODEV;
+>>> - if (uncore_init->use_discovery &&
+>>> - !intel_uncore_has_discovery_tables(uncore_init->uncore_units_ignore))
+>>> + if (!uncore_init->use_discovery) {
+>>> + if (in_guest)
+>>> + return -ENODEV;
+>>> + } else if (!intel_uncore_has_discovery_tables(uncore_init->uncore_units_ignore))
+>>> return -ENODEV;
+>>> }
+>>> For the earlier platforms which don't support discovery table, just
+>>> disable uncore for guests. Will there be any issues?
+>>>> Thanks,
+>>>> Kan
+>>>>> So we can enable uncore on virtualized CPUs
+>>>>> when uncore discovery is using.
+>>>>> Signed-off-by: Cheng Hong <chenpeihong.cph@alibaba-inc.com>
+>>>>> —
+>>>>> arch/x86/events/intel/uncore.c | 2 +-
+>>>>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>> diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+>>>>> index d98fac567684..33776df95aa4 100644
+>>>>> --- a/arch/x86/events/intel/uncore.c
+>>>>> +++ b/arch/x86/events/intel/uncore.c
+>>>>> @@ -1920,7 +1920,7 @@ static int __init intel_uncore_init(void)
+>>>>> struct intel_uncore_init_fun *uncore_init;
+>>>>> int pret = 0, cret = 0, mret = 0, ret;
+>>>>> - if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
+>>>>> + if (uncore_no_discover && boot_cpu_has(X86_FEATURE_HYPERVISOR))
+>>>>> return -ENODEV;
+>>>>> __uncore_max_dies =
+>>> Thanks,
+>>> Chen
 
