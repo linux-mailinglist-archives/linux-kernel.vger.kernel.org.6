@@ -1,160 +1,356 @@
-Return-Path: <linux-kernel+bounces-341113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFF36987B76
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:02:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CDFE987B78
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17E921F2495E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:02:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70E711C2173D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9959D1B0108;
-	Thu, 26 Sep 2024 23:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07A61B0105;
+	Thu, 26 Sep 2024 23:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L1VGlq0y"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BRjO8ktC"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37ED2282FA;
-	Thu, 26 Sep 2024 23:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF2A143C4C
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 23:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727391713; cv=none; b=euNpHHkwPvoO7MB2QH1UA0mmC/AMqVZpl5ugwzUMB7ksQmkghk5z0LJTTSsFUVtzQU1LCCqBKLjOlyy7JiJt8a9IzgtCLilbAPGBhkdIC3XQHr+pcmp6O8PrU5CwoWqbejTQqsYLCvX6Dzl7jHjWmqPb6SmyLnvDKIbSXYCcuUQ=
+	t=1727391776; cv=none; b=S51sRIDKyaWAaAK0MayuzNz9+Xg1manIES5b9WS7lBkBlRbQ40XXau5IR+MSv5WilRkj+IfF/yVulkSmAOwVUORRRAz9Nl6N49hpR5fQX3pECW3aq/liefOdUSMvQbQ6kL2PVwbtGSJQG5ZOCq6PBoB1v/36nDlccUcSjEB5mhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727391713; c=relaxed/simple;
-	bh=ctGRqkZQnL3iwsaJbEOPs/nL6DqatorLsyNrJPJi188=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TYhjU3XWxqkAKqkzSNYi1VSIXjvkFBgSscmJvRJvxsm8OFdq8JxdLtf9j8we7tvtKFUoLhj0YjhlxIFDkV+X/aalNOwvYpZvkYoGX0DEzxiqSOwLCiFpy5iIurlpK+SNsXnZDeGJsd3X1pbked+LCFLQq99vo9sTfSZHnSXmlag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L1VGlq0y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48QG9mG7026541;
-	Thu, 26 Sep 2024 23:01:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bDhnhxaLSsQjl7xe4xa9yaUsNXJSZfAHaDNanf+MtVA=; b=L1VGlq0yeiNIwbWD
-	rauKzq2Npx92dXPG2lryye+al+tOxfhhN9iKJfacVJR0/J9ZOC2Ca7DN7ICbUYt1
-	fd4qRogLR3EGLww/vfyLSqOejT9EajrE2A4iisWpTarlDlidDX0maKIrT5eDLFVz
-	EHFs9NRc8SDF9/aJpM/CMuI2RRDpbY+x/l8hBLB0nNXc2BZR04bDnvfaknKCBwIL
-	RTt//+k6m9HJrAjlWIWNfwSTRTNP5kig2z1sIvdnOBZ5IYeHPKhgBbRgtouVydox
-	jyH5jDY0utWXZKkcxK+lhUtyxGRpLtfKMn8Mqb16HuZ5klrQkfH5H3FPgK/g6reY
-	2ac6hg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sn5c151y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Sep 2024 23:01:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48QN1TuF007471
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Sep 2024 23:01:29 GMT
-Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 26 Sep
- 2024 16:01:27 -0700
-Message-ID: <e9f38fe1-10fb-49ad-b209-0e2786ec6f94@quicinc.com>
-Date: Thu, 26 Sep 2024 16:01:27 -0700
+	s=arc-20240116; t=1727391776; c=relaxed/simple;
+	bh=oM59e6kr162a9a2uhU9XEojF6kxpM2IMYzqPQD7xs5E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gYRIUxQTCtGPQOsCEDOg9ciqSSdcbJkFz1T88oyiQHU9h2eyMwlY26dud4gV5w8SY6ZWl4ButJzN2BwnCB8yi4I7ajh9ovpil1FUOuZZGKBkEetb8gxASxjFDWPQZOQ+bPVzGiwZylnS1aeJUj5UiCUARcTwAXAjbI8rUoaEMMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BRjO8ktC; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e23b300bf9so9710167b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:02:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727391774; x=1727996574; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l++ZOmowKHw8XyXDDkEXLL9vXkRtvvkj5VB0cxq2xZk=;
+        b=BRjO8ktCpKV8OvePNZ1Tfm1I++mMCuzU1v5CNoGXFx0SFtdDifOlcZcEcRFvK/rJ4V
+         YHiIbJh+RLDbsrhneDY64cMmOHA10co5Bs9fQkmFsDk9kyRVhyqwyA77dTFDXC4ovqq6
+         2fa4vDpp3BPK1IZTb4muG8TWHpjCdiAcdEMog=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727391774; x=1727996574;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l++ZOmowKHw8XyXDDkEXLL9vXkRtvvkj5VB0cxq2xZk=;
+        b=kRRb6z4fga4oRJL/I9F0uPDnRvpeIoULQrmfpggvLh3NyCq8D+mhXxBuSaMHRVFst6
+         mbnKwIk0qU5MTbp4AFaeW/3YrwSA4AXcsWeA67PMVkLRSAwqcBQbtcOV6znai0lZkCmJ
+         nYD6PAazy9fLYNy3HJsglU1aPycHmo3su7/Zq+LhIc8kR/eTDwEX8xAbfefzppr+VrO8
+         JzRrkWIIN3BL0IqMfs8KtpXI8FBGlTeZyJCEo8b/jTZ9M+DcYt+lcRmTwBB9nd0kryy/
+         NQs0afR0qQnh100/5itAC3g2P2UEdzQx6Tf/ZvwOHgzr+y+F8QE7QkgxSRlAwXfr/Cnk
+         n6BA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7S0zt3VthA7HTEJktyzQcnFXH+ITjHLBd4aT2t82uJ7nMBh6iUI6C6UQ4b0DAM8yAlW9YGJ3AWkWa4RY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbPRVirR+qsrmst5TxeMoe3Rh3ICNb2RHMPDj8mQhmeNyM9VP6
+	kIfk/9oFnOHEq199TKB2S8+8pZdKhzaJTZc8G4LFA4OCwLzTI4OTywYuIz9WelDCmWtJxmYRwax
+	2ypaRA28mNunk+5D3LXDMawBc7CL6YAPYZq6b
+X-Google-Smtp-Source: AGHT+IHvR0iPjqZka/TBZbcQc4sKK1GUE3B8UbLiK9wUGx6AXR3PAOEAsvGzErlfJJhebhQbh6Ajaz7zXKrEw/n/UGk=
+X-Received: by 2002:a05:690c:6303:b0:6b0:52a6:6515 with SMTP id
+ 00721157ae682-6e2474d1f72mr12375437b3.6.1727391773882; Thu, 26 Sep 2024
+ 16:02:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs/gpu: ci: update flake tests requirements
-To: Vignesh Raman <vignesh.raman@collabora.com>,
-        <dri-devel@lists.freedesktop.org>
-CC: <daniels@collabora.com>, <helen.koike@collabora.com>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <robdclark@gmail.com>,
-        <guilherme.gallo@collabora.com>, <sergi.blanch.torne@collabora.com>,
-        <deborah.brouwer@collabora.com>, <dmitry.baryshkov@linaro.org>,
-        <mripard@kernel.org>, <rodrigo.vivi@intel.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>, <amd-gfx@lists.freedesktop.org>,
-        <linux-arm-msm@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
-        <virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-References: <20240926070653.1773597-1-vignesh.raman@collabora.com>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20240926070653.1773597-1-vignesh.raman@collabora.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: pSkChFDu4ef4NamDTDMy0qtaNpRfUdmK
-X-Proofpoint-GUID: pSkChFDu4ef4NamDTDMy0qtaNpRfUdmK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999
- spamscore=0 mlxscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409260160
+References: <20240925080353.2362879-1-jakiela@google.com> <20240925080353.2362879-2-jakiela@google.com>
+ <bbf023c7-f08b-4f9d-8770-08e63074fb4c@collabora.com>
+In-Reply-To: <bbf023c7-f08b-4f9d-8770-08e63074fb4c@collabora.com>
+From: Hsin-Yi Wang <hsinyi@chromium.org>
+Date: Thu, 26 Sep 2024 16:02:27 -0700
+Message-ID: <CAJMQK-g4BdJPPU59s4X3yuAU+Gy-hTm9bCnSHFfDEbtKv6Xr1A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: mediate: Introduce MT8186
+ Chinchou/Chinchou360 Chromebooks
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: =?UTF-8?Q?Albert_Jakie=C5=82a?= <jakiela@google.com>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
+	wenst@chromium.org, rafal@milecki.pl, nfraprado@collabora.com, 
+	macpaul.lin@mediatek.com, sean.wang@mediatek.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 26, 2024 at 2:27=E2=80=AFAM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Il 25/09/24 10:03, Albert Jakie=C5=82a ha scritto:
+> > The MT8186 Chinchou/Chinchou360, also known as the Asus Chromebook
+> > CZ12/CZ11 Flip, is a clamshell or convertible device with touchscreen,
+> > stylus and extra buttons.
+> >
+> > Signed-off-by: Albert Jakie=C5=82a <jakiela@google.com>
+> > ---
+> >   arch/arm64/boot/dts/mediatek/Makefile         |   3 +
+> >   .../mediatek/mt8186-corsola-chinchou-sku0.dts |  18 +
+> >   .../mediatek/mt8186-corsola-chinchou-sku1.dts |  34 ++
+> >   .../mt8186-corsola-chinchou-sku16.dts         |  28 ++
+> >   .../dts/mediatek/mt8186-corsola-chinchou.dtsi | 445 +++++++++++++++++=
++
+> >   5 files changed, 528 insertions(+)
+> >   create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinch=
+ou-sku0.dts
+> >   create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinch=
+ou-sku1.dts
+> >   create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinch=
+ou-sku16.dts
+> >   create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinch=
+ou.dtsi
+> >
+> > diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dt=
+s/mediatek/Makefile
+> > index 8fd7b2bb7a15..0db7770e8907 100644
+> > --- a/arch/arm64/boot/dts/mediatek/Makefile
+> > +++ b/arch/arm64/boot/dts/mediatek/Makefile
+> > @@ -55,6 +55,9 @@ dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8183-kukui-kodama-=
+sku32.dtb
+> >   dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8183-kukui-krane-sku0.dtb
+> >   dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8183-kukui-krane-sku176.dtb
+> >   dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8183-pumpkin.dtb
+> > +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-chinchou-sku0.dtb
+> > +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-chinchou-sku1.dtb
+> > +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-chinchou-sku16.dtb
+> >   dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-magneton-sku393216.dt=
+b
+> >   dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-magneton-sku393217.dt=
+b
+> >   dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-magneton-sku393218.dt=
+b
+> > diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku0.=
+dts b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku0.dts
+> > new file mode 100644
+> > index 000000000000..29dd92318da1
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku0.dts
+> > @@ -0,0 +1,18 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> > +/*
+> > + * Copyright 2023 Google LLC
+> > + */
+> > +
+> > +/dts-v1/;
+> > +#include "mt8186-corsola-chinchou.dtsi"
+> > +
+> > +/ {
+> > +     model =3D "Google chinchou sku0 board";
+> > +     compatible =3D "google,chinchou-sku0", "google,chinchou-sku2",
+> > +                     "google,chinchou-sku4", "google,chinchou-sku5",
+> > +                     "google,chinchou", "mediatek,mt8186";
+> > +};
+> > +
+> > +&gpio_keys {
+> > +     status =3D "disabled";
+> > +};
+> > diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku1.=
+dts b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku1.dts
+> > new file mode 100644
+> > index 000000000000..8ba31f81d9ad
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku1.dts
+> > @@ -0,0 +1,34 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> > +/*
+> > + * Copyright 2023 Google LLC
+> > + */
+> > +
+> > +/dts-v1/;
+> > +#include "mt8186-corsola-chinchou.dtsi"
+> > +
+> > +/ {
+> > +     model =3D "Google chinchou sku1/sku17 board";
+> > +     compatible =3D "google,chinchou-sku1", "google,chinchou-sku17",
+> > +                     "google,chinchou-sku3", "google,chinchou-sku6",
+> > +                     "google,chinchou-sku7", "google,chinchou-sku20",
+> > +                     "google,chinchou-sku22", "google,chinchou-sku23",
+> > +                     "mediatek,mt8186";
+> > +};
+> > +
+> > +&i2c1 {
+> > +     i2c-scl-internal-delay-ns =3D <10000>;
+> > +
+> > +     touchscreen: touchscreen@41 {
+> > +             compatible =3D "ilitek,ili2901";
+> > +             reg =3D <0x41>;
+> > +             interrupts-extended =3D <&pio 12 IRQ_TYPE_LEVEL_LOW>;
+> > +             pinctrl-names =3D "default";
+> > +             pinctrl-0 =3D <&touchscreen_pins>;
+> > +             reset-gpios =3D <&pio 60 GPIO_ACTIVE_LOW>;
+> > +             vccio-supply =3D <&pp1800_tchscr_report_disable>;
+> > +     };
+> > +};
+> > +
+> > +&gpio_keys {
+> > +     status =3D "disabled";
+> > +};
+> > diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku16=
+.dts b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku16.dts
+> > new file mode 100644
+> > index 000000000000..d3378d7ad096
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku16.dts
+> > @@ -0,0 +1,28 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> > +/*
+> > + * Copyright 2023 Google LLC
+> > + */
+> > +
+> > +/dts-v1/;
+> > +#include "mt8186-corsola-chinchou.dtsi"
+> > +
+> > +/ {
+> > +     model =3D "Google chinchou sku16/sku2147483647 board";
+> > +     compatible =3D "google,chinchou-sku16", "google,chinchou-sku18",
+> > +                     "google,chinchou-sku19", "google,chinchou-sku21",
+> > +                     "google,chinchou-sku2147483647", "mediatek,mt8186=
+";
+> > +};
+> > +
+> > +&i2c1 {
+> > +     i2c-scl-internal-delay-ns =3D <10000>;
+> > +
+> > +     touchscreen: touchscreen@41 {
+> > +             compatible =3D "ilitek,ili2901";
+> > +             reg =3D <0x41>;
+> > +             interrupts-extended =3D <&pio 12 IRQ_TYPE_LEVEL_LOW>;
+> > +             pinctrl-names =3D "default";
+> > +             pinctrl-0 =3D <&touchscreen_pins>;
+> > +             reset-gpios =3D <&pio 60 GPIO_ACTIVE_LOW>;
+> > +             vccio-supply =3D <&pp1800_tchscr_report_disable>;
+> > +     };
+> > +};
+> > diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi =
+b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
+> > new file mode 100644
+> > index 000000000000..c77cc43f8442
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
+>
+> ..snip..
+>
+> > +
+> > +&mmc1_pins_default {
+> > +     pins-clk {
+> > +             drive-strength =3D <MTK_DRIVE_8mA>;
+>
+> Please stop using the meaningless MTK_DRIVE_(x)mA macro.
+>
+> drive-strength =3D <8>; is enough :-)
+>
+> Cheers,
+> Angelo
+>
+> > +     };
+> > +
+> > +     pins-cmd-dat {
+> > +             drive-strength =3D <MTK_DRIVE_8mA>;
+> > +     };
+> > +};
+> > +
+> > +&mmc1_pins_uhs {
+> > +     pins-clk {
+> > +             drive-strength =3D <MTK_DRIVE_8mA>;
+> > +     };
+> > +
+> > +     pins-cmd-dat {
+> > +             drive-strength =3D <MTK_DRIVE_8mA>;
+> > +     };
+> > +};
+> > +
+> > +&sound {
+> > +     status =3D "okay";
+> > +
+> > +     compatible =3D "mediatek,mt8186-mt6366-rt5650-sound";
+>
+> You don't need to change this compatible, as the only thing that changes =
+in the
+> actual driver are the dapm_routes. I implemented support for that nice da=
+i-link
+> (standard, kind of) graph so that we stop getting a thousand compatibles =
+for no
+> reason other than routing :-)
+>
+> This should work with (99.9% confident it will, but please test):
+>
+>         model =3D "mt8186_rt5650";
+>         status =3D "okay";
+>
+> > +     mediatek,adsp =3D <&adsp>;
+>
+> This property is already set in the node that you're inheriting from
+> mt8186-corsola.dtsi, please drop.
+>
+> > +
+> > +     audio-routing =3D
+> > +             "Headphone", "HPOL",
+> > +             "Headphone", "HPOR",
+> > +             "HDMI1", "TX";
+> > +
+> > +     hs-playback-dai-link {
+> > +             codec {
+> > +                     sound-dai =3D <&rt5650>;
+> > +             };
+> > +     };
+> > +
+> > +     hs-capture-dai-link {
+> > +             codec {
+> > +                     sound-dai =3D <&rt5650>;
+> > +             };
+> > +     };
+> > +
+> > +     spk-share-dai-link {
+> > +     };
+>
+> Empty nodes are meaningless (and you're inheriting this dai link from
+> mt8186-corsola.dtsi as well). Drop.
+>
+> > +
+> > +     spk-hdmi-playback-dai-link {
+> > +             codec {
+> > +                     sound-dai =3D <&it6505dptx>;
+> > +             };
+> > +     };
+> > +};
+> > +
+> > +&wifi_enable_pin {
+> > +     pins-wifi-enable {
+> > +             pinmux =3D <PINMUX_GPIO51__FUNC_GPIO51>;
+> > +     };
+> > +};
+> > +
+> > +&wifi_pwrseq {
+> > +     reset-gpios =3D <&pio 51 GPIO_ACTIVE_LOW>;
+> > +};
+> > +
+>
+> ..snip..
+>
+> > +
+> > +&pen_insert {
+> > +     wakeup-event-action =3D <EV_ACT_ANY>;
+>
+> Why is this set to EV_ACT_ANY on Chinchou but not on the other Corsola de=
+vices?
+> Is there any specific reason?
 
+Default it's set to EV_ACT_DEASSERTED. Some OEMs want to wake up on
+both assert and deassert.
 
-On 9/26/2024 12:06 AM, Vignesh Raman wrote:
-> Update the documentation to require linking to a relevant GitLab
-> issue for each new flake entry instead of an email report. Added
-> specific GitLab issue URLs for i915, xe and other drivers.
-> 
-> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
-> ---
-> 
-> v2:
-> - Add gitlab issue link for msm driver.
-> 
-> ---
->   Documentation/gpu/automated_testing.rst | 16 +++++++++++-----
->   1 file changed, 11 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/automated_testing.rst
-> index 2d5a28866afe..f918fe56f2b0 100644
-> --- a/Documentation/gpu/automated_testing.rst
-> +++ b/Documentation/gpu/automated_testing.rst
-> @@ -67,20 +67,26 @@ Lists the tests that for a given driver on a specific hardware revision are
->   known to behave unreliably. These tests won't cause a job to fail regardless of
->   the result. They will still be run.
->   
-> -Each new flake entry must be associated with a link to the email reporting the
-> -bug to the author of the affected driver, the board name or Device Tree name of
-> -the board, the first kernel version affected, the IGT version used for tests,
-> -and an approximation of the failure rate.
-> +Each new flake entry must include a link to the relevant GitLab issue, the board
-> +name or Device Tree name, the first kernel version affected, the IGT version used
-> +for tests and an approximation of the failure rate.
->   
->   They should be provided under the following format::
->   
-> -  # Bug Report: $LORE_OR_PATCHWORK_URL
-> +  # Bug Report: $GITLAB_ISSUE
->     # Board Name: broken-board.dtb
->     # Linux Version: 6.6-rc1
->     # IGT Version: 1.28-gd2af13d9f
->     # Failure Rate: 100
->     flaky-test
->   
-> +The GitLab issue must include the logs and the pipeline link. Use the appropriate
-> +link below to create an issue.
-> +https://gitlab.freedesktop.org/drm/i915/kernel/-/issues for i915 driver
-> +https://gitlab.freedesktop.org/drm/xe/kernel/-/issues for xe driver
-> +https://gitlab.freedesktop.org/drm/msm/-/issues for msm driver
-> +https://gitlab.freedesktop.org/drm/misc/kernel/-/issues for other drivers
-> +
-
-Acked for MSM.
-
-Thanks
-
-Abhinav
->   drivers/gpu/drm/ci/${DRIVER_NAME}-${HW_REVISION}-skips.txt
->   -----------------------------------------------------------
->   
+>
+> Cheers,
+> Angelo
+>
 
