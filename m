@@ -1,172 +1,258 @@
-Return-Path: <linux-kernel+bounces-339778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52FE3986A6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:34:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FF0986A70
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4D651F225DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:34:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 962AF1C216EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34043170A07;
-	Thu, 26 Sep 2024 01:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F0117334E;
+	Thu, 26 Sep 2024 01:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="j//TLb/a"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011053.outbound.protection.outlook.com [52.101.129.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hrlx4+i2"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FE94A3E;
-	Thu, 26 Sep 2024 01:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727314466; cv=fail; b=g8N58P7F09PdBqjtoTKoehz3596143lIoCcxEFGLgmexll694f+PCDza3VMo03vtIxybH/Una3aIo+0O0oOTUeu4XiMTerMjE7y3GIXV0QKdXLjFGMJHr/wGHDx2T244u/QaKd8kjG+q9+LP+WByzg2ELPjb35+o8+28GRnAZzM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727314466; c=relaxed/simple;
-	bh=qKTPZYs1r/6kjfFI+exDeby+GM0qTUny6fCun+SLsPQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nrnXwWA5DwReuwQZTH7IGxbSJf9f80LVW0UKJxaUfiZmyo682JmijfPALiynRLrMjYVGI/lojJxDwN23Yih+4s+r5QhTXe092DsUA8IhE1gRcTrpG6Yua1XHmfuSYbQfXkGTMtm4thRS9Lw/hHZtyjAjjaiJTsG4Qbpo0bkH0Dc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=j//TLb/a; arc=fail smtp.client-ip=52.101.129.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uwPsNL07I1E82fRP2XXpDhFF6qMCWu/R6oeA8rmNrdvwc4loHR+H2nr/OkiI0991emovJpdWfgHFoxTIhI1lqTSnQA8vgXA7m8iEI8+q/NbD6n8xFn+vHdIGFw59TMQNrkNvc6Uaq+nnRJ2LvhRPSCWYZMJZ5hvi2/hWkJultc2EWLbBQH3dZDw0Z3MbkhJUK13dYH+nu7NvtNMYbyc8HvA6/nlMIJ2IPYPCr7vfXWXni3gfV+S2RiJPWe3J+cCdwmmNaRpF4zSLNhpN8yKtLVOCQ2Q3Aw8HGZlIzP0PROCKxfz2kx7SWjQLjZ+1NZhGwObHrhPNcgja8uNOzPHQyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p2TDy7iOdR/wUjJFHM2RR1HQM9QvSX9Swk7w0/MPqEA=;
- b=xS+Q2ZWvcCVeIIHr5P+Vp7jBeBSBpHHrcc1NDKimUDegPJtoeUaylo03gA1t3KG0Q4FlvlJvsjWtXd1iRhpaz2nr74qCxyKkVYP3SejWtMRAA0Sf+novtbNiO7eMTf4f+uiqhQkuqLoyPRRvKsT8MKCw2vMFYALzOtwz4biJbt3gv9FabvvwL8xOZ8unPu86GJfgGbSrWnsgm9CJvt9Z3UqeHrQn91ZKFU9rikZOd0e6y4wjW+FchzCLIY+Ts16IZhixaDoOFV4D6VgxrtXj57sSPh18C65CtQW3wZy2Rd28DFckX34FoDCojtaKdm7Pj5dfXiatiA7/0Tsb+zqHSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
- (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p2TDy7iOdR/wUjJFHM2RR1HQM9QvSX9Swk7w0/MPqEA=;
- b=j//TLb/aHiEgsH9NZB2sEU1hyhVhDnJUHBO3PznM9kmDvh+v0vGwhfdmOpUX2NNZoREBZUOszOCfv1ofK9gnFRJ1ccmTC6eA21Xo6x8cyrQkkm2fcu8Fv/FTFz+Hcj0hoeAJmSxTpjTJiOQh78PAcfYpvHGjEXF+2LCESq1wUawpiktrJzsXAUiDRrm1sgUvK/q9PpaeuQVKpRp2i357lYMEYEhtdZeshv5WIu+6Bq1t0/sO9FR34YNEKZT7FfU9e7dhGJi3UwUeM//Hn0wS3+1QVTgkmkhRReLQ1yeRLR+9hSOfVoDXmkG6ZBP2L0GqIxoiOGsP6doMGKybSOn6Uw==
-Received: from SGBP274CA0013.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::25) by
- SEYPR04MB6555.apcprd04.prod.outlook.com (2603:1096:101:b9::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8005.20; Thu, 26 Sep 2024 01:34:16 +0000
-Received: from SG2PEPF000B66C9.apcprd03.prod.outlook.com
- (2603:1096:4:b0:cafe::15) by SGBP274CA0013.outlook.office365.com
- (2603:1096:4:b0::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.20 via Frontend
- Transport; Thu, 26 Sep 2024 01:34:16 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
- smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
-Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
- designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
- client-ip=211.20.1.79; helo=localhost.localdomain;
-Received: from localhost.localdomain (211.20.1.79) by
- SG2PEPF000B66C9.mail.protection.outlook.com (10.167.240.20) with Microsoft
- SMTP Server id 15.20.8005.15 via Frontend Transport; Thu, 26 Sep 2024
- 01:34:14 +0000
-From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-To: patrick@stwcx.xyz,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] ARM: dts: aspeed: yosemite4: correct the compatible string of adm1272
-Date: Thu, 26 Sep 2024 09:34:10 +0800
-Message-Id: <20240926013411.3701546-1-Delphine_CC_Chiu@wiwynn.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503FD1714CB
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 01:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727314518; cv=none; b=suqWgPPs0NJU/RM65z2dPtPfians7ROLBR3NLMBgiKvGSXsLuOqV5VsyyUzZODwpV9epJHz0M95QarYdJXrWXbeNlaAR4C/aHnIX01Xrmk9c+hF+fmCA+zdMNntKlI8HG2qlU1/CT8PJTEWptoU2uaZQnyLaZ6MhY144BsBvvJA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727314518; c=relaxed/simple;
+	bh=3V7g/BeR1Ppicr/9SbMMwaV0q1o6SyThAHL8JhoDbmM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sGiMHYISGUVAg/AoIz+WfPkUeqz7bYwm/ZhKCO1GO4rfg9nNtbl8lZkDdwq4EQ3AEbxPaJln1PAF+sCICNMyB0URvSnG6WAOZ51yj1hAI6bKsAYYjLDVMjxhiCcA+qw8GhW5YV4UYosTkjbkz3P24qMcN/2WgFziVUudiK6Gft4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hrlx4+i2; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1159159528so2256650276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 18:35:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727314515; x=1727919315; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VU04rMbBG4hQZH66KIJbz/36hQ90QEQKf0kwa/exU7s=;
+        b=hrlx4+i2Gzqa5E8rZvEE6+bE5W47q4nUpn/Q/UuGr3jdZ6C4Ck0fUcwmEnoHgIe0Bw
+         uw3EOMLGzdiEPuEl2Y+BWKkqRhlagG8GLCXWRn75KcEu+Im13t82VVQHjFfwhEmN42V+
+         Wo2NqPo4FjjDslJnLiorK0/uuFiS+GZcAneidItSrW36QDQjApsCn3MSYq/djb9XVgmE
+         Ifg41LMETVnllQbgI7nZ9kHd6xQaKfB1v5sH9eVb6dln7sUdadA0vCdDS38NaLdXmKby
+         x6UE5EgMBY4FDcoMiY3qhdGLuP6iX4ZzXUAZKG/Y04zpGBdIZ4Aplyrq0rzy0CGINJ7b
+         WbJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727314515; x=1727919315;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VU04rMbBG4hQZH66KIJbz/36hQ90QEQKf0kwa/exU7s=;
+        b=RIBjTP0MxsRAwKI0ERSkzL/cyCrb+zInEzgFjAhWyEfdA9tpia9IckgJv1nfbOMhVa
+         P3vYgw1AJ8WXgBIXMOlWZhcSRmeAwZyuH+AB6BN2TrIlBpwUrll+erPNiZ2q74d8qWDW
+         qJgetM/+/s/7Zy9d4qTUSCxF1hBc/0ToXGJNobMFSdfmuTUcc5cEz9oWqwpmBdjqlQR0
+         RnvTqjyfVN3mDmY1Gc574Pcd2NQb95c2sqFHmm3QzruYB+56XpWNrit5MR5UsUvxEhot
+         tzinKDsHVhZ9Emq9BNldNydt1j0UYQFYiylt5PV4Fh+Qo1fS32UpSOaCiXOSX9TyGwN4
+         U+uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxzXrpKd0t2DoTRYqLCLs+xqVgkCI2Uf07vMmBCw3xeGvRjj2AFNAZp/dw0UYisoiOx7Oye+O4LoSdt/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM9+aEF7cV1jYUJOA6Pt6mJ89AL0A2DAdhNHEVIK/qi/Kmtowe
+	FWvZGiU8gwKGYvkBKV1n8yYdjCVYAtl5WrIOZINu14M3vK2wr58Ac/Hakks4iKn2CTV/nkQ8eO7
+	5vtWrSjyuBYzoC96i+A==
+X-Google-Smtp-Source: AGHT+IFp/msJsj4288R/ygmqz/AmN2G/ZyRf++8GaxDH1j7Mu8CzY0R/FPvCXduMLUW1do9JgPGzUuM+NCjd3k9+
+X-Received: from jthoughton.c.googlers.com ([fda3:e722:ac3:cc00:13d:fb22:ac12:a84b])
+ (user=jthoughton job=sendgmr) by 2002:a05:6902:2287:b0:e1d:9ac3:a2ee with
+ SMTP id 3f1490d57ef6-e25ca952192mr22515276.4.1727314515061; Wed, 25 Sep 2024
+ 18:35:15 -0700 (PDT)
+Date: Thu, 26 Sep 2024 01:34:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66C9:EE_|SEYPR04MB6555:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 2322b598-5295-41fc-c3a6-08dcddcb54fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TaqZl/pwXb21WWsmNY5xtxuvmp/CGumbrjLh1+j77Z1pJbjbYItFu+/cwY6K?=
- =?us-ascii?Q?jU0pFtBBK1AZz/E0dOtRPgmc5XHjSW1L1pr4fie4PG/6aI60etq9q++VQ94m?=
- =?us-ascii?Q?e9rrEO7jgaygDddsruYI2ZtblcVEv0CVsNSdUhO1RaS8VcUi3GcrECe3X5R8?=
- =?us-ascii?Q?ryp4Ur1k1UmN9wfQSIuLR2RSGV3jouAk+goDKupkr/5kBmk7ymZPW+kaliwz?=
- =?us-ascii?Q?35hExpqj/xUfT86KYq+S7CyvbjAGgLy1TJAPxpfsCW6NTvIYtrwWovCzQHAs?=
- =?us-ascii?Q?hYp8iey91EuP+srui70Dv9zQdUI8QpNe/xDba1fDMZcp8RRqWgWGZecakhy1?=
- =?us-ascii?Q?cgm7/ULnVgVJCBdGXV5rQqoZ1AIr9B8XQkrhCSuZqB8hDu2fld+Gf4myY8Ki?=
- =?us-ascii?Q?n7lbMO52AmOn+GSe74jOlTwtzkzl/wlW96wOJqaHAQyZ8Kftb64rNeKycVf3?=
- =?us-ascii?Q?sF7V+DzPs9VhDp2NmErkvl/25BdaLgmaeY1pivNMX1nPubtjz+UXumGw0eh/?=
- =?us-ascii?Q?5ihrZU6qzIkhtrlBFI1VwMdX0yiztVxuj9Xd+5ZrbexCCyuHKAn6eQLdIWpz?=
- =?us-ascii?Q?dCPB/jUrtPgeS8K+114qghUOhld7jQRyHso1PB0zq6j+ZA/F7fs8cu6SHgH3?=
- =?us-ascii?Q?bN3R/AGIVZCIPltft1FwS7+B1ijv/qdlGjUiI+2mKeJtkYJK50X8jtsAFxjn?=
- =?us-ascii?Q?sm85TVKK7rDR5jwI9zFAfZMzZXDfiHaOxn4yqtXFjFWbniXOD45jKo1mBDdz?=
- =?us-ascii?Q?ng3Rgt5PXIqkvwejNCw7l2JVbM82bzObdI/nlU28vArxla1DwortAGqHt4T7?=
- =?us-ascii?Q?XEsTwHDSvkdjVXgY0abpu9BlxhNXgDlnpcprvgrAU1XVi+OcOlI9Bmh1WCrA?=
- =?us-ascii?Q?shAmcxpGaAyK0CBmFVhsM+DuDLRhsqlnuDwcbdwi0U79hSFItGvFSGoAnd14?=
- =?us-ascii?Q?L89Qil1vGpjCY3a9M7C9lP4mEaVLYo/Izbp1UGU2i45hjdq29z8AdCMCNkxh?=
- =?us-ascii?Q?z9+0ywsmZY6w3dOJz7SaihAcewM8S61B1WNWTQgLaCuBINoT2B7JZgDNhs6K?=
- =?us-ascii?Q?g/eyqOBqRoC49Hfa1toPhnX0T2mZhySuksXtozzJEtxGiqlCChofpVfAeHSq?=
- =?us-ascii?Q?XL7ljzgfGzA2VMqI7gZYHB9dVgEEUJJhQ1KpsEl5cnlRO9bHPz8cutneH0JG?=
- =?us-ascii?Q?6EiMq63ov2YES43gpnOdWfYz0mSrIDVDxPnvGOcWZWfR5xCNgB06e2mNXifp?=
- =?us-ascii?Q?8pR18n4d+P5VQ2I9QNASx1HnfzHcAb9Bcc28+kpTc5bvZhdplCB5u4gJMvG2?=
- =?us-ascii?Q?7cctu9Os+G/6NPlARgfJtLomWzEcDUEi1sh7stzKXm2j+g9aAiT+ohmV9foN?=
- =?us-ascii?Q?WE/8ObvA/oBl038ytIvQp+KvBoCJ/F3PzsYpBfqVHDPJ52El39FKZan3+ia1?=
- =?us-ascii?Q?y5Iwro7cStO3PmSWPRx0Niu1CVO3f8iJ?=
-X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 01:34:14.5996
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2322b598-5295-41fc-c3a6-08dcddcb54fb
-X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG2PEPF000B66C9.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR04MB6555
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
+Message-ID: <20240926013506.860253-1-jthoughton@google.com>
+Subject: [PATCH v7 00/18] mm: multi-gen LRU: Walk secondary MMU page tables
+ while aging
+From: James Houghton <jthoughton@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Matlack <dmatlack@google.com>, 
+	David Rientjes <rientjes@google.com>, James Houghton <jthoughton@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao <yuzhao@google.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+This patchset makes it possible for MGLRU to consult secondary MMUs
+while doing aging, not just during eviction. This allows for more
+accurate reclaim decisions, which is especially important for proactive
+reclaim.
 
-Remove the redundant space in the compatible string of adm1272.
+This series includes:
+1. Cleanup, add support for locklessly memslot walks in KVM (patches
+   1-2).
+2. Support for lockless aging for x86 TDP MMU (patches 3-4).
+3. Further small optimizations (patches 5-6).
+4. Support for lockless harvesting of access information for the x86
+   shadow MMU (patches 7-10).
+5. Some mm cleanup (patch 11).
+6. Add fast-only aging MMU notifiers (patches 12-13).
+7. Support fast-only aging in KVM/x86 (patches 14-16).
+8. Have KVM participate in MGLRU aging (patch 17).
+9. Updates to the access_tracking_perf_test to verify MGLRU
+   functionality (patch 18).
 
-Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
-Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
----
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Patches 1-10 are pure optimizations and could be applied without the
+rest of the series, though the lockless shadow MMU lockless patches
+become more useful in the context of MGLRU aging.
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-index 98477792aa00..7ed76cd4fd2d 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-@@ -284,12 +284,12 @@ &i2c10 {
- &i2c11 {
- 	status = "okay";
- 	power-sensor@10 {
--		compatible = "adi, adm1272";
-+		compatible = "adi,adm1272";
- 		reg = <0x10>;
- 	};
- 
- 	power-sensor@12 {
--		compatible = "adi, adm1272";
-+		compatible = "adi,adm1272";
- 		reg = <0x12>;
- 	};
- 
+Please note that mmu_notifier_test_young_fast_only() is added but not
+used in this series. I am happy to remove it if that would be
+appropriate.
+
+The fast-only notifiers serve a particular purpose: for aging, we
+neither want to delay other operations (e.g. unmapping for eviction)
+nor do we want to be delayed by these other operations ourselves. By
+default, the implementations of test_young() and clear_young() are meant
+to be *accurate*, not fast. The fast-only notifiers will only give age
+information that can be gathered fast.
+
+The fast-only notifiers are non-trivially implemented for only x86. The
+TDP MMU and the shadow MMU are both supported, but the shadow MMU will
+not actually age sptes locklessly if A/D bits in the spte have been
+disabled (i.e., if L1 disables them).
+
+access_tracking_perf_test now has a mode (-p) to check performance of
+MGLRU aging while the VM is faulting memory in.
+
+This series has been tested with access_tracking_perf_test and Sean's
+mmu_stress_test[6], both with tdp_mmu=0 and tdp_mmu=1.
+
+=== Previous Versions ===
+
+Since v6[1]:
+ - Rebased on top of kvm-x86/next and Sean's lockless rmap walking
+   changes[6].
+ - Removed HAVE_KVM_MMU_NOTIFIER_YOUNG_FAST_ONLY (thanks DavidM).
+ - Split up kvm_age_gfn() / kvm_test_age_gfn() optimizations (thanks
+   DavidM and Sean).
+ - Improved new MMU notifier documentation (thanks DavidH).
+ - Dropped arm64 locking change.
+ - No longer retry for CAS failure in TDP MMU non-A/D case (thanks
+   Sean).
+ - Added some R-bys and A-bys.
+
+Since v5[2]:
+ - Reworked test_clear_young_fast_only() into a new parameter for the
+   existing notifiers (thanks Sean).
+ - Added mmu_notifier.has_fast_aging to tell mm if calling fast-only
+   notifiers should be done.
+ - Added mm_has_fast_young_notifiers() to inform users if calling
+   fast-only notifier helpers is worthwhile (for look-around to use).
+ - Changed MGLRU to invoke a single notifier instead of two when
+   aging and doing look-around (thanks Yu).
+ - For KVM/x86, check indirect_shadow_pages > 0 instead of
+   kvm_memslots_have_rmaps() when collecting age information
+   (thanks Sean).
+ - For KVM/arm, some fixes from Oliver.
+ - Small fixes to access_tracking_perf_test.
+ - Added missing !MMU_NOTIFIER version of mmu_notifier_clear_young().
+
+Since v4[3]:
+ - Removed Kconfig that controlled when aging was enabled. Aging will
+   be done whenever the architecture supports it (thanks Yu).
+ - Added a new MMU notifier, test_clear_young_fast_only(), specifically
+   for MGLRU to use.
+ - Add kvm_fast_{test_,}age_gfn, implemented by x86.
+ - Fix locking for clear_flush_young().
+ - Added KVM_MMU_NOTIFIER_YOUNG_LOCKLESS to clean up locking changes
+   (thanks Sean).
+ - Fix WARN_ON and other cleanup for the arm64 locking changes
+   (thanks Oliver).
+
+Since v3[4]:
+ - Vastly simplified the series (thanks David). Removed mmu notifier
+   batching logic entirely.
+ - Cleaned up how locking is done for mmu_notifier_test/clear_young
+   (thanks David).
+ - Look-around is now only done when there are no secondary MMUs
+   subscribed to MMU notifiers.
+ - CONFIG_LRU_GEN_WALKS_SECONDARY_MMU has been added.
+ - Fixed the lockless implementation of kvm_{test,}age_gfn for x86
+   (thanks David).
+ - Added MGLRU functional and performance tests to
+   access_tracking_perf_test (thanks Axel).
+ - In v3, an mm would be completely ignored (for aging) if there was a
+   secondary MMU but support for secondary MMU walking was missing. Now,
+   missing secondary MMU walking support simply skips the notifier
+   calls (except for eviction).
+ - Added a sanity check for that range->lockless and range->on_lock are
+   never both provided for the memslot walk.
+
+For the changes since v2[5], see v3.
+
+Based on latest kvm-x86/next.
+
+[1]: https://lore.kernel.org/linux-mm/20240724011037.3671523-1-jthoughton@google.com/
+[2]: https://lore.kernel.org/linux-mm/20240611002145.2078921-1-jthoughton@google.com/
+[3]: https://lore.kernel.org/linux-mm/20240529180510.2295118-1-jthoughton@google.com/
+[4]: https://lore.kernel.org/linux-mm/20240401232946.1837665-1-jthoughton@google.com/
+[5]: https://lore.kernel.org/kvmarm/20230526234435.662652-1-yuzhao@google.com/
+[6]: https://lore.kernel.org/kvm/20240809194335.1726916-1-seanjc@google.com/
+
+James Houghton (14):
+  KVM: Remove kvm_handle_hva_range helper functions
+  KVM: Add lockless memslot walk to KVM
+  KVM: x86/mmu: Factor out spte atomic bit clearing routine
+  KVM: x86/mmu: Relax locking for kvm_test_age_gfn and kvm_age_gfn
+  KVM: x86/mmu: Rearrange kvm_{test_,}age_gfn
+  KVM: x86/mmu: Only check gfn age in shadow MMU if
+    indirect_shadow_pages > 0
+  mm: Add missing mmu_notifier_clear_young for !MMU_NOTIFIER
+  mm: Add has_fast_aging to struct mmu_notifier
+  mm: Add fast_only bool to test_young and clear_young MMU notifiers
+  KVM: Pass fast_only to kvm_{test_,}age_gfn
+  KVM: x86/mmu: Locklessly harvest access information from shadow MMU
+  KVM: x86/mmu: Enable has_fast_aging
+  mm: multi-gen LRU: Have secondary MMUs participate in aging
+  KVM: selftests: Add multi-gen LRU aging to access_tracking_perf_test
+
+Sean Christopherson (4):
+  KVM: x86/mmu: Refactor low level rmap helpers to prep for walking w/o
+    mmu_lock
+  KVM: x86/mmu: Add infrastructure to allow walking rmaps outside of
+    mmu_lock
+  KVM: x86/mmu: Add support for lockless walks of rmap SPTEs
+  KVM: x86/mmu: Support rmap walks without holding mmu_lock when aging
+    gfns
+
+ Documentation/admin-guide/mm/multigen_lru.rst |   6 +-
+ arch/x86/include/asm/kvm_host.h               |   4 +-
+ arch/x86/kvm/Kconfig                          |   1 +
+ arch/x86/kvm/mmu/mmu.c                        | 355 ++++++++++++----
+ arch/x86/kvm/mmu/tdp_iter.h                   |  27 +-
+ arch/x86/kvm/mmu/tdp_mmu.c                    |  57 ++-
+ include/linux/kvm_host.h                      |   2 +
+ include/linux/mmu_notifier.h                  |  82 +++-
+ include/linux/mmzone.h                        |   6 +-
+ include/trace/events/kvm.h                    |  19 +-
+ mm/damon/vaddr.c                              |   2 -
+ mm/mmu_notifier.c                             |  38 +-
+ mm/rmap.c                                     |   9 +-
+ mm/vmscan.c                                   | 148 +++++--
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ .../selftests/kvm/access_tracking_perf_test.c | 369 +++++++++++++++--
+ .../selftests/kvm/include/lru_gen_util.h      |  55 +++
+ .../testing/selftests/kvm/lib/lru_gen_util.c  | 391 ++++++++++++++++++
+ virt/kvm/Kconfig                              |   3 +
+ virt/kvm/kvm_main.c                           | 124 +++---
+ 20 files changed, 1451 insertions(+), 248 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/include/lru_gen_util.h
+ create mode 100644 tools/testing/selftests/kvm/lib/lru_gen_util.c
+
+
+base-commit: 3cc25d5adcfd2a2c33baa0b2a1979c2dbc9b990b
 -- 
-2.25.1
+2.46.0.792.g87dc391469-goog
 
 
