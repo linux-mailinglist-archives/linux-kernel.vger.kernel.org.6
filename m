@@ -1,116 +1,99 @@
-Return-Path: <linux-kernel+bounces-340045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4854A986DF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:46:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7EA986DEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C60F2B22106
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:46:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20D731F22D36
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECE6192B95;
-	Thu, 26 Sep 2024 07:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DA118CC04;
+	Thu, 26 Sep 2024 07:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hZ3qH6lF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcUSIMgk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E79518FDA6;
-	Thu, 26 Sep 2024 07:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74321186E47;
+	Thu, 26 Sep 2024 07:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727336760; cv=none; b=gOAd82Vik6vF4r+yQjl9xDV8L1IvtDjnYgTy6TDziMGbDlLIytdp98Nj7656UuSMde+4axN6RYkGbwBJyXYPi7r1n+E4MqyQBl7uL4XEq0Aq6EMmJoGy7AAMFauT5elBHyV76BS25FAr8bn200vicf2FQGGVobIhSCbrzTuum9Q=
+	t=1727336759; cv=none; b=chEAjupdUf9Ieuit7S7VnRtzwbdd1oHPe0CylAa8xKNtRBJpCXIGPl/VxJNFp2fe0OCfi+0/+y+et5hb6QaJJIAFgWd6GxFqEZcVVgV6n3dU5ZRm88v8PRbgQX/PL1gzT7Ek9jyTeoHi7qJcx7wzSTfl/OquRXS2b681aD4ping=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727336760; c=relaxed/simple;
-	bh=7BD1DRr3dEN2fGhGJbApcotfC5pMbfC3fKHmayjAYZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hsykh9SpwZiX3N8emBQQjoHgZx4ranucr5zN4oJrpZi+5RWFx0lrhiScLWrIa+jrMKOCcyelg1hZLg+Ho8anGA+9yUk5tH2xtufcv2fh3bIsSw1Im4Vg32z3CcjOi9oIUpPtAZbPY7E2J5tgPt5gI2CllX6VEq9mpwLlaQkQ+ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hZ3qH6lF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5A36C4CEC5;
-	Thu, 26 Sep 2024 07:45:57 +0000 (UTC)
+	s=arc-20240116; t=1727336759; c=relaxed/simple;
+	bh=e/gntNiBQgCaRPooExpC06zI/SPYCIBZpwHJdV6OL0A=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ihmvEHrl+uBp9vJ5JvMaJgAteBZftBjLbMXAJYOp49thvnTV/9oqiwaXD5OJSAP30vObN3vhY+tGDWa8cJBvqbNe29MeAplcDuhtR52QonHUBolXjAe1RXTz0iFTnS/amKnIGugsOwHHJDgs+ajN6LGDP0nnErB1FC52L7mmjNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VcUSIMgk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F46C4CECE;
+	Thu, 26 Sep 2024 07:45:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727336760;
-	bh=7BD1DRr3dEN2fGhGJbApcotfC5pMbfC3fKHmayjAYZg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hZ3qH6lFGWX+ox7NsmVd37/9/mBj4ZChRc31dgUtUJpQ9cOMVHHDWAv1EJMJKvCGA
-	 PI6LFetip+CDnDhD1g8ElvbTT9m1Oed8StSxqnpwtfqE3npWgLDq3j9KhTMLsZbv7f
-	 zRHLSLP8sh7zc8rZPmAGYYqCNkkb30o0fd6XRtJutHYml/x0IjZXmrFV6lxrI+Dbz3
-	 sm5fktsJXNJyTik5UXwlyQPHVxANx8ZLZPHaIWW7zuJdj8lOBhoWyMYscRO9X0AnJr
-	 EXyfZSFqNdN9If/UCewJsPl1x+xgixAlckwwEQ6UElL+374FLYmLJob+qpsc/ENc6s
-	 C5fMZWHZt2vGA==
-Date: Thu, 26 Sep 2024 08:45:54 +0100
-From: Lee Jones <lee@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, sre@kernel.org, tsbogend@alpha.franken.de,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-mips@vger.kernel.org
-Subject: Re: [PATCH v5 3/6] dt-bindings: mfd: Add Realtek RTL9300 switch
- peripherals
-Message-ID: <20240926074554.GH7545@google.com>
-References: <20240925215847.3594898-1-chris.packham@alliedtelesis.co.nz>
- <20240925215847.3594898-4-chris.packham@alliedtelesis.co.nz>
- <4pxungrwkjusdalmjbwvqcpjwmbsb7hw4452zqlto6sq54vfa6@psz3gge4uwy7>
+	s=k20201202; t=1727336759;
+	bh=e/gntNiBQgCaRPooExpC06zI/SPYCIBZpwHJdV6OL0A=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=VcUSIMgkwDc5KZPM4C5+1WvSAwzn619GXNhxXc4+VSrfgfvgkOmyEcEMTPz+rK3Oe
+	 EQIrGkUApcb+ZqcFPtxvV5A7/NyqjY+AeirPkQk0FuwFkXG15BNAdyiveETK0+nyZ1
+	 tUVCpcv6/xDfLTaumfTn3lQnENIsbPfvv2WG0rb2joDcjyBiPR38s2WGSpoXubMSiQ
+	 gPgH3Bxo8DT2shkpTFHftpwoKwaljSrJ4nYRX2LszpiEGj/y2VARqUZp03N5jH6oRb
+	 4YPVz7Q1bkcjLtPbwpReGrB+h3DRfWvFhR1ZZvI+gXbIt9mv6H2qXLRbchZzy5gdCD
+	 qP+8qSDqY4Kug==
+Date: Thu, 26 Sep 2024 09:45:55 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] spi: atmel-quadspi: Avoid overwriting delay register
+ settings
+Message-ID: <ZvURMxKGilu_XBvH@finisterre.sirena.org.uk>
+References: <20240918082744.379610-1-ada@thorsis.com>
+ <20240918082744.379610-2-ada@thorsis.com>
+ <20240926-macarena-wincing-7c4995487a29@thorsis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aU3UVmKPQDmkhMy2"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4pxungrwkjusdalmjbwvqcpjwmbsb7hw4452zqlto6sq54vfa6@psz3gge4uwy7>
+In-Reply-To: <20240926-macarena-wincing-7c4995487a29@thorsis.com>
+X-Cookie: Editing is a rewording activity.
 
-Intentional top-post.
 
-These replies all came in without the original mail.
+--aU3UVmKPQDmkhMy2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Does anyone have any idea why that would have been?
+On Thu, Sep 26, 2024 at 09:25:10AM +0200, Alexander Dahl wrote:
 
-On Thu, 26 Sep 2024, Krzysztof Kozlowski wrote:
+> This is somewhat embarrassing, because the patch was already applied
+> to master.  Should it be reverted, then I would send a v2 of the
+> series?  Or should I send a quick fixup?
 
-> On Thu, Sep 26, 2024 at 09:58:44AM +1200, Chris Packham wrote:
-> > Add device tree schema for the Realtek RTL9300 switches. The RTL9300
-> > family is made up of the RTL9301, RTL9302B, RTL9302C and RTL9303. These
-> > have the same SoC differ in the Ethernet switch/SERDES arrangement.
-> > 
-> > Currently the only supported features are the syscon-reboot and i2c
-> > controllers. The syscon-reboot is needed to be able to reboot the board.
-> > The I2C controllers are slightly unusual because they each own an SCL
-> > pin (GPIO8 for the first controller, GPIO 17 for the second) but have 8
-> > common SDA pins which can be assigned to either controller (but not
-> > both).
-> > 
-> > Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> > ---
-> > 
-> > Notes:
-> >     Changes in v5:
-> >       I've combined the two series I had in flight so this is the
-> >       combination of adding the switch syscon, the reboot and i2c. It makes
-> >       the changelog a bit meaningless so I've dropped the earlier
-> >       commentary.
-> >     
-> >       As requested I've put a more complete example in the main
-> >       rtl9300-switch.yaml.
-> >     
-> >       I've kept rtl9300-i2c.yaml separate for now but link to it with a $ref
-> >       from rtl9300-switch.yaml to reduce clutter. The example in
-> >       rtl9300-i2c.yaml is technically duplicating part of the example from
-> >       rtl9300-switch.yaml but I feel it's nice to be able to see the example
-> >       next to where the properties are defined.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Best regards,
-> Krzysztof
-> 
+A quick fixup is better.
 
--- 
-Lee Jones [李琼斯]
+--aU3UVmKPQDmkhMy2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb1ETMACgkQJNaLcl1U
+h9Bmbwf+NwL/UaJuHEoWm+uNNHHz3McUtlO9QHBPoFb3qobRbG4X/ON80i5y/xs4
+MXtgq4shjhhndmpIwj6zPjXGtk+KyDIC/fIUDW9/Khh4t7Fol6FGuWRtfrh/SVZN
+UtkkifVcl6mXRvD+f04SNeLaHp694h+x/0PU4Fo3p6TzfZU40EP5AkNlqpySJnaO
+fny3gtdxhQV3ux/fxVKB/yw/1r22OwoxYXmHS59ep88z8BGXPfUTNcdlHLSNF4E1
+c60H0583bxB7PVWKHgWpMT68msJIKBk7xbgE+sDQ962/K85EKtcz3M8rDHa+Og2/
+OEFcNHPDCxWJioZmYLBGkvmaOUooFA==
+=zAYW
+-----END PGP SIGNATURE-----
+
+--aU3UVmKPQDmkhMy2--
 
