@@ -1,167 +1,125 @@
-Return-Path: <linux-kernel+bounces-339922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2799986C30
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:59:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B299986C34
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45BD4B2520E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:59:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAFAEB2165F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E2918786D;
-	Thu, 26 Sep 2024 05:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3D516B38B;
+	Thu, 26 Sep 2024 06:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bx0IQXOO"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EIJ+achf"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118C3186E47
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF4E33C9
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727330360; cv=none; b=IM3tV3A8qHMWQ+Hd15OFheQwLRhSmlP0KnGwBaEQ/cK0fE+98jkvpDZwdVSAQ4PDcHodOe3gFnAKaOTg7P6TdVNhOyqV+Dr6Nyq41ivKzIIDTyDY2LZLo4EnKxy069qATTkxDi407MzfU3nSy4KIs/59kAB3/wi830HYPPcWE7s=
+	t=1727330462; cv=none; b=brjN+6V7DonSGKUYI3NHixTVHDAeC7dFU9W3TLc4DENELnhORdJLixQlglGA/1VccLglm6yA21QsUmBxvksSRaQW5cwvlDj51VCeKwVKEdCh0Ii8GwnOsTXqGNV1HLlo2p9y+0/mHtuydfD/KlTFJhJa+VHIXBTIGMdHerzrWlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727330360; c=relaxed/simple;
-	bh=XYyn/uWSwGEwZ2izkIKhOmYIuCbBJ8CxIZasp0IY31A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mbubryq1HzK62zXO20mCA+Uu1O2+O3jbYmUJHaZs27kYX1KNUDd3ltNBXwJSbsBS7taQt+UBOirYUxWqjwOOOaGPCz/ejNlbuEr+/IX9Q6dZpHYHjugUVFcoaiCdZUR4cBFqq/TWCVSH6aD9umNkpk/3fXrsooTQ7YkKsFwE4zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bx0IQXOO; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4582760b79cso2847151cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 22:59:17 -0700 (PDT)
+	s=arc-20240116; t=1727330462; c=relaxed/simple;
+	bh=APHhQS2kfqSesdAbtu8MsR1bPo3wOCnREIf/orjt6bo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mj4Og0MWeu7C1cInWobqXnVoPlvj5TA6WNqhhCcVP2yCEEA+AgQvNW3BrwHDnuT5ju9ZN8HqFxtrYTeTLEAjTjqUZlGjxxbtTy+skMrucRdXsa/p72i3t8GwBooYCADHndb29XJphlwcnQeIDyyRGed2mqtTe+RD+SArmj7dZhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EIJ+achf; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5365c512b00so690352e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:00:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727330357; x=1727935157; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=o/c8AisojHt8E8qq/bSCfOVPkpZhoMvB2alieW7bAk4=;
-        b=bx0IQXOOJVzSvCeYKB1yNPRKrRMe4LGl0iKna1BizoObe62ouDS05M4Xt2C6w5ZPU1
-         jRRmxJju8Wa4ks7XOMnnGybV6D1E4tFtEPIU3CbktPPob5kM43FXvy4WEA6dR3uwQv/v
-         CplrSGwYP0t/c9Gik+XjCDUC7M5pfaIRDgi7Y=
+        d=linaro.org; s=google; t=1727330457; x=1727935257; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ILy1gmaChDb8kjYQrj+oZMRoRoxb+hbZeapN9RMmuKk=;
+        b=EIJ+achfpyO0cd8wsXocjbtqtJMeNx0DLGE/zpHJYueqPzaakqrd/PDyMAdpsRJyf2
+         g76f4MciOg4t01mwLiP57OOfMAqZghF7smFjlNd66KY+R3iVuHy1KoquCjE1FwqhtIlT
+         lOqoMTbJn4VC1nrkIE8wJWswfVtYCrUz+OIV9JZAWlE5XEooJdtOv51GpQ4stAGYgJPp
+         sVwBwDCmXqztop/g8D8SgWVCO4sU0JCn1+j0/6UF+0KrDIUWLRdDNxm+3y6JttxESTMq
+         ui1ex2xGfJ/S9chd14i/bNhXFF+IP/LtMGT7ee8647bWcVkaCy40rFZ08AO12uWGEO/k
+         08hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727330357; x=1727935157;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o/c8AisojHt8E8qq/bSCfOVPkpZhoMvB2alieW7bAk4=;
-        b=ErdbTPvOTanlAOygSokma5ZxD1rTQZau0iZ8rhXA15f5BoYwE/eeDUdSJF6iIT6ypg
-         J8WbuVaFdGDagdKNKsmipyc6PO0L0qnDgH2tgO3b2AKYUkWufjLpO0XTaO6fOAP2wg8t
-         zAg/ZJ5/Zc9x6WEJJRg6fy0pkhcfV9CLbbsxP6MJdEUQJpOJPHDe/Rgezw5LdzSk1Fmu
-         CVzgOAUbCWxRQ9pezGqbJDq6DYZ+7+z8QIYS7NDeEtf52HvrT4yoeL0wDj+EmXtdCArc
-         jLkemYRjqq92w9ds+B5LU8jZiOk1z9eGz+Duqs1q7Nk7paKP9HMAY3Ro4xas+0rAioGI
-         eWGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWiQPHzDpmsCx7m+mL2wuBAVqrbZbPNjkBD+36/mScfLOJAZBrdNblpuq+mjw/dkRUbb9PDZd4qJUvGhRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHoMoR1QPftTETDBvDgrr1BhE1tQPTaHRPBBTE/CYoPBNt47HC
-	pblIJSX9QpoYO59ncQ7nW6nxk+MiBiI/CDcf7mW/KsU/8ltUYJMalox0lkGoiw==
-X-Google-Smtp-Source: AGHT+IH8HqXesp42SaUkdV4xroJDzKJ0Wpb2M4gze5VjC9BE0JCCtVeG2eBFGZII9cPYa+Z2uyfzxQ==
-X-Received: by 2002:ac8:5fd0:0:b0:458:2e48:b5ec with SMTP id d75a77b69052e-45b5e094b69mr64342101cf.45.1727330356886;
-        Wed, 25 Sep 2024 22:59:16 -0700 (PDT)
-Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b5253b05fsm22611271cf.10.2024.09.25.22.59.14
+        d=1e100.net; s=20230601; t=1727330457; x=1727935257;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ILy1gmaChDb8kjYQrj+oZMRoRoxb+hbZeapN9RMmuKk=;
+        b=ck7SJcf0OEiTuMywv1sZzbUY7YNjXqxymb80QDlTRX6d3VxHLxh9i0GSYWHyWyrlj3
+         kB8CAcEsV+RbIPsJNq+qzUorwdfAcYnoWoTGC6o3U7kt/C8NjlT0vT5Y1g1RN1mmnAYD
+         zHmsxqRmdgaLt1gqu7Mq7WWTqUpGyYtgIEa9Jqz85xCbKZefrvb2UGJOGsTi29A1zxJK
+         g1AgIXBMf8iJBhfDOKFBvL0zEUe2IiKaJCnJUHVSSUjPEN88YqTzyl8KdBG2cGW6IdbR
+         Ey/D2XjQGOX+YTSi7DwGypuqqGWn5sf9n/0PT1ygOof/Cw8zE7bFZR8v9zPY/qvbAQGT
+         j9Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUot55wcNbMrTFYWQZ3nQAvFCf91SSZQFhkZzJHnwu/Pmo3EAAnuaMkV2ijMFHuN4wWcBVEw4ledcbAI2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiWVHwghrBKJAkECv0rUJUowLo1Yt+d2Q44dvLgFUukIx4IWuU
+	771lbfViSwYGUUl82Q/s9UTZkrnd3+bMOPWoPRsruEpt7UaaFMkQJE2CSdNoj24=
+X-Google-Smtp-Source: AGHT+IF3zAWXPj1hxe8OqEL5ya4nM2XcgbVEqmQK5WYyGuJNygjvKW4VKCBqLHmEaR5Sbg+uW3uJLw==
+X-Received: by 2002:a05:6512:12c4:b0:536:7c31:cb21 with SMTP id 2adb3069b0e04-53877553493mr3634739e87.35.1727330457366;
+        Wed, 25 Sep 2024 23:00:57 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85e0bbcsm711541e87.46.2024.09.25.23.00.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 22:59:15 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 26 Sep 2024 05:59:06 +0000
-Subject: [PATCH] media: uvcvideo: Stop stream during unregister
+        Wed, 25 Sep 2024 23:00:56 -0700 (PDT)
+Date: Thu, 26 Sep 2024 09:00:54 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Rob Herring <robh@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Thierry Reding <treding@nvidia.com>, 
+	Simona Vetter <simona@ffwll.ch>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Alexey Brodkin <abrodkin@synopsys.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 ] gpu: drm: replace of_graph_get_next_endpoint()
+Message-ID: <bsvoitn4ygjm7ftiqex7knppf6ykiqort4wf3rb4vlsw6gnu2c@kze7w2f3plha>
+References: <87setn8eju.wl-kuninori.morimoto.gx@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240926-uvc_stop_streaming-v1-1-038180fafe5f@chromium.org>
-X-B4-Tracking: v=1; b=H4sIACn49GYC/x2MQQqAIBAAvyJ7TjAJw74SEaZb7SELLQnEvyddB
- uYwkyFiIIwwsAwBE0U6fZW2YWB34zfk5KqDFLITWir+JDvH+7wqApqD/MYV6tVJgbpfLNTwCrj
- S+0/HqZQPntZ+N2QAAAA=
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87setn8eju.wl-kuninori.morimoto.gx@renesas.com>
 
-uvc_unregister_video() can be called asynchronously from
-uvc_disconnect(). If the device is still streaming when that happens, a
-plethora of race conditions can occur.
+On Thu, Sep 26, 2024 at 12:05:42AM GMT, Kuninori Morimoto wrote:
+> From DT point of view, in general, drivers should be asking for a
+> specific port number because their function is fixed in the binding.
+> 
+> of_graph_get_next_endpoint() doesn't match to this concept.
+> 
+> Simply replace
+> 
+> 	- of_graph_get_next_endpoint(xxx, NULL);
+> 	+ of_graph_get_endpoint_by_regs(xxx, 0, -1);
+> 
+> Link: https://lore.kernel.org/r/20240202174941.GA310089-robh@kernel.org
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Make sure that the device has stopped streaming before exiting this
-function.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-If the user still holds handles to the driver's file descriptors, any
-ioctl will return -ENODEV from the v4l2 core.
+> ---
+> v3 -> v4
+> 	- based on latest linus/master branch
+> 
+> v2 -> v3
+> 	- based on latest linux-next/master
+> 	- Add someone to "To" who is thought to be Maintainer
+> 
+>  drivers/gpu/drm/drm_of.c                              | 4 +++-
+>  drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c | 2 +-
+>  drivers/gpu/drm/tiny/arcpgu.c                         | 2 +-
+>  3 files changed, 5 insertions(+), 3 deletions(-)
 
-This change makes uvc more consistent with the rest of the v4l2 drivers
-using the vb2_fop_* and vb2_ioctl_* helpers.
-
-Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
-This patch was part of the series:
-https://patchwork.linuxtv.org/project/linux-media/list/?series=13064
-
-Moved out from it to ease the review.
----
- drivers/media/usb/uvc/uvc_driver.c | 32 +++++++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index f0febdc08c2d..bee150b852e4 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1919,11 +1919,41 @@ static void uvc_unregister_video(struct uvc_device *dev)
- 	struct uvc_streaming *stream;
- 
- 	list_for_each_entry(stream, &dev->streams, list) {
-+		/* Nothing to do here, continue. */
- 		if (!video_is_registered(&stream->vdev))
- 			continue;
- 
-+		/*
-+		 * For stream->vdev we follow the same logic as:
-+		 * vb2_video_unregister_device().
-+		 */
-+
-+		/* 1. Take a reference to vdev */
-+		get_device(&stream->vdev.dev);
-+
-+		/* 2. Ensure that no new ioctls can be called. */
- 		video_unregister_device(&stream->vdev);
--		video_unregister_device(&stream->meta.vdev);
-+
-+		/* 3. Wait for old ioctls to finish. */
-+		mutex_lock(&stream->mutex);
-+
-+		/* 4. Stop streaming. */
-+		uvc_queue_release(&stream->queue);
-+
-+		mutex_unlock(&stream->mutex);
-+
-+		put_device(&stream->vdev.dev);
-+
-+		/*
-+		 * For stream->meta.vdev we can directly call:
-+		 * vb2_video_unregister_device().
-+		 */
-+		vb2_video_unregister_device(&stream->meta.vdev);
-+
-+		/*
-+		 * Now both vdevs are not streaming and all the ioctls will
-+		 * return -ENODEV.
-+		 */
- 
- 		uvc_debugfs_cleanup_stream(stream);
- 	}
-
----
-base-commit: 81ee62e8d09ee3c7107d11c8bbfd64073ab601ad
-change-id: 20240926-uvc_stop_streaming-6e9fd20e97bc
-
-Best regards,
 -- 
-Ricardo Ribalda <ribalda@chromium.org>
-
+With best wishes
+Dmitry
 
