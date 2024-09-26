@@ -1,681 +1,400 @@
-Return-Path: <linux-kernel+bounces-341116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3D92987B7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:05:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23104987B7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 339E21F24111
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:05:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25A611C228F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871CB1B0121;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215261B011D;
 	Thu, 26 Sep 2024 23:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bka9ql2A"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="riJ9WVA2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41842143C4C;
-	Thu, 26 Sep 2024 23:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB0E282FA;
+	Thu, 26 Sep 2024 23:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727391901; cv=none; b=vDNNZBtf24C8sUnXw/6XZ7DU4trrFKLmtxyiLFNIJQWVGyjt9KFgqlCqske+7uk4bqXjHRZ/rWi88pFjDIlKpEoYzAtWyVFr0e4vvw8JxOvSKggCbNV4ePc8zY1M8JUWrT1/f+vHmx2/mL+UJVxtVv9dzDdwG0B6oD/sfWwtoOU=
+	t=1727391901; cv=none; b=b/pykGKlk5BvC1Qp+PQU1hn67Ea5GOa1EO+8NKcKHFCvxeHbP2MK2nVD6EjyuoIOiINrChjw5VNIrqWlkIRKtqNBzh7QFF3tOnGKKJXUqYJaxEcsKgm8H8CqIh4d87vCLFFm3kp0REcW4S5eRoKGyZchRVqjaKb56duPhAco8BM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727391901; c=relaxed/simple;
-	bh=Z2l+gcJewtaZGcQ8Bt7cX61r8ZpFy0rWccy06WX3iMI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NB3oC2zpbyPw/OmHqAjll28DtH2+rQZEO4z1DBmNz0D+tIFqI7HVSGNghlg/zPE7Yv01MRxlANxNPgwtZ3sRqFjpWFpZYx3O95PtYNMF6vJeRZoqrE/MOvfLHqGORty1k+4APJynfF5Tz/MnN0Q92iqfCUn/eSDdbxlpo4lJwus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bka9ql2A; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71798a15ce5so1992890b3a.0;
-        Thu, 26 Sep 2024 16:04:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727391898; x=1727996698; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GMsIDMK1DDrg0Yyv1jX8w4F76evTMg1B64TtXPFTWOQ=;
-        b=bka9ql2AwuGz+wQUx2OU3HT9lm3+ZANd0637Gy6Yu7b/ZAfqT4/+ZxQ0Dyg9JjGE9n
-         SBFA/2WDFRdEd/c4hr4M6wk2nRGiAbjJmcSiNrAf0G8+WcUcW5+ptdXdDhGCvqdvfU+/
-         YtN/xZO7e/D2sQ8xxnvzDRP4kgudAoFn0EVmBCJzt/WcU5OFvjfp36/rdmCL5M7VOsix
-         CIsRUqWSaTB5lgFfuGxQeKrSyo1ZbX1LVXEpDjGIqo6h8PBBxOUquFrkk/58rBYpreLV
-         bsiORCYQN5ybVCn4IpqquLI8n/V8/og4202Er2304WNgf6uURAEBfHNCMRhAJENhYL8K
-         ZfhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727391898; x=1727996698;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GMsIDMK1DDrg0Yyv1jX8w4F76evTMg1B64TtXPFTWOQ=;
-        b=rv/clO1w3ca6XIuzZ3zhms7m2Sc7WK43RGFIfOS3YTiAEDcsViiK+yT0CqqP6er1n/
-         JgSYhgJUXYH9IV3d6Kn8HCOY5W3gq6ye2+fatRZQgrl7s6HUwknsl0Wbo2HPbISsj1RY
-         qxH2Jdtwuf+JVdtEvSAh2901FWkQOVBUjIaKoBLP85N++d01LR9ubD83vKJG05nSH3me
-         X1f+WnwHzWLHkRfrciTtaWneZeHf3zDfy7Lqk4LcP61bAKB115IZqouSdOmLNaPGPBtE
-         YQyGi9m2nAooToWDQCkcu6qaoPG13hP9nGwT9UkJ/iJMUilfv2jqWldbBd7HkwtDsX8y
-         ZiHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCgCO+hwm0S1Nyc0jCSAW8GViLGJhp5n5dBLATeBe8372M46OeDg7/owII4Rt11BngajCdIMj3LlMTiXNk@vger.kernel.org, AJvYcCVeMbubK+bPgTlqRUdYNQXU8adACFsy5pXCr5Q+ujvtcj2IJM18IeKk1eI52I67p6rrOsqBpsAFIHaO@vger.kernel.org, AJvYcCXOPjcKCrcUHlUN5+RRHNXHZ5FNRnBu320DHWTAEyA0ZpEml/UjO9Ikrx3jXMsdDpIiQ3oKilmT0C2M@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW+6FJc/88aiLass6gvZXtNtfGkYTt/IeVRvNYRdKPlR1UZr0D
-	d4HDiFp7/nNNxiQaaZRChdFVl4m2AENlXMffo0gLNzqRvDqoRcaz
-X-Google-Smtp-Source: AGHT+IF+nGkS9O9uGxE47Gicx01cKZPi/PnmWJEq3myiiVA2CsWcjjHbKBQ7EqG99fOgC6cSl2Zi8g==
-X-Received: by 2002:a05:6a20:b711:b0:1d4:fafb:845d with SMTP id adf61e73a8af0-1d4fafb8945mr1677142637.2.1727391898182;
-        Thu, 26 Sep 2024 16:04:58 -0700 (PDT)
-Received: from fan ([2601:646:8f03:9fee:8795:a5ca:b1bf:1a39])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264bc88bsm421782b3a.71.2024.09.26.16.04.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 16:04:57 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Thu, 26 Sep 2024 16:04:42 -0700
-To: shiju.jose@huawei.com
-Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, bp@alien8.de, tony.luck@intel.com,
-	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
-	dan.j.williams@intel.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com,
-	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
-	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
-	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
-	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
-	duenwen@google.com, mike.malvestuto@intel.com, gthelen@google.com,
-	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
-	wbs@os.amperecomputing.com, nifan.cxl@gmail.com, jgroves@micron.com,
-	vsalve@micron.com, tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
-	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
-	wanghuiqiang@huawei.com, linuxarm@huawei.com
-Subject: Re: [PATCH v12 02/17] EDAC: Add EDAC scrub control driver
-Message-ID: <ZvXoiiOB330Kv-2Q@fan>
-References: <20240911090447.751-1-shiju.jose@huawei.com>
- <20240911090447.751-3-shiju.jose@huawei.com>
+	bh=+C26cKotFZ9YAS/Hd6JgISHCzfKTyGZhHwQSDxR35z4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=em6ftZsMjAO5iSDSSwY079yjzECXGfk1zWwWiemwsbYSap0YaUlHLBlN3XCSdEJV2AiDD71nDxg8gwXwJ76ZbgKk4kE/RFKyNZ0gr3CsxSExnO7anG310rRj6QB97OMLHl373lMB/P+lZSl3J2qTiIT7F9W4ijMxGibvLPJp/Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=riJ9WVA2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E9C6C4CEC9;
+	Thu, 26 Sep 2024 23:05:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727391901;
+	bh=+C26cKotFZ9YAS/Hd6JgISHCzfKTyGZhHwQSDxR35z4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=riJ9WVA2wDOUannbJlvJNnO0ADlvqkLZQoKvv8LUy4VS+FgBo501PDcGxVbg5UlyU
+	 f7eEJpsoEHIE/ckjdS3bdlfme2s8nk6393pWCLoRnSX4o28VuWQfNBWPGP0SuH+9I6
+	 HL4/nh6Zp0WGo6WrC8dwMQzyZeCqRdD4En8hLwXHXOs3/EUb4LgOBCRgyHZepJMEeA
+	 BeOJo+fXgd+ByrEYIZweF7zwGO+4WYGy2211MywMCA+dOYeKZmjuGQLoIZhDWEE88Y
+	 06I2b+ggbCrGBZemPYxy8UhleoWPtKPf6cie2x3q79/GrUTDmPnW/eQtR7MvQskSVJ
+	 Ry8FbY/VJTv1g==
+Date: Thu, 26 Sep 2024 16:04:59 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
+	linux-perf-users <linux-perf-users@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] perf sched timehist: Add pre-migration wait time option
+Message-ID: <ZvXom7j_LdYYyVUz@google.com>
+References: <20240917091537.46684-1-vineethr@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240911090447.751-3-shiju.jose@huawei.com>
+In-Reply-To: <20240917091537.46684-1-vineethr@linux.ibm.com>
 
-On Wed, Sep 11, 2024 at 10:04:31AM +0100, shiju.jose@huawei.com wrote:
-> From: Shiju Jose <shiju.jose@huawei.com>
+Hello,
+
+On Tue, Sep 17, 2024 at 02:45:37PM +0530, Madadi Vineeth Reddy wrote:
+> pre-migration wait time is the time that a task unnecessarily spends
+> on the runqueue of a CPU but doesn't get switched-in there. In terms
+> of tracepoints, it is the time between sched:sched_wakeup and
+> sched:sched_migrate_task.
+
+Sounds useful.
+
 > 
-> Add generic EDAC scrub control driver supports configuring the memory scrubbers
-> in the system. The device with scrub feature, get the scrub descriptor from the
-> EDAC scrub and registers with the EDAC RAS feature driver, which adds the sysfs
-> scrub control interface. The scrub control attributes for a scrub instance are
-> available to userspace in /sys/bus/edac/devices/<dev-name>/scrub*/.
+> Let's say a task woke up on CPU2, then it got migrated to CPU4 and
+> then it's switched-in to CPU4. So, here pre-migration wait time is
+> time that it was waiting on runqueue of CPU2 after it is woken up.
 > 
-> Generic EDAC scrub driver and the common sysfs scrub interface promotes
-> unambiguous access from the userspace irrespective of the underlying scrub
-> devices.
+> The general pattern for pre-migration to occur is:
+> sched:sched_wakeup
+> sched:sched_migrate_task
+> sched:sched_switch
+> So, this option expects sched_wakeup also to be recorded and fails
+> if attempted to use the option without sched:sched_wakeup tracepoint.
+
+I'm curious if you check sched_migrate_task as well.
+
 > 
-> The sysfs scrub attribute nodes would be present only if the client driver
-> has implemented the corresponding attribute callback function and pass in ops
-> to the EDAC RAS feature driver during registration.
+> pre-migrations are generally not useful and it increases migrations.
+> This metric would be helpful in testing patches mainly related to wakeup
+> and load-balancer code paths as better wakeup logic would choose an
+> optimal CPU where task would be switched-in and thereby reducing pre-
+> migrations.
 > 
-> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> The sample output(s) when -P or --pre-migrations is used:
+> =================
+>            time    cpu  task name                       wait time  sch delay   run time  pre-mig time
+>                         [tid/pid]                          (msec)     (msec)     (msec)     (msec)
+> --------------- ------  ------------------------------  ---------  ---------  ---------  ---------
+>   103032.721020 [0000]  perf[47206]                         0.000      0.000      0.000      0.000
+>   103032.721034 [0000]  migration/0[18]                     0.000      0.003      0.013      0.000
+>   103032.736716 [0001]  schbench[47229/47207]              10.664      9.231      0.039      9.170
+>   103032.736719 [0005]  <idle>                              0.000      0.000     15.405      0.000
+>   103032.736726 [0003]  schbench[47216/47207]              11.251      9.193      0.022      9.126
+>   103032.736727 [0001]  schbench[47228/47207]              10.752      9.264      0.010      9.169
+>   103032.736731 [0007]  <idle>                              0.000      0.000     15.314      0.000
+>   103032.736739 [0008]  <idle>                              0.000      0.000     15.249      0.000
+>   103032.736742 [0003]  schbench[47257/47207]               9.498      9.184      0.015      9.100
+> 
+>    51370.894024 [0012]  schbench[38775/38770]              21.047     21.047      8.950      0.000
+>    51370.894024 [0008]  schbench[38781/38770]              39.597     39.448      9.984     39.437
+>    51370.894025 [0009]  stress-ng-cpu[38743]                7.971      7.971      9.997      0.000
+> 
+> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
 > ---
->  Documentation/ABI/testing/sysfs-edac-scrub |  69 ++++
->  drivers/edac/Makefile                      |   1 +
->  drivers/edac/edac_device.c                 |   6 +-
->  drivers/edac/edac_scrub.c                  | 377 +++++++++++++++++++++
->  include/linux/edac.h                       |  30 ++
->  5 files changed, 482 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-edac-scrub
->  create mode 100755 drivers/edac/edac_scrub.c
+>  tools/perf/Documentation/perf-sched.txt |   8 ++
+>  tools/perf/builtin-sched.c              | 110 +++++++++++++++++-------
+>  2 files changed, 85 insertions(+), 33 deletions(-)
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-edac-scrub b/Documentation/ABI/testing/sysfs-edac-scrub
-> new file mode 100644
-> index 000000000000..f465cc91423f
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-edac-scrub
-> @@ -0,0 +1,69 @@
-> +What:		/sys/bus/edac/devices/<dev-name>/scrub*
-
-Based on the code below, we can only have scrub0, scrub1, etc.
-So should we use scrubX instead of scrub* here.
-
-The same for below.
-
-Fan
-
-> +Date:		Oct 2024
-> +KernelVersion:	6.12
-> +Contact:	linux-edac@vger.kernel.org
-> +Description:
-> +		The sysfs EDAC bus devices /<dev-name>/scrub* subdirectory
-> +		belongs to an instance of memory scrub control feature,
-> +		where <dev-name> directory corresponds to a device/memory
-> +		region registered with the EDAC scrub driver and thus
-> +		registered with the generic EDAC RAS driver.
-> +		The sysfs scrub attr nodes would be present only if the
-> +		client driver has implemented the corresponding attr
-> +		callback function and pass in ops to the EDAC RAS feature
-> +		driver during registration.
-> +
-> +What:		/sys/bus/edac/devices/<dev-name>/scrub*/addr_range_base
-> +Date:		Oct 2024
-> +KernelVersion:	6.12
-> +Contact:	linux-edac@vger.kernel.org
-> +Description:
-> +		(RW) The base of the address range of the memory region
-> +		to be scrubbed (on-demand scrubbing).
-> +
-> +What:		/sys/bus/edac/devices/<dev-name>/scrub*/addr_range_size
-> +Date:		Oct 2024
-> +KernelVersion:	6.12
-> +Contact:	linux-edac@vger.kernel.org
-> +Description:
-> +		(RW) The size of the address range of the memory region
-> +		to be scrubbed (on-demand scrubbing).
-> +
-> +What:		/sys/bus/edac/devices/<dev-name>/scrub*/enable_background
-> +Date:		Oct 2024
-> +KernelVersion:	6.12
-> +Contact:	linux-edac@vger.kernel.org
-> +Description:
-> +		(RW) Start/Stop background(patrol) scrubbing if supported.
-> +
-> +What:		/sys/bus/edac/devices/<dev-name>/scrub*/enable_on_demand
-> +Date:		Oct 2024
-> +KernelVersion:	6.12
-> +Contact:	linux-edac@vger.kernel.org
-> +Description:
-> +		(RW) Start/Stop on-demand scrubbing the memory region
-> +		if supported.
-> +
-> +What:		/sys/bus/edac/devices/<dev-name>/scrub*/min_cycle_duration
-> +Date:		Oct 2024
-> +KernelVersion:	6.12
-> +Contact:	linux-edac@vger.kernel.org
-> +Description:
-> +		(RO) Supported minimum scrub cycle duration in seconds
-> +		by the memory scrubber.
-> +
-> +What:		/sys/bus/edac/devices/<dev-name>/scrub*/max_cycle_duration
-> +Date:		Oct 2024
-> +KernelVersion:	6.12
-> +Contact:	linux-edac@vger.kernel.org
-> +Description:
-> +		(RO) Supported maximum scrub cycle duration in seconds
-> +		by the memory scrubber.
-> +
-> +What:		/sys/bus/edac/devices/<dev-name>/scrub*/current_cycle_duration
-> +Date:		Oct 2024
-> +KernelVersion:	6.12
-> +Contact:	linux-edac@vger.kernel.org
-> +Description:
-> +		(RW) The current scrub cycle duration in seconds and must be
-> +		within the supported range by the memory scrubber.
-> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
-> index 4edfb83ffbee..fbf0e39ec678 100644
-> --- a/drivers/edac/Makefile
-> +++ b/drivers/edac/Makefile
-> @@ -10,6 +10,7 @@ obj-$(CONFIG_EDAC)			:= edac_core.o
+> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
+> index 3db64954a267..7935499b88b0 100644
+> --- a/tools/perf/Documentation/perf-sched.txt
+> +++ b/tools/perf/Documentation/perf-sched.txt
+> @@ -221,6 +221,14 @@ OPTIONS for 'perf sched timehist'
+>  	priorities are specified with -: 120-129. A combination of both can also be
+>  	provided: 0,120-129.
 >  
->  edac_core-y	:= edac_mc.o edac_device.o edac_mc_sysfs.o
->  edac_core-y	+= edac_module.o edac_device_sysfs.o wq.o
-> +edac_core-y	+= edac_scrub.o
+> +-P::
+> +--pre-migrations::
+> +	Show pre-migration wait time. pre-migration wait time is the time spent
+> +	by a task waiting on a runqueue but not getting the chance to run there
+> +	and is migrated to a different runqueue where it is finally run. This
+> +	time between migrate_task and sched_wakeup is the pre-migration wait
+> +	time. This option is valid only if sched_wakeup tracepoint is recorded.
+> +
+>  OPTIONS for 'perf sched replay'
+>  ------------------------------
 >  
->  edac_core-$(CONFIG_EDAC_DEBUG)		+= debugfs.o
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index 5981cc51abc8..252e71d83d82 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -228,6 +228,7 @@ struct perf_sched {
+>  	bool		show_wakeups;
+>  	bool		show_next;
+>  	bool		show_migrations;
+> +	bool		pre_migrations;
+>  	bool		show_state;
+>  	bool		show_prio;
+>  	u64		skipped_samples;
+> @@ -247,7 +248,10 @@ struct thread_runtime {
+>  	u64 dt_iowait;      /* time between CPU access by iowait (off cpu) */
+>  	u64 dt_preempt;     /* time between CPU access by preempt (off cpu) */
+>  	u64 dt_delay;       /* time between wakeup and sched-in */
+> +	u64 dt_pre_mig;     /* time between migration and wakeup */
+>  	u64 ready_to_run;   /* time of wakeup */
+> +	u64 woken;	    /* time when sched_wakeup tracepoint is hit */
+> +	u64 migrated;	    /* time when a thread is migrated */
 >  
-> diff --git a/drivers/edac/edac_device.c b/drivers/edac/edac_device.c
-> index e4a5d010ea2d..6381896b6424 100644
-> --- a/drivers/edac/edac_device.c
-> +++ b/drivers/edac/edac_device.c
-> @@ -608,12 +608,16 @@ static int edac_dev_feat_init(struct device *parent,
->  			      const struct edac_dev_feature *ras_feat,
->  			      const struct attribute_group **attr_groups)
+>  	struct stats run_stats;
+>  	u64 total_run_time;
+> @@ -255,6 +259,7 @@ struct thread_runtime {
+>  	u64 total_iowait_time;
+>  	u64 total_preempt_time;
+>  	u64 total_delay_time;
+> +	u64 total_pre_mig_time;
+>  
+>  	char last_state;
+>  
+> @@ -2083,14 +2088,15 @@ static void timehist_header(struct perf_sched *sched)
+>  		printf(" ");
+>  	}
+>  
+> -	if (sched->show_prio) {
+> -		printf(" %-*s  %-*s  %9s  %9s  %9s",
+> -		       comm_width, "task name", MAX_PRIO_STR_LEN, "prio",
+> -		       "wait time", "sch delay", "run time");
+> -	} else {
+> -		printf(" %-*s  %9s  %9s  %9s", comm_width,
+> -		       "task name", "wait time", "sch delay", "run time");
+> -	}
+> +	printf(" %-*s", comm_width, "task name");
+> +
+> +	if (sched->show_prio)
+> +		printf("  %-*s", MAX_PRIO_STR_LEN, "prio");
+> +
+> +	printf("  %9s  %9s  %9s", "wait time", "sch delay", "run time");
+> +
+> +	if (sched->pre_migrations)
+> +		printf("  %9s", "pre-mig time");
+>  
+>  	if (sched->show_state)
+>  		printf("  %s", "state");
+> @@ -2105,17 +2111,15 @@ static void timehist_header(struct perf_sched *sched)
+>  	if (sched->show_cpu_visual)
+>  		printf(" %*s ", ncpus, "");
+>  
+> -	if (sched->show_prio) {
+> -		printf(" %-*s  %-*s  %9s  %9s  %9s",
+> -		       comm_width, "[tid/pid]", MAX_PRIO_STR_LEN, "",
+> -		       "(msec)", "(msec)", "(msec)");
+> -	} else {
+> -		printf(" %-*s  %9s  %9s  %9s", comm_width,
+> -		       "[tid/pid]", "(msec)", "(msec)", "(msec)");
+> -	}
+> +	printf(" %-*s", comm_width, "[tid/pid]");
+>  
+> -	if (sched->show_state)
+> -		printf("  %5s", "");
+> +	if (sched->show_prio)
+> +		printf("  %-*s", MAX_PRIO_STR_LEN, "");
+> +
+> +	printf("  %9s  %9s  %9s", "(msec)", "(msec)", "(msec)");
+> +
+> +	if (sched->pre_migrations)
+> +		printf("  %9s", "(msec)");
+>  
+>  	printf("\n");
+>  
+> @@ -2127,15 +2131,15 @@ static void timehist_header(struct perf_sched *sched)
+>  	if (sched->show_cpu_visual)
+>  		printf(" %.*s ", ncpus, graph_dotted_line);
+>  
+> -	if (sched->show_prio) {
+> -		printf(" %.*s  %.*s  %.9s  %.9s  %.9s",
+> -		       comm_width, graph_dotted_line, MAX_PRIO_STR_LEN, graph_dotted_line,
+> -		       graph_dotted_line, graph_dotted_line, graph_dotted_line);
+> -	} else {
+> -		printf(" %.*s  %.9s  %.9s  %.9s", comm_width,
+> -		       graph_dotted_line, graph_dotted_line, graph_dotted_line,
+> -		       graph_dotted_line);
+> -	}
+> +	printf(" %.*s", comm_width, graph_dotted_line);
+> +
+> +	if (sched->show_prio)
+> +		printf("  %.*s", MAX_PRIO_STR_LEN, graph_dotted_line);
+> +
+> +	printf("  %.9s  %.9s  %.9s", graph_dotted_line, graph_dotted_line, graph_dotted_line);
+> +
+> +	if (sched->pre_migrations)
+> +		printf("  %.9s", graph_dotted_line);
+>  
+>  	if (sched->show_state)
+>  		printf("  %.5s", graph_dotted_line);
+> @@ -2190,6 +2194,8 @@ static void timehist_print_sample(struct perf_sched *sched,
+>  
+>  	print_sched_time(tr->dt_delay, 6);
+>  	print_sched_time(tr->dt_run, 6);
+> +	if (sched->pre_migrations)
+> +		print_sched_time(tr->dt_pre_mig, 6);
+>  
+>  	if (sched->show_state)
+>  		printf(" %5c ", thread__tid(thread) == 0 ? 'I' : state);
+> @@ -2249,6 +2255,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
+>  	r->dt_iowait  = 0;
+>  	r->dt_preempt = 0;
+>  	r->dt_run     = 0;
+> +	r->dt_pre_mig = 0;
+>  
+>  	if (tprev) {
+>  		r->dt_run = t - tprev;
+> @@ -2257,6 +2264,11 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
+>  				pr_debug("time travel: wakeup time for task > previous sched_switch event\n");
+>  			else
+>  				r->dt_delay = tprev - r->ready_to_run;
+> +
+> +			if (r->woken && r->migrated) {
+> +				if ((r->migrated > r->woken) && (r->migrated < tprev))
+> +					r->dt_pre_mig = r->migrated - r->woken;
+> +			}
+>  		}
+>  
+>  		if (r->last_time > tprev)
+> @@ -2280,6 +2292,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
+>  	r->total_sleep_time   += r->dt_sleep;
+>  	r->total_iowait_time  += r->dt_iowait;
+>  	r->total_preempt_time += r->dt_preempt;
+> +	r->total_pre_mig_time += r->dt_pre_mig;
+>  }
+>  
+>  static bool is_idle_sample(struct perf_sample *sample,
+> @@ -2579,12 +2592,27 @@ static void timehist_print_wakeup_event(struct perf_sched *sched,
+>  	printf("\n");
+>  }
+>  
+> -static int timehist_sched_wakeup_ignore(const struct perf_tool *tool __maybe_unused,
+> +static int timehist_sched_wakeup_consider(const struct perf_tool *tool __maybe_unused,
+
+No this function is to not duplicate work when you have both
+sched_wakeup and sched_waking tracepoints.
+
+>  					union perf_event *event __maybe_unused,
+>  					struct evsel *evsel __maybe_unused,
+>  					struct perf_sample *sample __maybe_unused,
+>  					struct machine *machine __maybe_unused)
 >  {
-> -	int num;
-> +	int num, ret;
->  
->  	switch (ras_feat->ft_type) {
->  	case RAS_FEAT_SCRUB:
->  		dev_data->scrub_ops = ras_feat->scrub_ops;
->  		dev_data->private = ras_feat->ctx;
-> +		ret = edac_scrub_get_desc(parent, attr_groups,
-> +					  ras_feat->instance);
-> +		if (ret)
-> +			return ret;
->  		return 1;
->  	case RAS_FEAT_ECS:
->  		num = ras_feat->ecs_info.num_media_frus;
-> diff --git a/drivers/edac/edac_scrub.c b/drivers/edac/edac_scrub.c
-> new file mode 100755
-> index 000000000000..3f8f37629acf
-> --- /dev/null
-> +++ b/drivers/edac/edac_scrub.c
-> @@ -0,0 +1,377 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Generic EDAC scrub driver supports controlling the memory
-> + * scrubbers in the system and the common sysfs scrub interface
-> + * promotes unambiguous access from the userspace.
-> + *
-> + * Copyright (c) 2024 HiSilicon Limited.
-> + */
-> +
-> +#define pr_fmt(fmt)     "EDAC SCRUB: " fmt
-> +
-> +#include <linux/edac.h>
-> +
-> +enum edac_scrub_attributes {
-> +	SCRUB_ADDR_RANGE_BASE,
-> +	SCRUB_ADDR_RANGE_SIZE,
-> +	SCRUB_ENABLE_BACKGROUND,
-> +	SCRUB_ENABLE_ON_DEMAND,
-> +	SCRUB_MIN_CYCLE_DURATION,
-> +	SCRUB_MAX_CYCLE_DURATION,
-> +	SCRUB_CURRENT_CYCLE_DURATION,
-> +	SCRUB_MAX_ATTRS
-> +};
-> +
-> +struct edac_scrub_dev_attr {
-> +	struct device_attribute dev_attr;
-> +	u8 instance;
-> +};
-> +
-> +struct edac_scrub_context {
-> +	char name[EDAC_FEAT_NAME_LEN];
-> +	struct edac_scrub_dev_attr scrub_dev_attr[SCRUB_MAX_ATTRS];
-> +	struct attribute *scrub_attrs[SCRUB_MAX_ATTRS + 1];
-> +	struct attribute_group group;
-> +};
-> +
-> +#define to_scrub_dev_attr(_dev_attr)      \
-> +		container_of(_dev_attr, struct edac_scrub_dev_attr, dev_attr)
-> +
-> +static ssize_t addr_range_base_show(struct device *ras_feat_dev,
-> +				    struct device_attribute *attr,
-> +				    char *buf)
-> +{
-> +	u8 inst = ((struct edac_scrub_dev_attr *)to_scrub_dev_attr(attr))->instance;
-> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_scrub_ops *ops = ctx->scrub[inst].scrub_ops;
-> +	u64 base, size;
-> +	int ret;
-> +
-> +	ret = ops->read_range(ras_feat_dev->parent, ctx->scrub[inst].private, &base, &size);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sysfs_emit(buf, "0x%llx\n", base);
-> +}
-> +
-> +static ssize_t addr_range_size_show(struct device *ras_feat_dev,
-> +				    struct device_attribute *attr,
-> +				    char *buf)
-> +{
-> +	u8 inst = ((struct edac_scrub_dev_attr *)to_scrub_dev_attr(attr))->instance;
-> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_scrub_ops *ops = ctx->scrub[inst].scrub_ops;
-> +	u64 base, size;
-> +	int ret;
-> +
-> +	ret = ops->read_range(ras_feat_dev->parent, ctx->scrub[inst].private, &base, &size);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sysfs_emit(buf, "0x%llx\n", size);
-> +}
-> +
-> +static ssize_t addr_range_base_store(struct device *ras_feat_dev,
-> +				     struct device_attribute *attr,
-> +				     const char *buf, size_t len)
-> +{
-> +	u8 inst = ((struct edac_scrub_dev_attr *)to_scrub_dev_attr(attr))->instance;
-> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_scrub_ops *ops = ctx->scrub[inst].scrub_ops;
-> +	u64 base, size;
-> +	int ret;
-> +
-> +	ret = ops->read_range(ras_feat_dev->parent, ctx->scrub[inst].private, &base, &size);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = kstrtou64(buf, 0, &base);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = ops->write_range(ras_feat_dev->parent, ctx->scrub[inst].private, base, size);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +static ssize_t addr_range_size_store(struct device *ras_feat_dev,
-> +				     struct device_attribute *attr,
-> +				     const char *buf,
-> +				     size_t len)
-> +{
-> +	u8 inst = ((struct edac_scrub_dev_attr *)to_scrub_dev_attr(attr))->instance;
-> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_scrub_ops *ops = ctx->scrub[inst].scrub_ops;
-> +	u64 base, size;
-> +	int ret;
-> +
-> +	ret = ops->read_range(ras_feat_dev->parent, ctx->scrub[inst].private, &base, &size);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = kstrtou64(buf, 0, &size);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = ops->write_range(ras_feat_dev->parent, ctx->scrub[inst].private, base, size);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +static ssize_t enable_background_store(struct device *ras_feat_dev,
-> +				       struct device_attribute *attr,
-> +				       const char *buf, size_t len)
-> +{
-> +	u8 inst = ((struct edac_scrub_dev_attr *)to_scrub_dev_attr(attr))->instance;
-> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_scrub_ops *ops = ctx->scrub[inst].scrub_ops;
-> +	bool enable;
-> +	int ret;
-> +
-> +	ret = kstrtobool(buf, &enable);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = ops->set_enabled_bg(ras_feat_dev->parent, ctx->scrub[inst].private, enable);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +static ssize_t enable_background_show(struct device *ras_feat_dev,
-> +				      struct device_attribute *attr, char *buf)
-> +{
-> +	u8 inst = ((struct edac_scrub_dev_attr *)to_scrub_dev_attr(attr))->instance;
-> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_scrub_ops *ops = ctx->scrub[inst].scrub_ops;
-> +	bool enable;
-> +	int ret;
-> +
-> +	ret = ops->get_enabled_bg(ras_feat_dev->parent, ctx->scrub[inst].private, &enable);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sysfs_emit(buf, "%d\n", enable);
-> +}
-> +
-> +static ssize_t enable_on_demand_show(struct device *ras_feat_dev,
-> +				     struct device_attribute *attr, char *buf)
-> +{
-> +	u8 inst = ((struct edac_scrub_dev_attr *)to_scrub_dev_attr(attr))->instance;
-> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_scrub_ops *ops = ctx->scrub[inst].scrub_ops;
-> +	bool enable;
-> +	int ret;
-> +
-> +	ret = ops->get_enabled_od(ras_feat_dev->parent, ctx->scrub[inst].private, &enable);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sysfs_emit(buf, "%d\n", enable);
-> +}
-> +
-> +static ssize_t enable_on_demand_store(struct device *ras_feat_dev,
-> +				      struct device_attribute *attr,
-> +				      const char *buf, size_t len)
-> +{
-> +	u8 inst = ((struct edac_scrub_dev_attr *)to_scrub_dev_attr(attr))->instance;
-> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_scrub_ops *ops = ctx->scrub[inst].scrub_ops;
-> +	bool enable;
-> +	int ret;
-> +
-> +	ret = kstrtobool(buf, &enable);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = ops->set_enabled_od(ras_feat_dev->parent, ctx->scrub[inst].private, enable);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +static ssize_t min_cycle_duration_show(struct device *ras_feat_dev,
-> +				       struct device_attribute *attr,
-> +				       char *buf)
-> +{
-> +	u8 inst = ((struct edac_scrub_dev_attr *)to_scrub_dev_attr(attr))->instance;
-> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_scrub_ops *ops = ctx->scrub[inst].scrub_ops;
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret = ops->min_cycle_read(ras_feat_dev->parent, ctx->scrub[inst].private, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sysfs_emit(buf, "%u\n", val);
-> +}
-> +
-> +static ssize_t max_cycle_duration_show(struct device *ras_feat_dev,
-> +				       struct device_attribute *attr,
-> +				       char *buf)
-> +{
-> +	u8 inst = ((struct edac_scrub_dev_attr *)to_scrub_dev_attr(attr))->instance;
-> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_scrub_ops *ops = ctx->scrub[inst].scrub_ops;
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret = ops->max_cycle_read(ras_feat_dev->parent, ctx->scrub[inst].private, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sysfs_emit(buf, "%u\n", val);
-> +}
-> +
-> +static ssize_t current_cycle_duration_show(struct device *ras_feat_dev,
-> +					   struct device_attribute *attr,
-> +					   char *buf)
-> +{
-> +	u8 inst = ((struct edac_scrub_dev_attr *)to_scrub_dev_attr(attr))->instance;
-> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_scrub_ops *ops = ctx->scrub[inst].scrub_ops;
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret = ops->cycle_duration_read(ras_feat_dev->parent, ctx->scrub[inst].private, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sysfs_emit(buf, "%u\n", val);
-> +}
-> +
-> +static ssize_t current_cycle_duration_store(struct device *ras_feat_dev,
-> +					    struct device_attribute *attr,
-> +					    const char *buf, size_t len)
-> +{
-> +	u8 inst = ((struct edac_scrub_dev_attr *)to_scrub_dev_attr(attr))->instance;
-> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_scrub_ops *ops = ctx->scrub[inst].scrub_ops;
-> +	long val;
-> +	int ret;
-> +
-> +	ret = kstrtol(buf, 0, &val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = ops->cycle_duration_write(ras_feat_dev->parent, ctx->scrub[inst].private, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +static umode_t scrub_attr_visible(struct kobject *kobj,
-> +				  struct attribute *a, int attr_id)
-> +{
-> +	struct device *ras_feat_dev = kobj_to_dev(kobj);
-> +	struct device_attribute *dev_attr =
-> +				container_of(a, struct device_attribute, attr);
-> +	u8 inst = ((struct edac_scrub_dev_attr *)to_scrub_dev_attr(dev_attr))->instance;
-> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_scrub_ops *ops = ctx->scrub[inst].scrub_ops;
-> +
-> +	switch (attr_id) {
-> +	case SCRUB_ADDR_RANGE_BASE:
-> +	case SCRUB_ADDR_RANGE_SIZE:
-> +		if (ops->read_range && ops->write_range)
-> +			return a->mode;
-> +		if (ops->read_range)
-> +			return 0444;
-> +		return 0;
-> +	case SCRUB_ENABLE_BACKGROUND:
-> +		if (ops->get_enabled_bg && ops->set_enabled_bg)
-> +			return a->mode;
-> +		if (ops->get_enabled_bg)
-> +			return 0444;
-> +		return 0;
-> +	case SCRUB_ENABLE_ON_DEMAND:
-> +		if (ops->get_enabled_od && ops->set_enabled_od)
-> +			return a->mode;
-> +		if (ops->get_enabled_od)
-> +			return 0444;
-> +		return 0;
-> +	case SCRUB_MIN_CYCLE_DURATION:
-> +		return ops->min_cycle_read ? a->mode : 0;
-> +	case SCRUB_MAX_CYCLE_DURATION:
-> +		return ops->max_cycle_read ? a->mode : 0;
-> +	case SCRUB_CURRENT_CYCLE_DURATION:
-> +		if (ops->cycle_duration_read && ops->cycle_duration_write)
-> +			return a->mode;
-> +		if (ops->cycle_duration_read)
-> +			return 0444;
-> +		return 0;
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +#define EDAC_SCRUB_ATTR_RO(_name, _instance)       \
-> +	((struct edac_scrub_dev_attr) { .dev_attr = __ATTR_RO(_name), \
-> +				     .instance = _instance })
-> +
-> +#define EDAC_SCRUB_ATTR_WO(_name, _instance)       \
-> +	((struct edac_scrub_dev_attr) { .dev_attr = __ATTR_WO(_name), \
-> +				     .instance = _instance })
-> +
-> +#define EDAC_SCRUB_ATTR_RW(_name, _instance)       \
-> +	((struct edac_scrub_dev_attr) { .dev_attr = __ATTR_RW(_name), \
-> +				     .instance = _instance })
-> +
-> +static int scrub_create_desc(struct device *scrub_dev,
-> +			     const struct attribute_group **attr_groups,
-> +			     u8 instance)
-> +{
-> +	struct edac_scrub_context *scrub_ctx;
-> +	struct attribute_group *group;
-> +	int i;
-> +
-> +	scrub_ctx = devm_kzalloc(scrub_dev, sizeof(*scrub_ctx), GFP_KERNEL);
-> +	if (!scrub_ctx)
-> +		return -ENOMEM;
-> +
-> +	group = &scrub_ctx->group;
-> +	scrub_ctx->scrub_dev_attr[0] = EDAC_SCRUB_ATTR_RW(addr_range_base, instance);
-> +	scrub_ctx->scrub_dev_attr[1] = EDAC_SCRUB_ATTR_RW(addr_range_size, instance);
-> +	scrub_ctx->scrub_dev_attr[2] = EDAC_SCRUB_ATTR_RW(enable_background, instance);
-> +	scrub_ctx->scrub_dev_attr[3] = EDAC_SCRUB_ATTR_RW(enable_on_demand, instance);
-> +	scrub_ctx->scrub_dev_attr[4] = EDAC_SCRUB_ATTR_RO(min_cycle_duration, instance);
-> +	scrub_ctx->scrub_dev_attr[5] = EDAC_SCRUB_ATTR_RO(max_cycle_duration, instance);
-> +	scrub_ctx->scrub_dev_attr[6] = EDAC_SCRUB_ATTR_RW(current_cycle_duration, instance);
-> +	for (i = 0; i < SCRUB_MAX_ATTRS; i++)
-> +		scrub_ctx->scrub_attrs[i] = &scrub_ctx->scrub_dev_attr[i].dev_attr.attr;
-> +
-> +	sprintf(scrub_ctx->name, "%s%d", "scrub", instance);
-> +	group->name = scrub_ctx->name;
-> +	group->attrs = scrub_ctx->scrub_attrs;
-> +	group->is_visible  = scrub_attr_visible;
-> +
-> +	attr_groups[0] = group;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * edac_scrub_get_desc - get EDAC scrub descriptors
-> + * @scrub_dev: client device, with scrub support
-> + * @attr_groups: pointer to attrribute group container
-> + * @instance: device's scrub instance number.
-> + *
-> + * Returns 0 on success, error otherwise.
-> + */
-> +int edac_scrub_get_desc(struct device *scrub_dev,
-> +			const struct attribute_group **attr_groups,
-> +			u8 instance)
-> +{
-> +	if (!scrub_dev || !attr_groups)
-> +		return -EINVAL;
-> +
-> +	return scrub_create_desc(scrub_dev, attr_groups, instance);
-> +}
-> diff --git a/include/linux/edac.h b/include/linux/edac.h
-> index b337254cf5b8..aae8262b9863 100644
-> --- a/include/linux/edac.h
-> +++ b/include/linux/edac.h
-> @@ -674,6 +674,36 @@ enum edac_dev_feat {
->  	RAS_FEAT_MAX
->  };
->  
-> +/**
-> + * struct scrub_ops - scrub device operations (all elements optional)
-> + * @read_range: read base and offset of scrubbing range.
-> + * @write_range: set the base and offset of the scrubbing range.
-> + * @get_enabled_bg: check if currently performing background scrub.
-> + * @set_enabled_bg: start or stop a bg-scrub.
-> + * @get_enabled_od: check if currently performing on-demand scrub.
-> + * @set_enabled_od: start or stop an on-demand scrub.
-> + * @min_cycle_read: minimum supported scrub cycle duration in seconds.
-> + * @max_cycle_read: maximum supported scrub cycle duration in seconds.
-> + * @cycle_duration_read: get the scrub cycle duration in seconds.
-> + * @cycle_duration_write: set the scrub cycle duration in seconds.
-> + */
-> +struct edac_scrub_ops {
-> +	int (*read_range)(struct device *dev, void *drv_data, u64 *base, u64 *size);
-> +	int (*write_range)(struct device *dev, void *drv_data, u64 base, u64 size);
-> +	int (*get_enabled_bg)(struct device *dev, void *drv_data, bool *enable);
-> +	int (*set_enabled_bg)(struct device *dev, void *drv_data, bool enable);
-> +	int (*get_enabled_od)(struct device *dev, void *drv_data, bool *enable);
-> +	int (*set_enabled_od)(struct device *dev, void *drv_data, bool enable);
-> +	int (*min_cycle_read)(struct device *dev, void *drv_data,  u32 *min);
-> +	int (*max_cycle_read)(struct device *dev, void *drv_data,  u32 *max);
-> +	int (*cycle_duration_read)(struct device *dev, void *drv_data, u32 *cycle);
-> +	int (*cycle_duration_write)(struct device *dev, void *drv_data, u32 cycle);
-> +};
-> +
-> +int edac_scrub_get_desc(struct device *scrub_dev,
-> +			const struct attribute_group **attr_groups,
-> +			u8 instance);
-> +
->  struct edac_ecs_ex_info {
->  	u16 num_media_frus;
->  };
-> -- 
-> 2.34.1
-> 
+> +	struct thread *thread;
+> +	struct thread_runtime *tr = NULL;
+> +	const u32 pid = evsel__intval(evsel, sample, "pid");
+> +
+> +	thread = machine__findnew_thread(machine, 0, pid);
+> +	if (thread == NULL)
+> +		return -1;
+> +
+> +	tr = thread__get_runtime(thread);
+> +	if (tr == NULL)
+> +		return -1;
+> +
+> +	if (tr->woken == 0)
+> +		tr->woken = sample->time;
 
--- 
-Fan Ni
+I think you can add this to timehist_sched_wakeup_event().
+
+> +
+>  	return 0;
+>  }
+>  
+> @@ -2694,8 +2722,14 @@ static int timehist_migrate_task_event(const struct perf_tool *tool,
+>  
+>  	tr->migrations++;
+>  
+> +	if (tr->migrated == 0)
+> +		tr->migrated = sample->time;
+> +
+>  	/* show migrations if requested */
+> -	timehist_print_migration_event(sched, evsel, sample, machine, thread);
+> +	if (sched->show_migrations) {
+> +		timehist_print_migration_event(sched, evsel, sample,
+> +							machine, thread);
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -2846,11 +2880,14 @@ static int timehist_sched_change_event(const struct perf_tool *tool,
+>  		/* last state is used to determine where to account wait time */
+>  		tr->last_state = state;
+>  
+> -		/* sched out event for task so reset ready to run time */
+> +		/* sched out event for task so reset ready to run time, woken and migrated time */
+>  		if (state == 'R')
+>  			tr->ready_to_run = t;
+>  		else
+>  			tr->ready_to_run = 0;
+> +
+> +		tr->woken = 0;
+> +		tr->migrated = 0;
+>  	}
+>  
+>  	evsel__save_time(evsel, sample->time, sample->cpu);
+> @@ -3278,7 +3315,7 @@ static int perf_sched__timehist(struct perf_sched *sched)
+>  
+>  	/* prefer sched_waking if it is captured */
+>  	if (evlist__find_tracepoint_by_name(session->evlist, "sched:sched_waking"))
+> -		handlers[1].handler = timehist_sched_wakeup_ignore;
+> +		handlers[1].handler = timehist_sched_wakeup_consider;
+>  
+>  	/* setup per-evsel handlers */
+>  	if (perf_session__set_tracepoints_handlers(session, handlers))
+> @@ -3290,8 +3327,14 @@ static int perf_sched__timehist(struct perf_sched *sched)
+>  		goto out;
+>  	}
+>  
+> -	if (sched->show_migrations &&
+> -	    perf_session__set_tracepoints_handlers(session, migrate_handlers))
+> +	if (sched->pre_migrations && !evlist__find_tracepoint_by_name(session->evlist,
+> +									"sched:sched_wakeup")) {
+> +		pr_err("No sched_wakeup events found. sched_wakeup tracepoint is mandatory for -P option\n");
+> +		goto out;
+> +	}
+> +
+> +	if ((sched->show_migrations || sched->pre_migrations) &&
+> +		(perf_session__set_tracepoints_handlers(session, migrate_handlers)))
+
+No need for parenthesis.
+
+Thanks,
+Namhyung
+
+
+>  		goto out;
+>  
+>  	/* pre-allocate struct for per-CPU idle stats */
+> @@ -3833,6 +3876,7 @@ int cmd_sched(int argc, const char **argv)
+>  	OPT_BOOLEAN(0, "show-prio", &sched.show_prio, "Show task priority"),
+>  	OPT_STRING(0, "prio", &sched.prio_str, "prio",
+>  		   "analyze events only for given task priority(ies)"),
+> +	OPT_BOOLEAN('P', "pre-migrations", &sched.pre_migrations, "Show pre-migration wait time"),
+>  	OPT_PARENT(sched_options)
+>  	};
+>  
+> -- 
+> 2.43.1
+> 
 
