@@ -1,131 +1,183 @@
-Return-Path: <linux-kernel+bounces-340223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07805987024
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:30:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8818D987027
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 067091C2171D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:30:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 436C5285E86
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D0B1AAE0E;
-	Thu, 26 Sep 2024 09:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997C91AC8B3;
+	Thu, 26 Sep 2024 09:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NGtdJwD4"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="BveS5WCI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YZEQu2z3"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489EC1AC441
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AE01AB6EE;
+	Thu, 26 Sep 2024 09:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727342985; cv=none; b=kq7eWsEog/zhNs7wztlAMmU6Nm7OAmzhTkWaaJl6RAzNimHLxdwnctmi7h4eSHLA2iYsLyqbTksIFz+BPmzHQwH33hmhLJS5VEhmmU4NTsWUgOFXWzgDvEkS3iqD4mH/BVNpiJ4VfJe7ZD9tPkON1jVnVFXyy5qzj/vy3TC7Zto=
+	t=1727343005; cv=none; b=s7WhLbUqXRlnoCFsxnkF0DxJeByW2DSR7xqzC32xkrT596rIXlFh70iC/JenQzg76HLybDBH2wvRazFN8MzDyEY7ejpUvy/dKy8uKBfhsXaJqhXJPNypqRNZvbNzBkoU1Qe5RVMhF2ULZey9uxgE/367hfc6gLbdKW/0WXQl4Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727342985; c=relaxed/simple;
-	bh=tkrxBATaBcqKod9pjIDQEXjlc5uLNRjLyEp3j7CQA14=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hkpl7cAbG2pJ7c5e7wNO2mAHmG9xFkCQYsTK5vBz2P8UybrLb9h+u8M8XFKmwGFOsckdqtd/j/0Z96f8OL0QPFgKxv/rUb8dSo4B5qS9/OQOIeNE70mBq8QKz5P1zqbciJFcY1mpkihoij3jqORFrgKuKjW1FDUoKizCeyFa2Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NGtdJwD4; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2068bee21d8so7903275ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 02:29:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727342983; x=1727947783; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LhqiIDQ5Jqu/fSndHOna+E70YcD1T5+jR0brWu5czp4=;
-        b=NGtdJwD4mHXYbWYmQEyo7ok78zUOtpO+axlaDLXkajJJYzfprG1dReKutopXKn2Sk/
-         pHvpl6Da9+jnfERM9lcFHAtAzk/v09IX6i8LW9uNUi1vga//0PT9w+c5RRWko6BrOsih
-         W5j2qlFlUOsjVu0BQWFm/VzzvjQjupLf/R2wQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727342983; x=1727947783;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LhqiIDQ5Jqu/fSndHOna+E70YcD1T5+jR0brWu5czp4=;
-        b=DkrROk+fH1yOdUwswp35TFxbsHYRoQy7UotUT+KuWcG+5XwDLOfE0GfXvHpWYRTmJF
-         ZSj5ar68p271mECGWHMmd5XRTcGWrH9pPvZ6y2dDLDL5eIzEiroQwABO9f+dLbNg0A+t
-         CVpaKALE/BT13UC0ipFyYFxc2PXkU4rIZb8Tsly+PKSvtCroj0BvIdC35PCfcHB9H5Lm
-         GccNwy8E8WJlwSZp0sKfyXU3awIlnZFjtN/I6NX2K6hm2x1CVEFhdGV8+MMUOVGTT8AN
-         vvgoRCR5D+YZmLEupHC4J2IRl+8ekPhfn9+rWDFh83NpjjObCpEZnFNWKUXN9H/rvxko
-         jMHA==
-X-Gm-Message-State: AOJu0YwTVd6DlmIM1qzIfOECO44cpK12CeYus488QBx1n8GDuWmbMBFY
-	OyxPNIlz0tEiS1LMqvJGrCDXgBr1Hs1YGwJwLMAiGMQwwIdhhcjiMJ8yyxEJjw==
-X-Google-Smtp-Source: AGHT+IEdG39v0Vfwfch9vcjFuBKfPvx9YOlmD0blQWme8C0zQJMHMM2ZuXN87DCP03QyVmgMacA7Sw==
-X-Received: by 2002:a17:903:110f:b0:207:1737:2c66 with SMTP id d9443c01a7336-20afc4c127fmr79900895ad.35.1727342983478;
-        Thu, 26 Sep 2024 02:29:43 -0700 (PDT)
-Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:4234:cfaa:3b83:d75a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af1720b00sm34819105ad.64.2024.09.26.02.29.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 02:29:43 -0700 (PDT)
-From: Pin-yen Lin <treapking@chromium.org>
-To: Xin Ji <xji@analogixsemi.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH v2 2/2] drm/bridge: it6505: Drop EDID cache on bridge power off
-Date: Thu, 26 Sep 2024 17:29:09 +0800
-Message-ID: <20240926092931.3870342-3-treapking@chromium.org>
-X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
-In-Reply-To: <20240926092931.3870342-1-treapking@chromium.org>
-References: <20240926092931.3870342-1-treapking@chromium.org>
+	s=arc-20240116; t=1727343005; c=relaxed/simple;
+	bh=iIHzXOx0pFk7jwvksvnKP2lN8/sMzdyxEPKPJMcowRA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ByE33WWF91lG6QjsIGGQHHCKby+FgOUNfXIWkKyuVWoDeLw1UQ4u68ty7wjtj+Jp8UtwGt223Z+PBIoW7lqM2aVCij0bMQN/mgDjg7cdUCFm4aTDP1HGzC261MpPyNrJO30BFuG44Hl/8ddVNhMuA74stjkzBuoX5/129BDYblQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=BveS5WCI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YZEQu2z3; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 591181380552;
+	Thu, 26 Sep 2024 05:30:02 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Thu, 26 Sep 2024 05:30:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm3; t=1727343002; x=1727429402; bh=3p
+	y0WN0ig/hJCQGZ38PUAlfLE4IxkpXsSiSv6aahmBE=; b=BveS5WCIFwJPubF9rx
+	XRf3i1SEUACtQsVMpHIcaDdXcIs8jn3+TW9ndjSDyaQDBZI+HAlbl/SsuQe6VH0Q
+	XKgB/2fZH1VO3UemV3ZUkDYRlGyY57K7UINWOoTdeXvv99U+QaG8k4kAZOooqszb
+	gPU6BTcegBSJSv+8Y4cKik75V0LADj/z10yx1MOEsdwDX7aHgv9uSqGUFZxSNg+o
+	cGeQ1BdXKH9dv+k+XpJ59np5DADHHVhIldJFPNS3kfrjSo0Wh8k/NchORj0X7F9B
+	KKdwRQlH2AkivYtc58ziiVDtmCgLpFtCUbPrFCqFQJkajdOIYOzUrBbiXcRXjU54
+	2HwQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm2; t=1727343002; x=1727429402; bh=3py0WN0ig/hJC
+	QGZ38PUAlfLE4IxkpXsSiSv6aahmBE=; b=YZEQu2z36daOhKyJthLN1pf1pOjG8
+	xs4MBhVLCy1SZ9N9Wx1TFr/DA/V1P0/lTGw1R4guTEI3wpBLSxcEpBDRbC4Q3AHw
+	vT0qwwO54FzlvIsq4aZ0iIrW3V8r7L5eRvkpwK+bMSFCzqTYddzEnTWFehzM3gFg
+	GulTD6XOnNvj6Ijk3YhPlYe2e3AVCp4HfYf17PNwK7dkK7EsI7wV1INn3KfSRolH
+	0W3CQx428hilx3hvQ5Qcjud30XWL0TPFYoBvFczmmeCSX2810WjSF/9Lg3Ne5Ql1
+	rTcoGM+pc9X8r8giYlk6K4EC8t8bV0b47yebfoWH2t5gMy+TavoZUQSyA==
+X-ME-Sender: <xms:mSn1Ziqmx7_hhixfCPuBm-dpb02hHxcykObpeA5WZRxSnaPYnVFKoA>
+    <xme:mSn1ZgqY-ekks4ihwtdogkE8py5V2m_wHr7WNBDJDJPEYn-UwLx9glTWuTl1sI_AF
+    q94h91MUvLSlGfLPLU>
+X-ME-Received: <xmr:mSn1ZnMQd6ptm0b6m4t283huGKrg-VIgv9TCWmW7doyRg7JITGnZ369gsEkOJA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtjedgudeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
+    ffkffogggtgfesthekredtredtjeenucfhrhhomhepfdfnuhhkvgcuffdrucflohhnvghs
+    fdcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtthgvrhhnpeejtdfhhe
+    ffkefhteekleduteegudfgleekheejuedvueefvdeltdehuefgveekkeenucffohhmrghi
+    nhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghpthhtohep
+    uddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhht
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrdhinhht
+    vghlrdgtohhmpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprh
+    gtphhtthhopegtohhrvghnthhinhdrtghhrghrhiesghhmrghilhdrtghomhdprhgtphht
+    thhopehsuhhpvghrmhdusehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:mSn1Zh6_YLYj9xDW1Gjt7rDQWrQoQg5VK0q6ktvzov3BWQ4tgeYeww>
+    <xmx:mSn1Zh4Y0gKR0ldA1o41dItM0TIAsNF3YyrCcLKhEJ6qFb--Xwq4iw>
+    <xmx:mSn1ZhjVrbXJdPQjyxOswnywbs7o8H0xWsyw1AUY6cMmEZ_bUKTa-g>
+    <xmx:mSn1Zr7cND1GULWxVthATwouowaexuo_s-iYyxB7ygs-wjm33HqLSw>
+    <xmx:min1ZmHjuwa5xvoicyz-0LQ9-qdTTSbkHcnCfHSdNyKT94SoRfYeIXva>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 26 Sep 2024 05:29:57 -0400 (EDT)
+From: "Luke D. Jones" <luke@ljones.dev>
+To: linux-kernel@vger.kernel.org
+Cc: linux-input@vger.kernel.org,
+	bentiss@kernel.org,
+	jikos@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com,
+	corentin.chary@gmail.com,
+	superm1@kernel.org,
+	"Luke D. Jones" <luke@ljones.dev>
+Subject: [PATCH v4 0/9] platform/x86: introduce asus-armoury driver
+Date: Thu, 26 Sep 2024 21:29:43 +1200
+Message-ID: <20240926092952.1284435-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The bridge might miss the display change events when it's powered off.
-This happens when a user changes the external monitor when the system
-is suspended and the embedded controller doesn't not wake AP up.
+his is the first major patch I've ever done with the intention of
+introducing a new module, so it's highly likely I've made some mistakes
+or misunderstood something.
 
-It's also observed that one DP-to-HDMI bridge doesn't work correctly
-when there is no EDID read after it is powered on.
+TL;DR:
+1. introduce new module to contain bios attributes, using fw_attributes_class
+2. deprecate all possible attributes from asus-wmi that were added ad-hoc
+3. remove those in the next LTS cycle
 
-Drop the cache to force an EDID read after system resume to fix this.
+The idea for this originates from a conversation with Mario Limonciello
+https://lore.kernel.org/platform-driver-x86/371d4109-a3bb-4c3b-802f-4ec27a945c99@amd.com/
 
-Fixes: 11feaef69d0c ("drm/bridge: it6505: Add caching for EDID")
-Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+It is without a doubt much cleaner to use, easier to discover, and the
+API is well defined as opposed to the random clutter of attributes I had
+been placing in the platform sysfs.
 
----
+There is some discussion on-going regarding the way tuning knobs such as
+the PPT_* should work with platform_profile. This may result in the creation
+of an extra profile type "Custom" to signify that the user has adjusted
+things away from the defaults used by profiles such as "balanced" or "quiet".
 
-Changes in v2:
-- Collect review tags
+Regards,
+Luke
 
- drivers/gpu/drm/bridge/ite-it6505.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changelog:
+- v1
+  - Initial submission
+- v2
+  - Too many changes to list, but all concerns raised in previous submission addressed.
+  - History: https://lore.kernel.org/platform-driver-x86/20240716051612.64842-1-luke@ljones.dev/
+- v3
+  - All concerns addressed.
+  - History: https://lore.kernel.org/platform-driver-x86/20240806020747.365042-1-luke@ljones.dev/
+- v4
+  - Use EXPORT_SYMBOL_NS_GPL() for the symbols required in this patch series
+  - Add patch for hid-asus due to the use of EXPORT_SYMBOL_NS_GPL()
+  - Split the PPT knobs out to a separate patch
+  - Split the hd_panel setting out to a new patch
+  - Clarify some of APU MEM configuration and convert int to hex
+  - Rename deprecated Kconfig option to ASUS_WMI_DEPRECATED_ATTRS
+  - Fixup cyclic dependency in Kconfig
 
-diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-index 1e1c06fdf206..bb449efac2f4 100644
---- a/drivers/gpu/drm/bridge/ite-it6505.c
-+++ b/drivers/gpu/drm/bridge/ite-it6505.c
-@@ -3101,6 +3101,8 @@ static __maybe_unused int it6505_bridge_suspend(struct device *dev)
- {
- 	struct it6505 *it6505 = dev_get_drvdata(dev);
- 
-+	it6505_remove_edid(it6505);
-+
- 	return it6505_poweroff(it6505);
- }
- 
+Luke D. Jones (9):
+  platform/x86: asus-wmi: export symbols used for read/write WMI
+  hid-asus: Add MODULE_IMPORT_NS(ASUS_WMI)
+  platform/x86: asus-armoury: move existing tunings to asus-armoury
+    module
+  platform/x86: asus-armoury: add panel_hd_mode attribute
+  platform/x86: asus-armoury: add the ppt_* and nv_* tuning knobs
+  platform/x86: asus-armoury: add dgpu tgp control
+  platform/x86: asus-armoury: add apu-mem control support
+  platform/x86: asus-armoury: add core count control
+  platform/x86: asus-wmi: deprecate bios features
+
+ .../ABI/testing/sysfs-platform-asus-wmi       |   17 +
+ drivers/hid/hid-asus.c                        |    1 +
+ drivers/platform/x86/Kconfig                  |   22 +
+ drivers/platform/x86/Makefile                 |    1 +
+ drivers/platform/x86/asus-armoury.c           | 1051 +++++++++++++++++
+ drivers/platform/x86/asus-armoury.h           |  257 ++++
+ drivers/platform/x86/asus-wmi.c               |  185 ++-
+ include/linux/platform_data/x86/asus-wmi.h    |   19 +
+ 8 files changed, 1520 insertions(+), 33 deletions(-)
+ create mode 100644 drivers/platform/x86/asus-armoury.c
+ create mode 100644 drivers/platform/x86/asus-armoury.h
+
 -- 
-2.46.0.792.g87dc391469-goog
+2.46.1
 
 
