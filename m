@@ -1,128 +1,114 @@
-Return-Path: <linux-kernel+bounces-340728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFEE987721
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:59:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1515C987722
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9505FB2A9DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:59:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E4C11C252E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE8D15D5A6;
-	Thu, 26 Sep 2024 15:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D24158552;
+	Thu, 26 Sep 2024 15:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHTsQPcS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ik7OxE0U"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FEB15B99D;
-	Thu, 26 Sep 2024 15:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B0A14AD25
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727366323; cv=none; b=Q0Z024gVYP278b96Nt9xsq1szqfdmkyW03euMkYK7QWxEweq1u/4hrVlw6NluItVJ7vzqTIuk6lD11OFU0PGfsE9RB98PDqAywjyFWt7BDBj6h0pY6QvGZ8OC+H6tGcrhNFli/dOLplYTR6keiVKXJ42vI6ukBGH2qxfhBRwWvM=
+	t=1727366349; cv=none; b=rJ8Vtj0gn4onRwPh5xkwl5g/6xaqHI/13Uhka//Gr0F2rzjXcUwgoH6etKpnnhN/idHRrp/8goHENmQHI5ecuHVoReQk/JYZhDqTpp5J0i/j/IL5TWkMePFGo/4F0PmUfPZhnEDoLOTGtVdfx7tb2DSCXtlOt7Y9NYK0e3Hb/SM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727366323; c=relaxed/simple;
-	bh=igJ0G0OPnz/B3elCb/RuWY5dnt8N4bIiq+BlerzgzHw=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=aUDxV1FNXN4UcwoFvqwRnPK7iuAnvim8bNJNnN3cU6qRtaaZkcdLIYTCF7MC3kVelJB92pJMPJNpS4p0x0pTn1OIC8iYyPu04mQk6p44j767he2OhvJzyzTsehM84JXwsbpwNtBGP8+QH+Jod7TqhoH4ePvzgxrfRvmbPSwnArA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHTsQPcS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A0ABC4CECE;
-	Thu, 26 Sep 2024 15:58:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727366321;
-	bh=igJ0G0OPnz/B3elCb/RuWY5dnt8N4bIiq+BlerzgzHw=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=bHTsQPcSbxg85P9pIQPwMha5ShcMWjEr/16SMRgqIGc0KVuAdbzGQqlSA3sdEFtsh
-	 3maWznzVTHKHJO0pw13fpAHWusOih98hmsvwVVTKK9XrqwhyUZT987WGqV561PhFDK
-	 qD/q603YAskungMGSk5lQ+8a6irk64cgCLQ0kpDOorQIwbyu56uWdUjdO/ManXyc5W
-	 PszVvAFG/yhxfismT8Vr/bbp+R9fyLR0hylngWnCOwnxxNkkx5LEHu050RMiALBJ9+
-	 psF+INAfbFocSty46NMOk95uBDe6GW+nuEi4dOff+V1avkzMsyc9BzGna602i4YqN7
-	 0eMI67mlN0Pkw==
-From: Kalle Valo <kvalo@kernel.org>
-To: Vladislav Efanov <VEfanov@ispras.ru>
-Cc: Johannes Berg <johannes@sipsolutions.net>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  "John W.
- Linville" <linville@tuxdriver.com>,  linux-wireless@vger.kernel.org,
-  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  lvc-project@linuxtesting.org
-Subject: Re: [PATCH] cfg80211: Convert WARN_ON() to warning message
-References: <20240926133446.25445-1-VEfanov@ispras.ru>
-Date: Thu, 26 Sep 2024 18:58:37 +0300
-In-Reply-To: <20240926133446.25445-1-VEfanov@ispras.ru> (Vladislav Efanov's
-	message of "Thu, 26 Sep 2024 16:34:38 +0300")
-Message-ID: <874j629zki.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1727366349; c=relaxed/simple;
+	bh=2v2nI+JCWRDdjouZniI/NESZgicyvP+07ZPHhBMP+pU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y4/l+XYQri94ADnyN0tJx8BawhySvtUz7991kRHI07j4AgZpQGWeFmyal4uj9/An6LRQk9d204YrIHAMJWoFmZR4dYTfEY+RdQOudWyxNQ6c+wq2LdsYwyv2OolVT1ZwGCJMWozUjFybT8A1YM1zXg/K+lpgoy/+NXVxFSeVg7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ik7OxE0U; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727366346;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gFAsLAn7aoKzo71RR9rydtziNxEzX6MqXWWWxfPqW18=;
+	b=Ik7OxE0UbaGS34gmSgmP/gkXBg6TBP0rJjQYFXHVS+8Um1ZVXewAPeTv2QCulVXrNSq0LP
+	CkgpoNDVT87pKLHlEcaDdf6KOylDsB56rWDmg4ZXRFJx5IYBWfImbLLEVrXTyaxNXhRBL6
+	HkeXe+mdiG8yZdBULOxlT5G0iMBnQGc=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-359-K1UzhgOrNZG6e6r9Dx0AnA-1; Thu, 26 Sep 2024 11:59:05 -0400
+X-MC-Unique: K1UzhgOrNZG6e6r9Dx0AnA-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7acb118ba04so238856185a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:59:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727366344; x=1727971144;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gFAsLAn7aoKzo71RR9rydtziNxEzX6MqXWWWxfPqW18=;
+        b=wJPXhFsuV004zYjQpqiJY9ilQ8mCV/iU4TM/eaWky5/YYlbI89M3jgNyW1pRTBpZPT
+         XJU0m58aY+aFYZe10w0et7+I6Svx8ZxIv2593z5UUi8Co1LToi7yYvqGuZLz5CsbUOgG
+         u/OHeSAA1+RMLhGf7B4shiKze+qnipnTPCehfL72j/xbEFLyODqk3NbIfwYVgoaCb7LQ
+         xRkud1enrISfwEdEA9DOrSUPm6G2L8RYTOHBimIkxm6xdso8T992ojy7vv30+m8QHd+E
+         tWPMdO7sbzbHVqBTpvJJDloS2lBcEzhklq+s+RjHUgSfeEb0dBFnkT+XRwYTiiY3b9uX
+         qgpA==
+X-Gm-Message-State: AOJu0YyjBFBttU5BIMzzKuJRbEoGB8avHvR95FtmE4F3CV5TchmQ2LIS
+	XKgVwFMr+Q1oOvTrdEXM+xyLQjCXOgq8pB2i04KNCMNwqZNiYKHdy4qEvQyZk/L07gGnMduF5D7
+	BU95CCIx//irJQHT68hrKVcN4MbbhZvaYclHnwPeZSPHjsei/iwK4B/R+ITdYniPkPpTkiyRk
+X-Received: by 2002:a05:620a:3907:b0:7ac:c348:6a55 with SMTP id af79cd13be357-7ae3785aa4dmr7320785a.38.1727366344018;
+        Thu, 26 Sep 2024 08:59:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGRrdxCsCY8RTL63d/BLOR3iT34tGRFX8LGr+whBimlqLf5fLkvQQDVmOR5aqdwd7HjXAlecA==
+X-Received: by 2002:a05:620a:3907:b0:7ac:c348:6a55 with SMTP id af79cd13be357-7ae3785aa4dmr7318385a.38.1727366343632;
+        Thu, 26 Sep 2024 08:59:03 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae377ecc96sm2434085a.68.2024.09.26.08.59.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 08:59:03 -0700 (PDT)
+Date: Thu, 26 Sep 2024 11:59:00 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	syzbot+bf2c35fa302ebe3c7471@syzkaller.appspotmail.com
+Subject: Re: [PATCH v1] mm/huge_memory: check pmd_special() only after
+ pmd_present()
+Message-ID: <ZvWExCqCM7qzydP1@x1n>
+References: <20240926154234.2247217-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240926154234.2247217-1-david@redhat.com>
 
-Vladislav Efanov <VEfanov@ispras.ru> writes:
+On Thu, Sep 26, 2024 at 05:42:34PM +0200, David Hildenbrand wrote:
+> We should only check for pmd_special() after we made sure that we
+> have a present PMD. For example, if we have a migration PMD,
+> pmd_special() might indicate that we have a special PMD although we
+> really don't.
+> 
+> This fixes confusing migration entries as PFN mappings, and not
+> doing what we are supposed to do in the "is_swap_pmd()" case further
+> down in the function -- including messing up COW, page table handling
+> and accounting.
+> 
+> Reported-by: syzbot+bf2c35fa302ebe3c7471@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/lkml/66f15c8d.050a0220.c23dd.000f.GAE@google.com/
+> Fixes: bc02afbd4d73 ("mm/fork: accept huge pfnmap entries")
+> Cc: Peter Xu <peterx@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-> syzkaller got the following warning:
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 9992 at net/wireless/ibss.c:36 __cfg80211_ibss
->
-> This warning is the result of the race condition between the following
-> events:
->
-> event1                          event2                      event3
-> __ieee80211_sta_join_ibss()        |                          |
-> creates new cgf80211_bss           |                          |
-> structure.                         |                          |
-> Calls cfg80211_ibss_joined()       |                          |
-> which will scheduled               |                          |
-> new event_work.                    |                          |
->                          ieee80211_ibss_disconnect()          |
->                          is called due to connection          |
->                          dropped/ibss leaves to               |
->                          remove cfg80211_bss structure.       |
->                                                 event_work starts.
->                                           __cfg80211_ibss_joined()
->                                           is called and WARNING is
->                                           detected due to
->                                           cfg80211_bss structure was
->                                           removed by event2.
->
-> It is a normal situation when connection is dropped during handshaking.
-> So it looks reasonable to replace WARN_ON() with warning message to
-> prevent false alarm.
->
-> Found by Linux Verification Center (linuxtesting.org) with syzkaller.
-> Fixes: 04a773ade068 ("cfg80211/nl80211: add IBSS API")
-> Signed-off-by: Vladislav Efanov <VEfanov@ispras.ru>
-> ---
->  net/wireless/ibss.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/net/wireless/ibss.c b/net/wireless/ibss.c
-> index e6fdb0b8187d..93c8bee12bdf 100644
-> --- a/net/wireless/ibss.c
-> +++ b/net/wireless/ibss.c
-> @@ -34,8 +34,10 @@ void __cfg80211_ibss_joined(struct net_device *dev, const u8 *bssid,
->  	bss = cfg80211_get_bss(wdev->wiphy, channel, bssid, NULL, 0,
->  			       IEEE80211_BSS_TYPE_IBSS, IEEE80211_PRIVACY_ANY);
->  
-> -	if (WARN_ON(!bss))
-> +	if (!bss) {
-> +		pr_warn("cfg80211: cfg80211_bss with bssid %s not found.\n", bssid);
->  		return;
-> +	}
-
-If it's a normal case (disclaimer: didn't investigate that) the warning
-message could be more descriptive. I suspect the user is just confused
-after seeing that.
-
-Also 'wifi:' missing from subject.
+Reviewed-by: Peter Xu <peterx@redhat.com>
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+Peter Xu
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
