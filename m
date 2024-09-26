@@ -1,157 +1,141 @@
-Return-Path: <linux-kernel+bounces-340094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E57C986E7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:05:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D884986E81
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E87D1C227DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:05:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DACBC283035
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7BE13EFF3;
-	Thu, 26 Sep 2024 08:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB67D13CABC;
+	Thu, 26 Sep 2024 08:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kajsb+Km"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rkXycBby"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7460D1C6A1
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4D71C6A1
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727337937; cv=none; b=Q8eqs00U5pv2eHXDEwJC2fRixCVM40cmddVlx3IehVS464MOZSaHpQqBPliiG24hN7ncn5SHwD/6VxrKpbjd+TrvHSTjUwQUw2VrKih9vL+KHXKtQP3ArSjmGOcGa5UkEmY83Eh9KeySIpcFZflGuwTTDuwNzwPV7QTvB1KV7I4=
+	t=1727337990; cv=none; b=G+szmBZoMEOuoYRaARKW7neWOXR4MrURcN3Jy6FUE8R9OlxzZdoAIAmvHAOTG7qVGAZbBJN1j1K52I4EpEmb3ZLMtKzf44/kjUWLDn2qBDjdqPdBcwR5wR10LE+DknXQ1BiyuPgHfO4PIP8XSPaWO30MtXIvKu5EhUlwgL9z+bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727337937; c=relaxed/simple;
-	bh=bUXY6yWOmtpTdxj18iuqMd81YsLHeJYTQ7XXi66bsj8=;
+	s=arc-20240116; t=1727337990; c=relaxed/simple;
+	bh=biWe9SCPMWB4EBx4lKE9mL17X69k/v0fgz92fvOkNfg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B1XmahcsOxvk3Hz3wceKf/UQ3d5r8D5oiKB17X+fhbCWp6UKQWED+2n/W0WcaOlH2SkwlOX0ejgjm21LatZSMZ4bq5g0J25pNJk7YUAhjf0HDiYjZZtleB7uAGDFP61IcOzuBN53kEafuy1wsnogwtjg+mG4ap+XC/xIUH8yNgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kajsb+Km; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6db67400db4so7829407b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 01:05:35 -0700 (PDT)
+	 To:Cc:Content-Type; b=OzJCH5MII7psm/R5wWwGIOoh1xD6LF0/kSKUN9SdSDxJzt3tibZ5TknnRonMVjoYPo828pDxJRyaZyDv5tNZ8wDfSJZQVB8hsU8S3Pa/Itk62OQ0MnCuW6Jaxz1/RS6c8qPI0VfAU90kDuDyhQxPBYAlzfw29QqviqwGGLHX6wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rkXycBby; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb2191107so5549695e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 01:06:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727337934; x=1727942734; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=I9FWBets92WpJ5WZa/nOYlxesuTzHoeH8VJdqXlSdzM=;
-        b=kajsb+KmyYHyqWUy8acveHQSpUCtijRUyjvw/dMxXAmaCYSENQdgbtaTKwdnzXVKR1
-         PDR15VqvkNJa32zXAnIMd5sTiNGp/fuzblLfFdV7yrT9q2VIWj0Z5HXmzpGZc0FX8t5j
-         WaK4PAtPPOtHcBNiuSBSSPGyjWwSVL3Mb+m4f2G0JM0kTXLK1WUxLwbRmylTqIkIfAYH
-         nisDRRmkDz/SEGOuOv67sEHf/kzbb+AjL/8C3TqstjrGGR9iBfoAM/KV1ptntNVPjnjV
-         OBedpDxkasR6rb0i/2rkFiieoGbyoEJJ5ePmbMWPhfhyzqU1GeYcGXoWXrBvRn4x9cv9
-         PrvQ==
+        d=google.com; s=20230601; t=1727337987; x=1727942787; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=biWe9SCPMWB4EBx4lKE9mL17X69k/v0fgz92fvOkNfg=;
+        b=rkXycBbyJl1F4bqOWNsovXohYyj5qf1rUnfMPl9GwZeZxtnsajHFg4ehjvyXwhjyy+
+         feCaJVKI0BXKPUn7ZYtkpVb7y881taFOIuF/DjaqDFT0zP+1UF027FLZh/lVsrUV9VQG
+         kmME17WNno7fftv+tocZomb+QPgP0eR0Rf+MS6wlMA7SD2CgXuiwPL2Wh1shJXjCAM2Y
+         ZovWlgEHneADNNogtpJ71MAflysfYjrYnWLij5edAZwZN09iWrap7bWsMD/MEl6Be3wU
+         Y1l/gaTM03+IzlBwCrNVaOU+uvGyEpUvUE45OgPSG4mK5tyl/la4ccvfS4uFyum+3MAt
+         Kmbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727337934; x=1727942734;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I9FWBets92WpJ5WZa/nOYlxesuTzHoeH8VJdqXlSdzM=;
-        b=sab9sf/y/WaScjkJNI9snRW1tZdtwKDMxevR4TwpJtR0gdBPYRUB1A8HFLh4uTBeGC
-         WqNUrsGUX2+Q6xCpIiH0QkryfNKQ1EJimHkBFKnWP9wQ/zaAXGj+rWqKbgm7VipJBm4K
-         EX+6iJWB8cd1ddYp8bfvAc5fvqHyT5B/9UN86XG/NpapxvuXYFDxmL+n/2PC2sgF6Aws
-         3xBMACltWTpwGlUttBvq2EoO0LtOxLBdzs7XW+dRWFhDGqeKY7Ppn74Nszf7XhxYKnlp
-         /9Ze1F5qxf6u8TEGk5Kj2Yo7nbNa1LVON3XjcuK6naa6q7eU7b1vz8f49aIsYiynhJVb
-         gyjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQB0SeMxm5iPeslRMaltB+bUWMxEZIhG3HCfBxKOwoJXeFdd5F0C6XdAdg6o4eMZSBP6FtR+WMliRSzAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk8aXqM7/sJpNfOFuZmu6wXEQfYOXT1bvEqwjR03M9hgPz0IOx
-	i+WNRDA/kL8YbqA5D4hl6XhHnNiq2e5yqJxe4QQ5NqzJk1NJAzXVilYpQGaJRBhUOd8mlnJWNTu
-	XF0tHopQmm7b/frCyzpBXKFTc3xtpvAGyVTCdrg==
-X-Google-Smtp-Source: AGHT+IHN4aYzJJswa7TWE9GtZ8Qu5DXUmugZlTBtYvnKazEr7hRghRUxCKw7SCIId7wsA7FconFu6Ksp74+l6P9OlYY=
-X-Received: by 2002:a05:690c:368e:b0:6dd:cb3e:7069 with SMTP id
- 00721157ae682-6e21d863400mr48504937b3.24.1727337934254; Thu, 26 Sep 2024
- 01:05:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727337987; x=1727942787;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=biWe9SCPMWB4EBx4lKE9mL17X69k/v0fgz92fvOkNfg=;
+        b=L3aZcrpzRj/9nL1bb5BjZtWQPwQrL8Gy9NAjD1+IdLM/BuCpvrcD6gHK2uZYTJFcBm
+         nHEZtRSbJXfec+RjjW2rDSdGFzossEzuVZVO20Neg89oJpZmQHuf/93iPMwrDxV9RiEN
+         O9L9hGmLBsLiUzn6ZscUtMg2RwnxzbPYKy83wQMvhVpfDwY7lx5b4scxOksa0LhV1ipk
+         Pnt6OILM9GRImTa1UWwXZeHswD86Iqh285tBxn+/sDDdonjHZYM6mq7SMPVb96WlB3u7
+         SOj2OOxER+N/GVRykrlclxNagxbvWpvdARTMcPCRQLL718TOpCC4bXci2s8IWpW+lfkI
+         Q42Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWypnKHO4y03vBNYn7UNIP9XdR+U7axgMT2XLT/0oLk3n9RMVSOfiPNrtW9E6XZ8jKdNHEuMeTkK82DeSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGEam+V+zdFe2JjC/sh/oQ05hMAgyFyOFXbWy5JPJYij9h8B2v
+	hyV6Dfk6aC4Yrlv8JS9AIPEjuS5x97pgAzCFEyZ0PgvYjuuByZJ5zW8B5M8w74Sqsj1xncs2hP8
+	pRBVuN5aNz7c4LKsVY5mxhiOuQNA5ak629Qk/
+X-Google-Smtp-Source: AGHT+IGQf4MlOYVIyq+fv+nPRs9u8K5eq9suqxgAzZolV8xGTd0n1ASvxWSTxNXpoLbpcjjNRQOQzO0np9ED1wdtB5I=
+X-Received: by 2002:a05:600c:468f:b0:426:5e91:3920 with SMTP id
+ 5b1f17b1804b1-42e96248ad6mr39208825e9.29.1727337986691; Thu, 26 Sep 2024
+ 01:06:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926074755.22176-1-Hermes.Wu@ite.com.tw> <20240926074755.22176-3-Hermes.Wu@ite.com.tw>
- <ngr25a4x3s6hd3ztmj7h5y6zp3fxw3ojm4ax5wpk45iqdfkvwe@piznnnlyudmv> <3150e8e9ca754411bb0404475d149a8f@ite.com.tw>
-In-Reply-To: <3150e8e9ca754411bb0404475d149a8f@ite.com.tw>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 26 Sep 2024 10:05:22 +0200
-Message-ID: <CAA8EJppG01kE-USS6XYp5gRwEq-hNAUY0cBLfEcHZQgP8CRTsg@mail.gmail.com>
-Subject: Re: [PATCH v4 02/11] drm/bridge: it6505: fix aux operation for edid read
-To: Hermes.Wu@ite.com.tw
-Cc: Kenneth.Hung@ite.com.tw, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, angelogioacchino.delregno@collabora.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240924184401.76043-1-cmllamas@google.com> <20240924184401.76043-3-cmllamas@google.com>
+ <CAH5fLghapZJ4PbbkC8V5A6Zay-_sgTzwVpwqk6RWWUNKKyJC_Q@mail.gmail.com>
+ <ZvRM6RHstUiTSsk4@google.com> <CAH5fLggK3qZCXezUPg-xodUqeWRsVwZw=ywenvLAtfVRD3AgHw@mail.gmail.com>
+ <ZvRRJiRe7zwyPeY7@google.com>
+In-Reply-To: <ZvRRJiRe7zwyPeY7@google.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 26 Sep 2024 10:06:14 +0200
+Message-ID: <CAH5fLgiqgWy9BVpQ8dE6hMNvDopEMVT-4w3DffXONDo3t6NqEw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] binder: fix OOB in binder_add_freeze_work()
+To: Carlos Llamas <cmllamas@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Yu-Ting Tseng <yutingtseng@google.com>, linux-kernel@vger.kernel.org, 
+	kernel-team@android.com, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 26 Sept 2024 at 10:04, <Hermes.Wu@ite.com.tw> wrote:
+On Wed, Sep 25, 2024 at 8:06=E2=80=AFPM Carlos Llamas <cmllamas@google.com>=
+ wrote:
 >
-> >On Thu, Sep 26, 2024 at 03:47:52PM GMT, Hermes Wu wrote:
-> >> From: Hermes Wu <Hermes.wu@ite.com.tw>
-> >>
-> >> The EDID read operation can reach the maximum size of the AUX FIFO buffer.
+> On Wed, Sep 25, 2024 at 07:52:37PM +0200, Alice Ryhl wrote:
+> > > > I reviewed some other code paths to verify whether there are other
+> > > > problems with processes dying concurrently with operations on freez=
+e
+> > > > notifications. I didn't notice any other memory safety issues, but =
+I
+> > >
+> > > Yeah most other paths are protected with binder_procs_lock mutex.
+> > >
+> > > > noticed that binder_request_freeze_notification returns EINVAL if y=
+ou
+> > > > try to use it with a node from a dead process. That seems problemat=
+ic,
+> > > > as this means that there's no way to invoke that command without
+> > > > risking an EINVAL error if the remote process dies. We should not
+> > > > return EINVAL errors on correct usage of the driver.
+> > >
+> > > Agreed, this should probably be -ESRCH or something. I'll add it to v=
+2,
+> > > thanks for the suggestion.
 > >
-> >And? Commit message should describe why the change is necessary and what is being done. Just providing a statement is not enough.
+> > Well, maybe? I think it's best to not return errnos from these
+> > commands at all, as they obscure how many commands were processed.
+>
+> This is problematic, particularly when it's a multi-command buffer.
+> Userspace doesn't really know which one failed and if any of them
+> succeeded. Agreed.
+>
 > >
+> > Since the node still exists even if the process dies, perhaps we can
+> > just let you create the freeze notification even if it's dead? We can
+> > make it end up in the same state as if you request a freeze
+> > notification and the process then dies afterwards.
 >
-> The original AUX operation treat all reads by using data registers will be limited at 4 bytes.
-> AUX operation command CMD_AUX_I2C_EDID_READ using AUX FIFO is capable of reads data by 16 bytes each time.
-> It can improve speed of read EDID.
+> It's a dead node, there is no process associated with it. It would be
+> incorrect to setup the notification as it doesn't have a frozen status
+> anymore. We can't determine the ref->node->proc->is_frozen?
+>
+> We could silently fail and skip the notification, but I don't know if
+> userspace will attempt to release it later... and fail with EINVAL.
 
-improves, rather than "can improve". Please add this to the commit message.
+I mean, userspace *has* to be able to deal with the case where the
+process dies *right after* the freeze notification is registered. If
+we make the behavior where it's already dead be the same as that case,
+then we're not giving userspace any new things it needs to care about.
 
->
->
-> >>
-> >> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-> >> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
-> >> ---
-> >>  drivers/gpu/drm/bridge/ite-it6505.c | 8 ++++++--
-> >>  1 file changed, 6 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c
-> >> b/drivers/gpu/drm/bridge/ite-it6505.c
-> >> index 28a8043229d3..b451d3c2ac1d 100644
-> >> --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> >> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> >> @@ -1078,8 +1078,11 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
-> >>      int i, ret_size, ret = 0, request_size;
-> >>
-> >>      mutex_lock(&it6505->aux_lock);
-> >> -    for (i = 0; i < size; i += 4) {
-> >> -            request_size = min((int)size - i, 4);
-> >> +    for (i = 0; i < size; ) {
-> >> +            if (cmd == CMD_AUX_I2C_EDID_READ)
-> >> +                    request_size = min_t(int, (int)size - i, AUX_FIFO_MAX_SIZE);
-> >> +            else
-> >> +                    request_size = min_t(int, (int)size - i, 4);
-> >>              ret_size = it6505_aux_operation(it6505, cmd, address + i,
-> >>                                              buffer + i, request_size,
-> >>                                              reply);
-> >> @@ -1088,6 +1091,7 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
-> >>                      goto aux_op_err;
-> >>              }
-> >>
-> >> +            i += request_size;
-> >>              ret += ret_size;
-> >>      }
-> >>
-> >> --
-> >> 2.34.1
-> >>
-> >
-> >--
-> >With best wishes
-> >Dmitry
-> >
->
-> BR,
-> Hermes
->
-
-
--- 
-With best wishes
-Dmitry
+Alice
 
