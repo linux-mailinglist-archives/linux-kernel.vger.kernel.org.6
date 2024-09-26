@@ -1,144 +1,129 @@
-Return-Path: <linux-kernel+bounces-340083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB3A986E70
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:01:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E0FE986E7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB1B31C224F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:01:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF5A7B26479
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F7A13D638;
-	Thu, 26 Sep 2024 08:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80DC4C91;
+	Thu, 26 Sep 2024 08:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NhTXaH/D"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="EDnxg5qd"
+Received: from ironport.ite.com.tw (HC210-202-87-179.vdslpro.static.apol.com.tw [210.202.87.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723244C91
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB6B1C6A1
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.202.87.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727337684; cv=none; b=tdvi0vODhIVB1TRC3yUFKBJBZqkn4sB41SiILMLj3RgdsevIR2jINv8AziJs7zRxr4IuYapTHQ7OrGdyo72nOHWWqw287FXSiw52oKYAsh7KG+nupYEh+jO1YGzQMKZqgf1mC/fEp7sVaRMlQdLfoBqkzyRWOvHB/KbKDiX2Hvg=
+	t=1727337879; cv=none; b=KxTOFCEoQClxv6nlEH5cQUvVsJ6kio7OpkV6xleazANGBJnd22kLMP5mrF+D1taz0obx7CILz6h4L++ZweB4EBfGdzXknG27yVrdj0fd22NkM1RK/E3aK8wnrBJM+5/VfqPBYNG0+ekLcTIW4iVy7YAjR+gXVaYHsffAC6mHdjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727337684; c=relaxed/simple;
-	bh=AR6atAPvVEqP/mZPC144HSL/sY2AEBRd61UQzKSFzNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CDQWzVgwvPpO9BWWE+rr7tkgyn/o9ZELosOcd0tesTlw2KapOtL/F8a+lMtyzLiYgM41aYp8gsFS4Ww/Zn/E+bv6brd4hTBPjIb5PPCF/qGXVsT3sueNIAH5l7BAr1kVRCyWSUQuDGblQ5HkRqC8benTd8sZDVua1XTSheN2TvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NhTXaH/D; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f75aa08a96so6559781fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 01:01:22 -0700 (PDT)
+	s=arc-20240116; t=1727337879; c=relaxed/simple;
+	bh=zAhjqqnt+vihOHLXCcReZ2zUxhIQlge/XtTGcpTLwsY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=joI4kWaAmJluEahooeTsuvLK7Bf0S3E2dAeUD9Ma9R1NLdUISVrtfUFf9n6+6kAgD8zJ+Dys/Vhhd+o6axQ98s0vsAid67cbcszkY/S7420SIohyyaDVAb0dEePz5ONLKJwrtf14ESw1ZjMT/yXKAsIWjcxxTFFYor/BKoooeIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=EDnxg5qd reason="key not found in DNS"; arc=none smtp.client-ip=210.202.87.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727337680; x=1727942480; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mnYkXlO4xqxmTC9/oaS9Fy67Dlsqb/FqP+5KeOimFjE=;
-        b=NhTXaH/Dcx6hVoLo5GNIp0RupcBSjMHsz3Qus1S/UuA0y541Nn3QP/OLlUpy+2Kp9f
-         i5jYge8Wn8dMTMzI0zUrZVCRrjPHahijDDD04aqepBcaGkUjifp4LfXaoQQ9ULrYvb76
-         HHDYCzVcnHge1zpWfnLBXEIHmQusAjMFgQ2VYyuxX6jtVPfzZOaui05S4wIB/ayuzGYA
-         QWQ6QBiTEQciZgH4VztmAADlFictFFf6R/rhCMq/b+e/MuO4ra/+1YCThOL0/UhYsWHo
-         ajv+vT7VU+VmDOTmGH9gvQt7v//6ltyTcyrGeWHN6068p60cdF5k9SUyMPmBVEQP9RSo
-         t+fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727337680; x=1727942480;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mnYkXlO4xqxmTC9/oaS9Fy67Dlsqb/FqP+5KeOimFjE=;
-        b=ns/SukOAGXe8P6RsQc/g7wAPgvtejngAKvelWKwJG78KSkWwnR1FM53plhKRVclq2l
-         2m99SVNYyfBB6/tnN/DO1S7gbGdS6IqZWRGna831kv5Fh8SM03IfedomT710kUmeeyqG
-         gsPOtquHKD6tdXrj9GgXCDyxp2jiamyLq/3mt0lC6i+AE+9YvHu7mL/vAsclnwOzi/It
-         GewzBYL/ok9rJ/a5GzKQMSzPaX1nCxMGBkpx78cjczR24lTc+FXqoHHD/QQf1RQgMil/
-         Ve7OlPne7xc16fLZlzi1j+uWQGYAE91taphjTfunGC103N5oEC94FXrJsjqqtX0B91q4
-         aKqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMWmPuOxfON+P2RelAyqyQtOW5mcLuzN16M8Ei94k0i33e+hC6STF7MpXfhoXARuC2ZwW97WX8dPeBFXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7LtzKMu7fOhrW8mffQDljfdRG66CmwEFg+IkRALZxufkD6zMG
-	HfgaBgzvXnqJ7jaolpxko//UvFPq6SxYMw9rkhxqMx33Q6af6p58HM1eYWJkVSg=
-X-Google-Smtp-Source: AGHT+IFtMIQI9HYA+rwxH65S1pikrqxhoUIciOnR3NOXr2mN5NDNBRifM1sAHFCpXhAFfxKki4zyhw==
-X-Received: by 2002:a05:651c:50b:b0:2f3:ed84:9e66 with SMTP id 38308e7fff4ca-2f916007957mr32637691fa.13.1727337680478;
-        Thu, 26 Sep 2024 01:01:20 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d289b6f7sm7591461fa.113.2024.09.26.01.01.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 01:01:19 -0700 (PDT)
-Date: Thu, 26 Sep 2024 11:01:17 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Hermes Wu <Hermes.Wu@ite.com.tw>
-Cc: Kenneth Hung <Kenneth.hung@ite.com.tw>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Allen Chen <allen.chen@ite.com.tw>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 04/11] drm/bridge: it6505: fix aux command write to
- aux operaction register
-Message-ID: <fcy6i4cfmtpsgnvuqfjm7pwlkyuno65rij5w32snmjbudma6wp@ht2jqtj2rsxq>
+  d=ite.com.tw; s=dkim;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=zAhjqqnt+vihOHLXCcReZ2zUxhIQlge/XtTGcpTLwsY=;
+  b=EDnxg5qd1bDs4mDuvxnEAga4NAouo+z9efdC07xtGsivPoiJw79r0TU6
+   ESE6ZuL93y1JupGlTwmiWWnV4gMx3y3TTOfn3+98l0DNLaoeZlPKQEA6L
+   PXTk/JZQouRYAJFh8x7Z/oKjHG1mEDFI0sTs9uXlICG06tUmhCRRkFb0/
+   zerR3s7xADSDhA0ghsI5uKO8X61qO9RZscjZ3lOJFUsw7aErxurwB5W8z
+   hB5ly3G1OlYEmus2JghtWYrmHPIjqpcP4+7U4d4/qoZBjaVpHkXreupBH
+   JuTjgKt3ddk4GNTO0nfm1dJJd62ZyH4SaT35j7qBF6EC0PTHNnMREy6Qj
+   A==;
+X-CSE-ConnectionGUID: sbMb1ya5RT+tR1myXqvpBg==
+X-CSE-MsgGUID: MF3JLNddS8qEmW0shmyKng==
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 26 Sep 2024 16:04:35 +0800
+Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
+	by mse.ite.com.tw with ESMTP id 48Q84VKx056748;
+	Thu, 26 Sep 2024 16:04:31 +0800 (GMT-8)
+	(envelope-from Hermes.Wu@ite.com.tw)
+Received: from TPEMAIL1.internal.ite.com.tw (192.168.15.58) by
+ TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 26 Sep 2024 16:04:32 +0800
+Received: from TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68]) by
+ TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68%6]) with mapi id
+ 15.01.2507.039; Thu, 26 Sep 2024 16:04:32 +0800
+From: <Hermes.Wu@ite.com.tw>
+To: <dmitry.baryshkov@linaro.org>
+CC: <Kenneth.Hung@ite.com.tw>, <andrzej.hajda@intel.com>,
+        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+        <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+        <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+        <simona@ffwll.ch>, <angelogioacchino.delregno@collabora.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v4 02/11] drm/bridge: it6505: fix aux operation for edid
+ read
+Thread-Topic: [PATCH v4 02/11] drm/bridge: it6505: fix aux operation for edid
+ read
+Thread-Index: AQHbD+kjGrKEoIM+OEqhK3clD79cG7JptSew
+Date: Thu, 26 Sep 2024 08:04:32 +0000
+Message-ID: <3150e8e9ca754411bb0404475d149a8f@ite.com.tw>
 References: <20240926074755.22176-1-Hermes.Wu@ite.com.tw>
- <20240926074755.22176-5-Hermes.Wu@ite.com.tw>
+ <20240926074755.22176-3-Hermes.Wu@ite.com.tw>
+ <ngr25a4x3s6hd3ztmj7h5y6zp3fxw3ojm4ax5wpk45iqdfkvwe@piznnnlyudmv>
+In-Reply-To: <ngr25a4x3s6hd3ztmj7h5y6zp3fxw3ojm4ax5wpk45iqdfkvwe@piznnnlyudmv>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tm-snts-smtp: 66043082299B154D2E8B6C8604E5972B2BFE8F93E60CA43BFC5FDEB6A86BF5E02002:8
+Content-Type: text/plain; charset="big5"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926074755.22176-5-Hermes.Wu@ite.com.tw>
+X-MAIL:mse.ite.com.tw 48Q84VKx056748
 
-On Thu, Sep 26, 2024 at 03:47:54PM GMT, Hermes Wu wrote:
-> From: Hermes Wu <Hermes.wu@ite.com.tw>
-> 
-> The aux control register command is 4 bits LSB only, adding a MACRO to get
-> correct operaction command.
-
-Nit: AUX, add (not adding), macro.
-
-What happens if the driver doesn't limit the field? Let me guess, the
-KSV reading command is 0x10 (it should have been a part of the commit
-message, BTW), so it overrides some other bits? In such a case this
-either should be a part of the previous commit, or, at least, come
-before it.
-
-> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
-> ---
->  drivers/gpu/drm/bridge/ite-it6505.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-> index 0583abdca75f..d1f5220e04a6 100644
-> --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> @@ -329,6 +329,8 @@ enum aux_cmd_type {
->  	CMD_AUX_GET_KSV_LIST = 0x10,
->  };
->  
-> +#define GET_AUX_CONTROL_CODE(cmd) ((cmd) & 0x0F)
-> +
->  enum aux_cmd_reply {
->  	REPLY_ACK,
->  	REPLY_NACK,
-> @@ -1000,7 +1002,7 @@ static ssize_t it6505_aux_operation(struct it6505 *it6505,
->  				  size);
->  
->  	/* Aux Fire */
-> -	it6505_write(it6505, REG_AUX_CMD_REQ, cmd);
-> +	it6505_write(it6505, REG_AUX_CMD_REQ, GET_AUX_CONTROL_CODE(cmd));
->  
->  	ret = it6505_aux_wait(it6505);
->  	if (ret < 0)
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
+Pk9uIFRodSwgU2VwIDI2LCAyMDI0IGF0IDAzOjQ3OjUyUE0gR01ULCBIZXJtZXMgV3Ugd3JvdGU6
+DQo+PiBGcm9tOiBIZXJtZXMgV3UgPEhlcm1lcy53dUBpdGUuY29tLnR3Pg0KPj4gDQo+PiBUaGUg
+RURJRCByZWFkIG9wZXJhdGlvbiBjYW4gcmVhY2ggdGhlIG1heGltdW0gc2l6ZSBvZiB0aGUgQVVY
+IEZJRk8gYnVmZmVyLg0KPg0KPkFuZD8gQ29tbWl0IG1lc3NhZ2Ugc2hvdWxkIGRlc2NyaWJlIHdo
+eSB0aGUgY2hhbmdlIGlzIG5lY2Vzc2FyeSBhbmQgd2hhdCBpcyBiZWluZyBkb25lLiBKdXN0IHBy
+b3ZpZGluZyBhIHN0YXRlbWVudCBpcyBub3QgZW5vdWdoLg0KPg0KDQpUaGUgb3JpZ2luYWwgQVVY
+IG9wZXJhdGlvbiB0cmVhdCBhbGwgcmVhZHMgYnkgdXNpbmcgZGF0YSByZWdpc3RlcnMgd2lsbCBi
+ZSBsaW1pdGVkIGF0IDQgYnl0ZXMuDQpBVVggb3BlcmF0aW9uIGNvbW1hbmQgQ01EX0FVWF9JMkNf
+RURJRF9SRUFEIHVzaW5nIEFVWCBGSUZPIGlzIGNhcGFibGUgb2YgcmVhZHMgZGF0YSBieSAxNiBi
+eXRlcyBlYWNoIHRpbWUuDQpJdCBjYW4gaW1wcm92ZSBzcGVlZCBvZiByZWFkIEVESUQuDQoNCg0K
+Pj4gDQo+PiBGaXhlczogYjVjODRhOWVkY2Q0ICgiZHJtL2JyaWRnZTogYWRkIGl0NjUwNSBkcml2
+ZXIiKQ0KPj4gU2lnbmVkLW9mZi1ieTogSGVybWVzIFd1IDxIZXJtZXMud3VAaXRlLmNvbS50dz4N
+Cj4+IC0tLQ0KPj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvaXRlLWl0NjUwNS5jIHwgOCArKysr
+KystLQ0KPj4gIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0p
+DQo+PiANCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2l0ZS1pdDY1MDUu
+YyANCj4+IGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9pdGUtaXQ2NTA1LmMNCj4+IGluZGV4IDI4
+YTgwNDMyMjlkMy4uYjQ1MWQzYzJhYzFkIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJt
+L2JyaWRnZS9pdGUtaXQ2NTA1LmMNCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvaXRl
+LWl0NjUwNS5jDQo+PiBAQCAtMTA3OCw4ICsxMDc4LDExIEBAIHN0YXRpYyBzc2l6ZV90IGl0NjUw
+NV9hdXhfZG9fdHJhbnNmZXIoc3RydWN0IGl0NjUwNSAqaXQ2NTA1LA0KPj4gIAlpbnQgaSwgcmV0
+X3NpemUsIHJldCA9IDAsIHJlcXVlc3Rfc2l6ZTsNCj4+ICANCj4+ICAJbXV0ZXhfbG9jaygmaXQ2
+NTA1LT5hdXhfbG9jayk7DQo+PiAtCWZvciAoaSA9IDA7IGkgPCBzaXplOyBpICs9IDQpIHsNCj4+
+IC0JCXJlcXVlc3Rfc2l6ZSA9IG1pbigoaW50KXNpemUgLSBpLCA0KTsNCj4+ICsJZm9yIChpID0g
+MDsgaSA8IHNpemU7ICkgew0KPj4gKwkJaWYgKGNtZCA9PSBDTURfQVVYX0kyQ19FRElEX1JFQUQp
+DQo+PiArCQkJcmVxdWVzdF9zaXplID0gbWluX3QoaW50LCAoaW50KXNpemUgLSBpLCBBVVhfRklG
+T19NQVhfU0laRSk7DQo+PiArCQllbHNlDQo+PiArCQkJcmVxdWVzdF9zaXplID0gbWluX3QoaW50
+LCAoaW50KXNpemUgLSBpLCA0KTsNCj4+ICAJCXJldF9zaXplID0gaXQ2NTA1X2F1eF9vcGVyYXRp
+b24oaXQ2NTA1LCBjbWQsIGFkZHJlc3MgKyBpLA0KPj4gIAkJCQkJCWJ1ZmZlciArIGksIHJlcXVl
+c3Rfc2l6ZSwNCj4+ICAJCQkJCQlyZXBseSk7DQo+PiBAQCAtMTA4OCw2ICsxMDkxLDcgQEAgc3Rh
+dGljIHNzaXplX3QgaXQ2NTA1X2F1eF9kb190cmFuc2ZlcihzdHJ1Y3QgaXQ2NTA1ICppdDY1MDUs
+DQo+PiAgCQkJZ290byBhdXhfb3BfZXJyOw0KPj4gIAkJfQ0KPj4gIA0KPj4gKwkJaSArPSByZXF1
+ZXN0X3NpemU7DQo+PiAgCQlyZXQgKz0gcmV0X3NpemU7DQo+PiAgCX0NCj4+ICANCj4+IC0tDQo+
+PiAyLjM0LjENCj4+IA0KPg0KPi0tIA0KPldpdGggYmVzdCB3aXNoZXMNCj5EbWl0cnkNCj4NCg0K
+QlIsDQpIZXJtZXMNCg0K
 
