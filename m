@@ -1,141 +1,160 @@
-Return-Path: <linux-kernel+bounces-340408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F893987307
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:46:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4464298731A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 564C7284142
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF7A3286E5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA67F157A72;
-	Thu, 26 Sep 2024 11:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A9C14E2ED;
+	Thu, 26 Sep 2024 11:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="wuT2djYl"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GR3rdi7Y"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398F012BEBB;
-	Thu, 26 Sep 2024 11:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA2E12BEBB
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 11:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727351166; cv=none; b=q1LaBj0NjdPkb48nfP9ZpZPoQvYdtQvuXzmunDqmeD1BKBdozmuQBb2IPB6sJ3KTBDTKGxYDRyWc+IsA1R5z1sGeJyGwr7DhYDuM6LPyV1X2qH56CoMs0fsEQ+yURFlNrfx8cRRjyb9GeZeoqVZql1Sz3KV+lyMWdr2P0g1rasM=
+	t=1727351562; cv=none; b=JRTmFYestq1wZf4vhAbjxkjF/lD5zwdjiFPZdnn93april5sIOqGUj+CbB9XB3beKs5e78oTieia0C78qoDbDNPB+ln0EE6aEnPVspt98RkNp/gS1lSwr1H988RfFGv300/uv9frJvX8LprlBvhzlEPUrv5p/uh1coSHMqla3TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727351166; c=relaxed/simple;
-	bh=8aI0kGQIhwa+LpEzandVm20UuyTxqRP9xDt+Dw8EQA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IgqnxuaLHTZHwIzqkSDbtyhgMv3Dk1p3L2xS0SUj2y/nlYdX/Ty7DfqMOS7ZiKatVcQ0WR9LI+EtyqjRjUCw0IevXrYF1aQZpVGGau/WBoC8HzIUcSYdzmjjXF++itf2vy54GvnMgOUGBowr/lpabnvc7QlCIBvsk3utlYArhD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=wuT2djYl; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=gVy15gAavgqrcDP8xE+eSxR0KJiOJ5m7kfVHIJ0BOlk=; b=wuT2djYlIGUqRAS/a7lmjhbDsL
-	v7potOF7LYxwP59Y/CxF4mzj6zkMizBnZwbhpMZHR6znzcwvZbsF7Fk5JDtqmfAc/kavYUALwvX+J
-	AgJYEcjt7Ah+Jjlc+sdrZswl7qO52iMOXn6MtzwmbwJoRU6eHTrXLciWEjTcfjDA0ZUnFN7usTP7B
-	HQO1+XPfm/cK/TJ8u6NIyt2ZGfryE5GI84AsJmVBuSInBsL4HgXsz0gm6lUyiHPfK1KjzIFFSehV0
-	dfjZbhV0onCCsHN5Dnv9wKex4JsjfXDScPEglzRAYYUYF+KKJHK0zmvyTYf6h2MgzPzbCsrEjXfUk
-	jJfwPRcw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56324)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1stmwU-00089O-1j;
-	Thu, 26 Sep 2024 12:45:54 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1stmwP-0008IK-1W;
-	Thu, 26 Sep 2024 12:45:49 +0100
-Date: Thu, 26 Sep 2024 12:45:49 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Abhishek Chauhan <quic_abchauha@quicinc.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Halaney <ahalaney@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Brad Griffis <bgriffis@nvidia.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, kernel@quicinc.com
-Subject: Re: [PATCH net v3 1/2] net: phy: aquantia: AQR115c fix up PMA
- capabilities
-Message-ID: <ZvVJbakJ01++YHHG@shell.armlinux.org.uk>
-References: <20240925230129.2064336-1-quic_abchauha@quicinc.com>
- <20240925230129.2064336-2-quic_abchauha@quicinc.com>
+	s=arc-20240116; t=1727351562; c=relaxed/simple;
+	bh=4Z7MWmtSq4rFp2dyBVA0WZG/AytSGMpXW49uqCNdSoU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KE5PItrAp5bCbhHVNP0r0xViKalpVHrCAqpD7xKV3LmevcYyFXMFc0kjVQ0R9RDoLlcWR3XQgRChGJKfN8v9N3BFE3Fhgtflva+QdysAgdTfKmyVMXa8do3fETp6HVEUIdYOE7L6EaEQxilgKmyNnmbHMobFgj9D6/GA/Dyk5PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GR3rdi7Y; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5EAC08D4;
+	Thu, 26 Sep 2024 13:51:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727351470;
+	bh=4Z7MWmtSq4rFp2dyBVA0WZG/AytSGMpXW49uqCNdSoU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GR3rdi7YF+zJp+Cmyhsmxb0yOpprI2NmitXg8tLdwIlGzs4yrO9LSYhIYoOKQUNur
+	 9gTAH5bZwKpUV+5JGRtkyzd0xEeU7kh+B+P9DSOfpHua4oTv1ro/g6lpZ0EOdlYdW4
+	 3qH1VBS5YNo1ppjZ/cmR7qoss9Z55dmvJJx/i+rg=
+Message-ID: <5a540bdb-e3ca-494a-b68d-8f81f4d1cc1a@ideasonboard.com>
+Date: Thu, 26 Sep 2024 14:52:35 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925230129.2064336-2-quic_abchauha@quicinc.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: fw_devlinks preventing a panel driver from probing
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>,
+ Saravana Kannan <saravanak@google.com>,
+ Aradhya Bhatia <aradhya.bhatia@linux.dev>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Devarsh Thakkar <devarsht@ti.com>
+References: <1a1ab663-d068-40fb-8c94-f0715403d276@ideasonboard.com>
+ <34mewzvfyjsvyud3lzy6swxs7sr64xkgrbkxtvyw3czvoerct7@7guo32ehwa52>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
+ wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
+ Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
+ eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
+ LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
+ G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
+ DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
+ 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
+ rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
+ Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
+ aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
+ ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
+ PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
+ VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
+ 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
+ uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
+ R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
+ sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
+ Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
+ PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
+ dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
+ qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
+ hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
+ DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
+ KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
+ 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
+ xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
+ UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
+ /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
+ 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
+ 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
+ mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
+ 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
+ suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
+ xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
+ m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
+ CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
+ CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
+ 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
+ ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
+ yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
+ 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
+In-Reply-To: <34mewzvfyjsvyud3lzy6swxs7sr64xkgrbkxtvyw3czvoerct7@7guo32ehwa52>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 25, 2024 at 04:01:28PM -0700, Abhishek Chauhan wrote:
-> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-> index e982e9ce44a5..88ba12aaf6e0 100644
-> --- a/drivers/net/phy/aquantia/aquantia_main.c
-> +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> @@ -767,6 +767,33 @@ static int aqr111_config_init(struct phy_device *phydev)
->  	return aqr107_config_init(phydev);
->  }
->  
-> +static int aqr115c_get_features(struct phy_device *phydev)
-> +{
-> +	int ret;
-> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported) = { 0, };
+Hi,
 
-Networking uses reverse-christmas tree ordering for variables. Please
-swap the order of these.
+On 21/09/2024 23:15, Dmitry Baryshkov wrote:
+> On Mon, Sep 16, 2024 at 02:51:57PM GMT, Tomi Valkeinen wrote:
+>> Hi,
+>>
+>> We have an issue where two devices have dependencies to each other,
+>> according to drivers/base/core.c's fw_devlinks, and this prevents them from
+>> probing. I've been adding debugging to the core.c, but so far I don't quite
+>> grasp the issue, so I thought to ask. Maybe someone can instantly say that
+>> this just won't work...
+> 
+> Well, just 2c from my side. I consider that fw_devlink adds devlinks for
+> of-graph nodes to be a bug. It doesn't know about the actual direction
+> of dependencies between corresponding devices or about the actual
+> relationship between drivers. It results in a loop which is then broken
+> in some way. Sometimes this works. Sometimes it doesn't. Sometimes this
+> hides actual dependencies between devices. I tried reverting offending
+> parts of devlink, but this attempt failed.
 
-Also, I think this would be better:
+I was also wondering about this. The of-graphs are always two-way links, 
+so the system must always mark them as a cycle. But perhaps there are 
+other benefits in the devlinks than dependency handling?
 
-	unsigned long *supported = phydev->supported;
+>> If I understand the fw_devlink code correctly, in a normal case the links
+>> formed with media graphs are marked as a cycle (FWLINK_FLAG_CYCLE), and then
+>> ignored as far as probing goes.
+>>
+>> What we see here is that when using a single-link OLDI panel, the panel
+>> driver's probe never gets called, as it depends on the OLDI, and the link
+>> between the panel and the OLDI is not a cycle.
+> 
+> I think in your case you should be able to fix the issue by using the
+> FWNODE_FLAG_NOT_DEVICE, which is intented to be used in such cases. You
 
-You don't actually need a separate mask.
+How would I go using FWNODE_FLAG_NOT_DEVICE? Won't this only make a 
+difference if the flag is there at early stage when the linux devices 
+are being created? I think it's too late if I set the flag when the dss 
+driver is being probed.
 
-> +
-> +	/* Normal feature discovery */
-> +	ret = genphy_c45_pma_read_abilities(phydev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* PHY FIXUP */
-> +	/* Although the PHY sets bit 12.18.19.48, it does not support 5G/10G modes */
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, phydev->supported);
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKX4_Full_BIT, phydev->supported);
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKR_Full_BIT, phydev->supported);
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, phydev->supported);
+> have a dependency on DT node which doesn't have backing device.
 
-For the above four, s/phydev->supported/supported/
+Well, there is a backing device, the DSS. But if you mean that the 
+system at the moment cannot figure out that there is a backing device, 
+then true.
 
-> +
-> +	/* Phy supports Speeds up to 2.5G with Autoneg though the phy PMA says otherwise */
-> +	linkmode_copy(supported, phy_gbit_features);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseX_Full_BIT, supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
-> +
-> +	linkmode_or(phydev->supported, supported, phydev->supported);
+  Tomi
 
-Drop this linkmode_or().
-
-You'll then be modifying phydev->supported directly, which is totally
-fine.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
