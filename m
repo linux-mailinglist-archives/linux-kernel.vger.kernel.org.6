@@ -1,139 +1,285 @@
-Return-Path: <linux-kernel+bounces-339952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55F87986C8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:32:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E594986C4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 846891C24706
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D970D284735
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00CA1A4E97;
-	Thu, 26 Sep 2024 06:30:51 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DD3186E37;
+	Thu, 26 Sep 2024 06:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2BLsJsk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5FC1A4E82;
-	Thu, 26 Sep 2024 06:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18661171C;
+	Thu, 26 Sep 2024 06:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727332251; cv=none; b=p+UdmmeMo1uEitZA4eOhSnoSAm+0FkCjd2c+2P6q3Xt0nU2HdnDLmlqYC7syrC+FbCuxlKhRCUD5fA1yO0nnbXbE8Wi8Dffgs0P2rhJTTP9M4ApuQpRp0as6J8mnxMLEij89I38T5A6546cP6uutwxlVnxYXfnkPsRO2X8c//JM=
+	t=1727331161; cv=none; b=pxLk3nMKr1Ir7CmKHnFSd1ARpY7A17BT+Z1F7e1Kxc1ASTHztLfSPBo10Eu/DpqIcLHAr5hkSADmFW4a3h2SeCunQzMGROZhjKfrWqWK0JqL/yAxwQRTv3bVsUqIbnL8J23w4ZJPRPBXCGsyo/L+E7cq40j5NmVOnXAaEy+RBng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727332251; c=relaxed/simple;
-	bh=dhtuowUS90bkYojYwsBSh7oyuNPvGYsFGnGhqpWqytA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=b/lVlF18R/Z3fuEPxhIwmrFUZ9S1KEWNGkiIrbsMoqOCUeOoRLCykyOG9FUGcDBqO8hzjw9gSin9aa35Jg2vTva8Ci0SvyLUo2ZLTRX1zKHEoZsyzhXQD6Dr7Zz3QyNvAUTVYhV4/UH0rQtHWEzlcAFxYvmwhV7+WIUqEgMl3o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A6F79202045;
-	Thu, 26 Sep 2024 08:30:47 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6CFF920184C;
-	Thu, 26 Sep 2024 08:30:47 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 736A0183F0C7;
-	Thu, 26 Sep 2024 14:30:44 +0800 (+08)
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: l.stach@pengutronix.de,
-	kwilczynski@kernel.org,
-	bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	frank.li@nxp.com,
-	robh+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	festevam@gmail.com,
-	s.hauer@pengutronix.de
-Cc: linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	kernel@pengutronix.de,
-	imx@lists.linux.dev,
-	Richard Zhu <hongxing.zhu@nxp.com>
-Subject: [PATCH v3 9/9] arm64: dts: imx95: Add ref clock for i.MX95 PCIe
-Date: Thu, 26 Sep 2024 14:07:53 +0800
-Message-Id: <1727330873-17486-10-git-send-email-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1727330873-17486-1-git-send-email-hongxing.zhu@nxp.com>
-References: <1727330873-17486-1-git-send-email-hongxing.zhu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1727331161; c=relaxed/simple;
+	bh=vyhvbMXo1ody6rcBI8E09FjxzCy/zj4ub5XtiAxNTHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e73Ld7do0/4MILBh9L1i9ErGenyF92pnmKDJ/B+27XhgLoZIujLROwsULU308ODr9jRlssUzI0464wx++6CyoSp/mWfZHCclWeUNHqfmkE+Ld15U9sEFf+1qnc2ddVY/rxQe/F43g1xiNvxGm8npw04QYky5gEuJkhc9ziP8kYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r2BLsJsk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 477B7C4CEC5;
+	Thu, 26 Sep 2024 06:12:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727331161;
+	bh=vyhvbMXo1ody6rcBI8E09FjxzCy/zj4ub5XtiAxNTHc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r2BLsJskTeJI1aP1XGCAMyahlW0mF2MaYnOVVHQPCaRkpIBDLeGI1bzkkBdSEkJ4B
+	 kS/cGKlT23HLDZ4wdo1Njgc26A2d45DoV9OEfOgzydCWqLhIpQo3mQ3yPvlVFsCe9/
+	 QWkHAZOS6JC4+D8FoUGVw/eT4rLFegj5ePGKA27kNmWxv1V83qM5+MRGlF8xoM5lX1
+	 QBhfknnYj6ZtK15MXDqhjUlbTtpA3/8iuz8qeLGuIxVHgEYGcCdG6kR0j8ZZyHGK6O
+	 oSAxt5cY8EOJSeo5QDe10dneU7WOo+dSXojxHWscs5tLx033Ux+zaC8DlzdFJGqXsr
+	 wnQIuGGdLgI5A==
+Date: Wed, 25 Sep 2024 23:12:38 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	irogers@google.com, swapnil.sapkal@amd.com, yu.c.chen@intel.com,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, rostedt@goodmis.org, vincent.guittot@linaro.org,
+	bristot@redhat.com, adrian.hunter@intel.com, james.clark@arm.com,
+	kan.liang@linux.intel.com, gautham.shenoy@amd.com,
+	kprateek.nayak@amd.com, juri.lelli@redhat.com,
+	yangjihong@bytedance.com, void@manifault.com, tj@kernel.org,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	santosh.shukla@amd.com, ananth.narayan@amd.com,
+	sandipan.das@amd.com
+Subject: Re: [PATCH 2/5] perf sched stats: Add record and rawdump support
+Message-ID: <ZvT7VkSUpNFKfqge@google.com>
+References: <20240916164722.1838-1-ravi.bangoria@amd.com>
+ <20240916164722.1838-3-ravi.bangoria@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240916164722.1838-3-ravi.bangoria@amd.com>
 
-Add ref clock for i.MX95 PCIe.
+On Mon, Sep 16, 2024 at 04:47:19PM +0000, Ravi Bangoria wrote:
+> From: Swapnil Sapkal <swapnil.sapkal@amd.com>
+> 
+> Define new, perf tool only, sample types and their layouts. Add logic
+> to parse /proc/schedstat, convert it to perf sample format and save
+> samples to perf.data file with `perf sched stats record` command. Also
+> add logic to read perf.data file, interpret schedstat samples and
+> print rawdump of samples with `perf script -D`.
+> 
+> Note that, /proc/schedstat file output is standardized with version
+> number. The patch supports v15 but older or newer version can be added
+> easily.
+> 
+> Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
+> Co-developed-by: Ravi Bangoria <ravi.bangoria@amd.com>
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
+> ---
+>  tools/lib/perf/Documentation/libperf.txt      |   2 +
+>  tools/lib/perf/Makefile                       |   2 +-
+>  tools/lib/perf/include/perf/event.h           |  42 +++
+>  .../lib/perf/include/perf/schedstat-cpu-v15.h |  13 +
+>  .../perf/include/perf/schedstat-domain-v15.h  |  40 +++
+>  tools/perf/builtin-inject.c                   |   2 +
+>  tools/perf/builtin-sched.c                    | 222 +++++++++++++++-
+>  tools/perf/util/event.c                       |  98 +++++++
+>  tools/perf/util/event.h                       |   2 +
+>  tools/perf/util/session.c                     |  20 ++
+>  tools/perf/util/synthetic-events.c            | 249 ++++++++++++++++++
+>  tools/perf/util/synthetic-events.h            |   3 +
+>  tools/perf/util/tool.c                        |  20 ++
+>  tools/perf/util/tool.h                        |   4 +-
+>  14 files changed, 716 insertions(+), 3 deletions(-)
+>  create mode 100644 tools/lib/perf/include/perf/schedstat-cpu-v15.h
+>  create mode 100644 tools/lib/perf/include/perf/schedstat-domain-v15.h
+> 
+> diff --git a/tools/lib/perf/Documentation/libperf.txt b/tools/lib/perf/Documentation/libperf.txt
+> index fcfb9499ef9c..39c78682ad2e 100644
+> --- a/tools/lib/perf/Documentation/libperf.txt
+> +++ b/tools/lib/perf/Documentation/libperf.txt
+> @@ -211,6 +211,8 @@ SYNOPSIS
+>    struct perf_record_time_conv;
+>    struct perf_record_header_feature;
+>    struct perf_record_compressed;
+> +  struct perf_record_schedstat_cpu;
+> +  struct perf_record_schedstat_domain;
+>  --
+>  
+>  DESCRIPTION
+> diff --git a/tools/lib/perf/Makefile b/tools/lib/perf/Makefile
+> index 3a9b2140aa04..ebbfea891a6a 100644
+> --- a/tools/lib/perf/Makefile
+> +++ b/tools/lib/perf/Makefile
+> @@ -187,7 +187,7 @@ install_lib: libs
+>  		$(call do_install_mkdir,$(libdir_SQ)); \
+>  		cp -fpR $(LIBPERF_ALL) $(DESTDIR)$(libdir_SQ)
+>  
+> -HDRS := bpf_perf.h core.h cpumap.h threadmap.h evlist.h evsel.h event.h mmap.h
+> +HDRS := bpf_perf.h core.h cpumap.h threadmap.h evlist.h evsel.h event.h mmap.h schedstat-cpu-v15.h schedstat-domain-v15.h
+>  INTERNAL_HDRS := cpumap.h evlist.h evsel.h lib.h mmap.h rc_check.h threadmap.h xyarray.h
+>  
+>  INSTALL_HDRS_PFX := $(DESTDIR)$(prefix)/include/perf
+> diff --git a/tools/lib/perf/include/perf/event.h b/tools/lib/perf/include/perf/event.h
+> index 37bb7771d914..35be296d68d5 100644
+> --- a/tools/lib/perf/include/perf/event.h
+> +++ b/tools/lib/perf/include/perf/event.h
+> @@ -457,6 +457,44 @@ struct perf_record_compressed {
+>  	char			 data[];
+>  };
+>  
+> +struct perf_record_schedstat_cpu_v15 {
+> +#define CPU_FIELD(_type, _name, _ver)		_type _name;
+> +#include "schedstat-cpu-v15.h"
+> +#undef CPU_FIELD
+> +};
+> +
+> +struct perf_record_schedstat_cpu {
+> +	struct perf_event_header header;
+> +	__u16			 version;
+> +	__u64			 timestamp;
+> +	__u32			 cpu;
 
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx95.dtsi | 25 ++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
+Can you change the layout to minimize the paddings?  Probably better to
+add an explicit field for unused bits.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
-index 1bbf9a0468f6..83a6b0a8da3e 100644
---- a/arch/arm64/boot/dts/freescale/imx95.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
-@@ -221,6 +221,13 @@ core5 {
- 		};
- 	};
- 
-+	clk_dummy: clock-dummy {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+		clock-output-names = "clk_dummy";
-+	};
-+
- 	clk_ext1: clock-ext1 {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -1055,6 +1062,14 @@ smmu: iommu@490d0000 {
- 			};
- 		};
- 
-+		hsio_blk_ctl: syscon@4c0100c0 {
-+			compatible = "nxp,imx95-hsio-blk-ctl", "syscon";
-+			reg = <0x0 0x4c0100c0 0x0 0x4>;
-+			#clock-cells = <1>;
-+			clocks = <&clk_dummy>;
-+			power-domains = <&scmi_devpd IMX95_PD_HSIO_TOP>;
-+		};
-+
- 		pcie0: pcie@4c300000 {
- 			compatible = "fsl,imx95-pcie";
- 			reg = <0 0x4c300000 0 0x10000>,
-@@ -1082,8 +1097,9 @@ pcie0: pcie@4c300000 {
- 			clocks = <&scmi_clk IMX95_CLK_HSIO>,
- 				 <&scmi_clk IMX95_CLK_HSIOPLL>,
- 				 <&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
--				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
--			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux";
-+				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>,
-+				 <&hsio_blk_ctl 0>;
-+			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux", "ref";
- 			assigned-clocks =<&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
- 					 <&scmi_clk IMX95_CLK_HSIOPLL>,
- 					 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
-@@ -1149,8 +1165,9 @@ pcie1: pcie@4c380000 {
- 			clocks = <&scmi_clk IMX95_CLK_HSIO>,
- 				 <&scmi_clk IMX95_CLK_HSIOPLL>,
- 				 <&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
--				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
--			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux";
-+				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>,
-+				 <&hsio_blk_ctl 0>;
-+			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux", "ref";
- 			assigned-clocks =<&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
- 					 <&scmi_clk IMX95_CLK_HSIOPLL>,
- 					 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
--- 
-2.37.1
 
+> +	union {
+> +		struct perf_record_schedstat_cpu_v15 v15;
+> +	};
+> +};
+> +
+> +struct perf_record_schedstat_domain_v15 {
+> +#define DOMAIN_FIELD(_type, _name, _ver)	_type _name;
+> +#include "schedstat-domain-v15.h"
+> +#undef DOMAIN_FIELD
+> +};
+> +
+> +#define DOMAIN_NAME_LEN		16
+> +
+> +struct perf_record_schedstat_domain {
+> +	struct perf_event_header header;
+> +	__u16			 version;
+> +	__u64			 timestamp;
+> +	__u32			 cpu;
+> +	__u16			 domain;
+
+Ditto.
+
+> +	char			 name[DOMAIN_NAME_LEN];
+> +	union {
+> +		struct perf_record_schedstat_domain_v15 v15;
+> +	};
+> +	__u16			 nr_cpus;
+> +	__u8			 cpu_mask[];
+> +};
+> +
+>  enum perf_user_event_type { /* above any possible kernel type */
+>  	PERF_RECORD_USER_TYPE_START		= 64,
+>  	PERF_RECORD_HEADER_ATTR			= 64,
+> @@ -478,6 +516,8 @@ enum perf_user_event_type { /* above any possible kernel type */
+>  	PERF_RECORD_HEADER_FEATURE		= 80,
+>  	PERF_RECORD_COMPRESSED			= 81,
+>  	PERF_RECORD_FINISHED_INIT		= 82,
+> +	PERF_RECORD_SCHEDSTAT_CPU		= 83,
+> +	PERF_RECORD_SCHEDSTAT_DOMAIN		= 84,
+>  	PERF_RECORD_HEADER_MAX
+>  };
+>  
+> @@ -518,6 +558,8 @@ union perf_event {
+>  	struct perf_record_time_conv		time_conv;
+>  	struct perf_record_header_feature	feat;
+>  	struct perf_record_compressed		pack;
+> +	struct perf_record_schedstat_cpu	schedstat_cpu;
+> +	struct perf_record_schedstat_domain	schedstat_domain;
+>  };
+>  
+>  #endif /* __LIBPERF_EVENT_H */
+> diff --git a/tools/lib/perf/include/perf/schedstat-cpu-v15.h b/tools/lib/perf/include/perf/schedstat-cpu-v15.h
+> new file mode 100644
+> index 000000000000..8e4355ee3705
+> --- /dev/null
+> +++ b/tools/lib/perf/include/perf/schedstat-cpu-v15.h
+> @@ -0,0 +1,13 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifdef CPU_FIELD
+> +CPU_FIELD(__u32, yld_count, v15)
+> +CPU_FIELD(__u32, array_exp, v15)
+> +CPU_FIELD(__u32, sched_count, v15)
+> +CPU_FIELD(__u32, sched_goidle, v15)
+> +CPU_FIELD(__u32, ttwu_count, v15)
+> +CPU_FIELD(__u32, ttwu_local, v15)
+> +CPU_FIELD(__u64, rq_cpu_time, v15)
+> +CPU_FIELD(__u64, run_delay, v15)
+> +CPU_FIELD(__u64, pcount, v15)
+> +#endif
+
+Can we have a single schedstat.h containing both CPU fields and domain
+fields?  You might require users to define the macro always and get rid
+of the ifdef condition here.
+
+Also is there any macro magic to handle the version number?  I think you
+can have the number only (15; without 'v') and compare with input if
+needed..
+
+Thanks,
+Namhyung
+
+
+> diff --git a/tools/lib/perf/include/perf/schedstat-domain-v15.h b/tools/lib/perf/include/perf/schedstat-domain-v15.h
+> new file mode 100644
+> index 000000000000..422e713d617a
+> --- /dev/null
+> +++ b/tools/lib/perf/include/perf/schedstat-domain-v15.h
+> @@ -0,0 +1,40 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifdef DOMAIN_FIELD
+> +DOMAIN_FIELD(__u32, idle_lb_count, v15)
+> +DOMAIN_FIELD(__u32, idle_lb_balanced, v15)
+> +DOMAIN_FIELD(__u32, idle_lb_failed, v15)
+> +DOMAIN_FIELD(__u32, idle_lb_imbalance, v15)
+> +DOMAIN_FIELD(__u32, idle_lb_gained, v15)
+> +DOMAIN_FIELD(__u32, idle_lb_hot_gained, v15)
+> +DOMAIN_FIELD(__u32, idle_lb_nobusyq, v15)
+> +DOMAIN_FIELD(__u32, idle_lb_nobusyg, v15)
+> +DOMAIN_FIELD(__u32, busy_lb_count, v15)
+> +DOMAIN_FIELD(__u32, busy_lb_balanced, v15)
+> +DOMAIN_FIELD(__u32, busy_lb_failed, v15)
+> +DOMAIN_FIELD(__u32, busy_lb_imbalance, v15)
+> +DOMAIN_FIELD(__u32, busy_lb_gained, v15)
+> +DOMAIN_FIELD(__u32, busy_lb_hot_gained, v15)
+> +DOMAIN_FIELD(__u32, busy_lb_nobusyq, v15)
+> +DOMAIN_FIELD(__u32, busy_lb_nobusyg, v15)
+> +DOMAIN_FIELD(__u32, newidle_lb_count, v15)
+> +DOMAIN_FIELD(__u32, newidle_lb_balanced, v15)
+> +DOMAIN_FIELD(__u32, newidle_lb_failed, v15)
+> +DOMAIN_FIELD(__u32, newidle_lb_imbalance, v15)
+> +DOMAIN_FIELD(__u32, newidle_lb_gained, v15)
+> +DOMAIN_FIELD(__u32, newidle_lb_hot_gained, v15)
+> +DOMAIN_FIELD(__u32, newidle_lb_nobusyq, v15)
+> +DOMAIN_FIELD(__u32, newidle_lb_nobusyg, v15)
+> +DOMAIN_FIELD(__u32, alb_count, v15)
+> +DOMAIN_FIELD(__u32, alb_failed, v15)
+> +DOMAIN_FIELD(__u32, alb_pushed, v15)
+> +DOMAIN_FIELD(__u32, sbe_count, v15)
+> +DOMAIN_FIELD(__u32, sbe_balanced, v15)
+> +DOMAIN_FIELD(__u32, sbe_pushed, v15)
+> +DOMAIN_FIELD(__u32, sbf_count, v15)
+> +DOMAIN_FIELD(__u32, sbf_balanced, v15)
+> +DOMAIN_FIELD(__u32, sbf_pushed, v15)
+> +DOMAIN_FIELD(__u32, ttwu_wake_remote, v15)
+> +DOMAIN_FIELD(__u32, ttwu_move_affine, v15)
+> +DOMAIN_FIELD(__u32, ttwu_move_balance, v15)
+> +#endif /* DOMAIN_FIELD */
 
