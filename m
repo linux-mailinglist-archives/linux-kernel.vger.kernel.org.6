@@ -1,207 +1,432 @@
-Return-Path: <linux-kernel+bounces-340313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED48987172
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:25:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A44987177
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D63C1C248A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:25:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0336D1C2435B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5ABC1AD9D3;
-	Thu, 26 Sep 2024 10:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8F91AC8AB;
+	Thu, 26 Sep 2024 10:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="Fm+wH5Cq"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2041.outbound.protection.outlook.com [40.107.21.41])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xJYsR13B"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2045.outbound.protection.outlook.com [40.107.237.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876681ACE00;
-	Thu, 26 Sep 2024 10:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9710F1ABEBC;
+	Thu, 26 Sep 2024 10:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.45
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727346245; cv=fail; b=UAQQ1oH6Cd0T8iAT6I9G6Xhj1BNry2PzC1ILrDeDhcS6UCEusnT4die715yuZWLIG1/LrICrNKlJnBLxae8UOn+4VGWlF6jd3RDns/GNfmqPIcAw5Tyo4/hZGHLRYcGOOoU+jU/aEthlLkL2WB+lGv1ePBEfdrusnRX4kzDbpvo=
+	t=1727346349; cv=fail; b=RUUeGYPCrzjOtH2kSZcURNtqWl0T4uPi1DdR1QFndSl4X1jQCB0M7CzScDDFuLRe25kp7L7bKfK/hDWF+ElvKG3z7pOKfLdJW6rRp4ObqIz4BFrgNu/SPFYQrlJZhvgOHfIeZYzUUsZbOYcX7FAG9ayhBhcFwtHZ8lCo6SYF358=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727346245; c=relaxed/simple;
-	bh=Z2sL7C924cvBOwN1Ue7PAn2OLZq9ahajNrN9SSAPxG4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tB/j28DPfpluj8qxPZdzF7BB1UwpOnmFHmMXlGJimsOq2FsE1YiysJQgkjLvI/Zkq/FGVhXuth3XiTTIuGm5Kk/S+08LgZg7FpQQLvtxPphMsDHhedYgVccbq18lGCNTFPoT24BvBtR4m4UjxpxpjldVjFX1wMbb5Mi+hbHaiFY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=Fm+wH5Cq; arc=fail smtp.client-ip=40.107.21.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+	s=arc-20240116; t=1727346349; c=relaxed/simple;
+	bh=G7k6scg3aoTJeIBCL14NUYl3LwVwh8w41wyh5etzQM8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=OM/XTVP/rUFd0OwertYAMl6mIh4n0LS3fzPHQmvlE+r2Oa/t4cAjQPX7U38j/JqE8EUtvhec+e7TWHzX/KF+LkEaA2EfL9VvzkgOM1smi8egUOzuzsFvsz09CrPgBEL6DF7M+GKEDoRhJmAZQJikPCnLWM8cYa26uAu8zJ26oZ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xJYsR13B; arc=fail smtp.client-ip=40.107.237.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IqJbUb2eyzYamx2G5f1BirjsQKCRnrG77bmuOwXNNLPzypK/Upk0Aytmm1ui5RY36SNQJSJNWfa+cexydd2H9P+9XDM6AMt0C1+pfJ5XmoIzse7LF2sRzu2dla3qFcDjJMIWyFfiabEbKfwPIkHHboVuwoQybggXPEGxyJnnrTjgawfnxkTeAEoqhX+dNKELpuVIECc+5RTy0kWW/k1QQCcXsI4Y8AM1u/DoVIsuglKUVJq1dovwgV2CrmW50H7oADGqSKqQIxV25I17AenZG/9CdA6ame0wjszcTjUJf4uZqoPYh071E6X5HhrRs6iaeAcawCI8ynFEVNJnnpMDqg==
+ b=yLfppv60q3FFWkPHp7xJqfe7B1PNrvEsYH+Hc1LWAUAtVv75WcsXOl2lca0HuXWp5EwEptOe0JVp+QDIhG1bjwLyTMbarYZTgFGQKbeWsQN+NseqXeYGA2uoKKUbwW31o/Op0qnO64DBdb2D7jZNKwlezKnEwbzrKLgj6uSIlAnnAk+az3nwUiOSqNcQh9BuoT+wlC9yh6ZzQMeNPbAR/muFEb1Bg6GfQ6EyDQDVHAOPYvSjbWB4WurykwgKjUKdMeegBYkB54HSQGxosDSQiDo5IAg+2Tnj8TEZQ5HZpk5GI17T3fBwUeKQZB0P6vBFQc8o7eW7SIaA509d+zdhYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z2sL7C924cvBOwN1Ue7PAn2OLZq9ahajNrN9SSAPxG4=;
- b=oxDoeAoGefWfwGUe9SWBVJwsFDRl8H5ZTvaHghFvuvA2zzD/Ekn6S/wCDNU2ioyxU2dU5vgmkmnTDeajauSYx6PWbGV2TJEupjUfIphvPgBFCCW882jKzbxB4Em5bD43UPMvB/gXbX0dDOPC7coxqVexsornMJhnqmTDAnzCxQZR0B0AmzNSELglfLoGmEJkAnasPuo8oSkfgr9zHksTTxD8okXX4eRGsZ6Cge8ic8iZlkZWlvghAEKbybOsaQv3qAO6H5cuFCSGBABs/4y8y67kV3rojwPAyuZ7dMiPLo6p872YHhApTl8QsDDtBPC8OaX2GVpjwQDHosLvzqrl/w==
+ bh=mlqbRjB/wibfcvQg5+MP1UVjq5rFwcklKzvJLigozYo=;
+ b=QZwHE0vytNrWvtCY36XUIEK1Vf2zvj4/l4PvM9TpWMhnGdbzUqdFk3bxZZnh0VbHv4/AM0Xbols0SFXI47m/o4/xi9MHJwlB/rAHEH3EnX3xzKgTUHoLxUK5Yv0s78AcAvM95/JAeXzwSzfCfT9hP+64678rN/AeQ4VzszVdJfGrzgxMaXxQ+L/IcUDNUlOw+uUeBpJq0cZZKxNXluybFpNss3b42p7/Qhpnn8g38eLEZXb+D2GfWp7nd3Ok6eKjnkp3zloISeFRqfTXQgZ1918jTlxDB9tjIiRhW7F0UZH3jmNPMTcRr5ySwApARuUWwxFVzndkb/14QZZtkypUQQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z2sL7C924cvBOwN1Ue7PAn2OLZq9ahajNrN9SSAPxG4=;
- b=Fm+wH5Cqb39e+gnXmXyCzrWA2QusncGEWfQIOy147JjD22VSDpiX9zF2jGkz0wALMK1uy4h1NyPXBU+AaIYNufbUhbpCmkKqJKV1Ms6j5k/Q2wz1952y/9kUaBUbLchqnb8IPrplCmjrlszgzbdWxLprV6KoGwKWbybzR2DXY1xFMKaxrosEl1JvHTu29eweYm+Z0Xaj3JyC7tzE/jn9A6fdsDGd6u7wuKyQuJjO+cVQgtT2Nl5Rkxy7pNb8t56YfZ/aWcjFnW6II7GVwUDZDpo+lmzMNv74e59/YrdztYMtUPvgw2wnVx/rZk+6tz5jm8mDiJLwGEVgV+9f3cQvUg==
-Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5b6::22)
- by GV2PR10MB7510.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:d8::7) with
+ bh=mlqbRjB/wibfcvQg5+MP1UVjq5rFwcklKzvJLigozYo=;
+ b=xJYsR13BptpeX723/0Cfe8oOA0UVkrWuBJkt+gXRVwWFnwkZe+h8I1VDUR4Ldm532UxuAgNj8MThJkxyQJ69PFYKcVbxDxAkBj+Oh0Z/OJ7PGXHFslPKaJgcbS0ahectG9O2AaDUwKpfE3EZ8Sj9yxhM/pBNbsv3rlAoCxqpMmY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com (2603:10b6:208:311::19)
+ by BY5PR12MB4113.namprd12.prod.outlook.com (2603:10b6:a03:207::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.20; Thu, 26 Sep
- 2024 10:23:55 +0000
-Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::baa6:3ada:fbe6:98f4]) by AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::baa6:3ada:fbe6:98f4%3]) with mapi id 15.20.7982.022; Thu, 26 Sep 2024
- 10:23:54 +0000
-From: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
-To: "rogerq@kernel.org" <rogerq@kernel.org>, "dan.carpenter@linaro.org"
-	<dan.carpenter@linaro.org>
-CC: "c-vankar@ti.com" <c-vankar@ti.com>, "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>, "davem@davemloft.net"
-	<davem@davemloft.net>, "jpanis@baylibre.com" <jpanis@baylibre.com>,
-	"grygorii.strashko@ti.com" <grygorii.strashko@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kuba@kernel.org" <kuba@kernel.org>, "horms@kernel.org" <horms@kernel.org>,
-	"edumazet@google.com" <edumazet@google.com>, "pabeni@redhat.com"
-	<pabeni@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH net] net: ethernet: ti: am65-cpsw: Fix forever loop in
- cleanup code
-Thread-Topic: [PATCH net] net: ethernet: ti: am65-cpsw: Fix forever loop in
- cleanup code
-Thread-Index: AQHbD/mT3IrJL2vGb0qy0l+Vcqok17Jp3GuA
-Date: Thu, 26 Sep 2024 10:23:54 +0000
-Message-ID: <99cb11c8d4cb2f9c64aabc400c1e2c39d9b1e004.camel@siemens.com>
-References: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
-In-Reply-To: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
-Accept-Language: en-US
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.22; Thu, 26 Sep
+ 2024 10:25:43 +0000
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4]) by BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4%3]) with mapi id 15.20.7982.022; Thu, 26 Sep 2024
+ 10:25:41 +0000
+Message-ID: <5a75b73f-dcb1-4a45-9526-194a3451b5c6@amd.com>
+Date: Thu, 26 Sep 2024 15:55:32 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 2/2] platform/x86/amd: pmf: Add manual control support
 Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR10MB6867:EE_|GV2PR10MB7510:EE_
-x-ms-office365-filtering-correlation-id: 780b7164-845c-4e9c-59d5-08dcde155317
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?S2FTY0lSMTBzSXVuSUh3OG92eWRieVdmM1IvRWR0Ymx2SjBJZXB0RXFxUnY4?=
- =?utf-8?B?NWtZY2diMUhBcVgzR2lDMHB4aTBRVDJZR3FReTY5aE4xSC9WejBVcVZTSzhJ?=
- =?utf-8?B?Tzh2R3VXc2VQSVJZR0tEQmRpbWdRdnR3QTYxNEt0NE1EYnlVZzFtN3BtYXN4?=
- =?utf-8?B?VnVhN2hNejVyVnRzSFViYVU4ZXBXM3NkRTdWdkxNRkkxeTdTTlF4alN6NTBt?=
- =?utf-8?B?WVFiS3hTZUpDdE9WbnJjZ2V3MHAvOXVWcGNoV3BRWXdiNVcwUWozeVhBQjF3?=
- =?utf-8?B?QVU3bkZUbjVQcC9hdVR0eXFoRjh5VjJCSHplaUk4cFJxSExGcG84WFBMWTB3?=
- =?utf-8?B?RUtVZDY1UjR5eVRHTVV4Z2dPeDR3UkRaeXJFT1VBOWk3b0xudzVlT1Y3Nm9w?=
- =?utf-8?B?M3hMQnpLaHJnZmdoYXgvZllmOE9HWitMLzEwWXhtalF6bE1aeGJ5akV1ZjBa?=
- =?utf-8?B?cUZGNTlCV0NQUlV4M21FaDE2bi9ta0N3bXRGemFSYStOeld1UXdaOFhidjdE?=
- =?utf-8?B?S3NvOVgzdnhxOTBVajJDNGx6TnozNTdNSmtkeUJrK2Z4aU5GajFiZ3VpUlYv?=
- =?utf-8?B?dmljWlBGdW9rcUFWWjI5UkFuNk13Nk9BOXp5R05YM09udUw3U25wZWY2MC9v?=
- =?utf-8?B?dlZ5TE1RcjVFUWxEZVhhQ21PTllyUWVVT0plN1IzY21YTzNibHdTS3BoRW9H?=
- =?utf-8?B?dTRrbktyR3pqR0pFRWtlRFdWVGszSlZ1SnZNTFFXS21tdzlCUExOdXozK2No?=
- =?utf-8?B?Ky9Nc2JJZSsvbmp2WlhEaFo5RW1CaDhDNWlzUXA5amgvbXRQV05uVEtycmwy?=
- =?utf-8?B?ejdhMHZES3BjTnRtbC96TGdUejRSdC9pZGE5MlVhQmxaNzJIQVFpdEtjbHRC?=
- =?utf-8?B?dGxCekVYU05reFQ0MGcyOEo1QkZ5ZG9RV0RZc2Q4RUhUcS9TaVRSWGZCZzls?=
- =?utf-8?B?QjEzTzd0a0M3ZWY1Ryt4bFJCa255S0JocnpGaXlRVzFRNEZzZzArdXVrWEQv?=
- =?utf-8?B?ZGQ4aFFia1UrRjJHbGU0YXJreUNUbWFOUGVjRUZwNWZlMG5yTUdadmloeFpR?=
- =?utf-8?B?TE43MWVTL3BidFM3aFMzMDMwRDdCdTZEdkh1Q3RuQmRhTzZ0TnVnbDB3ZTlP?=
- =?utf-8?B?ay82SEEzYWl4S0NJSnFnb041UVN4N0lGK1c0VnU3Q09ZWkllbWxDR3VsampP?=
- =?utf-8?B?NlUxVHdNYUl4dWZMK3lQaVpCMWJDZFhvK2h2NE5qZSttNG1WRDRwL2lpZVhi?=
- =?utf-8?B?aWlhT3NoN0JaODAxWkxGOVRjYTBSNm5kcHIyeEhudkZ5YVREZEpMQ3JCUlJR?=
- =?utf-8?B?WnpBVWwvUGZZa1R6MTlCZ1pwbmVvOE8xNjFlUTVOeDlHT0pzcUhrNTg3Slpr?=
- =?utf-8?B?S3BOOHN1RU5UV3J6Zit4cUVIR0ZXUHBIMlAzTnRZc0pLMjRneWNOZmtCQkNS?=
- =?utf-8?B?M0xQellkV2RuVHJIdEhiWDdROFQzdFNPNHh3NEpqY2hWTUdTUlBFNUpZTXBH?=
- =?utf-8?B?TEd3VEVJMTZxVXF4c2pzNFVYNGNnbGFIc0pINDgxVWtkekc1T01NSHRNOFpZ?=
- =?utf-8?B?b1Q4RTRrY292MmozQzFGZ1E0ZDR6WVpBeWVlVGppYWdiU3J2NXhTRHJUSUpL?=
- =?utf-8?B?ZURSMGtaWlpLVXBWVW5TVzVoMzRSSkJTZC9qME9yUE8xWXZCZ3ZUbTRTelZt?=
- =?utf-8?B?cVBOVUkrSjA4WFBUTURwa1pWb2N6eURaWkk2ZDUzRCtLeGlpNlJ3RkhpL1Js?=
- =?utf-8?B?KzNUcno4ak9ib1FJdVYxd3JiTW5VNEl2R0t0UkpEM3FzbHZjSWJOUE5kMFpT?=
- =?utf-8?Q?kEm22p5Feb2lHbSKwZgaAsfYgnFHCsXsEeKcQ=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?ZU5EZDdzbFZrbEs3TUZLRWpTRUIxUUh2Z09XZFoxU3k1TXhidklnNFpBUTJr?=
- =?utf-8?B?bXNGenNvR0tKNFlRR2QwZXo0UVlRSzJjMlRxckZkVmd5cDVSTVA5MFN2OHpJ?=
- =?utf-8?B?ZVNqN1hCaSsvMmRNbFJwQk1aNTRzaE8zaERyc0YxVGFQZFozOFV3am0zWHpB?=
- =?utf-8?B?aVpQUGdtV3RPWWsxbmxTckh4enFMaDd2MWlGb2Vld05QVllvQ2hHUzQvdFln?=
- =?utf-8?B?YytVNTlRNzhwclpIU2RESDRpUjJ6cDFRdGJ4cXdZS2dkbndWQTY3bjBLc1Nr?=
- =?utf-8?B?WS9FNC9zaG9TZ3pFMVlIK2JjOHZJUTl4VThkVTRYdXZ5WmVDZ0I2bWl0YkVH?=
- =?utf-8?B?czBSZ1hKelUxYXFDZjlYeHNpSm5SV3UxcWtCZVJaTnZMRHprNkY5ZFhPdDdI?=
- =?utf-8?B?bkd3NlNSOGNXM2pXZTUyRVhHemttWGdVaktEZG42cWFCUEVrenh0aW9TWnRP?=
- =?utf-8?B?bjZqUk9PZEU1YTR0bFF0dTk2QWVuaDI3V3c4K1liTWp0VEllRmE1N1hwUGR1?=
- =?utf-8?B?ME9xZFFmT24zMWloSEk2MVA2Um5vM0pKczh1Qzk0STJOQ2tlMmlYNm5URk8v?=
- =?utf-8?B?QjUwdi9mb1RJcjFtVVh3M3NJOHFueEo5STRpTUpXZFlsRWwxVjIrajI3UTVy?=
- =?utf-8?B?ZTE3RHNPL1VvZ1UvelFqMTJTY2JOMm84MVVCZmxOWkoxT3pzYUxjQ0RYVjc1?=
- =?utf-8?B?aFlpaU1ZSk10a2dWZDk0eHE2dWJTb3Z4UDlESGVVeGl6cmR1dnhQY1hrcEtF?=
- =?utf-8?B?RlBuTXJJT29oemNDL3BQRjI2eUQrT05UamJ0TmthbVhoOFlueXUzS3JZTzk0?=
- =?utf-8?B?RE9uMlpnT3JlblZ6Y25BNHl6WnlySzF2Uk1IM05MWDIvSnZDWlRERHdFUGdF?=
- =?utf-8?B?R1F6TzR5VzEyaXVjUjJaVHhlVjJOeURzRWhXRXN3Q1ZwazJON3Jld0RGTzky?=
- =?utf-8?B?cXFRUDlFZ3A4NUlOVmZkaDRyV2Vnc015VWRvMUYrZkxNeXdzN1pLYmRDbUtZ?=
- =?utf-8?B?TGR5UzRxTGs4UzdHd1FFTUt1WEVaUGk2VWZjUVVrWFFmSG90SzRVTklISWVN?=
- =?utf-8?B?M2xtaTluck5SdXM3WGFoQ2w2dUZRSjRkUEhRY1JGWHpsWDhnUFZkWUxLVjRh?=
- =?utf-8?B?Yll2NlZ6blZBb3pTNG9QQ2RZZkUrdmowUnhqeUhyRjhENXk0Si9NUXlUUHhP?=
- =?utf-8?B?MmlBZ3g0dyswMjEwWVVsOWJSMlNaWDJ2N3NDbUhPcThuZmQ2THJLNitlTTIw?=
- =?utf-8?B?OUtjU3Rvd09oV0dNdFhwR1ZNTGVKd0MvcUNxRjRnZmRKaEpoR1RsaGJXUm9j?=
- =?utf-8?B?ZHhEcjNvZzIxbDhDTTdiU0RUczBnSXVKcXRDcitHSWRYdGMzdU9sZEI2MHJO?=
- =?utf-8?B?OVJadmxTTXhOdWhoREh6Um1DaDJUMnphZmJkbXo5cTFuNGxINlI1bFZ3cjlp?=
- =?utf-8?B?ZWFjZ0NvTlg1YjVhREZtWlZYOE5zRE56Z2g1NXplY0Q1ZUZMUlM4UkovQnlZ?=
- =?utf-8?B?SWhrQ0xUOXpBZ2hIRHdvU0NrZWxJOHRuZlVXbU5QZGh0K3loVkZSSWcwVE9K?=
- =?utf-8?B?a0k1R0c1YzlWRno1djRvci9jQjhxWXhUbWxWUXdBU3hETTFjWnlpWThXU2pl?=
- =?utf-8?B?M3J3YkY4WGRTVzVBOVpYY3EwN2J4ZjZpN0xaTDNxSW56R0tTR0kzVHN1TXlM?=
- =?utf-8?B?TTFlcHI4QjlOcERzVU9yWDFDNDlkN0NwanJVMGwzK2w2K0o4b0hnd0JpYUdq?=
- =?utf-8?B?dENQLzNnbWpzOXcyQ1VXamNJVThaSGZmeXVkY052dmNlOVFVK0M3WWhNQWpK?=
- =?utf-8?B?WS90UzZQZXczR2t5SEJwbW1VT29URnQza1hSd0h1aWx2SFFGeElWRzVoaDNH?=
- =?utf-8?B?WDlJUks1amYwOFpqM2QyY1B6UW52Njl6UkJ3WDNwM1FHSkNNeFRPS3hZeWhR?=
- =?utf-8?B?dFZqeCtBUkxXWno0YlpIaEk1UFBlRStVN3JpaHh0UmlKWk9WaFZ6aEtKYnNY?=
- =?utf-8?B?Y1Q2U3lOUTIwMUhEdWdEdVErV2M4YXBkT0ZtdEY4N0ZaOUJLUTRsMFVCc1Jr?=
- =?utf-8?B?TlVtL0ZHZFBRS3FDZGVFcVBMbTZzaDZYTU1MRERSdmdDdzhQSlFwNHR0TS9h?=
- =?utf-8?B?NUxEYXA1SjgwbzVLQUY5NG9DanU0YS8wbG1tU1NVWGhmc0JvaVZIeURvdWFv?=
- =?utf-8?Q?gcLpo6KbDAPZsk9+wN4F+cU=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3C4A50FFD834D945A4902448AAB25252@EURPRD10.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+To: Mario Limonciello <superm1@kernel.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Hans de Goede
+ <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, "Luke D . Jones" <luke@ljones.dev>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: "open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>,
+ Antheas Kapenekakis <lkml@antheas.dev>, me@kylegospodneti.ch,
+ Denis Benato <benato.denis96@gmail.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20240926025955.1728766-1-superm1@kernel.org>
+ <20240926025955.1728766-3-superm1@kernel.org>
+From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+In-Reply-To: <20240926025955.1728766-3-superm1@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MAXP287CA0020.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a00:49::36) To BL1PR12MB5176.namprd12.prod.outlook.com
+ (2603:10b6:208:311::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5176:EE_|BY5PR12MB4113:EE_
+X-MS-Office365-Filtering-Correlation-Id: 09b6089c-05ef-4a5f-4cd4-08dcde159290
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dW1pV05Ib3pEbHMrMzZ5TXVSUVZZS1RkTi9NWXdpNVRxYjVQc0FHamptNUdM?=
+ =?utf-8?B?K1ZVd0hySHlueWppbGhYcGZrZCsrcTJ2ZjlSNG84dGUvL2dtYWU3TnFBN0xW?=
+ =?utf-8?B?NGdIei9sMFlBNGdPZ1Q2V2xzckpzTWdaeGhWR0Z2WllCZnM4VmdtdDBjL2Vv?=
+ =?utf-8?B?UkMrbGhVaEFtNjJ5ZGVuK1JYb3UyeTRMSk5wdWhGNFJpZUZPSjd2L2EvWVRD?=
+ =?utf-8?B?NksxK0lKeU92OHFwOWFHVi8zRXBsTTFCb01xMCtMaVdPNWZmUEFqdzlTaU5V?=
+ =?utf-8?B?dGV2RWJrTWxRS2QrRGhFZW5MaFFYN1l6VzZPZjhuejU5aVltREVKcXFQWjJ3?=
+ =?utf-8?B?WDNranVGc2VCWGhrejhPZnA5MDNiOVlvdCtLbmJncUdJZHFIdlNuMGIwZldL?=
+ =?utf-8?B?Mk5HV0lZSEwvSDFqR1NmTis5NTUwYmZlQ2F4WlFmdVJvK016eXM4QmFXM2dG?=
+ =?utf-8?B?Z0xNT0IyNDhSRzJZSnJHSURJajdJL3BWbnNlWVl0SkdRd0V5dzhDVlBJWk40?=
+ =?utf-8?B?WjQ1VVNPb2ZNaVdlRkgrYTRJalBGSTkwR05mQ3o5TER5a3JCQS9LZDZvd21E?=
+ =?utf-8?B?aCtBdkJnZWJYd240MHY5Yko5N3VVVjNWbHdhd25MWG1aTzFGd1FqRHdlQkFy?=
+ =?utf-8?B?bHdiVkZWbWd1MWF4c1orb0ZsNEprNkZEZHVEUkdFS1dSejJyZkhhM1FVMGNH?=
+ =?utf-8?B?eUJLWFJ0cGtyN0Zqbkh2Y3NMWCtGOTVlT1J6eVNkcWxoRWZFOVpiY3Iwdmdq?=
+ =?utf-8?B?bC8rVUxUUGhGV1hPSU1oR2FFK3JYa08zcDlYbHFEWExYa2tQaTBLYUFGWTFS?=
+ =?utf-8?B?dGtPdEVVSHpFOGZnV2gzMzI2SWVMa09VWVZER2Vsbk1zWEZza1FpVFVPZ0dH?=
+ =?utf-8?B?ZkNzT0pXRVNFSnlPU041ZzRub0ZEdmV4aWliaGxhMHgxWmVqVkFMWFpYUnhn?=
+ =?utf-8?B?V210VXgvUHlMRVAwNDl6S250MUhKdWZlNkdiYm4zaHBxTGlTQ1QzM0ZuakZB?=
+ =?utf-8?B?V2xXa2pYRFRTYlk2MWtERmFlZkVZUWViUlBybEd1UE41VElZSlNwV0RDRlQv?=
+ =?utf-8?B?TFJuOFBKUGZBN1A1VURVWk9TdDhKNzNaYzJYZ3lBbnB4MFNYNnpLVnNMVXRZ?=
+ =?utf-8?B?eFNYd0p4WXRseEczQTJPMCtqZkxZdm5VcFBWWFd2dCtkNmxqOGRzU0VWblo2?=
+ =?utf-8?B?K210bUlZbncrM210ODNUeDJrSEZNZ3JZM1ZhN1IvdXh0OWJwd0RmWUc4dEc1?=
+ =?utf-8?B?RkZyQkNPa2padVJIaE9OOXRTcjRJMlpSTWlhVzY2WnIyQ3loYXFhSFdpNmpD?=
+ =?utf-8?B?Q04rN1hFWjNCS3BkNm80YnZveHlzM3c0QVpqSHRVMDIwdlpCclMzZXRlNjRC?=
+ =?utf-8?B?dkZuSFBxNlIvN2xQN0F5Ty9odVlwekZjYnJkbkk0QXZNbWdXTGd6T0dQaGNi?=
+ =?utf-8?B?N0pLYTRrajFJSmVlN1VteStCd05INGJ4VkpBaVpWYXRWeHBEVTFlMDZqMDlk?=
+ =?utf-8?B?QkVEZmk3R3JHMHlETXQ2Rzlaa21tZWswbTgvU25tVy9uNE8zMy9GVlcyODRX?=
+ =?utf-8?B?RkFqMXlwejIxUFVzSDBEUUNuM3FrUTJRdXdBWDQ0RVAyZmhmRVRjTVQ2VnpE?=
+ =?utf-8?Q?LRX09TtHIKjZnPoKCLqcMjhp+p39FmcteGKUUjZXlKh4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RVBWWWRKMU5vOWxiR29CMGxLY3c5MnZXcXVTQjhvVWs2V1ZpQy9wSUptWWJ3?=
+ =?utf-8?B?ZExTS3JFT0VWWi95WWJyYkgzR3hrV1JyZURva01rSWN2R3IvZWFhNWgvbVZS?=
+ =?utf-8?B?QmdYZGwrZzZvbExOMTd6b0VYeXc4dTdOVzJ0c3lyOW0rU1FLbXNQeldPaUI5?=
+ =?utf-8?B?Rk5qaEhVQ0dsTXNpaXBGZ0VFTlBMTnhsb3ZSei9GSGhBQVlPaW9saFJJak1s?=
+ =?utf-8?B?R3Jlei92NllkNVVVV2xubUpScHFJME0zeDNRMFlRWGVFUE5DR2tOM1pQZFVS?=
+ =?utf-8?B?Z1h5SGNoUEpiMVdjU0FkTWNYaU9SMDZVUDZkQy96NGl5aXNtR0ZFT2tCUktE?=
+ =?utf-8?B?NFpKN0lLcnVjQVp5N0ZjdUx2ZnU2MzFjRWdsSGdHL0lVd2ZnUE93dzdWdWVz?=
+ =?utf-8?B?VWhQZkVoWlZEZ3RxOE5tZzhrTUtseGhQeHA0U3czTkVCbGsraDNDRFh2M2pl?=
+ =?utf-8?B?R0JIeDI0NTBxdFAzODdOR0FNL3BHbmRUSU4xM3Z2QmtpeVRmUmJzMS84VVNz?=
+ =?utf-8?B?SFBSWEFhQURaTGllR2djeEJsRkd2OVl3YmJpQWxCSndRN2lDY3RyK0tzWlB3?=
+ =?utf-8?B?NlBNdmtFZFc2dVh1aDNzNEVuWGVCbVcvWFNmQW9xYUZzaGpaSmFyV0ZVdkY2?=
+ =?utf-8?B?YmJNbTdQV0FseDFMeEM4MUMybExabmRWNzE3RXhqVFNIT2d0eFVnSWVLa0Z5?=
+ =?utf-8?B?MEpxNlhNbitDWGltU0h0QmMwTi9BT3ppZjJnRkZJUU84RDBKanlBK2Zwa1hI?=
+ =?utf-8?B?dG9jdjROUmdReERxdmZ3ZU5GMlQ4amxzckJTN05WRHQxcm0ycTIwdVE2SU9t?=
+ =?utf-8?B?K2JXZEZtOTQrT2dNVEw1bmpIZThudkI0K200TzJMTjFOK0ZRUlJUWm5RM2hN?=
+ =?utf-8?B?dnBVWld5cGluZ2J1bGVOZ3BtYnNoS2xXWnJxWUdrNkROOGhNOC9wSmRnd3Z5?=
+ =?utf-8?B?Zk1uSllWV3F6cjhLN08xckdSMHI1MW5xbUhqVUszWnRvaFZFTmllOXRtbERi?=
+ =?utf-8?B?UjVlSm5MTEpBRFE4a01TTFVLbWt3c2Q4eFU4eEpOYkcxSFcvNGxBeTB0OUsz?=
+ =?utf-8?B?R3JDb2J4NTcvNS9kWUk2TklOeTIrL2dadTRjTzBXS29iWjJ0c25NS0tyTVZa?=
+ =?utf-8?B?QitGQkZOS1F1cE0rcEgxZVVQQzhFSjc5dmd5cHNUbEg5RGFSRW81U2JtYjZa?=
+ =?utf-8?B?U1B3cW1mY1ZYQmJsd3BpZ1E1N0dFcmE4ZTEybHl3WDNEdXkzeXhZS3ozbjZL?=
+ =?utf-8?B?MWlrcEo2ME5hbjIzL1k0R1hKTFJSeFJJQkFWbTJ0Q3lCQXhNaXczYnpWTEFL?=
+ =?utf-8?B?cGhHQUFDdnJpb2kzUFUzNEdZcDlTYURmODdGTThRQk5waFI4WkR3TEhTWGlQ?=
+ =?utf-8?B?aTJQT2ZYTms2bTVDTnJlaTVaMFlWYVIydEdHeDJPdmgxMS9ZT0wxcFV2akRx?=
+ =?utf-8?B?VS9IZTBYRFhFRXRPbTVTc0hVdzhNbjA5QjF4ZXJja013WWVOYUFoUi9pSDR1?=
+ =?utf-8?B?eGJXckV3dzlNUDN2Tk9LL2Zob1I5OUJyWWlCOVJHY3JTQVVjYlhyMEZDRzdi?=
+ =?utf-8?B?OERqOTA4cjEzNlhGZHEvcXRPcDdPQkpla1pxTXQ2Nno4RVJJaFZDR0wvMGNP?=
+ =?utf-8?B?WEM4V3cyTXpvQnoxZHZRNUs1LytMWXBoV1lmNzVWYXcvZ3ozNWhHTXprMm5y?=
+ =?utf-8?B?TkdEMEZmSlZUaW5vWGtzalIrRFVQWnNLdjhoYSt0UnNtQUlsSTFJYXl4VFVm?=
+ =?utf-8?B?Mk14Z2FtWVoyUFB5YzFKSTVtZ0V4RnBvZ2hIN3V1WURnWTBzMmdybEoxd2x5?=
+ =?utf-8?B?Ritsb2RxMG9sTkxvV2E1NGZ6OTNvcGNUcXdSbjkvRWhuckJ5c1hSaklOSTJO?=
+ =?utf-8?B?VVBpR0VxNEpqU0dIdE9vN3d0UGNrTTRmVzN4ZDZNT2lDWnEwcGlQU3BjWjdF?=
+ =?utf-8?B?cDBnbnJwLy85ajBxTDFKK0F6cVF1QktDVEsyT05sekVncVNtZzdMdWljQ2FP?=
+ =?utf-8?B?RUZobVVmK0dva1JLMG96cWJzOW1maDhuTUVEaVZxOWZHTVl6LzJEajAydHE4?=
+ =?utf-8?B?SWZydzJSaElUL3pwRG9ZVVIremtGWGo0ckFkNDZhc0ZFaTU4TlRIZXo3TFpr?=
+ =?utf-8?Q?Yi0jKOuN29srfXsB/tHXgqfgw?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09b6089c-05ef-4a5f-4cd4-08dcde159290
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5176.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 780b7164-845c-4e9c-59d5-08dcde155317
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2024 10:23:54.8904
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 10:25:41.8182
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Z3rAKFDGc3X4dN1F8F57PyFksJfFvyxcKKVbutNch/JXnwxwvUUieHVPQu5dSzRY84dpad0EQHh/1UaqWYuSyQ+5dNnNMTcY4+3cm6kzrb0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB7510
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CmxqHQLb7RmxejIut2gME/O6TmWjd4RTd8GGIxYeLxrM6TYy/COSV5bmsMGK/tezlFM/ok4uvWTCvKf3RjGBdA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4113
 
-SGkgRGFuIQ0KDQpPbiBUaHUsIDIwMjQtMDktMjYgYXQgMTI6NTAgKzAzMDAsIERhbiBDYXJwZW50
-ZXIgd3JvdGU6DQo+IFRoaXMgZXJyb3IgaGFuZGxpbmcgaGFzIGEgdHlwby7CoCBJdCBzaG91bGQg
-aSsrIGluc3RlYWQgb2YgaS0tLsKgIEluIHRoZQ0KPiBvcmlnaW5hbCBjb2RlIHRoZSBlcnJvciBo
-YW5kbGluZyB3aWxsIGxvb3AgdW50aWwgaXQgY3Jhc2hlcy4NCj4gDQo+IEZpeGVzOiBkYTcwZDE4
-NGE4YzMgKCJuZXQ6IGV0aGVybmV0OiB0aTogYW02NS1jcHN3OiBJbnRyb2R1Y2UgbXVsdGkgcXVl
-dWUgUngiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQGxp
-bmFyby5vcmc+DQoNClRoYW5rcyBmb3IgZml4aW5nIHRoaXMhDQpSZXZpZXdlZC1ieTogQWxleGFu
-ZGVyIFN2ZXJkbGluIDxhbGV4YW5kZXIuc3ZlcmRsaW5Ac2llbWVucy5jb20+DQoNCj4gLS0tDQo+
-IMKgZHJpdmVycy9uZXQvZXRoZXJuZXQvdGkvYW02NS1jcHN3LW51c3MuYyB8IDIgKy0NCj4gwqAx
-IGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC90aS9hbTY1LWNwc3ctbnVzcy5jIGIvZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvdGkvYW02NS1jcHN3LW51c3MuYw0KPiBpbmRleCBjYmU5OTAxN2NiZmEu
-LmQyNTM3MjdiMTYwZiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvdGkvYW02
-NS1jcHN3LW51c3MuYw0KPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC90aS9hbTY1LWNwc3ct
-bnVzcy5jDQo+IEBAIC03NjMsNyArNzYzLDcgQEAgc3RhdGljIGludCBhbTY1X2Nwc3dfbnVzc19j
-b21tb25fb3BlbihzdHJ1Y3QgYW02NV9jcHN3X2NvbW1vbiAqY29tbW9uKQ0KPiAJazNfdWRtYV9n
-bHVlX2Rpc2FibGVfcnhfY2huKHJ4X2Nobi0+cnhfY2huKTsNCj4gwqANCj4gwqBmYWlsX3J4Og0K
-PiAtCWZvciAoaSA9IDA7IGkgPCBjb21tb24tPnJ4X2NoX251bV9mbG93czsgaS0tKQ0KPiArCWZv
-ciAoaSA9IDA7IGkgPCBjb21tb24tPnJ4X2NoX251bV9mbG93czsgaSsrKQ0KPiDCoAkJazNfdWRt
-YV9nbHVlX3Jlc2V0X3J4X2NobihyeF9jaG4tPnJ4X2NobiwgaSwgJnJ4X2Nobi0+Zmxvd3NbaV0s
-DQo+IMKgCQkJCQnCoCBhbTY1X2Nwc3dfbnVzc19yeF9jbGVhbnVwLCAwKTsNCj4gwqANCg0KLS0g
-DQpBbGV4YW5kZXIgU3ZlcmRsaW4NClNpZW1lbnMgQUcNCnd3dy5zaWVtZW5zLmNvbQ0K
+
+
+On 9/26/2024 08:29, Mario Limonciello wrote:
+> From: Mario Limonciello <mario.limonciello@amd.com>
+> 
+> A number of users resort to using reverse engineered software like
+> ryzenadj to manipulate debugging interfaces for modifying APU settings.
+> 
+> At a glance these tools are useful, but the problem is they break
+> state machines in other software such as the PMF driver or the OEM
+> EC.
+> 
+> Offer a knob for PMF to allow 'manual control' which will users can
+> directly change things like fPPT and sPPT. As this can be harmful for
+> a system to try to push limits outside of a thermal design, taint the
+> kernel and show a critical message when in use.
+
+I appreciate the proposal, but giving users this control seems similar
+to using tools like Ryzenadj or Ryzen Master, which are primarily for
+overclocking. Atleast Ryzen Master has a dedicated mailbox with PMFW.
+
+While some existing PMF mailboxes are being deprecated, and SPL has
+been removed starting with Strix[1] due to the APTS method.
+
+It's important to use some settings together rather than individually
+(which the users might not be aware of). For instance, updating SPL
+requires corresponding updates to STT limits to avoid negative outcomes.
+
+Additionally, altering these parameters can exceed thermal limits and
+potentially void warranties.
+
+Considering CnQF, why not let OEMs opt-in and allow the algorithm to
+manage power budgets, rather than providing these controls to users
+from the kernel when userspace tools already exist?
+
+Please note that on systems with Smart PC enabled, if users manually
+adjust the system thermals, it can lead to the thermal controls
+becoming unmanageable.
+
+Please consider this perspective.
+
+[1]
+https://github.com/torvalds/linux/blob/master/drivers/platform/x86/amd/pmf/sps.c#L193
+
+IMHO, having a 'custom' platform-profile node is fine, but tieing that
+to PMF static slider would be a NO from my side, because of the above
+said reasons.
+
+Thanks,
+Shyam
+
+> 
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  Documentation/ABI/testing/sysfs-amd-pmf | 10 +++
+>  drivers/platform/x86/amd/pmf/Makefile   |  1 +
+>  drivers/platform/x86/amd/pmf/core.c     |  9 +++
+>  drivers/platform/x86/amd/pmf/manual.c   | 88 +++++++++++++++++++++++++
+>  drivers/platform/x86/amd/pmf/pmf.h      |  5 ++
+>  drivers/platform/x86/amd/pmf/sps.c      |  4 ++
+>  6 files changed, 117 insertions(+)
+>  create mode 100644 drivers/platform/x86/amd/pmf/manual.c
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-amd-pmf b/Documentation/ABI/testing/sysfs-amd-pmf
+> index 7fc0e1c2b76b..6f3d5cbf443f 100644
+> --- a/Documentation/ABI/testing/sysfs-amd-pmf
+> +++ b/Documentation/ABI/testing/sysfs-amd-pmf
+> @@ -11,3 +11,13 @@ Description:	Reading this file tells if the AMD Platform Management(PMF)
+>  		To turn off CnQF user can write "off" to the sysfs node.
+>  		Note: Systems that support auto mode will not have this sysfs file
+>  		available.
+> +
+> +What:		/sys/devices/platform/*/{spl, fppt, sppt, sppt_apu_only, stt_min, stt_limit_apu, stt_skip_temp}
+> +Date:		December 2024
+> +Contact:	Mario Limonciello <mario.limonciello@amd.com>
+> +Description:	Manual control of AMD PMF APU coefficients
+> +		.
+> +		These files are used to manually control the APU coefficients.
+> +		In order to write to these files the module most be
+> +		loaded with manual_control=1 and the user must write "custom"
+> +		to the ACPI platform profile.
+> diff --git a/drivers/platform/x86/amd/pmf/Makefile b/drivers/platform/x86/amd/pmf/Makefile
+> index 7d6079b02589..81444d6f4428 100644
+> --- a/drivers/platform/x86/amd/pmf/Makefile
+> +++ b/drivers/platform/x86/amd/pmf/Makefile
+> @@ -7,4 +7,5 @@
+>  obj-$(CONFIG_AMD_PMF) += amd-pmf.o
+>  amd-pmf-objs := core.o acpi.o sps.o \
+>  		auto-mode.o cnqf.o \
+> +		manual.o \
+>  		tee-if.o spc.o pmf-quirks.o
+> diff --git a/drivers/platform/x86/amd/pmf/core.c b/drivers/platform/x86/amd/pmf/core.c
+> index d6af0ca036f1..52a68ca094be 100644
+> --- a/drivers/platform/x86/amd/pmf/core.c
+> +++ b/drivers/platform/x86/amd/pmf/core.c
+> @@ -53,6 +53,10 @@ static bool force_load;
+>  module_param(force_load, bool, 0444);
+>  MODULE_PARM_DESC(force_load, "Force load this driver on supported older platforms (experimental)");
+>  
+> +bool pmf_manual_control;
+> +module_param_named(manual_control, pmf_manual_control, bool, 0444);
+> +MODULE_PARM_DESC(manual_control, "Expose manual control knobs (experimental)");
+> +
+>  static int amd_pmf_pwr_src_notify_call(struct notifier_block *nb, unsigned long event, void *data)
+>  {
+>  	struct amd_pmf_dev *pmf = container_of(nb, struct amd_pmf_dev, pwr_src_notifier);
+> @@ -349,6 +353,10 @@ static void amd_pmf_init_features(struct amd_pmf_dev *dev)
+>  		dev_dbg(dev->dev, "SPS enabled and Platform Profiles registered\n");
+>  	}
+>  
+> +	if (pmf_manual_control) {
+> +		amd_pmf_init_manual_control(dev);
+> +		return;
+> +	}
+>  	amd_pmf_init_smart_pc(dev);
+>  	if (dev->smart_pc_enabled) {
+>  		dev_dbg(dev->dev, "Smart PC Solution Enabled\n");
+> @@ -485,6 +493,7 @@ static void amd_pmf_remove(struct platform_device *pdev)
+>  
+>  static const struct attribute_group *amd_pmf_driver_groups[] = {
+>  	&cnqf_feature_attribute_group,
+> +	&manual_attribute_group,
+>  	NULL,
+>  };
+>  
+> diff --git a/drivers/platform/x86/amd/pmf/manual.c b/drivers/platform/x86/amd/pmf/manual.c
+> new file mode 100644
+> index 000000000000..b33fc3cd8d61
+> --- /dev/null
+> +++ b/drivers/platform/x86/amd/pmf/manual.c
+> @@ -0,0 +1,88 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * AMD Platform Management Framework Driver
+> + *
+> + * Copyright (c) 2024, Advanced Micro Devices, Inc.
+> + * All Rights Reserved.
+> + *
+> + * Author: Mario Limonciello <mario.limonciello@amd.com>
+> + */
+> +
+> +#include "pmf.h"
+> +
+> +#define pmf_manual_attribute(_name, _set_command, _get_command)		\
+> +static ssize_t _name##_store(struct device *d,				\
+> +			     struct device_attribute *attr,		\
+> +			     const char *buf, size_t count)		\
+> +{									\
+> +	struct amd_pmf_dev *dev = dev_get_drvdata(d);			\
+> +	uint val;							\
+> +									\
+> +	if (dev->current_profile != PLATFORM_PROFILE_CUSTOM) {		\
+> +		dev_warn_once(dev->dev,					\
+> +			      "Manual control is disabled, please set "	\
+> +			      "platform profile to custom.\n");		\
+> +		return -EINVAL;						\
+> +	}								\
+> +									\
+> +	if (kstrtouint(buf, 10, &val) < 0)				\
+> +		return -EINVAL;						\
+> +									\
+> +	amd_pmf_send_cmd(dev, _set_command, false, val, NULL);		\
+> +									\
+> +	return count;							\
+> +}									\
+> +static ssize_t _name##_show(struct device *d,				\
+> +			   struct device_attribute *attr,		\
+> +			   char *buf)					\
+> +{									\
+> +	struct amd_pmf_dev *dev = dev_get_drvdata(d);			\
+> +	uint val;							\
+> +									\
+> +	amd_pmf_send_cmd(dev, _get_command, true, ARG_NONE, &val);	\
+> +									\
+> +	return sysfs_emit(buf, "%u\n", val);				\
+> +}
+> +
+> +pmf_manual_attribute(spl, SET_SPL, GET_SPL);
+> +static DEVICE_ATTR_RW(spl);
+> +pmf_manual_attribute(fppt, SET_FPPT, GET_FPPT);
+> +static DEVICE_ATTR_RW(fppt);
+> +pmf_manual_attribute(sppt, SET_SPPT, GET_SPPT);
+> +static DEVICE_ATTR_RW(sppt);
+> +pmf_manual_attribute(sppt_apu_only, SET_SPPT_APU_ONLY, GET_SPPT_APU_ONLY);
+> +static DEVICE_ATTR_RW(sppt_apu_only);
+> +pmf_manual_attribute(stt_min, SET_STT_MIN_LIMIT, GET_STT_MIN_LIMIT);
+> +static DEVICE_ATTR_RW(stt_min);
+> +pmf_manual_attribute(stt_limit_apu, SET_STT_LIMIT_APU, GET_STT_LIMIT_APU);
+> +static DEVICE_ATTR_RW(stt_limit_apu);
+> +pmf_manual_attribute(stt_skin_temp, SET_STT_LIMIT_HS2, GET_STT_LIMIT_HS2);
+> +static DEVICE_ATTR_RW(stt_skin_temp);
+> +
+> +static umode_t manual_attr_is_visible(struct kobject *kobj, struct attribute *attr, int idx)
+> +{
+> +	return pmf_manual_control ? 0660 : 0;
+> +}
+> +
+> +static struct attribute *manual_attrs[] = {
+> +	&dev_attr_spl.attr,
+> +	&dev_attr_fppt.attr,
+> +	&dev_attr_sppt.attr,
+> +	&dev_attr_sppt_apu_only.attr,
+> +	&dev_attr_stt_min.attr,
+> +	&dev_attr_stt_limit_apu.attr,
+> +	&dev_attr_stt_skin_temp.attr,
+> +	NULL,
+> +};
+> +
+> +const struct attribute_group manual_attribute_group = {
+> +	.attrs = manual_attrs,
+> +	.is_visible = manual_attr_is_visible,
+> +};
+> +
+> +void amd_pmf_init_manual_control(struct amd_pmf_dev *dev)
+> +{
+> +	add_taint(TAINT_CPU_OUT_OF_SPEC, LOCKDEP_STILL_OK);
+> +	pr_crit("Manual PMF control is enabled, please disable it before "
+> +		"reporting any bugs unrelated to PMF.\n");
+> +}
+> diff --git a/drivers/platform/x86/amd/pmf/pmf.h b/drivers/platform/x86/amd/pmf/pmf.h
+> index 8ce8816da9c1..ca3df63cf190 100644
+> --- a/drivers/platform/x86/amd/pmf/pmf.h
+> +++ b/drivers/platform/x86/amd/pmf/pmf.h
+> @@ -798,4 +798,9 @@ void amd_pmf_dump_ta_inputs(struct amd_pmf_dev *dev, struct ta_pmf_enact_table *
+>  /* Quirk infrastructure */
+>  void amd_pmf_quirks_init(struct amd_pmf_dev *dev);
+>  
+> +/* Manual configuration */
+> +extern bool pmf_manual_control;
+> +extern const struct attribute_group manual_attribute_group;
+> +void amd_pmf_init_manual_control(struct amd_pmf_dev *dev);
+> +
+>  #endif /* PMF_H */
+> diff --git a/drivers/platform/x86/amd/pmf/sps.c b/drivers/platform/x86/amd/pmf/sps.c
+> index 92f7fb22277d..6db88e523a86 100644
+> --- a/drivers/platform/x86/amd/pmf/sps.c
+> +++ b/drivers/platform/x86/amd/pmf/sps.c
+> @@ -305,6 +305,8 @@ int amd_pmf_get_pprof_modes(struct amd_pmf_dev *pmf)
+>  	case PLATFORM_PROFILE_LOW_POWER:
+>  		mode = POWER_MODE_POWER_SAVER;
+>  		break;
+> +	case PLATFORM_PROFILE_CUSTOM:
+> +		return 0;
+>  	default:
+>  		dev_err(pmf->dev, "Unknown Platform Profile.\n");
+>  		return -EOPNOTSUPP;
+> @@ -412,6 +414,8 @@ int amd_pmf_init_sps(struct amd_pmf_dev *dev)
+>  	set_bit(PLATFORM_PROFILE_LOW_POWER, dev->pprof.choices);
+>  	set_bit(PLATFORM_PROFILE_BALANCED, dev->pprof.choices);
+>  	set_bit(PLATFORM_PROFILE_PERFORMANCE, dev->pprof.choices);
+> +	if (pmf_manual_control)
+> +		set_bit(PLATFORM_PROFILE_CUSTOM, dev->pprof.choices);
+>  
+>  	/* Create platform_profile structure and register */
+>  	err = platform_profile_register(&dev->pprof);
 
