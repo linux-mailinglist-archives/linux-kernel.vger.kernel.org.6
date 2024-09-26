@@ -1,376 +1,260 @@
-Return-Path: <linux-kernel+bounces-340802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB6E987811
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:01:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A474987813
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2EB1F278BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:01:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 633F71C2326D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1142837F;
-	Thu, 26 Sep 2024 17:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE31E15B0FA;
+	Thu, 26 Sep 2024 17:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="qjEw/0pq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ll8OmUtD"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="JGTzgmUg"
+Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB3313B5B4;
-	Thu, 26 Sep 2024 17:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2726F535D8
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727370083; cv=none; b=KzesHh1XEusd+jNCHpUzndV5qNBGgu5XeLYSb7K1guGK9Lc/JG7ft0R0Y+GWve4vvHGVbGuGkToMelEtIrKz+mFU4FoaoB39gOS3CB+/UlIaQWN9caw15qGQV9q2QoNf4IMjReFLYS+9N8BLu61Wi7kS4nTz7GpaRcGyYJLUMM4=
+	t=1727370107; cv=none; b=MMyDLpjoBYZBCNRggiTksVNaXaAmQmqGsl8ICcR+wv6CCdqvMJewYksR04niPxnYIR0k6IbTQXBg01P9m7XcDkPEnp5qeCGH0zWBrcrxKxbEPfz58SuARIrBPIoCWbmu5bG2fmFt1HjLf0a+apO9MArC3jmvygGeEa7ESw9e7sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727370083; c=relaxed/simple;
-	bh=LMAchIt46jsNMmWdOpmkfAkCZl4l1fWbdJ7aeUS5LRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ci/lMZrqvZ78t5Ar4oFiCc5ox3xH1ZuhWsTKRnjuY7SYoFvdTxQlz8JPZom5MiGA8dQD75gNtnSC739/FPLaIyErNrK+S8NViC+RTdTFoY9nfaWW+VifuXRtyufwltUTtiPD7fBbgX2pc3ZF2EBb0s7FXL2nj0kN3L1d0VPDGtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=qjEw/0pq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ll8OmUtD; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id AF747138010C;
-	Thu, 26 Sep 2024 13:01:20 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Thu, 26 Sep 2024 13:01:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1727370080; x=1727456480; bh=4fSFLCINFt
-	7cgtytZlqcRKAfL/4/3naIxELDwHMAFDw=; b=qjEw/0pqiTsCj+Rkhy3M1seuNn
-	yL70lXfKUllFAHEgxdHshheMPKp5wm9D6uSez/zjMRRZMW7qcRvjfO8wi68F93MI
-	KQ7ht+mCHdauxB+9ppj/K/SSYeW9GU+kLPFVrcyrqcJSvv2S/8QxTcBKmQDuvQX5
-	I8zBdbbuq/+7ojZcLG8EMi80pM6B801Bj6b8Ee1y4D86CJy5fDeZBg/zAMxxMQS1
-	rJBYXf6EnLbWdLCAGfm0cC67CFToFRg0l25Mc8wKw/e10f+1VOpD4A2Kdy0UF218
-	UtFd9HF60GX27IhjxVijpr26JWGDFBDqBpo9W4dQ9+qzk5641c0zxFPbz/0g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1727370080; x=1727456480; bh=4fSFLCINFt7cgtytZlqcRKAfL/4/
-	3naIxELDwHMAFDw=; b=ll8OmUtDJb7yptTkfe/Pfeb2NkuWJqdxtX0fwgKs48hs
-	z6RZAyj7t0AhOC6ldvLQOzYZ8/HdaaU8bXBFkRMQ1BiOISBqY6NyFSFxQMXKbHub
-	V+vpIhZz7a5jS79OPZjPE5s7SHC5VQwd6iNX0BXDW1M8XySdfofsUwA45UWi5Dp0
-	YNE1w0RnzhPT9jqBPvJpVl6EZX7N8BqfAF7P1ejk8HPq6zTZ//s0Ae5meSs8rGFB
-	3eBijOlogjz3T2zfewGtlRVyodjC6R2OYMfZv/k6wnUV/O8oem+XjwA/8OY4+dov
-	Wj+yg+iWkEEoduAuXBQItfqINCq/wz5u8m3GalOe6Q==
-X-ME-Sender: <xms:YJP1ZjQlPi9qUxQ_JIwTV-R5kjKN1FZMoz2f6f84IB3pVXkqhd9G-A>
-    <xme:YJP1ZkyryJ5Q6yNt9_pe6h-FEwvFbU-20UkRQ81G6yfuFMkKg3UgKiYNSQ-Iy9Kh4
-    mRWiLusU2vVyV00WwQ>
-X-ME-Received: <xmr:YJP1Zo2Px66EnqAhGY7XQnuxuotukpT9dKhMZxCx82TjPvEOVijB-Bmj9ur40sTLBvcMepJI8BFTuhA04dE6Ra0e9NyQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtjedguddtlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenfghrlhcuvffnffculddutddmnecujfgurhepfffhvfevuffk
-    fhggtggujgesthdtredttddtvdenucfhrhhomheplfgrnhcujfgvnhgurhhikhcuhfgrrh
-    hruceokhgvrhhnvghlsehjfhgrrhhrrdgttgeqnecuggftrfgrthhtvghrnhepffdutedt
-    ieduudetjeegjeeujeegjeeuheettdetieevvdevffekjeejueehgefhnecuffhomhgrih
-    hnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihii
-    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhgvrhhnvghlsehjfhgrrhhrrdgttg
-    dpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhh
-    ohhrshhtvghnrdgslhhumhesthhosghluhigrdgtohhmpdhrtghpthhtohepkhgvnhhtrd
-    hovhgvrhhsthhrvggvtheslhhinhhugidruggvvhdprhgtphhtthhopehrvghgrhgvshhs
-    ihhonhhssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqsg
-    gtrggthhgvfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqhhgrrhguvghnihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:YJP1ZjA50JbPmn11HOaGx90eg5l2A_HqJ_cXA65O7YiwdCFKJM3tRw>
-    <xmx:YJP1Zsg9jd54JyZMmJyvWWWQ-Z3gMZ3HPzYZlaypnzb-rRnxNNj7OQ>
-    <xmx:YJP1Znqa64xuBCBB-QnK2FR8Hl4_gQ_hXxiaK4ZcyYr-F7NzYRPVOg>
-    <xmx:YJP1ZnjzL1RCZc1dXAI2NJnJIqLbN1bgVkTtpscV3eUKlT2LhDBvBg>
-    <xmx:YJP1ZnU_D4I5uTIGwx3eIaL5ka9OK4nm1VfVyp82D99TysISGgnQ39hp>
-Feedback-ID: i01d149f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 26 Sep 2024 13:01:19 -0400 (EDT)
-Date: Thu, 26 Sep 2024 19:01:17 +0200
-From: Jan Hendrik Farr <kernel@jfarr.cc>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: kent.overstreet@linux.dev, regressions@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <ZvWTXaqkmxP2E2dc@archlinux>
-References: <ZvV6X5FPBBW7CO1f@archlinux>
- <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
- <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+	s=arc-20240116; t=1727370107; c=relaxed/simple;
+	bh=jHeBxSkbnyf8/BPO8pTmrjnlfyK5XG9kVO2rcjJ7W5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C7DsRGmdkGPndbOnvUoEwJcGqbschjFYhr1tFojzfuQE8A3YSZscOdjh/GajikJ0KGSakbYD2bTI2o+UvSYrF3a0sj04Qvqffsl7OIDipc6Htb+ShSb4N3l6e3xWXMKFfLC8uJfYXCBrtilc+bDgKDogZb9QF7B8khNnIzWM5Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=JGTzgmUg; arc=none smtp.client-ip=209.85.218.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-a8d56155f51so145600566b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:01:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1727370103; x=1727974903; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=30OYdyWfnY2pknaNFy3DZOrHCOc+F0CdzGG2PNlhmv0=;
+        b=JGTzgmUgkKsuoxef1B+DhfErCprtpQO8lGiT2nPbnhySDVyM6HnDQ1hmAPWcTB1TXx
+         ibxPMoyA0pc5pHNRMDfS4H4AJfMYabwXRDBbzqzft3dLTrMsNC09skf+4zrrAbyUfOfe
+         3ke4fy5Ip3JgWKoNUS7TlWhHVGK5VHEzH0sUE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727370103; x=1727974903;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=30OYdyWfnY2pknaNFy3DZOrHCOc+F0CdzGG2PNlhmv0=;
+        b=Y7bW/vU4gHMO8hKW0g3yQwTNnPCnz+tWGZziNwEjn0ghwP/sbIsW24ErBa/uK5H5j6
+         ffSLz6CT7yWve/MoC4M0rWFzi2L4NLT/gpFvDi5vTtzSaoKcFr0ih+Rh41PvWxRfEAcM
+         VFpPe51i92wRReoeDpOD5X/bYs4w7FNHTeCoE36XuqlsXkql5Zge7V1HbFKj6wi8JjUV
+         LncnH11uKg/U1YKMUbtjrjonLfY0v9GwIrZTf6pYzP3szliCPKdM6CLF2KJ8Z6zRQ6Gb
+         5tJs3XH05SwENSFmB4Qo1pxYRaTo4eRQI6ZWBcEWbMkYGW1QNDzukk9pyeEHIREJOmWF
+         fhAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUUM1aQuZNYpxTiUEBEgMRYRYsDsprfuD/QyIaNqAAub4HxpjBr8dgBfnzq5MtjkG30QLofUUACIKKwvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4xuBkpcsZI9lmzv4IRb79C/P1gxqLLBZD9TGTBGc3ellCw2WR
+	RfZlnAd9Tw0SCFILoa3XKaI1Lr0SvKF8hU7jSK+ycJfngw3I8zpxlFfICSDYzWg=
+X-Google-Smtp-Source: AGHT+IFCjEApElJ7pjdHcbOrYxe/Y5KaSJmzt13ep3YkyZdoI8/INCYY+JQrzcKJO2bOA7miehhKYA==
+X-Received: by 2002:a17:907:1c19:b0:a80:bf95:7743 with SMTP id a640c23a62f3a-a93c48f8a9emr17782666b.13.1727370103348;
+        Thu, 26 Sep 2024 10:01:43 -0700 (PDT)
+Received: from [10.125.226.166] ([185.25.67.249])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2777209sm18679166b.44.2024.09.26.10.01.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Sep 2024 10:01:42 -0700 (PDT)
+Message-ID: <adbf01c2-5ce3-443d-bc6f-b74575ff0d5c@citrix.com>
+Date: Thu, 26 Sep 2024 18:01:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 3/3] x86/bugs: Use code segment selector for VERW
+ operand
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Uros Bizjak <ubizjak@gmail.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, Robert Gill <rtgill82@gmail.com>,
+ Jari Ruusu <jariruusu@protonmail.com>, Brian Gerst <brgerst@gmail.com>,
+ "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+ antonio.gomez.iglesias@linux.intel.com, daniel.sneddon@linux.intel.com,
+ stable@vger.kernel.org
+References: <20240925-fix-dosemu-vm86-v7-0-1de0daca2d42@linux.intel.com>
+ <20240925-fix-dosemu-vm86-v7-3-1de0daca2d42@linux.intel.com>
+ <5703f2d8-7ca0-4f01-a954-c0eb1de930b4@citrix.com>
+ <20240925234616.2ublphj3vbluawb3@desk> <20240926001729.2unwdxtcnnkf3k3t@desk>
+ <555e220d-7ff5-58e4-7ca8-282ca88d8392@gmail.com>
+ <20240926161031.dcohgbkbqs4bk32n@desk>
+ <acea2233-0975-4449-952c-8eb05b075d8c@citrix.com>
+ <20240926165656.4ato6lx4omwiy6sv@desk>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ xsFNBFLhNn8BEADVhE+Hb8i0GV6mihnnr/uiQQdPF8kUoFzCOPXkf7jQ5sLYeJa0cQi6Penp
+ VtiFYznTairnVsN5J+ujSTIb+OlMSJUWV4opS7WVNnxHbFTPYZVQ3erv7NKc2iVizCRZ2Kxn
+ srM1oPXWRic8BIAdYOKOloF2300SL/bIpeD+x7h3w9B/qez7nOin5NzkxgFoaUeIal12pXSR
+ Q354FKFoy6Vh96gc4VRqte3jw8mPuJQpfws+Pb+swvSf/i1q1+1I4jsRQQh2m6OTADHIqg2E
+ ofTYAEh7R5HfPx0EXoEDMdRjOeKn8+vvkAwhviWXTHlG3R1QkbE5M/oywnZ83udJmi+lxjJ5
+ YhQ5IzomvJ16H0Bq+TLyVLO/VRksp1VR9HxCzItLNCS8PdpYYz5TC204ViycobYU65WMpzWe
+ LFAGn8jSS25XIpqv0Y9k87dLbctKKA14Ifw2kq5OIVu2FuX+3i446JOa2vpCI9GcjCzi3oHV
+ e00bzYiHMIl0FICrNJU0Kjho8pdo0m2uxkn6SYEpogAy9pnatUlO+erL4LqFUO7GXSdBRbw5
+ gNt25XTLdSFuZtMxkY3tq8MFss5QnjhehCVPEpE6y9ZjI4XB8ad1G4oBHVGK5LMsvg22PfMJ
+ ISWFSHoF/B5+lHkCKWkFxZ0gZn33ju5n6/FOdEx4B8cMJt+cWwARAQABzSlBbmRyZXcgQ29v
+ cGVyIDxhbmRyZXcuY29vcGVyM0BjaXRyaXguY29tPsLBegQTAQgAJAIbAwULCQgHAwUVCgkI
+ CwUWAgMBAAIeAQIXgAUCWKD95wIZAQAKCRBlw/kGpdefoHbdD/9AIoR3k6fKl+RFiFpyAhvO
+ 59ttDFI7nIAnlYngev2XUR3acFElJATHSDO0ju+hqWqAb8kVijXLops0gOfqt3VPZq9cuHlh
+ IMDquatGLzAadfFx2eQYIYT+FYuMoPZy/aTUazmJIDVxP7L383grjIkn+7tAv+qeDfE+txL4
+ SAm1UHNvmdfgL2/lcmL3xRh7sub3nJilM93RWX1Pe5LBSDXO45uzCGEdst6uSlzYR/MEr+5Z
+ JQQ32JV64zwvf/aKaagSQSQMYNX9JFgfZ3TKWC1KJQbX5ssoX/5hNLqxMcZV3TN7kU8I3kjK
+ mPec9+1nECOjjJSO/h4P0sBZyIUGfguwzhEeGf4sMCuSEM4xjCnwiBwftR17sr0spYcOpqET
+ ZGcAmyYcNjy6CYadNCnfR40vhhWuCfNCBzWnUW0lFoo12wb0YnzoOLjvfD6OL3JjIUJNOmJy
+ RCsJ5IA/Iz33RhSVRmROu+TztwuThClw63g7+hoyewv7BemKyuU6FTVhjjW+XUWmS/FzknSi
+ dAG+insr0746cTPpSkGl3KAXeWDGJzve7/SBBfyznWCMGaf8E2P1oOdIZRxHgWj0zNr1+ooF
+ /PzgLPiCI4OMUttTlEKChgbUTQ+5o0P080JojqfXwbPAyumbaYcQNiH1/xYbJdOFSiBv9rpt
+ TQTBLzDKXok86M7BTQRS4TZ/ARAAkgqudHsp+hd82UVkvgnlqZjzz2vyrYfz7bkPtXaGb9H4
+ Rfo7mQsEQavEBdWWjbga6eMnDqtu+FC+qeTGYebToxEyp2lKDSoAsvt8w82tIlP/EbmRbDVn
+ 7bhjBlfRcFjVYw8uVDPptT0TV47vpoCVkTwcyb6OltJrvg/QzV9f07DJswuda1JH3/qvYu0p
+ vjPnYvCq4NsqY2XSdAJ02HrdYPFtNyPEntu1n1KK+gJrstjtw7KsZ4ygXYrsm/oCBiVW/OgU
+ g/XIlGErkrxe4vQvJyVwg6YH653YTX5hLLUEL1NS4TCo47RP+wi6y+TnuAL36UtK/uFyEuPy
+ wwrDVcC4cIFhYSfsO0BumEI65yu7a8aHbGfq2lW251UcoU48Z27ZUUZd2Dr6O/n8poQHbaTd
+ 6bJJSjzGGHZVbRP9UQ3lkmkmc0+XCHmj5WhwNNYjgbbmML7y0fsJT5RgvefAIFfHBg7fTY/i
+ kBEimoUsTEQz+N4hbKwo1hULfVxDJStE4sbPhjbsPCrlXf6W9CxSyQ0qmZ2bXsLQYRj2xqd1
+ bpA+1o1j2N4/au1R/uSiUFjewJdT/LX1EklKDcQwpk06Af/N7VZtSfEJeRV04unbsKVXWZAk
+ uAJyDDKN99ziC0Wz5kcPyVD1HNf8bgaqGDzrv3TfYjwqayRFcMf7xJaL9xXedMcAEQEAAcLB
+ XwQYAQgACQUCUuE2fwIbDAAKCRBlw/kGpdefoG4XEACD1Qf/er8EA7g23HMxYWd3FXHThrVQ
+ HgiGdk5Yh632vjOm9L4sd/GCEACVQKjsu98e8o3ysitFlznEns5EAAXEbITrgKWXDDUWGYxd
+ pnjj2u+GkVdsOAGk0kxczX6s+VRBhpbBI2PWnOsRJgU2n10PZ3mZD4Xu9kU2IXYmuW+e5KCA
+ vTArRUdCrAtIa1k01sPipPPw6dfxx2e5asy21YOytzxuWFfJTGnVxZZSCyLUO83sh6OZhJkk
+ b9rxL9wPmpN/t2IPaEKoAc0FTQZS36wAMOXkBh24PQ9gaLJvfPKpNzGD8XWR5HHF0NLIJhgg
+ 4ZlEXQ2fVp3XrtocHqhu4UZR4koCijgB8sB7Tb0GCpwK+C4UePdFLfhKyRdSXuvY3AHJd4CP
+ 4JzW0Bzq/WXY3XMOzUTYApGQpnUpdOmuQSfpV9MQO+/jo7r6yPbxT7CwRS5dcQPzUiuHLK9i
+ nvjREdh84qycnx0/6dDroYhp0DFv4udxuAvt1h4wGwTPRQZerSm4xaYegEFusyhbZrI0U9tJ
+ B8WrhBLXDiYlyJT6zOV2yZFuW47VrLsjYnHwn27hmxTC/7tvG3euCklmkn9Sl9IAKFu29RSo
+ d5bD8kMSCYsTqtTfT6W4A3qHGvIDta3ptLYpIAOD2sY3GYq2nf3Bbzx81wZK14JdDDHUX2Rs
+ 6+ahAA==
+In-Reply-To: <20240926165656.4ato6lx4omwiy6sv@desk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 26 18:09:57, Thorsten Blum wrote:
-> On 26. Sep 2024, at 17:28, Thorsten Blum <thorsten.blum@toblux.com> wrote:
-> > On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
-> >> 
-> >> Hi Kent,
-> >> 
-> >> found a strange regression in the patch set for 6.12.
-> >> 
-> >> First bad commit is: 86e92eeeb23741a072fe7532db663250ff2e726a
-> >> bcachefs: Annotate struct bch_xattr with __counted_by()
-> >> 
-> >> When compiling with clang 18.1.8 (also with latest llvm main branch) and
-> >> CONFIG_FORTIFY_SOURCE=y my rootfs does not mount because there is an erroneous
-> >> detection of a buffer overflow.
-> >> 
-> >> The __counted_by attribute is supposed to be supported starting with gcc 15,
-> >> not sure if it is implemented yet so I haven't tested with gcc trunk yet.
-> >> 
-> >> Here's the relevant section of dmesg:
-> >> 
-> >> [    6.248736] bcachefs (nvme1n1p2): starting version 1.12: rebalance_work_acct_fix
-> >> [    6.248744] bcachefs (nvme1n1p2): recovering from clean shutdown, journal seq 1305969
-> >> [    6.252374] ------------[ cut here ]------------
-> >> [    6.252375] memchr: detected buffer overflow: 12 byte read of buffer size 0
-> >> [    6.252379] WARNING: CPU: 18 PID: 511 at lib/string_helpers.c:1033 __fortify_report+0x45/0x50
-> >> [    6.252383] Modules linked in: bcachefs lz4hc_compress lz4_compress hid_generic usbhid btrfs crct10dif_pclmul libcrc32c crc32_pclmul crc32c_generic polyval_clmulni crc32c_intel polyval_generic raid6_pq ghash_clmulni_intel xor sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni_intel gf128mul nvme crypto_simd ccp xhci_pci cryptd sp5100_tco xhci_pci_renesas nvme_core nvme_auth video wmi ip6_tables ip_tables x_tables i2c_dev
-> >> [    6.252404] CPU: 18 UID: 0 PID: 511 Comm: mount Not tainted 6.11.0-10065-g6fa6588e5964 #98 d8e0beb515d91b387aa60970de7203f35ddd182c
-> >> [    6.252406] Hardware name: Micro-Star International Co., Ltd. MS-7D78/PRO B650-P WIFI (MS-7D78), BIOS 1.C0 02/06/2024
-> >> [    6.252407] RIP: 0010:__fortify_report+0x45/0x50
-> >> [    6.252409] Code: 48 8b 34 c5 30 92 21 87 40 f6 c7 01 48 c7 c0 75 1b 0a 87 48 c7 c1 e1 93 07 87 48 0f 44 c8 48 c7 c7 ef 03 10 87 e8 0b c2 9b ff <0f> 0b e9 cf 5d 9e 00 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90
-> >> [    6.252410] RSP: 0018:ffffbb3d03aff350 EFLAGS: 00010246
-> >> [    6.252412] RAX: 4ce590fb7c372800 RBX: ffff98d559a400e8 RCX: 0000000000000027
-> >> [    6.252413] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffff98e43db21a08
-> >> [    6.252414] RBP: ffff98d559a400d0 R08: 0000000000001fff R09: ffff98e47ddcd000
-> >> [    6.252415] R10: 0000000000005ffd R11: 0000000000000004 R12: ffff98d559a40000
-> >> [    6.252416] R13: ffff98d54abf1320 R14: ffffbb3d03aff430 R15: 0000000000000000
-> >> [    6.252417] FS:  00007efc82117800(0000) GS:ffff98e43db00000(0000) knlGS:0000000000000000
-> >> [    6.252418] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >> [    6.252419] CR2: 000055d96658ea80 CR3: 000000010a12c000 CR4: 0000000000f50ef0
-> >> [    6.252420] PKRU: 55555554
-> >> [    6.252421] Call Trace:
-> >> [    6.252423]  <TASK>
-> >> [    6.252425]  ? __warn+0xd5/0x1d0
-> >> [    6.252427]  ? __fortify_report+0x45/0x50
-> >> [    6.252429]  ? report_bug+0x144/0x1f0
-> >> [    6.252431]  ? __fortify_report+0x45/0x50
-> >> [    6.252433]  ? handle_bug+0x6a/0x90
-> >> [    6.252435]  ? exc_invalid_op+0x1a/0x50
-> >> [    6.252436]  ? asm_exc_invalid_op+0x1a/0x20
-> >> [    6.252440]  ? __fortify_report+0x45/0x50
-> >> [    6.252441]  __fortify_panic+0x9/0x10
-> >> [    6.252443]  bch2_xattr_validate+0x13b/0x140 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-> >> [    6.252463]  bch2_btree_node_read_done+0x125a/0x17a0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-> >> [    6.252482]  btree_node_read_work+0x202/0x4a0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-> >> [    6.252499]  bch2_btree_node_read+0xa8d/0xb20 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-> >> [    6.252514]  ? srso_alias_return_thunk+0x5/0xfbef5
-> >> [    6.252515]  ? pcpu_alloc_noprof+0x741/0xb50
-> >> [    6.252517]  ? srso_alias_return_thunk+0x5/0xfbef5
-> >> [    6.252519]  ? time_stats_update_one+0x75/0x1f0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-> >> 
-> >> ...
-> >> 
-> >> 
-> >> The memchr in question is at:
-> >> https://github.com/torvalds/linux/blob/11a299a7933e03c83818b431e6a1c53ad387423d/fs/bcachefs/xattr.c#L99
-> >> 
-> >> There is not actually a buffer overflow here, I checked with gdb that
-> >> xattr.v->x_name does actually contain a string of the correct length and
-> >> xattr.v->x_name_len contains the correct length and should be used to determine
-> >> the length when memchr uses __struct_size for bounds-checking due to the
-> >> __counted_by annotation.
-> >> 
-> >> I'm at the point where I think this is probably a bug in clang. I have a patch
-> >> that does fix (more like bandaid) the problem and adds some print statements:
-> >> 
-> >> --
-> >> diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
-> >> index 56c8d3fe55a4..8d7e749b7dda 100644
-> >> --- a/fs/bcachefs/xattr.c
-> >> +++ b/fs/bcachefs/xattr.c
-> >> @@ -74,6 +74,7 @@ int bch2_xattr_validate(struct bch_fs *c, struct bkey_s_c k,
-> >>      enum bch_validate_flags flags)
-> >> {
-> >> struct bkey_s_c_xattr xattr = bkey_s_c_to_xattr(k);
-> >> + const struct bch_xattr *v = (void *)k.v;
-> >> unsigned val_u64s = xattr_val_u64s(xattr.v->x_name_len,
-> >>  le16_to_cpu(xattr.v->x_val_len));
-> >> int ret = 0;
-> >> @@ -94,9 +95,12 @@ int bch2_xattr_validate(struct bch_fs *c, struct bkey_s_c k,
-> >> 
-> >> bkey_fsck_err_on(!bch2_xattr_type_to_handler(xattr.v->x_type),
-> >> c, xattr_invalid_type,
-> >> - "invalid type (%u)", xattr.v->x_type);
-> >> + "invalid type (%u)", v->x_type);
-> >> 
-> >> - bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_name_len),
-> >> + pr_info("x_name_len: %d", v->x_name_len);
-> >> + pr_info("__struct_size(x_name): %ld", __struct_size(v->x_name));
-> >> + pr_info("__struct_size(x_name): %ld", __struct_size(xattr.v->x_name));
-> >> + bkey_fsck_err_on(memchr(v->x_name, '\0', v->x_name_len),
-> >> c, xattr_name_invalid_chars,
-> >> "xattr name has invalid characters");
-> >> fsck_err:
-> >> --
-> >> 
-> >> 
-> >> Making memchr access via a pointer created with
-> >> const struct bch_xattr *v = (void *)k.v fixes it. From the print statements I
-> >> can see that __struct_size(xattr.v->x_name) incorrectly returns 0, while
-> >> __struct_size(v->x_name) correctly returns 10 in this case (the value of
-> >> x_name_len).
-> >> 
-> >> The generated assembly illustrates what is going wrong. Below is an excerpt
-> >> of the assembly clang generated for the bch2_xattr_validate function:
-> >> 
-> >> mov r13d, ecx
-> >> mov r15, rdi
-> >> mov r14, rsi
-> >> mov rdi, offset .L.str.3
-> >> mov rsi, offset .L__func__.bch2_xattr_validate
-> >> mov rbx, rdx
-> >> mov edx, eax
-> >> call _printk
-> >> movzx edx, byte ptr [rbx + 1]
-> >> mov rdi, offset .L.str.4
-> >> mov rsi, offset .L__func__.bch2_xattr_validate
-> >> call _printk
-> >> movzx edx, bh
-> >> mov rdi, offset .L.str.4
-> >> mov rsi, offset .L__func__.bch2_xattr_validate
-> >> call _printk
-> >> lea rdi, [rbx + 4]
-> >> mov r12, rbx
-> >> movzx edx, byte ptr [rbx + 1]
-> >> xor ebx, ebx
-> >> xor esi, esi
-> >> call memchr
-> >> 
-> >> At the start of this rdx contains k.v (and is moved into rbx). The three calls
-> >> to printk are the ones you can see in my patch. You can see that for the
-> >> print that uses __struct_size(v->x_name) the compiler correctly uses
-> >> movzx edx, byte ptr [rbx + 1]
-> >> to load x_name_len into edx.
-> >> 
-> >> For the printk call that uses __struct_size(xattr.v->x_name) however the
-> >> compiler uses
-> >> movzx edx, bh
-> >> So it will print the high 8 bits of the lower 16 bits (second least
-> >> significant byte) of the memory address of xattr.v->x_type. This is obviously
-> >> completely wrong.
-> >> 
-> >> It is then doing the correct call of memchr because this is using my patch.
-> >> Without my patch it would be doing the same thing for the call to memchr where
-> >> it uses the second least significant byte of the memory address of x_type as the
-> >> length used for the bounds-check.
-> >> 
-> >> 
-> >> 
-> >> The LLVM IR also shows the same problem:
-> >> 
-> >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
-> >> [...]
-> >> %51 = ptrtoint ptr %2 to i64
-> >> %52 = lshr i64 %51, 8
-> >> %53 = and i64 %52, 255
-> >> 
-> >> This is the IR for the incorrect behavior. It simply converts the pointer to an
-> >> int, shifts right by 8 bits, then and with 0xFF. If it did a load (to i64)
-> >> instead of ptrtoint this would actually work, as the second least significant
-> >> bit of an i64 loaded from that memory address does contain the value of
-> >> x_name_len. It's as if clang forgot to dereference a pointer here.
-> >> 
-> >> Correct IR does this (for the other printk invocation):
-> >> 
-> >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
-> >> [...]
-> >> %4 = getelementptr inbounds %struct.bch_xattr, ptr %1, i64 0, i32 1
-> >> %5 = load i8, ptr %4, align 8
-> >> [...]
-> >> %48 = load i8, ptr %5, align 4
-> >> %49 = zext i8 %48 to i64
-> >> 
-> >> Best Regards
-> >> Jan
-> > 
-> > I suspect it's the same Clang __bdos() "bug" as in [1] and [2].
-> > 
-> > [1] https://lore.kernel.org/linux-kernel/3D0816D1-0807-4D37-8D5F-3C55CA910FAA@linux.dev/
-> > [2] https://lore.kernel.org/all/20240913164630.GA4091534@thelio-3990X/
-> 
-> Could you try this and see if it resolves the problem?
-> 
-> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> index 1a957ea2f4fe..b09759f31789 100644
-> --- a/include/linux/compiler_types.h
-> +++ b/include/linux/compiler_types.h
-> @@ -413,7 +413,7 @@ struct ftrace_likely_data {
->   * When the size of an allocated object is needed, use the best available
->   * mechanism to find it. (For cases where sizeof() cannot be used.)
->   */
-> -#if __has_builtin(__builtin_dynamic_object_size)
-> +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
->  #define __struct_size(p)	__builtin_dynamic_object_size(p, 0)
->  #define __member_size(p)	__builtin_dynamic_object_size(p, 1)
->  #else
-> 
+On 26/09/2024 5:56 pm, Pawan Gupta wrote:
+> On Thu, Sep 26, 2024 at 05:28:05PM +0100, Andrew Cooper wrote:
+>> On 26/09/2024 5:10 pm, Pawan Gupta wrote:
+>>> On Thu, Sep 26, 2024 at 04:52:53PM +0200, Uros Bizjak wrote:
+>>>>> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+>>>>> index e18a6aaf414c..4228a1fd2c2e 100644
+>>>>> --- a/arch/x86/include/asm/nospec-branch.h
+>>>>> +++ b/arch/x86/include/asm/nospec-branch.h
+>>>>> @@ -318,14 +318,21 @@
+>>>>>   /*
+>>>>>    * Macro to execute VERW instruction that mitigate transient data sampling
+>>>>>    * attacks such as MDS. On affected systems a microcode update overloaded VERW
+>>>>> - * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %cs
+>>>>> - * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
+>>>>> - * 32-bit mode.
+>>>>> + * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
+>>>>>    *
+>>>>>    * Note: Only the memory operand variant of VERW clears the CPU buffers.
+>>>>>    */
+>>>>>   .macro CLEAR_CPU_BUFFERS
+>>>>> -	ALTERNATIVE "", __stringify(verw %cs:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+>>>>> +#ifdef CONFIG_X86_64
+>>>>> +	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+>>>> You should drop _ASM_RIP here and direclty use (%rip). This way, you also
+>>>> won't need __stringify:
+>>>>
+>>>> ALTERNATIVE "", "verw mds_verw_sel(%rip)", X86_FEATURE_CLEAR_CPU_BUF
+>>>>
+>>>>> +#else
+>>>>> +	/*
+>>>>> +	 * In 32bit mode, the memory operand must be a %cs reference. The data
+>>>>> +	 * segments may not be usable (vm86 mode), and the stack segment may not
+>>>>> +	 * be flat (ESPFIX32).
+>>>>> +	 */
+>>>>> +	ALTERNATIVE "", __stringify(verw %cs:mds_verw_sel), X86_FEATURE_CLEAR_CPU_BUF
+>>>> Also here, no need for __stringify:
+>>>>
+>>>> ALTERNATIVE "", "verw %cs:mds_verw_sel", X86_FEATURE_CLEAR_CPU_BUF
+>>>>
+>>>> This is in fact what Andrew proposed in his review.
+>>> Thanks for pointing out, I completely missed that part. Below is how it
+>>> looks like with stringify gone:
+>>>
+>>> --- >8 ---
+>>> Subject: [PATCH] x86/bugs: Use code segment selector for VERW operand
+>>>
+>>> Robert Gill reported below #GP in 32-bit mode when dosemu software was
+>>> executing vm86() system call:
+>>>
+>>>   general protection fault: 0000 [#1] PREEMPT SMP
+>>>   CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
+>>>   Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
+>>>   EIP: restore_all_switch_stack+0xbe/0xcf
+>>>   EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
+>>>   ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
+>>>   DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
+>>>   CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
+>>>   Call Trace:
+>>>    show_regs+0x70/0x78
+>>>    die_addr+0x29/0x70
+>>>    exc_general_protection+0x13c/0x348
+>>>    exc_bounds+0x98/0x98
+>>>    handle_exception+0x14d/0x14d
+>>>    exc_bounds+0x98/0x98
+>>>    restore_all_switch_stack+0xbe/0xcf
+>>>    exc_bounds+0x98/0x98
+>>>    restore_all_switch_stack+0xbe/0xcf
+>>>
+>>> This only happens in 32-bit mode when VERW based mitigations like MDS/RFDS
+>>> are enabled. This is because segment registers with an arbitrary user value
+>>> can result in #GP when executing VERW. Intel SDM vol. 2C documents the
+>>> following behavior for VERW instruction:
+>>>
+>>>   #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
+>>> 	   FS, or GS segment limit.
+>>>
+>>> CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
+>>> space. Use %cs selector to reference VERW operand. This ensures VERW will
+>>> not #GP for an arbitrary user %ds.
+>>>
+>>> Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
+>>> Cc: stable@vger.kernel.org # 5.10+
+>>> Reported-by: Robert Gill <rtgill82@gmail.com>
+>>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
+>>> Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
+>>> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+>>> Suggested-by: Brian Gerst <brgerst@gmail.com>
+>>> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+>>> ---
+>>>  arch/x86/include/asm/nospec-branch.h | 11 ++++++++++-
+>>>  1 file changed, 10 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+>>> index ff5f1ecc7d1e..96b410b1d4e8 100644
+>>> --- a/arch/x86/include/asm/nospec-branch.h
+>>> +++ b/arch/x86/include/asm/nospec-branch.h
+>>> @@ -323,7 +323,16 @@
+>>>   * Note: Only the memory operand variant of VERW clears the CPU buffers.
+>>>   */
+>>>  .macro CLEAR_CPU_BUFFERS
+>>> -	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+>>> +#ifdef CONFIG_X86_64
+>>> +	ALTERNATIVE "", "verw mds_verw_sel(%rip)", X86_FEATURE_CLEAR_CPU_BUF
+>>> +#else
+>>> +	/*
+>>> +	 * In 32bit mode, the memory operand must be a %cs reference. The data
+>>> +	 * segments may not be usable (vm86 mode), and the stack segment may not
+>>> +	 * be flat (ESPFIX32).
+>>> +	 */
+>>> +	ALTERNATIVE "", "verw %cs:mds_verw_sel", X86_FEATURE_CLEAR_CPU_BUF
+>>> +#endif
+>> You should also delete _ASM_RIP() as you're removing the only user of it.
+> Can we? I see that __svm_vcpu_run() and __vmx_vcpu_run() are using _ASM_RIP().
 
-Alright after looking at it in the debugger the code it generates now is
-just wild.
+Oh - so it is when I'm on the right branch.  Sorry for the noise.
 
-I added one more printk before the call to memchr like so:
-
-diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
-index 56c8d3fe55a4..3c7c479ea3a8 100644
---- a/fs/bcachefs/xattr.c
-+++ b/fs/bcachefs/xattr.c
-@@ -96,6 +96,7 @@ int bch2_xattr_validate(struct bch_fs *c, struct bkey_s_c k,
- 			 c, xattr_invalid_type,
- 			 "invalid type (%u)", xattr.v->x_type);
- 
-+	pr_info("__struct_size(x_name): %lu", __struct_size(xattr.v->x_name));
- 	bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_name_len),
- 			 c, xattr_name_invalid_chars,
- 			 "xattr name has invalid characters");
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index f14c275950b5..43ac0bca485d 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -413,7 +413,7 @@ struct ftrace_likely_data {
-  * When the size of an allocated object is needed, use the best available
-  * mechanism to find it. (For cases where sizeof() cannot be used.)
-  */
--#if __has_builtin(__builtin_dynamic_object_size)
-+#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
- #define __struct_size(p)	__builtin_dynamic_object_size(p, 0)
- #define __member_size(p)	__builtin_dynamic_object_size(p, 1)
- #else
-
-
-Here's the generated assembly for this:
-
-	mov	rdi, offset .L.str.3
-	mov	rsi, offset .L__func__.bch2_xattr_validate
-	mov	r12, rdx
-	mov	rdx, -1
-	call	_printk
-	mov	rax, r12
-	movzx	esi, ah
-	movzx	edx, byte ptr [r12 + 1]
-	cmp	rsi, rdx
-	jb	.LBB4_15
-# %bb.11:
-	lea	rdi, [rax + 4]
-	xor	ebx, ebx
-	xor	esi, esi
-	call	memchr
-
-So for the printk it hardcoded -1 (aka 0xFFFFF... 64 bit long int max)
-as the result of __struct_size. But then for before call to memchr it does
-the same stuff again and puts the second least significant byte of the memory
-address of x_type in esi, only to then load the correct value of x_name_len
-into edx and compares them for the bounds-check.
-
-Best Regards
-Jan
+~Andrew
 
