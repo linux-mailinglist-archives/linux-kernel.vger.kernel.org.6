@@ -1,158 +1,265 @@
-Return-Path: <linux-kernel+bounces-340361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C42098720A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 921B598720D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E486289BF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:52:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D40286373
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F3B1AD5D7;
-	Thu, 26 Sep 2024 10:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDD81AD3F4;
+	Thu, 26 Sep 2024 10:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Whx2l67e"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B8Frapnu"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21CC1ACE03
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5082F1AD9E3;
+	Thu, 26 Sep 2024 10:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727347952; cv=none; b=ekvZzht79ZEvIVuomcRsTAmrbQTSXdml4sDvgBoV7vV74pS4NljvbLs40IrfI8VgWoQ4JD9i1wpwS3pTgEqCYhCQAp5SaH3j6ZJbzyOyftE0h+W2WwMwDvmntFW+88KD0aazTdVTtFZFA49lAyKjkc01jwggqGF1DhvZJgs4riU=
+	t=1727347965; cv=none; b=jYhkv85CvkzGcIPLUVausrby7xH8uCIjSuz5PSFa2cVhYl//OPwYeuuBt1WVGER/pS4dPDNEbbWAkk1NAYrBkV4gNEtQ8BKlKK1Vf6m15Ww5iXFtpGIRMDm1YiWMrLHMBU257ymdBmILmP3FDVMxXmyf8s2fRZgp/1IOhBD7mpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727347952; c=relaxed/simple;
-	bh=jc6WaqxvmP5VbH2bakowRUyH2tKYaT2YUN/mffZUmdA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rEIgw4S6X4Jigs4BFJJWL1ebsczvP3WptgV/iTSJ5aeuGVWjNLblfdnxuhDMSrbPVnWpDOSAmQi7Q52rXnvyd/uXAwZEkmztFknCt6BLG13c3F+JYo2Im7IcERhDkTswcIJ23TH7SYfN128VdwDU8amJrhJJSWnuxnzx81tWlSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Whx2l67e; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c5c3a1f474so825622a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 03:52:29 -0700 (PDT)
+	s=arc-20240116; t=1727347965; c=relaxed/simple;
+	bh=rNLSkaEd7oDUKlk8fUcvYr/AJfk6k2J1D0qkHx1VVI8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eQ+ZW2KcbDGRxmqA87vGsm22vtkXEvwgnDMKpZYpVXFScoymHRCisOTPmFmvPuTfWFZZTjdKvUK9Mb3M8cdXkjGgM/b302yvMPRzusC5/7An9iph7v4rEBArsOQIBuc1xP/YvmrdKISkAXJlbrVrl8Pqt6/CqVNBXdbAKLk/EEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B8Frapnu; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d6d0fe021so137162666b.1;
+        Thu, 26 Sep 2024 03:52:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727347948; x=1727952748; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rJu6mYblkqkVcXR8JB08LsUmO1kDyu1sUwLdCteDGqk=;
-        b=Whx2l67evl7Cz9iA53YsP6XxIPf7D0V/E+n699fmomvbvlb/GlSsuqaXtZO4CJKikb
-         SCVvU5vYaaSjsLGFD6xQF+Nn//Z5zijDCXk7YTcDODKqfm7aWOg7iAv7pA468s13tlmz
-         RHwFljG0gDnNbI6trVKbcIVOFduoL3qMainmAXmOfoj+hTq7lbzZfQJPuUebPYnByuba
-         takh16z53JICHLy8AKthQ/MaquCwHP9WW9kQERCxpd1WjjpAuJBAAfKnDs2sYeg1wVNn
-         Kh4sE7euXFrsc5t6TbnOEdDYwb2n5cMszx2D4CmrolcRBYulmA4D9RCBNCXe7oAb8iXd
-         5sjA==
+        d=gmail.com; s=20230601; t=1727347961; x=1727952761; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rNLSkaEd7oDUKlk8fUcvYr/AJfk6k2J1D0qkHx1VVI8=;
+        b=B8FrapnuhKSSh8TS3j1PiqLveNu2BD9Kpsa4hg37bXNzaZQI7FAFUfDOUSrf2YYwHH
+         MhcV8M1fz7Vzo95idRdo9xeTM866UwupCUkJ6Zl9jGXb3Y5kTyFQNpsDRCPPGKg999Bw
+         6e9+f3Fwovc26Caia4uEX50Jrpz4eJSxC7/CBsLsuVjDHMZun6aOdmJdpo7KISLwdzd6
+         2VKqC5SbDgbcsfsP72DYL1raX6tcRhDC/s/FYxIDR4QMSG2kFNAflcDluiWwjBXYEiR6
+         oLX+qXbEnTMvn5UayHCMlSH5kw8mSM3ysbfo5aoYPKwOitk4xDrHZfdO0CikPlGitQKn
+         eV6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727347948; x=1727952748;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rJu6mYblkqkVcXR8JB08LsUmO1kDyu1sUwLdCteDGqk=;
-        b=LKkRiJvcwA5KLHhJdSpOTFVVXAHtRRQIj2K2kc0WXyAzHEs2eCJsKRrx5oJ4ku3uoU
-         KTsRVqsVv/uWsaqJf9FXvBpfpNpyoCIrIvcLfAsqwyhz7FDqU8GMYrRMwMEDOTZuyosw
-         EO8mEFJSU+0C/yHfO/V6AoxGUGXYrSpUFYa1rDflOgUINnV3IJQXbdlO7ZPchB9vyVYI
-         gUOq9JXyrTNlpZJtmKzFZBnlvBQSz0uONnaonILU3/gXHHWjBxQH6iuPfhW/zK9s8V/l
-         R4vcapFSeTJtEbcS++Aivmmpv4KGqJMripQFrnL/nmwvpIlpEPe4kndUgO5FUjODursd
-         pIuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnCEMY7mngW1r7+JapWmX97s6pOB1+vw6mYkgj3NpfhvpWJUNOvXUZSyQSTVeCojJaUm6DSm5PHyk10go=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU8bneKCW7dN+V5NSrpsobXrLvnsg37Sz6844w3PUUIGY85ohd
-	WPLol8Rpx7dsXXFcHJO3HWo+1HCZFnnba2iqZcCkf04xRC7pF5Fv0LyiOUa9DTg=
-X-Google-Smtp-Source: AGHT+IHqh7l0ziaE7Iee4IWJbL+JOqnqbMeKHuaoZ2CaR0fOIf16vkoIFCf4nL/NIj3W3r4REhw/AA==
-X-Received: by 2002:a17:907:f78e:b0:a8a:3ece:d073 with SMTP id a640c23a62f3a-a93a0320106mr457384266b.10.1727347947978;
-        Thu, 26 Sep 2024 03:52:27 -0700 (PDT)
-Received: from [192.168.0.157] ([79.115.63.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9393134bd2sm334386766b.214.2024.09.26.03.52.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 03:52:27 -0700 (PDT)
-Message-ID: <2a38f567-8734-4295-95bd-c3ea65c0754b@linaro.org>
-Date: Thu, 26 Sep 2024 11:52:25 +0100
+        d=1e100.net; s=20230601; t=1727347961; x=1727952761;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rNLSkaEd7oDUKlk8fUcvYr/AJfk6k2J1D0qkHx1VVI8=;
+        b=GJQnqUBhekHd4MjpqHSt4WCJJ+tatKqTPZ7n3AreBYUeVCJuoyCu13YiF1X52TMNxF
+         24qRCyoTDd2EFn8CzR5S39P8w9kDxJE+X6uWqMku/c/fUAxFF9KunTkzMnSq/4cvQxgg
+         /Xu++ZPQa2gIgD+ZikfBBJ0K+UBdkF7H8pqSkd5NmGV7LjqGtlMIGyDAc3xYgI5iPA3V
+         XmLJGBe6WM1Uv//axMCv5xwcvRB7ox1Ickn2aXLnRFZS/B42SgASK3ogSj0lRYqNS/Z6
+         1CBwY7hbB9fjhDx+lQgLVODTI+qiG4dZLOguTDChzYSgfjM5Yox4BdiwHcny0LklhXKT
+         6akQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSdG7uUR8FAz9jp/Se/jbwX3cuQXACkTejubAocZXxWTPWuEl7g4XoyA2BSTveAJ9tLOMDJSGmGj9MNAW1@vger.kernel.org, AJvYcCW9wQCHIMf2QIB9BVZ2GU0egMyOQkCWfyPud1ftbpp5+QkhNE9H4OfWvnuVdfEVEWBb2l631N3CpMt4@vger.kernel.org, AJvYcCXen2r7H7oO/tivAVX4GBjJwE/zLqH8V4/z5F0x4aoncgO0KeVS/rbr05jtD0bVtM86/rI6EwPLAsqq@vger.kernel.org, AJvYcCXnMPgiatLKU6gu+gv/d4EEaHeGsTvKN9YDAcQ0sIegmknp3G0JLI57DUPkBRhGdydPlzMLQo+xnAJn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJpWsTVJxx1Qb3mX5z6IIU/EfY2YzbdEP4wHbZq5XqObXpIiS8
+	IAcCHzo4etGR1OsXHTSXUTpYDQTK1kwidtaMXx5sWR/ITrnEp7Y1
+X-Google-Smtp-Source: AGHT+IFEqLjZ85oYoyLQbtQFM71BDt+U30LBxiyP+dOTJVzn/sVZoFDhT1nJPJ4DAiUCLcjVwrOm0w==
+X-Received: by 2002:a17:907:2cc4:b0:a8a:913e:418b with SMTP id a640c23a62f3a-a93a0369e7bmr538221366b.20.1727347961226;
+        Thu, 26 Sep 2024 03:52:41 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:341e:1201:c434:b5b1:98a6:efed])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93a1a8c71csm221130666b.87.2024.09.26.03.52.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 03:52:40 -0700 (PDT)
+Message-ID: <83cf3c3eb1cc5fcc06ce72cab14cc0da3bd817b6.camel@gmail.com>
+Subject: Re: [PATCH 1/7] iio: backend: add API for interface get
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Antoniu Miclaus
+	 <antoniu.miclaus@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>,  Michael Hennerich <Michael.Hennerich@analog.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+ <ukleinek@kernel.org>, Andy Shevchenko <andy@kernel.org>, Marcelo Schmitt
+ <marcelo.schmitt@analog.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
+  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,  =?ISO-8859-1?Q?Jo=E3o?= Paulo
+ =?ISO-8859-1?Q?Gon=E7alves?= <joao.goncalves@toradex.com>, Marius Cristea
+ <marius.cristea@microchip.com>,  Sergiu Cuciurean
+ <sergiu.cuciurean@analog.com>, Dragos Bogdan <dragos.bogdan@analog.com>,
+ linux-iio@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-pwm@vger.kernel.org
+Date: Thu, 26 Sep 2024 12:52:39 +0200
+In-Reply-To: <CAMknhBHmtpnX-nXxReF-rUW1ks1=iw3m_BmiRUTkf5XckPsvPw@mail.gmail.com>
+References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
+	 <20240923101206.3753-2-antoniu.miclaus@analog.com>
+	 <CAMknhBHmtpnX-nXxReF-rUW1ks1=iw3m_BmiRUTkf5XckPsvPw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/15] mtd: spi-nor: macronix: workaround for device id
- re-use
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Esben Haabendal <esben@geanix.com>, Michael Walle <mwalle@kernel.org>
-Cc: Pratyush Yadav <pratyush@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org, Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
- linux-arm-kernel@lists.infradead.org
-References: <20240711-macronix-mx25l3205d-fixups-v3-0-99353461dd2d@geanix.com>
- <D2NGXHZ2VTK0.M0AOB4CM7MHM@kernel.org> <87tte2hmq0.fsf@geanix.com>
- <2196b4e8-2c93-4a73-a717-28448d4668ab@linaro.org>
-Content-Language: en-US
-In-Reply-To: <2196b4e8-2c93-4a73-a717-28448d4668ab@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+On Thu, 2024-09-26 at 10:40 +0200, David Lechner wrote:
+> On Mon, Sep 23, 2024 at 12:15=E2=80=AFPM Antoniu Miclaus
+> <antoniu.miclaus@analog.com> wrote:
+> >=20
+> > Add backend support for obtaining the interface type used.
+> >=20
+> > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> > ---
+> > =C2=A0drivers/iio/industrialio-backend.c | 24 ++++++++++++++++++++++++
+> > =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 10 ++++++++++
+> > =C2=A02 files changed, 34 insertions(+)
+> >=20
+> > diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industria=
+lio-
+> > backend.c
+> > index efe05be284b6..53ab6bc86a50 100644
+> > --- a/drivers/iio/industrialio-backend.c
+> > +++ b/drivers/iio/industrialio-backend.c
+> > @@ -449,6 +449,30 @@ ssize_t iio_backend_ext_info_set(struct iio_dev *i=
+ndio_dev,
+> > uintptr_t private,
+> > =C2=A0}
+> > =C2=A0EXPORT_SYMBOL_NS_GPL(iio_backend_ext_info_set, IIO_BACKEND);
+> >=20
+> > +/**
+> > + * iio_backend_interface_type_get - get the interace type used.
+> > + * @back: Backend device
+> > + * @type: Interface type
+> > + *
+> > + * RETURNS:
+> > + * 0 on success, negative error number on failure.
+> > + */
+> > +int iio_backend_interface_type_get(struct iio_backend *back,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_int=
+erface_type *type)
+> > +{
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D iio_backend_op_call(back,=
+ interface_type_get, type);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 return ret;
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (*type > IIO_BACKEND_INTERFACE=
+_CMOS)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 return -EINVAL;
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+> > +}
+> > +EXPORT_SYMBOL_NS_GPL(iio_backend_interface_type_get, IIO_BACKEND);
+> > +
+> > =C2=A0/**
+> > =C2=A0 * iio_backend_extend_chan_spec - Extend an IIO channel
+> > =C2=A0 * @indio_dev: IIO device
+> > diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+> > index 8099759d7242..ba8ad30ac9ba 100644
+> > --- a/include/linux/iio/backend.h
+> > +++ b/include/linux/iio/backend.h
+> > @@ -63,6 +63,11 @@ enum iio_backend_sample_trigger {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_BACKEND_SAMPLE_TRIGGER_M=
+AX
+> > =C2=A0};
+> >=20
+> > +enum iio_backend_interface_type {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_BACKEND_INTERFACE_LVDS,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_BACKEND_INTERFACE_CMOS
+> > +};
+> > +
+> > =C2=A0/**
+> > =C2=A0 * struct iio_backend_ops - operations structure for an iio_backe=
+nd
+> > =C2=A0 * @enable: Enable backend.
+> > @@ -81,6 +86,7 @@ enum iio_backend_sample_trigger {
+> > =C2=A0 * @extend_chan_spec: Extend an IIO channel.
+> > =C2=A0 * @ext_info_set: Extended info setter.
+> > =C2=A0 * @ext_info_get: Extended info getter.
+> > + * @interface_type_get: Interface type.
+> > =C2=A0 **/
+> > =C2=A0struct iio_backend_ops {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int (*enable)(struct iio_bac=
+kend *back);
+> > @@ -113,6 +119,8 @@ struct iio_backend_ops {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 const char *buf, size_t len);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int (*ext_info_get)(struct i=
+io_backend *back, uintptr_t private,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 const struct iio_chan_spec *chan, char *buf);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int (*interface_type_get)(struct =
+iio_backend *back,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_interface=
+_type *type);
+> > =C2=A0};
+> >=20
+> > =C2=A0int iio_backend_chan_enable(struct iio_backend *back, unsigned in=
+t chan);
+> > @@ -142,6 +150,8 @@ ssize_t iio_backend_ext_info_set(struct iio_dev *in=
+dio_dev,
+> > uintptr_t private,
+> > =C2=A0ssize_t iio_backend_ext_info_get(struct iio_dev *indio_dev, uintp=
+tr_t private,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct iio_chan_spec=
+ *chan, char *buf);
+> >=20
+> > +int iio_backend_interface_type_get(struct iio_backend *back,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_int=
+erface_type *type);
+> > =C2=A0int iio_backend_extend_chan_spec(struct iio_dev *indio_dev,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_backend *back,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_chan_spec *chan=
+);
+> > --
+> > 2.46.0
+> >=20
+>=20
+> This seems very specific to the AD485x chips and the AXI ADC backend.
+> Since it is describing how the chip is wired to the AXI DAC IP block,
+> I would be tempted to use the devicetree for this info instead of
+> adding a new backend function.
 
+Not sure If I'm following your point but I think this is the typical case w=
+here the
+chip (being it a DAC or ADC) supports both CMOS and LVDS interfaces. Natura=
+lly you
+only use one on your system and this is a synthesis parameter on the FPGA I=
+P core.
+Therefore, it makes sense for the frontend to have way to ask for this info=
+rmation to
+the backend.
 
-On 9/26/24 11:47 AM, Tudor Ambarus wrote:
-> Hi, Esben,
-> 
-> Thank you for the perseverance :D
-> 
-> On 9/26/24 8:56 AM, Esben Haabendal wrote:
->> "Michael Walle" <mwalle@kernel.org> writes:
->>
->>> Hi,
->>>
->>> On Thu Jul 11, 2024 at 3:00 PM CEST, Esben Haabendal wrote:
->>>> As a consequence, the SPI_NOR_SKIP_SFDP flag is no more, and all
->>>> drivers that have been doing optional SFDP is now marked explicitly to
->>>> do that using the SPI_NOR_TRY_SFDP.
->>>
->>> First, I haven't looked at your patchset at the moment. But I'd like
->>> to take the opportunity to discuss the following (and excuse me that
->>> I didn't had this idea before all your work on this).
->>>
->>> First, I'd like to see it the other way around, that is, doing SFDP
->>> by default and let the driver opt-out instead of opt-in. This will
->>> also align with the current "SFDP only driver", i.e. if a flash is
->>> not known we try SFDP anyway. Going forward, I'd say this is also
->>> the sane behavior and we don't have to add any flags if someone want
->>> to add support for an (older) flash with the same ID but without
->>> SFDP. With the current approach, we'd have to add the TRY_SFDP flag.
->>>
->>> Now we might play it safe and add that SPI_NOR_SKIP_SFDP to any
->>> flash which doesn't do the SFDP parsing (because it has size != 0
->>> and not any of the magic flags set) - or we might just go ahead and
->>> do the probing first for *any* flashes. Yes we might issue an
->>> unsupported opcode, but we already do that with the generic SFDP
->>> flash driver. So no big deal maybe (?). Vendors where we know for a
->>> fact that they don't have any SFDP (Everspin I'm looking at you),
->>> would of course set the SKIP_SFDP flag.
-> 
-> Issuing RDSFDP for flashes that don't support it shouldn't be too bad
-> indeed, it's not recommended, but it shall be fine. What I'm worried
-> about is flashes with wrong SFDP data (see all the SFDP fixup hooks that
-> we have). So my suggestion is to play it safe unless one of you guys
-> step up and commit that will fix or help fix each bug that results from
-> this.
-> 
-> I'd like you to also consider the SFDP versions and how many parameters
-> they are exposing. I can't tell exactly, but if I remember correctly,
-> rev A had 9 dwords for BFPT, revB 16, and revC and other more. If we
-> consider static init folowed by SFDP with rollback option, point 3/ in
-> your cover letter, are we sure that all the parameters that are
-> initialized before parsing SFDP are overwritten at SFDP parsing time? If
-> yes, we shall be fine.
-> 
-> Esben, to speed up the things on both ends, I recommend you for v4 to
-> draft just a core patch if you care, then you can handle the vendor
-> drivers. Or send us some pseudocode and we can talk on that.
-> 
+That said, we could also have a DT parameter but, ideally, we would then ne=
+ed a way
+to match the parameter with the backend otherwise we could have DT stating =
+LVDS and
+the backend built with CMOS.
 
-To summarize, I like the idea too, as far as we can keep backward
-compatibility.
+Other thing that we could think about is a new devm_iio_backend_get_with_in=
+fo() where
+the frontend would get some constant and static info about the backend (the=
+ interface
+type would an ideal match for something like this). But I feel it's still e=
+arly days
+for something like this :)
+
+- Nuno S=C3=A1
 
