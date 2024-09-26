@@ -1,141 +1,106 @@
-Return-Path: <linux-kernel+bounces-341057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D32E987AD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:51:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0160987AD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E2501C22598
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:51:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 351ADB221DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9B8188A0F;
-	Thu, 26 Sep 2024 21:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D79E188A17;
+	Thu, 26 Sep 2024 21:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="k7FcpV9L";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EB0Z/WN8"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VfIwrFbK"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9A74D8C8;
-	Thu, 26 Sep 2024 21:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074B74D8C8;
+	Thu, 26 Sep 2024 21:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727387469; cv=none; b=m4o7WTJKiiR+kq3TepngqQ3E66b4uqLh36nUUeVz9wKnxn+I5A1Ak/aG7hOTPrq94wkTzmi2hMfWA2h9yaZzJ5PQ9azuWbUCy3BsRhtsQo4YE8LTAKwBmj5uM7V+WhDrVXLAiu1cbnXcPFS0lS/z1fGeNJiwhbNzr38aSXXb3Tc=
+	t=1727387687; cv=none; b=lehe/iiQIA3TM3RlKVvp22evRWJukcDVGpVBhC2EJeTKOv1lOVoc4ri/yJcLnPL+gABj30kfJFm8VNx7G2c3+xCrj3/MS0zlu9CgHVavMW0ZZKMqmMPyntvFFU3fc3/kWC7yea2tx3hI0m27q5xnbADmR5A3fEvN9kaiaoWxgoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727387469; c=relaxed/simple;
-	bh=+LrZtZuxB1yky8XJNegEZBgeTMWsNHrgz2WWJN5NT4Q=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=i9CIL9zGnkAnXOipfuzsgmajxbwKiJev6EBqp3kVOr2kC8oGut+h0lhimnGp/Sivj4rirwFBJzNgpoeGyJPbLn5DaXiSEZEImBvsp2Amckr6T6CFW7Z7l94wgmud8QNNnawJoZR6MWtz/F2kN2MQY9Ub2g6vK6C/XHpGCK3CfLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=k7FcpV9L; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EB0Z/WN8; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 13A7511401E8;
-	Thu, 26 Sep 2024 17:51:07 -0400 (EDT)
-Received: from phl-imap-01 ([10.202.2.91])
-  by phl-compute-08.internal (MEProxy); Thu, 26 Sep 2024 17:51:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1727387467;
-	 x=1727473867; bh=+LrZtZuxB1yky8XJNegEZBgeTMWsNHrgz2WWJN5NT4Q=; b=
-	k7FcpV9LFgRtT8yrHhKwe5Mxw4VKz7q6YIByA+P7fXF3jFFNqtxUTs8OB4ucXhpi
-	6miT3EI1BkGlMoxrLzA8Kpa3qVwbHK3HoKKhlNYxvbgbhXFC7LZgnQfLVRhvgwda
-	rCFHcTkUgWW1ov0lO2+SnA3KPQbpk3R7SM1lSs9PrzaxZ5DhMOf8bV0rvEuaJLNW
-	mtDaza722gkSi1eKdxvWnMIVOa8ST2bRLdnLpuFGS0eTFlHJ+MGkp409jCPvSuqo
-	/0ZjTBrTJP5A6DRmG2rsK/LHmnZj2UfjGlCIJkwQWhhRDeS47OfHFtGGCf0I0RpL
-	StTj4Z1MYi2NTZ9x5Z3bdg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727387467; x=
-	1727473867; bh=+LrZtZuxB1yky8XJNegEZBgeTMWsNHrgz2WWJN5NT4Q=; b=E
-	B0Z/WN8ImuoL2mc4eNEeIc0uDXxxTTrjmXFd1VoQLRSrbXTf0OyVZybWAyjGKB/o
-	GsCMgIzDxFxLh0kk79SVyQm4bf/vW5B41MhM7WEDvk9+l2G3NNfdSCDsUWu6ypPN
-	12p8thr3WjIkq7vOutqDATatEVv5XgrMrWXMzW8HHxX6QHeaMFr+hqu8i36RhiK6
-	bN9GH9lL3AHdXkhlMoYlHSnT9v6oJVy0woxp/OBSKg5qdW66Xg7be/d0ayIYx3ip
-	BYLr7YTR2NoEMcIINJLlXpOOUqXVoEXxnuXCgXOhLbtuc/H6zmFvYcZvLFtU7Rh4
-	crvXAhARQsZmRlGbg+x4A==
-X-ME-Sender: <xms:Stf1ZjnDvG051HRsRcgxEgKxjOC3ZFSbosHvQ-7rBDHeHIIq9u9PBw>
-    <xme:Stf1Zm1xRv_0u9fYyQd0W-PBdcK498cD4AvtRdeuGoGimz6MzkE7MKwLCoT5YXfo4
-    INcH_nRO5IU0ZvkYu4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtkedgtdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedfnfhukhgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvg
-    hvqeenucggtffrrghtthgvrhhnpeekleejjedtjeduvdehleejfffhgefgveejgedtvddt
-    teejtdeijedvffehgfdvjeenucffohhmrghinheptghmuhdrvgguuhenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehluhhkvgeslhhjohhnvghs
-    rdguvghvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
-    sggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtohepshhuphgvrhhmudeskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomh
-    dprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtohep
-    lhhinhhugidqihhnphhuthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehplhgrthhfohhrmhdqughrihhvvghrqdigkeeisehvghgvrhdrkhgvrhhnvghlrdhorh
-    hg
-X-ME-Proxy: <xmx:Stf1ZpqRwggJO7S9FWsQmM9gLKC_Ygn4Vxrx_2fhKyyqQG_3VrH-XA>
-    <xmx:Stf1ZrnGg5SBrnq_lB34fryJed69_KkOo4yMo4ulqPzIW8ZspQ7L5Q>
-    <xmx:Stf1Zh2XdX0kfqjRMTeh8Gn2i8ZI73IaaAi1dQlOEADSB_qLtiv_xA>
-    <xmx:Stf1ZqsBeAal5-w13I6AHQUOichBUvx-J22NupeIwAG1PHBC3EIwqg>
-    <xmx:S9f1ZqIUAbDpvxfh3vfbpZU_oaz3MU21miot9kJ00BsKfsS58pnthIpF>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C4A303360077; Thu, 26 Sep 2024 17:51:06 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727387687; c=relaxed/simple;
+	bh=GMaI/gRqjexWn4lHeEnJ/pKOc3fxdqFbjWlnY29hRGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=HVcTkQPFOtEpIHuwhhFGtrSzUO7ZTc+hlgRhubGRrZ1Q7yrb5rv7RaQnmdFN05uCRI1R9w1jTNKKLNANdk0i3h5Thh7wEJ7CwlX8hEDQi0vyDt0p9gAxUjU69EmfvD4Gh9j03Gzn83R+xAjecCTqFKdXQH0VdHEygmIev6UrVlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VfIwrFbK; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1727387681;
+	bh=TAuRc1E8BTkVpoePZCSkTfuwEKHVPj2LuCmlGX3mJGw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VfIwrFbK1ltnWuBcD/RSFjEKuCkMT0G00NpNgrHJkREspWwXcvuyxS3lbvXe7DJqR
+	 mM4VkGUD+AUhQCa9f4ag+kOt8llattdQFCGCs3ajW5MsE7JRdiwcwWFTSvM0+6tZEi
+	 FEDe7dyIawKJXRqFU/P5eD07/iS2HVxzFtiLQT3Xlwo7kdcToT6teHrnqebGY43H1P
+	 r47Y1zoXT8ZrSlJX5l0HaZv9aK72q6I+WpbyaioW/BWhFHecnMOCNG1RPnaMQSQTL1
+	 /REbAx8FSRboF4iYT0JVkSUI4wTowQASg9asVbXZ/9crqIqPv5AZBt5dtaSqSNSVD2
+	 4WJuU1v8dH/2g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XF6ns1cJpz4xKl;
+	Fri, 27 Sep 2024 07:54:40 +1000 (AEST)
+Date: Fri, 27 Sep 2024 07:54:39 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the ftrace tree
+Message-ID: <20240927075439.2dac541e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 27 Sep 2024 09:50:46 +1200
-From: "Luke Jones" <luke@ljones.dev>
-To: "Markus Elfring" <Markus.Elfring@web.de>,
- platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
- "Benjamin Tissoires" <bentiss@kernel.org>,
- "Corentin Chary" <corentin.chary@gmail.com>,
- "Hans de Goede" <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Jiri Kosina" <jikos@kernel.org>, "Mario Limonciello" <superm1@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Message-Id: <f3b059cd-0045-435e-9bb9-467bb9cb0cc1@app.fastmail.com>
-In-Reply-To: <08320b8e-a71b-4055-9fdf-1df76530ec1a@web.de>
-References: <20240926092952.1284435-4-luke@ljones.dev>
- <08320b8e-a71b-4055-9fdf-1df76530ec1a@web.de>
-Subject: Re: [PATCH v4 3/9] platform/x86: asus-armoury: move existing tunings to
- asus-armoury module
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; boundary="Sig_/gV0tAzXY4Vl5s2lrxg=sphz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/gV0tAzXY4Vl5s2lrxg=sphz
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
+The following commits are also in Linus Torvalds' tree as different
+commits (but the same patches):
 
-On Fri, 27 Sep 2024, at 7:10 AM, Markus Elfring wrote:
-> =E2=80=A6
-> > +++ b/drivers/platform/x86/asus-armoury.h
-> > @@ -0,0 +1,146 @@
-> =E2=80=A6
-> > +#ifndef _ASUS_BIOSCFG_H_
-> > +#define _ASUS_BIOSCFG_H_
-> =E2=80=A6
->=20
-> I suggest to omit leading underscores from such identifiers.
-> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+=
-or+define+a+reserved+identifier
+  1a41e44aaf63 ("tracepoint: Support iterating over tracepoints on modules")
+  3c842de2d916 ("sefltests/tracing: Add a test for tracepoint events on mod=
+ules")
+  4ca74b253b11 ("tracepoint: Support iterating tracepoints in a loading mod=
+ule")
+  59c9f2923c04 ("tracing/fprobe: Support raw tracepoints on future loaded m=
+odules")
+  8e327678a908 ("kprobes: Remove obsoleted declaration for init_test_probes=
+")
+  c37e4bc7f70a ("tracing/fprobe: Support raw tracepoint events on modules")
 
-Hi Markus,
+--=20
+Cheers,
+Stephen Rothwell
 
-the link is C standard, not kernel C right?
-Pretty much everything I look at in the kernel seems to use the leading =
-underscores.
+--Sig_/gV0tAzXY4Vl5s2lrxg=sphz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Regards,
-Luke.
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb12B8ACgkQAVBC80lX
+0Gyq/Af/UC5bGI6VgEavdGaTqT+rIoRmbcpuTbb1Ejy8yh7xufQxqAfyVZFB+qoL
+jlLoyICC4FFJ1lDaJeckQy55wBCR1lRrZZgq4iEn2tZ3QsrdsPwm9kIKMkg2OS8f
+ony6ZsHYVY8iz+0Uz80WK3ne0UXLSmk5BCEbC0xsltixQhD/zCsrmFEmHvvKiamh
+cUjR8u1D8kMJjkkwJq9us7pyaSQNBq5fOTx1d8eHl4yqEqlN/zfFRSu3iQJ4OkJ6
+QNoL9tBogOOOJ3y6HPNw4xSGb3ghCiSKjPj7raB/IfCaKdKntkqitdiMXFelEwIV
+PoNWLzZh/YsZLjUCatMZTU088i14cQ==
+=RxQM
+-----END PGP SIGNATURE-----
+
+--Sig_/gV0tAzXY4Vl5s2lrxg=sphz--
 
