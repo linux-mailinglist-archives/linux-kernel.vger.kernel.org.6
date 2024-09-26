@@ -1,94 +1,148 @@
-Return-Path: <linux-kernel+bounces-340914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BDA9878F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:12:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 386019878F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34127B26B35
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:11:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE5D3283946
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7D516133E;
-	Thu, 26 Sep 2024 18:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AEA165F1F;
+	Thu, 26 Sep 2024 18:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+HIgG9Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tk+2CkGG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7669013D889;
-	Thu, 26 Sep 2024 18:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3206813D889;
+	Thu, 26 Sep 2024 18:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727374297; cv=none; b=k8xbI2h36Ze1hgu98wZcHKKPbW8hYsncHuBxh35FGgm7HQB8HrQUD7XOtq/xXurNCI5wjsv1xoSetbU+h5A21Nv2YwPBAc9VBlc0opP/bwRlAw8INfgBFMR7RjZxvbMCb8nt/vRvLMRvuFl79rQqMvMA+gEA+HFD6JKp2SGE92c=
+	t=1727374484; cv=none; b=EZLbEBOlYwozl/TVw/jsUdfVYIyVk9xrHyuewTNE3IiCHu3AN8ptpfN635H03h29m1ksL9zXzTi6B95mfYXGoUPe4kOnB5yFxlntwRvUaEWfSFEIrMrUP3n2hcZ9kSgcwCVnLCmJeJiPozix0sxQ7lifkPUrRtS8qdL60H2LWpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727374297; c=relaxed/simple;
-	bh=56mzS41ce5/9+IUEXD+XVGSW4V+p6gXfuozlaZk9EHA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=K3aKYEqTtoCgtKEjX+d6xik8vLBVPvFzP1VYEgz/2aIOGqHu8GGjt5tor3/Y1VtQtDcuXvgNOtKMY8ksrwm2XVk9mkctTMaExGkGE1NjZA7nK1QU0vrT8XUQwJV5kkkHB7Y+dngnoYv1Q16zmg2Q2Uhjo+h5FLrw4JjJ5O/SiN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+HIgG9Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8894EC4CEC5;
-	Thu, 26 Sep 2024 18:11:36 +0000 (UTC)
+	s=arc-20240116; t=1727374484; c=relaxed/simple;
+	bh=N7pDSsBTC5mumG9nziGctRk8uC0jSDt0Wb1G0EiYg9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LyJJLS4jDiSD2SwfUDY6nDOLSedUc/i46O6ec/4daGdpzDylegpEqBjI2fswcQHBtHvWC2YLK2vDFV2ZVghzu6xbTGlAQtJC6HCZeTyWu5a7WA6+JPjFOyDW5aGVJ0RrTE9+/KDuSnWPyTXhv4ewsul611hfm7KcrVSxs4ZT6yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tk+2CkGG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6BEAC4CEC5;
+	Thu, 26 Sep 2024 18:14:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727374297;
-	bh=56mzS41ce5/9+IUEXD+XVGSW4V+p6gXfuozlaZk9EHA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=k+HIgG9Qa0Js8se64sSEDRTVXfWAaGsFccLLDAutjuscC/+5Z7Z/62y7bHexBCgDh
-	 SB3wcRdE3yapuwAH/uMUeR/oGJt/tnwwDYy6YdcEVEE61jDZDG5kYDtADL0TX7MYML
-	 vohhLGr3l640oa6DJDYogDw4bxr420CfPgZW93FkuO1ec8HroIHp8VSGRg4up7E3Gf
-	 kjp90cba8zRUhtUFQe8WrMCycGPIm7tJoCIaHQhJEW3sj6FOLk5k28ZAc3nn0KyWUu
-	 9uScWewce/j3ShmjOcH2DuaJ/PrqnGvC8XtYTfn+Z5xn+JJj6vgmcVme1Soh8ZYW3K
-	 IN3deguGAwolQ==
-Date: Thu, 26 Sep 2024 20:11:34 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Aditya Garg <gargaditya08@live.com>, 
-    "bentiss@kernel.org" <bentiss@kernel.org>
-cc: "airlied@gmail.com" <airlied@gmail.com>, 
-    "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-    "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
-    "mripard@kernel.org" <mripard@kernel.org>, 
-    "daniel@ffwll.ch" <daniel@ffwll.ch>, 
-    =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <thomas@t-8ch.de>, 
-    Orlando Chamberlain <orlandoch.dev@gmail.com>, 
-    Kerem Karabay <kekrby@gmail.com>, 
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-    "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
-    "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-    "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
-Subject: Re: [WHY SUCH DELAY!] Touch Bar support for T2 Macs
-In-Reply-To: <MA0P287MB0217799EF124DAB1EB9941ACB86A2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-Message-ID: <nycvar.YFH.7.76.2409262009240.31206@cbobk.fhfr.pm>
-References: <DD9C41AD-6543-47CE-8504-69E4992229B2@live.com> <MA0P287MB02176175318B96135BE3E320B8902@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM> <nycvar.YFH.7.76.2409111420040.31206@cbobk.fhfr.pm> <MA0P287MB0217A06CA89D6A7D0631466EB86A2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <nycvar.YFH.7.76.2409262001520.31206@cbobk.fhfr.pm> <MA0P287MB0217799EF124DAB1EB9941ACB86A2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=k20201202; t=1727374483;
+	bh=N7pDSsBTC5mumG9nziGctRk8uC0jSDt0Wb1G0EiYg9A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tk+2CkGG7i1BjHpvfi0nvr6hfJJ9HTMNkKQBKUDVVFTRuX1zoFsTkpiTgvIdgreFw
+	 lEpcgTULni3KsyoXZak0MHnbXBTJiTAp3kdhbt5eCBQ8Bena20k5mWz5osAMSVN7GH
+	 0GK6dlHDEX5ZYpKO3rhRqESL9jq4J5FLFAQumoL3OrhaCL69ClpvfgTgUr++swX9Gj
+	 cGpT2QbnCLH3b1lxORJxexgke6zZoaSPtmYFOZVCaCFA7YElQhvdXC64rzMd+2v3L5
+	 kMXJ9LkBEJjWB0zvdf61TsCy1twhZLLfXpTiYqHNqo5HhNP/XFEWX6Mltd5aCFBzG6
+	 OtDwCQcdFtr7Q==
+Message-ID: <7bfba4ef-0f42-4482-874f-77a4434eb338@kernel.org>
+Date: Thu, 26 Sep 2024 13:14:42 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/2] "custom" ACPI platform profile support
+To: Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede
+ <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, "Luke D . Jones" <luke@ljones.dev>
+Cc: "platform-driver-x86@vger.kernel.org"
+ <platform-driver-x86@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>,
+ Antheas Kapenekakis <lkml@antheas.dev>, me@kylegospodneti.ch,
+ Denis Benato <benato.denis96@gmail.com>,
+ "Limonciello, Mario" <mario.limonciello@amd.com>
+References: <20240926025955.1728766-1-superm1@kernel.org>
+ <2d07d31e-87f6-4576-977d-336f3d0bbc81@app.fastmail.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <2d07d31e-87f6-4576-977d-336f3d0bbc81@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 26 Sep 2024, Aditya Garg wrote:
-
-> >> It has been more than a month since I've sent this patch set and I
-> >> haven't got a clear yes or not for the same. I understand maintainers
-> >> are busy people, but I'd really appreciate if I get some response for
-> >> this series of patches from the HID and DRM maintainers.
-> > 
-> > Just to reiterate -- I am waiting for Ack from the DRM people and will
-> > then take it through hid.git.
+On 9/26/2024 08:58, Mark Pearson wrote:
+> Thanks Mario,
 > 
-> So I should assume the HID portion is fit to be merged now?
+> On Wed, Sep 25, 2024, at 10:59 PM, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> There are two major ways to tune platform performance in Linux:
+>>   * ACPI platform profile
+>>   * Manually tuning APU performance
+>>
+>> Changing the ACPI platform profile is a "one stop shop" to change
+>> performance limits and fan curves all at the same time.
+>>
+>> On AMD systems the manual tuning methods typically involve changing
+>> values of settings such as fPPT, sPPT or SPL.
+>>
+>> The problem with changing these settings manually is that the definition
+>> of the ACPI platform profile if supported by the hardware is no longer
+>> accurate.  At best this can cause misrepresenting the state of the
+>> platform to userspace and at worst can cause the state machine into an
+>> invalid state.
+>>
+>> The existence and continued development of projects such as ryzenadj which
+>> manipulate debugging interfaces show there is a demand for manually tuning
+>> performance.
+>>
+>> Furthermore some systems (such as ASUS and Lenovo handhelds) offer an
+>> ACPI-WMI interface for changing these settings. If using anything outside
+>> that WMI interface the state will be wrong.  If using that WMI interface
+>> the platform profile will be wrong.
+>>
+>> This series introduces a "custom" ACPI platform profile and adds support
+>> for the AMD PMF driver to use it when a user has enabled manual
+>> adjustments.
+>>
+>> If agreeable a similar change should be made to asus-armoury and any other
+>> drivers that export the ability to change these settings but also a
+>> platform profile.
+>>
+> 
+> As someone who supports customers on Lenovo devices and hits the occasional situation where a user has made strange tweaks to different power related settings, and then complains about power or thermal issues - I love the idea that it can be made clear the system has been 'adjusted' in a non standard way. I can also see why users would want interfaces to do those changes.
 
-hid-appletb-* I have gone through, and it looks all good to me.
+JFYI we're going to do something really similar in amdgpu when people 
+have enabled overclocking.  That's part of the inspiration for this RFC.
 
-Benjamin, could you please explicitly provide your Ack for the multitouch 
-changes?
+https://lore.kernel.org/amd-gfx/CADnq5_M+vxGV6y8oEQHC+-CcqV-vW9ND4SsRHqHKbwR_b0iJ9g@mail.gmail.com/T/#m1d69399c3e799ea1ef2014a27fd6e555f9e70ba0
 
--- 
-Jiri Kosina
-SUSE Labs
+> 
+> Some suggestions:
+> 
+> I'm wondering if we can make it so a driver can register only a 'custom' profile as an extra profile handler?
+> 
+> The thinking here is the custom setting in this series is implemented for the amd sps driver, and therefore on a regular Lenovo laptop wouldn't be used, as the thinkpad_acpi driver will grab the profile slot, Users on Lenovo systems aren't going to be able to get at these extra tweaks (unless they unload thinkpad_acpi, which has other side effects).
 
+Well the RFC was just to show it for the AMD PMF driver, but I think 
+that thinkpad_acpi, asus_armoury etc could all potentially implement the 
+'custom' bit too if they offer an ACPI-WMI interface to similar settings.
+
+> 
+> If the sps driver can offer a custom mode, separately from thinkpad_acpi, then users can tweak settings to their hearts content but get back to regular mode when done.
+> 
+> I also think there needs to be a way that when you switch from custom back to a 'regular' profile that it would do a clean up of anything tweaked. e.g. when switching away from custom the ppd driver should call a 'custom mode cleanup' function, so things can be undone and returned to how they were when it was started.
+> 
+> Mark
+
+I guess what you're proposing is that multiple drivers register as 
+profile handlers and they might not all export the same features.
+
+If we did something like this we could instead have the core call 
+callbacks for all platform profile handlers.  We could also drop a pile 
+of quirks from amd-pmf where there are some ASUS systems that advertise 
+SPS in in the PMF framework and also asus-wmi provides it.
+
+If I'm following you right, I generally like this idea.
 
