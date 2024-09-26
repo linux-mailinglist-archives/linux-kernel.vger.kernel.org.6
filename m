@@ -1,92 +1,97 @@
-Return-Path: <linux-kernel+bounces-340106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C4A4986E9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:17:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F05A4986EA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EB242835ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:17:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D2A5B20A9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3E81A4B70;
-	Thu, 26 Sep 2024 08:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63431A4B7B;
+	Thu, 26 Sep 2024 08:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GLoLb+JU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gItNIB6n"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2439143C4C;
-	Thu, 26 Sep 2024 08:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CD7143C4C;
+	Thu, 26 Sep 2024 08:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727338666; cv=none; b=Cf8DsA/Mx9Kl10a5Y7MaG/L63nZ6htnwuFkZ28wnk3gEzjgfdfq50BhO4CHdsSof+pPkNJ7/qQs5MzoCFhsaygIWKFU5bGrG/NRkMiEiAlR2rk6UMmXyuU0aGwDizabmlltw2XvtKwjBQixD589joP2Vf/ZPrEFLBbLgORxfp28=
+	t=1727338799; cv=none; b=H6orxe5baFiTu6k4hp3b0eDALMkGUJtHmCZXdMgfdWNzP7wAPIZpx7/+UbzC1uiAE9Yvb+KbJvjIRokgcsX2j0QcfhfrjCSL0BsVucxPTTRSopaGcL7FwMREBzDwmEdjiJ0acJs5aISaQzz9iKh5lpQjFzV3y9qyyewbW9cHjm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727338666; c=relaxed/simple;
-	bh=zJGAtiQ6hKIqDHqBWVNAwPYrFwC+QZwE/XS3fZBSj+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ML5Z50qk+ZEWf01tW7FWQ0brhYF7AUZb3kHh8Z2yzwezddpMFuLLZkmX3Z66bM4REz1+W+96TfqFMSDv2KI+MJ94jOwUB/gxd4pkpQAfM4ZH7Ppfy1UxNFiOu0GOl5qNP+MsMgGzmHgEGEO5+iTsvpqf9lPO4LlZLgVDr9Q32Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GLoLb+JU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AADAC4CEC5;
-	Thu, 26 Sep 2024 08:17:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727338666;
-	bh=zJGAtiQ6hKIqDHqBWVNAwPYrFwC+QZwE/XS3fZBSj+I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GLoLb+JU2ubBx0zEZcGzeHPbDlwTO0uCmZwKaLYvKzkHspmmyYShkJ+T6c/gJPqwa
-	 c0eEs3jq4S/qB4h0xaqVrhwwtZCbhShrc+HwxUXLA80tsDvGT0mPrKV98MIJpJuGWI
-	 eqxZKqDsuLSbzB/cYmsbjCEn5k93H7wq3HWpz8Ac=
-Date: Thu, 26 Sep 2024 10:17:39 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: cuigaosheng <cuigaosheng1@huawei.com>
-Cc: rafael@kernel.org, akpm@linux-foundation.org,
-	thunder.leizhen@huawei.com, wangweiyang2@huawei.com,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH -next 1/2] kobject: fix memory leak in kset_register()
- due to uninitialized kset->kobj.ktype
-Message-ID: <2024092637-unthawed-vending-c39b@gregkh>
-References: <20240925120747.1930709-1-cuigaosheng1@huawei.com>
- <20240925120747.1930709-2-cuigaosheng1@huawei.com>
- <2024092530-putt-democracy-e2df@gregkh>
- <c928dc7c-3418-d6cb-9503-e0c9a48adc1c@huawei.com>
+	s=arc-20240116; t=1727338799; c=relaxed/simple;
+	bh=3xkB7qsfl6gEMdb6P+8lKB/6/behm+H5Tvf9MRznwJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tEQt40klyqzD9YgUbcXEkOg6HBmucSkUQiG3jmxUdYRRaIpwAepASHKeaOvlhpM1nF2IqCMm2E+itB46geTgt5Gudb+TYPQ/ZED2XEzt6HVajhmbd3uhaS4pdjMnjk5G0k0+9NcLOlNPGlT+O8/kUnWLDeYhTGIIkvXUbBc+f+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gItNIB6n; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 296504000E;
+	Thu, 26 Sep 2024 08:19:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727338789;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kwLUqRkyD3Eruc35UHJuAT0u8bQ7Br0xc4xyX8+nkzU=;
+	b=gItNIB6n7q08IeCqHIYzAnmU51PGZVxXVL69C70WkOp+ECOiIQWWg6m5vEbn/uccqf90lK
+	vu4Stj0I7W2pPYSGHzXKszOK3DWMBO2PPLJwBVyJpRMSAUoUTJkz+bb+qCWI9z+CWhGz4D
+	o8KTpBu33NAU5YqpktXTGedmWW0hDb9SL6BxJ8JH5YovZC3TUpPPC11IrpQFWNtLT2z7D2
+	Srr1yaFvRMUNfW1vtKNOhAAsv3cMc6/51LZOgPRUa1C/XR/BwOjlBbC63oTj8nIVbAOqDf
+	180si3I7KuR9ceIwkQmsCsvuNYQAHBhfhZc7b9kgk7Kd+c3OYTFGQMtq/dnI1g==
+Date: Thu, 26 Sep 2024 10:19:40 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Yu Jiaoliang <yujiaoliang@vivo.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Marcelo Schmitt
+ <marcelo.schmitt@analog.com>, Jonathan Cameron <jic23@kernel.org>, Matteo
+ Martelli <matteomartelli3@gmail.com>, Michal Simek <michal.simek@amd.com>,
+ Ivan Mikhaylov <fr0st61te@gmail.com>, Mike Looijmans
+ <mike.looijmans@topic.nl>, Dan Carpenter <dan.carpenter@linaro.org>, Nuno
+ Sa <nuno.sa@analog.com>, Richard Leitner <richard.leitner@linux.dev>,
+ Stephen Boyd <sboyd@kernel.org>, Wadim Egorov <w.egorov@phytec.de>, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] iio: adc: Fix typos in comments across various files
+Message-ID: <20240926101940.22bbc3fe@booty>
+In-Reply-To: <20240926034411.3482986-1-yujiaoliang@vivo.com>
+References: <20240926034411.3482986-1-yujiaoliang@vivo.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c928dc7c-3418-d6cb-9503-e0c9a48adc1c@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Thu, Sep 26, 2024 at 10:56:24AM +0800, cuigaosheng wrote:
-> On 2024/9/25 20:19, Greg KH wrote:
-> 
-> > On Wed, Sep 25, 2024 at 08:07:46PM +0800, Gaosheng Cui wrote:
-> > > If a kset with uninitialized kset->kobj.ktype be registered,
-> > Does that happen today with any in-kernel code?  If so, let's fix those
-> > kset instances, right?
-> 
-> I didn't find this kset instance in kernel code,itwas discovered through code review.
+Hello Yu,
 
-Great, then it is not a real issue :)
+On Thu, 26 Sep 2024 11:43:54 +0800
+Yu Jiaoliang <yujiaoliang@vivo.com> wrote:
 
-> > > kset_register() will return error, and the kset.kobj.name allocated
-> > > by kobject_set_name() will be leaked.
-> > > 
-> > > To mitigate this, we free the name in kset_register() when an error
-> > > is encountered due to uninitialized kset->kobj.ktype.
-> > How did you hit this?
-> 
-> I am testing kernel functionality through fault injection, and I discovered
-> it whenI was locating the issue fixed by another patch, I haven't found this
-> wrong usage in the kernel, but we can construct it by fault injection,
+> This commit fixes several typographical errors in comments within
+> the drivers/iio/adc directory. No functional changes are made.
 
-"fault injection" also shows things that are impossible to ever have
-happen as well, so our "need" to fix them is usually very low, right?
+I think it would be useful to add those typo patterns to
+scripts/spelling.txt, so checkpatch.pl will check them, preventing the
+same typos from happening in the future.
 
-thanks,
+With that added (perhaps in a separate patch), looks good.
 
-greg k-h
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
