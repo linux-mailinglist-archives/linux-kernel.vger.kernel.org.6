@@ -1,166 +1,141 @@
-Return-Path: <linux-kernel+bounces-340659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E908398765B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:18:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF14898769A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91EDB1F291D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 898B1284118
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA87155756;
-	Thu, 26 Sep 2024 15:18:09 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3B01537DB;
+	Thu, 26 Sep 2024 15:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SN/0oRu0"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C6A4F21D;
-	Thu, 26 Sep 2024 15:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FEE1531C3
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727363889; cv=none; b=LK059DGJ6nCtK9Pp7wPHhtDfsre7oN2ELlWLMOrlZzZUFXFeu6dB0tkBNNnRvi8hsdO4xR+05nnyJSpZ4kSH49VhBLt9l7oN/ZIn4L68j3YpYZvdfbFjc/wQn8caapaj30NC8P7jS5wY+28Mzj3Mb2I/LbQSjFGYwKz+eVMpqG4=
+	t=1727364850; cv=none; b=pRuv7YsQEIEPc8cJwjkfzLvR7G1saknF7F9KGs8vcdjNqUeOCTv0WWlMhBYfpOBR6nB1GEdI9QChOPcSSZ6euCrcGN273BGEWrFkXUisRhUP+DIWuacRlspcwnKhgPUQyfy+8/9+oHRQ8jCFUs2jrU8t9n+KE4ec9YYnETjO9iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727363889; c=relaxed/simple;
-	bh=TCL06OTau/rgWgOh2hhmMvRSYfdo/Vj+wi/zZJ/ezeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ki0+JXgWJvSJ+4uEC/ivm2ICcLIgEP1jb6yyWGjP5RVt0/Ep2U6/IzgJJFtACauoBsIc0hGHvvypQxQLvBXtC0K2/30K6oVCjjCQVrHi1NsrBAb1MtdKBhPbPVrxOC3j5wttUxo4WbW+leel3f88qUsRJVITdxIIe/MR1X/9oa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=57678 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1stqFl-001gm6-C9; Thu, 26 Sep 2024 17:18:03 +0200
-Date: Thu, 26 Sep 2024 17:18:00 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, rbc@meta.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org
-Subject: Re: [PATCH nf-next v5 0/2] netfilter: Make IP_NF_IPTABLES_LEGACY
- selectable
-Message-ID: <ZvV7KFHXx3V30HEH@calendula>
-References: <20240909084620.3155679-1-leitao@debian.org>
- <Zuq12avxPonafdvv@calendula>
- <Zuq3ns-Ai05Hcooj@calendula>
- <ZvVBawvMot9nu2jE@gmail.com>
+	s=arc-20240116; t=1727364850; c=relaxed/simple;
+	bh=Z2erKCz0U8c+h5Ktpp0aggL95u0PsF6aQ4wW3yJQjm4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=QJie8GUr+hqzI5vAo84Uird6vrXtmg+0IGG0EY9luO65R+fxxM1NUjta11zJYQVpa2wb2CwGaWtF/3fNHS3O3FED+r9w2bMTYghb9cZB529UvUV+Vz7KVJAVm+p7p6A2yE6Nq2zoLSGeLIUOML+GrBrCuzR4lH7XFM89hY7zI44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=SN/0oRu0; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240926153406epoutp04e912761bdf77550382f7348b495b114a~41S0UoolU0168801688epoutp041
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:34:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240926153406epoutp04e912761bdf77550382f7348b495b114a~41S0UoolU0168801688epoutp041
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727364846;
+	bh=6g2/Yv8LRZHcuTNohjSQe7MhKxKk+4pTuQkyJGh4qCM=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=SN/0oRu0/U6owg7gN0jW3K/R+I1PYRmz7wXdr+UvTRn3VMhyHRop9cDo3zEPqexpJ
+	 4f1iJKUxj7UHpiqhp95gvq18V8M/ExY276DRN/zoM7y5WrofiAhpaEVftp6hNpQvDa
+	 WM3MXScDE3pCqZl4NZLFoQ0v98+KqXdpbay1pCNQ=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240926153405epcas5p2c0d726c61580ef8c0c4dab10130c217e~41SzQ3Uzq2335223352epcas5p26;
+	Thu, 26 Sep 2024 15:34:05 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4XDyLh00zRz4x9Pv; Thu, 26 Sep
+	2024 15:34:04 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	CC.7E.19863.BEE75F66; Fri, 27 Sep 2024 00:34:03 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240926144716epcas5p330d6374d8b647f45e056143f237a55aa~40p7WW3H02295422954epcas5p3k;
+	Thu, 26 Sep 2024 14:47:16 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240926144716epsmtrp243a68a1bb8e182cab9e2dfe37218e4dc~40p7VgqkL0901909019epsmtrp2-;
+	Thu, 26 Sep 2024 14:47:16 +0000 (GMT)
+X-AuditID: b6c32a50-c73ff70000004d97-8a-66f57eeb0a6b
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B3.CB.07567.4F375F66; Thu, 26 Sep 2024 23:47:16 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240926144714epsmtip13c94ef8817afabe4713b1576fd8b400d~40p5Pb70D1886218862epsmtip1i;
+	Thu, 26 Sep 2024 14:47:14 +0000 (GMT)
+From: Varada Pavani <v.pavani@samsung.com>
+To: krzk@kernel.org, aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: gost.dev@samsung.com, Varada Pavani <v.pavani@samsung.com>
+Subject: [PATCH 0/2] clk: samsung: Update PLL locktime and samsung function
+Date: Thu, 26 Sep 2024 20:15:11 +0530
+Message-Id: <20240926144513.71349-1-v.pavani@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCKsWRmVeSWpSXmKPExsWy7bCmlu7ruq9pBk/aTC0ezNvGZnFo81Z2
+	i+tfnrNa3Dywk8ni/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrVYtHWL+wWh9+0s1r8
+	u7aRxWJD7yt2Bz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKOybTJSE1NSixRS85LzUzLz
+	0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA7lRSKEvMKQUKBSQWFyvp29kU5ZeW
+	pCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUmZGec79jKWHCBueL9hbOsDYw/
+	mLoYOTkkBEwkzizax97FyMUhJLCHUWLbnw0sEM4nRomzN25AOd8YJW63rmfrYuQAa/m2WQEi
+	vpdR4tySR6wQTiuTxKXDy1hA5rIJaEmsnrqcFcQWETjCJPHnRCqIzSxgJ7F+6lxmEFtYwFvi
+	+v5DYDUsAqoSj7dsZAOxeQUsJX7+2scIcZ+8xOoNB5hBFkgIvGSX2PZjLztEwkXi7cVJUEXC
+	Eq+Ob4GKS0l8frcX6tJkifZP3BDhHIlLu1dB/WwvceDKHBaQEmYBTYn1u/QhwrISU0+tY4I4
+	k0+i9/cTqHJeiR3zYGwliZ07JkDZEhJPV69hg7A9JOa+bQOLCwnESlzY3c04gVF2FsKGBYyM
+	qxilUguKc9NTk00LDHXzUsvhEZWcn7uJEZz8tAJ2MK7e8FfvECMTB+MhRgkOZiUR3kk3P6YJ
+	8aYkVlalFuXHF5XmpBYfYjQFhtlEZinR5Hxg+s0riTc0sTQwMTMzM7E0NjNUEud93To3RUgg
+	PbEkNTs1tSC1CKaPiYNTqoFp87xpxonBi28c+RmyUH6Z1K8s1v8hHufE1neYRZnrr+qMMbVX
+	aGe9Hbxb4raI9p3fvzpK8o6un6AUcsE6R/uCgrzyjS9P9orw7D0W45wzf8LUW206xg8li0Vs
+	fm5I3OLZ3R/Wev9aWs7NGerrw/Mqbd6+WJOs9j+NIXANn0ng/4Jq71lNmaJ+j5kUfLjVT/i3
+	ZEZl7dSvC6s95JPH+fTVUk/X85fcrrY42i13KrnouzBH+ML+R85/K6LObzO6XMtr0li6/WN+
+	Vcu7haZyu+c1rV+0WGadq0/35HUqceI72NnsDrhNq0r5U8XYJNt5k8O23PayTkD1p5ytqi3b
+	Gee/lPn++OxdTf0JzfxCrkosxRmJhlrMRcWJAFgq0LIHBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrALMWRmVeSWpSXmKPExsWy7bCSnO6X4q9pBmd+KFs8mLeNzeLQ5q3s
+	Fte/PGe1uHlgJ5PF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxaKtX9gtDr9pZ7X4
+	d20ji8WG3lfsDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZZzv
+	2MpYcIG54v2Fs6wNjD+Yuhg5OCQETCS+bVboYuTiEBLYzShx+eckti5GTqC4hMTOb63MELaw
+	xMp/z9khipqZJO6f6GACSbAJaEmsnrqcFSQhInCJSeLAkSfsIAlmAQeJi2efsIDYwgLeEtf3
+	H2IFsVkEVCUeb9kItoFXwFLi5699jBAb5CVWbzjAPIGRZwEjwypGydSC4tz03GTDAsO81HK9
+	4sTc4tK8dL3k/NxNjOBA1NLYwXhv/j+9Q4xMHIyHGCU4mJVEeCfd/JgmxJuSWFmVWpQfX1Sa
+	k1p8iFGag0VJnNdwxuwUIYH0xJLU7NTUgtQimCwTB6dUA9PcCOH8hbOOHLGocItzOCgk1Ft7
+	NevB2RAVYR1rpUcpYY++GDvN+bv9lPpxFvE5v9hUdU/w5kWWKvDPuflxxdtZSv5q+6y452yp
+	tnukyt9oxrIi8uYa+c4F/HWyyu9Mp+ROiXLJfdYm8Ek5JysjuuvsprDj2w271378/jFrY5o8
+	R1vE3SmGGzhcDyY8O35XYHXXq1XOTcoa30uv8LaUHIs68WJfxTJjK6eT6X2T5hWvqDl6coPQ
+	C5fCJSK1m+YyOZQ9f7SxZ+VxJ6njSzNcr3SbnWS/2mXixiYXd1Tu0uqLJboZhRmV/aysewt1
+	1//vSLFuPhJz8ZfBOZlTi4+vF3l/fUn4n+ZbtWKPNA74LFNiKc5INNRiLipOBAAoAjo9swIA
+	AA==
+X-CMS-MailID: 20240926144716epcas5p330d6374d8b647f45e056143f237a55aa
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240926144716epcas5p330d6374d8b647f45e056143f237a55aa
+References: <CGME20240926144716epcas5p330d6374d8b647f45e056143f237a55aa@epcas5p3.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZvVBawvMot9nu2jE@gmail.com>
-X-Spam-Score: -1.9 (-)
 
-On Thu, Sep 26, 2024 at 04:11:39AM -0700, Breno Leitao wrote:
-> Hello Pablo,
-> 
-> On Wed, Sep 18, 2024 at 01:21:02PM +0200, Pablo Neira Ayuso wrote:
-> > Single patch to update them all should be fine.
-> 
-> I am planning to send the following patch, please let me know if you
-> have any concern before I send it:
-> 
-> Author: Breno Leitao <leitao@debian.org>
-> Date:   Thu Aug 29 02:51:02 2024 -0700
-> 
->     netfilter: Make legacy configs user selectable
->     
->     This option makes legacy Netfilter Kconfig user selectable, giving users
->     the option to configure iptables without enabling any other config.
+This patch series updates samsung clock driver with common samsung
+CCF function and defines locktime value for PLL142XX controller.
 
-LGTM, a few cosmetic nitpicks below.
+Varada Pavani (2):
+  clk: samsung: Use samsung CCF common function
+  clk: samsung: Fixes PLL locktime for PLL142XX used on FSD platfom
 
->     Make the following KConfig entries user selectable:
->      * BRIDGE_NF_EBTABLES_LEGACY
->      * IP_NF_ARPTABLES
->      * IP_NF_IPTABLES_LEGACY
->      * IP6_NF_IPTABLES_LEGACY
->     
->     Signed-off-by: Breno Leitao <leitao@debian.org>
-> 
-> diff --git a/net/bridge/netfilter/Kconfig b/net/bridge/netfilter/Kconfig
-> index 104c0125e32e..b7bdb094f708 100644
-> --- a/net/bridge/netfilter/Kconfig
-> +++ b/net/bridge/netfilter/Kconfig
-> @@ -41,7 +41,13 @@ config NF_CONNTRACK_BRIDGE
->  
->  # old sockopt interface and eval loop
->  config BRIDGE_NF_EBTABLES_LEGACY
-> -	tristate
-> +	tristate "Legacy EBTABLES support"
-> +	depends on BRIDGE && NETFILTER_XTABLES
-> +	default n
-> +	help
-> +	 Legacy ebtable packet/frame classifier.
-                ^^^^^^^
-                ebtables
+ drivers/clk/samsung/clk-exynos4.c | 78 +++++++++++++++++--------------
+ drivers/clk/samsung/clk-pll.c     |  7 ++-
+ 2 files changed, 50 insertions(+), 35 deletions(-)
 
-> +	 This is not needed if you are using ebtables over nftables
-> +	 (iptables-nft).
->  
->  menuconfig BRIDGE_NF_EBTABLES
->  	tristate "Ethernet Bridge tables (ebtables) support"
-> diff --git a/net/ipv4/netfilter/Kconfig b/net/ipv4/netfilter/Kconfig
-> index 1b991b889506..2c4d42b5bed1 100644
-> --- a/net/ipv4/netfilter/Kconfig
-> +++ b/net/ipv4/netfilter/Kconfig
-> @@ -12,7 +12,13 @@ config NF_DEFRAG_IPV4
->  
->  # old sockopt interface and eval loop
->  config IP_NF_IPTABLES_LEGACY
-> -	tristate
-> +	tristate "Legacy IP tables support"
-> +	default	n
-> +	select NETFILTER_XTABLES
-> +	help
-> +	  iptables is a legacy packet classifier.
-> +	  This is not needed if you are using iptables over nftables
-> +	  (iptables-nft).
->  
->  config NF_SOCKET_IPV4
->  	tristate "IPv4 socket lookup support"
-> @@ -318,7 +324,13 @@ endif # IP_NF_IPTABLES
->  
->  # ARP tables
->  config IP_NF_ARPTABLES
-> -	tristate
-> +	tristate "Legacy ARPTABLE support"
-                         ^^^^^^^^
-                         ARPTABLES
+-- 
+2.17.1
 
-> +	depends on NETFILTER_XTABLES
-> +	default n
-> +	help
-> +	  arptables is a legacy packet classifier.
-> +	  This is not needed if you are using arptables over nftables
-> +	  (iptables-nft).
->  
->  config NFT_COMPAT_ARP
->  	tristate
-> diff --git a/net/ipv6/netfilter/Kconfig b/net/ipv6/netfilter/Kconfig
-> index f3c8e2d918e1..e087a8e97ba7 100644
-> --- a/net/ipv6/netfilter/Kconfig
-> +++ b/net/ipv6/netfilter/Kconfig
-> @@ -8,7 +8,14 @@ menu "IPv6: Netfilter Configuration"
->  
->  # old sockopt interface and eval loop
->  config IP6_NF_IPTABLES_LEGACY
-> -	tristate
-> +	tristate "Legacy IP6 tables support"
-> +	depends on INET && IPV6
-> +	select NETFILTER_XTABLES
-> +	default n
-> +	help
-> +	  ip6tables is a legacy packet classifier.
-> +	  This is not needed if you are using iptables over nftables
-> +	  (iptables-nft).
->  
->  config NF_SOCKET_IPV6
->  	tristate "IPv6 socket lookup support"
 
