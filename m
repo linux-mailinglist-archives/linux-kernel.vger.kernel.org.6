@@ -1,91 +1,108 @@
-Return-Path: <linux-kernel+bounces-340904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2DDA9878D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:03:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50EFD9878D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 082BE1F28FDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:03:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15FBC2836F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9896915F308;
-	Thu, 26 Sep 2024 18:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69CF1662FA;
+	Thu, 26 Sep 2024 18:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqzgGSDj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBYdNH+I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0139C4A24;
-	Thu, 26 Sep 2024 18:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100B54A24;
+	Thu, 26 Sep 2024 18:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727373801; cv=none; b=neO2yTs/uT+ESw6UctTQ4+KmG5ht9yANhVQrO1jxAT60UffVnizX6OdvNf35iVvFUUrRK2feXPOdFTkq70rG7NiwiVNWziZFUqdZ2bn78CISNuZxzjEP+5OpYCuqd6Q4sExUaXPDhumhqsSsRSbif8SYdezXq37wTkaWzF+vw9o=
+	t=1727373867; cv=none; b=Wmj5+0T5wBV72s4Ndc3N5Iv20EHZyleLACCMxkn3KxdZWe/b1ySf0OCEujMT7BIkAHw4etPf5NtLoSUtOiStckbzr/MQgCHRVQbkMY5hSjwHF2rBLbRClwng2ATWCnLj+iRK+HZXrcXJX942I+vPvXVtNvGYFBfBs+yLLEDB+eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727373801; c=relaxed/simple;
-	bh=3228WUQ9vmLAriBD/5+dhgd2dxqg90jLNlv96f6hosU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=RXvQ6RMd1bACszCG/kysGyd2utIhkRvDQPNU57FNcsjkJVoq7ky4yHbO+ldcHTOa0Clr3lVXpaopoI07PaNP62uDhHB2DIoOTSW8DqZhcyTh921SP9O5N5MUYRSOafSY5Nt+T+x64rwZit0BcD4HX9Wh+o2wYO3WmS9viUKlUAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqzgGSDj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 144FBC4CEC5;
-	Thu, 26 Sep 2024 18:03:19 +0000 (UTC)
+	s=arc-20240116; t=1727373867; c=relaxed/simple;
+	bh=gj9eNFEeiWVEaaqEkkwhe3PeLqdetTJaVkbInymCKyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cd+t8bdWw1goE9g9ABsL973ZYz17euNfnU1bA7Bl0U7+j3T1DtvyMT0URSpQBz35N2Qx1BDNqnzvLyeZmfx4EqzHYc3SbOB2bOMGpgvFCCL7hZX3Cd87GCS7quaqQX1XIJ0KwZl5phU7/fwV35De4GYFntLa0+szdUxNnCR3WPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PBYdNH+I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5CF1C4CEC5;
+	Thu, 26 Sep 2024 18:04:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727373800;
-	bh=3228WUQ9vmLAriBD/5+dhgd2dxqg90jLNlv96f6hosU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=kqzgGSDjhP9snOiX20gWrwtkbxJ4FT5Wr4UnFIvZITpLLNwtGuCrqFBd3IakG6See
-	 nDxbBih8Zn1IIAloR6eyav9COsM5dOW0otLgXHbz1I0kgI0h7pXBI7nQkGUJ771AbJ
-	 HjP4mn+U1A2UzFj0LV0U9h2Z75VZ+adbkvvH3RXcrZJt0ccu1m9ytnk4WA0ELaZE3H
-	 Zovmdk2HacZO/U/zLomD9FiYCGGjQiHVswcr++7/Ps7IkTyJ4KGDj+3Z+ISkdC1CEW
-	 2NE7OmEu7oJ6sqhhsUNsqNzc791js6xBjDOTP8hJBr+YvXxLAx009ER3uOt+dCnAYh
-	 wbM9oX/tY68kQ==
-Date: Thu, 26 Sep 2024 20:03:18 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Aditya Garg <gargaditya08@live.com>, 
-    "airlied@gmail.com" <airlied@gmail.com>
-cc: "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-    "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
-    "mripard@kernel.org" <mripard@kernel.org>, 
-    "daniel@ffwll.ch" <daniel@ffwll.ch>, 
-    "bentiss@kernel.org" <bentiss@kernel.org>, 
-    =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <thomas@t-8ch.de>, 
-    Orlando Chamberlain <orlandoch.dev@gmail.com>, 
-    Kerem Karabay <kekrby@gmail.com>, 
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-    "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
-    "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-    "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
-Subject: Re: [WHY SUCH DELAY!] Touch Bar support for T2 Macs
-In-Reply-To: <MA0P287MB0217A06CA89D6A7D0631466EB86A2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-Message-ID: <nycvar.YFH.7.76.2409262001520.31206@cbobk.fhfr.pm>
-References: <DD9C41AD-6543-47CE-8504-69E4992229B2@live.com> <MA0P287MB02176175318B96135BE3E320B8902@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM> <nycvar.YFH.7.76.2409111420040.31206@cbobk.fhfr.pm>
- <MA0P287MB0217A06CA89D6A7D0631466EB86A2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=k20201202; t=1727373865;
+	bh=gj9eNFEeiWVEaaqEkkwhe3PeLqdetTJaVkbInymCKyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PBYdNH+I4AK26SkyPpnSkEDEL6ETqz9yHPijs8bPR8r/vSQ4Z9QCMUvjBqTnLwDkO
+	 t2MgFmsZcKotLMgPMs0Co29Zh0nzuSOYs5D92soiZpo7XF+GdoH57C+njD16nQmY4l
+	 mAi/o6llL25D/ll3uL7y7iSgI5zmI09l0e9HIy6LYr4LzmXns6iZ85ZQBIkQpr7eo2
+	 CsbSboz0Lp5Yq5EmsYHDzYMMZICxzKX7GtjgddHsy4DuPbSOiV8xclcDPK+vYWmUiS
+	 2zODvxiO7dmWn5+5buvL/ZNjFk7U/dcjHGnkuOdqmfrc9/hhbHruZT+Hc1TE9bNiG7
+	 BDvX1XYPVA35w==
+Date: Thu, 26 Sep 2024 11:04:23 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org
+Subject: Re: [RFC/PATCH bpf-next 0/3] bpf: Add slab iterator and kfunc (v1)
+Message-ID: <ZvWiJ_Mcb5zbE2Dm@google.com>
+References: <20240925223023.735947-1-namhyung@kernel.org>
+ <ZvSnz4F7gDFa9_ue@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZvSnz4F7gDFa9_ue@google.com>
 
-On Thu, 26 Sep 2024, Aditya Garg wrote:
+On Thu, Sep 26, 2024 at 12:16:15AM +0000, Roman Gushchin wrote:
+> On Wed, Sep 25, 2024 at 03:30:20PM -0700, Namhyung Kim wrote:
+> > Hello,
+> > 
+> > I'm proposing a new iterator and a kfunc for the slab memory allocator
+> > to get information of each kmem_cache like in /proc/slabinfo or
+> > /sys/kernel/slab.
+> 
+> Hello, Namhyung!
 
-> It has been more than a month since I've sent this patch set and I 
-> haven't got a clear yes or not for the same. I understand maintainers 
-> are busy people, but I'd really appreciate if I get some response for 
-> this series of patches from the HID and DRM maintainers.
+Hello Roman!
 
-Just to reiterate -- I am waiting for Ack from the DRM people and will 
-then take it through hid.git.
+> 
+> I personally like the idea very much. With a growing number of kmem_caches
+> /proc/slabinfo getting close to it's limit, so having a more flexible
+> interface makes a lot of sense.
+> 
+> > Maybe I need to call it kmem_cache iter but slab
+> > was short and easier to call. :)
+> 
+> I'd personally prefer kmem_cache or slab_cache, just in case somebody later
+> would propose an iterator over individual slab objects within a kmem_cache.
 
-Dave, who'd be the best person to do this from the DRM side please?
+I think we can add a parameter to limit or extend the functionality
+like task iter and cgroup iter.  But I'm not sure we need to use a
+different name for that.  Anyway I'm ok to rename it kmem_cache iter.
 
-Thanks,
+> 
+> Acked-by: Roman Gushchin <roman.gushchin@linux.dev> (mm/*)
 
--- 
-Jiri Kosina
-SUSE Labs
-
+Thanks for your review!
+Namhyung
 
