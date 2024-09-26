@@ -1,132 +1,118 @@
-Return-Path: <linux-kernel+bounces-340935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A46B987937
+	by mail.lfdr.de (Postfix) with ESMTPS id 23000987939
 	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 169DA1C21407
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:39:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 992431C216F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8B5175D53;
-	Thu, 26 Sep 2024 18:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="OGsInAtY"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D786015B96E;
-	Thu, 26 Sep 2024 18:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2238E1714D9;
+	Thu, 26 Sep 2024 18:40:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B90513777E;
+	Thu, 26 Sep 2024 18:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727375988; cv=none; b=Hn6zLZ9KNx5Of647EjyjVwDGt8R1bPx16KfsdlHFNdRdsX/0qt9Bc1CedR5/J2bq7FDeLh1EOW44EballBGFZIqghusNlZFs/jEX8KvVl6lBe+vBsGKtmtoBcssSrkdPtFjTnPSkQGcNswMIzvM8PUAAFuCBsf3v25OTlbyVuss=
+	t=1727376051; cv=none; b=dQaOqIWOFk0H4Vw4P91Nz+yow/b5PGg8yKuaeovBiWRm7RSJl7G2+MQcyT4jLc3iy+viPTQ1aVon8XS7f/XaIDDUaoc6r5012bgHvvFF0uJjpJaS9v+1aYK9Wj+QyZdHd/lr/b6nmxybAS2kvJ2sKsHk+u9wLmAuTiQWGf5aZN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727375988; c=relaxed/simple;
-	bh=eE5u2j2C+K9iLvMJT2upOmg3IJEUpwK2T0VUyCuZXkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T21K+IA/ITlM00Zu4MuhXN1lZz0kO+4/RAyePTn/HS2T2QECfnN7gFD0afXrY+FC6E5Jjv7/tbeK+gE3KCj4pHZyl+1M7PZGJlUx4a+mAs4RUNezK4swxTFC2FWquu8Ny/0fIp+ZFs/fDz5ZUYJtq+59cwmYgNnf7DsXTgeSm8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=OGsInAtY; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=V66/Bzro1T7ZAB1kueHnp/otNZSlwdgDsCDAFqLRcQI=; b=OGsInAtYTpLNQkj5oDDqLHUSxY
-	XnQcY0X4AOCqhw5hWiFERR84HjQGRI0gwC/gPPAJFGjvbv+jN9myx4y2yZiRpaOoLmIscbSS5Q9K1
-	ekiMGkVkjpBraCLyC7+1XqS/lt7IpPByCNxXz2C2wOVcOhbWV8WkTk7xrZdlwlnKMILE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sttOj-008P8u-4T; Thu, 26 Sep 2024 20:39:29 +0200
-Date: Thu, 26 Sep 2024 20:39:29 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] riscv: dts: thead: Add TH1520 ethernet nodes
-Message-ID: <3e26f580-bc5d-448e-b5bd-9b607c33702b@lunn.ch>
-References: <20240926-th1520-dwmac-v2-0-f34f28ad1dc9@tenstorrent.com>
- <20240926-th1520-dwmac-v2-3-f34f28ad1dc9@tenstorrent.com>
+	s=arc-20240116; t=1727376051; c=relaxed/simple;
+	bh=epz6jRXFedkq8RZkzym6M6z9oDDMZfQ2lvyT+uetk40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aficHS6r7gzCka2NqfIHrtHvsPrV7E1Gjp/ty6DKCFnM9RDtmKNpMx7t4kvO9IJaB47CYK7e0jfQzu1mApdD6JRPr1m75ZJDHP6o5YXcmpfK1OudxB7XhtLeaqUOr3+ucz9hykmn0l4RqZx++oQYRRav7ePuX0AhCeLsbrbHWis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2B5F14BF;
+	Thu, 26 Sep 2024 11:41:17 -0700 (PDT)
+Received: from [10.57.20.191] (unknown [10.57.20.191])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E38A3F6A8;
+	Thu, 26 Sep 2024 11:40:46 -0700 (PDT)
+Message-ID: <221f3995-34e4-42a9-a18d-faaa7cf542d1@arm.com>
+Date: Thu, 26 Sep 2024 19:40:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926-th1520-dwmac-v2-3-f34f28ad1dc9@tenstorrent.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] perf mem: Fix printing PERF_MEM_LVLNUM_{L2_MHB|MSC}
+To: Thomas Falcon <thomas.falcon@intel.com>, peterz@infradead.org,
+ mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240926144040.77897-1-thomas.falcon@intel.com>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <20240926144040.77897-1-thomas.falcon@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> +&mdio0 {
-> +	phy0: ethernet-phy@1 {
-> +		reg = <1>;
-> +	};
-> +
-> +	phy1: ethernet-phy@2 {
-> +		reg = <2>;
-> +	};
-> +};
+On 9/26/2024 3:40 PM, Thomas Falcon wrote:
+> 
+> With commit 8ec9497d3ef34 ("tools/include: Sync uapi/linux/perf.h
+> with the kernel sources"), 'perf mem report' gives an incorrect memory
+> access string.
+> ...
+> 0.02%   1       3644    L5 hit  [.] 0x0000000000009b0e  mlc     [.] 0x00007fce43f59480
+> ...
+> 
+> This occurs because, if no entry exists in mem_lvlnum, perf_mem__lvl_scnprintf
+> will default to 'L%d, lvl', which in this case for PERF_MEM_LVLNUM_L2_MHB is 0x05.
+> Add entries for PERF_MEM_LVLNUM_L2_MHB and PERF_MEM_LVLNUM_MSC to mem_lvlnum,
+> so that the correct strings are printed.
+> ...
+> 0.02%   1       3644    L2 MHB hit      [.] 0x0000000000009b0e  mlc     [.] 0x00007fce43f59480
+> ...
+> 
+> Fixes: 8ec9497d3ef34 ("tools/include: Sync uapi/linux/perf.h with the kernel sources")
+> Suggested-by: Kan Liang <kan.liang@linux.intel.com>
+> Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
+> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
 
-Two PHYs on one bus...
+Reviewed-by: Leo Yan <leo.yan@arm.com>
 
-> +		gmac1: ethernet@ffe7060000 {
-> +			compatible = "thead,th1520-gmac", "snps,dwmac-3.70a";
-> +			reg = <0xff 0xe7060000 0x0 0x2000>, <0xff 0xec004000 0x0 0x1000>;
-> +			reg-names = "dwmac", "apb";
-> +			interrupts = <67 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "macirq";
-> +			clocks = <&clk CLK_GMAC_AXI>, <&clk CLK_GMAC_AXI>;
-> +			clock-names = "stmmaceth", "pclk";
-> +			snps,pbl = <32>;
-> +			snps,fixed-burst;
-> +			snps,multicast-filter-bins = <64>;
-> +			snps,perfect-filter-entries = <32>;
-> +			snps,axi-config = <&stmmac_axi_config>;
-> +			status = "disabled";
-> +
-> +			mdio1: mdio {
-> +				compatible = "snps,dwmac-mdio";
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +			};
-> +		};
-> +
-> +		gmac0: ethernet@ffe7070000 {
-> +			compatible = "thead,th1520-gmac", "snps,dwmac-3.70a";
-> +			reg = <0xff 0xe7070000 0x0 0x2000>, <0xff 0xec003000 0x0 0x1000>;
-> +			reg-names = "dwmac", "apb";
-> +			interrupts = <66 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "macirq";
-> +			clocks = <&clk CLK_GMAC_AXI>, <&clk CLK_GMAC_AXI>;
-
-And the MACs are listed in opposite order. Does gmac1 probe first,
-find the PHY does not exist, and return -EPROBE_DEFER. Then gmac0
-probes successfully, and then sometime later gmac1 then reprobes?
-
-I know it is normal to list nodes in address order, but you might be
-able to avoid the EPROBE_DEFER if you reverse the order.
-
-     Andrew
+> ---
+> v2: Leo Yan suggested adding PERF_MEM_LVLNUM_L{1-4} to mem_lvlnum
+>     and printing a clearer message in the case of an unknown level
+>     to more easily catch similar issues in the future
+> ---
+>  tools/perf/util/mem-events.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
+> index 051feb93ed8d..bf5090f5220b 100644
+> --- a/tools/perf/util/mem-events.c
+> +++ b/tools/perf/util/mem-events.c
+> @@ -366,6 +366,12 @@ static const char * const mem_lvl[] = {
+>  };
+> 
+>  static const char * const mem_lvlnum[] = {
+> +       [PERF_MEM_LVLNUM_L1] = "L1",
+> +       [PERF_MEM_LVLNUM_L2] = "L2",
+> +       [PERF_MEM_LVLNUM_L3] = "L3",
+> +       [PERF_MEM_LVLNUM_L4] = "L4",
+> +       [PERF_MEM_LVLNUM_L2_MHB] = "L2 MHB",
+> +       [PERF_MEM_LVLNUM_MSC] = "Memory-side Cache",
+>         [PERF_MEM_LVLNUM_UNC] = "Uncached",
+>         [PERF_MEM_LVLNUM_CXL] = "CXL",
+>         [PERF_MEM_LVLNUM_IO] = "I/O",
+> @@ -448,7 +454,7 @@ int perf_mem__lvl_scnprintf(char *out, size_t sz, const struct mem_info *mem_inf
+>                 if (mem_lvlnum[lvl])
+>                         l += scnprintf(out + l, sz - l, mem_lvlnum[lvl]);
+>                 else
+> -                       l += scnprintf(out + l, sz - l, "L%d", lvl);
+> +                       l += scnprintf(out + l, sz - l, "Unknown level %d", lvl);
+> 
+>                 l += scnprintf(out + l, sz - l, " %s", hit_miss);
+>                 return l;
+> --
+> 2.46.0
+> 
 
