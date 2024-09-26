@@ -1,100 +1,134 @@
-Return-Path: <linux-kernel+bounces-340721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 058E298770C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:56:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BF5987710
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B3521C2583D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:56:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20A221C22760
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB50157E91;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A13159217;
+	Thu, 26 Sep 2024 15:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FU+oDtiT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62972158205;
 	Thu, 26 Sep 2024 15:56:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DD9156C40;
-	Thu, 26 Sep 2024 15:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727366187; cv=none; b=aPZ8pBkkfbP1DvcRrGQDrMD7SbV1qpwcs+DoIvTOaTpw6rdcqrPlRolYBHMCeIr1Tj8MF2aiXFk2OwFli8UahKHcBGk2fiKz1WqOsomMc3WfLSsVgvjnX+00aj91wDCv4FYRx3gbaNf46md5q8k2pL+OrPmT9XuGNigKNRfBErk=
+	t=1727366188; cv=none; b=XY+nyjzqMmTJyGnMGgKM1wMW8gQvmsTNw7DZrAbju3U4JxtsryEYckBWlp07AqDDEmIJygzYW+94IZIlp/Hqcgy5t0H79UDFGGWjr2vj5LH2K2SYhff4zDrMeaGJuYBJNcQOBWrnx53nWW+Z3endU/FwH6B9YHWXDjZCwq12KV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727366187; c=relaxed/simple;
-	bh=WBnnx5zlorm4kEs0yeAw44dctNIiEVNABaauurFcP0U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UNHRQYEUJ6d8/BfiRwFsFzydWNfnqe3Kt/DH8VvfNOAOqUkuODJTULJ4lUHZcwTUiHl+Z5Gf0cIHm+6a7nQ13hxwp4dsLbaPUENWc6SFTJXg61qZ0P90YfRj+7EuIpA2jaspGQW/MB0tZIuh77foVgawOwCHlC9AWHW3PhOUYN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7924D14BF;
-	Thu, 26 Sep 2024 08:56:47 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BE13E3F587;
-	Thu, 26 Sep 2024 08:56:16 -0700 (PDT)
-Message-ID: <c9100637-663a-4307-9d59-deebcf9ad34c@arm.com>
-Date: Thu, 26 Sep 2024 16:56:15 +0100
+	s=arc-20240116; t=1727366188; c=relaxed/simple;
+	bh=1/qI2GP3Axi5UcQBFFO7yyGh9Go/5y6RvSagLxELw7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oaiLocp00jXY2PDpk3WMG8LehDo45Um30mROG1gKgT7VAUlrTuMB4wTBYPzpss82VI78RN/Mf839CtnxxeWWsRVKLVhm6HtK/8rxSC+9g5Qu/r1KbJZl/dXhMCCj1L9j5TtchVDNVulKc5NZ62ecKmLfllupLSLZT/wS5ROMo7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FU+oDtiT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDF65C4CEC5;
+	Thu, 26 Sep 2024 15:56:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727366187;
+	bh=1/qI2GP3Axi5UcQBFFO7yyGh9Go/5y6RvSagLxELw7I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FU+oDtiT5Xcl/Iai3/8xWtZT7hPf9kRCjbT1q1NyX6z8NCljCQXow4AXGtuYmSlC+
+	 AzmA96KBDfIGUsL2DhJkznlHWk+kLOYjzE5ZKagM4kbBZZDUcMDZN+aCjAVWjifoUi
+	 ud94FqvxI/WXzT/7jaPN9whX0uaCYcpWIaMXRNAJN/0gZyJRYvk/8EFRkwCAto3jM6
+	 /ldlX4vGj3/GcKzejRPsQJus+lCjaJxUTeTr3qvb0dB+n2nR/b91T6MfK9rtbtZ2Ap
+	 qt26/lxcP30MKT8O/AwM851eNGKMEQiQxUva5E9qei+t/7w/cJ8WdUjWlO+c3ajx+r
+	 Hxzq5XfQUHFew==
+Date: Thu, 26 Sep 2024 16:56:21 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Gary Guo <gary@garyguo.net>, Jason Montleon <jmontleo@redhat.com>,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	nathan@kernel.org, ndesaulniers@google.com, morbo@google.com,
+	justinstitt@google.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	llvm@lists.linux.dev, stable@vger.kernel.org
+Subject: Re: [PATCH] RISC-V: Fix building rust when using GCC toolchain
+Message-ID: <20240926-plated-guts-e84b822c40cc@spud>
+References: <20240917000848.720765-1-jmontleo@redhat.com>
+ <20240917000848.720765-2-jmontleo@redhat.com>
+ <334EBB3A-6ABF-4FBF-89D2-DF3A6DCCCEA2@kernel.org>
+ <20240917142950.48d800ac@eugeo>
+ <31885EDD-EF6D-4EF1-94CA-276BA7A340B7@kernel.org>
+ <CANiq72=KdF2zrcHJEH+YGv9Mn6szsHrZpEWb_y2QkFzButm3Ag@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: core: Only set maximum DMA segment size if DMA is
- supported
-To: Guenter Roeck <linux@roeck-us.net>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Christoph Hellwig <hch@lst.de>
-References: <20240924210123.2288529-1-linux@roeck-us.net>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240924210123.2288529-1-linux@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nmXfaJxXZ5jvnxoJ"
+Content-Disposition: inline
+In-Reply-To: <CANiq72=KdF2zrcHJEH+YGv9Mn6szsHrZpEWb_y2QkFzButm3Ag@mail.gmail.com>
 
-On 24/09/2024 10:01 pm, Guenter Roeck wrote:
-> Since upstream commit 334304ac2bac ("dma-mapping: don't return errors
-> from dma_set_max_seg_size") calling dma_set_max_seg_size() on a device
-> not supporting DMA results in a warning traceback. This is seen when
-> booting the sifive_u machine from SD. The underlying SPI controller
-> (sifive,spi0 compatible) explicitly sets dma_mask to NULL.
 
-Hmm, that driver probably shouldn't be doing that, but either way it's 
-not actually relevant to this check - what's significant is that when 
-the MMC host device is an "mmc-spi-slot" instance, its mmc_dev() ends up 
-being the SPI *device* itself, not the grandparent SPI controller.
+--nmXfaJxXZ5jvnxoJ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thus the patch itself is appropriate on the basis that MMC hosts may 
-exist on non-DMA-capable buses, so the subsystem needs to consider that.
+On Thu, Sep 26, 2024 at 05:40:19PM +0200, Miguel Ojeda wrote:
+> On Tue, Sep 17, 2024 at 5:26=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
+rote:
+> >
+> > Yes, but unfortunately I already knew how it worked. It's not flags I a=
+m worried about, it is extensions.
+> > Even using a libclang that doesn't match clang could be a problem, but =
+we can at least declare that unsupported.
+> > Not digging it out on an airport bus, but we discussed the lack of GCC =
+support on the original patch adding riscv, and decided against it.
+>=20
+> Do you mean you would prefer to avoid supporting the mixed GCC-Clang
+> builds?
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Mixed builds are allowed on the c side, since we can figure out what the
+versions of each tool are. If there's a way to detect the version of
+libclang in use by the rust side, then I would be okay with mixed gcc +
+rustc builds.
 
-> Avoid the backtrace by only calling dma_set_max_seg_size() if DMA is
-> supported.
-> 
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->   drivers/mmc/core/queue.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
-> index d0b3ca8a11f0..4d6844261912 100644
-> --- a/drivers/mmc/core/queue.c
-> +++ b/drivers/mmc/core/queue.c
-> @@ -388,7 +388,8 @@ static struct gendisk *mmc_alloc_disk(struct mmc_queue *mq,
->   
->   	blk_queue_rq_timeout(mq->queue, 60 * HZ);
->   
-> -	dma_set_max_seg_size(mmc_dev(host), queue_max_segment_size(mq->queue));
-> +	if (mmc_dev(host)->dma_parms)
-> +		dma_set_max_seg_size(mmc_dev(host), queue_max_segment_size(mq->queue));
->   
->   	INIT_WORK(&mq->recovery_work, mmc_mq_recovery_handler);
->   	INIT_WORK(&mq->complete_work, mmc_blk_mq_complete_work);
+> If so, do you mean you would prefer to not pick the patch,
+> i.e. avoid supporting this at all?
+
+Yes, I would rather this was not applied at all. My plan was to send a
+patch making HAVE_RUST depend on CC_IS_CLANG, but just ain't got around
+to it yet, partly cos I was kinda hoping to mention this to you guys at
+LPC last week, but I never got the chance to talk to any rust people (or
+go to any rust talks either!).
+
+> (If so, then perhaps it would be a
+> good idea to add a comment there and perhaps a note to
+> https://docs.kernel.org/rust/arch-support.html).
+
+Sure, I can add a comment there.=20
+
+> Otherwise, please let me know if I am misunderstanding -- thanks!
+
+In sorta related news, is there a plan for config "options" that will
+allow us to detect gcc-rs or the gcc rust backend?
+
+Cheers,
+Conor.
+
+--nmXfaJxXZ5jvnxoJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvWEJQAKCRB4tDGHoIJi
+0oYrAPwMntj0z02QObS+IYmEmboJI6SyEUkngNBmw9pJE4dx/AD/aIavZrcUYEKA
+wsXoLTaDPQ2Dv+rm0e1ziNyB8Bg2nA4=
+=wItZ
+-----END PGP SIGNATURE-----
+
+--nmXfaJxXZ5jvnxoJ--
 
