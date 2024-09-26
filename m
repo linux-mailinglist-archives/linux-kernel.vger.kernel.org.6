@@ -1,79 +1,54 @@
-Return-Path: <linux-kernel+bounces-340235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C0AA987049
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:33:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2753D987059
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137A8286BAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:33:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ECF01C2484D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2805F1A7AD8;
-	Thu, 26 Sep 2024 09:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5531A42AB;
+	Thu, 26 Sep 2024 09:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FbR9OIMT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LUI9tduO"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2068614A62A
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113F7224D6
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727343176; cv=none; b=nIW+/bHd727KSl38fUrrGY1JHPLDUAPlL+XEfbjp+f1snjSxr60K6k2gfa2v8bUfN0gj/WgRhtZ8+DdjK++Gmk2woJRgKO56p30qXdSc+fnV8M62NDDR66inRnAxGm+fdr7d9BLgXbk9rzgfuMuUS63Jj4Z4Jrp/f8CWPiOHDDc=
+	t=1727343243; cv=none; b=Zt48oigKmjjaX2mZGtfRFzKc5jEtiJsjBGeL+3/zv+DujCm1XXS7zDjlC2PZPZd9D0LZ8c1QXgBaMYQy3Jtq/PXWQfrJnmNLGB6ZfuUf02jzcXpG5dRtAWVv8FWfI8Kc+H4BaZYjJd+QzPfXc3wA2+whUmTMEsPQRQlx4iU7enw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727343176; c=relaxed/simple;
-	bh=9KLITEozZMuMw31UlUJPPVtzDHJ+Iw2+blshL/EsAUg=;
+	s=arc-20240116; t=1727343243; c=relaxed/simple;
+	bh=Df5Y9+CiHpGGKQOzwFg0ep4DadWij8jUa5ykfjb2WLg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XqUMNLcXQ3UMu+o3REeVP5uR/khNyRxsVBGUQ0SBlwN1yOKVOjIXKNe4rgu2kyEwJFPelinvoIjpJ4Aib+3jZChlIJLT9sR/tyXfUyic+P92RLNDj+vyZSh1mD5oM2RdT8jBhmOB5vLJNRRf2U2fwSdIK7Em/jGJypJzcUe7F+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FbR9OIMT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727343174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=viiv1R7Qk2EGD2osRa2/tRj2PEh5xjR8v8WEQ+l48h8=;
-	b=FbR9OIMTnjGkRdQIq+gRA/nfxTIjNbfmQ2WcR252ywiji+V1qCh7vOe0LkDYK31kP4kSMO
-	y7CSfy4NtjDCReDiH7MvKke3CzhyItGkiAT7i7eYyQInrlrxdZOvUa1nftDMlZ3af43iO1
-	adTV1zEY31fsxYWrMJL6x8g50RCn4h0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-504-AqkWLvn1P_aMvTqb3eKYSA-1; Thu, 26 Sep 2024 05:32:53 -0400
-X-MC-Unique: AqkWLvn1P_aMvTqb3eKYSA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cb236ad4aso4333665e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 02:32:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727343172; x=1727947972;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=viiv1R7Qk2EGD2osRa2/tRj2PEh5xjR8v8WEQ+l48h8=;
-        b=weKGt5K3WtY4mSK1bIvpH1tXyQgItDB00OZZxe6gNIKwaiM/+VOTZwmfIGNuOwRLIz
-         dF/roDTTFquk6MnmtA1jewTxm/BvJyICDm5rKeLoXJ8i/kzfOBCfcAn8fvaC04e2lb8c
-         q0H7wftsyLEwrK0t8tx5cM0qUmiUvWk6ojYgtu5ZydSDgxccLX96RFEe7A1ygS6ZuOWL
-         DTtW3X/8ni54xO0P/ipn2V7UR7SQhtuUhmnBzhBBfQdwvGXgfdNb24NuwH0kAXpBDs2m
-         0dmz8lqBkoFB4jPwGA42NyOjoJR8X/718qUHpw7lpCby7Rolr0t4dBwzfry6tevY6TD9
-         u0yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnqfYlupvFYCDj97oH5S38j4ye2QQxTm80GX0RNIjkauY8mEihy/kBBDSDWngTGE9wYyyaGwbziyytuy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEzTTeVeYI2YbZGHXa9koXnKI8PYM2aVvZ/xhQ4QZbx9nBlv6v
-	sia2XMd0+7Pm94DvOfvM7qwouUGbCcb7QP5uONOL0wxlGEftqK4ylXOtTZm5hyj+TJn5PXLVw8f
-	CuaXU2GkbRYCuwgsBE5JLcU4s6ov7Xql/gSCM2wyvNpr+FtorOfA0iwFLN2S5Bw==
-X-Received: by 2002:a05:600c:190e:b0:428:ec2a:8c94 with SMTP id 5b1f17b1804b1-42e9610c1bamr38128495e9.10.1727343171728;
-        Thu, 26 Sep 2024 02:32:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENw/jaKF0ZTS+WW9dNaP+bfiB9Y+GVOoQJHXRbTb9+ASAmfl4wzmxgU8LlvJ332t4eckoI7A==
-X-Received: by 2002:a05:600c:190e:b0:428:ec2a:8c94 with SMTP id 5b1f17b1804b1-42e9610c1bamr38128215e9.10.1727343171327;
-        Thu, 26 Sep 2024 02:32:51 -0700 (PDT)
-Received: from ?IPV6:2a0d:3341:b089:3810:f39e:a72d:6cbc:c72b? ([2a0d:3341:b089:3810:f39e:a72d:6cbc:c72b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a168bdsm41800565e9.37.2024.09.26.02.32.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 02:32:50 -0700 (PDT)
-Message-ID: <327e2020-4cb6-469d-87a4-dddc0bcf7ecb@redhat.com>
-Date: Thu, 26 Sep 2024 11:32:48 +0200
+	 In-Reply-To:Content-Type; b=hhBLUcUL8HRLQVswaR6T00YPsKTW8qbMRPjqINQISHMQpPz7RTo2S5UY5zl6PsWqme9ZOVGGCRx+5qVG1SSo5QxlLlxh+IjwhB6iEAphbeC1rQdjrfQSPYRsoKkPjpXajkvN8J60mvLjJn1q5aqdDggNSJliCzazozJRLDJlz88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LUI9tduO; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727343240;
+	bh=Df5Y9+CiHpGGKQOzwFg0ep4DadWij8jUa5ykfjb2WLg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LUI9tduOcNBvZPpnTbgYRam64lWcZhKujisk4t/35GFgvZ3/st0pJn2jrXSu2Lam/
+	 Gx47u64L0EkRtup8c5zi8swKwdFlx+VVe7hNov7e3ADoinAftAd76eU7zuq+HxTjnC
+	 3nAtsNaz0uSLtWynTVo4uMw6aIk7jVob4wcZG0JzCgJU7pZCzpLNcGrFJVYdKsz7HK
+	 jDX1G+UG1G76vTDUzqWghRCbx7RcZZkZgveShv9jaXsmoYbcs/0wV9fGORZ5AUW2TN
+	 wlvkAcEaJSeG8jOFcRyzWjw598PAtHi7g0GXzvExvy4ERbfmz8rapp2Rp7/L+rCD0B
+	 +e5zymaIdn3ug==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A271117E10AE;
+	Thu, 26 Sep 2024 11:33:59 +0200 (CEST)
+Message-ID: <d8f54575-6df8-4198-a078-70debc9f8e0b@collabora.com>
+Date: Thu, 26 Sep 2024 11:33:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,48 +56,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] selftests: add unshare_test and msg_oob to
- gitignore
-To: Shuah Khan <skhan@linuxfoundation.org>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Allison Henderson <allison.henderson@oracle.com>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- rds-devel@oss.oracle.com, linux-mm@kvack.org
-References: <20240925-selftests-gitignore-v2-0-bbbbdef21959@gmail.com>
- <20240925-selftests-gitignore-v2-1-bbbbdef21959@gmail.com>
- <62f52cb9-1173-46aa-96a0-d48de011fdc2@linuxfoundation.org>
+Subject: Re: [PATCH v1 1/1] drm/mediatek: Fix wrong check of nvmem_cell_read
+To: Liankun Yang <liankun.yang@mediatek.com>, chunkuang.hu@kernel.org,
+ p.zabel@pengutronix.de, airlied@gmail.com, simona@ffwll.ch,
+ matthias.bgg@gmail.com, rex-bc.chen@mediatek.com, msp@baylibre.com,
+ granquet@baylibre.com, dmitry.osipenko@collabora.com,
+ jitao.shi@mediatek.com, mac.shen@mediatek.com, peng.liu@mediatek.com
+Cc: Project_Global_Chrome_Upstream_Group@mediatek.com,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240925084116.28848-1-liankun.yang@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <62f52cb9-1173-46aa-96a0-d48de011fdc2@linuxfoundation.org>
+In-Reply-To: <20240925084116.28848-1-liankun.yang@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/25/24 18:41, Shuah Khan wrote:
-> On 9/25/24 06:23, Javier Carrasco wrote:
->> These executables are missing from their corresponding gitignore files.
->> Add them to the lists.
->>
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->> ---
->>    tools/testing/selftests/core/.gitignore | 1 +
->>    tools/testing/selftests/net/.gitignore  | 1 +
->>    2 files changed, 2 insertions(+)
->>
+Il 25/09/24 10:40, Liankun Yang ha scritto:
+> If the len is 0, kernel crash will occur when performing operations.
+> Add the len check conditions to prevent kernel crash.
 > 
-> Can you split these into two patches. It will be easier
-> for the net patch to go through the net tree.
+
+Please fix the commit title:
+
+drm/mediatek: mtk_dp: Fix potential KP on 0 bytes nvmem cell read
+
+> Fixes: f70ac097a2cf ("drm/mediatek: Add MT8195 Embedded DisplayPort driver")
 > 
-> I take the core changes through my tree. net changes go
-> through net tree.
 
-@Javier, while at the above, please split the changes in two separate 
-series: one for core and one for net. It will additionally simplify the 
-patch handling, thanks!
+Please remove this blank line between the Fixes tag and your S-o-b.
 
-Paolo
+> Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+> ---
+>   drivers/gpu/drm/mediatek/mtk_dp.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+> index d8796a904eca..0cc75ba96b98 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+> @@ -1082,7 +1082,7 @@ static void mtk_dp_get_calibration_data(struct mtk_dp *mtk_dp)
+>   	buf = (u32 *)nvmem_cell_read(cell, &len);
+>   	nvmem_cell_put(cell);
+>   
+> -	if (IS_ERR(buf) || ((len / sizeof(u32)) != 4)) {
+> +	if (IS_ERR(buf) || (len == 0) || ((len / sizeof(u32)) != 4)) {
+
+if (IS_ERR(buf) || !len || ((len / sizeof(u32)) != 4)) {
+
+Cheers,
+Angelo
 
 
