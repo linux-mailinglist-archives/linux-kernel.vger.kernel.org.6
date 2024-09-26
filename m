@@ -1,125 +1,107 @@
-Return-Path: <linux-kernel+bounces-339923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B299986C34
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:01:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3479986C35
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAFAEB2165F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:01:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 169141C2231F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3D516B38B;
-	Thu, 26 Sep 2024 06:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EIJ+achf"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4222817C9AA;
+	Thu, 26 Sep 2024 06:03:24 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF4E33C9
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4796533C9;
+	Thu, 26 Sep 2024 06:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727330462; cv=none; b=brjN+6V7DonSGKUYI3NHixTVHDAeC7dFU9W3TLc4DENELnhORdJLixQlglGA/1VccLglm6yA21QsUmBxvksSRaQW5cwvlDj51VCeKwVKEdCh0Ii8GwnOsTXqGNV1HLlo2p9y+0/mHtuydfD/KlTFJhJa+VHIXBTIGMdHerzrWlo=
+	t=1727330603; cv=none; b=kPj8AcNh1s2wEY81NvDESRosLV49rrHvW1zTwEeRGsgxsekAaBxmE0NnqRXvNMjxtyA9exOQkecbTDz+RF+dyCxCnKUZcXHdU9kF7lw+v2YClYuOy2zcDGHQ5mUya+ymr6oE499dV1x4fd+ykXTFQ4fdUuxvukF+uf39bqm5Dwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727330462; c=relaxed/simple;
-	bh=APHhQS2kfqSesdAbtu8MsR1bPo3wOCnREIf/orjt6bo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mj4Og0MWeu7C1cInWobqXnVoPlvj5TA6WNqhhCcVP2yCEEA+AgQvNW3BrwHDnuT5ju9ZN8HqFxtrYTeTLEAjTjqUZlGjxxbtTy+skMrucRdXsa/p72i3t8GwBooYCADHndb29XJphlwcnQeIDyyRGed2mqtTe+RD+SArmj7dZhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EIJ+achf; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5365c512b00so690352e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:00:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727330457; x=1727935257; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ILy1gmaChDb8kjYQrj+oZMRoRoxb+hbZeapN9RMmuKk=;
-        b=EIJ+achfpyO0cd8wsXocjbtqtJMeNx0DLGE/zpHJYueqPzaakqrd/PDyMAdpsRJyf2
-         g76f4MciOg4t01mwLiP57OOfMAqZghF7smFjlNd66KY+R3iVuHy1KoquCjE1FwqhtIlT
-         lOqoMTbJn4VC1nrkIE8wJWswfVtYCrUz+OIV9JZAWlE5XEooJdtOv51GpQ4stAGYgJPp
-         sVwBwDCmXqztop/g8D8SgWVCO4sU0JCn1+j0/6UF+0KrDIUWLRdDNxm+3y6JttxESTMq
-         ui1ex2xGfJ/S9chd14i/bNhXFF+IP/LtMGT7ee8647bWcVkaCy40rFZ08AO12uWGEO/k
-         08hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727330457; x=1727935257;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ILy1gmaChDb8kjYQrj+oZMRoRoxb+hbZeapN9RMmuKk=;
-        b=ck7SJcf0OEiTuMywv1sZzbUY7YNjXqxymb80QDlTRX6d3VxHLxh9i0GSYWHyWyrlj3
-         kB8CAcEsV+RbIPsJNq+qzUorwdfAcYnoWoTGC6o3U7kt/C8NjlT0vT5Y1g1RN1mmnAYD
-         zHmsxqRmdgaLt1gqu7Mq7WWTqUpGyYtgIEa9Jqz85xCbKZefrvb2UGJOGsTi29A1zxJK
-         g1AgIXBMf8iJBhfDOKFBvL0zEUe2IiKaJCnJUHVSSUjPEN88YqTzyl8KdBG2cGW6IdbR
-         Ey/D2XjQGOX+YTSi7DwGypuqqGWn5sf9n/0PT1ygOof/Cw8zE7bFZR8v9zPY/qvbAQGT
-         j9Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCUot55wcNbMrTFYWQZ3nQAvFCf91SSZQFhkZzJHnwu/Pmo3EAAnuaMkV2ijMFHuN4wWcBVEw4ledcbAI2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiWVHwghrBKJAkECv0rUJUowLo1Yt+d2Q44dvLgFUukIx4IWuU
-	771lbfViSwYGUUl82Q/s9UTZkrnd3+bMOPWoPRsruEpt7UaaFMkQJE2CSdNoj24=
-X-Google-Smtp-Source: AGHT+IF3zAWXPj1hxe8OqEL5ya4nM2XcgbVEqmQK5WYyGuJNygjvKW4VKCBqLHmEaR5Sbg+uW3uJLw==
-X-Received: by 2002:a05:6512:12c4:b0:536:7c31:cb21 with SMTP id 2adb3069b0e04-53877553493mr3634739e87.35.1727330457366;
-        Wed, 25 Sep 2024 23:00:57 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85e0bbcsm711541e87.46.2024.09.25.23.00.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 23:00:56 -0700 (PDT)
-Date: Thu, 26 Sep 2024 09:00:54 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Rob Herring <robh@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Thierry Reding <treding@nvidia.com>, 
-	Simona Vetter <simona@ffwll.ch>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Alexey Brodkin <abrodkin@synopsys.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 ] gpu: drm: replace of_graph_get_next_endpoint()
-Message-ID: <bsvoitn4ygjm7ftiqex7knppf6ykiqort4wf3rb4vlsw6gnu2c@kze7w2f3plha>
-References: <87setn8eju.wl-kuninori.morimoto.gx@renesas.com>
+	s=arc-20240116; t=1727330603; c=relaxed/simple;
+	bh=UFFuMEjRprC/nHZiWeusBH6HZ5Zeg80ENmePWoeqE78=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u6qNw0V+KZyb07ijd9NZ+u057jiEWgcBj3UZLGNPS2FjDF6PL+HlPHk74p6rwhL5bSrA1PpXV1rM/6BB5r0GB1ty4vLFMNojGi5Gie6lWYD9tgV9DO+n1EISL0uOu4JrS7wihO5oZyDxLftfqWdVREtNGFQzqeXX2crTM0/vSww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 0279423a7bcd11efa216b1d71e6e1362-20240926
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_TRUSTED
+	SA_EXISTED, SN_TRUSTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
+	DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
+	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
+	ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:c040a86b-ca0b-4b94-bea5-4de90ba9ef21,IP:10,
+	URL:0,TC:0,Content:0,EDM:-25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,AC
+	TION:release,TS:-30
+X-CID-INFO: VERSION:1.1.38,REQID:c040a86b-ca0b-4b94-bea5-4de90ba9ef21,IP:10,UR
+	L:0,TC:0,Content:0,EDM:-25,RT:0,SF:-15,FILE:0,BULK:0,RULE:EDM_GE969F26,ACT
+	ION:release,TS:-30
+X-CID-META: VersionHash:82c5f88,CLOUDID:4059f7a170610ac050989fc40eb08643,BulkI
+	D:240926135947FABNYA5N,BulkQuantity:1,Recheck:0,SF:66|38|24|17|19|44|102,T
+	C:nil,Content:0,EDM:1,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,C
+	OL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS
+X-UUID: 0279423a7bcd11efa216b1d71e6e1362-20240926
+X-User: aichao@kylinos.cn
+Received: from localhost.localdomain [(112.64.161.44)] by mailgw.kylinos.cn
+	(envelope-from <aichao@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 658562920; Thu, 26 Sep 2024 14:03:11 +0800
+From: Ai Chao <aichao@kylinos.cn>
+To: perex@perex.cz,
+	tiwai@suse.com,
+	kailang@realtek.com,
+	sbinding@opensource.cirrus.com,
+	simont@opensource.cirrus.com,
+	josh@joshuagrisham.com,
+	foss@athaariq.my.id,
+	rf@opensource.cirrus.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ai Chao <aichao@kylinos.cn>
+Subject: [PATCH] ALSA: hda/realtek: Add quirk for Huawei MateBook 13 KLV-WX9
+Date: Thu, 26 Sep 2024 14:02:52 +0800
+Message-Id: <20240926060252.25630-1-aichao@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87setn8eju.wl-kuninori.morimoto.gx@renesas.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 26, 2024 at 12:05:42AM GMT, Kuninori Morimoto wrote:
-> From DT point of view, in general, drivers should be asking for a
-> specific port number because their function is fixed in the binding.
-> 
-> of_graph_get_next_endpoint() doesn't match to this concept.
-> 
-> Simply replace
-> 
-> 	- of_graph_get_next_endpoint(xxx, NULL);
-> 	+ of_graph_get_endpoint_by_regs(xxx, 0, -1);
-> 
-> Link: https://lore.kernel.org/r/20240202174941.GA310089-robh@kernel.org
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The headset mic requires a fixup to be properly detected/used.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Ai Chao <aichao@kylinos.cn>
+---
+ sound/pci/hda/patch_realtek.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> ---
-> v3 -> v4
-> 	- based on latest linus/master branch
-> 
-> v2 -> v3
-> 	- based on latest linux-next/master
-> 	- Add someone to "To" who is thought to be Maintainer
-> 
->  drivers/gpu/drm/drm_of.c                              | 4 +++-
->  drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c | 2 +-
->  drivers/gpu/drm/tiny/arcpgu.c                         | 2 +-
->  3 files changed, 5 insertions(+), 3 deletions(-)
-
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index f787ff4182d4..7681200e84e8 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10880,6 +10880,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1854, 0x048a, "LG gram 17 (17ZD90R)", ALC298_FIXUP_SAMSUNG_AMP_V2_4_AMPS),
+ 	SND_PCI_QUIRK(0x19e5, 0x3204, "Huawei MACH-WX9", ALC256_FIXUP_HUAWEI_MACH_WX9_PINS),
+ 	SND_PCI_QUIRK(0x19e5, 0x320f, "Huawei WRT-WX9 ", ALC256_FIXUP_ASUS_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x19e5, 0x3212, "Huawei KLV-WX9 ", ALC256_FIXUP_ACER_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1b35, 0x1235, "CZC B20", ALC269_FIXUP_CZC_B20),
+ 	SND_PCI_QUIRK(0x1b35, 0x1236, "CZC TMI", ALC269_FIXUP_CZC_TMI),
+ 	SND_PCI_QUIRK(0x1b35, 0x1237, "CZC L101", ALC269_FIXUP_CZC_L101),
 -- 
-With best wishes
-Dmitry
+2.25.1
+
 
