@@ -1,142 +1,153 @@
-Return-Path: <linux-kernel+bounces-340240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD96987063
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:38:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B43BF987066
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 769281F289A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:38:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DDC61F28976
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E7B1AAE2A;
-	Thu, 26 Sep 2024 09:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792E21AC422;
+	Thu, 26 Sep 2024 09:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQheAZ1y"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HZGLDGGc"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5557738FA3;
-	Thu, 26 Sep 2024 09:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119CE192595;
+	Thu, 26 Sep 2024 09:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727343497; cv=none; b=gej5cWQsnKz9nWuquegr0lE98XmPGOj4U0aJriBtRVaAn0Rwz2HsXfp9qZ9Jvirc9yJ0kLvRSV6jeWlZZTntNcLmkmNOpeUXrmDKKI+3qX+U3UYevCF1y2AclYrCWZMpvN5L6A6X+LgdO2ui/dNDFQNIpr7mc8XlqdrYlEdwhZc=
+	t=1727343507; cv=none; b=J6qpfhghf1tWrAjjgmK4g0bcF8mrsQkA0pIoakhDylPC3Mp0SkOPi5QuJ6lzKUNbemLHUNkPW1jVxMZ61+z189XhyuVDG1T1YYIuiORWKIpJbiPzFu0jQHdlv2znZaih39K+avPQ3Vt8mWzaUfKGFFXWYuURg05I1AulyWGrIvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727343497; c=relaxed/simple;
-	bh=qScvP8P9xx7hLbHKx7dQASxlbWNGucAP1NZhNK5pLRQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QZXnpuKwMeu1vSVJ307leSUcgw34GPV213scWjazbRGX+WG29w1WR1waXuKKoxt0cmOiFSoPuj1oEE7eu64o9ejuEvsuHl6k6H/tGG4q9UbLemHrpxd7fNmeDDEvmzByEaCEitCv4iYrjc07MRdSpKYZu1kHf+NLLVRWkdVhMTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQheAZ1y; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a90188ae58eso95839966b.1;
-        Thu, 26 Sep 2024 02:38:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727343493; x=1727948293; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=i6R+5KcNZ/aUYuiGzfFgNRbA94w9SXEb0wbMS+GUYlE=;
-        b=YQheAZ1yhHdGyUgIqu18lsue98sPgn4xY+UwyjYnlWHTYcB7ED9GbfkCvOaFKWNu95
-         DNRklhUCATs1vajmKJ5Kz7XeDtgf290A60fmiV/yMmcmaa/d3PCC2qQ+OUYgfY1qiZVF
-         HnI+YGvowKmrtItmrOVYl1A6YNRmFzGL5HsANhRIKZxpnNeJxkMtplMk2QbAT0RKaqOQ
-         Q5bWFSr1wJN4SGjNpbQsjFQhffVV2rKixuenugI4DLjdCli5aGyy8uXUTLUQ2EDt9Gnr
-         TGQP43M3F6chSVcf9iEpXKkpOm2nu9dtSkTAqnwHKQmGqEwVXKmDlksQxS9GCSkZ6PuW
-         xtTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727343493; x=1727948293;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i6R+5KcNZ/aUYuiGzfFgNRbA94w9SXEb0wbMS+GUYlE=;
-        b=QZOci0eRtZmnnNJmaDuLE8cGk6Jy0lhpkXK0K6s+LAUWwNClpuwoeSR02u7wGEBubW
-         2yEcTq4cXavINX3n8uA+lQhTMa3iEMgOZVKFpnMLIq3NlVFo8jCr9NF9sRhqM4d6RlrR
-         fa5eUVVOF+jSKWB0peMqsyWy91ra+U9W+w88rwEwAfa0l40cnGMi9EeIMo4LsgTTlyR1
-         ggH0pXlxsOYLSbibNB0WN6Wo9XpXyGJafmb8CgzYbFgdL7jGORyoJ0DT1Iknk7aO5gSx
-         Q+R6ahoLhf5Jy7tIzC82JU/x43gR1eZvEEQSjtq5G97ZKGp4kNRTc+kG9FK9rudRevAk
-         1zqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHx7Of+xB9lMDQm5eFbKvXd4UD2mqDY6OsVYSWxcIAzmXQuwG+eoFGcWnwFShq/acJCqbDp9QV7ohNMrY=@vger.kernel.org, AJvYcCWuh8yGcZPvn4GufCRBdDTgUmNz3mA6SfDq0oZbnOwZ40USdeDGZZSPS7qEsy5JaB6Y7TK4ohrlEclF@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIRBdh9mlJw+3c79yGtM85L1gQ2ny89OytMjXGRzQ03MjvBCOd
-	ep+/QLA+PKrKl0d32NRZ/dRdx+nviKFeRA/mQ41Id27fI+95GvPf
-X-Google-Smtp-Source: AGHT+IGYb31pyij47ajHjWwCsepUA6sCOcNfwXWjrjCXyOLYK5HLzXYFDeIPuoP7S2kEJd00nkx5IQ==
-X-Received: by 2002:a17:907:7ba3:b0:a8d:7b7d:8c39 with SMTP id a640c23a62f3a-a93a05e7985mr489893366b.43.1727343493128;
-        Thu, 26 Sep 2024 02:38:13 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-4e5f-6907-08e4-04ed.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:4e5f:6907:8e4:4ed])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f33470sm325743566b.28.2024.09.26.02.38.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 02:38:12 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 26 Sep 2024 11:38:11 +0200
-Subject: [PATCH] hwmon: (adt7475) Fix memory leak in
- adt7475_fan_pwm_config()
+	s=arc-20240116; t=1727343507; c=relaxed/simple;
+	bh=7p82Z+0K/eh4XfuDiQGpTvGvbH3Kqj994es0zyo9h2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V/q8S6canAXas/+Hpu8Zh63A0QxXkz4xmud9oLNjx2UXMvhH1z/LxE0hlHwEVKlhe2RQLnI6lGaOzmpJAMXp8lczj//eElk+lpiKrBHIxRQDg3nnrPO26AuthEKHnevmPbSUd3FK0Ps9oNtXXtfZ9kmvDho0nuaZ6ygbyaeQbGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HZGLDGGc; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727343503;
+	bh=7p82Z+0K/eh4XfuDiQGpTvGvbH3Kqj994es0zyo9h2o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HZGLDGGcTzSqmFrsD6xl58A2Yj+XdU/wYAjesI8ExXUhHFBFFPXDYHLguwq/Qmh9j
+	 zhw+ZoLkrcGpwTWsV9LzzD0CUaZUKZI+6V4BbdiaAj0pKYa1PiFfBmgliB8/c74O0C
+	 j468Yl+8mDdbBU9b0OsZcPfwd5/CqnNCfp91OauB6YwsUc486MARmTYQPeIoweIgWU
+	 5oG7xbgOX0pwfO0n2eJlL8gBwpwQKqaOZwoyWuaYbig1wcFpPn16FEGhIkSmsNqJgV
+	 qbopcnutnivTro5SNGl4CssyrbK3dO7XkhLD3qL+K1BvLqKxUpZW/jcUexE012XBoM
+	 elcSX6ScQOYFg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 36D2117E10AF;
+	Thu, 26 Sep 2024 11:38:22 +0200 (CEST)
+Message-ID: <7a1315ef-4be5-4528-858b-9f07c814636d@collabora.com>
+Date: Thu, 26 Sep 2024 11:38:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] dt-bindings: display: mediatek: Fix clocks count
+ constraint for new SoCs
+To: Conor Dooley <conor@kernel.org>, Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: moudy.ho@mediatek.com, macross.chen@mediatek.com,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org,
+ Alexandre Mergnat <amergnat@baylibre.com>, Bear Wang
+ <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+ Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>,
+ Chris-qj chen <chris-qj.chen@mediatek.com>,
+ MediaTek Chromebook Upstream
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ Chen-Yu Tsai <wenst@chromium.org>
+References: <20240924103156.13119-1-macpaul.lin@mediatek.com>
+ <20240924103156.13119-3-macpaul.lin@mediatek.com>
+ <ffc1900b-3921-48ca-a2b2-1b798c57e572@collabora.com>
+ <20240924-commute-collision-13ad39717d31@spud>
+ <2821ef09-1b32-082d-69d1-e09a3a302447@mediatek.com>
+ <20240925-satisfy-epidermal-bd414891479a@spud>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240925-satisfy-epidermal-bd414891479a@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240926-hwmon_adt7475_memleak-v1-1-89b8ee07507a@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAIIr9WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDSyMz3Yzy3Py8+MSUEnMTc9P43NTcnNTEbF1js9Q0k9SUlFSTJAsloN6
- CotS0zAqwudGxtbUA+DhK62cAAAA=
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pwm@vger.kernel.org, Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727343491; l=1669;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=qScvP8P9xx7hLbHKx7dQASxlbWNGucAP1NZhNK5pLRQ=;
- b=YhaUGPQb20+sdm9JafMG+XuxzE4jkoBPBWOBbjNXeBjq4fp1qEazPQJntFlwgidVBUONQhVMJ
- qhGCSZtLLIdARlKcqQd7ok/LYh0Kp0aH1XdMd+BmGAu7eOCHQHtLoI+
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-The device_for_each_child_node() loop requires calls to
-fwnode_handle_put() upon early returns to decrement the refcount of
-the child node and avoid leaking memory.
+Il 25/09/24 16:34, Conor Dooley ha scritto:
+> On Wed, Sep 25, 2024 at 04:42:59PM +0800, Macpaul Lin wrote:
+>>
+>> On 9/25/24 00:00, Conor Dooley wrote:
+>>> On Tue, Sep 24, 2024 at 01:42:01PM +0200, AngeloGioacchino Del Regno wrote:
+>>>> Il 24/09/24 12:31, Macpaul Lin ha scritto:
+>>>>> The display node in mt8195.dtsi was triggering a CHECK_DTBS error due
+>>>>> to an excessively long 'clocks' property:
+>>>>>      display@14f06000: clocks: [[31, 14], [31, 43], [31, 44]] is too long
+>>>>>
+>>>>> To resolve this issue, add "maxItems: 3" to the 'clocks' property in
+>>>>> the DT schema.
+>>>>>
+>>>>> Fixes: 4ed545e7d100 ("dt-bindings: display: mediatek: disp: split each block to individual yaml")
+>>>>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+>>>>> ---
+>>>>>     .../devicetree/bindings/display/mediatek/mediatek,split.yaml     | 1 +
+>>>>>     1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
+>>>>> index e4affc854f3d..42d2d483cc29 100644
+>>>>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,split.yaml
+>>>>> @@ -57,6 +57,7 @@ properties:
+>>>>>       clocks:
+>>>>>         items:
+>>>>>           - description: SPLIT Clock
+>>>>
+>>>> That's at least confusing (granted that it works) - either add a description for
+>>>> each clock and then set `minItems: 1` (preferred), or remove this "SPLIT Clock"
+>>>> description and allow a maximum of 3 clocks.
+>>>>
+>>>> Removing the description can be done - IMO - because "SPLIT Clock" is, well,
+>>>> saying that the SPLIT block gets a SPLIT clock ... stating the obvious, anyway.
+>>>
+>>> Right, but what are the other two new clocks? Are they as obvious?
+>>> There's no clock-names here to give any more information as to what the
+>>> other clocks are supposed to be.
+>>>
+>>> Kinda unrelated, but I think that "SPLIT Clock" probably isn't what the
+>>> name of the clock in the IP block is anyway, sounds more like the name
+>>> for it on the provider end..
+>>
+>> Thanks for the suggestions. I think Moudy could help on the new fixes
+>> for both DT schem and mt8195.dtsi. This patch could be separated from
+>> origin patch set.
+> 
+> Not sure what you mean about separating it, if you mean correcting the
+> description for the split clock sure. The other stuff I mentioned needs
+> to be resolved before I'm willing to ack this.
 
-There are multiple early returns within that loop in
-adt7475_fan_pwm_config(), but fwnode_handle_put() is never called.
-Instead of adding the missing calls, the scoped version of the loop can
-be used to simplify the code and avoid mistakes in the future if new
-early returns are added.
+He means separating this patch from the rest of the series that he pushed - which
+is okay, as it's a bit mixed anyway :-)
 
-This issue was recently introduced and it does not affect old kernels
-that do not support the scoped variant.
+Besides ... Moudy, can you please help to clarify the description of those clocks?
 
-Fixes: 777c97ff08d0 ("hwmon: (adt7475) Add support for configuring initial PWM state")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/hwmon/adt7475.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
-index ca466d12475a..5f2541c11fe9 100644
---- a/drivers/hwmon/adt7475.c
-+++ b/drivers/hwmon/adt7475.c
-@@ -1735,11 +1735,10 @@ static int adt7475_pwm_properties_parse_args(struct fwnode_handle *fwnode,
- static int adt7475_fan_pwm_config(struct i2c_client *client)
- {
- 	struct adt7475_data *data = i2c_get_clientdata(client);
--	struct fwnode_handle *child;
- 	struct adt7475_pwm_config cfg = {};
- 	int ret;
- 
--	device_for_each_child_node(&client->dev, child) {
-+	device_for_each_child_node_scoped(&client->dev, child) {
- 		if (!fwnode_property_present(child, "pwms"))
- 			continue;
- 
-
----
-base-commit: 92fc9636d1471b7f68bfee70c776f7f77e747b97
-change-id: 20240926-hwmon_adt7475_memleak-36ef4edde4b8
-
-Best regards,
--- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
+Cheers,
+Angelo
 
