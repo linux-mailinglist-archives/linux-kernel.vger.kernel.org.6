@@ -1,453 +1,281 @@
-Return-Path: <linux-kernel+bounces-341074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC729987B19
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:18:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D896B987B1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24A2CB21A94
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:18:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93911283AD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC5F18B46C;
-	Thu, 26 Sep 2024 22:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D300918E767;
+	Thu, 26 Sep 2024 22:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r1QhlAkr"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NV01RE/E"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAF318A955
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 22:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727389115; cv=none; b=mSrPAKIrib61pBpIekwH982/Y3feqkSYjAP1BXHodx6TE624QWyw0Og6FYWl5pQJVtTNLtkWw6mL/TOqpMrdV2MldXSjvEnf/FbCwFpDE0JxDQyDc4Zibsuuba5k7xYgYTAx/NNT5KL4h7hsnm+O2Tp9sjCjp+9X+0qPxogVWMA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727389115; c=relaxed/simple;
-	bh=3r09Dih5T0ytfcvEwFadweD7t20yr9F1Y+awQB8GP3Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RHGF+5dzwx5JiVRLQU7U9qvuXJl9NFdKCyDkDA1kq2cIhgst2PJh8swJX4p+7OJTEwpUQ0E/LxMzQWJg+PkKy98U2dupxVvnpN27N5yp2ZCNuMKt4QWmkC4GJ38aXbKWWunnIORp7+4obmxAqzW+hTiXXqjYCH/uRWhIqwEUueY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r1QhlAkr; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f74e613a10so25270851fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:18:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727389111; x=1727993911; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4UCl+uWy8nsfmy4BXRVymw9lD+6K7iWgD6U9RalzAQk=;
-        b=r1QhlAkrmuMl4n/5+nzOVRm3EsghsBu9XeS9ypRTl2n64a9XbrKUluCo+lIRZpy7Db
-         SNJV8BGr3PHbX1F7UgSQtYTVUsEDshhuRNIkevHOWmnFo8jW9np0jOMB2BuP0ataDwbm
-         P3rhJVPnxiQ20XE7h2etAiP7AviV6UqCiv/Jj4UOyuuwj2x5pGsM2RdJhr74+QAcp1oT
-         0lvwWEsVOjQ/GBzu0u7ywkTR6M/7+CE4LGBfHJw5L6CLYXRruVuT7T5giiTVul9TivA+
-         TzF88IIi81m7wGc4KDrLt/448+rfcOBROIzp8E6D5wD7y27uKpMILTomonJbZze82pd1
-         UlAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727389111; x=1727993911;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4UCl+uWy8nsfmy4BXRVymw9lD+6K7iWgD6U9RalzAQk=;
-        b=QBcU6xkfHbP+HeMe6gZpr2SQ0tbj0yUxzwPt2ZBowbqsopmOxcqY97sWWg1Fz+KJk3
-         mpJFRyAL6e8eZnsL0XSdHRP+HGbkmUGn1bbTimCVopyA6e+wl64MHnXfcyaqKeWCkJ/G
-         WwFMwRQNStHDFkjXHyTPyguRI1Jq4EnON957q+my29ZMRTqWCvh9LHvqsYxvuDHcFYaB
-         frogs+/AZ7s3CBlFNj0FQosu+P+MkPkmwwwN0/4DQBwHvx6rLHNzW29Kjqv4Js2ll8uU
-         o8WKzBDL+IFzalsA8AziK2uoJOAdAMDM+MyyoI8R97Vk6PV2XS00dW9iQEmi/t9NgO5c
-         hwBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTcNoBIffbpboyEkSMidLEJ5AgyE4Y9+DB366WTZDHqAkDjziqGvKOvqb+LoZuGjf7iParTXLs64/QNjM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXoFDzSuqH7u+wOEqGp3CYbkWXecXwWVevMyrR5aJV4ZzVhf6/
-	9Yhrx33FGZPaQ6htjnqCdP+1+rm7yAj7gKBzA+qAEWUphKQ8zZK+q09eeRmhgYpTZCfAWn7MxjU
-	BMu7R5OQsrjDy/iiviUONs9tokhyOMFCkMOU=
-X-Google-Smtp-Source: AGHT+IHxsc/TTJb/YbObEDpcBwS08fhpE2e87VBW4nuuZRdcHz6UgyPx2oE26iacTGr8W87HUwL0jpxf5Nscv/CTewU=
-X-Received: by 2002:a05:6512:acd:b0:52c:8342:6699 with SMTP id
- 2adb3069b0e04-5389fca3accmr1068861e87.55.1727389110426; Thu, 26 Sep 2024
- 15:18:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6AE18E749;
+	Thu, 26 Sep 2024 22:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727389375; cv=fail; b=ZTT20UTb2ULWDklg+otEX+QBMaESSPEv5pkRxdpOhTzGt23Rjk3+O3oyvqB4qrNiLgz6292yRreZfJYEHybfJB2njtiUwTSjp/R/lMmbqtKBSmbI90n28Ij1xSsusBsRXj5llL7uK33m4c2XOD8qifHN3R5sPkcbHhWvYNNv0Yo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727389375; c=relaxed/simple;
+	bh=AszswHHbSTDkaKM5YIsnnLQXm0xUuA053Sv3Zk9XRak=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mr6C7nNwRMh/CKw9rukIWxPoFtET/u2H5Rlirto3ksRlUtPCmNltHSQL8+XwZVoLutJ3BBxTdtRemAvxsYOPJb2tCyzIxp3FaVvTmzpiP3jNATFYeWSud+a8rNE5mIZDgRD8UbGztlHw04t0XoLCFOB3XqsDNscwILsZCkalriY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NV01RE/E; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727389373; x=1758925373;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=AszswHHbSTDkaKM5YIsnnLQXm0xUuA053Sv3Zk9XRak=;
+  b=NV01RE/EbWPVwvqFE6meHnhL5SkZNPsvMRhgkUQ0speZQvDd/4ax61cg
+   C1gNAU2IGDk/95NuaLXnkQroScuNiabw00lpxPTY3aoDYhbHmpW5H5hIV
+   LzLS9Qevn4/Av7xoOg38UgOPsYTzpmFhc2/hQmKeDa3KswtsHQznWzPy2
+   VFFByOhqwLckgOi+PlruFkX68EQlpnyaqOUOwuUBozaz3z9Autme2/cLW
+   0ZyyWlhHyhpQsXshw9SYPLmEsMht0ku5K4cSArOopEVES9d/3MZFYp/+H
+   YmQEghVkMu3X2MtmqgPJKLKYIBC9DkoyVzQKVhQLEj5FNVt067fuPb/ic
+   g==;
+X-CSE-ConnectionGUID: VoYpBRyXSqWZh2yRFncWVA==
+X-CSE-MsgGUID: OJacrokqRoavg91O7WYf0Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26686975"
+X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
+   d="scan'208";a="26686975"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 15:22:52 -0700
+X-CSE-ConnectionGUID: TUj9yYkoSGqTfYIB4OcRbg==
+X-CSE-MsgGUID: eJ9IoquvQ8uezNeprBpHWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
+   d="scan'208";a="72312671"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Sep 2024 15:22:51 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 26 Sep 2024 15:22:51 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 26 Sep 2024 15:22:50 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 26 Sep 2024 15:22:50 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.170)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 26 Sep 2024 15:22:50 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qQdikEJkGHCS6PoHauvY9VziF4do9czdgHJ8XKMEmSKG+KwhzoElPqujMeeIYkZsnW1R95l3QOkuR7IEz/gLVPviS0yhcct5vKPQLRwpbnNGLqrRAON40V+i7+d5o+wOUTL0yhuxxH6qYaisnLgtdARDFYu63nTJer2IRnj+lVkJ3GcqXPlFQCdyaAWkWzcHAoHzho6FRInydb6hbYFcZBq0/4/0QsuDH+alQdtVmE9kjHGkTszwdV2RIVW7W+xNZvwmMHytcCd2nSiqI7Ydb+arATNWfJZHLOGwGIFlgXFsnDjFXfzP9e8TWmmOViWiSzT9hWcapbnrFO9CIA+6yA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VopegB+SOomcasEMZoI9bqOQBY43NKHSZm1+z+Ah9tw=;
+ b=vEQgXAlCSdEtZWM3M+dE7wzv1gpb9EeT/gpjm6kE4RzAOpWbz8XlkW8Nv1D11AZ/qZoNjQtVaFYa3h1jORTk22k8MCjUkrNy2/aPF4jAEwppMLDkFlzRoREIYMcbbMXptdmn2A+E9kXSXmxyZzR7q+y+3QY9Yda16AsXfzT+yoR4KRgACGkTcImR68mHAE/vByD7NZWtetxHwGHcddQz/s1z8oifBkYwslcy2UfYM5+G8hvFCZgQXCymn89sn9AxUcpWHCi0jzhq7L/u4qK0JQSBdBbau4RqG+0SwjusBedNnLCebKZHzhkXJNk2gCdbdvAKIsvtAnhiF1ftw/a//Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by PH7PR11MB6053.namprd11.prod.outlook.com (2603:10b6:510:1d1::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Thu, 26 Sep
+ 2024 22:22:48 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.7982.022; Thu, 26 Sep 2024
+ 22:22:47 +0000
+Message-ID: <62ca1338-2d10-4299-ab7e-361a811bd667@intel.com>
+Date: Fri, 27 Sep 2024 10:22:40 +1200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/8] x86/virt/tdx: Prepare to support reading other
+ global metadata fields
+To: "Hansen, Dave" <dave.hansen@intel.com>, "kirill.shutemov@linux.intel.com"
+	<kirill.shutemov@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"bp@alien8.de" <bp@alien8.de>, "peterz@infradead.org" <peterz@infradead.org>,
+	"mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+	"Williams, Dan J" <dan.j.williams@intel.com>, "seanjc@google.com"
+	<seanjc@google.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>
+CC: "x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "Yamahata, Isaku"
+	<isaku.yamahata@intel.com>, "Hunter, Adrian" <adrian.hunter@intel.com>,
+	"nik.borisov@suse.com" <nik.borisov@suse.com>
+References: <cover.1727173372.git.kai.huang@intel.com>
+ <101f6f252db860ad7a7433596006da0d210dd5cb.1727173372.git.kai.huang@intel.com>
+ <408dee3f-a466-4746-92d3-adf54d35ec7c@intel.com>
+Content-Language: en-US
+From: "Huang, Kai" <kai.huang@intel.com>
+In-Reply-To: <408dee3f-a466-4746-92d3-adf54d35ec7c@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY1P220CA0010.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:59d::12) To BL1PR11MB5978.namprd11.prod.outlook.com
+ (2603:10b6:208:385::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZvV6X5FPBBW7CO1f@archlinux> <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
- <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com> <ZvWTXaqkmxP2E2dc@archlinux>
- <ZvWd0aK7p_1rkb7E@archlinux> <CAMj1kXFV+Jck9Yf4w18rOzHckXvpXkhPhL-KrpBC8hqgXusw2g@mail.gmail.com>
-In-Reply-To: <CAMj1kXFV+Jck9Yf4w18rOzHckXvpXkhPhL-KrpBC8hqgXusw2g@mail.gmail.com>
-From: Bill Wendling <morbo@google.com>
-Date: Thu, 26 Sep 2024 15:18:12 -0700
-Message-ID: <CAGG=3QXG+Vsm7mjLV42Q-uA-EvgfOehSUeNQjKA3QQbw8vqSCg@mail.gmail.com>
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in bch2_xattr_validate
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Jan Hendrik Farr <kernel@jfarr.cc>, Kees Cook <kees@kernel.org>, 
-	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev, 
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|PH7PR11MB6053:EE_
+X-MS-Office365-Filtering-Correlation-Id: c395590c-021b-4044-3cb7-08dcde79c03a
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MkdmRFFLc3VFcG9tMlVtWWNuZC90U3ZLWFhmb3ByZ3JSRU41VzZ4QzJBZDIw?=
+ =?utf-8?B?VU05QlNSVkRTMmRZcis4a0R2bXl3TFNCTTVGSTdXMnpUcTJOdXVtVGxnTmxW?=
+ =?utf-8?B?aFlid0d3R2tSZDdFdENKU1lZWjVINlNVT1VIOXdiQmQ0WnJUU09CUTNnbFBQ?=
+ =?utf-8?B?R3gzaEd6YytvWnNFOFh0UmxMTDFUdTdzeW1GMm8zckNaY3U4TXdvT2RlMW9l?=
+ =?utf-8?B?NmphOHR2K1l0NjZqNzQxZTZ3bndFd05JU2VTODJ3b1FWRm84YTV3NTdzQ2JY?=
+ =?utf-8?B?YldXRDB1SkkxWi9UMkJ4R1NqTkRXdTd5RDZvcytZdjd0dTBRWmtoR3NMamlh?=
+ =?utf-8?B?R0lXM1VwZzJwcGFCdWVaVXNPSHBqQ211UEE0TkJhOTVaUGI0dTk3SW9uZHlH?=
+ =?utf-8?B?bS9RODZISGkzMnNuRGYvNlZ4ZUVJR0pPZE13ZGdseVNOMXNCanJJVVppeU9Q?=
+ =?utf-8?B?ZExjY3lucEF5S01XSkxCT1htcWxPbE44VVJiMlQ5NW95WTVIdkxYSnIyTE01?=
+ =?utf-8?B?ZngwTVc0eE5qV0tIU0VXYnFLM3daNjhLK3liZGtQcDJSdkkzOGh0eXprMGE5?=
+ =?utf-8?B?SzNRRmdmVkJnOHdXUExweEFSSFJ4SFFQUEpndkU4TDBkdjdQRGFoSFBPT0d3?=
+ =?utf-8?B?emdTcFhLbGlXTldKSmtCQUlPSVdsNlZNYk1TM1JVTWdmbGtrY3dnWXdGMklZ?=
+ =?utf-8?B?WHRDcDBnZWhQczRzdjJkci8vaW1MUWZpSU1TeTRuTEdFWnZvc1U4K2EwMFYr?=
+ =?utf-8?B?dGV2azNLTnFGZE9UZTAwTzBUaU9Hei83WFdvK0hiZEtVd0FzcXJ5Z1VkQ0Fa?=
+ =?utf-8?B?MDU5cEN2blE4c2lFRUVyZ3ZyRUpqOFc1NGk1ZFY1NzR1VXV1eFFlcEdtTlFG?=
+ =?utf-8?B?SEZ5UHFsYmJGdFdTU28zTjFrSEc2dDduVDdNTzFIZ2hnQ0QrK1BSUXhwc3Br?=
+ =?utf-8?B?VE4ySWRVaGVmWWFFemRuSnkxNXdGRjhtaDQxMldkektYL0t5Rlc0Zm9BT0Vs?=
+ =?utf-8?B?LzYvRXZNaUlrUUVXOFNtNnVxOGQzdWNDNVRMRTgrVmhqRlJad0xCTkNvazhx?=
+ =?utf-8?B?emdUYVBKU0piNnhtMTAvdUJiWnZEQSsxajZaK3Njc0ZMOVBTcVI2Szg0SXdr?=
+ =?utf-8?B?V0lkNlFLcWluMmdUdE5nT3IzVWUzSkFueTFMRS8wclpydnVOS2hwMTNqZi9V?=
+ =?utf-8?B?RXhyNUp4VXdscFowOEtCcEdjUVhDM1RBRDRNUzJiaktGZFlIbGtYdmVlOW5z?=
+ =?utf-8?B?dmVSRTVoWkd5dVNLaFdlczQ0WmxGZE4vM0xjL1Z5WElJRktNQlcvbmZGQUFr?=
+ =?utf-8?B?VVE3YnpDZVYrN3ZndWlVMjh3NkR6SDVkSURXQzN1ZWdOWHk4ODZYLytmeElp?=
+ =?utf-8?B?RW9rOFA2eXM4WlZoRnpLY1ZaMENuTW1NWEJGclliNUl3Z203d3V0WmJteWhz?=
+ =?utf-8?B?WFpoZVI2ZmdTWkFRalFtS3dleUtPdjZMK011QnFuTU9SWURzRHc2ZG9wV00v?=
+ =?utf-8?B?MFpVYjRXdFhiVGozbnBndW14U3dnSzVFZUdJNUJ3Mk16aFpGU2FibHVodzQr?=
+ =?utf-8?B?KzFEbmd1dFBLYkpjWFVVMlBlbng0MmgwbDRFZ1p4TEJrcVF6TkxUNUF2MkE2?=
+ =?utf-8?B?eVV6TFM5SlluSEN6MlQwanpzQ09TRUZNTG84U1pOa3BKbkJ4TmtJcTBOby9G?=
+ =?utf-8?B?TklVeHBPNzBwQUhIM3VqMkQ2Y3FtZ0IvaFZzWmFta1E5KzJSKzlxcE1HOXcw?=
+ =?utf-8?B?WjBwVStLSmNYKzhuRWNUNU15Q25RZ040ckJjL3RCMmlvL1BwMFNBdU9Jb3FU?=
+ =?utf-8?B?cytTb2tKd2FMYm9ocC93TWsyQ0ladmV6Sm03M0wrdFNoNUlzSDJFRmVBNmhv?=
+ =?utf-8?B?T0tHSWU1VUxhdEE3U09VY295dE5rd1FDWHlYeE9RVDh0SkE9PQ==?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?V013Zmg3Q3cvc0lKZStHL3piMnpvb1k3NkpjWWMrcDd1aXJEQmxqZDg5OUlI?=
+ =?utf-8?B?aXFUR2NUejgxVGhkQUtCMVA4SmpLdCsxV0RhaktUMm9TZEg1TTcvdlNpMjZQ?=
+ =?utf-8?B?cFRnWDljbkZXN1FtdFhpL2pQMWNwVmZZUk9vTnhEZnN6ZitSYkl6SjArN1pq?=
+ =?utf-8?B?dUVnTVJJb3prU1hCK21aaGpYSjZtYWs4RTh3OS84SDRPM2diZjhnZUtLMFg2?=
+ =?utf-8?B?aWoxMjg3d1FGZ2UvYjVaQjlqaVp5UmhUekw3d2hqNFR3WjRHTzdVTjRrMDBt?=
+ =?utf-8?B?aVROM2E2enVPOU1hTG5Sc2x5Wld1T2FKeE5LWWh4Q0pjRXNEaXJNQ0ZVSkVL?=
+ =?utf-8?B?YTdrRkxDN2MzNHNjeDdOQlgrbElkbUR2cHhoT2swT2ZRaStQZER0RUMyeFN3?=
+ =?utf-8?B?aStMV3ZSaVNHSTdSOW9XTmp0NjZMSkZjc21FWjBTTlV4Rnc2WTY4dURqMEdJ?=
+ =?utf-8?B?STQyK01lTDQ0U3Y2NHNVaVUzcG9sdzFEQ2RGdWhURmJKRkZRTFhKTmVMK09E?=
+ =?utf-8?B?MGpCMS9aOHBLTTlwc0hHbU9kUFRCYURZWklFVnJzYjhMNWp4ZDhRV0lpemFC?=
+ =?utf-8?B?S2gxd2YxWDQvaVRXZjRVRDBSKzdWZysybmdPL01HWCtNd0QzK3lyQUpYYWhF?=
+ =?utf-8?B?NFR0T3JwbnU4dytZckdFMlNZaEVwTDN3V2dPa3JQeDF2VjZJSVY2NWZ4Snla?=
+ =?utf-8?B?WUU5SC85VjJGWmJ5ZndWZEhrR3M1MDRZRWNxeDF4NkVEbCsvcFpVdi8vajUz?=
+ =?utf-8?B?eEpTY1cxdmZaZWMxdFJvTXNRdCs5WU0zYnl1MXkxWURnWE4zUGNkZFNmQUg4?=
+ =?utf-8?B?REpidHlIa2RJdHJ1ckQ2ZUwzaHVFMUxwQ2x5UU9tUnU5YW5ycjdvK0pjMWpO?=
+ =?utf-8?B?Z3FGSUluNmN5OXFVRVNXcE5JTFFBMFpnUVp3ZytlekUrOENDU1F4alNkNm8r?=
+ =?utf-8?B?ZVJJNDR0NjdubVAwekRCcHFVQlB6MEJ2L1kwbGtoV0ZCSE9nV2p3L0paZHo4?=
+ =?utf-8?B?cXBBeUJvUGprTFlHRDY1SGFWaURIdHplUmlOOEJlQ01VT3kxZlhsYXdQYUcv?=
+ =?utf-8?B?djZhcHZaZkZReHdqME90UkZqc3lZN3R5RWNuYXV5a2E0cUxqeDJ3eDFlRVBC?=
+ =?utf-8?B?QjQwbnVidmN0V2dHWDhiMWdndFRMdytRdkd0eDlHT1JtNHNIc2toZmtvWmQ4?=
+ =?utf-8?B?ZUxhNSswYXV3VGh0K0Y5UlNrdnErSGpubGVOcFQ4QlJNYlpPMTNOUlk2c3J3?=
+ =?utf-8?B?R1ZQZjE0WndrV05hVkhNSk5JRFl4cVFPMTJVKzZCeG9ieXlJMFNyYjk4V2lP?=
+ =?utf-8?B?aFNtYXdFSXNjYVdLYTdQUmE3ZUxNWkhsTFpWOXI2czFsWXpvekRnZjZzWXF2?=
+ =?utf-8?B?d3RIUjVpS0tIK29PS1pTMVVBdlBFR29HR3FLYlhIYm1mNzhuT0JGdHlLNEtR?=
+ =?utf-8?B?eHlZMDBWVmdvai9INnI1TzBYZXFFaThiYm9vOVp0WUppaWhKYTNDQXVBS25m?=
+ =?utf-8?B?RHdNaE41NEJMSXF4UjY4QmVVTmg1UlRSb0tqTDVDSnV0bU9FWVoyY0V0VUo4?=
+ =?utf-8?B?eVhXdWYrTm4vR3h0RW85eWNGVUtISzBkTWJLZ0I5bHRRSnMraEQzN0hwVXJv?=
+ =?utf-8?B?RWpsZXZXcmIxbzdJc3lGaW85K3IvUDFjRmVWMGkzbkd4L1l0bTRibmJYdXJw?=
+ =?utf-8?B?ZWk5SXc2c0U5VUpUV0swbGxUaTlVbVRRWG81cW0yaTg0Y0NtQXRGaVR2MjEy?=
+ =?utf-8?B?TG1ZWjFZblFvRVJYVzh1b0IvR0g0aEdwTVVHaUlVSi9kaU0vYy9GWlUrYXkx?=
+ =?utf-8?B?RkRWMjBLN2xiczhFR0ViU3p3czlCT0huaGFPVzNXT1J0Wlo2WW9HdDBDMGd3?=
+ =?utf-8?B?Q093MUlsYWNhR1AyZkI0R3VzRUFMblJYV2Z5bGp5YmtIczkwRXdDWUh6L21K?=
+ =?utf-8?B?Q01HQkxHZld1Ujd3S3cvSzRkaElZdkdWWk8ySGJHcSthdy93dGl5T1drZkVN?=
+ =?utf-8?B?U2ZqWmdFSURXVVV3YUFKOHBqMzJvNmwrUm5tUnZxRVZUTU0vMXV6NGMyZjdr?=
+ =?utf-8?B?OTNnaHlKWjJLWCtZQ1d3UmxmcGg2NGdzdHJ1eWZueHExajI3eWhOS2pWRDRy?=
+ =?utf-8?Q?B0GStqi9rDbkD33gH2EnK2oRI?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c395590c-021b-4044-3cb7-08dcde79c03a
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 22:22:47.8908
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Fhb8CrCvKFZRq+IF5Z8N79a5DTFjO6lWZZL7r18HQwYnoCykUsGzVWA/23tF5WQo3osEttT5xlJM1ks45f905A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6053
+X-OriginatorOrg: intel.com
 
-On Thu, Sep 26, 2024 at 12:58=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> w=
-rote:
->
-> (cc Kees and Bill)
->
-> On Thu, 26 Sept 2024 at 19:46, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
-> >
-> > On 26 19:01:20, Jan Hendrik Farr wrote:
-> > > On 26 18:09:57, Thorsten Blum wrote:
-> > > > On 26. Sep 2024, at 17:28, Thorsten Blum <thorsten.blum@toblux.com>=
- wrote:
-> > > > > On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> wro=
-te:
-> > > > >>
-> > > > >> Hi Kent,
-> > > > >>
-> > > > >> found a strange regression in the patch set for 6.12.
-> > > > >>
-> > > > >> First bad commit is: 86e92eeeb23741a072fe7532db663250ff2e726a
-> > > > >> bcachefs: Annotate struct bch_xattr with __counted_by()
-> > > > >>
-> > > > >> When compiling with clang 18.1.8 (also with latest llvm main bra=
-nch) and
-> > > > >> CONFIG_FORTIFY_SOURCE=3Dy my rootfs does not mount because there=
- is an erroneous
-> > > > >> detection of a buffer overflow.
-> > > > >>
-> > > > >> The __counted_by attribute is supposed to be supported starting =
-with gcc 15,
-> > > > >> not sure if it is implemented yet so I haven't tested with gcc t=
-runk yet.
-> > > > >>
-> > > > >> Here's the relevant section of dmesg:
-> > > > >>
-> > > > >> [    6.248736] bcachefs (nvme1n1p2): starting version 1.12: reba=
-lance_work_acct_fix
-> > > > >> [    6.248744] bcachefs (nvme1n1p2): recovering from clean shutd=
-own, journal seq 1305969
-> > > > >> [    6.252374] ------------[ cut here ]------------
-> > > > >> [    6.252375] memchr: detected buffer overflow: 12 byte read of=
- buffer size 0
-> > > > >> [    6.252379] WARNING: CPU: 18 PID: 511 at lib/string_helpers.c=
-:1033 __fortify_report+0x45/0x50
-> > > > >> [    6.252383] Modules linked in: bcachefs lz4hc_compress lz4_co=
-mpress hid_generic usbhid btrfs crct10dif_pclmul libcrc32c crc32_pclmul crc=
-32c_generic polyval_clmulni crc32c_intel polyval_generic raid6_pq ghash_clm=
-ulni_intel xor sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni_intel gf128mul nv=
-me crypto_simd ccp xhci_pci cryptd sp5100_tco xhci_pci_renesas nvme_core nv=
-me_auth video wmi ip6_tables ip_tables x_tables i2c_dev
-> > > > >> [    6.252404] CPU: 18 UID: 0 PID: 511 Comm: mount Not tainted 6=
-.11.0-10065-g6fa6588e5964 #98 d8e0beb515d91b387aa60970de7203f35ddd182c
-> > > > >> [    6.252406] Hardware name: Micro-Star International Co., Ltd.=
- MS-7D78/PRO B650-P WIFI (MS-7D78), BIOS 1.C0 02/06/2024
-> > > > >> [    6.252407] RIP: 0010:__fortify_report+0x45/0x50
-> > > > >> [    6.252409] Code: 48 8b 34 c5 30 92 21 87 40 f6 c7 01 48 c7 c=
-0 75 1b 0a 87 48 c7 c1 e1 93 07 87 48 0f 44 c8 48 c7 c7 ef 03 10 87 e8 0b c=
-2 9b ff <0f> 0b e9 cf 5d 9e 00 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90
-> > > > >> [    6.252410] RSP: 0018:ffffbb3d03aff350 EFLAGS: 00010246
-> > > > >> [    6.252412] RAX: 4ce590fb7c372800 RBX: ffff98d559a400e8 RCX: =
-0000000000000027
-> > > > >> [    6.252413] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: =
-ffff98e43db21a08
-> > > > >> [    6.252414] RBP: ffff98d559a400d0 R08: 0000000000001fff R09: =
-ffff98e47ddcd000
-> > > > >> [    6.252415] R10: 0000000000005ffd R11: 0000000000000004 R12: =
-ffff98d559a40000
-> > > > >> [    6.252416] R13: ffff98d54abf1320 R14: ffffbb3d03aff430 R15: =
-0000000000000000
-> > > > >> [    6.252417] FS:  00007efc82117800(0000) GS:ffff98e43db00000(0=
-000) knlGS:0000000000000000
-> > > > >> [    6.252418] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > >> [    6.252419] CR2: 000055d96658ea80 CR3: 000000010a12c000 CR4: =
-0000000000f50ef0
-> > > > >> [    6.252420] PKRU: 55555554
-> > > > >> [    6.252421] Call Trace:
-> > > > >> [    6.252423]  <TASK>
-> > > > >> [    6.252425]  ? __warn+0xd5/0x1d0
-> > > > >> [    6.252427]  ? __fortify_report+0x45/0x50
-> > > > >> [    6.252429]  ? report_bug+0x144/0x1f0
-> > > > >> [    6.252431]  ? __fortify_report+0x45/0x50
-> > > > >> [    6.252433]  ? handle_bug+0x6a/0x90
-> > > > >> [    6.252435]  ? exc_invalid_op+0x1a/0x50
-> > > > >> [    6.252436]  ? asm_exc_invalid_op+0x1a/0x20
-> > > > >> [    6.252440]  ? __fortify_report+0x45/0x50
-> > > > >> [    6.252441]  __fortify_panic+0x9/0x10
-> > > > >> [    6.252443]  bch2_xattr_validate+0x13b/0x140 [bcachefs 836117=
-9bbfcc59e669df38aec976f02d7211a659]
-> > > > >> [    6.252463]  bch2_btree_node_read_done+0x125a/0x17a0 [bcachef=
-s 8361179bbfcc59e669df38aec976f02d7211a659]
-> > > > >> [    6.252482]  btree_node_read_work+0x202/0x4a0 [bcachefs 83611=
-79bbfcc59e669df38aec976f02d7211a659]
-> > > > >> [    6.252499]  bch2_btree_node_read+0xa8d/0xb20 [bcachefs 83611=
-79bbfcc59e669df38aec976f02d7211a659]
-> > > > >> [    6.252514]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > > > >> [    6.252515]  ? pcpu_alloc_noprof+0x741/0xb50
-> > > > >> [    6.252517]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > > > >> [    6.252519]  ? time_stats_update_one+0x75/0x1f0 [bcachefs 836=
-1179bbfcc59e669df38aec976f02d7211a659]
-> > > > >>
-> > > > >> ...
-> > > > >>
-> > > > >>
-> > > > >> The memchr in question is at:
-> > > > >> https://github.com/torvalds/linux/blob/11a299a7933e03c83818b431e=
-6a1c53ad387423d/fs/bcachefs/xattr.c#L99
-> > > > >>
-> > > > >> There is not actually a buffer overflow here, I checked with gdb=
- that
-> > > > >> xattr.v->x_name does actually contain a string of the correct le=
-ngth and
-> > > > >> xattr.v->x_name_len contains the correct length and should be us=
-ed to determine
-> > > > >> the length when memchr uses __struct_size for bounds-checking du=
-e to the
-> > > > >> __counted_by annotation.
-> > > > >>
-> > > > >> I'm at the point where I think this is probably a bug in clang. =
-I have a patch
-> > > > >> that does fix (more like bandaid) the problem and adds some prin=
-t statements:
-> > > > >>
-> > > > >> --
-> > > > >> diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
-> > > > >> index 56c8d3fe55a4..8d7e749b7dda 100644
-> > > > >> --- a/fs/bcachefs/xattr.c
-> > > > >> +++ b/fs/bcachefs/xattr.c
-> > > > >> @@ -74,6 +74,7 @@ int bch2_xattr_validate(struct bch_fs *c, stru=
-ct bkey_s_c k,
-> > > > >>      enum bch_validate_flags flags)
-> > > > >> {
-> > > > >> struct bkey_s_c_xattr xattr =3D bkey_s_c_to_xattr(k);
-> > > > >> + const struct bch_xattr *v =3D (void *)k.v;
-> > > > >> unsigned val_u64s =3D xattr_val_u64s(xattr.v->x_name_len,
-> > > > >>  le16_to_cpu(xattr.v->x_val_len));
-> > > > >> int ret =3D 0;
-> > > > >> @@ -94,9 +95,12 @@ int bch2_xattr_validate(struct bch_fs *c, str=
-uct bkey_s_c k,
-> > > > >>
-> > > > >> bkey_fsck_err_on(!bch2_xattr_type_to_handler(xattr.v->x_type),
-> > > > >> c, xattr_invalid_type,
-> > > > >> - "invalid type (%u)", xattr.v->x_type);
-> > > > >> + "invalid type (%u)", v->x_type);
-> > > > >>
-> > > > >> - bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_name=
-_len),
-> > > > >> + pr_info("x_name_len: %d", v->x_name_len);
-> > > > >> + pr_info("__struct_size(x_name): %ld", __struct_size(v->x_name)=
-);
-> > > > >> + pr_info("__struct_size(x_name): %ld", __struct_size(xattr.v->x=
-_name));
-> > > > >> + bkey_fsck_err_on(memchr(v->x_name, '\0', v->x_name_len),
-> > > > >> c, xattr_name_invalid_chars,
-> > > > >> "xattr name has invalid characters");
-> > > > >> fsck_err:
-> > > > >> --
-> > > > >>
-> > > > >>
-> > > > >> Making memchr access via a pointer created with
-> > > > >> const struct bch_xattr *v =3D (void *)k.v fixes it. From the pri=
-nt statements I
-> > > > >> can see that __struct_size(xattr.v->x_name) incorrectly returns =
-0, while
-> > > > >> __struct_size(v->x_name) correctly returns 10 in this case (the =
-value of
-> > > > >> x_name_len).
-> > > > >>
-> > > > >> The generated assembly illustrates what is going wrong. Below is=
- an excerpt
-> > > > >> of the assembly clang generated for the bch2_xattr_validate func=
-tion:
-> > > > >>
-> > > > >> mov r13d, ecx
-> > > > >> mov r15, rdi
-> > > > >> mov r14, rsi
-> > > > >> mov rdi, offset .L.str.3
-> > > > >> mov rsi, offset .L__func__.bch2_xattr_validate
-> > > > >> mov rbx, rdx
-> > > > >> mov edx, eax
-> > > > >> call _printk
-> > > > >> movzx edx, byte ptr [rbx + 1]
-> > > > >> mov rdi, offset .L.str.4
-> > > > >> mov rsi, offset .L__func__.bch2_xattr_validate
-> > > > >> call _printk
-> > > > >> movzx edx, bh
-> > > > >> mov rdi, offset .L.str.4
-> > > > >> mov rsi, offset .L__func__.bch2_xattr_validate
-> > > > >> call _printk
-> > > > >> lea rdi, [rbx + 4]
-> > > > >> mov r12, rbx
-> > > > >> movzx edx, byte ptr [rbx + 1]
-> > > > >> xor ebx, ebx
-> > > > >> xor esi, esi
-> > > > >> call memchr
-> > > > >>
-> > > > >> At the start of this rdx contains k.v (and is moved into rbx). T=
-he three calls
-> > > > >> to printk are the ones you can see in my patch. You can see that=
- for the
-> > > > >> print that uses __struct_size(v->x_name) the compiler correctly =
-uses
-> > > > >> movzx edx, byte ptr [rbx + 1]
-> > > > >> to load x_name_len into edx.
-> > > > >>
-> > > > >> For the printk call that uses __struct_size(xattr.v->x_name) how=
-ever the
-> > > > >> compiler uses
-> > > > >> movzx edx, bh
-> > > > >> So it will print the high 8 bits of the lower 16 bits (second le=
-ast
-> > > > >> significant byte) of the memory address of xattr.v->x_type. This=
- is obviously
-> > > > >> completely wrong.
-> > > > >>
-> > > > >> It is then doing the correct call of memchr because this is usin=
-g my patch.
-> > > > >> Without my patch it would be doing the same thing for the call t=
-o memchr where
-> > > > >> it uses the second least significant byte of the memory address =
-of x_type as the
-> > > > >> length used for the bounds-check.
-> > > > >>
-> > > > >>
-> > > > >>
-> > > > >> The LLVM IR also shows the same problem:
-> > > > >>
-> > > > >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone=
- %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
-> > > > >> [...]
-> > > > >> %51 =3D ptrtoint ptr %2 to i64
-> > > > >> %52 =3D lshr i64 %51, 8
-> > > > >> %53 =3D and i64 %52, 255
-> > > > >>
-> > > > >> This is the IR for the incorrect behavior. It simply converts th=
-e pointer to an
-> > > > >> int, shifts right by 8 bits, then and with 0xFF. If it did a loa=
-d (to i64)
-> > > > >> instead of ptrtoint this would actually work, as the second leas=
-t significant
-> > > > >> bit of an i64 loaded from that memory address does contain the v=
-alue of
-> > > > >> x_name_len. It's as if clang forgot to dereference a pointer her=
-e.
-> > > > >>
-> > > > >> Correct IR does this (for the other printk invocation):
-> > > > >>
-> > > > >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone=
- %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
-> > > > >> [...]
-> > > > >> %4 =3D getelementptr inbounds %struct.bch_xattr, ptr %1, i64 0, =
-i32 1
-> > > > >> %5 =3D load i8, ptr %4, align 8
-> > > > >> [...]
-> > > > >> %48 =3D load i8, ptr %5, align 4
-> > > > >> %49 =3D zext i8 %48 to i64
-> > > > >>
-> > > > >> Best Regards
-> > > > >> Jan
-> > > > >
-> > > > > I suspect it's the same Clang __bdos() "bug" as in [1] and [2].
-> > > > >
-> > > > > [1] https://lore.kernel.org/linux-kernel/3D0816D1-0807-4D37-8D5F-=
-3C55CA910FAA@linux.dev/
-> > > > > [2] https://lore.kernel.org/all/20240913164630.GA4091534@thelio-3=
-990X/
-> > > >
-> > > > Could you try this and see if it resolves the problem?
-> > > >
-> > > > diff --git a/include/linux/compiler_types.h b/include/linux/compile=
-r_types.h
-> > > > index 1a957ea2f4fe..b09759f31789 100644
-> > > > --- a/include/linux/compiler_types.h
-> > > > +++ b/include/linux/compiler_types.h
-> > > > @@ -413,7 +413,7 @@ struct ftrace_likely_data {
-> > > >   * When the size of an allocated object is needed, use the best av=
-ailable
-> > > >   * mechanism to find it. (For cases where sizeof() cannot be used.=
-)
-> > > >   */
-> > > > -#if __has_builtin(__builtin_dynamic_object_size)
-> > > > +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__cla=
-ng__)
-> > > >  #define __struct_size(p)   __builtin_dynamic_object_size(p, 0)
-> > > >  #define __member_size(p)   __builtin_dynamic_object_size(p, 1)
-> > > >  #else
-> > > >
-> > >
-> > > Alright after looking at it in the debugger the code it generates now=
- is
-> > > just wild.
-> > >
-> > > I added one more printk before the call to memchr like so:
-> > >
-> > > diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
-> > > index 56c8d3fe55a4..3c7c479ea3a8 100644
-> > > --- a/fs/bcachefs/xattr.c
-> > > +++ b/fs/bcachefs/xattr.c
-> > > @@ -96,6 +96,7 @@ int bch2_xattr_validate(struct bch_fs *c, struct bk=
-ey_s_c k,
-> > >                        c, xattr_invalid_type,
-> > >                        "invalid type (%u)", xattr.v->x_type);
-> > >
-> > > +     pr_info("__struct_size(x_name): %lu", __struct_size(xattr.v->x_=
-name));
-> > >       bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_name_=
-len),
-> > >                        c, xattr_name_invalid_chars,
-> > >                        "xattr name has invalid characters");
-> > > diff --git a/include/linux/compiler_types.h b/include/linux/compiler_=
-types.h
-> > > index f14c275950b5..43ac0bca485d 100644
-> > > --- a/include/linux/compiler_types.h
-> > > +++ b/include/linux/compiler_types.h
-> > > @@ -413,7 +413,7 @@ struct ftrace_likely_data {
-> > >   * When the size of an allocated object is needed, use the best avai=
-lable
-> > >   * mechanism to find it. (For cases where sizeof() cannot be used.)
-> > >   */
-> > > -#if __has_builtin(__builtin_dynamic_object_size)
-> > > +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang=
-__)
-> > >  #define __struct_size(p)     __builtin_dynamic_object_size(p, 0)
-> > >  #define __member_size(p)     __builtin_dynamic_object_size(p, 1)
-> > >  #else
-> > >
-> > >
-> > > Here's the generated assembly for this:
-> > >
-> > >       mov     rdi, offset .L.str.3
-> > >       mov     rsi, offset .L__func__.bch2_xattr_validate
-> > >       mov     r12, rdx
-> > >       mov     rdx, -1
-> > >       call    _printk
-> > >       mov     rax, r12
-> > >       movzx   esi, ah
-> > >       movzx   edx, byte ptr [r12 + 1]
-> > >       cmp     rsi, rdx
-> > >       jb      .LBB4_15
-> > > # %bb.11:
-> > >       lea     rdi, [rax + 4]
-> > >       xor     ebx, ebx
-> > >       xor     esi, esi
-> > >       call    memchr
-> > >
-> > > So for the printk it hardcoded -1 (aka 0xFFFFF... 64 bit long int max=
-)
-> > > as the result of __struct_size. But then for before call to memchr it=
- does
-> > > the same stuff again and puts the second least significant byte of th=
-e memory
-> > > address of x_type in esi, only to then load the correct value of x_na=
-me_len
-> > > into edx and compares them for the bounds-check.
-> > >
-> >
-> >
-> > __builtin_object_size should only ever be compile time known, right? So
-> > it looks like this is pretty broken atm.
-> >
-> > I think until this stuff is fixed in clang the only real option is:
-> >
-There seems to be an issue with how the offset to the flexible array
-member is calculated internally. I'm looking into it now.
 
--bw
+
+On 27/09/2024 3:47 am, Hansen, Dave wrote:
+> On 9/24/24 04:28, Kai Huang wrote:
+>> +#define build_sysmd_read(_size)							\
+>> +static int __read_sys_metadata_field##_size(u64 field_id, u##_size *val)	\
+>> +{										\
+>> +	u64 tmp;								\
+>> +	int ret;								\
+>> +										\
+>> +	ret = tdh_sys_rd(field_id, &tmp);					\
+>> +	if (ret)								\
+>> +		return ret;							\
+>> +										\
+>> +	*val = tmp;								\
+>> +										\
+>> +	return 0;								\
+>>   }
+> 
+> Why?  What's so important about having the compiler do the copy?
+> 
+> 
+> #define read_sys_metadata_field(id, val) 	\
+> 	__read_sys_metadata_field(id, val, sizeof (*(val)))
+> 
+> static int __read_sys_metadata_field(u64 field_id, void *ptr, int size)
+> {
+> 	...
+> 	memcpy(ptr, &tmp, size);
+> 
+> 	return 0;
+> }
+> 
+> There's one simple #define there so that users don't have to do the
+> sizeof and can't screw it up.
+
+Yes we can do this.  This is basically what I did in the previous version:
+
+https://lore.kernel.org/kvm/0403cdb142b40b9838feeb222eb75a4831f6b46d.1724741926.git.kai.huang@intel.com/
+
+But Dan commented using typeless 'void *' and 'size' is kinda a step 
+backwards and we should do something similar to build_mmio_read():
+
+https://lore.kernel.org/kvm/66db75497a213_22a2294b@dwillia2-xfh.jf.intel.com.notmuch/
+
+Hi Dan,
+
+I think what Dave suggested makes sense.  If the concern is using 
+__read_sys_metadata_field() directly isn't typesafe, we can add a 
+comment to it saying callers should not use it directly and use 
+read_sys_metadata_field() instead.
+
+Dave's approach also makes the LoC slightly shorter, and cleaner from 
+the perspective that we don't need to explicitly specify the '16/32/64' 
+in the READ_SYS_INFO() macro anymore as shown in here:
+
+https://lore.kernel.org/kvm/79c256b8978310803bb4de48cd81dd373330cbc2.1727173372.git.kai.huang@intel.com/
+
+Please let me know your comment?
+
+
+
 
