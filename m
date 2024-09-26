@@ -1,113 +1,106 @@
-Return-Path: <linux-kernel+bounces-340690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8940E9876A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:40:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 440339876AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 358AB1F26F09
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:40:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC578286AA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CD51534E6;
-	Thu, 26 Sep 2024 15:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F96F1531F9;
+	Thu, 26 Sep 2024 15:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPJ0Ggc7"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ds/7j4pg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10765145B2E;
-	Thu, 26 Sep 2024 15:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9368E13777E;
+	Thu, 26 Sep 2024 15:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727365234; cv=none; b=dagFvGqrFOHc0HO7QLHZb9wKjVAopy6L/mcZJXVFVj2ta9nETx6d/2zcHlR7lg4FF4lVckPOX+DbpZIBJ/PbxmjSscpcuc+7Trg8uIET/QkQucknkGSH6ZUcxBlqmECp14/kQugJyHA+IOJfcGOObPb72cnAalyFAnoLevG7QkI=
+	t=1727365248; cv=none; b=JSb5M+OqqJIsoF+PYFFxLA0/tSPSTfzp0q+Wvaj2kqDDed70yraJRfbxeiSJ/yASPKvCnVdG9KSA+QCtpx4oab/j+RolSFLqeRoz8L3cnXHn+kxlZnvZ9U4RXekdsmkXTCMHakxdxteOJIM1pvySP0k/OxcuJ5uxiy86ObQ/75M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727365234; c=relaxed/simple;
-	bh=eBWvVfsKE4lYCkR9jWhTHTt0x1qkASzl46mhvR//R7U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uLmEMsnfp+8y8YpS6DJwSyAunoylZtqtVpyDLsiA/93g87B61uKG+gs3kl6qb3tQgz/fksk95kjHrMTL7utE1wPzs3W0DRwhhIwuOLUkaBNKzuM2b55Kx4ZRX7p5UCTW/O/iaYbvc10BfJaaOV3ICP23nDmZ2SfuHkh42jkw6zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VPJ0Ggc7; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7c3d415f85eso79958a12.0;
-        Thu, 26 Sep 2024 08:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727365232; x=1727970032; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eBWvVfsKE4lYCkR9jWhTHTt0x1qkASzl46mhvR//R7U=;
-        b=VPJ0Ggc7+EjzItIjoFx9C0Am305nY8vagkZYwGfXZwTMIvTX/eGHwyONAf6KSbd4+T
-         yrqOXLPlm1rURrO27B5tIOjAw9wX+Jup1zs7tXYFFqcsTPmujUg4M18AtwAgrKRzMHR+
-         806hQtPjJWL3DGwrPdRzPaFCOeF0tE9eLT8owRa5xPkrpq0HBc6RxKFkxOWbm9+yWBOK
-         NfiJFfpCfZurlQLKnsUPSGhaUFFK+9tv2l+Wek2l3gGNxGebKuqwD1397IMqt8iWxjWv
-         TXImJCgfPfCRHaom12GD2SGayHfcmLh7W9+iaJSa2RDBmvHxQEySk8hiFmipd5PHvBmJ
-         AMmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727365232; x=1727970032;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eBWvVfsKE4lYCkR9jWhTHTt0x1qkASzl46mhvR//R7U=;
-        b=U9wWkObAlfqGHN01oiuVBZlrBx7y9cJjknNV9hx9nKItCLo8GmIFcOPT8264RoBSLS
-         6vVRuTRT/sWQjPsJDzU8W+7+NgLKAZXo3L08aj8pPrDkMMXTF1Qfc53ROYE68JzXzHQB
-         iAY9AoXfM9XOJey7c5CWQvK2Uxk5linESSkN/DwCYwUAlsvqzBo8UueS9otH7CTEcvkb
-         3NdfF/+2RWz3vX/B07T9KT+VJG/8HbkH1syUpwSMccMOrb8XJLz3oi7zvugUAx1qYDxd
-         IVCk7/uBGhk7dDknqR8YoELRB/Qtyk0+LFxetIWHkRDYWAB1GHsNBBaJOlhoZk/Itcsu
-         OcEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDmxjUVGxUJJbhYq+YRPIKNOiu1zTYAKVs9T+3EkkJp/Rq3/Q0gsbR7cRssA2vJCjHk4eR1GRqUexbsUU=@vger.kernel.org, AJvYcCWnv/Qitb1J9CQXh1Kz4594Qu5jqifRhHR9oQvyS/8PZedMsSMANqPgpqIkLwVXHhitWgBEe0VBRKu8L+2z4ao=@vger.kernel.org, AJvYcCXZb8qmFRhKHie2IIibg9zrgmYiot/E3FK1fqvFkIx+hrHhVaHdG+BCjTo+Bs2Qd5I5Brjea2vj@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsclbfKVA8demyp/sy+3L11LILBRjjq3E/H/Ool7A0aFrWWK2z
-	RT8AgZfDdiYGNb+SSfQ96sjoixUcYen4MM1HnBybW0GaMx6Vum9t/semENe2Tx5la5vYT95XE28
-	uHYy1V9f255TNwwPy6VxAmPGkQt4T7ft33BQINA==
-X-Google-Smtp-Source: AGHT+IG0/1g5eMwIe2YWirZf4Ac8fdSnvrNHQArrRR/tnb9tehSWeiCfeqtWgbf9mBS9CWxs1mPUyKjyQDvqh0yUQKk=
-X-Received: by 2002:a05:6a00:891:b0:70b:705f:dda7 with SMTP id
- d2e1a72fcca58-71b26059671mr157176b3a.4.1727365232203; Thu, 26 Sep 2024
- 08:40:32 -0700 (PDT)
+	s=arc-20240116; t=1727365248; c=relaxed/simple;
+	bh=3XqQa1S4pPEpYGC473x6A+WKkpX5QqHWPg4UIF/AHv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=henqpOZWiQpFlLnN692vRcRiuI15MCrU832hZJwFSAC1BfeNWbojcHINhGwAjVABw5FhIFBD7lq9OENeCFk3jNKZ7osLxwbCzZfBw1ZGPIO3UO3lnk6SS+OIm4+tnkyTZkYHVRddd0PNB/MHo29Ymh0A94KDFzPQgdQ5P2iaf30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ds/7j4pg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FC4DC4CEC5;
+	Thu, 26 Sep 2024 15:40:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727365248;
+	bh=3XqQa1S4pPEpYGC473x6A+WKkpX5QqHWPg4UIF/AHv0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ds/7j4pgNDAn1Hhdsk2P+iELKBRcq/g3fK5rYEB71F/+wETOSYdNaIpPQkJKu4ZIL
+	 OS7s5WpkI+hODgHBJqArlTnmHFqHJk6pZwDhhmBa92fCLQ+6BU06D1QW0VQVwlIWPe
+	 zSbfI++Zhi6VUnW86ZgcBifi9gkPhEZdvjH+iD8nPqufV5ElF8mBLNJpLFbibSWOur
+	 zY/iEpbe4hMo+TujBt0VQKklGs+v8jgYGWJg9ZffnWknLDwmYFSKgMPOcPRJJtjSkC
+	 IaBfOc25+w6Ca5I0iIWkhvYl0MzzCNEu8JKKZzoxoJfqe4fD8HuWhqcda0JZ0+cynV
+	 Iaf9pj55Cskuw==
+Date: Thu, 26 Sep 2024 16:40:41 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Ivan Mikhaylov <fr0st61te@gmail.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 1/3] dt-bindings: iio: adc: add a7779 doc
+Message-ID: <20240926-tasting-twitter-01e807270dd0@spud>
+References: <20240926135418.8342-1-ramona.nechita@analog.com>
+ <20240926135418.8342-2-ramona.nechita@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917000848.720765-1-jmontleo@redhat.com> <20240917000848.720765-2-jmontleo@redhat.com>
- <334EBB3A-6ABF-4FBF-89D2-DF3A6DCCCEA2@kernel.org> <20240917142950.48d800ac@eugeo>
- <31885EDD-EF6D-4EF1-94CA-276BA7A340B7@kernel.org>
-In-Reply-To: <31885EDD-EF6D-4EF1-94CA-276BA7A340B7@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 26 Sep 2024 17:40:19 +0200
-Message-ID: <CANiq72=KdF2zrcHJEH+YGv9Mn6szsHrZpEWb_y2QkFzButm3Ag@mail.gmail.com>
-Subject: Re: [PATCH] RISC-V: Fix building rust when using GCC toolchain
-To: Conor Dooley <conor@kernel.org>
-Cc: Gary Guo <gary@garyguo.net>, Jason Montleon <jmontleo@redhat.com>, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	nathan@kernel.org, ndesaulniers@google.com, morbo@google.com, 
-	justinstitt@google.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	llvm@lists.linux.dev, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dPcabCR052Cwt+GZ"
+Content-Disposition: inline
+In-Reply-To: <20240926135418.8342-2-ramona.nechita@analog.com>
+
+
+--dPcabCR052Cwt+GZ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 17, 2024 at 5:26=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> Yes, but unfortunately I already knew how it worked. It's not flags I am =
-worried about, it is extensions.
-> Even using a libclang that doesn't match clang could be a problem, but we=
- can at least declare that unsupported.
-> Not digging it out on an airport bus, but we discussed the lack of GCC su=
-pport on the original patch adding riscv, and decided against it.
+On Thu, Sep 26, 2024 at 04:53:55PM +0300, Ramona Alexandra Nechita wrote:
+> Add dt bindings for AD7779 8-channel, simultaneous sampling ADC
+> family with eight full =CE=A3-=CE=94 ADCs on chip and ultra-low input
+> current to allow direct sensor connection.
+>=20
+> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
 
-Do you mean you would prefer to avoid supporting the mixed GCC-Clang
-builds? If so, do you mean you would prefer to not pick the patch,
-i.e. avoid supporting this at all? (If so, then perhaps it would be a
-good idea to add a comment there and perhaps a note to
-https://docs.kernel.org/rust/arch-support.html).
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-Otherwise, please let me know if I am misunderstanding -- thanks!
+--dPcabCR052Cwt+GZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers,
-Miguel
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvWAeQAKCRB4tDGHoIJi
+0mFPAP90X6GYF+zb6YW43Qnl+FiKGEOBCXku3k7B8ji0hQWELwD9HtdDik5VwIF4
+duc//BfDAMKiQyC6Y8JNrHZ1xLW+Vwc=
+=vQQH
+-----END PGP SIGNATURE-----
+
+--dPcabCR052Cwt+GZ--
 
