@@ -1,126 +1,181 @@
-Return-Path: <linux-kernel+bounces-341042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01303987AB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:29:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40FC2987AB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62035B249CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:29:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2C67283F5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7CA186E39;
-	Thu, 26 Sep 2024 21:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0039188719;
+	Thu, 26 Sep 2024 21:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m9fpQhKC"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gvnfKl52"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0F4183CD6
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 21:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A5F18870F
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 21:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727386168; cv=none; b=m5YRBayFTyM0YaIOIovy+pKuTtwuCpOySyRuaGOM+vaZ2PSd157xyyxTRNiUKF29l7uNmZYhRCo6O4RwtWNr3WfkQrGVlbl3GxKzb2wFmyaBUW3gO1R9zdH0lF9AYlDJAaCMSYMAQnWd7jWv6Zk8OfLKpdsgG7VQ7GplK+2fOqg=
+	t=1727386500; cv=none; b=Hyc+F7dRPN5nAZsO3n4ZDGVuGthkmhP+zgjSRQRlD65ZabW5211ZjiZUTfVd/9B1sELMoWgtnXX+njwtgjzuigG3URNK/c4DeWexHb6QkxCsO1+23QHDNNglY67YjIBnOl07j384ADCPr4wFoP0N0boEVWginPdnekP971nAjqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727386168; c=relaxed/simple;
-	bh=xqFq4RQYxYh3u9MLZ5kVqT1d0qeMIn5tA9drEqhxvR0=;
+	s=arc-20240116; t=1727386500; c=relaxed/simple;
+	bh=sXuVaKEonPIKosH2orXhpZe2Ha1PuBdnIKyXUyo1xxw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pUD5y5G7eKyFAyPR4cgK1c4lQSMx4IgYyDx7h5PCF0uEECg6RLNgJS9IO5hd012l9RP8pIsXO47kFWXC+Gidn050sDyyo2Zd86VjyXTt7RtGecR/72ipRDn5ZzFgZ3Vb+NPX62YkwBRYbHbbKHpmF1BLmCjTbFlm/91EazYaYSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=m9fpQhKC; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6cb25aad5dfso11274586d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:29:26 -0700 (PDT)
+	 To:Cc:Content-Type; b=KFyraTs/g01ACrrVx3ripAtvSEnJANQ57H0UTYmPO09XazaEwVUAGVuqeWXWwJ7D5HQO7i+LtMhlBsVA4B3Ck2+8H2d+yN/+mcxdJ+cOUroZdmoc8qGm07Z+bDDDsfr5Y/5g4+grsEkFM91Y6l2TtGf/uOifiLObgAPyUQgNLBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gvnfKl52; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a2769d774cso66865ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:34:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727386165; x=1727990965; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=j+swCKlfoXljh1Hu/0Qrpjoy4tGhDYS+cmjUv5wcQ0g=;
-        b=m9fpQhKCCcNTUR5NB0NjA/VY0g58moH+YGHI9+2UWDDwCtdLKA9SuqD/gOx6g1smaj
-         H0VybX9qBh+J3/0vZkL1mhbJijOW/hCT41pIh71qD9RxaYEphmlaVHp5wYS5d/cCZNPI
-         wULq8XNbsfPihnsNSlgmqWm4qRJg6UqRGy0z0=
+        d=google.com; s=20230601; t=1727386497; x=1727991297; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R3ys5pi3iJKdCNJc+dP6UG9C7uKed6bzhlzubnhFXj0=;
+        b=gvnfKl52SFo7RFvRzhZ9l36UJ1ABym2VriSGG6sX22RDBBDEBVUv9dRvMzURqeGOnh
+         cxBNagmMB+xHEywlCoUDDAR0awrkS2HKY+2ahVh5HK1Hniqcq7Ahq43kq1F2EoPbK6Vl
+         DFlQPxeSja7N1zeJBd82ANxzhtqA9EJOp28n2ueeZ/RgECY6Mjufh+tI6NqB2w4QOljV
+         oMrrYpMNb4xEjczUahwdeNBaWhhm90TKgKnVqEllUZRToPLzpyP1cBJfIa79fc4PQvEX
+         xphcXwk1FrfZ5+FXd4EyqQ4ASmC/6eW3NXtzYHAAElW0zUut8gtczylRQTlvnl9dvb7X
+         Tv4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727386165; x=1727990965;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j+swCKlfoXljh1Hu/0Qrpjoy4tGhDYS+cmjUv5wcQ0g=;
-        b=S4yRVmTIpED3wlVoqNeyld6iYxSeJb9Tlhi7+W2lanJcBifrsVEzS4A/6quny6VRNc
-         aalWUl9288is2eK5GDMc8g2xe7/pJ6HI+xy2S/DQKxzY0dsjoPGFRH644IyvX+0OsqWP
-         56pGTYiRGq+BD8Q9KIwrBXQLRFx1+tYWyb/Wm+Ba+EWjyMXNZY63d9mgdMYYsXffJlZV
-         E4EfsIsW6OZ03Po4IJNFDskDn957AAeBtIhQIMRoHTFBzQJvCIOwSDtBXQgjEYwOFgBd
-         +l+CsMrB23TV/cok5sstdXRJFpNs2BdAz/anaJjUQtNOt8mRzKuZPI+AfL+R1xZiTLiX
-         AU5w==
-X-Forwarded-Encrypted: i=1; AJvYcCV/uuI5XlTUZdR0JZvBP++592Zyuge8OistWmz6XKkYsgT3ctjwa6NY8RxqPHGTaJ7TxujXH7SSbYkHglY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYN/QYNjU4z/FJKI5Yt9VrToHnV4kq/yiOpBAJz6H9Q3kePfnn
-	soWdtRzVJI7g41AeCM9VgPfajm6/K1BnIYTtcD6Zk8Q43wYPfttoBTo+vrlnrSdh/j3nN48zqYW
-	tNUbISGwEmpFo3qsImg46x9mxAiOjJV1NqiB/
-X-Google-Smtp-Source: AGHT+IFJ2huc7rd6dPx1SGjSzSK0AKd3XeVgNspJCXTwvGlRQYEnb8R+RueAxRyyqxI2e+Yg2jHjhagmicTQnQvJRvY=
-X-Received: by 2002:a05:6214:14a8:b0:6cb:3e17:f4cc with SMTP id
- 6a1803df08f44-6cb3e17f54bmr1186906d6.31.1727386165372; Thu, 26 Sep 2024
- 14:29:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727386497; x=1727991297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R3ys5pi3iJKdCNJc+dP6UG9C7uKed6bzhlzubnhFXj0=;
+        b=PPrK6GFokF8c69o9QdEiVN7UlN41WWiVh5zCHHqrC7VSCH0CVe0m1fizMkaVEoA0AN
+         R5znrUGvsJUZcJ69ZRbpBOTXybUlNcsJBr1jbjRdhHyXWzWLSOGuDdhV/6YT2ymjoSj+
+         5L8k3ASNdUMqxXeohEVAe0h+bUBO0PsRbhVzXgAoJ+i/3prJWYOuXeN/qmCvoO4MwWXm
+         rxb6kOGLupzbQMdBNx+YsRPr37Fu0ChuEVfE5qb2J3/4vv7XYjk07/htKTDdUJsjqTJ6
+         QL5UY1ce79y3vpZJKmUhFoP9ywACt3pZzZfjyvWazad3EswcLZWmKsVp7tG0AAqwhYUM
+         nt7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWvbCazqttyd7WAW9OXjwlv1LstwG+ADuhNMqal8Iij4JwvQH8FO7NxPCRJi09wiHCd+SCLlhl3HVdLCKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyubdj4AwlJaaavesRkjHXAnR7CK+4h1uCzE6DpLqBWaxAxI9F
+	4XC6yZsQ7yjzWaECWConLuj6VQYi6XPdh6s8/+DEAQBfTCMyhG7Nl+gP3QR4Q0tvCDm79cN1N4+
+	Xf2IXz1iiiQZ2hYlDyLTs7JK00U12lrYcfSyN
+X-Google-Smtp-Source: AGHT+IHKYt5N4DuFIgfp9EMxSz5/JuHxq92sIthoPP6ktmct3B7k9c3RHD41qO3fS+kr7PHhzEB5jCnfi3lNPUFvpWU=
+X-Received: by 2002:a05:6e02:1a6e:b0:3a0:926a:8d35 with SMTP id
+ e9e14a558f8ab-3a346b6faf0mr279735ab.17.1727386497334; Thu, 26 Sep 2024
+ 14:34:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926080021.148031-1-patrick.rudolph@9elements.com> <20240926080021.148031-37-patrick.rudolph@9elements.com>
-In-Reply-To: <20240926080021.148031-37-patrick.rudolph@9elements.com>
-From: Simon Glass <sjg@chromium.org>
-Date: Thu, 26 Sep 2024 23:29:12 +0200
-Message-ID: <CAFLszTgNiRAh3bo26avy+tPZvu9L1R=CuFKJP4LBCJ0gdXfb0Q@mail.gmail.com>
-Subject: Re: [PATCH v5 36/36] azure-pipelines: Enable qemu_sbsa
-To: Patrick Rudolph <patrick.rudolph@9elements.com>
-Cc: u-boot@lists.denx.de, linux-kernel@vger.kernel.org, 
-	Tom Rini <trini@konsulko.com>
+References: <20240716132951.1748662-1-kan.liang@linux.intel.com>
+ <CAP-5=fVZVU7kMOHz7CC7O1+2dX844dHqhqMebzEKWMA=59am-g@mail.gmail.com> <Zqo8kVXkN_UaTp6f@x1>
+In-Reply-To: <Zqo8kVXkN_UaTp6f@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 26 Sep 2024 14:34:43 -0700
+Message-ID: <CAP-5=fX=QR66nQ6VKRMFfiFdueiC1EUGmxSbT9RCkW8dz67e6w@mail.gmail.com>
+Subject: Re: [PATCH] perf jevents: Don't stop at the first matched pmu when
+ searching a events table
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: kan.liang@linux.intel.com, namhyung@kernel.org, adrian.hunter@intel.com, 
+	peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org, 
+	kernel test robot <oliver.sang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 26 Sept 2024 at 10:12, Patrick Rudolph
-<patrick.rudolph@9elements.com> wrote:
+On Wed, Jul 31, 2024 at 6:31=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
 >
-> Add QEMU's SBSA ref board and run tests on it.
+> On Tue, Jul 16, 2024 at 09:30:01AM -0700, Ian Rogers wrote:
+> > On Tue, Jul 16, 2024 at 6:29=E2=80=AFAM <kan.liang@linux.intel.com> wro=
+te:
+> > >
+> > > From: Kan Liang <kan.liang@linux.intel.com>
+> > >
+> > > The "perf all PMU test" fails on a Coffee Lake machine.
+> > >
+> > > The failure is caused by the below change in the commit e2641db83f18
+> > > ("perf vendor events: Add/update skylake events/metrics").
+> > >
+> > > +    {
+> > > +        "BriefDescription": "This 48-bit fixed counter counts the UC=
+LK cycles",
+> > > +        "Counter": "FIXED",
+> > > +        "EventCode": "0xff",
+> > > +        "EventName": "UNC_CLOCK.SOCKET",
+> > > +        "PerPkg": "1",
+> > > +        "PublicDescription": "This 48-bit fixed counter counts the U=
+CLK cycles.",
+> > > +        "Unit": "cbox_0"
+> > >      }
+> > >
+> > > The other cbox events have the unit name "CBOX", while the fixed coun=
+ter
+> > > has a unit name "cbox_0". So the events_table will maintain separate
+> > > entries for cbox and cbox_0.
+> > >
+> > > The perf_pmus__print_pmu_events() calculates the total number of even=
+ts,
+> > > allocate an aliases buffer, store all the events into the buffer, sor=
+t,
+> > > and print all the aliases one by one.
+> > >
+> > > The problem is that the calculated total number of events doesn't mat=
+ch
+> > > the stored events in the aliases buffer.
+> > >
+> > > The perf_pmu__num_events() is used to calculate the number of events.=
+ It
+> > > invokes the pmu_events_table__num_events() to go through the entire
+> > > events_table to find all events. Because of the
+> > > pmu_uncore_alias_match(), the suffix of uncore PMU will be ignored. S=
+o
+> > > the events for cbox and cbox_0 are all counted.
+> > >
+> > > When storing events into the aliases buffer, the
+> > > perf_pmu__for_each_event() only process the events for cbox.
+> > >
+> > > Since a bigger buffer was allocated, the last entry are all 0.
+> > > When printing all the aliases, null will be outputted, and trigger th=
+e
+> > > failure.
+> > >
+> > > The mismatch was introduced from the commit e3edd6cf6399 ("perf
+> > > pmu-events: Reduce processed events by passing PMU"). The
+> > > pmu_events_table__for_each_event() stops immediately once a pmu is se=
+t.
+> > > But for uncore, especially this case, the method is wrong and mismatc=
+h
+> > > what perf does in the perf_pmu__num_events().
+> > >
+> > > With the patch,
+> > > $ perf list pmu | grep -A 1 clock.socket
+> > >    unc_clock.socket
+> > >         [This 48-bit fixed counter counts the UCLK cycles. Unit: unco=
+re_cbox_0
+> > > $ perf test "perf all PMU test"
+> > >   107: perf all PMU test                                             =
+  : Ok
+> > >
+> > > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > > Closes: https://lore.kernel.org/all/202407101021.2c8baddb-oliver.sang=
+@intel.com/
+> > > Fixes: e3edd6cf6399 ("perf pmu-events: Reduce processed events by pas=
+sing PMU")
+> > > Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> >
+> > Awesome sauce, thanks!
+> >
+> > Reviewed-by: Ian Rogers <irogers@google.com>
 >
-> Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-> ---
->  .azure-pipelines.yml | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> Thanks, applied to tmp.perf-tools-next,
 
-Reviewed-by: Simon Glass <sjg@chromium.org>
+Did this get applied? I'm not seeing it in perf-tools-next:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/lo=
+g/tools/perf/pmu-events/jevents.py?h=3Dperf-tools-next
 
-Should add gitlab too?
-
-
-
->
-> diff --git a/.azure-pipelines.yml b/.azure-pipelines.yml
-> index 93111eb612..2881851ecf 100644
-> --- a/.azure-pipelines.yml
-> +++ b/.azure-pipelines.yml
-> @@ -250,6 +250,11 @@ stages:
->                wget -O - https://github.com/riscv-software-src/opensbi/releases/download/v1.3.1/opensbi-1.3.1-rv-bin.tar.xz | tar -C /tmp -xJ;
->                export OPENSBI=/tmp/opensbi-1.3.1-rv-bin/share/opensbi/lp64/generic/firmware/fw_dynamic.bin;
->            fi
-> +          if [[ "\${TEST_PY_BD}" == "qemu-arm-sbsa" ]]; then
-> +              wget -O /tmp/bl1.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/bl1.bin;
-> +              wget -O /tmp/fip.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/fip.bin;
-> +              export BINMAN_INDIRS=/tmp
-> +          fi
->            # the below corresponds to .gitlab-ci.yml "script"
->            cd \${WORK_DIR}
->            export UBOOT_TRAVIS_BUILD_DIR=/tmp/\${TEST_PY_BD}
-> @@ -415,6 +420,9 @@ stages:
->          qemu_arm64:
->            TEST_PY_BD: "qemu_arm64"
->            TEST_PY_TEST_SPEC: "not sleep"
-> +        qemu_arm_sbsa_ref:
-> +          TEST_PY_BD: "qemu-arm-sbsa"
-> +          TEST_PY_TEST_SPEC: "not sleep"
->          qemu_m68k:
->            TEST_PY_BD: "M5208EVBE"
->            TEST_PY_ID: "--id qemu"
-> --
-> 2.46.0
->
+Thanks,
+Ian
 
