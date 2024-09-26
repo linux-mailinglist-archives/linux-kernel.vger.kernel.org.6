@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-340528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9697E9874B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:47:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B169874C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DC291C2146A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:47:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 933F828665E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B98813211A;
-	Thu, 26 Sep 2024 13:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A80C136349;
+	Thu, 26 Sep 2024 13:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cXIYS2oo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mg9Pd+we"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB2957C8E;
-	Thu, 26 Sep 2024 13:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C13055896;
+	Thu, 26 Sep 2024 13:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727358447; cv=none; b=a1jLJrooSMNOTJVoFT4Vxh37oVWkOMRSq4kRLAQCx4fDaYf26yBHi9NSgqyHGUx3Z4BK+PRKPnlfQtzvIXkNS79TQSAogmuaPpP1UjacQ1NW7Y41xefka6jAL5xbS8nOsCnM+jGhL+ZsXEn0QciB8KvMDkRchWd2/u31GtqrIy4=
+	t=1727358612; cv=none; b=HKOW2ycOZ2HmnLN+R6ymoGVnGfvub2VAv+BojWvMv2rf2d9L2/7XpmwLOlSlKKABAVKlVBsD/j3YM5sp9wM3U2kPz5MxdFjr6FWLPO2BxHYrA+gQ7jNrjZhPKO19toD1e3GqxQlSjW+24gM1RefFO3+1+hG9kldb2FScPS19GCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727358447; c=relaxed/simple;
-	bh=ctphzOTB+NOA/GK51VbE/tPCxaAZCjNjqSwu64PcJGc=;
+	s=arc-20240116; t=1727358612; c=relaxed/simple;
+	bh=+y2sG9MD4eBDu2i93LTYciIQrY6phRu0PEv2rKRT8TI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oSJD9G/Nl9FjqVKme4JQSb3P0Gj8O44G1oHILFL+3YXi2TtUE0egm3Bg1Hfgxni4q7SMtPaEduz4JnrnO27iWUbPRCFI/vw3Fi2gNa2fcY9rWawGNVnJql4u1yDMiUQBI4imfQ0dlxjTmPn8dtvX/BJdQZubnv3wbzLHl0SaAxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cXIYS2oo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C21FC4CEC5;
-	Thu, 26 Sep 2024 13:47:19 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Vo/drjm5EzqI34e75OdeFeS1EhPOeLE/EQCxg4zn0N08FJk7Ukzdndc0oOrZ5hXE+qccLyUrVG7aAlG6aBDvtcXpJAMXsO/g4MUcTGguosl3P3t3BmXO2NMeN34PWCNafrnYqTnX0CSgvBM9MRWnhywiNWM3J+AmOFchnkVbbho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mg9Pd+we; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF641C4CEC5;
+	Thu, 26 Sep 2024 13:50:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727358447;
-	bh=ctphzOTB+NOA/GK51VbE/tPCxaAZCjNjqSwu64PcJGc=;
+	s=k20201202; t=1727358611;
+	bh=+y2sG9MD4eBDu2i93LTYciIQrY6phRu0PEv2rKRT8TI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cXIYS2oohhk0wPVApgA8sV8GfMPwJTcPLbCNEY/cE/UBy1nHorVYKrnPBkEbYtlbJ
-	 iq8wfAEyydQDpVMvA6mA0+MVbcoJYGjh9VbD+Q9LWIgb+Xm+b8kbbJ2ax/Rh1DlGLL
-	 9B5c6dVHqc8odofCoLmrLKD3rS+2ZgNWac2lbdI/Dn//gCRQBBhfx3CUqliEQVYhU0
-	 GJBZgJZAmAmXGhAybYFPeeZxPmPJfZN2MuUDafu++b56/lBPc/gzDBVtMUE/wCWjcl
-	 czGes4th5TX0x1yveAjGJzkVyYlmO3ew+N80fkkHuz+UDAzWhgcy/lLoCkxDW9Z3d6
-	 f6wbqSqG24auQ==
-Message-ID: <f12452ef-5ad1-4095-a772-55109da2debf@kernel.org>
-Date: Thu, 26 Sep 2024 15:47:17 +0200
+	b=Mg9Pd+weEoJzAMxod/QKgBxSC5w5B91hJ96x7ziCzqaaqK6W2K1Y032aI6f6PiF6+
+	 eCa/gq6m3ljcnijjmQq358MKe5hcZifXc8ATug9QD6JhxmqF+QwbNiJxVL/ZOExPSI
+	 bqzh5E7MuasHYDZ0jmve60PDLBWxj39LE8rpCbGDNd4i2GMzV6kM9qj/hPLQt5DPgf
+	 ucFgqcvnOBPNiN9e/o3ZZ7LYLOY128UwN8+DLZYctICR6A+IPn2Smo3iHG2XxtwdJ/
+	 qtMgQGyqDSRJLkYcSOOg5/eCN2IGCGAW2nA+YyMtSfQZ0VXIRsgNxKXCwNh4/5pdiG
+	 Rwnx86lWPyk+g==
+Message-ID: <ecfb3621-fb8e-4452-a83f-bfe5f0b03398@kernel.org>
+Date: Thu, 26 Sep 2024 15:50:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] dt-bindings: display/msm: Document the DPU for
- SA8775P
-To: Mahadevan <quic_mahap@quicinc.com>, robdclark@gmail.com,
- quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org, sean@poorly.run,
- marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- swboyd@chromium.org, konrad.dybcio@linaro.org, danila@jiaxyga.com,
- bigfoot@classfun.cn, neil.armstrong@linaro.org, mailingradian@gmail.com,
- quic_jesszhan@quicinc.com, andersson@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_kalyant@quicinc.com,
- quic_jmadiset@quicinc.com, quic_vpolimer@quicinc.com
-References: <20240926110137.2200158-1-quic_mahap@quicinc.com>
- <20240926110137.2200158-3-quic_mahap@quicinc.com>
+Subject: Re: [PATCH 1/2] i2c: designware: determine HS tHIGH and tLOW based on
+ HW paramters
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Michael Wu <Michael.Wu@kneron.us>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>, morgan chang <morgan.chang@kneron.us>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240925080432.186408-1-michael.wu@kneron.us>
+ <20240925080432.186408-2-michael.wu@kneron.us>
+ <ZvPU2ZEG_8UV3FzF@smile.fi.intel.com> <ZvPWEFWk_MG5SsCg@smile.fi.intel.com>
+ <IA1PR14MB6224EAAD5566CC5288CDC0838A6A2@IA1PR14MB6224.namprd14.prod.outlook.com>
+ <ZvVREcwQSKZb5IU2@smile.fi.intel.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,24 +109,42 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240926110137.2200158-3-quic_mahap@quicinc.com>
+In-Reply-To: <ZvVREcwQSKZb5IU2@smile.fi.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/09/2024 13:01, Mahadevan wrote:
-> Document the DPU for Qualcomm SA8775P platform.
+On 26/09/2024 14:18, Andy Shevchenko wrote:
+> On Thu, Sep 26, 2024 at 08:45:47AM +0000, Michael Wu wrote:
+>>> On Wed, Sep 25, 2024 at 12:16:10PM +0300, Andy Shevchenko wrote:
+>>>> On Wed, Sep 25, 2024 at 04:04:30PM +0800, Michael Wu wrote:
 > 
-> Signed-off-by: Mahadevan <quic_mahap@quicinc.com>
-> ---
+> ...
 > 
-> [v2]
-> - Use fake DISPCC nodes to avoid clock dependencies in dt-bindings. [Dmitry]
-> - Update bindings by fixing dt_binding_check tool errors (update includes in example),
->   adding proper spacing and indentation in binding example. [Dmitry, Rob]
-> - Capitalize clock names in description. [Dmitry]
+>>>>> + * @bus_loading: for high speed mode, the bus loading affects the high
+>>> and low
+>>>>> + *	pulse width of SCL
+>>>>
+>>>> This is bad naming, better is bus_capacitance.
+>>>
+>>> Even more specific bus_capacitance_pf as we usually add physical units to the
+>>> variable names, so we immediately understand from the code the order of
+>>> numbers and their physical meanings. 
+>>
+>> Sounds good. However, I think the length of "bus_capacitance_pf" is a bit
+>> long, we may often encounter the limit of more than 80 characters in a
+>> line when coding. I'll rename it to "bus_cap_pf".
 > 
+> Limit had been relaxed to 100. I still think we may use temporary variables,
 
-Please start testing patches before you send them.
+Just to be clear, because you encourage reformatting it to 100:
+
+You mix coding style with checkpatch. Checkpatch does not define coding
+style. Coding style doc defines it. Limit is 80, unless growing to 100
+improves readability.
+
+> if needed, in order to make code neater. That said, I slightly prefer
+> bus_capacitance_pf over the shortened variant.
+> 
 
 Best regards,
 Krzysztof
