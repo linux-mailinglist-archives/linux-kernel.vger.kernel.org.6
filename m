@@ -1,153 +1,94 @@
-Return-Path: <linux-kernel+bounces-340913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2885F9878F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:12:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65BDA9878F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01EB3B26D03
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:10:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34127B26B35
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4160216088F;
-	Thu, 26 Sep 2024 18:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7D516133E;
+	Thu, 26 Sep 2024 18:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZsGu4eHF"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+HIgG9Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA23716130C
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 18:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7669013D889;
+	Thu, 26 Sep 2024 18:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727374240; cv=none; b=mqRps5MU/mMpthfUkIJsjSCDwqSBtDkr+H0gmg2YDdAFrHtDQX/FS/uP66gzxdzpxHsTa29vK1qnuKMIxilhC5/7MZEAX6G3k45Qa//gVpxA9aTP3M1PkkYxL67mr+HGXWMmdzb6t6d+BU23gGwQX1aMcFJ2A3YKGaQQ8ouxXLg=
+	t=1727374297; cv=none; b=k8xbI2h36Ze1hgu98wZcHKKPbW8hYsncHuBxh35FGgm7HQB8HrQUD7XOtq/xXurNCI5wjsv1xoSetbU+h5A21Nv2YwPBAc9VBlc0opP/bwRlAw8INfgBFMR7RjZxvbMCb8nt/vRvLMRvuFl79rQqMvMA+gEA+HFD6JKp2SGE92c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727374240; c=relaxed/simple;
-	bh=tEGhy1y3hxikKXA90z5wp7UYXddJC1lR3CMHAlfnVRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E06kSRXLUmK/otilby5vyduqKIDuQcy1lKJUJskB4snxDoi6hhrIyZh5wWI+4Kk5MoKE4CKrpkkj6rYnKmYXdea987fXWtIiBHA+OfiA0WVgAbGxNvKRoaXAJOYcDR5W1Qy8hf+T4Zp7C3FBUjgBVGL3OGvNxYcRbLXKTpBBARE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZsGu4eHF; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8d3cde1103so171992166b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 11:10:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727374237; x=1727979037; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tEGhy1y3hxikKXA90z5wp7UYXddJC1lR3CMHAlfnVRw=;
-        b=ZsGu4eHF11SqHfY8HcLgxBKM3+C+663yLaLGbHzilNFyNtnZ+jR6YHIs8g6qDslqDc
-         n4vS3dVWn8LZf/k0HN4R9YTdzF6IYxGezD97u5/uOxxTxhG0PY3QEy7cSxNRkT0jIdr4
-         s11Rd1sWrp30VcRc5rNcIQlSgV967ruir3h7pgeSbKJAGGLswocqFvkGqPZY0RjU8Cqi
-         ZRmEfhksqfh0PciowAhVeNnnlhCxl/E0qz8tirlL512sGrgqHIrzVGz6mLiYzZmQ587h
-         9Ny2LUpeWMMtYBbl/WCqlJ2nhyO5tGSrlJDwp/nIfw26XgYTJpH3PuljGtEG2AJrnJS5
-         NsKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727374237; x=1727979037;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tEGhy1y3hxikKXA90z5wp7UYXddJC1lR3CMHAlfnVRw=;
-        b=CImbKj4ihHSIWZIfZ7UakwW25iqM6LkmgokTHIrvx2Y204SwH93JevD9M5U26z1WI7
-         DMuKMMyuPQ7cC5nqZXHxIOkbHXaX54Aty2bVYRRHOXnY7MMjmYQKlgDRZHRTiRrkUE0A
-         jLYt/rx/0qNYWOCfNCE12PobFskePH+aYglQ+GgESQHDslt0p0zr63q0vloF/i8DhoQ7
-         4ywGEe5910RaIWeZ2YLpy3mNsMmBAKXf7XGzUPy5QarW49F/IYvyipbJwKYuovcRhLQz
-         XiVT+yjco0/fnCOshhrR3kWtu0L7dMSoNbHousKmo+AE3dTOMgUpD42oEWVB8J8GSQ6b
-         kyiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUB8uYhF3VQH1g587vfn9WmSPchP0laQdN9iCSDyEslYJUUhgwer1SViLUX98KsmmTiTHTVZmFaTx550jU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy3XZbtQNjmB6hFTRRUHX3Q4q6lXLgAP+TRgWntTh5ZoSjV44Q
-	PMNaPvTLPc9yI06MtV67xLza0nx8TIJgsfNg6SEo8PthMXj9TCzn8u89r+mEXuQ=
-X-Google-Smtp-Source: AGHT+IEfe8BpSSgYBcwUqahCkfmDSBMc3otDpIdlgBIMUSWhz79v6I4cHVtltnbs2o3FtkBUNGafGg==
-X-Received: by 2002:a17:907:6d1a:b0:a86:a41c:29b with SMTP id a640c23a62f3a-a93c48e80bdmr36738166b.8.1727374236956;
-        Thu, 26 Sep 2024 11:10:36 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c299861bsm23451366b.192.2024.09.26.11.10.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 11:10:36 -0700 (PDT)
-Date: Thu, 26 Sep 2024 20:10:35 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, hannes@cmpxchg.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, lizefan.x@bytedance.com, 
-	shuah@kernel.org
-Subject: Re: [PATCH v3 0/2] Exposing nice CPU usage to userspace
-Message-ID: <qjbbaywlodoojlb5n3vavgck2jrffofnlzpf7pc5h7fsyu5y7o@oqh5vbuns7ve>
-References: <20240923142006.3592304-1-joshua.hahnjy@gmail.com>
+	s=arc-20240116; t=1727374297; c=relaxed/simple;
+	bh=56mzS41ce5/9+IUEXD+XVGSW4V+p6gXfuozlaZk9EHA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=K3aKYEqTtoCgtKEjX+d6xik8vLBVPvFzP1VYEgz/2aIOGqHu8GGjt5tor3/Y1VtQtDcuXvgNOtKMY8ksrwm2XVk9mkctTMaExGkGE1NjZA7nK1QU0vrT8XUQwJV5kkkHB7Y+dngnoYv1Q16zmg2Q2Uhjo+h5FLrw4JjJ5O/SiN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+HIgG9Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8894EC4CEC5;
+	Thu, 26 Sep 2024 18:11:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727374297;
+	bh=56mzS41ce5/9+IUEXD+XVGSW4V+p6gXfuozlaZk9EHA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=k+HIgG9Qa0Js8se64sSEDRTVXfWAaGsFccLLDAutjuscC/+5Z7Z/62y7bHexBCgDh
+	 SB3wcRdE3yapuwAH/uMUeR/oGJt/tnwwDYy6YdcEVEE61jDZDG5kYDtADL0TX7MYML
+	 vohhLGr3l640oa6DJDYogDw4bxr420CfPgZW93FkuO1ec8HroIHp8VSGRg4up7E3Gf
+	 kjp90cba8zRUhtUFQe8WrMCycGPIm7tJoCIaHQhJEW3sj6FOLk5k28ZAc3nn0KyWUu
+	 9uScWewce/j3ShmjOcH2DuaJ/PrqnGvC8XtYTfn+Z5xn+JJj6vgmcVme1Soh8ZYW3K
+	 IN3deguGAwolQ==
+Date: Thu, 26 Sep 2024 20:11:34 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Aditya Garg <gargaditya08@live.com>, 
+    "bentiss@kernel.org" <bentiss@kernel.org>
+cc: "airlied@gmail.com" <airlied@gmail.com>, 
+    "tzimmermann@suse.de" <tzimmermann@suse.de>, 
+    "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
+    "mripard@kernel.org" <mripard@kernel.org>, 
+    "daniel@ffwll.ch" <daniel@ffwll.ch>, 
+    =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <thomas@t-8ch.de>, 
+    Orlando Chamberlain <orlandoch.dev@gmail.com>, 
+    Kerem Karabay <kekrby@gmail.com>, 
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+    "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
+    "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+    "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
+Subject: Re: [WHY SUCH DELAY!] Touch Bar support for T2 Macs
+In-Reply-To: <MA0P287MB0217799EF124DAB1EB9941ACB86A2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+Message-ID: <nycvar.YFH.7.76.2409262009240.31206@cbobk.fhfr.pm>
+References: <DD9C41AD-6543-47CE-8504-69E4992229B2@live.com> <MA0P287MB02176175318B96135BE3E320B8902@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM> <nycvar.YFH.7.76.2409111420040.31206@cbobk.fhfr.pm> <MA0P287MB0217A06CA89D6A7D0631466EB86A2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <nycvar.YFH.7.76.2409262001520.31206@cbobk.fhfr.pm> <MA0P287MB0217799EF124DAB1EB9941ACB86A2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="o4xm45ommiv6myew"
-Content-Disposition: inline
-In-Reply-To: <20240923142006.3592304-1-joshua.hahnjy@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 
+On Thu, 26 Sep 2024, Aditya Garg wrote:
 
---o4xm45ommiv6myew
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> >> It has been more than a month since I've sent this patch set and I
+> >> haven't got a clear yes or not for the same. I understand maintainers
+> >> are busy people, but I'd really appreciate if I get some response for
+> >> this series of patches from the HID and DRM maintainers.
+> > 
+> > Just to reiterate -- I am waiting for Ack from the DRM people and will
+> > then take it through hid.git.
+> 
+> So I should assume the HID portion is fit to be merged now?
 
-On Mon, Sep 23, 2024 at 07:20:04AM GMT, Joshua Hahn <joshua.hahnjy@gmail.co=
-m> wrote:
-> From: Joshua Hahn <joshua.hahn6@gmail.com>
->=20
-> v2 -> v3: Signed-off-by & renamed subject for clarity.
-> v1 -> v2: Edited commit messages for clarity.
+hid-appletb-* I have gone through, and it looks all good to me.
 
-Thanks for the version changelog, appreciated!
+Benjamin, could you please explicitly provide your Ack for the multitouch 
+changes?
 
-=2E..
-> Exposing this metric will allow users to accurately probe the niced CPU
-> metric for each workload, and make more informed decisions when
-> directing higher priority tasks.
+-- 
+Jiri Kosina
+SUSE Labs
 
-Possibly an example of how this value (combined with some other?) is
-used for decisions could shed some light on this and justify adding this
-attribute.
-
-Thanks,
-Michal
-
-(I'll respond here to Tejun's message from v2 thread.)
-
-On Tue, Sep 10, 2024 at 11:01:07AM GMT, Tejun Heo <tj@kernel.org> wrote:
-> I think it's as useful as system-wide nice metric is.
-
-Exactly -- and I don't understand how that system-wide value (without
-any cgroups) is useful.
-If I don't know how many there are niced and non-niced tasks and what
-their runnable patterns are, the aggregated nice time can have ambiguous
-interpretations.
-
-> I think there are benefits to mirroring system wide metrics, at least
-> ones as widely spread as nice.
-
-I agree with benefits of mirroring of some system wide metrics when they
-are useful <del>but not all of them because it's difficult/impossible to ta=
-ke
-them away once they're exposed</del>. Actually, readers _should_ handle
-missing keys gracefuly, so this may be just fine.
-
-(Is this nice time widely spread? (I remember the field from `top`, still
-not sure how to use it.) Are other proc_stat(5) fields different?
-
-I see how this can be the global analog on leaf cgroups but
-interpretting middle cgroups with children of different cpu.weights?)
-
---o4xm45ommiv6myew
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZvWjmQAKCRAt3Wney77B
-SQ8WAQCp29FbziRN/KbfWQPcfAVt7SDahK/4JWtmK3cAW9Ev6AD/fINR453pWEMR
-b2Nxw2R0JPWdmbAjsReOZPift5TgNg0=
-=bl5O
------END PGP SIGNATURE-----
-
---o4xm45ommiv6myew--
 
