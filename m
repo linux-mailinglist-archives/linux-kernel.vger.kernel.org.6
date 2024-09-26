@@ -1,162 +1,124 @@
-Return-Path: <linux-kernel+bounces-340439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F60698736E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:18:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB160987373
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 275271F277E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:18:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 564A61F273A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50A617557E;
-	Thu, 26 Sep 2024 12:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484AF178362;
+	Thu, 26 Sep 2024 12:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="BHaQpiq/"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JOjTuC4P"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3B514F9FD
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D41114E2CF
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727353127; cv=none; b=V+ldbqFY1rKcWg0zajZ2zKx9hKyE3Kxy9FSMG0DMsea7vDCZcQOmqTkAZc+fOA5mvORNi+6fEyPZkuYKDyRJwGApv2Hc32HixSMrflMPznGVwBu5a89f5tTiDz8NjI83+6XdarMK91OWd4zDWgqlnyeEfs14l0kyXpjiJImPqJA=
+	t=1727353231; cv=none; b=aRvwkvo2VFSy5MtR2ol+SewNe5KgLkuY5TkE/H/nBKCXV2AYHeWHQ5/PSxZVUl9KUZ5XeUziyMoMXpq8YycJwOJiLINQmhlEe6FVvcoiWuNqJMNPrCbWalLkuZEu3kvCSoRy1Pqo5YrDRW6qgm8hZInozOr7xBRQZkke8/XPX/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727353127; c=relaxed/simple;
-	bh=2UmOXdEz4CJIDOrDkKiif+rQZXk8sYyTHxbPYDMhRAk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hBvXHfCTR2WJ2ByhBQl/R/OFA1YEVgdVdqM2JnJX5+Tk/AExl5bNuZV5gYPOsoAV0JPxcoq6GjU8G/lLW9MTIDMeji+6tpsZJDpRtgn2tatjgUvJQe4bj70CTA9SMjsUuskBKj36tAYO8VZpPGYBf6hJgEICyymyrP+UBRLl7ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=BHaQpiq/; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=GtspPkz4ED44hgy2l6w83AQqS3e+5A0pTkCNhVxW6xg=; b=BHaQpiq/vsy+t7Eal2oau12xpW
-	hmPVG2yt13UkxZJwruDvHSNwGQ+24TP72lTu9juLpOIKLKYTYW7UF/TGV30Khk+uz7BuwAehtYUmM
-	ghzICwqq6doOZDaU3PsDo4eRncak5ETutz5MkTmMqrZhxlFVCVB10MEEPkmK/+zwKsNGerfDhZxvU
-	OISzT2BcBxbqgII7xwHitkrghw3piIcVDQrI/N8oQaC5215kc9v9A3W9YFH6DKkSzP138+N9QNbdG
-	i2UZrdDcPkQCMl0fYrrlssXoxpkgSoUei01QiZ+wylVPhbwnlFq5FVHe+Pgchh4Hi5vIV5uBJwwIW
-	Tp5le0Ug==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1stnSA-000HTd-9i; Thu, 26 Sep 2024 14:18:38 +0200
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1stnS9-000Hc0-0F;
-	Thu, 26 Sep 2024 14:18:37 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Michael Walle <mwalle@kernel.org>,  Pratyush Yadav
- <pratyush@kernel.org>,  Miquel Raynal <miquel.raynal@bootlin.com>,
-  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Nicolas Ferre <nicolas.ferre@microchip.com>,
-  Alexandre Belloni <alexandre.belloni@bootlin.com>,  Claudiu Beznea
- <claudiu.beznea@tuxon.dev>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  Rasmus Villemoes
- <rasmus.villemoes@prevas.dk>,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 00/15] mtd: spi-nor: macronix: workaround for device
- id re-use
-In-Reply-To: <2196b4e8-2c93-4a73-a717-28448d4668ab@linaro.org> (Tudor
-	Ambarus's message of "Thu, 26 Sep 2024 11:47:33 +0100")
-References: <20240711-macronix-mx25l3205d-fixups-v3-0-99353461dd2d@geanix.com>
-	<D2NGXHZ2VTK0.M0AOB4CM7MHM@kernel.org> <87tte2hmq0.fsf@geanix.com>
-	<2196b4e8-2c93-4a73-a717-28448d4668ab@linaro.org>
-Date: Thu, 26 Sep 2024 14:18:37 +0200
-Message-ID: <87v7yifw0y.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1727353231; c=relaxed/simple;
+	bh=vOTpzB5vd/CwIsuye/jBaiRBDbMI1JUdjxFFIctmwEQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MV+FDqIVJl/51XeqXTsm1IL8ts4CsRIbASgOMSw4jmgFqedfVvbAxEaa74u6Cvk/MMqW8nyULiv3Td6HtZcS5Wm7RiRSoiphe4HRcpQyApMESI0hLyDl1ad3uemS6xfMEimhsBW5tTZ50/G7KTLFyxHktEE4Z+q2wwd7U6gfdvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JOjTuC4P; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e25c5ed057dso917536276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:20:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727353229; x=1727958029; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/chIijZxfaJZTmXeHsE7W1Ywlan6j7i6j6yboptQjwE=;
+        b=JOjTuC4Pg3j/gHHx9Uy+VfdebUOaxqcoEbibnDgwFfk9/CpyX6esgGmH9oHWNriWwZ
+         tpYwRVh+cYtx2TxWAEoZBuHlgurVXYQ0HlAq4VhmWRqX1VYj/aqJc40inEZ8SAG5bh2e
+         sCZT+gmzPRTfee6eXi2UwDxZpjR+V5SBJXPOdWwqSadizel+jfiPCzgpZGrjB6TmRiGo
+         h7C3KicEWiDV4NQWpqBnGU1POP07aw5T+J7sBu47ZTMsLSkZZPvH0bXsSHUjh2cSGgqL
+         XCbQ2+brdwq9U66sbzQIF9Gk6kQskpCsfxScVeGw80LPW9oV8JNNK04ZUm+G9pXlTnUA
+         pMyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727353229; x=1727958029;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/chIijZxfaJZTmXeHsE7W1Ywlan6j7i6j6yboptQjwE=;
+        b=jAdqQ1OEjF4bdK8I0WNxC+DY7L1VtlE8v1evh5L8tQP+y+boDYCTxU7dUu6c1hS44Z
+         1JlSKNAdIMNmM82P29uH8kJ+uVu6vr0BR9av+FSgmj5YaqNhh4MTU2RJKNbYgzK5gxxr
+         NfW4rL3SgNjhSYarSW3eSMItqO5DgfSFKLTqE02dIbpat6ydNiB+SAD13QPKd62+4Q/3
+         RnbPhfG8I3InB59Vm/vpbZcsUv5+sVKEeFZzfgDMWnplTc9aesiW8DQeKULTeKi4Uiil
+         StThqh5vu0QbN/Wqjc12/0V2KQADKj+32HETp2uTmJlgl0fDpoPw1bpEqh7jCHvt2MQ3
+         QNTA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5sud4xpRhimP5l8XuyR4BdRz9Vhs/hcCvQkf30CLfhcheSw1x2gHwlXYRded7OJrWk4GPdV7ay2uZiNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3R2wukiy9bKG/NrxSy7SHqV7i4SF8N8NucNeMLV5RozckCRjM
+	vlSsF2AdkiHEZkI4zMW2oCxITfKcRtSMiEhuzHBlTvbFAp0XbUDQvWUBiEZNRlnOUcjmbvJLVa9
+	9I7OoB1bEtzZG+xhoNwZr754RRdfjDQi0kiheRg==
+X-Google-Smtp-Source: AGHT+IFYe6avJXcb20Z3oY/wCbFOgqRRn6CzbS+mU2MwuBkHglhoEJHCWq1HMAvQiZOvmabxdtU+nRUUoxytEl305oc=
+X-Received: by 2002:a05:690c:5c03:b0:6b5:5042:2c9d with SMTP id
+ 00721157ae682-6e21d848317mr47670397b3.24.1727353229221; Thu, 26 Sep 2024
+ 05:20:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27410/Thu Sep 26 11:30:46 2024)
+References: <b890361e-e99b-43da-8571-7478b5eab475@web.de> <jjsbnitbajdw7dc4plkbb55ezl2cdbnrfws7hnoigbzasvdzua@puhrwwlu4lvv>
+ <ZvVPlInCFajkeFy9@smile.fi.intel.com>
+In-Reply-To: <ZvVPlInCFajkeFy9@smile.fi.intel.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 26 Sep 2024 14:20:19 +0200
+Message-ID: <CAA8EJpo0Q0Wn-GzqmPeNFfG_Hr-o8E7F_VuO47EbxKx=0OQhyQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] usb: typec: ucsi: ccg: Adjustments for common code in
+ two functions
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-usb@vger.kernel.org, 
+	Ajay Gupta <ajayg@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Haotien Hsu <haotienh@nvidia.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Utkarsh Patel <utkarsh.h.patel@intel.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Wolfram Sang <wsa@the-dreams.de>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Tudor Ambarus <tudor.ambarus@linaro.org> writes:
-
-> Hi, Esben,
+On Thu, 26 Sept 2024 at 14:12, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
-> Thank you for the perseverance :D
+> On Thu, Sep 26, 2024 at 12:26:24AM +0300, Dmitry Baryshkov wrote:
+> > On Wed, Sep 25, 2024 at 07:31:04PM GMT, Markus Elfring wrote:
+> > > From: Markus Elfring <elfring@users.sourceforge.net>
+> > > Date: Wed, 25 Sep 2024 19:19:01 +0200
+> > >
+> > > A few update suggestions were taken into account
+> > > from static source code analysis.
+> > >
+> > > Markus Elfring (2):
+> > >   Use common code in ccg_write()
+> > >   Use common code in ccg_read()
+> > >
+> > >  drivers/usb/typec/ucsi/ucsi_ccg.c | 15 ++++++++-------
+> > >  1 file changed, 8 insertions(+), 7 deletions(-)
+> >
+> > For the series:
+> >
+> > Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 >
-> On 9/26/24 8:56 AM, Esben Haabendal wrote:
->> "Michael Walle" <mwalle@kernel.org> writes:
->> 
->>> Hi,
->>>
->>> On Thu Jul 11, 2024 at 3:00 PM CEST, Esben Haabendal wrote:
->>>> As a consequence, the SPI_NOR_SKIP_SFDP flag is no more, and all
->>>> drivers that have been doing optional SFDP is now marked explicitly to
->>>> do that using the SPI_NOR_TRY_SFDP.
->>>
->>> First, I haven't looked at your patchset at the moment. But I'd like
->>> to take the opportunity to discuss the following (and excuse me that
->>> I didn't had this idea before all your work on this).
->>>
->>> First, I'd like to see it the other way around, that is, doing SFDP
->>> by default and let the driver opt-out instead of opt-in. This will
->>> also align with the current "SFDP only driver", i.e. if a flash is
->>> not known we try SFDP anyway. Going forward, I'd say this is also
->>> the sane behavior and we don't have to add any flags if someone want
->>> to add support for an (older) flash with the same ID but without
->>> SFDP. With the current approach, we'd have to add the TRY_SFDP flag.
->>>
->>> Now we might play it safe and add that SPI_NOR_SKIP_SFDP to any
->>> flash which doesn't do the SFDP parsing (because it has size != 0
->>> and not any of the magic flags set) - or we might just go ahead and
->>> do the probing first for *any* flashes. Yes we might issue an
->>> unsupported opcode, but we already do that with the generic SFDP
->>> flash driver. So no big deal maybe (?). Vendors where we know for a
->>> fact that they don't have any SFDP (Everspin I'm looking at you),
->>> would of course set the SKIP_SFDP flag.
->
-> Issuing RDSFDP for flashes that don't support it shouldn't be too bad
-> indeed, it's not recommended, but it shall be fine. What I'm worried
-> about is flashes with wrong SFDP data (see all the SFDP fixup hooks that
-> we have). So my suggestion is to play it safe unless one of you guys
-> step up and commit that will fix or help fix each bug that results from
-> this.
+> I believe there is no-one to take it,
 
-Sounds like a good idea. I for one will not put my head on the table
-like that :D
+I guessed so.
 
-> I'd like you to also consider the SFDP versions and how many parameters
-> they are exposing. I can't tell exactly, but if I remember correctly,
-> rev A had 9 dwords for BFPT, revB 16, and revC and other more. If we
-> consider static init folowed by SFDP with rollback option, point 3/ in
-> your cover letter, are we sure that all the parameters that are
-> initialized before parsing SFDP are overwritten at SFDP parsing time? If
-> yes, we shall be fine.
+> but in any case the thing is that kfree()
+> probably can be done using __free(). Then PM runtime handled differently.
 
-How can we be sure of that?
+That's a separate cleanup in my opinion.
 
-But if you want to be really sure that no static configuraion is left
-after SFDP parsing, why are we handing it a copy of nor->params that was
-initialized from static configuration?
-
-Why not call spi_nor_parse_sfdp() with nor->params bing basically
-uninitialized?
-
-And then, only if spi_nor_parse_sfdp() fails, look into flash_info
-static configuration?
-
-> Esben, to speed up the things on both ends, I recommend you for v4 to
-> draft just a core patch if you care, then you can handle the vendor
-> drivers. Or send us some pseudocode and we can talk on that.
-
-I will see what I can do.
-
-I guess some kind of RFC patch of the core changes for v4 might be a
-good next step.
-
-/Esben
+-- 
+With best wishes
+Dmitry
 
