@@ -1,94 +1,126 @@
-Return-Path: <linux-kernel+bounces-340643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56DFD987634
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:05:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2452987637
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52BAF283824
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:05:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 258D81C24371
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FC114A616;
-	Thu, 26 Sep 2024 15:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456C913B5B4;
+	Thu, 26 Sep 2024 15:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZBc/gFHn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Duc255lC"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5852E56A;
-	Thu, 26 Sep 2024 15:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D01EAD5;
+	Thu, 26 Sep 2024 15:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727363140; cv=none; b=vDC/2smoMTQShlT1opW7aSfq3pJxq6BKzdRPO+KTNGhGGSQdGewLvZhqAEPK0/S5DO+hoibPFm9pQPu7UEjUKdJ14VTUc/Z0H/f6GfH/JaUpHkJzdryok+/F1xlgG60S7QdXoPDEOPRw9AUx9NaeiYyR13i2pgetBWXIPSFny4Y=
+	t=1727363177; cv=none; b=sUGyiGizBopfUIl53Cl05GzTLYOCjK75DeCM8YGKu5bQ+QLxa0HPJGXqEs0pRcI+AvmJ9dgswInk9bcYjCmf2eVQhybNYDUX0fKtltwJpGndy6gjmLJ5zMSwJFemkVIaFuE9HL8BRnE5A2UgY3M3bBwC6GCGBGWjyWFiSGMy53Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727363140; c=relaxed/simple;
-	bh=/NGdEFNyrAbKge3yFgZc4lPX3H1bXgr4e2H1TEfy630=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GWd1i74DkMijrzmyIvlhU65IoJYvWKQPcQKJm4P7Wyskc2CO1TSZ8doNJdZX6eZ8Ro9hgDc2V6tgT7q7HRi28/kEzxWXM4Rb7eD7H8AliuHzsHW71u94SeKXf9mfJY4gCms0opqo6kwcfXKobqSBEvWuoTeO2ZQYDe1a/LkOdV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZBc/gFHn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7F15C4CEC5;
-	Thu, 26 Sep 2024 15:05:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727363139;
-	bh=/NGdEFNyrAbKge3yFgZc4lPX3H1bXgr4e2H1TEfy630=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZBc/gFHnNdzdAs6CNYvZpTJjvZ9DFM3wkruwCecoVPTNp4xncYRoa7roHTynT6z4p
-	 08fRxhMJzMt4RcloKu0Pv13EuNMRaocY7fH6D1uvCCexXBOOfjpgVY3wuM6atFC7ei
-	 ajCPrjM2duKFwThWNaSrjYX1PdwJIILTrhpJmSSk=
-Date: Thu, 26 Sep 2024 17:05:36 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Miscdevices in Rust
-Message-ID: <2024092647-subgroup-aqueduct-ec24@gregkh>
-References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+	s=arc-20240116; t=1727363177; c=relaxed/simple;
+	bh=VMgdYxqwZw2CBmoTc0olJuVK9+Rj042dsdpbAHc2qRY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IswJ6hAyZViLBgbzwledc7+gXpkTyFkjW+VnSCYe4iqMiTWvmTcc5xFtgKlCEVgpmIn2F+f4i774y+jPltu7cPtSUk741FtAqiwSkII4H9Z5RSKnE3xh3g7nZdxPVGy7HQ9xhrJykMtJGitk7G+e9dbzZIWKwoR4RXR2AOVwPJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Duc255lC; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-710e14e2134so637534a34.0;
+        Thu, 26 Sep 2024 08:06:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727363175; x=1727967975; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+t9mzZCgU476gMWQ4P/6LYkVX8h6Med+hDfNmEpc/1k=;
+        b=Duc255lC6oPJ/HpBTAGrnzWIij5Wl79Hx01pSLbTqMlbOB2EqOd3nWf2i76L4mNcLw
+         oyA6e+Fip+3ePebQd/hEuE9B0TD2BXIPEh5fsHXm7cFg3bNOiM6OksaeF/7Efz0GLOhe
+         UrgmnD56H5WdjdUWqjFWdZrJXXrFoHLAHuk8/Bp9OCY7QSrqtxXgDYV/ZW37BklVX12U
+         ekkNik1/5LIa3sS/Ly6ZcMnY8Ubp9kz78cYyR4Zl4yCQCr87YxJO+/R1qvtwdC6/js0+
+         d9sDGtDyEZ3WIp9Ql0aRKR8r6RXW0tUl/4AYRNtA2CS4h6wmB4604wxeDAq6hgieKrtM
+         zImA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727363175; x=1727967975;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+t9mzZCgU476gMWQ4P/6LYkVX8h6Med+hDfNmEpc/1k=;
+        b=Mw1ykZJ1g7pzqxzmEjd1daic5tENiHqLAvfFidwE7PU9BiCQRJwcP46h4WFy7wC+jg
+         Tep4gZ2m+HlzexV/AMER25JjiWxNkJqIMxYqJO+RGDFNfrL8V1502C2QeDDMLGVPeURB
+         tUqf+uHxnH7nr4zebT7P/XSgXYNDWfAiHkH3dHnsHlKwBQlLE+E7hwrjDMFECzTmjzDw
+         Ipk4gaJktXRLhkA9DH0przi+vg5lRhv0JGRDxsJ+Q/Yidw+zOpAafbtm0tnTO9437fE3
+         qQbmFrUIRSOv3Ppzl6x8D9REtQYwLJ+RysQ2abajzWNMYjd6yGxJwaPvaBkChFJQ2ezn
+         iV2A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4NM3GPWClrKyG+2fvHEZjUf4pqLeINIg0fNtk/JHFYGS455gOh78+nYXafamUek4BRUe7gJXsNw85SX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi3lgHpdKej9DkazN14Gn9phm2GtyzIG1wJ9q8sW41Qr8r737a
+	QpceM6ukziY62PtF3P5IYgM/IsJj6veCIS2mfcbnjmSZCDfmsL85
+X-Google-Smtp-Source: AGHT+IEbKUb8qPOQKB9YD1j0rocvtAxgd1Na0LBfHO2qlQqfBv5UZ335WpXW+4TFkNDuCvwHFStayw==
+X-Received: by 2002:a05:6358:8a9:b0:1b8:33f2:7c81 with SMTP id e5c5f4694b2df-1becbb5f930mr17747955d.8.1727363175271;
+        Thu, 26 Sep 2024 08:06:15 -0700 (PDT)
+Received: from fedora.. ([106.219.166.49])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db2b974bsm6198a12.34.2024.09.26.08.06.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 08:06:14 -0700 (PDT)
+From: Riyan Dhiman <riyandhiman14@gmail.com>
+To: clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Riyan Dhiman <riyandhiman14@gmail.com>
+Subject: [PATCH v2] btrfs: add missing NULL check in btrfs_free_tree_block()
+Date: Thu, 26 Sep 2024 20:35:56 +0530
+Message-ID: <20240926150555.37987-2-riyandhiman14@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 26, 2024 at 02:58:54PM +0000, Alice Ryhl wrote:
-> A misc device is generally the best place to start with your first Rust
-> driver, so having abstractions for miscdevice in Rust will be important
-> for our ability to teach Rust to kernel developers.
-> 
-> I intend to add a sample driver using these abstractions, and I also
-> intend to use it in Rust Binder to handle the case where binderfs is
-> turned off.
-> 
-> I know that the patchset is still a bit rough. It could use some work on
-> the file position aspect. But I'm sending this out now to get feedback
-> on the overall approach.
+In commit 3ba2d3648f9dc (btrfs: reflow btrfs_free_tree_block), the block
+group lookup using btrfs_lookup_block_group() was added in btrfs_free_tree_block().
+However, the return value of this function is not checked for a NULL result,
+which can lead to null pointer dereferences if the block group is not found.
 
-Very cool!
+This patch adds a check to ensure that if btrfs_lookup_block_group() returns
+NULL, the function will gracefully exit, preventing further operations that
+rely on a valid block group pointer.
 
-> This patchset depends on files [1] and vma [2].
->
-> Link: https://lore.kernel.org/all/20240915-alice-file-v10-0-88484f7a3dcf@google.com/ [1]
-> Link: https://lore.kernel.org/all/20240806-vma-v5-1-04018f05de2b@google.com/ [2]
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+---
+v2: Added WARN_ON if block group is NULL instead of jump to out block.
+v1: if block group is NULL, jump to out block.
 
-Does it really need all of those dependencies?  I know your development
-stack is deep here, but maybe I can unwind a bit of the file stuff to
-get this in for the next merge window (6.13-rc1) if those two aren't
-going to be planned for there.
+Compile tested only
 
-I'll look into this some more next week, thanks!
+ fs/btrfs/extent-tree.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-greg k-h
+diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+index a5966324607d..be031be3dfe5 100644
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -3455,6 +3455,13 @@ int btrfs_free_tree_block(struct btrfs_trans_handle *trans,
+ 
+ 	bg = btrfs_lookup_block_group(fs_info, buf->start);
+ 
++	if (WARN_ON(!bg)) {
++	    btrfs_abort_transaction(trans, -ENOENT);
++	    btrfs_err(fs_info, "block group not found for extent buffer %llu generation %llu root %llu transaction %llu",
++				buf->start, btrfs_header_generation(buf), root_id,
++				trans->transid);
++	    return -ENOENT;
++	}
+ 	if (btrfs_header_flag(buf, BTRFS_HEADER_FLAG_WRITTEN)) {
+ 		pin_down_extent(trans, bg, buf->start, buf->len, 1);
+ 		btrfs_put_block_group(bg);
+-- 
+2.46.1
+
 
