@@ -1,110 +1,134 @@
-Return-Path: <linux-kernel+bounces-340741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53E5E987748
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:09:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610ED987741
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E70911F2737D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:09:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47BCC1C227A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C006A15A4B0;
-	Thu, 26 Sep 2024 16:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176A0158DC3;
+	Thu, 26 Sep 2024 16:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S8qCmsUh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WxezdJbD"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA7415B57D
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727366930; cv=none; b=Sf6PPvao/59aEJDCW/cRrCv+o5inbJyvnL9ffC/8ThHJ4laaKncL5KyIBdRuxbXTKe9W84sq+3jxkxICR0Xh4KFTF9D8XpXGMFElfuSVOG3EMG6nhsJ0b1o3mTKbQ5+FRpUEQUy2velqCj7rwOX2sBnAiDJTYr/XdJBGsCAhS2s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727366930; c=relaxed/simple;
-	bh=Tye5qerO5CBCY8lsDm6znBw3VH/UFoDPiSxLCCPG9w4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gfyGUp3NIS4YO6zEx9DBKds1Aokqow9aHS8/g3Q952iHyckPxU78eGe8MteDOKHM1KIz3k3l7gJnZA3yL+Qv0ny39cZuw+aL3yvOTdc130sOjKatUbMKUE0z+8NQJj5egG7hk/YcJr7vjRY/1dJBeCnt/8bW9g0PSU8ox+OV1Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S8qCmsUh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727366927;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tye5qerO5CBCY8lsDm6znBw3VH/UFoDPiSxLCCPG9w4=;
-	b=S8qCmsUh7nvukf/56QwaWlcwsoPzNusxbMQlfVYE4di0wE+l/s/vA+3Gj+2VK3W6+9XZ34
-	eziHzaGmvYJxJ3/6PliYSrHjmCfdzLYONR4i0r/JKM19+++qMi7/aeLcJAxyQmtLYQCjiX
-	7oPmCjr76Dsn6t+7AwV4juxPYfcBAT0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-FPkTXSsUOLG-ml5MbKYVPg-1; Thu,
- 26 Sep 2024 12:08:44 -0400
-X-MC-Unique: FPkTXSsUOLG-ml5MbKYVPg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2D04419792DE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4716154BF8;
 	Thu, 26 Sep 2024 16:08:42 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.133])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 7C22E195605A;
-	Thu, 26 Sep 2024 16:08:38 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 26 Sep 2024 18:08:28 +0200 (CEST)
-Date: Thu, 26 Sep 2024 18:08:24 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Liao, Chang" <liaochang1@huawei.com>
-Cc: Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>, mhiramat@kernel.org,
-	peterz@infradead.org, mark.rutland@arm.com,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
-Message-ID: <20240926160823.GA2592@redhat.com>
-References: <20240919121719.2148361-1-liaochang1@huawei.com>
- <20240919141824.GB12149@redhat.com>
- <41fdfc47-4161-d2e4-6528-4079b660424f@huawei.com>
- <Zu2VdYrLWTJbVOAt@arm.com>
- <b90ce6f1-0d47-2429-5536-a8d5d91d6a70@huawei.com>
- <20240923071856.GA31866@willie-the-truck>
- <20240923105228.GB20793@redhat.com>
- <522284d3-9655-3703-00e9-33f358dbc78d@huawei.com>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727366924; cv=none; b=TIpeZlyhVYyULxzJd0UQeDTdHJ4xfatPCadLj+C7Gzplq/5Xp4LB8c6TUWmJfVy+U4Ame0Qh+CZtVnOVUK3IA7w8cHeKATFAav8md9TECl2qf+uSvDbYj42X+r5WqAwSXle+YkvG5LGJyR82rwQvvlNceKY3yrWkGC6TOvw/mnk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727366924; c=relaxed/simple;
+	bh=1CI/fpmiMGMi1J3jURicxvginVm5OIwiTVw57yhg7jw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XU6UWPxMqSmbEDoYGBDb/ZZtG9NxmndW4B0bhJ/DPCDIHfu7Su2ISVw23cFy3IHLkGFAaZOWqVdwp/wC3pDJdcNQmJ1o44qwS2el8Xu0subjGfpBNDVDkzMZvyk2o3J/XE9vaXl0rjo5et5VWot8V3H7ONgt5L/iogYga9OrOog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WxezdJbD; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso222543266b.1;
+        Thu, 26 Sep 2024 09:08:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727366920; x=1727971720; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gP+KVl3Nki9xP9jnHdY7npTezgVnfLdw1bgRUHESfM8=;
+        b=WxezdJbDm4Ku/25IVLpiBuwOhVL0TNqkjwq8309ob5Z8yWkOFUHe0Fr8KK0N0RZIPn
+         awY3IYxcGi87M1/nXtuA7qA0ESa0J0p0wavx9LVQ2xam15Yfb+n1lQwMJZqbYS4OlRM/
+         ckfsSL91wgXpR6GntOo0t+ft/qYyNMUNNXFVHgUB03Krdgpn6IEiCEMWsyyBnMdNARHs
+         YXwStHHNKI3CGwXSd3HmqTrLAQaajzWhfiNtO5TPo3rTLw0Nd6iNVDZqPmOLnlydPdDk
+         nE5+pM7y9ZeVu9on0d4WHSJ5Is9r6uyCgM/aXTiMkPpRA/tUr2xBM/1m8WNRYTqI5lYg
+         p+yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727366920; x=1727971720;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gP+KVl3Nki9xP9jnHdY7npTezgVnfLdw1bgRUHESfM8=;
+        b=k/d5MbSLUwVh0xptwzPtW5MatOWv/Vcdhy6Mqha3cvBuH+k2Mh135XKAQzpERp2y6x
+         LqghW8BQcC8ElOE7olL4i8X1zyFkJNz8n2EBPhHscjdwZ8EClR6584vl90ukL1EovKxv
+         SM2XEZbk1sqnAWZ9VbxMZQuIsCQJAGbbhXhVxjmBw128RxYHkjt1TyT+MqM2KgibO0Z9
+         82Uv7EOmxUFY+5t48wCDgOHN7rckhWoYn9G8sOFwJwOJ8YJZBYMYTCaM8rInjLnpegj2
+         XRVg0yF3LP5hn+3wpgCqWS5RnWYJHZ5IwAO3FGWzpZC5sH5Gv87CbIZtyvCglYQKtZud
+         AQIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHkCzSUFOyb0sachbKJe2o1Wb9cv2r7MN7h9bAxjuBq0/LHG/q6cHpUTaZ9d8jvoBllOid0vkD4WLbsKNb@vger.kernel.org, AJvYcCWDUTUJXvPzbLsVe/BiyRFoNHvENQTmMZvZ/Qm1bVX0gNCKYgMf0BLHtFJdYaJy1GNxNYUFEQZQlzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuVhIl81/Ost0LAK4II/ZskLHyQwNH1fKUFR1Oklt9RO62Nyfx
+	Qv4UQnbQ3GzueigBZD7i0xTI0S6i0WUlEr2jk+olYA+I4kKbqv53gQbE0ZnV
+X-Google-Smtp-Source: AGHT+IHJD6ELGXqZ1LcvJSbwjs53CX/iyOKOge9JOfylo2K10ErpdDcSnwB/LYDMcLoXoMRgMBLADg==
+X-Received: by 2002:a17:907:36cd:b0:a7a:acae:340b with SMTP id a640c23a62f3a-a93c32119afmr42883666b.31.1727366919820;
+        Thu, 26 Sep 2024 09:08:39 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-6d88-4cd9-a9d4-f267.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:6d88:4cd9:a9d4:f267])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c70d3sm13947966b.78.2024.09.26.09.08.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 09:08:38 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/4] iio: adc: use scoped device_for_each_childe_node()
+Date: Thu, 26 Sep 2024 18:08:36 +0200
+Message-Id: <20240926-iio_device_for_each_child_node_scoped-v1-0-64ca8a424578@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <522284d3-9655-3703-00e9-33f358dbc78d@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAASH9WYC/x2NXQqDMBAGryL73ICNP2CvUsqiu1+ahZJIAqUg3
+ t3Qx4Fh5qCKYqj06A4q+Fq1nBrcbx1JXNMbzrQx+d6P/eJnZ5ZZmyjgkAtjlcgS7aOcsoKr5B3
+ qZJuGEXOYdNmotfaCYL//5/k6zwvp/FZhdwAAAA==
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727366918; l=1474;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=1CI/fpmiMGMi1J3jURicxvginVm5OIwiTVw57yhg7jw=;
+ b=9sbPl0gcd83nFbHGowD5FIQz+dLJhH94gn6DMUgsGRmoscq/J8Acvc+dh92pABpm6VnlTSEw+
+ rKGP2hFhzmLAOHlJD6dEO29nVZ5b7zWDqDL/ztTqX/8J9DlWpX+pgIi
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On 09/26, Liao, Chang wrote:
->
-> 在 2024/9/23 18:52, Oleg Nesterov 写道:
-> > On 09/23, Will Deacon wrote:
-> >>
-> >> However, we should use __GFP_ZERO anyway
-> >> because I don't think it's a good idea to map an uninitialised page into
-> >> userspace.
-> >
-> > Agreed, and imo this even needs a separate "fix info leak" patch.
->
-> Do you mean to fill the entire page with CPU specific illegal instructions
-> in this patch?
+The device_for_each_child_node() macro requires calls to
+fwnode_handle_put() upon early exits (break/return), and that has been a
+constant source of bugs in the kernel.
 
-Hmm. Why?? No... OK, I'll write the changelog and send the trivial patch
-in a minute.
+This series switches to the more secure, scoped version of the macro
+in the IIO subsystem, wherever the loop contains error paths. This
+change simplifies the code and removes the explicit calls to
+fwnode_handle_put(). In all cases the child node is only used for
+parsing, and not assigned to be used later.
 
-Oleg.
+The straightforward uses of the loop with no error paths have been left
+untouched, as their simplicity justifies the non-scoped variant.
+
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (4):
+      iio: adc: qcom-pm8xxx-xoadc: use scoped device_for_each_child_node()
+      iio: adc: qcom-spmi-vadc: use scoped device_for_each_child_node()
+      iio: adc: sun20i-gpadc: use scoped device_for_each_child_node()
+      iio: adc: ad5755: use scoped device_for_each_child_node()
+
+ drivers/iio/adc/qcom-pm8xxx-xoadc.c |  8 +++-----
+ drivers/iio/adc/qcom-spmi-vadc.c    |  7 ++-----
+ drivers/iio/adc/sun20i-gpadc-iio.c  |  7 ++-----
+ drivers/iio/dac/ad5755.c            | 11 +++--------
+ 4 files changed, 10 insertions(+), 23 deletions(-)
+---
+base-commit: 92fc9636d1471b7f68bfee70c776f7f77e747b97
+change-id: 20240926-iio_device_for_each_child_node_scoped-cb534e6f5d9b
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
