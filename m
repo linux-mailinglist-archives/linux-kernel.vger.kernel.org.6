@@ -1,101 +1,78 @@
-Return-Path: <linux-kernel+bounces-340957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C9C98797D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:58:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 142FD987983
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE4B28747D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:58:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1B29286EF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D169C17A591;
-	Thu, 26 Sep 2024 18:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64FE15ECDF;
+	Thu, 26 Sep 2024 19:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="eNmc+Qah"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cTY/ZkbL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F36B15B98E;
-	Thu, 26 Sep 2024 18:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AF41D5AC5
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 19:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727377101; cv=none; b=AHgHPsUvuoTVtfvC4OjlJF+BRkD7si0VUZJSswn2rcyRLdJWSkrViyrDsvOPi+3pk8ztBbt63VN24fui5ehc09hujHe8DRkv0DY9b5NLykj1kI5W1r8JbazWHrkUC8LT7FR5aoTLgrTuiWp/pcghyLu3Sl3EsPf7MG7t3G3zg0Q=
+	t=1727377738; cv=none; b=TIANB43BOT4nVNRkfJuCjQmANrJA2fJ6J4Mus3Bo6lE8g2PqMAx5ZGEz6KgEeknWQjVYiGSDneKCoIVUpt6NeJ0tpVzF/wOvweAIGaRUx05M+1RAMNgQ9X3CawB8bo7sIp8MVnyjGsvUEy2M92q/ijVbgrlspp4b0uEeI7LSjM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727377101; c=relaxed/simple;
-	bh=nFOuKnkaTmIkn6GiEorRCB9FV+6ha31zO84j5crpkY0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m6XLt4R+jLQg8Y82Hjeac/NCkCyKMrRmScPgMHUNi+RtYbOTh0HF8BiPnPb05H8rGGLhJz3Se8xYqqy1OhoXyFgE9fn7RU7TUEXy120Ec7rK4dA0s/kasrRcLXEvjLzEpDGHmJOGK8AJ1S2qMkdqtztcamf8r6H+GaBCjhtB2fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=eNmc+Qah; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1727377096; x=1727636296;
-	bh=MY/ZvB0yi1dIucSZzljqvB4KqcbC9zKa10VJMi+Shxg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=eNmc+Qah1iuFhuit9fCzpb6eaSuWVKd/NfqP3FMLfrcWo4BUWyIeXuCFbpIrEmxVN
-	 9PMyLF922uEhwE7eiMZHag8WGBlNsQOqwWcZt+3rja8XdjSmJLkEQ0RjHWM6wfFGgE
-	 RP4JfL83yNIbpWEYFWqyTXlTzURzyorjQdoxGLgEmXn9oOqewdqdYbZ0+gILeLVU4x
-	 on5u9vzC4nnwCPY1GcXPprlpelP0o23FE0G8ceUoyCEf0gl7XbDUa6Hvh9Y6gVDkqe
-	 1T2bf4uU5JlWcjdWyX1sJ/D7eVnB4P47r/5HxtcyFNX6/3uQqt7DBxtBmuOM1t7cVD
-	 I/XatSfu55B1w==
-Date: Thu, 26 Sep 2024 18:58:10 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Miscdevices in Rust
-Message-ID: <f7820784-9d9c-4ab9-8c84-b010fead8321@proton.me>
-In-Reply-To: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
-References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: b96f335b3237fcac0256ede9a308460b398ca769
+	s=arc-20240116; t=1727377738; c=relaxed/simple;
+	bh=W4Vwz79B7/UebOZ9Pi90NzzLOkD92zmgBMX3RQUvfbo=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FMQyihsOMDkCB3KiIb91D5Ndc0+gDM27jgAVR03pJKchf/faWvjXZRMqb2jbFmBGfdmeNhjmHzzt2q+vNyDFXm/SA1UnD8Vbxte9w02/3XKopnDVDVuAM7LZh6TSGLexIbOU61dhOZAi7vzquhZKt+aznmVG89Bnda738KWaP1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cTY/ZkbL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDAA2C4CEC5;
+	Thu, 26 Sep 2024 19:08:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727377737;
+	bh=W4Vwz79B7/UebOZ9Pi90NzzLOkD92zmgBMX3RQUvfbo=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=cTY/ZkbLuGmyDCm4OVh3X83/xPn7LFa+fmfXC9swWRlW11Z3Lox/Q9VAIID6QTQBi
+	 /eZhRUw09OKvQZTtvSVN9dmj/WHjfcjNjwp8b0QzsWicPklc+1cC0B8CyqXPErDTxt
+	 BXgKGu0jFBoPJFKSivYKfHC+4KpEjqdNQL2iGI92Z6DDqOtWEfLMCNlZPBsxD/Bz8m
+	 j1YFxV/7kb6ZK3PSeHjHV1+3AxF/OkakxcQUDnNqC/WQKc7cBzBVMUOicySkEZCqT2
+	 DECE5Ky1uH6OSSbAwKGOzJse+CRIDNcOnK+Im4C0H4mvHQARpXzG2EUrCZzA7Gk4JV
+	 y8YqJU24LcQEQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE4CD3809A8F;
+	Thu, 26 Sep 2024 19:09:01 +0000 (UTC)
+Subject: Re: [GIT PULL] soc: convert ep93xx to devicetree
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <6c10bab5-e5a5-4969-b28d-11d8a1d5d587@app.fastmail.com>
+References: <6c10bab5-e5a5-4969-b28d-11d8a1d5d587@app.fastmail.com>
+X-PR-Tracked-List-Id: <linux-arm-kernel.lists.infradead.org>
+X-PR-Tracked-Message-Id: <6c10bab5-e5a5-4969-b28d-11d8a1d5d587@app.fastmail.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-ep93xx-dt-6.12
+X-PR-Tracked-Commit-Id: e3eb39e6bab564ed430172f37be835f84e923c23
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 075dbe9f6e3c21596c5245826a4ee1f1c1676eb8
+Message-Id: <172737774015.1364780.14805978363792235604.pr-tracker-bot@kernel.org>
+Date: Thu, 26 Sep 2024 19:09:00 +0000
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Nikita Shubin <nikita.shubin@maquefel.me>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, soc@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-On 26.09.24 16:58, Alice Ryhl wrote:
-> A misc device is generally the best place to start with your first Rust
-> driver, so having abstractions for miscdevice in Rust will be important
-> for our ability to teach Rust to kernel developers.
+The pull request you sent on Thu, 26 Sep 2024 18:10:12 +0200:
 
-Sounds good!
+> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-ep93xx-dt-6.12
 
-> I intend to add a sample driver using these abstractions, and I also
-> intend to use it in Rust Binder to handle the case where binderfs is
-> turned off.
->=20
-> I know that the patchset is still a bit rough. It could use some work on
-> the file position aspect. But I'm sending this out now to get feedback
-> on the overall approach.
->=20
-> This patchset depends on files [1] and vma [2].
->=20
-> Link: https://lore.kernel.org/all/20240915-alice-file-v10-0-88484f7a3dcf@=
-google.com/ [1]
-> Link: https://lore.kernel.org/all/20240806-vma-v5-1-04018f05de2b@google.c=
-om/ [2]
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-> Alice Ryhl (3):
->       rust: types: add Opaque::try_ffi_init
->       rust: file: add f_pos and set_f_pos
->       rust: miscdevice: add abstraction for defining miscdevices
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/075dbe9f6e3c21596c5245826a4ee1f1c1676eb8
 
-I recall that we had a sample miscdev driver in the old rust branch. Can
-you include that in this series, or is there still some stuff missing? I
-think it would be really useful for people that want to implement such a
-driver to have something to look at.
+Thank you!
 
----
-Cheers,
-Benno
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
