@@ -1,87 +1,131 @@
-Return-Path: <linux-kernel+bounces-340818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F98987833
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:15:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C292F987834
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A839CB2834B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:15:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A8D1F277F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3B515B0FA;
-	Thu, 26 Sep 2024 17:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDFD15B0FA;
+	Thu, 26 Sep 2024 17:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ahvJ6ELI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4Y3JgBns"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i0/5TG8i"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E332D4A32;
-	Thu, 26 Sep 2024 17:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EE03FF1
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727370921; cv=none; b=plYULRX+c+HKD0fjTE4uTiz7TAURsUW9Fsz4K6D3U04TLLy/dK9Iqr3vYUAX8UnDutnx7fdyPXaIi5AHD9y/n0s8a37rKmn8U1c26pUAt8XAC2hgimQ/VMfOKaGj7c+SDU7OlqKfxx25wJL29ibXF32JTf4otk/yVydf+vMTxcE=
+	t=1727370957; cv=none; b=aw+85X0BIXZelEK7IB63GZ9TejHtd6xEcQWcgVlaSr99Kj4Scvz3QVTXviVBhJrYAOYutGkOSnZvVBxXaFBPOYI1ZSkyBEsDsu8RueBMI+gJGi67inZPEErojeJRk8HUv0HgzwtCN2jFnNQt+oD+LxQCv0R1SKVjw1IvrKMdSP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727370921; c=relaxed/simple;
-	bh=KTd/7DeF4THfRHYleD7QLnvHZc/zNNrR8yFGwvG2RY8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DtPH5acS7GkM8sQ0KeNKY5VVD0k6uT7g5S3MKUnWpclcrpBM9J7BjCzyMlnaYNop28ZU+QiLGuAvE7AYJ5T9FnbUHKzbdHb7cxGzuSgZxC7OUP59Q3hb60slIqfNhEaQRC6RjVAVJB/o5xQJyerXFBJvBrq391lNtlW+psz/Xwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ahvJ6ELI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4Y3JgBns; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727370917;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KTd/7DeF4THfRHYleD7QLnvHZc/zNNrR8yFGwvG2RY8=;
-	b=ahvJ6ELIl6HZ1GowgArOlJZ3graTTJCM1TMd6gTRZF0JnjiHa1+laun3yE+6gMxj72TGi9
-	aQttl0E63C8ueINWyKuwaVVaCjk8Ubo8NKCbg0mOCoUD/SXOQs0U1lsK0PMxkCDzQmaVKM
-	WiUtUhZpq/w5O9ahOGGRZNBjwV5Vqej43dmZ0vukDQcltWnFdxHTkahXUbsXWai6y3tHCh
-	cGwb0nSfYPT9ynsJbU6XRe6QMU+SRNIQtXN1WIUQfAc9OpmaJF3GVyxpREqHbY10xw35LB
-	8GPgTxbos9G4xu6IUViqz6R+q8hxOqqmxN2/xzwyh8qPtkdfH/AOAmRNTaz9mg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727370917;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KTd/7DeF4THfRHYleD7QLnvHZc/zNNrR8yFGwvG2RY8=;
-	b=4Y3JgBnscp978klURKEZ5GjD46AyW3kzcHErxdzmgeqKd91C6iDovYAJY38DGXlo6vRYij
-	7IwYtx/0orZHPIAg==
-To: Shuah Khan <skhan@linuxfoundation.org>, jstultz@google.com,
- sboyd@kernel.org, shuah@kernel.org
-Cc: Shuah Khan <skhan@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 0/2] timers test fix and duplicate defines cleanup
-In-Reply-To: <cover.1727191485.git.skhan@linuxfoundation.org>
-References: <cover.1727191485.git.skhan@linuxfoundation.org>
-Date: Thu, 26 Sep 2024 19:15:17 +0200
-Message-ID: <877cay2v6i.ffs@tglx>
+	s=arc-20240116; t=1727370957; c=relaxed/simple;
+	bh=8Z9QXJ2eIFePE4Q+M3ttCNU/wCNcB/FJYMIBgdLUyTg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NoSzvU9inL+sb3kOqNbHjAMla6a/p5jjUKWE01+KqMiEuVOXvcA1EKz3n5nEZH9KhflOvv+3BXTbavg+X2O+6mYnjhCY6W836k93WHYHt2XgXuyaZKDwkv1cSZ44p+PlyZglzNRQNfnYf5tP/AKvT3wc5e1he0TZmiPnX9mDI3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=i0/5TG8i; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f753375394so12313211fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:15:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727370950; x=1727975750; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Z9QXJ2eIFePE4Q+M3ttCNU/wCNcB/FJYMIBgdLUyTg=;
+        b=i0/5TG8iulAzmQzftLWX5xSPeRo8jWLzXTzB6Ga1Nxo2hopHlRLACkhUpJq06vsLcP
+         cB6wSACrMt+uet9uoGIgskjRinIQ+SjsyE9L6B0+GqjMIIvYoYM7PC3OjY8VWOmgd7bh
+         +myd78KDUPEWviPeVPhs8J0bmmHZROFwzEpSs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727370950; x=1727975750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8Z9QXJ2eIFePE4Q+M3ttCNU/wCNcB/FJYMIBgdLUyTg=;
+        b=aGCu7uSeAlVJ/4ec0yV53J5xJb2rzhp1mwYX1zgz5EuVBk0yFI88cxBzgv+uQ32WtN
+         9z6t3RrVt2qcIEafx63Icda8Pdus3N+0hiLB2b34pJzGUW44LmwXl+cdzICnyzv+6U+P
+         ItrCob7VdqYDM4qon8tYCFKCE6AkrFiNFgpdRHgzo8+O1iqVf/SUm3zWmeY66V4aHPmC
+         S1x9xj95gxvg0B0bZuY+doBZUaT3/u/sqMCpD43w0Zvm8azmFFu4HjtzyWPYLSINX5wb
+         wcFCqps8qDlxq4Uc2KmJdDKjwMoJDT7PxdN7Ev56ELokeiHZmSix+gw2ZPuDT15iHnV3
+         uaZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkDcgRNNwL0x+f4gh1kx8TXJbHT5HJ16WFtQ1lAUq2EHWR12KvYP/0zb5ogpKOM9mPAsXJCU7UmPIXqKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSiowRHVOaShkl5ohSVS33teIKMuR0ZQ8ZJnmA2gRq12NYGwFx
+	EdL2+dqEkNV+2r92TUwzVGUUIF8yXlE2HLPcWtXvYxQg1+qqICZSLOYRjg+boccCR2E/4IX6/57
+	8Bg==
+X-Google-Smtp-Source: AGHT+IGhQA3hV23xmckisUtgY9UK9oklQkgLNjQPcaIDnItI5bAvtSeT6BxYDAq2krs/NaOd8KzfNQ==
+X-Received: by 2002:a05:651c:19a9:b0:2f6:263d:96aa with SMTP id 38308e7fff4ca-2f9d3e3ec11mr2792441fa.3.1727370950153;
+        Thu, 26 Sep 2024 10:15:50 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f9d45d69a0sm166321fa.29.2024.09.26.10.15.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Sep 2024 10:15:49 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f75aaaade6so14857421fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:15:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUtxGboz8AQi7OSGOqRTeZ1J/wr61/6gdT2qGLpHTsL1V7cuqDC8MQk3LHordEkPMvaZG+MVSbnExl4kVM=@vger.kernel.org
+X-Received: by 2002:a05:651c:2220:b0:2ef:2bb4:45d with SMTP id
+ 38308e7fff4ca-2f9d3e38033mr3647841fa.9.1727370947964; Thu, 26 Sep 2024
+ 10:15:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240926092931.3870342-1-treapking@chromium.org> <20240926092931.3870342-2-treapking@chromium.org>
+In-Reply-To: <20240926092931.3870342-2-treapking@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 26 Sep 2024 10:15:32 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V5Yf1shF2eKCYOxu=x48cScTh8WXkcm4Xvr1qJnSn1Kg@mail.gmail.com>
+Message-ID: <CAD=FV=V5Yf1shF2eKCYOxu=x48cScTh8WXkcm4Xvr1qJnSn1Kg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] drm/bridge: anx7625: Drop EDID cache on bridge
+ power off
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: Xin Ji <xji@analogixsemi.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Sam Ravnborg <sam@ravnborg.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24 2024 at 09:56, Shuah Khan wrote:
+Hi,
 
-> The first patch in this two patch fixes warn_unused_result compile
-> time warning in posix_timers test.
+On Thu, Sep 26, 2024 at 2:29=E2=80=AFAM Pin-yen Lin <treapking@chromium.org=
+> wrote:
 >
-> The second patch removes local NSEC_PER_SEC and USEC_PER_SEC defines.
-> NSEC_PER_SEC and USEC_PER_SEC are defines in several timers tests.
-> These defines are inconsistent with variations of ULL, LL, etc. without
-> any explanation why it is necessary.
+> The bridge might miss the display change events when it's powered off.
+> This happens when a user changes the external monitor when the system
+> is suspended and the embedded controller doesn't not wake AP up.
 >
-> These defines can be picked up from include/vdso/time64.h header
-> file. In the interest of making it easier to maintain, remove the
-> local defines. Include include/vdso/time64.h instead. This change
-> will also make the defines consistent.
+> It's also observed that one DP-to-HDMI bridge doesn't work correctly
+> when there is no EDID read after it is powered on.
+>
+> Drop the cache to force an EDID read after system resume to fix this.
+>
+> Fixes: 8bdfc5dae4e3 ("drm/bridge: anx7625: Add anx7625 MIPI DSI/DPI to DP=
+")
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+I don't think it needs a re-spin, but for future reference you're
+always supposed to move your own Signed-off-by to the bottom whenever
+you "touch" a patch. Thus yours should be below Dmitry's tag.
+
+In any case,
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+
+If these haven't been applied and there's no other feedback at the end
+of next week I'll plan to apply both this and the next patch to
+drm-misc-fixes.
+
+
+-Doug
 
