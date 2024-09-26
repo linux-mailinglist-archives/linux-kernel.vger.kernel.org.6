@@ -1,113 +1,149 @@
-Return-Path: <linux-kernel+bounces-340955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF76987976
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:54:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C0798797A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE9F2280A6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:54:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3121B287113
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241E11741E8;
-	Thu, 26 Sep 2024 18:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874EA176AD7;
+	Thu, 26 Sep 2024 18:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sh53+aA1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GoV+tMtp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FF24A24;
-	Thu, 26 Sep 2024 18:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB0C15B98E;
+	Thu, 26 Sep 2024 18:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727376836; cv=none; b=PoyX9O/LRB7VwPUt8046aHsSVR+wYMTCFd18/kKkkzWF/8txyjHB6zknzvshrXgLnNbTBZdwoKaY7NVQ6gNYametp+TfBdSYkxXJ8MG19i901/ypi0M9U+LrZaGAi3oDoaWuuswfp4e8vM26kxBBoTnBPjWnBeLtMArm/snAMgk=
+	t=1727377057; cv=none; b=Ex79cYw9O82gMCY4HX2PQJmi99q/8iNeIIUeGt9qNixkinyUU7QYHQjtotgF3YoXipDdv3xAtv6tkPKPa1BvJEMEvn0e3OP6iC2SVZrW1hF1ZEQWEKPMthW1/EXFmhjZTQtwrFYcLEPSt5XKNBRDR/QnsQhEx47sz99X+EJ4rNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727376836; c=relaxed/simple;
-	bh=GjhL1DklTV864soyZ8shLVXWedXxRjEAjQPHytr+Lbo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sbBQ8pq0sV1SbdBoXKTxBNp6Xa8uHgIgCNOnRFAAMdZlgEcrptk4S5qg+xPbby9r3pRsTCb18cpwoTzNvJBuxaBK/Aya056FETTnUO1yapBKpYrVv5SJD7WC4rHSL4fJLpKbbkAx+80Nx192RUHStwErI+D9wgPLIJaW7vMdf64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sh53+aA1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E045BC4CEC5;
-	Thu, 26 Sep 2024 18:53:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727376836;
-	bh=GjhL1DklTV864soyZ8shLVXWedXxRjEAjQPHytr+Lbo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sh53+aA1D1BqJffmLPj4DE6Owxvt0S/63gofJfCX+OeUUvXxpSzouXFynWYc40VpK
-	 yqClJngTiWkPsB6KY5b0MteWFr2HTx2Ttlz8nD7v46QzXzNs1zoAJ0H2WcA8xbWsuL
-	 /Rz3+gVN89XQuU5Sc6HfpfymBDUpY56efS6qKXuAqib6wuyzPANQx63L8pqFTzMxuY
-	 lUbXOzSBpUhcktsAAWE07Ru19xMS444WsWa+NStGiGzz6fbkDPJLjBoaTssOLKdD+P
-	 ygVHyRdFX+6tSQ32iLrapXRVRTWprRuMrowsfYMnMHqaHSdKFjHyDqAthr9RdkpLeR
-	 w/e9ehEAUh/sA==
-Message-ID: <a7b94f15-114f-4088-9920-8cef790fc354@kernel.org>
-Date: Thu, 26 Sep 2024 13:53:54 -0500
+	s=arc-20240116; t=1727377057; c=relaxed/simple;
+	bh=0omD3fzYrOSjwEjXMO2jmFjlFDpokzhSrIuQ7Z0EIjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aB8/1/jSjWq+PQC3R7d8sb87CcKhHXbSgREp/FYB2QXMGlSSkRMoQe+BSM3i0+us7RhD6wtx6PAfaZJzjo5gH57MqbpbiISpzuOhCLDul/ajvnuBx/bSSi7X5Dc5Q6rxHVbnhGiVaUTSZr3spfn8NDVjC4Kf21nGM1k/pCHy/oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GoV+tMtp; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727377056; x=1758913056;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0omD3fzYrOSjwEjXMO2jmFjlFDpokzhSrIuQ7Z0EIjQ=;
+  b=GoV+tMtpO/bGSaNEQmTzZ+k0bu2i7NR03QMRQeT2XRE2pQlJ84xs0R+K
+   SaRBnCEW3f5t6RG4IEqwEJYCJxroCD5IvTIXkZCH5EQQ94H8P2Byft0+s
+   IXPckri5306LHVRi1y3J30iILK1lW82hoXDPwU/Qx8UrG+od3IVJlOHJ5
+   5nViQS/Qp6W0Nj+Oka4281HKHcuOsv1rke5qya0IHr5M1ROA1HucC2m2Z
+   P598EgEdgZSsF+uF7schhPdz5RhYH6DiK69Y1O6z1LFMS3seJ7VtWfmrp
+   V4J7YcRCQxJtmg1HJRGlJAduMjD089lJRHF253za6eFuAHsvjAB/eT0GJ
+   w==;
+X-CSE-ConnectionGUID: BhIXFjH2QB62IUezKCmNag==
+X-CSE-MsgGUID: Y3shEXNLSNyxCrdtJstDMg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26448688"
+X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
+   d="scan'208";a="26448688"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 11:57:35 -0700
+X-CSE-ConnectionGUID: hgu0IQX0TTOFpSYxdEpA2g==
+X-CSE-MsgGUID: wd/12+7yTV6utez+McuSwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,156,1725346800"; 
+   d="scan'208";a="71865853"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 11:57:31 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 5679611F843;
+	Thu, 26 Sep 2024 21:57:29 +0300 (EEST)
+Date: Thu, 26 Sep 2024 18:57:29 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Prabhakar <prabhakar.csengg@gmail.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 11/11] media: i2c: ov5645: Report streams using frame
+ descriptors
+Message-ID: <ZvWumaGsMPGGwPaS@kekkonen.localdomain>
+References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240910170610.226189-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <ZvWBlivUaZ92KoAI@kekkonen.localdomain>
+ <20240926174819.GK21788@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 2/2] platform/x86/amd: pmf: Add manual control support
-To: Antheas Kapenekakis <lkml@antheas.dev>
-Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Hans de Goede
- <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, "Luke D . Jones" <luke@ljones.dev>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- "open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>, me@kylegospodneti.ch,
- Denis Benato <benato.denis96@gmail.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20240926025955.1728766-1-superm1@kernel.org>
- <20240926025955.1728766-3-superm1@kernel.org>
- <CAGwozwGXh1RV96hvSEd3HQoKGY+DeRPrhcKMxJUu7STRZURsmg@mail.gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <CAGwozwGXh1RV96hvSEd3HQoKGY+DeRPrhcKMxJUu7STRZURsmg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926174819.GK21788@pendragon.ideasonboard.com>
 
-On 9/26/2024 03:52, Antheas Kapenekakis wrote:
-> Hi Mario,
+On Thu, Sep 26, 2024 at 08:48:19PM +0300, Laurent Pinchart wrote:
+> On Thu, Sep 26, 2024 at 03:45:26PM +0000, Sakari Ailus wrote:
+> > Hi Prabhakar,
+> > 
+> > Thanks for the set. It looks largely very nice to me, after addressing
+> > Laurent's comments. A few comments here and possibly on other patches...
+> > 
+> > On Tue, Sep 10, 2024 at 06:06:10PM +0100, Prabhakar wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > 
+> > > Implement the .get_frame_desc() subdev operation to report information
+> > > about streams to the connected CSI-2 receiver. This is required to let
+> > > the CSI-2 receiver driver know about virtual channels and data types for
+> > > each stream.
+> > > 
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > ---
+> > >  drivers/media/i2c/ov5645.c | 28 ++++++++++++++++++++++++++++
+> > >  1 file changed, 28 insertions(+)
+> > > 
+> > > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> > > index 7f1133292ffc..c24eb6e7a7b5 100644
+> > > --- a/drivers/media/i2c/ov5645.c
+> > > +++ b/drivers/media/i2c/ov5645.c
+> > > @@ -28,6 +28,7 @@
+> > >  #include <linux/regulator/consumer.h>
+> > >  #include <linux/slab.h>
+> > >  #include <linux/types.h>
+> > > +#include <media/mipi-csi2.h>
+> > >  #include <media/v4l2-ctrls.h>
+> > >  #include <media/v4l2-event.h>
+> > >  #include <media/v4l2-fwnode.h>
+> > > @@ -829,6 +830,32 @@ static const struct v4l2_ctrl_ops ov5645_ctrl_ops = {
+> > >  	.s_ctrl = ov5645_s_ctrl,
+> > >  };
+> > >  
+> > > +static int ov5645_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
+> > > +				 struct v4l2_mbus_frame_desc *fd)
+> > > +{
+> > > +	const struct v4l2_mbus_framefmt *fmt;
+> > > +	struct v4l2_subdev_state *state;
+> > > +
+> > > +	if (pad != OV5645_PAD_SOURCE)
+> > > +		return -EINVAL;
+> > 
+> > As you have a single source pad, and pretty much all sensor drivers will, I
+> > think it'd be nice to add a check for this (that it's not an internal pad)
+> > to the caller side in v4l2-subdev.c. And of course drop this one.
 > 
-> It is fine to require a module parameter for turning on custom profiles.
-> 
-> However, distributions such as Bazzite use per-device kernel
-> parameters, which, while user accessible, will not be modified by the
-> user for 95% of use-cases. In fact, the Bazzite update system manages
-> the kernel parameters of devices automatically.
-> 
-> What this would mean in practice is that for devices where this custom
-> control may be used, the module parameter will be set globally for all
-> of them and taint their kernels.
-> 
-> Instead, only taint the kernel when entering custom mode. If combined
-> with something such as `custom_mode_choices`, only taint the kernel if
-> `amd-pmf-user` is selected after that.
+> What check would you add, just verifying that the pad is a source pad ?
 
-Yeah if we continue down a variation of this direction that is a 
-sensible change to push the taint down to only when in it's actually 
-been used, not just when the module parameter is set.
+I think you could add that, too, besides the absence of the internal flag.
 
-> 
->> +{
->> +       add_taint(TAINT_CPU_OUT_OF_SPEC, LOCKDEP_STILL_OK);
->> +       pr_crit("Manual PMF control is enabled, please disable it before "
->> +               "reporting any bugs unrelated to PMF.\n");
->> +}
-> 
-> "Manual PMF control is enabled. If the device supports other ways of
-> thermal management, please use those before reporting any bugs
-> unrelated to PMF. If not, only if setting TDP is required for testing
-> (e.g., under load in specific thermal conditions), proceed with the
-> understanding that this module may cause interference, especially with
-> the amd-gpu driver, the suspend process, and, if the parameters are
-> out of spec, general stability of the system."
-> 
-> Antheas
-
+-- 
+Sakari Ailus
 
