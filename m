@@ -1,101 +1,123 @@
-Return-Path: <linux-kernel+bounces-341038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8DE987A9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:20:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D997987AA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 23:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228DD1C21F09
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:20:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 950681C21EB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 21:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CF918801A;
-	Thu, 26 Sep 2024 21:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7351885AF;
+	Thu, 26 Sep 2024 21:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFSV61e/"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/YUC4PG"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFC518800D;
-	Thu, 26 Sep 2024 21:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C0A18800D;
+	Thu, 26 Sep 2024 21:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727385555; cv=none; b=o+0pfJ6ansfcf2QjyqQrevvEMNp5k9NT1vY8lhFzibFYvwUobC+w60aj1i7IGehKtUUo8S0jeTviU/uyLr+qG6MfEX45HhclzgpFhb6fMyE08naP2nw3YLCQoViOgO0KI73Q1NF97X4CoXn3Ns6BT99ncjdPIwj5CmqEhUa4eqQ=
+	t=1727385560; cv=none; b=RyNAc/7qadINu9qzmzk1phxVM7Qe9KUXjtQ69lJhHdrCax49pONdRFCyzV90dhw7qlPcgoa8alro+6M7BVR7IbLiKAHL7TJUwG1vb/Gcqw9W7pWMKLFxO8cdfD2Ed8qMflKY1cQFSlgfO1lRiUQFVqUlbOTpAdG4svNKQKJ2aMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727385555; c=relaxed/simple;
-	bh=YEKHoo43BF79Gz23kSQAk8+dmLPPoq5zevMJhdfoyBE=;
+	s=arc-20240116; t=1727385560; c=relaxed/simple;
+	bh=kDsArXBf6a8j6EERJV+eipbquN7VuWFS+lqT9h5+qQc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LaCT/7XyKnOMExN1odW21luv8JM7yd0+81CSrXfMStVJV/JO7rkxe/JfXQiv/jARrq36x0HGy30wlY6+y5bHTsrJDDQOeSBJ+KIyCZQIoG3VijFtU4333m63ZPTfMCHsLZgkiHY8UvQAlPa38+hWnOJclCytevwkOQKu+7Y8bgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bFSV61e/; arc=none smtp.client-ip=209.85.210.181
+	 To:Cc:Content-Type; b=MeAx7yQqx957TF/5Fm9dLD5pe2NtdTWDYrisVDfoRdsVRxe4LzTo5e/mbIr3Zo3G6moSpGkG0hT8EKRKCFZq3Om3GLvWERzgNc51Rq48sKex8Vqc2eHDt4IvNhIbvZbsLtk14FGtWdsfXtH/kBRJTJSMq/sSaNy0I7XxOaI3yAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S/YUC4PG; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7191f1875d3so186132b3a.0;
-        Thu, 26 Sep 2024 14:19:13 -0700 (PDT)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e0b467da03so88824a91.2;
+        Thu, 26 Sep 2024 14:19:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727385553; x=1727990353; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727385558; x=1727990358; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YEKHoo43BF79Gz23kSQAk8+dmLPPoq5zevMJhdfoyBE=;
-        b=bFSV61e/gDKqsybBBvT6RaulbvIKrgZJYCFOAvwSdaH+zSOGBz1SfnCP1xWvBEiY+B
-         jwZ61i2mrqpWDG2k+bOTqRURdDiJWBJNpy7leOyqTHTmxgNln9sHjBRSbjY9W4zU9M6A
-         aCuIQEsss1vzDIYxFpuyT6LbkSz0VuOh+pl/eVEEIBoR1iCqeuFzB+gyyrmHC6GR/o0w
-         F2Rh2RdYU5ufOSfVAtpKA0d3lI0vyx2d2Ji+3kpWy1bpC5Lv6moTGIE5UcUClzHuVHrZ
-         i40lGy6mL19a6HH/hu0BWqR4Xmt9G4U4mGqRJnRN0e3kv2NVLZU+FGTgBSB2rUIcVTc8
-         QXMw==
+        bh=ZT6vThl0w6DW/3vNhpd4p3yZrCiKGVkkePEpwNafr6M=;
+        b=S/YUC4PG1A38zAn+zUB0pOfsmCj+QE2mE1rtpLBl9kOoIVTztXWSm7WzwH0fJHaOYF
+         Wl8sdUlMBK5wQ62w6It33G8L4RMKtr3SnxC85SJohPljm8W8Ur4+5JixgmRXo3QIKNJB
+         Rf2eHqLdfaSLp0LNPs7G7LPgXmbw+/genWzK+mJKSQZbVq52nMW9TUdfx1v08ltbWZ+j
+         wkXCDDH7aydB0JOkb78rbx6Nm/tHXoHu/LqnDafBgTBjEoBuUT5kZPDicmFBIUmk5+n6
+         U4UPAxSP90mfg6Vjh9jLvCaMfQCrlTSQUWKfd90DUhLaYC3LeFhHED/aDpCG3dJ1hR+r
+         FzXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727385553; x=1727990353;
+        d=1e100.net; s=20230601; t=1727385558; x=1727990358;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YEKHoo43BF79Gz23kSQAk8+dmLPPoq5zevMJhdfoyBE=;
-        b=HuCpDzPX0mhcGzxyPdR47dYkW//jmsSU84dTNIWEXLWcM3PzVvdsZXC2p1JAG2HyvZ
-         Afiyci/lLPE6XVNouOwNEwxdnllP52amg4CJxQNJyKGX2JYpwKjV7awTsNBdSpEk5Mgc
-         kDrf0e4YPque4GC8rxIesyp19E17pIqejA7+3VXzpndTIS+ZQoofkDJaVaEfeFG8wZ4V
-         6/Cyypit8a19NC1ZLGB9Wrdp6b2tlFlgHmisxIrDDGFqDIQGUrF+gkkm+s0b/OMhaHdd
-         sv4I9K948d0tBKW8ShmMPM6ISErv61bRKct5Sk20A25Jl9KKtZcgORKVNwT49Mkw9Qik
-         7BZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsexJ8EEDVjwcYEL+ddqvlGV+paitQSIwgVfkLslD994JfkeTG6VMLGNbecxKT6iqxUioGvFhQUYUaMCE=@vger.kernel.org, AJvYcCXfbgtVCuPUx4SN2Ul1/7l5NJ+ytyhOmFea+4sYcx+WWyqHlTG+aKB4UX2gGXz/TFQyiEiQcfNJqeaCO0hbs3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzts3wSWPbOpxpqvD3Fv0Uk2YkqzObVO4eyaCcPusvNN2U/abA
-	2t6ku2l0GdLDl4RjtAW9q3AoxZn3dz8JJx5bsYsqXQG+E2STYVTLIfnrw1OnKtvRy5CLKkMwHoV
-	GbyT0lQc3TkLZ6UmyW5pJ2g+EMYk=
-X-Google-Smtp-Source: AGHT+IHULP3pU3vUe/QzsEsWGXZyg5HaYhsoOAbzA5msEXfvnbs+cNXkKhwNX7aRIH724eXaazA1vELV1IzArwEqRhI=
-X-Received: by 2002:a05:6a00:1407:b0:70d:2c09:45ff with SMTP id
- d2e1a72fcca58-71b2604d429mr749238b3a.4.1727385553106; Thu, 26 Sep 2024
- 14:19:13 -0700 (PDT)
+        bh=ZT6vThl0w6DW/3vNhpd4p3yZrCiKGVkkePEpwNafr6M=;
+        b=bUxvIGxAhv5MtkPkRKulDIANhNEA/6lcA37Anbj/aHGP3H3WEML5AcliRWdy4SKu77
+         y5S0zbnaj033DAFXrwDVchnoOmuUknd4aSCfzOF6EWhVET5sMA0dwlHi2fmZm2GaPsRt
+         OIzaA+cDSIZ+dxbC+Yn830bGRizqC+3wkVbNqLNjV2+g8CrQkBvC5dH+H5P88pXZW4Yk
+         /HUSiHGKQ1AMt9xlUuI+oj4gxQ0V5TOX4eiOWgXC/rLvqk22gHul51TUBgkLYnFI9P11
+         1JjyPqlhmD8anV0M3z4UsJapBsSEVbPxnA3AogkFUmUpSwruTA26a3P3pIhO8ncUVhKm
+         DTWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeUOrxRiNxk+uW+JcEchGJwHVGux5/U4yZj5C2J6zzwNwoeEifqcToMyl+5LlynL+nxc078ZOFb1QV6/Q=@vger.kernel.org, AJvYcCVw3FukN4nvsKfpoOzb/161VO9CHKoCvVuX/7bzKUcipvrehddHjjrx0t6kbxAN7/GAHTZxw0D7HXfHLaiEblQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz22vdpV+SRRomtfKkrWk5XTjRZ7cOT8PykA3SUdtzyO1g4V1jr
+	8g8LnQQligySQEUw2ktpJseY6SzeVQkB3ZrNPnzMq4RpE8nJzcB1k2e29Phn3wKQyYPMiuwMIfl
+	GOeZSrk4hle7yAV9FUwcpnqJgxy4=
+X-Google-Smtp-Source: AGHT+IE4+BdZ3LfDobLEZiEw+lXACKHY9OjSMU9qsH6bL5zXt19ZyY2VBI87QSoBXPl6FJAr1a79Q74C+/jwv3zPANU=
+X-Received: by 2002:a05:6a20:6a20:b0:1cf:672e:cf08 with SMTP id
+ adf61e73a8af0-1d4fa78e967mr800601637.8.1727385558266; Thu, 26 Sep 2024
+ 14:19:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925141944.277936-1-ojeda@kernel.org>
-In-Reply-To: <20240925141944.277936-1-ojeda@kernel.org>
+References: <20240926093849.1192264-1-aliceryhl@google.com>
+In-Reply-To: <20240926093849.1192264-1-aliceryhl@google.com>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 26 Sep 2024 23:18:59 +0200
-Message-ID: <CANiq72meNkvahLDAxPUq4suzFY_xUgxEW6vGsWuo9ZzeiNrQJA@mail.gmail.com>
-Subject: Re: [PATCH] rust: cfi: fix `patchable-function-entry` starting version
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Date: Thu, 26 Sep 2024 23:19:06 +0200
+Message-ID: <CANiq72k9ihcNNRkiGW4us1F_cQuotRFA9_8iJuCMUJnEjbKzrw@mail.gmail.com>
+Subject: Re: [PATCH] rust: KASAN+RETHUNK requires rustc 1.83.0
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: ojeda@kernel.org, a.hindborg@samsung.com, alex.gaynor@gmail.com, 
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, gary@garyguo.net, hpa@zytor.com, 
+	jpoimboe@kernel.org, linux-kernel@vger.kernel.org, masahiroy@kernel.org, 
+	mingo@redhat.com, nathan@kernel.org, nicolas@fjasle.eu, 
+	patches@lists.linux.dev, peterz@infradead.org, rust-for-linux@vger.kernel.org, 
+	tglx@linutronix.de, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 25, 2024 at 4:20=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
+On Thu, Sep 26, 2024 at 11:39=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
 >
-> The `-Zpatchable-function-entry` flag is available since Rust
-> 1.81.0, not Rust 1.80.0, i.e. commit ac7595fdb1ee ("Support for -Z
-> patchable-function-entry") in upstream Rust.
+> When enabling both KASAN and RETHUNK, objtool emits the following
+> warnings:
 >
-> Fixes: ca627e636551 ("rust: cfi: add support for CFI_CLANG with Rust")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+>     rust/core.o: warning: objtool: asan.module_ctor+0x13: 'naked' return =
+found in MITIGATION_RETHUNK build
+>     rust/core.o: warning: objtool: asan.module_dtor+0x13: 'naked' return =
+found in MITIGATION_RETHUNK build
+>
+> This is caused by the -Zfunction-return=3Dthunk-extern flag in rustc not
+> properly informing LLVM about the mitigation, which means that the KASAN
+> functions asan.module_ctor and asan.module_dtor are generated without
+> the rethunk mitigation.
+>
+> The other mitigations that we enabled for Rust (SLS, RETPOLINE) do not
+> have the same bug, as they're being applied through the target-feature
+> functionality instead.
+>
+> This is being fixed for rustc 1.83.0, so update Kconfig to reject this
+> configuration on older compilers.
+>
+> Link: https://github.com/rust-lang/rust/pull/130824
+> Fixes: d7868550d573 ("x86/rust: support MITIGATION_RETHUNK")
+> Reported-by: Miguel Ojeda <ojeda@kernel.org>
+> Closes: https://lore.kernel.org/all/CANiq72myZL4_poCMuNFevtpYYc0V0embjSuK=
+b7y=3DC+m3vVA_8g@mail.gmail.com/
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Applied to `rust-fixes` -- thanks everyone!
+Applied to `rust-fixes` -- thanks!
 
 Cheers,
 Miguel
