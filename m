@@ -1,123 +1,224 @@
-Return-Path: <linux-kernel+bounces-339814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB1F986AE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:18:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D72986AEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A6351F22CCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:18:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0288A1C213C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C2A171E49;
-	Thu, 26 Sep 2024 02:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733EB175D57;
+	Thu, 26 Sep 2024 02:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="ARtCYk/B"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frspAm7M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9214120B
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 02:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80FC4120B;
+	Thu, 26 Sep 2024 02:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727317123; cv=none; b=hf76l+LyLpsM7R9GY0EPAelbsDxx/ZnbzBNCfjVD8WpWn1DcXq4yNmg3W9mq7pnqp6ut5vqLP8ox7KlVQs33PZy20ceoGA0LYIbgfqz4iiFyYD7fETiTBeAbPa/N9d+9XU1eq+qKm5YRDGj6jBrFf23018R5OlOK5BuM+vLFjTQ=
+	t=1727317571; cv=none; b=lrImTJFX0LSAqMrP/SZiw+DgGHEeUQ2N6O062xkEIITIy0XddM070JnM0tC008rgvgx1FraN5e8pr41FZO0T2zD8OcyWM3FmtG1fKdnNd91f44lC0MTjborf7lghHU6sriWZE/iCDvkaI15e4Kk0kXHSf9h6N39J7Wy6TlnNZSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727317123; c=relaxed/simple;
-	bh=DGxeJgemhoDo5JKQYPlnG86DMJLcCfAUQs0cO+BoAK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xbq/RHkwcY+etpNcw/4C9FwMeILQIo2vMUoTGiaTes7NHuv7amMTSdUhzLeYVDMNAadgo+BIWAcCIHeuBNzlw+4CNfc28tLqtq7ePirF1Ke2OrY64kAsi2vgeqt7jRHPLaecMC/+1hiMjCAoFOUXUNDRBwBzhyOQSmiAX8s4uVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=ARtCYk/B; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1727317089;
-	bh=SgCHUiz82lndKjTeNsmeInw+/PdasPiFZ+8EYbiHHVQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=ARtCYk/BvJ0ONQLgRgevRcpB6qNCLxx9TsJH456Srvr8KJtsghjHuKpiSRTtqAlqZ
-	 5kCEfZciP5FtvD8Xho3kCKxA63XxHe/4yDp4ppNidD1ECVfm+lAnF/hLMlYVoHs+m0
-	 AkRnsXUn/8aiL1iGFs4FhRbN7fnhLqfPm4CKzhjM=
-X-QQ-mid: bizesmtp89t1727317049t27s5x5e
-X-QQ-Originating-IP: RWncql2tgzXbdZQHdtoltutKeRWhDKw8fLlZUTgT37s=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 26 Sep 2024 10:17:26 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 5024891882931544061
-From: WangYuli <wangyuli@uniontech.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	samuel.holland@sifive.com,
-	conor.dooley@microchip.com,
-	charlie@rivosinc.com,
-	macro@orcam.me.uk,
-	palmer@rivosinc.com
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	atish.patra@wdc.com,
-	anup@brainfault.org,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com,
-	tglx@linutronix.de,
-	peterz@infradead.org,
-	mikelley@microsoft.com,
-	oleksandr@natalenko.name,
-	deller@gmx.de,
-	gpiccoli@igalia.com,
-	apatel@ventanamicro.com,
-	maz@kernel.org,
-	kernelfans@gmail.com,
-	jszhang@kernel.org,
-	daniel.lezcano@linaro.org,
-	Alistair.Francis@wdc.com,
-	atishp@atishpatra.org,
-	dwmw2@infradead.org,
-	mark.rutland@arm.com,
-	sabrapan@amazon.com,
-	ross.philipson@oracle.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [RESEND. PATCH v2] riscv: Use '%u' to format the output of 'cpu'
-Date: Thu, 26 Sep 2024 10:17:22 +0800
-Message-ID: <DE320FC8D88E057F+20240926021722.1007313-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1727317571; c=relaxed/simple;
+	bh=r5SI/RGSLPfnaDMdwQYTrj8PSSmy7YhHEr12h+MWAoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ErIX4u2w441C2HnnDbkDM8rcwMHzvFZkmxELVoZjIaja3yg161gdro4ZNgeY99FoQz17tbNqazM656aZYj74WaaR0dDbDh+DDAQQK8mcbuAYWKdRoYi08HDWcpwMca/D+CPyN1BXP0pswE+Mb4i3UZRl2sF7aMr9ybHfDKVDup4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frspAm7M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEC0DC4CEC3;
+	Thu, 26 Sep 2024 02:26:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727317571;
+	bh=r5SI/RGSLPfnaDMdwQYTrj8PSSmy7YhHEr12h+MWAoY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=frspAm7Mpmz1+1OkPVLEAsL/gO4dAcKalYn1V+qRG5s5F3chfbXw4j8c86lSDF7ET
+	 d/LSuEOFje85dlrho0oNDIstDd2/Hy/jE9fbpWKuAL1ZHF2NOYW3xVBxKzUXF76yMl
+	 8tq2l8F3N7DWB3v6o3hb3qyAwniLvGQ2rh0noD3xOZMwmafcSQTn1y/DT0vRzhGVtd
+	 IfCn5dtDczmE6EY29yFIR1sxBmzPpUkM1XsBSGJpt1CT7herFW1ys9l6DNw/eMyskH
+	 3GSK7M+nCmklE5AvkTdHIkppb+alBO4lhyfFpx58LHfbWTwpzYGx2Y4hksLE8a+rpu
+	 MAHrsHi+GBxSw==
+Date: Wed, 25 Sep 2024 21:26:10 -0500
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
+Subject: Re: [PATCH 1/3] of: address: Add helper function to get untranslated
+ 'ranges' information
+Message-ID: <20240926022610.GA2360654-robh@kernel.org>
+References: <20240924-pci_fixup_addr-v1-0-57d14a91ec4f@nxp.com>
+ <20240924-pci_fixup_addr-v1-1-57d14a91ec4f@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+In-Reply-To: <20240924-pci_fixup_addr-v1-1-57d14a91ec4f@nxp.com>
 
-'cpu' is an unsigned integer, so its conversion specifier should
-be %u, not %d.
+On Tue, Sep 24, 2024 at 05:54:19PM -0400, Frank Li wrote:
+> Introduce `for_each_of_range_untranslate()` to retrieve untranslated CPU
+> address information, similar to `of_property_read_reg()`. This is required
+> for hardware like i.MX8QXP to configure the PCIe controller ATU and
+> eliminate the need for workaround address fixups in drivers. Currently,
+> many drivers use hardcoded CPU addresses for fixups, but this information
+> is already described in the Device Tree. With correct hardware
+> descriptions, such fixups can be removed.
 
-Suggested-by: Wentao Guan <guanwentao@uniontech.com>
-Suggested-by: Maciej W. Rozycki <macro@orcam.me.uk>
-Link: https://lore.kernel.org/all/alpine.DEB.2.21.2409122309090.40372@angie.orcam.me.uk/
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-Tested-by: Charlie Jenkins <charlie@rivosinc.com>
----
- arch/riscv/kernel/cpu-hotplug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Just to be clear, you don't have to change the DT to add the 
+intermediate bus? If you do, then that's an ABI issue.
 
-diff --git a/arch/riscv/kernel/cpu-hotplug.c b/arch/riscv/kernel/cpu-hotplug.c
-index 28b58fc5ad19..a1e38ecfc8be 100644
---- a/arch/riscv/kernel/cpu-hotplug.c
-+++ b/arch/riscv/kernel/cpu-hotplug.c
-@@ -58,7 +58,7 @@ void arch_cpuhp_cleanup_dead_cpu(unsigned int cpu)
- 	if (cpu_ops->cpu_is_stopped)
- 		ret = cpu_ops->cpu_is_stopped(cpu);
- 	if (ret)
--		pr_warn("CPU%d may not have stopped: %d\n", cpu, ret);
-+		pr_warn("CPU%u may not have stopped: %d\n", cpu, ret);
- }
- 
- /*
--- 
-2.45.2
+> 
+>             ┌─────────┐                    ┌────────────┐
+>  ┌─────┐    │         │ IA: 0x8ff0_0000    │            │
+>  │ CPU ├───►│ BUS     ├─────────────────┐  │ PCI        │
+>  └─────┘    │         │ IA: 0x8ff8_0000 │  │            │
+>   CPU Addr  │ Fabric  ├─────────────┐   │  │ Controller │
+> 0x7000_0000 │         │             │   │  │            │
+>             │         │             │   │  │            │   PCI Addr
+>             │         │             │   └──► CfgSpace  ─┼────────────►
+>             │         ├─────────┐   │      │            │    0
+>             │         │         │   │      │            │
+>             └─────────┘         │   └──────► IOSpace   ─┼────────────►
+>                                 │          │            │    0
+>                                 │          │            │
+>                                 └──────────► MemSpace  ─┼────────────►
+>                         IA: 0x8000_0000    │            │  0x8000_0000
+>                                            └────────────┘
+> 
+> bus@5f000000 {
+>         compatible = "simple-bus";
+>         #address-cells = <1>;
+>         #size-cells = <1>;
+>         ranges = <0x5f000000 0x0 0x5f000000 0x21000000>,
+>                  <0x80000000 0x0 0x70000000 0x10000000>;
+> 
+>         pcieb: pcie@5f010000 {
+>                 compatible = "fsl,imx8q-pcie";
+>                 reg = <0x5f010000 0x10000>, <0x8ff00000 0x80000>;
+>                 reg-names = "dbi", "config";
+>                 #address-cells = <3>;
+>                 #size-cells = <2>;
+>                 device_type = "pci";
+>                 bus-range = <0x00 0xff>;
+>                 ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
+>                          <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
+> 	...
+> 	};
+> };
+> 
+> Currently all function related 'range' return CPU address. THe new help
+> function for_each_of_range_untranslate() can get above diagram IA address
+> informaiton.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/of/address.c       | 33 +++++++++++++++++++++++----------
+>  include/linux/of_address.h |  9 ++++++++-
+>  2 files changed, 31 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/of/address.c b/drivers/of/address.c
+> index 286f0c161e332..09c73936e573f 100644
+> --- a/drivers/of/address.c
+> +++ b/drivers/of/address.c
+> @@ -787,8 +787,9 @@ int of_pci_dma_range_parser_init(struct of_pci_range_parser *parser,
+>  EXPORT_SYMBOL_GPL(of_pci_dma_range_parser_init);
+>  #define of_dma_range_parser_init of_pci_dma_range_parser_init
+>  
+> -struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
+> -						struct of_pci_range *range)
+> +struct of_pci_range *of_pci_range_parser_one_common(struct of_pci_range_parser *parser,
+> +						    struct of_pci_range *range,
+> +						    bool translate)
+>  {
+>  	int na = parser->na;
+>  	int ns = parser->ns;
+> @@ -806,11 +807,13 @@ struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
+>  	range->bus_addr = of_read_number(parser->range + busflag_na, na - busflag_na);
+>  
+>  	if (parser->dma)
+> -		range->cpu_addr = of_translate_dma_address(parser->node,
+> -				parser->range + na);
+> +		range->cpu_addr = translate ? of_translate_dma_address(parser->node,
+> +						parser->range + na) :
+> +					      of_read_number(parser->range + na, parser->pna);
+>  	else
+> -		range->cpu_addr = of_translate_address(parser->node,
+> -				parser->range + na);
+> +		range->cpu_addr = translate ? of_translate_address(parser->node,
+> +						parser->range + na) :
+> +					      of_read_number(parser->range + na, parser->pna);
+>  	range->size = of_read_number(parser->range + parser->pna + na, ns);
+>  
+>  	parser->range += np;
+> @@ -823,11 +826,13 @@ struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
+>  		flags = parser->bus->get_flags(parser->range);
+>  		bus_addr = of_read_number(parser->range + busflag_na, na - busflag_na);
+>  		if (parser->dma)
+> -			cpu_addr = of_translate_dma_address(parser->node,
+> -					parser->range + na);
+> +			cpu_addr = translate ? of_translate_dma_address(parser->node,
+> +						parser->range + na) :
+> +					       of_read_number(parser->range + np, np);
+>  		else
+> -			cpu_addr = of_translate_address(parser->node,
+> -					parser->range + na);
+> +			cpu_addr = translate ? of_translate_address(parser->node,
+> +						parser->range + na) :
+> +					       of_read_number(parser->range + np, np);
+>  		size = of_read_number(parser->range + parser->pna + na, ns);
+>  
+>  		if (flags != range->flags)
+> @@ -842,6 +847,14 @@ struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
+>  
+>  	return range;
+>  }
+> +EXPORT_SYMBOL_GPL(of_pci_range_parser_one_common);
+> +
+> +struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
+> +					     struct of_pci_range *range)
+> +{
+> +	return of_pci_range_parser_one_common(parser, range, true);
+> +}
+> +
+>  EXPORT_SYMBOL_GPL(of_pci_range_parser_one);
+>  
+>  static u64 of_translate_ioport(struct device_node *dev, const __be32 *in_addr,
+> diff --git a/include/linux/of_address.h b/include/linux/of_address.h
+> index 26a19daf0d092..692aae853217a 100644
+> --- a/include/linux/of_address.h
+> +++ b/include/linux/of_address.h
+> @@ -32,8 +32,11 @@ struct of_pci_range {
+>  #define of_range of_pci_range
+>  
+>  #define for_each_of_pci_range(parser, range) \
+> -	for (; of_pci_range_parser_one(parser, range);)
+> +	for (; of_pci_range_parser_one_common(parser, range, true);)
+> +#define for_each_of_pci_range_untranslate(parser, range) \
+> +	for (; of_pci_range_parser_one_common(parser, range, false);)
+>  #define for_each_of_range for_each_of_pci_range
+> +#define for_each_of_range_untranslate for_each_of_pci_range_untranslate
 
+You may want both the translated and untranslated address, so I would 
+just add the untranslated address to the of_pci_range struct and return 
+both with the existing iterator.
+
+Rob
 
