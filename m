@@ -1,186 +1,194 @@
-Return-Path: <linux-kernel+bounces-340993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49208987A00
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:11:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9999E987A01
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 22:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1F26283676
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:11:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0472835B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27BD17DFF3;
-	Thu, 26 Sep 2024 20:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E48168491;
+	Thu, 26 Sep 2024 20:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dDCNlFxA"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2055.outbound.protection.outlook.com [40.107.243.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZJjzu6FE"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B541BC58;
-	Thu, 26 Sep 2024 20:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727381453; cv=fail; b=MoBS0LnHyvoK14r0pzwcAkOGUS/ou7vitPXlkR5TEwg34jO/MYf24V72it/IA3q4dfAZVHDZ+gAQJwN8wDDnOVr5yiUfG9oWZ9uVIhIhmLBdOpHN2gXZ+ROFOzRMiNhnyRnlqUImpd931YraF1x/q1jGWpGKrBn8WDqw1cnEIHE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727381453; c=relaxed/simple;
-	bh=Lo8KCptgx3xpUCfpx5/dAXC7R0bywG8o3D8Bb0/iGxo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dgj0quyY0V75crYdbTxldEajqjq+I66kE4PVnDXT9ylubRKr8/h4G9KmvFlr0XAzcsihWFOiwJMLq7c6NeFz+ncZerUJ99Rk57PdcviIZdhcNJoD3CvZZN7lMQftmLniwwNMovuKnXeTbSnAPAzXsXxHl7hzWuna9/qQPswI8pM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dDCNlFxA; arc=fail smtp.client-ip=40.107.243.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dRM4a7XeafX5uQ6rTm/gKfmSsl+kgHnewVWei7t8Jn8r5Xf+ZyZnO71BBbTMKrAR4+C+XWUUv0ywkOJOoKDsiSOrjbeeweRCG4sHHviI0rwEn7/ifzjDaPaXik7FCtCIq14Sv4LvmUu1l9oz+ZlwRhjUjvAPnGYJ+BdfqPfAl+hYdSJdNQsmNFnZqfFTaA+SYIUNesR/xclRNiDbrXXCTg5VjZ3E7zpqnRAl7kMDZkwARMLGRChkfnYZsuhLQRQCH8PEWR9VooMWaGuiur2fEcRKTfeW3zM+67tA2Fu/sINeLzf5dl5otLleaJ3Qv4sX0W7uKoPFitrFtCsV5TeK2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/IvCX5/R8XMHp+Ih+iOiKL48eGlOMs10hOmuQZyhYVc=;
- b=pbH8bzJZxJM0YdCFnZ4NEhB7z8GME7wwOGEoh/PM7bQ5PHiOSUSm4/Dad47GzdJ3peNjbfyj4Bm6qCpzHXWnKnUVVoS/lIynVLotQvLaCK4nNhDclnR18fld9lVyKcrd6/PdDGTHl8pRASScDGEU+xdXTVsYwzHq2rAo0BfQmQaR0nZjJrO6ThPIjDBulIHlU9iOwAnT4kYkGikrk/sVoMBN7pt6M8DL/Nu22LfrowXpeqD4OfbIES7V7fUXA2laZCT7H17Bq088I1FFJI40tPsA+9hifxN9DCFvKFnG4FDgPjJnDmsnftb+yYABmWr9SWOejg4GOu/KbXJQozyWPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/IvCX5/R8XMHp+Ih+iOiKL48eGlOMs10hOmuQZyhYVc=;
- b=dDCNlFxA2Q+xvn6YeuLQqfy5R+dg1b0kTauxoe8RUIH4o+sE++lPvlOrZRUMHWdD6TJ87hK5PQdsymg4gAwUDDsc5zPuDJw2QM+2l47/QPfrXh6hgKJlxpYYUBWhcwQcXNYW05pCwbQp2sjU1QxG8UqYBmNsY9ciXtYQarh3slEJL3TwjaKeARHBhCbwA6X/jQbeH6FlSYwIw81nPwwO9NfRuP9vWURDo97tnLN5XkWo5FKDsNxRQjI6FkgRPhLzHdiebGSAH5Ca431s0TonzqNdhuIL9gIAZlwEeL4MX+57X7EJ9lZBqWf7IKLMgTJvRysyF55GTSV33FGypqxR4w==
-Received: from DM6PR06CA0097.namprd06.prod.outlook.com (2603:10b6:5:336::30)
- by SJ0PR12MB6805.namprd12.prod.outlook.com (2603:10b6:a03:44f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Thu, 26 Sep
- 2024 20:10:48 +0000
-Received: from DS1PEPF00017092.namprd03.prod.outlook.com
- (2603:10b6:5:336:cafe::e1) by DM6PR06CA0097.outlook.office365.com
- (2603:10b6:5:336::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.17 via Frontend
- Transport; Thu, 26 Sep 2024 20:10:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- DS1PEPF00017092.mail.protection.outlook.com (10.167.17.135) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8005.15 via Frontend Transport; Thu, 26 Sep 2024 20:10:48 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 26 Sep
- 2024 13:10:40 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 26 Sep 2024 13:10:39 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Thu, 26 Sep 2024 13:10:38 -0700
-Date: Thu, 26 Sep 2024 13:10:37 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Yi Liu <yi.l.liu@intel.com>
-CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <will@kernel.org>,
-	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
-	<eric.auger@redhat.com>, <jean-philippe@linaro.org>, <mdf@kernel.org>,
-	<mshavit@google.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<smostafa@google.com>
-Subject: Re: [PATCH v2 04/19] iommufd: Allow pt_id to carry viommu_id for
- IOMMU_HWPT_ALLOC
-Message-ID: <ZvW/vS5/vulxw3co@Asurada-Nvidia>
-References: <cover.1724776335.git.nicolinc@nvidia.com>
- <2d469a5279ef05820d5993df752d32239878338d.1724776335.git.nicolinc@nvidia.com>
- <3ddf97a3-cf5b-4907-bbe4-296456951e6b@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42A317F4F7
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 20:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727381457; cv=none; b=mkwgMOa8I6bkcr3mpMDsB1d/Enh9jBjhGO+2oyiCJ9/gcOzWWkY6JOa5LvEC8fYJQO5SucLufufSvHSKTZvlbmNgD/8RD9RcYpWMQfW0vxGaW4l5s8YbyWiXEoB+7MPirZSx/sGm8iRRAz766B6nwhruAIMKeHyvarg5vllnwik=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727381457; c=relaxed/simple;
+	bh=Oew1F34mtV7x31gAePkACrpqznQNjr9U92ItRlAvpLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UR2RN7/em+hOKjUqueeGnzx7Tl8j76Te9/jVrXhyI9WgMfB7AyCpHsu+8RdwnSmmdIATWwjGlIpaKyhbWqfqOqnNQWRfimRlWXKGQ12yjxpDS6x2uiN9MEvXIvdti26Gmg/WdYZ6eWGLqmq1GcmfmabN73btqTUkInIukXFfj1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZJjzu6FE; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48QKAdAV036359;
+	Thu, 26 Sep 2024 15:10:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1727381439;
+	bh=CWXzNSwJGDLIly+lgoLVLkiz2czDebFNAK4Ataxvfkw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ZJjzu6FE6bM1eFcFBBCX2/hJcZPk+N2mVyGnLn9nmQOL9wfJUsOuf+SSdeKZ7Lcbl
+	 3IHrpeF6WmjLftT+D0G0oxZ2LmAjP2qzo8Jd2KbB0qo+8UewaOZ6VkaVZkTghREool
+	 JRevra2oxiL7DK9/BFeoeMVXXtP3xItmwrxsJ3WM=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48QKAcxP075743
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 26 Sep 2024 15:10:38 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 26
+ Sep 2024 15:10:38 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 26 Sep 2024 15:10:38 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48QKAc8e077102;
+	Thu, 26 Sep 2024 15:10:38 -0500
+Message-ID: <8119c948-5609-4f61-bf49-aaaf82cd9597@ti.com>
+Date: Thu, 26 Sep 2024 15:10:38 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <3ddf97a3-cf5b-4907-bbe4-296456951e6b@intel.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00017092:EE_|SJ0PR12MB6805:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f93d362-7ede-4737-6d88-08dcde674fe1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|376014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VgMwvHzIuqt6i26Xl3M3LoL345ioZmZkF/YB9YlUdKvGj6jIZoksozozHar0?=
- =?us-ascii?Q?TOTr2jW6W2fIMfMgQVVsvYm+cABwfbZKluEnHZcU6ESQ2i5zL8eJnIlXNQwK?=
- =?us-ascii?Q?vUGqHWWDUIV4HFubAVWhL5go3CjGvflSVLo7dnSBGHOBHZ02vxXNS5uommhu?=
- =?us-ascii?Q?XLeQjX7Ch80KEMBeW1o1mXu2pfrCNYI8ws+8LANqCF0vpcrUoqn3gmvbgFBY?=
- =?us-ascii?Q?T/MGa/PYmAZZYzLSZnZFkCBrWlyrxpmApXmTw8eDWyWoBQ4mRgLxkBCN1+1d?=
- =?us-ascii?Q?c6ViPiuDvHwkzEe4fUVYQC3yg2plNs7JLWP0vXbhrMU9hw/X55lUTyitNsIN?=
- =?us-ascii?Q?jY/2D3uVRQJ2t/aDCHtQ2XFUxIDqBcJK5CWfHvRgF3YbxClORVk/oOP5buGU?=
- =?us-ascii?Q?uXbrRD03vlauv7WRm5TCCubR/tsHBllnfJaIaknINL9EPKRxPQ1ymAEw74X3?=
- =?us-ascii?Q?xVgjrFyaSZa/hY8phNDiXDgRNF3pVn+7X2ee8KBrMGz/18iYGr56UXhuLG54?=
- =?us-ascii?Q?Ex0kP+9xMODnlcELh5gkK0tVl5MvUrTdo0pABgs+hStw9A9jBywsjJ3LLGBK?=
- =?us-ascii?Q?5Dr7FgkDlW7nC2OBj72HsFlByFedElWlaZCi3BEzdYMNgBWDDvnYzFaqO80S?=
- =?us-ascii?Q?FRLJIljO0zOhjr1kJFBoFNph7Q095zyXpz2A/NfD077a0Wc2NTvUL6PlCzUA?=
- =?us-ascii?Q?aSQDclWy2zOKaE8GS/FjQNGXl6EicBRouH9vRuMgQ7UrnoyCOHPeqzg4EFyh?=
- =?us-ascii?Q?KaUWheBOG+afIEM2o4mrP5ipNQspNeXHf2MuxiyY9lSDIb7OmHPgA4+bHx1p?=
- =?us-ascii?Q?BQMV18fCxLvUo0wZWX2mdSRkiA41xNRIpsUBi+9g7TVPozuIz18UoQMH0M5a?=
- =?us-ascii?Q?cK3+YvELDbHGMe+7mvW8KxtZUnH6ZnTX2jsqm0s7ySPptjec8j086vfTCxSD?=
- =?us-ascii?Q?K3hBpu8Or7TzdCy+Ole6iGSzVb4G3OY355+rg9V7lvR6yaUfMBrDXtJlUkiy?=
- =?us-ascii?Q?Kk7bQsT5A0l/slpvhz49WqZDUX5xtLInWce9oSO4w+U5POWXcwR6SaZur5LG?=
- =?us-ascii?Q?qHTLX3wcJqez8RcQLGMX8+8p5CTpvsSBfJo7hS4sGJOvAi6/fb6Y1hQVteO6?=
- =?us-ascii?Q?Z+TtI1ldcefFs+DECbYrVg5r0t6fsI+dp34e7GYBvRzqJdAjh6ZMiO2zIEyS?=
- =?us-ascii?Q?WkGmUaORWkqPtV1GzzQumjB51gc3eUn12ymEO97Py+Pb2CGi9CGJC+NQ1ArA?=
- =?us-ascii?Q?XR4qMbJRxmerUE3VBQ1AUee0H3+RE09XkVUeD1aLBHMluEpReuzIrEOmH5xC?=
- =?us-ascii?Q?5SMIW4QFkmhDiVNvEyoz+LBJ915ewRdIlDPCA6xhwiXf+XuPBCZUtswCUniX?=
- =?us-ascii?Q?6CAHiCd6/rHaeCG3mo6ZufizVBDQuvecSf3H6l6BI0x4vaFSYaIcBGiBoDll?=
- =?us-ascii?Q?smC/a1arX1MvJy3LgLkgTKkk/Eo8pepD?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 20:10:48.1533
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f93d362-7ede-4737-6d88-08dcde674fe1
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF00017092.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6805
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] arm64: defconfig: Set MFD_TPS6594_I2C as built-in
+To: Nishanth Menon <nm@ti.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Bryan Brattlof <bb@ti.com>,
+        Bjorn
+ Andersson <quic_bjorande@quicinc.com>
+References: <20240819204352.1423727-1-jm@ti.com>
+ <ZsTHj/Fyffi2LxIu@hu-bjorande-lv.qualcomm.com>
+ <20240821110940.s5ubbcozk2bouklh@chaps>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20240821110940.s5ubbcozk2bouklh@chaps>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Sep 26, 2024 at 04:50:46PM +0800, Yi Liu wrote:
-> On 2024/8/28 00:59, Nicolin Chen wrote:
-> > Now a VIOMMU can wrap a shareable nested parent HWPT. So, it can act like
-> > a nested parent HWPT to allocate a nested HWPT.
-> > 
-> > Support that in the IOMMU_HWPT_ALLOC ioctl handler, and update its kdoc.
-> > 
-> > Also, associate a viommu to an allocating nested HWPT.
+Hi Nishanth,
+
+On 8/21/24 6:09 AM, Nishanth Menon wrote:
+> On 09:42-20240820, Bjorn Andersson wrote:
+>> On Mon, Aug 19, 2024 at 03:43:52PM -0500, Judith Mendez wrote:
+>>> SK-AM62A-LP is a device targeting automotive front-camera applications
+>>> among other use-cases. It utilizes the TPS6593x PMIC (interfaced over I2C)
+>>> to power the SoC and various other peripherals on the board [1].
+>>>
+>>> MMCSD requires the PMIC to be setup correctly before setting the bus
+>>> pins to 1.8V using the TPS6594 driver interfaced over i2c.
+>>>
+>>> Currently, the following could be seen when booting the am62ax platform:
+>>>
+>>> "platform fa00000.mmc: deferred probe pending: platform: supplier regulator-5 not ready"
+>>> "vdd_mmc1: disabling"
+>>
+>> Is this the regulator framework disabling the "unused" vdd_mmc1 while
+>> you still have a probe deferred client?
+>>
+>> That's not right.
 > 
-> it still not quite clear to me what vIOMMU obj stands for. Here, it is a
-> wrapper of s2 hpwt IIUC. But in the cover letter, vIOMMU obj can instanced
-> per the vIOMMU units in VM.
+> I think context of the full log might be missing, hence misleading - but
+> if this is correct, regulator framework might have a problem as well -
+> it does not change the fact that we will need regulator driver to
+> support switch from 3.3v to 1.8v to enable UHS (which is another
+> topic as well - do not trust the bootloader either for the default
+> voltage enabled in the system).
+> 
+> Judith: This is why providing links to previous versions of patches AND
+> providing links to the full before and after logs in the diffstat
+> section helps reviewers - please do that in the next revision.
+> 
+>>
+>>>
+>>> and a failure to boot the SK-AM62A-LP.
+>>>
+>>> One solution is to use initramfs [2], but using initramfs increases the
+>>> boot time for this automotive solution which requires faster boot time
+>>> parameters.
+>>>
+>>> Another solution is to change MFD_TPS6594_I2C to built-in, that way the
+>>> PMIC is setup and the regulators are ready before MMCSD switches to UHS
+>>> mode, this is the preferred solution since it does not increase boot time
+>>> like the initramfs solution does.
+> 
+> What is the adder in cost? bloat-o-meter report summary should have
+> been part of commits that increase vmlinux
+> 
+>>>
+>>> [1] https://www.ti.com/lit/zip/sprr459
+>>> [2] https://lore.kernel.org/linux-devicetree/5f03207b-c29b-4d16-92b0-d14eef77bf17@linaro.org/
+>>> Fixes: f9010eb938be ("arm64: defconfig: Enable TPS6593 PMIC for SK-AM62A")
+>>>
+>>> Signed-off-by: Judith Mendez <jm@ti.com>
+>>> ---
+>>>   arch/arm64/configs/defconfig | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>>> index 7d32fca649965..61f767246d3a5 100644
+>>> --- a/arch/arm64/configs/defconfig
+>>> +++ b/arch/arm64/configs/defconfig
+>>> @@ -756,7 +756,7 @@ CONFIG_RZ_MTU3=y
+>>>   CONFIG_MFD_TI_AM335X_TSCADC=m
+>>>   CONFIG_MFD_TI_LP873X=m
+>>>   CONFIG_MFD_TPS65219=y
+>>> -CONFIG_MFD_TPS6594_I2C=m
+>>> +CONFIG_MFD_TPS6594_I2C=y
+>>
+>> These things should work with =m, and then you can make them =y in your
+>> product config to avoid the probe deferral.
+> 
+> I think this is inline with the discussion with Krystoff on the topic as
+> well
+> 
+> 
+> Judith: you just need the regulator, for sd/mmc to work. Why is there
+> half a dozen unrelated stuff coming with it [1] report from
+> bloat-o-meter? Please fix the driver dependencies before adding
+> un-necessary stuff to the kernel Image file.
+> 
+> [1] https://gist.github.com/nmenon/0caff032a430bbf649ad1107e6f12f9a
 
-Yea, the implementation in this version is merely a wrapper. I
-had a general introduction of vIOMMU in the other reply. And I
-will put something similar in the next version of the series,
-so the idea would be bigger than a wrapper.
 
-> Does it mean each vIOMMU of VM can only have
-> one s2 HWPT?
+It seems like TPS6594_I2C driver has a few dependencies:
 
-Giving some examples here:
- - If a VM has 1 vIOMMU, there will be 1 vIOMMU object in the
-   kernel holding one S2 HWPT.
- - If a VM has 2 vIOMMUs, there will be 2 vIOMMU objects in the
-   kernel that can hold two different S2 HWPTs, or share one S2
-   HWPT (saving memory).
+select MFD_TPS6594
+select REGMAP_I2C
+select CRC8
+depends on I2C
 
-Thanks
-Nic
+I am not sure what could be done here to change the driver to built
+in without increasing the size of the kernel this much:
+
+Total: Before=19064141, After=19108349, chg +0.23%
+
+Please advice.
+Thanks,
+
+~ Judith
+
+
+
 
