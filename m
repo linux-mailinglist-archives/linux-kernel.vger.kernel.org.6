@@ -1,161 +1,119 @@
-Return-Path: <linux-kernel+bounces-340613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B9549875D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:44:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FBE29875E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EAAB280FF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:44:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD1E1F221FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CDD4595B;
-	Thu, 26 Sep 2024 14:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E98C14C5AA;
+	Thu, 26 Sep 2024 14:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ODPqvmSI"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="VeyTd9R8"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469EF2AE94;
-	Thu, 26 Sep 2024 14:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04623145348
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727361883; cv=none; b=FyDtDOumPFdGiGT1a2y4Lc8LmvYIpY5iPBNaKC+U4QTOICl8MRQ+FmBm6ijAZqxqDZDIYM8eBRIBHWSD3ndsgqFx7SCUnEW/14K6CwLS3YQVGhDziAIAzXyaMEoXxL2rPZuDXh6IovF2d7RXysWduCOeykT/ve3oMfCUMedeKqY=
+	t=1727361917; cv=none; b=RDCMzJEMtkHN9iQNxgg9+CG+bUD/l5o383KvKf0Na3+rrLUnZEUaUs9Rjdlc28dNShddza7m7ZmjsSaMcuoH0kIxq/YhvB/BpP5m+0DwthX2NJIgPjRpF5GXZe+4QS2EXxn+SMyYbALDz5BcpEdahTOYGtOlrye7SiEos+s0rlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727361883; c=relaxed/simple;
-	bh=KHiIOMuKFrpmgjeiaWPc6Ffbcb0QLfWDPwZ7Pt1/qMg=;
+	s=arc-20240116; t=1727361917; c=relaxed/simple;
+	bh=dsumOzFDfuh/PYFlQ5fBlwa0itLqF681cpqOcUvtv+0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QbzekVOw/IMy7OXA6+6T3usSId9U1D2uXk4jkrDyVlXsv2D9HyVr+5rZukMXn8wkqFkR6m9FBNrOMMPetM/W4Ncd2hlMzGkS9Lhpl/6dw+8Ago3wI4M3aW9Y3zIH6a9/6x9uo5mrnxm8ZY1HegnP3RjjTS/Zg4UxGV3Gzf12Xcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ODPqvmSI; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53567b4c3f4so1195424e87.2;
-        Thu, 26 Sep 2024 07:44:41 -0700 (PDT)
+	 To:Cc:Content-Type; b=hnWIMIqK6Y39+ZODhU1QeVKd6+1vB9iN3/RRap0yek2eSU/kgCQm5LooPACN9HBmMX3DCANJ4SDClshtPgQbT/SXJ+rz6WtKNNOEA529MSWP7R6QH8uqwKLJdNpE3hnigEM9avgiWLwyEhFjd4VDAKjYWywOadxTcFJPmjEzggM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=VeyTd9R8; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f761461150so16837461fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:45:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727361880; x=1727966680; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727361914; x=1727966714; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aEuVELZYPUhfbaLfMAa7ALwlXBOTrHLw6cCw0jRrWMg=;
-        b=ODPqvmSIc1PC0X9GZRcJ2C8dKGRFgeNJtqeR0vR6VTIIP3/44nbmTygoLTla/peHUB
-         azB04aEfV4XzX9PR9d3S2edEcP2mhC6D63uIbMm9EBLEMRp3OvDJXTNtk5NjkyY2HDx3
-         0dQ9I2vOdjoJfvEdN55aL6atOuh5eas37Nbx6lfkWJiF0e86NW+unSX9/P1WZBYwU/Qh
-         JLSnuFYodoodThGg/oKXvW48nZSbsN4HRTEzouVcnqb3dTabLmPv4QOl6sq0oeOfZC+j
-         cqNqF+1BcKfUY4dF7QqEN7UaEX26Xb7nHdEjkryyyixbvcaaaYVN8vDUhNBI8QLc3bZw
-         OBQQ==
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UUk5GqFsvnt8aibuoucXH3mgAlXQnT7Fu6sM4Odfi8U=;
+        b=VeyTd9R8+cruMSRIYlvO1L1twVFDeN8tss4OomfqAArVdxqGg5rlNP6/dJTdyfu6V3
+         hBKl0fkg0OuRoNnW63/VeLvk9B7em36Cbcnf2Gqp0/4BJBn67uvQv+ry8hFi5yDSjsIc
+         a8GEHDLtx83lBr4KcH8WHijTHKP8MtiCRHURjyDSGurE/OL6/lpPk1QxqVf8EiHx0yZz
+         TNVzZ3pDHrxw7mhaAX45p5GVd9rTkNk/1N3FlqBl5y1AreZfVYwwT+srqanbuS6g/v0f
+         fU5CB0OLI9I9lxOKOEvBd+ntYRVtMlLO8Iq/FKzmdsk+ivGluF7Kent+Kwap0IKHHHBN
+         HYWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727361880; x=1727966680;
+        d=1e100.net; s=20230601; t=1727361914; x=1727966714;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aEuVELZYPUhfbaLfMAa7ALwlXBOTrHLw6cCw0jRrWMg=;
-        b=ZBgpogubmoTepe5UTJpKZbtGZ61/BFEKEsQGTwult9oMi2rp7OaLrGuePHpnuCRwD0
-         Gf2xrkktOH49KtMj094IRiBr1z1EZhgVCvTBLOa1UWdlYrMw/IPfalwx0gGVhjAPacP6
-         D0OkurE6PIufPjtN5xROLbXUA+/sBMiv7xWPzWdhhzKvLosL6gnkmqL+DB2GIw65nUIN
-         cKhNzVTtcL3B2o/i67e6hQNVC/B97GKbZzEZZ6/3H9E/+ObA6yCILvJ8hprO9IrTIJDH
-         cwSU/oWNReB2gzP+Qjgv+z4y8zHf2CvRYmHGIpJUrtNuAPCk3GBqi1ET9wcaOuQVPq3y
-         VzAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDkHJmiOq42EpT0hT9xhevIbAtslH/rvl2oSOrdO3Je/WGTqiuFpkBwkJZIRnl36cxwNNICZm0EuqTmA==@vger.kernel.org, AJvYcCXv+rPN8i3T2rYismS/uDJUdSXRY3ZMsL6T99zl9cTqpz6yD0kiJzop3ha5XU+cR10x5poXrbOP6dMlCt4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwarhtpH6QNskEeDBL5u5ngOU3330azb61MmeazwmF5U7UEZaT8
-	s54sHluuF6u1YjvsawWuJSOfjuVgdz9DW3rTcms6e7oktA98YYN55rbilwFLXGjGqXnKkWguKmb
-	L+BJ/Sdz3ia9mmK2WfLW7DbOx47YiLKbT
-X-Google-Smtp-Source: AGHT+IEC6VTjqWuhOwyxsDOfwJGcn9nSY1VJVlaXaxXEnh2WyXWMJNmMC/7ImdpQGecPZkEJNqiMETJe3C2mhQXzUUI=
-X-Received: by 2002:a05:6512:2302:b0:52c:dc6f:75a3 with SMTP id
- 2adb3069b0e04-5387c2b3068mr4574805e87.40.1727361879849; Thu, 26 Sep 2024
- 07:44:39 -0700 (PDT)
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UUk5GqFsvnt8aibuoucXH3mgAlXQnT7Fu6sM4Odfi8U=;
+        b=Mqa86jcaH7h/Y/9KvRWMWDjoFEoWM0lSklgq4i10on35xWZ7cZQ1gNPbWviUpYbiA1
+         Yl6ZpizBXneI88ORlaZ5NvAdCtg6JOGUj4JVKfLfg6mzAzihVAWboaiSxlcnqJRLS1I1
+         lTgyfGq+tP0dNQ85KW128VBOVucaxgmVAhEE3GjTGhUHZ+SJL4HasG+S+Ql/zprACD7l
+         uO3JXPnhso43hNV+fM8vTRUNCAQi7qFlxbfw/c/hbJFJGpMfTdzj+5gTDaGoYuChCx0d
+         LeVMX369B4LeyhQ1RYvg7vXDGaC/LkkDot5efIHCgVbP24Kko7q8DTFToPiBv8wqt5rA
+         Q/dw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBTBi+Itlq5+NNB4tmblz/yBKn9gIh75B8tX0xRwMhbvF159EteEHoyyhJni2IDRV8kLPFRn9B34knNOE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0Y1aS8vP08Afj03PDK8pCYvc93Mpb24qzeuBacLSOlAfih5fj
+	qYFeyzusPhVqvuevfHGpnyFRLng5jjY0KQa/Szi3Rgo32z5XmO4W3bBxoAp6HIplMoLUvyiqLzH
+	gia4s/3SulD58MKCevDSjXtmO1ZKrg/zlhL0VTg==
+X-Google-Smtp-Source: AGHT+IFBiLue3QFOk1WR26MRKOBV5299+r2MgZ52axZ/Ki/sFLcqtDTCw32+oxmnpnFn89KL/PCW6zIy0IG54nMMM54=
+X-Received: by 2002:a2e:4a0a:0:b0:2f7:6869:3b55 with SMTP id
+ 38308e7fff4ca-2f9cd40052emr9790031fa.21.1727361913927; Thu, 26 Sep 2024
+ 07:45:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926100434.45d58861@canb.auug.org.au> <CAH5fLgjRVZA3Gmb7Ogs+Y65T38EpNVeVEqmg93ZB4dn0Y7J3aA@mail.gmail.com>
- <20240926181348.3965b040@canb.auug.org.au> <CANiq72kFH125Pk6K-JaswWDFmcvtP2GKx2-3ZAULF4PmpW7M-w@mail.gmail.com>
- <CA+icZUUWBiZj67VxO=LPS5_Bt+i_g6s-HFT9Ts4UmmuPNk2kbA@mail.gmail.com> <CANiq72=dp=+kUHerFvUcL1TDLeuVz=xd781wm7WFmU1Sj-S8LA@mail.gmail.com>
-In-Reply-To: <CANiq72=dp=+kUHerFvUcL1TDLeuVz=xd781wm7WFmU1Sj-S8LA@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Thu, 26 Sep 2024 16:44:03 +0200
-Message-ID: <CA+icZUVVRvXA0G932bsEiEWhdv=Zd0WOPOEMXeHudTzqEp6pKA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of Linus' tree
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Alice Ryhl <aliceryhl@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Gatlin Newhouse <gatlin.newhouse@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Marco Elver <elver@google.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
+ <20240906-wrapped-keys-v6-6-d59e61bc0cb4@linaro.org> <fc780dc2-5a69-48d8-8caa-ca2ee97d10ef@kernel.org>
+In-Reply-To: <fc780dc2-5a69-48d8-8caa-ca2ee97d10ef@kernel.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 26 Sep 2024 16:45:01 +0200
+Message-ID: <CAMRc=Md3itY5N1gErL-VDAz0qW6DrHPKpXzT6kNwc2HVfvchpA@mail.gmail.com>
+Subject: Re: [PATCH v6 06/17] firmware: qcom: scm: add a call for deriving the
+ software secret
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>, 
+	Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Asutosh Das <quic_asutoshd@quicinc.com>, 
+	Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
+	Bart Van Assche <bvanassche@acm.org>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Eric Biggers <ebiggers@kernel.org>, 
+	"Theodore Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Bjorn Andersson <andersson@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Gaurav Kashyap <quic_gaurkash@quicinc.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, linux-block@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dm-devel@lists.linux.dev, linux-mmc@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 2:58=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+On Mon, Sep 9, 2024 at 1:23=E2=80=AFPM Konrad Dybcio <konradybcio@kernel.or=
+g> wrote:
+> > +
+> > +     memzero_explicit(secret_buf, sw_secret_size);
+> > +
+> > +out_free_wrapped:
 >
-> On Thu, Sep 26, 2024 at 2:49=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.co=
-m> wrote:
-> >
-> > Do you offer a (an optimized - optimized for kernel-builds) prebuilt
-> > RUST toolchain - preferable for x86-64 hosts - like Nathan +
-> > LLVM/Clang folk offer (see [1],[2])?
->
-> Yes, Nathan himself provides those! :)
->
->     https://mirrors.edge.kernel.org/pub/tools/llvm/rust/
+> Is there a reason to zero out the buffer that's being zero-allocated?
 >
 
-Thanks for the link!
-OK, I darkly remember seeing this somewhere.
+It's my understanding that it is a good practice in crypto routines to
+immediately and explicitly zero out the memory used for storing
+secrets.
 
-> He may comment further -- I think the Rust compiler itself is not
-> built (yet?) with PGO etc. like he does for the LLVM side.
->
-> As usual -- thanks Nathan!
->
-> > Maybe I have missed in [3] or overlooked.
->
-> If you go into the Quick Start guide from your link, you will see it
-> linked at the top:
->
->     https://docs.kernel.org/rust/quick-start.html
->
-> I also mentioned these in LPC's Kernel Summit track (sorry, no
-> video/stream yet, as far as I understand):
-> https://lpc.events/event/18/contributions/1912/
->
-> > [ Provocative ]
-> > Can I REALLY use a RUST-compiled Linux-kernel on BARE METAL?
-> > Do I need special hardware?
-> > Do you have a working in sense of bootable linux-config file?
-> > ^^ This is a real question - not interested in any "technical preview".
-> > ^^ You do NOT need to answer all this!
->
-> I am not sure what you mean -- people has been using Linux with Rust
-> enabled in real hardware for quite a while, e.g. Android and Asahi,
-> plus others are upcoming (Fedora, as far as I know), and I regularly
-> test in CI that the kernel boots in QEMU for several architectures and
-> configs that we already have in-tree.
->
-
-Asahi or Fedora-Asahi?
-Do you have a link to a Linux-Live-System or maybe a pointer to a kernel-co=
-nfig?
-
-> I also regularly test in CI that the kernel can be built with
-> `rustup`'s binaries, with several distro toolchains and with Nathan's
-> toolchains too.
->
-
-Is it possible to download a built VM (rustup-binary) and test in QEMU
-for example?
-
-I have NO experiences with RUST - but it looks like things/development
-moved further.
-
-Before I wanted to test gendwarfksyms-v3 from Sami.
-
-Best regards and wishes,
--sed@-
+Bart
 
