@@ -1,64 +1,68 @@
-Return-Path: <linux-kernel+bounces-340021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3F8986D6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:23:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74978986D7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE33EB22096
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:23:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A1D4283420
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E76189F30;
-	Thu, 26 Sep 2024 07:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C5218BC10;
+	Thu, 26 Sep 2024 07:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LK+9hoAF"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="GtBFhMwl"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC5B18DF89
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF71185B55;
+	Thu, 26 Sep 2024 07:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727335421; cv=none; b=oGL5/2SPbYUzo+HCNrVruMLEi7tsz3eJELUldIh8P0HFBzXHPe6cIHkmUAGqtgvUojAljz7aj8ozIBKUhkhQuHSLapXMs+lpG87YXjKSuiADra5uEupf4KR0/I3Q8xMFE6fZxoMZuLzntRW/76bhMqnPyP9swz5R/1KqZcK7Zw8=
+	t=1727335529; cv=none; b=Alt7o2u8atNcroTO3dsCm6Hrbf45i3QFyuAAOsf5wK6D4iWQ/OaByST1vdyxkDcpZBo+WgYYaVFn5Tw2DatcJ/6XipJH05VPPREestZ5xlXvzF4+9anBFV/UuYwQpfm/2k/Raq3AE1TVf4Slk6ZBj28KhPFt2mSFT9xkBQeLP74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727335421; c=relaxed/simple;
-	bh=2ioXvhnYQmBXk12dSBLdQoAJznJnVZ4GhTtw8CVkreA=;
+	s=arc-20240116; t=1727335529; c=relaxed/simple;
+	bh=UTP4AJIcfkshPFU/SQC+v0Q+oZVwMHnZQaBpKvG9x1c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HDHcFYLI+nmZTBXfBnFC5bcC2y58zDkYaflCpeLeiSKjD0me5H2fez6T4bz0y2rVA4/L7PDCqD/dNuKjhOXwWvzA7iz2qI35PP2vvroRFfR4wf+uSgLy0BJbyZ98qy1kiBvbwbXMU1ubDsRiwPPeOOrHCZAa+21Pjt9iLVBaFTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LK+9hoAF; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 26 Sep 2024 09:23:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727335417;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M74QGAwrZ1qMfz1BFpXYDpWU8+8YmkAu637hCGvBle4=;
-	b=LK+9hoAFd4m/K1ZOZML//fwnZLwPZLLrjFSfwYCU+EZEhXJI4akJZyd4He3SFuzAQg0SaF
-	/v1oPBieCSTaZ8r4j5KphkM7JlW+/taETVooh0+ECPFnS0yD31NemiDIZe1Gw3RNK43m2V
-	rtdc7pn3k/BCUybEnYN+v4aDw8M/RWo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Shaoqin Huang <shahuang@redhat.com>
-Cc: Marc Zyngier <maz@kernel.org>, kvmarm@lists.linux.dev,
-	Eric Auger <eauger@redhat.com>, Sebastian Ott <sebott@redhat.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Fuad Tabba <tabba@google.com>,
-	Mark Brown <broonie@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
-	Kristina Martsenko <kristina.martsenko@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 1/2] KVM: arm64: Use kvm_has_feat() to check if
- FEAT_RAS is advertised to the guest
-Message-ID: <ZvUL9SrVo4hn3aR0@linux.dev>
-References: <20240926032244.3666579-1-shahuang@redhat.com>
- <20240926032244.3666579-2-shahuang@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ntpvejw9qWxWj9mgDDG9uFfdkEGw2nLW7qSl9TP/aLBzNJxQq8zTJS96t+QsWq2c3ddF7StqiZffrFX7Zo57rQlQowv5j2+DDCn0ss+wA1TtlhMVaXA9nLK6t+6biy5ypk0xS4xLaBxju2lVGGTt8ojRtQSXrQKOJGFvzCcTUgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=GtBFhMwl; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D9EAD1483DC9;
+	Thu, 26 Sep 2024 09:25:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1727335518; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=HofPiSPRsOq8IMdn+s0YrB3BCnkaGyRPRUXAn53i/Sk=;
+	b=GtBFhMwlBlN39A/Znf/BuTGk1e6Lc8rdQgGtN2zCR+bozFDmd0NXgC8uc+1FbUVdyCq6rK
+	pm8Idy158AIcp/e4QlpcJ1vfVUM0rS0+INO9XOnoircEIB0xgqKnUOMb2SXclusDkSnEZm
+	+6KuL9XqItvicLwUSQSFVEFllTSqYIdVwypuwhHTp9ZveszKIrcT+OGw4G9MSpLg/hB3qq
+	h6F17n1V0xRTqKirT6TbAt0eVPx4b2+xMjrL77cpLrxp1Q0BLUXHWDCBrBNKai1cw5UCvm
+	Lhr8I/lxAO1vbGYzKInnYqP0n4qxE3FyU4k+gjr1LGVetnIE6dEzWjkv+8ltYA==
+Date: Thu, 26 Sep 2024 09:25:10 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] spi: atmel-quadspi: Avoid overwriting delay register
+ settings
+Message-ID: <20240926-macarena-wincing-7c4995487a29@thorsis.com>
+Mail-Followup-To: Mark Brown <broonie@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240918082744.379610-1-ada@thorsis.com>
+ <20240918082744.379610-2-ada@thorsis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,110 +71,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240926032244.3666579-2-shahuang@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240918082744.379610-2-ada@thorsis.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Sep 25, 2024 at 11:22:39PM -0400, Shaoqin Huang wrote:
-> diff --git a/arch/arm64/kvm/handle_exit.c b/arch/arm64/kvm/handle_exit.c
-> index d7c2990e7c9e..99f256629ead 100644
-> --- a/arch/arm64/kvm/handle_exit.c
-> +++ b/arch/arm64/kvm/handle_exit.c
-> @@ -405,7 +405,7 @@ int handle_exit(struct kvm_vcpu *vcpu, int exception_index)
->  void handle_exit_early(struct kvm_vcpu *vcpu, int exception_index)
->  {
->  	if (ARM_SERROR_PENDING(exception_index)) {
-> -		if (this_cpu_has_cap(ARM64_HAS_RAS_EXTN)) {
-> +		if (kvm_has_feat(vcpu->kvm, ID_AA64PFR0_EL1, RAS, IMP)) {
->  			u64 disr = kvm_vcpu_get_disr(vcpu);
+Hello everyone,
+
+Am Wed, Sep 18, 2024 at 10:27:43AM +0200 schrieb Alexander Dahl:
+> Previously the MR and SCR registers were just set with the supposedly
+> required values, from cached register values (cached reg content
+> initialized to zero).
+> 
+> All parts fixed here did not consider the current register (cache)
+> content, which would make future support of cs_setup, cs_hold, and
+> cs_inactive impossible.
+> 
+> Setting SCBR in atmel_qspi_setup() erases a possible DLYBS setting from
+> atmel_qspi_set_cs_timing().  The DLYBS setting is applied by ORing over
+> the current setting, without resetting the bits first.  All writes to MR
+> did not consider possible settings of DLYCS and DLYBCT.
+> 
+> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+> Fixes: f732646d0ccd ("spi: atmel-quadspi: Add support for configuring CS timing")
+> ---
+>  drivers/spi/atmel-quadspi.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
+> index 5aaff3bee1b7..fcd57cf1f2cf 100644
+> --- a/drivers/spi/atmel-quadspi.c
+> +++ b/drivers/spi/atmel-quadspi.c
+> @@ -375,9 +375,9 @@ static int atmel_qspi_set_cfg(struct atmel_qspi *aq,
+>  	 * If the QSPI controller is set in regular SPI mode, set it in
+>  	 * Serial Memory Mode (SMM).
+>  	 */
+> -	if (aq->mr != QSPI_MR_SMM) {
+> -		atmel_qspi_write(QSPI_MR_SMM, aq, QSPI_MR);
+> -		aq->mr = QSPI_MR_SMM;
+> +	if (!(aq->mr & QSPI_MR_SMM)) {
+> +		aq->mr |= QSPI_MR_SMM;
+> +		atmel_qspi_write(aq->scr, aq, QSPI_MR);
+
+On a second glance, this looks wrong, value for Mode Register (MR) is
+written into Serial Clock Register (SCR), should be like this instead:
+
+    atmel_qspi_write(aq->mr, aq, QSPI_MR);
+
+This is somewhat embarrassing, because the patch was already applied
+to master.  Should it be reverted, then I would send a v2 of the
+series?  Or should I send a quick fixup?
+
+Greets
+Alex
+
+>  	}
 >  
->  			kvm_handle_guest_serror(vcpu, disr_to_esr(disr));
-
-This is wrong; this is about handling *physical* SErrors, not virtual
-ones.
-
-So it really ought to be keyed off of the host cpucap.
-
-> diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
-> index 37ff87d782b6..bf176a3cc594 100644
-> --- a/arch/arm64/kvm/hyp/include/hyp/switch.h
-> +++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
-> @@ -272,7 +272,7 @@ static inline void ___activate_traps(struct kvm_vcpu *vcpu, u64 hcr)
+>  	/* Clear pending interrupts */
+> @@ -501,7 +501,8 @@ static int atmel_qspi_setup(struct spi_device *spi)
+>  	if (ret < 0)
+>  		return ret;
 >  
->  	write_sysreg(hcr, hcr_el2);
+> -	aq->scr = QSPI_SCR_SCBR(scbr);
+> +	aq->scr &= ~QSPI_SCR_SCBR_MASK;
+> +	aq->scr |= QSPI_SCR_SCBR(scbr);
+>  	atmel_qspi_write(aq->scr, aq, QSPI_SCR);
 >  
-> -	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN) && (hcr & HCR_VSE))
-> +	if (kvm_has_feat(vcpu->kvm, ID_AA64PFR0_EL1, RAS, IMP) && (hcr & HCR_VSE))
->  		write_sysreg_s(vcpu->arch.vsesr_el2, SYS_VSESR_EL2);
->  }
-
-I don't think this should be conditioned on guest visibility either. If
-FEAT_RAS is implemented in hardware, ESR_EL1 is set to the value of
-VSESR_EL2 when the vSError is taken, no matter what.
-
-> diff --git a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> index 4c0fdabaf8ae..98526556d4e5 100644
-> --- a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> +++ b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> @@ -105,6 +105,8 @@ static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
+>  	pm_runtime_mark_last_busy(ctrl->dev.parent);
+> @@ -534,6 +535,7 @@ static int atmel_qspi_set_cs_timing(struct spi_device *spi)
+>  	if (ret < 0)
+>  		return ret;
 >  
->  static inline void __sysreg_save_el2_return_state(struct kvm_cpu_context *ctxt)
->  {
-> +	struct kvm_vcpu *vcpu = ctxt_to_vcpu(ctxt);
-> +
->  	ctxt->regs.pc			= read_sysreg_el2(SYS_ELR);
->  	/*
->  	 * Guest PSTATE gets saved at guest fixup time in all
-> @@ -113,7 +115,7 @@ static inline void __sysreg_save_el2_return_state(struct kvm_cpu_context *ctxt)
->  	if (!has_vhe() && ctxt->__hyp_running_vcpu)
->  		ctxt->regs.pstate	= read_sysreg_el2(SYS_SPSR);
+> +	aq->scr &= ~QSPI_SCR_DLYBS_MASK;
+>  	aq->scr |= QSPI_SCR_DLYBS(cs_setup);
+>  	atmel_qspi_write(aq->scr, aq, QSPI_SCR);
 >  
-> -	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
-> +	if (kvm_has_feat(vcpu->kvm, ID_AA64PFR0_EL1, RAS, IMP))
->  		ctxt_sys_reg(ctxt, DISR_EL1) = read_sysreg_s(SYS_VDISR_EL2);
->  }
+> @@ -549,8 +551,8 @@ static void atmel_qspi_init(struct atmel_qspi *aq)
+>  	atmel_qspi_write(QSPI_CR_SWRST, aq, QSPI_CR);
 >  
-> @@ -220,6 +222,7 @@ static inline void __sysreg_restore_el2_return_state(struct kvm_cpu_context *ctx
->  {
->  	u64 pstate = to_hw_pstate(ctxt);
->  	u64 mode = pstate & PSR_AA32_MODE_MASK;
-> +	struct kvm_vcpu *vcpu = ctxt_to_vcpu(ctxt);
+>  	/* Set the QSPI controller by default in Serial Memory Mode */
+> -	atmel_qspi_write(QSPI_MR_SMM, aq, QSPI_MR);
+> -	aq->mr = QSPI_MR_SMM;
+> +	aq->mr |= QSPI_MR_SMM;
+> +	atmel_qspi_write(aq->mr, aq, QSPI_MR);
 >  
->  	/*
->  	 * Safety check to ensure we're setting the CPU up to enter the guest
-> @@ -238,7 +241,7 @@ static inline void __sysreg_restore_el2_return_state(struct kvm_cpu_context *ctx
->  	write_sysreg_el2(ctxt->regs.pc,			SYS_ELR);
->  	write_sysreg_el2(pstate,			SYS_SPSR);
->  
-> -	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
-> +	if (kvm_has_feat(vcpu->kvm, ID_AA64PFR0_EL1, RAS, IMP))
->  		write_sysreg_s(ctxt_sys_reg(ctxt, DISR_EL1), SYS_VDISR_EL2);
->  }
-
-These registers are still stateful no matter what, we cannot prevent an
-ESB instruction inside the VM from consuming a pending vSError.
-
-Keep in mind the ESB instruction is a NOP without FEAT_RAS, so it is
-still a legal instruction for a VM w/o FEAT_RAS.
-
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 31e49da867ff..b09f8ba3525b 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -4513,7 +4513,7 @@ static void vcpu_set_hcr(struct kvm_vcpu *vcpu)
->  
->  	if (has_vhe() || has_hvhe())
->  		vcpu->arch.hcr_el2 |= HCR_E2H;
-> -	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN)) {
-> +	if (kvm_has_feat(kvm, ID_AA64PFR0_EL1, RAS, IMP)) {
->  		/* route synchronous external abort exceptions to EL2 */
->  		vcpu->arch.hcr_el2 |= HCR_TEA;
->  		/* trap error record accesses */
-
-No, we want external aborts to be taken to EL2. Wouldn't this also have
-the interesting property of allowing a VM w/o FEAT_RAS to access the
-error record registers?
-
--- 
-Thanks,
-Oliver
+>  	/* Enable the QSPI controller */
+>  	atmel_qspi_write(QSPI_CR_QSPIEN, aq, QSPI_CR);
+> -- 
+> 2.39.5
+> 
+> 
 
