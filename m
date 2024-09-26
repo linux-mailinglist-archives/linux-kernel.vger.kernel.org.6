@@ -1,91 +1,135 @@
-Return-Path: <linux-kernel+bounces-340004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50650986D30
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:05:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060FE986D3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DF6D280E66
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A15861F2298C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9B418C32D;
-	Thu, 26 Sep 2024 07:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418B918BB84;
+	Thu, 26 Sep 2024 07:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOMrENlp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="a6qG1sYP"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3BB188CC7;
-	Thu, 26 Sep 2024 07:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39B81E86E;
+	Thu, 26 Sep 2024 07:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727334306; cv=none; b=amxu7wvtdlucn9fomizvLerWTr69N9Bq3gQKi84JRPgtExrhG4PdxiN3V+qzvZtrRNeqOXoHqWAPZpUbY1jzAw1wC6o6mYEK356lFh90K3ijtrSvsGRbv72dghiNHzJj0I+1mgB067BOXf07r+yMbuETVKM2E5qnfzBJk69cvLo=
+	t=1727334451; cv=none; b=U0hlAR6A+PZBu3rEc8nmMMdqV3OfE2bwa/QdBiZb3mojR2/0zf74RrvUmQFLaMllM5jzJolftqnJlypaXz0iSrJmlbXT7Q2u5nwuDQc2T2C/ckH1lfNAOOWUgoaFCRIVGQo2B/WBoT47mWjxoi3g/YKC99+25zAgFmykzZhECR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727334306; c=relaxed/simple;
-	bh=PmeIsMqrFqSAHKlByfGuq98ieyZORXwH7IlRJ289hkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c7rutuvZJ6V4dLpkHJAiO7EbZznKunFrCfTr7y3cW3marwnwz75B2MGdb2KTu5CTpRDeS8Kr3IGPMhF9MwfKSJz036R+PSCVkDD4lPAzbINxkvgZCHCg7yp7EJKalG6+zq6nH/P0FNQUEGF9GF/NOViC+tqebIydwYGUjlFTbWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOMrENlp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CE93C4CEC5;
-	Thu, 26 Sep 2024 07:05:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727334305;
-	bh=PmeIsMqrFqSAHKlByfGuq98ieyZORXwH7IlRJ289hkI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vOMrENlpetRETktPSGtOA359hRSkrkG8LJYOllofjox8SsQzjhpWT5a4/gJOOoNis
-	 DPTDOOeK2io3H/Oxh18WRYbazxTmOlMmQgmpCemzmM5G2dn90s71QMcdXtNgiYx3Qm
-	 lOssOVusI+Xp0FMIkHFHTV8l0tBxTrh2kE1Z3EyaHhBDKRi+CcG1nqnuyfoQzOvuoX
-	 68nDpQvKl6eMv2wO3ru8Y+LZdpF4QBNsmDeMbj7H7RfHTcRRZQuVo0JHf97Prq+AT2
-	 POLthqzIfDq4unWXO6fUGU5M1VvFsIEdlXhqQUNRz679fLEL5fDLG50ugTyOPO9BAD
-	 irLg1G2ze4Zxw==
-Date: Thu, 26 Sep 2024 09:05:02 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Caleb Connolly <caleb.connolly@linaro.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	s=arc-20240116; t=1727334451; c=relaxed/simple;
+	bh=KnAJPqBaS5mXano/IWPtVY1GwRK9RukKLmDCVvuE62k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mQ4hk9Y6TSA0YfrcbeRWg9SLsOMfor0mgoTrKMyiY9N0IbKEuukgqWn1Y1GA3cjEy2PgYJjWoXmsWJlHGFeDn9Tr3yiyx+hlJfjRj2zfXFJLX+YE3kDhd0MWqJlp7MREjMhWwsxDk2rs1OYU5tS2co3WZuBrJgsJQb8IAqkPM+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=a6qG1sYP; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727334447;
+	bh=KnAJPqBaS5mXano/IWPtVY1GwRK9RukKLmDCVvuE62k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=a6qG1sYPRZwPWN61Ga0JUd2JAOsqgmxztWRWL7bQyRnlvitHYMF1KaYiokMoe90QL
+	 y0Z3W5WTVkarVdSfrD0gilBztAbMN9+Nl2XmUon16zfnlqbH3MMB6MEo6gwyN1chMZ
+	 Ws24NLwZgR0HaoUXMSRR9ZlxGDiUgHCb7Trje6ira3SDxES3YSw1Xp46P3aIhJ4atB
+	 bvQwTNUASavoZB4mXLO1zjyG8zshAZLVTm0Y2vAFT0NQFWuMOwyu394ObkzfiDPWs2
+	 HnpyVWilPmTXyapS5PY6PZNtVpy2So9ybSPpNinWx92FjggJnEEd6mokyHEC1mm2Tn
+	 pMtK3XWjBoW/A==
+Received: from localhost.localdomain (unknown [171.76.80.165])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 69E9F17E0FDC;
+	Thu, 26 Sep 2024 09:07:24 +0200 (CEST)
+From: Vignesh Raman <vignesh.raman@collabora.com>
+To: dri-devel@lists.freedesktop.org
+Cc: daniels@collabora.com,
+	helen.koike@collabora.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	robdclark@gmail.com,
+	guilherme.gallo@collabora.com,
+	sergi.blanch.torne@collabora.com,
+	deborah.brouwer@collabora.com,
+	dmitry.baryshkov@linaro.org,
+	mripard@kernel.org,
+	rodrigo.vivi@intel.com,
+	linux-mediatek@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: power/supply: qcom,pmi8998-char: Add
- missing "interrupt-controller" to example
-Message-ID: <bxxhgmcfxhzvf3m655gl3asiro6v6zaqrxeea3nlehyc54dl6f@3nvonnrzynpw>
-References: <20240925173413.1905782-1-robh@kernel.org>
+Subject: [PATCH v2] docs/gpu: ci: update flake tests requirements
+Date: Thu, 26 Sep 2024 12:36:49 +0530
+Message-ID: <20240926070653.1773597-1-vignesh.raman@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240925173413.1905782-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 25, 2024 at 12:34:12PM -0500, Rob Herring (Arm) wrote:
-> Enabling dtc interrupt_provider check reveals the example is missing
-> the "interrupt-controller" property as it is a dependency of
-> "#interrupt-cells".
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml   | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml b/Documentation/devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml
-> index 277c47e048b6..a1b4926e7190 100644
-> --- a/Documentation/devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml
-> @@ -61,6 +61,7 @@ examples:
->        #address-cells = <1>;
->        #size-cells = <0>;
->        #interrupt-cells = <4>;
-> +      interrupt-controller;
+Update the documentation to require linking to a relevant GitLab
+issue for each new flake entry instead of an email report. Added
+specific GitLab issue URLs for i915, xe and other drivers.
 
-Opposite, the interrupt-cells should be dropped. The parent ("pmic") is
-qcom,spmi-pmic.yaml which is not an interrupt controller, according to
-the bindings.
+Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+---
 
-Best regards,
-Krzysztof
+v2:
+- Add gitlab issue link for msm driver.
+
+---
+ Documentation/gpu/automated_testing.rst | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/automated_testing.rst
+index 2d5a28866afe..f918fe56f2b0 100644
+--- a/Documentation/gpu/automated_testing.rst
++++ b/Documentation/gpu/automated_testing.rst
+@@ -67,20 +67,26 @@ Lists the tests that for a given driver on a specific hardware revision are
+ known to behave unreliably. These tests won't cause a job to fail regardless of
+ the result. They will still be run.
+ 
+-Each new flake entry must be associated with a link to the email reporting the
+-bug to the author of the affected driver, the board name or Device Tree name of
+-the board, the first kernel version affected, the IGT version used for tests,
+-and an approximation of the failure rate.
++Each new flake entry must include a link to the relevant GitLab issue, the board
++name or Device Tree name, the first kernel version affected, the IGT version used
++for tests and an approximation of the failure rate.
+ 
+ They should be provided under the following format::
+ 
+-  # Bug Report: $LORE_OR_PATCHWORK_URL
++  # Bug Report: $GITLAB_ISSUE
+   # Board Name: broken-board.dtb
+   # Linux Version: 6.6-rc1
+   # IGT Version: 1.28-gd2af13d9f
+   # Failure Rate: 100
+   flaky-test
+ 
++The GitLab issue must include the logs and the pipeline link. Use the appropriate
++link below to create an issue.
++https://gitlab.freedesktop.org/drm/i915/kernel/-/issues for i915 driver
++https://gitlab.freedesktop.org/drm/xe/kernel/-/issues for xe driver
++https://gitlab.freedesktop.org/drm/msm/-/issues for msm driver
++https://gitlab.freedesktop.org/drm/misc/kernel/-/issues for other drivers
++
+ drivers/gpu/drm/ci/${DRIVER_NAME}-${HW_REVISION}-skips.txt
+ -----------------------------------------------------------
+ 
+-- 
+2.43.0
 
 
