@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-339791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA65986A95
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:38:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2342986A96
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB8BA281ECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACC712850AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06301A706D;
-	Thu, 26 Sep 2024 01:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D05D194C6C;
+	Thu, 26 Sep 2024 01:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EadYPUZf"
-Received: from mail-ua1-f74.google.com (mail-ua1-f74.google.com [209.85.222.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VWyL8IMW"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C03D1A4AA6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981351A4AB4
 	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 01:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.74
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727314533; cv=none; b=ADqjfu+y/43UpQLFHANWbKTV6dK8d9RDh/3kV0HRdDPTn9wzkYV61B6k2JxEo3Pu8DVud7AaodkZY59RGFxhZPvojUFu/SIIbkm0nhf1QKph4wMwj4arN4UIr8GY/ReI9H5UxKyMN9dNIdIHlqsRFgXsHF534IzlWg3v909PfO0=
+	t=1727314533; cv=none; b=Fz3tt7XCbNKA6Pi3gWptYFkSWKfLRpl6kQqj27ziL967X1bCvDiiUxpOiTbhfGUbqvahz8ClfgfoFYkhbn/L8wUJPlr+b0CuKsoWHSdVB/4b26VcayaM2PJc4q624vS14tkWsFpXsTdoUfj/TyjVXDyTXRaMGJcpDuex5WslZQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727314533; c=relaxed/simple;
-	bh=TwJSAlmKBARZz/CI6deRJoTQbU3R7Kx2125IS9QJ4rA=;
+	bh=iynxZ4Ry9WaN4XO7OQhzo2JcvREd4yVbmFHSIphWh40=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=e9FVYzK7glioitimZquezBrVKoiXlCN6qJ9r923172zEkMpt53GQFNcInJcb6F5YSSZigiXbNE7P1fYma2Hl43bAr9komtxWuAK9MD7hrxgYrsWWDwsaL4y15cPbPeKfOn6uPvNHZZMBlaAYE1KmtYDh/vzmungi2tN2T6nVynQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EadYPUZf; arc=none smtp.client-ip=209.85.222.74
+	 To:Cc:Content-Type; b=n8HQbBb6WpSEqZXH+ODsmUqpad/R5G/whHhCj59E34vLLo7RIHkk5zcst0IzyzS74H/D3Pv+3DdWvlbM19HsfEBcBxrJC1sdGj5JwymHhnjvVKWH6q9yY5QLR+XBjsLvwovG8nIOeTZA1x/xEq6OkEcvSi0cp3xi34b34g4ZDZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VWyL8IMW; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-ua1-f74.google.com with SMTP id a1e0cc1a2514c-848917ba13aso142235241.3
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e230808455so5355257b3.0
         for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 18:35:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727314530; x=1727919330; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1727314531; x=1727919331; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jwY5XxMaAH9vrNcOxKBlxaXWmYulPCq+P3CKqgHldo8=;
-        b=EadYPUZfKnrSS3YLeCYgelEvWLhlKB3uT+jGwO7o8otaPiDZTDs6vPTCDMAMuzexXX
-         rgRhn2L+UXm2VO1w7KD5z82x5ev47oSHETuz4a3gvs8Q41oV8LiCE8lC8A2xYqGpfCym
-         bKFnQW8z08kxjWRqH3ZzYMRVHaILlsZt5DmsPauiZBobmhkcL4Y7NH+AzJjKnQNDY4j4
-         d+w6z5kZA/FThfofQCbd+hqTzOEhqE98fu11+kWfWU3TdyA7s8XrNYOWWyy8alx2rc3F
-         kH0vCw6jMeMd383Tr9P45gzfhqAcxTt0J1j5sRhHoQdjQFBz5i/4cFaeNbeq6uoWUxFO
-         zxaw==
+        bh=ogisB+p0t7E+MEmwUL2EdeyMfss1r+UivrCLQXciZ0o=;
+        b=VWyL8IMWaAQGG04phvq0Z82R4n3aqoS8tnjLNrvV31bkzDKYLafBHC6bvUn+CxBWhA
+         wgUjKspczotuLzqQkZA08e3t2qzXpHzyFxXGXL3oAqCpuveC4EQXmyq9ndvserDhpQCU
+         YxO64grDH4l7l7CgnhizfmPdsfkHeV/O3t746cdXyk4q9froEqnH4gGhox54CF69qst/
+         JGnKQ3s8K78MpE8Vo/EggETvPbj44jRIF4iuqglsTJXRS1dzVVnILFkWJ4GtouowoPqD
+         Ez6nRSiklK1H9zgRKk0QeNTmf2xNHpMc9zpK4F3u+4TahGNcWTUoYo+W4sQIRWsRJlFw
+         srRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727314530; x=1727919330;
+        d=1e100.net; s=20230601; t=1727314531; x=1727919331;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jwY5XxMaAH9vrNcOxKBlxaXWmYulPCq+P3CKqgHldo8=;
-        b=l0DS0pPNj8LUEXKJY33rBwCcuEWrJRevV5bklS+zCoF3rLq5qu1NG8fzGBhVTSpFiD
-         dM02OSeXWQ0AGeMBd1Q2cAQ9lc+ajKBWsvjFkzfhsW4gWSW4ky4Ddw2GZklblD25VkzJ
-         Ha81xwCYm3gU1dlVoZzUUKZvLubXCFs9KzGxaMiVpbvDEABcIWhIPP1Rrfw3kYWVy9Ng
-         IfG6WE1TmtALRkDYummM5PKXJbS50bLZaj1AWoXv+rxzychmkMhjLKDv+jRKyUbRjMt1
-         XS7fZhXLN9AJgV0dvK7CL/+gbS7O1dFHfUn5qLZ4hEW0FKQ7S85RhsLWidtwEc6VEKu1
-         mlQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUc5ysD85dZlGHNi0IcrExqjg2Vurgv6Lgc/jTCAOevWGOdcoQwTlB1FyIwXt2LZTOrhelrhecJQ/B9paw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKBxJr89U0ib3XZNSi7cjB3j7BSu93quD3Y3HtUaDuVUusLIwH
-	YeifHTZJ4rA0gpAA3+vqliFXxOXtTYT26Kn0rmBf4xMJTIa7x2hEhrhK1JMhDB19oUKRif2wfjR
-	vPtWomxxEJKAOX0fwhA==
-X-Google-Smtp-Source: AGHT+IFR+2qF3anIZYWl2APj1JzmMbbMXKjDESaaFvEMKsw92aYBHlJKDywpCEXIkyk1bOavtsxa/wF5vSbBnBSJ
+        bh=ogisB+p0t7E+MEmwUL2EdeyMfss1r+UivrCLQXciZ0o=;
+        b=pBgb7T6jrlzU2t+1/8MzqxRva+QSnlpVLWe/1+av3GHyUFmDAYWlIH0ReVZWOXeA5/
+         eaVRPgLbGudJVJ2sHSCiJpJUPfQsbkouFt7r5crE8lfYNH8hpel5HF/gfkTw3YbmLUmF
+         EDVIs3SmEd2ObeU6T2n4IeAZ+xoIuBOnIJOZf56eg+6k5tRW5/VXUGA7fn2ZI4w5FFmr
+         xqHD5rjR2/afIZpuEL/6J2sXm8oMRx/EUhUfsWpic87t9ucICt+ybJwTUdOxMlVMPMp2
+         jikea9W7n27MPX+rBZ8EZMLrvrp41iT08ouYk32CmpUSWtGktoWN6PW5p00tgI8ilJph
+         aUlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVo4VSnmoP76IHTbjaj0C8icXSzmEKwJJF38OjpCIa/P6kgiyujQ6F2SHpaHijRgB4Gkj+CBHGDXUM9vHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9P8iyeCDEPhiQWwoeqfLdSSUhoEL/gyOtJWpw61heKX8By95Z
+	YY7BomEfG9hOr+XMqh2ZtU8U0jN5/IeRsOc4ZW3ZC8kERAPYwEjcFhsFb9xLDoH+MXG4YAVxdI6
+	XNQZS+gXXX01yr5yFXg==
+X-Google-Smtp-Source: AGHT+IEFdzw0O48kZ1pdx1YoauWRvV0zu2R4nMdxsgoP5v/WIUZXOoAYIDJzZnEXzkuO0wTdBSaqUczWpwalNBYg
 X-Received: from jthoughton.c.googlers.com ([fda3:e722:ac3:cc00:13d:fb22:ac12:a84b])
- (user=jthoughton job=sendgmr) by 2002:ab0:380d:0:b0:846:d5f9:2186 with SMTP
- id a1e0cc1a2514c-84e83c0a7fdmr10563241.2.1727314529698; Wed, 25 Sep 2024
- 18:35:29 -0700 (PDT)
-Date: Thu, 26 Sep 2024 01:35:00 +0000
+ (user=jthoughton job=sendgmr) by 2002:a05:690c:5292:b0:62c:f976:a763 with
+ SMTP id 00721157ae682-6e21d6c27c9mr136077b3.1.1727314530709; Wed, 25 Sep 2024
+ 18:35:30 -0700 (PDT)
+Date: Thu, 26 Sep 2024 01:35:01 +0000
 In-Reply-To: <20240926013506.860253-1-jthoughton@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240926013506.860253-1-jthoughton@google.com>
 X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
-Message-ID: <20240926013506.860253-13-jthoughton@google.com>
-Subject: [PATCH v7 12/18] mm: Add has_fast_aging to struct mmu_notifier
+Message-ID: <20240926013506.860253-14-jthoughton@google.com>
+Subject: [PATCH v7 13/18] mm: Add fast_only bool to test_young and clear_young
+ MMU notifiers
 From: James Houghton <jthoughton@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, David Matlack <dmatlack@google.com>, 
@@ -85,119 +86,302 @@ Cc: Andrew Morton <akpm@linux-foundation.org>, David Matlack <dmatlack@google.co
 	linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 
-has_fast_aging should be set by subscribers that non-trivially implement
-fast-only versions of both test_young() and clear_young().
+For implementers, the fast_only bool indicates that the age information
+needs to be harvested such that we do not slow down other MMU operations,
+and ideally that we are not ourselves slowed down by other MMU
+operations.  Usually this means that the implementation should be
+lockless.
 
-Fast aging must be opt-in. For a subscriber that has not been
-enlightened with "fast aging", the test/clear_young() will behave
-identically whether or not fast_only is given. Have KVM always opt out
-for now; specific architectures can opt-in later.
-
-Given that KVM is the only test/clear_young() implementer, we could
-instead add an equivalent check in KVM, but doing so would incur an
-indirect function call every time, even if the notifier ends up being a
-no-op.
-
-Add mm_has_fast_young_notifiers() in case a caller wants to know if it
-should skip many calls to the mmu notifiers that may not be necessary
-(like MGLRU look-around).
+Also add mmu_notifier_test_young_fast_only() and
+mmu_notifier_clear_young_fast_only() helpers to set fast_only for these
+notifiers.
 
 Signed-off-by: James Houghton <jthoughton@google.com>
 ---
- include/linux/mmu_notifier.h | 14 ++++++++++++++
- mm/mmu_notifier.c            | 20 ++++++++++++++++++++
- virt/kvm/kvm_main.c          |  1 +
- 3 files changed, 35 insertions(+)
+ include/linux/mmu_notifier.h | 61 ++++++++++++++++++++++++++++++++----
+ include/trace/events/kvm.h   | 19 ++++++-----
+ mm/mmu_notifier.c            | 18 ++++++++---
+ virt/kvm/kvm_main.c          | 12 ++++---
+ 4 files changed, 88 insertions(+), 22 deletions(-)
 
 diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-index e2dd57ca368b..37643fa43687 100644
+index 37643fa43687..7c17e2871c66 100644
 --- a/include/linux/mmu_notifier.h
 +++ b/include/linux/mmu_notifier.h
-@@ -231,6 +231,7 @@ struct mmu_notifier {
- 	struct mm_struct *mm;
- 	struct rcu_head rcu;
- 	unsigned int users;
-+	bool has_fast_aging;
- };
+@@ -106,21 +106,38 @@ struct mmu_notifier_ops {
+ 	 * clear_young is a lightweight version of clear_flush_young. Like the
+ 	 * latter, it is supposed to test-and-clear the young/accessed bitflag
+ 	 * in the secondary pte, but it may omit flushing the secondary tlb.
++	 *
++	 * The fast_only parameter indicates that this call should not block,
++	 * and this function should not cause other MMU notifier calls to
++	 * block. Usually this means that the implementation should be
++	 * lockless.
++	 *
++	 * When called with fast_only, this notifier will be a no-op (and
++	 * return that the range is NOT young), unless has_fast_aging is set
++	 * on the struct mmu_notifier.
++	 *
++	 * When fast_only is true, if the implementer cannot determine that a
++	 * range is young without blocking, it should return 0 (i.e., that
++	 * the range is NOT young).
+ 	 */
+ 	int (*clear_young)(struct mmu_notifier *subscription,
+ 			   struct mm_struct *mm,
+ 			   unsigned long start,
+-			   unsigned long end);
++			   unsigned long end,
++			   bool fast_only);
  
- /**
-@@ -383,6 +384,7 @@ extern int __mmu_notifier_clear_young(struct mm_struct *mm,
- 				      unsigned long end);
+ 	/*
+ 	 * test_young is called to check the young/accessed bitflag in
+ 	 * the secondary pte. This is used to know if the page is
+ 	 * frequently used without actually clearing the flag or tearing
+ 	 * down the secondary mapping on the page.
++	 *
++	 * The fast_only parameter has the same meaning as with clear_young.
+ 	 */
+ 	int (*test_young)(struct mmu_notifier *subscription,
+ 			  struct mm_struct *mm,
+-			  unsigned long address);
++			  unsigned long address,
++			  bool fast_only);
+ 
+ 	/*
+ 	 * invalidate_range_start() and invalidate_range_end() must be
+@@ -381,9 +398,11 @@ extern int __mmu_notifier_clear_flush_young(struct mm_struct *mm,
+ 					  unsigned long end);
+ extern int __mmu_notifier_clear_young(struct mm_struct *mm,
+ 				      unsigned long start,
+-				      unsigned long end);
++				      unsigned long end,
++				      bool fast_only);
  extern int __mmu_notifier_test_young(struct mm_struct *mm,
- 				     unsigned long address);
-+extern bool __mm_has_fast_young_notifiers(struct mm_struct *mm);
+-				     unsigned long address);
++				     unsigned long address,
++				     bool fast_only);
+ extern bool __mm_has_fast_young_notifiers(struct mm_struct *mm);
  extern int __mmu_notifier_invalidate_range_start(struct mmu_notifier_range *r);
  extern void __mmu_notifier_invalidate_range_end(struct mmu_notifier_range *r);
- extern void __mmu_notifier_arch_invalidate_secondary_tlbs(struct mm_struct *mm,
-@@ -428,6 +430,13 @@ static inline int mmu_notifier_test_young(struct mm_struct *mm,
- 	return 0;
- }
- 
-+static inline bool mm_has_fast_young_notifiers(struct mm_struct *mm)
+@@ -418,7 +437,16 @@ static inline int mmu_notifier_clear_young(struct mm_struct *mm,
+ 					   unsigned long end)
+ {
+ 	if (mm_has_notifiers(mm))
+-		return __mmu_notifier_clear_young(mm, start, end);
++		return __mmu_notifier_clear_young(mm, start, end, false);
++	return 0;
++}
++
++static inline int mmu_notifier_clear_young_fast_only(struct mm_struct *mm,
++						     unsigned long start,
++						     unsigned long end)
 +{
 +	if (mm_has_notifiers(mm))
-+		return __mm_has_fast_young_notifiers(mm);
-+	return 0;
-+}
-+
- static inline void
- mmu_notifier_invalidate_range_start(struct mmu_notifier_range *range)
- {
-@@ -619,6 +628,11 @@ static inline int mmu_notifier_test_young(struct mm_struct *mm,
++		return __mmu_notifier_clear_young(mm, start, end, true);
  	return 0;
  }
  
-+static inline bool mm_has_fast_young_notifiers(struct mm_struct *mm)
+@@ -426,7 +454,15 @@ static inline int mmu_notifier_test_young(struct mm_struct *mm,
+ 					  unsigned long address)
+ {
+ 	if (mm_has_notifiers(mm))
+-		return __mmu_notifier_test_young(mm, address);
++		return __mmu_notifier_test_young(mm, address, false);
++	return 0;
++}
++
++static inline int mmu_notifier_test_young_fast_only(struct mm_struct *mm,
++						    unsigned long address)
++{
++	if (mm_has_notifiers(mm))
++		return __mmu_notifier_test_young(mm, address, true);
+ 	return 0;
+ }
+ 
+@@ -622,12 +658,25 @@ static inline int mmu_notifier_clear_young(struct mm_struct *mm,
+ 	return 0;
+ }
+ 
++static inline int mmu_notifier_clear_young_fast_only(struct mm_struct *mm,
++						     unsigned long start,
++						     unsigned long end)
 +{
 +	return 0;
 +}
 +
- static inline void
- mmu_notifier_invalidate_range_start(struct mmu_notifier_range *range)
+ static inline int mmu_notifier_test_young(struct mm_struct *mm,
+ 					  unsigned long address)
  {
-diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-index 8982e6139d07..c405e5b072cf 100644
---- a/mm/mmu_notifier.c
-+++ b/mm/mmu_notifier.c
-@@ -382,6 +382,26 @@ int __mmu_notifier_clear_flush_young(struct mm_struct *mm,
- 	return young;
+ 	return 0;
  }
  
-+bool __mm_has_fast_young_notifiers(struct mm_struct *mm)
++static inline int mmu_notifier_test_young_fast_only(struct mm_struct *mm,
++						    unsigned long address)
 +{
-+	struct mmu_notifier *subscription;
-+	bool has_fast_aging = false;
-+	int id;
-+
-+	id = srcu_read_lock(&srcu);
-+	hlist_for_each_entry_rcu(subscription,
-+				 &mm->notifier_subscriptions->list, hlist,
-+				 srcu_read_lock_held(&srcu)) {
-+		if (subscription->has_fast_aging) {
-+			has_fast_aging = true;
-+			break;
-+		}
-+	}
-+	srcu_read_unlock(&srcu, id);
-+
-+	return has_fast_aging;
++	return 0;
 +}
 +
+ static inline bool mm_has_fast_young_notifiers(struct mm_struct *mm)
+ {
+ 	return 0;
+diff --git a/include/trace/events/kvm.h b/include/trace/events/kvm.h
+index 74e40d5d4af4..6d9485cf3e51 100644
+--- a/include/trace/events/kvm.h
++++ b/include/trace/events/kvm.h
+@@ -457,36 +457,41 @@ TRACE_EVENT(kvm_unmap_hva_range,
+ );
+ 
+ TRACE_EVENT(kvm_age_hva,
+-	TP_PROTO(unsigned long start, unsigned long end),
+-	TP_ARGS(start, end),
++	TP_PROTO(unsigned long start, unsigned long end, bool fast_only),
++	TP_ARGS(start, end, fast_only),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(	unsigned long,	start		)
+ 		__field(	unsigned long,	end		)
++		__field(	bool,		fast_only	)
+ 	),
+ 
+ 	TP_fast_assign(
+ 		__entry->start		= start;
+ 		__entry->end		= end;
++		__entry->fast_only	= fast_only;
+ 	),
+ 
+-	TP_printk("mmu notifier age hva: %#016lx -- %#016lx",
+-		  __entry->start, __entry->end)
++	TP_printk("mmu notifier age hva: %#016lx -- %#016lx fast_only: %d",
++		  __entry->start, __entry->end, __entry->fast_only)
+ );
+ 
+ TRACE_EVENT(kvm_test_age_hva,
+-	TP_PROTO(unsigned long hva),
+-	TP_ARGS(hva),
++	TP_PROTO(unsigned long hva, bool fast_only),
++	TP_ARGS(hva, fast_only),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(	unsigned long,	hva		)
++		__field(	bool,		fast_only	)
+ 	),
+ 
+ 	TP_fast_assign(
+ 		__entry->hva		= hva;
++		__entry->fast_only	= fast_only;
+ 	),
+ 
+-	TP_printk("mmu notifier test age hva: %#016lx", __entry->hva)
++	TP_printk("mmu notifier test age hva: %#016lx fast_only: %d",
++		  __entry->hva, __entry->fast_only)
+ );
+ 
+ #endif /* _TRACE_KVM_MAIN_H */
+diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
+index c405e5b072cf..f9ec810c8a1b 100644
+--- a/mm/mmu_notifier.c
++++ b/mm/mmu_notifier.c
+@@ -404,7 +404,8 @@ bool __mm_has_fast_young_notifiers(struct mm_struct *mm)
+ 
  int __mmu_notifier_clear_young(struct mm_struct *mm,
  			       unsigned long start,
- 			       unsigned long end)
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 7d5b35cfc1ed..f6c369eccd2a 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -930,6 +930,7 @@ static const struct mmu_notifier_ops kvm_mmu_notifier_ops = {
- static int kvm_init_mmu_notifier(struct kvm *kvm)
+-			       unsigned long end)
++			       unsigned long end,
++			       bool fast_only)
  {
- 	kvm->mmu_notifier.ops = &kvm_mmu_notifier_ops;
-+	kvm->mmu_notifier.has_fast_aging = false;
- 	return mmu_notifier_register(&kvm->mmu_notifier, current->mm);
+ 	struct mmu_notifier *subscription;
+ 	int young = 0, id;
+@@ -413,9 +414,13 @@ int __mmu_notifier_clear_young(struct mm_struct *mm,
+ 	hlist_for_each_entry_rcu(subscription,
+ 				 &mm->notifier_subscriptions->list, hlist,
+ 				 srcu_read_lock_held(&srcu)) {
++		if (fast_only && !subscription->has_fast_aging)
++			continue;
++
+ 		if (subscription->ops->clear_young)
+ 			young |= subscription->ops->clear_young(subscription,
+-								mm, start, end);
++								mm, start, end,
++								fast_only);
+ 	}
+ 	srcu_read_unlock(&srcu, id);
+ 
+@@ -423,7 +428,8 @@ int __mmu_notifier_clear_young(struct mm_struct *mm,
  }
  
+ int __mmu_notifier_test_young(struct mm_struct *mm,
+-			      unsigned long address)
++			      unsigned long address,
++			      bool fast_only)
+ {
+ 	struct mmu_notifier *subscription;
+ 	int young = 0, id;
+@@ -432,9 +438,13 @@ int __mmu_notifier_test_young(struct mm_struct *mm,
+ 	hlist_for_each_entry_rcu(subscription,
+ 				 &mm->notifier_subscriptions->list, hlist,
+ 				 srcu_read_lock_held(&srcu)) {
++		if (fast_only && !subscription->has_fast_aging)
++			continue;
++
+ 		if (subscription->ops->test_young) {
+ 			young = subscription->ops->test_young(subscription, mm,
+-							      address);
++							      address,
++							      fast_only);
+ 			if (young)
+ 				break;
+ 		}
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index f6c369eccd2a..ec07caaed6b6 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -846,7 +846,7 @@ static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
+ 			IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS),
+ 	};
+ 
+-	trace_kvm_age_hva(start, end);
++	trace_kvm_age_hva(start, end, false);
+ 
+ 	return kvm_handle_hva_range(kvm, &range).ret;
+ }
+@@ -854,7 +854,8 @@ static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
+ static int kvm_mmu_notifier_clear_young(struct mmu_notifier *mn,
+ 					struct mm_struct *mm,
+ 					unsigned long start,
+-					unsigned long end)
++					unsigned long end,
++					bool fast_only)
+ {
+ 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
+ 	const struct kvm_mmu_notifier_range range = {
+@@ -868,7 +869,7 @@ static int kvm_mmu_notifier_clear_young(struct mmu_notifier *mn,
+ 			IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS),
+ 	};
+ 
+-	trace_kvm_age_hva(start, end);
++	trace_kvm_age_hva(start, end, fast_only);
+ 
+ 	/*
+ 	 * Even though we do not flush TLB, this will still adversely
+@@ -888,7 +889,8 @@ static int kvm_mmu_notifier_clear_young(struct mmu_notifier *mn,
+ 
+ static int kvm_mmu_notifier_test_young(struct mmu_notifier *mn,
+ 				       struct mm_struct *mm,
+-				       unsigned long address)
++				       unsigned long address,
++				       bool fast_only)
+ {
+ 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
+ 	const struct kvm_mmu_notifier_range range = {
+@@ -902,7 +904,7 @@ static int kvm_mmu_notifier_test_young(struct mmu_notifier *mn,
+ 			IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_YOUNG_LOCKLESS),
+ 	};
+ 
+-	trace_kvm_test_age_hva(address);
++	trace_kvm_test_age_hva(address, fast_only);
+ 
+ 	return kvm_handle_hva_range(kvm, &range).ret;
+ }
 -- 
 2.46.0.792.g87dc391469-goog
 
