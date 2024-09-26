@@ -1,134 +1,124 @@
-Return-Path: <linux-kernel+bounces-340695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C88D9876C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:43:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2318E9876C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9433F2863DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:43:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDE1EB27881
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70269156665;
-	Thu, 26 Sep 2024 15:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3E8155756;
+	Thu, 26 Sep 2024 15:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RB27zguB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vHtxVj2y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QGp6NLnH"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A9114D6F6;
-	Thu, 26 Sep 2024 15:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D4B152165;
+	Thu, 26 Sep 2024 15:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727365378; cv=none; b=vClHSMKGwpEZAMgbwcxw14MFNzcH453Jp4AgDPj3mY5nhupKGBF7yMTsvH5cupNxMeFfGe5985cQfNayq5WDNlBMZ1XF2UcAnbr6q+BZx2S5eebSnKSHfuX04LHwGa4zZLmXqZIhmh57P4BcZoydE6jWGsjDxQDzZ9vZIeDYHmE=
+	t=1727365410; cv=none; b=JCsayktzztRlf8XbNAiIZfZODxlO9SEwfFXi3wBYsOJyNcJBhbFufMFrfCKcna5sNrVm9jvlwzmuFOIBS+9hH8p+MtrF/5R4ymVTDl9yER0an2sLHnzMH061fpRg9vo80bonrwA0IU6I88/CU+/h+Be7mquivO7dpG31Xl392rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727365378; c=relaxed/simple;
-	bh=Sc8fvXVB1aCNmxQD36fuOG91eO7FuqWYSK2bNIoNLmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IQaql6JS8XU+TVh+vE5S8clwNRuOIh42dqKPsc/xfArYW5cePw4b8aEcNqL02e+03oWFBaquB3W2yzkkmr+Xi8lEtF01dbw/3Ua1MHzALHTEmO6egjtY+9NMQJ7BrqO39APDS+9o+CCmqHYdF7CzWavaUEVuNgzKTRNAgU4Qi8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RB27zguB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4A0C4CEC5;
-	Thu, 26 Sep 2024 15:42:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727365378;
-	bh=Sc8fvXVB1aCNmxQD36fuOG91eO7FuqWYSK2bNIoNLmA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RB27zguB93RPqKdJw/VZJC6cZqQTJfKMa2RcktB0DLakxRYbFxJQN+9VbqtpKl8ge
-	 Qna+sbBbWHov4iqHSk7nzSpU1JO9idQHSFt27GxKKydQIUYOoz+VBWIoo1BAoy/t7i
-	 BcVLNyKoEca5UiQKzDSa3DbXaheWLzUrxXWTdWSmRX2g4jJCMd81zrfz7/gZx25sQe
-	 /+KWr9ZlDxjprpFQufiRK3yModdXNOHkFbPjsnLDU1abt6VD5aPYd9A0tXQ0MMhr4g
-	 xhPhkrxWGa249FTp3lhCmfE85jNzwCmJ1MMCkR1Sk69XyEBqKJS1GZfxZTHPDWFE64
-	 Fks5eZXw0Dnrg==
-Date: Thu, 26 Sep 2024 16:42:53 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] dt-bindings: panel: add Samsung s6e3ha8
-Message-ID: <20240926-emerald-parchment-29bf2dbd6ca6@spud>
-References: <20240926-starqltechn_integration_upstream-v5-0-1cb0e43e623f@gmail.com>
- <20240926-starqltechn_integration_upstream-v5-1-1cb0e43e623f@gmail.com>
+	s=arc-20240116; t=1727365410; c=relaxed/simple;
+	bh=LsaecnkOmRFc2Rb85nI2WQzfb4PTcDIVvWPaTLkMmKU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FSVSUYfXo17ZNGBAVxyvMfIAeyYYztJn3k0VDFBvLkMWolv4PAvj4Nu5LUsFgNJm9//0lBUDx9Mw/7yaaBKwxzYH8IAZsURULKBdL3J6T3tCXTyHaZIoo0CfXd3sZhMV6nHhhvZWOFmnWdBYwtxSyST9EtSs/nCYWUaC2Hp3Amo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vHtxVj2y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QGp6NLnH; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727365406;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vZ/HKgnyH2HmTsoqiD2jM9GAYr4moWSHAgynrG+F/AQ=;
+	b=vHtxVj2yfehMPNOP5iiUaLPrtxiKreiaFchKIbhXVouWyk4l770aQfemwxS44NUbPTOjyK
+	Y2k1BGYQwyOTU/h2Xm5depaeU0IjAnkyL7DSCT8RLIUyAudKqhVO2g4dZ+aE3BkNo8Hmur
+	ZDHO715TXOYflWj8dc6D/anlY7NQiWCR5G5uP7YzO/EkTC97bF5QiW0I9UU2swsaK8U0rp
+	zKxBZT8IsewPNvb7bW8tY8wdODTwfUWNde4b6Bmkhw+PoBCEazYr2ZzaIRYF5XGBVGbTgX
+	LUhKvTUHoI5RHzhGqvhAntUXf2jpT3ihh6SNbdco/K0fBjm9NlVxije3ZRqNtw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727365406;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vZ/HKgnyH2HmTsoqiD2jM9GAYr4moWSHAgynrG+F/AQ=;
+	b=QGp6NLnHhrwLB/1PcErLd2XM1lSocD1JGiXGFmlJtdoqe4XlvnwChgIDEBL+VZcU2WbZil
+	jgoYPvSSG9jFxKAQ==
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Marc Zyngier <maz@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: Nam Cao <namcao@linutronix.de>,
+	stable@vger.kernel.org
+Subject: [PATCH] irqchip/sifive-plic: Unmask interrupt in plic_irq_enable()
+Date: Thu, 26 Sep 2024 17:43:15 +0200
+Message-Id: <20240926154315.1244200-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="P65Kks/bHhmaxPhk"
-Content-Disposition: inline
-In-Reply-To: <20240926-starqltechn_integration_upstream-v5-1-1cb0e43e623f@gmail.com>
-
-
---P65Kks/bHhmaxPhk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 02:29:26PM +0300, Dzmitry Sankouski wrote:
-> Add binding for the Samsung s6e3ha8 panel found in the Samsung S9.
->=20
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
->=20
-> ---
-> Changes for v5:
-> - fix required properties order
-> - fix example indentation
->=20
-> Changes in v4:
-> - change dts example intendation from tabs
->  to spaces
-> - remove reset-gpios description
-> ---
->  Documentation/devicetree/bindings/display/panel/samsung,s6e3ha8.yaml | 7=
-5 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  MAINTAINERS                                                          |  =
-5 ++++
->  2 files changed, 80 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/display/panel/samsung,s6e3=
-ha8.yaml b/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha8.=
-yaml
-> new file mode 100644
-> index 000000000000..05a78429aaea
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha8.yaml
-> @@ -0,0 +1,75 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/panel/samsung,s6e3ha8.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung s6e3ha8 AMOLED DSI panel
-> +
-> +description: The s6e3ha8 is a 1440x2960 DPI display panel from Samsung M=
-obile
-> +  Displays (SMD).
+It is possible that an interrupt is disabled and masked at the same time.
+When the interrupt is enabled again by enable_irq(), only plic_irq_enable()
+is called, not plic_irq_unmask(). The interrupt remains masked and never
+raises.
 
-if you respin, please start the text on the line after the description.
-That's just a nit, so
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+An example where interrupt is both disabled and masked is when
+handle_fasteoi_irq() is the handler, and IRQS_ONESHOT is set. The interrupt
+handler:
+  1. Mask the interrupt
+  2. Handle the interrupt
+  3. Check if interrupt is still enabled, and unmask it (see
+     cond_unmask_eoi_irq())
 
---P65Kks/bHhmaxPhk
-Content-Type: application/pgp-signature; name="signature.asc"
+If another task disables the interrupt in the middle of the above steps,
+the interrupt will not get unmasked, and will remain masked when it is
+enabled in the future.
 
------BEGIN PGP SIGNATURE-----
+The problem is occasionally observed when PREEMPT_RT is enabled, because
+PREEMPT_RT add the IRQS_ONESHOT flag. But PREEMPT_RT only makes the
+problem more likely to appear, the bug has been around since
+commit a1706a1c5062 ("irqchip/sifive-plic: Separate the enable and mask
+operations").
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvWA/QAKCRB4tDGHoIJi
-0saMAQDBPHOWuygsfNgEC+MMK3RNo6tbBp4taeBLLvkieQIF2gEAqO+b87htOpor
-yG+Ogr0J4PLu4VLRQpcgeTcL7/1K8wM=
-=Wmqz
------END PGP SIGNATURE-----
+Fix it by unmasking interrupt in plic_irq_enable().
 
---P65Kks/bHhmaxPhk--
+Fixes: a1706a1c5062 ("irqchip/sifive-plic: Separate the enable and mask ope=
+rations").
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+Cc: stable@vger.kernel.org
+---
+ drivers/irqchip/irq-sifive-plic.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive=
+-plic.c
+index 2f6ef5c495bd..0efbf14ec9fa 100644
+--- a/drivers/irqchip/irq-sifive-plic.c
++++ b/drivers/irqchip/irq-sifive-plic.c
+@@ -128,6 +128,9 @@ static inline void plic_irq_toggle(const struct cpumask=
+ *mask,
+=20
+ static void plic_irq_enable(struct irq_data *d)
+ {
++	struct plic_priv *priv =3D irq_data_get_irq_chip_data(d);
++
++	writel(1, priv->regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
+ 	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 1);
+ }
+=20
+--=20
+2.39.5
+
 
