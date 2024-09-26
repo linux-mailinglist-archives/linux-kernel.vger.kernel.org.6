@@ -1,62 +1,57 @@
-Return-Path: <linux-kernel+bounces-340710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319649876EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:51:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5922E9876F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 621221C22E2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:51:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0394F1F27CEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3706157490;
-	Thu, 26 Sep 2024 15:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9E8158550;
+	Thu, 26 Sep 2024 15:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QvQCl6FS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rkdfqjfe"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E96114B086;
-	Thu, 26 Sep 2024 15:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DEF414F126
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 15:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727365905; cv=none; b=TFiZc5YcWAh9LjrTALEHMvLV/v/keJaioPI9ZKsxy7nHWWLA/58MEEJ3gBdmxkZxfna2stAyrZj5mwX6AhLMWc9rjj6vMU9rgP0SPFPWkK2eOsSpADziD0kS8puzjEhNFaXznmkcvnUuH7eWWKwIHAYOL2qgxdlU559QJc1QWRI=
+	t=1727365967; cv=none; b=tAUNTnHqfaKy64Z9df7jx1FoHXOoXQ+5xujEN5cI91GyX/zcR0x41/6E7qZYbMd1neUVhXqHeTGnxHHz8Vs8t7LBSsBLeiNBE/+urO69ObRmrkZov804qDTd6qk3PZvHwQNqNq0rmP4D1x11BFSjeGlIsRctCrHXAegc811FQG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727365905; c=relaxed/simple;
-	bh=/zmH17S5Vfm0yDytaFwUjhdEpjDpunAgDGO95mzmn78=;
+	s=arc-20240116; t=1727365967; c=relaxed/simple;
+	bh=s0uXlTXXpIVJz43LXvYFbgNIaxkLq1605E1/EirRJyA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I9mPRNf/zeKy+AB87CUct64stczqnafLyMnHZzeLCNAbaNp2A5bwsqlYEEf33dC7BSfaI4C38QWNuVzvGih6dJIlX2NdXnGsPXk1RoyqrH1rlQn4ff1e4CFasXnMTEnCXgWrJOEw17fSrIQeVpu/9b3Gqun5eXHw7AuzwBHdN/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QvQCl6FS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38176C4CECD;
-	Thu, 26 Sep 2024 15:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727365904;
-	bh=/zmH17S5Vfm0yDytaFwUjhdEpjDpunAgDGO95mzmn78=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QvQCl6FSrEpR+YD4IdpGNf5jOLSpCK692o5EO2AREFk5LGAmlfF+8M8Kb14Byd1D7
-	 eMKg2sCrIvIBGKVnhfrcXTY6+VGHZEsF3c6SgI7wA3P4af0i6Qxim6Sm2m1Qgmm2IC
-	 MpidG1X6ef2cQoViHH5w6OG08jZk1TDAdSQwfA9fL+aq0dMChmFjzzJHygigIjOOPx
-	 Z1WG75ndQjbX7QAcXgwv6fEC+T7QYujEr0hfkcP/LuL20QP5AQIW2Wk834EIPUW7eR
-	 WamG+oq40/tuDpYkpDnicKs9qlPKM6vMk6mfjqmeGbM2hFxp2i9rBxb8d3k0GHl7gK
-	 N0vg7GEl4vBHw==
-Date: Thu, 26 Sep 2024 16:51:39 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Roger Quadros <rogerq@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Julien Panis <jpanis@baylibre.com>,
-	Chintan Vankar <c-vankar@ti.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net: ethernet: ti: am65-cpsw: Fix forever loop in
- cleanup code
-Message-ID: <20240926155139.GG4029621@kernel.org>
-References: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F+Uo2YQt4QQnmlI9i9Mo6/rpI9aOHhgNPDuj1CDlQtZeqCyiqvK3drl9Fil7THUjzRc0fkR1HSq4Y2idNlfb6ntEZZIn7b8Xcbd2GZgDgNrC0E2pU0J02bavaa78WHDZ9qTwLxf4dTCqkVLc/xddMKxkDPb47lXVElIQEEs0AMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rkdfqjfe; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 26 Sep 2024 08:52:32 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727365961;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z7G9ApLodriz/3joeN5VC8yGsIyla+zmSVIF3RzVqW4=;
+	b=rkdfqjfeLCjUwQkPZdp8SArzUM460wX8K2Vo4qtCeHBCFhILxoZJ9IlzIU8rLdiAn/0xd5
+	/XTqIUPXHEhYZVCjCStxxhIr7+AVVfPkdMCjrl/VLQyU/bNSKnQ+xLb6xVRXiat2aH6v0a
+	Uj1eNkSRLpopJkRxbNMYuGCCZHaLVFg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, Minchan Kim <minchan@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, pedro.falcato@gmail.com
+Subject: Re: [PATCH v3] mm/madvise: unrestrict process_madvise() for current
+ process
+Message-ID: <xv5qg4hfqvqzooounx57hzl4jzmfefitf3qklcdqzz7a4dufxn@v3r47r7p6ono>
+References: <20240926151019.82902-1-lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,21 +60,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
+In-Reply-To: <20240926151019.82902-1-lorenzo.stoakes@oracle.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Sep 26, 2024 at 12:50:45PM +0300, Dan Carpenter wrote:
-> This error handling has a typo.  It should i++ instead of i--.  In the
-> original code the error handling will loop until it crashes.
+On Thu, Sep 26, 2024 at 04:10:19PM GMT, Lorenzo Stoakes wrote:
+> The process_madvise() call was introduced in commit ecb8ac8b1f14
+> ("mm/madvise: introduce process_madvise() syscall: an external memory
+> hinting API") as a means of performing madvise() operations on another
+> process.
 > 
-> Fixes: da70d184a8c3 ("net: ethernet: ti: am65-cpsw: Introduce multi queue Rx")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> However, as it provides the means by which to perform multiple madvise()
+> operations in a batch via an iovec, it is useful to utilise the same
+> interface for performing operations on the current process rather than a
+> remote one.
+> 
+> Commit 22af8caff7d1 ("mm/madvise: process_madvise() drop capability check
+> if same mm") removed the need for a caller invoking process_madvise() on
+> its own pidfd to possess the CAP_SYS_NICE capability, however this leaves
+> the restrictions on operation in place.
+> 
+> Resolve this by only applying the restriction on operations when accessing
+> a remote process.
+> 
+> Moving forward we plan to implement a simpler means of specifying this
+> condition other than needing to establish a self pidfd, perhaps in the form
+> of a sentinel pidfd.
+> 
+> Also take the opportunity to refactor the system call implementation
+> abstracting the vectorised operation.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Hi Dan,
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-Unfortunately this patch didn't apply cleanly to net
-which throws our CI off. So, unfortunately, I think it needs to
-be rebased and reposted (after the 24h grace period).
+> ---
+> v3:
+> * Avoid introducing PR_MADV_SELF and defer a non-pidfd version until later.
 
--- 
-pw-bot: changes-requested
+Seems like a good plan to decouple this patch from PR_MADV_SELF vs
+PIDFD_SELF decision. I am hoping to see the follow up patch as well.
+
+thanks,
+Shakeel
+
 
