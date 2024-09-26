@@ -1,124 +1,174 @@
-Return-Path: <linux-kernel+bounces-340696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2318E9876C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:43:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017129876CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDE1EB27881
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:43:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC2E01F22534
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3E8155756;
-	Thu, 26 Sep 2024 15:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964DC156C74;
+	Thu, 26 Sep 2024 15:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vHtxVj2y";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QGp6NLnH"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gwg77Jvu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D4B152165;
-	Thu, 26 Sep 2024 15:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA0B4C7E;
+	Thu, 26 Sep 2024 15:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727365410; cv=none; b=JCsayktzztRlf8XbNAiIZfZODxlO9SEwfFXi3wBYsOJyNcJBhbFufMFrfCKcna5sNrVm9jvlwzmuFOIBS+9hH8p+MtrF/5R4ymVTDl9yER0an2sLHnzMH061fpRg9vo80bonrwA0IU6I88/CU+/h+Be7mquivO7dpG31Xl392rg=
+	t=1727365548; cv=none; b=V26C0C2pAhMftsSPqOpAoF3J/ZfgHZREYxRtKKKV0jLrlkVmSppYZVgwzi0LX7yKMYSlfma1kPxKKY4h6370IOIKGMq6h7paSBiUpOQv3KhEP5nBPlJ1CRoCr3nC3OSACsgXDFCugJzsY6lCZ0rvEIjv2w28/BX4JIsahLZ/dhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727365410; c=relaxed/simple;
-	bh=LsaecnkOmRFc2Rb85nI2WQzfb4PTcDIVvWPaTLkMmKU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FSVSUYfXo17ZNGBAVxyvMfIAeyYYztJn3k0VDFBvLkMWolv4PAvj4Nu5LUsFgNJm9//0lBUDx9Mw/7yaaBKwxzYH8IAZsURULKBdL3J6T3tCXTyHaZIoo0CfXd3sZhMV6nHhhvZWOFmnWdBYwtxSyST9EtSs/nCYWUaC2Hp3Amo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vHtxVj2y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QGp6NLnH; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727365406;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vZ/HKgnyH2HmTsoqiD2jM9GAYr4moWSHAgynrG+F/AQ=;
-	b=vHtxVj2yfehMPNOP5iiUaLPrtxiKreiaFchKIbhXVouWyk4l770aQfemwxS44NUbPTOjyK
-	Y2k1BGYQwyOTU/h2Xm5depaeU0IjAnkyL7DSCT8RLIUyAudKqhVO2g4dZ+aE3BkNo8Hmur
-	ZDHO715TXOYflWj8dc6D/anlY7NQiWCR5G5uP7YzO/EkTC97bF5QiW0I9UU2swsaK8U0rp
-	zKxBZT8IsewPNvb7bW8tY8wdODTwfUWNde4b6Bmkhw+PoBCEazYr2ZzaIRYF5XGBVGbTgX
-	LUhKvTUHoI5RHzhGqvhAntUXf2jpT3ihh6SNbdco/K0fBjm9NlVxije3ZRqNtw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727365406;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vZ/HKgnyH2HmTsoqiD2jM9GAYr4moWSHAgynrG+F/AQ=;
-	b=QGp6NLnHhrwLB/1PcErLd2XM1lSocD1JGiXGFmlJtdoqe4XlvnwChgIDEBL+VZcU2WbZil
-	jgoYPvSSG9jFxKAQ==
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Marc Zyngier <maz@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: Nam Cao <namcao@linutronix.de>,
-	stable@vger.kernel.org
-Subject: [PATCH] irqchip/sifive-plic: Unmask interrupt in plic_irq_enable()
-Date: Thu, 26 Sep 2024 17:43:15 +0200
-Message-Id: <20240926154315.1244200-1-namcao@linutronix.de>
+	s=arc-20240116; t=1727365548; c=relaxed/simple;
+	bh=CLSOSrXAh5PynW/B+LjJqD06hd2C+CRjgR9f3rpXf1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WcSLeX7CEEJUasjJ2cfDYGjq678OEx6dLAdNAwoD2xketAo8IAWwFel+7Ib5IxUk/vNCVY6vq+AIJFiujOSKzOt8N256OfJrRNg0EUf8p2iwkX4wGkyMjIkx8S/WAqzZ693svVilvLfwTxTweYfSF94LDrThd1HceyflCLo5uAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gwg77Jvu; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727365547; x=1758901547;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CLSOSrXAh5PynW/B+LjJqD06hd2C+CRjgR9f3rpXf1E=;
+  b=gwg77Jvu+Tqn8c3I13AwANe6pII29wWcki8bMCp3e1J9GJuxH7Ql4z9h
+   qx6nAgIJWKtNgarRa6jWBGt9dUYVAEUWyEtbyOM5iqadZEQYt80/FZvBN
+   wlt+xuVjNYVUJa3e3Bszbl9Yeb9N27Cu6ACsrMxjqwOtFGjPPVyzr+XW9
+   krXLqfs0+Ixr9BmliyQrRLnrmrseriIVwHj1e5OOemO97PYCK44ozM14o
+   HaRJkXJU0BSjHSQPdnmSECCMRLOEHbF6Nt3BtgiXMTT+QTXXE/Iz8aRE1
+   P6ErjpOJtTAmESPoIOYcmjO3QJE1c5DCaZ/mGQ9NwED8DeRfU1nIgwOEE
+   A==;
+X-CSE-ConnectionGUID: JbqaYAH+Qkeq89Sz6BY83w==
+X-CSE-MsgGUID: ikcd1GCTQ6qz+d2MPLjHRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="37832740"
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="37832740"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 08:45:37 -0700
+X-CSE-ConnectionGUID: fo251BJlTguimYm5DXk+oQ==
+X-CSE-MsgGUID: 9mrUSJZySPiqV2qq24gLxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="72519331"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 08:45:29 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id D8BF011F843;
+	Thu, 26 Sep 2024 18:45:26 +0300 (EEST)
+Date: Thu, 26 Sep 2024 15:45:26 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 11/11] media: i2c: ov5645: Report streams using frame
+ descriptors
+Message-ID: <ZvWBlivUaZ92KoAI@kekkonen.localdomain>
+References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240910170610.226189-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910170610.226189-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-It is possible that an interrupt is disabled and masked at the same time.
-When the interrupt is enabled again by enable_irq(), only plic_irq_enable()
-is called, not plic_irq_unmask(). The interrupt remains masked and never
-raises.
+Hi Prabhakar,
 
-An example where interrupt is both disabled and masked is when
-handle_fasteoi_irq() is the handler, and IRQS_ONESHOT is set. The interrupt
-handler:
-  1. Mask the interrupt
-  2. Handle the interrupt
-  3. Check if interrupt is still enabled, and unmask it (see
-     cond_unmask_eoi_irq())
+Thanks for the set. It looks largely very nice to me, after addressing
+Laurent's comments. A few comments here and possibly on other patches...
 
-If another task disables the interrupt in the middle of the above steps,
-the interrupt will not get unmasked, and will remain masked when it is
-enabled in the future.
+On Tue, Sep 10, 2024 at 06:06:10PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Implement the .get_frame_desc() subdev operation to report information
+> about streams to the connected CSI-2 receiver. This is required to let
+> the CSI-2 receiver driver know about virtual channels and data types for
+> each stream.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  drivers/media/i2c/ov5645.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> index 7f1133292ffc..c24eb6e7a7b5 100644
+> --- a/drivers/media/i2c/ov5645.c
+> +++ b/drivers/media/i2c/ov5645.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+> +#include <media/mipi-csi2.h>
+>  #include <media/v4l2-ctrls.h>
+>  #include <media/v4l2-event.h>
+>  #include <media/v4l2-fwnode.h>
+> @@ -829,6 +830,32 @@ static const struct v4l2_ctrl_ops ov5645_ctrl_ops = {
+>  	.s_ctrl = ov5645_s_ctrl,
+>  };
+>  
+> +static int ov5645_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
+> +				 struct v4l2_mbus_frame_desc *fd)
+> +{
+> +	const struct v4l2_mbus_framefmt *fmt;
+> +	struct v4l2_subdev_state *state;
+> +
+> +	if (pad != OV5645_PAD_SOURCE)
+> +		return -EINVAL;
 
-The problem is occasionally observed when PREEMPT_RT is enabled, because
-PREEMPT_RT add the IRQS_ONESHOT flag. But PREEMPT_RT only makes the
-problem more likely to appear, the bug has been around since
-commit a1706a1c5062 ("irqchip/sifive-plic: Separate the enable and mask
-operations").
+As you have a single source pad, and pretty much all sensor drivers will, I
+think it'd be nice to add a check for this (that it's not an internal pad)
+to the caller side in v4l2-subdev.c. And of course drop this one.
 
-Fix it by unmasking interrupt in plic_irq_enable().
+> +
+> +	state = v4l2_subdev_lock_and_get_active_state(sd);
+> +	fmt = v4l2_subdev_state_get_format(state, OV5645_PAD_SOURCE, 0);
+> +	v4l2_subdev_unlock_state(state);
+> +
+> +	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
+> +	fd->num_entries = 1;
+> +
+> +	memset(fd->entry, 0, sizeof(fd->entry));
+> +
+> +	fd->entry[0].pixelcode = fmt->code;
+> +	fd->entry[0].stream = 0;
+> +	fd->entry[0].bus.csi2.vc = 0;
+> +	fd->entry[0].bus.csi2.dt = MIPI_CSI2_DT_YUV422_8B;
+> +
+> +	return 0;
+> +}
+> +
+>  static int ov5645_enum_mbus_code(struct v4l2_subdev *sd,
+>  				 struct v4l2_subdev_state *sd_state,
+>  				 struct v4l2_subdev_mbus_code_enum *code)
+> @@ -1062,6 +1089,7 @@ static const struct v4l2_subdev_video_ops ov5645_video_ops = {
+>  };
+>  
+>  static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
+> +	.get_frame_desc = ov5645_get_frame_desc,
+>  	.enum_mbus_code = ov5645_enum_mbus_code,
+>  	.enum_frame_size = ov5645_enum_frame_size,
+>  	.get_fmt = v4l2_subdev_get_fmt,
+> 
 
-Fixes: a1706a1c5062 ("irqchip/sifive-plic: Separate the enable and mask ope=
-rations").
-Signed-off-by: Nam Cao <namcao@linutronix.de>
-Cc: stable@vger.kernel.org
----
- drivers/irqchip/irq-sifive-plic.c | 3 +++
- 1 file changed, 3 insertions(+)
+-- 
+Kind regards,
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive=
--plic.c
-index 2f6ef5c495bd..0efbf14ec9fa 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -128,6 +128,9 @@ static inline void plic_irq_toggle(const struct cpumask=
- *mask,
-=20
- static void plic_irq_enable(struct irq_data *d)
- {
-+	struct plic_priv *priv =3D irq_data_get_irq_chip_data(d);
-+
-+	writel(1, priv->regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
- 	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 1);
- }
-=20
---=20
-2.39.5
-
+Sakari Ailus
 
