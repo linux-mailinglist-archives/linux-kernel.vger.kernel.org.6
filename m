@@ -1,151 +1,148 @@
-Return-Path: <linux-kernel+bounces-340493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF7A98741C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:03:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F5A987417
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3284E1C25227
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:03:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECA00287D9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17A829405;
-	Thu, 26 Sep 2024 13:02:33 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFF736B0D;
+	Thu, 26 Sep 2024 13:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kKXGbPTz"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04736134BD;
-	Thu, 26 Sep 2024 13:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F48A364D6
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 13:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727355753; cv=none; b=XZIaltJgia1n5P30cETei8j/VrrV+mP8MZiits4MfK3AbiyQi6uX5xetiqQ+PSGY6c2497UQmLhgRC2e7EJ3m9WB6Ka3Bf/Nvm69zt2JrseIsBOj8Gz8bv2NRCPGWFFH0pccfsOGTX61Xz4AwXS15oRoxp2A00Lp5/ZwO2G4G8c=
+	t=1727355744; cv=none; b=uw6SZuKgbJPcui5ma/sChqun1PkHXIfEmzg3o2wQS5EXTS1D0cvugLoWc1Ut2TpYXTJzn6jFIv3Nis2BM/VYGpoWx2fqFf837RvS6SUJtK2SGBjUBoLs1D9jERAjfDoE4WF29FSOC76OH/JyNyD2YjCbIPSB67uEJ+aD3WXX6pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727355753; c=relaxed/simple;
-	bh=EucDBvHwAdAl+dRNre88WCsytrxATLOM9vlg81wv5DE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QnAJ7LGpFjbkSeVhfr60PQiTQ9uxMA15Rcg8VBH53s+nUYkq5ObUoxIMXUAfKoY1bbetviuamKBYDyP5i6ARy3HGDkp8pkiiZDRXicUSQ09tzgggOECNGaeUK9y/ce+yNXTfZqDXCsQ3z321jzTMcys/C7ftDXd7FIYmiP7QmsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 8e5339207c0711efa216b1d71e6e1362-20240926
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:241c662b-c4da-4a6f-be57-8728f2557072,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:4ffcbebf5d458c4c52a3e46c696ecd5d,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,URL:0,
-	File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:N
-	O,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 8e5339207c0711efa216b1d71e6e1362-20240926
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <xialonglong@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1937593751; Thu, 26 Sep 2024 21:02:16 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 7058D16002081;
-	Thu, 26 Sep 2024 21:02:16 +0800 (CST)
-X-ns-mid: postfix-66F55B58-3065693
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by node4.com.cn (NSMail) with ESMTPA id 7487816002081;
-	Thu, 26 Sep 2024 13:02:15 +0000 (UTC)
-From: Longlong Xia <xialonglong@kylinos.cn>
-To: jirislaby@kernel.org
-Cc: daniel.starke@siemens.com,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Longlong Xia <xialonglong@kylinos.cn>
-Subject: [PATCH v2 1/1] tty: n_gsm: Fix use-after-free in gsm_cleanup_mux
-Date: Thu, 26 Sep 2024 21:02:13 +0800
-Message-ID: <20240926130213.531959-1-xialonglong@kylinos.cn>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <681d8d8b-e527-4f01-b3d6-01eb573e72df@kernel.org>
-References: <681d8d8b-e527-4f01-b3d6-01eb573e72df@kernel.org>
+	s=arc-20240116; t=1727355744; c=relaxed/simple;
+	bh=Yw2gERMntAsAFddVzmQJOo5KLhmlfIFpjS86moCqkYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lgZAVhx3xa3uy7lkVvIpsmol6im+brPkc79deOxt2s4UEtq2KAiebkkncCOwR4ov/gf/1c9eVHm7aWyiyxyacTfR8I7IZGZXMpkGUjNGRjhMrV6jxp4KjUsBj0KbNVY8O1GJNxZL6/Pup51pNXuD1yQLZJpboXD1fB6qt8cwhew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kKXGbPTz; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5365392cfafso1032009e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 06:02:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727355741; x=1727960541; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FjrjrRM9XPvHYxyCvf9B1RVZyMTuwJYX+MU9Coc6xcE=;
+        b=kKXGbPTz+aRwCKE6glKY09lJ/NgbPcVGmpIH+dfvnqHMcxUpLzX2EduoDRHsmLQYvY
+         X/KQq4uu9SICpn9+cAadGM68gKdfiJPCtP1ljDODn0lQWeIt8qAl4YmB4rkzgM7BgI4h
+         ovMtzuksh3bukiKma1lgHv1lcsrldJpb8/JUwYxLhVFWKriXXqGArcjWowdpKMjx0pmd
+         RZMT8pBZur4bNpPEu7fxnb77M2BNvUt3bT/dJ7OvaeOwKvg77i5iWvHWOeQe3eLtxtQ3
+         iFOuCmygs1DM4BWrzkLRsp31tPcBtCGOC3uQuLseBJlFTnJkccoT9JeOZKnYUvUC4njW
+         D+Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727355741; x=1727960541;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FjrjrRM9XPvHYxyCvf9B1RVZyMTuwJYX+MU9Coc6xcE=;
+        b=iBNf8AwKK2AdN2rkn8ert+2XHHT3kzXvgo73hIICTSPdiDumaTc8F3deT+aZdefUvt
+         n2zzVoHPNeJ1VzQpZU+k0vy0KYZKVUB0rLpTk+qeKj32wgWJNUP3xqtkyy97/EMlRTl8
+         RB3l7sU2HAVyffaeLhWvsS0Yr3SeO4xy/uO5qF4nVOobRqCEcHw7StrDPbvCMeTqQ1IP
+         AiwrYOQYmtMrHL9pTe1SU+Nl/aSKPpc5aKfqxTuTjWMzRCXve4+UzzgQQEewKjMFixuh
+         oFOb083SUvsbi6UtRA0V8oNoyijMsNlyQ7ey5bB5FwYFOLpQaxpdHKiJvEH8Yq3JHYqE
+         /sMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrLLPh6u8pT9U5lXGFar1oeXGmXklgKNUllUHeb0WLuZ5g9PM0YXs75hMhiTAyXtHnm6Gy2v5+twi2Pi8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTk0CdyTwiM+rkCWp6RKPl2dZezoJKDt9rkPIJTikuRjwoqTeS
+	uJtHdqh8Z+z4WS4dWePGtHemNo6ThNY1+RV58hCLJx6ppedIJb9cM0ePvdlLTuQ=
+X-Google-Smtp-Source: AGHT+IH2/C/vn/3guz1GtFMt/oWgqT239gTYMR64SJn79sphprz6qemJfk5SXKxHE0ZI+qaue6j10Q==
+X-Received: by 2002:a05:6512:31cd:b0:536:a695:9429 with SMTP id 2adb3069b0e04-5387048a724mr3919631e87.10.1727355740345;
+        Thu, 26 Sep 2024 06:02:20 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85e582esm795886e87.63.2024.09.26.06.02.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 06:02:17 -0700 (PDT)
+Date: Thu, 26 Sep 2024 16:02:15 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Mahadevan <quic_mahap@quicinc.com>
+Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
+	marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, swboyd@chromium.org, 
+	konrad.dybcio@linaro.org, danila@jiaxyga.com, bigfoot@classfun.cn, 
+	neil.armstrong@linaro.org, mailingradian@gmail.com, quic_jesszhan@quicinc.com, 
+	andersson@kernel.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_kalyant@quicinc.com, quic_jmadiset@quicinc.com, quic_vpolimer@quicinc.com
+Subject: Re: [PATCH v2 3/5] drm/msm: mdss: Add SA8775P support
+Message-ID: <35e6yleiy6wkja3ojlfjddifxv7kr7x6tyn5pszas2chouuvql@trpeb7b4eop2>
+References: <20240926110137.2200158-1-quic_mahap@quicinc.com>
+ <20240926110137.2200158-4-quic_mahap@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926110137.2200158-4-quic_mahap@quicinc.com>
 
-BUG: KASAN: slab-use-after-free in gsm_cleanup_mux+0x77b/0x7b0
-drivers/tty/n_gsm.c:3160 [n_gsm]
-Read of size 8 at addr ffff88815fe99c00 by task poc/3379
-CPU: 0 UID: 0 PID: 3379 Comm: poc Not tainted 6.11.0+ #56
-Hardware name: VMware, Inc. VMware Virtual Platform/440BX
-Desktop Reference Platform, BIOS 6.00 11/12/2020
-Call Trace:
- <TASK>
- gsm_cleanup_mux+0x77b/0x7b0 drivers/tty/n_gsm.c:3160 [n_gsm]
- __pfx_gsm_cleanup_mux+0x10/0x10 drivers/tty/n_gsm.c:3124 [n_gsm]
- __pfx_sched_clock_cpu+0x10/0x10 kernel/sched/clock.c:389
- update_load_avg+0x1c1/0x27b0 kernel/sched/fair.c:4500
- __pfx_min_vruntime_cb_rotate+0x10/0x10 kernel/sched/fair.c:846
- __rb_insert_augmented+0x492/0xbf0 lib/rbtree.c:161
- gsmld_ioctl+0x395/0x1450 drivers/tty/n_gsm.c:3408 [n_gsm]
- _raw_spin_lock_irqsave+0x92/0xf0 arch/x86/include/asm/atomic.h:107
- __pfx_gsmld_ioctl+0x10/0x10 drivers/tty/n_gsm.c:3822 [n_gsm]
- ktime_get+0x5e/0x140 kernel/time/timekeeping.c:195
- ldsem_down_read+0x94/0x4e0 arch/x86/include/asm/atomic64_64.h:79
- __pfx_ldsem_down_read+0x10/0x10 drivers/tty/tty_ldsem.c:338
- __pfx_do_vfs_ioctl+0x10/0x10 fs/ioctl.c:805
- tty_ioctl+0x643/0x1100 drivers/tty/tty_io.c:2818
+On Thu, Sep 26, 2024 at 04:31:35PM GMT, Mahadevan wrote:
+> Add Mobile Display Subsystem (MDSS) support for the SA8775P platform.
+> 
+> Signed-off-by: Mahadevan <quic_mahap@quicinc.com>
+> ---
+> 
+> [v2]
+> - Update commit message. [Dmitry]
+> - Reorder compatible string of MDSS based on alphabetical order. [Dmitry]
+> - add reg_bus_bw in msm_mdss_data. [Dmitry]
+> 
+> ---
+>  drivers/gpu/drm/msm/msm_mdss.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
+> index faa88fd6eb4d..8f1d42a43bd0 100644
+> --- a/drivers/gpu/drm/msm/msm_mdss.c
+> +++ b/drivers/gpu/drm/msm/msm_mdss.c
+> @@ -573,6 +573,16 @@ static const struct msm_mdss_data qcm2290_data = {
+>  	.reg_bus_bw = 76800,
+>  };
+>  
+> +static const struct msm_mdss_data sa8775p_data = {
+> +	.ubwc_enc_version = UBWC_4_0,
+> +	.ubwc_dec_version = UBWC_4_0,
 
-Allocated by task 65:
- gsm_data_alloc.constprop.0+0x27/0x190 drivers/tty/n_gsm.c:926 [n_gsm]
- gsm_send+0x2c/0x580 drivers/tty/n_gsm.c:819 [n_gsm]
- gsm1_receive+0x547/0xad0 drivers/tty/n_gsm.c:3038 [n_gsm]
- gsmld_receive_buf+0x176/0x280 drivers/tty/n_gsm.c:3609 [n_gsm]
- tty_ldisc_receive_buf+0x101/0x1e0 drivers/tty/tty_buffer.c:391
- tty_port_default_receive_buf+0x61/0xa0 drivers/tty/tty_port.c:39
- flush_to_ldisc+0x1b0/0x750 drivers/tty/tty_buffer.c:445
- process_scheduled_works+0x2b0/0x10d0 kernel/workqueue.c:3229
- worker_thread+0x3dc/0x950 kernel/workqueue.c:3391
- kthread+0x2a3/0x370 kernel/kthread.c:389
- ret_from_fork+0x2d/0x70 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:257
+Just 4.0 or 4.3?
 
-Freed by task 3367:
- kfree+0x126/0x420 mm/slub.c:4580
- gsm_cleanup_mux+0x36c/0x7b0 drivers/tty/n_gsm.c:3160 [n_gsm]
- gsmld_ioctl+0x395/0x1450 drivers/tty/n_gsm.c:3408 [n_gsm]
- tty_ioctl+0x643/0x1100 drivers/tty/tty_io.c:2818
+> +	.ubwc_swizzle = 4,
+> +	.ubwc_static = 1,
+> +	.highest_bank_bit = 0,
+> +	.macrotile_mode = 1,
+> +	.reg_bus_bw = 74000,
+> +};
+> +
+>  static const struct msm_mdss_data sc7180_data = {
+>  	.ubwc_enc_version = UBWC_2_0,
+>  	.ubwc_dec_version = UBWC_2_0,
+> @@ -710,6 +720,7 @@ static const struct of_device_id mdss_dt_match[] = {
+>  	{ .compatible = "qcom,mdss" },
+>  	{ .compatible = "qcom,msm8998-mdss", .data = &msm8998_data },
+>  	{ .compatible = "qcom,qcm2290-mdss", .data = &qcm2290_data },
+> +	{ .compatible = "qcom,sa8775p-mdss", .data = &sa8775p_data },
+>  	{ .compatible = "qcom,sdm670-mdss", .data = &sdm670_data },
+>  	{ .compatible = "qcom,sdm845-mdss", .data = &sdm845_data },
+>  	{ .compatible = "qcom,sc7180-mdss", .data = &sc7180_data },
+> -- 
+> 2.34.1
+> 
 
-[Analysis]
-gsm_msg on the tx_ctrl_list or tx_data_list of gsm_mux
-can be freed by multi threads through ioctl,which leads
-to the occurrence of uaf. Protect it by gsm tx lock.
-
-Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
-Suggested-by: Jiri Slaby <jirislaby@kernel.org>
----
-v1 -> v2:
-    - Use ORC and clean up commit messages.
-    - Use guard marco as suggested by Jiri Slaby.
-
- drivers/tty/n_gsm.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
-index 5d37a0984916..252849910588 100644
---- a/drivers/tty/n_gsm.c
-+++ b/drivers/tty/n_gsm.c
-@@ -3157,6 +3157,8 @@ static void gsm_cleanup_mux(struct gsm_mux *gsm, bo=
-ol disc)
- 	mutex_unlock(&gsm->mutex);
- 	/* Now wipe the queues */
- 	tty_ldisc_flush(gsm->tty);
-+
-+	guard(spinlock_irqsave)(&gsm->tx_lock);
- 	list_for_each_entry_safe(txq, ntxq, &gsm->tx_ctrl_list, list)
- 		kfree(txq);
- 	INIT_LIST_HEAD(&gsm->tx_ctrl_list);
---=20
-2.45.2
-
+-- 
+With best wishes
+Dmitry
 
