@@ -1,139 +1,111 @@
-Return-Path: <linux-kernel+bounces-340220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8680F98701D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:28:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA98987021
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B75AB1C214AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:28:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 943351F27C41
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8657A1AC422;
-	Thu, 26 Sep 2024 09:28:18 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68EC1AB6CA;
+	Thu, 26 Sep 2024 09:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wa0FqmY+"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F261AB6F2;
-	Thu, 26 Sep 2024 09:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71C117C9B0
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727342898; cv=none; b=PB43eQTwYyn0QFSca1k7Btj8iTlwLg8GqQEFrY//ui0J0ScVgbCSar9sU3RYpsjXPHfd0ENWF1lvlFHLlSRxws8TXu3A3c0sVp64hidu0H38dTKAAJmWRqHxnpYjc4Fcl77xIK1WebNgypM6rq+gjmyrg6OdI6bXU3RvdJxWaU8=
+	t=1727342980; cv=none; b=IJ13UEONKx44m4DE4UG9dMhl5yH82yj4g0w0AOe0FuoW6eVmEW5kC46Zv1+0IFWINPhLDlcu20rPChwpRkJlWT+qFFCrOM9Ty9N7svswtXHZfDTA1TP6wBnSxj+FilhTaxYHpx28sAcMmvIMsc0umHvxOK1R5FgOPazmKo1uzeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727342898; c=relaxed/simple;
-	bh=EDht8aYisYAcI7n+B9DfXTXswUoogYDJgicgfThstww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hx0kWE8jXjAEjqdfOId3XGEYK7VRN8a4jwa9OJh/zFruf3OVIj1VMGpBaLppPM6LJNonFbcTYGi42V9mCBN5ZBYJ2QdQlEUwQhKae2vePkxoRZlmBn7haykAVrYZ7jw6uRjA1BKuNQFfT9mGk5yVNSQcbVWundiF1/KzyQtKegg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XDpBs5d7Hz10McL;
-	Thu, 26 Sep 2024 17:26:45 +0800 (CST)
-Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
-	by mail.maildlp.com (Postfix) with ESMTPS id 495EF1401F0;
-	Thu, 26 Sep 2024 17:28:12 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.174) by dggpeml100021.china.huawei.com
- (7.185.36.148) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 26 Sep
- 2024 17:28:11 +0800
-Message-ID: <52f055eb-a828-45cd-a06d-ca2006321926@huawei.com>
-Date: Thu, 26 Sep 2024 17:28:11 +0800
+	s=arc-20240116; t=1727342980; c=relaxed/simple;
+	bh=e6nEwqo0egjHQZK0hgI1JGRoPmddHPorS9dz1V7owoI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MoHKybXGaHODVpUOSQmXFz9VhgOjd+31AZhywoQd35nrfPqIcb0IhGUyrI+Gq7UrITypisHs8LYVp3WRYmHqYsvDoB51gM7E74YtILpiVAfPlFq0qd4jRnVVFThZMSqRVL8BNnOww8JJme2cQTptqn3TRxr8O5Mm25lg1Y/JjFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Wa0FqmY+; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2068acc8b98so7394855ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 02:29:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727342978; x=1727947778; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CoVZDlT8rcbCdZD4HgbL8e34c7fme5G3T1sU2oo428U=;
+        b=Wa0FqmY+nm9PIH3uPu5ZgwsyiVzwCarUMFJrQ/03XK30JGScFIbT6dmc0ziZIdZVs5
+         U5bUbqctT/golOIUbC1YSF4HV/AzBO3NV9Z3x+RRDNXwUHIDb06UBmlVAzSU2D8iEUlW
+         qSa99ISGYLGGnosbpMhmLXX9Lqx7w4yfNianU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727342978; x=1727947778;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CoVZDlT8rcbCdZD4HgbL8e34c7fme5G3T1sU2oo428U=;
+        b=kTYImUF29YvtSAittT1crTSBGPxMN3EffxImC7PZOrI+5scX+y2OWMtE87BIGLrG4X
+         4TUyJcuPi2FfMnQgxlHbAZdGLPcx3ZGQ05h3zoY+eThV6x5TkccZrUKNO4gRxZHkJSjS
+         RfV1zUopGKZLNzdYwAMVhK4MjRDf0AEYk8pnC+hzZUVJZ04sW9p19WPZ2H/Ezmhkjkup
+         JFN7EW22bHBgtTS/0k82blj52+3GY7Phq05+R7tN2cLSyPSxy9mmXG7MpOWkUyDTT5Lc
+         i18Q7U/HdeH9ZD+ozplKTJ1AUuetb5QW1CxxOSeLjjQFcdr9XpuKGpo4qd4K8yF1FCLQ
+         VeXQ==
+X-Gm-Message-State: AOJu0YyXKlpgkFv6bc3KZmlg2w7z9v8zFioKM3tjY1DuwpsXG61uLv6t
+	wWqnAsuvfezMzCRUfkE/OvqutH5Q7MyNWe2XE7/cirkY7yfpHA7cnDWRVe4qVg==
+X-Google-Smtp-Source: AGHT+IHXrp6wJER4dh1BTAriwK+WD+8X8sDvbZv4icGc+K+dLuVljojwoLFCgGkE+FqGR4g9QtmlWQ==
+X-Received: by 2002:a17:903:40cc:b0:205:701b:22be with SMTP id d9443c01a7336-20afc662bdamr57796665ad.56.1727342978037;
+        Thu, 26 Sep 2024 02:29:38 -0700 (PDT)
+Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:4234:cfaa:3b83:d75a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af1720b00sm34819105ad.64.2024.09.26.02.29.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 02:29:37 -0700 (PDT)
+From: Pin-yen Lin <treapking@chromium.org>
+To: Xin Ji <xji@analogixsemi.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Pin-yen Lin <treapking@chromium.org>,
+	Sam Ravnborg <sam@ravnborg.org>
+Subject: [PATCH v2 0/2] Drop EDID cache for it6505/anx7625 when the bridge is powered off
+Date: Thu, 26 Sep 2024 17:29:07 +0800
+Message-ID: <20240926092931.3870342-1-treapking@chromium.org>
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] ext4: fix crash on BUG_ON in ext4_alloc_group_tables
-To: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-CC: Jan Kara <jack@suse.cz>, <tytso@mit.edu>, <stable@vger.kernel.org>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, =?UTF-8?Q?St=C3=A9phane_Graber?=
-	<stgraber@stgraber.org>, Christian Brauner <brauner@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-ext4@vger.kernel.org>, Wesley Hershberger
-	<wesley.hershberger@canonical.com>, Yang Erkun <yangerkun@huawei.com>
-References: <20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com>
- <20240925143325.518508-2-aleksandr.mikhalitsyn@canonical.com>
- <20240925155706.zad2euxxuq7h6uja@quack3>
- <142a28f9-5954-47f6-9c0c-26f7c142dbc1@huawei.com>
- <CAEivzxc-b-QDx8AEdHEwa06Q2TYgZZkw2PWQ+K_Lyf+oyTM1Zg@mail.gmail.com>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <CAEivzxc-b-QDx8AEdHEwa06Q2TYgZZkw2PWQ+K_Lyf+oyTM1Zg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpeml100021.china.huawei.com (7.185.36.148)
 
-On 2024/9/26 17:16, Aleksandr Mikhalitsyn wrote:
-> On Thu, Sep 26, 2024 at 10:29 AM Baokun Li <libaokun1@huawei.com> wrote:
->> On 2024/9/25 23:57, Jan Kara wrote:
->>> On Wed 25-09-24 16:33:24, Alexander Mikhalitsyn wrote:
->>>> [   33.882936] EXT4-fs (dm-5): mounted filesystem 8aaf41b2-6ac0-4fa8-b92b-77d10e1d16ca r/w with ordered data mode. Quota mode: none.
->>>> [   33.888365] EXT4-fs (dm-5): resizing filesystem from 7168 to 786432 blocks
->>>> [   33.888740] ------------[ cut here ]------------
->>>> [   33.888742] kernel BUG at fs/ext4/resize.c:324!
->>> Ah, I was staring at this for a while before I understood what's going on
->>> (it would be great to explain this in the changelog BTW).  As far as I
->>> understand commit 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation
->>> in alloc_flex_gd()") can actually make flex_gd->resize_bg larger than
->>> flexbg_size (for example when ogroup = flexbg_size, ngroup = 2*flexbg_size
->>> - 1) which then confuses things. I think that was not really intended and
->>> instead of fixing up ext4_alloc_group_tables() we should really change
->>> the logic in alloc_flex_gd() to make sure flex_gd->resize_bg never exceeds
->>> flexbg size. Baokun?
->>>
->>>                                                                Honza
->> Hi Honza,
->>
->> Your analysis is absolutely correct. It's a bug!
->> Thank you for locating this issue！
->> An extra 1 should not be added when calculating resize_bg in
->> alloc_flex_gd().
->>
->>
->> Hi Aleksandr,
-> Hi Baokun,
->
->> Could you help test if the following changes work?
-> I can confirm that this patch helps.
->
-> Tested-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
->
-> Kind regards,
-> Alex
+This mainly fixes the use case when the user changes the external monitor
+when the system is suspended. Without this series, both of the bridges
+will skip the EDID read and returned the cached one after resume.
 
-Thank you for the test!
+Apart from that, we also observed a DP-to-HDMI bridge expects an EDID read
+after it's powered on. This patch also works around the problem by always
+triggering the EDID read after the system resume.
 
+Changes in v2:
+- Only drop the EDID cache for anx7625 when it's not in eDP mode
+- Collect review tags
 
-Cheers,
-Baokun
->>
->> Thanks,
->> Baokun
->>
->> ---
->>
->> diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
->> index e04eb08b9060..1f01a7632149 100644
->> --- a/fs/ext4/resize.c
->> +++ b/fs/ext4/resize.c
->> @@ -253,10 +253,12 @@ static struct ext4_new_flex_group_data
->> *alloc_flex_gd(unsigned int flexbg_size,
->>           /* Avoid allocating large 'groups' array if not needed */
->>           last_group = o_group | (flex_gd->resize_bg - 1);
->>           if (n_group <= last_group)
->> -               flex_gd->resize_bg = 1 << fls(n_group - o_group + 1);
->> +               flex_gd->resize_bg = 1 << fls(n_group - o_group);
->>           else if (n_group - last_group < flex_gd->resize_bg)
->> -               flex_gd->resize_bg = 1 << max(fls(last_group - o_group + 1),
->> +               flex_gd->resize_bg = 1 << max(fls(last_group - o_group),
->>                                                 fls(n_group - last_group));
->>
->>           flex_gd->groups = kmalloc_array(flex_gd->resize_bg,
->>                                           sizeof(struct ext4_new_group_data),
->>
+Pin-yen Lin (2):
+  drm/bridge: anx7625: Drop EDID cache on bridge power off
+  drm/bridge: it6505: Drop EDID cache on bridge power off
+
+ drivers/gpu/drm/bridge/analogix/anx7625.c | 2 ++
+ drivers/gpu/drm/bridge/ite-it6505.c       | 2 ++
+ 2 files changed, 4 insertions(+)
+
+-- 
+2.46.0.792.g87dc391469-goog
+
 
