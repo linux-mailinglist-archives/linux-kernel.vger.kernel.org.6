@@ -1,93 +1,94 @@
-Return-Path: <linux-kernel+bounces-340637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBDC3987622
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:59:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD48987624
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D30286514
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:59:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 593A2286BF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 15:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F0A14D70F;
-	Thu, 26 Sep 2024 14:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F5A155A3C;
+	Thu, 26 Sep 2024 14:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ewUJumSc"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nZjU4xIK"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C9514B959
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A99153598
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727362777; cv=none; b=ARP8jq2bCcP1yGoMe1Q5yP2QDvu7CKWt8JAFsEEin8mc0RE8WpuoxuMxV25xXXA7FXV2HsDTEDC6bNASg6xqRKj7EKXIKI6kJFQe1LCbTlkiFtl95GpQoJB/RHNLrTVPAYad0w1DzaEO4W4A2QDdCPLSNto4UMzTqCSDNH70mvc=
+	t=1727362781; cv=none; b=eRVLGQF6iPjtbO4gB9FMMG7gdwAwJOPd8WRgUk6en5Ag4eZgXeD+a3AL9pp2hyHkg4U38PWJCAgEzhRIdome04fIsOspehogDrsCaA4EjHvEoClNJOopDDfGvXyyR6noWlPj1YiK29lwzvkkNVPfVyTNGSordpa5akJBHnOf3Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727362777; c=relaxed/simple;
-	bh=Twk1wQnSBYqUrwPgppU6IblWdyNgBfrFOMFHTIuSYDk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=S9aQoN8B0QFxtPMscUn7vFtwONUHWSRFoPBEmB+W5oqI7hlTcezjNPtG4Au/wBBiO2HKmraoYFC4Hjn4itCfLh6imgcdoQc2X9/QUVQzYDiwaiuJZmVIVmJjHmbhIF3HqyeNGcaSb+B0eDWMtaPDM3Nyyu6usNoqHnJhi1L2G4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ewUJumSc; arc=none smtp.client-ip=209.85.219.201
+	s=arc-20240116; t=1727362781; c=relaxed/simple;
+	bh=OmA5Fpc8q+VVliuvZsHkzpnnFxIk9+56osMv6UGZYI0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=G8VTKoZiv1Y8Q2PHQV3FWznjjee0IXNflR9tuyfRQ5K8AgOJKbjmKnlZz6vfs14tPXDu4B08Wji4dvtxUnwipb2SN+IZOMmooxG1HnBxUSMBplf0qxUh3g9Ozlt6jD6cVxhit6PkUfY5u3DTGfPdoxF9Z12c7NlxIxHCtSfiv6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nZjU4xIK; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e25e3d7f514so131136276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:59:35 -0700 (PDT)
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-37ccc96d3e6so508023f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:59:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727362775; x=1727967575; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bmvRPgDoL8QHsBR9jVlHIhzOpjA+hNTzpNM4jcDB5LU=;
-        b=ewUJumScUoSxOntswYgRQ0TE6WGYaddx4Hx7cy8uRwcNHNIi5OTbhPDWtRoM7x9uRF
-         y3EUMQskIZ+UX9ibCm3CdPuTkjhEddkWULtkpI3uNzS8ZpR1w8UVd1fAl/r64jT39ncy
-         ei9V5Vm4Ed1qOErR0LjQOGqaHil2In9Sof8d/bGgpvKpH278apIeJyEL2On4Kg/G9WZu
-         AsBy+YzNY+EJzb8puWV0PofLyJPFwfH8vtQA/kH2P+M6oYKgLXPUq7Is1L/n+IJo+RFR
-         hUA0e5GWoI/XmamDHqlOnkuUKDrpIYdYAJrG5uHLnIHYY0BBB4WNR8Jf02lx5AQJRX5p
-         KXgg==
+        d=google.com; s=20230601; t=1727362778; x=1727967578; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I4ovaENvdzEIgnWtdOGCa2HlqqG1g+BvQV/UUS4KByA=;
+        b=nZjU4xIKWg0tgbOhlJ6GAlAcuFAtzpDKS0BOn3hDhh+B4VJ0BlKmYuP/APEyPtOE55
+         8H0UCr3n5kO66mHXX9rUB13T38mXhWAvY9saRHoc1rx1OLYrevR+pa89bvh0zwRAzWkX
+         EcrhVDJf33/FHgViIDmG70zjNih8aFuwJaMUCKEIkBZF0tOyNecTbUCj3+nMAHBBe47v
+         7ZQQ+8G5ArH/Om3+rkhdeMNhF+s99MRX5WPdbPDDd1gbsKHe6Ua49grDYgE/KoDcr3XR
+         TsCO14QLTyjb2xb46z/wYZCyJ23jIAKC+x9gaGq6r62ENX/bM+fNm4DQK/m+4lt3JDbB
+         jJWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727362775; x=1727967575;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bmvRPgDoL8QHsBR9jVlHIhzOpjA+hNTzpNM4jcDB5LU=;
-        b=RuyqnyKxBzpMgpllYNIU/502kqqIyDOO4Q+BOSmEPfzk7ifjP9GNpkUqK7Zhqho1Im
-         Vb18WJnZy4/z7pvZmMqoRqX4CoHY9ScYLN+owW9uy8r0dKyDCQAibJAQ6mtdwGPNvTBq
-         IvyJP3KbhC+mWLa/VnzBNpuOO4QgD5mCyyf3SOy1lBYvK61dEeYtTmDB8cM7Tg5xEaO7
-         so+4tBIoDD3AW8o7maqX6EnGHfntbgC1lyPBYjiyaPgoLflhesBXc2562keWsIwvtl2n
-         d2FtTwgQgsc+HZ1T4WNMi1lYW0AsSM4xyDvfYSVNX4iuIIOGFojOSgfPNFd9EZ19+pL2
-         5j+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXaNe3/hWd/d0Q9BvR92d1ShAG5yjJCZiVH4bK3Lufb6b+nwxB9dWq2bwTuw06OTRB+lHAw1hNx5Y5KfDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya5HfHUz+xEjrALrjyrK0H6Oz79w2rJZq5GACHYKzDtt2Dhyd1
-	xywxLnXKG0bt62JwP7P9jPhHqESwxmmZc3nrVZtgEPj9pZvcQHJw5puyhW3hG3nCTyEH8EWSbNE
-	Ip59s1UpLt6hHnQ==
-X-Google-Smtp-Source: AGHT+IENP7Kx7M4Vi4Vt/eiie+FqP0nzfwl2y+4Din8XNMrO/5bTMKuLlkVaBOTPlzBeY9KeSKk3Ah2pbeqQc98=
+        d=1e100.net; s=20230601; t=1727362778; x=1727967578;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I4ovaENvdzEIgnWtdOGCa2HlqqG1g+BvQV/UUS4KByA=;
+        b=b09+x7IYzp7H/DGHdbrk8vFxTedc/5S6RGsi0N0cNMNjPLmklpitTQe20GjxgdlqQt
+         jLVEjAn2VKPeTITMHbvIOgzfW2cpt1RxwG+kuFkAAwQzTiCMl5o/+IQvGaCxZVmFbro1
+         oqOli1WqmS2kDdRQ//vdSwYEVsUz01BnmImXd+wMocDq79/qo5FuHizSEd3zW5eQS889
+         JKaRhM0IHZ1PfGjmWqN6296VmIQkX5UGCPav5L7d7dQUfHDvEvcieDW8REtixXhFT7rS
+         BkRY5Dw3PGrcpeZn7JGIq26nPTmC+IgJFf8rEj14EYFuDS1zM2ROC69CGgMm+yOHmhGY
+         emXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTpRIuimcu5nLg6xogxe98JwSZ6gsY6qzlZI/O5w94pkPydIDEG9U4PiSR/l9W3gRugRFK4lvDLoqB4zA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaSPr56+ocvPnnkIa86EwfrWENycuzp92j4QNTEGOGcPlo8ECE
+	cM4DATHCQIVPDqUoRRPIw6A/VmZRdo7hESfpgqi5AiFNNnGd3lWhhR/ehY7Lu0tVn+sNnY7gUAv
+	eHdM04dTWlrUmNQ==
+X-Google-Smtp-Source: AGHT+IFKEbPPWgHrvBx3h62gH1uccNY84xCIpV8wPvnZRiFspAmH/JXjTSZnsxXOxNukoaeaW6QiOQdx2PwCrf0=
 X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a25:74cc:0:b0:e25:cced:3e3f with SMTP id
- 3f1490d57ef6-e25cced3f41mr34732276.4.1727362774767; Thu, 26 Sep 2024 07:59:34
+ (user=aliceryhl job=sendgmr) by 2002:a5d:5d86:0:b0:37c:cd08:ae77 with SMTP id
+ ffacd0b85a97d-37ccd08aea5mr2171f8f.5.1727362777240; Thu, 26 Sep 2024 07:59:37
  -0700 (PDT)
-Date: Thu, 26 Sep 2024 14:58:54 +0000
+Date: Thu, 26 Sep 2024 14:58:55 +0000
+In-Reply-To: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAK529WYC/x2MSwqAIBQAryJvnaAmoV0lWvh51ltkoRCBdPek5
- cDMNKhYCCvMrEHBmyqduYMcGITd5Q05xc6ghNLCqol7zQ+qIXY3IFfWiRSNHo2X0JurYKLn/y3 r+36p9wRwXwAAAA==
+References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1434; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=Twk1wQnSBYqUrwPgppU6IblWdyNgBfrFOMFHTIuSYDk=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm9Xa2YUpz8YLZJ0XuLQKBhsgdcDwfS7+0EQz25
- oN/K01chRaJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZvV2tgAKCRAEWL7uWMY5
- RjP+D/0VUGUvQuh2G44M+zDxJ4o/WUijMkAgM38lt7KdI0LAw/6fwSoJlZWXOGk563fruQ44SIj
- kmBZ0MeUs44ENruJXaRPtK/KJIfQT9Le+o+hJ0tCmD9MbBSXZO2xXohqfvIgn6E+4hd+VYaC9JF
- YzwRRODpoQxeSipt2eBQe8bUmfe8xSg/lJ6QSFlz/c6EwMZUhE/ZL6GVtWZ3UzWgy+nFTi/9++r
- dib2+PkHcS9CS/KTJn4LhSGRO04d4aen0EknjcZxm1RoKXiW0UZfwAx4Z7xXfiVg1vqrWqmhYuw
- 6YKNvTq4ldIM4+S8u5X3FnjXP1IqReRbCJUcUYOlNQQnfCoGDGG/DDRB/m8u0YzeFIlZ+QobFAJ
- A5fQqmiQzW3EPgtkOAewZpR3iA1vdSdDNR9g48Lih3Lia0ClaPRHrl170EpiZQ0jIqVUvAVM0yz
- exJdZXv2Ik3y8nJH/q/A/9aJmZlSnW8lR/moyHnEZ6zbIYWFEpdHDyYuOJwly5+nmNVqRjpqpXF
- 3a6LG2lcE1uR0VoV23V/bWVZcTQ7gpH22Lu4p0jLRSHI3CSBjUNu2Sfb/IcHR/r5BczHQUC8Vyr
- 3f2EALu0SBk5mVbbdC86cCdJjT9EuTG7dWxFVHpGkg3QhLJzEEm2smFu9BSjO4mnQM+W//j9TM/ 1SBYl6jLGALOThA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1611; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=OmA5Fpc8q+VVliuvZsHkzpnnFxIk9+56osMv6UGZYI0=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm9XbSQkqismR95jHztyc9oFt0R1RyL0v4MQoMg
+ Ybr2gj5HH+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZvV20gAKCRAEWL7uWMY5
+ RgiQEACG+ngJ8Ks/GRo9WYo2LpeGTNA9gO//nSEXxJjeP0yNTMg8B4A2Z6/QTljOib63lFektQK
+ 2dbJJzREq8Tw0n/wcsY00gwTbJbKLNq2fo1nRvqSEjGS1jOXUuGIfSGcrly6WcVRb40JvWmG0q/
+ 5TpqUYdL255WyX2jVzfXX0IStAImQ02hJilPi+UawWPgyCup76PcZpVbaAFKjaeIICGuIZbE/U4
+ axpSi2VgGnWUG0HdPz2/xbcMsPdkUCMaDSmLCpjraZkGtvkVchET0tV3eGfwaxAoHFvv8J2n3VT
+ /AEk+jAYH8eYHetyof6y/VOZl5JoJV/uj8rJ7b/gQfs+c0M9WgxZuyFVmMm5spt4WDdInsSALVq
+ 0FnKPgICKpjMeFWbQorKiQj24xDms0TEOlMWnWMILMeapra2XAxcqeIggXkXFvSb8n6Kf3Qt3ph
+ Ohpo/UAoZOLymhitGXvvlqAa5JLnYto4hkzaJ9SdTDM7z8hes/a36e2L/wHM6pyZTtoGHH431nx
+ jq4RUgtjOR0A5oEFRCYLTVNswpeeF55Uq5hyIHkfiFJsM7uAnuiXxl980kOhVYik7IdpCbrgRC6
+ 3bcwCCwsx329WRLELYhYoURZbtvLENW3mTgqj5PWMq62MLzwUY6T4hOsg79nFyKH3yR8uuYpQWR rQqS160OiCK7K3Q==
 X-Mailer: b4 0.13.0
-Message-ID: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
-Subject: [PATCH 0/3] Miscdevices in Rust
+Message-ID: <20240926-b4-miscdevice-v1-1-7349c2b2837a@google.com>
+Subject: [PATCH 1/3] rust: types: add Opaque::try_ffi_init
 From: Alice Ryhl <aliceryhl@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
 	Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -99,41 +100,43 @@ Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
 	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-A misc device is generally the best place to start with your first Rust
-driver, so having abstractions for miscdevice in Rust will be important
-for our ability to teach Rust to kernel developers.
+This will be used by the miscdevice abstractions, as the C function
+`misc_register` is fallible.
 
-I intend to add a sample driver using these abstractions, and I also
-intend to use it in Rust Binder to handle the case where binderfs is
-turned off.
-
-I know that the patchset is still a bit rough. It could use some work on
-the file position aspect. But I'm sending this out now to get feedback
-on the overall approach.
-
-This patchset depends on files [1] and vma [2].
-
-Link: https://lore.kernel.org/all/20240915-alice-file-v10-0-88484f7a3dcf@google.com/ [1]
-Link: https://lore.kernel.org/all/20240806-vma-v5-1-04018f05de2b@google.com/ [2]
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
-Alice Ryhl (3):
-      rust: types: add Opaque::try_ffi_init
-      rust: file: add f_pos and set_f_pos
-      rust: miscdevice: add abstraction for defining miscdevices
+ rust/kernel/types.rs | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
- rust/bindings/bindings_helper.h |   1 +
- rust/kernel/fs/file.rs          |  20 ++
- rust/kernel/lib.rs              |   1 +
- rust/kernel/miscdevice.rs       | 401 ++++++++++++++++++++++++++++++++++++++++
- rust/kernel/types.rs            |  16 ++
- 5 files changed, 439 insertions(+)
----
-base-commit: a6266fcab443f4b6ae31016bd6c3872f8200d5e1
-change-id: 20240926-b4-miscdevice-29a0fd8438b1
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index 3238ffaab031..dd9c606c515c 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -299,6 +299,22 @@ pub fn ffi_init(init_func: impl FnOnce(*mut T)) -> impl PinInit<Self> {
+         }
+     }
+ 
++    /// Creates a fallible pin-initializer from the given initializer closure.
++    ///
++    /// The returned initializer calls the given closure with the pointer to the inner `T` of this
++    /// `Opaque`. Since this memory is uninitialized, the closure is not allowed to read from it.
++    ///
++    /// This function is safe, because the `T` inside of an `Opaque` is allowed to be
++    /// uninitialized. Additionally, access to the inner `T` requires `unsafe`, so the caller needs
++    /// to verify at that point that the inner value is valid.
++    pub fn try_ffi_init<E>(
++        init_func: impl FnOnce(*mut T) -> Result<(), E>,
++    ) -> impl PinInit<Self, E> {
++        // SAFETY: We contain a `MaybeUninit`, so it is OK for the `init_func` to not fully
++        // initialize the `T`.
++        unsafe { init::pin_init_from_closure::<_, E>(move |slot| init_func(Self::raw_get(slot))) }
++    }
++
+     /// Returns a raw pointer to the opaque data.
+     pub const fn get(&self) -> *mut T {
+         UnsafeCell::get(&self.value).cast::<T>()
 
-Best regards,
 -- 
-Alice Ryhl <aliceryhl@google.com>
+2.46.0.792.g87dc391469-goog
 
 
