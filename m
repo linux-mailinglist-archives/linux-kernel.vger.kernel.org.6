@@ -1,268 +1,151 @@
-Return-Path: <linux-kernel+bounces-339768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF24986A46
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:32:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FFF0986A47
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 02:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 593702813E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:32:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7603B226BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB3D16B3BF;
-	Thu, 26 Sep 2024 00:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1E416FF25;
+	Thu, 26 Sep 2024 00:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="ZGP6SeO6"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7tbpnj5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B98E22EE8
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 00:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DF116D4E6;
+	Thu, 26 Sep 2024 00:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727310744; cv=none; b=Ury/FU9fHZ/zvPXUb0so5fZVBHXBJkOQU289USWOYYGNyQ9oA4a93xRPMZ5a8DCkXCzXXt5c+tfH77JsDIdHbnWEQR78ddQYWw1vDhEZ4RuQJTSfOz1iMX/XNHGf2O+yBWFq/WK5lroo00P+u0fEmdaGpyVuq+UWnPO7y09UJC0=
+	t=1727310860; cv=none; b=AccgAU20CiiPnbW9GBiagsDTayfwNCedJAyQ7S4bYfoU34GH2mEscn/d1sBP+iSA9OZk0bM3C/9omjcq9YcGpn+FIXqONlVToVwxFgbptqTgl5B+kL8UUjdZPRAhTWX+BUJ1Nl+8FlUJljh1R6rNd9PWH+zaxHLS6Meaju3Inp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727310744; c=relaxed/simple;
-	bh=inhp/7je4aEb9CZ9ES0DmSVnFT/nEuo4Tkerx5rKOoI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DGyFpD9QZMP1O58fLKSqOu5DJxk76MxYYK9jLeS/w3qOnIvg8cynF+o91si1afifZCN/qPbACcXMGOjWnu95Zs0+TcTcISpSyW5Hr3O9W3f+sytRqthJZeZ1+iF7zqq54Pib7uvITqMxEVSO8Jz+pyXzsu95pgWlv2r+QH76ALE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=ZGP6SeO6; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-374ba74e9b6so314116f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:32:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1727310741; x=1727915541; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=S13MqfQIDnb7OvPgfFjzyFVlhocju1TL+JpU9vyiuK8=;
-        b=ZGP6SeO6pYb8fPwwwjrUn/D2l1jDuQ5B3nJSWa7ibGV3YuAo/9BCLxXkO8EpwPZ7ty
-         FEuGx0XjQgu5/BUgX0QuHT+Ct0XIaj75XK2MXrFM1m9eiEmlZyPUvNUhoCHOGvLI6y5c
-         PZRjlq6sEwE9CSEyC+DSy2VlcUIEUlY2I4DBY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727310741; x=1727915541;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S13MqfQIDnb7OvPgfFjzyFVlhocju1TL+JpU9vyiuK8=;
-        b=eB1yvlET1svVHhkALC2NvP71zT8L6F9H0MQ6WP7BDSDCFyCocWs87FZzzDO7Al0Of9
-         5LFebJAHGbSSMnjEgfl5qhl6ZeRlX2E4GX2TSu8ITvBRKupG69ztyKgi/rSWuuS6lMSg
-         XkjcsX90mkQduk6TWUBCivqaFGzih5nA821taHARqS+MbkpDRCGdapBnf4b9knxNlOHt
-         xJq1xxcUCO/TJlfiva4MYnweH8no5jLxV89IsgOyPPyEjJLUL0fouHvOM+s12ZlZYy9o
-         DZVdQE4blOObFePoZSdoS5SgbBzBMF21o4iFG/aT9dHQSCxlw9su7MMIaz4HJ0f0+Syx
-         dHSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAEaRHAv5Q4Aw0W1jfUMOTBtyr+UnEZdR0l1jmqewId5UNaHR9B0A5qPBYHcXARc/jDgse3MysUDsmrsU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvWXisB0BHNo/U/tLjDJN9oQdbO+nNJCgQQQbMqM5V6/JQ4qLR
-	ux03MYbWDkhBCQvhwWvi230eF9adlKvws9p9GslnxE43yLhse3rM+R8KWWqHIus=
-X-Google-Smtp-Source: AGHT+IEuPdBjvoSrO1e3qdTNI88GrUXbnknPEOjgKXsMRBWiNcaGNsT4lgVPFis9GXjg9ZFvBhUQQg==
-X-Received: by 2002:a05:6000:1141:b0:374:c90e:990c with SMTP id ffacd0b85a97d-37cc2480bcdmr3495877f8f.33.1727310740571;
-        Wed, 25 Sep 2024 17:32:20 -0700 (PDT)
-Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f33df1sm284393966b.43.2024.09.25.17.32.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 17:32:20 -0700 (PDT)
-Message-ID: <4ca44b13-2442-4d59-8716-df43c3692a8a@citrix.com>
-Date: Thu, 26 Sep 2024 01:32:19 +0100
+	s=arc-20240116; t=1727310860; c=relaxed/simple;
+	bh=um2xMlvib2CN05auEw1jp/lh1xunvTfllOnZydnRhQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aph6wM8Qj/NIeGFI2v7hqyvFidxZ2INBkoMxggp+JsIjyaLEqeQITd/Tn0x+MDY8zDD2JwTR8YklfLQsKNtDcht+6VQXuimmAzvL6fa/5HGYXAXcr+yfWCvFel/5dGmCX2bIyM9okb+kakk0EAvZJlMHMJPa29Be8NW9uc2M5zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7tbpnj5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F38FDC4CEC3;
+	Thu, 26 Sep 2024 00:34:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727310858;
+	bh=um2xMlvib2CN05auEw1jp/lh1xunvTfllOnZydnRhQU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F7tbpnj5WOzdHcTEW25rt+QlegitMWjk1hY34B0t7CZLhdK+vySW0gRvov8IG1Hxl
+	 2sjlJ1rjmsB3ZTeFXaXTwLwC6N2HxW95gIOlt3CxqABPSiCfnFCKy7dGtAdZCEwQUN
+	 G/IQseAAb/viBtAa9tcQ+yN/SiZXsf+rPilT7nYgzH/ze+GPkKhPVMHwQyjU051Whv
+	 qe8sRLLWxQOzubtrggvSyArunGu1pfPTn5DQdPcUOdyUn3pK2qhc0ef7K3ttsK/PFQ
+	 28vmvw9I+Adx05wmjVNQsp/LV4HkFtlHh8gXeNpCi+Ldl9TC0cyieDq/pt5SE7L6W1
+	 48MwswGdiny1w==
+Date: Wed, 25 Sep 2024 17:34:15 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Guo Ren <guoren@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>,
+	Guilherme Amadio <amadio@gentoo.org>,
+	Changbin Du <changbin.du@huawei.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Aditya Gupta <adityag@linux.ibm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
+	Kajol Jain <kjain@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
+	Shenlin Liang <liangshenlin@eswincomputing.com>,
+	Atish Patra <atishp@rivosinc.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Chen Pei <cp0613@linux.alibaba.com>,
+	Dima Kogan <dima@secretsauce.net>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	Yang Jihong <yangjihong@bytedance.com>
+Subject: Re: [PATCH v1 09/11] perf build: Rename HAVE_DWARF_SUPPORT to
+ HAVE_LIBDW_SUPPORT
+Message-ID: <ZvSsB8bT3CTLT4B0@google.com>
+References: <20240924160418.1391100-1-irogers@google.com>
+ <20240924160418.1391100-10-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/3] x86/bugs: Use code segment selector for VERW
- operand
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org, x86@kernel.org,
- Robert Gill <rtgill82@gmail.com>, Jari Ruusu <jariruusu@protonmail.com>,
- Brian Gerst <brgerst@gmail.com>,
- "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
- antonio.gomez.iglesias@linux.intel.com, daniel.sneddon@linux.intel.com,
- stable@vger.kernel.org
-References: <20240925-fix-dosemu-vm86-v7-0-1de0daca2d42@linux.intel.com>
- <20240925-fix-dosemu-vm86-v7-3-1de0daca2d42@linux.intel.com>
- <5703f2d8-7ca0-4f01-a954-c0eb1de930b4@citrix.com>
- <20240925234616.2ublphj3vbluawb3@desk> <20240926001729.2unwdxtcnnkf3k3t@desk>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <20240926001729.2unwdxtcnnkf3k3t@desk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240924160418.1391100-10-irogers@google.com>
 
-On 26/09/2024 1:17 am, Pawan Gupta wrote:
-> On Wed, Sep 25, 2024 at 04:46:23PM -0700, Pawan Gupta wrote:
->> On Thu, Sep 26, 2024 at 12:29:00AM +0100, Andrew Cooper wrote:
->>> On 25/09/2024 11:25 pm, Pawan Gupta wrote:
->>>> Robert Gill reported below #GP in 32-bit mode when dosemu software was
->>>> executing vm86() system call:
->>>>
->>>>   general protection fault: 0000 [#1] PREEMPT SMP
->>>>   CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
->>>>   Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
->>>>   EIP: restore_all_switch_stack+0xbe/0xcf
->>>>   EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
->>>>   ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
->>>>   DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
->>>>   CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
->>>>   Call Trace:
->>>>    show_regs+0x70/0x78
->>>>    die_addr+0x29/0x70
->>>>    exc_general_protection+0x13c/0x348
->>>>    exc_bounds+0x98/0x98
->>>>    handle_exception+0x14d/0x14d
->>>>    exc_bounds+0x98/0x98
->>>>    restore_all_switch_stack+0xbe/0xcf
->>>>    exc_bounds+0x98/0x98
->>>>    restore_all_switch_stack+0xbe/0xcf
->>>>
->>>> This only happens in 32-bit mode when VERW based mitigations like MDS/RFDS
->>>> are enabled. This is because segment registers with an arbitrary user value
->>>> can result in #GP when executing VERW. Intel SDM vol. 2C documents the
->>>> following behavior for VERW instruction:
->>>>
->>>>   #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
->>>> 	   FS, or GS segment limit.
->>>>
->>>> CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
->>>> space. Use %cs selector to reference VERW operand. This ensures VERW will
->>>> not #GP for an arbitrary user %ds.
->>>>
->>>> Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
->>>> Cc: stable@vger.kernel.org # 5.10+
->>>> Reported-by: Robert Gill <rtgill82@gmail.com>
->>>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
->>>> Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
->>>> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
->>>> Suggested-by: Brian Gerst <brgerst@gmail.com>
->>>> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
->>>> ---
->>>>  arch/x86/include/asm/nospec-branch.h | 6 ++++--
->>>>  1 file changed, 4 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
->>>> index ff5f1ecc7d1e..e18a6aaf414c 100644
->>>> --- a/arch/x86/include/asm/nospec-branch.h
->>>> +++ b/arch/x86/include/asm/nospec-branch.h
->>>> @@ -318,12 +318,14 @@
->>>>  /*
->>>>   * Macro to execute VERW instruction that mitigate transient data sampling
->>>>   * attacks such as MDS. On affected systems a microcode update overloaded VERW
->>>> - * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
->>>> + * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %cs
->>>> + * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
->>>> + * 32-bit mode.
->>>>   *
->>>>   * Note: Only the memory operand variant of VERW clears the CPU buffers.
->>>>   */
->>>>  .macro CLEAR_CPU_BUFFERS
->>>> -	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
->>>> +	ALTERNATIVE "", __stringify(verw %cs:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
->>>>  .endm
->>> People ought rightly to double-take at this using %cs and not %ss. 
->>> There is a good reason, but it needs describing explicitly.  May I
->>> suggest the following:
->>>
->>> *...
->>> * In 32bit mode, the memory operand must be a %cs reference.  The data
->>> segments may not be usable (vm86 mode), and the stack segment may not be
->>> flat (espfix32).
->>> *...
->> Thanks for the suggestion. I will include this.
->>
->>>  .macro CLEAR_CPU_BUFFERS
->>> #ifdef __x86_64__
->>>     ALTERNATIVE "", "verw mds_verw_sel(%rip)", X86_FEATURE_CLEAR_CPU_BUF
->>> #else
->>>     ALTERNATIVE "", "verw %cs:mds_verw_sel", X86_FEATURE_CLEAR_CPU_BUF
->>> #endif
->>>  .endm
->>>
->>> This also lets you drop _ASM_RIP().  It's a cute idea, but is more
->>> confusion than it's worth, because there's no such thing in 32bit mode.
->>>
->>> "%cs:_ASM_RIP(mds_verw_sel)" reads as if it does nothing, because it
->>> really doesn't in 64bit mode.
->> Right, will drop _ASM_RIP() in 32-bit mode and %cs in 64-bit mode.
-> Its probably too soon for next version, pasting the patch here:
->
-> ---8<---
-> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-> index e18a6aaf414c..4228a1fd2c2e 100644
-> --- a/arch/x86/include/asm/nospec-branch.h
-> +++ b/arch/x86/include/asm/nospec-branch.h
-> @@ -318,14 +318,21 @@
->  /*
->   * Macro to execute VERW instruction that mitigate transient data sampling
->   * attacks such as MDS. On affected systems a microcode update overloaded VERW
-> - * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %cs
-> - * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
-> - * 32-bit mode.
-> + * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
->   *
->   * Note: Only the memory operand variant of VERW clears the CPU buffers.
->   */
->  .macro CLEAR_CPU_BUFFERS
-> -	ALTERNATIVE "", __stringify(verw %cs:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
-> +#ifdef CONFIG_X86_64
-> +	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
-> +#else
-> +	/*
-> +	 * In 32bit mode, the memory operand must be a %cs reference. The data
-> +	 * segments may not be usable (vm86 mode), and the stack segment may not
-> +	 * be flat (ESPFIX32).
-> +	 */
+On Tue, Sep 24, 2024 at 09:04:16AM -0700, Ian Rogers wrote:
+> In Makefile.config for unwinding the name dwarf implies either
+> libunwind or libdw. Make it clearer that HAVE_DWARF_SUPPORT is really
+> just defined when libdw is present by renaming to HAVE_LIBDW_SUPPORT.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/Documentation/perf-check.txt         |  6 +++---
+>  tools/perf/Makefile.config                      |  2 +-
+>  tools/perf/arch/powerpc/annotate/instructions.c |  4 ++--
+>  tools/perf/arch/x86/annotate/instructions.c     |  2 +-
+>  tools/perf/builtin-annotate.c                   |  2 +-
+>  tools/perf/builtin-check.c                      |  6 +++---
+>  tools/perf/builtin-probe.c                      | 12 ++++++------
+>  tools/perf/builtin-report.c                     |  4 ++--
+>  tools/perf/util/annotate-data.h                 |  8 ++++----
+>  tools/perf/util/debuginfo.h                     |  6 +++---
+>  tools/perf/util/disasm.c                        |  4 ++--
+>  tools/perf/util/disasm.h                        |  4 ++--
+>  tools/perf/util/genelf.c                        |  4 ++--
+>  tools/perf/util/genelf.h                        |  2 +-
+>  tools/perf/util/include/dwarf-regs.h            |  6 +++---
+>  tools/perf/util/probe-event.c                   |  4 ++--
+>  tools/perf/util/probe-finder.h                  |  4 ++--
+>  17 files changed, 40 insertions(+), 40 deletions(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-check.txt b/tools/perf/Documentation/perf-check.txt
+> index 45101a8e4154..31741499e786 100644
+> --- a/tools/perf/Documentation/perf-check.txt
+> +++ b/tools/perf/Documentation/perf-check.txt
+> @@ -47,15 +47,15 @@ feature::
+>                  bpf                     /  HAVE_LIBBPF_SUPPORT
+>                  bpf_skeletons           /  HAVE_BPF_SKEL
+>                  debuginfod              /  HAVE_DEBUGINFOD_SUPPORT
+> -                dwarf                   /  HAVE_DWARF_SUPPORT
+> -                dwarf_getlocations      /  HAVE_DWARF_SUPPORT
+> +                dwarf                   /  HAVE_LIBDW_SUPPORT
+> +                dwarf_getlocations      /  HAVE_LIBDW_SUPPORT
 
-I was intending for this to replace the "Using %cs" sentence, as a new
-paragraph in that main comment block.
+I'm not sure if we really want to display dwarf_getlocatiosn as it's too
+implementation detail IMHO.  Maybe just 'dwarf' or 'libdw' is enough.
 
-Otherwise, yes, this is half of what I had in mind.
+Thanks,
+Namhyung
 
-~Andrew
+
+>                  dwarf-unwind            /  HAVE_DWARF_UNWIND_SUPPORT
+>                  auxtrace                /  HAVE_AUXTRACE_SUPPORT
+>                  libaudit                /  HAVE_LIBAUDIT_SUPPORT
+>                  libbfd                  /  HAVE_LIBBFD_SUPPORT
+>                  libcapstone             /  HAVE_LIBCAPSTONE_SUPPORT
+>                  libcrypto               /  HAVE_LIBCRYPTO_SUPPORT
+> -                libdw-dwarf-unwind      /  HAVE_DWARF_SUPPORT
+> +                libdw-dwarf-unwind      /  HAVE_LIBDW_SUPPORT
+>                  libelf                  /  HAVE_LIBELF_SUPPORT
+>                  libnuma                 /  HAVE_LIBNUMA_SUPPORT
+>                  libopencsd              /  HAVE_CSTRACE_SUPPORT
 
