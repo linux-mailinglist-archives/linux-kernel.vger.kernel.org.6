@@ -1,214 +1,203 @@
-Return-Path: <linux-kernel+bounces-340351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C129871F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:47:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D619871EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF85FB2ABA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72C5828B08C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4A51AD5EB;
-	Thu, 26 Sep 2024 10:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063DB1AD5EB;
+	Thu, 26 Sep 2024 10:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O9DcKNdA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="eYR8Jsqq"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D6A1A726A;
-	Thu, 26 Sep 2024 10:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1701F95C;
+	Thu, 26 Sep 2024 10:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727347642; cv=none; b=PzS4IqD4tXUdkhnnWLMaLbnPakJJoScdpM5NyeNCA447EsKcK+Vx+4GJ6D8Hzebztbf3Ji61ROP9tmg1dP1sjEoqDeMVDE7NemSon5AfyfsqrcYTk8966TlS4xC3y2MCLSm8PndQg/DR3ylmiXR+g9VdnvHkmDJydrCD8BysvI8=
+	t=1727347610; cv=none; b=lPSSOyb07qTucZBypmHI/oaw+6mMK8qKFn2doDvjOJ1y1k6WITRpPwLSw47AOAeO9mllQZ4gYp+wqL8ApXwir1ECQGsUTwer1dz+oi8IzVNtwtrq5TqOuQaSzW/mAwEMIh7ccMp9iq/L2s41V4DO85Iw+OK44tSVBJ9l3FtnPhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727347642; c=relaxed/simple;
-	bh=kgTVEDiu1C/X/bxty3fOtvH3nFttn5jCBkrGOQolGMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MFCU82b0DWwP2uGqTlGYzgibXUD9PnNOJGgo8BL1cEdQTaxtBsmGew5qyuTy7lX70ycyPWk4n7mkmBEcTNyQMhkXJntJteSUGgQrs/92QQWoAeQj9GXMcHFN6htYsjdAIoN8Jfo9mQODEgXr/VIuagpbHBO37ZqLV6qvoiDOFb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O9DcKNdA; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727347640; x=1758883640;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kgTVEDiu1C/X/bxty3fOtvH3nFttn5jCBkrGOQolGMY=;
-  b=O9DcKNdA00uVRzt3SVy0fP7ktS0AhFeoCCqPRiLMz/M2ZD0yFrucTL/y
-   nWPvdjLN1QOBAfHuKyCmgYKOisjnY/Iw/7riJ98OAqm0Xbzte/qZlIKyW
-   6qCbZEHXr/FzwLY1FZ5SW5/W4L5dWVbOf55iDTOATM1SSet0orkIFkp+x
-   LklF8bql2r3dJk5YVTkzhfm7XU97QdNPb7miuh6zIV5zPV3tsvIicIUfz
-   iUeaA+XwL3fJWf0lvwjjX1+11/n3vD+604slKkwZbe8Cz9GEtz5fnivN9
-   zO3+sVO+ZdHuC74cfVMe135izcJuER2fnu7tMuMFUddDZ+8Cqo/CXfzgD
-   Q==;
-X-CSE-ConnectionGUID: WZzqkdRWQoewGqnZk02cww==
-X-CSE-MsgGUID: S7JOb7iSTfu9IOmNSPJoeQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="43947437"
-X-IronPort-AV: E=Sophos;i="6.10,155,1719903600"; 
-   d="scan'208";a="43947437"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 03:47:11 -0700
-X-CSE-ConnectionGUID: VBop/fJUTtWTJG9YeZpqjw==
-X-CSE-MsgGUID: f6+mt1YJQeKm6knOr+RLSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,155,1719903600"; 
-   d="scan'208";a="76870270"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 26 Sep 2024 03:47:08 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1stm1Z-000KaF-1o;
-	Thu, 26 Sep 2024 10:47:05 +0000
-Date: Thu, 26 Sep 2024 18:46:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dipendra Khadka <kdipendra88@gmail.com>, florian.fainelli@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	maxime.chevallier@bootlin.com, horms@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Dipendra Khadka <kdipendra88@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v4] net: systemport: Add error pointer checks in
- bcm_sysport_map_queues() and bcm_sysport_unmap_queues()
-Message-ID: <202409261836.eGX8TVKA-lkp@intel.com>
-References: <20240925152927.4579-1-kdipendra88@gmail.com>
+	s=arc-20240116; t=1727347610; c=relaxed/simple;
+	bh=c/eI5nnfbeDwNzWVyrDZhox1VEloJsRrqMJnVR48mnw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VTSN3iv0IxratFig5rASLaY6k4VLvFLpkg6TXV6B05LtMIXp2In3NtZG/udjA3tRddO3onv6cRSAQ4rhseKPyloT3p8cIYnZMa7JPUOkfZ6/HFjAiI+ZqztuXYu8kozP5o6fl8lvk7CUb9aynACx1FxlhkDN1HM/ntYAxdtltGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=eYR8Jsqq; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727347597; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=HAfK9a+C2cwA67W9H+QW9yoB06NuG9+8CGbAb5+/yLQ=;
+	b=eYR8Jsqq9Wj8qR1qPDC9639NInmTM8LCU98vq2XiAW0yczkmG+pHv/gE3mYquCkZCnRh273Dnl/ztzV6M5P3APM3UNkNJgIa9NDor+IYlybnvKevJM64Sni80bvph2aWA+bzocJj4VHPrdGLwcBGv4zuBcL7apaHuzllOQ7XSpc=
+Received: from 30.221.129.247(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFn33Oz_1727347595)
+          by smtp.aliyun-inc.com;
+          Thu, 26 Sep 2024 18:46:36 +0800
+Message-ID: <5f5e006b-d13b-45a5-835d-57a64d450a1a@linux.alibaba.com>
+Date: Thu, 26 Sep 2024 18:46:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925152927.4579-1-kdipendra88@gmail.com>
-
-Hi Dipendra,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on net/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dipendra-Khadka/net-systemport-Add-error-pointer-checks-in-bcm_sysport_map_queues-and-bcm_sysport_unmap_queues/20240925-233508
-base:   net/main
-patch link:    https://lore.kernel.org/r/20240925152927.4579-1-kdipendra88%40gmail.com
-patch subject: [PATCH net v4] net: systemport: Add error pointer checks in bcm_sysport_map_queues() and bcm_sysport_unmap_queues()
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240926/202409261836.eGX8TVKA-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 7773243d9916f98ba0ffce0c3a960e4aa9f03e81)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240926/202409261836.eGX8TVKA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409261836.eGX8TVKA-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/net/ethernet/broadcom/bcmsysport.c:11:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/net/ethernet/broadcom/bcmsysport.c:11:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/net/ethernet/broadcom/bcmsysport.c:11:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   In file included from drivers/net/ethernet/broadcom/bcmsysport.c:14:
-   In file included from include/linux/netdevice.h:38:
-   In file included from include/net/net_namespace.h:43:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:10:
-   In file included from include/linux/mm.h:2232:
-   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/net/ethernet/broadcom/bcmsysport.c:2401:21: error: expected ';' after return statement
-    2401 |                 return PTR_ERR(dp));
-         |                                   ^
-         |                                   ;
-   7 warnings and 1 error generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
+To: Ariel Miculas <amiculas@cisco.com>
+Cc: Benno Lossin <benno.lossin@proton.me>, rust-for-linux@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, Gary Guo <gary@garyguo.net>,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
+References: <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me>
+ <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
+ <239b5d1d-64a7-4620-9075-dc645d2bab74@proton.me>
+ <20240925154831.6fe4ig4dny2h7lpw@amiculas-l-PF3FCGJH>
+ <80cd0899-f14c-42f4-a0aa-3b8fa3717443@linux.alibaba.com>
+ <20240925214518.fvig2n6cop3sliqy@amiculas-l-PF3FCGJH>
+ <be7a42b2-ae52-4d51-9b0c-ed0304db3bdf@linux.alibaba.com>
+ <0ca4a948-589a-4e2c-9269-827efb3fb9ef@linux.alibaba.com>
+ <20240926081007.6amk4xfuo6l4jhsc@amiculas-l-PF3FCGJH>
+ <54bf7cc6-a62a-44e9-9ff0-ca2e334d364f@linux.alibaba.com>
+ <20240926095140.fej2mys5dee4aar2@amiculas-l-PF3FCGJH>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240926095140.fej2mys5dee4aar2@amiculas-l-PF3FCGJH>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-vim +2401 drivers/net/ethernet/broadcom/bcmsysport.c
 
-  2389	
-  2390	static int bcm_sysport_unmap_queues(struct net_device *dev,
-  2391					    struct net_device *slave_dev)
-  2392	{
-  2393		struct bcm_sysport_priv *priv = netdev_priv(dev);
-  2394		struct bcm_sysport_tx_ring *ring;
-  2395		unsigned int num_tx_queues;
-  2396		unsigned int q, qp, port;
-  2397		struct dsa_port *dp;
-  2398	
-  2399		dp = dsa_port_from_netdev(slave_dev);
-  2400		if (IS_ERR(dp))
-> 2401			return PTR_ERR(dp));
-  2402	
-  2403		port = dp->index;
-  2404	
-  2405		num_tx_queues = slave_dev->real_num_tx_queues;
-  2406	
-  2407		for (q = 0; q < dev->num_tx_queues; q++) {
-  2408			ring = &priv->tx_rings[q];
-  2409	
-  2410			if (ring->switch_port != port)
-  2411				continue;
-  2412	
-  2413			if (!ring->inspect)
-  2414				continue;
-  2415	
-  2416			ring->inspect = false;
-  2417			qp = ring->switch_queue;
-  2418			priv->ring_map[qp + port * num_tx_queues] = NULL;
-  2419		}
-  2420	
-  2421		return 0;
-  2422	}
-  2423	
+On 2024/9/26 17:51, Ariel Miculas wrote:
+> On 24/09/26 04:25, Gao Xiang wrote:
+>>
+>>
+>> On 2024/9/26 16:10, Ariel Miculas wrote:
+>>> On 24/09/26 09:04, Gao Xiang wrote:
+>>>>
+>>
+>>
+>> ...
+>>
+>>>
+>>> And here [4] you can see the space savings achieved by PuzzleFS. In
+>>> short, if you take 10 versions of Ubuntu Jammy from dockerhub, they take
+>>> up 282 MB. Convert them to PuzzleFS and they only take up 130 MB (this
+>>> is before applying any compression, the space savings are only due to
+>>> the chunking algorithm). If we enable compression (PuzzleFS uses Zstd
+>>> seekable compression), which is a fairer comparison (considering that
+>>> the OCI image uses gzip compression), then we get down to 53 MB for
+>>> storing all 10 Ubuntu Jammy versions using PuzzleFS.
+>>>
+>>> Here's a summary:
+>>> # Steps
+>>>
+>>> * I’ve downloaded 10 versions of Jammy from hub.docker.com
+>>> * These images only have one layer which is in tar.gz format
+>>> * I’ve built 10 equivalent puzzlefs images
+>>> * Compute the tarball_total_size by summing the sizes of every Jammy
+>>>     tarball (uncompressed) => 766 MB (use this as baseline)
+>>> * Sum the sizes of every oci/puzzlefs image => total_size
+>>> * Compute the total size as if all the versions were stored in a single
+>>>     oci/puzzlefs repository => total_unified_size
+>>> * Saved space = tarball_total_size - total_unified_size
+>>>
+>>> # Results
+>>> (See [5] if you prefer the video format)
+>>>
+>>> | Type | Total size (MB) | Average layer size (MB) | Unified size (MB) | Saved (MB) / 766 MB |
+>>> | --- | --- | --- | --- | --- |
+>>> | Oci (uncompressed) | 766 | 77 | 766 | 0 (0%) |
+>>> | PuzzleFS uncompressed | 748 | 74 | 130 | 635 (83%) |
+>>> | Oci (compressed) | 282 | 28 | 282 | 484 (63%) |
+>>> | PuzzleFS (compressed) | 298 | 30 | 53 | 713 (93%) |
+>>>
+>>> Here's the script I used to download the Ubuntu Jammy versions and
+>>> generate the PuzzleFS images [6] to get an idea about how I got to these
+>>> results.
+>>>
+>>> Can we achieve these results with the current erofs features?  I'm
+>>> referring specifically to this comment: "EROFS already supports
+>>> variable-sized chunks + CDC" [7].
+>>
+>> Please see
+>> https://erofs.docs.kernel.org/en/latest/comparsion/dedupe.html
+> 
+> Great, I see you've used the same example as I did. Though I must admit
+> I'm a little surprised there's no mention of PuzzleFS in your document.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Why I need to mention and even try PuzzleFS here (there are too many
+attempts why I need to try them all)?  It just compares to the EROFS
+prior work.
+
+> 
+>>
+>> 	                Total Size (MiB)	Average layer size (MiB)	Saved / 766.1MiB
+>> Compressed OCI (tar.gz)	282.5	28.3	63%
+>> Uncompressed OCI (tar)	766.1	76.6	0%
+>> Uncomprssed EROFS	109.5	11.0	86%
+>> EROFS (DEFLATE,9,32k)	46.4	4.6	94%
+>> EROFS (LZ4HC,12,64k)	54.2	5.4	93%
+>>
+>> I don't know which compression algorithm are you using (maybe Zstd?),
+>> but from the result is
+>>    EROFS (LZ4HC,12,64k)  54.2
+>>    PuzzleFS compressed   53?
+>>    EROFS (DEFLATE,9,32k) 46.4
+>>
+>> I could reran with EROFS + Zstd, but it should be smaller. This feature
+>> has been supported since Linux 6.1, thanks.
+> 
+> The average layer size is very impressive for EROFS, great work.
+> However, if we multiply the average layer size by 10, we get the total
+> size (5.4 MiB * 10 ~ 54.2 MiB), whereas for PuzzleFS, we see that while
+> the average layer size is 30 MIB (for the compressed case), the unified
+> size is only 53 MiB. So this tells me there's blob sharing between the
+> different versions of Ubuntu Jammy with PuzzleFS, but there's no sharing
+> with EROFS (what I'm talking about is deduplication across the multiple
+> versions of Ubuntu Jammy and not within one single version).
+
+Don't make me wrong, I don't think you got the point.
+
+First, what you asked was `I'm referring specifically to this
+comment: "EROFS already supports variable-sized chunks + CDC"`,
+so I clearly answered with the result of compressed data global
+deduplication with CDC.
+
+Here both EROFS and Squashfs compresses 10 Ubuntu images into
+one image for fair comparsion to show the benefit of CDC, so
+I believe they basically equal to your `Unified size`s, so
+the result is
+
+			Your unified size
+	EROFS (LZ4HC,12,64k)  54.2
+	PuzzleFS compressed   53?
+	EROFS (DEFLATE,9,32k) 46.4
+
+That is why I used your 53 unified size to show EROFS is much
+smaller than PuzzleFS.
+
+The reason why EROFS and SquashFS doesn't have the `Total Size`s
+is just because we cannot store every individual chunk into some
+seperate file.
+
+Currently, I have seen no reason to open arbitary kernel files
+(maybe hundreds due to large folio feature at once) in the page
+fault context.  If I modified `mkfs.erofs` tool, I could give
+some similar numbers, but I don't want to waste time now due
+to `open arbitary kernel files in the page fault context`.
+
+As I said, if PuzzleFS finally upstream some work to open kernel
+files in page fault context, I will definitely work out the same
+feature for EROFS soon, but currently I don't do that just
+because it's very controversal and no in-tree kernel filesystem
+does that.
+
+Thanks,
+Gao Xiang
 
