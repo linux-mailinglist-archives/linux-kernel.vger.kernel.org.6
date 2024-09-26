@@ -1,132 +1,108 @@
-Return-Path: <linux-kernel+bounces-339961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86056986CB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:42:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227EA986CE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 331C01F2307F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:42:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAAA7281EE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E4318950D;
-	Thu, 26 Sep 2024 06:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C201A18E743;
+	Thu, 26 Sep 2024 06:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Hinq26xx"
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="BlvMWbVT"
+Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CABC188A0A;
-	Thu, 26 Sep 2024 06:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B64C18DF92;
+	Thu, 26 Sep 2024 06:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727332965; cv=none; b=dqkDCMSxoPkS50yppc7U5ZxfQ96zriBm4ZzALj2SqtS0NLvYW0xPlWtyLc7iKXQE5PxVfgjf2Al741fG0RLG8zeyT48GdIMLYhA56Rz1DojEkNKB2Ko3Z2FsTh0xrNBAPEsQD2cLhY08Wf418QkqgzDVpAud+XAlg/w0ykpGglM=
+	t=1727333381; cv=none; b=YtTQsDI1x4xSXZ4OOmVXmLkusLwudTBwujGaxJZgf2LTzeY/WlVWwoYgiFyUs2wSPnVVQu+YMAKPx8TnaFNWc40OTG2eAb9D43FBuJlddP5jG84KIwyKHvVuXynxXcw8W6gkjjKyv3eLT3oW+EVDHNa8Bv1AN1ZS+Fxp39sPai4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727332965; c=relaxed/simple;
-	bh=qgINXFFH8CgkNeufo3VqgmvlEs65suKlSSutu/MIEfA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R89Hw1Yo+k+6wn4gktUvhN5EQiEQ0xuGAzJdLQeY8/cvkFd+lY+V3DuoNqJ1E9qgdaWx2p+UiXOeIwz0jiXN3y+usKqcZldlA/OMRntE2ODNx+AZfdtII98dE2uAlAeaySc74dVpysOua7w7m8zz4quke7l22HW48hlCf4FKkto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Hinq26xx; arc=none smtp.client-ip=217.70.178.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay6-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::226])
-	by mslow1.mail.gandi.net (Postfix) with ESMTP id 2262BC017B;
-	Thu, 26 Sep 2024 06:42:33 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 35AF8C0009;
-	Thu, 26 Sep 2024 06:42:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727332945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hSl+x4yB2HAc1rNghZGKMNPTySVIpuiqh6T8oSAPYPM=;
-	b=Hinq26xxYj8wFLdNhFvYb7mND6z9NRu5ePojvtxKw5p6PGBQKMErxOncw8GrnuDS6vfLG/
-	VAEdf79NI32N5BGQG6sjFu2WMcmLIOg2IweEcRe2Plgt3g590pWVPZO1plw6kJc9cmW3QW
-	xmQjydz4bq7He1qQR6H3xlII98nHf8/fQ8T4SHNjvk1rkUgGjY+NUJV8C6aH+BZcRK4AP5
-	XCnoTQfySRrSp4E5zRtDTyhB+AQ+fNTtNIpJT7zhSjbnRJ4PZV54rlbBLhYsjrLHfLG5no
-	15Zy3Z6qXKVmJSf4rVC2r2SLJbkFmXYsW98rd7OKnyk79XVBjWvOkU+QBS5rLw==
-Date: Thu, 26 Sep 2024 08:42:22 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Abhishek Chauhan <quic_abchauha@quicinc.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andrew Halaney <ahalaney@redhat.com>, "Russell King (Oracle)"
- <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
- <hkallweit1@gmail.com>, Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>, "linux-tegra@vger.kernel.org"
- <linux-tegra@vger.kernel.org>, Brad Griffis <bgriffis@nvidia.com>, Vladimir
- Oltean <vladimir.oltean@nxp.com>, Jon Hunter <jonathanh@nvidia.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, kernel@quicinc.com
-Subject: Re: [PATCH net v3 1/2] net: phy: aquantia: AQR115c fix up PMA
- capabilities
-Message-ID: <20240926084222.48042652@fedora.home>
-In-Reply-To: <20240925230129.2064336-2-quic_abchauha@quicinc.com>
-References: <20240925230129.2064336-1-quic_abchauha@quicinc.com>
-	<20240925230129.2064336-2-quic_abchauha@quicinc.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1727333381; c=relaxed/simple;
+	bh=tqh/odynIxXOQ1waZJqQvC8VrmDUVp97OnoXEwg2YRc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YkoqDSwKhlPikIubv0tBD0r1wyHTK/HF4Nc4+ltOXdBsjfIvhIAUtXfA7OpSP0irV2ZQVIERhTf8IjknlbdA37U8UxOcNlx58o5cNRTcHrBXRNTxpneIrqH/+h8h0R91Mriqc1NIrqTNEnuZ2cVVy8tS5SzF7Z7zISHNYNO+fo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=BlvMWbVT; arc=none smtp.client-ip=178.154.239.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
+Received: from mail-nwsmtp-smtp-production-main-44.sas.yp-c.yandex.net (unknown [IPv6:2a02:6b8:c08:df8e:0:640:17d3:0])
+	by forward501b.mail.yandex.net (Yandex) with ESMTPS id 79BD86239B;
+	Thu, 26 Sep 2024 09:44:16 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-44.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id EiO1hD0g1uQ0-WgLdjpxD;
+	Thu, 26 Sep 2024 09:44:15 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1727333055; bh=tqh/odynIxXOQ1waZJqQvC8VrmDUVp97OnoXEwg2YRc=;
+	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=BlvMWbVTj+3/JU4Q6bpN+tkgXHMNJpecWcUNulBHjSf/0TdosxuOgr7mJc4v10WAZ
+	 SJU8v+v2QUoqVXalDqusCX9K8hi5gd26TSVgXHb8abbMmZ0qwQ6zMIIi8TBXkh5wEi
+	 bRijCpBZhIMiOCJKj/DT8tlAhbtDNaJkUawHFtGI=
+Authentication-Results: mail-nwsmtp-smtp-production-main-44.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <555edaf290dd3dd4e1c3cc635b41de05ed4af350.camel@maquefel.me>
+Subject: Re: [PATCH] dt-bindings: gpio: ep9301: Add missing
+ "#interrupt-cells" to examples
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>, Arnd Bergmann
+	 <arnd@arndb.de>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski
+	 <brgl@bgdev.pl>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	 <conor+dt@kernel.org>
+Date: Thu, 26 Sep 2024 09:44:14 +0300
+In-Reply-To: <20240925173510.1907048-1-robh@kernel.org>
+References: <20240925173510.1907048-1-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+X-Yandex-Filter: 1
 
-Hello,
+SGkgUm9iIQoKVGhhbmsgeW91IQoKUmV2aWV3ZWQtYnk6IE5pa2l0YSBTaHViaW4gPG5pa2l0YS5z
+aHViaW5AbWFxdWVmZWwubWU+CgpPbiBXZWQsIDIwMjQtMDktMjUgYXQgMTI6MzUgLTA1MDAsIFJv
+YiBIZXJyaW5nIChBcm0pIHdyb3RlOgo+IEZyb206IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5v
+cmc+Cj4gCj4gRW5hYmxpbmcgZHRjIGludGVycnVwdF9wcm92aWRlciBjaGVjayByZXZlYWxzIHRo
+ZSBleGFtcGxlcyBhcmUKPiBtaXNzaW5nCj4gdGhlICIjaW50ZXJydXB0LWNlbGxzIiBwcm9wZXJ0
+eSBhcyBpdCBpcyBhIGRlcGVuZGVuY3kgb2YKPiAiaW50ZXJydXB0LWNvbnRyb2xsZXIiLgo+IAo+
+IFNvbWUgb2YgdGhlIGluZGVudGF0aW9uIGlzIG9mZiwgc28gZml4IHRoYXQgdG9vLgo+IAo+IFNp
+Z25lZC1vZmYtYnk6IFJvYiBIZXJyaW5nIChBcm0pIDxyb2JoQGtlcm5lbC5vcmc+Cj4gLS0tCj4g
+wqBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9ncGlvLWVwOTMwMS55YW1s
+IHwgOSArKysrKystLQo+IC0KPiDCoDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDMg
+ZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9ncGlvL2dwaW8tZXA5MzAxLnlhbWwKPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9ncGlvL2dwaW8tZXA5MzAxLnlhbWwKPiBpbmRleCBkYWFkZmI0OTI2YzMuLjNh
+MTA3OWQ2ZWUyMCAxMDA2NDQKPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvZ3Bpby9ncGlvLWVwOTMwMS55YW1sCj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL2dwaW8vZ3Bpby1lcDkzMDEueWFtbAo+IEBAIC03Myw5ICs3MywxMCBAQCBleGFt
+cGxlczoKPiDCoMKgwqDCoMKgwqAgcmVnLW5hbWVzID0gImRhdGEiLCAiZGlyIiwgImludHIiOwo+
+IMKgwqDCoMKgwqDCoCBncGlvLWNvbnRyb2xsZXI7Cj4gwqDCoMKgwqDCoMKgICNncGlvLWNlbGxz
+ID0gPDI+Owo+IC3CoMKgwqDCoMKgwqDCoCBpbnRlcnJ1cHQtY29udHJvbGxlcjsKPiAtwqDCoMKg
+wqDCoMKgwqAgaW50ZXJydXB0LXBhcmVudCA9IDwmdmljMT47Cj4gLcKgwqDCoMKgwqDCoMKgIGlu
+dGVycnVwdHMgPSA8Mjc+Owo+ICvCoMKgwqDCoMKgIGludGVycnVwdC1jb250cm9sbGVyOwo+ICvC
+oMKgwqDCoMKgICNpbnRlcnJ1cHQtY2VsbHMgPSA8Mj47Cj4gK8KgwqDCoMKgwqAgaW50ZXJydXB0
+LXBhcmVudCA9IDwmdmljMT47Cj4gK8KgwqDCoMKgwqAgaW50ZXJydXB0cyA9IDwyNz47Cj4gwqDC
+oMKgwqAgfTsKPiDCoAo+IMKgwqDCoMKgIGdwaW9AODA4NDAwMDQgewo+IEBAIC04Nyw2ICs4OCw3
+IEBAIGV4YW1wbGVzOgo+IMKgwqDCoMKgwqDCoCBncGlvLWNvbnRyb2xsZXI7Cj4gwqDCoMKgwqDC
+oMKgICNncGlvLWNlbGxzID0gPDI+Owo+IMKgwqDCoMKgwqDCoCBpbnRlcnJ1cHQtY29udHJvbGxl
+cjsKPiArwqDCoMKgwqDCoCAjaW50ZXJydXB0LWNlbGxzID0gPDI+Owo+IMKgwqDCoMKgwqDCoCBp
+bnRlcnJ1cHQtcGFyZW50ID0gPCZ2aWMxPjsKPiDCoMKgwqDCoMKgwqAgaW50ZXJydXB0cyA9IDwy
+Nz47Cj4gwqDCoMKgwqAgfTsKPiBAQCAtMTI3LDYgKzEyOSw3IEBAIGV4YW1wbGVzOgo+IMKgwqDC
+oMKgwqDCoCBncGlvLWNvbnRyb2xsZXI7Cj4gwqDCoMKgwqDCoMKgICNncGlvLWNlbGxzID0gPDI+
+Owo+IMKgwqDCoMKgwqDCoCBpbnRlcnJ1cHQtY29udHJvbGxlcjsKPiArwqDCoMKgwqDCoCAjaW50
+ZXJydXB0LWNlbGxzID0gPDI+Owo+IMKgwqDCoMKgwqDCoCBpbnRlcnJ1cHRzLWV4dGVuZGVkID0g
+PCZ2aWMwIDE5PiwgPCZ2aWMwIDIwPiwKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JnZpYzAgMjE+LCA8JnZpYzAgMjI+LAo+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDwmdmlj
+MSAxNT4sIDwmdmljMSAxNj4sCgo=
 
-On Wed, 25 Sep 2024 16:01:28 -0700
-Abhishek Chauhan <quic_abchauha@quicinc.com> wrote:
-
-> AQR115c reports incorrect PMA capabilities which includes
-> 10G/5G and also incorrectly disables capabilities like autoneg
-> and 10Mbps support.
-> 
-> AQR115c as per the Marvell databook supports speeds up to 2.5Gbps
-> with autonegotiation.
-> 
-> Fixes: 0ebc581f8a4b ("net: phy: aquantia: add support for aqr115c")
-> Link: https://lore.kernel.org/all/20240913011635.1286027-1-quic_abchauha@quicinc.com/T/
-> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
-> ---
-
-[...]
-
->  
-> +static int aqr115c_get_features(struct phy_device *phydev)
-> +{
-> +	int ret;
-> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported) = { 0, };
-> +
-> +	/* Normal feature discovery */
-> +	ret = genphy_c45_pma_read_abilities(phydev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* PHY FIXUP */
-> +	/* Although the PHY sets bit 12.18.19.48, it does not support 5G/10G modes */
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, phydev->supported);
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKX4_Full_BIT, phydev->supported);
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKR_Full_BIT, phydev->supported);
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, phydev->supported);
-> +
-> +	/* Phy supports Speeds up to 2.5G with Autoneg though the phy PMA says otherwise */
-> +	linkmode_copy(supported, phy_gbit_features);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseX_Full_BIT, supported);
-
-I still think you shouldn't report 2500BaseX, as you mentionned
-it's a BaseT PHY. This is independent of the modes that the PHY uses to
-connect to the MAC. Although the PHY can talk to the MAC using
-2500BaseX on its MII interface, it looks like it can't use
-2500BaseX on its MDI (the LP side of the PHY). There's the same issue in
-patch 2.
-
-Thanks,
-
-Maxime
 
