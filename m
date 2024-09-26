@@ -1,68 +1,78 @@
-Return-Path: <linux-kernel+bounces-340416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8519C987328
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:00:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 283E498732E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30FFE1F2529D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:00:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 092B11C24989
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9A4175548;
-	Thu, 26 Sep 2024 11:59:52 +0000 (UTC)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDC015DBA3;
+	Thu, 26 Sep 2024 12:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PpEDbugS"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C26F1607AC;
-	Thu, 26 Sep 2024 11:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E157414C5AE
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 12:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727351991; cv=none; b=NOGEGN404h9Q9z2AVpvwBvb9N9lNHdV7ulZCTF+HKtjwy9/0SI6f38X4Evl/KQQxo82wEIOptYn0z5aTKKcLWvvPuGVwvZZIut0IOUF463pDo+n+GmtcHrlcUsC4D4/N4vTtljYHZmkhtqu+z/jU/Ag27SkwF9Yn7xq5RUJDJ+4=
+	t=1727352058; cv=none; b=mHvP9/lCFcwgjTdBzb0zVYACMIeiJZYrGIQmjMeGGSOuNrScyp+J6Coz/aw5iNbQEfueUjLkjQVkbXukqEp4+LUDWVKq71ka2MmXkDINdEbikmC+/AE1KWXlYz9A8jq0xGN5OAXBICGL1XTbdx5QJavEXtc5ewt1lzBLC0lI97w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727351991; c=relaxed/simple;
-	bh=9Irs03yPr6tjELLL2FPcWUMBrotw8+KG6uF7QcNk5io=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EaOQpTzbaJEjoKhRKrStBPO4xZgL78rpr3BQwOxSOJXp7JupYSxAT+d4u/P+fjX0KhJQNOp0o/WdgoX4Xe4VtNodBJjWVb1noqGaA3XrDhKcoga1i+TKRWRSTlQqFUla2tOD+QKQmD9FemYu5sVlmsRl7Y63vLwm5iNlH06lhoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1727352058; c=relaxed/simple;
+	bh=1IDIx+9Wanu9Uu3uGwq+qvd2AaETcdP6DtocYfM5fNw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qJICTKWzv2zcefWCXw6v9FqEm56Rg1MVzAkPRMhRsPpOf7+XrKh66d8l4VhHZaGmS0eFRoJdqs/Y9KoZD0FImZZQcddBiPerUGqH9l5/6fhNnJ03wTagTUpbUU5RRtCN17cotPJ4O19XqpnidUiDDJ19WbdKH48X/9TIok4zlGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PpEDbugS; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42f56ad2afaso2938175e9.1;
-        Thu, 26 Sep 2024 04:59:49 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71b08405187so788427b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:00:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727352056; x=1727956856; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=r7KCWGxZhj1y1aKLk6OuylPhX7GhAPrJcm5GWveFmkw=;
+        b=PpEDbugSRRdfjRuu+UOXdmm8LMmZsWeAEu0/9GGdXTR95bxCL9mUbpgt5wbcsXmqxg
+         YHFWBzSGUCAej/OopQJ2LrB5tWXTphjhemAF9FLdE72PkAkp9JGcR1fyiB/YP6tgecZD
+         /cK3n3He0tqWj0ROeCiywm1Hb8i8sJGLKeH9LYmreh/tXfxPAkNPlivepuXjqxlvTyJE
+         PBrQBk2xLjJKXGfODkzJqU1Yvb/STSXaYi7v0z2Ksl0Y1WThRNJ7RrkjWOH/FcM1kfgL
+         ooG6nNgfzUCIRS/xNtF+Bm+3WAK7Ir8EiScCxIGdIaAGLEIzusZljop/UZxTGjJDPBKU
+         lN3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727351988; x=1727956788;
+        d=1e100.net; s=20230601; t=1727352056; x=1727956856;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gxSjjMFIL5z+1ilqVFAedbVxswn5znP/0ZSm6j/I5zU=;
-        b=nOtz0xoPkzk4iZN0pTo2XEBkDgUKsPZgp2BeL3w4gnsmuIqVSAAr4025BHo8sLqoQR
-         bFrJZPCp/phjxUjXarPAclIvGq6v26hodu84gTGTFheAnIG75ThgI+6iyp3zJnk5dZPk
-         U+A0O/MdfGFQxYicVeWFQTVyxE+aC6omBsZLFN0hUB8JRAW/aWta6IBlC4zIKdHNOBXe
-         m8jajXiGNo0K0zaIlEkhGVxL9TgzROo+WuRo7qigg0zoOzWu1V4xUKxnylS/W75pa0KJ
-         x2MMKwLudQq/FggkUaUyGr0Nx6PVgNVSfEX8dosYi0uIxXpRyO97AaAyPXaPesT6eLoX
-         OaNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFevz6AqxdwIwE2mCiuRpEuE5sv3/tIPga1FcLMN3863yOygCMwR+UyvZCFETXwRGz0PVTefe7i5zLb39x@vger.kernel.org, AJvYcCWkvGqO5CAyeqLIBuNG9JGS2GlMKOLidGK2C6vGxYVvK5/HhBWnJDiQJonWMggdgNuxKdF/3P3LhPBGtw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2sEcevA+orERRooAeZ4HtN71FCQ0ufKGyVvCvU2di7Nocxwy5
-	qsvSJIprZKdcDFj1WF2nk2fMpMK7Ky7BMp60GbEjtZghUFZUfjs4
-X-Google-Smtp-Source: AGHT+IEc5vBF0pHaaWrHKVe6N8bqzSwjg/UM76GSZVbZBUvqAeMhP6OtJMqnMG7P38GAR/+gCbkBxA==
-X-Received: by 2002:a05:600c:1c26:b0:42c:bae0:f05f with SMTP id 5b1f17b1804b1-42e9610ac1cmr49115685e9.13.1727351987911;
-        Thu, 26 Sep 2024 04:59:47 -0700 (PDT)
-Received: from nuc.fritz.box (p200300f6f71aeb00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f71a:eb00:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2cd263sm6274057f8f.48.2024.09.26.04.59.47
+        bh=r7KCWGxZhj1y1aKLk6OuylPhX7GhAPrJcm5GWveFmkw=;
+        b=NOVh8QRylta9MBlFoN1MmOxb0dGhS6KWYLarMvHbQOZaw2sNncVPLM3OslzbV2SCQA
+         G6SVZsezt/7Hn/lyaEEyjZylx8cW1kC3Zk80wTlzzYtkg1Q7scAGfoTwWGpjIYXjfeqa
+         eN1alyfJgSrxcWcRYmDyunzzCmQetumMLHTPFCsF+olqAgXVQAh/W9BbNsfaPMT5OCJ8
+         6drprzIQQB/45YWZqrgVHXBoaRslz/s//uXqHysbx+S/KNvDuYA7RDOVUTo5URa3KR9n
+         dD/D7n3Yvamr6QCjRVWqY1Z9b4cggO0Rst+GrlnSeheisi5NQkQs/8XYkwAcclczAUZt
+         GWsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBDmv8IbTIYS008FqWjhRPwzBnmhNg37vYeVxc1vBTjGPGQG3xn3Tman7n3z2mm8nojrZNtRNybQdO4hc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaFcU092K9Z4WPfBomc/nlEy2Av9A1f6+L99JmcMGToCrCb6/J
+	hB7m0sAb4mf+WcuYdsasTZZmn3Po8n421RYEnJDxXbcSzPgcX5P6
+X-Google-Smtp-Source: AGHT+IESzLMriRLSPqkZ4Cp7hI+8v1XHdKwNCcIXZ+c9djXqMKBez3id/sdylBSuj2PoBH2dp+k7iA==
+X-Received: by 2002:a05:6a20:cd92:b0:1d2:e807:b65b with SMTP id adf61e73a8af0-1d4d4b9bcddmr7864536637.37.1727352055854;
+        Thu, 26 Sep 2024 05:00:55 -0700 (PDT)
+Received: from xiaoa.mioffice.cn ([43.224.245.180])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc967539sm4323103b3a.147.2024.09.26.05.00.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 04:59:47 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Naohiro Aota <naohiro.aota@wdc.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH] btrfs: remove code duplication in ordered extent finishing
-Date: Thu, 26 Sep 2024 13:59:35 +0200
-Message-ID: <20240926115935.20631-1-jth@kernel.org>
-X-Mailer: git-send-email 2.43.0
+        Thu, 26 Sep 2024 05:00:55 -0700 (PDT)
+From: Xiang Gao <gxxa03070307@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	gaoxiang17 <gaoxiang17@xiaomi.com>
+Subject: [PATCH] mm/cma: print total and used count in cma_alloc()
+Date: Thu, 26 Sep 2024 20:00:49 +0800
+Message-Id: <20240926120049.321514-1-gxxa03070307@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,85 +81,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+From: gaoxiang17 <gaoxiang17@xiaomi.com>
 
-Remove the duplicated transaction joining, block reserve setting and raid
-extent inserting in btrfs_finish_ordered_extent().
+before:
+[   24.407814] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
+[   24.413397] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
+[   24.415886] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
 
-While at it, also abort the transaction in case inserting a RAID
-stripe-tree entry fails.
+after:
+[   24.097989] cma: cma_alloc(cma (____ptrval____), name: reserved, total count 16384, used count: 64, request count 1, align 0)
+[   24.104260] cma: cma_alloc(cma (____ptrval____), name: reserved, total count 16384, used count: 65, request count 1, align 0)
+[   24.107504] cma: cma_alloc(cma (____ptrval____), name: reserved, total count 16384, used count: 66, request count 1, align 0)
 
-Suggested-by: Naohiro Aota <naohiro.aota@wdc.com>
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
 ---
- fs/btrfs/inode.c | 45 ++++++++++++++++-----------------------------
- 1 file changed, 16 insertions(+), 29 deletions(-)
+ mm/cma.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 353fb58c83da..35a03a671fc6 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -3068,34 +3068,6 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_extent *ordered_extent)
- 			goto out;
- 	}
+diff --git a/mm/cma.c b/mm/cma.c
+index 2d9fae939283..fc35a86aa82f 100644
+--- a/mm/cma.c
++++ b/mm/cma.c
+@@ -403,6 +403,17 @@ static void cma_debug_show_areas(struct cma *cma)
+ 	spin_unlock_irq(&cma->lock);
+ }
  
--	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
--		BUG_ON(!list_empty(&ordered_extent->list)); /* Logic error */
--
--		btrfs_inode_safe_disk_i_size_write(inode, 0);
--		if (freespace_inode)
--			trans = btrfs_join_transaction_spacecache(root);
--		else
--			trans = btrfs_join_transaction(root);
--		if (IS_ERR(trans)) {
--			ret = PTR_ERR(trans);
--			trans = NULL;
--			goto out;
--		}
--		trans->block_rsv = &inode->block_rsv;
--		ret = btrfs_update_inode_fallback(trans, inode);
--		if (ret) /* -ENOMEM or corruption */
--			btrfs_abort_transaction(trans, ret);
--
--		ret = btrfs_insert_raid_extent(trans, ordered_extent);
--		if (ret)
--			btrfs_abort_transaction(trans, ret);
--
--		goto out;
--	}
--
--	clear_bits |= EXTENT_LOCKED;
--	lock_extent(io_tree, start, end, &cached_state);
--
- 	if (freespace_inode)
- 		trans = btrfs_join_transaction_spacecache(root);
- 	else
-@@ -3109,8 +3081,23 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_extent *ordered_extent)
- 	trans->block_rsv = &inode->block_rsv;
++static unsigned long cma_get_used(struct cma *cma)
++{
++	unsigned long used;
++
++	spin_lock_irq(&cma->lock);
++	used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
++	spin_unlock_irq(&cma->lock);
++
++	return used << cma->order_per_bit;
++}
++
+ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+ 				unsigned int align, gfp_t gfp)
+ {
+@@ -420,8 +431,8 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+ 	if (!cma || !cma->count || !cma->bitmap)
+ 		return page;
  
- 	ret = btrfs_insert_raid_extent(trans, ordered_extent);
--	if (ret)
-+	if (ret) {
-+		btrfs_abort_transaction(trans, ret);
-+		goto out;
-+	}
-+
-+	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
-+		BUG_ON(!list_empty(&ordered_extent->list)); /* Logic error */
-+
-+		btrfs_inode_safe_disk_i_size_write(inode, 0);
-+		ret = btrfs_update_inode_fallback(trans, inode);
-+		if (ret) /* -ENOMEM or corruption */
-+			btrfs_abort_transaction(trans, ret);
- 		goto out;
-+	}
-+
-+	clear_bits |= EXTENT_LOCKED;
-+	lock_extent(io_tree, start, end, &cached_state);
+-	pr_debug("%s(cma %p, name: %s, count %lu, align %d)\n", __func__,
+-		(void *)cma, cma->name, count, align);
++	pr_debug("%s(cma %p, name: %s, total count %lu, used count: %lu, request count %lu, align %d)\n", __func__,
++		(void *)cma, cma->name, cma->count, cma_get_used(cma), count, align);
  
- 	if (test_bit(BTRFS_ORDERED_COMPRESSED, &ordered_extent->flags))
- 		compress_type = ordered_extent->compress_type;
+ 	if (!count)
+ 		return page;
 -- 
-2.43.0
+2.34.1
 
 
