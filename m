@@ -1,135 +1,129 @@
-Return-Path: <linux-kernel+bounces-340272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54BA69870BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 728BE9870C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D26B928387B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:52:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DA00280D84
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA24B1AC452;
-	Thu, 26 Sep 2024 09:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8261AC439;
+	Thu, 26 Sep 2024 09:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfdoMWOO"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="OxXyz8/L";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OjlRWMhX"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95D4189509;
-	Thu, 26 Sep 2024 09:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61652745C;
+	Thu, 26 Sep 2024 09:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727344345; cv=none; b=JWsS7dWbdcWcYzQDbboY/CpA6HNv88lAm83/Iw4S9hBoVs/23j3cTISscMeLPBjM5EUewUyyj776QHeAfXMOS4zu3equscym+jrd/8iiG2Iavrlv4gncJa0Bcj4dokNRjQK7jR4/dG+xoFoPSn81fr0LBvaw0vDCe3uthwOlrls=
+	t=1727344446; cv=none; b=LqodWbeCsUYcFUJsd+/GRAzFLcLgLNA5ewYUDw6shirVtHjAadKxD+9ujDRYsUXKxZhJC6rDt44aedIQL9wR2rlDjUbBX9RL3LXGOspSQTM8QYwI8GEaPzSgmmw8L6HAa0UIpV2gQwA3GNyC9MUJIeLvTC0y3wAyg1S7IRGXFTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727344345; c=relaxed/simple;
-	bh=yZFc2DYfsGluZTXNOiYfeHuR6VWhgbRBOI4olWxsvis=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Di94c1qSELPpGqtaSfaCKJVmV1d+1CwcwWiyscW8S1Hf0udHv6tdHKDnDBfq3YMeolDlwmJ+j+X+McLnoC2GzXVTUO5oCjG7edkqbuMgSTYDyjglkZwZZEPX3efIfNUcd4xFLUpGVTSwFkrBs6DZyFQax199nySwYHEpD77iX/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jfdoMWOO; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c40aea5c40so1447101a12.0;
-        Thu, 26 Sep 2024 02:52:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727344342; x=1727949142; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZEypOx7pACJ1pldoAKbaM/8U6Ia3BeCPrlCZA3BPX2U=;
-        b=jfdoMWOOOCYbjGMso5uZbd6IOutRwb5LS9J1iUKzEjyq8NIMC2hCX1AQ7Hv3RGevyP
-         u4Ono83r8p19BPt81bCcuoBS+dY4bEp0eQEortozqCB2PFYdOVHg1LX4mkIeRkAKIc21
-         oMuocZlq465M1DXoe3x79WsvcAc9xpvfU+Pu5AGIUoRqCA1oGgfhcg51E6Wv1koXZtm0
-         D6U331vBKCnS7XLjxAV2Ul4pFP5BhVf0qoo2QPpcrDknLYAbr8XFwZDfsJvbFFz4LYBm
-         S9lrthvuudaaputP2eHX3vvLbl4OePBi9SwCSHJfCLIIF6y9qTqsGUdfAEsduCbjaqMn
-         PDkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727344342; x=1727949142;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZEypOx7pACJ1pldoAKbaM/8U6Ia3BeCPrlCZA3BPX2U=;
-        b=KUlGm1dyiCrvMjcBC3umueyDsPaUZxIT0fWPFmJPwpvKKpschnpG66kcPIHPLon5Q0
-         3yF4IPVr5T07wSJ+9TDwsP+i2Eu3qlRGOu6+qlCd76EsgZ8vlarfwsNEaoNVC3CTSdh1
-         fx0xG1bI2jTJ3Nn9+abxqHJa9S/wTMXxSPsfZJkvfJFs28TBngWo9oEfhSyelL7+vksj
-         VRYpR9HlBfDG7HUZxHBSCkmUzNMOQYdBN3ZyiO/igrVvMNWynq5+efQPysQfa8LqHcu8
-         v28SYZvf5H7dIzDCIZHqZXqcWbgp3EfYZMWRxARidQOuUb5yLHWBCgdmLZXWB2IVKdVW
-         TtTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUF1BCFa9wUw/RGgWVuHAV13nOdDMnZSxVd6+078ZFxnGAsPzVlLag2k+0iQbrs5Xuftw9ccLr05+KOWQ==@vger.kernel.org, AJvYcCXa8Rp//D84ar3cM0xgKtSq0T5yH5y9a8txanfaEH54aZmgp/vm0QNSmaRLdSKY19QmQPoC0XosaEHHeV8=@vger.kernel.org, AJvYcCXmaE5fcSEIW/rD0J0x9lTZm5l0cRVG8W7Fd+SJZRIWlb6mi94D3qYq7mVIslSjZg755F2ybwLJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkBFU2+ZsqBVF0PgKZb87NheTW2vEoWlQPPAIww05PYSk3qBWi
-	lQ2uKvUOy50wogJejpqRADuwp8ymAgRo/7C4RVKTeeJTA654Gn7B
-X-Google-Smtp-Source: AGHT+IFBa8H7U+B09fxkkx/DjtN54sGUPrDgiy0rQT/q65a9PuxkPQXWu9PINaowt/5DqsNbXKkzfQ==
-X-Received: by 2002:a05:6402:230e:b0:5c3:cc1c:4d9c with SMTP id 4fb4d7f45d1cf-5c8777eae4amr2213065a12.18.1727344341797;
-        Thu, 26 Sep 2024 02:52:21 -0700 (PDT)
-Received: from ?IPV6:2a02:8389:41cf:e200:4e5f:6907:8e4:4ed? (2a02-8389-41cf-e200-4e5f-6907-08e4-04ed.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:4e5f:6907:8e4:4ed])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf49d23asm2956451a12.41.2024.09.26.02.52.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 02:52:20 -0700 (PDT)
-Message-ID: <f54a53f9-e2e7-488d-b69d-250251719c7e@gmail.com>
-Date: Thu, 26 Sep 2024 11:52:16 +0200
+	s=arc-20240116; t=1727344446; c=relaxed/simple;
+	bh=9m0ce/rF46/JT3BE6a/S7VEkZgt3lat6EtXZbZEhIcA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tjSfDTDsFlVgLvP8pi7DfMF6AIcaCW9uzqYuatjSj8P9/Wj96zlCoiHbHqfwnlc4J4cKsKz2kyqB8jqHNHUXMZVjJh1Ywsxs2lYYoUuekZgBlZJr7+4AeWaNe9o9u+F72PB+oid5jZLsR6CH4epkHb9/pLLqI6INMuSjAzlvBGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=OxXyz8/L; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OjlRWMhX; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 949F01140287;
+	Thu, 26 Sep 2024 05:54:03 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Thu, 26 Sep 2024 05:54:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm3; t=1727344443; x=1727430843; bh=ph2+HLVpjUvZbza6d9jwG
+	hezL49XRfepl+UhJW96y+o=; b=OxXyz8/LJQuzsCHCdDbl/0VCI1PxMXmkD1bTS
+	iEkawgF+4BPXpMH/1tPxckuH5H9T3houi0JUvP3axsNX7Li/FFEDZYgJermBwplv
+	7eaQEUnnv/z7Yu5G6S53sXZoEL58JcbTe8Syb1Lu3f7bfG2XSMvJRBH00R8lN+hz
+	dYjKZwcrx/53HfILJC5yj3jUZObq2oet47MCVOu8r3LJDwobqAvQ67Vy8ZCpvI1G
+	Z+jbqAnMwtGMqkrb4CcCggOE3eMSCdcCqz3hkyVZOAvfZ92DgYzMLqf2X2YNyJdi
+	RoeIZxYzHDZ9FAj5rlJ2lekXt3f2AH2/oBHLUTheLHMUCe8Pw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1727344443; x=1727430843; bh=ph2+HLVpjUvZbza6d9jwGhezL49X
+	Rfepl+UhJW96y+o=; b=OjlRWMhXYsvQuZ5tywHKJWBb6xvl37gEE2DNpAWpelpD
+	sqe/e/fGzYADvln46aFdtuFT37aVk3aFCwSfD+7VexUD5ZoT7t9N7v4kXH0c99Hq
+	buVZUiiYKwgVEn7/KyCcbqWwbd1WZGU3XVVR9HZj+hEvnd8ltl36oscTz00LIgAF
+	xH42X+bIfWyGLnPusO2yoF83AB1AJqovJuSfEscMAxL9Jk7YqptWfGySRrNmY5am
+	NppbgMOfpcL8A+cCfaXSHUCT1FwQe3tTLhb787Vx8Px0FrmXtWO48cZPwUTPSA3M
+	NP76D7L1WaV2yra9xlZLVMyIWeqWGfZ2bWKl17rQfQ==
+X-ME-Sender: <xms:Oy_1ZoVKiK0bSdWeo2XfKhdi-5fF1ohIAbq59pHWUNlfGBvMCUyoyA>
+    <xme:Oy_1ZslUjab5N6cl_GAHU20_6pvXTprd7TYYfTTbS04TG1y6HXclTnR_Jd-OYDRA1
+    kjKE3DCx1lQ7j3Y5bA>
+X-ME-Received: <xmr:Oy_1ZsYHBlNQg1Vus1oIgHB22iTqU19bbTcxR8sAq4lNt4tfIBTaZs03VCbwZg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtjedgvdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
+    ffkffoggfgsedtkeertdertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdf
+    uceolhhukhgvsehljhhonhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfdujedthf
+    duudekffefkeeiffdttddvhfegudduueffuefhfefggeefteevvdegnecuvehluhhsthgv
+    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvsh
+    druggvvhdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrdhinhhtvg
+    hlrdgtohhmpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgt
+    phhtthhopegtohhrvghnthhinhdrtghhrghrhiesghhmrghilhdrtghomhdprhgtphhtth
+    hopehsuhhpvghrmhdusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkvgeslhhj
+    ohhnvghsrdguvghv
+X-ME-Proxy: <xmx:Oy_1ZnWf-Oc6Xt5J57rcWm97hw23CbvkRweZ6s5HUq7RFZNQGe5qOA>
+    <xmx:Oy_1ZinHPtaekTuIo93g1lQh1cQ8MLpOnAPrtzKSl33nl54zjt8Gvg>
+    <xmx:Oy_1Zsc-XEjL-HrahQ2GREt08MRMpZa6IhvbLFHDIHh0J93UUzAY9Q>
+    <xmx:Oy_1ZkEWv5OFw0btjUgprDGRMt19ppjz6Tk2mZM3ggwRa5RtvtXHEw>
+    <xmx:Oy_1ZgZb4W9f9OfO4u33rgTrZLwhjkZWkHfoa3xhQv_isx_7D6MPsBxu>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 26 Sep 2024 05:53:59 -0400 (EDT)
+From: "Luke D. Jones" <luke@ljones.dev>
+To: linux-kernel@vger.kernel.org
+Cc: platform-driver-x86@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com,
+	corentin.chary@gmail.com,
+	superm1@kernel.org,
+	"Luke D. Jones" <luke@ljones.dev>
+Subject: [PATCH 0/3] platfom/x86: asus-wmi: revert ROG Ally quirks
+Date: Thu, 26 Sep 2024 21:53:41 +1200
+Message-ID: <20240926095344.1291013-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] selftests: add unshare_test and msg_oob to
- gitignore
-To: Paolo Abeni <pabeni@redhat.com>, Shuah Khan <skhan@linuxfoundation.org>,
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Allison Henderson <allison.henderson@oracle.com>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- rds-devel@oss.oracle.com, linux-mm@kvack.org
-References: <20240925-selftests-gitignore-v2-0-bbbbdef21959@gmail.com>
- <20240925-selftests-gitignore-v2-1-bbbbdef21959@gmail.com>
- <62f52cb9-1173-46aa-96a0-d48de011fdc2@linuxfoundation.org>
- <327e2020-4cb6-469d-87a4-dddc0bcf7ecb@redhat.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <327e2020-4cb6-469d-87a4-dddc0bcf7ecb@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 26/09/2024 11:32, Paolo Abeni wrote:
-> On 9/25/24 18:41, Shuah Khan wrote:
->> On 9/25/24 06:23, Javier Carrasco wrote:
->>> These executables are missing from their corresponding gitignore files.
->>> Add them to the lists.
->>>
->>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->>> ---
->>>    tools/testing/selftests/core/.gitignore | 1 +
->>>    tools/testing/selftests/net/.gitignore  | 1 +
->>>    2 files changed, 2 insertions(+)
->>>
->>
->> Can you split these into two patches. It will be easier
->> for the net patch to go through the net tree.
->>
->> I take the core changes through my tree. net changes go
->> through net tree.
-> 
-> @Javier, while at the above, please split the changes in two separate
-> series: one for core and one for net. It will additionally simplify the
-> patch handling, thanks!
-> 
-> Paolo
-> 
+The ASUS ROG Ally (and Ally X) quirks that I added over the last year
+are not required. I worked with ASUS to pinpoint the exact cause of
+the original issue (MCU USB dev missing every second resume) and the
+result is a new MCU firmware which will be released on approx 16/10/24.
 
-Hi Paolo,
+All users should update to MCU FW as soon as released to:
+- Ally 1: v319
+- Ally X: v313
 
-as I have already sent a v3 where I split this patch, I will send a new
-series with the patches under selftests/net from that v3:
+Luke D. Jones (3):
+  Revert "platform/x86: asus-wmi: ROG Ally increase wait time, allow MCU
+    powersave"
+  Revert "platform/x86: asus-wmi: disable USB0 hub on ROG Ally before
+    suspend"
+  platfom/x86: asus-wmi: cleanup after Ally quirk reverts
 
-selftests: net: add msg_oob to gitignore
-selftests: net: rds: add include.sh to EXTRA_CLEAN
-selftests: net: rds: add gitignore file for include.sh
+ drivers/platform/x86/asus-wmi.c | 39 +--------------------------------
+ 1 file changed, 1 insertion(+), 38 deletions(-)
 
-Best regards,
-Javier Carrasco
+-- 
+2.46.1
+
 
