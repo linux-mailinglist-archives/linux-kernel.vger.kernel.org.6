@@ -1,162 +1,130 @@
-Return-Path: <linux-kernel+bounces-340018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23120986D60
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:15:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57353986D5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6EEE283236
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:15:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00FC31F2171D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6279918E76E;
-	Thu, 26 Sep 2024 07:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DC018D621;
+	Thu, 26 Sep 2024 07:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PMoB2KNR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WLetWrJ+"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ok067OnW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B84B18E37A;
-	Thu, 26 Sep 2024 07:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B0F188907;
+	Thu, 26 Sep 2024 07:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727334892; cv=none; b=AWjQhssvbQugraNnwiIv+2VIzsfFe5CBlpXR5VyGaxUm07hNwYMhxwEk/1c3jDOYnMwzoIJLBTi+lARoZ4HpP++z1JgBktkLu5bMM6DAEXQ+A1oM2Wu8ifxD+dgLpnLbT2hMV8dRBJ9cQEaVReV6rcxXem2Qie0YO9X7zTselpc=
+	t=1727334885; cv=none; b=SupGcanin5LXgHhsdM2XdBm47vGQ9fh8TruPtlyI4zhV4ENVT3Bl8clWOr4PSiMfhquuORmBx4H4RKPFdqgMVMAD18XZn9V8N92YUlV2mRr5GeQgsEjB7+/NK3uqZdOFrvbsM2EFWzJcIOJMDYvgAhWqWDfEAzfBakqO9uvN3ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727334892; c=relaxed/simple;
-	bh=WlY3d7SLr1N+C4pY/PP84LyM8TYT0prgnbu6pk4uLws=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=gPiM5ONStcMeepPaqw9yYqHRFnbp0upWWEv80WssA3ZIQEpLiaG8AwUyj/QghjUfMUNxIe3k9DFwV6aYtj9m9n0sTAe70peLZxOX/cL46Zl6HUg+YMP9ikXIUfu/R+Mc09XYimemWX9Jz/sbwBq73CjpNbw1UVnmlJeOmUaPFME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PMoB2KNR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WLetWrJ+; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 1CDF41140253;
-	Thu, 26 Sep 2024 03:14:49 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 26 Sep 2024 03:14:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727334889;
-	 x=1727421289; bh=/T6ar3F0gXR/zaU63AYT1uaAqMFPYcSq6bUl+9VYhuk=; b=
-	PMoB2KNRK9uvldBimKptBz1a/ORdeC/+Gxczc773IY6wYopp2EcC1/sEN9DA6p0N
-	2fxL2DNJwCKxKwhZrc6EjD7WL6wXEO8O+zdNkwIKs53mZre2IlNt/VE+/zd5jyUI
-	O50fDTunzBE2W14JSglvOTdJs2IjH8fM0P/VGARZjdO69tRDp8yefmbv83EB9hCS
-	dsURRAWGVZHDxxA39oapMPieNrqWMRcUjeFtLq0xCkof8ZhUGH0Cj7BIt8txVHth
-	r4tlHRAofzbcl+JqC/JZRQzYVctZemqBbbDCUQ4TzrJi6gYUkHO+jBDved8X2ck1
-	y5k+6uz6Hv7+ztiEqd/Byw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727334889; x=
-	1727421289; bh=/T6ar3F0gXR/zaU63AYT1uaAqMFPYcSq6bUl+9VYhuk=; b=W
-	LetWrJ+UEuB+QV3R8zA+ndQHa/X8JiMW000u2v3zKIbNdwZJ7dCrydDwSK9qw3nf
-	C/f0Wmdl1L7xiXMRJZ8W8Y8lRvQVd6E0NOhBqqUmbO7S0DaH3+EN0hdXuI4GhjZW
-	JvbYgFF4VS+gFtcXXWI98+9EuVufxnOBrah+HCKBtHp/tDHWix36qy74VKnLzuny
-	VcS+bCfM5vSXNmVWIDW+89NOibk25D7hCIC2tlkysAWRbTb9rb94miMJkCfd1PVr
-	yTXR+60BaKmVdnYBq9ZMmreyQs3i76fG1NWSKnd9Gveyv31n5uFIc/QAGmPATPJ0
-	X4Ts3OHE50gojGoU6/ooQ==
-X-ME-Sender: <xms:6An1Zt_8OU-jE5gqCRt953O8HbkA53-0EtwRHk08x352CPjcoZ6IZA>
-    <xme:6An1Zhsha5yiVnlFd719MH1sktDIbDxF0-h3yjFyDdNyvoffY0lQX8j4v857VxlNU
-    j_8MPtkvV1kcMZxZeY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtiedguddukecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
-    vddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinh
-    grshesrghrmhdrtghomhdprhgtphhtthhopehjvhgvthhtvghrsehkrghlrhgrhihinhgt
-    rdgtohhmpdhrtghpthhtohephihsihhonhhnvggruheskhgrlhhrrgihihhntgdrtghomh
-    dprhgtphhtthhopegthhgvnhhhuhgrtggriheskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepghhuohhrvghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihho
-    nhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtsh
-    drihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlohhonhhgrghrtghhsehlihhs
-    thhsrdhlihhnuhigrdguvghv
-X-ME-Proxy: <xmx:6An1ZrCyn79DMvSAuCcgCq6i_t4gnthLW4in2IXB3c4NIZKg1EOy-w>
-    <xmx:6An1ZhehrLA4MoqEwTf2EophW8Qe17hKoVYNoFMqnTTJxvviG3M07A>
-    <xmx:6An1ZiMFswFt_m-jCYqNHf3vdlKihK4C50z0YrL_H_tKz2CyfGlDoA>
-    <xmx:6An1Zjk-ASdXuvHyok7bvh6S-q-BvtZDgg_VnQzxoTeWJ5ZlDG4NJA>
-    <xmx:6Qn1ZjlRN7popDqYqT9mNyGxuA75CHGpFDWh-avqB8KQkTZErTQ-4pT0>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 2B2142220071; Thu, 26 Sep 2024 03:14:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727334885; c=relaxed/simple;
+	bh=s1QCm+M6EGtkn+pyLctXytbJXiAlK/xwoHv72CVj4vE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IaxG107C3v5W0hPv/orIug5WeNVUqXOcCTrtRFqwBSnN695cRjE6lRUtk0HT5V7wj80vJvP6CkPgFEJBWSV/cGT7I3kbzHss3f9k1I5byKKJj4FqMTaeQ1ewWbktVvG6FTWRp3iYu7+eBo9ERWjf3r055bjlku5sPu3gYiZDrLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ok067OnW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PH5MB9032311;
+	Thu, 26 Sep 2024 07:14:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Z1k2Vp1xBbiHK3RyGJFubNyjnmminq8ylfJH4ImpPLE=; b=Ok067OnWo0/xyRRs
+	9EzexZGhwtsR+KZ7U10m93poUZh6FWqltLB/PWUwt4tQvShavdraCnxFFjQJFXNY
+	Z1OK8UFPb43R1kKG5WwUvpYq3qi5HZAWylVrLJkEooFJHIZpEIIU5DAlWym+hLMu
+	70X7FA6rUPCQpv7t3TKjcoYmYmFBHvrldmvMQKrf9qSuPfz0JOkt4sJuOY3WvlBu
+	nVUPV40t25BeMTvvzey/xWkfbs485eHZZuQsCxRt69i2RQbDWd/TyWkdeX3MtKPr
+	wE2CwjkN/ZeOsNwu4XZfJk9NRP0TQ3aETHflrL8+cDuF2y/FSnaujwkA+gZZop9Q
+	py7aVw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sp7upsf4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Sep 2024 07:14:27 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48Q7EPee026611
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Sep 2024 07:14:25 GMT
+Received: from [10.151.37.100] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 26 Sep
+ 2024 00:14:19 -0700
+Message-ID: <3eee6f21-98fb-44ef-be19-75c4048a40ea@quicinc.com>
+Date: Thu, 26 Sep 2024 12:44:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 26 Sep 2024 07:14:16 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Julian Vetter" <jvetter@kalrayinc.com>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
- guoren <guoren@kernel.org>, "Huacai Chen" <chenhuacai@kernel.org>,
- "WANG Xuerui" <kernel@xen0n.name>,
- "Andrew Morton" <akpm@linux-foundation.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- loongarch@lists.linux.dev, "Yann Sionneau" <ysionneau@kalrayinc.com>
-Message-Id: <f47e66f9-ec20-4e75-b88f-d412339e797d@app.fastmail.com>
-In-Reply-To: <20240925132420.821473-2-jvetter@kalrayinc.com>
-References: <20240925132420.821473-1-jvetter@kalrayinc.com>
- <20240925132420.821473-2-jvetter@kalrayinc.com>
-Subject: Re: [PATCH v6 1/5] Consolidate __memcpy_{to,from}io and __memset_io into
- iomap_copy.c
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/8] arm64: defconfig: Enable IPQ5424 SoC base configs
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
+        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <quic_varada@quicinc.com>
+References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
+ <20240913121250.2995351-9-quic_srichara@quicinc.com>
+ <4dxqbm4uuuuht5db7kt6faz2pdeodn224hd34np322divs22ba@dzmjveze3b4f>
+ <2a16d5a2-17a5-4988-8a25-34ac10ff3d08@quicinc.com>
+ <h6ajhgv5rqabxupove4ge4253ywzbjyxoqq75c7ojmauudd3z5@hhhkbbzfmved>
+Content-Language: en-US
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <h6ajhgv5rqabxupove4ge4253ywzbjyxoqq75c7ojmauudd3z5@hhhkbbzfmved>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: vSx9peXx521b_oqIPBe2zFZUbiPCPjwV
+X-Proofpoint-ORIG-GUID: vSx9peXx521b_oqIPBe2zFZUbiPCPjwV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 mlxlogscore=573 mlxscore=0 phishscore=0
+ suspectscore=0 impostorscore=0 spamscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409260046
 
-On Wed, Sep 25, 2024, at 13:24, Julian Vetter wrote:
-> Various architectures have almost the same implementations for
-> __memcpy_{to,from}io and __memset_io functions. So, consolidate them
-> into the existing lib/iomap_copy.c.
->
-> Reviewed-by: Yann Sionneau <ysionneau@kalrayinc.com>
-> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
-> ---
-> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
-
-You have a duplicated signoff here.
 
 
-> +#ifndef __memcpy_fromio
-> +void __memcpy_fromio(void *to, const volatile void __iomem *from, 
-> size_t count);
-> +#endif
-> +
-> +#ifndef __memcpy_toio
-> +void __memcpy_toio(volatile void __iomem *to, const void *from, size_t 
-> count);
-> +#endif
-> +
-> +#ifndef __memset_io
-> +void __memset_io(volatile void __iomem *dst, int c, size_t count);
-> +#endif
+On 9/26/2024 3:01 AM, Dmitry Baryshkov wrote:
+> On Thu, Sep 26, 2024 at 12:34:56AM GMT, Sricharan Ramabadhran wrote:
+>>
+>>
+>> On 9/13/2024 6:23 PM, Dmitry Baryshkov wrote:
+>>> On Fri, Sep 13, 2024 at 05:42:50PM GMT, Sricharan R wrote:
+>>>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>>>
+>>>> Enable the clock and pinctrl configs for Qualcomm IPQ5332 SoC
+>>>
+>>> Please name the device rather than the platform. The defconfig affects
+>>> all users, so it should be justified.
+>>>
+>> Sorry, to understand correctly, you mean to use the board name here ?
+> 
+> Yes, the board which is generally accessible, if possible. You are
+> increasing kernel size for everybody using defconfig, so at least it
+> should be obvious, who is benefiting from that.
+> 
 
-I'm not entirely sure about the purpose of the #ifdef here, since
-nothing ever overrides the double-underscore versions, both before
-and after your patches.
+ok, will fix subject description accordingly.
 
-Unless I'm missing something here, I think a more logical
-sequence would be:
-
-1. add the definitions in this file without the underscores,
-   as memcpy_fromio/memcpy_toio/memset_io, with the #ifdef
-   for that name that is always set at this point
-
-2. replace the default implementation in asm-generic/io.h
-   with extern prototypes, remove the #define from those
-
-3. convert the other architectures, removing both the
-   implementations and the prototypes.
-
-     Arnd
+Regards,
+  Sricharan
 
