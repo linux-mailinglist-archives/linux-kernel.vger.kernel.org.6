@@ -1,143 +1,134 @@
-Return-Path: <linux-kernel+bounces-340270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FEE79870B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:51:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 237009870B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867251C21CED
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:51:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E85272873DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925E31AC437;
-	Thu, 26 Sep 2024 09:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54B61ACDF5;
+	Thu, 26 Sep 2024 09:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VucRxMSg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IPfMCxpm"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91051A727E;
-	Thu, 26 Sep 2024 09:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C34C1A7AD0;
+	Thu, 26 Sep 2024 09:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727344268; cv=none; b=OV6p/2xevzfsKtQPw+gPATslh9ZhXOji5dBvBllqjPVvJBzx5PkKYfdQeDUPSvc+G8UzwHxPg0K9xHB9rYKB5xO3CREAs0M1HGly8pTv9S+v4xUDPUXV6REVyvlcYi7glQScEuG0vb7xi6XBCflGuCBbWJhN9Hyq+Jogw2Td/8w=
+	t=1727344255; cv=none; b=cH4GIjWNg6L/bTSeFzv5vcds0SgHFGlybCCnuoo/uj4fMItsDXH2qX2zz/YhkHbIyHU2c6rmid202ez/dK6nshFXkoEnGQQREzddyjH3KOmo8j0mz8zhGiwFE1W6fBxz4nTC6OXrGsawYvYtYSud2MFvMLLkcKG7EHq/UBr4Mmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727344268; c=relaxed/simple;
-	bh=9ZXXL62CO9L7MkrvKkBtHpmLLSVAGUPp16RKqcXHYC8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rPGjTP4R0iVlMzkRzEQ2wnWN94iQF4XL/foGiDYFLlnUShKombzLx5d2wjUboMLuROLTOrKnkxwVOJdWDthDk/TvTTw5HQOsQJwzJqqOtJ9Lnai6kcBCfPC4kln1r+qEIZ5YKwGoM6AvTQQguVBkf6Fax0d3cvuNOWzGbkqhRl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VucRxMSg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8447AC4CEC9;
-	Thu, 26 Sep 2024 09:51:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727344267;
-	bh=9ZXXL62CO9L7MkrvKkBtHpmLLSVAGUPp16RKqcXHYC8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VucRxMSg0Bzqr/XQx12JhsBQyChNLaTrAsNX19Nk0BtrX70gL9WmhZfByXTM2i9dl
-	 ZLALfX0/VJ+5O+PsqmDQ3aIs8SY2m+nzQmI37gyzEJNV33isj4c2Y2SUuqnFGxpYIU
-	 04iwSkyN8kYlGgE2aR0zNqpkcmGME767+m2QpTygM2xhgQhmtzgfT0HLCx68kVdtjh
-	 Fo/WV9lnmEpWplRJb92R7gn1StkBqGbMnL1FbUErlkbJ+8UGSw9MIA7wSLCB4xuMXp
-	 U7VLtMTrxRBqcNa+lkzgUF0FbdPP1TN4Mh46HeiXB5L6a8Z//e2ZLvMBHpJK+JVM/l
-	 Z0pfhIqWrL90w==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53655b9bbcdso945698e87.2;
-        Thu, 26 Sep 2024 02:51:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWSALlFoK1yVs6z27sZDIIsW7LGSXNwIIyw7PdPx9zMzbruYm64JYeFPCVXMZ77IaNX+QaphnHmrXGAv6Vq@vger.kernel.org, AJvYcCWs+xDn/xBTJAQyUqyZLUHAU19T+jeTK6mupoB1nXvDlWZQlb+39a4NZA4Vo7MwQis/IxNxjSTSqZTfqg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4Wu29/46ZOCvSLkNnb6j7BZXoMug2AZ2AUuxyZ7241PApMbh6
-	GtV1jBuqjd2nfnDxJMEZ+Lxvlnpcy0xSYa7vR3Huh6LTifZmCX9iDhFz3R1H62bj+6ME0KXbhjU
-	6H7AnRc0NUScMDruvPJg6CIdYavo=
-X-Google-Smtp-Source: AGHT+IHtPY0AigQvOzwkGNuTgd7iJ/Zv5NiFYFAHgUF62JdilGYhzTjPpXGhd784w+LX3XVQNDNDIm3KXtZc1SoDDV0=
-X-Received: by 2002:a05:6512:220f:b0:52e:fd53:a251 with SMTP id
- 2adb3069b0e04-538775666edmr3675097e87.59.1727344265738; Thu, 26 Sep 2024
- 02:51:05 -0700 (PDT)
+	s=arc-20240116; t=1727344255; c=relaxed/simple;
+	bh=kO4sKsdwCUugE8CbsLsofDZOg4JYmgj8cD3/KeMEuU4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bOwSECnYPqsobO0Ds213Wlz3o97ZDHgu+oABbrRW6waFgnvrP4nkH+uNWfDKSjhu/MCz9gA7Vq5S8TohOLYGh37K7vNPWc0VEhFmZVWStxyi7KBlxO76jQEbgf9e28myyCwSa2gt7C5V1s5PuL5YAQv7TBqeVVOmo7c1czBV/aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IPfMCxpm; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727344241; x=1727949041; i=markus.elfring@web.de;
+	bh=AFzcS8Ftuw+z5NkNchcdPPK9b9v88GV9gFK0HM0eF/k=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=IPfMCxpm4X94tQ0gZdtc0YPBwYnhDeXbbUbiOiKWLPEiZHC6EMXvw1eOvLBFNv7H
+	 EGDPRKjMbwpTJ4udjUkvn3HOWyoVPia128/ZQfSa0MdzJ5smc3jchESfFMItpFkgI
+	 GnlHAcJSUxREHJPrmfQuAh5Zt6f/rbLh4zkqqdFUC0BtRBqKhh2yTtTTY82gziFLI
+	 JTNm8+EY4yjPaHridnyNHoXOdctVTr5t57TNQXC8mf7ZYOjy8fRuLlZ3KAjIfm6XX
+	 TOrsKDE/S5/lsnpf0+kaRMKJEkxhx5uuXVAZQXtGilNUzkQZHD1bPxzgX9D5cV+lJ
+	 Q9+IumrhFFvtiYVVpA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MhWkj-1sGahe09EB-00g2qr; Thu, 26
+ Sep 2024 11:50:41 +0200
+Message-ID: <fc35a4b0-9a41-4f14-9558-99fc0b7e2ad8@web.de>
+Date: Thu, 26 Sep 2024 11:50:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926075034.39475-1-riyandhiman14@gmail.com>
-In-Reply-To: <20240926075034.39475-1-riyandhiman14@gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Thu, 26 Sep 2024 10:50:28 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H7AG9+mAXv7Fk6td8KdAWfqK51MzXAMZHT0TnHSsbjHwA@mail.gmail.com>
-Message-ID: <CAL3q7H7AG9+mAXv7Fk6td8KdAWfqK51MzXAMZHT0TnHSsbjHwA@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: remove redundant stop_loop variable in scrub_stripe()
-To: Riyan Dhiman <riyandhiman14@gmail.com>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 2/2] ubifs: Reduce kfree() calls in ubifs_purge_xattrs()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
+ Zhihao Cheng <chengzhihao1@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <ff787fb9-a9fc-4798-8460-3ec310e6cd9f@web.de>
+Content-Language: en-GB
+In-Reply-To: <ff787fb9-a9fc-4798-8460-3ec310e6cd9f@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:aPiOWLcSidigunR2DygPf0duUQgDMqaQvfyrTwF39tLnflvg42L
+ nQ8g/c7fmGAaop0GbD6vgZNGULC28/e+ECRg6nzhxAFXNpgO0mK7WKxSxNyYKWhzdbtJr/4
+ BESjDWCztPlfBHhBQ7kxlOJ4c0MFexsGNuqeNKmDvsRxbumnyD+E1wACOk+hf8K9yo6fBrG
+ p/2A/cRnmcLdLZSXwLk1g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:KCkX6tKssj0=;8ThV0nGKi5xh+POQztudQoa7Qii
+ CKNfINptDpzjfiY+/SiY0XMhtmHintSTGmZBRoDbuDsYAq1EUhWBlTdMcA/mRnAkxgVbs0tZJ
+ +AmMiSWjMUNjVwDdYudGq8S3/0C7Diy4upeSoFlbSHLIgfjMmkZ5sp4eTX+ojzxb2f0J/u1Ms
+ QfEUv+Zpeh6g3uGOZWYZUrxZK9WcIzcjS7lTlxzlpT3UBs0aaq/Q4AP4mcsGlcPVCq5krDeiC
+ SQOHg+l8hKW+RCGRMOLpaZlN4mf8pqGBEhWVy0vdZhP3a3Xv+KWS+IW2+izVbRqI9Ujxni7tW
+ o+fyrXCcQlMhepIW0HvpFJaKnLUdzRucOBeZpbyqVTgWKSuLJghsz7rr/pbmK1ffgK21QYrPa
+ h8WJAa7fJSQ3gN4c/wBIAwi2NVNdTZ4wKOq1aQ5vjhxNd3V93+XKv335EwN7SI7b4tqHOX1iV
+ 3KT5A3J4A9sJ52+sUrnq3sajaDJH1j0m92ZEZpP07M0Av4/aoX9f3/98Lp4AYU4qVMNoOcvAe
+ Jjk5SAyTke92hCLha2k/jI1aofGk0Pnmp1nH5NlEeftNu0MRJjxlKNlxTuJFnsmzibX76OPsb
+ uPgGBr+bbEvJZrqCv57KZIe8hcksLa7BgDhv6l3nLEZvUW9EGnChiNyA57WYlKAwuenNavE9A
+ 7S6v4BB1a0vVdiGiC/vVqCfbOh+37ik7+arRznu9sVwhvt3bUio84P/Ko2e/yA3+UgaEc9qiy
+ EGXIR4TUtWzAUn3VGJJ4qi+iychuHe4yugn+BhVO1KyDeA3W5mNkBmENHDanfU1VMOl3KGA+W
+ SkctUyBETctUuqZKBKNxYwqQ==
 
-On Thu, Sep 26, 2024 at 8:51=E2=80=AFAM Riyan Dhiman <riyandhiman14@gmail.c=
-om> wrote:
->
-> The variable stop_loop was originally introduced in commit
-> 625f1c8dc66d7 (Btrfs: improve the loop of scrub_stripe). It was initializ=
-ed
-> to 0 in commit 3b080b2564287 (Btrfs: scrub raid56 stripes in the right wa=
-y).
-> However, in a later commit 18d30ab961497 (btrfs: scrub: use scrub_simple_=
-mirror()
-> to handle RAID56 data stripe scrub), the code that modified stop_loop was=
- removed,
-> making the variable redundant.
->
-> Currently, stop_loop is only initialized with 0 and is never used or modi=
-fied
-> within the scrub_stripe() function. As a result, this patch removes the
-> stop_loop variable to clean up the code and eliminate unnecessary redunda=
-ncy.
->
-> This change has no impact on functionality, as stop_loop was never utiliz=
-ed
-> in any meaningful way in the final version of the code.
->
-> Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Sep 2024 11:28:48 +0200
 
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Move a pair of kfree() calls behind the label =E2=80=9Cout_err=E2=80=9D
+so that two statements can be better reused at the end of
+this function implementation.
 
-Looks good, thanks.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/ubifs/xattr.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> ---
-> Compile tested only
->
->  fs/btrfs/scrub.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
->
-> diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-> index 3a3427428074..43431065d981 100644
-> --- a/fs/btrfs/scrub.c
-> +++ b/fs/btrfs/scrub.c
-> @@ -2256,7 +2256,6 @@ static noinline_for_stack int scrub_stripe(struct s=
-crub_ctx *sctx,
->         /* Offset inside the chunk */
->         u64 offset;
->         u64 stripe_logical;
-> -       int stop_loop =3D 0;
->
->         /* Extent_path should be released by now. */
->         ASSERT(sctx->extent_path.nodes[0] =3D=3D NULL);
-> @@ -2370,14 +2369,8 @@ static noinline_for_stack int scrub_stripe(struct =
-scrub_ctx *sctx,
->                 logical +=3D increment;
->                 physical +=3D BTRFS_STRIPE_LEN;
->                 spin_lock(&sctx->stat_lock);
-> -               if (stop_loop)
-> -                       sctx->stat.last_physical =3D
-> -                               map->stripes[stripe_index].physical + dev=
-_stripe_len;
-> -               else
-> -                       sctx->stat.last_physical =3D physical;
-> +               sctx->stat.last_physical =3D physical;
->                 spin_unlock(&sctx->stat_lock);
-> -               if (stop_loop)
-> -                       break;
->         }
->  out:
->         ret2 =3D flush_scrub_stripes(sctx);
-> --
-> 2.46.1
->
->
+diff --git a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
+index 7757959e9f09..a514dc4dc535 100644
+=2D-- a/fs/ubifs/xattr.c
++++ b/fs/ubifs/xattr.c
+@@ -532,8 +532,6 @@ int ubifs_purge_xattrs(struct inode *host)
+ 			ubifs_err(c, "dead directory entry '%s', error %d",
+ 				  xent->name, err);
+ 			ubifs_ro_mode(c, err);
+-			kfree(pxent);
+-			kfree(xent);
+ 			goto out_err;
+ 		}
+
+@@ -543,8 +541,6 @@ int ubifs_purge_xattrs(struct inode *host)
+ 		err =3D remove_xattr(c, host, xino, &nm);
+ 		iput(xino);
+ 		if (err) {
+-			kfree(pxent);
+-			kfree(xent);
+ 			ubifs_err(c, "cannot remove xattr, error %d", err);
+ 			goto out_err;
+ 		}
+@@ -564,6 +560,8 @@ int ubifs_purge_xattrs(struct inode *host)
+ 	return 0;
+
+ out_err:
++	kfree(pxent);
++	kfree(xent);
+ 	up_write(&ubifs_inode(host)->xattr_sem);
+ 	return err;
+ }
+=2D-
+2.46.1
+
 
