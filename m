@@ -1,349 +1,193 @@
-Return-Path: <linux-kernel+bounces-340355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 490CC9871F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:49:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F29EC9871FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BE5D1C210A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:49:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A936628C597
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992181AD9F1;
-	Thu, 26 Sep 2024 10:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="JRhBS/GN"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E541ACE12;
+	Thu, 26 Sep 2024 10:49:31 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B421F95C;
-	Thu, 26 Sep 2024 10:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5941AB6E7
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727347724; cv=none; b=QVl+Jao0byAD06XUich2pbawRm6QudO+NY1ibzjm6rvHA1acROIlQUg2XCTjjnBGrzfRZck5BiXYV6ovD01O6cg8CcH3j/xYqX9F3rLspZfz/+mVEJ4wlN6P14bqylAHWI7MpBCyi1pjehulCq4YvOQWvvwo3keowlelIPiTjDU=
+	t=1727347771; cv=none; b=jNi8Oo1nvt79/rxMO7gk1aU89YxcUto0fUbUbKVAFg2O2izdgEnUNE1N0SU163x65+FB7RnaA2C7OHBMiiSsj2Jcmoip2oHSzk24g/ZBx42YqfhmSyzaiaw5kHd5PIkWytRjLSADyKDTgdiYfWf5NV6UO7GCPtaaC3UYSZhWWhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727347724; c=relaxed/simple;
-	bh=I+cQCruRtcbgvl2B5ua7+vEXO+xfL7ptucecZqP1qrY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=poQ+QNX/nT+/p7vDKlpVLVU7PzJSHEvAhyCmKSy2HPIKNxGyXYHKmt8oiBLIVasl38A7gj12EEScL0vE4AmwElJyiwY93KSiOPmCNdKW8oAivdgNtcLmvzavVOMGb8yfR1R4aOxILNxxN8/vdHrVNMuUF0lYf+AxzoXWn41ksl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=JRhBS/GN; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ZXkf1wTdQhc/mYJKrKkTTXfk+s8Dy/Zc2oNs+XEaIEY=; b=JRhBS/GNZFIjJaYKgT9LpIVjGR
-	Q9hFSbGvviFL+Zz5W355wtych5DzSBE2HiGSl+g+puZoiepARAau0zZEETJ7Sqn6uk7wbiBO3MvRC
-	P8PnUkUOUP142QZ9bS42bZ2Po51jpUZ+ryW+ghO3vnbk6MJN5gByaZQQtzu0O/cHDu2NN+bbYOrWc
-	WH02heJDAZtBUJI2byDL29nDsERDMfGOaXG3Pcu8c5YI5fTxbCAfvKVThr/RLsAVT2DVSaxIbmDOf
-	GENzq2Of53KrmyTZ8Jp/7E8EVn+pT9+M3LvQxa+pGgBgHr7wFf4DwiFSDzl3t2Rtgmoh9WDelnq2q
-	4f3Ea9QA==;
-Received: from 85-160-70-253.reb.o2.cz ([85.160.70.253] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1stm34-0002XP-12; Thu, 26 Sep 2024 12:48:38 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, Frank Wang <frawang.cn@gmail.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
- tim.chen@rock-chips.com, frank.wang@rock-chips.com
-Subject:
- Re: [PATCH v3 2/2] phy: rockchip: inno-usb2: Add usb2 phys support for rk3576
-Date: Thu, 26 Sep 2024 12:48:36 +0200
-Message-ID: <10867555.aFP6jjVeTY@phil>
-In-Reply-To: <20240926103223.29538-2-frawang.cn@gmail.com>
-References:
- <20240926103223.29538-1-frawang.cn@gmail.com>
- <20240926103223.29538-2-frawang.cn@gmail.com>
+	s=arc-20240116; t=1727347771; c=relaxed/simple;
+	bh=KEawcTrJFiGdBZY0yAY/PMd6jxyoUx+5CAO7Zh1V9R4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OsW8P+dT1lBjDjDds9r1E5AnlSA64dhH+tt4lE6m71bpcNAdw6Ieh6o3Gp8umfipv1Kzvw3lafnZhiIURx7byCVKroCMvMd6R6zCCHZgS/FfP3MIxCpZLsPNp5MLypExx2JLWkirUlXT2yW1gFLwjKT/+EXhWr9pmrCPbxwp734=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a045e7ed57so9285035ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 03:49:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727347768; x=1727952568;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xr3Jdh4lzyM+gHqoLJWzrwPHI0SDfvfxvRci18QnFi0=;
+        b=LvV4sP9Yxp+/TIuK2QcXgkMcDfRiI05ZGvw1qNrUcPu306unRwtVpBGzL7yXxQGI67
+         DHV7tRsTuoaCP/LVDPhRSvBDKnKx72ty5RgDGS7kFqnP43SmhyGzCroi8oTlQwLZMaN/
+         44ceTExrBv/3NzEnXWlgDubLYE1QByrxIVr5SuyqT9fLFKNg36e0h57JXx8zJ/f27ZVk
+         yRePhX7F4O3f1iZclUrDlqbrYdzVgRrxnDt+mb5faWDoa85Tp+JvBBnWpo8YgD9eE4Lx
+         i3ZxAhIvLLP0rUx/tvSfcwMyKwsdTG0PwXNYeqEFmvThsJPNTvhurBNa5cTcDxjfMY63
+         b6kw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpZ8wtJ5bVVRe43q6CTqF3O6fC468l1PW12h9kGATnia+lqMmT3ls9+2UoKOdxpY5WDUTHan8Izwp9wN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNywCjCX9fH1Zi2TjGd1qDGRfwIEi+UYWgWddAjGvpQdLLkQt3
+	ZwbKluoaqTm602+6VthG9HWjkZTx0A2IC2bB8C7FF5qQKAB/nKgn9Jf4xfzzvop8QdXe8K1I006
+	67/q0RD6KreJNSzdGCwSAAZ1fE+YoeVsetpOLwZNCT1S+MOhuIAH41NQ=
+X-Google-Smtp-Source: AGHT+IGoZaOeI4L7kAj69IlfSEUZcwlaeAkURhARdEfyyIisH0G/Zhhb8FuuvGdClg9hZLZjVI1NN75B4Kj4Fk9ZL8vcNXzeCkmJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Received: by 2002:a05:6e02:1ca2:b0:3a3:41cf:f594 with SMTP id
+ e9e14a558f8ab-3a341cff716mr6694975ab.12.1727347768582; Thu, 26 Sep 2024
+ 03:49:28 -0700 (PDT)
+Date: Thu, 26 Sep 2024 03:49:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f53c38.050a0220.211276.0069.GAE@google.com>
+Subject: [syzbot] [bcachefs?] general protection fault in bch2_alloc_read
+From: syzbot <syzbot+a1b59c8e1a3f022fd301@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Am Donnerstag, 26. September 2024, 12:32:23 CEST schrieb Frank Wang:
-> From: William Wu <william.wu@rock-chips.com>
-> 
-> The RK3576 SoC has two independent USB2.0 PHYs, and each PHY has
-> one port.
-> 
-> This change also converts the clock management from single to bulk
-> as some Rockchip SoCs (e.g RK3576) have more than one clock.
-> 
-> Signed-off-by: William Wu <william.wu@rock-chips.com>
-> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
-> ---
-> Changelog:
-> v3:
->  - amend the commit log adds clocks converting.
->  - retrieve the clock by "clks.id" in *_clk480m_register() function.
-> 
-> v2:
->  - no changes.
-> v1:
->  - https://patchwork.kernel.org/project/linux-phy/patch/20240923025326.10467-2-frank.wang@rock-chips.com/
-> 
->  drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 139 +++++++++++++++++-
->  1 file changed, 131 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-> index 4f71373ae6e1..642c7857c5ae 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-> @@ -229,9 +229,10 @@ struct rockchip_usb2phy_port {
->   * @dev: pointer to device.
->   * @grf: General Register Files regmap.
->   * @usbgrf: USB General Register Files regmap.
-> - * @clk: clock struct of phy input clk.
-> + * @clks: array of phy input clocks.
->   * @clk480m: clock struct of phy output clk.
->   * @clk480m_hw: clock struct of phy output clk management.
-> + * @num_clks: number of phy input clocks.
->   * @phy_reset: phy reset control.
->   * @chg_state: states involved in USB charger detection.
->   * @chg_type: USB charger types.
-> @@ -246,9 +247,10 @@ struct rockchip_usb2phy {
->  	struct device	*dev;
->  	struct regmap	*grf;
->  	struct regmap	*usbgrf;
-> -	struct clk	*clk;
-> +	struct clk_bulk_data	*clks;
->  	struct clk	*clk480m;
->  	struct clk_hw	clk480m_hw;
-> +	int			num_clks;
->  	struct reset_control	*phy_reset;
->  	enum usb_chg_state	chg_state;
->  	enum power_supply_type	chg_type;
-> @@ -376,7 +378,9 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
->  {
->  	struct device_node *node = rphy->dev->of_node;
->  	struct clk_init_data init;
-> +	struct clk *refclk = NULL;
->  	const char *clk_name;
-> +	int i;
->  	int ret = 0;
->  
->  	init.flags = 0;
-> @@ -386,8 +390,15 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
->  	/* optional override of the clockname */
->  	of_property_read_string(node, "clock-output-names", &init.name);
->  
-> -	if (rphy->clk) {
-> -		clk_name = __clk_get_name(rphy->clk);
-> +	for (i = 0; i < rphy->num_clks; i++) {
-> +		if (!strncmp(rphy->clks[i].id, "phyclk", 6)) {
-> +			refclk = rphy->clks[i].clk;
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (!IS_ERR(refclk)) {
-> +		clk_name = __clk_get_name(refclk);
->  		init.parent_names = &clk_name;
->  		init.num_parents = 1;
->  	} else {
-> @@ -1406,22 +1417,29 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
->  	if (IS_ERR(rphy->phy_reset))
->  		return PTR_ERR(rphy->phy_reset);
->  
-> -	rphy->clk = devm_clk_get_optional_enabled(dev, "phyclk");
-> -	if (IS_ERR(rphy->clk)) {
-> -		return dev_err_probe(&pdev->dev, PTR_ERR(rphy->clk),
-> +	ret = devm_clk_bulk_get_all(dev, &rphy->clks);
-> +	if (ret == -EPROBE_DEFER) {
-> +		return dev_err_probe(&pdev->dev, -EPROBE_DEFER,
->  				     "failed to get phyclk\n");
->  	}
->  
-> +	/* Clocks are optional */
-> +	rphy->num_clks = ret < 0 ? 0 : ret;
-> +
->  	ret = rockchip_usb2phy_clk480m_register(rphy);
->  	if (ret) {
->  		dev_err(dev, "failed to register 480m output clock\n");
->  		return ret;
->  	}
->  
-> +	ret = clk_bulk_prepare_enable(rphy->num_clks, rphy->clks);
-> +	if (ret)
-> +		return ret;
-> +
+Hello,
 
-Do you actually need that separate enable step?
-There exists devm_clk_bulk_get_all_enable() 
+syzbot found the following issue on:
 
-https://elixir.bootlin.com/linux/v6.11/source/include/linux/clk.h#L511
+HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15a3de9f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e851828834875d6f
+dashboard link: https://syzkaller.appspot.com/bug?extid=a1b59c8e1a3f022fd301
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=167ddca9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a3de9f980000
 
-which you could use above. Especially as otherwise you'd need a remove
-callback to disable the clock on driver unbind?
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-88264981.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/df2a0a047a7a/vmlinux-88264981.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bbdb25081712/bzImage-88264981.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/2bfe5d0e1da4/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a1b59c8e1a3f022fd301@syzkaller.appspotmail.com
+
+bcachefs (loop0): accounting_read... done
+bcachefs (loop0): alloc_read...
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 0 UID: 0 PID: 5100 Comm: syz-executor420 Not tainted 6.11.0-syzkaller-08481-g88264981f208 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:bch2_alloc_read+0x17d9/0x24f0 fs/bcachefs/alloc_background.c:625
+Code: 0f b6 04 10 84 c0 4c 8d a4 24 b0 02 00 00 49 89 d7 0f 85 78 04 00 00 48 8b 33 48 8b 3c 24 e8 5e 14 00 00 48 89 c3 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 74 04 00 00 0f b6 44 24 30 88 03 48 8b
+RSP: 0018:ffffc90002d8f0e0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff89011e18963c
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 0000008100000014
+RBP: ffffc90002d8f4c8 R08: ffffffff8409ef0e R09: 0000000000000000
+R10: ffffc90002d8f450 R11: fffff520005b1e8c R12: ffffc90002d8f390
+R13: 000000000000001c R14: ffffc90002d8f200 R15: dffffc0000000000
+FS:  00005555882c4380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000558280275240 CR3: 000000001205e000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:183
+ bch2_run_recovery_passes+0x19e/0x820 fs/bcachefs/recovery_passes.c:230
+ bch2_fs_recovery+0x24f9/0x38b0 fs/bcachefs/recovery.c:859
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0xd61/0x1700 fs/bcachefs/fs.c:1956
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0c704b9dea
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd5754dfb8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffd5754dfd0 RCX: 00007f0c704b9dea
+RDX: 00000000200058c0 RSI: 0000000020005900 RDI: 00007ffd5754dfd0
+RBP: 0000000000000004 R08: 00007ffd5754e010 R09: 002c61746f757172
+R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
+R13: 00007ffd5754e010 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bch2_alloc_read+0x17d9/0x24f0 fs/bcachefs/alloc_background.c:625
+Code: 0f b6 04 10 84 c0 4c 8d a4 24 b0 02 00 00 49 89 d7 0f 85 78 04 00 00 48 8b 33 48 8b 3c 24 e8 5e 14 00 00 48 89 c3 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 74 04 00 00 0f b6 44 24 30 88 03 48 8b
+RSP: 0018:ffffc90002d8f0e0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff89011e18963c
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 0000008100000014
+RBP: ffffc90002d8f4c8 R08: ffffffff8409ef0e R09: 0000000000000000
+R10: ffffc90002d8f450 R11: fffff520005b1e8c R12: ffffc90002d8f390
+R13: 000000000000001c R14: ffffc90002d8f200 R15: dffffc0000000000
+FS:  00005555882c4380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4c02468cda CR3: 000000001205e000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	0f b6 04 10          	movzbl (%rax,%rdx,1),%eax
+   4:	84 c0                	test   %al,%al
+   6:	4c 8d a4 24 b0 02 00 	lea    0x2b0(%rsp),%r12
+   d:	00
+   e:	49 89 d7             	mov    %rdx,%r15
+  11:	0f 85 78 04 00 00    	jne    0x48f
+  17:	48 8b 33             	mov    (%rbx),%rsi
+  1a:	48 8b 3c 24          	mov    (%rsp),%rdi
+  1e:	e8 5e 14 00 00       	call   0x1481
+  23:	48 89 c3             	mov    %rax,%rbx
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 0f b6 04 38       	movzbl (%rax,%r15,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 74 04 00 00    	jne    0x4ab
+  37:	0f b6 44 24 30       	movzbl 0x30(%rsp),%eax
+  3c:	88 03                	mov    %al,(%rbx)
+  3e:	48                   	rex.W
+  3f:	8b                   	.byte 0x8b
 
 
->  	if (rphy->phy_cfg->phy_tuning) {
->  		ret = rphy->phy_cfg->phy_tuning(rphy);
->  		if (ret)
-> -			return ret;
-> +			goto disable_clks;
->  	}
->  
->  	index = 0;
-> @@ -1484,6 +1502,8 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
->  
->  put_child:
->  	of_node_put(child_np);
-> +disable_clks:
-> +	clk_bulk_disable_unprepare(rphy->num_clks, rphy->clks);
->  	return ret;
->  }
->  
-> @@ -1495,6 +1515,30 @@ static int rk3128_usb2phy_tuning(struct rockchip_usb2phy *rphy)
->  				BIT(2) << BIT_WRITEABLE_SHIFT | 0);
->  }
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-I still maintain, that this maybe should be two separate patches.
-And you even seem to have nice "cut-here" in it ;-)
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-The code above converts the driver to use clk_bulk to handle
-multiple clocks for controller variants needing it.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-And the code below adds the rk3576-specific data to the driver.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-
-
-> +static int rk3576_usb2phy_tuning(struct rockchip_usb2phy *rphy)
-> +{
-> +	int ret;
-> +	u32 reg = rphy->phy_cfg->reg;
-> +
-> +	/* Deassert SIDDQ to power on analog block */
-> +	ret = regmap_write(rphy->grf, reg + 0x0010, GENMASK(29, 29) | 0x0000);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Do reset after exit IDDQ mode */
-> +	ret = rockchip_usb2phy_reset(rphy);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* HS DC Voltage Level Adjustment 4'b1001 : +5.89% */
-> +	ret |= regmap_write(rphy->grf, reg + 0x000c, GENMASK(27, 24) | 0x0900);
-> +
-> +	/* HS Transmitter Pre-Emphasis Current Control 2'b10 : 2x */
-> +	ret |= regmap_write(rphy->grf, reg + 0x0010, GENMASK(20, 19) | 0x0010);
-> +
-> +	return ret;
-> +}
-> +
->  static int rk3588_usb2phy_tuning(struct rockchip_usb2phy *rphy)
->  {
->  	int ret;
-> @@ -1923,6 +1967,84 @@ static const struct rockchip_usb2phy_cfg rk3568_phy_cfgs[] = {
->  	{ /* sentinel */ }
->  };
->  
-> +static const struct rockchip_usb2phy_cfg rk3576_phy_cfgs[] = {
-> +	{
-> +		.reg = 0x0,
-> +		.num_ports	= 1,
-> +		.phy_tuning	= rk3576_usb2phy_tuning,
-> +		.clkout_ctl	= { 0x0008, 0, 0, 1, 0 },
-> +		.port_cfgs	= {
-> +			[USB2PHY_PORT_OTG] = {
-> +				.phy_sus	= { 0x0000, 8, 0, 0, 0x1d1 },
-> +				.bvalid_det_en	= { 0x00c0, 1, 1, 0, 1 },
-> +				.bvalid_det_st	= { 0x00c4, 1, 1, 0, 1 },
-> +				.bvalid_det_clr = { 0x00c8, 1, 1, 0, 1 },
-> +				.ls_det_en	= { 0x00c0, 0, 0, 0, 1 },
-> +				.ls_det_st	= { 0x00c4, 0, 0, 0, 1 },
-> +				.ls_det_clr	= { 0x00c8, 0, 0, 0, 1 },
-> +				.disfall_en	= { 0x00c0, 6, 6, 0, 1 },
-> +				.disfall_st	= { 0x00c4, 6, 6, 0, 1 },
-> +				.disfall_clr	= { 0x00c8, 6, 6, 0, 1 },
-> +				.disrise_en	= { 0x00c0, 5, 5, 0, 1 },
-> +				.disrise_st	= { 0x00c4, 5, 5, 0, 1 },
-> +				.disrise_clr	= { 0x00c8, 5, 5, 0, 1 },
-> +				.utmi_avalid	= { 0x0080, 1, 1, 0, 1 },
-> +				.utmi_bvalid	= { 0x0080, 0, 0, 0, 1 },
-> +				.utmi_ls	= { 0x0080, 5, 4, 0, 1 },
-> +			}
-> +		},
-> +		.chg_det = {
-> +			.cp_det		= { 0x0080, 8, 8, 0, 1 },
-> +			.dcp_det	= { 0x0080, 8, 8, 0, 1 },
-> +			.dp_det		= { 0x0080, 9, 9, 1, 0 },
-> +			.idm_sink_en	= { 0x0010, 5, 5, 1, 0 },
-> +			.idp_sink_en	= { 0x0010, 5, 5, 0, 1 },
-> +			.idp_src_en	= { 0x0010, 14, 14, 0, 1 },
-> +			.rdm_pdwn_en	= { 0x0010, 14, 14, 0, 1 },
-> +			.vdm_src_en	= { 0x0010, 7, 6, 0, 3 },
-> +			.vdp_src_en	= { 0x0010, 7, 6, 0, 3 },
-> +		},
-> +	},
-> +	{
-> +		.reg = 0x2000,
-> +		.num_ports	= 1,
-> +		.phy_tuning	= rk3576_usb2phy_tuning,
-> +		.clkout_ctl	= { 0x2008, 0, 0, 1, 0 },
-> +		.port_cfgs	= {
-> +			[USB2PHY_PORT_OTG] = {
-> +				.phy_sus	= { 0x2000, 8, 0, 0, 0x1d1 },
-> +				.bvalid_det_en	= { 0x20c0, 1, 1, 0, 1 },
-> +				.bvalid_det_st	= { 0x20c4, 1, 1, 0, 1 },
-> +				.bvalid_det_clr = { 0x20c8, 1, 1, 0, 1 },
-> +				.ls_det_en	= { 0x20c0, 0, 0, 0, 1 },
-> +				.ls_det_st	= { 0x20c4, 0, 0, 0, 1 },
-> +				.ls_det_clr	= { 0x20c8, 0, 0, 0, 1 },
-> +				.disfall_en	= { 0x20c0, 6, 6, 0, 1 },
-> +				.disfall_st	= { 0x20c4, 6, 6, 0, 1 },
-> +				.disfall_clr	= { 0x20c8, 6, 6, 0, 1 },
-> +				.disrise_en	= { 0x20c0, 5, 5, 0, 1 },
-> +				.disrise_st	= { 0x20c4, 5, 5, 0, 1 },
-> +				.disrise_clr	= { 0x20c8, 5, 5, 0, 1 },
-> +				.utmi_avalid	= { 0x2080, 1, 1, 0, 1 },
-> +				.utmi_bvalid	= { 0x2080, 0, 0, 0, 1 },
-> +				.utmi_ls	= { 0x2080, 5, 4, 0, 1 },
-> +			}
-> +		},
-> +		.chg_det = {
-> +			.cp_det		= { 0x2080, 8, 8, 0, 1 },
-> +			.dcp_det	= { 0x2080, 8, 8, 0, 1 },
-> +			.dp_det		= { 0x2080, 9, 9, 1, 0 },
-> +			.idm_sink_en	= { 0x2010, 5, 5, 1, 0 },
-> +			.idp_sink_en	= { 0x2010, 5, 5, 0, 1 },
-> +			.idp_src_en	= { 0x2010, 14, 14, 0, 1 },
-> +			.rdm_pdwn_en	= { 0x2010, 14, 14, 0, 1 },
-> +			.vdm_src_en	= { 0x2010, 7, 6, 0, 3 },
-> +			.vdp_src_en	= { 0x2010, 7, 6, 0, 3 },
-> +		},
-> +	},
-> +	{ /* sentinel */ }
-> +};
-> +
->  static const struct rockchip_usb2phy_cfg rk3588_phy_cfgs[] = {
->  	{
->  		.reg = 0x0000,
-> @@ -2094,6 +2216,7 @@ static const struct of_device_id rockchip_usb2phy_dt_match[] = {
->  	{ .compatible = "rockchip,rk3366-usb2phy", .data = &rk3366_phy_cfgs },
->  	{ .compatible = "rockchip,rk3399-usb2phy", .data = &rk3399_phy_cfgs },
->  	{ .compatible = "rockchip,rk3568-usb2phy", .data = &rk3568_phy_cfgs },
-> +	{ .compatible = "rockchip,rk3576-usb2phy", .data = &rk3576_phy_cfgs },
->  	{ .compatible = "rockchip,rk3588-usb2phy", .data = &rk3588_phy_cfgs },
->  	{ .compatible = "rockchip,rv1108-usb2phy", .data = &rv1108_phy_cfgs },
->  	{}
-> 
-
-
-
-
+If you want to undo deduplication, reply with:
+#syz undup
 
