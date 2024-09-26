@@ -1,181 +1,130 @@
-Return-Path: <linux-kernel+bounces-340135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD31986EF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:37:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E44986EF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74C62B20BF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:37:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A21C287E59
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1584C1AC8A8;
-	Thu, 26 Sep 2024 08:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51F61AAE2A;
+	Thu, 26 Sep 2024 08:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dpARYpw5"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="YSCmne2Z"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B831A727A;
-	Thu, 26 Sep 2024 08:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2DC1A76DC
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 08:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727339772; cv=none; b=lBaWVQPZ05MDMlVkarla6GGO2+EqLpDUXUIbRPWDBDd8/tG6b2cvYQ7FMG5XZFqNIzZHihK+yd4VBSXaiXIpa55P2sBhfw9lFnR1p3H7O2r6Uso8oh4X0nShgQVpnxMRnlL12gT5qNJ6X2dhbVPvH7Mf/Zh4EGvf9BHoqaDA1DM=
+	t=1727339781; cv=none; b=qOFR8mlLBut+UBkc2gPdFB6NFS2seZZGPZLt1pXwhHa5W1bVTI/W0jCUr9beMzrMUUkJTjG+rODl39FHPSgknwPTIXIt5lhYOsJKoOHXqzMDIRed2vUkxceSmnO8RrcrFKpvKlWVd/3bFbCteAEM1eiek170oWLrVuf4uwCLQRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727339772; c=relaxed/simple;
-	bh=GJlBJ2nije3417X3Duk+yPak7aNIl/IkHg/i7Ff3tgs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=P//t8889myntImuB2iuCSI545jtN/9AFnxX3lD/fnoJ647fxF5l43n5m0mQKjhAMUm7B2bLfuHnU2BIrZyUTYfKeD0hPZwMCiDyi25POoPN9t/i9nxtpKUsg//8V+rKwcxQNxBPMpPathi9zBsM+76RTBABniePCtUl2IY2m7mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dpARYpw5; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48Q8a0Wp042677;
-	Thu, 26 Sep 2024 03:36:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727339760;
-	bh=/NklGAACFNInFGXKnjf+d7lTvw/WjOe5LVumCjbxEJg=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=dpARYpw56iNobO0+/RjIDcfeGv8VLqRjLssXsNpq2pGs52IWDiMmhgn+ycsi1lD9p
-	 eeECBMs7XUYpVu37T3RSsED/m4cDu+qYW1UxwX9TBs74kTq2coPGVDa/A328TTTCbK
-	 Bd0aR8Xytda1X3gP1CJHuTU7LA9tpIyj4v6MN4nc=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48Q8a0UT053894
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 26 Sep 2024 03:36:00 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 26
- Sep 2024 03:35:59 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 26 Sep 2024 03:35:59 -0500
-Received: from [127.0.1.1] (lcpd911.dhcp.ti.com [172.24.227.226])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48Q8ZPKA064456;
-	Thu, 26 Sep 2024 03:35:55 -0500
-From: Dhruva Gole <d-gole@ti.com>
-Date: Thu, 26 Sep 2024 14:04:57 +0530
-Subject: [PATCH v7 6/6] cpufreq: ti-cpufreq: Update efuse/rev offsets in
- AM62 family
+	s=arc-20240116; t=1727339781; c=relaxed/simple;
+	bh=oMv366uiJp3HQkoteowXZimUN2vlS1+7Fn+esEf3CvU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qTs1mtP9MsUbgwvM+rEjFEJrz0EnD16MvNLIyuf00zcXCUEBi+uOfnjObJD6aiTjuKBArnj0u0UCbfCHkT0JiS1FjWK4eODXnxkDJx36ZY56kCR2MfmXMg7aZ/wmCSBwZnEDTuHrb6AYnZHB1JBYPctOU4S9Dru+v0y6TAumh7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=YSCmne2Z; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 6346161e7be211efb66947d174671e26-20240926
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=mUIEIOTVEOxWCkdNGpdYL1C7JlQvaQX1nk+/uj7MHS0=;
+	b=YSCmne2ZwQT1lDJo0+yn/tlrQg4uRf3XqKSgLnsn/HDpm01TehPjM/IxXj1aSljvbsHDq3UzE8iltSFLe3gll9nOZUZG1fNaMQcSxQ/6r9va6CmxXuKO/OuqmI2haRAt1MBhWHrFdeF/nAxMQR02BAT3rFSkYnrJv7p4b8Er314=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:e48866cb-9dcb-4962-a60d-82bc21aba7d0,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:90dbccd0-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 6346161e7be211efb66947d174671e26-20240926
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1312321736; Thu, 26 Sep 2024 16:36:13 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 26 Sep 2024 16:36:11 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 26 Sep 2024 16:36:11 +0800
+From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+To: Alper Nebi Yasak <alpernebiyasak@gmail.com>, Chun-Kuang Hu
+	<chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: Shawn Sung <shawn.sung@mediatek.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, "Jason-JH . Lin"
+	<jason-jh.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Nancy
+ Lin <nancy.lin@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v6 0/2] Fix degradation problem of alpha blending series
+Date: Thu, 26 Sep 2024 16:35:24 +0800
+Message-ID: <20240926083526.24629-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240926-ti-cpufreq-fixes-v5-v7-6-3c94c398fe8f@ti.com>
-References: <20240926-ti-cpufreq-fixes-v5-v7-0-3c94c398fe8f@ti.com>
-In-Reply-To: <20240926-ti-cpufreq-fixes-v5-v7-0-3c94c398fe8f@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael
- J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        Andrew Davis
-	<afd@ti.com>, Bryan Brattlof <bb@ti.com>,
-        Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>,
-        Markus Schneider-Pargmann
-	<msp@baylibre.com>,
-        Dhruva Gole <d-gole@ti.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727339725; l=2979;
- i=d-gole@ti.com; s=20240919; h=from:subject:message-id;
- bh=GJlBJ2nije3417X3Duk+yPak7aNIl/IkHg/i7Ff3tgs=;
- b=SI6s16xvei2mPWIU04o5SUXvMFiKHAW3liKgNmSW0XtdgkRJ8RkPugTxuHbgmbDa5HTg7UGO5
- JkLRdxsqcotCO9U0GLjHWzZ1Ds9v9RApTK770ZYGM9JHmcpG5xwsebk
-X-Developer-Key: i=d-gole@ti.com; a=ed25519;
- pk=k8NnY4RbxVqeqGsYfTHeVn4hPOHkjg7Mii0Ixs4rghM=
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain
+X-MTK: N
 
-With the Silicon revision being taken directly from socinfo, there's no
-longer any need for reading any SOC register for revision from this driver.
-Hence, we do not require any rev_offset for AM62 family of devices.
-The efuse offset should be 0x0 for AM625 as well, as the syscon
-register being used from DT refers to the efuse_offset directly.
+Some SoCs not support pre-multiplied pixel formats and extending
+configuration of OVL pre-multiplied color formats, such as MT8173.
 
-However, to maintain the backward compatibility with old devicetree, also
-add condition to handle the case where we have the wrong offset and add
-the older efuse_offset value there such that we don't end up reading the
-wrong register offset.
+Fix the SoC degradation problem by this sreies.
 
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
 ---
- drivers/cpufreq/ti-cpufreq.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-index ba621ce1cdda694c98867422dbb7f10c0df2afef..054eadd7a3bf98a15d765e0506dbfa7ed0706f4f 100644
---- a/drivers/cpufreq/ti-cpufreq.c
-+++ b/drivers/cpufreq/ti-cpufreq.c
-@@ -313,10 +313,9 @@ static const struct soc_device_attribute k3_cpufreq_soc[] = {
- 
- static struct ti_cpufreq_soc_data am625_soc_data = {
- 	.efuse_xlate = am625_efuse_xlate,
--	.efuse_offset = 0x0018,
-+	.efuse_offset = 0x0,
- 	.efuse_mask = 0x07c0,
- 	.efuse_shift = 0x6,
--	.rev_offset = 0x0014,
- 	.multi_regulator = false,
- };
- 
-@@ -325,7 +324,6 @@ static struct ti_cpufreq_soc_data am62a7_soc_data = {
- 	.efuse_offset = 0x0,
- 	.efuse_mask = 0x07c0,
- 	.efuse_shift = 0x6,
--	.rev_offset = 0x0014,
- 	.multi_regulator = false,
- };
- 
-@@ -334,7 +332,6 @@ static struct ti_cpufreq_soc_data am62p5_soc_data = {
- 	.efuse_offset = 0x0,
- 	.efuse_mask = 0x07c0,
- 	.efuse_shift = 0x6,
--	.rev_offset = 0x0014,
- 	.multi_regulator = false,
- };
- 
-@@ -349,11 +346,26 @@ static int ti_cpufreq_get_efuse(struct ti_cpufreq_data *opp_data,
- 				u32 *efuse_value)
- {
- 	struct device *dev = opp_data->cpu_dev;
-+	struct device_node *np = of_find_node_by_path("/bus@f0000/bus@b00000/syscon@43000000");
- 	u32 efuse;
- 	int ret;
- 
--	ret = regmap_read(opp_data->syscon, opp_data->soc_data->efuse_offset,
--			  &efuse);
-+	/*
-+	 * This checks for old AM625 Devicetrees where the syscon was a phandle to the
-+	 * wkup_conf parent, this required a hard-coded offset to the efuse register.
-+	 * This node had the compatibles "syscon", "simple-mfd".
-+	 */
-+	if (of_device_is_compatible(np, "simple-mfd") &&
-+	    of_machine_is_compatible("ti,am625")) {
-+		dev_warn(dev,
-+			 "%s: An old devicetree is in use, please consider updating at some point!",
-+			 __func__);
-+		ret = regmap_read(opp_data->syscon, opp_data->soc_data->efuse_offset + 0x0018,
-+				  &efuse);
-+	} else {
-+		ret = regmap_read(opp_data->syscon, opp_data->soc_data->efuse_offset,
-+				  &efuse);
-+	}
- 	if (opp_data->soc_data->quirks & TI_QUIRK_SYSCON_MAY_BE_MISSING && ret == -EIO) {
- 		/* not a syscon register! */
- 		void __iomem *regs = ioremap(OMAP3_SYSCON_BASE +
+Chnage in v6:
+1. Use blend_modes instead of function pointer in OVL
+2. Use ethdr instead of mdp_rdma to get blend_modes
+3. Add 0 checking for adding blend_mode property for mtk_plane
+
+Change in v5:
+Add fix patch for mtk_plane
+
+Change in v4:
+Add lost cases of mtk_ovl_fmt_convert_with_blend
+
+Change in v3:
+Change MACRO approach to function pointer in driver data
+
+Change in v2:
+Fix build error and typo
+
+Change in v1:
+Add fix patch for OVL unsupport color format settings by driver data
+
+---
+
+Jason-JH.Lin (2):
+  drm/mediatek: ovl: Add blend_modes to driver data
+  drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
+
+ drivers/gpu/drm/mediatek/mtk_crtc.c           |  1 +
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.c       |  2 +
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.h       | 10 ++++
+ drivers/gpu/drm/mediatek/mtk_disp_drv.h       |  2 +
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c       | 48 ++++++++++++++++---
+ .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  7 +++
+ drivers/gpu/drm/mediatek/mtk_ethdr.c          |  7 +++
+ drivers/gpu/drm/mediatek/mtk_ethdr.h          |  1 +
+ drivers/gpu/drm/mediatek/mtk_plane.c          | 15 +++---
+ drivers/gpu/drm/mediatek/mtk_plane.h          |  4 +-
+ 10 files changed, 80 insertions(+), 17 deletions(-)
 
 -- 
-2.34.1
+2.43.0
 
 
