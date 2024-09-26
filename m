@@ -1,232 +1,174 @@
-Return-Path: <linux-kernel+bounces-340365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD4398721E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:56:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F6A987226
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE8F2B280BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:56:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948CC28168B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8120F1AD9FA;
-	Thu, 26 Sep 2024 10:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569041AE851;
+	Thu, 26 Sep 2024 11:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oeKB6cYQ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="VXKXyLXp"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386C315A4AF;
-	Thu, 26 Sep 2024 10:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7701D5AA2;
+	Thu, 26 Sep 2024 11:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727348169; cv=none; b=RNf3Wy9vMDLsClsO8UVaiJf1ffanz6WSq3zq1Y25Xx1FWWZpgOKjkeMBQz3tLplgpoGm/JNI+he2N9x++VejBB4R5SiUGA/KQIQDJwvwCYrwZ+j3L3HJpqXAmAduGEqkHPDJE4M/3n3FLZblxwlpoNcejmmJGKX0ldkPzBJckck=
+	t=1727348435; cv=none; b=fQYN5awvnExOhz4uFy0txhAsJfKpvv03/XBSpEFvH/A4cO0b8YI8a6dZ1ow+B7iz4Ahr2KzkgsB3nY+oH2RnjBer5ehNEwIyPuqe412TRWDu5ds+W30tyG3WhxaGq08OFgEscjOcOO10b9r5uCHDOZhv9RN0Ymem6FXzfPMzlCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727348169; c=relaxed/simple;
-	bh=qTRkRemlYBcgSh0/Nkoi3/uReReE34+1ByAPeKgnblY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BO9VRBK1uHxH9iXr18peaGzBvyvFQEgNJ1+s2LRBHkSqyU4vq8sZ89bEtyP+otbGWhENpcivKURbWq76qDR2RKXShiLfluiqCibCpx96F3fUbUwm0HAwB2ptAO+xMkBv1NpYbslz9HbkdNqV2NzjpsAl4wU/8t0wEURg9ObmTTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oeKB6cYQ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48Q7bPK6003273;
-	Thu, 26 Sep 2024 10:56:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IBwVa7e4K9hvRIbnvmlG+l1h8zml2X9ZLRbV1k7628Y=; b=oeKB6cYQlkQZznZI
-	y/y1fnlTGyP28EYo3yFcYxaQU28+Fa1m9TjQAPhVyzBgjTREouTTrxGu//R1ozjG
-	d436Yof0LU0riKd2C5eN7WUSnt1yDx44MUYTri9Z50HuG0TXtM+ieHeGcxxiEv+C
-	5l5s2C9V7xTGKF5nG279+/HtpZoRr0b2nMlwofiC5zd436DRnEQ5GYFs+FkWOfOv
-	GdygBMuRjHNpWaIFb7b9+5DDhhbwH9ZXkKRGNIJLaQUDANR/+LrrWN9MHq0nywQx
-	Td/qVkKBWlTLaNjp2QqunXbxjgssVyfJFLXei5Ed44oGnAYGLOTLF/SKnJ+tlyh/
-	wZKXOg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sn5byb9r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Sep 2024 10:56:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48QAu0U3014930
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Sep 2024 10:56:00 GMT
-Received: from [10.216.19.58] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 26 Sep
- 2024 03:55:55 -0700
-Message-ID: <ca3cd653-9ab1-93e6-7862-bca8a45e34d0@quicinc.com>
-Date: Thu, 26 Sep 2024 16:25:52 +0530
+	s=arc-20240116; t=1727348435; c=relaxed/simple;
+	bh=Pc9TQipB1PXhPa7yxQyCZHQQyfF9tPgiTNX4o9cxzGs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oz62JONBhBcpT7kvd6NgAVfagcs9TmRzw7BNG69oOjB+CLaE8KnFYHFl03G1TLASbb4e/TsaGvfDMfHbCM7AF+sbhX2Y+BqjKjAOELP4aUNWzW2HlaGTa7OKzVVf0r3QYR9EHxTbjzu1UJm/+pehKgCEaDCtUi6wNjPLyeHd0mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=VXKXyLXp; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id CF6C52E0341F;
+	Thu, 26 Sep 2024 14:00:28 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1727348429;
+	bh=Pc9TQipB1PXhPa7yxQyCZHQQyfF9tPgiTNX4o9cxzGs=;
+	h=Received:From:Subject:To;
+	b=VXKXyLXp3chwQqlZhyWs3BlTwzjaFsMOcN8A33h5YzuK+A8VVeHrj1y/PX56WWkZ+
+	 degBIPSY58RgXNd+N+fXPH29ONsbOz33BdcLI7nBTLO1Lda1e2pRvYiNardLY9o8g6
+	 LAdl24D1e9qt52czejxU8e8U1sNmyoXyIBR/8J8Q=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f169.google.com with SMTP id
+ 38308e7fff4ca-2f75f116d11so9824451fa.1;
+        Thu, 26 Sep 2024 04:00:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVR9SPFBk1kPK7ZzuLnd3bGc1F/3Rv+5OaxWDc2EPZl+S9yinjN3ZT3Fts3ZQh/wRdjH4Hnl+8yEWlosW3j@vger.kernel.org,
+ AJvYcCVloSAVO4ohT6N4LFqp+v/GHpTG4LGKiJFIbNugUK9UeO0FHneJb3ia4/FeIE6G3K8aF7jl7ZnQKVBDKfloCUoHRsbyZw==@vger.kernel.org,
+ AJvYcCXmhSvtbtBq6RV78qc/ib5aM3t9ilRPMgcF91rY1Odab30lKnAQ5unrVBMnhLfy3/ITUuRhOic/M+64@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoCaTYeb3g1n0PA0dMuZ3wQZ3UXFKeFfXLXRBvvHbTX40Uqfmk
+	3VNG4bdgtyFYXAiLGhvRNamFBjLLjkeQQQ6u7BhlP97sASByaHxg5fhB+vKkG1byJBSAqxdSBl1
+	sozixPvRxrddUoe2Yfay9ughn6OQ=
+X-Google-Smtp-Source: 
+ AGHT+IFO9a8ZqmMJTgUiVOCjewruLn5HCAF8pol28Te+3WoJXoS2uVX7hcs6mSAmRYDeyIFNrrGzqccjLKpD/X6pULk=
+X-Received: by 2002:a2e:d09:0:b0:2f9:ccc3:38cf with SMTP id
+ 38308e7fff4ca-2f9ccc33a62mr4456791fa.37.1727348428018; Thu, 26 Sep 2024
+ 04:00:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 20/29] media: iris: subscribe parameters and properties
- to firmware for hfi_gen2
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vedang Nagar
-	<quic_vnagar@quicinc.com>
-References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
- <20240827-iris_v3-v3-20-c5fdbbe65e70@quicinc.com>
- <b259f304-77a2-4b0e-a8b3-c8d0fb8f9750@linaro.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <b259f304-77a2-4b0e-a8b3-c8d0fb8f9750@linaro.org>
+References: <20240926025955.1728766-1-superm1@kernel.org>
+ <20240926025955.1728766-3-superm1@kernel.org>
+ <5a75b73f-dcb1-4a45-9526-194a3451b5c6@amd.com>
+In-Reply-To: <5a75b73f-dcb1-4a45-9526-194a3451b5c6@amd.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Thu, 26 Sep 2024 13:00:16 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwGtqwOOfrUpjLghW4JCKqcFk9ut-X0MBvHAm37YVS51tw@mail.gmail.com>
+Message-ID: 
+ <CAGwozwGtqwOOfrUpjLghW4JCKqcFk9ut-X0MBvHAm37YVS51tw@mail.gmail.com>
+Subject: Re: [RFC 2/2] platform/x86/amd: pmf: Add manual control support
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc: Mario Limonciello <superm1@kernel.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Luke D . Jones" <luke@ljones.dev>, Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>,
+	me@kylegospodneti.ch, Denis Benato <benato.denis96@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: TSfwPIFQgIhyv5XemYiS3fU5Rd7-0Rjd
-X-Proofpoint-GUID: TSfwPIFQgIhyv5XemYiS3fU5Rd7-0Rjd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999
- spamscore=0 mlxscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409260073
+X-PPP-Message-ID: 
+ <172734842939.27093.10360311400567677248@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
+Hi Shyam,
 
+> I appreciate the proposal, but giving users this control seems similar
+> to using tools like Ryzenadj or Ryzen Master, which are primarily for
+> overclocking. Atleast Ryzen Master has a dedicated mailbox with PMFW.
 
-On 9/24/2024 8:46 PM, Bryan O'Donoghue wrote:
-> On 27/08/2024 11:05, Dikshita Agarwal via B4 Relay wrote:
->> From: Vedang Nagar <quic_vnagar@quicinc.com>
->>
->> For hfi_gen2, subscribe for different bitstream parameters to
->> firmware to get notified for change in any of the subscribed
->> parameters.
->>
->> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
->> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
->> ---
->>   drivers/media/platform/qcom/iris/iris_hfi_gen2.h   |   6 +
->>   .../platform/qcom/iris/iris_hfi_gen2_command.c     | 179
->> +++++++++++++++++++++
->>   .../platform/qcom/iris/iris_hfi_gen2_defines.h     |   9 ++
->>   .../platform/qcom/iris/iris_platform_common.h      |   4 +
->>   .../platform/qcom/iris/iris_platform_sm8550.c      |  13 ++
->>   5 files changed, 211 insertions(+)
->>
->> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2.h
->> b/drivers/media/platform/qcom/iris/iris_hfi_gen2.h
->> index 8170c1fef569..5fbbab844025 100644
->> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2.h
->> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2.h
->> @@ -18,12 +18,18 @@ struct iris_core;
->>    *
->>    * @inst: pointer to iris_instance structure
->>    * @packet: HFI packet
->> + * @ipsc_properties_set: boolean to set ipsc properties to fw
->> + * @opsc_properties_set: boolean to set opsc properties to fw
->>    * @src_subcr_params: subscription params to fw on input port
->> + * @dst_subcr_params: subscription params to fw on output port
->>    */
->>   struct iris_inst_hfi_gen2 {
->>       struct iris_inst        inst;
->>       struct iris_hfi_header        *packet;
->> +    bool                ipsc_properties_set;
->> +    bool                opsc_properties_set;
->>       struct hfi_subscription_params    src_subcr_params;
->> +    struct hfi_subscription_params    dst_subcr_params;
->>   };
->>     void iris_hfi_gen2_command_ops_init(struct iris_core *core);
->> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
->> b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
->> index e50f00021f6d..791b535a3584 100644
->> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
->> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
->> @@ -472,6 +472,9 @@ static int iris_hfi_gen2_session_open(struct
->> iris_inst *inst)
->>       if (inst->state != IRIS_INST_DEINIT)
->>           return -EALREADY;
->>   +    inst_hfi_gen2->ipsc_properties_set = false;
->> +    inst_hfi_gen2->opsc_properties_set = false;
->> +
->>       inst_hfi_gen2->packet = kzalloc(4096, GFP_KERNEL);
->>       if (!inst_hfi_gen2->packet)
->>           return -ENOMEM;
->> @@ -536,9 +539,185 @@ static int iris_hfi_gen2_session_close(struct
->> iris_inst *inst)
->>       return ret;
->>   }
->>   +static int iris_hfi_gen2_session_subscribe_mode(struct iris_inst *inst,
->> +                        u32 cmd, u32 plane, u32 payload_type,
->> +                        void *payload, u32 payload_size)
->> +{
->> +    struct iris_inst_hfi_gen2 *inst_hfi_gen2 = to_iris_inst_hfi_gen2(inst);
->> +
->> +    iris_hfi_gen2_packet_session_command(inst,
->> +                         cmd,
->> +                         (HFI_HOST_FLAGS_RESPONSE_REQUIRED |
->> +                         HFI_HOST_FLAGS_INTR_REQUIRED),
->> +                         iris_hfi_gen2_get_port(plane),
->> +                         inst->session_id,
->> +                         payload_type,
->> +                         payload,
->> +                         payload_size);
->> +
->> +    return iris_hfi_queue_cmd_write(inst->core, inst_hfi_gen2->packet,
->> +                    inst_hfi_gen2->packet->size);
->> +}
->> +
->> +static int iris_hfi_gen2_subscribe_change_param(struct iris_inst *inst,
->> u32 plane)
->> +{
->> +    struct iris_inst_hfi_gen2 *inst_hfi_gen2 = to_iris_inst_hfi_gen2(inst);
->> +    struct hfi_subscription_params subsc_params;
->> +    u32 prop_type, payload_size, payload_type;
->> +    struct iris_core *core = inst->core;
->> +    const u32 *change_param = NULL;
->> +    u32 change_param_size = 0;
->> +    u32 payload[32] = {0};
->> +    u32 hfi_port = 0;
->> +    int ret;
->> +    u32 i;
->> +
->> +    if ((V4L2_TYPE_IS_OUTPUT(plane) &&
->> inst_hfi_gen2->ipsc_properties_set) ||
->> +        (V4L2_TYPE_IS_CAPTURE(plane) &&
->> inst_hfi_gen2->opsc_properties_set)) {
->> +        dev_err(core->dev, "invalid plane\n");
->> +        return 0;
->> +    }
->> +
->> +    change_param = core->iris_platform_data->input_config_params;
->> +    change_param_size = core->iris_platform_data->input_config_params_size;
->> +
->> +    if (!change_param || !change_param_size)
->> +        return -EINVAL;
-> 
-> That's an odd one, checking for zero but _not_ bounds checking
-> chanage_param_size < (sizeof(payload)/sizeof(u32)) - 1
-> 
-> I'm not sure where inpug_config_param_size gets populated but I'd rather
-> check that type of parameter - for exactly that reason - than the defensive
-> coding done on your inputs elsewhere.
-> 
-> TL;DR why do you trust change_param_size < your array size but not
-> change_param_size >= 1 ?
-> 
-These NULL checks here are actually not needed as we will make sure this is
-filled in platform data. Will remove these checks in next version and will
-see if bound check is required.
-> ---
-> bod
+In the laptop market I agree with you. However, in the handheld
+market, users expect to be able to lower the power envelope of the
+device on demand in a granular fashion. As the battery drop is
+measured in Watts, tying a slider to Watts is a natural solution.
+
+Most of the time, when those controls are used it is to limit the
+thermal envelope of the device, not exceed it. We want to remove the
+use of these tools and allow manufacturers the ability to customise
+the power envelope they offer to users.
+
+> While some existing PMF mailboxes are being deprecated, and SPL has
+> been removed starting with Strix[1] due to the APTS method.
+>
+> It's important to use some settings together rather than individually
+> (which the users might not be aware of). For instance, updating SPL
+> requires corresponding updates to STT limits to avoid negative outcomes.
+
+This suggestion was referring to a combined slider, much like the
+suggestion below. So STT limits would be modified in tandem,
+respecting manufacturer profiles. See comments below.
+
+If you find the name SPL disagreeable, it could be named {tdp,
+tdp_min, tdp_max}. This is the solution used by Valve on the Steam
+Deck (power1_cap{+min,max}, power2_cap{+min,max}).
+
+In addition, boost is seen as detrimental to handheld devices, with
+most users disliking and disabling it. Steam Deck does not use boost.
+It is disabled by Steam (power1_cap == power2_cap). So STT and STAPM
+are not very relevant. In addition, Steam Deck van gogh has a more
+linear response so TDP limits are less required.
+
+> Additionally, altering these parameters can exceed thermal limits and
+> potentially void warranties.
+>
+> Considering CnQF, why not let OEMs opt-in and allow the algorithm to
+> manage power budgets, rather than providing these controls to users
+> from the kernel when userspace tools already exist?
+>
+> Please note that on systems with Smart PC enabled, if users manually
+> adjust the system thermals, it can lead to the thermal controls
+> becoming unmanageable.
+>
+> Please consider this perspective.
+>
+> [1]
+> https://github.com/torvalds/linux/blob/master/drivers/platform/x86/amd/pmf/sps.c#L193
+
+This slider looks like it would do what we would need. I will note the
+importance of tying the slider to Watts to manage user expectation and
+adding more gradations (e.g., 15-25, every 1-2W for sub-50W devices).
+
+We have found automatic solutions to not work in the handheld market,
+as most AAA games will consume the maximum TDP the profile allows. In
+addition, due to performance non-linearities above e.g., 15W,
+performance will be similar. For example, on the Legion Go,
+performance might increase 20% when going from 17W-25W, however
+consumption will increase from ~30W to 45W (50%) which greatly affects
+battery life.
+
+Therefore, we need to allow the user to choose between 20% and extra
+battery life. If you think we can use an algorithm for this I would
+love to know.
+
+Much like you, we dislike AutoTDP solutions that use e.g., RyzenAdj, as they:
+ 1) Do not respect manufacturer limits
+ 2) Cause system instability such as stutters when setting values
+ 3) Can cause crashes if they access the mailbox at the same time as
+the AMD drm driver.
+
+Thank you for your time,
+Antheas
 
