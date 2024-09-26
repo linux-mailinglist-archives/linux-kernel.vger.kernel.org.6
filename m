@@ -1,102 +1,135 @@
-Return-Path: <linux-kernel+bounces-340114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEACE986EB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:24:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA10F986EB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8342DB2108E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:24:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FCC4281D60
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 08:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D918C135A53;
-	Thu, 26 Sep 2024 08:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39E71A4E76;
+	Thu, 26 Sep 2024 08:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bt0ziwDs"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="lnOot4Ci"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1071719F123;
-	Thu, 26 Sep 2024 08:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF736188CB8;
+	Thu, 26 Sep 2024 08:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727339066; cv=none; b=Qbw55fjjtmVvUpnJHvRf48XfHV+IgU1F2HbwwDVzzw596BObDR29PRtZgAiwVCPWZUDlHm3wMPQa2GiFXiXe51pynU6fl+Xpju308i9ka/HShNO1whR8OGzQDFY1l2U43C07t4jqm2XARVpPKEbBXEv0/ieo7+YEXs43qyZ0RRk=
+	t=1727339109; cv=none; b=KaY6XJ0Bh7S16amkZScYYHgUVH40snKgy47eyZUgje29cxrr0D1J3VjgfA20QcuTKNnCeBZDzktIxQYnHSBNw8E3l0ZwqZR2fGv/oT1frAXHxRCWGTDGRVan2EG+ciqFusuFBbezc8jdBGO/1o2bAwh2l3YQqXYeR2Az/jmwO3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727339066; c=relaxed/simple;
-	bh=/Z2XIG86WdY+jEgqJgqZCAMogLmoLb2+X5zN5NeXU+4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pNPCgLvcTaXahXst58qk8a46WouMQLy+pM8Hgw/tu8k3Ky0VVuqEu7Jwklhmo9VB3MueoV13Fy/VlvGkvTVCr3vEkDVmJXLLT5FT86QGXNtCGbzsZQYdyqb60Y3BmP0JlB0S40GUUaA7EEujGjEO1qA32P7GLHxiPV6YRFEEBC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bt0ziwDs; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e0a4eebdcfso44496a91.0;
-        Thu, 26 Sep 2024 01:24:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727339064; x=1727943864; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Agw4mfcYu0+felgqBCno2VGLAfNAP2sDrnMAdk9QiyA=;
-        b=Bt0ziwDsxoSvr/KEs7a+sGVgpi2F74+m5NZzlu47AoK0ffmWS+LU2bKeZ2wfz7FICr
-         lNOcotj3aiAIwOdMxuu3vmVXJ28N6LbUfpE/awmYQK2VnbaLKNxVmad433dP07625k7g
-         /WiRLo4nhvDf6rmsEIsK5IXHVkhtenGzGe6XnbxpHEjZLCdQN6D7j2n0CYbWi7mozgkj
-         IPHcumD1gTuVoz8XxOqIIvwSOS6Gr7bxOTnjLNMU/imHXrng966SrDRsGyyt5HwHE57Q
-         vXr7qeT/qUH1wQSeBqgRMuYhhWLZO0L0lbE0N4DwJFAe1h8q0JXNP6ihmKAZkjpIcSy2
-         AkSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727339064; x=1727943864;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Agw4mfcYu0+felgqBCno2VGLAfNAP2sDrnMAdk9QiyA=;
-        b=Nnzj4ry+tD2fwHQqXpQ7NNSre4XDCXmhQZGjvbPVPiQKceh7616w2IP8DudQKNVNIe
-         uEOLVsgneeMHpvmbmI9pRLp8t+xBOVdnnwLW+i53qDiyA3gZPrVpnWIAtguFcVUSJElf
-         Eli1D3L73ygUR2/LFSx9nyo1fTUtO1KBJNc0AZrob3ZgT3VerumzoIDrU/+NL+p5NpHg
-         UmKLGN6p7fHFEFdv4Vits4oI3c0MkjMA6SKIncAbzqzjGP++WNnkjGq+PhCc+OZ09OwN
-         4YDIdDgKgexEgf/+4UgR8xChbxXd3Hk/m7XwkCCAEJ6mgqp4f3UJH1S6Utr+s9eb0j/A
-         7nNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUq2nWsX3muimgBnETK/z72U4ORmj7vE9BZPsYvLznhX7itis0dn7vdnMKcgiVz2aoNRVeU5azK7ivDpA==@vger.kernel.org, AJvYcCVG12Ul00rHZ5ZJ3NkpQSiidoGXHP3P2G3zPsE/HFTJ7nfezbtmZK35Q7OUe+piKymRIhHPzyCc/o+M+Ps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHUy57ij6U6gy/R1uxIAgL3nhst/VlwDvu6Kvs8mpXud49PtW9
-	K1P091cajX07dccxCwtJ4qNAMVfdB3q1xksbZUKQIUD25xK411GGnNIHQQVMZwrQWVeYdWgviQ6
-	409LPJRbQSMpm+/49O1EdSHk5STc=
-X-Google-Smtp-Source: AGHT+IGN5a2LjedSz/nV25OOsTamVwRf6epN8mrSZq263ZT0rjnM/n7nBjLzueNprcFSVf79mIDhHgqRY74DdBkDVn8=
-X-Received: by 2002:a05:6a21:6d82:b0:1c6:bed1:bbd0 with SMTP id
- adf61e73a8af0-1d4bed1b9dfmr3876946637.0.1727339064378; Thu, 26 Sep 2024
- 01:24:24 -0700 (PDT)
+	s=arc-20240116; t=1727339109; c=relaxed/simple;
+	bh=nzAJ58vyoHQtO3NGE8PRselJtg6kTzIF26rnk3ElbXE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DWfSd9KjzdrvB9BBcZMbv7F+JaJq2UG1Hq/PmPlDKpMt8r+HVpt4/7dHVVxgspFbpLDyVohSbBycbU4fgx8ZKOhsSItHRSCftKEiOqC5EnABlp9CQnfm/hMqmwm0uo/UykmpwIi+dtzyvGOuwmZJTf2GkBwNeH5wZ0FKSCWVits=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=lnOot4Ci; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=iBsC3mABl+He9E398zbyg48Y1tA2wfpFLTdtcZVXHtw=; b=lnOot4CiQs6jGk5N9O6UHusTzf
+	tvYsmgjHyv9XLkoSuitf8eT7HDY5YYLgia0z0d3nLQjR5w0ONlV+THk+5btwcvK1AossjagBYT04Q
+	36QKSrnVjx6fzIuEwCitbw9rAUEPuq2K3UaHmTTEInfHIGYF7LvN8XHRGhylDaI/rAzGCVh6Hbdo2
+	lR8CKW/yC+j2BIRi/lYeDjsCBGhMnoC6BnuepvEbkcbXzDJtOrzEZJhH7AkoM0KVGq9+JBL6klYme
+	Lprgc7g7kRcFIMIH0AYMFdzKCLvJhv684BMiN07OhWgMpJT8s1psLwLwfAhF3SVGRHcHme8Q3oGQ4
+	xYRmqqxA==;
+Received: from 85-160-70-253.reb.o2.cz ([85.160.70.253] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1stjnu-0001ez-D4; Thu, 26 Sep 2024 10:24:50 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org, Dragan Simic <dsimic@manjaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, stable@vger.kernel.org
+Subject:
+ Re: [PATCH] arm64: dts: rockchip: Move L3 cache under CPUs in RK356x SoC dtsi
+Date: Thu, 26 Sep 2024 10:24:49 +0200
+Message-ID: <3938446.fW5hKsROvD@phil>
+In-Reply-To:
+ <da07c30302cdb032dbda434438f89692a6cb0a2d.1727336728.git.dsimic@manjaro.org>
+References:
+ <da07c30302cdb032dbda434438f89692a6cb0a2d.1727336728.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926100434.45d58861@canb.auug.org.au> <CAH5fLgjRVZA3Gmb7Ogs+Y65T38EpNVeVEqmg93ZB4dn0Y7J3aA@mail.gmail.com>
- <20240926181348.3965b040@canb.auug.org.au>
-In-Reply-To: <20240926181348.3965b040@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 26 Sep 2024 10:24:10 +0200
-Message-ID: <CANiq72kFH125Pk6K-JaswWDFmcvtP2GKx2-3ZAULF4PmpW7M-w@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of Linus' tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alice Ryhl <aliceryhl@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Gatlin Newhouse <gatlin.newhouse@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Marco Elver <elver@google.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Sep 26, 2024 at 10:13=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.or=
-g.au> wrote:
->
-> Thanks.  I will replace the reverts in my fixes tree with that until it
-> is applied to Linus' tree.
+Am Donnerstag, 26. September 2024, 09:49:18 CEST schrieb Dragan Simic:
+> Move the "l3_cache" node under the "cpus" node in the dtsi file for Rockchip
+> RK356x SoCs.  There's no need for this cache node to be at the higher level.
+> 
+> Fixes: 8612169a05c5 ("arm64: dts: rockchip: Add cache information to the SoC dtsi for RK356x")
+> Cc: stable@vger.kernel.org
 
-Thanks! I will apply it to rust-fixes now, so in principle you will
-get it through that branch for tomorrow, in case it helps.
+I think the commit message needs a bit more rationale on why this is a
+stable-worthy fix. Because from the move and commit message it reads
+like a styling choice ;-) .
 
-Cheers,
-Miguel
+I do agree that it makes more sense as child of cpus, but the commit
+message should also elaborate on why that would matter for stable.
+
+
+Heiko
+
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk356x.dtsi | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+> index 4690be841a1c..9f7136e5d553 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+> @@ -113,19 +113,19 @@ cpu3: cpu@300 {
+>  			d-cache-sets = <128>;
+>  			next-level-cache = <&l3_cache>;
+>  		};
+> -	};
+>  
+> -	/*
+> -	 * There are no private per-core L2 caches, but only the
+> -	 * L3 cache that appears to the CPU cores as L2 caches
+> -	 */
+> -	l3_cache: l3-cache {
+> -		compatible = "cache";
+> -		cache-level = <2>;
+> -		cache-unified;
+> -		cache-size = <0x80000>;
+> -		cache-line-size = <64>;
+> -		cache-sets = <512>;
+> +		/*
+> +		 * There are no private per-core L2 caches, but only the
+> +		 * L3 cache that appears to the CPU cores as L2 caches
+> +		 */
+> +		l3_cache: l3-cache {
+> +			compatible = "cache";
+> +			cache-level = <2>;
+> +			cache-unified;
+> +			cache-size = <0x80000>;
+> +			cache-line-size = <64>;
+> +			cache-sets = <512>;
+> +		};
+>  	};
+>  
+>  	cpu0_opp_table: opp-table-0 {
+> 
+
+
+
+
 
