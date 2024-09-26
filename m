@@ -1,93 +1,140 @@
-Return-Path: <linux-kernel+bounces-340179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16355986F72
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:00:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 454AB986F74
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 416B81C22608
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:00:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 760E21C20E5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185171A726C;
-	Thu, 26 Sep 2024 09:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A271B1A4E81;
+	Thu, 26 Sep 2024 09:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CmumwoTR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="1g3477Zy"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FAC610B;
-	Thu, 26 Sep 2024 09:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913D3610B;
+	Thu, 26 Sep 2024 09:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727341229; cv=none; b=iM56kUhDWiJLCYGYmKDBr9KUG5KHeXDMRWGLz31/QQVjm6Rz/Rop/MpzZ+/FdPjBB6+Tpy+oAmEe4jfyIP2pxdI+nCF0XGzBKQpH/vJAJNTnBLkDFSLJhoM6Gh7R8YUzJwIW2GFdCf8dDcM7Xdjlt1TOFJGJ7m5ePf5xHCwQeS4=
+	t=1727341250; cv=none; b=BfS/vAZINSB6XSeQJSEVzIXrWE9S5mkeGZlZ05Y6c96ssmWTMCC8poAzYObQVcNyB+xwx3pPC9or+wXrPQNQtrn+QyaCkB9P7rC6zfewgTzARdtHuvYm+0ZnjuseuHVEgoBtV5oeA9P8xyZCzR38nbGAdfdy1kONirocMxbxZEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727341229; c=relaxed/simple;
-	bh=UMJdoJY8tPgme2bAZ6M6eFWFlg8c/0NZ1rSPKltyKB8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=i8mekQz75CjEFi+4WRGs4Va0I8laBxPnN+4lHCK1xQdfE5hTuORjsCyZtRzXD3D+c6rxFqHkztWuKDKFcDqM9i23m7tIoxEHdFIuMxrBoMyhlu9F3nJhD0eHLqTNHaRF6wbqILQCNWT/14pqx7OYSj0ckGvCwOBLcooo19g42x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CmumwoTR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00CF5C4CEC5;
-	Thu, 26 Sep 2024 09:00:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727341229;
-	bh=UMJdoJY8tPgme2bAZ6M6eFWFlg8c/0NZ1rSPKltyKB8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=CmumwoTRBLqKNmwM9+43L/BETXs02XSso9VHoU7yA/cInNSHHYU2ogfyEFpcKKBcB
-	 eL77XqmkNzKr1ePbF0lcEXuDOCp1ZKNCtCuEqaA7TLQfXoqcmSJpkuL86TdDRE/Dco
-	 JTpm0APPtVpztqpibJvWrCtA7KWbiZ0PZm8nOhfgBDEbP/oMogxFkv4+WePgFT02LN
-	 8JyLHWGh2xjk111z82ZxfgV+MwzasZZhWjBGjQMrF7eFPmeQ1hqRv33+Ke5Z8VJeC+
-	 almue6WdTTKDbAapBCzonvSeuPbfOsK3KBNlAAbK3H2lXXvSnA1mysBM3oWjxoMHPm
-	 YsfSdBVWbb0zQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF6B380DBF5;
-	Thu, 26 Sep 2024 09:00:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1727341250; c=relaxed/simple;
+	bh=aeFPmcKmmbExL2IR7IpGRpWzRnxI8fggckfYDKs4nnQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=he+qiEhQSrCZHIHPYj/G150/1LsU5TiU1ydTcxb2gMWgarFRndlpoO93UBFMVW3NZK5Z3mWCWLXhlr+OQHGiwxlkjwNn4k4DveaKnV03S62bBavt0gKde9GDTMfLEIYy7Es0bji9iXv46fqni0NfZx2c9rpI1EFtEThtZyYHHC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=1g3477Zy; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Ub1Y8m82tTvGVFmDgJcqPN+qV5RmpDIawEahuLWehTE=; b=1g3477Zy2dgHxKLcQr/xqn6BQ0
+	6dOScrwm1tsNJa/iGqfwY8XN20f76oNDwl8JetA1lAAL3/EBFfvtXHkRaBUg9Ts20ygy7uM9NsYy1
+	sNzJBKjEF4RJibW1x2egx7nZbqnbEJ0LBCq+cTftm65gHJhv9KZvAfw5530DWUrSyhWvwl4CLVamk
+	Ma3J/dnfP993j43GHnykZMdHMBaK32jK4RvAtMfDeTUXuA5NvpYyOO9j4CwgOFajjrZ8ywsvjY7D8
+	I2pe7Q48Tf1k4KHp/GHzzJRH6UPkovSFVXGKHQu+Fa6dDG65i3tV69U38Ufd+o26swa99OOmSGg7b
+	WR9v4PCw==;
+Received: from 85-160-70-253.reb.o2.cz ([85.160.70.253] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1stkMd-0001t8-SA; Thu, 26 Sep 2024 11:00:43 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-spi@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ Dragan Simic <dsimic@manjaro.org>
+Cc: broonie@kernel.org, oss@helene.moe, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] spi: rockchip: Use dev_err_probe() in the probe path
+Date: Thu, 26 Sep 2024 11:00:42 +0200
+Message-ID: <6673004.tM3a2QDmDi@phil>
+In-Reply-To:
+ <8bc905ff3c47ed458d8c65a031822ba6b9df8a07.1727337732.git.dsimic@manjaro.org>
+References:
+ <cover.1727337732.git.dsimic@manjaro.org>
+ <8bc905ff3c47ed458d8c65a031822ba6b9df8a07.1727337732.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCHv3] usbnet: fix cyclical race on disconnect with work queue
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172734123152.1176897.11617917642549187841.git-patchwork-notify@kernel.org>
-Date: Thu, 26 Sep 2024 09:00:31 +0000
-References: <20240919123525.688065-1-oneukum@suse.com>
-In-Reply-To: <20240919123525.688065-1-oneukum@suse.com>
-To: Oliver Neukum <oneukum@suse.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-Hello:
+Am Donnerstag, 26. September 2024, 10:38:15 CEST schrieb Dragan Simic:
+> Use function dev_err_probe() in the probe path instead of dev_err() where
+> appropriate, to make the code a bit more uniform and compact, and to impr=
+ove
+> error handling for the TX and RX DMA channel requests.
+>=20
+> Previously, deferred requests for the TX and RX DMA channels produced no
+> debug messages, and the final error messages didn't include the error cod=
+es,
+> which are all highly useful when debugging permanently failed DMA channel
+> requests, such as when the required drivers aren't enabled.
+>=20
+> Suggested-by: H=E9lene Vulquin <oss@helene.moe>
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> ---
+>  drivers/spi/spi-rockchip.c | 25 ++++++++++++-------------
+>  1 file changed, 12 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
+> index 28879fed03f8..6b5c67a357bb 100644
+> --- a/drivers/spi/spi-rockchip.c
+> +++ b/drivers/spi/spi-rockchip.c
+> @@ -853,22 +853,21 @@ static int rockchip_spi_probe(struct platform_devic=
+e *pdev)
+> =20
+>  	ctlr->dma_tx =3D dma_request_chan(rs->dev, "tx");
+>  	if (IS_ERR(ctlr->dma_tx)) {
+> -		/* Check tx to see if we need defer probing driver */
+> -		if (PTR_ERR(ctlr->dma_tx) =3D=3D -EPROBE_DEFER) {
+> -			ret =3D -EPROBE_DEFER;
+> +		/* Check tx to see if we need to defer driver probing */
+> +		ret =3D dev_err_probe(rs->dev, PTR_ERR(ctlr->dma_tx),
+> +				    "Failed to request TX DMA channel\n");
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+you're upgrading here from a warning to an error log level.
+As it seems the controller may actually provide some level of functionality
+even without dma, is this approriate?
 
-On Thu, 19 Sep 2024 14:33:42 +0200 you wrote:
-> The work can submit URBs and the URBs can schedule the work.
-> This cycle needs to be broken, when a device is to be stopped.
-> Use a flag to do so.
-> This is a design issue as old as the driver.
-> 
-> Signed-off-by: Oliver Neukum <oneukum@suse.com>
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> CC: stable@vger.kernel.org
-> 
-> [...]
+Same for rx below.
 
-Here is the summary with links:
-  - [PATCHv3] usbnet: fix cyclical race on disconnect with work queue
-    https://git.kernel.org/netdev/net/c/04e906839a05
+Heiko
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> +		if (ret =3D=3D -EPROBE_DEFER)
+>  			goto err_disable_pm_runtime;
+> -		}
+> -		dev_warn(rs->dev, "Failed to request TX DMA channel\n");
+>  		ctlr->dma_tx =3D NULL;
+>  	}
+> =20
+>  	ctlr->dma_rx =3D dma_request_chan(rs->dev, "rx");
+>  	if (IS_ERR(ctlr->dma_rx)) {
+> -		if (PTR_ERR(ctlr->dma_rx) =3D=3D -EPROBE_DEFER) {
+> -			ret =3D -EPROBE_DEFER;
+> +		/* Check rx to see if we need to defer driver probing */
+> +		ret =3D dev_err_probe(rs->dev, PTR_ERR(ctlr->dma_rx),
+> +				    "Failed to request RX DMA channel\n");
+> +		if (ret =3D=3D -EPROBE_DEFER)
+>  			goto err_free_dma_tx;
+> -		}
+> -		dev_warn(rs->dev, "Failed to request RX DMA channel\n");
+>  		ctlr->dma_rx =3D NULL;
+>  	}
+> =20
+>=20
+
+
 
 
 
