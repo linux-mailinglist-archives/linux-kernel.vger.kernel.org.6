@@ -1,240 +1,187 @@
-Return-Path: <linux-kernel+bounces-340805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50CD9987815
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:02:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A13D4987817
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 19:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0AAAB23D13
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:02:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 854A7287462
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 17:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEF615A4B0;
-	Thu, 26 Sep 2024 17:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="AuLgDpTu"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011043.outbound.protection.outlook.com [52.101.65.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6575115B963;
+	Thu, 26 Sep 2024 17:02:31 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0573A157A41
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727370144; cv=fail; b=O245d07q1ah26BfK4IyDJhCOZCrjVcAhef0Qb249ljw22DQfRrveTJUlmXHZ0bFCdvqUZuXVymGDmnfzEmDxP3z6yr2ddhjp7odI64rGpZaX7bgNOo+1nVwXIj0eFLShkiamrZNi3njodZpJ+elF1oTruhJkK2B0ohuOenzXk2o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727370144; c=relaxed/simple;
-	bh=/umabdU29187tcibJUkOBk/jHXOt1YZ2XRUlnnlXhpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=rOwLWfTsEQr7NuY9gp/Ax3dUjwm4FhRMzEKxxOhhSYLyW48MLECWlRrNzxwZrkUt+pd2mxhXuq72937r1UeXrqAH+5/11hF2OuLDib52SL7BA1qQRFGgRjzoxv93fIr2LEEYQCC55BpxqwE930tiDx7h6EkIZKcMJaJKGJqcwA4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=AuLgDpTu; arc=fail smtp.client-ip=52.101.65.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f6JKj8uhZW0fwNU0jXsmoLG7q5QLKbkXrKqTzV8O4OXu40fyrvhoPpYsQpEIMMObwJrzJigthKf+asjLRZVEOZw8m5oBt3qfPXfA8Mq0WMKILkKzhiTI9DxU/VdTRICl6mTxrREGRrorQscoR3XPByagio/dqaFNpSUHKzKCMLPTDIQ6p/+Ge1f48ugGLF9rg/BUZUcBEkTlXE58dqit2mOyu3R8GTY7nyBRlR4ExzJ/VCUf2zDNzbVWoaoUrKGyYmzIlU2hpvzfuR4+0vWiWdyk0vJUqz87ysCkTQdqSKRsCLcrqzHXS2/UKPM4n3u0YTueojIaI/DlQdZx+f2VNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3xOIUQ8u8uHJqEbGLKzK7E4Elj4ClTv0DcMYjJrWySc=;
- b=AvK/HsFKhvEMTCgbkgf/KFDT23ctHe5ezzm2Eq8JkOpJ7Ih8I+km0CGe7PiU5QyheGRNRTKRy/gVpR9iqk4UWglhIyA775IsJ/tTcREUVPVuQbohObi1c23vqS0HfLr5+j/kfEPMtZ2X5QfhpHiBULf2g8UmQ8V/NnHjLnxnn81blfXKk2xpoTsZ6AQgha3zVmoR+3AFBJU4Arwojq4NzVpnWFgiwJzux5VGsLVLwYfQiSkAepywogcRD2TOorthkVrc/Ej6TLFneVOUiRnaRqJOF4j5FOQhqzHoWkf3QAJxQs/t6Qm0Ab52Kslw8wtWBRZyEO25Y6/Y4goGDJIysA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3xOIUQ8u8uHJqEbGLKzK7E4Elj4ClTv0DcMYjJrWySc=;
- b=AuLgDpTuBsbUuDkP+IBrU6BcqlRM7lRF7y37FlPi2tTk1iVA+//IsYeZnRdzmeg4iqvrWtr2TMPq30+fLd1ydip7Hf1irCUw96hOyDLDFjjZ7qFcQUS03JJupuCdaGykvefAHDesa3n4q0eKx14lTlZmEbTJ3vVNQ9hxzgWoXKUPjquPmb7G6tJAn3ucszj+WpN7OIv66tXGjJQSFiTMvaY8+ie5eyTLliosNJ2Lxg79XoLkfwjtDvjGSIyPYobsDwhaLObi5RhNH8RmAa0lD/wQsbsPqAtOzJiEDm+5QOOJxjEnvG0SXcUnW0nuRGQjKBop22Wp+Mj6zEj/PM+bAA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DB9PR04MB9646.eurprd04.prod.outlook.com (2603:10a6:10:30a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Thu, 26 Sep
- 2024 17:02:14 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7982.022; Thu, 26 Sep 2024
- 17:02:14 +0000
-Date: Thu, 26 Sep 2024 13:02:06 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Parshuram Thombare <pthombar@cadence.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Conor Culhane <conor.culhane@silvaco.com>
-Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	Ravindra Yashvant Shinde <ravindra.yashvant.shinde@nxp.com>,
-	stable@kernel.org
-Subject: Re: [PATCH v4 00/11] i3c: master: some fix and improvemnt for hotjoin
-Message-ID: <ZvWTjjuRU26dTyKT@lizhi-Precision-Tower-5810>
-References: <20240829-i3c_fix-v4-0-ebcbd5efceba@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829-i3c_fix-v4-0-ebcbd5efceba@nxp.com>
-X-ClientProxiedBy: BYAPR08CA0034.namprd08.prod.outlook.com
- (2603:10b6:a03:100::47) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E875915C133
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727370150; cv=none; b=NuFA14UQQMs4khFzbGszkCt1o5YISTYOYUmYy1CfBPEJG8kvoWOCGp8ZTauNS6mwC9D3JzpiR5ujao0XYzKr6aLhaoEwi7cJEMCtSnYVUagCNSSbpRI0gnOwK3YUN6xucjceFVWMu90QjpTVMiquT/J3eD71qKNsyWOXymdyJF4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727370150; c=relaxed/simple;
+	bh=amLeIUzDg6N5z6TPUjRHXlC09XUEc8rBprxd8yz95nw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jTIOCfMAEH7eeKbyKxr3GIEAORDWOBzyFkeoJcY11pksS9/20VaaVd0mgQaEl7HUXMpnY5gqizNLrkRHrJeay5fNec0B9E3VoJE7eum/hh6Pg8995gqqbhTS9yTSenI/E9AlJ+sdI9BsY8+fkRzZVsLcoYm4/2KDnO2IpuO4eSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39f5328fd5eso12272375ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:02:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727370148; x=1727974948;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7JKBVvQkVjew4Fq/HTsPxuf4+ylReuYaw+UJwkB/x3E=;
+        b=RY/HFUtAQRAI/xatRAwC96d/p+tNt2evcjbBdMEVnXk7Spjg+XaOhPwEvD3bOsVC9G
+         8RDh1pG6LexMknzwncbB3ntlo9KOtF5FyFFNbuclJ+oJtC+p6tabtMLoafLm8ikOV88T
+         NpRtXaGhQmrfLO64QTltdGy7u6BijHK2qJfquhLHR+O5X0BYMVcaPP2K/qH7CKUYm67q
+         h/IC3nT2xyw7U9WBYFrRV8mkqzV/7qV7kn+ar4D0DySJ6r6GVLmzN/EwUbFWES2OgU+2
+         IdcW7cpiYX486iMcuahozIqHowTZG09cG+wiIhcvL3oA2kenV+8qr3SNlPXmifVNQ/R4
+         TmjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmibnzG9bXnVTOjJC/1QF6mT32tEylKgxHhPu266Wk7Oflm/qasjEuE6YfT3tFHMM9guiTR75MICWAkj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGzZ4+TucLSktJcYcScsURE8Hpsc9WOEgcRjppqyBdweeXF//Y
+	zm5oIqail/O/j9gAu0eC/LlpxnMHuaiMBe31+M7VK5VAbY/cdVMksa9ksy6P3g8bDjWDCgA4B8X
+	IWaOlS8p8wviDGQTYfD2WhQGKg6j2SUVLxo0/k41B8p4seQEPqH0u1SY=
+X-Google-Smtp-Source: AGHT+IEfChCIvJD17g0HNjWVF24uw4Z/2wNdAl7dth1DT/ECx0gJENK2vMZYi0Y59xa7ozb2Jgm5O+aJJG7L2OxI9TTB9H0DS08s
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB9646:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd2b6ae5-feea-40e0-9992-08dcde4cf7f1
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|366016|376014|52116014|7416014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?FIJoBS7uDZLRla7GQkWYqe5p8Jzf3sJxmksHXVJknXUhOa89ptzSANDMzNu1?=
- =?us-ascii?Q?k9j6iK7653z2grNqTho0JL1BYmTWctglFuabV2qvm5x7R8A0nn1gtteRMPck?=
- =?us-ascii?Q?Ix/PPWBwtuNXhxSJ5cWlStgtJBvoYbkokSmyBzI6HoeENIIUcxMIQdHxOn50?=
- =?us-ascii?Q?0CuZCuVQUB8AYSZwB6HpJOtHYyAyX+Fs/veSOmR8Pi6BNlWSPNPeDloxvC1/?=
- =?us-ascii?Q?SJO4MUtIPmkLxCAqk+nURQxwyjGtvFeh3puUYt9oiWjPCiw9/ehVGr9lYdZD?=
- =?us-ascii?Q?umnfa9MDqKGeDQYD9fhTaooKObI97tEtftg7g+VSeN42gwW3K7cyebyAF4Ne?=
- =?us-ascii?Q?5py/Pu1hDEE+h2odd3ef6l86qFnwx3zjynk9TAr00Q9GAkx9FOaou6ZLHnDH?=
- =?us-ascii?Q?12MDG/0qf4GGlewSMa6s9OYtcclthjNg0ZGIktTVww/IhtqTLxm+0UsnL0Cw?=
- =?us-ascii?Q?HfJOIfdIEHODLSW5cipgbT9UApONR9YdpykTMgE4UL3MBvRS7HOfK2subR0B?=
- =?us-ascii?Q?FqXD3BuwBIQj698zCmGX+G/OEJbRFQgKD1PBcIJo/N7Pg2nYnL9wzHR7n1nR?=
- =?us-ascii?Q?M3clA1T69YQiJ88JqvEkEhV+NUfjR4u5lp2q+wCrEZzKruDIh5/xZiTXVpMa?=
- =?us-ascii?Q?VEDcxyVo5bXwuhRKFtQYTOv0Rmckq09WtW5VAuojSOIKIPg+DiXvtwOJ0UPv?=
- =?us-ascii?Q?sPz+KCMqkU9XFv2j4/+vpg8frNOoIpMmXukl5D9SbFTL9HGa1DMWJjIMzFpC?=
- =?us-ascii?Q?JRCDnTl16QvqCY8R5wUg6+9xgo7BVgKnMQAv8dOgXozZDO8XftO73BfVzvlO?=
- =?us-ascii?Q?NLAxB2i5tUqD4R5/IA+tyaeofUqagbNZR5rbpvcBUaaBSuvzGlzgtc8qo/de?=
- =?us-ascii?Q?VJvXVyOsf21sq+5oXNKszuGVq8valGkx65edqEUdOlgDX1llO/p84eabh9gm?=
- =?us-ascii?Q?4ZF23hSCE+fO0OtD+Y57aUVs1DVBbHLPQyBmMSV2+0zHV1zZG9y1L3YS1zL9?=
- =?us-ascii?Q?s6/9XIEwbWC4Q9PiT6tdFfusSij/YnIRkf/R/3cG0KZwBZpCJD9b77MbiibM?=
- =?us-ascii?Q?aDbim9oVR+Nz1Digz6H8jqrPRHy6ZvNhnOOrpYVaOL0wfatCSK1KW2pDeCPM?=
- =?us-ascii?Q?IyD+RvotReLKEBqCB6HXMUSqVJcPSLcoQBJbV52ew79eQ9aa9BcVJZ3LqzWP?=
- =?us-ascii?Q?IakP6rctd+hofiMGHxStSGUqhtreqRXOeM9IcmrRIgN3er+TIrybKAq6AtZ0?=
- =?us-ascii?Q?R77oV9uCjI1lQs4v7IpPA0qDjBhGxow3/v7NxNBWFl1KshUoI/icpmK+Fs8q?=
- =?us-ascii?Q?tMmwhhPEkDLOFZ/q5f4LaRf9tlnRij7pyVX3IQmnxiQHtXNpKInBQFfDoQh/?=
- =?us-ascii?Q?Y2Nq5FQ=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(7416014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?YuEZCOPEGyEIbzHPtKKXhSHMEhV6V2yck9oClIJ7Xu/oeQ1bGnQwi2LfWbj+?=
- =?us-ascii?Q?bwuO2fhV32O9fl1dPaGB6x8cDaIAiNUaqmIy7xGcYJJQz5QE96HPV29gN8LI?=
- =?us-ascii?Q?ON7y0v0z0qsjts+5fvAQJo1+J2bQ7FU7pFwgrqUub+DMwEIXkeklf/qht2SK?=
- =?us-ascii?Q?vq5UY+iI+tMxf83BLcWb6NdUX5+2/e+aJayAcLpm8wYlXArtjWeFZ4BNERyp?=
- =?us-ascii?Q?9LJGDznirb8TjktbFYar5QWGDJZMFIVzkvh1UID2w467r5yZ07kBzMwo81bx?=
- =?us-ascii?Q?0BbzafSnHoR3pj3qQKDV2mmmVy1QTeqJd8t6IZYQAFrTtzRHu8FjfO54qveG?=
- =?us-ascii?Q?jVtoFbzTjXSENczRvoyD2qJkTWV2lxpbYY08mowxBCU952UsMdq/m/Jq1Nfi?=
- =?us-ascii?Q?28xaC6CRnhq82VLOwEkeDcHSsYr1I24zxQ3o/fB9jQT6P9GBsJ6suu3vuPIy?=
- =?us-ascii?Q?vHJyxC5t6TCfidH8pohkJMoFIZDofz0BAAX27k/fGkjbutK6Jsq1yc/jxfZW?=
- =?us-ascii?Q?ReomKbVaItDpyrM3+jVBZP/MXqZSg8xi3Qg5/gj05bmPWM7I6T3LrZGEOXN6?=
- =?us-ascii?Q?YxU0Jd2m55Z4lkoOXi/V3wMzOTy0M4CUIhOroSvnt8UYM3jzz1flgAhNnF4K?=
- =?us-ascii?Q?Cna6KHngsPXmCpg2r7IzvO4oACKUqe74++gAHSuRFR5AsJ1rpq/1xI351Zdf?=
- =?us-ascii?Q?s4qVde8sLLbRv5ix2xy7UDxOBAbHoXaMKRRpEzCIKUcJqoSkXRkZ9IHtQVgn?=
- =?us-ascii?Q?I86dSd5Q9y74yH9W+OPmJv4J9h0ZdFiCMlItht8AmFzqDElTX5BUh6cb8yqa?=
- =?us-ascii?Q?QxmpIFrQsTdPGYBElRfyZL5Mf5+6Hk55fgK6HibC1wAnlF74i0DdkEpRVOM5?=
- =?us-ascii?Q?vUh7yA03vQeu40rGCP/B8d4yxn5t4eWv+8SYmF8MV8RbMHuSsLPAHyROjb53?=
- =?us-ascii?Q?Du7BQ9uQU4a7o3qwuEUi3uMhARSqNnkC4O3qGEvx8c15dvEFUG3212E0sVaT?=
- =?us-ascii?Q?QKxOWwxfB85bpkZorqs8nXCQI6WQc0kwIVf33VTQWOEn9GUcAVMIPW+qmS1I?=
- =?us-ascii?Q?o1GSwwzG4e/sgr4QV4A9Y++bJlVtwA1miRakyFTclYvrFUScqHd0vh8Kr9SC?=
- =?us-ascii?Q?7zUfhEpc4S6HBRH0A+kEV0Qr2N7MyqQsv9x9/fiJ/9V1KTNxqKzzlDX/nU2+?=
- =?us-ascii?Q?MZEUXu2RTV0Trp6WPRDCu/qOHNT4e81we4SnZhNUQ7C9h+BJvA0Vm0esGbHu?=
- =?us-ascii?Q?U/w+CJ9W+6dIbfYDa7xb2ZFI7guHUELp9425lrVrM29zysPNl3hpf2FOt3R1?=
- =?us-ascii?Q?kdbiQBYIwwOI2CmuAbRZcaS+545mvsQSRo2PwZunU9ixY+VB5p0FmdmG0W8P?=
- =?us-ascii?Q?x132dQ+CEGc2i/A1GNCaRB7k2Ga/E96uZoimBKf7tbjUnwEaDQWuv2ZucBSl?=
- =?us-ascii?Q?YYprwcn1Tv/Yk+JakkM8yb3uJtD2nQUIH+bpoFZS55dnCdbPOLtOfnkI1HQC?=
- =?us-ascii?Q?rDfBrwe+9n60gIqKdtb4+4cAxSGfGbnBdHtsPFYjW/OC32GYC87gCFTP8EXM?=
- =?us-ascii?Q?fjktjOPl+0RmOELPzLs=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd2b6ae5-feea-40e0-9992-08dcde4cf7f1
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 17:02:14.0273
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /33v9PJBkffVSgHDOGQDjQzYDC5lp2tVLp3whtgVAqRg0CmKLzQ50fCPCz7o5R0LzN6Ixq8wfv20YffVeXfRNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9646
+X-Received: by 2002:a05:6e02:1c29:b0:3a1:f549:7272 with SMTP id
+ e9e14a558f8ab-3a3452bdca2mr657025ab.23.1727370147773; Thu, 26 Sep 2024
+ 10:02:27 -0700 (PDT)
+Date: Thu, 26 Sep 2024 10:02:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f593a3.050a0220.211276.0079.GAE@google.com>
+Subject: [syzbot] [overlayfs?] general protection fault in ovl_llseek
+From: syzbot <syzbot+d9efec94dcbfa0de1c07@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 29, 2024 at 05:13:57PM -0400, Frank Li wrote:
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
+Hello,
 
-Alex:
+syzbot found the following issue on:
 
-https://lore.kernel.org/linux-i3c/20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com/T/#m16fa9bb875b0ae9d37c5f6e91f90e375551c6366
+HEAD commit:    11a299a7933e Merge tag 'for-6.12/block-20240925' of git://..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1549da80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25e41eb82fab6c0b
+dashboard link: https://syzkaller.appspot.com/bug?extid=d9efec94dcbfa0de1c07
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1349da80580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15870507980000
 
-There is some discuss about assiged address, I already explain the reason
-and ping 3 times,
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-11a299a7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b59f47d0c0da/vmlinux-11a299a7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bf395abcfb64/bzImage-11a299a7.xz
 
-These patch are actual fixed hot join issues.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d9efec94dcbfa0de1c07@syzkaller.appspotmail.com
 
-How move forward?
+RBP: 0000000000000001 R08: 00007fff0dcc56f7 R09: 00000000000000a0
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000001
+R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000022: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000110-0x0000000000000117]
+CPU: 0 UID: 0 PID: 5106 Comm: syz-executor776 Not tainted 6.11.0-syzkaller-10669-g11a299a7933e #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ovl_llseek+0x2a4/0x3f0 fs/overlayfs/file.c:214
+Code: 8d 7c 24 60 e8 ad db e0 fe 48 8b 44 24 60 48 89 44 24 30 48 83 e0 fc 48 89 44 24 20 4c 8d b0 20 01 00 00 4d 89 f7 49 c1 ef 03 <43> 80 3c 27 00 74 08 4c 89 f7 e8 6d dc e0 fe 49 89 1e 48 8b 1c 24
+RSP: 0018:ffffc90002d6fe00 EFLAGS: 00010207
+RAX: fffffffffffffff4 RBX: 0000000000000000 RCX: 0000000000000001
+RDX: 0000000000000000 RSI: ffffffff8c610080 RDI: 0000000000000001
+RBP: ffffc90002d6fec8 R08: ffffffff901ce56f R09: 1ffffffff2039cad
+R10: dffffc0000000000 R11: fffffbfff2039cae R12: dffffc0000000000
+R13: 1ffff11007b2e7ac R14: 0000000000000114 R15: 0000000000000022
+FS:  0000555590dd5380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fcababb3226 CR3: 000000004186a000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ vfs_llseek fs/read_write.c:382 [inline]
+ ksys_lseek fs/read_write.c:395 [inline]
+ __do_sys_lseek fs/read_write.c:406 [inline]
+ __se_sys_lseek fs/read_write.c:404 [inline]
+ __x64_sys_lseek+0x150/0x1e0 fs/read_write.c:404
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fcabab5d8e9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 a1 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff0dcc5958 EFLAGS: 00000246 ORIG_RAX: 0000000000000008
+RAX: ffffffffffffffda RBX: 00007fff0dcc5970 RCX: 00007fcabab5d8e9
+RDX: 0000000000000000 RSI: 0000000000010000 RDI: 0000000000000004
+RBP: 0000000000000001 R08: 00007fff0dcc56f7 R09: 00000000000000a0
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000001
+R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ovl_llseek+0x2a4/0x3f0 fs/overlayfs/file.c:214
+Code: 8d 7c 24 60 e8 ad db e0 fe 48 8b 44 24 60 48 89 44 24 30 48 83 e0 fc 48 89 44 24 20 4c 8d b0 20 01 00 00 4d 89 f7 49 c1 ef 03 <43> 80 3c 27 00 74 08 4c 89 f7 e8 6d dc e0 fe 49 89 1e 48 8b 1c 24
+RSP: 0018:ffffc90002d6fe00 EFLAGS: 00010207
+RAX: fffffffffffffff4 RBX: 0000000000000000 RCX: 0000000000000001
+RDX: 0000000000000000 RSI: ffffffff8c610080 RDI: 0000000000000001
+RBP: ffffc90002d6fec8 R08: ffffffff901ce56f R09: 1ffffffff2039cad
+R10: dffffc0000000000 R11: fffffbfff2039cae R12: dffffc0000000000
+R13: 1ffff11007b2e7ac R14: 0000000000000114 R15: 0000000000000022
+FS:  0000555590dd5380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fcababb3226 CR3: 000000004186a000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	8d 7c 24 60          	lea    0x60(%rsp),%edi
+   4:	e8 ad db e0 fe       	call   0xfee0dbb6
+   9:	48 8b 44 24 60       	mov    0x60(%rsp),%rax
+   e:	48 89 44 24 30       	mov    %rax,0x30(%rsp)
+  13:	48 83 e0 fc          	and    $0xfffffffffffffffc,%rax
+  17:	48 89 44 24 20       	mov    %rax,0x20(%rsp)
+  1c:	4c 8d b0 20 01 00 00 	lea    0x120(%rax),%r14
+  23:	4d 89 f7             	mov    %r14,%r15
+  26:	49 c1 ef 03          	shr    $0x3,%r15
+* 2a:	43 80 3c 27 00       	cmpb   $0x0,(%r15,%r12,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	4c 89 f7             	mov    %r14,%rdi
+  34:	e8 6d dc e0 fe       	call   0xfee0dca6
+  39:	49 89 1e             	mov    %rbx,(%r14)
+  3c:	48 8b 1c 24          	mov    (%rsp),%rbx
 
-best regard
-Frank Li
 
-> Changes in v4:
-> - See each patch
-> - Link to v3: https://lore.kernel.org/r/20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com
->
-> Changes in v3:
-> - Fix build warning
-> kernel test robot noticed the following build warnings:
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Li/i3c-master-Remove-i3c_dev_disable_ibi_locked-olddev-on-device-hotjoin/20240814-234209
-> base:   41c196e567fb1ea97f68a2ffb7faab451cd90854
-> patch link:    https://lore.kernel.org/r/20240813-i3c_fix-v2-10-68fe4a050188%40nxp.com
-> patch subject: [PATCH v2 10/11] i3c: master: svc: wait for Manual ACK/NACK Done before next step
-> config: x86_64-randconfig-161-20240817 (https://download.01.org/0day-ci/archive/20240818/202408180012.ifcIOjgX-lkp@intel.com/config)
-> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202408180012.ifcIOjgX-lkp@intel.com/
->
-> - Link to v2: https://lore.kernel.org/r/20240813-i3c_fix-v2-0-68fe4a050188@nxp.com
->
-> Changes in v2:
-> - add help function at i3c: master: svc: manually emit NACK/ACK for hotjoin F
-> Add below new fix patch
-> i3c: master: svc: fix possible assignment of the same address to two devices
-> i3c: master: svc: wait for Manual ACK/NACK Done before next step
-> i3c: master: svc: use spinlock_saveirq at svc_i3c_master_ibi_work()
-> i3c: master: svc: need check IBIWON for dynamtica address assign
->
-> - Link to v1: https://lore.kernel.org/r/20240724-i3c_fix-v1-0-bfa500b023d6@nxp.com
->
-> ---
-> Frank Li (11):
->       i3c: master: Remove i3c_dev_disable_ibi_locked(olddev) on device hotjoin
->       i3c: master: Replace hard code 2 with macro I3C_ADDR_SLOT_STATUS_BITS
->       i3c: master: Extend address status bit to 4 and add I3C_ADDR_SLOT_EXT_INIT
->       i3c: master: Fix dynamic address leak when 'assigned-address' is present
->       i3c: master: Fix miss free init_dyn_addr at i3c_master_put_i3c_addrs()
->       i3c: master: svc: use repeat start when IBI WIN happens
->       i3c: master: svc: manually emit NACK/ACK for hotjoin
->       i3c: master: svc: need check IBIWON for dynamtica address assign
->       i3c: master: svc: use spin_lock_irqsave at svc_i3c_master_ibi_work()
->       i3c: master: svc: wait for Manual ACK/NACK Done before next step
->       i3c: master: svc: fix possible assignment of the same address to two devices
->
->  drivers/i3c/master.c                | 100 +++++++++++++++++++++--------
->  drivers/i3c/master/svc-i3c-master.c | 122 +++++++++++++++++++++++++++---------
->  include/linux/i3c/master.h          |   9 ++-
->  3 files changed, 175 insertions(+), 56 deletions(-)
-> ---
-> base-commit: f2b9f0aeff2b3bb0446c955f0d8fac7659644c75
-> change-id: 20240724-i3c_fix-371bf8fa9e00
->
-> Best regards,
-> ---
-> Frank Li <Frank.Li@nxp.com>
->
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
