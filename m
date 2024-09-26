@@ -1,369 +1,209 @@
-Return-Path: <linux-kernel+bounces-340187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF3C986F8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:05:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065D8986F85
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADE581F25C63
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:05:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B97D32835E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C55B1AB6CF;
-	Thu, 26 Sep 2024 09:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC4C18BC21;
+	Thu, 26 Sep 2024 09:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dbgLVTSf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Ze/CLS7P"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2051.outbound.protection.outlook.com [40.107.117.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6383E1A4E8F;
-	Thu, 26 Sep 2024 09:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727341508; cv=none; b=QJRhXOgZQHLycxmrzjY+po0CwC+xSeeZEdVJTgOjXY10g2voHiykze3dHO6Mb3PlnGHYK5/4C/JQjt7hZ7RuLiqCGlS1dh+SOlTk6SOI6YGyN24UE6/KTNaguf9nZRVWOVNkTbvz6BM+k8GO+qhaRamfl4PH7Ra9E7Ki4sj0Bf4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727341508; c=relaxed/simple;
-	bh=mjDQwPXu/dNHYC1lgypXnboqw7i+4tdKWzE2tDfSUgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dFTjdkg8p/s6dHkVq6tB3sMta6txwmzQFOBGILrJ/7JdsJ6MKo+RwB3EC1r6cFAL4Mvq4sBKh+hS4lPtXurReHxG3HyYAzsmHb9qbe4x7zPS+2txxJ73AjKTF75XTHGJX6hpJaEz9vAxpVKmzqql8VMMjlxmUTOAzOxXa//5UlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dbgLVTSf; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727341506; x=1758877506;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mjDQwPXu/dNHYC1lgypXnboqw7i+4tdKWzE2tDfSUgY=;
-  b=dbgLVTSfQSPnx55seT7IJ0Qxd6XHVf5opYzcfHAqZw18nbQTzeELBtIi
-   s3OywxBkrMdCBiUXvDBL46OFNhVv+TD7C3cdIR6e1Mg+TfrArjK/ebqsP
-   NsLU2SOcgRrepU6ldFUrNOt1T8AT1uRu7lG0fAbRaT9vAlqQKkiunPZ93
-   JP6s+pZ0Tcddk7M9vmKl1DTC3kOaQjCCd9axpuhAmxI5OcAfB7z6fAiUu
-   XvnnSTQRzC1fXYrfw3DuIMU9er0ZQcyQa3EBZNeTZoaVyyEoQsNOtMPbO
-   wIT41k09TOzcBQdLzLnrzD+2fg3F+UZMTtnGtSS2myOE3g8jwkh0a430f
-   A==;
-X-CSE-ConnectionGUID: oE31a0EyTr2TBcRHZsM+4A==
-X-CSE-MsgGUID: mEVmILPKQh2YGDGHIcuh8g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="26291583"
-X-IronPort-AV: E=Sophos;i="6.10,259,1719903600"; 
-   d="scan'208";a="26291583"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 02:04:08 -0700
-X-CSE-ConnectionGUID: C7Kc94+DSu6ki204b/pYkQ==
-X-CSE-MsgGUID: 7CUgC/n+TImyC/T/N7FxvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,260,1719903600"; 
-   d="scan'208";a="72877918"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 26 Sep 2024 02:04:05 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1stkPr-000KUp-05;
-	Thu, 26 Sep 2024 09:04:03 +0000
-Date: Thu, 26 Sep 2024 17:03:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>, linux-usb@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: eem: Use common error handling code in
- eem_unwrap()
-Message-ID: <202409261628.MdRLCYzn-lkp@intel.com>
-References: <59fadd5a-6574-4379-98ac-cc4f11b675cc@web.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D7D208CA;
+	Thu, 26 Sep 2024 09:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727341452; cv=fail; b=ulBBuyNZPVH/A5Wi4o7PyJN2DwX6rUMJCVaR+wEyrwDorBt1i0QXM0wlURZhy8s1uQDdMjJEXIN4dcDIZTfMCMdZDWkMI6s2+j1HJRFLww+EhDHfAdCf4W6aIEC5BEZRNC7a5G0Pn2rHcJsDeNN4R/JtBsruzwH/DrVJgE2xzqw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727341452; c=relaxed/simple;
+	bh=yr3fZhLd36i3fF9MYVSoyxk7WlRm4P7kca8PHCK6vNY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bZzKzLZZInyCccm/tS5ydviM6uXVlAwYCM4b/t+AwTKhXml39y7QW8eVW8OFgnaA2aWkQlbhp/6tfcIeMsE67ZoH3b8DwTyUFWhMxuHWhBr7S/A3fRw5rtIet8psrz0AxDe6I97uNEPuchmIcpKfQ4NypanB2M6UCN1wD9lMmOE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Ze/CLS7P; arc=fail smtp.client-ip=40.107.117.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bycC7DWNXLr1KQzUtyfDhLIFhgxA3BXKBbmq12JE+AmM7eC91X4hqh5PwAulqYcAw+d8b2rQBrJihDuJWetUogOoGGqmiyCd0ecX2wur8qD+g0d6T4zeEicbSW8MbOItSIK59seI1oAMRGUElvN8b3Go/NIhnicRR5HuYsiAB3UlZGXhiR1hIFzXNbDmvtTotYV7w2bSemGphhQ7S5BC3Ue9di9ZVk8T6KzzbJHduho2dx4bgoq86TTimy/aK5rCQQMBZGaJZYcD5V1w0Gw+QUuu94kshWkz4T4DsbPY5F/PB3rvcVXilToDZ2/EZtI4ZM49wPv+vAy0ApdMadimkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZPeSy7xEMrEnWppOC+tY4YRCuvLmFj/eEpfj4VKggT4=;
+ b=i1Bppb0P1q7PtvJptBKdH377OJrZ4mBTXvoShp/Qd6L6XxuPM+ppN+jPVLh/CxsT/oigqjkPOR4trpF2YcENYeoeJexlgj3gckz7iDRssjb0+IVA1lGMjjisTBBVkCgJMrqDsYgrjslt3d9o1NS73By7zjhveX4ZheTQCVpqI/rNvdImCNWp79eVqUyojoPYfwIbrOHyxfpqET2E6rRGG6mrajgGCS4Wd1KpWksqhuUiDV3Pj//qiTZrZFNTy9sTC5IhJk6OXonHzR22yS64PWV9JPzFh3+8SknHyFQ1pMtsgfjYS4Qjp+qHsjRxt24kZyk5O1fPMASloc7oN/ZD8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZPeSy7xEMrEnWppOC+tY4YRCuvLmFj/eEpfj4VKggT4=;
+ b=Ze/CLS7PZVD5ZFe+9o4um4Bq5XBh0mTP3mCRKXdfeYK6MwVrjcp+b4U+yWK5nFcpG2SIx4P0EPVWgfr23+5HBGYOlQYdxWyK5o6ctyBp+dlw9orgkxxuzuq13lVrPcN8rsbzaIHBCEkPex9ya6AelVaLMW+SqbIr8iayhihQ6Rye1iN9Vuj767a57HMhMF4DmKxLDtMyf8L5j+nfe58YWPhf2cwnJx8MryratG0HF30ZLD9sCML2dfp930oA8BLYcsJ8FHyg66l7u5+6Lqjkj3JuRH3LjHgGIfr/8QmNc3kJDQhGAGs4MwNWEIuPbVzK5gaYewvfQXnjpQVdfTBzlQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
+ by KL1PR06MB6260.apcprd06.prod.outlook.com (2603:1096:820:d7::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Thu, 26 Sep
+ 2024 09:04:07 +0000
+Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
+ ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
+ ([fe80::9c62:d1f5:ede3:1b70%5]) with mapi id 15.20.7982.022; Thu, 26 Sep 2024
+ 09:04:07 +0000
+Message-ID: <5d896b89-1f81-40b7-b2b7-a2867b4a8129@vivo.com>
+Date: Thu, 26 Sep 2024 17:03:48 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] iio: adc: Fix typos in comments across various files
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>,
+ Matteo Martelli <matteomartelli3@gmail.com>,
+ Michal Simek <michal.simek@amd.com>, Ivan Mikhaylov <fr0st61te@gmail.com>,
+ Mike Looijmans <mike.looijmans@topic.nl>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Nuno Sa <nuno.sa@analog.com>,
+ Richard Leitner <richard.leitner@linux.dev>, Stephen Boyd
+ <sboyd@kernel.org>, Wadim Egorov <w.egorov@phytec.de>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, opensource.kernel@vivo.com
+References: <20240926034411.3482986-1-yujiaoliang@vivo.com>
+ <20240926101940.22bbc3fe@booty>
+From: Yu Jiaoliang <11172850@vivo.com>
+In-Reply-To: <20240926101940.22bbc3fe@booty>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TYAPR01CA0004.jpnprd01.prod.outlook.com (2603:1096:404::16)
+ To TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <59fadd5a-6574-4379-98ac-cc4f11b675cc@web.de>
-
-Hi Markus,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on usb/usb-testing]
-[also build test ERROR on usb/usb-next usb/usb-linus westeri-thunderbolt/next linus/master v6.11 next-20240926]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/usb-gadget-eem-Use-common-error-handling-code-in-eem_unwrap/20240925-233931
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-patch link:    https://lore.kernel.org/r/59fadd5a-6574-4379-98ac-cc4f11b675cc%40web.de
-patch subject: [PATCH] usb: gadget: eem: Use common error handling code in eem_unwrap()
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240926/202409261628.MdRLCYzn-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 7773243d9916f98ba0ffce0c3a960e4aa9f03e81)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240926/202409261628.MdRLCYzn-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409261628.MdRLCYzn-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/usb/gadget/function/f_eem.c:13:
-   In file included from include/linux/etherdevice.h:20:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:10:
-   In file included from include/linux/mm.h:2232:
-   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/usb/gadget/function/f_eem.c:13:
-   In file included from include/linux/etherdevice.h:20:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/usb/gadget/function/f_eem.c:13:
-   In file included from include/linux/etherdevice.h:20:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/usb/gadget/function/f_eem.c:13:
-   In file included from include/linux/etherdevice.h:20:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
->> drivers/usb/gadget/function/f_eem.c:547:22: error: use of undeclared identifier 'ep'
-     547 |         usb_ep_free_request(ep, req);
-         |                             ^
->> drivers/usb/gadget/function/f_eem.c:547:26: error: use of undeclared identifier 'req'
-     547 |         usb_ep_free_request(ep, req);
-         |                                 ^
->> drivers/usb/gadget/function/f_eem.c:549:20: error: use of undeclared identifier 'skb2'; did you mean 'skb'?
-     549 |         dev_kfree_skb_any(skb2);
-         |                           ^~~~
-         |                           skb
-   drivers/usb/gadget/function/f_eem.c:393:20: note: 'skb' declared here
-     393 |                         struct sk_buff *skb,
-         |                                         ^
-   7 warnings and 3 errors generated.
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|KL1PR06MB6260:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb25e1c8-2561-4b61-6452-08dcde0a2d80
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014|81742002;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WXE3UDNDVE50YXhWc3R3bllXaVdhdk9JeXRsL1Ira2FhVDhFOHJuMWNtNjdP?=
+ =?utf-8?B?T2pBNVFFUWFReVZUcGpjUEloK1oxd1hyZXdJbGhrYVMrL1VjZkFmUXNITkpv?=
+ =?utf-8?B?UHVVVU5IY0tEOHNpT3NsUHBqVzhzQ0dKSGdoWnRrNTVIcHl0YnBuOGxDYm9N?=
+ =?utf-8?B?NDRNK2pybXF6ZFhxQ1AzTVdSYmtJRzV4Zk44NHlaTzFmQWttaGh4WHJaRGhs?=
+ =?utf-8?B?TERsQnNYanpHTjBYM0NhR2dBeGo4L0VGRzdzMVVxdmozNUhoNnp1enRHZXZE?=
+ =?utf-8?B?cndvb1BLVU5CUGh6eDdOc3N4aDBoNEZWVGJBUlhtWnVlR0NLd2lnREZXR0V6?=
+ =?utf-8?B?emIzN2Y2V2lOWTgvWFFvL0lHalpidTVRSVFIQkVVZDIzT3FrT2duK1QxNmJL?=
+ =?utf-8?B?ajNxVnAzN0gwZFpiODdDekQ1bWxnQTMxTW5EWnVXb1FveDgrUCtlcFppazQ2?=
+ =?utf-8?B?OTI2VDkwRUV0STM2cmRCSXRXd0dSZ1g4ZjFMOTBXdGd4N0xyeDd4RnAyV1ds?=
+ =?utf-8?B?eXdMT1B1V2pKRzZZNnEyQ0RPSytsRmdaNVR1N2xsWG53SjhDZGFJajUzOWE3?=
+ =?utf-8?B?SG0zV0ZuZnllbHVBN2lmN2lwbndaalBzRHVNQ29zV1V5RDlqek15c0xjQzIz?=
+ =?utf-8?B?Y2Zwc083TkF0S2FPdnQ2MmxtdjU1WHpNb0ZycU5mRUNkbmxqdCtoNVZRTjBk?=
+ =?utf-8?B?dXhKSmJBQlhpcVVscU5FOVdwTDA4a0J4dm50ZFJENE1nSFVDbmFNRWNiTlRQ?=
+ =?utf-8?B?NUI3dW5tRDV2WUQvaVhnSjB5ZEZkWVl0SkpVQU4rOWJJd1hacENSVDl3ZVFD?=
+ =?utf-8?B?aDBYVTVtdkRES0ZZYXd1cktobXF2aWVCMlhqVFhZZTBDVm15S1lpUGozTndk?=
+ =?utf-8?B?VDE3RVRuK3ZYdnMrVkt1RVNNbG1nSW5wMXVYRWpiVjM2aFhIRXdZUzB4TGs3?=
+ =?utf-8?B?ZTUyNVVqYWR5M0ppL2JVQit2a1E0ZzBjYlQ4cUR6c29SQTE0YVcrU0lUZURP?=
+ =?utf-8?B?d3VpWjFGWWl0WW9Lc0NqWllIR1ppbVc0bXR1UUh4V09uWHlCL1hTL05yMzRt?=
+ =?utf-8?B?TVpqNG1JV0I0Z21iN1NMb2JIRE9yYUxQRE0xNjFKd2VYLzMrYm9qeGlPankv?=
+ =?utf-8?B?T3g1cnZwbE1ZSHl2Mkhjb0FLYWRLLytYUVdYcGJFdmQ0SmZTYlNZcTliWU9T?=
+ =?utf-8?B?N3RKVm9iTVNwTDB0OW4wa3ZYR3BoSFF0dklPQ0E4b1NQSkp3bjkweENVSmpp?=
+ =?utf-8?B?am1WTkZzcHlOUVp3KzBOQkNGWDU1dHc3QU9wZ2FqQWJUVXJzRG0rMWltL0x5?=
+ =?utf-8?B?N2ZjTzRVbWtxaXdBdnM2a0tmY2tOYjFTOXpYNXd6alV3VG1ZWGV5akRpR3h1?=
+ =?utf-8?B?S3ROSFVZQXQvc3JWbkNjVUl1NUMyTURCWnQrY245dUQ1MGFwWlJOV0lOdWRn?=
+ =?utf-8?B?ZndJZWJJaEhwd1lmaU9rYmJnczI4bG9aVHlEalN2c3FDYzlkVDFoU3JQUEU3?=
+ =?utf-8?B?elduUFFKK09VT2VrV2M1WGNMK2ZGUzVUQlBXV3VBRi8vZlhsa2xTeE5HcVFh?=
+ =?utf-8?B?emZITHdaYy95K1JFVzlicXE0N2NkaVR4VWtzSlJWRisrM21FaExyanVKK1Va?=
+ =?utf-8?B?cXB4SkFXSkpid1JrL1pFVVlpbG1lTEgwM2JYVm44bVRGSVMwN2M3cUxtMWxX?=
+ =?utf-8?B?L2s0SlQySTliMURDenU2ekgrN2E2SklDdmF0RGNOMkVUR3cwendoMCtDcFB0?=
+ =?utf-8?B?aWE3QTlqSVFIS1UzVSt6R0wwREx4YlQ1cDRlTTU2Y1F2VHUrcGs1eFJjZmJY?=
+ =?utf-8?B?aXlDN3lIdXU1MGwxSDhMdjFqdTZFRzhSRHluYmNFRDZwTllqMmZDVTlJODRz?=
+ =?utf-8?B?SkxGeDJKSStHdjVkYkNhMWlVRHNQdGRPMFBXM20vcTVFaVhSYXlZK3h6SHVo?=
+ =?utf-8?Q?Q3B70jRnROE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014)(81742002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aDRqemN0SUUrOEFJU0lSeSttbnZFR0hYY0hTUWcvQ0poUkIyNng2YkEzaUNn?=
+ =?utf-8?B?SU55Q1ZNb3BhU2tXbkRKeDNkQzM4ZkdOTFJzeTFHQnNjcXFnNnpuZzZCWUo2?=
+ =?utf-8?B?NTBhT3RlUnNRZk1veUxIVzZmdjFrcm9mdVpQV2Jka0VPSnR4R01BeVlzM3FN?=
+ =?utf-8?B?RXFOd1ZnalM5OElZY2Rlb1N0amJtb0Z2dEtNMkE0ZHdRbFlTbDFEUjNSUm52?=
+ =?utf-8?B?ZnQ0eU9JVVFQRnRrYVhycFNGa1BOYkNVZWJyVStMc3pDZEFPQm5VV0tvdE1C?=
+ =?utf-8?B?U25oQjdJcXJLRnVqTUN6VW9CNDdNS0owWWRxSDl6SWorNXAxWEZUWUlNdHAv?=
+ =?utf-8?B?WEFlVUdxT2Z0MTE4cDgyMWE5MTBjL0FCSnpYeUpNMlNqRkUzQU50Z2gzRTJ1?=
+ =?utf-8?B?UDVsVEl1RlRLUDNFbmVrRC9ndHJ2ZVFTZ3NxR3htVElZU1JkQWdGMmtOdnlO?=
+ =?utf-8?B?a1c3aTNCb0dod3I0Y1hkRjlyR3VVYXY0Q1l6QXFwN0pYVXBPbVRxRlh2cTFY?=
+ =?utf-8?B?TTF5blZ6S0MxT3dmcWV2Y1ljWk1ZcnZ3YlVSNmJmWnY3c2RTRDA5SXJPVjk1?=
+ =?utf-8?B?NlRhSlVpcVdFNm1GamxIQWVseFE0OHFBMWYweGVYODY0Z2t1NSsraHpzQUVl?=
+ =?utf-8?B?MEJZNzUvN2pjelRtdzg2aVphUUMrSG9uZnBacXM3bXYxZWpqVnk1OTNDcElB?=
+ =?utf-8?B?a0tzd05UNWkyUEpWZFBKWWg5akVGdGNQd1dPVjZSMUx3TUdxdmRHSFY4VDZt?=
+ =?utf-8?B?TEZHeUlPbnBRdHlvb0VteUwzWEtmdEtBbTRTL0hla3hVZmNBSDc2Y29mTFhx?=
+ =?utf-8?B?eVZXSnh2K3B1MEIyV2NJYjY5QWp6S0V1YThRTmNENDlnNTkwajl0Z1p5QUxK?=
+ =?utf-8?B?akRHRW5aZUMzZGd5ZXBLNmtBTEJzb0UvQUUwS3pJVmV4blJyUG10TkNtWnZS?=
+ =?utf-8?B?cXAwVEx2Z0dFdk52T0cyRGl3SGUzbzJqZElyNFhlSW5OaW9QeDNTR1ZKMHRm?=
+ =?utf-8?B?ckxoc01GZjZTUVBOZjFacmYwUi9oNWVlNExnOEo4ZUdiUnB1UitSUXQwT1VQ?=
+ =?utf-8?B?a0t1MkZ0K1VCN0RDclRkbFRzRDErQ0pwOFFtaFV4SDZrMk1WZkR5Z1I0QWhx?=
+ =?utf-8?B?Y3ZlQW9DQ01TQ2R3ampYUUUrODFHVk5vUndrYTRqNDZxSkR6Q3RIU0V6c1dP?=
+ =?utf-8?B?bXJCL2N6S0dvTHRlRnE3eHhZZ1IweGJMaUcyRUdWdHVKR1Ywd3o3SU93cUtS?=
+ =?utf-8?B?a0NWMUNlaHlzSGdnMElJbjJUL0JrZlNTY2NZOXp3c3FmSWcwMkNjWjVndk1n?=
+ =?utf-8?B?L2lxSHVaTmxSV1ZCeTFyMnA0UFVENXJpM1FXYkxlNSthczE3Tm1ORXkvN2xP?=
+ =?utf-8?B?TzhlWExRRGF5ZWphd3B4Y1ZVa21WaWh0U0YzOEpmY0hxK1BOUTNDQUtKMWZl?=
+ =?utf-8?B?QU5HWCt0c1FxN3hxSTNwV1NXMmZjdjNXRGNrZzZQZzhuTEJFa2toUm5LVlRn?=
+ =?utf-8?B?M0owMitLb3Eya0REUkdzRTJCVGZhei85WStVK3h4c2d2bDhaYW5oNGlYN2ZB?=
+ =?utf-8?B?bW9zajdveHUrOGUvc3had3pSeDRmMERQeE5UOFF3OFNlSldNR21QbWc4NEdO?=
+ =?utf-8?B?MHNXYVMvT0lrcmJ1WXFUemh0RzJiMjhNejlnbXZuRWJpOXdPQjZRWklZbUJr?=
+ =?utf-8?B?WjBmcW00cGRTOW85cGt1Rk1EN0xyVCtmQjBEdDFBZXBTOXRHL1pGKzlVOEgz?=
+ =?utf-8?B?VHpWbXBKVXU4UEppMVk1ZUJmSGhRY0VLWVgxZGZPaE8yWnVLMGRRWTBNUlp5?=
+ =?utf-8?B?WWIvNkl6TGc4blJwNHRPajJiYnBjcFhUQzNPbkdDalVieEZWN3drelEwSkhl?=
+ =?utf-8?B?YWROQmFwWTNkWnpEZDBoUWtVV2hvNVZnTEQzc2VuOC9OWkY2ajFJNWFCc1Jy?=
+ =?utf-8?B?enFwNzlUQ0JDeUF4VHZnUHFwQXlVZ2xEYXUxSnBZU0QwYUhOUFdjS1l3ek0v?=
+ =?utf-8?B?YXVpNk9OZkZhOG5MYWN2cURoU1RIZHhHNXcvUU8wRW5vZHdLRm9wZkM5NHVl?=
+ =?utf-8?B?WHhncFM0R2RCUlFhbVZnR01qVWFXcmZTMDdmeUY4T3pNUUFsVkNGNnBDa2F4?=
+ =?utf-8?Q?1KTg3u0Ms9PzLEowU1gS5r776?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb25e1c8-2561-4b61-6452-08dcde0a2d80
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2024 09:04:07.5333
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6T/bYngJB0mPmVP9ysFVcl1vB7X2/s1SdzYTs+HuNI6dVL8bsyxlyUh3GD9+yvQw16UeV19+5FLOTNzM/z8l2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6260
 
 
-vim +/ep +547 drivers/usb/gadget/function/f_eem.c
+在 2024/9/26 16:19, Luca Ceresoli 写道:
+> Hello Yu,
+>
+> On Thu, 26 Sep 2024 11:43:54 +0800
+> Yu Jiaoliang <yujiaoliang@vivo.com> wrote:
+>
+>> This commit fixes several typographical errors in comments within
+>> the drivers/iio/adc directory. No functional changes are made.
+> I think it would be useful to add those typo patterns to
+> scripts/spelling.txt, so checkpatch.pl will check them, preventing the
+> same typos from happening in the future.
+>
+> With that added (perhaps in a separate patch), looks good.
 
-   387	
-   388	/*
-   389	 * Remove the EEM header.  Note that there can be many EEM packets in a single
-   390	 * USB transfer, so we need to break them out and handle them independently.
-   391	 */
-   392	static int eem_unwrap(struct gether *port,
-   393				struct sk_buff *skb,
-   394				struct sk_buff_head *list)
-   395	{
-   396		struct usb_composite_dev	*cdev = port->func.config->cdev;
-   397		int				status = 0;
-   398	
-   399		do {
-   400			struct sk_buff	*skb2;
-   401			u16		header;
-   402			u16		len = 0;
-   403	
-   404			if (skb->len < EEM_HLEN) {
-   405				status = -EINVAL;
-   406				DBG(cdev, "invalid EEM header\n");
-   407				goto error;
-   408			}
-   409	
-   410			/* remove the EEM header */
-   411			header = get_unaligned_le16(skb->data);
-   412			skb_pull(skb, EEM_HLEN);
-   413	
-   414			/* EEM packet header format:
-   415			 * b0..14:	EEM type dependent (data or command)
-   416			 * b15:		bmType (0 == data, 1 == command)
-   417			 */
-   418			if (header & BIT(15)) {
-   419				struct usb_request	*req;
-   420				struct in_context	*ctx;
-   421				struct usb_ep		*ep;
-   422				u16			bmEEMCmd;
-   423	
-   424				/* EEM command packet format:
-   425				 * b0..10:	bmEEMCmdParam
-   426				 * b11..13:	bmEEMCmd
-   427				 * b14:		reserved (must be zero)
-   428				 * b15:		bmType (1 == command)
-   429				 */
-   430				if (header & BIT(14))
-   431					continue;
-   432	
-   433				bmEEMCmd = (header >> 11) & 0x7;
-   434				switch (bmEEMCmd) {
-   435				case 0: /* echo */
-   436					len = header & 0x7FF;
-   437					if (skb->len < len) {
-   438						status = -EOVERFLOW;
-   439						goto error;
-   440					}
-   441	
-   442					skb2 = skb_clone(skb, GFP_ATOMIC);
-   443					if (unlikely(!skb2)) {
-   444						DBG(cdev, "EEM echo response error\n");
-   445						goto next;
-   446					}
-   447					skb_trim(skb2, len);
-   448					put_unaligned_le16(BIT(15) | BIT(11) | len,
-   449								skb_push(skb2, 2));
-   450	
-   451					ep = port->in_ep;
-   452					req = usb_ep_alloc_request(ep, GFP_ATOMIC);
-   453					if (!req)
-   454						goto free_skb;
-   455	
-   456					req->buf = kmalloc(skb2->len, GFP_KERNEL);
-   457					if (!req->buf)
-   458						goto free_request;
-   459	
-   460					ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
-   461					if (!ctx) {
-   462						kfree(req->buf);
-   463						goto free_request;
-   464					}
-   465					ctx->skb = skb2;
-   466					ctx->ep = ep;
-   467	
-   468					skb_copy_bits(skb2, 0, req->buf, skb2->len);
-   469					req->length = skb2->len;
-   470					req->complete = eem_cmd_complete;
-   471					req->zero = 1;
-   472					req->context = ctx;
-   473					if (usb_ep_queue(port->in_ep, req, GFP_ATOMIC))
-   474						DBG(cdev, "echo response queue fail\n");
-   475					break;
-   476	
-   477				case 1:  /* echo response */
-   478				case 2:  /* suspend hint */
-   479				case 3:  /* response hint */
-   480				case 4:  /* response complete hint */
-   481				case 5:  /* tickle */
-   482				default: /* reserved */
-   483					continue;
-   484				}
-   485			} else {
-   486				u32		crc, crc2;
-   487				struct sk_buff	*skb3;
-   488	
-   489				/* check for zero-length EEM packet */
-   490				if (header == 0)
-   491					continue;
-   492	
-   493				/* EEM data packet format:
-   494				 * b0..13:	length of ethernet frame
-   495				 * b14:		bmCRC (0 == sentinel, 1 == calculated)
-   496				 * b15:		bmType (0 == data)
-   497				 */
-   498				len = header & 0x3FFF;
-   499				if ((skb->len < len)
-   500						|| (len < (ETH_HLEN + ETH_FCS_LEN))) {
-   501					status = -EINVAL;
-   502					goto error;
-   503				}
-   504	
-   505				/* validate CRC */
-   506				if (header & BIT(14)) {
-   507					crc = get_unaligned_le32(skb->data + len
-   508								- ETH_FCS_LEN);
-   509					crc2 = ~crc32_le(~0,
-   510							skb->data, len - ETH_FCS_LEN);
-   511				} else {
-   512					crc = get_unaligned_be32(skb->data + len
-   513								- ETH_FCS_LEN);
-   514					crc2 = 0xdeadbeef;
-   515				}
-   516				if (crc != crc2) {
-   517					DBG(cdev, "invalid EEM CRC\n");
-   518					goto next;
-   519				}
-   520	
-   521				skb2 = skb_clone(skb, GFP_ATOMIC);
-   522				if (unlikely(!skb2)) {
-   523					DBG(cdev, "unable to unframe EEM packet\n");
-   524					goto next;
-   525				}
-   526				skb_trim(skb2, len - ETH_FCS_LEN);
-   527	
-   528				skb3 = skb_copy_expand(skb2,
-   529							NET_IP_ALIGN,
-   530							0,
-   531							GFP_ATOMIC);
-   532				if (unlikely(!skb3))
-   533					goto free_skb;
-   534	
-   535				dev_kfree_skb_any(skb2);
-   536				skb_queue_tail(list, skb3);
-   537			}
-   538	next:
-   539			skb_pull(skb, len);
-   540		} while (skb->len);
-   541	
-   542	error:
-   543		dev_kfree_skb_any(skb);
-   544		return status;
-   545	
-   546	free_request:
- > 547		usb_ep_free_request(ep, req);
-   548	free_skb:
- > 549		dev_kfree_skb_any(skb2);
-   550		goto next;
-   551	}
-   552	
+Hi Luca,
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks for the suggestion. I'll prepare a new patch that collects the 
+typos we've encountered so far and adds them to |scripts/spelling.txt|.
+
+>
+> Luca
+
+Best regards,
+Yu
+
 
