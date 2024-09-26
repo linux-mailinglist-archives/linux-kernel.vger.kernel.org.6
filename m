@@ -1,317 +1,247 @@
-Return-Path: <linux-kernel+bounces-340310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD69198716C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:24:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 155B798716B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAF52B26772
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:24:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372211C20D5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407C01AED4C;
-	Thu, 26 Sep 2024 10:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1D31AED42;
+	Thu, 26 Sep 2024 10:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="XpukGwrK"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Npu/bshD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5E11AE85D
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 10:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD6D1AED24;
+	Thu, 26 Sep 2024 10:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727346171; cv=none; b=umFg0aSd29twGLS9Zi/WC9EtPRWBpsG59nNAfVuftiRZJVqMczOo/LrlZ4rnk5vNUqlL11bC50SrdQ5N89+20TA4NJ865PzP7FMXmuF3Qj/sFG8uFOQ8gjbXbSVqxsWC0gxOMdcqqankc2gGHaA5eANYn2iZVDYqENv56Uk8suk=
+	t=1727346170; cv=none; b=DV0T/hT1HujuMugMT+IOfU1FC94X/RbRQEt9SpCGdn9CDpxy/axG6LQP0ma3T0wfiKf96fAZOdZXkeckHE++5eKye+0+EAtO0CVreTm1lRzI4+0A5Id9JpSzvCbz8rUKoElgNfF5k7BOVtmepjJ3U2+6OCjHr1dzcyNddlPHM1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727346171; c=relaxed/simple;
-	bh=xjTuda35KcSlQuwoxzvvCeZq/Ut+oQp08Pax949HVAg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Os3ElsKyDENBappAPt5MbXikZgXAUhPYfZT2Uu4dfJwNXZOCIuZ3i/ScriMeQiQYoWRgIUom+kLi5PUueUlrXTtXjHnnQvFA4WFDuatf//1tn8ZIYJIotMAdGWLNVbY9y7oODw8mtzwBc7R5XwzPOqcWQaoZbkuZa5ZPtf4874c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=XpukGwrK; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 4372d0487bf111efb66947d174671e26-20240926
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=+nBRMeHrqpisBv7SezYCJmoN36meD3f3bMKJ7yKvV3A=;
-	b=XpukGwrKlSNicihlE58rbzM91rp1sNgbJKD6xziInAnUBg8uxNYiju9NF1e+8wBVMYucQ7UH1A6FPP4yh6MXHEJ8o/loo9nHrEQITjW3kRQNoCuF4TZUx6Z3lqSvUwZ3jLJvZp0PYyBf4DRo8kUu/SEX82LYUoQuuO6CsYl1r0Y=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:978e27cc-45b6-4fb1-8f0b-6153baa79ffe,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:9f6bced0-7921-4900-88a1-3aef019a55ce,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULN,TF_CID_SPAM_SNR
-X-UUID: 4372d0487bf111efb66947d174671e26-20240926
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 995541842; Thu, 26 Sep 2024 18:22:42 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 26 Sep 2024 18:22:39 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 26 Sep 2024 18:22:39 +0800
-From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-To: Alper Nebi Yasak <alpernebiyasak@gmail.com>, Chun-Kuang Hu
-	<chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: Shawn Sung <shawn.sung@mediatek.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, "Jason-JH . Lin"
-	<jason-jh.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, "Nancy
- Lin" <nancy.lin@mediatek.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v7 3/3] drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
-Date: Thu, 26 Sep 2024 18:22:38 +0800
-Message-ID: <20240926102238.24303-4-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20240926102238.24303-1-jason-jh.lin@mediatek.com>
-References: <20240926102238.24303-1-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1727346170; c=relaxed/simple;
+	bh=ApStDj/Esr86SDM7qKUkCjmQCHLicFoSdvEL5DXnaIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kpy/lK7pbyrhIUoefPNhqHWcRXV4K2F5jPKOf2NmgP2NDKPQLaEyWHojjOicyrP82WoNRMrrsq2ZpvSSDTo1e1Y7cK77CYIRYG9UWkMt2DcZzebjx79gIZ2Q904JkxpvKqG8rxejaRy4MDHSVvlQtizHG+xiBBdsbTJ8GVoobfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Npu/bshD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 341EEC4CED0;
+	Thu, 26 Sep 2024 10:22:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727346170;
+	bh=ApStDj/Esr86SDM7qKUkCjmQCHLicFoSdvEL5DXnaIk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Npu/bshDR9E7sfM6xcY8XnID5yIHMGqa++B7v+rpyUFw93P7i+G8+BUsYGftx4GJv
+	 lTSjoJJqshgcYAvzk2LRKzYPSAzx63kGFfKlYxZFGDC04oqJBBOmeywTt52zOwBNQ7
+	 l7Oa8/55Hjg17IHGQaUOG0zNJztDlkO98XeFgM9E=
+Date: Thu, 26 Sep 2024 12:22:46 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] TTY / Serial driver updates for 6.12-rc1
+Message-ID: <ZvU19s7TVsFsLgas@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--11.160200-8.000000
-X-TMASE-MatchedRID: 6n1zk+md1nVe0FYiuVD/cPSZ/2axrnPBqQzUsXJNLuEGW3hFnC9N1dpn
-	hpe4D1hOFzjo+TNgpJdApkCDZ8Q62p4dOTBCL+zXY1bQMCMvmn5ai3lnXr67vo5RXzY0MfgCcHj
-	giTON9jJOFu8ssjxG8/FjRYaB9JwD8Jz+t9Z3vumQOktEo73GFLBH/AqZyGLZVI7KaIl9NhepxN
-	4rruuBUzbBFkyI1h9EASo1XNPhrPpUaz8ayo4K5t8tWTI1R8epfS0Ip2eEHnz3IzXlXlpamPoLR
-	4+zsDTtw1tMVU7ONTxZdXVSzJ2FUTDV2YxaJ/uB9SLGo0PDTfvZ2NYIRBdBWQ==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--11.160200-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	215D95A5CEA8326A093FD183F4D987BFFC96E49DAE22675422A21A3E88935F9D2000:8
-X-MTK: N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Since some SoCs support premultiplied pixel formats but some do not,
-the blend_modes parameter is added to mtk_plane_init(), which is
-obtained from the mtk_ddp_comp_get_blend_modes function implemented
-in different blending supported components.
+The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
 
-The blending supported components can use driver data to set the
-blend mode capabilities for different SoCs.
+  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
 
-Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_crtc.c             |  1 +
- drivers/gpu/drm/mediatek/mtk_ddp_comp.c         |  2 ++
- drivers/gpu/drm/mediatek/mtk_ddp_comp.h         | 10 ++++++++++
- drivers/gpu/drm/mediatek/mtk_disp_drv.h         |  2 ++
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c         |  7 +++++++
- drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c |  7 +++++++
- drivers/gpu/drm/mediatek/mtk_ethdr.c            |  7 +++++++
- drivers/gpu/drm/mediatek/mtk_ethdr.h            |  1 +
- drivers/gpu/drm/mediatek/mtk_plane.c            | 15 +++++++--------
- drivers/gpu/drm/mediatek/mtk_plane.h            |  4 ++--
- 10 files changed, 46 insertions(+), 10 deletions(-)
+are available in the Git repository at:
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediatek/mtk_crtc.c
-index 175b00e5a253..b65f196f2015 100644
---- a/drivers/gpu/drm/mediatek/mtk_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
-@@ -913,6 +913,7 @@ static int mtk_crtc_init_comp_planes(struct drm_device *drm_dev,
- 				BIT(pipe),
- 				mtk_crtc_plane_type(mtk_crtc->layer_nr, num_planes),
- 				mtk_ddp_comp_supported_rotations(comp),
-+				mtk_ddp_comp_get_blend_modes(comp),
- 				mtk_ddp_comp_get_formats(comp),
- 				mtk_ddp_comp_get_num_formats(comp), i);
- 		if (ret)
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-index be66d94be361..edc6417639e6 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-@@ -363,6 +363,7 @@ static const struct mtk_ddp_comp_funcs ddp_ovl = {
- 	.layer_config = mtk_ovl_layer_config,
- 	.bgclr_in_on = mtk_ovl_bgclr_in_on,
- 	.bgclr_in_off = mtk_ovl_bgclr_in_off,
-+	.get_blend_modes = mtk_ovl_get_blend_modes,
- 	.get_formats = mtk_ovl_get_formats,
- 	.get_num_formats = mtk_ovl_get_num_formats,
- };
-@@ -416,6 +417,7 @@ static const struct mtk_ddp_comp_funcs ddp_ovl_adaptor = {
- 	.disconnect = mtk_ovl_adaptor_disconnect,
- 	.add = mtk_ovl_adaptor_add_comp,
- 	.remove = mtk_ovl_adaptor_remove_comp,
-+	.get_blend_modes = mtk_ovl_adaptor_get_blend_modes,
- 	.get_formats = mtk_ovl_adaptor_get_formats,
- 	.get_num_formats = mtk_ovl_adaptor_get_num_formats,
- 	.mode_valid = mtk_ovl_adaptor_mode_valid,
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-index ecf6dc283cd7..39720b27f4e9 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-@@ -80,6 +80,7 @@ struct mtk_ddp_comp_funcs {
- 	void (*ctm_set)(struct device *dev,
- 			struct drm_crtc_state *state);
- 	struct device * (*dma_dev_get)(struct device *dev);
-+	u32 (*get_blend_modes)(struct device *dev);
- 	const u32 *(*get_formats)(struct device *dev);
- 	size_t (*get_num_formats)(struct device *dev);
- 	void (*connect)(struct device *dev, struct device *mmsys_dev, unsigned int next);
-@@ -266,6 +267,15 @@ static inline struct device *mtk_ddp_comp_dma_dev_get(struct mtk_ddp_comp *comp)
- 	return comp->dev;
- }
- 
-+static inline
-+u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
-+{
-+	if (comp->funcs && comp->funcs->get_blend_modes)
-+		return comp->funcs->get_blend_modes(comp->dev);
-+
-+	return 0;
-+}
-+
- static inline
- const u32 *mtk_ddp_comp_get_formats(struct mtk_ddp_comp *comp)
- {
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_drv.h b/drivers/gpu/drm/mediatek/mtk_disp_drv.h
-index 082ac18fe04a..04154db9085c 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_drv.h
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_drv.h
-@@ -103,6 +103,7 @@ void mtk_ovl_register_vblank_cb(struct device *dev,
- void mtk_ovl_unregister_vblank_cb(struct device *dev);
- void mtk_ovl_enable_vblank(struct device *dev);
- void mtk_ovl_disable_vblank(struct device *dev);
-+u32 mtk_ovl_get_blend_modes(struct device *dev);
- const u32 *mtk_ovl_get_formats(struct device *dev);
- size_t mtk_ovl_get_num_formats(struct device *dev);
- 
-@@ -131,6 +132,7 @@ void mtk_ovl_adaptor_start(struct device *dev);
- void mtk_ovl_adaptor_stop(struct device *dev);
- unsigned int mtk_ovl_adaptor_layer_nr(struct device *dev);
- struct device *mtk_ovl_adaptor_dma_dev_get(struct device *dev);
-+u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
- const u32 *mtk_ovl_adaptor_get_formats(struct device *dev);
- size_t mtk_ovl_adaptor_get_num_formats(struct device *dev);
- enum drm_mode_status mtk_ovl_adaptor_mode_valid(struct device *dev,
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index 0cf7b80f612e..1d3b25d768f9 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -215,6 +215,13 @@ void mtk_ovl_disable_vblank(struct device *dev)
- 	writel_relaxed(0x0, ovl->regs + DISP_REG_OVL_INTEN);
- }
- 
-+u32 mtk_ovl_get_blend_modes(struct device *dev)
-+{
-+	struct mtk_disp_ovl *ovl = dev_get_drvdata(dev);
-+
-+	return ovl->data->blend_modes;
-+}
-+
- const u32 *mtk_ovl_get_formats(struct device *dev)
- {
- 	struct mtk_disp_ovl *ovl = dev_get_drvdata(dev);
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-index c6768210b08b..bf2546c4681a 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-@@ -400,6 +400,13 @@ void mtk_ovl_adaptor_disable_vblank(struct device *dev)
- 	mtk_ethdr_disable_vblank(ovl_adaptor->ovl_adaptor_comp[OVL_ADAPTOR_ETHDR0]);
- }
- 
-+u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev)
-+{
-+	struct mtk_disp_ovl_adaptor *ovl_adaptor = dev_get_drvdata(dev);
-+
-+	return mtk_ethdr_get_blend_modes(ovl_adaptor->ovl_adaptor_comp[OVL_ADAPTOR_ETHDR0]);
-+}
-+
- const u32 *mtk_ovl_adaptor_get_formats(struct device *dev)
- {
- 	struct mtk_disp_ovl_adaptor *ovl_adaptor = dev_get_drvdata(dev);
-diff --git a/drivers/gpu/drm/mediatek/mtk_ethdr.c b/drivers/gpu/drm/mediatek/mtk_ethdr.c
-index d1d9cf8b10e1..0f22e7d337cb 100644
---- a/drivers/gpu/drm/mediatek/mtk_ethdr.c
-+++ b/drivers/gpu/drm/mediatek/mtk_ethdr.c
-@@ -145,6 +145,13 @@ static irqreturn_t mtk_ethdr_irq_handler(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+u32 mtk_ethdr_get_blend_modes(struct device *dev)
-+{
-+	return BIT(DRM_MODE_BLEND_PREMULTI) |
-+	       BIT(DRM_MODE_BLEND_COVERAGE) |
-+	       BIT(DRM_MODE_BLEND_PIXEL_NONE);
-+}
-+
- void mtk_ethdr_layer_config(struct device *dev, unsigned int idx,
- 			    struct mtk_plane_state *state,
- 			    struct cmdq_pkt *cmdq_pkt)
-diff --git a/drivers/gpu/drm/mediatek/mtk_ethdr.h b/drivers/gpu/drm/mediatek/mtk_ethdr.h
-index 81af9edea3f7..a72aeee46829 100644
---- a/drivers/gpu/drm/mediatek/mtk_ethdr.h
-+++ b/drivers/gpu/drm/mediatek/mtk_ethdr.h
-@@ -13,6 +13,7 @@ void mtk_ethdr_clk_disable(struct device *dev);
- void mtk_ethdr_config(struct device *dev, unsigned int w,
- 		      unsigned int h, unsigned int vrefresh,
- 		      unsigned int bpc, struct cmdq_pkt *cmdq_pkt);
-+u32 mtk_ethdr_get_blend_modes(struct device *dev);
- void mtk_ethdr_layer_config(struct device *dev, unsigned int idx,
- 			    struct mtk_plane_state *state,
- 			    struct cmdq_pkt *cmdq_pkt);
-diff --git a/drivers/gpu/drm/mediatek/mtk_plane.c b/drivers/gpu/drm/mediatek/mtk_plane.c
-index 7d2cb4e0fafa..8a48b3b0a956 100644
---- a/drivers/gpu/drm/mediatek/mtk_plane.c
-+++ b/drivers/gpu/drm/mediatek/mtk_plane.c
-@@ -320,8 +320,8 @@ static const struct drm_plane_helper_funcs mtk_plane_helper_funcs = {
- 
- int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
- 		   unsigned long possible_crtcs, enum drm_plane_type type,
--		   unsigned int supported_rotations, const u32 *formats,
--		   size_t num_formats, unsigned int plane_idx)
-+		   unsigned int supported_rotations, const u32 blend_modes,
-+		   const u32 *formats, size_t num_formats, unsigned int plane_idx)
- {
- 	int err;
- 
-@@ -366,12 +366,11 @@ int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
- 	if (err)
- 		DRM_ERROR("failed to create property: alpha\n");
- 
--	err = drm_plane_create_blend_mode_property(plane,
--						   BIT(DRM_MODE_BLEND_PREMULTI) |
--						   BIT(DRM_MODE_BLEND_COVERAGE) |
--						   BIT(DRM_MODE_BLEND_PIXEL_NONE));
--	if (err)
--		DRM_ERROR("failed to create property: blend_mode\n");
-+	if (blend_modes) {
-+		err = drm_plane_create_blend_mode_property(plane, blend_modes);
-+		if (err)
-+			DRM_ERROR("failed to create property: blend_mode\n");
-+	}
- 
- 	drm_plane_helper_add(plane, &mtk_plane_helper_funcs);
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_plane.h b/drivers/gpu/drm/mediatek/mtk_plane.h
-index 5b177eac67b7..3b13b89989c7 100644
---- a/drivers/gpu/drm/mediatek/mtk_plane.h
-+++ b/drivers/gpu/drm/mediatek/mtk_plane.h
-@@ -48,6 +48,6 @@ to_mtk_plane_state(struct drm_plane_state *state)
- 
- int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
- 		   unsigned long possible_crtcs, enum drm_plane_type type,
--		   unsigned int supported_rotations, const u32 *formats,
--		   size_t num_formats, unsigned int plane_idx);
-+		   unsigned int supported_rotations, const u32 blend_modes,
-+		   const u32 *formats, size_t num_formats, unsigned int plane_idx);
- #endif
--- 
-2.43.0
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.12-rc1
 
+for you to fetch changes up to 5ed771f174726ae879945d4f148a9005ac909cb7:
+
+  tty: serial: samsung: Fix serial rx on Apple A7-A9 (2024-09-11 15:47:13 +0200)
+
+----------------------------------------------------------------
+TTY/Serial driver update for 6.12-rc1
+
+Here is the "big" set of tty/serial driver updates for 6.12-rc1.
+
+Nothing major in here, just nice forward progress in the slow cleanup of
+the serial apis, and lots of other driver updates and fixes.
+
+Included in here are:
+  - serial api updates from Jiri to make things more uniform and sane
+  - 8250_platform driver cleanups
+  - samsung serial driver fixes and updates
+  - qcom-geni serial driver fixes from Johan for the bizarre UART engine
+    that that chip seems to have.  Hopefully it's in a better state now,
+    but hardware designers still seem to come up with more ways to make
+    broken UARTS 40+ years after this all should have finished.
+  - sc16is7xx driver updates
+  - omap 8250 driver updates
+  - 8250_bcm2835aux driver updates
+  - a few new serial driver bindings added
+  - other serial minor driver updates
+
+All of these have been in linux-next for a long time with no reported
+problems.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+André Draszik (4):
+      dt-bindings: serial: samsung: avoid duplicating permitted clock-names
+      dt-bindings: serial: samsung: fix maxItems for gs101
+      tty: serial: samsung_tty: drop unused argument to irq handlers
+      tty: serial: samsung_tty: cast the interrupt's void *id just once
+
+Andy Shevchenko (8):
+      serial: 8250_platform: Remove duplicate mapping
+      serial: 8250_platform: Don't shadow error from serial8250_register_8250_port()
+      serial: 8250_platform: Use same check for ACPI in the whole driver
+      serial: 8250_platform: Tidy up ACPI ID table
+      serial: 8250_platform: Switch to use platform_get_mem_or_io()
+      serial: 8250_platform: Refactor serial8250_probe()
+      serial: 8250_platform: Unify comment style
+      serial: 8250_bcm2835aux: Switch to DEFINE_SIMPLE_DEV_PM_OPS()
+
+Arnd Bergmann (2):
+      serial: 8250_platform: remove ACPI_PTR() annotation
+      serial: 8250_platform: fix uart_8250_port initializer
+
+Chen Ni (2):
+      mxser: convert comma to semicolon
+      tty: hvc: convert comma to semicolon
+
+Douglas Anderson (3):
+      soc: qcom: geni-se: add GP_LENGTH/IRQ_EN_SET/IRQ_EN_CLEAR registers
+      serial: qcom-geni: fix arg types for qcom_geni_serial_poll_bit()
+      serial: qcom-geni: introduce qcom_geni_serial_poll_bitfield()
+
+Ferry Toth (1):
+      tty: serial: 8250_dma: use sgl with 2 nents to take care of buffer wrap
+
+Florian Fainelli (1):
+      tty: rp2: Fix reset with non forgiving PCIe host bridges
+
+Greg Kroah-Hartman (2):
+      Merge 6.11-rc3 into tty-next
+      Merge 6.11-rc4 into tty-next
+
+Jinjie Ruan (1):
+      serial: xilinx_uartps: Make cdns_rs485_supported static
+
+Jiri Slaby (SUSE) (15):
+      tty: simplify tty_dev_name_to_number() using guard(mutex)
+      serial: protect uart_port_dtr_rts() in uart_shutdown() too
+      serial: don't use uninitialized value in uart_poll_init()
+      serial: remove quot_frac from serial8250_do_set_divisor()
+      serial: use guards for simple mutex locks
+      mxser: remove stale comment
+      mxser: remove doubled sets of close times
+      xhci: dbgtty: remove kfifo_out() wrapper
+      xhci: dbgtty: use kfifo from tty_port struct
+      mctp: serial: propagage new tty types
+      6pack: remove sixpack::rbuff
+      6pack: drop sixpack::mtu
+      6pack: drop sixpack::buffsize
+      6pack: remove global strings
+      6pack: propagage new tty types
+
+Jisheng Zhang (2):
+      serial: 8250: move mmp|pxa uart earlycon code
+      serial: 8250_early: add xscale earlycon support
+
+Johan Hovold (5):
+      serial: qcom-geni: fix fifo polling timeout
+      serial: qcom-geni: fix false console tx restart
+      serial: qcom-geni: fix console corruption
+      serial: qcom-geni: disable interrupts during console writes
+      serial: qcom-geni: fix polled console corruption
+
+Lech Perczak (3):
+      serial: sc16is7xx: remove SC16IS7XX_MSR_DELTA_MASK
+      serial: sc16is7xx: fix copy-paste errors in EFR_SWFLOWx_BIT constants
+      serial: sc16is7xx: convert bitmask definitions to use BIT() macro
+
+Liao Chen (1):
+      serial: 8250_aspeed_vuart: Enable module autoloading
+
+Markus Schneider-Pargmann (5):
+      dt-bindings: serial: 8250_omap: Add wakeup-source property
+      serial: 8250: omap: Remove unused wakeups_enabled
+      serial: 8250: omap: Cleanup on error in request_irq
+      serial: 8250: omap: Set wakeup capable, do not enable
+      serial: 8250: omap: Parse DT wakeup-source proerty
+
+Nick Chan (3):
+      tty: serial: samsung: Use bit manipulation macros for APPLE_S5L_*
+      tty: serial: samsung: Fix A7-A11 serial earlycon SError
+      tty: serial: samsung: Fix serial rx on Apple A7-A9
+
+Oliver Rhodes (1):
+      dt-bindings: serial: renesas: Document RZ/G2M v3.0 (r8a774a3) scif
+
+Rafał Miłecki (2):
+      dt-bindings: serial: mediatek,uart: add MT7981
+      arm64: dts: mediatek: mt7981: add UART controllers
+
+Raphael Gallais-Pou (1):
+      serial: st-asc: Switch from CONFIG_PM_SLEEP guards to pm_sleep_ptr()
+
+Rob Herring (Arm) (1):
+      serdev: Use of_property_present()
+
+Stefan Wahren (2):
+      serial: 8250_bcm2835aux: add PM suspend/resume support
+      serial: 8250_bcm2835aux: Fix clock imbalance in PM resume
+
+Sunil V L (1):
+      serial: 8250_platform: Enable generic 16550A platform devices
+
+Varshini Rajendran (1):
+      dt-bindings: serial: atmel,at91-usart: add compatible for sam9x7.
+
+ .../devicetree/bindings/serial/8250_omap.yaml      |   1 +
+ .../bindings/serial/atmel,at91-usart.yaml          |   9 +-
+ .../devicetree/bindings/serial/mediatek,uart.yaml  |   1 +
+ .../devicetree/bindings/serial/renesas,scif.yaml   |   1 +
+ .../devicetree/bindings/serial/samsung_uart.yaml   |  70 ++++++--
+ arch/arm64/boot/dts/mediatek/mt7981b.dtsi          |  33 ++++
+ drivers/net/hamradio/6pack.c                       |  60 +++----
+ drivers/net/mctp/mctp-serial.c                     |  23 +--
+ drivers/tty/hvc/hvsi_lib.c                         |   2 +-
+ drivers/tty/mxser.c                                |   7 +-
+ drivers/tty/serdev/core.c                          |   2 +-
+ drivers/tty/serial/8250/8250_aspeed_vuart.c        |   1 +
+ drivers/tty/serial/8250/8250_bcm2835aux.c          |  47 ++++++
+ drivers/tty/serial/8250/8250_dma.c                 |  19 ++-
+ drivers/tty/serial/8250/8250_dwlib.c               |   2 +-
+ drivers/tty/serial/8250/8250_early.c               |  11 ++
+ drivers/tty/serial/8250/8250_exar.c                |   2 +-
+ drivers/tty/serial/8250/8250_omap.c                |  10 +-
+ drivers/tty/serial/8250/8250_pci.c                 |   2 +-
+ drivers/tty/serial/8250/8250_platform.c            | 122 ++++++++++++--
+ drivers/tty/serial/8250/8250_port.c                |   4 +-
+ drivers/tty/serial/8250/8250_pxa.c                 |  16 --
+ drivers/tty/serial/qcom_geni_serial.c              | 133 ++++++++-------
+ drivers/tty/serial/rp2.c                           |   2 +-
+ drivers/tty/serial/samsung_tty.c                   |  51 +++---
+ drivers/tty/serial/sc16is7xx.c                     | 183 +++++++++++----------
+ drivers/tty/serial/serial_core.c                   | 142 +++++++---------
+ drivers/tty/serial/st-asc.c                        |  10 +-
+ drivers/tty/serial/xilinx_uartps.c                 |   2 +-
+ drivers/tty/tty_io.c                               |  11 +-
+ drivers/usb/host/xhci-dbgcap.h                     |   1 -
+ drivers/usb/host/xhci-dbgtty.c                     |  30 +---
+ include/linux/serial_8250.h                        |   2 +-
+ include/linux/serial_s3c.h                         |  24 +--
+ include/linux/soc/qcom/geni-se.h                   |   9 +
+ 35 files changed, 621 insertions(+), 424 deletions(-)
 
