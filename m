@@ -1,165 +1,190 @@
-Return-Path: <linux-kernel+bounces-339835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85419986B2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:01:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D11986B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A4AB1F233D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:01:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14E221F2279A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 03:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1762E183CD6;
-	Thu, 26 Sep 2024 03:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0E01714AA;
+	Thu, 26 Sep 2024 03:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="U9OP4OLN"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mpUrEbyd"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27D517B513
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 03:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAFC610B;
+	Thu, 26 Sep 2024 03:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727319649; cv=none; b=Fjaqbf0WVWh6abrpysgnPEJzAHI+fmCZxRkQb03RWaLtnEmZIair/G2lhv+b2aO3PaNRu20RcO7LJaFp6cAmTXkkGjyg9Y/8V6wE+hoYlJ+nIB2qTh7+wq0xfmzeThq/mNdNWRvHhW0YLvH1NfK9V8UyR+vtpqjb93BIDYfOsmU=
+	t=1727320063; cv=none; b=E6QnONTA3xX5pgZ3qLYLnlEMxBfwDSjfaVPVqizfG+cywfIx7vjBXOO6kCVnj1ItNr4bGhkS6bJpFWhD9MOSYW2y8kHkyaWRAfWHAB/Qqe+Gr1QL6/kU5cNCh4+th5V/uGWxBLl3NZkDJN/GPqQAFyFpx4J9Caye+AQcJLJX8wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727319649; c=relaxed/simple;
-	bh=fOP1RW8xaYXgo6UAKNyyCaNdqYpSFEzAXlb1gulSoCs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=h2Z5ISrnzIOBZ+J+iTjc2A3KGYr/tCsSs57UZHlrSgBDW4Pun1mWIeCq9feSFC5YPPJIfO6utQ0nFvPKNfcUNeV9tJmq86qV+groV8YiKq2NaFI6j+AZsLHXVCz1LfqHi7zIymoE7oksv8oMQIV4pOYXOtjKAqtoOv2+GquwFO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=U9OP4OLN; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-719b17b2da1so432189b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 20:00:47 -0700 (PDT)
+	s=arc-20240116; t=1727320063; c=relaxed/simple;
+	bh=ALZuawAv6RfhRY6+vfLFnO27Tn6WraHoyicrJ8XdUYY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BvsdVlA0KQ2rzQZ9hbReEu6qPRgGFknF6GXYVvgVXRl1atswB7zDSAEx/XGNZ/oRS5U2GmwideJFqsY853GUpj3Dryl/XcLWbFvFZQ9Ram6cPj4CsRk6KTKLKT93I0V1/yCjYMDcjW09IDN8eYoeUgGSGhNuEtd2ymusZZiMfAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mpUrEbyd; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a90188ae58eso61104666b.1;
+        Wed, 25 Sep 2024 20:07:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1727319647; x=1727924447; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727320059; x=1727924859; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Go4TL5YXIlZZjrMduyK+IYQM3hDPDoYu1c/gM7Xg4NM=;
-        b=U9OP4OLNmdPKBCZkhRLl1Y8pWLWiIM3gNP6ukhz+HMKlPan5/Pw9RFUN8T1mrqbUxP
-         m4R5jJ9sy2BH3PTGb0JKnyB1hOr9hOtBnhhQzBL3kNfD/AoRwvxG7nCfn8qS3Tn7X/5H
-         RTi+8i2BsqLVicmXWiHl3jXjMJbfN0AxoPEz4=
+        bh=SjHLO3lK/OQsJDE6OFm+7r5Bk5tao2ttjn7ToVjtLbE=;
+        b=mpUrEbydil0BbHIjknbZIei/rLF21sxIl6tS3je/Rs9UjfECutGm16qb7GD8otAGN3
+         PuR8McG7hkE5hvnV5U7q4Cn3dh2qvTj82ouOAZGYhqr/1BW21bKyMHY2uihXMNtmO8tp
+         SIQx0nzVCKo69j7XD+uEnPIaiMFk3GKskLycoU+5ldzyinE1cpushisYdZ+J0E3Z3cXm
+         dLDe30X67P/3sdyQISsw2+rg9g2Uav/f5sLRyatqGJ3wRPnVmKN2iD2RlXN2shwjOum1
+         MCr2cdZTRQ1Kh7FifpuQU5BYsRUW1yv9YnPMxwztirZsGkXs3D/OAZ0QfjJXpD6eZ0kj
+         s/QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727319647; x=1727924447;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727320059; x=1727924859;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Go4TL5YXIlZZjrMduyK+IYQM3hDPDoYu1c/gM7Xg4NM=;
-        b=H/rZj6xTNl4RDprOZ3rMkyjrbVt0nwp2DPui37hVJze6hQmcwanXE9ST+uNvGaOsuM
-         +7Zv7jxq66InZyFBvMRpTcBM9APeoHDGQgjT19oU7CwVHONpSFefwEteYvNXt9WvvfP7
-         40J5piO4iqD20pTMF6mG34rwDXpJwztY8y7wIkBUvLPaazGLwajwMGvNIU5gbs5RCvzf
-         FPXWkcVugm6FXm0PUJHy3u9ZEI7PBfsqhFGKFTeEraq14kVQmf+j0HyS2WTlA2uRWtwx
-         XhXEB1OHkg5mwdQ0nb4DZt2mKxx8wGqTTxfylH5WOp/yfgqmCm8HO9nC3vPdFqXfFLb9
-         IzUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWV5WDvrgInQa904I/4OM89XLcUKotiYq6Zoo0nMf6OiS/pUnCq2aNjho9F4A/sPqhe6ng3NyRb/oWk2yI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcvjRNb/BQqhYZ8dZ+aE42PQa+Sr969cTJGNNp8dnbwU8XAjUn
-	Sz6rlidYZmTyu7THw+1ELPKhJk2Mxzix8VJco9U4YKWBIlJAoK7gCpi7JxPCWck=
-X-Google-Smtp-Source: AGHT+IHo/QvXYlAQpeWJb8WEqJxzH+RaMo6+alDlGBaUSCq3IFim3Y3CWxECI4I1FBHAIyJCrPXsJw==
-X-Received: by 2002:a05:6a00:174c:b0:718:d94b:4b with SMTP id d2e1a72fcca58-71b0aaa22ddmr6704494b3a.6.1727319647069;
-        Wed, 25 Sep 2024 20:00:47 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc97c2a8sm3354111b3a.163.2024.09.25.20.00.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 20:00:46 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: Joe Damato <jdamato@fastly.com>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Shailend Chand <shailend@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	Ziwei Xiao <ziweixiao@google.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [RFC net-next 2/2] gve: Map NAPI instances to queues
-Date: Thu, 26 Sep 2024 03:00:22 +0000
-Message-Id: <20240926030025.226221-3-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240926030025.226221-1-jdamato@fastly.com>
-References: <20240926030025.226221-1-jdamato@fastly.com>
+        bh=SjHLO3lK/OQsJDE6OFm+7r5Bk5tao2ttjn7ToVjtLbE=;
+        b=fb4YzwfqInqSEfUcDAvzNFUg6nhbq6PyTxfGtfGYlBeG1fqw5GqeNpe7/59pw0aCeE
+         p4i492iR9USKaOcoRkZhbkZywJQJE0wvTxHfLs3yEehAKU1vJCyLJA4c2JtVPO1nojYS
+         0JHidYTKqEUh6TX7avjXPq5RnHMX8dxOWlbYE4XCnwpwwY7jbtmNh7+QAzQFmHJg4BYr
+         b9CDPDf9GmxtJP+HX5xKv+aZLhAPhX0pExGJIpdje9aOz8PhZ4dMk1WrKaa3xiJwb7cj
+         RYVwYvESZR1P5y/j/zuwnMktUUaBhvaRDaedPUnJ/3TFNQXUvr+AIWHDdKSO05B50Lji
+         K88A==
+X-Forwarded-Encrypted: i=1; AJvYcCUaMX51afnWp0sZ0iDu7F4iNPQgwQyA3nLECxqoHo5yDmGNHV1Ic3wXpuYNrYrSNwrjcGYggi31T9YZ@vger.kernel.org, AJvYcCXJmDgQc+SUnIXKEHIsAdKrldV61wCR2Ay3FRplG5KlFmIq+VHicIhIoQSrNIQEMSXRLuRyXlnEHcOR4Js=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg3UpPFnt1DM3f44j01aiMuzAHvnelg230F7lV54vKWvDosadI
+	uCgvBQRSXqNZQj1iWZ6tpzH2MfJD5ATQgUDk42nptShf3CxPCAWr88M3K4nh7xHyCEprnUB1pWS
+	CnI2MC3xkOwyWUaN5A1AdaDUrdGM=
+X-Google-Smtp-Source: AGHT+IHQnslP5PPXpBtyd2X2lFAmGTpsIvv0uQ/zlGvwN5ExqoTvexqaymYpjsuH9T2eLl+rbj3GyIp5sEfE5Sm7rPE=
+X-Received: by 2002:a17:907:e6d8:b0:a77:cbe5:413f with SMTP id
+ a640c23a62f3a-a93a03247a9mr349784066b.4.1727320059072; Wed, 25 Sep 2024
+ 20:07:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240718034614.484018-1-alvinzhou.tw@gmail.com>
+ <20240718034614.484018-7-alvinzhou.tw@gmail.com> <97134efb-398d-4c21-a915-87a5b4f1b29a@linaro.org>
+ <CAPhrvRR3U9=0DuG_FQ81ZJq+RLe6Bn9YO831Mx2n3NkeV3MCdA@mail.gmail.com>
+ <368cd6fb-cab1-44ad-af46-651d9323bc19@linaro.org> <618e4514-791b-4a73-a1ba-45170a21e453@linaro.org>
+ <79406f2b-8411-4059-b959-9e543944fb9c@linaro.org> <20240925115746.22cdd8fe@xps-13>
+In-Reply-To: <20240925115746.22cdd8fe@xps-13>
+From: Alvin Zhou <alvinzhou.tw@gmail.com>
+Date: Thu, 26 Sep 2024 11:06:41 +0800
+Message-ID: <CAPhrvRR2_j=KhFJHWyU48z998q0wkoZJYCBAUuv8ejp7xnkWiQ@mail.gmail.com>
+Subject: Re: [PATCH v9 6/6] mtd: spi-nor: add support for Macronix Octal flash
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, linux-mtd@lists.infradead.org, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, pratyush@kernel.org, 
+	mwalle@kernel.org, richard@nod.at, vigneshr@ti.com, broonie@kernel.org, 
+	chengminglin@mxic.com.tw, leoyu@mxic.com.tw, 
+	AlvinZhou <alvinzhou@mxic.com.tw>, JaimeLiao <jaimeliao@mxic.com.tw>, 
+	Bough Chen <haibo.chen@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use the netdev-genl interface to map NAPI instances to queues so that
-this information is accessible to user programs via netlink.
+Hi Miquel,
 
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-			 --dump queue-get --json='{"ifindex": 2}'
+Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=88=
+25=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=885:57=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+> Hi Alvin,
+>
+> tudor.ambarus@linaro.org wrote on Tue, 24 Sep 2024 08:17:26 +0100:
+>
+> > On 9/24/24 7:36 AM, Tudor Ambarus wrote:
+> > >
+> > >
+> > > On 9/24/24 7:26 AM, Tudor Ambarus wrote:
+> > >>
+> > >>
+> > >> On 9/24/24 4:25 AM, Alvin Zhou wrote:
+> > >>> Hi Tudor,
+> > >>>
+> > >>> Tudor Ambarus <tudor.ambarus@linaro.org> =E6=96=BC 2024=E5=B9=B49=
+=E6=9C=8823=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=882:54=E5=AF=AB=E9=
+=81=93=EF=BC=9A
+> > >>>>
+> > >>>> Hi, Alvin,
+> > >>>>
+> > >>>> I quickly skimmed over the previous 5 patches and they are looking=
+ fine.
+> > >>>>
+> > >>>> I don't get this patch however.
+> > >>>>
+> > >>>> On 7/18/24 4:46 AM, AlvinZhou wrote:
+> > >>>>> From: AlvinZhou <alvinzhou@mxic.com.tw>
+> > >>>>>
+> > >>>>> Adding Manufacture ID 0xC2 in last of ID table because of
+> > >>>>> Octal Flash need manufacturer fixup for enabling/disabling
+> > >>>>> Octal DTR mode.
+> > >>>>>
+> > >>>>> Signed-off-by: JaimeLiao <jaimeliao@mxic.com.tw>
+> > >>>>> Signed-off-by: AlvinZhou <alvinzhou@mxic.com.tw>
+> > >>>>> ---
+> > >>>>>  drivers/mtd/spi-nor/macronix.c | 4 +++-
+> > >>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+> > >>>>>
+> > >>>>> diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor=
+/macronix.c
+> > >>>>> index f039819a5252..1a8ccebdfe0e 100644
+> > >>>>> --- a/drivers/mtd/spi-nor/macronix.c
+> > >>>>> +++ b/drivers/mtd/spi-nor/macronix.c
+> > >>>>> @@ -200,7 +200,9 @@ static const struct flash_info macronix_nor_p=
+arts[] =3D {
+> > >>>>>               .name =3D "mx25l3255e",
+> > >>>>>               .size =3D SZ_4M,
+> > >>>>>               .no_sfdp_flags =3D SECT_4K,
+> > >>>>> -     }
+> > >>>>> +     },
+> > >>>>> +     /* Need the manufacturer fixups, Keep this last */
+> > >>>>> +     { .id =3D SNOR_ID(0xc2) }
+> > >>>>>  };
+> > >>>>>
+> > >>>>
+> > >>>> Could you please elaborate why you need just the manufacturer id h=
+ere? I
+> > >>>> would have expected to see a specific flash entry instead.
+> > >>>
+> > >>> Grateful to Michael for the valuable suggestion. This addition of t=
+he
+> > >>> Macronix manufacturer ID enables the fixup functions such as
+> > >>> macronix_nor_set_octal_dtr to be executed without the need to
+> > >>> create separate ID entries for each Octal DTR NOR Flash in the
+> > >>> flash_info.
+> > >>>
+> > >>
+> > >> Ah, nice. Okay then. I'm going to review the rest of the patches. Th=
+ey
+> > >> look promising ;).
+> > >
+> > > ah, but then you'll always have a matched ID, so you break the generi=
+c
+> > > flash probing for macronix. Is that correct?
+> >
+> > Answering myself: it's fine. Generic flash probe just fills a name,
+> > which we don't really care about.
+>
+> I was also a bit surprised by the diff, would you mind filling a more
+> complete with details on the actual goal of this entry (having all
+> Macronix flashes to get the fixups, without creating separate ID
+> entries for each of the flashes)
 
-[{'id': 0, 'ifindex': 2, 'napi-id': 8313, 'type': 'rx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8314, 'type': 'rx'},
- {'id': 2, 'ifindex': 2, 'napi-id': 8315, 'type': 'rx'},
- {'id': 3, 'ifindex': 2, 'napi-id': 8316, 'type': 'rx'},
- {'id': 4, 'ifindex': 2, 'napi-id': 8317, 'type': 'rx'},
-[...]
- {'id': 0, 'ifindex': 2, 'napi-id': 8297, 'type': 'tx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8298, 'type': 'tx'},
- {'id': 2, 'ifindex': 2, 'napi-id': 8299, 'type': 'tx'},
- {'id': 3, 'ifindex': 2, 'napi-id': 8300, 'type': 'tx'},
- {'id': 4, 'ifindex': 2, 'napi-id': 8301, 'type': 'tx'},
-[...]
+Thank you for the reminder, I will incorporate more detailed
+explanations.
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- drivers/net/ethernet/google/gve/gve_main.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+>
+> Thanks,
+> Miqu=C3=A8l
 
-diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
-index 661566db68c8..da811e90bdfa 100644
---- a/drivers/net/ethernet/google/gve/gve_main.c
-+++ b/drivers/net/ethernet/google/gve/gve_main.c
-@@ -1875,6 +1875,9 @@ static void gve_turndown(struct gve_priv *priv)
- 
- 		if (!gve_tx_was_added_to_block(priv, idx))
- 			continue;
-+
-+		netif_queue_set_napi(priv->dev, idx, NETDEV_QUEUE_TYPE_TX,
-+				     NULL);
- 		napi_disable(&block->napi);
- 	}
- 	for (idx = 0; idx < priv->rx_cfg.num_queues; idx++) {
-@@ -1883,6 +1886,9 @@ static void gve_turndown(struct gve_priv *priv)
- 
- 		if (!gve_rx_was_added_to_block(priv, idx))
- 			continue;
-+
-+		netif_queue_set_napi(priv->dev, idx, NETDEV_QUEUE_TYPE_RX,
-+				     NULL);
- 		napi_disable(&block->napi);
- 	}
- 
-@@ -1909,6 +1915,9 @@ static void gve_turnup(struct gve_priv *priv)
- 			continue;
- 
- 		napi_enable(&block->napi);
-+		netif_queue_set_napi(priv->dev, idx, NETDEV_QUEUE_TYPE_TX,
-+				     &block->napi);
-+
- 		if (gve_is_gqi(priv)) {
- 			iowrite32be(0, gve_irq_doorbell(priv, block));
- 		} else {
-@@ -1931,6 +1940,9 @@ static void gve_turnup(struct gve_priv *priv)
- 			continue;
- 
- 		napi_enable(&block->napi);
-+		netif_queue_set_napi(priv->dev, idx, NETDEV_QUEUE_TYPE_RX,
-+				     &block->napi);
-+
- 		if (gve_is_gqi(priv)) {
- 			iowrite32be(0, gve_irq_doorbell(priv, block));
- 		} else {
--- 
-2.43.0
-
+Thanks,
+Alvin
 
