@@ -1,128 +1,116 @@
-Return-Path: <linux-kernel+bounces-340552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453A198751F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:09:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD75E987523
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB91B1F22F60
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:09:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74457B22641
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 14:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162998248C;
-	Thu, 26 Sep 2024 14:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701DC13213E;
+	Thu, 26 Sep 2024 14:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="gQO8PtmS";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="OPWxx9X4"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRfLUbpj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFCB2E3F7
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 14:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8572E3F7;
+	Thu, 26 Sep 2024 14:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727359760; cv=none; b=s0pngLZTdaYISqBia62OHnWqxx4PNaWy5Nnp4S5DVjUgjT2XUij9PiQWVsXRFsfJefBcYWpXWRbUz1R1OyMC4OXt+XqPoKbzKWA8oTeuAl8i2icGOTIoPB0TUslAJCNpMaiiqH6BKNSw2t3P9YgK37ic90lMYUc79EHFpraiPk8=
+	t=1727359795; cv=none; b=McBrToEVsYbWGQMGGX45ELPT7a8cIlyVayEyjSO6JmOpnFp3cV8r6/Sq7RPp31czooHfA9+Kwqofvm3qSVcz2m2dHvrUtfSAhivNpSvkZnACF+Eu9loK3KQkVgMohv8ypUUNkgS5kAcO5MXkWaq/6qyQHx4CsU19V/XIe/ZYomo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727359760; c=relaxed/simple;
-	bh=aU7DhuM0MRl/oleJUgNjJ5QLB7b0wpiBWF3UI3tBfO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kG4vGs7+u9rTfWgb4/cpblH63AusMDtSLzGXoEySpkhygXTrnOGzVMyVExmJ9JJeOVlacOy9rWMLMhutM5eCXPNodo8YtZTVzVVCtyPhnYL14L+y9ADYBYO9Ls/1k7veV0AI/UKsz7d92rNScMJWdyMkMcTAc+lyskrOCXgyyH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=gQO8PtmS; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=OPWxx9X4 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1727359756; x=1758895756;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=aU7DhuM0MRl/oleJUgNjJ5QLB7b0wpiBWF3UI3tBfO8=;
-  b=gQO8PtmSUyyNyCM18jEsr1uenVrnYMemasRy5qTZCYTjXpzelRbRPFII
-   Ir3YVL1m1nMtIS2D96Rv3lWbG4myvT3sTBss0qRqqsiUyQBQKlO1WDgXE
-   kiNTV3TJDRszjeCTqLMoyhPKtidnqaIJL/4igfz5hy8JOZPjl3uSZ+GPW
-   STA0vXYPSTBXrABdv1Qpa2BvHZn/X9Bcr1zKBgbJmoSvLl/lNd0fzn/WJ
-   mcWHHNIU1dA+U2ohF79co7J6HCPvPICAUWCnylKv/KUH+nIfYvolkyGgP
-   qBLiHMrUeYeebyTFlKXml4Q8+iqH1qqrCeq1g7/5PE/CLRkbb+7eiK4Pw
-   g==;
-X-CSE-ConnectionGUID: WesfB8g6TUKNOiDFyfVYYQ==
-X-CSE-MsgGUID: oLILoqlWRbGX4q8dhpshqw==
-X-IronPort-AV: E=Sophos;i="6.11,155,1725314400"; 
-   d="scan'208";a="39145675"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 26 Sep 2024 16:09:11 +0200
-X-CheckPoint: {66F56B07-1-B62731C4-FB8D8F8A}
-X-MAIL-CPID: 52217610F519004650615E3A9DFC3094_3
-X-Control-Analysis: str=0001.0A682F20.66F56B07.00CA,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 965B4163464;
-	Thu, 26 Sep 2024 16:09:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1727359746;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=aU7DhuM0MRl/oleJUgNjJ5QLB7b0wpiBWF3UI3tBfO8=;
-	b=OPWxx9X4ANG+tfcreBmeS7UkQnvUB8Tdyb3lXfCasPbyVNlo51xaTvZixvroKUOUzmSLZt
-	Nm7+NU9S8+iOyDJlYY5c9MWNMr+aB9kcNGz+szuokdlhPEg9e+fJz/NyVlZcysPfnTAxCG
-	vJ8A/goAltjeIWEB5wUW8hAZLK0BNpTGlS+SErUZcIa+6WMiBKNgDcwdl5hGoyOPK1VvHb
-	yVwwrnz3tfNIcdfvv98iPWHJQw8E46dip1xZRbKUCnwZHmhqoHEFyimeIN6azYSLxPTMtz
-	DVZvlFI+hrz5tGHoTSVQ9LstuT+rS7979zREacLyehfrn0HJYWU+RmQq2LuV3Q==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Matthias Schiffer <matthias.schiffer@tq-group.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] drm: fsl-dcu: enable PIXCLK on LS1021A
-Date: Thu, 26 Sep 2024 16:09:03 +0200
-Message-ID: <2754373.mvXUDI8C0e@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <tosilxaxfg6hejtqs2fslf6ez5pdg5yxj776pohmodja3bn5jp@4jbdprx52fqx>
-References: <20240926055552.1632448-1-alexander.stein@ew.tq-group.com> <20240926055552.1632448-2-alexander.stein@ew.tq-group.com> <tosilxaxfg6hejtqs2fslf6ez5pdg5yxj776pohmodja3bn5jp@4jbdprx52fqx>
+	s=arc-20240116; t=1727359795; c=relaxed/simple;
+	bh=5OVs4ZtVDZXTUxQ1wNV9IUGz0njANUUAWYK3Ofzc3t0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WItglpRNIgoZGCOf+ltotd1kwTEx4yonHmHwroRjqabMDFjfdSEcpUUsQin082KaqCJ9TNp+hDdcUg+r56rQZHgMUcuUbxem8HNb8xP/yCcqrcTtAlNQqnYOTwNyUCBhvQXLJXrIStW/cwr/GuNMN9PQ4BRHDHpogdSpzlyQEbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZRfLUbpj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D220C4CEC5;
+	Thu, 26 Sep 2024 14:09:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727359795;
+	bh=5OVs4ZtVDZXTUxQ1wNV9IUGz0njANUUAWYK3Ofzc3t0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZRfLUbpj9eCyQEnVOsyqEXZtD1QAfN6gxdhH67cZkxrjSlpT0I/YHyTxGQO2BMguD
+	 9y4cdaDxdKMYwo1D8u25MQrwcXjVSr06wpvHgvA9clStDTFYTftUeI6q+aUDtDUvDT
+	 4fe4O494p3j5lH3evkSCle7f9L/m6Ete614MKJRrXr7IuCQPSbx6Z3x88mQHarcOI6
+	 O9UvTmWYK3LWtPd6B3kYjVo768hMbjSUIg+p7gf+EdFBhI023/ZeQydAbSbKf4wWdL
+	 RNEG2a4iuT0DF6jac9WeAbKhU10MTwkUPnoP4Q6Dq1A8Nl7QnXKdGai1dwzbxXTVru
+	 zfSfhBHmsl/oQ==
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a910860e4dcso144339066b.3;
+        Thu, 26 Sep 2024 07:09:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVt0alVAvcn3KN1ec9v4nAmi830Wo69EhQL3k7lMhuByr9oI/GNrzYkWI+iEGLMGmgh7i9InfwVUwNlXA==@vger.kernel.org, AJvYcCXyWSlfarkEcbghSgw7J1qk2X/+6Far/foEDYK04REzNAkEA9Wnxwc0DZ/ERZmWtNZz2zW2B6UojI8lKvEs@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR4O6T03TPheUFzOsIroq0xQkPMQSF6lMwbXilrOJ+uxsd6rpt
+	VqmlRVDfOLAb4cMFtqjrGwwguMAKjGc+HaUFdjKpzaeR49YFiDfghTGjnBA4I4PA/RrQptX1zlC
+	OeJ1sQVodjM83UaW8irWw5Qrbf/c=
+X-Google-Smtp-Source: AGHT+IHVYHgCtMU8Ncq5nGgrW2FgX2HXxYfeEtIMmlkNIVx7IYe8fceuUDV7JqHRDxjYyHwn+wK+pBMzYsb+C5RKlU8=
+X-Received: by 2002:a17:907:7f8d:b0:a8d:11c2:2b4 with SMTP id
+ a640c23a62f3a-a93a06768aamr635811266b.56.1727359793924; Thu, 26 Sep 2024
+ 07:09:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <CAL3q7H5vV1MLODuCHr1p4Dx6tMGOMeqxDnTGMsDz290kw8Vsew@mail.gmail.com>
+ <20240926135729.4578-1-riyandhiman14@gmail.com>
+In-Reply-To: <20240926135729.4578-1-riyandhiman14@gmail.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Thu, 26 Sep 2024 15:09:16 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H4prrKHKP_Ls-eYhiHtp4x84+d2W189eV4R+KF4V89yGA@mail.gmail.com>
+Message-ID: <CAL3q7H4prrKHKP_Ls-eYhiHtp4x84+d2W189eV4R+KF4V89yGA@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: add missing NULL check in btrfs_free_tree_block()
+To: Riyan Dhiman <riyandhiman14@gmail.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Dmitry,
+On Thu, Sep 26, 2024 at 2:57=E2=80=AFPM Riyan Dhiman <riyandhiman14@gmail.c=
+om> wrote:
+>
+> > If that happens we want it to be noisy so that it gets reported and we
+> > look at it.
+> > Letting a NULL pointer dereference happen is one way of getting our att=
+ention.
+> >
+> > O more gentle and explicit way would be to have a:    ASSERT(bg !=3D NU=
+LL);
+>
+> I am wondering whether it would be better to have an ASSERT statement her=
+e, as you
+> suggested, or use a BUG_ON instead.
 
-Am Donnerstag, 26. September 2024, 08:05:56 CEST schrieb Dmitry Baryshkov:
-> On Thu, Sep 26, 2024 at 07:55:51AM GMT, Alexander Stein wrote:
-> > From: Matthias Schiffer <matthias.schiffer@tq-group.com>
-> >=20
-> > The PIXCLK needs to be enabled in SCFG before accessing certain DCU
-> > registers, or the access will hang. For simplicity, the PIXCLK is enabl=
-ed
-> > unconditionally, resulting in increased power consumption.
->=20
-> By this description it looks like a fix. What is the first broken
-> commit? It needs to be mentioned in the Fixes: tag. Or is it hat
-> existing devices have been enabling SCFG in some other way?
+Please no, we're trying to get rid of all BUG_ON()s in the code base,
+and replace them either with proper error handling or an ASSERT, or
+both sometimes since CONFIG_BTRFS_ASSERT is not enabled by default in
+some distros (we say in kconfig that it's meant only for developers).
 
-We discussed this internally and it seems this never worked, unless PIXCLK
-was already enabled in SCFG by a different way, e.g. firmware, etc.
+>
+> I haven't personally encountered a null pointer dereference issue in a li=
+ve kernel
+> environment, so I'm not sure how the kernel behaves in such a scenario. H=
+owever, it
+> seems wrong to leave it unhandled as it currently is.
 
-Best regards,
-Alexander
+Just add a:
 
-> >=20
-> > Signed-off-by: Matthias Schiffer <matthias.schiffer@tq-group.com>
-> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > ---
-> > Changes in v2:
-> > * Add note about power consumption in commit message
-> > * Add note about power consumption in comment
-> > * Fix alignment
-> >=20
->=20
->=20
+if (WARN_ON(!bg)) {
+    btrfs_abort_transaction(trans, -ENOENT);
+    btrfs_err(fs_info, "block group not found for extent buffer %llu
+generation %llu root %llu transaction %llu",
+                   buf->start, btrfs_header_generation(buf), root_id,
+trans->transid);
+    return -ENOENT;
+}
 
+Thanks.
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+>
+> Regards,
+> Riyan Dhiman
 
