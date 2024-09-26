@@ -1,182 +1,141 @@
-Return-Path: <linux-kernel+bounces-340395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72A579872BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA4C9872C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F3BAB22398
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:23:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF1E8B236DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E5718CC01;
-	Thu, 26 Sep 2024 11:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B4518C913;
+	Thu, 26 Sep 2024 11:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="S8YB934G"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bj74r4UU"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC361B960;
-	Thu, 26 Sep 2024 11:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C1B18C002;
+	Thu, 26 Sep 2024 11:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727349819; cv=none; b=bydnVgYUJnLL0xb0SWiUTwTezxC4+XLAlB96EVh2h/wk6O3u4VJIZ9MYOaIzIXC+tkhFmHys+BJFlsAEP5U1D/2ugRzPqJtruFDVgmVagMD983oX756SkpNnCtb86MqeTYnwDht3C/4IxA5e1Kt0Z4FAJfHUZzFSigWLk0P12NA=
+	t=1727349841; cv=none; b=TzSbkw7MChVgLPQ613ZLfA5j3pmVSWJAAVlzm/H01M+S+P3TeIB2oTfZz5rMfttUASimCIZ7FPGdot55pIEowP5EsCWO33/t/CGqvzS2GAaGNB3S4CiEfgDjwS3OyckOLnoKouNZgYrzUTZwnc+rK/mz/Vjtc0DTywZjb0k8YuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727349819; c=relaxed/simple;
-	bh=4uSInfRnITG59DSZsLFHyPVKqII85qLvRJfFkEJyfBY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZTYMejfLn757sdbpZxCe1M+L6lHYK6mwoBOb3BHtFWjQJL9nZJ1ogzom8EKeXm7GyDrUex62VfrJhCLZjXK8TUDOd9U4CIzeC4j2y0aj/j+M+kgVHMjlS3M6EKl7nvlGrzksu3CsgEb+G+wawIhnNFJpbsQrJ0dYIb0KvL/gpRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=S8YB934G; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1727349808; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=52Hd22cyMQE0xicpF+br1DfVt8GaUc6LS4cJaudJCdk=;
-	b=S8YB934GS2UYCT3i1ugXs6Wx2zPU0p9cYvaWhYOoFPGHVz4TApPr/mxtBNy5cXvfvGr1is1GyWQP/Wq1hpNLr0XYNxpqxCPzV2DK/21AauFiqxua+rEHbM+2YvWc4xDJ6g2rn0bgnwgmpbEiXJR1bS9TsbMwsWbDvQY5KVQKQuI=
-Received: from 30.221.129.247(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFnG64q_1727349806)
-          by smtp.aliyun-inc.com;
-          Thu, 26 Sep 2024 19:23:27 +0800
-Message-ID: <ec17a30e-c63a-4615-8784-69aef2bb2bae@linux.alibaba.com>
-Date: Thu, 26 Sep 2024 19:23:26 +0800
+	s=arc-20240116; t=1727349841; c=relaxed/simple;
+	bh=Qh6BKA0klmtViryPhizQMHA5VvaCtxlmVNmS6TUntoA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=MjWnF/UvSx9nV/EU16z9HNEKVkIIdZowbN9nUpZc4PY7fyU+vt8lTqIsVhYchqodsrayyhrpvfTM1wylIfdCJCpnnWlMBAbMl9otIkdi34/ALAGlEqn/HEftOAd6p9GMA/othm+ObRgyNNVftiMKZeauqJtshDF4RcpOSeSYh28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bj74r4UU; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-718e2855479so626934b3a.1;
+        Thu, 26 Sep 2024 04:23:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727349839; x=1727954639; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qh6BKA0klmtViryPhizQMHA5VvaCtxlmVNmS6TUntoA=;
+        b=bj74r4UUE5LPAbnJ6JuXEaTj5DOZCSYBL95NKgUgSAl4rMUnSQFH4dfwQyRQcdjEJZ
+         lpKfsZjNBBCLer9vt49idN1qugVYTWAYHrs1MC4JotFfZnIn263JY8yWci6E4Ip2KMw8
+         PjZZ5EElkm6TxrLInKCFEyDyStg+eoxashxQUCpNADo7Ure+kiARZSb7eSv1xcCOfcv0
+         LvX5BIfpLx7YivANk3cq8hX2yzU+DoYvn4hOnj6KCelZCqPeLXr9FLBedNMQQxDKMbX5
+         Al05RVCh5tZsOG6YlB71CM95p06BAIvPrzacDigM+4w4U40oq4toU5au/FjJfZ6D8nml
+         DqPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727349839; x=1727954639;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qh6BKA0klmtViryPhizQMHA5VvaCtxlmVNmS6TUntoA=;
+        b=jtARh+V6VHtqzswH5BgDw7yozBBNW/7H1mNjNbKrVUN4XH/y5wOVhD0HP7f8uPIvx7
+         S4tMb3kcxf/N+70q/hXpl/rZpwJZUzopA7OtTsU3RX3D9Zq8Ny6USInsqdTeVrM5hKxw
+         yN+rW/Yfiw79iGjlyZwXKcG8c1QY0KPlKOxw4AOjrpFx4VSloqbcLWT50lzBNjyjaukG
+         HxvcbPEYMkktCLWVjHlJ8CJOVub6o0xE5h0zlK8gnhnkl2t/2OrPDBAH+okZ3CX1c0BE
+         0zQalG9sRjWvRkve0l+qguz9D8x/dF2N5wF2UjaniC4cMKQUn/FdeIiWRfujUKXGA+wk
+         uulw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZN3Pnjz/N4Gt5X06L2yS8pKKOB+IBOkYTQfRj0QVENnsemosgFSs3XBB94mzLIHi/W92+04+FJKvMrHza3A==@vger.kernel.org, AJvYcCXzW0N5c/3SLmfi3gHLeDo+/ZC2Pas0diQ1pK0oTNplDuTWKnWUmNxKP2kgf0+dtwvS4JofQ4eG28rDprY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWMeOq60wHbwfD8sMkIrW76GXXIryS4EFiJrtHaRg8eqfZQgso
+	FwW2l0X7bsJT1/xhYtJxlWaV8iOasykDj/3VTTu8e5sZny/3lBk8
+X-Google-Smtp-Source: AGHT+IESqjCJ3V69qqI/L3vFmeBNqhPpBAt80MIcXE8Vc2JIV6xIYQktZwJ2SiMRLJ0z42frHG76yA==
+X-Received: by 2002:a05:6a21:3941:b0:1c6:a65f:299 with SMTP id adf61e73a8af0-1d4d4ac640emr7966777637.21.1727349839055;
+        Thu, 26 Sep 2024 04:23:59 -0700 (PDT)
+Received: from smtpclient.apple ([198.11.176.14])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc92c9c1sm4157565b3a.114.2024.09.26.04.23.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Sep 2024 04:23:58 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
-To: Ariel Miculas <amiculas@cisco.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, rust-for-linux@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Gary Guo <gary@garyguo.net>,
- linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
-References: <239b5d1d-64a7-4620-9075-dc645d2bab74@proton.me>
- <20240925154831.6fe4ig4dny2h7lpw@amiculas-l-PF3FCGJH>
- <80cd0899-f14c-42f4-a0aa-3b8fa3717443@linux.alibaba.com>
- <20240925214518.fvig2n6cop3sliqy@amiculas-l-PF3FCGJH>
- <be7a42b2-ae52-4d51-9b0c-ed0304db3bdf@linux.alibaba.com>
- <0ca4a948-589a-4e2c-9269-827efb3fb9ef@linux.alibaba.com>
- <20240926081007.6amk4xfuo6l4jhsc@amiculas-l-PF3FCGJH>
- <54bf7cc6-a62a-44e9-9ff0-ca2e334d364f@linux.alibaba.com>
- <20240926095140.fej2mys5dee4aar2@amiculas-l-PF3FCGJH>
- <5f5e006b-d13b-45a5-835d-57a64d450a1a@linux.alibaba.com>
- <20240926110151.52cuuidfpjtgwnjd@amiculas-l-PF3FCGJH>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240926110151.52cuuidfpjtgwnjd@amiculas-l-PF3FCGJH>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH 0/2] livepatch: introduce 'stack_order' sysfs interface to
+ klp_patch
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <0fe8f8d36fb5fc78c645b26c20b5ae365bb59991.camel@suse.com>
+Date: Thu, 26 Sep 2024 19:23:44 +0800
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+ Miroslav Benes <mbenes@suse.cz>,
+ Jiri Kosina <jikos@kernel.org>,
+ Petr Mladek <pmladek@suse.com>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8A6A3E71-DB43-4305-95FC-202D20B5EC16@gmail.com>
+References: <20240925064047.95503-1-zhangwarden@gmail.com>
+ <0fe8f8d36fb5fc78c645b26c20b5ae365bb59991.camel@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
 
+> On Sep 25, 2024, at 21:08, Marcos Paulo de Souza <mpdesouza@suse.com> =
+wrote:
+>=20
+> On Wed, 2024-09-25 at 14:40 +0800, Wardenjohn wrote:
+>> As previous discussion, maintainers think that patch-level sysfs
+>> interface is the
+>> only acceptable way to maintain the information of the order that
+>> klp_patch is=20
+>> applied to the system.
+>>=20
+>> However, the previous patch introduce klp_ops into klp_func is a
+>> optimization=20
+>> methods of the patch introducing 'using' feature to klp_func.
+>>=20
+>> But now, we don't support 'using' feature to klp_func and make
+>> 'klp_ops' patch
+>> not necessary.
+>>=20
+>> Therefore, this new version is only introduce the sysfs feature of
+>> klp_patch=20
+>> 'stack_order'.
+>=20
+> The approach seems ok to me, but I would like to see selftests for =
+this
+> new attribute. We have been trying to add more and more selftests for
+> existing known behavior, so IMO adding a new attribute should contain =
+a
+> new test to exercise the correct behavior.
+>=20
+> Other than that, for the series:
+>=20
+> Acked-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+>=20
 
-On 2024/9/26 19:01, Ariel Miculas via Linux-erofs wrote:
-> On 24/09/26 06:46, Gao Xiang wrote:
+Hi, Macros!
 
-...
+Thanks a lot.
 
->>
->>>
->>>>
->>>> 	                Total Size (MiB)	Average layer size (MiB)	Saved / 766.1MiB
->>>> Compressed OCI (tar.gz)	282.5	28.3	63%
->>>> Uncompressed OCI (tar)	766.1	76.6	0%
->>>> Uncomprssed EROFS	109.5	11.0	86%
->>>> EROFS (DEFLATE,9,32k)	46.4	4.6	94%
->>>> EROFS (LZ4HC,12,64k)	54.2	5.4	93%
->>>>
->>>> I don't know which compression algorithm are you using (maybe Zstd?),
->>>> but from the result is
->>>>     EROFS (LZ4HC,12,64k)  54.2
->>>>     PuzzleFS compressed   53?
->>>>     EROFS (DEFLATE,9,32k) 46.4
->>>>
->>>> I could reran with EROFS + Zstd, but it should be smaller. This feature
->>>> has been supported since Linux 6.1, thanks.
->>>
->>> The average layer size is very impressive for EROFS, great work.
->>> However, if we multiply the average layer size by 10, we get the total
->>> size (5.4 MiB * 10 ~ 54.2 MiB), whereas for PuzzleFS, we see that while
->>> the average layer size is 30 MIB (for the compressed case), the unified
->>> size is only 53 MiB. So this tells me there's blob sharing between the
->>> different versions of Ubuntu Jammy with PuzzleFS, but there's no sharing
->>> with EROFS (what I'm talking about is deduplication across the multiple
->>> versions of Ubuntu Jammy and not within one single version).
->>
->> Don't make me wrong, I don't think you got the point.
->>
->> First, what you asked was `I'm referring specifically to this
->> comment: "EROFS already supports variable-sized chunks + CDC"`,
->> so I clearly answered with the result of compressed data global
->> deduplication with CDC.
->>
->> Here both EROFS and Squashfs compresses 10 Ubuntu images into
->> one image for fair comparsion to show the benefit of CDC, so
-> 
-> It might be a fair comparison, but that's not how container images are
-> distributed. You're trying to argue that I should just use EROFS and I'm
+I will add selftest case for it as soon as possible.
 
-First, OCI layer is just distributed like what I said.
+Regards.
+Wardenjohn.
 
-For example, I could introduce some common blobs to keep
-chunks as chunk dictionary.   And then the each image
-will be just some index, and all data will be
-deduplicated.  That is also what Nydus works.
-
-> showing you that EROFS doesn't currently support the functionality
-> provided by PuzzleFS: the deduplication across multiple images.
-
-No, EROFS supports external devices/blobs to keep a lot of
-chunks too (as dictionary to share data among images), but
-clearly it has the upper limit.
-
-But PuzzleFS just treat each individual chunk as a seperate
-file, that will cause unavoidable "open arbitary number of
-files on reading, even in page fault context".
-
-> 
->> I believe they basically equal to your `Unified size`s, so
->> the result is
->>
->> 			Your unified size
->> 	EROFS (LZ4HC,12,64k)  54.2
->> 	PuzzleFS compressed   53?
->> 	EROFS (DEFLATE,9,32k) 46.4
->>
->> That is why I used your 53 unified size to show EROFS is much
->> smaller than PuzzleFS.
->>
->> The reason why EROFS and SquashFS doesn't have the `Total Size`s
->> is just because we cannot store every individual chunk into some
->> seperate file.
-> 
-> Well storing individual chunks into separate files is the entire point
-> of PuzzleFS.
-> 
->>
->> Currently, I have seen no reason to open arbitary kernel files
->> (maybe hundreds due to large folio feature at once) in the page
->> fault context.  If I modified `mkfs.erofs` tool, I could give
->> some similar numbers, but I don't want to waste time now due
->> to `open arbitary kernel files in the page fault context`.
->>
->> As I said, if PuzzleFS finally upstream some work to open kernel
->> files in page fault context, I will definitely work out the same
->> feature for EROFS soon, but currently I don't do that just
->> because it's very controversal and no in-tree kernel filesystem
->> does that.
-> 
-> The PuzzleFS kernel filesystem driver is still in an early POC stage, so
-> there's still a lot more work to be done.
-
-I suggest that you could just ask FS/MM folks about this ("open
-kernel files when reading in the page fault") first.
-
-If they say "no", I suggest please don't waste on this anymore.
-
-Thanks,
-Gao Xiang
+(This email is resent because it seemed not sent to LKML...)=
 
