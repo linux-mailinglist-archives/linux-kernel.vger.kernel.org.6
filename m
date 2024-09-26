@@ -1,86 +1,70 @@
-Return-Path: <linux-kernel+bounces-340215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D20E98700A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:25:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6002F987015
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3981C2096C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:25:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258AA2854CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99F11AB6E8;
-	Thu, 26 Sep 2024 09:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="O5A6t4RS"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAB01AAE15;
+	Thu, 26 Sep 2024 09:27:14 +0000 (UTC)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC449146596;
-	Thu, 26 Sep 2024 09:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C801E146596
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727342743; cv=none; b=sJzG/u3bUaxIPQRKS/iHxQqCLrVYJVuhTtShYGv9WRwtWSXuMSZBKiJYbg1aflCy4+1Td33sPCqoFUIVQ7SBou88+m/1yKfGqnR1QP78m2P43hQshwumF3wcUKcZgsS1462z3J4Oei76aDnhUfHn6JsAXt9sUgHUTMzIVMesDv4=
+	t=1727342834; cv=none; b=WV8sxuPhyuUmJHGyeECPV060XneE00Z6o7vwgTXNO/v3mkjwrYJEnfbhMcauxkp++vbsGj16ckccPLXyS+/m5zxcJCBNEhIj6X/61Ztlt3CoVaDNX0wIJb2HeF/w/401jlIQl94t3IfPjU3/fIXYkNdCIf3O3py2EHocCe7ik2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727342743; c=relaxed/simple;
-	bh=WOTEcCH1q+vXiU5+IcfW8u8/9hRynPOT7CZFFoTf05M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oAakDKc6NIbFnCphW2tiarwhd+YmkJJNn/XY/vwY7EALLsm+dNbzYkD+Gdzh4vGMX60TEnPyiyVLYRQoD8Drc4CGFuIBEx8s5llgwn/k3SzniFC+Aj2nR5yBnmQ7U++8cc8R0REnm6R5kWwfaE2l9JjJlL7HZd+wxy6BmFucr9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=O5A6t4RS; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 43cb2c507be911ef8b96093e013ec31c-20240926
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=gGORMmyAt9xsZXh0Ovwbl04Yo5sJ4S7NR8EIjHh5Gdk=;
-	b=O5A6t4RSnX4EperVbWtBAt6SymW7DXERWTw7R7XMi3dxf41oZQZxFHzGqEuVx1WsgPOL9xf+9HpXSYgP4+IWTVhQMX63WBHTrVO3Bvpc3XGOQo8GcSri0/GMC5uH27Xd58hfbEsnGdsQDolu9pklf48XSc5Rx97juBNDM/8ABnI=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:0c6f0e59-db39-4a13-9c25-e6c7d049b234,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:69ad999e-8e9a-4ac1-b510-390a86b53c0a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 43cb2c507be911ef8b96093e013ec31c-20240926
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 770929033; Thu, 26 Sep 2024 17:25:26 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 26 Sep 2024 17:25:25 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 26 Sep 2024 17:25:25 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Eason Yen
-	<eason.yen@mediatek.com>, Jiaxin Yu <jiaxin.yu@mediatek.com>, Shane Chien
-	<shane.chien@mediatek.com>, Hui Liu <hui.liu@mediatek.com>,
-	<linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-sound@vger.kernel.org>,
-	Alexandre Mergnat <amergnat@baylibre.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
-	<wenst@chromium.org>
-Subject: [PATCH 3/3] arm64: dts: mediatek: mt6359: fix dtbs_check error for audio-codec
-Date: Thu, 26 Sep 2024 17:25:19 +0800
-Message-ID: <20240926092519.6556-3-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20240926092519.6556-1-macpaul.lin@mediatek.com>
-References: <20240926092519.6556-1-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1727342834; c=relaxed/simple;
+	bh=2oJS0dqs3dzFGrMjrE2KNkacP8RMJBWZ1mFfNaWdjkI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=MH8jf8nx29choFeXLIeH+AdhnNShZCW1g9HnzE9CGOLYEWb/fCq91NObO2xPX7dLLVGajh/dZaEYfxNKm0vjU+kSQIOVkCWvKycGWC+RcQnHg1f6Wj6XCSYgwYBhXZNzIz3pS4QPzEOvP+Qbb7QxkyHHfqe14/7+mpSMDi5jbhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cde6b5094so6983615e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 02:27:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727342831; x=1727947631;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RCYimulyplJ/QBbQZDyNZ6PC7/nIgszRvvPJOLK6CQQ=;
+        b=hZXGD9cuUtc233f4CY1QTWoIcR+/p2HKZ9n2FQWn3HIqghogdjbe25Z8hMqCPoAGVS
+         Yog3KaXHfPUHcTDGEzR5GYIwFnsMTpKzvVONi8XD+LmikNhp5vCvZw7QqbvaFEACQJiz
+         l50ePgZ8qgzEY9zuj9UdJf3YtY/RgWdCDyVoHi4bG03maCTwjHsH2P+q1yPLSMoGiAPb
+         VOm+le2x6BqrU3QAyJTGRJRNF3iiRti9UZMEtA5Lp88F/XndzpSjX+W+jhivrQMHbG28
+         R25za8C0aAlEHLsAmkHAIBUzKi5cJVd/t8T1ky03NufisxXal6lQ6HYqIaka+AhJyvsI
+         wX+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWX4z/eIvVy8CR6FNe1fsJ2FskO1HR0ubih5zd+ct3qkGsveG9CjNTjkgql1DN/QDSRsuxch4hkFEh21v4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywtFxhZJ2eSWr3ZbSEuSjl9C2TwzUsuTixvVZmr1+sZfbyDkiv
+	HzUQOjx6ocgPlp56JHH9HIxZMXHIUvNcdTwTE9n31GQf1sDb4XEl
+X-Google-Smtp-Source: AGHT+IEQT+Ooa0Yhm5wcyTD5XpZt+dDp7YMYJ24i3C/+E8lwiSV5RucDIsttkrKOgzUYqqlOQF+FRQ==
+X-Received: by 2002:adf:f1ca:0:b0:374:c8cc:1bb1 with SMTP id ffacd0b85a97d-37cc24b575bmr3660406f8f.39.1727342830761;
+        Thu, 26 Sep 2024 02:27:10 -0700 (PDT)
+Received: from costa-tp.redhat.com ([2a00:a041:e281:f300:ddd7:8878:b93d:7c0b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2cd263sm5938075f8f.48.2024.09.26.02.27.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 02:27:10 -0700 (PDT)
+From: Costa Shulyupin <costa.shul@redhat.com>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] powerpc/xive: Use cpumask_intersects()
+Date: Thu, 26 Sep 2024 12:26:22 +0300
+Message-ID: <20240926092623.399577-2-costa.shul@redhat.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,36 +72,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
 
-This change fixes these dtbs_check errors for audio-codec:
-1. pmic: 'mt6359codec' does not match any of the regexes: 'pinctrl-[0-9]+'
- - Replace device node name to generic 'audio-codec'
-2. pmic: regulators: 'compatible' is a required property
- - Add 'mediatek,mt6359-codec' to compatible.
+Replace `cpumask_any_and(a, b) >= nr_cpu_ids`
+with the more readable `!cpumask_intersects(a, b)`.
 
-Fixes: 3b7d143be4b7 ("arm64: dts: mt6359: add PMIC MT6359 related nodes")
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+Comparison between cpumask_any_and() and cpumask_intersects()
+
+The cpumask_any_and() function expands using FIND_FIRST_BIT(),
+resulting in a loop that iterates through each bit of the bitmask:
+
+for (idx = 0; idx * BITS_PER_LONG < sz; idx++) {
+	val = (FETCH);
+	if (val) {
+		sz = min(idx * BITS_PER_LONG + __ffs(MUNGE(val)), sz);
+		break;
+	}
+}
+
+The cpumask_intersects() function expands using __bitmap_intersects(),
+resulting in that the first loop iterates through each long word of the bitmask,
+and the second through each bit within a long word:
+
+unsigned int k, lim = bits/BITS_PER_LONG;
+for (k = 0; k < lim; ++k)
+	if (bitmap1[k] & bitmap2[k])
+		return true;
+
+if (bits % BITS_PER_LONG)
+	if ((bitmap1[k] & bitmap2[k]) & BITMAP_LAST_WORD_MASK(bits))
+		return true;
+
+Conclusion: cpumask_intersects() is at least as efficient as cpumask_any_and(),
+if not more so, as it typically performs fewer loops and comparisons.
+
+Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+
 ---
- arch/arm64/boot/dts/mediatek/mt6359.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt6359.dtsi b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-index dd732a820a7c..47bbd665a5a5 100644
---- a/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-@@ -14,7 +14,8 @@ pmic_adc: adc {
- 			#io-channel-cells = <1>;
- 		};
+v2: add comparison between cpumask_any_and() and cpumask_intersects()
+
+---
+ arch/powerpc/sysdev/xive/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/sysdev/xive/common.c b/arch/powerpc/sysdev/xive/common.c
+index fa01818c1972c..a6c388bdf5d08 100644
+--- a/arch/powerpc/sysdev/xive/common.c
++++ b/arch/powerpc/sysdev/xive/common.c
+@@ -726,7 +726,7 @@ static int xive_irq_set_affinity(struct irq_data *d,
+ 	pr_debug("%s: irq %d/0x%x\n", __func__, d->irq, hw_irq);
  
--		mt6359codec: mt6359codec {
-+		mt6359codec: audio-codec {
-+			compatible = "mediatek,mt6359-codec";
- 		};
+ 	/* Is this valid ? */
+-	if (cpumask_any_and(cpumask, cpu_online_mask) >= nr_cpu_ids)
++	if (!cpumask_intersects(cpumask, cpu_online_mask))
+ 		return -EINVAL;
  
- 		regulators {
+ 	/*
 -- 
-2.45.2
+2.45.0
 
 
