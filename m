@@ -1,266 +1,365 @@
-Return-Path: <linux-kernel+bounces-340745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A518E987754
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:10:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8531987752
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78521C2291E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:10:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A30282872
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 16:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2900B15ADAB;
-	Thu, 26 Sep 2024 16:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B597159217;
+	Thu, 26 Sep 2024 16:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GE6LfrsQ"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="BeFrtj+h"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A0115A4B0
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0781552E4
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 16:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727367015; cv=none; b=en5OplXQWXaTiVtsMOR8QOcm+t3T7uuIQfQwtAnYi6+i5EvBeYxh+NJzShYlbrQ56OWir7AR0AaVORxQX5lBXtp3qGuT+24tWru7IM7TqdvMas0XzhrgGE7rPx7aNdTH4LHn8WY2dUV23HyEbm7wiZk/vCPofsXo5Q7stXo7kKQ=
+	t=1727367012; cv=none; b=NTeblNRSizvUxntYyOswtDRHY2HQQUi8ZYDQWPVV6SWsTgOeV1HiCbIo77Ca6aSnwXH9p1QXugZmtqAwyEJ6NLDLatjokeJGhM4ih2LiRu/Y/youJncXKUsJ0eCfmslupyvegDOOgn/zQX3vYWRfQbZb1MFrTmld9oqNnoBW++A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727367015; c=relaxed/simple;
-	bh=9ppUXlQStz/pVBs4wA1v93gcurIcZpsmK1CpKcYPpas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nuqJ5QYtWGn0d9MZzdpdRvOVyk2bKZOK5y7g4BtUyEw4D2CkyOF7w/D/uDdzZ00G5n+FEHnlDRMtOocT0Sa1g022IsFp5bGNt1hI0OikFglzZowrO8JmWUR3w903YnUZq8yY6Zrdu1Z2siqiNApeJi2VKM5XXwNslDRHkGuzSOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GE6LfrsQ; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cb2f272f8bso8765566d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:10:13 -0700 (PDT)
+	s=arc-20240116; t=1727367012; c=relaxed/simple;
+	bh=f4L3Pr657lBd3fyOul34qHTxj2UdBG04VUvdr5BBB3c=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=VLoGThdGRVMfYYZjTk9CvtOc10tr2u9QzEOzG1/iw8DGpb6SBjJpXxF6144iqZ07cgh4KOWzu42F2bbZ08Uh0NbUy1uZzphOL/wdiRMbEIgf2D0MXHQCdq+eGDhgRDunDSkWuPPMmzRV5D4l6ayvDb7MEX9mklyeNDrCwA1eX+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=BeFrtj+h; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d302b6b30so15196166b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:10:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727367012; x=1727971812; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1727367009; x=1727971809; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sBIdWGdOThYriGRAkgCF3gYUdSYRggQHa7ZNg5N9A8M=;
-        b=GE6LfrsQnln/L4PUin87wKQyriRvj5W6uHEXfKrbYEdgDe7l3/MjlBmTVjJPsiBXE0
-         jY6XMGF1QXPpibChjfeFMHcATl3Z6YvoheASaY6X3r6Lv4SKRnSdrUZbu63DnSuRgZJy
-         2ilQvLeX1sPCkG94UwA8/K/C/VKdIk9j0xb9V+/G5q/ElOrkckKNTOvPtF1xCsjKhMYd
-         2qQxMUKCQCx8A0d/MHupmx0eDTOenabaANLq4OFUQUb3wpbkcU5smcEEiOST8YAfHdMf
-         COKC9dgxzIj8y6NULQwp6plMCbPpbrdj3TvAcQsOR58GjoH9gNWYUPfQdIHkMKqEwkdv
-         tyAQ==
+        bh=2Bn/mqTcRvJrwPZazblc0vCi2AEX8oQ7gBnHiDBLn/w=;
+        b=BeFrtj+hJUJLowJ8fR/Tg0S1EUqSo/C1PFmiBykSLH9eH3S4QtFl9w1Wx+hWnzk193
+         ttD9ipzA95Sg98fEeic79VurW+4WGplsoBbIu7J7ZOAK13sXvqq/gJO5l27r8jzWU0En
+         4dfwKYJguCZOxNYinS5D5Dupe4+GlcyhuhvuWYaRclkIZS5RkVh6A1QEtyg150GYkAkY
+         PP9fgHYbgH0ji1c/AlLstYSLv2OazkRNUJYK4UQJyquKyarB4S5eEzvBhBbLfYTYlZhN
+         dg4VGzmPfYCHrMUKyps0p4KidBDIEC6zDu8nDX5MFC0prWFnTAf+S+sHG66GcyHle31C
+         rO8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727367012; x=1727971812;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727367009; x=1727971809;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sBIdWGdOThYriGRAkgCF3gYUdSYRggQHa7ZNg5N9A8M=;
-        b=Ai8dIszL611zP17sVrbbvENb8Kpi8C9uBO8t4aS47JgJXzDSRLq4Jma+WXTV1Ot0vU
-         ChzHSPtFkqiTCuLKU9AyY5vtPExf0J4DEfBJnC9DUDz46zOnlsnXmaAKlWeeqvCMTDGH
-         AyK0KvOc3VI5lFZHFTFIk/EY7S3Vnm3sat/gb7n2fnG3qzyAACqVIMYpAGAmazTuaAMu
-         EgNhiIkWcAXUuRz3KhmlyA9H2muXar51OURft5u5rc4AaDm2SLgu/wjjxDQaHXmxXQnL
-         clbLB/uHaGnC9gTJ3Npwriyxa2n/HKjKLxVY1D+8NaspMokK5lg+5gtDIHMGjpvmcFXz
-         kjoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBSFsXb3yDwk9g4RxBlW7wNlAJ1PbOaawFyhbDqYuEnZNTA273b/YP8DvAltWLxPV7J5KwI2xfSSxqrNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9M3WnsW9tXUn3pj2SP0pooqwvJUghpjWQXB891RuxH7cc804u
-	D3zit46g5XKzgbwkuCX6Tbq6gudYurwrOfO3q4FEEf8MpLe284xk
-X-Google-Smtp-Source: AGHT+IGYvRvGVK1f59J9V+iEiuzZEgVT+k9OGL6CCe0OR8mKUbCw5TToYTzweTLzwJWHi67SVDDWsw==
-X-Received: by 2002:a05:6214:44a1:b0:6bf:7d3c:a64d with SMTP id 6a1803df08f44-6cb3b684717mr2363906d6.32.1727367012290;
-        Thu, 26 Sep 2024 09:10:12 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b61362asm637286d6.35.2024.09.26.09.10.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 09:10:11 -0700 (PDT)
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 45640120006A;
-	Thu, 26 Sep 2024 12:10:11 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Thu, 26 Sep 2024 12:10:11 -0400
-X-ME-Sender: <xms:Y4f1ZjIPBuqpTFgUe8aZOLDYAL0EYNC94yYYk3Q7wXMjSQ49ezHC8w>
-    <xme:Y4f1ZnKASbwZhVVkE0iM82jBL9JjrW6L9wXWek3_BDTjeCBSN9ugLHc6Xwwzfk0YV
-    59CShe_W0HF3bgo0A>
-X-ME-Received: <xmr:Y4f1Zrt0KnG9t_WtxPHG1IrKGso93iFxlq9iBPoLnHCeaeqwumrN5zOenfWLjw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtjedgleekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
-    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepuddvpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegufihmfidvsehinhhfrhgruggvrggurdhorh
-    hgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohep
-    phgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepmhhinhhgohesrh
-    gvughhrghtrdgtohhmpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehlohhnghhmrghnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehkvghnth
-    drohhvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheprghrnhgusegr
-    rhhnuggsrdguvgdprhgtphhtthhopegsihhgvggrshihsehlihhnuhhtrhhonhhigidrug
-    gv
-X-ME-Proxy: <xmx:Y4f1ZsYhO1-V-ueFuVldaH7VXwUIefiTX9RUZiphdskK7ZeEPElZaw>
-    <xmx:Y4f1ZqYJUb8gEK3GmpF9VQEEDkN0MjTNZhT5Yt9EIOTu5rCSLhErTQ>
-    <xmx:Y4f1ZgDcGp4h7aJ3xh50FZ7B14qJWVugFAMoGWJJz4oWq-_29Hs8LQ>
-    <xmx:Y4f1ZoY9tbVw57pL2iSw1BQLHnkZ3x6N7tnyb3kHSFZtdDpB4lViQg>
-    <xmx:Y4f1ZupiqieBJGpCWQKVU4f70cFYyXsZX3diGnogEsJSq2c6yrazm5aA>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 26 Sep 2024 12:10:10 -0400 (EDT)
-Date: Thu, 26 Sep 2024 09:09:24 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	David Woodhouse <dwmw@amazon.co.uk>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] lockdep: add lockdep_cleanup_dead_cpu()
-Message-ID: <ZvWHNLdMCeWwEQZ7@boqun-archlinux>
-References: <f7bd2b3b999051bb3ef4be34526a9262008285f5.camel@infradead.org>
+        bh=2Bn/mqTcRvJrwPZazblc0vCi2AEX8oQ7gBnHiDBLn/w=;
+        b=BJe8Ee1T5NndHtVdpCh9LI81D5NSuYE66i5MwjD+plQ6qUGdIrKi3DZJhhdqL0gdaH
+         MH8Xa3poY5WxAudZ33zwQWBm44Yo/LwRwcvxKRek8xELf94cFKFI6P/qkLpWXtohfDQp
+         kJ1acM58Yrwy5sYoRuFhtah+FBHod507nN5swYwF78d0/FAYWqzCtvCW/juoPZ3L1+NQ
+         ek2WcDSF/NBSoRJLPgd0jqX5Jtnd1aze5aigIxrRE51vrP87Pz9Fld2kOFmVmRP5Opby
+         SqxizK6KICN2x3o+tN7juI7vnpgqdQ0JHBFCW6yy7Zzv9LbaFklypWbSqH2mLciB1L2e
+         lI2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ2MtHiO1TSVvw1TWKRhIKRyOsfhoRdPQFCFbSx4fvWagX857cp+8TAdq48f+ujA3pZKdyMRoEIYxN3rY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvVClwCrQc1kuaBDMd/IFegmy0Pw34T4jVnq2jipjfhwiTW1HU
+	OniNsradzlhItS9jRH8zomZW6HqSlmFnzAQx2fYhgHEX0He8vYPjrRnaz6Xsl6g=
+X-Google-Smtp-Source: AGHT+IG7PAd/1hf/zr74d9c8aFmDg6lm7QV1Hb/m0XkPYtwRQJ0/YeHQ5Rmjqejbv+22FR826V7V2w==
+X-Received: by 2002:a17:907:7e8c:b0:a86:a694:aaff with SMTP id a640c23a62f3a-a93c48f857dmr1280866b.1.1727367008779;
+        Thu, 26 Sep 2024 09:10:08 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:a4f:301:82f:3680:12cb:d924])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c5c5dsm14057366b.72.2024.09.26.09.10.07
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Sep 2024 09:10:08 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f7bd2b3b999051bb3ef4be34526a9262008285f5.camel@infradead.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+Date: Thu, 26 Sep 2024 18:09:57 +0200
+Cc: kent.overstreet@linux.dev,
+ regressions@lists.linux.dev,
+ linux-bcachefs@vger.kernel.org,
+ linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+References: <ZvV6X5FPBBW7CO1f@archlinux>
+ <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+To: Jan Hendrik Farr <kernel@jfarr.cc>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On Thu, Sep 26, 2024 at 04:17:37PM +0100, David Woodhouse wrote:
-> From: David Woodhouse <dwmw@amazon.co.uk>
-> 
-> Add a function to check that an offline CPU has left the tracing
-> infrastructure in a sane state.
-> 
-> Commit 9bb69ba4c177 ("ACPI: processor_idle: use raw_safe_halt() in
-> acpi_idle_play_dead()") fixed an issue where the acpi_idle_play_dead()
-> function called safe_halt() instead of raw_safe_halt(), which had the
-> side-effect of setting the hardirqs_enabled flag for the offline CPU.
-> 
-> On x86 this triggered warnings from lockdep_assert_irqs_disabled() when
-> the CPU was brought back online again later. These warnings were too
-> early for the exception to be handled correctly.
-> 
-> So lockdep turned a perfectly harmless bug into a system crash with a
-> triple-fault.
-> 
+On 26. Sep 2024, at 17:28, Thorsten Blum <thorsten.blum@toblux.com> =
+wrote:
+> On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+>>=20
+>> Hi Kent,
+>>=20
+>> found a strange regression in the patch set for 6.12.
+>>=20
+>> First bad commit is: 86e92eeeb23741a072fe7532db663250ff2e726a
+>> bcachefs: Annotate struct bch_xattr with __counted_by()
+>>=20
+>> When compiling with clang 18.1.8 (also with latest llvm main branch) =
+and
+>> CONFIG_FORTIFY_SOURCE=3Dy my rootfs does not mount because there is =
+an erroneous
+>> detection of a buffer overflow.
+>>=20
+>> The __counted_by attribute is supposed to be supported starting with =
+gcc 15,
+>> not sure if it is implemented yet so I haven't tested with gcc trunk =
+yet.
+>>=20
+>> Here's the relevant section of dmesg:
+>>=20
+>> [    6.248736] bcachefs (nvme1n1p2): starting version 1.12: =
+rebalance_work_acct_fix
+>> [    6.248744] bcachefs (nvme1n1p2): recovering from clean shutdown, =
+journal seq 1305969
+>> [    6.252374] ------------[ cut here ]------------
+>> [    6.252375] memchr: detected buffer overflow: 12 byte read of =
+buffer size 0
+>> [    6.252379] WARNING: CPU: 18 PID: 511 at lib/string_helpers.c:1033 =
+__fortify_report+0x45/0x50
+>> [    6.252383] Modules linked in: bcachefs lz4hc_compress =
+lz4_compress hid_generic usbhid btrfs crct10dif_pclmul libcrc32c =
+crc32_pclmul crc32c_generic polyval_clmulni crc32c_intel polyval_generic =
+raid6_pq ghash_clmulni_intel xor sha512_ssse3 sha256_ssse3 sha1_ssse3 =
+aesni_intel gf128mul nvme crypto_simd ccp xhci_pci cryptd sp5100_tco =
+xhci_pci_renesas nvme_core nvme_auth video wmi ip6_tables ip_tables =
+x_tables i2c_dev
+>> [    6.252404] CPU: 18 UID: 0 PID: 511 Comm: mount Not tainted =
+6.11.0-10065-g6fa6588e5964 #98 d8e0beb515d91b387aa60970de7203f35ddd182c
+>> [    6.252406] Hardware name: Micro-Star International Co., Ltd. =
+MS-7D78/PRO B650-P WIFI (MS-7D78), BIOS 1.C0 02/06/2024
+>> [    6.252407] RIP: 0010:__fortify_report+0x45/0x50
+>> [    6.252409] Code: 48 8b 34 c5 30 92 21 87 40 f6 c7 01 48 c7 c0 75 =
+1b 0a 87 48 c7 c1 e1 93 07 87 48 0f 44 c8 48 c7 c7 ef 03 10 87 e8 0b c2 =
+9b ff <0f> 0b e9 cf 5d 9e 00 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 =
+90
+>> [    6.252410] RSP: 0018:ffffbb3d03aff350 EFLAGS: 00010246
+>> [    6.252412] RAX: 4ce590fb7c372800 RBX: ffff98d559a400e8 RCX: =
+0000000000000027
+>> [    6.252413] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: =
+ffff98e43db21a08
+>> [    6.252414] RBP: ffff98d559a400d0 R08: 0000000000001fff R09: =
+ffff98e47ddcd000
+>> [    6.252415] R10: 0000000000005ffd R11: 0000000000000004 R12: =
+ffff98d559a40000
+>> [    6.252416] R13: ffff98d54abf1320 R14: ffffbb3d03aff430 R15: =
+0000000000000000
+>> [    6.252417] FS:  00007efc82117800(0000) GS:ffff98e43db00000(0000) =
+knlGS:0000000000000000
+>> [    6.252418] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [    6.252419] CR2: 000055d96658ea80 CR3: 000000010a12c000 CR4: =
+0000000000f50ef0
+>> [    6.252420] PKRU: 55555554
+>> [    6.252421] Call Trace:
+>> [    6.252423]  <TASK>
+>> [    6.252425]  ? __warn+0xd5/0x1d0
+>> [    6.252427]  ? __fortify_report+0x45/0x50
+>> [    6.252429]  ? report_bug+0x144/0x1f0
+>> [    6.252431]  ? __fortify_report+0x45/0x50
+>> [    6.252433]  ? handle_bug+0x6a/0x90
+>> [    6.252435]  ? exc_invalid_op+0x1a/0x50
+>> [    6.252436]  ? asm_exc_invalid_op+0x1a/0x20
+>> [    6.252440]  ? __fortify_report+0x45/0x50
+>> [    6.252441]  __fortify_panic+0x9/0x10
+>> [    6.252443]  bch2_xattr_validate+0x13b/0x140 [bcachefs =
+8361179bbfcc59e669df38aec976f02d7211a659]
+>> [    6.252463]  bch2_btree_node_read_done+0x125a/0x17a0 [bcachefs =
+8361179bbfcc59e669df38aec976f02d7211a659]
+>> [    6.252482]  btree_node_read_work+0x202/0x4a0 [bcachefs =
+8361179bbfcc59e669df38aec976f02d7211a659]
+>> [    6.252499]  bch2_btree_node_read+0xa8d/0xb20 [bcachefs =
+8361179bbfcc59e669df38aec976f02d7211a659]
+>> [    6.252514]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> [    6.252515]  ? pcpu_alloc_noprof+0x741/0xb50
+>> [    6.252517]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> [    6.252519]  ? time_stats_update_one+0x75/0x1f0 [bcachefs =
+8361179bbfcc59e669df38aec976f02d7211a659]
+>>=20
+>> ...
+>>=20
+>>=20
+>> The memchr in question is at:
+>> =
+https://github.com/torvalds/linux/blob/11a299a7933e03c83818b431e6a1c53ad38=
+7423d/fs/bcachefs/xattr.c#L99
+>>=20
+>> There is not actually a buffer overflow here, I checked with gdb that
+>> xattr.v->x_name does actually contain a string of the correct length =
+and
+>> xattr.v->x_name_len contains the correct length and should be used to =
+determine
+>> the length when memchr uses __struct_size for bounds-checking due to =
+the
+>> __counted_by annotation.
+>>=20
+>> I'm at the point where I think this is probably a bug in clang. I =
+have a patch
+>> that does fix (more like bandaid) the problem and adds some print =
+statements:
+>>=20
+>> --
+>> diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
+>> index 56c8d3fe55a4..8d7e749b7dda 100644
+>> --- a/fs/bcachefs/xattr.c
+>> +++ b/fs/bcachefs/xattr.c
+>> @@ -74,6 +74,7 @@ int bch2_xattr_validate(struct bch_fs *c, struct =
+bkey_s_c k,
+>>      enum bch_validate_flags flags)
+>> {
+>> struct bkey_s_c_xattr xattr =3D bkey_s_c_to_xattr(k);
+>> + const struct bch_xattr *v =3D (void *)k.v;
+>> unsigned val_u64s =3D xattr_val_u64s(xattr.v->x_name_len,
+>>  le16_to_cpu(xattr.v->x_val_len));
+>> int ret =3D 0;
+>> @@ -94,9 +95,12 @@ int bch2_xattr_validate(struct bch_fs *c, struct =
+bkey_s_c k,
+>>=20
+>> bkey_fsck_err_on(!bch2_xattr_type_to_handler(xattr.v->x_type),
+>> c, xattr_invalid_type,
+>> - "invalid type (%u)", xattr.v->x_type);
+>> + "invalid type (%u)", v->x_type);
+>>=20
+>> - bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', =
+xattr.v->x_name_len),
+>> + pr_info("x_name_len: %d", v->x_name_len);
+>> + pr_info("__struct_size(x_name): %ld", __struct_size(v->x_name));
+>> + pr_info("__struct_size(x_name): %ld", =
+__struct_size(xattr.v->x_name));
+>> + bkey_fsck_err_on(memchr(v->x_name, '\0', v->x_name_len),
+>> c, xattr_name_invalid_chars,
+>> "xattr name has invalid characters");
+>> fsck_err:
+>> --
+>>=20
+>>=20
+>> Making memchr access via a pointer created with
+>> const struct bch_xattr *v =3D (void *)k.v fixes it. =46rom the print =
+statements I
+>> can see that __struct_size(xattr.v->x_name) incorrectly returns 0, =
+while
+>> __struct_size(v->x_name) correctly returns 10 in this case (the value =
+of
+>> x_name_len).
+>>=20
+>> The generated assembly illustrates what is going wrong. Below is an =
+excerpt
+>> of the assembly clang generated for the bch2_xattr_validate function:
+>>=20
+>> mov r13d, ecx
+>> mov r15, rdi
+>> mov r14, rsi
+>> mov rdi, offset .L.str.3
+>> mov rsi, offset .L__func__.bch2_xattr_validate
+>> mov rbx, rdx
+>> mov edx, eax
+>> call _printk
+>> movzx edx, byte ptr [rbx + 1]
+>> mov rdi, offset .L.str.4
+>> mov rsi, offset .L__func__.bch2_xattr_validate
+>> call _printk
+>> movzx edx, bh
+>> mov rdi, offset .L.str.4
+>> mov rsi, offset .L__func__.bch2_xattr_validate
+>> call _printk
+>> lea rdi, [rbx + 4]
+>> mov r12, rbx
+>> movzx edx, byte ptr [rbx + 1]
+>> xor ebx, ebx
+>> xor esi, esi
+>> call memchr
+>>=20
+>> At the start of this rdx contains k.v (and is moved into rbx). The =
+three calls
+>> to printk are the ones you can see in my patch. You can see that for =
+the
+>> print that uses __struct_size(v->x_name) the compiler correctly uses
+>> movzx edx, byte ptr [rbx + 1]
+>> to load x_name_len into edx.
+>>=20
+>> For the printk call that uses __struct_size(xattr.v->x_name) however =
+the
+>> compiler uses
+>> movzx edx, bh
+>> So it will print the high 8 bits of the lower 16 bits (second least
+>> significant byte) of the memory address of xattr.v->x_type. This is =
+obviously
+>> completely wrong.
+>>=20
+>> It is then doing the correct call of memchr because this is using my =
+patch.
+>> Without my patch it would be doing the same thing for the call to =
+memchr where
+>> it uses the second least significant byte of the memory address of =
+x_type as the
+>> length used for the bounds-check.
+>>=20
+>>=20
+>>=20
+>> The LLVM IR also shows the same problem:
+>>=20
+>> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, =
+ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
+>> [...]
+>> %51 =3D ptrtoint ptr %2 to i64
+>> %52 =3D lshr i64 %51, 8
+>> %53 =3D and i64 %52, 255
+>>=20
+>> This is the IR for the incorrect behavior. It simply converts the =
+pointer to an
+>> int, shifts right by 8 bits, then and with 0xFF. If it did a load (to =
+i64)
+>> instead of ptrtoint this would actually work, as the second least =
+significant
+>> bit of an i64 loaded from that memory address does contain the value =
+of
+>> x_name_len. It's as if clang forgot to dereference a pointer here.
+>>=20
+>> Correct IR does this (for the other printk invocation):
+>>=20
+>> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, =
+ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
+>> [...]
+>> %4 =3D getelementptr inbounds %struct.bch_xattr, ptr %1, i64 0, i32 1
+>> %5 =3D load i8, ptr %4, align 8
+>> [...]
+>> %48 =3D load i8, ptr %5, align 4
+>> %49 =3D zext i8 %48 to i64
+>>=20
+>> Best Regards
+>> Jan
+>=20
+> I suspect it's the same Clang __bdos() "bug" as in [1] and [2].
+>=20
+> [1] =
+https://lore.kernel.org/linux-kernel/3D0816D1-0807-4D37-8D5F-3C55CA910FAA@=
+linux.dev/
+> [2] https://lore.kernel.org/all/20240913164630.GA4091534@thelio-3990X/
 
-I won't call this a "perfectly harmless bug", safe_halt() also contains
-tracepoints, which are not supposed to work in offline path IIUC, for
-example, you may incorrectly use RCU when RCU is not watching, that
-could mean reading garbage memory (surely it won't crash the system, but
-I hope I never need to debug such a system ;-)).
+Could you try this and see if it resolves the problem?
 
-Otherwise this patch looks good to me. Thanks!
+diff --git a/include/linux/compiler_types.h =
+b/include/linux/compiler_types.h
+index 1a957ea2f4fe..b09759f31789 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -413,7 +413,7 @@ struct ftrace_likely_data {
+  * When the size of an allocated object is needed, use the best =
+available
+  * mechanism to find it. (For cases where sizeof() cannot be used.)
+  */
+-#if __has_builtin(__builtin_dynamic_object_size)
++#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
+ #define __struct_size(p)	__builtin_dynamic_object_size(p, 0)
+ #define __member_size(p)	__builtin_dynamic_object_size(p, 1)
+ #else
 
-Regards,
-Boqun
-
-> Add lockdep_cleanup_dead_cpu() to check for this kind of failure mode,
-> print the events leading up to it, and correct it so that the CPU can
-> come online again correctly. Re-introducing the original bug now merely
-> results in this warning instead:
-> 
-> [   61.556652] smpboot: CPU 1 is now offline
-> [   61.556769] CPU 1 left hardirqs enabled!
-> [   61.556915] irq event stamp: 128149
-> [   61.556965] hardirqs last  enabled at (128149): [<ffffffff81720a36>] acpi_idle_play_dead+0x46/0x70
-> [   61.557055] hardirqs last disabled at (128148): [<ffffffff81124d50>] do_idle+0x90/0xe0
-> [   61.557117] softirqs last  enabled at (128078): [<ffffffff81cec74c>] __do_softirq+0x31c/0x423
-> [   61.557199] softirqs last disabled at (128065): [<ffffffff810baae1>] __irq_exit_rcu+0x91/0x100
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  v2: Update commit message to reflect the fact that the original bug
->      fix is now merged as commit 9bb69ba4c177.
-> 
-> 
->  include/linux/irqflags.h |  6 ++++++
->  kernel/cpu.c             |  1 +
->  kernel/locking/lockdep.c | 24 ++++++++++++++++++++++++
->  3 files changed, 31 insertions(+)
-> 
-> diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
-> index 3f003d5fde53..57b074e0cfbb 100644
-> --- a/include/linux/irqflags.h
-> +++ b/include/linux/irqflags.h
-> @@ -18,6 +18,8 @@
->  #include <asm/irqflags.h>
->  #include <asm/percpu.h>
->  
-> +struct task_struct;
-> +
->  /* Currently lockdep_softirqs_on/off is used only by lockdep */
->  #ifdef CONFIG_PROVE_LOCKING
->    extern void lockdep_softirqs_on(unsigned long ip);
-> @@ -25,12 +27,16 @@
->    extern void lockdep_hardirqs_on_prepare(void);
->    extern void lockdep_hardirqs_on(unsigned long ip);
->    extern void lockdep_hardirqs_off(unsigned long ip);
-> +  extern void lockdep_cleanup_dead_cpu(unsigned int cpu,
-> +				       struct task_struct *idle);
->  #else
->    static inline void lockdep_softirqs_on(unsigned long ip) { }
->    static inline void lockdep_softirqs_off(unsigned long ip) { }
->    static inline void lockdep_hardirqs_on_prepare(void) { }
->    static inline void lockdep_hardirqs_on(unsigned long ip) { }
->    static inline void lockdep_hardirqs_off(unsigned long ip) { }
-> +  static inline void lockdep_cleanup_dead_cpu(unsigned int cpu,
-> +					      struct task_struct *idle) {}
->  #endif
->  
->  #ifdef CONFIG_TRACE_IRQFLAGS
-> diff --git a/kernel/cpu.c b/kernel/cpu.c
-> index d293d52a3e00..c4aaf73dec9e 100644
-> --- a/kernel/cpu.c
-> +++ b/kernel/cpu.c
-> @@ -1338,6 +1338,7 @@ static int takedown_cpu(unsigned int cpu)
->  
->  	cpuhp_bp_sync_dead(cpu);
->  
-> +	lockdep_cleanup_dead_cpu(cpu, idle_thread_get(cpu));
->  	tick_cleanup_dead_cpu(cpu);
->  
->  	/*
-> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> index 7963deac33c3..42b07c3b8862 100644
-> --- a/kernel/locking/lockdep.c
-> +++ b/kernel/locking/lockdep.c
-> @@ -4583,6 +4583,30 @@ void lockdep_softirqs_off(unsigned long ip)
->  		debug_atomic_inc(redundant_softirqs_off);
->  }
->  
-> +/**
-> + * lockdep_cleanup_dead_cpu - Ensure CPU lockdep state is cleanly stopped
-> + *
-> + * @cpu: index of offlined CPU
-> + * @idle: task pointer for offlined CPU's idle thread
-> + *
-> + * Invoked after the CPU is dead. Ensures that the tracing infrastructure
-> + * is left in a suitable state for the CPU to be subsequently brought
-> + * online again.
-> + */
-> +void lockdep_cleanup_dead_cpu(unsigned int cpu, struct task_struct *idle)
-> +{
-> +	if (unlikely(!debug_locks))
-> +		return;
-> +
-> +	if (unlikely(per_cpu(hardirqs_enabled, cpu))) {
-> +		pr_warn("CPU %u left hardirqs enabled!", cpu);
-> +		if (idle)
-> +			print_irqtrace_events(idle);
-> +		/* Clean it up for when the CPU comes online again. */
-> +		per_cpu(hardirqs_enabled, cpu) = 0;
-> +	}
-> +}
-> +
->  static int
->  mark_usage(struct task_struct *curr, struct held_lock *hlock, int check)
->  {
-> -- 
-> 2.44.0
-> 
-> 
-
-
+Thanks,
+Thorsten=
 
