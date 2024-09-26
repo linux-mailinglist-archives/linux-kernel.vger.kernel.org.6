@@ -1,292 +1,156 @@
-Return-Path: <linux-kernel+bounces-340056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56905986E29
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:50:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C78F986E37
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 166B9284515
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:50:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFA8B1F25B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4540F190693;
-	Thu, 26 Sep 2024 07:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC18C1A4B73;
+	Thu, 26 Sep 2024 07:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="dHoWMISb"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="hyRhOUne"
+Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853BC187FFC;
-	Thu, 26 Sep 2024 07:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A87192B91
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 07:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727337032; cv=none; b=K2xkxPSPiHEmj50I9Ks4qenCTIZb5s8CNEZuACPscl7wnMtnnQjFntmfy1ybcS8KOTlQZKX3MK2tQt+nm1gjLg2YX5uV8SrYsTLovkP8fOZsGtfevoNG6kYzFz6Jy9w42CuVqdcBsquhbbh6DpI4b4Jqi0KjtbLALG+zd23K3Xk=
+	t=1727337053; cv=none; b=sVxBFX5AdziKsBoryB4VTzisZkbB/gz8/VVqTgGKmMLsSDaazeZIf6hv3AlFc1zAUptIDj+pUGva4H1OMWxJ9WhHv3NMyOwktLdAg8b7GelIe4GMXM/rep0I6RxtvbXRC1mgJ3F5Rl8X4ngrJjHVMazZJoIDkssh3VGfzY2vuQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727337032; c=relaxed/simple;
-	bh=l1D7H8k3UWbb9HZSOKhbsMvyIYn05baFXQ7m3jm17rM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qbb9OgmBq8Ahl9A8r6dV87W9i6ekVHuYs/Cpq8f2ri2iGRfHR0r8kmzO8U6utMaX/nRDlhwXfU2JYFTMEYN2lyG75XVuLjkZJTx6Hp2nZhS1FynpZG6AlLsdCRfl/BJIZOrGQtI+7kljRIOcVYAl5nOSD0BRjyUROoFz30yUXBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=dHoWMISb; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/64oQO0+82AsF19pq77f1GsXh2trAUcBXVw1xgF7N/U=; b=dHoWMISb1bJhvCAGnMdA5S6DT+
-	LSRJeBXSZsmGIXaQg0HD1lEF9fu1JaKMRyfMX3o7uMC17DKdTvC14dTXJ0HRdXptagfzLuUn0sGow
-	LaAdZyqpGHd6XCbXLeDs967i61wyMCVViiJApPDvVO9ATdbvbFnJ7IMeuZM0uMIZwmtv7nr0IG/JO
-	3RYDPZjN2Iv3pwGYxBsjVhPNofWsCuAEWLK5fBN7sDk7BfOmunMPcRfsncJxN47mE3nOs1S/1KNkn
-	hjuWVwO8mPeC799jqiTCvIoue6eAJlpy8e77ZCdQ9kXWDrFUm2a4jbCqfcc1QxZx+q2uxBYbCDhZ2
-	u9TmZlIw==;
-Received: from [2001:9e8:9d8:901:3235:adff:fed0:37e6] (port=33682 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1stjGU-0093hB-U9;
-	Thu, 26 Sep 2024 09:50:19 +0200
-Date: Thu, 26 Sep 2024 09:50:16 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 14/23] kbuild: add $(objtree)/ prefix to some in-kernel
- build artifacts
-Message-ID: <20240926-adamant-griffin-of-patience-fe83b9@lindesnes>
-References: <20240917141725.466514-1-masahiroy@kernel.org>
- <20240917141725.466514-15-masahiroy@kernel.org>
+	s=arc-20240116; t=1727337053; c=relaxed/simple;
+	bh=rCEkrXcygtOiMg0wEqwWeSBJqip2eQhqWHPvkKTIKHw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RzrhZlFV3j5vq8eAm2BX++6a9DSoQD1smjq9BS7Q+/nN5qTxaZQhwWJJHbhoeKJJNKWqZTh2igpsFZHgI4b3CnMoi2cRTp8eFpIEaAKZtuxnJyRnVpAXs3T/My5XoPmhTVOb3axG7Bzkd+063hkBRnthrNtarjyoze1O0aew0co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=hyRhOUne reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=ite.com.tw; s=dkim;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=TL0RVCovDNNgxWowpAkzwVX4O27zCkE2i956LEsHuhA=;
+  b=hyRhOUnetIMHOvyh4i6jBMNeKwk5ojr7YL3vGrp1bb1X2tKyjjO6EdiT
+   hhNup0WIyp2Ir7tqTeWITtvASzJ+e1KDI+2dkBYoJWmq0z8SCnjkFB8Wz
+   +D5KW7mAES8hsZ64yLap/4mYS+Qk911TwhyMvh3b1ZQrz34u2HZhAwe/g
+   7vw/ePzpFDSbgYfLHFqU3qZZ5qN6+uEevhqqpYWYnOYSazHYfV+U5eHxJ
+   n0n7BBXyaIouY5+LDOd1axlz9OANEerW1OtZrgPqpyo6aZ8gy48qr0QiZ
+   ReYUE8a7KM4ZVNxpG8hjS8vWYSa2bw7aH6rXFVENah0cXl+w5jbOgUXMY
+   w==;
+X-CSE-ConnectionGUID: kWp+db1uQ1qBHpH0z7guFA==
+X-CSE-MsgGUID: 3slr1Z9NTY+4Jt19DJ4+Ng==
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 26 Sep 2024 15:50:43 +0800
+Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
+	by mse.ite.com.tw with ESMTP id 48Q7ocVs044817;
+	Thu, 26 Sep 2024 15:50:38 +0800 (GMT-8)
+	(envelope-from Hermes.Wu@ite.com.tw)
+Received: from LAPTOP-C4GM1L3U.localdomain (192.168.82.6) by
+ TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 26 Sep 2024 15:50:38 +0800
+From: Hermes Wu <Hermes.Wu@ite.com.tw>
+To: hermes wu <Hermes.wu@ite.com.tw>
+CC: Kenneth Hung <Kenneth.hung@ite.com.tw>,
+        Andrzej Hajda
+	<andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert
+ Foss <rfoss@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej
+ Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>,
+        Hermes Wu <hermes.wu@ite.com.tw>, Allen Chen <allen.chen@ite.com.tw>,
+        "open list:DRM DRIVERS"
+	<dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 07/11] drm/bridge: it6505: fix HDCP encription not enable when R0 ready
+Date: Thu, 26 Sep 2024 15:50:16 +0800
+Message-ID: <20240926075018.22328-3-Hermes.Wu@ite.com.tw>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240926075018.22328-1-Hermes.Wu@ite.com.tw>
+References: <20240926075018.22328-1-Hermes.Wu@ite.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917141725.466514-15-masahiroy@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TPEMAIL1.internal.ite.com.tw (192.168.15.58) To
+ TPEMAIL1.internal.ite.com.tw (192.168.15.58)
+X-TM-SNTS-SMTP:
+	0EBEA4471AE5B0C61383775D94A830EAC1652369C823F42BDA0FD3BDEE6158032002:8
+X-MAIL:mse.ite.com.tw 48Q7ocVs044817
 
-On Tue, Sep 17, 2024 at 11:16:42PM +0900, Masahiro Yamada wrote:
-> $(objtree) refers to the top of the output directory of kernel builds.
-> 
-> This commit adds the explicit (objtree)/ prefix to build artifacts
-> needed for building external modules.
-> 
-> This change has no immediate impact, as the top-level Makefile
-> currently defines:
-> 
->   objtree         := .
-> 
-> However, it prepares for supporting the building of external modules
-> in a different directory.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  Makefile                  | 10 +++++-----
->  scripts/Kbuild.include    |  2 +-
->  scripts/Makefile.build    |  4 ++--
->  scripts/Makefile.modfinal | 14 +++++++-------
->  scripts/Makefile.modinst  |  2 +-
->  scripts/Makefile.modpost  | 12 ++++++------
->  scripts/depmod.sh         |  4 ++--
->  7 files changed, 24 insertions(+), 24 deletions(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index ee9ad0f0960f..c923bea7043b 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -354,7 +354,7 @@ else # !mixed-build
->  include $(srctree)/scripts/Kbuild.include
->  
->  # Read KERNELRELEASE from include/config/kernel.release (if it exists)
-> -KERNELRELEASE = $(call read-file, include/config/kernel.release)
-> +KERNELRELEASE = $(call read-file, $(objtree)/include/config/kernel.release)
->  KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
->  export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
->  
-> @@ -717,7 +717,7 @@ endif
->  export KBUILD_MODULES KBUILD_BUILTIN
->  
->  ifdef need-config
-> -include include/config/auto.conf
-> +include $(objtree)/include/config/auto.conf
->  endif
->  
->  ifeq ($(KBUILD_EXTMOD),)
-> @@ -780,13 +780,13 @@ else # !may-sync-config
->  # and include/config/auto.conf but do not care if they are up-to-date.
->  # Use auto.conf to show the error message
->  
-> -checked-configs := include/generated/autoconf.h include/generated/rustc_cfg include/config/auto.conf
-> +checked-configs := $(addprefix $(objtree)/, include/generated/autoconf.h include/generated/rustc_cfg include/config/auto.conf)
->  missing-configs := $(filter-out $(wildcard $(checked-configs)), $(checked-configs))
->  
->  ifdef missing-configs
-> -PHONY += include/config/auto.conf
-> +PHONY += $(objtree)/include/config/auto.conf
->  
-> -include/config/auto.conf:
-> +$(objtree)/include/config/auto.conf:
->  	@echo   >&2 '***'
->  	@echo   >&2 '***  ERROR: Kernel configuration is invalid. The following files are missing:'
->  	@printf >&2 '***    - %s\n' $(missing-configs)
-> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-> index ed8a7493524b..8c311b997e24 100644
-> --- a/scripts/Kbuild.include
-> +++ b/scripts/Kbuild.include
-> @@ -205,7 +205,7 @@ if_changed_dep = $(if $(if-changed-cond),$(cmd_and_fixdep),@:)
->  
->  cmd_and_fixdep =                                                             \
->  	$(cmd);                                                              \
-> -	scripts/basic/fixdep $(depfile) $@ '$(make-cmd)' > $(dot-target).cmd;\
-> +	$(objtree)/scripts/basic/fixdep $(depfile) $@ '$(make-cmd)' > $(dot-target).cmd;\
->  	rm -f $(depfile)
->  
->  # Usage: $(call if_changed_rule,foo)
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index 8403eba15457..6e8954cbf53a 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -34,7 +34,7 @@ subdir-asflags-y :=
->  subdir-ccflags-y :=
->  
->  # Read auto.conf if it exists, otherwise ignore
-> --include include/config/auto.conf
-> +-include $(objtree)/include/config/auto.conf
->  
->  include $(srctree)/scripts/Kbuild.include
->  include $(srctree)/scripts/Makefile.compiler
-> @@ -107,7 +107,7 @@ cmd_cpp_i_c       = $(CPP) $(c_flags) -o $@ $<
->  $(obj)/%.i: $(obj)/%.c FORCE
->  	$(call if_changed_dep,cpp_i_c)
->  
-> -genksyms = scripts/genksyms/genksyms		\
-> +genksyms = $(objtree)/scripts/genksyms/genksyms	\
->  	$(if $(1), -T $(2))			\
->  	$(if $(KBUILD_PRESERVE), -p)		\
->  	-r $(or $(wildcard $(2:.symtypes=.symref)), /dev/null)
-> diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
-> index 1482884ec3ca..6d8aa3059ee2 100644
-> --- a/scripts/Makefile.modfinal
-> +++ b/scripts/Makefile.modfinal
-> @@ -6,7 +6,7 @@
->  PHONY := __modfinal
->  __modfinal:
->  
-> -include include/config/auto.conf
-> +include $(objtree)/include/config/auto.conf
->  include $(srctree)/scripts/Kbuild.include
->  
->  # for c_flags
-> @@ -37,15 +37,15 @@ quiet_cmd_ld_ko_o = LD [M]  $@
->        cmd_ld_ko_o =							\
->  	$(LD) -r $(KBUILD_LDFLAGS)					\
->  		$(KBUILD_LDFLAGS_MODULE) $(LDFLAGS_MODULE)		\
-> -		-T scripts/module.lds -o $@ $(filter %.o, $^)
-> +		-T $(objtree)/scripts/module.lds -o $@ $(filter %.o, $^)
->  
->  quiet_cmd_btf_ko = BTF [M] $@
->        cmd_btf_ko = 							\
-> -	if [ ! -f vmlinux ]; then					\
-> +	if [ ! -f $(objtree)/vmlinux ]; then				\
->  		printf "Skipping BTF generation for %s due to unavailability of vmlinux\n" $@ 1>&2; \
->  	else								\
-> -		LLVM_OBJCOPY="$(OBJCOPY)" $(PAHOLE) -J $(PAHOLE_FLAGS) $(MODULE_PAHOLE_FLAGS) --btf_base vmlinux $@; \
-> -		$(RESOLVE_BTFIDS) -b vmlinux $@; 			\
-> +		LLVM_OBJCOPY="$(OBJCOPY)" $(PAHOLE) -J $(PAHOLE_FLAGS) $(MODULE_PAHOLE_FLAGS) --btf_base $(objtree)/vmlinux $@; \
-> +		$(RESOLVE_BTFIDS) -b $(objtree)/vmlinux $@;		\
->  	fi;
->  
->  # Same as newer-prereqs, but allows to exclude specified extra dependencies
-> @@ -57,8 +57,8 @@ if_changed_except = $(if $(call newer_prereqs_except,$(2))$(cmd-check),      \
->  	printf '%s\n' 'savedcmd_$@ := $(make-cmd)' > $(dot-target).cmd, @:)
->  
->  # Re-generate module BTFs if either module's .ko or vmlinux changed
-> -%.ko: %.o %.mod.o $(extmod_prefix).module-common.o scripts/module.lds $(and $(CONFIG_DEBUG_INFO_BTF_MODULES),$(KBUILD_BUILTIN),vmlinux) FORCE
-> -	+$(call if_changed_except,ld_ko_o,vmlinux)
-> +%.ko: %.o %.mod.o $(extmod_prefix).module-common.o $(objtree)/scripts/module.lds $(and $(CONFIG_DEBUG_INFO_BTF_MODULES),$(KBUILD_BUILTIN),$(objtree)/vmlinux) FORCE
-> +	+$(call if_changed_except,ld_ko_o,$(objtree)/vmlinux)
->  ifdef CONFIG_DEBUG_INFO_BTF_MODULES
->  	+$(if $(newer-prereqs),$(call cmd,btf_ko))
->  endif
-> diff --git a/scripts/Makefile.modinst b/scripts/Makefile.modinst
-> index 4d81ed9af294..2d39d452c49e 100644
-> --- a/scripts/Makefile.modinst
-> +++ b/scripts/Makefile.modinst
-> @@ -6,7 +6,7 @@
->  PHONY := __modinst
->  __modinst:
->  
-> -include include/config/auto.conf
-> +include $(objtree)/include/config/auto.conf
->  include $(srctree)/scripts/Kbuild.include
->  
->  install-y :=
-> diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
-> index 44936ebad161..12e7c15d099c 100644
-> --- a/scripts/Makefile.modpost
-> +++ b/scripts/Makefile.modpost
-> @@ -35,10 +35,10 @@
->  PHONY := __modpost
->  __modpost:
->  
-> -include include/config/auto.conf
-> +include $(objtree)/include/config/auto.conf
->  include $(srctree)/scripts/Kbuild.include
->  
-> -MODPOST = scripts/mod/modpost
-> +MODPOST = $(objtree)/scripts/mod/modpost
->  
->  modpost-args =										\
->  	$(if $(CONFIG_MODULES),-M)							\
-> @@ -119,11 +119,11 @@ include $(kbuild-file)
->  
->  output-symdump := $(KBUILD_EXTMOD)/Module.symvers
->  
-> -ifeq ($(wildcard Module.symvers),)
-> -missing-input := Module.symvers
-> +ifeq ($(wildcard $(objtree)/Module.symvers),)
-> +missing-input := $(objtree)/Module.symvers
->  else
-> -modpost-args += -i Module.symvers
-> -modpost-deps += Module.symvers
-> +modpost-args += -i $(objtree)/Module.symvers
-> +modpost-deps += $(objtree)/Module.symvers
->  endif
->  
->  modpost-args += -e $(addprefix -i , $(KBUILD_EXTRA_SYMBOLS))
-> diff --git a/scripts/depmod.sh b/scripts/depmod.sh
-> index e22da27fe13e..3c34fecacbc8 100755
-> --- a/scripts/depmod.sh
-> +++ b/scripts/depmod.sh
-> @@ -12,7 +12,7 @@ KERNELRELEASE=$1
->  
->  : ${DEPMOD:=depmod}
->  
-> -if ! test -r System.map ; then
-> +if ! test -r "${objtree}/System.map" ; then
->  	echo "Warning: modules_install: missing 'System.map' file. Skipping depmod." >&2
->  	exit 0
->  fi
-> @@ -25,7 +25,7 @@ if [ -z $(command -v $DEPMOD) ]; then
->  	exit 0
->  fi
->  
-> -set -- -ae -F System.map
-> +set -- -ae -F "${objtree}/System.map"
->  if test -n "$INSTALL_MOD_PATH"; then
->  	set -- "$@" -b "$INSTALL_MOD_PATH"
->  fi
-> -- 
-> 2.43.0
-> 
-> 
+From: Hermes Wu <Hermes.wu@ite.com.tw>
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+When starting HDCP authentication, HDCP encryption should be enabled on
+the link when R0' is checked.
+
+Change encryption enables time at R0' ready.
+Hardware HDCP engine trigger changes repeater fail to restart flow.
+
+
+Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
+Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
+---
+ drivers/gpu/drm/bridge/ite-it6505.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
+index d2ec3dfc57d6..82986f28f653 100644
+--- a/drivers/gpu/drm/bridge/ite-it6505.c
++++ b/drivers/gpu/drm/bridge/ite-it6505.c
+@@ -2091,15 +2091,12 @@ static void it6505_hdcp_wait_ksv_list(struct work_struct *work)
+ 	ksv_list_check = it6505_hdcp_part2_ksvlist_check(it6505);
+ 	DRM_DEV_DEBUG_DRIVER(dev, "ksv list ready, ksv list check %s",
+ 			     ksv_list_check ? "pass" : "fail");
+-	if (ksv_list_check) {
+-		it6505_set_bits(it6505, REG_HDCP_TRIGGER,
+-				HDCP_TRIGGER_KSV_DONE, HDCP_TRIGGER_KSV_DONE);
++
++	if (ksv_list_check)
+ 		return;
+-	}
++
+ timeout:
+-	it6505_set_bits(it6505, REG_HDCP_TRIGGER,
+-			HDCP_TRIGGER_KSV_DONE | HDCP_TRIGGER_KSV_FAIL,
+-			HDCP_TRIGGER_KSV_DONE | HDCP_TRIGGER_KSV_FAIL);
++	it6505_start_hdcp(it6505);
+ }
+ 
+ static void it6505_hdcp_work(struct work_struct *work)
+@@ -2472,7 +2469,11 @@ static void it6505_irq_hdcp_ksv_check(struct it6505 *it6505)
+ {
+ 	struct device *dev = it6505->dev;
+ 
+-	DRM_DEV_DEBUG_DRIVER(dev, "HDCP event Interrupt");
++	DRM_DEV_DEBUG_DRIVER(dev, "HDCP repeater R0 event Interrupt");
++	/* 1B01 HDCP encription should start when R0 is ready*/
++	it6505_set_bits(it6505, REG_HDCP_TRIGGER,
++			HDCP_TRIGGER_KSV_DONE, HDCP_TRIGGER_KSV_DONE);
++
+ 	schedule_work(&it6505->hdcp_wait_ksv_list);
+ }
+ 
+-- 
+2.34.1
 
 
