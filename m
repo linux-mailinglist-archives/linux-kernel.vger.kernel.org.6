@@ -1,148 +1,182 @@
-Return-Path: <linux-kernel+bounces-340915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386019878F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:14:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 003929878FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE5D3283946
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:14:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 435B8B21427
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AEA165F1F;
-	Thu, 26 Sep 2024 18:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EE582488;
+	Thu, 26 Sep 2024 18:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tk+2CkGG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CgTZPr0M"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3206813D889;
-	Thu, 26 Sep 2024 18:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B8E1534E6
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 18:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727374484; cv=none; b=EZLbEBOlYwozl/TVw/jsUdfVYIyVk9xrHyuewTNE3IiCHu3AN8ptpfN635H03h29m1ksL9zXzTi6B95mfYXGoUPe4kOnB5yFxlntwRvUaEWfSFEIrMrUP3n2hcZ9kSgcwCVnLCmJeJiPozix0sxQ7lifkPUrRtS8qdL60H2LWpQ=
+	t=1727374535; cv=none; b=OUWZtPCfiAFCcEyXi9T3YSfCMU11WTSbojK8Jai8uxY9kHfuhHOdOGN8/Ruvaqum+sp3jc1uuIkRepxTg9qjizfy1dTf23e86Y2jgHLspS5waoAKSi31++BlrvxVl53Hn2UfnyjjAjRmj4UKIwOlzRuMd5YIhYAKm+k3Ny8c/gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727374484; c=relaxed/simple;
-	bh=N7pDSsBTC5mumG9nziGctRk8uC0jSDt0Wb1G0EiYg9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LyJJLS4jDiSD2SwfUDY6nDOLSedUc/i46O6ec/4daGdpzDylegpEqBjI2fswcQHBtHvWC2YLK2vDFV2ZVghzu6xbTGlAQtJC6HCZeTyWu5a7WA6+JPjFOyDW5aGVJ0RrTE9+/KDuSnWPyTXhv4ewsul611hfm7KcrVSxs4ZT6yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tk+2CkGG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6BEAC4CEC5;
-	Thu, 26 Sep 2024 18:14:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727374483;
-	bh=N7pDSsBTC5mumG9nziGctRk8uC0jSDt0Wb1G0EiYg9A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tk+2CkGG7i1BjHpvfi0nvr6hfJJ9HTMNkKQBKUDVVFTRuX1zoFsTkpiTgvIdgreFw
-	 lEpcgTULni3KsyoXZak0MHnbXBTJiTAp3kdhbt5eCBQ8Bena20k5mWz5osAMSVN7GH
-	 0GK6dlHDEX5ZYpKO3rhRqESL9jq4J5FLFAQumoL3OrhaCL69ClpvfgTgUr++swX9Gj
-	 cGpT2QbnCLH3b1lxORJxexgke6zZoaSPtmYFOZVCaCFA7YElQhvdXC64rzMd+2v3L5
-	 kMXJ9LkBEJjWB0zvdf61TsCy1twhZLLfXpTiYqHNqo5HhNP/XFEWX6Mltd5aCFBzG6
-	 OtDwCQcdFtr7Q==
-Message-ID: <7bfba4ef-0f42-4482-874f-77a4434eb338@kernel.org>
-Date: Thu, 26 Sep 2024 13:14:42 -0500
+	s=arc-20240116; t=1727374535; c=relaxed/simple;
+	bh=0iaW9ayASK4sYOEg7AV+wgw2JHuSB/rDBFbxxHYK+kg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oM5gpUb3QcxIWerg2Fci/hafFSwThPqceKkMh1OlvdN/2hculdhxNB5odsCOkFW/8Ppk+A6BAre7iEtkaNiU4pPPKyajFK2AomUKai6a9aZFX9iE7RJGHq9rLpIk/98sFHiWZiLiTYNv+qGhI545GxfW5IBuVdO87ykWtazNHoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CgTZPr0M; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4581cec6079so37301cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 11:15:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727374532; x=1727979332; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ghI5wl9Rodk/qOTN/GXzEVkvMG0ZFbywRGFDuKaTQGk=;
+        b=CgTZPr0MikyVbQY57XDnogDR/NKIDNiItW+63Y2Lu1QT7M3RieLLvc12enuYOhTtqf
+         kb9ZwoCUTiL+DBvNgOuABJD735GzbDMesX8ONorz05oiheyP1uX8wxTA7+5RsF87UKZa
+         Q5Ooy5ggpT+bTS1iqm1+mBTwvrzxOT+98CtrHSWU01ibKXm7Y9COKJk2o2Q5NfVNTQE+
+         UQT5tgF+f4UZnfeeDgd9mi2hIWumnZlpsPvotzvKLbeLm7hViEWuqGMgpalp6e5CVJfw
+         3IY6m8l2nYE6QxbKARUa9BSrtKIh9ny7/amYDLdRQvmSX0SOR2z8r8DHPrymVfdkiU5H
+         BO8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727374532; x=1727979332;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ghI5wl9Rodk/qOTN/GXzEVkvMG0ZFbywRGFDuKaTQGk=;
+        b=w3YRuU5e97AAMAIQTwRHUATTxmOirOB6Zp/6gjht6c6qtlj65Jxr1q8onl0S+IeBD5
+         qI3fbqdcmj05BHEWdmbLaPhv1iroBW2BCoALQ5yhjycC1e+Lby+j4CojXJsjqj7XvOIr
+         PJClXFWUbOZMlUw/OWxdwvOpP6kf/cIzM7TzVTD6vB0UXmks/MzhfLNVVFBvTJhFQpLB
+         37FMKF1/VQCf1Uo0KTT/loBOSN9539gytkL1NlIKJeMLyve889SO7jOFTMCdQIqBDJlg
+         VX/rhrWAG0vWXDKf8grofatZ70SLn70qPQy+taDZiKadG5L3q1gR9jOsdFsN+PP1jcCj
+         Gmag==
+X-Forwarded-Encrypted: i=1; AJvYcCWrM5m896q0j/Ex5xAzHWDVwoJ5DWya92rdczU6GJg7QqPdolqWTBI15srIWd+u1YaENZrsN8NfUL5XwJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1S+7NVOhMQ132KFOOvscMF9rNjWSvm0hpP0ZHYDEa9aGqQW0/
+	KdU9QtiaDzSlDZ2eLJ3qbcSynXWCWFVlGvH/H3vc/mYTqJRjajQmL1Q3w8wKiPDC5cySh90hvzE
+	ejOCYILQ6wekTS5ZfzDO7zVXZAsnawBKpsr4p
+X-Google-Smtp-Source: AGHT+IEKskNfWv42/OYoUzFnd0ZbE37pwmmbLc0UUgMIXvnGdU5BvAly31C36TplRHtvwCbfAj6CwKAwWZwa5Zx659M=
+X-Received: by 2002:a05:622a:24a:b0:453:62ee:3fe with SMTP id
+ d75a77b69052e-45ca03e60f6mr134981cf.17.1727374531410; Thu, 26 Sep 2024
+ 11:15:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 0/2] "custom" ACPI platform profile support
-To: Mark Pearson <mpearson-lenovo@squebb.ca>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede
- <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, "Luke D . Jones" <luke@ljones.dev>
-Cc: "platform-driver-x86@vger.kernel.org"
- <platform-driver-x86@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>,
- Antheas Kapenekakis <lkml@antheas.dev>, me@kylegospodneti.ch,
- Denis Benato <benato.denis96@gmail.com>,
- "Limonciello, Mario" <mario.limonciello@amd.com>
-References: <20240926025955.1728766-1-superm1@kernel.org>
- <2d07d31e-87f6-4576-977d-336f3d0bbc81@app.fastmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <2d07d31e-87f6-4576-977d-336f3d0bbc81@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240925075707.3970187-1-linyunsheng@huawei.com> <20240925075707.3970187-3-linyunsheng@huawei.com>
+In-Reply-To: <20240925075707.3970187-3-linyunsheng@huawei.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 26 Sep 2024 11:15:15 -0700
+Message-ID: <CAHS8izOxugzWJDTc-4CWqaKABTj=J4OHs=Lcb=SE9r8gX0J+yg@mail.gmail.com>
+Subject: Re: [PATCH net v2 2/2] page_pool: fix IOMMU crash when driver has
+ already unbound
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com, 
+	Robin Murphy <robin.murphy@arm.com>, Alexander Duyck <alexander.duyck@gmail.com>, 
+	IOMMU <iommu@lists.linux.dev>, Wei Fang <wei.fang@nxp.com>, 
+	Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, 
+	Eric Dumazet <edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, 
+	Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
+	Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
+	imx@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	intel-wired-lan@lists.osuosl.org, bpf@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/26/2024 08:58, Mark Pearson wrote:
-> Thanks Mario,
-> 
-> On Wed, Sep 25, 2024, at 10:59 PM, Mario Limonciello wrote:
->> From: Mario Limonciello <mario.limonciello@amd.com>
->>
->> There are two major ways to tune platform performance in Linux:
->>   * ACPI platform profile
->>   * Manually tuning APU performance
->>
->> Changing the ACPI platform profile is a "one stop shop" to change
->> performance limits and fan curves all at the same time.
->>
->> On AMD systems the manual tuning methods typically involve changing
->> values of settings such as fPPT, sPPT or SPL.
->>
->> The problem with changing these settings manually is that the definition
->> of the ACPI platform profile if supported by the hardware is no longer
->> accurate.  At best this can cause misrepresenting the state of the
->> platform to userspace and at worst can cause the state machine into an
->> invalid state.
->>
->> The existence and continued development of projects such as ryzenadj which
->> manipulate debugging interfaces show there is a demand for manually tuning
->> performance.
->>
->> Furthermore some systems (such as ASUS and Lenovo handhelds) offer an
->> ACPI-WMI interface for changing these settings. If using anything outside
->> that WMI interface the state will be wrong.  If using that WMI interface
->> the platform profile will be wrong.
->>
->> This series introduces a "custom" ACPI platform profile and adds support
->> for the AMD PMF driver to use it when a user has enabled manual
->> adjustments.
->>
->> If agreeable a similar change should be made to asus-armoury and any other
->> drivers that export the ability to change these settings but also a
->> platform profile.
->>
-> 
-> As someone who supports customers on Lenovo devices and hits the occasional situation where a user has made strange tweaks to different power related settings, and then complains about power or thermal issues - I love the idea that it can be made clear the system has been 'adjusted' in a non standard way. I can also see why users would want interfaces to do those changes.
+On Wed, Sep 25, 2024 at 1:03=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> Networking driver with page_pool support may hand over page
+> still with dma mapping to network stack and try to reuse that
+> page after network stack is done with it and passes it back
+> to page_pool to avoid the penalty of dma mapping/unmapping.
+> With all the caching in the network stack, some pages may be
+> held in the network stack without returning to the page_pool
+> soon enough, and with VF disable causing the driver unbound,
+> the page_pool does not stop the driver from doing it's
+> unbounding work, instead page_pool uses workqueue to check
+> if there is some pages coming back from the network stack
+> periodically, if there is any, it will do the dma unmmapping
+> related cleanup work.
+>
+> As mentioned in [1], attempting DMA unmaps after the driver
+> has already unbound may leak resources or at worst corrupt
+> memory. Fundamentally, the page pool code cannot allow DMA
+> mappings to outlive the driver they belong to.
+>
+> Currently it seems there are at least two cases that the page
+> is not released fast enough causing dma unmmapping done after
+> driver has already unbound:
+> 1. ipv4 packet defragmentation timeout: this seems to cause
+>    delay up to 30 secs.
+> 2. skb_defer_free_flush(): this may cause infinite delay if
+>    there is no triggering for net_rx_action().
+>
 
-JFYI we're going to do something really similar in amdgpu when people 
-have enabled overclocking.  That's part of the inspiration for this RFC.
+I think additionally this is dependent on user behavior, right? AFAIU,
+frags allocated by the page_pool will remain in the socket receive
+queue until the user calls recvmsg(), and AFAIU they are stuck there
+arbitrarily long.
 
-https://lore.kernel.org/amd-gfx/CADnq5_M+vxGV6y8oEQHC+-CcqV-vW9ND4SsRHqHKbwR_b0iJ9g@mail.gmail.com/T/#m1d69399c3e799ea1ef2014a27fd6e555f9e70ba0
+> In order not to do the dma unmmapping after driver has already
+> unbound and stall the unloading of the networking driver, add
+> the pool->items array to record all the pages including the ones
+> which are handed over to network stack, so the page_pool can
+> do the dma unmmapping for those pages when page_pool_destroy()
+> is called.
 
-> 
-> Some suggestions:
-> 
-> I'm wondering if we can make it so a driver can register only a 'custom' profile as an extra profile handler?
-> 
-> The thinking here is the custom setting in this series is implemented for the amd sps driver, and therefore on a regular Lenovo laptop wouldn't be used, as the thinkpad_acpi driver will grab the profile slot, Users on Lenovo systems aren't going to be able to get at these extra tweaks (unless they unload thinkpad_acpi, which has other side effects).
+One thing I could not understand from looking at the code: if the
+items array is in the struct page_pool, why do you need to modify the
+page_pool entry in the struct page and in the struct net_iov? I think
+the code could be made much simpler if you can remove these changes,
+and you wouldn't need to modify the public api of the page_pool.
 
-Well the RFC was just to show it for the AMD PMF driver, but I think 
-that thinkpad_acpi, asus_armoury etc could all potentially implement the 
-'custom' bit too if they offer an ACPI-WMI interface to similar settings.
+> As the pool->items need to be large enough to avoid
+> performance degradation, add a 'item_full' stat to indicate the
+> allocation failure due to unavailability of pool->items.
+>
 
-> 
-> If the sps driver can offer a custom mode, separately from thinkpad_acpi, then users can tweak settings to their hearts content but get back to regular mode when done.
-> 
-> I also think there needs to be a way that when you switch from custom back to a 'regular' profile that it would do a clean up of anything tweaked. e.g. when switching away from custom the ppd driver should call a 'custom mode cleanup' function, so things can be undone and returned to how they were when it was started.
-> 
-> Mark
+I'm not sure there is any way to size the pool->items array correctly.
+Can you use a data structure here that can grow? Linked list or
+xarray?
 
-I guess what you're proposing is that multiple drivers register as 
-profile handlers and they might not all export the same features.
+AFAIU what we want is when the page pool allocates a netmem it will
+add the netmem to the items array, and when the pp releases a netmem
+it will remove it from the array. Both of these operations are slow
+paths, right? So the performance of a data structure more complicated
+than an array may be ok. bench_page_pool_simple will tell for sure.
 
-If we did something like this we could instead have the core call 
-callbacks for all platform profile handlers.  We could also drop a pile 
-of quirks from amd-pmf where there are some ASUS systems that advertise 
-SPS in in the PMF framework and also asus-wmi provides it.
+> Note, the devmem patchset seems to make the bug harder to fix,
+> and may make backporting harder too. As there is no actual user
+> for the devmem and the fixing for devmem is unclear for now,
+> this patch does not consider fixing the case for devmem yet.
+>
 
-If I'm following you right, I generally like this idea.
+net_iovs don't hit this bug, dma_unmap_page_attrs() is never called on
+them, so no special handling is needed really. However for code
+quality reasons lets try to minimize the number of devmem or memory
+provider checks in the code, if possible.
+
+--=20
+Thanks,
+Mina
 
