@@ -1,98 +1,165 @@
-Return-Path: <linux-kernel+bounces-340910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63EF9878E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:10:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 247B19878DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 20:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6CFE1C213DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD8641F215A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 18:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EDD175D2C;
-	Thu, 26 Sep 2024 18:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E76D165F0C;
+	Thu, 26 Sep 2024 18:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O9o+YpqO"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYBfYdyt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C3B166315
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 18:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533BB26AE6;
+	Thu, 26 Sep 2024 18:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727374176; cv=none; b=LYmIGKi55TinTpbQX4yheyBbLXqe1tj82sLVUfwdARULj2YVTRhnJnT3fLGoUpXoPJP85lk9aB7mRo+PjV9//V68m4dYND86PWob49FoP1NhgPhioTs6kFb1C38/q5JLoOc5B5SJ+TNlQEz0tRU9TdOEXJuO0DgGwdu6Dx/ClfU=
+	t=1727374153; cv=none; b=hmwVY9MqPRPKuc8phfBBUeSGHEI1QmVlizBDovm7b/6sIUPibMJZjSZRUL+uqJXGww0Omqj+DxVW/eIsr3qOvOaygwNOTeooHMjKlilODdJdUGV5XDVG/jbq6SnHKIOcattHUHgJfts59XFgtEHfxpOf9J2WL9EqZa5m8M0ZosE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727374176; c=relaxed/simple;
-	bh=vnoXmPj03gY3HeZFlU/P/fiukyHxubnqAyx25jYQ6PE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HJf3QiGxg5oWx0jMAAGxCr6sg50xVyraCRf+U2Vus1Fo5mQJipycdKOp/C2K8WJEeWNcYhLnCyEjdn762VHKH1yMNzSv6oSTKpmTYyEI6hqcZuvInI5hHYgny+CYTfXlFd1yg+VP5SlWYgjaDPdUqdIZTprJUCaOTy1jb+VXeA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O9o+YpqO; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727374171;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mtm2tEn6+0ysbxRZCa9NK2SpqJBjdy9coOdju9E6VL4=;
-	b=O9o+YpqOYzWoFfC6sMVyedxU6uVvTrnsEW0gevy1l9MYltp8/wE72b2jaFnMsd0tetmp57
-	fopC0KEdgGMYBecsYa0+adB+rtcmWvGOTWspz+4SPDJY88/tGVx+BpG3Ny7VcvmYccg2IJ
-	FSYo6F9xT8hRXieg0gWZGl4H3DwXk0o=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH 2/2] arm64: dts: renesas: ulcb: Add SD/OE pin properties
-Date: Thu, 26 Sep 2024 14:09:03 -0400
-Message-Id: <20240926180903.479895-3-sean.anderson@linux.dev>
-In-Reply-To: <20240926180903.479895-1-sean.anderson@linux.dev>
-References: <20240926180903.479895-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1727374153; c=relaxed/simple;
+	bh=aW4HaPysR4BZas3D4OloyZPYqiYG/jzTmy8XMsvWbl8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S3LK+zYuVXr5MGoBt8TTaF1b+qU+t2hz4qWlvDbVX6cduCsf0La1GYKj0nXBZT249vK4BZFY2p77HT3uVVas3DwiyuSTQgUtBH0X1SJqih42AQRo/n15M3rjGYpof5w+5feOLgvE9v4/tbv7KzgritKavnZXd3jK+EcnoMEwHus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYBfYdyt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA5C9C4CEC5;
+	Thu, 26 Sep 2024 18:09:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727374152;
+	bh=aW4HaPysR4BZas3D4OloyZPYqiYG/jzTmy8XMsvWbl8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VYBfYdytYSCzvYc0a63DTb856RytSGeqMrFAn2CjqZqGFIiDvr4h95sEJfF1L7xk/
+	 WEEU4HwkhQJ7ooD7JJR0WRi2hsVrRtjjuwDFHPu8EBBCaagN1ga3hvo9n8zqsa2lsc
+	 SMu+QP267XP+N2P/sGDSwhkomyceKYOSoTYyUrzDeLtw8MBqyGOul5e7mYZPga6gw1
+	 M1nT7TR33X4qeLqb2XVzUXsRnjozivnxTAPLxycsWFbLd3xljC27BgalJhwLBWWcns
+	 mq8zVWepdu/kL4InsZzxohTX41Z12s8+HqtIXbVOKqND9r44fofFGCV/O4E9iqfGbC
+	 KdEc7PKRg7Vtg==
+Message-ID: <f516dd07-7d7b-403e-a55e-6bf21dbea9b4@kernel.org>
+Date: Thu, 26 Sep 2024 13:09:10 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 2/2] platform/x86/amd: pmf: Add manual control support
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Luke D . Jones" <luke@ljones.dev>, Mark Pearson
+ <mpearson-lenovo@squebb.ca>,
+ "open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>, me@kylegospodneti.ch,
+ Denis Benato <benato.denis96@gmail.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20240926025955.1728766-1-superm1@kernel.org>
+ <20240926025955.1728766-3-superm1@kernel.org>
+ <5a75b73f-dcb1-4a45-9526-194a3451b5c6@amd.com>
+ <CAGwozwGtqwOOfrUpjLghW4JCKqcFk9ut-X0MBvHAm37YVS51tw@mail.gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <CAGwozwGtqwOOfrUpjLghW4JCKqcFk9ut-X0MBvHAm37YVS51tw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add SD/OE pin properties to the devicetree so that Linux can configure
-the pin without relying on the OTP. This configuration is based on
-inspection of the schematic (which shows the SD/OE pin permanently tied
-high).
+On 9/26/2024 06:00, Antheas Kapenekakis wrote:
+> Hi Shyam,
+> 
+>> I appreciate the proposal, but giving users this control seems similar
+>> to using tools like Ryzenadj or Ryzen Master, which are primarily for
+>> overclocking. Atleast Ryzen Master has a dedicated mailbox with PMFW.
+> 
+> In the laptop market I agree with you. However, in the handheld
+> market, users expect to be able to lower the power envelope of the
+> device on demand in a granular fashion. As the battery drop is
+> measured in Watts, tying a slider to Watts is a natural solution.
+> 
+> Most of the time, when those controls are used it is to limit the
+> thermal envelope of the device, not exceed it. We want to remove the
+> use of these tools and allow manufacturers the ability to customise
+> the power envelope they offer to users.
+> 
+>> While some existing PMF mailboxes are being deprecated, and SPL has
+>> been removed starting with Strix[1] due to the APTS method.
 
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
----
+Hmm, what do you think about about offering a wrapper for this for 
+people to manipulate?
 
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+>>
+>> It's important to use some settings together rather than individually
+>> (which the users might not be aware of). For instance, updating SPL
+>> requires corresponding updates to STT limits to avoid negative outcomes.
+> 
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index a2f66f916048..2a2cd788ffec 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -234,6 +234,8 @@ versaclock5: clock-generator@6a {
- 		#clock-cells = <1>;
- 		clocks = <&x23_clk>;
- 		clock-names = "xin";
-+		idt,shutdown = <0>;
-+		idt,output-enable-active = <1>;
- 	};
- };
- 
--- 
-2.35.1.1320.gc452695387.dirty
+The tough part about striking the balance here is how would an end user 
+know what values to set in tandem.  I think a lot of people just assume 
+they can "just change SPL" and that's it and have a good experience.
 
+> This suggestion was referring to a combined slider, much like the
+> suggestion below. So STT limits would be modified in tandem,
+> respecting manufacturer profiles. See comments below.
+> 
+> If you find the name SPL disagreeable, it could be named {tdp,
+> tdp_min, tdp_max}. This is the solution used by Valve on the Steam
+> Deck (power1_cap{+min,max}, power2_cap{+min,max}).
+
+It's not so much that it's disagreeable term but Shyam is pointing out 
+that SPL is no longer a valid argument to the platform mailbox.
+
+> 
+> In addition, boost is seen as detrimental to handheld devices, with
+> most users disliking and disabling it. Steam Deck does not use boost.
+> It is disabled by Steam (power1_cap == power2_cap). So STT and STAPM
+> are not very relevant. In addition, Steam Deck van gogh has a more
+> linear response so TDP limits are less required.
+> 
+>> Additionally, altering these parameters can exceed thermal limits and
+>> potentially void warranties.
+>>
+>> Considering CnQF, why not let OEMs opt-in and allow the algorithm to
+>> manage power budgets, rather than providing these controls to users
+>> from the kernel when userspace tools already exist?
+
+The problem is all of the RE tools rely upon PCI config space access or 
+/dev/mem access to manipulate undocumented register offsets.
+
+When the system is under kernel lockdown (such as with distro kernel 
+when UEFI secure boot is turned on) then those interfaces are 
+intentionally locked down.
+
+That's why I'm hoping we can strike some sort of balance at the request 
+for some advanced users being able to tune values in a predictable 
+fashion while also allowing OEMs to configure policies like CNQF or 
+Smart PC when users for users that don't tinker.
+
+>>
+>> Please note that on systems with Smart PC enabled, if users manually
+>> adjust the system thermals, it can lead to the thermal controls
+>> becoming unmanageable.
+
+Yeah; that's why as this RFC patch I didn't let CNQF, ITS or Smart PC 
+initialize.  Basically if manual control is enabled then "SPS" and 
+manual sysfs control is the only thing available.
+
+> 
+> Much like you, we dislike AutoTDP solutions that use e.g., RyzenAdj, as they:
+>   1) Do not respect manufacturer limits
+>   2) Cause system instability such as stutters when setting values
+>   3) Can cause crashes if they access the mailbox at the same time as
+> the AMD drm driver.
+> 
+
+Yes.  Exactly why I feel that if we offer an interface instead people 
+can use such an interface instead of these tools.
 
