@@ -1,80 +1,102 @@
-Return-Path: <linux-kernel+bounces-340414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6A1987323
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:55:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75818987325
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 13:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 043232807AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:55:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BD761F25006
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D07A15B143;
-	Thu, 26 Sep 2024 11:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A8D15B55E;
+	Thu, 26 Sep 2024 11:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBaM49d2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826A01798F;
-	Thu, 26 Sep 2024 11:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JThb5KHB"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2ED81798F;
+	Thu, 26 Sep 2024 11:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727351698; cv=none; b=CjgnCgamPrj/3WpBdDHj2i43gtSdUqsRQXu0Be/ZszxfH7+kFW4NGuKCK3dUhRvC0QsjJotPO/E/J3aRNi3RqrfK6RhfYBVaT61ssN7k8uPrfm026NPbEmnKlJxeIbMPKBFxKKQSoV+jo8wETtpguhRI3NwuX8ipFbjgAURIVZM=
+	t=1727351988; cv=none; b=EGT8RwaYcJEnI4ey86jvwWFJqRm78NLZncnvW8Tl2K5xq4HTY8Xg8uG4AzpT7BKUAirR1UNN1SRPUjUBoTbMiscDEuQO6YyD/PzyVSfZ4TX4jONWu4Ci4f1SilBARrQIBrEa7MU+b834VXjfhO5oGBYfg/AEyKUUiXVKY4rR31s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727351698; c=relaxed/simple;
-	bh=pv76Q8cH20FnIagVxuCMJYVjeT1pz9UhuUuSKP7NVOo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=B+r2B53/T/nNtMOEb+6cG9xmLbMHkFFQYOLa7TL7rJ5giKsXG7Tp3NMnh5QKG4yg+Pv9x4qjAUgKu/Tag2BixDMZqAgLxH+pzqqQk2yCf3/FhZQq16kBa9+JNQi4LBx6OiO7rAMuQ7GqBn0f5xCrpLkMefCzvI3IDbUCsgMWWOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBaM49d2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC7F2C4CEC5;
-	Thu, 26 Sep 2024 11:54:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727351698;
-	bh=pv76Q8cH20FnIagVxuCMJYVjeT1pz9UhuUuSKP7NVOo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=NBaM49d2x+11ox7BoohZjS8Lg4Z4Dr0boUzDT+SnyQlHgJhuq4Ro38yvuS4BgSu8D
-	 rW9fImvJ2nwdnZDT2pQ16g98sd2LfWoJe7RmdGG7yNFrY6SmQ6nMA0sJZvPnHg82qC
-	 ZrdRhMAJcxd07+w8nQEgE/Dy6N8pM1OljquGz46yrMd9L7cKR+y9ZdYz0VFZUqBN/z
-	 3sIlxV55nv5ZnNDWNA39bJWFtQkpnHWUJq9dOWnF3O87ANiACUHr2BKKh/Qws9aRxX
-	 Xyha4ol4g3TA76M8kWdTIM+WsU13Dta2PG2Ury7gGhS80SPotCeusybgjQI/Wa6jgl
-	 afmIG0DIl8hmw==
-Date: Thu, 26 Sep 2024 13:54:55 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: "Luke D. Jones" <luke@ljones.dev>
-cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
-    bentiss@kernel.org, platform-driver-x86@vger.kernel.org, 
-    ilpo.jarvinen@linux.intel.com, hdegoede@redhat.com, 
-    corentin.chary@gmail.com, superm1@kernel.org
-Subject: Re: [PATCH v4 2/9] hid-asus: Add MODULE_IMPORT_NS(ASUS_WMI)
-In-Reply-To: <20240926092952.1284435-3-luke@ljones.dev>
-Message-ID: <nycvar.YFH.7.76.2409261354320.31206@cbobk.fhfr.pm>
-References: <20240926092952.1284435-1-luke@ljones.dev> <20240926092952.1284435-3-luke@ljones.dev>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1727351988; c=relaxed/simple;
+	bh=y+nY+Te9CMW3SoF1lkygRmaQ0k3UjH69fBcRe15h5OM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bz09fnGnjUbZVEW3jRdJoOLG0epkWGA/YUZ92kkGogZsf+Ef9vr0xQRj6lAtHmpzKP/VyqK+Cu9UcKPYcs62Mch0WnB1Ysat2m9sqNk7HKEF9Fb7C/c+m4W3tzBxePfwqr+skfi37Chj4CaPFBU28XiR5Yc00uXYUDjmsjft4nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JThb5KHB; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=F5vYX
+	8/opjvE5wTUAnPujK6sAT6th5nnz2xNAH+qpyg=; b=JThb5KHBs/mXH7Jj2s7YN
+	8Ko3Rp8ib5v4XzMqqrZM82an+1xVXRI8iasLBGXrV94khdTXPTVLCkvouxvtPvkG
+	D/sOYSDQKvZxxtCvbEMU8DvsQfSo1ISNs34YeATgRordApnZ3AtuLmpDRiCsg9W3
+	qu03wgAISnxHl4aEQ3qmqY=
+Received: from thinkpad.. (unknown [60.168.209.67])
+	by gzga-smtp-mta-g3-5 (Coremail) with SMTP id _____wCnK6aZTPVmuaNDPA--.52970S2;
+	Thu, 26 Sep 2024 19:59:21 +0800 (CST)
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: deller@gmx.de
+Cc: linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Qianqiang Liu <qianqiang.liu@163.com>
+Subject: [PATCH] fbcon: break earlier in search_fb_in_map and search_for_mapped_con
+Date: Thu, 26 Sep 2024 19:59:11 +0800
+Message-Id: <20240926115911.620624-1-qianqiang.liu@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCnK6aZTPVmuaNDPA--.52970S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Gw4xGw4UAr45tryfJF48Crg_yoWfurc_GF
+	1vvF95CayDtFy8Kr1rK3W3A34Yva1jva45WasrtF9Iy342q3yrXr4fZFn5XrWrWa1rZFWq
+	vF1kJrn3Za4rCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUUJ5rDUUUUU==
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiLxxmamb1RZ5vGAAAsA
 
-On Thu, 26 Sep 2024, Luke D. Jones wrote:
+Break the for loop immediately upon finding the target, making the
+process more efficient.
 
-> A small change to asus_wmi_evaluate_method() was introduced during
-> asus-armoury driver development to put the exports behind a namespace.
-> 
-> Import that namespace here.
-> 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+---
+ drivers/video/fbdev/core/fbcon.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Feel free to add
-
-	Acked-by: Jiri Kosina <jkosina@suse.com>
-
+diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+index d9abae2516d8..e8b4e8c119b5 100644
+--- a/drivers/video/fbdev/core/fbcon.c
++++ b/drivers/video/fbdev/core/fbcon.c
+@@ -512,8 +512,10 @@ static int search_fb_in_map(int idx)
+ 	int i, retval = 0;
+ 
+ 	for (i = first_fb_vc; i <= last_fb_vc; i++) {
+-		if (con2fb_map[i] == idx)
++		if (con2fb_map[i] == idx) {
+ 			retval = 1;
++			break;
++		}
+ 	}
+ 	return retval;
+ }
+@@ -523,8 +525,10 @@ static int search_for_mapped_con(void)
+ 	int i, retval = 0;
+ 
+ 	for (i = first_fb_vc; i <= last_fb_vc; i++) {
+-		if (con2fb_map[i] != -1)
++		if (con2fb_map[i] != -1) {
+ 			retval = 1;
++			break;
++		}
+ 	}
+ 	return retval;
+ }
 -- 
-Jiri Kosina
-SUSE Labs
+2.34.1
 
 
