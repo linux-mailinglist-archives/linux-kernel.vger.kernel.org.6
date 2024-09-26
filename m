@@ -1,204 +1,167 @@
-Return-Path: <linux-kernel+bounces-340294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717AA987123
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:19:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E0B987135
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 12:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E838F1F23A2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:19:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16905B283DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 10:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2372A1AC8AB;
-	Thu, 26 Sep 2024 10:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187B41AB6F0;
+	Thu, 26 Sep 2024 10:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="lITTgP2M"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhcjoVNP"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818145647F;
-	Thu, 26 Sep 2024 10:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DA21ACE0D;
+	Thu, 26 Sep 2024 10:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727345941; cv=none; b=OywEBd+8Vs9qJODrTczL3Be9QRF50d9yFBFPHXxg1hGiIHhZRe/Wqs01Jz39yUBv8YVpyvE/IuGGeUr455Sd4ak6nD80oCbMUtwzzI1lwlXdV2c+9twBFK8oI9KkBj5gy3VbnwCCtAnuEPVYJpw3CiT7U2oAGL6q4KBP5O+js9Y=
+	t=1727346052; cv=none; b=a0aFKEq2SRncqm18jTsTc5AX8zA4mQ+qPMiPFYnyXmV4+R8vsOpwjj+oYU+K73tPFDfVUOfHcYDDTJHlcgDdB4/7UOtgHFwxWxx2mW6YYPEm/FdvuQFF7YN9HKgjWDNEtclI4gGSxmAz6VoROwMp5NkvkKex4Pp5bcD5OyJdeF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727345941; c=relaxed/simple;
-	bh=jofM7Q5aS76ZNLfcMgMBEeX3gAqN6j6s3g02UtRiWa4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UQHWew/bOGaMNdSX5ZAuKKOSxQCQpPS7eyRS3CQOeVuH3lywog2vzQn+MDjV2lmwx2sBHRIiAadPS/kbnSbpbqDLIhP5R1zZNHwi7L31W0au8cqssTvyz3nV0+hcazJFDU63I3m3vzI244btNiOonKxE8XtI9sfaOU4eFhSdGpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=lITTgP2M; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=vcQOEOghojEEcKzBYWCBaalez3tMu6zJ0B+RBH5pf0I=; t=1727345939;
-	x=1727777939; b=lITTgP2M+/SrjouAGVJ7kNtAol4InXfuHxYQwHbBUMIOwZXJCAGKIWAp4dcj2
-	88vzSpmq/h+ctAtfEjJbJoF77iQN8d5+25dPlJnQt1eaIJYy6ybY8hWlEo1wZzP1QOzM+gntkHvL2
-	qTtkfantvnMSatP7Q12RR0IHk8FRYdgvJFCGQnU7rmqiSoxL8GODx/PDU/Qusc3ojb5UsvAYZK9vS
-	hY6A3XCZx2D2gp2A64aWZMvIG7blf6LtPSvmK2w6JDz1+PsciGdMBcg5Tvm1N+/u+JZYQHU1YhtE2
-	wJgUsnTJ4LeY0zWXxl/+tgv32uyOvSAo57fb1aTdeu+eh1/ATg==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1stlaG-0006Jr-33; Thu, 26 Sep 2024 12:18:52 +0200
-Message-ID: <7ce7f7cc-870f-4f7f-98c6-95eb784008ff@leemhuis.info>
-Date: Thu, 26 Sep 2024 12:18:51 +0200
+	s=arc-20240116; t=1727346052; c=relaxed/simple;
+	bh=NuL4dI2poc5wNfVuOhusNAL0N90LbOn9S9VV9BLqC8g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pFPSJc3K+Md9vdMd0zgD74wWxckAEMEp7OATZIi4bZDIkj86r3br5gubGa+3zgwMVrMRth5ogOOAYJMK8zSfU6NUIAbWvNUJ+O5Cwm0A4nfq/3W3NoWfQrb/R8gAtu0MuKoi1Wq8QxDEw1s9frJ6sKz4aCujQxhxWb88TQbBLQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhcjoVNP; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso1206449e87.2;
+        Thu, 26 Sep 2024 03:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727346049; x=1727950849; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8IVre1yMyrMqTq/PbcIC9hra/9CR9DAifO0gVMmtGPY=;
+        b=AhcjoVNPbbsZMJabNv+Ye1FEaaPDnhqGUJo9nxBWQBSHnd4nq8VMTVpMtwR5OXT9l8
+         4Y81wmWVUkkiSpqg3GsGt+DW1y/CsL1CZiHSYiw4OdhW/pxvspB1jVcb1hSgGAf6wy//
+         AosN4hJxwaeYxe7OYG9+AR2WB3d5dmCct9mh23ewm0JDqJzcbp1oaUhblHzG1mWazTWS
+         avrBe8kQkF1kpMSiaXbxEKmxFLX8VQ5cfxvWcOT5oWFb6HDVhnqGSCUxpUJmSwi8Xodz
+         xw3lLZsAZG/GXIZCxQ5tBSffN3Jj+zq7cc2uzzjPBjlMi7TiTTTEBEtAtgbvLFG7EI5P
+         iCyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727346049; x=1727950849;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8IVre1yMyrMqTq/PbcIC9hra/9CR9DAifO0gVMmtGPY=;
+        b=JJ302NOM/UEILupiVeHqF1O3jOvEr14n6/Rt3mMpVINfrbvRKGyaUb5SAoRSguVCVQ
+         3CGqIWCoYog06wQD4+fSCNPqPDeb4PEqIjqRioM/NLMJDVKe/RHQRVN2IMqCd72+oEY0
+         jf3GwI93itOFT3g3ath+OAfWlzsOv8dVhZ+YyD6dnt0NryWzRsn+Ymg/bhWBUxnT9n7V
+         8BD75As95KI5Z83ZeY4fBaClVd6sCKlpf+O/tF9GQ46saIgli7MmwfE5i6grAs98xtVa
+         QHiS2Pfyjx/aNCnqueeIcFbAnkDWlE7U6nSkTlZ/nSZJZyXaUtbFlkoVitjs2VO0B/JC
+         lXSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVprT1wDR9naVw/eQJKRgF3Mr0k86dzAtwho9UjHqto+QHrDoztaKN2reAomwE0oschNjG/dW6YsyHxPME=@vger.kernel.org, AJvYcCWCNEd9KGBhwChCdXs3Z06/1VkIMQsyNhhEADevDd1i6rXKj3m/bMhDfddE1uoYtCbTW0vESlS9ep4bWg==@vger.kernel.org, AJvYcCWiwQn2Z93TCjDfa8o9qkQu/XkJsSmYYIVdb//NZchmMcjzyWD5dM5BLE0BXi5L8Y3j5G+C6bT90Qu1SQhm@vger.kernel.org, AJvYcCX+W6K6xFA+mfF49ZRPatw4bpnDHL/P+umvTKV8X0j691iTkZaDHH0VRUghpfPBTGbyhawwWs9F4IOM@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJzq8RDQz2gaKRTnMpZr4TB3Ezge4MB5z1vsYt1eHejMfvzY/D
+	ADo1KcjYIO+mPQT5l4T6Xxs2fyIW1/jHQZlB3Gs3apYBHLVKdKQJ
+X-Google-Smtp-Source: AGHT+IHhBPBUZ84Fgt19/l7LY0tBpRg2LadPCUuvfGyPkpOXS7Cr4FdmWzOS4+1f8kb8oCWhWOBAOw==
+X-Received: by 2002:a05:6512:a8d:b0:536:53e3:feae with SMTP id 2adb3069b0e04-5387048a6cbmr4909154e87.11.1727346048462;
+        Thu, 26 Sep 2024 03:20:48 -0700 (PDT)
+Received: from [127.0.1.1] (mm-20-1-84-93.mgts.dynamic.pppoe.byfly.by. [93.84.1.20])
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-537a85ee54esm759071e87.96.2024.09.26.03.20.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 03:20:47 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v5 0/7] Add support for Maxim Integrated MAX77705 MFD
+Date: Thu, 26 Sep 2024 13:20:17 +0300
+Message-Id: <20240617-starqltechn_integration_upstream-v5-0-e0033f141d17@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: resource: Skip IRQ override on Asus Vivobook Go
- E1404GAB
-To: Hans de Goede <hdegoede@redhat.com>, Tamim Khan <tamim@fusetak.com>,
- linux-acpi@vger.kernel.org
-Cc: rafael@kernel.org, lenb@kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <20240903014317.38858-1-tamim@fusetak.com>
- <c73420b7-c186-4b5d-a074-961b35ed829c@leemhuis.info>
- <f79854bd-b338-458f-bc04-466376d05a65@leemhuis.info>
- <87cf24b3-5ddd-4532-b186-dd1dcc62f712@leemhuis.info>
- <c1276139-d26f-457a-8a73-7f17538dbd28@redhat.com>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: en-US, de-DE
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <c1276139-d26f-457a-8a73-7f17538dbd28@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1727345939;5d8a54f4;
-X-HE-SMSGID: 1stlaG-0006Jr-33
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAGE19WYC/43O0Q6CIBQG4FdxXEdDULCueo/WHOJR2RQNkNWc7
+ x66tbqry//fzvefBTmwGhw6JwuyELTTo4khPyRIddK0gHUdM6KEZoSnAjsv7b33oDpTauOhtdL
+ Hm3KenLcgB1ypghc5qWgDDEWmkg5wZaVRXYTM3PexnCw0+rHvXm8xd9r50T73NwLb2vdi8XsxM
+ EwwsIZzTkkqpLq0g9T9UY0D2vCQfcBTyv4AswjSmkJT5yovhPgG13V9Ad5rAaM2AQAA
+To: Sebastian Reichel <sre@kernel.org>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-leds@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727346045; l=3311;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=NuL4dI2poc5wNfVuOhusNAL0N90LbOn9S9VV9BLqC8g=;
+ b=O+7i7z4OuBRIMMt8I9vxRGXW79EiAJ2IYyvi/vsFtSdHQIfvus9bWWBctJ7qdgF8Kwl3ns308
+ SQZHXqt24KvCRrQpY+25jwdqULhwYfzOs6ETmeIb8JOD9FwRTVFkPbE
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-On 25.09.24 16:31, Hans de Goede wrote:
-> 
-> On 25-Sep-24 1:56 PM, Thorsten Leemhuis wrote:
->> [CCing Hans]
-> Can you next time maybe also add a bit of text explaining why ?
+The Maxim MAX77705 is a Companion Power Management and Type-C
+interface IC which includes charger, fuelgauge, LED, haptic motor driver and
+Type-C management IC. It's used in Samsung S series smart phones
+starting from S9 model.
 
-Sorry, yes, you are right, will keep that in mind.
+Add features:
+  - charger
+  - fuelgauge
+  - haptic
+  - led
 
->> On 05.09.24 12:45, Thorsten Leemhuis wrote:
->>> On 05.09.24 11:51, Thorsten Leemhuis wrote:
->>>> On 03.09.24 03:43, Tamim Khan wrote:
->>>>> Like other Asus Vivobooks, the Asus Vivobook Go E1404GAB has a DSDT
->>>>> that describes IRQ 1 as ActiveLow, while the kernel overrides to Edge_High.
->>>>> This override prevents the internal keyboard from working. This patch fixes
->>>>> this problem by adding this laptop to the table that prevents the kernel from
->>>>> overriding the IRQ.
->>>>>
->>>>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219212
->>>> Thx for that. FWIW, I by chance noticed another such report about the
->>>> E1404GA: https://bugzilla.kernel.org/show_bug.cgi?id=219224
->>>
->>> TWIMC, shortly after sending this mail I noticed there is another request
->>> for a quirk that was send to the list, bug afaics fall through the
->>> cracks. See here:
->>> https://lore.kernel.org/all/1226760b-4699-4529-bf57-6423938157a3@wanadoo.fr/
->>>
->>> It afaics add a X1704VAP:
-> [...]
-> 
-> Ok, I wonder did you Cc me so that I can write / submit patches upstream
-> for these ones?
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v5:
+- Split patchset per subsystem
+- Link to v4: https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com
 
-Not really. Of course it would be nice if you or someone else took care
-of that one and...
+Changes in v4:
+- Rewrite max77705, max77705_charger, max77705_fuel_gauge from scratch
+- Reorder patches:
+  - squash max77705 subdevice bindings in core file because
+    no resources there
+  - split device tree changes
+- Use _ as space for filenames in power/supply like the majority
+- Link to v3: https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com
 
-> It seems that there are 3 missing models:
-> - E1404GA: https://bugzilla.kernel.org/show_bug.cgi?id=219224
-> - X1704VAP https://lore.kernel.org/all/1226760b-4699-4529-bf57-6423938157a3@wanadoo.fr/
-> - B2502CV: https://bugzilla.kernel.org/show_bug.cgi?id=217760#c12
-> 
-> Which someone needs to submit upstream, right ?
+---
+Dzmitry Sankouski (7):
+      power: supply: add undervoltage health status property
+      dt-bindings: mfd: add maxim,max77705
+      mfd: Add new driver for MAX77705 PMIC
+      input: max77693: add max77705 haptic support
+      power: supply: max77705: Add charger driver for Maxim 77705
+      power: supply: max77705: Add fuel gauge driver for Maxim 77705
+      leds: max77705: Add LEDs support
 
-...these as well -- and ideally would even be willing to act as go-to
-person from now on in case more of these quirk entries are needed, which
-I guess will be the case. But given the backstory (see below) I don't
-think you or anyone else is obliged to do this, even if the current
-situation is parlty caused by regressions and recent fixes for them.
+ Documentation/ABI/testing/sysfs-class-power               |   2 +-
+ Documentation/devicetree/bindings/mfd/maxim,max77705.yaml | 177 +++++++++++++++++++++
+ MAINTAINERS                                               |   4 +
+ drivers/input/misc/Kconfig                                |   4 +-
+ drivers/input/misc/Makefile                               |   1 +
+ drivers/input/misc/max77693-haptic.c                      |  15 +-
+ drivers/leds/Kconfig                                      |   6 +
+ drivers/leds/Makefile                                     |   1 +
+ drivers/leds/leds-max77705.c                              | 157 ++++++++++++++++++
+ drivers/mfd/Kconfig                                       |  12 ++
+ drivers/mfd/Makefile                                      |   2 +
+ drivers/mfd/max77705.c                                    | 248 +++++++++++++++++++++++++++++
+ drivers/power/supply/Kconfig                              |  13 ++
+ drivers/power/supply/Makefile                             |   2 +
+ drivers/power/supply/max77705_charger.c                   | 585 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/power/supply/max77705_fuel_gauge.c                | 348 ++++++++++++++++++++++++++++++++++++++++
+ drivers/power/supply/power_supply_sysfs.c                 |   1 +
+ include/linux/mfd/max77693-common.h                       |   6 +-
+ include/linux/mfd/max77705-private.h                      | 180 +++++++++++++++++++++
+ include/linux/power/max77705_charger.h                    | 215 +++++++++++++++++++++++++
+ include/linux/power/max77705_fuelgauge.h                  |  65 ++++++++
+ include/linux/power_supply.h                              |   1 +
+ 22 files changed, 2040 insertions(+), 5 deletions(-)
+---
+base-commit: 3469b89bd13f10d679d1b1f5b47fb71953e96349
+change-id: 20240617-starqltechn_integration_upstream-bc86850b2fe3
 
->> """
->>> adding this section to file drivers/acpi/resource.c helped; if someone could do an official patch it would be great :-|
->>>
->>>         {
->>>                 /* Asus ExpertBook B2502CVA */
->>>                 .matches = {
->>>                         DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
->>>                         DMI_MATCH(DMI_BOARD_NAME, "B2502CVA"),
->>>                 },
->> """
->>
->> This is not a regression, but given how frequently I notice these issues
->> please as a bystander allow me to ask: is there maybe some way to
->> improve the situation so that we do not have to add all these and likely
->> many other Asus Laptops to that file?
-> 
-> This has been discussed before and unfortunately there is no other way
-> to deal with this. There has been some discussion about reading back
-> the polarity and edge/level from the hardware for the keyboard IRQ
-> to get the values which the BIOS has setup. But it is uncertain if this
-> will work and no one is working on this.
+Best regards,
+-- 
+Dzmitry Sankouski <dsankouski@gmail.com>
 
-A refresher like this was more what I was fishing for. Thx for this.
-
-Now that you wrote it, it makes me think: given the amount of quirk
-entries we apparently need I wonder if it might be wise to revisit this
-at some point in the not to distant future, as I suspect otherwise
-sooner or later Linus might yell at all of us with something along the
-lines of "the kernel is clearly broken, why did we work around this with
-lots of quirk entries instead of fixing this for real". Something like
-that happened in a somewhat (but not exactly) similar situation a year
-ago, and it iirc was not the first time.
-
-Writing this lead to another thought: does anyone have contacts to Asus
-and could just ask if there is some generic way to detect which of their
-Laptops need a quirk?
-
-Ciao, Thorsten
 
