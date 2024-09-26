@@ -1,167 +1,197 @@
-Return-Path: <linux-kernel+bounces-340212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-340213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9AB986FFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:23:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B2F986FFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 11:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A47D71F21954
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:23:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F9DA1C20936
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 09:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B004B1AB6E8;
-	Thu, 26 Sep 2024 09:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8BC1A7254;
+	Thu, 26 Sep 2024 09:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="szum4kl2"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Nck0ynkh"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592011AC89C
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EBE1A76C3
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727342581; cv=none; b=eJExgXw28AwXakrdJRbmUX7yJXbUAJABPG29gOfzikwbBf9Wovprc3hfZL674Z+TLllaVyBXdb5Gmi4UMIIZ8S5r7DGpsXv7Gki64hbobkSpJf71wog/AQ80djNuQhV/Mz6sPZrtGY+1/8oddaOlrtFT6RexyGe+Mx9yNzrnlcU=
+	t=1727342626; cv=none; b=uxKdER8SI4W9EFVD4dG33klHnr2LAWou7267ViHLcnIjg7SG2Cz4BV95oa7pBDTP9Pzvfrb8XVgl+37Lz2WaNOYBRVAwk+UMm9f99HcCML54aeTscJJ+lBaYWJtV69OV+u1PQ0Pfuc+x42ypjqRkIl6S7QpehcRTqzZ/8m0iMTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727342581; c=relaxed/simple;
-	bh=gUoEtIkV9cH1qFhqIUs8Q3i4kxbKsbsjONdXcxA4tqY=;
+	s=arc-20240116; t=1727342626; c=relaxed/simple;
+	bh=OGmxnpcDlZNA/AYOJ/6ULikhRdvi0qFPDR/9HM1/x2g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ef0WgehWw/mzGJCE1ZhGw3OzuymaLba58h1kOYudj8Dy4qHcDfgRmqpS9qsaBk4rhgV9oKA+RvT/yE4kClrnm1GmEUpB6IuxcDBYaZNfceJxZYXK2U1lqLWCUg5gj8V+5HKssWgot8adl4zY0kIPrnrsaMBAFstM8GyiPua6cvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=szum4kl2; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6db9f7969fdso6952647b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 02:22:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727342578; x=1727947378; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LZGtXs4SnucH/2vV0KGS1J8bE5d3j0Fh63iPQCBAM80=;
-        b=szum4kl2zyZnrhLuepmm0C/+HyOY4rXsPtj4ThSS8MU1lgGt7GO7ZmScEp9BWsKF5e
-         5j6nf4WfYv51DcmWke12MCoqj0pU/fwQA22LklFcm9FeB8igibVsLCgfvLxaPSNs7b6j
-         nKWbLnyUMUSGFlb9jCP+DmRgf0mGBnbdtK5UWCjd6WSOOXKMeggX7CKEJGqqOuFkruIL
-         v/N0JMItpYYhMVI0IF3ZKionqO5ebk3dLPvNFDu/GiNtTOlPC29YsLA+3S2UtzurggMF
-         76J9hOt2BanuLqLn4FWwxQw9B07QoUNlHL8N/xs9SmpUzoN8bmKk+03lVsWb0mzyZPQa
-         SrNg==
+	 To:Cc:Content-Type; b=S5dekzHAnCKBM2FOqWDEcJzyLen3VgGcScyeaVIRhWDE5+RBlmjPazF/EZ6VtWjzZOiPuJkE0HUohZ/tAkcioKOl/5iWN3nsGgL+rMskDRCQEIg8wpa511heGi5+jR2BqIB4BfYMKMbP+51E4/hjjYKrhwVsUmCK3f/6b7aRC5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Nck0ynkh; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com [209.85.221.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 936993F169
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 09:23:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727342620;
+	bh=VuvXYjjw3CXYdbw9a5WIM2wjLWJmbAUDB5oW3X71uKI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=Nck0ynkh4DveMSRn1dszXyqbz7J7dusdbHh4MPpSzsg3osexgqcO4j4EYnoBKWy1M
+	 Lreh2W+QTRu/e5dbpbXy1OLZ9+HUXzjV1MVSSYscsbNqkq+BqLuHTH8P5T/fDJrGZv
+	 +Ws0l8PRz+9AvSuN/TIVzTqgZvbPVqjrUb5ia2ie2l/TfBv2DGXSm897KShyTOzqeB
+	 tJTsMDiIIaMJVwbPxDMg+lUakEGNJoFO0VyvPfv6G2renZ42RxT+n/Z8Y86OQV1ov6
+	 J07vCvwU9yR+VEXTZR8rm7gtoIEQCcZjFsdXZbMUXW8NAx+BnPS1NFrzdL6FZlrWz+
+	 4LNoY8VY/nQlQ==
+Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-502ca9abb6bso238391e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 02:23:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727342578; x=1727947378;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LZGtXs4SnucH/2vV0KGS1J8bE5d3j0Fh63iPQCBAM80=;
-        b=OzrLLHn9xUz1meiySmwiLFM2VXILGlChyAcBsvIHII/GkZximNw/F97Wb4YZOwt8Ui
-         2ATgX0lU43+8+r7iNTYPvFPvwW52cmlnnB3FBF+AIJ8bALwOceISjSTFHrGrIkwpmsL5
-         zjvuxqk23gRA2hlF8lCMsxUTovtv3lRIFytG8fCq5plgyFbjXTLadKfG9+RRbpVEz+or
-         wo6z6KECzfo3YH9bl1oTbDrXTakpKYs1hObDttiN+SaVkHqkEUFp4214UWiH0cJnMr/Q
-         W3JoJFk2bseFEBslT06aeqaUZJxu/J/fDVrvx3mTAcfrg88sBwPntIycALJg/NaWpZzu
-         YeeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUx6ZVdIOBLlqhZCqSU6+5air/fMKWjKP5ORvaGHtEAUfyrQzYfOnGusml7+XvVjlPAPXRB45b8LEguE3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDyT21kqtl9DEDsofQYflgl4W0OJTtd7kRb9CEdjDcaF5womZf
-	Qw11od/MsBxk/iUcU/QTi2SlCH0T1zqDU9enSVmMoQXvspJ3BmD77vMztU+2CJWw7/cxM2uGoaW
-	aioAC6In6DJvP4mhku14o2uDqHJOZWX/W73DX3w==
-X-Google-Smtp-Source: AGHT+IFt9+XUc/nU9CnjzfY8rchFZ60R0ODamPwBCn1bvMLBUHAlkIVUGyZ+P/73Bxs2FGRrF7jjbcdhBdl3LCi67FQ=
-X-Received: by 2002:a05:690c:660b:b0:6e2:611:7abd with SMTP id
- 00721157ae682-6e22f004833mr18307427b3.20.1727342578171; Thu, 26 Sep 2024
- 02:22:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727342616; x=1727947416;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VuvXYjjw3CXYdbw9a5WIM2wjLWJmbAUDB5oW3X71uKI=;
+        b=fnj2CgvZ5JNNaSm+4v/drYpiN9DDe89pTEBy4W+6AorfhQv/UR44rF3rE/9cdcV/op
+         J/c4w6KER7K1ucrk79mXI0DLq8tiXgvhhaOHdJmiGZE0li2+0YVfZMU91FK4qWYdEacC
+         nEjuoUIf65bD5DGz+mgqyPuWGwBYy4RFwiFJxIBA1jk+jCMuX2u4BlELQ3xpeZ/E4j7p
+         GQNvnMsEcx3lfUh9QfMnzuThrpva/I4hE/HFceSQiNOaTlJYQFp96+oVfofO3kLjV1Nx
+         HO6izSWtqS0f6LkIG9DrkOPjMQ26A8l7520BOLpX6LeCJirR6PI8e83CICmV2IsuREiv
+         hbtA==
+X-Forwarded-Encrypted: i=1; AJvYcCW69qSzjjaEF6p7W1Fz75isX5YIaOBNVnlnqBWZVJkHXef7NxW5t4wJCpCXzpElnEDVGy1xFTCEOnykozU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ9DylpVY4NaiLb/UBxchGHhCpMjGq5GpAn2bVxBEFgNjgGBHV
+	WoOi36loL0VD+23J4TEGGMTuwjyAlOuuHoltQXbLHnOHvzZEs0mU9583ECjrTyzcs7T1krSFMPP
+	DJh3I/ZX8qc/v7J2+/kNvF+UzeYVUuKd5G3hynULyWYRs8Ul9VgUxmdRW2NfHEPHB5NV+vzV0XX
+	csFvYyctZBmT2WG6oATI0EuFze/TxLhqanG76fA/mm6GkO1LyB5H0c
+X-Received: by 2002:a05:6122:2001:b0:4ed:145:348f with SMTP id 71dfb90a1353d-505c20c9250mr4629399e0c.12.1727342615572;
+        Thu, 26 Sep 2024 02:23:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF5CdqjXmLGTfMBbg30OzbC8qJPvljC2kVMj5wKnnDPZibQ6RE8OS5y2l4s17+ZabfNSzJgl1eo11+fDbgIx2M=
+X-Received: by 2002:a05:6122:2001:b0:4ed:145:348f with SMTP id
+ 71dfb90a1353d-505c20c9250mr4629390e0c.12.1727342615085; Thu, 26 Sep 2024
+ 02:23:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926075134.22394-1-Hermes.Wu@ite.com.tw> <7pazkukfrskc6o2zd23h6o4wyt7ougjjgnmogy2effr2lof7di@7opphoswhebf>
- <7ac7de7a5c7e417484bc2a4a1ad59ac3@ite.com.tw>
-In-Reply-To: <7ac7de7a5c7e417484bc2a4a1ad59ac3@ite.com.tw>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 26 Sep 2024 11:22:46 +0200
-Message-ID: <CAA8EJpq2rZu5ciSc4Zg6cO66B9b7QLszgZjhhqX6Mk2Q0sHpdQ@mail.gmail.com>
-Subject: Re: [PATCH v4 10/11] drm/bridge: it6505: fix HDCP CTS ksv wait timer
-To: Hermes.Wu@ite.com.tw
-Cc: Kenneth.Hung@ite.com.tw, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, angelogioacchino.delregno@collabora.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com>
+ <20240925143325.518508-2-aleksandr.mikhalitsyn@canonical.com>
+ <20240925155706.zad2euxxuq7h6uja@quack3> <CAEivzxfjnKq2fgCfYwhZukAO-ZfoUiC5n0Y5yaUpuz-y7kDf+g@mail.gmail.com>
+ <dcda93dd-f2ef-4419-ae73-7d3c55b5df8f@huawei.com>
+In-Reply-To: <dcda93dd-f2ef-4419-ae73-7d3c55b5df8f@huawei.com>
+From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date: Thu, 26 Sep 2024 11:23:24 +0200
+Message-ID: <CAEivzxdnAt3WbVmMLpb+HCBSrwkX6vesMvK3onc+Zc9wzv1EtA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] ext4: fix crash on BUG_ON in ext4_alloc_group_tables
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Jan Kara <jack@suse.cz>, tytso@mit.edu, stable@vger.kernel.org, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@stgraber.org>, 
+	Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	Wesley Hershberger <wesley.hershberger@canonical.com>, Yang Erkun <yangerkun@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 26 Sept 2024 at 10:39, <Hermes.Wu@ite.com.tw> wrote:
+On Thu, Sep 26, 2024 at 10:50=E2=80=AFAM Baokun Li <libaokun1@huawei.com> w=
+rote:
 >
-> >On Thu, Sep 26, 2024 at 03:51:33PM GMT, Hermes Wu wrote:
-> >> From: Hermes Wu <Hermes.wu@ite.com.tw>
-> >>
-> >> When running the HDCP CTS test on UNIGRAF DPR-100.
-> >> HDCP must disabled after waiting KSV for 5s.
-> >> Consider system ksv work schedules. The original timer has a chance to expire.
+> On 2024/9/26 0:17, Aleksandr Mikhalitsyn wrote:
+> > On Wed, Sep 25, 2024 at 5:57=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> >> On Wed 25-09-24 16:33:24, Alexander Mikhalitsyn wrote:
+> >>> [   33.882936] EXT4-fs (dm-5): mounted filesystem 8aaf41b2-6ac0-4fa8-=
+b92b-77d10e1d16ca r/w with ordered data mode. Quota mode: none.
+> >>> [   33.888365] EXT4-fs (dm-5): resizing filesystem from 7168 to 78643=
+2 blocks
+> >>> [   33.888740] ------------[ cut here ]------------
+> >>> [   33.888742] kernel BUG at fs/ext4/resize.c:324!
+> >> Ah, I was staring at this for a while before I understood what's going=
+ on
+> >> (it would be great to explain this in the changelog BTW).  As far as I
+> >> understand commit 665d3e0af4d3 ("ext4: reduce unnecessary memory alloc=
+ation
+> >> in alloc_flex_gd()") can actually make flex_gd->resize_bg larger than
+> >> flexbg_size (for example when ogroup =3D flexbg_size, ngroup =3D 2*fle=
+xbg_size
+> >> - 1) which then confuses things. I think that was not really intended =
+and
+> > Hi Jan,
 > >
-> >I can't understand two last sentences, excuse me.
+> > First of all, thanks for your reaction/review on this one ;-)
 > >
-> >Nit: KSV, not ksv
+> > You are absolutely right, have just checked with our reproducer and
+> > this modification:
+> >
+> > diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
+> > index e04eb08b9060..530a918f0cab 100644
+> > --- a/fs/ext4/resize.c
+> > +++ b/fs/ext4/resize.c
+> > @@ -258,6 +258,8 @@ static struct ext4_new_flex_group_data
+> > *alloc_flex_gd(unsigned int flexbg_size,
+> >                  flex_gd->resize_bg =3D 1 << max(fls(last_group - o_gro=
+up + 1),
+> >                                                fls(n_group - last_group=
+));
+> >
+> > +       BUG_ON(flex_gd->resize_bg > flexbg_size);
+> > +
+> >          flex_gd->groups =3D kmalloc_array(flex_gd->resize_bg,
+> >                                          sizeof(struct ext4_new_group_d=
+ata),
+> >                                          GFP_NOFS);
+> >
+> > and yes, it crashes on this BUG_ON. So it looks like instead of making
+> > flex_gd->resize_bg to be smaller
+> > than flexbg_size in most cases we can actually have an opposite effect
+> > here. I guess we really need to fix alloc_flex_gd() too.
+> >
+> >> instead of fixing up ext4_alloc_group_tables() we should really change
+> >> the logic in alloc_flex_gd() to make sure flex_gd->resize_bg never exc=
+eeds
+> >> flexbg size. Baokun?
+> > At the same time, if I understand the code right, as we can have
+> > flex_gd->resize_bg !=3D flexbg_size after
+> > 5d1935ac02ca5a ("ext4: avoid online resizing failures due to oversized
+> > flex bg") and
+> > 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation in alloc_flex=
+_gd()")
+> > we should always refer to flex_gd->resize_bg value which means that
+> > ext4_alloc_group_tables() fix is needed too.
+> > Am I correct in my understanding?
 >
-> Form HDCP CTS, DUT should wait downstream KSV list at least 5s.
-> And driver use a while loop with a 20ms sleep to reach the scope.
-> The true wait timer will reach 10s which is much longer then it supposed to.
->
-> It should better use other APIs to implement this waiting, rather than just reduce the counter.
+> Hi Alex,
 
-See all the macros in <linux/iopoll.h>, maybe that helps. Consider
-adding a version of read_poll_timeout with the in-loop break
-condition.
+Hi Baokun,
 
 >
->         timeout /= 20;
->         while (timeout > 0) {
->                 if (!it6505_get_sink_hpd_status(it6505))
->                         return;
+> These two are not exactly equivalent.
 >
->                 bstatus = it6505_dpcd_read(it6505, DP_AUX_HDCP_BSTATUS);
->
->                 if (bstatus & DP_BSTATUS_READY)
->                         break;
->
->                 msleep(20);
->                 timeout--;
->         }
->
-> >>
-> >> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-> >> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
-> >> ---
-> >>  drivers/gpu/drm/bridge/ite-it6505.c | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-> >> index e75bc1575aa8..22d9bec3faea 100644
-> >> --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> >> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> >> @@ -2093,7 +2093,8 @@ static void it6505_hdcp_wait_ksv_list(struct work_struct *work)
-> >>      struct it6505 *it6505 = container_of(work, struct it6505,
-> >>                                           hdcp_wait_ksv_list);
-> >>      struct device *dev = it6505->dev;
-> >> -    unsigned int timeout = 5000;
-> >> +    /* 1B-04 fail, wait to long to Stop encription(5s->3s). */
-> >
-> >encryption, most likely it's also "too long".
-> >
-> >> +    unsigned int timeout = 3000;
-> >
-> >What is the timeout per the standard?
-> >
-> >>      u8 bstatus = 0;
-> >>      bool ksv_list_check;
-> >>
-> >> --
-> >> 2.34.1
-> >>
-> >
-> >--
-> >With best wishes
-> >Dmitry
-> >
+> The flex_gd->resize_bg is only used to determine how many block groups we
+> allocate memory to, i.e., the maximum number of block groups per resize.
+> And the flexbg_size is used to make some judgement on flexible block
+> groups, for example, the BUG_ON triggered in the issue is to make sure
+> src_group and last_group must be in the same flexible block group.
 
+Huge thanks for explaining this!
 
+Then I guess it's better if you send a patch with your fix.
+Feel free to add my Tested-by tag.
 
--- 
-With best wishes
-Dmitry
+Question to you and Jan. Do you guys think that it makes sense to try
+to create a minimal reproducer for this problem without Incus/LXD involved?
+(only e2fsprogs, lvm tools, etc)
+
+I guess this test can be put in the xfstests test suite, right?
+
+Kind regards,
+Alex
+
+>
+>
+> Regards,
+> Baokun
+>
 
