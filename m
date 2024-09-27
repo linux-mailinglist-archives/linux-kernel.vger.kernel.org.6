@@ -1,175 +1,158 @@
-Return-Path: <linux-kernel+bounces-342252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55723988C95
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:46:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDF8988C9A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4A40B215FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:45:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F91EB21608
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05FF1B5EC2;
-	Fri, 27 Sep 2024 22:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B113F187844;
+	Fri, 27 Sep 2024 22:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="uUu0uLje"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VvWaQ9ck"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4532187844;
-	Fri, 27 Sep 2024 22:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2671B5EB5
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 22:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727477147; cv=none; b=q4QGcBI744c5D2QftBmgX5YssYquXgGwI5JVj/xaNfOmSUZmgNeARgXUzjmKcN5vEKfNWgOR5Kw6OS4Al22FNCFYZ/J9bSBcwpcUSE+nShi6vuxpTHUigEI8oMe96a1aQ+oO8BjYiC4dz0QMnqABhrGyePnRiWC32BQWFxbWvNU=
+	t=1727477155; cv=none; b=bo7Wk2MqzIlw/pgdU8SEOkRoPuq+gDPn1maxgbubWhPOfrvLz4h9HN4t+TwB7ZQLCPesqGtFXm8fFuthm7S8dotBXbDSKFnGouTNmcHmu4/QO3QOYJ0irkZpfIu61/VCNY8fi1L+M/cI6Tqrq4hCo00MJ/tXw1lYXUuEgRvD//4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727477147; c=relaxed/simple;
-	bh=SrrXd7yijovg4qbm3DPkekQZ5EmbpQN8ylq9P9eX+W8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oNwtAwecqe93DDBIoHg+6S/4R314qCLHqurKNClE3QvGcxBLR+bZVoZ/zF6Lie5xOuu5BZ7kmhmwC3GB/doDejtFSKhrUpQ6mWI2ZQxa4NiL6smtK418WKLqJsvHy8soegUA7H9C03WkE4tCFHA48KG7nAq6eb3/TT5qTGqgKyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=uUu0uLje; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1727477128; x=1728081928; i=deller@gmx.de;
-	bh=+dHwecBIGg3Joh9idb0HFBnwx/TWcgxtGlnTZgL1Fb8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=uUu0uLjeGZn/g6y6YSPbR6YB6qaRe3pNhJCnt+RdL78RZxB24OSvtZWLvxBeDpws
-	 pNx/1gYztAFPkvfzIMmR7fr1oQmZqyA3u2Eg4jSrA8+gepeDhqP9bWV3Pp46/eRQq
-	 jEG/p4Qd8xVMkKHfZjR1Q8chWfU7vA6KNbZstQYtsIrP744mS5lAoD0ucOJADVuV1
-	 Ve2Y81NJWD6pc/N9yeZR0KzXwbJpvraPxQvdH6i83E6/5nKKpVqThPPRhwk+amAI1
-	 cw46M7wqVJl8u8zdjvrzIZlgKIdku8yW+pqpVU3Omu7HZhtz9hSAo/AEamOubL7fJ
-	 NIw4Ar1s9o9+Jlf9SA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.63.79]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MzhnH-1rz28P23qz-00zF2I; Sat, 28
- Sep 2024 00:45:28 +0200
-Message-ID: <db1de78a-8846-4fbf-9923-98614f60e73a@gmx.de>
-Date: Sat, 28 Sep 2024 00:45:25 +0200
+	s=arc-20240116; t=1727477155; c=relaxed/simple;
+	bh=UEbVixBgVaf8M3e9cHPVpzQgl77JbdhxFB49Rb4Lexg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SyAFx0050DeYY7EGhjccfMIsMrk/5gJeZY7aptc1E5CAq7xRW0EgoKXcOAiiMf4TwPG+TM9dI1XNR6st2naopf8VoC02TmQAMNZGZ72IsEnCK9lndKAUXU/oFxynuy51AU8HXURLq7uUhSt7H+eS1lBffEw7/PLU9TKKzQCInCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VvWaQ9ck; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37ce18b042fso3340f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 15:45:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727477152; x=1728081952; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aDQvVwsDtp+mFdbUxO9Cffd9UazHpnItRnVC+YjwEF8=;
+        b=VvWaQ9ck2lnpUwm5weFmN6mU4S/oxwKFdjb7OGMhay5SelOXJffeAj6IhTbp4GcfpF
+         JqVle5RL2/LQ1MdFrK7SyR74EUYI1bwUoyylN0euAtgJ4oC1BQbZjiscLw/i+mId4HRP
+         QOTdwFftOKbeEbvWE53bmUFMwhTPHumng8VTOpDCLVfJ7J+6KdRU/oeAssWoBDxd6rz6
+         QKMAFNWKwFpAlAqUARfJVaIYsoopuonTj6Ejq1u+Hu/HByAoXXVC0CbIsBN2soFIHdZk
+         s5bZOZaHPSJzDEGW/kLtmaJdoMvCT34YSiNb7AlN5avfT4jj6BdOkHz51Z9Zr8i4ZUkM
+         73nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727477152; x=1728081952;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aDQvVwsDtp+mFdbUxO9Cffd9UazHpnItRnVC+YjwEF8=;
+        b=ryDSQ1pnYTXdCzzNDm/sIR9cMmUWM93u+o0lfZPjjjq1wgsjNt8jx1pm5JrtBU42hl
+         JY4FxIqbOJECSEdhYuWfTK+3Q5pi7/KbxWX7NronwUOpkFP19xXv6l7MVNY0PgmBlyiJ
+         7JdVmvPbslVQMZF8fKnhhz4Qcp+8aUWTKorNi7R0PU6wYXiwRSleM0LpjAuZSCko258Q
+         q8fqKK4UIA7rVxTKjFZqqTi2gUlAlVBxNGsLz7NHahxYnQLgbv+/Wg+SzQ5djoLPCJE7
+         4RiVSPMdvD/vkXy609T2MWNuY71B70/+vksUap+fkhW8ONe4nTD538XJW1C0+nT0V+3i
+         avFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVx+iGaIKOEWB7M9lCQI4J9D0sLAIiRUXgSW+ptUFRR7VDnAFa5fjIu5zp0c1Dhj4T4ZyfIrM0HSgNljVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAH4F52JhqXEjJh0ZgsnKzGOYH5MXUwAObMvPuzvvylB9AmlvK
+	6hsnIXsEvD9mjC90sITc10/QLdU7ZFtASbpp/I6F+zmC+GTDdbnygRUT5l/Vx6vIN/2Zg8M4RxG
+	UR3IWuDP+2Lsj7BiLyQ+7CKSVHHuv4nppox27
+X-Google-Smtp-Source: AGHT+IG6Xki+LFKJg9jjTGxml51UwiNYvnAhUGo6WA4A/ge/2ShkqDPsrBP4lv5UL9HpPy51RD3yj/pjoU1+Gx+aQq8=
+X-Received: by 2002:a05:6000:d82:b0:375:570e:7ee with SMTP id
+ ffacd0b85a97d-37cd5a9eb80mr3127268f8f.15.1727477151378; Fri, 27 Sep 2024
+ 15:45:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] sis_main: Fix strbuf array overflow
-To: Andrey Shumilin <shum.sdl@nppct.ru>,
- Thomas Winischhofer <thomas@winischhofer.net>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
- khoroshilov@ispras.ru, ykarpov@ispras.ru, vmerzlyakov@ispras.ru,
- vefanov@ispras.ru
-References: <20240927193424.3934247-1-shum.sdl@nppct.ru>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20240927193424.3934247-1-shum.sdl@nppct.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20240728203001.2551083-1-xur@google.com> <20240728203001.2551083-7-xur@google.com>
+ <c65a07ef-6436-4e04-a263-7cad9758e9be@gmail.com>
+In-Reply-To: <c65a07ef-6436-4e04-a263-7cad9758e9be@gmail.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Fri, 27 Sep 2024 15:45:39 -0700
+Message-ID: <CAKwvOdm0iZspjpuueBV1=eFt+Bf4edWBZsDsj10kEvTGZRye2w@mail.gmail.com>
+Subject: Re: [PATCH 6/6] Add Propeller configuration for kernel build.
+To: Maksim Panchenko <max4bolt@gmail.com>, Rong Xu <xur@google.com>
+Cc: Han Shen <shenhan@google.com>, Sriraman Tallam <tmsriram@google.com>, 
+	David Li <davidxl@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, John Moon <john@jmoon.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
+	Mike Rapoport <rppt@kernel.org>, "Paul E . McKenney" <paulmck@kernel.org>, Rafael Aquini <aquini@redhat.com>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Eric DeVolder <eric.devolder@oracle.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	Benjamin Segall <bsegall@google.com>, Breno Leitao <leitao@debian.org>, 
+	Wei Yang <richard.weiyang@gmail.com>, Brian Gerst <brgerst@gmail.com>, 
+	Juergen Gross <jgross@suse.com>, Palmer Dabbelt <palmer@rivosinc.com>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, Kees Cook <kees@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Xiao Wang <xiao.w.wang@intel.com>, 
+	Jan Kiszka <jan.kiszka@siemens.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>, Stephane Eranian <eranian@google.com>, 
+	Maksim Panchenko <maks@meta.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pCmyMRGPD3DNsO2nzlobMSmzVIrYYCtn1A9wdCNAy67CwSNyqQq
- Nm1uJ8D46LF+iRZuFKHLdSFdJ4x/HBP4iDeXMkyLSDwYCQfHmldajgAqXZ64i1p1QPPivqY
- 7g4/b11rcg9wEta2+27eshdGv6UAHQM6U0ndpz77RIZRVZ6So82IivgWf8vR9TeSiWnJcFo
- jwFKtLXf4lti8nhpPgO0A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PfPZZ7CPJSQ=;kK6miyz9JF2cGTm/FkqmnGcVfTo
- b9zhUAkjw4ubBKhWoJERYCdcwwmB9OoqQXUgv5CWj/XKzbIgyjOkNO+TUTWSz1J1degPxwrQ8
- DmC4phatYmN/B+HLIqpPkpUoUc/7EdTy5XaG7weJoEIUBlWSaHjNhJ9fxKys5mQhDcgECYmuU
- 3Zcq9xbPzfIUcrJC9qBvg2Rwhu0wMkl0Ggka2I2+GeT60AbSBRk//7vpN1q6Vnka1m/kirYqx
- S/lsWRUupPdwzTXyIFMU1LDX1gdbeyfZAyEeankdX/L61XrzpyLMTexrDLU31BS9LuhbQDl7t
- wFdVKa0QZUVIIFRxdFQor7gyDFTBnq0mAjtyTPp0IKDQt+ukE8Jq6t+MFSgzipDQj5B0bwCkZ
- TSeYgtBAWUoMe9qDtz+51gJklSgLEMSJ+EIMm6h6qLcjjaNH7Jqrsk3bhWKtAbc4MANZgkwrp
- IinAxMP8vowvQLB6FcyaGtx4eBqjqLAqgeq1LIjD6OjYSBXFaFihFDrRkx24WpTvljUGZSqSa
- 73zzO8j11dvd0Xj7jJhf4WnbH1/xPZCkA9KFYbLaxeZZvTsJa6cOvPwe0B1RIcom+8LFbfsD8
- jtkRoIsIAbdMVGEE6+YQZSHjiCTiycygbnFAmQAdvoG/BLvNg2oMGg/KMgNqfLNNQDTRiX/xv
- CllqQLkzIDJpoqbXZK+0pEXGfv7baha2WwTGoSuA3MufcXiHrBxHqbdBlcgH8eHVsZauIJal8
- rsyHhFKA7tfV3qI+A2ONR1Z5KzrPZC8fS2JCCBo1prZ1RM5oKd7zh5Ua2zS25x1HBOCZjzS6s
- Jwph/O3sV+YTluCT+oWIhuTg==
 
-On 9/27/24 21:34, Andrey Shumilin wrote:
-> The values of the variables xres and yres are placed in strbuf.
-> These variables are obtained from strbuf1.
-> The strbuf1 array contains digit characters
-> and a space if the array contains non-digit characters.
-> Then, when executing sprintf(strbuf, "%ux%ux8", xres, yres);
-> more than 16 bytes will be written to strbuf.
-> It is suggested to increase the size of the strbuf array to 24.
+On Thu, Sep 19, 2024 at 4:52=E2=80=AFAM Maksim Panchenko <max4bolt@gmail.co=
+m> wrote:
 >
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> On Sun, Jul 28, 2024 at 01:29:56PM -0700, Rong Xu wrote:
+> > Add the build support for using Clang's Propeller optimizer. Like
+> > AutoFDO, Propeller uses hardware sampling to gather information
+> > about the frequency of execution of different code paths within a
+> > binary. This information is then used to guide the compiler's
+> > optimization decisions, resulting in a more efficient binary.
 >
-> Signed-off-by: Andrey Shumilin <shum.sdl@nppct.ru>
-
-applied to fbdev git tree.
-
-Thanks!
-Helge
-
-> ---
->   drivers/video/fbdev/sis/sis_main.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Thank you for submitting the patches with the latest compiler features.
 >
-> diff --git a/drivers/video/fbdev/sis/sis_main.c b/drivers/video/fbdev/si=
-s/sis_main.c
-> index 03c736f6f3d0..e907fde96ff4 100644
-> --- a/drivers/video/fbdev/sis/sis_main.c
-> +++ b/drivers/video/fbdev/sis/sis_main.c
-> @@ -183,7 +183,7 @@ static void sisfb_search_mode(char *name, bool quiet=
-)
->   {
->   	unsigned int j =3D 0, xres =3D 0, yres =3D 0, depth =3D 0, rate =3D 0=
-;
->   	int i =3D 0;
-> -	char strbuf[16], strbuf1[20];
-> +	char strbuf[24], strbuf1[20];
->   	char *nameptr =3D name;
+> Regarding Propeller, I want to quickly mention that I plan to send a
+> patch to include BOLT as a profile-based post-link optimizer for the
+> kernel. I'd like it to be considered an alternative that is selectable
+> at build time.
 >
->   	/* We don't know the hardware specs yet and there is no ivideo */
+> BOLT also uses sampling, and the profile can be collected on virtually
+> any kernel (with some caveats).  There are no constraints on the
+> compiler (i.e., any version of GCC or Clang is acceptable), while Linux
+> perf is the only external dependency used for profile collection and
+> conversion. BOLT works on top of AutoFDO and LTO but can be used without
+> them if the user desires. The build overhead is a few seconds.
+>
+> As you've heard from the LLVM discussion
+> (https://discourse.llvm.org/t/optimizing-the-linux-kernel-with-autofdo-in=
+cluding-thinlto-and-propeller)
+> and LPC talk (https://lpc.events/event/18/contributions/1921/), at Meta,
+> we've also successfully optimized the kernel and got similar results.
+>
+> Again, this is a heads-up before the patch, and I would like to hear
+> what people think about having a binary optimizer as a user-selectable
+> alternative to Propeller.
 
+I'd imagine that folks would be interested in running Propeller, or
+BOLT, but perhaps not both.
+
+In that sense, Kconfig has the means to express mutual exclusion.
+It's perhaps worth working together to get the kconfig selection
+working such that folks can play with enabling these newer toolchain
+related technologies.
+
+The next instance of the bi-weekly public Clang Built Linux meeting is
+next Wednesday. (Links from https://clangbuiltlinux.github.io/)
+
+Perhaps it's worth Rong (and Sriraman and Han) and Maksim to stop by and ch=
+at?
+--=20
+Thanks,
+~Nick Desaulniers
 
