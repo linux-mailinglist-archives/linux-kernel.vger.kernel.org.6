@@ -1,178 +1,132 @@
-Return-Path: <linux-kernel+bounces-341214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B4F987CBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:53:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A11D9987CC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36ED91C21AA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:53:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2219D283F25
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C076B166F32;
-	Fri, 27 Sep 2024 01:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33542165F0B;
+	Fri, 27 Sep 2024 01:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nQ/KMT5o"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F15614A60D;
-	Fri, 27 Sep 2024 01:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="agNAQZaB"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E633C139D04
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 01:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727401973; cv=none; b=KHcrLV1CxadFKnEZuSeOus4EHs8FTJNwwo6CVZH/xztEpUonpuoeYk6a4f4heCDlfKwoMzKJwCOFBnTxLwiYYnKJaBbPaAMAHWM2L5yA5Y4ibK87Df+AxEnkWoOpDB96nZ/zq9T8POCoZGJ0EH+Ch5ewrBTmDHJNS4H6H7ye3Rg=
+	t=1727402125; cv=none; b=HJPwrUBeYAB+pfEaJ6vuErVg1GHkjzh6B5wxWwh0UQKVaNjef+k4fPATlGA0qbmDrMKUZV1gOTqLVLDhEjVKDwykgDuGIWp8euy7PUpQTKRWDiZAfzT8ETLCREw6igeszDFt6kH9zrDzSb+daXkivN7YZ+WFX9rytj0JcePdxZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727401973; c=relaxed/simple;
-	bh=xAnrZRaJyD7HBPI7XnenJ3MGc9tNIxZl2rrNgLUBi3g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZyG5RHiDicUho7YivKIXLNLzqlwX4S3byO643urlzene4iDt3+6PhwwtN9nrI2q4tto4S6w49ipPx4gR9FDE4c6j1me1rcUHmCj9rBjIfT9BJL+wb8TrPdvEA9NlWKX3aiePWUTzdlR3YSKk/JDanESxunRRHZYxrTVrwUmAF+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nQ/KMT5o; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6cb2c5128d5so11175136d6.0;
-        Thu, 26 Sep 2024 18:52:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727401970; x=1728006770; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xAnrZRaJyD7HBPI7XnenJ3MGc9tNIxZl2rrNgLUBi3g=;
-        b=nQ/KMT5oaw578zvC8rNyPhWfeMoLYAlyEgU/9MacV7pOHnhDX0UmggCZAjAvx1ySUG
-         kCOHv1LokU/flAEjGMXzqTs7EM4vbQB/BegPm27NYJeLsiDdjQ5B+Oofp8raENoEqn7s
-         O5c1EQF0sY8ULqq0vjFnkbwW00yjT149kLE7ACCNusQCZXnde6tKHjI9QsDtQLvDvpZ0
-         TcDcyXfJJXK8k56uFXqHa1ha/EYsXlBwzUv7FMgsYUrZ4V1cxe7NbE84+MEc8AIqFiLE
-         eEcGHcwof7U0RF/Sr+cemjF4v3cKI66fBFoI5UyAAlHlywg73DYbqoCbr+vOdJ3iAINh
-         l7fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727401970; x=1728006770;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xAnrZRaJyD7HBPI7XnenJ3MGc9tNIxZl2rrNgLUBi3g=;
-        b=vyDe5hwNbuqyS+LP6enNhTzpNeVDo2LHoZoOfSilV3LVSiomgmA1UpXSBiG1V5Fg+5
-         DPolIxy/FVeWCC9CJ853zFxph36bBJriGj/ZbXdCl2LSiXVjUY85wf4lzMt0Fbfi7X5u
-         UKiZKAKot6hqmApXLATvwZ3atCGCToSHRaC85W3EhlOy0NdC/vmcCSwDad5NSXttSNoN
-         HqrzkIjpHEFzR9jYX2q2as08xB6S2Gqh3kWp379e930fcL6T9q3eHZUJzDtmAWusRrTy
-         A0XKyKXfOC61Cl+pfA8Lip9oh7o22Tz4eEBEeImBzk2zZ47+4bGl7Hy2mitP36JSct4a
-         UuuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjGDxQLdTGh+RAhRlU/tiBPBVKJXIm5p2RxI6zGnM/EOwBrTcWlaD6KCmJCF22PF15p+Dd+g/Uipxu@vger.kernel.org, AJvYcCX6H6Xp+ZHivEE1R7gM8z/7t/62MPh+qyvglo7Vlo9Jr2Db1c57FkpnxrlTapP9b2/Qpd1w4ZIz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJdBq7cSBmqHau2Bb0c2if1MjBnWKQiQSCMqxXQAnHq2D+BU5/
-	OnrBiR59t7ZP72v1ZE3H4Hu9ylQEdYx+vXHnkM4KRL6NIRvqI22HLBCv+3lUtO8fLlEFTr4zpl6
-	znTDMozQx5OhsJ8GItlZR5bR9gng=
-X-Google-Smtp-Source: AGHT+IHCPKsx7efhs3k311WYqpjW68lnnDe97yjX9qnvjdLXn0K9KjZ7hrrKjK7KTeq6a5vgyQ5IgQgX4WMdpOgg9FQ=
-X-Received: by 2002:ad4:4450:0:b0:6cb:3ba3:8eab with SMTP id
- 6a1803df08f44-6cb3ba38f1amr20584326d6.31.1727401970400; Thu, 26 Sep 2024
- 18:52:50 -0700 (PDT)
+	s=arc-20240116; t=1727402125; c=relaxed/simple;
+	bh=cDQruCotEAJyCf0Jm7wbw0ybbpXXugfQ50TotK412aA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MReKpCJ+XYayJPKA3pSuKS+aarVvrERhzkopwucsN5h5xWbLDAnWKymfg3bWeASh4VvhWrqBTjMlxsbicQjxEO+x8mpSd/auHR5ZHEDd5l69Uf77USBi2DDYWGNvDDCQRMA0U3aqTxv+ru0qgfNDmcC4klEP9WX9QwY97yWcSp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=agNAQZaB; arc=none smtp.client-ip=220.197.31.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=gaFJTtBW6PRxpRpTe5zZRej7sGKKz+gU6gH52jzi4sY=;
+	b=agNAQZaBMkqaGCj7pL9V7HsvEyVbH9RVlRwqYvEGc6RIQhJprd8+3h5ZjM3NDq
+	8UY7BE7jcVSUoL/Wtc9AHdUf7BygRCOIYAX5FCsLUJ8Il0/ihPXlCrj/SvEPuJvF
+	kMllwwJqSCBUlZyj8rnKWGnhEcVGSZP6pY4LANwoMhAK4=
+Received: from [172.24.140.8] (unknown [111.204.182.99])
+	by gzga-smtp-mta-g2-3 (Coremail) with SMTP id _____wD3X+xUEPZmLteTDA--.11963S2;
+	Fri, 27 Sep 2024 09:54:30 +0800 (CST)
+Message-ID: <fea9b64f-4ede-475d-8788-73bce88b2e3a@126.com>
+Date: Fri, 27 Sep 2024 09:54:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926225531.700742-1-intelfx@intelfx.name> <CAKEwX=MmCKrOkvDO5Yc_M8EB+k5U9AZ3boEiu4u2HUb7p0z+Kw@mail.gmail.com>
- <dba9d7d9542d4f3d979a89f88253418c1d8a9775.camel@intelfx.name>
-In-Reply-To: <dba9d7d9542d4f3d979a89f88253418c1d8a9775.camel@intelfx.name>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 26 Sep 2024 18:52:39 -0700
-Message-ID: <CAKEwX=N3m3cTkyh3ebA+79_oOEe4QMDbU2BxjEJCgfRanX9g9Q@mail.gmail.com>
-Subject: Re: [PATCH] zswap: improve memory.zswap.writeback inheritance
-To: Ivan Shapovalov <intelfx@intelfx.name>
-Cc: linux-kernel@vger.kernel.org, Mike Yuan <me@yhndnzj.com>, Tejun Heo <tj@kernel.org>, 
-	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Yosry Ahmed <yosryahmed@google.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Chris Li <chrisl@kernel.org>, cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sched/eevdf: Fix wakeup-preempt by checking
+ cfs_rq->nr_running
+To: Chen Yu <yu.c.chen@intel.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Chunxin Zang <zangchunxin@lixiang.com>, linux-kernel@vger.kernel.org,
+ Chen Yu <yu.chen.surf@gmail.com>, kernel test robot <oliver.sang@intel.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>
+References: <20240925085440.358138-1-yu.c.chen@intel.com>
+Content-Language: en-US
+From: Honglei Wang <jameshongleiwang@126.com>
+In-Reply-To: <20240925085440.358138-1-yu.c.chen@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wD3X+xUEPZmLteTDA--.11963S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uFy8Wry5AryxuF4kKF1Dtrb_yoW8tFW3pF
+	Z0krWrJr4vg348tw42vwsYqr98t3sxG343Kr4jk3WrXw4Yk3sayr13KFy3ZF4q9r4kCF43
+	tF4jvFW2k3Z0vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UtpnQUUUUU=
+X-CM-SenderInfo: 5mdpv2pkrqwzphlzt0bj6rjloofrz/1tbi2wtnrWb2Bmx5aQAAsw
 
-On Thu, Sep 26, 2024 at 4:40=E2=80=AFPM Ivan Shapovalov <intelfx@intelfx.na=
-me> wrote:
->
-> On 2024-09-26 at 16:12 -0700, Nhat Pham wrote:
-> > On Thu, Sep 26, 2024 at 3:55=E2=80=AFPM Ivan Shapovalov <intelfx@intelf=
-x.name> wrote:
-> > >
-> > > Improve the inheritance behavior of the `memory.zswap.writeback` cgro=
-up
-> > > attribute introduced during the 6.11 cycle. Specifically, in 6.11 we
-> > > walk the parent cgroups until we find a _disabled_ writeback, which d=
-oes
-> > > not allow the user to selectively enable zswap writeback while having=
- it
-> > > disabled by default.
-> >
-> > Is there an actual need for this? This is a theoretical use case I
-> > thought of (and raised), but I don't think anybody actually wants
-> > this...?
->
-> This is of course anecdata, but yes, it does solve a real use-case that
-> I'm having right now, as well as a bunch of my colleagues who recently
-> complained to me (in private) about pretty much the same use-case.
->
-> The use-case is following: it turns out that it could be beneficial for
-> desktop systems to run with a pretty high swappiness and zswap
-> writeback globally disabled, to nudge the system to compress cold pages
-> but not actually write them back to the disk (which would happen pretty
-> aggressively if it was not disabled) to reduce I/O and latencies.
-> However, under this setup it is sometimes needed to re-enable zswap
-> writeback for specific memory-heavy applications that allocate a lot of
-> cold pages, to "allow" the kernel to actually swap those programs out.
 
-Out of pure curiosity (and to make sure I fully grasp the problem at
-hand), is this the capacity-based zswap writeback (i.e the one
-triggered by limits), or the memory pressure based dynamic shrinker?
 
-If you disable the latter and only rely on the former, it should not
-"write pages aggressively". Limits are rarely reached (IIUC, zswap.max
-are frequently used as binary knobs, and global limits are hard to
-reach), so usually pages that are going to disk swap are just pages
-zswap reject (i.e mostly just pages that fail to compress). This
-should be a very small category. You will still see "swap" usage due
-to a quirk in zswap architecture (which I'm working to fix), but there
-should rarely be any IOs. So the setup itself is not super necessary.
+On 2024/9/25 16:54, Chen Yu wrote:
+> Commit 85e511df3cec ("sched/eevdf: Allow shorter slices to wakeup-preempt")
+> introduced a mechanism that a wakee with shorter slice could preempt
+> the current running task. It also lower the bar for the current task
+> to be preempted, by checking the rq->nr_running instead of cfs_rq->nr_running
+> when the current task has ran out of time slice. But there is a scenario
+> that is problematic. Say, if there is 1 cfs task and 1 rt task, before
+> 85e511df3cec, update_deadline() will not trigger a reschedule, and after
+> 85e511df3cec, since rq->nr_running is 2 and resched is true, a resched_curr()
+> would happen.
+> 
+> Some workloads (like the hackbench reported by lkp) do not like
+> over-scheduling. We can see that the preemption rate has been
+> increased by 2.2%:
+> 
+> 1.654e+08            +2.2%   1.69e+08        hackbench.time.involuntary_context_switches
+> 
+> Restore its previous check criterion.
+> 
+> Fixes: 85e511df3cec ("sched/eevdf: Allow shorter slices to wakeup-preempt")
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202409231416.9403c2e9-oliver.sang@intel.com
+> Suggested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> ---
+> v1->v2:
+>      Check cfs_rq->nr_running instead of rq->nr_running(K Prateek Nayak)
+> ---
+>   kernel/sched/fair.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 225b31aaee55..53a351b18740 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -1247,7 +1247,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
+>   
+>   	account_cfs_rq_runtime(cfs_rq, delta_exec);
+>   
+> -	if (rq->nr_running == 1)
+> +	if (cfs_rq->nr_running == 1)
+>   		return;
+>  
+Hi Yu,
 
-If it's the latter then yeah I can kinda see the need for the setup.
+I'm wondering if commit 85e511df3cec wants to give more chances to do 
+resched just in case there are 'short slices' tasks ready in the other 
+cfs hierarchy. Does something like rq->cfs->nr_running == 1 make more 
+sense? But maybe it helps less than 'cfs_rq->nr_running == 1' in this 
+hackbench case.
 
->
-> >
-> > Besides, most people who want this can just:
-> >
-> > 1. Enable zswap writeback on root cgroup (and all non-leaf cgroups).
-> >
-> > 2. Disable zswap writeback on leaf cgroups on creation by default.
-> >
-> > 3. Selectively enable zswap writeback for the leaf cgroups.
-> >
-> > All of this is quite doable in userspace. It's not even _that_ racy -
-> > just do this before adding tasks etc. to the cgroup?
->
-> Well, yes, it is technically doable from userspace, just like it was
-> technically doable prior to commit e39925734909 to have userspace
-> explicitly control the entire hierarchy of writeback settings.
-> However it _is_ pretty painful, and the flow you described would
-> essentially negate any benefits of that patch (it would require
-> userspace to, once again, manage the entire hierarchy explicitly
-> without any help from the kernel).
 
-I think it's a tad different. In the case of the commit e39925734909,
-the hierarchical behavior of zswap.writeback knob is quite
-semantically confusing, almost counter-intuitive (and does not conform
-to the convention of other cgroup knobs, which use the most
-restrictive limit - check out zswap.max limit checking for example).
-That commit arguably fixes it for the "common" case (i.e you want the
-hierarchical enforcement to hold for the most part). That's why there
-were even conversations about cc-ing the stable mailing list for
-backporting it to older kernels.
+Thanks,
+Honglei
 
-This is more of a "new use case" patch. It complicates the API, for
-something readily doable in userspace - the kernel does not do
-anything that userspace cannot achieve. So it should undergo stricter
-scrutiny. :)
+>   	if (resched || did_preempt_short(cfs_rq, curr)) {
 
-Anyway, Yosry, Johannes, how do you feel about this?
 
