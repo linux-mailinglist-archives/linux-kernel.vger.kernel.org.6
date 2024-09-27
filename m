@@ -1,152 +1,197 @@
-Return-Path: <linux-kernel+bounces-342089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EAB8988A74
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:54:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BAB988A78
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE9011F22D4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:54:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D653B20A58
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2381C244A;
-	Fri, 27 Sep 2024 18:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235491C233A;
+	Fri, 27 Sep 2024 18:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Up5LfOhD"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IswfUcXW"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA431C2448;
-	Fri, 27 Sep 2024 18:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AE6170854;
+	Fri, 27 Sep 2024 18:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727463192; cv=none; b=BcRlHG44GNTYgyKtDVwOTQKXMWQjH/ixB10ThEUrZ1k3Al7yhNx9/wEEqCXLqKHd/v/87deZURuj1mprmKatdZwPG66IHAi84MSsTkc00gR5oXSUgqmXheVIySbBkf2MwezkRk19RuF6St7308TvlQGvNwcrP7FpXnfgx6pAZp4=
+	t=1727463227; cv=none; b=IXvFamKILKVZO4x/UIXwdlj+Pl6PHAAxC3u8yG1AxRCpb0FgMS1owkaH+HDxhy3oaGpoM7S+/19LYKHqJm3uOhursWvoV2lOwbEizpqre5oM97F7WJDh8ZQZSD7PnnRfvVU2rjKiWxRznYI378RNGTrpYKm3Iz9Onsz8mXtFlTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727463192; c=relaxed/simple;
-	bh=EQU/nMThH64UXmKqjp5XW/4FNj6l+F1Hjgt0If2j66Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BROJQEhbKpKlLU0qw2iCzC3yUEWKTS1bWA5WT29AqJmV9OgB7icdQpvla+V1Fcf3cRwNcUkV8T/c89iyzEvWms/Wtiemp+KLyUQ78GxLCqRcqKgnvwjhAfb4j1nT+84iV9ZXmoPCe2ns95s3tZgnjpaSPNJYZ6eRQdLZ25rdrkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Up5LfOhD; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1727463227; c=relaxed/simple;
+	bh=ahNif2ZitxpgjeuFdwtymeQN2tcpxeW74+z4eOgOWAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A0UzGWHzCas0SOeQZQvsNcPBA9gazKDN/PtoVxLuAnIT/Mx63rD5idCnCUYZjHuOW7oQYrSTlIcnaU9FHytB2QKCUMmb+SZWf8qn/zg2TFEzXEIGD1OMMKS3BVDq2Ag6X/tbxxF61+0m6QeObMePgzuW76djXqzsVSL5BvrbCc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IswfUcXW; arc=none smtp.client-ip=209.85.215.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71afb729f24so1979398b3a.0;
-        Fri, 27 Sep 2024 11:53:10 -0700 (PDT)
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7d4f85766f0so2013999a12.2;
+        Fri, 27 Sep 2024 11:53:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727463190; x=1728067990; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=dbzSbIDCCsHjcvPDWg+z7MkfqFP9g+H59bnn5mkUGjQ=;
-        b=Up5LfOhDeG2bSNdurY8kxQhQQwRRqBAj/VMEB8wvAbiJMtJPwRVdPuwErp6YObSRfn
-         45s+DokN6e08uUHp2gzDihhyV8DZpq8egkP/XeRaZ8d/wk3oQ8lL8NcAfuWhi3VUT1UN
-         adHrcRT2ffb82UcrAriKRqpB88Zaje/DU78zAar4QIAyecFBfJ6Tac947qqt4jFKl9eQ
-         W8vsSXdQb/thwd6UfS/b900WIhLYCyYzRb0P1Xwp+dY5A6aF37LjIH/Aj5zJMnXwlNEg
-         aDnBCms3BQB00qI0rgj5mHrTVcRMrfMnJHUA3jy+gMC/LIRFpq8KfMlzZ+aNoo3idWAy
-         cMTQ==
+        d=gmail.com; s=20230601; t=1727463225; x=1728068025; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oH5Q3YvVcVG2+Ok6zmjD2cmRE67hBFWupM9iOfac4P4=;
+        b=IswfUcXW3icRLl7XM3MpRiONeE6c+ENlhy1c4XghoNrwDe8elv5sbciygjOIG3h78h
+         jhnCvqEfWFVfzhoEJUlxl8d0bt6bcveE6NsXzjksiTwOGE+/IAq8iOjq8BWYfwIJQOyN
+         uqOrlXn1UFv2YwKhqvKcwjBsbSD2LvXeFmz+1hKsTfk5/TPA2gZrCEStsIVRJeS/Z2i1
+         QteRfkYpnJXxg2DNAlomqx8z7hd/YhgYYLuSBzWtzbEbBeHPIMnoZDtVSGE51n1VU5LG
+         eiHPCKFup7o6oahFEUWqiwkhgporXAkfd1Kx20CmGwpdFtZ+UmG478UbKHx9MO8x/nIx
+         Rp1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727463190; x=1728067990;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dbzSbIDCCsHjcvPDWg+z7MkfqFP9g+H59bnn5mkUGjQ=;
-        b=ESIo9VyyGMj4yzcqdjBmlc21neLSrIaCLmASOdqI2WtP3fuwDviabiAVoLnvp5CLwS
-         N+IIE140HHPczlj/URaYAS7AShYjX1ZNayfK0xvmlwPzdBINnTp4hfFp2bQyy35F86Hp
-         AZFgqvwHgFTVZPtFrW/pjoohtn7Vg8K6wKkd7MQ/xcava87wH3TmZRwu5jRa150tHwYI
-         wyiCZDCKnCik9QE8i4U1K+O4aPcs+t0w9m1Jr4HOeiS5dKKFYQCDxa3m3pGjWP/FUI5Y
-         AVSpRib8Yi5L7DQCbtVuSvwLotSxmL4T0wpKTYYLI0Kj3IB60GracZDH0NqcVZ/PHxoB
-         d9Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaVreyx+ZHLBh0gsEJQGCvceqSViVMoa1HsaVOKpuBoOu1WXzn0tVJRmLhIuCJC8KWSrGJQkEA@vger.kernel.org, AJvYcCXz54TDYXG30Hpv7ceAXRpaRQvduJS+cNXk9H3PXFB5kX/s5ELcqkIbiq2V2baQaDBJkFLgARnebSoSug4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIiZItBn+T57uzzb4CbEojwYVlO39B+f852uhq9UeqtQ+tNYrt
-	CJgFA/0zeJAvMnogtRxUsOUwVsDl78QaQNNkTFPEIaTOkLt7D7D7
-X-Google-Smtp-Source: AGHT+IGBI9qT+dKTZo/3e3OZH4O+IgOwp93mspF3sYnu3xtIYxs2xklGqHTVlfnzMkFQFdD4nQ5DAA==
-X-Received: by 2002:a05:6a00:10cf:b0:706:3329:5533 with SMTP id d2e1a72fcca58-71b26083189mr6450528b3a.24.1727463190148;
-        Fri, 27 Sep 2024 11:53:10 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db613f6csm1945031a12.91.2024.09.27.11.53.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 11:53:09 -0700 (PDT)
-Message-ID: <d02a265a-b4f8-4357-b45a-033f08c6e97b@gmail.com>
-Date: Fri, 27 Sep 2024 11:53:06 -0700
+        d=1e100.net; s=20230601; t=1727463225; x=1728068025;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oH5Q3YvVcVG2+Ok6zmjD2cmRE67hBFWupM9iOfac4P4=;
+        b=SY19hrgfX4/hJIU5gpjjuU3cwz51Rp4pxdCu6AlXRVmVZX3whXuiQMFifUeo/tALwL
+         uRHGyk+SwEqtgo82oy0eIl1G3f0oDQT79s2uIg7kXhcpDCTTM7MXzgGVWFY9qvTYRjUu
+         2GuSs6mozbVzuYKJh6W1oEVh9WCC4b6kVuxMRjr+c/H27vCfAXCi/fwS3M9Ub5pFB/CF
+         /Whh9s8kJVfjLj3heBFP0U7cDxJiNduCVU1fJI77izm9qefiOQ7Lmmp8uVfgGU+VC1OS
+         hlONM8dpbRlMkvIhxXRh2HIE4uMEFHOYKveHs+LgqfU0eLxvbczokRXgiqW/00HrcdP9
+         Ut/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXEUGS1NshnKt/gKDksIblasnE3qs+lyGh3sNF28U6yVelSDjYKng+ESn6158jViN/EmFkchx1dW5gSYsi7PHw7ag==@vger.kernel.org, AJvYcCXWTV/mx22d8CAPQwz8sdYd3aR0/AQ3oE9Uq4U68dvoEurSa73glGLe9fsvYQ1jTL9VxixxqbVl0kiwzRc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yycg/jSCHlDlTFfXjjMJ2LIawdLFL1RzSZynP0kK+dnVVbkXv4R
+	j7/0mxo9Bt2g4HyuHjFLRqTs/O6SmRuzkUeinM0Xxc4e2vOjws3p
+X-Google-Smtp-Source: AGHT+IG2FHBd//nxWvrh5PxGuORgW3ZTYcAXOZ5BENPlCIN1CxMv0U6lX0bLj1TyK4bSvfw5bTo8OA==
+X-Received: by 2002:a05:6a00:2383:b0:70a:f576:beeb with SMTP id d2e1a72fcca58-71b25f852e2mr5946397b3a.15.1727463225061;
+        Fri, 27 Sep 2024 11:53:45 -0700 (PDT)
+Received: from mbp.lan (c-67-174-206-244.hsd1.ca.comcast.net. [67.174.206.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264c23b6sm1930244b3a.88.2024.09.27.11.53.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 11:53:44 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: [PATCH v5 0/8] perf record --off-cpu: Dump off-cpu samples directly
+Date: Fri, 27 Sep 2024 11:53:32 -0700
+Message-ID: <20240927185340.658143-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 00/54] 6.6.53-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240927121719.714627278@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240927121719.714627278@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/27/24 05:22, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.53 release.
-> There are 54 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.53-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Changes in v5:
+ - Delete unnecessary copy in BPF program
+ - Remove sample_embed from perf header, hard code off-cpu stuff instead
+ - Move evsel__is_offcpu_event() to evsel.h
+ - Minor changes to the test
+ - Edit some comments
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Changes in v4:
+ - Minimize the size of data output by perf_event_output()
+ - Keep only one off-cpu event
+ - Change off-cpu threshold's unit to microseconds
+ - Set a default off-cpu threshold
+ - Print the correct error message for the field 'embed' in perf data header
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Changes in v3:
+ - Add off-cpu-thresh argument
+ - Process direct off-cpu samples in post
+
+Changes in v2:
+ - Remove unnecessary comments.
+ - Rename function off_cpu_change_type to off_cpu_prepare_parse
+
+v1:
+
+As mentioned in: https://bugzilla.kernel.org/show_bug.cgi?id=207323
+
+Currently, off-cpu samples are dumped when perf record is exiting. This
+results in off-cpu samples being after the regular samples. This patch
+series makes possible dumping off-cpu samples on-the-fly, directly into
+perf ring buffer. And it dispatches those samples to the correct format
+for perf.data consumers.
+
+Before:
+```
+     migration/0      21 [000] 27981.041319: 2944637851    cycles:P:  ffffffff90d2e8aa record_times+0xa ([kernel.kallsyms])
+            perf  770116 [001] 27981.041375:          1    cycles:P:  ffffffff90ee4960 event_function+0xf0 ([kernel.kallsyms])
+            perf  770116 [001] 27981.041377:          1    cycles:P:  ffffffff90c184b1 intel_bts_enable_local+0x31 ([kernel.kallsyms])
+            perf  770116 [001] 27981.041379:      51611    cycles:P:  ffffffff91a160b0 native_sched_clock+0x30 ([kernel.kallsyms])
+     migration/1      26 [001] 27981.041400: 4227682775    cycles:P:  ffffffff90d06a74 wakeup_preempt+0x44 ([kernel.kallsyms])
+     migration/2      32 [002] 27981.041477: 4159401534    cycles:P:  ffffffff90d11993 update_load_avg+0x63 ([kernel.kallsyms])
+
+sshd  708098 [000] 18446744069.414584:     286392 offcpu-time: 
+	    79a864f1c8bb ppoll+0x4b (/usr/lib/libc.so.6)
+	    585690935cca [unknown] (/usr/bin/sshd)
+```
+
+After:
+```
+            perf  774767 [003] 28178.033444:        497           cycles:P:  ffffffff91a160c3 native_sched_clock+0x43 ([kernel.kallsyms])
+            perf  774767 [003] 28178.033445:     399440           cycles:P:  ffffffff91c01f8d nmi_restore+0x25 ([kernel.kallsyms])
+         swapper       0 [001] 28178.036639:  376650973           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+         swapper       0 [003] 28178.182921:  348779378           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+    blueman-tray    1355 [000] 28178.627906:  100184571 offcpu-time: 
+	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+	    7fff24e862d8 [unknown] ([unknown])
+
+
+    blueman-tray    1355 [000] 28178.728137:  100187539 offcpu-time: 
+	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+	    7fff24e862d8 [unknown] ([unknown])
+
+
+         swapper       0 [000] 28178.463253:  195945410           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+     dbus-broker     412 [002] 28178.464855:  376737008           cycles:P:  ffffffff91c000a0 entry_SYSCALL_64+0x20 ([kernel.kallsyms])
+```
+
+Howard Chu (8):
+  perf evsel: Set off-cpu BPF output to system-wide
+  perf record --off-cpu: Add --off-cpu-thresh
+  perf record --off-cpu: Parse offcpu-time event
+  perf record off-cpu: Dump direct off-cpu samples in BPF
+  perf record --off-cpu: Dump total off-cpu time at the end.
+  perf evsel: Delete unnecessary = 0
+  perf record --off-cpu: Parse BPF output embedded data
+  perf test: Add direct off-cpu dumping test
+
+ tools/perf/builtin-record.c             |  26 ++++
+ tools/perf/builtin-script.c             |   4 +-
+ tools/perf/tests/builtin-test.c         |   1 +
+ tools/perf/tests/shell/record_offcpu.sh |  29 ++++
+ tools/perf/tests/tests.h                |   1 +
+ tools/perf/tests/workloads/Build        |   1 +
+ tools/perf/tests/workloads/offcpu.c     |  16 +++
+ tools/perf/util/bpf_off_cpu.c           | 174 +++++++++++++++---------
+ tools/perf/util/bpf_skel/off_cpu.bpf.c  | 123 +++++++++++++++++
+ tools/perf/util/evsel.c                 |  47 ++++---
+ tools/perf/util/evsel.h                 |   6 +
+ tools/perf/util/off_cpu.h               |  10 +-
+ tools/perf/util/record.h                |   1 +
+ tools/perf/util/session.c               |  12 +-
+ 14 files changed, 359 insertions(+), 92 deletions(-)
+ create mode 100644 tools/perf/tests/workloads/offcpu.c
+
 -- 
-Florian
+2.43.0
+
 
