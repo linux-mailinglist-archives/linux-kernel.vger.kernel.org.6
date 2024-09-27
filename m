@@ -1,289 +1,160 @@
-Return-Path: <linux-kernel+bounces-341585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A4498820F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:58:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42FF3988218
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B1C52878E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:58:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 884C7B2154D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543431BB6A6;
-	Fri, 27 Sep 2024 09:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DCE1BBBDA;
+	Fri, 27 Sep 2024 09:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="F9kpLyKN"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2075.outbound.protection.outlook.com [40.107.215.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yf7rDCDK"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DC61BB686;
-	Fri, 27 Sep 2024 09:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727431087; cv=fail; b=EbBYHFhLJHktSTpAyExKti72F3UkT/AQhgytwCadPlsywjH7c8qSQavdLuWlGjzmnmY08xeFUrz5jA59kmYXaFY6CKacn8upTiPifKaQ0nzpltfgj1QlS3fnU8MxIpqGJVH6gUJiZ61IKlpQDVHkkDG5T4ynAA7w3LWhiBbqBA8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727431087; c=relaxed/simple;
-	bh=j1Lsxh8bhC3yvT+wphCAjCwRs3kZLDP64P+wF39sQ/w=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Ie58ibNETVkV1x7MQQWaeE3ZAdvvuV1XkPd6ZoKRhE4k0rj9ZY2fsAPvfSNUXLQKX8m/ZFK4HJHtOMutCiprh1XsAmM2SxlxcGSQJ2o93v5+jAb4cono+0yhEOdq9m2rYaGROoiSUtE3wQnotrloYyL3LHc6s5TNdM+XkRJ9yPw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=F9kpLyKN; arc=fail smtp.client-ip=40.107.215.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EsaiL8wfFWgRou/bEWjcsOyo2gNPWqBEQC1u4ZXuogF8PVbOUl/InKaFFGyCKaP+RATHUaQeNxmBwwvVGXDrj3r+u56MaICYbN77x831hohAH2yJSXmqXDj5LLsQ34/o/sLTeUVx0PzCGIIZcdLH7T8rui5IMazekUR90mqRAsWHb0hk4rgcAQxe/nDAE8tinT8uv+hBncVJCZ1j7gW3retXte5AAiAFuKqLr6hZjSlvncd2OI7dgelJ6xdev+g7BSGaz0FcxGAttPeGvoJH6KXg7KbtQeUlCvVnl0X5sbqqA+vnmkKoLww6T8zVoMpUzOgACs9iuEGm5En4FxnMDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NfH3v+Fk1r4Uxk/WkLcTkJRvq4ieXkeOTFyr3qU24lY=;
- b=BUvdgiGH9fSFwkjjVTdcwtyS8Kn+TPb5nD0vDN6c60d2CJheLH6QHaFird/7mGDyjEZrQ7hWKjg8YZHtmWxU17dawy8Q3jSLl3lJwuyfzAiNVHV8J7KSqyY6axvs2Z6nzRVjCPEnnPksOOXHVSFx5sfs/mDRpBbTouaCO+AnNI8wbKkpYK5MtbmeV+ZJyxjQFlz48P0tg2cW7j2hqledu69iwptkX/rFmZBUCQU5KhYtFMoqEC65IVrGUkeMv9JhlqMftLd1wElJGGi03GabtOHCQwLyID40bBlEUOCwQZdBDk9KdH7tld2y7+yVb5CGCDho21rOJ5pGHh3fP8Cdtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NfH3v+Fk1r4Uxk/WkLcTkJRvq4ieXkeOTFyr3qU24lY=;
- b=F9kpLyKNj15vHJptCXTd4EawBJAtrDDd2pcHGh5Jg6xnlwRwaxScKI+bIPq4axAr0tRq4xauq7lvjiAyVpUD/MGPGdvRiq48qmDcLoXnr0p3slkM6YwzQJXl8yh/N5VOsRgnbpca418bJoBYiBTWjYlqFmxWsln222mqfimdv9W3tfs8rM72j4hZnShTK8RPp87lUkxHmqvjdmx1lW3dSLKRhnd7b98M+aqY282PVt1OZrRBa8QldgWRGCgJV/jdm8M4BgOSjINbaDunSdngcw57fkcnXlKq1shSLIZSFrASJeThrjU5kxI1SuKaxvaRjUpCd1jMcFxJuSO84BoGYQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB4128.apcprd06.prod.outlook.com (2603:1096:400:22::9)
- by KL1PR06MB6473.apcprd06.prod.outlook.com (2603:1096:820:ef::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Fri, 27 Sep
- 2024 09:57:59 +0000
-Received: from TYZPR06MB4128.apcprd06.prod.outlook.com
- ([fe80::2bb1:c586:b61b:b920]) by TYZPR06MB4128.apcprd06.prod.outlook.com
- ([fe80::2bb1:c586:b61b:b920%7]) with mapi id 15.20.8005.020; Fri, 27 Sep 2024
- 09:57:59 +0000
-From: Yan Zhen <yanzhen@vivo.com>
-To: philipp.reisner@linbit.com,
-	lars.ellenberg@linbit.com,
-	christoph.boehmwalder@linbit.com,
-	axboe@kernel.dk
-Cc: drbd-dev@lists.linbit.com,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Yan Zhen <yanzhen@vivo.com>
-Subject: [PATCH v1] drbd: Fix typos in the comment
-Date: Fri, 27 Sep 2024 17:57:35 +0800
-Message-Id: <20240927095735.228661-1-yanzhen@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0035.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::8) To TYZPR06MB4128.apcprd06.prod.outlook.com
- (2603:1096:400:22::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D4F1BBBC0
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727431174; cv=none; b=SdjQmky/J7lGOXiqTDMdoJuB0NJLBO1/vLJt+H9V5FbccEm2p9xIGzAJBkBKI7APk7cejFuHngn+hfwiGZ+W4jJqGrPlHHYkpc+ys4N8K4Fcj4/gfds1rgUHFnx66Dj1zSJojFo8gK8rX6bCTRqtMBDpM1E+5NbEIYEhwf10WJ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727431174; c=relaxed/simple;
+	bh=/wFHvQrnJe6+I0Hk404NsRdbI8eFHq8tb62kLJdsI/o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sZmSAIYoU72Z9GqVdMHDqT/IFm6rdNivvKCjOVYFWZvxW2cH8UG3cLFmMWaoMr8EK3hA+jGaDWtTbHkrgGleaXUy6cdiYM75X5VZwC41lb1uGl9AEIPyBVZZYHqwHhYEJjMBYP3eIs9ScLOghNWgSni8XHNYaUZPLmQa+pQdyUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yf7rDCDK; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7e6b738acd5so911180a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:59:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727431172; x=1728035972; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/wFHvQrnJe6+I0Hk404NsRdbI8eFHq8tb62kLJdsI/o=;
+        b=yf7rDCDKkef/ZmyjQ5fE/iIG8XGaSNtqpivi4oLPR8OmeUcNvceksxMvn/JqgBWjku
+         07QMX+A1BPUYrSEDdYetiw28hsxTf1+8LSzQ42Q2f6b1M5TwqV551ASk2Qma6qnupGty
+         o00+WNOZxNl7qMYDC/xV2EZMfMSJEGSK8BdX2hAHbmRCqJmZUOrsexyHEs80Pz4S+ltM
+         yjkuYoQ0HhDxQkGb9iBzkOJ0VnSB2J4lwzHmgbPmWZ9vPAU6G648bW4kkHWCCFUGLej3
+         E92hwCJURVmMzGh+epzRcciNN8A4oNiHF558O29J/Tkhqv8qFZINud6Q78rNZeGbbRQ/
+         TxDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727431172; x=1728035972;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/wFHvQrnJe6+I0Hk404NsRdbI8eFHq8tb62kLJdsI/o=;
+        b=cWO7Dwk52t+g/hAj8E1AsjmAT1VT3AzIlQetUP4tNVG7mjmJHdvORwV5XaV9Wttw1J
+         CPjsPFCBFsdS76EWExiRC6HS8yiB6Hr1fDP1q32Ypv0zt6BTDA7tZPtl2b/E2Iq7oxaM
+         kRPrvSOZQ5sZaABqPXB3y/xoS7VtWnxBycAKxqHyMGQZ/6qGkZQnPmk5DpTQc6hzwURt
+         ZteS2kUdv8Wu1Tu7UtxxVEwW7GGwykt9p5ZjIKrqOm8e7x7lrwXc49m61wbpZrVW7hAF
+         jEqvWBD8HslK8yJdGm/qWDzv9BEsU4U1/OrOAofnB12KYWRNdNv112Bje9dea86TdcTb
+         cJuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSbjQRebbOlF+uF/tt/QWnnAxkW/F7ahNekKlGQkeMSj4Y1dh2jivpauzJJWLgqWtwopcE9eToO7jPaYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywjaq1wvOxxA0v/foClyc6wMnJLMOd1DhqqiLCRW5CllCv11gI9
+	x0GZwJmlHeZi0QSG1AsRVe0c7zTP5JK6UvptMOoLVEYYah6gjy/oUclP5JX9vqlGGrhqjRwRTC/
+	V66YTyR86nIrQz8Oy1Nu7qZVD+t1gVIhZ0m17Jw==
+X-Google-Smtp-Source: AGHT+IFPw7TdHI7xAVBejSYDuXRNyLLxKTG1ESrzw48y3A/pOuf25zX23NWOfeE/8MxH7DAW+JoIMvACw7ATICsO3w0=
+X-Received: by 2002:a05:6a20:6f03:b0:1cf:23cb:b927 with SMTP id
+ adf61e73a8af0-1d4fa7a6f8emr3754825637.34.1727431171797; Fri, 27 Sep 2024
+ 02:59:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB4128:EE_|KL1PR06MB6473:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d0d9fc7-1f63-462b-8be1-08dcdedade30
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IdxZTkeFAp/lAMriqDgNRQA+wdh/gZRcjKYxRxypCC6D1/zDyjDDtWDG0mTa?=
- =?us-ascii?Q?3kniTAqkKLC2GmNZTTv30vlF1F2XB5ZxMjrkevfQLAN0z5EfPBPFDkcNYff5?=
- =?us-ascii?Q?ixTMMWkvzJhubyDNCp0q+5IUAkNt1iv9tErMPOxBDTSFE3faBep1ZvlvM0EC?=
- =?us-ascii?Q?JwfUta28auYW/eQW60QFK1yqQBn/RtaEoLCnuoFEPNKjgF4DX7kw4YvkvzEF?=
- =?us-ascii?Q?sJtgkDeuLPiwB0mTZQR5TpfSdPLRsOQNzJSgHYq0jXKYPzm2H8AATwLXdAzg?=
- =?us-ascii?Q?sabY9CRT0WpwhiLyeIRL2EMNFFE6j1MleiK09Vr80bRSAsQp8Wfcxsa9gO+s?=
- =?us-ascii?Q?oyEV4uSnTaZJTKG6BmMnlnD5yxxrg88y9nxoXXlaZ+trGkldqgUH199jAcNn?=
- =?us-ascii?Q?b48f97EVhndD8PkMxM2bHlUA1dTH/UjI/4w0aMQpXroKwsLlBqiIRGBNBLOb?=
- =?us-ascii?Q?R1/MGSwaUBTbjZLPSxl0hmC5vVG9esKxYpsL+cV+T79MfOO/WNKUIL6kQoBU?=
- =?us-ascii?Q?3H+3lgkq+r/vgEUmCg08gh73I7t1+eDalUQiht1yLLljENGIv0yuVFhe5HDK?=
- =?us-ascii?Q?Jz62h8zp+GDfNDycMgE44DEC5xKO+BH4b3KwAdXNbybYYIe6zTrcr6nZg1h4?=
- =?us-ascii?Q?aScgfdNLZb7lJiEhpH3AnZugsSS+4bYUlCATtQXMmf71eUy1RLIfsH0QxNxJ?=
- =?us-ascii?Q?go2ywaHbTqga3NLT3SpxYBs/lRrVG1dWWDOg7aF9jdfwOMLdJJPHHv2iQguV?=
- =?us-ascii?Q?6ZgD+booP/JpGHnPmlYODVOk4N47oak2bAIoh6iTB7hxKcMl2otreGam0b1+?=
- =?us-ascii?Q?LncPpuYh3+DlfujaObOcCda3HvljNbtXKkFS0u/WBhD/SGMAHn/epPQBgNCG?=
- =?us-ascii?Q?xkcRrqDi2Xw3jqjtzcNYHMWw3HH0PukEJqtHPLDOmSVifO97EaYXsGJCndc8?=
- =?us-ascii?Q?cdTFKF0E3eM/0xfRioijDAEsKQbAyckJEKtxzLUFLMkcTa4YDh0HvdE40XNy?=
- =?us-ascii?Q?BBOohJLt6d/quvZFoZAO2z6Ekx3hiXWdtt/fWVKcO0RNTsafBsMlRjkKmPAD?=
- =?us-ascii?Q?03P4639GZHaZk88hDj0Qzs1LwXgdbQmKIZ736z9ww5o3qX3EFY/LUlG98Nvm?=
- =?us-ascii?Q?h5Nqpfz6bw3REBSnsYEz1dEusABnvxcVEyggg7Bg9RIAGGd/33ZO7BNN8ytC?=
- =?us-ascii?Q?G5COx861j4A1RHjumrg1GnJLr9wMFLnPJ2Rt2UtnUjsWT/07VGFojpbeKjjB?=
- =?us-ascii?Q?kJRR1HbfVoUh59tMP0FntJ7NdNgmfivWg6L/hH792QNdWQ5WwNs6ClGuak7/?=
- =?us-ascii?Q?xiRul7Gsc3QgIBL2g2IIDBfDj3pjrXmpNBGSBQ6WZxPyOBMW3rz9PNKpQMq5?=
- =?us-ascii?Q?GXo6PPm7qFf4SN4feloANuiroTqTpb3gF9O21xEgA3NvxFYkdQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4128.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?OLvRzKe2NQg99Vzwd98M+t77ViU/xIUm+sTppZpl5fgsDTAqRus5Etg9copB?=
- =?us-ascii?Q?p5HPx9vQmkfbxf+hEiwx6E2xuqsyEX9OK9pQI2X8LJLeHG1g+9tlzfU3TgQb?=
- =?us-ascii?Q?mWaGkWzga/QelNKInSxYElz9MKt4fCQhv8mTUPm2uHgZkigKzlZdG+C3DAaV?=
- =?us-ascii?Q?G8R4w36ECB/PXmBbHCaBJZaemAnL7pLfMDBLnntfhXo0bNVWMRw5rRCkok8W?=
- =?us-ascii?Q?ddbQIYfzPWDPV86fVwE+EYB7ApzzpzjRiMT3ZyW7588/mVdFCAzQ2tAaa180?=
- =?us-ascii?Q?xOzoI/Ka4TvQAgwBsPzyBy6MjqvOZAL1W4t1xqFRFSKFt57SnZUMEYVTJ7+I?=
- =?us-ascii?Q?/P6c9J4rJjALZncBWYFPIqxaEw+PThNxESB6RjYAFBXVw5r9cM607qnlDpLL?=
- =?us-ascii?Q?pLD5/+vtOOwXH8QhsLkGpOnRZYek5SWEnu1X0lL7vAX/8V+l5FznbGOMcf8s?=
- =?us-ascii?Q?7H75GsKaiicHpiT0zNpTLBMbinjoVKjMtcjXriNp3GEybMzQpSOC4MV+ldMH?=
- =?us-ascii?Q?aXKGUj06iESE6bdneinoKlInhuS6/o5IRUqHsNXjf/iyCUl85xwt3POnKtrZ?=
- =?us-ascii?Q?wcU3Ceet4567P/ic7d6VKp+i0OJnS1UM0tQ8kw0qfFsdrJJhYs4Yzg3o4LVS?=
- =?us-ascii?Q?qeHhdxtcE1s3qpsUuysCJMjS4+Cr0WwWZX7b8E9yVhsO+UaLDsnVmDtZxLeY?=
- =?us-ascii?Q?Hj+DYcQhcDIjX/u+U4pkoTRx2/R7iqjPIZcQKd0zz5VMhMf3U9sY62yVONjT?=
- =?us-ascii?Q?5NtPy1v3Nxg1iRee4VQ/xJ0T6C+7mBxSnih4mFaMKYPYjjg6/mpqJdiSg5Im?=
- =?us-ascii?Q?zh8EzUC1ssPqfaVsqeuAUAFCUSIaoENIAh261rQOcts2FlAnJyKViXvebvky?=
- =?us-ascii?Q?XYP+7lhk18ZGb7ssM+003OPoaNPmiOD+bxlUapCGTnh8o+ofn4teQySYwgvb?=
- =?us-ascii?Q?nlaWo8w5kNN89bHkV9YeE7HNl28AwD3pNq2OWVm+DiXVBKvhu8zVizo/aLDs?=
- =?us-ascii?Q?UXTYJUl41wxZptlCMrHWOYMowtIWNsqu45guEVCR3g9368w3ewsbObHhKztY?=
- =?us-ascii?Q?GP9+JEgFq2HHvXWu8TXcMkPZi7JO+XcQkQ5Pxmg8GMQhE3/y9r985BHRDqVX?=
- =?us-ascii?Q?V9CePjen04oJ/H1/7zi+IPY7qkvJNmt6U6aMXOINYcxsJ7EIlGmIj3lm48RZ?=
- =?us-ascii?Q?6YbkxBUNY3936kvA6MFobnUdcdGheV9YIQJfGxSVx3rR6xU63Hj8DoOxBzN+?=
- =?us-ascii?Q?9LLKVCUAnKCb8QzTJFThL/V27TD5JHB3FIH9Zr6skvUG4NAXoLlRrM/Bharu?=
- =?us-ascii?Q?rMtRD2/Z4HyK8iwldHsvRBuGxuwAIpZd/YLREnODkcxp5xr9WTrpSBmfVaJl?=
- =?us-ascii?Q?Bv8mIXBI3Id/u5xhhV6Lp2KBMrh4G45TybVrxrzSmzYle5bQCjgJt4z3UNM9?=
- =?us-ascii?Q?/gVS1y/ynXGOWxIe1+t3HZEHisF36TR4dypZP6zDmQD2A8cIEF3ZCi/bICBR?=
- =?us-ascii?Q?r2UVV9O99jgb9Bc9ALm7WrdjWmgN8xhYePOEPlPVl5WuAtOQdXXTb/UwENPr?=
- =?us-ascii?Q?cerfxz/ILqNMimfRxq+pubMutxWOCGnBsyfYGJuD?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d0d9fc7-1f63-462b-8be1-08dcdedade30
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4128.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 09:57:59.3995
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4sLcUqPzSloZJ+bNoTwqoI+4Ejw4fWkzxitkElUQyrVsCjheZTk+KjOIIrKluwzQCuvABGj6DeF+d1WGmPoY8g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6473
+References: <20240925075707.3970187-1-linyunsheng@huawei.com>
+ <20240925075707.3970187-3-linyunsheng@huawei.com> <CAHS8izOxugzWJDTc-4CWqaKABTj=J4OHs=Lcb=SE9r8gX0J+yg@mail.gmail.com>
+ <842c8cc6-f716-437a-bc98-70bc26d6fd38@huawei.com> <CAC_iWjLgNOtsbhqrhvvEz2C3S668qB8KatL_W+tPHMSkDrNS=w@mail.gmail.com>
+ <0ef315df-e8e9-41e8-9ba8-dcb69492c616@huawei.com>
+In-Reply-To: <0ef315df-e8e9-41e8-9ba8-dcb69492c616@huawei.com>
+From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Date: Fri, 27 Sep 2024 12:58:55 +0300
+Message-ID: <CAC_iWjKeajwn3otjdEekE6VDLHGEvqmnQRwpN5R3yHj8UpEiDw@mail.gmail.com>
+Subject: Re: [PATCH net v2 2/2] page_pool: fix IOMMU crash when driver has
+ already unbound
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Mina Almasry <almasrymina@google.com>, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, liuyonglong@huawei.com, fanghaiqing@huawei.com, 
+	zhangkun09@huawei.com, Robin Murphy <robin.murphy@arm.com>, 
+	Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, 
+	Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
+	Clark Wang <xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>, 
+	Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, 
+	Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
+	Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, imx@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
+	bpf@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-Correctly spelled comments make it easier for the reader to understand
-the code.
+On Fri, 27 Sept 2024 at 12:50, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>
+> On 2024/9/27 17:21, Ilias Apalodimas wrote:
+> > Hi Yunsheng
+> >
+> > On Fri, 27 Sept 2024 at 06:58, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+> >>
+> >> On 2024/9/27 2:15, Mina Almasry wrote:
+> >>>
+> >>>> In order not to do the dma unmmapping after driver has already
+> >>>> unbound and stall the unloading of the networking driver, add
+> >>>> the pool->items array to record all the pages including the ones
+> >>>> which are handed over to network stack, so the page_pool can
+> >>>> do the dma unmmapping for those pages when page_pool_destroy()
+> >>>> is called.
+> >>>
+> >>> One thing I could not understand from looking at the code: if the
+> >>> items array is in the struct page_pool, why do you need to modify the
+> >>> page_pool entry in the struct page and in the struct net_iov? I think
+> >>> the code could be made much simpler if you can remove these changes,
+> >>> and you wouldn't need to modify the public api of the page_pool.
+> >>
+> >> As mentioned in [1]:
+> >> "There is no space in 'struct page' to track the inflight pages, so
+> >> 'pp' in 'struct page' is renamed to 'pp_item' to enable the tracking
+> >> of inflight page"
+> >
+> > I have the same feeling as Mina here. First of all, we do have an
+> > unsigned long in struct page we use for padding IIRC. More
+>
+> I am assuming you are referring to '_pp_mapping_pad' in 'struct page',
+> unfortunately the field might be used when a page is mmap'ed to user
+> space as my understanding.
+>
 
-Fix typos:
-'mutliple' ==> 'multiple',
-'droped' ==> 'dropped',
-'Suprisingly' ==> 'Surprisingly',
-'chage' ==> 'change',
-'typicaly' ==> 'typically',
-'progres' ==> 'progress',
-'catched' ==> 'caught',
-'protocoll' ==> 'protocol',
-'stroage' ==> 'storage',
-'independend' ==> 'independent'.
+Ah good point, I just grepped for it and didn't look at the surrounding unions.
 
-Signed-off-by: Yan Zhen <yanzhen@vivo.com>
----
- drivers/block/drbd/drbd_debugfs.c | 2 +-
- drivers/block/drbd/drbd_nl.c      | 6 +++---
- drivers/block/drbd/drbd_req.c     | 8 ++++----
- drivers/block/drbd/drbd_vli.h     | 4 ++--
- 4 files changed, 10 insertions(+), 10 deletions(-)
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/include/linux/mm_types.h#L126
+>
+> > importantly, though, why does struct page need to know about this?
+> > Can't we have the same information in page pool?
+> > When the driver allocates pages it does via page_pool_dev_alloc_XXXXX
+> > or something similar. Cant we do what you suggest here ? IOW when we
+> > allocate a page we put it in a list, and when that page returns to
+> > page_pool (and it's mapped) we remove it.
+>
+> Yes, that is the basic idea, but the important part is how to do that
+> with less performance impact.
 
-diff --git a/drivers/block/drbd/drbd_debugfs.c b/drivers/block/drbd/drbd_debugfs.c
-index 12460b584bcb..c116c4f93eea 100644
---- a/drivers/block/drbd/drbd_debugfs.c
-+++ b/drivers/block/drbd/drbd_debugfs.c
-@@ -622,7 +622,7 @@ void drbd_debugfs_connection_add(struct drbd_connection *connection)
- 	struct dentry *conns_dir = connection->resource->debugfs_res_connections;
- 	struct dentry *dentry;
- 
--	/* Once we enable mutliple peers,
-+	/* Once we enable multiple peers,
- 	 * these connections will have descriptive names.
- 	 * For now, it is just the one connection to the (only) "peer". */
- 	dentry = debugfs_create_dir("peer", conns_dir);
-diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-index 5d65c9754d83..4b1876baf472 100644
---- a/drivers/block/drbd/drbd_nl.c
-+++ b/drivers/block/drbd/drbd_nl.c
-@@ -572,7 +572,7 @@ bool conn_try_outdate_peer(struct drbd_connection *connection)
- 	spin_lock_irq(&resource->req_lock);
- 	if (connection->cstate < C_WF_REPORT_PARAMS && !test_bit(STATE_SENT, &connection->flags)) {
- 		if (connection->connect_cnt != connect_cnt)
--			/* In case the connection was established and droped
-+			/* In case the connection was established and dropped
- 			   while the fence-peer handler was running, ignore it */
- 			drbd_info(connection, "Ignoring fence-peer exit code\n");
- 		else
-@@ -3918,7 +3918,7 @@ static int get_one_status(struct sk_buff *skb, struct netlink_callback *cb)
- 
- 		if (!device) {
- 			/* This is a connection without a single volume.
--			 * Suprisingly enough, it may have a network
-+			 * Surprisingly enough, it may have a network
- 			 * configuration. */
- 			struct drbd_connection *connection;
- 
-@@ -4852,7 +4852,7 @@ static int get_initial_state(struct sk_buff *skb, struct netlink_callback *cb)
- 	int err = 0;
- 
- 	/* There is no need for taking notification_mutex here: it doesn't
--	   matter if the initial state events mix with later state chage
-+	   matter if the initial state events mix with later state change
- 	   events; we can always tell the events apart by the NOTIFY_EXISTS
- 	   flag. */
- 
-diff --git a/drivers/block/drbd/drbd_req.c b/drivers/block/drbd/drbd_req.c
-index 380e6584a4ee..9ecdaac20e1f 100644
---- a/drivers/block/drbd/drbd_req.c
-+++ b/drivers/block/drbd/drbd_req.c
-@@ -85,7 +85,7 @@ void drbd_req_destroy(struct kref *kref)
- 
- 	/* If called from mod_rq_state (expected normal case) or
- 	 * drbd_send_and_submit (the less likely normal path), this holds the
--	 * req_lock, and req->tl_requests will typicaly be on ->transfer_log,
-+	 * req_lock, and req->tl_requests will typically be on ->transfer_log,
- 	 * though it may be still empty (never added to the transfer log).
- 	 *
- 	 * If called from do_retry(), we do NOT hold the req_lock, but we are
-@@ -1575,7 +1575,7 @@ void do_submit(struct work_struct *ws)
- 		 * Be strictly non-blocking here,
- 		 * we already have something to commit.
- 		 *
--		 * Commit if we don't make any more progres.
-+		 * Commit if we don't make any more progress.
- 		 */
- 
- 		while (list_empty(&incoming)) {
-@@ -1689,7 +1689,7 @@ static bool net_timeout_reached(struct drbd_request *net_req,
-  * - the connection was established (resp. disk was attached)
-  *   for longer than the timeout already.
-  * Note that for 32bit jiffies and very stable connections/disks,
-- * we may have a wrap around, which is catched by
-+ * we may have a wrap around, which is caught by
-  *   !time_in_range(now, last_..._jif, last_..._jif + timeout).
-  *
-  * Side effect: once per 32bit wrap-around interval, which means every
-@@ -1745,7 +1745,7 @@ void request_timer_fn(struct timer_list *t)
- 	 * but which is still waiting for an ACK. */
- 	req_peer = connection->req_ack_pending;
- 
--	/* if we don't have such request (e.g. protocoll A)
-+	/* if we don't have such request (e.g. protocol A)
- 	 * check the oldest requests which is still waiting on its epoch
- 	 * closing barrier ack. */
- 	if (!req_peer)
-diff --git a/drivers/block/drbd/drbd_vli.h b/drivers/block/drbd/drbd_vli.h
-index 941c511cc4da..aa78a55aa1af 100644
---- a/drivers/block/drbd/drbd_vli.h
-+++ b/drivers/block/drbd/drbd_vli.h
-@@ -15,7 +15,7 @@
- 
- /*
-  * At a granularity of 4KiB storage represented per bit,
-- * and stroage sizes of several TiB,
-+ * and storage sizes of several TiB,
-  * and possibly small-bandwidth replication,
-  * the bitmap transfer time can take much too long,
-  * if transmitted in plain text.
-@@ -179,7 +179,7 @@ static inline int __vli_encode_bits(u64 *out, const u64 in)
- 
- #undef VLI_L_1_1
- 
--/* code from here down is independend of actually used bit code */
-+/* code from here down is independent of actually used bit code */
- 
- /*
-  * Code length is determined by some unique (e.g. unary) prefix.
--- 
-2.34.1
+Yes, but do you think that keeping that list of allocated pages in
+struct page_pool will end up being more costly somehow compared to
+struct page?
 
+Thanks
+/Ilias
 
