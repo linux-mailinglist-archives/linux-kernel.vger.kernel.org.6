@@ -1,139 +1,150 @@
-Return-Path: <linux-kernel+bounces-341940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD4398889D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:59:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E6A9888A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3942F1F2238C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:59:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2DA02832E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9E41C1738;
-	Fri, 27 Sep 2024 15:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AA01C0DFD;
+	Fri, 27 Sep 2024 15:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4u1xYTg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="id/IfExZ"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6707718B1A;
-	Fri, 27 Sep 2024 15:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8931C172F
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 15:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727452746; cv=none; b=qJWG57uKrP0lnqKUwsCTymurponA/hS+GgbL8vOruSGHkyPt96VhqCSoO6zEZE2Mnh9hOvv9QWSHhlhP+Sx2erg/A1tZ1Egsvgm0+5BeR2Wgdf4yVy/FP3shrjU9WjsiYWDuSOsTCB76WtRbHhtEV0EwG4EpErsRmPzra/11GTM=
+	t=1727452783; cv=none; b=gWaTKFItTnEJ4olIQz4ONTmWQo+np1unr/GZto7jtVxIsHg3gOOuANxgEl7zpZsjBL3G+VHDIllqRGapZAmniIKSagiJ7p4vO8UuYhiY1vZz0tZCmYvPkDGYGDBxxXPFpP8I/PBCDGHgnUHa3AT86Qw/3bckE7hWeQMH+ehJAm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727452746; c=relaxed/simple;
-	bh=cWE8BmZFHMepVrtWTAC86oVYAiBjKmog8NM4odRkDkA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PzQJmZJy9cH5K8I4OremAlgBBklczDq9BniSs4oRUqWOPaF64Qna+S6Q6P+kUtDK1whWsNaR5C3ZJYlSAsofotUQIw+wLl3OiUb5P2+YevKTMW73GtGg9ruxoN89P0T5ft5bEfQBEfChH6wRHP8XNdl4XeLAECFVR5kEY+FDu4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4u1xYTg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33019C4CEC4;
-	Fri, 27 Sep 2024 15:59:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727452745;
-	bh=cWE8BmZFHMepVrtWTAC86oVYAiBjKmog8NM4odRkDkA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X4u1xYTgU9uL2wo2Iw1JRMqvbNHEARccGWeO0JOIwYloJA25+G503q1DHB4QM0znO
-	 oySkHFj0sl7mCnU140TSCrWzIznewF34uYBdsNK/nswWKCb7EkFQ6fBYpT6F9CcTzB
-	 8TH+mlw741LE6kGAVvBQIH5U+ooV4EaPm7EMs66ZMqe14Zl+p5xbF1PFmNPFBIVCwr
-	 cBRcmAdCtDHvAOPMINMoyEyUd42YlPVHo1xvp1UcvNAVug/n7fqDiP5xh2rSUNQ6EU
-	 i0yEnORLk/BKtLVSVsoJBcWNWsoYDrSYIxoL6oLFCnumxgcVUu5F63JeGdjFzZx37C
-	 cmS7rJOnzW8ug==
-Date: Fri, 27 Sep 2024 17:59:00 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, 
-	"airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
-	Jiri Kosina <jikos@kernel.org>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
-	Orlando Chamberlain <orlandoch.dev@gmail.com>, Kerem Karabay <kekrby@gmail.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v5 7/10] HID: multitouch: allow specifying if a device is
- direct in a class
-Message-ID: <73tdfypdlvpgavq4vnlya3os3nniwxktqhpju4luiec3mpqfwl@7j57v4gzf37h>
-References: <DD9C41AD-6543-47CE-8504-69E4992229B2@live.com>
- <013F1B8B-F187-4A9B-9882-0FD174B73860@live.com>
+	s=arc-20240116; t=1727452783; c=relaxed/simple;
+	bh=mNcJxIvrUlKBRWm7kcRpla8DkgOPTgYac1kq5Li84zw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ng4rjGqFiKkEv6SZCzEMkWcY3L6ymkSFKUnKNljBI9ErZUID1TtAIzx931823/VzVIgNiIR3X53ShJ5Fi4nRfAR+Kk67wrgdPjJpYoRcUeaWtj28uzaPYOWf3xCV4xf5XwM/O+QzvJrh6gH6OcQks+VRRLGvUWwyKy1klBzkXQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=id/IfExZ; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4582a5b495cso246671cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:59:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727452781; x=1728057581; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mNcJxIvrUlKBRWm7kcRpla8DkgOPTgYac1kq5Li84zw=;
+        b=id/IfExZIybVGoBSsnSiG7/vQHEuzRHtH/vKaao7WIX1PODdhznLY3KkcVEjQsO98l
+         lWlDESmfBMxT0NGZsuDsqVZpNbKZZFpat5nfgnljzxFcpo8E/Xolcm2XODGe/+7HGTBs
+         EgYWD6ExQ451Qbau8D5SLrkOGEBFbXFv1Ci1bJ/rMpTslpfiNQiKnZPnZxxFTGAZubhS
+         BiwCckdCk5bxc6o62sqxFlxo5WPDkh+mNAx19BwTS27LX87NoMtIAgs+xsZSxGZyJw/v
+         BZKkgrUROdwaR2tx9nyddpZBRNAd0dw2jROIv9kZefSSldmqftJjPBwIhMnCCu4ZfMYX
+         TN7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727452781; x=1728057581;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mNcJxIvrUlKBRWm7kcRpla8DkgOPTgYac1kq5Li84zw=;
+        b=ldwF+QMnRc19GbTCdKwhg+otYbSN/XXb/0mySmo9YDbUs3QvPc1rXnL/g0h3bQfNjZ
+         3o0HWCpLO8r+MIyg4vbbp2gANv+FzwBVEXpQJi/yOrb2SdKlo6vQpl11Tsu0GFFLDHB7
+         zNyl3OCVZSjCD+fNLlqrjUNpqEka25tBkugz+Cg8zZL8ZI51DFf422f3796OP46uF9Qg
+         Up9iDJyrx/BVp8O+cAO9KT+dv2hFAc16perhJN9I389YvSBptj1Rv84Eb8J91Vt7ahFX
+         AJv4+wRYeGa/jAbTKEyIFjA0ttpMtM1GCc0nDgu/gpDQGuSDSGzgaDKihl9Zc2qDZ9Le
+         gCOw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0ZFS8eqApRZzv8U/NF/uEAcwHsnpjKGP2tqFB/uQXdbHH6KfrJcGbuwVO5ZMekwJHKGMhmI+4SGIo7GI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWBxXZX4qi/P4UylXPecO//eUVZaG0FcmSgiKSu2up9CDEnqZP
+	sfoVuIb0ppel9R7Wl4AvVo6uX1bx0CgnQFh89OVkt6VfE7bluhX7mK4zvONthol/W/ioRgJvbzF
+	4Crpe1BEtrlKEGwzxqD+HYG6GBVrLbyb/1iO1
+X-Google-Smtp-Source: AGHT+IFh0GldhtACuS2QaxWHGVDuBc4fpilU9wj8Ngw31fpS/kV2OS2lVOxcZUl6UKTvobIZccHNBjO0lZzjRDP7+Ko=
+X-Received: by 2002:a05:622a:a491:b0:453:58c8:3fd1 with SMTP id
+ d75a77b69052e-45c9feb0724mr3810001cf.0.1727452780668; Fri, 27 Sep 2024
+ 08:59:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <013F1B8B-F187-4A9B-9882-0FD174B73860@live.com>
+References: <cover.1724776335.git.nicolinc@nvidia.com> <6348cc7a72ce9f2ac0e9caf9737e70177a01eb74.1724776335.git.nicolinc@nvidia.com>
+ <Zva4PJ3FhpMlWxhF@google.com> <20240927140141.GA4568@nvidia.com>
+ <Zva_nFXZgT4MEfDg@google.com> <20240927145808.GB4568@nvidia.com>
+In-Reply-To: <20240927145808.GB4568@nvidia.com>
+From: Mostafa Saleh <smostafa@google.com>
+Date: Fri, 27 Sep 2024 16:59:29 +0100
+Message-ID: <CAFgf54q9j1NjEBxHtf8sqpx5i01PAqwpuwZg-Bt5AOAf-Rwaew@mail.gmail.com>
+Subject: Re: [PATCH v2 06/19] iommufd/viommu: Add IOMMU_VIOMMU_SET/UNSET_VDEV_ID
+ ioctl
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com, will@kernel.org, 
+	joro@8bytes.org, suravee.suthikulpanit@amd.com, robin.murphy@arm.com, 
+	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org, 
+	mshavit@google.com, shameerali.kolothum.thodi@huawei.com, yi.l.liu@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Aug 17 2024, Aditya Garg wrote:
-> From: Kerem Karabay <kekrby@gmail.com>
-> 
-> Currently the driver determines the device type based on the
-> application, but this value is not reliable on Apple Touch Bars, where
-> the application is HID_DG_TOUCHPAD even though the devices are direct,
-> so allow setting it in classes.
-> 
-> Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+On Fri, Sep 27, 2024 at 3:58=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
+>
+> On Fri, Sep 27, 2024 at 02:22:20PM +0000, Mostafa Saleh wrote:
+>
+> > > We don't support multi SID through this interface, at least in this
+> > > version.
+> > >
+> > > To do multi-sid you have to inform the VM of all the different pSIDs
+> > > the device has and then setup the vSID/pSID translation to map them
+> > > all to the HW invalidation logic.
+> >
+> > Why would the VM need to know the pSID?
+>
+> It doesn't need to know the pSID exactly, but it needs to know all the
+> pSIDs that exist and have them be labeled with vSIDs.
+>
+> With cmdq direct assignment the VM has to issue an ATS invalidation
+> for each and every physical device using its vSID. There is no HW path
+> to handle a 1:N v/p SID relationship.
+>
 
-So that one commit breaks the HID selftests.
+I see, that's for the cmdq assignment.
 
-For a reproducer:
+> > Ah, I thought IOMMUFD would be used instead of VFIO_TYPE1*, which shoul=
+d cover
+> > platform devices (VFIO-platform) or am I missing something?
+>
+> It does work with platform, but AFAIK nobody is interested in that so
+> it hasn't been any focus. Enabling multi-sid nesting, sub stream ids,
+> etc is some additional work I think.
+>
+> But what I mean is the really hard use case for the vSID/pSID mapping
+> is ATS invalidation and you won't use ATS invalidation on platform so
+> multi-sid likely doesn't matter.
+>
+> STE/CD invalidation could possibly be pushed down through the
+> per-domain ioctl and replicated to all domain attachments. We don't
+> have code in the series to do that, but it could work from a uAPI
+> perspective.
+>
+> > If possible, can the UAPI be designed with this in mind, even if not
+> > implemented now?
+>
+> It is reasonable to ask. I think things are extensible enough. I'd
+> imagine we can add a flag 'secondary ID' and then a new field
+> 'secondary ID index' to the vdev operations when someone wants to take
+> this on.
+>
 
-./tools/testing/selftests/hid/vmtest.sh -- \
-  "pip3 install hid-tools attrs pyroute2; \
-   pytest -v tools/testing/selftests/hid/tests/ --udevd -k Topseed"
+Makes sense, I can take this when I start doing the pKVM work with
+IOMMUFD, in case it wasn't supported by then.
 
-In summary: Topseed devices are weird, and I guess this patch makes them
-weirder. Please ensure you do not regress on any known devices (so by
-removing '-k Topseed' once this is fixed).
+Thanks,
+Mostafa
 
-Cheers,
-Benjamin
-
-> ---
->  drivers/hid/hid-multitouch.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-> index 60b675cd1..2948fbcbc 100644
-> --- a/drivers/hid/hid-multitouch.c
-> +++ b/drivers/hid/hid-multitouch.c
-> @@ -146,6 +146,7 @@ struct mt_class {
->  	__s32 sn_height;	/* Signal/noise ratio for height events */
->  	__s32 sn_pressure;	/* Signal/noise ratio for pressure events */
->  	__u8 maxcontacts;
-> +	bool is_direct;	/* true for touchscreens */
->  	bool is_indirect;	/* true for touchpads */
->  	bool export_all_inputs;	/* do not ignore mouse, keyboards, etc... */
->  };
-> @@ -563,13 +564,13 @@ static struct mt_application *mt_allocate_application(struct mt_device *td,
->  	mt_application->application = application;
->  	INIT_LIST_HEAD(&mt_application->mt_usages);
->  
-> -	if (application == HID_DG_TOUCHSCREEN)
-> +	if (application == HID_DG_TOUCHSCREEN && !td->mtclass.is_indirect)
->  		mt_application->mt_flags |= INPUT_MT_DIRECT;
->  
->  	/*
->  	 * Model touchscreens providing buttons as touchpads.
->  	 */
-> -	if (application == HID_DG_TOUCHPAD) {
-> +	if (application == HID_DG_TOUCHPAD && !td->mtclass.is_direct) {
->  		mt_application->mt_flags |= INPUT_MT_POINTER;
->  		td->inputmode_value = MT_INPUTMODE_TOUCHPAD;
->  	}
-> @@ -1317,6 +1318,9 @@ static int mt_touch_input_configured(struct hid_device *hdev,
->  	if (td->serial_maybe)
->  		mt_post_parse_default_settings(td, app);
->  
-> +	if (cls->is_direct)
-> +		app->mt_flags |= INPUT_MT_DIRECT;
-> +
->  	if (cls->is_indirect)
->  		app->mt_flags |= INPUT_MT_POINTER;
->  
-> -- 
-> 2.43.0
-> 
+> Jason
 
