@@ -1,85 +1,51 @@
-Return-Path: <linux-kernel+bounces-341621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B4E9988292
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:33:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB3B49882AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D60A1C2182A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:33:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D9122839FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94450187329;
-	Fri, 27 Sep 2024 10:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="TVX6ArO8"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA79C189904;
+	Fri, 27 Sep 2024 10:39:38 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4149E13698F
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 10:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD35185956;
+	Fri, 27 Sep 2024 10:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727433219; cv=none; b=oAzJWwlDHQm15C8nyHG5uvrIMSw2eYpYlAMK/9agT339oLUduE0MCyihOZfZ9o9UhDiYFnhZlWJ/xp8+nCABFI2A2ObPp2PsdJfbbgrzkSKM3z2InT/Xr26nG3uZPX3R2WEM/GgqHVyOykYHvb1ujD8BsGy7NJLu6It6aMuqa14=
+	t=1727433578; cv=none; b=nofijnp7C6JF83qrjSkddmMdteXdQC8dvKtstcmQaRFc5ABrjMwt0m16/L6NNc9HiZ8EzlPMCQPu7o5T876d+tTHg6nyYFUKMgUvC81waNrVZaLTokrB6hZkI1iC0cJpBLPGhFrEhrYAlUn+2ZWtIZgUgsDSoz+2ycUT8zePrZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727433219; c=relaxed/simple;
-	bh=jvmEomY0Hp/ILK66ANKCMNaC0jWBActS4+ftVmPCWM4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rcKnagy67SqsoIO0naXpLkBo1Z7mJcAFdO58fM3QFpWH8DE/83UdEC1nQDlR7yluCoc5c72npT7euZRqquveY4ulCDgjvE68rVh/wzrJZHOyB815FO9EzGWMkdqE/AVFLCdSeMRoD4iGLToGPWhEZFDH/7Jaxxk3DCQw0Hmtzeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=TVX6ArO8; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-719ba0654f9so1654306b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 03:33:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessos.org; s=google; t=1727433217; x=1728038017; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3T2LL56WRUoCrnPPbMQXHKo2gYqUc6Xl1Uhj3Rvhbjc=;
-        b=TVX6ArO89L5+CfIURfPOU0duJ5kBCWmqL6h2Mq7gpAuiszKLMt/h7ZSH/Cwmte9Yjo
-         eDwcxy2q7GvB1pB5sswt8+7PaCVLoN2AfjaEaAYfPlMECE0YLBRJ1Oz1iIHWu05FXGkx
-         mALVryRTnwNZl1DVxC2AoBL1MKdWjnpfdPAbKSFHjxsn1/D+dtR4zSKz4OP07Tm/W5g+
-         ksUAJ46WKsKmJO+DaLJVgmE0Cr0PmqaZljR39Fxb9Tjdj6eUXUMLh4kmRK362fFK168A
-         6wnTVHj1lu3taVStRsmSGGx5NlZDxSrWiu7KUnrBxY/FQS0e57uF2ZGNxra5zTtKQ9za
-         8Q5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727433217; x=1728038017;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3T2LL56WRUoCrnPPbMQXHKo2gYqUc6Xl1Uhj3Rvhbjc=;
-        b=wKmrc3hSeRTU95ojE2drsEcEqHWCZ0fQ9hfePTu9426e+GifUamdOl0ch3trdUwRUA
-         vRfbbF3JE9PTY930kxe1lptmyfZMTuzv+GzLfZ/q21gdfX6Y8xS15sgZscFJIk4CVf84
-         +SjbJujWBXWClq2b3zG2DSjBnIUBLgqEPPtZOtyfLTsmZucXhvdFDH7ao0jOmSXFZCeV
-         d/Uswx9dLkAYCzLR08XFeyxQjr6lQVw9oRH0MOEa6aiOUTL98DI+ehHUd14w+PepQ9LV
-         LJJN1Jnh5ofzo4SXMMB5Df6O69CDFlb4t+RWUcmvE44Bhq1v6vXDAKzeOS5lNZCjgsZT
-         qJJA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6W95cfA9TrsJUarS/Rds3DyZka7JvhVGVkfhUb5Ozlb9MScRIL55SAyRdq/AS+BeCrN2KxxIxo4YigdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDMrOkm6+MZTMuQShxunlm9Sd7JzKOqxJQQ/82Tb1LRZeYgK29
-	lhw4kjBp5OdUmfyypBojfCntSlLxkZF0ZLtNyrxfscREQQaNvEf5vNTPRmx+jnM=
-X-Google-Smtp-Source: AGHT+IF0zNjfWEDae/br0X7b1tX8Ys2XUZW1pqq4nWxX+EJ/ZMpO2obVuiNEzXm2wGp5BTWq0Y+Z4Q==
-X-Received: by 2002:a05:6a21:3a96:b0:1d3:4675:fc06 with SMTP id adf61e73a8af0-1d4fa6212c8mr4009385637.10.1727433217215;
-        Fri, 27 Sep 2024 03:33:37 -0700 (PDT)
-Received: from localhost.localdomain ([123.51.167.56])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7e6db2b3e22sm1352768a12.30.2024.09.27.03.33.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 03:33:36 -0700 (PDT)
-From: Jian-Hong Pan <jhp@endlessos.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>,
-	David Box <david.e.box@linux.intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@endlessos.org,
-	Jian-Hong Pan <jhp@endlessos.org>
-Subject: [PATCH v10 0/3] PCI: vmd: Enable PCI PM's L1 substates of remapped PCIe Root Port and NVMe
-Date: Fri, 27 Sep 2024 18:32:32 +0800
-Message-ID: <20240927103231.24244-2-jhp@endlessos.org>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727433578; c=relaxed/simple;
+	bh=+IQVWCoQkBqzAWdPVto3UtHP1hYCzMDTMNGMIGZJix8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y3xm5hlLABnOvBVH7FdZeyI16cbOV5NlDZ0M6Ftc8jX3Wq2dOZ4so2qjpX/MLRT6MxYPlT7Lsy3UlkqYST2k0SN8T2z6VhBt/v+SybN4zBe1ouVWqUCM7xRinapokycFCbWQy+Cl1CSAv+tWY8z3aeA3wYbNAMHcySCg0CzjIcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XFRlx2k5RzFqq0;
+	Fri, 27 Sep 2024 18:39:09 +0800 (CST)
+Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
+	by mail.maildlp.com (Postfix) with ESMTPS id 14F43140391;
+	Fri, 27 Sep 2024 18:39:33 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 27 Sep 2024 18:39:24 +0800
+From: Junxian Huang <huangjunxian6@hisilicon.com>
+To: <jgg@ziepe.ca>, <leon@kernel.org>
+CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <tangchengchang@huawei.com>,
+	<huangjunxian6@hisilicon.com>
+Subject: [PATCH v6 for-next 0/2] RDMA: Provide an API for drivers to disassociate mmap pages
+Date: Fri, 27 Sep 2024 18:33:21 +0800
+Message-ID: <20240927103323.1897094-1-huangjunxian6@hisilicon.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,51 +53,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemf100018.china.huawei.com (7.202.181.17)
 
-Notice the VMD remapped PCIe Root Port and NVMe have PCI PM L1 substates
-capability, but they are disabled originally.
+Provide an API rdma_user_mmap_disassociate() for drivers to disassociate
+mmap pages. Use this API in hns to prevent userspace from ringing doorbell
+when HW is reset.
 
-Here is a failed example on ASUS B1400CEAE with enabled VMD:
+v5 -> v6:
+* Fix build warning of unused label in patch #1
+* inline the call to rdma_user_mmap_disassociate() in patch #2
 
-10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
-    ...
-    Capabilities: [200 v1] L1 PM Substates
-        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
-                  PortCommonModeRestoreTime=45us PortTPowerOnTime=50us
-        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-                   T_CommonMode=0us LTR1.2_Threshold=0ns
-        L1SubCtl2: T_PwrOn=0us
+v4 -> v5:
+* Remove 'disassociated' from core.
+* Remove lockdep in uverbs_user_mmap_disassociate() since we have
+  a new disassociation_lock and don't need to hold hw_destroy_rwsem
+  in the newly introduced api.
+* Use hr_dev->dis_db to prevent new mmaps once the device is reset.
 
-10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
-    ...
-    Capabilities: [900 v1] L1 PM Substates
-        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substates+
-                  PortCommonModeRestoreTime=32us PortTPowerOnTime=10us
-        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-                   T_CommonMode=0us LTR1.2_Threshold=101376ns
-        L1SubCtl2: T_PwrOn=50us
+v3 -> v4:
+* Add the newly introduced disassociation_lock to ib_uverbs_mmap()
+  and rdma_umap_open() to prevent concurrency with
+  rdma_user_mmap_disassociate().
+* Change the disassociated flag from atomic_t to bool.
 
-According to "PCIe r6.0, sec 5.5.4", to config the link between the PCIe
-Root Port and the child device correctly:
-* Ensure both devices are in D0 before enabling PCI-PM L1 PM Substates.
-* Ensure L1.2 parameters: Common_Mode_Restore_Times, T_POWER_ON and
-  LTR_L1.2_THRESHOLD are programmed properly on both devices before enable
-  bits for L1.2.
+v2 -> v3:
+* Walk all ufiles of a device in rdma_user_mmap_disassociate() as Jason
+  commented, so drivers don't need to maintain their own list of ucontexts.
+* Add a disassociation_lock in uverbs_user_mmap_disassociate() as Jason
+  commented to avoid racing between different threads.
+* Add a disassociated flag indicating whether mmaps have been disabled
+  to prevent new mmap after the disassociation.
 
-Prepare this series to fix that.
+v1 -> v2:
+* Keep uverbs_user_mmap_disassociate() in uverbs_main.c. The new api
+  rdma_user_mmap_disassociate() is also moved to this file.
+* Add "#if IS_ENABLED(CONFIG_INFINIBAND_USER_ACCESS)" to hns's
+  rdma_user_mmap_disassociate() call.
 
-Jian-Hong Pan (3):
-  PCI: vmd: Set PCI devices to D0 before enable PCI PM's L1 substates
-  PCI/ASPM: Add notes about enabling PCI-PM L1SS to
-    pci_enable_link_state(_locked)
-  PCI: ASPM: Make pci_save_aspm_l1ss_state save both child and parent's
-    L1SS configuration
+Chengchang Tang (2):
+  RDMA/core: Provide rdma_user_mmap_disassociate() to disassociate mmap
+    pages
+  RDMA/hns: Disassociate mmap pages for all uctx when HW is being reset
 
- drivers/pci/controller/vmd.c | 13 +++++++----
- drivers/pci/pcie/aspm.c      | 45 +++++++++++++++++++++++++++++-------
- 2 files changed, 46 insertions(+), 12 deletions(-)
+ drivers/infiniband/core/uverbs.h           |  2 +
+ drivers/infiniband/core/uverbs_main.c      | 43 +++++++++++++++++++++-
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c |  4 ++
+ drivers/infiniband/hw/hns/hns_roce_main.c  |  5 +++
+ include/rdma/ib_verbs.h                    |  8 ++++
+ 5 files changed, 60 insertions(+), 2 deletions(-)
 
--- 
-2.46.2
+--
+2.33.0
 
 
