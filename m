@@ -1,112 +1,147 @@
-Return-Path: <linux-kernel+bounces-341986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E9E988948
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:46:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D17898894A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3B21F21C85
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:46:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22FA71F21C6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D931C173B;
-	Fri, 27 Sep 2024 16:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCB31C1745;
+	Fri, 27 Sep 2024 16:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IUEsB+IA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0QpyIETp"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Atw1ajzL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510DA139587;
-	Fri, 27 Sep 2024 16:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B346B139587;
+	Fri, 27 Sep 2024 16:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727455565; cv=none; b=LaBX/IMZlIj5Ha0UBVsHM+K5qbcuIXgGpZJC+0GJ8SVM2D+120hwkMDGZ+9ve5hc3ULvnXY4gGTlOU6TV3b23VKSpLkui0ndM6l1+u2QJRXS1IKc+wGAg2tVs5+m5XdZbgQgiw//C4Yeig4zOIk4t5TAxbKHnUNjSk6Bcz9hMxA=
+	t=1727455662; cv=none; b=tHM557a24jsfqxpToQ5dXJA2H5zWF2XYIToMUM3wf2A0EHIkyYS9HKJPDAwNUiF6aTQ+UfZEH6fdTQ3pkFRw0agQdjBv16YB8vbijltdF1wS/KRtFiWcrXW0VmVsoh9Eyc2xaHpFLj2vpjjgeNW4m/WwaKqU5BaDxKdHVQJvk2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727455565; c=relaxed/simple;
-	bh=Dq39zctb0+M+IyvzrX8hPT9pWJireV6GwwDwnMBinqk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o2sF6YUrusWVCIVTry2Xpi1aty9MzvFCjrMgWdtqHWAkFpwhnd7CvEtvrM4zGv+aHSXxxclhEkYBCIHt2CUnSsxrN2eaMcSREgTb4zT7vuYylGC1EOtxL6I8+Y8vsNeH94hwmSKBnhpcS2CMtABXnr1mrUF09gBENPXlv7CtiHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IUEsB+IA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0QpyIETp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727455558;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=duuwl2G3x5FNBhikPhn175qnffZs/xH8VAphAGWC7mw=;
-	b=IUEsB+IA9enHtwMdL/vLDJ0YFw+n9xoDyBRk6/96HRC4rToE7tKdmZ89Zll61tVuiMjydo
-	bK1G2L3p5fXzjkl3i+57cg12GOwPtR04r3LIj+WwAzewGHDg2fPp+mIIYmqVPEbj1IAuQM
-	ZTODKk9Lmg+Xgf6CDNPSo6kHlFTqwjcncZ94n+4CFHuNkm0RNGDe4NoZUN6CpwgZqxmEqR
-	/d7+LD0qHW8UZKmqN2GgrwlvOyMghwMXKpHL3DFK0Bej3+HMwbP0RphXLc7RyzZal73yvG
-	JZO95wlGEkz4iDYD/LrKCaWcOX+C70nNiY80ZdjXVLm91pUaZ3gqyPXVtX4AuA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727455558;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=duuwl2G3x5FNBhikPhn175qnffZs/xH8VAphAGWC7mw=;
-	b=0QpyIETpEcfanTxgcw7vJOJ3XHz1/iIZntGUDzbL1dAv1JsdR7VLmxxZ0RSzFwdIMpryNT
-	apZGu9u4dOX98eAA==
-Date: Fri, 27 Sep 2024 18:45:38 +0200
-Subject: [PATCH] tools/nolibc: s390: include std.h
+	s=arc-20240116; t=1727455662; c=relaxed/simple;
+	bh=YiIlX3DiMKQ7D0i0kaflLjAuElpI3TBRCPxZ5j8B+FI=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=PnHo8RnWGWPDLDecou4Wl+tSjipARMq6HbBJRFOST+pMHJ2zkqPn/Rbi5pIpnmfVwKRf/JtovTDKVIq4PKL8EoGer7IEujruclala5pazeALnXoujEjJZtP6lm3Zjv7txNqMHOq9yhRHnmNmlWA5S1mnDq1Ubo5jhWFfA7il6iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Atw1ajzL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 012F2C4CEC4;
+	Fri, 27 Sep 2024 16:47:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1727455661;
+	bh=YiIlX3DiMKQ7D0i0kaflLjAuElpI3TBRCPxZ5j8B+FI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Atw1ajzL+k+4JaRM381/iMJTRT70Zn3wbDpU0r8/Xzl/pQ7Rr+fcV8r5Vo/OX0wYJ
+	 n0lVxokIAmuTqA2MioV9y7U43npiEVSKPgBt55QkoW4k4wmy2cICOsSFimaffkHTkB
+	 nt5x+Ij8HEUq9524uchIWp56cFcgOkU6eEwuAATo=
+Date: Fri, 27 Sep 2024 09:47:40 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.12-rc1
+Message-Id: <20240927094740.1a82b77b071feb9027621bed@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240927-nolibc-s390-std-h-v1-1-30442339a6b9@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIADHh9mYC/x3MQQqAIBBA0avErBswDcSuEi3SxhoIDSciiO6et
- HyL/x8QKkwCQ/NAoYuFc6ro2gbCNqeVkJdq0Er3ymmLKe/sA4pxCuVccMPgfWeiVXG2Bmp3FIp
- 8/89xet8PcaK7D2MAAAA=
-X-Change-ID: 20240927-nolibc-s390-std-h-cbb13f70fa73
-To: Willy Tarreau <w@1wt.eu>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727455556; l=1026;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=Dq39zctb0+M+IyvzrX8hPT9pWJireV6GwwDwnMBinqk=;
- b=RHItbtGGV9sIR5Q1cpcfUcivvYj0Q1EtXVlat1lkjCcJMvcz6dOUQBzxZcV7s/Vb04V2F4XOf
- 1gSclD3z7NcDdPDbriSORa6H5WfvFhdVQWjubRJk76uK1bq1omzOuyD
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-arch-s390.h uses types from std.h, but does not include it.
-Depending on the inclusion order the compilation can fail.
-Include std.h explicitly to avoid these errors.
 
-Fixes: 404fa87c0eaf ("tools/nolibc: s390: provide custom implementation for sys_fork")
-Cc: stable@vger.kernel.org
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- tools/include/nolibc/arch-s390.h | 1 +
- 1 file changed, 1 insertion(+)
+Linus, please merge this batch of hotfixes, thanks.
 
-diff --git a/tools/include/nolibc/arch-s390.h b/tools/include/nolibc/arch-s390.h
-index 2ec13d8b9a2db80efa8d6cbbbd01bfa3d0059de2..f9ab83a219b8a2d5e53b0b303d8bf0bf78280d5f 100644
---- a/tools/include/nolibc/arch-s390.h
-+++ b/tools/include/nolibc/arch-s390.h
-@@ -10,6 +10,7 @@
- 
- #include "compiler.h"
- #include "crt.h"
-+#include "std.h"
- 
- /* Syscalls for s390:
-  *   - registers are 64-bit
+The following changes since commit abf2050f51fdca0fd146388f83cddd95a57a008d:
 
----
-base-commit: e477dba5442c0af7acb9e8bbbbde1108a37ed39c
-change-id: 20240927-nolibc-s390-std-h-cbb13f70fa73
+  Merge tag 'media/v6.12-1' of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media (2024-09-23 15:27:58 -0700)
 
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-09-27-09-45
+
+for you to fetch changes up to 2af148ef8549a12f8025286b8825c2833ee6bcb8:
+
+  ocfs2: fix uninit-value in ocfs2_get_block() (2024-09-26 14:01:45 -0700)
+
+----------------------------------------------------------------
+19 hotfixes.  13 are cc:stable.
+
+There's a focus on fixes for the memfd_pin_folios() work which was added
+into 6.11.  Apart from that, the usual shower of singleton fixes.
+
+----------------------------------------------------------------
+Andrey Skvortsov (1):
+      zram: don't free statically defined names
+
+Diederik de Haas (1):
+      mm/damon/Kconfig: update DAMON doc URL
+
+Gautham Ananthakrishna (1):
+      ocfs2: reserve space for inline xattr before attaching reflink tree
+
+Guenter Roeck (2):
+      mm: make SPLIT_PTE_PTLOCKS depend on SMP
+      Revert "list: test: fix tests for list_cut_position()"
+
+Huang Ying (1):
+      memory tiers: use default_dram_perf_ref_source in log message
+
+Jeongjun Park (1):
+      mm: migrate: annotate data-race in migrate_folio_unmap()
+
+Joseph Qi (1):
+      ocfs2: fix uninit-value in ocfs2_get_block()
+
+Lorenzo Stoakes (1):
+      tools: fix shared radix-tree build
+
+Mohammed Anees (1):
+      ocfs2: fix deadlock in ocfs2_get_system_file_inode
+
+Muhammad Usama Anjum (1):
+      kselftests: mm: fix wrong __NR_userfaultfd value
+
+Steve Sistare (6):
+      mm/filemap: fix filemap_get_folios_contig THP panic
+      mm/hugetlb: fix memfd_pin_folios free_huge_pages leak
+      mm/hugetlb: fix memfd_pin_folios resv_huge_pages leak
+      mm/gup: fix memfd_pin_folios hugetlb page allocation
+      mm/gup: fix memfd_pin_folios alloc race panic
+      mm/hugetlb: simplify refs in memfd_alloc_folio
+
+Tiezhu Yang (1):
+      compiler.h: specify correct attribute for .rodata..c_jump_table
+
+qiwu.chen (1):
+      mm: kfence: fix elapsed time for allocated/freed track
+
+ drivers/block/zram/zram_drv.c              |  6 ++++--
+ fs/ocfs2/aops.c                            |  5 ++---
+ fs/ocfs2/extent_map.c                      |  8 +++++++-
+ fs/ocfs2/refcounttree.c                    | 26 ++++++++++++++++++++++++--
+ fs/ocfs2/xattr.c                           | 11 +----------
+ include/linux/compiler.h                   |  2 +-
+ include/linux/hugetlb.h                    | 10 ++++++++++
+ lib/list-test.c                            |  6 ------
+ mm/Kconfig                                 |  1 +
+ mm/damon/Kconfig                           |  2 +-
+ mm/filemap.c                               |  4 ++++
+ mm/gup.c                                   |  1 +
+ mm/hugetlb.c                               | 17 +++++++++++++++++
+ mm/kfence/report.c                         |  2 +-
+ mm/memfd.c                                 | 18 ++++++++++--------
+ mm/memory-tiers.c                          |  6 +++---
+ mm/migrate.c                               |  2 +-
+ tools/testing/selftests/mm/pagemap_ioctl.c |  2 +-
+ tools/testing/shared/maple-shared.h        |  4 ++++
+ tools/testing/shared/shared.h              |  4 ++++
+ tools/testing/shared/shared.mk             |  4 +++-
+ tools/testing/shared/xarray-shared.h       |  4 ++++
+ 22 files changed, 104 insertions(+), 41 deletions(-)
 
 
