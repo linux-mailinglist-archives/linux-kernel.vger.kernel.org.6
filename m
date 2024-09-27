@@ -1,120 +1,160 @@
-Return-Path: <linux-kernel+bounces-342217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21777988BE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:39:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F3C988C0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C4B61C2197D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:39:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06A001C2122D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD471B07DD;
-	Fri, 27 Sep 2024 21:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48FF18BB97;
+	Fri, 27 Sep 2024 21:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFJvlGT8"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="euJNz2wm"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7631E1B07A7;
-	Fri, 27 Sep 2024 21:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA9918A93C
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 21:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727473108; cv=none; b=gpLNmodxLW7jxugrCCToRJvprcsk+M55gjd3OWl5rowJDtWX+7iVsVwwsOMnBXX9pJmldk9ImI+jnOllNqL59QBy+cNtnclmEKoikHHr/2UzCMRcZhpdFqNe5klpD1lfGqwreTcAysSLQpiwJDl0iED20zAZFf51Je/WVvDHo6o=
+	t=1727474166; cv=none; b=KODzzIHCVq9zfaN8hYLathcjHcya9jbIDrPq1vV4XEX5e6RJRYWK3WUZTMkyF+vkgTKLxRMBrsaS0AEYgJ0gYj0b8gT+De7QUGvPxAVm6SKoBSFUgnPnuxEpr9PUHuw0JxvmKnvErgrXn3qrOGlkQRUE1GSQLWq+hEexPBTo35Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727473108; c=relaxed/simple;
-	bh=QufH1xxg/E8IioG2o4riVxLCSynj093uASTK1ajoGdI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=APwv7GDL6P7P1SvQZQN6k7A72Lumfj4oR4pbGH/JL/9dNRxsitr25EwKgWHL+kJwGy81X3pgqFCbDe11g2X3U89GoLfbhhjE95rVusZPd5wAwUycuOanfc3HbHjjGTdoCMnOGPdDtGvTBh2vkkPTtz6lVnnoeiQXxir1v0glITU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kFJvlGT8; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso472362266b.1;
-        Fri, 27 Sep 2024 14:38:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727473105; x=1728077905; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JWnwm8RblNa7aLdkeV2+jPl5Nar5YevPhQoaza9x0d4=;
-        b=kFJvlGT8Ujbj23mYaGtzaxQYyiIBSN9nivc1uxRlUpbjHulAJYpvWbN7Rl5yqN4Yp4
-         ZUXu81bSehdIQL+Uf/rxrsIPiZLwks4t1oHWrD7ljlyhRPolsIREEcrZI6vXT3EGnxTi
-         FpI2XVkEVtDsiGQjOdsSJjzs7Wey6DLJzwu6RcTIZTnLqh87yXBZOZsg/hB+5vyfN01e
-         AVN8J6pZfEhHwEbxQ3dCSwMsDVaGMkR0ngwqnWP/DKyv05wD+5QNiDemkDd8SMq4BMni
-         i5sNoKsqTRZRr8sIbK3t47orozdYrXBwYeNEAjzKak2oJYZX7qKz/cDTN/yVyM2vs1vP
-         nxGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727473105; x=1728077905;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JWnwm8RblNa7aLdkeV2+jPl5Nar5YevPhQoaza9x0d4=;
-        b=usX6+yeCWX21WHhwgFSBrlRxoiFJUbpjJW8IgsnB3SDeFZNP5EWIJamMK29L5JZ+Wl
-         MSsVUnT1/c6a+Ah/KMXbTOZKZ9xnxZtyXYg2OshRA5q7eHJzCP9C2Q2futXRiNRj6hvZ
-         4QjCAdw+na3+dIv9va/NCifgqDO94I80vfQOMjeCz9fjEfnV3NjacvW349sAMuxrXYIt
-         o5w3BPeqwyMB8DAdZOY5KWGB8JMLS/sdFsmd1JnOrddxcO4rakxQI+x45rK2q0Szh+Tv
-         9uke4J4Bt6j/0CNzTfMfhgg7PDSvRJWyBwM3jpqV+sMe9QFn3KG8B2ZIVnKciiqetoI5
-         Ny3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX5Cn/m1g+cOa9dtE0QxL+ecHsBen+gY+PeUomyyl11eWgVcLOLe/3vbYyXM6ATlErDKPIXyGOm0c/wJyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGwPiiwmMBDVz2jsfDHpF+nhwVOrOQX+52Q8zk/kmQjLse/FY1
-	PO9yJdSaan+9vWXP6Uyvz8rvOFI+onDEdLiAGmALv59AV1OWZGd/XQc49sQ8
-X-Google-Smtp-Source: AGHT+IHdfDM6R7tkZ+oiDrTeifvU/oMnXiRgg17qNPeWfNC8fTVDrKvpa5JNRStnh0rePDUeOl/drA==
-X-Received: by 2002:a17:907:3e86:b0:a8d:2281:94d9 with SMTP id a640c23a62f3a-a93b165e095mr905562266b.23.1727473104547;
-        Fri, 27 Sep 2024 14:38:24 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-6e73-3ff7-9936-9d4d.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:6e73:3ff7:9936:9d4d])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2978a04sm179174366b.144.2024.09.27.14.38.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 14:38:24 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Fri, 27 Sep 2024 23:37:45 +0200
-Subject: [PATCH 6/6] leds: turris-omnia: Remove unused local leds.h
+	s=arc-20240116; t=1727474166; c=relaxed/simple;
+	bh=vFobzuLapNJqa1JFkKMs2L8PJFRop/kO4uJVZ+Q8/LY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dbbiFhfOq7P7hxNWEaLhPmzkcvGQjIudVRizNJTvUN7j8Ii9Z4jyM5kHjxuNHberoNr+jbXhxa43Ici0DOqseKqiBcrEYDmCS4cogzgffczdhfwhadr9ZwA78ePatGDZ4xon4OJw30+Mr1PgZuz//Ism9uRukzaYHF7mrjLfNOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=euJNz2wm; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id A89708913A;
+	Fri, 27 Sep 2024 23:55:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1727474154;
+	bh=1wCrVSekfrRZtVecO31dRGlCjgzqIKbOjbSNaN+r9UE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=euJNz2wmpidlnQLnFqwxsbsJRvPUh2AsHlq4G+NOEduRoQp1LGOluygbnuq/F9JRm
+	 YkwVDV9drVXvvQLUTQYfcjMdKFw6FDd1juk3lBru9X9fi8fTR/JamtcCilsB9g3wft
+	 DRf3akd7jeeGxwvnYfGI9cj+RADfYSC966vAfrhH6SlqpCxTPZXuN5m4Ygm370wnof
+	 /cVAlYQhfbQuGp5sDK56u444+haxnBd3RI8kzziff7wzn280yFHq7mao6pk+Xbp+oF
+	 JLjJumgsSNPFl/ZbgG0mVfQpngFpvsmMcNXbSbIBTMJJ7FPbQE+cB0V4qQ0ovoXD4d
+	 vjjGkZ8p/Zjhg==
+Message-ID: <e32ed329-b012-44f2-854b-80a8b0efc4e6@denx.de>
+Date: Fri, 27 Sep 2024 23:42:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] soc: imx8m: Probe the SoC driver as platform
+ driver
+To: Saravana Kannan <saravanak@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, kernel@dh-electronics.com,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Arnd Bergmann <arnd@arndb.de>, Fabio Estevam <festevam@gmail.com>,
+ Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240926213729.2882045-1-marex@denx.de>
+ <CAGETcx-q7+DGhPYd3QrsPh7O_0HU7T=NhaJYp0Fu7YW2zwbo7Q@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <CAGETcx-q7+DGhPYd3QrsPh7O_0HU7T=NhaJYp0Fu7YW2zwbo7Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240927-leds_unused_leds_h-v1-6-46fbf41ed4ae@gmail.com>
-References: <20240927-leds_unused_leds_h-v1-0-46fbf41ed4ae@gmail.com>
-In-Reply-To: <20240927-leds_unused_leds_h-v1-0-46fbf41ed4ae@gmail.com>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727473094; l=637;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=QufH1xxg/E8IioG2o4riVxLCSynj093uASTK1ajoGdI=;
- b=HdMSEXk3ThbdIHd4WAtT6cxocBp7FdSt0AqaIA75ozBtxJpMJkSaC5SNcDF49VkVdENxFo9ix
- PkKgBwxoT9mCiFG4uoOCxZb2rfnseS9KXAUTMIEAX/dt/vrMmmXeagd
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-This driver does not require any element from the local leds.h. Drop
-unused header.
+On 9/27/24 1:39 AM, Saravana Kannan wrote:
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/leds/leds-turris-omnia.c | 1 -
- 1 file changed, 1 deletion(-)
+[...]
 
-diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turris-omnia.c
-index 4cff8c4b020c..2de825ac08b3 100644
---- a/drivers/leds/leds-turris-omnia.c
-+++ b/drivers/leds/leds-turris-omnia.c
-@@ -10,7 +10,6 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
--#include "leds.h"
- 
- #define OMNIA_BOARD_LEDS	12
- #define OMNIA_LED_NUM_CHANNELS	3
+>> +static int imx8mq_soc_revision(u32 *socrev)
+>>   {
+>>          struct device_node *np;
+>>          void __iomem *ocotp_base;
+>>          u32 magic;
+>>          u32 rev;
+>>          struct clk *clk;
+>> +       int ret;
+>>
+>>          np = of_find_compatible_node(NULL, NULL, "fsl,imx8mq-ocotp");
+>>          if (!np)
+>> -               return 0;
+>> +               return -EINVAL;
+>>
+>>          ocotp_base = of_iomap(np, 0);
+> 
+> Using devm_of_iomap() and scoped "whatever it's called" might help
+> simplify the error handling.
+> 
+> So something like this for np:
+> struct device_node *np __free(device_node) = np =
+> of_find_compatible_node(NULL, NULL, "fsl,imx8mq-ocotp");
+> 
+> And this for ocotp_base:
+> ocotp_base = devm_of_iomap(dev, np, 0);
 
--- 
-2.43.0
+This would fail if OCOTP driver probes first and claims the memory area 
+with request_mem_region() (or devm_request_mem_region(), used in 
+__devm_ioremap_resource() which is called from devm_of_iomap()). I ran 
+into this with ANATOP, which is the other iomap()d device here. The 
+of_iomap() does not use request_mem_region(), so it can map the area.
 
+> Would mean you can delete all the error handling parts
+
+All right, let's do this in separate 3/3 patch , because the amount of 
+changes in this one patch are growing to be too much and difficult to 
+review.
+
+[...]
+
+>> @@ -212,8 +240,11 @@ static int __init imx8_soc_init(void)
+>>          data = id->data;
+>>          if (data) {
+>>                  soc_dev_attr->soc_id = data->name;
+>> -               if (data->soc_revision)
+>> -                       soc_rev = data->soc_revision();
+>> +               if (data->soc_revision) {
+>> +                       ret = data->soc_revision(&soc_rev);
+>> +                       if (ret)
+>> +                               goto free_soc;
+>> +               }
+>>          }
+> 
+> I'm glad it's working for you, but I think there might still be a race
+> that you are just lucky enough to not hit. I think you still need to
+> fix up drivers/base/soc.c to return -EPROBE_DEFER when
+> soc_device_match() is called but soc_bus_type has no devices
+> registered. That way any drivers that try to use that API will defer
+> probe until this device gets to probe.
+
+soc_device_match() returns a pointer to soc_device_attribute or NULL, do 
+you have some other function in mind ?
+
+> And then you'll have to look at all the callers of that API for the
+> boards this driver is meant for and make sure they don't ignore the
+> error return value. Just add a WARN() on the API to figure out all the
+> callers in your board.
+> 
+> Also, you might want to check that your list of probed devices doesn't
+> change without any async probing or this patch vs with async probing
+> and this patch. Quick way to get list of successfully probed devices
+> is:
+> # find /sys/devices -name driver
+
+It seems OK.
+
+[...]
 
