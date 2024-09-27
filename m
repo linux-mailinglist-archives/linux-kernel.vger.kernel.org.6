@@ -1,98 +1,113 @@
-Return-Path: <linux-kernel+bounces-342049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01EA988A0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:21:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9089988A0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B2471F216A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:21:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3DFA280F07
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3965F1C1AA7;
-	Fri, 27 Sep 2024 18:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6881C1AB0;
+	Fri, 27 Sep 2024 18:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lEn0PJr+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrJ9iO9Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9745D524B0;
-	Fri, 27 Sep 2024 18:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5670A524B0;
+	Fri, 27 Sep 2024 18:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727461255; cv=none; b=lv/8ZWgkiucFqwOxBzJQidTzQwSnyjV4N48qVAPfsaElO6I6pG0lgoSpqmsSxnwrWeyQLouhGBHoGCiKyMH7MxSom1V0dX6GW23/mYcQOXZaUFwg0+Ji21OUiVKKy+i8IIp2iIPdHHIAicCxZCxG2EhuzPawbn4YCiFwivEnM7w=
+	t=1727461362; cv=none; b=CwBHv7wIOBQA96R/1jUWaozvk97n5ZU4plxzMCns/Zi6KK1YZ0sJB2mEM66JaWtzjyL+W/6hkbPNEcfPR9czNc979FUyuBkx1mbYrkrV21s1Hd0wBGoenzDOElC2ARfL0h0T3tPA5BdatSRMnV9sn/TI3wbkgYvsoojDU+hB0Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727461255; c=relaxed/simple;
-	bh=L5RdLxarLTrz7yGRyAe3FrDHSbhsVNMTuzIViLOU370=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=EFTVdpBTotvQzvPk5O2ZXVRYjfvodmyox8WHtRMAB+E16I8sgfseTpbIGQB0oU96cEQxJKS+CI6+YQc46J3ddYJ+idcP11r/ItsGXy+o9zGYuW6Pu4V9L5/8tkr1qfvSv88xwBGXWRn7Xz7cgQ5NCdZzj7sVENziDJuNknD+uiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lEn0PJr+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB38DC4CEC4;
-	Fri, 27 Sep 2024 18:20:54 +0000 (UTC)
+	s=arc-20240116; t=1727461362; c=relaxed/simple;
+	bh=Aj6QsXN9+wurRdEhLLOgrIKRi1TKrZH9iLUL4lOE1aI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=S4zUANZOmwyQgMrMZnhZJvcbuZGYzyvucGjdLiHE2B3AGgvlSW8xLWleZMmgN4sLWTUUOQ9BJTpTVayD723FCWsGoKlzW2wAgYPymxdbPvJJJn9BXW9wD4TtQqQrv3UtUc0z82VEHd64RzUHhwveFJZgU+n2+HcJ7gqd5WRmZdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HrJ9iO9Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8520AC4CEC4;
+	Fri, 27 Sep 2024 18:22:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727461255;
-	bh=L5RdLxarLTrz7yGRyAe3FrDHSbhsVNMTuzIViLOU370=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lEn0PJr+qXgM9YYV4Aw/k/5YEaAU00rPp0xz/mQ1PQVCATraLIXg5a6tNy8aUdVqW
-	 1orjc/0WtpAkAIFBmJS2zjeNLJbzRUuYeL1kHIVXC5xp2BQ8DL69Oz8CrPZjyiI69g
-	 jaB439XCe9f3E7mEBiKp/OKx+n0oHX67vO1Ij31wEizp0Vk7AMfUVU2S1Ve1+NHoPM
-	 +mtl7aFkaCVr3lwx1X5qOP+oVmt0Rpy1iN1+Al8hkbtWm6qdih1nl0jNPNIl9cb2mF
-	 Oc02sPSqS3LDH0acsmQyychCsQHqUoIqxFv4HD4XzerP8C/zexx12tVWEi2O0bhngI
-	 zlIZOeAPvMeKg==
-Received: by pali.im (Postfix)
-	id DD7379ED; Fri, 27 Sep 2024 20:20:48 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Check for UTF-16 null codepoint in SFU symlink target location
-Date: Fri, 27 Sep 2024 20:20:39 +0200
-Message-Id: <20240927182039.18739-1-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1727461360;
+	bh=Aj6QsXN9+wurRdEhLLOgrIKRi1TKrZH9iLUL4lOE1aI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=HrJ9iO9Y/DzVq8thg17WFcf91NweE6AOMVZnFbBW6wetlh8Dzbd9hwP61HNIEw7qx
+	 Sw+FwQQ+5GuwF5ZyKG6x6LYW+HRsm9H8+TvvynPjlDLbb+Con37B2qfukao8pNaVKg
+	 aMhjTDC7cWr07Vr6bhNfgFo/LHSAoAgxfQpdbCejz0NJplLsM8hXHSyJoTwCZNIjRo
+	 KdXgeciJAPYNeaEE+CwCSyEUGQgyePSXJTqJC34wGJOnsfGgkkWO16f/Zv+J3LByVK
+	 Zsy+GXUswnLxIZ878CbvnmLfxy6BHDZDc0BrbGQu0wgZHTZdIvBVU/3PojaWCftmL8
+	 IOZQINqOzH48g==
+Date: Fri, 27 Sep 2024 13:22:38 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/6] PCI: rockchip: Simplify clock handling by using
+ clk_bulk*() function
+Message-ID: <20240927182238.GA85539@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANAwSgSgwx0kuV-boF14_WXiPkE8KXxOWOfS2e_QOWMKgKSLnA@mail.gmail.com>
 
-Check that read buffer of SFU symlink target location does not contain
-UTF-16 null codepoint (via UniStrnlen() call) because Linux cannot process
-symlink with null byte, it truncates everything in buffer after null byte.
+On Fri, Sep 27, 2024 at 01:47:44PM +0530, Anand Moon wrote:
+> On Mon, 2 Sept 2024 at 00:03, Anand Moon <linux.amoon@gmail.com> wrote:
+> >
+> > Refactor the clock handling in the Rockchip PCIe driver,
+> > introducing a more robust and efficient method for enabling and
+> > disabling clocks using clk_bulk*() API. Using the clk_bulk APIs,
+> > the clock handling for the core clocks becomes much simpler.
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> 
+> Do you have any review comments on this series?
 
-Fixes: cf2ce67345d6 ("cifs: Add support for reading SFU symlink location")
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/smb/client/inode.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Looks like nice work, thanks.  Minor tips below.  We'll start applying
+PCI patches to v6.13-rc1 after it is tagged.  It looks like these will
+apply cleanly, so no rebasing needed.
 
-diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-index 88c4c3d0d607..0c23634438e5 100644
---- a/fs/smb/client/inode.c
-+++ b/fs/smb/client/inode.c
-@@ -625,10 +625,16 @@ cifs_sfu_type(struct cifs_fattr *fattr, const char *path,
- 									       &symlink_len_utf16,
- 									       &symlink_buf_utf16,
- 									       &buf_type);
-+					/*
-+					 * Check that read buffer has valid length and does not
-+					 * contain UTF-16 null codepoint (via UniStrnlen() call)
-+					 * because Linux cannot process symlink with null byte.
-+					 */
- 					if ((rc == 0) &&
- 					    (symlink_len_utf16 > 0) &&
- 					    (symlink_len_utf16 < fattr->cf_eof-8 + 1) &&
--					    (symlink_len_utf16 % 2 == 0)) {
-+					    (symlink_len_utf16 % 2 == 0) &&
-+					    (UniStrnlen((wchar_t *)symlink_buf_utf16, symlink_len_utf16/2) == symlink_len_utf16/2)) {
- 						fattr->cf_symlink_target =
- 							cifs_strndup_from_utf16(symlink_buf_utf16,
- 										symlink_len_utf16,
--- 
-2.20.1
+  - It would be helpful if you can add a cover letter (0/n), which is
+    a good place for the overall diffstat and series-level changelog.
 
+  - This v5 series adds drivers/phy patches, which are also related to
+    rockchip, but will be handled by a different maintainer, so best
+    to send them as separate series (and of course send the phy
+    patches to the right maintainer, linux-phy, etc).
+
+  - "b4 am -o/tmp/ 20240901183221.240361-2-linux.amoon@gmail.com"
+    complains about something, I dunno how to fix:
+
+      Checking attestation on all messages, may take a moment...
+      ---
+	✗ [PATCH v5 1/6] PCI: rockchip: Simplify clock handling by using clk_bulk*() function
+	✗ [PATCH v5 2/6] PCI: rockchip: Simplify reset control handling by using reset_control_bulk*() function
+	✗ [PATCH v5 3/6] PCI: rockchip: Refactor rockchip_pcie_disable_clocks function signature
+	✗ [PATCH v5 4/6] phy: rockchip-pcie: Simplify error handling with dev_err_probe()
+	✗ [PATCH v5 5/6] phy: rockchip-pcie: Change to use devm_clk_get_enabled() helper
+	✗ [PATCH v5 6/6] phy: rockchip-pcie: Use regmap_read_poll_timeout for PCIe reference clk PLL status
+	---
+	✗ BADSIG: DKIM/gmail.com
+
+  - In 3/6 and 6/6 commit logs, add parens after function names as
+    you did elsewhere.
+
+  - Super nit: In 5/6, s/Change to use/Use/.  Every patch is a change,
+    so "Change to" doesn't add any information.
+
+Bjorn
 
