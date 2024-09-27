@@ -1,62 +1,42 @@
-Return-Path: <linux-kernel+bounces-341339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 909AA987E9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:44:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BF3987EA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE5D31C216E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:44:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F56285307
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAF417838A;
-	Fri, 27 Sep 2024 06:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CXmCGkvJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1024176ADA;
+	Fri, 27 Sep 2024 06:49:07 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6116F15ADAB;
-	Fri, 27 Sep 2024 06:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017A815D5C1;
+	Fri, 27 Sep 2024 06:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727419488; cv=none; b=reI9j2IrFvhxNzm26PS/uQbhJwYUCcvPUXJKRt+YyccCtqGilEhJdmyVJJ0Tww/zppu4DTOzPPeshdP9EsXATIt2t9seDDQoOGpyjf/wqrL+T8r2ZazBYB2UEA8EFdimsFFcwaFfHYDyhyD3sZIrxcTQ/vN5FXRrzB4ZqiepGhk=
+	t=1727419747; cv=none; b=ITGxlJs4avNQcNyqCF1HU7MPPB19R+UU5DmXqHUCH8Svcc2irZPs6pm5hWPxKAzTQN7Azu/APtF59/d6Kci5xCoGmP1wgsbuIEzZctqJ0hf4Kar9duZ5ogmi6mqLApCpSihh5wobO8fjewt3p2wzCn3J6xf0MJhiPjF4ihQPNSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727419488; c=relaxed/simple;
-	bh=6hnlNFhuYDlDz6K9dZi56nL/JWaQI5M+pBFI2Y9R9wA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QE/gt8ENFlCek+oH6qtVTPKzBD0bB6ZL9xVrQDbpzD8Hlt20cY8HYNFjJODpLXtP8XbtOXG07vIsSHkG7cRtbjf2kCDmL0dZJBXI2/hP+nTC4cH7uTFIpveFbHOMjeuklnMimvOJ6M7z7vBhAl47UpZI6m5xhD5rQldReVHKqec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CXmCGkvJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R6d6Fx001947;
-	Fri, 27 Sep 2024 06:44:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ON3zv317POrum9p0WhSwvi3GjOkzBVaoI7HUYQhGUbM=; b=CXmCGkvJSJ2TWpC6
-	qrFHGrqXcGO7oOVQe9HgBAMudU5CJBUxud5TAyU7oOZpEcFzFhvoPyudjR4QNTAx
-	u3jlzig60FHhDbAIlNmfQE1Iz/68u9XmU40sHsj0rPqUodjkGnZtylj0dz6Rd2w8
-	AyZCYcQYd7P+1L6m4+5lyXK96X75Ren/2sDBpNUvrB680Rvm3p064kc9QezeqOqh
-	KegoROlbPXvTyBWuoXVNVsrWEXsy1emAYAQO96f7n20qzoGIuFYriCmAEg0FGoZy
-	j27OemQYGzA6yQkSds9jOh2NrXEj90s/cFGffd0EK8wGn+drZuXzWqKAa/84msm/
-	UUYy9A==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41skgnjg94-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 06:44:29 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48R6iRVA014330
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 06:44:27 GMT
-Received: from [10.204.67.11] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 26 Sep
- 2024 23:44:19 -0700
-Message-ID: <2414cba4-53f2-4aec-b87b-9f8d92035bad@quicinc.com>
-Date: Fri, 27 Sep 2024 12:14:16 +0530
+	s=arc-20240116; t=1727419747; c=relaxed/simple;
+	bh=EyQm+Ncbs6BRpLLC0a2IJtD7y3/C59KdCxFZcwgEe7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gG2G8Dj2FmsAvJazGrsUYFqevodTCn8qxPesBue+Ced/hsJz1oRSFD00/mqH7JM2KQ6I24JPC7BWfCB9CE8LorMRWhfpqSQCkmxO1np/I/Q/fdqLMqJMonswegpa+TdQWhl0vvYsN5C/1v/yopa7XRe5flmGB2KdUFCXV/LrPZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [172.18.132.162] (ip-185-104-138-57.ptr.icomera.net [185.104.138.57])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 7A98561E5FE05;
+	Fri, 27 Sep 2024 08:48:21 +0200 (CEST)
+Message-ID: <6e333fc5-cd36-4fed-9704-9e3d69633155@molgen.mpg.de>
+Date: Fri, 27 Sep 2024 08:48:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,98 +44,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] drm/msm: mdss: Add SA8775P support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <swboyd@chromium.org>,
-        <konrad.dybcio@linaro.org>, <danila@jiaxyga.com>,
-        <bigfoot@classfun.cn>, <neil.armstrong@linaro.org>,
-        <mailingradian@gmail.com>, <quic_jesszhan@quicinc.com>,
-        <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_kalyant@quicinc.com>, <quic_jmadiset@quicinc.com>,
-        <quic_vpolimer@quicinc.com>
-References: <20240926110137.2200158-1-quic_mahap@quicinc.com>
- <20240926110137.2200158-4-quic_mahap@quicinc.com>
- <35e6yleiy6wkja3ojlfjddifxv7kr7x6tyn5pszas2chouuvql@trpeb7b4eop2>
+Subject: Re: [PATCH] Bluetooth: btrtl: Shorten HCI_OP_RESET timeout
+To: Hilda Wu <hildawu@realtek.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alex_lu@realsil.com.cn, max.chou@realtek.com, kidman@realtek.com,
+ howardchung@google.com, apusaka@chromium.org, yinghsu@chromium.org,
+ johnlai@google.com
+References: <20240927064127.4167789-1-hildawu@realtek.com>
 Content-Language: en-US
-From: Mahadevan P <quic_mahap@quicinc.com>
-In-Reply-To: <35e6yleiy6wkja3ojlfjddifxv7kr7x6tyn5pszas2chouuvql@trpeb7b4eop2>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 24P3xGPppakOwre31esyCz8hqkm2HohV
-X-Proofpoint-GUID: 24P3xGPppakOwre31esyCz8hqkm2HohV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- mlxlogscore=999 adultscore=0 suspectscore=0 phishscore=0 impostorscore=0
- spamscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409270044
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20240927064127.4167789-1-hildawu@realtek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Dear Hilda,
 
 
-On 9/26/2024 6:32 PM, Dmitry Baryshkov wrote:
-> On Thu, Sep 26, 2024 at 04:31:35PM GMT, Mahadevan wrote:
->> Add Mobile Display Subsystem (MDSS) support for the SA8775P platform.
->>
->> Signed-off-by: Mahadevan <quic_mahap@quicinc.com>
->> ---
->>
->> [v2]
->> - Update commit message. [Dmitry]
->> - Reorder compatible string of MDSS based on alphabetical order. [Dmitry]
->> - add reg_bus_bw in msm_mdss_data. [Dmitry]
->>
->> ---
->>   drivers/gpu/drm/msm/msm_mdss.c | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
->> index faa88fd6eb4d..8f1d42a43bd0 100644
->> --- a/drivers/gpu/drm/msm/msm_mdss.c
->> +++ b/drivers/gpu/drm/msm/msm_mdss.c
->> @@ -573,6 +573,16 @@ static const struct msm_mdss_data qcm2290_data = {
->>   	.reg_bus_bw = 76800,
->>   };
->>   
->> +static const struct msm_mdss_data sa8775p_data = {
->> +	.ubwc_enc_version = UBWC_4_0,
->> +	.ubwc_dec_version = UBWC_4_0,
-> Just 4.0 or 4.3?
+Thank you for your patch.
+
+Am 27.09.24 um 08:41 schrieb Hilda Wu:
+> Shorten the timeout for the HCI Reset on shutdown.
+
+Why? It’d be great if you elaborated, and documented how to reproduce 
+the problem.
+
+What is the old and new timeout value? For the git commit message 
+summary, maybe use:
+
+Bluetooth: btrtl: Decrease HCI_OP_RESET timeout from x ms to y ms
+
+> Signed-off-by: Hilda Wu <hildawu@realtek.com>
+> ---
+>   drivers/bluetooth/btrtl.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+> index 2d95b3ea046d..7128a8a0ba25 100644
+> --- a/drivers/bluetooth/btrtl.c
+> +++ b/drivers/bluetooth/btrtl.c
+> @@ -1371,7 +1371,7 @@ int btrtl_shutdown_realtek(struct hci_dev *hdev)
+>   	/* According to the vendor driver, BT must be reset on close to avoid
+>   	 * firmware crash.
+>   	 */
+> -	skb = __hci_cmd_sync(hdev, HCI_OP_RESET, 0, NULL, HCI_INIT_TIMEOUT);
+> +	skb = __hci_cmd_sync(hdev, HCI_OP_RESET, 0, NULL, HCI_CMD_TIMEOUT);
+>   	if (IS_ERR(skb)) {
+>   		ret = PTR_ERR(skb);
+>   		bt_dev_err(hdev, "HCI reset during shutdown failed");
 
 
-UBWC version has to be 4.0 as per UBWC reference document of sa8775p.
+Kind regards,
 
-
->
->> +	.ubwc_swizzle = 4,
->> +	.ubwc_static = 1,
->> +	.highest_bank_bit = 0,
->> +	.macrotile_mode = 1,
->> +	.reg_bus_bw = 74000,
->> +};
->> +
->>   static const struct msm_mdss_data sc7180_data = {
->>   	.ubwc_enc_version = UBWC_2_0,
->>   	.ubwc_dec_version = UBWC_2_0,
->> @@ -710,6 +720,7 @@ static const struct of_device_id mdss_dt_match[] = {
->>   	{ .compatible = "qcom,mdss" },
->>   	{ .compatible = "qcom,msm8998-mdss", .data = &msm8998_data },
->>   	{ .compatible = "qcom,qcm2290-mdss", .data = &qcm2290_data },
->> +	{ .compatible = "qcom,sa8775p-mdss", .data = &sa8775p_data },
->>   	{ .compatible = "qcom,sdm670-mdss", .data = &sdm670_data },
->>   	{ .compatible = "qcom,sdm845-mdss", .data = &sdm845_data },
->>   	{ .compatible = "qcom,sc7180-mdss", .data = &sc7180_data },
->> -- 
->> 2.34.1
->>
+Paul
 
