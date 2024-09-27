@@ -1,86 +1,179 @@
-Return-Path: <linux-kernel+bounces-342167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D05D1988B24
+	by mail.lfdr.de (Postfix) with ESMTPS id BC642988B23
 	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D707F1F230E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:15:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16ACE1F22EC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6941C2DCE;
-	Fri, 27 Sep 2024 20:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C0C1C2DBC;
+	Fri, 27 Sep 2024 20:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OXw4eh88"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i379LYSX"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E5B16A949;
-	Fri, 27 Sep 2024 20:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0739F1C0DD7;
+	Fri, 27 Sep 2024 20:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727468129; cv=none; b=qWCUzP3tkwDVHo1uqGS0lrRs4Igw4RoVQ+Xq+P6I4HdwgO3hvVdrw7mx5wI6SWNetzk7kbYIrIRl5hYoVzLjcBCeJ5kaoVPcS7qd2HMrWt2yV8BT0v58uQH9lZb3aKpvC49F8iro8tOtnnxsEM6zwfColg4JI/tigj39Uv2RR3I=
+	t=1727468128; cv=none; b=TN6dzb8ffCqSpbN5xv/cL6UkYbXe1E0obuRsSTYp2YGz/QWFIqM4JiyXl1vUUwtrDh+5e3arZzu1Ev0FOo15jkyRhEL3IhDCFF5aJDotDfTY1UEWRJSExi+WtEaQfH44ulg5cK/ZL/wUCO3g+rgKzTHoo7AbEXl14RhJ8cctP9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727468129; c=relaxed/simple;
-	bh=sUcXjqJXesE5GUuxXbEF77J3wkvDa6pF3vtCYKKPeM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uqB19OJzikWX+9LgsnZZCL2OXa2VxPT7KijNj9QVPQsphcz7oefR6Dv0myHapMnXB8/I1FVp6G3bLeqmKZBEyPaQMXShM5KSmDBpA+PJUj+LO1jpr3gxnyNKiL8BpLlspd/qH4LgD+wda7JPPIomDHRrLUEHAcxqI+gp4zFXCgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OXw4eh88; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=sUcXjqJXesE5GUuxXbEF77J3wkvDa6pF3vtCYKKPeM0=; b=OXw4eh88Ab9lDK7EfV20df3MVK
-	dDMqG0syFywlMqObd7HH3Eviv/iYr/vOPzZ4PiCFf+xWmA+f+VE9emHmiph1E8bAabjK82tGPc4of
-	ZdfJlo0XMQYEZSpFFKozOM4xxzc0N6YwYgds4H8KqGdZtr9+h2wnZQCic85dsZt4zkLKGrHBxMTx6
-	DcVJqE3shOIGZy2XVODKztg1/DFese7cqUIb5MYQ/tZc8zZgFqTPIjEP4RXTCoyGE6oHFqiZxVN6X
-	V6sgMAffTsd992/R8fEDnAxSBG2E5YBURURxc0FnOscpmtMh1I4ezSTJDrKwL8YGA9rJ5R1m6AulG
-	oqG1W7rA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1suHN4-0000000G3i8-0fwy;
-	Fri, 27 Sep 2024 20:15:22 +0000
-Date: Fri, 27 Sep 2024 21:15:22 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Leo Stone <leocstone@gmail.com>,
-	syzbot+d9efec94dcbfa0de1c07@syzkaller.appspotmail.com,
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com,
-	skhan@linuxfoundation.org, anupnewsmail@gmail.com,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [syzbot] [overlayfs?] general protection fault in ovl_llseek
-Message-ID: <20240927201522.GW3550746@ZenIV>
-References: <k53rd76iiguxb6prfmkqfnlfmkjjdzjvzc6uo7eppjc2t4ssdf@2q7pmj7sstml>
- <CAOQ4uxhXbTZS3wmLibit-vP_3yQSC=p+qmBLxKkBHL1OgO5NBQ@mail.gmail.com>
- <CAOQ4uxiTOJNk-Sy6RFezv=_kpsM9AqMSej=9DxfKtO53-vqXqA@mail.gmail.com>
- <CAHk-=wikugk2soi_2OFz1k27qjjYMQ140ZXWeOh8_9iSxpr=PQ@mail.gmail.com>
+	s=arc-20240116; t=1727468128; c=relaxed/simple;
+	bh=ek8QD245r6lFUWHgAu5IKfQNlnFycA+9qL9ruUcoRB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Luv60SUpmCA4JJfmrdwc4TQDe1hrr6vFcaFo90sdNGdCttBtrSPcSdiGs63rRXruE5KwZD+658jvGwj1w7VtVQMF3qqxkxzapz8Kx9/gbRBeVNUjarnRXfHtZHRlsUjG44OGtNehbDq9MVAXIeNvPTrFKfo0L3WsYilqfbQV3d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i379LYSX; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5365aa568ceso3185654e87.0;
+        Fri, 27 Sep 2024 13:15:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727468125; x=1728072925; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QIMNxc9i5uywt236vnRMCdmiBIxZF4zCqaMPF6coLfc=;
+        b=i379LYSXm0VyD1ot7Gx7SM4HA684MhDsqToXpAIzGTXBgtoknHqR5pTk3gzJ/d9ViU
+         xTTUFDzTgWe7Kk0ricYyIaHm0C74KoNREADVN9aSSL7FiPYt82zcsOw/BDVsFK9sXh6X
+         nY6TMS5UHBuUv0IuFyFmXYb3DLF10F7X8iBxgUjmulA//CSPnu7NTKl5d1CpY2g3wFGN
+         MuliFRhVGsP4O8/FulBIXapVsNiucJfEe/d43Tc43Jjy9CVB0cSUX7bFL6Qxp4zBRSx9
+         tYHnLY5mBLF6nQ/lDRnRxKJ7Z4KKUUcGtcuIEfR3IiVIYj3ZEUG/LfgliSNgbR2c/prp
+         Kghg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727468125; x=1728072925;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QIMNxc9i5uywt236vnRMCdmiBIxZF4zCqaMPF6coLfc=;
+        b=AgwJG2kkN5HDcm0qtM4T5F1t7jBPw1pF2GQwqO1JfwdgPi817vvqdDnQ84zFvPQhYm
+         LMuBq/YvypLFKqRlj7CLOd5FmueapZyAsMFASubt6JKY1U5nTqVKfEJtjow1p75VWgP9
+         qQizr8OGeHagUqzKDUZ641YwZBuyEg6EXamWuKi25ueOf0zt8z+Qt65KGgyRKG7pHTbA
+         C6v33E8eKYx//gSDlM3HIfm1FX3lY6Rr3oRVOGFuLo2zkaqKd/zXT/homhEXuh042zdX
+         48JWvBC+s6EV09quUBuwhx6Iz/uZh2ucIjPvo4WzHPlmVZT0cEgb4VX/aDrf9u1q3RaB
+         pvYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcsJyuhiZRr8dey2vTveUW+3B4f8xSsA+MASHLEIdLMNslGwi6WFA5IqRVeu2Hqa5Ma2hAu6ti95pLP52N@vger.kernel.org, AJvYcCVw09DN2K7TTG1UpEHmIeIYNKXqk5bq05FZh1J8V84uEXh8qk78VSYfpBFpTf3vpbybQQq7Ba4b2R68@vger.kernel.org, AJvYcCXMsPAzqswo4M3n5wEtNBTvt91dkRl5NtHTQJCFqtIPF720h+9DmZKUVDw09IXTMj6JIzJcHkei3puW4N7e@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFFNwJ8vtEvj0EBGMmCbdboKNQJxQ4hQXSBews6evzVKypjOWo
+	3s22/W4ckXZPRoqBS0vTtLIdITrQY5JNky6OBYkF0cKiO1w1Urwk
+X-Google-Smtp-Source: AGHT+IHQGK1XWDK0fxlB6FflHsYkNhurTWaq10UOXiMznBIujmMLFUq8kQYDLfUnHiiGnjT2eyaWxA==
+X-Received: by 2002:a05:6512:31c1:b0:536:5625:511f with SMTP id 2adb3069b0e04-5389fc7d145mr4416291e87.45.1727468124570;
+        Fri, 27 Sep 2024 13:15:24 -0700 (PDT)
+Received: from [192.168.1.17] (host-87-19-160-215.retail.telecomitalia.it. [87.19.160.215])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2997507sm168172766b.204.2024.09.27.13.15.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Sep 2024 13:15:24 -0700 (PDT)
+Message-ID: <a035fb73-e2b8-4928-b136-b3b99996bc84@gmail.com>
+Date: Fri, 27 Sep 2024 22:15:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wikugk2soi_2OFz1k27qjjYMQ140ZXWeOh8_9iSxpr=PQ@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 05/11] drm/msm/a6xx: Implement preemption for a7xx
+ targets
+To: Rob Clark <robdclark@gmail.com>
+Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Jonathan Corbet <corbet@lwn.net>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ Akhil P Oommen <quic_akhilpo@quicinc.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Sharat Masetty <smasetty@codeaurora.org>
+References: <20240926-preemption-a750-t-v6-0-7b6e1ef3648f@gmail.com>
+ <20240926-preemption-a750-t-v6-5-7b6e1ef3648f@gmail.com>
+ <CAF6AEGviMOLoZKHf4DX9mEj84Y5Xx2hH4tvrkRVLsYyQz35Bwg@mail.gmail.com>
+Content-Language: en-US
+From: Antonino Maniscalco <antomani103@gmail.com>
+In-Reply-To: <CAF6AEGviMOLoZKHf4DX9mEj84Y5Xx2hH4tvrkRVLsYyQz35Bwg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 12:47:16PM -0700, Linus Torvalds wrote:
+On 9/27/24 6:29 PM, Rob Clark wrote:
+> On Thu, Sep 26, 2024 at 2:17 PM Antonino Maniscalco
+> <antomani103@gmail.com> wrote:
+>>
+>> This patch implements preemption feature for A6xx targets, this allows
+>> the GPU to switch to a higher priority ringbuffer if one is ready. A6XX
+>> hardware as such supports multiple levels of preemption granularities,
+>> ranging from coarse grained(ringbuffer level) to a more fine grained
+>> such as draw-call level or a bin boundary level preemption. This patch
+>> enables the basic preemption level, with more fine grained preemption
+>> support to follow.
+>>
+>> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+>> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+>> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8450-HDK
+>> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+>> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+>> ---
+>>   drivers/gpu/drm/msm/Makefile              |   1 +
+>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 283 +++++++++++++++++++++-
+>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 +++++++++++++
+>>   drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 377 ++++++++++++++++++++++++++++++
+>>   drivers/gpu/drm/msm/msm_ringbuffer.h      |   7 +
+>>   5 files changed, 825 insertions(+), 11 deletions(-)
+>>
+> 
+> [snip]
+> 
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+>> index 6e065500b64d6d95599d89c33e6703c92f210047..355a3e210335d60a5bed0ee287912271c353402a 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> 
+> [snip]
+> 
+>> @@ -784,6 +1015,16 @@ static int a6xx_ucode_load(struct msm_gpu *gpu)
+>>                  msm_gem_object_set_name(a6xx_gpu->shadow_bo, "shadow");
+>>          }
+>>
+>> +       a6xx_gpu->pwrup_reglist_ptr = msm_gem_kernel_new(gpu->dev, PAGE_SIZE,
+>> +                                                        MSM_BO_WC  | MSM_BO_MAP_PRIV,
+>> +                                                        gpu->aspace, &a6xx_gpu->pwrup_reglist_bo,
+>> +                                                        &a6xx_gpu->pwrup_reglist_iova);
+> 
+> Couldn't this also be MSM_BO_GPU_READONLY?  And same for the
+> preempt_postamble_ptr, I assume?
 
-> But I still strongly suspect that to make it more likely that I don't
-> miss anything, you make the subject line some big clue-bat to my head
-> like having "[PATCH-for-linus]" header.
+So for pwrup_reglist_ptr, it contains the cpu_gpu_lock struct that needs 
+to be written by the gpu. The list itself is part of that struct.
 
-BTW, what do you prefer for "please run this script with this explanation
-just before -rc1" kind of stuff?
+> 
+> Also, it looks like we are only writing the smmu_info from the
+> kernel.. is there any way that could be split out into a RO buffer?
 
-Example: https://lore.kernel.org/all/20240927015611.GT3550746@ZenIV/
+For preempt_postamble_ptr, and smmu_info I think it should be possible 
+so I'll work on that.
 
-I've used "[tree-wide]" as a prefix, but I've no idea what your preferences
-would be in that respect...
+> 
+> BR,
+> -R
+> 
+>> +
+>> +       if (IS_ERR(a6xx_gpu->pwrup_reglist_ptr))
+>> +               return PTR_ERR(a6xx_gpu->pwrup_reglist_ptr);
+>> +
+>> +       msm_gem_object_set_name(a6xx_gpu->pwrup_reglist_bo, "pwrup_reglist");
+>> +
+>>          return 0;
+>>   }
+>>
+
+
+Best regards,
+-- 
+Antonino Maniscalco <antomani103@gmail.com>
 
