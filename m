@@ -1,259 +1,111 @@
-Return-Path: <linux-kernel+bounces-341947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443229888B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:06:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2BFB9888B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB7A1C21DD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:06:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D38C1F243AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1441C172C;
-	Fri, 27 Sep 2024 16:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D7B17ADF0;
+	Fri, 27 Sep 2024 16:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="El7DZNNy"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtyGGqJ+"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFDB1465A9;
-	Fri, 27 Sep 2024 16:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8AA189B91
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 16:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727453189; cv=none; b=iS/9QtHhJDSne8xcgASAtCTKnwmrTnUdpJc5IBFhY6H6FggQ4b23XGGllmfIkYvbEd5z2xyrAGw7KdeRC4WLxCXw2/RAbYfIuvBIvbX+7PrkpcVSgB0894G/HNlFBnGqGH47ZCB6CuLpmOCi8LGxA45E5o+XlfngqgVqKpcjZ3E=
+	t=1727453223; cv=none; b=fba/sH1f8Xjf2ZjZHgKr7WaDtOSdci1CCGvDQYnC8giK4CCwCEB+cjnpDSliHftwk4iAi+yrQX///7Ct4cXomUGC8JnPaCAdXSBe8YH1Y13ksUG6RV5X8qrLyk7St9ROZgVHxx8aCDps++MQx/TViaxu5xpbf5zLfVDHzZlEgg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727453189; c=relaxed/simple;
-	bh=LCF+qUh/MKz3OzrSjMhLzA/TwT31vZuTL8I+Ceg0rI0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=LdZPqhq0RCFDER8WAXOLcUttLrWirXGNnOwrrb4m87l//l/eMqeNE9wvqtETe+bv/z9XsfT2+RlwCqsdfx/jfL3gMDLO7TP76zDJlLLMl6TCszbua6uhIxhyS8tZApVRHNdY2VkUF1FtqDc7sNkzpi+xRVMFXDW3MvcbMEQ9fOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=El7DZNNy; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1727453223; c=relaxed/simple;
+	bh=8R8VLfvJ2OUDls7JSbC9KTjMOxvjjnXa1rYXM0jdatg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t4kfzUeptiF7YGNzrUYfRkXncFGQbfUeCEqQWi/JzqZ70DUklVDP+fElVKv+lByinEf0PARvV6Jt1R+g9v7da9CmhaG4KQXa00kw/FOTvESi5JPJSz/RwczEpD4DByGk5t8l2w2SVpjRMvpSGa82M2mtrq+pMs2ZxZY6nbY7auw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YtyGGqJ+; arc=none smtp.client-ip=209.85.215.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20b49ee353cso5610455ad.2;
-        Fri, 27 Sep 2024 09:06:28 -0700 (PDT)
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7d4f85766f0so1850039a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:07:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727453187; x=1728057987; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MjAiCFdlzm5VzHUYTb3sNNTZnJLLHgUJWgYzOHcrrbg=;
-        b=El7DZNNyU5qo2HQpWtphoeFN87Z5okWD/6WQxdk5P6PpxAP0WvaSGTNaTeMwX6LTzT
-         IegLA8eh8y9qOvxJu8/ZNbwnji69r/vaZste4ak3Zb+3Hmlsth/qfN0Wgpm/GiiXlCmC
-         7fRJ1yW22CVWWjlVx3JIVThFnR9l/2tCBMrB84V9Su8G3JWG3hHgiK5FHKG9LTh4qgPh
-         Ujj+fCWDaj9mriRHylQGLgmpvKl5gFEqc1P/vb1ae+7gdROIxcjmYAGJGC2W+jczbgI/
-         rMWxqtSLumEwaM2UZR2UIPkGpI4LdKeXQhE4pMfQMaLI+Rn8gGX5BJ2b7V3+cI7GDF3j
-         SXQA==
+        d=gmail.com; s=20230601; t=1727453221; x=1728058021; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0e2OQQno5G2t7eZ3Z7x4q0N4c7RNB1RIrrucMjojTeU=;
+        b=YtyGGqJ+YCbRr/uXCwIVoNjZy0/Db0qLJ7VlkDpGFFCEbVXBMn2bn1BIzVkL0n4/9v
+         ctp+uSVfD9HCEluAE38v3OFH/IST3Us6vvKqa12aG1fKwm/weij7DQHFCusBKg6hohiI
+         l6dGVC0FBJHr5s9TfMAPS3GKu9235q2qb6IWVFG1yMNOOkcT8AEJ5dShs0alHvf0zeTl
+         kVLNMycDgWc/j1miMQ3EEjFv5uQdE0j9tFEYBSxmOQBZEQgf/RG1bUh0gnW2Pi9QZAnv
+         5cPISNX7V2Ctgdj9iVp5XPeMqNeBTYfUF2QSoXk8zEcQasG2d1+utdxs+Qopafyyiaji
+         BybQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727453187; x=1728057987;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MjAiCFdlzm5VzHUYTb3sNNTZnJLLHgUJWgYzOHcrrbg=;
-        b=wxcz9pbKiAM1+TsliCF0io4uzhruaVMRBQOMJTUZlqSpfVauwoSjqNyTuekofDbTN2
-         czKlJaAcsIQf0XCqEEvFuM1eqsRzYUh/si9j4mwJaOR4UPHZ5tr/gXCLg7RFxpK3G55C
-         7+vN1gvLbpfT0bxPUyvW0ioYtOkTc1y3iP9iPrR87vR+sXmPitfbBjDWvtTdCtV1Yg/f
-         nuAv3XPTAhjb8rjcpEdZt15+4DatphO98BjqR1VPG4KaqdF3DAT6Gt15NG0g4/BQjOPq
-         Xy08RS9dwU+68fpsUDOXLqb/QowkLocUWIcIY6IhhiJBt/C/n/2qJDr/M3FUrGpsPUNn
-         2yVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAJ8oxhjg3r+QsG34xqihMBy/P2G+8r19cHs3RdaBer/cLnCPUttD9yWA4i03KJJ8kS83G@vger.kernel.org, AJvYcCXeM9sWjudIVu5u+dgRmsZZj+jmAcdTHInVBLgWsumj7+GlJwc4UCAGsRAqkjr8gjcLwtabD9PuNsF7KUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzzLcyNBhsNqoEaREYvDYmUfsWWIftjnH998CtjyKcXoR4aUb/
-	PjmQ/GvV0pWXLp1Al23f2MAnofWjwfN+329QWG6b7bWRRSM7VSV5
-X-Google-Smtp-Source: AGHT+IF5FcC4CB2D7S/aeepZVCiS/xWqxivDP6Q5j803wcBvqAXoTyPUkjDLas9EFT7uJ1fAdDhjNQ==
-X-Received: by 2002:a17:902:e743:b0:201:e7c2:bd03 with SMTP id d9443c01a7336-20b37bdc6a4mr50751985ad.60.1727453187402;
-        Fri, 27 Sep 2024 09:06:27 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e5169csm15221805ad.238.2024.09.27.09.06.19
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Sep 2024 09:06:26 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+        d=1e100.net; s=20230601; t=1727453221; x=1728058021;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0e2OQQno5G2t7eZ3Z7x4q0N4c7RNB1RIrrucMjojTeU=;
+        b=r5wf+klKY3Parp+h3WPSl4E7td2vKl2QSJqImSfo5Ro1hdY4VbB74yDQAKio5ZiYhz
+         qWeyJ1LtrlR7NZ59MvZyDPLbQTaEVmnqIuvQHPMub+PLKiTSu32LQF/+ykSMLIg9A4BW
+         2E9JdZkE0nfSvoBdaL0BR0q3Fn4sHz+P4R3UiR0COBT17XGbCYfcZ1cnxs5lXo4n+laK
+         4ykelONzG4ITbA3oRWfzPswQP7cCDLd3+ArA5OB3+6Y2DlVYyXWdH/zdiql4eWobbqXr
+         bxlmHC9ztn+4xIeDKZuWovs8rKu7nmtpNkFgSR8fz5ZqfGfFM/CzHWxRECc8ugaTFNG7
+         5MXw==
+X-Gm-Message-State: AOJu0YyqsraxmIhDsEoJd7gMqDqDmtgRK5Icxm6ZoqzAryJhz14uY6Fe
+	v77DdqHfRRTZ6BOhyTgR4uFiWmhGCnjxRxoQZyZ1FVPmiStm6dhL8RDPEg==
+X-Google-Smtp-Source: AGHT+IHdtJuVx0zJqlZh5r+D43Yo+UQqo+2/vP9AXMexE6REGrD3V/syTYTFY60GaMLMSZKKNfJJHA==
+X-Received: by 2002:a05:6a20:cf8f:b0:1d4:e4eb:73e2 with SMTP id adf61e73a8af0-1d4fa687debmr4966021637.13.1727453221177;
+        Fri, 27 Sep 2024 09:07:01 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:a574:73a2:d5e7:da6e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26529d6csm1752546b3a.166.2024.09.27.09.07.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 09:07:00 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-team@android.com
+Cc: Daeho Jeong <daehojeong@google.com>,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v3 1/2] mkfs.f2fs: change -c option description
+Date: Fri, 27 Sep 2024 09:06:54 -0700
+Message-ID: <20240927160655.3594366-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <ZvY0gG2dCJApPbp5@boqun-archlinux>
-Date: Sat, 28 Sep 2024 00:06:06 +0800
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- LKML <linux-kernel@vger.kernel.org>,
- RCU <rcu@vger.kernel.org>,
- linux-mm@kvack.org,
- lkmm@lists.linux.dev,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
- rostedt <rostedt@goodmis.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- maged.michael@gmail.com,
- Neeraj upadhyay <neeraj.upadhyay@amd.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4106601E-82BC-471D-8AD0-B5E8FE99C7CD@gmail.com>
-References: <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
- <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
- <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
- <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
- <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
- <54487a36-f74c-46c3-aed7-fc86eaaa9ca2@huaweicloud.com>
- <CAHk-=wifOW0VEh6uL3sHSaAUA46YmPDS9Wh5HnNC2JyOiXVA=Q@mail.gmail.com>
- <ZvX12_1mK8983cXm@boqun-archlinux>
- <0b262fe5-2fc5-478d-bf66-f208723238d5@efficios.com>
- <e748893f-28a3-4b8a-a848-cfb1173ab940@app.fastmail.com>
- <ZvY0gG2dCJApPbp5@boqun-archlinux>
-To: Boqun Feng <boqun.feng@gmail.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-2024=E5=B9=B49=E6=9C=8827=E6=97=A5 12:28=EF=BC=8CBoqun Feng =
-<boqun.feng@gmail.com> wrote=EF=BC=9A
->=20
-> On Fri, Sep 27, 2024 at 09:37:50AM +0800, Boqun Feng wrote:
->>=20
->>=20
->> On Fri, Sep 27, 2024, at 9:30 AM, Mathieu Desnoyers wrote:
->>> On 2024-09-27 02:01, Boqun Feng wrote:
->>>> #define ADDRESS_EQ(var, expr) \
->>>> ({ \
->>>> bool _____cmp_res =3D (unsigned long)(var) =3D=3D (unsigned =
-long)(expr); \
->>>> \
->>>> OPTIMIZER_HIDE_VAR(var); \
->>>> _____cmp_res; \
->>>> })
->>>=20
->>> If the goal is to ensure gcc uses the register populated by the
->>> second, I'm afraid it does not work. AFAIU, "hiding" the dependency
->>> chain does not prevent the SSA GVN optimization from combining the
->=20
-> Note it's not hiding the dependency, rather the equality,
->=20
->>> registers as being one and choosing one arbitrary source. "hiding"
->=20
-> after OPTIMIZER_HIDE_VAR(var), compiler doesn't know whether 'var' is
-> equal to 'expr' anymore, because OPTIMIZER_HIDE_VAR(var) uses =
-"=3Dr"(var)
-> to indicate the output is overwritten. So when 'var' is referred =
-later,
-> compiler cannot use the register for a 'expr' value or any other
-> register that has the same value, because 'var' may have a different
-> value from the compiler's POV.
->=20
->>> the dependency chain before or after the comparison won't help here.
->>>=20
->>> int fct_hide_var_compare(void)
->>> {
->>>     int *a, *b;
->>>=20
->>>     do {
->>>         a =3D READ_ONCE(p);
->>>         asm volatile ("" : : : "memory");
->>>         b =3D READ_ONCE(p);
->>>     } while (!ADDRESS_EQ(a, b));
->>=20
->> Note that ADDRESS_EQ() only hide first parameter, so this should be =
-ADDRESS_EQ(b, a).
->>=20
->=20
-> I replaced ADDRESS_EQ(a, b) with ADDRESS_EQ(b, a), and the compile
-> result shows it can prevent the issue:
->=20
-> gcc 14.2 x86-64:
->=20
-> fct_hide_var_compare:
-> .L2:
->        mov     rcx, QWORD PTR p[rip]
->        mov     rdx, QWORD PTR p[rip]
->        mov     rax, rdx
->        cmp     rcx, rdx
->        jne     .L2
->        mov     eax, DWORD PTR [rax]
->        ret
->=20
-> gcc 14.2.0 ARM64:
->=20
-> fct_hide_var_compare:
->        adrp    x2, p
->        add     x2, x2, :lo12:p
-> .L2:
->        ldr     x3, [x2]
->        ldr     x1, [x2]
->        mov     x0, x1
->        cmp     x3, x1
->        bne     .L2
->        ldr     w0, [x0]
->        ret
->=20
-> Link to godbolt:
->=20
-> https://godbolt.org/z/a7jsfzjxY
+From: Daeho Jeong <daehojeong@google.com>
 
-Checking the assembly generated by different compilers for the kernel on =
-the local machine will yield more accurate results. Some optimizations =
-are restricted by the kernel. Therefore, if you use Godbolt, ensure that =
-the compiler arguments match those used for the kernel.
+Current description confuses users like they can add addtional devices
+with one -c option using commas(,) at the same time.
 
->=20
-> Regards,
-> Boqun
->=20
->> Regards,
->> Boqun
->>=20
->>>     return *b;
->>> }
->>>=20
->>> gcc 14.2 x86-64:
->>>=20
->>> fct_hide_var_compare:
->>>  mov    rax,QWORD PTR [rip+0x0]        # 67 =
-<fct_hide_var_compare+0x7>
->>>  mov    rdx,QWORD PTR [rip+0x0]        # 6e =
-<fct_hide_var_compare+0xe>
->>>  cmp    rax,rdx
->>>  jne    60 <fct_hide_var_compare>
->>>  mov    eax,DWORD PTR [rax]
->>>  ret
->>> main:
->>>  xor    eax,eax
->>>  ret
->>>=20
->>> gcc 14.2.0 ARM64:
->>>=20
->>> fct_hide_var_compare:
->>>         adrp    x0, .LANCHOR0
->>>         add     x0, x0, :lo12:.LANCHOR0
->>> .L12:
->>>         ldr     x1, [x0]
->>>         ldr     x2, [x0]
->>>         cmp     x1, x2
->>>         bne     .L12
->>>         ldr     w0, [x1]
->>>         ret
->>> p:
->>>         .zero   8
->>>=20
->>>=20
->>> --=20
->>> Mathieu Desnoyers
->>> EfficiOS Inc.
->>> https://www.efficios.com
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
+---
+ mkfs/f2fs_format_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index d9cdd61..b6785cd 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -50,7 +50,7 @@ static void mkfs_usage()
+ 	MSG(0, "\nUsage: mkfs.f2fs [options] device [sectors]\n");
+ 	MSG(0, "[options]:\n");
+ 	MSG(0, "  -b filesystem block size [default:4096]\n");
+-	MSG(0, "  -c device1[,device2,...] up to 7 additional devices, except meta device\n");
++	MSG(0, "  -c [device_name] up to 7 additional devices, except meta device\n");
+ 	MSG(0, "  -d debug level [default:0]\n");
+ 	MSG(0, "  -e [cold file ext list] e.g. \"mp3,gif,mov\"\n");
+ 	MSG(0, "  -E [hot file ext list] e.g. \"db\"\n");
+-- 
+2.46.1.824.gd892dcdcdd-goog
 
 
