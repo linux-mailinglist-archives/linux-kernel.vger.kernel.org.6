@@ -1,282 +1,265 @@
-Return-Path: <linux-kernel+bounces-341898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86FF59887F8
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD329887F9
 	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8056D1C20E4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:10:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE64C283FAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F751C172F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D3C1C172E;
 	Fri, 27 Sep 2024 15:10:30 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB511A2D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26B51465A9
 	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 15:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727449829; cv=none; b=dNavtiWNsFnovFs9eAq/PCsyNZa3askHILk50HQSrYWpQJGE8ySb5NCo/4EzpuXbKiZ9uSEiOHvuDDHrGvDplnOx3DQD8bCLyZ5+IeibKFmtOo6O70OgjqFsOg8G+07ITFArLH6W/HpwOGkVHSXekWykWbWhxdTfo5yTl+tf/9Q=
+	t=1727449829; cv=none; b=mZwTLNq/pRXBys7OU0ycyXlBdTKs7nOUF4YsPszes/C7GXUO8sgfZBsZkzN9x6tfM14fDYLdC0r1NZ2CQ6scI/MuxHiefr1UfGIQZGUdgvUSyKbaYqJ4DBfgsqqLtho+bAtayN4OG+ntalQONUEYkA18oXJTyPzOV11srte9wPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727449829; c=relaxed/simple;
-	bh=RU/ep/F0MfWF0KVpkBGYfIKFc/9cIaYiVqoNYrKALYs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kSFVpMkwBb2TBK3AdUu5jsCOF6t/LxcOW0oPpTH9w89BNJ1ViKHCjqxeOLMmVhliIy9LoSqnOBFaJiAUMtu+KvvuoDli6y4ZBiX/GhcDoyOqEAkb0vm/a12Fa+UVH0mkLd8irVf7202RFkJiXxb+rVdFgn0HNi5pgNFy0NYPkUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+	bh=tbQlpSYDQbJIWs+I6PoKHmXEbRrMwnswxHoSLa5T9+k=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oLKm2Q4fo2ast3qpBagRP0/v39p16wO33BUM7w3+ISXu06DIRZNq4MldlCREpMmvzE5p1vuv6h+K7b0sVEyRCiphxyAdLea5EXuDH9/F3I2g9Js678CUXixtlPd8zuS0xpktin8l44FcvMJ33cg96VFESQ/YxwjJg1GC/R+pCwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a342e7e49cso21596235ab.0
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a19534ac2fso27607975ab.2
         for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:10:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1727449827; x=1728054627;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Us/krW6xEHQWPnvD7rWX/NAPA2lNNq7M6EfbHDhyKs4=;
-        b=uP4/KvwnD4RM55FH14875lghMKVO38TALGfOyB9bbD6kLPJBrohQC9Nacru9A2nzk4
-         VhDS+0REVHQBkvsWDptynmctf6iXgD6/es/3ol8KLCW1NgRM4h5wznvYkfpKzxzOJWwL
-         mlk68FuV/NkNOIeDd/eE/4O3G3mG2520uq95ywK++b3SWpeAkaQpz5F1jWkBmD5lRiCH
-         qU02mjbb/0u7EbL/M1oopGulxzbQu/K7iSGuYh0OFrfw0kKc4koxCSIfvVNm0PbFbeYC
-         ZUV0qGNq/AQ4Y5vizGcM6ivvFOo0wvaTcTcdyeZuJ5vmCnJmrVwM6Wqp1aD3aTAuJPr4
-         aScw==
-X-Forwarded-Encrypted: i=1; AJvYcCXlgoy4eOYcbpArqrDQaIgGSpuJcaz3t9sO2wRUnClYsS7l5HLb3y1X4N8kFPdnv5D8nRHjSsq2/hEz2Sc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqlWgcsZTmrX/S5TRu3S7UK4rocCK2vzbD03oRLdeZWBvWQJ7g
-	eVjkAz2jGaB8R0EAaq7eNmfzDjySwQnCgpuRfblB5gpnluHoyK9oAPCnO26m/1SQ5MEZ2fzIeqt
-	Q226Kisoe2V0ADnc/HhPBVKnJ44B33m7UH8p7+EdOFBYBxAANZWMQNoI=
-X-Google-Smtp-Source: AGHT+IGKqNJez0CVrkIdg15a7qO+Pj5FU8hpIFvegftscbpIqV4KFYZE29D3ayoiuGHz0Acl74EbXpnQP5IeiwvI5iiN40iBWpVk
+        bh=ERlCl2uGX1D9UD9O6/6oh/wf/ZOom1paAo5/+bUQn0E=;
+        b=PY0zQxVb5GFzoqxLob4bgtEhlf3eA2qkQ1A89CXjB2/xFvCMlUfcBj2vdh24/Nb0Z3
+         bJOWHumUlyDR/NJI7LOcaHbZeTibzEMDsVV5S5DzwEesGyb9GtO1H6bB48VFjGsLLOg9
+         r/rRTIPXvGlSB2Vrr+cQpTRWIH+MbE8GIRKR+O6u5ebbO+yvv1CBD1yeKSPo+0bMuaEe
+         rS3BtnL4JRBfgegYYkdMJhdu5UgXSIXv5I5SVikb7qlN/FcxQuCMri0cYkGilJVAlPT2
+         C3iGs6YDNb3mitAk1wF8GlRBOh1U0SXCKYhtMXs7k29b+l7Jj3sWw4kuP0WyoSkhwq6H
+         MK7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWSLFpHWiEGyq31AjgirNfweEfUGSeC1IFjx1nyD77HlwgJG1HABRLTyCbA12oN5JhmAfVHDjZwGFabTPQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpOmHVvHbEJnokTCwWvF4WxGWhPHiKBKECbw7AgNDcVXp5fSNs
+	q7dJxJL9fmds2I0IoWEVBl+R++N1SQDGjXDoEARIE7qkRAWRWcK5LK03KbzCcm1v8N+E5CQFPcV
+	3B1UGhioZZ1cC7F3omTNomFFAEsLNRK3LgilfOApZSz8Ap4f1gZUYLvM=
+X-Google-Smtp-Source: AGHT+IGg4soPYa/5ZkMZNlCRvLjGd6EtJf5hLBmIDpVQVQzb3/BpiWuaUeifRwlgY8sDSQg1N1+gk4NkTRRKDbUlo9LnzfSOtWku
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16c8:b0:39f:558a:e404 with SMTP id
- e9e14a558f8ab-3a34516039bmr36325895ab.4.1727449826766; Fri, 27 Sep 2024
- 08:10:26 -0700 (PDT)
+X-Received: by 2002:a05:6e02:216e:b0:39f:60d7:813b with SMTP id
+ e9e14a558f8ab-3a3452bf4damr29639725ab.22.1727449827013; Fri, 27 Sep 2024
+ 08:10:27 -0700 (PDT)
 Date: Fri, 27 Sep 2024 08:10:26 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f6cae2.050a0220.46d20.001f.GAE@google.com>
-Subject: [syzbot] [bluetooth?] KASAN: slab-use-after-free Write in mgmt_device_connected
-From: syzbot <syzbot+ea704362ec2bbf4ddcca@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <66f6cae2.050a0220.46d20.0020.GAE@google.com>
+Subject: [syzbot] [kernfs?] KASAN: slab-use-after-free Read in kernfs_add_one
+From: syzbot <syzbot+81380e5b57bacce8a9f6@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    df54f4a16f82 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1201531f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dde5a5ba8d41ee9e
-dashboard link: https://syzkaller.appspot.com/bug?extid=ea704362ec2bbf4ddcca
+HEAD commit:    d1f2d51b711a Merge tag 'clk-fixes-for-linus' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15bf0e00580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=58a85aa6925a8b78
+dashboard link: https://syzkaller.appspot.com/bug?extid=81380e5b57bacce8a9f6
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+userspace arch: i386
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/aa2eb06e0aea/disk-df54f4a1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/14728733d385/vmlinux-df54f4a1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/99816271407d/Image-df54f4a1.gz.xz
+disk image: https://storage.googleapis.com/syzbot-assets/1517895ef9e6/disk-d1f2d51b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a5831fb8e0a7/vmlinux-d1f2d51b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3291515529ce/bzImage-d1f2d51b.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ea704362ec2bbf4ddcca@syzkaller.appspotmail.com
+Reported-by: syzbot+81380e5b57bacce8a9f6@syzkaller.appspotmail.com
 
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
+usb 1-1: Direct firmware load for ueagle-atm/eagleII.fw failed with error -2
+usb 1-1: Falling back to sysfs fallback for: ueagle-atm/eagleII.fw
 ==================================================================
-BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-BUG: KASAN: slab-use-after-free in test_and_set_bit include/asm-generic/bitops/instrumented-atomic.h:71 [inline]
-BUG: KASAN: slab-use-after-free in mgmt_device_connected+0x48/0x524 net/bluetooth/mgmt.c:9650
-Write of size 8 at addr ffff0000fa89c838 by task kworker/u9:2/6409
+BUG: KASAN: slab-use-after-free in kernfs_root fs/kernfs/kernfs-internal.h:70 [inline]
+BUG: KASAN: slab-use-after-free in kernfs_add_one+0x447/0x8b0 fs/kernfs/dir.c:818
+Read of size 8 at addr ffff88803434d990 by task kworker/0:5/5284
 
-CPU: 0 UID: 0 PID: 6409 Comm: kworker/u9:2 Not tainted 6.11.0-rc5-syzkaller-gdf54f4a16f82 #0
+CPU: 0 UID: 0 PID: 5284 Comm: kworker/0:5 Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: hci3 hci_rx_work
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+Workqueue: events request_firmware_work_func
+Call Trace:
+ <TASK>
  __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
  print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x198/0x538 mm/kasan/report.c:488
- kasan_report+0xd8/0x138 mm/kasan/report.c:601
- kasan_check_range+0x268/0x2a8 mm/kasan/generic.c:189
- __kasan_check_write+0x20/0x30 mm/kasan/shadow.c:37
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- test_and_set_bit include/asm-generic/bitops/instrumented-atomic.h:71 [inline]
- mgmt_device_connected+0x48/0x524 net/bluetooth/mgmt.c:9650
- l2cap_connect_req net/bluetooth/l2cap_core.c:4077 [inline]
- l2cap_bredr_sig_cmd net/bluetooth/l2cap_core.c:4772 [inline]
- l2cap_sig_channel net/bluetooth/l2cap_core.c:5543 [inline]
- l2cap_recv_frame+0x1324/0xc914 net/bluetooth/l2cap_core.c:6825
- l2cap_recv_acldata+0x4ac/0x15f0 net/bluetooth/l2cap_core.c:7514
- hci_acldata_packet net/bluetooth/hci_core.c:3785 [inline]
- hci_rx_work+0x2b8/0xa80 net/bluetooth/hci_core.c:4022
- process_one_work+0x79c/0x15b8 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x978/0xec4 kernel/workqueue.c:3389
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kernfs_root fs/kernfs/kernfs-internal.h:70 [inline]
+ kernfs_add_one+0x447/0x8b0 fs/kernfs/dir.c:818
+ kernfs_create_dir_ns+0xd9/0x120 fs/kernfs/dir.c:1071
+ sysfs_create_dir_ns+0x189/0x3a0 fs/sysfs/dir.c:59
+ create_dir lib/kobject.c:73 [inline]
+ kobject_add_internal+0x435/0x8d0 lib/kobject.c:240
+ kobject_add_varg lib/kobject.c:374 [inline]
+ kobject_add+0x152/0x220 lib/kobject.c:426
+ class_dir_create_and_add drivers/base/core.c:3225 [inline]
+ get_device_parent+0x391/0x410 drivers/base/core.c:3276
+ device_add+0x325/0xbf0 drivers/base/core.c:3606
+ fw_load_sysfs_fallback drivers/base/firmware_loader/fallback.c:86 [inline]
+ fw_load_from_user_helper drivers/base/firmware_loader/fallback.c:162 [inline]
+ firmware_fallback_sysfs+0x307/0x9e0 drivers/base/firmware_loader/fallback.c:238
+ _request_firmware+0xcf5/0x12b0 drivers/base/firmware_loader/main.c:914
+ request_firmware_work_func+0x12a/0x280 drivers/base/firmware_loader/main.c:1165
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd10 kernel/workqueue.c:3389
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-Allocated by task 6409:
+Allocated by task 5284:
  kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x40/0x78 mm/kasan/common.c:68
- kasan_save_alloc_info+0x40/0x50 mm/kasan/generic.c:565
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0xac/0xc4 mm/kasan/common.c:387
- kasan_kmalloc include/linux/kasan.h:211 [inline]
- __kmalloc_cache_noprof+0x244/0x374 mm/slub.c:4189
- kmalloc_noprof include/linux/slab.h:681 [inline]
- kzalloc_noprof include/linux/slab.h:807 [inline]
- __hci_conn_add+0x25c/0x13cc net/bluetooth/hci_conn.c:934
- hci_conn_add_unset+0x78/0xf8 net/bluetooth/hci_conn.c:1043
- hci_conn_request_evt+0x4fc/0xb08 net/bluetooth/hci_event.c:3288
- hci_event_func net/bluetooth/hci_event.c:7446 [inline]
- hci_event_packet+0x8dc/0x106c net/bluetooth/hci_event.c:7498
- hci_rx_work+0x318/0xa80 net/bluetooth/hci_core.c:4017
- process_one_work+0x79c/0x15b8 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x978/0xec4 kernel/workqueue.c:3389
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3992 [inline]
+ slab_alloc_node mm/slub.c:4041 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4048
+ __kernfs_new_node+0xd8/0x870 fs/kernfs/dir.c:624
+ kernfs_new_node+0x137/0x240 fs/kernfs/dir.c:700
+ kernfs_create_dir_ns+0x43/0x120 fs/kernfs/dir.c:1061
+ sysfs_create_dir_ns+0x189/0x3a0 fs/sysfs/dir.c:59
+ create_dir lib/kobject.c:73 [inline]
+ kobject_add_internal+0x435/0x8d0 lib/kobject.c:240
+ kobject_add_varg lib/kobject.c:374 [inline]
+ kobject_add+0x152/0x220 lib/kobject.c:426
+ class_dir_create_and_add drivers/base/core.c:3225 [inline]
+ get_device_parent+0x391/0x410 drivers/base/core.c:3276
+ device_add+0x325/0xbf0 drivers/base/core.c:3606
+ fw_load_sysfs_fallback drivers/base/firmware_loader/fallback.c:86 [inline]
+ fw_load_from_user_helper drivers/base/firmware_loader/fallback.c:162 [inline]
+ firmware_fallback_sysfs+0x307/0x9e0 drivers/base/firmware_loader/fallback.c:238
+ _request_firmware+0xcf5/0x12b0 drivers/base/firmware_loader/main.c:914
+ request_firmware_work_func+0x12a/0x280 drivers/base/firmware_loader/main.c:1165
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd10 kernel/workqueue.c:3389
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-Freed by task 6412:
+Freed by task 16:
  kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x40/0x78 mm/kasan/common.c:68
- kasan_save_free_info+0x54/0x6c mm/kasan/generic.c:579
- poison_slab_object+0x128/0x180 mm/kasan/common.c:240
- __kasan_slab_free+0x3c/0x70 mm/kasan/common.c:256
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
  kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2252 [inline]
- slab_free mm/slub.c:4473 [inline]
- kfree+0x154/0x3e0 mm/slub.c:4594
- bt_link_release+0x20/0x30 net/bluetooth/hci_sysfs.c:16
- device_release+0x8c/0x1ac
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x2a8/0x41c lib/kobject.c:737
- put_device drivers/base/core.c:3790 [inline]
- device_unregister+0x3c/0xcc drivers/base/core.c:3913
- hci_conn_del_sysfs+0xf0/0x170 net/bluetooth/hci_sysfs.c:86
- hci_conn_cleanup net/bluetooth/hci_conn.c:175 [inline]
- hci_conn_del+0x72c/0xaa0 net/bluetooth/hci_conn.c:1162
- hci_conn_failed+0x244/0x350 net/bluetooth/hci_conn.c:1266
- hci_abort_conn_sync+0x500/0xbb0 net/bluetooth/hci_sync.c:5545
- abort_conn_sync+0x224/0x25c net/bluetooth/hci_conn.c:2917
- hci_cmd_sync_work+0x1cc/0x34c net/bluetooth/hci_sync.c:328
- process_one_work+0x79c/0x15b8 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x978/0xec4 kernel/workqueue.c:3389
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+ slab_free_hook mm/slub.c:2256 [inline]
+ slab_free mm/slub.c:4477 [inline]
+ kmem_cache_free+0x145/0x350 mm/slub.c:4552
+ rcu_do_batch kernel/rcu/tree.c:2569 [inline]
+ rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2843
+ handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+ run_ksoftirqd+0xca/0x130 kernel/softirq.c:928
+ smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
 Last potentially related work creation:
- kasan_save_stack+0x40/0x6c mm/kasan/common.c:47
- __kasan_record_aux_stack+0xd0/0xec mm/kasan/generic.c:541
- kasan_record_aux_stack_noalloc+0x14/0x20 mm/kasan/generic.c:551
- insert_work+0x54/0x2d4 kernel/workqueue.c:2185
- __queue_work+0xe20/0x1308 kernel/workqueue.c:2341
- delayed_work_timer_fn+0x74/0x90 kernel/workqueue.c:2487
- call_timer_fn+0x1b4/0x8e8 kernel/time/timer.c:1792
- expire_timers kernel/time/timer.c:1838 [inline]
- __run_timers kernel/time/timer.c:2417 [inline]
- __run_timer_base+0x59c/0x7b4 kernel/time/timer.c:2428
- run_timer_base kernel/time/timer.c:2437 [inline]
- run_timer_softirq+0xcc/0x194 kernel/time/timer.c:2447
- handle_softirqs+0x2e4/0xbfc kernel/softirq.c:554
- __do_softirq+0x14/0x20 kernel/softirq.c:588
+ kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+ __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
+ __call_rcu_common kernel/rcu/tree.c:3106 [inline]
+ call_rcu+0x167/0xa70 kernel/rcu/tree.c:3210
+ kernfs_put+0x1dc/0x370 fs/kernfs/dir.c:578
+ __kernfs_remove+0x768/0x870 fs/kernfs/dir.c:1508
+ kernfs_remove+0x7a/0xa0 fs/kernfs/dir.c:1528
+ __kobject_del+0xe2/0x310 lib/kobject.c:604
+ kobject_del+0x45/0x60 lib/kobject.c:627
+ device_del+0x7ff/0x9b0 drivers/base/core.c:3891
+ usb_disconnect+0x60b/0x950 drivers/usb/core/hub.c:2332
+ hub_port_connect drivers/usb/core/hub.c:5361 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x1ebc/0x5150 drivers/usb/core/hub.c:5903
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd10 kernel/workqueue.c:3389
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-The buggy address belongs to the object at ffff0000fa89c000
- which belongs to the cache kmalloc-8k of size 8192
-The buggy address is located 2104 bytes inside of
- freed 8192-byte region [ffff0000fa89c000, ffff0000fa89e000)
+The buggy address belongs to the object at ffff88803434d960
+ which belongs to the cache kernfs_node_cache of size 176
+The buggy address is located 48 bytes inside of
+ freed 176-byte region [ffff88803434d960, ffff88803434da10)
 
 The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x13a898
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0x5ffc00000000040(head|node=0|zone=2|lastcpupid=0x7ff)
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x3434d
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
 page_type: 0xfdffffff(slab)
-raw: 05ffc00000000040 ffff0000c0002280 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000020002 00000001fdffffff 0000000000000000
-head: 05ffc00000000040 ffff0000c0002280 dead000000000122 0000000000000000
-head: 0000000000000000 0000000000020002 00000001fdffffff 0000000000000000
-head: 05ffc00000000003 fffffdffc3ea2601 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+raw: 00fff00000000000 ffff88801bafedc0 ffffea00017d3b80 dead000000000006
+raw: 0000000000000000 0000000080110011 00000001fdffffff 0000000000000000
 page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid 1 (swapper/0), ts 13386431658, free_ts 13376370430
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1500
+ prep_new_page mm/page_alloc.c:1508 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3446
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4702
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2325
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2488
+ new_slab mm/slub.c:2541 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3727
+ __slab_alloc+0x58/0xa0 mm/slub.c:3817
+ __slab_alloc_node mm/slub.c:3870 [inline]
+ slab_alloc_node mm/slub.c:4029 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4048
+ __kernfs_new_node+0xd8/0x870 fs/kernfs/dir.c:624
+ kernfs_new_node+0x137/0x240 fs/kernfs/dir.c:700
+ __kernfs_create_file+0x49/0x2e0 fs/kernfs/file.c:1034
+ sysfs_add_file_mode_ns+0x24a/0x310 fs/sysfs/file.c:307
+ create_files fs/sysfs/group.c:76 [inline]
+ internal_create_group+0x7a7/0x11d0 fs/sysfs/group.c:180
+ kernel_add_sysfs_param+0xec/0x130 kernel/params.c:819
+ param_sysfs_builtin+0x16e/0x1f0 kernel/params.c:856
+ param_sysfs_builtin_init+0x31/0x40 kernel/params.c:990
+page last free pid 1173 tgid 1173 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1101 [inline]
+ free_unref_page+0xd22/0xea0 mm/page_alloc.c:2619
+ vfree+0x186/0x2e0 mm/vmalloc.c:3367
+ delayed_vfree_work+0x56/0x80 mm/vmalloc.c:3288
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd10 kernel/workqueue.c:3389
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
 Memory state around the buggy address:
- ffff0000fa89c700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff0000fa89c780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff0000fa89c800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                        ^
- ffff0000fa89c880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff0000fa89c900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88803434d880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88803434d900: fb fb fb fb fc fc fc fc fc fc fc fc fa fb fb fb
+>ffff88803434d980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                         ^
+ ffff88803434da00: fb fb fc fc fc fc fc fc fc fc fa fb fb fb fb fb
+ ffff88803434da80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
 ==================================================================
-Unable to handle kernel paging request at virtual address dfff800000000064
-KASAN: null-ptr-deref in range [0x0000000000000320-0x0000000000000327]
-Mem abort info:
-  ESR = 0x0000000096000005
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x05: level 1 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[dfff800000000064] address between user and kernel address ranges
-Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 UID: 0 PID: 6409 Comm: kworker/u9:2 Tainted: G    B              6.11.0-rc5-syzkaller-gdf54f4a16f82 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: hci3 hci_rx_work
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : l2cap_send_cmd+0x484/0x770 net/bluetooth/l2cap_core.c:964
-lr : l2cap_send_cmd+0x478/0x770 net/bluetooth/l2cap_core.c:964
-sp : ffff8000ab0c71a0
-x29: ffff8000ab0c71c0 x28: dfff800000000000 x27: ffff0000ccc2c90e
-x26: ffff0000ccc2c90c x25: 0000000000000010 x24: 0000000000000000
-x23: ffff0000ce726010 x22: ffff0000c8eec000 x21: 0000000000000322
-x20: ffff0000c5fd7640 x19: ffff0000ce726000 x18: 1fffe00036799fe6
-x17: ffff80008a4ba0fc x16: ffff800080a863f4 x15: 0000000000000001
-x14: 1fffe00019985922 x13: 0000000000000000 x12: 0000000000000000
-x11: 0000000000100000 x10: 0000000000032ad3 x9 : ffff800093f02100
-x8 : 0000000000000064 x7 : 0000000200090000 x6 : 0000000200090000
-x5 : ffff0000ccc2c918 x4 : ffff8000ab0c7888 x3 : ffff80008a4ab374
-x2 : 0000000000000000 x1 : 0000000000000008 x0 : 0000000000000000
-Call trace:
- l2cap_send_cmd+0x484/0x770 net/bluetooth/l2cap_core.c:964
- l2cap_connect net/bluetooth/l2cap_core.c:4034 [inline]
- l2cap_connect_req net/bluetooth/l2cap_core.c:4080 [inline]
- l2cap_bredr_sig_cmd net/bluetooth/l2cap_core.c:4772 [inline]
- l2cap_sig_channel net/bluetooth/l2cap_core.c:5543 [inline]
- l2cap_recv_frame+0x25c8/0xc914 net/bluetooth/l2cap_core.c:6825
- l2cap_recv_acldata+0x4ac/0x15f0 net/bluetooth/l2cap_core.c:7514
- hci_acldata_packet net/bluetooth/hci_core.c:3785 [inline]
- hci_rx_work+0x2b8/0xa80 net/bluetooth/hci_core.c:4022
- process_one_work+0x79c/0x15b8 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x978/0xec4 kernel/workqueue.c:3389
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
-Code: 9769fc8a f94002a8 910c8915 d343fea8 (38fc6908) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	9769fc8a 	bl	0xfffffffffda7f228
-   4:	f94002a8 	ldr	x8, [x21]
-   8:	910c8915 	add	x21, x8, #0x322
-   c:	d343fea8 	lsr	x8, x21, #3
-* 10:	38fc6908 	ldrsb	w8, [x8, x28] <-- trapping instruction
 
 
 ---
