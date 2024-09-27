@@ -1,124 +1,166 @@
-Return-Path: <linux-kernel+bounces-341516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1274B988108
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:02:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7678198810B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 976F0B25063
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:02:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 979FA1C22807
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA12F183CB4;
-	Fri, 27 Sep 2024 09:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BDB189906;
+	Fri, 27 Sep 2024 09:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hg+L5Rs1"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="lhAIHtlK"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA3817BEAC
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E86183CAD
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727427732; cv=none; b=AodehVQbAKXYus8wKqRWBi0oU2rs+mutz+1wmAbvLmGE82TczwMiYRdsVQCMCN5rC1INES0RUu+cXnzsm9KMuCiGj42Tm9j+FYmC/QjTQZf/NcDB6zNH4dw1MeObphf0YDudimF649aY76ilRfzQK5gtbHfuQPmAmmO0BYlsrsc=
+	t=1727428011; cv=none; b=LFeYLL04teJsaJkaju9R6MRoHz7wyDIeqxsZJQ9uDaJ914nrGOAiWXB1ylRgdVeA6zE6+0ca0pI4xWW2xOTaNmSpeLSIeghRuP3czEZ1Q4DAz/tINtP+89nHymfSEGICJArMGDcerRUFpRC7g4u5G1GIP/uA7zvqVcxrw2kGmKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727427732; c=relaxed/simple;
-	bh=OzTlkDrZ5UNBFj2egyQHy9ztwtmLwwcWSRs7QSGkC50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=suNqBVOmmbXsN7i3/8R0p4+gDcdrDSMoYbZn4Rhf1NmD5PWU3WRmK5bY6kyTyBOSsAqQOj34z/fUfZCXABaRxoFeyIx6pMGNDo8iPk3GKLoULtPrQ0Fn15A4fLw+VNeWZuv0xQaYMkYLQse+WfNusTkDg7R47XSuTLZ6UAzTZek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hg+L5Rs1; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53659867cbdso3075549e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:02:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727427729; x=1728032529; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JWb73ryEVZ2J3BVL15FqHfUHxoOk+Qe9ibuCLa7loPI=;
-        b=hg+L5Rs1pReWVvspjzeOE+foIQAtENSDFZU/5kgir7LJKflnOTlFKzbJoOnFgvNCbD
-         cSamnnba7WGZfdYRguBTPftPWvnqP7Q7CXt1MnTW/LOxYDCTtAeUEa+IDDzyt9+BxCwE
-         z2MVIuvjSmpSoMqWIM4YJXZf2qUX3hD9SxBtoXQvOYQP3qDoUT5OCYt3wXlga0oK2Nld
-         c7GtRxXDydCFSR0alay70Co9JJYNOKTy1/smdh1fsyiX5z12QHcl/Yp3jXnbmOBfB8o4
-         1sfITV7OT4KJmLq9yaahgi+RQaZRrCVbhtuAo4ne79kQQsrNxQ6NtlZcAjb/wrdzYpqw
-         Kndg==
+	s=arc-20240116; t=1727428011; c=relaxed/simple;
+	bh=p/tL/mEtgxya4nQTMT45w11AbEgp01edlss3aQNmTWA=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tiJ4mZgq5tk3AHMk6Yk3VNMpDV0f5FQCS9ebX90dtI9VzMlgPJQBMVe+djNLHOlrpDqD6AzxOCVjfGWHqidU8a+66ZYgpJucWy6bDha/JPJ/ZwIFNMF11IjDz9QRfRqSvjQRMqpR5/deiRl2CE0TXrDtKZpJl829MlUGIa2CU9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=lhAIHtlK; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com [209.85.160.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D5CBA3F135
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:06:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727427999;
+	bh=TdWwWyYx3NSL/g/B28NaT9+skLBhcn0OqBIgUz2KJ8c=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=lhAIHtlKLzOc98JwocjSQC3GsGpOljY/wcQVby16/ExexJePfRoeV8NB0ec7sadBA
+	 oal1Fcpujpirm3N9zqGn7exhqxfdG4s21CtEZTEWWGIz/vt7kn6MHDD6UzymOV8xlZ
+	 7PuwRE1/jknCpLZczUgt6zumK0dQ63AdlAyryKayHOPp60UkEV2edSgeFz9DZqxmtP
+	 peKXrLeFLJzdIF5ZgsY49LND93nxIBpKi2uPXzoilE6M+G2rb6sja50f5kfbv4/XD1
+	 n5jJZ1sPB61ZcH9OZ9ogUdkXSJkmVo2KAcnaIX2DszTxkJc9pus8U0q4486WJb90Y4
+	 WwC+muPh+jukA==
+Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-286fa354e34so1311376fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:06:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727427729; x=1728032529;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JWb73ryEVZ2J3BVL15FqHfUHxoOk+Qe9ibuCLa7loPI=;
-        b=OMM+fhoLQvFgrjE3s0EW6vEFb05x0A7v5Re1yyo6e1UOfSjf6ZvD6VyCOLLrx14q8w
-         1oXncp3VarwQtFUzX9EOtBGC+RaM5kBcPTW7lfKuuesVLw6Dzf1fu8m7zGc/etY7/b1v
-         +Aq2tf70VBFBTmCwGPwakNi62nqb4OBU8/ZgY1ARWBzqfAatgSm1TF6UNBKxG9GOMZpP
-         v6M8fST+0/TuSvJDyfugV57Vd3oHsNvgMOtU36vwBpwyYIf5y96d4KXQXe00CqkK0fCh
-         Et6BQnFKRMXLwYN/YMGvqnL3Me54Dyb41gHZMyBgJ8ELosHOpdifMesS4xZkSCJDoK75
-         KrJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/2QGwxMrc7PXwx2IRr0YmdWVw4YEE9qGVfWvCNs+iA0iHreMH1Juc6809MWUbbXUlXFNSA34wk/IeWFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws3Fa2MKyMbtfRMjoVSI9ZKA8KYeEiSPscDWNX/1QuqGEXk7Uj
-	xuTiPLpVNBc0hFplOZKjL4rFc0TKBZcEB0vj6HBQqyU1c3Guq0qjtmjv+o464FI=
-X-Google-Smtp-Source: AGHT+IFdzeCd6YYS6wM/QqC+S3hSNA2f3XY8BHe1b5ScvCd2SfMlzBQM0TBaxSb+NfI+Cw6mQEmOgA==
-X-Received: by 2002:a05:6512:eaa:b0:535:6a34:b8c3 with SMTP id 2adb3069b0e04-5389fc34366mr2411280e87.5.1727427728569;
-        Fri, 27 Sep 2024 02:02:08 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd5e3c5sm233552e87.106.2024.09.27.02.02.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 02:02:07 -0700 (PDT)
-Date: Fri, 27 Sep 2024 12:02:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sricharan R <quic_srichara@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	ulf.hansson@linaro.org, linus.walleij@linaro.org, catalin.marinas@arm.com, 
-	p.zabel@pengutronix.de, geert+renesas@glider.be, neil.armstrong@linaro.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, quic_varada@quicinc.com
-Subject: Re: [PATCH V2 6/9] clk: qcom: add Global Clock controller (GCC)
- driver for IPQ5424 SoC
-Message-ID: <hitzcz3gjp4mywesnoicjnv4sfy4sckgepbl43bjjndp74etpl@adnjplfj3pfg>
-References: <20240927065244.3024604-1-quic_srichara@quicinc.com>
- <20240927065244.3024604-7-quic_srichara@quicinc.com>
+        d=1e100.net; s=20230601; t=1727427998; x=1728032798;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TdWwWyYx3NSL/g/B28NaT9+skLBhcn0OqBIgUz2KJ8c=;
+        b=aUY5W1H1j1EHyBhza3izyaUcwayPpw7s/fjYjrmeBwFmxn85Ci22NebeMSHp0dy4g5
+         qHmJg3i6qp1ZRmmS1Xfc/vv6OOhhhYUDJNsy9XKVp6pv6kH1dYXPk0euwxcii1Nnnr25
+         QXMECSMMbDu8AFKhi3lBDRVcZhI2Jv8bzdX3nYUXerLC9UpjBfjFBjMZKzy38bSwRL+5
+         Gc0X9cjMXnFcn//OU+ELNa/bD1mMxptznsWOrgZ1lnRGFLg2wEqPdCaCjRsL8WRjkqdW
+         /mBEofJ6QLpulHbQGsZz3UCYPLu1XoQMqcRv+OcSzryTRHdEY/6QE2OehV7yao2M5WG/
+         pULQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXntvxbSYFbDLa4m98K2qtDSeDFYnrhrmmlQy49XDqxdZzC62vHWPnMN2t83H6QXc630nnvTIwPhs8vmCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzNhkHwQWg7i2hWazDLnfpvbUpRDVzQjMpILk4yef8/RQwTrxy
+	mdJ0WBdXT9QB9c2h5J6ENC7fJAPYNiSCVevcgYNJig5x7hRhTryOMbeqr2EY/pqwEZhmV3X6ify
+	sU3xNrcdr8AqFpfdmpbNabgUhhLTRmOgMQMB4iVpDP+uoARP62Uvtc6nsxZ430AM0xUrsK6kvXn
+	TknFHi4CBBKNV6Uqh/kRuH5F+usFFNoTaCAmJMY/eUUDVhvRIR9Gmd
+X-Received: by 2002:a05:6871:1c7:b0:277:fd73:8f82 with SMTP id 586e51a60fabf-28710c28d08mr1801227fac.45.1727427998419;
+        Fri, 27 Sep 2024 02:06:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGv+HoVG+UamQzP9HYGm4dvtX0uDQArn9ex/l2o6/iZbKaH7H7PMWWqDndToxE25AX6dEyIqQ8K4thbHVn/x+E=
+X-Received: by 2002:a05:6871:1c7:b0:277:fd73:8f82 with SMTP id
+ 586e51a60fabf-28710c28d08mr1801204fac.45.1727427998028; Fri, 27 Sep 2024
+ 02:06:38 -0700 (PDT)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 27 Sep 2024 02:06:37 -0700
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <ZvYJfrPx75FA1IFC@x1>
+References: <20240926-th1520-dwmac-v2-0-f34f28ad1dc9@tenstorrent.com>
+ <20240926-th1520-dwmac-v2-3-f34f28ad1dc9@tenstorrent.com> <3e26f580-bc5d-448e-b5bd-9b607c33702b@lunn.ch>
+ <ZvWyQo+2mwsC1HS6@x1> <0b49b681-2289-412a-8969-d134ffcfb7fc@lunn.ch> <ZvYJfrPx75FA1IFC@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927065244.3024604-7-quic_srichara@quicinc.com>
+Mime-Version: 1.0
+Date: Fri, 27 Sep 2024 02:06:37 -0700
+Message-ID: <CAJM55Z8DeGJs=ASgdErEVWagy_f8JMWVe_TEWJWAcrUbzoDjOQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] riscv: dts: thead: Add TH1520 ethernet nodes
+To: Drew Fustini <dfustini@tenstorrent.com>, Andrew Lunn <andrew@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Drew Fustini <drew@pdp7.com>, 
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 27, 2024 at 12:22:41PM GMT, Sricharan R wrote:
-> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> 
-> Add support for the global clock controller found on IPQ5424 SoC.
-> 
-> Co-developed-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> ---
->   [v2] Remove CLK_IS_CRITICAL for all clks
->        Added CLK_IGNORE_UNUSED only for gpll0 temporarily till
+Drew Fustini wrote:
+> On Thu, Sep 26, 2024 at 09:30:32PM +0200, Andrew Lunn wrote:
+> > On Thu, Sep 26, 2024 at 12:13:06PM -0700, Drew Fustini wrote:
+> > > On Thu, Sep 26, 2024 at 08:39:29PM +0200, Andrew Lunn wrote:
+> > > > > +&mdio0 {
+> > > > > +	phy0: ethernet-phy@1 {
+> > > > > +		reg = <1>;
+> > > > > +	};
+> > > > > +
+> > > > > +	phy1: ethernet-phy@2 {
+> > > > > +		reg = <2>;
+> > > > > +	};
+> > > > > +};
+> > > >
+> > > > Two PHYs on one bus...
+> > >
+> > > Thanks for pointing this out. I will move phy1 to mdio1.
+> >
+> > ???
+> >
+> > Are you saying the two PHYs are not on the same bus?
+>
+> Sorry, this is my first time working on an Ethernet driver and I
+> misunderstood.
+>
+> Sipeed only shares the schematic of the baseboard for the LPi4a [1].
+> There are pages for GMAC Ethernet0 and GMAC Ethernet1. Each shows 4 MDIO
+> differential pairs going into a SG4301G transformer.
+>
+> I believe that RTL8211F-CG phy chips are on the LM4A SoM board which
+> contains the TH1520 SoC. Unfortunately, Sipeed does not provide a
+> schematic of the SoM so its hard for me to inspect how the phy chips are
+> wired up.
+>
+> Vendor kernel [2] that Sipeed uses has:
+>
+> 	mdio0 {
+> 		#address-cells = <1>;
+> 		#size-cells = <0>;
+> 		compatible = "snps,dwmac-mdio";
+>
+> 		phy_88E1111_0: ethernet-phy@0 {
+> 			reg = <0x1>;
+> 		};
+>
+> 		phy_88E1111_1: ethernet-phy@1 {
+> 			reg = <0x2>;
+> 		};
+> 	};
+>
+> so I think that does mean they are on the same MDIO bus.
 
-This should be gpll4, not gpll0 (no need to resend just to fix the
-changelog though).
+It depends how you look at it. The SoC has two MACs and they can both
+control their own MDIO bus. However MDIO of both MACs are pinmux'ed to
+the same pins on the SoC. So the solution above just mux the pins to
+GMAC0 and let that control both PHYs. Alternatively I guess one could
+let each GMAC control their own phy on their own MDIO bus and then
+switch pinmux settings everytime you need to need to talk to one or
+the other.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-
->        dependent consumers are enabled
->        Fixed probe to use qcom_cc_probe
-> 
->  drivers/clk/qcom/Kconfig       |    8 +
->  drivers/clk/qcom/Makefile      |    1 +
->  drivers/clk/qcom/gcc-ipq5424.c | 3309 ++++++++++++++++++++++++++++++++
->  3 files changed, 3318 insertions(+)
->  create mode 100644 drivers/clk/qcom/gcc-ipq5424.c
-> 
-
--- 
-With best wishes
-Dmitry
+/Emil
 
