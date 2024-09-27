@@ -1,222 +1,158 @@
-Return-Path: <linux-kernel+bounces-341545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7B2998817A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:42:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22203988183
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63AAC280FB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:42:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 448E01C21796
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21711BAEC0;
-	Fri, 27 Sep 2024 09:42:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D6A1BBBE5;
+	Fri, 27 Sep 2024 09:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gVS9TYcp"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EAD16B75C
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D8B1BB6A1
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727430126; cv=none; b=riw3OQBo2ktu0PSqcL7tt+QbTG+0QGvKDkpsdpHdzxlaivgd0L3Or+Ix4ZOcOrHzUb6mcgpcnPndfWWoPJM0z08rKcYH959X7bbQfWXpDLFFvsjrMeAfHgM9Xoum19yzicTTMnz8zINnGgp4Y4TQe6UxnTgzfF6TahvseZ1Rm4E=
+	t=1727430144; cv=none; b=JcpWHI1CQDjfbkkw5m7t5a4R2QU/LFebI6SJbfCfh/9Z1yqcN/iXeecJVyH6qnybdlMAFyFEYPVX69movHQAaqYijKs4/F+84BkztEEGL+A176YtOGj9ugkM8UHgbdqRogkKfr0VeRgmoTOjq2wZDAfbfZaAAYHkg7NOZzj+49g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727430126; c=relaxed/simple;
-	bh=ExE4sdAOaSHy4Ky7Pd3vZbMQ1jh+h1Zk5ViszV59/uQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Uwj39pFfcziSWjebi2kl63LQq+w80jnROgxD4bixMBdn6DArykmAMPW/JGT3UTMe8AQcY2vWcaK3VJdit1YFMt/PPOC5KN3YJUyNst/g/VEBgNhFP9epg4zCba+WYwrqG+/9YMLu59SbWsYz1z7FTXLx21NbrE/HFt2Nlb0jfDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a1a2af837dso26956885ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:42:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727430124; x=1728034924;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pl6dhnPMSgzIsMUN8oLnDOXDXKAHcQSlvS8jSp5ywzE=;
-        b=A3CUoZ10c9DkyPz5WtWWussINh9miK/oLAJu8926GHVFGMGw3evUK1u07lMaZbevyP
-         WNOHkbCaAp5gPyiE8hK6G9Gj+zeN/u2YlrcN0efUJYSzAEngXoDmi3F1dZnbqL4Zuvk9
-         IyzF8ck156YZILJ0KO43kJ2Xl1fy98hErQBymdllHgCUc+wbQVlhn8xEEeSJVC1QJT+j
-         BrCQwOw+efmgVPLtt2qxNvbvdYInNqnbhgsrNIfVR0kgMJ/iRI3Rjtb+ftJEURwJ8uuX
-         TYd09U3MGWsGaYsnq1ZHte1j8pTYKnMRzUHIrCk+kUwHT1cGzwfO/4KbtFMTfzGK4oMo
-         tlbQ==
-X-Gm-Message-State: AOJu0YwnqgKN8lbgcEacEkFRALmRRB8IIKUyjqIJfWdSJe9Q7O8u3R+k
-	CS/espiiYX4zhOAWdH4u/+hYmeytB833h0qKZtmPdihQh/YW+yuAshNPqov4qwK2TetE1Mre4AZ
-	Kcpv1mchVsqqlJpis1AzJr8Kgi7cc/v4QaTloXzhFSlwPF2h5RbL8KlA=
-X-Google-Smtp-Source: AGHT+IEKoYWJwxqJusHVyEtQykQZQ8RmwSd47Dc9C7J6zkmOhA9vNj1T0Q+khvAODqmaRVlu/ILtEThGA4m4rwfv4SMJu1+PX1ls
+	s=arc-20240116; t=1727430144; c=relaxed/simple;
+	bh=kMhNo7Ln5nY1eA0klBlBDYwOc53pg40U8v9PVt3Cl2A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=vCLBNyBgCwMft2mjMICGVVYteFteRFV1raXiwHZzn7C3aUM4YL4FxDji+HpOi/JYETbiEdDK1YSoJxEz/2cSI31scntYUjkpE99EjAVmiCjmNJ/S4Vbh3Cw+zMZfkURpo6Q2Er2RLzLIsVnedA8qpXkeZQGtPoFbeswQQs9eniA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gVS9TYcp; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240927094215euoutp02ca02ab16177456c60bf38173b3dc4617~5EI47Oc-I0829908299euoutp021
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:42:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240927094215euoutp02ca02ab16177456c60bf38173b3dc4617~5EI47Oc-I0829908299euoutp021
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727430135;
+	bh=iRxMDVxsMTPf5GiUxbCu9Fzli+whUq6rFI3/VvGrkrc=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=gVS9TYcpr0YkCsrQxNtNIIlK071vej0p/Zwyi3XKgS5y3syH8lhp8jZOVdzA48yUi
+	 9Jtgb3lJ0l8SQ0K7F8E/wMfL1R0yQ8ytFnPJ9LCGkHk0xsI76puGIBpHbG5scPMVVV
+	 gESYYTc65QPL+XmdC6swlYXY41nLE+3GBtrDywMs=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240927094214eucas1p12cf5253caf393fb3a9ed19dcbaa76fec~5EI4BG82L2561525615eucas1p17;
+	Fri, 27 Sep 2024 09:42:14 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 53.CF.09624.6FD76F66; Fri, 27
+	Sep 2024 10:42:14 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240927094213eucas1p22449c12701e67bc29371a6a6cb6f72a2~5EI3ejCaN2825128251eucas1p2s;
+	Fri, 27 Sep 2024 09:42:13 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240927094213eusmtrp2eae65dc4e30cbc3151c93403370a718c~5EI3dt4kX2852628526eusmtrp2f;
+	Fri, 27 Sep 2024 09:42:13 +0000 (GMT)
+X-AuditID: cbfec7f2-bfbff70000002598-b3-66f67df6a176
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id DA.33.14621.5FD76F66; Fri, 27
+	Sep 2024 10:42:13 +0100 (BST)
+Received: from AMDC4942.home (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240927094212eusmtip2f50cd86c7896a2fa249a0d0526ed22c8~5EI2vWRHx1283512835eusmtip2z;
+	Fri, 27 Sep 2024 09:42:12 +0000 (GMT)
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+To: drew@pdp7.com, guoren@kernel.org, wefu@redhat.com,
+	jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, m.szyprowski@samsung.com
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: [PATCH RFC v2 0/3] Introduce support for T-head TH1520 Mailbox
+Date: Fri, 27 Sep 2024 11:42:04 +0200
+Message-Id: <20240927094207.1650085-1-m.wilczynski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1945:b0:39f:507a:6170 with SMTP id
- e9e14a558f8ab-3a344638a4amr22219415ab.8.1727430123925; Fri, 27 Sep 2024
- 02:42:03 -0700 (PDT)
-Date: Fri, 27 Sep 2024 02:42:03 -0700
-In-Reply-To: <20240927092714.465114-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f67deb.050a0220.46d20.0015.GAE@google.com>
-Subject: Re: [syzbot] [keyrings?] [lsm?] [ext4?] possible deadlock in
- keyring_clear (2)
-From: syzbot <syzbot+1b2d1134e0b675176a15@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7djP87rfar+lGbTuYbbY+nsWu8WaveeY
+	LOYfOcdqce/SFiaLF3sbWSyurZjLbvFy1j02i8u75rBZbPvcwmax9shddov1X+czWby83MNs
+	0TaL3+L/nh3sFi37p7A48Hu8efmSxeNwxxd2j52z7rJ7bFrVyeaxeUm9R8vaY0we7/ddZfPo
+	27KK0eNS83V2j8+b5AK4orhsUlJzMstSi/TtErgyXr40KpjPU3HhdB9zA+N5zi5GTg4JAROJ
+	3xvXsXUxcnEICaxglJg66xszhPOFUWLOz63sEM5nRokF7fuZYFqO39kDlVjOKLHo03QWkISQ
+	wBtGiaPdmSA2m4CRxIPl81lBikQE3jFKTLp2mwnEYRboBVqydybYKGEBd4mVPzcwgtgsAqoS
+	j2ceAVrOwcErYC+x/YEHxDZ5if0HzzKD2LwCghInZz4BW8YMFG/eOhvsVgmBZk6JQ397mSEa
+	XCT+/lsDZQtLvDq+hR3ClpH4v3M+1Av5Eg+2foKqqZHY2XMcyraWuHPuFxvIDcwCmhLrd+mD
+	mBICjhK37lhAmHwSN94KQlzAJzFp23RmiDCvREebEMQMNYmpPb1wO8+t2Aa100NiwYeV0JCK
+	lXj7vpd1AqPCLCR/zULy1yyEExYwMq9iFE8tLc5NTy02zEst1ytOzC0uzUvXS87P3cQITHKn
+	/x3/tINx7quPeocYmTgYDzFKcDArifBanfuaJsSbklhZlVqUH19UmpNafIhRmoNFSZxXNUU+
+	VUggPbEkNTs1tSC1CCbLxMEp1cBUfWr+I+k09WvL9j0T/rJn78Pnsjei7kxumvigvUbrVq3V
+	T1t5qxMF2+5zeUveXGQtrdfGr6r0YMsmZyV776Vilg33GMzulDKU2aXfqf9ZEjNp6v3FX1MV
+	tz7/Leo73ZBlx9Op9o2PaqtFWJaxX1ZPFAs4fHaZpBbHP/M1X+Irot+uYtgpou7iOGHfnwXx
+	P70nzApeluRk+IUv62wHl8ScD/U6bvu6jO9GPmLaUphlqlGc0Dhb23GS432/zWUXQs/EXPzn
+	frrgwVK2jS1bdorZHDxw5ZbRAu/ug2k8EYXM6+/aB77W3Oz+R/4wd8Tiji/n2+Se838Ik5EU
+	/mDq3tj66c+6HfO7t3QqZsy1tdJSYinOSDTUYi4qTgQAFnDi8uEDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsVy+t/xe7pfa7+lGayZI2ex9fcsdos1e88x
+	Wcw/co7V4t6lLUwWL/Y2slhcWzGX3eLlrHtsFpd3zWGz2Pa5hc1i7ZG77Bbrv85nsnh5uYfZ
+	om0Wv8X/PTvYLVr2T2Fx4Pd48/Ili8fhji/sHjtn3WX32LSqk81j85J6j5a1x5g83u+7yubR
+	t2UVo8el5uvsHp83yQVwRenZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZ
+	pKTmZJalFunbJehlvHxpVDCfp+LC6T7mBsbznF2MnBwSAiYSx+/sYe9i5OIQEljKKDH/SiMz
+	REJG4lr3SxYIW1jiz7UuNoiiV4wSL68cZQVJsAkYSTxYPp8VJCEi8IdR4vqzN4wgDrPAREaJ
+	m3PvM4JUCQu4S6z8uQHMZhFQlXg88wjQCg4OXgF7ie0PPCA2yEvsP3gWbDOvgKDEyZlPwDYz
+	A8Wbt85mnsDINwtJahaS1AJGplWMIqmlxbnpucWGesWJucWleel6yfm5mxiBMbbt2M/NOxjn
+	vfqod4iRiYPxEKMEB7OSCK/Vua9pQrwpiZVVqUX58UWlOanFhxhNgc6byCwlmpwPjPK8knhD
+	MwNTQxMzSwNTSzNjJXFet8vn04QE0hNLUrNTUwtSi2D6mDg4pRqY3O78qd4admr15+DkdQJe
+	SyNKhaK8I2ffKJd88kTlyfw52hbvOR/a1v7+MSNC24j1qK7+fV7frrY1Dvlbpx/dfeCHUlFO
+	F4+aQ8+f2VGfOq7PnuZfUK4Qe7nDyKhbx8qA8+vB3qUzAwt5g6qq2wqLvNeIPEn5O+/R9M3N
+	XQWZU091PSrVnHokpV372626Hft2THt4x79gZpHv5BNhD22en3R+6D8v1d/O7qWaZuXFovqM
+	ZQGz1uhEL9tc+vmnWGWT3D2JiXK5tgd331uVcUT7q6Rm00r3daz/enyDKxRKnE5MnPnI/TLX
+	xIIz9e17pLcuWDPp1MUl27R3qx2Ye4nLJswhavPETxtfHbVYdvnTDiWW4oxEQy3mouJEAEzB
+	mVA6AwAA
+X-CMS-MailID: 20240927094213eucas1p22449c12701e67bc29371a6a6cb6f72a2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240927094213eucas1p22449c12701e67bc29371a6a6cb6f72a2
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240927094213eucas1p22449c12701e67bc29371a6a6cb6f72a2
+References: <CGME20240927094213eucas1p22449c12701e67bc29371a6a6cb6f72a2@eucas1p2.samsung.com>
 
-Hello,
+The T-head TH1520 SoC supports a hardware mailbox that enables two cores
+within the SoC to communicate and coordinate [1]. One example of such
+coordination would be cooperation with the T-Head E902 core, which is
+responsible for power, clock, and resource management. For example, in
+the specific case of the BXM-4-64 GPU, it needs to be powered on by the
+E902 core, and the kernel running on the E910 needs to 'ask' the
+firmware running on the E902 core to enable power to the GPU island.
+Given recent advancements in work on the upstream GPU driver [2], there
+is an emerging need to get this code in the mainline kernel.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in keyring_clear
+Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf [1]
+Link: https://gitlab.freedesktop.org/imagination/linux-firmware/-/issues/1 [2]
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-syzkaller-11558-g075dbe9f6e3c-dirty #0 Not tainted
-------------------------------------------------------
-kswapd0/73 is trying to acquire lock:
-ffff88803d6355d8 (&type->lock_class){+.+.}-{3:3}, at: keyring_clear+0xb2/0x350 security/keys/keyring.c:1655
+Michal Wilczynski (3):
+  mailbox: Introduce support for T-head TH1520 Mailbox driver
+  dt-bindings: mailbox: Add thead,th1520-mailbox bindings
+  riscv: dts: thead: Add mailbox node
 
-but task is already holding lock:
-ffffffff8ea37100 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6844 [inline]
-ffffffff8ea37100 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7226
+ .../bindings/mailbox/thead,th1520-mbox.yaml   |  84 +++
+ MAINTAINERS                                   |   2 +
+ arch/riscv/boot/dts/thead/th1520.dtsi         |  13 +
+ drivers/mailbox/Kconfig                       |  10 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/mailbox-th1520.c              | 551 ++++++++++++++++++
+ 6 files changed, 662 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
+ create mode 100644 drivers/mailbox/mailbox-th1520.c
 
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (fs_reclaim){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
-       __fs_reclaim_acquire mm/page_alloc.c:3834 [inline]
-       fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3848
-       might_alloc include/linux/sched/mm.h:327 [inline]
-       slab_pre_alloc_hook mm/slub.c:4037 [inline]
-       slab_alloc_node mm/slub.c:4115 [inline]
-       __kmalloc_cache_noprof+0x3d/0x2c0 mm/slub.c:4291
-       kmalloc_noprof include/linux/slab.h:878 [inline]
-       kzalloc_noprof include/linux/slab.h:1014 [inline]
-       assoc_array_insert+0xfe/0x33e0 lib/assoc_array.c:980
-       __key_link_begin+0xe5/0x1f0 security/keys/keyring.c:1314
-       key_instantiate_and_link+0x2a0/0x510 security/keys/key.c:525
-       add_master_key_user+0x222/0x2e0 fs/crypto/keyring.c:400
-       add_new_master_key+0x2f8/0x5d0 fs/crypto/keyring.c:451
-       do_add_master_key fs/crypto/keyring.c:529 [inline]
-       add_master_key+0x419/0x970 fs/crypto/keyring.c:579
-       fscrypt_ioctl_add_key+0x3e9/0x590 fs/crypto/keyring.c:752
-       __ext4_ioctl fs/ext4/ioctl.c:1537 [inline]
-       ext4_ioctl+0x18b1/0x5590 fs/ext4/ioctl.c:1626
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:907 [inline]
-       __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&type->lock_class){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3158 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3277 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
-       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
-       keyring_clear+0xb2/0x350 security/keys/keyring.c:1655
-       fscrypt_put_master_key+0xc8/0x190 fs/crypto/keyring.c:79
-       put_crypt_info+0x275/0x320 fs/crypto/keysetup.c:548
-       fscrypt_put_encryption_info+0x40/0x60 fs/crypto/keysetup.c:753
-       ext4_clear_inode+0x15b/0x1c0 fs/ext4/super.c:1525
-       ext4_evict_inode+0xabc/0xf50 fs/ext4/inode.c:323
-       evict+0x4e8/0x9b0 fs/inode.c:723
-       __dentry_kill+0x20d/0x630 fs/dcache.c:615
-       shrink_kill+0xa9/0x2c0 fs/dcache.c:1060
-       shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1087
-       prune_dcache_sb+0x10f/0x180 fs/dcache.c:1168
-       super_cache_scan+0x34f/0x4b0 fs/super.c:221
-       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
-       shrink_slab_memcg mm/shrinker.c:548 [inline]
-       shrink_slab+0x878/0x14d0 mm/shrinker.c:626
-       shrink_one+0x43b/0x850 mm/vmscan.c:4818
-       shrink_many mm/vmscan.c:4879 [inline]
-       lru_gen_shrink_node mm/vmscan.c:4957 [inline]
-       shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
-       kswapd_shrink_node mm/vmscan.c:6765 [inline]
-       balance_pgdat mm/vmscan.c:6957 [inline]
-       kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               lock(&type->lock_class);
-                               lock(fs_reclaim);
-  lock(&type->lock_class);
-
- *** DEADLOCK ***
-
-2 locks held by kswapd0/73:
- #0: ffffffff8ea37100 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6844 [inline]
- #0: ffffffff8ea37100 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7226
- #1: ffff888039c6c0e0 (&type->s_umount_key#32){++++}-{3:3}, at: super_trylock_shared fs/super.c:562 [inline]
- #1: ffff888039c6c0e0 (&type->s_umount_key#32){++++}-{3:3}, at: super_cache_scan+0x94/0x4b0 fs/super.c:196
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 73 Comm: kswapd0 Not tainted 6.11.0-syzkaller-11558-g075dbe9f6e3c-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2203
- check_prev_add kernel/locking/lockdep.c:3158 [inline]
- check_prevs_add kernel/locking/lockdep.c:3277 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
- down_write+0x99/0x220 kernel/locking/rwsem.c:1579
- keyring_clear+0xb2/0x350 security/keys/keyring.c:1655
- fscrypt_put_master_key+0xc8/0x190 fs/crypto/keyring.c:79
- put_crypt_info+0x275/0x320 fs/crypto/keysetup.c:548
- fscrypt_put_encryption_info+0x40/0x60 fs/crypto/keysetup.c:753
- ext4_clear_inode+0x15b/0x1c0 fs/ext4/super.c:1525
- ext4_evict_inode+0xabc/0xf50 fs/ext4/inode.c:323
- evict+0x4e8/0x9b0 fs/inode.c:723
- __dentry_kill+0x20d/0x630 fs/dcache.c:615
- shrink_kill+0xa9/0x2c0 fs/dcache.c:1060
- shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1087
- prune_dcache_sb+0x10f/0x180 fs/dcache.c:1168
- super_cache_scan+0x34f/0x4b0 fs/super.c:221
- do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
- shrink_slab_memcg mm/shrinker.c:548 [inline]
- shrink_slab+0x878/0x14d0 mm/shrinker.c:626
- shrink_one+0x43b/0x850 mm/vmscan.c:4818
- shrink_many mm/vmscan.c:4879 [inline]
- lru_gen_shrink_node mm/vmscan.c:4957 [inline]
- shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
- kswapd_shrink_node mm/vmscan.c:6765 [inline]
- balance_pgdat mm/vmscan.c:6957 [inline]
- kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
-Tested on:
-
-commit:         075dbe9f Merge tag 'soc-ep93xx-dt-6.12' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b4c507980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f6cf7b6189844756
-dashboard link: https://syzkaller.appspot.com/bug?extid=1b2d1134e0b675176a15
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1545159f980000
+-- 
+2.34.1
 
 
