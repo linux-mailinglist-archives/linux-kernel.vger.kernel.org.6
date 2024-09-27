@@ -1,170 +1,200 @@
-Return-Path: <linux-kernel+bounces-341394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D29987F70
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:30:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14C89987F73
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B20E91C20B1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:30:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F9FE283B9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C74D18800E;
-	Fri, 27 Sep 2024 07:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A8717DFFF;
+	Fri, 27 Sep 2024 07:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NU6bNFyK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="DmGUjfu9"
+Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BDB165EF1
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0471B158557;
+	Fri, 27 Sep 2024 07:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727422204; cv=none; b=uboliGM3195TSSjluWfQa/HuB2II/+lBN2FNkBgOkhoJrzO6vKZYruMZ8tfrr7fH2P6LRC+AsQzOkFpDGnvZ13fKLx7LYRqTAxGA3HGZwpCVjoE/HIdQtgm0WZRbaumnstbE731ZDTDJFBn1tgx7LmrVfPAjLmtiY+WnXqUq0x0=
+	t=1727422221; cv=none; b=eNPaNy9F5jzmxkx1TTj/u22uMsdD+8WKksBK6oZ8LYiN++iE3XKrw65DwRpmndIYwl8/EYep0b7zwzo7/sRRYukOWMYqVS1A2cM6DMsAtlijWgQWzML9WzpiNFRBF58jD4UadaLgD8mMBp3NWaiY65DXn2+w64w7B+YmoKRyVrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727422204; c=relaxed/simple;
-	bh=75P1+FkwfrhA+nc+gMZONlm4DJ+b9tTbwaEl7CaM2lY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BkJM3QgT90T4O0bYEknppcMaqy/77XPVf4m5t0dsJTLuiDOXFfUrAXtNOwBXjOCginVXEL2fRYR1xnlllxDke67eOV6BrI3aKLEWFV+YSl8dbmH5Kn3feQNdFdhso4dDrNqFo9JlHXH/1tTDQNLa8ZM4ecKj7wtMnxb1O99TEcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NU6bNFyK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A48C4CEC4;
-	Fri, 27 Sep 2024 07:30:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727422204;
-	bh=75P1+FkwfrhA+nc+gMZONlm4DJ+b9tTbwaEl7CaM2lY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=NU6bNFyKNJI927X38EjR1ERVurW8b3+bSGgZTc1XLlJDpvsxLvK87mnKm9UlqCvJc
-	 6sqJ3FzeLyUU2z++ohRVfuTcC7WBjYs7KqXEbxFOSCqx3MwtjAc4tf3DhVOhyhNi4+
-	 4sCxpOWVmMQr2C8mNYcE0fmvd1Q+yAPzLalI9L0Q=
-Date: Fri, 27 Sep 2024 09:29:51 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
-	Saravana Kannan <saravanak@google.com>
-Subject: [GIT PULL] Driver core changes for 6.12-rc1
-Message-ID: <ZvZe76mpNqBp18Ts@kroah.com>
+	s=arc-20240116; t=1727422221; c=relaxed/simple;
+	bh=X1EbbchWBqe7kbUWUcRB4Udab8NrA9vLhm7bmk0PrAU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vap17U/EgpGLE81X/xpj+kk/FsyXpupURgy55aRcpea6CiVeGv4caKOkdAEaSEqHs9IuwQqov7uO5qW7ew1AU80QW3UFKM44qXCry3q5wXVRulEa/GlG7bNndXzHyj3ZUwn/U7umbilmQAARjFOv876A5fLBCH5YIKJtE/nFoKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=DmGUjfu9; arc=none smtp.client-ip=62.96.220.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
+Received: from localhost (localhost [127.0.0.1])
+	by a.mx.secunet.com (Postfix) with ESMTP id 81E2E2087B;
+	Fri, 27 Sep 2024 09:30:11 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+	by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 70YR9yFkRM4s; Fri, 27 Sep 2024 09:30:10 +0200 (CEST)
+Received: from cas-essen-01.secunet.de (rl1.secunet.de [10.53.40.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by a.mx.secunet.com (Postfix) with ESMTPS id 8AAF820520;
+	Fri, 27 Sep 2024 09:30:10 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 a.mx.secunet.com 8AAF820520
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
+	s=202301; t=1727422210;
+	bh=Y7bDXPx3wgFkMtrWB50i7268p5aSWwld5cDeHJN70vQ=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
+	b=DmGUjfu9XoTS7oIw+WXmoCVkhHu0yVAdG0kzZ/O+q/NHPTxR/YpPCjdoTOnmyWXIx
+	 oyr18Wp/ospvb5o3Qc9B+Navo7ljSxyi+btD5A/A3DMow7vlMHSicmJswM5w+ducwP
+	 LzZ36qkvEzMytxAdUbiIcgZOsztRp9oM3QpLwL1FvMFosdD8Cc9Op6KoKzIMHhVoB7
+	 cphIBQ1Xh6jFunmSAY8eOpj4e+FqgCy8cCLA+fL8lcrXQn1AeUrJqgNCoCCTuqDLiS
+	 Jy9tTrHyyvMxfostnOuwoO11pgTOlflpd4WMITcLgLePfQukY9LFE6mO3Sr/rxKkkl
+	 8tloe3qZjil1A==
+Received: from mbx-essen-02.secunet.de (10.53.40.198) by
+ cas-essen-01.secunet.de (10.53.40.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 27 Sep 2024 09:30:10 +0200
+Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-02.secunet.de
+ (10.53.40.198) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 27 Sep
+ 2024 09:30:10 +0200
+Received: by gauss2.secunet.de (Postfix, from userid 1000)
+	id E96A23181523; Fri, 27 Sep 2024 09:30:09 +0200 (CEST)
+Date: Fri, 27 Sep 2024 09:30:09 +0200
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: Sabrina Dubroca <sd@queasysnail.net>
+CC: <pabeni@redhat.com>, syzbot
+	<syzbot+cc39f136925517aed571@syzkaller.appspotmail.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <herbert@gondor.apana.org.au>,
+	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [net?] UBSAN: shift-out-of-bounds in
+ xfrm_selector_match (2)
+Message-ID: <ZvZfAQ4IGX/3N/Ne@gauss3.secunet.de>
+References: <00000000000088906d0622445beb@google.com>
+ <66f33458.050a0220.457fc.001e.GAE@google.com>
+ <ZvPvQMDvWRygp4IC@hog>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <ZvPvQMDvWRygp4IC@hog>
+X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
+ mbx-essen-02.secunet.de (10.53.40.198)
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
 
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+On Wed, Sep 25, 2024 at 01:08:48PM +0200, Sabrina Dubroca wrote:
+> 2024-09-24, 14:51:20 -0700, syzbot wrote:
+> > syzbot has found a reproducer for the following issue on:
+> > 
+> > HEAD commit:    151ac45348af net: sparx5: Fix invalid timestamps
+> > git tree:       net-next
+> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=15808a80580000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=37c006d80708398d
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=cc39f136925517aed571
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122ad2a9980000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1387b107980000
+> 
+> syzbot managed to create an SA with:
+> 
+> usersa.sel.family = 0
+> usersa.sel.prefixlen_s = 128
+> usersa.family = AF_INET
+> 
+> Because of the AF_UNSPEC selector, verify_newsa_info doesn't put
+> limits on prefixlen_{s,d}. But then copy_from_user_state sets
+> x->sel.family to usersa.family (AF_INET).
+> 
+> So I think verify_newsa_info should do the same conversion before
+> checking prefixlen:
+> 
+> 
+> diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+> index 55f039ec3d59..8d06a37adbd9 100644
+> --- a/net/xfrm/xfrm_user.c
+> +++ b/net/xfrm/xfrm_user.c
+> @@ -201,6 +201,7 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
+>  {
+>  	int err;
+>  	u8 sa_dir = attrs[XFRMA_SA_DIR] ? nla_get_u8(attrs[XFRMA_SA_DIR]) : 0;
+> +	u16 family = p->sel.family;
+>  
+>  	err = -EINVAL;
+>  	switch (p->family) {
+> @@ -221,7 +222,10 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
+>  		goto out;
+>  	}
+>  
+> -	switch (p->sel.family) {
+> +	if (!family && !(p->flags & XFRM_STATE_AF_UNSPEC))
+> +		family = p->family;
+> +
+> +	switch (family) {
+>  	case AF_UNSPEC:
+>  		break;
+>  
+> 
+> 
+> Steffen, does that make sense?
 
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+Yes, it does. Later, in copy_from_user_state() we do
 
-are available in the Git repository at:
+if (!x->sel.family && !(p->flags & XFRM_STATE_AF_UNSPEC))
+	x->sel.family = p->family;
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/driver-core-6.12-rc1
+anyway.
 
-for you to fetch changes up to eb46cb321f1f3f3102f4ad3d61dd5c8c06cdbf17:
+> Without this, we have prefixlen=128 when we get to addr4_match, which
+> does a shift of (32 - prefixlen), so we get
+> 
+> UBSAN: shift-out-of-bounds in ./include/net/xfrm.h:900:23
+> shift exponent -96 is negative
+> 
+> 
+> Maybe a check for prefixlen < 128 would also be useful in the
+> XFRM_STATE_AF_UNSPEC case, to avoid the same problems with syzbot
+> passing prefixlen=200 for an ipv6 SA. I don't know how
+> XFRM_STATE_AF_UNSPEC is used, so I'm not sure what restrictions we can
+> put. If we end up with prefixlen = 100 used from ipv4 we'll still have
+> the same issues.
 
-  Revert "driver core: don't always lock parent in shutdown" (2024-09-25 11:01:34 +0200)
+I've introduced XFRM_STATE_AF_UNSPEC back in 2008 to make
+inter addressfamily tunnels working while maintaining
+backwards compatibility to openswan that did not set
+the selector family. At least that's what I found in
+an E-Mail conversation from back then.
 
-----------------------------------------------------------------
-Driver core update for 6.12-rc1
+A check for prefixlen <= 128 would make sense in any case.
+But not sure if we can restrict that somehow further.
 
-Here is a small set of patches for the driver core code for 6.12-rc1.
+> 
+> >  __ip4_datagram_connect+0x96c/0x1260 net/ipv4/datagram.c:49
+> >  __ip6_datagram_connect+0x194/0x1230
+> >  ip6_datagram_connect net/ipv6/datagram.c:279 [inline]
+> >  ip6_datagram_connect_v6_only+0x63/0xa0 net/ipv6/datagram.c:291
+> 
+> This path also looks a bit dubious. From the reproducer, we have a
+> rawv6 socket trying to connect to a v4mapped address, despite having
+> ip6_datagram_connect_v6_only as its ->connect.
+> 
+> pingv6 sockets also use ip6_datagram_connect_v6_only and set
+> sk->sk_ipv6only=1 (in net/ipv4/ping.c ping_init_sock), but rawv6 don't
+> have this, so __ip6_datagram_connect can end up in
+> __ip4_datagram_connect. I guess it would make sense to set it in rawv6
+> too. rawv6_bind already rejected v4mapped addresses.
+> 
+> And then we could add a DEBUG_NET_WARN_ON_ONCE(!ipv6_only_sock(sk)) in
+> ip6_datagram_connect_v6_only, or maybe even call ipv6_addr_type to
+> reject v4mapped addresses and reject them like the non-AF_INET6 case.
 
-This set is the one that caused the most delay on my side, due to lots
-of last-minute reports of problems in the async shutdown feature that
-was added.  In the end, I've reverted all of the patches in that series
-so we are back to "normal" and the patch set is being reworked for the
-next merge window.
+I can't comment on that now, let me have a closer look into it.
 
-Other than the async shutdown patches that were reverted, included in
-here are:
-  - minor driver core cleanups
-  - minor driver core bus and class api cleanups and simplifications for
-    some callbacks
-  - some const markings of structures
-  - other even more minor cleanups
-
-All of these, including the last minute reverts, have been in
-linux-next, but all of the reports of problems in linux-next were before
-the reverts happened.  After the reverts, all is good.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Andy Shevchenko (5):
-      driver core: Sort headers
-      driver core: Use kasprintf() instead of fixed buffer formatting
-      driver core: Use guards for simple mutex locks
-      driver core: Make use of returned value of dev_err_probe()
-      driver core: Use 2-argument strscpy()
-
-Dr. David Alan Gilbert (1):
-      driver core: attribute_container: Remove unused functions
-
-Greg Kroah-Hartman (7):
-      Merge 6.11-rc3 into driver-core-next
-      Merge 6.11-rc4 into driver-core-next
-      Revert "driver core: fix async device shutdown hang"
-      Revert "nvme-pci: Make driver prefer asynchronous shutdown"
-      Revert "driver core: shut down devices asynchronously"
-      Revert "driver core: separate function to shutdown one device"
-      Revert "driver core: don't always lock parent in shutdown"
-
-Jann Horn (1):
-      firmware_loader: Block path traversal
-
-Jinjie Ruan (1):
-      driver core: Fix a potential null-ptr-deref in module_add_driver()
-
-Kunwu Chan (2):
-      platform: Make platform_bus_type constant
-      bus: fsl-mc: make fsl_mc_bus_type const
-
-Stuart Hayes (5):
-      driver core: don't always lock parent in shutdown
-      driver core: separate function to shutdown one device
-      driver core: shut down devices asynchronously
-      nvme-pci: Make driver prefer asynchronous shutdown
-      driver core: fix async device shutdown hang
-
-Uros Bizjak (1):
-      devres: Correclty strip percpu address space of devm_free_percpu() argument
-
-Yuesong Li (1):
-      driver:base:core: Adding a "Return:" line in comment for device_link_add()
-
-Zijun Hu (10):
-      driver core: Fix size calculation of symlink name for devlink_(add|remove)_symlinks()
-      driver core: Fix error handling in driver API device_rename()
-      driver core: bus: Return -EIO instead of 0 when show/store invalid bus attribute
-      driver core: Remove unused parameter for virtual_device_parent()
-      driver core: bus: Add simple error handling for buses_init()
-      driver core: bus: Fix double free in driver API bus_register()
-      drivers/base: Introduce device_match_t for device finding APIs
-      driver core: class: Check namespace relevant parameters in class_register()
-      driver core: Make parameter check consistent for API cluster device_(for_each|find)_child()
-      driver core: Trivially simplify ((struct device_private *)curr)->device->p to @curr
-
- drivers/base/attribute_container.c  |  48 +----------
- drivers/base/auxiliary.c            |   2 +-
- drivers/base/base.h                 |   2 +-
- drivers/base/bus.c                  |  19 ++--
- drivers/base/class.c                |  14 ++-
- drivers/base/core.c                 | 168 ++++++++++++++++++------------------
- drivers/base/dd.c                   |   2 +-
- drivers/base/devres.c               |   2 +-
- drivers/base/driver.c               |   2 +-
- drivers/base/firmware_loader/main.c |  30 +++++++
- drivers/base/module.c               |  14 +--
- drivers/base/platform.c             |   2 +-
- drivers/bus/fsl-mc/fsl-mc-bus.c     |   2 +-
- include/linux/attribute_container.h |   6 --
- include/linux/auxiliary_bus.h       |   2 +-
- include/linux/device/bus.h          |   6 +-
- include/linux/device/class.h        |   2 +-
- include/linux/device/driver.h       |   2 +-
- include/linux/fsl/mc.h              |   2 +-
- include/linux/platform_device.h     |   2 +-
- 20 files changed, 165 insertions(+), 164 deletions(-)
 
