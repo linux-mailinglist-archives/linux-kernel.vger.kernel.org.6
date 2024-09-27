@@ -1,146 +1,116 @@
-Return-Path: <linux-kernel+bounces-342121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC269988ACE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:38:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 774FC988AD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48851B21311
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:38:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01522B22C37
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0B01C243C;
-	Fri, 27 Sep 2024 19:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813611C2449;
+	Fri, 27 Sep 2024 19:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kpc8WZ8R"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="tf9nekx0"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521921C2423;
-	Fri, 27 Sep 2024 19:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8469D1C2423;
+	Fri, 27 Sep 2024 19:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727465885; cv=none; b=tC2XWLlm6A3fSVZ5EFFUBw5FBBcP3odEUCbByc6Mt+nl7kj9GROfLRU4lNGuhkHWJ3+SfoRwKgQXZzWWHm7h3VOLB+FopdmQi1V/HdgEHWO9VnkdH9Xnb6ZTPicFsd3+hy3NQTupicttNxBf6uPWz5+DMQJGpwg+9geB9Gc+smM=
+	t=1727465899; cv=none; b=Xogfm9LVjFIm77r9wnCaPYKbIVZ63ySXX1dWzDxqVNl85EoC7WZfs6wnI9z05onE5nf737bu85gNLOvKQ5P9rB7y63yNUiwVN7OZtP9/opXdxEtTbUjFOihwbWOPqKDoGNSEsPfegopskTxK7RzLxZrhZ6oO797XUIB17irh6ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727465885; c=relaxed/simple;
-	bh=kv3QxqsVW2dfG1YNDz85KvG3puNGvwJQDHIA0s7DHio=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uFzk5Tr/d5EFfBSs06MgWYvgUhT0mkI6KnLlpcUVjPO3ULwoAXIa2M23Fk4UYYFqB6AUpGhIuYsAcYqR2AWXZB4PIDL3GibZPvrgp24egXvX19uiygrYEuBPC9Lm+BUV2yB/RuZMlT/HxnGEz62qaxmf7jaTI+RL+ZIBLObS+EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kpc8WZ8R; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48RD05Cd026378;
-	Fri, 27 Sep 2024 19:37:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=b0Lssv7cUe0U/qYMod4vjdhA
-	HSFbc3w8JAK/104B438=; b=Kpc8WZ8RbyC5RH4IZ4B8ooaujqs7MTTk7ysCyiGG
-	BzfFXmWALH/SzhmzoqNIcunxP4C/2ASd+mdiju3ggWGGDlDwK+rnO6kf1k9isZEz
-	H/ctu94hzy+7Kx73FztGlShHwtITBKK0WlAE/nzg9BwoXgpD0lMrnohxusC4PATJ
-	ZXFISU1etguRFgNe4TrLIaW1/75jKjzPlbQIX3yvNiS3I//kK3mbQ0XOLN7xrymf
-	EcI8V9Um96SGJMGzw7wJjz5F/cDMwxCBel97uivcdMNR4+gC85GGNhHGFWhnc3ne
-	J3hR/Ev0f5j/qIn48omIcs27MQwYOCCSh2CzQ52gBGNXGQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41ww708wmf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 19:37:55 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48RJbsti021025
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 19:37:54 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 27 Sep 2024 12:37:52 -0700
-Date: Sat, 28 Sep 2024 01:07:43 +0530
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] remoteproc: qcom: Fix NULL pointer in glink_subdev_stop()
-Message-ID: <ZvcJhzDmdhO/wbKq@hu-mojha-hyd.qualcomm.com>
-References: <20240925103351.1628788-1-quic_mojha@quicinc.com>
- <ZvTYA1Rg6DrEEabk@hu-bjorande-lv.qualcomm.com>
+	s=arc-20240116; t=1727465899; c=relaxed/simple;
+	bh=CxQBOMsATly929QQSMQ/jP51+X4IBzG9suHWt186Pdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UTZ1jYJATqxk7pie4L1dk3rF/bjUNB12hKVfQC9KquOSpTNovsvRxxAIibS07JjUlhMnABrQVUdA8tK9G7bCLLjdfwKn8o5zi8NqixLy+7shi2efHmZYdyd+shFd8bxvMbo3xQbAiIgArF45d+Hu55tcdv0fudmBfFhVIcfWHQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=tf9nekx0; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NXSCHIRP+95oD988ODIFXfHC/wOJhCYIutUrPYPipXM=; b=tf9nekx02vfwZyhH3wzXalGviV
+	kjIZNSNqdCDEkCXsnjP0uSNXUJysMgmta+wTyvrip5va/5/UOBfmZQCUCxJpGrBKNv+dtoH3M6P+6
+	kH1+sKT1ZvODlxoSHSgxujBWxi5Ez2wf1/B8ZZIfni5lVQpf2tbGRxniADjo4YoEInD2QQ1C7p0hv
+	wc4lxU/U7C9wih75+exLEWu3fDwMZokClccmU683lE8oNZjlIBSi0UsdznwXFK8nSUK76j20FjK5H
+	oT3bZOIDBTE2yDTqLZPwF1KpqNksK72kfTB57sqpeImo79wney1JdkYZ1UdO5djXFA+NnL3FBO649
+	3WMN2YIg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1suGn3-0000000G3O9-2vXk;
+	Fri, 27 Sep 2024 19:38:09 +0000
+Date: Fri, 27 Sep 2024 20:38:09 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] rust: file: add f_pos and set_f_pos
+Message-ID: <20240927193809.GV3550746@ZenIV>
+References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+ <20240926-b4-miscdevice-v1-2-7349c2b2837a@google.com>
+ <20240926220821.GP3550746@ZenIV>
+ <20240926224733.GQ3550746@ZenIV>
+ <CAH5fLgick=nmDFd1w5zLSw9tVXMe-u2vk3sBbG-HZsPEUtYLVw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZvTYA1Rg6DrEEabk@hu-bjorande-lv.qualcomm.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: BC8v580HNiGLCxPdG06qZjzCkAfsd2Pu
-X-Proofpoint-ORIG-GUID: BC8v580HNiGLCxPdG06qZjzCkAfsd2Pu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 clxscore=1015
- mlxlogscore=999 priorityscore=1501 impostorscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409270143
+In-Reply-To: <CAH5fLgick=nmDFd1w5zLSw9tVXMe-u2vk3sBbG-HZsPEUtYLVw@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Sep 25, 2024 at 08:41:55PM -0700, Bjorn Andersson wrote:
-> On Wed, Sep 25, 2024 at 04:03:51PM +0530, Mukesh Ojha wrote:
-> > Multiple call to glink_subdev_stop() for the same remoteproc can happen
-> > if rproc_stop() fails from Process-A that leaves the rproc state to
-> > RPROC_CRASHED state later a call to recovery_store from user space in
-> > Process B triggers rproc_trigger_recovery() of the same remoteproc to
-> > recover it results in NULL pointer dereference issue in
-> > qcom_glink_smem_unregister().
-> > 
-> > Fix it by having a NULL check in glink_subdev_stop().
-> > 
-> > 	Process-A                			Process-B
-> > 
-> >   fatal error interrupt happens
-> > 
-> >   rproc_crash_handler_work()
-> >     mutex_lock_interruptible(&rproc->lock);
-> >     ...
-> > 
-> >        rproc->state = RPROC_CRASHED;
-> >     ...
-> >     mutex_unlock(&rproc->lock);
-> > 
-> >     rproc_trigger_recovery()
-> >      mutex_lock_interruptible(&rproc->lock);
-> > 
-> >       adsp_stop()
-> >       qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
-> >       remoteproc remoteproc3: can't stop rproc: -22
+On Fri, Sep 27, 2024 at 08:56:50AM +0200, Alice Ryhl wrote:
+
+> Okay, interesting. I did not know about all of these llseek helpers.
+> I'm definitely happy to make the Rust API force users to do the right
+> thing if we can.
 > 
-> I presume that at this point this remoteproc is in some undefined state
-> and the only way to recover is for the user to reboot the machine?
+> It sounds like we basically have a few different seeking behaviors
+> that the driver can choose between, and we want to force the user to
+> use one of them?
 
-Here, 50+ (5s) retry of scm shutdown is failing during decryption of
-remote processor memory region, and i don't think, it is anyway to do
-with remote processor state here, as a best effort more number of
-retries can be tried instead of 50 or wait for some other recovery
-command like recovery_store() to let it do the retry again from
-beginning.
+Depends...  Basically, SEEK_HOLE/SEEK_DATA is seriously fs-specific
+(unsurprisingly), and pretty much everything wants the usual relation
+between SEEK_SET and SEEK_CUR (<SEEK_CUR,n> is the same as <SEEK_SET,
+current position + n>).  SEEK_END availability varies - the simplest
+variant is <SEEK_END, n> == <SEEK_SET, size + n>, but there are
+cases that genuinely have nothing resembling end-relative seek
+(e.g. anything seq_file-related).
 
-> 
-> 
-> The check for glink->edge avoids one pitfall following this, but I'd
-> prefer to see a solution that avoids issues in this scenario in the
-> remoteproc core - rather than working around side effects of this in
-> different places.
+It's not so much available instances as available helpers; details of
+semantics may seriously vary by the driver.
 
-Handling in a remoteproc core means we may need another state something
-like "RPROC_UNKNOWN" which can be kept after one attempt of recovery
-failure and checking the same during another try return immediately with
-some log message.
+Note that once upon a time ->f_pos had been exposed to ->read() et.al.;
+caused recurring bugs, until we switched to "sample ->f_pos before calling
+->read(), pass the reference to local copy into the method, then put
+what's the method left behind in there back into ->f_pos".
 
--Mukesh
+Something similar might be a good idea for ->llseek().  Locking is
+an unpleasant problem, unfortunately.  lseek() is not a terribly hot
+codepath, but read() and write() are.  For a while we used to do exclusion
+on per-struct file basis for _all_ read/write/lseek; see 797964253d35
+"file: reinstate f_pos locking optimization for regular files" for the
+point where it eroded.
+
+FWIW, I suspect that unconditionally taking ->f_pos_mutex for llseek(2)
+would solve most of the problems - for one thing, with guaranteed
+per-struct-file serialization of vfs_llseek() we could handle SEEK_CUR
+right there, so that ->llseek() instances would never see it; for another,
+we just might be able to pull the same 'pass a reference to local variable
+and let it be handled there' trick for ->llseek().  That would require
+an audit of locking in the instances, though...
 
