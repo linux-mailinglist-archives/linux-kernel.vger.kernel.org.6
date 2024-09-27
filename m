@@ -1,141 +1,147 @@
-Return-Path: <linux-kernel+bounces-341682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0C698838C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:56:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AEC6988396
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A507928745E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:56:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B999B1F24D93
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE65B18A6CF;
-	Fri, 27 Sep 2024 11:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3163A18A95C;
+	Fri, 27 Sep 2024 11:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="b8fHkR1R";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jdiGp5DQ"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OAQWbnn7"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4578157E91
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFFB18A6D9;
+	Fri, 27 Sep 2024 11:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727438204; cv=none; b=Tpscx+lYKC8D5rPWAb/MnE6U43n2B2cWbIZKYCzLJspf08njY+rCgo3ADmDQV+gXg3hlORgtRZ5ZzJTQcmxAAn6+FlGpfcCowK9kZokpY0gepe6A0HjXoyv5tH8v0cIs9mPZKlx4lT30+lxT9i8OiqngBLZA4PZ/FR7d5lTk2H8=
+	t=1727438279; cv=none; b=RoZtrIGWrbCLQr4rmuzcioyz27eXucwErC2S0+lKwQhP/OUGHwjMjmjhabjAa7v2UYN5vvUwMpnCCxHTM1FSsWuX8P6un0/6XQkKPJsv1CcUA6uBhFkqnINODTUzSVgzJ6qzL/2+q0VtviNEbqAsf8hZQy23bSLlvC3z9hAtkKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727438204; c=relaxed/simple;
-	bh=6DmNFqmmvb83gXmF9WjsiVyXZP10O269GmkfDdyUmMo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=LcDC2/2Uy9zDZwjrHv5ejbD06ofol92UqXe+9UEczh6AbFXIgWvUhPJugmLAS0bCCj6Njfj5WxptHsilNhK04754WGsO4DRx176Zsp22XmxqutTZ1mnunWfjg6At9IYJdGlx6lsQBfAs0IicViZpi42eBOuwM6PT26lqCqVuKbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=b8fHkR1R; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jdiGp5DQ; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id BBCE113805C9;
-	Fri, 27 Sep 2024 07:56:41 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 27 Sep 2024 07:56:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727438201;
-	 x=1727524601; bh=Ay7YF/Xuo5nNlHfCru66Td9SMu/HSo2oVALKq6Fnm2w=; b=
-	b8fHkR1Rn+U1DJr0+tJSBZGI3631TwN7E1T1eXk2gB0RDtSsy5+kgtCSZLVcAWQV
-	MhliV3zGoOUgueadUA0nCdVyFVAA22K7rxTB7CFcQsQLs000ArMgX+xrVEoMQ7eF
-	Kfp64KnAckL0a+4wh5zNN9CD6CZ/2JBJ9dJmb/AbP/O2hvTA7sQctCX57yISD7od
-	T5CxHaTW2T26nnplrIzvBSfiOT0W2F9C526sI6hGvHNuYLux8e3ip4uA47NbtH/r
-	uEOUZwIwBX7JY3R0mUihBhD8EfFBxCUPMQHn0XcpslJHxinEhfEN5lpFjYB12Y+Q
-	+EZycAayGLaT2Q/GjyGX7Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727438201; x=
-	1727524601; bh=Ay7YF/Xuo5nNlHfCru66Td9SMu/HSo2oVALKq6Fnm2w=; b=j
-	diGp5DQLgrsMw7zxu42iklMeZLvUHinEA7GgbnaaRILfgf1RxAtIqEu6eiqW2OrE
-	k3VGmxZJwLEe/P/T2c8NTX1s21PT8msK7k589/q/m4C6RkwPBav649qnl2J4ARIK
-	2hSmi6OhtOon3eaZFGeKPFDnwPn+2ueAiVvqVnT/ay2NAPy3fKma3f+lMRMBfD9Z
-	Mp21FuoWnMJYSaGpeckTluNGJOTYaAbeTJ4oorrC7tS9ybHArfoJYmKm3vLNQOUI
-	u08rZXi3NRANmc07DjszujhlmV7dZtDHwVFP481N/MD5N7tE2MeZLZK0mz6SCZGV
-	zdJVunAT2jOvaSvs+JmYg==
-X-ME-Sender: <xms:eZ32ZgYX4kGVbPPs_XTlr75uogeZ5Qygikd5CBXpIackj7tKd-mr6A>
-    <xme:eZ32ZrZNceMX0N6dD4us9wQQWHOavHC428HNlbn2LHOJSGa0sE9YN-VBEt6JH4M0n
-    fxM-B0JgSY4CamFpas>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtledggeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudef
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhgvghlohhgihhorggttghhih
-    hnohdruggvlhhrvghgnhhosegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepmhgr
-    rhgvgiesuggvnhigrdguvgdprhgtphhtthhopehkvghrnhgvlhesughhqdgvlhgvtghtrh
-    honhhitghsrdgtohhmpdhrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepshgrrhgrvhgrnhgrkhesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
-    epshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghilhdrrghr
-    mhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmh
-    dqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohep
-    ihhmgieslhhishhtshdrlhhinhhugidruggvvh
-X-ME-Proxy: <xmx:eZ32Zq_yNxIIomxFYxqWVZQbH1Iw3DCWl35sCtIo7HHY2YS-8mQBEg>
-    <xmx:eZ32Zqr6EsZLS_fcYlitFUwSH_jRawbIOp8FmvDGVzS6GhfDPRK_zw>
-    <xmx:eZ32Zro6RSDPlwg93-pUcBGfFaic2u91pCHDv-nUuiRQbWmbfXqWEA>
-    <xmx:eZ32ZoS5m-DfODkHL1RWKcjktB_4XE0WtSn666PTf1acte3crahqfQ>
-    <xmx:eZ32ZphJk9ACd2OgZI6jpVJsQsL8IqvtQMdH0o5Xku4S7OKpmv-rR8t2>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 1C8A52220071; Fri, 27 Sep 2024 07:56:41 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727438279; c=relaxed/simple;
+	bh=OFvMn4GwvKADxI17/MHAKauBHsI2ZCvbRnSqWFXPevw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JclU7FqQj9zAzPnDO9taQxd2o+9lvm8ghN/hUtJEWfIpRb0AkD15idldN7xqxKxW+Z3eXAFihthwENb+/l5+0w1LyVmdwnNR6PCAPeh8sdWAnxQr6oRHE1Swx0RGDOGjwXMv7OOjqy+N2bzc/Ik4uz9a9S0/l5bTlF+CMGPXtg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OAQWbnn7; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2db6e80555dso376317a91.0;
+        Fri, 27 Sep 2024 04:57:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727438277; x=1728043077; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/00YoVmyxoQD04QF3B+FPA5cgwCGWAPgMWHF0NDU/mM=;
+        b=OAQWbnn7pTpY/EQbG5C09/sChWtgtM2VRSWXQ5Xv7MNffsrx/SjOZIoU5tbRZM56cv
+         TIphql2SnHz5qWkiiRbfBYQE/YwHYHl+Wfic0ojBVLEuR3kvWbApeNNjzeQa1vsGk2r6
+         p2u9nWmzhlHNBoV4GuGbmqI+caJ1QsC2GlbZB1rf7t/IfSLnVTHNqaIQBlGtUIDZv5Bc
+         VuLHWQRu/qdbzqkdizCljUBwZxKBdAGKa4gXQa9uTsM9Tyl+Hqpw4jmj6+psjN0pA77o
+         pvCKOTPGsgHjbPITWQDHqSSXFIHrNSNoCtG1sApIHA01nWak1YejV46B6JOKtSM4yg3R
+         HDQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727438277; x=1728043077;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/00YoVmyxoQD04QF3B+FPA5cgwCGWAPgMWHF0NDU/mM=;
+        b=Fu+HwK04J3/87EO4Z3PPCvNqJI6r/UUKsXHvoFrdztudns8MLpZUM0qNdvgFCyMPC8
+         QtOiAvhSJ9T8iIwTKk/CkVBbKMMVToWZVwBtdr5J7n4nlS79K8MLA/IrRtRBpeEV+zrY
+         5pAj77Vv8Qgxv8Ya3NJpCldnFZvtrhQl4pM4p8mHMQUgRWB/4HCS+peLKAkE+YFnCj8w
+         QZU+RFpaHnHUlXJrAzbFAQw/qqEi9cKbp9XjyfMOlQvo3vru/f/PDZ26Hs1AHsDAvMf2
+         qS2ZS/wr/h/D+KGPZi6jKwXtgC3fno4eMomETg/sQjU5YCXAsViy/rjp8ReBYgxJWdaZ
+         9TAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/dTySIbtApQoPoFqYxaePvJadWIOLP2rip99FJDqnGAFmGydMuJiAHK8iU+CJhq9a95ARV878mE8a76Am@vger.kernel.org, AJvYcCVDOrqhJieQXNy8NWRj3BjrmmE6y23Tv4T97p2g9EkDCVmOo0BfPHYcAIOw91lp+zwZ31WIor865Sf75o5n@vger.kernel.org, AJvYcCXEd6HRFbhgYVx2F6nXxWWVXJ4NOa5H7VNoExHvOxNKbQafYiFRCn63CZ0dXNvbZm7dWbGnkMHeUfr7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi8LR+jhUr0sh+2YlcF7CQ68PqsKuI8d4/XRnWhX1gNh6GoomY
+	AHDGHrwMDNLn2nFZY7scItqXdXTG0aQ4Jwnlnme/v7T6bQfgdAXRXDp4FppSMBVly85NgV7E+wu
+	fCd2G2/ynYT5sMBfJKwoQsn5/4Xk=
+X-Google-Smtp-Source: AGHT+IFMYD0OH+mms5PX41lPPzr/Ohq/r9pchznWtwGPOOpsDLVNm08dDIYqmANikx8KUubtMRcg72JLma6cxaU0Aik=
+X-Received: by 2002:a17:90a:68ce:b0:2d8:e7ef:7d23 with SMTP id
+ 98e67ed59e1d1-2e0b8d7c62cmr1427986a91.4.1727438277454; Fri, 27 Sep 2024
+ 04:57:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 27 Sep 2024 11:56:20 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Saravana Kannan" <saravanak@google.com>, "Marek Vasut" <marex@denx.de>
-Cc: linux-arm-kernel@lists.infradead.org, kernel@dh-electronics.com,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Fabio Estevam" <festevam@gmail.com>,
- "Jeff Johnson" <quic_jjohnson@quicinc.com>,
- "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>,
- "Sascha Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>,
- imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Message-Id: <dbdb9141-a345-4a17-becb-29e69a494e59@app.fastmail.com>
-In-Reply-To: 
- <CAGETcx-q7+DGhPYd3QrsPh7O_0HU7T=NhaJYp0Fu7YW2zwbo7Q@mail.gmail.com>
-References: <20240926213729.2882045-1-marex@denx.de>
- <CAGETcx-q7+DGhPYd3QrsPh7O_0HU7T=NhaJYp0Fu7YW2zwbo7Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] soc: imx8m: Probe the SoC driver as platform driver
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20240926-preemption-a750-t-v6-0-7b6e1ef3648f@gmail.com> <20240926-preemption-a750-t-v6-4-7b6e1ef3648f@gmail.com>
+In-Reply-To: <20240926-preemption-a750-t-v6-4-7b6e1ef3648f@gmail.com>
+From: Connor Abbott <cwabbott0@gmail.com>
+Date: Fri, 27 Sep 2024 12:57:46 +0100
+Message-ID: <CACu1E7HEZztQ3bctuVdrwLCVY2oJ_01AyeKdwCuuB6gmsPurpg@mail.gmail.com>
+Subject: Re: [PATCH v6 04/11] drm/msm: Add CONTEXT_SWITCH_CNTL bitfields
+To: Antonino Maniscalco <antomani103@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Neil Armstrong <neil.armstrong@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024, at 23:39, Saravana Kannan wrote:
+In the future, the right thing to do is open a mesa MR with just the
+register changes and then copy the file from mesa once it's merged,
+because all of the XML files are supposed to flow from mesa to keep
+mesa and the kernel in sync. I've opened a mesa MR [1] based on this
+that will hopefully get quickly acked and merged.
+
+Connor
+
+[1] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/31422
+
+On Thu, Sep 26, 2024 at 10:17=E2=80=AFPM Antonino Maniscalco
+<antomani103@gmail.com> wrote:
 >
-> Also, you might want to check that your list of probed devices doesn't
-> change without any async probing or this patch vs with async probing
-> and this patch. Quick way to get list of successfully probed devices
-> is:
-> # find /sys/devices -name driver
+> Add missing bitfields to CONTEXT_SWITCH_CNTL in a6xx.xml.
 >
-> Arnd,
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8450-HDK
+> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/registers/adreno/a6xx.xml | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 >
-> Why is soc_device_match() doing a bus_for_each_dev(&soc_bus_type,...)?
-> Are the real use cases where more than one soc device can be
-> registered with soc_device_register()?
+> diff --git a/drivers/gpu/drm/msm/registers/adreno/a6xx.xml b/drivers/gpu/=
+drm/msm/registers/adreno/a6xx.xml
+> index 2dfe6913ab4f52449b76c2f75b2d101c08115d16..fd31d1d7a11eef7f38dcc2975=
+dc1034f6b7a2e41 100644
+> --- a/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
+> +++ b/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
+> @@ -1337,7 +1337,12 @@ to upconvert to 32b float internally?
+>                 <reg32 offset=3D"0x0" name=3D"REG" type=3D"a6x_cp_protect=
+"/>
+>         </array>
+>
+> -       <reg32 offset=3D"0x08A0" name=3D"CP_CONTEXT_SWITCH_CNTL"/>
+> +       <reg32 offset=3D"0x08A0" name=3D"CP_CONTEXT_SWITCH_CNTL">
+> +               <bitfield name=3D"STOP" pos=3D"0" type=3D"boolean"/>
 
-Anything can register a soc_device, and I think there is a case
-where both the actual SoC and a firmware driver each register
-one, see drivers/firmware/smccc/soc_id.c and 
-drivers/firmware/imx/imx-scu-soc.c.
+This bit isn't set to 1 when it's stopped, it's set to
 
-Not sure how common this is, but this was something that people
-asked for when we created the interface.
-
-      Arnd
+> +               <bitfield name=3D"LEVEL" low=3D"6" high=3D"7"/>
+> +               <bitfield name=3D"USES_GMEM" pos=3D"8" type=3D"boolean"/>
+> +               <bitfield name=3D"SKIP_SAVE_RESTORE" pos=3D"9" type=3D"bo=
+olean"/>
+> +       </reg32>
+>         <reg64 offset=3D"0x08A1" name=3D"CP_CONTEXT_SWITCH_SMMU_INFO"/>
+>         <reg64 offset=3D"0x08A3" name=3D"CP_CONTEXT_SWITCH_PRIV_NON_SECUR=
+E_RESTORE_ADDR"/>
+>         <reg64 offset=3D"0x08A5" name=3D"CP_CONTEXT_SWITCH_PRIV_SECURE_RE=
+STORE_ADDR"/>
+>
+> --
+> 2.46.1
+>
 
