@@ -1,263 +1,178 @@
-Return-Path: <linux-kernel+bounces-341359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D30BF987EFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:57:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB68D987F00
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DE7C281BB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:57:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1FA628159E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828EB179647;
-	Fri, 27 Sep 2024 06:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC0A17A59B;
+	Fri, 27 Sep 2024 06:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="baAYrfza"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SECq03ZU"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2A4179652
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 06:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727420201; cv=fail; b=hhELt+txCiWcwxoN9DoJvRfkLBEMJJJ6Gl6PwkAI2Njnpea0ovfeMtSG+ja0Jkd7ToGEE6SXKBW/+bKP6V83Vxcx6gu04b6Jgvn/lqVya/EnqEhfc8JlpjoWUnroIwtfLkzhV4Lo0sv/9V2ZdNRdlLQ92kEsLQE1FhGoEOx2CKs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727420201; c=relaxed/simple;
-	bh=6MpUKYwCfZ3w6ZSsXWzizMcCe8HQk26DzM2UbdlQ+0E=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=b5hPNJRKfAjVsFEGxmj5QaPiC3I33oVkD6t/7Nx+ZXFQ382Vb4JNEuzV/JGMxJQm7U9BwECG0qRl8jQr8sOS1mjhnpQEGVmd3NBnA/8Tp+YsXdc8Ky8yV7HpWgqgchNr6qKGJaLv57/tCu9TolOdUhHzv8w5wihHw99lRUl16pQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=baAYrfza; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727420200; x=1758956200;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=6MpUKYwCfZ3w6ZSsXWzizMcCe8HQk26DzM2UbdlQ+0E=;
-  b=baAYrfza4Kd15C9NeBC3dn04/l7VJUsuJRzT49zvBikrfSfhbCsoeuyA
-   DEl5Lq/SQAIIyYREu/jM7RK+P2PoOxM7lCewV53ouP6bs1xbfKZpMdkGc
-   QpRJzGoxJLR+ziZSpuebjC4Ur/Y2gVpsZU7G7KV4x19JODeLYqeR06z1r
-   5xrDwFClWlm/jiNiDQPD0tHV6SfDNNLrGh22zqpaqIoBI3F2SutcNyx2T
-   9lPSaqBPT4nBiPlTafffzCtR89y/Qjhdv8mOotgsLvNo7iDDZVkkVo9wD
-   lsxQt33wRdW37mYQxmp8IhePZpBGvLO+ikv/huniN+iZ2wZUzoCn/xGVP
-   g==;
-X-CSE-ConnectionGUID: 1G74hDLIRKKjzBdtdKVbyA==
-X-CSE-MsgGUID: vUXIAEtRRGOYBd0Pl/jeJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26357305"
-X-IronPort-AV: E=Sophos;i="6.11,157,1725346800"; 
-   d="scan'208";a="26357305"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 23:56:39 -0700
-X-CSE-ConnectionGUID: xFlww93SRI+wUWXPPPQm5g==
-X-CSE-MsgGUID: BiVNccdxTROZWu+alPABGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,157,1725346800"; 
-   d="scan'208";a="76807804"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Sep 2024 23:56:38 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 26 Sep 2024 23:56:37 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 26 Sep 2024 23:56:37 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 26 Sep 2024 23:56:37 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 26 Sep 2024 23:56:37 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YlcaU2SQiwBl1I5NjV1gp8IRIL8fJRxjaSD73FTpdvN/Fw4CWfLK5WyGl/ZTuHEULiQt3oyJZLR4RNwL8MewuHkJrVTHjVtRH02W8pN97SoBKfEnoP2duXN2SMELClONk6gvFpJIr0Lq0LrmBY7g3A9rQLS7C05Xqm+5aBkiV1SUvslqHQ5GxdcH36jSVBspEh5dc39BatPMCe3BU7OQVoJY04a24AsDERHRgiY0PwbS6vPu3W6WT4NliN3hIzeoyLlh7Dg/cmT4QlDp4QvQKvQxR4XWoajwfhm8sovrg7ovW9CuxqItR+DUSMzUQyYZ0Lmlv3jhKRwptU1bKutM7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NEkZ67Q6RbkknWOeIyNm/8yYMbnV4fmSW2yJCRtkjmw=;
- b=apP/n7SAO8xB8dL28v50RAtKapgO+9uxMop6CV+W7I3bZMfMptGZaxKEQZs5iMlnG5vGb3wyZ0BVrmXo/80h5VWJhzeDc+Qbl9E50xyIei27Ze0GBdVTr4XH9MZ9756TsTrvVxIwA8MOZ8avJDUDlG6uHFHceJcmB5zrzv2aas4q1bj8GrF7aGM7S8TlhALcniW3LWtDxnGC2MQvd8cwscWfbxCJddI7GQoymw1lGmdAVe02urwIkiQ+EcPl+DpJh9eCtrKanUU4XkRzBnO+JlmmBNLcHp+YUI3Lbi33QlrhqHPiqGqsdvUSJOYG2k4gsgoAhmwzE5nHdB3WHIK45A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
- DM6PR11MB4641.namprd11.prod.outlook.com (2603:10b6:5:2a9::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8005.22; Fri, 27 Sep 2024 06:56:35 +0000
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce%4]) with mapi id 15.20.7982.022; Fri, 27 Sep 2024
- 06:56:35 +0000
-Date: Fri, 27 Sep 2024 14:56:18 +0800
-From: Chen Yu <yu.c.chen@intel.com>
-To: Honglei Wang <jameshongleiwang@126.com>
-CC: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>, Chunxin Zang
-	<zangchunxin@lixiang.com>, <linux-kernel@vger.kernel.org>, Chen Yu
-	<yu.chen.surf@gmail.com>, kernel test robot <oliver.sang@intel.com>, "K
- Prateek Nayak" <kprateek.nayak@amd.com>
-Subject: Re: [PATCH v2] sched/eevdf: Fix wakeup-preempt by checking
- cfs_rq->nr_running
-Message-ID: <ZvZXEqNLcJxq+8Aw@chenyu5-mobl2>
-References: <20240925085440.358138-1-yu.c.chen@intel.com>
- <fea9b64f-4ede-475d-8788-73bce88b2e3a@126.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <fea9b64f-4ede-475d-8788-73bce88b2e3a@126.com>
-X-ClientProxiedBy: MA1P287CA0010.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a00:35::18) To DM4PR11MB6020.namprd11.prod.outlook.com
- (2603:10b6:8:61::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0123415854D
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 06:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727420228; cv=none; b=OT96ybYiuS+8Zbz4/JD3Qll96EZfB14Kw+j8zHzrJaqThH7Tt5hYnhv/OVDtQRdvuz/nfzXk3s2pmh0eOJFf4q5oHgJxBaYETyS/wBub0PUNVrerp6TkatQSCEMUb0htohH2L9N96TbMsKz/1FUJxXR/3mZ2XhfuoH9eRpLxjQs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727420228; c=relaxed/simple;
+	bh=ntPXSTn0XaL1bz+NWhec/AVUqU9BTy+XXCzoOAy9NCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jjD7ZddJEQeQpDIounsA3rKKHCh9A3HcMsNNXZAEH+8bTVn58alPaadk7WWyQ2+AI8gGlpHi7V8tBOFxYjG3BoiZzTBNq0jvJ7pJStWUyc3jFoPsdIQondX/TvMqQDkoRm+TmYF5hZU0lP55yEQXJiH3JDrZ4KOTAa/mOhtUwQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SECq03ZU; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42e5e758093so15443765e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 23:57:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727420225; x=1728025025; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tqmPizVsqq4qdhBRG8AwKRaqHKBJIvPdTR51rrGTtac=;
+        b=SECq03ZU2pg9DQNujkSYfZivqpvthEnMbafx09geZ4kG+VEiy01aL+XVPziekrQJ//
+         DHMo4bPnWmOKIP1rZ7S1IOg2eNOAZ4iZcaH1q/SiVex7+KPjmGJRMtWnYw3RA55UQrdb
+         teMm8RfyDaCYPNlBi+03Wo06oiMO5zztZI5x9bWhrCmEI8J7Z+38i4l0NIDrNjoqxLVz
+         OSdz5l8Wrm1e4nDsl98RIDboD1P8GNq6wU82QIPW2pXPQcpiM7qKpuhgOf5OW1wvZ+nx
+         tU+uksxDbBStzkmayixOmu0U3YZdXQ6QgeUKt0nK90PMdMgcZEQqLXPxh1xIdU9I0+Ol
+         cBrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727420225; x=1728025025;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tqmPizVsqq4qdhBRG8AwKRaqHKBJIvPdTR51rrGTtac=;
+        b=kwDc+GKH53vYWlx88jCCRC56csUwiEKZ6KauqaHplOuVie7rSzDw2lDUIR59QQyne4
+         GZuBlwL6hqjO440HjzHw3hhdmH6Ef9nqjSRMHqVM/JoezGwDLNXN0inKFlva2+G3hkwu
+         SqypmKSvoAFBZA0Azk8Xw3Q3Oa6YgFI+fuG5qc5wr1CDHEgN4bXEym5q5EAQyWFoaJOQ
+         2IntI8RvOSTOEb3VtwuQoU7EXlYDuNAK09OD3zT0SmNo9sF6MZdy6wis793nIf6i4lfm
+         8O9C6mwtyTXq9jERtECfw1sLiaJIAcfEZQhBlVQRHDPUcNSF+NBhuk9ecwqeIicDcZ6f
+         ErNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGq8A3ojC0fRDSlO6qrdzckxw782nu0AmwH+SqJwZ57Uk2KqlvNBiSGP8nr1lykuwjZ3BflkgdZ+Lc+W0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5cD//cC47vlnoYbicZXMGqZkQRt5zBERZybE3WeQ3VbD4Dl2c
+	UrTfWmu8wInTKdSphHf3mhDKbluWFI3MRVD072p/81+aqAf86kYi3zRSVOuSWA2Nafmjam6a3VA
+	jlkthH3gxCfEv9jQ7S3u/4IYE/OgjGq3tUvzC
+X-Google-Smtp-Source: AGHT+IEL+etCLpk5OYw+YdsvWhveUaQTGppJFFWoWLIplEsVQRyrmKK2vppq4B4v8T1EMDfuPi9L4dAtpHeeA2VvdXY=
+X-Received: by 2002:a05:600c:1c81:b0:42c:bae0:f065 with SMTP id
+ 5b1f17b1804b1-42f5840cf46mr13043465e9.5.1727420225137; Thu, 26 Sep 2024
+ 23:57:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|DM6PR11MB4641:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e9e2983-40a8-4f57-0e90-08dcdec186e2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?4hCzFR1ukhqZBYSC+Ani8vq0MmgqQOfXpipZFLEIRLi+BzuXD8Zs7TamP79f?=
- =?us-ascii?Q?XELZzNiGE3ip/vzaDJjdSQExfUD0mqrU3wOGeEFIws2el5t5Bu/J9U9F2vOY?=
- =?us-ascii?Q?bhEf8xJh6qJARQz9w3WS+2U40MUjRfsHajXx3QixlIW7eHQ7rM9DCLWPjj6S?=
- =?us-ascii?Q?srVCRVmtFaYGWPxLCxtPvZWpOFpat/Col8D30gJ9bqrlaAdf+ZrujlAV41XV?=
- =?us-ascii?Q?LjjeT9KDLOmg+js4xPY0uxT1nj16uHdbw3qkV/uyrKlzARntnL8BvMhDMxS2?=
- =?us-ascii?Q?zh5v7xbB+3ysf/GfmqaIvDh+/5P5HNF4O/38KCOWMg8EKGHWKVjbiqwxfGB0?=
- =?us-ascii?Q?kKdiWSs6oB5+YfI92ciGIRn4o2lI+y+FojYOGwLZYrYG4I0nNAktQi6bdUVH?=
- =?us-ascii?Q?yx8fA9R31/DpWT5nVTpUo85zhtLGW+q+PEriAV0IloCe1+rkWaAN+/hGkOX6?=
- =?us-ascii?Q?vxLLyzNxFFhdR50PRKtqFRXFWtw5CSdu7e8pgQYEe0NYpa4E+Mizi8D8SiD7?=
- =?us-ascii?Q?R8aJzVC5Dg1hXjZ3+3V5ANMebvbvHm8BwTGSKWoBlFOLnnoXG38+567b0q0O?=
- =?us-ascii?Q?6VWfvK0k1KkG5fNbQrEERp5SIovGHK2n1ms+6EuOizOVJpHiGy5DQxcjv3mB?=
- =?us-ascii?Q?WmcqurhLTDRFBncBdFx4h/X8vm34aBYzXEJyWvxPVLNgn+oKeXhFMsWc25rt?=
- =?us-ascii?Q?ZoN26CGnltYwHx/AaI2mth3so5U8QqpvfzwkOaHpWOYMFV0tBK1KyM2P0VCA?=
- =?us-ascii?Q?zm3HNaPxrCxYXToEr1zHmzdWZM6ATTF6blP4ss1B5sAt32oKyowPlBOlDlHW?=
- =?us-ascii?Q?8KefdSsvz05Ew761vn8EtnmDSN8ac2a+DWAOeN/2If4zgoIRb2lDBuqUsJ5g?=
- =?us-ascii?Q?3g86u5lz9RnVWl9BRxCEXcssGJ9XnfeaB0OyMypgE4iewpVD/hfWgjr9tdJ0?=
- =?us-ascii?Q?x6A9G1+QXaljo68I0JBTfztnKrJ9UDdK7lDFRu3b1CKwB/UdbiYgL7zkVDov?=
- =?us-ascii?Q?KiI4p6MD5ZtrKRsKY5TaQS+J81QMsPaeK90RAj/4AagDB7X5ddvpouRuZqUk?=
- =?us-ascii?Q?DHi+uT16rMcg8EtUuyf3UOZDirQ4Kxb0bxPKtwM3CNZeRW3Os9u2+yapjyrz?=
- =?us-ascii?Q?yk7L9EK75fhgPgcBom9DzS9bd1LWnLCRt4ZrC2zE3iILnFJw7FPfUoqPK8uF?=
- =?us-ascii?Q?2cv1ufAHRkXEK7SdOihd/04M3RX/MkKEvzBpcgWJMWUhPgDS+9wyxiP/K0ex?=
- =?us-ascii?Q?2rU2lPrvwRteoh5ch4yTOv837VcCNfBhu5P0BaSw2SUFJIPddFty36tH53Zw?=
- =?us-ascii?Q?pubiSEYRXe3IVuOYQ7rnhaywYEyu5LnzMXySq8WGH1/D9HNLkSoJVIGenlPy?=
- =?us-ascii?Q?StgcbLc=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?2Zu0Y+g4G2FwuEK9rKIBMbg4WFN3On/lDpOhzAgqUJsLKBq3W5YHk33d++8b?=
- =?us-ascii?Q?KpnoLdtleTYm23znhXSCiMcRLMNql43lfCeJ7/TBkDUbTZvJXFCw50cA4gma?=
- =?us-ascii?Q?6+mjpKr5/MBXYOxp1LZf2XTC2imtbYIRIY0YRxuV5AoAgjfhgkKxbZqG250K?=
- =?us-ascii?Q?mHUrKvGl16yAhLNIpIpQxAb0PVaI3IxHk6K+s5wr0CtWGKTvwzGM/EQweHiM?=
- =?us-ascii?Q?hkCheMMGloqUH/+i65xNVCYfyvIqkah0vv7TAPxzT/8KN+ae5lIfMN4ocakX?=
- =?us-ascii?Q?k+NUlzQNTwOWqSz9gox/bPxNWVwAOj1ZJ9DdPLuiJjhmb1i9WRMJCiGTIbwT?=
- =?us-ascii?Q?aVREq0zK6UlXqQd5fOpV2f5aC1me1JEca7pDTSv7uTVcPPTLcrnFC+YQEuRm?=
- =?us-ascii?Q?b0Y7/0T5gm7PjtUCta0M8H0G812op66XJSnlCCOSkzzg8x8fKvz0kn0A5Zin?=
- =?us-ascii?Q?ttHEJ1GFS5y1NkV0KvONm85Kqb9r1DLXwmg3Y8iOZ5PzYLSwbF+J1J+4XNgU?=
- =?us-ascii?Q?kF6ccZCQO0QKca8+wilZN7TP85i62G49OVzGB6qX6QPHSHxlxSog2zGi69X7?=
- =?us-ascii?Q?QNpWqnhUwmLlzzqHUgTXn1voJoaouFDg00uVgjyWEgKTNpjy7qP3hm4kb90K?=
- =?us-ascii?Q?lkCJRAtfJ4utUpCB++65Qx7+HWlqp/9CzwvMSC3EficTBRxwFyb3g0ZttZdx?=
- =?us-ascii?Q?GjbxCPC5ikKgdstQUJVPoAWKq9RVFT9J1S6qOeN7bnldX99E9EQoX9WivC4s?=
- =?us-ascii?Q?4gIKvHMVWBvYYKxH9jnQ1uJ9+tQZoSsctH3Gz5A5WwxlUPNxy31m5pgwqGKQ?=
- =?us-ascii?Q?FZozGTltS+4sFEd8gFyd8BYAbP8M+SliycIosNmG4lwzw48ThNpu8K392Sn0?=
- =?us-ascii?Q?J/h1B65zFVomSm9IN0hsYaST04CiHwlZz0pHr5Y4EdzXLCpKwBrG85YKLcyH?=
- =?us-ascii?Q?C6IYXm5TmyvkTAG1eNXgc/X6Un18Cq4A2qK7Bx0UM5cHHRd563dkq2joLdAB?=
- =?us-ascii?Q?L93tx5iOA+yFOAZ+pUwEpq/73KaIKQzV0gugO3WCY53R15xqiaxxQiXHf75Z?=
- =?us-ascii?Q?hLqhk7hYxtHlyJEYeNfonXWbrneIkAwFlnIgHMRuIU1KqngT+l25b0+aQuN4?=
- =?us-ascii?Q?YsooE7oGUX3PqyTIFTm4ittaglaKG/gdZitzhycA+dhr9gwGN1pKATg+3DZo?=
- =?us-ascii?Q?avuj0FlU59XR1BdzXUUX9diyMAMglNsDwtVm4MoiGq+PsuPF7ePSkjFntbh/?=
- =?us-ascii?Q?AFNC+5LsScyhIgpNZXov1/x9DnAJTK+0YwN6IThX2BIX+KpoAzZ5ObgZKvSp?=
- =?us-ascii?Q?VfMjCe0nGEShUTDpRlglnH/5ijWKV7nyDds83vkAcKEJnzEqM4EpCJzP2za1?=
- =?us-ascii?Q?lBar4xjckehBd1m27DFJh0GAviYrbxtch8kWZ0XXBILoDbh+C/+7W1nBQhnS?=
- =?us-ascii?Q?x8GZRVbuaZ/zQgjvyjApihYPcObBrBYudGx8YUjTSvRx9723MZvQ1V/gdCcO?=
- =?us-ascii?Q?0G8SvB+KDHcsquPW5nHpSuqW9Gw4A+XVStS3eJp969XoWCEvMEFX7N0X+oWP?=
- =?us-ascii?Q?jqddQqNeBKeNS+ZocQYQPt+CLUHqjGFyOaUyvdyz?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e9e2983-40a8-4f57-0e90-08dcdec186e2
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 06:56:35.4810
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gWC3Uv5DnUzWsZohBNf5ARdfYOmdRGiUDnEeRNmXMfV4KknBES0RGsOQy9brPQ6zD67/UdVQyvAFKBcfgJEVOg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4641
-X-OriginatorOrg: intel.com
+References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+ <20240926-b4-miscdevice-v1-2-7349c2b2837a@google.com> <20240926220821.GP3550746@ZenIV>
+ <20240926224733.GQ3550746@ZenIV>
+In-Reply-To: <20240926224733.GQ3550746@ZenIV>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 27 Sep 2024 08:56:50 +0200
+Message-ID: <CAH5fLgick=nmDFd1w5zLSw9tVXMe-u2vk3sBbG-HZsPEUtYLVw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] rust: file: add f_pos and set_f_pos
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Honglei,
+On Fri, Sep 27, 2024 at 12:47=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> =
+wrote:
+>
+> On Thu, Sep 26, 2024 at 11:08:21PM +0100, Al Viro wrote:
+> > On Thu, Sep 26, 2024 at 02:58:56PM +0000, Alice Ryhl wrote:
+> > > Add accessors for the file position. Most of the time, you should not
+> > > use these methods directly, and you should instead use a guard for th=
+e
+> > > file position to prove that you hold the fpos lock. However, under
+> > > limited circumstances, files are allowed to choose a different lockin=
+g
+> > > strategy for their file position. These accessors can be used to hand=
+le
+> > > that case.
+> > >
+> > > For now, these accessors are the only way to access the file position
+> > > within the llseek and read_iter callbacks.
+> >
+> > You really should not do that within ->read_iter().  If your method
+> > does that, it has the wrong signature.
+> >
+> > If nothing else, it should be usable for preadv(2), so what file positi=
+on
+> > are you talking about?
+>
+> To elaborate: ->llseek() is the only method that has any business accessi=
+ng
+> ->f_pos (and that - possibly not forever).  Note, BTW, that most of the
+> time ->llseek() should be using one of the safe instances from fs/libfs.c
+> or helpers from the same place; direct ->f_pos access in drivers is
+> basically for things like
+> static loff_t cfam_llseek(struct file *file, loff_t offset, int whence)
+> {
+>         switch (whence) {
+>         case SEEK_CUR:
+>                 break;
+>         case SEEK_SET:
+>                 file->f_pos =3D offset;
+>                 break;
+>         default:
+>                 return -EINVAL;
+>         }
+>
+>         return offset;
+> }
+> which is... really special.  Translation: lseek(fd, n, SEEK_CUR) - return=
+ n
+> and do nothing.  lseek(fd, n, SEEK_SET) - usual semantics.  Anything else
+> - fail with EINVAL.  The mind-boggling part is SEEK_CUR, but that's
+> userland ABI of that particular driver; if the authors can be convinced t=
+hat
+> we don't need to preserve that wart, it can be replaced with use of
+> no_seek_end_llseek.  If their very special userland relies upon it...
+> not much we can do.
+>
+> Anything else outside of core VFS should not touch the damn thing, unless
+> they have a very good reason and are willing to explain what makes them
+> special.
+>
+> From quick grep through the tree, we seem to have grown a bunch of bogosi=
+ties
+> in vfio (including one in samples, presumably responsible for that infest=
+ation),
+> there's a few strange ioctls that reset it to 0 or do other unnatural thi=
+ngs
+> (hell, VFAT has readdir() variant called that way), there are _really_ sh=
+itty
+> cases in HFS, HFS+ and HPFS, where things like unlink() while somebody ha=
+s the
+> parent directory open will modify the current position(s), and then there=
+'s
+> whatever ksmbd is playing at.
+>
+> We really should not expose ->f_pos - that can't be done on the C side (y=
+et),
+> but let's not spread that idiocy.
 
-On 2024-09-27 at 09:54:28 +0800, Honglei Wang wrote:
-> 
-> 
-> On 2024/9/25 16:54, Chen Yu wrote:
-> > Commit 85e511df3cec ("sched/eevdf: Allow shorter slices to wakeup-preempt")
-> > introduced a mechanism that a wakee with shorter slice could preempt
-> > the current running task. It also lower the bar for the current task
-> > to be preempted, by checking the rq->nr_running instead of cfs_rq->nr_running
-> > when the current task has ran out of time slice. But there is a scenario
-> > that is problematic. Say, if there is 1 cfs task and 1 rt task, before
-> > 85e511df3cec, update_deadline() will not trigger a reschedule, and after
-> > 85e511df3cec, since rq->nr_running is 2 and resched is true, a resched_curr()
-> > would happen.
-> > 
-> > Some workloads (like the hackbench reported by lkp) do not like
-> > over-scheduling. We can see that the preemption rate has been
-> > increased by 2.2%:
-> > 
-> > 1.654e+08            +2.2%   1.69e+08        hackbench.time.involuntary_context_switches
-> > 
-> > Restore its previous check criterion.
-> > 
-> > Fixes: 85e511df3cec ("sched/eevdf: Allow shorter slices to wakeup-preempt")
-> > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > Closes: https://lore.kernel.org/oe-lkp/202409231416.9403c2e9-oliver.sang@intel.com
-> > Suggested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> > Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> > Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-> > ---
-> > v1->v2:
-> >      Check cfs_rq->nr_running instead of rq->nr_running(K Prateek Nayak)
-> > ---
-> >   kernel/sched/fair.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 225b31aaee55..53a351b18740 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -1247,7 +1247,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
-> >   	account_cfs_rq_runtime(cfs_rq, delta_exec);
-> > -	if (rq->nr_running == 1)
-> > +	if (cfs_rq->nr_running == 1)
-> >   		return;
-> Hi Yu,
-> 
-> I'm wondering if commit 85e511df3cec wants to give more chances to do
-> resched just in case there are 'short slices' tasks ready in the other cfs
-> hierarchy.
-> Does something like rq->cfs->nr_running == 1 make more sense? But
-> maybe it helps less than 'cfs_rq->nr_running == 1' in this hackbench case.
-> 
+Okay, interesting. I did not know about all of these llseek helpers.
+I'm definitely happy to make the Rust API force users to do the right
+thing if we can.
 
-Thanks for taking a look.
+It sounds like we basically have a few different seeking behaviors
+that the driver can choose between, and we want to force the user to
+use one of them?
 
-It could be possible that Peter wanted the short tasks to preempt other quickly.
-If I understand correctly, when we say preemption, we usually consider two
-tasks which are in the same cfs_rq(level). For example, check_preempt_wakeup_fair()
-iterates the hierarchy from down-up until the current task and the wakee are in the
-same level via find_matching_se(&se, &pse), then check if the wakee can preempt the
-current. This should be consistent with the tick preemption in update_curr(). And
-whether the short task should preempt the current is checked by
-update_curr() -> did_preempt_short(), rather than checking the cfs_rq->nr_running/nr_h_running
-I suppose.
-
-Thanks,
-Chenyu
+Alice
 
