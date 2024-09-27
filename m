@@ -1,81 +1,63 @@
-Return-Path: <linux-kernel+bounces-341997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A157988969
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:00:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F030D98896A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4911E28029B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:00:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BAF81C22953
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FF51C1758;
-	Fri, 27 Sep 2024 17:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A5C1C1745;
+	Fri, 27 Sep 2024 17:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sp4lDaXh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OngA4t2C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9ECE1C1AA2;
-	Fri, 27 Sep 2024 17:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5AC3218B;
+	Fri, 27 Sep 2024 17:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727456402; cv=none; b=ML1Poi8gvUEBdTWkFppDw0UZdYVEzpkFTMMiLtbAoFXZtXkxGC4cH6EwJMy1H86VG8SoScQBG4Z3j7MSVWjKrEWfjvKJJAQw2VxGPfGE2PrHghlaKgmr4WGVmx22uhSItJS+fYetNqVyTCBXCOjY343JyivvFz1sXcyOnF7agH0=
+	t=1727456426; cv=none; b=d+C/nlcXjjO6zgRxTYEace87Zs6VfYjj6OWUp7ixxxZrUcd0qxwGObOQOP6q2PADbetkDpbH2SFP+NYk9Z1RB+OPLMH5hzNsQgjjwsFZrVtUWAIIpguiYaNI/SKrFWByosqvYBotiMVnrjw3mX+E50e3G3KCqmgSiaorFfhyOYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727456402; c=relaxed/simple;
-	bh=2ApnVOpy3phuG2Yl6/xKeNiOdwIr7PHbwb1uUNWV3Ks=;
+	s=arc-20240116; t=1727456426; c=relaxed/simple;
+	bh=dwUnyxfa5kYaO7PQJiK4BIUR+CDbP0ZO5jGWXvbbblY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G8ALWqfCoZhwSukh3MqVho7+A5pWe5Bum46NjaHZqnuFFq4fiJ+5SiUab5XKa0kQlrrWpq9ZOKPTeVDz1HwKqTFa9LkZkhAIKXmX7uEpsMBSxPCtZ9G9vJitFLFeBYr4gvdczjnFUJO/mS68bNVKGYDzLIJkRWlWlM4rmUVAvBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sp4lDaXh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68FFDC4CEC4;
-	Fri, 27 Sep 2024 17:00:01 +0000 (UTC)
+	 MIME-Version:Content-Type; b=hfTEwCehuX4WsDVnw24cDSyLw24Z8B20UIMKIm1hZxUCDqsuBNb1/5i7sxNZd3/tWJtOv9myBXUdo1e3B5ZiYrP51efnUpF6cc/qyR9M6BkBFjpl1Rie/4BpfSWveMeAGvCLK9/AIXRR0MV4BnLQrE6008Hr5FGIhDYFXzBZsJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OngA4t2C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BD28C4CEC4;
+	Fri, 27 Sep 2024 17:00:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727456402;
-	bh=2ApnVOpy3phuG2Yl6/xKeNiOdwIr7PHbwb1uUNWV3Ks=;
+	s=k20201202; t=1727456425;
+	bh=dwUnyxfa5kYaO7PQJiK4BIUR+CDbP0ZO5jGWXvbbblY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Sp4lDaXhYOW/ZY4+SO/sT2KX+HqwkS8DSVU0d3Xty+9CiIpBG6W6m+zl70HAZm3fe
-	 9+1mFqYEwKk3m6HckbEtwxVsCZemxJuHoIaSJsWZye9vsvT7x/fEx2oOZySdxSQOqD
-	 t3nC9XK+XYl8Q7hwVtEYhfbdXbYqQwseF7Awwm1lc+eIa/YfkYp3dFjv0ymKZRtWAl
-	 3oE4Sd4OpZ3+5o+gcy3blskDS81ZXMl9uG5H+KeXjSc3y8NOr/iU3Ehg3agnzhojWu
-	 rYwzf+c7jqs1Ox0hGNYbP5P9doYXdFJNNSNUtQMlokUknlSsoJwUcychUoSog1qgHV
-	 UtmF6xqv8lOVQ==
+	b=OngA4t2CmVQyTgcxA3F6+RjRySu914yPHh/aN5WShCgczH1rvib0h3YePAfdJZQ0Z
+	 m+MwDpRk2UkRMu7QFrpVC7Zt1ahQWcmVSXTUAjWtYKtRIUhV3nR/4H+TJf6VwPpORV
+	 oB7/LSslwA1NtgiQdmT2+BrBXyClPxdZsxx91QFRbgGYq5CF/rKYBA0oWN3Vs5kyvg
+	 XYwwNxS18NGda8u7ndn8VvNj8yB5Ukdx+eNjn2k/kIlCwdSuSEdaLXpblT5NPuFKnL
+	 1BjW3jX8OJcgjjLCGvstT3zrfgiMibG2ZTCtD0WEZmRQoR5hpFDxjr20vo/j/af43J
+	 2nMuWYcvub9xQ==
 From: Namhyung Kim <namhyung@kernel.org>
-To: irogers@google.com,
-	linux-perf-users@vger.kernel.org,
-	kan.liang@linux.intel.com,
-	ak@linux.intel.com,
-	James Clark <james.clark@linaro.org>
-Cc: John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Peter Zijlstra <peterz@infradead.org>,
+To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
 	Arnaldo Carvalho de Melo <acme@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
 	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
 	Adrian Hunter <adrian.hunter@intel.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Ze Gao <zegao2021@gmail.com>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Sun Haiyong <sunhaiyong@loongson.cn>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-arm-kernel@lists.infradead.org,
+	Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 0/7] Event parsing fixes
-Date: Fri, 27 Sep 2024 09:59:57 -0700
-Message-ID: <172745636991.248403.11015785931495275902.b4-ty@kernel.org>
+Subject: Re: [PATCH] libperf: Explicitly specify install-html dependencies
+Date: Fri, 27 Sep 2024 10:00:22 -0700
+Message-ID: <172745641224.248656.17860675088257717109.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-In-Reply-To: <20240926144851.245903-1-james.clark@linaro.org>
-References: <20240926144851.245903-1-james.clark@linaro.org>
+In-Reply-To: <20240915-perf-v1-1-cbfd9cd1d482@daynix.com>
+References: <20240915-perf-v1-1-cbfd9cd1d482@daynix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,20 +67,14 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Thu, 26 Sep 2024 15:48:31 +0100, James Clark wrote:
+On Sun, 15 Sep 2024 10:34:29 +0900, Akihiko Odaki wrote:
 
-> I rebased this one and made some other fixes so that I could test it,
-> so I thought I'd repost it here in case it's helpful. I also added a
-> new test.
-> 
-> But for the testing it all looks ok.
-> 
-> There is one small difference where it now hides _all_ default
-> <not supported> events, when previously it would only hide some
-> selected subset of events like "stalled-cycles-frontend". I think
-> this is now more consistent across platforms because, for example,
-> Apple M only has cycles and instructions, and the rest of the
-> default events would always show as <not supported> there.
+> install_doc of tools/lib/perf/Makefile invokes install-man,
+> install-html, and install-examples of
+> tools/lib/perf/Documentation/Makefile at once. This invocation succeeds
+> when make runs in serial but can fail when make runs in parallel because
+> while install-man of tools/lib/perf/Documentation/Makefile depends on
+> all, install-html depends on nothing and can run ahead of all.
 > 
 > [...]
 
