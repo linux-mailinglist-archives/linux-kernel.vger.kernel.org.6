@@ -1,104 +1,143 @@
-Return-Path: <linux-kernel+bounces-341685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60B99883A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:59:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 479969883A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7117D2878B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:59:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F286828271D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EE918A95E;
-	Fri, 27 Sep 2024 11:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8EE18BB88;
+	Fri, 27 Sep 2024 12:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LuYkyrSc"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D20yKn0n"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBD0143C4C;
-	Fri, 27 Sep 2024 11:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BD918A94E;
+	Fri, 27 Sep 2024 12:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727438352; cv=none; b=Xd0Xox36iM3uXln823USgMxRKHsP2dJ/goJfhpr/HypS7HkvrTl37WL1sFW55bBd3aR0+1u8PMMnL/wG7iYIjH/YlVQpcgvcQal9KJOxOtAR1abgkDI7h07xxSIsSjbNNs2HyNiB+KOnfuTf8lLHopAXRjuM3OCvTRor+hVgJkI=
+	t=1727438406; cv=none; b=sFCf16e4u4yAxxWHwpq6eaFKEYj0k9vtyAvbvQ4wTjGZCBqy2A3OSXWCCylhEgXY91f4onC2caxs48fkaFTPcdoMlKxs/ipRf05opO83BJpNadjl+0iWBmh2/R6rRup23BOFHwWTQ2fT6fLtwXfriUMqQO/AgDHLfHdOXYUFjlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727438352; c=relaxed/simple;
-	bh=OHgltXjCCbzVialuRwKHad3k4S6bdpxLuP2Vdgj2Jiw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HCef0CDulARBc+wA9OCv+RmSYUwBT6t1KnKSLb2yYXx8E7lbkfIiLanfJY0Ut60zK6/LbivUdE6JuXhNBiV0rfEwGqizZeaX5hPc1ybLJrKqE+MfWPOv4tuUQEaw3Iu8WtJil9f5cPFP47tPq7zwuK+3XWMDpylkxZx5gY8LniI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=LuYkyrSc; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=9SUDZW4Es71/qXQBSzrGEM3NsuyUoGW8P/PUFbYZIA4=; b=LuYkyrScUAmp094kXm5CrB4SqI
-	bD0g3c/LHBoFXF9vxq0zltKH8MYcEb5MIUKZy4cz3s+GrBCPY4AX7IDpWjrN+FiSBoqEMJf0A6ech
-	u+VgkaueeK7a6s98+SNVXzfeOgl4jem99PE7O3VCni51eghIxcykdlATXLosRG9w+JNc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1su9cO-008SQd-4u; Fri, 27 Sep 2024 13:58:40 +0200
-Date: Fri, 27 Sep 2024 13:58:40 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] riscv: dts: thead: Add TH1520 ethernet nodes
-Message-ID: <5076789c-3a35-4349-9733-f5d47528c184@lunn.ch>
-References: <20240926-th1520-dwmac-v2-0-f34f28ad1dc9@tenstorrent.com>
- <20240926-th1520-dwmac-v2-3-f34f28ad1dc9@tenstorrent.com>
- <3e26f580-bc5d-448e-b5bd-9b607c33702b@lunn.ch>
- <ZvWyQo+2mwsC1HS6@x1>
- <0b49b681-2289-412a-8969-d134ffcfb7fc@lunn.ch>
- <ZvYJfrPx75FA1IFC@x1>
+	s=arc-20240116; t=1727438406; c=relaxed/simple;
+	bh=G5dRquXqM5Ubqce76JdRcHqMplZAPXMF3V21VX6sEew=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=An+CmXPrTLkmR5WD6ZjEfRmugVaZSfRIUpB/wCMNiuWgzk0oXUj0+yh+GPWWiJQ5s0ggtBBJEN3hcJS4Gcco5v25NO2zWR+ddo4Iv5n3yYsbsSK3LUNMnqjlrnNjCwVBpBVApTpIYou+WPB5LpuVG6nh9q0nGnT2J/QNy95enCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D20yKn0n; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R6pHLs000908;
+	Fri, 27 Sep 2024 12:00:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=CarDBbXgWJJuBnsQuU5FLI
+	6/Z8gB5bLhrJy3KId03es=; b=D20yKn0n7DpXvM4X0rnyZ8qQ426dkrwqycXNw2
+	q82Sv+hdAQKJzJTLuSDWzC460sdqxeTcQyMrmCq/aj4pc+7+qv93EWOCtlQEbDVA
+	slA3x2GK4nQ3lpW6tx8lwJBBCwxu+rU0IyHFP8CaRzUq9qHgyzf0yd9jilKOi9mu
+	RK837Cne/1dDE/v7IduTbZj+y6veQE+aJgYDWoS3Dihfttb8eXJU60IKXU2Ogb8l
+	COBEiS6O3m+eD9Nj7KtCie6KzUtlycQ0hzrO51KZ2EoO4GFmWMFGQuqpbLEB6Ld0
+	2v3uGExal3pZFHkZ68rWkZVnH7GGPK4TuYAYcnRENFY1OHXA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sn3sjs3b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 12:00:00 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48RBxxaj016238
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 11:59:59 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 27 Sep 2024 04:59:51 -0700
+From: Tingguo Cheng <quic_tingguoc@quicinc.com>
+Subject: [PATCH v2 0/4] Add rpmhpd powerdomains support for QCS615/QCS8300
+Date: Fri, 27 Sep 2024 19:59:12 +0800
+Message-ID: <20240927-add_qcs615_qcs8300_powerdomains_driver_support-v2-0-18c030ad7b68@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvYJfrPx75FA1IFC@x1>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABKe9mYC/4XNQQ6DIBCF4asY1qUBpEq76j0aQwjQOgsBQWkb4
+ 92LJq67mvyzeN+Cko1gE7pVC4o2QwLvSrBThXSv3MtiMKURI4yTK2uxMkaOOjX0sh1REyKDf9t
+ o/KDAJWkiZBtlmkPwccKtNly0lDU1J6iMhmif8NnBR1e6hzT5+N39TLfvQZGD+mtkigm+NoopI
+ gSnRt3HGTQ4fdZ+QN26rj+2kJ0i5wAAAA==
+X-Change-ID: 20240927-add_qcs615_qcs8300_powerdomains_driver_support-7cd487126340
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_fenglinw@quicinc.com>, <quic_tingweiz@quicinc.com>,
+        Tingguo Cheng
+	<quic_tingguoc@quicinc.com>,
+        Shazad Hussain <quic_shazhuss@quicinc.com>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727438390; l=1493;
+ i=quic_tingguoc@quicinc.com; s=20240917; h=from:subject:message-id;
+ bh=G5dRquXqM5Ubqce76JdRcHqMplZAPXMF3V21VX6sEew=;
+ b=/U1N0ljo+LoqaZ1L2EPggyyzZa1Bhp2IpVrZdU7nLvlSd1oG3K13E6QAp8sQhGo2OVZbweg/A
+ 0XIKA2/b8s2Bt2lnQG2JYd2X6wtcx6PpTHsxWLpIweUvKetIiqlOADL
+X-Developer-Key: i=quic_tingguoc@quicinc.com; a=ed25519;
+ pk=PiFYQPN5GCP7O6SA43tuKfHAbl9DewSKOuQA/GiHQrI=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PNTOGV6zXA9DeLoM0djQE-qrwJsNJyqb
+X-Proofpoint-ORIG-GUID: PNTOGV6zXA9DeLoM0djQE-qrwJsNJyqb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ mlxscore=0 impostorscore=0 spamscore=0 malwarescore=0 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409270086
 
-> I tried to setup an nfs server with a rootfs on my local network. I can
-> mount it okay from my laptop so I think it is working okay. However, it
-> does not seem to work on the lpi4a [3]. It appears the rgmii-id
-> validation fails and the dwmac driver can not open the phy:
-> 
->  thead-dwmac ffe7060000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-0
->  thead-dwmac ffe7060000.ethernet eth0: validation of rgmii-id with support \
->              00,00000000,00000000,00006280 and advertisementa \
-> 	     00,00000000,00000000,00006280 failed: -EINVAL
->  thead-dwmac ffe7060000.ethernet eth0: __stmmac_open: Cannot attach to PHY (error: -22)
+Document the qcom,qcs8300-rpmhpd compatible and add power domains in
+rpmhpd driver to support QCS8300.
+Document the qcom,qcs615-rpmhpd compatible and add power domains in
+rpmhpd driver to support QCS615.
 
-Given what Emil said, i would suggest flipping the MDIO busses
-around. Put the PHYs on gmac1's MDIO bus, and set the pinmux so that
-its MDIO bus controller is connected to the outside world. Then, when
-gmac1 probes first, its MDIO bus will be probed at the same time, and
-its PHY found.
+Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+---
+Changes in v2:
+- Rebased patchsets on next-20240927.
+- Combined 2 patchsets into one to resolve merge conflicts of touching
+  the same part of code.
+  - Current Patchset
+  |
+  |->Patchset 1:https://lore.kernel.org/r/20240920-add_qcs615_powerdomains_driver_support-v1-0-8846efaf9454@quicinc.com
+  |->Patchset 2:https://lore.kernel.org/r/20240920-add_qcs8300_powerdomains_driver_support-v1-0-96a2a08841da@quicinc.com
 
-	Andrew
+- Link to v1: https://lore.kernel.org/r/20240920-add_qcs8300_powerdomains_driver_support-v1-0-96a2a08841da@quicinc.com
+
+---
+Tingguo Cheng (4):
+      dt-bindings: power: qcom,rpmpd: document qcs8300 RPMh power domains
+      pmdomain: qcom: rpmhpd: Add qcs8300 power domains
+      dt-bindings: power: qcom,rpmpd: document qcs615 RPMh power domains
+      pmdomain: qcom: rpmhpd: Add qcs615 power domains
+
+ .../devicetree/bindings/power/qcom,rpmpd.yaml      |  2 ++
+ drivers/pmdomain/qcom/rpmhpd.c                     | 36 ++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+---
+base-commit: 40e0c9d414f57d450e3ad03c12765e797fc3fede
+change-id: 20240927-add_qcs615_qcs8300_powerdomains_driver_support-7cd487126340
+
+Best regards,
+-- 
+Tingguo Cheng <quic_tingguoc@quicinc.com>
+
 
