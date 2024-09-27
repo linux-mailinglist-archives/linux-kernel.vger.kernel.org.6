@@ -1,69 +1,68 @@
-Return-Path: <linux-kernel+bounces-341557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A989D98819A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:45:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A655098819C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E62FDB25CF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:45:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 356211F2256A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B020E1BB68C;
-	Fri, 27 Sep 2024 09:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083651BAED8;
+	Fri, 27 Sep 2024 09:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="GUjYpNmJ"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="CcLgHUi5"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EB91BAED8
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D1E1BBBEB
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727430249; cv=none; b=YS9Z84IAhX9rfhLVUNgWmVe1GKxk3i2fWtJ2+gt50lADO+Ypg/RM6neItFSXstbGKgaFA7gqQk1Lfea7/AWRn7yArxFrhNEwqM3noqiDTQFHI76+cBACTZYXqrqmHmvebaBKx+LxKJg4s5S82tlntcNG1mVausy00eBIogpEqqk=
+	t=1727430254; cv=none; b=WtcMO92vo4M6DtMqHWODxue9FrPC5YO5eN306CVmT6mSOSE1TsAao9UOU3qG79kEdSdHagYheydi4n8fAKnM9U3BxKMZHIqy0v6iIvJUEj4wAxX3FSlCDC8LgRfvc0fYrIZ7LTbjlr8TaE5Js8rMStQjF04bLoIpta5eTKZO8iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727430249; c=relaxed/simple;
-	bh=qUvzN8IBROYnnHg8qAtc3jAq1T0xOO32joawfFMzBZg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=EOZJ2k8gIgXqN3YdSmh6I7P4JQaKvW+eL64wYANA7D+8Mt50VNQd6+t09yLnkqmdHiaNnuU1b3cxFVgYpa8uT8tkGCrPSkxl6PDU6ltD+G2wOci76XI97Y02UEhUrQQjp+NUeUr+5qaXWWw0ZNkt1b2zqxKA0XnIhueNm3yuf7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=GUjYpNmJ; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1727430254; c=relaxed/simple;
+	bh=HcCP2rekDd7lA+V0zfMNj7Eaud2KbIIRS5cNTt4Dysk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=oHPQMmVKUwQJK4qrWWOa09fmRtmukAAaLx736u/SLri4h9lPWFgAVHq4AZuv9gf9mPltGznPObGkt4f65zRlddtjdMCgyNeR967hKDqGbkRJgdCpFiD7dRwYxfQvYRVcbSvjvrIQVRZIWdQF0D/o2YXN65EoUPtQuj+lTKewh1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=CcLgHUi5; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20b09a83466so2438285ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:44:07 -0700 (PDT)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e0c2e42b75so107759a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:44:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1727430247; x=1728035047; darn=vger.kernel.org;
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1727430252; x=1728035052; darn=vger.kernel.org;
         h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=I+pcE4ggyYRS5X6pVo2fS5/uPfMaFvxBm9rRWSI3wH8=;
-        b=GUjYpNmJwolzMXEkqKjx7RqbcGaCsyG+/xO38hiSeRdlJrdCrrijlZhsVIh+3Cv/5K
-         CD8AXakTUPOm2IQQ9hhTgWWW8AWMQjcEHUinjAdKKQ0gsFcebF3h7v016FyJtvklD17U
-         +Iq5eIHqZ01x17qLDysM50uGT/PpVpZXyg5irvLzAVASaa+I1SWaDAUbewztgNBUw/5R
-         to5j1q4Wsp3jH5FRRRM9UVfqr6EiTTDbCEU7vnKr8p5li/Lfz8sVMF/jRGT7Ew62QV2w
-         FMIiI3IgvQ1XInxQi4aFZxvRMZiOE7bAMTzKZY4EE16qkJprEm0dc7f3sp65e8DAGhOc
-         OvEw==
+        bh=6vXo/QBqbRSPcyQ8x6xHYpiZBOONjq8OugZwsB+apMA=;
+        b=CcLgHUi5g9lfWHEIpZn7vx/cOFF8ZpVi72+Z9ZZgy/xXxNUCB1bHBzCfBLZMRgGUIJ
+         u5YzNXMTwjaISe8IlHnqvGUJY63sV/OJ8pGps0FTp6pPBSgQBq0ktcH2igx9BgNeL6Qs
+         ujiTsGxx0hPF+qIwcK53kT8Adfivs2uhxtlqOiW3tC9qiQrcoBAvngM1oCrNrfla7Zo8
+         tgr5r4FMo4R3uNK9t0rJlrlpl7mRGoGSO4+KxAhaaG07SDe7LUDTLVz3mCdykYglYgFF
+         THWmbACxCIpU1DP597C4kozNut2w0CWVRuu86fpTyBUivn6tQPbgQhel58pmh9A87Nqp
+         cNig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727430247; x=1728035047;
+        d=1e100.net; s=20230601; t=1727430252; x=1728035052;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I+pcE4ggyYRS5X6pVo2fS5/uPfMaFvxBm9rRWSI3wH8=;
-        b=eZsF2aaQI1tJXcWLufFNwpT6c/+woFswWKubkAbkbRjRmp2QIh2p0y9OLgDYrkAsh9
-         y1omj2pjle6wjdOs74Tfc52ILdn4kg+689A6pWOKgmzr3vME1U5AcDW8NxxsHmZeMgK+
-         wWZhMBuLMF6+JkQdSPTjH5k08aFFa5ohP0s0Mx9o/8PeVakjSYytSS106okHN0xSIOZc
-         IlbflAKfUy3RCMsDTk/pIeFMRsMZ6xOJ7S98bSiAQi5swU3JIiTAa3kRbZNZMPThzvVU
-         lE/S2P4E2zQIC8SwEbjbY5EoNwHSOEb9xNSk2peOP/b5odwxmYXuTJJmrVTLxIJDbifr
-         Odog==
-X-Forwarded-Encrypted: i=1; AJvYcCUk7RIB9sCbgw1/JMiyV4Ntw6Qj3xk0zqN7oUO6elbcSy9cOs/a7HOF6V8ReCgDmtYX2EYmMW38s6FQGm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBfSgizqn+K7/0QWhToWjY8r5lIguWq638D3n/4F3hBTRHXUoX
-	VpHegNwFAaKWnE8x0jXbZuv2aMlUU9uTgdnMOEgiwoE94fSVkJ+YU9G7+jeLlm0TkBkbBoSn5ZR
-	vXP4=
-X-Google-Smtp-Source: AGHT+IEv4f2iWdehOnAHDvI+4cTE317jz6vBcdU/dL58GnnGLWNRzmz39Mt/C1xTWOvT+3IlYnO3Zw==
-X-Received: by 2002:a17:903:41ce:b0:206:b6db:499f with SMTP id d9443c01a7336-20b36716572mr16798355ad.0.1727430247011;
-        Fri, 27 Sep 2024 02:44:07 -0700 (PDT)
+        bh=6vXo/QBqbRSPcyQ8x6xHYpiZBOONjq8OugZwsB+apMA=;
+        b=gJyUlMDerD+IegDQtdL6yNEKCqF8SUDY9fiDpO2G7lBXsMJ1NAeT1BvFXbq8z4r+mD
+         Y5rKN+CTDHvX8YWVCCAGP6J+bGTxHaHc41KBAG3Z71gO6Mil7UwJ9tM8n1J5ABjRs9hS
+         J6UQQXoA1RNJ8bbg1cnGbScM/1AGl+UFFaBwQf/OlfW8p94ajqEleBsfc5UTZYKEc1c7
+         shlHEdvixMa0uKkok4JbuYqOYrhrKwFwfKz3P5nLu4hX4CYtVqJpTd/+snFloyogSYXN
+         Z0JtSZvu850+w4VWxhnh8vqARoDb9YpqoGMHMmNwTsEwa8MHfjO+pao7EShWj0bUHvhe
+         dZBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVozFQoH8HpqtliwQW4IBJtAxZzrzHRHJlt8T8S1EIuVsQ72RUTCjH5hqQBVjQsYMwujZMnPpqX8cfIDiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbINoZPmGc6lKA+6aq2rBr8doUOasMuUhExo0apRI7jSQRa6Tf
+	D3xaiMhuUU7EZyGaB0HAzI/F63nJAPD1bqEqZPSvzYfiD9H8yw0t3MV1oT+Z+iw=
+X-Google-Smtp-Source: AGHT+IE7RZB9BJpIiNesgL3dY0bxd4GYrJD5iq+grbfZ17f5PpYAXUaASOupLwHC3H3KxQnpst0sMw==
+X-Received: by 2002:a17:90a:d802:b0:2da:71f8:7ff with SMTP id 98e67ed59e1d1-2e0b8e841bfmr1312757a91.5.1727430251873;
+        Fri, 27 Sep 2024 02:44:11 -0700 (PDT)
 Received: from lvzhaoxiong-KLVC-WXX9.huaqin.com ([116.66.212.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1bae46sm5105895a91.22.2024.09.27.02.44.03
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1bae46sm5105895a91.22.2024.09.27.02.44.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 02:44:06 -0700 (PDT)
+        Fri, 27 Sep 2024 02:44:11 -0700 (PDT)
 From: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
 To: neil.armstrong@linaro.org,
 	quic_jesszhan@quicinc.com,
@@ -81,9 +80,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Subject: [PATCH v3 1/2] drm/panel: jd9365da: Modify Kingdisplay and  Melfas panel timing
-Date: Fri, 27 Sep 2024 17:43:39 +0800
-Message-Id: <20240927094340.18544-2-lvzhaoxiong@huaqin.corp-partner.google.com>
+Subject: [PATCH v3 2/2] drm/panel: boe-th101mb31ig002: Modify Starry panel timing
+Date: Fri, 27 Sep 2024 17:43:40 +0800
+Message-Id: <20240927094340.18544-3-lvzhaoxiong@huaqin.corp-partner.google.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240927094340.18544-1-lvzhaoxiong@huaqin.corp-partner.google.com>
 References: <20240927094340.18544-1-lvzhaoxiong@huaqin.corp-partner.google.com>
@@ -104,52 +103,80 @@ executed when the backlight is not fully powered off, which may cause
 a white screen. However, we removed this
 "backlight_off_to_display_off_delay_ms" and found that this situation
 did not occur. Therefore, in order to solve the problem mentioned
-above, we reduced it from 100ms to 3ms (tCMD_OFF >= 1ms).
+above, we removed this delay, and the delay between "display off" and
+"enter sleep" is not defined in the spec, so we reduce it from 120ms
+to 50ms.
 
-This is the timing specification for the two panels:
-1. Kingdisplay panel timing spec:
-https://github.com/KD54183/-JD9365DA_Power-On-Off-Sequence_V0120240923
-2. LMFBX101117480 timing spec: https://github.com/chiohsin-lo/TDY-JD_LIB
+In addition, T14 >= 120ms, so we change
+"enter_sleep_to_reset_down_delay_ms" from 100ms to 120ms.
 
-Fixes: 2b976ad760dc ("drm/panel: jd9365da: Support for kd101ne3-40ti MIPI-DSI panel")
-Fixes: c4ce398cf18a ("drm/panel: jd9365da: Support for Melfas lmfbx101117480 MIPI-DSI panel")
+The panel spec:
+1. https://github.com/Vme5o/power-on-off-sequential
+
+Fixes: e4bd1db1c1f7 ("drm/panel: boe-th101mb31ig002: Support for starry-er88577 MIPI-DSI panel")
 
 Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
 ---
 Changes between V3 and V2:
 -  1. Modify the commit message 
-v2: https://lore.kernel.org/all/20240923134227.11383-2-lvzhaoxiong@huaqin.corp-partner.google.com/
+v2: https://lore.kernel.org/all/20240923134227.11383-3-lvzhaoxiong@huaqin.corp-partner.google.com/
 
 Changes between V2 and V1:
--  1. Modify the commit message 
--  2. Modify the value of backlight_off_to_display_off_delay_ms.
-v1: https://lore.kernel.org/all/20240915080830.11318-2-lvzhaoxiong@huaqin.corp-partner.google.com/
+-  1. Modify the commit message.
+-  2. Delete the value of backlight_off_to_display_off_delay_ms.
+-  3. Modify the value of enter_sleep_to_reset_down_delay_ms from 100ms to 120ms.
+v1: https://lore.kernel.org/all/20240915080830.11318-3-lvzhaoxiong@huaqin.corp-partner.google.com/
 ---
- drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../gpu/drm/panel/panel-boe-th101mb31ig002-28a.c    | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-index 44897e5218a6..486aa20e5518 100644
---- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-+++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-@@ -858,7 +858,7 @@ static const struct jadard_panel_desc kingdisplay_kd101ne3_40ti_desc = {
- 	.reset_before_power_off_vcioo = true,
- 	.vcioo_to_lp11_delay_ms = 5,
- 	.lp11_to_reset_delay_ms = 10,
--	.backlight_off_to_display_off_delay_ms = 100,
-+	.backlight_off_to_display_off_delay_ms = 3,
- 	.display_off_to_enter_sleep_delay_ms = 50,
- 	.enter_sleep_to_reset_down_delay_ms = 100,
+diff --git a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
+index 0b87f1e6ecae..9e4d91c7c394 100644
+--- a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
++++ b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
+@@ -29,7 +29,7 @@ struct panel_desc {
+ 	bool lp11_before_reset;
+ 	unsigned int vcioo_to_lp11_delay_ms;
+ 	unsigned int lp11_to_reset_delay_ms;
+-	unsigned int backlight_off_to_display_off_delay_ms;
++	unsigned int display_off_to_enter_sleep_delay_ms;
+ 	unsigned int enter_sleep_to_reset_down_delay_ms;
+ 	unsigned int power_off_delay_ms;
  };
-@@ -1109,7 +1109,7 @@ static const struct jadard_panel_desc melfas_lmfbx101117480_desc = {
- 	.reset_before_power_off_vcioo = true,
- 	.vcioo_to_lp11_delay_ms = 5,
- 	.lp11_to_reset_delay_ms = 10,
--	.backlight_off_to_display_off_delay_ms = 100,
-+	.backlight_off_to_display_off_delay_ms = 3,
- 	.display_off_to_enter_sleep_delay_ms = 50,
- 	.enter_sleep_to_reset_down_delay_ms = 100,
+@@ -184,12 +184,10 @@ static int boe_th101mb31ig002_disable(struct drm_panel *panel)
+ 						      panel);
+ 	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
+ 
+-	if (ctx->desc->backlight_off_to_display_off_delay_ms)
+-		mipi_dsi_msleep(&dsi_ctx, ctx->desc->backlight_off_to_display_off_delay_ms);
+-
+ 	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
+ 
+-	mipi_dsi_msleep(&dsi_ctx, 120);
++	if (ctx->desc->display_off_to_enter_sleep_delay_ms)
++		mipi_dsi_msleep(&dsi_ctx, ctx->desc->display_off_to_enter_sleep_delay_ms);
+ 
+ 	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+ 
+@@ -275,6 +273,7 @@ static const struct panel_desc boe_th101mb31ig002_desc = {
+ 			  MIPI_DSI_MODE_NO_EOT_PACKET |
+ 			  MIPI_DSI_MODE_LPM,
+ 	.init = boe_th101mb31ig002_enable,
++	.display_off_to_enter_sleep_delay_ms = 120,
  };
+ 
+ static const struct drm_display_mode starry_er88577_default_mode = {
+@@ -302,8 +301,8 @@ static const struct panel_desc starry_er88577_desc = {
+ 	.lp11_before_reset = true,
+ 	.vcioo_to_lp11_delay_ms = 5,
+ 	.lp11_to_reset_delay_ms = 50,
+-	.backlight_off_to_display_off_delay_ms = 100,
+-	.enter_sleep_to_reset_down_delay_ms = 100,
++	.display_off_to_enter_sleep_delay_ms = 50,
++	.enter_sleep_to_reset_down_delay_ms = 120,
+ 	.power_off_delay_ms = 1000,
+ };
+ 
 -- 
 2.17.1
 
