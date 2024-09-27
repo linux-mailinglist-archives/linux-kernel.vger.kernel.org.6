@@ -1,157 +1,167 @@
-Return-Path: <linux-kernel+bounces-341866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2BF988761
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:43:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D169988774
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CC261F2168F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:43:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DABF1B2112E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFF718BC26;
-	Fri, 27 Sep 2024 14:43:35 +0000 (UTC)
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7CA21C0DDB;
+	Fri, 27 Sep 2024 14:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="HDaUr8Jl"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063C0A2D;
-	Fri, 27 Sep 2024 14:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05731BFE18;
+	Fri, 27 Sep 2024 14:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727448215; cv=none; b=cmrCIr/K8WAiCpsLA/9ZEJ3iMoOYLKuaQWET3aSdL/E+ygcyxIFukwB5nMIwJqDHTqtMmtC4mPslKAawF9ot6vLTPbjKaRQL11WDoUOltMAtyqW6Da8MMppf966orIjRiLGFBDrblcUnByzElJD4e6Nyt6UPFcplLvxv5PJIPOg=
+	t=1727448371; cv=none; b=t358qkiCrAJP1vqaX4sPLpF/SLYlTcCadqqt4LrA7GyaIp4W5POOzD5c9fZIMDhhOGnbcQfrAGiM3f5MQOHBQJlpLE4XHM6DogzA4GI0aO+k6y8Ro8EmgUd/ZKSWM8P3PBs3CxCjmhOdsAXOtiXPlA1JxId3VTF1GXGYEY1eI50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727448215; c=relaxed/simple;
-	bh=jeR1ZYwbSsy/8gC6GLL0ewkTrLc8MHYfdMlTgdIpmxI=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=pjM38CvHD9JuWYV65zuLJq95n0ZIYz/Ps7qLMUNgayYN4h0bUWOnxifhL1GyqGUzn5F3mArmicgfRivgbACuwxeVYY0dInliO02CDp9/vbtbWjZdT6EnegbK3uZmMSMU4hLSFnAv+qffmcMIk5e3eN1VivHBLi1LePrx5Ja8sqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:43476)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1suCBu-002Tdn-EA; Fri, 27 Sep 2024 08:43:30 -0600
-Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:39014 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1suCBt-009qW1-G2; Fri, 27 Sep 2024 08:43:30 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Tycho Andersen <tycho@tycho.pizza>
-Cc: Aleksa Sarai <cyphar@cyphar.com>,  Alexander Viro
- <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,  Jan
- Kara <jack@suse.cz>,  Kees Cook <kees@kernel.org>,  Jeff Layton
- <jlayton@kernel.org>,  Chuck Lever <chuck.lever@oracle.com>,  Alexander
- Aring <alex.aring@gmail.com>,  linux-fsdevel@vger.kernel.org,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,  Tycho Andersen
- <tandersen@netflix.com>,  Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?=
- <zbyszek@in.waw.pl>
-References: <20240924141001.116584-1-tycho@tycho.pizza>
-	<87msjx9ciw.fsf@email.froward.int.ebiederm.org>
-	<20240925.152228-private.conflict.frozen.trios-TdUGhuI5Sb4v@cyphar.com>
-	<ZvR+k3D1KGALOIWt@tycho.pizza>
-	<878qvf17zl.fsf@email.froward.int.ebiederm.org>
-	<Zva8GEUv1Xj8SsLf@tycho.pizza>
-Date: Fri, 27 Sep 2024 09:43:22 -0500
-In-Reply-To: <Zva8GEUv1Xj8SsLf@tycho.pizza> (Tycho Andersen's message of "Fri,
-	27 Sep 2024 08:07:20 -0600")
-Message-ID: <87h6a1xilx.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1727448371; c=relaxed/simple;
+	bh=xD+akKG2WsLXNifs5kWRujVjHdAwiGgMHce05hDMYP4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=m5A84lTuUYzrih7r11218ZXbRgmLGgTsWjrU7BU7CMtUfqA7FEAlBqdqJ10Kd8EMJWdoLkHeV/VRGVzk5DXULQ4NekcQZ2VYXNihLXFJhKG2W0UU0gM3zALedBtuj8REq8r1iRBFiQg1Lgm51HrSOSFCu29xeUwaYRi/1sVeB2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=HDaUr8Jl; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727448367;
+	bh=xD+akKG2WsLXNifs5kWRujVjHdAwiGgMHce05hDMYP4=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=HDaUr8JlcQb+Iam8HThov2FtvO0R0VEH8ApXioSxl/6HkWF9TM74GkVwndOYWxVPA
+	 kcYrOkobLfkSlg4IoIDTikp5BFSibZzsVcr/AMdhA4HNrTUyi5Ys4HZKJcOWIM6jk6
+	 vP3Op45mLNp8G+2yywkUtu3CLdXdU6Tubwy00zgg18t/SyWBMChXMQV4Z3KFSirpoq
+	 bonlIgsrqOGNXpaYI3L4Zp8dzBV2shg1zt+OldcbN/td/yzMykX3uAN/XE+VKcom/G
+	 EDe+il41Q3OW+SoANnOoRHipjtFxT7vkyeesC2dOK/Gj9cxJrgydqSI/eKenV00rrw
+	 ZFSaSk5Z1fgMw==
+Received: from [IPV6:2605:8d80:582:29fa:9e57:c437:e7dd:8f59] (unknown [IPv6:2605:8d80:582:29fa:9e57:c437:e7dd:8f59])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XFYDs436zz1P2X;
+	Fri, 27 Sep 2024 10:46:05 -0400 (EDT)
+Message-ID: <08423acb-1f8e-407a-80fe-c424c6ee2861@efficios.com>
+Date: Fri, 27 Sep 2024 10:43:59 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1suCBt-009qW1-G2;;;mid=<87h6a1xilx.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX19odIX+pzGkJDzocY816Air47iY1grMlMY=
-X-Spam-Level: 
-X-Spam-Virus: No
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4905]
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Tycho Andersen <tycho@tycho.pizza>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 352 ms - load_scoreonly_sql: 0.04 (0.0%),
-	signal_user_changed: 4.8 (1.4%), b_tie_ro: 3.3 (0.9%), parse: 1.22
-	(0.3%), extract_message_metadata: 11 (3.1%), get_uri_detail_list: 1.85
-	(0.5%), tests_pri_-2000: 10 (2.9%), tests_pri_-1000: 2.2 (0.6%),
-	tests_pri_-950: 1.00 (0.3%), tests_pri_-900: 0.80 (0.2%),
-	tests_pri_-90: 48 (13.5%), check_bayes: 46 (13.2%), b_tokenize: 6
-	(1.6%), b_tok_get_all: 7 (2.1%), b_comp_prob: 1.90 (0.5%),
-	b_tok_touch_all: 29 (8.1%), b_finish: 0.74 (0.2%), tests_pri_0: 262
-	(74.5%), check_dkim_signature: 0.38 (0.1%), check_dkim_adsp: 3.5
-	(1.0%), poll_dns_idle: 0.86 (0.2%), tests_pri_10: 1.71 (0.5%),
-	tests_pri_500: 6 (1.7%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
-X-SA-Exim-Connect-IP: 166.70.13.51
-X-SA-Exim-Rcpt-To: zbyszek@in.waw.pl, tandersen@netflix.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, alex.aring@gmail.com, chuck.lever@oracle.com, jlayton@kernel.org, kees@kernel.org, jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, cyphar@cyphar.com, tycho@tycho.pizza
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Boqun Feng <boqun.feng@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
+ lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>, rostedt <rostedt@goodmis.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>, Vlastimil Babka
+ <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+References: <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+ <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
+ <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
+ <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
+ <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
+ <54487a36-f74c-46c3-aed7-fc86eaaa9ca2@huaweicloud.com>
+ <CAHk-=wifOW0VEh6uL3sHSaAUA46YmPDS9Wh5HnNC2JyOiXVA=Q@mail.gmail.com>
+ <ZvX12_1mK8983cXm@boqun-archlinux>
+ <0b262fe5-2fc5-478d-bf66-f208723238d5@efficios.com>
+ <e748893f-28a3-4b8a-a848-cfb1173ab940@app.fastmail.com>
+ <ZvY0gG2dCJApPbp5@boqun-archlinux>
+ <8aceaf4f-5578-4fca-8be7-3448d7b89721@efficios.com>
+Content-Language: en-US
+In-Reply-To: <8aceaf4f-5578-4fca-8be7-3448d7b89721@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Tycho Andersen <tycho@tycho.pizza> writes:
+On 2024-09-27 12:59, Mathieu Desnoyers wrote:
+> On 2024-09-27 06:28, Boqun Feng wrote:
+[...]
+>> I replaced ADDRESS_EQ(a, b) with ADDRESS_EQ(b, a), and the compile
+>> result shows it can prevent the issue:
+> 
+> I see, yes. It prevents the issue by making the compiler create
+> a copy of the value "modified" by the asm before doing the equality
+> comparison.
+> 
+> This means the compiler cannot derive the value for b from the first
+> load when b is used after after the equality comparison.
+> 
+> The only downside of OPTIMIZER_HIDE_VAR() is that it adds an extra
+> "mov" instruction to move the content across registers. I don't think
+> it matters performance wise though, so that solution is appealing
+> because it is arch-agnostic.
+> 
+> One small improvement over your proposed solution would be to apply
+> OPTIMIZER_HIDE_VAR() on both inputs. Because this is not a volatile
+> asm, it is simply optimized away if var1 or var2 is unused following
+> the equality comparison. It is more convenient to prevent replacement
+> of both addresses being compared by the other rather than providing
+> the guarantee only on a single parameter:
 
-> On Wed, Sep 25, 2024 at 09:09:18PM -0500, Eric W. Biederman wrote:
->> Tycho Andersen <tycho@tycho.pizza> writes:
->> 
->> > Yep, I did this for the test above, and it worked fine:
->> >
->> >         if (bprm->fdpath) {
->> >                 /*
->> >                  * If fdpath was set, execveat() made up a path that will
->> >                  * probably not be useful to admins running ps or similar.
->> >                  * Let's fix it up to be something reasonable.
->> >                  */
->> >                 struct path root;
->> >                 char *path, buf[1024];
->> >
->> >                 get_fs_root(current->fs, &root);
->> >                 path = __d_path(&bprm->file->f_path, &root, buf, sizeof(buf));
->> >
->> >                 __set_task_comm(me, kbasename(path), true);
->> >         } else {
->> >                 __set_task_comm(me, kbasename(bprm->filename), true);
->> >         }
->> >
->> > obviously we don't want a stack allocated buffer, but triggering on
->> > ->fdpath != NULL seems like the right thing, so we won't need a flag
->> > either.
->> >
->> > The question is: argv[0] or __d_path()?
->> 
->> You know.  I think we can just do:
->> 
->> 	BUILD_BUG_ON(DNAME_INLINE_LEN >= TASK_COMM_LEN);
->> 	__set_task_comm(me, bprm->file->f_path.dentry->d_name.name, true);
->> 
->> Barring cache misses that should be faster and more reliable than what
->> we currently have and produce the same output in all of the cases we
->> like, and produce better output in all of the cases that are a problem
->> today.
->> 
->> Does anyone see any problem with that?
->
-> Nice, this works great. We need to drop the BUILD_BUG_ON() since it is
-> violated in today's tree, but I think this is safe to do anyway since
-> __set_task_comm() does strscpy_pad(tsk->comm, buf, sizeof(tsk->comm)).
+Actually, your approach is better (only preserving the address
+dependency on the first parameter), because it allows the second
+parameter to be a constant.
 
-Doh.  I simply put the conditional in the wrong order.  That should have
-been:
-	BUILD_BUG_ON(TASK_COMM_LEN > DNAME_INLINE_LEN);
+Here is a diff. Please let me know if I need to improve anything wrt
+comments or implementation:
 
-Sorry I was thinking of the invariant that needs to be preserved rather
-than the bug that happens.
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 2df665fa2964..52434eccd715 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -186,6 +186,32 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+  	__asm__ ("" : "=r" (var) : "0" (var))
+  #endif
+  
++/*
++ * Compare an address with an expression while preserving the address
++ * dependencies for later use of the address. It should be used when
++ * comparing an address returned by rcu_dereference() with another
++ * address (either constant or in registers).
++ *
++ * This is needed to prevent the compiler SSA GVN optimization pass from
++ * replacing the register holding @addr by @expr (either a constant or a
++ * register) based on their equality, which does not preserve address
++ * dependencies and allows the following misordering speculations:
++ *
++ * - If @expr is a constant, the compiler can issue the loads which depend
++ *   on @addr before the load of @addr.
++ * - If @expr is a register populated by a prior load, weakly-ordered
++ *   CPUs can speculate loads which depend on @addr before the load of the
++ *   address they depend on.
++ */
++#ifndef ADDRESS_EQ
++#define ADDRESS_EQ(addr, expr)					\
++	({							\
++		bool __res = (addr) == (expr);			\
++		OPTIMIZER_HIDE_VAR(addr);			\
++		__res;						\
++	})
++#endif
++
+  #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+  
+  /**
 
-Eric
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
