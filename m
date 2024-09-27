@@ -1,195 +1,225 @@
-Return-Path: <linux-kernel+bounces-341954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10DB19888CD
+	by mail.lfdr.de (Postfix) with ESMTPS id 517B69888CF
 	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 525291F24D32
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:14:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB2BE1F24E00
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE501C172E;
-	Fri, 27 Sep 2024 16:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8C71C172E;
+	Fri, 27 Sep 2024 16:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZyCtzk6/"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cP5ZGoxA"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6B7189BA3
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 16:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAEE189BA3;
+	Fri, 27 Sep 2024 16:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727453630; cv=none; b=jGhHmtKegzRd7W9MzALArcZE58OM7TzKpjLMbdk2U6GPtRILooAZpivXNFqFJPiQKgJvounhacjgEAolNeRnqBpyBdtAMGablEg5s3pPeWgI82yNGGZnepv1d9AQOa0crS24EukzzOrL3DlPoeuXpknm+oOKZuWp5M6F9wUPT64=
+	t=1727453640; cv=none; b=lFQndIBq4JWD7SdEdR5iTamG8NzsY+DD3Iz8KrtY4PzvpJ9yunKV3qSv7Vt22OsWb+Vv43tyOJX82Psinet/Iiv9Sr0mOLTBtPMVLR/iYjJaZu7t7RPTye5HGNv6m6/LqvxgcfmF3mPNyG77WLqsbe2rLBcEyU+ro2uIV80Ayg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727453630; c=relaxed/simple;
-	bh=7kU6XoxUAcIgBj0KIhY5INXnY9DzzTkhFr/l3iiJ8JE=;
+	s=arc-20240116; t=1727453640; c=relaxed/simple;
+	bh=EF0Av991yhny8U1gCitGfS/KZoWeWgh1qn4rm107pVo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KrMumFlH7OpkuK8uh6lTxgf47LPLURV7oj+ip22vybPT7DZM0YMOpsJsiKP65NtPyjQMYTKGBzlMrQl1dXDJPWZ6uPN/jS6cAq9tb8a6zQKOsR96Y1fJQap5r8yyTM16bucTV1s59vdc8wE7EoD3XbSCFYtZcn+usgDas3MzmZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZyCtzk6/; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20b061b7299so186515ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:13:48 -0700 (PDT)
+	 To:Cc:Content-Type; b=cZZkM+0VTzdWTAryfyh4OLB0QEEFJqCZJhpVIDVdEsjOTzLiITI4hi6xc4FydzhQy+L3T9/YQz5eJATUfXQznYDdV2jpsVS55Tx6AAnTMpEI9MAQCvWugJ5UBAXq1bR+IWM6eIkCLIa3irundgDPtxserGI1yVqeS15ejF8bxcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cP5ZGoxA; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a34802247eso4303835ab.0;
+        Fri, 27 Sep 2024 09:13:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727453628; x=1728058428; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727453638; x=1728058438; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oEfwOX0k0jsdiAz/mx4JtQIPRHf7GHZcKBgddoeHMM0=;
-        b=ZyCtzk6/2CU9lSsVFR/r9ziw1TPZDJtiNNvvokiqDkQJ+kukM1Y/2oLGP1DgR2EWGb
-         KhftS1bJPCpdLrbTyO8ZDFj7HJgIGLp26aWOgSLoD3O0hfHztkgRsVkyLSJV9BqhNIeR
-         1jKhIglAe+BVlRRHw8Y5m++Wfsl4do3SOXqjqKJaSJcrR0DmTTlSwVAkkyg3NQs9woW8
-         sFRIvwdtI1/6nY0A3+k/qsfUlFhTX1vXb+Q3ilv93km/BpNMsYcLyqNysiLo10S+N2Zn
-         oh59hivEu75zCR9llUosUuFZA0RmMNS0RaI80ZWwMJg+fv4PRte3jPTTRA1it83SC8sb
-         +yRw==
+        bh=DEn58HecF0TosxZt+Dqr3/YCoDZ17RngyusZkdzm+yE=;
+        b=cP5ZGoxAbzhhQ23j9BLRvkzsSUKHoIgqmoPuRs0bgnlsleMKHlie5aVbRzUqst+XeM
+         dkkrSaeGD+zHVs5kDsCV2Gm5C89TNAoK7gedjKiPEUrc4+QYq5KaGnTgmH3nCEG5TveK
+         /0ZG3ETge32+4CNCDo1DenJ4JDunRHon7lTblQEPPznqyWaSX/GBFcp2kPRuHzN54aC8
+         OWvOpM4umHLT1CkJxkXJZW0qbZAHpuarMSxEKI47J0MYAjdwcFO0wq73RXvIZd9hcHMS
+         LIwaXNa5ak+jmrqf34Xgk6BxWdVT7D7yuvqhUDsIjGy5mXePRfoxe5WKHw4VcFF/PJYK
+         51cA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727453628; x=1728058428;
+        d=1e100.net; s=20230601; t=1727453638; x=1728058438;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oEfwOX0k0jsdiAz/mx4JtQIPRHf7GHZcKBgddoeHMM0=;
-        b=XljH1FBZYe/6wfGbYlUaUwUP/VyERarOcLZtIbAmfj3jpHPP8tx9Z2acNsagRwsZoH
-         zSTbKEubk8BkvvhJGhFPrW6jiyt4MYFbGmD2Fbe1/qso+97DkHzw/XhF8Doedn5jJ0gn
-         FxRRWIZOGA/F2H31rVIndNL+3EshCMfM9Qj9FfhRPh9C+i+n39lpePcP19z5Au1tIl6z
-         NWvnf+QTptotm9deZOfTaPpEzt8wMXs42aAYFLIOfrviCLkGzke7TWZUZNYgVSeXTGnm
-         JLcK6hOu6lwIurTD5+swL6vekoLGqMx2ASJ85KqBSv8B0U/bb9Ugej8yNEAxmPvZTSd5
-         X6KA==
-X-Forwarded-Encrypted: i=1; AJvYcCWV6MwgjuBYzO3ldhQR1XauT2f4AM4g0if/D4X+FgUDVdV1awVGmTGlZQyX5AmymwNjPprdTQIIs5m5fQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzC5+FWfs4/KxOT8/BwpHrtAkrhPDJguVxz4c74MsWypEITUp7
-	x1SR0JltYd23nmuByY4UBhdKicjv8vCnkHiDjEynn8D+OIDhl2rG0omP0sFGcWSv9rihGG3sXlo
-	juegLPtiF0Q+UNYLAzhqaed1ccZITvHwgeEV2
-X-Google-Smtp-Source: AGHT+IG8N/hvJvaxu+2E3iccFfkOGWuZB6ZYaUmHLVfB3/2b9cxpaCTbUmx0migIGXlRtEDU+IRgbFFUAICLwolBmHw=
-X-Received: by 2002:a17:902:f686:b0:206:aa47:adc6 with SMTP id
- d9443c01a7336-20b3d5764f4mr2377275ad.11.1727453627640; Fri, 27 Sep 2024
- 09:13:47 -0700 (PDT)
+        bh=DEn58HecF0TosxZt+Dqr3/YCoDZ17RngyusZkdzm+yE=;
+        b=BzIOb8c3yDKWhnzgVrh/8ysbilF1Eo106NPEn/7+mwKxqf9mAoDye32sj7wneX+pJe
+         chJYelNLUfugjDu2RedWsO5syYPOiRsSP/NrCquNxYIZegZwSm19M4+hJWkNNZC9gGTQ
+         yMyyFzlB+eo15x2+F6P2CnN78wc2cH+oeMSiUIOlPryliqD87WcXcg5446DHIl0W0sFo
+         9fVwqomMCjDrWRHKgN3FN+gG27H7bQp/BLkF2LqRmBCDGVqcJREDwmhpF+XLRNZO55cy
+         1WergmpxMsmkFI6Ox7P6E7cnL3KBhU/GQbzQqKJ7ApIQ6pZUOc/DZfPDCd16HpcgQ5+Q
+         emlw==
+X-Forwarded-Encrypted: i=1; AJvYcCURMmVjwQwp77sXixQk5sVHZBAI+uH9ikXa1qciimBkwwvzL9v2J+uVPXnzUirjXCAGh4koo+1C3k/5d+wg@vger.kernel.org, AJvYcCUSm6jnMEKFvEcBM3erPE4yzfPkt3NKIfQqqDYFZpEMVMFl6LE4TbguHUPfQQjtQNtRAI02mz142Urr@vger.kernel.org, AJvYcCWajmeO5PlsPIspDfA5SYuRXpt387F0oqdANZHKBVYwGimb0HzGoqf7/tlL4X7KIQ7gamuhgMvpS47hz08f@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8sP9jYWi2Z7reGnB6kZPjS8A/6LyGLZZzv+lK3RIdNJuzK5V/
+	vsQIUAuE/dNYdug6x0ux3/jzxNWlWkW0Ec67ituOBN0q8tfV3a1f8gudPFpVBgu/gsHdWowR56j
+	SrRxzTiaVzFJ/9lJglJ6z8HyGWUT5jA==
+X-Google-Smtp-Source: AGHT+IG8J8ayTBM0SIM96790nCwHY2riAMEY+VMgtSqhHWVj3meExklYvjvN+tePgujrZ2Yd48FUNnuFRhUvZao5JCU=
+X-Received: by 2002:a05:6e02:1c8f:b0:3a0:a385:9128 with SMTP id
+ e9e14a558f8ab-3a345169251mr36411535ab.6.1727453637742; Fri, 27 Sep 2024
+ 09:13:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926233632.821189-1-cmllamas@google.com> <20240926233632.821189-7-cmllamas@google.com>
- <CAH5fLggS7C4QdmDFqEy5KARUj+4oNWfstyno3d43joG5haysDw@mail.gmail.com>
-In-Reply-To: <CAH5fLggS7C4QdmDFqEy5KARUj+4oNWfstyno3d43joG5haysDw@mail.gmail.com>
-From: Yu-Ting Tseng <yutingtseng@google.com>
-Date: Fri, 27 Sep 2024 09:13:34 -0700
-Message-ID: <CAN5Drs3TCGT1rWJjujo3FP3HxnSFUFo5hcWh=4+xhOYzDg4JqQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/8] binder: allow freeze notification for dead nodes
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Carlos Llamas <cmllamas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	stable@vger.kernel.org
+References: <20240926-preemption-a750-t-v6-0-7b6e1ef3648f@gmail.com> <20240926-preemption-a750-t-v6-5-7b6e1ef3648f@gmail.com>
+In-Reply-To: <20240926-preemption-a750-t-v6-5-7b6e1ef3648f@gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Fri, 27 Sep 2024 09:13:45 -0700
+Message-ID: <CAF6AEGtgSCpsOvikwEchyLhT3mnA38oanLGgbBvJVPhaFa+M2g@mail.gmail.com>
+Subject: Re: [PATCH v6 05/11] drm/msm/a6xx: Implement preemption for a7xx targets
+To: Antonino Maniscalco <antomani103@gmail.com>
+Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Akhil P Oommen <quic_akhilpo@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Sharat Masetty <smasetty@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 12:19=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
+On Thu, Sep 26, 2024 at 2:17=E2=80=AFPM Antonino Maniscalco
+<antomani103@gmail.com> wrote:
 >
-> On Fri, Sep 27, 2024 at 1:37=E2=80=AFAM Carlos Llamas <cmllamas@google.co=
-m> wrote:
-> >
-> > Alice points out that binder_request_freeze_notification() should not
-> > return EINVAL when the relevant node is dead [1]. The node can die at
-> > any point even if the user input is valid. Instead, allow the request
-> > to be allocated but skip the initial notification for dead nodes. This
-> > avoids propagating unnecessary errors back to userspace.
-> >
-> > Fixes: d579b04a52a1 ("binder: frozen notification")
-> > Cc: stable@vger.kernel.org
-> > Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> > Link: https://lore.kernel.org/all/CAH5fLghapZJ4PbbkC8V5A6Zay-_sgTzwVpwq=
-k6RWWUNKKyJC_Q@mail.gmail.com/ [1]
-> > Signed-off-by: Carlos Llamas <cmllamas@google.com>
-> > ---
-> >  drivers/android/binder.c | 28 +++++++++++++---------------
-> >  1 file changed, 13 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> > index 73dc6cbc1681..415fc9759249 100644
-> > --- a/drivers/android/binder.c
-> > +++ b/drivers/android/binder.c
-> > @@ -3856,7 +3856,6 @@ binder_request_freeze_notification(struct binder_=
-proc *proc,
-> >  {
-> >         struct binder_ref_freeze *freeze;
-> >         struct binder_ref *ref;
-> > -       bool is_frozen;
-> >
-> >         freeze =3D kzalloc(sizeof(*freeze), GFP_KERNEL);
-> >         if (!freeze)
-> > @@ -3872,32 +3871,31 @@ binder_request_freeze_notification(struct binde=
-r_proc *proc,
-> >         }
-> >
-> >         binder_node_lock(ref->node);
-> > -
-> > -       if (ref->freeze || !ref->node->proc) {
-> > -               binder_user_error("%d:%d invalid BC_REQUEST_FREEZE_NOTI=
-FICATION %s\n",
-> > -                                 proc->pid, thread->pid,
-> > -                                 ref->freeze ? "already set" : "dead n=
-ode");
-> > +       if (ref->freeze) {
-> > +               binder_user_error("%d:%d BC_REQUEST_FREEZE_NOTIFICATION=
- already set\n",
-> > +                                 proc->pid, thread->pid);
-> >                 binder_node_unlock(ref->node);
-> >                 binder_proc_unlock(proc);
-> >                 kfree(freeze);
-> >                 return -EINVAL;
-> >         }
-> > -       binder_inner_proc_lock(ref->node->proc);
-> > -       is_frozen =3D ref->node->proc->is_frozen;
-> > -       binder_inner_proc_unlock(ref->node->proc);
-> >
-> >         binder_stats_created(BINDER_STAT_FREEZE);
-> >         INIT_LIST_HEAD(&freeze->work.entry);
-> >         freeze->cookie =3D handle_cookie->cookie;
-> >         freeze->work.type =3D BINDER_WORK_FROZEN_BINDER;
-> > -       freeze->is_frozen =3D is_frozen;
-> > -
-> >         ref->freeze =3D freeze;
-> >
-> > -       binder_inner_proc_lock(proc);
-> > -       binder_enqueue_work_ilocked(&ref->freeze->work, &proc->todo);
-> > -       binder_wakeup_proc_ilocked(proc);
-> > -       binder_inner_proc_unlock(proc);
-> > +       if (ref->node->proc) {
-> > +               binder_inner_proc_lock(ref->node->proc);
-> > +               freeze->is_frozen =3D ref->node->proc->is_frozen;
-> > +               binder_inner_proc_unlock(ref->node->proc);
-> > +
-> > +               binder_inner_proc_lock(proc);
-> > +               binder_enqueue_work_ilocked(&freeze->work, &proc->todo)=
-;
-> > +               binder_wakeup_proc_ilocked(proc);
-> > +               binder_inner_proc_unlock(proc);
+> This patch implements preemption feature for A6xx targets, this allows
+> the GPU to switch to a higher priority ringbuffer if one is ready. A6XX
+> hardware as such supports multiple levels of preemption granularities,
+> ranging from coarse grained(ringbuffer level) to a more fine grained
+> such as draw-call level or a bin boundary level preemption. This patch
+> enables the basic preemption level, with more fine grained preemption
+> support to follow.
 >
-> This is not a problem with your change ... but, why exactly are we
-> scheduling the BINDER_WORK_FROZEN_BINDER right after creating it? For
-> death notications, we only schedule it immediately if the process is
-> dead. So shouldn't we only schedule it if the process is not frozen?
+> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8450-HDK
+> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/Makefile              |   1 +
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 283 +++++++++++++++++++++-
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 +++++++++++++
+>  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 377 ++++++++++++++++++++++++=
+++++++
+>  drivers/gpu/drm/msm/msm_ringbuffer.h      |   7 +
+>  5 files changed, 825 insertions(+), 11 deletions(-)
 >
-> And if the answer is that frozen notifications are always sent
-> immediately to notify about the current state, then we should also
-> send one for a dead process ... maybe. I guess a dead process is not
-> frozen?
-Yes this is to immediately notify about the current state (frozen or
-unfrozen). A dead process is in neither state so it feels more correct
-not to send either?
+> diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
+> index f5e2838c6a76505b353f83c9fe9c997f1c282701..32e915109a59dda96ed76ddd2=
+b4f57bb225f4572 100644
+> --- a/drivers/gpu/drm/msm/Makefile
+> +++ b/drivers/gpu/drm/msm/Makefile
+> @@ -23,6 +23,7 @@ adreno-y :=3D \
+>         adreno/a6xx_gpu.o \
+>         adreno/a6xx_gmu.o \
+>         adreno/a6xx_hfi.o \
+> +       adreno/a6xx_preempt.o \
+>
+>  adreno-$(CONFIG_DEBUG_FS) +=3D adreno/a5xx_debugfs.o \
+>
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/=
+adreno/a6xx_gpu.c
+> index 6e065500b64d6d95599d89c33e6703c92f210047..355a3e210335d60a5bed0ee28=
+7912271c353402a 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> @@ -16,6 +16,84 @@
+>
+>  #define GPU_PAS_ID 13
+>
+> +/* IFPC & Preemption static powerup restore list */
+> +static const uint32_t a7xx_pwrup_reglist[] =3D {
+> +       REG_A6XX_UCHE_TRAP_BASE,
+> +       REG_A6XX_UCHE_TRAP_BASE + 1,
+> +       REG_A6XX_UCHE_WRITE_THRU_BASE,
+> +       REG_A6XX_UCHE_WRITE_THRU_BASE + 1,
+> +       REG_A6XX_UCHE_GMEM_RANGE_MIN,
+> +       REG_A6XX_UCHE_GMEM_RANGE_MIN + 1,
+> +       REG_A6XX_UCHE_GMEM_RANGE_MAX,
+> +       REG_A6XX_UCHE_GMEM_RANGE_MAX + 1,
+> +       REG_A6XX_UCHE_CACHE_WAYS,
+> +       REG_A6XX_UCHE_MODE_CNTL,
+> +       REG_A6XX_RB_NC_MODE_CNTL,
+> +       REG_A6XX_RB_CMP_DBG_ECO_CNTL,
+> +       REG_A7XX_GRAS_NC_MODE_CNTL,
+> +       REG_A6XX_RB_CONTEXT_SWITCH_GMEM_SAVE_RESTORE,
+> +       REG_A6XX_UCHE_GBIF_GX_CONFIG,
+> +       REG_A6XX_UCHE_CLIENT_PF,
+> +       REG_A6XX_TPL1_DBG_ECO_CNTL1,
+> +};
+> +
+> +static const uint32_t a7xx_ifpc_pwrup_reglist[] =3D {
+> +       REG_A6XX_TPL1_NC_MODE_CNTL,
+> +       REG_A6XX_SP_NC_MODE_CNTL,
+> +       REG_A6XX_CP_DBG_ECO_CNTL,
+> +       REG_A6XX_CP_PROTECT_CNTL,
+> +       REG_A6XX_CP_PROTECT(0),
+> +       REG_A6XX_CP_PROTECT(1),
+> +       REG_A6XX_CP_PROTECT(2),
+> +       REG_A6XX_CP_PROTECT(3),
+> +       REG_A6XX_CP_PROTECT(4),
+> +       REG_A6XX_CP_PROTECT(5),
+> +       REG_A6XX_CP_PROTECT(6),
+> +       REG_A6XX_CP_PROTECT(7),
+> +       REG_A6XX_CP_PROTECT(8),
+> +       REG_A6XX_CP_PROTECT(9),
+> +       REG_A6XX_CP_PROTECT(10),
+> +       REG_A6XX_CP_PROTECT(11),
+> +       REG_A6XX_CP_PROTECT(12),
+> +       REG_A6XX_CP_PROTECT(13),
+> +       REG_A6XX_CP_PROTECT(14),
+> +       REG_A6XX_CP_PROTECT(15),
+> +       REG_A6XX_CP_PROTECT(16),
+> +       REG_A6XX_CP_PROTECT(17),
+> +       REG_A6XX_CP_PROTECT(18),
+> +       REG_A6XX_CP_PROTECT(19),
+> +       REG_A6XX_CP_PROTECT(20),
+> +       REG_A6XX_CP_PROTECT(21),
+> +       REG_A6XX_CP_PROTECT(22),
+> +       REG_A6XX_CP_PROTECT(23),
+> +       REG_A6XX_CP_PROTECT(24),
+> +       REG_A6XX_CP_PROTECT(25),
+> +       REG_A6XX_CP_PROTECT(26),
+> +       REG_A6XX_CP_PROTECT(27),
+> +       REG_A6XX_CP_PROTECT(28),
+> +       REG_A6XX_CP_PROTECT(29),
+> +       REG_A6XX_CP_PROTECT(30),
+> +       REG_A6XX_CP_PROTECT(31),
+> +       REG_A6XX_CP_PROTECT(32),
+> +       REG_A6XX_CP_PROTECT(33),
+> +       REG_A6XX_CP_PROTECT(34),
+> +       REG_A6XX_CP_PROTECT(35),
+> +       REG_A6XX_CP_PROTECT(36),
+> +       REG_A6XX_CP_PROTECT(37),
+> +       REG_A6XX_CP_PROTECT(38),
+> +       REG_A6XX_CP_PROTECT(39),
+> +       REG_A6XX_CP_PROTECT(40),
+> +       REG_A6XX_CP_PROTECT(41),
+> +       REG_A6XX_CP_PROTECT(42),
+> +       REG_A6XX_CP_PROTECT(43),
+> +       REG_A6XX_CP_PROTECT(44),
+> +       REG_A6XX_CP_PROTECT(45),
+> +       REG_A6XX_CP_PROTECT(46),
+> +       REG_A6XX_CP_PROTECT(47),
+> +       REG_A6XX_CP_AHB_CNTL,
+> +};
 
+Should we put these in a6xx_catalog.c, in a6xx_info instead?  I guess
+they'd differ on a6xx if we enabled preemption there (at a minimum,
+the # of CP_PROTECT regs differs btwn a6xx sub-generations)
 
->
-> > +       }
-> >
-> >         binder_node_unlock(ref->node);
-> >         binder_proc_unlock(proc);
-> > --
-> > 2.46.1.824.gd892dcdcdd-goog
-> >
+BR,
+-R
 
