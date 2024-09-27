@@ -1,45 +1,83 @@
-Return-Path: <linux-kernel+bounces-341208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67846987CAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:43:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93445987CB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1787E1F23F32
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:43:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44A59285164
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07461514C6;
-	Fri, 27 Sep 2024 01:43:25 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54407165F02;
+	Fri, 27 Sep 2024 01:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wFMNGr4t"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2058.outbound.protection.outlook.com [40.107.92.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4412746D;
-	Fri, 27 Sep 2024 01:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727401405; cv=none; b=aMsGFiHnuaHqAFfQs2CRBOb/Pv0+kuhl8wvONFLrLAhfZVDRok6m4gxz+B08zAd5CfN/E6+JSj/HUNJgCldiCY7g3gTgELDz7kg8MGp3Y5g1syJoNL1P9kolDnRWD+TEtw2u/Kqbyv4MMYuJMCy1Zt6NM3/FMNNtr+tVdn/8848=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727401405; c=relaxed/simple;
-	bh=eThHgiFZLCQUTtc9xrFLaZUNnQjcwKmNmd28LqBUrx4=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E386F14A4CC
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 01:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727401657; cv=fail; b=qju69ipnctUx9Qp1L4uUYGp7JUS01SWsp3FtMeXRoX9cJSOkNgtZCYPCyj/+nvhGIV82PnDiLMupOErTr9gNgkuVjWoLbjh+NJ07C18b9JDotnfohjOluDB3T7YHLq5/BF2dOYJ+zgirpy3cA3A91Ur+EN6VMsSd5ho+RNNYqSQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727401657; c=relaxed/simple;
+	bh=QNqoz3dPI8GyxhXMYtNWtYTfBoQ0bYDex1/3ZnQ3A54=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bbCX2/CcUj6BUKFZn95nV1g0SYbxhJ1wWLzX28f3JWAFeh+Ar75oudE7Oc0eiku2cXcCVhebxj+Ga5pj6M2CJgsBli5Jh82kJ/ut1RKV6UQMcwDqm7HSoEzeZ/q0n4b0WciCQxLzmYhpbxxsgw6WWZr91KdwqlPG4h9Ps2DMC54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XFCrd12pxz2DcZj;
-	Fri, 27 Sep 2024 09:42:25 +0800 (CST)
-Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9118C1A0188;
-	Fri, 27 Sep 2024 09:43:14 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.174) by dggpeml100021.china.huawei.com
- (7.185.36.148) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 27 Sep
- 2024 09:43:13 +0800
-Message-ID: <e6758b35-fb97-4f69-8cdb-2650edea80b5@huawei.com>
-Date: Fri, 27 Sep 2024 09:43:13 +0800
+	 In-Reply-To:Content-Type; b=r1EruWBiZfS0Hjwc27PjuumRAxkT/CWLQtfuqDzdk2mi2w1E0kLa05F+XUj5hOHJXfHAbLhU4dusWU+lteAwIDOo4JLapah5ODx9/0A02Wf8BpeuQwUTcyYzhelw1tCAfcYN7rSimimj0d7Wu8af5v1KeYKmhvBH7TrjL83o08w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wFMNGr4t; arc=fail smtp.client-ip=40.107.92.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iU/Q8VKD1br1d7wdQqO7Q1oiqZkLjyHWU1L/1zEuuTlRZdTp0KugtnoPArp4hsn/0+aRAeQDSDpxKVVt9BFLbFdTUGe71QJLgYxQLNOrlo1+6R7QnnUeVM6HFoFhtYmLZE9s5UMKeunNb0xCulilXc4TVB2k27VwwGqN1fdGRpSVdjZi70d+M1IEDnm3CgBvthc2ImerUKgK8gfTXDBHCGMxgklTAzTj4w7XLyZiZLUC6OMm5Qpj5Yu58050kv7jCjA2T9Tgw3OXYmohBw2EDlVbWceuuSc4Fm3eaQ535DVc7z7dBAzaRh0TUQZzUvrlew+W5C7MunHu6yvJ9KkJ2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=re69GDicJsTVYB8i/wCJt4K1EhDG8JMiCWJegOKlVFw=;
+ b=e0I7xmXpkCvtXlSgmCZRuhWczbLgbGxYA57K8ZT5AGmki41awPLwcS96BbdcRd0aWtnUExpsG8/ycRtsDo5rKeFimLqu1iQguhX2nRwgR1woKeHAcaoYzLjOi1+1aYo4kTYK68oMbSMaHTFO9P+E5MZH9GMt75m53W+tDRWIB0oknCNBwvDKZEmosuyfkD59fw9T5a3lszRlsYn1sjoniblHvcC216eAZHNOKqGC7JeXCIAH+fPi6veNIAK64gC6VYTPaEWLm59Aqfcut+3ZnjGk1VRW+NLnrvS/lw2HFkCOAM83tEOdmdVDbGqiQm2TJ7dg2GSI4L3NXbyN034WtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=re69GDicJsTVYB8i/wCJt4K1EhDG8JMiCWJegOKlVFw=;
+ b=wFMNGr4t/66QbS97MsVBK1VfE1XCPkolbspCDIuqnobu3xjeC1rDSllKfuHRNZkoOpDK5Qom8ZResleX9ri8p1eYfZSk1H5cVHKxC2OyaNjvEXehq2toMhE6E/FRkixv8w6uQM9tJyUu3fiptqVCv+I7WSglspi4lL9YQ3wZVmE=
+Received: from BY5PR13CA0017.namprd13.prod.outlook.com (2603:10b6:a03:180::30)
+ by SJ2PR12MB8926.namprd12.prod.outlook.com (2603:10b6:a03:53b::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.22; Fri, 27 Sep
+ 2024 01:47:32 +0000
+Received: from CO1PEPF000075ED.namprd03.prod.outlook.com
+ (2603:10b6:a03:180:cafe::60) by BY5PR13CA0017.outlook.office365.com
+ (2603:10b6:a03:180::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.15 via Frontend
+ Transport; Fri, 27 Sep 2024 01:47:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000075ED.mail.protection.outlook.com (10.167.249.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8005.15 via Frontend Transport; Fri, 27 Sep 2024 01:47:01 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Sep
+ 2024 20:46:59 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Sep
+ 2024 20:46:54 -0500
+Received: from [172.18.112.153] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 26 Sep 2024 20:46:53 -0500
+Message-ID: <572b339b-7dab-4db0-8ee8-d805f8211aa3@amd.com>
+Date: Thu, 26 Sep 2024 21:46:53 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,98 +85,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] ext4: fix crash on BUG_ON in ext4_alloc_group_tables
-To: Eric Sandeen <sandeen@sandeen.net>
-CC: Jan Kara <jack@suse.cz>, Alexander Mikhalitsyn
-	<aleksandr.mikhalitsyn@canonical.com>, <tytso@mit.edu>,
-	<stable@vger.kernel.org>, Andreas Dilger <adilger.kernel@dilger.ca>,
-	=?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@stgraber.org>, Christian Brauner
-	<brauner@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>, Wesley
- Hershberger <wesley.hershberger@canonical.com>, Yang Erkun
-	<yangerkun@huawei.com>, Baokun Li <libaokun1@huawei.com>
-References: <20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com>
- <20240925143325.518508-2-aleksandr.mikhalitsyn@canonical.com>
- <20240925155706.zad2euxxuq7h6uja@quack3>
- <142a28f9-5954-47f6-9c0c-26f7c142dbc1@huawei.com>
- <ac29f2ba-7f77-4413-82b9-45f377f6c971@sandeen.net>
+Subject: Re: [PATCH 4/5] x86/xen: Avoid relocatable quantities in Xen ELF
+ notes
+To: Ard Biesheuvel <ardb+git@google.com>, <linux-kernel@vger.kernel.org>
+CC: Ard Biesheuvel <ardb@kernel.org>, Juergen Gross <jgross@suse.com>, "Boris
+ Ostrovsky" <boris.ostrovsky@oracle.com>, <x86@kernel.org>,
+	<xen-devel@lists.xenproject.org>
+References: <20240926104113.80146-7-ardb+git@google.com>
+ <20240926104113.80146-11-ardb+git@google.com>
 Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <ac29f2ba-7f77-4413-82b9-45f377f6c971@sandeen.net>
+From: Jason Andryuk <jason.andryuk@amd.com>
+In-Reply-To: <20240926104113.80146-11-ardb+git@google.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpeml100021.china.huawei.com (7.185.36.148)
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075ED:EE_|SJ2PR12MB8926:EE_
+X-MS-Office365-Filtering-Correlation-Id: d0af9c1e-4caf-4712-54c6-08dcde965a1f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S1lrZzc1YllEV2txOWhkYzFneTZqeXVrOW94NHZwMzY2WmY5SWJ3dU14Tzc2?=
+ =?utf-8?B?VUlWbm4zdG5CRkRBeXViRmZJTzUwbnVNVVJwNFBRWXhLQTU5WXdFajBETHlh?=
+ =?utf-8?B?d3hPOVErL0tESjJtTDZoV2JJSUF3cm56QjhPWE1TVVpXanZwLzhza3lxL1hJ?=
+ =?utf-8?B?VjVIbmNONUVGTXVuSEFrUmJtT1haNEx2bkg2cGJZbkFkdWhBRmxlM2NxL29P?=
+ =?utf-8?B?dVhhaVNaUjJXSUN5eHpUUFBPSlFETnl2b3QwL2RGMEtaUElnRmNUUmhQMlEy?=
+ =?utf-8?B?dWtYcktIR1Z2VVpwaTU2aVRzS1VIS2VTK1JUb1ZyN2FtMlE5Ums4bDAzS2pj?=
+ =?utf-8?B?VjJyeUdVeThQb0NRc092NGdOZ3IzSzNxc2RMUHhTNU1GQWxSZE4zZ0dRb2JZ?=
+ =?utf-8?B?SFQrOWtXZEFYVm9ISTVQNXhycERwZHhzdlZ5TXFqOW5idSthb2h5OTFOV2pz?=
+ =?utf-8?B?VFFWM3R4T3UwUVZIQjlQdXp2ajF5UlVlb1N2QVlRVyswd0VJMUxKVmxucmZr?=
+ =?utf-8?B?K1lNSThmVmlXdmd4akpNUkhYUzZZMWRKckQwN3k4eWd5S1FISHY0dE1TaktP?=
+ =?utf-8?B?Y1hmSEV2VWY2cDlIanlKNVRud2daSlRqUGUyZHh5cjVOM1J6aS82Z201eWVD?=
+ =?utf-8?B?ZWZKU0VxOFlLYmlGN0k2MW9zYUZKNS81NEJyaGFPY1FmSFBtaVdSTTNxT2Ns?=
+ =?utf-8?B?YzdyMVhIM05CenhwU1lZN2hBRi9PRCtkYmVDTmtxUVpjZzVEY1NyU3pSV0hP?=
+ =?utf-8?B?aWNWUFhsZFNXazQwbk5RMTRzMnVpYnFtTlRmTWJGdWs3ejlPWVZGOEdQSWNJ?=
+ =?utf-8?B?TWxRQmlsVEdYR2p5V3pycDlkMDBZd3ZOMTAwZEl6alJGcC9GNlRid3cydVhK?=
+ =?utf-8?B?dGV5QXNJY0h6Ni9OVGhLWGN2NFVDbGtYYmRvZXZjQ1pvWnUzWHhuSjZaMWdQ?=
+ =?utf-8?B?bExNREpKc2VsU0NKZk8rQ3o5QzUwUTV6N3RLcm1lVEhnWCtQNkhxS0J4TXZF?=
+ =?utf-8?B?cDkxdE42R3hqZ1hkazBqbFp4czh0WDN3WmVHcTc2bWJIZUZNUGNXdUNUN2hr?=
+ =?utf-8?B?Tkp4SHFHWllBMk9EWjFHaXREUkp1eVBHbTRMV0ZHN3c3OXprK1gycFZ0Ui9L?=
+ =?utf-8?B?V2VBZmxTU1MrbXRkdzl6QTBCR0p6UXNqVVhvQVdZV2IvUzRMTSs0Q3lzMk1o?=
+ =?utf-8?B?amtsSmsvK20vcEdJVFVwUW01Ym95N3JnV2g5YVhZZFpiUk5Rbk9DV28wQ2U5?=
+ =?utf-8?B?SkMyWWVIYnl5T3B6RVFERjVEenVTME11OTI2S0hXUzlNVElMRk5Fa3daeVlJ?=
+ =?utf-8?B?aTBrWEpReElBMWkrVERnbWFZbGhNVVdSUmx2K3c0Q1VIalMyOC80ZXkzczVW?=
+ =?utf-8?B?R1JoZFJWMnRQazI4OXJQSFYveTZDd1BFNTBuRERxYk9wRkdPbUk3R3YxVkor?=
+ =?utf-8?B?S1hIWno0cC9TV3JmdGkycC9scG1PVEtqanBJRmJHT203MjFnSGRILzdod3ZQ?=
+ =?utf-8?B?SWVQOTlQZ0xENXREK0N3VEt3WXBMTnFWMVdUazl5eDFXMXl3QnR1Z0xEaXBW?=
+ =?utf-8?B?dERIUkFqOURMbUZxeXBWb1lCc01ML0RUU1JZRmIwWTJCYTZmalNSVG9JQVM1?=
+ =?utf-8?B?Nk1VL3Z5VjYwMWhYaTY1cmJtOVZXSDhxeVdzMDlCWXBxdDJ0UjdBb2ZXaVlS?=
+ =?utf-8?B?cjJMay9xaDRpNmsxVDIrVXpUeXp1U1Q5VXczL1ZaWGM1cWRKTnhEMHVWRkRK?=
+ =?utf-8?B?VjJOL1M4SGYzUUxsRlFKdUVnRk1ZdWtCMGZRNGJYZWtVcG9NNTg2azR5aFlQ?=
+ =?utf-8?Q?cs9PRo2JToG5zA07eHDX0uWfd8hXuh8/k7GY8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 01:47:01.2294
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0af9c1e-4caf-4712-54c6-08dcde965a1f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000075ED.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8926
 
-On 2024/9/27 0:04, Eric Sandeen wrote:
-> On 9/26/24 3:28 AM, Baokun Li wrote:
->> On 2024/9/25 23:57, Jan Kara wrote:
->>> On Wed 25-09-24 16:33:24, Alexander Mikhalitsyn wrote:
->>>> [   33.882936] EXT4-fs (dm-5): mounted filesystem 8aaf41b2-6ac0-4fa8-b92b-77d10e1d16ca r/w with ordered data mode. Quota mode: none.
->>>> [   33.888365] EXT4-fs (dm-5): resizing filesystem from 7168 to 786432 blocks
->>>> [   33.888740] ------------[ cut here ]------------
->>>> [   33.888742] kernel BUG at fs/ext4/resize.c:324!
->>> Ah, I was staring at this for a while before I understood what's going on
->>> (it would be great to explain this in the changelog BTW).  As far as I
->>> understand commit 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation
->>> in alloc_flex_gd()") can actually make flex_gd->resize_bg larger than
->>> flexbg_size (for example when ogroup = flexbg_size, ngroup = 2*flexbg_size
->>> - 1) which then confuses things. I think that was not really intended and
->>> instead of fixing up ext4_alloc_group_tables() we should really change
->>> the logic in alloc_flex_gd() to make sure flex_gd->resize_bg never exceeds
->>> flexbg size. Baokun?
->>>
->>>                                  Honza
->> Hi Honza,
->>
->> Your analysis is absolutely correct. It's a bug!
->> Thank you for locating this issue！
->> An extra 1 should not be added when calculating resize_bg in alloc_flex_gd().
->>
->>
->> Hi Aleksandr,
->>
->> Could you help test if the following changes work?
->>
-> I just got an internal bug report for this as well, and I can also confirm that
-> the patch fixes my testcase, thanks! Feel free to add:
->
-> Tested-by: Eric Sandeen <sandeen@redhat.com>
->
-> I had been trying to debug this and it felt like an off by one but I didn't get
-> to a solution in time. ;)
->
-> Can you explain what the 2 cases under
->
-> /* Avoid allocating large 'groups' array if not needed */
->
-> are doing? I *think* the first 'if' is trying not to over-allocate for the last
-> batch of block groups that get added during a resize. What is the "else if" case
-> doing?
->
-> Thanks,
-> -Eric
->
-The ext4 online resize started out by allocating the memory needed
-for an entire flexible block group regardless of the number of block
-groups to be added.
+On 2024-09-26 06:41, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
+> 
+> Xen puts virtual and physical addresses into ELF notes that are treated
+> by the linker as relocatable by default. Doing so is not only pointless,
+> given that the ELF notes are only intended for consumption by Xen before
+> the kernel boots. It is also a KASLR leak, given that the kernel's ELF
+> notes are exposed via the world readable /sys/kernel/notes.
+> 
+> So emit these constants in a way that prevents the linker from marking
+> them as relocatable. This involves place-relative relocations (which
+> subtract their own virtual address from the symbol value) and linker
+> provided absolute symbols that add the address of the place to the
+> desired value.
+> 
+> While at it, switch to a 32-bit field for XEN_ELFNOTE_PHYS32_ENTRY,
+> which better matches the intent as well as the Xen documentation and
+> source code.
 
-This led to a warning being triggered in the mm module when the
-userland set a very large flexbg_size (perhaps they wanted to put
-all the group metadata in the head of the disk), allocating more
-memory than the MAX_ORDER size. Commit 5d1935ac02ca5a
-("ext4: avoid online resizing failures due to oversized flex bg") fixes
-this problem with resize_bg.
+QEMU parses this according to the ELF bitness.  It looks like this reads 
+8 bytes on 64bit, and 4 on 32.  So I think this change would break its 
+parsing.
 
-Normally, when online resizing, we may not need to allocate the
-memory required for an entire flexible block group. So if o_group
-and n_group are in the same flexible block group or if o_group
-and n_group are in neighbouring flexible block groups, we
-check if less memory can be allocated. This is what was done in
-commit 665d3e0af4d3 ("ext4: reduce unnecessary memory
-allocation in alloc_flex_gd()").
+(I don't use QEMU PVH and I'm not that familiar with its implementation.)
 
 Regards,
-Baokun
-
+Jason
 
