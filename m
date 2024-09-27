@@ -1,175 +1,120 @@
-Return-Path: <linux-kernel+bounces-342112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 879B8988AB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:23:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C91E2988AB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15379B20F75
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:23:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A5C728314C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9A21C231B;
-	Fri, 27 Sep 2024 19:23:45 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB301C2335;
+	Fri, 27 Sep 2024 19:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qix9VuY3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H328Pc8C"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F70139D1B;
-	Fri, 27 Sep 2024 19:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3DD1C2323
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727465025; cv=none; b=clQmnjYEFzjyv2LASUmNkMeS0PgVYHLj2p7aIXIS31Jmh5ph67N9uSI6+HUW9dEKn8TdS3HEIRpX9AKCh4Vl7AzC9Rkgz+1ixH2/DqPv8OSlg7ihCWN3hYFez6xDitZ3Q9sWfIfEcn9URuSJjwPIS2LmmTJEdtBgt4zE9UOQRIw=
+	t=1727465085; cv=none; b=dqBPVc2o+Qe4E/9+jso6vkdMkyOQjFBa1128txNQ82iP3magoqj39wzULEsj0tninjfFgtF5+UQ9casshsrTEmRsAb2e4Mb9585KlR2u6WwA9q1m4KXIOsMlFuhg+2qJKXb/MtTBq/4ArKhUq3QTGcjKuZhaYokij1gkm1Tm2Rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727465025; c=relaxed/simple;
-	bh=GM2PMzkiugJoiVXHiXF3aEICP/a8rNLrEmgoYpGtqoo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L3/7A0w5EQaMkeFwSoMxHlsWhGt4TvB4h/dFBlpWU5JXv78Qyf02dL9tTsdXHVamEJ0qKq2BnRVuZucslkKNY7cWQo5cLIsDsvgNmlAjR23ZdhdtWMktsLnSoxwBRiCYj6ADji2aPox6BNiXtLxRUZa1VICTMxZ024Dw0O58k/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XFfyJ0cLGz9v7NM;
-	Sat, 28 Sep 2024 03:03:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id EDE42140496;
-	Sat, 28 Sep 2024 03:23:37 +0800 (CST)
-Received: from [10.81.203.162] (unknown [10.81.203.162])
-	by APP2 (Coremail) with SMTP id GxC2BwBnFscqBvdmpgHGAQ--.52397S2;
-	Fri, 27 Sep 2024 20:23:37 +0100 (CET)
-Message-ID: <62508c1f-66ca-450d-abb6-236ca3b9096d@huaweicloud.com>
-Date: Fri, 27 Sep 2024 21:23:20 +0200
+	s=arc-20240116; t=1727465085; c=relaxed/simple;
+	bh=BnVvJPg0q+ucLQBn9QzNWpsLwSSHsWnQ0QJjvTi8wzw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AEloD9bo9qHAVfpssa6CVldXYC6PgqTnHwPjBn+KBjX3w8uXrY9lg68MJF1lUpAJK2AIyxUyolGt+PSu3BC/rHHFeRT/vPOSTG36MAJFF9G5LJQLED2EdmTY2FnFFi810Xv5OVTIvYsmvv0AmK2UW3YRwpcSP+m/ax01xr+a1Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qix9VuY3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H328Pc8C; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727465081;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F1ga0MGIrO4qo0RmiWY7ZcyKIypxbEhP6no11WpHP7A=;
+	b=qix9VuY3aFkNjQpp09NLUS2qB1mlJXInvnXBod9UTswORzrLn+eFNubpLKEd9OpZrK9uHv
+	PZ1LHsx01LwPEhtaqXJa3Gh0jBu6e1C1XXEicTo5w8Js+gD60qmXCXq9JgU8glVxTwAbku
+	4fujbPYWn/VlmajiIzzL+2+U+PMrY4cgHtN3FDMo9crLyboIMK4xfXR4gPoe3m4ReBN6JZ
+	Hjv+LhgC7rCYbeuJ7G4yG+5PwMbuYqBSM3vYCaNUB/aiYJN2x3PZ/JJmV12XegYduhAvrb
+	aH8lMtKHGDlPyKYBYYxoB49aGpzowOn/DLIyg4POI7h9TBHKPuQm1t1fGrGtWA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727465081;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F1ga0MGIrO4qo0RmiWY7ZcyKIypxbEhP6no11WpHP7A=;
+	b=H328Pc8CzP228AFK3jQSywn8u9AUmTDD4C1tpcAS0d9fQJQb5rtGXHPVeXvlhQWqU41cIP
+	OTglQKznu/9mDrCg==
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
+ John Stultz <jstultz@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Oleg
+ Nesterov <oleg@redhat.com>
+Subject: Re: [patch v4 00/27] posix-timers: Cure the SIG_IGN mess
+In-Reply-To: <87o749xisy.fsf@email.froward.int.ebiederm.org>
+References: <20240927083900.989915582@linutronix.de>
+ <87o749xisy.fsf@email.froward.int.ebiederm.org>
+Date: Fri, 27 Sep 2024 21:24:41 +0200
+Message-ID: <87y13c293a.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-To: Boqun Feng <boqun.feng@gmail.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
- lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>, Vlastimil Babka
- <vbabka@suse.cz>, maged.michael@gmail.com,
- Neeraj Upadhyay <neeraj.upadhyay@amd.com>
-References: <ZvPp4taB9uu__oSQ@boqun-archlinux>
- <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
- <ZvP_H_R43bXpmkMS@boqun-archlinux>
- <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
- <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
- <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
- <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
- <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
- <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
- <bba2e656-4c3b-46db-b308-483de440b922@efficios.com>
- <ZvY2zBiluLkqRSkc@boqun-archlinux>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <ZvY2zBiluLkqRSkc@boqun-archlinux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwBnFscqBvdmpgHGAQ--.52397S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF48Zw4Duw13Kr45ZFyDGFg_yoW8ZF1kpr
-	WagF1YgF4kAr4Syr1Ivr4UZFyFyrn3Grn8Cw10gryqv3W3GF4xuF4fK3y7CF9rCrn3Cr1j
-	qr129a4S9wsxZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
-	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07
-	jzE__UUUUU=
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+Content-Type: text/plain
 
-Two comments inline,
+On Fri, Sep 27 2024 at 09:39, Eric W. Biederman wrote:
+> I have stopped looking at this after patch 4.
+>
+> The current code can and does handle userspace injecting a signal with
+> si_sys_private sent to an non-zero value using rt_sigqueueinfo(2) and
+> that value will be delivered to userspace.
+>
+> I think the at least the ability to inject such a signal (ignoring
+> si_sys_private) is very interesting for debuggers and checkpoint restart
+> applications.
+>
+> I get the feeling the rest of the patch series depends upon not
+> supporting userspace injecting signals with si_code == SI_TIMER.  That
+> seems unnecessary.
+>
+> It seems reasonable to depend upon something like the SIGQUEUE_PREALLOC
+> in the flags field of struct sigqueue to detect a kernel generated
+> signal.  Rather than adding various hacks to make everything work
+> with just a struct kernel_siginfo_t.  Especially as the timer signals
+> today are the only signals that are preallocated.
 
-Am 9/27/2024 um 6:38 AM schrieb Boqun Feng:
+Fair enough.
 
-> compilers can replace 'ptr' with 'head' because of the equality, and
-> even putting barrier() here cannot prevent compiler to rewrite the else
-> branch into:
-> 
-> 	else {
-> 		barrier();
-> 		return head;
-> 	}
-> 
-> because that's just using a different register, unrelated to memory
-> accesses.
+> Is there any chance 18/27 posix-timers: Embed sigqueue in struct k_itimer
+> can be moved up?
+>
+> That should allow removing the reliance on si_sys_private.
+>
+> That should prevent the need to add another hack with sys_private_ptr in
+> struct kernel_siginfo
+>
+> Perhaps what needs to happen is to update collect_signal to return the
+> sigqueue entry (if it was preallocated), instead of the resched_timer.
+> Then the timer code can just use container_of to get the struct
+> k_itimer?
+>
+> After that si_sys_private can move into struct k_itimer, and the code
+> won't need to worry about userspace setting that value, or about needing
+> to clear that value.  As si_sys_private will always be 0 in preallocated
+> signals.
 
-Yeah, that was the solution I had in mind. My reasoning was that from 
-the C abstract machine, head is still a memory access, and the barrier() 
-should make the compiler forget everything it knew about the value of 
-head from before the barrier().
+Let me try that.
 
-So I had a gap in my understanding of the strength of barrier(). Can I 
-understand it to mean that the compiler can do escape analysis to reason 
-that a volatile asm code with ::memory can't possibly be manipulating 
-some variables (like head in this case)?
+Thanks for taking a look!
 
-That idea seems to be confirmed by this (atrocious, not to be copied!) 
-example:
-
-int fct_escape_address_of_b(void)
-{
-     int *a, *b;
-
-     do {
-         a = READ_ONCE(p);
-         asm volatile ("" : : : "memory");
-         b = READ_ONCE(p);
-     } while (a != b);
-
-     // really really hide b
-     int **p = &b;
-     OPTIMIZER_HIDE_VAR(p);
-
-     asm volatile ("" : : : "memory");
-     return *b;
-}
-
-This also does not generate any additional instructions, unlike just 
-using OPTIMIZER_HIDE_VAR(b).
-
-What is the advantage of defining OPTIMIZE_HIDE_VAR the way it currently 
-works instead of like above?
-
-
-
- > On Fri, Sep 27, 2024 at 03:20:40AM +0200, Mathieu Desnoyers wrote:
-
->> I have a set of examples below that show gcc use the result of the
->> first load, and clang use the result of the second load (on
->> both x86-64 and aarch64). Likewise when a load-acquire is used as
->> second load, which I find odd. 
-
-Note that if you use acquire on the second load, the code is correct 
-even if the compiler uses the result of the first load.
-
-That is because the acquire load will still synchronize sufficiently 
-with the second publishing store after the ABA, and then we can get the 
-right data even from the old address.
-
-Best wishes,
-
-   jonas
-
+       tglx
 
