@@ -1,169 +1,210 @@
-Return-Path: <linux-kernel+bounces-341188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DCC987C36
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:46:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2DE7987C38
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A45F61F233F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:46:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D53501C20BEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B9EAD2C;
-	Fri, 27 Sep 2024 00:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD913D69;
+	Fri, 27 Sep 2024 00:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nnhyfkpz"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Z+Be1s8z"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AD23D69
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D3D1CD23;
+	Fri, 27 Sep 2024 00:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727397984; cv=none; b=oBBeEoLIC0IiS0CL4NsXR/hloroBJtpZ1bSvcqufggWpOpoW9vUkqONDOkMObvU3VLnc06ktL/RDJ5N9kd7Vj1s3sTLTXTYGh0o1UvolqJjMxvbs9sBI/jZ7ZrPLztdo1EEgNRnHuMqR/HQ0dASxeELI2SdlHLb0ED1c6RBx/uU=
+	t=1727397997; cv=none; b=rngrt5CtB1uJ1hvZS9uUgnOf17fAneW+GQz4a6cDH8h4YEZwOH1X/Ft/51eAHBnxYBux7earO+SBF7D0cXrECktNEe/ETaZYIMHLe4Izer7ScLv/wtlZ3MAn1kJwMmwkv9u8JzD9arVsponfD+Wsw3j3xCG3i2LvzJ4oz9WosZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727397984; c=relaxed/simple;
-	bh=z673UoaL8z9ZI/EhvO/Qvk52JJe/KNbu8zqc11/Kyrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KhUpgckKE+uFo8lgldsu+bO4x2UDpYexKPeDv5ziE9PAMQXCyVz4DFei7YQKJ1VWZycAE/SEyA1xpT8mT7+Bo5MJBKGr9a3of5BQ55D3cv9wp2ZtWmZFQMze0K+OWOOnQ5QL7DEg7xw5W1k60PCqRmwAwtImI0/NGYB26vYiBTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nnhyfkpz; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7a9a3071c6bso154120285a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:46:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727397982; x=1728002782; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hK7XIg+h73Lo5G8j4I0+IcwU4eEQuc0allw56ITKwJc=;
-        b=NnhyfkpzjRpRvaU4B/7TRiPEO63d3sXq8Ym718Ic/tI7iFRh+Hv2h8WIHKoYQRdGqg
-         RxrZ2O1NUgbn3Uuja36qo/AOtdYPICCVhGpm9b30Bh4laYX7O2tMSVg97DdasCNQfzD/
-         Xn6blZR5Sun7RjY1IUQCyfzHtHL/xAdd3vOjEfi/HRezT5y5GP6kXQsp002DJD+Xf0NW
-         GlW2XlamRb2fGFSmKtqSQgqMzcfdOrz/8sPBGai0SCbIsbFvGY76eCAD3x2hz2wHhCB7
-         aYqVifx4f/MEf3nhE70A0IDfxdru92Of2SEmAeKAnRtSSiypdKeeqU2XqW5uIQI9yaRe
-         msZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727397982; x=1728002782;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hK7XIg+h73Lo5G8j4I0+IcwU4eEQuc0allw56ITKwJc=;
-        b=OiknUjh2Hg/c+g4S579l9SH2c8AGCKDj9kvlr1x8pJWNwT7+08ZjaY7WZmZ/lDHy+h
-         l9WrBZyBGs6lCJMqTdcCId5I+he+/V9RMlOOG6VKI+H3R1VEqfMiKYwJ/7V4D2tY2CKC
-         uWd3Cr3BgdGPOkYFyDTGowFT/bK3zXXivYt41pRZup3st9+6ffpKqfoLYLzoCAadRcYx
-         vC1MvIFWAxNtxRd860rrFiso9OeNxku8YpoaOxy2NAhprt1qr9G19lSTwCEbdI2BpIom
-         jr6FS0dRHdK5Uhd3T3y9gI1sMqbADK67xB+W7wO0CWUQ2Mpc93Sl5/Rt1Xwp/kwOFfgT
-         a4AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5aYvhXyNNDzDGE5V5l6xPOQ+RdnYKQhoLc3X/BjR3g0q0z7jLqIm8s/+g5Paf8GtDsqstJXTeNuhc5jw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRM4Y5Np5FH3K9I34yqBi2D2dvEGLup5WAXl9K84aD/nFRpdso
-	5z56a4gXnVqJ0KflmfTQqUYrMssmOEkcAF3oRjUuJko9XQwWto8U
-X-Google-Smtp-Source: AGHT+IHcEdRUR5uh4phvhOwDVy1ytm3q7xNabLtSvXHmxYIjsZDoMM4FxTGj/LmhD8w7cRl50pmmEQ==
-X-Received: by 2002:a05:620a:1a1d:b0:7ac:b376:e8e1 with SMTP id af79cd13be357-7ae378c3552mr222688685a.46.1727397981585;
-        Thu, 26 Sep 2024 17:46:21 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae3782c5f1sm38930385a.74.2024.09.26.17.46.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 17:46:21 -0700 (PDT)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 7FA271200068;
-	Thu, 26 Sep 2024 20:46:20 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Thu, 26 Sep 2024 20:46:20 -0400
-X-ME-Sender: <xms:XAD2ZnnDGt6WoiAtzE4WCbg6pjRZyOt2hCdaNaI6q2xDdT92WUk9uw>
-    <xme:XAD2Zq0MhgYOhGsAEpjuW0PQmJU763u8vRZBYps-l4AcBH4bPS3CB9Iz4-tntYN3L
-    az98TjVrxxm2Q8VIQ>
-X-ME-Received: <xmr:XAD2ZtorU-OJ-iFpSOsMIOU45dBVO7JwhmiEcp9Bg_Jo1gZMhiYBJoj8m1Sd0Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtkedgfeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteeh
-    uddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
-    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
-    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
-    mhgvpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epugifmhifvdesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehtghhlgieslhhi
-    nhhuthhrohhnihigrdguvgdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrug
-    drohhrghdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthho
-    peifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhonhhgmhgrnhesrhgvug
-    hhrghtrdgtohhmpdhrtghpthhtohepkhgvnhhtrdhovhgvrhhsthhrvggvtheslhhinhhu
-    gidruggvvhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtohepsg
-    highgvrghshieslhhinhhuthhrohhnihigrdguvg
-X-ME-Proxy: <xmx:XAD2ZvnzqkGcIB4fnpq71-IHlMxk9_VS911VBH7YF-55E-zkXR7vpA>
-    <xmx:XAD2Zl1by6BHG37H_NSeYFu3g8frN2wMKTcW-a84odlOMHNB7Uv4UA>
-    <xmx:XAD2ZusQTouRqK461UZ81bMsu4VKMLVvMfx9G2_AVMK5jUNqqrRKjA>
-    <xmx:XAD2ZpXnsUgP6Dq7kwg-ObDmSGKBW69ADnJIBh26nTUStc9MZDWzgw>
-    <xmx:XAD2Zk1F3IU7jGUS3bhtoq4sPhkCyy2aZJSDjxw2GQTxBbSYtWTK3nF1>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 26 Sep 2024 20:46:19 -0400 (EDT)
-Date: Thu, 26 Sep 2024 17:45:32 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] lockdep: add lockdep_cleanup_dead_cpu()
-Message-ID: <ZvYALG8PDrcwMSUb@boqun-archlinux>
-References: <f7bd2b3b999051bb3ef4be34526a9262008285f5.camel@infradead.org>
- <ZvWHNLdMCeWwEQZ7@boqun-archlinux>
- <ff9c0a7328c4ead69f9f3b37fe8746ca6a3f03b9.camel@infradead.org>
+	s=arc-20240116; t=1727397997; c=relaxed/simple;
+	bh=f5CdAj7wO0aS2YYIpIN0BGV+mfuOKKc1eQbVTdnNyYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VbeOsbNuIJnU36MPx1fxFo2N1peLlBzcGgNU4HU4x0rbHx9mDC8TriUuyV2tdZCWZt/LHhxH4M36XlRmeLD20wT24z2VA58EHqRlwXOqEgMpNRgTCRs6cziy9GCGko8GT8uL+jQtPpKgvrFTpkqPO/FqJfseYRBXKs5c8m1riOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Z+Be1s8z; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1727397989;
+	bh=XVEoEgesWQ83ePKBrKT4S1RU/Hzvezx24SvewYaDZT0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Z+Be1s8zeeGGSDDITn6aBeV8NbnwdutJTTZQvURq5WzRuiFRJNjBvx1whvHxxQYBa
+	 hKguvMtvT1dr+wZBf+QfLct2Wovgtj2qkYtvjnEJgpzxDLiYPumgQb6rtoNzfNPnd+
+	 SeGdiTe4DIaY1ZR8VpZgzs2yikzWlGLlrspskymgJxG7gFMRv1MnPyvMAttY2JcYDx
+	 QwwjVm4FtTWoqEB3M6Nyr8NAD+flCrNWoOf9zlB5Ogu2v1G1eSRNs3PutSDjojTJNf
+	 FV08iAapNqziIWJpxW6JNMkP3yH4/jlHyHNtp42AW6fjWk9yV6ihC7VikHE4NToe+3
+	 WiLXqtwhpvreg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XFBc470T4z4xNx;
+	Fri, 27 Sep 2024 10:46:28 +1000 (AEST)
+Date: Fri, 27 Sep 2024 10:46:28 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kent Overstreet <kent.overstreet@linux.dev>, "Cc: Andrew Morton"
+ <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the bcachefs tree
+Message-ID: <20240927104628.2ca6ad07@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff9c0a7328c4ead69f9f3b37fe8746ca6a3f03b9.camel@infradead.org>
+Content-Type: multipart/signed; boundary="Sig_/i8QpOE8ZEyt57fNB+h0B8zs";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Sep 26, 2024 at 05:37:12PM +0100, David Woodhouse wrote:
-> On Thu, 2024-09-26 at 09:09 -0700, Boqun Feng wrote:
-> > 
-> > I won't call this a "perfectly harmless bug", safe_halt() also contains
-> > tracepoints, which are not supposed to work in offline path IIUC, for
-> > example, you may incorrectly use RCU when RCU is not watching, that
-> > could mean reading garbage memory (surely it won't crash the system, but
-> > I hope I never need to debug such a system ;-)).
-> > 
-> > Otherwise this patch looks good to me. Thanks!
-> 
-> Apart from the fact that I can't count. Apparently I got up to v3 of it
-> last time, so this one should have been v4. I just mostly forgot all
-> about it, and found it lying around in a git tree a year later, and it
-> still seemed relevant. 
+--Sig_/i8QpOE8ZEyt57fNB+h0B8zs
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-My point is calling a non-noinstr function in the offline path is not a
-"perfectly harmless" bug, it can cause serious results, so that line in
-the commit log is not true. Of course, lockdep should handle buggy code
-gracefully, but buggy code is still buggy code.
+Hi all,
 
-Anyway, I've taken it into my tree (I removed the "perfectly harmless
-bug" part because of the reason above):
-	
-	git://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git lockdep-for-tip
+After merging the fs-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-and will send it in a PR to tip around -rc2 to -rc4, so it will goes
-into v6.13 if things went well.
+In file included from fs/bcachefs/str_hash.h:5,
+                 from fs/bcachefs/xattr.h:5,
+                 from fs/bcachefs/acl.c:6:
+fs/bcachefs/acl.c: In function 'bch2_acl_from_disk':
+fs/bcachefs/btree_iter.h:896:44: error: 'PF_MEMALLOC_NORECLAIM' undeclared =
+(first use in this function); did you mean 'PF_MEMALLOC_NOIO'?
+  896 |         typeof(_do) _p =3D memalloc_flags_do(PF_MEMALLOC_NORECLAIM|=
+PF_MEMALLOC_NOWARN, _do);\
+      |                                            ^~~~~~~~~~~~~~~~~~~~~
+fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
+gs_do'
+  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
+               \
+      |                                                     ^~~~~~
+fs/bcachefs/acl.c:139:15: note: in expansion of macro 'allocate_dropping_lo=
+cks'
+  139 |         acl =3D allocate_dropping_locks(trans, ret,
+      |               ^~~~~~~~~~~~~~~~~~~~~~~
+fs/bcachefs/btree_iter.h:896:44: note: each undeclared identifier is report=
+ed only once for each function it appears in
+  896 |         typeof(_do) _p =3D memalloc_flags_do(PF_MEMALLOC_NORECLAIM|=
+PF_MEMALLOC_NOWARN, _do);\
+      |                                            ^~~~~~~~~~~~~~~~~~~~~
+fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
+gs_do'
+  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
+               \
+      |                                                     ^~~~~~
+fs/bcachefs/acl.c:139:15: note: in expansion of macro 'allocate_dropping_lo=
+cks'
+  139 |         acl =3D allocate_dropping_locks(trans, ret,
+      |               ^~~~~~~~~~~~~~~~~~~~~~~
+fs/bcachefs/btree_iter.h:896:66: error: 'PF_MEMALLOC_NOWARN' undeclared (fi=
+rst use in this function); did you mean 'PF_MEMALLOC_NOFS'?
+  896 |         typeof(_do) _p =3D memalloc_flags_do(PF_MEMALLOC_NORECLAIM|=
+PF_MEMALLOC_NOWARN, _do);\
+      |                                                                  ^~=
+~~~~~~~~~~~~~~~~
+fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
+gs_do'
+  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
+               \
+      |                                                     ^~~~~~
+fs/bcachefs/acl.c:139:15: note: in expansion of macro 'allocate_dropping_lo=
+cks'
+  139 |         acl =3D allocate_dropping_locks(trans, ret,
+      |               ^~~~~~~~~~~~~~~~~~~~~~~
+fs/bcachefs/acl.c: In function 'bch2_acl_chmod':
+fs/bcachefs/btree_iter.h:886:38: error: 'PF_MEMALLOC_NORECLAIM' undeclared =
+(first use in this function); did you mean 'PF_MEMALLOC_NOIO'?
+  886 |         int _ret =3D memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEM=
+ALLOC_NOWARN, _do);\
+      |                                      ^~~~~~~~~~~~~~~~~~~~~
+fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
+gs_do'
+  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
+               \
+      |                                                     ^~~~~~
+fs/bcachefs/acl.c:430:15: note: in expansion of macro 'allocate_dropping_lo=
+cks_errcode'
+  430 |         ret =3D allocate_dropping_locks_errcode(trans,
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+fs/bcachefs/btree_iter.h:886:60: error: 'PF_MEMALLOC_NOWARN' undeclared (fi=
+rst use in this function); did you mean 'PF_MEMALLOC_NOFS'?
+  886 |         int _ret =3D memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEM=
+ALLOC_NOWARN, _do);\
+      |                                                            ^~~~~~~~=
+~~~~~~~~~~
+fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
+gs_do'
+  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
+               \
+      |                                                     ^~~~~~
+fs/bcachefs/acl.c:430:15: note: in expansion of macro 'allocate_dropping_lo=
+cks_errcode'
+  430 |         ret =3D allocate_dropping_locks_errcode(trans,
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from fs/bcachefs/btree_locking.h:13,
+                 from fs/bcachefs/btree_io.h:7,
+                 from fs/bcachefs/btree_cache.c:7:
+fs/bcachefs/btree_cache.c: In function 'bch2_btree_node_mem_alloc':
+fs/bcachefs/btree_cache.c:807:31: error: 'PF_MEMALLOC_NORECLAIM' undeclared=
+ (first use in this function); did you mean 'PF_MEMALLOC_NOIO'?
+  807 |         if (memalloc_flags_do(PF_MEMALLOC_NORECLAIM,
+      |                               ^~~~~~~~~~~~~~~~~~~~~
+fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
+gs_do'
+  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
+               \
+      |                                                     ^~~~~~
+fs/bcachefs/btree_cache.c:807:31: note: each undeclared identifier is repor=
+ted only once for each function it appears in
+  807 |         if (memalloc_flags_do(PF_MEMALLOC_NORECLAIM,
+      |                               ^~~~~~~~~~~~~~~~~~~~~
+fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
+gs_do'
+  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
+               \
+      |                                                     ^~~~~~
 
-Feel free to send a new version, if the one in my tree needs some
-changes. Again, thanks for the patch!
+Caused by commit
 
-Regards,
-Boqun
+  87a3e08121cb ("bcachefs: Switch to memalloc_flags_do() for vmalloc alloca=
+tions")
 
-(you can refer some context here [1], in case you wonder who's this
-Boqun guy and why is he doing this ;-))
+from the bcachefs tree interacting with commit
 
-[1]: https://lore.kernel.org/lkml/Zq5KmTEnalIOHf6a@boqun-archlinux/
+  0df1d8edfe8a ("Revert "mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_N=
+OWARN"")
+
+from the mm-hotfixes-unstable branch of the mm-hotfixes tree.
+
+I have reverted that mm-hotfixes commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/i8QpOE8ZEyt57fNB+h0B8zs
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb2AGQACgkQAVBC80lX
+0Gw2Vwf6Ap0xX636APFWEG/uC6rioHhMAgbFrcA8/NLp0rp1qzd6YSfd/yJgMXwa
+PX27GQk2/6pwgkKWjtSvq+YsoF6fMVmQnbgVW0FtjSYTBqfs3fBgSvsvfd8hhHhJ
+pQGptdgL3+Cxq3cUq4kZAtUodYXnJdjJyoFvDq8H0JI7TQAzhAmZDFP3rLHUEh/z
+wj3p1OToI/bWSJTkH8rta0e/LO3GTiduBcCKXAp7mtyyR/eNpuEfTTa1nO/qSd0j
++fnMFQ7rpm8pxwSRwWuGnG9vdD6AqM3rYiUnxVtFfzB5odwdpHcxoAHd4cvmHXJ2
+sp5GXcC+gC47jPm3HE9FNRy+iA062A==
+=wNli
+-----END PGP SIGNATURE-----
+
+--Sig_/i8QpOE8ZEyt57fNB+h0B8zs--
 
