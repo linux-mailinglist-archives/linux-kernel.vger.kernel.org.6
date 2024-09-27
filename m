@@ -1,119 +1,173 @@
-Return-Path: <linux-kernel+bounces-341903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1522898880E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:17:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A931988818
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1AC81F225B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:17:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D57283865
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2F71C172A;
-	Fri, 27 Sep 2024 15:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DE11C1AA2;
+	Fri, 27 Sep 2024 15:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="k3YpYjCH"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="OaGgv9nY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AjUy+z71"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB6E18C335
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 15:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEC41411E0;
+	Fri, 27 Sep 2024 15:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727450270; cv=none; b=kLajnFxICPzz7+67n9ayfUcBXJg/XvPO9LrGyN0axhf3l6u3ilpWI89/ja8F9fuoiYF44O8zIsq4ieXdddvVTT0ApASeVH+eT4zDWehhqP1vfxKohBv2ulKI158slY1QhIfCWFvtDCOPbFIdeMcxn9Z6xu0Z2lluO/ESNFqPukc=
+	t=1727450298; cv=none; b=kIrOL6N6Ck4JwvLHl+sQ3Z8Iv/neAd5lfe3syWtzb3Q+27brgTHLrBFQIUjSReW2l+ROPZm32K1wCuRyPUgLWAl6fpmydJSQ6cqwtW/lqnqyWL1LctFvhH8hlO/phQGuKMCvkggmHUYbIWeHI7g22Rvzd1MdFMrqOfRozL8xUWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727450270; c=relaxed/simple;
-	bh=0VFOiBJqGcZn5JGPIN5XyCsCk6RR00gRMKGJVv/ZX1o=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=uFW4hgVjRARIIQXBbAr37AknmroVVn6/S1P1cVtm+Rns6HbRiVTshd8upXNTYhC8BE+8KX0Xqghoee5X2YhL2VnCmTzrMy1YmfGPi0cm4M6KabPCbaO/9J26MdoY3+M/ZUQz/0nrpH0zPmPbH90bxykw+4dJtE0ksLkrSOQF/+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=k3YpYjCH; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-831e62bfa98so103831139f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:17:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727450268; x=1728055068; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CJAy1insd6dM3jY9CSa90Q6Fky7PdsrvsA2vVjKbRXU=;
-        b=k3YpYjCHYVOOt4IFDq8y3OHHQnDRyEHEyqh3eKqw5i1KROcRJ6NGLtGioLuZYc2JOH
-         BO+d3EUs+ugbPVjXR9Qi8q681lSiuocSZ2MjUZPRrdMolKxB3uWV95AHyQw1JrSUAId+
-         hgaT1POQZ7MJL41z9i3tk9+tdcxWMjxYu3/H84P/awRHFok8764IYSQuMAhasOkDv6ox
-         Y/h3Pskeu/T35extFm5Uqn+6GWfmWlYAUWcfjj/6FoG+JejmbL5uuYp5ij+uNGv07lvj
-         orv8ShophlE3zNWZsNZP0s5rk1sft9oALkbO0ND/u+Q7yQicSuePMm3eGUgiOw7YNsUF
-         GvOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727450268; x=1728055068;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CJAy1insd6dM3jY9CSa90Q6Fky7PdsrvsA2vVjKbRXU=;
-        b=NI64s44T9yfcxWaqYi1FiQ+aTRZPYhlj6dCSrBxDWcvx8rAkxqcm6XIVzhdrM5Hwuz
-         YTLDUrYEF7YtgAUrXWGzfPXcHJ2fw2VQ2caGWary9o4EFXnXi3yrXuiFr8LoccmqKKMq
-         x2bx460QLK95n2hXz/Hlo4x5F+Bokh4Q2W9lz1ft5R/QE90iwXVbPQwIEFNg7rpYGEPW
-         GAStu+Zy61Q5WcKoAxSXIuOVqQXuyn0sGisRkG4quFfTdQfFJMOI1MlNFtR4ZmlCDJ6m
-         eOr4ORIxy73FU9UCAcSkicukJWGFhP72NY65Oz6jXnmgXKj82wbm3wONxs9LvLo5ktsx
-         2lOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEkFu6PxAy9Bh8oq87WfuisoOf6HLM2EfaZDW5g9l7DTBDrmn/Q9aMn5oRQoY9iAniw4Y2VvNjWO5Z1J0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfLgNB1VIIVm6WyBrrABefwapCJztDZqG/b7e8JBNDWhz/83H+
-	J1OI8c+TTdmvd0QVB17exZ7EvEd3EQJqt/L7Q34sNAb91cNF6mRhc5M2fk9s+R4=
-X-Google-Smtp-Source: AGHT+IGpWtX6DInv1hzBIW7KgqzQVhbP7A+VOVCIXk4NqpeqNQymYxYMNikVNLu3nIAv2mn+06hYYg==
-X-Received: by 2002:a05:6602:2b81:b0:832:40d0:902a with SMTP id ca18e2360f4ac-834931de722mr388631239f.6.1727450267841;
-        Fri, 27 Sep 2024 08:17:47 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d8888f9d3esm521402173.170.2024.09.27.08.17.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 08:17:47 -0700 (PDT)
-Message-ID: <91194406-3fdf-4e38-9838-d334af538f74@kernel.dk>
+	s=arc-20240116; t=1727450298; c=relaxed/simple;
+	bh=Au412/fFbpquOp/lmA/1fVR4HYznA9tZpqoVa2f6kL0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aUfaYHgQ6EayQGiib3iZFioIKU5cc5jGwwBHw4qNmhwuHqpFD9r9uljFOEkMcBoAhnZ6uPYgE/eGubJBckp3Y5ZvhEaL7UleNzKRyjw9dLov/6vfxxIsOUVOs9dsqmap+XxETC/XrURYBtYX4+XRKSEreu+t/fkAt+0Sl059wCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=OaGgv9nY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AjUy+z71; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id BF56813802B2;
+	Fri, 27 Sep 2024 11:18:15 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Fri, 27 Sep 2024 11:18:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1727450295; x=
+	1727536695; bh=jcSby7W+5uYeteUvGb/mYaE5eneel7efJMsI4xZNg/Q=; b=O
+	aGgv9nY/gvXmka7uEIvUyI2bcReYcLIrGXiC2EXnWt+6t/+3/pSz2aOwRahK5NGN
+	S4w1LpVVLX0+T9WDe2cmujPbqbp7OfhaW9cZKw6wolwdr0KLQCU2J8X6l74GP3zP
+	b71pzfbKjFsjrH0HS8yg/Buznwjlxmdg/d1W5IIHCXyjR9OgOBHq25HjgGtauHzG
+	SbhTRjnAvrw8GMzHNAqjlCjcIkVu0U/+dSnoMbD1yILpYlZ6xaAJR5vu68+1Pklm
+	iF2sJLkKIzeBZ37xp2MTlzV7Fwfg9GMIrAEq/t/WHbSsOkDjC25tReJRJPLMjeyf
+	FqnT2H6YnE0aHR9ZPM11A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727450295; x=
+	1727536695; bh=jcSby7W+5uYeteUvGb/mYaE5eneel7efJMsI4xZNg/Q=; b=A
+	jUy+z71oFyvq3G7NnTwpUPU9yVnmsM+V82bXRSyZUmqLXVa06AI4PYxNoge9NSFv
+	MLrGAGndjUbPvblZBY6zscQfYm1qMXdPet6kSlYanG7OAvsIMUlfBkkuVixdkbl3
+	tgkNxetvMtqk/LqG/NL0kmW62+voaWY0ZvZ6bP/bH80rZ+ASXo2WXGWhyHg4IgFU
+	jKlIjoBkz6TJmPTZRFetKfZB6oVn6YGlzbxUvVOAnesgTGcOV7xq+MEILp+xBiVH
+	qwNTNCiQGeer/Pq5C4t6sPLL0m2l/jRGdHoPNTcG9OLXOsFyUCaBj7k/Upg36h1j
+	zsYSMyvxT3PUF0n0z3IyA==
+X-ME-Sender: <xms:t8z2ZsMPbYRGneU6RmeB3Iv60fjN5ScCVEuw07reEi5UG-1IUZygmQ>
+    <xme:t8z2Zi8EU0jwGRji3Pg3tiGqbyWfbVB_VfN_2IL5o_mgxVCFRUrXwrtqX6SSy5Ejm
+    x2ZGFZr0NrUpKqy7JM>
+X-ME-Received: <xmr:t8z2ZjRaz_VkZPPa-TigCr1y0XzwRu7zYXbQ6rvJrv2QIs2vcrpbxIZ3yaVMESZY7EuYmg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtledgkeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttden
+    ucfhrhhomhepvfihtghhohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrph
+    hiiiiirgeqnecuggftrfgrthhtvghrnhepvdegffehledvleejvdethffgieefveevhfei
+    gefffffgheeguedtieektdeigeeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepthihtghhohesthihtghhohdrphhiiiiirgdpnhgspghrtghp
+    thhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehvihhrohesiigvnh
+    hivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepvg
+    gsihgvuggvrhhmseigmhhishhsihhonhdrtghomhdprhgtphhtthhopehkvggvsheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhr
+    ghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhg
+X-ME-Proxy: <xmx:t8z2ZkuMJ3mb6j0Zg6OTn1vk8onkfZQ88D4FOLMQamzI8Reb3NCePg>
+    <xmx:t8z2ZkfiSbncT3x4VYeGsFv2jvgJOKF3iI_jpsuTSgUYTNuyonMeaA>
+    <xmx:t8z2Zo2-G_IUcqWPqHsz2_gQfllhFhqJeQ-EW7mHzvtznfPNoPXb9g>
+    <xmx:t8z2Zo9hnGX1GiG2tDMsGzKdrwCg7HauSwTXnFFm6jqD27RtL5KK4w>
+    <xmx:t8z2Zo2OAieCbFF6JSSCu-F0t5K-z3TbwE05FYch6oxsNrg6rjXfFtcU>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 27 Sep 2024 11:18:13 -0400 (EDT)
+From: Tycho Andersen <tycho@tycho.pizza>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Tycho Andersen <tycho@tycho.pizza>,
+	Tycho Andersen <tandersen@netflix.com>
+Subject: [PATCH v2 2/2] selftests/exec: add a test to enforce execveat()'s comm
 Date: Fri, 27 Sep 2024 09:17:46 -0600
+Message-Id: <20240927151746.391931-2-tycho@tycho.pizza>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240927151746.391931-1-tycho@tycho.pizza>
+References: <20240927151746.391931-1-tycho@tycho.pizza>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- the arch/x86 maintainers <x86@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: AMD zen microcode updates breaks boot
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Tycho Andersen <tandersen@netflix.com>
 
-Got home from conference travels and updated two test boxes to current
--git (sha 075dbe9f6e3c), both AMD boxes. One of them boots fine, the
-other one does not. One is a Dell R7525, cpu:
+We want to ensure that /proc/self/comm stays useful for execveat() callers.
 
-2 socket AMD EPYC 7763 64-Core Processor
+Signed-off-by: Tycho Andersen <tandersen@netflix.com>
+---
+ tools/testing/selftests/exec/execveat.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-and it boots fine on -git. The other is a Dell R7625, cpu:
-
-2 socket AMD EPYC 9754 128-Core Processor
-
-and that one does not boot. Just get a black screen when the kernel
-should load. Because I didn't have much to go on here, I bisected the
-issue, and it came up with:
-
-94838d230a6c835ced1bad06b8759e0a5f19c1d3 is the first bad commit
-commit 94838d230a6c835ced1bad06b8759e0a5f19c1d3 (HEAD)
-Author: Borislav Petkov <bp@alien8.de>
-Date:   Thu Jul 25 13:20:37 2024 +0200
-
-    x86/microcode/AMD: Use the family,model,stepping encoded in the patch ID
-
-which seems plausible. And indeed, reverting that commit (and its fixup)
-on top of current -git does indeed solve it. Happy to test patches,
-unfortunately I don't have much to offer up in terms of oops or whatever
-to help diagnose this. In lieu of instant ideas to prevent this issue on
--rc1, perhaps a revert?
-
+diff --git a/tools/testing/selftests/exec/execveat.c b/tools/testing/selftests/exec/execveat.c
+index 071e03532cba..091029f4ca9b 100644
+--- a/tools/testing/selftests/exec/execveat.c
++++ b/tools/testing/selftests/exec/execveat.c
+@@ -419,6 +419,9 @@ int main(int argc, char **argv)
+ 	if (argc >= 2) {
+ 		/* If we are invoked with an argument, don't run tests. */
+ 		const char *in_test = getenv("IN_TEST");
++		/* TASK_COMM_LEN == 16 */
++		char buf[32];
++		int fd;
+ 
+ 		if (verbose) {
+ 			ksft_print_msg("invoked with:\n");
+@@ -432,6 +435,28 @@ int main(int argc, char **argv)
+ 			return 1;
+ 		}
+ 
++		fd = open("/proc/self/comm", O_RDONLY);
++		if (fd < 0) {
++			perror("open comm");
++			return 1;
++		}
++
++		if (read(fd, buf, sizeof(buf)) < 0) {
++			close(fd);
++			perror("read comm");
++			return 1;
++		}
++		close(fd);
++
++		/*
++		 * /proc/self/comm should fail to convert to an integer, i.e.
++		 * atoi() should return 0.
++		 */
++		if (atoi(buf) != 0) {
++			ksft_print_msg("bad /proc/self/comm: %s", buf);
++			return 1;
++		}
++
+ 		/* Use the final argument as an exit code. */
+ 		rc = atoi(argv[argc - 1]);
+ 		exit(rc);
 -- 
-Jens Axboe
+2.34.1
 
 
