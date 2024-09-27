@@ -1,184 +1,487 @@
-Return-Path: <linux-kernel+bounces-341205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B8B2987CA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50899987C71
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECD18B21C12
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:36:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4734B23C17
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B541C42A93;
-	Fri, 27 Sep 2024 01:36:42 +0000 (UTC)
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E3ED53C;
-	Fri, 27 Sep 2024 01:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005D74690;
+	Fri, 27 Sep 2024 01:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uA+mPYrB"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DA6D53C
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 01:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727401002; cv=none; b=avIHuV+TsxMMR0lT4N8LjW9nRNuGJYSE/xiSkUMHYRTTXIuK5afhT+ibhl0PO0w/5Fw7On7wP8pSOqRdulfpScBeTTizJkaLV6aUYLcA6V4Xheu3vOuOGSKEnNAqxegpZBhZo1ITQvBl9KmlzbGsjwFMG2UA81CIUepHNALT1Yc=
+	t=1727400636; cv=none; b=WnqXFXK7oQLOuR+hcM5ul4MTaoi3gGQN2QNl1bP6Zrz6eBDA3HEeYpijh842ChLds7/xfpm4F7SsSsYyZf/wjOvwSIJ9770v0iKwWExa97SwFq11/If9KxX1KVP9DBH9GvkUDY7UF6kcWkSrti12ko0iTCDtV8heKhP/8hsMDOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727401002; c=relaxed/simple;
-	bh=hFdP5aaaibBZ8KCNQ8ZKquKbDyruQ6qDPnUlk8g7+Cw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ylji0gj8tJ00SXnTfxhWvuJ3HGLYx0weTngXTjbVdoeUBBAWWvImRGNtV3QzkvgjDKRGGJGBnxy5B/CU3r41k9ZDve0AlHZleWIXvT1MAHLRgcWuscOV1HvRN2Y6Tcb6E7R0o1qyXfkvOtpi7JTb6yMSfFcZWiCH+b4O7xa3jKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 48R1PxJ1000683;
-	Thu, 26 Sep 2024 20:25:59 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 48R1PvPj000682;
-	Thu, 26 Sep 2024 20:25:57 -0500
-Date: Thu, 26 Sep 2024 20:25:57 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>, dhowells@redhat.com,
-        dwmw2@infradead.org, davem@davemloft.net, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
-        Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
-Message-ID: <20240927012557.GA634@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au> <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com> <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com> <ZuaVzQqkwwjbUHSh@gondor.apana.org.au> <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com> <a991cf4187bced19485e28a5542ac446b92f864e.camel@huaweicloud.com>
+	s=arc-20240116; t=1727400636; c=relaxed/simple;
+	bh=zu1Gd/b6mSFsQnE9SquvBSzmfht+TMBCgJEgd48Cp4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cPVd8kW+B0fZcNPhZG2NM7TM9jFARalCRSc5ORHmglHfeWnbrLTWZGMo/ckIZpp54K1wTCv7oDkRDyUEipoESFkggv3IVajtQWex/MVJpglnewfV/ActCqgt7S9jALupR1oxhr9eAnJYIntBHsYd4SKiMbUADH2nMJ9wZkQhDY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uA+mPYrB; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8b155b5e9eso228081066b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 18:30:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727400633; x=1728005433; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xg3wV/pQhTWJt03A+VQrrhFbG/VZmKb3C/uzMo1xX7k=;
+        b=uA+mPYrBfr7VNUntx6UFz3VQ6M2yTwC60w+OxzwGYUiNDyGxTt2yIXqVK1Oho6rvoH
+         7mV34dqLzEotN+3tX4xveaXp6VpqiKFuTnPwSZJ15aCesj8rXqmB6mRUuww738BfIJlk
+         LalVkkSTaUvPm5spw1/Mzc4XR/vEw3F+COzf/X5X86imDs8r6tpdgI4fDcwpOsfLe94p
+         oLXZAuaMsCdn2hnSX/qVX9EsDQTyEKNrScUhvmTf7EjPxDlpta+wjxJXgCO02LNpnXQD
+         g9Xh1tOncCGq+kPD5hLJyLXMbii13IbxB1R3L6HlzX53rq6cyH19K6JBt0sKdBeUgO2C
+         QiAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727400633; x=1728005433;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xg3wV/pQhTWJt03A+VQrrhFbG/VZmKb3C/uzMo1xX7k=;
+        b=LYbExcIqkTrfhARhoF1wMzXsC9Vb20PE8v2N0iPX7YixObaFY3runiwPoW6vH8u+QN
+         bfzKv8KerW374qp8Cc/GQUTIhjdZp+q7n3TBFconBxpGB+ijmAERoZc9FogshxC5hX6n
+         7J8r2yBXXoTSAYLSqhBS5Nw5feuWVN8Xl/HuKP9JsDN9G1jZvCkiuh+fIIdE3FTXwkd5
+         XOp8yCEC1N54XBuRYVzjv20Y8J8HO6TTqGjk5ahV8wiprgayy6Q6sMTme71Vzm42BxhD
+         NozucUfjkOdSynBKJL6xHu4NMU6I1/W2AjK5xooOVh55m0OnciXYUTfjIB/pM9zwvP8d
+         W4ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUNT+OBfEHLuvIeff6tUXvIuNRQgk5rowj0EDY6fpcS++F2xxQGJAtiBhvOMHzHKdnhA8AYb2XCxxxX4fY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwNq3vSvUyAFfkzUCWly/kVmqTCDASKzMIY+yBgDsMfwdRPqaD
+	RhA4ZuHWPZHBCzRkS8dyINlC2w8yFsHscNmIZ+oH9LmznoTTyV0RmlXaeeL7qkGl2phm8O5cGmF
+	NBlGNX1DSodi0M+9iqqp9XrKGIADFeUGkkJleDMnHGqJtT8uGlXMWqg==
+X-Google-Smtp-Source: AGHT+IFWsEr09B36HWHZ0Jf6z7llfdYi9OX2qDQ6cmBHPIDp3bVPkNYnYGODEOrnoMH/1wOyBvgD4bct1B0SpslK3Gg=
+X-Received: by 2002:a17:907:36c2:b0:a86:789b:71fe with SMTP id
+ a640c23a62f3a-a93c4ae8f90mr103123466b.48.1727400632639; Thu, 26 Sep 2024
+ 18:30:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a991cf4187bced19485e28a5542ac446b92f864e.camel@huaweicloud.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 26 Sep 2024 20:26:00 -0500 (CDT)
+MIME-Version: 1.0
+References: <ZvV6X5FPBBW7CO1f@archlinux> <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+ <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com> <ZvWTXaqkmxP2E2dc@archlinux>
+ <ZvWd0aK7p_1rkb7E@archlinux> <CAMj1kXFV+Jck9Yf4w18rOzHckXvpXkhPhL-KrpBC8hqgXusw2g@mail.gmail.com>
+ <CAGG=3QXG+Vsm7mjLV42Q-uA-EvgfOehSUeNQjKA3QQbw8vqSCg@mail.gmail.com>
+In-Reply-To: <CAGG=3QXG+Vsm7mjLV42Q-uA-EvgfOehSUeNQjKA3QQbw8vqSCg@mail.gmail.com>
+From: Bill Wendling <morbo@google.com>
+Date: Thu, 26 Sep 2024 18:30:15 -0700
+Message-ID: <CAGG=3QVWCQB-3sM=iwgTmX8zrU81H+F_A1icJwROvW_DSvsBeA@mail.gmail.com>
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in bch2_xattr_validate
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Jan Hendrik Farr <kernel@jfarr.cc>, Kees Cook <kees@kernel.org>, 
+	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev, 
+	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 11:41:51AM +0200, Roberto Sassu wrote:
+On Thu, Sep 26, 2024 at 3:18=E2=80=AFPM Bill Wendling <morbo@google.com> wr=
+ote:
+>
+> On Thu, Sep 26, 2024 at 12:58=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org>=
+ wrote:
+> >
+> > (cc Kees and Bill)
+> >
+> > On Thu, 26 Sept 2024 at 19:46, Jan Hendrik Farr <kernel@jfarr.cc> wrote=
+:
+> > >
+> > > On 26 19:01:20, Jan Hendrik Farr wrote:
+> > > > On 26 18:09:57, Thorsten Blum wrote:
+> > > > > On 26. Sep 2024, at 17:28, Thorsten Blum <thorsten.blum@toblux.co=
+m> wrote:
+> > > > > > On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> w=
+rote:
+> > > > > >>
+> > > > > >> Hi Kent,
+> > > > > >>
+> > > > > >> found a strange regression in the patch set for 6.12.
+> > > > > >>
+> > > > > >> First bad commit is: 86e92eeeb23741a072fe7532db663250ff2e726a
+> > > > > >> bcachefs: Annotate struct bch_xattr with __counted_by()
+> > > > > >>
+> > > > > >> When compiling with clang 18.1.8 (also with latest llvm main b=
+ranch) and
+> > > > > >> CONFIG_FORTIFY_SOURCE=3Dy my rootfs does not mount because the=
+re is an erroneous
+> > > > > >> detection of a buffer overflow.
+> > > > > >>
+> > > > > >> The __counted_by attribute is supposed to be supported startin=
+g with gcc 15,
+> > > > > >> not sure if it is implemented yet so I haven't tested with gcc=
+ trunk yet.
+> > > > > >>
+> > > > > >> Here's the relevant section of dmesg:
+> > > > > >>
+> > > > > >> [    6.248736] bcachefs (nvme1n1p2): starting version 1.12: re=
+balance_work_acct_fix
+> > > > > >> [    6.248744] bcachefs (nvme1n1p2): recovering from clean shu=
+tdown, journal seq 1305969
+> > > > > >> [    6.252374] ------------[ cut here ]------------
+> > > > > >> [    6.252375] memchr: detected buffer overflow: 12 byte read =
+of buffer size 0
+> > > > > >> [    6.252379] WARNING: CPU: 18 PID: 511 at lib/string_helpers=
+.c:1033 __fortify_report+0x45/0x50
+> > > > > >> [    6.252383] Modules linked in: bcachefs lz4hc_compress lz4_=
+compress hid_generic usbhid btrfs crct10dif_pclmul libcrc32c crc32_pclmul c=
+rc32c_generic polyval_clmulni crc32c_intel polyval_generic raid6_pq ghash_c=
+lmulni_intel xor sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni_intel gf128mul =
+nvme crypto_simd ccp xhci_pci cryptd sp5100_tco xhci_pci_renesas nvme_core =
+nvme_auth video wmi ip6_tables ip_tables x_tables i2c_dev
+> > > > > >> [    6.252404] CPU: 18 UID: 0 PID: 511 Comm: mount Not tainted=
+ 6.11.0-10065-g6fa6588e5964 #98 d8e0beb515d91b387aa60970de7203f35ddd182c
+> > > > > >> [    6.252406] Hardware name: Micro-Star International Co., Lt=
+d. MS-7D78/PRO B650-P WIFI (MS-7D78), BIOS 1.C0 02/06/2024
+> > > > > >> [    6.252407] RIP: 0010:__fortify_report+0x45/0x50
+> > > > > >> [    6.252409] Code: 48 8b 34 c5 30 92 21 87 40 f6 c7 01 48 c7=
+ c0 75 1b 0a 87 48 c7 c1 e1 93 07 87 48 0f 44 c8 48 c7 c7 ef 03 10 87 e8 0b=
+ c2 9b ff <0f> 0b e9 cf 5d 9e 00 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 =
+90
+> > > > > >> [    6.252410] RSP: 0018:ffffbb3d03aff350 EFLAGS: 00010246
+> > > > > >> [    6.252412] RAX: 4ce590fb7c372800 RBX: ffff98d559a400e8 RCX=
+: 0000000000000027
+> > > > > >> [    6.252413] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI=
+: ffff98e43db21a08
+> > > > > >> [    6.252414] RBP: ffff98d559a400d0 R08: 0000000000001fff R09=
+: ffff98e47ddcd000
+> > > > > >> [    6.252415] R10: 0000000000005ffd R11: 0000000000000004 R12=
+: ffff98d559a40000
+> > > > > >> [    6.252416] R13: ffff98d54abf1320 R14: ffffbb3d03aff430 R15=
+: 0000000000000000
+> > > > > >> [    6.252417] FS:  00007efc82117800(0000) GS:ffff98e43db00000=
+(0000) knlGS:0000000000000000
+> > > > > >> [    6.252418] CS:  0010 DS: 0000 ES: 0000 CR0: 00000000800500=
+33
+> > > > > >> [    6.252419] CR2: 000055d96658ea80 CR3: 000000010a12c000 CR4=
+: 0000000000f50ef0
+> > > > > >> [    6.252420] PKRU: 55555554
+> > > > > >> [    6.252421] Call Trace:
+> > > > > >> [    6.252423]  <TASK>
+> > > > > >> [    6.252425]  ? __warn+0xd5/0x1d0
+> > > > > >> [    6.252427]  ? __fortify_report+0x45/0x50
+> > > > > >> [    6.252429]  ? report_bug+0x144/0x1f0
+> > > > > >> [    6.252431]  ? __fortify_report+0x45/0x50
+> > > > > >> [    6.252433]  ? handle_bug+0x6a/0x90
+> > > > > >> [    6.252435]  ? exc_invalid_op+0x1a/0x50
+> > > > > >> [    6.252436]  ? asm_exc_invalid_op+0x1a/0x20
+> > > > > >> [    6.252440]  ? __fortify_report+0x45/0x50
+> > > > > >> [    6.252441]  __fortify_panic+0x9/0x10
+> > > > > >> [    6.252443]  bch2_xattr_validate+0x13b/0x140 [bcachefs 8361=
+179bbfcc59e669df38aec976f02d7211a659]
+> > > > > >> [    6.252463]  bch2_btree_node_read_done+0x125a/0x17a0 [bcach=
+efs 8361179bbfcc59e669df38aec976f02d7211a659]
+> > > > > >> [    6.252482]  btree_node_read_work+0x202/0x4a0 [bcachefs 836=
+1179bbfcc59e669df38aec976f02d7211a659]
+> > > > > >> [    6.252499]  bch2_btree_node_read+0xa8d/0xb20 [bcachefs 836=
+1179bbfcc59e669df38aec976f02d7211a659]
+> > > > > >> [    6.252514]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > > > > >> [    6.252515]  ? pcpu_alloc_noprof+0x741/0xb50
+> > > > > >> [    6.252517]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > > > > >> [    6.252519]  ? time_stats_update_one+0x75/0x1f0 [bcachefs 8=
+361179bbfcc59e669df38aec976f02d7211a659]
+> > > > > >>
+> > > > > >> ...
+> > > > > >>
+> > > > > >>
+> > > > > >> The memchr in question is at:
+> > > > > >> https://github.com/torvalds/linux/blob/11a299a7933e03c83818b43=
+1e6a1c53ad387423d/fs/bcachefs/xattr.c#L99
+> > > > > >>
+> > > > > >> There is not actually a buffer overflow here, I checked with g=
+db that
+> > > > > >> xattr.v->x_name does actually contain a string of the correct =
+length and
+> > > > > >> xattr.v->x_name_len contains the correct length and should be =
+used to determine
+> > > > > >> the length when memchr uses __struct_size for bounds-checking =
+due to the
+> > > > > >> __counted_by annotation.
+> > > > > >>
+> > > > > >> I'm at the point where I think this is probably a bug in clang=
+. I have a patch
+> > > > > >> that does fix (more like bandaid) the problem and adds some pr=
+int statements:
+> > > > > >>
+> > > > > >> --
+> > > > > >> diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
+> > > > > >> index 56c8d3fe55a4..8d7e749b7dda 100644
+> > > > > >> --- a/fs/bcachefs/xattr.c
+> > > > > >> +++ b/fs/bcachefs/xattr.c
+> > > > > >> @@ -74,6 +74,7 @@ int bch2_xattr_validate(struct bch_fs *c, st=
+ruct bkey_s_c k,
+> > > > > >>      enum bch_validate_flags flags)
+> > > > > >> {
+> > > > > >> struct bkey_s_c_xattr xattr =3D bkey_s_c_to_xattr(k);
+> > > > > >> + const struct bch_xattr *v =3D (void *)k.v;
+> > > > > >> unsigned val_u64s =3D xattr_val_u64s(xattr.v->x_name_len,
+> > > > > >>  le16_to_cpu(xattr.v->x_val_len));
+> > > > > >> int ret =3D 0;
+> > > > > >> @@ -94,9 +95,12 @@ int bch2_xattr_validate(struct bch_fs *c, s=
+truct bkey_s_c k,
+> > > > > >>
+> > > > > >> bkey_fsck_err_on(!bch2_xattr_type_to_handler(xattr.v->x_type),
+> > > > > >> c, xattr_invalid_type,
+> > > > > >> - "invalid type (%u)", xattr.v->x_type);
+> > > > > >> + "invalid type (%u)", v->x_type);
+> > > > > >>
+> > > > > >> - bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_na=
+me_len),
+> > > > > >> + pr_info("x_name_len: %d", v->x_name_len);
+> > > > > >> + pr_info("__struct_size(x_name): %ld", __struct_size(v->x_nam=
+e));
+> > > > > >> + pr_info("__struct_size(x_name): %ld", __struct_size(xattr.v-=
+>x_name));
+> > > > > >> + bkey_fsck_err_on(memchr(v->x_name, '\0', v->x_name_len),
+> > > > > >> c, xattr_name_invalid_chars,
+> > > > > >> "xattr name has invalid characters");
+> > > > > >> fsck_err:
+> > > > > >> --
+> > > > > >>
+> > > > > >>
+> > > > > >> Making memchr access via a pointer created with
+> > > > > >> const struct bch_xattr *v =3D (void *)k.v fixes it. From the p=
+rint statements I
+> > > > > >> can see that __struct_size(xattr.v->x_name) incorrectly return=
+s 0, while
+> > > > > >> __struct_size(v->x_name) correctly returns 10 in this case (th=
+e value of
+> > > > > >> x_name_len).
+> > > > > >>
+> > > > > >> The generated assembly illustrates what is going wrong. Below =
+is an excerpt
+> > > > > >> of the assembly clang generated for the bch2_xattr_validate fu=
+nction:
+> > > > > >>
+> > > > > >> mov r13d, ecx
+> > > > > >> mov r15, rdi
+> > > > > >> mov r14, rsi
+> > > > > >> mov rdi, offset .L.str.3
+> > > > > >> mov rsi, offset .L__func__.bch2_xattr_validate
+> > > > > >> mov rbx, rdx
+> > > > > >> mov edx, eax
+> > > > > >> call _printk
+> > > > > >> movzx edx, byte ptr [rbx + 1]
+> > > > > >> mov rdi, offset .L.str.4
+> > > > > >> mov rsi, offset .L__func__.bch2_xattr_validate
+> > > > > >> call _printk
+> > > > > >> movzx edx, bh
+> > > > > >> mov rdi, offset .L.str.4
+> > > > > >> mov rsi, offset .L__func__.bch2_xattr_validate
+> > > > > >> call _printk
+> > > > > >> lea rdi, [rbx + 4]
+> > > > > >> mov r12, rbx
+> > > > > >> movzx edx, byte ptr [rbx + 1]
+> > > > > >> xor ebx, ebx
+> > > > > >> xor esi, esi
+> > > > > >> call memchr
+> > > > > >>
+> > > > > >> At the start of this rdx contains k.v (and is moved into rbx).=
+ The three calls
+> > > > > >> to printk are the ones you can see in my patch. You can see th=
+at for the
+> > > > > >> print that uses __struct_size(v->x_name) the compiler correctl=
+y uses
+> > > > > >> movzx edx, byte ptr [rbx + 1]
+> > > > > >> to load x_name_len into edx.
+> > > > > >>
+> > > > > >> For the printk call that uses __struct_size(xattr.v->x_name) h=
+owever the
+> > > > > >> compiler uses
+> > > > > >> movzx edx, bh
+> > > > > >> So it will print the high 8 bits of the lower 16 bits (second =
+least
+> > > > > >> significant byte) of the memory address of xattr.v->x_type. Th=
+is is obviously
+> > > > > >> completely wrong.
+> > > > > >>
+> > > > > >> It is then doing the correct call of memchr because this is us=
+ing my patch.
+> > > > > >> Without my patch it would be doing the same thing for the call=
+ to memchr where
+> > > > > >> it uses the second least significant byte of the memory addres=
+s of x_type as the
+> > > > > >> length used for the bounds-check.
+> > > > > >>
+> > > > > >>
+> > > > > >>
+> > > > > >> The LLVM IR also shows the same problem:
+> > > > > >>
+> > > > > >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readno=
+ne %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
+> > > > > >> [...]
+> > > > > >> %51 =3D ptrtoint ptr %2 to i64
+> > > > > >> %52 =3D lshr i64 %51, 8
+> > > > > >> %53 =3D and i64 %52, 255
+> > > > > >>
+> > > > > >> This is the IR for the incorrect behavior. It simply converts =
+the pointer to an
+> > > > > >> int, shifts right by 8 bits, then and with 0xFF. If it did a l=
+oad (to i64)
+> > > > > >> instead of ptrtoint this would actually work, as the second le=
+ast significant
+> > > > > >> bit of an i64 loaded from that memory address does contain the=
+ value of
+> > > > > >> x_name_len. It's as if clang forgot to dereference a pointer h=
+ere.
+> > > > > >>
+> > > > > >> Correct IR does this (for the other printk invocation):
+> > > > > >>
+> > > > > >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readno=
+ne %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
+> > > > > >> [...]
+> > > > > >> %4 =3D getelementptr inbounds %struct.bch_xattr, ptr %1, i64 0=
+, i32 1
+> > > > > >> %5 =3D load i8, ptr %4, align 8
+> > > > > >> [...]
+> > > > > >> %48 =3D load i8, ptr %5, align 4
+> > > > > >> %49 =3D zext i8 %48 to i64
+> > > > > >>
+> > > > > >> Best Regards
+> > > > > >> Jan
+> > > > > >
+> > > > > > I suspect it's the same Clang __bdos() "bug" as in [1] and [2].
+> > > > > >
+> > > > > > [1] https://lore.kernel.org/linux-kernel/3D0816D1-0807-4D37-8D5=
+F-3C55CA910FAA@linux.dev/
+> > > > > > [2] https://lore.kernel.org/all/20240913164630.GA4091534@thelio=
+-3990X/
+> > > > >
+> > > > > Could you try this and see if it resolves the problem?
+> > > > >
+> > > > > diff --git a/include/linux/compiler_types.h b/include/linux/compi=
+ler_types.h
+> > > > > index 1a957ea2f4fe..b09759f31789 100644
+> > > > > --- a/include/linux/compiler_types.h
+> > > > > +++ b/include/linux/compiler_types.h
+> > > > > @@ -413,7 +413,7 @@ struct ftrace_likely_data {
+> > > > >   * When the size of an allocated object is needed, use the best =
+available
+> > > > >   * mechanism to find it. (For cases where sizeof() cannot be use=
+d.)
+> > > > >   */
+> > > > > -#if __has_builtin(__builtin_dynamic_object_size)
+> > > > > +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__c=
+lang__)
+> > > > >  #define __struct_size(p)   __builtin_dynamic_object_size(p, 0)
+> > > > >  #define __member_size(p)   __builtin_dynamic_object_size(p, 1)
+> > > > >  #else
+> > > > >
+> > > >
+> > > > Alright after looking at it in the debugger the code it generates n=
+ow is
+> > > > just wild.
+> > > >
+> > > > I added one more printk before the call to memchr like so:
+> > > >
+> > > > diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
+> > > > index 56c8d3fe55a4..3c7c479ea3a8 100644
+> > > > --- a/fs/bcachefs/xattr.c
+> > > > +++ b/fs/bcachefs/xattr.c
+> > > > @@ -96,6 +96,7 @@ int bch2_xattr_validate(struct bch_fs *c, struct =
+bkey_s_c k,
+> > > >                        c, xattr_invalid_type,
+> > > >                        "invalid type (%u)", xattr.v->x_type);
+> > > >
+> > > > +     pr_info("__struct_size(x_name): %lu", __struct_size(xattr.v->=
+x_name));
+> > > >       bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_nam=
+e_len),
+> > > >                        c, xattr_name_invalid_chars,
+> > > >                        "xattr name has invalid characters");
+> > > > diff --git a/include/linux/compiler_types.h b/include/linux/compile=
+r_types.h
+> > > > index f14c275950b5..43ac0bca485d 100644
+> > > > --- a/include/linux/compiler_types.h
+> > > > +++ b/include/linux/compiler_types.h
+> > > > @@ -413,7 +413,7 @@ struct ftrace_likely_data {
+> > > >   * When the size of an allocated object is needed, use the best av=
+ailable
+> > > >   * mechanism to find it. (For cases where sizeof() cannot be used.=
+)
+> > > >   */
+> > > > -#if __has_builtin(__builtin_dynamic_object_size)
+> > > > +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__cla=
+ng__)
+> > > >  #define __struct_size(p)     __builtin_dynamic_object_size(p, 0)
+> > > >  #define __member_size(p)     __builtin_dynamic_object_size(p, 1)
+> > > >  #else
+> > > >
+> > > >
+> > > > Here's the generated assembly for this:
+> > > >
+> > > >       mov     rdi, offset .L.str.3
+> > > >       mov     rsi, offset .L__func__.bch2_xattr_validate
+> > > >       mov     r12, rdx
+> > > >       mov     rdx, -1
+> > > >       call    _printk
+> > > >       mov     rax, r12
+> > > >       movzx   esi, ah
+> > > >       movzx   edx, byte ptr [r12 + 1]
+> > > >       cmp     rsi, rdx
+> > > >       jb      .LBB4_15
+> > > > # %bb.11:
+> > > >       lea     rdi, [rax + 4]
+> > > >       xor     ebx, ebx
+> > > >       xor     esi, esi
+> > > >       call    memchr
+> > > >
+> > > > So for the printk it hardcoded -1 (aka 0xFFFFF... 64 bit long int m=
+ax)
+> > > > as the result of __struct_size. But then for before call to memchr =
+it does
+> > > > the same stuff again and puts the second least significant byte of =
+the memory
+> > > > address of x_type in esi, only to then load the correct value of x_=
+name_len
+> > > > into edx and compares them for the bounds-check.
+> > > >
+> > >
+> > >
+> > > __builtin_object_size should only ever be compile time known, right? =
+So
+> > > it looks like this is pretty broken atm.
+> > >
+Right. It's __builtin_dynamic_object_size that's known during runtime.
 
-Good evening, I hope the week has gone well for everyone.
+> > > I think until this stuff is fixed in clang the only real option is:
+> > >
+> There seems to be an issue with how the offset to the flexible array
+> member is calculated internally. I'm looking into it now.
+>
+What Clang's doing is calculating the size of the object with this formula:
 
-> On Sun, 2024-09-15 at 10:40 +0200, Linus Torvalds wrote:
-> > On Sun, 15 Sept 2024 at 10:08, Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> > > 
-> > > If the aformentioned EFI use-case is bogus, then distro package
-> > > verification is going to be the only application for PGP keys in
-> > > the kernel.
-> > 
-> > So I haven't actually seen _that_ series, but as mentioned it does
-> > smell pretty conceptually broken to me.
-> > 
-> > But hey, code talks, bullshit walks. People can most certainly try to
-> > convince me.
+  size_t struct_size_including_flexible_array_members =3D
+    MAX(sizeof(struct posix_acl),
+        offsetof(struct posix_acl, a_entries) +
+        sizeof(struct posix_acl_entry) * count);
 
-> The solution has three parts.
-> 
-> 1. The kernel verifies the RPM header with a PGP key embedded in the
-> kernel, and provided by the Linux distribution vendor.
-> 
-> 2. The Integrity Digest Cache parses the verified RPM header in the
-> kernel and feeds one of the existing LSMs (IMA, IPE and BPF LSM) with
-> the digests extracted from the RPM header.
-> 
-> 3. The LSMs compare the fsverity digest they find in the filesystem
-> with the authenticated ones from the RPM header, and might deny access
-> to the file if the digests don't match.
-> 
-> At this point, RPM headers don't contain fsverity digests, only file
-> content digests, but this is an orthogonal problem.
+The various sizes and offsets are as follows:
 
-So from the above, can it be assumed that the RPM parsing code isn't
-useful until the RPM packages contain fsverity root hashes?
+  sizeof(struct posix_acl) =3D=3D 32
+  sizeof(struct posix_acl_entry) =3D=3D 8
 
-In addition, and we mentioned this previously in this thread, it seems
-that one needs to 'eat' a full read of a file, at least once, in order
-to generate an fsverity digest that is consistent with the actual
-on-disk contents of the file.
+  sizeof(a_refcount) =3D=3D 4 :: offset =3D=3D 0
+  sizeof(a_rcu) =3D=3D 16 :: offset =3D=3D 8
+  sizeof(a_count) =3D=3D 4 :: offset =3D=3D 24
+  offsetof(a_entries) =3D=3D 28
 
-So, once again, the notion of the implementation of a generic digest
-cache would seem to be orthogonal to the issue of verifying that the
-digest values in the cache are from a 'known good' source.
+The resulting "real" size (according to Clang) is MAX(32, 28 + 8 * 1)
+=3D=3D 36. I believe it's padding that results in the size of 40 for the
+malloc size. Does that description jibe with what you're seeing?
 
-> I had a look at previous threads on similar topics, to find your
-> position on the matter.
-> 
-> I got that you would not be probably against (1), and maybe not (3).
-> 
-> However, we still need a source telling whether the fsverity digest in
-> the filesystem is the same of one calculated by Linux distributions
-> during build. That is what the Integrity Digest Cache provides.
-> 
-> Regarding (2), maybe I'm missing something fundamental, but isn't
-> parsing the ELF format of kernel modules from the kernel similar?
-> 
-> Cannot really go to user space at this point, since the authenticated
-> fsverity digests are directly consumed by LSMs. Also, as David pointed
-> out in this thread [1], there is no obligation for user space to call
-> any signature verification function before executing a file, this task
-> must be done by an LSM.
-> 
-> I'm aware that we should not run unnecessary code in the kernel. I
-> tried to mitigate this issue by striping the parsing functionality to
-> the minimum (220 LOC), and formally verifying it with the Frama-C
-> static analyzer. The parser is available here [2].
-> 
-> I'm also aware that this is not the long term solution, but I didn't
-> find much support on the alternatives, like a trustworthy user mode
-> driver [3][4] (isolated from other root processes) and signed eBPF
-> programs [5].
+(For what it's worth, I think Clang is correct here.)
 
-We mentioned this previously in the related threads you cite, our TSEM
-LSM implementation allows the kernel to determine whether or not a
-userspace process or the entirety of userspace should be 'trusted' at
-any point in time.
-
-The security footprint/model of a digest 'priming' workload is going
-to be extremely small.  If the priming workload is invoked early in
-the boot process the kernel can have assurance that neither the
-priming workload or the surrounding userspace has commited any actions
-that would be considered to make the system untrusted.
-
-> What it would be the right way to proceed, in your opinion?
-
-Alternatively, we had suggested previously that the RPM parsing code
-may be a good candidate for implementation with a separate kernel
-loadable module.  That places the parsing code in the kernel to meet
-your security requirement and there is standardized infrastructure for
-module signing that would ensure the integrity of the parser.
-
-The module surfaces a pseudo-file through securityfs that userspace
-can use to feed the RPM header into the kernel to drive the population
-of the digest cache.  The parser only needs to be resident and
-operative long enough to initialize the digest cache of a trusted
-system and a kernel loadable module would seem to be consistent with
-that model.
-
-Once again, priming the digest cache with known good digests seems to
-be an issue orthogonal to the implementation of the digest cache
-itself.
-
-We would be interested in knowing if we are misunderstanding the model
-you are trying to achieve.
-
-> Thanks
-> 
-> Roberto
-> 
-> [1] https://lore.kernel.org/linux-kernel/32081.1171560770@redhat.com/
-> [2] https://lore.kernel.org/linux-integrity/20240905150543.3766895-9-roberto.sassu@huaweicloud.com/
-> [3] https://lore.kernel.org/lkml/20230317145240.363908-1-roberto.sassu@huaweicloud.com/#t
-> [4] https://lore.kernel.org/linux-integrity/eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com/
-> [5] https://lwn.net/Articles/853489/
-
-Have a good weekend.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+-bw
 
