@@ -1,111 +1,145 @@
-Return-Path: <linux-kernel+bounces-341936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF104988893
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:53:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A579888E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73E082821F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:53:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB395B25122
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328D01C172D;
-	Fri, 27 Sep 2024 15:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7523518BB90;
+	Fri, 27 Sep 2024 16:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=b1n.io header.i=@b1n.io header.b="q2K/+3Qa"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ciI0Ozww"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58ADE18B1A
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 15:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC6F1E4AE;
+	Fri, 27 Sep 2024 16:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727452429; cv=none; b=PyxiZjDa3VsApGIacUBsoZUpDyZ92cdDhFUkWhn/HH/DW7J/MHIwLm8TiwG4UPcVaCUix2aUJ1OXF25TV78v8tSURxRB8xQdgbnIznlGs7pnrBd9oDj16RNJSE4xJwtlahNBQhtyuKQwxzRlSsKQY/TNh86o68wt+I0IxfMnyiw=
+	t=1727453828; cv=none; b=ZUMBUjj5rk5TNMuEl7wy3zQhnFSIgmoC7WlIzq2/GN076HpHwWF5m06iqDQPcgkiB/DVvzbFksWArkQPjgcglx9lBbXymK1tTAUMaj/d+HW/L3zzf0LspYv/pC9cw4Hfrfbp/+YCCTQdsqr5Y+eJ/DNcYPBceT6CfzhBw7DU0oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727452429; c=relaxed/simple;
-	bh=m73kTn1FiOVjNDuAAijNwcVvwqRvcR31r50qp6jVgys=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=QAMBujiyfZxOvMf0eky4NEIam8OaNIO5G/F+/llSbvFDIFNdLn0FR/kPjBZ2elNJtmGP5+jSycS6y+xSG2Z4+BjD+aeGbDVmS8a7qn1Hql3K/JFYofTeAO7flTTvlNHqH4dFMWU7HuPPyj/0ZbZ4IC5NpgT3aKfyjgNuSF3hubs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=b1n.io; spf=pass smtp.mailfrom=b1n.io; dkim=pass (2048-bit key) header.d=b1n.io header.i=@b1n.io header.b=q2K/+3Qa; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=b1n.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=b1n.io
+	s=arc-20240116; t=1727453828; c=relaxed/simple;
+	bh=Vm0nFv5pTtfM4Kg9IRi5F8nbyeaxRpuRYrhTeo+bloE=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=KLRJhs6LIZ4+j93cAXXaVBLRwhL5ihvKoMMrZpcTSFhKU91JF31rq+edWZtuUfLn/vtGAfteqNcATK/A4AWMjLxATcihIaXl9FUBrkt/ZLVc35bLVVEbHAuf7BFRhS2wmtNlhmVzI9htP8KTBGaUPQ8reH5xBmQJ+upolamdhX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ciI0Ozww; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71788bfe60eso1901830b3a.1;
+        Fri, 27 Sep 2024 09:17:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727453827; x=1728058627; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=L+yddGmNvvninROrZh27GX7gU63fOouPWzZAESW4FuI=;
+        b=ciI0Ozww1Y62ozJB56Jl5fH+jfryZKTvpDh866uFMS6xazrk9Lw95oWaCkLwiOANi4
+         au/tMGFZcLwndjVeLP2cWnU62vOOzmEYICwbrdK5VHu2iGBJ99pFAApR5IogTg0s+w+g
+         UA6S1vrLC4mXYlYDPxrgsIPZQvHzh+gMyRkrDUoLFiNZRnsIVy6UHhheTZ3c4dVpwQUz
+         K9s/rCXpOP+dIRq5gmjtSwaxT5MD9aN0MGoGwLLfOMdJgm0AHN6++HCW5pUdxOxAF/Dm
+         VS53xljy0JJUEdg+HXngC8yCYcetuYSEk/Xekoi3tdxwRJe8oZKHmEiCCZR5vubIba/E
+         88LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727453827; x=1728058627;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L+yddGmNvvninROrZh27GX7gU63fOouPWzZAESW4FuI=;
+        b=p2+fR89cj6pu6QPIYVGU8lTW67C9YdWhaorO3vDXXOPHaxGN+5j50wvYN+Du8ZG3wN
+         dgrlZrjzxfm2RfkiikPqhboi0zeGdGBHP7g4RVLFmsv2QBQuef+JPmUO00chKvGvqlrS
+         kYPLIxUO83DVRWWxLYf4yhmH5Z48sVt/h6ha2Jvq/opbBFeJeyAh/pKRoJWPJQSpZ9CW
+         u+Dhfda76766lH5o76WSvx1NVVb4/agNf6v02DNtjuNOWP/UlQOqilJ6vKM/327GNWKV
+         +IFkhcSet9dMiafSWY/Lto5AzmXL+pEveNlODvihRDWjU1Nhtnz25dh/CJ9HA54HVGlG
+         3pAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuBwfpxxuyVTkXarw/C2rYLN/0R9ySFvkIMpVkfR/bTfsuUPCOI9WGdeCzHnGdNb742XOHrKPmFW1l59c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU++HWJymYNSt4uxOfqcU85ESNgr5PZk6WOBLrRtzTMcLvHC2g
+	eW9eWprr/1w8mN48For/bQ54UZQIFkMH4XsStlfb1cqqyyemyLB4
+X-Google-Smtp-Source: AGHT+IGozEALnQx1Er7SBfzGwW2QDie8jNd5SkYPMBx3yNF2xMOdfceVDjor2c9KEZXwlrpTM7HORA==
+X-Received: by 2002:a05:6a00:17a9:b0:70d:2fb5:f996 with SMTP id d2e1a72fcca58-71b25f451e7mr5943442b3a.11.1727453826683;
+        Fri, 27 Sep 2024 09:17:06 -0700 (PDT)
+Received: from dw-tp ([171.76.86.51])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26515f1asm1766740b3a.135.2024.09.27.09.17.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 09:17:05 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>, Scott Wood <oss@buserror.net>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] powerpc: remove dead config options for MPC85xx platform support
+In-Reply-To: <20240927095203.392365-1-lukas.bulwahn@redhat.com>
+Date: Fri, 27 Sep 2024 21:23:45 +0530
+Message-ID: <87frplay9i.fsf@gmail.com>
+References: <20240927095203.392365-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=b1n.io; s=key1;
-	t=1727452425;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MrRWjp70LLWukpDeEqzl+DxRbjw0dZRDDnsvuRSCUtQ=;
-	b=q2K/+3Qa8JVirMw2MrvS1IurBVxTV8aniXUYcR128zktaKIt49wkqyAXjA46A7Rtpy3+KI
-	/8l7e/RGJBEGWVllZhGJyG+hZiGZ1JsDvluO64z5dT+4UwKUHcJ13cSg6mul9rgI+fmXxN
-	3D5LJxljlR9E5gvkkEK27QBqDsI9m1dSetd/tl/wpITDDQawgG1CtgvlRzBRI0axIndXkq
-	39pKeIiX1TR5NZEthnCvVKBXRUe3lbRIZa98oFEzqS56DfRfxl9hu7vU/OFhJLmnzIMIX2
-	fQ/h8s+G1mzzYucOEIBD3EKcpZMJQ6ej3SB4FIZ5gTvhDClwXAD2u6KFDj4YLg==
-Content-Type: multipart/signed;
- boundary=b8bd27bd84e1265222b75fe1216dfdabde64cd8d460f647eb948bcb0026a;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Fri, 27 Sep 2024 15:53:37 +0000
-Message-Id: <D4H6RX1ZCSQ8.1BQ8LW44D65X1@b1n.io>
-Cc: "Florian Schilhabel" <florian.c.schilhabel@googlemail.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] staging: rtl8712: Fix unnecessary parentheses warnings
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Xingquan Liu" <b1n@b1n.io>
-To: "Dan Carpenter" <dan.carpenter@linaro.org>
-References: <20240927151637.82772-1-b1n@b1n.io>
- <9bf11c06-85c7-4ef0-ba26-e4780a28f23c@stanley.mountain>
- <D4H6EYM973NS.13D8BVWVTVO2D@b1n.io>
- <75267b21-f800-41a5-8a7a-ddbf0062ffcd@stanley.mountain>
-In-Reply-To: <75267b21-f800-41a5-8a7a-ddbf0062ffcd@stanley.mountain>
-X-Migadu-Flow: FLOW_OUT
 
---b8bd27bd84e1265222b75fe1216dfdabde64cd8d460f647eb948bcb0026a
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8; format=Flowed
+Lukas Bulwahn <lbulwahn@redhat.com> writes:
 
-On Fri Sep 27, 2024 at 11:45 PM CST, Dan Carpenter wrote:
-> Greg doesn't agree with checkpatch about unnecessary parentheses.  If the code
-> looks like this:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 >
-> 	if ((a == b) || (b == c)) {
+> Commit 384e338a9187 ("powerpc: drop MPC8540_ADS and MPC8560_ADS platform
+> support") and commit b751ed04bc5e ("powerpc: drop MPC85xx_CDS platform
+> support") removes the platform support for MPC8540_ADS, MPC8560_ADS and
+> MPC85xx_CDS in the source tree, but misses to remove the config options in
+> the Kconfig file. Hence, these three config options are without any effect
+> since then.
 >
-> then just ignore checkpatch.  However if the code looks like:
+> Drop these three dead config options.
 >
-> 	p = &(foo);
+
+Indeed these looks to be dead config remaining.
+
+> Fixes: 384e338a9187 ("powerpc: drop MPC8540_ADS and MPC8560_ADS platform support")
+> Fixes: b751ed04bc5e ("powerpc: drop MPC85xx_CDS platform support")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  arch/powerpc/platforms/85xx/Kconfig | 21 ---------------------
+>  1 file changed, 21 deletions(-)
+
+I couldn't find any relevant reference of MPC8540_ADS, MPC8560_ADS or MPC85xx_CDS
+after this patch
+
+So please feel free to add - 
+
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+
 >
-> Then change it to:
->
-> 	p = &foo;
->
-> This sort of change would need to be split up by driver instead of all of
-> driver/staging.  So it would be a series of patches.  You don't need to split
-> it up by file.  Split it by driver.
-
-Thanks, this information is important.
-
--- 
-Xingquan Liu
-
-
---b8bd27bd84e1265222b75fe1216dfdabde64cd8d460f647eb948bcb0026a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iM4EABYKAHYWIQRK8k7aQ0rr/Uwki+E2I1LDHPWnXgUCZvbVCFgYaHR0cHM6Ly9r
-ZXlzLm9wZW5wZ3Aub3JnL3Zrcy92MS9ieS1maW5nZXJwcmludC8zMEFGMUFDMDcz
-MDg5M0VEQzE0OUI3OTVCMDA3OUIxMkU2Qzk4RUE2AAoJEDYjUsMc9adecmsA/1CT
-ARv7d7BNP8jqMV01kDzfhh6aMo18uku1ssSaCCm/AQDxRh6mwE9BIwRfYM85Iu7F
-GHZ/mLrhGgDY9tQ7kGJaCw==
-=0GIo
------END PGP SIGNATURE-----
-
---b8bd27bd84e1265222b75fe1216dfdabde64cd8d460f647eb948bcb0026a--
+> diff --git a/arch/powerpc/platforms/85xx/Kconfig b/arch/powerpc/platforms/85xx/Kconfig
+> index 9315a3b69d6d..604c1b4b6d45 100644
+> --- a/arch/powerpc/platforms/85xx/Kconfig
+> +++ b/arch/powerpc/platforms/85xx/Kconfig
+> @@ -40,27 +40,6 @@ config BSC9132_QDS
+>  	  and dual StarCore SC3850 DSP cores.
+>  	  Manufacturer : Freescale Semiconductor, Inc
+>  
+> -config MPC8540_ADS
+> -	bool "Freescale MPC8540 ADS"
+> -	select DEFAULT_UIMAGE
+> -	help
+> -	  This option enables support for the MPC 8540 ADS board
+> -
+> -config MPC8560_ADS
+> -	bool "Freescale MPC8560 ADS"
+> -	select DEFAULT_UIMAGE
+> -	select CPM2
+> -	help
+> -	  This option enables support for the MPC 8560 ADS board
+> -
+> -config MPC85xx_CDS
+> -	bool "Freescale MPC85xx CDS"
+> -	select DEFAULT_UIMAGE
+> -	select PPC_I8259
+> -	select HAVE_RAPIDIO
+> -	help
+> -	  This option enables support for the MPC85xx CDS board
+> -
+>  config MPC85xx_MDS
+>  	bool "Freescale MPC8568 MDS / MPC8569 MDS / P1021 MDS"
+>  	select DEFAULT_UIMAGE
+> -- 
+> 2.46.1
 
