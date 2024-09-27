@@ -1,127 +1,142 @@
-Return-Path: <linux-kernel+bounces-341535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA63988156
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:29:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 200E8988159
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5EF01C21D38
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:29:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDB7E281844
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1121BAEC8;
-	Fri, 27 Sep 2024 09:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xr3Hvbz9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175D61BAED1;
+	Fri, 27 Sep 2024 09:29:07 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61681BA89D;
-	Fri, 27 Sep 2024 09:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DD51BAED0;
+	Fri, 27 Sep 2024 09:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727429335; cv=none; b=mcSeTxWWYNzwm275QNDeqDdTvP05SRoD1vTv5SmfHmcVkQW+DZGmIlIdyMnUbocCUvpfvJ5gG7nBecTAh+/PWv6D/B2hZsV6nMWktuarb2JEVh9Ih2BlLILHrAKiFocRZAvfJp9DLZcqapYphFVupZ5WPu5VTApfpnpVlypIE2s=
+	t=1727429346; cv=none; b=s00Ji5KmzEwCvelHlMXYfLb3RTElWJrDn1V7cT1UKFzTMvtwx1PeKusDbKZUHgKTRpvmMfa8LH9Wg3YFwcepyrbcQF8vIgRPhTZ6Kwsmr5BJQ+bt0hrXhGigXxGehv/YEQMyRKVzfZVoWlSJ/cWQVjxKPYRw/ArYIpnuYKcg6Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727429335; c=relaxed/simple;
-	bh=tEADgN4+0MVD8NyE8u9DHCW1941Zple++xFgdtE7Lqs=;
+	s=arc-20240116; t=1727429346; c=relaxed/simple;
+	bh=JF+sDDOK5PxGb3aYQzqGRu08TbXb26q+zXfIZ0oadcQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWod66k6NjDBjN7pUu4Sp7HqgMmUjzBTfGazZwZyUZbGsKJ++JzEFQ6yfVCKotaSa8ndBWUiyrms7JttA3cA6PED3QS4D/498IIhZyDg37rgMRcPllp9qgyvzduA7MGQbB5l7ltp81azZ/ZZk4wcnMZ5uI0BjkpoyKsFRG9MzbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xr3Hvbz9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4CACC4CEC4;
-	Fri, 27 Sep 2024 09:28:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727429335;
-	bh=tEADgN4+0MVD8NyE8u9DHCW1941Zple++xFgdtE7Lqs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xr3Hvbz9t2MSHH3v4Q8FmyZxHemGNFrG+e7jK5spLTweDQIHHfOukGsWd5qJPO2V5
-	 BmijwD7NKAcFaETkdLToPdAZAJhyXB3Y4Z7vOPUGry/pV1RQfWao72ENnh8tg03Y9E
-	 PcClg8MxJm/m+/LcaI2Wd6qmh1MxpR8O+Xm2fQlmbFo4Vtn0it4ZbLDkk/U2x4JBmk
-	 ASMGonfS6In7VYo9OrMOHFSx0vBUWPrQwRcXqYTQERRrdxfeL6hbSFIXtbRGo4XgAx
-	 BYQKSAm+qjgwsZp96nulVPwISp74jMAIIWEo//X8KMevoHvcDktw2yhlXv0uqGkFGE
-	 jqQrYJAXlgQ7g==
-Date: Fri, 27 Sep 2024 11:28:52 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>, 
-	Tinghan Shen <tinghan.shen@mediatek.com>, Seiya Wang <seiya.wang@mediatek.com>, 
-	Ben Lok <ben.lok@mediatek.com>, "Nancy . Lin" <nancy.lin@mediatek.com>, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	Alexandre Mergnat <amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, 
-	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>, 
-	Chris-qj chen <chris-qj.chen@mediatek.com>, 
-	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH v3 2/5] dt-bindings: iommu: mediatek: Fix interrupt count
- constraint for new SoCs
-Message-ID: <bilc7elacctsvr3eeqi5n45loy2w3qnzymwwhytlaeb3bmn4u7@thakmicixlko>
-References: <20240927065041.15247-1-macpaul.lin@mediatek.com>
- <20240927065041.15247-2-macpaul.lin@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Scnd+UZah9zrAT6j8tsPyi1YbKL7K1vYnm9fV2B3Mt+5og48u5mG11nfa7wrB0Bn7QIJqL3a7h0gEZ/r4z2SCL6TUeg+r0EGDsoJEGuZoyb+kLea8dfe9DwaGwjhf3obNBQMZWmxuyZ3Aj6qZQta552yLE3MwPBWxUynenDhXv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id BE7232800F0B1;
+	Fri, 27 Sep 2024 11:28:54 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id A2869268E83; Fri, 27 Sep 2024 11:28:54 +0200 (CEST)
+Date: Fri, 27 Sep 2024 11:28:54 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: AceLan Kao <acelan.kao@canonical.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: pciehp: Fix system hang on resume after hot-unplug
+ during suspend
+Message-ID: <ZvZ61srt3QAca2AI@wunner.de>
+References: <20240926125909.2362244-1-acelan.kao@canonical.com>
+ <ZvVgTGVSco0Kg7H5@wunner.de>
+ <CAFv23Q=5KdqDHYxf9PVO=kq=VqP0LwRaHQ-KnY2taDEkZ9Fueg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240927065041.15247-2-macpaul.lin@mediatek.com>
+In-Reply-To: <CAFv23Q=5KdqDHYxf9PVO=kq=VqP0LwRaHQ-KnY2taDEkZ9Fueg@mail.gmail.com>
 
-On Fri, Sep 27, 2024 at 02:50:38PM +0800, Macpaul Lin wrote:
-> The infra-iommu node in mt8195.dtsi was triggering a CHECK_DTBS error due
-> to an excessively long 'interrupts' property. The error message was:
+On Fri, Sep 27, 2024 at 03:33:50PM +0800, AceLan Kao wrote:
+> Lukas Wunner <lukas@wunner.de> 2024-9-26 9:23
+> > On Thu, Sep 26, 2024 at 08:59:09PM +0800, Chia-Lin Kao (AceLan) wrote:
+> > > Remove unnecessary pci_walk_bus() call in pciehp_resume_noirq(). This
+> > > fixes a system hang that occurs when resuming after a Thunderbolt dock
+> > > with attached thunderbolt storage is unplugged during system suspend.
+> > >
+> > > The PCI core already handles setting the disconnected state for devices
+> > > under a port during suspend/resume.
+> > > 
+> > > The redundant bus walk was
+> > > interfering with proper hardware state detection during resume, causing
+> > > a system hang when hot-unplugging daisy-chained Thunderbolt devices.
 > 
->   infra-iommu@10315000: interrupts: [[0, 795, 4, 0], [0, 796, 4, 0],
->                      [0, 797, 4, 0], [0, 798, 4, 0], [0, 799, 4, 0]]
->                      is too long
-> 
-> To address this issue, update the compatbile matching rule for
-> 'interrupts' property. This change allows flexibility in the number
-> of interrupts for new SoCs like MT8195.
-> The purpose of these 5 interrupts is also added into description.
-> 
-> Fixes: bca28426805d ("dt-bindings: iommu: mediatek: Convert IOMMU to DT schema")
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> ---
->  .../bindings/iommu/mediatek,iommu.yaml        | 25 ++++++++++++++++++-
->  1 file changed, 24 insertions(+), 1 deletion(-)
-> 
-> Changes for v2:
->  - commit message: re-formatting and add a description of adding 5 interrupts.
->  - add 'description' and 'maxItems: 5' for 'interrupt' property of
->    'mt8195-iommu-infra'
->  - others keeps 'maxItems: 1'
-> 
-> Changes for v3:
->  - Refine the description for 'interrupts' property and fixes the compatible
->    matching rules.
->  - Refine commit message.
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
-> index ea6b0f5f24de..10e2bb0f0704 100644
-> --- a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
-> +++ b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
-> @@ -96,7 +96,13 @@ properties:
->      maxItems: 1
->  
->    interrupts:
-> -    maxItems: 1
+> I have no good answer for you now.
+> After enabling some debugging options and debugging lock options, I
+> still didn't get any message.
 
-This does not make sense and was not here at v2. Keep constraints at top
-level.
+Have you tried "no_console_suspend" on the kernel command line?
 
-This is how variable-length lists are created:
-https://elixir.bootlin.com/linux/v6.11-rc6/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L127
 
-Best regards,
-Krzysztof
+> ubuntu@localhost:~$ lspci -tv
+> -[0000:00]-+-00.0  Intel Corporation Device 6400
+>           +-02.0  Intel Corporation Lunar Lake [Intel Graphics]
+>           +-04.0  Intel Corporation Device 641d
+>           +-05.0  Intel Corporation Device 645d
+>           +-07.0-[01-38]--
+>           +-07.2-[39-70]----00.0-[3a-70]--+-00.0-[3b]--
+>           |                               +-01.0-[3c-4d]--
+>           |                               +-02.0-[4e-5f]----00.0-[4f-50]----01.0-[50]----00.0  Phison Electronics Corporation E12 NVMe Controller
+>           |                               +-03.0-[60-6f]--
+>           |                               \-04.0-[70]--
+> 
+> This is Dell WD22TB dock
+> 39:00.0 PCI bridge [0604]: Intel Corporation Thunderbolt 4 Bridge [Goshen Ridge 2020] [8086:0b26] (rev 03)
+>        Subsystem: Intel Corporation Thunderbolt 4 Bridge [Goshen Ridge 2020] [8086:0000]
+> 
+> This is the TBT storage connects to the dock
+> 50:00.0 Non-Volatile memory controller [0108]: Phison Electronics
+> Corporation E12 NVMe Controller [1987:5012] (rev 01)
+>        Subsystem: Phison Electronics Corporation E12 NVMe Controller [1987:5012]
+>        Kernel driver in use: nvme
+>        Kernel modules: nvme
 
+The lspci output shows another PCIe switch in-between the WD22TB dock and
+the NVMe drive (bus 4e and 4f).  Is that another Thunderbolt device?
+Or is the NVMe drive built into the WD22TB dock and the switch at bus
+4e and 4f is a non-Thunderbolt PCIe switch in the dock?
+
+I realize now that commit 9d573d19547b ("PCI: pciehp: Detect device
+replacement during system sleep") is a little overzealous because it
+not only reacts to *replaced* devices but also to *unplugged* devices:
+If the device was unplugged, reading the vendor and device ID returns
+0xffff, which is different from the cached value, so the device is
+assumed to have been replaced even though it's actually been unplugged.
+
+The device replacement check runs in the ->resume_noirq phase.  Later on
+in the ->resume phase, pciehp_resume() calls pciehp_check_presence() to
+check for unplugged devices.  Commit 9d573d19547b inadvertantly reacts
+before pciehp_check_presence() gets a chance to react.  So that's something
+that we should probably change.
+
+I'm not sure though why that would call a hang.  But there is a known issue
+that a deadlock may occur when hot-removing nested PCIe switches (which is
+what you've got here).  Keith Busch recently re-discovered the issue.
+You may want to try if the hang goes away if you apply this patch:
+
+https://lore.kernel.org/all/20240612181625.3604512-2-kbusch@meta.com/
+
+If it does go away then at least we know what the root cause is.
+
+The patch is a bit hackish, but there's an ongoing effort to tackle the
+problem more thoroughly:
+
+https://lore.kernel.org/all/20240722151936.1452299-1-kbusch@meta.com/
+https://lore.kernel.org/all/20240827192826.710031-1-kbusch@meta.com/
+
+Thanks,
+
+Lukas
 
