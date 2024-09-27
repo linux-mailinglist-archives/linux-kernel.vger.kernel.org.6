@@ -1,103 +1,113 @@
-Return-Path: <linux-kernel+bounces-341431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A07D9988003
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:07:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F97987FFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C37F1F23CE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:07:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C30AB1F23D2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1366189B95;
-	Fri, 27 Sep 2024 08:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6oFnRXx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B606188CB7;
-	Fri, 27 Sep 2024 08:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D58D1898E0;
+	Fri, 27 Sep 2024 08:07:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52314188CB7;
+	Fri, 27 Sep 2024 08:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727424445; cv=none; b=UvXGxhOmJwcnd2AttRXsaSRqYeBfL3W8/ddI2HzYDa8lwenF07YoorzBeCods0WS5NyST7ktOXVG8b1w76tr+sZ3H6CCYQyGWJ6KlhbR5EKlrNEC0dOyc0l3PsKB853wJ/Un0LHh6KKJjpcRKvD0Fcx5mbZYMT36RId9bStSCqA=
+	t=1727424443; cv=none; b=R/mq3IknXtshPqOBbMm3BnhepGCqap82WQYdC1Z1Z1455Cb5PGelCCZTGrKAYtw51Pvcb0kvq5dqP7yilwy8bw+II9f91fGjnri02nWDdvY+Oh+TYFArcWtL7F8TgntMcoq0q1OALsiU2E7YE1Qvt4E2YQ+6xxGG5JwWwAxVQ/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727424445; c=relaxed/simple;
-	bh=w/r4IrDMdsbnNrUJdiGTxDc3Vc0EH27o2LrhEKew1Ys=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BDNaZ6FiaP09XkgU3R7lWOHLNSjpVXPrjYnb+Mn4/htk0NYa2H96nw4QRsa7CZqVNdgulp+Vu6l5zAmhhDjP5JQzk2N0VFHg58hvwLeWxVINS8Y1FSibrqM8Q9snxYpm1PTY6/w4K6N2OQOsMmD7ngEU5HkqFuZQXoFkQEFTnC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6oFnRXx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9461C4CEC4;
-	Fri, 27 Sep 2024 08:07:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727424444;
-	bh=w/r4IrDMdsbnNrUJdiGTxDc3Vc0EH27o2LrhEKew1Ys=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=B6oFnRXxQkgl22gfgRImZiiCHxUgyVhhbFzoqKCjHidXalW6C1b0p5OEC7RzXwDuD
-	 QbGKtx++eoj6dk31xc3dHn0ZayosgCj7HmDRdGpvqXrIP3dJNIypsrPtOtJXxd7+Hi
-	 Kl5qVXPOp2lT66ee6SrJEaIFddPSnZi+bDKdC/iDjyGfIE201CPHRqBzmh1X6WoAYm
-	 N3VrUm0NWY2K0RUe0gDori9yX2Qz4COEzDUKJT+ZX4Zcn6+hh10OnntWjipQlwNU98
-	 MbvA9XHSrLr8Bp9gcPbQUOp5MC6LSLH785IcxOyAV6Zsg5EVLLiDd55dUY7jG6EaBk
-	 FptumCalarihQ==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>,
-	Steve French <sfrench@samba.org>,
-	Marc Dionne <marc.dionne@auristor.com>
-Subject: Re: (subset) [PATCH 4/8] afs: Remove unused struct and function prototype
-Date: Fri, 27 Sep 2024 10:07:10 +0200
-Message-ID: <20240927-beide-aktienhandel-de829a6cac5e@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240923150756.902363-5-dhowells@redhat.com>
-References: <20240923150756.902363-1-dhowells@redhat.com> <20240923150756.902363-5-dhowells@redhat.com>
+	s=arc-20240116; t=1727424443; c=relaxed/simple;
+	bh=YRZ1ueWRpnNP2xNE0IWnl5wmfNtSmVQx7kZs4r+OZUw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R0WOO4iRCiILZjKKRmA/BxoDRroYpFhGU7+/TMc2o8KITl00mhHBmCgSf1l56kifgnLiKLybw+ZnYzZBmwO1hNupG4MsxkMz2jnC+E2wIRVnYmVFtJg+5H0BVw3LccqbGCXB1ap18UrMAMV5g68wll3Obir9sz2yIaIOXJqlCV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 122F3150C;
+	Fri, 27 Sep 2024 01:07:50 -0700 (PDT)
+Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 815EF3F6A8;
+	Fri, 27 Sep 2024 01:07:18 -0700 (PDT)
+Message-ID: <fe152d28-703b-4f97-9656-b351295a506a@arm.com>
+Date: Fri, 27 Sep 2024 09:07:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=970; i=brauner@kernel.org; h=from:subject:message-id; bh=w/r4IrDMdsbnNrUJdiGTxDc3Vc0EH27o2LrhEKew1Ys=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR9S9/Cmv1nio7inM2hPx4Gqx7MOXeN7/ecBw9sbsrrW Rh1//P93FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRU+WMDBv2R79Oloz9sKxY ZOUMHwnHSWzSqcn6ly5MaO8/mmIukczwV8rkYKuOZ5HcqZ9O/I0fzzdkhnybeC6Tk2WCjH1JeNd TJgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] perf arm-spe: Calculate meta data size
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>,
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240914215458.751802-1-leo.yan@arm.com>
+ <20240914215458.751802-3-leo.yan@arm.com> <ZvZNSr51YgWvc6tu@google.com>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <ZvZNSr51YgWvc6tu@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 23 Sep 2024 16:07:48 +0100, David Howells wrote:
-> The struct afs_address_list and the function prototype
-> afs_put_address_list() are not used anymore and can be removed. Remove
-> them.
+
+
+On 9/27/24 07:14, Namhyung Kim wrote:
+> Warning: EXTERNAL SENDER, use caution when opening links or attachments.
 > 
 > 
+> On Sat, Sep 14, 2024 at 10:54:55PM +0100, Leo Yan wrote:
+>> The metadata is designed to contain a header and per CPU information.
+>>
+>> The arm_spe_find_cpus() function is introduced to identify how many CPUs
+>> support ARM SPE. Based on the CPU number, calculates the metadata size.
+>>
+>> Signed-off-by: Leo Yan <leo.yan@arm.com>
+>> ---
+>>   tools/perf/arch/arm64/util/arm-spe.c | 35 +++++++++++++++++++++++++---
+>>   1 file changed, 32 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/tools/perf/arch/arm64/util/arm-spe.c b/tools/perf/arch/arm64/util/arm-spe.c
+>> index c2d5c8ca4900..15478989ef30 100644
+>> --- a/tools/perf/arch/arm64/util/arm-spe.c
+>> +++ b/tools/perf/arch/arm64/util/arm-spe.c
+>> @@ -37,11 +37,40 @@ struct arm_spe_recording {
+>>        bool                    *wrapped;
+>>   };
+>>
+>> +static struct perf_cpu_map *arm_spe_find_cpus(struct evlist *evlist)
+> 
+> Please add a comment that it returns a new cpu map, and caller should
+> release the reference after use.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Will do.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Thanks,
+Leo
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[4/8] afs: Remove unused struct and function prototype
-      https://git.kernel.org/vfs/vfs/c/45635ccabac2
+>> +{
+>> +     struct perf_cpu_map *event_cpus = evlist->core.user_requested_cpus;
+>> +     struct perf_cpu_map *online_cpus = perf_cpu_map__new_online_cpus();
+>> +     struct perf_cpu_map *intersect_cpus;
+>> +
+>> +     /* cpu map is not "any" CPU , we have specific CPUs to work with */
+>> +     if (!perf_cpu_map__has_any_cpu(event_cpus)) {
+>> +             intersect_cpus = perf_cpu_map__intersect(event_cpus, online_cpus);
+>> +             perf_cpu_map__put(online_cpus);
+>> +     /* Event can be "any" CPU so count all CPUs. */
+>> +     } else {
+>> +             intersect_cpus = online_cpus;
+>> +     }
+>> +
+>> +     return intersect_cpus;
+>> +}
 
