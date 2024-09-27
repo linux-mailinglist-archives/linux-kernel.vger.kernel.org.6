@@ -1,85 +1,98 @@
-Return-Path: <linux-kernel+bounces-342046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426D3988A04
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:19:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B01EA988A0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8892F283428
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:19:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B2471F216A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25931C1AD6;
-	Fri, 27 Sep 2024 18:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3965F1C1AA7;
+	Fri, 27 Sep 2024 18:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lEn0PJr+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846091C1AB0;
-	Fri, 27 Sep 2024 18:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9745D524B0;
+	Fri, 27 Sep 2024 18:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727461170; cv=none; b=tICGtQvzm/ee01ZRqy+AZtVlsni3zCwBGwIuIoCpvwtpVLd4Q8/33a4TsbDZ3fjyFajLhVGts4cvt9GfJ7lHFAc4ezE8682p+j06eeBzz6P6rJtubHtop2k7/8NOfGHt0VGOKpLkDlethHHNeJQ3rvhYHbaXPcz9fCju1BfpPVM=
+	t=1727461255; cv=none; b=lv/8ZWgkiucFqwOxBzJQidTzQwSnyjV4N48qVAPfsaElO6I6pG0lgoSpqmsSxnwrWeyQLouhGBHoGCiKyMH7MxSom1V0dX6GW23/mYcQOXZaUFwg0+Ji21OUiVKKy+i8IIp2iIPdHHIAicCxZCxG2EhuzPawbn4YCiFwivEnM7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727461170; c=relaxed/simple;
-	bh=ExF5NdFyt2gwt2UFq/9gjmINDypBVoNqff3CF4CiT9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nncGqzeRocrTdZgQ8z6YP1g3Vgc9ZxN/OWVapLlVSF5qavAPExbgz5ZaL+kCjlYV5ZKssXTSfgt3kHTcwjsV9PcI1Q/aBhgzjO96XEbgKQAMgCq0ackaSU4dPm7ZbYiRqNodRRUadPgfKO0ud8HQJKSi9nCr/04VdvO+3bxMCWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44A3FC4CEC4;
-	Fri, 27 Sep 2024 18:19:29 +0000 (UTC)
-Date: Fri, 27 Sep 2024 14:20:09 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Masami Hiramatsu
- <mhiramat@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the ftrace tree with Linus' tree
-Message-ID: <20240927142009.16fe7e19@gandalf.local.home>
-In-Reply-To: <CAEf4BzbU_hzj=BQQC5arRwN5TY+vHS9S9acts=c1kX28C95zkg@mail.gmail.com>
-References: <20240927113620.7a673f55@canb.auug.org.au>
-	<CAEf4BzbU_hzj=BQQC5arRwN5TY+vHS9S9acts=c1kX28C95zkg@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727461255; c=relaxed/simple;
+	bh=L5RdLxarLTrz7yGRyAe3FrDHSbhsVNMTuzIViLOU370=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=EFTVdpBTotvQzvPk5O2ZXVRYjfvodmyox8WHtRMAB+E16I8sgfseTpbIGQB0oU96cEQxJKS+CI6+YQc46J3ddYJ+idcP11r/ItsGXy+o9zGYuW6Pu4V9L5/8tkr1qfvSv88xwBGXWRn7Xz7cgQ5NCdZzj7sVENziDJuNknD+uiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lEn0PJr+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB38DC4CEC4;
+	Fri, 27 Sep 2024 18:20:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727461255;
+	bh=L5RdLxarLTrz7yGRyAe3FrDHSbhsVNMTuzIViLOU370=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lEn0PJr+qXgM9YYV4Aw/k/5YEaAU00rPp0xz/mQ1PQVCATraLIXg5a6tNy8aUdVqW
+	 1orjc/0WtpAkAIFBmJS2zjeNLJbzRUuYeL1kHIVXC5xp2BQ8DL69Oz8CrPZjyiI69g
+	 jaB439XCe9f3E7mEBiKp/OKx+n0oHX67vO1Ij31wEizp0Vk7AMfUVU2S1Ve1+NHoPM
+	 +mtl7aFkaCVr3lwx1X5qOP+oVmt0Rpy1iN1+Al8hkbtWm6qdih1nl0jNPNIl9cb2mF
+	 Oc02sPSqS3LDH0acsmQyychCsQHqUoIqxFv4HD4XzerP8C/zexx12tVWEi2O0bhngI
+	 zlIZOeAPvMeKg==
+Received: by pali.im (Postfix)
+	id DD7379ED; Fri, 27 Sep 2024 20:20:48 +0200 (CEST)
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] cifs: Check for UTF-16 null codepoint in SFU symlink target location
+Date: Fri, 27 Sep 2024 20:20:39 +0200
+Message-Id: <20240927182039.18739-1-pali@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 27 Sep 2024 11:13:30 -0700
-Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+Check that read buffer of SFU symlink target location does not contain
+UTF-16 null codepoint (via UniStrnlen() call) because Linux cannot process
+symlink with null byte, it truncates everything in buffer after null byte.
 
-> Hm... sounds like two versions of my patch were applied to two
-> different trees or something? FWIW, 10cdb82aa77f is the right one cto
-> pick (I didn't check which one is in Linus' tree), but the differences
-> are tiny.
-> 
-> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> index 87b468d93f6a..c3df411a2684 100644
-> --- a/kernel/trace/trace_uprobe.c
-> +++ b/kernel/trace/trace_uprobe.c
-> @@ -834,7 +834,7 @@ static int probes_profile_seq_show(struct seq_file
-> *m, void *v)
-> 
->         nhits = 0;
->         for_each_possible_cpu(cpu) {
-> -               nhits += READ_ONCE(*per_cpu_ptr(tu->nhits, cpu));
-> +               nhits += per_cpu(*tu->nhits, cpu);
->         }
-> 
->         seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
-> 
-> >
+Fixes: cf2ce67345d6 ("cifs: Add support for reading SFU symlink location")
+Signed-off-by: Pali Rohár <pali@kernel.org>
+---
+ fs/smb/client/inode.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-It looks like Masami rebased his tree and I didn't do the update yet.
-
-I updated the latest for-next in the tracing repo, so everything should be
-good again.
-
--- Steve
+diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
+index 88c4c3d0d607..0c23634438e5 100644
+--- a/fs/smb/client/inode.c
++++ b/fs/smb/client/inode.c
+@@ -625,10 +625,16 @@ cifs_sfu_type(struct cifs_fattr *fattr, const char *path,
+ 									       &symlink_len_utf16,
+ 									       &symlink_buf_utf16,
+ 									       &buf_type);
++					/*
++					 * Check that read buffer has valid length and does not
++					 * contain UTF-16 null codepoint (via UniStrnlen() call)
++					 * because Linux cannot process symlink with null byte.
++					 */
+ 					if ((rc == 0) &&
+ 					    (symlink_len_utf16 > 0) &&
+ 					    (symlink_len_utf16 < fattr->cf_eof-8 + 1) &&
+-					    (symlink_len_utf16 % 2 == 0)) {
++					    (symlink_len_utf16 % 2 == 0) &&
++					    (UniStrnlen((wchar_t *)symlink_buf_utf16, symlink_len_utf16/2) == symlink_len_utf16/2)) {
+ 						fattr->cf_symlink_target =
+ 							cifs_strndup_from_utf16(symlink_buf_utf16,
+ 										symlink_len_utf16,
+-- 
+2.20.1
 
 
