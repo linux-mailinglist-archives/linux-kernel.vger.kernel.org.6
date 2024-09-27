@@ -1,82 +1,113 @@
-Return-Path: <linux-kernel+bounces-341410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73969987FAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:45:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 753A1987FAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C121C22F68
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 217011F235BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0264017ADE7;
-	Fri, 27 Sep 2024 07:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="uh/0mpnG"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50F618800E;
+	Fri, 27 Sep 2024 07:45:24 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FAE817BB25
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD85D208D7;
+	Fri, 27 Sep 2024 07:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727423148; cv=none; b=Kp+DJ3DgZ5nTt3UrDV0VEDphj7OARURNiDsKNc3njqcF1MhZtTqRi0T+2gt36A/DLf0JH4iz12fUknArKHJ/Y5hX8JWwFw1ub0NLfzNxqfcy9acoKSGtQASGUKJw23mPcHGVdLTW20A+ozouBsJR7FSgx0eT+eihkG7eZIp0AaM=
+	t=1727423124; cv=none; b=fQL3kYhOmtGFK3JYlIQ/RoF5H8cvdb6/gEutJS5+XOGy/qleiKnrAEetJNBQZkJ+Eam4CHvePOpx6B5lAscvMfZkbhX3Np61eHFaRTiynZpqSEI+SrhiJn26SJRHpZxLVOF+moATuk3JkdxnIybUa4B/i0ChUEAP69AudwMH4fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727423148; c=relaxed/simple;
-	bh=30VL0B6J658aAI1BZFx4ueBxAI+EoTmJNVz+c6irajo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=EbSi3crBTitsIQNRXXjunIXex9men//n/iGgB3U6/HrkFVkGTfBO91QuwppG9yd/62WdCAMG0/fjWlh7HCGMrTLmvQzuy7XCC54Ap/7HTt5Bk1akcVhvkd8eZDjGDQdL95H9JMS+iVZ7/2ruzLE8RFZ4OdQYxsiKu0lE8gRcSZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=uh/0mpnG; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1727423143; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=+uKA/3Anne8NzqGyUdHub419eOd1luCIHOLfaDwabwo=;
-	b=uh/0mpnGYqWVqTPEIsMWzv6/fiq/gFZit9bJAUtKNDpiNcoZw2+P8zgzyr9Fgjm8MFP49A3PBCEiBXoPq/jtJK9omM40ubWwsaaIuU6st4gMEO2ooLINetbOeC7HPHgGJNh16kiafBh021HX584KvNDHY9qZNqSm3Vw1k1hggJI=
-Received: from localhost(mailfrom:llfl@linux.alibaba.com fp:SMTPD_---0WFq-3Ro_1727423142)
-          by smtp.aliyun-inc.com;
-          Fri, 27 Sep 2024 15:45:42 +0800
-From: "Kun(llfl)" <llfl@linux.alibaba.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] device-dax: Correct pgoff align in dax_set_mapping()
-Date: Fri, 27 Sep 2024 15:45:09 +0800
-Message-ID: <23c02a03e8d666fef11bbe13e85c69c8b4ca0624.1727421694.git.llfl@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727423124; c=relaxed/simple;
+	bh=ypXZmQ6dKOwdo+1jgOYy9lN6chCL2pA6F1O+NZ0qugw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lMGMrtbOFfycq6vGM1mBxV9N1Jf5vH6FlinGGsyXRMfyw1Pvl7YzwuZmnwD9O96jXX/w/tr5tSldoI4WQklHR88O+cutMWaCDURHn1R1c3z93+8vx5gajnpbnwtGOa63S61NOGaJ891zW9cG3/pXsPa/yBReXTD8kbJOcjIil0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XFMv02XGFz4f3jJ1;
+	Fri, 27 Sep 2024 15:45:00 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id A72791A0D44;
+	Fri, 27 Sep 2024 15:45:16 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP3 (Coremail) with SMTP id _Ch0CgCH24eLYvZmVXyTCQ--.18822S2;
+	Fri, 27 Sep 2024 15:45:16 +0800 (CST)
+Message-ID: <c7bcf377-c386-41cd-8268-7b6f8cb251fd@huaweicloud.com>
+Date: Fri, 27 Sep 2024 15:45:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/3] cgroup/bpf: use a dedicated workqueue for cgroup
+ bpf destruction
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
+ longman@redhat.com, chenridong@huawei.com, cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240923114352.4001560-1-chenridong@huaweicloud.com>
+ <20240923114352.4001560-2-chenridong@huaweicloud.com>
+ <24rp7n32rtzdszc7zxwmeitfmtib5yu7wo432b7uxjkvbdtrxp@kemt7l74yich>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <24rp7n32rtzdszc7zxwmeitfmtib5yu7wo432b7uxjkvbdtrxp@kemt7l74yich>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgCH24eLYvZmVXyTCQ--.18822S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZw1fWF1fGryxCF4kGFWrGrg_yoWfZrb_Wa
+	yIkwn2k3yrCay2gw1Iq39xXrWkCF48JryUWwn5Gr47Gw1fWw4DWa97Jrn3Za4UZa1vyasr
+	uFZxWa42qr129jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbwkYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-pgoff should be aligned using ALIGN_DOWN() instead of ALIGN(). Otherwise,
-vmf->address not aligned to fault_size will be aligned to the next
-alignment, that can result in memory failure getting the wrong address.
 
-Fixes: b9b5777f09be ("device-dax: use ALIGN() for determining pgoff")
-Signed-off-by: Kun(llfl) <llfl@linux.alibaba.com>
-Tested-by: JianXiong Zhao <zhaojianxiong.zjx@alibaba-inc.com>
----
- drivers/dax/device.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-index 9c1a729cd77e..6d74e62bbee0 100644
---- a/drivers/dax/device.c
-+++ b/drivers/dax/device.c
-@@ -86,7 +86,7 @@ static void dax_set_mapping(struct vm_fault *vmf, pfn_t pfn,
- 		nr_pages = 1;
- 
- 	pgoff = linear_page_index(vmf->vma,
--			ALIGN(vmf->address, fault_size));
-+			ALIGN_DOWN(vmf->address, fault_size));
- 
- 	for (i = 0; i < nr_pages; i++) {
- 		struct page *page = pfn_to_page(pfn_t_to_pfn(pfn) + i);
--- 
-2.43.0
+On 2024/9/26 20:49, Michal Koutný wrote:
+> Hello.
+> 
+> On Mon, Sep 23, 2024 at 11:43:50AM GMT, Chen Ridong <chenridong@huaweicloud.com> wrote:
+>> +static int __init cgroup_bpf_wq_init(void)
+>> +{
+>> +	cgroup_bpf_destroy_wq = alloc_workqueue("cgroup_bpf_destroy", 0, 1);
+>> +	WARN_ON_ONCE(!cgroup_bpf_destroy_wq);
+>> +	return 0;
+>> +}
+>> +core_initcall(cgroup_bpf_wq_init);
+> 
+> I think hard fail (panic() if you want to avoid BUG_ON) would be
+> warranted here and mere warning would leave system exposed to worse
+> errors later (and _ONCE in an initcall looks unnecessary).
+> 
+Thank you. I think panic() is alright.
+
+Best regards,
+Ridong
+
+> Maybe look at other global wqs. I see that returning -ENOMEM might be an
+> option, however, I don't see that initcall's return value would be
+> processed anywhere currently :-/
+> 
+> Besides this allocation failpath this is a sensible change to me.
+> 
+> Thanks,
+> Michal
 
 
