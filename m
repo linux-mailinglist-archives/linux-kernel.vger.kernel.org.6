@@ -1,105 +1,146 @@
-Return-Path: <linux-kernel+bounces-342120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5461988ACB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:37:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC269988ACE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EBBB283933
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:37:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48851B21311
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EBA1C2434;
-	Fri, 27 Sep 2024 19:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0B01C243C;
+	Fri, 27 Sep 2024 19:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="d8cM4T2H"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kpc8WZ8R"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515E91C2427
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521921C2423;
+	Fri, 27 Sep 2024 19:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727465848; cv=none; b=oeez2HLzgSAbXVEBpjFxJgs2xSYCfCfkzvQc7m2/LreBYTGzw1s6iZjGoZgbYXPC/XBeWbd/8f+a9ad08qlSJyWjzPKx5KF+TR++lNIyWIQT/bDZCEKs6LOPNMU2Vbbs5mm2qzlze+xDE1Qe/CeUGUDcAQn94zkkDmrsqvlCkrI=
+	t=1727465885; cv=none; b=tC2XWLlm6A3fSVZ5EFFUBw5FBBcP3odEUCbByc6Mt+nl7kj9GROfLRU4lNGuhkHWJ3+SfoRwKgQXZzWWHm7h3VOLB+FopdmQi1V/HdgEHWO9VnkdH9Xnb6ZTPicFsd3+hy3NQTupicttNxBf6uPWz5+DMQJGpwg+9geB9Gc+smM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727465848; c=relaxed/simple;
-	bh=hzgXQd4meOt9YchtBa0oZc8snxmhRoTpkYPDbYyNMcU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ueYBDYsgefmPHVf0sbe51S8jWH04j+7MBJpJh5JfkAyo+mjdlvv/tMMaSEHPTkxEOx6rW2Ow5lEc3MfbPU3MHkawo4DN05hs8I9nffjXfrNCnCNjtUtHHqnQhZUsBjX1YwQNVbGFXK6YCnAOT5FXO1btLR9uupR+R1RL3+Zv184=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=d8cM4T2H; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8d2b4a5bf1so304470766b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:37:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1727465844; x=1728070644; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OGKYcXyh3V/E4diP4s63uLyqxym8fFf6P1DXJXOS0Pw=;
-        b=d8cM4T2HKUOLwZn8nfygioxWnbRYbdYEI9phOzPWkdzkD88rqhSRwC/J63/DkOnsX2
-         airqVCRL+c5dTsM1A+/CY/7QDtYsgVC2gQfiGXS0GRrtnImAx4Teciw+o29yfGdHIdPZ
-         XlZZYBFwtx0uV72TK2KozCaKzPLmC8Vn+tIM8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727465844; x=1728070644;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OGKYcXyh3V/E4diP4s63uLyqxym8fFf6P1DXJXOS0Pw=;
-        b=cqPLHbx25kTp8x6spzbThyHk9q4nsipj3+7g0WgRv3MG9TfP7fVOgJ03IS28jZVnub
-         7gQ409TT1/xlGag45puaZnsEKI4+1meSmuQ+3nEtGqMxC6BhAs8PjQMAfnn77y2tTbt/
-         BCZ+mLBXqMhOEq+KSD9CZYlpkJNUc8m4gs+xXAPzmsBLugYZ5I8H466t/Y6BvDoSy6Ul
-         l6lAFM3BbAGwV74D+w6FiEpjqxXYzAiI3CHfFjEhKpw0B/pBuaY73bKTAoJB7HDECdJE
-         +x7ehKAhMMnpgq/dX1Rt2N2D7jRrUyxO9jVXl68K3kLQuEzjqsHSzfmspZi+EbTWFkj3
-         qECw==
-X-Gm-Message-State: AOJu0YzMSPkuKmJv/HSQGlDWrzQean9TbPNc9gwms9fR+7VkUZ0yqoT2
-	fujjwFdFkOWFxoBRizQ4l2z++cygMmJtAQYOX13umg7PSLMpmM9hqq7WEP/WGd/iEQPqBgfXlxK
-	HoacsYA==
-X-Google-Smtp-Source: AGHT+IHoG2p/NL+Z6YGGHdZTiIbv/WBWTfW6R9m3FvTdJudeH8co3d99bjZZgtEzoZ/xMFPXG9k0WA==
-X-Received: by 2002:a17:907:a01:b0:a8d:e49:c530 with SMTP id a640c23a62f3a-a93c4a671bbmr463648466b.42.1727465844494;
-        Fri, 27 Sep 2024 12:37:24 -0700 (PDT)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c299e5bbsm166599366b.215.2024.09.27.12.37.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 12:37:23 -0700 (PDT)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8a7b1c2f2bso365570366b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:37:23 -0700 (PDT)
-X-Received: by 2002:a17:907:9482:b0:a8a:7501:de21 with SMTP id
- a640c23a62f3a-a93c48e9977mr481536066b.12.1727465843370; Fri, 27 Sep 2024
- 12:37:23 -0700 (PDT)
+	s=arc-20240116; t=1727465885; c=relaxed/simple;
+	bh=kv3QxqsVW2dfG1YNDz85KvG3puNGvwJQDHIA0s7DHio=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uFzk5Tr/d5EFfBSs06MgWYvgUhT0mkI6KnLlpcUVjPO3ULwoAXIa2M23Fk4UYYFqB6AUpGhIuYsAcYqR2AWXZB4PIDL3GibZPvrgp24egXvX19uiygrYEuBPC9Lm+BUV2yB/RuZMlT/HxnGEz62qaxmf7jaTI+RL+ZIBLObS+EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kpc8WZ8R; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48RD05Cd026378;
+	Fri, 27 Sep 2024 19:37:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=b0Lssv7cUe0U/qYMod4vjdhA
+	HSFbc3w8JAK/104B438=; b=Kpc8WZ8RbyC5RH4IZ4B8ooaujqs7MTTk7ysCyiGG
+	BzfFXmWALH/SzhmzoqNIcunxP4C/2ASd+mdiju3ggWGGDlDwK+rnO6kf1k9isZEz
+	H/ctu94hzy+7Kx73FztGlShHwtITBKK0WlAE/nzg9BwoXgpD0lMrnohxusC4PATJ
+	ZXFISU1etguRFgNe4TrLIaW1/75jKjzPlbQIX3yvNiS3I//kK3mbQ0XOLN7xrymf
+	EcI8V9Um96SGJMGzw7wJjz5F/cDMwxCBel97uivcdMNR4+gC85GGNhHGFWhnc3ne
+	J3hR/Ev0f5j/qIn48omIcs27MQwYOCCSh2CzQ52gBGNXGQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41ww708wmf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 19:37:55 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48RJbsti021025
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 19:37:54 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 27 Sep 2024 12:37:52 -0700
+Date: Sat, 28 Sep 2024 01:07:43 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Bjorn Andersson <quic_bjorande@quicinc.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] remoteproc: qcom: Fix NULL pointer in glink_subdev_stop()
+Message-ID: <ZvcJhzDmdhO/wbKq@hu-mojha-hyd.qualcomm.com>
+References: <20240925103351.1628788-1-quic_mojha@quicinc.com>
+ <ZvTYA1Rg6DrEEabk@hu-bjorande-lv.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZvbeGKQMC1vFq8ei@yury-ThinkPad>
-In-Reply-To: <ZvbeGKQMC1vFq8ei@yury-ThinkPad>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 27 Sep 2024 12:37:06 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjS9O67Ue9fZWG4ptc-MyZchqJmQFsMJkOchqpnxc-Dvw@mail.gmail.com>
-Message-ID: <CAHk-=wjS9O67Ue9fZWG4ptc-MyZchqJmQFsMJkOchqpnxc-Dvw@mail.gmail.com>
-Subject: Re: [GIT PULL] bitmap changes for v6.12-rc1
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Anshuman Khandual <anshuman.khandual@arm.com>, 
-	Brian Norris <briannorris@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZvTYA1Rg6DrEEabk@hu-bjorande-lv.qualcomm.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BC8v580HNiGLCxPdG06qZjzCkAfsd2Pu
+X-Proofpoint-ORIG-GUID: BC8v580HNiGLCxPdG06qZjzCkAfsd2Pu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 clxscore=1015
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409270143
 
-On Fri, 27 Sept 2024 at 09:32, Yury Norov <yury.norov@gmail.com> wrote:
->
-> GENMASK_U128() is a prerequisite needed for arm64 development.
+On Wed, Sep 25, 2024 at 08:41:55PM -0700, Bjorn Andersson wrote:
+> On Wed, Sep 25, 2024 at 04:03:51PM +0530, Mukesh Ojha wrote:
+> > Multiple call to glink_subdev_stop() for the same remoteproc can happen
+> > if rproc_stop() fails from Process-A that leaves the rproc state to
+> > RPROC_CRASHED state later a call to recovery_store from user space in
+> > Process B triggers rproc_trigger_recovery() of the same remoteproc to
+> > recover it results in NULL pointer dereference issue in
+> > qcom_glink_smem_unregister().
+> > 
+> > Fix it by having a NULL check in glink_subdev_stop().
+> > 
+> > 	Process-A                			Process-B
+> > 
+> >   fatal error interrupt happens
+> > 
+> >   rproc_crash_handler_work()
+> >     mutex_lock_interruptible(&rproc->lock);
+> >     ...
+> > 
+> >        rproc->state = RPROC_CRASHED;
+> >     ...
+> >     mutex_unlock(&rproc->lock);
+> > 
+> >     rproc_trigger_recovery()
+> >      mutex_lock_interruptible(&rproc->lock);
+> > 
+> >       adsp_stop()
+> >       qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
+> >       remoteproc remoteproc3: can't stop rproc: -22
+> 
+> I presume that at this point this remoteproc is in some undefined state
+> and the only way to recover is for the user to reboot the machine?
 
-Note that at least right now, __int128 is marked as conditional for arm64:
+Here, 50+ (5s) retry of scm shutdown is failing during decryption of
+remote processor memory region, and i don't think, it is anyway to do
+with remote processor state here, as a best effort more number of
+retries can be tried instead of 50 or wait for some other recovery
+command like recovery_store() to let it do the retry again from
+beginning.
 
-        select ARCH_SUPPORTS_INT128 if CC_HAS_INT128
+> 
+> 
+> The check for glink->edge avoids one pitfall following this, but I'd
+> prefer to see a solution that avoids issues in this scenario in the
+> remoteproc core - rather than working around side effects of this in
+> different places.
 
-which implies that we may have compiler versions that don't actually
-support it at all.
+Handling in a remoteproc core means we may need another state something
+like "RPROC_UNKNOWN" which can be kept after one attempt of recovery
+failure and checking the same during another try return immediately with
+some log message.
 
-That said, I'm not sure what those compiler versions might be. Maybe
-this is historical copy-and-paste noise.
-
-                Linus
+-Mukesh
 
