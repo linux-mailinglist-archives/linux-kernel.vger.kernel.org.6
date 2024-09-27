@@ -1,74 +1,62 @@
-Return-Path: <linux-kernel+bounces-342144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3293988AF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:54:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB3A1988AFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 819DD286099
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:54:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B51D285563
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DF41C2DC9;
-	Fri, 27 Sep 2024 19:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AA01C2459;
+	Fri, 27 Sep 2024 19:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHRkkkr5"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="N32ygTRt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4CD1C2DA9;
-	Fri, 27 Sep 2024 19:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA511C2314;
+	Fri, 27 Sep 2024 19:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727466818; cv=none; b=ef63UVnJmotIxHs2DRT1ENLeN5eFLVYCrsqtyl8idJmoS0l5SpkL0be62uFdU0hjmZVxDrSpXumvuPGk30TONAtGwRJBPlGWgzFm3vDqbwGjQrQqV5coFNbLd87TjBY1pgCBWrSwQ8kG0hZufaC9ZAUa2vN7i4ILqr/Fa/a2WXE=
+	t=1727466899; cv=none; b=YTIAHkaAbToY/ajBb+ZN/gfxOSoHuUw3JPUvQOuk3EOs4tbH0pLgfVlX4LcMC9m+EzPnOQQzNGbcEDrqz2DaMHM8ATFAirkAA2A7YbnRbSARWXU8Zcx1dDOznAyQdofIlZRo1Fcnp9oklLiQg7b+fgXsHMIZUPLz5oFPkV9rJTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727466818; c=relaxed/simple;
-	bh=1sRSiLL2s+rhC9lMeUeab4c5Ax8ZEVJnhzAtAh9iuxg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dbpUaXO/akxwprGhTwcjqwvtmWFnjZ1au1rzBDVLkipClJcNkGLDzcF5CXDxSBOfdFyruGZLEduqNVCpYs6nlgGU0x801/SlB+SpIiKh/vNCojD0el5Aq4xy3fKyPhi3sRcIVohB9JtMYKQlNP8CJVMRXwGXiCnD29Pw/9D5ZrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHRkkkr5; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20696938f86so23669575ad.3;
-        Fri, 27 Sep 2024 12:53:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727466816; x=1728071616; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=RONVPCE+2gCe6dRiJAhlF0RsixMwVz/85xrl96ANRvc=;
-        b=IHRkkkr5YY+rXgOjoRKpjroI3+yCrg5j7wYVYA0uCU/ek52nihJARDiZuq+tUOFR9o
-         4r6kvEjAq0mJn3zCHraLxtn9dMO7SSuDRR71IGBusQEH4IElt+L2qWfpVeaY8tax4+bK
-         LvAp6JZV318pXKtvJ/ZL3HHdrjUAENFuyDbqS4MQoRi+ftzK09mIWoHv2XKSVOsI209z
-         nEjHFpEbbya7/2TLoJb8qjfFJNIHnheeOlKgi82h8z5vwgzpXAeg2avBndnejTkW6aPZ
-         VJWT6equTEnGyQ5gpwnaQSzBO0nb95eDtCTCrwnHqkcMdwV5M/9HuyagzdPn/QPFGyOC
-         4UkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727466816; x=1728071616;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RONVPCE+2gCe6dRiJAhlF0RsixMwVz/85xrl96ANRvc=;
-        b=Jd++1e+N1qB7xGhuuOjZyGbpCbN4bqZ23T7h2vYBXhF/qsL6fU9+HiGuJ9TCX9em85
-         9jrUv1iXhnu6+/bHt6cL7UQWqro8PQh/oA5ti5ZYzxqCJuExZXzsN8CIXoAtqADZfe9l
-         zLT2RVWrke/XBdaNUSHaw6QRnTK34WuR3vE2F++wurwCz052HqljBzqkc1z/UmTji6MZ
-         70HjxWMGu1j1Tp26nhisXdIINDHekgvBz290nHEIZCbal0nISaT2lmhiotMdxr1d7n+v
-         F3kRv8jOcEo2uHPHVaA31hlSee/tYih3BLG+wSZ+2y62JpZWlHWN1Hzey5lC+2Jxk0Cr
-         U8mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnoY3+VxEiR8VIJD89bSSu/fUcp4uEDLQrqxrpInizgbmrAUrNP1XsjuYHLvE15iX/TUq9Jor+@vger.kernel.org, AJvYcCWDck3OSbII+wYjUb9Dww4CO8D1Qxz7p2ZwPr8+Zqd0oD6i5vE3KUXgzK1wmWH6EYeQk557Cuyo2jeXfXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsLF6OeMmn1DhuGqdYN3kOWlkoKdY/xczbEM5my+T5Menul/+M
-	7IRNXBIk83FUuJ/5XUhUoGIAhDg3DHkdm+diyqERs5BcXRwK/KLA
-X-Google-Smtp-Source: AGHT+IGxlsb4FvQGP9y5BlF2LmlJ8hBoGnzLQdVnCJ6yq3avFeToRRS5/LTNYpKTBvLorbqsJMYY4g==
-X-Received: by 2002:a17:902:e743:b0:206:b7b8:1f0e with SMTP id d9443c01a7336-20b367cac14mr66586695ad.1.1727466816530;
-        Fri, 27 Sep 2024 12:53:36 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db294f03sm1988322a12.11.2024.09.27.12.53.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 12:53:36 -0700 (PDT)
-Message-ID: <fe63c59c-95aa-436e-9788-0a8061124035@gmail.com>
-Date: Fri, 27 Sep 2024 12:53:31 -0700
+	s=arc-20240116; t=1727466899; c=relaxed/simple;
+	bh=ni5f01vHHK6WNOX9fH82PwiWJanF2V/ekCCo5y0yd0A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ELklO8PFTEAzZnPgtv6aJ6RYMSWMkD21Hbiri+HmQXns0R4Owlk65bEa1ntklJrt999tGl6J3Q08Y2L1HzV+tSEqUe1kjB54uKzbMXjbbKhYj1vfcPDw5e3jzxdcxQTi/jqEZkDA/DTD53wtJF4KxVWVn4vK/8B6HWTBlo4rM6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=N32ygTRt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48RFwuLn020953;
+	Fri, 27 Sep 2024 19:54:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Bw9dmykM1oqxtd+vSTcwef7paO8IgTipyaS026C0f7w=; b=N32ygTRtOF/GO6Bi
+	KZI5vRE7LAl0qmQBF86xWnX0yjMFx3QZDcnSOfEaMGuz79H7hIaljqrFXhyi4KmD
+	IskfQ+UNJv4NOenKLLSbbqEvyEXkeBEY1Uw6GwVVrpYdamt7DhneF/Xb653lPwkk
+	kPi4qvUXFrTIKXeN6LPm5h/qo+vWi7TRyQkY2r2VbMiLTS89QezI+qQt7rrWusHb
+	p89PBQdEkvW0ZKtSnJMzcQvRK+J8x4DUGxH1oVEhYDadvam13HGlw06ZI5racJVK
+	4NSbNuHhbWKL1cajyqHcCrGR7EqxAMMSvE6Jq54CPG5+m5VBoSlvGnrOmpPOQe6h
+	UOPDAA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sp7uv773-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 19:54:40 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48RJscAh002640
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 19:54:38 GMT
+Received: from [10.216.8.2] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 27 Sep
+ 2024 12:54:32 -0700
+Message-ID: <a7f0a221-cea1-441a-b276-285b8ce8b2bb@quicinc.com>
+Date: Sat, 28 Sep 2024 01:23:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,77 +64,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.11 00/12] 6.11.1-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240927121715.213013166@linuxfoundation.org>
+Subject: Re: [PATCH v15 5/5] iommu/arm-smmu: add ACTLR data and support for
+ qcom_smmu_500
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <joro@8bytes.org>, <jgg@ziepe.ca>, <jsnitsel@redhat.com>,
+        <robh@kernel.org>, <krzysztof.kozlowski@linaro.org>,
+        <quic_c_gdjako@quicinc.com>, <iommu@lists.linux.dev>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240920155813.3434021-1-quic_bibekkum@quicinc.com>
+ <20240920155813.3434021-6-quic_bibekkum@quicinc.com>
+ <xxd74r5zzobcsg6joty4rxxmj4gaiezmj6bqlcdbcyhshchqq2@ljpxtgq2dthg>
+ <66af599b-85a7-40fd-b550-346013028394@quicinc.com>
+ <jqwm5ddslvpbdp4ngxxyfpeda2qoc2rsnxc5cwo3gy24mpd345@qkyxwggxk77m>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240927121715.213013166@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+In-Reply-To: <jqwm5ddslvpbdp4ngxxyfpeda2qoc2rsnxc5cwo3gy24mpd345@qkyxwggxk77m>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NyYgMfx4Dw_sIS2ntnT0gdipMxNkeiXV
+X-Proofpoint-ORIG-GUID: NyYgMfx4Dw_sIS2ntnT0gdipMxNkeiXV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 mlxlogscore=999 mlxscore=0 phishscore=0
+ suspectscore=0 impostorscore=0 spamscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409270145
 
-On 9/27/24 05:24, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.1 release.
-> There are 12 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.1-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+On 9/24/2024 3:09 PM, Dmitry Baryshkov wrote:
+> On Sat, Sep 21, 2024 at 01:29:04AM GMT, Bibek Kumar Patro wrote:
+>>
+>>
+>> On 9/20/2024 9:48 PM, Dmitry Baryshkov wrote:
+>>> On Fri, Sep 20, 2024 at 09:28:13PM GMT, Bibek Kumar Patro wrote:
+>>>> Add ACTLR data table for qcom_smmu_500 including
+>>>> corresponding data entry and set prefetch value by
+>>>> way of a list of compatible strings.
+>>>>
+>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+>>>> ---
+>>>>    drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 24 ++++++++++++++++++++++
+>>>>    1 file changed, 24 insertions(+)
+>>>>
+>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> index 4ac272d05843..e8f936a446df 100644
+>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> @@ -25,8 +25,31 @@
+>>>>
+>>>>    #define CPRE			(1 << 1)
+>>>>    #define CMTLB			(1 << 0)
+>>>> +#define PREFETCH_SHIFT		8
+>>>> +#define PREFETCH_DEFAULT	0
+>>>> +#define PREFETCH_SHALLOW	(1 << PREFETCH_SHIFT)
+>>>> +#define PREFETCH_MODERATE	(2 << PREFETCH_SHIFT)
+>>>> +#define PREFETCH_DEEP		(3 << PREFETCH_SHIFT)
+>>>>    #define GFX_ACTLR_PRR		(1 << 5)
+>>>>
+>>>> +static const struct of_device_id qcom_smmu_actlr_client_of_match[] = {
+>>>> +	{ .compatible = "qcom,adreno",
+>>>> +			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
+>>>> +	{ .compatible = "qcom,adreno-gmu",
+>>>> +			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
+>>>> +	{ .compatible = "qcom,adreno-smmu",
+>>>> +			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
+>>>> +	{ .compatible = "qcom,fastrpc",
+>>>> +			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
+>>>> +	{ .compatible = "qcom,sc7280-mdss",
+>>>> +			.data = (const void *) (PREFETCH_SHALLOW | CPRE | CMTLB) },
+>>>> +	{ .compatible = "qcom,sc7280-venus",
+>>>> +			.data = (const void *) (PREFETCH_SHALLOW | CPRE | CMTLB) },
+>>>> +	{ .compatible = "qcom,sm8550-mdss",
+>>>> +			.data = (const void *) (PREFETCH_DEFAULT | CMTLB) },
+>>>> +	{ }
+>>>> +};
+>>>
+>>> Wow, this looks really nice now!
+>>>
+>>
+>> I am also in favor of this compatible based approach now,
+>> as it looks to be much cleaner implementation.
+> 
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+> 
+
+Hi Robin/Will, let me know if you have any suggestions/inputs on this 
+patch. If everything looks fine, I'll send the next iteration with 
+Dmitry's inputs and update tags.
+
+Thanks & regards,
+Bibek
+
+>>
+>>>> +
+>>>>    static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
+>>>>    {
+>>>>    	return container_of(smmu, struct qcom_smmu, smmu);
+>>>> @@ -640,6 +663,7 @@ static const struct qcom_smmu_match_data qcom_smmu_500_impl0_data = {
+>>>>    	.impl = &qcom_smmu_500_impl,
+>>>>    	.adreno_impl = &qcom_adreno_smmu_500_impl,
+>>>>    	.cfg = &qcom_smmu_impl0_cfg,
+>>>> +	.client_match = qcom_smmu_actlr_client_of_match,
+>>>>    };
+>>>>
+>>>>    /*
+>>>> --
+>>>> 2.34.1
+>>>>
+>>>
+> 
 
