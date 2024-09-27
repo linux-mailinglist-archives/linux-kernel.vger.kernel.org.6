@@ -1,160 +1,174 @@
-Return-Path: <linux-kernel+bounces-341587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FF3988218
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:59:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2210A988212
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 884C7B2154D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:59:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 670F9B22F44
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DCE1BBBDA;
-	Fri, 27 Sep 2024 09:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79771BB6A2;
+	Fri, 27 Sep 2024 09:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yf7rDCDK"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bBp2E6OH"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D4F1BBBC0
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97A61BB686
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727431174; cv=none; b=SdjQmky/J7lGOXiqTDMdoJuB0NJLBO1/vLJt+H9V5FbccEm2p9xIGzAJBkBKI7APk7cejFuHngn+hfwiGZ+W4jJqGrPlHHYkpc+ys4N8K4Fcj4/gfds1rgUHFnx66Dj1zSJojFo8gK8rX6bCTRqtMBDpM1E+5NbEIYEhwf10WJ8=
+	t=1727431153; cv=none; b=G3cEEgaZz3FI220thFmukliUvss0PTgyqdswIUqxdFCyl4GmVi4xT7GVu0ahP+4/6RzLgWO8WDAnagXG7C0SifTAHZAtFchfEtvFfPsSye1dE+lSCkNyJuo9kY0qv3pPYArvg/rDzIbZ/9fme/1b+C+h6nOpKDnBR9puEqurQcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727431174; c=relaxed/simple;
-	bh=/wFHvQrnJe6+I0Hk404NsRdbI8eFHq8tb62kLJdsI/o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sZmSAIYoU72Z9GqVdMHDqT/IFm6rdNivvKCjOVYFWZvxW2cH8UG3cLFmMWaoMr8EK3hA+jGaDWtTbHkrgGleaXUy6cdiYM75X5VZwC41lb1uGl9AEIPyBVZZYHqwHhYEJjMBYP3eIs9ScLOghNWgSni8XHNYaUZPLmQa+pQdyUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yf7rDCDK; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7e6b738acd5so911180a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:59:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727431172; x=1728035972; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/wFHvQrnJe6+I0Hk404NsRdbI8eFHq8tb62kLJdsI/o=;
-        b=yf7rDCDKkef/ZmyjQ5fE/iIG8XGaSNtqpivi4oLPR8OmeUcNvceksxMvn/JqgBWjku
-         07QMX+A1BPUYrSEDdYetiw28hsxTf1+8LSzQ42Q2f6b1M5TwqV551ASk2Qma6qnupGty
-         o00+WNOZxNl7qMYDC/xV2EZMfMSJEGSK8BdX2hAHbmRCqJmZUOrsexyHEs80Pz4S+ltM
-         yjkuYoQ0HhDxQkGb9iBzkOJ0VnSB2J4lwzHmgbPmWZ9vPAU6G648bW4kkHWCCFUGLej3
-         E92hwCJURVmMzGh+epzRcciNN8A4oNiHF558O29J/Tkhqv8qFZINud6Q78rNZeGbbRQ/
-         TxDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727431172; x=1728035972;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/wFHvQrnJe6+I0Hk404NsRdbI8eFHq8tb62kLJdsI/o=;
-        b=cWO7Dwk52t+g/hAj8E1AsjmAT1VT3AzIlQetUP4tNVG7mjmJHdvORwV5XaV9Wttw1J
-         CPjsPFCBFsdS76EWExiRC6HS8yiB6Hr1fDP1q32Ypv0zt6BTDA7tZPtl2b/E2Iq7oxaM
-         kRPrvSOZQ5sZaABqPXB3y/xoS7VtWnxBycAKxqHyMGQZ/6qGkZQnPmk5DpTQc6hzwURt
-         ZteS2kUdv8Wu1Tu7UtxxVEwW7GGwykt9p5ZjIKrqOm8e7x7lrwXc49m61wbpZrVW7hAF
-         jEqvWBD8HslK8yJdGm/qWDzv9BEsU4U1/OrOAofnB12KYWRNdNv112Bje9dea86TdcTb
-         cJuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSbjQRebbOlF+uF/tt/QWnnAxkW/F7ahNekKlGQkeMSj4Y1dh2jivpauzJJWLgqWtwopcE9eToO7jPaYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjaq1wvOxxA0v/foClyc6wMnJLMOd1DhqqiLCRW5CllCv11gI9
-	x0GZwJmlHeZi0QSG1AsRVe0c7zTP5JK6UvptMOoLVEYYah6gjy/oUclP5JX9vqlGGrhqjRwRTC/
-	V66YTyR86nIrQz8Oy1Nu7qZVD+t1gVIhZ0m17Jw==
-X-Google-Smtp-Source: AGHT+IFPw7TdHI7xAVBejSYDuXRNyLLxKTG1ESrzw48y3A/pOuf25zX23NWOfeE/8MxH7DAW+JoIMvACw7ATICsO3w0=
-X-Received: by 2002:a05:6a20:6f03:b0:1cf:23cb:b927 with SMTP id
- adf61e73a8af0-1d4fa7a6f8emr3754825637.34.1727431171797; Fri, 27 Sep 2024
- 02:59:31 -0700 (PDT)
+	s=arc-20240116; t=1727431153; c=relaxed/simple;
+	bh=2flsGpB1c9ksM0YD7oL8sidu+g6UnIcj0j5F137b1LY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=icdnrT5HYs9rCaj6B7YeQ0qYlaBjYMXg2Ly2FvMQXQkAgywXve2/o2kwgv2quas0QZ8WkfMT7Sd31M9N3C8wpDUya/dVhu1of3VL5wvzjrl3bg+i++pg7yI3ewLwSKNvPuQr18AasVdQkDmtBqUkukDwkEhh2pR+S87v2FxOROM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bBp2E6OH; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240927095908euoutp01d7195f062cbf860c76fb7e5d3f3eb49c~5EXobtn_B1911319113euoutp01F
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:59:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240927095908euoutp01d7195f062cbf860c76fb7e5d3f3eb49c~5EXobtn_B1911319113euoutp01F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727431148;
+	bh=j7PzyRcbV//YpQacJQIeRez+0I/Vcd+wMl5eZe9x8S0=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=bBp2E6OHBKqz1mrq4nyWLARyKuYvBFgRiwIV9xKJJlF/M1ZOUcNMS5PQgJWB0Q+eK
+	 3RP8CySIac5H2Sm1mpxWHI17Q+GfYiXYd9/fu5yPsK6leMFmvTzydyKDKho6JDxBmz
+	 B4yrfXHzCpK2hF5ao6HPb+XZpbgGBQQCpVk3ujeQ=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240927095907eucas1p1f7eb7595a0e1cae436aa6474804bda4a~5EXn18_Jt2385023850eucas1p1U;
+	Fri, 27 Sep 2024 09:59:07 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 83.23.09624.BE186F66; Fri, 27
+	Sep 2024 10:59:07 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240927095907eucas1p1e2d5b2b17548f6998435fd5b02724439~5EXnVoCK32613326133eucas1p1F;
+	Fri, 27 Sep 2024 09:59:07 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240927095907eusmtrp227bc16714369bc915d064a998234be5f~5EXnUzRwm0584705847eusmtrp2F;
+	Fri, 27 Sep 2024 09:59:07 +0000 (GMT)
+X-AuditID: cbfec7f2-bfbff70000002598-79-66f681eb4e8a
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id DF.49.19096.AE186F66; Fri, 27
+	Sep 2024 10:59:06 +0100 (BST)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240927095906eusmtip1d4f85eac2a19b366f79e8ef0c61978e6~5EXmlsglA1880218802eusmtip1e;
+	Fri, 27 Sep 2024 09:59:06 +0000 (GMT)
+Message-ID: <53a614cd-6dff-40fe-a715-690d37e50f68@samsung.com>
+Date: Fri, 27 Sep 2024 11:59:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925075707.3970187-1-linyunsheng@huawei.com>
- <20240925075707.3970187-3-linyunsheng@huawei.com> <CAHS8izOxugzWJDTc-4CWqaKABTj=J4OHs=Lcb=SE9r8gX0J+yg@mail.gmail.com>
- <842c8cc6-f716-437a-bc98-70bc26d6fd38@huawei.com> <CAC_iWjLgNOtsbhqrhvvEz2C3S668qB8KatL_W+tPHMSkDrNS=w@mail.gmail.com>
- <0ef315df-e8e9-41e8-9ba8-dcb69492c616@huawei.com>
-In-Reply-To: <0ef315df-e8e9-41e8-9ba8-dcb69492c616@huawei.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Fri, 27 Sep 2024 12:58:55 +0300
-Message-ID: <CAC_iWjKeajwn3otjdEekE6VDLHGEvqmnQRwpN5R3yHj8UpEiDw@mail.gmail.com>
-Subject: Re: [PATCH net v2 2/2] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: Mina Almasry <almasrymina@google.com>, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, liuyonglong@huawei.com, fanghaiqing@huawei.com, 
-	zhangkun09@huawei.com, Robin Murphy <robin.murphy@arm.com>, 
-	Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, 
-	Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
-	Clark Wang <xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>, 
-	Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, 
-	Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
-	Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, imx@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
-	bpf@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 0/3] Introduce support for T-head TH1520 Mailbox
+To: drew@pdp7.com, guoren@kernel.org, wefu@redhat.com,
+	jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, m.szyprowski@samsung.com
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20240927094207.1650085-1-m.wilczynski@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMKsWRmVeSWpSXmKPExsWy7djPc7qvG7+lGTyYomCx9fcsdos1e88x
+	Wcw/co7V4t6lLUwWL/Y2slhcWzGX3eLlrHtsFpd3zWGz2Pa5hc1i7ZG7QLHLPcwWbbP4Lf7v
+	2cFu0bJ/CosDn8ebly9ZPA53fGH32DnrLrvHplWdbB6bl9R7tKw9xuTxft9VNo++LasYPS41
+	X2f3+LxJLoArissmJTUnsyy1SN8ugSvj8Wy/gt8CFc/3T2RpYFzK28XIySEhYCIx98xN5i5G
+	Lg4hgRWMEo+ftrNDOF8YJa60HWCEcD4zSizqOc7SxcgB1jJ9JwdEfDmjxL3Xd1ghnLeMEu1H
+	IYp4Bewk1l4zBFnBIqAqcfziUxYQm1dAUOLkzCdgtqiAvMT9WzPYQWxhAW+JT/232EDmiAi8
+	Y5SYdO02E0iCWSBe4vGUC1C2uMStJ/PBbDYBI4kHy+ezgticAg4Sn5e+YYWokZfY/nYOM8Rv
+	2zkl1nWlQNguEh/272aEsIUlXh3fwg5hy0j83wkxU0IgX+LB1k9QvTUSO3uOQ9nWEnfO/WID
+	+YtZQFNi/S59SDg4Sty6YwFh8knceCsIcQCfxKRt05khwrwSHW1CEDPUJKb29MLtPLdiG9ME
+	RqVZSGEyC8mLs5C8Mgth7QJGllWM4qmlxbnpqcWGeanlesWJucWleel6yfm5mxiB6e70v+Of
+	djDOffVR7xAjEwfjIUYJDmYlEV6rc1/ThHhTEiurUovy44tKc1KLDzFKc7AoifOqpsinCgmk
+	J5akZqemFqQWwWSZODilGpgWdkfVNlSIst1g21z3rH+i7eUbIZuX7Lb9wXJ5R+65x8vEz9Tf
+	d2yX91lSLfru0wr1ycwCvOt+O7pIlv32kjXcNefnxEVr7yunWyXdiVBzPrH30HIvzUluASsl
+	BKcJsMYoOQY0ztUxruXPlFK589XJeJ/9iZSqx4lve3NuGS6669bFK558+60a75wII0v1zeLf
+	QxwDfm0y3tEz+Wbnpo/JKU93mcnduZb5aROLXXKrilrzDT/VBY1xqhtl/y75XqRyc6q605n1
+	cabVov62+9Qf7Ft2RjHETuLxydnxc2c5CkxWSettEPI8o9KnExXx2zzntp3SHI90b95NqhL7
+	5rqYK6Yums/3MC+v7LKgrRJLcUaioRZzUXEiAIw3eB/mAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsVy+t/xu7qvGr+lGfzYbmmx9fcsdos1e88x
+	Wcw/co7V4t6lLUwWL/Y2slhcWzGX3eLlrHtsFpd3zWGz2Pa5hc1i7ZG7QLHLPcwWbbP4Lf7v
+	2cFu0bJ/CosDn8ebly9ZPA53fGH32DnrLrvHplWdbB6bl9R7tKw9xuTxft9VNo++LasYPS41
+	X2f3+LxJLoArSs+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1
+	SN8uQS/j8Wy/gt8CFc/3T2RpYFzK28XIwSEhYCIxfSdHFyMXh5DAUkaJRZuXMXYxcgLFZSSu
+	db9kgbCFJf5c62KDKHrNKPHr53EmkGZeATuJtdcMQWpYBFQljl98ClbPKyAocXLmEzBbVEBe
+	4v6tGewgtrCAt8Sn/ltgc0QE3jFKHFk+jxFkDrNAvMSGm8oQ8yczSvze2wZ2BLOAuMStJ/OZ
+	QGw2ASOJB8vns4LYnAIOEp+XvmGF6FWXWD9PCKJcXmL72znMExiFZiE5YxaSSbMQOmYh6VjA
+	yLKKUSS1tDg3PbfYSK84Mbe4NC9dLzk/dxMjMMK3Hfu5ZQfjylcf9Q4xMnEwHmKU4GBWEuG1
+	Ovc1TYg3JbGyKrUoP76oNCe1+BCjKTAoJjJLiSbnA1NMXkm8oZmBqaGJmaWBqaWZsZI4L9uV
+	82lCAumJJanZqakFqUUwfUwcnFINTHPMzFcU+/PZ6e2IFbslki3Y8ye2sOBB+1+tHZmsczXt
+	bin4VTZ9U2t8zVlilfJeavW8/ob/74LM2LbGP+/fZXTMZXnVgYRNzV9PbVl0UHf7N9bfy7/b
+	Lp1h/+GJ8qLlSU2VK2/pSr5ofX/yt6zZ2aUWjRcNCp+tChV7rXP08pQjUY37lnD+2fL/1M0T
+	nZWpq4TaGmb1s/svdbA8PeWG3Hr/w3fr25f9f1H3WNCr7lbtx4Nv4p7tU918YuP9jyHfcv+s
+	uCwatv5o8IszKde5Tqn9nTnvttUs15lvuCKcOxWeeum11t2f7j3DXs3C+tyeNpu0HcK7tO1r
+	rD68MnjC7rht71vxez/Kljh4JxhW5pxXYinOSDTUYi4qTgQAfPhgLHkDAAA=
+X-CMS-MailID: 20240927095907eucas1p1e2d5b2b17548f6998435fd5b02724439
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240927094213eucas1p22449c12701e67bc29371a6a6cb6f72a2
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240927094213eucas1p22449c12701e67bc29371a6a6cb6f72a2
+References: <CGME20240927094213eucas1p22449c12701e67bc29371a6a6cb6f72a2@eucas1p2.samsung.com>
+	<20240927094207.1650085-1-m.wilczynski@samsung.com>
 
-On Fri, 27 Sept 2024 at 12:50, Yunsheng Lin <linyunsheng@huawei.com> wrote:
->
-> On 2024/9/27 17:21, Ilias Apalodimas wrote:
-> > Hi Yunsheng
-> >
-> > On Fri, 27 Sept 2024 at 06:58, Yunsheng Lin <linyunsheng@huawei.com> wrote:
-> >>
-> >> On 2024/9/27 2:15, Mina Almasry wrote:
-> >>>
-> >>>> In order not to do the dma unmmapping after driver has already
-> >>>> unbound and stall the unloading of the networking driver, add
-> >>>> the pool->items array to record all the pages including the ones
-> >>>> which are handed over to network stack, so the page_pool can
-> >>>> do the dma unmmapping for those pages when page_pool_destroy()
-> >>>> is called.
-> >>>
-> >>> One thing I could not understand from looking at the code: if the
-> >>> items array is in the struct page_pool, why do you need to modify the
-> >>> page_pool entry in the struct page and in the struct net_iov? I think
-> >>> the code could be made much simpler if you can remove these changes,
-> >>> and you wouldn't need to modify the public api of the page_pool.
-> >>
-> >> As mentioned in [1]:
-> >> "There is no space in 'struct page' to track the inflight pages, so
-> >> 'pp' in 'struct page' is renamed to 'pp_item' to enable the tracking
-> >> of inflight page"
-> >
-> > I have the same feeling as Mina here. First of all, we do have an
-> > unsigned long in struct page we use for padding IIRC. More
->
-> I am assuming you are referring to '_pp_mapping_pad' in 'struct page',
-> unfortunately the field might be used when a page is mmap'ed to user
-> space as my understanding.
->
 
-Ah good point, I just grepped for it and didn't look at the surrounding unions.
 
-> https://elixir.bootlin.com/linux/v6.7-rc8/source/include/linux/mm_types.h#L126
->
-> > importantly, though, why does struct page need to know about this?
-> > Can't we have the same information in page pool?
-> > When the driver allocates pages it does via page_pool_dev_alloc_XXXXX
-> > or something similar. Cant we do what you suggest here ? IOW when we
-> > allocate a page we put it in a list, and when that page returns to
-> > page_pool (and it's mapped) we remove it.
->
-> Yes, that is the basic idea, but the important part is how to do that
-> with less performance impact.
+On 9/27/24 11:42, Michal Wilczynski wrote:
+> The T-head TH1520 SoC supports a hardware mailbox that enables two cores
+> within the SoC to communicate and coordinate [1]. One example of such
+> coordination would be cooperation with the T-Head E902 core, which is
+> responsible for power, clock, and resource management. For example, in
+> the specific case of the BXM-4-64 GPU, it needs to be powered on by the
+> E902 core, and the kernel running on the E910 needs to 'ask' the
+> firmware running on the E902 core to enable power to the GPU island.
+> Given recent advancements in work on the upstream GPU driver [2], there
+> is an emerging need to get this code in the mainline kernel.
+> 
+> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf [1]
+> Link: https://gitlab.freedesktop.org/imagination/linux-firmware/-/issues/1 [2]
+> 
+> Michal Wilczynski (3):
+>   mailbox: Introduce support for T-head TH1520 Mailbox driver
+>   dt-bindings: mailbox: Add thead,th1520-mailbox bindings
+>   riscv: dts: thead: Add mailbox node
 
-Yes, but do you think that keeping that list of allocated pages in
-struct page_pool will end up being more costly somehow compared to
-struct page?
+Just realized that I haven't included a summary of changes for v2.
+Here it is:
 
-Thanks
-/Ilias
+v2:
+ - fixed thead,th1520-mbox.yaml binding file by dropping redundant
+   descriptions, renaming reg-names, removing unnecessary clocks,
+   providing constraints and defining ICU's
+ - fixed the mailbox driver code to work well with updated binding-file,
+   removed clocks support, as it's not necessary for mailbox to work
+ - adjusted the device tree node instance of mbox_910t so it will work
+   with updated bindings file
+
+> 
+>  .../bindings/mailbox/thead,th1520-mbox.yaml   |  84 +++
+>  MAINTAINERS                                   |   2 +
+>  arch/riscv/boot/dts/thead/th1520.dtsi         |  13 +
+>  drivers/mailbox/Kconfig                       |  10 +
+>  drivers/mailbox/Makefile                      |   2 +
+>  drivers/mailbox/mailbox-th1520.c              | 551 ++++++++++++++++++
+>  6 files changed, 662 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
+>  create mode 100644 drivers/mailbox/mailbox-th1520.c
+> 
 
