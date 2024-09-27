@@ -1,247 +1,326 @@
-Return-Path: <linux-kernel+bounces-341196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8259987C63
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:15:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51416987C66
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DB71C220A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:14:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE7741F228BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0F422087;
-	Fri, 27 Sep 2024 01:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11A14500E;
+	Fri, 27 Sep 2024 01:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ZL2f/0N2";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="d8hpo8UD"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="W32bVJ7u"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E07A376F1
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 01:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727399693; cv=fail; b=HC3wJvrYXE1M405IYImxgJAJpn8T24697k7ZFiYROoxKJV5D1oL4DjeuAF1TsUTy1H+TEAZjvGCbf+xZoNVW6Tfe6T0mUjJcV3td5UVZw1ct0/t3LmGhpBh3Gdv9omEjsmWkKSihDFZWkkoBrCh4YDsEpWDbCKrHk+wwwcN3UZE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727399693; c=relaxed/simple;
-	bh=GoTuxENmtYl9zXquoQMcSfeJpHCbSDMyxxlo46V75i0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TbMbNuMdVVU0VRc2fKd1ZHlXMUGTjKZb7Ik6FCY5QNiUHSypKdAbllvUg7+GGRP3KLJFbWdv2UmKWle05U0g6St+CeVMwd5k7tta4ucYkrWQkSpAX9wf50Zsape8fImRFvMLnWBEyg6UNJwlhdw2Gav5oftF1ffvKy5wRyWE4VI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ZL2f/0N2; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=d8hpo8UD; arc=fail smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: e0a6e8e67c6d11ef8b96093e013ec31c-20240927
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=GoTuxENmtYl9zXquoQMcSfeJpHCbSDMyxxlo46V75i0=;
-	b=ZL2f/0N2A+YWfiRTGcjp6GR8R3vmJeRcYTTMl2lpl4jfE/JU7sH/e0GF6dycts9IzV3bzRJr3aAEXPEryO/cfTV/3khGhIjxrg8P8KYmWUHNBS+8NWQiIcldoK7l0bEYuLzJFcWUsw0cRrtOLC9eBXid71y5o0DpNJAV+pppBaA=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:528e2f17-cf95-421c-90d7-1f05ff0896f6,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:ca98d5d0-7921-4900-88a1-3aef019a55ce,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: e0a6e8e67c6d11ef8b96093e013ec31c-20240927
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
-	(envelope-from <ck.hu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1924740589; Fri, 27 Sep 2024 09:14:43 +0800
-Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 27 Sep 2024 09:14:41 +0800
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 27 Sep 2024 09:14:41 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=agQpmIMnsJhV52hB/PtpUJW0vOPhw0qHcIOuUqpjHVyrrWArN3mG/qS8RzAbPk1rcsD0WOC8ODXZnf22kUNqpOy5gUbkDW1FOmt0GFRdQ9N0BRH8JSN9XGfeMoL8XBJrsI3imILUyIUc/elgmf8MJlO5le+YRxq19ANMhOvP8IvyfamN2IWr8s3YZIsiHvifeqzOuVT7DAXrUTpFHaOWZPXazhK7Edeg/mOqK4rF3EEmRD3pF7O9RzdSLT7FTnpvqAU301DpPSILtp57OOQFLXtb5OAeu9mDr6YFk+xWuN/ATNkw5NHzJd8eYA3CYZKrIPc7BDbf7TQzaHaN6GAWkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GoTuxENmtYl9zXquoQMcSfeJpHCbSDMyxxlo46V75i0=;
- b=kX6GQenVnmGkD3TZfT/g0+JUQvqq8il9D5PHTFyLvh27USinAKnrP5Gf9GKOOdDxqrj8ylORiDXFKwUIcmMtz5XKZD8SFqrqPmahyBwj9ynxtfYaeah+YK7qwko7bVPdbuLfklaO5IypLzSjh0WyEYzAemWXbmMYT0jBmKlajmLix+OYEIRMqj+Od8EEc2B2GRdH2JC/g3Ye3SonEeVCcoPem7/IOmncIlIADGGGN7KtajyVDu7wE34Tmw1cxYJSJ7WomOmJC6RVz69+v6tzrzLMIrKRV6ykc2jmWzBfgZVWlwOGGWi/JHNo13hwK+xbgvzkEHge5oyNQpk0HdB+JQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GoTuxENmtYl9zXquoQMcSfeJpHCbSDMyxxlo46V75i0=;
- b=d8hpo8UDPKflb9d90Y7BTAIYrvbHXTweLdggFZrr2WLUdiR5aNTCw5EPumpjII9JmOiSc8LU7tW9DwtJdr5Byn5xMvElcS2fM16M7smkscWQ+ERDi0T3b9NzTqP7WGcZ3M5ko+QoQc4j081H56Xa3HlxXDbUrWWyGHmqc8lnGro=
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
- by TYZPR03MB7721.apcprd03.prod.outlook.com (2603:1096:400:41f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.22; Fri, 27 Sep
- 2024 01:14:38 +0000
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54%6]) with mapi id 15.20.8005.017; Fri, 27 Sep 2024
- 01:14:38 +0000
-From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-To: =?utf-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
-	"alpernebiyasak@gmail.com" <alpernebiyasak@gmail.com>,
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, "AngeloGioacchino Del
- Regno" <angelogioacchino.delregno@collabora.com>
-CC: "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	=?utf-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
-	=?utf-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
-	=?utf-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	Project_Global_Chrome_Upstream_Group
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v7 1/3] drm/mediatek: ovl: Remove the color format comment
- for ovl_fmt_convert()
-Thread-Topic: [PATCH v7 1/3] drm/mediatek: ovl: Remove the color format
- comment for ovl_fmt_convert()
-Thread-Index: AQHbD/4dMxSpCUfOskmRwZSC6CQUirJq1UCA
-Date: Fri, 27 Sep 2024 01:14:38 +0000
-Message-ID: <5746a0ed795922315d4264b1e5300fdb9acffa37.camel@mediatek.com>
-References: <20240926102238.24303-1-jason-jh.lin@mediatek.com>
-	 <20240926102238.24303-2-jason-jh.lin@mediatek.com>
-In-Reply-To: <20240926102238.24303-2-jason-jh.lin@mediatek.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|TYZPR03MB7721:EE_
-x-ms-office365-filtering-correlation-id: 64b495e1-7ed4-4e7a-4e91-08dcde91c1f9
-x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?TitLcmtUaTlUWVVVYVFNZ2V3dmJ3VVRwcVlpUk9sUk1uNUpad2xOQmtvWkVK?=
- =?utf-8?B?N216Uzl4VlAwazFlRG1PSDhTTkI1WGRWSnRGVlpaam1TWldZK0t2bGVNNHA5?=
- =?utf-8?B?cWl1dUdaTE9uQ1lDeFFsZ2Y1WHg0Ym5wWCtoK0IyV2JmSmk5cU5PZGdFaWgx?=
- =?utf-8?B?dFJMTzFaN2RqSHg1L3FvVEVYSlp6UTVyTEQyNEhZN0NzY1IzV2grdS9yTG56?=
- =?utf-8?B?bm9hOXhOaG40cHJzSWFsODBsNW10R3hTZUpHdGJBOVVoemV4ODJ3WFFiTmpj?=
- =?utf-8?B?bVRudTh0UjN0L0t1b2lGUTBidXlEaDhiSjNDWnNVeFJFTUp2eHd1U3Y1dm1o?=
- =?utf-8?B?Vm5pMkhiK0FCT3BGMitOUjE4NVo0cmJBUmVYdmM3a3RyWU85SXpMVkVHQVJF?=
- =?utf-8?B?MGxRN3R1R25VQS9yMFpCdWY2Y1RWa1JIUUc2eDJlUUVBakNoano3Qk54amdz?=
- =?utf-8?B?WkxxTko0ak9OWDA5akxYVVdDYUxBUk9uUmF3MGlBdnZWSG9icUFBU2o0NWlX?=
- =?utf-8?B?RzZ5dWd5V0JDY25GazYwMHgxNEN0MjBlZzI1eGp1NEpWZ1ZyYm9MMzhqKzc3?=
- =?utf-8?B?Nis0Z2R1ZFJYNjBYOGZhRFFXZnd6NGRrQjJseDhrZGdoQkdaakd1clZ3SUxP?=
- =?utf-8?B?cFVYQ1VsUmJaVzZvM2FhaU5vMUlkSzFSUUFtV1VvcWZrTitoN1ZYTzA0c2FS?=
- =?utf-8?B?VnAyKzFNVEE1ZDNGbWNSTklBRkpucFJ2a0ZQQ2J4dzRBOWtLMlcwWExqTnVE?=
- =?utf-8?B?RkJtbEVQY3VKUC9mUUdrMW1jaDVVTmNNMVZoSUVGS2dwUDhDMllNZWVWaS91?=
- =?utf-8?B?L3ZxTjJoZkVDaTNVa21LdFYxek4zUWw1ZXp6ZFJ2WTY5L2pzTlJSTHpBb0ZX?=
- =?utf-8?B?a05oeWxFUktZdlhYZDVHdFUwY0h1T2xoeTBTWVpvZTZ2V3pQb2hyVXY4ajBE?=
- =?utf-8?B?TmkyWVFDbzhDZ29GQVNpRmdTa3JQdDNPbDZwZVRrUlpNUUlITUJkWHpTVHdD?=
- =?utf-8?B?b2RRdkRybFdtb1h6RzhnV0ZtTzhNK2xQWGhLeXFaTTdXZzFMRVpHZThySHUy?=
- =?utf-8?B?YVJkUkdQZmIvOEFhS2czMVYyNnE0V1Y4R04wRllTRWR5S014eEoxNDVUaUlQ?=
- =?utf-8?B?N0llZzdDSGQ0M25mekZSMkQ0RjJKREdHZXdtTXZHVHlMaU9xRjdvdi93SkdQ?=
- =?utf-8?B?Sng3emFWMHpxR29LQWRBTE9VdnYwOTZORkgya2NMYm5uZXNKczI3ei9OcnBl?=
- =?utf-8?B?MWFSbUpEQ1YxVWlCc2s3UlpuWHRQQnZMZkg5aklnV2ZVNyt5MDZpMTE1cGNE?=
- =?utf-8?B?cUJneXM1NWVHZUZXUDg3UFVLZVBmODc0bGZaaHphK0Y4bnF3WHhsUUJibUU4?=
- =?utf-8?B?YnRJT2hDbGQxdHhPN3hEeGNxZmprejU0TWRwZlNDZnRGQWhpQW5OYkwvK0t0?=
- =?utf-8?B?Rlo5eUdNRzFNWDJPOVJrWG03elpEbWprSUlpTFVpWUZINjNkY0orVjY3Z28r?=
- =?utf-8?B?cjhsMDhxdDNmUXpramZrbGhSZ1pyZE1GWVcrYlNFMHVTNXI2QVBrNmN0NXph?=
- =?utf-8?B?TnJENmN6czVjZUxkN09ld0dQd1RkbndrUjBBQjNORlhOa2ppV3ZVeU9PTlJv?=
- =?utf-8?B?UmFmL1ZrblRkMFpBQ1VMUUhzWG5GZVRNaU9SOXVJbFdkZmcrZ0pVZWdXaUNW?=
- =?utf-8?B?aHJmZzJYWXRzbTNBdUMyOC9odDhzZGgxemhlb2tLQnlDSzdIWXp1R0RCa1FG?=
- =?utf-8?B?dzhzMUxIQ2N0Uk9BRUJNbE9rc3JucllUZE05L29BM2JIZHNBVUh1Y0RuWG1u?=
- =?utf-8?B?TFBIV2VjZlhRMmwxdXRPQT09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Tm5kTEpBTWs1TUF2SnV3bGxiRHEvZlBLZUhRb0duNERQcDlEdUVTL1hsMk8r?=
- =?utf-8?B?azJxOGJQY25pK2kvUW9EZTUxZ1pYWklmckl2cGdiTWxoRllnUFdEOThXbTcr?=
- =?utf-8?B?Uk9qVGo5WSsxYnp1NTdrRDJEVVp1MmJtNWIxYWMyMWZOVWVBQlVVQ2xVaW5G?=
- =?utf-8?B?RDNyeGpnNWl3K1NNanhvb2JISExBKytDRFdMV3IvdVZ3Mk5nVWl6NGphQlo2?=
- =?utf-8?B?SHVrUFE4ZEN5aDhJRUI2d1VEZjlUMUhBSFpYV2p3UXNqUjhleGZjZ3lJQXgr?=
- =?utf-8?B?R2NyVlJJcE1RYnN5OEQvVWZ5VmFJVUJrUnk5U0R4c3hDR1JlRGlReWRBanpv?=
- =?utf-8?B?aVNXQ1ZZYmF3RUFYMVB0eW43cWZreURrVXB0dFB2Z1lvdHIxckM0SVVMR2x6?=
- =?utf-8?B?d0VUSGtzV3pGSklmOHNDSzV5TnEzenh6c214OE91S2EyblEyQlkxdXFiOFR4?=
- =?utf-8?B?VWVzQnNncmNuRHQvKy9YVWtrT1YvQmgzaDEwbVUvZ1lWSFFxTHlLaXNleXR2?=
- =?utf-8?B?S1R6WVRZMVFoS1lFYng1SkhSYnVQTWNqQXhsZGllb0FXZDlQenNBdkczRHQx?=
- =?utf-8?B?Z3FRNS8waVNQRVU1Tm1yUGc2b09yNmRXTUl1R0NkdWVIUHJQRWN5bDdHQmtW?=
- =?utf-8?B?OWpTS1BCZXNLa2hhVTE4MFBYak5meCtlTVA0MFhUL0kraUFSS0NYOElBVWNP?=
- =?utf-8?B?d1B5YjBEM0VZeWVxcmEwNy9tSEVTelRXVUJJWEp1NDhtbUE3OTlVbzVIYW1K?=
- =?utf-8?B?QXN5TzJXUk9GRkZSWGErYmJXcDJEWWhyVDFMMXY2WURoRGQ0THZmUmhyOUs0?=
- =?utf-8?B?cWJOcnM3UFM5SlpOa2RWMHhYY1cxd0o5eHhpa05tOHJIOEhmeGFOdXhmYUVr?=
- =?utf-8?B?dWl0YWpjVElrZHRkckh4VDY3NjY1aTAxaUtiYzNmVktCQWZFeGRjazdGU0dH?=
- =?utf-8?B?NlRFVzZKcHQ1Z2E5RnlTUHlTN1BMRlU2ZUUvc2t6dlQvQWNpc0hDWkVMcUNw?=
- =?utf-8?B?c2NVTDQrdHAxblg3RUpVSDJBWlpvSjJYdyt1UkxURndPTjdsZllMTmVhMlFB?=
- =?utf-8?B?WnFKRlZsQy90L3dCWGJ3Ky9kUnh1NEtqS3FMWTdrVzVlRE0xRlNBUUErTnZU?=
- =?utf-8?B?M2VxblhBOFh0dHRncmNWWm5jU25GL3VkWEl0UnR2QW5pS2s4RFFIQ2ZVdUlW?=
- =?utf-8?B?QnFUc2pWWmd6KzNhTFV1eHB0d0FIMWlpTVY3Tk9lY2NBTXpxbmdpcHEyZDRh?=
- =?utf-8?B?VnNHdWk5T2wyRjZ0RzZLVFNMck5WZlpSY084RWFhTkFPazNFRk1MYXEwMW81?=
- =?utf-8?B?WGQ3QzRMaVo0UDhPOTNVRDFNNzhnVkJYaFM5YTBtR2JlK2NTOWlwRzRoajdX?=
- =?utf-8?B?TmQzSzQvUkczS0pWMk5MZGFDVDlYOFJhSlJGSnQ1dlVmcDVsRFZJbzFjekk2?=
- =?utf-8?B?K3VUaGk0K09idnRrQTdGbkZuMDZhVFFnMXBhQ3Z3Sk1id3p3VWhNaVBlNHRh?=
- =?utf-8?B?MVpJOXBjbktFR0V4Q3dqMXFyOXpTeHNMb3FTOTdWVmV3eTVTc0pmaUZGSDVG?=
- =?utf-8?B?UmRzVmVlZkVaNHpNaUZwWC9HNFFPUlIzRERYRU5wQXBMQ0Uwck9mVlhxb3dn?=
- =?utf-8?B?YlJ5TzJXY2NLdGFYdTMwVEI0NGRBbHRLTWpUUWpQUzhRblNvUXZab3dJcUc3?=
- =?utf-8?B?UXFCU3ZmdU9lYlZUc2tpYWNNVjFrbW95NFI5NU5RWWY0MXZVSVVLS0ZMOHRE?=
- =?utf-8?B?VUpHQXl1WGxLSTdlMVpzbWNTdHRlMDlBeE50QTM1cHducWUrV0x1QXBidGJT?=
- =?utf-8?B?QkJzZUZDNis3ZDFqa2JycTFOeGprNkxEd3BJU2c0Yk5PdUdkTjVPd05wc1E1?=
- =?utf-8?B?akdCU2psNUI2R2pXcjRlUTFNMXFORFJmcmNGSGJFZi80dGY0TkkyT2FkWkxz?=
- =?utf-8?B?cW9QSFJ0VlM1enZmbzRIeW9RQWI4ZC9ERXRsT3ZQTmJEa25uWEdoV01JeVBy?=
- =?utf-8?B?UnhxcFoxakxkOUUxRlhqRW1WQ1JpcGl3ajZuZzhKc2Fndk9Xc0MzOVlWMXgr?=
- =?utf-8?B?eE1xR284Mk9VRjRKdk1zZGE2MXJ4Y2xXY3NWNC9ZeGpBN2NNOFhKVU8wUnJ6?=
- =?utf-8?Q?X63/XNHJuqgTmKPRI0h7XBk9E?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <20D1295F6F53114696BCB4A0FE8A65F9@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276AAA932;
+	Fri, 27 Sep 2024 01:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727400144; cv=none; b=KWhcmpHQflQads0trR3fZGAR4/zEf89l/NV6AqjS1mJn57Guu5Kvz01qK7VFRq+PO3Jwqx/FzHpNQrbq0jtcQqg2GVkM4AccUtfL5W+m4HUmsiXbljpNrhVb/9fvnyXz+HzyklryEdCuay9wm2PEyDQgODiTV9L2gky0MgAByiQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727400144; c=relaxed/simple;
+	bh=ElZAKhc9xfVL364QUUdcGdbCVJjoyaPqJZ5VzYUZDLg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bu5tMm14j+cfLdIvlaYygx97N0t0tnzuQPnMdgHVg0N2cD17HnVkt+X/xpDhkcEdDLYfE5YDQSESXn3i+RGSZbzr5XYr4HC00xA8PvbDhBUcx6h5mcy3cLajQtZmHoWnRFmCxDkLxv0jJ5VkYSw04SoUHpY05rxc7RzFW6pXvPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=W32bVJ7u; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727400135;
+	bh=ElZAKhc9xfVL364QUUdcGdbCVJjoyaPqJZ5VzYUZDLg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=W32bVJ7uvg72EJNsd3sQl4uL/XE6oglxztZY2TbDCA+zlmMR2CAVp007XFbaQGJah
+	 Np0FQGOUG51m6HMNE3BGseVBXVhjNBT4bxH+TXAHGEihAQFzDYms7aHXpohI+XmSaW
+	 bJW2ZYbm+6JXkwdFmGKkDeUXu9VAQS7szJwV07fi1n+v+nfugsid+OJiSkM9iM+sid
+	 KD9mdOi6DOGKCoK+jDP8TbmEU9i5swLvwQtz/sz/LSeqRRjrL9w0jCG5MhVel3kRfO
+	 fMggqCINXLRHnkGxhrPbUaya9BAn1q8uQUaR2SL4AUtgmE3wYSsFun1Ea+HLQhEDQN
+	 FEOAy6rG3O30w==
+Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XFCPM25b7z1MZK;
+	Thu, 26 Sep 2024 21:22:15 -0400 (EDT)
+Message-ID: <bba2e656-4c3b-46db-b308-483de440b922@efficios.com>
+Date: Fri, 27 Sep 2024 03:20:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64b495e1-7ed4-4e7a-4e91-08dcde91c1f9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Sep 2024 01:14:38.5298
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jO4qho35HnUqltj18AsCDY2PYK0DGcRWFCixFGY80uz/XzqE7QtOwvbyexgtYgYA4h/gaHhvTH5wZ2jN3tcO3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB7721
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--8.978300-8.000000
-X-TMASE-MatchedRID: 9zTThWtzImsOwH4pD14DsPHkpkyUphL9Fk73i4rVVIGPaLJ/Ca3ST9zD
-	hHEbpyKJbdJAvGIAvFbnU7CCEjbK3wtrOhDKumbSQ4srjeRbxTZMkOX0UoduuX5h6y4KCSJcrWv
-	A11V1iKktIcNCL+1lT8oRp4xvRGy/SReiLCvBHECV9hHQSQP5WlPgO2JKQydYBqAOEFOvViSjxY
-	yRBa/qJRVHsNBZf9aRAYt5KiTiutkLbigRnpKlKZvjAepGmdoOycS6Ue2KT2IkdzO9FDnzIELPg
-	ZP3Zuce5FXjt5gUQGs1tlhgxN6YZSG9euVtnCmM6ZUH8MVT5d8x8C3niAqRBML/jhJtP8FMtYKm
-	gy/hRHp6myquVNZbsaCSvkH5b0KNAxBSRrPbDo+vZrXn/T4fmw==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--8.978300-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	D005D49A6E156CB2E35BE920F1DFB25AC3898A5AC1E619056DD09413B8DFEE5F2000:8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+ rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>, Vlastimil Babka
+ <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <20240917143402.930114-2-boqun.feng@gmail.com>
+ <55975a55-302f-4c45-bfcc-192a8a1242e9@huaweicloud.com>
+ <ZvPfmAp_2mDkI3ss@boqun-archlinux>
+ <f5aeeeda-c725-422a-9481-4795bd3ade0f@huaweicloud.com>
+ <ZvPp4taB9uu__oSQ@boqun-archlinux>
+ <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
+ <ZvP_H_R43bXpmkMS@boqun-archlinux>
+ <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
+ <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+ <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
+ <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
+ <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
+ <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-SGksIEphc29uOg0KDQpPbiBUaHUsIDIwMjQtMDktMjYgYXQgMTg6MjIgKzA4MDAsIEphc29uLUpI
-LkxpbiB3cm90ZToNCj4gU2luY2Ugd2UgY2hhbmdlZCBNQUNST3MgdG8gYmUgY29uc2lzdGVudCB3
-aXRoIERSTSBpbnB1dCBjb2xvciBmb3JtYXQNCj4gbmFtaW5nLCB0aGUgY29tbWVudCBmb3Igb3Zs
-X2ZtdF9jb252ZXIoKSBpcyBubyBsb25nZXIgbmVlZGVkLg0KDQpSZXZpZXdlZC1ieTogQ0sgSHUg
-PGNrLmh1QG1lZGlhdGVrLmNvbT4NCg0KPiANCj4gRml4ZXM6IDlmNDI4Yjk1YWM4OSAoImRybS9t
-ZWRpYXRlazogQWRkIG5ldyBjb2xvciBmb3JtYXQgTUFDUk9zIGluIE9WTCIpDQo+IFNpZ25lZC1v
-ZmYtYnk6IEphc29uLUpILkxpbiA8amFzb24tamgubGluQG1lZGlhdGVrLmNvbT4NCj4gLS0tDQo+
-ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3Bfb3ZsLmMgfCA1IC0tLS0tDQo+ICAx
-IGZpbGUgY2hhbmdlZCwgNSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3Bfb3ZsLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0
-ZWsvbXRrX2Rpc3Bfb3ZsLmMNCj4gaW5kZXggODliNDM5ZGNmM2E2Li40YTRiYzI3YTY3ZjAgMTAw
-NjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZGlzcF9vdmwuYw0KPiAr
-KysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3Bfb3ZsLmMNCj4gQEAgLTM4OSwx
-MSArMzg5LDYgQEAgdm9pZCBtdGtfb3ZsX2xheWVyX29mZihzdHJ1Y3QgZGV2aWNlICpkZXYsIHVu
-c2lnbmVkIGludCBpZHgsDQo+ICBzdGF0aWMgdW5zaWduZWQgaW50IG92bF9mbXRfY29udmVydChz
-dHJ1Y3QgbXRrX2Rpc3Bfb3ZsICpvdmwsIHVuc2lnbmVkIGludCBmbXQsDQo+ICAJCQkJICAgIHVu
-c2lnbmVkIGludCBibGVuZF9tb2RlKQ0KPiAgew0KPiAtCS8qIFRoZSByZXR1cm4gdmFsdWUgaW4g
-c3dpdGNoICJNRU1fTU9ERV9JTlBVVF9GT1JNQVRfWFhYIg0KPiAtCSAqIGlzIGRlZmluZWQgaW4g
-bWVkaWF0ZWsgSFcgZGF0YSBzaGVldC4NCj4gLQkgKiBUaGUgYWxwaGFiZXQgb3JkZXIgaW4gWFhY
-IGlzIG5vIHJlbGF0aW9uIHRvIGRhdGENCj4gLQkgKiBhcnJhbmdlbWVudCBpbiBtZW1vcnkuDQo+
-IC0JICovDQo+ICAJc3dpdGNoIChmbXQpIHsNCj4gIAlkZWZhdWx0Og0KPiAgCWNhc2UgRFJNX0ZP
-Uk1BVF9SR0I1NjU6DQo=
+On 2024-09-26 18:12, Linus Torvalds wrote:
+> On Thu, 26 Sept 2024 at 08:54, Jonas Oberhauser
+> <jonas.oberhauser@huaweicloud.com> wrote:
+>>
+>> No, the issue introduced by the compiler optimization (or by your
+>> original patch) is that the CPU can speculatively load from the first
+>> pointer as soon as it has completed the load of that pointer:
+> 
+> You mean the compiler can do it. The inline asm has no impact on what
+> the CPU does. The conditional isn't a barrier for the actual hardware.
+> But once the compiler doesn't try to do it, the data dependency on the
+> address does end up being an ordering constraint on the hardware too
+> (I'm happy to say that I haven't heard from the crazies that want
+> value prediction in a long time).
+> 
+> Just use a barrier.  Or make sure to use the proper ordered memory
+> accesses when possible. Don't use an inline asm for the compare - we
+> don't even have anything insane like that as a portable helper, and we
+> shouldn't have it.
+
+How does the compiler barrier help in any way here ?
+
+I am concerned about the compiler SSA GVN (Global Value Numbering)
+optimizations, and I don't think a compiler barrier solves anything.
+(or I'm missing something obvious)
+
+I was concerned about the suggestion from Jonas to use "node2"
+rather than "node" after the equality check as a way to ensure
+the intended register is used to return the pointer, because after
+the SSA GVN optimization pass, AFAIU this won't help in any way.
+I have a set of examples below that show gcc use the result of the
+first load, and clang use the result of the second load (on
+both x86-64 and aarch64). Likewise when a load-acquire is used as
+second load, which I find odd. Hopefully mixing this optimization
+from gcc with speculation still abide by the memory model.
+
+Only the asm goto approach ensures that gcc uses the result from
+the second load.
+
+#include <stdbool.h>
+
+#define READ_ONCE(x)   \
+     (*(__volatile__  __typeof__(x) *)&(x))
+
+static inline
+bool same_ptr(void *a, void *b)
+{
+     asm goto (
+#ifdef __x86_64__
+         "cmpq %[a], %[b]\n\t"
+         "jne %l[ne]\n\t"
+#elif defined(__aarch64__)
+         "cmp %[a], %[b]\n\t"
+         "bne %l[ne]\n\t"
+#else
+# error "unimplemented"
+#endif
+         : : [a] "r" (a), [b] "r" (b)
+         : : ne);
+     return true;
+ne:
+     return false;
+}
+
+int *p;
+
+int fct_2_volatile(void)
+{
+     int *a, *b;
+
+     do {
+         a = READ_ONCE(p);
+         asm volatile ("" : : : "memory");
+         b = READ_ONCE(p);
+     } while (a != b);
+     return *b;
+}
+
+int fct_volatile_acquire(void)
+{
+     int *a, *b;
+
+     do {
+         a = READ_ONCE(p);
+         asm volatile ("" : : : "memory");
+         b = __atomic_load_n(&p, __ATOMIC_ACQUIRE);
+     } while (a != b);
+     return *b;
+}
+
+int fct_asm_compare(void)
+{
+     int *a, *b;
+
+     do {
+         a = READ_ONCE(p);
+         asm volatile ("" : : : "memory");
+         b = READ_ONCE(p);
+     } while (!same_ptr(a, b));
+     return *b;
+}
+
+x86-64 gcc 14.2:
+
+fct_2_volatile:
+  mov    rax,QWORD PTR [rip+0x0]        # 7 <fct_2_volatile+0x7>
+  mov    rdx,QWORD PTR [rip+0x0]        # e <fct_2_volatile+0xe>
+  cmp    rax,rdx
+  jne    0 <fct_2_volatile>
+  mov    eax,DWORD PTR [rax]
+  ret
+  cs nop WORD PTR [rax+rax*1+0x0]
+fct_volatile_acquire:
+  mov    rax,QWORD PTR [rip+0x0]        # 27 <fct_volatile_acquire+0x7>
+  mov    rdx,QWORD PTR [rip+0x0]        # 2e <fct_volatile_acquire+0xe>
+  cmp    rax,rdx
+  jne    20 <fct_volatile_acquire>
+  mov    eax,DWORD PTR [rax]
+  ret
+  cs nop WORD PTR [rax+rax*1+0x0]
+fct_asm_compare:
+  mov    rdx,QWORD PTR [rip+0x0]        # 47 <fct_asm_compare+0x7>
+  mov    rax,QWORD PTR [rip+0x0]        # 4e <fct_asm_compare+0xe>
+  cmp    rax,rdx
+  jne    40 <fct_asm_compare>
+  mov    eax,DWORD PTR [rax]
+  ret
+main:
+  xor    eax,eax
+  ret
+
+x86-64 clang 19.1.0:
+
+fct_2_volatile:
+  mov    rcx,QWORD PTR [rip+0x0]        # 7 <fct_2_volatile+0x7>
+  mov    rax,QWORD PTR [rip+0x0]        # e <fct_2_volatile+0xe>
+  cmp    rcx,rax
+  jne    0 <fct_2_volatile>
+  mov    eax,DWORD PTR [rax]
+  ret
+  cs nop WORD PTR [rax+rax*1+0x0]
+fct_volatile_acquire:
+  mov    rcx,QWORD PTR [rip+0x0]        # 27 <fct_volatile_acquire+0x7>
+  mov    rax,QWORD PTR [rip+0x0]        # 2e <fct_volatile_acquire+0xe>
+  cmp    rcx,rax
+  jne    20 <fct_volatile_acquire>
+  mov    eax,DWORD PTR [rax]
+  ret
+  cs nop WORD PTR [rax+rax*1+0x0]
+fct_asm_compare:
+  mov    rcx,QWORD PTR [rip+0x0]        # 47 <fct_asm_compare+0x7>
+  mov    rax,QWORD PTR [rip+0x0]        # 4e <fct_asm_compare+0xe>
+  cmp    rax,rcx
+  jne    40 <fct_asm_compare>
+  mov    eax,DWORD PTR [rax]
+  ret
+  cs nop WORD PTR [rax+rax*1+0x0]
+main:
+  xor    eax,eax
+  ret
+
+ARM64 gcc 14.2.0:
+
+fct_2_volatile:
+         adrp    x0, .LANCHOR0
+         add     x0, x0, :lo12:.LANCHOR0
+.L2:
+         ldr     x1, [x0]
+         ldr     x2, [x0]
+         cmp     x1, x2
+         bne     .L2
+         ldr     w0, [x1]
+         ret
+fct_volatile_acquire:
+         adrp    x0, .LANCHOR0
+         add     x0, x0, :lo12:.LANCHOR0
+.L6:
+         ldr     x1, [x0]
+         ldar    x2, [x0]
+         cmp     x1, x2
+         bne     .L6
+         ldr     w0, [x1]
+         ret
+fct_asm_compare:
+         adrp    x1, .LANCHOR0
+         add     x1, x1, :lo12:.LANCHOR0
+.L9:
+         ldr     x2, [x1]
+         ldr     x0, [x1]
+         cmp x2, x0
+         bne .L9
+
+         ldr     w0, [x0]
+         ret
+p:
+         .zero   8
+
+armv8-a clang (trunk):
+
+fct_2_volatile:
+  adrp	x8, 0 <fct_2_volatile>
+  ldr	x10, [x8]
+  ldr	x9, [x8]
+  cmp	x10, x9
+  b.ne	4 <fct_2_volatile+0x4>  // b.any
+  ldr	w0, [x9]
+  ret
+fct_volatile_acquire:
+  adrp	x8, 0 <fct_2_volatile>
+  add	x8, x8, #0x0
+  ldr	x10, [x8]
+  ldar	x9, [x8]
+  cmp	x10, x9
+  b.ne	24 <fct_volatile_acquire+0x8>  // b.any
+  ldr	w0, [x9]
+  ret
+fct_asm_compare:
+  adrp	x8, 0 <fct_2_volatile>
+  ldr	x9, [x8]
+  ldr	x8, [x8]
+  cmp	x9, x8
+  b.ne	3c <fct_asm_compare>  // b.any
+  ldr	w0, [x8]
+  ret
+main:
+  mov	w0, wzr
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
