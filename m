@@ -1,130 +1,116 @@
-Return-Path: <linux-kernel+bounces-341980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92137988937
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:38:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0D6988940
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5183CB210EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39C861F21C9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1551C174E;
-	Fri, 27 Sep 2024 16:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D7A1C1758;
+	Fri, 27 Sep 2024 16:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VQvCQpdU"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqxIcL9b"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808F05234;
-	Fri, 27 Sep 2024 16:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823E513AA47;
+	Fri, 27 Sep 2024 16:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727455088; cv=none; b=HHjMGopdS5AGFaXiWbu7pk+agvOdn47k5BZG5GHkgcjSsbFOWTg3MuhCLSAsqOCmJT1chFoH0kz3EKk8stEXhsUwcTrcXdzLLJfBQEwHViUr1mEKcFNvpxsLY9YytYHdiGC+1vbIl0EIhbllih+tTGQenkTEFiayWdtunoAvMHI=
+	t=1727455274; cv=none; b=iOV9BhT1b4iQc/Guv2eZVB4TLLlMJ0DrRl2wrkSDcZ0BjDxulRAZzUVD4vx/KV6KpfMMdibea5dFnvLlNGxvoXmduvXZv9P+lD8oOS41qcNk93Q34+fq7gltzreEx5xa+SMzk8dL+IgAK5JX0HRUeTD5uwoRzt8UHaM3SSj743Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727455088; c=relaxed/simple;
-	bh=oMMgZasyjwbgBtBbPugjBrjHCR3Muzq/t56L9musDps=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hqgLjCjMORx2gp/YoVaHqDpGkEanAAzJlX9xgdwUvqoBZolXecveNmEx5tp6EFVIB4qs2VOFQ3WxQtNM6tEy4SWQrUhL7mC7LGKbXBdUZNvCfTA/He6mFus3mYx2/HwxJOltLXoNH+uwfQ88HQcp7Si3rY0HvDtH352Rauf4YaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VQvCQpdU; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 555AC1BF207;
-	Fri, 27 Sep 2024 16:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727455079;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glVgptwsGapTQILgbrhz4NgHpHzm+T7wOD6Ai2rnQlc=;
-	b=VQvCQpdUQB8nsXkeePUDxdZRYIIhuF3ipBrUk2agR49KZQEpR16Iv8t3BppRm1VH7SF1Y/
-	GiyddKX71Oj0w4NHzjXN+jidGweaMGtMxE49/Mk1KVTjTl/cT0hR3AOKaMpiaVnUPFLgJq
-	OfreJOuJN/PzhRtoNV4sjY+ooVxs2XL9oVC6aSjS2fwvJcoKM2QB5umJPtiKFKydaiIHlQ
-	gXkMYE7R8v74SPEo0FYn9hb5MHF8AX220l/xCUkZ7618LApPcld9+STwNCfYQl5d/nWStS
-	Cmx/ABwfoMmdVVlMrnXAjQ6eqJf0IENkWtie5xNIKe7aVXTrIdmjD7RW480hrg==
-Date: Fri, 27 Sep 2024 18:37:56 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Abhishek Chauhan <quic_abchauha@quicinc.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andrew Halaney <ahalaney@redhat.com>, "Russell King (Oracle)"
- <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
- <hkallweit1@gmail.com>, Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>, "linux-tegra@vger.kernel.org"
- <linux-tegra@vger.kernel.org>, Brad Griffis <bgriffis@nvidia.com>, Vladimir
- Oltean <vladimir.oltean@nxp.com>, Jon Hunter <jonathanh@nvidia.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, kernel@quicinc.com
-Subject: Re: [PATCH net v4 2/2] net: phy: aquantia: remove usage of
- phy_set_max_speed
-Message-ID: <20240927183756.16d3c6a3@fedora.home>
-In-Reply-To: <20240927010553.3557571-3-quic_abchauha@quicinc.com>
-References: <20240927010553.3557571-1-quic_abchauha@quicinc.com>
-	<20240927010553.3557571-3-quic_abchauha@quicinc.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1727455274; c=relaxed/simple;
+	bh=8u5Av3AJg+Z/BbalDYPhMZPtlm215Q5+jjmCKOSVDiM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VCAn+sv9MNl4ruU+5/rn10M6KJZ3FxQ6ftNpTU6TgOCW21ci+mA9YnNs8wTfix33ojqLikfTyFXUqab2g0jHuE3XT4eVEcUoXG7xEDohXD1SXVcUCvDYxHwKX7yobCRHyhWcPTxOZNuHMdrT6QyCiq31+VGtpreZ3Fwu1o8DVtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nqxIcL9b; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-458362e898aso15966521cf.0;
+        Fri, 27 Sep 2024 09:41:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727455268; x=1728060068; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A3aLam3ii1BoY06ylPVYnFDjPB5q96zwrcB98znTpIw=;
+        b=nqxIcL9bP/ZNwH6cesbtIfFEINQtpWjofI7NSC76xxoo3AApbD9Yp2Sgnuwt3REsY9
+         XKXj8+IakZmYDQkbB7aFwgYXIzgh/YpjCqM4U9RnCcLpA8dMKt5DzwuYm4It4T4hpZzB
+         J0MrDke57vWifF6KxtAmTKmV2urh+32B6zpryr4BkWK8SMCfrf4J7LhwzSvqwlzZuprT
+         ZDs5GPo3Siai2ttjkf0jBdd8QTsyIHeUilRfR6JtfEGJeaFvgqyKITbdwgJVLW1pHjaa
+         BoDEnwlFmPnKiUwZbvMRuI3uu4QXirhQ1FD58ZMkIlhDkxZiovmx4rb9/5wlHJ32vEPu
+         L19A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727455268; x=1728060068;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A3aLam3ii1BoY06ylPVYnFDjPB5q96zwrcB98znTpIw=;
+        b=Kx4dh0jIoK1+yC5EJtHuvco3MbMj1mfHS1d3dCFVfRcyhz2MrS0s9ZYWT1auB6s6ew
+         eAxMleSX696Vic4TkCFOJE0uC5vP+eCPGM9CV8zuW6MX2ELXzgvfQa+fEpAwdOazfU9o
+         ev9fzVZIN1n/L+FuvPg4cUlE6OmyFrY9u0a3J48IZy8WS5aJva4+P7pRebTkD6ToK5V+
+         c1CsNTWVvvHNJ2r6Jphx5xb2d9ii8xs7U6Z/eoEZ9mbqkdEk7UiFFM3Z28XRLkA2jQzn
+         Be6GK9KlOTNcrL3CHstsSx2lyFwgrrxvZ3sAfNh/lwpM76nLyQFN/CYoAMIlwvGRaeia
+         Wl8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWSIrjiTYUuGd0bwZ8d5Cj9cN6hTBOuRudu0viCl0eORp11oBHO3BMQhJEeqKV1gBkN/z5PnOke@vger.kernel.org, AJvYcCXIQHr9bH4A3Dt0pxmwiwg5P+Yf+ikQwgEZi9fUFEF9SUuSr8irDl/UhnLtNSmzQ63hnS2g9mw3Ov5zcWRh@vger.kernel.org, AJvYcCXvGuqogV/ZM0Z6HKn+MQ6hu2q1SBccX8Q5A83ZYumIb1A0SwWcspyCuiPYYA+pQbE45IQ9dyDNRTR9@vger.kernel.org
+X-Gm-Message-State: AOJu0YwboWE2RM7jVNIKKvSvLfl6lJ8wkE41K2lcVE4/XGB2qCucEQuq
+	uNe80S2o/VJHqTfMxivziXdC4wuh4QDXhCUIeJ9cRMJIzg0AoEe6e4LtFFslrNHpfZ3jvUxZMxm
+	4V8gUFMYpFjzkuuHiFjDIYijQ9JQeRHyd
+X-Google-Smtp-Source: AGHT+IHhFxiJIKOZQd9ObN+Bow9DnfeccCKDA+4HeO5e3KFOZo82DqxOsuBi8pqEMQvdlAwG2bxDBPuo1+y+Brz4sRY=
+X-Received: by 2002:a0c:fa49:0:b0:6cb:3bc0:c2c6 with SMTP id
+ 6a1803df08f44-6cb3bc0c330mr53625576d6.10.1727455268393; Fri, 27 Sep 2024
+ 09:41:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+References: <20240926225531.700742-1-intelfx@intelfx.name> <CAKEwX=O=Qu4LZt79==FztxFjgBu2+q7C6EDji-ZmW5Ga38_dSg@mail.gmail.com>
+ <5hnu3xa5hcusvmvg37m5ktsfcutghk2z3dh7lcoctyyfluabqv@u4ma5mafchpw>
+In-Reply-To: <5hnu3xa5hcusvmvg37m5ktsfcutghk2z3dh7lcoctyyfluabqv@u4ma5mafchpw>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Fri, 27 Sep 2024 09:40:56 -0700
+Message-ID: <CAKEwX=MPtsX0OexWfL3j-4TcPuAdoDWP4E2BzehrkFs67bTv9Q@mail.gmail.com>
+Subject: Re: [PATCH] zswap: improve memory.zswap.writeback inheritance
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Ivan Shapovalov <intelfx@intelfx.name>, linux-kernel@vger.kernel.org, 
+	Mike Yuan <me@yhndnzj.com>, Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>, Yosry Ahmed <yosryahmed@google.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	Chris Li <chrisl@kernel.org>, cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Sep 27, 2024 at 8:01=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.co=
+m> wrote:
+>
+>
+> What about assigning this semantic to an empty string ("")?
+> That would be the default behavior and also the value shown when reading
+> the file (to distinguish this for explicitly configured values).
 
-On Thu, 26 Sep 2024 18:05:53 -0700
-Abhishek Chauhan <quic_abchauha@quicinc.com> wrote:
+Yeah that's better than -1, I agree. Still a bit confusing, but at
+least the semantic is "we are not making a choice at the memcg".
 
-> Remove the use of phy_set_max_speed in phy driver as the
-> function is mainly used in MAC driver to set the max
-> speed.
-> 
-> Instead use get_features to fix up Phy PMA capabilities for
-> AQR111, AQR111B0, AQR114C and AQCS109
-> 
-> Fixes: 038ba1dc4e54 ("net: phy: aquantia: add AQR111 and AQR111B0 PHY ID")
-> Fixes: 0974f1f03b07 ("net: phy: aquantia: remove false 5G and 10G speed ability for AQCS109")
-> Fixes: c278ec644377 ("net: phy: aquantia: add support for AQR114C PHY ID")
-> Link: https://lore.kernel.org/all/20240913011635.1286027-1-quic_abchauha@quicinc.com/T/
-> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+>
+> (The weirdness of 0, 1, -1, -1, -1  would remain. Maybe switching this
+> via the mount option could satisfy any user. Admittedly, I tend to
+> confuse this knob with swap.max.)
 
-[...]
+Yeah a mount option, or in general some sort of global knob (with
+proper documentation) would be preferable.
 
-> +static int aqr111_get_features(struct phy_device *phydev)
-> +{
-> +	unsigned long *supported = phydev->supported;
-> +	int ret;
-> +
-> +	/* Normal feature discovery */
-> +	ret = genphy_c45_pma_read_abilities(phydev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* PHY FIXUP */
-> +	/* Although the PHY sets bit 12.18.19, it does not support 10G modes */
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, supported);
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKX4_Full_BIT, supported);
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKR_Full_BIT, supported);
-> +
-> +	/* Phy supports Speeds up to 5G with Autoneg though the phy PMA says otherwise */
-> +	linkmode_or(supported, supported, phy_gbit_features);
-> +	/* Set the 5G speed if it wasn't set as part of the PMA feature discovery */
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
-
-As you are moving away from phy_set_max_speed(phydev, 5000), it should mean
-that what used to be in the supported bits already contained the
-5GBaseT bit, as phy_set_max_speed simply clears the highest speeds.
-
-In such case, calling the newly introduced function from
-patch 1 should be enough ?
-
-Thanks,
-
-Maxime
+And yeah, I hear you with the swap.max confusion. That's why I tried
+to make it explicit in the documentation, because the difference is
+subtle and can trip up users. Hopefully, when zswap and swap are
+decoupled, users can conceptualize them as two separate tiers, and the
+confusion will lessen...
 
