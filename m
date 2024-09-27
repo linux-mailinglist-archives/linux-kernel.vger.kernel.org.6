@@ -1,235 +1,384 @@
-Return-Path: <linux-kernel+bounces-341843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719B7988701
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:22:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64831988707
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0FF91F2230F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:22:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13D7E281A44
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB7113BAF1;
-	Fri, 27 Sep 2024 14:22:34 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8F0136663;
+	Fri, 27 Sep 2024 14:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ei/JQSng"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54484138490
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5596D13A3EC;
+	Fri, 27 Sep 2024 14:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727446954; cv=none; b=Ld4KErmhhaKsnQl4tRKajc15wBQs3Kqyn7hdOV25puzWHkBvf8cNxIdfcGMM+IPrJAO/QTSunXgm5VfYVmYqgR7h1i8yN4eLR4yEE/R4oSl6nGOdT6B1t32gUgsy1PlyeNwud6w68ab6WQtp+fpqLk1icJHQCzrzU3u0kMfItGU=
+	t=1727446978; cv=none; b=moPODdqWyP77bjjXfUGN+s1jqvmhh1C3ZuosmccYZHSZ7vmwSSx43mSdOS8eQAI1FyHq7s7zqb5QJjQWUwo1778sInU/pepkx6RXAdOaaNEz4TJrNc+spKs84f+ZNr0MA3GTYDtApwTW3sgaWuq95TdymV4x1v7U1t+S4gD3VLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727446954; c=relaxed/simple;
-	bh=aIhht4PG68qhRfY6HBtQm3jSEVcyG9Is78AbjW13dpc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MGEZQqjjR49rIPw7AjT6der/WcX3DFYTVT3ij5Q4lqSW3HmFXJ7USLoeUC14jvHxDnUlcGLjTvORGpGQHTjre6wfUmSVpQCM2M0uvqih0+oXl84j9oXYX3l/6RnXd3WtHS4DP5883I4iAwRYngx0ae1VG6HiHamC4F/gQz6gU0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8324396d0abso220263439f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:22:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727446951; x=1728051751;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pQvv9V/jjUoYbB6kLmOvJiieuB/iUQwkX+2sB6oQSNk=;
-        b=jbQRqS5J9C6wrO85GSChdCBc0SwJcRHLUUloZkSOfasM9HJLW9AB44IXt3ud77jQAo
-         pnVt4bst2EmZYpOaBzodi5odHVDb6XQvxFQ6IMOZ1qVk7X6Xwve8dZpUB7U2Z+K54afB
-         iM2Xwhf4LUYq1m4hQhpFiB1SEPnSTinhHKeH5Xc5JTNGl0qFjyBEI8czgptQSCzGQ6oM
-         3SrTMhao4KzYknjYwCX6V2LYKo70UuH0LxA79SZyc8Pu8s8OjH+NqhnWTs5A/sYNVYcS
-         28gt0PPyCrNtmN9smxityA4yyT+bOgtoum46k6PwN3FGkLYi4aZYuOD8FstYfKO5uRlH
-         vMMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJzh6ANX+uo9KXdVYK54Y4JZw6rZ+lUejJvXJdU/9kxv3nwx3kYbzT85r+iMcjWnORjnZujrBRdseOrsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlkAo4wc0YH4VF1IdOFe9rgn7Nfe3BTXyHK8vCMSFU0PhOF937
-	zNvQXD3s4jiKy+ZC9G76WoNBGJLvGp9t1xAQdzPWwa2Hxl3AmATWn09Dkye+pLnrJlKIG/UfrX3
-	LEM56cBTlOcKbAH8f2b+EJPoqO7We+P390Eb7/5mHAu6JfFIh8MH+eBQ=
-X-Google-Smtp-Source: AGHT+IFaPG9P8yNET5Pe7AZcXVYyi/C5S2auebhjEWfVj2jbXu3tpYOGcPHmlOiI8wvKMqv1Z4GdtYiC04x7OQeM+Qw0Ym4mUgaP
+	s=arc-20240116; t=1727446978; c=relaxed/simple;
+	bh=M/39kum3E/trMY3xAOIUM0UlUX5wD8I/F08ihv1OY8o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AENFEceKfSmDa+M32q8TQQexi9O2Rc6tCTD7RSx1+7kJ4z+HPWHRMTNqtaUd6Nb5gCQIKZjwGpkQA1+I872QEw0ntHGcbJP4ON4AqqzJFovp9KCU/ec1ds2m8Vht8IjoSgpB7BwVEigWHnrrETjfJayOC0AkpLr8DUsENzVNrW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ei/JQSng; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E67AC4CEC4;
+	Fri, 27 Sep 2024 14:22:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727446978;
+	bh=M/39kum3E/trMY3xAOIUM0UlUX5wD8I/F08ihv1OY8o=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Ei/JQSng7c7VVc/nMPDGk0U5AlyaozxtuSqfALu/DcWS8m3i6LuIy77RqvamJh0ra
+	 b8C7ErIdsDAs/h0avrFXuEp9OWXJ2j3Fd75y/Mgtj/pUCsnOKEO3xbng6TQpBLbIMe
+	 s70+ZXb81TJ4Zw09wuIYML4M4n3U6fzvSXhXInTdqfxPOBCC6UpEFSJmOpoS01pmA/
+	 7D3qYh4vi3k+t5QenbHB4sv9lE4IzPB8fV97EcB7b/dnK5wnLICdwzMAEOjsfs6aSA
+	 r2oFjEcat9xrJUjF/mJQRkTwr0BRNW+uyQDdwdpZFibffKhXHoz1uu78CKX4GyQi0V
+	 z5IC0pBcxrfCA==
+Message-ID: <c292b99c-3d51-461e-aadb-cd21ed972db0@kernel.org>
+Date: Fri, 27 Sep 2024 16:22:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4c:0:b0:3a3:449b:5989 with SMTP id
- e9e14a558f8ab-3a3452ba439mr32011415ab.21.1727446951528; Fri, 27 Sep 2024
- 07:22:31 -0700 (PDT)
-Date: Fri, 27 Sep 2024 07:22:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f6bfa7.050a0220.38ace9.0019.GAE@google.com>
-Subject: [syzbot] [btrfs?] general protection fault in btrfs_update_reloc_root
-From: syzbot <syzbot+283673dbc38527ef9f3d@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] fpga: Add Efinix Trion & Titanium serial SPI
+ programming driver
+To: iansdannapel@gmail.com, mdf@kernel.org, hao.wu@intel.com,
+ yilun.xu@intel.com, trix@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, neil.armstrong@linaro.org, heiko.stuebner@cherry.de,
+ rafal@milecki.pl, linus.walleij@linaro.org, linux-fpga@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240927141445.157234-1-iansdannapel@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240927141445.157234-1-iansdannapel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 27/09/2024 16:14, iansdannapel@gmail.com wrote:
+> From: Ian Dannapel <iansdannapel@gmail.com>
+> 
+> Add a new driver for loading binary firmware to volatile
+> configuration RAM using "SPI passive programming" on Efinix FPGAs.
+> 
+> Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
 
-syzbot found the following issue on:
+Thank you for your patch. There is something to discuss/improve.
 
-HEAD commit:    932d2d1fcb2b Merge tag 'dlm-6.12' of git://git.kernel.org/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=179a3177980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c208b3605ba9ec44
-dashboard link: https://syzkaller.appspot.com/bug?extid=283673dbc38527ef9f3d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> ---
+>  drivers/fpga/Kconfig                    |  10 ++
+>  drivers/fpga/Makefile                   |   1 +
+>  drivers/fpga/efinix-trion-spi-passive.c | 211 ++++++++++++++++++++++++
+>  3 files changed, 222 insertions(+)
+>  create mode 100644 drivers/fpga/efinix-trion-spi-passive.c
+> 
+> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> index 37b35f58f0df..eb1e44c4e3e0 100644
+> --- a/drivers/fpga/Kconfig
+> +++ b/drivers/fpga/Kconfig
+> @@ -83,6 +83,16 @@ config FPGA_MGR_XILINX_SPI
+>  	  FPGA manager driver support for Xilinx FPGA configuration
+>  	  over slave serial interface.
+>  
+> +config FPGA_MGR_EFINIX_SPI
+> +	tristate "Efinix FPGA configuration over SPI passive"
+> +	depends on SPI
+> +	help
+> +	  This option enables support for the FPGA manager driver to
+> +	  configure Efinix Trion and Titanium Series FPGAs over SPI
+> +	  using passive serial mode.
+> +	  Warning: Do not activate this if there are other SPI devices
+> +	  on the same bus as it might interfere with the transmission.
+> +
+>  config FPGA_MGR_ICE40_SPI
+>  	tristate "Lattice iCE40 SPI"
+>  	depends on OF && SPI
+> diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+> index aeb89bb13517..1a95124ff847 100644
+> --- a/drivers/fpga/Makefile
+> +++ b/drivers/fpga/Makefile
+> @@ -18,6 +18,7 @@ obj-$(CONFIG_FPGA_MGR_TS73XX)		+= ts73xx-fpga.o
+>  obj-$(CONFIG_FPGA_MGR_XILINX_CORE)	+= xilinx-core.o
+>  obj-$(CONFIG_FPGA_MGR_XILINX_SELECTMAP)	+= xilinx-selectmap.o
+>  obj-$(CONFIG_FPGA_MGR_XILINX_SPI)	+= xilinx-spi.o
+> +obj-$(CONFIG_FPGA_MGR_EFINIX_SPI)	+= efinix-trion-spi-passive.o
+>  obj-$(CONFIG_FPGA_MGR_ZYNQ_FPGA)	+= zynq-fpga.o
+>  obj-$(CONFIG_FPGA_MGR_ZYNQMP_FPGA)	+= zynqmp-fpga.o
+>  obj-$(CONFIG_FPGA_MGR_VERSAL_FPGA)	+= versal-fpga.o
+> diff --git a/drivers/fpga/efinix-trion-spi-passive.c b/drivers/fpga/efinix-trion-spi-passive.c
+> new file mode 100644
+> index 000000000000..87ff645265ca
+> --- /dev/null
+> +++ b/drivers/fpga/efinix-trion-spi-passive.c
+> @@ -0,0 +1,211 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Trion and Titanium Series FPGA SPI Passive Programming Driver
+> + *
+> + * Copyright (C) 2024 iris-GmbH infrared & intelligent sensors
+> + *
+> + * Ian Dannapel <iansdannapel@gmail.com>
+> + *
+> + * Manage Efinix FPGA firmware that is loaded over SPI using
+> + * the serial configuration interface.
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/fpga/fpga-mgr.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/of.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/sizes.h>
+> +
+> +struct efinix_spi_conf {
+> +	struct spi_device *spi;
+> +	struct gpio_desc *cdone;
+> +	struct gpio_desc *creset;
+> +	struct gpio_desc *cs;
+> +};
+> +
+> +static int efinix_spi_get_cdone_gpio(struct efinix_spi_conf *conf)
+> +{
+> +	int ret;
+> +
+> +	ret = gpiod_get_value(conf->cdone);
 
-Unfortunately, I don't have any reproducer for this issue yet.
+This should be just return gpiod_get_value()... but then it's quite
+simple wrapper, so just use it directly.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-932d2d1f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fbcb7198214b/vmlinux-932d2d1f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/418eaebf4817/bzImage-932d2d1f.xz
+> +	return ret;
+> +}
+> +
+> +static void efinix_spi_reset(struct efinix_spi_conf *conf)
+> +{
+> +	gpiod_set_value(conf->creset, 1);
+> +	/* wait tCRESET_N */
+> +	usleep_range(5, 15);
+> +	gpiod_set_value(conf->creset, 0);
+> +}
+> +
+> +static enum fpga_mgr_states efinix_spi_state(struct fpga_manager *mgr)
+> +{
+> +	struct efinix_spi_conf *conf = mgr->priv;
+> +
+> +	if (conf->cdone && efinix_spi_get_cdone_gpio(conf) == 1)
+> +		return FPGA_MGR_STATE_OPERATING;
+> +
+> +	return FPGA_MGR_STATE_UNKNOWN;
+> +}
+> +
+> +static int efinix_spi_apply_clk_cycles(struct efinix_spi_conf *conf)
+> +{
+> +	char data[13] = {0};
+> +
+> +	return spi_write(conf->spi, data, sizeof(data));
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+283673dbc38527ef9f3d@syzkaller.appspotmail.com
+Hm, aren't buffers from stack discouraged? spi-summary explicitly
+mentions this case or I am getting this wrong?
 
-loop0: detected capacity change from 0 to 32768
-BTRFS: device fsid c9fe44da-de57-406a-8241-57ec7d4412cf devid 1 transid 8 /dev/loop0 (7:0) scanned by syz.0.0 (5111)
-BTRFS info (device loop0): first mount of filesystem c9fe44da-de57-406a-8241-57ec7d4412cf
-BTRFS info (device loop0): using crc32c (crc32c-intel) checksum algorithm
-BTRFS info (device loop0): disk space caching is enabled
-BTRFS warning (device loop0): space cache v1 is being deprecated and will be removed in a future release, please use -o space_cache=v2
-BTRFS info (device loop0): rebuilding free space tree
-BTRFS info (device loop0): disabling free space tree
-BTRFS info (device loop0): clearing compat-ro feature flag for FREE_SPACE_TREE (0x1)
-BTRFS info (device loop0): clearing compat-ro feature flag for FREE_SPACE_TREE_VALID (0x2)
-BTRFS info (device loop0): balance: start -d -m
-BTRFS info (device loop0): relocating block group 6881280 flags data|metadata
-FAULT_INJECTION: forcing a failure.
-name failslab, interval 1, probability 0, space 0, times 1
-CPU: 0 UID: 0 PID: 5111 Comm: syz.0.0 Not tainted 6.11.0-syzkaller-05442-g932d2d1fcb2b #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- fail_dump lib/fault-inject.c:52 [inline]
- should_fail_ex+0x3b0/0x4e0 lib/fault-inject.c:153
- should_failslab+0xac/0x100 mm/failslab.c:45
- slab_pre_alloc_hook mm/slub.c:4039 [inline]
- slab_alloc_node mm/slub.c:4115 [inline]
- kmem_cache_alloc_noprof+0x6c/0x2a0 mm/slub.c:4142
- start_transaction+0x830/0x1670 fs/btrfs/transaction.c:676
- prepare_to_relocate+0x31f/0x4c0 fs/btrfs/relocation.c:3642
- relocate_block_group+0x169/0xd20 fs/btrfs/relocation.c:3678
- btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4150
- btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3376
- __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4160
- btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4537
- btrfs_ioctl_balance+0x493/0x7c0 fs/btrfs/ioctl.c:3673
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9ff217def9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f9ff2edc038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f9ff2335f80 RCX: 00007f9ff217def9
-RDX: 0000000020000180 RSI: 00000000c4009420 RDI: 0000000000000004
-RBP: 00007f9ff2edc090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f9ff2335f80 R15: 00007ffcf8ef9128
- </TASK>
-BTRFS info (device loop0): balance: ended with status: -12
-Oops: general protection fault, probably for non-canonical address 0xdffffc00000000cc: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000660-0x0000000000000667]
-CPU: 0 UID: 0 PID: 5111 Comm: syz.0.0 Not tainted 6.11.0-syzkaller-05442-g932d2d1fcb2b #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:btrfs_update_reloc_root+0x362/0xa80 fs/btrfs/relocation.c:926
-Code: e8 03 42 80 3c 20 00 74 08 4c 89 f7 e8 07 da 34 fe bb 65 06 00 00 49 03 1e 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <0f> b6 04 08 84 c0 4c 8b 64 24 18 0f 85 c9 05 00 00 0f b6 1b 31 ff
-RSP: 0018:ffffc9000316f700 EFLAGS: 00010207
-RAX: 00000000000000cc RBX: 0000000000000665 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000003 RDI: 00000000ffffffff
-RBP: ffffc9000316f810 R08: ffffffff83c687df R09: fffff5200062def4
-R10: dffffc0000000000 R11: fffff5200062def4 R12: dffffc0000000000
-R13: 0000000000000001 R14: ffff8880008111d0 R15: ffff888035802038
-FS:  00007f9ff2edc6c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9fe73f9000 CR3: 000000003feac000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- commit_fs_roots+0x2ee/0x720 fs/btrfs/transaction.c:1496
- btrfs_commit_transaction+0xfaf/0x3740 fs/btrfs/transaction.c:2430
- del_balance_item fs/btrfs/volumes.c:3678 [inline]
- reset_balance_state+0x25e/0x3c0 fs/btrfs/volumes.c:3742
- btrfs_balance+0xead/0x10c0 fs/btrfs/volumes.c:4574
- btrfs_ioctl_balance+0x493/0x7c0 fs/btrfs/ioctl.c:3673
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9ff217def9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f9ff2edc038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f9ff2335f80 RCX: 00007f9ff217def9
-RDX: 0000000020000180 RSI: 00000000c4009420 RDI: 0000000000000004
-RBP: 00007f9ff2edc090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f9ff2335f80 R15: 00007ffcf8ef9128
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:btrfs_update_reloc_root+0x362/0xa80 fs/btrfs/relocation.c:926
-Code: e8 03 42 80 3c 20 00 74 08 4c 89 f7 e8 07 da 34 fe bb 65 06 00 00 49 03 1e 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <0f> b6 04 08 84 c0 4c 8b 64 24 18 0f 85 c9 05 00 00 0f b6 1b 31 ff
-RSP: 0018:ffffc9000316f700 EFLAGS: 00010207
-RAX: 00000000000000cc RBX: 0000000000000665 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000003 RDI: 00000000ffffffff
-RBP: ffffc9000316f810 R08: ffffffff83c687df R09: fffff5200062def4
-R10: dffffc0000000000 R11: fffff5200062def4 R12: dffffc0000000000
-R13: 0000000000000001 R14: ffff8880008111d0 R15: ffff888035802038
-FS:  00007f9ff2edc6c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055e5284b79b2 CR3: 000000003feac000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	e8 03 42 80 3c       	call   0x3c804208
-   5:	20 00                	and    %al,(%rax)
-   7:	74 08                	je     0x11
-   9:	4c 89 f7             	mov    %r14,%rdi
-   c:	e8 07 da 34 fe       	call   0xfe34da18
-  11:	bb 65 06 00 00       	mov    $0x665,%ebx
-  16:	49 03 1e             	add    (%r14),%rbx
-  19:	48 89 d8             	mov    %rbx,%rax
-  1c:	48 c1 e8 03          	shr    $0x3,%rax
-  20:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
-  27:	fc ff df
-* 2a:	0f b6 04 08          	movzbl (%rax,%rcx,1),%eax <-- trapping instruction
-  2e:	84 c0                	test   %al,%al
-  30:	4c 8b 64 24 18       	mov    0x18(%rsp),%r12
-  35:	0f 85 c9 05 00 00    	jne    0x604
-  3b:	0f b6 1b             	movzbl (%rbx),%ebx
-  3e:	31 ff                	xor    %edi,%edi
+> +}
+> +
+> +static int efinix_spi_write_init(struct fpga_manager *mgr,
+> +				 struct fpga_image_info *info,
+> +				 const char *buf, size_t count)
+> +{
+> +	struct efinix_spi_conf *conf = mgr->priv;
+> +
+> +	if (info->flags & FPGA_MGR_PARTIAL_RECONFIG) {
+> +		dev_err(&mgr->dev, "Partial reconfiguration not supported\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* reset with chip select active */
+> +	gpiod_set_value(conf->cs, 1);
+> +	usleep_range(5, 15);
+> +	efinix_spi_reset(conf);
+> +
+> +	/* wait tDMIN */
+> +	usleep_range(100, 150);
+> +
+> +	return 0;
+> +}
+> +
+> +static int efinix_spi_write(struct fpga_manager *mgr, const char *buf,
+> +			    size_t count)
+> +{
+> +	struct efinix_spi_conf *conf = mgr->priv;
+> +	int ret;
+> +
+> +	ret = spi_write(conf->spi, buf, count);
+> +	if (ret) {
+> +		dev_err(&mgr->dev, "SPI error in firmware write: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int efinix_spi_write_complete(struct fpga_manager *mgr,
+> +				     struct fpga_image_info *info)
+> +{
+> +	struct efinix_spi_conf *conf = mgr->priv;
+> +	unsigned long timeout =
+> +		jiffies + usecs_to_jiffies(info->config_complete_timeout_us);
+> +	bool expired = false;
+> +	int done;
+> +
+> +	/* append at least 100 clock cycles */
+> +	efinix_spi_apply_clk_cycles(conf);
+> +
+> +	/* release chip select */
+> +	gpiod_set_value(conf->cs, 0);
+> +
+> +	if (conf->cdone) {
+> +		while (!expired) {
+> +			expired = time_after(jiffies, timeout);
+> +
+> +			done = efinix_spi_get_cdone_gpio(conf);
+> +			if (done < 0)
+> +				return done;
+> +
+> +			if (done)
+> +				break;
+> +		}
+> +	}
+> +
+> +	if (expired)
+> +		return -ETIMEDOUT;
+> +
+> +	/* wait tUSER */
+> +	usleep_range(75, 125);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct fpga_manager_ops efinix_spi_ops = {
+> +	.state = efinix_spi_state,
+> +	.write_init = efinix_spi_write_init,
+> +	.write = efinix_spi_write,
+> +	.write_complete = efinix_spi_write_complete,
+> +};
+> +
+> +static int efinix_spi_probe(struct spi_device *spi)
+> +{
+> +	struct efinix_spi_conf *conf;
+> +	struct fpga_manager *mgr;
+> +
+> +	conf = devm_kzalloc(&spi->dev, sizeof(*conf), GFP_KERNEL);
+> +	if (!conf)
+> +		return -ENOMEM;
+> +
+> +	conf->spi = spi;
+> +
+> +	conf->creset = devm_gpiod_get(&spi->dev, "creset", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(conf->creset))
+> +		return dev_err_probe(&spi->dev, PTR_ERR(conf->creset),
+> +				"Failed to get RESET gpio\n");
+> +
+> +	conf->cs = devm_gpiod_get(&spi->dev, "cs", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(conf->cs))
+> +		return dev_err_probe(&spi->dev, PTR_ERR(conf->cs),
+> +				"Failed to get CHIP_SELECT gpio\n");
+> +
+> +	if (!(spi->mode & SPI_CPHA) || !(spi->mode & SPI_CPOL))
+> +		return dev_err_probe(&spi->dev, -EINVAL,
+> +				"Unsupported SPI mode, set CPHA and CPOL\n");
+> +
+> +	conf->cdone = devm_gpiod_get_optional(&spi->dev, "cdone", GPIOD_IN);
+> +	if (IS_ERR(conf->cdone))
+> +		return dev_err_probe(&spi->dev, PTR_ERR(conf->cdone),
+> +				"Failed to get CDONE gpio\n");
+> +
+> +	mgr = devm_fpga_mgr_register(&spi->dev,
+> +				"Efinix SPI Passive Programming FPGA Manager",
+> +					&efinix_spi_ops, conf);
+> +
+> +	return PTR_ERR_OR_ZERO(mgr);
+> +}
+> +
+> +#ifdef CONFIG_OF
+
+Drop
+
+> +static const struct of_device_id efinix_spi_of_match[] = {
+> +	{ .compatible = "efinix,trion-spi-passive", },
+> +	{ .compatible = "efinix,titanium-spi-passive", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, efinix_spi_of_match);
+> +#endif
+> +
+> +static const struct spi_device_id efinix_ids[] = {
+> +	{ "trion-spi-passive", 0 },
+> +	{ "titanium-spi-passive", 0 },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(spi, efinix_ids);
+> +
+> +static struct spi_driver efinix_spi_passive_driver = {
+> +	.driver = {
+> +		.name = "efinix-fpga-spi-passive",
+> +		.of_match_table = of_match_ptr(efinix_spi_of_match),
+
+Drop of_match_ptr
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Best regards,
+Krzysztof
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
