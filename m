@@ -1,144 +1,108 @@
-Return-Path: <linux-kernel+bounces-342208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56D9988BB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:12:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBDF988BCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B84F1F2275F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:12:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC364B21BFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB341C2DCA;
-	Fri, 27 Sep 2024 21:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3751C2DD2;
+	Fri, 27 Sep 2024 21:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FsJTpKKn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G8Ah7msH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A505D1C245F
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 21:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE03C14D43D;
+	Fri, 27 Sep 2024 21:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727471518; cv=none; b=eZm0gF1FVBSD37OA2xt5rpKjBT7ZPeStttZ5D5wjTcmzzC4EJqEK9+J59+Cqx8354RYfPGIjCORXBso3X7nm8kUBCF+mxaAbVvSepFO2tXxTkpgyQA8ruO1FBJ0Oc0fWqKsFfuMwRUznSFPQEVxR/kY8ezvG+C8b1v6qKoF590E=
+	t=1727472543; cv=none; b=FpZMVjdY7kdgYRbA5cZ5+QlymMt/NZ+Ds2M41CHlYbI+T9cf1tydP+QOz+Exkye7K12/l1Z4AnNum9qCspi/p8UOTpOyPV1hhFiN9Xu3xNR445n541ktY+Yscfi8VIHCfN7n/8os4zyGmIXLhyjLCTNdR5IOUUmjwy//yIgxkQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727471518; c=relaxed/simple;
-	bh=j3c5/Zh4p82GAk9vaXtDQNsggU/jIEjNscDXUpnSLwI=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=caHPD0r4cfb4R+RjWdwZGG/nLEzHnaXIIdmR1HkKbMMvkJ775EHGndgc2yBAaICQyFOsBrVvuftLBaTbXPjnFLW4eqZsVO1L75fURi3opAuGynAgDiGWL7jKGkTRCH5Oaf1yJMvMMo49G9Qqv+M/hoRaYMxlLyfpu7KhWOMfNNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FsJTpKKn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727471515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8uMxOBU2H6Hw+qD+HRMDEGiSShQKw6OKRseN26Hxg0M=;
-	b=FsJTpKKnXbio8SND1s1thRm9O+Ioa7LV/ohIU03LvcLBVubCeLSwPhE1dyTSBb+jfNKVZ8
-	GHwWXy1+trr933LG+RJ+dfxgJ0lRhulKrVE+XI8QT/vWODhKbkXZugqJuHOGNKH4WxTm6k
-	Vb4OZ/lpvZXFEEmyBeDVsN41G9vDUWQ=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-nkGTJbKIOsK6M6_0H6aoDw-1; Fri,
- 27 Sep 2024 17:11:52 -0400
-X-MC-Unique: nkGTJbKIOsK6M6_0H6aoDw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F2381936B95;
-	Fri, 27 Sep 2024 21:11:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BC3D43003DF2;
-	Fri, 27 Sep 2024 21:11:43 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <55cef4bef5a14a70b97e104c4ddd8ef64430f168.camel@gmail.com>
-References: <55cef4bef5a14a70b97e104c4ddd8ef64430f168.camel@gmail.com> <20240923183432.1876750-1-chantr4@gmail.com> <20240814203850.2240469-20-dhowells@redhat.com> <2663729.1727470216@warthog.procyon.org.uk>
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: dhowells@redhat.com, Manu Bretelle <chantr4@gmail.com>,
-    asmadeus@codewreck.org, ceph-devel@vger.kernel.org,
-    christian@brauner.io, ericvh@kernel.org, hsiangkao@linux.alibaba.com,
-    idryomov@gmail.com, jlayton@kernel.org,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-    linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
-    netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
-    smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
-    v9fs@lists.linux.dev, willy@infradead.org
-Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
+	s=arc-20240116; t=1727472543; c=relaxed/simple;
+	bh=pH33JBA1XiLy2oH0ddyRqN1FptJn9l9jJKHzfLHfq0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GNrDctKYjDyYN1eDvsvN+6mILtEFeYCqxqSdEMl8bvArclQmEbcTW3CryO8OHwXkCztI4QjA3zPnZAe/BDzVSQlJ1SXY3z4LMkqpg7hHlgCgpTyf+5Dvl9LlD1I37bwwaQJ+v9auLAoB526PeBTfvG2SkWzrKFjRG40OOy1TrK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G8Ah7msH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AEF7C4CEC4;
+	Fri, 27 Sep 2024 21:29:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727472542;
+	bh=pH33JBA1XiLy2oH0ddyRqN1FptJn9l9jJKHzfLHfq0w=;
+	h=Date:From:To:Cc:Subject:From;
+	b=G8Ah7msHY/Yh9Vhmqa7j32k1LcmH7052ZB2GYCv4MU2KF/zg75r5/O56XEKBAQz2I
+	 JDY04yPKVbQXWYHY5fS5lUfAyWF8Arth/73KnUF0eLppnfdMEWDbJRLSc4FXTPTTFC
+	 Xq1qccZeEi2Nd10HZt4lIM78xZ84v3/gxdl0cuJet5GMo1/WxvBKfNpkxoATtEB0yk
+	 68pAl1fEYyiFNeaM5ZEo4qr96PBIH7Kjd0942To6NstglINSZntdpdJX+m5DEckzlf
+	 TZMfH2tsFS4VyaYCfs5xBryctjSUhX8iVmWpVqw0w079nPXeR2f7nJyQCxzK+n4gE5
+	 uGXgguFUDs0Lg==
+Date: Fri, 27 Sep 2024 14:29:00 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>, samitolvanen@google.com,
+	petr.pavlu@suse.com, da.gomez@samsung.com,
+	linux-modules@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	vdonnefort@google.com, song@kernel.org, catalin.marinas@arm.com,
+	chunhui.li@mediatek.com, xion.wang@mediatek.com,
+	masahiroy@kernel.org, mcgrof@kernel.org
+Subject: [GIT PULL] Modules changes for v6.12-rc1
+Message-ID: <ZvcjnE9Me0hCy4yK@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2668611.1727471502.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 27 Sep 2024 22:11:42 +0100
-Message-ID: <2668612.1727471502@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Eduard Zingerman <eddyz87@gmail.com> wrote:
+The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
 
-> On Fri, 2024-09-27 at 21:50 +0100, David Howells wrote:
-> > Is it possible for you to turn on some tracepoints and access the trac=
-es?
-> > Granted, you probably need to do the enablement during boot.
-> =
+  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
 
-> Yes, sure, tell me what you need.
+are available in the Git repository at:
 
-If you look here:
+  git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/ tags/modules-6.12-rc1
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log=
-/?h=3Dnetfs-fixes
+for you to fetch changes up to b319cea80539df9bea0ad98cb5e4b2fcb7e1a34b:
 
-you can see some patches I've added.  If you can try this branch or cherry
-pick:
+  module: Refine kmemleak scanned areas (2024-09-13 09:55:17 -0700)
 
-	netfs: Fix write oops in generic/346 (9p) and generic/074 (cifs)
-	netfs: Advance iterator correctly rather than jumping it
-	netfs: Use a folio_queue allocation and free functions
-	netfs: Add a tracepoint to log the lifespan of folio_queue structs
+----------------------------------------------------------------
+Modules changes for v6.12-rc1
 
-And then turn on the following "netfs" tracepoints:
+There are a few fixes / cleanups from Vincent, Chunhui, and Petr, but the
+most important part of this pull request is the Rust community stepping
+up to help maintain both C / Rust code for future Rust module support. We
+grow the set of modules maintainers by 3 now, and with this hope to scale to
+help address what's needed to properly support future Rust module support.
 
-	read,sreq,rreq,failure,write,write_iter,folio,folioq,progress,donate
+A lot of exciting stuff coming in future kernel releases.
 
-which can be done by:
+This has been on linux-next for ~ 3 weeks now with no issues.
 
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_read/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_rreq/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_sreq/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_failure/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_write/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_write_iter/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_folio/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_folioq/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_progress/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_donate/enable
+----------------------------------------------------------------
+Chunhui Li (1):
+      module: abort module loading when sysfs setup suffer errors
 
-or through trace-cmd.
+Luis Chamberlain (1):
+      MAINTAINERS: scale modules with more reviewers
 
-> Alternatively I can pack this thing in a dockerfile, so that you would
-> be able to reproduce locally (but that would have to wait till my evenin=
-g).
+Petr Pavlu (2):
+      module: Split modules_install compression and in-kernel decompression
+      module: Clean up the description of MODULE_SIG_<type>
 
-I don't have Docker set up, so I'm not sure how easy that would be for me =
-to
-use.
+Vincent Donnefort (1):
+      module: Refine kmemleak scanned areas
 
-Thanks,
-David
-
+ MAINTAINERS                    |  3 ++
+ kernel/module/Kconfig          | 77 +++++++++++++++++++++---------------------
+ kernel/module/debug_kmemleak.c | 18 +++-------
+ kernel/module/sysfs.c          | 63 ++++++++++++++++++++++------------
+ scripts/Makefile.modinst       |  2 ++
+ 5 files changed, 90 insertions(+), 73 deletions(-)
 
