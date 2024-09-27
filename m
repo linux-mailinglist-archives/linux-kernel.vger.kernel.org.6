@@ -1,144 +1,231 @@
-Return-Path: <linux-kernel+bounces-341639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BE79882D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:53:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B979882E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37C201C20F67
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:53:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D728B22E05
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51ED4188CBC;
-	Fri, 27 Sep 2024 10:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B134189B88;
+	Fri, 27 Sep 2024 10:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvVycrQ1"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UbMiJWtk";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bCMKr1nK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jzK9n+RT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fhVI8TSH"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1227176231;
-	Fri, 27 Sep 2024 10:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE7F176231;
+	Fri, 27 Sep 2024 10:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727434382; cv=none; b=azGP5ZBi+pCTCPkNdH7D9yvP1pYQqOT1ksn1/CgDp9t/G0tIDvY5Wk4aUhcBSj4pUtoMNRJZuWhD3aGt4xMtdnMX9aRP4Lmyy0FeZfOUOJjkkt698oTrCZ3I6YXBl9ENMXyyuefhv7mZF0QOhkIS0cpremrnYN+0NVYuZTJFJL8=
+	t=1727434607; cv=none; b=o9N1Uj59RDTQpiG4/hIMDt9npahihbj6pyyppYQ04OkIrFhMmMnyMWXuSRAIVS4w/mRnXVc38dy7nViYNbJ/+CIvVrLktEdR2I/NRFQ5KK4bc+SagSgZ7njozBeE95r0T/WyLX6RWEP9FkfmSPioKZYOnif+B5nCDngOnKV6TUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727434382; c=relaxed/simple;
-	bh=qpzjcK7P9aCIhyL9j6ErFx1L8MX/ouoRYzE4NRYamEA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=onvch/lRJCi4sOACc1OOZWsGHsLm827KG6uNSqdDd48CMnXBW36AJdQ/Ynl6Z1ntsCS7JDCp34yeukdby+4YiMn0GC8ZEzoZGsMnvHGnnGQ9xzQwaaHgt6ocK29Uk4MkY9JEfcYGjlKap0zjvrGR+wlqn1DME/sPEm/8YPgEStw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvVycrQ1; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2054e22ce3fso23177935ad.2;
-        Fri, 27 Sep 2024 03:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727434380; x=1728039180; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=E+c2UctfRu4dEGPzoXRKlz44mkq/CrL/aM0G1S5KNv0=;
-        b=lvVycrQ1sfe+2GVle3nLaF2UD8qeixxUmgcm6O4+45mkZPHw8AHMQUZmSQjY+uoAce
-         eIfRx18DEYFPhnUvNanOByFTbZFVyDvilW6C272sS3NppmNNJ27rKNPKH6ZeMD00ZyN+
-         07Caupbx+Y7RqlxGhXy1jYgfDbyHc6kDL/cBT5Bh5zs2AqqrULO6vxGJcVXJopR95QlL
-         NgFjhIC7ujDkmqeTZkow1ObMH1tXQn5NdYjdWwe4IzSLcrVwPKmZn6YmeldWh4k1/At9
-         +kwzgrqdL3al7lauUfw2qTTwjiPHmqAtGAMHZ4085nzOsjnbFE7RrqMwdvPyF6hwJMbz
-         bmTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727434380; x=1728039180;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E+c2UctfRu4dEGPzoXRKlz44mkq/CrL/aM0G1S5KNv0=;
-        b=xVK1Q/3HD17hoxqX9Xgo25O0sCvz+ss0cfp/OW2FDlBaa45RAUrAhXeR9vTGPZTJ/e
-         2Z/0/pSAZvU1baU+1U6aEZiJHwqmcWIzzvnNwVGbdnMCsq1ipkhoHa7FVcZ2LsFpzEVo
-         2RB+Wav3td+ZCgKraZXnHWljAAghvtajBEujhIkj+GpleKcGTI4puhfseocCQCxMGvwe
-         10A2tsvUzl6eDbLWqIa6vJRf/kwlM7awdLnz/aAKUVcdGan2PmWj1nMdyD/VrLj6Lkm+
-         VUcTgxdcqOnix7OM5YKRn4kA4p5fxGdNJjKY79Xmv210l284rxCyrjkS0RGlbblCNK4R
-         uG1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUrw8NW2UG84wuf1NBQcKT/z4uxGqfOiNkzIro3ld7wYzD+D+hL66PnnKShIbRfdcWuoZWK3awHZk4nUtA=@vger.kernel.org, AJvYcCXHzG8165jA0NyNCkEsTtS9nfJFgnPgPX0RU82181+Iso6AB+DbTgIcJUWDIqCarPpKCBABFxhZ84a6LTQyPlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLrhHGyQUzVPQfKnS5B5IlRBrL8Y5hfeV54C8DVI0rJhGbrfjh
-	TyB0pO/AXcQIwCcnQWCIdrp5QycZDsJtN7LqLSwnIZwKbvGv+0s9
-X-Google-Smtp-Source: AGHT+IFGNiiYrlQT5OIBiZ/pzB/VJiF7lU6NaACC3XfoT0i7X25FX8NVpQCZYuqjMSI+wOeV2Hj1Ag==
-X-Received: by 2002:a17:902:ce88:b0:205:4531:54d with SMTP id d9443c01a7336-20b37b6f245mr41351605ad.30.1727434379981;
-        Fri, 27 Sep 2024 03:52:59 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37db029csm11624785ad.106.2024.09.27.03.52.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 03:52:59 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <8fb6bcdf-be19-4769-a1cb-dada2e9c3362@roeck-us.net>
-Date: Fri, 27 Sep 2024 03:52:57 -0700
+	s=arc-20240116; t=1727434607; c=relaxed/simple;
+	bh=zESR3K2Jq1dcJ2qZGed0oVKJ3pFoF5CF1TOUyybCqoM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sfKRMmPZKKa0SmVpLTgnACjztY4ki6/3F7EB5tzokBNrkXtO+M71SHkjOVRT73858wgbXKALGMMYbU1WbYccLgSR2aoExzhXSbJ66UTltgxXL+DfONaNZDZAhsV1JVEPT+Jgf6MSDJhqJvjZJ8GTDF3tQL9QkJyX497VL9bVaXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UbMiJWtk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bCMKr1nK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jzK9n+RT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fhVI8TSH; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DEC971FD73;
+	Fri, 27 Sep 2024 10:56:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727434604; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tgF9R9s9imIY5hY32djPCrmT+BnOQ2JaDGEea9O/4PE=;
+	b=UbMiJWtkyB82NEnVc9Ao7vQTG+NsWLKfGdyX0rxAHKgfKKoF0CFyCYK5kS3Nbhy99IPhB6
+	60pjQg2e2gKcgQFT1ZcxMN1uT3XsTx4zvvJM5/lNP0ZHPEvoqDujq3GxYip9AyMHhU/kWE
+	C4xl6Us9ASSH9V1mKS3Nz0QiTvy84HM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727434604;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tgF9R9s9imIY5hY32djPCrmT+BnOQ2JaDGEea9O/4PE=;
+	b=bCMKr1nKq1aB2NflnNrFstG2t8AgDB2uPenck9pSIM+KGB5QUnjI40OISgO6ucJ0X5Pcsy
+	AqNK60r7mPgaWOAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727434603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tgF9R9s9imIY5hY32djPCrmT+BnOQ2JaDGEea9O/4PE=;
+	b=jzK9n+RTwVInQEs9WYhlf124s68pgCJLNik3HmYIeQrDlVh/eqRpZ9lWKqIOJ8Sffcg6Rm
+	cen6VUSquknestoTdrlvwW0fVOOg0jP729GtVTs2dJGTpxWLkYhecqFvKMgzJslYBnB/63
+	zbOwZGYG/fQSx5Ppdyi2hcuGDmYWB4c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727434603;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tgF9R9s9imIY5hY32djPCrmT+BnOQ2JaDGEea9O/4PE=;
+	b=fhVI8TSHTbhB0fP4yHgAxjqfx9FXPbU0lw5QpujOg3azMuCx506OBFFM0AL2Zka16SbVM4
+	5N4Xmfu0o+CJHfDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D153F1386E;
+	Fri, 27 Sep 2024 10:56:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kPYQM2uP9maTYgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 27 Sep 2024 10:56:43 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9ADE6A0826; Fri, 27 Sep 2024 12:56:43 +0200 (CEST)
+Date: Fri, 27 Sep 2024 12:56:43 +0200
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+	jack@suse.cz, linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>,
+	Wesley Hershberger <wesley.hershberger@canonical.com>,
+	=?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@stgraber.org>,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Eric Sandeen <sandeen@redhat.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] ext4: fix off by one issue in alloc_flex_gd()
+Message-ID: <20240927105643.h4b4zunjivv4nkzu@quack3>
+References: <20240927063620.2630898-1-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] MAINTAINERS: Update the maintainer of StarFive
- watchdog driver
-To: Xingyu Wu <xingyu.wu@starfivetech.com>,
- Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
- Ziv Xu <ziv.xu@starfivetech.com>, linux-kernel@vger.kernel.org
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, linux-watchdog@vger.kernel.org
-References: <20240927065032.2773997-1-xingyu.wu@starfivetech.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240927065032.2773997-1-xingyu.wu@starfivetech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240927063620.2630898-1-libaokun@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On 9/26/24 23:50, Xingyu Wu wrote:
-> Samin quits maintaining the StarFive watchdog driver and Ziv joins instead.
-> Update the maintainer of this driver from Samin to Ziv.
+On Fri 27-09-24 14:36:20, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+> Wesley reported an issue:
+> 
+> ==================================================================
+> EXT4-fs (dm-5): resizing filesystem from 7168 to 786432 blocks
+> ------------[ cut here ]------------
+> kernel BUG at fs/ext4/resize.c:324!
+> CPU: 9 UID: 0 PID: 3576 Comm: resize2fs Not tainted 6.11.0+ #27
+> RIP: 0010:ext4_resize_fs+0x1212/0x12d0
+> Call Trace:
+>  __ext4_ioctl+0x4e0/0x1800
+>  ext4_ioctl+0x12/0x20
+>  __x64_sys_ioctl+0x99/0xd0
+>  x64_sys_call+0x1206/0x20d0
+>  do_syscall_64+0x72/0x110
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> ==================================================================
+> 
+> While reviewing the patch, Honza found that when adjusting resize_bg in
+> alloc_flex_gd(), it was possible for flex_gd->resize_bg to be bigger than
+> flexbg_size.
+> 
+> The reproduction of the problem requires the following:
+> 
+>  o_group = flexbg_size * 2 * n;
+>  o_size = (o_group + 1) * group_size;
+>  n_group: [o_group + flexbg_size, o_group + flexbg_size * 2)
+>  o_size = (n_group + 1) * group_size;
+> 
+> Take n=0,flexbg_size=16 as an example:
+> 
+>               last:15
+> |o---------------|--------------n-|
+> o_group:0    resize to      n_group:30
+> 
+> The corresponding reproducer is:
+> 
+> img=test.img
+> truncate -s 600M $img
+> mkfs.ext4 -F $img -b 1024 -G 16 8M
+> dev=`losetup -f --show $img`
+> mkdir -p /tmp/test
+> mount $dev /tmp/test
+> resize2fs $dev 248M
+> 
+> Delete the problematic plus 1 to fix the issue, and add a WARN_ON_ONCE()
+> to prevent the issue from happening again.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+I don't think you are adding WARN_ON_ONCE() :). Otherwise feel free to add:
 
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> 
+> Reported-by: Wesley Hershberger <wesley.hershberger@canonical.com>
+> Closes: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2081231
+> Reported-by: Stéphane Graber <stgraber@stgraber.org>
+> Closes: https://lore.kernel.org/all/20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com/
+> Tested-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> Tested-by: Eric Sandeen <sandeen@redhat.com>
+> Fixes: 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation in alloc_flex_gd()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>  fs/ext4/resize.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
+> index e04eb08b9060..397970121d43 100644
+> --- a/fs/ext4/resize.c
+> +++ b/fs/ext4/resize.c
+> @@ -253,9 +253,9 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned int flexbg_size,
+>  	/* Avoid allocating large 'groups' array if not needed */
+>  	last_group = o_group | (flex_gd->resize_bg - 1);
+>  	if (n_group <= last_group)
+> -		flex_gd->resize_bg = 1 << fls(n_group - o_group + 1);
+> +		flex_gd->resize_bg = 1 << fls(n_group - o_group);
+>  	else if (n_group - last_group < flex_gd->resize_bg)
+> -		flex_gd->resize_bg = 1 << max(fls(last_group - o_group + 1),
+> +		flex_gd->resize_bg = 1 << max(fls(last_group - o_group),
+>  					      fls(n_group - last_group));
+>  
+>  	flex_gd->groups = kmalloc_array(flex_gd->resize_bg,
+> -- 
+> 2.46.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
