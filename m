@@ -1,380 +1,279 @@
-Return-Path: <linux-kernel+bounces-341651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 918C6988301
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:08:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B30798830B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B46A21C21EED
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44C1728394F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281D0189526;
-	Fri, 27 Sep 2024 11:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B8F188732;
+	Fri, 27 Sep 2024 11:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="S6fxygLP"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2077.outbound.protection.outlook.com [40.107.92.77])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KGmsG4Vo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DD32B9B5;
-	Fri, 27 Sep 2024 11:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727435308; cv=fail; b=gQ9LMuzqe7cmg4YuMtJ0VsyTanz6a+loCr7UJ8m5EShlzFRWrqWug9Lz7hJCQnGWWzwJiDSjI0SFYOc63sPw6Jo9oNv62nzTyIp+GhJx2s3uztdEzi0ot1DAM5B/BUa2AO+ZaEQBJL0rjbTAFVDcFTjJd+qv9DxPURQDXN2EIyI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727435308; c=relaxed/simple;
-	bh=96u4lo4QbWf3wRm/1lj4Qe/W1Vzue36CoHbSBah+iEI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pkxKh7lIZVsdMsrePvfHcJGQqyO+jirYaN/M7ComlpQlnYDtcMib665ESqYxckZ5hzyOEtLUukyj9VXlDjJtIGTPE+7VjihNpJaWMeQCzsxo3GEFY5t2UAzgaO2tygonBdyhShYP14tND2D7m5XL+Ce3fn0pp2y+nhZoL49ukzM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=S6fxygLP; arc=fail smtp.client-ip=40.107.92.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cnTpnITvotVLi7z/UP2MJCd+K0G5z7M47qSRmV9iIpwTUDASbB5bFAZYyiqYwiME7MQpvLXhdAcJdxO4DawmH/SF9ZezadvC5pUeZRDkRC+dK0kHTckPn+TRnpvnf3L3v0SDor27EMVJOISAnKw1+9RKWm24FTYjHRfF6PatdO3an+ANucxhrq4ol49doGvfIaaymVVewABvxfCPuPyHdK7A2tBfex4V6C/NJajEzqEkgiDVaa6lm7HVQUQXe+OW7Ytc1mNd2G8u+VXOLArK87IMEx3I4p6VpfUBp8CC51dXgwRKgqnrGn6b1UGGk43pNFgd/BmneWKmbW0DV/c6Jw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WMb47/T3MYXkBzrcpoA8Lboszs/Q9rt39lHup7knp08=;
- b=d6S78FcIjghnxTo73ieILAXWepBU4CEVYJ2Wv1NfR/Yn5HzNAG4HrT/+cHFR4r3o/Y/C0bVtHWqWZvXyYTXHlgtktTaZkBd0DTifHTpamBlemQVZAFXn2fdXNWN/Cc/QsM00QtEwQV5ABDN5ZIYeudNJ2k+djTRF6YIfRjWoVps0K/TXlz3EXETqfRp7L2QuQtB/r9YBAVWhUDkeJobmUfd1wqWgVr03Zg8XOyqih9/2xgvF62LgzhWyBof2/cVHD74kLk07l4ReeNwIPEHwCa4gNfRQQ3AOAVVlRiWPiEKqxnJEMl/D7akxHe1WMEkoGYye4qKqleStw5Pm0qVJRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WMb47/T3MYXkBzrcpoA8Lboszs/Q9rt39lHup7knp08=;
- b=S6fxygLPY95jvT8UfLg25Ja5ifUlxeNk/ynNjU1b1vTEVPMWrJ0M6SZnC4uYDvKc5xbi4Mnm6Bucv3jnHORKJi3vLmIv2IFkMy6wOyrqX7bknbk7Gr2IQcjOHW0SKfKs1TKR2jKwSXVpmpBP3YNS8QNMcXn+rh8GeHK2FOInMBI=
-Received: from CH5PR03CA0018.namprd03.prod.outlook.com (2603:10b6:610:1f1::18)
- by MW3PR12MB4345.namprd12.prod.outlook.com (2603:10b6:303:59::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.22; Fri, 27 Sep
- 2024 11:08:21 +0000
-Received: from DS1PEPF00017097.namprd05.prod.outlook.com
- (2603:10b6:610:1f1:cafe::9f) by CH5PR03CA0018.outlook.office365.com
- (2603:10b6:610:1f1::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.22 via Frontend
- Transport; Fri, 27 Sep 2024 11:08:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS1PEPF00017097.mail.protection.outlook.com (10.167.18.101) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8005.15 via Frontend Transport; Fri, 27 Sep 2024 11:08:20 +0000
-Received: from [10.136.38.163] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 27 Sep
- 2024 06:08:11 -0500
-Message-ID: <438e185b-b1dc-4a34-ae09-667a706aa1a3@amd.com>
-Date: Fri, 27 Sep 2024 16:38:04 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8E982488;
+	Fri, 27 Sep 2024 11:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727435822; cv=none; b=mgkiJkHdzR0bv1rw7XEVOAiQNsLgvyEnmh3YN1F7Hw/1747leInkkxtmvttig8Xd2RSDM/GdekCVouyjVEIZDXCozqW/hQEm8ZBkTXPlat9k2vDR76ZKfsYIpg+CGs8kaOaQdnMnsJnveYtidEwj5gRXAROvArAyVr1vg5hEo3w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727435822; c=relaxed/simple;
+	bh=cnJM+E8jPuaOwm3l36DtHQZW0XW+rwgvrnTBcES9sgk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=dHavDJmkiLtklEEbWEDG2JcLVVrG+N7vGU6qJG/2zoWUvoS2N/VcN0eTxwu5ylhsD98j9moNkJv4Nt22FO1JmWHXLxvzaEVutsxCVW4Ouig35f5p27liIWnd4gebkfEDQK7k+PeCOy4uYoqQVTZMTn8AqZ4Ny4VY8+gOcJ3+AGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KGmsG4Vo; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727435821; x=1758971821;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=cnJM+E8jPuaOwm3l36DtHQZW0XW+rwgvrnTBcES9sgk=;
+  b=KGmsG4VoAW058B2fcEn4WJxiPPs0oSy9+X5SgGs+dtpCrUkajF9C5LRa
+   yJtwQH58hJyAAAArR/0fWOYxHGMjW1RuOaGkN6ipPMtZG4VaEdVecNr1i
+   io7MV0usRkPAcQ93TbXqOEqxn8oNgYQtPV96hAzBTybhgh5Lrj5lAgKdR
+   Z9X92rL7k1AdOFSJwOCCrzXIseL/R1dSnaC95jYi2eY6226bJGNQug83j
+   LZNB5x6/0tDfYZeQoQOgLTavTryqHfGFeOHj1kDWTtSx25TAGUkuEeFQg
+   BdECrrLmKKrxFyabyyxWFHyyQH5RFrCJhzKLiAL7ApW5evcuQ+koTgg8W
+   g==;
+X-CSE-ConnectionGUID: ZbnhjsiERkq3M8BthAt4rw==
+X-CSE-MsgGUID: z/vKt3LESOC3/Z6heOcNiQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="51991000"
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="51991000"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 04:17:00 -0700
+X-CSE-ConnectionGUID: FwMmTBUNRAyRuayWL9xkUA==
+X-CSE-MsgGUID: ee6BMitiRRCtHHZ4Eu6DOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="72583708"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.80])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 04:16:56 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 27 Sep 2024 14:16:52 +0300 (EEST)
+To: Jian-Hong Pan <jhp@endlessos.org>
+cc: Bjorn Helgaas <helgaas@kernel.org>, Johan Hovold <johan@kernel.org>, 
+    David Box <david.e.box@linux.intel.com>, 
+    Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
+    Nirmal Patel <nirmal.patel@linux.intel.com>, 
+    Jonathan Derrick <jonathan.derrick@linux.dev>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux@endlessos.org
+Subject: Re: [PATCH v10 3/3] PCI/ASPM: Make pci_save_aspm_l1ss_state save
+ both child and parent's L1SS configuration
+In-Reply-To: <20240927103723.24622-2-jhp@endlessos.org>
+Message-ID: <a6502c65-770b-4dee-3fab-2ec58c277404@linux.intel.com>
+References: <20240927103231.24244-2-jhp@endlessos.org> <20240927103723.24622-2-jhp@endlessos.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] perf sched stats: Add schedstat v16 support
-Content-Language: en-GB
-To: Namhyung Kim <namhyung@kernel.org>, Ravi Bangoria <ravi.bangoria@amd.com>
-CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<irogers@google.com>, <yu.c.chen@intel.com>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<rostedt@goodmis.org>, <vincent.guittot@linaro.org>, <bristot@redhat.com>,
-	<adrian.hunter@intel.com>, <james.clark@arm.com>,
-	<kan.liang@linux.intel.com>, <gautham.shenoy@amd.com>,
-	<kprateek.nayak@amd.com>, <juri.lelli@redhat.com>,
-	<yangjihong@bytedance.com>, <void@manifault.com>, <tj@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
-	<santosh.shukla@amd.com>, <ananth.narayan@amd.com>, <sandipan.das@amd.com>
-References: <20240916164722.1838-1-ravi.bangoria@amd.com>
- <20240916164722.1838-4-ravi.bangoria@amd.com> <ZvT74_Sp1bQZvqbO@google.com>
-From: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
-In-Reply-To: <ZvT74_Sp1bQZvqbO@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00017097:EE_|MW3PR12MB4345:EE_
-X-MS-Office365-Filtering-Correlation-Id: a048ccf6-1b7f-4946-bd33-08dcdee4b278
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|7416014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WjFwLzVETXRNRE9DWFZETFdMa0h4ZGREL1dmVDhIdE1iejAxcVR5UmFYc1VT?=
- =?utf-8?B?eXdQbk9NQVJ3cE5jRk5zK3NCRWUyVDVNQkFmRCtOQ1MwNzBCOGpPYTY5TjNJ?=
- =?utf-8?B?SklpR3NHMjRUM2JxMlByYmd1NzVlOWwraG9kb0RmdE5tQXdONUxabEsvN1pE?=
- =?utf-8?B?MWVFRnliejNTcmtnVTR0Unc0WjFaTkJ6blc5U0NaRW40d3VtM0FaSE1SSWZu?=
- =?utf-8?B?QklXRERaT1RDamUzUzJiWkZnWTBYN1haTlRXaUcwbVZ0V2ZjMkI1bUxRMEsw?=
- =?utf-8?B?VE5rbmZkeUlPeVZKb2poUDRhZ2MvVWlkVUZFd3JrbkNQUHB0RGNVQkQya2Ny?=
- =?utf-8?B?UFErUitwQnFYWS9IV1BoM3ExcGdzYWZLSHJTOVJtM0NoVTkyYkRJbWtrUHRO?=
- =?utf-8?B?dHovZkNCL1BXZUIvU1piVDZ1S0hzSW1mOFdGMVp2by94TGNiVXNRREZZb1V0?=
- =?utf-8?B?Tk5CU05vRXI0ZEZsNzRzYlJSRjE4aFNXZWVHUThRc2tJMW9Qdks3MUo0M0J0?=
- =?utf-8?B?RUt4YmZ4WWJKRE1Lb25xUStYUDlzS1pYYk9YbzMyaHhlamdSL0l3cnN5dEFY?=
- =?utf-8?B?YUFuQjg0WFgrRURYUnk4azRreURaSGgwejA2YkJpT21kM0VVblpiSDdnVm1t?=
- =?utf-8?B?VSsrTEJlWUZyUkFUZEhaT2xKN01GdGFCSkJha2ZCK3A2bzdPRml2bFZBN3hE?=
- =?utf-8?B?bmI3cys4VW1NMXVVN1JqWWRpTEFML3Q3S0Y5djlEazZUdm9aMmhWYnRPYzFv?=
- =?utf-8?B?dzNEV3E5VnMxN2JjdFkzcVA2NmxGSzhxYURWUk1FWVdkdENQV1dveWRWUGZz?=
- =?utf-8?B?bXJXNWozU2w2SnFoeHczVDVpbmptL1dFL0tsUzJCYUEwK3h3bU9OL041WWhB?=
- =?utf-8?B?NDF3MVdnTmVCRXMzS3VQdFNwZHVhUTZwbkU2M1h5UVdvVVY3T3RNS2R0UkZX?=
- =?utf-8?B?Wno4R0NnQ3dLVWxST09Wd1poZ0o4Q0s5emU3MlBMT1BZcGV3MlVHMW5HQitT?=
- =?utf-8?B?QVFhWVBGamhIYTVMUEQrdDMwVkR1UnIyRzV3ZU1jemFVM1F2ZXI1Qll1dDBm?=
- =?utf-8?B?NlpZalZnTmFRdmJ3WFoyMTVtNzIvdWthNFVva2JlNWpkMHdtckx4SFZhTDVt?=
- =?utf-8?B?QUZOR0lHZzAzWVhHMFpQeU5yRG5JbmNQdk8wSzdpWWpjMTFxVVNJZnhGem45?=
- =?utf-8?B?RUdRSzRvNC9CUVZlaW5Ra0N0b0o1aUtJT0xtLyt3MnBwbUJCVFRQZlA1NitF?=
- =?utf-8?B?WE5heXRyTFVLRndOSGlFbGxqd0YzMEZUN0pLb0svS2pqSVNlakw2dUNjM0Rh?=
- =?utf-8?B?ZUFVYWRBdlRocTB2bU1wbE5OcjRLQlk0VFpETkZTclRTTTNDenZ1OG1zSkVi?=
- =?utf-8?B?blB0Yk55YlpzdVlRKzFCOGJvOVpsZ1p5MTJITS9maTBLZ2ROUllHdkt5STRq?=
- =?utf-8?B?bGJsR2kraHhmY05OcVRXdzQzNlgwemFBVHBtNHBlTUtiZVEzRmphUm8wbEZZ?=
- =?utf-8?B?TzhnQ1BhbkZNNmFTMTZnSk5uNldhT3FtMEdaVUNhYU5Hcnd2Z2t2aVNmOVNJ?=
- =?utf-8?B?dlJic3Zwb1V3OEVtaFFPSkt5eStHQnpWRjBnZk1CWkc2a09WcEZQRXR6a1FY?=
- =?utf-8?B?R2ZPOW9mNW9WZC9HT0k0YU5PTkZ1ZC9jTlVXOE5oZEpzQ1N4VGo2WlJzUEpo?=
- =?utf-8?B?SmJOVnJoU2JpdXcwYUthVTZNaUF1Sk1TeXhMbFpxS1RUa3pTeTYxQVdLT0xt?=
- =?utf-8?B?aUNkMlduUzIyVDJxelovdGJRc2JEbXhKV2VJSjFBZVIvYXcxYXdENzAwVXo3?=
- =?utf-8?B?QU5iYk9obW54QVdwcElhVGQzenFnS1FjcTQ1cDhCaVNFa1VlUnV1akU0OTFG?=
- =?utf-8?Q?XvoSPWbe7mmEU?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(7416014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 11:08:20.6841
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a048ccf6-1b7f-4946-bd33-08dcdee4b278
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF00017097.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4345
+Content-Type: multipart/mixed; boundary="8323328-1628269038-1727435812=:961"
 
-Hello Namhyung,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 9/26/2024 11:44 AM, Namhyung Kim wrote:
-> On Mon, Sep 16, 2024 at 04:47:20PM +0000, Ravi Bangoria wrote:
->> From: Swapnil Sapkal <swapnil.sapkal@amd.com>
->>
->> /proc/schedstat file output is standardized with version number.
->> Add support to record and raw dump v16 version layout.
-> 
-> How many difference between v15 and v16?  Can we have it in the same
-> file with a different version number?
-There is difference in ordering in domain fields between v15 and v16, 
-busy and idle load balancing fields are interchanged. Furthermore if new 
-fields are added, the parser breaks and maintaning a separate header 
-file seemed cleaner.
-It will be difficult to define the perf structs, if the fields are 
-present in same header file.
-If you any suggestion to handle this, I am all ears.
+--8323328-1628269038-1727435812=:961
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
---
-Thanks and Regards,
-Swapnil
-> 
-> Thanks,
-> Namhyung
-> 
->>
->> Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
->> Co-developed-by: Ravi Bangoria <ravi.bangoria@amd.com>
->> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
->> ---
->>   tools/lib/perf/Makefile                       |  2 +-
->>   tools/lib/perf/include/perf/event.h           | 14 +++++++
->>   .../lib/perf/include/perf/schedstat-cpu-v16.h | 13 ++++++
->>   .../perf/include/perf/schedstat-domain-v16.h  | 40 +++++++++++++++++++
->>   tools/perf/util/event.c                       |  6 +++
->>   tools/perf/util/synthetic-events.c            |  6 +++
->>   6 files changed, 80 insertions(+), 1 deletion(-)
->>   create mode 100644 tools/lib/perf/include/perf/schedstat-cpu-v16.h
->>   create mode 100644 tools/lib/perf/include/perf/schedstat-domain-v16.h
->>
->> diff --git a/tools/lib/perf/Makefile b/tools/lib/perf/Makefile
->> index ebbfea891a6a..de0f4ffd9e16 100644
->> --- a/tools/lib/perf/Makefile
->> +++ b/tools/lib/perf/Makefile
->> @@ -187,7 +187,7 @@ install_lib: libs
->>   		$(call do_install_mkdir,$(libdir_SQ)); \
->>   		cp -fpR $(LIBPERF_ALL) $(DESTDIR)$(libdir_SQ)
->>   
->> -HDRS := bpf_perf.h core.h cpumap.h threadmap.h evlist.h evsel.h event.h mmap.h schedstat-cpu-v15.h schedstat-domain-v15.h
->> +HDRS := bpf_perf.h core.h cpumap.h threadmap.h evlist.h evsel.h event.h mmap.h schedstat-cpu-v15.h schedstat-domain-v15.h schedstat-cpu-v16.h schedstat-domain-v16.h
->>   INTERNAL_HDRS := cpumap.h evlist.h evsel.h lib.h mmap.h rc_check.h threadmap.h xyarray.h
->>   
->>   INSTALL_HDRS_PFX := $(DESTDIR)$(prefix)/include/perf
->> diff --git a/tools/lib/perf/include/perf/event.h b/tools/lib/perf/include/perf/event.h
->> index 35be296d68d5..c332d467c9c9 100644
->> --- a/tools/lib/perf/include/perf/event.h
->> +++ b/tools/lib/perf/include/perf/event.h
->> @@ -463,6 +463,12 @@ struct perf_record_schedstat_cpu_v15 {
->>   #undef CPU_FIELD
->>   };
->>   
->> +struct perf_record_schedstat_cpu_v16 {
->> +#define CPU_FIELD(_type, _name, _ver)		_type _name;
->> +#include "schedstat-cpu-v16.h"
->> +#undef CPU_FIELD
->> +};
->> +
->>   struct perf_record_schedstat_cpu {
->>   	struct perf_event_header header;
->>   	__u16			 version;
->> @@ -470,6 +476,7 @@ struct perf_record_schedstat_cpu {
->>   	__u32			 cpu;
->>   	union {
->>   		struct perf_record_schedstat_cpu_v15 v15;
->> +		struct perf_record_schedstat_cpu_v16 v16;
->>   	};
->>   };
->>   
->> @@ -479,6 +486,12 @@ struct perf_record_schedstat_domain_v15 {
->>   #undef DOMAIN_FIELD
->>   };
->>   
->> +struct perf_record_schedstat_domain_v16 {
->> +#define DOMAIN_FIELD(_type, _name, _ver)	_type _name;
->> +#include "schedstat-domain-v16.h"
->> +#undef DOMAIN_FIELD
->> +};
->> +
->>   #define DOMAIN_NAME_LEN		16
->>   
->>   struct perf_record_schedstat_domain {
->> @@ -490,6 +503,7 @@ struct perf_record_schedstat_domain {
->>   	char			 name[DOMAIN_NAME_LEN];
->>   	union {
->>   		struct perf_record_schedstat_domain_v15 v15;
->> +		struct perf_record_schedstat_domain_v16 v16;
->>   	};
->>   	__u16			 nr_cpus;
->>   	__u8			 cpu_mask[];
->> diff --git a/tools/lib/perf/include/perf/schedstat-cpu-v16.h b/tools/lib/perf/include/perf/schedstat-cpu-v16.h
->> new file mode 100644
->> index 000000000000..f3a55131a05a
->> --- /dev/null
->> +++ b/tools/lib/perf/include/perf/schedstat-cpu-v16.h
->> @@ -0,0 +1,13 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +
->> +#ifdef CPU_FIELD
->> +CPU_FIELD(__u32, yld_count, v16)
->> +CPU_FIELD(__u32, array_exp, v16)
->> +CPU_FIELD(__u32, sched_count, v16)
->> +CPU_FIELD(__u32, sched_goidle, v16)
->> +CPU_FIELD(__u32, ttwu_count, v16)
->> +CPU_FIELD(__u32, ttwu_local, v16)
->> +CPU_FIELD(__u64, rq_cpu_time, v16)
->> +CPU_FIELD(__u64, run_delay, v16)
->> +CPU_FIELD(__u64, pcount, v16)
->> +#endif /* CPU_FIELD */
->> diff --git a/tools/lib/perf/include/perf/schedstat-domain-v16.h b/tools/lib/perf/include/perf/schedstat-domain-v16.h
->> new file mode 100644
->> index 000000000000..d6ef895c9d32
->> --- /dev/null
->> +++ b/tools/lib/perf/include/perf/schedstat-domain-v16.h
->> @@ -0,0 +1,40 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +
->> +#ifdef DOMAIN_FIELD
->> +DOMAIN_FIELD(__u32, busy_lb_count, v16)
->> +DOMAIN_FIELD(__u32, busy_lb_balanced, v16)
->> +DOMAIN_FIELD(__u32, busy_lb_failed, v16)
->> +DOMAIN_FIELD(__u32, busy_lb_imbalance, v16)
->> +DOMAIN_FIELD(__u32, busy_lb_gained, v16)
->> +DOMAIN_FIELD(__u32, busy_lb_hot_gained, v16)
->> +DOMAIN_FIELD(__u32, busy_lb_nobusyq, v16)
->> +DOMAIN_FIELD(__u32, busy_lb_nobusyg, v16)
->> +DOMAIN_FIELD(__u32, idle_lb_count, v16)
->> +DOMAIN_FIELD(__u32, idle_lb_balanced, v16)
->> +DOMAIN_FIELD(__u32, idle_lb_failed, v16)
->> +DOMAIN_FIELD(__u32, idle_lb_imbalance, v16)
->> +DOMAIN_FIELD(__u32, idle_lb_gained, v16)
->> +DOMAIN_FIELD(__u32, idle_lb_hot_gained, v16)
->> +DOMAIN_FIELD(__u32, idle_lb_nobusyq, v16)
->> +DOMAIN_FIELD(__u32, idle_lb_nobusyg, v16)
->> +DOMAIN_FIELD(__u32, newidle_lb_count, v16)
->> +DOMAIN_FIELD(__u32, newidle_lb_balanced, v16)
->> +DOMAIN_FIELD(__u32, newidle_lb_failed, v16)
->> +DOMAIN_FIELD(__u32, newidle_lb_imbalance, v16)
->> +DOMAIN_FIELD(__u32, newidle_lb_gained, v16)
->> +DOMAIN_FIELD(__u32, newidle_lb_hot_gained, v16)
->> +DOMAIN_FIELD(__u32, newidle_lb_nobusyq, v16)
->> +DOMAIN_FIELD(__u32, newidle_lb_nobusyg, v16)
->> +DOMAIN_FIELD(__u32, alb_count, v16)
->> +DOMAIN_FIELD(__u32, alb_failed, v16)
->> +DOMAIN_FIELD(__u32, alb_pushed, v16)
->> +DOMAIN_FIELD(__u32, sbe_count, v16)
->> +DOMAIN_FIELD(__u32, sbe_balanced, v16)
->> +DOMAIN_FIELD(__u32, sbe_pushed, v16)
->> +DOMAIN_FIELD(__u32, sbf_count, v16)
->> +DOMAIN_FIELD(__u32, sbf_balanced, v16)
->> +DOMAIN_FIELD(__u32, sbf_pushed, v16)
->> +DOMAIN_FIELD(__u32, ttwu_wake_remote, v16)
->> +DOMAIN_FIELD(__u32, ttwu_move_affine, v16)
->> +DOMAIN_FIELD(__u32, ttwu_move_balance, v16)
->> +#endif /* DOMAIN_FIELD */
->> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
->> index c9bc8237e3fa..d138e4a5787c 100644
->> --- a/tools/perf/util/event.c
->> +++ b/tools/perf/util/event.c
->> @@ -566,6 +566,9 @@ size_t perf_event__fprintf_schedstat_cpu(union perf_event *event, FILE *fp)
->>   	if (version == 15) {
->>   #include <perf/schedstat-cpu-v15.h>
->>   		return size;
->> +	} else if (version == 16) {
->> +#include <perf/schedstat-cpu-v16.h>
->> +		return size;
->>   	}
->>   #undef CPU_FIELD
->>   
->> @@ -641,6 +644,9 @@ size_t perf_event__fprintf_schedstat_domain(union perf_event *event, FILE *fp)
->>   	if (version == 15) {
->>   #include <perf/schedstat-domain-v15.h>
->>   		return size;
->> +	} else if (version == 16) {
->> +#include <perf/schedstat-domain-v16.h>
->> +		return size;
->>   	}
->>   #undef DOMAIN_FIELD
->>   
->> diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
->> index 9d8450b6eda9..73b2492a4cde 100644
->> --- a/tools/perf/util/synthetic-events.c
->> +++ b/tools/perf/util/synthetic-events.c
->> @@ -2546,6 +2546,8 @@ static union perf_event *__synthesize_schedstat_cpu(struct io *io, __u16 version
->>   
->>   	if (version == 15) {
->>   #include <perf/schedstat-cpu-v15.h>
->> +	} else if (version == 16) {
->> +#include <perf/schedstat-cpu-v16.h>
->>   	}
->>   #undef CPU_FIELD
->>   
->> @@ -2667,6 +2669,8 @@ static union perf_event *__synthesize_schedstat_domain(struct io *io, __u16 vers
->>   
->>   	if (version == 15) {
->>   #include <perf/schedstat-domain-v15.h>
->> +	} else if (version == 16) {
->> +#include <perf/schedstat-domain-v16.h>
->>   	}
->>   #undef DOMAIN_FIELD
->>   
->> @@ -2709,6 +2713,8 @@ int perf_event__synthesize_schedstat(const struct perf_tool *tool,
->>   
->>   	if (!strcmp(line, "version 15\n")) {
->>   		version = 15;
->> +	} else if (!strcmp(line, "version 16\n")) {
->> +		version = 16;
->>   	} else {
->>   		pr_err("Unsupported /proc/schedstat version: %s", line + 8);
->>   		goto out_free_line;
->> -- 
->> 2.46.0
->>
+On Fri, 27 Sep 2024, Jian-Hong Pan wrote:
+
+> PCI devices' parameters on the VMD bus have been programmed properly
+> originally. But, cleared after pci_reset_bus() and have not been restored
+> correctly. This leads the link's L1.2 between PCIe Root Port and child
+> device gets wrong configs.
+>=20
+> Here is a failed example on ASUS B1400CEAE with enabled VMD. Both PCIe
+> bridge and NVMe device should have the same LTR1.2_Threshold value.
+> However, they are configured as different values in this case:
+>=20
+> 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Processo=
+r PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
+>   ...
+>   Capabilities: [200 v1] L1 PM Substates
+>     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Subst=
+ates+
+>       PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50us
+>     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+>       T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
+>     L1SubCtl2: T_PwrOn=3D0us
+>=20
+> 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Blue=
+ SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
+>   ...
+>   Capabilities: [900 v1] L1 PM Substates
+>     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Subst=
+ates+
+>       PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10us
+>     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+>       T_CommonMode=3D0us LTR1.2_Threshold=3D101376ns
+>     L1SubCtl2: T_PwrOn=3D50us
+>=20
+> Here is VMD mapped PCI device tree:
+>=20
+> -+-[0000:00]-+-00.0  Intel Corporation Device 9a04
+>  | ...
+>  \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
+>               \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
+>=20
+> When pci_reset_bus() resets the bus [e1] of the NVMe, it only saves and
+> restores NVMe's state before and after reset.
+
+> Because bus [e1] has only one
+> device: 10000:e1:00.0 NVMe.
+
+This is incomplete sentence. And I don't understand why the number of=20
+devices is relevant. Perhaps just drop it?
+
+> The PCIe bridge is missed.
+
+Unclear what this refers to (I know what you mean but please write it=20
+so that other reading this 10 years from now will also get what is
+missed).
+
+> However, when it
+> restores the NVMe's state, it also restores the ASPM L1SS between the PCI=
+e
+> bridge and the NVMe by pci_restore_aspm_l1ss_state().=20
+
+"it also restores ..." -> "ASPM code restores L1SS for both the parent=20
+bridge and the NVMe in pci_restore_aspm_l1ss_state()."
+
+> The NVMe's L1SS is
+> restored correctly. But, the PCIe bridge's L1SS is restored with the wron=
+g
+> value 0x0 [1]. Because, the parent device (PCIe bridge)'s L1SS is not sav=
+ed
+
+Join these sentences without . and drop the comma.
+
+I'd say "was not saved" because at that point it occurred clearly before=20
+the restore.
+
+> by pci_save_aspm_l1ss_state() before reset. That is why
+> pci_restore_aspm_l1ss_state() gets the parent device (PCIe bridge)'s save=
+d
+> state capability data and restores L1SS with value 0.
+
+This last sentence seems duplicated.
+=20
+> So, if the PCI device has a parent, make pci_save_aspm_l1ss_state() save
+> the parent's L1SS configuration, too. This is symmetric on
+> pci_restore_aspm_l1ss_state().
+>=20
+> [1]: https://lore.kernel.org/linux-pci/CAPpJ_eexU0gCHMbXw_z924WxXw0+B6SdS=
+4eG9oGpEX1wmnMLkQ@mail.gmail.com/
+
+Just put this into Link tag.
+
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D218394
+
+Closes: ?
+
+Fixes tag is also missing.
+
+Add:
+
+Suggested-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+> Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
+> ---
+> v9:
+> - Drop the v8 fix about drivers/pci/pcie/aspm.c. Use this in VMD instead.
+>=20
+> v10:
+> - Drop the v9 fix about drivers/pci/controller/vmd.c
+> - Fix in PCIe ASPM to make it symmetric between pci_save_aspm_l1ss_state(=
+)
+>   and pci_restore_aspm_l1ss_state()
+>=20
+>  drivers/pci/pcie/aspm.c | 39 +++++++++++++++++++++++++++++++--------
+>  1 file changed, 31 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index bd0a8a05647e..823aaf813978 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -81,24 +81,47 @@ void pci_configure_aspm_l1ss(struct pci_dev *pdev)
+> =20
+>  void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+>  {
+> -=09struct pci_cap_saved_state *save_state;
+> -=09u16 l1ss =3D pdev->l1ss;
+> +=09struct pci_cap_saved_state *pl_save_state, *cl_save_state;
+> +=09struct pci_dev *parent;
+>  =09u32 *cap;
+> =20
+>  =09/*
+>  =09 * Save L1 substate configuration. The ASPM L0s/L1 configuration
+>  =09 * in PCI_EXP_LNKCTL_ASPMC is saved by pci_save_pcie_state().
+>  =09 */
+> -=09if (!l1ss)
+> +=09if (!pdev->l1ss)
+>  =09=09return;
+> =20
+> -=09save_state =3D pci_find_saved_ext_cap(pdev, PCI_EXT_CAP_ID_L1SS);
+> -=09if (!save_state)
+> +=09cl_save_state =3D pci_find_saved_ext_cap(pdev, PCI_EXT_CAP_ID_L1SS);
+> +=09if (!cl_save_state)
+>  =09=09return;
+> =20
+> -=09cap =3D &save_state->cap.data[0];
+> -=09pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL2, cap++);
+> -=09pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL1, cap++);
+> +=09cap =3D &cl_save_state->cap.data[0];
+> +=09pci_read_config_dword(pdev, pdev->l1ss + PCI_L1SS_CTL2, cap++);
+> +=09pci_read_config_dword(pdev, pdev->l1ss + PCI_L1SS_CTL1, cap++);
+> +
+> +=09/*
+> +=09 * If here is a parent device and it has not saved state, save parent=
+'s
+> +=09 * L1 substate configuration, too. This is symmetric on
+> +=09 * pci_restore_aspm_l1ss_state().
+> +=09 */
+> +=09if (!pdev->bus || !pdev->bus->self)
+> +=09=09return;
+> +
+> +=09parent =3D pdev->bus->self;
+> +=09if (!parent->l1ss)
+> +=09=09return;
+> +
+> +=09pl_save_state =3D pci_find_saved_ext_cap(parent, PCI_EXT_CAP_ID_L1SS)=
+;
+> +=09if (!pl_save_state)
+> +=09=09return;
+> +
+> +=09if (parent->state_saved)
+> +=09=09return;
+
+This decision can be made before even reading the pl_saved_state.
+
+> +
+> +=09cap =3D &pl_save_state->cap.data[0];
+> +=09pci_read_config_dword(parent, parent->l1ss + PCI_L1SS_CTL2, cap++);
+> +=09pci_read_config_dword(parent, parent->l1ss + PCI_L1SS_CTL1, cap++);
+
+This approach duplicates code and that seems unnecessary to me.
+
+Could you instead leave the current function (nearly?) as is and use it as=
+=20
+a helper for a new pci_save_aspm_l1ss_state() which calls the helper first=
+=20
+for the pdev and then for its parent (if needed). Or do I miss something=20
+why that is not possible?
+
+--=20
+ i.
+
+--8323328-1628269038-1727435812=:961--
 
