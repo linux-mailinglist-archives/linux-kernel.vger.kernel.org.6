@@ -1,173 +1,82 @@
-Return-Path: <linux-kernel+bounces-341183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15666987C27
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:20:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880F1987C28
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7CBC1C21631
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:20:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAD59281C01
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC96EA926;
-	Fri, 27 Sep 2024 00:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I5vkEqor"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355CFA930;
+	Fri, 27 Sep 2024 00:21:16 +0000 (UTC)
+Received: from secure.elehost.com (secure.elehost.com [185.209.179.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6A56AAD;
-	Fri, 27 Sep 2024 00:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E334C9D;
+	Fri, 27 Sep 2024 00:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.209.179.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727396401; cv=none; b=WpQRkQErZuah3Vk62TsdRzpj59f44PJAkqOzbLZxgkM4l+sf9IDIgefCjUX3c/+uXAe2mjixmebUqJrnerBlXi1nm2pmGipbRia1sy48BbuVQoU0exKRXnto5CiDKkENlcU1a5YtYBzh+KTKt2nFy8G6YNVxBOk1IOlI55T1AGE=
+	t=1727396475; cv=none; b=DvFprI17jryNUsN1wyU89v5Kz6rkuBsjoixgCtVIjV184YQjCwbWV6vdQ0KmSsD4y+E33TKTR/zpudfOzupdTFwqsS2kcLNbAwfTLtQOrxiwAYCsN9bLvQwCYiu3agcQGZRTpbytlGZ76vpZ4Vl2OUfbcTfNycyoxFL17gBF+J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727396401; c=relaxed/simple;
-	bh=UuweBmSShn/gSeqrXCn4tgiXEHMtvUOLL0DVS0Qki/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DHro5aV39QW8Bd+6aLWorGE33+wRHVgXmeH+Bdyd263CqGKZFCZoPHfAGALAPqkvOg0hAdWwSvaYIjIQX8BMOJXhwKF2RSi7pwiHqo+9VCQpEAxE1TZQBi4spf+Noe63xyzNAfH0eAerL4XJWQmxKOn9TY/XZiySQX/HiDYryzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I5vkEqor; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48QKu0pL011647;
-	Fri, 27 Sep 2024 00:19:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WlFYqRzn7wRcZo/X7XdhtDJ+/Kr1HL0e2I8UPpVX54U=; b=I5vkEqorAYRQAB5P
-	f2PUWHSY7fHFOwluAObBb+N7ghUfkckp+f9vQiOuDwzEBm5GPj+muAEZfg1l4jKj
-	OrRTUlMX6KEnINkwq07OI/IUXYUSqRnMPVlDB07MAFS4wHpYmZspiDLi2eyAoD4o
-	qRaZGGdiVAiUFoO7kosMZQX1yqH6vFVsViGdLOfUXixV87rdun+YmGeK9Ffff/b+
-	Hw11+AzoG32st/Yk7g144qZpSVxbR7Jo0jazD1ETmvBhhHFy7JtXjbjSeqoSFCyN
-	jya9Ka9uqBcpXZzFKn2NbUKbI2cfwm9+6zCm2ce2wGo28H8VLQ3Km2HcPDiu+wtb
-	Da8djQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41skuf16mq-1
+	s=arc-20240116; t=1727396475; c=relaxed/simple;
+	bh=HWG7RpDLrRHr25tablqDr3PAJLXsIi/0E8gauy9GUCg=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=geCdAsEuP1EPBalmcFLW91Y3vNNDndXjh4qaEmHYG68zBa3HoZCYMLNiBWdJozI2eT3cAYEGvEXdTdBirW2LMRgNMydkIfUUh3ZKIjmsE6Kx4CAikjlywiMZXrKoogSKUMfo0ZY/7VVise5dHsJO4oneQbSvbpQ4DECUy2yBgLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexbridge.com; spf=pass smtp.mailfrom=nexbridge.com; arc=none smtp.client-ip=185.209.179.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexbridge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nexbridge.com
+X-Virus-Scanned: Debian amavisd-new at secure.elehost.com
+Received: from Mazikeen (pool-99-228-67-183.cpe.net.cable.rogers.com [99.228.67.183])
+	(authenticated bits=0)
+	by secure.elehost.com (8.15.2/8.15.2/Debian-22ubuntu3) with ESMTPSA id 48R0L3Kp1769041
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 00:19:36 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48R0JZBk005364
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 00:19:35 GMT
-Received: from [10.110.100.83] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 26 Sep
- 2024 17:19:32 -0700
-Message-ID: <6c6fae0b-2328-4427-83a3-3391c63e1e00@quicinc.com>
-Date: Thu, 26 Sep 2024 17:19:31 -0700
+	Fri, 27 Sep 2024 00:21:04 GMT
+Reply-To: <rsbecker@nexbridge.com>
+From: <rsbecker@nexbridge.com>
+To: "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>
+Cc: "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
+        <git-packagers@googlegroups.com>
+References: <xmqqv7yijq33.fsf@gitster.g>
+In-Reply-To: <xmqqv7yijq33.fsf@gitster.g>
+Subject: RE: [ANNOUNCE] Git v2.47.0-rc0
+Date: Thu, 26 Sep 2024 20:20:58 -0400
+Organization: Nexbridge Inc.
+Message-ID: <02d701db1073$23c0e850$6b42b8f0$@nexbridge.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3 1/2] net: phy: aquantia: AQR115c fix up PMA
- capabilities
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
-        "Andrew
- Lunn" <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "Bartosz
- Golaszewski" <bartosz.golaszewski@linaro.org>,
-        "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>,
-        Brad Griffis <bgriffis@nvidia.com>,
-        "Vladimir
- Oltean" <vladimir.oltean@nxp.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "Maxime
- Chevallier" <maxime.chevallier@bootlin.com>,
-        Przemek Kitszel
-	<przemyslaw.kitszel@intel.com>, <kernel@quicinc.com>
-References: <20240925230129.2064336-1-quic_abchauha@quicinc.com>
- <20240925230129.2064336-2-quic_abchauha@quicinc.com>
- <ZvVJbakJ01++YHHG@shell.armlinux.org.uk>
-Content-Language: en-US
-From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-In-Reply-To: <ZvVJbakJ01++YHHG@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: fQz4ud-1lkg8TDR1giAaAZ9PbPBaRRlC
-X-Proofpoint-ORIG-GUID: fQz4ud-1lkg8TDR1giAaAZ9PbPBaRRlC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- adultscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- malwarescore=0 impostorscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409270001
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-ca
+Thread-Index: AQMNDtWMcFSu+xH81pusNJ/g6d9/5bAGyHMQ
 
 
+>-----Original Message-----
+>From: Junio C Hamano <jch2355@gmail.com> On Behalf Of Junio C Hamano
+>Sent: September 26, 2024 1:13 PM
+>To: git@vger.kernel.org
+>Cc: Linux Kernel <linux-kernel@vger.kernel.org>; =
+git-packagers@googlegroups.com
+>Subject: [ANNOUNCE] Git v2.47.0-rc0
+>
+>An early preview release Git v2.47.0-rc0 is now available for testing =
+at the usual
+>places.  It is comprised of 597 non-merge commits since v2.46.0, =
+contributed by 69
+>people, 27 of which are new faces [*].
+>
+>The tarballs are found at:
+>
+>    https://www.kernel.org/pub/software/scm/git/testing/
 
-On 9/26/2024 4:45 AM, Russell King (Oracle) wrote:
-> On Wed, Sep 25, 2024 at 04:01:28PM -0700, Abhishek Chauhan wrote:
->> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
->> index e982e9ce44a5..88ba12aaf6e0 100644
->> --- a/drivers/net/phy/aquantia/aquantia_main.c
->> +++ b/drivers/net/phy/aquantia/aquantia_main.c
->> @@ -767,6 +767,33 @@ static int aqr111_config_init(struct phy_device *phydev)
->>  	return aqr107_config_init(phydev);
->>  }
->>  
->> +static int aqr115c_get_features(struct phy_device *phydev)
->> +{
->> +	int ret;
->> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported) = { 0, };
-> 
-> Networking uses reverse-christmas tree ordering for variables. Please
-> swap the order of these.
-> 
-> Also, I think this would be better:
-> 
-> 	unsigned long *supported = phydev->supported;
-> 
-> You don't actually need a separate mask.
-> 
->> +
->> +	/* Normal feature discovery */
->> +	ret = genphy_c45_pma_read_abilities(phydev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* PHY FIXUP */
->> +	/* Although the PHY sets bit 12.18.19.48, it does not support 5G/10G modes */
->> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, phydev->supported);
->> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKX4_Full_BIT, phydev->supported);
->> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKR_Full_BIT, phydev->supported);
->> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, phydev->supported);
-> 
-> For the above four, s/phydev->supported/supported/
-> 
->> +
->> +	/* Phy supports Speeds up to 2.5G with Autoneg though the phy PMA says otherwise */
->> +	linkmode_copy(supported, phy_gbit_features);
->> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseX_Full_BIT, supported);
->> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
->> +
->> +	linkmode_or(phydev->supported, supported, phydev->supported);
-> 
-> Drop this linkmode_or().
-> 
-> You'll then be modifying phydev->supported directly, which is totally
-> fine.
-Noted!.
+RC0 looks good on NonStop. Thank you.
 
-Thanks Russell. Appreciate all the reviews. 
-
-
-> 
 
