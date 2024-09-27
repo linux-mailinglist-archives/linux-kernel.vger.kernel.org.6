@@ -1,119 +1,195 @@
-Return-Path: <linux-kernel+bounces-341953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60A4C9888CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:12:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10DB19888CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F268E1F24EF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:12:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 525291F24D32
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3632E1C1725;
-	Fri, 27 Sep 2024 16:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE501C172E;
+	Fri, 27 Sep 2024 16:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kFaN/HFD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZyCtzk6/"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104CC1465A9
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 16:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6B7189BA3
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 16:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727453537; cv=none; b=LKIsRDIO1djlMiujLUhDgAaUYNPaEc3N1akyY9e6yA/zYN13cfw9Ji0NS+0XtQ/BMj8d46rmN3osBqQUs26eFMfbHP6KAE1Gq3V9Fsg5tub43cZB/mRxxx2yVa18nIE6LXiQkgUGkVvuRsHa88rgUlM30CvZojY/k9w7jo3BDPE=
+	t=1727453630; cv=none; b=jGhHmtKegzRd7W9MzALArcZE58OM7TzKpjLMbdk2U6GPtRILooAZpivXNFqFJPiQKgJvounhacjgEAolNeRnqBpyBdtAMGablEg5s3pPeWgI82yNGGZnepv1d9AQOa0crS24EukzzOrL3DlPoeuXpknm+oOKZuWp5M6F9wUPT64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727453537; c=relaxed/simple;
-	bh=X79qvOpP7Haz1lh12lIQHIPKIGkP5JAG3xeYPU03R9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p4+33oVcrEr+p8ahLkhu/RlHu3ExB9Qe4cPqHu6RTvCXyMY3Ah38Ir0slwHbiM2PozaUmZeLQqFbPByzqlGTDD/cbJwRTKeS7PGVehVq6/iL95ajLwZhumVtH5L3dAyMYmbmCR01s9n/vYKzW7WbSelQNgwyYE1JO/YYy+aX+n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kFaN/HFD; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727453536; x=1758989536;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=X79qvOpP7Haz1lh12lIQHIPKIGkP5JAG3xeYPU03R9M=;
-  b=kFaN/HFDLg3nZQawlr6Oj+BATML8ztZx27/8Xoykd9GJcqC7Pwe2+hJ8
-   uDZluCc1+pfZiomv7pHzmOkrpI+6NNFV6DEn6xDNHCLDSM1XjyDwaXn20
-   7vMJlS2JI/lI91jAVdKu+8B75UG6Dz8fHk+8aN1dTrvHl6mqkxVQeW5xo
-   EwWolh3S3VdmjZVTxvr3JtXx5ozCEQnC0Dn2kYS6usfLOm4/YCiKbujPb
-   l1hyaeEzT49NdNIDXrsGIQp+s7BbrSE02eMaPMPl6/CBr+5lTz7aYfsMq
-   tM+0fzmX0sxID6+/JKK1VCRMzkLFpInflxSHpG70bT21PUZNVzLRZvwGy
-   Q==;
-X-CSE-ConnectionGUID: YC7jNjaSQoef7znqZ7rexg==
-X-CSE-MsgGUID: Iyp28rVpQlOt9osHMsdNJw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="14225815"
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="14225815"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 09:12:16 -0700
-X-CSE-ConnectionGUID: 2Z0qTn05QEueYEpLLhBaiw==
-X-CSE-MsgGUID: xBe9mr3lSBqdO/XTCHt9eQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="72157345"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 09:12:14 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1suDZj-0000000DeeV-3q6h;
-	Fri, 27 Sep 2024 19:12:11 +0300
-Date: Fri, 27 Sep 2024 19:12:11 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Keita Morisaki <keyz@google.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] devres: Fix page faults when tracing devres from
- unloaded modules
-Message-ID: <ZvbZWzW4I2CYNe3r@smile.fi.intel.com>
-References: <20240927142807.544325-1-keyz@google.com>
+	s=arc-20240116; t=1727453630; c=relaxed/simple;
+	bh=7kU6XoxUAcIgBj0KIhY5INXnY9DzzTkhFr/l3iiJ8JE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KrMumFlH7OpkuK8uh6lTxgf47LPLURV7oj+ip22vybPT7DZM0YMOpsJsiKP65NtPyjQMYTKGBzlMrQl1dXDJPWZ6uPN/jS6cAq9tb8a6zQKOsR96Y1fJQap5r8yyTM16bucTV1s59vdc8wE7EoD3XbSCFYtZcn+usgDas3MzmZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZyCtzk6/; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20b061b7299so186515ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:13:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727453628; x=1728058428; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oEfwOX0k0jsdiAz/mx4JtQIPRHf7GHZcKBgddoeHMM0=;
+        b=ZyCtzk6/2CU9lSsVFR/r9ziw1TPZDJtiNNvvokiqDkQJ+kukM1Y/2oLGP1DgR2EWGb
+         KhftS1bJPCpdLrbTyO8ZDFj7HJgIGLp26aWOgSLoD3O0hfHztkgRsVkyLSJV9BqhNIeR
+         1jKhIglAe+BVlRRHw8Y5m++Wfsl4do3SOXqjqKJaSJcrR0DmTTlSwVAkkyg3NQs9woW8
+         sFRIvwdtI1/6nY0A3+k/qsfUlFhTX1vXb+Q3ilv93km/BpNMsYcLyqNysiLo10S+N2Zn
+         oh59hivEu75zCR9llUosUuFZA0RmMNS0RaI80ZWwMJg+fv4PRte3jPTTRA1it83SC8sb
+         +yRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727453628; x=1728058428;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oEfwOX0k0jsdiAz/mx4JtQIPRHf7GHZcKBgddoeHMM0=;
+        b=XljH1FBZYe/6wfGbYlUaUwUP/VyERarOcLZtIbAmfj3jpHPP8tx9Z2acNsagRwsZoH
+         zSTbKEubk8BkvvhJGhFPrW6jiyt4MYFbGmD2Fbe1/qso+97DkHzw/XhF8Doedn5jJ0gn
+         FxRRWIZOGA/F2H31rVIndNL+3EshCMfM9Qj9FfhRPh9C+i+n39lpePcP19z5Au1tIl6z
+         NWvnf+QTptotm9deZOfTaPpEzt8wMXs42aAYFLIOfrviCLkGzke7TWZUZNYgVSeXTGnm
+         JLcK6hOu6lwIurTD5+swL6vekoLGqMx2ASJ85KqBSv8B0U/bb9Ugej8yNEAxmPvZTSd5
+         X6KA==
+X-Forwarded-Encrypted: i=1; AJvYcCWV6MwgjuBYzO3ldhQR1XauT2f4AM4g0if/D4X+FgUDVdV1awVGmTGlZQyX5AmymwNjPprdTQIIs5m5fQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzC5+FWfs4/KxOT8/BwpHrtAkrhPDJguVxz4c74MsWypEITUp7
+	x1SR0JltYd23nmuByY4UBhdKicjv8vCnkHiDjEynn8D+OIDhl2rG0omP0sFGcWSv9rihGG3sXlo
+	juegLPtiF0Q+UNYLAzhqaed1ccZITvHwgeEV2
+X-Google-Smtp-Source: AGHT+IG8N/hvJvaxu+2E3iccFfkOGWuZB6ZYaUmHLVfB3/2b9cxpaCTbUmx0migIGXlRtEDU+IRgbFFUAICLwolBmHw=
+X-Received: by 2002:a17:902:f686:b0:206:aa47:adc6 with SMTP id
+ d9443c01a7336-20b3d5764f4mr2377275ad.11.1727453627640; Fri, 27 Sep 2024
+ 09:13:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927142807.544325-1-keyz@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240926233632.821189-1-cmllamas@google.com> <20240926233632.821189-7-cmllamas@google.com>
+ <CAH5fLggS7C4QdmDFqEy5KARUj+4oNWfstyno3d43joG5haysDw@mail.gmail.com>
+In-Reply-To: <CAH5fLggS7C4QdmDFqEy5KARUj+4oNWfstyno3d43joG5haysDw@mail.gmail.com>
+From: Yu-Ting Tseng <yutingtseng@google.com>
+Date: Fri, 27 Sep 2024 09:13:34 -0700
+Message-ID: <CAN5Drs3TCGT1rWJjujo3FP3HxnSFUFo5hcWh=4+xhOYzDg4JqQ@mail.gmail.com>
+Subject: Re: [PATCH v2 6/8] binder: allow freeze notification for dead nodes
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Carlos Llamas <cmllamas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 10:28:07PM +0800, Keita Morisaki wrote:
-> The devres ftrace event logs the name of the devres node, which is often a
-> function name (e.g., "devm_work_drop") stringified by macros like
-> devm_add_action. Currently, ftrace stores this name as a string literal
-> address, which can become invalid when the module containing the string is
-> unloaded. This results in page faults when ftrace tries to access the name.
-> 
-> This behavior is problematic because the devres ftrace event is designed to
-> trace resource management throughout a device driver's lifecycle, including
-> during module unload. The event should be available even after the module
-> is unloaded to properly diagnose resource issues.
-> 
-> Fix the issue by copying the devres node name into the ftrace ring buffer
-> using __assign_str(), instead of storing just the address. This ensures
-> that ftrace can always access the name, even if the module is unloaded.
-> 
-> This change increases the memory usage for each of the ftrace entry by
-> 12-16 bytes assuming the average devres node name is 20 bytes long,
-> depending on the size of const char *.
-> 
-> Note that this change does not affect anything unless all of following
-> conditions are met.
-> - CONFIG_DEBUG_DEVRES is enabled
-> - ftrace tracing is enabled
-> - The devres event is enabled in ftrace tracing
+On Fri, Sep 27, 2024 at 12:19=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> On Fri, Sep 27, 2024 at 1:37=E2=80=AFAM Carlos Llamas <cmllamas@google.co=
+m> wrote:
+> >
+> > Alice points out that binder_request_freeze_notification() should not
+> > return EINVAL when the relevant node is dead [1]. The node can die at
+> > any point even if the user input is valid. Instead, allow the request
+> > to be allocated but skip the initial notification for dead nodes. This
+> > avoids propagating unnecessary errors back to userspace.
+> >
+> > Fixes: d579b04a52a1 ("binder: frozen notification")
+> > Cc: stable@vger.kernel.org
+> > Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> > Link: https://lore.kernel.org/all/CAH5fLghapZJ4PbbkC8V5A6Zay-_sgTzwVpwq=
+k6RWWUNKKyJC_Q@mail.gmail.com/ [1]
+> > Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> > ---
+> >  drivers/android/binder.c | 28 +++++++++++++---------------
+> >  1 file changed, 13 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> > index 73dc6cbc1681..415fc9759249 100644
+> > --- a/drivers/android/binder.c
+> > +++ b/drivers/android/binder.c
+> > @@ -3856,7 +3856,6 @@ binder_request_freeze_notification(struct binder_=
+proc *proc,
+> >  {
+> >         struct binder_ref_freeze *freeze;
+> >         struct binder_ref *ref;
+> > -       bool is_frozen;
+> >
+> >         freeze =3D kzalloc(sizeof(*freeze), GFP_KERNEL);
+> >         if (!freeze)
+> > @@ -3872,32 +3871,31 @@ binder_request_freeze_notification(struct binde=
+r_proc *proc,
+> >         }
+> >
+> >         binder_node_lock(ref->node);
+> > -
+> > -       if (ref->freeze || !ref->node->proc) {
+> > -               binder_user_error("%d:%d invalid BC_REQUEST_FREEZE_NOTI=
+FICATION %s\n",
+> > -                                 proc->pid, thread->pid,
+> > -                                 ref->freeze ? "already set" : "dead n=
+ode");
+> > +       if (ref->freeze) {
+> > +               binder_user_error("%d:%d BC_REQUEST_FREEZE_NOTIFICATION=
+ already set\n",
+> > +                                 proc->pid, thread->pid);
+> >                 binder_node_unlock(ref->node);
+> >                 binder_proc_unlock(proc);
+> >                 kfree(freeze);
+> >                 return -EINVAL;
+> >         }
+> > -       binder_inner_proc_lock(ref->node->proc);
+> > -       is_frozen =3D ref->node->proc->is_frozen;
+> > -       binder_inner_proc_unlock(ref->node->proc);
+> >
+> >         binder_stats_created(BINDER_STAT_FREEZE);
+> >         INIT_LIST_HEAD(&freeze->work.entry);
+> >         freeze->cookie =3D handle_cookie->cookie;
+> >         freeze->work.type =3D BINDER_WORK_FROZEN_BINDER;
+> > -       freeze->is_frozen =3D is_frozen;
+> > -
+> >         ref->freeze =3D freeze;
+> >
+> > -       binder_inner_proc_lock(proc);
+> > -       binder_enqueue_work_ilocked(&ref->freeze->work, &proc->todo);
+> > -       binder_wakeup_proc_ilocked(proc);
+> > -       binder_inner_proc_unlock(proc);
+> > +       if (ref->node->proc) {
+> > +               binder_inner_proc_lock(ref->node->proc);
+> > +               freeze->is_frozen =3D ref->node->proc->is_frozen;
+> > +               binder_inner_proc_unlock(ref->node->proc);
+> > +
+> > +               binder_inner_proc_lock(proc);
+> > +               binder_enqueue_work_ilocked(&freeze->work, &proc->todo)=
+;
+> > +               binder_wakeup_proc_ilocked(proc);
+> > +               binder_inner_proc_unlock(proc);
+>
+> This is not a problem with your change ... but, why exactly are we
+> scheduling the BINDER_WORK_FROZEN_BINDER right after creating it? For
+> death notications, we only schedule it immediately if the process is
+> dead. So shouldn't we only schedule it if the process is not frozen?
+>
+> And if the answer is that frozen notifications are always sent
+> immediately to notify about the current state, then we should also
+> send one for a dead process ... maybe. I guess a dead process is not
+> frozen?
+Yes this is to immediately notify about the current state (frozen or
+unfrozen). A dead process is in neither state so it feels more correct
+not to send either?
 
-LGTM now,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-thanks!
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+>
+> > +       }
+> >
+> >         binder_node_unlock(ref->node);
+> >         binder_proc_unlock(proc);
+> > --
+> > 2.46.1.824.gd892dcdcdd-goog
+> >
 
