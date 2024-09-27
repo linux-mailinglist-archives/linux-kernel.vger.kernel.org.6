@@ -1,151 +1,93 @@
-Return-Path: <linux-kernel+bounces-341703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB09F9883E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:09:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6E498836A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0739F1C22AC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 213E32829A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DC618B486;
-	Fri, 27 Sep 2024 12:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8146018A6C4;
+	Fri, 27 Sep 2024 11:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b="LLoGWuZ5"
-Received: from mx0a-00176a03.pphosted.com (mx0a-00176a03.pphosted.com [67.231.149.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtXXZ560"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F90218B47B;
-	Fri, 27 Sep 2024 12:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8F329B0;
+	Fri, 27 Sep 2024 11:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727438937; cv=none; b=iMSQOiNro1bf0JCk/PSdKlIsc9jEP1FxoxbXWaR+6Dna91P2flncjNPZAQd4cMrh0Q1Odt2eW642c3S5hjn3GgKwY4+NgKfvSez0KMakft/wHv/gx2Y2YQY0j2Je2hcbaZCiL1CmlNwT4RanvIoupgOp3vLIB/3oXaY4cR2Nr4E=
+	t=1727437229; cv=none; b=Q6tdUpINwZnyr3+Gf0GgsNQPJN3+6Kf8nVhS1MJemoxYubia0mX866xhTBZ0TDqYLnUPY3Yn7DmJUQg1ScGV/PNuPJphkIpkwxEnHMDRRBZsVv6+Xclnz5yqeitFYGj9MmZuTyfK66ncpBTvNYbFUvuAVstrOeZux9Jj0wzunrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727438937; c=relaxed/simple;
-	bh=BOMUjrCDX/mpkZeQc3erJcFcMgIa9QWT3fwqZXQngdc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jcS47DKOVXxUxRuhnTVrX96ygCsmm28aXCt2dosusb6DYvztUklAo5IBBm1U55U0VZxgwv4KTnCcWvkskPkPKwcT8ia/abxNSepLQnSepFBg5qCE1fs3p+3EdqmZnfsPHIvydwUBulD8Nfv6+9tZVFU7TxwEyYZuUgUs4aeIIAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com; spf=pass smtp.mailfrom=gehealthcare.com; dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b=LLoGWuZ5; arc=none smtp.client-ip=67.231.149.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gehealthcare.com
-Received: from pps.filterd (m0048274.ppops.net [127.0.0.1])
-	by m0048274.ppops.net-00176a03. (8.18.1.2/8.18.1.2) with ESMTP id 48RBHF7r001209;
-	Fri, 27 Sep 2024 07:36:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	gehealthcare.com; h=cc:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=outbound; bh=L
-	b+Ii06hZr9RVIhQ8vABzCk3MPbxyB0NuH1PWnokkzU=; b=LLoGWuZ5VocOlhEnn
-	ESmKeS886WQfC4GwiLYlUujT3QauQPP0HIl49ePoXQV9I7CrhFakzKlh7q2q/UwZ
-	Togga3hhd7/K7ve6z7KHGCNY5x2m63dz2IxrXD2+G0mzG6aMrhwszwk6hJMl3Dlt
-	SDKMzhm08nU00N6hGlNliu3jvt+DtvzQxWpPvcwcXyPgwnRPYciVp1WDczCfXMG7
-	zJwl802NtSBZLrLtZOUdwvrkMf/66aNEOdx2L6bT/V5iTdXwQGpK3hBgCmzjsiMw
-	VIoOvYsqo8KcpDqHF1vxEGsrDCqc6mM7MLKWUEIRlBQhtQyNf+NJH5i88Kli3xQV
-	x1+Yw==
-Date: Fri, 27 Sep 2024 14:36:02 +0300
-From: Ian Ray <ian.ray@gehealthcare.com>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: pca953x: fix pca953x_irq_bus_sync_unlock race
-Message-ID: <ZvaYopCACdP-dQIi@852ed68de471>
-References: <20240620042915.2173-1-ian.ray@gehealthcare.com>
- <8d8462da853b6c147e3cdb790b2e3ea7d4aaf533.camel@suse.de>
+	s=arc-20240116; t=1727437229; c=relaxed/simple;
+	bh=+p5kaVpOnwFVuUCrs+KPwrAE0W9NA+0wEHrYwH2KrTE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=RwPmeV1GGXfAVA3QtrZ5MYizDjw8AyeDT38qsQSLJd9UtNF4+sI73w0bd3QHlgxdkAP31WY27Ai3Da+b8HTrYOaJOiUhXtDR8z1reHIykAHWb1HuR3+0gVCPmwApIDZHDlL2u3NhHO+uv5hcdLhFkd1T4wSkOmpS4Hcu4SlB9SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtXXZ560; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54057C4CEC4;
+	Fri, 27 Sep 2024 11:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727437228;
+	bh=+p5kaVpOnwFVuUCrs+KPwrAE0W9NA+0wEHrYwH2KrTE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=RtXXZ560pNIiLSkEkLSCy2QrnZbhp+uPRfg+APR3Kj7W7zxwULPj21Nqf3Pmxq0eL
+	 PWPJ5F0TH+B8rSIvRq2n0zJD3GEh3yquZV26R6Rcw+CyjKqF8dj+MpYmPh6Tbq9scM
+	 oGUPoLH1tOBpDzIlk+YFQngD4PR9c/UhN1Ibs9t5UQNJwvq/PnQ/E615bIeqa0p1i+
+	 TFb0/xzNDcvnXMHVKfaJdBx9b7VrZ5BD2LljeYUj/F9nF217pa2p+XoQj+GR1qvDJQ
+	 BXj07qTDMI8hAI7wWdVLKSrFbXQTBatOySoFuDYmWyjpsLhFsoRhy27aOLA1VNRF7m
+	 3tlCCIYGK41Cg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 354CC3809A80;
+	Fri, 27 Sep 2024 11:40:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d8462da853b6c147e3cdb790b2e3ea7d4aaf533.camel@suse.de>
-X-Proofpoint-ORIG-GUID: 9kRN0ENJbt6vJLNCYM1e_GTzUXfg90mF
-X-Proofpoint-GUID: 9kRN0ENJbt6vJLNCYM1e_GTzUXfg90mF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-27_06,2024-09-27_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 bulkscore=0
- adultscore=0 suspectscore=0 clxscore=1011 spamscore=0 lowpriorityscore=0
- phishscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409270083
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] net: wwan: qcom_bam_dmux: Fix missing pm_runtime_disable()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172743723073.1930223.10533462862376551133.git-patchwork-notify@kernel.org>
+Date: Fri, 27 Sep 2024 11:40:30 +0000
+References: <20240923115743.3563079-1-ruanjinjie@huawei.com>
+In-Reply-To: <20240923115743.3563079-1-ruanjinjie@huawei.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: stephan@gerhold.net, loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
+ johannes@sipsolutions.net, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-arm-msm@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2024 at 11:49:04AM +0200, Jean Delvare wrote:
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Mon, 23 Sep 2024 19:57:43 +0800 you wrote:
+> It's important to undo pm_runtime_use_autosuspend() with
+> pm_runtime_dont_use_autosuspend() at driver exit time.
 > 
-> Hello Ian,
+> But the pm_runtime_disable() and pm_runtime_dont_use_autosuspend()
+> is missing in the error path for bam_dmux_probe(). So add it.
 > 
-> On Thu, 2024-06-20 at 07:29 +0300, Ian Ray wrote:
-> > Ensure that `i2c_lock' is held when setting interrupt latch and mask in
-> > pca953x_irq_bus_sync_unlock() in order to avoid races.
-> >
-> > The other (non-probe) call site pca953x_gpio_set_multiple() ensures the
-> > lock is held before calling pca953x_write_regs().
-> >
-> > The problem occurred when a request raced against irq_bus_sync_unlock()
-> > approximately once per thousand reboots on an i.MX8MP based system.
-:
-> > --- a/drivers/gpio/gpio-pca953x.c
-> > +++ b/drivers/gpio/gpio-pca953x.c
-> > @@ -758,6 +758,8 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
-> >         int level;
-> >
-> >         if (chip->driver_data & PCA_PCAL) {
-> > +               guard(mutex)(&chip->i2c_lock);
-> > +
-> >                 /* Enable latch on interrupt-enabled inputs */
-> >                 pca953x_write_regs(chip, PCAL953X_IN_LATCH, chip->irq_mask);
-> >
+> Found by code review. Compile-tested only.
 > 
-> I've been asked to backport this fix to SUSE kernels and I have a
-> concern about it.
-> 
-> You take the i2c_lock mutex inside the (chip->driver_data & PCA_PCAL)
-> conditional block, where pca953x_write_regs() is being called, and the
-> commit description implies this is indeed the call you wanted to
-> protect.
-> 
-> However, immediately after the conditional block, the common code path
-> includes a call to pca953x_read_regs(). Looking at the rest of the
-> driver code, I see that the i2c_lock mutex is *also* always held
-> (except during device probe) when calling this function. Which isn't
-> really surprising as I seem to understand the device uses a banked
-> register addressing, and this typically affects both reading from and
-> writing to registers.
-> 
-> So I suspect the i2c_lock mutex needs to be held for this call to
-> pca953x_read_regs() as well (unless you are familiar with the register
-> map and know for sure that the "direction" register is outside of the
-> banked register range).
+> [...]
 
-Hello Jean,
+Here is the summary with links:
+  - [v2] net: wwan: qcom_bam_dmux: Fix missing pm_runtime_disable()
+    https://git.kernel.org/netdev/net/c/d505d3593b52
 
-Direction is indeed banked (see, for example, PCA953x_BANK_CONFIG).
-
-It certainly looks plausible that a race between
-pca953x_gpio_direction_input or pca953x_gpio_direction_output and 
-the register read in pca953x_irq_bus_sync_unlock may occur.
-
-In practice, I think that this is unlikely to ever be observed because
-(IMHO) GPIO direction is rarely changed after initialization.
-(Disclaimer: this is true for the embedded systems I work with.)
-
-Hope this clarifies things.
-
-Thanks,
-Ian
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-> 
-> I'm not familiar with the gpio-pca953x driver at all so I may be
-> missing something and maybe everything is actually fine, but I would
-> appreciate if someone could take a look and give a second opinion.
-> 
-> Thanks,
-> --
-> Jean Delvare
-> SUSE L3 Support
-> 
 
