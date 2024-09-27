@@ -1,200 +1,166 @@
-Return-Path: <linux-kernel+bounces-341823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164F89886AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:07:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 475779886AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89F38B212C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:07:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A721C22C19
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9535D477;
-	Fri, 27 Sep 2024 14:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81D31339A4;
+	Fri, 27 Sep 2024 14:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FTFAg0gk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="YLIExtAS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Mt+Z0Npn"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8554D8DA
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C787081727;
+	Fri, 27 Sep 2024 14:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727446042; cv=none; b=NERnSvFxmQQ9427kHnofl/FLdaPgjPo+p/RQQz5oaPB0Y1T/ikNNCaof4ycwTPozCTSBOIcK8Qt/8kDXwOCXGiFisW4OTRFv/K+9gTHrVXkuT5kjV94pKS24ydGzGhhK5/uKvbfpII2nR8wZd4JgvgffeaIbP4AwsEeo4Pl+x4E=
+	t=1727446047; cv=none; b=HVbK8ALtc1c/ECdBeAhW8dEQezYvISowoSyL+gIZ3d0iPeXnPYMki22FCGORRMyjLLa5YOBTf5YwJtsL2N52ysNUFw6KFajSpVCoswYhhj3x77R+EjNwVqO7oIVsfbZx+mDXtlfd35uX7DbE61F5gZnMhB7PD+CeeaWryJqA1P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727446042; c=relaxed/simple;
-	bh=CLo9OzVwUZsZ0uIWth/rFORlhVysacKJrF8TOBj8qI0=;
+	s=arc-20240116; t=1727446047; c=relaxed/simple;
+	bh=+my4i+PV2U51waZhPAUIE9prTED9WJKWUkcEfP0xVPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j6ryk7f6OMomHmgMueghktx0/2ijPkNqbAwesOBnVDAXHTEScAhLtAXeVWICKMjRwzk3vRmOIKmJh80CoGhCA2D8QsOKgLLcoJeFmRA2H5bEHrOMpKSSlIzAS66P1hRI8I1dWL7xJcMVB86LKxEEOQ00KA6naXsIutNdMGlEnD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FTFAg0gk; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727446041; x=1758982041;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=CLo9OzVwUZsZ0uIWth/rFORlhVysacKJrF8TOBj8qI0=;
-  b=FTFAg0gkZ0VkQs1zHyrMOi4g+kuEY8HtVqRhRKYPEJp50L/fErjc7pet
-   RW2Gmf1aJ6bKv6zm8BughGkN6HLIUYVepOw7kOwV0elsj6QC1dF4WK5CC
-   YqIEF6el18UuhUwCIjnNWelryzYe12pv/0l1Jvp/ECdKcqCppKl9N6d2V
-   zOoqChNn5gYLVvG/pyicq0gqzid3fxm4isfZ8/ooiXFa5eYzswyGndFRp
-   ZwghbYWhtBsjhHXnWTsarCa+00YdR4bbx5kvNKg3MqKv8xx77YoDFySgX
-   SL7KOF7sKFOiUF1tmyKAwxCTylZMPBzJKWf00tehoASKIngFfseDk+bko
-   g==;
-X-CSE-ConnectionGUID: tAU4GNUUS66EhMJpckZH6A==
-X-CSE-MsgGUID: n8AdVdXiRt+c+c2pzJDtFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="37262392"
-X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
-   d="scan'208";a="37262392"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 07:07:20 -0700
-X-CSE-ConnectionGUID: pYcf9pL4QQyGlpwN2L8OuQ==
-X-CSE-MsgGUID: xIrr8pHUQhedg+DyPQcs/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
-   d="scan'208";a="72706953"
-Received: from stinkpipe.fi.intel.com (HELO stinkbox) ([10.237.72.74])
-  by fmviesa008.fm.intel.com with SMTP; 27 Sep 2024 07:07:16 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 27 Sep 2024 17:07:15 +0300
-Date: Fri, 27 Sep 2024 17:07:15 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>, rodrigo.vivi@intel.com,
-	joonas.lahtinen@linux.intel.com, tursulin@ursulin.net,
-	airlied@gmail.com, simona@ffwll.ch, intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com
-Subject: Re: [PATCH] gpu: drm: i915: display: Avoid null values
- intel_plane_atomic_check_with_state
-Message-ID: <Zva8E_L9yUN6IWlW@intel.com>
-References: <20240927000146.50830-1-alessandro.zanni87@gmail.com>
- <87tte1zewf.fsf@intel.com>
- <ZvaduhDERL-zvED3@intel.com>
- <87tte1xmqe.fsf@intel.com>
- <Zva3CAewBl8NBL91@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dGSSdgXfj8lt44ukq9YQHPEiFpeWXwuXmlz5bxncJcwnHOk7v9ORaRsn+WELsz5vRId7MLEugZq1F3KCvRFWS8+XXe8HkPXvLwS8YLgFM9kFy8dKMDineeiAmaDkTL62RlTqxqCSCI0cuyXoY4fcAbWW5Fztx4svW3ezghc9z8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=YLIExtAS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Mt+Z0Npn; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id C41B81380162;
+	Fri, 27 Sep 2024 10:07:23 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Fri, 27 Sep 2024 10:07:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1727446043; x=1727532443; bh=reEuEofoIX
+	50Jk9+XfJrwD0MRSP6hIoJJ1tb5DJ8T7Y=; b=YLIExtASxjMsLzAQVgJU9JmOsc
+	/FBDk20AQOHIbQA7l7q9wC4SvNTwE1yR1a3+uMTjCsEuR9eRGZ7PD3HjlG57wM7f
+	G2E3CNdhbx0h1HB6sq699XOXVA5eH4LbBpwGxQ4HZXDR3uKH44/6hCo3+L9DsZt9
+	UBqkFKV0lHuNX7EgQQf7MeK8WxU0uOjKUiCjr1fwnm8iGHUk+EVa1jPQJ/aAKsLX
+	BiIBXbiO0P2Fu+s4XuSdoRa2hffg2Z616fMs+EV44vJIFwsaAFLdUd2iy8ofFshD
+	xvSH/qsG5VuqbM8wu5+dMYAE3GKh/mBY10xVMNo0ayxm5PKHFpS4KJ6JiQjQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1727446043; x=1727532443; bh=reEuEofoIX50Jk9+XfJrwD0MRSP6
+	hIoJJ1tb5DJ8T7Y=; b=Mt+Z0Npn8iF9AEDWPT/DMESvRfJ6Vow6mC1kB0zqM5zN
+	9krzJvPSFtaWibAFAbrc/ifWXfGCsi4F4PAyCUkK7lLDbsPgLhyZA/sutqm4WL7B
+	5MAYhe92No5bG6skcJq7vv9ctRs1+04EhLJZ7eQvbGMBJ0VFHQRnUgmWpKQRk8N4
+	Pr5GK/5BM4HZ4Z0Kl7/E2fnVtrRVGNJG2JszaEZBqMeDCb9yTIU/l9t+s8CJm9wR
+	Q8af6Q1UBBzZllHKNPst8J2RY48lgi5nIGnuJ1Srt7BHi+QqolFgZ2zoyZsCH6tW
+	/T5V4ghJW9a1effr3R+hOmEJ4ywaycEu20MTFpcLIw==
+X-ME-Sender: <xms:Grz2ZlqGIvXlpRo9uUAW4OPreujmx493hsSqmz_8xn947VvyVTfdpg>
+    <xme:Grz2ZnosVpMV3AsEwWt5zEphIMSFJWmwkltr_4iLYNYrSgltG4Pnjt0CLEU67CJWG
+    EcnXxeEoTN8NTCKIZ4>
+X-ME-Received: <xmr:Grz2ZiPkfuvFKo82vsv4_AyjlndDEj4Y5KtcqadjzH5S0P-ZSN_Qiq1gwPZMJuozrpZg9EiTMmMLNgifpyAe5d8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtledgjedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepvfihtghhohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrph
+    hiiiiirgeqnecuggftrfgrthhtvghrnhepueettdetgfejfeffheffffekjeeuveeifedu
+    leegjedutdefffetkeelhfelleetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepthihtghhohesthihtghhohdrphhiiiiirgdpnhgspghrtghp
+    thhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegvsghivgguvghrmh
+    esgihmihhsshhiohhnrdgtohhmpdhrtghpthhtoheptgihphhhrghrsegthihphhgrrhdr
+    tghomhdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgr
+    tghksehsuhhsvgdrtgiipdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehjlhgrhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegthhhu
+    tghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopegrlhgvgidrrghrih
+    hnghesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:Grz2Zg4BJjWdY2Yh5cV6xInhNtB0zxrdpiicIQLMG5HDCyvav2WUjg>
+    <xmx:Grz2Zk7LTB8wJrYWbGqAwdd7MrgceZCF6g1D1lBnY2VltB5Rgtg9FQ>
+    <xmx:Grz2ZohAKeO1p7tkMNLKMEgTuWmtDHxLZt86Yiu0gglgqVEghqfO7Q>
+    <xmx:Grz2Zm47iKhCqT0JlVDoNgtu6xHXu4AxRaNwZAXuCdN-Bb7KNJUDsg>
+    <xmx:G7z2ZjSmQVDFIxhXt7zMHHjK-VylwIdSXZ9EJCeOfJIAkwlXvWgDiqCn>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 27 Sep 2024 10:07:21 -0400 (EDT)
+Date: Fri, 27 Sep 2024 08:07:20 -0600
+From: Tycho Andersen <tycho@tycho.pizza>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Tycho Andersen <tandersen@netflix.com>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
+Message-ID: <Zva8GEUv1Xj8SsLf@tycho.pizza>
+References: <20240924141001.116584-1-tycho@tycho.pizza>
+ <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
+ <20240925.152228-private.conflict.frozen.trios-TdUGhuI5Sb4v@cyphar.com>
+ <ZvR+k3D1KGALOIWt@tycho.pizza>
+ <878qvf17zl.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zva3CAewBl8NBL91@intel.com>
-X-Patchwork-Hint: comment
+In-Reply-To: <878qvf17zl.fsf@email.froward.int.ebiederm.org>
 
-On Fri, Sep 27, 2024 at 04:45:44PM +0300, Ville Syrjälä wrote:
-> On Fri, Sep 27, 2024 at 04:14:17PM +0300, Jani Nikula wrote:
-> > On Fri, 27 Sep 2024, Ville Syrjälä <ville.syrjala@linux.intel.com> wrote:
-> > > On Fri, Sep 27, 2024 at 11:20:32AM +0300, Jani Nikula wrote:
-> > >> On Fri, 27 Sep 2024, Alessandro Zanni <alessandro.zanni87@gmail.com> wrote:
-> > >> > This fix solves multiple Smatch errors:
-> > >> >
-> > >> > drivers/gpu/drm/i915/display/intel_atomic_plane.c:660
-> > >> > intel_plane_atomic_check_with_state() error:
-> > >> > we previously assumed 'fb' could be null (see line 648)
-> > >> >
-> > >> > drivers/gpu/drm/i915/display/intel_atomic_plane.c:664
-> > >> > intel_plane_atomic_check_with_state()
-> > >> > error: we previously assumed 'fb' could be null (see line 659)
-> > >> >
-> > >> > drivers/gpu/drm/i915/display/intel_atomic_plane.c:671
-> > >> > intel_plane_atomic_check_with_state()
-> > >> > error: we previously assumed 'fb' could be null (see line 663)
-> > >> >
-> > >> > We should check first if fb is not null before to access its properties.
-> > >> 
-> > >> new_plane_state->uapi.visible && !fb should not be possible, but it's
-> > >> probably too hard for smatch to figure out. It's not exactly trivial for
-> > >> humans to figure out either.
-> > >> 
-> > >> I'm thinking something like below to help both.
-> > >> 
-> > >> Ville, thoughts?
-> > >> 
-> > >> 
-> > >> BR,
-> > >> Jani.
-> > >> 
-> > >> 
-> > >> diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-> > >> index 3505a5b52eb9..d9da47aed55d 100644
-> > >> --- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-> > >> +++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-> > >> @@ -629,6 +629,9 @@ int intel_plane_atomic_check_with_state(const struct intel_crtc_state *old_crtc_
-> > >>  	if (ret)
-> > >>  		return ret;
-> > >>  
-> > >> +	if (drm_WARN_ON(display->drm, new_plane_state->uapi.visible && !fb))
-> > >> +		return -EINVAL;
-> > >> +
-> > >
-> > > We have probably 100 places that would need this. So it's going
-> > > to be extremely ugly.
-> > >
-> > > One approach I could maybe tolerate is something like
-> > > intel_plane_is_visible(plane_state) 
-> > > {
-> > > 	if (drm_WARN_ON(visible && !fb))
-> > > 		return false;
-> > >
-> > > 	return plane_state->visible;
-> > > }
-> > >
-> > > + s/plane_state->visible/intel_plane_is_visible(plane_state)/
-> > >
-> > > But is that going to help these obtuse tools?
-> > 
-> > That does help people, which is more important. :)
-> > 
-> > I think the problem is first checking if fb is NULL, and then
-> > dereferencing it anyway.
-> > 
-> > visible always means fb != NULL, but I forget, is the reverse true? Can
-> > we have fb != NULL and !visible? I mean could we change the fb check to
-> > visible check?
+On Wed, Sep 25, 2024 at 09:09:18PM -0500, Eric W. Biederman wrote:
+> Tycho Andersen <tycho@tycho.pizza> writes:
 > 
-> No, the reverse does not hold. A plane can be invisible
-> while still having a valid fb. Eg. the plane could be
-> positioned completely offscreen, or the entire crtc may
-> be inactive (DPMS off).
+> > Yep, I did this for the test above, and it worked fine:
+> >
+> >         if (bprm->fdpath) {
+> >                 /*
+> >                  * If fdpath was set, execveat() made up a path that will
+> >                  * probably not be useful to admins running ps or similar.
+> >                  * Let's fix it up to be something reasonable.
+> >                  */
+> >                 struct path root;
+> >                 char *path, buf[1024];
+> >
+> >                 get_fs_root(current->fs, &root);
+> >                 path = __d_path(&bprm->file->f_path, &root, buf, sizeof(buf));
+> >
+> >                 __set_task_comm(me, kbasename(path), true);
+> >         } else {
+> >                 __set_task_comm(me, kbasename(bprm->filename), true);
+> >         }
+> >
+> > obviously we don't want a stack allocated buffer, but triggering on
+> > ->fdpath != NULL seems like the right thing, so we won't need a flag
+> > either.
+> >
+> > The question is: argv[0] or __d_path()?
 > 
-> And whenever we have an fb we want to do all the check to make sure
-> it satisfies all the requirements, whether the plane is visible or
-> not. Otherwise we could end up confusing userspace with something
-> like this:
+> You know.  I think we can just do:
 > 
-> 1. Usespace assigns some unsupported fb to the plane
->    but positions the plane offscreen -> success
-> 2. Userspace moves the plane to somewhere onscreen -> fail
+> 	BUILD_BUG_ON(DNAME_INLINE_LEN >= TASK_COMM_LEN);
+> 	__set_task_comm(me, bprm->file->f_path.dentry->d_name.name, true);
+> 
+> Barring cache misses that should be faster and more reliable than what
+> we currently have and produce the same output in all of the cases we
+> like, and produce better output in all of the cases that are a problem
+> today.
+> 
+> Does anyone see any problem with that?
 
+Nice, this works great. We need to drop the BUILD_BUG_ON() since it is
+violated in today's tree, but I think this is safe to do anyway since
+__set_task_comm() does strscpy_pad(tsk->comm, buf, sizeof(tsk->comm)).
 
-Basically planes should have three different "enabled" states:
+I will respin with this and dropping the flag.
 
-logically_enabled: fb!=NULL (also the crtc must be logically enabled,
-                             but drm_atomic_plane_check() guarantees
-			     this for us)
-visible: logically_enabled && dst rectangle is at least
-         partially within pipe_src rectangle
-active: visible && crtc_is_active
-
-Currently we try to make the proper distinction between
-logically_enabled vs. invisible, but we do not properly
-handle the visible vs. active case. That is, we currently
-mark the plane as invisible if the crtc is inactive.
-
-That means we eg. calculate watermarks as if the plane was
-invisible. That may cause a subsequent "DPMS on" operation
-to fail unexpectedly because all of a sudden we realize 
-that we don't have enough FIFO space for this particular
-plane configuration. There's a FIXME somewhere in the plane
-code about this.
-
--- 
-Ville Syrjälä
-Intel
+Tycho
 
