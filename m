@@ -1,92 +1,139 @@
-Return-Path: <linux-kernel+bounces-341403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBBF6987F99
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:41:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1861987F9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89256282C40
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:41:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D19C282B94
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBA418787B;
-	Fri, 27 Sep 2024 07:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078B21D5ABA;
+	Fri, 27 Sep 2024 07:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CmQb5/xE"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQmr+z7z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F054C17BB33
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58ABD17C9E8;
+	Fri, 27 Sep 2024 07:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727422905; cv=none; b=f5FVTcZCEh7TRzSLcgX78pjCrxYtkllv4V9I1g074XaWhLxvOx3n1Q79umst9T5lMNgar7kpO8KoxcKEmOhCij8zKZRNuox6X6XhPjnIQcS55nOFI7JJIfzrv+UerG0K1JUlN4rUM0yhSTAgkmD0fIukAHZ2oy3b0G7Irv8bXvk=
+	t=1727422931; cv=none; b=CGefq8L80xO9CmkvbY+ZasPrvdRB3D0Gx12EQ93wSpGq98MxHYOgGH9XkEC8sFfcEvDrfhogZNsFSAE6GA+3KH+ujY+mm72TQA2gAHIILRLGwh1zo0/miV3I2TNMSZwF3FWH5HZLD8L/zjVzYI5KZNCP2eW14fD/Lp6OoE2BMb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727422905; c=relaxed/simple;
-	bh=Nq/GzUihNbVYzxTa7EPEL5sIN9ljkiIkLuozmHVPcAM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XEm/bQ1XUAi8EWAMrblSj1DAXUsgfSNZLWa6MogEqc/xQZduRBVEOg9iOqQ31V9KNrdB4JE4Q8vxYYrloyo7NQDgJ2axjlMYT9Ygd5DjHBc8PmTuM17jvcpF/GOWrkU9V6j3QblXsb5cFoRrhcWqHaq8iuiTU+EJoMmOGppPWzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wnliu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CmQb5/xE; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wnliu.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6886cd07673so35265147b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:41:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727422903; x=1728027703; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nX65nEvrl8c2bAG4dwYO3ALnsJ3H00hLsCIdrQbSMT8=;
-        b=CmQb5/xE/Mfq1tt8P5H647Tpf22z/giXmVevXn/Zs4jXh7W4cy8xSG2oLidm0Tb0rn
-         2uI9lskr4ukmEQBmS+yGBB+PZWciI6b7o9kA706ajhqGuzzHMBGSGRO19ZY5KN8+IKjq
-         4ck6LH8v2a2ziSG/nh5bx5gGtzICwAhAm+Wadcfgs7HhzY3lCpmKUOMVlo2yZaEMsc6C
-         zhA33eFWhnYgsYoJ0aug2acJvljep94/VOLpin357D7mAMA7B+NTnct4AbyHdfLBgsJP
-         o6+mrnTQbWzURIPAx4O6wlw5C61bMYuoXPyLDGt6hKLA4f3DVa9HoCjphDDIrtr9PF+N
-         t86g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727422903; x=1728027703;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nX65nEvrl8c2bAG4dwYO3ALnsJ3H00hLsCIdrQbSMT8=;
-        b=BNYZOYDF0ZePOO5bGP+OS3OGXm0Ems+2g0PXN0MV60e7TDeGuJnlcSiu+iRWMPkHKk
-         ALcI1yyLllYTeSNK2bm8uf++8GCxHNDHBKn/gPF7NbM600aJn7KPrilD20mpNtuquCB1
-         LLB63lflMtKQ6qbmNXEXrsAriYRs7BE5cUu5F8BfgF3SgapmfD8TH1SGHcA+HXNMweUm
-         Ekm2a+5X7Pr9RJY4NuiwvjR8m7pLbPjL6T1QEl0X9CZZQg2zhaST1auziKK4V0O07A+x
-         z7motuL+7tTVtGpjBVZmT9ciU3CjTyn077Imw8oVmuzYWLWor90yKsNjvU949rr8tSr/
-         0EqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVR3vWUhAsSd1wPhTuX1EIFy9s6u4GOuZn0Zc92SJ79IDfEs6100bXTlehST+65e583mxTL0VXwmEE2nQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx/bDJvBDSZkg0JcoY/3cPEoXFnt3nRRS+G5YWVq3tqmhFYP1n
-	4dFEEry4P2SnUQR1KmFfbKJ2rD3rS+/jqWN3PMmu+8nnTDBnpk9KGyeNGt91lYPWLMcrCcnn1g=
-	=
-X-Google-Smtp-Source: AGHT+IHv+V7TrnoRkTknrxCQf2udj+QD2JXSuqMR8tmU8ZFo0gB5BIQ6MEHE/Kyko7jUwDjudbLD/oXTFQ==
-X-Received: from liuweina.c.googlers.com ([fda3:e722:ac3:cc00:99:2717:ac13:e22f])
- (user=wnliu job=sendgmr) by 2002:a05:690c:700d:b0:6db:c3b8:c4ce with SMTP id
- 00721157ae682-6e24762237cmr646337b3.7.1727422902920; Fri, 27 Sep 2024
- 00:41:42 -0700 (PDT)
-Date: Fri, 27 Sep 2024 07:41:41 +0000
-In-Reply-To: <8e02ed1a-42a9-41ab-b1b4-cb5e66bf4018@linux.microsoft.com>
+	s=arc-20240116; t=1727422931; c=relaxed/simple;
+	bh=4cSEU+BlVShce+rMJkVIHeDVoDj4iOY0cw4EX60EB5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q1kOHr2JvV/7QPOcEcY8Gx5ElbKO423HsSbKXlRxoCWTjqeA296e9rMsb4lyahMVSaXM91PRijEgu/Q+fCYG1MoIyKzV8kY7Y0YDgJmBXdby1qhOemu22vuBBgPse3TOXfR4KPxD7fIOy9KZR/4ezFd0n1q343A/uaYgaupQyMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQmr+z7z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0100C4CEC4;
+	Fri, 27 Sep 2024 07:42:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727422931;
+	bh=4cSEU+BlVShce+rMJkVIHeDVoDj4iOY0cw4EX60EB5k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bQmr+z7zQfw2VbGaGMOxNMR0OiXqugTiaoK5lxrgVyQu4V6+aKmbZmq+RWmBTBPEg
+	 tVWrvVFkqJNhcT6wUbjufeJQmxjCam1Sij/SX8RduKx8/ihui92hUyyW06m7IoT4nP
+	 qute0SrSDhEa6Zbpy8iYhRTxsvA1TOiCc2KZQgsddQnu+9bCRVzv25/LPAjD3hWFEv
+	 /zvyeNR/WNH0CV9ivvs4HtjCsES9zM7oo+urhBOBgEILG35StRr6WGCN/04BhxOyWx
+	 it0+zak0kpoN/ZyE1oQcKQ7wC9lz8ikt+s0Znpo8+F7b/odz8elhdV1ZI6+67ADBjg
+	 JY0um6KCRCi5Q==
+Date: Fri, 27 Sep 2024 09:42:08 +0200
+From: "mripard@kernel.org" <mripard@kernel.org>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "tzimmermann@suse.de" <tzimmermann@suse.de>, 
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "airlied@gmail.com" <airlied@gmail.com>, 
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina <jikos@kernel.org>, 
+	"bentiss@kernel.org" <bentiss@kernel.org>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	Orlando Chamberlain <orlandoch.dev@gmail.com>, Kerem Karabay <kekrby@gmail.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v5 10/10] drm/tiny: add driver for Apple Touch Bars in
+ x86 Macs
+Message-ID: <rq3gcr7y2eygp7gifzivxvrj3tzd7ouexz36aeluxjoufs6k6c@kulq7plg52vi>
+References: <DD9C41AD-6543-47CE-8504-69E4992229B2@live.com>
+ <3C9E8938-32EC-44AC-A783-3BFDE2F01290@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <8e02ed1a-42a9-41ab-b1b4-cb5e66bf4018@linux.microsoft.com>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Message-ID: <20240927074141.71195-1-wnliu@google.com>
-Subject: Re: ARM64 Livepatch based on SFrame
-From: Weinan Liu <wnliu@google.com>
-To: kumarpraveen@linux.microsoft.com
-Cc: broonie@kernel.org, catalin.marinas@arm.com, chenzhongjin@huawei.com, 
-	jamorris@linux.microsoft.com, jpoimboe@redhat.com, kpraveen.lkml@gmail.com, 
-	kumarpraveen@microsoft.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, 
-	madvenka@linux.microsoft.com, mark.rutland@arm.com, nobuta.keiya@fujitsu.com, 
-	peterz@infradead.org, sjitindarsingh@gmail.com, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="brmuv7eam2ubwxdk"
+Content-Disposition: inline
+In-Reply-To: <3C9E8938-32EC-44AC-A783-3BFDE2F01290@live.com>
 
-We from Google are working on implementing SFrame unwinder for the Linux kernel, 
-And we will be happy to collaborate with others for adding arm64 livepatch support
 
-Weinan
+--brmuv7eam2ubwxdk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Aug 17, 2024 at 11:52:22AM GMT, Aditya Garg wrote:
+> From: Kerem Karabay <kekrby@gmail.com>
+>=20
+> The Touch Bars found on x86 Macs support two USB configurations: one
+> where the device presents itself as a HID keyboard and can display
+> predefined sets of keys, and one where the operating system has full
+> control over what is displayed. This commit adds support for the display
+> functionality of the second configuration.
+>=20
+> Note that this driver has only been tested on T2 Macs, and only includes
+> the USB device ID for these devices. Testing on T1 Macs would be
+> appreciated.
+>=20
+> Credit goes to @imbushuo on GitHub for reverse engineering most of the
+> protocol.
+>=20
+> Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+> ---
+>  MAINTAINERS                       |   6 +
+>  drivers/gpu/drm/tiny/Kconfig      |  12 +
+>  drivers/gpu/drm/tiny/Makefile     |   1 +
+>  drivers/gpu/drm/tiny/appletbdrm.c | 624 ++++++++++++++++++++++++++++++
+>  4 files changed, 643 insertions(+)
+>  create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8766f3e5e..2665e6c57 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6889,6 +6889,12 @@ S:	Supported
+>  T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+>  F:	drivers/gpu/drm/sun4i/sun8i*
+> =20
+> +DRM DRIVER FOR APPLE TOUCH BARS
+> +M:	Kerem Karabay <kekrby@gmail.com>
+> +L:	dri-devel@lists.freedesktop.org
+> +S:	Maintained
+> +F:	drivers/gpu/drm/tiny/appletbdrm.c
+
+How do you plan on maintaining it? If you want to do so through drm-misc
+(and you should), you need to list the gitlab repo here.
+
+Also, I haven't seen Kerem take part of the discussion at all. Are they
+ok with taking on the maintainer's role?
+
+It's really clear to me either why this needs to be going through hid at
+all. Is it not standalone?
+
+Maxime
+
+--brmuv7eam2ubwxdk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZvZhywAKCRAnX84Zoj2+
+drZEAYDXfSQwdEQELLZAn1fDt8kp1AMKxh7uc4HvWdsgncx92uVquXnyrV8Ajx9r
+GVDiuS4BgIheSxUqmByNX7Zrziwg7oHJQyWpydRiSVvchCzYRsdOpJURa8xY3mJy
+s+Yr7sQ4mA==
+=TV0a
+-----END PGP SIGNATURE-----
+
+--brmuv7eam2ubwxdk--
 
