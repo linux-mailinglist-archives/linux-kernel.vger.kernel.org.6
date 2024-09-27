@@ -1,200 +1,141 @@
-Return-Path: <linux-kernel+bounces-341820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E07219886A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:03:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDCB29886A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31C96B221CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:03:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A025E1F2241D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1ADB8248D;
-	Fri, 27 Sep 2024 14:02:50 +0000 (UTC)
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773EB7405A;
+	Fri, 27 Sep 2024 14:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gccWDigm"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3BB1C6A5
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91CA524B0
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727445770; cv=none; b=OBYOA2qnKFMTJtR3ywSXJ0GNSIniHXFg6E38VZnDX9d5daJr5MaKHTB9G+SXZhKw9YEpxji/ppDWFR/bK7HGXwg5QJNEixvXR95sbrgMRpz0IyLpdgxjbb0l6jwy/jmT4Q1QyahS0D1vciPiM1tGqEsDMgwOEz6TJWAi5lsdHA0=
+	t=1727445801; cv=none; b=GcTSkNy4+cH3y3HsYhhpkxYzc5sBPwMLyJ93aBwO03jdH256y4SdfGO4LLb3cH4o3pYV5xRE1XD3G3An2KyTPquNr42Uad8Eahz0HPXrzmPC5tnVizaGBHHaUPb5fLNt00PxAELX32iSDVWSV0NRvxRZndPOFdP3AptZDYbKumo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727445770; c=relaxed/simple;
-	bh=253Zqta9CAPSxb0t76sFDkKz3VGVITFMFbl7WkT/ffY=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=Eab7lZI0T0pY8wnSi9ptkVxVAmU6HWkX1YBoTpIHcMzGo9NxaMtEQyzJLXDXvm79JVNik/sLmNv2VlFw0NMQ6Ftc+ElpEkTHSZ4QK7VKMwRn7sUAdG3qCGXmfgLs+PIeE4JOpFVyYrRBc07dfPQUh669QIfDL53c8fZDYdRdx+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:48944)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1suBYV-002Q08-SJ; Fri, 27 Sep 2024 08:02:47 -0600
-Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:35456 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1suBYT-009lQK-GZ; Fri, 27 Sep 2024 08:02:47 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,  Anna-Maria Behnsen
- <anna-maria@linutronix.de>,  Frederic Weisbecker <frederic@kernel.org>,
-  John Stultz <jstultz@google.com>,  Peter Zijlstra <peterz@infradead.org>,
-  Ingo Molnar <mingo@kernel.org>,  Stephen Boyd <sboyd@kernel.org>,  Oleg
- Nesterov <oleg@redhat.com>
-References: <20240927083900.989915582@linutronix.de>
-	<20240927084817.138903581@linutronix.de>
-Date: Fri, 27 Sep 2024 09:02:39 -0500
-In-Reply-To: <20240927084817.138903581@linutronix.de> (Thomas Gleixner's
-	message of "Fri, 27 Sep 2024 10:48:44 +0200 (CEST)")
-Message-ID: <87r095yz28.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1727445801; c=relaxed/simple;
+	bh=N1oUxv8Fuk3s4IDXTpoWVFLeOzsWppA7l+cWR7k0zx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CyHiafqcrxOcDhMkEUwdY5KAS3GvZ8WWEDepVWGjJvfV78kIycSrRWA3VaOAtn+qMjcHmoop2z7vhs9RZkDQcGXrrDbnC89aEnt6a1h2T/i+QBOOUfOaMhqbQEZCQhbW/0sv/BoNaQMthU+1Yzlx66ri0tSW1HcpWCY5xZcxsHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gccWDigm; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso399812966b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:03:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727445798; x=1728050598; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ilDLO/w4D1h79Cn17evM3dxXJpvBxV7O0gGjs3DSJQ8=;
+        b=gccWDigmqpsfm1uQ/MbzwtfKY8dm0FEho1VWvV1Esiul9c88R+hVfFYGZhGdPUa1ZM
+         rKwZAWw8t1hwheB9+umwVahTlIhoxuIEXi3TKrsE/s5a4fBd956GzbyhiliyP262EjAt
+         ohU1Nknaw6Oo5igMaU6kIkgGexAhsJdB2+Fa2AZ4b6lb4U8mPo1UBMsYSA/mgKwm/CcS
+         PRuPIH743vbMO/UyKrlgSBFEKhtzT17ZX0sBEw3smWr2QO1QodYtND3twQrHjFvYC9vt
+         jl/xfakIwDq89haG8xrPbdOP40l+IEqn8+dvNY38D03RmrzcJzRNGxy5VcXsyDaoQ5rt
+         Ds9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727445798; x=1728050598;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ilDLO/w4D1h79Cn17evM3dxXJpvBxV7O0gGjs3DSJQ8=;
+        b=WSEolH562HA9Zq72tZ4C7CLRt47eASUwYWKg+J5xRln1rMqYjfCHZ4VCKZ5f8hVmuU
+         WD5RmuQPO2+KAFOmqVXobnURKAgxxQPhvAkAZwxHJ1cEiCPVn1Q83gFf/xBdDcjrQibE
+         KI02djIzL4+Zk2gtwTw2wtKxH0uoDdARTGo6n/ONDsgPTKnQRv8Znl7YLkjgiEyZmNLM
+         gbxlN0c7Z35v++bw1szPZB0M1TCspCxo1tZQ9UY2KZn69Ih86Q1zHoC+8NiFm4AiUeQh
+         6vjfKcmaX7a2/+MukeG7GAoXosXq8phe1WLqGLbpamjPXSAX9CUU/eFHVwWWqBhS811f
+         nPAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXc48gTEH+if6vl8lSvjmhbPNuORWtR8qSGu7lPrcquSKsOdEZ6EJ1pxd9TEaIjKXmiAzjtlEOA5FQfhUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnweBl7ijZPZ6XAhNyCTccGhX+Ke7svDDDQcuuN+gRXiYHppvk
+	A98rvjHqXX14pRo09WR9XCbXW/Zsxp4WNXf9XR8yOjKA4hruOXavhrQxlZM/CRQ=
+X-Google-Smtp-Source: AGHT+IGJWFabzttSmxlbnN3217JwN5XTx6TiZkmS2MiGqhdVgMpiuAoCSBT/PTjmO4pkV0kxJDkarA==
+X-Received: by 2002:a17:907:3faa:b0:a90:1f60:7b2d with SMTP id a640c23a62f3a-a93c2b9cd79mr421037766b.0.1727445796377;
+        Fri, 27 Sep 2024 07:03:16 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c29991adsm136930566b.214.2024.09.27.07.03.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 07:03:15 -0700 (PDT)
+Date: Fri, 27 Sep 2024 16:03:14 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: Chen Ridong <chenridong@huawei.com>, tj@kernel.org, 
+	cgroups@vger.kernel.org, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	Boqun Feng <boqun.feng@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] cgroup: fix deadlock caused by cgroup_mutex and
+ cpu_hotplug_lock
+Message-ID: <3syvchv2pryjtqrwjeyfddhfzcmgnkv7znq7fv6tt75cysg6fn@ee2m3svbqr6x>
+References: <20240817093334.6062-1-chenridong@huawei.com>
+ <20240817093334.6062-2-chenridong@huawei.com>
+ <20240911111542.2781-1-hdanton@sina.com>
+ <20240927112516.1136-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1suBYT-009lQK-GZ;;;mid=<87r095yz28.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1+8CoN0e1B/8db3/9AENJYL3kqPKwuQVmw=
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4999]
-	*  1.0 XM_B_Investor BODY: Commonly used business phishing phrases
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.0 T_TooManySym_02 5+ unique symbols in subject
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Thomas Gleixner <tglx@linutronix.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1745 ms - load_scoreonly_sql: 0.08 (0.0%),
-	signal_user_changed: 12 (0.7%), b_tie_ro: 10 (0.6%), parse: 1.70
-	(0.1%), extract_message_metadata: 38 (2.2%), get_uri_detail_list: 4.2
-	(0.2%), tests_pri_-2000: 71 (4.0%), tests_pri_-1000: 14 (0.8%),
-	tests_pri_-950: 1.82 (0.1%), tests_pri_-900: 1.42 (0.1%),
-	tests_pri_-90: 212 (12.1%), check_bayes: 210 (12.0%), b_tokenize: 42
-	(2.4%), b_tok_get_all: 43 (2.4%), b_comp_prob: 4.5 (0.3%),
-	b_tok_touch_all: 100 (5.7%), b_finish: 1.09 (0.1%), tests_pri_0: 1318
-	(75.5%), check_dkim_signature: 1.92 (0.1%), check_dkim_adsp: 13 (0.8%),
-	 poll_dns_idle: 10 (0.6%), tests_pri_10: 16 (0.9%), tests_pri_500: 52
-	(3.0%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [patch v4 04/27] posix-timers: Cure si_sys_private race
-X-SA-Exim-Connect-IP: 166.70.13.51
-X-SA-Exim-Rcpt-To: oleg@redhat.com, sboyd@kernel.org, mingo@kernel.org, peterz@infradead.org, jstultz@google.com, frederic@kernel.org, anna-maria@linutronix.de, linux-kernel@vger.kernel.org, tglx@linutronix.de
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cdhtwavnjy3c7mbm"
+Content-Disposition: inline
+In-Reply-To: <20240927112516.1136-1-hdanton@sina.com>
 
-Thomas Gleixner <tglx@linutronix.de> writes:
 
-> From: Thomas Gleixner <tglx@linutronix.de>
->
-> The si_sys_private member of the siginfo which is embedded in the
-> preallocated sigqueue is used by the posix timer code to decide whether a
-> timer must be reprogrammed on signal delivery.
->
-> The handling of this is racy as a long standing comment in that code
-> documents. It is modified with the timer lock held, but without sighand
-> lock being held. The actual signal delivery code checks for it under
-> sighand lock without holding the timer lock.
+--cdhtwavnjy3c7mbm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I suspect this falls under the ancient all integers are atomic rule
-in practice.
+On Fri, Sep 27, 2024 at 07:25:16PM GMT, Hillf Danton <hdanton@sina.com> wrote:
+> > Or if the negation is correct, why do you mean that processed work item
+> > is _not_ preventing thread T from running (in the case I left quoted
+> > above)?
+> >
+> If N (N > 1) cgroup work items are queued before one cpu hotplug work, then
+> 1) workqueue worker1 dequeues cgroup work1 and executes it,
+> 2) worker1 goes off cpu and falls in nap because of failure of acquiring
+> cgroup_mutex,
+> 3) worker2 starts processing cgroup work2 and repeats 1) and 2),
+> 4) after N sleepers, workerN+1 dequeus the hotplug work and executes it
+> and completes finally.
 
-> Hand the new value to send_sigqueue() as argument and store it with sighand
-> lock held.
+My picture of putting everything under one system_wq worker was a bit
+clumsy. I see how other workers can help out with processing the queue,
+that's where then N >= WQ_DFL_ACTIVE comes into play, then this gets
+stuck(?). [1]
 
-Is there any way we can simply remove the hack of using si_sys_private,
-and use a field in the structure that contains the preallocated signal?
+IOW, if N < WQ_DFL_ACTIVE, the mutex waiters in the queue are harmless.
 
-I don't have any issues with updating send_siqueue so that the locking
-is consistent.  However can we possibly name the argument something like
-it_requeue_pending instead of si_private?
+> Clear lad?
 
-Eric
+I hope, thanks!
 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->
-> ---
->  include/linux/sched/signal.h |  2 +-
->  kernel/signal.c              | 10 +++++++++-
->  kernel/time/posix-timers.c   | 15 +--------------
->  3 files changed, 11 insertions(+), 16 deletions(-)
-> ---
-> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-> index c8ed09ac29ac..bd9f569231d9 100644
-> --- a/include/linux/sched/signal.h
-> +++ b/include/linux/sched/signal.h
-> @@ -340,7 +340,7 @@ extern int send_sig(int, struct task_struct *, int);
->  extern int zap_other_threads(struct task_struct *p);
->  extern struct sigqueue *sigqueue_alloc(void);
->  extern void sigqueue_free(struct sigqueue *);
-> -extern int send_sigqueue(struct sigqueue *, struct pid *, enum pid_type);
-> +extern int send_sigqueue(struct sigqueue *, struct pid *, enum pid_type, int si_private);
->  extern int do_sigaction(int, struct k_sigaction *, struct k_sigaction *);
->  
->  static inline void clear_notify_signal(void)
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index 3d2e087283ab..443baadb5ab0 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -1915,7 +1915,7 @@ void sigqueue_free(struct sigqueue *q)
->  		__sigqueue_free(q);
->  }
->  
-> -int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type)
-> +int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type, int si_private)
->  {
->  	int sig = q->info.si_signo;
->  	struct sigpending *pending;
-> @@ -1950,6 +1950,14 @@ int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type)
->  	if (!likely(lock_task_sighand(t, &flags)))
->  		goto ret;
->  
-> +	/*
-> +	 * Update @q::info::si_sys_private for posix timer signals with
-> +	 * sighand locked to prevent a race against dequeue_signal() which
-> +	 * decides based on si_sys_private whether to invoke
-> +	 * posixtimer_rearm() or not.
-> +	 */
-> +	q->info.si_sys_private = si_private;
-> +
->  	ret = 1; /* the signal is ignored */
->  	result = TRACE_SIGNAL_IGNORED;
->  	if (!prepare_signal(sig, t, false))
-> diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-> index bcd5e56412e7..b6cca1ed2f90 100644
-> --- a/kernel/time/posix-timers.c
-> +++ b/kernel/time/posix-timers.c
-> @@ -299,21 +299,8 @@ int posix_timer_queue_signal(struct k_itimer *timr)
->  	if (timr->it_interval)
->  		si_private = ++timr->it_requeue_pending;
->  
-> -	/*
-> -	 * FIXME: if ->sigq is queued we can race with
-> -	 * dequeue_signal()->posixtimer_rearm().
-> -	 *
-> -	 * If dequeue_signal() sees the "right" value of
-> -	 * si_sys_private it calls posixtimer_rearm().
-> -	 * We re-queue ->sigq and drop ->it_lock().
-> -	 * posixtimer_rearm() locks the timer
-> -	 * and re-schedules it while ->sigq is pending.
-> -	 * Not really bad, but not that we want.
-> -	 */
-> -	timr->sigq->info.si_sys_private = si_private;
-> -
->  	type = !(timr->it_sigev_notify & SIGEV_THREAD_ID) ? PIDTYPE_TGID : PIDTYPE_PID;
-> -	ret = send_sigqueue(timr->sigq, timr->it_pid, type);
-> +	ret = send_sigqueue(timr->sigq, timr->it_pid, type, si_private);
->  	/* If we failed to send the signal the timer stops. */
->  	return ret > 0;
->  }
+Michal
+
+[1] I don't see a trivial way how to modify lockdep to catch this
+    (besides taking wq saturation into account it would also need to
+    propagate some info across complete->wait_for_completion).
+
+
+--cdhtwavnjy3c7mbm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZva7IAAKCRAt3Wney77B
+Sd2mAQCxOrw2I8bsq5+HUt8cg8qakt97WeglQHMG9ceCXW2LDgEAxCnLeSko2OVY
+tg7Ga1Z4DzB/tAkefAhq9FpE/8CSmQ8=
+=mf9o
+-----END PGP SIGNATURE-----
+
+--cdhtwavnjy3c7mbm--
 
