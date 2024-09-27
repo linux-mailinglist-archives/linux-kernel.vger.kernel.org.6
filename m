@@ -1,94 +1,57 @@
-Return-Path: <linux-kernel+bounces-342108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A75E988AAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:04:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CBC1988AB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B97DCB2140A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:04:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E25282879
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B58A1C2311;
-	Fri, 27 Sep 2024 19:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2171C2320;
+	Fri, 27 Sep 2024 19:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Hho3ajbb"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQPlB/T7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C42D61FD8
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAB016FF3B;
+	Fri, 27 Sep 2024 19:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727463846; cv=none; b=aVdbpP/jSBZqYl4wdERdwDE1xCZcEouFixqUU9J0qAaHuF3gjlvHtwsVYg2wjuFOtUybHRJMDD5ZGsS6iYdIruFF+HJix46JKE+B23woR6K148l4VZ2aCLWS6wIRkENjBtpvswCRT+ewB0E5VmoRCAsC+aOTiAkm1C3lyFn7MIk=
+	t=1727463954; cv=none; b=EYxqjczfkzDRqyofsEBxM9IZoq+OMwBhr0rK1TjZOq7yimtCAYnoyw1qEKUjXJ6q8aRYulEjFIUcihTVf8AO5MREne9pwVUx3RRK30g91vtodcjvjzyqYfiUbS95tm6rV2wb2fJ+ry8nm4pjogDi0NzGd5wHxyHvapJFgG9Bz8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727463846; c=relaxed/simple;
-	bh=CHepwiKVrhYRFqSEuoEN43CO3RQYMQzGqzOq5t5Q4gw=;
+	s=arc-20240116; t=1727463954; c=relaxed/simple;
+	bh=AlVmqydRc0H9M6uSiES4idlufya26gQJmhUiInsVoMM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=toOpHh5iMyA1TXG9R9NuGJW290c4ENx/JMsfK/ni1RvpzojEQfpVVZOqCFwpcgQy/yix+GNLkwkJvcn4JAiLBF/9J8lP0huN/0LK1r/LiwQg0H8PG1xFLPI2DhxwA7j/EUpZBJOvPmxwzrPZegJ064SAX5WogAhM1PWzsyT1lpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Hho3ajbb; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-718816be6cbso2203998b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:04:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1727463844; x=1728068644; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PPfHmPKp/Y5WNN6bjQeKxR8UWNI3sljkWbiIgLHSqiM=;
-        b=Hho3ajbbteXrvBQh7szIUYAvFPqhCCuuCWK0hQ3KP/+LP/hkIAYgcQcdDTZVb5u7YN
-         NO0mnc8LgVzSHfdKuV18zPoma+gS6kUnT4xgDudGh7obz8lJ4/AfgUkyfAF7au7Jpnis
-         MSoEtqwhwHesIogbW9qUmY17eDVKxve4ap57s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727463844; x=1728068644;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PPfHmPKp/Y5WNN6bjQeKxR8UWNI3sljkWbiIgLHSqiM=;
-        b=OwshBXt1j8me0Jm+4TElNtiYMhRqdmZo0zniBUa5N21zyhneBj1+T4j9FGnhHa7x0m
-         LNnjL+jsHBO8Nu9mEE65Be2XnQ6aaqSz7mN6qEqP1mqL1FtsK0oiNdmHTBuku8B7vYTW
-         SPoegyg/902EYrxdwBv64kCP8poprKxapOk6/Tev3Our8IRt70KmRXVM6vh4Tr5D+pyW
-         Gxp4vhBAgO9TtpdMSD1XCQYL6q7D5YSRy1XdSpIiV3hAF9EP7WcIA2YRVLxhm1nEIEox
-         mM7oQr7niFJY50iBKnk34n7pdqwyUbvAOnI7mv6Lx7hdw6JM1SL0zW2NTwM2k8VOgqq2
-         kwQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCHtEP1JMpxIfkr+7OlqLSyeb7rtjsLnZVXDtc6iNlT8alV3FbhF1Y7SyZJOaFq9aRCjdoTtq2ybTMuEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMWp+kseZk2w7QPOGvYhSb94Vg3ZgTsjWZtza7t43HrGVMKzZT
-	n1GExowTJ8MrWSAnwhFHlXv7j8N6VzdUrYxIDmSzjE3VfuhnoWe1DDz6rw1G860=
-X-Google-Smtp-Source: AGHT+IG6H/MJggwQq8+Ni9SwF4tf2SUxcM6xi55yVCWrfJ+aMITNHnRkqOJjElHqC9jWV2TVfLT/BA==
-X-Received: by 2002:a05:6a00:174c:b0:717:945e:effd with SMTP id d2e1a72fcca58-71b25f29138mr6032343b3a.1.1727463844374;
-        Fri, 27 Sep 2024 12:04:04 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db5eb3bbsm1985855a12.72.2024.09.27.12.04.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 12:04:03 -0700 (PDT)
-Date: Fri, 27 Sep 2024 12:04:01 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Shailend Chand <shailend@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Willem de Bruijn <willemb@google.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next 1/2] gve: Map IRQs to NAPI instances
-Message-ID: <ZvcBofFP6r4SONYL@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Shailend Chand <shailend@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Willem de Bruijn <willemb@google.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240926030025.226221-1-jdamato@fastly.com>
- <20240926030025.226221-2-jdamato@fastly.com>
- <20240927185619.GN4029621@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aCh17W80B7Nu4ehGbjwonEycmtpsHXv04Kts+a8A5vHCLB/VAFJBmxhZUgpkbsSxQsZ32IWlIKf8gwl1CPxdJBbD4Mr4k0bqFLOIbwgGppPlCcXaRUIDn80GjtcXPfTe0anrkiBH9bu/eJEzRGm6B5R2YPGv+QU0o9ibUco9ldQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQPlB/T7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E1CC4CEC4;
+	Fri, 27 Sep 2024 19:05:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727463954;
+	bh=AlVmqydRc0H9M6uSiES4idlufya26gQJmhUiInsVoMM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VQPlB/T7qzO8uuxc1elhRj4hg/sUzm8ppcz/jKj7zzv1LjM68viaJZoYK9bFRU3JN
+	 kusPDdDssMCcRYjgPKF+meCQETY6Uj2YopNl1j0V31TdQBF/sFt1oZIDzNbw7gUxRP
+	 +t6kggF30jZfjgk/PyHt4+pm8aoP6dYTW/uM6ATypzoxcAGTaPnHjK1dM2KceNZdbI
+	 XQL3weL3C54wTigW471cG9thwQ47Su2sKHZJq22J1M7zsg2bXwRDAkk3pQ2Xh7AuIU
+	 mFIbqCkH1Nnr0o9kfgot8Qs2fv2cZlh9IdUtNfiL23LPKV2BSF1XAMH0DxYYyZREwB
+	 PVVNeGCHTFeEg==
+Date: Fri, 27 Sep 2024 16:05:50 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/8] perf record --off-cpu: Dump off-cpu samples
+ directly
+Message-ID: <ZvcCDkrzwilKYQR2@x1>
+References: <20240927185340.658143-1-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,16 +60,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240927185619.GN4029621@kernel.org>
+In-Reply-To: <20240927185340.658143-1-howardchu95@gmail.com>
 
-On Fri, Sep 27, 2024 at 07:56:19PM +0100, Simon Horman wrote:
-> On Thu, Sep 26, 2024 at 03:00:21AM +0000, Joe Damato wrote:
-> > Use netdev-genl interface to map IRQs to NAPI instances so that this
-> > information is accesible by user apps via netlink.
-> 
-> nit: accessible
-> 
-> Flagged by checkpatch.pl --codespell
+On Fri, Sep 27, 2024 at 11:53:32AM -0700, Howard Chu wrote:
+> Changes in v5:
+>  - Delete unnecessary copy in BPF program
+>  - Remove sample_embed from perf header, hard code off-cpu stuff instead
+>  - Move evsel__is_offcpu_event() to evsel.h
+>  - Minor changes to the test
+>  - Edit some comments
 
-Thanks, will fix that.
+Thanks, I'll try to review and test this early next week, and check on
+bisectability issues as you mentioned privately.
+
+Thanks!
+
+- Arnaldo
+ 
+> Changes in v4:
+>  - Minimize the size of data output by perf_event_output()
+>  - Keep only one off-cpu event
+>  - Change off-cpu threshold's unit to microseconds
+>  - Set a default off-cpu threshold
+>  - Print the correct error message for the field 'embed' in perf data header
+> 
+> Changes in v3:
+>  - Add off-cpu-thresh argument
+>  - Process direct off-cpu samples in post
+> 
+> Changes in v2:
+>  - Remove unnecessary comments.
+>  - Rename function off_cpu_change_type to off_cpu_prepare_parse
+> 
+> v1:
+> 
+> As mentioned in: https://bugzilla.kernel.org/show_bug.cgi?id=207323
+> 
+> Currently, off-cpu samples are dumped when perf record is exiting. This
+> results in off-cpu samples being after the regular samples. This patch
+> series makes possible dumping off-cpu samples on-the-fly, directly into
+> perf ring buffer. And it dispatches those samples to the correct format
+> for perf.data consumers.
+> 
+> Before:
+> ```
+>      migration/0      21 [000] 27981.041319: 2944637851    cycles:P:  ffffffff90d2e8aa record_times+0xa ([kernel.kallsyms])
+>             perf  770116 [001] 27981.041375:          1    cycles:P:  ffffffff90ee4960 event_function+0xf0 ([kernel.kallsyms])
+>             perf  770116 [001] 27981.041377:          1    cycles:P:  ffffffff90c184b1 intel_bts_enable_local+0x31 ([kernel.kallsyms])
+>             perf  770116 [001] 27981.041379:      51611    cycles:P:  ffffffff91a160b0 native_sched_clock+0x30 ([kernel.kallsyms])
+>      migration/1      26 [001] 27981.041400: 4227682775    cycles:P:  ffffffff90d06a74 wakeup_preempt+0x44 ([kernel.kallsyms])
+>      migration/2      32 [002] 27981.041477: 4159401534    cycles:P:  ffffffff90d11993 update_load_avg+0x63 ([kernel.kallsyms])
+> 
+> sshd  708098 [000] 18446744069.414584:     286392 offcpu-time: 
+> 	    79a864f1c8bb ppoll+0x4b (/usr/lib/libc.so.6)
+> 	    585690935cca [unknown] (/usr/bin/sshd)
+> ```
+> 
+> After:
+> ```
+>             perf  774767 [003] 28178.033444:        497           cycles:P:  ffffffff91a160c3 native_sched_clock+0x43 ([kernel.kallsyms])
+>             perf  774767 [003] 28178.033445:     399440           cycles:P:  ffffffff91c01f8d nmi_restore+0x25 ([kernel.kallsyms])
+>          swapper       0 [001] 28178.036639:  376650973           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+>          swapper       0 [003] 28178.182921:  348779378           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+>     blueman-tray    1355 [000] 28178.627906:  100184571 offcpu-time: 
+> 	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+> 	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+> 	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+> 	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+> 	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+> 	    7fff24e862d8 [unknown] ([unknown])
+> 
+> 
+>     blueman-tray    1355 [000] 28178.728137:  100187539 offcpu-time: 
+> 	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+> 	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+> 	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+> 	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+> 	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+> 	    7fff24e862d8 [unknown] ([unknown])
+> 
+> 
+>          swapper       0 [000] 28178.463253:  195945410           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+>      dbus-broker     412 [002] 28178.464855:  376737008           cycles:P:  ffffffff91c000a0 entry_SYSCALL_64+0x20 ([kernel.kallsyms])
+> ```
+> 
+> Howard Chu (8):
+>   perf evsel: Set off-cpu BPF output to system-wide
+>   perf record --off-cpu: Add --off-cpu-thresh
+>   perf record --off-cpu: Parse offcpu-time event
+>   perf record off-cpu: Dump direct off-cpu samples in BPF
+>   perf record --off-cpu: Dump total off-cpu time at the end.
+>   perf evsel: Delete unnecessary = 0
+>   perf record --off-cpu: Parse BPF output embedded data
+>   perf test: Add direct off-cpu dumping test
+> 
+>  tools/perf/builtin-record.c             |  26 ++++
+>  tools/perf/builtin-script.c             |   4 +-
+>  tools/perf/tests/builtin-test.c         |   1 +
+>  tools/perf/tests/shell/record_offcpu.sh |  29 ++++
+>  tools/perf/tests/tests.h                |   1 +
+>  tools/perf/tests/workloads/Build        |   1 +
+>  tools/perf/tests/workloads/offcpu.c     |  16 +++
+>  tools/perf/util/bpf_off_cpu.c           | 174 +++++++++++++++---------
+>  tools/perf/util/bpf_skel/off_cpu.bpf.c  | 123 +++++++++++++++++
+>  tools/perf/util/evsel.c                 |  47 ++++---
+>  tools/perf/util/evsel.h                 |   6 +
+>  tools/perf/util/off_cpu.h               |  10 +-
+>  tools/perf/util/record.h                |   1 +
+>  tools/perf/util/session.c               |  12 +-
+>  14 files changed, 359 insertions(+), 92 deletions(-)
+>  create mode 100644 tools/perf/tests/workloads/offcpu.c
+> 
+> -- 
+> 2.43.0
 
