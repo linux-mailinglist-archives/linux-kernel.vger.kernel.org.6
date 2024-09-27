@@ -1,124 +1,163 @@
-Return-Path: <linux-kernel+bounces-341944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778E09888AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:02:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813E39888AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 232001F235EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:02:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F226AB22B89
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D15A1C1725;
-	Fri, 27 Sep 2024 16:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E7A1C172C;
+	Fri, 27 Sep 2024 16:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rwq9bjBy"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lDm6s4gI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EAC200A3
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 16:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AED0200A3;
+	Fri, 27 Sep 2024 16:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727452946; cv=none; b=InSDTXG63/vZGb0zmZdk/3W79Eew7ZmAe9sgCDXldgCqb2BtIHJcZ6dFS6zxPh3MW3J1yWr4rLKihdtiAuxNkwdFYPF1Z2a2yyjzrSLITKpJIRhK62JUm6fJWZ3fZNS/9McpygGnKRxKA94KI55fdx2zCuc6V5XOeO++ag9Xod0=
+	t=1727453013; cv=none; b=MrrXRxXvge4FZX/6V/gMtdkflTbVltOSoutChF3PFNYTSPcn8pc1zYY2y5vCBvt9NrA8s/kzkdhlh/1NiXv/AXFQP+AqVDN6Ohb1EmEdPSYX6MtYXvS9In+fFEPxGL6FUo5oSQ4g6qMpUtcN8g7E9vDTO1zDVFoVgN8FAaZYOfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727452946; c=relaxed/simple;
-	bh=j8EKtiti6A+WnBNT10RaewPAngTEUNXpu20Lyhq973s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NbFrb4f8OA7cbWDXaGN96hUa2TndMlKa/I8WDx1DFdZNzPV6lcpwixowswyoBdn5nh5Se3QGWSPJ8L5n6Urp6Owxa4czUbZSmokEHfgSiPb1ruqjDgmWvN4zTvxEu2yxl4XlUhvbxzzMCo4eB3RLPtoeRSE0WnUepROkCA2hMiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rwq9bjBy; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6dbbe7e51bbso19532557b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:02:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727452944; x=1728057744; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oGIro/Gw+pG6C+1E3sPWUSd5s24w2G8NI6gHk8UMPKw=;
-        b=rwq9bjByPwFN22KNJJR8pzRG4aSSA35BrjNnERmKZ4ATj1aTUWPPpiANEoCHdkPogW
-         8wJOK6BBNLGDLLrUk1gKYRpRmpTF3yD4TDu58k3m+jsfRcjIAuHJ4C6EHIrmcXotNZKX
-         q0KPxWUeUJUnW04dgzj3OW+f7ZM5qeIaJ7t7f+QK0QKjJTFFmyIcklOGOE3TTzfccTr1
-         VUqha4gscggkvPgVOKCB/x63uLCc4QVg9e2oX8kp8kliBBYQMu8B1qM8m+NQWlEd2aFG
-         Z+wYtPQZkYPVOGeDxZ1EbQgVknSEUn1lJUu9ae7Hx2hve2SQ6yqRglYsX6YLAHbghS5x
-         M8eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727452944; x=1728057744;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oGIro/Gw+pG6C+1E3sPWUSd5s24w2G8NI6gHk8UMPKw=;
-        b=dKM9mE0ScpzxWn4RjvtOMIGCxuSUmg+0qFAceW/hO7kk5S3vcUoXUqmBwWPKjr/S0B
-         al8iaHEXPUtvUGMZpRxgP4tzzkwiqmhhc5RrzOkIJQLkYoVIOR9FRSfCoCJ6xHYMOiom
-         me1YJNJBgHMatnh4OLUim9eitkiaOIoJNFAr541oTAxHzxU7SWRl1wINbfMkbuY+lvw3
-         SgSEdfTQQkCzDLclPjS1ZDDACfMqN7sGROmw12ELLeUgVd7vzR1yhlBfsoITsCBZQreO
-         9fr5seyZmvtQY4qwWKWPc5iJ1saYeCcxruPU06W4focvoh04IuM8ynW0tNGDxmOh38jA
-         qM4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXYFqB2udDMZSWfoNN+WcMcU+zYlcawwxfC+7Jq+103mHn2sZ7j20JRqQ36/blA8gzlOwYkIGuvihtJn1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKGH5gUbMHiVcI8F2OhvwZJhH83cmxQiUHekBfFs2krkMohvlJ
-	RrRSO2VAioUZvDFlOzYmfqZm9Kk45Vw3x6XReDDU1rEEWqPz27b2VSY3FEq+//1u88/oLV9wqB+
-	hjpGxvkEV5MPrylMI4yI1xYm+VNNhLA03LDncJA==
-X-Google-Smtp-Source: AGHT+IFKb/vMmnggV56geE4/LB9PLjbBe1DnuIle3XzTmcqytPrRsrd/oj6ZHjXqBbLDkzsVtWhd/O27c6gwZgRbuEk=
-X-Received: by 2002:a05:690c:f0e:b0:6dd:c768:e58c with SMTP id
- 00721157ae682-6e2473b6783mr34335307b3.0.1727452944048; Fri, 27 Sep 2024
- 09:02:24 -0700 (PDT)
+	s=arc-20240116; t=1727453013; c=relaxed/simple;
+	bh=eMlisuPU8aSOMFD/1F9ex1awVaAko4nscyew5rE08e0=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hCWzJQVUJrYvckMBhJGM8Jai6ApBbJ4WbrmyW5aKYCQWFdtkzGWIC97WT62KdDpmTEJi/HDwl7EQtvtnjZ/+H8hRTFZ67qsjMDfAtebuVnbZIqHVO/nsJ6XfhFl5t/jcg/I5zxHh/XzW4kDJ4mqqYbIn1THAxDUofHXR3VeVnbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lDm6s4gI; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727453013; x=1758989013;
+  h=from:to:cc:references:in-reply-to:subject:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=eMlisuPU8aSOMFD/1F9ex1awVaAko4nscyew5rE08e0=;
+  b=lDm6s4gIbOO88J7/9+3Yp5y2ZS+hcmAfRvbfrGwRY1emBnGvf34itdF4
+   tUc/Pa8PBr+9azoPyD+7sw6XSiSNYzpDmYxMlMBI1edIBcIDr/31d9WQq
+   PJOoUlQJv/tUjDRwTVovmv6gvglBMwkXVp4IQxoRxNxAjr9oWVpQLoqsj
+   L04oqPRZYsz1rGAuAvdm1TFDVvteVFF4/NoBIfxkPYnmpm0VAGJyDL/fR
+   qQjwoHKzEwIldJ+73dSBMT7+dWBpJ6OtcNgCBCuD5FZ3lh/qBjSAD9VLJ
+   USB6Pn2u+buvGRLZPW2yjE19ohbtYXjeDQdoB3Au0t+nkAXQDSEiqLHTo
+   A==;
+X-CSE-ConnectionGUID: 9s6ZIaDlSKuz1zlPaVMYlQ==
+X-CSE-MsgGUID: Smb4eAr0SfayX9z5wL2tnA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="49129852"
+X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
+   d="scan'208";a="49129852"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 09:03:32 -0700
+X-CSE-ConnectionGUID: WYjpbBapSlSP2KIipdKD+A==
+X-CSE-MsgGUID: D9tt5ylpQWCX5Qd1hHyaOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
+   d="scan'208";a="73004773"
+Received: from bseshasa-mobl.amr.corp.intel.com (HELO bseshasaMOBL) ([10.246.171.145])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 09:03:28 -0700
+From: <bala.seshasayee@linux.intel.com>
+To: "'Barry Song'" <21cnbao@gmail.com>
+Cc: <tom.zanussi@linux.intel.com>,
+	<minchan@kernel.org>,
+	<senozhatsky@chromium.org>,
+	<hannes@cmpxchg.org>,
+	<yosryahmed@google.com>,
+	<nphamcs@gmail.com>,
+	<chengming.zhou@linux.dev>,
+	<herbert@gondor.apana.org.au>,
+	<davem@davemloft.net>,
+	"Yu, Fenghua" <fenghua.yu@intel.com>,
+	"Jiang, Dave" <dave.jiang@intel.com>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+	"Guilford, James" <james.guilford@intel.com>,
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>,
+	"Caldwell, Heath" <heath.caldwell@intel.com>,
+	"Sridhar, Kanchana P" <Kanchana.P.Sridhar@intel.com>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>,
+	<ryan.roberts@arm.com>,
+	<linux-crypto@vger.kernel.org>,
+	<dmaengine@vger.kernel.org>
+References: <cover.1714581792.git.andre.glover@linux.intel.com> <8fe04e86f0907588d210885ac91965960f97f450.1714581792.git.andre.glover@linux.intel.com> <CAGsJ_4xREUbRWRZEO8EiEBdP9YN0Wip4_p58Cca=B4ZdPb7Mpg@mail.gmail.com>
+In-Reply-To: <CAGsJ_4xREUbRWRZEO8EiEBdP9YN0Wip4_p58Cca=B4ZdPb7Mpg@mail.gmail.com>
+Subject: RE: [RFC PATCH 2/3] crypto: add by_n attribute to acomp_req
+Date: Fri, 27 Sep 2024 09:03:27 -0700
+Message-ID: <000001db10f6$cb3ca4b0$61b5ee10$@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628-dpu-msm8953-msm8996-v1-0-a31c77248db7@mainlining.org>
- <zeek3j7skstysho5bduxn23xipz3fpqsfwggue66dlyozhepnn@4wnnd7q6xf22> <05c1f93940c38087e8d245d2b6bf90e0@mainlining.org>
-In-Reply-To: <05c1f93940c38087e8d245d2b6bf90e0@mainlining.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 27 Sep 2024 18:02:13 +0200
-Message-ID: <CAA8EJpr0C-gXDoJsStTxJzCMEkbZaPeEAcBES3GqZp1FcKb=4Q@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Add MSM8996/MSM8953 dpu catalog
-To: barnabas.czeman@mainlining.org
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, Konrad Dybcio <konrad.dybcio@somainline.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHanBEURTUo4d1RW0OV8cvHU+0CnrJax8IAgBHsYLA=
+Content-Language: en-us
 
-On Fri, 27 Sept 2024 at 17:39, <barnabas.czeman@mainlining.org> wrote:
->
-> On 2024-08-01 21:25, Dmitry Baryshkov wrote:
-> > On Fri, Jun 28, 2024 at 04:39:38PM GMT, Barnab=C3=A1s Cz=C3=A9m=C3=A1n =
-wrote:
-> >> This patch series add dpu support for MSM8996/MSM8953 devices.
-> >>
-> >> Note, by default these platforms are still handled by the MDP5 driver
-> >> unless the `msm.prefer_mdp5=3Dfalse' parameter is provided.
+
+
+> -----Original Message-----
+> From: Barry Song <21cnbao@gmail.com>
+> Sent: Sunday, September 15, 2024 11:16 PM
+> To: Andre Glover <andre.glover@linux.intel.com>
+> Cc: tom.zanussi@linux.intel.com; minchan@kernel.org;
+> senozhatsky@chromium.org; hannes@cmpxchg.org; yosryahmed@google.com;
+> nphamcs@gmail.com; chengming.zhou@linux.dev;
+> herbert@gondor.apana.org.au; davem@davemloft.net; Yu, Fenghua
+> <fenghua.yu@intel.com>; Jiang, Dave <dave.jiang@intel.com>; Feghali, =
+Wajdi K
+> <wajdi.k.feghali@intel.com>; Guilford, James =
+<james.guilford@intel.com>; Gopal,
+> Vinodh <vinodh.gopal@intel.com>; Seshasayee, Bala
+> <bala.seshasayee@intel.com>; Caldwell, Heath =
+<heath.caldwell@intel.com>;
+> Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>; linux-
+> kernel@vger.kernel.org; linux-mm@kvack.org; ryan.roberts@arm.com; =
+linux-
+> crypto@vger.kernel.org; dmaengine@vger.kernel.org
+> Subject: Re: [RFC PATCH 2/3] crypto: add by_n attribute to acomp_req
+>=20
+> On Thu, May 2, 2024 at 5:46=E2=80=AFAM Andre Glover =
+<andre.glover@linux.intel.com>
+> wrote:
 > >
-> > Could you please provide a summary of features actually tested with the
-> > DPU driver? Have you tested YUV output? Have you tested RGB planes?
-> I have checked all planes they are working fine.
->
-> > Which LMs have you tested?
-> I have done some more testing and msm8953 LMs are fine but i have found
-> out
-> on msmm8996 LM_3 and LM_4 is not working as i see in downstream sde code
-> they are not exists.
-> This kind of messages i got for LM_3 and LM_4
-> [   34.751091] [drm:_dpu_rm_make_reservation] [dpu error]unable to find
-> appropriate mixers
-> [   34.751112] [drm:dpu_rm_reserve] [dpu error]failed to reserve hw
-> resources: -119
+> > Add the 'by_n' attribute to the acomp_req. The 'by_n' attribute can =
+be
+> > used a directive by acomp crypto algorithms for splitting compress =
+and
+> > decompress operations into "n" separate jobs.
+>=20
+> Hi Andre,
+>=20
+> I am definitely in favor of the patchset idea. However, I'm not =
+convinced that a
+> separate by_n API is necessary. Couldn=E2=80=99t this functionality be =
+handled
+> automatically within your driver? For instance, if a large folio is =
+detected, could it
+> automatically apply the by_n concept?
+>=20
+> Am I overlooking something that makes exposing the API necessary in =
+this case?
 
-I think LM_3 / LM_4 are WB-only, but I didn't have time to check that.
-Maybe it's easier to omit them for now.
+Hi Barry,
 
-I hope to get back to those platforms during the forthcoming or the
-next development cycle, after (hopefully) finishing the HDMI
-conversion story.
+The 'deflate-iaa-canned' compression algorithm is fully compatible with =
+the deflate standard. Andre's patchset introduces 'canned-by_n' as a new =
+compression algorithm, which is not a deflate stream since it has a =
+different header (for the by_n chunks).
+The same 'canned-by_n' algorithm along with the value of the acomp_req =
+=E2=80=98by_n=E2=80=99 attribute would be used to compress and =
+decompress a given input buffer.
+Furthermore, with a tunable 'by_n' , the user can experiment with =
+different values of by_n for different mTHP sizes to understand =
+trade-offs in performance vs. compression ratio.
 
---=20
-With best wishes
-Dmitry
+Thanks
+Bala
+
 
