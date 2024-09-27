@@ -1,132 +1,176 @@
-Return-Path: <linux-kernel+bounces-342010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F566988998
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:16:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81BAC9889A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0BE1F21F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:16:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26554B21FFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EF31C1752;
-	Fri, 27 Sep 2024 17:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9EE1C1AA2;
+	Fri, 27 Sep 2024 17:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9KsOEca"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="AYHtG6/i"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A39E9443;
-	Fri, 27 Sep 2024 17:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BE09443;
+	Fri, 27 Sep 2024 17:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727457396; cv=none; b=iIDA9wwuCeIsGfZAnnkpfk4yFy7Qvb0EtOsrj7EbFGH+4vfZD8sCxzWVFNIOjf06/H1t0mkBBKGUQXRpaseZ1PCivCGuFapJvshSf4NfAqZ1MPNwUhBcjup1d29nhSM7jb9Mz2rxo5Vg6QVZvxinXtS3Qv4782kZ1kkQHjqq+MA=
+	t=1727457545; cv=none; b=RwniqaGIKEipQ+rmuBKu8KHGC7BFv1c7CLc7svqKViVYLyMDb+wmqE15jHD1oqaaOXYfxScNh+O9WzzJZhiQmFJgD/9MdbsFw8VnpP8Evsvcb59p3aMW112zRHSOsZdqLdZN114GiPxXTOmksisPleMmf6hXUq20AiwV0SCRlEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727457396; c=relaxed/simple;
-	bh=WknK4cOtOLyalFU6sTUSoe3/Zmky5Kztt69ULojNWv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=erJvMtQDU2nW1Cernxn40+WZi453VbHPGcTYulhWG85yCBsOeJgiXGr9YI7u+E6gmMgIPpZl0798TmqAyvHp85r/HrpJAfk8d7TVuVUtaZBj93OpRo5haXcixV9Cie3Hy4KNUSbJONmsKhDE15JsueFRvOPLphbmRJejH5pXLuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9KsOEca; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 813ADC4CEC7;
-	Fri, 27 Sep 2024 17:16:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727457395;
-	bh=WknK4cOtOLyalFU6sTUSoe3/Zmky5Kztt69ULojNWv0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b9KsOEcaHCPjUZl479E0wwJWyCK9AgvhOzUUUXvhchm5hebe/NhKlSQ9XuCbncHmg
-	 4lQoAuPEAXbP+MpoXSH0/p5H2StYSnZ7ejPSWd5kUz/wwlvhURZZ6b9PaNUsgGNmrf
-	 yntEXqCPH9dOlHnxz3m1sDt/cgLPvJ5ik+Mc5Nru0FNKuotpOqdyGcSy0jha05TEre
-	 ckWnlydh16vKwmjc3dhN+6CfHTPfoPVTB/mFwuKmxDT7eHqBvs9rqhPs+ueEuXU2Qp
-	 1ovPTBZyjTSaukjfwD9wAIO20PMweL6uQ2epLWYPkXC3VWLRDcGW7BQghIJQSelLEf
-	 Xs1xW5fUvxQ2w==
-Date: Fri, 27 Sep 2024 10:16:32 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Guo Ren <guoren@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>,
-	Guilherme Amadio <amadio@gentoo.org>,
-	Changbin Du <changbin.du@huawei.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Aditya Gupta <adityag@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
-	Kajol Jain <kjain@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
-	Shenlin Liang <liangshenlin@eswincomputing.com>,
-	Atish Patra <atishp@rivosinc.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Chen Pei <cp0613@linux.alibaba.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	Yang Jihong <yangjihong@bytedance.com>
-Subject: Re: [PATCH v1 11/11] perf build: Rename PERF_HAVE_DWARF_REGS to
- PERF_HAVE_LIBDW_REGS
-Message-ID: <ZvbocHwtPkwJwDOA@google.com>
-References: <20240924160418.1391100-1-irogers@google.com>
- <20240924160418.1391100-12-irogers@google.com>
- <ZvTUo_nbr_gKaJrs@google.com>
- <CAP-5=fVQVEgSK55Y_38KXyp3CJ1ssPOcqkA2JKwMDVYJe8iztA@mail.gmail.com>
- <ZvW4iZpTinJKWIFD@google.com>
- <CAP-5=fUcV6rXiTSpGPCGou6h9Gy-MYcYtrvdFJKCz28gQAf-LA@mail.gmail.com>
+	s=arc-20240116; t=1727457545; c=relaxed/simple;
+	bh=wtDpYwOAOKofX4RvJxSntDIhYtfMCgqh7rhIZgRfwJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V0iXUbhMHkmExu/TBJnwPs7dd+tPTishh2Qzxw9sEpX5sAhS+abiFlAGFRaAfpbYcNe8HrzT7RwUxyxJqkfCRgKYeBZ9mG4Mi279en5EwXTSTKvGAEvKJCYyCL+Vk5p/hgDO/PHgskWptHqfyEkVLrso333R2lS0InfnzfLzos4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=AYHtG6/i; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1727457523; x=1728062323; i=w_armin@gmx.de;
+	bh=wtDpYwOAOKofX4RvJxSntDIhYtfMCgqh7rhIZgRfwJ8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=AYHtG6/iQJDvQyZfJRLG0SQe1DP9ifBowEWfHWSBcvEnaLO5NTWDCJ/M+nCIQTir
+	 AkW9qx6YMJxcGFk9M9/wUAx42Ks4uRaKBfp16FEjTt2jb1MmKPz3lopUQskCcXpmD
+	 3nGKlRMmXftcIZ0neM7BmsgL1BpPaTeMTjRPg3BfTuRsGUzRYhmPJ4gsAGA57oh3N
+	 0b6NA9/glWLeJPEMVAW4re2opBpulSJ82nB5Qr53tW1kFnsUQcswZ9hYjrWbAkAJr
+	 hQze/JLxMBbSQxdQxao9sQdYy+sl8fGmHVRsCWRSSLlqu0KfbTooe6BEHaTu+O9VE
+	 uQa5ozJABfYATk2ViQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MYNJq-1sOnoW3TbW-00QuPw; Fri, 27
+ Sep 2024 19:18:42 +0200
+Message-ID: <95d1342d-f2a1-4f55-b8f9-d1ede1207aaa@gmx.de>
+Date: Fri, 27 Sep 2024 19:18:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUcV6rXiTSpGPCGou6h9Gy-MYcYtrvdFJKCz28gQAf-LA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
+ NB04 devices
+To: Werner Sembach <wse@tuxedocomputers.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: bentiss@kernel.org, dri-devel@lists.freedesktop.org, jelle@vdwaa.nl,
+ jikos@kernel.org, lee@kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com,
+ pavel@ucw.cz, platform-driver-x86@vger.kernel.org
+References: <20240926174405.110748-1-wse@tuxedocomputers.com>
+ <20240926174405.110748-2-wse@tuxedocomputers.com>
+ <ad01bc38-3834-44c9-a5e3-540a09a20643@gmx.de>
+ <3dde4572-78a0-4a93-916a-563b7150f078@tuxedocomputers.com>
+ <3e5630c0-2ab4-49fc-8b91-988b327bdcf8@tuxedocomputers.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <3e5630c0-2ab4-49fc-8b91-988b327bdcf8@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:VFjl67dLNrv6Jc4tqj4gacATd5Ifbha8xEOZ4lw5in4oH2CWA8t
+ MYnzLPSKY1axuJqaUQMWHFQYPKO1pZAxYxN0X8Mmd2AkbecbkzKKo/RgtKAz8ANi73lMeXI
+ t/h2gowUjE3f+AAMAmK1Rm4hqp+m8gFY7wGH6HQ4lq5P917kN9fxelePqkrx7szzQZOd4ud
+ o0/LSuuDcFwKE0aNNKjnw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vEEe5JzzMiY=;rdnoMfl7Ge1slGcTHb2xD/BJNx5
+ o5VocNTqMshaUv15dIW6Zbx26P56xKZgODeDJeLzlrpEDyJkKM5+577L2HpHATlxdWAB3EpbT
+ yQJO8KYiVm26Mm/RJxRK2idvn69cBPCLBm0E9Cc5Y2eXHgVcRgjy6fFxeAdujANXxZD3Quynz
+ mz4gRj12PsMSdyI3oVAeIJ7eKW+YI83W8fELMIoJAZAVI3HDxv1wxI7YhlxCcGT143DpU9zgm
+ LAqLT55AVLFWpq4D3BaqPNuGo8DvKwkG1MAW4gIfjjrgiTGehzBh5zAbrbMIZzqx7O7KT4YwV
+ C0UIL3mR7tEOUCiwYIlugNHwC/z87T4lAFpZa5NoE4unBEVc6xdF5oylI4NF7wVZi6PN8IPGk
+ EvEe0c8r9KTRIppTToz3Uk8zVd7TeOnPN9AdScV+1cqG//18nbKqzcGNIuKjZaZrHsHTqAnvj
+ +IqG/+Ce2RQks+rwEanWiLi9dKtDXi5KV6XHTlQ6vGBfNnWP+1FBmIsACNMpvbcQEmzfZpeAQ
+ txotazX9ZqOuA8WYvTOFcCiBNbDsQyn3yYbX0CMzOB3EwzYFYGNmrG+hQ8bpqxGbXtT7zbSZv
+ LI0OzpVl2dzHD2Sj8r+USuvx4YK9gI/2aYsKEQE006bZIQ+hbbV7/lk2rCFDo4XsjQo1oT8Ee
+ OT6nLYuK/Xd3NbVj2Zqad8Xlydj6QNkJBW4XsCg1P24tegd7IzU1LQwjc4HeB6RL87pUQ//1S
+ iN9FcPjRnZ9+FSi1rzDdqeq33Kq+RZWNN0x7WTl1mHRIqA0XFjDMn8igRUn9kPctLPJAH3fiX
+ mKZ6gfYv/mvqy/GAfGsXUEHoRh55LoKVit9s5Opx0GqyA=
 
-On Thu, Sep 26, 2024 at 12:55:18PM -0700, Ian Rogers wrote:
-> On Thu, Sep 26, 2024 at 12:40 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Thu, Sep 26, 2024 at 05:47:16AM -0700, Ian Rogers wrote:
-> > > On Wed, Sep 25, 2024 at 8:27 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >
-> > > > On Tue, Sep 24, 2024 at 09:04:18AM -0700, Ian Rogers wrote:
-> > > > > The name dwarf can imply libunwind support, whereas
-> > > > > PERF_HAVE_DWARF_REGS is only enabled with libdw support. Rename to
-> > > > > make it clearer there is a libdw connection.
-> > > >
-> > > > While it only covers libdw, I think the idea of this macro is whether
-> > > > the arch has register mappings defined in DWARF standard.  So I think
-> > > > it's better to keep the name for this case.
-> > >
-> > > How can the dwarf standard exist for an arch but not define registers?
-> >
-> > I meant it's about the arch code in the perf tools to have the mapping,
-> > not the DWARF standard itself.
-> 
-> But we guard those definitions behind having libdw:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/arch/x86/Makefile?h=perf-tools-next#n3
-> So we only have the regs if libdw is present, not if dwarf is in use
-> for libunwind/libdw. Hence wanting to be specific that they are just a
-> libdw and not a dwarf thing. Trying to use the regs in libunwind code
-> would be broken. That could change but I wanted to make the code clear
-> for the way things are at the moment.
+Am 27.09.24 um 13:24 schrieb Werner Sembach:
 
-I understand your point but calling it LIBDW_REGS looks unnatural to me.
+> Hi,
+>
+> an additional question below
+>
+> Am 27.09.24 um 08:59 schrieb Werner Sembach:
+>> Hi,
+>>
+>> Am 26.09.24 um 20:39 schrieb Armin Wolf:
+>>> Am 26.09.24 um 19:44 schrieb Werner Sembach:
+>>>
+>>>> [...]
+>>>> +// We don't know if the WMI API is stable and how unique the GUID
+>>>> is for this ODM. To be on the safe
+>>>> +// side we therefore only run this driver on tested devices
+>>>> defined by this list.
+>>>> +static const struct dmi_system_id tested_devices_dmi_table[] =3D {
+>>>> +=C2=A0=C2=A0=C2=A0 {
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // TUXEDO Sirius 16 Gen1
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .matches =3D {
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 D=
+MI_EXACT_MATCH(DMI_SYS_VENDOR, "TUXEDO"),
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 D=
+MI_EXACT_MATCH(DMI_BOARD_NAME, "APX958"),
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>> +=C2=A0=C2=A0=C2=A0 {
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // TUXEDO Sirius 16 Gen2
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .matches =3D {
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 D=
+MI_EXACT_MATCH(DMI_SYS_VENDOR, "TUXEDO"),
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 D=
+MI_EXACT_MATCH(DMI_BOARD_NAME, "AHP958"),
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>> +=C2=A0=C2=A0=C2=A0 { }
+>>>> +};
+>>>> +
+>>>> +static int probe(struct wmi_device *wdev, const void
+>>>> __always_unused *context)
+>>>> +{
+>>>> +=C2=A0=C2=A0=C2=A0 struct tuxedo_nb04_wmi_driver_data_t *driver_data=
+;
+>>>> +
+>>>> +=C2=A0=C2=A0=C2=A0 if (dmi_check_system(tested_devices_dmi_table))
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENODEV;
+>>>
+>>> Hi,
+>>>
+>>> please do this DMI check during module initialization. This avoids
+>>> having an useless WMI driver
+>>> on unsupported machines and allows for marking
+>>> tested_devices_dmi_table as __initconst.
+> I wonder how to do it since I don't use module_init manually but
+> module_wmi_driver to register the module.
 
-Thanks,
-Namhyung
+In this case you cannot use module_wmi_driver. You have to manually call w=
+mi_driver_register()/wmi_driver_unregister()
+in module_init()/module_exit().
 
+>>>
+>>> Besides that, maybe a "force" module parameter for overriding the
+>>> DMI checking could be
+>>> useful?
+>
+> Considering the bricking potential i somewhat want for people to look
+> in the source first, so i would not implementen a force module parameter=
+.
+>
+Ok.
+
+> Kind regards,
+>
+> Werner
+>
+>
 
