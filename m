@@ -1,182 +1,200 @@
-Return-Path: <linux-kernel+bounces-341819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3664A9886A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:02:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E07219886A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63D991C20CDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:02:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31C96B221CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1954A4D8AE;
-	Fri, 27 Sep 2024 14:02:47 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1ADB8248D;
+	Fri, 27 Sep 2024 14:02:50 +0000 (UTC)
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02DB1C6A5
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3BB1C6A5
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727445766; cv=none; b=kT7MM9t/6bbv3347YWsCvzmUvKVXHzgii+7TrHM8TMK38Tz/vKcLM/3qjtov5JGdzlIvB25sHtPJYde5kNl6rH5hkmoYP+IU6RgOJPTxSGdYIEevwXOm+PGq/SlzKZovVD074JqXEwt64c5rsvknaOyTorqUA06vlkxMApSDwq8=
+	t=1727445770; cv=none; b=OBYOA2qnKFMTJtR3ywSXJ0GNSIniHXFg6E38VZnDX9d5daJr5MaKHTB9G+SXZhKw9YEpxji/ppDWFR/bK7HGXwg5QJNEixvXR95sbrgMRpz0IyLpdgxjbb0l6jwy/jmT4Q1QyahS0D1vciPiM1tGqEsDMgwOEz6TJWAi5lsdHA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727445766; c=relaxed/simple;
-	bh=DbIQG7Ikmt0U5AkqHrtP94Mr5y3++IEU076T+/9xjq0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A/B75d/ZBn8cFrVRL0vWhB4XPG/jeqv7AeDjhxAqWVwxv4Q29eqUO8j22GoNcTywUW9zb4POGFS4+rdEQvirBNgyt5c2ZWV1TKPqStSVA4Lzud6xo5YNtxhKK0zGssMdPmIlZbaKwkUl/t+35sLwgFiBbQZ6Abd0sDHOTHIaWC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1suBYH-000740-8T; Fri, 27 Sep 2024 16:02:33 +0200
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Fri, 27 Sep 2024 16:02:32 +0200
-Subject: [PATCH] reset: Further simplify locking with guard()
+	s=arc-20240116; t=1727445770; c=relaxed/simple;
+	bh=253Zqta9CAPSxb0t76sFDkKz3VGVITFMFbl7WkT/ffY=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=Eab7lZI0T0pY8wnSi9ptkVxVAmU6HWkX1YBoTpIHcMzGo9NxaMtEQyzJLXDXvm79JVNik/sLmNv2VlFw0NMQ6Ftc+ElpEkTHSZ4QK7VKMwRn7sUAdG3qCGXmfgLs+PIeE4JOpFVyYrRBc07dfPQUh669QIfDL53c8fZDYdRdx+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:48944)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1suBYV-002Q08-SJ; Fri, 27 Sep 2024 08:02:47 -0600
+Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:35456 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1suBYT-009lQK-GZ; Fri, 27 Sep 2024 08:02:47 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,  Anna-Maria Behnsen
+ <anna-maria@linutronix.de>,  Frederic Weisbecker <frederic@kernel.org>,
+  John Stultz <jstultz@google.com>,  Peter Zijlstra <peterz@infradead.org>,
+  Ingo Molnar <mingo@kernel.org>,  Stephen Boyd <sboyd@kernel.org>,  Oleg
+ Nesterov <oleg@redhat.com>
+References: <20240927083900.989915582@linutronix.de>
+	<20240927084817.138903581@linutronix.de>
+Date: Fri, 27 Sep 2024 09:02:39 -0500
+In-Reply-To: <20240927084817.138903581@linutronix.de> (Thomas Gleixner's
+	message of "Fri, 27 Sep 2024 10:48:44 +0200 (CEST)")
+Message-ID: <87r095yz28.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240927-reset-guard-v1-1-293bf1302210@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIAPe69mYC/y3MSwqAMAxF0a1IxhZqKIpuRRyUNmomftIqQnHvF
- nV4HrybIJAwBeiKBEInB16XjKoswM12mUixzwbUaHSLjRIKFNV0WPHKGfSjR4u1ayA/NqGRr7f
- WD5+F9iNH4z/e9wO22c/WcgAAAA==
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-X-Mailer: b4 0.15-dev-13183
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::54
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-XM-SPF: eid=1suBYT-009lQK-GZ;;;mid=<87r095yz28.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+8CoN0e1B/8db3/9AENJYL3kqPKwuQVmw=
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4999]
+	*  1.0 XM_B_Investor BODY: Commonly used business phishing phrases
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Thomas Gleixner <tglx@linutronix.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1745 ms - load_scoreonly_sql: 0.08 (0.0%),
+	signal_user_changed: 12 (0.7%), b_tie_ro: 10 (0.6%), parse: 1.70
+	(0.1%), extract_message_metadata: 38 (2.2%), get_uri_detail_list: 4.2
+	(0.2%), tests_pri_-2000: 71 (4.0%), tests_pri_-1000: 14 (0.8%),
+	tests_pri_-950: 1.82 (0.1%), tests_pri_-900: 1.42 (0.1%),
+	tests_pri_-90: 212 (12.1%), check_bayes: 210 (12.0%), b_tokenize: 42
+	(2.4%), b_tok_get_all: 43 (2.4%), b_comp_prob: 4.5 (0.3%),
+	b_tok_touch_all: 100 (5.7%), b_finish: 1.09 (0.1%), tests_pri_0: 1318
+	(75.5%), check_dkim_signature: 1.92 (0.1%), check_dkim_adsp: 13 (0.8%),
+	 poll_dns_idle: 10 (0.6%), tests_pri_10: 16 (0.9%), tests_pri_500: 52
+	(3.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [patch v4 04/27] posix-timers: Cure si_sys_private race
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: oleg@redhat.com, sboyd@kernel.org, mingo@kernel.org, peterz@infradead.org, jstultz@google.com, frederic@kernel.org, anna-maria@linutronix.de, linux-kernel@vger.kernel.org, tglx@linutronix.de
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
 
-Use guard(mutex) to automatically unlock mutexes when going out of
-scope. Simplify error paths by removing a goto and manual mutex
-unlocking in multiple places.
+Thomas Gleixner <tglx@linutronix.de> writes:
 
-Follow-up to commit 3ec21e7fa854 ("reset: simplify locking with
-guard()").
+> From: Thomas Gleixner <tglx@linutronix.de>
+>
+> The si_sys_private member of the siginfo which is embedded in the
+> preallocated sigqueue is used by the posix timer code to decide whether a
+> timer must be reprogrammed on signal delivery.
+>
+> The handling of this is racy as a long standing comment in that code
+> documents. It is modified with the timer lock held, but without sighand
+> lock being held. The actual signal delivery code checks for it under
+> sighand lock without holding the timer lock.
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/reset/core.c | 30 +++++++++---------------------
- 1 file changed, 9 insertions(+), 21 deletions(-)
+I suspect this falls under the ancient all integers are atomic rule
+in practice.
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 4d509d41456a..6fbc6f3c14c9 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -676,25 +676,20 @@ int reset_control_acquire(struct reset_control *rstc)
- 	if (reset_control_is_array(rstc))
- 		return reset_control_array_acquire(rstc_to_array(rstc));
- 
--	mutex_lock(&reset_list_mutex);
-+	guard(mutex)(&reset_list_mutex);
- 
--	if (rstc->acquired) {
--		mutex_unlock(&reset_list_mutex);
-+	if (rstc->acquired)
- 		return 0;
--	}
- 
- 	list_for_each_entry(rc, &rstc->rcdev->reset_control_head, list) {
- 		if (rstc != rc && rstc->id == rc->id) {
--			if (rc->acquired) {
--				mutex_unlock(&reset_list_mutex);
-+			if (rc->acquired)
- 				return -EBUSY;
--			}
- 		}
- 	}
- 
- 	rstc->acquired = true;
- 
--	mutex_unlock(&reset_list_mutex);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(reset_control_acquire);
-@@ -1041,29 +1036,27 @@ __of_reset_control_get(struct device_node *node, const char *id, int index,
- 		}
- 	}
- 
--	mutex_lock(&reset_list_mutex);
-+	guard(mutex)(&reset_list_mutex);
- 	rcdev = __reset_find_rcdev(&args, gpio_fallback);
- 	if (!rcdev) {
- 		rstc = ERR_PTR(-EPROBE_DEFER);
--		goto out_unlock;
-+		goto out_put;
- 	}
- 
- 	if (WARN_ON(args.args_count != rcdev->of_reset_n_cells)) {
- 		rstc = ERR_PTR(-EINVAL);
--		goto out_unlock;
-+		goto out_put;
- 	}
- 
- 	rstc_id = rcdev->of_xlate(rcdev, &args);
- 	if (rstc_id < 0) {
- 		rstc = ERR_PTR(rstc_id);
--		goto out_unlock;
-+		goto out_put;
- 	}
- 
- 	/* reset_list_mutex also protects the rcdev's reset_control list */
- 	rstc = __reset_control_get_internal(rcdev, rstc_id, shared, acquired);
- 
--out_unlock:
--	mutex_unlock(&reset_list_mutex);
- out_put:
- 	of_node_put(args.np);
- 
-@@ -1098,7 +1091,7 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 	const char *dev_id = dev_name(dev);
- 	struct reset_control *rstc = NULL;
- 
--	mutex_lock(&reset_lookup_mutex);
-+	guard(mutex)(&reset_lookup_mutex);
- 
- 	list_for_each_entry(lookup, &reset_lookup_list, list) {
- 		if (strcmp(lookup->dev_id, dev_id))
-@@ -1107,11 +1100,9 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 		if ((!con_id && !lookup->con_id) ||
- 		    ((con_id && lookup->con_id) &&
- 		     !strcmp(con_id, lookup->con_id))) {
--			mutex_lock(&reset_list_mutex);
-+			guard(mutex)(&reset_list_mutex);
- 			rcdev = __reset_controller_by_name(lookup->provider);
- 			if (!rcdev) {
--				mutex_unlock(&reset_list_mutex);
--				mutex_unlock(&reset_lookup_mutex);
- 				/* Reset provider may not be ready yet. */
- 				return ERR_PTR(-EPROBE_DEFER);
- 			}
-@@ -1119,13 +1110,10 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 			rstc = __reset_control_get_internal(rcdev,
- 							    lookup->index,
- 							    shared, acquired);
--			mutex_unlock(&reset_list_mutex);
- 			break;
- 		}
- 	}
- 
--	mutex_unlock(&reset_lookup_mutex);
--
- 	if (!rstc)
- 		return optional ? NULL : ERR_PTR(-ENOENT);
- 
+> Hand the new value to send_sigqueue() as argument and store it with sighand
+> lock held.
 
----
-base-commit: 487b1b32e317b85c2948eb4013f3e089a0433d49
-change-id: 20240927-reset-guard-c42dfd2a26c7
+Is there any way we can simply remove the hack of using si_sys_private,
+and use a field in the structure that contains the preallocated signal?
 
-Best regards,
--- 
-Philipp Zabel <p.zabel@pengutronix.de>
+I don't have any issues with updating send_siqueue so that the locking
+is consistent.  However can we possibly name the argument something like
+it_requeue_pending instead of si_private?
 
+Eric
+
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>
+> ---
+>  include/linux/sched/signal.h |  2 +-
+>  kernel/signal.c              | 10 +++++++++-
+>  kernel/time/posix-timers.c   | 15 +--------------
+>  3 files changed, 11 insertions(+), 16 deletions(-)
+> ---
+> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+> index c8ed09ac29ac..bd9f569231d9 100644
+> --- a/include/linux/sched/signal.h
+> +++ b/include/linux/sched/signal.h
+> @@ -340,7 +340,7 @@ extern int send_sig(int, struct task_struct *, int);
+>  extern int zap_other_threads(struct task_struct *p);
+>  extern struct sigqueue *sigqueue_alloc(void);
+>  extern void sigqueue_free(struct sigqueue *);
+> -extern int send_sigqueue(struct sigqueue *, struct pid *, enum pid_type);
+> +extern int send_sigqueue(struct sigqueue *, struct pid *, enum pid_type, int si_private);
+>  extern int do_sigaction(int, struct k_sigaction *, struct k_sigaction *);
+>  
+>  static inline void clear_notify_signal(void)
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 3d2e087283ab..443baadb5ab0 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -1915,7 +1915,7 @@ void sigqueue_free(struct sigqueue *q)
+>  		__sigqueue_free(q);
+>  }
+>  
+> -int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type)
+> +int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type, int si_private)
+>  {
+>  	int sig = q->info.si_signo;
+>  	struct sigpending *pending;
+> @@ -1950,6 +1950,14 @@ int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type)
+>  	if (!likely(lock_task_sighand(t, &flags)))
+>  		goto ret;
+>  
+> +	/*
+> +	 * Update @q::info::si_sys_private for posix timer signals with
+> +	 * sighand locked to prevent a race against dequeue_signal() which
+> +	 * decides based on si_sys_private whether to invoke
+> +	 * posixtimer_rearm() or not.
+> +	 */
+> +	q->info.si_sys_private = si_private;
+> +
+>  	ret = 1; /* the signal is ignored */
+>  	result = TRACE_SIGNAL_IGNORED;
+>  	if (!prepare_signal(sig, t, false))
+> diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+> index bcd5e56412e7..b6cca1ed2f90 100644
+> --- a/kernel/time/posix-timers.c
+> +++ b/kernel/time/posix-timers.c
+> @@ -299,21 +299,8 @@ int posix_timer_queue_signal(struct k_itimer *timr)
+>  	if (timr->it_interval)
+>  		si_private = ++timr->it_requeue_pending;
+>  
+> -	/*
+> -	 * FIXME: if ->sigq is queued we can race with
+> -	 * dequeue_signal()->posixtimer_rearm().
+> -	 *
+> -	 * If dequeue_signal() sees the "right" value of
+> -	 * si_sys_private it calls posixtimer_rearm().
+> -	 * We re-queue ->sigq and drop ->it_lock().
+> -	 * posixtimer_rearm() locks the timer
+> -	 * and re-schedules it while ->sigq is pending.
+> -	 * Not really bad, but not that we want.
+> -	 */
+> -	timr->sigq->info.si_sys_private = si_private;
+> -
+>  	type = !(timr->it_sigev_notify & SIGEV_THREAD_ID) ? PIDTYPE_TGID : PIDTYPE_PID;
+> -	ret = send_sigqueue(timr->sigq, timr->it_pid, type);
+> +	ret = send_sigqueue(timr->sigq, timr->it_pid, type, si_private);
+>  	/* If we failed to send the signal the timer stops. */
+>  	return ret > 0;
+>  }
 
