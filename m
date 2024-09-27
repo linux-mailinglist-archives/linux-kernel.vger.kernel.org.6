@@ -1,131 +1,96 @@
-Return-Path: <linux-kernel+bounces-342189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA88988B56
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:40:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3AF988B5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2235F2826E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:40:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 146881F219A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692BC1C2DA3;
-	Fri, 27 Sep 2024 20:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F2F1C2DB5;
+	Fri, 27 Sep 2024 20:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l+QGF/DH"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JpM0Va7t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0311E4AE;
-	Fri, 27 Sep 2024 20:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEF3381B1;
+	Fri, 27 Sep 2024 20:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727469614; cv=none; b=Qrl6dlERJLSSGIHZaXcqhpy8nJk5NhkYBCruw7WWvNlF8k6cQr6mXDBs9TQDPcdlUrRM8ZthYzEriuUZByor743ySeKn9CaPmpiISOP0vRl/8i9hbAl9QMLeK66Z2alM/4RhsXiNn1APhRfH3+1Id2t2cWERXZdIUhyFvo3A6ss=
+	t=1727469628; cv=none; b=QRqzZQSSbU35nW7YelnXNFo2pd+5Vva/n6lzdfw/wtte+o2spAWlpVLa8Ib0BK/Vi9WokMrhic6hphwy/wlj/0N/d4GMk3ZPlwG+86KF7keFPNv87+O+M78KyXVh5AVL6Bl2yJ8f0/URyLuvWRnuphNlw1pniknRpbtP/+tTJWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727469614; c=relaxed/simple;
-	bh=3DGUJ3TLsK0lVuJXsACcJZxaucifcbxqwagxApclWEc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=hyREbdLmTe9LlhrNBNb9ATRRRMLGwyCNP+EYk9UbJCCO5QfXGUS/1A93lUPnUcSE8faOC+eIRVcC5pb3Xhnx2w6kRJDQCK4qXy8NWjAsWuTAIViwyDSOocHKNHj8t+2cgGG15SxxYIukfVNnNSHgbH3CtaKKvFGeMykuQDEWN8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l+QGF/DH; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53659867cbdso4142372e87.3;
-        Fri, 27 Sep 2024 13:40:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727469611; x=1728074411; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hthAcDKPQMJW1A+hjzFdpyeRVVHnV5fmXsD68YpD0u4=;
-        b=l+QGF/DHrqPMuittVYX+QMZgqPMu2qPOs0VDr24Hsnx5LtD063zWlvHuPZHEKV1MIe
-         YZdlvfMFJ95fX1GSQCR5yYTC5uOSaMth/XeCrHo3tSge3uLl412UeSxp1VwXLFZqkX01
-         xlINslsaWGsS8mTeWVGIzhs2ypOgTmT6RZovHr8+mWJTjYsxQgpJfC5YOOPxmnmHx45u
-         p509qPDiabOSFrqU5sssUMRuh55EgayeL5EEaPWDprDI/Yst7OV0t7Hio0ui6NIA84P0
-         7C4kRVwk6Nnz0041rYWih6BcOzQ7IAL8QmwCq2DZ0cvKpfC4riSpTRkcuqoq2iz3Fa4m
-         giow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727469611; x=1728074411;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hthAcDKPQMJW1A+hjzFdpyeRVVHnV5fmXsD68YpD0u4=;
-        b=Wq/za5FAoeMtvkOD8edqe0Egtk3O6sGaEe+OTAD57iAA42AvsezhWFcFoRlqTf0Ntf
-         sT2SNjRuu+/Z6AyZJHh1+VWEWeyc7YcflVWmluwHAtwB7+wHjtUn424sUr7TRhaZrSyR
-         oWZkcGDHAkwvNQOBTwYrJSA3Prvu6HryaxbUDoGDg0ukkfa+uG/CHPa02wAvhA/t43VL
-         IdqYGjuw6Cmi3X3Q0SYThxHPo+O13yz5eTqNeSHvQfpil6AikbAZbsVVCG8lmJ6LFsgE
-         qkhmMUF//lSnZ+hAgCzVxzPkQKmFQd5oYSYN0DxD/7Zsc5hA7R8ZqFCg4Motfsp1NeOM
-         fVew==
-X-Forwarded-Encrypted: i=1; AJvYcCXbrCcYxWnwbgITNF9fJUrCorv99XQsIR98sEHjj1Z+9HSvH+gh38FfwVu88UTZYth9tVauBedA2RPH@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfUi7m2J/+fQVal9yFBT0jDPVtECzcE4AFjTpPxKj7c+hvWhmS
-	1n3DbVKJMyHbn+bvQBgs4rLztM/36DedTPzKP4CU5mN8gCRezcX9JW1h+i8wL0WgzSjDcDyiGD7
-	z3Y7kJsOBI9TUJr1MAubqT6afGg3C7fLi
-X-Google-Smtp-Source: AGHT+IH3DmL/UKZB5yPvchHnEQUAmyPoNU5cm+KbxtkilRuEU3FV3gdezLxwkO+1P5WGGJLCRrn36GESu/C1mwnXGxc=
-X-Received: by 2002:ac2:4c56:0:b0:533:4505:5b2a with SMTP id
- 2adb3069b0e04-5389fc478b7mr4561184e87.28.1727469611014; Fri, 27 Sep 2024
- 13:40:11 -0700 (PDT)
+	s=arc-20240116; t=1727469628; c=relaxed/simple;
+	bh=3mCX7ui67Z5+JH8T/lQuFK4+Zm9TpnQ1PDbS8lWu17U=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=AIdhBlOP32vs3KCcRqI/3O9k7AXG8E8RGr1j+2i9RWd+HUhmgshnyDGETJV26mU69cZ7rkdf49BJgr/CHChrepU38kZtXsu5ExoEUaP22lnU0O1qiCSlHU3zFxWN9bYp0dEUh1veZ9VmoGJb/OE9DPwhILP4ouj+jPK52wSJrIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JpM0Va7t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C81DC4CEC4;
+	Fri, 27 Sep 2024 20:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727469628;
+	bh=3mCX7ui67Z5+JH8T/lQuFK4+Zm9TpnQ1PDbS8lWu17U=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=JpM0Va7tlFB9Mk9PZp5aQcE7v1rpoJ35d9b0VHMAwEW+W9UtbyDUhTWdxrcqH7TPy
+	 2jDFW/L/YYWziccIWsxiRTl6uHlH/uizbxcAKuj6Yw8b9v2Ljzz5I6cmNYrAGWAM/+
+	 wUinWlNYTxYk+VtQjSQ4Fe3WAFi1YLQlijg5br2lIFprWQU5on18L9K/RMQsZiHLSB
+	 ZpnrISvemoRO6IIdL3eeazcVE2skPqWr5F0HjV/82nhn/UrQKKzA7Zkx4VmPnsEVa/
+	 SyU/FB9AdYqyVxPE1VgCwL3ovZ8heLDpZnP1Dd/81u4I4svt4HBz+0jzXkAWwsZXCN
+	 7xxmQ28CScNKA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB32E3809A80;
+	Fri, 27 Sep 2024 20:40:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 27 Sep 2024 15:39:59 -0500
-Message-ID: <CAH2r5mv17isy4Or5+Gffn82y=HWWdgdsUOayJbbJ7dd4r3Teqw@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v4] libbpf: Fix expected_attach_type set when kernel
+ not support
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172746963079.2077014.1104287797507537674.git-patchwork-notify@kernel.org>
+Date: Fri, 27 Sep 2024 20:40:30 +0000
+References: <20240925153012.212866-1-chen.dylane@gmail.com>
+In-Reply-To: <20240925153012.212866-1-chen.dylane@gmail.com>
+To: Tao Chen <chen.dylane@gmail.com>
+Cc: andrii@kernel.org, eddyz87@gmail.com, daniel@iogearbox.net,
+ martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Please pull the following changes since commit
-ac34bb40f748593e585f4c414a59cf4404249a15:
+Hello:
 
-  Merge tag 'v6.12-rc-smb3-client-fixes-part2' of
-git://git.samba.org/sfrench/cifs-2.6 (2024-09-26 09:20:19 -0700)
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
 
-are available in the Git repository at:
+On Wed, 25 Sep 2024 23:30:12 +0800 you wrote:
+> The commit "5902da6d8a52" set expected_attach_type again with
+> field of bpf_program after libbpf_prepare_prog_load, which makes
+> expected_attach_type = 0 no sense when kernel not support the
+> attach_type feature, so fix it.
+> 
+> Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to bpf_program__attach_usdt")
+> Suggested-by: Jiri Olsa <jolsa@kernel.org>
+> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+> 
+> [...]
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.12rc-more-smb3-client-fixes
+Here is the summary with links:
+  - [bpf-next,v4] libbpf: Fix expected_attach_type set when kernel not support
+    https://git.kernel.org/bpf/bpf-next/c/c51003e23373
 
-for you to fetch changes up to 220d83b52c7d16ec3c168b82f4e6ce59c645f7ab:
-
-  smb: client: make SHA-512 TFM ephemeral (2024-09-26 18:15:19 -0500)
-
-----------------------------------------------------------------
-Five smb3 client fixes, and an immportant netfs fix for cifs write regression
-- noisy log message cleanup
-- important netfs fix for cifs crash in generic/074
-- Three minor improvements to use of hashing (multichannel and mount
-improvements)
-- Fix decryption crash for large read with small esize
-----------------------------------------------------------------
-David Howells (1):
-      netfs: Fix write oops in generic/346 (9p) and generic/074 (cifs)
-
-Enzo Matsumiya (4):
-      smb: client: fix UAF in async decryption
-      smb: client: allocate crypto only for primary server
-      smb: client: make HMAC-MD5 TFM ephemeral
-      smb: client: make SHA-512 TFM ephemeral
-
-Paulo Alcantara (1):
-      smb: client: stop flooding dmesg in smb2_calc_signature()
-
- fs/netfs/internal.h           |   1 +
- fs/netfs/misc.c               |  74 +++++++++++++++++-------
- fs/netfs/write_issue.c        |  12 +++-
- fs/smb/client/cifsencrypt.c   | 151
-+++++++++++++++++++-----------------------------
- fs/smb/client/cifsglob.h      |   2 -
- fs/smb/client/sess.c          |   2 +-
- fs/smb/client/smb2misc.c      |  28 ++++-----
- fs/smb/client/smb2ops.c       |  47 +++++++++------
- fs/smb/client/smb2pdu.c       |  10 ++++
- fs/smb/client/smb2proto.h     |   2 +-
- fs/smb/client/smb2transport.c |  32 +---------
- 11 files changed, 182 insertions(+), 179 deletions(-)
-
-
+You are awesome, thank you!
 -- 
-Thanks,
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Steve
+
 
