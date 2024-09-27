@@ -1,320 +1,324 @@
-Return-Path: <linux-kernel+bounces-341872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C49998878F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:52:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB20988798
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 813EA1C223B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:52:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C2CC1F2235C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E21F1C0DEC;
-	Fri, 27 Sep 2024 14:52:36 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EAC1C0DE6;
+	Fri, 27 Sep 2024 14:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="dDhAxQ5K"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C658819A2AE
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727448755; cv=none; b=cFNEevRH+MLUnABIaj3HL6R7LR5YOUh5tQ87Mpi/3qWgpp+x13OHNmklwwz7T0qBDTPDarz3VQOxxxRf6dD5LFVkWyeEYhlCwZxYOu6EfESxAOg8cfSZqkRIfvjh4IBqXLyoUhB+WPdYqAw9r49Js+ud/R1StGToNgbtapBfmoA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727448755; c=relaxed/simple;
-	bh=Ld4ISu92u2NM7VzqIYcpy7U3ckIusrPOjhXV75ZLvp0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Clv0IC5LZuYeKwAhHbuQNMD0OWQTv0sqC3eoGAYzF8YZU2Yb7p5obPFju9/K/FCEUGUpP9Cx3InD1JXhDDgSjETenmomftAFOICneNE/Xfoh/5Uf8JnpHLDjGDcUQCT6dyWhFM6QEiUcFuH/EKp6d2/+JVZAnX65cLkZfBj4C0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a0ce3a623eso22710295ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:52:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727448753; x=1728053553;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iPIbln5qr80FAIgYQB4BneGmDE5PaIYnAUCu7jqhOBs=;
-        b=PlaE0y95jFmRgA2Pw30zoprjKMmcw0aTDDXVG6lW0ksjWp/mFgIpd3GqedpOG1bTWQ
-         2pV6nyqFdJ+/PS+qzXnTLP3JJ09e/LeE5LsfV4O+JIu2r/8PtFBIIJMC0Z7gXCOqXjbw
-         0w0ZUD1ZrKDLQW5kq9NLeNxPISHsVNn/xC0wmJBn6GUJEbhmVb87gQtXp95pNZiR+KXP
-         2sHJWpszOKhDwdGQbLw3vq271V5X9IVtLxMplUUvT1wpNZno5jA1flUxdjrj/56dlWwx
-         /8S4Bsj9p19wnVxHZ4ot3fqNvJPGvvDnXTuEN4LSWULXCPctL5DtxnO5WED4qkej7En1
-         ytbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5iwgxEe3gqyiCECqHEkXoPt6aNeJukeaaM3a4pqD026Y/hjk3K5fWjgroXp/8ZK3AkTFOBmn9rXgsP5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yywi3BnJT483nrl451tgfBq+cN55CW8Q8IlK17Xff06N2qD2kz3
-	Ill1k31WcdwhjccbJJQt6eCBpY/yq4pzaVkUpfFq/yRZFBTwe8LTQ/KX+jBMe6pcRtgIA9/mpLk
-	BtG/y6kkvdzKRiJBwQBnD+yEThl6BeDmIbafxvLxRRqzgDI4ZM8J9j/o=
-X-Google-Smtp-Source: AGHT+IFeA3bIZ7e4+1fSjQKbhGu4vNpDD111eDDZsZRTkIhC1K5vbzCO/DPGghsy9DPfF/HqSgwiPD3wdCGo2xWzf4f6aEjSDV9o
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C733E101F2;
+	Fri, 27 Sep 2024 14:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727448819; cv=pass; b=I22NaredpBtXgunUe2lU8hBNN8U3XTj2wk9n3f62wTyLh9Rpbd2qzrNQKvIG38iLbSXlxRH9hc1V6I5rqNR7TI61+ZJUGfsAVGQetnD/wZ5abcpjkDl/eGOxTGX6sqg+cVCdFYPoNduyrKSioEJ/EHc8+jrXpbF6W/3SNjTL6hU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727448819; c=relaxed/simple;
+	bh=fnc+b+/OVaedreBulviypeEcdYrkzohxEfCHDYZwc7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GNtvCEeUfvbwJs/FpKrCLLvI+s050x9XLVVzUBKBo98J0gVFlzHnmSMG7T2dMAgUxUR+03o2qkMfb6MtKG4qNuzgbjcrMJsUHsFdMWVIYpR0VhWKhYXoEz2uJMHT1DpskXd9HULFC6cz51lfd0tJlh/69bL11hPkYc8+rerB+C0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=dDhAxQ5K; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1727448797; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=YeV4skKts/uC7qsGNAueSjntVW7a1zOn89cSj9HDiyW89bmLoPDYqCVOJ7HeMuNa0zdmgbJbH4EpWs/AtmFcpC7KrT0VbNAJPN/tiyQO+yi+t6qF1HSXJ+sez6evfzhWbU4xFBx9un+Q+6zM20Wp36JuDtLSKXLZtAEG/EF+9gg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1727448797; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7vdr0FHgb01Q/8JXQyzZImJX7vsMYZPFwkh+dtRKbkk=; 
+	b=jhW4BfhA7qkfjQuHbTQu6oVVuecVy2x5isyi6UuO21SIsZbqHSwdGm7JuMWgYujJFqZukrc63M6F0zV+YCxeZNyS30eGxoExfqoSDcABb6M7LfbQ5yZ5BPqbtXdmwWhsRCNZpQIFR01Kmcp+8AY2CFx6DatQ3TBSnVc3Dx+/u90=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727448797;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=7vdr0FHgb01Q/8JXQyzZImJX7vsMYZPFwkh+dtRKbkk=;
+	b=dDhAxQ5KLZkuOClA25gKC6dLvHH5uqEFWm/IKzn2xn1HswhW4qn+vojdF7dVHfeB
+	f/iJYRB85ss0KJi5BPuXo/fPYCQZMrNK1GGXvu0iJjwqIluiN08+hbMQeUbd+merkqY
+	UieOTULoQRcDMJ37yHTulIXlWAO2zVzNYtYnwqIk=
+Received: by mx.zohomail.com with SMTPS id 1727448795031200.9673622331943;
+	Fri, 27 Sep 2024 07:53:15 -0700 (PDT)
+Date: Fri, 27 Sep 2024 15:53:10 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	kernel@collabora.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v6 1/5] drm/panthor: introduce job cycle and timestamp
+ accounting
+Message-ID: <gxtbgvg6dihcbcwm7sihnfl7cqnfx72ekr7mgvgykeukpltwak@b3pdwok2n5p6>
+References: <5c4d1008-261f-4c47-ab73-c527675484a4@arm.com>
+ <bq6lctwgpsxvrdaajmjo3xdjt32srmsxvjhtzyebdj6izjzoaw@6duby4axg3pf>
+ <ef799587-f7c2-472a-8550-9c40a395eccb@arm.com>
+ <jgdknf77n6vqanh4jv2yixe4n4hsbhqqhth4beued4topggwgz@wx7bumhrbpje>
+ <033f8885-9c0e-4c5a-a272-baf48807dc5d@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca0c:0:b0:3a3:35f0:4c0c with SMTP id
- e9e14a558f8ab-3a3451b070dmr27211775ab.18.1727448752925; Fri, 27 Sep 2024
- 07:52:32 -0700 (PDT)
-Date: Fri, 27 Sep 2024 07:52:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f6c6b0.050a0220.46d20.001b.GAE@google.com>
-Subject: [syzbot] [input?] [usb?] KASAN: slab-use-after-free Read in
- hiddev_disconnect (3)
-From: syzbot <syzbot+b76a30cf04926010df03@syzkaller.appspotmail.com>
-To: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <033f8885-9c0e-4c5a-a272-baf48807dc5d@arm.com>
 
-Hello,
+On 25.09.2024 10:56, Steven Price wrote:
+>On 23/09/2024 21:43, Adrián Larumbe wrote:
+>> Hi Steve,
+>> 
+>> On 23.09.2024 09:55, Steven Price wrote:
+>>> On 20/09/2024 23:36, Adrián Larumbe wrote:
+>>>> Hi Steve, thanks for the review.
+>>>
+>>> Hi Adrián,
+>>>
+>>>> I've applied all of your suggestions for the next patch series revision, so I'll
+>>>> only be answering to your question about the calc_profiling_ringbuf_num_slots
+>>>> function further down below.
+>>>>
+>>>
+>>> [...]
+>>>
+>>>>>> @@ -3003,6 +3190,34 @@ static const struct drm_sched_backend_ops panthor_queue_sched_ops = {
+>>>>>>  	.free_job = queue_free_job,
+>>>>>>  };
+>>>>>>  
+>>>>>> +static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
+>>>>>> +				       u32 cs_ringbuf_size)
+>>>>>> +{
+>>>>>> +	u32 min_profiled_job_instrs = U32_MAX;
+>>>>>> +	u32 last_flag = fls(PANTHOR_DEVICE_PROFILING_ALL);
+>>>>>> +
+>>>>>> +	/*
+>>>>>> +	 * We want to calculate the minimum size of a profiled job's CS,
+>>>>>> +	 * because since they need additional instructions for the sampling
+>>>>>> +	 * of performance metrics, they might take up further slots in
+>>>>>> +	 * the queue's ringbuffer. This means we might not need as many job
+>>>>>> +	 * slots for keeping track of their profiling information. What we
+>>>>>> +	 * need is the maximum number of slots we should allocate to this end,
+>>>>>> +	 * which matches the maximum number of profiled jobs we can place
+>>>>>> +	 * simultaneously in the queue's ring buffer.
+>>>>>> +	 * That has to be calculated separately for every single job profiling
+>>>>>> +	 * flag, but not in the case job profiling is disabled, since unprofiled
+>>>>>> +	 * jobs don't need to keep track of this at all.
+>>>>>> +	 */
+>>>>>> +	for (u32 i = 0; i < last_flag; i++) {
+>>>>>> +		if (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL)
+>>>>>> +			min_profiled_job_instrs =
+>>>>>> +				min(min_profiled_job_instrs, calc_job_credits(BIT(i)));
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u64));
+>>>>>> +}
+>>>>>
+>>>>> I may be missing something, but is there a situation where this is
+>>>>> different to calc_job_credits(0)? AFAICT the infrastructure you've added
+>>>>> can only add extra instructions to the no-flags case - whereas this
+>>>>> implies you're thinking that instructions may also be removed (or replaced).
+>>>>>
+>>>>> Steve
+>>>>
+>>>> Since we create a separate kernel BO to hold the profiling information slot, we
+>>>> need one that would be able to accomodate as many slots as the maximum number of
+>>>> profiled jobs we can insert simultaneously into the queue's ring buffer. Because
+>>>> profiled jobs always take more instructions than unprofiled ones, then we would
+>>>> usually need fewer slots than the number of unprofiled jobs we could insert at
+>>>> once in the ring buffer.
+>>>>
+>>>> Because we represent profiling metrics with a bit mask, then we need to test the
+>>>> size of the CS for every single metric enabled in isolation, since enabling more
+>>>> than one will always mean a bigger CS, and therefore fewer jobs tracked at once
+>>>> in the queue's ring buffer.
+>>>>
+>>>> In our case, calling calc_job_credits(0) would simply tell us the number of
+>>>> instructions we need for a normal job with no profiled features enabled, which
+>>>> would always requiere less instructions than profiled ones, and therefore more
+>>>> slots in the profiling info kernel BO. But we don't need to keep track of
+>>>> profiling numbers for unprofiled jobs, so there's no point in calculating this
+>>>> number.
+>>>>
+>>>> At first I was simply allocating a profiling info kernel BO as big as the number
+>>>> of simultaneous unprofiled job slots in the ring queue, but Boris pointed out
+>>>> that since queue ringbuffers can be as big as 2GiB, a lot of this memory would
+>>>> be wasted, since profiled jobs always require more slots because they hold more
+>>>> instructions, so fewer profiling slots in said kernel BO.
+>>>>
+>>>> The value of this approach will eventually manifest if we decided to keep track of
+>>>> more profiling metrics, since this code won't have to change at all, other than
+>>>> adding new profiling flags in the panthor_device_profiling_flags enum.
+>>>
+>>> Thanks for the detailed explanation. I think what I was missing is that
+>>> the loop is checking each bit flag independently and *not* checking
+>>> calc_job_credits(0).
+>>>
+>>> The check for (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL) is probably what
+>>> confused me - that should be completely redundant. Or at least we need
+>>> something more intelligent if we have profiling bits which are not
+>>> mutually compatible.
+>> 
+>> I thought of an alternative that would only test bits that are actually part of
+>> the mask:
+>> 
+>> static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
+>> 				       u32 cs_ringbuf_size)
+>> {
+>> 	u32 min_profiled_job_instrs = U32_MAX;
+>> 	u32 profiling_mask = PANTHOR_DEVICE_PROFILING_ALL;
+>> 
+>> 	while (profiling_mask) {
+>> 		u32 i = ffs(profiling_mask) - 1;
+>> 		profiling_mask &= ~BIT(i);
+>> 		min_profiled_job_instrs =
+>> 			min(min_profiled_job_instrs, calc_job_credits(BIT(i)));
+>> 	}
+>> 
+>> 	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u64));
+>> }
+>> 
+>> However, I don't think this would be more efficient, because ffs() is probably
+>> fetching the first set bit by performing register shifts, and I guess this would
+>> take somewhat longer than iterating over every single bit from the last one,
+>> even if also matching them against the whole mask, just in case in future
+>> additions of performance metrics we decide to leave some of the lower
+>> significance bits untouched.
+>
+>Efficiency isn't very important here - we're not on a fast path, so it's
+>more about ensuring the code is readable. I don't think the above is
+>more readable then the original for loop.
+>
+>> Regarding your question about mutual compatibility, I don't think that is an
+>> issue here, because we're testing bits in isolation. If in the future we find
+>> out that some of the values we're profiling cannot be sampled at once, we can
+>> add that logic to the sysfs knob handler, to make sure UM cannot set forbidden
+>> profiling masks.
+>
+>My comment about compatibility is because in the original above you were
+>calculating the top bit of PANTHOR_DEVICE_PROFILING_ALL:
+>
+>> u32 last_flag = fls(PANTHOR_DEVICE_PROFILING_ALL);
+>
+>then looping between 0 and that bit:
+>
+>> for (u32 i = 0; i < last_flag; i++) {
+>
+>So the test:
+>
+>> if (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL)
+>
+>would only fail if PANTHOR_DEVICE_PROFILING_ALL had gaps in the bits
+>that it set. The only reason I can think for that to be true in the
+>future is if there is some sort of incompatibility - e.g. maybe there's
+>an old and new way of doing some form of profiling with the old way
+>being kept for backwards compatibility. But I suspect if/when that is
+>required we'll need to revisit this function anyway. So that 'if'
+>statement seems completely redundant (it's trivially always true).
 
-syzbot found the following issue on:
+I think you're right about this. Would you be fine with the rest of the patch
+as it is in revision 8 if I also deleted this bitmask check?
 
-HEAD commit:    baeb9a7d8b60 Merge tag 'sched-rt-2024-09-17' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c7ae9f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d3981d50a2855c2
-dashboard link: https://syzkaller.appspot.com/bug?extid=b76a30cf04926010df03
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-baeb9a7d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/02c319355ed9/vmlinux-baeb9a7d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/41f9f78e928c/bzImage-baeb9a7d.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b76a30cf04926010df03@syzkaller.appspotmail.com
-
-plantronics 0003:047F:FFFF.0008: hiddev0,hidraw1: USB HID v0.40 Device [HID 047f:ffff] on usb-dummy_hcd.0-1/input0
-usb 5-1: USB disconnect, device number 15
-==================================================================
-BUG: KASAN: slab-use-after-free in debug_spin_lock_before kernel/locking/spinlock_debug.c:86 [inline]
-BUG: KASAN: slab-use-after-free in do_raw_spin_lock+0x271/0x2c0 kernel/locking/spinlock_debug.c:115
-Read of size 4 at addr ffff8880431f941c by task kworker/1:2/1449
-
-CPU: 1 UID: 0 PID: 1449 Comm: kworker/1:2 Not tainted 6.11.0-syzkaller-07341-gbaeb9a7d8b60 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- debug_spin_lock_before kernel/locking/spinlock_debug.c:86 [inline]
- do_raw_spin_lock+0x271/0x2c0 kernel/locking/spinlock_debug.c:115
- __mutex_unlock_slowpath+0x197/0x650 kernel/locking/mutex.c:937
- hiddev_disconnect+0x15b/0x1c0 drivers/hid/usbhid/hiddev.c:940
- hid_disconnect+0xbb/0x1b0 drivers/hid/hid-core.c:2322
- hid_hw_stop drivers/hid/hid-core.c:2369 [inline]
- hid_device_remove+0x1a8/0x260 drivers/hid/hid-core.c:2757
- device_remove+0xc8/0x170 drivers/base/dd.c:566
- __device_release_driver drivers/base/dd.c:1272 [inline]
- device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1295
- bus_remove_device+0x22f/0x420 drivers/base/bus.c:574
- device_del+0x396/0x9f0 drivers/base/core.c:3871
- hid_remove_device drivers/hid/hid-core.c:2939 [inline]
- hid_destroy_device+0xe5/0x150 drivers/hid/hid-core.c:2959
- usbhid_disconnect+0xa0/0xe0 drivers/hid/usbhid/hid-core.c:1458
- usb_unbind_interface+0x1e8/0x970 drivers/usb/core/driver.c:461
- device_remove drivers/base/dd.c:568 [inline]
- device_remove+0x122/0x170 drivers/base/dd.c:560
- __device_release_driver drivers/base/dd.c:1272 [inline]
- device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1295
- bus_remove_device+0x22f/0x420 drivers/base/bus.c:574
- device_del+0x396/0x9f0 drivers/base/core.c:3871
- usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1418
- usb_disconnect+0x2e1/0x920 drivers/usb/core/hub.c:2304
- hub_port_connect drivers/usb/core/hub.c:5361 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x1da5/0x4e10 drivers/usb/core/hub.c:5903
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Allocated by task 1449:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1004 [inline]
- hiddev_connect+0x262/0x630 drivers/hid/usbhid/hiddev.c:893
- hid_connect+0x25e/0x18a0 drivers/hid/hid-core.c:2239
- hid_hw_start drivers/hid/hid-core.c:2349 [inline]
- hid_hw_start+0xaa/0x140 drivers/hid/hid-core.c:2340
- plantronics_probe+0x2f0/0x3f0 drivers/hid/hid-plantronics.c:191
- __hid_device_probe drivers/hid/hid-core.c:2699 [inline]
- hid_device_probe+0x2eb/0x490 drivers/hid/hid-core.c:2736
- call_driver_probe drivers/base/dd.c:578 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:657
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1029
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
- device_add+0x114b/0x1a70 drivers/base/core.c:3682
- hid_add_device+0x37f/0xa70 drivers/hid/hid-core.c:2882
- usbhid_probe+0xd3b/0x1410 drivers/hid/usbhid/hid-core.c:1431
- usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
- call_driver_probe drivers/base/dd.c:578 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:657
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1029
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
- device_add+0x114b/0x1a70 drivers/base/core.c:3682
- usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
- usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
- call_driver_probe drivers/base/dd.c:578 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:657
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1029
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
- device_add+0x114b/0x1a70 drivers/base/core.c:3682
- usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x2d9a/0x4e10 drivers/usb/core/hub.c:5903
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Freed by task 8582:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2343 [inline]
- slab_free mm/slub.c:4580 [inline]
- kfree+0x158/0x4b0 mm/slub.c:4728
- hiddev_release+0x409/0x520 drivers/hid/usbhid/hiddev.c:232
- __fput+0x3f6/0xb60 fs/file_table.c:431
- task_work_run+0x14e/0x250 kernel/task_work.c:228
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff8880431f9400
- which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 28 bytes inside of
- freed 512-byte region [ffff8880431f9400, ffff8880431f9600)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x431f8
-head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xfdffffff(slab)
-raw: 00fff00000000040 ffff88801ac42c80 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000000100010 00000001fdffffff 0000000000000000
-head: 00fff00000000040 ffff88801ac42c80 dead000000000100 dead000000000122
-head: 0000000000000000 0000000000100010 00000001fdffffff 0000000000000000
-head: 00fff00000000002 ffffea00010c7e01 ffffffffffffffff 0000000000000000
-head: ffff888000000004 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 2, migratetype Unmovable, gfp_mask 0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 45, tgid 45 (kworker/u32:2), ts 69585986841, free_ts 69505160524
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1500
- prep_new_page mm/page_alloc.c:1508 [inline]
- get_page_from_freelist+0x1351/0x2e50 mm/page_alloc.c:3446
- __alloc_pages_noprof+0x22b/0x23f0 mm/page_alloc.c:4702
- alloc_pages_mpol_noprof+0x275/0x610 mm/mempolicy.c:2263
- alloc_slab_page mm/slub.c:2413 [inline]
- allocate_slab mm/slub.c:2579 [inline]
- new_slab+0x28c/0x3f0 mm/slub.c:2632
- ___slab_alloc+0xd7d/0x17a0 mm/slub.c:3819
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3909
- __slab_alloc_node mm/slub.c:3962 [inline]
- slab_alloc_node mm/slub.c:4123 [inline]
- __kmalloc_cache_noprof+0x2b4/0x300 mm/slub.c:4291
- kmalloc_noprof include/linux/slab.h:878 [inline]
- batadv_forw_packet_alloc+0x3ac/0x4e0 net/batman-adv/send.c:519
- batadv_iv_ogm_aggregate_new+0x132/0x4a0 net/batman-adv/bat_iv_ogm.c:562
- batadv_iv_ogm_queue_add net/batman-adv/bat_iv_ogm.c:670 [inline]
- batadv_iv_ogm_schedule_buff+0xe6d/0x14d0 net/batman-adv/bat_iv_ogm.c:849
- batadv_iv_ogm_schedule net/batman-adv/bat_iv_ogm.c:868 [inline]
- batadv_iv_ogm_schedule net/batman-adv/bat_iv_ogm.c:861 [inline]
- batadv_iv_send_outstanding_bat_ogm_packet+0x31e/0x8d0 net/batman-adv/bat_iv_ogm.c:1712
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-page last free pid 5348 tgid 5348 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1101 [inline]
- free_unref_page+0x64a/0xe40 mm/page_alloc.c:2619
- __put_partials+0x14c/0x170 mm/slub.c:3146
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x4e/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x192/0x1e0 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4086 [inline]
- slab_alloc_node mm/slub.c:4135 [inline]
- kmem_cache_alloc_noprof+0x121/0x2f0 mm/slub.c:4142
- getname_flags.part.0+0x4c/0x550 fs/namei.c:139
- getname_flags+0x93/0xf0 include/linux/audit.h:322
- vfs_fstatat+0x86/0x160 fs/stat.c:340
- __do_sys_newfstatat+0xa2/0x130 fs/stat.c:505
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff8880431f9300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8880431f9380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff8880431f9400: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                            ^
- ffff8880431f9480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880431f9500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>Steve
+>
+>>> I'm also not entirely sure that the amount of RAM saved is significant,
+>>> but you've already written the code so we might as well have the saving ;)
+>> 
+>> I think this was more evident before Boris suggested we reduce the basic slot
+>> size to that of a single cache line, because then the minimum profiled job
+>> might've taken twice as many ringbuffer slots as a nonprofiled one. In that
+>> case, we would need a half as big BO for holding the sampled data (in case the
+>> least size profiled job CS would extend over the 16 instruction boundary).
+>> I still think this is a good idea so that in the future we don't need to worry
+>> about adjusting the code that deals with preparing the right boilerplate CS,
+>> since it'll only be a matter of adding new instructions inside prepare_job_instrs().
+>> 
+>>> Thanks,
+>>> Steve
+>>>
+>>>> Regards,
+>>>> Adrian
+>>>>
+>>>>>> +
+>>>>>>  static struct panthor_queue *
+>>>>>>  group_create_queue(struct panthor_group *group,
+>>>>>>  		   const struct drm_panthor_queue_create *args)
+>>>>>> @@ -3056,9 +3271,35 @@ group_create_queue(struct panthor_group *group,
+>>>>>>  		goto err_free_queue;
+>>>>>>  	}
+>>>>>>  
+>>>>>> +	queue->profiling.slot_count =
+>>>>>> +		calc_profiling_ringbuf_num_slots(group->ptdev, args->ringbuf_size);
+>>>>>> +
+>>>>>> +	queue->profiling.slots =
+>>>>>> +		panthor_kernel_bo_create(group->ptdev, group->vm,
+>>>>>> +					 queue->profiling.slot_count *
+>>>>>> +					 sizeof(struct panthor_job_profiling_data),
+>>>>>> +					 DRM_PANTHOR_BO_NO_MMAP,
+>>>>>> +					 DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
+>>>>>> +					 DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
+>>>>>> +					 PANTHOR_VM_KERNEL_AUTO_VA);
+>>>>>> +
+>>>>>> +	if (IS_ERR(queue->profiling.slots)) {
+>>>>>> +		ret = PTR_ERR(queue->profiling.slots);
+>>>>>> +		goto err_free_queue;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	ret = panthor_kernel_bo_vmap(queue->profiling.slots);
+>>>>>> +	if (ret)
+>>>>>> +		goto err_free_queue;
+>>>>>> +
+>>>>>> +	/*
+>>>>>> +	 * Credit limit argument tells us the total number of instructions
+>>>>>> +	 * across all CS slots in the ringbuffer, with some jobs requiring
+>>>>>> +	 * twice as many as others, depending on their profiling status.
+>>>>>> +	 */
+>>>>>>  	ret = drm_sched_init(&queue->scheduler, &panthor_queue_sched_ops,
+>>>>>>  			     group->ptdev->scheduler->wq, 1,
+>>>>>> -			     args->ringbuf_size / (NUM_INSTRS_PER_SLOT * sizeof(u64)),
+>>>>>> +			     args->ringbuf_size / sizeof(u64),
+>>>>>>  			     0, msecs_to_jiffies(JOB_TIMEOUT_MS),
+>>>>>>  			     group->ptdev->reset.wq,
+>>>>>>  			     NULL, "panthor-queue", group->ptdev->base.dev);
+>>>>>> @@ -3354,6 +3595,7 @@ panthor_job_create(struct panthor_file *pfile,
+>>>>>>  {
+>>>>>>  	struct panthor_group_pool *gpool = pfile->groups;
+>>>>>>  	struct panthor_job *job;
+>>>>>> +	u32 credits;
+>>>>>>  	int ret;
+>>>>>>  
+>>>>>>  	if (qsubmit->pad)
+>>>>>> @@ -3407,9 +3649,16 @@ panthor_job_create(struct panthor_file *pfile,
+>>>>>>  		}
+>>>>>>  	}
+>>>>>>  
+>>>>>> +	job->profiling.mask = pfile->ptdev->profile_mask;
+>>>>>> +	credits = calc_job_credits(job->profiling.mask);
+>>>>>> +	if (credits == 0) {
+>>>>>> +		ret = -EINVAL;
+>>>>>> +		goto err_put_job;
+>>>>>> +	}
+>>>>>> +
+>>>>>>  	ret = drm_sched_job_init(&job->base,
+>>>>>>  				 &job->group->queues[job->queue_idx]->entity,
+>>>>>> -				 1, job->group);
+>>>>>> +				 credits, job->group);
+>>>>>>  	if (ret)
+>>>>>>  		goto err_put_job;
+>>>>>>  
+>>>>
 
