@@ -1,146 +1,108 @@
-Return-Path: <linux-kernel+bounces-342111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF08F988AB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:12:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BCAC988ABD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AA47B21BFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:12:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C08D1C226B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36AD1C231B;
-	Fri, 27 Sep 2024 19:12:39 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F2A1C2332;
+	Fri, 27 Sep 2024 19:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b="W347u7uF"
+Received: from mail.nppct.ru (mail.nppct.ru [195.133.245.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC8513AD1C;
-	Fri, 27 Sep 2024 19:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0561189F5C
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.245.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727464359; cv=none; b=CILSoZyAAvZvlW/+pLrgGAfTGsBgwNQPnXS1uP3OjhirPE2KQyNpNDi94ToX0/fJs0tDAgAhrY+tMCcexcid9eFLIwMMgSwGW0o1eq4oB9C3j6OeVxOxc9oeeorTM4aMPPFBaMU+Jj22NwrMn4y/vNi799tiLiT7PSs0cmnTgwc=
+	t=1727465269; cv=none; b=c8ETk0Csl53ThJ5B9bmdG/Epvb7Y8v8mxQa53g7tYA5ott/pFeK/ChUiF+UWMP3gf7zoQetLmsEiu+1mpnHdt9Von65SWS5RRltTeEEhT689JgoM9rRpS9Lt8P9y3iB0qDynYnqXSE3qNi8oyOgGQAeI1Xa6BXq81O6pllI44ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727464359; c=relaxed/simple;
-	bh=8wpubwXCGXoVmfAHfIF5StVhRnWB0U7keO4Zg6GWO58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PAuYUbZrAU65T0ycj77itkVxgFikXhzEX5c/flkURdoC2rmS5qlTXsgzPfer/miEJEG1TFZv6N8Ev3FL62NvAiKEyqqz5JRbAFNWOJ2RplCPK2RPc04rcbzpgOF6RBCxjMCkuFvIdrUSfTELrRo5hVZH7dlyjxuFsVEMR9Q0YCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XFfZc18S7z9v7Nc;
-	Sat, 28 Sep 2024 02:46:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id DD54C1400CA;
-	Sat, 28 Sep 2024 03:12:27 +0800 (CST)
-Received: from [10.81.203.162] (unknown [10.81.203.162])
-	by APP2 (Coremail) with SMTP id GxC2BwAniMiMA_dm8ODFAQ--.41972S2;
-	Fri, 27 Sep 2024 20:12:27 +0100 (CET)
-Message-ID: <1b04e35c-8994-48d9-907a-966bb4dfabaf@huaweicloud.com>
-Date: Fri, 27 Sep 2024 21:12:09 +0200
+	s=arc-20240116; t=1727465269; c=relaxed/simple;
+	bh=+6Z8zlYwsiNEwXds5k9H7KKtvVM+H5+chHKO7+K6B/Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JJu12G29y5pu2F/Qansxf60BWEOEB4wg/qpNloWdjlT+APzIcb8pZo71kJ2xNEm2OqEXfw2Un8RW1c+uPQIY/XXNHjCJ2rlVENkaaanz2pYU3trCjwYPUJ6+k56nYE+7HZH1tACNxKVssKJUr3qTFCUCPghe/dTWkQ4W0DpvTH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru; spf=pass smtp.mailfrom=nppct.ru; dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b=W347u7uF; arc=none smtp.client-ip=195.133.245.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nppct.ru
+Received: from mail.nppct.ru (localhost [127.0.0.1])
+	by mail.nppct.ru (Postfix) with ESMTP id 779BA1C0CF9
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 22:18:29 +0300 (MSK)
+Authentication-Results: mail.nppct.ru (amavisd-new); dkim=pass (1024-bit key)
+	reason="pass (just generated, assumed good)" header.d=nppct.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nppct.ru; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:to:from:from; s=dkim; t=1727464708; x=
+	1728328709; bh=+6Z8zlYwsiNEwXds5k9H7KKtvVM+H5+chHKO7+K6B/Q=; b=W
+	347u7uFRHrVhYkbN191d14BIydsN/RlynclndjmZ102V1KmLdiHbAGCELE2vXDWV
+	DZ3ZPD2vfv/Do7c6MIqDTbVCgznn1xSvtWe62lAQUZVFCdZ9NZ8p7LfOy4ARCEMm
+	W6VWwvMqNt2b04oac+CNCf7C40A+C4W6EwyE343vQs=
+X-Virus-Scanned: Debian amavisd-new at mail.nppct.ru
+Received: from mail.nppct.ru ([127.0.0.1])
+	by mail.nppct.ru (mail.nppct.ru [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id R8cor9oSa9WY for <linux-kernel@vger.kernel.org>;
+	Fri, 27 Sep 2024 22:18:28 +0300 (MSK)
+Received: from localhost.localdomain (mail.dev-ai-melanoma.ru [185.130.227.204])
+	by mail.nppct.ru (Postfix) with ESMTPSA id 8EB3E1C0604;
+	Fri, 27 Sep 2024 22:18:27 +0300 (MSK)
+From: Andrey Shumilin <shum.sdl@nppct.ru>
+To: ichal Kalderon <mkalderon@marvell.com>
+Cc: Andrey Shumilin <shum.sdl@nppct.ru>,
+	Ariel Elior <aelior@marvell.com>,
+	Doug Ledford <dledford@redhat.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	khoroshilov@ispras.ru,
+	ykarpov@ispras.ru,
+	vmerzlyakov@ispras.ru,
+	vefanov@ispras.ru
+Subject: [PATCH] qedr/verbs: Add pd pointer null check
+Date: Fri, 27 Sep 2024 22:18:18 +0300
+Message-Id: <20240927191818.3576242-1-shum.sdl@nppct.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
- rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>, rostedt <rostedt@goodmis.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>, Vlastimil Babka
- <vbabka@suse.cz>, maged.michael@gmail.com,
- Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
- <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
- <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
- <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
- <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
- <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
- <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
- <54487a36-f74c-46c3-aed7-fc86eaaa9ca2@huaweicloud.com>
- <CAHk-=wifOW0VEh6uL3sHSaAUA46YmPDS9Wh5HnNC2JyOiXVA=Q@mail.gmail.com>
- <ZvX12_1mK8983cXm@boqun-archlinux>
- <0b262fe5-2fc5-478d-bf66-f208723238d5@efficios.com>
- <e748893f-28a3-4b8a-a848-cfb1173ab940@app.fastmail.com>
- <CAHk-=wgQyXOt_HjDZHNqWMmyvv74xLAcMw88grfp4HkKoS2vLw@mail.gmail.com>
- <7e1c8a5e-c110-414c-8fb2-022eacc2bd4a@efficios.com>
- <CAHk-=wgBgh5U+dyNaN=+XCdcm2OmgSRbcH4Vbtk8i5ZDGwStSA@mail.gmail.com>
- <34ec590c-b109-44a0-8bfe-8aafc6e7ad64@efficios.com>
- <CAHk-=wi_hz8Whs2ogRUQEfMBk=OkZ3usmvJkzb5YyEKwqEJBmQ@mail.gmail.com>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <CAHk-=wi_hz8Whs2ogRUQEfMBk=OkZ3usmvJkzb5YyEKwqEJBmQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwAniMiMA_dm8ODFAQ--.41972S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYs7kC6x804xWl14x267AKxVWrJVCq3wAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjc
-	xK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY
-	04v7MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v26r4a6rW5MxC20s026xCaFV
-	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-	x4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
-	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
-	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7IU1c4S7UUUUU==
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+Content-Transfer-Encoding: 8bit
 
+It is possible that a null pointer will be passed
+to the qedr_set_common_qp_params function.
+The patch adds a pointer check before dereferencing.
 
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Am 9/27/2024 um 8:13 PM schrieb Linus Torvalds:
+Signed-off-by: Andrey Shumilin <shum.sdl@nppct.ru>
 
-> Because even hiding the value one from the compiler will mean that it
-> can't use the comparison to decide that the originals are equal, even
-> if one of them is unhidden.
-> 
-> No?
-> 
->                Linus
+---
+ drivers/infiniband/hw/qedr/verbs.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-I think it depends on which one you hide.
-
-If you do
-
-  z = b;
-  hide(z);
-  if (a==z) { *b; }
-
-then it will be fine, because it knows a==z but nothing about the 
-relation of b with a or z.
-
-
-But for
-
-  z = a;
-  hide(z);
-  if (z==b) { *b; }
-
-then it would still know that b == z, and could replace *b with *z 
-(which really is *a).
-
-
-Best wishes,
-   jonas
-
-
+diff --git a/drivers/infiniband/hw/qedr/verbs.c b/drivers/infiniband/hw/qedr/verbs.c
+index 511c95bb3d01..09bb7fbe2bba 100644
+--- a/drivers/infiniband/hw/qedr/verbs.c
++++ b/drivers/infiniband/hw/qedr/verbs.c
+@@ -2270,6 +2270,11 @@ struct ib_qp *qedr_create_qp(struct ib_pd *ibpd,
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
++	if (!pd) {
++		DP_ERR(dev, "create qp: pd is NULL\n");
++		return ERR_PTR(-EINVAL);
++	}
++
+ 	qedr_set_common_qp_params(dev, qp, pd, attrs);
+ 
+ 	if (attrs->qp_type == IB_QPT_GSI) {
+-- 
+2.30.2
 
 
