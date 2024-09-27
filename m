@@ -1,183 +1,499 @@
-Return-Path: <linux-kernel+bounces-341921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD97988867
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:39:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFDB698886B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEB361C20C9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:39:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FC42B22490
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B14C1C1740;
-	Fri, 27 Sep 2024 15:39:04 +0000 (UTC)
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43A91C175D;
+	Fri, 27 Sep 2024 15:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="twUpRTJf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4821E4AE;
-	Fri, 27 Sep 2024 15:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C4B1E4AE;
+	Fri, 27 Sep 2024 15:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727451543; cv=none; b=CwR39nIQvdJZ5fB8P5zYModO7foKjocJuKr40yGjFdN5kMgvXrT4mAkH7CW2OXoKJhYQPWnKzbe8q8oZryqRjhSZVQ0btff0+3o3WGAoFqc0691u19ZTpxKzH+HM2Udbbr24skKa+ixzLlXPzOxeK8jx1tynN9tFAFSDcQDhHQo=
+	t=1727451550; cv=none; b=S+i9YeI7tyYD6HTxNd9JF80SWWaYodmsihzPUAVrTQ/0PQuxdXLioToraRt9k9Pz270mMBa8wg3Zkm54D94Q3odHL10XJ216qFT+05+5ByxbU5qFAaqAlLYcmcfyxNxDUStgI2Sm71lwtmK1gjm8HV2LyKYJi++s7fZPnZCtuN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727451543; c=relaxed/simple;
-	bh=A+nnFcqSOeTK/ORQTho2XfZbvuo2e1Q/u8SLxixq3Mg=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=BJ9gkUZGW9fLa8S11iF74PNvAx6JUHXQm84qx5P02o/q1az1xnhXr29tJvOtaX+GCPmV9hjw9lpI102wJwy4NTQKx1o7R1E42dHld0P3m9H6FjvgbBkWy6uudIgjOdb2KuXrjh6Vq2EJjS8Xam82TGWVejUGix7NZzHENlJfw0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:55628)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1suD3V-004ZpH-Bb; Fri, 27 Sep 2024 09:38:53 -0600
-Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:36938 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1suD3U-009xfm-B0; Fri, 27 Sep 2024 09:38:52 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Tycho Andersen <tycho@tycho.pizza>
-Cc: Aleksa Sarai <cyphar@cyphar.com>,  Alexander Viro
- <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,  Jan
- Kara <jack@suse.cz>,  Kees Cook <kees@kernel.org>,  Jeff Layton
- <jlayton@kernel.org>,  Chuck Lever <chuck.lever@oracle.com>,  Alexander
- Aring <alex.aring@gmail.com>,  linux-fsdevel@vger.kernel.org,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,  Tycho Andersen
- <tandersen@netflix.com>,  Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?=
- <zbyszek@in.waw.pl>
-References: <20240924141001.116584-1-tycho@tycho.pizza>
-	<87msjx9ciw.fsf@email.froward.int.ebiederm.org>
-	<20240925.152228-private.conflict.frozen.trios-TdUGhuI5Sb4v@cyphar.com>
-	<ZvR+k3D1KGALOIWt@tycho.pizza>
-	<878qvf17zl.fsf@email.froward.int.ebiederm.org>
-	<Zva8GEUv1Xj8SsLf@tycho.pizza>
-	<87h6a1xilx.fsf@email.froward.int.ebiederm.org>
-	<ZvbHlChEmj35+jHF@tycho.pizza>
-Date: Fri, 27 Sep 2024 10:38:45 -0500
-In-Reply-To: <ZvbHlChEmj35+jHF@tycho.pizza> (Tycho Andersen's message of "Fri,
-	27 Sep 2024 08:56:20 -0600")
-Message-ID: <87wmixw1h6.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1727451550; c=relaxed/simple;
+	bh=MfMhGynU4JvxQVteRfbW8LAV4G55LKO/5OpCwaX9w0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oEqu+3T7KJt8HxXoTTejErXWV/jg0sDhYhSIGFE+HiWNqdTz0dwNw5A5vW3NHUxQDxtXF5cLwsplYfPqPN9TD76Fv1aGZ6P3Jw/aeRScojPcg6xtJEaXuyP3e/BiN4p7Zj53e3nVGvLvwFoM3CV55jiaU5rsBC+f4K65w4YpgYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=twUpRTJf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFDDCC4CEC4;
+	Fri, 27 Sep 2024 15:39:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727451550;
+	bh=MfMhGynU4JvxQVteRfbW8LAV4G55LKO/5OpCwaX9w0w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=twUpRTJfy6Z4b9NHI5mYsH7NhFHIljHDYjs+Ea9xre+kBESToco94DothumvXG4sS
+	 /jTNKQ5hS1oTTXJ4/fqZyWAbkaDbhpDc6vwd43weyUX7lLo6YwUfhqrH4G50pVpsdp
+	 hj1NqUpmMl2rCm6xzXr7v8vIIDBGnm9LPQ+wRaJGgMdXmeBoUoWwo86KPmzSttDuzo
+	 1iY+cHdNHzABI+9TW/kuDo1nCE7PyYzcqc2YpOjwsAnn0/88QfaB3ib/EEaOv5fiwq
+	 Kv4nxCCgcWYY4TT+7Y9QjonVFmmrMLiglalSAEvff7Zd99Fwwrzvxa99e6dwsN7K1+
+	 OIFFbl9YXsQTg==
+Date: Fri, 27 Sep 2024 17:39:03 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "tzimmermann@suse.de" <tzimmermann@suse.de>, 
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, 
+	"airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
+	Jiri Kosina <jikos@kernel.org>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	Orlando Chamberlain <orlandoch.dev@gmail.com>, Kerem Karabay <kekrby@gmail.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v5 2/10] HID: hid-appletb-kbd: add driver for the
+ keyboard mode
+Message-ID: <i4kn5ftusya5ins2gliea33gkfsoubd6cxcy7lhw5zpxsww4ct@m5cg7prilvfj>
+References: <DD9C41AD-6543-47CE-8504-69E4992229B2@live.com>
+ <0B505E00-A1D6-4D0E-BE04-311E231874C5@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1suD3U-009xfm-B0;;;mid=<87wmixw1h6.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/SeLu3lFfn5+34ujWa2fAf2nSewHm7GeA=
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4774]
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Tycho Andersen <tycho@tycho.pizza>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 454 ms - load_scoreonly_sql: 0.07 (0.0%),
-	signal_user_changed: 11 (2.5%), b_tie_ro: 10 (2.2%), parse: 1.01
-	(0.2%), extract_message_metadata: 12 (2.7%), get_uri_detail_list: 2.0
-	(0.4%), tests_pri_-2000: 13 (2.9%), tests_pri_-1000: 2.8 (0.6%),
-	tests_pri_-950: 1.24 (0.3%), tests_pri_-900: 0.98 (0.2%),
-	tests_pri_-90: 82 (18.1%), check_bayes: 81 (17.8%), b_tokenize: 9
-	(2.0%), b_tok_get_all: 10 (2.1%), b_comp_prob: 2.7 (0.6%),
-	b_tok_touch_all: 56 (12.4%), b_finish: 0.84 (0.2%), tests_pri_0: 316
-	(69.6%), check_dkim_signature: 0.55 (0.1%), check_dkim_adsp: 3.3
-	(0.7%), poll_dns_idle: 1.57 (0.3%), tests_pri_10: 2.1 (0.5%),
-	tests_pri_500: 7 (1.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
-X-SA-Exim-Connect-IP: 166.70.13.51
-X-SA-Exim-Rcpt-To: zbyszek@in.waw.pl, tandersen@netflix.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, alex.aring@gmail.com, chuck.lever@oracle.com, jlayton@kernel.org, kees@kernel.org, jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, cyphar@cyphar.com, tycho@tycho.pizza
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0B505E00-A1D6-4D0E-BE04-311E231874C5@live.com>
 
-Tycho Andersen <tycho@tycho.pizza> writes:
+On Aug 17 2024, Aditya Garg wrote:
+> From: Kerem Karabay <kekrby@gmail.com>
+> 
+> The Touch Bars found on x86 Macs support two USB configurations: one
+> where the device presents itself as a HID keyboard and can display
+> predefined sets of keys, and one where the operating system has full
+> control over what is displayed. This commit adds a driver for the
+> display functionality of the first configuration.
+> 
+> Note that currently only T2 Macs are supported.
+> 
+> This driver is based on previous work done by Ronald Tschalär
+> <ronald@innovation.ch>.
+> 
+> Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+> Co-developed-by: Aditya Garg <gargaditya08@live.com>
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+> ---
+>  .../ABI/testing/sysfs-driver-hid-appletb-kbd  |  13 +
+>  drivers/hid/Kconfig                           |  11 +
+>  drivers/hid/Makefile                          |   1 +
+>  drivers/hid/hid-appletb-kbd.c                 | 304 ++++++++++++++++++
+>  drivers/hid/hid-quirks.c                      |   4 +-
+>  5 files changed, 332 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
+>  create mode 100644 drivers/hid/hid-appletb-kbd.c
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd b/Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
+> new file mode 100644
+> index 000000000..2a19584d0
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
+> @@ -0,0 +1,13 @@
+> +What:		/sys/bus/hid/drivers/hid-appletb-kbd/<dev>/mode
+> +Date:		September, 2023
+> +KernelVersion:	6.5
+> +Contact:	linux-input@vger.kernel.org
+> +Description:
+> +		The set of keys displayed on the Touch Bar.
+> +		Valid values are:
+> +		== =================
+> +		0  Escape key only
+> +		1  Function keys
+> +		2  Media/brightness keys
+> +		3  None
+> +		== =================
+> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+> index 4988c1fb2..72b665eda 100644
+> --- a/drivers/hid/Kconfig
+> +++ b/drivers/hid/Kconfig
+> @@ -158,6 +158,17 @@ config HID_APPLETB_BL
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called hid-appletb-bl.
+>  
+> +config HID_APPLETB_KBD
+> +	tristate "Apple Touch Bar Keyboard Mode"
+> +	depends on USB_HID
+> +	help
+> +	  Say Y here if you want support for the keyboard mode (escape,
+> +	  function, media and brightness keys) of Touch Bars on x86 MacBook
+> +	  Pros.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called hid-appletb-kbd.
+> +
+>  config HID_ASUS
+>  	tristate "Asus"
+>  	depends on USB_HID
+> diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+> index 1d825a474..d903c9a26 100644
+> --- a/drivers/hid/Makefile
+> +++ b/drivers/hid/Makefile
+> @@ -30,6 +30,7 @@ obj-$(CONFIG_HID_ACRUX)		+= hid-axff.o
+>  obj-$(CONFIG_HID_APPLE)		+= hid-apple.o
+>  obj-$(CONFIG_HID_APPLEIR)	+= hid-appleir.o
+>  obj-$(CONFIG_HID_APPLETB_BL)	+= hid-appletb-bl.o
+> +obj-$(CONFIG_HID_APPLETB_KBD)	+= hid-appletb-kbd.o
+>  obj-$(CONFIG_HID_CREATIVE_SB0540)	+= hid-creative-sb0540.o
+>  obj-$(CONFIG_HID_ASUS)		+= hid-asus.o
+>  obj-$(CONFIG_HID_AUREAL)	+= hid-aureal.o
+> diff --git a/drivers/hid/hid-appletb-kbd.c b/drivers/hid/hid-appletb-kbd.c
+> new file mode 100644
+> index 000000000..ecac68fc7
+> --- /dev/null
+> +++ b/drivers/hid/hid-appletb-kbd.c
+> @@ -0,0 +1,304 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Apple Touch Bar Keyboard Mode Driver
+> + *
+> + * Copyright (c) 2017-2018 Ronald Tschalär
+> + * Copyright (c) 2022-2023 Kerem Karabay <kekrby@gmail.com>
+> + * Copyright (c) 2024 Aditya Garg <gargaditya08@live.com>
+> + */
+> +
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+> +#include <linux/hid.h>
+> +#include <linux/usb.h>
+> +#include <linux/input.h>
+> +#include <linux/sysfs.h>
+> +#include <linux/bitops.h>
+> +#include <linux/module.h>
+> +#include <linux/string.h>
+> +#include <linux/input/sparse-keymap.h>
+> +
+> +#include "hid-ids.h"
+> +
+> +#define APPLETB_KBD_MODE_ESC	0
+> +#define APPLETB_KBD_MODE_FN	1
+> +#define APPLETB_KBD_MODE_SPCL	2
+> +#define APPLETB_KBD_MODE_OFF	3
+> +#define APPLETB_KBD_MODE_MAX	APPLETB_KBD_MODE_OFF
+> +
+> +#define HID_USAGE_MODE		0x00ff0004
+> +
+> +static int appletb_tb_def_mode = APPLETB_KBD_MODE_SPCL;
+> +module_param_named(mode, appletb_tb_def_mode, int, 0444);
+> +MODULE_PARM_DESC(mode, "Default touchbar mode:\n"
+> +			 "    0 - escape key only\n"
+> +			 "    1 - function-keys\n"
+> +			 "    [2] - special keys");
+> +
+> +struct appletb_kbd {
+> +	struct hid_field *mode_field;
+> +
+> +	u8 saved_mode;
+> +	u8 current_mode;
+> +};
+> +
+> +static const struct key_entry appletb_kbd_keymap[] = {
+> +	{ KE_KEY, KEY_ESC, { KEY_ESC } },
+> +	{ KE_KEY, KEY_F1,  { KEY_BRIGHTNESSDOWN } },
+> +	{ KE_KEY, KEY_F2,  { KEY_BRIGHTNESSUP } },
+> +	{ KE_KEY, KEY_F3,  { KEY_RESERVED } },
+> +	{ KE_KEY, KEY_F4,  { KEY_RESERVED } },
+> +	{ KE_KEY, KEY_F5,  { KEY_KBDILLUMDOWN } },
+> +	{ KE_KEY, KEY_F6,  { KEY_KBDILLUMUP } },
+> +	{ KE_KEY, KEY_F7,  { KEY_PREVIOUSSONG } },
+> +	{ KE_KEY, KEY_F8,  { KEY_PLAYPAUSE } },
+> +	{ KE_KEY, KEY_F9,  { KEY_NEXTSONG } },
+> +	{ KE_KEY, KEY_F10, { KEY_MUTE } },
+> +	{ KE_KEY, KEY_F11, { KEY_VOLUMEDOWN } },
+> +	{ KE_KEY, KEY_F12, { KEY_VOLUMEUP } },
+> +	{ KE_END, 0 }
+> +};
+> +
+> +static int appletb_kbd_set_mode(struct appletb_kbd *kbd, u8 mode)
+> +{
+> +	struct hid_report *report = kbd->mode_field->report;
+> +	struct hid_device *hdev = report->device;
+> +	int ret;
+> +
+> +	ret = hid_hw_power(hdev, PM_HINT_FULLON);
+> +	if (ret) {
+> +		hid_err(hdev, "Device didn't resume (%pe)\n", ERR_PTR(ret));
+> +		return ret;
+> +	}
+> +
+> +	ret = hid_set_field(kbd->mode_field, 0, mode);
+> +	if (ret) {
+> +		hid_err(hdev, "Failed to set mode field to %u (%pe)\n", mode, ERR_PTR(ret));
+> +		goto power_normal;
+> +	}
+> +
+> +	hid_hw_request(hdev, report, HID_REQ_SET_REPORT);
+> +
+> +	kbd->current_mode = mode;
+> +
+> +power_normal:
+> +	hid_hw_power(hdev, PM_HINT_NORMAL);
+> +
+> +	return ret;
+> +}
+> +
+> +static ssize_t mode_show(struct device *dev,
+> +			 struct device_attribute *attr, char *buf)
+> +{
+> +	struct appletb_kbd *kbd = dev_get_drvdata(dev);
+> +
+> +	return sysfs_emit(buf, "%d\n", kbd->current_mode);
+> +}
+> +
+> +static ssize_t mode_store(struct device *dev,
+> +			  struct device_attribute *attr,
+> +			  const char *buf, size_t size)
+> +{
+> +	struct appletb_kbd *kbd = dev_get_drvdata(dev);
+> +	u8 mode;
+> +	int ret;
+> +
+> +	ret = kstrtou8(buf, 0, &mode);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (mode > APPLETB_KBD_MODE_MAX)
+> +		return -EINVAL;
+> +
+> +	ret = appletb_kbd_set_mode(kbd, mode);
+> +
+> +	return ret < 0 ? ret : size;
+> +}
+> +static DEVICE_ATTR_RW(mode);
+> +
+> +struct attribute *appletb_kbd_attrs[] = {
+> +	&dev_attr_mode.attr,
+> +	NULL
+> +};
+> +ATTRIBUTE_GROUPS(appletb_kbd);
+> +
+> +static int appletb_tb_key_to_slot(unsigned int code)
+> +{
+> +	switch (code) {
+> +	case KEY_ESC:
+> +		return 0;
+> +	case KEY_F1 ... KEY_F10:
+> +		return code - KEY_F1 + 1;
+> +	case KEY_F11 ... KEY_F12:
+> +		return code - KEY_F11 + 11;
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int appletb_kbd_hid_event(struct hid_device *hdev, struct hid_field *field,
+> +				      struct hid_usage *usage, __s32 value)
+> +{
+> +	struct appletb_kbd *kbd = hid_get_drvdata(hdev);
+> +	struct key_entry *translation;
+> +	struct input_dev *input;
+> +	int slot;
+> +
+> +	if ((usage->hid & HID_USAGE_PAGE) != HID_UP_KEYBOARD || usage->type != EV_KEY)
+> +		return 0;
+> +
+> +	input = field->hidinput->input;
+> +
+> +	/*
+> +	 * Skip non-touch-bar keys.
+> +	 *
+> +	 * Either the touch bar itself or usbhid generate a slew of key-down
+> +	 * events for all the meta keys. None of which we're at all interested
+> +	 * in.
+> +	 */
+> +	slot = appletb_tb_key_to_slot(usage->code);
+> +	if (slot < 0)
+> +		return 0;
+> +
+> +	translation = sparse_keymap_entry_from_scancode(input, usage->code);
 
-> On Fri, Sep 27, 2024 at 09:43:22AM -0500, Eric W. Biederman wrote:
->> Tycho Andersen <tycho@tycho.pizza> writes:
->> 
->> > On Wed, Sep 25, 2024 at 09:09:18PM -0500, Eric W. Biederman wrote:
->> >> Tycho Andersen <tycho@tycho.pizza> writes:
->> >> 
->> >> > Yep, I did this for the test above, and it worked fine:
->> >> >
->> >> >         if (bprm->fdpath) {
->> >> >                 /*
->> >> >                  * If fdpath was set, execveat() made up a path that will
->> >> >                  * probably not be useful to admins running ps or similar.
->> >> >                  * Let's fix it up to be something reasonable.
->> >> >                  */
->> >> >                 struct path root;
->> >> >                 char *path, buf[1024];
->> >> >
->> >> >                 get_fs_root(current->fs, &root);
->> >> >                 path = __d_path(&bprm->file->f_path, &root, buf, sizeof(buf));
->> >> >
->> >> >                 __set_task_comm(me, kbasename(path), true);
->> >> >         } else {
->> >> >                 __set_task_comm(me, kbasename(bprm->filename), true);
->> >> >         }
->> >> >
->> >> > obviously we don't want a stack allocated buffer, but triggering on
->> >> > ->fdpath != NULL seems like the right thing, so we won't need a flag
->> >> > either.
->> >> >
->> >> > The question is: argv[0] or __d_path()?
->> >> 
->> >> You know.  I think we can just do:
->> >> 
->> >> 	BUILD_BUG_ON(DNAME_INLINE_LEN >= TASK_COMM_LEN);
->> >> 	__set_task_comm(me, bprm->file->f_path.dentry->d_name.name, true);
->> >> 
->> >> Barring cache misses that should be faster and more reliable than what
->> >> we currently have and produce the same output in all of the cases we
->> >> like, and produce better output in all of the cases that are a problem
->> >> today.
->> >> 
->> >> Does anyone see any problem with that?
->> >
->> > Nice, this works great. We need to drop the BUILD_BUG_ON() since it is
->> > violated in today's tree, but I think this is safe to do anyway since
->> > __set_task_comm() does strscpy_pad(tsk->comm, buf, sizeof(tsk->comm)).
->> 
->> Doh.  I simply put the conditional in the wrong order.  That should have
->> been:
->> 	BUILD_BUG_ON(TASK_COMM_LEN > DNAME_INLINE_LEN);
->> 
->> Sorry I was thinking of the invariant that needs to be preserved rather
->> than the bug that happens.
->
-> Thanks, I will include that. Just for my own education: this is still
-> *safe* to do, because of _pad, it's just that it is a userspace
-> visible break if TASK_COMM_LEN > DNAME_INLINE_LEN is ever true?
+You are missing a Kconfig depends or select here because when enabling
+this module, we can get
 
-Not a userspace visible issue at all.
+ERROR: modpost: "sparse_keymap_setup" [drivers/hid/hid-appletb-kbd.ko] undefined!
+ERROR: modpost: "sparse_keymap_entry_from_scancode" [drivers/hid/hid-appletb-kbd.ko] undefined!
 
-With TASK_COMM_LEN <= DNAME_INLINE_LEN we could just use a memcpy of
-TASK_COMM_LEN bytes, and everything will be safe.  (But we aren't
-guaranteed a terminating '\0').
+FWIW, I tried "depend on INPUT_SPARSEKMAP" and "select
+INPUT_SPARSEKMAP", but in both cases the error was there, so I suspect
+there is one extra config to select (could be my script but if I can
+enter this state, I believe others will get into it as well).
 
-If you look at d_move and copy_name in dcache.c you can see that
-there are cases where a rename of the dentry that happens as we
-are reading it to fill task->comm a terminating '\0' might be
-missed.
+Cheers,
+Benjamin
 
-strscpy_pad relies on either finding a final '\0' after which
-is adds more '\0's or on finding the end of the source buffer.
-
-strscpy_pad will guarantee that there is a final '\0' in task->comm.
-
-There might be some race in reading dentry->d_name, but I don't think we
-much care.
-
-Eric
+> +
+> +	if (translation && kbd->current_mode == APPLETB_KBD_MODE_SPCL) {
+> +		input_event(input, usage->type, translation->keycode, value);
+> +
+> +		return 1;
+> +	}
+> +
+> +	return kbd->current_mode == APPLETB_KBD_MODE_OFF;
+> +}
+> +
+> +static int appletb_kbd_input_configured(struct hid_device *hdev, struct hid_input *hidinput)
+> +{
+> +	int idx;
+> +	struct input_dev *input = hidinput->input;
+> +
+> +	/*
+> +	 * Clear various input capabilities that are blindly set by the hid
+> +	 * driver (usbkbd.c)
+> +	 */
+> +	memset(input->evbit, 0, sizeof(input->evbit));
+> +	memset(input->keybit, 0, sizeof(input->keybit));
+> +	memset(input->ledbit, 0, sizeof(input->ledbit));
+> +
+> +	__set_bit(EV_REP, input->evbit);
+> +
+> +	sparse_keymap_setup(input, appletb_kbd_keymap, NULL);
+> +
+> +	for (idx = 0; appletb_kbd_keymap[idx].type != KE_END; idx++) {
+> +		input_set_capability(input, EV_KEY, appletb_kbd_keymap[idx].code);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int appletb_kbd_probe(struct hid_device *hdev, const struct hid_device_id *id)
+> +{
+> +	struct appletb_kbd *kbd;
+> +	struct device *dev = &hdev->dev;
+> +	struct hid_field *mode_field;
+> +	int ret;
+> +
+> +	ret = hid_parse(hdev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "HID parse failed\n");
+> +
+> +	mode_field = hid_find_field(hdev, HID_OUTPUT_REPORT,
+> +				    HID_GD_KEYBOARD, HID_USAGE_MODE);
+> +	if (!mode_field)
+> +		return -ENODEV;
+> +
+> +	kbd = devm_kzalloc(dev, sizeof(*kbd), GFP_KERNEL);
+> +	if (!kbd)
+> +		return -ENOMEM;
+> +
+> +	kbd->mode_field = mode_field;
+> +
+> +	ret = hid_hw_start(hdev, HID_CONNECT_HIDINPUT);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "HID hw start failed\n");
+> +
+> +	ret = hid_hw_open(hdev);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "HID hw open failed\n");
+> +		goto stop_hw;
+> +	}
+> +
+> +	ret = appletb_kbd_set_mode(kbd, appletb_tb_def_mode);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "Failed to set touchbar mode\n");
+> +		goto close_hw;
+> +	}
+> +
+> +	hid_set_drvdata(hdev, kbd);
+> +
+> +	return 0;
+> +
+> +close_hw:
+> +	hid_hw_close(hdev);
+> +stop_hw:
+> +	hid_hw_stop(hdev);
+> +	return ret;
+> +}
+> +
+> +static void appletb_kbd_remove(struct hid_device *hdev)
+> +{
+> +	struct appletb_kbd *kbd = hid_get_drvdata(hdev);
+> +
+> +	appletb_kbd_set_mode(kbd, APPLETB_KBD_MODE_OFF);
+> +
+> +	hid_hw_close(hdev);
+> +	hid_hw_stop(hdev);
+> +}
+> +
+> +#ifdef CONFIG_PM
+> +static int appletb_kbd_suspend(struct hid_device *hdev, pm_message_t msg)
+> +{
+> +	struct appletb_kbd *kbd = hid_get_drvdata(hdev);
+> +
+> +	kbd->saved_mode = kbd->current_mode;
+> +	appletb_kbd_set_mode(kbd, APPLETB_KBD_MODE_OFF);
+> +
+> +	return 0;
+> +}
+> +
+> +static int appletb_kbd_reset_resume(struct hid_device *hdev)
+> +{
+> +	struct appletb_kbd *kbd = hid_get_drvdata(hdev);
+> +
+> +	appletb_kbd_set_mode(kbd, kbd->saved_mode);
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static const struct hid_device_id appletb_kbd_hid_ids[] = {
+> +	/* MacBook Pro's 2018, 2019, with T2 chip: iBridge Display */
+> +	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_TOUCHBAR_DISPLAY) },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(hid, appletb_kbd_hid_ids);
+> +
+> +static struct hid_driver appletb_kbd_hid_driver = {
+> +	.name = "hid-appletb-kbd",
+> +	.id_table = appletb_kbd_hid_ids,
+> +	.probe = appletb_kbd_probe,
+> +	.remove = appletb_kbd_remove,
+> +	.event = appletb_kbd_hid_event,
+> +	.input_configured = appletb_kbd_input_configured,
+> +#ifdef CONFIG_PM
+> +	.suspend = appletb_kbd_suspend,
+> +	.reset_resume = appletb_kbd_reset_resume,
+> +#endif
+> +	.driver.dev_groups = appletb_kbd_groups,
+> +};
+> +module_hid_driver(appletb_kbd_hid_driver);
+> +
+> +MODULE_AUTHOR("Ronald Tschalär");
+> +MODULE_AUTHOR("Kerem Karabay <kekrby@gmail.com>");
+> +MODULE_DESCRIPTION("MacBookPro Touch Bar Keyboard Mode Driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
+> index 818d41a35..7c576d654 100644
+> --- a/drivers/hid/hid-quirks.c
+> +++ b/drivers/hid/hid-quirks.c
+> @@ -328,7 +328,6 @@ static const struct hid_device_id hid_have_special_driver[] = {
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_GEYSER1_TP_ONLY) },
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2021) },
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2021) },
+> -	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_TOUCHBAR_DISPLAY) },
+>  #endif
+>  #if IS_ENABLED(CONFIG_HID_APPLEIR)
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_IRCONTROL) },
+> @@ -340,6 +339,9 @@ static const struct hid_device_id hid_have_special_driver[] = {
+>  #if IS_ENABLED(CONFIG_HID_APPLETB_BL)
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_TOUCHBAR_BACKLIGHT) },
+>  #endif
+> +#if IS_ENABLED(CONFIG_HID_APPLETB_KBD)
+> +	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_TOUCHBAR_DISPLAY) },
+> +#endif
+>  #if IS_ENABLED(CONFIG_HID_ASUS)
+>  	{ HID_I2C_DEVICE(USB_VENDOR_ID_ASUSTEK, USB_DEVICE_ID_ASUSTEK_I2C_KEYBOARD) },
+>  	{ HID_I2C_DEVICE(USB_VENDOR_ID_ASUSTEK, USB_DEVICE_ID_ASUSTEK_I2C_TOUCHPAD) },
+> -- 
+> 2.43.0
+> 
 
