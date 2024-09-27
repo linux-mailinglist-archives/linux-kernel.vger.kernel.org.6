@@ -1,127 +1,159 @@
-Return-Path: <linux-kernel+bounces-342006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABBD6988989
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:10:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B4598898F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00E462808E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:10:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1DE1F21C55
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8981C1AA0;
-	Fri, 27 Sep 2024 17:10:05 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FCF1C1AA2;
+	Fri, 27 Sep 2024 17:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oY2VXxVU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88374166F23;
-	Fri, 27 Sep 2024 17:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF1D524B0;
+	Fri, 27 Sep 2024 17:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727457004; cv=none; b=EsyrrBEkM9b3dX3vkV2NPFmFChArRBK4aQ0x3ZGian+z5j9ZXYIwrF3Q98diITApo9jH7EUkCiDgd5/sNT1M1uHUNuw8ixSn15PaZspKJ9qRDgf3qzRjvsKpEh0p5Aw58hxnf5HL11N8Xh1gkPm/zqdrgPTC53j1AUUL2dBxpNo=
+	t=1727457148; cv=none; b=s9NaBXOa/fzBr71QCJ4Gl2it2BUM3sdzM9qPRIYOMY3sN83q2pl56a6qn79SSIEUkNtjtf++X65nsWvL2rHUV3HwVFGD9ac0dS+oMg8ZdveJ8JGofF2jLLAljO6855mfalYH00I7fSvLik/njtX97Zxw2ptMxHSU8p+S4lMxFy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727457004; c=relaxed/simple;
-	bh=msPFs0oHddcTpnqpQnU8/vyIsstY5Hmuyz7ku4/n+Vs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hY9KvFgSqoLMa3ca63ilYxQMI6rsioaK9DVTyT+J/2GknegR2tyxgQVT5Gq6AOu6AeD9TAw50TolbJvYyvuOR5ZKXHy3v3Mz3+wiW7VEbUQaV9aYQw1cPRFgLX6gpEkHvnRIwLKZhrrX7Qdkk9UmfnufBLXSFcwXg7scPEB7sio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6dbb24ee2ebso23637957b3.1;
-        Fri, 27 Sep 2024 10:10:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727457000; x=1728061800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xoY6H2xihm8sOHd6/SknfHzEtRV3+jpw8m+Q4KMLP+g=;
-        b=tRMjiYTYypx9L5PJMkd2xnLL3moT3CPImD8m2IP5kg6+UZyqhOtanwT5HRBm0hfYCg
-         EsYGdbIG2PDapDWCNGv5U6GT5CPT4KgP++qj0Sr+qmqfAIfTFW1FhTeNfxgdGzLu3YAk
-         hJjPYhds4pYAL0KcSG30KLN/EzQeEdH3HJ6KOu5b3hivPceLTOz81PiMYsJJacYl8XC0
-         1I+JeHlxchtrGIXL4P5SY4jHFhzALzFXqXa/zOhGlvwC3qD1qDwvTeGW5eR808jcxOxm
-         SVzF1lA3pHYJbkNGSc5EbFq3tg56zj2MuAfv/FTSHBRssTZE+yMP0ewQ4uqiz3uXiBWS
-         LlDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUd116sw7wmtstG8rMa8beP1eJqHLZsUY38pW6J1Y92lGvLy6v0MQ6/QubmZ1UNCqrK2vBISGjhXqm4@vger.kernel.org, AJvYcCUlvnq7+bYxTMuoSQIrLDRvkYnkR+9dRxzt+N4HFSTUFhaNxfIQIbLXZl74gZED8ay0F/vWuxxrK+mccZMmlMjrI4g=@vger.kernel.org, AJvYcCVtfOniakizM2ulrNzIcv0jpfPfWcCnONf3Qs2qvZuTSHgYXBQR/AlMJ8ttOsiSosqulEtn2MeVXCbzqA==@vger.kernel.org, AJvYcCWKPKr3EcOJK2ym4rzDPqMIm6B/L4zF5Un8VhU4WCWKZNjxmGdH/vfcECRuVZPstzoyfkV+VF55y5sOfts=@vger.kernel.org, AJvYcCX3YJey9Uh8g/JSiuIW312UPZp4Wkdu80R4dGmkJWlcBW/xKPfvvLbE1UBR2PLKe3cZzzTvF9HnW5Rx6BHb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0pHOHX0sDBMj6OB2LUB8/RGEt8+HCY7iBF4KI8vYkmID4IOWf
-	LH0QsxHwXGcYTZqJdqwLEC/zOJQjqlp+tOQGxjtUKeSi1xRmWiu1WnJwgRHq
-X-Google-Smtp-Source: AGHT+IHlJToKTAzVgAYZKGZ99dEqKZ1IEZ+5wIjrGIZT5k3uFU+ceirE6auatgIXjGrDTfARDQ6h1g==
-X-Received: by 2002:a05:690c:4911:b0:6e2:e3d:4dda with SMTP id 00721157ae682-6e247544eb3mr33866507b3.17.1727457000404;
-        Fri, 27 Sep 2024 10:10:00 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e245388265sm3604807b3.111.2024.09.27.10.09.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 10:09:59 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6dde476d3dfso20291487b3.3;
-        Fri, 27 Sep 2024 10:09:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUrOXltbnbNNZxfPRXnTcPKUru5KvKS9O1I2oBYV45ig8vwMmz4Ei6zu5xIQ0eQfN5WqLc8PZ7GZPuQWA==@vger.kernel.org, AJvYcCV0MsNBukM+FDLBa9rCwezuhjlMVIvYELoFRZXBjLmEjfsnV+AzS/J8LcHWxgYd3rVTPsa0i+Pb4Ex4W+4=@vger.kernel.org, AJvYcCWLPWfonlVFYNxpTqRRbUg8mHrnmdAHQ2NfoFulCtu6GVfCq6Wdog4C2KLtn36p/nkwjEJJaxVh3T7J@vger.kernel.org, AJvYcCWs9rc42AnN83gB176lsVK8iPBiM2ucRf2JFK1nkkFw2ifYLqvdAFGNw7dI/8Z1giRM0SSDtVywym4BR0ng@vger.kernel.org, AJvYcCXqxR15tyRkjq+z6FJyalTwvGiTVVui03u5mEerUvVxCWd4eNL5o+yaMdgT68tS3TXpUnP28w/4ai7BQXleTR3BY9s=@vger.kernel.org
-X-Received: by 2002:a05:690c:112:b0:6e2:985:f4df with SMTP id
- 00721157ae682-6e24dc9c710mr22157267b3.44.1727456998718; Fri, 27 Sep 2024
- 10:09:58 -0700 (PDT)
+	s=arc-20240116; t=1727457148; c=relaxed/simple;
+	bh=/aepn4yxs2GacHcxTHHnxPFuOl6EiGqs7P8YQBP1mx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gj9eAHVq4SjoUjyl6op7bvPIJZrcM1mEpUQbEpfIjK6TtYp5wUUXnVIpOaC7ZArF95T5nCO+WPJJBOJEroJSM80jU2TU9WyFJ+2gusLwcRVMs9XXWf8U5baUyDBqlNtT5JAteBDkgEBCj2xQaztwVdWCqCq8revKJOua80WnLNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oY2VXxVU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8807C4CEC4;
+	Fri, 27 Sep 2024 17:12:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727457147;
+	bh=/aepn4yxs2GacHcxTHHnxPFuOl6EiGqs7P8YQBP1mx4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oY2VXxVU+quI2gL/DOUPraf3nWFhrGOrvHRjkN5sCL/ieWgt22COKnTzY3JjtAXjy
+	 qAjKdpNoHQl3/DkZfLjeymp81F0cYRURumPt1xzl8fwQid8d4rwdi13rKgQMFx11Ao
+	 uPZIfWkON3PEE00qAlpPoAcRmga9vBYcPCgWXrqMLUeBXyWC48RCaxnU4dUEpec0y9
+	 wenwpKyUNfxl3gOsog8iYPvbrPcuJpT++51TdCWPdqbGLhtjcwy+1y/RCxfmgCNq1I
+	 kpuS/yoRfMJvI+mwUkV8PyhYwkgK3E9BEExElRfvDEz+K3qQ9vkkSOhMOnbRoSsal9
+	 /5Xx6ICCcxeGA==
+Date: Fri, 27 Sep 2024 10:12:24 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Tengda Wu <wutengda@huaweicloud.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, song@kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH -next 1/2] perf stat: Increase perf_attr_map entries
+Message-ID: <ZvbnePGVmbWF0fAF@google.com>
+References: <20240925135523.367957-1-wutengda@huaweicloud.com>
+ <20240925135523.367957-2-wutengda@huaweicloud.com>
+ <ZvTgHKl4eZvpyVml@google.com>
+ <41d1d728-dbf4-4b0d-9855-19cd06e2a594@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1727438777.git.geert+renesas@glider.be> <4455919.MSiuQNM8U4@phil>
-In-Reply-To: <4455919.MSiuQNM8U4@phil>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 27 Sep 2024 19:09:45 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXVBfp0ZJ5Me93p1fB9-ac00WcAYOb9jkG=D+wm01j+qw@mail.gmail.com>
-Message-ID: <CAMuHMdXVBfp0ZJ5Me93p1fB9-ac00WcAYOb9jkG=D+wm01j+qw@mail.gmail.com>
-Subject: Re: [PATCH treewide 00/11] ASoC: Clean up {hp,mic}-det-gpio handling
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lubomir Rintel <lkundrak@v3.sk>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Paul Cercueil <paul@crapouillou.net>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
-	Nicolin Chen <nicoleotsuka@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Adrien Grassein <adrien.grassein@gmail.com>, Adam Ford <aford173@gmail.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-sound@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-mips@vger.kernel.org, 
-	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <41d1d728-dbf4-4b0d-9855-19cd06e2a594@huaweicloud.com>
 
-Hi Heiko,
+On Fri, Sep 27, 2024 at 10:35:54AM +0800, Tengda Wu wrote:
+> 
+> 
+> On 2024/9/26 12:16, Namhyung Kim wrote:
+> > On Wed, Sep 25, 2024 at 01:55:22PM +0000, Tengda Wu wrote:
+> >> bperf restricts the size of perf_attr_map's entries to 16, which
+> >> cannot hold all events in many scenarios. A typical example is
+> >> when the user specifies `-a -ddd` ([0]). And in other cases such as
+> >> top-down analysis, which often requires a set of more than 16 PMUs
+> >> to be collected simultaneously.
+> >>
+> >> Fix this by increase perf_attr_map entries to 100, and an event
+> >> number check has been introduced when bperf__load() to ensure that
+> >> users receive a more friendly prompt when the event limit is reached.
+> >>
+> >>   [0] https://lore.kernel.org/all/20230104064402.1551516-3-namhyung@kernel.org/
+> > 
+> > Apparently this patch was never applied.  I don't know how much you need
+> > but having too many events at the same time won't be very useful because
+> > multiplexing could reduce the accuracy.
+> > 
+> 
+> Could you please explain why patch [0] was not merged at that time? I couldn't
+> find this information from the previous emails.
 
-On Fri, Sep 27, 2024 at 4:45=E2=80=AFPM Heiko Stuebner <heiko@sntech.de> wr=
-ote:
-> Am Freitag, 27. September 2024, 14:42:15 CEST schrieb Geert Uytterhoeven:
-> >   - The second patch updates the Audio Graph and Simple Audio Card DT
-> >     bindings,
-> >   - Patches 3-9 converts various DTS files to use the new properties,
-> >   - The last 2 patches convert Freescale sound device nodes to use the
-> >     new properties.
-> >
-> > All patches can be applied independently,
->
-> though I guess dts patches should wait till patch 2 gets applied
-> somewhere, so that changed dts and changed binding can again find
-> together in linux-next?
+I guess it's just fell through the crack. :)
 
-Yes, if we want to avoid introducing new dtbs_check warnings in linux-next.
+> 
+> In my scenario, we collect more than 40+ events to support necessary metric
+> calculations, which multiplexing is inevitable. Although multiplexing may
+> reduce accuracy, for the purpose of supporting metric calculations, these
+> accuracy losses can be acceptable. Perf also has the same issue with multiplexing.
+> Removing the event limit for bperf can provide users with additional options.
+> 
+> In addition to accuracy, we also care about overhead. I compared the overhead
+> of bperf and perf by testing ./lat_ctx in lmbench [1], and found that the
+> overhead of bperf stat is about 4% less than perf. This is why we choose to
+> use bperf in some extreme scenarios.
 
-Gr{oetje,eeting}s,
+Ok, thanks for explanation.  I think it's ok to increase the limit.
 
-                        Geert
+Thanks,
+Namhyung
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> 
+>   [1] https://github.com/intel/lmbench
+> 
+> Thanks,
+> Tengda
+> 
+> > 
+> >>
+> >> Fixes: 7fac83aaf2ee ("perf stat: Introduce 'bperf' to share hardware PMCs with BPF")
+> >> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+> >> ---
+> >>  tools/perf/util/bpf_counter.c | 8 +++++++-
+> >>  1 file changed, 7 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
+> >> index 7a8af60e0f51..3346129c20cf 100644
+> >> --- a/tools/perf/util/bpf_counter.c
+> >> +++ b/tools/perf/util/bpf_counter.c
+> >> @@ -28,7 +28,7 @@
+> >>  #include "bpf_skel/bperf_leader.skel.h"
+> >>  #include "bpf_skel/bperf_follower.skel.h"
+> >>  
+> >> -#define ATTR_MAP_SIZE 16
+> >> +#define ATTR_MAP_SIZE 100
+> >>  
+> >>  static inline void *u64_to_ptr(__u64 ptr)
+> >>  {
+> >> @@ -451,6 +451,12 @@ static int bperf__load(struct evsel *evsel, struct target *target)
+> >>  	enum bperf_filter_type filter_type;
+> >>  	__u32 filter_entry_cnt, i;
+> >>  
+> >> +	if (evsel->evlist->core.nr_entries > ATTR_MAP_SIZE) {
+> >> +		pr_err("Too many events, please limit to %d or less\n",
+> >> +			ATTR_MAP_SIZE);
+> >> +		return -1;
+> >> +	}
+> >> +
+> >>  	if (bperf_check_target(evsel, target, &filter_type, &filter_entry_cnt))
+> >>  		return -1;
+> >>  
+> >> -- 
+> >> 2.34.1
+> >>
+> 
 
