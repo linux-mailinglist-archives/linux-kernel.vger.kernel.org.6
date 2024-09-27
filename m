@@ -1,129 +1,122 @@
-Return-Path: <linux-kernel+bounces-341950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C6B9888C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:07:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF159888C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDF3FB21DE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:07:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC90285359
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055B11C1745;
-	Fri, 27 Sep 2024 16:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F49D1C1745;
+	Fri, 27 Sep 2024 16:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wOL2EfGg"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMLLcB0C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E169E1C0DFB
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 16:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA35A17ADF0;
+	Fri, 27 Sep 2024 16:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727453263; cv=none; b=WVSOeI1ZHIvs07+rflcXhWfJSEwpQSlaVNkou/II2uBM1Z1SGWD0WY8ENX0GB7td3cr4k7BEFPUD5g94I384oaVmO1g96CaSDsLWs7wrJ4DJuUPB6iRabd4jbDUrG5lYDylDx1qiCO/VhxZaYSBW6zQtgKars0hoDnJX6gcgVxg=
+	t=1727453338; cv=none; b=WCVxTm50fJrWDaomgkeQTFFgAX9U6Jdl71R9t+4jPI4J5PP/fkxuRqdq+GNSgQkWVqA6ARbZJPSSz4ZEwmmdafR2OdNO70QOcILW2ETfN3B7nWmO5KAgEUR7xAOKb1PNXYij4VusULwjoLpWvGaNngt4+DV0oJt3lUMucHG61uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727453263; c=relaxed/simple;
-	bh=EHFkGhEsQhdZACKa6pRYflE/XTK6NMY4RSG4EsLdttE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hcg3+ZbqdcQvdBqA4hJjRsiUaesy/0YEfWrzqbewFaShCX9cVuAA2xuEK8e5eIZ5sZgTCelmckc2wuXT6XFFYTXvkeqXZUIku/BUBwMo8j0Cs/kN0nKubLJCqZ4eS4s/D2M4371OMu66jWC6vQnsOCYV+OUKgmz+J0HYy0PtQcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wOL2EfGg; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6db67400db4so25522797b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:07:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727453261; x=1728058061; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EHFkGhEsQhdZACKa6pRYflE/XTK6NMY4RSG4EsLdttE=;
-        b=wOL2EfGguNfhHEHLck4tK8+MJbz1AGa+t1ZGheiuhN1qt2wdW7IMvVEYl3wzLRO60p
-         Zh1e3j29wmEuQrv/IB4wYwd+B2L5b5X0snE2YhsIW+SUq02x9bbmt544xU66em1X/zix
-         6rKhYs29+S04YCwnbaA+tX9N7SH2x+M8fPzska4/APJWToXuWmlWglIMMaWgPx6EntG1
-         IrrGyEV6MU1CQCqtVar+37Q4q60LldLtQ4HWXWYLVk818BW1dPSWYEjjov2lGWTv1x0Y
-         aOJS/XML3WdzypGAJgj3hsN2YeySGKeOUwYRUdIltm8f/Gv4vt6DrRqb8bk4f7aABV96
-         XR4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727453261; x=1728058061;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EHFkGhEsQhdZACKa6pRYflE/XTK6NMY4RSG4EsLdttE=;
-        b=u4jtZXACzp3FAlzVsoiJ4KQxkgkJoL3H2th7nj8jzoccijoZxDILqGKhaKXlk+2iOV
-         ljQAo84n1Br0ldCJFcZPmHkvoSv0Vn7gD2E7y6JQgRbXM6kn0Xfsa5OLS8NOowhE+Kql
-         jCOwoGzbE+JBHQizfxWeMWZ9557Ff3rqOLHUPK1+i4saMhu2/cx3rRInqUaeHRCYKQOa
-         u4folcGvcSixor9pdbLUgtyUy8Er5x0lvDozuV6GWnW+wyDaYl2LOlS9sM3vqy5tplLZ
-         f2Cz5zRUg8eYQW67JoZW7STAC8Gv0DrZkJ8ZgdIkn1szxpDulTzOz0/6jG59AfgvvQEJ
-         aP/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUu+8mYJruwetU7quqA8KGPJxuXDgnnz/hd2pNZ2P0NffhkvpkuPWjXa0hAkUdX2jN8FgpaPFMkcgAohAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym9+nar8e18Q3TF/We//woJ9U+4U4t6OKWRE2KE3T01oBJV/Nr
-	U1J81rIt0cMo+4eBdrbx/EfzTZYlKYdtqeV1HZUvjl8LbuitnJVdskzu/bwUjgQI/biy7wpHpq+
-	IiazlyTCRjbzFG6vaVGX4SJOtHswNZSWMrU9YXA==
-X-Google-Smtp-Source: AGHT+IGzx/qK9UYxRzV3lT0jsfbrNXpOxjZ3LgmKAoBZnS1e/5cYjHGIXlrJ/VoSeio0nf1YAgFk8rGuS3JdImONTdg=
-X-Received: by 2002:a05:690c:60c5:b0:6de:1e2:d66a with SMTP id
- 00721157ae682-6e2474f4adamr30196557b3.2.1727453260762; Fri, 27 Sep 2024
- 09:07:40 -0700 (PDT)
+	s=arc-20240116; t=1727453338; c=relaxed/simple;
+	bh=Jgeva35jung0HLChJS3oHaOxrwYCVGeyPtkdlN1SI6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EbnlkY3re71kj3232J3vHPsSFUo+NaComKlrAmTNSOgv81rcZTnBT5jIPZwRalr2kzw5QNOezZ+nsr6qjHEsC2sqCgZ0wMHJ+osaRAbzWF0apqE3lD6CvqMH2t5i2dbRlZYPyW6Ig58ga+vqO2AQIoa8MhYmfQpFIf6Z5/Bh9uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMLLcB0C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA5CC4CEC6;
+	Fri, 27 Sep 2024 16:08:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727453338;
+	bh=Jgeva35jung0HLChJS3oHaOxrwYCVGeyPtkdlN1SI6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qMLLcB0CPeYXnWoJ+M+VV6LO8BtP0Cc8lJPeDm249puTHgDZ2cRWWBj2u4QGF0qF4
+	 CQOnXklJBdNnkBCLkUroki95BnrC/3VpkQ58i8CRHt+AibtwysDxxvLiwbvXEEvwjT
+	 YGRGTDvheXGgWQFGoOcv/HXC+UeSDVdR/MxIwiAiaiNr1JszVkKfavLxg3pyfVDWiC
+	 jYSW7hNFoJARle0f+oQD6Ne1DW1jyWVgmspfSZ/YE+TiiJU6645ZbJ7bgJONwC9lrx
+	 8ODbH5pVVga89H6WV//VxeNDSfi+6smL5YcYSjGNjSnCensPmQw/kgIlAkn3dfG5lm
+	 b/BlSxiTm0f9w==
+Date: Fri, 27 Sep 2024 18:08:52 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: dri-devel@lists.freedesktop.org, hdegoede@redhat.com, jelle@vdwaa.nl, 
+	jikos@kernel.org, lee@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, 
+	ojeda@kernel.org, onitake@gmail.com, pavel@ucw.cz
+Subject: Re: [PATCH 0/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04
+Message-ID: <et3cv7i2lhsjoq26toweh4uv72yo34u3wqrj3q2urfnx2bhiq3@fdtkag4bcekh>
+References: <20240926174405.110748-1-wse@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628-dpu-msm8953-msm8996-v1-0-a31c77248db7@mainlining.org>
- <20240628-dpu-msm8953-msm8996-v1-1-a31c77248db7@mainlining.org>
- <540ce2add6b1975502e898cc332275a6248aa1bc.camel@icenowy.me> <dd94e7fb72cf85800fbd46758010ea64@mainlining.org>
-In-Reply-To: <dd94e7fb72cf85800fbd46758010ea64@mainlining.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 27 Sep 2024 18:07:30 +0200
-Message-ID: <CAA8EJppHXUE=zhw=h7qM1iP3oLK6K9=Rqte5hKHtRGmT-5SWhA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm/msm/dpu: Add MSM8996 support
-To: barnabas.czeman@mainlining.org
-Cc: Icenowy Zheng <uwu@icenowy.me>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@somainline.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926174405.110748-1-wse@tuxedocomputers.com>
 
-On Fri, 27 Sept 2024 at 17:44, <barnabas.czeman@mainlining.org> wrote:
->
-> On 2024-08-18 09:16, Icenowy Zheng wrote:
-> > =E5=9C=A8 2024-06-28=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 16:39 +0200=EF=
-=BC=8CBarnab=C3=A1s Cz=C3=A9m=C3=A1n=E5=86=99=E9=81=93=EF=BC=9A
-> >> From: Konrad Dybcio <konrad.dybcio@linaro.org>
-> >>
-> >> Add support for MSM8996, which - fun fact - was the SoC that this
-> >> driver
-> >> (or rather SDE, its downstream origin) was meant for and first tested
-> >> on.
-> >>
-> >> It has some hardware that differs from the modern SoCs, so not a lot
-> >> of
-> >> current structs could have been reused. It's also seemingly the only
-> >> SoC
-> >> supported by DPU that uses RGB pipes.
-> >>
-> >> Note, by default this platform is still handled by the MDP5 driver
-> >> unless the `msm.prefer_mdp5=3Dfalse' parameter is provided.
-> >
-> > For curiosity, will this driver makes DSC possible on MSM8996?
-> As far as i know yes, but if i know correctly there are some DSC
-> support also in MDP5.
+On Sep 26 2024, Werner Sembach wrote:
+> Hi,
+> took some time but now a first working draft of the suggested new way of
+> handling per-key RGB keyboard backlights is finished. See:
+> https://lore.kernel.org/all/1fb08a74-62c7-4d0c-ba5d-648e23082dcb@tuxedocomputers.com/
+> First time for me sending a whole new driver to the LKML, so please excuse
+> mistakes I might have made.
+> 
+> Known bugs:
+> - The device has a lightbar which is currently not implemented and
+>   therefore stuck to blue once the first backlight control command is send.
+> 
+> What is still missing:
+> - The leds fallback
+> - Lightbar control
+> 
+> Some general noob questions:
+> 
+> Initially I though it would be nice to have 2 modules, one jsut being the
+> wmi initialization and utility stuff and one just being the backlight logic
+> stuff, being loaded automatically via module_alias, but that would still
+> require me to create the virtual hid device during the wmi_ab probe, and
+> that already needs the ll_driver, so i guess I have to do it statically
+> like i did now?
+> Or in other words: I would have liked to have a module dependency graph
+> like this:
+>     tuxedo_nb04_lamp_array depends on tuxedo_nb04_platform (combining *_wmi_init and *_wmi_utility)
+> but if i currently split it into modules i would get this:
+>     tuxedo_nb04_wmi_ab_init dpends on tuxedo_nb04_wmi_ab_lamp_array depends on tuxedo_nb04_wmi_utility
 
-No, MDP5 doesn't support DSC. mdp5_cfg.c defines corresponding
-capabilities, but there is no actual support.
+On more general question to you: how much confident are you about your
+LampArray implementation?
 
-> > I think the Google Pixel device uses a panel that needs DSC, which
-> > makes mainlining it currently impossible.
+If you still need to add/fix stuff in it, I would advise you to have a
+simple HID device, with bare minimum functionality, and then add the
+LampArray functionality on top through HID-BPF. This way you can fix
+LampArray out of band with the kernel, while having a more stable kernel
+module. This should be possible with v6.11+.
 
-I hope we can look at the DSC support for those platforms at some
-point. No particular dates and/or plans yet.
+Another solution is to still have your wmi-to-hid module, and then a
+HID kernel module in drivers/hid that supports LampArray.
 
---=20
-With best wishes
-Dmitry
+But I would strongly suggest while you are figuring out the userspace
+part to stick to HID-BPF, and then once you are happy we can move to a
+full kernel module.
+
+Cheers,
+Benjamin
+
+> 
+> Currently after creating the virtual hdev in the wmi init probe function I
+> have to keep track of it and manually destroy it during the wmi init
+> remove. Can this be automated devm_kzalloc-style?
+> 
+> Kind regards,
+> Werner Sembach
+> 
+> 
 
