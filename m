@@ -1,136 +1,107 @@
-Return-Path: <linux-kernel+bounces-342222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB91D988BF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:46:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646AD988C02
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6203E1F22A0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:46:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC8F2838E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF61018A92D;
-	Fri, 27 Sep 2024 21:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902E418C33B;
+	Fri, 27 Sep 2024 21:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWWMHkvD"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nDBx667z"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E88414BF8B;
-	Fri, 27 Sep 2024 21:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9BB14BF8B;
+	Fri, 27 Sep 2024 21:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727473610; cv=none; b=dN1qGMPgX7zHctRKKRJ8qqOrf0d8DPSoJ/3+9aQeE9y1N2nFzu7xs+AYG8XMRtlBJC5bvn0Ljf0LfJnpj7bWGe1XmLoJ1eyL0TdLmX4PAvMS/WY2oceFUfYg9awl/NTZlnUQy2fAeR0N945UcBTgII4L6dbf+P3MkZR7RY5N790=
+	t=1727473857; cv=none; b=p8n4hSz4Uki9hX6Kxb1L9ZEMkyc7lvyb85mzXKTUy63n36b/u2BFnvvZ6UKy8FvS8Oq5D2alH4b4YG3I5j1vO9TshuhYguPIDcdRitplovJfPqPuTpvo/M65zGJ9nWYMpOQrhTVcNFvgfqECQcXc+feX92U+3gmydvDiUXy7Kgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727473610; c=relaxed/simple;
-	bh=Wn0F4ZZKy7MrtCQLcs6efedBXXHQO4GrYg9FzCiBgHk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rBegVL+aXmUA5GN8JeLwhZxLbwRoATigGSKkao9XjzFpu5+wq4Cqi+XeAFaFjHVcZRNuSgbCca2mzhozFDnb0U0N/vwqWVWOOb0gPzTAvHaPrGe2Okuioo8eotY1FkX0/r53UwHJW199Czuc0o6sv8cfbgRdDnqZCEIyfiZG3x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWWMHkvD; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cafda818aso24499545e9.2;
-        Fri, 27 Sep 2024 14:46:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727473607; x=1728078407; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yn/nHA6wY7ndJPorvaTWw/EXz9mbabGh25VhoL58iXI=;
-        b=NWWMHkvDO5DQjyP67ytlAOGUc+1qUdWc5oc6YHUS4jbpT3/2Eho+PZYit/Gt6mUm1/
-         BY57NFTbiS4NPEMG20YtZdJzlBwZP4947bvKnHuXreTkwhA1iZSVGGMC8K2uAAtt5ANT
-         NxJ8DQICQhRIZpzT+FFThUg34WMezz8kJNo2uza3tRNM6ZNw8IUj0JdUVyZl+5KrT/Ed
-         5DgWSOpGGWwmqsFDPNYdGozDsM8qLXHZq5i3sdhOXhhvdPyxzrnX8x2NYYk1bzQGQzHE
-         fd3iFPGaRYnxu/smUN6jzFUgpPRNv3UlupDeeqLpUAU610wpX6rVlzJzxpSAYmnwyJ41
-         oKdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727473607; x=1728078407;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yn/nHA6wY7ndJPorvaTWw/EXz9mbabGh25VhoL58iXI=;
-        b=pKV2Q3DDIeD2pewRpueTjTWyJlWM5AnoSWrCenT3zRG1NfqJmVe7O46ah9kXqUwVeB
-         TYK+JlMVl4y3udGIrxLl4HKKshkLcRlBYofx2N3vrzoOCeJLDlm5sasffzN3G43Nt2Ti
-         E2hWu00GZBZIkN1C7FyfNBF3O2WmeE2TJrzZCqrGLX7OJwFbEDEoq8ZfhH5NHcUbOvlf
-         70EXITQfRcxRKuj8hRlzFWnwprB6zYfHNRHrl076wTFbj0ufiSxa521TS+VHtAX84Clp
-         ts9Gx8Nl+oh4gdG0+ibb2euKY+ecrzPCKnnEZLTnFEhmj9iy93IwDvvsgHyc3bE9cFzq
-         hdzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCWNLxAgiuPbhU0dECE1TCQT84+UwmMQrGtDOIg8af+H8SMN3E570ra8UqyJwfQc6VJNjV8r8Thfj3ZPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY5T0P+m3ZaEN3tYCzsBimBTBkQVaMs9L+wslloTyd8ri0gUrO
-	60v1FNe+0vQquI4KxpBy6/GI5ohMmJiUy0RXY901OMKi/8iCqmDhDovf5Q==
-X-Google-Smtp-Source: AGHT+IGovXrIxhKdAwoOy3jyj3LmcNzEFNW26eyNFeKEnYT4q4VO5oouO+6VkbozV9mGzQJzRc5aNQ==
-X-Received: by 2002:a05:600c:4f82:b0:42c:bb41:a05a with SMTP id 5b1f17b1804b1-42f584a06camr33248175e9.34.1727473606615;
-        Fri, 27 Sep 2024 14:46:46 -0700 (PDT)
-Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e902560cfsm115186515e9.0.2024.09.27.14.46.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 14:46:44 -0700 (PDT)
-From: Ilya Dryomov <idryomov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 6.12-rc1
-Date: Fri, 27 Sep 2024 23:46:17 +0200
-Message-ID: <20240927214629.141146-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1727473857; c=relaxed/simple;
+	bh=JxjCIhWE6gqloaqlLmdNyCYXnknkCaTq9ANMK1KebsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jc2PPoLUBu+wqU4Q7GHRVOGYWCysKyn86TTIjA5+Jw5BR+ZRNrF3UHXlq4V3SDtkxPmecHJ1Q4NxReTpfPgjAXQyBL8N63qL7jkG6DL+JeAsMk2UVFmgT3Ie6PuxilU/i5LujF13rOl4agHTroVn6ARJSm3mKz1bpps9XmbbI8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nDBx667z; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 53B7B83D;
+	Fri, 27 Sep 2024 23:49:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727473764;
+	bh=JxjCIhWE6gqloaqlLmdNyCYXnknkCaTq9ANMK1KebsI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nDBx667zRWYHdYqIjItXRW2gECGmU+URS9W9P7L8+qP4ykKjReIyFHfrbrR42RtUo
+	 VjhlwS1xbTep9hFe9Ra03bNyba3ozr+vk2mIq9GCz6BqJc+YsPQarT28aFMr3EYzSD
+	 PqVMYbUrsNJheJOgdTtFm6njDJVUEdqahPImXuzs=
+Date: Sat, 28 Sep 2024 00:50:50 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 01/16] media: platform: rzg2l-cru: rzg2l-ip: Use the
+ RZG2L_CRU_IP_SINK/SOURCE enum entries
+Message-ID: <20240927215050.GC12322@pendragon.ideasonboard.com>
+References: <20240910175357.229075-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240910175357.229075-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240910175357.229075-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi Linus,
+Hi Prabhakar,
 
-The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
+Thank you for the patch.
 
-  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
+On Tue, Sep 10, 2024 at 06:53:42PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Use enum values (`RZG2L_CRU_IP_SINK` and `RZG2L_CRU_IP_SOURCE`) instead
+> of hardcoded array indices.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-are available in the Git repository at:
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-6.12-rc1
+> ---
+>  drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> index ac8ebae4ed07..9f0ea1de50da 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> @@ -217,8 +217,8 @@ int rzg2l_cru_ip_subdev_register(struct rzg2l_cru_dev *cru)
+>  	ip->subdev.entity.function = MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER;
+>  	ip->subdev.entity.ops = &rzg2l_cru_ip_entity_ops;
+>  
+> -	ip->pads[0].flags = MEDIA_PAD_FL_SINK;
+> -	ip->pads[1].flags = MEDIA_PAD_FL_SOURCE;
+> +	ip->pads[RZG2L_CRU_IP_SINK].flags = MEDIA_PAD_FL_SINK;
+> +	ip->pads[RZG2L_CRU_IP_SOURCE].flags = MEDIA_PAD_FL_SOURCE;
+>  
+>  	ret = media_entity_pads_init(&ip->subdev.entity, 2, ip->pads);
+>  	if (ret)
 
-for you to fetch changes up to c08dfb1b49492c09cf13838c71897493ea3b424e:
+-- 
+Regards,
 
-  ceph: remove the incorrect Fw reference check when dirtying pages (2024-09-24 22:51:33 +0200)
-
-----------------------------------------------------------------
-Three CephFS fixes from Xiubo and Luis and a bunch of assorted
-cleanups.
-
-----------------------------------------------------------------
-Chen Yufan (1):
-      ceph: Convert to use jiffies macro
-
-Li Zetao (1):
-      libceph: use min() to simplify code in ceph_dns_resolve_name()
-
-Luis Henriques (SUSE) (1):
-      ceph: fix a memory leak on cap_auths in MDS client
-
-Xiubo Li (3):
-      ceph: rename ceph_flush_cap_releases() to ceph_flush_session_cap_releases()
-      ceph: flush all caps releases when syncing the whole filesystem
-      ceph: remove the incorrect Fw reference check when dirtying pages
-
-Yan Zhen (1):
-      ceph: Fix typo in the comment
-
-Yue Haibing (1):
-      ceph: Remove unused declarations
-
-Zhang Zekun (1):
-      ceph: Remove empty definition in header file
-
- fs/ceph/addr.c                  |  1 -
- fs/ceph/caps.c                  | 29 ++++++++++++++++++++++++++---
- fs/ceph/dir.c                   |  2 +-
- fs/ceph/inode.c                 |  2 +-
- fs/ceph/mds_client.c            | 25 +++++++++++++++++++------
- fs/ceph/mds_client.h            |  7 ++-----
- fs/ceph/super.c                 |  1 +
- fs/ceph/super.h                 |  7 +------
- include/linux/ceph/osd_client.h |  2 --
- net/ceph/messenger.c            |  2 +-
- 10 files changed, 52 insertions(+), 26 deletions(-)
+Laurent Pinchart
 
