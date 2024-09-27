@@ -1,63 +1,75 @@
-Return-Path: <linux-kernel+bounces-341611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8DC988266
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:25:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D579098826F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996151F21D71
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:25:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12B8F1C22A57
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA2A1BC099;
-	Fri, 27 Sep 2024 10:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE4A1885A2;
+	Fri, 27 Sep 2024 10:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="YbEi/3rX"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="HnBMVLhb"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4D519FA66;
-	Fri, 27 Sep 2024 10:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38761CD31;
+	Fri, 27 Sep 2024 10:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727432743; cv=none; b=QAD0qPvbj3Lowc/v92M8Q7jA1HyK0B3LrOrqrp5nuznQZ0XZPuDN30FDgCpppgzdC5m6tcrWruBMhki3aP3vdtbhLbT+srgppFv1vmzc9YNrYVpJsTtLuu37+iDixTQVSFD6O5kiGvF7dzaN9p3SODZTXx2Xxiri61iRPn2mU38=
+	t=1727433053; cv=none; b=iyv55fvjWm+1RIlh/USfgvMOfBdiiJVTkBcgG4RtlRYVlw9LWoNPfvxcC07LUPhlDcb5RgxM/hbXQA931CYWgOf6l9aePbcdgoaSXmzE7mWDHh9ylmwFsWkD0zfLSSVvY7LHz83ASeHTHUuJHpGipgsHj0W6O6L2cCL7pQjf11I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727432743; c=relaxed/simple;
-	bh=deoRTQsc/jmO/3PI13iUFKJ8VRt2zP00FMOAs9pNWAE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HvREbVvvPrlg5MnKuGWGxjxlNXQAwbuuQqU0ypMgOciF3TOq54AHWDRN8kv69mw5wxGKpgPsAAUrPuILcElCKPB8KJ0Vq8+O0tOUqxKVA/DEYnY2BbgEp9qspJfpQad8hYLZAif1agmZVv4goDJN9npohbDDRiuU4B915bFszV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=YbEi/3rX; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net AFC1941898
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1727432734; bh=6WPhCE4x2dsw0rer9LX+9vHWkhowueVam5DumtgG7lY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=YbEi/3rX+RywDDrysdyrvbSch6CwlXQ4hY3xMIIIp9LlRu9wdfH/sc5yAzow48HYf
-	 uhgX4RWuDxkObUz9taQZGpP5WcV9XKZrIt5q2DKnCMF5qeDXfD4+nh3CwNdwyvgXK3
-	 r68C+i0lSYCTQwJRZ+SdPL7tEInB9TB2vPetw6wabl9TrDVTEgcSih48CR02CXjBV0
-	 FPLFSbmHWeCA18OIYSj5QC/FH68E85EZOT9hyiYNBMm/OeVOxRmP8SqA3xqtjWJsRe
-	 ASUKlKcbAN7s1unZlwAuDmVVt/U9judEDDjxnG0GKqIVfUZLO0jVNoGxWfrwCBU1XT
-	 Uc4BSb+au0iAQ==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id AFC1941898;
-	Fri, 27 Sep 2024 10:25:27 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Steven Rostedt <rostedt@goodmis.org>, Stephen Rothwell
- <sfr@canb.auug.org.au>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, linux-doc@vger.kernel.org
-Subject: Re: linux-next: build warning after merge of the ftrace tree
-In-Reply-To: <20240926091452.4be87000@rorschach.local.home>
-References: <20240919150513.067dd727@canb.auug.org.au>
- <20240926091452.4be87000@rorschach.local.home>
-Date: Fri, 27 Sep 2024 04:24:52 -0600
-Message-ID: <87a5fte6mj.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1727433053; c=relaxed/simple;
+	bh=gGlVStBekd6tn5scRrWK5ZAhxic3Z9UU5MfQzxxUMJ4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HpOxp56y2ZlvcuDhnOMks72t6GdwTlt1GNJQJRWMQoa3qIL4bPWQzxez21aJgb54lQU6UlcE9/diSsQJ91UaFcbrI5xydy814KY964f7GDBCkEYwiEEH4XtzTOiuu2xaUGSIGbfnWEtdq06V4PtrjamcvolLSGc92LXxuQ9UQy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=HnBMVLhb; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 8d713dd67cbb11efb66947d174671e26-20240927
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=m46+FnCMQHOmqn0PoIzre0+LrIPiIFVNgGTSNn1G4lU=;
+	b=HnBMVLhbPhUcs3t0NSgzyZJgxtovAZPaNcI0ORLMOmq+G36QMcdIAjAAhdYVH3V/+ZxenL18+OiKYELWCxfab731z2/zRfpjNNsxd4OVwR+ziTHYVnLAdHkNTIXxpweK/I9niv4vRy+NqDJuvqYwzKezUORbctVkCEi6oBMkQ+8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:5a2343ec-6235-44f3-8d97-821c9dd2ee93,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:c231ded0-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 8d713dd67cbb11efb66947d174671e26-20240927
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+	(envelope-from <pablo.sun@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 288267427; Fri, 27 Sep 2024 18:30:44 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 27 Sep 2024 18:30:41 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 27 Sep 2024 18:30:41 +0800
+From: Pablo Sun <pablo.sun@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Srinivas
+ Kandagatla" <srinivas.kandagatla@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, Pablo Sun <pablo.sun@mediatek.com>
+Subject: [PATCH v2 0/6] Enable Mali GPU on MediaTek Genio 700 EVK
+Date: Fri, 27 Sep 2024 18:29:59 +0800
+Message-ID: <20240927103005.17605-1-pablo.sun@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,30 +77,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--0.806400-8.000000
+X-TMASE-MatchedRID: 9hizXfD21dsmTNBjrl+CAW3NvezwBrVmojQrbrPpzzqGisL/BZ/9PdW+
+	IybvzGvgNj6y7Vt/6GWC5iz+AfW7iGUlOh2o2oTOXP5rFAucBUGUi9wB9gmcSg6QlBHhBZuwdO+
+	/9tNlGWiVMlcqqHWd7aBVvEjzNBpCHxPMjOKY7A8LbigRnpKlKZx+7GyJjhAUhkdrz87uCrRgoB
+	lboHSVM/+AFuk/l+IJhhE+xzpC0Amtj3NsCFywmxooWenQjZ+C/qp3hdj9VidpK/dq5WMpuQtpr
+	0rlZmVdSZrfNhP3sgUBh9AgBSEFrJm+YJspVvj2xkvrHlT8euI+kK598Yf3Mg==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--0.806400-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	D0C318A38EBB130AA739C695458581D634A5D984CB05CC042F6AC14E61DE43042000:8
+X-MTK: N
 
-Steven Rostedt <rostedt@goodmis.org> writes:
+This series is based on linux-next, tag: next-20240927
 
-> On Thu, 19 Sep 2024 15:05:13 +1000
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
->> Hi all,
->> 
->> After merging the ftrace tree, today's linux-next build (htmldocs)
->> produced this warning:
->> 
->> Documentation/trace/debugging.rst: WARNING: document isn't included in any toctree
->> 
->> Introduced by commit
->> 
->>   2fcd5aff92aa ("tracing/Documentation: Start a document on how to debug with tracing")
->> 
->
-> Thanks for reporting this Stephen, but I don't know how to fix it.
->
-> Jon?
+Enables the GPU on mt8390-genio-700-evk.dts. 
+The panfrost driver probed with dmesg:
 
-Add a line to Documentation/trace/index.rst in the appropriate spot
-referencing the new file.
+panfrost 13000000.gpu: clock rate = 390000000
+panfrost 13000000.gpu: mali-g57 id 0x9093 major 0x0 minor 0x0 status 0x0
+panfrost 13000000.gpu: features: 00000000,000019f7, 
+  issues: 00000003,80000400
+panfrost 13000000.gpu: Features: L2:0x08130206 Shader:0x00000000
+  Tiler:0x00000809 Mem:0x1 MMU:0x00002830 AS:0xff JS:0x7
+panfrost 13000000.gpu: shader_present=0x10005 l2_present=0x1
+[drm] Initialized panfrost 1.2.0 for 13000000.gpu on minor 0
 
-jon
+Changes in v2:
+- Fixes the "Fixes" tag in patch ("arm64: dts: mediatek: mt8188: 
+  Fix wrong clock provider in MFG1 power domain")
+- Reuse mtk_mt8186_efuse_pdata
+- Remove comma at the end of mainpll_d5_d2
+- Add patch ("soc: mediatek: mediatek-regulator-coupler: Support mt8188")
+- Couple GPU SRAM voltage to GPU voltage instead of fixed value
+
+Pablo Sun (6):
+  arm64: dts: mediatek: mt8188: Fix wrong clock provider in MFG1 power
+    domain
+  clk: mediatek: clk-mt8188-topckgen: Remove univpll from parents of
+    mfg_core_tmp
+  nvmem: mtk-efuse: Enable postprocess for mt8188 GPU speed binning
+  arm64: dts: mediatek: mt8188: Add efuse for GPU speed binning
+  soc: mediatek: mediatek-regulator-coupler: Support mt8188
+  arm64: dts: mediatek: mt8390-genio-700-evk: Enable Mali GPU
+
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi      | 11 +++++--
+ .../dts/mediatek/mt8390-genio-700-evk.dts     | 31 +++++++++++++++++++
+ drivers/clk/mediatek/clk-mt8188-topckgen.c    |  9 ++++--
+ drivers/nvmem/mtk-efuse.c                     |  1 +
+ drivers/soc/mediatek/mtk-regulator-coupler.c  |  1 +
+ 5 files changed, 48 insertions(+), 5 deletions(-)
+
+-- 
+2.45.2
+
 
