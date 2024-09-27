@@ -1,324 +1,164 @@
-Return-Path: <linux-kernel+bounces-341875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB20988798
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:53:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B12988796
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C2CC1F2235C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:53:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6840A1F223F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EAC1C0DE6;
-	Fri, 27 Sep 2024 14:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="dDhAxQ5K"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129BA1C0DE7;
+	Fri, 27 Sep 2024 14:53:30 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C733E101F2;
-	Fri, 27 Sep 2024 14:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727448819; cv=pass; b=I22NaredpBtXgunUe2lU8hBNN8U3XTj2wk9n3f62wTyLh9Rpbd2qzrNQKvIG38iLbSXlxRH9hc1V6I5rqNR7TI61+ZJUGfsAVGQetnD/wZ5abcpjkDl/eGOxTGX6sqg+cVCdFYPoNduyrKSioEJ/EHc8+jrXpbF6W/3SNjTL6hU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727448819; c=relaxed/simple;
-	bh=fnc+b+/OVaedreBulviypeEcdYrkzohxEfCHDYZwc7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GNtvCEeUfvbwJs/FpKrCLLvI+s050x9XLVVzUBKBo98J0gVFlzHnmSMG7T2dMAgUxUR+03o2qkMfb6MtKG4qNuzgbjcrMJsUHsFdMWVIYpR0VhWKhYXoEz2uJMHT1DpskXd9HULFC6cz51lfd0tJlh/69bL11hPkYc8+rerB+C0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=dDhAxQ5K; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1727448797; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=YeV4skKts/uC7qsGNAueSjntVW7a1zOn89cSj9HDiyW89bmLoPDYqCVOJ7HeMuNa0zdmgbJbH4EpWs/AtmFcpC7KrT0VbNAJPN/tiyQO+yi+t6qF1HSXJ+sez6evfzhWbU4xFBx9un+Q+6zM20Wp36JuDtLSKXLZtAEG/EF+9gg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1727448797; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7vdr0FHgb01Q/8JXQyzZImJX7vsMYZPFwkh+dtRKbkk=; 
-	b=jhW4BfhA7qkfjQuHbTQu6oVVuecVy2x5isyi6UuO21SIsZbqHSwdGm7JuMWgYujJFqZukrc63M6F0zV+YCxeZNyS30eGxoExfqoSDcABb6M7LfbQ5yZ5BPqbtXdmwWhsRCNZpQIFR01Kmcp+8AY2CFx6DatQ3TBSnVc3Dx+/u90=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727448797;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=7vdr0FHgb01Q/8JXQyzZImJX7vsMYZPFwkh+dtRKbkk=;
-	b=dDhAxQ5KLZkuOClA25gKC6dLvHH5uqEFWm/IKzn2xn1HswhW4qn+vojdF7dVHfeB
-	f/iJYRB85ss0KJi5BPuXo/fPYCQZMrNK1GGXvu0iJjwqIluiN08+hbMQeUbd+merkqY
-	UieOTULoQRcDMJ37yHTulIXlWAO2zVzNYtYnwqIk=
-Received: by mx.zohomail.com with SMTPS id 1727448795031200.9673622331943;
-	Fri, 27 Sep 2024 07:53:15 -0700 (PDT)
-Date: Fri, 27 Sep 2024 15:53:10 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	kernel@collabora.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v6 1/5] drm/panthor: introduce job cycle and timestamp
- accounting
-Message-ID: <gxtbgvg6dihcbcwm7sihnfl7cqnfx72ekr7mgvgykeukpltwak@b3pdwok2n5p6>
-References: <5c4d1008-261f-4c47-ab73-c527675484a4@arm.com>
- <bq6lctwgpsxvrdaajmjo3xdjt32srmsxvjhtzyebdj6izjzoaw@6duby4axg3pf>
- <ef799587-f7c2-472a-8550-9c40a395eccb@arm.com>
- <jgdknf77n6vqanh4jv2yixe4n4hsbhqqhth4beued4topggwgz@wx7bumhrbpje>
- <033f8885-9c0e-4c5a-a272-baf48807dc5d@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9F61C0DDB
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727448809; cv=none; b=o7W/ld7n+Ooqr7BUQlONz9N+w0Txn38G/jIXLq2lsRdGY1Ke9wQbbU3bWFS27ZinRkwP86pka1VhLnTZl+yi8aQ3WEPNkQNYC3Ash6LvsCpFp3WUsAY3DKyD94O2skVSNSIDnbb3mEJRlIaZID7c4ocLVnk41gRCGiwoesG+Q6w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727448809; c=relaxed/simple;
+	bh=HaX/MQx1zNcIHLfx6OG1HhNLa8dC2O4MTlK7wLnEgJw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=er/LDa76DOEn/59yEZN//UOYzWhROc49hq0CmwpBtum1RUC+KUEXnXs42yEtKZWyoF5cLagEnGcAupXeDB/vk77GR10mQKhiBmNWKBUbHs+Z/KwsN9vhjqJKNPqC7OPhklsX8J84Zk3DIMmRdu7uDibf3BROkG0T+o/uj66m7hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82cfb2e416eso238358039f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:53:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727448807; x=1728053607;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=INg9NDGbJndgApL4ta3KYfHMik711xYxdB14onZZNkM=;
+        b=KY2hwjC+j/KHHZ1nvS50vgJcAmLa0T1fJGjQO1RdqMVM60d8vIW0N8Y63XEIuAA2fc
+         Qgzp+srfiKM/kA/hVs5KyjX00RhZBlXXTjpPxJRqTULawWN6GKmA16PQXY9Rz7eV8scC
+         Kkz+tEyoJa4kXqy/EohJnD8eUB7NQnwEON0vHwGK1S2sbS5keZ0rqGHjzndQem4PJ85+
+         Pka8mazCnsiFSC9mwvCcVKaYGk6UhO1CsYIT6oQ1IXfQRmXG/gDMjIu36I49PQ9Q+6Er
+         3xRqDmXPDuLfO9st7ravB1z9dyNiqEnBz2F5db/kIzLHDCavTbiOuyt9KmUZV1KI+X0K
+         JIEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDJm4YgFxHztx3g3yzxVo1r78byeIiV51Al1Ih0vFYWGsjQmAeNstcohPJBjGqVzameIx1SmrJgiXvLhE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+m8drbM+UD3IsNhQeqvy1N9PLTWcADL25l7pAB3T4iKZ6ALqB
+	RvOSH+J/KfKacpCmiMvgZp0lE2IXyywFHQVl/VzavAc8Y499pg9ZNZrEBUkty+0+PaTPAohgQHA
+	8bOCa2Q8oMbQF3I9fqM2DA2LBmrJDPT2OA3yawUXXEFPGwAR8fsWk7v8=
+X-Google-Smtp-Source: AGHT+IHIUcpYtJFgSP7pDy5XgukcodOG+wBBK/L59AFlPJQxsc2QKzR35Blq4RzUjYQRWd3myrD5J0AkyOk9IN0/XkOe0NkeMsiK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <033f8885-9c0e-4c5a-a272-baf48807dc5d@arm.com>
+X-Received: by 2002:a05:6e02:1d84:b0:3a2:74eb:91fa with SMTP id
+ e9e14a558f8ab-3a3451c1b12mr31149485ab.25.1727448807297; Fri, 27 Sep 2024
+ 07:53:27 -0700 (PDT)
+Date: Fri, 27 Sep 2024 07:53:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f6c6e7.050a0220.38ace9.0024.GAE@google.com>
+Subject: [syzbot] [bluetooth?] BUG: corrupted list in _hci_cmd_sync_cancel_entry
+From: syzbot <syzbot+01fdb2cc3f0b4ddcfcf1@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 25.09.2024 10:56, Steven Price wrote:
->On 23/09/2024 21:43, Adrián Larumbe wrote:
->> Hi Steve,
->> 
->> On 23.09.2024 09:55, Steven Price wrote:
->>> On 20/09/2024 23:36, Adrián Larumbe wrote:
->>>> Hi Steve, thanks for the review.
->>>
->>> Hi Adrián,
->>>
->>>> I've applied all of your suggestions for the next patch series revision, so I'll
->>>> only be answering to your question about the calc_profiling_ringbuf_num_slots
->>>> function further down below.
->>>>
->>>
->>> [...]
->>>
->>>>>> @@ -3003,6 +3190,34 @@ static const struct drm_sched_backend_ops panthor_queue_sched_ops = {
->>>>>>  	.free_job = queue_free_job,
->>>>>>  };
->>>>>>  
->>>>>> +static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
->>>>>> +				       u32 cs_ringbuf_size)
->>>>>> +{
->>>>>> +	u32 min_profiled_job_instrs = U32_MAX;
->>>>>> +	u32 last_flag = fls(PANTHOR_DEVICE_PROFILING_ALL);
->>>>>> +
->>>>>> +	/*
->>>>>> +	 * We want to calculate the minimum size of a profiled job's CS,
->>>>>> +	 * because since they need additional instructions for the sampling
->>>>>> +	 * of performance metrics, they might take up further slots in
->>>>>> +	 * the queue's ringbuffer. This means we might not need as many job
->>>>>> +	 * slots for keeping track of their profiling information. What we
->>>>>> +	 * need is the maximum number of slots we should allocate to this end,
->>>>>> +	 * which matches the maximum number of profiled jobs we can place
->>>>>> +	 * simultaneously in the queue's ring buffer.
->>>>>> +	 * That has to be calculated separately for every single job profiling
->>>>>> +	 * flag, but not in the case job profiling is disabled, since unprofiled
->>>>>> +	 * jobs don't need to keep track of this at all.
->>>>>> +	 */
->>>>>> +	for (u32 i = 0; i < last_flag; i++) {
->>>>>> +		if (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL)
->>>>>> +			min_profiled_job_instrs =
->>>>>> +				min(min_profiled_job_instrs, calc_job_credits(BIT(i)));
->>>>>> +	}
->>>>>> +
->>>>>> +	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u64));
->>>>>> +}
->>>>>
->>>>> I may be missing something, but is there a situation where this is
->>>>> different to calc_job_credits(0)? AFAICT the infrastructure you've added
->>>>> can only add extra instructions to the no-flags case - whereas this
->>>>> implies you're thinking that instructions may also be removed (or replaced).
->>>>>
->>>>> Steve
->>>>
->>>> Since we create a separate kernel BO to hold the profiling information slot, we
->>>> need one that would be able to accomodate as many slots as the maximum number of
->>>> profiled jobs we can insert simultaneously into the queue's ring buffer. Because
->>>> profiled jobs always take more instructions than unprofiled ones, then we would
->>>> usually need fewer slots than the number of unprofiled jobs we could insert at
->>>> once in the ring buffer.
->>>>
->>>> Because we represent profiling metrics with a bit mask, then we need to test the
->>>> size of the CS for every single metric enabled in isolation, since enabling more
->>>> than one will always mean a bigger CS, and therefore fewer jobs tracked at once
->>>> in the queue's ring buffer.
->>>>
->>>> In our case, calling calc_job_credits(0) would simply tell us the number of
->>>> instructions we need for a normal job with no profiled features enabled, which
->>>> would always requiere less instructions than profiled ones, and therefore more
->>>> slots in the profiling info kernel BO. But we don't need to keep track of
->>>> profiling numbers for unprofiled jobs, so there's no point in calculating this
->>>> number.
->>>>
->>>> At first I was simply allocating a profiling info kernel BO as big as the number
->>>> of simultaneous unprofiled job slots in the ring queue, but Boris pointed out
->>>> that since queue ringbuffers can be as big as 2GiB, a lot of this memory would
->>>> be wasted, since profiled jobs always require more slots because they hold more
->>>> instructions, so fewer profiling slots in said kernel BO.
->>>>
->>>> The value of this approach will eventually manifest if we decided to keep track of
->>>> more profiling metrics, since this code won't have to change at all, other than
->>>> adding new profiling flags in the panthor_device_profiling_flags enum.
->>>
->>> Thanks for the detailed explanation. I think what I was missing is that
->>> the loop is checking each bit flag independently and *not* checking
->>> calc_job_credits(0).
->>>
->>> The check for (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL) is probably what
->>> confused me - that should be completely redundant. Or at least we need
->>> something more intelligent if we have profiling bits which are not
->>> mutually compatible.
->> 
->> I thought of an alternative that would only test bits that are actually part of
->> the mask:
->> 
->> static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
->> 				       u32 cs_ringbuf_size)
->> {
->> 	u32 min_profiled_job_instrs = U32_MAX;
->> 	u32 profiling_mask = PANTHOR_DEVICE_PROFILING_ALL;
->> 
->> 	while (profiling_mask) {
->> 		u32 i = ffs(profiling_mask) - 1;
->> 		profiling_mask &= ~BIT(i);
->> 		min_profiled_job_instrs =
->> 			min(min_profiled_job_instrs, calc_job_credits(BIT(i)));
->> 	}
->> 
->> 	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u64));
->> }
->> 
->> However, I don't think this would be more efficient, because ffs() is probably
->> fetching the first set bit by performing register shifts, and I guess this would
->> take somewhat longer than iterating over every single bit from the last one,
->> even if also matching them against the whole mask, just in case in future
->> additions of performance metrics we decide to leave some of the lower
->> significance bits untouched.
->
->Efficiency isn't very important here - we're not on a fast path, so it's
->more about ensuring the code is readable. I don't think the above is
->more readable then the original for loop.
->
->> Regarding your question about mutual compatibility, I don't think that is an
->> issue here, because we're testing bits in isolation. If in the future we find
->> out that some of the values we're profiling cannot be sampled at once, we can
->> add that logic to the sysfs knob handler, to make sure UM cannot set forbidden
->> profiling masks.
->
->My comment about compatibility is because in the original above you were
->calculating the top bit of PANTHOR_DEVICE_PROFILING_ALL:
->
->> u32 last_flag = fls(PANTHOR_DEVICE_PROFILING_ALL);
->
->then looping between 0 and that bit:
->
->> for (u32 i = 0; i < last_flag; i++) {
->
->So the test:
->
->> if (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL)
->
->would only fail if PANTHOR_DEVICE_PROFILING_ALL had gaps in the bits
->that it set. The only reason I can think for that to be true in the
->future is if there is some sort of incompatibility - e.g. maybe there's
->an old and new way of doing some form of profiling with the old way
->being kept for backwards compatibility. But I suspect if/when that is
->required we'll need to revisit this function anyway. So that 'if'
->statement seems completely redundant (it's trivially always true).
+Hello,
 
-I think you're right about this. Would you be fine with the rest of the patch
-as it is in revision 8 if I also deleted this bitmask check?
+syzbot found the following issue on:
 
->Steve
->
->>> I'm also not entirely sure that the amount of RAM saved is significant,
->>> but you've already written the code so we might as well have the saving ;)
->> 
->> I think this was more evident before Boris suggested we reduce the basic slot
->> size to that of a single cache line, because then the minimum profiled job
->> might've taken twice as many ringbuffer slots as a nonprofiled one. In that
->> case, we would need a half as big BO for holding the sampled data (in case the
->> least size profiled job CS would extend over the 16 instruction boundary).
->> I still think this is a good idea so that in the future we don't need to worry
->> about adjusting the code that deals with preparing the right boilerplate CS,
->> since it'll only be a matter of adding new instructions inside prepare_job_instrs().
->> 
->>> Thanks,
->>> Steve
->>>
->>>> Regards,
->>>> Adrian
->>>>
->>>>>> +
->>>>>>  static struct panthor_queue *
->>>>>>  group_create_queue(struct panthor_group *group,
->>>>>>  		   const struct drm_panthor_queue_create *args)
->>>>>> @@ -3056,9 +3271,35 @@ group_create_queue(struct panthor_group *group,
->>>>>>  		goto err_free_queue;
->>>>>>  	}
->>>>>>  
->>>>>> +	queue->profiling.slot_count =
->>>>>> +		calc_profiling_ringbuf_num_slots(group->ptdev, args->ringbuf_size);
->>>>>> +
->>>>>> +	queue->profiling.slots =
->>>>>> +		panthor_kernel_bo_create(group->ptdev, group->vm,
->>>>>> +					 queue->profiling.slot_count *
->>>>>> +					 sizeof(struct panthor_job_profiling_data),
->>>>>> +					 DRM_PANTHOR_BO_NO_MMAP,
->>>>>> +					 DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
->>>>>> +					 DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
->>>>>> +					 PANTHOR_VM_KERNEL_AUTO_VA);
->>>>>> +
->>>>>> +	if (IS_ERR(queue->profiling.slots)) {
->>>>>> +		ret = PTR_ERR(queue->profiling.slots);
->>>>>> +		goto err_free_queue;
->>>>>> +	}
->>>>>> +
->>>>>> +	ret = panthor_kernel_bo_vmap(queue->profiling.slots);
->>>>>> +	if (ret)
->>>>>> +		goto err_free_queue;
->>>>>> +
->>>>>> +	/*
->>>>>> +	 * Credit limit argument tells us the total number of instructions
->>>>>> +	 * across all CS slots in the ringbuffer, with some jobs requiring
->>>>>> +	 * twice as many as others, depending on their profiling status.
->>>>>> +	 */
->>>>>>  	ret = drm_sched_init(&queue->scheduler, &panthor_queue_sched_ops,
->>>>>>  			     group->ptdev->scheduler->wq, 1,
->>>>>> -			     args->ringbuf_size / (NUM_INSTRS_PER_SLOT * sizeof(u64)),
->>>>>> +			     args->ringbuf_size / sizeof(u64),
->>>>>>  			     0, msecs_to_jiffies(JOB_TIMEOUT_MS),
->>>>>>  			     group->ptdev->reset.wq,
->>>>>>  			     NULL, "panthor-queue", group->ptdev->base.dev);
->>>>>> @@ -3354,6 +3595,7 @@ panthor_job_create(struct panthor_file *pfile,
->>>>>>  {
->>>>>>  	struct panthor_group_pool *gpool = pfile->groups;
->>>>>>  	struct panthor_job *job;
->>>>>> +	u32 credits;
->>>>>>  	int ret;
->>>>>>  
->>>>>>  	if (qsubmit->pad)
->>>>>> @@ -3407,9 +3649,16 @@ panthor_job_create(struct panthor_file *pfile,
->>>>>>  		}
->>>>>>  	}
->>>>>>  
->>>>>> +	job->profiling.mask = pfile->ptdev->profile_mask;
->>>>>> +	credits = calc_job_credits(job->profiling.mask);
->>>>>> +	if (credits == 0) {
->>>>>> +		ret = -EINVAL;
->>>>>> +		goto err_put_job;
->>>>>> +	}
->>>>>> +
->>>>>>  	ret = drm_sched_job_init(&job->base,
->>>>>>  				 &job->group->queues[job->queue_idx]->entity,
->>>>>> -				 1, job->group);
->>>>>> +				 credits, job->group);
->>>>>>  	if (ret)
->>>>>>  		goto err_put_job;
->>>>>>  
->>>>
+HEAD commit:    a430d95c5efa Merge tag 'lsm-pr-20240911' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=136ba607980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=44d46e514184cd24
+dashboard link: https://syzkaller.appspot.com/bug?extid=01fdb2cc3f0b4ddcfcf1
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bdf130384fad/disk-a430d95c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c62ff195641a/vmlinux-a430d95c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4069702199e2/bzImage-a430d95c.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+01fdb2cc3f0b4ddcfcf1@syzkaller.appspotmail.com
+
+list_del corruption, ffff88801febb580->next is LIST_POISON1 (dead000000000100)
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:56!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 8278 Comm: kworker/u9:2 Not tainted 6.11.0-syzkaller-02574-ga430d95c5efa #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Workqueue: hci2 hci_conn_timeout
+RIP: 0010:__list_del_entry_valid_or_report+0x108/0x1c0 lib/list_debug.c:56
+Code: c7 c7 80 1b b1 8b e8 c7 c6 dd fc 90 0f 0b 48 c7 c7 e0 1b b1 8b e8 b8 c6 dd fc 90 0f 0b 48 c7 c7 40 1c b1 8b e8 a9 c6 dd fc 90 <0f> 0b 48 89 ca 48 c7 c7 a0 1c b1 8b e8 97 c6 dd fc 90 0f 0b 48 89
+RSP: 0018:ffffc90003a1fbe0 EFLAGS: 00010286
+RAX: 000000000000004e RBX: ffff88801febb580 RCX: ffffffff816c6699
+RDX: 0000000000000000 RSI: ffffffff816cf7b6 RDI: 0000000000000005
+RBP: ffff88805f5a8000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000000 R11: 0000000000000001 R12: ffff88801febb588
+R13: dffffc0000000000 R14: ffff88805f5a8618 R15: ffff88801febb580
+FS:  0000000000000000(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000202f5000 CR3: 0000000060a82000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __list_del_entry_valid include/linux/list.h:124 [inline]
+ __list_del_entry include/linux/list.h:215 [inline]
+ list_del include/linux/list.h:229 [inline]
+ _hci_cmd_sync_cancel_entry.constprop.0+0x80/0x1d0 net/bluetooth/hci_sync.c:643
+ hci_cmd_sync_cancel_entry net/bluetooth/hci_sync.c:847 [inline]
+ hci_cmd_sync_dequeue_once net/bluetooth/hci_sync.c:866 [inline]
+ hci_cancel_connect_sync+0x103/0x2c0 net/bluetooth/hci_sync.c:6844
+ hci_abort_conn+0x163/0x340 net/bluetooth/hci_conn.c:2948
+ hci_conn_timeout+0x1ab/0x220 net/bluetooth/hci_conn.c:576
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3393
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__list_del_entry_valid_or_report+0x108/0x1c0 lib/list_debug.c:56
+Code: c7 c7 80 1b b1 8b e8 c7 c6 dd fc 90 0f 0b 48 c7 c7 e0 1b b1 8b e8 b8 c6 dd fc 90 0f 0b 48 c7 c7 40 1c b1 8b e8 a9 c6 dd fc 90 <0f> 0b 48 89 ca 48 c7 c7 a0 1c b1 8b e8 97 c6 dd fc 90 0f 0b 48 89
+RSP: 0018:ffffc90003a1fbe0 EFLAGS: 00010286
+RAX: 000000000000004e RBX: ffff88801febb580 RCX: ffffffff816c6699
+RDX: 0000000000000000 RSI: ffffffff816cf7b6 RDI: 0000000000000005
+RBP: ffff88805f5a8000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000000 R11: 0000000000000001 R12: ffff88801febb588
+R13: dffffc0000000000 R14: ffff88805f5a8618 R15: ffff88801febb580
+FS:  0000000000000000(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000202f5000 CR3: 0000000060a82000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
