@@ -1,163 +1,249 @@
-Return-Path: <linux-kernel+bounces-341945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813E39888AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26B879888B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F226AB22B89
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:03:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32D89B23CE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E7A1C172C;
-	Fri, 27 Sep 2024 16:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8CF1C173C;
+	Fri, 27 Sep 2024 16:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lDm6s4gI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YjNAgSor"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AED0200A3;
-	Fri, 27 Sep 2024 16:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A60913CA81;
+	Fri, 27 Sep 2024 16:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727453013; cv=none; b=MrrXRxXvge4FZX/6V/gMtdkflTbVltOSoutChF3PFNYTSPcn8pc1zYY2y5vCBvt9NrA8s/kzkdhlh/1NiXv/AXFQP+AqVDN6Ohb1EmEdPSYX6MtYXvS9In+fFEPxGL6FUo5oSQ4g6qMpUtcN8g7E9vDTO1zDVFoVgN8FAaZYOfQ=
+	t=1727453065; cv=none; b=kdcVkaT5dEoCksH+1Y2VyqzNTnU1EvzzkRai8JNBJkEWXLdvR4HTNXI9kgU6smDbxaiijWrGLOnyMgczCpTAPiZ7H7PxSRMCyUMw4Teh3GEhmqA35bIT8QMXiyGSKqySMlhkrT1GYDbdQXBIuf+Z8nAU4GViueCao4SZcnF89i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727453013; c=relaxed/simple;
-	bh=eMlisuPU8aSOMFD/1F9ex1awVaAko4nscyew5rE08e0=;
-	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hCWzJQVUJrYvckMBhJGM8Jai6ApBbJ4WbrmyW5aKYCQWFdtkzGWIC97WT62KdDpmTEJi/HDwl7EQtvtnjZ/+H8hRTFZ67qsjMDfAtebuVnbZIqHVO/nsJ6XfhFl5t/jcg/I5zxHh/XzW4kDJ4mqqYbIn1THAxDUofHXR3VeVnbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lDm6s4gI; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727453013; x=1758989013;
-  h=from:to:cc:references:in-reply-to:subject:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=eMlisuPU8aSOMFD/1F9ex1awVaAko4nscyew5rE08e0=;
-  b=lDm6s4gIbOO88J7/9+3Yp5y2ZS+hcmAfRvbfrGwRY1emBnGvf34itdF4
-   tUc/Pa8PBr+9azoPyD+7sw6XSiSNYzpDmYxMlMBI1edIBcIDr/31d9WQq
-   PJOoUlQJv/tUjDRwTVovmv6gvglBMwkXVp4IQxoRxNxAjr9oWVpQLoqsj
-   L04oqPRZYsz1rGAuAvdm1TFDVvteVFF4/NoBIfxkPYnmpm0VAGJyDL/fR
-   qQjwoHKzEwIldJ+73dSBMT7+dWBpJ6OtcNgCBCuD5FZ3lh/qBjSAD9VLJ
-   USB6Pn2u+buvGRLZPW2yjE19ohbtYXjeDQdoB3Au0t+nkAXQDSEiqLHTo
-   A==;
-X-CSE-ConnectionGUID: 9s6ZIaDlSKuz1zlPaVMYlQ==
-X-CSE-MsgGUID: Smb4eAr0SfayX9z5wL2tnA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="49129852"
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="49129852"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 09:03:32 -0700
-X-CSE-ConnectionGUID: WYjpbBapSlSP2KIipdKD+A==
-X-CSE-MsgGUID: D9tt5ylpQWCX5Qd1hHyaOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="73004773"
-Received: from bseshasa-mobl.amr.corp.intel.com (HELO bseshasaMOBL) ([10.246.171.145])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 09:03:28 -0700
-From: <bala.seshasayee@linux.intel.com>
-To: "'Barry Song'" <21cnbao@gmail.com>
-Cc: <tom.zanussi@linux.intel.com>,
-	<minchan@kernel.org>,
-	<senozhatsky@chromium.org>,
-	<hannes@cmpxchg.org>,
-	<yosryahmed@google.com>,
-	<nphamcs@gmail.com>,
-	<chengming.zhou@linux.dev>,
-	<herbert@gondor.apana.org.au>,
-	<davem@davemloft.net>,
-	"Yu, Fenghua" <fenghua.yu@intel.com>,
-	"Jiang, Dave" <dave.jiang@intel.com>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
-	"Guilford, James" <james.guilford@intel.com>,
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>,
-	"Caldwell, Heath" <heath.caldwell@intel.com>,
-	"Sridhar, Kanchana P" <Kanchana.P.Sridhar@intel.com>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>,
-	<ryan.roberts@arm.com>,
-	<linux-crypto@vger.kernel.org>,
-	<dmaengine@vger.kernel.org>
-References: <cover.1714581792.git.andre.glover@linux.intel.com> <8fe04e86f0907588d210885ac91965960f97f450.1714581792.git.andre.glover@linux.intel.com> <CAGsJ_4xREUbRWRZEO8EiEBdP9YN0Wip4_p58Cca=B4ZdPb7Mpg@mail.gmail.com>
-In-Reply-To: <CAGsJ_4xREUbRWRZEO8EiEBdP9YN0Wip4_p58Cca=B4ZdPb7Mpg@mail.gmail.com>
-Subject: RE: [RFC PATCH 2/3] crypto: add by_n attribute to acomp_req
-Date: Fri, 27 Sep 2024 09:03:27 -0700
-Message-ID: <000001db10f6$cb3ca4b0$61b5ee10$@linux.intel.com>
+	s=arc-20240116; t=1727453065; c=relaxed/simple;
+	bh=Gu4nG96kzcucKdcN6xH7Hfcnj7tf2Rp8UdR4tx9Ffjs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h+a8CcLT+82NuA3RYrCewTV7DomSKURl4tGDZ4HunDNKMcnbS1semQGgzvfQoo4SkSMeBYyUq7YwK9Gb++cQjGK1AiPVcS3zDqut2eQ2CLnKvRs7TTYqmR3m/nfH5H/hrUKD6Y14hs6gcANsl7p3Gpy233+4xhhjKTYIMTjFu04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YjNAgSor; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a0c8b81b4eso9637605ab.0;
+        Fri, 27 Sep 2024 09:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727453062; x=1728057862; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bg2l6UGtum/7AudqJcwWoets59MOCUr9IF+C08Kwo9w=;
+        b=YjNAgSorLirhDGirMiJHB9lAfYB5tbsUGLIshviD7O5VydiWMf8iUyCcleMncdjLGd
+         qTcSNj7wlJF23AA1a18lo8ppLiuZA7xaRJtN+0GR4gXygu12z4989aMUXyItwz9brz6D
+         dlSCqhDUpSRlhPKYAJD5ag/OhaqqXf+shPWcU/zHPop8XBCtzqOVm+QAyOxjRQ9wkdFd
+         IGA4X8j0WIgzm1kV8pdkFXJClbllVXixAt6fWChdjZrXXUr8f9exQCcBq66y77VS1lyL
+         WJ2HQvv+Z8G//Pi1iOHnfoYFNRzol2x4NFCalXmZpMyV9I/HljAtS9dWWtMfE/Q5ur5t
+         CLmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727453062; x=1728057862;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bg2l6UGtum/7AudqJcwWoets59MOCUr9IF+C08Kwo9w=;
+        b=q0KosktuwFr+7iO7m4R1Jlezpg1ROBliseXw7MMXQLtqoAk/Iq1Qpgz95za4mx7TCv
+         fZ2ZaxoBo0ukgHm20qZGEV7iHobqiGpj5TfeATG05i+GpaH0DklsrKifNTPkGRT2fw1y
+         uOItwj3Mh7nOUe8BgE6ItP0XtYFIfavR1+fIT2wEncd1GuuZBX43aPArwS2LnzjVj5g1
+         6EiS2jJEfJjTWP5GdUI3imxlqQYxXZzQgVtS7S2R3XFuE3gnS1Hf1gQ2Sx4NB2SFzuXj
+         OKgxKI9UK/4ui+RoJ6wO5TcYS+eRRU+wCQnWTVXRuniaueoCmqgt57IoTjdqxmZuxN3F
+         On7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVioPiV97HJp8KuYTPs2OzRgrIfuydp/mjHFkB2xtLP7FC0mS5DDAvO8rNMjTT1jQ+kqpa7eYd9SZ56iw==@vger.kernel.org, AJvYcCW3MbGhkdzUY/w1cA+P6MA4R7h+NXcCzNIiEx8xnzl3kgure0AwmDQsWz4p3f3XR9OJD0jYJYo4@vger.kernel.org, AJvYcCX+Hjj00+Pf99MpIBHHyE5rr4bp5OHnbGKw3cv0qWRJV6JUOGzeij1h5Y+0eBjZaxLIk4rI6B4x3MhJMdc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh0UPRmllXbwXgQ16LYEnEPtLXdrmr+0Lw3xZ2r2SBO38NlSC0
+	6FC9lTiP64xV5VCXJE4WRfWh32kW7OCk/rbfoQYIq37ji0f9Yg9T+gdWSV8bD/bdkHybNFnM4+9
+	laBgxFZMHd+iOeR+3j/3QYQ6GSwI=
+X-Google-Smtp-Source: AGHT+IEbjcly4ZSXbWX9GWV9zM/1K7tqjTq3D0Rfh9Q96eNhxC2541Z+C3b8vuL1ICAaIRXgAsZeFsyI1BonMXhXHvc=
+X-Received: by 2002:a05:6e02:152a:b0:3a0:8c68:7705 with SMTP id
+ e9e14a558f8ab-3a3451bc28cmr39565755ab.21.1727453062222; Fri, 27 Sep 2024
+ 09:04:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
+References: <66f6c84c.050a0220.38ace9.0027.GAE@google.com>
+In-Reply-To: <66f6c84c.050a0220.38ace9.0027.GAE@google.com>
+From: Xin Long <lucien.xin@gmail.com>
+Date: Fri, 27 Sep 2024 12:04:10 -0400
+Message-ID: <CADvbK_cwG6b_PGji2bBp4=tGSxHi-ZMxjXAmKdzT1sKXr0_Uwg@mail.gmail.com>
+Subject: Re: [syzbot] [sctp?] general protection fault in sctp_inet_listen
+To: syzbot <syzbot+f4e0f821e3a3b7cee51d@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org, 
+	marcelo.leitner@gmail.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHanBEURTUo4d1RW0OV8cvHU+0CnrJax8IAgBHsYLA=
-Content-Language: en-us
 
+On Fri, Sep 27, 2024 at 10:59=E2=80=AFAM syzbot
+<syzbot+f4e0f821e3a3b7cee51d@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    196145c606d0 Merge tag 'clk-fixes-for-linus' of git://git=
+...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16f8549f98000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D61d235cb8d150=
+01c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Df4e0f821e3a3b7c=
+ee51d
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+> userspace arch: i386
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/629d679a6d66/dis=
+k-196145c6.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/aec0dd4a04f3/vmlinu=
+x-196145c6.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/68e515733997/b=
+zImage-196145c6.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+f4e0f821e3a3b7cee51d@syzkaller.appspotmail.com
+>
+> Oops: general protection fault, probably for non-canonical address 0xdfff=
+fc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
+> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> CPU: 1 UID: 0 PID: 10078 Comm: syz.4.940 Not tainted 6.11.0-rc7-syzkaller=
+-00097-g196145c606d0 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 08/06/2024
+> RIP: 0010:sctp_inet_listen+0x7f0/0xa20 net/sctp/socket.c:8617
+In sctp_listen_start() invoked by sctp_inet_listen(), it should set the
+socket state back to CLOSED if sctp_autobind() fails due to whatever
+reason:
 
+@@ -8557,8 +8557,10 @@ static int sctp_listen_start(struct sock *sk,
+int backlog)
+         */
+        inet_sk_set_state(sk, SCTP_SS_LISTENING);
+        if (!ep->base.bind_addr.port) {
+-               if (sctp_autobind(sk))
++               if (sctp_autobind(sk)) {
++                       inet_sk_set_state(sk, SCTP_SS_CLOSED);
+                        return -EAGAIN;
++               }
 
-> -----Original Message-----
-> From: Barry Song <21cnbao@gmail.com>
-> Sent: Sunday, September 15, 2024 11:16 PM
-> To: Andre Glover <andre.glover@linux.intel.com>
-> Cc: tom.zanussi@linux.intel.com; minchan@kernel.org;
-> senozhatsky@chromium.org; hannes@cmpxchg.org; yosryahmed@google.com;
-> nphamcs@gmail.com; chengming.zhou@linux.dev;
-> herbert@gondor.apana.org.au; davem@davemloft.net; Yu, Fenghua
-> <fenghua.yu@intel.com>; Jiang, Dave <dave.jiang@intel.com>; Feghali, =
-Wajdi K
-> <wajdi.k.feghali@intel.com>; Guilford, James =
-<james.guilford@intel.com>; Gopal,
-> Vinodh <vinodh.gopal@intel.com>; Seshasayee, Bala
-> <bala.seshasayee@intel.com>; Caldwell, Heath =
-<heath.caldwell@intel.com>;
-> Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>; linux-
-> kernel@vger.kernel.org; linux-mm@kvack.org; ryan.roberts@arm.com; =
-linux-
-> crypto@vger.kernel.org; dmaengine@vger.kernel.org
-> Subject: Re: [RFC PATCH 2/3] crypto: add by_n attribute to acomp_req
->=20
-> On Thu, May 2, 2024 at 5:46=E2=80=AFAM Andre Glover =
-<andre.glover@linux.intel.com>
-> wrote:
-> >
-> > Add the 'by_n' attribute to the acomp_req. The 'by_n' attribute can =
-be
-> > used a directive by acomp crypto algorithms for splitting compress =
-and
-> > decompress operations into "n" separate jobs.
->=20
-> Hi Andre,
->=20
-> I am definitely in favor of the patchset idea. However, I'm not =
-convinced that a
-> separate by_n API is necessary. Couldn=E2=80=99t this functionality be =
-handled
-> automatically within your driver? For instance, if a large folio is =
-detected, could it
-> automatically apply the by_n concept?
->=20
-> Am I overlooking something that makes exposing the API necessary in =
-this case?
+Otherwise, next time when calling sctp_inet_listen(), if sctp_sk(sk)->reuse
+is already set via setsockopt(SCTP_REUSE_PORT), sctp_sk(sk)->bind_hash will
+be dereferenced as the state is LISTENING, and causes crash as bind_hash is
+NULL.
 
-Hi Barry,
-
-The 'deflate-iaa-canned' compression algorithm is fully compatible with =
-the deflate standard. Andre's patchset introduces 'canned-by_n' as a new =
-compression algorithm, which is not a deflate stream since it has a =
-different header (for the by_n chunks).
-The same 'canned-by_n' algorithm along with the value of the acomp_req =
-=E2=80=98by_n=E2=80=99 attribute would be used to compress and =
-decompress a given input buffer.
-Furthermore, with a tunable 'by_n' , the user can experiment with =
-different values of by_n for different mTHP sizes to understand =
-trade-offs in performance vs. compression ratio.
-
-Thanks
-Bala
-
+> Code: 8d 98 00 06 00 00 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 d=
+f e8 6e 4e 05 f7 48 8b 1b 48 83 c3 02 48 89 d8 48 c1 e8 03 <42> 0f b6 04 28=
+ 84 c0 0f 85 8e 01 00 00 c6 03 01 31 db e9 d6 f9 ff
+> RSP: 0018:ffffc90002eafd20 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: 0000000000000002 RCX: ffff88802e973c00
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+> RBP: ffffc90002eafe78 R08: ffffffff8af5839c R09: 1ffffffff283c920
+> R10: dffffc0000000000 R11: fffffbfff283c921 R12: 1ffff1100fc7e242
+> R13: dffffc0000000000 R14: ffff88807e3f1212 R15: 1ffff1100fc7e2ff
+> FS:  0000000000000000(0000) GS:ffff8880b8900000(0063) knlGS:00000000f5735=
+b40
+> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+> CR2: 00007fadae30cff8 CR3: 0000000050d9a000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  __sys_listen_socket net/socket.c:1883 [inline]
+>  __sys_listen+0x1b7/0x230 net/socket.c:1894
+>  __do_sys_listen net/socket.c:1902 [inline]
+>  __se_sys_listen net/socket.c:1900 [inline]
+>  __ia32_sys_listen+0x5a/0x70 net/socket.c:1900
+>  do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+>  __do_fast_syscall_32+0xb4/0x110 arch/x86/entry/common.c:386
+>  do_fast_syscall_32+0x34/0x80 arch/x86/entry/common.c:411
+>  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+> RIP: 0023:0xf7fd6579
+> Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 0=
+0 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90=
+ 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+> RSP: 002b:00000000f573556c EFLAGS: 00000206 ORIG_RAX: 000000000000016b
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:sctp_inet_listen+0x7f0/0xa20 net/sctp/socket.c:8617
+> Code: 8d 98 00 06 00 00 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 d=
+f e8 6e 4e 05 f7 48 8b 1b 48 83 c3 02 48 89 d8 48 c1 e8 03 <42> 0f b6 04 28=
+ 84 c0 0f 85 8e 01 00 00 c6 03 01 31 db e9 d6 f9 ff
+> RSP: 0018:ffffc90002eafd20 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: 0000000000000002 RCX: ffff88802e973c00
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+> RBP: ffffc90002eafe78 R08: ffffffff8af5839c R09: 1ffffffff283c920
+> R10: dffffc0000000000 R11: fffffbfff283c921 R12: 1ffff1100fc7e242
+> R13: dffffc0000000000 R14: ffff88807e3f1212 R15: 1ffff1100fc7e2ff
+> FS:  0000000000000000(0000) GS:ffff8880b8900000(0063) knlGS:00000000f5735=
+b40
+> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+> CR2: 000055f65cf85950 CR3: 0000000050d9a000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> ----------------
+> Code disassembly (best guess):
+>    0:   8d 98 00 06 00 00       lea    0x600(%rax),%ebx
+>    6:   48 89 d8                mov    %rbx,%rax
+>    9:   48 c1 e8 03             shr    $0x3,%rax
+>    d:   42 80 3c 28 00          cmpb   $0x0,(%rax,%r13,1)
+>   12:   74 08                   je     0x1c
+>   14:   48 89 df                mov    %rbx,%rdi
+>   17:   e8 6e 4e 05 f7          call   0xf7054e8a
+>   1c:   48 8b 1b                mov    (%rbx),%rbx
+>   1f:   48 83 c3 02             add    $0x2,%rbx
+>   23:   48 89 d8                mov    %rbx,%rax
+>   26:   48 c1 e8 03             shr    $0x3,%rax
+> * 2a:   42 0f b6 04 28          movzbl (%rax,%r13,1),%eax <-- trapping in=
+struction
+>   2f:   84 c0                   test   %al,%al
+>   31:   0f 85 8e 01 00 00       jne    0x1c5
+>   37:   c6 03 01                movb   $0x1,(%rbx)
+>   3a:   31 db                   xor    %ebx,%ebx
+>   3c:   e9                      .byte 0xe9
+>   3d:   d6                      (bad)
+>   3e:   f9                      stc
+>   3f:   ff                      .byte 0xff
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
