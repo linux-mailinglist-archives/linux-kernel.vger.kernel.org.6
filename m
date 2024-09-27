@@ -1,107 +1,121 @@
-Return-Path: <linux-kernel+bounces-341432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0896598800A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:08:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0084F98800C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3956E1C22249
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:08:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A10EF1F24ECE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5759F189901;
-	Fri, 27 Sep 2024 08:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Outd2lB0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5320618952A;
+	Fri, 27 Sep 2024 08:08:39 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E20188CB7;
-	Fri, 27 Sep 2024 08:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BB7189520;
+	Fri, 27 Sep 2024 08:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727424494; cv=none; b=Px+BW4IHy/7b8vy2AYidIiT2gS9szfsk8SCOkLHr9YqBu/RtmNH2feZ2FrQ+fflUGULxdLYjPzzBxHRtxxoaEmHwBHTpDE07AF4158lqUzeTd5idVjW5NRH33q/MVzXJw/OEHe90olKideTM+L1s4k6fpCHW90hDmnYVEVEjiOw=
+	t=1727424519; cv=none; b=LzmWJoiN+fBluz6kUFaptlXg+XVSqYMNZT6T4t4L2UPoORLQRkmvrRXWh9skyB7GN6lmRNSp5MrvPg3M+eOyhBSnk0LIPGoHoa22neo/qGmB5rAa4zsg0SsFdxpd2/eHBrk6QYNI98SfLFEfUUtBZZBw3ndeueTant8Ww+0Kypg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727424494; c=relaxed/simple;
-	bh=qrr8F6mhp37/8goTelXVcSv72h5Emk8kpcyLOVTI7nQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A0fgcehOzCbX08qFwbCZgqOR6hShXMABfS6r2jjw1WQ5SJUh4na295JbGoH4piX/OB5u9dQhzCqamOzeGXw8g1A6UFGieziwtQYiwZlqOZUzncG7YbegeS9AP3T5/48+edaDAiS9GMoPwyqgjxmQxyxP4ILiWdN6BrGet/NVCPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Outd2lB0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C4DC4CEC4;
-	Fri, 27 Sep 2024 08:08:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727424494;
-	bh=qrr8F6mhp37/8goTelXVcSv72h5Emk8kpcyLOVTI7nQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Outd2lB01VOTLYDOGeswQwueKzlm+EOifqdxlQ4wB/8MrqP6mZtqn6n+rKIoTqc1e
-	 kiisilHVnZCIEJvalKnA3qR2YHOkwk+HzZxQYLedHYLRTpBSFEheAsUMMOVVXFYRgj
-	 oZNhoNHLcUvthQxoFMAThjmuiGgHXqnMfBJJboyDD3j6cY2fyYQxHOwaNlAfY9ESKo
-	 grEtBzrVEHlyEpt136/mYVhFyRdz36/t+JDZSXA5Mge9d5fwWXYM2cDL4KIrNMeMd8
-	 WUGeJbN6K897pM3Cb8O2g8BA94c0wF4P33q9OSZrB7Mfqe5Ls744JoZHQWmwTx2/kE
-	 UOLO55iVty1Fw==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Steve French <sfrench@samba.org>,
-	Marc Dionne <marc.dionne@auristor.com>
-Subject: Re: (subset) [PATCH 6/8] afs: Fix the setting of the server responding flag
-Date: Fri, 27 Sep 2024 10:07:59 +0200
-Message-ID: <20240927-inklusive-erfunden-8a9df201244e@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240923150756.902363-7-dhowells@redhat.com>
-References: <20240923150756.902363-1-dhowells@redhat.com> <20240923150756.902363-7-dhowells@redhat.com>
+	s=arc-20240116; t=1727424519; c=relaxed/simple;
+	bh=DmH1bdqnmvsqJTkNwjchhRxv+dIOQ+T+/wC54Fa6HWo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uJsGXY2TtRlpxKa1DeFgSeE74EOKDrpSbU4lBHHJugBITSf8hi4BuIdUzbzN3EQVCiM54XoYqu1rg0TmaW7cEqHARDlwPsXvVd6p4slWmHEmf6T59dxCkwKhT1x+BA6Rr2lYpKXnzWS3GqsZ1YSkHxYRF8GMZH5Tv0KRcu0zOUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XFNPk4Sw0z4f3lDN;
+	Fri, 27 Sep 2024 16:08:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id A187C1A0568;
+	Fri, 27 Sep 2024 16:08:27 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP2 (Coremail) with SMTP id Syh0CgBn51z6Z_ZmuE3hCQ--.32299S2;
+	Fri, 27 Sep 2024 16:08:27 +0800 (CST)
+Message-ID: <6a2f4e01-c9f5-4fb5-953e-2999e00a4b37@huaweicloud.com>
+Date: Fri, 27 Sep 2024 16:08:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1300; i=brauner@kernel.org; h=from:subject:message-id; bh=qrr8F6mhp37/8goTelXVcSv72h5Emk8kpcyLOVTI7nQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR9S3928A/vY47APBNFzaQswV4+Pw8Hlu3a9bd+cD9uO Frlc/JtRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETyLzMyTNTnfr5xfcZix1xr Tj7JEPepAnKn+FvmbAnf0rfRyop5DsP/gIP2Vf3Nm3a29nDoVNhIl9UaHjpdV197f2eb0M+i678 5AQ==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] workqueue: doc: Add a note saturating the
+ system_wq is not permitted
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
+ longman@redhat.com, chenridong@huawei.com, cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240923114352.4001560-1-chenridong@huaweicloud.com>
+ <20240923114352.4001560-3-chenridong@huaweicloud.com>
+ <ipabgusdd5zhnp5724ycc5t4vbraeblhh3ascyzmbkrxvwpqec@pdy3wk5hokru>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <ipabgusdd5zhnp5724ycc5t4vbraeblhh3ascyzmbkrxvwpqec@pdy3wk5hokru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgBn51z6Z_ZmuE3hCQ--.32299S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFyxZw4xJFWxAw1kAFWkZwb_yoW8GFWfpF
+	s7uw1jk3Wvyr4Iyws8Zw1j9F4fZF1kua1UtrnrG3s2yr4DGrn3KFyfKF1rZa1YgFn3C342
+	vFW2v3yDCa4qvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Mon, 23 Sep 2024 16:07:50 +0100, David Howells wrote:
-> In afs_wait_for_operation(), we set transcribe the call responded flag to
-> the server record that we used after doing the fileserver iteration loop -
-> but it's possible to exit the loop having had a response from the server
-> that we've discarded (e.g. it returned an abort or we started receiving
-> data, but the call didn't complete).
+
+
+On 2024/9/26 20:49, Michal Koutný wrote:
+> On Mon, Sep 23, 2024 at 11:43:51AM GMT, Chen Ridong <chenridong@huaweicloud.com> wrote:
+>> +  Note: If something is expected to generate a large number of concurrent
+>> +  works, it should utilize its own dedicated workqueue rather than
+>> +  system wq. Because this may saturate system_wq and potentially lead
+>> +  to deadlock.
 > 
-> This means that op->server might be NULL, but we don't check that before
-> attempting to set the server flag.
+> How does "large number of concurrent" translate practically?
 > 
-> [...]
+> The example with released cgroup_bpf from
+>    cgroup_destroy_locked
+>      cgroup_bpf_offline
+> which is serialized under cgroup_mutex as argued previously. So this
+> generates a single entry at a time and it wouldn't hint towards the
+> creation of cgroup_bpf_destroy_wq.
+> 
+> I reckon the argument could be something like the processing rate vs
+> production rate of entry items should be such that number of active
+> items is bound. But I'm not sure it's practical since users may not know
+> the comparison result and they would end up always creating a dedicated
+> workqueue.
+> 
+> 
+> Michal
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Thank you, Michal.
+I think it's difficult to measure the comparison result. Actually, if 
+something generates work at a high frequency, it would be better to use 
+dedicated wq.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+How about:
+Note: If something may generate works frequently, it may saturate the 
+system_wq and potentially lead to deadlock. It should utilize its own 
+dedicated workqueue rather than system wq.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Best regards,
+Ridong
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[6/8] afs: Fix the setting of the server responding flag
-      https://git.kernel.org/vfs/vfs/c/830c1b2c1c28
 
