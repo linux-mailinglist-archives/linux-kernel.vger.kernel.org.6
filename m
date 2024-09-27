@@ -1,152 +1,140 @@
-Return-Path: <linux-kernel+bounces-342062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C16988A32
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:40:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF26988A39
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6C8E1C21020
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF80B1C22A82
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890F41C1AD3;
-	Fri, 27 Sep 2024 18:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E661C1AD3;
+	Fri, 27 Sep 2024 18:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dniiWOgj"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K15c/Fa4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9890BEEA6;
-	Fri, 27 Sep 2024 18:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD08EEA6;
+	Fri, 27 Sep 2024 18:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727462452; cv=none; b=sdgMd8aDQQnvwgAxu6eOESoHCen3WEV6jGKbZR9+agCyLxtbstD2uDIqW5Flt0kC6aRi92s9kcSclu6zxH4Y8BsNvWq0MRPPYoo58pLXDa4B6HFQgiCVyZfEFGf0eK5paTce4T4nndD5tcg97dINolEl2H8wXYvqb4YUwYGiGzI=
+	t=1727462496; cv=none; b=lZeX7iR6/0rISMJ7TwQ8Fo2FvXdDroXNSJ+f7X9gaGNCTL76ktIw4sh4Ka1GPQAO9XBSW7kI2mTgNqGh/amogizQ/rwuXCVn9uQGP3b3N0B/JfQTnV9nPCh8msTjePUrPtftxF/RKg7CWi6re1TnZRXip4U1AmlOEQY5/GZlV1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727462452; c=relaxed/simple;
-	bh=l6wsKnVGFHrCSH5QYAnlhhvn1UZgLJL1xTYQ+csr9Yc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n2ua/7agIhdoUrgSx7dUbmwNHJWpQY5uOO5vDrtIZLvBhH9Kn6/e5dx226ztU7XkOVDJnxHhAMNGDQNz2vR3CZFdjUg2RLjREY/Mo+WSvQoG4J9hCPhiGbImsnrsY7Ix1W82epV3D8UMlXGMKXGQU+jRVQaTJvgemNsOXMRZzlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dniiWOgj; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20551e2f1f8so31250945ad.2;
-        Fri, 27 Sep 2024 11:40:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727462451; x=1728067251; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=mrTpB7aIu2nPqZTsm0QkOBF56SjSGYBFZq1aXqvp/qE=;
-        b=dniiWOgj80cKpWBbbJwU2Qu4yV6xGJINBnEngDnaAU2qIFhsW34Dw0igITYzwSDeWs
-         Q/q/goCdvsnoY27cqbn2gXYwz5t9GB2hngKGGZ2+pux9KGN8qBLhJ4G68r00cbEiL8o9
-         LBK8qT3xBYWpd64dMvK7qzSrNNWLyDTEp9vePVvHsTdiFDJISaSd8dI7u2LqKZNkghuF
-         qP4l9luP2OIl9uMuumIsHrpqrffDSYogRvbT+Ze578Q2Skwo/ZbY4O4aaMrDih0oEz8a
-         q6A7B64zP89xlCxD7dzmFaWwVYgbtsC7/HNUrDtdir/AWhdBHNsEF0jOC4AOtaLmtysj
-         dODA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727462451; x=1728067251;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mrTpB7aIu2nPqZTsm0QkOBF56SjSGYBFZq1aXqvp/qE=;
-        b=O+R0f3waQzbm6i2LKFzCsQnAlobRtJ+AVAmu+CNdRrONiW9KMoywwDqajZYKsnMhk6
-         MPMYoqWwK0/wwPZ3jv8tlRW+GOJzHUkK4f/WXp2vW+Quhx5uaG0MNx+bbd9KH8bwNJPL
-         3eCY/AFKg6KZQ1CST4RTPr88k5CgEOd25PevtxJCcCbVsKqZGG4esY1WOk6kMoFr8cNa
-         KXFqkNYZsaF8b+BMrHE9vCYBlrpal+bFLOk0BfS7RQ0ueRV8tyN8/FZ2xOq9ZaD6Pkk4
-         luKIrdFN11JYc4yo/1OcayodoZ7204davmc61dzLEPsQ77xG1WJcc99L3hvJDUO0fH8X
-         n1NA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5m5J3wxQ9cMfAQcQaGF44irLJoW6oCuLsmm+5XXs2F5f2xlyiDT5zTWKvvepfpkXOez1/TBq8@vger.kernel.org, AJvYcCVWfwGsN5Kw3cWwp0ucVw5HIQGTUwOC5JlFStNO7SGTwMwiZvn0KBZvD6CxqjL67mMfw/1ws7ZGN8KgRh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7VVOKM1h/5BGcyotZ03uM+oX3W6RN/mWmGuBnfqB6rN6WX0L8
-	7ydTfgDYlRZDYT9qyu+alckY+srRBs9qDezGIfZwiaddwnLNt7ax
-X-Google-Smtp-Source: AGHT+IFXK1z/TgHxTL5l1/oVn4VmuHT2CkVe78cWXKFrAZqmjbn0HDX74BKjH+x2yD8LjZjCrrHiTA==
-X-Received: by 2002:a17:903:2349:b0:20b:5478:b387 with SMTP id d9443c01a7336-20b5478b659mr9401135ad.59.1727462450911;
-        Fri, 27 Sep 2024 11:40:50 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db296fdbsm1711405a12.9.2024.09.27.11.40.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 11:40:49 -0700 (PDT)
-Message-ID: <0a98c9a1-8cc2-48ba-b74f-e7bf861327d9@gmail.com>
-Date: Fri, 27 Sep 2024 11:40:43 -0700
+	s=arc-20240116; t=1727462496; c=relaxed/simple;
+	bh=djFsDLX/zPhywfaWe9kuIOBlVP1tbaN3Cb2qCVNHtag=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BMM9yoqp+VqwViwJBq/I0D3bjvZPzQf3ZMDu1AFAkDp+v1kh0g2L0ke6YpMNRXqoxFdTukDzX83KoL+0QxTKS49Ir5FBB4eAj09inw1nf+SxQ+/CFYqGrMv0Ui3D/VWa9wDslnOTx7T6xo7dXJOtw9R9IErYHFyBfObRO79oNRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K15c/Fa4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A11AC4CED1;
+	Fri, 27 Sep 2024 18:41:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727462495;
+	bh=djFsDLX/zPhywfaWe9kuIOBlVP1tbaN3Cb2qCVNHtag=;
+	h=From:To:Cc:Subject:Date:From;
+	b=K15c/Fa4IssMrnMcNRtDZ4ZfJY2zLaXDrpGgEnHpYKLoiLIuQzcNqrj1tG7KIjkZz
+	 n7sigAgo8SL8tdVuT2SHNI3ncG1dPKKLs7J6uysXouXstWbSwMgtjLIYm9D1LE4joJ
+	 pnY8kqsiunrDXDfewGRp4JTB1gYaowM8E/WDFHhaNJsl93YmCrl9gMK/8YEAYYOMwg
+	 cuyBbOGQ+SL08sVCMjiJw9NWd4xLVfKLM4oAphLEAw/EnCISkPoW8Ds5WOU/8o0ktU
+	 CgsotGk/rxKx7MJgsRExdnv/Co9p8I1aKxETboVQa9qHoU2oHruIQHN0nKydDhYHpA
+	 2LkyMOcgAhWCQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	bpf@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: [RFC/PATCH bpf-next 0/3] bpf: Add kmem_cache iterator and kfunc (v2)
+Date: Fri, 27 Sep 2024 11:41:30 -0700
+Message-ID: <20240927184133.968283-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 00/73] 6.1.112-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240927121719.897851549@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240927121719.897851549@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/27/24 05:23, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.112 release.
-> There are 73 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.112-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hello,
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+I'm proposing a new iterator and a kfunc for the slab memory allocator
+to get information of each kmem_cache like in /proc/slabinfo or
+/sys/kernel/slab in more flexible way.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+v2 changes)
+
+ * rename it to "kmem_cache_iter"
+ * fix a build issue
+ * add Acked-by's from Roman and Vlastimil (Thanks!)
+ * add error codes in the test for debugging
+
+v1: https://lore.kernel.org/lkml/20240925223023.735947-1-namhyung@kernel.org/
+ 
+My use case is `perf lock contention` tool which shows contended locks
+but many of them are not global locks and don't have symbols.  If it
+can tranlate the address of the lock in a slab object to the name of
+the slab, it'd be much more useful.
+
+I'm not aware of type information in slab yet, but I was told there's
+a work to associate BTF ID with it.  It'd be definitely helpful to my
+use case.  Probably we need another kfunc to get the start address of
+the object or the offset in the object from an address if the type
+info is available.  But I want to start with a simple thing first.
+
+The slab_iter iterates kmem_cache objects under slab_mutex and will be
+useful for userspace to prepare some work for specific slabs like
+setting up filters in advance.  And the bpf_get_slab_cache() kfunc
+will return a pointer to a slab from the address of a lock.  And the
+test code is to read from the iterator and make sure it finds a slab
+cache of the task_struct for the current task.
+
+The code is available at 'bpf/slab-iter-v2' branch in
+https://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+
+Thanks,
+Namhyung
+
+
+Namhyung Kim (3):
+  bpf: Add kmem_cache iterator
+  mm/bpf: Add bpf_get_kmem_cache() kfunc
+  selftests/bpf: Add a test for kmem_cache_iter
+
+ include/linux/btf_ids.h                       |   1 +
+ kernel/bpf/Makefile                           |   1 +
+ kernel/bpf/helpers.c                          |   1 +
+ kernel/bpf/kmem_cache_iter.c                  | 131 ++++++++++++++++++
+ mm/slab_common.c                              |  16 +++
+ .../bpf/prog_tests/kmem_cache_iter.c          |  64 +++++++++
+ tools/testing/selftests/bpf/progs/bpf_iter.h  |   7 +
+ .../selftests/bpf/progs/kmem_cache_iter.c     |  66 +++++++++
+ 8 files changed, 287 insertions(+)
+ create mode 100644 kernel/bpf/kmem_cache_iter.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
+ create mode 100644 tools/testing/selftests/bpf/progs/kmem_cache_iter.c
+
 -- 
-Florian
+2.46.1.824.gd892dcdcdd-goog
+
 
