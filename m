@@ -1,114 +1,157 @@
-Return-Path: <linux-kernel+bounces-341255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B827C987D50
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 05:43:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DE3987D57
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 05:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 699E31F23B1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:43:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67C30B24190
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE5C16F297;
-	Fri, 27 Sep 2024 03:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QiaSM/BO"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B646C16FF3B;
+	Fri, 27 Sep 2024 03:52:22 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DA94690;
-	Fri, 27 Sep 2024 03:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDC32B9B5
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 03:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727408623; cv=none; b=HWUr4hxBbqcpn/l6hD/6EF5BCRUhh/tUfkmMVS6CCcmolzsE64jjSeUEO2DvTe4KyKTMxv2loUnUgEG8LIgSCc+f7p5Bo1l5wsNExKWI1M38GdhWCCQicNjZdCiyDaQt8zG7gvCEX6P9QHX4EL2306nsJR5WQ9TfDf1rVTMC/pg=
+	t=1727409142; cv=none; b=hJgPrPSFvTWfFh6lsjfYP6emdiwDUexp99+i3BwpKiLu1EUgMQdZLohBpnP9E93m/bnUS9rzRaVaW7sWDABiGkakBZOqwTqpSLXFKjkB3ccHr249eGLRr6TtyfPDhGt1LoVTCCWwDz+Uv1NWPNMRFCXTkZVXvLLdgnU7AFPu90Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727408623; c=relaxed/simple;
-	bh=M12yjV2rLKndwGSVDOnRBmvPJV/rZi+eKahVkySN5Mg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AUADNT3FpCUzyfYygjMl95VrhcBGJTBP1E1fcHg14WT+MRz+LSpKVbGfQjY3ECcGPze/TA8Dz2HZcAWd8WgFlqIFAckXf8m4/i/teVIOl0pwLSUq3jbH+yZay/gJenwXR/qIMYgaHJMFnx8x8Tjl9EQLVtyQ7UNV+5tBtInM7UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QiaSM/BO; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1727408619;
-	bh=AEZZTCs08ioT/lvvc5FwBArvA+RpNCDWVxF8TfYq3s4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QiaSM/BOhQLor16QllpuSmncshnP10EQpwSyPG9xSAYVgJkLMxcblJgLNy3jIb9iB
-	 dqbG1EA8Ip3uAVFTCvP+GijezeCjJE0968atueEo1vD7BVQYileoyxcKmWs5VLpGSp
-	 Gjhq+QaZ0WlU1RWUtp3JFzylEUF7ewAC24dMJALhcvX1PbEniUIY/trZcHiIC70b/m
-	 Qqc5c3Mv0GrAMJoUyum2r7CokTwzhpZHwdsc+aSXP1BZLSJCYm9SocqlOJ1RDysHeK
-	 W5v7bsYoBfBXyL9agBEp/XgmsYayseo6h2hGOrTdiizVapXzzODgqLCMwYgsmVOFKZ
-	 rPLPhHiP0ubpw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XFGXW3KFpz4xPX;
-	Fri, 27 Sep 2024 13:43:38 +1000 (AEST)
-Date: Fri, 27 Sep 2024 13:43:37 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Keith Busch <kbusch@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warnings after merge of the block tree
-Message-ID: <20240927134337.021b1ec2@canb.auug.org.au>
-In-Reply-To: <20240916183622.105641d8@canb.auug.org.au>
-References: <20240916183622.105641d8@canb.auug.org.au>
+	s=arc-20240116; t=1727409142; c=relaxed/simple;
+	bh=tijYP/eR2PHioC3KgAgMi4QXGnwkmGd0Dgeb/FN19k0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hcSv2CPKes8DzHxJkJeMsOlpD3dOc4JHIRAnEl7x2VBZDseKa+5zkW3jW0D7kuqth2qlB7D+ElpGKu2Jm+0+BzzQe9fHXuNSS0dHSU3tpOzm/a+Nvd9cQxSkcXGQCv0jtdWyTG5kUFRWJkuk4pZH/JrBc7Y2wQeeQaCwheJ6Zos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3440fc2d3so9781875ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 20:52:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727409140; x=1728013940;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3auWreLAZ73QzV0Lv0K1wMlu78NrY1VI+H7gTuEZZNg=;
+        b=OARSott2aO8BwuoOkU1hHwfmPbT2svBvWOc0GZ7COhLxhI3oJB2ABb86SRAasAma15
+         Dj4NB9iZslOoT1OkVb8FqPAm1qSddPGlb05RhO5Rw4mEZH2WB7+f8wm9PIhucawz+Mnl
+         azeKuA4VwSvvVpCS0s4hh5D1+y+UUuApU4hr7+wgtKXgMzmYAHXuUw81BM5J+Tco9jiO
+         uLr5v1uuWeoWJupRhyzv9RbK5ltZJGkVN7OxWu78HpZdAnUhs7GXvbRMIHc83fvJ5bwc
+         AJHdPQ0Og+ckSk/ZhA+VTRykzchgdbjiLq8tIIlpw2UQF/857UbHBe7gpPgxp4vzHCR0
+         /0fg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8/bYYxRad/8NXwmODydlxpmuwP2hPt/7bDDImcypBwl61Qgayx0mBZW027uyvYkOkLEGDYHtwq9jffD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdNveEdGJwpxs0HEi59PlPDFYVqBsFZftexIBTd4K7S/zRb2F2
+	kvBtZSddHufaJ/897u0Rr8/2NlkUHBogrY/E/BmLE0amhTSHT+vjetZaHrDd5sCT8pjqrAEKJ+A
+	2zO23uN7ntrllUBO6AtqVZ14dgiybvHsV7jo18iNEuEq6/7jlFi+KCqU=
+X-Google-Smtp-Source: AGHT+IE/eMe8L5X79DJcyc3g++cEfn8GM0JPpB9NtO+cctnAc2JcrwKhO3x5h2Ylk2bpVDbMqAZ8cGNF4hg6MH0vGn+lnXTetJZ0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/vPyaVJUikyZxYaRZ1Tqn/N_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Received: by 2002:a92:ca4a:0:b0:3a0:915d:a4a7 with SMTP id
+ e9e14a558f8ab-3a34514832bmr16835235ab.2.1727409140018; Thu, 26 Sep 2024
+ 20:52:20 -0700 (PDT)
+Date: Thu, 26 Sep 2024 20:52:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f62bf3.050a0220.38ace9.0007.GAE@google.com>
+Subject: [syzbot] [bpf?] BUG: MAX_STACK_TRACE_ENTRIES too low! (4)
+From: syzbot <syzbot+c6c4861455fdd207f160@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/vPyaVJUikyZxYaRZ1Tqn/N_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+syzbot found the following issue on:
 
-On Mon, 16 Sep 2024 18:36:22 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the block tree, today's linux-next build (htmldocs)
-> produced these warnings:
->=20
-> block/blk-integrity.c:69: warning: Function parameter or struct member 'r=
-q' not described in 'blk_rq_map_integrity_sg'
-> block/blk-integrity.c:69: warning: Excess function parameter 'q' descript=
-ion in 'blk_rq_map_integrity_sg'
-> block/blk-integrity.c:69: warning: Excess function parameter 'bio' descri=
-ption in 'blk_rq_map_integrity_sg'
->=20
-> Introduced by commit
->=20
->   76c313f658d2 ("blk-integrity: improved sg segment mapping")
+HEAD commit:    abf2050f51fd Merge tag 'media/v6.12-1' of git://git.kernel..
+git tree:       bpf
+console output: https://syzkaller.appspot.com/x/log.txt?x=100fc99f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bc30a30374b0753
+dashboard link: https://syzkaller.appspot.com/bug?extid=c6c4861455fdd207f160
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ee7107980000
 
-I am still seeing those warnings.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/367fc75d0a34/disk-abf2050f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8df13e2678de/vmlinux-abf2050f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/138b13f7dbdb/bzImage-abf2050f.xz
 
---=20
-Cheers,
-Stephen Rothwell
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c6c4861455fdd207f160@syzkaller.appspotmail.com
 
---Sig_/vPyaVJUikyZxYaRZ1Tqn/N_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+BUG: MAX_STACK_TRACE_ENTRIES too low!
+turning off the locking correctness validator.
+CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.11.0-syzkaller-09959-gabf2050f51fd #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ save_trace+0x926/0xb50 kernel/locking/lockdep.c:579
+ check_prev_add kernel/locking/lockdep.c:3219 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+ validate_chain+0x2bde/0x5920 kernel/locking/lockdep.c:3901
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ htab_lock_bucket+0x1a4/0x370 kernel/bpf/hashtab.c:167
+ htab_map_delete_elem+0x1df/0x6b0 kernel/bpf/hashtab.c:1430
+ bpf_prog_bc20a984d57ef3f1+0x67/0x6b
+ bpf_dispatcher_nop_func include/linux/bpf.h:1257 [inline]
+ __bpf_prog_run include/linux/filter.h:701 [inline]
+ bpf_prog_run include/linux/filter.h:708 [inline]
+ __bpf_trace_run kernel/trace/bpf_trace.c:2318 [inline]
+ bpf_trace_run2+0x2ec/0x540 kernel/trace/bpf_trace.c:2359
+ __traceiter_kfree+0x2b/0x50 include/trace/events/kmem.h:94
+ trace_kfree include/trace/events/kmem.h:94 [inline]
+ kfree+0x35e/0x440 mm/slub.c:4715
+ security_task_free+0xa4/0x1a0 security/security.c:3178
+ __put_task_struct+0xf9/0x290 kernel/fork.c:977
+ put_task_struct include/linux/sched/task.h:144 [inline]
+ delayed_put_task_struct+0x125/0x300 kernel/exit.c:228
+ rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+ rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
+ handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
+ run_ksoftirqd+0xca/0x130 kernel/softirq.c:927
+ smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb2KekACgkQAVBC80lX
-0GwrzggAobRTGUqGyRk5nodbwG0oUTxBPrO8y5+SJsqm+gUYumLzrU0YdBc4MPhc
-fFs69DeAc5xcwofbGLy04AcNi7LLlkEqK5JZ8bsvztd6ZE4mAYuGxw32HvsbC2Nq
-KdlElftBFQJPVtpdircHFbY+N0YoAvvSZvjkQcopk+mzsV0qgHObD7VtcVhwv8i3
-x0pXFXqwmHhklUiUJ9Tf+RuTSGO6edKbSW3+w8m9eXfhHuXMfiasIMZPhxPUAjQ0
-WT00jRPup6ZDiWIvLJB4kPBVixz4uoQiQXB5fpAGPNbzOYgnHcDfGgOErbL7cuZL
-yy8OCtddaP9NcoJwIr6Q1qAyJFDlGw==
-=Yom8
------END PGP SIGNATURE-----
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---Sig_/vPyaVJUikyZxYaRZ1Tqn/N_--
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
