@@ -1,65 +1,56 @@
-Return-Path: <linux-kernel+bounces-341540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5175F98816C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:35:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C45E98816F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1CF3281A21
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:35:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D9C32814CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F381BAED4;
-	Fri, 27 Sep 2024 09:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C90818C017;
+	Fri, 27 Sep 2024 09:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lw1IV33s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MetjOqmo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7002E15ADAB;
-	Fri, 27 Sep 2024 09:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6499A16B75C;
+	Fri, 27 Sep 2024 09:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727429691; cv=none; b=XlSFctsl/Aop9GZ7/QBVTJhG7kW46zGMb8LXk3oiKLPHejJYE9dZSGPVi3PV71ydhgwpgUcqlNoyxdz3DfRA/cnrSPq2s7ZoZsJ21+TDeY4oXkyV+vMTko4m4N0bSRp1+vZmFq+QtlmhyVuGgk22hrpwXbB9jZMKifyctA/2itg=
+	t=1727429723; cv=none; b=nuuP213pzuPbGVMKnMmIPTKneYjrnEWXX3nIKu8zN0n+Q2uxKkhiVbotX5QszWKjbo4NR4Q4UZbVJplMWuo2FlGoCGAEK6slWkx2qK968vAd8FhYxl5s0Mz2xj7+crPu2eIy7/hBHzoxpsZ9XZaQ0jQkPacL1hbeYSr/bSoXy8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727429691; c=relaxed/simple;
-	bh=GxG+tu+21lu0yCzU+ifnIiJI9JUvz1/XTvqf4gwANmM=;
+	s=arc-20240116; t=1727429723; c=relaxed/simple;
+	bh=xeGRmkPdIZIBxgJNn8xEkplsHyNoNurO6cJ68KdCFcw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hmPQgc8swJ7pKaCXUHTaQ3LBtI52uxJ22r//9zCNLG9mWXiEpu5Q4y8FNYW/sbZ+H/c/uD1m/WvLbl0KhIfeL90PmGQvXJ3+miyK5/uf0P4vIzuZUA3ZSjC7/EqOqVlhWB/FkE1Ka95lsCr/4K9Gei06YGamggfL/3YlVYuySaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lw1IV33s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48821C4CECD;
-	Fri, 27 Sep 2024 09:34:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jc2bOkT23JK+aPFq9I/wakauWuuJ+MF02yw5YXUBsNB57EfxWoFvrAIuTifY3EE7mf2yzWCPtf7mODnCJgWDOPGzyGHO1yb1mJz/TfUs7x9bb4d2Keorq6O6K2AmzzoXR1KoyYpHV4rc8ZS7JtmzX9kvswrFr+kZnkKrNH4Qa2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MetjOqmo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41EFC4CEC9;
+	Fri, 27 Sep 2024 09:35:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727429691;
-	bh=GxG+tu+21lu0yCzU+ifnIiJI9JUvz1/XTvqf4gwANmM=;
+	s=k20201202; t=1727429723;
+	bh=xeGRmkPdIZIBxgJNn8xEkplsHyNoNurO6cJ68KdCFcw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lw1IV33snqufyRIefxyv34fx/122R7wwnm+AFm4YXxXC8ZzrLikLv3M5h5GOl4Nru
-	 22dmIY+6IjYvQk1aWxzWRqSvlr68B0W10pufCpST8OJzbksS1m9bsH/BtxTsFg3Xpo
-	 lJpExPQlaTE5gnCqW9Mi+ugyS9DPY+efipl/qCnBzpeS4dNYxdfFBLTjAVWBmkb3aA
-	 8G6I9gsPQP1/yqLRrdEwqaHFrrQ+d4uCeT0Qve8GCqsXgT11TyV3D4iezPLTTnN1oV
-	 qRUIkuxf7H3fghviSq7Aih0hdU+QXNadtj5nDEaKEqCTBhNwRcmHRy3CbkDuIU0si4
-	 lawvIy42bdk0Q==
-Date: Fri, 27 Sep 2024 11:34:48 +0200
+	b=MetjOqmodU5FLBFaedlK53vKIZiuJqwnw/e+YESoWwUzggvoujMMBFD5TJuGGNhyc
+	 ROAEm5NGEUf6dXSZldoi/Y3k2+YsK+m9NhWx18mnIxCwBp3To1YZKkYQ1FT5X//QQc
+	 TS20pYoMDWmYHT6Go4m98H5zAT/m9gzhMrQKoJ1lohr4D0ZlBfnFWGgoFVE7Cj8D3n
+	 biMClFLQ71PXBNR2C43n4IjXdjjzn7l+IuK8ZtajrhVTLJtRR4Z1VYPHTydJCewYiT
+	 rxCNZffWq5KrRiWCY0lDWM/tCG+oUl2QuIhEVAGZ4XsmtUbZJObARU0za6VUg/Wpp0
+	 b001s5A9FvorA==
+Date: Fri, 27 Sep 2024 11:35:20 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Sebastian Reichel <sre@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Jisheng Zhang <jszhang@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
-	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Conor Dooley <conor@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: net: Add T-HEAD dwmac support
-Message-ID: <4pxpku3btckw7chyxlqw56entdb2s3gqeas4w3owbu5egmq3nf@5v76h4cczv4z>
-References: <20240926-th1520-dwmac-v2-0-f34f28ad1dc9@tenstorrent.com>
- <20240926-th1520-dwmac-v2-1-f34f28ad1dc9@tenstorrent.com>
+	Caleb Connolly <caleb.connolly@linaro.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: power/supply: qcom,pmi8998-charger: Drop
+ incorrect "#interrupt-cells" from example
+Message-ID: <tpjxumq75zjg6m2ucqat6vbzvtnku3msnqc6xpmizwtzdkwxwr@deqo4dbretch>
+References: <20240926213727.3064977-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,120 +59,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240926-th1520-dwmac-v2-1-f34f28ad1dc9@tenstorrent.com>
+In-Reply-To: <20240926213727.3064977-1-robh@kernel.org>
 
-On Thu, Sep 26, 2024 at 11:15:50AM -0700, Drew Fustini wrote:
-> From: Jisheng Zhang <jszhang@kernel.org>
+On Thu, Sep 26, 2024 at 04:37:26PM -0500, Rob Herring (Arm) wrote:
+> Enabling dtc interrupt_provider check reveals the example is missing
+> the "interrupt-controller" property as it is a dependency of
+> "#interrupt-cells". However, the PMIC parent node is not an interrupt
+> controller at all, so the "#interrupt-cells" is erroneous.
 > 
-> Add documentation to describe T-HEAD dwmac.
-> 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> [drew: change apb registers from syscon to second reg of gmac node]
-> [drew: rename compatible, add thead rx/tx internal delay properties]
-> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  .../devicetree/bindings/net/snps,dwmac.yaml        |   1 +
->  .../devicetree/bindings/net/thead,th1520-gmac.yaml | 109 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  3 files changed, 111 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> index 4e2ba1bf788c..474ade185033 100644
-> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> @@ -99,6 +99,7 @@ properties:
->          - snps,dwxgmac-2.10
->          - starfive,jh7100-dwmac
->          - starfive,jh7110-dwmac
-> +        - thead,th1520-gmac
->  
->    reg:
->      minItems: 1
-> diff --git a/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml b/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
-> new file mode 100644
-> index 000000000000..1070e891c025
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
-> @@ -0,0 +1,109 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/thead,th1520-gmac.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: T-HEAD TH1520 GMAC Ethernet controller
-> +
-> +maintainers:
-> +  - Drew Fustini <dfustini@tenstorrent.com>
-> +
-> +description: |
-> +  The TH1520 GMAC is described in the TH1520 Peripheral Interface User Manual
-> +  https://git.beagleboard.org/beaglev-ahead/beaglev-ahead/-/tree/main/docs
-> +
-> +  Features include
-> +    - Compliant with IEEE802.3 Specification
-> +    - IEEE 1588-2008 standard for precision networked clock synchronization
-> +    - Supports 10/100/1000Mbps data transfer rate
-> +    - Supports RGMII/MII interface
-> +    - Preamble and start of frame data (SFD) insertion in Transmit path
-> +    - Preamble and SFD deletion in the Receive path
-> +    - Automatic CRC and pad generation options for receive frames
-> +    - MDIO master interface for PHY device configuration and management
-> +
-> +  The GMAC Registers consists of two parts
-> +    - APB registers are used to configure clock frequency/clock enable/clock
-> +      direction/PHY interface type.
-> +    - AHB registers are use to configure GMAC core (DesignWare Core part).
-> +      GMAC core register consists of DMA registers and GMAC registers.
-> +
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +          - thead,th1520-gmac
-> +  required:
-> +    - compatible
-> +
-> +allOf:
-> +  - $ref: snps,dwmac.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - thead,th1520-gmac
-> +      - const: snps,dwmac-3.70a
-> +
-> +  reg:
-> +    items:
-> +      - description: DesignWare GMAC IP core registers
-> +      - description: GMAC APB registers
-> +
-> +  reg-names:
-> +    items:
-> +      - const: dwmac
-> +      - const: apb
-> +
-> +  thead,rx-internal-delay:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      RGMII receive clock delay. The value is used for the delay_ctrl
-> +      field in GMAC_RXCLK_DELAY_CTRL. Units are not specified.
+> v2:
+>  - Drop "#interrupt-cells" rather than add "interrupt-controller"
 
-What do you mean by "unspecified units"? They are always specified,
-hardware does not work randomly, e.g. once uses clock cycles, but next
-time you run it will use picoseconds.
-
-You also miss default (property is not required) and some sort of constraints.
-
-> +
-> +  thead,tx-internal-delay:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      RGMII transmit clock delay. The value is used for the delay_ctrl
-> +      field in GMAC_TXCLK_DELAY_CTRL. Units are not specified.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
