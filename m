@@ -1,84 +1,128 @@
-Return-Path: <linux-kernel+bounces-341780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E20D988613
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:08:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB78C988616
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F7E01F2120E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:08:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 183821C21AAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31AF18D620;
-	Fri, 27 Sep 2024 13:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/z164nN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52013189502
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 13:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8602418D645;
+	Fri, 27 Sep 2024 13:09:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCB6189502;
+	Fri, 27 Sep 2024 13:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727442491; cv=none; b=pCLfg0yr1HB9naK6qK60dfxUXOujVga/Bz5DndKonmjbLGukrRaypW/f1vwPke8jfRpYiqcdqkC3+2xcBTA5n5aB1xjsd6LXFWrdoLLJIxbME5UsErERBlMY+YqdVNJETnspWLqf56nRxIvqh1RdqmNNxwnj0/GryInDeJ4Q69c=
+	t=1727442552; cv=none; b=rKDmliYj8xJ0vrz+hD4nidN7MvlvmMNpgbMP4Oj40JOUlS6WSMv+7VnNiTXCZmYN3vvIXTMX/2aQoXM79My2mVKD5/wr26syw2vXqP6/nQEyLNFdKQg1y6hQ8sxFmWutL9bD5yo+ZNx0aw0AITG9YgBO1BuuPlZOesvo7Ab/qU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727442491; c=relaxed/simple;
-	bh=zZgnnnbsa4z/oy8HsRKQ5k9yoqyB40AEylEuJ+FCItM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ITRNNGquMd46vj0TI9MVF75RLsTw8hdxepi0FpWHjq7rHk+ztqXNU0Opf8orsNlOozqkkTg9Y2cJptWE1MLJC6LiDjsr6q64FINNOVZcnMGvbhnAEzVmsN+d9LDNGqtWkW6ZZTFwABl3hGEUjBgqqRlPPs0Tt8U1wAImSwCHZvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/z164nN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23ADBC4CEC4;
-	Fri, 27 Sep 2024 13:08:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727442490;
-	bh=zZgnnnbsa4z/oy8HsRKQ5k9yoqyB40AEylEuJ+FCItM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j/z164nNQmTIqDRqisxwo8W22kEZ//V3EjOerAGllwLc9otnRuoxH4BrfYeICSEBa
-	 Rrk67ekN+rc4ikY6NTvcio2fkkhaCXZZSna5KEudR/vD0VYCPCD71uTMYxbGOxoA6Z
-	 GxFRL6f69dgUD1JVZytVz3KGWjKPd1kdW52Kfpj4Rn3TvG3TmHSu6sExrF1vS+q5Qn
-	 3ebd9S4/kMcGQPLWEYrgO0U+IVs7stL6TvJO1yO2CNso5UdQue74/zzyA4NtVVrPLv
-	 nYC6EYk+ZElf93qpHFE7+ur9XOeu414eznBO5IWQCaf6bXpizOyXeurWSDEALZV9lo
-	 PZGdzddztbwJQ==
-Date: Fri, 27 Sep 2024 15:08:07 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch v4 03/27] signal: Get rid of resched_timer logic
-Message-ID: <ZvauNx_6ecMrnwCH@localhost.localdomain>
-References: <20240927083900.989915582@linutronix.de>
- <20240927084817.077215973@linutronix.de>
+	s=arc-20240116; t=1727442552; c=relaxed/simple;
+	bh=MY0VguBFD7ubm4DsS0RHYr4xnTyh3+39aOL9ZnKlFzk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iB19Sl/+MB2fIqhYVlr7y0U9uIFNr034R2Pblvsk6MXQ8BaI1pzciy6C3x750j50EZe2nD3/nm1coFI0IHk3n/WNht9yqYq1Tz11xM4tlm4KKdVh2ZfRlAoKITZY+FPSCCTP5zqJPn+w5p4I343M77k9fXTDD4RgaroSzMvXAYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D033D14BF;
+	Fri, 27 Sep 2024 06:09:37 -0700 (PDT)
+Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A9C7F3F587;
+	Fri, 27 Sep 2024 06:09:05 -0700 (PDT)
+Message-ID: <f9b6ae72-5f72-4569-b083-ab62e5d91382@arm.com>
+Date: Fri, 27 Sep 2024 14:09:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] x86: vdso: Introduce asm/vdso/mman.h
+To: Arnd Bergmann <arnd@arndb.de>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-mm@kvack.org
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20240923141943.133551-1-vincenzo.frascino@arm.com>
+ <20240923141943.133551-2-vincenzo.frascino@arm.com>
+ <626baa55-ca84-49ba-9131-c1657e0c0454@csgroup.eu>
+ <fe23745e-a965-4b74-863d-9479fdef239f@app.fastmail.com>
+Content-Language: en-US
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+In-Reply-To: <fe23745e-a965-4b74-863d-9479fdef239f@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240927084817.077215973@linutronix.de>
 
-Le Fri, Sep 27, 2024 at 10:48:42AM +0200, Thomas Gleixner a �crit :
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> There is no reason for handing the *resched pointer argument through
-> several functions just to check whether the signal is related to a self
-> rearming posix timer.
-> 
-> SI_TIMER is only used by the posix timer code and cannot be queued from
-> user space. The only extra check in collect_signal() to verify whether the
-> queued signal is preallocated is not really useful. Some other places
-> already check purely the SI_TIMER type.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+
+On 25/09/2024 22:23, Arnd Bergmann wrote:
+> On Wed, Sep 25, 2024, at 06:51, Christophe Leroy wrote:
+>> Le 23/09/2024 à 16:19, Vincenzo Frascino a écrit :
+>>> @@ -0,0 +1,15 @@
+...
+
+>>
+>> I still can't see the point with that change.
+>>
+>> Today 4 architectures implement getrandom and none of them require that 
+>> indirection. Please leave prot and flags as they are in the code.
+>>
+>> Then this file is totally pointless, VDSO code can include 
+>> uapi/linux/mman.h directly.
+>>
+>> VDSO is userland code, it should be safe to include any UAPI file there.
+> 
+> I think we are hitting an unfortunate corner case in the build
+> system here, based on the way we handle the uapi/ file namespace
+> in the kernel:
+> 
+> include/uapi/linux/mman.h includes three headers: asm/mman.h,
+> asm-generic/hugetlb_encode.h and linux/types.h. Two of these
+> exist in both include/uapi/ and include/, so while building
+> kernel code we end up picking up the non-uapi version which
+> on some architectures includes many other headers.
+> 
+> I agree that moving the contents out of uapi/ into vdso/ namespace
+> is not a solution here because that removes the contents from
+> the installed user headers, but we still need to do something
+> to solve the issue.
+>
+> The easiest workaround I see for this particular file is to
+> move the contents of arch/{arm,arm64,parisc,powerpc,sparc,x86}/\
+> include/asm/mman.h into a different file to ensure that the
+> only existing file is the uapi/ one. Unfortunately this does
+> not help to avoid it regressing again in the future.
+> 
+> To go a little step further I would also move
+> uapi/asm-generic/hugetlb_encode.h to uapi/linux/hugetlb_encode.h
+> or merge it into uapi/linux/mman.h. This file has no business
+> in asm-generic/* since there is only one copy.
+> 
+> After looking at this file for way too long, I somehow
+> ended up with a (completely unrelated) cleanup series that
+> I now posted at
+> https://lore.kernel.org/lkml/20240925210615.2572360-1-arnd@kernel.org/T/#t
+>
+
+I had a look at your proposal and it seems definitely better then mine. Thanks
+Arnd. I am happy to drop my changes and re-post only a small series with
+PAGE_SIZE/MASK required rework.
+
+>      Arnd
+
+-- 
+Regards,
+Vincenzo
 
