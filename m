@@ -1,128 +1,106 @@
-Return-Path: <linux-kernel+bounces-341372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD8D987F24
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:09:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7D4987F26
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 634C71C225E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:09:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C652816B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5541D17C9E7;
-	Fri, 27 Sep 2024 07:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C9817C9E7;
+	Fri, 27 Sep 2024 07:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XED3G62b"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iasi0Lks"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3A96BFC0
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0449D6BFC0;
+	Fri, 27 Sep 2024 07:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727420945; cv=none; b=LUwuNAgtzwstRjJzlVhKP91YQfNyUGurow8MsLvCqtNGznwi1jjy2tlqM66cjyF5xICJ8QsJmOAOGc35wxVvcIoPzkzfyIwbcHx40xG+wa5u8tqpa5Gef8O2o+dskCfj04uG0yMHpln+GnOoIt8Ver/DcmU8Id9mbC6kh09dOYg=
+	t=1727421006; cv=none; b=jh4kDow7LKEJgYmR+vs0koXdqCZZFFulKL9jeibnjaXKrImLh7sOO0XN9Mwl6ysd/S5iEAw2KWHP5wm7und+uPEUKRNM0yW9v25x8+u0VXFmGU87cem0LO1sRncUSu+nxV9H0Oc2NEw+EaP6C2rrHC0ZH9nOlH4WIJth9sy8CwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727420945; c=relaxed/simple;
-	bh=neZ8mjhpDb1zKg9oMc0du6XDU0YSF/yog+PccxNQx10=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=T6K3F9sCEoLz5TbYpWGPzNpNPSJ7N1C/eA9xZ+y/o5vXFKrQmPgRG6JaQfdBN+cgYgyV2NpZfKmGceUtejtgf9/CPNpp2kXhf9ebOUpq+dBcLxCLRrc9hsycMbP0V4GILHWDJC4KQb0c5vPNsF7OzT3EYNTN+EFtW/W61LB8qa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XED3G62b; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727420944; x=1758956944;
-  h=date:from:to:cc:subject:message-id;
-  bh=neZ8mjhpDb1zKg9oMc0du6XDU0YSF/yog+PccxNQx10=;
-  b=XED3G62boFd6eiHAASsq2iAQItc1t+SJ/tyrOkzD4+dInLaDkx9XyTN/
-   K5NZ3mTJbHsIn/CWe25osqNbUXr8l+UH7Ojduv+uP3XbN+R0/8QIuphd3
-   1bhmBFT6jqBbceTMvbXV+wcpWEAW/FYajzgrMRDSdgv/4wwzwSAcIHm0f
-   vuD5ZJyBRaG6WePdWhuwAtgLwddzfwFvnWYuH7VESdNUVwT7F64W/JTJ/
-   FAwVHqazNE5ZwPBQEq0F50U1LeZPxnx115VSZQMWSeUIS0y/h8xBKtW5M
-   HihF0qCgqU6mWv/1JU2nh3S/i/l5roQ569BBflddT2hPNw0daXjBRPF5C
-   w==;
-X-CSE-ConnectionGUID: 2xAMp45NRa+8JfusqmH5wg==
-X-CSE-MsgGUID: sewPeEgQQveHl9dQQDNJjQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26358822"
-X-IronPort-AV: E=Sophos;i="6.11,157,1725346800"; 
-   d="scan'208";a="26358822"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 00:09:03 -0700
-X-CSE-ConnectionGUID: OHdmhwdxRrS0k5S9sRJLgw==
-X-CSE-MsgGUID: ek7S3XJwQZufo2Ql5itK8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,157,1725346800"; 
-   d="scan'208";a="95787954"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 27 Sep 2024 00:09:02 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1su564-000LdZ-1B;
-	Fri, 27 Sep 2024 07:09:00 +0000
-Date: Fri, 27 Sep 2024 15:08:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- d1fb034b75a8a96fcb4bf01a7c0e1421eef833a3
-Message-ID: <202409271505.f1dOit4j-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1727421006; c=relaxed/simple;
+	bh=nrXyo6rSalrxDvu3KKVPOyZfO9gws1fSAJz6QSH0iQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Mjf0iSEfFizJWy0qqZ6W9c1soxSia74cIfLfgyuJOUoa72k4U4Y4/1yQFpsqeW8lsZ2yp78aHS5itDnxuXG9fE7PMQmAb4SPqdFN9ExfmdJA2bLCQJyvsTcng/Sk529vn2QLBgXmAD3WoTjBXb1yUYnZNbi39TUAUudGNZ4nkzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iasi0Lks; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7db54269325so1364001a12.2;
+        Fri, 27 Sep 2024 00:10:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727421004; x=1728025804; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n2SdVCFe+c85mj/Vz3aROtTmPOFVP1yeKdmNkgMPZAg=;
+        b=Iasi0LksDLaasTT9My7649DysZgcCuwArTak6w+Zhc+Ke+7Vc/7WdMDDMoZU8tp9z8
+         3xHRfF4qOb3m5TYMzRUo0oQkV3RrgRi5rOa+tWzd8iyCfAm8k4SwiIBlATY45+ZPnd9i
+         nSJNjK/1hrnrV09t7D0su8XyrM9CCuck0BvFGSzJG/VT/+3xeyegWD6XbU1sd1BYzF3y
+         QYg06C2cvdq6ANfv/iXSDo5BRQlWrls90EQ6P8bjJowxU1pBLYLJXxWs/jZkp8BU3Ow4
+         3x+gQI59bfRljhkL/lW2PGkDTGkdS1MuVSY5A1j5g2Yn36t2PjskDucPd8+EmJzYMoXA
+         Y/AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727421004; x=1728025804;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n2SdVCFe+c85mj/Vz3aROtTmPOFVP1yeKdmNkgMPZAg=;
+        b=A71j6cRRr2cU6TCO/lgYT3hi4Cl4P/iVmFEaNubLiLBTJj3hrtnNthXWpzcl9oiNmo
+         n4lufmNHR80WdXN/7xrbqOw29xkxy7t4o3/A/6XEagR7Qj4QK2LGSODeK+vcI6plj7RQ
+         2h4qnHcgdgrEfVdEo7Q0uXxUXh67vb5PJxk9MqEvm3DTHlfRT30FY0SFLyFZlfsjJmMu
+         p5bbD79fXemwQmZdi6VeGdVvQ5zVdntimRkghJvHuW0T59X5d7k5wp+oNafDA+RZg7CO
+         BakCxkJ7R2aCD9IpOh/ug2pyEzQvQz6waKmG6DdujOVdI5ioVRKErE85O7f2yVLamDZz
+         g4Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWDPfu4qoaLhpeR31AiQYzQpmF8MuyqVnYUKyVN1srnfHwBGc9FviuOTiG5BNAB5YUkHY8lgAMfc9QiGCRIw==@vger.kernel.org, AJvYcCXgNzxd7aiEyjKC9+0snRF3h4+7vt1FEdsUHTDR3hIDCnEfCXLRaxouTCEoIbl2QBoaTxFiFxaTO2oleXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp1EeVeyecWaTatpvzUwBxFjbbXMaf9kUJemKt0EVm8AizDBk2
+	qOuw5TN/9Gk/2qabXh8bddiSAXnUkoGSy1km4zo0uEFSRzSlAjDW
+X-Google-Smtp-Source: AGHT+IGYJhGARPKzg8Aet9OB2o+cMNQ0PO9cT7AF/MR3oO7a9i67dTHoWF3QhT0hYbV2hY24d0cYcg==
+X-Received: by 2002:a05:6a20:c702:b0:1cf:3e99:d7a7 with SMTP id adf61e73a8af0-1d4fa677f59mr3979228637.12.1727421004076;
+        Fri, 27 Sep 2024 00:10:04 -0700 (PDT)
+Received: from tc (c-67-171-216-181.hsd1.or.comcast.net. [67.171.216.181])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db2b2f73sm965187a12.25.2024.09.27.00.10.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 00:10:03 -0700 (PDT)
+Date: Fri, 27 Sep 2024 00:10:02 -0700
+From: Leo Stone <leocstone@gmail.com>
+To: syzbot+d9efec94dcbfa0de1c07@syzkaller.appspotmail.com
+Cc: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, syzkaller-bugs@googlegroups.com, 
+	skhan@linuxfoundation.org, anupnewsmail@gmail.com
+Subject: Re: [syzbot] [overlayfs?] general protection fault in ovl_llseek
+Message-ID: <k53rd76iiguxb6prfmkqfnlfmkjjdzjvzc6uo7eppjc2t4ssdf@2q7pmj7sstml>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: d1fb034b75a8a96fcb4bf01a7c0e1421eef833a3  x86/cpu: Add two Intel CPU model numbers
+Add a check to avoid using an invalid pointer if ovl_open_realfile fails.
 
-elapsed time: 754m
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-configs tested: 36
-configs skipped: 133
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index 2b7a5a3a7a2f..67f75eeb1e51 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -117,7 +117,11 @@ static int ovl_real_fdget_meta(const struct file *file, struct fd *real,
+                struct file *f = ovl_open_realfile(file, &realpath);
+                if (IS_ERR(f))
+                        return PTR_ERR(f);
+-               real->word = (unsigned long)ovl_open_realfile(file, &realpath) | FDPUT_FPUT;
++               f = ovl_open_realfile(file, &realpath);
++               if (IS_ERR(f))
++                       return PTR_ERR(f);
++               real->word = (unsigned long)f;
++               real->word |= FDPUT_FPUT;
+                return 0;
+        }
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
 
-tested configs:
-i386                         allmodconfig    gcc-12
-i386                          allnoconfig    gcc-12
-i386                         allyesconfig    gcc-12
-i386    buildonly-randconfig-001-20240927    clang-18
-i386    buildonly-randconfig-002-20240927    clang-18
-i386    buildonly-randconfig-002-20240927    gcc-12
-i386    buildonly-randconfig-003-20240927    clang-18
-i386    buildonly-randconfig-004-20240927    clang-18
-i386    buildonly-randconfig-005-20240927    clang-18
-i386    buildonly-randconfig-006-20240927    clang-18
-i386    buildonly-randconfig-006-20240927    gcc-12
-i386                            defconfig    clang-18
-i386              randconfig-001-20240927    clang-18
-i386              randconfig-002-20240927    clang-18
-i386              randconfig-003-20240927    clang-18
-i386              randconfig-004-20240927    clang-18
-i386              randconfig-004-20240927    gcc-12
-i386              randconfig-005-20240927    clang-18
-i386              randconfig-006-20240927    clang-18
-i386              randconfig-011-20240927    clang-18
-i386              randconfig-011-20240927    gcc-12
-i386              randconfig-012-20240927    clang-18
-i386              randconfig-013-20240927    clang-18
-i386              randconfig-013-20240927    gcc-12
-i386              randconfig-014-20240927    clang-18
-i386              randconfig-014-20240927    gcc-12
-i386              randconfig-015-20240927    clang-18
-i386              randconfig-015-20240927    gcc-11
-i386              randconfig-016-20240927    clang-18
-x86_64                        allnoconfig    clang-18
-x86_64                       allyesconfig    clang-18
-x86_64                          defconfig    gcc-11
-x86_64                              kexec    clang-18
-x86_64                              kexec    gcc-12
-x86_64                           rhel-8.3    gcc-12
-x86_64                      rhel-8.3-rust    clang-18
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
