@@ -1,183 +1,134 @@
-Return-Path: <linux-kernel+bounces-341645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 336FB9882F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:00:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596A89882FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6AF52824F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:00:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 047571F224A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC62185E7A;
-	Fri, 27 Sep 2024 11:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05692188CA8;
+	Fri, 27 Sep 2024 11:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Sa0op7Dr";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HaO1PFwd"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujwwUHcm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195E2186E29;
-	Fri, 27 Sep 2024 11:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601701741C6;
+	Fri, 27 Sep 2024 11:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727434810; cv=none; b=b82/j6oyl2marpwpKisQHb+d4FYqo7RBD997pt0Bd+6PvW3rtoCN44yM/K1FL7/GWVEXGvVCvJBkhkupSjk1/ltQ8SEfIYKelcdSSyWXmRYX9WQ31W9EHa8wD97IR67OCWF+DCi8tAizDTP1na05ZZEbex9p6yFxQtCoahpM5Hg=
+	t=1727434961; cv=none; b=eCMpTx1aNHgAabt3/548qBk+CTD/PRCipnKMIBW7Eb5oOzUHIHQsrNsF/0R4mElQBHvJC+HgOBoC7TGVTXHH3P1irMub1HCXJxoFTFM7Cd93zKAZO9mhYUHsUOzUCSvpwviebGMYV1HjZAKTN5oRKt+p3YNQiKz0WygVL6s64JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727434810; c=relaxed/simple;
-	bh=lcNikPtKAxq/dN0ibeXX8gwGwA4AaxcYAE0tjk+fG1c=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=gsgnIv/A0HUhZEjDkXCz2b6w4LOOO4hiuewFcUGJ+nlHyY1hyVvjRaJxAKeKVHnp7Sf/pdrxukw0SarlxdC9pYCCw80JxTyeN6WnmRCH67W8qwBMJ6iU/zwmFDH6b8+BZr1JyspDrE7I76Lly0KDddPZ1pyLS8tsEOQkM6pA0OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Sa0op7Dr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HaO1PFwd; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 18FDF1380712;
-	Fri, 27 Sep 2024 07:00:07 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 27 Sep 2024 07:00:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727434807;
-	 x=1727521207; bh=pM2APWPqWSep6TrEUhdTADKW01Hs8FHzTKdjsf1tTCg=; b=
-	Sa0op7Dr+YKcZT4oSmDjVDjyMXp++/lhg9SG1pk3fix1TZsDR1PQWsO3JOSQ7ZTE
-	TG+bn6JASXdbNtP2wemJRrtSYzFtLA0j+/QrA4V/JcTksSDprGBDgx7jJdcAvAF5
-	bvMbk+FESfTZzdv2Wl6E0oUr1i2mpmwCb0/AmMhqu57jWG48qSo5cjfOiXdO9Oqp
-	MRpgpIrqaDx/SLmVkP+nX6NwQ/EfrptteLz2XeTOgt7ANclRlZVb8oiRlzJwcf+g
-	z9Qtq0qarFNckTLUBu0a8kFxg3KwpIrFH6MTfFXfVmNCTq5vh08Ehlwe/npM5eB5
-	XvDNY1hp7zYHB0A/0om7MQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727434807; x=
-	1727521207; bh=pM2APWPqWSep6TrEUhdTADKW01Hs8FHzTKdjsf1tTCg=; b=H
-	aO1PFwdJbcwb/BehiJ5iwCUUWbl9Htv1oPV7KPmK+sSA4EgddZMkdtohxsYgpu5O
-	DR+Q0Dz2HG67E3K5tLab2uGGg3gq2PmzXu1ebKzBHtmHORuXSJrmrwenqajM5gRk
-	Ee9DeYsfwljro3NMVgJoROOsELCctNMwdDLI+Y2fH4DqGcThMKi6b0M49G4IkqpG
-	Q0MKDbXwloEJ2ic68aHg5sTn9RSQvrrz2LuCFxoYvtFmnELPcYBzkmPU0ggpv+gW
-	eAyZCfBQOKlFMIqE5TtmnVQkuLwbqPyZ3nbNQtHvRz3DD0jsGbkt0QrvvHLhm+kU
-	m8lLxabveKBu30AwKHZUw==
-X-ME-Sender: <xms:NpD2ZqeoXQiUdMM4N8bET5a2qBVYW_jNcmmobJya1kyF0ZzAQheh6g>
-    <xme:NpD2ZkP1UElTwyTzTPb6rPqh-VwWjpMkNUMzzD8Axor6jBICpWo1SYJkPPbd03moo
-    E_w8vagQGjFgCEvsY8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtledgfeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddv
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrg
-    hssegrrhhmrdgtohhmpdhrtghpthhtohepjhhvvghtthgvrheskhgrlhhrrgihihhntgdr
-    tghomhdprhgtphhtthhopeihshhiohhnnhgvrghusehkrghlrhgrhihinhgtrdgtohhmpd
-    hrtghpthhtoheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehguhhorhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhn
-    rdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrd
-    hinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhoohhnghgrrhgthheslhhishht
-    shdrlhhinhhugidruggvvh
-X-ME-Proxy: <xmx:NpD2Zrj39h4VXYFaMgI8sVlcLpAxmyDOujVyG1ZgjUZ3BT1CGw1SlQ>
-    <xmx:NpD2Zn81OkRaBTLxkF_TIr7PeiNMt_LEThqUoLdGK4t0gQ1yr3D7eg>
-    <xmx:NpD2ZmulMAj_Gpr4hsFXlDcuEbDVjnHZrWLGKMLnPdfXSbCQskLxvw>
-    <xmx:NpD2ZuEs3_rbzNrhVBC-fy7VEXLVJNrvXFvYi3hodc8RvZeUmHKIHg>
-    <xmx:N5D2ZuE5jmWpEuas5KCvyuGrRCcFCPV7idgmVmfWNgU5dFBTyKnkVfC5>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 661A92220071; Fri, 27 Sep 2024 07:00:06 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727434961; c=relaxed/simple;
+	bh=4UPUuX+Trl4Y6sfymx/iQndzU9LD0gq1bEPGXiBZtFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k1ZV7Uoci6fNUjJkDlhHM6ob8OvcE7Zt96v9dYHgVtCXBsI/wIzK+V5QIAJ+uOK3febH6lJIq84p7U+blukOXalh+RWC1WldzZTzGYs9w+BRH8oDSSjOcoXtn160S2n57Ou9/pmjZtsp9DX6E+l/W9XYsz6AnAPRnvTFJ+m7Dyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujwwUHcm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA56EC4CEC4;
+	Fri, 27 Sep 2024 11:02:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727434961;
+	bh=4UPUuX+Trl4Y6sfymx/iQndzU9LD0gq1bEPGXiBZtFc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ujwwUHcmPp97C/xhQjjwj/gz60+VNaaokKw8sZYPYQdyUINq5UXPPCHZ1r66xELKG
+	 5zYbOOwUYsEb4AWdx1OPwsOOnDxuxbZjxvkwuSSDRa03ocAKuqNM1LqQrwSP+kq1AB
+	 xTT82tILsrGbg2O1d3mB5xTDEzhHXzNG9roywwkZHTiRrxQcGRvG8LRDc5kdl0cLN8
+	 UQaOzN8XNEXWy4K4+WhU1vjPzW0tFxybZBIdMjsEsS1RWCCDzVLQc0h56JgGluz2wL
+	 yaraiSEoQMXGshQymdd1HHUDmIkNL9uYkHxT4Zc4hs4qx4IpvbaO3p13qgpkEGKx72
+	 Yff/re53DwQEA==
+Date: Fri, 27 Sep 2024 12:02:36 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, maxime.chevallier@bootlin.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Vladimir Oltean <vladimir.oltean@nxp.com>
+Subject: Re: [PATCH net v5] net: systemport: Add error pointer checks in
+ bcm_sysport_map_queues() and bcm_sysport_unmap_queues()
+Message-ID: <20240927110236.GK4029621@kernel.org>
+References: <20240926160513.7252-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 27 Sep 2024 10:59:43 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Julian Vetter" <jvetter@kalrayinc.com>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
- guoren <guoren@kernel.org>, "Huacai Chen" <chenhuacai@kernel.org>,
- "WANG Xuerui" <kernel@xen0n.name>,
- "Andrew Morton" <akpm@linux-foundation.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- loongarch@lists.linux.dev, "Yann Sionneau" <ysionneau@kalrayinc.com>
-Message-Id: <7100d48e-2b11-4d7a-8c5d-48900e8d4916@app.fastmail.com>
-In-Reply-To: <b9f3f692-d4fa-473b-9bdf-4ea73b22ccde@kalrayinc.com>
-References: <20240925132420.821473-1-jvetter@kalrayinc.com>
- <20240925132420.821473-2-jvetter@kalrayinc.com>
- <f47e66f9-ec20-4e75-b88f-d412339e797d@app.fastmail.com>
- <b9f3f692-d4fa-473b-9bdf-4ea73b22ccde@kalrayinc.com>
-Subject: Re: [PATCH v6 1/5] Consolidate __memcpy_{to,from}io and __memset_io into
- iomap_copy.c
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926160513.7252-1-kdipendra88@gmail.com>
 
-On Fri, Sep 27, 2024, at 08:19, Julian Vetter wrote:
-> On 26.09.24 09:14, Arnd Bergmann wrote:
->>> +#ifndef __memcpy_fromio
->>> +void __memcpy_fromio(void *to, const volatile void __iomem *from,
->>> size_t count);
->>> +#endif
->>> +
->>> +#ifndef __memcpy_toio
->>> +void __memcpy_toio(volatile void __iomem *to, const void *from, size_t
->>> count);
->>> +#endif
->>> +
->>> +#ifndef __memset_io
->>> +void __memset_io(volatile void __iomem *dst, int c, size_t count);
->>> +#endif
->> 
->> I'm not entirely sure about the purpose of the #ifdef here, since
->> nothing ever overrides the double-underscore versions, both before
->> and after your patches.
->> 
->> Unless I'm missing something here, I think a more logical
->> sequence would be:
->> 
->> 1. add the definitions in this file without the underscores,
->
-> by: "...in this file..." you mean the 'lib/iomap_copy.c' file, right? 
++ Vladimir
 
-Yes
+On Thu, Sep 26, 2024 at 04:05:12PM +0000, Dipendra Khadka wrote:
+> Add error pointer checks in bcm_sysport_map_queues() and
+> bcm_sysport_unmap_queues() after calling dsa_port_from_netdev().
+> 
+> Fixes: 1593cd40d785 ("net: systemport: use standard netdevice notifier to detect DSA presence")
+> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
 
-> But what if an architecture does not select 'CONFIG_HAS_IOMEM'. Then 
-> 'iomap_copy.c' is not compiled and we don't have an implementation, 
-> right?
-> I tried to compile with ARCH=um, with some MTD chip driver, like 
-> the robot did and it indeed fails, because um has 'NO_IOMEM' set. and 
-> the driver uses memcpy_fromio. I mean it's a strange combination, 
-> because apparently we try to use IO memory? Is this an invalid 
-> combination? But shouldn't the driver then 'depends on HAS_IOMEM'?
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Yes, I think that would be the best way to do it. Alternatively,
-arch/um could provide a dummy implementation of these.
-
->> 3. convert the other architectures, removing both the
->>     implementations and the prototypes.
->> 
->
-> I have removed the prototypes and have aligned the function arguments in 
-> m68k, alpha, parisc, and sh, which all have their own implementation, 
-> but had slightly different function arguments.
-
-Sorry for being unclear, I meant only the architectures that
-you are already touching.
-
-> Btw, I have not removed 
-> their implementations because some of them seem to have optimized 
-> implementations (e.g., alpha and m68k), that I didn't want to touch. But 
-> you're right others (e.g., sh) just do byte wise accesses and have a 
-> comment "This needs to be optimized." Maybe I should remove these and 
-> let them use the new version?!
-
-Ideally we should end up with only one copy, but I'd leave the
-rest for a future cleanup. In particular, alpha probably still
-needs a custom function.
-
-      Arnd
+> ---
+> v5: 
+>  -Removed extra parentheses
+> v4: https://lore.kernel.org/all/20240925152927.4579-1-kdipendra88@gmail.com/
+>  - Removed wrong and used correct Fixes: tag
+> v3: https://lore.kernel.org/all/20240924185634.2358-1-kdipendra88@gmail.com/
+>  - Updated patch subject
+>  - Updated patch description
+>  - Added Fixes: tags
+>  - Fixed typo from PRT_ERR to PTR_ERR
+>  - Error is checked just after  assignment
+> v2: https://lore.kernel.org/all/20240923053900.1310-1-kdipendra88@gmail.com/
+>  - Change the subject of the patch to net
+> v1: https://lore.kernel.org/all/20240922181739.50056-1-kdipendra88@gmail.com/
+>  drivers/net/ethernet/broadcom/bcmsysport.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
+> index c9faa8540859..a7ad829f11d4 100644
+> --- a/drivers/net/ethernet/broadcom/bcmsysport.c
+> +++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+> @@ -2331,11 +2331,15 @@ static const struct net_device_ops bcm_sysport_netdev_ops = {
+>  static int bcm_sysport_map_queues(struct net_device *dev,
+>  				  struct net_device *slave_dev)
+>  {
+> -	struct dsa_port *dp = dsa_port_from_netdev(slave_dev);
+>  	struct bcm_sysport_priv *priv = netdev_priv(dev);
+>  	struct bcm_sysport_tx_ring *ring;
+>  	unsigned int num_tx_queues;
+>  	unsigned int q, qp, port;
+> +	struct dsa_port *dp;
+> +
+> +	dp = dsa_port_from_netdev(slave_dev);
+> +	if (IS_ERR(dp))
+> +		return PTR_ERR(dp);
+>  
+>  	/* We can't be setting up queue inspection for non directly attached
+>  	 * switches
+> @@ -2386,11 +2390,15 @@ static int bcm_sysport_map_queues(struct net_device *dev,
+>  static int bcm_sysport_unmap_queues(struct net_device *dev,
+>  				    struct net_device *slave_dev)
+>  {
+> -	struct dsa_port *dp = dsa_port_from_netdev(slave_dev);
+>  	struct bcm_sysport_priv *priv = netdev_priv(dev);
+>  	struct bcm_sysport_tx_ring *ring;
+>  	unsigned int num_tx_queues;
+>  	unsigned int q, qp, port;
+> +	struct dsa_port *dp;
+> +
+> +	dp = dsa_port_from_netdev(slave_dev);
+> +	if (IS_ERR(dp))
+> +		return PTR_ERR(dp);
+>  
+>  	port = dp->index;
+>  
+> -- 
+> 2.43.0
+> 
 
