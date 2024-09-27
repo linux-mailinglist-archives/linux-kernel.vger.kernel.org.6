@@ -1,130 +1,138 @@
-Return-Path: <linux-kernel+bounces-341594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C6198822E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:03:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A57398823A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4157A1F23687
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:03:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BE771F22C45
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686081BC063;
-	Fri, 27 Sep 2024 10:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WxQPytC6"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6421BC075;
+	Fri, 27 Sep 2024 10:08:08 +0000 (UTC)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BBB1BD01D
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 10:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7AD185B7C;
+	Fri, 27 Sep 2024 10:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727431370; cv=none; b=ctwHbo4MyZFJxTNCS7fMyLMmSrLsITzSCGXqOSKaFFjcBl1g9EF267ifdCb0rh/ixBly4mtzaxaQCJzRCK4LYNQCzSIhjN9lrgVgUs6amWc8fAEIJzaolSwkwMXz18V8suUsFoITnBuSmOoZoUnCiQ2qbWGIJJDnMEfQB8KVW54=
+	t=1727431687; cv=none; b=aHARCXSjFKTlv7KYHmhonSwAxS2i/E0QKTeC5PZd/TMXXPSX1lI/BWaagCc5DHkdRmm53wLCR/u6XNEqL8B3kFKb1db+/cQEJ/1M1HUT3yUJH9yVXG0CU2v2SHLlKOL387qlxBL10P2QPB42Nmej28kOsnWWq6QMkOG9dMrabhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727431370; c=relaxed/simple;
-	bh=uw0K97JV9fivxdnVN2cUQwyp6nbgfNRKN3h76jkLFYY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lCULFzq55HSBWsGcK/j9qQI+CgS/GyQiJwXb+19E64Ep6wjoOHhZ7AuqL7kpoAxEVSDJn0sMUIUa6alanYDYKIfwJpEWRy7DHcRIXSLhLjzMqmWcaTRc84DnU+xHiOGbp/l6MRvLiA/1kjsx3+8LakmIrHWpt/VQAe+0mFWNsL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WxQPytC6; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6cb29ff33c5so15746256d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 03:02:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727431368; x=1728036168; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mSjw1khDQimJSSBzxeMp5r4khGbQqGrktSmSipAyKGM=;
-        b=WxQPytC6OZ04vlGKZs5Eg8aZM1+av+9SLcNLIeygjg1vxW5uOCmI/2ZvUDtUr/6Zcc
-         NM9ql9qHlbmWUxxFRnGnhP71ses9FDo5Cqi6fdHGWN5CR6vM04i5aVlLjiZmxk4ZaQmF
-         O9hbm/zC4b4QeqRFoEVRs92NUW2JEmeTY4gN4=
+	s=arc-20240116; t=1727431687; c=relaxed/simple;
+	bh=S2joWCU6hUCjgmqEoFTt2ye75YB6Gh+l7UXQjvfV4Ck=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YgDvUuRM5cKA9Suhe6fGnh5QiSFzCLnCiLjCIXhdAxUlyMRuPGl1MOtxnwucDwF1Y95o2VEoLz/hvau7zWtVWip1bemEe9RbnCH2mnGq+9S4bV8rkY8bt8T45VnnLYJXVmU2DTUoceB2DaQQ+j7Ly/eskJ81kHwkbXiqqfYFC/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e25d6342837so1180744276.1;
+        Fri, 27 Sep 2024 03:08:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727431368; x=1728036168;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727431684; x=1728036484;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mSjw1khDQimJSSBzxeMp5r4khGbQqGrktSmSipAyKGM=;
-        b=Kl08Ko4ZjetszP+SUtJ+Sl2jlubuTep7vPnsEfnp2LASL98yF3dA9WY0XATvR16+jZ
-         IFUK30TzmyAdLkW/WyIUEykjRNvVvaJEi2xiFR71Td+tijKTz0281aS+Ddnt2jvFI2No
-         yp+DRDjQ4BmikqQM2fMDrSY+ueAGUrxeDjFTsqf97P3Uy4R42uRA82Vmm2L3IBy/lv2r
-         18w5gTJKYgt58YAb5ksg53GHHesw1I3GWo84IuaPkqbV8rR6B/KSTrVtb/c0s2YLOObB
-         WLOeip10KUGoKz4NheLUTbiLjZMRGFj/EX5g5JADKPy9UK6LYe/M4cc2QIj66G0KDIan
-         SPTg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/pELBHW+tUpXbTsSalBjoxA9781lhSdmImNGwbkCY9mHM8k0S8QiG+5xbG++BfqKnwXzNLhx6uxS9hbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzaxsr3nNvhjyyXMIIlB1Ao1EmyG41uVX/Ygid/klpnRpLxps/q
-	Hpzn/zqddFwLrHgcruG9FoeHkKuO05wl5rff1S78JQxyUm8ypw53pwA/T9/z6w==
-X-Google-Smtp-Source: AGHT+IGmj2VIw5fwcR7lMfdlhGfeKlUZ5ZB5sGNgsSChCVQ89YCG0Pdjs36ucyYbgh9Wu38SUEf4+Q==
-X-Received: by 2002:a05:6214:3d8a:b0:6c5:3123:4efd with SMTP id 6a1803df08f44-6cb3b5b663bmr52445036d6.1.1727431367752;
-        Fri, 27 Sep 2024 03:02:47 -0700 (PDT)
-Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45c9f353f08sm6341091cf.94.2024.09.27.03.02.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 03:02:46 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 27 Sep 2024 10:02:34 +0000
-Subject: [PATCH v2 3/3] media: atomisp: Use max() macros
+        bh=L9jFqo+XfSXsqB7EAnslsl8zonehgOa3+GNAG8VGEt4=;
+        b=HGy+/CzGSOHCEz/aJmI9w36kNfcAgtDTdw/you4lsK9tHyu9lhkkOIqu77OvfPXeWU
+         PQoC7teaWsh/d8g2DjEBztz7W9F9RQ+jOqcYnK8ossZJbDLMLeB0dB6CQ09RfKGGynbh
+         dRJB5jgkHMXiZSe7ui6Pybk4uea7T1AO5k/hlLEwdlcxgg2JLeyVvPvHBQP68Rfwjgyn
+         26ZazSUUOssWe5FfoVqtau62peh0joIWDcgZWv4Urky+AufYtBlH0MmOKdY6eGck63DY
+         oACtTzI/Xb1/MK8o4BnbD6K7aT78hRuPGI5hVizoi//EKEbeHswKZgwX6vRZaL5tFKTM
+         KwEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRwzqWZ5Xlh4Ftpuv82eBzQRBrjd0DMs64a6xfLPkdC2ewfi4gF1OM3PgMj5ZXtiAwc2Z9BlE8H2CmHNyJxvcywRY=@vger.kernel.org, AJvYcCXRpPvjc7h3fQqv096Sy7esovDUA0iD9RG+tTn7QMEf9YazwTtnM0Wq5tpkDU+TMkT0+IkYTMi0FnkE@vger.kernel.org, AJvYcCXaXm9l6bLc36/bIcIbcYQpSExgTzSnDP3wTnYBuuXQhehw7BMrbag0wnEa8qGinlpkAqjB4Oe8kJpc908J@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQDlaaFeD0d231gPQEQtdZ/a4Dy4eMzeZlUDkVYExZdwi1FIgc
+	B3x9Jivr4UuunAOJXh8NgTZQwYg4Nk+WAG00ir+rPWFurvlGlcgzEwtKPcqx
+X-Google-Smtp-Source: AGHT+IEb6jEQVnZMR889ipxa9PqwLjKHys1haNjKcWik2FAtT1yARLt5iCaqj9YXEyrtulqmmZPyXw==
+X-Received: by 2002:a05:6902:1027:b0:e20:2ad3:570e with SMTP id 3f1490d57ef6-e2604b7d6d8mr1575496276.40.1727431684479;
+        Fri, 27 Sep 2024 03:08:04 -0700 (PDT)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e25e3ef8ef5sm369281276.11.2024.09.27.03.08.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Sep 2024 03:08:04 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6c3f1939d12so17087637b3.2;
+        Fri, 27 Sep 2024 03:08:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUk0l+ArMQ4MkZi/4/J8mHLxasMOi4OPulRbl0aAWXBk5WDx0YH7s6fmcRO/XHca6Y2GqJXVlbhXsnUvcpc@vger.kernel.org, AJvYcCWIguPQVw6o2p27fxUQkRwKjZ/pRf8ImQTL3PtjYnmLKdqNzbg0aRyQL37xKyphGITq/zWlbVNmMyZHah1VzO8xqww=@vger.kernel.org, AJvYcCWyepAwCH73ZZ/6xmbaxOBcgcVMbHiTdyQTn9CNRSmReyuw0psnUm8eljZgv0WXwf1aWIvA2WH4ymx2@vger.kernel.org
+X-Received: by 2002:a05:690c:60c5:b0:6de:1e2:d66a with SMTP id
+ 00721157ae682-6e2474f4adamr19241267b3.2.1727431683946; Fri, 27 Sep 2024
+ 03:08:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240927-cocci-6-12-v2-3-1c6ad931959b@chromium.org>
-References: <20240927-cocci-6-12-v2-0-1c6ad931959b@chromium.org>
-In-Reply-To: <20240927-cocci-6-12-v2-0-1c6ad931959b@chromium.org>
-To: Benoit Parrot <bparrot@ti.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-staging@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+References: <20240926180903.479895-1-sean.anderson@linux.dev> <cb716925-f6c0-4a00-8cfd-b30aed132fd1@linux.dev>
+In-Reply-To: <cb716925-f6c0-4a00-8cfd-b30aed132fd1@linux.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 27 Sep 2024 12:07:50 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUmf=BYrVWGDp4kjLGK=66HSMJbHuMvne-xGLkTYnGv2g@mail.gmail.com>
+Message-ID: <CAMuHMdUmf=BYrVWGDp4kjLGK=66HSMJbHuMvne-xGLkTYnGv2g@mail.gmail.com>
+Subject: Re: [PATCH 0/2] arm64: dts: renesas: Add SD/OE pin properties
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: linux-arm-kernel@lists.infradead.org, Adam Ford <aford173@gmail.com>, 
+	Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>, 
+	Biju Das <biju.das@bp.renesas.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The max() macro produce nicer code and also fixes the following cocci
-errors:
+Hi Sean,
 
-drivers/staging/media/atomisp/pci/sh_css_frac.h:40:17-18: WARNING opportunity for max()
-drivers/staging/media/atomisp/pci/sh_css_frac.h:50:17-18: WARNING opportunity for max()
+On Thu, Sep 26, 2024 at 8:24=E2=80=AFPM Sean Anderson <sean.anderson@linux.=
+dev> wrote:
+> On 9/26/24 14:09, Sean Anderson wrote:
+> > Linux can configure almost every part of this clock generator without
+> > relying on the OTP settings. However, the correct configuration for the
+> > SD/OE pin cannot be determined automatically. Therefore, add the
+> > appropriate properties to configure this pin.
+> >
+> > I have CC'd some people who appear to have access to the following
+> > boards which use the versaclock5:
+> >
+> > - Salvator-X
+> > - HiHope RZ/G2[MN] Main Board
+> > - Beacon Embedded Works RZ/G2N Development Kit
+> >
+> > as I could not find schematics for these boards. You can help me out by
+> > (pick one):
+> >
+> > - Run the following command and send me the output:
+> >
+> >     $ grep 10: /sys/kernel/debug/regmap/*-006a/registers
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/staging/media/atomisp/pci/sh_css_frac.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On Salvator-X (5p49v5923) and ULCB (5p49v5925): 82
+On Salvator-XS (5p49v6901): 8a
 
-diff --git a/drivers/staging/media/atomisp/pci/sh_css_frac.h b/drivers/staging/media/atomisp/pci/sh_css_frac.h
-index 8ba65161f7a9..3191d2858f59 100644
---- a/drivers/staging/media/atomisp/pci/sh_css_frac.h
-+++ b/drivers/staging/media/atomisp/pci/sh_css_frac.h
-@@ -37,7 +37,8 @@ static inline int sDIGIT_FITTING(int v, int a, int b)
- 	int fit_shift = sFRACTION_BITS_FITTING(a) - b;
- 
- 	v >>= sSHIFT;
--	v >>= fit_shift > 0 ? fit_shift : 0;
-+	if (fit_shift > 0)
-+		v >>= fit_shift;
- 
- 	return clamp_t(int, v, sISP_VAL_MIN, sISP_VAL_MAX);
- }
-@@ -47,7 +48,8 @@ static inline unsigned int uDIGIT_FITTING(unsigned int v, int a, int b)
- 	int fit_shift = uFRACTION_BITS_FITTING(a) - b;
- 
- 	v >>= uSHIFT;
--	v >>= fit_shift > 0 ? fit_shift : 0;
-+	if (fit_shift > 0)
-+		v >>= fit_shift;
- 
- 	return clamp_t(unsigned int, v, uISP_VAL_MIN, uISP_VAL_MAX);
- }
+> > - Inspect (or send me) the schematic to determine the state of the SD/O=
+E
+> >   pin during normal operation.
+> >
+> > My suspicion is that all of these boards use the same configuration
+> > (SD/OE pin tied high) owing to their common design heritage. Thanks in
+> > advance.
 
--- 
-2.46.1.824.gd892dcdcdd-goog
+According to the schematics, the SD/OE pin is indeed strapped high on
+all of the Salvator-X(S), ULCB, HiHope, and Renesom base and SoM boards.
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
