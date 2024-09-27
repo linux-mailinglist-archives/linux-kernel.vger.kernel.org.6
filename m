@@ -1,182 +1,251 @@
-Return-Path: <linux-kernel+bounces-341828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A6D09886B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:14:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E419988682
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E129D1F221CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:14:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F511F24379
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE5A78276;
-	Fri, 27 Sep 2024 14:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD641BF316;
+	Fri, 27 Sep 2024 13:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nS56KZqJ"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="arewJ1Sp"
+Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF3D18B1A
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727446438; cv=none; b=sKmYkCt9P6LqXs4q/5ugBrHiL8FSyV+yBls5oWdJgiGP30HdWjcqzYFhnGGKTvmJb4nQzG7hyNenxiCcSBOtMU+dDYqzUSqjVxrCaoOHxhlhmCV82uwI7GJmMxbG4k4Yb2+3k07SXJPItGwTWTCnzjHdTzKRtp28PPdTnGtNFuw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727446438; c=relaxed/simple;
-	bh=E+FCtvX5tiAUXaQC8bDj+CjwksAplbtuAStfl9vHjvA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ayPahnYjjCDDLD9knEmfiCShJHXquboUW8fkKdc5hj+I2VVcIStBup0kIjePv9J3TwQUVhlMXhH7MVII2R97XilxjgdhTYdmt1QC0P+6HfZnj2OKDHozOSJ21rRkvGLMGgr9F+AsBcKQ1AB804x2uh0Utl4RBcJZcWggUbuRlhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nS56KZqJ; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e25cf4e97aaso3065368276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:13:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727446436; x=1728051236; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oxHmrqFeJJMvL0LXe9u6VdmgiJC7okRqJH0b/bUsNDM=;
-        b=nS56KZqJheHcYeB1MSWekLxH4U9E7TUxYGjM6r63K7IGiNuFI/z7jyQZxH2Tmvhs0L
-         0JscEPHmY/dH1X+/rPTL6CcmumbcdkSz+T9Z6IKwjf1CfMJmIsYfECGrF/Ol3PiI8uWh
-         GvrTkIbzqeqsLmBoT+DeJY2mea5LBktWoNjea2dKYT0OYbi8kiZ6zIsGyRNiF/gCBvKx
-         XK5nsGv8GokoWi9fBQ8cHXuNZf6Ue4LrWsoVA6zOwgzl1ZqOjtGVFOcj9hQamtlRBxGx
-         PVrRwFSGEUMltk2ncpC1/YA2EQwUXsFMQdoAbqgH3XWh+zDK6iDDu8uPaTyNB+JjKieU
-         sBhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727446436; x=1728051236;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oxHmrqFeJJMvL0LXe9u6VdmgiJC7okRqJH0b/bUsNDM=;
-        b=s1bq9vyo2CR+QKPpK3C5wP0y8wOYrSYyx6jKHnvOXQ4nIH4qMn1FalhHP6cOSeqrN+
-         /ZxzeV4WuZmPsAGg0DNzpmSc/CzTzsx5X5i4s1kR+UWaJMDr+AP2dfvATx0dojGxIIj3
-         QJigopmIujmfbsXyLxuG+SNa3uJLctIogF+xYok6O7kiLvIS/dju/zraHXdhlk2pZ+Xb
-         6tqMISDSRziW9QtMOiaAT8GJp/onb13D/Io4B2hmIUlNIE8HNgoFdqbRs8J3ijFSPdCe
-         CCc1KF/ygGZK7yFbJNNrUCwzURWNPmhyzG8nS7looGkFYyaPdxJsDUDDXyla0H3p1UOd
-         hkrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVh0aKD+x/z+kTouWL0gIf38sE/vqp6QVQOeu/A0XvbQLqD1Rw7ON6tVYLHYV4ge8ZfRpkaS/RS+Ps0IAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfRFXSTPIKzglNzxXGyTdD/tukk1pGrL0i1t3RyoYkrsb8kBmJ
-	pWxf8Fdb6nSvk/ZCPbhCRsDoH5aT+zmMKVqh8x7iFHwV00YWJJsfgBwjKvjMRJcpk7Sa80DAmyv
-	CGA==
-X-Google-Smtp-Source: AGHT+IEnEGSzHCyg8dQbKDMJQILv716YQPrF4czXU/rTygWR1FZcg+eAhEhlInCTmo02d/T8LRkvFnOJR68=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a5b:1c2:0:b0:e25:d596:4847 with SMTP id
- 3f1490d57ef6-e2604c8e14cmr25663276.6.1727446435931; Fri, 27 Sep 2024 07:13:55
- -0700 (PDT)
-Date: Fri, 27 Sep 2024 07:13:54 -0700
-In-Reply-To: <66f4164d.050a0220.211276.0032.GAE@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7E81411E0;
+	Fri, 27 Sep 2024 13:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727444864; cv=fail; b=V1CYC5Un5rZgM4Zja8vCqnc5KQyt6QaMCjUZ3AaDlcZYld6Gti5FKAQrRqW2fMZhsZ3vPKbJVQziOQGpA0IND7E2xr2dgNsT8IIyKJEfepYlv4k3fX7yBlKPCwAoNDFbQli+d+JlOkhEn2aePJHp1ijSi2Kr/8wqylNpw2lFMg8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727444864; c=relaxed/simple;
+	bh=d5IqXDck2rUmJwU/vFwsS2BJHZPXxZQibDqhfU08RH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CHXqGiUBDOgvi9u497ruyZey+fPqzfbhN2DhNegBrGHEPKZoc8I371iLV6stu362XVp7tefxyQD7g+fYXu4Jqkr0MNaUpSMxrA69uWcAYfklP7xjy1IYDIAobNfC4nOyaLK1JtAPcBUHWTk1dk1LXBeAZhOQGNT8Dp3whCm0FmA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=arewJ1Sp; arc=fail smtp.client-ip=185.183.30.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+Received: from pps.filterd (m0209319.ppops.net [127.0.0.1])
+	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R9Kiud016333;
+	Fri, 27 Sep 2024 13:47:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=S1; bh=l6Po1c/leKWen0gLTunQbG9plwgpIgx
+	tCvWeQM4wstA=; b=arewJ1SpF6cDQo/6rKa8efNmXgczKOGRlOgYRKcxMCBZLSI
+	0jVkH8YLOIHPj8h6+siNyZZFTlvV2xExvV4SEtmxHxwOTpdNJKh9jeYBhNZIYJWb
+	kPU7eMMiL/EC+hOT3B2/v0NKs3ny9c+QZGZG3+s0bp34+8UD7d/LYshMik2u9Y6d
+	k4QeMXq4neO37OTdFVpi9EPQo5y+s6kwsPSIh4SA2PojzX2BCSaOaUciQaiGgNSN
+	hLzi7h2WP53hGulPf7wHIwPqTDqgf6EX8RqxFxJsNiHJjPjb/wYrkxelaxJqLiSQ
+	QDEaKs3AW2GW1L508SkPn5xIOnd9WA/MrL5kT6g==
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2176.outbound.protection.outlook.com [104.47.55.176])
+	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 41sphq5k1q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 27 Sep 2024 13:47:33 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b7iESt53sOZXb6FGD941mvXaMPKo91pK2UYIlBuLIepjRTWMgWMCgGxQDIH0qfZwsdAOvC7PzYijRiyHPk6moKiKMrGrgFJnlX96EoOMQhRKPXi5DxndsK2olk/X/h6Zv6JJ7LscUbEY0n23mcfqLgsQl7JRH8jXTCE4IZkbDY1rwno8E4PnI7Qy5r2lTJf1r1Kqe8AmqafbYNtc2p62HkPtnenm/4KoNz4KLFAcxJ5U3JKhlieN8rVM2FFxdbzW7MXcZIxnVFABKCGQaINQS/h72TUCpJM5jsjsF8ptgW20ym64qZUfR2qqKkCBscShqx57cG/1/3hbhiOBQwSOjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l6Po1c/leKWen0gLTunQbG9plwgpIgxtCvWeQM4wstA=;
+ b=QIxRVX9V3WzHd+btMS6Br3FxAXrCUpSbub3EljkcA1D5vklaI9ri5brYC+aRCyhb3rIM9AbQ5GR9CbwInKRfmTjglw0oDyGfxx416ssJkszxo7eNEbyaBNyi498cPss4Ron1cb2s2kug6aO41tV4RqQLI0E8ib2wKcdXOQnqXEh8zL9NScslUfyV305WfT8E2RM0YhNkA0c+wVR9pROUWYIk6KKZuxLyb3ooRxZHd59WUOREPeBI6Dc811abobsvT5znaxsdXnlqUBHAAGRvwaO1towxTVFFqrZLukqU5FS4EZLqnsmt2Eqd5hYlGn3+1BMsWcB4Mvl0khI3iTle9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 121.100.38.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=sony.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=sony.com;
+ dkim=none (message not signed); arc=none (0)
+Received: from MN2PR03CA0003.namprd03.prod.outlook.com (2603:10b6:208:23a::8)
+ by IA2PR13MB6703.namprd13.prod.outlook.com (2603:10b6:208:4bb::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Fri, 27 Sep
+ 2024 13:47:20 +0000
+Received: from BN2PEPF000055DF.namprd21.prod.outlook.com
+ (2603:10b6:208:23a:cafe::b) by MN2PR03CA0003.outlook.office365.com
+ (2603:10b6:208:23a::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.22 via Frontend
+ Transport; Fri, 27 Sep 2024 13:47:20 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 121.100.38.198)
+ smtp.mailfrom=sony.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=sony.com;
+Received-SPF: Fail (protection.outlook.com: domain of sony.com does not
+ designate 121.100.38.198 as permitted sender)
+ receiver=protection.outlook.com; client-ip=121.100.38.198;
+ helo=gepdcl09.sg.gdce.sony.com.sg;
+Received: from gepdcl09.sg.gdce.sony.com.sg (121.100.38.198) by
+ BN2PEPF000055DF.mail.protection.outlook.com (10.167.245.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8026.0 via Frontend Transport; Fri, 27 Sep 2024 13:47:19 +0000
+Received: from gepdcl04.s.gdce.sony.com.sg (SGGDCSE1NS08.sony.com.sg [146.215.123.198])
+	by gepdcl09.sg.gdce.sony.com.sg (8.14.7/8.14.4) with ESMTP id 48RDlHRp018579;
+	Fri, 27 Sep 2024 21:47:17 +0800
+Received: from mail.sony.com ([43.88.80.182])
+	by gepdcl04.s.gdce.sony.com.sg (8.14.7/8.14.4) with ESMTP id 48RDlGSm013472;
+	Fri, 27 Sep 2024 21:47:16 +0800
+Received: by mail.sony.com (Postfix, from userid 1000)
+	id F121A1BA903B; Fri, 27 Sep 2024 19:44:37 +0530 (IST)
+Date: Fri, 27 Sep 2024 19:44:37 +0530
+From: Nayeemahmed Badebade <nayeemahmed.badebade@sony.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        rafael@kernel.org, yoshihiro.toyama@sony.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/2] Add framework for user controlled driver probes
+Message-ID: <Zva9zUY3DwEPeXwI@NAB-HP-ProDesk-600sony.com>
+References: <20240911142319.3435746-1-nayeemahmed.badebade@sony.com>
+ <2024091327-repacking-avatar-ec23@gregkh>
+ <ZulGr8Ul7y0T0NkQ@NAB-HP-ProDesk-600sony.com>
+ <2024091743-germinate-fructose-3ded@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <66f4164d.050a0220.211276.0032.GAE@google.com>
-Message-ID: <Zva9oi6jfBSoGwn0@google.com>
-Subject: Re: [syzbot] [kvm?] WARNING in srcu_check_nmi_safety (2)
-From: Sean Christopherson <seanjc@google.com>
-To: syzbot <syzbot+314c2cfd4071ad738810@syzkaller.appspotmail.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
-	syzkaller-bugs@googlegroups.com, Kent Overstreet <kent.overstreet@linux.dev>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024091743-germinate-fructose-3ded@gregkh>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000055DF:EE_|IA2PR13MB6703:EE_
+X-MS-Office365-Filtering-Correlation-Id: dcca2898-51a9-4b6a-6b71-08dcdefae859
+x-proofpoint-id: d8690225-876f-412f-87c6-a7cb45557a4c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7289dXdkjH64MfZpao8RAOaZ5d4wZVj4ViDhDh4E3uuHGqGa2TXww/AkUAvo?=
+ =?us-ascii?Q?PU+t4IySmHxcOCqRncaGiJ6u8ynmiydoy+ZTMURIgzs25z0MATfY51WbzWxh?=
+ =?us-ascii?Q?oGzByaLZPc6prD5Ug6u2rp87sNKQUs3aodCdVw1xoYVU2ygsPkOAsC0WFlHW?=
+ =?us-ascii?Q?v/KSI3B0VVQMv1djUnzkCzfUYKMsgdwxxLslwcWeJNsjTtE2M34IAPaNYzsV?=
+ =?us-ascii?Q?Hw3lgawrTXbeOmc99MRTqMVd7uMBDpcSwB6SIkNX0lNHMldZSdapebjYjcVo?=
+ =?us-ascii?Q?2NjR6XJ7n31G4akMNsZY0gYXmtWPq/2eGbGBScRyoTvqMrd/Z0k6G4EBz/85?=
+ =?us-ascii?Q?cQOhfybGLGyNldd7CpPua6SxNaHGEaX0qZVuGtmFnHcGEhHAOQPhb95DsyV8?=
+ =?us-ascii?Q?0QkKP4wUeJ0MozWrkPEouh/sTOeOS3aCSO3GHLmIFI26Pvd6gN7VnbduOA5m?=
+ =?us-ascii?Q?bHFtxn5CccQ+TYCvWX7h2HkPck+DeWJCidfnYVwYzYA1EVEYQ6gtdJvXpz0U?=
+ =?us-ascii?Q?VR08xrRBAshwzDBvEfrx1UgUzKwqRXaRwDtCIbQmbraCYd4W7CyGoEMyCqGo?=
+ =?us-ascii?Q?TZ8KAzNfoWgEeIbfq6/oMYI343byb5NpZWsK4HcbHVE2oFR6Fvz5ejpwLTRt?=
+ =?us-ascii?Q?cnbQJ9FWdHnUrT2N58x6hyOOAxFKXl6EqC2kZMALLkgqGpzeA3ONsOthkgZn?=
+ =?us-ascii?Q?jzAF9lr9MQcQ5NSVBbL5zL+smCn2fYBtcj94UYS2Su2gzPp/M+Lv24IYbPwy?=
+ =?us-ascii?Q?cL5zT5GgUoENayGJr0RbuYtPOOIKJl9oYQwk6BDlrPMkh3Pijz/W25larzGL?=
+ =?us-ascii?Q?qI74QYUokqonNZi6uY3IWepz447hM9iY8gcLe1+h/W0RdS0s5Cm/ZtBdXv8t?=
+ =?us-ascii?Q?BTMr0rqs/XeOYO39JSQwVbdKhg4ILg++Vv0YmZzMoknEZeJExs9MncsnrAHm?=
+ =?us-ascii?Q?WbbJ3YJtDODK2q9df2m4wQHLVmmCvfCN/s+7cL8z69ZYI8Ql/njP2cMWj/ap?=
+ =?us-ascii?Q?uCR0cbLxSjdgp1bG3WL8nbY/Q3P9IDbShxN60vcQUMFw7EpCApm4QnXE7eQx?=
+ =?us-ascii?Q?0MWaOwaX/A3yZIOWtna9nXm4p+KptbRj3QMI+GEd1BTxIQYR81HCFg5i17du?=
+ =?us-ascii?Q?0E3O7AO3m8evYYW5T+f+ZCcYUtdkH2mt5Y/g5WiNkFasUAVu4Gd+TdkOXUP6?=
+ =?us-ascii?Q?pA39gsiKYgV6KB6IzH5p6dl1cG7MUv7+bqdNiqK4PXsn3cZW4QUFmaSbBPeZ?=
+ =?us-ascii?Q?z2r2MNk+ldWwXNrTxiI2jJncvy/NR8MPZ4nrk5XyUa/gJKHG7wF5L4cgXB37?=
+ =?us-ascii?Q?AFzMt/xTLglswbsL1XEN0TfnyUxpm0ptppE+kltwxYWuyPBfHBS/+Vo37QKO?=
+ =?us-ascii?Q?tF/vXpv1IKgW3OOqp4LBdwVyOjSa?=
+X-Forefront-Antispam-Report:
+	CIP:121.100.38.198;CTRY:SG;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:gepdcl09.sg.gdce.sony.com.sg;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	zFRtvbp77ACVCZf1I4QU0iOY/5BvmvNbk2Z7/CxwsuagpObOno2l7FZj+5PLu6L7J8PBvcwkDI+qjExwELcZI/e5mNHdXicD6dxF4GNjeJ+W/ovIdSGneOP8U52DPGQNEnFv/4KdpGmm11zt+EF5sbP3gASlw8lMv7tSQ8FiPWt1a1V5AuLB7URNQSePh6HFoHV/JL2Cg4/jFLOwBXMFSH0Ck40CY7GiO5qBBGfnjP3e1FVn3FmRCv0+WcyeerEh3F+l7iPpHWwVoVCSBA82kof4R/oxylGkL3nno68yHTa/EzUGLjh+9dLn9VeyUo+SRu0lfRp2KF+aoNkKXcYsB1Kx4+3j+a3KNSnqHY15CcCjIi2e0+VmOUT59SR3q4VsK5G5elpu2WBDNcbzpFQhIIGw6XoPhlQ0WxRTBZG6siOdvBKhbnA/vDEov8xAPoXx5RBKHcsnhllmbKdCgoPsWk8HSg1rqLCwmWTpNULFhitDAX6lqdt0/phJ+7oC2AmISPw7LrZlSs+1eJUncgJGb1xzQYuhZM09gMpNRV+YzRKFf9dR9Zb+2AlyhYYwvIoltpWpOl8TqZ+qXQSxGmRc9PKV2OdRevfwsS6OUI19GjFvK6OxElhWOYrevO6zUQU/
+X-OriginatorOrg: sony.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 13:47:19.3944
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dcca2898-51a9-4b6a-6b71-08dcdefae859
+X-MS-Exchange-CrossTenant-Id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=66c65d8a-9158-4521-a2d8-664963db48e4;Ip=[121.100.38.198];Helo=[gepdcl09.sg.gdce.sony.com.sg]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-BN2PEPF000055DF.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA2PR13MB6703
+X-Proofpoint-GUID: 1Kt2VX25IzvKHt0P7RqM_QegPkahuZhd
+X-Proofpoint-ORIG-GUID: 1Kt2VX25IzvKHt0P7RqM_QegPkahuZhd
+X-Sony-Outbound-GUID: 1Kt2VX25IzvKHt0P7RqM_QegPkahuZhd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-27_06,2024-09-27_01,2024-09-02_01
 
-+Kent
+Hi Greg,
 
-On Wed, Sep 25, 2024, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    abf2050f51fd Merge tag 'media/v6.12-1' of git://git.kernel..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=114cc99f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=bc30a30374b0753
-> dashboard link: https://syzkaller.appspot.com/bug?extid=314c2cfd4071ad738810
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-abf2050f.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/2179ebeade58/vmlinux-abf2050f.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/f05289b5cf7c/bzImage-abf2050f.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+314c2cfd4071ad738810@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> CPU 0 old state 2 new state 1
-> WARNING: CPU: 0 PID: 73 at kernel/rcu/srcutree.c:708 srcu_check_nmi_safety+0xca/0x150 kernel/rcu/srcutree.c:708
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 73 Comm: kswapd0 Not tainted 6.11.0-syzkaller-09959-gabf2050f51fd #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:srcu_check_nmi_safety+0xca/0x150 kernel/rcu/srcutree.c:708
-> Code: 81 c3 c8 01 00 00 48 89 d8 48 c1 e8 03 42 0f b6 04 20 84 c0 75 77 8b 33 48 c7 c7 20 0c 0c 8c 89 ea 44 89 f9 e8 b7 8c db ff 90 <0f> 0b 90 90 eb 0c 42 0f b6 04 23 84 c0 75 3d 45 89 3e 48 83 c4 08
-> RSP: 0018:ffffc90000e464e0 EFLAGS: 00010246
-> RAX: 41404736cdfea900 RBX: ffffe8ffffc414c8 RCX: ffff88801efb0000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000002 R08: ffffffff8155aaa2 R09: 1ffff11003f8519a
-> R10: dffffc0000000000 R11: ffffed1003f8519b R12: dffffc0000000000
-> R13: 0000607fe0041300 R14: ffffe8ffffc41320 R15: 0000000000000001
-> FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000564aa6d10940 CR3: 0000000011c68000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  srcu_read_lock include/linux/srcu.h:248 [inline]
->  __kvm_handle_hva_range virt/kvm/kvm_main.c:612 [inline]
->  kvm_handle_hva_range virt/kvm/kvm_main.c:684 [inline]
->  kvm_mmu_notifier_clear_flush_young+0xe6/0x820 virt/kvm/kvm_main.c:867
->  __mmu_notifier_clear_flush_young+0x11d/0x1d0 mm/mmu_notifier.c:379
->  mmu_notifier_clear_flush_young include/linux/mmu_notifier.h:410 [inline]
->  folio_referenced_one+0xb9d/0x2160 mm/rmap.c:895
->  rmap_walk_anon+0x4cd/0x8a0 mm/rmap.c:2638
->  rmap_walk mm/rmap.c:2716 [inline]
->  folio_referenced+0x394/0x7a0 mm/rmap.c:1008
->  folio_check_references mm/vmscan.c:863 [inline]
->  shrink_folio_list+0xe96/0x8cc0 mm/vmscan.c:1198
->  evict_folios+0x549b/0x7b50 mm/vmscan.c:4583
->  try_to_shrink_lruvec+0x9ab/0xbb0 mm/vmscan.c:4778
->  shrink_one+0x3b9/0x850 mm/vmscan.c:4816
->  shrink_many mm/vmscan.c:4879 [inline]
->  lru_gen_shrink_node mm/vmscan.c:4957 [inline]
->  shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
->  kswapd_shrink_node mm/vmscan.c:6765 [inline]
->  balance_pgdat mm/vmscan.c:6957 [inline]
->  kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
+Sorry for the delay in our response.
+Please find our reply to your comments:
 
-#syz set subsystems: bcachefs
+On Tue, Sep 17, 2024 at 12:11:22PM +0200, Greg KH wrote:
+> > On Fri, Sep 13, 2024 at 06:36:38AM +0200, Greg KH wrote:
+> > > > This patch series introduces a new framework in the form of a driver
+> > > > probe-control, aimed at addressing the need for deferring the probes
+> > > > from built-in drivers in kernels where modules are not used.
+> > > 
+> > > Wait, why?
+> > >
+> > 
+> > We have a scenario where a driver cannot be built as a module and ends up
+> > as a built-in driver. We don't want to probe this driver during boot as its
+> > not required at the time of booting.
+> > Example: drivers/pci/controller/dwc/pci-imx6.c
+> > So the intention is to only postpone some driver probes similar to:
+> > https://elinux.org/Deferred_Initcalls
+> > But instead of delaying initcall execution(which requires initmem to be kept
+> > and not freed during boot) we are trying to delay driver probes as this is
+> > much simpler.
+> > The proposed driver is a generic solution for managing such driver
+> > probes.
+> 
+> Again, please fix the drivers that are having problems with this, and
+> build them as a module and load them when you need/want them and can be
+> probed correctly.
+> 
 
-Looks like another bcachefs shutdown problem.  The failure happened on a kernel
-with d293ece10810 ("bcachefs: Fix shutdown ordering"), so it's not the exact same
-thing as reported in https://lore.kernel.org/all/Zr-bCqSWRS3yob7V@google.com.
+Sure, we will try to do that.
 
-[   82.068524][ T5112] bcachefs (loop0): going read-write
-[   82.076688][ T4530] Bluetooth: hci0: command tx timeout
-[   82.092465][ T5112] bcachefs (loop0): journal_replay... done
-[   82.150223][ T5112] bcachefs (loop0): resume_logged_ops... done
-[   82.152607][ T5112] bcachefs (loop0): delete_dead_inodes... done
-[   82.164815][ T5112] bcachefs (loop0): Fixed errors, running fsck a second time to verify fs is clean
-[   82.176357][ T5112] bcachefs (loop0): resume_logged_ops... done
-[   82.178950][ T5112] bcachefs (loop0): delete_dead_inodes... done
-[   82.188910][ T5112] bcachefs (loop0): done starting filesystem
-[   82.302896][ T5112] bcachefs (loop0): shutting down
-[   82.305956][ T5112] bcachefs (loop0): going read-only
-[   82.317925][ T5112] bcachefs (loop0): finished waiting for writes to stop
-[   82.328724][ T5112] bcachefs (loop0): flushing journal and stopping allocators, journal seq 17
-[   82.354271][ T5113] netlink: 16 bytes leftover after parsing attributes in process `syz.0.0'.
-[   82.366356][ T5112] bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 18
-[   82.386917][ T5112] bcachefs (loop0): shutdown complete, journal seq 19
-[   82.390927][ T5112] bcachefs (loop0): marking filesystem clean
-[   82.472328][ T5112] bcachefs (loop0): shutdown complete
-[   82.504701][   T73] ------------[ cut here ]------------
-[   82.507314][   T73] CPU 0 old state 2 new state 1
-[   82.509635][   T73] WARNING: CPU: 0 PID: 73 at kernel/rcu/srcutree.c:708 srcu_check_nmi_safety+0xca/0x150
-[   82.513331][   T73] Modules linked in:
+> > > > In such scenario, delaying the initialization of certain devices such
+> > > > as pcie based devices not needed during boot and giving user the control
+> > > > on probing these devices post boot, can help reduce overall boot time.
+> > > > This is achieved without modifying the driver code, simply by configuring
+> > > > the platform device tree.
+> > > 
+> > > PCI devices should not be on the platform device tree.
+> > >
+> > 
+> > You are right, we are referring to the pci host controller that will be
+> > listed in device tree and skipping its probe during boot as an example
+> > here.
+> 
+> pci host controllers should really be availble at boot time, wow your
+> hardware is b0rked, sorry.  Just make it a module and load it when you
+> want/need it.
+> 
+> > > And what's wrong with async probing?  That was written for this very
+> > > issue.
+> > >
+> > 
+> > We have explored async probe as an option, but we noticed below:
+> > 1) Probe initiated via async
+> > 2) Boot continues with other setup.
+> > 3) Boot reaches stage where ip configuration is to be done via
+> >    ip_auto_config() and 1) is still in progress, then boot waits for all
+> >    async calls to be completed before proceeding with network setup.
+> >    ip_auto_config()
+> >     -> wait_for_devices()
+> >       -> wait_for_device_probe()
+> >          -> async_synchronize_full()
+> > 4) Similar thing happens with rootfs mount step in prepare_namespace()
+> >    initcall
+> 
+> Again, if you make the problem driver as a module you should be ok,
+> right?
+> 
+
+Yes.
+
+> > So to avoid getting blocked on these probes which are not required
+> > during boot, we proposed this driver for managing such built-in driver
+> > probes execution.
+> 
+> Fix the broken drivers please :)
+> 
+
+Sure, we will do that.
+Thank you for your feedback.
+
+Regards,
+Nayeem
 
