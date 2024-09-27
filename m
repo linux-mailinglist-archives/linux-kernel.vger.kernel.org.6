@@ -1,206 +1,173 @@
-Return-Path: <linux-kernel+bounces-341686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B909883A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:59:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CD949883C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49C032878C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:59:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D59B1C22A38
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D48818A95C;
-	Fri, 27 Sep 2024 11:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E673C18BB86;
+	Fri, 27 Sep 2024 12:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="m1SVH5i8"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2059.outbound.protection.outlook.com [40.107.95.59])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="l4mvowJA"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D583218A6D2;
-	Fri, 27 Sep 2024 11:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727438373; cv=fail; b=Q7kjIHinhlOBvShKeUiU5egJVhO+jKIkA2DGb5GNL02pHQRTfHAvV/dwnJoMY5nOkNDAiojVxcat+Gld1S8Rn0ZMuwHwYQ9XlEwth3i6FSQxXDRHpZi3EyEmOJEih937nVXwDM5mIhfsEQl+UcL7+C5XL7A9dZTSP0ZP9i9mdgs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727438373; c=relaxed/simple;
-	bh=oPgOpfIRi34l7hD1nYVjnxClOBxs3SLZ6DcqlMX5YGs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=S7/A8VTmsB4QatvJwzwXoqO1TYO+JwlcYWfZeCciLg9zqLKj3HqHDbhLT6gyjveWbfTDQC4ICmRr5KnExo2GppyzU6NRT+aUDW3WsfEQMf4wyHdpMDt3jTgwxVtTpqYoZec5DZUeOo4k333c4hLnhLZB/ezUzR3NRlRgDTL4LBU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=m1SVH5i8; arc=fail smtp.client-ip=40.107.95.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DfU9u0I6xE3K5MsRlW8+ey00UNHM1idYzrGrUmva9aELL4U+ubEr0oQkDN2s53KmhAYYavMGil3OzR9rS62cerbv2sZRfNKfU6I8w0US3fCVun0JR+O/n7fowdItylyeZ184Jio2pCdpGdkNldYoouInzhGt/z5GtpulDHqpblLuMnn7nfHmEDPrl03UBpfNfSmeqeBrr2x/syARZw6RjY0NXvln/SITQOTtuQ0M7gYEhzpdpvqUcM3/cRZG0ylUX2e5Qjzq4hn+5OQ+rOODCjw8F7cPfYSAwW+9ohKVcaMAYheoGqYYFDVi5rxSSvIf5AqGKO0XJE4yvN7P+4xEWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wsg8DNswVT0ARWJ1C1xg2v3MBaEUgLW/9W1uuLhj2iI=;
- b=m3z6XPj/FQhWe3dHKPF6dJUG7v27PB7UyxKGv77ZmDa5vA5rnn+24NvfEWOyukl2t45eRqbOI6Q6rR8ojwT0bj+kFClHracdIF+E6cm2b8Etd4ZwbZxLMZjZf374yPZxGzNtSO+Cs1+rxH38ginYwFtVsutdt0yhqGd/+LNTjVJwWY0osT1uwMB2DIzlonH/LJPFJw3irH0l35IaqoiI9MyXIK4er2J4jcqG6RAqai9DDVS45+fiFiRYRbuDSCjaNfB2WIWcnCuUhSWPfKQnX2dT4udu+0GD9JMNjuQHRrGhYni8Y5qjUiZ6MLx9lJsFxOWQmrE34WkTkBGvZzasAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wsg8DNswVT0ARWJ1C1xg2v3MBaEUgLW/9W1uuLhj2iI=;
- b=m1SVH5i8phHIgJe5KxbD0AJfQ7GvVR1qMCUBqyl3jNXQEns4Ub8Ou8r5e+9vVdRZWECe0k8ENc4HTuPp50qjmENmVYkVEg8ehlU7UB0CiLTwm4aLai3aZ/PrAe0mepettEe6wXYCENjeIK9H6XgdQxhjaBraW8nnX6iZkIeS6aAGWLHzI7d1idplZAcpkHjFd2hDPrG3SjXsiVJO3I1XOE+eGOZz47urSX5KSR8RMv3dH8zGpYlyvQIzpywzdFKR0dm1vohQi33xdLhbbvPcqLDAgge6ntedrXYXAbSqjDdlXKRA9vTjHP9I1BglgjdT3W61ExUX5zU4simMaZ4z7Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by CY5PR12MB6406.namprd12.prod.outlook.com (2603:10b6:930:3d::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.22; Fri, 27 Sep
- 2024 11:59:27 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.7982.022; Fri, 27 Sep 2024
- 11:59:27 +0000
-Date: Fri, 27 Sep 2024 08:59:25 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Yi Liu <yi.l.liu@intel.com>, kevin.tian@intel.com, will@kernel.org,
-	joro@8bytes.org, suravee.suthikulpanit@amd.com,
-	robin.murphy@arm.com, dwmw2@infradead.org, baolu.lu@linux.intel.com,
-	shuah@kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
-	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
-	shameerali.kolothum.thodi@huawei.com, smostafa@google.com
-Subject: Re: [PATCH v2 04/19] iommufd: Allow pt_id to carry viommu_id for
- IOMMU_HWPT_ALLOC
-Message-ID: <20240927115925.GX9417@nvidia.com>
-References: <cover.1724776335.git.nicolinc@nvidia.com>
- <2d469a5279ef05820d5993df752d32239878338d.1724776335.git.nicolinc@nvidia.com>
- <3ddf97a3-cf5b-4907-bbe4-296456951e6b@intel.com>
- <ZvW/vS5/vulxw3co@Asurada-Nvidia>
- <ac6c371b-857a-42f3-9b71-969ef19a54ba@intel.com>
- <ZvZKfUQpiv33MQw+@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvZKfUQpiv33MQw+@Asurada-Nvidia>
-X-ClientProxiedBy: BL1PR13CA0118.namprd13.prod.outlook.com
- (2603:10b6:208:2b9::33) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E741F18B487;
+	Fri, 27 Sep 2024 12:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727438458; cv=none; b=PnWByNoBtjvYEZH103LZY4zj7oD9MrZSNf7dretAMFOxlCGUvlhJHnZVHU7JaMXm/OG6NQUsbdc58nY2l9V/djUMJULkVeldjr5HzEvcK45sfxXsey64ccxFyLuy3Dee5mPtSCeRbffquhlgVPILxLcEXrINw395q6FGCWwhGSI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727438458; c=relaxed/simple;
+	bh=xh7V+lSwrXwnf6AkaZSV161A1PTv5sxV84YQn60rU9g=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QrEg+k6y05PCRAvlxAPGQ+71PsF8wFPfWIYpgThxXpi5OdvLYPXqMhXrtLF7pZWSbfRUY408n2XBY0hocgfUEV6G0uh9rXWLRLxFk8H7JfXntY6zig+I7aA4NunFnPYRhN4dxqy0tUBRH2piBCWYTZIXGUkxdcKj8dxXQrfe1Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=l4mvowJA; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48RC0MLi020296;
+	Fri, 27 Sep 2024 07:00:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1727438422;
+	bh=+jsVr4Ims5WSRmy2NLVUof7RpYlMYwogh7jR4rXlInk=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=l4mvowJAjM9PJeOeJyl4Lw0IoQxGpHFoAmHIUeiriguabhIc4m8fYPjXtPvdf1o9e
+	 px8xK7VGURl6MbTf1fWQDPL2/R8LqUjVVjmLijdXCKy1uRwXptRLzZLF2aA1vBTqVC
+	 Bz/w2OXYV+xHs4q2SxmyjvE9E5mJ8nRaHRNMgeSw=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48RC0MQM110251
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 27 Sep 2024 07:00:22 -0500
+Received: from flwvowa01.ent.ti.com (10.64.41.90) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 27
+ Sep 2024 07:00:22 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by flwvowa01.ent.ti.com
+ (10.64.41.90) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.34; Fri, 27 Sep
+ 2024 07:00:21 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 27 Sep 2024 07:00:21 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48RC0LAu068343;
+	Fri, 27 Sep 2024 07:00:21 -0500
+Date: Fri, 27 Sep 2024 07:00:21 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Lee Jones <lee@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>,
+        Shawn Guo
+	<shawnguo@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "Florian
+ Fainelli" <florian.fainelli@broadcom.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+Subject: Re: [PATCH V2] mfd: syscon: Use regmap max_register_is_0 as needed
+Message-ID: <20240927120021.b6okbwrdpguv4hp6@spiny>
+References: <20240903184710.1552067-1-nm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CY5PR12MB6406:EE_
-X-MS-Office365-Filtering-Correlation-Id: ccea1778-34ce-4173-b554-08dcdeebd5f7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0gzSfoF5+0pUO0OAMV2rm9x/lWVmLfMUHnHLIJQp6T+9R0vy9YM0hpVAfwsf?=
- =?us-ascii?Q?URK6btlLd2y3LcqP0MOcZDp/8JkgPZWbqsG3sBxK+m7MzfsKhcjJJsma/Q5Y?=
- =?us-ascii?Q?BQ1phMSWYTWCEZIBXsJDrPbzTGAbiLzhoOW6xVaNiz20/BPrKS1Ck1fxMOrg?=
- =?us-ascii?Q?bapVjasIQhgX4htWshAy4OBJOS2t9otNA9cOZ9dc3g6iFfxbIdieg8Al1PWT?=
- =?us-ascii?Q?2htoaeS2T1eX81rgktcv0FXUOo+CXUv69qr0M1jWbLD3K5TMoOh6w9cP+bSl?=
- =?us-ascii?Q?8gnypjJmDSYU5pUx2NkauXvyyyg/4QljvEg7Qx1bLUjJ8t2keamhYl1ZSlIM?=
- =?us-ascii?Q?fh/OBxW5KBbnwlcxoKXWvprTbK8xMKGjDxcskykfoGgtWUMKJK5YRDtUAa9B?=
- =?us-ascii?Q?agN4igDuerS8BoDU3f+anmYEOTFQ9Ti8wlbufWxskrCbGikqjMuvpqbe9wlC?=
- =?us-ascii?Q?Qo6IZFhire8TSfs6UNhOhnYN4ytNXi3hSnByaQNp+KIGLabx2z3o8kMbZf6L?=
- =?us-ascii?Q?ErKvOC17dMRpWz+gBcA0Ko/TYop6acanJTl6eNKsr4z8QgJCFyMPR6wh+nI6?=
- =?us-ascii?Q?PNMjXW413JPpwPcgU0JTZM3/sUhWj537mLlG0EBAO2qpLw0kQYyKb1hk49E6?=
- =?us-ascii?Q?4uAL2PyqaI1NOIxcvacMifyaC/F3I+lLH0amAOkVNtV0x7nRX8FsMT2Hfpx5?=
- =?us-ascii?Q?VmfA1y8KrU6XS/mRPzCupA7A0deg+IDOnyUBOTMeiYuo4jryatGPdjKx7kFj?=
- =?us-ascii?Q?FdI0j7eEy3+X7Vic9Hj2C/FJRUhzhjQ5lCp4I0kABmS7+RVNUvYrCgOgzFWg?=
- =?us-ascii?Q?19uGW5VnfWlAgT+tZTEq46+eQ1FBPF8pjyFIye31IOPVmGd74cVUWHoI6+XS?=
- =?us-ascii?Q?DdneqdTSC6FDbFv8u9Kjtg3GHHv4d1eXlEfbHO3GNVADEP69nUMAIB0W3O8m?=
- =?us-ascii?Q?XGnfXCbx2DyUaAmUUSakNxdTOTY3dLR2PRpLcOm3PZVIZwmxl5jYwoCXYF1g?=
- =?us-ascii?Q?TSDfG+FiCYyS3uI05D+nFKecKj/FOjWSC29Qmhmu6dpF8MxRdYQQS6DsNvod?=
- =?us-ascii?Q?KqdFYDGLT7oul43m/oEo+iciwHVPib9P+A1vrgp77fgozg0q+V1kS6V/U1dt?=
- =?us-ascii?Q?tg3AwFqzUJxwvrBjsXvgz3AIyjgjN9rbQunMDkw4G6IspjEabdzwGpd2Q7hR?=
- =?us-ascii?Q?JRwhe2jgBwxiwr8lyLh/BgmPF4mxN/TDzm7rGL2xXAUcZEhU1+m9M5KbN0QT?=
- =?us-ascii?Q?z+XYFteYICCBqKQ07DW1Q4zwVWyFLuzAHa5CJGg1+Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rcsf8MBCpteAR4kviWaFq+3PKIMJpN71QQ/4LNXoveBZXqwt+UYnR3wrRJz4?=
- =?us-ascii?Q?2Lj/EyQHVDjHaxQxuu0ZQhwjeyL73DDp2zZyLWw0AyrLrVQ/lsGc88/W3Kb8?=
- =?us-ascii?Q?dFXVAMtsbBLZ0QZ8wg57xTLJXGz69tPlIuJAojkZv9HPTyCG3jaalxZ+nIy4?=
- =?us-ascii?Q?+J3KJiRwQtrglcV/4SowbzJXwdg5BOSP3n4iZbEjkzFMOeADZAURKGyBTJb8?=
- =?us-ascii?Q?MZirJKAX2zgnYhS1kXfQ/SbtWUl81xjdPKsdNB2LOyxiannmlFEl2Y3mKiQj?=
- =?us-ascii?Q?EcANg7BVxAx7ju+L9QgIw2AismnRZm1RYMfPHVeBWGe5RJ6HPq2fNydtTa3d?=
- =?us-ascii?Q?WWoKhUztV27+xMNcnb/KfgG9yPHjPKcKbQy3IiJwvT4R8dJ79LydKIQTzRLU?=
- =?us-ascii?Q?6zDSKPYDWHjlIc4hSGlcKCqpZVIqghvcFw/4y0jeoWSJ6V61Y/dGNQqStPF3?=
- =?us-ascii?Q?JDmJSEE5bbG7NZVVsYe2y8mxlVdVEsj9DmnP/3MorfvXYEct+pDXmNeQw5aA?=
- =?us-ascii?Q?BNp+sGw7U52Cf37hH4v0ZDXL6FDKpwi38Lo8RLmE2foQ87P2JqIQBumXeXym?=
- =?us-ascii?Q?thhDNrH4sIrJVIBb6r5LgxyHXYzabH9JUESQvZMj4gZHnw1ECOkfbbkCY0ws?=
- =?us-ascii?Q?5VQ2kONGZuZpC2Q4BBd/k88ZDxSkKLgU3e/JTR2kcwUcEtO6bKHJSxHIf+kL?=
- =?us-ascii?Q?geM1pUIcW3XbNX2jb23J1nfZkG6nZTNE1qtj83nafGAh5Y/fGHdByHeGRS48?=
- =?us-ascii?Q?zv90W3vDL/IPjJ0T77T1R4/15DIRookYctgmb/Rgamg4D5SetyNT5eEYEDZr?=
- =?us-ascii?Q?GiuzwOUNJQNKPFEzJDQUknouxl9NktDB9s+Tnww81GSc/842SperKBX4tOom?=
- =?us-ascii?Q?nkEPxgbTp1//XlFjK1xrSPx0PQlmaXJfOpshnAzbP8702QjQGWe/gRYQcNUW?=
- =?us-ascii?Q?wdcBMawqKXYZoDsrGHedH1mHbl7VISDZxfS1vxzBmQ4mjEHWxpTGyw6b7vBL?=
- =?us-ascii?Q?DX/HUJZmwyyX7WMHkNJxbFArRkYlKrZl4RjO7jsm+/3OBHY363jsA2uF05FJ?=
- =?us-ascii?Q?rJqfwA+fvbpxAZu9BX2ovgw2ngaBk7j51XzTxJW3x/jw728iS+QKBxLstf8S?=
- =?us-ascii?Q?YaEBhMMfKSrP8d7XMpLWxgKsONF+7iy5mL1IPbs97b6q9xOAEWtGWQ6qI4D1?=
- =?us-ascii?Q?5BwOhz5DlEZ313dbv/t2mAW9AaWor+k2aT7F1T+FxZOg8ggdMhcWRmXu9w/G?=
- =?us-ascii?Q?O44MBILDiHPbVu9Qh4muljF+oxRS50vtzQftXf6XeLQZLb6fzaFus0esXaAA?=
- =?us-ascii?Q?BRyJV85BHRN2Q3/EKZtYREYRpw0trXnZWIUFmNqoeRkEyzsxyU5roVQdSGGq?=
- =?us-ascii?Q?5kAEYxNjopi4glMzV+wkNHAeCLGUXbrpNLkadG4pBveRZXdMC4FUhtMHBzkg?=
- =?us-ascii?Q?GE0pnyM9kQ9X0+QHcKq++47Qk+qCH4UXETpteX5aW1qKqmONrIkV1Yvvqsmk?=
- =?us-ascii?Q?q4dFn/dyfrB40i9lYNs39K5W2FsjfqItzU4y6BEH64R8NLGxefvIk4W6cR2E?=
- =?us-ascii?Q?y59avI7Ls6VAuLd46ok=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ccea1778-34ce-4173-b554-08dcdeebd5f7
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 11:59:26.9530
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QJbZxuDE6PVxU89oGfFV6VPCYFOJQl2mCgA+nRHRrSlSsQ9Cy++tQH4e2Gk26Rbg
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6406
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240903184710.1552067-1-nm@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Sep 26, 2024 at 11:02:37PM -0700, Nicolin Chen wrote:
-> On Fri, Sep 27, 2024 at 01:38:08PM +0800, Yi Liu wrote:
-> > > > Does it mean each vIOMMU of VM can only have
-> > > > one s2 HWPT?
-> > > 
-> > > Giving some examples here:
-> > >   - If a VM has 1 vIOMMU, there will be 1 vIOMMU object in the
-> > >     kernel holding one S2 HWPT.
-> > >   - If a VM has 2 vIOMMUs, there will be 2 vIOMMU objects in the
-> > >     kernel that can hold two different S2 HWPTs, or share one S2
-> > >     HWPT (saving memory).
-> > 
-> > So if you have two devices assigned to a VM, then you may have two
-> > vIOMMUs or one vIOMMU exposed to guest. This depends on whether the two
-> > devices are behind the same physical IOMMU. If it's two vIOMMUs, the two
-> > can share the s2 hwpt if their physical IOMMU is compatible. is it?
+On 13:47-20240903, Nishanth Menon wrote:
+> syscon has always set the optional max_register configuration of
+> regmap to ensure the correct checks are in place. However, a recent
+> commit 0ec74ad3c157 ("regmap: rework ->max_register handling")
+> introduced explicit configuration in regmap framework for register
+> maps that is exactly 1 register, when max_register is pointing to a
+> valid register 0. This commit solved a previous limitation of regmap
+> framework.
 > 
-> Yes.
+> Update syscon driver to consistent in regmap configuration for
+> all sizes of syscons by using this new capability by setting
+> max_register_is_0, when the max_register is valid and 0.
 > 
-> > To achieve the above, you need to know if the physical IOMMUs of the
-> > assigned devices, hence be able to tell if physical IOMMUs are the
-> > same and if they are compatible. How would userspace know such infos?
+> Signed-off-by: Nishanth Menon <nm@ti.com>
+> ---
 > 
-> My draft implementation with QEMU does something like this:
->  - List all viommu-matched iommu nodes under /sys/class/iommu: LINKs
->  - Get PCI device's /sys/bus/pci/devices/0000:00:00.0/iommu: LINK0
->  - Compare the LINK0 against the LINKs
+> Based on my search
+> https://gist.github.com/nmenon/d537096d041fa553565fba7577d2cd24, the
+> pattern of syscon registers that may potentially be impacted by this
+> patch (that are exactly 1 register wide) is probably limited, though
+> this patch in itself was inspired by a buggy driver code fixed in
+> https://lore.kernel.org/linux-pm/20240828131915.3198081-1-nm@ti.com/
+> I have tried to Cc lists that may be interested in looking closer to
+> avoid un-intended side-effects.
 > 
-> We so far don't have an ID for physical IOMMU instance, which can
-> be an alternative to return via the hw_info call, otherwise.
+> Changes since V1:
+> * Incorporate review comments by rewording commit message and $subject
+>   and dropped Fixes.
+> * No functional change to the patch.
+> * Expand the CC list to notify potential users.
+> 
+> V1: https://lore.kernel.org/all/20240828121008.3066002-1-nm@ti.com/
+> 
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: Bjorn Andersson <andersson@kernel.org>
+> Cc: bcm-kernel-feedback-list@broadcom.com
+> Cc: Florian Fainelli <florian.fainelli@broadcom.com>
+> Cc: linux-stm32@st-md-mailman.stormreply.com
+> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
 
-We could return the sys/class/iommu string from some get_info or
-something
 
-> For compatibility to share a stage-2 HWPT, basically we would do
-> a device attach to one of the stage-2 HWPT from the list that VMM
-> should keep. This attach has all the compatibility test, down to
-> the IOMMU driver. If it fails, just allocate a new stage-2 HWPT.
+A gentle ping.
 
-Ideally just creating the viommu should validate the passed in hwpt is
-compatible without attaching.
+> 
+>  drivers/mfd/syscon.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+> index 2ce15f60eb10..3e1d699ba934 100644
+> --- a/drivers/mfd/syscon.c
+> +++ b/drivers/mfd/syscon.c
+> @@ -108,6 +108,8 @@ static struct syscon *of_syscon_register(struct device_node *np, bool check_res)
+>  	syscon_config.reg_stride = reg_io_width;
+>  	syscon_config.val_bits = reg_io_width * 8;
+>  	syscon_config.max_register = resource_size(&res) - reg_io_width;
+> +	if (!syscon_config.max_register)
+> +		syscon_config.max_register_is_0 = true;
+>  
+>  	regmap = regmap_init_mmio(NULL, base, &syscon_config);
+>  	kfree(syscon_config.name);
+> @@ -357,6 +359,9 @@ static int syscon_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	syscon_config.max_register = resource_size(res) - 4;
+> +	if (!syscon_config.max_register)
+> +		syscon_config.max_register_is_0 = true;
+> +
+>  	if (pdata)
+>  		syscon_config.name = pdata->label;
+>  	syscon->regmap = devm_regmap_init_mmio(dev, base, &syscon_config);
+> 
+> -- 
+> 2.46.0
+> 
+> 
 
-Jason
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
