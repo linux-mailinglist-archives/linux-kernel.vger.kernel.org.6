@@ -1,142 +1,108 @@
-Return-Path: <linux-kernel+bounces-341536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 200E8988159
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:29:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AE698815C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDB7E281844
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:29:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A1DD281624
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175D61BAED1;
-	Fri, 27 Sep 2024 09:29:07 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B98D189BAF;
+	Fri, 27 Sep 2024 09:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ScjzFJ3i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DD51BAED0;
-	Fri, 27 Sep 2024 09:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627C91BAECB;
+	Fri, 27 Sep 2024 09:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727429346; cv=none; b=s00Ji5KmzEwCvelHlMXYfLb3RTElWJrDn1V7cT1UKFzTMvtwx1PeKusDbKZUHgKTRpvmMfa8LH9Wg3YFwcepyrbcQF8vIgRPhTZ6Kwsmr5BJQ+bt0hrXhGigXxGehv/YEQMyRKVzfZVoWlSJ/cWQVjxKPYRw/ArYIpnuYKcg6Ck=
+	t=1727429405; cv=none; b=h86IY6fBq0o5lPJ+FhclQgWJc/k1LTI68TZcQp2mFrNRVMkquOlhO2avWYykU1W9KjWZVzN/MNme35h4GhsNFLx2fVKmiuZfL4uYs9fV9/qekavqMVMuh2ViA/uEdrMF7QJzgxC5X+46wD8/jzQTkmSRJuOoZV2JkUNGv3uIhBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727429346; c=relaxed/simple;
-	bh=JF+sDDOK5PxGb3aYQzqGRu08TbXb26q+zXfIZ0oadcQ=;
+	s=arc-20240116; t=1727429405; c=relaxed/simple;
+	bh=NQf7+QpzoDAuDvR3lojHYXmnOqICjH6ZZUXhwQlwxTQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Scnd+UZah9zrAT6j8tsPyi1YbKL7K1vYnm9fV2B3Mt+5og48u5mG11nfa7wrB0Bn7QIJqL3a7h0gEZ/r4z2SCL6TUeg+r0EGDsoJEGuZoyb+kLea8dfe9DwaGwjhf3obNBQMZWmxuyZ3Aj6qZQta552yLE3MwPBWxUynenDhXv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id BE7232800F0B1;
-	Fri, 27 Sep 2024 11:28:54 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id A2869268E83; Fri, 27 Sep 2024 11:28:54 +0200 (CEST)
-Date: Fri, 27 Sep 2024 11:28:54 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: AceLan Kao <acelan.kao@canonical.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: pciehp: Fix system hang on resume after hot-unplug
- during suspend
-Message-ID: <ZvZ61srt3QAca2AI@wunner.de>
-References: <20240926125909.2362244-1-acelan.kao@canonical.com>
- <ZvVgTGVSco0Kg7H5@wunner.de>
- <CAFv23Q=5KdqDHYxf9PVO=kq=VqP0LwRaHQ-KnY2taDEkZ9Fueg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ow9EUSacL76xlgKDxMNSiZf2173+qu97dSJjVFH84O7T6Aa9MWP/CYxyyt+eJII67PDe80xX4E+Gv+rK8gih2XW+sR1W5kctNUXsipx7f/EFA/SKr/BlrzlT9af+l1ntxS0tAJTwvb8ul8Bh3kcdTCaknymLIPwsyGlNFlWkpMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ScjzFJ3i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 904ADC4CEC4;
+	Fri, 27 Sep 2024 09:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727429405;
+	bh=NQf7+QpzoDAuDvR3lojHYXmnOqICjH6ZZUXhwQlwxTQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ScjzFJ3i8WArtva321lPwetZxW1xpR3cHvfebHeDsU9VzhNVBGN7TBm7UI9VqJPvW
+	 +EM8SZGWF63RH9k/CZ2RxaZpTiSKSihN6cgRg2p2WgJbzqhwYd51vkeAm+IK/hm7g4
+	 833OGNVebFKWaxLoI8E/dQKh9qMnFX1NMxsLiIuWZX8Z4vJ5SHxRJo3hg+WI3Rs57z
+	 B6VyDcRXSAdfgGGSUbPQOy/vXpiH1bzsJeRP0ZHNC/Cb+rQilcLKKaYI0QwVjLdDnt
+	 aB53+m3ZhKRbrBSZ0BBoaRdKe7Fc3h1362IARTc+9aYNzDbz+m82HKS9+NoTl8k2z/
+	 YI7sNC620yfVg==
+Date: Fri, 27 Sep 2024 11:30:02 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>, 
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, CK Hu <ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>, 
+	Tinghan Shen <tinghan.shen@mediatek.com>, Seiya Wang <seiya.wang@mediatek.com>, 
+	Ben Lok <ben.lok@mediatek.com>, "Nancy . Lin" <nancy.lin@mediatek.com>, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	Alexandre Mergnat <amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, 
+	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>, 
+	Chris-qj chen <chris-qj.chen@mediatek.com>, 
+	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH v3 5/5] dt-bindings: display: mediatek: dpi: correct
+ power-domains property
+Message-ID: <vo5ia2cprt2eff2frximgkjkapyavam65m5gjxpgbht76wacuk@sttamlbk3iu4>
+References: <20240927065041.15247-1-macpaul.lin@mediatek.com>
+ <20240927065041.15247-5-macpaul.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAFv23Q=5KdqDHYxf9PVO=kq=VqP0LwRaHQ-KnY2taDEkZ9Fueg@mail.gmail.com>
+In-Reply-To: <20240927065041.15247-5-macpaul.lin@mediatek.com>
 
-On Fri, Sep 27, 2024 at 03:33:50PM +0800, AceLan Kao wrote:
-> Lukas Wunner <lukas@wunner.de> 2024-9-26 9:23
-> > On Thu, Sep 26, 2024 at 08:59:09PM +0800, Chia-Lin Kao (AceLan) wrote:
-> > > Remove unnecessary pci_walk_bus() call in pciehp_resume_noirq(). This
-> > > fixes a system hang that occurs when resuming after a Thunderbolt dock
-> > > with attached thunderbolt storage is unplugged during system suspend.
-> > >
-> > > The PCI core already handles setting the disconnected state for devices
-> > > under a port during suspend/resume.
-> > > 
-> > > The redundant bus walk was
-> > > interfering with proper hardware state detection during resume, causing
-> > > a system hang when hot-unplugging daisy-chained Thunderbolt devices.
+On Fri, Sep 27, 2024 at 02:50:41PM +0800, Macpaul Lin wrote:
+> The MediaTek DPI module is typically associated with one of the
+> following multimedia power domains:
+>  - POWER_DOMAIN_DISPLAY
+>  - POWER_DOMAIN_VDOSYS
+>  - POWER_DOMAIN_MM
+> The specific power domain used varies depending on the SoC design.
 > 
-> I have no good answer for you now.
-> After enabling some debugging options and debugging lock options, I
-> still didn't get any message.
-
-Have you tried "no_console_suspend" on the kernel command line?
-
-
-> ubuntu@localhost:~$ lspci -tv
-> -[0000:00]-+-00.0  Intel Corporation Device 6400
->           +-02.0  Intel Corporation Lunar Lake [Intel Graphics]
->           +-04.0  Intel Corporation Device 641d
->           +-05.0  Intel Corporation Device 645d
->           +-07.0-[01-38]--
->           +-07.2-[39-70]----00.0-[3a-70]--+-00.0-[3b]--
->           |                               +-01.0-[3c-4d]--
->           |                               +-02.0-[4e-5f]----00.0-[4f-50]----01.0-[50]----00.0  Phison Electronics Corporation E12 NVMe Controller
->           |                               +-03.0-[60-6f]--
->           |                               \-04.0-[70]--
+> These power domains are shared by multiple devices within the SoC.
+> In most cases, these power domains are enabled by other devices.
+> As a result, the DPI module of legacy SoCs often functions correctly
+> even without explicit configuration.
 > 
-> This is Dell WD22TB dock
-> 39:00.0 PCI bridge [0604]: Intel Corporation Thunderbolt 4 Bridge [Goshen Ridge 2020] [8086:0b26] (rev 03)
->        Subsystem: Intel Corporation Thunderbolt 4 Bridge [Goshen Ridge 2020] [8086:0000]
+> It is recommended to explicitly add the appropriate power domain
+> property to the DPI node in the device tree. Hence drop the
+> compatible checking for specific SoCs.
 > 
-> This is the TBT storage connects to the dock
-> 50:00.0 Non-Volatile memory controller [0108]: Phison Electronics
-> Corporation E12 NVMe Controller [1987:5012] (rev 01)
->        Subsystem: Phison Electronics Corporation E12 NVMe Controller [1987:5012]
->        Kernel driver in use: nvme
->        Kernel modules: nvme
+> Fixes: 5474d49b2f79 ("dt-bindings: display: mediatek: dpi: Add power domains")
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
+> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
+> ---
+>  .../display/mediatek/mediatek,dpi.yaml        | 24 ++++++++-----------
+>  1 file changed, 10 insertions(+), 14 deletions(-)
 
-The lspci output shows another PCIe switch in-between the WD22TB dock and
-the NVMe drive (bus 4e and 4f).  Is that another Thunderbolt device?
-Or is the NVMe drive built into the WD22TB dock and the switch at bus
-4e and 4f is a non-Thunderbolt PCIe switch in the dock?
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-I realize now that commit 9d573d19547b ("PCI: pciehp: Detect device
-replacement during system sleep") is a little overzealous because it
-not only reacts to *replaced* devices but also to *unplugged* devices:
-If the device was unplugged, reading the vendor and device ID returns
-0xffff, which is different from the cached value, so the device is
-assumed to have been replaced even though it's actually been unplugged.
+Best regards,
+Krzysztof
 
-The device replacement check runs in the ->resume_noirq phase.  Later on
-in the ->resume phase, pciehp_resume() calls pciehp_check_presence() to
-check for unplugged devices.  Commit 9d573d19547b inadvertantly reacts
-before pciehp_check_presence() gets a chance to react.  So that's something
-that we should probably change.
-
-I'm not sure though why that would call a hang.  But there is a known issue
-that a deadlock may occur when hot-removing nested PCIe switches (which is
-what you've got here).  Keith Busch recently re-discovered the issue.
-You may want to try if the hang goes away if you apply this patch:
-
-https://lore.kernel.org/all/20240612181625.3604512-2-kbusch@meta.com/
-
-If it does go away then at least we know what the root cause is.
-
-The patch is a bit hackish, but there's an ongoing effort to tackle the
-problem more thoroughly:
-
-https://lore.kernel.org/all/20240722151936.1452299-1-kbusch@meta.com/
-https://lore.kernel.org/all/20240827192826.710031-1-kbusch@meta.com/
-
-Thanks,
-
-Lukas
 
