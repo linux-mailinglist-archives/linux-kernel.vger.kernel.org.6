@@ -1,214 +1,382 @@
-Return-Path: <linux-kernel+bounces-341918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40ADC988857
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:35:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E6A98885A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DC2E282BE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:35:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCAE51F22659
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544361C1738;
-	Fri, 27 Sep 2024 15:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F0C1C1743;
+	Fri, 27 Sep 2024 15:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FShUV+3T"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jwpyzGFC"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF30A2D;
-	Fri, 27 Sep 2024 15:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE931BFE13;
+	Fri, 27 Sep 2024 15:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727451312; cv=none; b=Vo4Hg+ldchTGkCGdMgEb7SdsccaSoZpYYrnFBirA4OA6Q0CeUH9tuZIaOmvQKlLEFCBAfPrEOIKXUjizMZYSIPgm62U7Sz8EOM7hjaQosFOcFOI94JDsAQ7flfF8Se4iGnxfPSufbO2TRGlaaO4GSGSU3QMc4gVWEzCOhIoE874=
+	t=1727451342; cv=none; b=l+HERJTN7NVgzqrUypOc4+OwACYX/BNKdfx2YcksGsSsODKEsPTBa2KsLaCLCD2ppIiTcSD1XE5iyQWX6jdScBqKLYFwB3fPoQ4cMJcTknZnmVPvicbdcytnR71sc9L1yI6vgQoWzxCXqwhPnw9z8l5NNZ8bvuV5qfmSasi1R14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727451312; c=relaxed/simple;
-	bh=KWiqkGb44uCl2lQmMMXoHG2mJyoihIc+Bd7VB2Ess+o=;
+	s=arc-20240116; t=1727451342; c=relaxed/simple;
+	bh=9DGGe7h2OtZ7tZB0fADGtwmdUrG3yqpjZAX1uETYG/Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J+t3swCisRyixgW6IbtUAD9MRkdTywLEs3A1QeQ2Veml4oOQt8cccC1UUmIf5Z1KvzbeURh43rQtvwPpg7EIAr4qgl8yDHZsfz73+HGu3avbCPlJnd/DBVIBVfSpgy7xVmZ990IdxGSj7OjDehQFGa9JaDSLM7OAkOG2YSsjEyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FShUV+3T; arc=none smtp.client-ip=209.85.219.171
+	 To:Cc:Content-Type; b=KwsGi89e75/jneT0j/b2F6maMSfDIa47G6kjyNLRRuShH7foyICAitvf4vbf+RQhl+ZSJ1k55XXx/1neHEuPrskLOnUl6EDTbVu9ADLI0IE8K2CoLvhkibHk9VHKKfk9VDmoqJE4m8vIlrzaIPQbY7TAKm7wheFKAaypqgIycAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jwpyzGFC; arc=none smtp.client-ip=209.85.160.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e026a2238d8so2276680276.0;
-        Fri, 27 Sep 2024 08:35:09 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-45aeed46f5eso9981941cf.3;
+        Fri, 27 Sep 2024 08:35:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727451309; x=1728056109; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OkjIuAs2YAv8rv1r4DmkhZ5+/9ilK5MYdkrmnv3HCoc=;
-        b=FShUV+3TeyDb2B6BjkwpKRxA1E6qCX0QxeYP0o0xcZFuEaMhPDxL0GxhH0RrJVkuEC
-         rt+WVK879EdSD2g36/elnWpi1uTXhzu+7E0ENV8sYncRSgu6xowUotZdLhEbtN6vxmbv
-         UYGN+8fwHySSaUL7cFhxKC03Cc5eYxkbdC9e7sHePjXuk34xFH8mq2PXQvx8dHKFdeo1
-         MZ7ZVOOFPiBrFzzeZGjjrHYN0PdijWeB0Q+887E9oeM7LpvDK3D/KDcOYV9JckfS/DTn
-         34m98IGupXjSBouyLpN2iijBewnAUF7Z5n5xnZATR9i5VnzrfsRlASQ+dZW5T72Tqr+4
-         eGJg==
+        d=gmail.com; s=20230601; t=1727451340; x=1728056140; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5RVoIgwpj4imbc8DwVoTuL68vnlYwQQnQejDRDQw/gk=;
+        b=jwpyzGFCVsOI/sHBnPwzflgSWbZu0pu2FhDZ0KbAT7+tX2s78If5iM0hMPdA0jjgu5
+         kr1bS8pzmyVyY3H59hjIJHhjs1HPdND95ibZyw7Wxk7V5IrSWwVlfocbwruR/YVWf2If
+         id7Ev/Z6rJ91pcjSjhKSZHrIB/96jkPS20ljQqtn65sKP6blB6Vm8wMBuK9/yV9/+OTk
+         WHUTzhWKcJGxNEo4pGrL72DKDNKLLYiVk3ouBvMm/IBeEhFA4asgdaHDAw2rPOff30VU
+         tnIWjfMmoaIP2qOv+Lu4O0mVLKOT2ihq7u0m8TLhqQEVnPiAqU6NETJAV0Uy3K82vw27
+         2ZKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727451309; x=1728056109;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OkjIuAs2YAv8rv1r4DmkhZ5+/9ilK5MYdkrmnv3HCoc=;
-        b=C9Q4NoMfIksvt15y16JqizkT0Eb52KEcvNUf3EJ6ox2mT000pACPHuRzbYYsK1kp7y
-         oXDdE4iZ8A+uuSW4DuCX5K65B+kQ4aFfyYfH9F7/zJ/yXw13em336vNSNcv4Qjg6EjUv
-         cTVWoyyqJGOojpkoWGYsgJiu8HYgP+WQCyn5XPXiwgDcvn4FCb5mlucoBOvJEgBzV1Za
-         U1I7bc9B/tVurQDj9rKlPPllDvdk2Xnip/yUMzg+Qt2rdjrGG7+WC+Cxkeqiot8ob4vB
-         +3iNbCdjzhUke0i1gNN1JdRjph7Qfl23Ygkcpee+f4osNYIAqnvU4aTov4uhnAsOmE2t
-         DL4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU5yRbyOvL7MixjevEjCekAws5lGJVK5tlB3SZ+iCnj6u6+IVRyBOc1R+JPgR/dTPjJcPf0+9mQSUyeRQ==@vger.kernel.org, AJvYcCVvvxeST2FMR4wdDaOB46I5XcynJK71QbmGjoE5Xh6amnk1D7irYsd4P4j/Y8OLIOaKsUVMAwPd0yqB@vger.kernel.org, AJvYcCX+XsdWT5xsVt2ca1kdK26p+CR9V9vtG/ThGtLR8o1BEaWdp8+WMzLb5DxxyxLXf/3tnEC0Pwic4vBC3LEb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9Mi8h76l/Icu26TgRKznm5AlJ81HzPnx+jil7UFlop0pfmRZQ
-	1iw+93se1tnZgf+Eg63OpegFRcvORel8kPAgi+dIQz+IPaned5DVb7V0d0IlJWIFlVcn+ktPp+q
-	yT7S+Ztio4YS2jbXXqiL8h3Fb0yI=
-X-Google-Smtp-Source: AGHT+IHNqoBNrjaN/muDbkbee0O4BUeveW5kk0CXzvo0C1B+ZXkb+LpCIJlAoLW2k7z2DIhoZ7Djtveav1EOaNXCBfU=
-X-Received: by 2002:a05:6902:c0d:b0:e24:9850:cd1f with SMTP id
- 3f1490d57ef6-e2604b3c605mr2559290276.16.1727451308897; Fri, 27 Sep 2024
- 08:35:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727451340; x=1728056140;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5RVoIgwpj4imbc8DwVoTuL68vnlYwQQnQejDRDQw/gk=;
+        b=FVlBuxVrwE8iYU1r4JI/H93deq4Cz9zaUeZ+qBC7Sd02DEB1xEgEtzDpW0relwHCoH
+         GBfYw9CwWvBJ8ZU8JIp+C+B4Sa/Q1i3qUv4UVycejBlDs80uMaM6hbxvTPA33dI4M5ik
+         IrYtyGatDg/BdMavhYqqIpd3h1LXOvLpzp6MRBMMeby+X/xHOUI2bLNbDBHijolHfbIC
+         7R9KuvX/ToB5pkATbbcCOIKEwzKFXk+a6B9BhMHqqtJNvyrGDbeRrTMrGkBevgwPzegy
+         oKcV+/Gsm35COl7pSLvHsGoOVsy/AInDF3591Jf+qByv33dwY++0RbJ1fWexaX8t4E24
+         FFBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUch18akzKL93NTsfkPJ+n+sK4yruhd6DLakkmdHdj2r/2e6tQq/ToDTK9z39QIw1EZuwt2QNnAihS8cvQ=@vger.kernel.org, AJvYcCUfmpTrlWzeiXm250mYN5jRAyp/jV/qlR/BSBx0DkDOPo1TVt4hvGdmGw+jtFlwks5eTkwneUW3DJpoUPU=@vger.kernel.org, AJvYcCVAkgoRFryGeVUEB3DWE0QcEHicokPasrJ1CQKKglWxq150mAmDAJpXsHR5Vkno8t1pB4tI0LuU8f+nu3xZ8j3stdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr1P2F9fGpjrvjxyvJ7pE560u5I/TYYFaDj01MoSYJUjUkIZ6V
+	bCy6FVim6rT1krDB8QHcpWN0dRKuL4SlJ32qH/vGZj1tbbkrm1Ik/mEE7oAvmy+QEljIoB0GCmB
+	baqGZUP5/yRSY3WlRip0wzakkqJ4AFSF4
+X-Google-Smtp-Source: AGHT+IEH7+x1lDEE4K125oQNgzyeZnmo4p9wiygywNZ8LiMlntVVjEE3BZ99FrpWwSJ+mcLKP+p1NV7nWTt9DXVYH6Y=
+X-Received: by 2002:a05:622a:1a24:b0:458:5cbb:bc7 with SMTP id
+ d75a77b69052e-45c9f2100bdmr51545881cf.36.1727451339541; Fri, 27 Sep 2024
+ 08:35:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927141445.157234-1-iansdannapel@gmail.com>
- <20240927141445.157234-2-iansdannapel@gmail.com> <dd9ae106-3c39-423b-9413-5a7ca57f7aec@kernel.org>
-In-Reply-To: <dd9ae106-3c39-423b-9413-5a7ca57f7aec@kernel.org>
-From: Ian Dannapel <iansdannapel@gmail.com>
-Date: Fri, 27 Sep 2024 17:34:58 +0200
-Message-ID: <CAKrir7irvRbwCsdjF_NNfWy68wTDfRuyW2oHb90gYgBA=L7-Tg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] dt-bindings: fpga: Add Efinix serial SPI programming bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: mdf@kernel.org, hao.wu@intel.com, yilun.xu@intel.com, trix@redhat.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	neil.armstrong@linaro.org, heiko.stuebner@cherry.de, rafal@milecki.pl, 
-	linus.walleij@linaro.org, linux-fpga@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240910170610.226189-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240925162153.GA27666@pendragon.ideasonboard.com> <ZvWCdn-lN66_tXeZ@kekkonen.localdomain>
+In-Reply-To: <ZvWCdn-lN66_tXeZ@kekkonen.localdomain>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 27 Sep 2024 16:35:13 +0100
+Message-ID: <CA+V-a8t+=55T5m7qjJyN7S2c2yJjPurAq-N=DhtffKZb7OWXZw@mail.gmail.com>
+Subject: Re: [PATCH v2 09/11] media: i2c: ov5645: Add internal image sink pad
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the review Krzysztof.
+Hi Sakari,
 
-Am Fr., 27. Sept. 2024 um 16:26 Uhr schrieb Krzysztof Kozlowski
-<krzk@kernel.org>:
+On Thu, Sep 26, 2024 at 4:49=E2=80=AFPM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
 >
-> On 27/09/2024 16:14, iansdannapel@gmail.com wrote:
-> > From: Ian Dannapel <iansdannapel@gmail.com>
+> Hi Laurent, Prabhakar,
+>
+> On Wed, Sep 25, 2024 at 07:21:53PM +0300, Laurent Pinchart wrote:
+> > Hi Prabhakar,
 > >
-> > Add device tree binding documentation for configuring Efinix FPGA
-> > using serial SPI passive programming mode.
+> > Thank you for the patch.
 > >
-> > Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
-> > ---
-> >  .../fpga/efinix,trion-spi-passive.yaml        | 85 +++++++++++++++++++
-> >  1 file changed, 85 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml
+> > On Tue, Sep 10, 2024 at 06:06:08PM +0100, Prabhakar wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Use the newly added internal pad API to expose the internal
+> > > configuration of the sensor to userspace in a standard manner.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> > > ---
+> > >  drivers/media/i2c/ov5645.c | 107 +++++++++++++++++++++++++++--------=
+--
+> > >  1 file changed, 79 insertions(+), 28 deletions(-)
+> > >
+> > > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> > > index dc93514608ee..255c6395a268 100644
+> > > --- a/drivers/media/i2c/ov5645.c
+> > > +++ b/drivers/media/i2c/ov5645.c
+> > > @@ -60,6 +60,10 @@
+> > >  #define OV5645_SDE_SAT_U           0x5583
+> > >  #define OV5645_SDE_SAT_V           0x5584
+> > >
+> > > +#define OV5645_NATIVE_FORMAT       MEDIA_BUS_FMT_SBGGR8_1X8
+> > > +#define OV5645_NATIVE_WIDTH        2592
+> > > +#define OV5645_NATIVE_HEIGHT       1944
+> > > +
+> > >  /* regulator supplies */
+> > >  static const char * const ov5645_supply_name[] =3D {
+> > >     "vdddo", /* Digital I/O (1.8V) supply */
+> > > @@ -69,6 +73,12 @@ static const char * const ov5645_supply_name[] =3D=
+ {
+> > >
+> > >  #define OV5645_NUM_SUPPLIES ARRAY_SIZE(ov5645_supply_name)
+> > >
+> > > +enum ov5645_pad_ids {
+> > > +   OV5645_PAD_SOURCE,
+> > > +   OV5645_PAD_IMAGE,
+> > > +   OV5645_NUM_PADS,
+> > > +};
+> > > +
+> > >  struct reg_value {
+> > >     u16 reg;
+> > >     u8 val;
+> > > @@ -87,7 +97,7 @@ struct ov5645 {
+> > >     struct i2c_client *i2c_client;
+> > >     struct device *dev;
+> > >     struct v4l2_subdev sd;
+> > > -   struct media_pad pad;
+> > > +   struct media_pad pads[OV5645_NUM_PADS];
+> > >     struct v4l2_fwnode_endpoint ep;
+> > >     struct v4l2_rect crop;
+> > >     struct clk *xclk;
+> > > @@ -826,7 +836,10 @@ static int ov5645_enum_mbus_code(struct v4l2_sub=
+dev *sd,
+> > >     if (code->index > 0)
+> > >             return -EINVAL;
+> > >
+> > > -   code->code =3D MEDIA_BUS_FMT_UYVY8_1X16;
+> > > +   if (code->pad =3D=3D OV5645_PAD_IMAGE)
+> > > +           code->code =3D OV5645_NATIVE_FORMAT;
+> > > +   else
+> > > +           code->code =3D MEDIA_BUS_FMT_UYVY8_1X16;
+> > >
+> > >     return 0;
+> > >  }
+> > > @@ -835,16 +848,24 @@ static int ov5645_enum_frame_size(struct v4l2_s=
+ubdev *subdev,
+> > >                               struct v4l2_subdev_state *sd_state,
+> > >                               struct v4l2_subdev_frame_size_enum *fse=
+)
+> > >  {
+> > > -   if (fse->code !=3D MEDIA_BUS_FMT_UYVY8_1X16)
+> > > -           return -EINVAL;
+> > > -
+> > > -   if (fse->index >=3D ARRAY_SIZE(ov5645_mode_info_data))
+> > > -           return -EINVAL;
+> > > -
+> > > -   fse->min_width =3D ov5645_mode_info_data[fse->index].width;
+> > > -   fse->max_width =3D ov5645_mode_info_data[fse->index].width;
+> > > -   fse->min_height =3D ov5645_mode_info_data[fse->index].height;
+> > > -   fse->max_height =3D ov5645_mode_info_data[fse->index].height;
+> > > +   if (fse->pad =3D=3D OV5645_PAD_IMAGE) {
+> > > +           if (fse->code !=3D OV5645_NATIVE_FORMAT || fse->index > 0=
+)
+> > > +                   return -EINVAL;
+> > > +
+> > > +           fse->min_width =3D OV5645_NATIVE_WIDTH;
+> > > +           fse->max_width =3D OV5645_NATIVE_WIDTH;
+> > > +           fse->min_height =3D OV5645_NATIVE_HEIGHT;
+> > > +           fse->max_height =3D OV5645_NATIVE_HEIGHT;
+> > > +   } else {
+> > > +           if (fse->code !=3D MEDIA_BUS_FMT_UYVY8_1X16 ||
 > >
-> > diff --git a/Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml b/Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml
-> > new file mode 100644
-> > index 000000000000..ec6697fa6f44
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml
-> > @@ -0,0 +1,85 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/fpga/efinix,trion-spi-passive.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Efinix SPI FPGA Manager
-> > +
-> > +maintainers:
-> > +  - Ian Dannapel <iansdannapel@gmail.com>
-> > +
-> > +description: |
-> > +  Efinix Trion and Titanium Series FPGAs support a method of loading the
-> > +  bitstream over what is referred to as "SPI Passive Programming".
-> > +  Only serial (1x bus width) is supported, setting the programming mode
-> > +  is not in the scope the this manager and must be done elsewhere.
-> > +
-> > +  Warning: The slave serial link is not technically SPI and therefore it is
-> > +  not recommended to have other devices on the same bus since it might
-> > +  interfere or be interfered by other transmissions.
-> > +
-> > +  References:
-> > +  - https://www.efinixinc.com/docs/an033-configuring-titanium-fpgas-v2.6.pdf
-> > +  - https://www.efinixinc.com/docs/an006-configuring-trion-fpgas-v6.0.pdf
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - efinix,trion-spi-passive
-> > +      - efinix,titanium-spi-passive
+> > This will be interesting. With internal pads we will introduce the
+> > concept of a "subdev model", which will formally document how the V4L2
+> > subdev configuration items (formats, selection rectangles, ...) maps to
+> > hardware features. Sakari is working on the definition of a subdev mode=
+l
+> > for raw sensors, that should catter for the needs of raw sensors withou=
+t
+> > a bayer scaler (the vast majority of them). To use internal pads with a
+> > non-raw sensor, we'll have to define a model. It may be more
+> > challenging/complicated to do so, as the YUV sensor features are less
+> > standardized, but it will be an interesting development.
 >
-> 1. Your driver suggests these are compatible, so make them compatible
-> with using fallback.
+> I think I'll make the sub-device model a bitmask, to allow implementing
+> more than one at the same time.
 >
-> 2. What is "spi-passive"? Compatible is supposed to be the name of the
-> device, so I assume this is "trion"? Can trion be anything else than fpga?
-spi-passive is the programming mode, where the device is in slave
-mode. There are also other modes, but not supported by this driver.
-The name was inspired by similar drivers (spi-xilinx.c). Isn't just
-"efinix,trion"/"efinix,titanium" too generic?
+> I'll try to remember to cc you to the patchset when I'll send it, likely
+> next week.
 >
-> > +
-> > +  spi-cpha: true
-> > +
-> > +  spi-cpol: true
-> > +
-> > +  spi-max-frequency:
-> > +    maximum: 25000000
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  creset-gpios:
->
-> reset-gpios
->
-> Do not invent own properties.
->
-> > +    description:
-> > +      reset and re-configuration trigger pin (low active)
-> > +    maxItems: 1
-> > +
-> > +  cs-gpios:
-> > +    description:
-> > +      chip-select pin (low active)
->
-> Eee? That's a property of controller, not child. Aren't you duplicating
-> existing controller property?
-This device uses this pin in combination with the reset to enter the
-programming mode. Also, the driver must guarantee that the pin is
-active for the whole transfer process, including ending dummy bits.
-This is why I added a warning to NOT use this driver with other
-devices on the same bus.
->
-> > +    maxItems: 1
-> > +
-> > +  cdone-gpios:
-> > +    description:
-> > +      optional configuration done status pin (high active)
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - creset-gpios
-> > +  - cs-gpios
-> > +
-> > +additionalProperties: false
->
-> unevaluatedProperties instead
->
-> > +
->
->
->
-> Best regards,
-> Krzysztof
->
+Great, I'll withhold sending a v3.
 
-Best regards,
-Ian
+> >
+> > > +               fse->index >=3D ARRAY_SIZE(ov5645_mode_info_data))
+> > > +                   return -EINVAL;
+> > > +
+> > > +           fse->min_width =3D ov5645_mode_info_data[fse->index].widt=
+h;
+> > > +           fse->max_width =3D ov5645_mode_info_data[fse->index].widt=
+h;
+> > > +           fse->min_height =3D ov5645_mode_info_data[fse->index].hei=
+ght;
+> > > +           fse->max_height =3D ov5645_mode_info_data[fse->index].hei=
+ght;
+> > > +   }
+> > >
+> > >     return 0;
+> > >  }
+> > > @@ -855,18 +876,55 @@ static int ov5645_set_format(struct v4l2_subdev=
+ *sd,
+> > >  {
+> > >     struct ov5645 *ov5645 =3D to_ov5645(sd);
+> > >     struct v4l2_mbus_framefmt *__format;
+> > > +   struct v4l2_rect *compose;
+> > >     struct v4l2_rect *__crop;
+> >
+> > While at it, could you rename __crop to crop ?
+> >
+> > >     const struct ov5645_mode_info *new_mode;
+> > >     int ret;
+> > >
+> > > -   __crop =3D v4l2_subdev_state_get_crop(sd_state, 0);
+> > > +   if (format->pad !=3D OV5645_PAD_SOURCE)
+> > > +           return v4l2_subdev_get_fmt(sd, sd_state, format);
+> > > +
+> > >     new_mode =3D v4l2_find_nearest_size(ov5645_mode_info_data,
+> > >                                       ARRAY_SIZE(ov5645_mode_info_dat=
+a),
+> > >                                       width, height, format->format.w=
+idth,
+> > >                                       format->format.height);
+> > > -
+> > > -   __crop->width =3D new_mode->width;
+> > > -   __crop->height =3D new_mode->height;
+> > > +   format->format.code =3D MEDIA_BUS_FMT_UYVY8_1X16;
+> > > +   format->format.width =3D new_mode->width;
+> > > +   format->format.height =3D new_mode->height;
+> > > +   format->format.field =3D V4L2_FIELD_NONE;
+> > > +   format->format.colorspace =3D V4L2_COLORSPACE_SRGB;
+> > > +   format->format.ycbcr_enc =3D V4L2_YCBCR_ENC_DEFAULT;
+> > > +   format->format.quantization =3D V4L2_QUANTIZATION_DEFAULT;
+> > > +   format->format.xfer_func =3D V4L2_XFER_FUNC_DEFAULT;
+> >
+> > Drivers are not supposed to return DEFAULT values, you should pick
+> > appropriate values.
+> >
+> > > +
+> > > +   __format =3D v4l2_subdev_state_get_format(sd_state, OV5645_PAD_IM=
+AGE);
+> >
+> > Maybe __format could also become fmt.
+> >
+> > > +   *__format =3D format->format;
+> > > +   __format->code =3D OV5645_NATIVE_FORMAT;
+> > > +   __format->width =3D OV5645_NATIVE_WIDTH;
+> > > +   __format->height =3D OV5645_NATIVE_HEIGHT;
+> > > +
+> > > +   __crop =3D v4l2_subdev_state_get_crop(sd_state, OV5645_PAD_IMAGE)=
+;
+> > > +   __crop->width =3D format->format.width;
+> > > +   __crop->height =3D format->format.height;
+> > > +
+> > > +   /*
+> > > +    * The compose rectangle models binning, its size is the sensor o=
+utput
+> > > +    * size.
+> > > +    */
+> > > +   compose =3D v4l2_subdev_state_get_compose(sd_state, OV5645_PAD_IM=
+AGE);
+> > > +   compose->left =3D 0;
+> > > +   compose->top =3D 0;
+> > > +   compose->width =3D format->format.width;
+> > > +   compose->height =3D format->format.height;
+> > > +
+> > > +   __crop =3D v4l2_subdev_state_get_crop(sd_state, OV5645_PAD_SOURCE=
+);
+> > > +   __crop->left =3D 0;
+> > > +   __crop->top =3D 0;
+> > > +   __crop->width =3D format->format.width;
+> > > +   __crop->height =3D format->format.height;
+> > > +
+> > > +   __format =3D v4l2_subdev_state_get_format(sd_state, OV5645_PAD_SO=
+URCE);
+> > > +   *__format =3D format->format;
+> > >
+> > >     if (format->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE) {
+> > >             ret =3D __v4l2_ctrl_s_ctrl_int64(ov5645->pixel_clock,
+> > > @@ -882,14 +940,6 @@ static int ov5645_set_format(struct v4l2_subdev =
+*sd,
+> > >             ov5645->current_mode =3D new_mode;
+> > >     }
+> > >
+> > > -   __format =3D v4l2_subdev_state_get_format(sd_state, 0);
+> > > -   __format->width =3D __crop->width;
+> > > -   __format->height =3D __crop->height;
+> > > -   __format->code =3D MEDIA_BUS_FMT_UYVY8_1X16;
+> > > -   __format->field =3D V4L2_FIELD_NONE;
+> > > -   __format->colorspace =3D V4L2_COLORSPACE_SRGB;
+> > > -
+> > > -   format->format =3D *__format;
+> > >
+> > >     return 0;
+> > >  }
+> > > @@ -899,7 +949,7 @@ static int ov5645_init_state(struct v4l2_subdev *=
+subdev,
+> > >  {
+> > >     struct v4l2_subdev_format fmt =3D {
+> > >             .which =3D V4L2_SUBDEV_FORMAT_TRY,
+> > > -           .pad =3D 0,
+> > > +           .pad =3D OV5645_PAD_SOURCE,
+> > >             .format =3D {
+> > >                     .code =3D MEDIA_BUS_FMT_UYVY8_1X16,
+> > >                     .width =3D ov5645_mode_info_data[1].width,
+> > > @@ -919,7 +969,7 @@ static int ov5645_get_selection(struct v4l2_subde=
+v *sd,
+> > >     if (sel->target !=3D V4L2_SEL_TGT_CROP)
+> > >             return -EINVAL;
+> > >
+> > > -   sel->r =3D *v4l2_subdev_state_get_crop(sd_state, 0);
+> > > +   sel->r =3D *v4l2_subdev_state_get_crop(sd_state, sel->pad);
+> >
+> > Now there's a compose rectangle, you should support getting it.
+> >
+> > >     return 0;
+> > >  }
+> > >
+> > > @@ -1123,11 +1173,12 @@ static int ov5645_probe(struct i2c_client *cl=
+ient)
+> > >     v4l2_i2c_subdev_init(&ov5645->sd, client, &ov5645_subdev_ops);
+> > >     ov5645->sd.internal_ops =3D &ov5645_internal_ops;
+> > >     ov5645->sd.flags |=3D V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL=
+_HAS_EVENTS;
+> > > -   ov5645->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+> > > +   ov5645->pads[OV5645_PAD_SOURCE].flags =3D MEDIA_PAD_FL_SOURCE;
+> > > +   ov5645->pads[OV5645_PAD_IMAGE].flags =3D MEDIA_PAD_FL_SINK | MEDI=
+A_PAD_FL_INTERNAL;
+> > >     ov5645->sd.dev =3D dev;
+> > >     ov5645->sd.entity.function =3D MEDIA_ENT_F_CAM_SENSOR;
+> > >
+> > > -   ret =3D media_entity_pads_init(&ov5645->sd.entity, 1, &ov5645->pa=
+d);
+> > > +   ret =3D media_entity_pads_init(&ov5645->sd.entity, ARRAY_SIZE(ov5=
+645->pads), ov5645->pads);
+> >
+> > Line wrap.
+>
+> It's good to run:
+>
+>         scripts/checkpatch.pl --strict --max-line-length=3D80
+>
+> on the patches.
+>
+Thanks for the pointer.
+
+Cheers,
+Prabhakar
 
