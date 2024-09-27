@@ -1,118 +1,90 @@
-Return-Path: <linux-kernel+bounces-342040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A4CF9889F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:16:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370D59889FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B345E1F21F5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:16:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 246FF1C22984
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589091C1AAB;
-	Fri, 27 Sep 2024 18:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8998C1C230F;
+	Fri, 27 Sep 2024 18:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AX6/8PeW"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YRz4V+y+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABA0136E28
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 18:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA17D136E28;
+	Fri, 27 Sep 2024 18:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727460954; cv=none; b=i9y4EHKuKkCgzQ/1GceRb0zR4GqTWGysazeUeCjYtTrMB1cHwqrsU+IxXXmPBOLKawqKmRfHqAaK6VL50mHlxKgrHI7xbmkSKUmOx7vdP0QHjenhaOoHBNwcXJjhlWPMfQrBw1/7xgXeYUwchnnLFsPb3yFXLH5UiBdYO8QTSb8=
+	t=1727460959; cv=none; b=efwrvDzLHZYq3XmJevVn2AxDmk13Iale6NwGskKM3+NEYtVAWK2y3wiAiDFm0HuJOsCS6C8Wn9bc7itXQG1GuQHSEAujbZEoA5ZJMls/vvJTY+keqtV76VxvJQpMJNhD3hJvwPmv7P2s5zgmhaMdEO5VQnQ4sN5pJTQsqb3SnGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727460954; c=relaxed/simple;
-	bh=cPGPrshc4QNk/99mTuoYkMhxWsse5tOYaZQsmXQjy6U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fW3FHxvYdLYbtAIH4883SpY08MZsoTkJelums/8+hBjOUQdC+E0apgSpDMoK0zEYTWi1vQ/bQvgTJCXtHVhEe6FWZGNDgXDL7x6C5eQr8iTigrwtn3F2E8WsfTj7VTHCWYO7+O9/C7Rh6oy10vBgMvfhdtYcLH0XKYlxAQeiTz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AX6/8PeW; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f759688444so23385851fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:15:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727460951; x=1728065751; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BAXC1jjS+q2JfymL+BkIvB6rw6pd4yUqUxSez452AvA=;
-        b=AX6/8PeWqUWh8v/jtp95n1/7OLMWZpTGXw0b7iw/ttzaSEBejRS76SX5KKvja0Sfyz
-         0hiltl8dLOzyi7hg/huBhhTlr4ZfFuTWkvInH68IsltNr5HI+5URRaRbidy6ip51Ejaa
-         688ZQ+Sqj2n/BnjdZLRgYfnVnHW+zdvVPnuw3voOX/RXBUbjstr7FJbgA9GXz07+nIxC
-         qhb6SjgKawUGX/YewVFQ804rUHo5b3Nrs6OsNnELiEJ2JIdyqw6HiI5Y2OujeltCqOoi
-         9TpYGlch22p3qgQ6NzWUL4QWNUyDDLCRDQVUnbwPv0C20I6No9J8Llq9Mc8afghYHeMF
-         rizA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727460951; x=1728065751;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BAXC1jjS+q2JfymL+BkIvB6rw6pd4yUqUxSez452AvA=;
-        b=Sk0AOojUFhh6d9CfAaaeIawqH3v20TUbI/tjATODQV1aG9c+Spw8407lTPtxffeHEM
-         L8H9w4hM83rQgu0BUxJv3RXPoBRHzj7JdA98F9ASmLeG5t4XW8+2tD2ndLCZWXrdjxsy
-         ZwydguXHhg6dtnUd9ms3CioTxqlBtE7Vg8UfzElqyTNL7v5acbMXHM5m5+Etw2XqgjZr
-         uWn87qB/6HxjJZYNtM4FRPVbBaxq85ebjPDLsrhXtDIsxh3v7OiZ1k2QcB0PYxvFrsUr
-         YLC/SjxyAb6Eamtz1xb5ma6kFdkgSuMa1ClFsEIpNbiPQGp8I3e8e2Dj3ZvJ2MOipZzp
-         P+NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUFHHheJHgtrpC0Jm6PytMpvA4pQEeHVNSo2nhUmLdJyqDsTrZWgEOo0HIDNOZlI+Ktrz35DSPoSAJh2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yycp6JZzzlfgmg9/aJ+vC/5VmDfKHqcOWOx6c1AS3oD26J47OB8
-	Pl99X2kx/9EJcz1nbhniTGmNrZqhhQVxVSMgGNLW2V4/LV8WmMVFHHoGLQHyjKA/V+Yg90StvW8
-	LCiZk9jQ6pJkXUeACzDLF+a17VXURNh5OBaEZ
-X-Google-Smtp-Source: AGHT+IFguB014B6EKl0Q/a5MJW3oPdzwrAqGbr/v6VQraq+wpGBJLmYOKfTJGKUPKSQiOem+2EK4Kwet0VNxh7U+gJ0=
-X-Received: by 2002:a05:651c:b0f:b0:2ec:1810:e50a with SMTP id
- 38308e7fff4ca-2f9d417a581mr26199411fa.32.1727460951099; Fri, 27 Sep 2024
- 11:15:51 -0700 (PDT)
+	s=arc-20240116; t=1727460959; c=relaxed/simple;
+	bh=VsXoDAk/3cgXnKaNj9IIe1/ClxMRI1S89qYD1FBDWjI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=uEgwTD4b8lrmiMDtbn9UFP07Jpw3ZcWjJo1dGkbBz6uv5d6LkpqAHxXSO5+w+ltJKIz8I494LpMPGqoDVs6BydErUswtKTffkmk5Ix7fXLMZyY2LDFg39LRoQj2lXq4TOF3yca8vNFOCb/eR9gDYWaJILfFf1YXkDu5vWLhZl7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YRz4V+y+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE14C4CEC7;
+	Fri, 27 Sep 2024 18:15:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727460957;
+	bh=VsXoDAk/3cgXnKaNj9IIe1/ClxMRI1S89qYD1FBDWjI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=YRz4V+y+76TPvXCCHF6p3SZH/WWhAjhQ7qHx7bVrEEWS8Z6/orbgNWcRTJr0Iu5iI
+	 bufKra0ucZske2c26x6r3rBd4fJHKBFqXpx/cwCqMTt43gNJ39Dkv2ihArqs24AbhM
+	 s8WeBgV4b0hzYBgNJa5bJyNXkCko0o8koy26xaHhXdqktKdBBPgeQ6Ag2wGcnybI9K
+	 iYmal/+CtFF0raFtVMd6HWdAY0spCP87tJGovzX5hlTFqCugugsIB5kSCngzjAEdSq
+	 dZ4zDs9K5UCjwfGKw85soR2fWAdYvAciwX1Wen48lCfUKS7OeWpemdbDvmJFMGv1Bp
+	 PLf24FhNrssXQ==
+Date: Fri, 27 Sep 2024 20:15:55 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Benjamin Tissoires <bentiss@kernel.org>
+cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    bpf@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH HID] HID: bpf: fix cfi stubs for hid_bpf_ops
+In-Reply-To: <20240927-fix-hid-bpf-stubs-v1-1-5bbf125f247c@kernel.org>
+Message-ID: <nycvar.YFH.7.76.2409272015390.31206@cbobk.fhfr.pm>
+References: <20240927-fix-hid-bpf-stubs-v1-1-5bbf125f247c@kernel.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926030025.226221-1-jdamato@fastly.com> <20240926030025.226221-3-jdamato@fastly.com>
-In-Reply-To: <20240926030025.226221-3-jdamato@fastly.com>
-From: Praveen Kaligineedi <pkaligineedi@google.com>
-Date: Fri, 27 Sep 2024 11:15:39 -0700
-Message-ID: <CA+f9V1OsZgH37X-zjWqjkjoQwteXg4=n_HyfA_SOWN9YM=GLRg@mail.gmail.com>
-Subject: Re: [RFC net-next 2/2] gve: Map NAPI instances to queues
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, Jeroen de Borst <jeroendb@google.com>, 
-	Shailend Chand <shailend@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Ziwei Xiao <ziweixiao@google.com>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-> diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
-> index 661566db68c8..da811e90bdfa 100644
-> --- a/drivers/net/ethernet/google/gve/gve_main.c
-> +++ b/drivers/net/ethernet/google/gve/gve_main.c
-> @@ -1875,6 +1875,9 @@ static void gve_turndown(struct gve_priv *priv)
->
->                 if (!gve_tx_was_added_to_block(priv, idx))
->                         continue;
-> +
-> +               netif_queue_set_napi(priv->dev, idx, NETDEV_QUEUE_TYPE_TX,
-> +                                    NULL);
->                 napi_disable(&block->napi);
->         }
-When XDP program is installed, the for loop iterates over both
-configured TX queues (idx <  priv->tx_cfg.num_queues) as well as
-dedicated XDP TX queues ( idx >= priv->tx_cfg.num_queues).
-Should add if (idx <  priv->tx_cfg.num_queues) check here.
+On Fri, 27 Sep 2024, Benjamin Tissoires wrote:
 
-> @@ -1909,6 +1915,9 @@ static void gve_turnup(struct gve_priv *priv)
->                         continue;
->
->                 napi_enable(&block->napi);
-> +               netif_queue_set_napi(priv->dev, idx, NETDEV_QUEUE_TYPE_TX,
-> +                                    &block->napi);
-> +
->                 if (gve_is_gqi(priv)) {
->                         iowrite32be(0, gve_irq_doorbell(priv, block));
->                 } else {
+> With the introduction of commit e42ac1418055 ("bpf: Check unsupported ops
+> from the bpf_struct_ops's cfi_stubs"), a HID-BPF struct_ops containing
+> a .hid_hw_request() or a .hid_hw_output_report() was failing to load
+> as the cfi stubs were not defined.
+> 
+> Fix that by defining those simple static functions and restore HID-BPF
+> functionality.
+> 
+> This was detected with the HID selftests suddenly failing on Linus' tree.
+> 
+> Cc: stable@vger.kernel.org # v6.11+
+> Fixes: 9286675a2aed ("HID: bpf: add HID-BPF hooks for hid_hw_output_report")
+> Fixes: 8bd0488b5ea5 ("HID: bpf: add HID-BPF hooks for hid_hw_raw_requests")
+> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+> ---
+> Hi,
+> 
+> This commit should directly go in Linus tree before we start creating
+> topic branches for 6.13 given that the CI is now failing on our HID
+> master branch.
 
-Same as above. When XDP program is installed, the for loop iterates
-over both configured TX queues (idx <  priv->tx_cfg.num_queues) as
-well as dedicated XDP TX queues ( idx >= priv->tx_cfg.num_queues)
+Applied now to for-6.12/upstream-fixes, thanks Benjamin.
+
+-- 
+Jiri Kosina
+SUSE Labs
+
 
