@@ -1,250 +1,226 @@
-Return-Path: <linux-kernel+bounces-341277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93762987D9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:39:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56085987DA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B25A11C220C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 04:39:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 788511C22100
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 04:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5CEEEAA;
-	Fri, 27 Sep 2024 04:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F8E170A16;
+	Fri, 27 Sep 2024 04:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W5WMGoGb"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RmZXZfde"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062D6158D66
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 04:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436D516DEBB;
+	Fri, 27 Sep 2024 04:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727411930; cv=none; b=BoCZRWOjbXf4DnML3EG1ucwssUje1lDynGCQMK4CfJ2naGbC8Ru4BdU69hojyWybg5cUraRJFBQQqY1w7KtBu0QIUQAxfwEq2IGhiyG98p8n+WiKrJGsm2GfMv6SRRj0GF99UgPGOr3qv9myktwoPuw0VSB8Sc1gHht3C/ciri8=
+	t=1727411968; cv=none; b=PuQgbmZTgoeSJmb4xK0qsJahZipnzZ0TcdoIJ3C0DoHwuf5Gybo3e86xU8acXQ0ou5QHvDz2ZIRzDAyaagIqNIlBSjmulqLepirirs5Z1c9+7l3bcmu8DxelhmxjvMBA86e0jEEFTip+FgowjJR7qN95H+soD8LV0bbr0/swrlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727411930; c=relaxed/simple;
-	bh=XnZrFknTED31CpFW1xavqyjmQ1RP1hTTwJB5JF3Tth8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U/uOGFL+r304BU2f2ebh5OOi+OKTqDlDGQv0Hitie76v+ihPDzl/nPmvjXe2+za5xYMgqmCb5YHKPzCytXjwjtgbpGrR1+jWYt6PA+o7aiO6i50vMb0kXcAjet8PYL/pQJAiJ6aO82M29Y61Z5lb7REa2S6mvbgyMEQGLX1jhzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=W5WMGoGb; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53659867cbdso2740338e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 21:38:48 -0700 (PDT)
+	s=arc-20240116; t=1727411968; c=relaxed/simple;
+	bh=w6DVDQjkuNJHV2tR9GWVHMeZWBXK08jPVFfyVvSYekU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lqvCoN25+VUAUBVOSY2WaXqT6wJqelsjt991C9vK2Oa9IlWi+HYglJlQPAiP56nQsmVYPaAdSBzX02A1CinqtA+rk9XB9veffdhFvBXxDafY5XImIyWagOnFRUI4/RT1K4GacZJnbsR2Oy0J7/RVJp9niipjvGb3GNjX6WNqhzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RmZXZfde; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4582760b79cso8731941cf.2;
+        Thu, 26 Sep 2024 21:39:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727411927; x=1728016727; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727411966; x=1728016766; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h/P54adq5wqPeVhdzqGMRKbTP9qOT4nAYJ2m7pC5TLg=;
-        b=W5WMGoGbjzxR4OZua5UMBbYrGfebKWOsMKPHeWxlRVh8ZX1w06+/KxGXYsWMJvyUwv
-         O7zD4KYpHyQSj3fGhmcvyW/RmwG5KaP8XqbD/BKd4hSf7+b8HmAK6YJCXTfEeOgO2Wlt
-         /HIDH5gkJFduGJl/HBAsFRmAn+eL6AuZ8C4d4=
+        bh=dRU6/4TVUAhjoio/t/k6qqSqdEw/5cr8n1FQhHvr5Jw=;
+        b=RmZXZfde9kQ6JsiHhTKwR3YW/yxDWN4wIFGj3WKFYIgtXiDEzYTzNwd5mCfTq8DKUe
+         qfqsod6cqWd0ieZ/8b4RpGhjwfD6ifufstB/DPbRmbUj6DqG9Njrfk7kZBEH3P36zZGP
+         XTk6M9Bn2jb6KLcob8aXxCR0BsDH4g0xkdqKGa+orHlJ9nsodPAzfISakntHjQ3TV5us
+         cT2te/soKM5JuhfZXaNu6cFXdfbBLNFBFip/l8mOP0DbR5gDJoZBkhqK/cTwKmJYnvjg
+         g8yZVV3bmajdP4ywvhh9VW0dQpMi1diX2F5t1RAu/zgVcEgEkfBQCH/W4F83d3+cHxhq
+         mOYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727411927; x=1728016727;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727411966; x=1728016766;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h/P54adq5wqPeVhdzqGMRKbTP9qOT4nAYJ2m7pC5TLg=;
-        b=e4uMGFe9dPZ9dEenWcW554MxSywh+y5WccsYHFtqMWW+rzjBw2m2yNnQMUv0mHYKk2
-         qGxVA/uqeY4nxq+tw/cMNpmn5bAcmIZz5PxXTipG6OwgLyY+j+XhzOLfL31MrJpASyzK
-         j3xewooiVuk6ZvkH78PK0jnDEwQJh8QPsRgo3R7/oJP5oj3WL9Jdt9j4+DLS2WHkq3P9
-         abfwxG0v4rAw1DgwKrIMt5OB0a1VAF9t/D7L61wFL2D1wXm9l2BuIlqYOWuVAoKcp/XC
-         jg1cxlEkPmYPWExjmQIxOBPdJx29lvcfoisfA9YFfM/u1MQWp/Rsu5dlQ2Knm/Z1DyXT
-         XFFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIFclFyzZgz8P1M78BEI7kDFeL04QdrCbqgG+wtsGzH3pvf5Vor3ChvGOeAmKFQ0FUCVtdMJbT0wS86i8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjso2kXshXpoCCetdSkXxmfEELbUdiQGkvRhurVYn8P803cUTu
-	ZT8jcC/e9qsSUmcsecY5KQJsbhNKurAbdK5WDVLPnXPdV8lO76a/GqTlrR5FGOnhzT4y6Ma7PSi
-	MEOKvNuzEICU+oJ/0SOx7QLJgwYX7/g/wzA+O
-X-Google-Smtp-Source: AGHT+IEuKMKaL9pm5ASOI7F2wVDmv6urgJgoH8ydyHLtVrSS2VSiUn0vrSHcCfRK5Gdvnw9KKS+IW86HHLQ+3e6fKoQ=
-X-Received: by 2002:a05:6512:3e05:b0:52c:cd77:fe03 with SMTP id
- 2adb3069b0e04-5389fc3bd31mr1339969e87.14.1727411927087; Thu, 26 Sep 2024
- 21:38:47 -0700 (PDT)
+        bh=dRU6/4TVUAhjoio/t/k6qqSqdEw/5cr8n1FQhHvr5Jw=;
+        b=MRUhBctwzcgZvtEP190qcIOeGc+wnaLWD0Zs/UWrvBbvRhWdVNcLseONJ2464UGCS4
+         cRVrJ5NoKiuWVMm4kk8BgHucXQOGY1bzqWK+7+ZraTVAl8b0nrPAL669emQ+TXdMFgqq
+         ma8x3DA3l3N8S/EToxx0w4dEw8qn9l9vjakskpBZHLIczaMomK4cLchJoIhUMlpgzZIs
+         a0Sg9gYmP4nj2Dy/iIDWTgK9DM5NxE4UCMpekxBLHTA3yqi5ek+h/zIm6V1SYCOglnyK
+         0Lb2lYj/2hl1o0/H+zJD1yKY5FTnCAdduv1Y8Yn1zBZCNwXcG2MmeWUpjxfb4hetFZ7g
+         s/ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWeXSse3soI+A8fV2C8VeFEcrsmSpW7yE2HZ6gvBEMrrUdkZPcO+wUor3BKS+XoY114ND3Q@vger.kernel.org, AJvYcCWvoGPEhWwulQdCKKqKXSrCR+gh2ZH2CO7sE6MOpUyvaYk/A1bjarBUcPM9ZVILzaARpj73hDCH5cL48IA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbK8XgXewxG5Yp3NXNaTcVEn92EpjmIA2WMwnWgXzhzFGKjkwp
+	FK3uK61bJz3EnkKzM9YIkdVW3ktk2NZqXtNsVvTJTTSSrP/F4/b3
+X-Google-Smtp-Source: AGHT+IGRJNR8YMG45DUkKzLpm66mQWZjHJK0giSYGof1EtZOJwSea9/ISL5wW4ohXqjOGHnxmP/MAA==
+X-Received: by 2002:a05:622a:3c6:b0:458:4fe5:b2f7 with SMTP id d75a77b69052e-45c9f1afb2dmr27273301cf.5.1727411965976;
+        Thu, 26 Sep 2024 21:39:25 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45c9f33a4c9sm4743071cf.73.2024.09.26.21.39.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 21:39:25 -0700 (PDT)
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfauth.phl.internal (Postfix) with ESMTP id F372C1200043;
+	Fri, 27 Sep 2024 00:39:24 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Fri, 27 Sep 2024 00:39:25 -0400
+X-ME-Sender: <xms:_Db2Zkk_zmSebOfd8O1C0dPjWEHeAc3XgIa7MGu-fQ_2TfzAqj73ug>
+    <xme:_Db2Zj2k7iVcRTB8aHCcinbmRlJKf27pwiY-9PsIpQpUTXvly-upYBVT0KRm3Ik6_
+    f3XDotMKSTX0SJk8Q>
+X-ME-Received: <xmr:_Db2ZioUx9N0ctlCUE1izEehr-fygmlBkkfn6jhGcf1Y-R-XLkuXTBytIR8lrA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtkedgkeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
+    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
+    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
+    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvdejpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehmrghthhhivghurdguvghsnhhohigvrhhsse
+    gvfhhfihgtihhoshdrtghomhdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidq
+    fhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepjhhonhgrshdrohgsvghrhhgruh
+    hsvghrsehhuhgrfigvihgtlhhouhgurdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgv
+    rhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgtuhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdr
+    ohhrghdprhgtphhtthhopehlkhhmmheslhhishhtshdrlhhinhhugidruggvvhdprhgtph
+    htthhopehprghulhhmtghksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehfrhgvuggv
+    rhhitgeskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:_Db2Zgm-fE8hUMqHcNrwexhGyjRt8C6pMc4co2W-LVb-0PvCIjUHgQ>
+    <xmx:_Db2Zi3EaCVb2yT79AagRK1gPp6JkGM2Q4yorZ7HOy-59UQpgt_PrQ>
+    <xmx:_Db2ZnuRPm7ueXHyIKmUrw_sSK1EPmRfIKoFu0cKk1lqqPl2F4VOsQ>
+    <xmx:_Db2ZuUEWmG_uNpKv8Nlf5VYrJZPJLQo8ehdYpnsYKh5SYdlD-MGgQ>
+    <xmx:_Db2Zl2ghnXP6pi4SS_g5elLYJbdgdUI3qv93e4On4PdGEs2n0WR-gAC>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 27 Sep 2024 00:39:24 -0400 (EDT)
+Date: Thu, 26 Sep 2024 21:38:36 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	linux-mm@kvack.org, lkmm@lists.linux.dev,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+Message-ID: <ZvY2zBiluLkqRSkc@boqun-archlinux>
+References: <ZvPp4taB9uu__oSQ@boqun-archlinux>
+ <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
+ <ZvP_H_R43bXpmkMS@boqun-archlinux>
+ <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
+ <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+ <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
+ <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
+ <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
+ <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
+ <bba2e656-4c3b-46db-b308-483de440b922@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925093807.1026949-1-wenst@chromium.org> <20240925093807.1026949-3-wenst@chromium.org>
- <ZvPscRdWlFPmtCyR@smile.fi.intel.com> <CAGXv+5Gf9+rc+vLcr-JFhO561G8dw38ksV3drat+DyCfWEVakQ@mail.gmail.com>
- <ZvVS7ITg2t-RIh8C@smile.fi.intel.com>
-In-Reply-To: <ZvVS7ITg2t-RIh8C@smile.fi.intel.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 27 Sep 2024 12:38:35 +0800
-Message-ID: <CAGXv+5EV4nNiAneajqr4VBkX4TO3zV76yqBM_u81ZMNjU52Bvw@mail.gmail.com>
-Subject: Re: [PATCH v8 2/3] regulator: Add devres version of of_regulator_get_optional()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Mark Brown <broonie@kernel.org>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
-	Johan Hovold <johan@kernel.org>, Pablo Sun <pablo.sun@mediatek.com>, 
-	Macpaul Lin <macpaul.lin@mediatek.com>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bba2e656-4c3b-46db-b308-483de440b922@efficios.com>
 
-On Thu, Sep 26, 2024 at 8:26=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Sep 26, 2024 at 04:43:52PM +0800, Chen-Yu Tsai wrote:
-> > On Wed, Sep 25, 2024 at 6:56=E2=80=AFPM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Wed, Sep 25, 2024 at 05:38:05PM +0800, Chen-Yu Tsai wrote:
->
-> ...
->
-> > > > +#if IS_ENABLED(CONFIG_OF)
-> > >
-> > > Do we really need this?
-> >
-> > What's the point of going through devres_* stuff if we already know
-> > _of_regulator_get() is going to fail anyway?
->
-> With devm_add_action*() this will be other way around and there are plent=
-y of
-> APIs done this way. The ifdeffery is simply ugly in the code.
+On Fri, Sep 27, 2024 at 03:20:40AM +0200, Mathieu Desnoyers wrote:
+> On 2024-09-26 18:12, Linus Torvalds wrote:
+> > On Thu, 26 Sept 2024 at 08:54, Jonas Oberhauser
+> > <jonas.oberhauser@huaweicloud.com> wrote:
+> > > 
+> > > No, the issue introduced by the compiler optimization (or by your
+> > > original patch) is that the CPU can speculatively load from the first
+> > > pointer as soon as it has completed the load of that pointer:
+> > 
+> > You mean the compiler can do it. The inline asm has no impact on what
+> > the CPU does. The conditional isn't a barrier for the actual hardware.
+> > But once the compiler doesn't try to do it, the data dependency on the
+> > address does end up being an ordering constraint on the hardware too
+> > (I'm happy to say that I haven't heard from the crazies that want
+> > value prediction in a long time).
+> > 
+> > Just use a barrier.  Or make sure to use the proper ordered memory
+> > accesses when possible. Don't use an inline asm for the compare - we
+> > don't even have anything insane like that as a portable helper, and we
+> > shouldn't have it.
+> 
+> How does the compiler barrier help in any way here ?
+> 
+> I am concerned about the compiler SSA GVN (Global Value Numbering)
+> optimizations, and I don't think a compiler barrier solves anything.
+> (or I'm missing something obvious)
 
-It's still extra code that doesn't get compiled out.
+I think you're right, a compiler barrier doesn't help here:
 
-> > Also, _of_regulator_get() does not have a stub version for !CONFIG_OF.
->
-> So, what prevents us from adding it?
+	head = READ_ONCE(p);
+	smp_mb();
+	WRITE_ONCE(*slot, head);
 
-Because there's no need if the only internal user isn't using it.
+	ptr = READ_ONCE(p);
+	if (ptr != head) {
+		...
+	} else {
+		barrier();
+		return ptr;
+	}
 
-I could also move them over to of_regulator.c.
+compilers can replace 'ptr' with 'head' because of the equality, and
+even putting barrier() here cannot prevent compiler to rewrite the else
+branch into:
 
-_of_regulator_get() stays internal to that file, and devm_regulator_release=
-()
-gets exposed instead.
+	else {
+		barrier();
+		return head;
+	}
 
-Does that sound better?
+because that's just using a different register, unrelated to memory
+accesses.
 
-> > > > +static struct regulator *_devm_of_regulator_get(struct device *dev=
-, struct device_node *node,
-> > > > +                                             const char *id, int g=
-et_type)
-> > > > +{
-> > > > +     struct regulator **ptr, *regulator;
-> > > > +
-> > > > +     ptr =3D devres_alloc(devm_regulator_release, sizeof(*ptr), GF=
-P_KERNEL);
-> > > > +     if (!ptr)
-> > > > +             return ERR_PTR(-ENOMEM);
-> > > > +
-> > > > +     regulator =3D _of_regulator_get(dev, node, id, get_type);
-> > > > +     if (!IS_ERR(regulator)) {
-> > > > +             *ptr =3D regulator;
-> > > > +             devres_add(dev, ptr);
-> > > > +     } else {
-> > > > +             devres_free(ptr);
-> > > > +     }
-> > > > +
-> > > > +     return regulator;
-> > >
-> > > Why not using devm_add_action() / devm_add_action_or_reset()
-> > > (whichever suits better here)?
-> >
-> > Cargo cult from _devm_regulator_get() in this file. However since this =
-is
-> > meant to share the same release function, both functions need to use th=
-e
-> > same mechanism.
-> >
-> > I could also argue that this is not an action, but an allocation, and s=
-o
-> > devres_alloc() seems to make more sense.
->
-> It's rather matter of the naming of the devm_add_action*() APIs, but agai=
-n,
-> we have plenty of APIs using it when it's allocation and not strictly spe=
-aking
-> an action.
+Jonas, am I missing something subtle? Or this is different than what you
+proposed?
 
-OK. Still the mechanism used needs to match that of the existing API.
-So devres_add() it is for now.
+Regards,
+Boqun
 
-> > > > +}
-> > >
-> > > > +#endif
->
-> ...
->
-> > > > +static inline struct regulator *__must_check devm_of_regulator_get=
-_optional(struct device *dev,
-> > > > +                                                                  =
-       struct device_node *node,
-> > > > +                                                                  =
-       const char *id)
-> > >
-> > > I don't know the conventions here, but I find better to have it as
-> > >
-> > > static inline __must_check struct regulator *
-> > > devm_of_regulator_get_optional(struct device *dev, struct device_node=
- *node, const char *id)
-> > >
-> > > Similar to other stubs and declarations.
-> >
-> > I don't think there are any conventions. This file already has three ty=
-pes:
-> >
-> > 1. Wrap the line with the function name on the second line
-> > 2. Wrap the arguments; wrapped arguments aligned to the left parenthesi=
-s.
-> > 3. Wrap the arguments; wrapped arguments aligned with aribtrary number =
-of
-> >    tabs.
-> >
-> > I prefer the way I have put them.
->
-> The way you put it despite relaxed limit is slightly harder to read.
-> I don't remember many headers that do so-o indented parameters. Besides
-> your way defers the burden of resplit to the future in case one more para=
-meter
-> needs to be added which will excess the 100 limit.
->
-> Also __must_check is somehow misplaced in my opinion (talking from my
-> experience and this can be simply checked by grepping other headers).
-
-Seems correct to me. It's between the return type and the function name.
-From the coding style doc:
-
- __init void * __must_check action(enum magic value, size_t size, u8 count,
-                                   char *fmt, ...) __printf(4, 5) __malloc;
-
-The preferred order of elements for a function prototype is:
-
-- storage class (below, ``static __always_inline``, noting that
-``__always_inline``
-  is technically an attribute but is treated like ``inline``)
-- storage class attributes (here, ``__init`` -- i.e. section
-declarations, but also
-  things like ``__cold``)
-- return type (here, ``void *``)
-- return type attributes (here, ``__must_check``)
-- function name (here, ``action``)
-- function parameters (here, ``(enum magic value, size_t size, u8
-count, char *fmt, ...)``,
-  noting that parameter names should always be included)
-- function parameter attributes (here, ``__printf(4, 5)``)
-- function behavior attributes (here, ``__malloc``)
-
-
-> That said, I prefer the way I suggested or something alike.
-
-Two people arguing over style that is not clearly specified in the coding
-style doc is probably wasting time. I'll use what `clang-format` gave:
-
-static inline struct regulator *__must_check of_regulator_get_optional(
-       struct device *dev, struct device_node *node, const char *id)
-static inline struct regulator *__must_check devm_of_regulator_get_optional=
-(
-       struct device *dev, struct device_node *node, const char *id)
-
-
-ChenYu
+> 
+> I was concerned about the suggestion from Jonas to use "node2"
+> rather than "node" after the equality check as a way to ensure
+> the intended register is used to return the pointer, because after
+> the SSA GVN optimization pass, AFAIU this won't help in any way.
+> I have a set of examples below that show gcc use the result of the
+> first load, and clang use the result of the second load (on
+> both x86-64 and aarch64). Likewise when a load-acquire is used as
+> second load, which I find odd. Hopefully mixing this optimization
+> from gcc with speculation still abide by the memory model.
+> 
+> Only the asm goto approach ensures that gcc uses the result from
+> the second load.
+> 
+[...]
 
