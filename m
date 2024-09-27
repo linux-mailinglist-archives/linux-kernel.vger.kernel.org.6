@@ -1,197 +1,227 @@
-Return-Path: <linux-kernel+bounces-341882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E0C9887B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:58:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57AC9887BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 159911F2268F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:58:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10CB7282445
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50821C1738;
-	Fri, 27 Sep 2024 14:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33F01C1AAC;
+	Fri, 27 Sep 2024 14:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="U/BHstmX"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2065.outbound.protection.outlook.com [40.107.241.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U+9auuQD"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D391C172A;
-	Fri, 27 Sep 2024 14:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727449101; cv=fail; b=CmfxkoUeXGofe/9C3JVH3+ZM0iGzSq/ix88SBuK0J/FD2ciiyL0eNVzPyd1mFcm+Hnc5CbS9dhRu7a+DTCF8PvyFHndSw8iSXmecV7LEHgy02I8nIObRBdmHad26exdgXe38vz0qo++S6DVsJQw52W7kX4/7ykZ4lR6K9xq9TaY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727449101; c=relaxed/simple;
-	bh=1dRmZswAg6NoiKmyMrqMg9I/N2V5MyjviSOZoUY31zk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ixVVGels0hO1YFMDbX4GeoCAnWzcQdnDHpZTL44aGIosP2xAPv0ZZAbca9a658ot9fA5ldU8vPyioovTHEZoFL+/fE0Pad/cjbfzB2/Xbxu8E8QtuP/ThxFHkpdAZyVEP726M9lJe2J7j9xm2hi6wLnf6c/kQU4oF68rQPzBbSQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=U/BHstmX; arc=fail smtp.client-ip=40.107.241.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=v731WUWpl2ci552+qttFSjgax92zwJybgNzQCC+FPDE1lFF1ILCDoOLALApbPebxn8XZeb+LuHl3AZWT8lDgPAIP87Pn96ZXMXfyK+ZAHUg08wLE6rWahxNIn4PewVAQMxip5hBGeSGTprTXyfFF6lfbYyGdxS7atCp+gPbhE7MAV7fcHASWC8rAvt6j+O8ggL3hqKcu8PaJQ080dbdg8D5dyKJYzYPFAkznbCpdVVy/HkOZKPIc8hcv+Ryldfdy/+y2R5vKuBXFGZGJsSlmh7ztU2dGkzbwO6pFOl4gjXEp9cXuwpeBJXTCpafHuRNxJXQYJzxKerSZfOGakQbNYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fdBhvxwRmJCjfv5jF8yAl2AC9ZuNdT/cokZimrMtSa0=;
- b=FphXzNWbRQedVb0J1ufH8lwRVuSRcYSteyFt7wsU/Py3ePdbi7If/Qk3GpRgQCJBttsRAces+8GqTq6GmdvGOSE+2YfNzfyKGsH6NTtp8r6s3RnTve6PY6bHLBpoN/ekL8WREi9nN8jA378M4qS9NRkSZoWVGr+8UGVkcHlg2HM7qohrfHxiNQnYFc3qglaTOrX4C1FQQZ50TjjOxkK5B7lRK+6Kza8HCONBRunNk0l+ulsfhw1OolD2eKMdxKGmJZrdEZ/ESKIMnaLd+GZasaJ1I20hbjBniXv5EDzb2IWZsw2WIPsk0ieaj1ehASyi/73jE+0rswR9r3/BpMP/8w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fdBhvxwRmJCjfv5jF8yAl2AC9ZuNdT/cokZimrMtSa0=;
- b=U/BHstmXG0QAHjV2pRzUu8IH+NKqyhHah70gGat+Su1kGo5ddcmsMP2RyjMhRKDiiB+MBoBktIjM3HpVdOrIxapvo3Uqn0fLiQmWjtnJc16133fqmU1DJBD+dS2E8JrLLKFtb0bejqpysaiOAXI/UR4bDy1/EvhT6QIta7DrYxc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from DU0PR04MB9562.eurprd04.prod.outlook.com (2603:10a6:10:321::10)
- by DBBPR04MB7692.eurprd04.prod.outlook.com (2603:10a6:10:1f6::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Fri, 27 Sep
- 2024 14:58:13 +0000
-Received: from DU0PR04MB9562.eurprd04.prod.outlook.com
- ([fe80::ad4d:8d53:1663:d181]) by DU0PR04MB9562.eurprd04.prod.outlook.com
- ([fe80::ad4d:8d53:1663:d181%7]) with mapi id 15.20.7982.022; Fri, 27 Sep 2024
- 14:58:12 +0000
-Message-ID: <df6b9303-155e-4796-adb2-e05c7e76e289@cherry.de>
-Date: Fri, 27 Sep 2024 16:58:10 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/8] dt-bindings: hwmon: add support for ti,amc6821
-To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Quentin Schulz <quentin.schulz@cherry.de>,
- Peter Rosin <peda@axentia.se>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20240906-dev-mule-i2c-mux-v8-0-dbd28a150e41@cherry.de>
- <20240906-dev-mule-i2c-mux-v8-3-dbd28a150e41@cherry.de>
-Content-Language: en-US
-From: Farouk Bouabid <farouk.bouabid@cherry.de>
-In-Reply-To: <20240906-dev-mule-i2c-mux-v8-3-dbd28a150e41@cherry.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR08CA0266.eurprd08.prod.outlook.com
- (2603:10a6:803:dc::39) To DU0PR04MB9562.eurprd04.prod.outlook.com
- (2603:10a6:10:321::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660D61C172B
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727449118; cv=none; b=PyO9td07FY/pQAfO15YNLKcy9ZVIdNTc994fekZu1vft/p+cioBb4SqpMyaEqsN1oWDw9oXpNXel3zmmQJ3xKmgVytCJa//MvPQYVQ+N/g6GOFP/fDII5W0PckuAWDuEeh0r7NtdCBKL9Sp4r/Afyj4QQVNLbhno1H88ZLU+CFA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727449118; c=relaxed/simple;
+	bh=HE6O6W2Ruehr/Eu1RUwe4KQ4pn2Eq+ugNzVZ6pTe/kY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GZ/l7zZEThHVlfFAr6Wq5CjDMv7ilAZ6LthTDA2uPe6cEfgF6qvmrfoAjeqQmhBT1EN8nxQgux5fQTAXXDYqolWLCApgaPTWujSEI7uf6fGgbCqQfBlM0+n0kJPTcaC+9PNmXCECOplRKIuW4Ew+p8lgV2T9oQL6JuI1GjCafkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U+9auuQD; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cae102702so18088335e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:58:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727449114; x=1728053914; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wAEj/JO1jlpmIzcCBunmBgTlF+U4pRBZ4iY2MlnWamE=;
+        b=U+9auuQD1gN8IyTFwAhQuQY5BEWkP8bq9xrzg/Ta1k3UZAU2ZajKm1H+ztVfAd8CBk
+         8/dSvDM9zZWoZ2rK++xZojY5YmUfeepxSF+285Uc+atUoMqeGzsLGZxcb3plCzSfsngp
+         wcKVGwmDu63yoQosieu3jk5nNoGbY6oTuB/KRrndaDqP3be/MZwCHgq4L2MbYOONhUpG
+         KuEzZII5Ws24cGrxrYsPVXcPslabUUVfcNKaO3esTmhJ3kM9NHQt77DS96IFEIcNnPYO
+         txPvoIM2S62CtHSkxjd/y05kvIiAk6v4W39eSlTY4yhTM1Uzkv6TJHoq10UV3enhcmh0
+         W/3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727449114; x=1728053914;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wAEj/JO1jlpmIzcCBunmBgTlF+U4pRBZ4iY2MlnWamE=;
+        b=pNRbCV3sX954dqbRglAPJDx0SzstUadu01YPy9Ye5BnF63dK1BdzMRDAzjnOLdXGwC
+         EDwTXYQ1sikC+Qz0CPq9/x3WJufN9d0vT69Vws0c/bj/B/LSk37aIuoshZ/O5OLSHvzr
+         mfcri4lJac40ke4CyOdDZwPT3vQ20/VUnMBQCyN9QGn7h6iIELMnS1ObvRAa8cPQysNC
+         lqi0LQLlN8xUYCRuO2poxSokxdyGb7xjMZXmmUIovrjZXcCS0Nf6sj8BcLlPHN7TiSAR
+         j5Y5v6GUG68nEPyyRZiknUXnFVK7CDdWPbshLqCDjm2NAb3tqlPno/f+QkXcmWNtigCi
+         Q0WA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgmtQC3u1GIMpWAmsXwP5dRFZstGoaisQ+H6rACwO4k4wVfHwoEScikewjD+8kPUgQXV3xBLE2G/2Vvm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhlPs00ephcEEOjSlZP3X7WWWyF/fDrjhh5/aYykhKSSosLgtg
+	Ik//LyWf60yYOnKAiuju4FIEbAI6omtQmt8kRKreUgy7R6mrmnX73OFgYxhlNXQOzijSUNiuNt0
+	RqVJVO9/iqcpsM7oDdnam9qpvwk25U7YBZZCN
+X-Google-Smtp-Source: AGHT+IELcwZniWeDG7akdUbrExTM3vBAIwJAIYW45Dt9txQywxDtKH3Os+0yYl3V/P3S0nbbG9MVVsoloqvry+c98Qs=
+X-Received: by 2002:adf:dd8e:0:b0:374:c8d1:70be with SMTP id
+ ffacd0b85a97d-37cd5b31966mr2081724f8f.38.1727449113441; Fri, 27 Sep 2024
+ 07:58:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9562:EE_|DBBPR04MB7692:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e54c281-fa0b-492c-69b9-08dcdf04cf1f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z2xYeWhaQXd4elFKSEg5RXoxY1pYZ2FUOTFwYnpmTXlXV0pSMjVBWkRTTWVv?=
- =?utf-8?B?eVE2ZExBd200anVvc0x2dUdJYTNRWVg4QVJodm9uYTVzNE5EOFNvbHk5YUlx?=
- =?utf-8?B?dzUzOCtvR0ZxdjZRUXFKa1pRQ2Qvbk54eTNTSDlhTWFiSFc4WHE5VCtpVEZP?=
- =?utf-8?B?RjQ1aVJxcCt3Y1RJa1VsdG1laHU5TXJadnZHQlZFaCs2SmFTcEhpenFaY0pH?=
- =?utf-8?B?eDkzTWxGaS9xb2JpUlpJUVFjK3FsRVoreW5yWEpCUTZIdmw4b3QySDRpOWhD?=
- =?utf-8?B?QTJGby9rQ1pLMDRjZ053ZGtISzhnWWdlNDh5NWQ5NG9zbmVLSklpRERzMnpw?=
- =?utf-8?B?ZkRUbHJFZ2NBa0RvR2RWMDNzNWpQNW5KQ01Fd3kyY1lvaitjMGxjVDBJNDVJ?=
- =?utf-8?B?eVM2RGpFRXZ2MEJDeGhEUDZGR0ttMThLQ0gxaG1JT3FBSGJJWklwWUpCU0tR?=
- =?utf-8?B?ZzMxTjVXMmdCRWxKekxYMzdISlNNVUQ4akJUbzZOOG5NOFNZcjRJT0M1VWZh?=
- =?utf-8?B?MTVIZ0U4dE1sbXVzOTVqRTYwWXVnN3Mwbk9JWlVHTTFxMlZqcytaMmgycEtF?=
- =?utf-8?B?eW9HbGlUVTA2a2J4a0JkUVJHZjB0cXBDZ1o5WlFxcm1TUTg3S1d0VC91SmRu?=
- =?utf-8?B?VXV5N2diZ1lmVWUyWjJlcE1lTUtyQVBmT3l0THpCYXJsUWtmYWF1RXNDRk9Q?=
- =?utf-8?B?Z2JWQ1VLdCtGdDcvbmlDaWhhb1p3b3IyYUhNMUlKOUc0WDAxOTRvT282OS81?=
- =?utf-8?B?MFh6bGcyVmdUNUNjbE9kWitZOHR1MGZOWXdlR0tlQTZRT3hTSHY3dGs1QkFi?=
- =?utf-8?B?Ry83SDk0Kzc4SytrUjEvUUNCcUhzSlNGNFBVV0hWRTZ3TzVGc0lqVjYwS255?=
- =?utf-8?B?cDdWRzBIbE5TZUFKQkF1MmRGUUpEV2tlWTlJM0VndnE1eWFwcWRzK1Nzejdv?=
- =?utf-8?B?TndCMmdVUXFndGJnd2RhQUV0QktxUXdwTEJPeW52YnZET1BsNHhPNlpiYTRZ?=
- =?utf-8?B?OEUwRUYzSVRzK1NaNTNwVHRIbGN0MjlWeGVnK2ZRcU50cFF6NUg2NVF3dnZ6?=
- =?utf-8?B?dXB4ZUk5a0YzRzdTell6cU9SQk9BaVlmYXcwNkJiWTI2bHFScGFKS1pISWtG?=
- =?utf-8?B?Y05oTjVWSWZqV2JDdEJuaUwyRGZsd2psKzFHVDRSOVFHK1RoTDdOSWlCYWVO?=
- =?utf-8?B?cnpSTUlxSU41cTFiT2dNWlQ3YnRNc29BTTBEVE04OFRxVXNNMEgxKzZGcjda?=
- =?utf-8?B?QlJvbWxuYS9QVEdGelRUU1VzdGc2SDhIazhBUDdKMTBHUHZaeTZ2R2diL2No?=
- =?utf-8?B?bmdyZDNzUzFJcjIxV04vWlNyM2ZVNmZ3VXI1RXM1dmlFKzZBS21hNXY5OCt2?=
- =?utf-8?B?bE1Hd1ZVNnZQSkZDRnlTaHo5eHNmK2wyMGdINVlBenF5UzZpQVdVVUVLdUM3?=
- =?utf-8?B?b3ZtdHJuK0pHZzRtSXNJcVFYTUZHQTZreVNSOGRuY3VxRjVOejBXYVJGSkVM?=
- =?utf-8?B?YmM0L2FyQ3ZwQk9wT3BZU0JHY3hrUHpGRVZSVTNnam5ORnlYNzdSTCtDcW90?=
- =?utf-8?B?ZmhPcU9nOUo2NjdIaHhLMVBzT3ZST2hqTVNUZVJZbCtjanFhOXphaTlWcnpN?=
- =?utf-8?B?elBHanlnVitKbTl3SUh1ZTJyaWZCckI3byszalRHR0cxaVRzSzJWWFdRYnRF?=
- =?utf-8?B?ZkcydnV6NXRmbGI0Y1g2amlTVGIzUW81RTUrUFkydGUzZ201ZVhFTm5BPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9562.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bWFLRVFVVWM0eG5tNUx4YjBCY2J2OFkxSUxraERnOFhXMDUwNGxjUzl3cVI1?=
- =?utf-8?B?c2pJbzQ3cEttK0tQSS9xUUYzSTY0VUtiSW1GMzhoWFFBS3VmR2ErSVBtTDRo?=
- =?utf-8?B?cU1WOFphbFBNMVpVZzdjSElZUTVnZFJCTGFhRS9oRkl1a09DRnRiWDNoZjRV?=
- =?utf-8?B?OVQxMmV0TGdod3VFQ1ZaR2ZRbVF3VHlLa3pIeGt4Y1Z0NlB4UHc0OXg1MEJP?=
- =?utf-8?B?WmJNZEVrM1dVYVIrdWUyM3J2Q0U3NzUvTzZSaG9sdjZXbVYwMml4cStMVTFa?=
- =?utf-8?B?b0taMzZ6WDNaUDcwZVhUR09yMytnUzQ0VjlpSFI5L2ZSN1l0KzlMS3BURDRC?=
- =?utf-8?B?aVJkOW5xU01rd2JabTRieVp5MEh2TVpxMTVqNjVwM2xUR25qU3IxRFlFMEsw?=
- =?utf-8?B?OVNRNlA3NUFGSFN5amNsaHM2OG1ON0x5WnNXNGNQV0FFZ29QM0dLZzJDcjdo?=
- =?utf-8?B?SmNRY2gvUHVJY0IxcHdUNEIzdC8yWWZMV0hFU3p1MkJ2dFRBdnNMMi9kR0xJ?=
- =?utf-8?B?VE9XMGFsKzEwK1hnanQycXNQZFAwQVRRTm9qc0VJN3hRaFFFM280eGdaUi9h?=
- =?utf-8?B?MC9HSFMwa1ZHeGRtWFNDL1VHUllKcFRXMURhaURSeUI3UGUyeGx2N1RaL1Yr?=
- =?utf-8?B?Q0VmRElSZ1p1c3dsK1F3ZkY3Q1VOUE5GVm9SYWZTZkkxTTlNeXVNd0YvY0dE?=
- =?utf-8?B?SExDQ2V0blJtVEZuaXN5cVZmcFJnYkg4aWhyUzl0NTRjci9BUTBYaWRJUzdx?=
- =?utf-8?B?U2hkTDZ1YnNjTTVEZzYzOTkxM0JIQVpiNjJ2Q2RJOHZYVmRIbVNWT3JrVCtM?=
- =?utf-8?B?WWo0Vlc4cERhZ1dBZDdxdkZuaU5kbjRFUlpLRnQxb09vVXZXNzJCcUxYOHZ3?=
- =?utf-8?B?b2RrSiszcG5sYW5sK1oxOWNkU0ZIUmN0REc0NmZWSWhNTGlod2VSMnR5K2Nj?=
- =?utf-8?B?VGdUMU92YVRYeGIwQTVsS1IxTkd1RDV5ZldqWEh0aDlJMnU3SW1aVGk3UmJi?=
- =?utf-8?B?TlZnQ3lTNHlGLy94aUtFTWtzVTJVdm5lSFM0U2NnSnRXRzZUTmZTdTB4eGRv?=
- =?utf-8?B?K2JVbkJqVS84YVQ4STlXb2x0YkxTTWk0by9SNGZzOFFabVNaUk13dmwrZk8x?=
- =?utf-8?B?QnhMbWtod0xQc0h5d0hBUUJmQ3ZWaWlsT2xRRzBhelN5NnY2SUpUWlRIWEJn?=
- =?utf-8?B?QjBVaVJ4VHpOTkVQUTZrQWQ5L21yYi9oMW8ydEpMaHJDQUd2MlJGai9VdE5E?=
- =?utf-8?B?c0ZEVnJTOENkd1Nlck5ETTFHaHBVTkp5MFdaVWhhdVBFTU5EQUVVajEyMkhW?=
- =?utf-8?B?c1B2b295K1pmajVEQmZVamhqTDlmMHpiYVkvanJ6a0p3ejZpTFpUYXdGbkIz?=
- =?utf-8?B?Ukw0OUdlb3ZZYXp2MEE3bzFiamYzSWRmR1doTjk4ZGwyOFNHeHFlYXYzQ3hP?=
- =?utf-8?B?b0huODU2cEI0OU5LZVdIVkVvTXF0THkvODY5WVpnZjJ4VWdaaHdGMzJOQWVK?=
- =?utf-8?B?UHdGOTVJNGF1RmZ2T3FQMis1SlpMNFdXS1RSNWRYcXdkcUZzSjNiNEJzSzlG?=
- =?utf-8?B?bmJTelExNWtnWGRNUGZoZUhDUGo2YUo0QnkxQUNPOXpmYmNFSnlJaXJsWXdO?=
- =?utf-8?B?Z3lNN2Z0b1F4RVJ5aC9ra2dOT2d3Y3p1VnZQZW1aUFkzRXJRdlorQ3BuanFE?=
- =?utf-8?B?THhxVU1TUFdnSzkxQ1JOTDE0V1pwNW9Nc2JrWUFwWHpJR3NYaGhvU2JzRHd1?=
- =?utf-8?B?OWlkcnZ4M0I3Qm5vOElNUFAxREdDQ0VTNlhUUTdEd2hzZnpwb1h1cXVIOVlK?=
- =?utf-8?B?RHpPSVdzb0RNVnkzYXM2T1NsY1hIdVEzNncxMWV5N1ZiNFAybkl5Qm1xMnVE?=
- =?utf-8?B?VWhnQk9hY21XRSt0THBPejUycnMwMjc3U09OMmJZclIwT1gvNmNzaXQyZkJk?=
- =?utf-8?B?V3NPWjRYYVFIWTRLT2ZuTHdmTTVkV1hDWnRYMmtqYkNtTzdkcEJCcnJyU2Z3?=
- =?utf-8?B?enRpVWNFQVVFaFlPOWVORjJGOHZValRhMUhqVngxSWo3NkF4ZkliUWhWcHk0?=
- =?utf-8?B?Qmxua1hlc1pTeEMrS1hINTE5elVaS1BCUXMvQ0RpZFNCMURYQmR0VnBlanNx?=
- =?utf-8?B?cUhHcVJFREtaV2RrS1dkdm1RZllOYUVXRDdaZkQ1dWtmS3k2Q3NkeE5Mak01?=
- =?utf-8?B?ZHc9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e54c281-fa0b-492c-69b9-08dcdf04cf1f
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9562.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 14:58:12.9138
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eCTYsVsE5jgiKJVPVdKxGmyra4e20PEbYlR7YgORCCr14ixAuhn6H4Djfvm6CeMWAqagfMgnTfcC8inZoZe1lfs0v/oAnlgKAy1yKYt2dg4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7692
+References: <CAH5fLgixve=E5=ghc3maXVC+JdqkrPSDqKgJiYEJ9j_MD4GAzg@mail.gmail.com>
+ <20240926-bewundere-beseitigen-59808f199f82@brauner> <20240926-pocht-sittlich-87108178c093@brauner>
+ <CAH5fLghUj3-8eZMOVhhk0c9x29B7uMj=9dHWsRJYC1ghxqUdxg@mail.gmail.com> <20240927-anreden-unwirklich-c98c1d9ac3a5@brauner>
+In-Reply-To: <20240927-anreden-unwirklich-c98c1d9ac3a5@brauner>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 27 Sep 2024 16:58:20 +0200
+Message-ID: <CAH5fLggZDETQz6CDGwR8504u3wANFZ_PSw96H9BhHAaCkHjgQg@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] rust: add PidNamespace wrapper
+To: Christian Brauner <brauner@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Bjoern Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arve Hjonnevag <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On 06.09.24 17:54, Farouk Bouabid wrote:
-> Add dt-bindings for amc6821 intelligent temperature monitor and
-> pulse-width modulation (PWM) fan controller.
+On Fri, Sep 27, 2024 at 4:21=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
 >
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
-> ---
+> On Fri, Sep 27, 2024 at 02:04:13PM GMT, Alice Ryhl wrote:
+> > On Thu, Sep 26, 2024 at 6:36=E2=80=AFPM Christian Brauner <brauner@kern=
+el.org> wrote:
+> > >
+> > > Ok, so here's my feeble attempt at getting something going for wrappi=
+ng
+> > > struct pid_namespace as struct pid_namespace indirectly came up in th=
+e
+> > > file abstraction thread.
+> >
+> > This looks great!
 >
-> Notes:
->      Merge after patch 1
+> Thanks!
+>
+> >
+> > > The lifetime of a pid namespace is intimately tied to the lifetime of
+> > > task. The pid namespace of a task doesn't ever change. A
+> > > unshare(CLONE_NEWPID) or setns(fd_pidns/pidfd, CLONE_NEWPID) will not
+> > > change the task's pid namespace only the pid namespace of children
+> > > spawned by the task. This invariant is important to keep in mind.
+> > >
+> > > After a task is reaped it will be detached from its associated struct
+> > > pids via __unhash_process(). This will also set task->thread_pid to
+> > > NULL.
+> > >
+> > > In order to retrieve the pid namespace of a task task_active_pid_ns()
+> > > can be used. The helper works on both current and non-current taks bu=
+t
+> > > the requirements are slightly different in both cases and it depends =
+on
+> > > where the helper is called.
+> > >
+> > > The rules for this are simple but difficult for me to translate into
+> > > Rust. If task_active_pid_ns() is called on current then no RCU lockin=
+g
+> > > is needed as current is obviously alive. On the other hand calling
+> > > task_active_pid_ns() after release_task() would work but it would mea=
+n
+> > > task_active_pid_ns() will return NULL.
+> > >
+> > > Calling task_active_pid_ns() on a non-current task, while valid, must=
+ be
+> > > under RCU or other protection mechanism as the task might be
+> > > release_task() and thus in __unhash_process().
+> >
+> > Just to confirm, calling task_active_pid_ns() on a non-current task
+> > requires the rcu lock even if you own a refcont on the task?
+>
+> Interesting question. Afaik, yes. task_active_pid_ns() goes via
+> task->thread_pid which is a shorthand for task->pid_links[PIDTYPE_PID].
+>
+> This will be NULLed when the task exits and is dead (so usually when
+> someone has waited on it - ignoring ptrace for sanity reasons and
+> autoreaping the latter amounts to the same thing just in-kernel):
+>
+> T1                      T2                                               =
+    T3
+> exit(0);
+>                         wait(T1)
+>                         -> wait_task_zombie()
+>                            -> release_task()
+>                               -> __exit_signals()
+>                                  -> __unash_process()
+>                                     // sets task->thread_pid =3D=3D NULL =
+        task_active_pid_ns(T1)
+>                                     // task->pid_links[PIDTYPE_PID] =3D=
+=3D NULL
+>
+> So having a reference to struct task_struct doesn't prevent
+> task->thread_pid becoming NULL.
+>
+> And you touch upon a very interesting point. The lifetime of struct
+> pid_namespace is actually tied to struct pid much tighter than it is to
+> struct task_struct. So when a task is released (transitions from zombie
+> to dead in the common case) the following happens:
+>
+> release_task()
+> -> __exit_signals()
+>    -> thread_pid =3D get_pid(task->thread_pid)
+>       -> __unhash_process()
+>          -> detach_pid(PIDTYPE_PID)
+>             -> __change_pid()
+>                {
+>                        task->thread_pid =3D NULL;
+>                        task->pid_links[PIDTYPE_PID] =3D NULL;
+>                        free_pid(thread_pid)
+>                }
+>          put_pid(thread_pid)
+>
+> And the free_pid() in __change_pid() does a delayed_put_pid() via
+> call_rcu().
+>
+> So afaiu, taking the rcu_read_lock() synchronizes against that
+> delayed_put_pid() in __change_pid() so the call_rcu() will wait until
+> everyone who does
+>
+> rcu_read_lock()
+> task_active_pid_ns(task)
+> rcu_read_unlock()
+>
+> and sees task->thread_pid non-NULL, is done. This way no additional
+> reference count on struct task_struct or struct pid is needed before
+> plucking the pid namespace from there. Does that make sense or have I
+> gotten it all wrong?
 
-Patch 1 is merged in next-20240910 and it represents the dependency 
-required for patches 3. I guess we should be ready to merge patches 3 
-and 4 through the hwmon subsystem.
+Okay. I agree that the code you have is the best we can do; at least
+until we get an rcu guard in Rust.
 
-Thanks,
+The macro doesn't quite work. You need to do something to constrain
+the lifetime used by `PidNamespace::from_ptr`. Right now, there is no
+constraint on the lifetime, so the caller can just pick the lifetime
+'static which is the lifetime that never ends. We want to constrain it
+to a lifetime that ends before the task dies. The easiest is to create
+a local variable and use the lifetime of that local variable. That
+way, the reference can never escape the current function, and hence,
+can't escape the current task.
 
-Farouk
+More generally, I'm sure there are lots of fields in current where we
+can access them without rcu only because we know the current task
+isn't going to die on us. I don't think we should have a macro for
+every single one. I think we can put together a single macro for
+getting a lifetime that ends before returning to userspace, and then
+reuse that lifetime for both `current` and `current_pid_ns`, and
+possibly also the `DeferredFd` patch.
 
+Alice
 
