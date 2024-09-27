@@ -1,156 +1,231 @@
-Return-Path: <linux-kernel+bounces-341400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B727A987F86
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:34:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07799987F84
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 600641F22284
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:34:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ABC81C2232E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC5C17DFFF;
-	Fri, 27 Sep 2024 07:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F3E17BEB6;
+	Fri, 27 Sep 2024 07:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gyaHN9Aq"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="EUCmp202"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7748116D9B8;
-	Fri, 27 Sep 2024 07:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D1615699E
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727422485; cv=none; b=UXsDQz7F3OxZjCCQu9lRONaDh7GVdD7TVScWJZkJVd8iYTO1v8h+Z34WjoEW/vWWRLscQinAtEs58yoiuwJIJnPzpGuTvVBKYZweN5YDI9MZVCHovj1CK9dEqI94JUc9ekaSv6E9Ij/0gjPJHZZTDHF/M4ykVkbDxyVFtvHDLWE=
+	t=1727422454; cv=none; b=e9eouNhg8msjcNCBkBG+iYwfKPnK8KaA+WXEWeLdpBYpdT3hxeQs31O6GILo7dSsIQlusMHA/1DULmf5hVkIugz/bh+yEGNtkYpruQlkcFWi1jiBSSqLAGT32JDbiQgcZkl40pNcyYw90m/IxxYM1yRPNEiY5/sFtPqCy3HAntc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727422485; c=relaxed/simple;
-	bh=F8xZbzcZKi7D9RO1xCzeGmIUlk5LUVrjx/z58Sceu/A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L+713T3Ee0f1cQHitfcX+T3ww19S+n0zxTn9UX+X2UwLOI0juCpRgVVDDcjsOyL1VUFB+1MGgIqrfnOxluWlQIDvi+jHfXoXXnJX4HRcSUcwQQFvqCoYziGB5NhO66Nd8KmnL6wWfpncOU31KUYDbCyqe0GUdCvf8ju99u1K9CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gyaHN9Aq; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so2413860e87.1;
-        Fri, 27 Sep 2024 00:34:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727422481; x=1728027281; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z+Vt35wGDJ+l3jGYxFgHKnj4OlEwqHkTiVYdeonhxt0=;
-        b=gyaHN9AqrAEafnetieu9KLbDUYa1MQM8yFvhera4IX5G0g1v6G+ecfGLQkxuQlz249
-         bZjXZP2jPNoBfBx6bYYhayBv/cTcUjXu8ZJ9yAZoGvcQqjyXvqTF+0bhJiJ9bkPkznC8
-         Yoygdw065Z3eHOrUHHyY+00JlJABh+dZ2qCQxmoX3zPg8urtEQLS/qdUTrmCF6cabs+a
-         VWTuEYRB3O8TWUxi8iZWjgofstIgE5IjJezq1uRPZv8u/g/wMf7pTNitgkmMPzTYSGQ+
-         1RLG5ycKLQCvd3KD49+0QZY0REfLbkpKZebP0KVN2McTnGMTU14eLycq03VrsAEvC7+n
-         IkvA==
+	s=arc-20240116; t=1727422454; c=relaxed/simple;
+	bh=im/F4eUutyF7Nm/5zlZw3FmztfxxGxoLo4xKXQENCgU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t6N2nLkhzSiQQca9A/2A41OEqnNt7qWPQXMcfp9OurW6/nvaSN1GpaaUNPB870PekMCU+oxG/m5xT96JCP1cZQpoM7psdg/7EmUYoQ6K7ziTzXu/dds/3kuM+J29FHzG00FTem2uYNSnqIVGgZBqKD8Sa//ADfTDWEcDuhqu79E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=EUCmp202; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com [209.85.219.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id ACBC43F135
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727422443;
+	bh=7YIljPLfNlEO3FZ2gWZ9IoRY/bMh1BYz9cIWOg32W6E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=EUCmp202Z9wTa+jg5+TTAAOxoDKIBIMOEdz3b+MCfTryVxQMwEwfcKQOcqpLTzBH+
+	 DpLoXGHpSoLH1PNa4E2Ea3hJcMfiSVn1XXRikpFTabQGMJXv3S81Hrv+k7GYooIQ5w
+	 S59zvug/ejl762cKZ196CjTMRrWCepML+PTHyGq1D6wohZZSuIamlgQxNtcYJwUX6y
+	 JPxS76MnGeWEbP/pW3J9e0AzmBBlkrG6Ff/w0CgPglspBCGK+DoE2K2eKdROS2frZX
+	 SWCdyMw0Omn16eBQ+W68FxiZ6k2K5CmysNZbD80giRXzTMJdartPFNEuYUAsvOwrd4
+	 78bMZcQmpsxxw==
+Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e25d62bfe12so2064582276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:34:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727422481; x=1728027281;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z+Vt35wGDJ+l3jGYxFgHKnj4OlEwqHkTiVYdeonhxt0=;
-        b=tw6hVY/qmkQoPzEFVpYk6TkvLhIlTw0AYM9aiI29QwUgSYQyXJKu1dC9iGIV/I6y4A
-         ihREY/17m92fq2vskdrLNEm7wqKsC+9jkCZ/jCG+63nBesFOLooVrznXPkiQX8hbNbML
-         X9CuAyCKExOjiVjSzQ+O8XKqhb5qMC0928XOUlvFKmIIIJYWaftgugeYQWZ/Qq08Fdjq
-         7hseeIyWb21UimkZbd+B/Da57uD+0ppNGQQSkAZRqfwFHa/uWG2MXhnfKAXnn/ZiRzxY
-         SB2h70iqi0sJ4GdbnRpLhPsUOeijaNpnI1I2FXC2pHFAN58GfuI5gsQpOfmsUHdDCP3o
-         2uiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/SF2AGhF5UTfukXzWFYKXqjYN4ItQh+5Ry1DhHlVSGvEXNdUoOImkQAKzUIe9BtkulMB+h+rD@vger.kernel.org, AJvYcCWChLr7SZnLdcdfyPICMvrY4ZkPh94cFckljWBn13zP5vANCYI1XKePrmjxwsu8Oc/XcmWiVOuFdvEAFvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj1Lpzy7wrQ7Q7zqf1hea09mL2gh2aidqjxtPpplc/jXhWYTOP
-	aOX5wMHWQ4D4MFfyavKw9TlKxUvBp7TnDx6OmUP3yo0caD7oQ4Gs
-X-Google-Smtp-Source: AGHT+IH3C96bwI2LsCmLv1jZkKdOlGuDYT4VudVpPDJSuSHjDdE7Z0Njhr4b7xvwpKFVjhkvBJMTIw==
-X-Received: by 2002:a05:6512:3c8e:b0:530:ae99:c7fa with SMTP id 2adb3069b0e04-5389fc29c3bmr1381659e87.10.1727422481196;
-        Fri, 27 Sep 2024 00:34:41 -0700 (PDT)
-Received: from localhost.localdomain ([213.174.0.108])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd5491esm212558e87.28.2024.09.27.00.34.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 00:34:39 -0700 (PDT)
-From: Volodymyr Boyko <boyko.cxx@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: boyko.cxx@gmail.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: retain NOCARRIER on protodown interfaces
-Date: Fri, 27 Sep 2024 10:33:30 +0300
-Message-Id: <20240927073331.80425-1-boyko.cxx@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1727422442; x=1728027242;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7YIljPLfNlEO3FZ2gWZ9IoRY/bMh1BYz9cIWOg32W6E=;
+        b=sAyjNY3G7GqtkrCck5RtkBbN3EglX38bH5lR/HBa43GIR3T8avC6JmD8Dz5S6lGQN/
+         bPyHSS0W2dmRsIgAt+GEHYEKFIQhzt17fPVuJGdd91HhNxu5eM0yp55Vhi0sr2g6NecV
+         xcyUGixYJfw5dF5CV97Ubo674rLsXlWBNqk1R02e5PAQHPdQ9gdqtIAVtVStqkahpJ8y
+         Qmk1mZ6hWfvpChpCnQQm5ifp9Wp2Qwzgnaka+FAkipxtcpq6Kf90WonN9z8VHeylEZmu
+         w44dVZBQmKC6xARdFx2cFRz+aCesjvxLQSAfztqABstC9gOu8tbSafg+6wjQNNM8VhG1
+         5FfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVarVLclGvlwhQozGeGyYxbAIrQWeEv3RlCJKBXyztL7jsyoqxLxx4eeWZh8KziK8OgTmOVZl/yPK0bBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP/ix+Ih/iwM84v7z+VH4yo3D3c1wbmYDDHjEj+2EcsE0scotj
+	N5DZV4j4RuQjYb14FSBXJ7goscN/HnLRPSYrVGb9F46xl/NhYcS6G57PFMOkkVyfE396bkCtUTQ
+	FdEnnkrviBHyIY/kmijexOVwtHW8mnB5nDAh1N8JQdkY1+WnBWJZEr7SF31No8xP5+Lu0WfynMz
+	0/PSnZjLnze7aeBNybsOvDh79n4cK7/rT9XbO31548BVr+Hz+6ErjP
+X-Received: by 2002:a05:6902:2191:b0:e20:16b9:ad68 with SMTP id 3f1490d57ef6-e2604c7b4d6mr1606579276.45.1727422442430;
+        Fri, 27 Sep 2024 00:34:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGedGnyfsyHzBPotN43JoM7Z1Z/Gr6maiReLknG4Z+OL/BZsgfIw7Ggk33gHsTNGT11RyoJhycmZ2g/8XDM8Lk=
+X-Received: by 2002:a05:6902:2191:b0:e20:16b9:ad68 with SMTP id
+ 3f1490d57ef6-e2604c7b4d6mr1606571276.45.1727422441984; Fri, 27 Sep 2024
+ 00:34:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240926125909.2362244-1-acelan.kao@canonical.com> <ZvVgTGVSco0Kg7H5@wunner.de>
+In-Reply-To: <ZvVgTGVSco0Kg7H5@wunner.de>
+From: AceLan Kao <acelan.kao@canonical.com>
+Date: Fri, 27 Sep 2024 15:33:50 +0800
+Message-ID: <CAFv23Q=5KdqDHYxf9PVO=kq=VqP0LwRaHQ-KnY2taDEkZ9Fueg@mail.gmail.com>
+Subject: Re: [PATCH] PCI: pciehp: Fix system hang on resume after hot-unplug
+ during suspend
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Make interface with enabled protodown to retain NOCARRIER state during
-transfer of operstate from its lower device.
+Lukas Wunner <lukas@wunner.de> =E6=96=BC 2024=E5=B9=B49=E6=9C=8826=E6=97=A5=
+ =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=889:23=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On Thu, Sep 26, 2024 at 08:59:09PM +0800, Chia-Lin Kao (AceLan) wrote:
+> > Remove unnecessary pci_walk_bus() call in pciehp_resume_noirq(). This
+> > fixes a system hang that occurs when resuming after a Thunderbolt dock
+> > with attached thunderbolt storage is unplugged during system suspend.
+> >
+> > The PCI core already handles setting the disconnected state for devices
+> > under a port during suspend/resume.
+>
+> Please explain in the commit message where the PCI core does that.
+Hi Lukas,
 
-Signed-off-by: Volodymyr Boyko <boyko.cxx@gmail.com>
----
-Currently bringing up lower device enables carrier on upper devices
-ignoring the protodown flag.
+I found my patch doesn't work.
+Let me explain the new findings below.
 
-Steps to reproduce:
-```
-ip l a test0 up type dummy
-ip l a test0.mv0 up link test0 type macvlan mode bridge
-ip l s test0.mv0 protodown on
-sleep 1
-printf 'before flap:\n'
-ip -o l show | grep test0
-ip l set down test0 && ip l set up test0
-printf 'after flap:\n'
-ip -o l show | grep test0
-ip l del test0
-```
+>
+> > The redundant bus walk was
+> > interfering with proper hardware state detection during resume, causing
+> > a system hang when hot-unplugging daisy-chained Thunderbolt devices.
+>
+> Please explain what "proper hardware state detection" means.
+>
+> Did you get a hung task stacktrace?  If so, please include it in the
+> commit message.
+>
+> If you're getting a system hang, it means there's a deadlock
+> involving pci_bus_sem.  I don't quite see how that could happen,
+> so a more verbose explanation would be appreciated.
+I have no good answer for you now.
+After enabling some debugging options and debugging lock options, I
+still didn't get any message.
+It just hangs there while resuming, and nothing could be logged.
 
-output without this change:
-```
-before flap:
-28: test0.mv0@test0: <NO-CARRIER,BROADCAST,MULTICAST,UP>
-	 state LOWERLAYERDOWN protodown on
-after flap:
-28: test0.mv0@test0: <BROADCAST,MULTICAST,UP,LOWER_UP>
-	 state UP protodown on
-```
+Here is my setup
+ubuntu@localhost:~$ lspci -tv
+-[0000:00]-+-00.0  Intel Corporation Device 6400
+          +-02.0  Intel Corporation Lunar Lake [Intel Graphics]
+          +-04.0  Intel Corporation Device 641d
+          +-05.0  Intel Corporation Device 645d
+          +-07.0-[01-38]--
+          +-07.2-[39-70]----00.0-[3a-70]--+-00.0-[3b]--
+          |                               +-01.0-[3c-4d]--
+          |
++-02.0-[4e-5f]----00.0-[4f-50]----01.0-[50]----00.0  Phison
+Electronics Corporation E12 NVMe Controlle
+r
+          |                               +-03.0-[60-6f]--
+          |                               \-04.0-[70]--
 
-output with this change:
-```
-before flap:
-28: test0.mv0@test0: <NO-CARRIER,BROADCAST,MULTICAST,UP>
-	state DOWN protodown on
-after flap:
-28: test0.mv0@test0: <NO-CARRIER,BROADCAST,MULTICAST,UP>
-	state DOWN protodown on
-```
----
- net/core/dev.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+This is Dell WD22TB dock
+39:00.0 PCI bridge [0604]: Intel Corporation Thunderbolt 4 Bridge
+[Goshen Ridge 2020] [8086:0b26] (rev 03)
+       Subsystem: Intel Corporation Thunderbolt 4 Bridge [Goshen Ridge
+2020] [8086:0000]
+       Kernel driver in use: pcieport
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 1e740faf9e78..10b0ae0ca5a8 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -10198,10 +10198,12 @@ void netif_stacked_transfer_operstate(const struct net_device *rootdev,
- 	else
- 		netif_testing_off(dev);
- 
--	if (netif_carrier_ok(rootdev))
--		netif_carrier_on(dev);
--	else
--		netif_carrier_off(dev);
-+	if (!dev->proto_down) {
-+		if (netif_carrier_ok(rootdev))
-+			netif_carrier_on(dev);
-+		else
-+			netif_carrier_off(dev);
-+	}
- }
- EXPORT_SYMBOL(netif_stacked_transfer_operstate);
- 
--- 
-2.39.5
+This is the TBT storage connects to the dock
+50:00.0 Non-Volatile memory controller [0108]: Phison Electronics
+Corporation E12 NVMe Controller [1987:5012] (rev 01)
+       Subsystem: Phison Electronics Corporation E12 NVMe Controller [1987:=
+5012]
+       Kernel driver in use: nvme
+       Kernel modules: nvme
 
+While resuming, the dock(8086:0b26) resumes first and I found if dock
+device run through below 2 functions in pciehp_resume_noirq()
+    if (pciehp_device_replaced(ctrl)) {
+        pci_walk_bus(ctrl->pcie->port->subordinate,pci_dev_set_disconnected=
+,
+NULL);
+        pciehp_request(ctrl, PCI_EXP_SLTSTA_PDC);
+    }
+The system hangs when storage(1987:5012) also calls the 2 functions.
+Only one of the 2 devices can enter the if statement, dock or storage,
+or the system hangs.
+
+To test it more, I found that mask out pciehp_request() eases the issue.
+It may be because it calls irq_wake_thread() and is stuck somewhere.
+
+So, I try to get rid of the irq_wake_thread() by replacing
+   pciehp_request(ctrl, PCI_EXP_SLTSTA_PDC);
+with
+   atomic_or(PCI_EXP_SLTSTA_PDC, &ctrl->pending_events);
+In this case, only dock(8086:0b26) will be called in pciehp_resume_noirq().
+And the tbt storage will be released after pci_power_up() fails.
+
+Do you think this is a feasible solution?
+
+diff --git a/drivers/pci/hotplug/pciehp_core.c
+b/drivers/pci/hotplug/pciehp_core.c
+index ff458e692fed..56bf23d55c41 100644
+--- a/drivers/pci/hotplug/pciehp_core.c
++++ b/drivers/pci/hotplug/pciehp_core.c
+@@ -332,7 +332,7 @@ static int pciehp_resume_noirq(struct pcie_device *dev)
+                       ctrl_dbg(ctrl, "device replaced during system sleep\=
+n");
+                       pci_walk_bus(ctrl->pcie->port->subordinate,
+                                    pci_dev_set_disconnected, NULL);
+-                       pciehp_request(ctrl, PCI_EXP_SLTSTA_PDC);
++                       atomic_or(PCI_EXP_SLTSTA_PDC, &ctrl->pending_events=
+);
+               }
+       }
+
+>
+> Thanks,
+>
+> Lukas
+>
+>
+> > Fixes: 9d573d19547b ("PCI: pciehp: Detect device replacement during sys=
+tem sleep")
+> > Signed-off-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
+> > ---
+> >  drivers/pci/hotplug/pciehp_core.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> >
+> > diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pc=
+iehp_core.c
+> > index ff458e692fed..c1c3f7e2bc43 100644
+> > --- a/drivers/pci/hotplug/pciehp_core.c
+> > +++ b/drivers/pci/hotplug/pciehp_core.c
+> > @@ -330,8 +330,6 @@ static int pciehp_resume_noirq(struct pcie_device *=
+dev)
+> >                */
+> >               if (pciehp_device_replaced(ctrl)) {
+> >                       ctrl_dbg(ctrl, "device replaced during system sle=
+ep\n");
+> > -                     pci_walk_bus(ctrl->pcie->port->subordinate,
+> > -                                  pci_dev_set_disconnected, NULL);
+> >                       pciehp_request(ctrl, PCI_EXP_SLTSTA_PDC);
+> >               }
+> >       }
+> > --
+> > 2.43.0
 
