@@ -1,93 +1,161 @@
-Return-Path: <linux-kernel+bounces-341673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6E498836A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:40:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6FCD98836B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 213E32829A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:40:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A64282B2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8146018A6C4;
-	Fri, 27 Sep 2024 11:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B92318A6AC;
+	Fri, 27 Sep 2024 11:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtXXZ560"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="oea5qNMT"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8F329B0;
-	Fri, 27 Sep 2024 11:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E8D176AD8
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727437229; cv=none; b=Q6tdUpINwZnyr3+Gf0GgsNQPJN3+6Kf8nVhS1MJemoxYubia0mX866xhTBZ0TDqYLnUPY3Yn7DmJUQg1ScGV/PNuPJphkIpkwxEnHMDRRBZsVv6+Xclnz5yqeitFYGj9MmZuTyfK66ncpBTvNYbFUvuAVstrOeZux9Jj0wzunrc=
+	t=1727437245; cv=none; b=uN/rzuToe5yzOM50c+d3dl8h5I6hvQSJANOcwYcXRXsnqimXAtlbsY4VLT2nSBK4qHWZ/8Dyak6J/8IU944fdT7ROLj3u0UQNoQvw2bHC3XW3+Ua0BOKi/dVAyRM/WoMi6LkaVWyJF9b/N803JvXiy3yc7dUFrUrt6VrphCkTvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727437229; c=relaxed/simple;
-	bh=+p5kaVpOnwFVuUCrs+KPwrAE0W9NA+0wEHrYwH2KrTE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=RwPmeV1GGXfAVA3QtrZ5MYizDjw8AyeDT38qsQSLJd9UtNF4+sI73w0bd3QHlgxdkAP31WY27Ai3Da+b8HTrYOaJOiUhXtDR8z1reHIykAHWb1HuR3+0gVCPmwApIDZHDlL2u3NhHO+uv5hcdLhFkd1T4wSkOmpS4Hcu4SlB9SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtXXZ560; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54057C4CEC4;
-	Fri, 27 Sep 2024 11:40:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727437228;
-	bh=+p5kaVpOnwFVuUCrs+KPwrAE0W9NA+0wEHrYwH2KrTE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RtXXZ560pNIiLSkEkLSCy2QrnZbhp+uPRfg+APR3Kj7W7zxwULPj21Nqf3Pmxq0eL
-	 PWPJ5F0TH+B8rSIvRq2n0zJD3GEh3yquZV26R6Rcw+CyjKqF8dj+MpYmPh6Tbq9scM
-	 oGUPoLH1tOBpDzIlk+YFQngD4PR9c/UhN1Ibs9t5UQNJwvq/PnQ/E615bIeqa0p1i+
-	 TFb0/xzNDcvnXMHVKfaJdBx9b7VrZ5BD2LljeYUj/F9nF217pa2p+XoQj+GR1qvDJQ
-	 BXj07qTDMI8hAI7wWdVLKSrFbXQTBatOySoFuDYmWyjpsLhFsoRhy27aOLA1VNRF7m
-	 3tlCCIYGK41Cg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 354CC3809A80;
-	Fri, 27 Sep 2024 11:40:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1727437245; c=relaxed/simple;
+	bh=4EnKIqPTCw9/4YUSHQg8hhkFTGSTS8hHn8kIFwgcFKM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SA5af+g4fCbozCoBVU8vl9VtRDNot+h4KjGj5WJU+XE0cr5S7VkvBi7gdcFDEaQdEPXlXlkiw68e8QzH+SIi9WQ5RSRprDCZpjvPdikGDLJIa/lt1H/S3/vrFEDqg56GKJBDxLGNkObfZOTcplQiYqBeEGVBO5p55xGIiJYsBik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=oea5qNMT; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-535dc4ec181so2212212e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 04:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727437242; x=1728042042; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jyze8mrfj5MgD1MFDnxhD4qoqtYWf3ZLVXQmYdjmUJQ=;
+        b=oea5qNMTrcwYuJ6FJvNWd//9u+cqoNKuRCZs9dUWp2AIAxflN6qUC7UUVuim8TRimZ
+         wRhCb7jZjBbWKonS8nOUWiHAxNI9+aNmg3HIklC5ABwYh2012cVKY2i460JpQc+AvAiB
+         LfOrtxJoeqi1SfuzbB1y7eqGytsqZfCDDtUUny91RoOJGlym9+MCMwgQVMIgyKKTrbzb
+         7Tj7Hx2jupodMudrIf6p6D+KwWuD7KbhejGI9Bz08MBwj7RacvZT0AOphv8uy3+TlZwi
+         VSNrloQWtc7nnM3gIFLTDWVkvVkwibU6ZvayPfRXQzKrTFdWH2i0jScUY2Znd2ziffeR
+         AS7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727437242; x=1728042042;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Jyze8mrfj5MgD1MFDnxhD4qoqtYWf3ZLVXQmYdjmUJQ=;
+        b=Ry2N89PdnsoHR7QbxMpNVjEc1Oad+/M4CZzHNusReBT25kBgP2CUv18ciDkbCqLZc8
+         TbUaKu5vfnoCi72hMr3VR9IN91QJbBgf9fJeY7/QJMaSH5sJMkisPjPoTMAkjOqwIoJ0
+         JxsrwUY2fCcxABdbwC1OQTuATUVMwWGWwIN10mS6EjpbGiKqaChQozUe35WRO9+Wphyw
+         Cg0UJWsEsW0KaBxqK5slfrIWdIT1Z7DHGApwh6t/34WHXu9y/mbnFJl8m261oeUduU2S
+         yoyKjbbNYi4l4JHC/RHiWxUlX8pjE2z55O53TBzfuO9CjVfY6kA7gEDsvOIADU37W512
+         4viA==
+X-Forwarded-Encrypted: i=1; AJvYcCV60tJldJGhvdk7pgoaba46ewXaoacMXbE7sQ9UqgY5jOsLGDmOBwBnblY4nh3Z86vsLU6TlmmiJ5sXA7A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa8s7ahsC4VeMG63FH3RCSvjx8vENc9+tqyR2rXF6refQ+CYTA
+	ZNneVoohRDJz++pxKdof9RQL5yy35kYNIKJHZDOVsyyznLw5i57LLcMnI/JAfyypXdU0otD1nrk
+	GEtlUquMsMj5DDUcupSIm7IBc9iM9U3BR9BBYXw==
+X-Google-Smtp-Source: AGHT+IGtRNzQlB+uJX1WtGAN3+M1XpMEsrQNdn2urubN2ERKRB+qApxAGpkLDsPz5k8Ppg7OujcBHbAX/spyAdOh2qc=
+X-Received: by 2002:a05:6512:3da8:b0:52e:fd53:a251 with SMTP id
+ 2adb3069b0e04-5389fcac2c2mr1968758e87.59.1727437241472; Fri, 27 Sep 2024
+ 04:40:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] net: wwan: qcom_bam_dmux: Fix missing pm_runtime_disable()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172743723073.1930223.10533462862376551133.git-patchwork-notify@kernel.org>
-Date: Fri, 27 Sep 2024 11:40:30 +0000
-References: <20240923115743.3563079-1-ruanjinjie@huawei.com>
-In-Reply-To: <20240923115743.3563079-1-ruanjinjie@huawei.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: stephan@gerhold.net, loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
- johannes@sipsolutions.net, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, linux-arm-msm@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240620042915.2173-1-ian.ray@gehealthcare.com>
+ <8d8462da853b6c147e3cdb790b2e3ea7d4aaf533.camel@suse.de> <ZvaYopCACdP-dQIi@852ed68de471>
+In-Reply-To: <ZvaYopCACdP-dQIi@852ed68de471>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 27 Sep 2024 13:40:30 +0200
+Message-ID: <CAMRc=MffD07aa=caRcBe9B=cna+SXYdJrH4z3b2V6qS1G3Z6zw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: pca953x: fix pca953x_irq_bus_sync_unlock race
+To: Ian Ray <ian.ray@gehealthcare.com>
+Cc: Jean Delvare <jdelvare@suse.de>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Fri, Sep 27, 2024 at 1:36=E2=80=AFPM Ian Ray <ian.ray@gehealthcare.com> =
+wrote:
+>
+> On Fri, Sep 27, 2024 at 11:49:04AM +0200, Jean Delvare wrote:
+> >
+> > Hello Ian,
+> >
+> > On Thu, 2024-06-20 at 07:29 +0300, Ian Ray wrote:
+> > > Ensure that `i2c_lock' is held when setting interrupt latch and mask =
+in
+> > > pca953x_irq_bus_sync_unlock() in order to avoid races.
+> > >
+> > > The other (non-probe) call site pca953x_gpio_set_multiple() ensures t=
+he
+> > > lock is held before calling pca953x_write_regs().
+> > >
+> > > The problem occurred when a request raced against irq_bus_sync_unlock=
+()
+> > > approximately once per thousand reboots on an i.MX8MP based system.
+> :
+> > > --- a/drivers/gpio/gpio-pca953x.c
+> > > +++ b/drivers/gpio/gpio-pca953x.c
+> > > @@ -758,6 +758,8 @@ static void pca953x_irq_bus_sync_unlock(struct ir=
+q_data *d)
+> > >         int level;
+> > >
+> > >         if (chip->driver_data & PCA_PCAL) {
+> > > +               guard(mutex)(&chip->i2c_lock);
+> > > +
+> > >                 /* Enable latch on interrupt-enabled inputs */
+> > >                 pca953x_write_regs(chip, PCAL953X_IN_LATCH, chip->irq=
+_mask);
+> > >
+> >
+> > I've been asked to backport this fix to SUSE kernels and I have a
+> > concern about it.
+> >
+> > You take the i2c_lock mutex inside the (chip->driver_data & PCA_PCAL)
+> > conditional block, where pca953x_write_regs() is being called, and the
+> > commit description implies this is indeed the call you wanted to
+> > protect.
+> >
+> > However, immediately after the conditional block, the common code path
+> > includes a call to pca953x_read_regs(). Looking at the rest of the
+> > driver code, I see that the i2c_lock mutex is *also* always held
+> > (except during device probe) when calling this function. Which isn't
+> > really surprising as I seem to understand the device uses a banked
+> > register addressing, and this typically affects both reading from and
+> > writing to registers.
+> >
+> > So I suspect the i2c_lock mutex needs to be held for this call to
+> > pca953x_read_regs() as well (unless you are familiar with the register
+> > map and know for sure that the "direction" register is outside of the
+> > banked register range).
+>
+> Hello Jean,
+>
+> Direction is indeed banked (see, for example, PCA953x_BANK_CONFIG).
+>
+> It certainly looks plausible that a race between
+> pca953x_gpio_direction_input or pca953x_gpio_direction_output and
+> the register read in pca953x_irq_bus_sync_unlock may occur.
+>
+> In practice, I think that this is unlikely to ever be observed because
+> (IMHO) GPIO direction is rarely changed after initialization.
+> (Disclaimer: this is true for the embedded systems I work with.)
+>
+> Hope this clarifies things.
+>
 
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
+I'd argue that this is the case for kernel users but you can never
+tell what the user-space will do. I think this may be a valid concern
+and worth addressing.
 
-On Mon, 23 Sep 2024 19:57:43 +0800 you wrote:
-> It's important to undo pm_runtime_use_autosuspend() with
-> pm_runtime_dont_use_autosuspend() at driver exit time.
-> 
-> But the pm_runtime_disable() and pm_runtime_dont_use_autosuspend()
-> is missing in the error path for bam_dmux_probe(). So add it.
-> 
-> Found by code review. Compile-tested only.
-> 
-> [...]
-
-Here is the summary with links:
-  - [v2] net: wwan: qcom_bam_dmux: Fix missing pm_runtime_disable()
-    https://git.kernel.org/netdev/net/c/d505d3593b52
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Bart
 
