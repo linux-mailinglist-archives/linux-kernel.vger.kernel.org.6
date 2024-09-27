@@ -1,120 +1,182 @@
-Return-Path: <linux-kernel+bounces-342280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74EB6988D0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 01:50:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14E1988D10
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 01:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B1E42830C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:50:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01E18B21648
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC861B86F7;
-	Fri, 27 Sep 2024 23:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DFC1B78FB;
+	Fri, 27 Sep 2024 23:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cmkgx/xB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrYKABT6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8290F1B86E7
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 23:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F279443;
+	Fri, 27 Sep 2024 23:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727480924; cv=none; b=Ti8u3/PkzYp8qgRo1jTEGPK9g/ph61GNwZppPjRcXK/wQ7d8jBnql2iVSc5X8/eL0InGl1nN7cEskCk9rq+BtkFsv+mUbnfCsFOKEkefRmXsV/TqzUBSsaRTfhoeF/vQe2w8JFsw0IYwzvVyoIGAWrRT5tG1W6MsScx6SsIxiyI=
+	t=1727481080; cv=none; b=MWqTYl6tPpNTAjE6ADC4ePU8j7up3B7891PzsO8TJT8brV3BnB46ED2Op+2IYpDIIuKwGRUzE/efONh6cdLjPmdVbgpD4ah8AEQ8s7SSScUW3qj7buN1EVpQ0ewU4MTe8dfeVU1oKVwQw6dTtSOYcUficBMYx3kPJ/mjFOfDzm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727480924; c=relaxed/simple;
-	bh=rfMcbOjD3p0NzqaCG839VBhZJT+iayiC/krDS6e2+Lw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nrSVlnbA6IgEXtxsxLi1G36GHL5dWoUhAmfWV8DdeG5K7+nG4ZrOrnf1vWuprnx77voSvQ71lpB0OS9m8cTkP6nveQNJn8jEHafeKY8KdldUrsjttWTf3PlOLygxWtIt/TrRomoK4ROethkZuAJXlD8/dLMXHu6+L3MP5kVwQ3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cmkgx/xB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC18DC4CED3;
-	Fri, 27 Sep 2024 23:48:43 +0000 (UTC)
+	s=arc-20240116; t=1727481080; c=relaxed/simple;
+	bh=ewY/sv1t7nj53njmVivVzd//BFGp3FOUKqt7Okgo7NI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=dGCq6Kt/tbc4JkR0/LN46Q74oDQEvbUgDpFObNfXOMBEMZEXtLaSLz44+ljk8BvIBZkvkEJl2M2btMFSfP4766ETLjWmpoQcwbwPFcYgmQK7PfOxt6wHDknz2lr91hpPoYe8isqCJqwdW2jtzBQi2i9PIZut9/Ty9tvQTtFlzQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YrYKABT6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC6FC4CEC6;
+	Fri, 27 Sep 2024 23:51:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727480924;
-	bh=rfMcbOjD3p0NzqaCG839VBhZJT+iayiC/krDS6e2+Lw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Cmkgx/xBfU9gz7rfbYOFDG1BI84sYG2ZZe03toE7QP0Ztp0aDAX6+MpXkPAFEN5yp
-	 mnhbqzkLIT5hvmXnZhnCfIQJWMZrez7uh7VYa8fEWt8uYCgLY0HV5ZvQ1CNUPq/t3I
-	 t/zjQObFw6/iaEtbqToKGI7kDPsfymndMXT63zeSCxqdMjZI3f7ELP9KTcXoVji2Ga
-	 cSS7+7p0CpKlNIOEiM/xtf/Fm+1Tun+o80cSKuuR9a4+rL2KDXiSwZpnoi0TFFlmA0
-	 czvixQmfXpvYCzD2eqAsvtx/+0HGRJ0AgyI8Q74lf/VvngjKu93At4rM7yFZNzm18Q
-	 DSukns8670bdw==
-From: Tejun Heo <tj@kernel.org>
-To: void@manifault.com,
-	peterz@infradead.org,
-	mingo@redhat.com
-Cc: kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	sched-ext@meta.com,
-	Tejun Heo <tj@kernel.org>,
-	Daniel Hodges <hodges.daniel.scott@gmail.com>,
-	Changwoo Min <multics69@gmail.com>,
-	Andrea Righi <andrea.righi@linux.dev>,
-	Dan Schatzberg <schatzberg.dan@gmail.com>
-Subject: [PATCH 3/3] sched_ext, scx_qmap: Add and use SCX_ENQ_CPU_SELECTED
-Date: Fri, 27 Sep 2024 13:46:13 -1000
-Message-ID: <20240927234838.152112-4-tj@kernel.org>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20240927234838.152112-1-tj@kernel.org>
-References: <20240927234838.152112-1-tj@kernel.org>
+	s=k20201202; t=1727481079;
+	bh=ewY/sv1t7nj53njmVivVzd//BFGp3FOUKqt7Okgo7NI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=YrYKABT6UQnYignz9+180E4GcxNgMeqQQyEgAHmmbf7Bh897jAsp8D8U1v1pYffw9
+	 IZ4lRZ2CJyVCSo5WQh3gU6/AGXEEOpZqTTCi7ObWJYdcTqBwL8qD1wRV0f7qh4UGlb
+	 EE2TufiS4ABxVmTIQOGY93zl7Mj6eP9O2LL/C1bOos31Fn/K8MgoYrC1G68KyAsi4P
+	 N1UbrNlDlEdnf9jAQ738cJGWW0HRi8bIKBWp2hhxeR1sg62oXg8UF+qoP9eWhg4QMD
+	 9sADzU5wBKz+MnpBvlaY/39tSvOAol46oIGrtTbjdFKleKOI1Ru8+Px7KgzcCsW+EZ
+	 QbEDrCh+r13vg==
+Date: Fri, 27 Sep 2024 18:51:17 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/3] of: address: Add cpu_untranslate_addr to struct
+ of_pci_range
+Message-ID: <20240927235117.GA98484@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240926-pci_fixup_addr-v2-1-e4524541edf4@nxp.com>
 
-scx_qmap and other schedulers in the SCX repo are using SCX_ENQ_WAKEUP to
-tell whether ops.select_cpu() was called. This is incorrect as
-ops.select_cpu() can be skipped in the wakeup path and leads to e.g.
-incorrectly skipping direct dispatch for tasks that are bound to a single
-CPU.
+On Thu, Sep 26, 2024 at 12:47:13PM -0400, Frank Li wrote:
+> Introduce field 'cpu_untranslate_addr' in of_pci_range to retrieve
+> untranslated CPU address information. This is required for hardware like
+> i.MX8QXP to configure the PCIe controller ATU and eliminate the need for
+> workaround address fixups in drivers. Currently, many drivers use
+> hardcoded CPU addresses for fixups, but this information is already
+> described in the Device Tree. With correct hardware descriptions, such
+> fixups can be removed.
 
-sched core has been udpated to specify ENQUEUE_RQ_SELECTED if
-->select_task_rq() was called. Map it to SCX_ENQ_CPU_SELECTED and update
-scx_qmap to test it instead of SCX_ENQ_WAKEUP.
+Instead of saying "required for hardware like i.MX8QXP", can we say
+something specific about what this kind of hardware *does* that
+requires this?
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>
-Cc: Daniel Hodges <hodges.daniel.scott@gmail.com>
-Cc: Changwoo Min <multics69@gmail.com>
-Cc: Andrea Righi <andrea.righi@linux.dev>
-Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
----
- kernel/sched/ext.c             | 1 +
- tools/sched_ext/scx_qmap.bpf.c | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+I *think* the point is that there's some address translation being
+done between the primary and secondary sides of some bridge.
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index c09e3dc38c34..9f00c8b629f1 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -691,6 +691,7 @@ enum scx_enq_flags {
- 	/* expose select ENQUEUE_* flags as enums */
- 	SCX_ENQ_WAKEUP		= ENQUEUE_WAKEUP,
- 	SCX_ENQ_HEAD		= ENQUEUE_HEAD,
-+	SCX_ENQ_CPU_SELECTED	= ENQUEUE_RQ_SELECTED,
- 
- 	/* high 32bits are SCX specific */
- 
-diff --git a/tools/sched_ext/scx_qmap.bpf.c b/tools/sched_ext/scx_qmap.bpf.c
-index 83c8f54c1e31..588b7dce44fa 100644
---- a/tools/sched_ext/scx_qmap.bpf.c
-+++ b/tools/sched_ext/scx_qmap.bpf.c
-@@ -230,8 +230,8 @@ void BPF_STRUCT_OPS(qmap_enqueue, struct task_struct *p, u64 enq_flags)
- 		return;
- 	}
- 
--	/* if !WAKEUP, select_cpu() wasn't called, try direct dispatch */
--	if (!(enq_flags & SCX_ENQ_WAKEUP) &&
-+	/* if select_cpu() wasn't called, try direct dispatch */
-+	if (!(enq_flags & SCX_ENQ_CPU_SELECTED) &&
- 	    (cpu = pick_direct_dispatch_cpu(p, scx_bpf_task_cpu(p))) >= 0) {
- 		__sync_fetch_and_add(&nr_ddsp_from_enq, 1);
- 		scx_bpf_dispatch(p, SCX_DSQ_LOCAL_ON | cpu, slice_ns, enq_flags);
--- 
-2.46.2
+I think "many drivers use hardcoded CPU addresses for fixups"
+basically means the .cpu_addr_fixup() callback hardcodes that
+translation in the code, e.g., "cpu_addr & CDNS_PLAT_CPU_TO_BUS_ADDR",
+"cpu_addr + BUS_IATU_OFFSET", etc, even though those translations
+*should* be described via DT.
 
+>             ┌─────────┐                    ┌────────────┐
+>  ┌─────┐    │         │ IA: 0x8ff0_0000    │            │
+>  │ CPU ├───►│ BUS     ├─────────────────┐  │ PCI        │
+>  └─────┘    │         │ IA: 0x8ff8_0000 │  │            │
+>   CPU Addr  │ Fabric  ├─────────────┐   │  │ Controller │
+> 0x7000_0000 │         │             │   │  │            │
+>             │         │             │   │  │            │   PCI Addr
+>             │         │             │   └──► CfgSpace  ─┼────────────►
+>             │         ├─────────┐   │      │            │    0
+>             │         │         │   │      │            │
+>             └─────────┘         │   └──────► IOSpace   ─┼────────────►
+>                                 │          │            │    0
+>                                 │          │            │
+>                                 └──────────► MemSpace  ─┼────────────►
+>                         IA: 0x8000_0000    │            │  0x8000_0000
+>                                            └────────────┘
+
+What does "IA" stand for?
+
+I don't quite understand the mapping done by the "BUS Fabric" block.
+It looks like you're saying the CPU Addr 0x7000_0000 is translated to
+all three of IA 0x8ff0_0000, IA 0x8ff8_0000, and IA 0x8000_0000, but
+that doesn't seem right.
+
+> bus@5f000000 {
+>         compatible = "simple-bus";
+>         #address-cells = <1>;
+>         #size-cells = <1>;
+>         ranges = <0x5f000000 0x0 0x5f000000 0x21000000>,
+>                  <0x80000000 0x0 0x70000000 0x10000000>;
+> 
+>         pcieb: pcie@5f010000 {
+>                 compatible = "fsl,imx8q-pcie";
+>                 reg = <0x5f010000 0x10000>, <0x8ff00000 0x80000>;
+>                 reg-names = "dbi", "config";
+>                 #address-cells = <3>;
+>                 #size-cells = <2>;
+>                 device_type = "pci";
+>                 bus-range = <0x00 0xff>;
+>                 ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
+>                          <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
+> 	...
+> 	};
+> };
+> 
+> 'cpu_untranslate_addr' in of_pci_range can indicate above diagram IA
+> address information.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v1 to v2
+> - add cpu_untranslate_addr in of_pci_range, instead adding new API.
+> ---
+>  drivers/of/address.c       | 2 ++
+>  include/linux/of_address.h | 1 +
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/drivers/of/address.c b/drivers/of/address.c
+> index 286f0c161e332..f4cb82f5313cf 100644
+> --- a/drivers/of/address.c
+> +++ b/drivers/of/address.c
+> @@ -811,6 +811,8 @@ struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
+>  	else
+>  		range->cpu_addr = of_translate_address(parser->node,
+>  				parser->range + na);
+> +
+> +	range->cpu_untranslate_addr = of_read_number(parser->range + na, parser->pna);
+>  	range->size = of_read_number(parser->range + parser->pna + na, ns);
+>  
+>  	parser->range += np;
+> diff --git a/include/linux/of_address.h b/include/linux/of_address.h
+> index 26a19daf0d092..0683ce0c07f68 100644
+> --- a/include/linux/of_address.h
+> +++ b/include/linux/of_address.h
+> @@ -26,6 +26,7 @@ struct of_pci_range {
+>  		u64 bus_addr;
+>  	};
+>  	u64 cpu_addr;
+> +	u64 cpu_untranslate_addr;
+>  	u64 size;
+>  	u32 flags;
+>  };
+> 
+> -- 
+> 2.34.1
+> 
 
