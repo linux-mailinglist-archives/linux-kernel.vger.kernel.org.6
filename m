@@ -1,213 +1,115 @@
-Return-Path: <linux-kernel+bounces-341340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D6C1987EA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:48:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FCE987EA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF06D1F22127
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:48:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A4F51C2233F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB26165EE9;
-	Fri, 27 Sep 2024 06:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E54D175D5C;
+	Fri, 27 Sep 2024 06:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QcRqs906"
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cGgok9I9"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7433E15CD7A
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 06:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DA415D5C1
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 06:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727419699; cv=none; b=ZRyt6fzA4uZuyoFAIImMUjJtPZx08jaqP1+ieGLgXGp7yJFozF+/YE/NHeCdUnYi7C+/J338fYAUUO+vJBF+AF2pODLQ6FP+frEqd2HeHalztsyNudKSxr9kKWm6QtHCITQTrUiOuKkdC7Ka+CABH3zNHeATHhjWwDVmH1wkouA=
+	t=1727419739; cv=none; b=cwhAXuHzXzsKvGacFHNe3lGAiS3Sx9yur0mCu0tNp5z3rW1qEe/O1afat4ctB9ZjPAoDmS9RJw5eBNHOGnQ0maKXVh21wGQVUdhG1UpjKm0473OyNF37ylbjKQzn+FUbPvWVqE13kTyTcoCFrotPVG2VqisOWVMVErUJ7HNAWGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727419699; c=relaxed/simple;
-	bh=seoZJVVkae3s3IXICNZ9fMVHO4f0TO87iEurq5MP/xM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VMqANpkM6NXSJ1lk1P7euxZClwvdL5tcxoAQ5wJw7ewgysMb3s6VK3munM1aYQA6aE+j92TpZTji8Z4wGERr/mpBY+j47PRwLlxqUg7+oBIUykxQGgHfeU6IQ/+TdULvetI9AyV4LcSrgkwrcdEga+F9Kbg3SN2YywoIpJAcN6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QcRqs906; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a8a6d1766a7so229216466b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 23:48:17 -0700 (PDT)
+	s=arc-20240116; t=1727419739; c=relaxed/simple;
+	bh=HbVB23OZTP5tfOpmp3K0L/PYgaXn9XT3U9puUNCFz2w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KuR5MfAdGQAlml3/XnVeXqmOXMCuPU7CP+PfVql/XeGNLwLX/FGw7tDnZPjEdynbolgEBb4u67u3OSuBWjsD9FUllD40RCb+psNEDzm/trpTimf5GDyp03l+vKcyV3oVWOOcOGN4uFjc97ip0at7OoHx0ZQgAn43iQEAQIguoow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cGgok9I9; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cd26c6dd1so1103683f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 23:48:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727419696; x=1728024496; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vBJMtcLG7aQHBsMfuf0SnmVlujb00WcTg7o4/+0tb1U=;
-        b=QcRqs906kEG4AOJd4M8ypDrdj2F7Nmar84H0DYraYjLszLCJ5eQcHrp9r3IRQKUsGU
-         8Kp/MBCZx6IDm6LcAyBnCM9tf/lzbqp/0fgWz49c0aB9KaF9lj/JnKCBeTbbZ/4N0/ne
-         o8+nWNeLPRaAZkq4stpvTHPU9CP7yDs7407FDueyaGYH09XAIs51p0VsaQRefuR+z5ti
-         34apjIEAnL5QrI7enG5CLXENbyyD3/ANx0J/76IKxekr5PzUJecsLkv4erB2lfa5YF/Z
-         q/8GwsBenU/tt9NgSC84WyrpWiQ7MAGaO+gPtSG1LaGvwbDuXY5LCpq3nbAYMf1qU1b2
-         K1YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727419696; x=1728024496;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1727419736; x=1728024536; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vBJMtcLG7aQHBsMfuf0SnmVlujb00WcTg7o4/+0tb1U=;
-        b=ZKKYjZtKDJcSrYaSvpIIYSWmDTVVe7X7sW8v1QfIKHopgdQRbBuFhYkaTBBVuLozMd
-         5Oz3KthB98HKsXPsAOBAhdkE7dyWKtcxPMEp7Mj8J2x1Mrw7MBnV1wdb5CSKHA336jfO
-         5nq+1jNOS7PZHtJZ4LqD4Gygi4DMTlzKHYg1ENa9zsWZjva3hzPA3INM92ddb7ugJ/P1
-         BizKao+ri1fLTml06FCtj3R6yqbB6mdxwwozMnZ/woo2TMN8OwwnRzKQUCUe+4C0NEkw
-         g89T7vtGKd3kvfAbquQ6qNSpvReJu+U/wm9OtRZ/6rPR60fGJ2vnCNRwpGGiv4h3C33g
-         JzIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkBDupCZsnXZBxelgy2CIp7Zx22ufhOkogoKgnHpmxkU2WtoRW6NF9jEKioLcR1SzMPATYlCoOxxoZwZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ65z4Ocdu151nKfVQ+hnHOOcodKVjFUAeiQJwvzzYGSbHClk3
-	SkhRaQaAaIbOoXMqVRIkwWL7hBldJiGTiHEGd/QKgfi029gW+b9NqEgp9y01pJ4=
-X-Google-Smtp-Source: AGHT+IGLDHBeNa6D6RZfpkGvMPVnCQ8ZzsxDN0YoVSie0mpImcNcS8+a9hjT0lBohBj3W/lmYOd11w==
-X-Received: by 2002:a17:906:c113:b0:a8a:7d13:297e with SMTP id a640c23a62f3a-a93c4c284cfmr178037066b.55.1727419695753;
-        Thu, 26 Sep 2024 23:48:15 -0700 (PDT)
-Received: from localhost (host-79-32-222-228.retail.telecomitalia.it. [79.32.222.228])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2997e64sm87199066b.190.2024.09.26.23.48.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 23:48:15 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Fri, 27 Sep 2024 08:48:28 +0200
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>, Lizhi Hou <lizhi.hou@amd.com>
-Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
- parsed from DT
-Message-ID: <ZvZVPA6ov5XgScpz@apocalypse>
-References: <Ztnft3p3tb_kP1jc@apocalypse>
- <20240905201656.GA391855@bhelgaas>
+        bh=fsWU+c9ooO36ZzyqvovuRAA2PZcmtpE3oZMgAJ7nS1k=;
+        b=cGgok9I9zJoLF2xMhzRRArHHeCgRNZXPzlVYpByVxW8WpQSHjZjVDJrNq/oSmao8cP
+         5vW17FjvWd8hDWtk3RIC0vR6CMUP7Bf8yNzE0zYvJQtcG7ZoPurQn/HQWp64NtcXrWv9
+         U4Wub5WdBNPWOfDxsuQbMlV6EVCxP/Z38DzOZJayrK4j/ebDV/NS8zB7IoRcS5xdl5aG
+         lLwQIoCik29hJCIeGaq29Jq/UvloI/ZuO6ig0Df4KSGuMy/EvTMjxvagDInw6+TuNMv2
+         mYEzEIcHdYjKIegTB6jFXuDyOKo2XQ+c1H+NWPR3MX9mVQ8Ti+4pap+jBPH40mtktpgS
+         dv2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727419736; x=1728024536;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fsWU+c9ooO36ZzyqvovuRAA2PZcmtpE3oZMgAJ7nS1k=;
+        b=B8Y7KMAIIxicY18gxqLhrr+9Dr1OxNkuA6SuM/LJlj1TQf+kHz12AJ9XSgcCSrP/UC
+         Fkt6EX2yHA9NAFpZxZ0qZ1tH9tz0c297WLJLjzxwvsAwSqg+DZuj9MHQmMa9jFE2CTWs
+         u05HcHelZEFTCYiYMBH+H2PV/zziVGYWmwlvy/RzR35awyxkDdnz0z8gifnImmdNS1nK
+         v9zUEI6GzxZpciNXC+5Uc78UfKJEo2rjA+9IXww/Wh+1Kd32J3Tju0+pvaARvkVj/YSV
+         GVGFxlbky7zfIWYtQKKQMSO9HIXVcUbt7sG6T1eJVfGET+jKVtLmv2XbYeevAT/qALfL
+         c3tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXazZUWtO1YvKXdAf174TvhZX4NOWnoA7Q9jPvmr3t8GaMERDvGY6TtKiZxtwas2VjIjmcdAUzteQq6lNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVixjF4UxOhONiiFGSFCJWwZ5mbVYT6RaYZklY+pFAF/5IGMJq
+	pf04PqADqA4ndWkUIjJrq2WjrGO3rlv7wjdamPjXv4LKK3V2HwaVOXY4ZnYcv8gU3iMSdbXbn1V
+	+NKU+uKCvj2u/olkl+15oJMp052f/vugX3u3J
+X-Google-Smtp-Source: AGHT+IE9wHdywVYcSJ0MhGBl1AGz6FW7pkwWHnpBoOpmqXayWnThfJyUMjbypeLgEyzcg3Wms3RNiMxi4qpc97lqV5U=
+X-Received: by 2002:adf:8b1b:0:b0:374:ba2b:4d1c with SMTP id
+ ffacd0b85a97d-37cd5aa684emr1665481f8f.31.1727419736162; Thu, 26 Sep 2024
+ 23:48:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905201656.GA391855@bhelgaas>
+References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
+ <20240926-b4-miscdevice-v1-2-7349c2b2837a@google.com> <20240926220821.GP3550746@ZenIV>
+In-Reply-To: <20240926220821.GP3550746@ZenIV>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 27 Sep 2024 08:48:41 +0200
+Message-ID: <CAH5fLggMgmg-3AH1JcA6hrNLvEoM8f8a=c99v7gSa+4q3diWjA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] rust: file: add f_pos and set_f_pos
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Bjorn,
+On Fri, Sep 27, 2024 at 12:08=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> =
+wrote:
+>
+> On Thu, Sep 26, 2024 at 02:58:56PM +0000, Alice Ryhl wrote:
+> > Add accessors for the file position. Most of the time, you should not
+> > use these methods directly, and you should instead use a guard for the
+> > file position to prove that you hold the fpos lock. However, under
+> > limited circumstances, files are allowed to choose a different locking
+> > strategy for their file position. These accessors can be used to handle
+> > that case.
+> >
+> > For now, these accessors are the only way to access the file position
+> > within the llseek and read_iter callbacks.
+>
+> You really should not do that within ->read_iter().  If your method
+> does that, it has the wrong signature.
+>
+> If nothing else, it should be usable for preadv(2), so what file position
+> are you talking about?
 
-On 15:16 Thu 05 Sep     , Bjorn Helgaas wrote:
-> [+cc Lizhi]
-> 
-> On Thu, Sep 05, 2024 at 06:43:35PM +0200, Andrea della Porta wrote:
-> > On 17:26 Tue 03 Sep     , Bjorn Helgaas wrote:
-> > > On Mon, Aug 26, 2024 at 09:51:02PM +0200, Andrea della Porta wrote:
-> > > > On 10:24 Wed 21 Aug     , Bjorn Helgaas wrote:
-> > > > > On Tue, Aug 20, 2024 at 04:36:05PM +0200, Andrea della Porta wrote:
-> > > > > > The of_pci_set_address() function parses devicetree PCI range
-> > > > > > specifier assuming the address is 'sanitized' at the origin,
-> > > > > > i.e. without checking whether the incoming address is 32 or 64
-> > > > > > bit has specified in the flags.  In this way an address with no
-> > > > > > OF_PCI_ADDR_SPACE_MEM64 set in the flags could leak through and
-> > > > > > the upper 32 bits of the address will be set too, and this
-> > > > > > violates the PCI specs stating that in 32 bit address the upper
-> > > > > > bit should be zero.
-> > > 
-> > > > > I don't understand this code, so I'm probably missing something.  It
-> > > > > looks like the interesting path here is:
-> > > > > 
-> > > > >   of_pci_prop_ranges
-> > > > >     res = &pdev->resource[...];
-> > > > >     for (j = 0; j < num; j++) {
-> > > > >       val64 = res[j].start;
-> > > > >       of_pci_set_address(..., val64, 0, flags, false);
-> > > > >  +      if (OF_PCI_ADDR_SPACE_MEM64)
-> > > > >  +        prop[1] = upper_32_bits(val64);
-> > > > >  +      else
-> > > > >  +        prop[1] = 0;
-> > ...
-> > > However, the CPU physical address space and the PCI bus address are
-> > > not the same.  Generic code paths should account for that different by
-> > > applying an offset (the offset will be zero on many platforms where
-> > > CPU and PCI bus addresses *look* the same).
-> > > 
-> > > So a generic code path like of_pci_prop_ranges() that basically copies
-> > > a CPU physical address to a PCI bus address looks broken to me.
-> > 
-> > Hmmm, I'd say that a translation from one bus type to the other is
-> > going on nonetheless, and this is done in the current upstream function
-> > as well. This patch of course does not add the translation (which is
-> > already in place), just to do it avoiding generating inconsistent address.
-> 
-> I think I was looking at this backwards.  I assumed we were *parsing"
-> a "ranges" property, but I think in fact we're *building* a "ranges"
-> property to describe an existing PCI device (either a PCI-to-PCI
-> bridge or an endpoint).  For such devices there is no address
-> translation.
-> 
-> Any address translation would only occur at a PCI host bridge that has
-> CPU address space on the upstream side and PCI address space on the
-> downstream side.
-> 
-> Since (IIUC), we're building "ranges" for a device in the interior of
-> a PCI hierarchy where address translation doesn't happen, I think both
-> the parent and child addresses in "ranges" should be in the PCI
-> address space.
-> 
-> But right now, I think they're both in the CPU address space, and we
-> basically do this:
-> 
->   of_pci_prop_ranges(struct pci_dev *pdev, ...)
->     res = &pdev->resource[...];
->     for (j = 0; j < num; j++) {   # iterate through BARs or windows
->       val64 = res[j].start;       # CPU physical address
->       # <convert to PCI address space>
->       of_pci_set_address(..., rp[i].parent_addr, val64, ...)
->         rp[i].parent_addr = val64
->       if (pci_is_bridge(pdev))
->         memcpy(rp[i].child_addr, rp[i].parent_addr)
->       else
->         rp[i].child_addr[0] = j   # child addr unset/unused
-> 
-> Here "res" is a PCI BAR or bridge window, and it contains CPU physical
-> addresses, so "val64" is a CPU physical address.  It looks to me like
-> we should convert to a PCI bus address at the point noted above, based
-> on any translation described by the PCI host bridge.  That *should*
-> naturally result in a 32-bit value if OF_PCI_ADDR_SPACE_MEM64 is not
-> set.
+Sorry, you are right. In read_iter we can access the file position via
+the kiocb. It only makes sense for seek.
 
-That's exactly the point, ecxept that right now a 64 bit address would
-"unnaturally" pass through even if OF_PCI_ADDR_SPACE_MEM64 is not set.
-Hence the purpose of this patch.
-
-Many thanks,
-Andrea
-
-> 
-> > > Maybe my expectation of this being described in DT is mistaken.
-> > 
-> > Not sure what you mean here, the address being translated are coming from
-> > DT, in fact they are described by "ranges" properties.
-> 
-> Right, for my own future reference since I couldn't find a generic
-> description of "ranges" in Documentation/devicetree/:
-> 
-> [1] https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#ranges
+Alice
 
