@@ -1,200 +1,260 @@
-Return-Path: <linux-kernel+bounces-341405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E17CB987F9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:42:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 959EE987FA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B070282A9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:42:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 913F9B22D65
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2E6188A14;
-	Fri, 27 Sep 2024 07:42:29 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2248186E3E;
+	Fri, 27 Sep 2024 07:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="KdpYHP+j"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5590D17C9E8
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B413170A27;
+	Fri, 27 Sep 2024 07:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727422948; cv=none; b=eXhKlB29rD3UeAzCg7u4cxLOrlBaUdt9q5t2AvL0vOT/wU6SrfevxJYWn6QkZZpU83efKqLa3qcvH/Rgruvpe6kQnzcfWQD13yIi/0tOvnh5PyT8oJRqbK7HWac7Y+SGaZ3BmRWNmLqfYMpG148+bEsME9E+DXy4DVZ0Ztb1Afs=
+	t=1727422986; cv=none; b=YOWxW9FRudosCmTHZcQ1h+9MgRaW7oly/nSvJP6G7/tW81rojpvMIFrbUp6rQAG19Z+OrzkfcetXXqbnHZPqby/2Pn2kh9w5evti6oWZWH+wsJnQdoG8CJSYoKGYCSDD/M0IcOz+TmsQydHuFwdLzM9Y4XhIzC7SSKOt6TNksfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727422948; c=relaxed/simple;
-	bh=Y85+uEMLKyCCsjGCE8+X3WPnq07CyeZ2Xkntji605Pw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BuJ4pE1FNzgbbCGbAHqYvocJCI0kBqHXzq6bQBOjwgGunV/+D95NIUBI9tn49QTgC/P4THuVfLFK2joV/hQiCnZirP4s5gCXW+86WedCOLfq36dKglTo3SJ6Rm+5bx2HPMlTfV7qlBWyQrezwR3SM+x0bW0ml5xM+/mkw8CDF4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a08c7d4273so20962025ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:42:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727422946; x=1728027746;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=njVp7Usi7eU+qsX5ofV6zvIiP/FfZPRnWFIKpJMtD1M=;
-        b=EpsLqFyUZlRUM1yjUymoQcJ3tjZLdoOiCEqa+FdlefwfuOIleCbJDWszL/FNNwf/s4
-         LmIYY5isHtP6TcHZiLy9MURtPCZBWFaQy+XxP22XtD6jWF4fSyzdwJQLFS4PN/90O+2N
-         e4L8WD77OoOTuByLAfMEO2HMWideg5aJQeYr32J3CHwkNzoEcniNTNX0VzdrhcPCkURy
-         PdCq2I2Ce32wznmtqgiNDtTeYMNwSE5RfyqiKbhi9pHAtbjA3Ms+KYe/8i8dZ1E+L2+E
-         VpYT4d7fH7nd8doOCzB8U4P7vSta3Wz230IWzy5uvW3rMQ1C4g8YwfDkLiqOqcTQ2yas
-         objQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUCy4ZKCZENT50FzVjYZiL/qFgpNIUwOLn5e3gfcFAgAfZ+Zs5szMGr4HxFj7OaU4yi+6bRLyYYMV1C4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp1tZOH9shiBu1JVC3mSiSsOI2bDK/cUFEnk6O/QZtqboN7i3p
-	bnrGwEsn81vyrt5dnT7az1/IW5VLJTvD0z16sHA7xNmA+woNCLisfOJFxXp+HRXev6pdE6jBTDO
-	ep9VnCjb9yQN0/a3GApL2jgZ9PmmFOWe5lv4twPIprpFbNIhAEK8GXhM=
-X-Google-Smtp-Source: AGHT+IHkbvVR1zRnDN6g66btasQuzklpsAJk1gErTEQWtyZu8q3/5LjdIZBSUp20vXHrUSWeqlhspogCCqsuy1z7uS0ssfEgjAbx
+	s=arc-20240116; t=1727422986; c=relaxed/simple;
+	bh=PyqhuP2oH4y9CdcyiEZUTG94tzpmNhW+F3PvUdqYcBc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uut3C2SL+yHpKYm6TvxdafnzOTeE9ZDzD1NchTCxjkMZ6JAdnOfVLhT9vpsk6SJhgn1+/i9FlNdF6ET3lE1/2HXLW/SfIql6SJZG053nR59PKf8DPgHBTjcthcwnnQKh/Qqf0hA2OgGMGq+ILdbNT1MXZG3lB3IhwfdcJQoaUG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=KdpYHP+j; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5ZTsev+NIW/zSFtIbfCXm6MY/MQInTAzru2nwTb17h8=; b=KdpYHP+j5/nU7dka/Qp+fzSLl1
+	//K33u0LzJWBdChANPG5AGEVmTrUOqfyp6GCdIyioKVLU5t2U44tr+GWX+Ulv7lCDmKFPjGvxo3NL
+	iDNOyUo6SL/wL3UJ7TFcbvPvWJla/bJjFEtXDWASouvhQcGhG5mkV5IntUe/kYUsfvSZeH16bBHk9
+	oDe9pmYbSYxsJXTL5Yjz0dQB2gdXpu8ILTngBsidBXLCSDvnLIt0dlojzh6NvhdBZS++IlJHJ6Ydk
+	Rw9nYChbKmV+F8siT7RTKENPL2iChTANooD+whdaWVx18RQeRNlfZKXPH//mGSHlDVNPT+cM6JqU1
+	WUDcuowA==;
+Received: from 85-160-70-253.reb.o2.cz ([85.160.70.253] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1su5cx-0008Nc-Rb; Fri, 27 Sep 2024 09:42:59 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, Frank Wang <frawang.cn@gmail.com>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
+ tim.chen@rock-chips.com, frank.wang@rock-chips.com
+Subject:
+ Re: [PATCH v3 2/2] phy: rockchip: inno-usb2: Add usb2 phys support for rk3576
+Date: Fri, 27 Sep 2024 09:42:58 +0200
+Message-ID: <9874721.ag9G3TJQzC@phil>
+In-Reply-To: <9cc2d594-a930-4c4a-86ee-47228af28936@gmail.com>
+References:
+ <20240926103223.29538-1-frawang.cn@gmail.com> <10867555.aFP6jjVeTY@phil>
+ <9cc2d594-a930-4c4a-86ee-47228af28936@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12ee:b0:3a2:aed1:1285 with SMTP id
- e9e14a558f8ab-3a344fc8e06mr27030935ab.0.1727422946540; Fri, 27 Sep 2024
- 00:42:26 -0700 (PDT)
-Date: Fri, 27 Sep 2024 00:42:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f661e2.050a0220.38ace9.000f.GAE@google.com>
-Subject: [syzbot] [ppp?] inconsistent lock state in ppp_input
-From: syzbot <syzbot+bd8d55ee2acd0a71d8ce@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-ppp@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hello,
+Hi Frank,
 
-syzbot found the following issue on:
+Am Freitag, 27. September 2024, 08:16:42 CEST schrieb Frank Wang:
+> On 2024/9/26 18:48, Heiko Stuebner wrote:
+> > Am Donnerstag, 26. September 2024, 12:32:23 CEST schrieb Frank Wang:
+> >> From: William Wu <william.wu@rock-chips.com>
+> >>
+> >> The RK3576 SoC has two independent USB2.0 PHYs, and each PHY has
+> >> one port.
+> >>
+> >> This change also converts the clock management from single to bulk
+> >> as some Rockchip SoCs (e.g RK3576) have more than one clock.
+> >>
+> >> Signed-off-by: William Wu <william.wu@rock-chips.com>
+> >> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+> >> ---
+> >> Changelog:
+> >> v3:
+> >>   - amend the commit log adds clocks converting.
+> >>   - retrieve the clock by "clks.id" in *_clk480m_register() function.
+> >>
+> >> v2:
+> >>   - no changes.
+> >> v1:
+> >>   - https://patchwork.kernel.org/project/linux-phy/patch/20240923025326.10467-2-frank.wang@rock-chips.com/
+> >>
+> >>   drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 139 +++++++++++++++++-
+> >>   1 file changed, 131 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> >> index 4f71373ae6e1..642c7857c5ae 100644
+> >> --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> >> +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> >> @@ -229,9 +229,10 @@ struct rockchip_usb2phy_port {
+> >>    * @dev: pointer to device.
+> >>    * @grf: General Register Files regmap.
+> >>    * @usbgrf: USB General Register Files regmap.
+> >> - * @clk: clock struct of phy input clk.
+> >> + * @clks: array of phy input clocks.
+> >>    * @clk480m: clock struct of phy output clk.
+> >>    * @clk480m_hw: clock struct of phy output clk management.
+> >> + * @num_clks: number of phy input clocks.
+> >>    * @phy_reset: phy reset control.
+> >>    * @chg_state: states involved in USB charger detection.
+> >>    * @chg_type: USB charger types.
+> >> @@ -246,9 +247,10 @@ struct rockchip_usb2phy {
+> >>   	struct device	*dev;
+> >>   	struct regmap	*grf;
+> >>   	struct regmap	*usbgrf;
+> >> -	struct clk	*clk;
+> >> +	struct clk_bulk_data	*clks;
+> >>   	struct clk	*clk480m;
+> >>   	struct clk_hw	clk480m_hw;
+> >> +	int			num_clks;
+> >>   	struct reset_control	*phy_reset;
+> >>   	enum usb_chg_state	chg_state;
+> >>   	enum power_supply_type	chg_type;
+> >> @@ -376,7 +378,9 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
+> >>   {
+> >>   	struct device_node *node = rphy->dev->of_node;
+> >>   	struct clk_init_data init;
+> >> +	struct clk *refclk = NULL;
+> >>   	const char *clk_name;
+> >> +	int i;
+> >>   	int ret = 0;
+> >>   
+> >>   	init.flags = 0;
+> >> @@ -386,8 +390,15 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
+> >>   	/* optional override of the clockname */
+> >>   	of_property_read_string(node, "clock-output-names", &init.name);
+> >>   
+> >> -	if (rphy->clk) {
+> >> -		clk_name = __clk_get_name(rphy->clk);
+> >> +	for (i = 0; i < rphy->num_clks; i++) {
+> >> +		if (!strncmp(rphy->clks[i].id, "phyclk", 6)) {
+> >> +			refclk = rphy->clks[i].clk;
+> >> +			break;
+> >> +		}
+> >> +	}
+> >> +
+> >> +	if (!IS_ERR(refclk)) {
+> >> +		clk_name = __clk_get_name(refclk);
+> >>   		init.parent_names = &clk_name;
+> >>   		init.num_parents = 1;
+> >>   	} else {
+> >> @@ -1406,22 +1417,29 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
+> >>   	if (IS_ERR(rphy->phy_reset))
+> >>   		return PTR_ERR(rphy->phy_reset);
+> >>   
+> >> -	rphy->clk = devm_clk_get_optional_enabled(dev, "phyclk");
+> >> -	if (IS_ERR(rphy->clk)) {
+> >> -		return dev_err_probe(&pdev->dev, PTR_ERR(rphy->clk),
+> >> +	ret = devm_clk_bulk_get_all(dev, &rphy->clks);
+> >> +	if (ret == -EPROBE_DEFER) {
+> >> +		return dev_err_probe(&pdev->dev, -EPROBE_DEFER,
+> >>   				     "failed to get phyclk\n");
+> >>   	}
+> >>   
+> >> +	/* Clocks are optional */
+> >> +	rphy->num_clks = ret < 0 ? 0 : ret;
+> >> +
+> >>   	ret = rockchip_usb2phy_clk480m_register(rphy);
+> >>   	if (ret) {
+> >>   		dev_err(dev, "failed to register 480m output clock\n");
+> >>   		return ret;
+> >>   	}
+> >>   
+> >> +	ret = clk_bulk_prepare_enable(rphy->num_clks, rphy->clks);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> > Do you actually need that separate enable step?
+> > There exists devm_clk_bulk_get_all_enable()
+> >
+> > https://elixir.bootlin.com/linux/v6.11/source/include/linux/clk.h#L511
+> >
+> > which you could use above. Especially as otherwise you'd need a remove
+> > callback to disable the clock on driver unbind?
+> >
+> 
+> Using devm_clk_bulk_get_all() just can get clocknumbers, 
+> and devm_clk_bulk_get_all_enable() is not.
+> It seems that there is no other API can get the number of clocks separately.
 
-HEAD commit:    5f5673607153 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=14568c80580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dedbcb1ff4387972
-dashboard link: https://syzkaller.appspot.com/bug?extid=bd8d55ee2acd0a71d8ce
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16296107980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14de92a9980000
+Hmm, didn't see that yesterday, but you're right.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/40172aed5414/disk-5f567360.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/58372f305e9d/vmlinux-5f567360.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d2aae6fa798f/Image-5f567360.gz.xz
+From a consistency standpoint I think it would actually make sense to
+return the number of clocks from devm_clk_bulk_get_all_enable() .
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bd8d55ee2acd0a71d8ce@syzkaller.appspotmail.com
-
-================================
-WARNING: inconsistent lock state
-6.11.0-rc7-syzkaller-g5f5673607153 #0 Not tainted
---------------------------------
-inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
-ksoftirqd/1/24 [HC0[0]:SC1[1]:HE1:SE0] takes:
-ffff0000db7f11e0 (&pch->downl){+.?.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
-ffff0000db7f11e0 (&pch->downl){+.?.}-{2:2}, at: ppp_channel_bridge_input drivers/net/ppp/ppp_generic.c:2272 [inline]
-ffff0000db7f11e0 (&pch->downl){+.?.}-{2:2}, at: ppp_input+0x16c/0x854 drivers/net/ppp/ppp_generic.c:2304
-{SOFTIRQ-ON-W} state was registered at:
-  lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
-  __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
-  _raw_spin_lock+0x48/0x60 kernel/locking/spinlock.c:154
-  spin_lock include/linux/spinlock.h:351 [inline]
-  ppp_channel_bridge_input drivers/net/ppp/ppp_generic.c:2272 [inline]
-  ppp_input+0x16c/0x854 drivers/net/ppp/ppp_generic.c:2304
-  pppoe_rcv_core+0xfc/0x314 drivers/net/ppp/pppoe.c:379
-  sk_backlog_rcv include/net/sock.h:1111 [inline]
-  __release_sock+0x1a8/0x3d8 net/core/sock.c:3004
-  release_sock+0x68/0x1b8 net/core/sock.c:3558
-  pppoe_sendmsg+0xc8/0x5d8 drivers/net/ppp/pppoe.c:903
-  sock_sendmsg_nosec net/socket.c:730 [inline]
-  __sock_sendmsg net/socket.c:745 [inline]
-  __sys_sendto+0x374/0x4f4 net/socket.c:2204
-  __do_sys_sendto net/socket.c:2216 [inline]
-  __se_sys_sendto net/socket.c:2212 [inline]
-  __arm64_sys_sendto+0xd8/0xf8 net/socket.c:2212
-  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 282914
-hardirqs last  enabled at (282914): [<ffff80008b42e30c>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
-hardirqs last  enabled at (282914): [<ffff80008b42e30c>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
-hardirqs last disabled at (282913): [<ffff80008b42e13c>] __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
-hardirqs last disabled at (282913): [<ffff80008b42e13c>] _raw_spin_lock_irqsave+0x2c/0x7c kernel/locking/spinlock.c:162
-softirqs last  enabled at (282904): [<ffff8000801f8e88>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (282904): [<ffff8000801f8e88>] handle_softirqs+0xa3c/0xbfc kernel/softirq.c:582
-softirqs last disabled at (282909): [<ffff8000801fbdf8>] run_ksoftirqd+0x70/0x158 kernel/softirq.c:928
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&pch->downl);
-  <Interrupt>
-    lock(&pch->downl);
-
- *** DEADLOCK ***
-
-1 lock held by ksoftirqd/1/24:
- #0: ffff80008f74dfa0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x10/0x4c include/linux/rcupdate.h:325
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 24 Comm: ksoftirqd/1 Not tainted 6.11.0-rc7-syzkaller-g5f5673607153 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:319
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:326
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
- dump_stack+0x1c/0x28 lib/dump_stack.c:128
- print_usage_bug+0x698/0x9ac kernel/locking/lockdep.c:4000
- mark_lock_irq+0x980/0xd2c
- mark_lock+0x258/0x360 kernel/locking/lockdep.c:4677
- __lock_acquire+0xf48/0x779c kernel/locking/lockdep.c:5096
- lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x48/0x60 kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:351 [inline]
- ppp_channel_bridge_input drivers/net/ppp/ppp_generic.c:2272 [inline]
- ppp_input+0x16c/0x854 drivers/net/ppp/ppp_generic.c:2304
- ppp_async_process+0x98/0x150 drivers/net/ppp/ppp_async.c:495
- tasklet_action_common+0x318/0x3f4 kernel/softirq.c:785
- tasklet_action+0x68/0x8c kernel/softirq.c:811
- handle_softirqs+0x2e4/0xbfc kernel/softirq.c:554
- run_ksoftirqd+0x70/0x158 kernel/softirq.c:928
- smpboot_thread_fn+0x4b0/0x90c kernel/smpboot.c:164
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+Because right now, those clk_* functions are looking pretty similar
+but behave differently. And looking at the function, the enable-variant
+also just uses clk_bulk_get_all, just looses the number of clocks
+because "ret" is reused by the enable call.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+But if you don't want to touch the clk API that's also ok, but
+you should then add a devm_add_action_or_reset call, to disable
+the clocks on driver removal, before they are freed.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> >>   	if (rphy->phy_cfg->phy_tuning) {
+> >>   		ret = rphy->phy_cfg->phy_tuning(rphy);
+> >>   		if (ret)
+> >> -			return ret;
+> >> +			goto disable_clks;
+> >>   	}
+> >>   
+> >>   	index = 0;
+> >> @@ -1484,6 +1502,8 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
+> >>   
+> >>   put_child:
+> >>   	of_node_put(child_np);
+> >> +disable_clks:
+> >> +	clk_bulk_disable_unprepare(rphy->num_clks, rphy->clks);
+> >>   	return ret;
+> >>   }
+> >>   
+> >> @@ -1495,6 +1515,30 @@ static int rk3128_usb2phy_tuning(struct rockchip_usb2phy *rphy)
+> >>   				BIT(2) << BIT_WRITEABLE_SHIFT | 0);
+> >>   }
+> >
+> > I still maintain, that this maybe should be two separate patches.
+> > And you even seem to have nice "cut-here" in it ;-)
+> >
+> > The code above converts the driver to use clk_bulk to handle
+> > multiple clocks for controller variants needing it.
+> >
+> >
+> > And the code below adds the rk3576-specific data to the driver.
+> >
+> 
+> Make sense, I shall split two separate patches in the next version.
+> BTW, should I send the clk_bulk process patch as a separate series? I 
+> mean I shouldn't send it together with this series, right?
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+No, just one series, convert the driver to clk_bulk*, add rk3576 binding,
+add rk3576-specific data :-) .
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Because people will want to see where you're going with your change
+and having "this series depends on this separate patch" creates confusion
+and you're really only touching this one driver.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Heiko
 
-If you want to undo deduplication, reply with:
-#syz undup
+
+
 
