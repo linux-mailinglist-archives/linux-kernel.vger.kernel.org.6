@@ -1,210 +1,170 @@
-Return-Path: <linux-kernel+bounces-341838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F4579886EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:20:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB22A9886EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0AF81F22201
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:20:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F144B20B12
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DE88175B;
-	Fri, 27 Sep 2024 14:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FFB130E27;
+	Fri, 27 Sep 2024 14:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XXNutOhw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/YqMEnw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2B024B28
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92E2191;
+	Fri, 27 Sep 2024 14:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727446800; cv=none; b=XyMk6INtbav969ASiasTtxBfUW7I/F/FLgKnbJdoqEwktZOsusAtSbEhxjjXuEJvKan9bkTp9DB+B74y7wC5Fmy9tHTpS4b12I5V2zj/9aLfTferPFq3ZF63lzCGkt2a56W80F6yc+xkUKgShhImSFOk4LkcaLcsf3Mwdg4/hWw=
+	t=1727446869; cv=none; b=cAeCIalv0bMvM+Gqtz+i7SMSI4qfPw38S0lIJ9GJV+fUmMMOy7+9cyqZGcBYBptvCNIdkC1mzarwzIsUYy8ZcWdyExsJQ1npvY+NzMO+V57J1JKAs7y/x1+QynH52dLPy4KEuPuenULUrRxEC5xO7JrBJsHYuSWsZn3wELO5QZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727446800; c=relaxed/simple;
-	bh=TAumnclaZPJ3JsP6Z6FrwJ5J4BWAABpTn6LrE92M8b0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tSqTrTAHYAO6T7lE+nKPPChMb16JfdQTt6ar6M86cAVgCzkBwEeFlyOek/3nIDGvKTZ7AT5noW0tMcs6sbC5EtTwgqTU/0mT2PeKlj3D87miZwJ44VK6Ukg9/3DZ1ftHGwtVGtHm7YBWlCCj4oQ72BdWkeCY/9QFD7SQygKUL8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XXNutOhw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727446797;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CsHStmWEpieZFdjzVIt+lNRUQ+HoOUuzdOx9CgVHRjs=;
-	b=XXNutOhwdihTJkCaU/T2Ckar7PcXsPfAvFvPP6zg4fWHd7gDBOLmk/sZ0GLm7W8x18Hcuu
-	X6+2BGseqXHMXUAoR1lIEsgVZiBDu1MPi1TNCm0zXNrkedurPSLhmt8oc07Inc5SyS/WBm
-	MUC6o55YKAJ/DP25sFFpLvcjuUtzPtA=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-588-g1D-88gTM5yx9kYsHr6n3Q-1; Fri, 27 Sep 2024 10:19:55 -0400
-X-MC-Unique: g1D-88gTM5yx9kYsHr6n3Q-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5c86d0ff3a8so1388071a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:19:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727446794; x=1728051594;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CsHStmWEpieZFdjzVIt+lNRUQ+HoOUuzdOx9CgVHRjs=;
-        b=hqsKHI1u96eCQQ+GH87E1sgn5A/GfEP3IZg0d4/t65CDFdKbD9xyAlEPIogAGIivN7
-         vvL46mzsaI+0y0QYIzR6MrFuw8ZZbmNvUMO+S8LQ9eOs3tazAH7N48mmoJbIUWHCx1XN
-         E+UEzTB1Q30Sz8zSk4QgXIMA2/zDO9pVUofVP6i3yQ6lBL2uYbWMlpgbBGd4RpxKQ3ow
-         sMD1+F0D/nefylotuhEsSVwHc+6E4y8unoDuGgf7tq+Lez1y2hIn3iWRcysh0fOx5C8/
-         gpN4LfMcvJiH6RgxXZW1tgpFZ0TGbbkpkwHPF4yNDsXsmyJXfyyv6g1HElCocCTaghNB
-         JrHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgA5g89aARFbl2G0nxo8hrvwXaZrrA0/18GYQEksOXgpqPAS8YkGODl2Y9Z5+VH4z0G2b09UEz/2sXEpA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCCyhc746TQZTJDoDq16IAuYu4TH/X0aT5Nl7azZ2WYoiy7U/S
-	2wOtG7tJkuA0m5gEzhc20GCHZN9m1PRjJEjk4lZCz9Iz6WCqV6MjhVsB8/Fe3oDQPxSOJ34xnf3
-	yRhByXlXNZd9SA8qriR045fxVwd/gBSAmGbPfXtiXGneg8ogIkwleX4dtoXei8w==
-X-Received: by 2002:a05:6402:e9e:b0:5c0:c10c:7c1d with SMTP id 4fb4d7f45d1cf-5c88260359fmr2685257a12.23.1727446793877;
-        Fri, 27 Sep 2024 07:19:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEl8zETG/nN7VCsItEgk23DbBOEAqEjpciP00WcQag6SkFOy6fRM48NrEV7cAT7D3Tod8+lxA==
-X-Received: by 2002:a05:6402:e9e:b0:5c0:c10c:7c1d with SMTP id 4fb4d7f45d1cf-5c88260359fmr2685231a12.23.1727446793344;
-        Fri, 27 Sep 2024 07:19:53 -0700 (PDT)
-Received: from [192.168.1.35] (85-147-213-205.cable.dynamic.v4.ziggo.nl. [85.147.213.205])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88248ac03sm1193820a12.70.2024.09.27.07.19.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 07:19:52 -0700 (PDT)
-Message-ID: <9feac709-fbab-424a-bc5c-dedbcec40dea@redhat.com>
-Date: Fri, 27 Sep 2024 16:19:50 +0200
+	s=arc-20240116; t=1727446869; c=relaxed/simple;
+	bh=gfF8BLW/H49a8nGE/ZR/uoAaquOYmKRnzvMeUzAWyX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQu2H2XEEviXK6GR8eeTAACVaKk7WL+XFQ+PWZ9cEf0K+adTKOQ5kDN35/E1sGY7yEJ1u3UwLqxsJ+dpe1N4fr+JTY7zJ7DDgUfjsl7bq9h0AmUhdLAfxtxfPFKOIoXERG319WmI6Nc6w9xreNDtTEZVHgAg85flkoZcgC/o9f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/YqMEnw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E25E3C4CEC4;
+	Fri, 27 Sep 2024 14:21:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727446869;
+	bh=gfF8BLW/H49a8nGE/ZR/uoAaquOYmKRnzvMeUzAWyX0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V/YqMEnwi59r3EJQyMrx6JDqdvPO9uApn971oz+NC9UX6j8Gc7A5dTOuCWTNqgIUG
+	 KQOEtI6YjfKl7qCqdzZeD/oHKobc9U+JZmPzMOGKZjSlK6P/RCPSRFP0vAD8SEVrGr
+	 LwkWjpSmCx8sIcbM0mRWsGQudR6bDwQa3jPzlXGeWvSvCv+4E1C1JX9IxLpFtVqCET
+	 8i8cSMKjj4odwcOD/JN6B4ofXTYRVUC64ars7F1G8xGNYO1UtWHpBgunynNV3HFnLG
+	 +cv1APqiLEhLhj/Gg+Qlj1tc9ajHNG1Q+V/j2VUb1S3kdXpE/L4w3/dyAsXGOYpd5h
+	 BlSIPtpnG+DCA==
+Date: Fri, 27 Sep 2024 16:21:00 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Bjoern Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arve Hjonnevag <arve@android.com>, Todd Kjos <tkjos@android.com>, 
+	Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH] [RFC] rust: add PidNamespace wrapper
+Message-ID: <20240927-anreden-unwirklich-c98c1d9ac3a5@brauner>
+References: <CAH5fLgixve=E5=ghc3maXVC+JdqkrPSDqKgJiYEJ9j_MD4GAzg@mail.gmail.com>
+ <20240926-bewundere-beseitigen-59808f199f82@brauner>
+ <20240926-pocht-sittlich-87108178c093@brauner>
+ <CAH5fLghUj3-8eZMOVhhk0c9x29B7uMj=9dHWsRJYC1ghxqUdxg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: resource: Skip IRQ override on Asus Vivobook Go
- E1404GAB
-To: Thorsten Leemhuis <linux@leemhuis.info>, Tamim Khan <tamim@fusetak.com>,
- linux-acpi@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: rafael@kernel.org, lenb@kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <20240903014317.38858-1-tamim@fusetak.com>
- <c73420b7-c186-4b5d-a074-961b35ed829c@leemhuis.info>
- <f79854bd-b338-458f-bc04-466376d05a65@leemhuis.info>
- <87cf24b3-5ddd-4532-b186-dd1dcc62f712@leemhuis.info>
- <c1276139-d26f-457a-8a73-7f17538dbd28@redhat.com>
- <7ce7f7cc-870f-4f7f-98c6-95eb784008ff@leemhuis.info>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <7ce7f7cc-870f-4f7f-98c6-95eb784008ff@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLghUj3-8eZMOVhhk0c9x29B7uMj=9dHWsRJYC1ghxqUdxg@mail.gmail.com>
 
-Hi Thorsten,
-
-On 26-Sep-24 12:18 PM, Thorsten Leemhuis wrote:
-> On 25.09.24 16:31, Hans de Goede wrote:
->>
->> On 25-Sep-24 1:56 PM, Thorsten Leemhuis wrote:
->>> [CCing Hans]
->> Can you next time maybe also add a bit of text explaining why ?
+On Fri, Sep 27, 2024 at 02:04:13PM GMT, Alice Ryhl wrote:
+> On Thu, Sep 26, 2024 at 6:36 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > Ok, so here's my feeble attempt at getting something going for wrapping
+> > struct pid_namespace as struct pid_namespace indirectly came up in the
+> > file abstraction thread.
 > 
-> Sorry, yes, you are right, will keep that in mind.
+> This looks great!
+
+Thanks!
+
 > 
->>> On 05.09.24 12:45, Thorsten Leemhuis wrote:
->>>> On 05.09.24 11:51, Thorsten Leemhuis wrote:
->>>>> On 03.09.24 03:43, Tamim Khan wrote:
->>>>>> Like other Asus Vivobooks, the Asus Vivobook Go E1404GAB has a DSDT
->>>>>> that describes IRQ 1 as ActiveLow, while the kernel overrides to Edge_High.
->>>>>> This override prevents the internal keyboard from working. This patch fixes
->>>>>> this problem by adding this laptop to the table that prevents the kernel from
->>>>>> overriding the IRQ.
->>>>>>
->>>>>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219212
->>>>> Thx for that. FWIW, I by chance noticed another such report about the
->>>>> E1404GA: https://bugzilla.kernel.org/show_bug.cgi?id=219224
->>>>
->>>> TWIMC, shortly after sending this mail I noticed there is another request
->>>> for a quirk that was send to the list, bug afaics fall through the
->>>> cracks. See here:
->>>> https://lore.kernel.org/all/1226760b-4699-4529-bf57-6423938157a3@wanadoo.fr/
->>>>
->>>> It afaics add a X1704VAP:
->> [...]
->>
->> Ok, I wonder did you Cc me so that I can write / submit patches upstream
->> for these ones?
+> > The lifetime of a pid namespace is intimately tied to the lifetime of
+> > task. The pid namespace of a task doesn't ever change. A
+> > unshare(CLONE_NEWPID) or setns(fd_pidns/pidfd, CLONE_NEWPID) will not
+> > change the task's pid namespace only the pid namespace of children
+> > spawned by the task. This invariant is important to keep in mind.
+> >
+> > After a task is reaped it will be detached from its associated struct
+> > pids via __unhash_process(). This will also set task->thread_pid to
+> > NULL.
+> >
+> > In order to retrieve the pid namespace of a task task_active_pid_ns()
+> > can be used. The helper works on both current and non-current taks but
+> > the requirements are slightly different in both cases and it depends on
+> > where the helper is called.
+> >
+> > The rules for this are simple but difficult for me to translate into
+> > Rust. If task_active_pid_ns() is called on current then no RCU locking
+> > is needed as current is obviously alive. On the other hand calling
+> > task_active_pid_ns() after release_task() would work but it would mean
+> > task_active_pid_ns() will return NULL.
+> >
+> > Calling task_active_pid_ns() on a non-current task, while valid, must be
+> > under RCU or other protection mechanism as the task might be
+> > release_task() and thus in __unhash_process().
 > 
-> Not really. Of course it would be nice if you or someone else took care
-> of that one and...
-> 
->> It seems that there are 3 missing models:
->> - E1404GA: https://bugzilla.kernel.org/show_bug.cgi?id=219224
->> - X1704VAP https://lore.kernel.org/all/1226760b-4699-4529-bf57-6423938157a3@wanadoo.fr/
->> - B2502CV: https://bugzilla.kernel.org/show_bug.cgi?id=217760#c12
->>
->> Which someone needs to submit upstream, right ?
-> 
-> ...these as well -- and ideally would even be willing to act as go-to
-> person from now on in case more of these quirk entries are needed, which
-> I guess will be the case. But given the backstory (see below) I don't
-> think you or anyone else is obliged to do this, even if the current
-> situation is parlty caused by regressions and recent fixes for them.
+> Just to confirm, calling task_active_pid_ns() on a non-current task
+> requires the rcu lock even if you own a refcont on the task?
 
-I have already done a bunch of these patches. So I would be happy to
-submit more of these, but someone needs to bring them to my attention first.
+Interesting question. Afaik, yes. task_active_pid_ns() goes via
+task->thread_pid which is a shorthand for task->pid_links[PIDTYPE_PID].
 
-Also maybe Paul Menzel (added to the Cc) and Tamim Khan can help with
-adding more quirks, when reports come in ?
+This will be NULLed when the task exits and is dead (so usually when
+someone has waited on it - ignoring ptrace for sanity reasons and
+autoreaping the latter amounts to the same thing just in-kernel):
 
-Either way I have submitted a set of patches to add quirks for the 3 new
-known broken models now.
+T1                      T2                                                   T3
+exit(0);
+                        wait(T1)
+                        -> wait_task_zombie()
+                           -> release_task()
+                              -> __exit_signals()
+                                 -> __unash_process()
+                                    // sets task->thread_pid == NULL         task_active_pid_ns(T1)
+                                    // task->pid_links[PIDTYPE_PID] == NULL
 
+So having a reference to struct task_struct doesn't prevent
+task->thread_pid becoming NULL.
 
->>> """
->>>> adding this section to file drivers/acpi/resource.c helped; if someone could do an official patch it would be great :-|
->>>>
->>>>         {
->>>>                 /* Asus ExpertBook B2502CVA */
->>>>                 .matches = {
->>>>                         DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
->>>>                         DMI_MATCH(DMI_BOARD_NAME, "B2502CVA"),
->>>>                 },
->>> """
->>>
->>> This is not a regression, but given how frequently I notice these issues
->>> please as a bystander allow me to ask: is there maybe some way to
->>> improve the situation so that we do not have to add all these and likely
->>> many other Asus Laptops to that file?
->>
->> This has been discussed before and unfortunately there is no other way
->> to deal with this. There has been some discussion about reading back
->> the polarity and edge/level from the hardware for the keyboard IRQ
->> to get the values which the BIOS has setup. But it is uncertain if this
->> will work and no one is working on this.
-> 
-> A refresher like this was more what I was fishing for. Thx for this.
-> 
-> Now that you wrote it, it makes me think: given the amount of quirk
-> entries we apparently need I wonder if it might be wise to revisit this
-> at some point in the not to distant future, as I suspect otherwise
-> sooner or later Linus might yell at all of us with something along the
-> lines of "the kernel is clearly broken, why did we work around this with
-> lots of quirk entries instead of fixing this for real". Something like
-> that happened in a somewhat (but not exactly) similar situation a year
-> ago, and it iirc was not the first time.
+And you touch upon a very interesting point. The lifetime of struct
+pid_namespace is actually tied to struct pid much tighter than it is to
+struct task_struct. So when a task is released (transitions from zombie
+to dead in the common case) the following happens:
 
-I hear you, but I don't really know anyone who has both the expertise
-as well as the bandwidth to deal with this.
+release_task()
+-> __exit_signals()
+   -> thread_pid = get_pid(task->thread_pid)
+      -> __unhash_process()
+         -> detach_pid(PIDTYPE_PID)
+            -> __change_pid()
+               {
+                       task->thread_pid = NULL;
+                       task->pid_links[PIDTYPE_PID] = NULL;
+                       free_pid(thread_pid)
+               }
+         put_pid(thread_pid)
 
-> Writing this lead to another thought: does anyone have contacts to Asus
-> and could just ask if there is some generic way to detect which of their
-> Laptops need a quirk?
+And the free_pid() in __change_pid() does a delayed_put_pid() via
+call_rcu().
 
-I don't have any contacts at Asus.
+So afaiu, taking the rcu_read_lock() synchronizes against that
+delayed_put_pid() in __change_pid() so the call_rcu() will wait until
+everyone who does
 
-Regards,
+rcu_read_lock()
+task_active_pid_ns(task)
+rcu_read_unlock()
 
-Hans
-
-
+and sees task->thread_pid non-NULL, is done. This way no additional
+reference count on struct task_struct or struct pid is needed before
+plucking the pid namespace from there. Does that make sense or have I
+gotten it all wrong?
 
