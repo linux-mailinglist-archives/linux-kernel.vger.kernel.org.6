@@ -1,200 +1,153 @@
-Return-Path: <linux-kernel+bounces-341395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C89987F73
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:30:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47CAA987F75
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F9FE283B9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:30:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E693D1F22E8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A8717DFFF;
-	Fri, 27 Sep 2024 07:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835C017C204;
+	Fri, 27 Sep 2024 07:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="DmGUjfu9"
-Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXM+Lz2y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0471B158557;
-	Fri, 27 Sep 2024 07:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D633D158557;
+	Fri, 27 Sep 2024 07:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727422221; cv=none; b=eNPaNy9F5jzmxkx1TTj/u22uMsdD+8WKksBK6oZ8LYiN++iE3XKrw65DwRpmndIYwl8/EYep0b7zwzo7/sRRYukOWMYqVS1A2cM6DMsAtlijWgQWzML9WzpiNFRBF58jD4UadaLgD8mMBp3NWaiY65DXn2+w64w7B+YmoKRyVrI=
+	t=1727422237; cv=none; b=Gmsv7zzkZ9j4umJ6ioFggQHmepSl5reJaOzqdBrLaXbQ51lmPThecMpg52CEdZhxohcNcNoen4PRD/cjD8Nrn/Q2ivdVYapY+u/JViuNJqOkFBp6X7nRUga5Z6yXZJMAocxJOJF3c7fjyoQGDMmyXh9MNlHDyqit9uoXHwFmrAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727422221; c=relaxed/simple;
-	bh=X1EbbchWBqe7kbUWUcRB4Udab8NrA9vLhm7bmk0PrAU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vap17U/EgpGLE81X/xpj+kk/FsyXpupURgy55aRcpea6CiVeGv4caKOkdAEaSEqHs9IuwQqov7uO5qW7ew1AU80QW3UFKM44qXCry3q5wXVRulEa/GlG7bNndXzHyj3ZUwn/U7umbilmQAARjFOv876A5fLBCH5YIKJtE/nFoKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=DmGUjfu9; arc=none smtp.client-ip=62.96.220.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
-Received: from localhost (localhost [127.0.0.1])
-	by a.mx.secunet.com (Postfix) with ESMTP id 81E2E2087B;
-	Fri, 27 Sep 2024 09:30:11 +0200 (CEST)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-	by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 70YR9yFkRM4s; Fri, 27 Sep 2024 09:30:10 +0200 (CEST)
-Received: from cas-essen-01.secunet.de (rl1.secunet.de [10.53.40.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by a.mx.secunet.com (Postfix) with ESMTPS id 8AAF820520;
-	Fri, 27 Sep 2024 09:30:10 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 a.mx.secunet.com 8AAF820520
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
-	s=202301; t=1727422210;
-	bh=Y7bDXPx3wgFkMtrWB50i7268p5aSWwld5cDeHJN70vQ=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
-	b=DmGUjfu9XoTS7oIw+WXmoCVkhHu0yVAdG0kzZ/O+q/NHPTxR/YpPCjdoTOnmyWXIx
-	 oyr18Wp/ospvb5o3Qc9B+Navo7ljSxyi+btD5A/A3DMow7vlMHSicmJswM5w+ducwP
-	 LzZ36qkvEzMytxAdUbiIcgZOsztRp9oM3QpLwL1FvMFosdD8Cc9Op6KoKzIMHhVoB7
-	 cphIBQ1Xh6jFunmSAY8eOpj4e+FqgCy8cCLA+fL8lcrXQn1AeUrJqgNCoCCTuqDLiS
-	 Jy9tTrHyyvMxfostnOuwoO11pgTOlflpd4WMITcLgLePfQukY9LFE6mO3Sr/rxKkkl
-	 8tloe3qZjil1A==
-Received: from mbx-essen-02.secunet.de (10.53.40.198) by
- cas-essen-01.secunet.de (10.53.40.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 27 Sep 2024 09:30:10 +0200
-Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-02.secunet.de
- (10.53.40.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 27 Sep
- 2024 09:30:10 +0200
-Received: by gauss2.secunet.de (Postfix, from userid 1000)
-	id E96A23181523; Fri, 27 Sep 2024 09:30:09 +0200 (CEST)
-Date: Fri, 27 Sep 2024 09:30:09 +0200
-From: Steffen Klassert <steffen.klassert@secunet.com>
-To: Sabrina Dubroca <sd@queasysnail.net>
-CC: <pabeni@redhat.com>, syzbot
-	<syzbot+cc39f136925517aed571@syzkaller.appspotmail.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <herbert@gondor.apana.org.au>,
-	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [net?] UBSAN: shift-out-of-bounds in
- xfrm_selector_match (2)
-Message-ID: <ZvZfAQ4IGX/3N/Ne@gauss3.secunet.de>
-References: <00000000000088906d0622445beb@google.com>
- <66f33458.050a0220.457fc.001e.GAE@google.com>
- <ZvPvQMDvWRygp4IC@hog>
+	s=arc-20240116; t=1727422237; c=relaxed/simple;
+	bh=7BBmEL4qhfybuaet/VOBEv3xMEna/TL1iMvTU7ecAdY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mG+kXvchuVjxTfKgaiQH11rld+cY34dSgysLpfCR3x+XjvNXP3Q+fPqPjjtTOCm/IGpR1E7tmgi6MPWmYZH/YB/cDRCti7pTojUAXy9JpjBFaYoSBcHkdRwG+IdEKYkCYZr1wMCgCpSj6FmxTSzSSX7eYjxtjU4WUFt2K1UzI/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXM+Lz2y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A435C4CEC4;
+	Fri, 27 Sep 2024 07:30:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727422237;
+	bh=7BBmEL4qhfybuaet/VOBEv3xMEna/TL1iMvTU7ecAdY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hXM+Lz2yqgY5/IVVeAABostlIQMd0BjIGsnQE0PtSa65PWiLO1pR5gKH6ZNp24UGI
+	 l5ElqWnNFj6nH6ubTQwfCUN+gsCaMvc7ulbRzocm116p/SnOyZU6P3Uh5z73BmaHdd
+	 WgJk8nuXA9X+C6fcMTKumHLUZ6HbaiG5KHWSgpIwDIw8jFc/MSqvB5sn9EjYIw0lPl
+	 oqgCZImfUlMPeQp2Hgn4RdiV27LUVib5cabFFWvV+gRPEr6IFky0A2LqcEPNVQAsMA
+	 TGU0PIL+4WQ+Af4M2MDDDjNzcmKWo+xODKn3RIXG8jBYAAIlFH8Q8SC9UuxK0cndoj
+	 tW4KPv7byrcLA==
+Message-ID: <4b98196a-c898-4d08-9101-31feb4e59b5c@kernel.org>
+Date: Fri, 27 Sep 2024 09:30:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZvPvQMDvWRygp4IC@hog>
-X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
- mbx-essen-02.secunet.de (10.53.40.198)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: phy: rockchip,inno-usb2phy: add
+ rk3576
+To: Frank Wang <frawang.cn@gmail.com>, vkoul@kernel.org, kishon@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
+ tim.chen@rock-chips.com, frank.wang@rock-chips.com
+References: <20240926103223.29538-1-frawang.cn@gmail.com>
+ <ed829240-d4f7-471f-84f6-3509f87f11a1@kernel.org>
+ <7944f4dd-96f0-40df-8c91-523409e3cb20@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <7944f4dd-96f0-40df-8c91-523409e3cb20@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 25, 2024 at 01:08:48PM +0200, Sabrina Dubroca wrote:
-> 2024-09-24, 14:51:20 -0700, syzbot wrote:
-> > syzbot has found a reproducer for the following issue on:
-> > 
-> > HEAD commit:    151ac45348af net: sparx5: Fix invalid timestamps
-> > git tree:       net-next
-> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=15808a80580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=37c006d80708398d
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=cc39f136925517aed571
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122ad2a9980000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1387b107980000
+On 27/09/2024 09:01, Frank Wang wrote:
+> Hi Krzysztof,
 > 
-> syzbot managed to create an SA with:
+> On 2024/9/26 22:19, Krzysztof Kozlowski wrote:
+>> On 26/09/2024 12:32, Frank Wang wrote:
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            enum:
+>>> +              - rockchip,rk3576-usb2phy
+>>> +    then:
+>>> +      properties:
+>>> +        clocks:
+>>> +          minItems: 3
+>>> +          maxItems: 3
+>> Read one more time the example I gave you. Top-level constraints are
+>> saying max one clock.
+>>
+>> Best regards,
+>> Krzysztof
+>>
 > 
-> usersa.sel.family = 0
-> usersa.sel.prefixlen_s = 128
-> usersa.family = AF_INET
+> Sorry for overlooking this, I will set both "clocks" and "clock-names" 
+> to true, and add the else case below the above codes for the "old" SoCs.
+> Just like the below.
 > 
-> Because of the AF_UNSPEC selector, verify_newsa_info doesn't put
-> limits on prefixlen_{s,d}. But then copy_from_user_state sets
-> x->sel.family to usersa.family (AF_INET).
+> -  clocks:
+> -    maxItems: 1
+> +  clocks: true
 > 
-> So I think verify_newsa_info should do the same conversion before
-> checking prefixlen:
-> 
-> 
-> diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-> index 55f039ec3d59..8d06a37adbd9 100644
-> --- a/net/xfrm/xfrm_user.c
-> +++ b/net/xfrm/xfrm_user.c
-> @@ -201,6 +201,7 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
->  {
->  	int err;
->  	u8 sa_dir = attrs[XFRMA_SA_DIR] ? nla_get_u8(attrs[XFRMA_SA_DIR]) : 0;
-> +	u16 family = p->sel.family;
->  
->  	err = -EINVAL;
->  	switch (p->family) {
-> @@ -221,7 +222,10 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
->  		goto out;
->  	}
->  
-> -	switch (p->sel.family) {
-> +	if (!family && !(p->flags & XFRM_STATE_AF_UNSPEC))
-> +		family = p->family;
-> +
-> +	switch (family) {
->  	case AF_UNSPEC:
->  		break;
->  
-> 
-> 
-> Steffen, does that make sense?
+> -  clock-names:
+> -    const: phyclk
+> +  clock-names: true
 
-Yes, it does. Later, in copy_from_user_state() we do
+For the third time, read the code I gave you. Do you see something like
+this there? Why doing all the time something different than existing code?
 
-if (!x->sel.family && !(p->flags & XFRM_STATE_AF_UNSPEC))
-	x->sel.family = p->family;
-
-anyway.
-
-> Without this, we have prefixlen=128 when we get to addr4_match, which
-> does a shift of (32 - prefixlen), so we get
-> 
-> UBSAN: shift-out-of-bounds in ./include/net/xfrm.h:900:23
-> shift exponent -96 is negative
-> 
-> 
-> Maybe a check for prefixlen < 128 would also be useful in the
-> XFRM_STATE_AF_UNSPEC case, to avoid the same problems with syzbot
-> passing prefixlen=200 for an ipv6 SA. I don't know how
-> XFRM_STATE_AF_UNSPEC is used, so I'm not sure what restrictions we can
-> put. If we end up with prefixlen = 100 used from ipv4 we'll still have
-> the same issues.
-
-I've introduced XFRM_STATE_AF_UNSPEC back in 2008 to make
-inter addressfamily tunnels working while maintaining
-backwards compatibility to openswan that did not set
-the selector family. At least that's what I found in
-an E-Mail conversation from back then.
-
-A check for prefixlen <= 128 would make sense in any case.
-But not sure if we can restrict that somehow further.
-
-> 
-> >  __ip4_datagram_connect+0x96c/0x1260 net/ipv4/datagram.c:49
-> >  __ip6_datagram_connect+0x194/0x1230
-> >  ip6_datagram_connect net/ipv6/datagram.c:279 [inline]
-> >  ip6_datagram_connect_v6_only+0x63/0xa0 net/ipv6/datagram.c:291
-> 
-> This path also looks a bit dubious. From the reproducer, we have a
-> rawv6 socket trying to connect to a v4mapped address, despite having
-> ip6_datagram_connect_v6_only as its ->connect.
-> 
-> pingv6 sockets also use ip6_datagram_connect_v6_only and set
-> sk->sk_ipv6only=1 (in net/ipv4/ping.c ping_init_sock), but rawv6 don't
-> have this, so __ip6_datagram_connect can end up in
-> __ip4_datagram_connect. I guess it would make sense to set it in rawv6
-> too. rawv6_bind already rejected v4mapped addresses.
-> 
-> And then we could add a DEBUG_NET_WARN_ON_ONCE(!ipv6_only_sock(sk)) in
-> ip6_datagram_connect_v6_only, or maybe even call ipv6_addr_type to
-> reject v4mapped addresses and reject them like the non-AF_INET6 case.
-
-I can't comment on that now, let me have a closer look into it.
+Best regards,
+Krzysztof
 
 
