@@ -1,107 +1,208 @@
-Return-Path: <linux-kernel+bounces-341783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51769988622
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:14:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABD4988623
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA78A1F21D18
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:14:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4010D282686
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265B918E35B;
-	Fri, 27 Sep 2024 13:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B8D18CC18;
+	Fri, 27 Sep 2024 13:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HcAAV3e9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VtZb3mcp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE8B18E04B;
-	Fri, 27 Sep 2024 13:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D34818D640
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 13:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727442854; cv=none; b=bp/wlE/oebjbofrL9g6ND+LzFyKDIr6mOWaP0aq3GGTlnPimkccR3lApfhGRM21lV4PFgbJot/RCmVloZxaK6xphtu59YPaE2VqdR/2tSK7RL4nj+B1ehpmcgyHYsirzxf2W1RxmJMxOzKlvTW2IAoa93p1PpeA/Oa+6JJ/V7rw=
+	t=1727442870; cv=none; b=VHPvKNAvxQMJSQVOsFT2mAhJrFqDIclY9YVIZiZvXJY7L8aGjm3LP+0YxrcOdHnw+Ch5bzPtkr/FCUd+2wVk0Kk5OxnWth9aOVYZHBMzCJdLxDd2shHm1JGfoFpcR4I3Ph5dG+dHbxnl19qfAeNO0hJfKa9dZ2ON0SAITfRq7Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727442854; c=relaxed/simple;
-	bh=lD7X3F4aQ/DImEMn86wtBbghQxJBS+VINHajn6ohurg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P26y3I3vLI8lKnfiEtnnqvSC4ASDGl2BhIsDCST6BHDi9gafdwV6apsuWMaJQfyHQAis2hjeA2/HuMYZjfdex9+wOhgIz2OkC+HEhOyjFqe2Qqzu5JnZ4XsAsLcNjN//AX/OJoZ3pnlJTXPC9CESaZ/GUrpHlWHKPoHy7X0s/uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HcAAV3e9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12D65C4CECF;
-	Fri, 27 Sep 2024 13:14:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727442854;
-	bh=lD7X3F4aQ/DImEMn86wtBbghQxJBS+VINHajn6ohurg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HcAAV3e94G5tfukXw6esqeXcQngIwF6ANCFn55VINpxDqY+aXJe+qTQAw/QXDna4P
-	 tEPEqoVP9orhnYRsUUsvO/kn/UAEnddgJIb1hXW8nNlJ7QBxbuEK1QZtmkORScMCJK
-	 0X/uCPHyFVRPF0jLHfpHWSNHmJVkog+TxTb9SUW1ZosS7wSI2vL1auCike6htB/2SJ
-	 UaqomXoJj1vpV6DaiazieraciOTcpAJo8AKDW0CfS5ws7ICZ1D1Cfs9yiLV5ruU+id
-	 nBWtslwECXay1dByV2zMHZc85rs9kNG3qBKX7jLRXaE023R79ZSIY8kem/1fi1MTCT
-	 iZA/RFziNyQWg==
-From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
-To: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Charlie Jenkins <charlie@rivosinc.com>
-Subject: [PATCH bpf-next 2/2] selftests: bpf: Add missing per-arch include path
-Date: Fri, 27 Sep 2024 15:13:53 +0200
-Message-ID: <20240927131355.350918-2-bjorn@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240927131355.350918-1-bjorn@kernel.org>
-References: <20240927131355.350918-1-bjorn@kernel.org>
+	s=arc-20240116; t=1727442870; c=relaxed/simple;
+	bh=7Zd0nIKdA0spCjCQ15NU4V0MwrpxGgvO1Z7KesC4g1Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GT0qwlVZ0TlULQPmqv5/wbnCvOi13TLjw1EZhnXtbxWmpk+n3u3Yz2UHoxjKWOT/O3gC15hLgn6wy/61m5Z9SfbNDoRf+q9t/Lnv+Om1ZY7i6wfn6OElrXNVMCm6DxKnDb+A3ezGVbwJ0HtDAQQ/ncWbCl9MrD39q9VU9GMNCIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VtZb3mcp; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727442868; x=1758978868;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=7Zd0nIKdA0spCjCQ15NU4V0MwrpxGgvO1Z7KesC4g1Q=;
+  b=VtZb3mcpT+X+lyXJsRQ5qxyI3phSOn4waEwwYfqfocs35ygIa1PkE/J8
+   ze/VOZYO/xlnHX66TsowLch+Lh/BAyWc/hTXOqk2p+9/5W8qNdYorUcmb
+   ja2KKNKWpVCdlzlulegmowejzfDmcxd489AsodOXMBseeKwkvfiBcqvic
+   Rnn8HyUo8+BCLJJcyJpHCG6/6K+BxBCLxqRMRyjAhEa6bvnPrgMZPfcVg
+   q59iEFFctlavPnO0UBh3vPL7RzzZpM9afSGseikN7fOsIbY5xwUuGf8pD
+   ljdpj/NXRaOQIlVLf03d/B1ab9Ah+mObIKyiF7PsPOWsNnCrq/JDqBOlI
+   g==;
+X-CSE-ConnectionGUID: tAyqtbPWQrmOLJP/kdPc3Q==
+X-CSE-MsgGUID: 2x9abciLRguksTdChI7j0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="37968939"
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="37968939"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 06:14:28 -0700
+X-CSE-ConnectionGUID: +L79hhesTLa3X8cLSmVYog==
+X-CSE-MsgGUID: LToT6LpmT0y0dj/RGNN43w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="72525227"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.211])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 06:14:23 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>, rodrigo.vivi@intel.com,
+ joonas.lahtinen@linux.intel.com, tursulin@ursulin.net, airlied@gmail.com,
+ simona@ffwll.ch, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ anupnewsmail@gmail.com
+Subject: Re: [PATCH] gpu: drm: i915: display: Avoid null values
+ intel_plane_atomic_check_with_state
+In-Reply-To: <ZvaduhDERL-zvED3@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240927000146.50830-1-alessandro.zanni87@gmail.com>
+ <87tte1zewf.fsf@intel.com> <ZvaduhDERL-zvED3@intel.com>
+Date: Fri, 27 Sep 2024 16:14:17 +0300
+Message-ID: <87tte1xmqe.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Björn Töpel <bjorn@rivosinc.com>
+On Fri, 27 Sep 2024, Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com=
+> wrote:
+> On Fri, Sep 27, 2024 at 11:20:32AM +0300, Jani Nikula wrote:
+>> On Fri, 27 Sep 2024, Alessandro Zanni <alessandro.zanni87@gmail.com> wro=
+te:
+>> > This fix solves multiple Smatch errors:
+>> >
+>> > drivers/gpu/drm/i915/display/intel_atomic_plane.c:660
+>> > intel_plane_atomic_check_with_state() error:
+>> > we previously assumed 'fb' could be null (see line 648)
+>> >
+>> > drivers/gpu/drm/i915/display/intel_atomic_plane.c:664
+>> > intel_plane_atomic_check_with_state()
+>> > error: we previously assumed 'fb' could be null (see line 659)
+>> >
+>> > drivers/gpu/drm/i915/display/intel_atomic_plane.c:671
+>> > intel_plane_atomic_check_with_state()
+>> > error: we previously assumed 'fb' could be null (see line 663)
+>> >
+>> > We should check first if fb is not null before to access its propertie=
+s.
+>>=20
+>> new_plane_state->uapi.visible && !fb should not be possible, but it's
+>> probably too hard for smatch to figure out. It's not exactly trivial for
+>> humans to figure out either.
+>>=20
+>> I'm thinking something like below to help both.
+>>=20
+>> Ville, thoughts?
+>>=20
+>>=20
+>> BR,
+>> Jani.
+>>=20
+>>=20
+>> diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers=
+/gpu/drm/i915/display/intel_atomic_plane.c
+>> index 3505a5b52eb9..d9da47aed55d 100644
+>> --- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+>> +++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+>> @@ -629,6 +629,9 @@ int intel_plane_atomic_check_with_state(const struct=
+ intel_crtc_state *old_crtc_
+>>  	if (ret)
+>>  		return ret;
+>>=20=20
+>> +	if (drm_WARN_ON(display->drm, new_plane_state->uapi.visible && !fb))
+>> +		return -EINVAL;
+>> +
+>
+> We have probably 100 places that would need this. So it's going
+> to be extremely ugly.
+>
+> One approach I could maybe tolerate is something like
+> intel_plane_is_visible(plane_state)=20
+> {
+> 	if (drm_WARN_ON(visible && !fb))
+> 		return false;
+>
+> 	return plane_state->visible;
+> }
+>
+> + s/plane_state->visible/intel_plane_is_visible(plane_state)/
+>
+> But is that going to help these obtuse tools?
 
-The prog_tests programs do not include the per-arch tools include
-path, e.g. tools/arch/riscv/include. Some architectures depend those
-files to build properly.
+That does help people, which is more important. :)
 
-Include tools/arch/$(SUBARCH)/include in the selftests bpf build.
+I think the problem is first checking if fb is NULL, and then
+dereferencing it anyway.
 
-Fixes: 6d74d178fe6e ("tools: Add riscv barrier implementation")
-Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
----
- tools/testing/selftests/bpf/Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+visible always means fb !=3D NULL, but I forget, is the reverse true? Can
+we have fb !=3D NULL and !visible? I mean could we change the fb check to
+visible check?
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 365740f24d2e..d6a53afa449f 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -10,6 +10,7 @@ TOOLSDIR := $(abspath ../../..)
- LIBDIR := $(TOOLSDIR)/lib
- BPFDIR := $(LIBDIR)/bpf
- TOOLSINCDIR := $(TOOLSDIR)/include
-+TOOLSARCHINCDIR := $(TOOLSDIR)/arch/$(SRCARCH)/include
- BPFTOOLDIR := $(TOOLSDIR)/bpf/bpftool
- APIDIR := $(TOOLSINCDIR)/uapi
- ifneq ($(O),)
-@@ -44,7 +45,7 @@ CFLAGS += -g $(OPT_FLAGS) -rdynamic					\
- 	  -Wall -Werror -fno-omit-frame-pointer				\
- 	  $(GENFLAGS) $(SAN_CFLAGS) $(LIBELF_CFLAGS)			\
- 	  -I$(CURDIR) -I$(INCLUDE_DIR) -I$(GENDIR) -I$(LIBDIR)		\
--	  -I$(TOOLSINCDIR) -I$(APIDIR) -I$(OUTPUT)
-+	  -I$(TOOLSINCDIR) -I$(TOOLSARCHINCDIR) -I$(APIDIR) -I$(OUTPUT)
- LDFLAGS += $(SAN_LDFLAGS)
- LDLIBS += $(LIBELF_LIBS) -lz -lrt -lpthread
- 
--- 
-2.43.0
+BR,
+Jani.
 
+>
+>>  	if (fb)
+>>  		new_crtc_state->enabled_planes |=3D BIT(plane->id);
+>>=20=20
+>>=20
+>>=20
+>> >
+>> > Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+>> > ---
+>> >  drivers/gpu/drm/i915/display/intel_atomic_plane.c | 6 +++---
+>> >  1 file changed, 3 insertions(+), 3 deletions(-)
+>> >
+>> > diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drive=
+rs/gpu/drm/i915/display/intel_atomic_plane.c
+>> > index e979786aa5cf..1606f79b39e6 100644
+>> > --- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+>> > +++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+>> > @@ -656,18 +656,18 @@ int intel_plane_atomic_check_with_state(const st=
+ruct intel_crtc_state *old_crtc_
+>> >  	    intel_plane_is_scaled(new_plane_state))
+>> >  		new_crtc_state->scaled_planes |=3D BIT(plane->id);
+>> >=20=20
+>> > -	if (new_plane_state->uapi.visible &&
+>> > +	if (new_plane_state->uapi.visible && fb &&
+>> >  	    intel_format_info_is_yuv_semiplanar(fb->format, fb->modifier))
+>> >  		new_crtc_state->nv12_planes |=3D BIT(plane->id);
+>> >=20=20
+>> > -	if (new_plane_state->uapi.visible &&
+>> > +	if (new_plane_state->uapi.visible && fb &&
+>> >  	    fb->format->format =3D=3D DRM_FORMAT_C8)
+>> >  		new_crtc_state->c8_planes |=3D BIT(plane->id);
+>> >=20=20
+>> >  	if (new_plane_state->uapi.visible || old_plane_state->uapi.visible)
+>> >  		new_crtc_state->update_planes |=3D BIT(plane->id);
+>> >=20=20
+>> > -	if (new_plane_state->uapi.visible &&
+>> > +	if (new_plane_state->uapi.visible && fb &&
+>> >  	    intel_format_info_is_yuv_semiplanar(fb->format, fb->modifier)) {
+>> >  		new_crtc_state->data_rate_y[plane->id] =3D
+>> >  			intel_plane_data_rate(new_crtc_state, new_plane_state, 0);
+>>=20
+>> --=20
+>> Jani Nikula, Intel
+
+--=20
+Jani Nikula, Intel
 
