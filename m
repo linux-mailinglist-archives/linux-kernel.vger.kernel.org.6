@@ -1,163 +1,254 @@
-Return-Path: <linux-kernel+bounces-341856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30592988729
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:35:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D34988738
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A41BF1F2268F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 521C1281D19
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F55614D71E;
-	Fri, 27 Sep 2024 14:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45D91531DC;
+	Fri, 27 Sep 2024 14:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8i4btJK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c6IOD6E8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC18F8248D;
-	Fri, 27 Sep 2024 14:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727447704; cv=none; b=qBEBQtJGJIXkXDOMqDxe5p4kH9VwRCL8chDCIWQsevS7kwVM5fbW5yUBdTmNFiHcYsrB+cTG1sG/6jUwvq6oOO05WYhVgC9LX3B+bsrzp60TU5oq7JmAwAr3s0jfhVoJ3xKOUnrZCG+QbRinmK96XrIYoLVcbqPzF8ZA5i23t/I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727447704; c=relaxed/simple;
-	bh=c6DFyrTDOyFgnE5oy8Fypufr4Eipzb/YxNk57blAT1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=urwGRH+njzT3pbN8XW4L4zbuG9ePd2rQy+t+YQXLh6pAGBEeVnCGekP2oSUeGlXqcKeJXN9RPtsc188LqnXcrfVfaBIgc+XkglBPpfUrzNYWK6Asaph02mFjWp8iHJIU89CQJAaRys3CTEZoIH701SYYAcw8ZK6+nl2B2sm4sCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8i4btJK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AA4AC4CEC4;
-	Fri, 27 Sep 2024 14:34:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727447704;
-	bh=c6DFyrTDOyFgnE5oy8Fypufr4Eipzb/YxNk57blAT1Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=H8i4btJK6GUo67PcYqZZEM9HUyAAq4JTE+kOkDqNB7CSpKImFVx1qtBSRuRBBc6rL
-	 YDRzLII19h4zTz/8emIk/EI++yRZzm8DcSPBk7OT7SNa6fh/F7DfFCkEdZVb4UijvS
-	 zTKC9U2EInzr8bSg3Ifjt8fgZbdmp/Jq9Xu4+P7iTzVp44NV/ebJjJYc5R0CiKgWSI
-	 V/aVB3R1zteOMguL2bw/mS9HoMGjxe7kHNrmbwGQEb1InGrzoaDWxlnE1/JGAjpHMP
-	 fgIcKtLdM79BCoTUnkqELL2iyicFDWOir4cSIYu/Wz34DmkNTNkrpVokn1JZRh3DnW
-	 zFL6lAXsg0+IQ==
-Message-ID: <9ea704e6-df1b-4dea-843b-008a3a7c3a67@kernel.org>
-Date: Fri, 27 Sep 2024 16:34:57 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CB084D13;
+	Fri, 27 Sep 2024 14:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727447771; cv=fail; b=YCGA3Bt2QbgH6fGN/svKLRqK44it7DrpnXiHdkZz2uEW1SNKqtgHYvd7tsUctVXfMWpWA56kDIzBbqZjDROK93kghfA++/3Abvrb2z6aySyrKyz5n9YsHabn/2xX+RU/QQhOB3xoYrpjiO6Qd4NyW1jAz+TZJrU/nOsHijY6JMI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727447771; c=relaxed/simple;
+	bh=+MOLFSiYjZsUhdChu6i3KQMH0AkFHGPbMGhNEsWmCM8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=uo5ftTKCCstUB0uIE4QuPiPfzRTMjEaqpOCUh8wna/RqzcAuQ0F0GVkRBFcRrTMuyaw87zz1zv/R8S2cGdnPALV+pypf91azFTkkzfkB28tUpYu7+qETF5sJ7C4vYa9dTqfn1MYEIYnICi/vjYIB1Wrk8ISwOF3M588aCr4bVOg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c6IOD6E8; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727447769; x=1758983769;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=+MOLFSiYjZsUhdChu6i3KQMH0AkFHGPbMGhNEsWmCM8=;
+  b=c6IOD6E8ws0m8MuR0AnZ8pvUomTBDPc5VBJT0H0aDcTcCQ8f0aUtiuFA
+   09jUUKIH0TW3MOYcdLCD6vpDBBwYRO7d7FYrQySF0EGecYARwAaACkgQU
+   DYdP5FARcFsywJ6ryNxm+w3xK7VRFyyK/wzrpH+i65qwT5E9x3gCMMstN
+   E6/nVS8/Iz+cIl5Bbi6qTD+v3XDz4JEyTPl+i+jF29eCNO8NDApoq8SEa
+   k9FTS4zaXLh8uPOzDF8GrOBZHnFk+NGGyga/ahYCFfXf7LRR/s5lqriLx
+   w51C4TT8EPU8I3bKa4dAb0Hyl4Jd/ZqzADdSiGObqIKYfd+n9EfnQVIEN
+   A==;
+X-CSE-ConnectionGUID: I4HeCuvAQ8O/Ws+nwonFAw==
+X-CSE-MsgGUID: YE/rKfSkRxebNf34gqqNRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="49121272"
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="49121272"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 07:36:09 -0700
+X-CSE-ConnectionGUID: 4qFHJUCnRWaJKFzUy/nLug==
+X-CSE-MsgGUID: S9xR4EEjTWixrzneASOlpg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="72854594"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 27 Sep 2024 07:36:08 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 27 Sep 2024 07:36:08 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 27 Sep 2024 07:36:08 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 27 Sep 2024 07:36:07 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g25fbL+6xZy6y0ehKSei6J25jULH0OaUAucMA0uBm6DXH7hQp9xb/PwU03F6VHu+0kOo5apAJuWkXavOsKGdrm4m6gbJaik+0jTSTKU+/GCf9BOHMImaRAFt+JO41sJwNSHNLqYBMep1eAgwK31V35lhH7unBE/LDyyAXDrJRsaSXOUTAGRb7ncx108UJFxhC2rXDsLo9f/DRMG1KpjE41e5t6gqngNhmJPei3uhm5rAecpJ2GzThxtRrp+tjFgvfrg5fUHUn7mUFuKekFJ+0JMvC2OaKFg+ShG27iDclniHX610LXTpxUPubuTZqLCENXYxTOd3IhNtjnqYh+gwog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vXs66BDXVmpsLSerwooIMLhmKohkA6pAXuF0WkNkKLc=;
+ b=XLCnAeOZhzpmBjFXIwZITgqHfGN5ikuxNNn3zDwYzlFYu566yqycZ6/wx9Puf02t+BQUg6dAv4n6bH9qu1zzhDdPNBq3SBvIin9d55RZYCatLWqhGwuYANpEzJ5sLSEaXOgg+f3enV6ffFaZSHRzxhQM48OEurqz7yOU8z9R/4ysinkvaqzxK/qIrDrClaizv9o7kmqCwbO3j4cOw335hXuCyEhZzn1nbA0p2AVEFz5sfaq6kKHc20qAxVeyuHf7nY0hoPNqM2n/VLMAB5pEewySVJYZhOCQWQejZfxP9OnrcFHVKz5VbiOTWC3hVDIPiHtZishhjGYcm9hJ4U1E9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN6PR11MB2864.namprd11.prod.outlook.com (2603:10b6:805:63::26)
+ by PH8PR11MB6925.namprd11.prod.outlook.com (2603:10b6:510:227::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.22; Fri, 27 Sep
+ 2024 14:36:05 +0000
+Received: from SN6PR11MB2864.namprd11.prod.outlook.com
+ ([fe80::c58f:66d9:46c0:d83d]) by SN6PR11MB2864.namprd11.prod.outlook.com
+ ([fe80::c58f:66d9:46c0:d83d%6]) with mapi id 15.20.7982.016; Fri, 27 Sep 2024
+ 14:36:05 +0000
+Date: Fri, 27 Sep 2024 10:35:58 -0400
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Vignesh Raman <vignesh.raman@collabora.com>
+CC: <dri-devel@lists.freedesktop.org>, <daniels@collabora.com>,
+	<helen.koike@collabora.com>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<robdclark@gmail.com>, <guilherme.gallo@collabora.com>,
+	<sergi.blanch.torne@collabora.com>, <deborah.brouwer@collabora.com>,
+	<dmitry.baryshkov@linaro.org>, <mripard@kernel.org>,
+	<quic_abhinavk@quicinc.com>, <linux-mediatek@lists.infradead.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
+	<amd-gfx@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+	<intel-gfx@lists.freedesktop.org>, <virtualization@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] docs/gpu: ci: update flake tests requirements
+Message-ID: <ZvbCzqvyeTI_j2cD@intel.com>
+References: <20240927052416.1833889-1-vignesh.raman@collabora.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240927052416.1833889-1-vignesh.raman@collabora.com>
+X-ClientProxiedBy: MW4P222CA0030.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:303:114::35) To SN6PR11MB2864.namprd11.prod.outlook.com
+ (2603:10b6:805:63::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: mediatek: Add MT8186
- Chinchou/Chinchou360 Chromebooks
-To: =?UTF-8?Q?Albert_Jakie=C5=82a?= <jakiela@google.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, wenst@chromium.org,
- rafal@milecki.pl, hsinyi@chromium.org, nfraprado@collabora.com,
- sean.wang@mediatek.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240927122940.4190949-1-jakiela@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240927122940.4190949-1-jakiela@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN6PR11MB2864:EE_|PH8PR11MB6925:EE_
+X-MS-Office365-Filtering-Correlation-Id: 320fe305-71d4-4ea8-cb10-08dcdf01b751
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ElrEf6GuiOyrEsbiu+RLqnOJJupxGbN04rSe1jrloJEtK8c4a4ji/UDr94G3?=
+ =?us-ascii?Q?F7P6jyPvYFrpjpnxppHKsdBTIjWV2LlUNmWo4tgRPacpomqqCi3epropdlHV?=
+ =?us-ascii?Q?scVvjVsHP6mHY/GEdHrYcXMJQVUUp31aK3TlCKBvqVfcnd2KqM8tgqMx9chN?=
+ =?us-ascii?Q?jaIXdLW6haoH1T7BIE4RGfrtHlMWk88UKtXyz+5twEhfYrKvXzGoFfz1SS05?=
+ =?us-ascii?Q?Q2nnUX+HRhW0TCX8Et4hGBm94j/lPnr3kJBjUyxKLjDChToxqa552p1Ked/F?=
+ =?us-ascii?Q?89gEK7OMe7fhTwmGIJUVz5FwmkFpTZ4Rq4CKJkSNuGxACYrZN/Ll1DvcyjOk?=
+ =?us-ascii?Q?ajEXu0tU4RoQKQtcqo8zSyM3BApALXf/zxeF9BFnN5y+/32Qp4AAd1gN9OPe?=
+ =?us-ascii?Q?fQDk1cFl8ek8ygE4qv9htZ81U1q8nJdH1CWuz+nO+VwaDkMRQemfRUXRcLEZ?=
+ =?us-ascii?Q?wf7A1LlRQwgeib0wEBshCwPsmp3tIsC54GnshRsrgVlbMf0EW5KC4gEp+aak?=
+ =?us-ascii?Q?IKz/XHRKgZiOxZ7bOUKsHyNgvc6rAfD0rLwmFMLXOe16K4ykuOUPTNj9tJgu?=
+ =?us-ascii?Q?1XGnx5Dtj8S/J5OkKD9MHK94sUctuzj9zRfA8OywaB1c0aJV/wmcPPtaIRwp?=
+ =?us-ascii?Q?oSZVwq1B6LpQog+sPMKcUmvpTPETtp4gpeXPv8BK16DQqmttx00Zii1k1tg4?=
+ =?us-ascii?Q?R3GV2Pub/vgiqigsoNlyWMKs/aAi+xUvoUPZTEqCnu+dlPrKPM18QQyxyL27?=
+ =?us-ascii?Q?i3K4Lmxx8r4one44EFo83HgMXt8Ytfy/wzYtIp+vgIQrjhv+9wIU7N1Cvw0Z?=
+ =?us-ascii?Q?eLhUSO38tqXnbgMv8wJloFobT7yGZRfn0NryT7qlALzdWGP0DboiKfwKy9u2?=
+ =?us-ascii?Q?wPPpnZKQZUEI3XR2L06LzsZkCQwieX8ISCg7BOTKBQRt2XV5q7rded/mFSJm?=
+ =?us-ascii?Q?JZNzSM5sQrpVosQ/bC7Qim4lYkFfBDgBt0W2L+0Ars1HV5LlNr8rIZMkzY0y?=
+ =?us-ascii?Q?cCf4ja1XSSediPPZNzA6Wtby7SK51nwCf3TaaQk8DaHOoZjFKCDuc5fxuA4k?=
+ =?us-ascii?Q?Hpkvzdf6fj7UOhSOxPC56oxdlrU8HuXzSo9nF5NCWvE2pmWErznH5xkn+4k1?=
+ =?us-ascii?Q?oulDcbTqM3v1JmEb1CSrB4gPK+ZDnnSrBUUBKTUKwFiWD3QGQ6PPGjlAC0GL?=
+ =?us-ascii?Q?FFz8xnoCWwPxvSUfq/Zj2dlleL28lkJ6JIKLcbSODJtEHijX9laGJ4M36gM?=
+ =?us-ascii?Q?=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR11MB2864.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?l5WVllZvSimEdc1+0M/NtfM4OG2EpFFEeyoIigLRBCrMm/PVcDwqEHiOrCdh?=
+ =?us-ascii?Q?Wbw5q7Rh3JgpyRedTixLuk0XrWzA+j9hifqTpsX2goKFJxnprqmQwz1lr080?=
+ =?us-ascii?Q?s6GJf84E+qdVwb9n4uSZGI5klVeM4i/hk38EVy3H8YyOvS6NFzy/dWBZXmJP?=
+ =?us-ascii?Q?aYxxD6/v12ictdxfg62DYsR5Qux4WrbRC/67Ak3OZQSQcWaQ/yWzcPc/eky1?=
+ =?us-ascii?Q?Mfms/v4qTi8LeqL4RjRCvTG0fWKph5AV3/qWtRx7Dr0WTK73Ad9V6wsJY3JR?=
+ =?us-ascii?Q?6Vwtu0lwLP+slAoljVpFXLVQEzp3QO+mxjs5S5eSoJnSIblrzlEYPbLjgeie?=
+ =?us-ascii?Q?5JGhhyCH2BWthyZBjEtqEcC6IYRUpRBzM3abxWOolVawEoSg5NMLjn5Zgb4e?=
+ =?us-ascii?Q?rbwzrBgZXO6Y95Z7Y/qxq8NoTGktZXgzysPsDb4dkRAST2wwvVjCbyEpegFu?=
+ =?us-ascii?Q?UQAbsppoor3m8//72RuUL2ReU492T9DXQM9eQ2IWW9bdJWhZHbkDRB59xVCF?=
+ =?us-ascii?Q?gtlCBQkVOsoxHFGifgNwiFzDY0XwnVbj1KDvF/io3sxbGCMYOwEAzyGO1lpY?=
+ =?us-ascii?Q?vtPyjY3tETlhKmMMjd2zQ+FEfPHMRuQVIfRbpkL3LT1rWY3qJHVQZ7cMQSja?=
+ =?us-ascii?Q?2Jo5nrdkZJ6FTXMgPpUNu/QoW/XP/41duMVp1xZngsGttPWrTre5JUuEJgWE?=
+ =?us-ascii?Q?ore2w+MfESNw17cyxf9hp8Qer/PJ7m+HxAFwWQxfo67vF0xPyzplevzQvqFR?=
+ =?us-ascii?Q?TLG7GoL94ZS9z4dpVfua6SHxWr43JBXmNU9ZZHbIgqBCp4ZDtLlhutbleOT3?=
+ =?us-ascii?Q?0cUhE40dSdZC5nrJUUvJ+wRm/uo05WGvEooIM0y0wW1WX+obqtnLcyvGJfli?=
+ =?us-ascii?Q?mxhSQMORZPqTH8N+qnVp57DCV4L8HH+l91MDuxSnMqQhxnH1JWqz6DOZZUe7?=
+ =?us-ascii?Q?wXEpwoORTjLyitocbGBuymzdKXejhGeCmT64I+Uvxm4NjNmvFASLepC0H8yu?=
+ =?us-ascii?Q?Ve3dOMJ/v6/RkC4ajwutXWhF0oPp4qFJtISsreHiWd7D1VQ/o73RuzP6uA84?=
+ =?us-ascii?Q?M4Als5GL6XUOIozETpqv6HTFyYte+ZJ8t1UTBMDdadnfADs9YC68xDz4BCUo?=
+ =?us-ascii?Q?yFo12dJ7qeICxLXWWDC4t0Ze67TM4iK9HQ68rod90DXFz9JdVDAUySiqc2ZL?=
+ =?us-ascii?Q?mWBIwY9klkzHqd6C499mBNF8xO8hYDZUh3RbPZOHgnzUW97o4Ezpn4RVnpdU?=
+ =?us-ascii?Q?+Uj4YOGNeGFAzZFibLwRSlYo/XGdCvgNydm/R4rnrRCN7pTG7Odtc8M8JroS?=
+ =?us-ascii?Q?vR+bHyIfvTR1nu+m9gFoq/0vLGqk1hdAzdeBTgocg009FHuYwUKAN2QY69dw?=
+ =?us-ascii?Q?87WkMspWs5aAY2lA50JKO+gP6UU4RdqbdbjEjSydotPgUwINd4khso9Kvd10?=
+ =?us-ascii?Q?K0/DT6GAZGMRT5XpUJyjW47LCV0LvKPvnAHwglsYx8dNbiuJdEON/OxGO0BC?=
+ =?us-ascii?Q?XAuEfXonfMhpj01KE/koJWIcPXdE6zjDlcJCud+Pc5Z+xN6wDeLTNF2BigAS?=
+ =?us-ascii?Q?LGWt7xQ7KZB6qGahXjPBW2exbqUUWMU/1bqTuCngWqIteLnZjab1rQq2Xylh?=
+ =?us-ascii?Q?4Q=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 320fe305-71d4-4ea8-cb10-08dcdf01b751
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR11MB2864.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 14:36:04.9841
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: u8hEmvkmOJ5ZG7CtX27kwSHNlSKUWTqLyV4tAUcYPhK053DbbHH+EotzyB9wy6qExV5gvNYHKvGd7NabQqyZHQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6925
+X-OriginatorOrg: intel.com
 
-On 27/09/2024 14:29, Albert Jakieła wrote:
-> Add entries for MT8186 based Chinchou/Chinchou360 Chromebooks.
-> These two are clamshell or convertible with touchscreen, stylus
-> and extra buttons.
+On Fri, Sep 27, 2024 at 10:54:14AM +0530, Vignesh Raman wrote:
+> Update the documentation to specify linking to a relevant GitLab
+> issue or email report for each new flake entry. Added specific
+> GitLab issue urls for i915, msm and amdgpu driver.
 > 
-> Signed-off-by: Albert Jakieła <jakiela@google.com>
+> Acked-by: Abhinav Kumar <quic_abhinavk@quicinc.com> # msm
+> Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # msm
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
 > ---
 > 
-> Changes since v1:
-> - PATCH 1/2: Delete sku2147483647
-> - Link to v1: https://lore.kernel.org/all/20240925080353.2362879-1-jakiela@google.com/
+> v2:
+> - Add gitlab issue link for msm driver.
+> 
+> v3:
+> - Update docs to specify we use email reporting or GitLab issues for flake entries.
 > 
 > ---
->  .../devicetree/bindings/arm/mediatek.yaml     | 22 +++++++++++++++++++
->  1 file changed, 22 insertions(+)
+>  Documentation/gpu/automated_testing.rst | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
-> index 1d4bb50fcd8d..47efd96e5659 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
-> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
-> @@ -239,6 +239,28 @@ properties:
->            - enum:
->                - mediatek,mt8183-pumpkin
->            - const: mediatek,mt8183
-> +      - description: Google Chinchou360 (Asus Chromebook CZ11 Flip CZ1104F)
-> +        items:
-> +          - const: google,chinchou-sku16
-> +          - const: google,chinchou-sku18
-> +          - const: google,chinchou-sku19
-> +          - const: google,chinchou-sku21
-> +          - const: mediatek,mt8186
-> +      - description: Google Chinchou (Asus Chromebook CZ12 Flip CZ1204C)
-> +        items:
-> +          - const: google,chinchou-sku0
-> +          - const: google,chinchou-sku1
-> +          - const: google,chinchou-sku2
-> +          - const: google,chinchou-sku3
-> +          - const: google,chinchou-sku4
-> +          - const: google,chinchou-sku5
-> +          - const: google,chinchou-sku6
-> +          - const: google,chinchou-sku7
-> +          - const: google,chinchou-sku17
-> +          - const: google,chinchou-sku22
-> +          - const: google,chinchou-sku23
-> +          - const: google,chinchou
-> +          - const: mediatek,mt8186
+> diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/automated_testing.rst
+> index 2d5a28866afe..03769b4a17cf 100644
+> --- a/Documentation/gpu/automated_testing.rst
+> +++ b/Documentation/gpu/automated_testing.rst
+> @@ -68,19 +68,24 @@ known to behave unreliably. These tests won't cause a job to fail regardless of
+>  the result. They will still be run.
+>  
+>  Each new flake entry must be associated with a link to the email reporting the
+> -bug to the author of the affected driver, the board name or Device Tree name of
+> -the board, the first kernel version affected, the IGT version used for tests,
+> -and an approximation of the failure rate.
+> +bug to the author of the affected driver or the relevant GitLab issue. The entry
+> +must also include the board name or Device Tree name, the first kernel version
+> +affected, the IGT version used for tests, and an approximation of the failure rate.
+>  
+>  They should be provided under the following format::
+>  
+> -  # Bug Report: $LORE_OR_PATCHWORK_URL
+> +  # Bug Report: $LORE_URL_OR_GITLAB_ISSUE
+>    # Board Name: broken-board.dtb
+>    # Linux Version: 6.6-rc1
+>    # IGT Version: 1.28-gd2af13d9f
+>    # Failure Rate: 100
+>    flaky-test
+>  
+> +Use the appropriate link below to create a GitLab issue:
+> +amdgpu driver: https://gitlab.freedesktop.org/drm/amd/-/issues
+> +i915 driver: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues
 
-These don't match your DTS. Which also means you did not test your DTS. :(
+Probably good to add:
 
-Best regards,
-Krzysztof
+xe driver: https://gitlab.freedesktop.org/drm/xe/kernel/-/issues
 
+Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+
+> +msm driver: https://gitlab.freedesktop.org/drm/msm/-/issues
+> +
+>  drivers/gpu/drm/ci/${DRIVER_NAME}-${HW_REVISION}-skips.txt
+>  -----------------------------------------------------------
+>  
+> -- 
+> 2.43.0
+> 
 
