@@ -1,153 +1,132 @@
-Return-Path: <linux-kernel+bounces-341457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93188988067
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:36:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A5BD988071
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 585C8284CED
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:36:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED32C2828FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2E9189919;
-	Fri, 27 Sep 2024 08:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DF0189B8C;
+	Fri, 27 Sep 2024 08:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A/kX46gX"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ioNOhjG0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FF1188A13
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63582188A13;
+	Fri, 27 Sep 2024 08:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727426194; cv=none; b=VVye6LzlP6X5EIGKjCBLBvtsBvgvNgCFHOIy55x42Nn8a7chBC8XvHNKs01PoLIVLqDpfZHgQ6E4zThpM9xEDOFQl0a1+/u027ZHsMJKTI4XEkBm6pLIhPRXs4jyeoNpxCxU5If9MKVPGPFW2pyImgB+Q1yVAfvimMP62Z7mCKU=
+	t=1727426202; cv=none; b=p9i+w1rlRABKSTufwPZTFX9DtKZCeHrsvVrhHpK792LlnJYD+RGYADKtnNbqC/TV188n7DXscQ9Ye9wNbqKvmwCZH1Evxu3M7aQfwWzxyjUqf0UHrhnZvYZjWbdCL1JxaCmDlXDTty6aJR9zWfsRi8YoHp6ulrUJ9vxtCAyf69o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727426194; c=relaxed/simple;
-	bh=BB95N8jhxDBIHPioKDDyl+2GZg9SBxN/8k7C+1yp4Dg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pPwcC78ZZut8SDp5Hb3d9xwNZBXM/b7DdwYs5Cc8pb0BiqE+c5MuAt7iZlISBAbrsu68Nw6MSV4lCtZeT9P8bMMTVb48pVVAPdXpzj9fuH9/Xmc8nF1nzqjY+zdG29KuHijw9oKynGBryCEbdX9m+d+DNyoykrAp4NHJIf5CbB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A/kX46gX; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6dde476d3dfso16015117b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 01:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727426192; x=1728030992; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NW990c4pKIgSUwRw9627ylvvkk5w5XELih7UcFss2WY=;
-        b=A/kX46gXSS33NQ0+o39Jfu7qNP8i/XbsY6T1o+uhThWPDJgailtEugCADTCUHV/cMJ
-         iDJgjjxnw9Hqka4ah3xYvfbqM/t7BXguqTXcGS2gLHTFyI2Sk3Ul07gx+Fj6Ie0964dS
-         smuA59IN8jeoJ9U5ACXhTBr0kInXfn1pzZk9EgVOMJPFDUrPuT0gcHuDSjq8teIc2W59
-         eBmrLJzvggQrw/xMvV1SQl6z89miZX5oEEz+CrjLK5haub3kHnGecIvVKiFrJ+IgL5Cs
-         NbCQOFikYskwSc/sDti2saymlL8QhwspAGCVWDpZ3uRJ8DiVO9MORb49t8sL1l89zdEH
-         xWmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727426192; x=1728030992;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NW990c4pKIgSUwRw9627ylvvkk5w5XELih7UcFss2WY=;
-        b=gEbo7+CaX7cuQ1W1e04GQOIGJE4130rlfnWGmifpfZ5SPB/ks123WOqWN+X85nLpQs
-         HxCGxXb3+H67Eo/SeTKDgEB5o/L66sLSeAdX0Q9nOiAA8lVo0bBV9Px1TK3S2tM5PEau
-         IgMi8480DV/MukswWzskqKjavC4u84xmG2nxQk6y7LEv0YtokVWWiSttkxv9qZzN7HuP
-         MpSOmNug7t4nBKs+RH+IUW/ntcXfYbcq2+QDmlikzoTGG4G2MZWmpLrYr/25HeMJO43D
-         /It854IAQM+6mEKAVcO12jVXzronuhA3Ew6Ah/6YIeU9FE1T2uSknjEGoh+FLCbb8++D
-         nwsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMsYOqXMD/bkypUP9gH6Pclm9YzHkcC3c/RXA9w6xvj4Onlgv/1HmykV1FinFst+M28qnKpUyeMyq6XUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCwDvosM6XvuLBXsAugm/3hFkhdsIgnox9wK6J8/RJqAXwF7ny
-	Ci8t4rK2KN+DrU25YUav/4kl3+CiiLbvkpIaaHj+wURYnd7Ry1rgFRhhXTePvsftQ1ds6nnCxWZ
-	ZifsjQGRo6UbCYpmgtkZ0tgwe05GpOyC3igv9Cw==
-X-Google-Smtp-Source: AGHT+IGl+8O6l/tpJLDnrP1hqZHzdAe8d1uuNodgKIZ1SsfYNlsEQYeZwwdlmgUzciDUtd6QzdNTFBGG8PuX6Au55nM=
-X-Received: by 2002:a05:690c:112:b0:6e2:985:f4df with SMTP id
- 00721157ae682-6e24dc9c710mr7236477b3.44.1727426192209; Fri, 27 Sep 2024
- 01:36:32 -0700 (PDT)
+	s=arc-20240116; t=1727426202; c=relaxed/simple;
+	bh=gN56hQNenZVnqXhAB3K+w5mDxEmbchmUy70xSOnUC+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VU+d/MG2Y7oAEz1BNwVPRM2NgvOnWH3Y7j0SAJbB1zGEiR7a+hO+D5vxrnsYLlZvvxtl5H3MXrNAnnk2AbFFxIUGXS8Ai1xVUDdTiZWU95FZSJobcZWA8spgaJce3/w+JJcd0Q1VeROkfMsAB3sCdJ0y6tJdVx3xtOTFHt4EFHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ioNOhjG0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F77C4CEC7;
+	Fri, 27 Sep 2024 08:36:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727426202;
+	bh=gN56hQNenZVnqXhAB3K+w5mDxEmbchmUy70xSOnUC+k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ioNOhjG040lK00VBc6SttDlhQzfuazI7nfiE23o0O7qHxaClNR3V+SCbR7SbdREIO
+	 hXcT0XRc+bGFzrUY2mtEbh3YK7X9z9urSsuPvKXlIEoXHbweW6iIABNS59H+/qadyY
+	 qUJMqGHf78EluvBMenFwJ7d34yQZ7yCWkrx5vDGBI4NMxqpS4o5kPzEMu6kabcT4D8
+	 Krgxq6+bgu0XgxAiHkky9g5q7Lu9wujhfwsoneAtrS8/kw1pW0tL1kec9YHuLER6fQ
+	 f33utDR2k4f7E8xr/kmgCns97kzveynRNvawxHkysvFwCPRkmfajs8v/Ejdk9+aZl3
+	 4axZc7HoXCoJg==
+Date: Fri, 27 Sep 2024 10:36:39 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Michael Wu <michael.wu@kneron.us>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Morgan Chang <morgan.chang@kneron.us>, mvp.kutali@gmail.com
+Subject: Re: [PATCH v2 2/2] i2c: dwsignware: determine HS tHIGH and tLOW
+ based on HW parameters
+Message-ID: <gvc6qhgvp7s4dmnn5bwdpttjx5nmuss62qzi4uxzrzvvqid6fb@b33pvi54digs>
+References: <20240927042230.277144-1-michael.wu@kneron.us>
+ <20240927042230.277144-3-michael.wu@kneron.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926075134.22394-1-Hermes.Wu@ite.com.tw> <20240926075134.22394-2-Hermes.Wu@ite.com.tw>
- <loulf3p74x3p6dinublo6xenwjoyssm2f5rk5g3env54abhath@37i4vlvxjn3f> <4360d5a8c4e54540831eca77ca9156f5@ite.com.tw>
-In-Reply-To: <4360d5a8c4e54540831eca77ca9156f5@ite.com.tw>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 27 Sep 2024 10:36:23 +0200
-Message-ID: <CAA8EJpq0Q-TRh6MW70sHkWGo3Sz1j1Ep15LFjXCnXK0pdHfhKg@mail.gmail.com>
-Subject: Re: [PATCH v4 11/11] drm/bridge: it6505: Add aux i2c functionality
-To: Hermes.Wu@ite.com.tw
-Cc: Kenneth.Hung@ite.com.tw, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, angelogioacchino.delregno@collabora.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240927042230.277144-3-michael.wu@kneron.us>
 
-On Fri, 27 Sept 2024 at 04:43, <Hermes.Wu@ite.com.tw> wrote:
->
->
-> >-----Original Message-----
-> >From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >Sent: Thursday, September 26, 2024 8:58 PM
-> >To: Hermes Wu (=E5=90=B3=E4=BD=B3=E5=AE=8F) <Hermes.Wu@ite.com.tw>
-> >Cc: Kenneth Hung (=E6=B4=AA=E5=AE=B6=E5=80=AB) <Kenneth.Hung@ite.com.tw>=
-; Andrzej Hajda <andrzej.hajda@intel.com>; Neil Armstrong <neil.armstrong@l=
-inaro.org>; Robert Foss <rfoss@kernel.org>; Laurent Pinchart <Laurent.pinch=
-art@ideasonboard.com>; Jonas Karlman <jonas@kwiboo.se>; Jernej Skrabec <jer=
-nej.skrabec@gmail.com>; Maarten Lankhorst <maarten.lankhorst@linux.intel.co=
-m>; Maxime Ripard <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse=
-.de>; David Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; An=
-geloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>; Allen C=
-hen <allen.chen@ite.com.tw>; open list:DRM DRIVERS <dri-devel@lists.freedes=
-ktop.org>; open list <linux-kernel@vger.kernel.org>
-> >Subject: Re: [PATCH v4 11/11] drm/bridge: it6505: Add aux i2c functional=
-ity
-> >
-> >On Thu, Sep 26, 2024 at 03:51:34PM GMT, Hermes Wu wrote:
-> >> From: Hermes Wu <Hermes.wu@ite.com.tw>
-> >>
-> >> Add aux-i2c operaction in order to support the MCCS function.
-> >
-> >Brevity is the soul of wit. However in the commit message we appreciate =
-more details. Is it enough to get monitor control to work? Or is there anyt=
-hing left to be implemented?
->
-> In drm_dp_helper, drm_dp_i2c_xfer() pack I2C request into sequence of AUX=
- request.
-> it6505_aux_i2c_operation() is implement to match drm_dp_i2c_xfer() behavi=
-or
+On Fri, Sep 27, 2024 at 12:22:17PM +0800, Michael Wu wrote:
+> In commit 35eba185fd1a ("i2c: designware: Calculate SCL timing parameter
+> for High Speed Mode") hs_hcnt and hs_lcnt are calculated based on fixed
+> tHIGH = 160 and tLOW = 120. However, the set of these fixed values only
+> applies to the combination of hardware parameters IC_CAP_LOADING = 400pF
+> and IC_CLK_FREQ_OPTIMIZATION = 1. Outside of this combination, if these
+> fixed tHIGH = 160 and tLOW = 120 are still used, the calculated hs_hcnt
+> and hs_lcnt may not be small enough, making it impossible for the SCL
+> frequency to reach 3.4 MHz.
+> 
+> Section 3.15.4.5 in DesignWare DW_apb_i2b Databook v2.03 says that when
+> IC_CLK_FREQ_OPTIMIZATION = 0,
+> 
+>     MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
+> 		     = 120 ns for 3.4 Mbps, bus loading = 400pF
+>     MIN_SCL_LOWtime = 160 ns for 3.4 Mbps, bus loading = 100pF
+> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
+> 
+> and section 3.15.4.6 says that when IC_CLK_FREQ_OPTIMIZATION = 1,
+> 
+>     MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
+> 		     = 160 ns for 3.4 Mbps, bus loading = 400pF
+>     MIN_SCL_LOWtime = 120 ns for 3.4 Mbps, bus loading = 100pF
+> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
+> 
+> In order to calculate more accurate hs_hcnt amd hs_lcnt, two hardware
+> parameters IC_CAP_LOADING and IC_CLK_FREQ_OPTIMIZATION must be
+> considered together.
+> 
+> Signed-off-by: Michael Wu <michael.wu@kneron.us>
+> ---
+>  drivers/i2c/busses/i2c-designware-common.c | 16 ++++++++++++++++
+>  drivers/i2c/busses/i2c-designware-core.h   |  6 ++++++
+>  drivers/i2c/busses/i2c-designware-master.c | 14 ++++++++++++--
+>  3 files changed, 34 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
+> index 080204182bb5..907f049f09f8 100644
+> --- a/drivers/i2c/busses/i2c-designware-common.c
+> +++ b/drivers/i2c/busses/i2c-designware-common.c
+> @@ -372,6 +372,20 @@ static void i2c_dw_adjust_bus_speed(struct dw_i2c_dev *dev)
+>  		t->bus_freq_hz = I2C_MAX_FAST_MODE_FREQ;
+>  }
+>  
+> +static void i2c_dw_fw_parse_hw_params(struct dw_i2c_dev *dev)
+> +{
+> +	struct device *device = dev->dev;
+> +	int ret;
+> +
+> +	ret = device_property_read_u32(device, "bus-capacitance-pf", &dev->bus_capacitance_pf);
+> +	if (ret || dev->bus_capacitance_pf < 400)
 
-Commit message, please.
-
->
-> >>
-> >>
-> >> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-> >
-> >This is definitely not a fix.
->
-> will remove.
->
-> >> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
-> >> ---
-> >>  drivers/gpu/drm/bridge/ite-it6505.c | 177
-> >> +++++++++++++++++++++++++++-
-> >>  1 file changed, 175 insertions(+), 2 deletions(-)
-> >
-> >--
-> >With best wishes
-> >Dmitry
-> >
-> BR,
-> Hermes
+Your binding said nothing about some limits here. Something is not
+complete. You might be missing constraints in the binding.
 
 
+> +		dev->bus_capacitance_pf = 100;
+> +	else
+> +		dev->bus_capacitance_pf = 400;
+> +
+> +	dev->clk_freq_optimized = device_property_read_bool(device, "clk-freq-optimized");
 
---=20
-With best wishes
-Dmitry
+Best regards,
+Krzysztof
+
 
