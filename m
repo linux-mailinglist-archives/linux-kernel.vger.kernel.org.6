@@ -1,571 +1,138 @@
-Return-Path: <linux-kernel+bounces-341771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21339885E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:58:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACBDF9885E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFA04281C3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:58:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92A34280C2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D1018E357;
-	Fri, 27 Sep 2024 12:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7D518DF72;
+	Fri, 27 Sep 2024 12:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3McnZxL"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LaWMJ7Qp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C19D18DF68;
-	Fri, 27 Sep 2024 12:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA8118CBF2;
+	Fri, 27 Sep 2024 12:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727441876; cv=none; b=UUFvrc73V8ZXcowbzCNB6Pnz63e99qgsOIUvvCQLMm9QPGd7gX0YPSy8SQtEK1OLdjebFrxzLuXFmJJYzwn0JVer9a/5aomXvErjOe9oq88neUeSnXaHEwag99JU61FOY8ebYLsanBoVj3Nr/9WwBzFZKm8YrCNk3bmhZTON6Bs=
+	t=1727441898; cv=none; b=DbpCtzqB6uJByBq/eVAmjCNos1OMXim+FroQrBONv+pFyIz+2ORzNLgNysTPz98ikmHDE5pxNG0LxHzgBtVFj+EU0XZRsDMH1AEUUSiNQFBZvLHwHJ5OtCgTfW7M2wrygwIfqKJFfXymTVt5qTrq5i/6j3wUvVZqoU77xZxnlfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727441876; c=relaxed/simple;
-	bh=hy/7MMiwqt06olSDE9Q+W8Z32QwfyyT82k5CZUTJwgU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Oz2t16GVFB6KtPpGhkTnUzhgeoaufChj3UWeCaBGdqffBO55KA6A6w2Xj0V3s/2D5lr/9UQPfFvxxtS7onsqJ3gtXEd6vaHWXqYR0lyoFEoA8Ab7wmWVZY4Bt0isnPB+mIDUjq0ICXpOgoply/G/14ip0eAKDcYAJ1S43xQDMfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y3McnZxL; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cd46f3a26so18126195e9.2;
-        Fri, 27 Sep 2024 05:57:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727441872; x=1728046672; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Od40muGTBaa+ZQ11YizfdQOFP4nmxYN1NvKyOeoabeI=;
-        b=Y3McnZxLZPbPqQ2kH/Gdy2tfnT0+f0718y8Muy4oC0c8xL0Z7U0JSsIFTZJIwQtL1E
-         W1FoA59N6otIWiK5xlaI29A7CbJ6fAomwDEOkB5oK+NLu2JE/jK6l3pzj5brK1LXf6mH
-         aHdfF5TBH2R8dfBeRl7ykCtOXspAjSMZ9b+0mdyysQ2wD34w1FzlNZY3OS1JKJCK6vJA
-         fRNPfeeabnXTXaWyWQ6mnN/uG36CvJKCJWkk3pxUY6UGRib0Y0MTO/nlnq8LJQ/GJjT5
-         OLu+8R+RLSst/JeNxB11z62YstOGXjS0u4jzVBTBR6utJ55MijYNwz4hb5Oc+F0APJm6
-         91hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727441872; x=1728046672;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Od40muGTBaa+ZQ11YizfdQOFP4nmxYN1NvKyOeoabeI=;
-        b=TSbKizX4YJwN9VoiKUI6cFbpQroB2W2whFkvtv7Che6FH+LfvX/AMrZiB6239ju8me
-         ie+8Iul+TMek8PVfEue7B7QzrwGwgVIiO+caYfpKDKQJJog5zH9FsoHl3CYl8encfi7R
-         N2xTkjhxF0USyWmR7wn1cGMhqN6EkASYgmaaxjyHjWJGC+jg6falRLFzxtyPbuUlTerk
-         pcOd3SIrsEcq9eP+LMD1Tp7KNAKZ3YBVoecB8Tvd+LdV19KYIoTtmKoBHgpLoEc6DYCj
-         d2DrM0SSSZyRLOsMuctH8Hq9MfRWz2tdyZCFRRAnHCkWZ96d9lL35Ewj/VDGa9SuJGGk
-         en5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWtDrBoLaLO07CHWj/ftv/uHp2Dafz3TQOR9MKgDm3DRjLHOITi4L353lvitu945Z85vE1/PU1A7vnI@vger.kernel.org, AJvYcCX3AYi/CJRAwjijaxFCPGsrEceQ15RBj4XM6Jf2YZrz5LHM3Q8nVcWvT8lfq6VZ+m/o7VIJpJMFJPTWleeu@vger.kernel.org, AJvYcCXS8DSrGzu/SUxn7NBQq3m4c6zoGP9kjP+tHnUr48kgkubB2J6JQjzQItYiObU9lLl7GZLW/nnNc3mA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHG9uGL43azL1RV3OC4H7fevqvDJ8AC1F8IAHd42uABKqT3Gs4
-	ZtPLNCO+OIMmLT7AP6wXGr4D+ROPiio5CBMZFAdNpCMDIBHlWwzuuHqRDQ==
-X-Google-Smtp-Source: AGHT+IEEkoxsp+qeHTxORkVR1ZjtcADc1Ad43Ujbt5OpUYdsv1jpSsz+KF2TgJXQkQR7wTbsLynsTA==
-X-Received: by 2002:a05:600c:1e0b:b0:42c:b995:20c8 with SMTP id 5b1f17b1804b1-42f5848551fmr21047905e9.24.1727441872083;
-        Fri, 27 Sep 2024 05:57:52 -0700 (PDT)
-Received: from debian.fritz.box ([2a00:79c0:666:ff00:303:6c5b:4b07:6715])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ddad1sm73814575e9.9.2024.09.27.05.57.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 05:57:51 -0700 (PDT)
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: 
-Cc: Dimitri Fedrau <dima.fedrau@gmail.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/2] pwm: add support for NXPs high-side switch MC33XS2410
-Date: Fri, 27 Sep 2024 14:57:45 +0200
-Message-Id: <20240927125745.38367-3-dima.fedrau@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20240927125745.38367-1-dima.fedrau@gmail.com>
-References: <20240927125745.38367-1-dima.fedrau@gmail.com>
+	s=arc-20240116; t=1727441898; c=relaxed/simple;
+	bh=3o4fcobnibIMMpM5lQE5ZT/RahfbRrro/dIs+3l8D8k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XebEbKBNwFuXFcKpbiOi3f2WWkJ2SitLLpuCylsOMNFNVxZ436T+eqG8H/gQF0NADub5FVS33qW30dT71WugPMhtVgKMdEvyTNgbM8viFdqnPlKXMIMfLocwHTRSNu5SKp2j3jtcFe8XQu1GjySVgefErX6hVFPB8jbTnmHZijc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LaWMJ7Qp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F45C4CEC4;
+	Fri, 27 Sep 2024 12:58:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727441898;
+	bh=3o4fcobnibIMMpM5lQE5ZT/RahfbRrro/dIs+3l8D8k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LaWMJ7Qp/JWiEHnW7zVri4xObJWcri+NBh1sMKMH4PLx4H5+wHB3edfFdMeRmIP/6
+	 ygWT+/W2aV2C6boUQwJUmz+Gl2PU5Te6xaZR8GYDnkD/xNvd/FnZ+7L6bIyIe1JYoO
+	 so6xZkqD8Qug9tM5OCMqm89naa50lj6jT7GaFw13nAm8J0oOVw+Vtt5mSb/PHt3MBD
+	 YXKfdngzYfOWI8bJEGxMLTx6Ah0cy+uj5hZBz6jDBbghQzhGHQsLnchcpJiUWP9R7h
+	 Q2KfN6hd28eJudjCgk72nj/nYGXEe9xQHV02msTegCO5V7663vkHoYW1euhq7NszGe
+	 5mYu9WL3emADA==
+Message-ID: <04cb87fd-592e-4ddf-8b3b-99f065a061d1@kernel.org>
+Date: Fri, 27 Sep 2024 14:58:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH treewide 08/11] arm64: dts: uniphier: Switch to
+ hp-det-gpios
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Magnus Damm <magnus.damm@gmail.com>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Paul Cercueil
+ <paul@crapouillou.net>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
+ Nicolin Chen <nicoleotsuka@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Adrien Grassein <adrien.grassein@gmail.com>, Adam Ford <aford173@gmail.com>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-mips@vger.kernel.org, alsa-devel@alsa-project.org,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <cover.1727438777.git.geert+renesas@glider.be>
+ <b14b8512181c2a3b0744698e8a21b4e16451d7b3.1727438777.git.geert+renesas@glider.be>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <b14b8512181c2a3b0744698e8a21b4e16451d7b3.1727438777.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The MC33XS2410 is a four channel high-side switch. Featuring advanced
-monitoring and control function, the device is operational from 3.0 V to
-60 V. The device is controlled by SPI port for configuration.
+On 27/09/2024 14:42, Geert Uytterhoeven wrote:
+> Replace the deprecated "hp-det-gpio" property by "hp-det-gpios" in Audio
+> Graph Card device nodes.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
----
- drivers/pwm/Kconfig          |  12 +
- drivers/pwm/Makefile         |   1 +
- drivers/pwm/pwm-mc33xs2410.c | 422 +++++++++++++++++++++++++++++++++++
- 3 files changed, 435 insertions(+)
- create mode 100644 drivers/pwm/pwm-mc33xs2410.c
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index 0915c1e7df16..f513513f9b2f 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -411,6 +411,18 @@ config PWM_LPSS_PLATFORM
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called pwm-lpss-platform.
- 
-+config PWM_MC33XS2410
-+	tristate "MC33XS2410 PWM support"
-+	depends on OF
-+	depends on SPI
-+	help
-+	  NXP MC33XS2410 high-side switch driver. The MC33XS2410 is a four
-+	  channel high-side switch. The device is operational from 3.0 V
-+	  to 60 V. The device is controlled by SPI port for configuration.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called pwm-mc33xs2410.
-+
- config PWM_MESON
- 	tristate "Amlogic Meson PWM driver"
- 	depends on ARCH_MESON || COMPILE_TEST
-diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-index 9081e0c0e9e0..c75deeeace40 100644
---- a/drivers/pwm/Makefile
-+++ b/drivers/pwm/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_PWM_LPC32XX)	+= pwm-lpc32xx.o
- obj-$(CONFIG_PWM_LPSS)		+= pwm-lpss.o
- obj-$(CONFIG_PWM_LPSS_PCI)	+= pwm-lpss-pci.o
- obj-$(CONFIG_PWM_LPSS_PLATFORM)	+= pwm-lpss-platform.o
-+obj-$(CONFIG_PWM_MC33XS2410)	+= pwm-mc33xs2410.o
- obj-$(CONFIG_PWM_MESON)		+= pwm-meson.o
- obj-$(CONFIG_PWM_MEDIATEK)	+= pwm-mediatek.o
- obj-$(CONFIG_PWM_MICROCHIP_CORE)	+= pwm-microchip-core.o
-diff --git a/drivers/pwm/pwm-mc33xs2410.c b/drivers/pwm/pwm-mc33xs2410.c
-new file mode 100644
-index 000000000000..f9a334a5e69b
---- /dev/null
-+++ b/drivers/pwm/pwm-mc33xs2410.c
-@@ -0,0 +1,422 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Liebherr-Electronics and Drives GmbH
-+ *
-+ * Reference Manual : https://www.nxp.com/docs/en/data-sheet/MC33XS2410.pdf
-+ *
-+ * Limitations:
-+ * - Supports frequencies between 0.5Hz and 2048Hz with following steps:
-+ *   - 0.5 Hz steps from 0.5 Hz to 32 Hz
-+ *   - 2 Hz steps from 2 Hz to 128 Hz
-+ *   - 8 Hz steps from 8 Hz to 512 Hz
-+ *   - 32 Hz steps from 32 Hz to 2048 Hz
-+ * - Cannot generate a 0 % duty cycle.
-+ * - Always produces low output if disabled.
-+ * - Configuration isn't atomic. When changing polarity, duty cycle or period
-+ *   the data is taken immediately, counters not being affected, resulting in a
-+ *   behavior of the output pin that is neither the old nor the new state,
-+ *   rather something in between.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/math64.h>
-+#include <linux/minmax.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/pwm.h>
-+
-+#include <asm/unaligned.h>
-+
-+#include <linux/spi/spi.h>
-+
-+#define MC33XS2410_GLB_CTRL		0x00
-+#define MC33XS2410_GLB_CTRL_MODE	GENMASK(7, 6)
-+#define MC33XS2410_GLB_CTRL_MODE_NORMAL	FIELD_PREP(MC33XS2410_GLB_CTRL_MODE, 1)
-+#define MC33XS2410_PWM_CTRL1		0x05
-+#define MC33XS2410_PWM_CTRL1_POL_INV(x)	BIT(x)
-+#define MC33XS2410_PWM_CTRL3		0x07
-+/* x in { 0 ... 3 } */
-+#define MC33XS2410_PWM_CTRL3_EN(x)	BIT(4 + (x))
-+#define MC33XS2410_PWM_FREQ1		0x08
-+/* x in { 1 ... 4 } */
-+#define MC33XS2410_PWM_FREQ(x)		(MC33XS2410_PWM_FREQ1 + (x - 1))
-+#define MC33XS2410_PWM_FREQ_STEP_MASK	GENMASK(7, 6)
-+#define MC33XS2410_PWM_FREQ_COUNT_MASK	GENMASK(5, 0)
-+#define MC33XS2410_PWM_DC1		0x0c
-+/* x in { 1 ... 4 } */
-+#define MC33XS2410_PWM_DC(x)		(MC33XS2410_PWM_DC1 + (x - 1))
-+#define MC33XS2410_WDT			0x14
-+
-+#define MC33XS2410_WR			BIT(7)
-+#define MC33XS2410_RD_CTRL		BIT(7)
-+#define MC33XS2410_RD_DATA_MASK		GENMASK(13, 0)
-+
-+#define MC33XS2410_MIN_PERIOD		488282
-+#define MC33XS2410_MAX_PERIOD_STEP0	2000000000
-+/* x in { 0 ... 3 } */
-+#define MC33XS2410_MAX_PERIOD_STEP(x)	(MC33XS2410_MAX_PERIOD_STEP0 >> (2 * x))
-+
-+#define MC33XS2410_MAX_TRANSFERS	5
-+#define MC33XS2410_WORD_LEN		2
-+
-+struct mc33xs2410_pwm {
-+	struct spi_device *spi;
-+};
-+
-+static inline struct mc33xs2410_pwm *mc33xs2410_from_chip(struct pwm_chip *chip)
-+{
-+	return pwmchip_get_drvdata(chip);
-+}
-+
-+static int mc33xs2410_xfer_regs(struct spi_device *spi, bool read, u8 *reg,
-+				u16 *val, bool *ctrl, int len)
-+{
-+	struct spi_transfer t[MC33XS2410_MAX_TRANSFERS] = { { 0 } };
-+	u8 tx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
-+	u8 rx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
-+	int i, ret, reg_i, val_i;
-+
-+	if (!len)
-+		return 0;
-+
-+	if (read)
-+		len++;
-+
-+	if (len > MC33XS2410_MAX_TRANSFERS)
-+		return -EINVAL;
-+
-+	for (i = 0; i < len; i++) {
-+		reg_i = i * MC33XS2410_WORD_LEN;
-+		val_i = reg_i + 1;
-+		if (read) {
-+			if (i < len - 1) {
-+				tx[reg_i] = reg[i];
-+				tx[val_i] = ctrl[i] ? MC33XS2410_RD_CTRL : 0;
-+				t[i].tx_buf = &tx[reg_i];
-+			}
-+
-+			if (i > 0)
-+				t[i].rx_buf = &rx[reg_i - MC33XS2410_WORD_LEN];
-+		} else {
-+			tx[reg_i] = reg[i] | MC33XS2410_WR;
-+			tx[val_i] = val[i];
-+			t[i].tx_buf = &tx[reg_i];
-+		}
-+
-+		t[i].len = MC33XS2410_WORD_LEN;
-+		t[i].cs_change = 1;
-+	}
-+
-+	t[len - 1].cs_change = 0;
-+
-+	ret = spi_sync_transfer(spi, &t[0], len);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (read) {
-+		for (i = 0; i < len - 1; i++) {
-+			reg_i = i * MC33XS2410_WORD_LEN;
-+			val[i] = FIELD_GET(MC33XS2410_RD_DATA_MASK,
-+					   get_unaligned_be16(&rx[reg_i]));
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static
-+int mc33xs2410_write_regs(struct spi_device *spi, u8 *reg, u16 *val, int len)
-+{
-+
-+	return mc33xs2410_xfer_regs(spi, false, reg, val, NULL, len);
-+}
-+
-+static int mc33xs2410_read_regs(struct spi_device *spi, u8 *reg, bool *ctrl,
-+				u16 *val, u8 len)
-+{
-+	return mc33xs2410_xfer_regs(spi, true, reg, val, ctrl, len);
-+}
-+
-+
-+static int mc33xs2410_write_reg(struct spi_device *spi, u8 reg, u16 val)
-+{
-+	return mc33xs2410_write_regs(spi, &reg, &val, 1);
-+}
-+
-+static
-+int mc33xs2410_read_reg(struct spi_device *spi, u8 reg, u16 *val, bool ctrl)
-+{
-+	return mc33xs2410_read_regs(spi, &reg, &ctrl, val, 1);
-+}
-+
-+static int mc33xs2410_read_reg_ctrl(struct spi_device *spi, u8 reg, u16 *val)
-+{
-+	return mc33xs2410_read_reg(spi, reg, val, true);
-+}
-+
-+static
-+int mc33xs2410_modify_reg(struct spi_device *spi, u8 reg, u16 mask, u16 val)
-+{
-+	u16 tmp;
-+	int ret;
-+
-+	ret = mc33xs2410_read_reg_ctrl(spi, reg, &tmp);
-+	if (ret < 0)
-+		return ret;
-+
-+	tmp &= ~mask;
-+	tmp |= val & mask;
-+
-+	return mc33xs2410_write_reg(spi, reg, tmp);
-+}
-+
-+static u8 mc33xs2410_pwm_get_freq(u64 period)
-+{
-+	u8 step, count;
-+
-+	/*
-+	 * Check which step is appropriate for the given period, starting with
-+	 * the highest frequency(lowest period). Higher frequencies are
-+	 * represented with better resolution by the device. Therefore favor
-+	 * frequency range with the better resolution to minimize error
-+	 * introduced by the frequency steps.
-+	 */
-+
-+	switch (period) {
-+	case MC33XS2410_MIN_PERIOD ... MC33XS2410_MAX_PERIOD_STEP(3):
-+		step = 3;
-+		break;
-+	case MC33XS2410_MAX_PERIOD_STEP(3) + 1 ... MC33XS2410_MAX_PERIOD_STEP(2):
-+		step = 2;
-+		break;
-+	case MC33XS2410_MAX_PERIOD_STEP(2) + 1 ... MC33XS2410_MAX_PERIOD_STEP(1):
-+		step = 1;
-+		break;
-+	case MC33XS2410_MAX_PERIOD_STEP(1) + 1 ... MC33XS2410_MAX_PERIOD_STEP(0):
-+		step = 0;
-+		break;
-+	}
-+
-+	/*
-+	 * Round up here because a higher count results in a higher frequency
-+	 * and so a smaller period.
-+	 */
-+	count = DIV_ROUND_UP((u32)MC33XS2410_MAX_PERIOD_STEP(step), (u32)period);
-+	return FIELD_PREP(MC33XS2410_PWM_FREQ_STEP_MASK, step) |
-+	       FIELD_PREP(MC33XS2410_PWM_FREQ_COUNT_MASK, count - 1);
-+}
-+
-+static u64 mc33xs2410_pwm_get_period(u8 reg)
-+{
-+	u32 freq, code, doubled_steps;
-+
-+	/*
-+	 * steps:
-+	 *   - 0 = 0.5Hz
-+	 *   - 1 = 2Hz
-+	 *   - 2 = 8Hz
-+	 *   - 3 = 32Hz
-+	 * frequency = (code + 1) x steps.
-+	 *
-+	 * To avoid losing precision in case steps value is zero, scale the
-+	 * steps value for now by two and keep it in mind when calculating the
-+	 * period that the frequency had been doubled.
-+	 */
-+	doubled_steps = 1 << (FIELD_GET(MC33XS2410_PWM_FREQ_STEP_MASK, reg) * 2);
-+	code = FIELD_GET(MC33XS2410_PWM_FREQ_COUNT_MASK, reg);
-+	freq = (code + 1) * doubled_steps;
-+
-+	/* Convert frequency to period, considering the doubled frequency. */
-+	return DIV_ROUND_UP((u32)(2 * NSEC_PER_SEC), freq);
-+}
-+
-+static int mc33xs2410_pwm_get_relative_duty_cycle(u64 period, u64 duty_cycle)
-+{
-+	/*
-+	 * duty_cycle cannot overflow and period is not zero, since this is
-+	 * guaranteed by the caller.
-+	 */
-+	duty_cycle *= 256;
-+	duty_cycle = div64_u64(duty_cycle, period);
-+
-+	return duty_cycle - 1;
-+}
-+
-+static void mc33xs2410_pwm_set_relative_duty_cycle(struct pwm_state *state,
-+						   u16 duty_cycle)
-+{
-+	if (!state->enabled)
-+		state->duty_cycle = 0;
-+	else
-+		state->duty_cycle = DIV_ROUND_UP_ULL((duty_cycle + 1) * state->period, 256);
-+}
-+
-+static int mc33xs2410_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-+				const struct pwm_state *state)
-+{
-+	struct mc33xs2410_pwm *mc33xs2410 = mc33xs2410_from_chip(chip);
-+	struct spi_device *spi = mc33xs2410->spi;
-+	u8 reg[4] = {
-+			MC33XS2410_PWM_FREQ(pwm->hwpwm + 1),
-+			MC33XS2410_PWM_DC(pwm->hwpwm + 1),
-+			MC33XS2410_PWM_CTRL1,
-+			MC33XS2410_PWM_CTRL3
-+		    };
-+	bool ctrl[2] = { true, true };
-+	u64 period, duty_cycle;
-+	int ret, rel_dc;
-+	u16 val[4];
-+	u8 mask;
-+
-+	period = min(state->period, MC33XS2410_MAX_PERIOD_STEP(0));
-+	if (period < MC33XS2410_MIN_PERIOD)
-+		return -EINVAL;
-+
-+	ret = mc33xs2410_read_regs(spi, &reg[2], &ctrl[0], &val[2], 2);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* frequency */
-+	val[0] = mc33xs2410_pwm_get_freq(period);
-+	/* Continue calculations with the possibly truncated period */
-+	period = mc33xs2410_pwm_get_period(val[0]);
-+
-+	/* duty cycle */
-+	duty_cycle = min(period, state->duty_cycle);
-+	rel_dc = mc33xs2410_pwm_get_relative_duty_cycle(period, duty_cycle);
-+	val[1] = rel_dc < 0 ? 0 : rel_dc;
-+
-+	/* polarity */
-+	mask = MC33XS2410_PWM_CTRL1_POL_INV(pwm->hwpwm);
-+	val[2] = (state->polarity == PWM_POLARITY_INVERSED) ?
-+		 (val[2] | mask) : (val[2] & ~mask);
-+
-+	/* enable output */
-+	mask = MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm);
-+	val[3] = (state->enabled && rel_dc >= 0) ? (val[3] | mask) :
-+						   (val[3] & ~mask);
-+
-+	return mc33xs2410_write_regs(spi, reg, val, 4);
-+}
-+
-+static int mc33xs2410_pwm_get_state(struct pwm_chip *chip,
-+				    struct pwm_device *pwm,
-+				    struct pwm_state *state)
-+{
-+	struct mc33xs2410_pwm *mc33xs2410 = mc33xs2410_from_chip(chip);
-+	struct spi_device *spi = mc33xs2410->spi;
-+	u8 reg[4] = {
-+			MC33XS2410_PWM_FREQ(pwm->hwpwm + 1),
-+			MC33XS2410_PWM_DC(pwm->hwpwm + 1),
-+			MC33XS2410_PWM_CTRL1,
-+			MC33XS2410_PWM_CTRL3,
-+		    };
-+	bool ctrl[4] = { true, true, true, true };
-+	u16 val[4];
-+	int ret;
-+
-+	ret = mc33xs2410_read_regs(spi, reg, ctrl, val, 4);
-+	if (ret < 0)
-+		return ret;
-+
-+	state->period = mc33xs2410_pwm_get_period(val[0]);
-+	state->polarity = (val[2] & MC33XS2410_PWM_CTRL1_POL_INV(pwm->hwpwm)) ?
-+			  PWM_POLARITY_INVERSED : PWM_POLARITY_NORMAL;
-+	state->enabled = !!(val[3] & MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm));
-+	mc33xs2410_pwm_set_relative_duty_cycle(state, val[1]);
-+	return 0;
-+}
-+
-+static const struct pwm_ops mc33xs2410_pwm_ops = {
-+	.apply = mc33xs2410_pwm_apply,
-+	.get_state = mc33xs2410_pwm_get_state,
-+};
-+
-+static int mc33xs2410_reset(struct device *dev)
-+{
-+	struct gpio_desc *reset_gpio;
-+
-+	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR_OR_NULL(reset_gpio))
-+		return PTR_ERR_OR_ZERO(reset_gpio);
-+
-+	fsleep(1000);
-+	gpiod_set_value_cansleep(reset_gpio, 0);
-+	/* Wake-up time */
-+	fsleep(10000);
-+
-+	return 0;
-+}
-+
-+static int mc33xs2410_probe(struct spi_device *spi)
-+{
-+	struct mc33xs2410_pwm *mc33xs2410;
-+	struct device *dev = &spi->dev;
-+	struct pwm_chip *chip;
-+	int ret;
-+
-+	chip = devm_pwmchip_alloc(dev, 4, sizeof(*mc33xs2410));
-+	if (IS_ERR(chip))
-+		return PTR_ERR(chip);
-+
-+	mc33xs2410 = mc33xs2410_from_chip(chip);
-+	mc33xs2410->spi = spi;
-+	chip->ops = &mc33xs2410_pwm_ops;
-+
-+	ret = mc33xs2410_reset(dev);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Disable watchdog and keep in mind that the watchdog won't trigger a
-+	 * reset of the machine when running into an timeout, instead the
-+	 * control over the outputs is handed over to the INx input logic
-+	 * signals of the device. Disabling it here just deactivates this
-+	 * feature until a proper solution is found.
-+	 */
-+	ret = mc33xs2410_write_reg(spi, MC33XS2410_WDT, 0x0);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to disable watchdog\n");
-+
-+	/* Transition to normal mode */
-+	ret = mc33xs2410_modify_reg(spi, MC33XS2410_GLB_CTRL,
-+				    MC33XS2410_GLB_CTRL_MODE,
-+				    MC33XS2410_GLB_CTRL_MODE_NORMAL);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret,
-+				     "Failed to transition to normal mode\n");
-+
-+	ret = devm_pwmchip_add(dev, chip);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to add pwm chip\n");
-+
-+	return 0;
-+}
-+
-+static const struct spi_device_id mc33xs2410_spi_id[] = {
-+	{ "mc33xs2410" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(spi, mc33xs2410_spi_id);
-+
-+static const struct of_device_id mc33xs2410_of_match[] = {
-+	{ .compatible = "nxp,mc33xs2410" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, mc33xs2410_of_match);
-+
-+static struct spi_driver mc33xs2410_driver = {
-+	.driver = {
-+		.name = "mc33xs2410-pwm",
-+		.of_match_table = mc33xs2410_of_match,
-+	},
-+	.probe = mc33xs2410_probe,
-+	.id_table = mc33xs2410_spi_id,
-+};
-+module_spi_driver(mc33xs2410_driver);
-+
-+MODULE_DESCRIPTION("NXP MC33XS2410 high-side switch driver");
-+MODULE_AUTHOR("Dimitri Fedrau <dima.fedrau@gmail.com>");
-+MODULE_LICENSE("GPL");
--- 
-2.39.5
+Best regards,
+Krzysztof
 
 
