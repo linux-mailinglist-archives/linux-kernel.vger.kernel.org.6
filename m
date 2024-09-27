@@ -1,107 +1,114 @@
-Return-Path: <linux-kernel+bounces-341598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA2F98823D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:10:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1901798823C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929851C2272D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:10:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49D641C21FE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549091BC9FC;
-	Fri, 27 Sep 2024 10:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15BA1BC074;
+	Fri, 27 Sep 2024 10:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ki4iFt4Y"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqCHPbc0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450C61BC099;
-	Fri, 27 Sep 2024 10:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483F917C232;
+	Fri, 27 Sep 2024 10:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727431784; cv=none; b=Sy//2IS4TVMZetOSn/zL7xiLLMS5xiJ31hApEduLIEZl6TQVrX/8r5rpoyeON0pMxcATNB0PvEe7fuytUqp0hx+Ph6og3wvgupPRjuCXo7b/UnqiS7fnXGlWcZ09fZcU23eYx8YmUoYpRU7BZBTFN2fIrXxByYxyJKn8JTLPP60=
+	t=1727431781; cv=none; b=bIDzcb0hWnxdMcxitCyOHLmMd4qpVsFQKc5BKe1zDe/KEijM65100QF/oAW1ZMADaiCKLOL0NksBFKETjPgxBNN6RlKBKx1vJ1pn4h0wZxBHha3c8CxT+dlNz11JKEQNFkB0XcVeOV+uEYCpdrjT4PbIi5fB6jLWiAzHtiri2U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727431784; c=relaxed/simple;
-	bh=u1HYuzt3VcJ0Ke4gqg4Bcs27HCUdrkVdFqLZtu1O5Y0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hvhwO+7Oswcuyi18cRv/O+wqpLSKtqlcEZfdkXYIRZdx+uFMrzfmqUooSWTFmENJDVPGgqzWLu4oZGA7ioPB2DnCZGWLwcuS+Gv3S8n2orN0ThdAXn/y0uSKTgiy0RhQHEqiXV1qtB+0UOBkY7FTMWWvfjSEkr0zjAyC7akJejA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ki4iFt4Y; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c881aa669fso1201584a12.0;
-        Fri, 27 Sep 2024 03:09:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727431781; x=1728036581; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u1HYuzt3VcJ0Ke4gqg4Bcs27HCUdrkVdFqLZtu1O5Y0=;
-        b=ki4iFt4YzpRFq82dTR4wIq9SycQjNqu9bvuoS4GK7hhW6ENptjpM9/MwPgUxgl+KSo
-         i5BC5EbkUCZWX+f5K9y+vJvK4xycnWXUI13o+LYwfT+Nyq5F5cifJW6jwJHbc+Oryy/R
-         +Kz7XAz9U4/MPnZ9ECKdaBJ1bS0GYei+T0JTjhX7tYY2GBXMkRfDXizdUzG22WVGHPz/
-         phzw5DytmdrgaZxe+2zUrjGWLI8lQAd/mgTlAttQcfDtr5dNY43YKa5sLMm2j64h6FCR
-         scxPbl7pjtumfZqvTpjELwwhiJ8MGSTAgaduVWGaOIBPg5VmnW40OgUqWEyjJVzLT8Dd
-         +xJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727431781; x=1728036581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u1HYuzt3VcJ0Ke4gqg4Bcs27HCUdrkVdFqLZtu1O5Y0=;
-        b=LzK44xFcjgJ8B3iflHFoTroq6TbHBvs/0mNvKPYkm6h9CEICagw1rLtE6DEj/tXORS
-         +19HVUXNj5hzGpvD+HC3/3hWhuX8BDgVdW93Nyb03x9TmGm1B/rtQ1toRXYcDpvmc0In
-         8m+zc3AOsvK0pgdIvG1PV7t25DahHyRIRPEpvthAxz9z1LBinDs874KMo1Bp39goQoxc
-         L79NYKI1eaXHue1gTH8Dm4PfGkDfeoesxcDdjWNwAJlUOM65NK3njQElV4q+lHIek3Ij
-         4Ce1Q0xNWSTTLSghf0MZbr27wlSpVoVKzJ3+glh23XZBotwv19D2jHd7WRPfr4sP8gPt
-         DNaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDkbqkmlBqDyrY/DWz2Acz9amIj9XHsTQJALBbnagGham8oodzOlnnFnXyNF7ecLj5RxaaBBDWOYQ1kjM=@vger.kernel.org, AJvYcCXExImsJ5nG3SYBZb1/gf51hFEoOQCGTP/COTwJyNrZGXGYTCLKPzb3X98WF5F27FeLNkX/Dg9+et+A0QQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKvqVmQHfmLLtStpjx/uQ+Eg2xGp7PbF7jMQVn81YBgNrvplLQ
-	I0jYZv2GVtvNfJU98sTuqHXG0hcvCR1iWrBVLH2t2OH8PjJ+2VZAJz8WSY+y0HxXPsWl+HkYZ9t
-	ird4k07oDJwCEmJQaBJ5VARyVoac=
-X-Google-Smtp-Source: AGHT+IFxKrVn+eN+8GsBOc9kEvDkWwEzAHy/d1V0TW1e6sbZfloJ1RQ+VeEYJjBsCrVj4lEvUHHOb0kRXZt1hATpgt0=
-X-Received: by 2002:a17:907:3e1c:b0:a88:b93b:cdcb with SMTP id
- a640c23a62f3a-a93c4a68305mr210200466b.47.1727431781464; Fri, 27 Sep 2024
- 03:09:41 -0700 (PDT)
+	s=arc-20240116; t=1727431781; c=relaxed/simple;
+	bh=aOI1znHzlcS3KjD1jj6wA2LPTGwM80fPp/V7uRtFpLE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=F3Bt38IjHm4QrHgTDsg5ATBlrABkP7YEgCxuBzzIkydffIAtd9SyMrF9HySExl6kxQS2+T9RJIPAeB+1PqMQ8gVClBZyYAYPmlxTUOQFhX5G9/dssZYzsNjxTe4VOHRNY3IMWS6giqXG7BLQuwIPD8uTAm5w/cxOh2dBjuMwiXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqCHPbc0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B929C4CECD;
+	Fri, 27 Sep 2024 10:09:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727431780;
+	bh=aOI1znHzlcS3KjD1jj6wA2LPTGwM80fPp/V7uRtFpLE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QqCHPbc0n6miRgNFWuO1nS+0pKCg0UgDJ4Xb/AmC+/K1NS1bcCT2sbamiMoDNKMIg
+	 0EloshYiwzcd7Ie/Hhl0cdblbi1O5+SSEgmWYgl9/U5w/F24318klaZJoeLZgBsPqU
+	 ylfZ+ortu8eRH6gbfysPLxH8e56XkTuOhy4/luySaO9nwM72wWerC37tU5KMDb3Yvg
+	 RECnJhS4h4MEkBNNHLlQUUgOkWmXPziyWB55buy2DAGbY7HQI0YDHwQlu+wipTjrcn
+	 cpJnGbp+zL1p7Pup+uu/Vgr5FxnPT/QNhqVpYTKZkm6zrdrAXnF+3d6XmFMWey2Ta1
+	 d4DmAae4ZyzOg==
+Date: Fri, 27 Sep 2024 12:09:36 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+Subject: [GIT PULL] i2c-host-fixes for v6.12-rc1
+Message-ID: <auogjhzhbs2w45ptdkl5ceyxsm7apyfi5wmfv3iwuzfh47pl6f@4nnrnpqqlum2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927-cocci-6-12-v2-0-1c6ad931959b@chromium.org> <20240927-cocci-6-12-v2-3-1c6ad931959b@chromium.org>
-In-Reply-To: <20240927-cocci-6-12-v2-3-1c6ad931959b@chromium.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 27 Sep 2024 13:09:05 +0300
-Message-ID: <CAHp75VegFGC6DR0RJ5QPPOoTEvwDz08tJzWirOeJvzPWKxFE4w@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] media: atomisp: Use max() macros
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Benoit Parrot <bparrot@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Bingbu Cao <bingbu.cao@intel.com>, 
-	Tianshu Qiu <tian.shu.qiu@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 1:02=E2=80=AFPM Ricardo Ribalda <ribalda@chromium.o=
-rg> wrote:
->
-> The max() macro produce nicer code
+Hi Wolfram,
 
-You forgot to update the commit message.
+Here’s the first pull request for the new 6.12 cycle. I hope
+the tag description is good this time.
 
-> and also fixes the following cocci
-> errors:
+My i2c/i2c-host-fixes branch is based on Linus's merge commit
+of the i2c stable patches.
 
-> drivers/staging/media/atomisp/pci/sh_css_frac.h:40:17-18: WARNING opportu=
-nity for max()
-> drivers/staging/media/atomisp/pci/sh_css_frac.h:50:17-18: WARNING opportu=
-nity for max()
+I wish you a great weekend!
+Andi
 
---=20
-With Best Regards,
-Andy Shevchenko
+The following changes since commit 4e2c9cd7dce6c7480f236c3ead196ff4e92ed597:
+
+  Merge tag 'i2c-for-6.12-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux (2024-09-23 14:34:19 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.12-rc1
+
+for you to fetch changes up to 0c8d604dea437b69a861479b413d629bc9b3da70:
+
+  i2c: xiic: Fix pm_runtime_set_suspended() with runtime pm enabled (2024-09-27 11:48:21 +0200)
+
+----------------------------------------------------------------
+The DesignWare driver now has the correct ENABLE-ABORT sequence,
+ensuring ABORT can always be sent when needed.
+
+In the SynQuacer controller we now check for PCLK as an optional
+clock, allowing ACPI to directly provide the clock rate.
+
+The recent KEBA driver required a dependency fix in Kconfig.
+
+The XIIC driver now has a corrected power suspend sequence.
+
+----------------------------------------------------------------
+Ard Biesheuvel (1):
+      i2c: synquacer: Deal with optional PCLK correctly
+
+Geert Uytterhoeven (1):
+      i2c: keba: I2C_KEBA should depend on KEBA_CP500
+
+Jinjie Ruan (1):
+      i2c: xiic: Fix pm_runtime_set_suspended() with runtime pm enabled
+
+Kimriver Liu (1):
+      i2c: designware: fix controller is holding SCL low while ENABLE bit is disabled
+
+ drivers/i2c/busses/Kconfig                 |  1 +
+ drivers/i2c/busses/i2c-designware-common.c | 14 ++++++++++++++
+ drivers/i2c/busses/i2c-designware-core.h   |  1 +
+ drivers/i2c/busses/i2c-designware-master.c | 38 ++++++++++++++++++++++++++++++++++++++
+ drivers/i2c/busses/i2c-synquacer.c         |  5 +++--
+ drivers/i2c/busses/i2c-xiic.c              |  2 +-
+ 6 files changed, 58 insertions(+), 3 deletions(-)
 
