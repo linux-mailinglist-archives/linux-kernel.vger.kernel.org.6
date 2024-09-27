@@ -1,121 +1,124 @@
-Return-Path: <linux-kernel+bounces-341630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D45A9882B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:40:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D78988296
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 380F91C21979
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:40:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AFBD1C20CDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02BF1BBBC9;
-	Fri, 27 Sep 2024 10:39:39 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620B2188CC3;
+	Fri, 27 Sep 2024 10:34:49 +0000 (UTC)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23B3156864;
-	Fri, 27 Sep 2024 10:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03E213698F;
+	Fri, 27 Sep 2024 10:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727433579; cv=none; b=Mstht2YP6JFV8m30++Ae88cS/vTAjLrUvxQga6YBa+eCNoujvJPUyTI81KKdEJvMsqylBY2uXAe1/aOjBwWJ5jtsaY5T0oLRHpcagV9KZvN3tEjb3GNSvO8N7FxdKhMnlhKHkLpxlZKyDBKHZgcsC6wbEcC3pOjNKyL94Qeuvz0=
+	t=1727433289; cv=none; b=b3l96Ukkeo+50xqZEpl7g6xY1UH80rpYh6GfE7bhE4C9hilgvOBJvYEUGUJwaP4KwRDlmboi05mYJPv0kVzYOSD3AyG88+fYr8uKEgMm9op4UAIIbm4HyqjyK5F2i2awUQR8zA7eZVFSCHJkYWlDfdzBJvkt/JUwXq3zA199g1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727433579; c=relaxed/simple;
-	bh=9nwi555wmo0T4hjREx+Vng1kKab3TSx4hs8Q1ZP84QI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e+kWKpZuPQKmgwx1SEeBNnqZEjAFgJlRd2BERuNChTlueiEiCoPvRY5VqX9Zol+GMmgi2a+YFibNxQdnS3+923blSJfCO1e1TskuAsIno732UFki/wf6aHjRgLUHywFbutSRPGoUnxDZB3RNZfU/m+hc83BGZsJYHjA9VPZ1uq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XFRjl0YrRzWf2l;
-	Fri, 27 Sep 2024 18:37:15 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3232F140391;
-	Fri, 27 Sep 2024 18:39:33 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 27 Sep 2024 18:39:25 +0800
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-To: <jgg@ziepe.ca>, <leon@kernel.org>
-CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <tangchengchang@huawei.com>,
-	<huangjunxian6@hisilicon.com>
-Subject: [PATCH v6 for-next 2/2] RDMA/hns: Disassociate mmap pages for all uctx when HW is being reset
-Date: Fri, 27 Sep 2024 18:33:23 +0800
-Message-ID: <20240927103323.1897094-3-huangjunxian6@hisilicon.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240927103323.1897094-1-huangjunxian6@hisilicon.com>
-References: <20240927103323.1897094-1-huangjunxian6@hisilicon.com>
+	s=arc-20240116; t=1727433289; c=relaxed/simple;
+	bh=yN6gDElavrQJa7jwQTTWC8l8VBpAN1vAQwopGHRGBtk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k9bfqLZOWCPDnxNz8kosVixErITKA7it0VOKY2bjmQshyRJaXne2cNBMjDRP1Hiu2teto1yE/OKirp6sjmVdfZjmNFTvIl3Z8+mbW+omIohZ60CGeu0UtyKjzhKyR3OnbayW+Bur4ezX+Ap5RFQGGWY9JgzVAziukFjsDGnFsUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e260b747fdcso27591276.3;
+        Fri, 27 Sep 2024 03:34:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727433286; x=1728038086;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RfEy+XIoNPLi46QPJiSDBu8Up9CfRlcO2gPqP6NKrqE=;
+        b=Eb/FKvQjuUagLJTBlTFF795nHWCack4kbjmuc0KVwWe/Spm6XgbiHpAN66w3p1g1Ew
+         oFtbySicE5IXKD4eeuE2v9mU4ZUBbUFzHjI92m26z5hvAVXxKe7VOld+kxepU8HXy+dG
+         77sUkynkv6nIJ2G6JcIH3dLGM3Evf69gaswggeJoRlr+yvlITGtRNsytkS09T7e/RqV2
+         GBQV6nmgnW5R3AHPIm3Zoo7JepZXjntFUBdR1GWYzUvQYDpkN3C8ryz9wEnuGj4/qO2P
+         WQISrRnEoyjIm3+/63VuIPuL2nBC5HxVF6Qjd9VjTvybWn1JsW15fi79Y4nh6yi6sSBf
+         BTUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8rTSlRVB9VPXVmOmxjM3+zfWhTApMljkWPCUIycIZ9hv7YGCsfEw3oKNbFpzVzmn74Cmzzq9t43GbZEut@vger.kernel.org, AJvYcCWYANWoEkrPBpAFJc15Dfgs9K6trd1yMynKYMCFVMybPv26wHMV1OiCLMXfuNuiB9K7GDGwI60L1Qi+@vger.kernel.org, AJvYcCWyLNklcdPDE3rOFWBxsWjFL8xhDApwmfnTNjJOFxeq8Re2GqXaiO1IeKJLLvyHIBXwNoMFa7NbPonbEovIBeIkcco=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt8MoQJehR6LsqpLd9Xv4PUkUts0IsTDMUSqBIHyZ31sk7Ldm2
+	3gQjd8oUyAsb5bpq909vBma8MuZkspRd6iDMazCFptGlede/2IksZUV/Xwee
+X-Google-Smtp-Source: AGHT+IEeLv7VNb+fvKNMiIE4FVk25QMA/omWWMIhimr3XlfjVfTMsthKvkjxQO4AJ4V1l563vCjaAw==
+X-Received: by 2002:a25:d851:0:b0:e25:c6aa:fe33 with SMTP id 3f1490d57ef6-e2604cf551fmr1648723276.37.1727433285770;
+        Fri, 27 Sep 2024 03:34:45 -0700 (PDT)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e25e3ef9e8csm378432276.2.2024.09.27.03.34.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Sep 2024 03:34:44 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6dfff346a83so17401957b3.2;
+        Fri, 27 Sep 2024 03:34:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUpO5Rs7qqNuYLsf2yjH7aD91Ov0dhW+frSN/+vNhSEg0nuok1Ouvm1lxUxTNLaVD3DJ7a3Pft+Wqx5/KO9c0jOxDs=@vger.kernel.org, AJvYcCVN/PTmO6T00en7/B3svDAVAZNZvlUqgpAIw1hVZQWTpTIceNINbJ11pVRSH3jUcsGPtZtPRHFBcqYFUrnB@vger.kernel.org, AJvYcCWJ2dRvhTR5jcTOBmlc/Z8s8MSGVWFeq19ci5MsqM2eEZPvQ/7fVoGkFQXC2GPwBvy5kQ7cCF4jdut/@vger.kernel.org
+X-Received: by 2002:a05:690c:498a:b0:6db:3b2f:a1eb with SMTP id
+ 00721157ae682-6e2475855cemr24823757b3.26.1727433284441; Fri, 27 Sep 2024
+ 03:34:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+References: <20240926180903.479895-1-sean.anderson@linux.dev> <20240926180903.479895-2-sean.anderson@linux.dev>
+In-Reply-To: <20240926180903.479895-2-sean.anderson@linux.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 27 Sep 2024 12:34:32 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUz2boLeoaynsHHM_26XqNFCJhTLYx9+zEHCG+ZMRwKVg@mail.gmail.com>
+Message-ID: <CAMuHMdUz2boLeoaynsHHM_26XqNFCJhTLYx9+zEHCG+ZMRwKVg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: salvator-xs: Add SD/OE pin properties
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chengchang Tang <tangchengchang@huawei.com>
+Hi Sean,
 
-When HW is being reset, userspace should not ring doorbell otherwise
-it may lead to abnormal consequence such as RAS.
+On Thu, Sep 26, 2024 at 8:09=E2=80=AFPM Sean Anderson <sean.anderson@linux.=
+dev> wrote:
+> Add SD/OE pin properties to the devicetree so that Linux can configure
+> the pin without relying on the OTP. This matches the register
+> configuration reported by Geert [1], as well as my inspection of the
+> schematic (which shows the SD/OE pin permanently tied high).
+>
+> [1] https://lore.kernel.org/linux-clk/CAMuHMdW9LMuQLuPEF-Fcs1E6Q7dDzY17VZ=
+qu4awKDj5WSTRt=3DA@mail.gmail.com/
+>
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 
-Disassociate mmap pages for all uctx to prevent userspace from ringing
-doorbell to HW. Since all resources will be destroyed during HW reset,
-no new mmap is allowed after HW reset is completed.
+Thanks for your patch!
 
-Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
-Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
-Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
----
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 4 ++++
- drivers/infiniband/hw/hns/hns_roce_main.c  | 5 +++++
- 2 files changed, 9 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index 24e906b9d3ae..f1feaa79f78e 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -7017,6 +7017,7 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
- 
- 	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
- }
-+
- static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
- {
- 	struct hns_roce_dev *hr_dev;
-@@ -7035,6 +7036,9 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
- 
- 	hr_dev->active = false;
- 	hr_dev->dis_db = true;
-+
-+	rdma_user_mmap_disassociate(&hr_dev->ib_dev);
-+
- 	hr_dev->state = HNS_ROCE_DEVICE_STATE_RST_DOWN;
- 
- 	return 0;
-diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
-index 4cb0af733587..49315f39361d 100644
---- a/drivers/infiniband/hw/hns/hns_roce_main.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_main.c
-@@ -466,6 +466,11 @@ static int hns_roce_mmap(struct ib_ucontext *uctx, struct vm_area_struct *vma)
- 	pgprot_t prot;
- 	int ret;
- 
-+	if (hr_dev->dis_db) {
-+		atomic64_inc(&hr_dev->dfx_cnt[HNS_ROCE_DFX_MMAP_ERR_CNT]);
-+		return -EPERM;
-+	}
-+
- 	rdma_entry = rdma_user_mmap_entry_get_pgoff(uctx, vma->vm_pgoff);
- 	if (!rdma_entry) {
- 		atomic64_inc(&hr_dev->dfx_cnt[HNS_ROCE_DFX_MMAP_ERR_CNT]);
--- 
-2.33.0
+There is no change in the output of
 
+    grep 10: /sys/kernel/debug/regmap/*-006a/registers
+
+before/after this patch, so
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+BTW, I applied the same patch to salvator-x.dtsi, and that seems to be
+fine, too.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
