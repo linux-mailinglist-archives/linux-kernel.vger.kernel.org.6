@@ -1,145 +1,112 @@
-Return-Path: <linux-kernel+bounces-341602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054BF988248
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:11:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E9298825C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7E9D1F22DAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:11:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB8BE281D4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37CC1BD002;
-	Fri, 27 Sep 2024 10:10:52 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40331BAED6;
+	Fri, 27 Sep 2024 10:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="x0zP+ehK"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0611BBBF1;
-	Fri, 27 Sep 2024 10:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE541BA4B
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 10:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727431852; cv=none; b=kQOrUVDkD4m9q2M1/XqgNOeCD0GJNETjO07TbLIxhVw+JUbfv/ALDVv0XklSXOJ7cSMHMfCZkv875e9NBURoUAjtGoLUECmAav8zXoCePWPaqWJX7DhzZmLrsyW6MnxDLgq3WORBTyoIoCW8UDR2i9+CVNXJmu+FB0jbg2OrTCU=
+	t=1727432553; cv=none; b=PqsABzhIarqBZoVkaPh5ZoRbBoN/lPaOazk9qhTZSTq0fCshMvxVUSly9MlPZi/VSaKmty9J1sSStxoLl4CoRYVXOBPOVqHaoDQKRynIiu6QYdOV3+LWKSLeb/y9AnulRp7d+lRxiTS30dtu/+ypArSjMRGgM2ETO1ACJlTUbZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727431852; c=relaxed/simple;
-	bh=46DKFiOZKtMOy5C/LqDJYVkvP8CaYTA8ZDmphOoRNmI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t0n92j90NnF8tmwC6FTQuz928twixCxQix999b89tah8BVWY4/RJRhpBhwFXJYUms3hmhT8EAY/tPNC26OBKUIH7lJcIq69m09/SlHtnw/HHynJ9f/+Pdr3yB/GAe+YdC2Nm6RHMZmOid5h0lVtxhYAPfmjpqkFZ4P6xysbscss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XFR6D3g4vz1SBK2;
-	Fri, 27 Sep 2024 18:09:56 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id F1B6E180042;
-	Fri, 27 Sep 2024 18:10:46 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 27 Sep
- 2024 18:10:46 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <krzk@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<alim.akhtar@samsung.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<sunyeal.hong@samsung.com>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] clk: samsung: Fix out-of-bound access of of_match_node()
-Date: Fri, 27 Sep 2024 18:21:04 +0800
-Message-ID: <20240927102104.3268790-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727432553; c=relaxed/simple;
+	bh=XpzVJnHFhcl4jmXhLHFvgrXOrhwm3pt7+vafHCNq9nU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sAobo7S9wYTtyln7gfjiu3jZlyH5qcMR1HebA23ViOjjQZS7Cxz1pRlrbXE30+uf/Nc2MTwYOlHNoSYGp5uybndphwnwnZo5sYGrOGbrkUdvMWhfuHahJJQr6/0Mnt8LjMsqFys30cGXbCbSnqSwlP6lymGjFJFtXvKHLRVQpzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=x0zP+ehK; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2054e22ce3fso22847035ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 03:22:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727432551; x=1728037351; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gjzHjRMZWCT00F+MmJxurXawW+bv39RWJ0acto+xoBc=;
+        b=x0zP+ehK/FZ93HCHUWmY0d8oMkaEXbKp8BPGAqVfIXaJ6zOh08UYyCzaHtE/ttT9g4
+         CO/PwNsH/gCcRVrFBwvgEr1qe8iVnr0NgIrCePO/4+2HweicUNLbGYWAfv8KueDoYOni
+         MQvSn3ujxRByElPK3Hhh6Mvmjn2DFF3kN8zvFFTII07oPu6TQMThclnKJ54hVbSWCzdF
+         NKSQMKiVkkK5m3uDwXr+6LlIglIvKgp599QLiLSezdZGrArh2yRi1HxCFPZhdnu5c2TF
+         iAff2bhv7Yxv/t+yr1kDhjAMWzC5hctwGVZJmFNyUxkN65NkiWtNpu4XH1HdaArhobb0
+         kyYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727432551; x=1728037351;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gjzHjRMZWCT00F+MmJxurXawW+bv39RWJ0acto+xoBc=;
+        b=EHG7/zLZjR1UpUDQu1In9meESi7nQNSGEmZbzcEUZFW8CfrjppJw6SgEPK0Zag7ID8
+         vKl3Onu2iREEapitRzd6mcJ+STdkyYTXNsM1/pKw1lvwhYP04RtQNmKBKznllzDuEDh4
+         3FKiPdZ4WFzq1HL6kknlLqEjG5BTcttOlpH+9kZNA4JGUyTa7HK6N1ayvMgC+9qdM+bt
+         0iMRkXFa3m8AhOxhhOIUIdr8UpEhXytogQr4BeZs222ztfG6s6FKYr0Q0uJPYsh8aZr8
+         PNquz6hDbzY/rywW721eVoOhZHpy/aXGEEjO0pUHs2Ldxm3/Lm6niiccEkszu2tLIlH3
+         /j1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUSvQA+vlbTpH6Cu0y7oRj1Z6u5GXjS9q/mMrzspzd+gWoRe6wbiZ0DStAXKZKZGNWGELcwfEb+qVBh1x8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyopE548N4oIqrsgLOnnKo/SeS0SPCk/HmvIqLKVi77DY6/JnO+
+	5Js7CkrEMJ9TyGj5R7TWKuAahuPIQFymcM/cJmbk73HcfDptTY6ZE4eBis8i2sI=
+X-Google-Smtp-Source: AGHT+IGjmKywl6Fm7hlmaEEN2CSCXIw815jV/ZLZG5HRcDqUBuPkAcQEU3JrHgAbSxA22mUkQAxe0w==
+X-Received: by 2002:a17:903:1c3:b0:205:9201:b520 with SMTP id d9443c01a7336-20b37c09c3dmr46510815ad.58.1727432551114;
+        Fri, 27 Sep 2024 03:22:31 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e2f382sm11026825ad.182.2024.09.27.03.22.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Sep 2024 03:22:30 -0700 (PDT)
+Message-ID: <4a250753-2bca-4ea3-87ef-af6d6a6b0ac5@kernel.dk>
+Date: Fri, 27 Sep 2024 04:22:29 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] drbd: Fix typos in the comment
+To: Yan Zhen <yanzhen@vivo.com>, philipp.reisner@linbit.com,
+ lars.ellenberg@linbit.com, christoph.boehmwalder@linbit.com
+Cc: drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+References: <20240927095735.228661-1-yanzhen@vivo.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240927095735.228661-1-yanzhen@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Currently, there is no terminator entry for exynosautov920_cmu_of_match,
-hence facing below KASAN warning,
+On 9/27/24 3:57 AM, Yan Zhen wrote:
+> Correctly spelled comments make it easier for the reader to understand
+> the code.
+> 
+> Fix typos:
+> 'mutliple' ==> 'multiple',
+> 'droped' ==> 'dropped',
+> 'Suprisingly' ==> 'Surprisingly',
+> 'chage' ==> 'change',
+> 'typicaly' ==> 'typically',
+> 'progres' ==> 'progress',
+> 'catched' ==> 'caught',
+> 'protocoll' ==> 'protocol',
+> 'stroage' ==> 'storage',
+> 'independend' ==> 'independent'.
 
-	==================================================================
-	BUG: KASAN: global-out-of-bounds in of_match_node+0x120/0x13c
-	Read of size 1 at addr ffffffe31cc9e628 by task swapper/0/1
+We generally don't do spelling fixes, unless it's done as part of
+a fix. That avoids needless churn that just causes backporting pain.
 
-	CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0+ #334
-	Hardware name: linux,dummy-virt (DT)
-	Call trace:
-	 dump_backtrace+0x94/0xec
-	 show_stack+0x18/0x24
-	 dump_stack_lvl+0x90/0xd0
-	 print_report+0x1f4/0x5b4
-	 kasan_report+0xc8/0x110
-	 __asan_report_load1_noabort+0x20/0x2c
-	 of_match_node+0x120/0x13c
-	 of_match_device+0x70/0xb4
-	 platform_match+0xa0/0x25c
-	 __device_attach_driver+0x7c/0x2d4
-	 bus_for_each_drv+0x100/0x188
-	 __device_attach+0x174/0x364
-	 device_initial_probe+0x14/0x20
-	 bus_probe_device+0x128/0x158
-	 device_add+0xb3c/0x10fc
-	 of_device_add+0xdc/0x150
-	 of_platform_device_create_pdata+0x120/0x20c
-	 of_platform_bus_create+0x2bc/0x620
-	 of_platform_populate+0x58/0x108
-	 of_platform_default_populate_init+0x100/0x120
-	 do_one_initcall+0x110/0x788
-	 kernel_init_freeable+0x44c/0x61c
-	 kernel_init+0x24/0x1e4
-	 ret_from_fork+0x10/0x20
-
-	The buggy address belongs to the variable:
-	 exynosautov920_cmu_of_match+0xc8/0x2c80
-
-	The buggy address belongs to the virtual mapping at
-	 [ffffffe31c7d0000, ffffffe31d700000) created by:
-	 paging_init+0x424/0x60c
-
-	The buggy address belongs to the physical page:
-	page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x4349e
-	flags: 0x3fffe0000002000(reserved|node=0|zone=0|lastcpupid=0x1ffff)
-	raw: 03fffe0000002000 fffffffec00d2788 fffffffec00d2788 0000000000000000
-	raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-	page dumped because: kasan: bad access detected
-
-	Memory state around the buggy address:
-	 ffffffe31cc9e500: f9 f9 f9 f9 00 00 03 f9 f9 f9 f9 f9 00 00 00 00
-	 ffffffe31cc9e580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-	>ffffffe31cc9e600: 00 00 00 00 00 f9 f9 f9 f9 f9 f9 f9 04 f9 f9 f9
-	                                  ^
-	 ffffffe31cc9e680: f9 f9 f9 f9 00 00 06 f9 f9 f9 f9 f9 00 00 06 f9
-	 ffffffe31cc9e700: f9 f9 f9 f9 00 00 06 f9 f9 f9 f9 f9 00 00 06 f9
-	==================================================================
-
-Add a dummy terminator entry at the end to assist
-of_match_node() in traversing up to the terminator entry
-without accessing an out-of-boundary index.
-
-Fixes: 485e13fe2fb6 ("clk: samsung: add top clock support for ExynosAuto v920 SoC")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/clk/samsung/clk-exynosautov920.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
-index 7ba9748c0526..a3634003b29b 100644
---- a/drivers/clk/samsung/clk-exynosautov920.c
-+++ b/drivers/clk/samsung/clk-exynosautov920.c
-@@ -1155,6 +1155,7 @@ static const struct of_device_id exynosautov920_cmu_of_match[] = {
- 		.compatible = "samsung,exynosautov920-cmu-peric0",
- 		.data = &peric0_cmu_info,
- 	},
-+	{ },
- };
- 
- static struct platform_driver exynosautov920_cmu_driver __refdata = {
 -- 
-2.34.1
+Jens Axboe
 
 
