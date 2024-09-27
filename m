@@ -1,421 +1,154 @@
-Return-Path: <linux-kernel+bounces-341730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926359884CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:31:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7767988421
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4B071C209E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:31:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA3F51C20B58
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D3518BC3B;
-	Fri, 27 Sep 2024 12:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E79218BC1F;
+	Fri, 27 Sep 2024 12:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H4mRp4lM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NMnMmPVC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40E018C03A;
-	Fri, 27 Sep 2024 12:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280B818A92A
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727440239; cv=none; b=D6xxxNG2O2AQg6VWJHat0AMbLwx6VJvF8Ekx6RMQ/AoTQ/3eq7h9ZKK4HwrIXhgqapAbIbgkr7mAJ0mgkD/s1pk+4ipwVVo6jaoWM6N7Bm7VcKujKCMP3PuKgFr/qL4YgHHxDOvvOFAStno+owDwTNNdY6C3f2FdFJJSCfFbRK8=
+	t=1727439846; cv=none; b=fUX99eYDUD/eQ45ilCmS4S+nzpQnUUUmgMbXlVI/ubCrxvHdgFulHzJYrW8iOzOhnxTwT3vnWk5NP2OugR7opWHlol4XcAX1CAo8OINdRNQMr21e1w3gegfboynydWsmBgCzAMZDnY+5WTnmxEb26BlZQciHTs/csTMXRwhK1EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727440239; c=relaxed/simple;
-	bh=nekBDy0fbUvFRTlF5bIpPVFtYPCKCeGrG35Ogbg/6G0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l0FKekl/N4RC8mn8ZLd3DZ96ElT6kmjySU2h3PW6FnBLFYDRc0w6EWHS8Ji0MExg3S8nGDV16I204J0vHo25r1Vxgi8qJ+0/ItWOWBfBDTz+y6339GCYh6wPp1yQsmFsUbxwQrFCeM0YwJR3p3Ov5kdR4GrxHUXqmpxxyVzFB9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H4mRp4lM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F44AC4CEC4;
-	Fri, 27 Sep 2024 12:30:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727440239;
-	bh=nekBDy0fbUvFRTlF5bIpPVFtYPCKCeGrG35Ogbg/6G0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=H4mRp4lM6ITn4qLlz2jMn1kWrG7pp5wDUiAfI1VXiXJyQJ//kFEl50++jI5KD6V7C
-	 hOY1wEJgvcxXyuA5HYDHWwMURaemX+hFCDte5lsIGQFeZ2THaPzuOY5UiDGhV7Lud5
-	 Mn7MjrraLkCzyet6rFb4wWk+Dex1xH56OHybpwgs=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org
-Subject: [PATCH 6.1 00/73] 6.1.112-rc1 review
-Date: Fri, 27 Sep 2024 14:23:11 +0200
-Message-ID: <20240927121719.897851549@linuxfoundation.org>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727439846; c=relaxed/simple;
+	bh=5VuviB8DRyOt//s3opc9BHk1L7AlQ59EBBLa9N7Wmtc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MdA4aqU4UBgJSfjtbAQ/dHa5CmPT94DrPF19Lg9RaF6T7ODzzxiaBVnsKic/+OcPHguT4W5/ciZoJQI3Qka5vIs2dz3sXnCrFwtbI87tREKUgwyotKO9FAYhoGKgYyCf/qGGhxhmLP3fP8DzbB7IiKRZhTVfmwmJyBLDzEbNv1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NMnMmPVC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727439844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rOO/RMJMndVoVeK71fgXzYzz13o8AL6/Nz/3/wUYT4k=;
+	b=NMnMmPVCSWFkviPXAPLUP8BlmPVKKdIV/ElGoWDby65tSjovxmoPM7m35Yw9pJRdql6wcC
+	OS/xqEBsZchhi40/+Z7x2LmFIeNAGNxyJK4d7LEDBe9A0hE3Zuz7wBZnhNA10fdb8/bADU
+	azWx61ug6t+YQIZrkiHWtLRDXOh0I54=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-308-RJ6UxhbwPeSQN595tWaPNA-1; Fri, 27 Sep 2024 08:24:03 -0400
+X-MC-Unique: RJ6UxhbwPeSQN595tWaPNA-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3789c3541e9so881437f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 05:24:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727439842; x=1728044642;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rOO/RMJMndVoVeK71fgXzYzz13o8AL6/Nz/3/wUYT4k=;
+        b=NkV610Wu2w1gxFqv6vJTsfAEAVbX5m5Dc/Sp1HdnUTastXQMyLaO91t5QXHif5TMUA
+         no5Cn73LRnknhy18Te2UYcj+lUFyvrhyuHDV+6kUuNhQeHVCsH+ZWlwXxjkvNI3gEBnC
+         hfNFEwdYtBmGzbQ67cfg8EKdhrWLmPHrdJons6h8GFVlo7t4lh9UvwooJQ0Cea3yAMKU
+         vz+F9sF1r0dAmoBck7rvFrBSz9+A4IGhBZBHQhIxFb0Dt9GFQsTRDrkeQ3xBCio0y6H3
+         CJl8+Lleh9m5mmwpmVIZlcwz6P6mHVe6X8aaKFNeMam3vlDupCclNVwlXLUG5RA3jeJL
+         LIaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXeR1iyDq3dBJRVnLk5gnCxNia4PzQkG9fpwUsUG8/j+PXbeW96KSJxyu7aNE+3JztM5NQ6/MnEdHLrgww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnahRGyTO83c+xWSG8WapXmjruq53N9S/3AK6q0QT1UFi+qr3f
+	Jnh6CxgmQ2AhYdliO1aIzzMPfX1nS18KonB2ct8MRSZPR0G6nsx52AY9I3td+wXC2VnNaOtaJQO
+	0SVzZBELdZ3jZnWaQ+WP+ORjNrFpUCtqAgT+M7Xeb0g9vTjXoD3PalpmZcyfhdqbMMUtYHObH
+X-Received: by 2002:a05:6000:114a:b0:374:c8e5:d56a with SMTP id ffacd0b85a97d-37cd5b292a5mr2156772f8f.48.1727439841698;
+        Fri, 27 Sep 2024 05:24:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFMdCrEL1EFKHWG5H8TyNvUQTkzVSw/bWL4thDMZuabh4Ub793nN7dXmSmqfZoWUw/tqASgiA==
+X-Received: by 2002:a05:6000:114a:b0:374:c8e5:d56a with SMTP id ffacd0b85a97d-37cd5b292a5mr2156751f8f.48.1727439841270;
+        Fri, 27 Sep 2024 05:24:01 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c709:8000:b502:8c1c:3624:99d4? (p200300cbc7098000b5028c1c362499d4.dip0.t-ipconnect.de. [2003:cb:c709:8000:b502:8c1c:3624:99d4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a52915sm73471995e9.39.2024.09.27.05.23.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Sep 2024 05:24:00 -0700 (PDT)
+Message-ID: <3ebf7c73-a575-4add-aca9-fb5079663ba4@redhat.com>
+Date: Fri, 27 Sep 2024 14:23:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.112-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.1.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.1.112-rc1
-X-KernelTest-Deadline: 2024-09-29T12:17+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-This is the start of the stable review cycle for the 6.1.112 release.
-There are 73 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.112-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.1.112-rc1
-
-Edward Adam Davis <eadavis@qq.com>
-    USB: usbtmc: prevent kernel-usb-infoleak
-
-Junhao Xie <bigfoot@classfun.cn>
-    USB: serial: pl2303: add device id for Macrosilicon MS3020
-
-Tony Luck <tony.luck@intel.com>
-    x86/mm: Switch to new Intel CPU model defines
-
-Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
-    powercap: RAPL: fix invalid initialization for pl4_supported field
-
-Filipe Manana <fdmanana@suse.com>
-    btrfs: calculate the right space for delayed refs when updating global reserve
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    selftests: mptcp: join: restrict fullmesh endp on 1st sf
-
-Marc Kleine-Budde <mkl@pengutronix.de>
-    can: mcp251xfd: move mcp251xfd_timestamp_start()/stop() into mcp251xfd_chip_start/stop()
-
-Marc Kleine-Budde <mkl@pengutronix.de>
-    can: mcp251xfd: properly indent labels
-
-Hagar Hemdan <hagarhem@amazon.com>
-    gpio: prevent potential speculation leaks in gpio_device_get_desc()
-
-Kent Gibson <warthog618@gmail.com>
-    gpiolib: cdev: Ignore reconfiguration without direction
-
-Ping-Ke Shih <pkshih@realtek.com>
-    Revert "wifi: cfg80211: check wiphy mutex is held for wdev mutex"
-
-Pablo Neira Ayuso <pablo@netfilter.org>
-    netfilter: nf_tables: missing iterator type in lookup walk
-
-Pablo Neira Ayuso <pablo@netfilter.org>
-    netfilter: nft_set_pipapo: walk over current view on netlink dump
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    netfilter: nft_socket: Fix a NULL vs IS_ERR() bug in nft_socket_cgroup_subtree_level()
-
-Florian Westphal <fw@strlen.de>
-    netfilter: nft_socket: make cgroupsv2 matching work with namespaces
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: journal geometry is not properly bounds checked
-
-Darrick J. Wong <djwong@kernel.org>
-    xfs: set bnobt/cntbt numrecs correctly when formatting new AGs
-
-Darrick J. Wong <djwong@kernel.org>
-    xfs: fix reloading entire unlinked bucket lists
-
-Darrick J. Wong <djwong@kernel.org>
-    xfs: make inode unlinked bucket recovery work with quotacheck
-
-Darrick J. Wong <djwong@kernel.org>
-    xfs: reload entire unlinked bucket lists
-
-Darrick J. Wong <djwong@kernel.org>
-    xfs: use i_prev_unlinked to distinguish inodes that are not on the unlinked list
-
-Shiyang Ruan <ruansy.fnst@fujitsu.com>
-    xfs: correct calculation for agend and blockcount
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: fix unlink vs cluster buffer instantiation race
-
-Darrick J. Wong <djwong@kernel.org>
-    xfs: fix negative array access in xfs_getbmap
-
-Darrick J. Wong <djwong@kernel.org>
-    xfs: load uncached unlinked inodes into memory on demand
-
-Shiyang Ruan <ruansy.fnst@fujitsu.com>
-    xfs: fix the calculation for "end" and "length"
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: remove WARN when dquot cache insertion fails
-
-Long Li <leo.lilong@huaweicloud.com>
-    xfs: fix ag count overflow during growfs
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: collect errors from inodegc for unlinked inode recovery
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: fix AGF vs inode cluster buffer deadlock
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: defered work could create precommits
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: buffer pins need to hold a buffer reference
-
-Ye Bin <yebin10@huawei.com>
-    xfs: fix BUG_ON in xfs_getbmap()
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: quotacheck failure can race with background inode inactivation
-
-Darrick J. Wong <djwong@kernel.org>
-    xfs: fix uninitialized variable access
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: block reservation too large for minleft allocation
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: prefer free inodes at ENOSPC over chunk allocation
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: fix low space alloc deadlock
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: don't use BMBT btree split workers for IO completion
-
-Wengang Wang <wen.gang.wang@oracle.com>
-    xfs: fix extent busy updating
-
-Wu Guanghao <wuguanghao3@huawei.com>
-    xfs: Fix deadlock on xfs_inodegc_worker
-
-Dave Chinner <dchinner@redhat.com>
-    xfs: dquot shrinker doesn't check for XFS_DQFLAG_FREEING
-
-Ferry Meng <mengferry@linux.alibaba.com>
-    ocfs2: strict bound check before memcmp in ocfs2_xattr_find_entry()
-
-Ferry Meng <mengferry@linux.alibaba.com>
-    ocfs2: add bounds checking to ocfs2_xattr_find_entry()
-
-Geert Uytterhoeven <geert+renesas@glider.be>
-    spi: spidev: Add missing spi_device_id for jg10309-01
-
-Hongyu Jin <hongyu.jin@unisoc.com>
-    block: Fix where bio IO priority gets set
-
-zhang jiao <zhangjiao2@cmss.chinamobile.com>
-    tools: hv: rm .*.cmd when make clean
-
-Michael Kelley <mhklinux@outlook.com>
-    x86/hyperv: Set X86_FEATURE_TSC_KNOWN_FREQ when Hyper-V provides frequency
-
-Paulo Alcantara <pc@manguebit.com>
-    smb: client: fix hang in wait_for_response() for negproto
-
-Liao Chen <liaochen4@huawei.com>
-    spi: bcm63xx: Enable module autoloading
-
-hongchi.peng <hongchi.peng@siengine.com>
-    drm: komeda: Fix an issue related to normalized zpos
-
-Fabio Estevam <festevam@gmail.com>
-    spi: spidev: Add an entry for elgin,jg10309-01
-
-Liao Chen <liaochen4@huawei.com>
-    ASoC: tda7419: fix module autoloading
-
-Liao Chen <liaochen4@huawei.com>
-    ASoC: intel: fix module autoloading
-
-Hans de Goede <hdegoede@redhat.com>
-    ASoC: Intel: soc-acpi-cht: Make Lenovo Yoga Tab 3 X90F DMI match less strict
-
-Marc Kleine-Budde <mkl@pengutronix.de>
-    can: mcp251xfd: mcp251xfd_ring_init(): check TX-coalescing configuration
-
-Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-    wifi: iwlwifi: clear trans->state earlier upon error
-
-Dmitry Antipov <dmantipov@yandex.ru>
-    wifi: mac80211: free skb on error path in ieee80211_beacon_get_ap()
-
-Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-    wifi: iwlwifi: mvm: don't wait for tx queues if firmware is dead
-
-Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-    wifi: iwlwifi: mvm: pause TCM when the firmware is stopped
-
-Daniel Gabay <daniel.gabay@intel.com>
-    wifi: iwlwifi: mvm: fix iwl_mvm_scan_fits() calculation
-
-Benjamin Berg <benjamin.berg@intel.com>
-    wifi: iwlwifi: lower message level for FW buffer destination
-
-Huacai Chen <chenhuacai@kernel.org>
-    LoongArch: Define ARCH_IRQ_INIT_FLAGS as IRQ_NOPROBE
-
-Jacky Chou <jacky_chou@aspeedtech.com>
-    net: ftgmac100: Ensure tx descriptor updates are visible
-
-Mike Rapoport <rppt@kernel.org>
-    microblaze: don't treat zero reserved memory regions as error
-
-Ross Brown <true.robot.ross@gmail.com>
-    hwmon: (asus-ec-sensors) remove VRM temp X570-E GAMING
-
-Thomas Blocher <thomas.blocher@ek-dev.de>
-    pinctrl: at91: make it work with current gpiolib
-
-Sherry Yang <sherry.yang@oracle.com>
-    scsi: lpfc: Fix overflow build issue
-
-Kailang Yang <kailang@realtek.com>
-    ALSA: hda/realtek - FIxed ALC285 headphone no sound
-
-Kailang Yang <kailang@realtek.com>
-    ALSA: hda/realtek - Fixed ALC256 headphone no sound
-
-Hongbo Li <lihongbo22@huawei.com>
-    ASoC: allow module autoloading for table board_ids
-
-Hongbo Li <lihongbo22@huawei.com>
-    ASoC: allow module autoloading for table db1200_pids
-
-Albert Jakieła <jakiela@google.com>
-    ASoC: SOF: mediatek: Add missing board compatible
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |   4 +-
- arch/loongarch/include/asm/hw_irq.h                |   2 +
- arch/loongarch/kernel/irq.c                        |   3 -
- arch/microblaze/mm/init.c                          |   5 -
- arch/x86/kernel/cpu/mshyperv.c                     |   1 +
- arch/x86/mm/init.c                                 |  16 +-
- block/blk-core.c                                   |  10 +
- block/blk-mq.c                                     |  10 -
- drivers/gpio/gpiolib-cdev.c                        |  12 +-
- drivers/gpio/gpiolib.c                             |   3 +-
- drivers/gpu/drm/arm/display/komeda/komeda_kms.c    |  10 +-
- drivers/hwmon/asus-ec-sensors.c                    |   2 +-
- drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c     |  42 ++--
- drivers/net/can/spi/mcp251xfd/mcp251xfd-dump.c     |   2 +-
- drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c   |   2 +-
- drivers/net/can/spi/mcp251xfd/mcp251xfd-ring.c     |  14 +-
- drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c      |   2 +-
- .../net/can/spi/mcp251xfd/mcp251xfd-timestamp.c    |   7 +-
- drivers/net/can/spi/mcp251xfd/mcp251xfd.h          |   1 +
- drivers/net/ethernet/faraday/ftgmac100.c           |  26 ++-
- drivers/net/wireless/intel/iwlwifi/fw/dbg.c        |   2 +-
- drivers/net/wireless/intel/iwlwifi/iwl-trans.h     |   2 +-
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c  |   9 +-
- drivers/net/wireless/intel/iwlwifi/mvm/ops.c       |   2 +
- drivers/net/wireless/intel/iwlwifi/mvm/scan.c      |  23 +-
- .../wireless/intel/iwlwifi/pcie/ctxt-info-gen3.c   |   3 +-
- drivers/pinctrl/pinctrl-at91.c                     |   5 +-
- drivers/powercap/intel_rapl_msr.c                  |  12 +-
- drivers/scsi/lpfc/lpfc_bsg.c                       |   2 +-
- drivers/spi/spi-bcm63xx.c                          |   1 +
- drivers/spi/spidev.c                               |   2 +
- drivers/usb/class/usbtmc.c                         |   2 +-
- drivers/usb/serial/pl2303.c                        |   1 +
- drivers/usb/serial/pl2303.h                        |   4 +
- fs/btrfs/block-rsv.c                               |  14 +-
- fs/btrfs/block-rsv.h                               |  12 +
- fs/btrfs/delayed-ref.h                             |  21 ++
- fs/ocfs2/xattr.c                                   |  27 ++-
- fs/smb/client/connect.c                            |  14 +-
- fs/xfs/libxfs/xfs_ag.c                             |  19 +-
- fs/xfs/libxfs/xfs_alloc.c                          |  69 +++++-
- fs/xfs/libxfs/xfs_bmap.c                           |  16 +-
- fs/xfs/libxfs/xfs_bmap.h                           |   2 +
- fs/xfs/libxfs/xfs_bmap_btree.c                     |  19 +-
- fs/xfs/libxfs/xfs_btree.c                          |  18 +-
- fs/xfs/libxfs/xfs_fs.h                             |   2 +
- fs/xfs/libxfs/xfs_ialloc.c                         |  17 ++
- fs/xfs/libxfs/xfs_log_format.h                     |   9 +-
- fs/xfs/libxfs/xfs_sb.c                             |  56 ++++-
- fs/xfs/libxfs/xfs_trans_inode.c                    | 113 +--------
- fs/xfs/xfs_attr_inactive.c                         |   1 -
- fs/xfs/xfs_bmap_util.c                             |  18 +-
- fs/xfs/xfs_buf_item.c                              |  88 +++++--
- fs/xfs/xfs_dquot.c                                 |   1 -
- fs/xfs/xfs_export.c                                |  14 ++
- fs/xfs/xfs_extent_busy.c                           |   1 +
- fs/xfs/xfs_fsmap.c                                 |   1 +
- fs/xfs/xfs_fsops.c                                 |  13 +-
- fs/xfs/xfs_icache.c                                |  58 ++++-
- fs/xfs/xfs_icache.h                                |   4 +-
- fs/xfs/xfs_inode.c                                 | 260 ++++++++++++++++++---
- fs/xfs/xfs_inode.h                                 |  36 ++-
- fs/xfs/xfs_inode_item.c                            | 149 ++++++++++++
- fs/xfs/xfs_inode_item.h                            |   1 +
- fs/xfs/xfs_itable.c                                |  11 +
- fs/xfs/xfs_log.c                                   |  47 ++--
- fs/xfs/xfs_log_recover.c                           |  19 +-
- fs/xfs/xfs_mount.h                                 |  11 +-
- fs/xfs/xfs_notify_failure.c                        |  15 +-
- fs/xfs/xfs_qm.c                                    |  72 ++++--
- fs/xfs/xfs_super.c                                 |   1 +
- fs/xfs/xfs_trace.h                                 |  46 ++++
- fs/xfs/xfs_trans.c                                 |   9 +-
- include/net/netfilter/nf_tables.h                  |  13 ++
- net/mac80211/tx.c                                  |   4 +-
- net/netfilter/nf_tables_api.c                      |   5 +
- net/netfilter/nft_lookup.c                         |   1 +
- net/netfilter/nft_set_pipapo.c                     |   6 +-
- net/netfilter/nft_socket.c                         |  41 +++-
- net/wireless/core.h                                |   8 +-
- sound/pci/hda/patch_realtek.c                      |  76 ++++--
- sound/soc/amd/acp/acp-sof-mach.c                   |   2 +
- sound/soc/au1x/db1200.c                            |   1 +
- sound/soc/codecs/tda7419.c                         |   1 +
- sound/soc/intel/common/soc-acpi-intel-cht-match.c  |   1 -
- sound/soc/intel/keembay/kmb_platform.c             |   1 +
- sound/soc/sof/mediatek/mt8195/mt8195.c             |   3 +
- tools/hv/Makefile                                  |   2 +-
- tools/testing/selftests/net/mptcp/mptcp_join.sh    |   4 +-
- 89 files changed, 1255 insertions(+), 462 deletions(-)
-
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/mm: Add missing free.
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, akpm@linux-foundation.org
+Cc: shuah@kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240927030114.3792-1-zhangjiao2@cmss.chinamobile.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240927030114.3792-1-zhangjiao2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 27.09.24 05:01, zhangjiao2 wrote:
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> 
+> There is a memory leak in mkdirty, just free src before return.
+
+Now explain to me why we care. The program will return immediately 
+afterwards?
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
