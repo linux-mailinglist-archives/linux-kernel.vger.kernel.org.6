@@ -1,115 +1,119 @@
-Return-Path: <linux-kernel+bounces-341590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71AAE988223
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:02:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C70A7988226
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E9B51F2165D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:02:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31561F22150
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF271BC073;
-	Fri, 27 Sep 2024 10:02:01 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC471BC06E;
+	Fri, 27 Sep 2024 10:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fwiW9A/P"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BF61BBBD3;
-	Fri, 27 Sep 2024 10:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C5916DEB5
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 10:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727431320; cv=none; b=iRx9PvR3RwgJpGrxE3wAM2lOJrAd4Ok3fp0+Qn8VWPAaT8aZGXufOPkgs3QNIcPVlWLfN4c0x3hi0MZobSLPglzfvkA96P5LU+Zeyy1zrQ34PrTGAY7Z5yB0s8AKbEZ51FO34e9pHfplMyQ75Wr9baku9dI3TvKaLr+Sam0fzPs=
+	t=1727431364; cv=none; b=a9WLvX04XGSkrg7UZ8MwJVK4gw+xdw6sXxpOkI5rWI4+G9RmIFQDTxdrf0k/qh4hVvV0Oy6Jk5zf8PIgLNCim7bgcT8uUD3tmOl2qChJgLmHZKhAcaM/wD+Y3z4xyKXrDyPdooKguETT2Qklru/3vNrcvzBwRB3UuTmbqH6PPAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727431320; c=relaxed/simple;
-	bh=ht6fokgBdYVUP0yIwXleLxvN52k0ajk5Rwp9U1rQadM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ttKYFomj1oqMVR8riap1P91ToztnKdVeLm248mQUwpTn0eT1BU+vTnpaKp/DXBi3g++9GJynNJAO7GcigRSW8b7Pdm+qpaSdYr3xBzsmahLcGbeVo2goMQCzzE5EqqVtVaaNXIZ9ORTfMwsvG8yUX/LptnQsTEmbgZnGJE+BqDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XFQvv2JvVz1SBvB;
-	Fri, 27 Sep 2024 18:00:59 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id C0E8214037C;
-	Fri, 27 Sep 2024 18:01:49 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 27 Sep 2024 18:01:40 +0800
-Message-ID: <e9a3066a-ff07-6d57-9b97-17ecebe95e59@huawei.com>
-Date: Fri, 27 Sep 2024 18:01:39 +0800
+	s=arc-20240116; t=1727431364; c=relaxed/simple;
+	bh=714tcmA69jYCf49amVdt/+5qp+u9/EL6t0lYFKZfwIM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=txxSCA1aWA2YneLk4RfuFLyZ8LBT1Tlwr/46juWmAygBK68zcBZDF+nceLmmbdCZRlgtRvdDeGSZlsyKn0m7+ZqToxGKiAqTSHy6c+Zg4Coxa9xS46CGW9qdBJSLFqJChXcKXofe89RH9tmHRm4GnZydxPPcXkw9dTBNWX0aWRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fwiW9A/P; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4582c62ee33so16348561cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 03:02:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727431361; x=1728036161; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3dKRhm+hxvd20V+RfyZH2y9WeFmXxaHJfSQ5cudFct0=;
+        b=fwiW9A/PWKXc8wzNX9QvMk90sdJrL0SdXGzT/JE+NrgID+oQeNSX29Bp51m8elAwo3
+         CIyWx3Q+5ysO7ke5v5C4nEAtK6Ra31gPfcxvhMXxJXOyw1z9+69rqckgL6BODRdDtDDV
+         61CGiEs0lxbRAL8E+PkzWfK0T0WzfDqQ55Jtg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727431361; x=1728036161;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3dKRhm+hxvd20V+RfyZH2y9WeFmXxaHJfSQ5cudFct0=;
+        b=xMoSHjHAljwLf/5sYko8hIWSgmaUaHUvpQm6nKysxoANtmD/Qu/N9sJvPpbBspDHFj
+         O37LJ5KjzrZsG4piJiWxRFkFvVfZfFoHHdwpIprpxdPfRWNc0X9hE9CvxiToWnz7AeUX
+         mIr4w2Lpta6G2QaKcec11nJZUUsdWYqLEH066p88vhad+Rd0DfL2dfjML2VLO1d30m0p
+         neyb/GRZ8pMuuHyZJ13wvtCKuhK5JfVPt02n9/OZJN1xRkOiUs1m8Hxbm6AfiRMz5hVN
+         mhkdsBKMuhC3ndO0RT+BDR5noR2NYeXBNsoU19ZObW5VYon8CPHfvevzh2eogUJsi0ea
+         HaBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNZ84DeqyD3Zm6vYO82Le1NJqVkBZhT9cWcxMGa25W/MdJ88suyP9OWNLDUHH6UWZQ/i4yTH9dMgvxHr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlj+QfzmnRksHOI29hE8XvLI/PJQ4TV2J11/XjiiwTTq0zsjwP
+	+uyOVG7jt4wwOCnqwJ3z7mEGREVv/vKMIrDFzPcoew4mzrBhYxwtm+G5GTS5GQ==
+X-Google-Smtp-Source: AGHT+IGwjy4L9j91AvvJoFPs1lbJmSSAza6n2s2jdGdo0BYw5vYnwd6nQ+ES2VVTBgPk7iM/xKrtFg==
+X-Received: by 2002:ac8:5f54:0:b0:458:37c6:46fa with SMTP id d75a77b69052e-45c9f230381mr40089251cf.28.1727431361423;
+        Fri, 27 Sep 2024 03:02:41 -0700 (PDT)
+Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45c9f353f08sm6341091cf.94.2024.09.27.03.02.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 03:02:40 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v2 0/3] media: static-analyzers: Fix 6.12-rc1 cocci
+ warnings
+Date: Fri, 27 Sep 2024 10:02:31 +0000
+Message-Id: <20240927-cocci-6-12-v2-0-1c6ad931959b@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH] uprobes: Improve the usage of xol slots for better
- scalability
-To: Andi Kleen <ak@linux.intel.com>
-CC: <mhiramat@kernel.org>, <oleg@redhat.com>, <andrii@kernel.org>,
-	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>
-References: <20240918012752.2045713-1-liaochang1@huawei.com>
- <87jzf9b12w.fsf@linux.intel.com>
- <7a6ba3f3-dffa-cdac-73c7-074505ea4b44@huawei.com> <ZuwoUmqXrztp-Mzh@tassilo>
- <0939300c-a825-5b46-d86f-72ce89b2b95f@huawei.com> <ZvH_LiUeOtAwommF@tassilo>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <ZvH_LiUeOtAwommF@tassilo>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALeC9mYC/23MOw7CMBBF0a1EUzPINiYfKvaBUoTxEE+ROLLBA
+ kXZOyY15X3SOyskjsIJLtUKkbMkCXMJc6iA/DCPjOJKg1HGqs40SIFIsEZt0NK50XdquXMOymG
+ J/JD3jt360l7SM8TPbmf9W/8yWaPC4aRbZ7kedOeu5GOY5DUdQxyh37btCw7ZNOqnAAAA
+To: Benoit Parrot <bparrot@ti.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>, 
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-staging@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
+This patchset introduces fixes for all the new warnings introduced in
+Linux 6.12-rc1
 
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v2: Thanks Andy and Hans
+- Replace max with if
+- Fix style in subject
+- Link to v1: https://lore.kernel.org/r/20240927-cocci-6-12-v1-0-a318d4e6a19d@chromium.org
 
-在 2024/9/24 7:52, Andi Kleen 写道:
->> Thanks for the suggestions, I will experiment with a read-write lock, meanwhile,
->> adding the documentation and testing for the lockless scheme.
-> 
-> Read-write locks are usually not worth it for short critical sections,
-> in fact they can be slower due to cache line effects.
+---
+Ricardo Ribalda (3):
+      media: ti: cal: Use str_up_down()
+      staging: media: ipu3: Use str_down_up()
+      media: atomisp: Use max() macros
 
-OK, I will start from a simple spinlock.
+ drivers/media/platform/ti/cal/cal-camerarx.c    | 2 +-
+ drivers/staging/media/atomisp/pci/sh_css_frac.h | 6 ++++--
+ drivers/staging/media/ipu3/ipu3-css.c           | 2 +-
+ 3 files changed, 6 insertions(+), 4 deletions(-)
+---
+base-commit: 075dbe9f6e3c21596c5245826a4ee1f1c1676eb8
+change-id: 20240927-cocci-6-12-4c571bc8e9dd
 
-> 
->> Sorry, I may not probably get the point clear here, and it would be very
->> nice if more details are provided for the concern. Do you mean it's necessary
->> to make the if-body excution exclusive among the CPUs? If that's the case,
->> I guess the test_and_put_task_slot() is the equvialent to the race condition
->> check. test_and_put_task_slot() uses a compare and exchange operation on the
->> slot_ref of utask instance. Regardless of the work type being performed by
->> other CPU, it will always bail out unless the slot_ref has a value of one,
->> indicating the utask is free to access from local CPU.
-> 
-> What I meant is that the typical pattern for handling races in destruction
-> is to detect someone else is racing and then let it do the destruction
-> work or reacquire the resource (so just bail out).
-
-Agreed.
-
-> 
-> But that's not what you're doing here, in fact you're adding a
-> completely new code path that has different semantics? I haven't checked
-> all the code, but it looks dubious.
-
-Andi, I've just sent v2. Looking forward to your feedback. Thanks.
-
-  https://lore.kernel.org/all/20240927094549.3382916-1-liaochang1@huawei.com/
-
-> 
-> -Andi
-> 
-
+Best regards,
 -- 
-BR
-Liao, Chang
+Ricardo Ribalda <ribalda@chromium.org>
+
 
