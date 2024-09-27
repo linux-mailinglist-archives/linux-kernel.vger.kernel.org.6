@@ -1,81 +1,138 @@
-Return-Path: <linux-kernel+bounces-341217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3098C987CC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:56:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4581D987CC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61E311C21C75
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:56:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC1FB2856C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72E7166F33;
-	Fri, 27 Sep 2024 01:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A91166F32;
+	Fri, 27 Sep 2024 01:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="cXdoxNmd"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHKUp61A"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC44139D04;
-	Fri, 27 Sep 2024 01:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2018A139D04;
+	Fri, 27 Sep 2024 01:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727402176; cv=none; b=ju1ip3zMrHo7RdQD2mZg8svu0pUL8d/f3YNFzKg9balz3D8Qf/5IL+A/AY6E2ppLtJ7FUaCfrPVkx2urWFfAyrkNuWnGN+sACfX2jF8fw/m57nssLD+pdRiPkajAr8CDTcWM6F0cZnVRLqlGLdi2n3Fczvd79FpW8f1gdbAQ/Ow=
+	t=1727402358; cv=none; b=SCYwS8D3kr+14Z/GUpiSJjthHH4gaNwN/1IGyQN7AjpCyvrM+Ws4qae9QGjzDl4kMfeLeT4ym/yZkFgDIRSeCsPLvL93Iz3No0Jc5ZE9f7VTxF3aEABTW9T0TKHHAZgwXMogUe2Af/w6lQjK9DntTdQeeMYjw/gS+iKqGfWIMFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727402176; c=relaxed/simple;
-	bh=ncoRFY8uh8Mcll71lsrLV3hAG3+Z6uNOuYcscTQA4+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YRIrjb2RR1hPeIQXKFNtZA/3fJZUEwqKZhdsCGoiB4yONTHrB0WIFksLs5xxeyhEc6TKwy+qMdNot5AmwKdLttFF4a42FWylxENnppn3sQ/8y1b1QEjhqFUmg5Eonuvr2bc1BIB841FypkyLNM9yvl6hnrBzypwblzwSS5UMJRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=cXdoxNmd; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=akB9JoRv18U9cgJ4MunbjCcH+dfMeNfJaDufYgRIIdY=; b=cXdoxNmdsJh0q8qEH9PujgudJy
-	0tKKAhs33nn79i5DtJaokcJvxlTdtT7WP9HmvZm577SXk6OyGosRAQrbuE9zal1jvwk+TNUq8OOCU
-	D26J753Q8DzewzLUnnVg5UtCGsAMlr1p2SZqz49BNQEvbkpvrQkSkasNJMPC8ggP+8IuD3kXksnxK
-	ZIFUUgr11CMA1yioMzmmygE1+Q3/vqbBo0qvTX6D6LHqcZoXSGU3ROAXkCJoTsMYgrjOOJAKAoxL2
-	7KetstVIrlBNgjSDjI1VO9783258ew+jdPrPXDmggnhv9EOOz2omAqBUceT+s91jc+DBwXoRSBFt1
-	zvG+LQFg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1su0DL-0000000FqUU-3An3;
-	Fri, 27 Sep 2024 01:56:11 +0000
-Date: Fri, 27 Sep 2024 02:56:11 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [tree-wide] finally take no_llseek out
-Message-ID: <20240927015611.GT3550746@ZenIV>
+	s=arc-20240116; t=1727402358; c=relaxed/simple;
+	bh=c5cR3Q8+qFlb50DTwf+gQ5cpJ9VTAnU8gdUxRmnDbYM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S274rhc66Wo2OWMNx/GOom+YWJb75mPnKpHS1pTmisrxSW9+HFJ6N/2pQL8L7tqnlK8Pzec+dHitdPaIoTs9PvLIUMcZiOrYKEqPUUcy1AXW+NVPkS7RZRouTUIk8flC0O4/oyDnIEtAERyMI1IZLL8FrIILIDW+MLW9Ybj9N4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHKUp61A; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d0d0aea3cso218118366b.3;
+        Thu, 26 Sep 2024 18:59:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727402355; x=1728007155; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c5cR3Q8+qFlb50DTwf+gQ5cpJ9VTAnU8gdUxRmnDbYM=;
+        b=AHKUp61AJtMfruVZePyCsB1a0gkDZ4Nc+QLwXCYdLvtp5cAiS85+dchsNBto+bWTT0
+         x/3IWivhWAsdwWOtL8OH57Vl9nn34Y66ahtiWBjhndjweWHiCWGy64lE1TCh8/maT6U7
+         Vv/5bxNxRSTPMx3QoE/sn5IMyYAxa3XOj3FzAu3QNROSR8loL336jxl1PVwuapHLG6zV
+         9jiimUT4zHeIFhytPR19Y030vvIhkrJ5zxhQGaXZesKI/Q0e/3kUJO2VVRk+cRGzea2r
+         h6I4NprI145in4lQg2UgCNbtjHXbok88KgSNNfsxpsWGN5yfuG93eAiaeuXRtGNDIH4B
+         mHlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727402355; x=1728007155;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c5cR3Q8+qFlb50DTwf+gQ5cpJ9VTAnU8gdUxRmnDbYM=;
+        b=vjnMpUchmq+5wDZOo6hYyJC1xNABqKHo8hL5qEtgwBr0CVd5hHBf7a/tz43ryLGbLX
+         2ENzFcCvxZ/xffwh3uHHNVOvHtKhPkb/GGcnFy5VCwePRhVvXR/XCnuNvlyduZ0I/PuF
+         OuIwmnIav+UH6UziGcEhmuyttzXYazAhqUbnSPgyuVi9wwuteDZJJIRfZJkOqdqqEsmq
+         CYFAv3vRCUf+DQlnt8VJGtWGnNtM45lSQbeByZa/XfDfqGOm5CHPQ8GXN/TsbZ75gpMN
+         1SkfEC5dQtqQAL/wrslQFMPAP6wxQ+LlTEN98zSYvSCcxbhfo4yEVH/hMSf1dZU/xiZC
+         F4Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGQbq0gg/GsxigrG4EFlVrWOW5Z1shT8jHQV2vTbDArfb+Lgz7HGtQmX6H85GA8+SWOcy2MoFEm58=@vger.kernel.org, AJvYcCVVs7FIRh7pbBDAxCA69Q7LwDx91fpP0R1M01Pn3gRFDjL8myfhgm3bJSqeuDF8+pKZYyRU8Pi3iATNYKvZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFOCZ3+7QPORVemmQB6rCZEKTEtX6ZBgHTlzTB8ZCwhe6st59V
+	5zY8Zcnut8qLpn1DXKNlvF3u2RDCOnOyDLAb0NW8CenQHv0lFo6lN7qGqr+LxQWKjLoXyp17UNC
+	/g9mpTvB62XfdvyPzTKK93D2/hPfcU8s=
+X-Google-Smtp-Source: AGHT+IE+eDDaLETVOmmDQjeaQ6dwtiRqSGMOBSedce60yrewHjSxeDZdw+OY3ofOqrceL+QgiofjsTCuQYgh0var87Q=
+X-Received: by 2002:a17:906:dac4:b0:a8d:51a7:d5e8 with SMTP id
+ a640c23a62f3a-a93c4918365mr114251366b.15.1727402355429; Thu, 26 Sep 2024
+ 18:59:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20240920101820.44850-1-kfting@nuvoton.com> <20240920101820.44850-2-kfting@nuvoton.com>
+ <rpu2o2vw6jqbuywabaxaqepathkqlzjzjvn7j6h5lq6zslitu4@icj5hpmwo6kr>
+In-Reply-To: <rpu2o2vw6jqbuywabaxaqepathkqlzjzjvn7j6h5lq6zslitu4@icj5hpmwo6kr>
+From: Tyrone Ting <warp5tw@gmail.com>
+Date: Fri, 27 Sep 2024 09:59:03 +0800
+Message-ID: <CACD3sJYQeqo4+uvDYR7P14cC3R9_wHMDhzy6T4G9V018NmTMSg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/6] i2c: npcm: correct the read/write operation procedure
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
+	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-	no_llseek had been defined to NULL two years ago,
-in 868941b14441 "fs: remove no_llseek".
+Hi Andi:
 
-	To quote that commit,
+Thank you for your help.
 
-At -rc1 we'll need do a mechanical removal of no_llseek -
-git grep -l -w no_llseek | grep -v porting.rst | while read i; do
-	sed -i '/\<no_llseek\>/d' $i
-done
-would do it.
+Andi Shyti <andi.shyti@kernel.org> =E6=96=BC 2024=E5=B9=B49=E6=9C=8826=E6=
+=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=884:19=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> Hi Tyrone,
+>
+> On Fri, Sep 20, 2024 at 06:18:15PM GMT, warp5tw@gmail.com wrote:
+> > From: Tyrone Ting <kfting@nuvoton.com>
+> >
+> > From: Tyrone Ting <kfting@nuvoton.com>
+>
+> no worries, I can take care of this.
+>
+> > Originally the driver uses the XMIT bit in SMBnST register to decide
+> > the upcoming i2c transaction. If XMIT bit is 1, then it will be an i2c
+> > write operation. If it's 0, then a read operation will be executed.
+> >
+> > In slave mode the XMIT bit can simply be used directly to set the state=
+.
+> > XMIT bit can be used as an indication to the current state of the state
+> > machine during slave operation. (meaning XMIT =3D 1 during writing and
+> > XMIT =3D 0 during reading).
+> >
+> > In master operation XMIT is valid only if there are no bus errors.
+> > For example: in a multi master where the same module is switching from
+> > master to slave at runtime, and there are collisions, the XMIT bit
+> > cannot be trusted.
+> >
+> > However the maser already "knows" what the bus state is, so this bit
+> > is not needed and the driver can just track what it is currently doing.
+> >
+> > Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
+> > Reviewed-by: Tali Perry <tali.perry1@gmail.com>
+>
+> This patch is independent from the rest of the series, can I
+> start takin this in and unburden you from this?
+>
 
-	Unfortunately, that hadn't been done.  Linus, could you
-do that now, so that we could finally put that thing to rest?
-All instances are of the form
-	.llseek = no_llseek,
-so it's obviously safe (run the script, look at git diff and see
-yourself).
+Sure, thank you again.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> Andi
+
+Regards,
+Tyrone
 
