@@ -1,161 +1,72 @@
-Return-Path: <linux-kernel+bounces-341674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6FCD98836B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:40:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC6F598836E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A64282B2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:40:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECE911C22984
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B92318A6AC;
-	Fri, 27 Sep 2024 11:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="oea5qNMT"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7953189F59;
+	Fri, 27 Sep 2024 11:42:54 +0000 (UTC)
+Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E8D176AD8
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A654187349
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727437245; cv=none; b=uN/rzuToe5yzOM50c+d3dl8h5I6hvQSJANOcwYcXRXsnqimXAtlbsY4VLT2nSBK4qHWZ/8Dyak6J/8IU944fdT7ROLj3u0UQNoQvw2bHC3XW3+Ua0BOKi/dVAyRM/WoMi6LkaVWyJF9b/N803JvXiy3yc7dUFrUrt6VrphCkTvQ=
+	t=1727437374; cv=none; b=jh9+4BdWAKsGC0PJ88k1vReodOfGGrsrikFJhyK9qgwgaLGWFGm/MPxeXh01qR0rYOasMr8qGh7lsA1XHr5J3OPsHviRup37gJQhK4XqEhe6j5qkC3dJ0O9/TWJXR1RXW4Qy/R9iwVFuIksLoX1VE5+TLblRJhvcEa1eyudzpsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727437245; c=relaxed/simple;
-	bh=4EnKIqPTCw9/4YUSHQg8hhkFTGSTS8hHn8kIFwgcFKM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SA5af+g4fCbozCoBVU8vl9VtRDNot+h4KjGj5WJU+XE0cr5S7VkvBi7gdcFDEaQdEPXlXlkiw68e8QzH+SIi9WQ5RSRprDCZpjvPdikGDLJIa/lt1H/S3/vrFEDqg56GKJBDxLGNkObfZOTcplQiYqBeEGVBO5p55xGIiJYsBik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=oea5qNMT; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-535dc4ec181so2212212e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 04:40:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727437242; x=1728042042; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jyze8mrfj5MgD1MFDnxhD4qoqtYWf3ZLVXQmYdjmUJQ=;
-        b=oea5qNMTrcwYuJ6FJvNWd//9u+cqoNKuRCZs9dUWp2AIAxflN6qUC7UUVuim8TRimZ
-         wRhCb7jZjBbWKonS8nOUWiHAxNI9+aNmg3HIklC5ABwYh2012cVKY2i460JpQc+AvAiB
-         LfOrtxJoeqi1SfuzbB1y7eqGytsqZfCDDtUUny91RoOJGlym9+MCMwgQVMIgyKKTrbzb
-         7Tj7Hx2jupodMudrIf6p6D+KwWuD7KbhejGI9Bz08MBwj7RacvZT0AOphv8uy3+TlZwi
-         VSNrloQWtc7nnM3gIFLTDWVkvVkwibU6ZvayPfRXQzKrTFdWH2i0jScUY2Znd2ziffeR
-         AS7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727437242; x=1728042042;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jyze8mrfj5MgD1MFDnxhD4qoqtYWf3ZLVXQmYdjmUJQ=;
-        b=Ry2N89PdnsoHR7QbxMpNVjEc1Oad+/M4CZzHNusReBT25kBgP2CUv18ciDkbCqLZc8
-         TbUaKu5vfnoCi72hMr3VR9IN91QJbBgf9fJeY7/QJMaSH5sJMkisPjPoTMAkjOqwIoJ0
-         JxsrwUY2fCcxABdbwC1OQTuATUVMwWGWwIN10mS6EjpbGiKqaChQozUe35WRO9+Wphyw
-         Cg0UJWsEsW0KaBxqK5slfrIWdIT1Z7DHGApwh6t/34WHXu9y/mbnFJl8m261oeUduU2S
-         yoyKjbbNYi4l4JHC/RHiWxUlX8pjE2z55O53TBzfuO9CjVfY6kA7gEDsvOIADU37W512
-         4viA==
-X-Forwarded-Encrypted: i=1; AJvYcCV60tJldJGhvdk7pgoaba46ewXaoacMXbE7sQ9UqgY5jOsLGDmOBwBnblY4nh3Z86vsLU6TlmmiJ5sXA7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa8s7ahsC4VeMG63FH3RCSvjx8vENc9+tqyR2rXF6refQ+CYTA
-	ZNneVoohRDJz++pxKdof9RQL5yy35kYNIKJHZDOVsyyznLw5i57LLcMnI/JAfyypXdU0otD1nrk
-	GEtlUquMsMj5DDUcupSIm7IBc9iM9U3BR9BBYXw==
-X-Google-Smtp-Source: AGHT+IGtRNzQlB+uJX1WtGAN3+M1XpMEsrQNdn2urubN2ERKRB+qApxAGpkLDsPz5k8Ppg7OujcBHbAX/spyAdOh2qc=
-X-Received: by 2002:a05:6512:3da8:b0:52e:fd53:a251 with SMTP id
- 2adb3069b0e04-5389fcac2c2mr1968758e87.59.1727437241472; Fri, 27 Sep 2024
- 04:40:41 -0700 (PDT)
+	s=arc-20240116; t=1727437374; c=relaxed/simple;
+	bh=2/TM2NHM2Z6JbDF6sxIrQU/Yg2Y3AlAVhKkUXPDJ4+w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TRc3hUg2AdlJ9Fmu8FSa7VMnLkBmi59zE3G1S3KBPZhskiE4dst7abXytOD4epzURdOiE2/zqK+yz0PWYUQPlAvs0casuzYaxdxuomoJVzxSTX/6wOlAd+MDJKwMX6GYSXDU0VsQIXo4c/lPiUyI2OKsnqnbPjN/JpDnbeYpREA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.71.54])
+	by sina.com (10.185.250.23) with ESMTP
+	id 66F69A0D000026DB; Fri, 27 Sep 2024 19:42:08 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6840358913239
+X-SMAIL-UIID: A2F331F45F294C8C95E71D6C31C39589-20240927-194208-1
+From: Hillf Danton <hdanton@sina.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: syzbot <syzbot+05f9cecd28e356241aba@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] INFO: task hung in new_device_store (5)
+Date: Fri, 27 Sep 2024 19:41:58 +0800
+Message-Id: <20240927114158.1190-1-hdanton@sina.com>
+In-Reply-To: <CANn89iLKhw-X-gzCJHgpEXe-1WuqTmSWLGOPf5oy1ZMkWyW9_w@mail.gmail.com>
+References: <66f5a0ca.050a0220.46d20.0002.GAE@google.com> <CANn89iKLTNs5LAuSz6xeKB39hQ2FOEJNmffZsv1F3iNHqXe0tQ@mail.gmail.com> <20240927110422.1084-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620042915.2173-1-ian.ray@gehealthcare.com>
- <8d8462da853b6c147e3cdb790b2e3ea7d4aaf533.camel@suse.de> <ZvaYopCACdP-dQIi@852ed68de471>
-In-Reply-To: <ZvaYopCACdP-dQIi@852ed68de471>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 27 Sep 2024 13:40:30 +0200
-Message-ID: <CAMRc=MffD07aa=caRcBe9B=cna+SXYdJrH4z3b2V6qS1G3Z6zw@mail.gmail.com>
-Subject: Re: [PATCH] gpio: pca953x: fix pca953x_irq_bus_sync_unlock race
-To: Ian Ray <ian.ray@gehealthcare.com>
-Cc: Jean Delvare <jdelvare@suse.de>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 1:36=E2=80=AFPM Ian Ray <ian.ray@gehealthcare.com> =
-wrote:
->
-> On Fri, Sep 27, 2024 at 11:49:04AM +0200, Jean Delvare wrote:
-> >
-> > Hello Ian,
-> >
-> > On Thu, 2024-06-20 at 07:29 +0300, Ian Ray wrote:
-> > > Ensure that `i2c_lock' is held when setting interrupt latch and mask =
-in
-> > > pca953x_irq_bus_sync_unlock() in order to avoid races.
-> > >
-> > > The other (non-probe) call site pca953x_gpio_set_multiple() ensures t=
-he
-> > > lock is held before calling pca953x_write_regs().
-> > >
-> > > The problem occurred when a request raced against irq_bus_sync_unlock=
-()
-> > > approximately once per thousand reboots on an i.MX8MP based system.
-> :
-> > > --- a/drivers/gpio/gpio-pca953x.c
-> > > +++ b/drivers/gpio/gpio-pca953x.c
-> > > @@ -758,6 +758,8 @@ static void pca953x_irq_bus_sync_unlock(struct ir=
-q_data *d)
-> > >         int level;
-> > >
-> > >         if (chip->driver_data & PCA_PCAL) {
-> > > +               guard(mutex)(&chip->i2c_lock);
-> > > +
-> > >                 /* Enable latch on interrupt-enabled inputs */
-> > >                 pca953x_write_regs(chip, PCAL953X_IN_LATCH, chip->irq=
-_mask);
-> > >
-> >
-> > I've been asked to backport this fix to SUSE kernels and I have a
-> > concern about it.
-> >
-> > You take the i2c_lock mutex inside the (chip->driver_data & PCA_PCAL)
-> > conditional block, where pca953x_write_regs() is being called, and the
-> > commit description implies this is indeed the call you wanted to
-> > protect.
-> >
-> > However, immediately after the conditional block, the common code path
-> > includes a call to pca953x_read_regs(). Looking at the rest of the
-> > driver code, I see that the i2c_lock mutex is *also* always held
-> > (except during device probe) when calling this function. Which isn't
-> > really surprising as I seem to understand the device uses a banked
-> > register addressing, and this typically affects both reading from and
-> > writing to registers.
-> >
-> > So I suspect the i2c_lock mutex needs to be held for this call to
-> > pca953x_read_regs() as well (unless you are familiar with the register
-> > map and know for sure that the "direction" register is outside of the
-> > banked register range).
->
-> Hello Jean,
->
-> Direction is indeed banked (see, for example, PCA953x_BANK_CONFIG).
->
-> It certainly looks plausible that a race between
-> pca953x_gpio_direction_input or pca953x_gpio_direction_output and
-> the register read in pca953x_irq_bus_sync_unlock may occur.
->
-> In practice, I think that this is unlikely to ever be observed because
-> (IMHO) GPIO direction is rarely changed after initialization.
-> (Disclaimer: this is true for the embedded systems I work with.)
->
-> Hope this clarifies things.
->
+On Fri, 27 Sep 2024 13:24:54 +0200 Eric Dumazet <edumazet@google.com>
+> I suggest you look at why we have to use rtnl_trylock()
+> 
+> If you know better, please send patches to remove all instances.
 
-I'd argue that this is the case for kernel users but you can never
-tell what the user-space will do. I think this may be a valid concern
-and worth addressing.
-
-Bart
+No patch is needed before you show us deadlock. I suspect you could
+spot a case where lockdep fails to report deadlock.
 
