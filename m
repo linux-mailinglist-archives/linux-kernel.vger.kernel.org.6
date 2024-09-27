@@ -1,199 +1,99 @@
-Return-Path: <linux-kernel+bounces-341459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3938D98807E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:38:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B2A988081
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D6D6281F55
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:38:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 214D42826FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE21189B8C;
-	Fri, 27 Sep 2024 08:38:34 +0000 (UTC)
-Received: from us-smtp-delivery-44.mimecast.com (us-smtp-delivery-44.mimecast.com [207.211.30.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54698189B94;
+	Fri, 27 Sep 2024 08:38:43 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB3E188A13
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.211.30.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9823B189B82
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727426313; cv=none; b=JPlqkJMrbq4s2wU5yO95a0xHkrZCHOMwhRTInZDy1eB4ZdbbnEloeULAc1ULN/iWeV8HuiHO8tzzgNZc8hbo7PiMD2xbdAaNBZUB+I89SxGxsje0SVe489OEiPgATofqhVsjc5Frw36BEQDWim9L5BWGB/iHDTIwfqskB90uFdQ=
+	t=1727426323; cv=none; b=P3FMyILwaNSFgSvqC9990Z2dhMmP/Oc0W2xyePIR+NJtJDA6ES3MuWvZw0TY4oU/pQ7gv77qgP8vI3HohJLfTey4URrMVxGvUsF3OU7Rp6SL7fh5zb+j1UoB3AZ0b8Yh0d9ZiGjn5PGo5qUN6JV4+5BD576SwYKw1RaLCPPdxQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727426313; c=relaxed/simple;
-	bh=5fZOxTgFdnFRLk5dVfvdHz8eMa+aF6h6Kp1fyoJ5Idk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IwEFR5g3AyUP9U5efwZ8ZYZu1tjkAPcI/Bf1V8IeJYUdvJORm56wFESWY2RLwn4povymj26SnZebPoeeooxAopoAbmwIBKzNuXl09qd77r/Rof9GZZOeqFkrnimYL2Uguh6OKv0Md2+dYlghintQffHehRF0cSnK7O+Ne31yBQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=none smtp.mailfrom=queasysnail.net; arc=none smtp.client-ip=207.211.30.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=queasysnail.net
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-433-kbha-mGBPiG3-xuHTjmMbA-1; Fri,
- 27 Sep 2024 04:38:21 -0400
-X-MC-Unique: kbha-mGBPiG3-xuHTjmMbA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D1B019034F7;
-	Fri, 27 Sep 2024 08:38:19 +0000 (UTC)
-Received: from hog (unknown [10.39.192.29])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4EE9C1956054;
-	Fri, 27 Sep 2024 08:38:15 +0000 (UTC)
-Date: Fri, 27 Sep 2024 10:38:13 +0200
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: pabeni@redhat.com,
-	syzbot <syzbot+cc39f136925517aed571@syzkaller.appspotmail.com>,
-	davem@davemloft.net, edumazet@google.com,
-	herbert@gondor.apana.org.au, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] UBSAN: shift-out-of-bounds in
- xfrm_selector_match (2)
-Message-ID: <ZvZu9TmFs5VFhjLw@hog>
-References: <00000000000088906d0622445beb@google.com>
- <66f33458.050a0220.457fc.001e.GAE@google.com>
- <ZvPvQMDvWRygp4IC@hog>
- <ZvZfAQ4IGX/3N/Ne@gauss3.secunet.de>
+	s=arc-20240116; t=1727426323; c=relaxed/simple;
+	bh=vBbo3HB5Qz+3wCGbH67QnJuM4gRbAwSZPSMxhep5Ins=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TE/slrbJmXmBLPJ3KlPCZuD6xAqUw3gV5988KTEPeBljDkPaVJ9Y+6kacoao1Mg1yeMV5EZIdbR16q5Mtcq1jPMirYYO/WARlyHvqHXDbvghcWdNb/KE4rFPzEeV81UX2i1arq1A/nOKll/ovHVsT3u/TUqEI0jaftndNJ6Oslg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a0ce4692a4so18548875ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 01:38:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727426321; x=1728031121;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QjhYMp+aHI+Y2MwKKNnj3/aFSAJBr/KYr7GS4EUAW9E=;
+        b=JcXIEL2/PKCVHDm8xLKu+kD4MyoO/oYhdqhWVo0Ktd4qnN8otjsReEheA6cEfwMhuf
+         yPoMGv+v9tO7sNFXTFV+lQ72nZBNzikmyjZ75rhRqYW1fMr1XjREfvh2fGT5hGqa5QS4
+         yY17CiBGLwNjfQCfeLJI7dqYnu1plz3EH1mGfGFUwh4nH28KBLMg5vdH1uW7xxJLhDAE
+         J+t9MbHgyD4nFPnz7tkvj3CTxHtsAb2nsxFYfkiriTCgilrwflxfVt4tRwQXoQ6Pf07q
+         PfUJBSy4L1+q/fihFLMCqi2NJ/Pn2HE2MAZOehym4CPaDKgA0OM3w2DiDK6RcFvjvcAt
+         4XNg==
+X-Gm-Message-State: AOJu0YziygTNnUSl+ARMQ9sq2weShY3zsu2i+2ieO4v+IvkRB5BATdXF
+	fDHp7fnYASpehrmHt+xK/uhZTO1S1SYBQtScFkqKDlwHUwdT/ImMjAKK01g5IlCBl5xHp8SO3SF
+	erw5q0qNbpi2BNrkFAEYBeN6KH61YKWJeO01K3R6tUSNtR6iAJ2VjeUU=
+X-Google-Smtp-Source: AGHT+IGctPAiBtzwErvDr0msRn4V4xSGxegC/4d7/ZIhNwEfzu5HHHR02fC2oJ6LBTBcmBpUFPRWvMHmGu+xZLpaRRC5EEV9s8eI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZvZfAQ4IGX/3N/Ne@gauss3.secunet.de>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-Received: by 2002:a05:6e02:1d1b:b0:3a2:763b:c83e with SMTP id
+ e9e14a558f8ab-3a3446029c2mr21519705ab.5.1727426320798; Fri, 27 Sep 2024
+ 01:38:40 -0700 (PDT)
+Date: Fri, 27 Sep 2024 01:38:40 -0700
+In-Reply-To: <000000000000ae63710620417f67@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f66f10.050a0220.38ace9.0011.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [squashfs?] possible deadlock in fsnotify_destroy_mark
+From: syzbot <syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-2024-09-27, 09:30:09 +0200, Steffen Klassert wrote:
-> On Wed, Sep 25, 2024 at 01:08:48PM +0200, Sabrina Dubroca wrote:
-> > 2024-09-24, 14:51:20 -0700, syzbot wrote:
-> > > syzbot has found a reproducer for the following issue on:
-> > > 
-> > > HEAD commit:    151ac45348af net: sparx5: Fix invalid timestamps
-> > > git tree:       net-next
-> > > console+strace: https://syzkaller.appspot.com/x/log.txt?x=15808a80580000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=37c006d80708398d
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=cc39f136925517aed571
-> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122ad2a9980000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1387b107980000
-> > 
-> > syzbot managed to create an SA with:
-> > 
-> > usersa.sel.family = 0
-> > usersa.sel.prefixlen_s = 128
-> > usersa.family = AF_INET
-> > 
-> > Because of the AF_UNSPEC selector, verify_newsa_info doesn't put
-> > limits on prefixlen_{s,d}. But then copy_from_user_state sets
-> > x->sel.family to usersa.family (AF_INET).
-> > 
-> > So I think verify_newsa_info should do the same conversion before
-> > checking prefixlen:
-> > 
-> > 
-> > diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-> > index 55f039ec3d59..8d06a37adbd9 100644
-> > --- a/net/xfrm/xfrm_user.c
-> > +++ b/net/xfrm/xfrm_user.c
-> > @@ -201,6 +201,7 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
-> >  {
-> >  	int err;
-> >  	u8 sa_dir = attrs[XFRMA_SA_DIR] ? nla_get_u8(attrs[XFRMA_SA_DIR]) : 0;
-> > +	u16 family = p->sel.family;
-> >  
-> >  	err = -EINVAL;
-> >  	switch (p->family) {
-> > @@ -221,7 +222,10 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
-> >  		goto out;
-> >  	}
-> >  
-> > -	switch (p->sel.family) {
-> > +	if (!family && !(p->flags & XFRM_STATE_AF_UNSPEC))
-> > +		family = p->family;
-> > +
-> > +	switch (family) {
-> >  	case AF_UNSPEC:
-> >  		break;
-> >  
-> > 
-> > 
-> > Steffen, does that make sense?
-> 
-> Yes, it does. Later, in copy_from_user_state() we do
-> 
-> if (!x->sel.family && !(p->flags & XFRM_STATE_AF_UNSPEC))
-> 	x->sel.family = p->family;
-> 
-> anyway.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Yes, that's what I based this on. Ok, so I'll make this a proper
-patch, thanks.
+***
 
-> > Without this, we have prefixlen=128 when we get to addr4_match, which
-> > does a shift of (32 - prefixlen), so we get
-> > 
-> > UBSAN: shift-out-of-bounds in ./include/net/xfrm.h:900:23
-> > shift exponent -96 is negative
-> > 
-> > 
-> > Maybe a check for prefixlen < 128 would also be useful in the
-> > XFRM_STATE_AF_UNSPEC case, to avoid the same problems with syzbot
-> > passing prefixlen=200 for an ipv6 SA. I don't know how
-> > XFRM_STATE_AF_UNSPEC is used, so I'm not sure what restrictions we can
-> > put. If we end up with prefixlen = 100 used from ipv4 we'll still have
-> > the same issues.
-> 
-> I've introduced XFRM_STATE_AF_UNSPEC back in 2008 to make
-> inter addressfamily tunnels working while maintaining
-> backwards compatibility to openswan that did not set
-> the selector family. At least that's what I found in
-> an E-Mail conversation from back then.
-> 
-> A check for prefixlen <= 128 would make sense in any case.
-> But not sure if we can restrict that somehow further.
+Subject: Re: [syzbot] [squashfs?] possible deadlock in fsnotify_destroy_mark
+Author: lizhi.xu@windriver.com
 
-I'll add this check too, and then I'll run some more experiments with
-that flag.
+Use memalloc_nofs_save/memalloc_nofs_restore to make sure we don't end
+up with the fs reclaim dependency.
 
-> > 
-> > >  __ip4_datagram_connect+0x96c/0x1260 net/ipv4/datagram.c:49
-> > >  __ip6_datagram_connect+0x194/0x1230
-> > >  ip6_datagram_connect net/ipv6/datagram.c:279 [inline]
-> > >  ip6_datagram_connect_v6_only+0x63/0xa0 net/ipv6/datagram.c:291
-> > 
-> > This path also looks a bit dubious. From the reproducer, we have a
-> > rawv6 socket trying to connect to a v4mapped address, despite having
-> > ip6_datagram_connect_v6_only as its ->connect.
-> > 
-> > pingv6 sockets also use ip6_datagram_connect_v6_only and set
-> > sk->sk_ipv6only=1 (in net/ipv4/ping.c ping_init_sock), but rawv6 don't
-> > have this, so __ip6_datagram_connect can end up in
-> > __ip4_datagram_connect. I guess it would make sense to set it in rawv6
-> > too. rawv6_bind already rejected v4mapped addresses.
-> > 
-> > And then we could add a DEBUG_NET_WARN_ON_ONCE(!ipv6_only_sock(sk)) in
-> > ip6_datagram_connect_v6_only, or maybe even call ipv6_addr_type to
-> > reject v4mapped addresses and reject them like the non-AF_INET6 case.
-> 
-> I can't comment on that now, let me have a closer look into it.
+#syz test
 
-This bit was more intended for Paolo/the netdev maintainers. I looked
-into it a bit more yesterday, and I don't think we should do anything
-for ping/raw sockets, because userspace can change sk_ipv6only via
-setsockopt(with SOL_IPV6,IPV6_V6ONLY). So we can only make sure that
-the kernel doesn't misbehave with v4mapped addresses, which I think is
-the case (pingv6 sockets will return EINVAL when ping_v6_sendmsg sees
-a v4mapped address, and rawv6 sockets will let the user send those
-packets but I didn't see any OOB accesses).
-
--- 
-Sabrina
-
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index c7e451d5bd51..70b77b6186a6 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -643,8 +643,13 @@ static int inotify_update_watch(struct fsnotify_group *group, struct inode *inod
+ 	/* try to update and existing watch with the new arg */
+ 	ret = inotify_update_existing_watch(group, inode, arg);
+ 	/* no mark present, try to add a new one */
+-	if (ret == -ENOENT)
++	if (ret == -ENOENT) {
++		unsigned int nofs_flag;
++
++		nofs_flag = memalloc_nofs_save();
+ 		ret = inotify_new_watch(group, inode, arg);
++		memalloc_nofs_restore(nofs_flag);
++	}
+ 	fsnotify_group_unlock(group);
+ 
+ 	return ret;
 
