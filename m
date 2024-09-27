@@ -1,155 +1,197 @@
-Return-Path: <linux-kernel+bounces-342054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1A6988A18
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D102988A1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382E71F22AFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:34:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B53181F22D73
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F87B1C1AAB;
-	Fri, 27 Sep 2024 18:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA411C1ACB;
+	Fri, 27 Sep 2024 18:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hUyByVj6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="at6SoP5z"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2055.outbound.protection.outlook.com [40.107.223.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1A213CA81;
-	Fri, 27 Sep 2024 18:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727462055; cv=none; b=BvuuC+GcQoJT6sD2QB+JFLiMl+o0KxJFldv2B0tc0FGU/sX2ws2vWb0GWtp5oDiu6uakbdLzmyS64Slf/iPSmTC5Z3r/EljZFvquHgwIUf5FCE1hdhRJ/0qMYqwr906ltyVCaVD4uPnPwy/uz1glVaON1fyk+4jE9QdTFNRbir0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727462055; c=relaxed/simple;
-	bh=dlqW5Zm8FitfmTGFtECD8AT31bFCGQrJ6qlNba+UZV4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mO2hR/6we0SA8AcmuyaH3jtPgwIU70tIxqAjo9TGO2+/RHT1HU29QgIqfcM00brg0a76OhjfWjwyA2hrxlu23ebQbkE6gxU2I5SsmkY0YZIN7grvRR0e4gQBhEhWzvk5jbFim7vyHND4O+C0TrgM7NfCocttP39NbjOAkz+AFas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hUyByVj6; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727462053; x=1758998053;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=dlqW5Zm8FitfmTGFtECD8AT31bFCGQrJ6qlNba+UZV4=;
-  b=hUyByVj6IyRgINIrfTtYbJHqCpi3xWXbO6FnCdGQe1BLaRd9+0WM7sPZ
-   6wXemGM7eMZrXHcvRzfgS5p6Drtm42cIuxnCA7sdY0BavY0F+y/4d25PR
-   Anr046YhzxE3duMlAyAVwYqu5R8NTb1841BIMexhXPkF4vfLHD6SM+vMY
-   b3sJ3PAk/o3vHq1E+Mj3sl0z/ewfElI/bHP6Zg0L4sgJXQn5QKTqu1OhY
-   p3PmduJJIQb+NhCbR7SN9FxFr64k64SAoqkfcJNS8HKimhDFOzpMfu4QG
-   ZV4WVPm9F7TVjMTfhvb2nkR68wF7l1NFBxuvFuAS0bz7ZYr1RgM1X4r2z
-   g==;
-X-CSE-ConnectionGUID: 3KG002ZyTHq25qih7q1cuA==
-X-CSE-MsgGUID: Ot+jEmxxRYO9HGlBPjMrkw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="26748097"
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="26748097"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 11:34:01 -0700
-X-CSE-ConnectionGUID: hGCaFdTjRU2ETMBJ4AAm0Q==
-X-CSE-MsgGUID: BJCBp5/4R/ajQ2HHluHvbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="103422840"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 11:34:00 -0700
-Received: from [10.212.24.85] (kliang2-mobl1.ccr.corp.intel.com [10.212.24.85])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 4131720B8DDA;
-	Fri, 27 Sep 2024 11:33:58 -0700 (PDT)
-Message-ID: <bbbd024c-d2df-47ea-9587-f68e5bc45962@linux.intel.com>
-Date: Fri, 27 Sep 2024 14:33:57 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0409A13CA81;
+	Fri, 27 Sep 2024 18:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727462165; cv=fail; b=ulcBUCuL5AnmOM8YPC1vFtNvLSJCWZ+5uRb+mEhcV9WNeTB1dn2WAhMvGgwXyiNXcKCgXEwqdRvmexOB5XtmRUTIqL9tq2y+j/sXi5qrXRsPc4cSY23m602nkA04kFZNt4uUk60e4h4oxKK3ztMk+vOAR53N6hiNAMDDuauhA50=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727462165; c=relaxed/simple;
+	bh=17dBu/bJ18oec0EyF0N8adrhaj6lmfZ7CqxTn0zT7gg=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=U/7MbN3tOAWpPkZ+QJbrX393uTMtoSIQ6CQjkgb/g0jZXs2qgbvQlUJQZ6FmHCqGoEa5N8LBach9pziXx4W/IzfYikZEY85txlTTudpF2+80QBVdPK6PbM9c+NVenFIHVY3Ohewef3h2K3p0Mmbt85aZYf9wUc3MOg1SAK0AYvI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=at6SoP5z; arc=fail smtp.client-ip=40.107.223.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZmzlrHGtY+P7xD2O2rZnIf0SDHtgJpPjvflJ6Cd/ZcJucCHxlss4fb8rPxDJ2IjZ6kbQTcSPOQ1/cY3d3rUaIbmhqCbTGGK+lAABTkVqW9qruNO8f7+2GDneNg0j8W9REZIMnCt31aRyWHiJs539h9/PC0Sgk6vLo9WmdsoaSVrL7s/lYWB/rLPapiOi7kTxReOJERfwBlw5CZq9B7yF+Og1Du068fU3cib1rP7TdLE7eSME8dNAngn7pFlkCtS1yBu1CUtHy5xcuIYtnU3hpqmx6PFGzcveF+c2GDMJTpSNwXNrT41ObZmN7GVa3lQzA5W4oMXf5RzY1Aevn+MQ8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U1OgkWGlWXVIGoHsqd1uRYgI5S2W58tB70DDDArbRYA=;
+ b=q7/Fy0BpEbQfBuwsVtRL29qa9247/R100BW2iRfmtNbSGzEwWsviFRaPpkIp772JvsLTk/3p5lnHgQ0VbGNQd2aT0YYYccA+qEtcEbm0RA66lzSFGuWsR6+beh+iAKJNerx/mmDZHKTgXZ6xggNTzqDU5pn831h3ruQYw5qo7jMmgNwxKr7cU2HFdnDwgKlnSjDCWTY5dNC3DkrF9OKEekPUlogCPe/BaDrFKDVhWQQrbJU0hGxd+DzmqcFLHNviNEdQHx3xvEWnPoK3HBwLsm3NcZrCdPoFVzQdXTty2ruIU9vw2/tv/p3cVr2Eam7pd5aBurLSJ8pj7FZ6POQmYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U1OgkWGlWXVIGoHsqd1uRYgI5S2W58tB70DDDArbRYA=;
+ b=at6SoP5zaHr4ctBjEaUayDEpB2N9ekGniAJa0X2/TzFKyhrgNJHJ3pq4JSYNYBuqPmvS3m+zgL0vLjfp4UYN3vTiOOEWFHthuPyjNmgzvDE5qwkdYDt7gi0M39QRZnTiSjwx/AmIeT4W2nRQtw5Gi4ZszGzLHlfliA96FtwKXAMaoO5y5THE9fz4ls5tsIqMONKG2FjouWcAaIvaUPVS/NJ3OvOvaGhHhnd30gUwQWa9CwOHxOORo1Ukub3QPgBwpVnTXCG3ZvaVwwEryxuKr7Y0Ildw+PvaV3XMQFnOZwR3vvISbZgFUSkDJFjd1DQmfhYsiv/LfX8/Cy9md5qiug==
+Received: from CH0PR04CA0009.namprd04.prod.outlook.com (2603:10b6:610:76::14)
+ by PH0PR12MB7864.namprd12.prod.outlook.com (2603:10b6:510:26c::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.26; Fri, 27 Sep
+ 2024 18:35:57 +0000
+Received: from CH2PEPF0000009D.namprd02.prod.outlook.com
+ (2603:10b6:610:76:cafe::d4) by CH0PR04CA0009.outlook.office365.com
+ (2603:10b6:610:76::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.21 via Frontend
+ Transport; Fri, 27 Sep 2024 18:35:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH2PEPF0000009D.mail.protection.outlook.com (10.167.244.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8005.15 via Frontend Transport; Fri, 27 Sep 2024 18:35:56 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 27 Sep
+ 2024 11:35:43 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 27 Sep
+ 2024 11:35:42 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Fri, 27 Sep 2024 11:35:41 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 00/73] 6.1.112-rc1 review
+In-Reply-To: <20240927121719.897851549@linuxfoundation.org>
+References: <20240927121719.897851549@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/22] Python generated Intel metrics
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Perry Taylor <perry.taylor@intel.com>, Samantha Alt
- <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>,
- Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>
-References: <20240926175035.408668-1-irogers@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240926175035.408668-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <e9793705-4c56-4d06-9f02-91c7f4586296@rnnvmail204.nvidia.com>
+Date: Fri, 27 Sep 2024 11:35:41 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000009D:EE_|PH0PR12MB7864:EE_
+X-MS-Office365-Filtering-Correlation-Id: 925d19ce-3970-4eaa-fd29-08dcdf2339bc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|7416014|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?alM3QVNCQUhrVVk5ay9NQ2hkcHAxQ253TzFvREFlb0psMDlaZ0hEWFlKNjJB?=
+ =?utf-8?B?dWF6UmszMWg2aEhOQ1VUcy83d01ISGVuc0hmYjFoRlZLQlU3ZkZ3WFhyUjRL?=
+ =?utf-8?B?Rm9UNjM4eTN4T1RjK3dDNjRwN3E0OC9JZHo3VmpRTXptVXN0Mzl5T2lGTEsx?=
+ =?utf-8?B?THRRSFV6RjhUU3ZWdXRoZEdDdkxoeDllVHExTlJZWVNkS2MxUGx2K3ZsTCtk?=
+ =?utf-8?B?dmhDclhPQWtKYWxQejdXYlRDTjNRM3Y4NGx1WjR2ekczMVZWNDIvbGpzQkNu?=
+ =?utf-8?B?OHJtb0hKTkJmSUdMcjdWSmtCaWk1N2liSCtMTS9PWUZJQituOUZmUE1maFhh?=
+ =?utf-8?B?cS8yK0M3Yk13WnlKQ0RoZURlWmdabm1pV0ZybC9XVVVhbEg4T2ZKUnlvWXho?=
+ =?utf-8?B?b2swME5lNFFRb212S1lHa1JxVnNLd1hLZ29BNjN1UGJVYjZhMDA2S2tNZGhp?=
+ =?utf-8?B?djVRTWUwc0tDaVhodERPTFBuNTl6ZjVGbktNUlFLc1lxTTRteVh3OGNlcjlw?=
+ =?utf-8?B?WG1PeEVrMndOZXdmRWdNQUxPcnA5V3F6MW51Y2wxQklKWFlNZGZQRmhwanhh?=
+ =?utf-8?B?d0JXdzllNmZRRHhUdU5UN1lhNlo4amQ5MmtYbUM4RFprcjJaYzMxeFNjbkU2?=
+ =?utf-8?B?SmVQSUdrWFM2V0V0WHp2Snk4YTFReHc2MUsveHgyTnNZeVFBN1BVc0tSUHN3?=
+ =?utf-8?B?Y1JEeGREVVA3R3o0T0tZZDlvZjFUbUJCeTBnNkRITmFNQ2czVkNZVVYwdTRl?=
+ =?utf-8?B?TXBHSjdrZVVaVUt0TlM2UEJ6b3JFeCt0NHppVXlydnRLS3VnUzZZcy9oUmhS?=
+ =?utf-8?B?QkMvOUpXL1htZ3pkTXlkSmhpRDdnZGVPQk82VWtsWEUrUjZvdmNIdW1UK052?=
+ =?utf-8?B?WnBWUDFiM2hsaHFqK0dRRGR1a0M3MkE0REc5ZWVIM2tIZFV3SGxmWjBvWVh1?=
+ =?utf-8?B?Q1J5MVNWNXFRN0FlcVF2OWtkMDNmOC9nVjAzazZ2aWpVRi9tV3dDL2tXbTlw?=
+ =?utf-8?B?eE5xYzdSWmtLaktVeU5ISWl3VnNOUUlBVHNrMmlQL1d4YjBLZWxFS0RsaW55?=
+ =?utf-8?B?SXRuMXovMzNWRExadjd0MnlEZWZ4MnF0bkFISDJwV3B1TjRNTGJpMVpaOUNv?=
+ =?utf-8?B?SkdRYmk0dURrbjczU1VRVndDdHNrRzcwNk10SzRmZTkzdmtHNG55M1NaeG1S?=
+ =?utf-8?B?V1hlckxueU9XRkovRlVHeUJOcmd2YlIvYmpIS3VzRkFQZ0dYL0RvNTNnNmlI?=
+ =?utf-8?B?eDhuYUlKUVd4UjcxTGc1Y29lZU9YR0VMTnBYSWR6L0pWcEsrQUxmbno3WUkr?=
+ =?utf-8?B?aHdKS2xCTTlqcmo2eURrVDVCYmVVVGZZTVZzZnYrSTV3U3lINkhOazd1Ukhi?=
+ =?utf-8?B?WHFibmJJYnhEU05idDZ1Z0ozZ1BITnFLZU5FaVJEcVpZZmp4VWhhQ1J2bDF5?=
+ =?utf-8?B?OExVVElyenJqLzFvOXJCN3lvRVZRcUpiV3lCVjl6UHY5alhQd09OVkkvdHh3?=
+ =?utf-8?B?dlZTUll6NkRNTTdLOFArNWpKcWMxbGRmSnlOeE9RaTc1NElVcFRVRFhBT2tD?=
+ =?utf-8?B?bzBERmowVHFPeWxXSXVxV0U4aGM3L0R1ekJGS0JQdDdkUmdYZUp4N2hLckMv?=
+ =?utf-8?B?YlQ1dkQ0WGNkTUVMdFR0WjlVdll4b1g4WExMS0N6NjVyMTZNWFZaL0JZeXRv?=
+ =?utf-8?B?SHpOV1JtMzRkS1dEM2tVdElYcFJJWml4SFU2OUN5RWMrUnpsODd2TTVCQUlR?=
+ =?utf-8?B?Q1dtWEJYRTNqSzkyY3Y4U0FJTENFZ1NSaW5YejlGMEpVdmV5Z2xYTzRLbTJ5?=
+ =?utf-8?B?MkVJYy95N2IySnYxcklRMXduTmpLeFhGcjcvMG1IRUxyYjdXaTFKUU5TOVc3?=
+ =?utf-8?B?dExaQXhyL2VQdnNQTUFNUExKM0R5bG83T2dUNmE1ZVVXNHNsby9IQ2QwbzhE?=
+ =?utf-8?Q?1VUy5wDxYLgHVhF9NDJ4aPyPaYa1CK30?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 18:35:56.4054
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 925d19ce-3970-4eaa-fd29-08dcdf2339bc
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF0000009D.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7864
 
-
-
-On 2024-09-26 1:50 p.m., Ian Rogers wrote:
-> Generate twenty sets of additional metrics for Intel. Rapl and Idle
-> metrics aren't specific to Intel but are placed here for ease and
-> convenience. Smi and tsx metrics are added so they can be dropped from
-> the per model json files. 
-
-Are Smi and tsx metrics the only two metrics who's duplicate metrics in
-the json files will be dropped?
-
-It sounds like there will be many duplicate metrics in perf list, right?
-
-Also, is it an attempt to define some architectural metrics for perf?
-How do you decide which metrics should be added here?
-
-Thanks,
-Kan
-
-> There are four uncore sets of metrics and
-> eleven core metrics. Add a CheckPmu function to metric to simplify
-> detecting the presence of hybrid PMUs in events. Metrics with
-> experimental events are flagged as experimental in their description.
+On Fri, 27 Sep 2024 14:23:11 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.112 release.
+> There are 73 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> The patches should be applied on top of:
-> https://lore.kernel.org/lkml/20240926174101.406874-1-irogers@google.com/
+> Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
+> Anything received after that time might be too late.
 > 
-> v4. Experimental metric descriptions. Add mesh bandwidth metric. Rebase.
-> v3. Swap tsx and CheckPMU patches that were in the wrong order. Some
->     minor code cleanup changes. Drop reference to merged fix for
->     umasks/occ_sel in PCU events and for cstate metrics.
-> v2. Drop the cycles breakdown in favor of having it as a common
->     metric, spelling and other improvements suggested by Kan Liang
->     <kan.liang@linux.intel.com>.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.112-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 > 
-> Ian Rogers (22):
->   perf jevents: Add RAPL metrics for all Intel models
->   perf jevents: Add idle metric for Intel models
->   perf jevents: Add smi metric group for Intel models
->   perf jevents: Add CheckPmu to see if a PMU is in loaded json events
->   perf jevents: Mark metrics with experimental events as experimental
->   perf jevents: Add tsx metric group for Intel models
->   perf jevents: Add br metric group for branch statistics on Intel
->   perf jevents: Add software prefetch (swpf) metric group for Intel
->   perf jevents: Add ports metric group giving utilization on Intel
->   perf jevents: Add L2 metrics for Intel
->   perf jevents: Add load store breakdown metrics ldst for Intel
->   perf jevents: Add ILP metrics for Intel
->   perf jevents: Add context switch metrics for Intel
->   perf jevents: Add FPU metrics for Intel
->   perf jevents: Add Miss Level Parallelism (MLP) metric for Intel
->   perf jevents: Add mem_bw metric for Intel
->   perf jevents: Add local/remote "mem" breakdown metrics for Intel
->   perf jevents: Add dir breakdown metrics for Intel
->   perf jevents: Add C-State metrics from the PCU PMU for Intel
->   perf jevents: Add local/remote miss latency metrics for Intel
->   perf jevents: Add upi_bw metric for Intel
->   perf jevents: Add mesh bandwidth saturation metric for Intel
+> thanks,
 > 
->  tools/perf/pmu-events/intel_metrics.py | 1046 +++++++++++++++++++++++-
->  tools/perf/pmu-events/metric.py        |   52 ++
->  2 files changed, 1095 insertions(+), 3 deletions(-)
-> 
+> greg k-h
+
+All tests passing for Tegra ...
+
+Test results for stable-v6.1:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    115 tests:	115 pass, 0 fail
+
+Linux version:	6.1.112-rc1-g4f910bc2b928
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
 
