@@ -1,333 +1,177 @@
-Return-Path: <linux-kernel+bounces-341260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C95987D5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 05:57:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE512987D63
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 05:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495D51F247B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:57:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBAA41C223EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881CE166F23;
-	Fri, 27 Sep 2024 03:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V9Fvw/1j"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3440B171E5A;
+	Fri, 27 Sep 2024 03:58:05 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B59B658;
-	Fri, 27 Sep 2024 03:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC481B658;
+	Fri, 27 Sep 2024 03:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727409434; cv=none; b=TAUauo90/ajq/vyK1R8Atx0pTo3JNzWcJHeCyjucqMwxSJ2LQCbcj4uxS/O/sV17Xj2nd+BR/O/fcsYZy7ZFqwR28V+JRvVXLgBi4tBNYJ1hH+CKhgpcPLp82KxjnaMjRyu5TLOwjwY9lQtp4qbCmCkVoGJIGlPogIzRjixj/mA=
+	t=1727409484; cv=none; b=OtQq4WRLTksRBn/Ctg63YPHPYMTSFFQEkJntYKrAqM2K+tHxZIm59j0ogiY9r8xhSOgzFpV45sVUAyu/Bh24q4zk6zD20SwouqNdph6s8P6PcLxh+eqD35LOQIVYgGkHdkCSd5NJ7kSaPI/b12GlrEKN4yQ/0/a4zSpZWby6/ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727409434; c=relaxed/simple;
-	bh=0VYXZOMHdb97xrJw3Bxek1KAWuBB5y3ij48UdQXQTq4=;
+	s=arc-20240116; t=1727409484; c=relaxed/simple;
+	bh=zwS/DaxFbYR3qTbNEu5uhuYnJAYJWvWGfzselIAAS1E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gyT7umJsE1kYYxbJTQhcQE7UUTPizuSRqT9ctYJLCrCyqDx4QxqRqX2lE/o4+A1m/HZ9Z+ZN0NecvUwuV0pZB/uz9Gcx0TIYxJb2zNNouNJgMsUkIzMhS5cjW+Ii2uUeEFsDH+EDha1hAnyAdgKfhcZTepSFjstZJR6UEVHIb30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V9Fvw/1j; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48QG9hmk023021;
-	Fri, 27 Sep 2024 03:57:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WvpeeRsSM5EanVHRP5dl54ylZHK/SV1lTkb/Y1w5qKc=; b=V9Fvw/1jYfX1FlUm
-	TFPRHyPryhlLSXSdNoUQw/UehOQ+lT0To3m33Vj+GWGhsgOrsLJOwdPzE89vDCsv
-	IrQ5J6EACzgo9VRQNyFmLTZ2by49djrQOHCikEYP2OkofvPHxzARxj4lBMkEbulJ
-	FE4iyBsNMeFxkU4ckF74d+FPNDe/8v+etPY+alqpADVFwJ9WjHkv4561295uFqCU
-	Bv4lm/Np3HQccPtkSfelTrckqWcgYiVHzp7whZndgZknkDAkG4FOX1rsHV2rzQfK
-	5fUuna/NC9kFeQmUqLyXHwkXHbK2Mp1L+T3Gr298tD5nMmLyJM3FNjknmfw2kxZw
-	jsafgw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41spwf1d64-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 03:57:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48R3v1fF010167
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 03:57:02 GMT
-Received: from [10.216.42.31] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 26 Sep
- 2024 20:56:54 -0700
-Message-ID: <0506433c-62c5-e7c0-8c8a-55744a5e87d6@quicinc.com>
-Date: Fri, 27 Sep 2024 09:26:51 +0530
+	 In-Reply-To:Content-Type; b=j8koX9Ojg5NtR73ohY3uC18Jo8Tz/LJI40KEGuKiHZYJ4aQPRFeBxxPtT3L2CWJUwux291nP8StXTQH5RutUwf4qe2cAAvBkkmDhg1caIR+fDJ6fhMWczdApsKP+OjsD1n0oBIfceYw/uu9/mQI6n/Btd6C10syZ9dqrmpEoV4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XFGpN5NVMzGq8S;
+	Fri, 27 Sep 2024 11:55:40 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id B3F901400CF;
+	Fri, 27 Sep 2024 11:57:58 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 27 Sep 2024 11:57:58 +0800
+Message-ID: <842c8cc6-f716-437a-bc98-70bc26d6fd38@huawei.com>
+Date: Fri, 27 Sep 2024 11:57:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v4] PCI: Enable runtime pm of the host bridge
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: Bjorn Helgaas <bhelgaas@google.com>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_vbadigan@quicinc.com>, <quic_ramkri@quicinc.com>,
-        <quic_nitegupt@quicinc.com>, <quic_skananth@quicinc.com>,
-        <quic_parass@quicinc.com>, "Rafael J. Wysocki"
-	<rjw@rjwysocki.net>,
-        Mayank Rana <quic_mrana@quicinc.com>,
-        Markus Elfring
-	<Markus.Elfring@web.de>, <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki"
-	<rafael@kernel.org>
-References: <20240708-runtime_pm-v4-1-c02a3663243b@quicinc.com>
- <20240816204539.GA73302@bhelgaas>
- <CAJZ5v0j0ck2yKPzisggkdKTFz-AVKG7q+6WnBiiT_43VT4Fbvg@mail.gmail.com>
- <b0d8e51d-cf53-dc75-0e57-4e2e85a14827@quicinc.com>
- <CAJZ5v0jMSrkH7jCk0Ayb21vdXjCnYHHiSqdbifNFwq2OucEMtQ@mail.gmail.com>
- <bfdc6c20-926e-533b-a8e3-0d5a3ef8be8c@quicinc.com>
- <CAJZ5v0gHw=BUGn7MkRaLnAQ9ki-YDOL3SpNxd0X9YmTVG-ofzw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2 2/2] page_pool: fix IOMMU crash when driver has
+ already unbound
+To: Mina Almasry <almasrymina@google.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<liuyonglong@huawei.com>, <fanghaiqing@huawei.com>, <zhangkun09@huawei.com>,
+	Robin Murphy <robin.murphy@arm.com>, Alexander Duyck
+	<alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Wei Fang
+	<wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang
+	<xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>, Tony Nguyen
+	<anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov
+	<ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard
+ Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, Saeed
+ Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan
+	<tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi
+	<lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen
+	<shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, Kalle Valo
+	<kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Ilias Apalodimas
+	<ilias.apalodimas@linaro.org>, <imx@lists.linux.dev>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<intel-wired-lan@lists.osuosl.org>, <bpf@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-mm@kvack.org>
+References: <20240925075707.3970187-1-linyunsheng@huawei.com>
+ <20240925075707.3970187-3-linyunsheng@huawei.com>
+ <CAHS8izOxugzWJDTc-4CWqaKABTj=J4OHs=Lcb=SE9r8gX0J+yg@mail.gmail.com>
 Content-Language: en-US
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <CAJZ5v0gHw=BUGn7MkRaLnAQ9ki-YDOL3SpNxd0X9YmTVG-ofzw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: n7_WLklo29El0qDiL1ERIp9snqkwVsOm
-X-Proofpoint-ORIG-GUID: n7_WLklo29El0qDiL1ERIp9snqkwVsOm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 priorityscore=1501 clxscore=1015
- malwarescore=0 mlxscore=0 mlxlogscore=999 impostorscore=0 phishscore=0
- spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409270025
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAHS8izOxugzWJDTc-4CWqaKABTj=J4OHs=Lcb=SE9r8gX0J+yg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hi Bjorn,
+On 2024/9/27 2:15, Mina Almasry wrote:
+> 
+>> In order not to do the dma unmmapping after driver has already
+>> unbound and stall the unloading of the networking driver, add
+>> the pool->items array to record all the pages including the ones
+>> which are handed over to network stack, so the page_pool can
+>> do the dma unmmapping for those pages when page_pool_destroy()
+>> is called.
+> 
+> One thing I could not understand from looking at the code: if the
+> items array is in the struct page_pool, why do you need to modify the
+> page_pool entry in the struct page and in the struct net_iov? I think
+> the code could be made much simpler if you can remove these changes,
+> and you wouldn't need to modify the public api of the page_pool.
 
-when you get time can you look into this.
-if there are no further concerns I will respin this patch.
+As mentioned in [1]:
+"There is no space in 'struct page' to track the inflight pages, so
+'pp' in 'struct page' is renamed to 'pp_item' to enable the tracking
+of inflight page"
 
-- Krishna Chaitanya.
+As we still need pp for "struct page_pool" for page_pool_put_page()
+related API, the container_of() trick is used to get the pp from the
+pp_item.
 
-On 9/12/2024 9:00 PM, Rafael J. Wysocki wrote:
-> On Thu, Sep 12, 2024 at 2:13 PM Krishna Chaitanya Chundru
-> <quic_krichai@quicinc.com> wrote:
+As you had changed 'struct net_iov' to be mirroring the 'struct page',
+so change 'struct net_iov' part accordingly.
+
+1. https://lore.kernel.org/all/50a463d5-a5a1-422f-a4f7-d3587b12c265@huawei.com/
+
+> 
+>> As the pool->items need to be large enough to avoid
+>> performance degradation, add a 'item_full' stat to indicate the
+>> allocation failure due to unavailability of pool->items.
 >>
+> 
+> I'm not sure there is any way to size the pool->items array correctly.
+
+Currently the size of pool->items is calculated in page_pool_create_percpu()
+as below, to make sure the size of pool->items is somewhat twice of the
+size of pool->ring so that the number of page sitting in the driver's rx
+ring waiting for the new packet is the similar to the number of page that is
+still being handled in the network stack as most drivers seems to set the
+pool->pool_size according to their rx ring size:
+
++#define PAGE_POOL_MIN_INFLIGHT_ITEMS		512
++	unsigned int item_cnt = (params->pool_size ? : 1024) +
++				PP_ALLOC_CACHE_SIZE + PAGE_POOL_MIN_INFLIGHT_ITEMS;
++	item_cnt = roundup_pow_of_two(item_cnt);
+
+> Can you use a data structure here that can grow? Linked list or
+> xarray?
+> 
+> AFAIU what we want is when the page pool allocates a netmem it will
+> add the netmem to the items array, and when the pp releases a netmem
+> it will remove it from the array. Both of these operations are slow
+> paths, right? So the performance of a data structure more complicated
+> than an array may be ok. bench_page_pool_simple will tell for sure.
+
+The question would be why do we need the pool->items to grow with the
+additional overhead and complication by dynamic allocation of item, using
+complicated data structure and concurrent handling?
+
+As mentioned in [2], it was the existing semantics, but it does not means
+we need to keep it. The changing of semantics seems like an advantage
+to me, as we are able to limit how many pages is allowed to be used by
+a page_pool instance.
+
+2. https://lore.kernel.org/all/2fb8d278-62e0-4a81-a537-8f601f61e81d@huawei.com/
+
+> 
+>> Note, the devmem patchset seems to make the bug harder to fix,
+>> and may make backporting harder too. As there is no actual user
+>> for the devmem and the fixing for devmem is unclear for now,
+>> this patch does not consider fixing the case for devmem yet.
 >>
->>
->> On 9/12/2024 5:27 PM, Rafael J. Wysocki wrote:
->>> On Thu, Sep 12, 2024 at 1:52 PM Krishna Chaitanya Chundru
->>> <quic_krichai@quicinc.com> wrote:
->>>>
->>>>
->>>>
->>>> On 9/12/2024 5:12 PM, Rafael J. Wysocki wrote:
->>>>> On Fri, Aug 16, 2024 at 10:45 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
->>>>>>
->>>>>> [+cc Rafael, Mayank, Markus (when people have commented on previous
->>>>>> versions, please cc them on new versions).  I'm still hoping Rafael
->>>>>> will have a chance to chime in]
->>>>>>
->>>>>> On Mon, Jul 08, 2024 at 10:19:40AM +0530, Krishna chaitanya chundru wrote:
->>>>>>> The Controller driver is the parent device of the PCIe host bridge,
->>>>>>> PCI-PCI bridge and PCIe endpoint as shown below.
->>>>>>>
->>>>>>>            PCIe controller(Top level parent & parent of host bridge)
->>>>>>>                            |
->>>>>>>                            v
->>>>>>>            PCIe Host bridge(Parent of PCI-PCI bridge)
->>>>>>>                            |
->>>>>>>                            v
->>>>>>>            PCI-PCI bridge(Parent of endpoint driver)
->>>>>>>                            |
->>>>>>>                            v
->>>>>>>                    PCIe endpoint driver
->>>>>>>
->>>>>>> Now, when the controller device goes to runtime suspend, PM framework
->>>>>>> will check the runtime PM state of the child device (host bridge) and
->>>>>>> will find it to be disabled.
->>>>>>
->>>>>> I guess "will find it to be disabled"  means the child (host bridge)
->>>>>> has runtime PM disabled, not that the child device is disabled, right?
->>>>>>
->>>>>>> So it will allow the parent (controller
->>>>>>> device) to go to runtime suspend. Only if the child device's state was
->>>>>>> 'active' it will prevent the parent to get suspended.
->>>>>>
->>>>>> Can we include a hint like the name of the function where the PM
->>>>>> framework decides this?  Maybe this is rpm_check_suspend_allowed()?
->>>>>>
->>>>>> rpm_check_suspend_allowed()  checks ".ignore_children", which sounds
->>>>>> like it could be related, and AFAICS .ignore_children == false here,
->>>>>> so .child_count should be relevant.
->>>>>>
->>>>>> But I'm still confused about why we can runtime suspend a bridge that
->>>>>> leads to devices that are not suspended.
->>>>>
->>>>> That should only be possible if runtime PM is disabled for those devices.
->>>>>
->>>>>>> Since runtime PM is disabled for host bridge, the state of the child
->>>>>>> devices under the host bridge is not taken into account by PM framework
->>>>>>> for the top level parent, PCIe controller. So PM framework, allows
->>>>>>> the controller driver to enter runtime PM irrespective of the state
->>>>>>> of the devices under the host bridge. And this causes the topology
->>>>>>> breakage and also possible PM issues like controller driver goes to
->>>>>>> runtime suspend while endpoint driver is doing some transfers.
->>>>>
->>>>> Why is it a good idea to enable runtime PM for a PCIe controller?
->>>>>
->>>> PCIe controller can do certain actions like keeping low power state,
->>>> remove bandwidth votes etc as part of runtime suspend as when we know
->>>> the client drivers already runtime suspended.
->>>
->>> Surely they can, but enabling runtime PM for devices that have
->>> children with runtime PM disabled and where those children have
->>> children with runtime PM enabled is a bug.
->>>
->> we are trying to enable the runtime PM of host bridge here, so that we
->> can enable runtime PM of the controller.
 > 
-> So this is a preliminary step.  That was unclear to me.
+> net_iovs don't hit this bug, dma_unmap_page_attrs() is never called on
+> them, so no special handling is needed really. However for code
+
+I am really doubtful about your above claim. As at least the below
+implementaion of dma_buf_unmap_attachment_unlocked() called in
+__net_devmem_dmabuf_binding_free() seems be using the DMA API directly:
+
+https://elixir.bootlin.com/linux/v6.7-rc8/source/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c#L215
+
+Or am I missing something obvious here?
+
+> quality reasons lets try to minimize the number of devmem or memory
+> provider checks in the code, if possible.
 > 
->> If this change got accepted the child here(host bridge) runtime pm will
->> be enabled then i think there will no issue in enabling the runtime pm
->> of the controller then.
->>>>>> What does "topology breakage" mean?  Do you mean something other than
->>>>>> the fact that an endpoint DMA might fail if the controller is
->>>>>> suspended?
->>>>>>
->>>>>>> So enable runtime PM for the host bridge, so that controller driver
->>>>>>> goes to suspend only when all child devices goes to runtime suspend.
->>>>>
->>>>> This by itself makes sense to me.
->>>>>
->>>>>> IIUC, the one-sentence description here is that previously, the PCI
->>>>>> host controller could be runtime suspended even while an endpoint was
->>>>>> active, which caused DMA failures.  And this patch changes that so the
->>>>>> host controller is only runtime suspended after the entire hierarchy
->>>>>> below it is runtime suspended?  Is that right?
->>>>>>
->>>>>>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->>>>>>> ---
->>>>>>> Changes in v4:
->>>>>>
->>>>>> (Note: v4 applies cleanly to v6.10-rc1 and to v6.11-rc1 with a small
->>>>>> offset).
->>>>>>
->>>>>>> - Changed pm_runtime_enable() to devm_pm_runtime_enable() (suggested by mayank)
->>>>>>> - Link to v3: https://lore.kernel.org/lkml/20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com/
->>>>>>> Changes in v3:
->>>>>>> - Moved the runtime API call's from the dwc driver to PCI framework
->>>>>>>      as it is applicable for all (suggested by mani)
->>>>>>> - Updated the commit message.
->>>>>>> - Link to v2: https://lore.kernel.org/all/20240305-runtime_pm_enable-v2-1-a849b74091d1@quicinc.com
->>>>>>> Changes in v2:
->>>>>>> - Updated commit message as suggested by mani.
->>>>>>> - Link to v1: https://lore.kernel.org/r/20240219-runtime_pm_enable-v1-1-d39660310504@quicinc.com
->>>>>>> ---
->>>>>>>
->>>>>>> ---
->>>>>>>     drivers/pci/probe.c | 4 ++++
->>>>>>>     1 file changed, 4 insertions(+)
->>>>>>>
->>>>>>> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
->>>>>>> index 8e696e547565..fd49563a44d9 100644
->>>>>>> --- a/drivers/pci/probe.c
->>>>>>> +++ b/drivers/pci/probe.c
->>>>>>> @@ -3096,6 +3096,10 @@ int pci_host_probe(struct pci_host_bridge *bridge)
->>>>>>>          }
->>>>>>>
->>>>>>>          pci_bus_add_devices(bus);
->>>>>>> +
->>>>>>> +     pm_runtime_set_active(&bridge->dev);
->>>>>>> +     devm_pm_runtime_enable(&bridge->dev);
->>>>>>> +
->>>>>>>          return 0;
->>>>>>>     }
->>>>>>>     EXPORT_SYMBOL_GPL(pci_host_probe);
->>>>>
->>>>> This will effectively prevent the host bridge from being
->>>>> runtime-suspended at all IIUC, so the PCIe controller will never
->>>>> suspend too after this change.
->>>>>
->>>> No we are having a different observations here.
->>>> Without this change the PCIe controller driver can go to runtime suspend
->>>> without considering the state of the client drivers i.e even when the
->>>> client drivers are active.
->>>> After adding this change we see the pcie controller is getting runtime
->>>> suspended only after the client drivers are runtime suspended which is
->>>> the expected behaviour.
->>>
->>> OK, but then when and how is it going to be resumed?
->>
->> sorry I am not expert of the pm framework here, what we observed is when
->> client drivers are trying to resume using runtime_get we see the
->> controller driver is also getting resume properly with this change.
->> let me dig in and see in code on how this is happening.
->>
->> Bjorn has this view on this change in previous v2 version[1]
->> "My expectation is that adding new functionality should only require
->> changes in drivers that want to take advantage of it.  For example, if
->> we add runtime PM support in the controller driver, the result should
->> be functionally correct even if we don't update drivers for downstream
->> devices.
->>
->> If that's not the way it works, I suggest that would be a problem in
->> the PM framework.
-> 
-> You can say so, but that's how it goes.
-> 
-> If there are any devices with runtime PM disabled in a dependency
-> chain, the runtime PM framework cannot follow that chain as a whole.
-> If enabling runtime PM for a device leads to this situation, it is not
-> correct.
-> 
->> The host bridge might be a special case because we don't have a
->> separate "host bridge" driver; that code is kind of integrated with
->> the controller drivers.  So maybe it's OK to do controller + host
->> bridge runtime PM support at the same time, as long as any time we add
->> runtime PM to a controller, we sure it's also set up for the host
->> bridge"
-> 
-> I think that you can enable runtime PM for host bridge devices in
-> general, as long as they don't need to be resumed without resuming any
-> of their children.
-> 
-> If that's the case, resuming one of its children will also cause the
-> host bridge to resume and all should be fine, although you also need
-> to ensure that system-wide suspend handling is in agreement with this.
-> 
-> I would suggest calling pm_runtime_no_callbacks() for the host bridge device.
-> 
->> [1] https://lore.kernel.org/all/20240307215505.GA632869@bhelgaas/
-> 
-> And this is the information to put into your patch changelog:
-> 
-> 1. It is a property of the runtime PM framework that it can only
-> follow continuous dependency chains.  That is, if there is a device
-> with runtime PM disabled in a dependency chain, runtime PM cannot be
-> enabled for devices below it and above it in that chain both at the
-> same time.
-> 
-> 2. Because of the above, in order to enable runtime PM for a PCIe
-> controller device, one needs to ensure that runtime PM is enabled for
-> all devices in every dependency chain between it and any PCIe endpoint
-> (as runtime PM is enabled for PCIe endpoints).
-> 
-> 3. This means that runtime PM needs to be enabled for the host bridge
-> device, which is present in all of these dependency chains.
-> 
-> 4. After this change, the host bridge device will be runtime-suspended
-> by the runtime PM framework automatically after suspending its last
-> child and it will be runtime-resumed automatically before resuming its
-> first child which will allow the runtime PM framework to track
-> dependencies between the host bridge device and all of its
-> descendants.
-> 
-> Thanks!
 
