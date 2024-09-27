@@ -1,487 +1,152 @@
-Return-Path: <linux-kernel+bounces-341201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50899987C71
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:30:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4563987C91
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4734B23C17
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:30:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9889C2827B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005D74690;
-	Fri, 27 Sep 2024 01:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938E4193;
+	Fri, 27 Sep 2024 01:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uA+mPYrB"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="QT8QNKm+"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DA6D53C
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 01:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D13518B1A;
+	Fri, 27 Sep 2024 01:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727400636; cv=none; b=WnqXFXK7oQLOuR+hcM5ul4MTaoi3gGQN2QNl1bP6Zrz6eBDA3HEeYpijh842ChLds7/xfpm4F7SsSsYyZf/wjOvwSIJ9770v0iKwWExa97SwFq11/If9KxX1KVP9DBH9GvkUDY7UF6kcWkSrti12ko0iTCDtV8heKhP/8hsMDOA=
+	t=1727400743; cv=none; b=ARCaXm1ea6IwfIvaoo+WftnhxWm2rjDE5PcR4onxONPulRhbeRUGHUiYo/HdZ3IX/MAYccM9VAOIQwol8AlT303kAyVW8VW25tE7ZPORkMa/jFmFnEykpVd+zq41gNo5Xg9M+Vl4HQwWux7V4lWZ5S7xIPd3kYn2hxp7dJXSPps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727400636; c=relaxed/simple;
-	bh=zu1Gd/b6mSFsQnE9SquvBSzmfht+TMBCgJEgd48Cp4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cPVd8kW+B0fZcNPhZG2NM7TM9jFARalCRSc5ORHmglHfeWnbrLTWZGMo/ckIZpp54K1wTCv7oDkRDyUEipoESFkggv3IVajtQWex/MVJpglnewfV/ActCqgt7S9jALupR1oxhr9eAnJYIntBHsYd4SKiMbUADH2nMJ9wZkQhDY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uA+mPYrB; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8b155b5e9eso228081066b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 18:30:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727400633; x=1728005433; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xg3wV/pQhTWJt03A+VQrrhFbG/VZmKb3C/uzMo1xX7k=;
-        b=uA+mPYrBfr7VNUntx6UFz3VQ6M2yTwC60w+OxzwGYUiNDyGxTt2yIXqVK1Oho6rvoH
-         7mV34dqLzEotN+3tX4xveaXp6VpqiKFuTnPwSZJ15aCesj8rXqmB6mRUuww738BfIJlk
-         LalVkkSTaUvPm5spw1/Mzc4XR/vEw3F+COzf/X5X86imDs8r6tpdgI4fDcwpOsfLe94p
-         oLXZAuaMsCdn2hnSX/qVX9EsDQTyEKNrScUhvmTf7EjPxDlpta+wjxJXgCO02LNpnXQD
-         g9Xh1tOncCGq+kPD5hLJyLXMbii13IbxB1R3L6HlzX53rq6cyH19K6JBt0sKdBeUgO2C
-         QiAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727400633; x=1728005433;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xg3wV/pQhTWJt03A+VQrrhFbG/VZmKb3C/uzMo1xX7k=;
-        b=LYbExcIqkTrfhARhoF1wMzXsC9Vb20PE8v2N0iPX7YixObaFY3runiwPoW6vH8u+QN
-         bfzKv8KerW374qp8Cc/GQUTIhjdZp+q7n3TBFconBxpGB+ijmAERoZc9FogshxC5hX6n
-         7J8r2yBXXoTSAYLSqhBS5Nw5feuWVN8Xl/HuKP9JsDN9G1jZvCkiuh+fIIdE3FTXwkd5
-         XOp8yCEC1N54XBuRYVzjv20Y8J8HO6TTqGjk5ahV8wiprgayy6Q6sMTme71Vzm42BxhD
-         NozucUfjkOdSynBKJL6xHu4NMU6I1/W2AjK5xooOVh55m0OnciXYUTfjIB/pM9zwvP8d
-         W4ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUNT+OBfEHLuvIeff6tUXvIuNRQgk5rowj0EDY6fpcS++F2xxQGJAtiBhvOMHzHKdnhA8AYb2XCxxxX4fY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwNq3vSvUyAFfkzUCWly/kVmqTCDASKzMIY+yBgDsMfwdRPqaD
-	RhA4ZuHWPZHBCzRkS8dyINlC2w8yFsHscNmIZ+oH9LmznoTTyV0RmlXaeeL7qkGl2phm8O5cGmF
-	NBlGNX1DSodi0M+9iqqp9XrKGIADFeUGkkJleDMnHGqJtT8uGlXMWqg==
-X-Google-Smtp-Source: AGHT+IFWsEr09B36HWHZ0Jf6z7llfdYi9OX2qDQ6cmBHPIDp3bVPkNYnYGODEOrnoMH/1wOyBvgD4bct1B0SpslK3Gg=
-X-Received: by 2002:a17:907:36c2:b0:a86:789b:71fe with SMTP id
- a640c23a62f3a-a93c4ae8f90mr103123466b.48.1727400632639; Thu, 26 Sep 2024
- 18:30:32 -0700 (PDT)
+	s=arc-20240116; t=1727400743; c=relaxed/simple;
+	bh=4DYv5PRySQeJ142c8DOzea7v9PzCCPllUBYrWz5mU+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=exTjcqRAqYDr3epc0ZO57OoFijwWHe+GCQndy3bOQnfQF51vQg5OyCFFizA8ZZZ13qBLMD4j1YeYteCFdrD5BelAC+zhod/WZUN8/2p5aOAC5PWIS65QbxStC1ggas2lisAjwYCC953U21sgDn7PZUPuKX311gegnBn7J/Jkj/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=QT8QNKm+; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727400740;
+	bh=4DYv5PRySQeJ142c8DOzea7v9PzCCPllUBYrWz5mU+8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QT8QNKm+w/wsXL27WqVFMjYByBNGKqWIGAbTWNusEfmQTWjXTu2B8H8XQwn1/aku0
+	 LhZcIuqfQpXYm1+yD8NaWjTmD4fXpePAecZzGJ6pDiuI81XcW+OaGE+4w+SU1CRzGy
+	 HgrQWjV5//zSJuL9zj/bQw7dKc//eKj3NMzRsCzqmpYndmN6nZ2eMCh/DEQetstm/C
+	 9Qx6gPZh1qdt835YBtdoe7JQF5pi240kbEEIphI7H+tIljwztRLdEasSLdVEUq+l3D
+	 aYf2mRuSyEZMfi24t1rEaRtFaEyat0Hn8NeXHke1msK/QZGPDQs+Rz3TOS0rUSsE/C
+	 vv377Zu1Qrd/Q==
+Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XFCd01hTTz1Mlx;
+	Thu, 26 Sep 2024 21:32:20 -0400 (EDT)
+Message-ID: <0b262fe5-2fc5-478d-bf66-f208723238d5@efficios.com>
+Date: Fri, 27 Sep 2024 03:30:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZvV6X5FPBBW7CO1f@archlinux> <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
- <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com> <ZvWTXaqkmxP2E2dc@archlinux>
- <ZvWd0aK7p_1rkb7E@archlinux> <CAMj1kXFV+Jck9Yf4w18rOzHckXvpXkhPhL-KrpBC8hqgXusw2g@mail.gmail.com>
- <CAGG=3QXG+Vsm7mjLV42Q-uA-EvgfOehSUeNQjKA3QQbw8vqSCg@mail.gmail.com>
-In-Reply-To: <CAGG=3QXG+Vsm7mjLV42Q-uA-EvgfOehSUeNQjKA3QQbw8vqSCg@mail.gmail.com>
-From: Bill Wendling <morbo@google.com>
-Date: Thu, 26 Sep 2024 18:30:15 -0700
-Message-ID: <CAGG=3QVWCQB-3sM=iwgTmX8zrU81H+F_A1icJwROvW_DSvsBeA@mail.gmail.com>
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in bch2_xattr_validate
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Jan Hendrik Farr <kernel@jfarr.cc>, Kees Cook <kees@kernel.org>, 
-	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev, 
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+To: Boqun Feng <boqun.feng@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
+ lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>, Vlastimil Babka
+ <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+References: <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
+ <ZvP_H_R43bXpmkMS@boqun-archlinux>
+ <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
+ <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+ <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
+ <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
+ <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
+ <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
+ <54487a36-f74c-46c3-aed7-fc86eaaa9ca2@huaweicloud.com>
+ <CAHk-=wifOW0VEh6uL3sHSaAUA46YmPDS9Wh5HnNC2JyOiXVA=Q@mail.gmail.com>
+ <ZvX12_1mK8983cXm@boqun-archlinux>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <ZvX12_1mK8983cXm@boqun-archlinux>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 26, 2024 at 3:18=E2=80=AFPM Bill Wendling <morbo@google.com> wr=
-ote:
->
-> On Thu, Sep 26, 2024 at 12:58=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org>=
- wrote:
-> >
-> > (cc Kees and Bill)
-> >
-> > On Thu, 26 Sept 2024 at 19:46, Jan Hendrik Farr <kernel@jfarr.cc> wrote=
-:
-> > >
-> > > On 26 19:01:20, Jan Hendrik Farr wrote:
-> > > > On 26 18:09:57, Thorsten Blum wrote:
-> > > > > On 26. Sep 2024, at 17:28, Thorsten Blum <thorsten.blum@toblux.co=
-m> wrote:
-> > > > > > On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> w=
-rote:
-> > > > > >>
-> > > > > >> Hi Kent,
-> > > > > >>
-> > > > > >> found a strange regression in the patch set for 6.12.
-> > > > > >>
-> > > > > >> First bad commit is: 86e92eeeb23741a072fe7532db663250ff2e726a
-> > > > > >> bcachefs: Annotate struct bch_xattr with __counted_by()
-> > > > > >>
-> > > > > >> When compiling with clang 18.1.8 (also with latest llvm main b=
-ranch) and
-> > > > > >> CONFIG_FORTIFY_SOURCE=3Dy my rootfs does not mount because the=
-re is an erroneous
-> > > > > >> detection of a buffer overflow.
-> > > > > >>
-> > > > > >> The __counted_by attribute is supposed to be supported startin=
-g with gcc 15,
-> > > > > >> not sure if it is implemented yet so I haven't tested with gcc=
- trunk yet.
-> > > > > >>
-> > > > > >> Here's the relevant section of dmesg:
-> > > > > >>
-> > > > > >> [    6.248736] bcachefs (nvme1n1p2): starting version 1.12: re=
-balance_work_acct_fix
-> > > > > >> [    6.248744] bcachefs (nvme1n1p2): recovering from clean shu=
-tdown, journal seq 1305969
-> > > > > >> [    6.252374] ------------[ cut here ]------------
-> > > > > >> [    6.252375] memchr: detected buffer overflow: 12 byte read =
-of buffer size 0
-> > > > > >> [    6.252379] WARNING: CPU: 18 PID: 511 at lib/string_helpers=
-.c:1033 __fortify_report+0x45/0x50
-> > > > > >> [    6.252383] Modules linked in: bcachefs lz4hc_compress lz4_=
-compress hid_generic usbhid btrfs crct10dif_pclmul libcrc32c crc32_pclmul c=
-rc32c_generic polyval_clmulni crc32c_intel polyval_generic raid6_pq ghash_c=
-lmulni_intel xor sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni_intel gf128mul =
-nvme crypto_simd ccp xhci_pci cryptd sp5100_tco xhci_pci_renesas nvme_core =
-nvme_auth video wmi ip6_tables ip_tables x_tables i2c_dev
-> > > > > >> [    6.252404] CPU: 18 UID: 0 PID: 511 Comm: mount Not tainted=
- 6.11.0-10065-g6fa6588e5964 #98 d8e0beb515d91b387aa60970de7203f35ddd182c
-> > > > > >> [    6.252406] Hardware name: Micro-Star International Co., Lt=
-d. MS-7D78/PRO B650-P WIFI (MS-7D78), BIOS 1.C0 02/06/2024
-> > > > > >> [    6.252407] RIP: 0010:__fortify_report+0x45/0x50
-> > > > > >> [    6.252409] Code: 48 8b 34 c5 30 92 21 87 40 f6 c7 01 48 c7=
- c0 75 1b 0a 87 48 c7 c1 e1 93 07 87 48 0f 44 c8 48 c7 c7 ef 03 10 87 e8 0b=
- c2 9b ff <0f> 0b e9 cf 5d 9e 00 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 =
-90
-> > > > > >> [    6.252410] RSP: 0018:ffffbb3d03aff350 EFLAGS: 00010246
-> > > > > >> [    6.252412] RAX: 4ce590fb7c372800 RBX: ffff98d559a400e8 RCX=
-: 0000000000000027
-> > > > > >> [    6.252413] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI=
-: ffff98e43db21a08
-> > > > > >> [    6.252414] RBP: ffff98d559a400d0 R08: 0000000000001fff R09=
-: ffff98e47ddcd000
-> > > > > >> [    6.252415] R10: 0000000000005ffd R11: 0000000000000004 R12=
-: ffff98d559a40000
-> > > > > >> [    6.252416] R13: ffff98d54abf1320 R14: ffffbb3d03aff430 R15=
-: 0000000000000000
-> > > > > >> [    6.252417] FS:  00007efc82117800(0000) GS:ffff98e43db00000=
-(0000) knlGS:0000000000000000
-> > > > > >> [    6.252418] CS:  0010 DS: 0000 ES: 0000 CR0: 00000000800500=
-33
-> > > > > >> [    6.252419] CR2: 000055d96658ea80 CR3: 000000010a12c000 CR4=
-: 0000000000f50ef0
-> > > > > >> [    6.252420] PKRU: 55555554
-> > > > > >> [    6.252421] Call Trace:
-> > > > > >> [    6.252423]  <TASK>
-> > > > > >> [    6.252425]  ? __warn+0xd5/0x1d0
-> > > > > >> [    6.252427]  ? __fortify_report+0x45/0x50
-> > > > > >> [    6.252429]  ? report_bug+0x144/0x1f0
-> > > > > >> [    6.252431]  ? __fortify_report+0x45/0x50
-> > > > > >> [    6.252433]  ? handle_bug+0x6a/0x90
-> > > > > >> [    6.252435]  ? exc_invalid_op+0x1a/0x50
-> > > > > >> [    6.252436]  ? asm_exc_invalid_op+0x1a/0x20
-> > > > > >> [    6.252440]  ? __fortify_report+0x45/0x50
-> > > > > >> [    6.252441]  __fortify_panic+0x9/0x10
-> > > > > >> [    6.252443]  bch2_xattr_validate+0x13b/0x140 [bcachefs 8361=
-179bbfcc59e669df38aec976f02d7211a659]
-> > > > > >> [    6.252463]  bch2_btree_node_read_done+0x125a/0x17a0 [bcach=
-efs 8361179bbfcc59e669df38aec976f02d7211a659]
-> > > > > >> [    6.252482]  btree_node_read_work+0x202/0x4a0 [bcachefs 836=
-1179bbfcc59e669df38aec976f02d7211a659]
-> > > > > >> [    6.252499]  bch2_btree_node_read+0xa8d/0xb20 [bcachefs 836=
-1179bbfcc59e669df38aec976f02d7211a659]
-> > > > > >> [    6.252514]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > > > > >> [    6.252515]  ? pcpu_alloc_noprof+0x741/0xb50
-> > > > > >> [    6.252517]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > > > > >> [    6.252519]  ? time_stats_update_one+0x75/0x1f0 [bcachefs 8=
-361179bbfcc59e669df38aec976f02d7211a659]
-> > > > > >>
-> > > > > >> ...
-> > > > > >>
-> > > > > >>
-> > > > > >> The memchr in question is at:
-> > > > > >> https://github.com/torvalds/linux/blob/11a299a7933e03c83818b43=
-1e6a1c53ad387423d/fs/bcachefs/xattr.c#L99
-> > > > > >>
-> > > > > >> There is not actually a buffer overflow here, I checked with g=
-db that
-> > > > > >> xattr.v->x_name does actually contain a string of the correct =
-length and
-> > > > > >> xattr.v->x_name_len contains the correct length and should be =
-used to determine
-> > > > > >> the length when memchr uses __struct_size for bounds-checking =
-due to the
-> > > > > >> __counted_by annotation.
-> > > > > >>
-> > > > > >> I'm at the point where I think this is probably a bug in clang=
-. I have a patch
-> > > > > >> that does fix (more like bandaid) the problem and adds some pr=
-int statements:
-> > > > > >>
-> > > > > >> --
-> > > > > >> diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
-> > > > > >> index 56c8d3fe55a4..8d7e749b7dda 100644
-> > > > > >> --- a/fs/bcachefs/xattr.c
-> > > > > >> +++ b/fs/bcachefs/xattr.c
-> > > > > >> @@ -74,6 +74,7 @@ int bch2_xattr_validate(struct bch_fs *c, st=
-ruct bkey_s_c k,
-> > > > > >>      enum bch_validate_flags flags)
-> > > > > >> {
-> > > > > >> struct bkey_s_c_xattr xattr =3D bkey_s_c_to_xattr(k);
-> > > > > >> + const struct bch_xattr *v =3D (void *)k.v;
-> > > > > >> unsigned val_u64s =3D xattr_val_u64s(xattr.v->x_name_len,
-> > > > > >>  le16_to_cpu(xattr.v->x_val_len));
-> > > > > >> int ret =3D 0;
-> > > > > >> @@ -94,9 +95,12 @@ int bch2_xattr_validate(struct bch_fs *c, s=
-truct bkey_s_c k,
-> > > > > >>
-> > > > > >> bkey_fsck_err_on(!bch2_xattr_type_to_handler(xattr.v->x_type),
-> > > > > >> c, xattr_invalid_type,
-> > > > > >> - "invalid type (%u)", xattr.v->x_type);
-> > > > > >> + "invalid type (%u)", v->x_type);
-> > > > > >>
-> > > > > >> - bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_na=
-me_len),
-> > > > > >> + pr_info("x_name_len: %d", v->x_name_len);
-> > > > > >> + pr_info("__struct_size(x_name): %ld", __struct_size(v->x_nam=
-e));
-> > > > > >> + pr_info("__struct_size(x_name): %ld", __struct_size(xattr.v-=
->x_name));
-> > > > > >> + bkey_fsck_err_on(memchr(v->x_name, '\0', v->x_name_len),
-> > > > > >> c, xattr_name_invalid_chars,
-> > > > > >> "xattr name has invalid characters");
-> > > > > >> fsck_err:
-> > > > > >> --
-> > > > > >>
-> > > > > >>
-> > > > > >> Making memchr access via a pointer created with
-> > > > > >> const struct bch_xattr *v =3D (void *)k.v fixes it. From the p=
-rint statements I
-> > > > > >> can see that __struct_size(xattr.v->x_name) incorrectly return=
-s 0, while
-> > > > > >> __struct_size(v->x_name) correctly returns 10 in this case (th=
-e value of
-> > > > > >> x_name_len).
-> > > > > >>
-> > > > > >> The generated assembly illustrates what is going wrong. Below =
-is an excerpt
-> > > > > >> of the assembly clang generated for the bch2_xattr_validate fu=
-nction:
-> > > > > >>
-> > > > > >> mov r13d, ecx
-> > > > > >> mov r15, rdi
-> > > > > >> mov r14, rsi
-> > > > > >> mov rdi, offset .L.str.3
-> > > > > >> mov rsi, offset .L__func__.bch2_xattr_validate
-> > > > > >> mov rbx, rdx
-> > > > > >> mov edx, eax
-> > > > > >> call _printk
-> > > > > >> movzx edx, byte ptr [rbx + 1]
-> > > > > >> mov rdi, offset .L.str.4
-> > > > > >> mov rsi, offset .L__func__.bch2_xattr_validate
-> > > > > >> call _printk
-> > > > > >> movzx edx, bh
-> > > > > >> mov rdi, offset .L.str.4
-> > > > > >> mov rsi, offset .L__func__.bch2_xattr_validate
-> > > > > >> call _printk
-> > > > > >> lea rdi, [rbx + 4]
-> > > > > >> mov r12, rbx
-> > > > > >> movzx edx, byte ptr [rbx + 1]
-> > > > > >> xor ebx, ebx
-> > > > > >> xor esi, esi
-> > > > > >> call memchr
-> > > > > >>
-> > > > > >> At the start of this rdx contains k.v (and is moved into rbx).=
- The three calls
-> > > > > >> to printk are the ones you can see in my patch. You can see th=
-at for the
-> > > > > >> print that uses __struct_size(v->x_name) the compiler correctl=
-y uses
-> > > > > >> movzx edx, byte ptr [rbx + 1]
-> > > > > >> to load x_name_len into edx.
-> > > > > >>
-> > > > > >> For the printk call that uses __struct_size(xattr.v->x_name) h=
-owever the
-> > > > > >> compiler uses
-> > > > > >> movzx edx, bh
-> > > > > >> So it will print the high 8 bits of the lower 16 bits (second =
-least
-> > > > > >> significant byte) of the memory address of xattr.v->x_type. Th=
-is is obviously
-> > > > > >> completely wrong.
-> > > > > >>
-> > > > > >> It is then doing the correct call of memchr because this is us=
-ing my patch.
-> > > > > >> Without my patch it would be doing the same thing for the call=
- to memchr where
-> > > > > >> it uses the second least significant byte of the memory addres=
-s of x_type as the
-> > > > > >> length used for the bounds-check.
-> > > > > >>
-> > > > > >>
-> > > > > >>
-> > > > > >> The LLVM IR also shows the same problem:
-> > > > > >>
-> > > > > >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readno=
-ne %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
-> > > > > >> [...]
-> > > > > >> %51 =3D ptrtoint ptr %2 to i64
-> > > > > >> %52 =3D lshr i64 %51, 8
-> > > > > >> %53 =3D and i64 %52, 255
-> > > > > >>
-> > > > > >> This is the IR for the incorrect behavior. It simply converts =
-the pointer to an
-> > > > > >> int, shifts right by 8 bits, then and with 0xFF. If it did a l=
-oad (to i64)
-> > > > > >> instead of ptrtoint this would actually work, as the second le=
-ast significant
-> > > > > >> bit of an i64 loaded from that memory address does contain the=
- value of
-> > > > > >> x_name_len. It's as if clang forgot to dereference a pointer h=
-ere.
-> > > > > >>
-> > > > > >> Correct IR does this (for the other printk invocation):
-> > > > > >>
-> > > > > >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readno=
-ne %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
-> > > > > >> [...]
-> > > > > >> %4 =3D getelementptr inbounds %struct.bch_xattr, ptr %1, i64 0=
-, i32 1
-> > > > > >> %5 =3D load i8, ptr %4, align 8
-> > > > > >> [...]
-> > > > > >> %48 =3D load i8, ptr %5, align 4
-> > > > > >> %49 =3D zext i8 %48 to i64
-> > > > > >>
-> > > > > >> Best Regards
-> > > > > >> Jan
-> > > > > >
-> > > > > > I suspect it's the same Clang __bdos() "bug" as in [1] and [2].
-> > > > > >
-> > > > > > [1] https://lore.kernel.org/linux-kernel/3D0816D1-0807-4D37-8D5=
-F-3C55CA910FAA@linux.dev/
-> > > > > > [2] https://lore.kernel.org/all/20240913164630.GA4091534@thelio=
--3990X/
-> > > > >
-> > > > > Could you try this and see if it resolves the problem?
-> > > > >
-> > > > > diff --git a/include/linux/compiler_types.h b/include/linux/compi=
-ler_types.h
-> > > > > index 1a957ea2f4fe..b09759f31789 100644
-> > > > > --- a/include/linux/compiler_types.h
-> > > > > +++ b/include/linux/compiler_types.h
-> > > > > @@ -413,7 +413,7 @@ struct ftrace_likely_data {
-> > > > >   * When the size of an allocated object is needed, use the best =
-available
-> > > > >   * mechanism to find it. (For cases where sizeof() cannot be use=
-d.)
-> > > > >   */
-> > > > > -#if __has_builtin(__builtin_dynamic_object_size)
-> > > > > +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__c=
-lang__)
-> > > > >  #define __struct_size(p)   __builtin_dynamic_object_size(p, 0)
-> > > > >  #define __member_size(p)   __builtin_dynamic_object_size(p, 1)
-> > > > >  #else
-> > > > >
-> > > >
-> > > > Alright after looking at it in the debugger the code it generates n=
-ow is
-> > > > just wild.
-> > > >
-> > > > I added one more printk before the call to memchr like so:
-> > > >
-> > > > diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
-> > > > index 56c8d3fe55a4..3c7c479ea3a8 100644
-> > > > --- a/fs/bcachefs/xattr.c
-> > > > +++ b/fs/bcachefs/xattr.c
-> > > > @@ -96,6 +96,7 @@ int bch2_xattr_validate(struct bch_fs *c, struct =
-bkey_s_c k,
-> > > >                        c, xattr_invalid_type,
-> > > >                        "invalid type (%u)", xattr.v->x_type);
-> > > >
-> > > > +     pr_info("__struct_size(x_name): %lu", __struct_size(xattr.v->=
-x_name));
-> > > >       bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_nam=
-e_len),
-> > > >                        c, xattr_name_invalid_chars,
-> > > >                        "xattr name has invalid characters");
-> > > > diff --git a/include/linux/compiler_types.h b/include/linux/compile=
-r_types.h
-> > > > index f14c275950b5..43ac0bca485d 100644
-> > > > --- a/include/linux/compiler_types.h
-> > > > +++ b/include/linux/compiler_types.h
-> > > > @@ -413,7 +413,7 @@ struct ftrace_likely_data {
-> > > >   * When the size of an allocated object is needed, use the best av=
-ailable
-> > > >   * mechanism to find it. (For cases where sizeof() cannot be used.=
-)
-> > > >   */
-> > > > -#if __has_builtin(__builtin_dynamic_object_size)
-> > > > +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__cla=
-ng__)
-> > > >  #define __struct_size(p)     __builtin_dynamic_object_size(p, 0)
-> > > >  #define __member_size(p)     __builtin_dynamic_object_size(p, 1)
-> > > >  #else
-> > > >
-> > > >
-> > > > Here's the generated assembly for this:
-> > > >
-> > > >       mov     rdi, offset .L.str.3
-> > > >       mov     rsi, offset .L__func__.bch2_xattr_validate
-> > > >       mov     r12, rdx
-> > > >       mov     rdx, -1
-> > > >       call    _printk
-> > > >       mov     rax, r12
-> > > >       movzx   esi, ah
-> > > >       movzx   edx, byte ptr [r12 + 1]
-> > > >       cmp     rsi, rdx
-> > > >       jb      .LBB4_15
-> > > > # %bb.11:
-> > > >       lea     rdi, [rax + 4]
-> > > >       xor     ebx, ebx
-> > > >       xor     esi, esi
-> > > >       call    memchr
-> > > >
-> > > > So for the printk it hardcoded -1 (aka 0xFFFFF... 64 bit long int m=
-ax)
-> > > > as the result of __struct_size. But then for before call to memchr =
-it does
-> > > > the same stuff again and puts the second least significant byte of =
-the memory
-> > > > address of x_type in esi, only to then load the correct value of x_=
-name_len
-> > > > into edx and compares them for the bounds-check.
-> > > >
-> > >
-> > >
-> > > __builtin_object_size should only ever be compile time known, right? =
-So
-> > > it looks like this is pretty broken atm.
-> > >
-Right. It's __builtin_dynamic_object_size that's known during runtime.
+On 2024-09-27 02:01, Boqun Feng wrote:
+> 	#define ADDRESS_EQ(var, expr)							\
+> 	({										\
+> 		bool _____cmp_res = (unsigned long)(var) == (unsigned long)(expr);	\
+> 											\
+> 		OPTIMIZER_HIDE_VAR(var);						\
+> 		_____cmp_res;								\
+> 	})
 
-> > > I think until this stuff is fixed in clang the only real option is:
-> > >
-> There seems to be an issue with how the offset to the flexible array
-> member is calculated internally. I'm looking into it now.
->
-What Clang's doing is calculating the size of the object with this formula:
+If the goal is to ensure gcc uses the register populated by the
+second, I'm afraid it does not work. AFAIU, "hiding" the dependency
+chain does not prevent the SSA GVN optimization from combining the
+registers as being one and choosing one arbitrary source. "hiding"
+the dependency chain before or after the comparison won't help here.
 
-  size_t struct_size_including_flexible_array_members =3D
-    MAX(sizeof(struct posix_acl),
-        offsetof(struct posix_acl, a_entries) +
-        sizeof(struct posix_acl_entry) * count);
+int fct_hide_var_compare(void)
+{
+     int *a, *b;
 
-The various sizes and offsets are as follows:
+     do {
+         a = READ_ONCE(p);
+         asm volatile ("" : : : "memory");
+         b = READ_ONCE(p);
+     } while (!ADDRESS_EQ(a, b));
+     return *b;
+}
 
-  sizeof(struct posix_acl) =3D=3D 32
-  sizeof(struct posix_acl_entry) =3D=3D 8
+gcc 14.2 x86-64:
 
-  sizeof(a_refcount) =3D=3D 4 :: offset =3D=3D 0
-  sizeof(a_rcu) =3D=3D 16 :: offset =3D=3D 8
-  sizeof(a_count) =3D=3D 4 :: offset =3D=3D 24
-  offsetof(a_entries) =3D=3D 28
+fct_hide_var_compare:
+  mov    rax,QWORD PTR [rip+0x0]        # 67 <fct_hide_var_compare+0x7>
+  mov    rdx,QWORD PTR [rip+0x0]        # 6e <fct_hide_var_compare+0xe>
+  cmp    rax,rdx
+  jne    60 <fct_hide_var_compare>
+  mov    eax,DWORD PTR [rax]
+  ret
+main:
+  xor    eax,eax
+  ret
 
-The resulting "real" size (according to Clang) is MAX(32, 28 + 8 * 1)
-=3D=3D 36. I believe it's padding that results in the size of 40 for the
-malloc size. Does that description jibe with what you're seeing?
+gcc 14.2.0 ARM64:
 
-(For what it's worth, I think Clang is correct here.)
+fct_hide_var_compare:
+         adrp    x0, .LANCHOR0
+         add     x0, x0, :lo12:.LANCHOR0
+.L12:
+         ldr     x1, [x0]
+         ldr     x2, [x0]
+         cmp     x1, x2
+         bne     .L12
+         ldr     w0, [x1]
+         ret
+p:
+         .zero   8
 
--bw
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
