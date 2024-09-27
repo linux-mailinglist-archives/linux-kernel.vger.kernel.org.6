@@ -1,76 +1,80 @@
-Return-Path: <linux-kernel+bounces-342146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E765988AFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A04988AFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EEF21C22EE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:56:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 135DD1C2042D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B531C245F;
-	Fri, 27 Sep 2024 19:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D44F1C2DA6;
+	Fri, 27 Sep 2024 19:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSPDIATa"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ClUkqwID"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BB113BAE2;
-	Fri, 27 Sep 2024 19:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E2713AA47;
+	Fri, 27 Sep 2024 19:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727466990; cv=none; b=Wpa+f5FvPRhbs8t0UanQ1ZqoQ3gvtjGV9XhmvwuwenVktl/qcLp9iXFc+CFIHWgFMK0NRt5mBRDgEaItwKFwsbsWIiIVVzg5/LzkNDB95XqBqo3juvH5cjyKEf9W0JGW9Sq/G1UbeBXMfn09mx8BRwzlCPcnS4vkKVyP6fIjODQ=
+	t=1727467135; cv=none; b=uzWkKB5JNHgUF6H8cM2zoVivGPy6ArP9yzTgbbn0MNNtVem2qJMcBbqh5FP8f+Xi2ExrTZTFZxx1GhokUpFQ41xU8hui4OYsX/6pUaMnvSrpX3eqr9Fs0BmAy+1un0cvvJbemtvD9gp6hCI+eKNukkNbBkEpbxIaluGJ9TMaP9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727466990; c=relaxed/simple;
-	bh=YHueFDko7gzpgE2n62VUPrObWi+WZbZm6FC2Qc7lks0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lF7eZ4vxQvlRoxVfH4qtWXCTenS8DQqwwdNQK9vtccSsmz9wdrS4jt78NpgJKMYAZLB/Vq6ziUQ+gqMtv+y0MflCa1i/UofJivrGqwOinp/XJrlIMQSWPcLwdmR6tF+qFM8dmoauCkl+CH2N29vY0hk17S391M9SxhhMoh9sFG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSPDIATa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 657E6C4CEC7;
-	Fri, 27 Sep 2024 19:56:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727466989;
-	bh=YHueFDko7gzpgE2n62VUPrObWi+WZbZm6FC2Qc7lks0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mSPDIATa8TjuDork9cpNoaOaReKyoM9p8bFAJ84rqMHRkx/8+z3AJJl2L6+EQVuEv
-	 AYKU9kEm8OgpQlQijCanbsrwuchKh5rgROWGoh2CobRhAVsOkYxobEwb4A4H1AlIzR
-	 TAAd8jFiS4fMo58jx2mhDqYp7BO8XJUSUsuY4i5QlV+ZSwZvaxEvNxX7tTuBKuMNxy
-	 ZEgzFM+eW9IFKtqfdCnTb8+MQmsKo6WIozLgslk9cm0dOsW9cAYDV/GlttkcTjTgGH
-	 DKzhOeJ2E5ngDH0B/CdkmGev6JUQYEY8ouxPbiW5S48UJCp19AEfzSwmWJAjhgcQ+F
-	 NI1XnCEKCD9eA==
-Date: Fri, 27 Sep 2024 09:56:28 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, longman@redhat.com,
-	mkoutny@suse.com, chenridong@huawei.com, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/3] add dedicated wq for cgroup bpf and adjust
- WQ_MAX_ACTIVE
-Message-ID: <ZvcN7O_UBNNQlnSz@slm.duckdns.org>
-References: <20240923114352.4001560-1-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1727467135; c=relaxed/simple;
+	bh=Q4NRK/SPPelnv4FulCQ+PJQ3ZwODZpKya8VXIMzCfko=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=tUYd+wUlypEUR7yHayK4jGI4ckFPBxNw1x28J0GP1kpVLibvNU1qXrOa13QVPmSVD1t/MRA2bctnc3VF43kIzAcVwGDVZHE5TD2vMpAGgTd2RDmjvLvelY3FKp15vo8xdu20AN2E4t84hKQzFdZEHZYi2kOokUReTWzoZ7pVixo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ClUkqwID; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B3BDC4CEC4;
+	Fri, 27 Sep 2024 19:58:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1727467135;
+	bh=Q4NRK/SPPelnv4FulCQ+PJQ3ZwODZpKya8VXIMzCfko=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ClUkqwID5qWG5EAgDtI+nUfZRFb5ZPfHe7j5bnf4ewJFFZQntVSt7IsCxa78go2nj
+	 0GySTluqDEc9Ith94kqkX+58ADN/+cdxQ3bDDnPXNKdd5zxe0Ofec8+jke/C6FIIm+
+	 P8d3WrRMY5zBsMbSwRlYWD8hhfDKai0TqCYVNT50=
+Date: Fri, 27 Sep 2024 12:58:53 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: jeffxu@chromium.org
+Cc: keescook@chromium.org, corbet@lwn.net, jeffxu@google.com,
+ jorgelo@chromium.org, groeck@chromium.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org, jannh@google.com,
+ sroettger@google.com, pedro.falcato@gmail.com,
+ linux-hardening@vger.kernel.org, willy@infradead.org,
+ gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+ deraadt@openbsd.org, usama.anjum@collabora.com, surenb@google.com,
+ merimus@google.com, rdunlap@infradead.org, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, enh@google.com
+Subject: Re: [PATCH v1 1/1] mseal: update mseal.rst
+Message-Id: <20240927125853.60978e0697a317e7965a8d9c@linux-foundation.org>
+In-Reply-To: <20240927185211.729207-2-jeffxu@chromium.org>
+References: <20240927185211.729207-1-jeffxu@chromium.org>
+	<20240927185211.729207-2-jeffxu@chromium.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923114352.4001560-1-chenridong@huaweicloud.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Fri, 27 Sep 2024 18:52:09 +0000 jeffxu@chromium.org wrote:
 
-On Mon, Sep 23, 2024 at 11:43:49AM +0000, Chen Ridong wrote:
-> The patch series add a dedicated workqueue for cgroup bpf destruction,
-> add adjust WQ_MAX_ACTIVE from 512 to 2048.
+> From: Jeff Xu <jeffxu@chromium.org>
+> 
+> Update doc after in-loop change: mprotect/madvise can have
+> partially updated and munmap is atomic.
 
-Patchset generally looks good to me. I'll wait for an updated version
-addressing Michal's comments.
+Fixes:what?
 
-Thanks.
+I think 4a2dd02b0916 ("mm/mprotect: replace can_modify_mm with
+can_modify_vma")?
 
--- 
-tejun
+
 
