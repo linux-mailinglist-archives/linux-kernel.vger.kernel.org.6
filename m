@@ -1,151 +1,198 @@
-Return-Path: <linux-kernel+bounces-341957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A8419888D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:14:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F029888D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B6CA1C227B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:14:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 538A11C21FCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980CC1C1747;
-	Fri, 27 Sep 2024 16:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38010166F06;
+	Fri, 27 Sep 2024 16:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Sku4ooQn"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CM86n/2i"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CA91C173C
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 16:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4F823B0
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 16:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727453669; cv=none; b=AQFRukOKmspwU7NpvxwfMhVoz+qqy6vSxMJTvhsiYHef2CgsRyfoGN5FmZOIhy/FNQnsgIItD1QIh1OzBNf6h7DEPyAQgeZnKD/jwcCcheQzLtOfaLWs+TO0j5vKchCI24p39si4TCu268biVeDsI9eue/QfPAwhZDesCecN6Lo=
+	t=1727453755; cv=none; b=hBNWmXcDOfDBtjcX8mOH7VefTM7AGQfc3PDdqvvMplGmhldLKwd5aRn9DYBkWsSADGCHah6VLgIzD68TUleF/kkDd6irbSHxFEfIxTBSXzeIG4nwlKaQmp1m6KX60SCzpK8fyN70noD21yxs82jsqy6x8Jdvh2i5KI9mePWVckI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727453669; c=relaxed/simple;
-	bh=3RIMFSBP6CNFy3ASEfaPEk9hh3pVcFi6cjnKVKez7w0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WdqS+oaZ1U72eKbQELOMKhCVGQInP5ztq8+/L3NM4yry7HZPUlkHzFzGWLK/GMdy2a8Yuh2WCS+GcISLineqlhymabp6OP3OTG8SlWrq/RcntpDEdVhxyANqHYhwq6VZXm+huAeN8Oe8ZYq9YAuf/6gYBz4g1WgGfwXwEwDv2u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Sku4ooQn; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2068a7c9286so24576965ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:14:27 -0700 (PDT)
+	s=arc-20240116; t=1727453755; c=relaxed/simple;
+	bh=LWrf4829vvOkSyoRdV+jBc8ktKiJRk8zXnM7DFOORlY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C07zAtSh3h118cY6czyWVi4mm8Dih1Yqj9b0RohoLCLngFJmbjN0AEHDmKZ1qpzz2DvbDDAIGyHsEBPfmwqo6zvr+pDqEIHtgIlt0JAzO1wFWgZWknj/BH3U8uC+CYKlgYcwMZsix3LX2ISu67SlGq7iRxrszoj6cj9a0fX5j2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CM86n/2i; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37cdac05af9so668683f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:15:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1727453667; x=1728058467; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4so8gffKQiyHlooUmYMifdWdhzGqPHicjPRqtGrdk7o=;
-        b=Sku4ooQnvMd7v+ZkQ+g/Sb7ndiqU2/kAUsjxAGjylkG3W2VPMvJX034xpepK/XfNwy
-         5lmkcRXengxE/tEygD9fYoOV3ejxrl98AEOYAZIRwd17v7ysXkcewitTkg2Ezn+9Hpk5
-         KWOumnvg5XaZqJkz+gd+H9D+pB10hh9mFa4Cw=
+        d=google.com; s=20230601; t=1727453752; x=1728058552; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UJFcC+sypFIzCwXHVb9UWjEcafVxnGH+H6m6XnmSRgU=;
+        b=CM86n/2iBlk+7lPE2kBO2RtJZdmYpr3zPC/g4kuTAGZvzPWqPP/vug0Ows9MH8yazV
+         UOFfU6b7S37+owC4gMCBs27yCo6QDNrbs71w5ahwY6FKjV1bS7kIdGzoqUgk+0ew804z
+         IPZlTIR78dcE7mtC68xiCg2SI5KkuUiZNQyUw4VKvlyP/q8jlowbFBYFMlqCo9bFVMV2
+         P6JH/nu86dYTVI7Ke2yNk3zyeiPTCRLSXv7SVLIvavlzlgvi8iQvb7O8VLyjitbDUE97
+         tfY4WGWkhRwymWd90PpdCdyMhrlm+EveNm/9EZTbTUkziODTKcSwmyMx+lcdoCUk1/kX
+         KEqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727453667; x=1728058467;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4so8gffKQiyHlooUmYMifdWdhzGqPHicjPRqtGrdk7o=;
-        b=EpFzSF01WYfuw6n8umRzCjPD22bI6S7f7QRS+ozeAVoKpcxvQxFN1mYNC9d9Om+cPW
-         An8e/dgryltnz1mFTECBh5ztYC+sT5iLsR7Yq62XCoOn9ON55DixDBlEpENJZYsU5BKJ
-         CdjvSUfP+hZUgc6Ugv8DEKMt2waMevOS3+7WeSfOomv7FNV4p5FT+AXjuKdR0o57IbsC
-         /89xNmcT2FXsffuaRnoMt7OPGoldxnp6+8R2lByfxSjCVzralmxRoYmcr7XWXJ9NIurN
-         qOWlyjwAtt17XKk34XX1/HIpf89ZNAdvR9ZDhunl3A8iT+kndT8aulLV1Ql5SDKoRYhs
-         IfbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXawhFoZdYqr1lxqccz9B5Q0c8gJiWmNXmK3zS17k3bQr+1kLeY7xdeG1RpRWmf64ESwLlZ5ZmJfpZPiVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLLKG9FZnKtb8NV/qHZ/Rs7yNMLtd5JHwSqqkobOTAOB2Lb2PQ
-	fcgmbZFsmZfatO3lAxayba+0gFXNu6WJTEXA9hW/2bdPV/r8JDRp+2iV2XtIkWI=
-X-Google-Smtp-Source: AGHT+IEjXaqfeQRAXRfoN5D9VsgOXKzfJXTb1NEO6DmBY3dq2QmLox7Y5Qeb0Qch3l/Xg+VnTQV0XA==
-X-Received: by 2002:a17:902:cec6:b0:20b:4d8a:290a with SMTP id d9443c01a7336-20b4d8a2dc6mr12777555ad.31.1727453666745;
-        Fri, 27 Sep 2024 09:14:26 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37d8e033sm15407225ad.70.2024.09.27.09.14.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 09:14:26 -0700 (PDT)
-Date: Fri, 27 Sep 2024 09:14:23 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Pavan Chebbi <pavan.chebbi@broadcom.com>
-Cc: netdev@vger.kernel.org, Michael Chan <mchan@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next v2 2/2] tg3: Link queues to NAPIs
-Message-ID: <ZvbZ33RYhTQAfBOQ@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>, netdev@vger.kernel.org,
-	Michael Chan <mchan@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240925162048.16208-1-jdamato@fastly.com>
- <20240925162048.16208-3-jdamato@fastly.com>
- <ZvXrbylj0Qt1ycio@LQ3V64L9R2>
- <CALs4sv1G1A8Ljfb2WAi7LkBN6oP62TzH6sgWyh5jaQsHw3vOFg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1727453752; x=1728058552;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UJFcC+sypFIzCwXHVb9UWjEcafVxnGH+H6m6XnmSRgU=;
+        b=tPyoMc4YEQtyCzRcasXVXIjvq4MJdFFGB20a9Dth4IRD40PPxFueIhT2LOTS2S/p+A
+         D7h39Vi8V+vlRQJgaocPn6tt3h6tuCiLJ0gGa57T5OgLqYFIp2bls8qx/2ajFiarw9hZ
+         dlTixYujElEkZVIvRwc7sLqTp/EJc9HglKLN6vLfMuaCo1gpO0dmlnCDEVfI9g5o/bpt
+         FRrzVgr6w6lFbD5Mi4AbkjBS7Xoajv2b3kc4my3sAq5GNrCuDFUEmf8q7PPX2F9fc11F
+         n3IPfxRpm8QuryvWui/+0Rqu0ADG06i0s/vLz8r8yKojHDJFAugzJPC/4xs3mKyMce/n
+         8PqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXY4Luj2aKO3qEse5PahUWExffakvsZBg43d7+/34MX2vfK2wCPGgHq7OshdZQ6rpNIJaivWsayW1b1Tsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkoVfQWQPJ4xgSk8gU/eJV9yoMYCXwVSQIbiD3N8vX1B5Tgm6m
+	+9J74y7O6gbrez3LyCJE1ttGiXTafpFiHERLgDCz7ljxH8ivqZGbMVCeWZLtzKRSU10EsV5e6Qe
+	AdLREjHhDujcUf4Q9RXYzHPJbjGS69dtfZ2qG
+X-Google-Smtp-Source: AGHT+IEuEn6OejQZYQUK3EEJ9NfLijLJ9S4pYRkVna/dSItUziAucRaHoS3awJeiSTgJVbzWrqJaGWCbNMt8ofA1UbQ=
+X-Received: by 2002:a05:6000:4f0:b0:374:c1c5:43ca with SMTP id
+ ffacd0b85a97d-37cd5aa6972mr3101004f8f.32.1727453751872; Fri, 27 Sep 2024
+ 09:15:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALs4sv1G1A8Ljfb2WAi7LkBN6oP62TzH6sgWyh5jaQsHw3vOFg@mail.gmail.com>
+References: <20240926233632.821189-1-cmllamas@google.com> <20240926233632.821189-7-cmllamas@google.com>
+ <CAH5fLggS7C4QdmDFqEy5KARUj+4oNWfstyno3d43joG5haysDw@mail.gmail.com> <CAN5Drs3TCGT1rWJjujo3FP3HxnSFUFo5hcWh=4+xhOYzDg4JqQ@mail.gmail.com>
+In-Reply-To: <CAN5Drs3TCGT1rWJjujo3FP3HxnSFUFo5hcWh=4+xhOYzDg4JqQ@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 27 Sep 2024 18:15:40 +0200
+Message-ID: <CAH5fLgjnyKtXsnPbvCFz64BBRqvWPwh6reM-myWA9AEBKFhcJg@mail.gmail.com>
+Subject: Re: [PATCH v2 6/8] binder: allow freeze notification for dead nodes
+To: Yu-Ting Tseng <yutingtseng@google.com>
+Cc: Carlos Llamas <cmllamas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 09:33:51AM +0530, Pavan Chebbi wrote:
-> On Fri, Sep 27, 2024 at 4:47 AM Joe Damato <jdamato@fastly.com> wrote:
+On Fri, Sep 27, 2024 at 6:13=E2=80=AFPM Yu-Ting Tseng <yutingtseng@google.c=
+om> wrote:
+>
+> On Fri, Sep 27, 2024 at 12:19=E2=80=AFAM Alice Ryhl <aliceryhl@google.com=
+> wrote:
 > >
-> > On Wed, Sep 25, 2024 at 04:20:48PM +0000, Joe Damato wrote:
-> > > Link queues to NAPIs using the netdev-genl API so this information is
-> > > queryable.
+> > On Fri, Sep 27, 2024 at 1:37=E2=80=AFAM Carlos Llamas <cmllamas@google.=
+com> wrote:
 > > >
-> > > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-> > >                          --dump queue-get --json='{"ifindex": 2}'
+> > > Alice points out that binder_request_freeze_notification() should not
+> > > return EINVAL when the relevant node is dead [1]. The node can die at
+> > > any point even if the user input is valid. Instead, allow the request
+> > > to be allocated but skip the initial notification for dead nodes. Thi=
+s
+> > > avoids propagating unnecessary errors back to userspace.
 > > >
-> > > [{'id': 0, 'ifindex': 2, 'type': 'rx'},
-> > >  {'id': 1, 'ifindex': 2, 'napi-id': 146, 'type': 'rx'},
-> > >  {'id': 2, 'ifindex': 2, 'napi-id': 147, 'type': 'rx'},
-> > >  {'id': 3, 'ifindex': 2, 'napi-id': 148, 'type': 'rx'},
-> > >  {'id': 0, 'ifindex': 2, 'napi-id': 145, 'type': 'tx'}]
-> > >
-> > > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > > Fixes: d579b04a52a1 ("binder: frozen notification")
+> > > Cc: stable@vger.kernel.org
+> > > Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> > > Link: https://lore.kernel.org/all/CAH5fLghapZJ4PbbkC8V5A6Zay-_sgTzwVp=
+wqk6RWWUNKKyJC_Q@mail.gmail.com/ [1]
+> > > Signed-off-by: Carlos Llamas <cmllamas@google.com>
 > > > ---
-> > >  drivers/net/ethernet/broadcom/tg3.c | 24 ++++++++++++++++++++----
-> > >  1 file changed, 20 insertions(+), 4 deletions(-)
+> > >  drivers/android/binder.c | 28 +++++++++++++---------------
+> > >  1 file changed, 13 insertions(+), 15 deletions(-)
 > > >
-> > > diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-> > > index ddf0bb65c929..f78d7e8c40b2 100644
-> > > --- a/drivers/net/ethernet/broadcom/tg3.c
-> > > +++ b/drivers/net/ethernet/broadcom/tg3.c
-> > > @@ -7395,18 +7395,34 @@ static int tg3_poll(struct napi_struct *napi, int budget)
-> > >
-> > >  static void tg3_napi_disable(struct tg3 *tp)
+> > > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> > > index 73dc6cbc1681..415fc9759249 100644
+> > > --- a/drivers/android/binder.c
+> > > +++ b/drivers/android/binder.c
+> > > @@ -3856,7 +3856,6 @@ binder_request_freeze_notification(struct binde=
+r_proc *proc,
 > > >  {
-> > > +     struct tg3_napi *tnapi;
-> > >       int i;
+> > >         struct binder_ref_freeze *freeze;
+> > >         struct binder_ref *ref;
+> > > -       bool is_frozen;
 > > >
-> > > -     for (i = tp->irq_cnt - 1; i >= 0; i--)
-> > > -             napi_disable(&tp->napi[i].napi);
-> > > +     ASSERT_RTNL();
-> > > +     for (i = tp->irq_cnt - 1; i >= 0; i--) {
-> > > +             tnapi = &tp->napi[i];
-> > > +             if (tnapi->tx_buffers)
-> > > +                     netif_queue_set_napi(tp->dev, i, NETDEV_QUEUE_TYPE_TX, NULL);
+> > >         freeze =3D kzalloc(sizeof(*freeze), GFP_KERNEL);
+> > >         if (!freeze)
+> > > @@ -3872,32 +3871,31 @@ binder_request_freeze_notification(struct bin=
+der_proc *proc,
+> > >         }
+> > >
+> > >         binder_node_lock(ref->node);
+> > > -
+> > > -       if (ref->freeze || !ref->node->proc) {
+> > > -               binder_user_error("%d:%d invalid BC_REQUEST_FREEZE_NO=
+TIFICATION %s\n",
+> > > -                                 proc->pid, thread->pid,
+> > > -                                 ref->freeze ? "already set" : "dead=
+ node");
+> > > +       if (ref->freeze) {
+> > > +               binder_user_error("%d:%d BC_REQUEST_FREEZE_NOTIFICATI=
+ON already set\n",
+> > > +                                 proc->pid, thread->pid);
+> > >                 binder_node_unlock(ref->node);
+> > >                 binder_proc_unlock(proc);
+> > >                 kfree(freeze);
+> > >                 return -EINVAL;
+> > >         }
+> > > -       binder_inner_proc_lock(ref->node->proc);
+> > > -       is_frozen =3D ref->node->proc->is_frozen;
+> > > -       binder_inner_proc_unlock(ref->node->proc);
+> > >
+> > >         binder_stats_created(BINDER_STAT_FREEZE);
+> > >         INIT_LIST_HEAD(&freeze->work.entry);
+> > >         freeze->cookie =3D handle_cookie->cookie;
+> > >         freeze->work.type =3D BINDER_WORK_FROZEN_BINDER;
+> > > -       freeze->is_frozen =3D is_frozen;
+> > > -
+> > >         ref->freeze =3D freeze;
+> > >
+> > > -       binder_inner_proc_lock(proc);
+> > > -       binder_enqueue_work_ilocked(&ref->freeze->work, &proc->todo);
+> > > -       binder_wakeup_proc_ilocked(proc);
+> > > -       binder_inner_proc_unlock(proc);
+> > > +       if (ref->node->proc) {
+> > > +               binder_inner_proc_lock(ref->node->proc);
+> > > +               freeze->is_frozen =3D ref->node->proc->is_frozen;
+> > > +               binder_inner_proc_unlock(ref->node->proc);
+> > > +
+> > > +               binder_inner_proc_lock(proc);
+> > > +               binder_enqueue_work_ilocked(&freeze->work, &proc->tod=
+o);
+> > > +               binder_wakeup_proc_ilocked(proc);
+> > > +               binder_inner_proc_unlock(proc);
 > >
-> > It looks like the ASSERT_RTNL is unnecessary; netif_queue_set_napi
-> > will call it internally, so I'll remove it before sending this to
-> > the list (barring any other feedback).
-> 
-> Thanks LGTM. You can use Reviewed-by: Pavan Chebbi <pavan.chebbi@broadcom.com>
+> > This is not a problem with your change ... but, why exactly are we
+> > scheduling the BINDER_WORK_FROZEN_BINDER right after creating it? For
+> > death notications, we only schedule it immediately if the process is
+> > dead. So shouldn't we only schedule it if the process is not frozen?
+> >
+> > And if the answer is that frozen notifications are always sent
+> > immediately to notify about the current state, then we should also
+> > send one for a dead process ... maybe. I guess a dead process is not
+> > frozen?
+> Yes this is to immediately notify about the current state (frozen or
+> unfrozen). A dead process is in neither state so it feels more correct
+> not to send either?
 
-Thanks, I've added your Reviewed-by for the official submission.
+Okay.
 
-I'll mention this in the cover letter when net-next is open but the
-only changes I've made to the patch I posted are:
-  - Removal of ASSERT_RTNL (mentioned above, as it seems to be unnecessary)
-  - Wrapped lines at 80 characters (cosmetic change only)
+On the other hand, I can easily imagine userspace code being written
+with the assumption that it'll always get a notification immediately.
+That would probably result in deadlocks in the edge case where the
+process happens to be dead.
+
+Alice
 
