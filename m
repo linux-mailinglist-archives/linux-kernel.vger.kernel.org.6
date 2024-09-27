@@ -1,88 +1,150 @@
-Return-Path: <linux-kernel+bounces-341285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7A1987DC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:04:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B053987DC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA8EF1C22273
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 05:04:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5097A1C227FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 05:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788B515B572;
-	Fri, 27 Sep 2024 05:04:04 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D8217085A;
+	Fri, 27 Sep 2024 05:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jnV5hrdi"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C2BF9C1
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 05:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0155B2F2E;
+	Fri, 27 Sep 2024 05:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727413444; cv=none; b=Y5JzrcCufVJy8ptbqFS9KqwRE3V8Z7xYs0FlxuYfCS5VvpRJNcWI3U9sB/QoiQVECMNIbmYkXIThpSd71R+Yk1L9Mdvs582ygqd24h/ZIAt4/oWkeu2/tAkynGvs2OJO7qSjA8ivAGqHbL1u1+mPue07vkGmYEpMNS2GnrQuogM=
+	t=1727413703; cv=none; b=ZTnBQqEGSHXf73DFIFSQCldQfVVv1CtFPRDnyFtcFu63qMhal47hiovkuwhe/7iNAYAinNY1THaqTCHZTM/qTum8w+pQdfz0uADZF+IsUrZlMHnE9A+57DTXbSEVSHeMWc856a/nK1A7ahkWMxA0ftE3Eni8kr9vFUhclXyM1ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727413444; c=relaxed/simple;
-	bh=SjGBYvz7T0qkxE6kg8zLeZ7KNqVwseOD+H9h9Z901w0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=SHPwD8ziMBlmHUva+x7SBSj6za641HdkM7lQlHRgnMa3Vi66MCiwAOvJ6pPiRPjQV3oZhxlJqx0pEsee3lCO1YTRCuu4aZDRYIzhDbzzjaolSTTP+3P0gZ49xKDFoTQxEAOFtshLtlIJilc6fdLqbCth9VnXWKwIqe8zNrOS77A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82b930cd6b2so210121539f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 22:04:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727413442; x=1728018242;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+9q+IZMEdWfJPC4uwcDTgpH54G/AY8V67uzGME3VoSs=;
-        b=IznVqzgUw7/igsdb9gmQzqJHj3pOR3qOd2WeQXTankZl5tJLsBH3nsjOeS3X5JCFFu
-         vjF+Q3QPXczs0EgN/oJuRwPWh4VollScs55zO/V5CdGWiCbTLopfQiilV4wwqwgo+kVD
-         IbqZhCS8kdIDu5XKtSh8jiWiUOkDSDFwXp0UHVeYeSTtq3snnxGQAaR12u9/CZQ28ItR
-         mSkHKE9Ubzzre7+T02qo8XR2EpQwdMJygsx7BNs3+Ux/lmXfYfeKrNPp1ls+87IaNzZD
-         IEKs/+X1hoWTuP+8WXvFd0jqqbvj+VtLlLUcIkuqNL4MRaXIDXwJZcGxm6ftLGQCYqeT
-         YF8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVGrSr0JbA5XDuOLYOnG98gvFQORG/9bp8JIXHElRDAaKpo7AhaQY/dF1wjk14yW0dyFJcPd1x8eCPGXYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbSvNSyGAO5Y7gcXC4UNI5YsgKhPgGKFA71t6emxNbypZ61FYb
-	m1mqyIfDncz9d7mkrac9rKa7OeWInzBPCSK87QH+jZXMqa0HTueseT5oefegOQsQxQ3kuJmnypL
-	hTXVFZrW4y3ZWvSj+DGr9WcgeadIqAT3INow9LpGoSk9Rwb6ZqjhyY84=
-X-Google-Smtp-Source: AGHT+IEuIThoMfjHlJmdIPHZix02yslTIlQF5/nyPzFqxMKfMlXxvSWsMpN3ijXL9qngDDvHLVpsU1YjSMkNcm8WIdZfwHbLF/CC
+	s=arc-20240116; t=1727413703; c=relaxed/simple;
+	bh=FpiLuwfpOyRVMVZloHBShMMbqSoFyooVGxqn5qfDJeE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K8pE+V5XxMMempTux0ET3aKg7w7u+0wF48HS3iMfM0S8vl+GorstvHn8Fslzbd2VvWL6pTABR5WzIfRyw511LTp4yjeQ6U0EVV3t23z3eMbwuUXT/HAMtsBkWoHoQ41MdoSQppaMBM0GsRZGHl76V4ieWJ3booV9qb5CCwukLSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jnV5hrdi; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R41dHC004377;
+	Fri, 27 Sep 2024 05:07:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=9CApFunvT3sS6/YT43VCSzj7Jy
+	IFMaSoyJEvAHbUpvM=; b=jnV5hrdi7DVHqUOjDvmrhKLHhLIbj6UDFH53B2wn9u
+	Vr92oCiTp6VWyteBiVtr/FpT74/84MVbFWeDrB5YnPJDdWOp8yrPqa+1XFNCEUwo
+	xGNQh3GlG8rBD6uVem40ozWiM4pXfPNatjFhNRpKUikIGhyJXehDiKEMwYOVQ1eh
+	4hKNND4eoOrhAkKyPFjAPPPJxFroXeZ/8ApQ4NTf1jE/MjegXPYAC+7BEVYK71iY
+	0DURNa8/39HescwAxlP7H+Oe0JuvRm62R/iNEWkfmmP31E7nCZLaObkR2ByLoR/Y
+	2Bm+4lM01xFwDHl6PvfkYM6kn19QEErWs/goHYlLXqTA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41snnatagj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 05:07:58 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48R57w9Q006674;
+	Fri, 27 Sep 2024 05:07:58 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41snnatagh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 05:07:57 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48R0WxJ6000636;
+	Fri, 27 Sep 2024 05:07:56 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41t8fv35ay-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 05:07:56 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48R57tkc52822414
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 27 Sep 2024 05:07:55 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3B0CD20043;
+	Fri, 27 Sep 2024 05:07:55 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 75C0D20040;
+	Fri, 27 Sep 2024 05:07:53 +0000 (GMT)
+Received: from ltczz402-lp1.aus.stglabs.ibm.com (unknown [9.40.194.31])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 27 Sep 2024 05:07:53 +0000 (GMT)
+From: Donet Tom <donettom@linux.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
+Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Mark Brown <broonie@kernel.org>,
+        Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+        usama.anjum@collabora.com
+Subject: [PATCH] selftests/mm: Fixed incorrect buffer->mirror size in hmm2 double_map test
+Date: Fri, 27 Sep 2024 00:07:52 -0500
+Message-ID: <20240927050752.51066-1-donettom@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2e:b0:3a1:a20f:c09c with SMTP id
- e9e14a558f8ab-3a3451b9f82mr17499385ab.22.1727413441951; Thu, 26 Sep 2024
- 22:04:01 -0700 (PDT)
-Date: Thu, 26 Sep 2024 22:04:01 -0700
-In-Reply-To: <a2f49743-4617-4655-ab4e-d94928368647@kylinos.cn>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f63cc1.050a0220.46d20.000d.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_stripe_to_text
-From: syzbot <syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	zhaomengmeng@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: u3hJP0oEm6bBvR-I7cUGFJWASJe_0GDW
+X-Proofpoint-ORIG-GUID: lbJ2JrcLKLuXquvqnZftyDtOSMpyQfrK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-27_02,2024-09-26_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ mlxscore=0 mlxlogscore=775 spamscore=0 impostorscore=0 priorityscore=1501
+ phishscore=0 bulkscore=0 clxscore=1011 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409270030
 
-Hello,
+The hmm2 double_map test was failing due to an incorrect
+buffer->mirror size. The buffer->mirror size was 6, while buffer->ptr
+size was 6 * PAGE_SIZE. The test failed because the kernel's
+copy_to_user function was attempting to copy a 6 * PAGE_SIZE buffer
+to buffer->mirror. Since the size of buffer->mirror was incorrect,
+copy_to_user failed.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+This patch corrects the buffer->mirror size to 6 * PAGE_SIZE.
 
-Reported-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
-Tested-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
+Test Result without this patch
+==============================
+ #  RUN           hmm2.hmm2_device_private.double_map ...
+ # hmm-tests.c:1680:double_map:Expected ret (-14) == 0 (0)
+ # double_map: Test terminated by assertion
+ #          FAIL  hmm2.hmm2_device_private.double_map
+ not ok 53 hmm2.hmm2_device_private.double_map
 
-Tested on:
+Test Result with this patch
+===========================
+ #  RUN           hmm2.hmm2_device_private.double_map ...
+ #            OK  hmm2.hmm2_device_private.double_map
+ ok 53 hmm2.hmm2_device_private.double_map
 
-commit:         1ec6d097 Merge tag 's390-6.12-1' of git://git.kernel.o..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e94507980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6265dd30e362bb47
-dashboard link: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1503f627980000
+Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+---
+ tools/testing/selftests/mm/hmm-tests.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Note: testing is done by a robot and is best-effort only.
+diff --git a/tools/testing/selftests/mm/hmm-tests.c b/tools/testing/selftests/mm/hmm-tests.c
+index d2cfc9b494a0..141bf63cbe05 100644
+--- a/tools/testing/selftests/mm/hmm-tests.c
++++ b/tools/testing/selftests/mm/hmm-tests.c
+@@ -1657,7 +1657,7 @@ TEST_F(hmm2, double_map)
+ 
+ 	buffer->fd = -1;
+ 	buffer->size = size;
+-	buffer->mirror = malloc(npages);
++	buffer->mirror = malloc(size);
+ 	ASSERT_NE(buffer->mirror, NULL);
+ 
+ 	/* Reserve a range of addresses. */
+-- 
+2.43.5
+
 
