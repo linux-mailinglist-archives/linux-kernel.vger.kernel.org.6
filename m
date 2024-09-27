@@ -1,107 +1,173 @@
-Return-Path: <linux-kernel+bounces-341915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE01988840
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:26:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F94E988852
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B09151C20A5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:26:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37535283D5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512301C1738;
-	Fri, 27 Sep 2024 15:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF431C1724;
+	Fri, 27 Sep 2024 15:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b6JaPc32"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGSTpYpA"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F4B1C0DFA
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 15:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3B174BED;
+	Fri, 27 Sep 2024 15:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727450807; cv=none; b=mZcaKmWnKs0caPt/sJHoTqCJ37jojUJMe5Gr13iaEGjLz+HUQGSV1HhXOrEsl/ZkSiVAPOd6oie+kSwMsN1j2FVpVztWOcPRC2TmQqeIRiGWTviNrHhszQmjZn3bBxMQgKGY97HeYXxZBhtzTqru6Ll6M0VKFY8/l/AgQuO9m8Q=
+	t=1727451120; cv=none; b=BuLCxrZ3Em8X8j69LHJyhCOljRZPZGNO8SwFX9OrKRQrOMDh9raMn2kqrI4BCsWC1tSgaI2MYnYP6qEbyJOHcLK6iQkAp426WXCQI7cyKfoUjZdxQlx8ue0+2O9DRW/G7CZvLpxA0uzx6RV9T9IeUnUDQikwJmkXAxnHeSa32Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727450807; c=relaxed/simple;
-	bh=Vdfhnsi3EotHXVW995ft11x8B3qGPa7cvav7Yi70Zhc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nlsXIgI4RyYfNkzWLXgHp+NQlTpDjYjixS16h4cpxDf8Rnp2HAjVtl57yGAs940PnfNVuATbwbnos3Sh9gydXBcYDwpXvBQrRhjBFhr8qH2u1WobiKKvLgSaep/IWZNcotJcqyH7PeWKS96SC2ayJNk/gtdRApBLq65gi1NCTGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b6JaPc32; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cae6bb895so20918145e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:26:45 -0700 (PDT)
+	s=arc-20240116; t=1727451120; c=relaxed/simple;
+	bh=ecsRbGoKvi94m683sBbOe5u+7jAt/EOz4MF3SLQZLRs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PHymMlTlARExjT1BzLeTJsat9F1uPNDoORPFurosfbMTxcsdyNfQDMNRv5wvOXUbQFgDrvf93Lbib+Yn9v+7lFcIeCNUNl1m04CpRLQ8SmaEBWL/SUIoAUChpa/JSN3fssib3SwDNozUYE3rlUoV8vr56KErXchOXLIRc+SJweA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGSTpYpA; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5d5eec95a74so1092758eaf.1;
+        Fri, 27 Sep 2024 08:31:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727450804; x=1728055604; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/nNMy1Jele6OQzwkGo6J+HA5rYJclMwLaw2lNZiPamE=;
-        b=b6JaPc32Fzd/HT/cIdoAMFIokeAeNjLucz0MtGa4Mfe4yUOlM7XQ5YN4+2Ribvd0DB
-         WmLFno4Z6UFsouI9WOJMSJkHSMXOEEXBMgmQ3wNDOf1oZmPFzH33fpUK1L1MJY33zR7X
-         Hg3+j3uIgzdlbpmhCgnVaK1WvHNjPz3DXcEXqsSM+ZiHwTRdZoHB/2S1jpUkqKS4ibW1
-         x68ysED0aDcZD7Kuo44w03Fxi2goJnGbQrOnbCy9qj4MO/xnR2qqTZ0JBeSb2nkFaca4
-         CcXHCJhXjDWmpALmAC5roGYSFGLHjXUIQbJ5JE/5L361Lv7+Hpi4y8XI3Y/Mgu0Q2nIK
-         rrqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727450804; x=1728055604;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727451118; x=1728055918; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/nNMy1Jele6OQzwkGo6J+HA5rYJclMwLaw2lNZiPamE=;
-        b=uNIVjH8UNYfZ/XaRAyc7/GoZ05DkNVOyWuzkcuk+DqL77eLs3GQYdOhP8jCtXqcVmE
-         EYmAfEwkFfln4N2MLOfmYxVm+uM73dgLCqMbXZPLdoTCtlyowO//Qtiy60pdhKrSWyLK
-         JbCcWLb2XkDEYEyQHj6t+hNjYPkGx0Ea4XRe/83jgH+U4C9duZCjYIZLj6IFt+9fUaJh
-         qnZgnih555VMS1dDuSelz0DZRlnQA0wdRNyC3cHK3OtsUkMWE0Jer2cuVLv9+ttNt8bb
-         KZCLkRsH/ANuMZycGFIwiL2wgi4oAxQaTEFfH6uHQvNZkqWKKsI0np0nhw+YIU49/grh
-         eMrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtLF5zkHAYqXxp2orVk8XRA5MBvPDXGzLWHtjv/TKUFwMlGeOTCUL+FMCpp4MVfIN4MlHNYDpuQ+KOErI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXud7jKRw1OG6g+yOZATI9fMFCCLanIolkqG2i179f029+Abek
-	SsahFYkR8yNIV/0wtes7KycGrB4FaQsZrwYPSqH7sfJ2+e4+TkOGqe7dnY5qPn0=
-X-Google-Smtp-Source: AGHT+IGBH2Kg/YpCT/R723MZc+TGVSxQKlIeip9U0L75aWbuvjywKgl5Tnj1OrlrAkjg/xIv+vWNzA==
-X-Received: by 2002:a05:600c:4e08:b0:42c:bad0:6c1c with SMTP id 5b1f17b1804b1-42f5844b3b4mr29417935e9.18.1727450804379;
-        Fri, 27 Sep 2024 08:26:44 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57debf07sm29600285e9.22.2024.09.27.08.26.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 08:26:43 -0700 (PDT)
-Date: Fri, 27 Sep 2024 18:26:39 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Xingquan Liu <b1n@b1n.io>
-Cc: Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8712: Fix unnecessary parentheses warnings
-Message-ID: <9bf11c06-85c7-4ef0-ba26-e4780a28f23c@stanley.mountain>
-References: <20240927151637.82772-1-b1n@b1n.io>
+        bh=usbGndAEP6RKj6SG8WhrwCRKqwPvgi09AD1FuzxTCC8=;
+        b=nGSTpYpA1odliLMKUvHOtHshO/k9RzygWzJtp5H2C+BUDCwaBlClBUcfM1Ly/4am4W
+         1dZ0yKlmNilEhBEBXqhpWSKW7WLWFFIGeuEJCA31C5lMf8C0EGx1KYtBlDwfDAr+nbpF
+         nPLBfUStyutu3km6cl0RmeuuHD8YqdDkKjTzTKNN3fT1tCEByVcPJbjYfTbo5ZB1VKBy
+         Td9aGsR2rDl1EBwbQKLNxe8iqGWPaYSzfVJHgbh47hPL20Z747VbgXaflYi46y07z9BT
+         i154cSyCkvpZKfl0qM+FU9uxupdpAH0WNeNZ/h+yA2Y6ojHHt+dq8qVQZXdQtaE/WzLe
+         yVuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727451118; x=1728055918;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=usbGndAEP6RKj6SG8WhrwCRKqwPvgi09AD1FuzxTCC8=;
+        b=meIh2f1s6bNkk6f0zikvJ2o4nA5fY162rUur275V1zeUN2SP5mDSSmOeGkM6A392bY
+         C1Jyz0jqyTeNFX1yCU7EKQ/3GVR8zIu2ngKlmzbl2b7aoHsEDQe5zpIggtPDR7URK+9d
+         N8nCpYXPvmusDEHvnehtz6ilsMB2beclf3CP32iBQw7vkKt5MSLE8xM1ziUgO47kl5p6
+         3cWT+eKReGligMRoamkNcbPMfAEnfvtTE06JjHvbzczNt5ZgLzMDHL9ERs3C0lmBs644
+         +hDEfkLZWekTeYJYfM9ccdPvfa1HnqOmf+HTXBVxPUui1KOgFh8fP4jh/Asq2XdNJxDy
+         aOyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTNGXvoP8RHP/ewpVN1oLsFbQqkd84aiOoojs2INsQqHnsR7vKGV/11aANGQoaGDbqAvPCups73UN7olY=@vger.kernel.org, AJvYcCXc8mtD0xsnyATTyZaG8Z1ig0Pxdb9ZJeTVdccaCLbyt4mzyyMP9tVkHadaAmKJxEMSqgKacr2BnFft610=@vger.kernel.org, AJvYcCXqTfvCZiyObFlt+rRcGISeXws6RqWfnLmNMK02BweN6Wp+5srHQBqMtv55adQz26lHrWEZUzrIGnO8KRHtM1jDp9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/0qMOro/fMS64peAUe3nPdB9Nmkfh7vR6hFIpMDixLdVJmqxT
+	T+WZvboKiRCUjgqlgyMD9YfXmsFJaaRJxzQdFNZuM9bGUPCDZGzbBQdRjnqIPSzwtO+RQwSj4io
+	QvkXYA7uk2BNs1Ukokc8J9kZNAJc=
+X-Google-Smtp-Source: AGHT+IF4JspM/zMBLkoNZehhJMPEmtTkj8/Ez0HqBPtRzJrG7epkmEQIYm8UrvsTuDdZxqRg4sw4VNQOBVlqUn6pffw=
+X-Received: by 2002:a05:6358:99aa:b0:1b5:f74e:ae3a with SMTP id
+ e5c5f4694b2df-1becbbb8890mr235276755d.15.1727451117751; Fri, 27 Sep 2024
+ 08:31:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927151637.82772-1-b1n@b1n.io>
+References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240910170610.226189-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <ZvWBlivUaZ92KoAI@kekkonen.localdomain> <20240926174819.GK21788@pendragon.ideasonboard.com>
+ <ZvWumaGsMPGGwPaS@kekkonen.localdomain>
+In-Reply-To: <ZvWumaGsMPGGwPaS@kekkonen.localdomain>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 27 Sep 2024 16:31:31 +0100
+Message-ID: <CA+V-a8uGmyrSQQULY9sS9r-Ss_Gxw7OBtbYjFYOMpLJ_e=ZRGg@mail.gmail.com>
+Subject: Re: [PATCH v2 11/11] media: i2c: ov5645: Report streams using frame descriptors
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 11:16:36PM +0800, Xingquan Liu wrote:
-> Fix all unnecessary parentheses warnings in checkpath.
-> 
-> Signed-off-by: Xingquan Liu <b1n@b1n.io>
-> ---
-> I ran clang-format additionally because I noticed the Linux community
-> recommends submitting code formatting patches along with other patches.
+Hi Sakari and Laurent,
 
-Probably avoid running clang-format.  If we wanted to do that, we could have
-done it already.
+On Thu, Sep 26, 2024 at 7:57=E2=80=AFPM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
+>
+> On Thu, Sep 26, 2024 at 08:48:19PM +0300, Laurent Pinchart wrote:
+> > On Thu, Sep 26, 2024 at 03:45:26PM +0000, Sakari Ailus wrote:
+> > > Hi Prabhakar,
+> > >
+> > > Thanks for the set. It looks largely very nice to me, after addressin=
+g
+> > > Laurent's comments. A few comments here and possibly on other patches=
+...
+> > >
+> > > On Tue, Sep 10, 2024 at 06:06:10PM +0100, Prabhakar wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > Implement the .get_frame_desc() subdev operation to report informat=
+ion
+> > > > about streams to the connected CSI-2 receiver. This is required to =
+let
+> > > > the CSI-2 receiver driver know about virtual channels and data type=
+s for
+> > > > each stream.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+> > > > ---
+> > > >  drivers/media/i2c/ov5645.c | 28 ++++++++++++++++++++++++++++
+> > > >  1 file changed, 28 insertions(+)
+> > > >
+> > > > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.=
+c
+> > > > index 7f1133292ffc..c24eb6e7a7b5 100644
+> > > > --- a/drivers/media/i2c/ov5645.c
+> > > > +++ b/drivers/media/i2c/ov5645.c
+> > > > @@ -28,6 +28,7 @@
+> > > >  #include <linux/regulator/consumer.h>
+> > > >  #include <linux/slab.h>
+> > > >  #include <linux/types.h>
+> > > > +#include <media/mipi-csi2.h>
+> > > >  #include <media/v4l2-ctrls.h>
+> > > >  #include <media/v4l2-event.h>
+> > > >  #include <media/v4l2-fwnode.h>
+> > > > @@ -829,6 +830,32 @@ static const struct v4l2_ctrl_ops ov5645_ctrl_=
+ops =3D {
+> > > >   .s_ctrl =3D ov5645_s_ctrl,
+> > > >  };
+> > > >
+> > > > +static int ov5645_get_frame_desc(struct v4l2_subdev *sd, unsigned =
+int pad,
+> > > > +                          struct v4l2_mbus_frame_desc *fd)
+> > > > +{
+> > > > + const struct v4l2_mbus_framefmt *fmt;
+> > > > + struct v4l2_subdev_state *state;
+> > > > +
+> > > > + if (pad !=3D OV5645_PAD_SOURCE)
+> > > > +         return -EINVAL;
+> > >
+> > > As you have a single source pad, and pretty much all sensor drivers w=
+ill, I
+> > > think it'd be nice to add a check for this (that it's not an internal=
+ pad)
+> > > to the caller side in v4l2-subdev.c. And of course drop this one.
+> >
+> > What check would you add, just verifying that the pad is a source pad ?
+>
+> I think you could add that, too, besides the absence of the internal flag=
+.
+>
+Checking only for the source flag should suffice, as the
+MEDIA_PAD_FL_INTERNAL flag cannot be set for a source pad because
+media_entity_pads_init() enforces this restriction.
 
-> 
-> I'm not sure if there are any issues with this.
+Do you agree?
 
-This patch does way too many things at once.  This is a long way away from being
-something we would even look at.
-
-regards,
-dan carpenter
-
+Cheers,
+Prabhakar
 
