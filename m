@@ -1,275 +1,273 @@
-Return-Path: <linux-kernel+bounces-341319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD81987E40
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:17:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8719B987E45
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D5931C221E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:16:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA5A6B2298D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C36C172BB9;
-	Fri, 27 Sep 2024 06:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C5A17837D;
+	Fri, 27 Sep 2024 06:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lA0APSyc"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sojrdndw"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FEB52F74;
-	Fri, 27 Sep 2024 06:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038F3178381
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 06:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727417811; cv=none; b=MhiV+3YEq84/YNLbOwZ1eDx7jbSNHOJd67QY+AZS5mUsZ0X+uo69sN0MNWeHAVBKkzz/Sht1ZWXf5IOlUzNG8WpVWu50tRCvgb6IRoZ/cMxaUUpF8D6jT6OWAToQlNNFfnIC9zrFfKu739ppWTkGgqOBPcemf8Z7K/I1NHyNGvw=
+	t=1727417816; cv=none; b=V9iUJbo54QCZx102/BIBsbDTD+slW2/a7Dhgq3XUD2oeYZJRl14JOVBMXVagnNCjtoyG9XHmgnrvjfu81EgUZHQSgDuEmth7/MJRlEg7Lfl5zefCZNPXnsJzpd2/YhlXgpsU3QQ9nMaQdbAtgDb3f3sloU8vqJuLt4HMmkwvZmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727417811; c=relaxed/simple;
-	bh=pk0EhutWfXshVlwVkCjUb7C2pwlJpTvsYXfR/yqB0LI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AM58UKOiYjCoGZ03IQ0Evi2s/U1BOoQRlF8rCRUGDlB4z3DAqg8arlJakqmRXMly5rg1ZhulPReThJ53ZF3DUGA3HiecBrtBy4CRW1CPg+wulYZbLskbsN6dESugQAIcsKt87NS1aK2O0vFcMzvjid8KlhVwd9pl05zjiMt6qv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lA0APSyc; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-718ef6a26dbso114273b3a.1;
-        Thu, 26 Sep 2024 23:16:49 -0700 (PDT)
+	s=arc-20240116; t=1727417816; c=relaxed/simple;
+	bh=BBuujurPmY7WHlx0IYwxYgrtMr81U8EJiwQSJ9iNZ+g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wg8Sp3E2sfDI6i4y69TOCZFbYcFkpP6HQVZBHeHxb2bXVgBSQA/R9ESSI8U2pYQwK1Sf0jxufZpekevqs+KjJE0wRuGlH/mzXR1C6PWZ3TF3sBiL2QiQqY+nYY7zZRKfeGp+hNZOD4S7wEyARhwA/XP/ybLmdTuZ0DUsogenlnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sojrdndw; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e045525719so1128686b6e.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 23:16:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727417809; x=1728022609; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nFMu5nIK1XA2U6Jv3UWdl8l0/cwS3LFilHd5/wyNgKU=;
-        b=lA0APSycx5UYqjyu+27mw3i/yd7iIDtNMJNaTuWwmSj2b4NLYkmhqQAyuALyDIKaWx
-         /04cGFoCHtFHUo9sUeHzDGrIW6eUMo5OdAXX2nL4cqRqSQ+Vid7uCmNNqyVsPbphmPKl
-         I1QDYhv/BXhY3VtYEAHtHYCHJkaFMACimtGEgZMiAn82cbMDldPZSxaZ63XiqpkhA5lK
-         8szcXaevtbT3VArzlOIf/v6HxftYLkLw62RAokIv0KPC/tEF/iCvNardKYmt+DaIWMWf
-         jA57XgBFScCa0tauYVoLH2T/OesScF74BVjvGEBfjNf/2gbHjCuaZsgGeNw8wJlG2uJy
-         yvWA==
+        d=linaro.org; s=google; t=1727417814; x=1728022614; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ozF4LqzPuN76+eJ5lZ+Te5WdJCv5iNC/lHSX5fH2wo8=;
+        b=SojrdndwDvLKovR02lAQoLTsqzzWx16I03RMqgNcPXibE9OkqASxXhso2d70Bwq/ve
+         ajvOBw9XdrRgKyuHEiRaCgGIhzKS8E3SNrM7QtmeScGtuOoRFMXnWtOCS19aAPzT32/m
+         Nu/Fl+x+ChITMB+sgNyerXjzjo1cUs9yGceTf74xKsVW74f8arXyi/n5vG5V4FZAxLaA
+         MnXETnjic3rtSiuUviL/ej833NYAzV739fwcuDxAQhq1hyjV4/H1HNc1db3d/ryLY+0i
+         U47ori0F2/Hri0IBV23RZHpYGDmqWBeLOaj2YjPib4etBpqOSQqEUEr+5gqVOgXq3Etv
+         Hhfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727417809; x=1728022609;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nFMu5nIK1XA2U6Jv3UWdl8l0/cwS3LFilHd5/wyNgKU=;
-        b=jaw8FCY86LERalettWZc82rx2sftIFgrJy1Z2DgQm9L2eiQS/UydrjHQruprv0Ymee
-         KDba8Xcp39G2e2ME1ZVma+hDkCaZiYjBy7HUslfkMzdl1GEfsoPQ3Ta/Skz3qyhAs1Fa
-         52ahLJcUqekRv/1ikHtHObeem/VWLbWM9bWMOUwW4SV8BU9EV67wsoJuVfkdCsCNHJPH
-         Z357LkoG3laJFGYG6HyFlh0BA1U43hqIfQFOgUXJuj6yCIw7t4oU27RvmalKtSjaB6ek
-         OOhb74V6LXMAVPER2z67YGUnzBDqbj3Pcz4J6qnRyddXNwU2/nhFAN7Jh+yAkoH055/Q
-         zl2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZUnN3jcoiKhGpYnFAPdkuZ6iKYwgubwKs3XfhOsLLoF2HGFuha/ZFKljp4jQE338/uj/IYdWqhm3n@vger.kernel.org, AJvYcCXp8p8d8yJbrr/Wqawoh2VdHT3bObXdrUkhOSINMylWIOOf7rC5+6xhd7dtuzJ9acroxZQ0mbM5/GkYJOqO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSNxeYVCPwNzTYZdc9aLwPqd7QX+02Y9NIBB1NsX6/uRSdFah7
-	APoO3PgSPfFeqV0z/jLdMMtOPabYANeWctFHDHB9XN9JvACyUztL8EDTOO8w
-X-Google-Smtp-Source: AGHT+IFMk1Agg28AI0P5xMasf2xXouzCk5MXC6T3rgBYjc4+jgRDD/x2a4D4CmpENKmag+Or5NCmng==
-X-Received: by 2002:a05:6a00:190e:b0:71b:64c:813f with SMTP id d2e1a72fcca58-71b2607eb74mr1501331b3a.6.1727417808721;
-        Thu, 26 Sep 2024 23:16:48 -0700 (PDT)
-Received: from [192.168.60.56] ([103.29.142.67])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264be25dsm857173b3a.84.2024.09.26.23.16.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 23:16:48 -0700 (PDT)
-Message-ID: <9cc2d594-a930-4c4a-86ee-47228af28936@gmail.com>
-Date: Fri, 27 Sep 2024 14:16:42 +0800
+        d=1e100.net; s=20230601; t=1727417814; x=1728022614;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ozF4LqzPuN76+eJ5lZ+Te5WdJCv5iNC/lHSX5fH2wo8=;
+        b=tAiO49dfgFsI91CLIZ1FIj7eaLRc7jB/2SurJVwbG8YmDzXwoOR/fSwllOjAH4mQeM
+         s+5071c39zGabsirZu8IPIQMoV7gHpGRsDxRo2Ojw4q5mFh3CXkpuwXQTiVEmVCs29ZX
+         8/ncDJlmySit1J+YT3ix3LnFhUIMVrqCglQpA86y+7xE4tEIjdNc2+WS+zjw7uoN+R5p
+         cgzzXUS7zOxOb7jcML0BqMMtAt+QwNvUsGJ8rVd+ciakkvcvDwHQO3VDSxgKQGQJhRLx
+         m0lmjueSflIfYZyEYr+IklSrhdp4OV/Rf4MS66kPQYpVSsPXFIqcSPVIkCGHlWdzWuDg
+         fS0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW7h5Utk5WhwTWKSt5PBL9bPSnToLHiMtW5yEcOinT/4S42tZ6/wa1Urw+VQFuFzAnwG2/cpePDdV6g0hE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGoEOuy2ESzVJah3gpDB4jeHAmFIFmG/00jpSEiwo23ycGeQnc
+	kNKr+rX241u3jTs2jqHaalns8alYBxmLVN1tRg0jrN3bR0dVS6S7V2/gU12iE9N0PW19xREC5yS
+	ehmYMocysZOJDaERmu7MwH1H4UeCPuzwYByJN5g==
+X-Google-Smtp-Source: AGHT+IE7a9V7g499bPCEexIc6gQX3B//P8N+eSHKwz0TbP7BEFlO4EoSql2AgMnBjmJ12sfgT8sHqNMG3B3iulzPgZA=
+X-Received: by 2002:a05:6808:331a:b0:3e3:91a5:d8bf with SMTP id
+ 5614622812f47-3e39395c60emr1379976b6e.8.1727417813829; Thu, 26 Sep 2024
+ 23:16:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] phy: rockchip: inno-usb2: Add usb2 phys support
- for rk3576
-To: Heiko Stuebner <heiko@sntech.de>, vkoul@kernel.org, kishon@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
- tim.chen@rock-chips.com, frank.wang@rock-chips.com
-References: <20240926103223.29538-1-frawang.cn@gmail.com>
- <20240926103223.29538-2-frawang.cn@gmail.com> <10867555.aFP6jjVeTY@phil>
-Content-Language: en-US
-From: Frank Wang <frawang.cn@gmail.com>
-In-Reply-To: <10867555.aFP6jjVeTY@phil>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240830070351.2855919-1-jens.wiklander@linaro.org>
+ <dhxvyshwi4qmcmwceokhqey2ww4azjcs6qrpnkgivdj7tv5cke@r36srvvbof6q>
+ <d8e0cb78-7cfb-42bf-b3a5-f765592e8dd4@ti.com> <mzur3odofwwrdqnystozjgf3qtvb73wqjm6g2vf5dfsqiehaxk@u67fcarhm6ge>
+ <e967e382-6cca-4dee-8333-39892d532f71@gmail.com> <lk7a2xuqrctyywuanjwseh5lkcz3soatc2zf3kn3uwc43pdyic@edm3hcd2koas>
+ <04caa788-19a6-4336-985c-4eb191c24438@amd.com> <2f9a4abe-b2fc-4bc7-9926-1da2d38f5080@linaro.org>
+ <CAFA6WYMd46quafJoGXjkCiPOKpYoDZdXwrNbG3QekyjB3_2FTA@mail.gmail.com> <2ab11399-ffa0-4940-a965-fb95a5f3b20e@amd.com>
+In-Reply-To: <2ab11399-ffa0-4940-a965-fb95a5f3b20e@amd.com>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Fri, 27 Sep 2024 08:16:42 +0200
+Message-ID: <CAHUa44GfsSjE9w4vPcbcESNoDj3exA+tfSxzbJh844CzyBVFtg@mail.gmail.com>
+Subject: Re: [Linaro-mm-sig] Re: [RFC PATCH 0/4] Linaro restricted heap
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
+	Andrew Davis <afd@ti.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Heiko,
+Hi,
 
-On 2024/9/26 18:48, Heiko Stuebner wrote:
-> Am Donnerstag, 26. September 2024, 12:32:23 CEST schrieb Frank Wang:
->> From: William Wu <william.wu@rock-chips.com>
->>
->> The RK3576 SoC has two independent USB2.0 PHYs, and each PHY has
->> one port.
->>
->> This change also converts the clock management from single to bulk
->> as some Rockchip SoCs (e.g RK3576) have more than one clock.
->>
->> Signed-off-by: William Wu <william.wu@rock-chips.com>
->> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
->> ---
->> Changelog:
->> v3:
->>   - amend the commit log adds clocks converting.
->>   - retrieve the clock by "clks.id" in *_clk480m_register() function.
->>
->> v2:
->>   - no changes.
->> v1:
->>   - https://patchwork.kernel.org/project/linux-phy/patch/20240923025326.10467-2-frank.wang@rock-chips.com/
->>
->>   drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 139 +++++++++++++++++-
->>   1 file changed, 131 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
->> index 4f71373ae6e1..642c7857c5ae 100644
->> --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
->> +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
->> @@ -229,9 +229,10 @@ struct rockchip_usb2phy_port {
->>    * @dev: pointer to device.
->>    * @grf: General Register Files regmap.
->>    * @usbgrf: USB General Register Files regmap.
->> - * @clk: clock struct of phy input clk.
->> + * @clks: array of phy input clocks.
->>    * @clk480m: clock struct of phy output clk.
->>    * @clk480m_hw: clock struct of phy output clk management.
->> + * @num_clks: number of phy input clocks.
->>    * @phy_reset: phy reset control.
->>    * @chg_state: states involved in USB charger detection.
->>    * @chg_type: USB charger types.
->> @@ -246,9 +247,10 @@ struct rockchip_usb2phy {
->>   	struct device	*dev;
->>   	struct regmap	*grf;
->>   	struct regmap	*usbgrf;
->> -	struct clk	*clk;
->> +	struct clk_bulk_data	*clks;
->>   	struct clk	*clk480m;
->>   	struct clk_hw	clk480m_hw;
->> +	int			num_clks;
->>   	struct reset_control	*phy_reset;
->>   	enum usb_chg_state	chg_state;
->>   	enum power_supply_type	chg_type;
->> @@ -376,7 +378,9 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
->>   {
->>   	struct device_node *node = rphy->dev->of_node;
->>   	struct clk_init_data init;
->> +	struct clk *refclk = NULL;
->>   	const char *clk_name;
->> +	int i;
->>   	int ret = 0;
->>   
->>   	init.flags = 0;
->> @@ -386,8 +390,15 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
->>   	/* optional override of the clockname */
->>   	of_property_read_string(node, "clock-output-names", &init.name);
->>   
->> -	if (rphy->clk) {
->> -		clk_name = __clk_get_name(rphy->clk);
->> +	for (i = 0; i < rphy->num_clks; i++) {
->> +		if (!strncmp(rphy->clks[i].id, "phyclk", 6)) {
->> +			refclk = rphy->clks[i].clk;
->> +			break;
->> +		}
->> +	}
->> +
->> +	if (!IS_ERR(refclk)) {
->> +		clk_name = __clk_get_name(refclk);
->>   		init.parent_names = &clk_name;
->>   		init.num_parents = 1;
->>   	} else {
->> @@ -1406,22 +1417,29 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
->>   	if (IS_ERR(rphy->phy_reset))
->>   		return PTR_ERR(rphy->phy_reset);
->>   
->> -	rphy->clk = devm_clk_get_optional_enabled(dev, "phyclk");
->> -	if (IS_ERR(rphy->clk)) {
->> -		return dev_err_probe(&pdev->dev, PTR_ERR(rphy->clk),
->> +	ret = devm_clk_bulk_get_all(dev, &rphy->clks);
->> +	if (ret == -EPROBE_DEFER) {
->> +		return dev_err_probe(&pdev->dev, -EPROBE_DEFER,
->>   				     "failed to get phyclk\n");
->>   	}
->>   
->> +	/* Clocks are optional */
->> +	rphy->num_clks = ret < 0 ? 0 : ret;
->> +
->>   	ret = rockchip_usb2phy_clk480m_register(rphy);
->>   	if (ret) {
->>   		dev_err(dev, "failed to register 480m output clock\n");
->>   		return ret;
->>   	}
->>   
->> +	ret = clk_bulk_prepare_enable(rphy->num_clks, rphy->clks);
->> +	if (ret)
->> +		return ret;
->> +
-> Do you actually need that separate enable step?
-> There exists devm_clk_bulk_get_all_enable()
+On Thu, Sep 26, 2024 at 4:03=E2=80=AFPM Christian K=C3=B6nig
+<christian.koenig@amd.com> wrote:
 >
-> https://elixir.bootlin.com/linux/v6.11/source/include/linux/clk.h#L511
+> Am 26.09.24 um 15:52 schrieb Sumit Garg:
+> > [Resend in plain text format as my earlier message was rejected by
+> > some mailing lists]
+> >
+> > On Thu, 26 Sept 2024 at 19:17, Sumit Garg <sumit.garg@linaro.org> wrote=
+:
+> >> On 9/25/24 19:31, Christian K=C3=B6nig wrote:
+> >>
+> >> Am 25.09.24 um 14:51 schrieb Dmitry Baryshkov:
+> >>
+> >> On Wed, Sep 25, 2024 at 10:51:15AM GMT, Christian K=C3=B6nig wrote:
+> >>
+> >> Am 25.09.24 um 01:05 schrieb Dmitry Baryshkov:
+> >>
+> >> On Tue, Sep 24, 2024 at 01:13:18PM GMT, Andrew Davis wrote:
+> >>
+> >> On 9/23/24 1:33 AM, Dmitry Baryshkov wrote:
+> >>
+> >> Hi,
+> >>
+> >> On Fri, Aug 30, 2024 at 09:03:47AM GMT, Jens Wiklander wrote:
+> >>
+> >> Hi,
+> >>
+> >> This patch set is based on top of Yong Wu's restricted heap patch set =
+[1].
+> >> It's also a continuation on Olivier's Add dma-buf secure-heap patch se=
+t [2].
+> >>
+> >> The Linaro restricted heap uses genalloc in the kernel to manage the h=
+eap
+> >> carvout. This is a difference from the Mediatek restricted heap which
+> >> relies on the secure world to manage the carveout.
+> >>
+> >> I've tried to adress the comments on [2], but [1] introduces changes s=
+o I'm
+> >> afraid I've had to skip some comments.
+> >>
+> >> I know I have raised the same question during LPC (in connection to
+> >> Qualcomm's dma-heap implementation). Is there any reason why we are
+> >> using generic heaps instead of allocating the dma-bufs on the device
+> >> side?
+> >>
+> >> In your case you already have TEE device, you can use it to allocate a=
+nd
+> >> export dma-bufs, which then get imported by the V4L and DRM drivers.
+> >>
+> >> This goes to the heart of why we have dma-heaps in the first place.
+> >> We don't want to burden userspace with having to figure out the right
+> >> place to get a dma-buf for a given use-case on a given hardware.
+> >> That would be very non-portable, and fail at the core purpose of
+> >> a kernel: to abstract hardware specifics away.
+> >>
+> >> Unfortunately all proposals to use dma-buf heaps were moving in the
+> >> described direction: let app select (somehow) from a platform- and
+> >> vendor- specific list of dma-buf heaps. In the kernel we at least know
+> >> the platform on which the system is running. Userspace generally doesn=
+'t
+> >> (and shouldn't). As such, it seems better to me to keep the knowledge =
+in
+> >> the kernel and allow userspace do its job by calling into existing
+> >> device drivers.
+> >>
+> >> The idea of letting the kernel fully abstract away the complexity of i=
+nter
+> >> device data exchange is a completely failed design. There has been ple=
+nty of
+> >> evidence for that over the years.
+> >>
+> >> Because of this in DMA-buf it's an intentional design decision that
+> >> userspace and *not* the kernel decides where and what to allocate from=
+.
+> >>
+> >> Hmm, ok.
+> >>
+> >> What the kernel should provide are the necessary information what type=
+ of
+> >> memory a device can work with and if certain memory is accessible or n=
+ot.
+> >> This is the part which is unfortunately still not well defined nor
+> >> implemented at the moment.
+> >>
+> >> Apart from that there are a whole bunch of intentional design decision=
+ which
+> >> should prevent developers to move allocation decision inside the kerne=
+l. For
+> >> example DMA-buf doesn't know what the content of the buffer is (except=
+ for
+> >> it's total size) and which use cases a buffer will be used with.
+> >>
+> >> So the question if memory should be exposed through DMA-heaps or a dri=
+ver
+> >> specific allocator is not a question of abstraction, but rather one of=
+ the
+> >> physical location and accessibility of the memory.
+> >>
+> >> If the memory is attached to any physical device, e.g. local memory on=
+ a
+> >> dGPU, FPGA PCIe BAR, RDMA, camera internal memory etc, then expose the
+> >> memory as device specific allocator.
+> >>
+> >> So, for embedded systems with unified memory all buffers (maybe except
+> >> PCIe BARs) should come from DMA-BUF heaps, correct?
+> >>
+> >>
+> >>  From what I know that is correct, yes. Question is really if that wil=
+l stay this way.
+> >>
+> >> Neural accelerators look a lot stripped down FPGAs these days and the =
+benefit of local memory for GPUs is known for decades.
+> >>
+> >> Could be that designs with local specialized memory see a revival any =
+time, who knows.
+> >>
+> >> If the memory is not physically attached to any device, but rather jus=
+t
+> >> memory attached to the CPU or a system wide memory controller then exp=
+ose
+> >> the memory as DMA-heap with specific requirements (e.g. certain sized =
+pages,
+> >> contiguous, restricted, encrypted, ...).
+> >>
+> >> Is encrypted / protected a part of the allocation contract or should i=
+t
+> >> be enforced separately via a call to TEE / SCM / anything else?
+> >>
+> >>
+> >> Well that is a really good question I can't fully answer either. From =
+what I know now I would say it depends on the design.
+> >>
+> > IMHO, I think Dmitry's proposal to rather allow the TEE device to be
+> > the allocator and exporter of DMA-bufs related to restricted memory
+> > makes sense to me. Since it's really the TEE implementation (OP-TEE,
+> > AMD-TEE, TS-TEE or future QTEE) which sets up the restrictions on a
+> > particular piece of allocated memory. AFAIK, that happens after the
+> > DMA-buf gets allocated and then user-space calls into TEE to set up
+> > which media pipeline is going to access that particular DMA-buf. It
+> > can also be a static contract depending on a particular platform
+> > design.
+> >
+> > As Jens noted in the other thread, we already manage shared memory
+> > allocations (from a static carve-out or dynamically mapped) for
+> > communications among Linux and TEE that were based on DMA-bufs earlier
+> > but since we didn't required them to be shared with other devices, so
+> > we rather switched to anonymous memory.
+> >
+> >  From user-space perspective, it's cleaner to use TEE device IOCTLs for
+> > DMA-buf allocations since it already knows which underlying TEE
+> > implementation it's communicating with rather than first figuring out
+> > which DMA heap to use for allocation and then communicating with TEE
+> > implementation.
 >
-> which you could use above. Especially as otherwise you'd need a remove
-> callback to disable the clock on driver unbind?
+> +1
 >
+> I'm not that deeply into the functionality the TEE device IOCTLs expose,
+> so can't judge if what's said above is correct or not.
+>
+> But in general building on top of existing infrastructure and
+> information is a really strong argument for a design.
+>
+> So from my 10 mile high point of view that sounds like the way to go.
 
-Using devm_clk_bulk_get_all() just can get clocknumbers, 
-anddevm_clk_bulk_get_all_enable() is not.
-It seems that there is no other API can get the number of clocks separately.
+That sounds good, I'll prepare another patch set based on that
+approach so we can see all the details.
 
-
->>   	if (rphy->phy_cfg->phy_tuning) {
->>   		ret = rphy->phy_cfg->phy_tuning(rphy);
->>   		if (ret)
->> -			return ret;
->> +			goto disable_clks;
->>   	}
->>   
->>   	index = 0;
->> @@ -1484,6 +1502,8 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
->>   
->>   put_child:
->>   	of_node_put(child_np);
->> +disable_clks:
->> +	clk_bulk_disable_unprepare(rphy->num_clks, rphy->clks);
->>   	return ret;
->>   }
->>   
->> @@ -1495,6 +1515,30 @@ static int rk3128_usb2phy_tuning(struct rockchip_usb2phy *rphy)
->>   				BIT(2) << BIT_WRITEABLE_SHIFT | 0);
->>   }
->
-> I still maintain, that this maybe should be two separate patches.
-> And you even seem to have nice "cut-here" in it ;-)
->
-> The code above converts the driver to use clk_bulk to handle
-> multiple clocks for controller variants needing it.
->
->
-> And the code below adds the rk3576-specific data to the driver.
->
-
-Make sense, I shall split two separate patches in the next version.
-BTW, should I send the clk_bulk process patch as a separate series? I 
-mean I shouldn't send it together with this series, right?
-
-
-Best regards,
-Frank
-
->
->> [...]
->>
->> +
->>   static const struct rockchip_usb2phy_cfg rk3588_phy_cfgs[] = {
->>   	{
->>   		.reg = 0x0000,
->> @@ -2094,6 +2216,7 @@ static const struct of_device_id rockchip_usb2phy_dt_match[] = {
->>   	{ .compatible = "rockchip,rk3366-usb2phy", .data = &rk3366_phy_cfgs },
->>   	{ .compatible = "rockchip,rk3399-usb2phy", .data = &rk3399_phy_cfgs },
->>   	{ .compatible = "rockchip,rk3568-usb2phy", .data = &rk3568_phy_cfgs },
->> +	{ .compatible = "rockchip,rk3576-usb2phy", .data = &rk3576_phy_cfgs },
->>   	{ .compatible = "rockchip,rk3588-usb2phy", .data = &rk3588_phy_cfgs },
->>   	{ .compatible = "rockchip,rv1108-usb2phy", .data = &rv1108_phy_cfgs },
->>   	{}
->>
->
-
+Thanks,
+Jens
 
