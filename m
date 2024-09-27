@@ -1,180 +1,239 @@
-Return-Path: <linux-kernel+bounces-341878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B82498879F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:56:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 020A29887A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC84C1F225F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:56:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B13652823DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE4F1C0DED;
-	Fri, 27 Sep 2024 14:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4601D1C0DDE;
+	Fri, 27 Sep 2024 14:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="VgdlrTvb";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iF7I47nA"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DDPk87GY"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5924F1BFE1A;
-	Fri, 27 Sep 2024 14:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE091C0DED;
+	Fri, 27 Sep 2024 14:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727448989; cv=none; b=OpoFKa3f6Awej2Z4+s4I4nKxnwyM2XySV7VSwG/nYaNs8kScGUAd3srKM9MaZ9rKn7TT1tIwB66NGMoRt4B5rXSht2q6cVOYZG/w9FFEG+btDRXhwX5coZoWi+l879vMiLqTF+inV4fT8s6qM606rj2qSTGEZ/rSjtY6dY148o4=
+	t=1727449040; cv=none; b=mL+Yv0ole7gcDbfTkeC8LIz+ur/WWW2WJAYXMEKdw0iPJ3PfN8g2u1+1L1X2GvwdCcT+ATLjRMtJUISlv2XJoxG0C3O7ryuHzqgUAAyglqtZ5jqEFm0P0ikKMMMBJvRcy7O4nIRMnvUjnMrHCGFPkJ9/3p/iCqRwA0VCfh4uT6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727448989; c=relaxed/simple;
-	bh=inzmU683np0qqTazklj06++fIeFWEJ0I19ZbsVKvWho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fyc/q2o8TXGp8sgwlq18rLr+W6UW5lw1cUt8GD6BGpwNxKUvgZ42o0t3LHBnEwlllQgp+1pqBBtoKs3HuXfd4O0P/AcFfJxtwKLPBKVsQdcVOr6mZ57VHmHhFNgfkEhX/yyP+pVQHCZL6C5yBJ2Nt7di3YDUWKYcAD05uAnpBJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=VgdlrTvb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iF7I47nA; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id 677CA1380143;
-	Fri, 27 Sep 2024 10:56:26 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Fri, 27 Sep 2024 10:56:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1727448986; x=1727535386; bh=lCpfQdkJ67
-	FKoocTx2z3FyOrYGH6Jp6LctLaGMXrtSA=; b=VgdlrTvbh+92Z+N91GjBhyRVVg
-	op+dQK9nZOurC8zzc00XjCTbVbMSYbzp9nv6OYtywYLLvJIW9JpZgBySIDSonM5b
-	qEfBlt5aVqjyqJIwqQTt5Pvs1o5Y2ZenSr/1t3D4MNrnn9am+ZcFppMZ6bBt2LxR
-	Zhms1yNnfVh65VwHejMrQZ7GFUyAtiYUe6+puZbXUWi5OevULLOysLCRt/s5sIZj
-	Dr+uV/Sm5WVoBboEMtviNSbu1tGhr2gBHdN6VT7aqDKIZ7qSGifk8Z2cTxchlixc
-	/oLCmUhCFBUZLw8Snc1wRybhycad6/c0eukQOcLWL9i+N6Ab6UNJlqU8SRig==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1727448986; x=1727535386; bh=lCpfQdkJ67FKoocTx2z3FyOrYGH6
-	Jp6LctLaGMXrtSA=; b=iF7I47nAUm+VHeZ0v731v0kbcVwAKvvrhGiDX5WcTLuX
-	cCn+wyryAjXmUIopcug+Lm4WJLrNbeQUwUU3j7vc1aQSEng25aAfuJLvlX3y7zlH
-	TE5WZ52k1LvJgKrnYumwN/7Gh55e5rOcgCqFr/kZOtAFj9mr+7muoGowgiwxbDdX
-	Bj76Y8oZRJBD5RpZM/bdJRek4WLcfekjk0e5mXqH+YZnn9nBMSeV+CjKUJUVrQTX
-	iAwKVG8e0guJYWjbVKGKRPRcFjNw2XLf8KBwf6FS/voMmXWBj8cYpvCVB4JUBSkS
-	5zkleevjYa7/p1XGmaP3d0zEMeDBuYOW0gLuRG9YCw==
-X-ME-Sender: <xms:mcf2Zpgfeer_Vs-7XmhL9sF02oA4b6Zt7XXi1ucFWfxXBEcmRr31wQ>
-    <xme:mcf2ZuAfC-Bm2CAtQ0xkReQginzxsO-U8yPZ3jqtOt1djJZ0QTr-YCcp_j-i7g9fV
-    Q6jOzHKWnwpisWHyiE>
-X-ME-Received: <xmr:mcf2ZpEqQP3hC8LpZFfNJy2mLD27eEay-yUKjtNceuJOx6rSWPjbhNqgme8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtledgkedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepvfihtghhohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrph
-    hiiiiirgeqnecuggftrfgrthhtvghrnhepueettdetgfejfeffheffffekjeeuveeifedu
-    leegjedutdefffetkeelhfelleetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepthihtghhohesthihtghhohdrphhiiiiirgdpnhgspghrtghp
-    thhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegvsghivgguvghrmh
-    esgihmihhsshhiohhnrdgtohhmpdhrtghpthhtoheptgihphhhrghrsegthihphhgrrhdr
-    tghomhdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgr
-    tghksehsuhhsvgdrtgiipdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehjlhgrhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegthhhu
-    tghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopegrlhgvgidrrghrih
-    hnghesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:mcf2ZuTRH7utXKrfboP36L73fv4Q3eOgMiZedA2jo_vsjbZZt1lyIg>
-    <xmx:mcf2Zmz6krV3mWWmftN-84Zlxl4gAcGtOdGZk6KaK3yTWYd8e84tEw>
-    <xmx:mcf2Zk5ECGFDJsoJEMa6WVzdedT93Ar20I6sXcRHDFgxLbfF9A5CJw>
-    <xmx:mcf2Zry6aMwifBgIpLxKHVoeRtwQDUMU-qENoIZfoXXWn516Yofuvw>
-    <xmx:msf2ZrKkfeqOLatrsTXrfmhG6nCPcRnnTcD6bzyV7P7hdb9ZSTjxykqM>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 27 Sep 2024 10:56:23 -0400 (EDT)
-Date: Fri, 27 Sep 2024 08:56:20 -0600
-From: Tycho Andersen <tycho@tycho.pizza>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>, Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Tycho Andersen <tandersen@netflix.com>,
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
-Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
-Message-ID: <ZvbHlChEmj35+jHF@tycho.pizza>
-References: <20240924141001.116584-1-tycho@tycho.pizza>
- <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
- <20240925.152228-private.conflict.frozen.trios-TdUGhuI5Sb4v@cyphar.com>
- <ZvR+k3D1KGALOIWt@tycho.pizza>
- <878qvf17zl.fsf@email.froward.int.ebiederm.org>
- <Zva8GEUv1Xj8SsLf@tycho.pizza>
- <87h6a1xilx.fsf@email.froward.int.ebiederm.org>
+	s=arc-20240116; t=1727449040; c=relaxed/simple;
+	bh=iJ45fvLCkoCq/NM5VFXVYlJANk7NQ5g0O+CaSmLIbLY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sozLPthuoCqr3Ee1P3Pxn6cGl1Rcr/xbBU3VEH5ByWO+wBeGDLFNZ53aBo/OCWlbHEeDM5/dkL+evQbvJ0QjrCxXQtMsPkchluPfuYrsx4azjgrgIyQkBzqRewoOjhSq/epUxTOXTn/xjAUNQERil0SySAoJ8tFFrdB+UelQfgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DDPk87GY; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f7528f4658so21860721fa.3;
+        Fri, 27 Sep 2024 07:57:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727449035; x=1728053835; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gb9IX3yRl7dl/yfTaoyaz4ZFMe4bzq/mwO1rvGCAOhw=;
+        b=DDPk87GYQj7y/SRg4mHdpv9tBA7rgf9II5RPgz0jAICOEcXuqvNpVsXcqiPK0eNjkY
+         GH/N0nrriSl5xHaVxVwglUrJhPKgXoElxnmsVSeq9mxTahnXOJv1wtZBl6vVEgRENuLt
+         ebiP3jdmuRA1iEo9W+AHUC+ueKG97dSS1HQwDHEkiNyZjBz7LapbW6Ucab4IiV6UsArw
+         3ZCfYWxnzz/cFrizD/Gzfa0EDJ+iT785ZGp0b39DQmwvp8kO2HJEZH99Gv1M+sJ0+pKU
+         JvVq9O8tGcY4J8uTfe5iO8QqKz0rDD7+VWd4mGaq2nKza+dg2uIcBfuVuUWiIAP1wL7D
+         3g6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727449035; x=1728053835;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gb9IX3yRl7dl/yfTaoyaz4ZFMe4bzq/mwO1rvGCAOhw=;
+        b=MP+IM+2ZJBjOwojWcA8t7gnknAUiq39ywF/TZ1KM90G5vlJB3JFczANHsjqZNwTA1c
+         gBrxJI2b3KXcJM2TKxshdJMzxZJ40Mo4QoZ7h4SwXL4sJ63F7C//79PcW6QN/Q8LS/6f
+         UsY2+qj/jAAx8v44nefQRsveBLYkhKbyQzCFe2BrLm3b8J6YCPlP8t/+tGhfZPgwdC9E
+         bmJnOl4ORKsvv+96fQZGYf1CZ2Lp0C7HTlX10rC4hqIFQ9oQ5nsDBagTmmh4kxmCrEyi
+         RS1ymeJXouCPP3tasmv9JR32x3uU5WyYf3uIRx3+U8Lo33ZWxntUVtFRtmkWDe9V40tx
+         aZeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAXeBS3PQQRN7t0IQrHnUUSFRaDA86DxPJl/Rali5xQMN+Se5JPG0SB9LazM2VqHTR0UM3sQ39nYfHjYmG2w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB1ybsE4TFiRvLJUHfhTbsdYLs7DAAzm7Afhhmhn2SbnDFzXm/
+	lLgJcMD6mGkRGbsBQvSlMei3jeSHHCq/NX3tdqY97hZwwOJfSjNVKuQKoPBe7nI=
+X-Google-Smtp-Source: AGHT+IGpq4XVA/JtvOSkaHkfn0YelZrSDEAI/UtaDLUhQvv6IcWEr8oegT8VWkdnLNZmZqxqum8MAw==
+X-Received: by 2002:a05:6512:3d93:b0:536:a695:942c with SMTP id 2adb3069b0e04-5389fc29ca0mr2340854e87.7.1727449034293;
+        Fri, 27 Sep 2024 07:57:14 -0700 (PDT)
+Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88245e737sm1227129a12.56.2024.09.27.07.57.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 07:57:11 -0700 (PDT)
+From: Stafford Horne <shorne@gmail.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Stafford Horne <shorne@gmail.com>,
+	Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+	Dawei Li <set_pte_at@outlook.com>,
+	Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	linux-openrisc@vger.kernel.org
+Subject: [PATCH] openrisc: Implement fixmap to fix eralycon
+Date: Fri, 27 Sep 2024 15:56:56 +0100
+Message-ID: <20240927145700.1963518-1-shorne@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h6a1xilx.fsf@email.froward.int.ebiederm.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 09:43:22AM -0500, Eric W. Biederman wrote:
-> Tycho Andersen <tycho@tycho.pizza> writes:
-> 
-> > On Wed, Sep 25, 2024 at 09:09:18PM -0500, Eric W. Biederman wrote:
-> >> Tycho Andersen <tycho@tycho.pizza> writes:
-> >> 
-> >> > Yep, I did this for the test above, and it worked fine:
-> >> >
-> >> >         if (bprm->fdpath) {
-> >> >                 /*
-> >> >                  * If fdpath was set, execveat() made up a path that will
-> >> >                  * probably not be useful to admins running ps or similar.
-> >> >                  * Let's fix it up to be something reasonable.
-> >> >                  */
-> >> >                 struct path root;
-> >> >                 char *path, buf[1024];
-> >> >
-> >> >                 get_fs_root(current->fs, &root);
-> >> >                 path = __d_path(&bprm->file->f_path, &root, buf, sizeof(buf));
-> >> >
-> >> >                 __set_task_comm(me, kbasename(path), true);
-> >> >         } else {
-> >> >                 __set_task_comm(me, kbasename(bprm->filename), true);
-> >> >         }
-> >> >
-> >> > obviously we don't want a stack allocated buffer, but triggering on
-> >> > ->fdpath != NULL seems like the right thing, so we won't need a flag
-> >> > either.
-> >> >
-> >> > The question is: argv[0] or __d_path()?
-> >> 
-> >> You know.  I think we can just do:
-> >> 
-> >> 	BUILD_BUG_ON(DNAME_INLINE_LEN >= TASK_COMM_LEN);
-> >> 	__set_task_comm(me, bprm->file->f_path.dentry->d_name.name, true);
-> >> 
-> >> Barring cache misses that should be faster and more reliable than what
-> >> we currently have and produce the same output in all of the cases we
-> >> like, and produce better output in all of the cases that are a problem
-> >> today.
-> >> 
-> >> Does anyone see any problem with that?
-> >
-> > Nice, this works great. We need to drop the BUILD_BUG_ON() since it is
-> > violated in today's tree, but I think this is safe to do anyway since
-> > __set_task_comm() does strscpy_pad(tsk->comm, buf, sizeof(tsk->comm)).
-> 
-> Doh.  I simply put the conditional in the wrong order.  That should have
-> been:
-> 	BUILD_BUG_ON(TASK_COMM_LEN > DNAME_INLINE_LEN);
-> 
-> Sorry I was thinking of the invariant that needs to be preserved rather
-> than the bug that happens.
+With commit 53c98e35dcbc ("openrisc: mm: remove unneeded early ioremap
+code") it was commented that early ioremap was not used in OpenRISC.  I
+acked this but was wrong.  Earlycon now fails with the below trace:
 
-Thanks, I will include that. Just for my own education: this is still
-*safe* to do, because of _pad, it's just that it is a userspace
-visible break if TASK_COMM_LEN > DNAME_INLINE_LEN is ever true?
+    Kernel command line: earlycon
+    ------------[ cut here ]------------
+    WARNING: CPU: 0 PID: 0 at mm/ioremap.c:23
+    generic_ioremap_prot+0x118/0x130
+    Modules linked in:
+    CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted
+    6.11.0-rc5-00001-gce02fd891c38-dirty #141
+    Call trace:
+    [<(ptrval)>] dump_stack_lvl+0x7c/0x9c
+    [<(ptrval)>] dump_stack+0x1c/0x2c
+    [<(ptrval)>] __warn+0xb4/0x108
+    [<(ptrval)>] ? generic_ioremap_prot+0x118/0x130
+    [<(ptrval)>] warn_slowpath_fmt+0x60/0x98
+    [<(ptrval)>] generic_ioremap_prot+0x118/0x130
+    [<(ptrval)>] ioremap_prot+0x20/0x30
+    [<(ptrval)>] of_setup_earlycon+0xd4/0x2e0
+    [<(ptrval)>] early_init_dt_scan_chosen_stdout+0x18c/0x1c8
+    [<(ptrval)>] param_setup_earlycon+0x3c/0x60
+    [<(ptrval)>] do_early_param+0xb0/0x118
+    [<(ptrval)>] parse_args+0x184/0x4b8
+    [<(ptrval)>] ? start_kernel+0x0/0x78c
+    [<(ptrval)>] parse_early_options+0x40/0x50
+    [<(ptrval)>] ? do_early_param+0x0/0x118
+    [<(ptrval)>] parse_early_param+0x48/0x68
+    [<(ptrval)>] ? start_kernel+0x318/0x78c
+    [<(ptrval)>] ? start_kernel+0x0/0x78c
+    ---[ end trace 0000000000000000 ]---
 
-Tycho
+To fix this we could either implement early_ioremap or implement fixmap.
+In this patch we choose the later option of implementing basic fixmap
+support.
+
+While fixing this we also remove the old FIX_IOREMAP slots that were
+used by early ioremap code.  That code was also removed by commit
+53c98e35dcbc ("openrisc: mm: remove unneeded early ioremap code") but
+these definitions were not cleaned up.
+
+Fixes: 53c98e35dcbc ("openrisc: mm: remove unneeded early ioremap code")
+Signed-off-by: Stafford Horne <shorne@gmail.com>
+---
+ arch/openrisc/Kconfig              |  3 +++
+ arch/openrisc/include/asm/fixmap.h | 21 +++++-------------
+ arch/openrisc/mm/init.c            | 34 ++++++++++++++++++++++++++++++
+ 3 files changed, 42 insertions(+), 16 deletions(-)
+
+diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
+index 69c0258700b2..3279ef457c57 100644
+--- a/arch/openrisc/Kconfig
++++ b/arch/openrisc/Kconfig
+@@ -65,6 +65,9 @@ config STACKTRACE_SUPPORT
+ config LOCKDEP_SUPPORT
+ 	def_bool  y
+ 
++config FIX_EARLYCON_MEM
++	def_bool y
++
+ menu "Processor type and features"
+ 
+ choice
+diff --git a/arch/openrisc/include/asm/fixmap.h b/arch/openrisc/include/asm/fixmap.h
+index ecdb98a5839f..aaa6a26a3e92 100644
+--- a/arch/openrisc/include/asm/fixmap.h
++++ b/arch/openrisc/include/asm/fixmap.h
+@@ -26,29 +26,18 @@
+ #include <linux/bug.h>
+ #include <asm/page.h>
+ 
+-/*
+- * On OpenRISC we use these special fixed_addresses for doing ioremap
+- * early in the boot process before memory initialization is complete.
+- * This is used, in particular, by the early serial console code.
+- *
+- * It's not really 'fixmap', per se, but fits loosely into the same
+- * paradigm.
+- */
+ enum fixed_addresses {
+-	/*
+-	 * FIX_IOREMAP entries are useful for mapping physical address
+-	 * space before ioremap() is useable, e.g. really early in boot
+-	 * before kmalloc() is working.
+-	 */
+-#define FIX_N_IOREMAPS  32
+-	FIX_IOREMAP_BEGIN,
+-	FIX_IOREMAP_END = FIX_IOREMAP_BEGIN + FIX_N_IOREMAPS - 1,
++	FIX_EARLYCON_MEM_BASE,
+ 	__end_of_fixed_addresses
+ };
+ 
+ #define FIXADDR_SIZE		(__end_of_fixed_addresses << PAGE_SHIFT)
+ /* FIXADDR_BOTTOM might be a better name here... */
+ #define FIXADDR_START		(FIXADDR_TOP - FIXADDR_SIZE)
++#define FIXMAP_PAGE_IO		PAGE_KERNEL_NOCACHE
++
++extern void __set_fixmap(enum fixed_addresses idx,
++			 phys_addr_t phys, pgprot_t flags);
+ 
+ #include <asm-generic/fixmap.h>
+ 
+diff --git a/arch/openrisc/mm/init.c b/arch/openrisc/mm/init.c
+index 1dcd78c8f0e9..7397d18c95d7 100644
+--- a/arch/openrisc/mm/init.c
++++ b/arch/openrisc/mm/init.c
+@@ -207,6 +207,40 @@ void __init mem_init(void)
+ 	return;
+ }
+ 
++static int __init map_page(unsigned long va, phys_addr_t pa, int flags)
++{
++	p4d_t *p4d;
++	pud_t *pud;
++	pmd_t *pd;
++	pte_t *pg;
++	int err = -ENOMEM;
++
++	p4d = p4d_offset(pgd_offset_k(va), va);
++	pud = pud_offset(p4d, va);
++	pd = pmd_offset(pud, va);
++	pg = pte_alloc_kernel(pd, va);
++
++	if (pg != NULL) {
++		err = 0;
++		set_pte_at(&init_mm, va, pg, pfn_pte(pa >> PAGE_SHIFT,
++				__pgprot(flags)));
++	}
++	return err;
++}
++
++void __init __set_fixmap(enum fixed_addresses idx,
++			 phys_addr_t phys, pgprot_t prot)
++{
++	unsigned long address = __fix_to_virt(idx);
++
++	if (idx >= __end_of_fixed_addresses) {
++		BUG();
++		return;
++	}
++
++	map_page(address, phys, pgprot_val(prot));
++}
++
+ static const pgprot_t protection_map[16] = {
+ 	[VM_NONE]					= PAGE_NONE,
+ 	[VM_READ]					= PAGE_READONLY_X,
+-- 
+2.44.0
+
 
