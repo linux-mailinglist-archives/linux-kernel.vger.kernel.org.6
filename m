@@ -1,142 +1,206 @@
-Return-Path: <linux-kernel+bounces-341691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B76E79883C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:01:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B909883A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68E6B1F216BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:01:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49C032878C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F72189B9C;
-	Fri, 27 Sep 2024 12:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D48818A95C;
+	Fri, 27 Sep 2024 11:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n6/FUp0/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="m1SVH5i8"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2059.outbound.protection.outlook.com [40.107.95.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0082C18BBAB;
-	Fri, 27 Sep 2024 12:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727438424; cv=none; b=JV+jPuhZqljis3eRmK45dLZZ00Qz+cnRLf2QcJCdegfnWA3SFwhUI7l3I3+BjCLJvQfkWK72a0+N3pzzXGNPpoWB+D4X+qjaZHsMIjTtvV9liumrHSL3yDNAgBz/OL1JLWhGiwYTOg19vQhmJ/zPs4Crn/VCoLVSXjBb+l4Yq+k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727438424; c=relaxed/simple;
-	bh=KiWNR4u/65xMmaqypvhKSc5m4ZESgrg/Ieajt/VQUWA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=UqcXKWkTP8oPkT0WsIuQUt/HOvcKPoHOc1CmeTg1uTo4d+U8DRSK1EFAtcAi3jlyIh0M5/Sc7u9ptapSArIlhjrsNWXIRhoSTo/pPrInM+3yNjakvg754FtWtV95pZN47u/t1TYG3zr9f4iBCGvvwblyuPZaDmBi9GbhdMrApxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n6/FUp0/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R6aOWV014838;
-	Fri, 27 Sep 2024 12:00:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	B0Vfl7VdKh0tBkOUpt5Cb/KYoBsGDN2QdYVHbAKRIKc=; b=n6/FUp0/08b/OLuK
-	BhCEl65qofQUQOs+29vSABJTx6woA5kKx1nBq5Xtz/hK+ty9qjLHjRk4AALmricP
-	NNOf38ewwRqorqOUv2aCooRpgjfa0elZRWRxQ5c2h3IsThZfLDX4W+NCKzmQkduU
-	K+eHA1gkozquLwWzrlkkOGC1HYFPBodaN1pw6D4VyLVIiITwpFDuZp8dcdueEsfz
-	frqUzr+W9QHgbimTutMauiPRT8mpT2NutjXMKzs0zDEooIAGovYJZmzYmPuD2l58
-	+Q6oVsx+ECEwz8AzS7XvIzKsFAZ3Tca/QIl0xNWPBc2qyxc333Nb5vZRX5I+esIF
-	BKSt5Q==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41spc32smr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 12:00:16 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48RC0GD5017298
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 12:00:16 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 27 Sep 2024 05:00:09 -0700
-From: Tingguo Cheng <quic_tingguoc@quicinc.com>
-Date: Fri, 27 Sep 2024 19:59:16 +0800
-Subject: [PATCH v2 4/4] pmdomain: qcom: rpmhpd: Add qcs615 power domains
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D583218A6D2;
+	Fri, 27 Sep 2024 11:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727438373; cv=fail; b=Q7kjIHinhlOBvShKeUiU5egJVhO+jKIkA2DGb5GNL02pHQRTfHAvV/dwnJoMY5nOkNDAiojVxcat+Gld1S8Rn0ZMuwHwYQ9XlEwth3i6FSQxXDRHpZi3EyEmOJEih937nVXwDM5mIhfsEQl+UcL7+C5XL7A9dZTSP0ZP9i9mdgs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727438373; c=relaxed/simple;
+	bh=oPgOpfIRi34l7hD1nYVjnxClOBxs3SLZ6DcqlMX5YGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=S7/A8VTmsB4QatvJwzwXoqO1TYO+JwlcYWfZeCciLg9zqLKj3HqHDbhLT6gyjveWbfTDQC4ICmRr5KnExo2GppyzU6NRT+aUDW3WsfEQMf4wyHdpMDt3jTgwxVtTpqYoZec5DZUeOo4k333c4hLnhLZB/ezUzR3NRlRgDTL4LBU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=m1SVH5i8; arc=fail smtp.client-ip=40.107.95.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DfU9u0I6xE3K5MsRlW8+ey00UNHM1idYzrGrUmva9aELL4U+ubEr0oQkDN2s53KmhAYYavMGil3OzR9rS62cerbv2sZRfNKfU6I8w0US3fCVun0JR+O/n7fowdItylyeZ184Jio2pCdpGdkNldYoouInzhGt/z5GtpulDHqpblLuMnn7nfHmEDPrl03UBpfNfSmeqeBrr2x/syARZw6RjY0NXvln/SITQOTtuQ0M7gYEhzpdpvqUcM3/cRZG0ylUX2e5Qjzq4hn+5OQ+rOODCjw8F7cPfYSAwW+9ohKVcaMAYheoGqYYFDVi5rxSSvIf5AqGKO0XJE4yvN7P+4xEWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wsg8DNswVT0ARWJ1C1xg2v3MBaEUgLW/9W1uuLhj2iI=;
+ b=m3z6XPj/FQhWe3dHKPF6dJUG7v27PB7UyxKGv77ZmDa5vA5rnn+24NvfEWOyukl2t45eRqbOI6Q6rR8ojwT0bj+kFClHracdIF+E6cm2b8Etd4ZwbZxLMZjZf374yPZxGzNtSO+Cs1+rxH38ginYwFtVsutdt0yhqGd/+LNTjVJwWY0osT1uwMB2DIzlonH/LJPFJw3irH0l35IaqoiI9MyXIK4er2J4jcqG6RAqai9DDVS45+fiFiRYRbuDSCjaNfB2WIWcnCuUhSWPfKQnX2dT4udu+0GD9JMNjuQHRrGhYni8Y5qjUiZ6MLx9lJsFxOWQmrE34WkTkBGvZzasAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wsg8DNswVT0ARWJ1C1xg2v3MBaEUgLW/9W1uuLhj2iI=;
+ b=m1SVH5i8phHIgJe5KxbD0AJfQ7GvVR1qMCUBqyl3jNXQEns4Ub8Ou8r5e+9vVdRZWECe0k8ENc4HTuPp50qjmENmVYkVEg8ehlU7UB0CiLTwm4aLai3aZ/PrAe0mepettEe6wXYCENjeIK9H6XgdQxhjaBraW8nnX6iZkIeS6aAGWLHzI7d1idplZAcpkHjFd2hDPrG3SjXsiVJO3I1XOE+eGOZz47urSX5KSR8RMv3dH8zGpYlyvQIzpywzdFKR0dm1vohQi33xdLhbbvPcqLDAgge6ntedrXYXAbSqjDdlXKRA9vTjHP9I1BglgjdT3W61ExUX5zU4simMaZ4z7Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by CY5PR12MB6406.namprd12.prod.outlook.com (2603:10b6:930:3d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.22; Fri, 27 Sep
+ 2024 11:59:27 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.7982.022; Fri, 27 Sep 2024
+ 11:59:27 +0000
+Date: Fri, 27 Sep 2024 08:59:25 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Yi Liu <yi.l.liu@intel.com>, kevin.tian@intel.com, will@kernel.org,
+	joro@8bytes.org, suravee.suthikulpanit@amd.com,
+	robin.murphy@arm.com, dwmw2@infradead.org, baolu.lu@linux.intel.com,
+	shuah@kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
+	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
+	shameerali.kolothum.thodi@huawei.com, smostafa@google.com
+Subject: Re: [PATCH v2 04/19] iommufd: Allow pt_id to carry viommu_id for
+ IOMMU_HWPT_ALLOC
+Message-ID: <20240927115925.GX9417@nvidia.com>
+References: <cover.1724776335.git.nicolinc@nvidia.com>
+ <2d469a5279ef05820d5993df752d32239878338d.1724776335.git.nicolinc@nvidia.com>
+ <3ddf97a3-cf5b-4907-bbe4-296456951e6b@intel.com>
+ <ZvW/vS5/vulxw3co@Asurada-Nvidia>
+ <ac6c371b-857a-42f3-9b71-969ef19a54ba@intel.com>
+ <ZvZKfUQpiv33MQw+@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZvZKfUQpiv33MQw+@Asurada-Nvidia>
+X-ClientProxiedBy: BL1PR13CA0118.namprd13.prod.outlook.com
+ (2603:10b6:208:2b9::33) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240927-add_qcs615_qcs8300_powerdomains_driver_support-v2-4-18c030ad7b68@quicinc.com>
-References: <20240927-add_qcs615_qcs8300_powerdomains_driver_support-v2-0-18c030ad7b68@quicinc.com>
-In-Reply-To: <20240927-add_qcs615_qcs8300_powerdomains_driver_support-v2-0-18c030ad7b68@quicinc.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_fenglinw@quicinc.com>, <quic_tingweiz@quicinc.com>,
-        Tingguo Cheng
-	<quic_tingguoc@quicinc.com>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727438391; l=1321;
- i=quic_tingguoc@quicinc.com; s=20240917; h=from:subject:message-id;
- bh=KiWNR4u/65xMmaqypvhKSc5m4ZESgrg/Ieajt/VQUWA=;
- b=YWUxC0OTV3ENrF1LLerQn8r5XNbhk8BX7CX4AdP/MgfNXSigRcvogOQlxQ9/qAV3ilmkzAP+E
- ec+w898+eFHADELzMZMr3qM9P72SVmjQNxIBz4X6BDkKJkqeWjSomKM
-X-Developer-Key: i=quic_tingguoc@quicinc.com; a=ed25519;
- pk=PiFYQPN5GCP7O6SA43tuKfHAbl9DewSKOuQA/GiHQrI=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: GxxnW90NFOkY4kQC9e7ZNyMyl4Q5w6EM
-X-Proofpoint-ORIG-GUID: GxxnW90NFOkY4kQC9e7ZNyMyl4Q5w6EM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 malwarescore=0 adultscore=0 phishscore=0 mlxlogscore=956
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409270086
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CY5PR12MB6406:EE_
+X-MS-Office365-Filtering-Correlation-Id: ccea1778-34ce-4173-b554-08dcdeebd5f7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0gzSfoF5+0pUO0OAMV2rm9x/lWVmLfMUHnHLIJQp6T+9R0vy9YM0hpVAfwsf?=
+ =?us-ascii?Q?URK6btlLd2y3LcqP0MOcZDp/8JkgPZWbqsG3sBxK+m7MzfsKhcjJJsma/Q5Y?=
+ =?us-ascii?Q?BQ1phMSWYTWCEZIBXsJDrPbzTGAbiLzhoOW6xVaNiz20/BPrKS1Ck1fxMOrg?=
+ =?us-ascii?Q?bapVjasIQhgX4htWshAy4OBJOS2t9otNA9cOZ9dc3g6iFfxbIdieg8Al1PWT?=
+ =?us-ascii?Q?2htoaeS2T1eX81rgktcv0FXUOo+CXUv69qr0M1jWbLD3K5TMoOh6w9cP+bSl?=
+ =?us-ascii?Q?8gnypjJmDSYU5pUx2NkauXvyyyg/4QljvEg7Qx1bLUjJ8t2keamhYl1ZSlIM?=
+ =?us-ascii?Q?fh/OBxW5KBbnwlcxoKXWvprTbK8xMKGjDxcskykfoGgtWUMKJK5YRDtUAa9B?=
+ =?us-ascii?Q?agN4igDuerS8BoDU3f+anmYEOTFQ9Ti8wlbufWxskrCbGikqjMuvpqbe9wlC?=
+ =?us-ascii?Q?Qo6IZFhire8TSfs6UNhOhnYN4ytNXi3hSnByaQNp+KIGLabx2z3o8kMbZf6L?=
+ =?us-ascii?Q?ErKvOC17dMRpWz+gBcA0Ko/TYop6acanJTl6eNKsr4z8QgJCFyMPR6wh+nI6?=
+ =?us-ascii?Q?PNMjXW413JPpwPcgU0JTZM3/sUhWj537mLlG0EBAO2qpLw0kQYyKb1hk49E6?=
+ =?us-ascii?Q?4uAL2PyqaI1NOIxcvacMifyaC/F3I+lLH0amAOkVNtV0x7nRX8FsMT2Hfpx5?=
+ =?us-ascii?Q?VmfA1y8KrU6XS/mRPzCupA7A0deg+IDOnyUBOTMeiYuo4jryatGPdjKx7kFj?=
+ =?us-ascii?Q?FdI0j7eEy3+X7Vic9Hj2C/FJRUhzhjQ5lCp4I0kABmS7+RVNUvYrCgOgzFWg?=
+ =?us-ascii?Q?19uGW5VnfWlAgT+tZTEq46+eQ1FBPF8pjyFIye31IOPVmGd74cVUWHoI6+XS?=
+ =?us-ascii?Q?DdneqdTSC6FDbFv8u9Kjtg3GHHv4d1eXlEfbHO3GNVADEP69nUMAIB0W3O8m?=
+ =?us-ascii?Q?XGnfXCbx2DyUaAmUUSakNxdTOTY3dLR2PRpLcOm3PZVIZwmxl5jYwoCXYF1g?=
+ =?us-ascii?Q?TSDfG+FiCYyS3uI05D+nFKecKj/FOjWSC29Qmhmu6dpF8MxRdYQQS6DsNvod?=
+ =?us-ascii?Q?KqdFYDGLT7oul43m/oEo+iciwHVPib9P+A1vrgp77fgozg0q+V1kS6V/U1dt?=
+ =?us-ascii?Q?tg3AwFqzUJxwvrBjsXvgz3AIyjgjN9rbQunMDkw4G6IspjEabdzwGpd2Q7hR?=
+ =?us-ascii?Q?JRwhe2jgBwxiwr8lyLh/BgmPF4mxN/TDzm7rGL2xXAUcZEhU1+m9M5KbN0QT?=
+ =?us-ascii?Q?z+XYFteYICCBqKQ07DW1Q4zwVWyFLuzAHa5CJGg1+Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rcsf8MBCpteAR4kviWaFq+3PKIMJpN71QQ/4LNXoveBZXqwt+UYnR3wrRJz4?=
+ =?us-ascii?Q?2Lj/EyQHVDjHaxQxuu0ZQhwjeyL73DDp2zZyLWw0AyrLrVQ/lsGc88/W3Kb8?=
+ =?us-ascii?Q?dFXVAMtsbBLZ0QZ8wg57xTLJXGz69tPlIuJAojkZv9HPTyCG3jaalxZ+nIy4?=
+ =?us-ascii?Q?+J3KJiRwQtrglcV/4SowbzJXwdg5BOSP3n4iZbEjkzFMOeADZAURKGyBTJb8?=
+ =?us-ascii?Q?MZirJKAX2zgnYhS1kXfQ/SbtWUl81xjdPKsdNB2LOyxiannmlFEl2Y3mKiQj?=
+ =?us-ascii?Q?EcANg7BVxAx7ju+L9QgIw2AismnRZm1RYMfPHVeBWGe5RJ6HPq2fNydtTa3d?=
+ =?us-ascii?Q?WWoKhUztV27+xMNcnb/KfgG9yPHjPKcKbQy3IiJwvT4R8dJ79LydKIQTzRLU?=
+ =?us-ascii?Q?6zDSKPYDWHjlIc4hSGlcKCqpZVIqghvcFw/4y0jeoWSJ6V61Y/dGNQqStPF3?=
+ =?us-ascii?Q?JDmJSEE5bbG7NZVVsYe2y8mxlVdVEsj9DmnP/3MorfvXYEct+pDXmNeQw5aA?=
+ =?us-ascii?Q?BNp+sGw7U52Cf37hH4v0ZDXL6FDKpwi38Lo8RLmE2foQ87P2JqIQBumXeXym?=
+ =?us-ascii?Q?thhDNrH4sIrJVIBb6r5LgxyHXYzabH9JUESQvZMj4gZHnw1ECOkfbbkCY0ws?=
+ =?us-ascii?Q?5VQ2kONGZuZpC2Q4BBd/k88ZDxSkKLgU3e/JTR2kcwUcEtO6bKHJSxHIf+kL?=
+ =?us-ascii?Q?geM1pUIcW3XbNX2jb23J1nfZkG6nZTNE1qtj83nafGAh5Y/fGHdByHeGRS48?=
+ =?us-ascii?Q?zv90W3vDL/IPjJ0T77T1R4/15DIRookYctgmb/Rgamg4D5SetyNT5eEYEDZr?=
+ =?us-ascii?Q?GiuzwOUNJQNKPFEzJDQUknouxl9NktDB9s+Tnww81GSc/842SperKBX4tOom?=
+ =?us-ascii?Q?nkEPxgbTp1//XlFjK1xrSPx0PQlmaXJfOpshnAzbP8702QjQGWe/gRYQcNUW?=
+ =?us-ascii?Q?wdcBMawqKXYZoDsrGHedH1mHbl7VISDZxfS1vxzBmQ4mjEHWxpTGyw6b7vBL?=
+ =?us-ascii?Q?DX/HUJZmwyyX7WMHkNJxbFArRkYlKrZl4RjO7jsm+/3OBHY363jsA2uF05FJ?=
+ =?us-ascii?Q?rJqfwA+fvbpxAZu9BX2ovgw2ngaBk7j51XzTxJW3x/jw728iS+QKBxLstf8S?=
+ =?us-ascii?Q?YaEBhMMfKSrP8d7XMpLWxgKsONF+7iy5mL1IPbs97b6q9xOAEWtGWQ6qI4D1?=
+ =?us-ascii?Q?5BwOhz5DlEZ313dbv/t2mAW9AaWor+k2aT7F1T+FxZOg8ggdMhcWRmXu9w/G?=
+ =?us-ascii?Q?O44MBILDiHPbVu9Qh4muljF+oxRS50vtzQftXf6XeLQZLb6fzaFus0esXaAA?=
+ =?us-ascii?Q?BRyJV85BHRN2Q3/EKZtYREYRpw0trXnZWIUFmNqoeRkEyzsxyU5roVQdSGGq?=
+ =?us-ascii?Q?5kAEYxNjopi4glMzV+wkNHAeCLGUXbrpNLkadG4pBveRZXdMC4FUhtMHBzkg?=
+ =?us-ascii?Q?GE0pnyM9kQ9X0+QHcKq++47Qk+qCH4UXETpteX5aW1qKqmONrIkV1Yvvqsmk?=
+ =?us-ascii?Q?q4dFn/dyfrB40i9lYNs39K5W2FsjfqItzU4y6BEH64R8NLGxefvIk4W6cR2E?=
+ =?us-ascii?Q?y59avI7Ls6VAuLd46ok=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ccea1778-34ce-4173-b554-08dcdeebd5f7
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 11:59:26.9530
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QJbZxuDE6PVxU89oGfFV6VPCYFOJQl2mCgA+nRHRrSlSsQ9Cy++tQH4e2Gk26Rbg
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6406
 
-Add support for power domains exposed by RPMh on the qcs615 platform.
-Only CX/CX_AO are exposed by RPMh. Consumers such as VDD_MX, EBI, LPI_
-MX and LPI_CX will share the power domains.
+On Thu, Sep 26, 2024 at 11:02:37PM -0700, Nicolin Chen wrote:
+> On Fri, Sep 27, 2024 at 01:38:08PM +0800, Yi Liu wrote:
+> > > > Does it mean each vIOMMU of VM can only have
+> > > > one s2 HWPT?
+> > > 
+> > > Giving some examples here:
+> > >   - If a VM has 1 vIOMMU, there will be 1 vIOMMU object in the
+> > >     kernel holding one S2 HWPT.
+> > >   - If a VM has 2 vIOMMUs, there will be 2 vIOMMU objects in the
+> > >     kernel that can hold two different S2 HWPTs, or share one S2
+> > >     HWPT (saving memory).
+> > 
+> > So if you have two devices assigned to a VM, then you may have two
+> > vIOMMUs or one vIOMMU exposed to guest. This depends on whether the two
+> > devices are behind the same physical IOMMU. If it's two vIOMMUs, the two
+> > can share the s2 hwpt if their physical IOMMU is compatible. is it?
+> 
+> Yes.
+> 
+> > To achieve the above, you need to know if the physical IOMMUs of the
+> > assigned devices, hence be able to tell if physical IOMMUs are the
+> > same and if they are compatible. How would userspace know such infos?
+> 
+> My draft implementation with QEMU does something like this:
+>  - List all viommu-matched iommu nodes under /sys/class/iommu: LINKs
+>  - Get PCI device's /sys/bus/pci/devices/0000:00:00.0/iommu: LINK0
+>  - Compare the LINK0 against the LINKs
+> 
+> We so far don't have an ID for physical IOMMU instance, which can
+> be an alternative to return via the hw_info call, otherwise.
 
-Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
----
- drivers/pmdomain/qcom/rpmhpd.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+We could return the sys/class/iommu string from some get_info or
+something
 
-diff --git a/drivers/pmdomain/qcom/rpmhpd.c b/drivers/pmdomain/qcom/rpmhpd.c
-index d256110225dc517187b2ac1bbbb781eae78b7d59..731feab9f17ddae699815332d193e9a298fff0e1 100644
---- a/drivers/pmdomain/qcom/rpmhpd.c
-+++ b/drivers/pmdomain/qcom/rpmhpd.c
-@@ -647,7 +647,19 @@ static const struct rpmhpd_desc qcs8300_desc = {
- 	.num_pds = ARRAY_SIZE(qcs8300_rpmhpds),
- };
- 
-+/* QCS615 RPMH powerdomains */
-+static struct rpmhpd *qcs615_rpmhpds[] = {
-+	[RPMHPD_CX] = &cx,
-+	[RPMHPD_CX_AO] = &cx_ao,
-+};
-+
-+static const struct rpmhpd_desc qcs615_desc = {
-+	.rpmhpds = qcs615_rpmhpds,
-+	.num_pds = ARRAY_SIZE(qcs615_rpmhpds),
-+};
-+
- static const struct of_device_id rpmhpd_match_table[] = {
-+	{ .compatible = "qcom,qcs615-rpmhpd", .data = &qcs615_desc },
- 	{ .compatible = "qcom,qcs8300-rpmhpd", .data = &qcs8300_desc },
- 	{ .compatible = "qcom,qdu1000-rpmhpd", .data = &qdu1000_desc },
- 	{ .compatible = "qcom,sa8155p-rpmhpd", .data = &sa8155p_desc },
+> For compatibility to share a stage-2 HWPT, basically we would do
+> a device attach to one of the stage-2 HWPT from the list that VMM
+> should keep. This attach has all the compatibility test, down to
+> the IOMMU driver. If it fails, just allocate a new stage-2 HWPT.
 
--- 
-2.34.1
+Ideally just creating the viommu should validate the passed in hwpt is
+compatible without attaching.
 
+Jason
 
