@@ -1,249 +1,259 @@
-Return-Path: <linux-kernel+bounces-341946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B879888B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:04:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 443229888B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32D89B23CE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:04:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB7A1C21DD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8CF1C173C;
-	Fri, 27 Sep 2024 16:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1441C172C;
+	Fri, 27 Sep 2024 16:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YjNAgSor"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="El7DZNNy"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A60913CA81;
-	Fri, 27 Sep 2024 16:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFDB1465A9;
+	Fri, 27 Sep 2024 16:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727453065; cv=none; b=kdcVkaT5dEoCksH+1Y2VyqzNTnU1EvzzkRai8JNBJkEWXLdvR4HTNXI9kgU6smDbxaiijWrGLOnyMgczCpTAPiZ7H7PxSRMCyUMw4Teh3GEhmqA35bIT8QMXiyGSKqySMlhkrT1GYDbdQXBIuf+Z8nAU4GViueCao4SZcnF89i4=
+	t=1727453189; cv=none; b=iS/9QtHhJDSne8xcgASAtCTKnwmrTnUdpJc5IBFhY6H6FggQ4b23XGGllmfIkYvbEd5z2xyrAGw7KdeRC4WLxCXw2/RAbYfIuvBIvbX+7PrkpcVSgB0894G/HNlFBnGqGH47ZCB6CuLpmOCi8LGxA45E5o+XlfngqgVqKpcjZ3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727453065; c=relaxed/simple;
-	bh=Gu4nG96kzcucKdcN6xH7Hfcnj7tf2Rp8UdR4tx9Ffjs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h+a8CcLT+82NuA3RYrCewTV7DomSKURl4tGDZ4HunDNKMcnbS1semQGgzvfQoo4SkSMeBYyUq7YwK9Gb++cQjGK1AiPVcS3zDqut2eQ2CLnKvRs7TTYqmR3m/nfH5H/hrUKD6Y14hs6gcANsl7p3Gpy233+4xhhjKTYIMTjFu04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YjNAgSor; arc=none smtp.client-ip=209.85.166.177
+	s=arc-20240116; t=1727453189; c=relaxed/simple;
+	bh=LCF+qUh/MKz3OzrSjMhLzA/TwT31vZuTL8I+Ceg0rI0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=LdZPqhq0RCFDER8WAXOLcUttLrWirXGNnOwrrb4m87l//l/eMqeNE9wvqtETe+bv/z9XsfT2+RlwCqsdfx/jfL3gMDLO7TP76zDJlLLMl6TCszbua6uhIxhyS8tZApVRHNdY2VkUF1FtqDc7sNkzpi+xRVMFXDW3MvcbMEQ9fOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=El7DZNNy; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a0c8b81b4eso9637605ab.0;
-        Fri, 27 Sep 2024 09:04:23 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20b49ee353cso5610455ad.2;
+        Fri, 27 Sep 2024 09:06:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727453062; x=1728057862; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727453187; x=1728057987; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bg2l6UGtum/7AudqJcwWoets59MOCUr9IF+C08Kwo9w=;
-        b=YjNAgSorLirhDGirMiJHB9lAfYB5tbsUGLIshviD7O5VydiWMf8iUyCcleMncdjLGd
-         qTcSNj7wlJF23AA1a18lo8ppLiuZA7xaRJtN+0GR4gXygu12z4989aMUXyItwz9brz6D
-         dlSCqhDUpSRlhPKYAJD5ag/OhaqqXf+shPWcU/zHPop8XBCtzqOVm+QAyOxjRQ9wkdFd
-         IGA4X8j0WIgzm1kV8pdkFXJClbllVXixAt6fWChdjZrXXUr8f9exQCcBq66y77VS1lyL
-         WJ2HQvv+Z8G//Pi1iOHnfoYFNRzol2x4NFCalXmZpMyV9I/HljAtS9dWWtMfE/Q5ur5t
-         CLmw==
+        bh=MjAiCFdlzm5VzHUYTb3sNNTZnJLLHgUJWgYzOHcrrbg=;
+        b=El7DZNNyU5qo2HQpWtphoeFN87Z5okWD/6WQxdk5P6PpxAP0WvaSGTNaTeMwX6LTzT
+         IegLA8eh8y9qOvxJu8/ZNbwnji69r/vaZste4ak3Zb+3Hmlsth/qfN0Wgpm/GiiXlCmC
+         7fRJ1yW22CVWWjlVx3JIVThFnR9l/2tCBMrB84V9Su8G3JWG3hHgiK5FHKG9LTh4qgPh
+         Ujj+fCWDaj9mriRHylQGLgmpvKl5gFEqc1P/vb1ae+7gdROIxcjmYAGJGC2W+jczbgI/
+         rMWxqtSLumEwaM2UZR2UIPkGpI4LdKeXQhE4pMfQMaLI+Rn8gGX5BJ2b7V3+cI7GDF3j
+         SXQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727453062; x=1728057862;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727453187; x=1728057987;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bg2l6UGtum/7AudqJcwWoets59MOCUr9IF+C08Kwo9w=;
-        b=q0KosktuwFr+7iO7m4R1Jlezpg1ROBliseXw7MMXQLtqoAk/Iq1Qpgz95za4mx7TCv
-         fZ2ZaxoBo0ukgHm20qZGEV7iHobqiGpj5TfeATG05i+GpaH0DklsrKifNTPkGRT2fw1y
-         uOItwj3Mh7nOUe8BgE6ItP0XtYFIfavR1+fIT2wEncd1GuuZBX43aPArwS2LnzjVj5g1
-         6EiS2jJEfJjTWP5GdUI3imxlqQYxXZzQgVtS7S2R3XFuE3gnS1Hf1gQ2Sx4NB2SFzuXj
-         OKgxKI9UK/4ui+RoJ6wO5TcYS+eRRU+wCQnWTVXRuniaueoCmqgt57IoTjdqxmZuxN3F
-         On7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVioPiV97HJp8KuYTPs2OzRgrIfuydp/mjHFkB2xtLP7FC0mS5DDAvO8rNMjTT1jQ+kqpa7eYd9SZ56iw==@vger.kernel.org, AJvYcCW3MbGhkdzUY/w1cA+P6MA4R7h+NXcCzNIiEx8xnzl3kgure0AwmDQsWz4p3f3XR9OJD0jYJYo4@vger.kernel.org, AJvYcCX+Hjj00+Pf99MpIBHHyE5rr4bp5OHnbGKw3cv0qWRJV6JUOGzeij1h5Y+0eBjZaxLIk4rI6B4x3MhJMdc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh0UPRmllXbwXgQ16LYEnEPtLXdrmr+0Lw3xZ2r2SBO38NlSC0
-	6FC9lTiP64xV5VCXJE4WRfWh32kW7OCk/rbfoQYIq37ji0f9Yg9T+gdWSV8bD/bdkHybNFnM4+9
-	laBgxFZMHd+iOeR+3j/3QYQ6GSwI=
-X-Google-Smtp-Source: AGHT+IEbjcly4ZSXbWX9GWV9zM/1K7tqjTq3D0Rfh9Q96eNhxC2541Z+C3b8vuL1ICAaIRXgAsZeFsyI1BonMXhXHvc=
-X-Received: by 2002:a05:6e02:152a:b0:3a0:8c68:7705 with SMTP id
- e9e14a558f8ab-3a3451bc28cmr39565755ab.21.1727453062222; Fri, 27 Sep 2024
- 09:04:22 -0700 (PDT)
+        bh=MjAiCFdlzm5VzHUYTb3sNNTZnJLLHgUJWgYzOHcrrbg=;
+        b=wxcz9pbKiAM1+TsliCF0io4uzhruaVMRBQOMJTUZlqSpfVauwoSjqNyTuekofDbTN2
+         czKlJaAcsIQf0XCqEEvFuM1eqsRzYUh/si9j4mwJaOR4UPHZ5tr/gXCLg7RFxpK3G55C
+         7+vN1gvLbpfT0bxPUyvW0ioYtOkTc1y3iP9iPrR87vR+sXmPitfbBjDWvtTdCtV1Yg/f
+         nuAv3XPTAhjb8rjcpEdZt15+4DatphO98BjqR1VPG4KaqdF3DAT6Gt15NG0g4/BQjOPq
+         Xy08RS9dwU+68fpsUDOXLqb/QowkLocUWIcIY6IhhiJBt/C/n/2qJDr/M3FUrGpsPUNn
+         2yVw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAJ8oxhjg3r+QsG34xqihMBy/P2G+8r19cHs3RdaBer/cLnCPUttD9yWA4i03KJJ8kS83G@vger.kernel.org, AJvYcCXeM9sWjudIVu5u+dgRmsZZj+jmAcdTHInVBLgWsumj7+GlJwc4UCAGsRAqkjr8gjcLwtabD9PuNsF7KUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzzLcyNBhsNqoEaREYvDYmUfsWWIftjnH998CtjyKcXoR4aUb/
+	PjmQ/GvV0pWXLp1Al23f2MAnofWjwfN+329QWG6b7bWRRSM7VSV5
+X-Google-Smtp-Source: AGHT+IF5FcC4CB2D7S/aeepZVCiS/xWqxivDP6Q5j803wcBvqAXoTyPUkjDLas9EFT7uJ1fAdDhjNQ==
+X-Received: by 2002:a17:902:e743:b0:201:e7c2:bd03 with SMTP id d9443c01a7336-20b37bdc6a4mr50751985ad.60.1727453187402;
+        Fri, 27 Sep 2024 09:06:27 -0700 (PDT)
+Received: from smtpclient.apple ([2402:d0c0:11:86::1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e5169csm15221805ad.238.2024.09.27.09.06.19
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Sep 2024 09:06:26 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <66f6c84c.050a0220.38ace9.0027.GAE@google.com>
-In-Reply-To: <66f6c84c.050a0220.38ace9.0027.GAE@google.com>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Fri, 27 Sep 2024 12:04:10 -0400
-Message-ID: <CADvbK_cwG6b_PGji2bBp4=tGSxHi-ZMxjXAmKdzT1sKXr0_Uwg@mail.gmail.com>
-Subject: Re: [syzbot] [sctp?] general protection fault in sctp_inet_listen
-To: syzbot <syzbot+f4e0f821e3a3b7cee51d@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	marcelo.leitner@gmail.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+From: Alan Huang <mmpgouride@gmail.com>
+In-Reply-To: <ZvY0gG2dCJApPbp5@boqun-archlinux>
+Date: Sat, 28 Sep 2024 00:06:06 +0800
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+ LKML <linux-kernel@vger.kernel.org>,
+ RCU <rcu@vger.kernel.org>,
+ linux-mm@kvack.org,
+ lkmm@lists.linux.dev,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+ rostedt <rostedt@goodmis.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>,
+ Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>,
+ Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ maged.michael@gmail.com,
+ Neeraj upadhyay <neeraj.upadhyay@amd.com>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <4106601E-82BC-471D-8AD0-B5E8FE99C7CD@gmail.com>
+References: <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+ <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
+ <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
+ <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
+ <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
+ <54487a36-f74c-46c3-aed7-fc86eaaa9ca2@huaweicloud.com>
+ <CAHk-=wifOW0VEh6uL3sHSaAUA46YmPDS9Wh5HnNC2JyOiXVA=Q@mail.gmail.com>
+ <ZvX12_1mK8983cXm@boqun-archlinux>
+ <0b262fe5-2fc5-478d-bf66-f208723238d5@efficios.com>
+ <e748893f-28a3-4b8a-a848-cfb1173ab940@app.fastmail.com>
+ <ZvY0gG2dCJApPbp5@boqun-archlinux>
+To: Boqun Feng <boqun.feng@gmail.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On Fri, Sep 27, 2024 at 10:59=E2=80=AFAM syzbot
-<syzbot+f4e0f821e3a3b7cee51d@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    196145c606d0 Merge tag 'clk-fixes-for-linus' of git://git=
-...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16f8549f98000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D61d235cb8d150=
-01c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Df4e0f821e3a3b7c=
-ee51d
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> userspace arch: i386
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/629d679a6d66/dis=
-k-196145c6.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/aec0dd4a04f3/vmlinu=
-x-196145c6.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/68e515733997/b=
-zImage-196145c6.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+f4e0f821e3a3b7cee51d@syzkaller.appspotmail.com
->
-> Oops: general protection fault, probably for non-canonical address 0xdfff=
-fc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> CPU: 1 UID: 0 PID: 10078 Comm: syz.4.940 Not tainted 6.11.0-rc7-syzkaller=
--00097-g196145c606d0 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 08/06/2024
-> RIP: 0010:sctp_inet_listen+0x7f0/0xa20 net/sctp/socket.c:8617
-In sctp_listen_start() invoked by sctp_inet_listen(), it should set the
-socket state back to CLOSED if sctp_autobind() fails due to whatever
-reason:
+2024=E5=B9=B49=E6=9C=8827=E6=97=A5 12:28=EF=BC=8CBoqun Feng =
+<boqun.feng@gmail.com> wrote=EF=BC=9A
+>=20
+> On Fri, Sep 27, 2024 at 09:37:50AM +0800, Boqun Feng wrote:
+>>=20
+>>=20
+>> On Fri, Sep 27, 2024, at 9:30 AM, Mathieu Desnoyers wrote:
+>>> On 2024-09-27 02:01, Boqun Feng wrote:
+>>>> #define ADDRESS_EQ(var, expr) \
+>>>> ({ \
+>>>> bool _____cmp_res =3D (unsigned long)(var) =3D=3D (unsigned =
+long)(expr); \
+>>>> \
+>>>> OPTIMIZER_HIDE_VAR(var); \
+>>>> _____cmp_res; \
+>>>> })
+>>>=20
+>>> If the goal is to ensure gcc uses the register populated by the
+>>> second, I'm afraid it does not work. AFAIU, "hiding" the dependency
+>>> chain does not prevent the SSA GVN optimization from combining the
+>=20
+> Note it's not hiding the dependency, rather the equality,
+>=20
+>>> registers as being one and choosing one arbitrary source. "hiding"
+>=20
+> after OPTIMIZER_HIDE_VAR(var), compiler doesn't know whether 'var' is
+> equal to 'expr' anymore, because OPTIMIZER_HIDE_VAR(var) uses =
+"=3Dr"(var)
+> to indicate the output is overwritten. So when 'var' is referred =
+later,
+> compiler cannot use the register for a 'expr' value or any other
+> register that has the same value, because 'var' may have a different
+> value from the compiler's POV.
+>=20
+>>> the dependency chain before or after the comparison won't help here.
+>>>=20
+>>> int fct_hide_var_compare(void)
+>>> {
+>>>     int *a, *b;
+>>>=20
+>>>     do {
+>>>         a =3D READ_ONCE(p);
+>>>         asm volatile ("" : : : "memory");
+>>>         b =3D READ_ONCE(p);
+>>>     } while (!ADDRESS_EQ(a, b));
+>>=20
+>> Note that ADDRESS_EQ() only hide first parameter, so this should be =
+ADDRESS_EQ(b, a).
+>>=20
+>=20
+> I replaced ADDRESS_EQ(a, b) with ADDRESS_EQ(b, a), and the compile
+> result shows it can prevent the issue:
+>=20
+> gcc 14.2 x86-64:
+>=20
+> fct_hide_var_compare:
+> .L2:
+>        mov     rcx, QWORD PTR p[rip]
+>        mov     rdx, QWORD PTR p[rip]
+>        mov     rax, rdx
+>        cmp     rcx, rdx
+>        jne     .L2
+>        mov     eax, DWORD PTR [rax]
+>        ret
+>=20
+> gcc 14.2.0 ARM64:
+>=20
+> fct_hide_var_compare:
+>        adrp    x2, p
+>        add     x2, x2, :lo12:p
+> .L2:
+>        ldr     x3, [x2]
+>        ldr     x1, [x2]
+>        mov     x0, x1
+>        cmp     x3, x1
+>        bne     .L2
+>        ldr     w0, [x0]
+>        ret
+>=20
+> Link to godbolt:
+>=20
+> https://godbolt.org/z/a7jsfzjxY
 
-@@ -8557,8 +8557,10 @@ static int sctp_listen_start(struct sock *sk,
-int backlog)
-         */
-        inet_sk_set_state(sk, SCTP_SS_LISTENING);
-        if (!ep->base.bind_addr.port) {
--               if (sctp_autobind(sk))
-+               if (sctp_autobind(sk)) {
-+                       inet_sk_set_state(sk, SCTP_SS_CLOSED);
-                        return -EAGAIN;
-+               }
+Checking the assembly generated by different compilers for the kernel on =
+the local machine will yield more accurate results. Some optimizations =
+are restricted by the kernel. Therefore, if you use Godbolt, ensure that =
+the compiler arguments match those used for the kernel.
 
-Otherwise, next time when calling sctp_inet_listen(), if sctp_sk(sk)->reuse
-is already set via setsockopt(SCTP_REUSE_PORT), sctp_sk(sk)->bind_hash will
-be dereferenced as the state is LISTENING, and causes crash as bind_hash is
-NULL.
+>=20
+> Regards,
+> Boqun
+>=20
+>> Regards,
+>> Boqun
+>>=20
+>>>     return *b;
+>>> }
+>>>=20
+>>> gcc 14.2 x86-64:
+>>>=20
+>>> fct_hide_var_compare:
+>>>  mov    rax,QWORD PTR [rip+0x0]        # 67 =
+<fct_hide_var_compare+0x7>
+>>>  mov    rdx,QWORD PTR [rip+0x0]        # 6e =
+<fct_hide_var_compare+0xe>
+>>>  cmp    rax,rdx
+>>>  jne    60 <fct_hide_var_compare>
+>>>  mov    eax,DWORD PTR [rax]
+>>>  ret
+>>> main:
+>>>  xor    eax,eax
+>>>  ret
+>>>=20
+>>> gcc 14.2.0 ARM64:
+>>>=20
+>>> fct_hide_var_compare:
+>>>         adrp    x0, .LANCHOR0
+>>>         add     x0, x0, :lo12:.LANCHOR0
+>>> .L12:
+>>>         ldr     x1, [x0]
+>>>         ldr     x2, [x0]
+>>>         cmp     x1, x2
+>>>         bne     .L12
+>>>         ldr     w0, [x1]
+>>>         ret
+>>> p:
+>>>         .zero   8
+>>>=20
+>>>=20
+>>> --=20
+>>> Mathieu Desnoyers
+>>> EfficiOS Inc.
+>>> https://www.efficios.com
 
-> Code: 8d 98 00 06 00 00 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 d=
-f e8 6e 4e 05 f7 48 8b 1b 48 83 c3 02 48 89 d8 48 c1 e8 03 <42> 0f b6 04 28=
- 84 c0 0f 85 8e 01 00 00 c6 03 01 31 db e9 d6 f9 ff
-> RSP: 0018:ffffc90002eafd20 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 0000000000000002 RCX: ffff88802e973c00
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-> RBP: ffffc90002eafe78 R08: ffffffff8af5839c R09: 1ffffffff283c920
-> R10: dffffc0000000000 R11: fffffbfff283c921 R12: 1ffff1100fc7e242
-> R13: dffffc0000000000 R14: ffff88807e3f1212 R15: 1ffff1100fc7e2ff
-> FS:  0000000000000000(0000) GS:ffff8880b8900000(0063) knlGS:00000000f5735=
-b40
-> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-> CR2: 00007fadae30cff8 CR3: 0000000050d9a000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  __sys_listen_socket net/socket.c:1883 [inline]
->  __sys_listen+0x1b7/0x230 net/socket.c:1894
->  __do_sys_listen net/socket.c:1902 [inline]
->  __se_sys_listen net/socket.c:1900 [inline]
->  __ia32_sys_listen+0x5a/0x70 net/socket.c:1900
->  do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
->  __do_fast_syscall_32+0xb4/0x110 arch/x86/entry/common.c:386
->  do_fast_syscall_32+0x34/0x80 arch/x86/entry/common.c:411
->  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-> RIP: 0023:0xf7fd6579
-> Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 0=
-0 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90=
- 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-> RSP: 002b:00000000f573556c EFLAGS: 00000206 ORIG_RAX: 000000000000016b
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:sctp_inet_listen+0x7f0/0xa20 net/sctp/socket.c:8617
-> Code: 8d 98 00 06 00 00 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 d=
-f e8 6e 4e 05 f7 48 8b 1b 48 83 c3 02 48 89 d8 48 c1 e8 03 <42> 0f b6 04 28=
- 84 c0 0f 85 8e 01 00 00 c6 03 01 31 db e9 d6 f9 ff
-> RSP: 0018:ffffc90002eafd20 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 0000000000000002 RCX: ffff88802e973c00
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-> RBP: ffffc90002eafe78 R08: ffffffff8af5839c R09: 1ffffffff283c920
-> R10: dffffc0000000000 R11: fffffbfff283c921 R12: 1ffff1100fc7e242
-> R13: dffffc0000000000 R14: ffff88807e3f1212 R15: 1ffff1100fc7e2ff
-> FS:  0000000000000000(0000) GS:ffff8880b8900000(0063) knlGS:00000000f5735=
-b40
-> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-> CR2: 000055f65cf85950 CR3: 0000000050d9a000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> ----------------
-> Code disassembly (best guess):
->    0:   8d 98 00 06 00 00       lea    0x600(%rax),%ebx
->    6:   48 89 d8                mov    %rbx,%rax
->    9:   48 c1 e8 03             shr    $0x3,%rax
->    d:   42 80 3c 28 00          cmpb   $0x0,(%rax,%r13,1)
->   12:   74 08                   je     0x1c
->   14:   48 89 df                mov    %rbx,%rdi
->   17:   e8 6e 4e 05 f7          call   0xf7054e8a
->   1c:   48 8b 1b                mov    (%rbx),%rbx
->   1f:   48 83 c3 02             add    $0x2,%rbx
->   23:   48 89 d8                mov    %rbx,%rax
->   26:   48 c1 e8 03             shr    $0x3,%rax
-> * 2a:   42 0f b6 04 28          movzbl (%rax,%r13,1),%eax <-- trapping in=
-struction
->   2f:   84 c0                   test   %al,%al
->   31:   0f 85 8e 01 00 00       jne    0x1c5
->   37:   c6 03 01                movb   $0x1,(%rbx)
->   3a:   31 db                   xor    %ebx,%ebx
->   3c:   e9                      .byte 0xe9
->   3d:   d6                      (bad)
->   3e:   f9                      stc
->   3f:   ff                      .byte 0xff
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+
 
