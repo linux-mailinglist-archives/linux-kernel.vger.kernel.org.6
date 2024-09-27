@@ -1,236 +1,180 @@
-Return-Path: <linux-kernel+bounces-341331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EF1E987E7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:33:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6A3987E7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87E32B2294F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:33:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36AA51F23494
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF3017967F;
-	Fri, 27 Sep 2024 06:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D3A17ADF1;
+	Fri, 27 Sep 2024 06:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qkJb8WEn"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2088.outbound.protection.outlook.com [40.107.236.88])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LF003AU2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C0D17557C;
-	Fri, 27 Sep 2024 06:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727418755; cv=fail; b=eNle480HiKAACkioN+VbSS8H7O1IQdpjcz9K2qiidbODW/V32eWkTUqMltWwU0mYO7AuAHw+/v3rB5NBFcOBmBcbW33dgnF9FNO56vlcDcMaWq28tX5idq39hFYjPl7KngQweAru9k9MsHbh25URb2j/9BfDNzUcfat5CuNY1K8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727418755; c=relaxed/simple;
-	bh=vWKSB/kiws/IK4EISfF50EtZnbe0fF0I7dg6ZjHcbCc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DtAy1CS03/uldej99LmA0H0RI8PTmC3P0mLBB8t2Z0Xw4billbvlF5RmkdmcUQTf9yMX+gUprluBbNccXAPSSorNxRaeJBEtMzpP3rLhjJvlg9KnkF2rmHEkdUAYDBtIj5uTH7Nj+JSQ85FNtY5Xj6Bcd2G8THUqy1CYMX9HptA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qkJb8WEn; arc=fail smtp.client-ip=40.107.236.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QnkzfgIG64gHqkh+9TknUsDnq+TMxBcGA2ekBNDC9U/pZrdKADF6phv6MOAqhBik2Q9dApOYZy2e1dfSXo7WsTlt9lfVB3vbOQjPpmAl5AdNUEepVTz5YQXSN92jdSmSlqXvWc+2wJM6trHJgUr6mG8tGI3oVQlYGlNkYLCO/xcfAqIBFHMG8GmHDA5rQaSPs6RBZfVyEChs/uuRTj/2fIw0bdoe1WcEJAZgujPJ5QtCHGPI2IuAspxhPapAxD5+HK/qpcOgR6oJUChSoJYRKW1QSrw1PMCnqGCACk+91ITMlZuZjLfc8/nY04z4/A7mhpABte0INZejatU0q/Tm2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E4z4ynnFIkCcKK8awp8U9A13oSt62TfPGsZL+c/NkYA=;
- b=WM1ztTX4JAjwv7SRVxFoMTFnxiequQ025+N0XctNkRClqCmBS7hXgkpGf3wqEiNSB0mmhL/MnN16069T/6HLGixjTTgHjqGmHkVgWWUeoDCj7lnPqPv9LHSY1YHUq5EYxuKrB5p497M7fU6sNGpMt1J/Eya57GnPEWromU1RnnJtHee5wnT4s3CJwD0/k1EQCv6ArBVSVUIV8Z5IRnPKRF4ZVOqBJ2ok2BhpmU7+FxnDDwglFBtDPRmworWNDAy77c+Awpyn+Z0hEBP17jtSrr51sAkaPIKk9NvRvmT5H8H4nEbRaEyOUMgCq+2C5iCuHVUK1hYhGIRmlnw+8e4bUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E4z4ynnFIkCcKK8awp8U9A13oSt62TfPGsZL+c/NkYA=;
- b=qkJb8WEnHQIKWcRDK75OonDF5VzSBIIgtb5vpaIxMaOMXEF9HMDMLCbkTOrCnlo11wfcwnBZ1cogc4XwmIQsQ8X91ejR/ISyfc0Iu6+/YOZCvVe2oSzqD/Yy5E3XcqqsnSrGu+g5s0sng3ASdKIW8mtQDW7o60VkQ+4XnEW8zA4/C2ybeTOQN3kSuJoPyp9QkXFn7lcmqmrRxjZInzce6WvmRJOxTM22nSM6uC4qIfSZBD+EBd5pJsE1GRUas9GO89UgZNEonUPsAIc6kdS0yonlZrmHdKRFtuq3tpjFPK4e7oBdv6NXWG3A6fgGXBPNFLN3cOnORxhQTf/eV1yiYQ==
-Received: from BYAPR05CA0097.namprd05.prod.outlook.com (2603:10b6:a03:e0::38)
- by DS7PR12MB5792.namprd12.prod.outlook.com (2603:10b6:8:77::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Fri, 27 Sep
- 2024 06:32:28 +0000
-Received: from SJ1PEPF00002312.namprd03.prod.outlook.com
- (2603:10b6:a03:e0:cafe::11) by BYAPR05CA0097.outlook.office365.com
- (2603:10b6:a03:e0::38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.17 via Frontend
- Transport; Fri, 27 Sep 2024 06:32:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ1PEPF00002312.mail.protection.outlook.com (10.167.242.166) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8005.15 via Frontend Transport; Fri, 27 Sep 2024 06:32:27 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 26 Sep
- 2024 23:32:13 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 26 Sep
- 2024 23:32:13 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Thu, 26 Sep 2024 23:32:11 -0700
-Date: Thu, 26 Sep 2024 23:32:10 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Yi Liu <yi.l.liu@intel.com>
-CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <will@kernel.org>,
-	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
-	<eric.auger@redhat.com>, <jean-philippe@linaro.org>, <mdf@kernel.org>,
-	<mshavit@google.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<smostafa@google.com>
-Subject: Re: [PATCH v2 00/19] iommufd: Add VIOMMU infrastructure (Part-1)
-Message-ID: <ZvZRapZlAsEGDIge@Asurada-Nvidia>
-References: <cover.1724776335.git.nicolinc@nvidia.com>
- <bf95f910-e837-4d79-8218-18d234ece730@intel.com>
- <ZvRcskGx2u94Vs+R@Asurada-Nvidia>
- <82632802-c55a-4199-b685-8b594a8e7104@intel.com>
- <ZvW+BoovlyJ/wziX@Asurada-Nvidia>
- <ff35efa5-ba7e-4974-94be-59bf794a14e3@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4F017557C;
+	Fri, 27 Sep 2024 06:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727418764; cv=none; b=LyRdXvD5mkAJj+d/mH2QFsQHLOYjN+NmIwkMrwIsGXSN3ysG2q+Xd3+kHgD2U6ROyMepa2xUAQTlLGXBtblC71GqeexGCGVcMYEkBIFzmsJb6UCMWRogY1mEm4VTgWQHaQ+qMPlP8x3WUYVKJNEGC5s08IzRkHcmzBmmLxeVV2E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727418764; c=relaxed/simple;
+	bh=pOdpKSFFX2DeTzjK8oSk8ZcZgBPu7DfNa+BPtyH4q6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOiyA1q2IrqITHd8FOwg/x260HTSsQ1EYZe3fj0ycpe3qaYQeNtO7Mzc2trockQQio2Hp0sk9HOoWovlAmc683tpHCWUBqy4/xUXQbml2HmDwA1TqXMS5vO7OnTKVxG1MjG4icvJN5oQxbYp1g1+ZcmRNbnbTDmEm0Lhioh4qdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LF003AU2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1069BC4CEC4;
+	Fri, 27 Sep 2024 06:32:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727418763;
+	bh=pOdpKSFFX2DeTzjK8oSk8ZcZgBPu7DfNa+BPtyH4q6o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LF003AU2xt3Op4738uhhsEoyysYHu3Yx7v9vox2lDOemKKT825bEhADmosvpRO2mY
+	 BWbFskRjpE0lAPbTpKfqcdtX/Gws3LFMWyZ90aaux/tkmD/XeuJ0etrt8TUr8QwrOX
+	 vNGYGkdlcrP1m+ujAMefXswmkrMzgPsoF4tGvPdWTpMtURuB23vpXgzO03lbmTjPUT
+	 ZItZ2aGceKgkn8zRI8WhHUlWspDtU1MKuf6DpZvgDFLC8V99JhiOBvOysKz3KVpfy2
+	 PLEIYdOmxAGTda4GNlOFIabiCWI4I0aWvSMZgH/lwKVXjAc2DE8QLnZqF9Ke77FtRP
+	 93lxNw1n8bnuw==
+Date: Thu, 26 Sep 2024 23:32:41 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] perf arm-spe: Define metadata header version 2
+Message-ID: <ZvZRiTYrTOdXUVUk@google.com>
+References: <20240914215458.751802-1-leo.yan@arm.com>
+ <20240914215458.751802-2-leo.yan@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ff35efa5-ba7e-4974-94be-59bf794a14e3@intel.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002312:EE_|DS7PR12MB5792:EE_
-X-MS-Office365-Filtering-Correlation-Id: d71aa1d9-9ac6-453b-9528-08dcdebe2841
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?O96ifY1zdApHyjT5kYXjrDbN2aE3QIfscyIq9Mq4n3X6a/Hbka03Q/FyuIBq?=
- =?us-ascii?Q?wo/AkXv5dFzrT4ARiO7x9SIzh6W+i9QtBJJp++ELTIA1OK3F+VBFpP3lpsmF?=
- =?us-ascii?Q?cQhdXuqq8AfvV4dxahj4aFUD/zrVSXsc0y7QIJlivMQe/MzHnJV7tGLy88Sb?=
- =?us-ascii?Q?BszKP7Gx3mf/LyM/lqqUTex/Sx2J21G4GS6oqrUWXVS2uDhkDUJIDgELgTi/?=
- =?us-ascii?Q?EHEOsp1Zr5xECHU6OFamL03UB3GOlju0djFMN6Jhu4hnRcCMAxK6K8pjKh0Z?=
- =?us-ascii?Q?BpRsb7xVcdlVjAlHxWAkuGLqwyat5VuX/NR+GRmJaGi8BsmjwrjN4EmRt42U?=
- =?us-ascii?Q?1ICD5c25GQ5BpQ/CRuQa/hHZ1j0z79DWWossK4rzP8mAXgLIDpmDRMhDWInu?=
- =?us-ascii?Q?VqiE0Xugr8nxvmSe94iyi7a48aipfevcDLglniDHts6pxuUbZYfAj93bXsua?=
- =?us-ascii?Q?O8KtUAtyHGVMKIUrrVme7qGoqVyFXCmpA8pYVnWGPNuxHATmFN/mAzswFq1o?=
- =?us-ascii?Q?oSIAw5jjJWCLhU1ZqBiSuVhrf42Q4VWmKudG1M7KCilKK50A3IO2/QV4wxCI?=
- =?us-ascii?Q?ROUQvB/ijgW22runUq2Vg3aTMKjjD2VKa5IhmuedRzxovFiSjX8SUmSsnOIF?=
- =?us-ascii?Q?0RRPt1/XYDkZleuLAZHM/csWpTEr0BYXbBbil80DNIlyTMYOCmY60/UaS04A?=
- =?us-ascii?Q?8GcTs7Zf2hdOzFkPI545NIca9ScIZuYrwvBIUBSsgma4sppGND3hId4FbZ1E?=
- =?us-ascii?Q?W+vu4wcONMPSTm0iyYDsugQaIvGIqNXUxNrM1mwH4LBjxVk2/mz6WCMEgfdx?=
- =?us-ascii?Q?8bO7ESMhCITWuh8sVjQLy9q543c7WgSgAqT5lmmPP09nVFnuVbWm2evkzt15?=
- =?us-ascii?Q?iXINBXLECTVz8k/rYeMvLNMO9Csqp8FQOFtpukRiA5RCBftrDEec/QoimDVK?=
- =?us-ascii?Q?vwAJi9OmN5Pw6SL02X4/hcHktCDzvlwrbnJel1nrcRR7TnJU07FG6FY45twh?=
- =?us-ascii?Q?6QHSI4Xso58ZqB/fnCHMtCwQw9cgRvKwIbY1o1EFbBaYoueJoLhQv2I+DIkV?=
- =?us-ascii?Q?j/Hm6TmQL7096PAIknCxv0x9CESQtowAiTpLKL0cDeZxzRBtSn2ijipied5/?=
- =?us-ascii?Q?CaqV9i3G3zf5LdDKCGBkmd2j/8Pw9fkhfb6MREGK8yNzzBCFnyEzVVQmD5IN?=
- =?us-ascii?Q?PqY1PBQQfifdUUNlo/X8qwUrW3RhqoxosaZ2HC16ArK2eF7q5RHen6+fIPIi?=
- =?us-ascii?Q?jNVyef5votgdveqnwXpft9jkZnGj0f28SMHXpsFmwt8BpT3cj1uwEqAKU0kr?=
- =?us-ascii?Q?CBd4DN8pOzxFWm+/6owgupoVfAOn3bDvw8rYNE/wxSuM4qIGap3FrYeVpEeQ?=
- =?us-ascii?Q?OvFLo2SGmzxUwtFHniJF9IAxu4xi?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 06:32:27.9056
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d71aa1d9-9ac6-453b-9528-08dcdebe2841
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002312.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5792
+In-Reply-To: <20240914215458.751802-2-leo.yan@arm.com>
 
-On Fri, Sep 27, 2024 at 01:54:45PM +0800, Yi Liu wrote:
-> > > > Baolu told me that Intel may have the same: different domain IDs
-> > > > on different IOMMUs; multiple IOMMU instances on one chip:
-> > > > https://lore.kernel.org/linux-iommu/cf4fe15c-8bcb-4132-a1fd-b2c8ddf2731b@linux.intel.com/
-> > > > So, I think we are having the same situation here.
-> > > 
-> > > yes, it's called iommu unit or dmar. A typical Intel server can have
-> > > multiple iommu units. But like Baolu mentioned in that thread, the intel
-> > > iommu driver maintains separate domain ID spaces for iommu units, which
-> > > means a given iommu domain has different DIDs when associated with
-> > > different iommu units. So intel side is not suffering from this so far.
-> > 
-> > An ARM SMMU has its own VMID pool as well. The suffering comes
-> > from associating VMIDs to one shared parent S2 domain.
+On Sat, Sep 14, 2024 at 10:54:54PM +0100, Leo Yan wrote:
+> The first version's metadata header structure doesn't include a field to
+> indicate a header version, which is not friendly for extension.
 > 
-> Is this because of the VMID is tied with a S2 domain?
-
-On ARM, yes. VMID is a part of S2 domain stuff.
-
-> > Does a DID per S1 nested domain or parent S2? If it is per S2,
-> > I think the same suffering applies when we share the S2 across
-> > IOMMU instances?
+> Define the metadata version 2 format with a new header structure and
+> extend per CPU's metadata. In the meantime, the old metadata header will
+> still be supported for backward compatibility.
 > 
-> per S1 I think. The iotlb efficiency is low as S2 caches would be
-> tagged with different DIDs even the page table is the same. :)
-
-On ARM, the stage-1 is tagged with an ASID (Address Space ID)
-while the stage-2 is tagged with a VMID. Then an invalidation
-for a nested S1 domain must require the VMID from the S2. The
-ASID may be also required if the invalidation is specific to
-that address space (otherwise, broadcast per VMID.)
-
-I feel these two might act somehow similarly to the two DIDs
-during nested translations?
-
-> > > > Adding another vIOMMU wrapper on the other hand can allow us to
-> > > > allocate different VMIDs/DIDs for different IOMMUs.
-> > > 
-> > > that looks like to generalize the association of the iommu domain and the
-> > > iommu units?
-> > 
-> > A vIOMMU is a presentation/object of a physical IOMMU instance
-> > in a VM.
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  tools/perf/arch/arm64/util/arm-spe.c |  4 +--
+>  tools/perf/util/arm-spe.c            |  2 +-
+>  tools/perf/util/arm-spe.h            | 38 +++++++++++++++++++++++++++-
+>  3 files changed, 40 insertions(+), 4 deletions(-)
 > 
-> a slice of a physical IOMMU. is it?
+> diff --git a/tools/perf/arch/arm64/util/arm-spe.c b/tools/perf/arch/arm64/util/arm-spe.c
+> index 2be99fdf997d..c2d5c8ca4900 100644
+> --- a/tools/perf/arch/arm64/util/arm-spe.c
+> +++ b/tools/perf/arch/arm64/util/arm-spe.c
+> @@ -41,7 +41,7 @@ static size_t
+>  arm_spe_info_priv_size(struct auxtrace_record *itr __maybe_unused,
+>  		       struct evlist *evlist __maybe_unused)
+>  {
+> -	return ARM_SPE_AUXTRACE_PRIV_SIZE;
+> +	return ARM_SPE_AUXTRACE_V1_PRIV_SIZE;
+>  }
+>  
+>  static int arm_spe_info_fill(struct auxtrace_record *itr,
+> @@ -53,7 +53,7 @@ static int arm_spe_info_fill(struct auxtrace_record *itr,
+>  			container_of(itr, struct arm_spe_recording, itr);
+>  	struct perf_pmu *arm_spe_pmu = sper->arm_spe_pmu;
+>  
+> -	if (priv_size != ARM_SPE_AUXTRACE_PRIV_SIZE)
+> +	if (priv_size != ARM_SPE_AUXTRACE_V1_PRIV_SIZE)
+>  		return -EINVAL;
+>  
+>  	if (!session->evlist->core.nr_mmaps)
+> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+> index 138ffc71b32d..70989b1bae47 100644
+> --- a/tools/perf/util/arm-spe.c
+> +++ b/tools/perf/util/arm-spe.c
+> @@ -1262,7 +1262,7 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
+>  				  struct perf_session *session)
+>  {
+>  	struct perf_record_auxtrace_info *auxtrace_info = &event->auxtrace_info;
+> -	size_t min_sz = sizeof(u64) * ARM_SPE_AUXTRACE_PRIV_MAX;
+> +	size_t min_sz = ARM_SPE_AUXTRACE_V1_PRIV_SIZE;
+>  	struct perf_record_time_conv *tc = &session->time_conv;
+>  	const char *cpuid = perf_env__cpuid(session->evlist->env);
+>  	u64 midr = strtol(cpuid, NULL, 16);
+> diff --git a/tools/perf/util/arm-spe.h b/tools/perf/util/arm-spe.h
+> index 4f4900c18f3e..5416d4e1d15f 100644
+> --- a/tools/perf/util/arm-spe.h
+> +++ b/tools/perf/util/arm-spe.h
+> @@ -12,10 +12,46 @@
+>  enum {
+>  	ARM_SPE_PMU_TYPE,
+>  	ARM_SPE_PER_CPU_MMAPS,
+> +	ARM_SPE_AUXTRACE_V1_PRIV_MAX,
+> +};
+> +
+> +#define ARM_SPE_AUXTRACE_V1_PRIV_SIZE	\
+> +	(ARM_SPE_AUXTRACE_V1_PRIV_MAX * sizeof(u64))
+> +
+> +enum {
+> +	/*
+> +	 * The old metadata format (defined above) does not include a
+> +	 * field for version number. Version 1 is reserved and starts
+> +	 * from version 2.
+> +	 */
+> +	ARM_SPE_HEADER_VERSION,
+> +	/* Number of sizeof(u64) */
+> +	ARM_SPE_HEADER_SIZE,
+> +	/* PMU type shared by CPUs */
+> +	ARM_SPE_SHARED_PMU_TYPE,
+> +	/* Number of CPUs */
+> +	ARM_SPE_CPUS_NUM,
+>  	ARM_SPE_AUXTRACE_PRIV_MAX,
+>  };
 
-Yes. When multiple nested translations happen at the same time,
-IOMMU (just like a CPU) is shared by these slices. And so is an
-invalidation queue executing multiple requests.
+Why don't you define something like struct arm_spe_header_v2 ?
 
-Perhaps calling it a slice sounds more accurate, as I guess all
-the confusion comes from the name "vIOMMU" that might be thought
-to be a user space object/instance that likely holds all virtual
-stuff like stage-1 HWPT or so?
+Thanks,
+Namhyung
 
-> and you treat S2 hwpt as a resource of the physical IOMMU as well.
-
-Yes. A parent HWPT (in the old day, we called it "kernel-manged"
-HWPT) is not a user space thing. This belongs to a kernel owned
-object.
-
-> > This presentation gives a VMM some capability to take
-> > advantage of some of HW resource of the physical IOMMU:
-> > - a VMID is a small HW reousrce to tag the cache;
-> > - a vIOMMU invalidation allows to access device cache that's
-> >    not straightforwardly done via an S1 HWPT invalidation;
-> > - a virtual device presentation of a physical device in a VM,
-> >    related to the vIOMMU in the VM, which contains some VM-level
-> >    info: virtual device ID, security level (ARM CCA), and etc;
-> > - Non-PRI IRQ forwarding to the guest VM;
-> > - HW-accelerated virtualization resource: vCMDQ, AMD VIOMMU;
+>  
+> -#define ARM_SPE_AUXTRACE_PRIV_SIZE (ARM_SPE_AUXTRACE_PRIV_MAX * sizeof(u64))
+> +enum {
+> +	/* Magic number */
+> +	ARM_SPE_MAGIC,
+> +	/* CPU logical number in system */
+> +	ARM_SPE_CPU,
+> +	/* Number of parameters */
+> +	ARM_SPE_CPU_NR_PARAMS,
+> +	/* CPU MIDR */
+> +	ARM_SPE_CPU_MIDR,
+> +	/* Associated PMU type */
+> +	ARM_SPE_CPU_PMU_TYPE,
+> +	/* Minimal interval */
+> +	ARM_SPE_CAP_MIN_IVAL,
+> +	ARM_SPE_CPU_PRIV_MAX,
+> +};
+> +
+> +#define ARM_SPE_HEADER_CURRENT_VERSION	2
+> +
+>  
+>  union perf_event;
+>  struct perf_session;
+> -- 
+> 2.34.1
 > 
-> might be helpful to draw a diagram to show what the vIOMMU obj contains.:)
-
-That's what I plan to. Basically looks like:
-  device---->stage1--->[ viommu [s2_hwpt, vmid, virq, HW-acc, etc.] ]
-
-Thanks
-Nic
 
