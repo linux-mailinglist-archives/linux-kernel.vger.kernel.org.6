@@ -1,219 +1,220 @@
-Return-Path: <linux-kernel+bounces-341850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B524988715
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:25:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2A3988718
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DA101C2315B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:25:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3504284EB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F23D13A40D;
-	Fri, 27 Sep 2024 14:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA42136E09;
+	Fri, 27 Sep 2024 14:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="D9j/MBAu"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2050.outbound.protection.outlook.com [40.107.103.50])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1ZQma4i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C23E1339A4;
-	Fri, 27 Sep 2024 14:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727447126; cv=fail; b=R5w3ZuwHWkIQw1woaSNkmQ5f+Bg5hSfb68jKPsIRoiTxJmuuPsyR1Wes1UoulZBHpdfGdRoCA97fv264Z2vhh3KCZRmaf2c318yvzPPokGMpPivB3o78V0TuEAExKP5dGLhETZ5KXcMJVZmbZ4rzA7rsIEaeb3h1MWfR5w1KaUI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727447126; c=relaxed/simple;
-	bh=0muM12GrV+/T/Hb0Q4B9kSEgly+73ptVBIYLc7hejJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cORmLfcZ/qqlXMiy1ppMWXYkVkKrEstr21SbSKL109L2O+BWAUvcjFqtdVNFdwXqYxPxnrrxNYVPgWBj7SBUBz/UCn4OppQrZuEZyXmmpsDHHEF0PZgdpEdfDP8hms0E4UPoO1vzQ0Nykf6QEMUVme93Ny6nIjBqvXucOOdC1cI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=D9j/MBAu; arc=fail smtp.client-ip=40.107.103.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NdtL7S4UGc514mcxI3c5MNYBnbhvhsph+Jri9rBVRWZ2InmdDetqOVDlmT9GO40ed/33feiy3pblBVgpKV8z3p0r4IIu7uY5Dqv7+2JCy/dL6XO+viZEfU/cRC+wZHejLhMAu6MAyjBq2vjXAPRKj1Cm3C5pY9ksZERfeA3TZ58ijG3SCGXfcXXtkkvarK0AQSvyPcyr9iqCulplFvgeHGOpPcy5J3KfWdPR4nxOoMFS/JFMF2FNgfk3Rc3eik4EjkYNG/seY11k6xORZetyagzX3+9w/TxYdZpyMvlR8E+ZxXrpk2gAKXR/JGVSflInbyilE3q054j8rue2NMLycA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AVINEDJqxgPHpLuCezfMkspdS+LTzVvereX/MeJ976c=;
- b=N/obidTYnN0u6Dl1QwWo6FZBKKSahsFtE7NcP+MXm5OLixPMluAvmHnrjrnGFXmrsEICsZQmg95MfRdEPlO4Rw9h9wa8Zm1Za94p6nWpm9e36vamD+WMvHhtGFfv4GKYGxGw4Yl4HC9Yv8HcqTEuP2WQt4+1EHDAXqZ1c5/03vrHQYU4SwS4xAwYyh58bgVH9DM08l3481juTPh6nWq7gesGbS63EMZjtnejpQs5no+9DGKCtTHahvev/Fv2HPe4YxwQpjKWYaPq9yUe6ia2/4M21w9eT7QE+3UBEMbBPQLdG1SQ62PwpQbj8WcUU8x5awlryQ7HZEwUD+E995FlDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AVINEDJqxgPHpLuCezfMkspdS+LTzVvereX/MeJ976c=;
- b=D9j/MBAu+AIW1c3YuA69O5hzSSrJnrsrDAxU8/5uIdqIihF4Mj5cvuzWF2djaikq4+yeQ8h/lu1QGmardbsnT2vr6S2rxzshZm98++ZCFPlhh+pL1damMqi3U0SegkNMRKk5GXgQ4sQbz6Fc/GVbvzusL0/kHJ55taK0Z7gFpnzKUc2k+TyDE6icc9qcRReQb5x5LvtoviKIHW1rfhaHRk9CR+5k51iI89SoJbPOsy+IrFaFh6SBRYQA3XXG4m5covCE8XkmKYFlYoj1oAFu37oFygbUfIMTrUrS6x7I/nGJzKWPKdVhnTYYvu+L/TS6ylE5iGPZet8RqwYFDuw6Cg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by AM0PR04MB7171.eurprd04.prod.outlook.com (2603:10a6:208:19c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.20; Fri, 27 Sep
- 2024 14:25:21 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.7982.022; Fri, 27 Sep 2024
- 14:25:21 +0000
-Date: Fri, 27 Sep 2024 17:25:18 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Ratheesh Kannoth <rkannoth@marvell.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	"ast@kernel.org" <ast@kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"hawk@kernel.org" <hawk@kernel.org>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH net 1/3] net: enetc: remove xdp_drops statistic from
- enetc_xdp_drop()
-Message-ID: <20240927142518.gh3uhq5qvlhh2fta@skbuf>
-References: <20240919084104.661180-1-wei.fang@nxp.com>
- <20240919084104.661180-2-wei.fang@nxp.com>
- <20240923050230.GB3287263@maili.marvell.com>
- <PAXPR04MB8510259090731BFCABFDD47F886F2@PAXPR04MB8510.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PAXPR04MB8510259090731BFCABFDD47F886F2@PAXPR04MB8510.eurprd04.prod.outlook.com>
-X-ClientProxiedBy: BE0P281CA0032.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:14::19) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FB918B1A;
+	Fri, 27 Sep 2024 14:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727447179; cv=none; b=Oa/BxLChxEUlRoGq6ALumEZQfsd4jWxjt4nfksQcegz38AfSKE06Wi3UgfbG2MXnfyLqBFlY7Q55FMhyrFf4pJZXpaYRAkyN5oKuAdRUyHBCvu4dlwGRAuZxeCSl2F9YUGGgoFWF43SRZ5nuKQSk6KZjYopTv86oQyKaVNfk/gk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727447179; c=relaxed/simple;
+	bh=rWNx8G6u4wjPkAWMYzAUZrCuVOjtknEM26E8OkXCZGQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=C/YxWWMqtBBT4zk8iv5nLdU8kz+tgSKMV+TbxEKk3VgQbt7RoUx00/GxeJXKNx4W19FrsiOQEOTiuIE3BwsyrVby89B3jZKgvDSCFcKu7716Wh1lUnePa24AGMiGmmLsg+vLhlxY9DzcQNXLwAJ3F090tgxb1vLCC3m24xaOImI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1ZQma4i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F54C4CEC6;
+	Fri, 27 Sep 2024 14:26:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727447178;
+	bh=rWNx8G6u4wjPkAWMYzAUZrCuVOjtknEM26E8OkXCZGQ=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=X1ZQma4iONGSerivD0KqONYPChTg6SHZ3kKK8DuL9B65UM0pE4kjk/5X35eQEZiKp
+	 skllGtfQuFRxIzGWemVbo20mTKsImfA5f080Kzpwz9e3IB7rwRH9WcZFH1VGyg804N
+	 PCe4No9kYSpjymD50GMst/dq6szWNQyk6HujZV+9SDpEEVLFszjOkuiC8co0Kyl5fm
+	 88aOdqvzZjTRLJ27QenKGLOBC3P4Od6SSFGu1HYVqf/gv+Ozf3aVROGlRBgEqJpEjg
+	 EbCtetxJS/8/78JknLYY5M+/LGUvQHJIKanSQX1/ulEm1LGGqBkHSaLprcRkaD7w4C
+	 itE08vTMyw2GQ==
+Message-ID: <dd9ae106-3c39-423b-9413-5a7ca57f7aec@kernel.org>
+Date: Fri, 27 Sep 2024 16:26:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AM0PR04MB7171:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3cf5c616-32b2-4a3f-ad6e-08dcdf0037f1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NG1KbDlMeDE3dExrVjdURFZGbmhZd24wYkV3ZU9zRCtrVmEreGVlUTdSeVQ0?=
- =?utf-8?B?NE43NVlBMnNibWZ0ZTBDZ3RaWHp4MjRuS3pHQnZpUVpPOVVmM25UU0pGMGVs?=
- =?utf-8?B?czZ1TmczL29NUEJzT29RSThvU3NwSHBWTGhNclBiM0dUZ3M2TDNZaDdpYTFM?=
- =?utf-8?B?VmJGSUxUT04vU2hOMXVyYnhIQ3lXUnhnaUJrSHoxdFcxN2hTbVpEbEFvTjlO?=
- =?utf-8?B?amFJUS85YThWbWMzbmJ6dE4rSE9xM0MyeFhuRUpEdXBzbkNtQXhnZlE5dkxO?=
- =?utf-8?B?TzYyQnQ5YUl5WWZnS1l6YldWQXMzNGROTkJuM29hUmxtQVZqczRnZ0hGTEhD?=
- =?utf-8?B?QzlMeTRkbW1rQUlpQjZ0eWc5ZkhoNUZPQ3hrZkxwM3cyOFRvcGpQR0IrTGpa?=
- =?utf-8?B?UHdRcmp1Vnc3dW8reGxsZzJnNkF1M1BMdFRqTGIydm11TlduL1RnRXpQdld1?=
- =?utf-8?B?bmo2V2VqUjlHd09ReXNUdDZ2V3dzK1dqUDhPaWZOQit3TUFIRzREaHhLT1Rh?=
- =?utf-8?B?ZkZGL0RXc1VKWnZUTms0V1o0WnlwN0xaZUFMVGNQVGM0REFlNk4rZmUwWjJh?=
- =?utf-8?B?dlVhU1ZkZnMzV0szcjFiNWNYK0ZLRFBIWFpwcnpSUlM5VGQyMnVmakRQWStj?=
- =?utf-8?B?a1AwUVk3M2pCL2srZE0xcHZzd1pvUDUzMXkwUnFJQW1EODFLRVBZaUFQRjlN?=
- =?utf-8?B?SnR4UWlzTHp1eWFKWUpHV1pPYVFxaGhBK2xyT3BFa1IwdUR0aHZCb1VFU2Na?=
- =?utf-8?B?dDlLQWZxQmlnV1Z0SUJTYk13U3pOZjJhSXl6a1FlMDJEbW5oTkhMRndSdUM3?=
- =?utf-8?B?MGtDNGJlYlJiV2U0SE9Tb21IakZZaHVQZmZ0MWFlOHFFTk5GZWtaaWNHSDk5?=
- =?utf-8?B?QS96Tjg4WHdyeUl5T1oybEJ2MU5Pc1JLS1NBR2FkNHAwQ1ZzUzJBb1E3UUZR?=
- =?utf-8?B?cFdZS0lmWFR0VHlKN1hTSVNvRExrbmtPRmdFSUNMWmw1WmNmRTVJN0g2eE50?=
- =?utf-8?B?U0VuaTVZeHJ4QVJwSUI1Mlh3dWNjeEEwa05acUhDT3A5TFBWRHE2VTdCZFdi?=
- =?utf-8?B?MXZIbFNTV3dpZnphTmhacExuMU9JYlVscVBDTWEzWWc4aWZGaU5CaWkzWTFa?=
- =?utf-8?B?TFdLVzNlMlJuNytrWUtUK3EvN0hQNElpSG5wMjRwRVdJMVZIcFNxTlZTQ3NG?=
- =?utf-8?B?eVl4Z0psZW1kVXRoTkFENjdmTHJDOUY3UUZSN0oza2FXSSsyakcyeFJzS0xX?=
- =?utf-8?B?U05nRmlDdlowWHhYZXYzZHcwYitrazNLTjdwTFFhTGVnQjBzK2I1QmVHMElo?=
- =?utf-8?B?bm9YTjRROVVmSUthVTZ5WHl0djVqVVh5cVFVTUpzTHpGM2p3b2oyV0JGenpV?=
- =?utf-8?B?dExmbGV0aDg2NU1zSTAxVUtZWmYwZWZPVDNyRnlaNUNtWi9OOERGQW5aYmlo?=
- =?utf-8?B?WEo0Z3I2NTBadVg2a082aWFCRkxxYVBSTUlvNFljbWcrMUZENVU2SXdJb01K?=
- =?utf-8?B?clpka3kzRnBURUxiUmVvaXBWQUZDV3ppaENFSENTSjhwRjlKakpDVjhCY2x2?=
- =?utf-8?B?Tm1SUEJnSE5hcTdZbnVzY09tQUJodnFwMWxONFoybm5DUVJ3OVA1OEtRQkdJ?=
- =?utf-8?B?OGJlakhIbXhBSjJLWERkcHZVdTJIdGp6Y2VNc3hWTTk2bGw3RU1hYkFFTWtS?=
- =?utf-8?B?TnB5L0JzMy9zdjc4WGU5YUQ1WHNWSlp0cUVWTUI4bTV1MFR3Nk4yMU5yUVNO?=
- =?utf-8?B?eGVOeG5PQndkRkxJTjlZc0trRHUvL3ZIYUVKNnNmR1BQbWFOY2J6b0cvdlJQ?=
- =?utf-8?B?Y05kT1MxWVNZWVYzQnUzdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NEZlYkg5WTd1Y1drSkRSMDdROWhLRm5xWGZZUnVacG8yeHk4Z3Q4T1V5cVJ2?=
- =?utf-8?B?anNabFNBSTNjN1Z1M0k2am1Qdm5LVG9aR0dVWmVnNHJRWDJjNW1Da3VyM0dh?=
- =?utf-8?B?bnYxOFcrdEZOQWVxT09CMDdIcS9aK29VVmkrQlNBbjJ4YlYwcUt2MHk0SW8z?=
- =?utf-8?B?YkxVaTVmRk9jeFcrSmVTd3Z5bWpQVHd4dEpIcGpjSFRYMzZSaFdGQ0NPRnRY?=
- =?utf-8?B?d09abTEzeG44UVZzdC9iYld1K0JJaGhMNS9hN1kwZzJjNThwSWpkNGphanVn?=
- =?utf-8?B?dmhMNjN4QzlGcEdvVWxEd1grUFpnQVdESmRwMUJUM25kenBMdUpLVFl6RUZL?=
- =?utf-8?B?d3lNWlJZdDR6RmhyMUVYNHM2NERoaFpWcnF3SjZvSmdkRTlUL3RsdWpSdmo5?=
- =?utf-8?B?dktuRUl4aW5kalVoU2lGei81K1h2M0NkVmh2TURMNDJEMGtNM2dxNVB5Zm44?=
- =?utf-8?B?Sm1pWk1nVjhKM1d6MGlGRTVPUkFGRVBKa1VGMHVrU1R2My9XU21SRFVRK2Nk?=
- =?utf-8?B?UGJpZSthUWtBeFBaK29IWnpWZEduTE1NZFZjWGtIWkZKZ0FhTWNIbXhKUm5P?=
- =?utf-8?B?Z2MvVzFnOEszWW9TMVQzRGEzZUhKK2FERDVoaENtZVFkL0FJUm95dGwxaUo4?=
- =?utf-8?B?RW1xbkcrMHhTSmluRDBRR2pOQXBFVFpLaVN3cjJyU21vRlZoQ3RpdDVUSlRz?=
- =?utf-8?B?LzkrVnlncU85WUYyWFY3TTNKWlZQTWhuU3dNMUZFT3ZjeXMrSzVHMTdFS2dW?=
- =?utf-8?B?OVcrVUQ0bFJMMXpjc2wyQ2J3SDI4Zkh5UnVVMzVEN0JmeUpPZFIydnhaVE5N?=
- =?utf-8?B?bHdQNytOcFVNUEh6OU5YU0xCcFFhV3ZQWGRSZFB3aWQrakxKa2JnTm80MDBO?=
- =?utf-8?B?dEZjeDNxd0tGUUpxelVKY2ZRd3hRYTJqSGhDeHFmMVBvZ0NkSElTMndaUEIv?=
- =?utf-8?B?MnpxbGZxZElhSWlmRlcwTWJkRXFHS0QrY1p3UEpLUlRjbDR1bGpEQjkrSEhK?=
- =?utf-8?B?cWhZWXdEV2tNZ2ZkYUFHZ2JVOGNVeHFoYTU3ZzRsWUxyL1ZFSmZnc2ZVcUdv?=
- =?utf-8?B?NFkxdEpDRUlJTGNaUVkvUzcxbE5waHJaMEdKZG01c21tVmtFNzZWMzFmQzdk?=
- =?utf-8?B?ZE91YWVoMnlJamdTZUZJSVlUV2xLKzJSRmY3VDdSWmYrTzdsRkdmcmFUcTM1?=
- =?utf-8?B?bnRoYkVDclNDam1zTkpjV0JCdk5yZXpvNm5TeWw3VVlZSnQ4VnBZNEI1N00v?=
- =?utf-8?B?Y2psdy94VHFjMzdHRlJEeTBsSkREUzlTckZuRDhubko0bHZFVS84YW9JZDIw?=
- =?utf-8?B?VnVTWU9tT2N2Qmdrc252TXdTK2pUS2U0TXdzM3dSTDVoTElqeklONFNVMkRx?=
- =?utf-8?B?V2dNbFBlVXVyN1M5eE0vbkg0cnNnS004RXJnNy95dXdWU1Vra3FxTHdYYVRl?=
- =?utf-8?B?aTNqRzAxS0piSUdvWStEZmh4UEV4S2NqN0tDUFJRR2FmeXZ5cVpOU2E0OVlt?=
- =?utf-8?B?SzdNelAyV2phaEppT01FWUc0WlZ1SENPY3RNU3h1VmNQWmNtM1pOdFY0TDZC?=
- =?utf-8?B?eUxNdktwWTVjTHpwZkJJZnJQSGJhZ284N0pKYmFLYkNZbkh2RFUxdUVaa2RB?=
- =?utf-8?B?dmt2cDJaKzMzZlJzNHJVd1hBSmFNcy9lcEViTU1OaStyMjBicjByVm9pUnJV?=
- =?utf-8?B?S1dKL2tGTWhoWjI1SDZZU0NwTWFJbU1JREhremN6RG9sQ3NFTkFsc2lzTG03?=
- =?utf-8?B?KzhsS1AybGdCRCtLZVU3K2ZmWmhlNlNZMFFnMFR5U0huUXNPWHl4K09zbFFM?=
- =?utf-8?B?bkxuMnIxYWF5S05RVzVuRGQ4a2dlWVRkVWp1bWVidy9UV1RkQ0tLb2l0SjhX?=
- =?utf-8?B?a2dUSkprZkpYWVVIb1JpUmxZbnZSMDBLNEFFcFljRGc5UGpaZFJack53Wlkr?=
- =?utf-8?B?TUVoY3VXYVFPSWo1T0Frc1lqSzhNZ0F0Q0Y0Q3dLU1FHcDhLY0tOWHJqWnBs?=
- =?utf-8?B?Q0hOa3VZTWNSbDROVHRNZGc2WDRlSmdaNWx0TlhWMktLN0NIVjgwRnNzT0dm?=
- =?utf-8?B?T0NvRU9FaXJmdk5SMmtWczRYMWlRYzc4a3JzWHRzTWVpMmJLWU55ZUpBUngw?=
- =?utf-8?B?Y0FCWmp0Y2ZNcmlzS1R5Wlg3cG1SWkdoOHl1ay83cTRXRkVqSlgvRXl4a0Rx?=
- =?utf-8?B?Mnc9PQ==?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3cf5c616-32b2-4a3f-ad6e-08dcdf0037f1
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 14:25:21.3861
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /9Xneqq7X2BiNjVNB2fp+jppKB95gnZ5Lqkg99UAqicWf6tkzqY8sLdqrhooZyQ0ghXcV2m9GHbeTbvowCTezg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7171
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: fpga: Add Efinix serial SPI programming
+ bindings
+To: iansdannapel@gmail.com, mdf@kernel.org, hao.wu@intel.com,
+ yilun.xu@intel.com, trix@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, neil.armstrong@linaro.org, heiko.stuebner@cherry.de,
+ rafal@milecki.pl, linus.walleij@linaro.org, linux-fpga@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240927141445.157234-1-iansdannapel@gmail.com>
+ <20240927141445.157234-2-iansdannapel@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240927141445.157234-2-iansdannapel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 23, 2024 at 08:53:07AM +0300, Wei Fang wrote:
-> > -----Original Message-----
-> > From: Ratheesh Kannoth <rkannoth@marvell.com>
-> > Sent: 2024年9月23日 13:03
-> > To: Wei Fang <wei.fang@nxp.com>
-> > Cc: davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
-> > pabeni@redhat.com; Claudiu Manoil <claudiu.manoil@nxp.com>; Vladimir
-> > Oltean <vladimir.oltean@nxp.com>; ast@kernel.org; daniel@iogearbox.net;
-> > hawk@kernel.org; john.fastabend@gmail.com; linux-kernel@vger.kernel.org;
-> > netdev@vger.kernel.org; bpf@vger.kernel.org; stable@vger.kernel.org;
-> > imx@lists.linux.dev
-> > Subject: Re: [PATCH net 1/3] net: enetc: remove xdp_drops statistic from
-> > enetc_xdp_drop()
-> > 
-> > On 2024-09-19 at 14:11:02, Wei Fang (wei.fang@nxp.com) wrote:
-> > > The xdp_drops statistic indicates the number of XDP frames dropped in
-> > > the Rx direction. However, enetc_xdp_drop() is also used in XDP_TX and
-> > > XDP_REDIRECT actions. If frame loss occurs in these two actions, the
-> > > frames loss count should not be included in xdp_drops, because there
-> > > are already xdp_tx_drops and xdp_redirect_failures to count the frame
-> > > loss of these two actions, so it's better to remove xdp_drops statistic
-> > > from enetc_xdp_drop() and increase xdp_drops in XDP_DROP action.
-> > nit: s/xdp_drops/xdp_rx_drops would be appropriate as you have
-> > xdp_tx_drops and
-> > xdp_redirect_failures.
+On 27/09/2024 16:14, iansdannapel@gmail.com wrote:
+> From: Ian Dannapel <iansdannapel@gmail.com>
 > 
-> Sorry, I don't quite understand what you mean.
+> Add device tree binding documentation for configuring Efinix FPGA
+> using serial SPI passive programming mode.
+> 
+> Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
+> ---
+>  .../fpga/efinix,trion-spi-passive.yaml        | 85 +++++++++++++++++++
+>  1 file changed, 85 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml b/Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml
+> new file mode 100644
+> index 000000000000..ec6697fa6f44
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml
+> @@ -0,0 +1,85 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/fpga/efinix,trion-spi-passive.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Efinix SPI FPGA Manager
+> +
+> +maintainers:
+> +  - Ian Dannapel <iansdannapel@gmail.com>
+> +
+> +description: |
+> +  Efinix Trion and Titanium Series FPGAs support a method of loading the
+> +  bitstream over what is referred to as "SPI Passive Programming".
+> +  Only serial (1x bus width) is supported, setting the programming mode
+> +  is not in the scope the this manager and must be done elsewhere.
+> +
+> +  Warning: The slave serial link is not technically SPI and therefore it is
+> +  not recommended to have other devices on the same bus since it might
+> +  interfere or be interfered by other transmissions.
+> +
+> +  References:
+> +  - https://www.efinixinc.com/docs/an033-configuring-titanium-fpgas-v2.6.pdf
+> +  - https://www.efinixinc.com/docs/an006-configuring-trion-fpgas-v6.0.pdf
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - efinix,trion-spi-passive
+> +      - efinix,titanium-spi-passive
 
-I don't understand what he means either. I guess he didn't realize you
-aren't proposing any new name, just working with existing concepts in
-the driver. Anyway, an ack about this from Ratheesh would be great, to
-not leave us hanging.
+1. Your driver suggests these are compatible, so make them compatible
+with using fallback.
+
+2. What is "spi-passive"? Compatible is supposed to be the name of the
+device, so I assume this is "trion"? Can trion be anything else than fpga?
+
+> +
+> +  spi-cpha: true
+> +
+> +  spi-cpol: true
+> +
+> +  spi-max-frequency:
+> +    maximum: 25000000
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  creset-gpios:
+
+reset-gpios
+
+Do not invent own properties.
+
+> +    description:
+> +      reset and re-configuration trigger pin (low active)
+> +    maxItems: 1
+> +
+> +  cs-gpios:
+> +    description:
+> +      chip-select pin (low active)
+
+Eee? That's a property of controller, not child. Aren't you duplicating
+existing controller property?
+
+> +    maxItems: 1
+> +
+> +  cdone-gpios:
+> +    description:
+> +      optional configuration done status pin (high active)
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - creset-gpios
+> +  - cs-gpios
+> +
+> +additionalProperties: false
+
+unevaluatedProperties instead
+
+> +
+
+
+
+Best regards,
+Krzysztof
+
 
