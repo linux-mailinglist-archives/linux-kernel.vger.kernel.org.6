@@ -1,125 +1,151 @@
-Return-Path: <linux-kernel+bounces-341956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E46C99888D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:14:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8419888D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6422E1C21F9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:14:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B6CA1C227B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D721C0DE2;
-	Fri, 27 Sep 2024 16:14:14 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980CC1C1747;
+	Fri, 27 Sep 2024 16:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Sku4ooQn"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F34189BA3;
-	Fri, 27 Sep 2024 16:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CA91C173C
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 16:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727453654; cv=none; b=QbluYsNADv2EkGUE7UX9jBFruzktImSVlgFpxS/QUgwfQyrWlXd0PokPFxRBeSg2gegw7OOlKvPt5/gJ3/eyqFiRWaslddoMSSAOv6aFHqOa3xMY3Sp9PokUu6KRS4XBpZHbprm+aQnow7F507y01pHCNfXjHO/TO3Yg1rT7Juk=
+	t=1727453669; cv=none; b=AQFRukOKmspwU7NpvxwfMhVoz+qqy6vSxMJTvhsiYHef2CgsRyfoGN5FmZOIhy/FNQnsgIItD1QIh1OzBNf6h7DEPyAQgeZnKD/jwcCcheQzLtOfaLWs+TO0j5vKchCI24p39si4TCu268biVeDsI9eue/QfPAwhZDesCecN6Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727453654; c=relaxed/simple;
-	bh=uDO1NUAjf9ODQr7KxdKGhc4KiPgUk8HH/nhj3gNmwaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nDZOQGC257RM3NbVDEw2mYmSxGtMlN5YN6CsEN5YSLZWPen8793hH/3vRSRR58mxmdmSuazULDlOjuLKMJjX518poplATtW7B3ob6OVU3lHaodGWm3PLu8EMOohSxNm//df/a43DI4VBba14BuFGLigxns3fQwj+ue2jpT+fUOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.100] (213.87.153.225) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Fri, 27 Sep
- 2024 19:14:01 +0300
-Message-ID: <8e0119d7-5458-919d-df19-679a9392fcc7@omp.ru>
-Date: Fri, 27 Sep 2024 19:14:00 +0300
+	s=arc-20240116; t=1727453669; c=relaxed/simple;
+	bh=3RIMFSBP6CNFy3ASEfaPEk9hh3pVcFi6cjnKVKez7w0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WdqS+oaZ1U72eKbQELOMKhCVGQInP5ztq8+/L3NM4yry7HZPUlkHzFzGWLK/GMdy2a8Yuh2WCS+GcISLineqlhymabp6OP3OTG8SlWrq/RcntpDEdVhxyANqHYhwq6VZXm+huAeN8Oe8ZYq9YAuf/6gYBz4g1WgGfwXwEwDv2u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Sku4ooQn; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2068a7c9286so24576965ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:14:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1727453667; x=1728058467; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4so8gffKQiyHlooUmYMifdWdhzGqPHicjPRqtGrdk7o=;
+        b=Sku4ooQnvMd7v+ZkQ+g/Sb7ndiqU2/kAUsjxAGjylkG3W2VPMvJX034xpepK/XfNwy
+         5lmkcRXengxE/tEygD9fYoOV3ejxrl98AEOYAZIRwd17v7ysXkcewitTkg2Ezn+9Hpk5
+         KWOumnvg5XaZqJkz+gd+H9D+pB10hh9mFa4Cw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727453667; x=1728058467;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4so8gffKQiyHlooUmYMifdWdhzGqPHicjPRqtGrdk7o=;
+        b=EpFzSF01WYfuw6n8umRzCjPD22bI6S7f7QRS+ozeAVoKpcxvQxFN1mYNC9d9Om+cPW
+         An8e/dgryltnz1mFTECBh5ztYC+sT5iLsR7Yq62XCoOn9ON55DixDBlEpENJZYsU5BKJ
+         CdjvSUfP+hZUgc6Ugv8DEKMt2waMevOS3+7WeSfOomv7FNV4p5FT+AXjuKdR0o57IbsC
+         /89xNmcT2FXsffuaRnoMt7OPGoldxnp6+8R2lByfxSjCVzralmxRoYmcr7XWXJ9NIurN
+         qOWlyjwAtt17XKk34XX1/HIpf89ZNAdvR9ZDhunl3A8iT+kndT8aulLV1Ql5SDKoRYhs
+         IfbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXawhFoZdYqr1lxqccz9B5Q0c8gJiWmNXmK3zS17k3bQr+1kLeY7xdeG1RpRWmf64ESwLlZ5ZmJfpZPiVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLLKG9FZnKtb8NV/qHZ/Rs7yNMLtd5JHwSqqkobOTAOB2Lb2PQ
+	fcgmbZFsmZfatO3lAxayba+0gFXNu6WJTEXA9hW/2bdPV/r8JDRp+2iV2XtIkWI=
+X-Google-Smtp-Source: AGHT+IEjXaqfeQRAXRfoN5D9VsgOXKzfJXTb1NEO6DmBY3dq2QmLox7Y5Qeb0Qch3l/Xg+VnTQV0XA==
+X-Received: by 2002:a17:902:cec6:b0:20b:4d8a:290a with SMTP id d9443c01a7336-20b4d8a2dc6mr12777555ad.31.1727453666745;
+        Fri, 27 Sep 2024 09:14:26 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37d8e033sm15407225ad.70.2024.09.27.09.14.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 09:14:26 -0700 (PDT)
+Date: Fri, 27 Sep 2024 09:14:23 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Pavan Chebbi <pavan.chebbi@broadcom.com>
+Cc: netdev@vger.kernel.org, Michael Chan <mchan@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next v2 2/2] tg3: Link queues to NAPIs
+Message-ID: <ZvbZ33RYhTQAfBOQ@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>, netdev@vger.kernel.org,
+	Michael Chan <mchan@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240925162048.16208-1-jdamato@fastly.com>
+ <20240925162048.16208-3-jdamato@fastly.com>
+ <ZvXrbylj0Qt1ycio@LQ3V64L9R2>
+ <CALs4sv1G1A8Ljfb2WAi7LkBN6oP62TzH6sgWyh5jaQsHw3vOFg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3] ata: Fix typos in the comment
-Content-Language: en-US
-To: Yan Zhen <yanzhen@vivo.com>, <dlemoal@kernel.org>, <cassel@kernel.org>,
-	<shawnguo@kernel.org>, <s.hauer@pengutronix.de>
-CC: <kernel@pengutronix.de>, <festevam@gmail.com>,
-	<linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<opensource.kernel@vivo.com>
-References: <20240927060056.221977-1-yanzhen@vivo.com>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <20240927060056.221977-1-yanzhen@vivo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/27/2024 16:01:09
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 188047 [Sep 27 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
- 8a1fac695d5606478feba790382a59668a4f0039
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.153.225 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.153.225 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.153.225
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/27/2024 16:04:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/27/2024 2:26:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALs4sv1G1A8Ljfb2WAi7LkBN6oP62TzH6sgWyh5jaQsHw3vOFg@mail.gmail.com>
 
-Hello!
-
-   Didn't spot the need to do s/comment/comments/ in the subject the 1st time... :-/
-
-On 9/27/24 09:00, Yan Zhen wrote:
-
-> Correctly spelled comments make it easier for the reader to understand
-> the code.
+On Fri, Sep 27, 2024 at 09:33:51AM +0530, Pavan Chebbi wrote:
+> On Fri, Sep 27, 2024 at 4:47 AM Joe Damato <jdamato@fastly.com> wrote:
+> >
+> > On Wed, Sep 25, 2024 at 04:20:48PM +0000, Joe Damato wrote:
+> > > Link queues to NAPIs using the netdev-genl API so this information is
+> > > queryable.
+> > >
+> > > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+> > >                          --dump queue-get --json='{"ifindex": 2}'
+> > >
+> > > [{'id': 0, 'ifindex': 2, 'type': 'rx'},
+> > >  {'id': 1, 'ifindex': 2, 'napi-id': 146, 'type': 'rx'},
+> > >  {'id': 2, 'ifindex': 2, 'napi-id': 147, 'type': 'rx'},
+> > >  {'id': 3, 'ifindex': 2, 'napi-id': 148, 'type': 'rx'},
+> > >  {'id': 0, 'ifindex': 2, 'napi-id': 145, 'type': 'tx'}]
+> > >
+> > > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > > ---
+> > >  drivers/net/ethernet/broadcom/tg3.c | 24 ++++++++++++++++++++----
+> > >  1 file changed, 20 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
+> > > index ddf0bb65c929..f78d7e8c40b2 100644
+> > > --- a/drivers/net/ethernet/broadcom/tg3.c
+> > > +++ b/drivers/net/ethernet/broadcom/tg3.c
+> > > @@ -7395,18 +7395,34 @@ static int tg3_poll(struct napi_struct *napi, int budget)
+> > >
+> > >  static void tg3_napi_disable(struct tg3 *tp)
+> > >  {
+> > > +     struct tg3_napi *tnapi;
+> > >       int i;
+> > >
+> > > -     for (i = tp->irq_cnt - 1; i >= 0; i--)
+> > > -             napi_disable(&tp->napi[i].napi);
+> > > +     ASSERT_RTNL();
+> > > +     for (i = tp->irq_cnt - 1; i >= 0; i--) {
+> > > +             tnapi = &tp->napi[i];
+> > > +             if (tnapi->tx_buffers)
+> > > +                     netif_queue_set_napi(tp->dev, i, NETDEV_QUEUE_TYPE_TX, NULL);
+> >
+> > It looks like the ASSERT_RTNL is unnecessary; netif_queue_set_napi
+> > will call it internally, so I'll remove it before sending this to
+> > the list (barring any other feedback).
 > 
-> Fix typos:
-> 'multipe' ==> 'multiple',
-> 'Paremeters' ==> 'Parameters',
-> 'recieved' ==> 'received',
-> 'realted' ==> 'related',
-> 'evaulated' ==> 'evaluated',
-> 'programing' ==> 'programming',
-> 'coninue' ==> 'continue'.
+> Thanks LGTM. You can use Reviewed-by: Pavan Chebbi <pavan.chebbi@broadcom.com>
 
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+Thanks, I've added your Reviewed-by for the official submission.
 
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-
-[...]
-
-MBR, Sergey
-
+I'll mention this in the cover letter when net-next is open but the
+only changes I've made to the patch I posted are:
+  - Removal of ASSERT_RTNL (mentioned above, as it seems to be unnecessary)
+  - Wrapped lines at 80 characters (cosmetic change only)
 
