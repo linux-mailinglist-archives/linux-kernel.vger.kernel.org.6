@@ -1,115 +1,150 @@
-Return-Path: <linux-kernel+bounces-341341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FCE987EA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:49:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD6C987EB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A4F51C2233F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:49:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DEE22828A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E54D175D5C;
-	Fri, 27 Sep 2024 06:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cGgok9I9"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC4117C7A5;
+	Fri, 27 Sep 2024 06:50:55 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2116.outbound.protection.partner.outlook.cn [139.219.146.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DA415D5C1
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 06:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727419739; cv=none; b=cwhAXuHzXzsKvGacFHNe3lGAiS3Sx9yur0mCu0tNp5z3rW1qEe/O1afat4ctB9ZjPAoDmS9RJw5eBNHOGnQ0maKXVh21wGQVUdhG1UpjKm0473OyNF37ylbjKQzn+FUbPvWVqE13kTyTcoCFrotPVG2VqisOWVMVErUJ7HNAWGo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727419739; c=relaxed/simple;
-	bh=HbVB23OZTP5tfOpmp3K0L/PYgaXn9XT3U9puUNCFz2w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KuR5MfAdGQAlml3/XnVeXqmOXMCuPU7CP+PfVql/XeGNLwLX/FGw7tDnZPjEdynbolgEBb4u67u3OSuBWjsD9FUllD40RCb+psNEDzm/trpTimf5GDyp03l+vKcyV3oVWOOcOGN4uFjc97ip0at7OoHx0ZQgAn43iQEAQIguoow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cGgok9I9; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cd26c6dd1so1103683f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 23:48:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727419736; x=1728024536; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fsWU+c9ooO36ZzyqvovuRAA2PZcmtpE3oZMgAJ7nS1k=;
-        b=cGgok9I9zJoLF2xMhzRRArHHeCgRNZXPzlVYpByVxW8WpQSHjZjVDJrNq/oSmao8cP
-         5vW17FjvWd8hDWtk3RIC0vR6CMUP7Bf8yNzE0zYvJQtcG7ZoPurQn/HQWp64NtcXrWv9
-         U4Wub5WdBNPWOfDxsuQbMlV6EVCxP/Z38DzOZJayrK4j/ebDV/NS8zB7IoRcS5xdl5aG
-         lLwQIoCik29hJCIeGaq29Jq/UvloI/ZuO6ig0Df4KSGuMy/EvTMjxvagDInw6+TuNMv2
-         mYEzEIcHdYjKIegTB6jFXuDyOKo2XQ+c1H+NWPR3MX9mVQ8Ti+4pap+jBPH40mtktpgS
-         dv2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727419736; x=1728024536;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fsWU+c9ooO36ZzyqvovuRAA2PZcmtpE3oZMgAJ7nS1k=;
-        b=B8Y7KMAIIxicY18gxqLhrr+9Dr1OxNkuA6SuM/LJlj1TQf+kHz12AJ9XSgcCSrP/UC
-         Fkt6EX2yHA9NAFpZxZ0qZ1tH9tz0c297WLJLjzxwvsAwSqg+DZuj9MHQmMa9jFE2CTWs
-         u05HcHelZEFTCYiYMBH+H2PV/zziVGYWmwlvy/RzR35awyxkDdnz0z8gifnImmdNS1nK
-         v9zUEI6GzxZpciNXC+5Uc78UfKJEo2rjA+9IXww/Wh+1Kd32J3Tju0+pvaARvkVj/YSV
-         GVGFxlbky7zfIWYtQKKQMSO9HIXVcUbt7sG6T1eJVfGET+jKVtLmv2XbYeevAT/qALfL
-         c3tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXazZUWtO1YvKXdAf174TvhZX4NOWnoA7Q9jPvmr3t8GaMERDvGY6TtKiZxtwas2VjIjmcdAUzteQq6lNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVixjF4UxOhONiiFGSFCJWwZ5mbVYT6RaYZklY+pFAF/5IGMJq
-	pf04PqADqA4ndWkUIjJrq2WjrGO3rlv7wjdamPjXv4LKK3V2HwaVOXY4ZnYcv8gU3iMSdbXbn1V
-	+NKU+uKCvj2u/olkl+15oJMp052f/vugX3u3J
-X-Google-Smtp-Source: AGHT+IE9wHdywVYcSJ0MhGBl1AGz6FW7pkwWHnpBoOpmqXayWnThfJyUMjbypeLgEyzcg3Wms3RNiMxi4qpc97lqV5U=
-X-Received: by 2002:adf:8b1b:0:b0:374:ba2b:4d1c with SMTP id
- ffacd0b85a97d-37cd5aa684emr1665481f8f.31.1727419736162; Thu, 26 Sep 2024
- 23:48:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BA815D5C1;
+	Fri, 27 Sep 2024 06:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.116
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727419855; cv=fail; b=VZRN87pOTYUPvcsQtg4MdwwTjj2P04ot7WdOnkehtINoCEUWpSXeMcI0ogIRSBq+jpU09LMrvpGoLpsxTqqRwpXr8DrrV02ti+9FMTT2Qg6GGmMpkswwCXtPRwaiMANRqMV2temJ+hj+iO5RboDxozoduq2meZtHlxwEcAoDZ6Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727419855; c=relaxed/simple;
+	bh=JZjloVqb6RoT3pnlZByOIyzo68aLVJA6mI0uyPnbYis=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=oNBBzrqCUjarWeWUE93bI6Og8owIaniDaCyzOjupmDd2n55ZJTXxtnZs1yR5qnqpEfRx+EI25g6uYdsnCPT/eyiDfsbFAoulAtaC9RyT7WcQ6vHIU6hNw7/SPOIb6/rw98ix44ZQhGczRSEGr0zxT1vPzEU9kmd+caDtBkUAVEI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=U1sYStp58NDDMyt/9H21sT8nOXlfa+M4cd3WV7scTbcaPJZYMdFCHcf4K+HxjcoZrCoeXtOm69scONY4k/Xx6oUHCkoqfAIzHuYqNedpQqjlfnn0ZlfIlOEFRKUV9g7Hcvo+b9aiTGOGdmDROppaKsL4ygu2T/ZggHFR1qUuK4w5VwrP3/Z3b1l4dD5e+bIFaKqjL2z7rhVN97Ocei6YKNPV65IFhrcmfxRsrUa0wV/NphtPErW6TVXVnvMYO6zUAsfwZOmWaqoJ/nYbNTbC7q95AK/RoafNm6tLR20CHyObZ6ZVJvplZ+qlS1TjAoBQCYeUpXZKkzLCLYCD1vTtPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=a8fshkL8QwkCD4nF3sKqLPVv1ejn1/tKdqPGo2yYkOQ=;
+ b=F9sE2L85MRH7kfoxMUX6i4bk+vV8AiwFBAmW8rG+OPnP5PQ68vdRkn4GT8wRgOADKPFNR2P42IuZazA/p1jBIYeUX2LCqr2EuHR5utewlNyBeCG493q4Io43SE+xBU20/XSadzJG3v4xewSZbUyvdf8EeEntXMsPoEibAOKprgXvppYLO6ROLs9rB7HVn2nWtRmpZ4vSen+Rtu+yjsqJdGa3kliIwEWq9tcL7dhYDmJMUQwbkKUSgxQS6jhhKUmGv9cw0ZP5b4qVE2X4aYsy6dTV6TUUO8ol17Ahm4wWDpCoKL8LWYMFs6k9aKDB9o5b6sCfGflS07KLktDDegrvFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::10) by NTZPR01MB1033.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:a::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.19; Fri, 27 Sep
+ 2024 06:50:41 +0000
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ ([fe80::40dc:d70a:7a0b:3f92]) by
+ NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn ([fe80::40dc:d70a:7a0b:3f92%4])
+ with mapi id 15.20.7962.021; Fri, 27 Sep 2024 06:50:41 +0000
+From: Xingyu Wu <xingyu.wu@starfivetech.com>
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+	Ziv Xu <ziv.xu@starfivetech.com>,
+	linux-kernel@vger.kernel.org
+Cc: Xingyu Wu <xingyu.wu@starfivetech.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-watchdog@vger.kernel.org
+Subject: [PATCH v1] MAINTAINERS: Update the maintainer of StarFive watchdog driver
+Date: Fri, 27 Sep 2024 14:50:32 +0800
+Message-Id: <20240927065032.2773997-1-xingyu.wu@starfivetech.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHXPR01CA0012.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c311:1b::21) To NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926-b4-miscdevice-v1-0-7349c2b2837a@google.com>
- <20240926-b4-miscdevice-v1-2-7349c2b2837a@google.com> <20240926220821.GP3550746@ZenIV>
-In-Reply-To: <20240926220821.GP3550746@ZenIV>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 27 Sep 2024 08:48:41 +0200
-Message-ID: <CAH5fLggMgmg-3AH1JcA6hrNLvEoM8f8a=c99v7gSa+4q3diWjA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] rust: file: add f_pos and set_f_pos
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: NTZPR01MB0956:EE_|NTZPR01MB1033:EE_
+X-MS-Office365-Filtering-Correlation-Id: 80bc429a-54d5-4731-e2b0-08dcdec0b39e
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|41320700013|1800799024|366016|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	OHjSDcUECDVreN1J13fvTiQ6vtpzg9icE70176wlzTKXfjKxbZVSbEe5F5NXUPxWvLhvdPI86+FdefA/q/JKsIhKdzOvfInLryrREdK0wnQGdMg8DJOhrj09p5Z49kAAjRNQn9QewU3WG/kMHqDUfBrMomkgxo51IpV1OmUBQZ8a8uiHSJ5xaYmQSifdIIRMM//iY5gPKgGc7AbO1OpbyLkUXj+/FRPXbEEzckVAb3mkuxvL6cU9PLlTa13FuT4Jp+bysvPMkojxHSpV5eqa2kPiwvpZs7LZMPUa6W99sUdxsqLUEJda0wqVaVX0bYoNn5vbFpKyeRCRxbPWfem6xYI4LDNCGHqF/8q1omgUE9tBPJsYw5v/y+ve4ximNtdy8q7ut+HXmF79DtrGqpyjZ1L54x5+GzNLybdahbdM8hndYXKrHu3tzj8PBL3P7JIqqMamTNF3knXhwxcv0eO9V2yTnXP3WHeZlTuQmqRAxjkiArN0ql/5j+1gAmMDk7QCzP9jyWFBQeyh1HCjMSldEEeydDym9uv+qi3wXNgVzosHXzRD430uyHivu9/2UaDsVdRqA36SlhIjZ/RXn7wtRR/sHM0PL0hSBHf4TgTFqo2OhvO0hIBy1eoe6xoPj3iv
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(41320700013)(1800799024)(366016)(52116014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?repkQhlf5o0k6LPkjyMwwi1FJCoQx+ySdBTYVzpUyrwNyhXO+AeWsO03K7/s?=
+ =?us-ascii?Q?+MPBzo4ySHjLxkTyprCxAR7JCrwOCgZUpul9ieHKoXKntrNLpeKFX66msArc?=
+ =?us-ascii?Q?Pe9A96nqzMvSr2vog0oKnOkUFfbeOPG2GNzZlLug5K4UAIZsC4MZAN9tEfGp?=
+ =?us-ascii?Q?zkLOoy+/14nznqIXXEPbss/BVirhtb0kPVcYP2vYNIkm0jcSrbeaTikq3W0n?=
+ =?us-ascii?Q?EhOYcEKzkcAi9AXal/9ot0JzHnhJZV/URzA//08Tghz6C2CyX2JifLFBHhk2?=
+ =?us-ascii?Q?DNZGPsIvZNfm1Sp8W2XEuqk2bCEFpM7O2bKtAlo3kGc8D/CmYFJOsxpGfWoW?=
+ =?us-ascii?Q?cNAjlwdJIHWLqE1HvVuaWZzbcJ5i5mPpEXCckQC1WZFBoWAiAl+5d1L1Ivk8?=
+ =?us-ascii?Q?oE6f7yQVH/XmbRIwdavuAHIpdQFHYcYzGQ6h0zjddlrokuqBUdtsYdHK/CBE?=
+ =?us-ascii?Q?gjJv3Rsl5NQMv20rJOXRNuAqzB6y9fbnOaf/Ii0Q7FlvbJc5Xv95BiCvKgYU?=
+ =?us-ascii?Q?+ImxJ3slxwZl3j3CvbJ00qdTwbtf3ayl87PPPzAd+pkW06mT6AwrXqN/2sQf?=
+ =?us-ascii?Q?QYGUMzw3rjNN1N1y+6GwPo+9uE1NF4kZASjogHmFiLzzx4EUf8jgffCwyr+4?=
+ =?us-ascii?Q?1Wwnqp9AJ1PewXu6cuExysOm0O2TYs18XZdFNxxeWFSWSR+CirI3EtjUkQnl?=
+ =?us-ascii?Q?ZELPlr7xceYMclZxrtXPRyCbeVodlwSDOKOQYCOoeoQo+GFrWAyQEVUFPF1i?=
+ =?us-ascii?Q?I8NMYtVm791Jx9w3JOjOo4Sv5ws21FVXnUD6C9icPDo/Xlas3kBQGkhLW3fb?=
+ =?us-ascii?Q?OSPUZQltiyU/Dm+XS8yc8rPCztOGekrGcd6dlKi6u3/dRT7EYns8mQ9NwCvG?=
+ =?us-ascii?Q?KuoNmMwZGpDt5I03uTV0FxnD9Sqsy4zcMp/3HdEtaBChGMbjhZUIGnhU/TkA?=
+ =?us-ascii?Q?p6ouIc3oXy2RiF3YItB9N+HuYB30QtSSY2nimxp7HsfPc3vla9nyGJay9Irs?=
+ =?us-ascii?Q?RBmyd93Gued5rgLnSc1Vcpcu5zN3+A04s2j6zgnpGhWwQK4CCzjsD/iJXh4x?=
+ =?us-ascii?Q?t/mcQAughtCHbYkfGzi6rZ/0oE8I6OVgnBYQLHGiChY8raxafxuMEvBg/VQJ?=
+ =?us-ascii?Q?2SOPv5VV7WuLv7T2igKgky6BDAjx6w3+Sx1ViGqo3mO3wP+SLpZ7w/a7wHWn?=
+ =?us-ascii?Q?ET/JAUVxYaOAbbgyqNbrirYXh58PJggP6u7GMwQauYmAyb8ggE0e+t5Q3sfg?=
+ =?us-ascii?Q?6IdfTI+poHDgmDACqRIvtyeINDlWdMnT3RyzGR47fySvDU5FWLGWgkGba0Pt?=
+ =?us-ascii?Q?uCLpRBjCrcXkUt4VAdlfbB7iWZwYz9+CZWRmoiLpum8Ye8ckvlX5NHCtomH+?=
+ =?us-ascii?Q?u0SKbSJE3joYtO4nyHItttSo3umdI03LIpCtyQ1AQ/nZpfLdZjUMiWS2jriY?=
+ =?us-ascii?Q?LX6dyHotEbR65qWw2ndLocvNyhlKjZsM9vVKBXAqsLMGLVVMejDDHanBVzSh?=
+ =?us-ascii?Q?8TazMpxCTJMoyP11pN7/X7on6sdo/TAR66iMLkjG706l/UKfy0nolI+WfvA7?=
+ =?us-ascii?Q?Vz3Zr0dxD24VQSi//XJM6PXQxRviPvZcPkrP9UH/z7/lgw5rtn6g/jb436NY?=
+ =?us-ascii?Q?FQ=3D=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 80bc429a-54d5-4731-e2b0-08dcdec0b39e
+X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 06:50:41.0699
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qd0bireWFAmvL3s9/hESmO1XBubsWbYMhaemtfBxymC13Js28ubL1fNWxZpxKVUHY/an6dLfjaNSmqAYNnjKzGxrQ0nv4LlxMeV/LbX8FQo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB1033
 
-On Fri, Sep 27, 2024 at 12:08=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> =
-wrote:
->
-> On Thu, Sep 26, 2024 at 02:58:56PM +0000, Alice Ryhl wrote:
-> > Add accessors for the file position. Most of the time, you should not
-> > use these methods directly, and you should instead use a guard for the
-> > file position to prove that you hold the fpos lock. However, under
-> > limited circumstances, files are allowed to choose a different locking
-> > strategy for their file position. These accessors can be used to handle
-> > that case.
-> >
-> > For now, these accessors are the only way to access the file position
-> > within the llseek and read_iter callbacks.
->
-> You really should not do that within ->read_iter().  If your method
-> does that, it has the wrong signature.
->
-> If nothing else, it should be usable for preadv(2), so what file position
-> are you talking about?
+Samin quits maintaining the StarFive watchdog driver and Ziv joins instead.
+Update the maintainer of this driver from Samin to Ziv.
 
-Sorry, you are right. In read_iter we can access the file position via
-the kiocb. It only makes sense for seek.
+Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Alice
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cc40a9d9b8cd..3c4276b2e72e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -21846,7 +21846,7 @@ F:	drivers/char/hw_random/jh7110-trng.c
+ 
+ STARFIVE WATCHDOG DRIVER
+ M:	Xingyu Wu <xingyu.wu@starfivetech.com>
+-M:	Samin Guo <samin.guo@starfivetech.com>
++M:	Ziv Xu <ziv.xu@starfivetech.com>
+ S:	Supported
+ F:	Documentation/devicetree/bindings/watchdog/starfive*
+ F:	drivers/watchdog/starfive-wdt.c
+-- 
+2.34.1
+
 
