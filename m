@@ -1,88 +1,164 @@
-Return-Path: <linux-kernel+bounces-341392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832CD987F6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:26:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D034F987F68
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E812814BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:26:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791581F22272
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EAC188CC8;
-	Fri, 27 Sep 2024 07:26:40 +0000 (UTC)
-Received: from out28-4.mail.aliyun.com (out28-4.mail.aliyun.com [115.124.28.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FECD170A27;
-	Fri, 27 Sep 2024 07:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3401C18733B;
+	Fri, 27 Sep 2024 07:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TRu/7hJw"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810A613A896
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727422000; cv=none; b=UyhGuRCaaao5NIsX23pGy8W8dWAbptj8gI7jkyGyvTQmlG6ckPixpmmSigA5XlLh3XNL4QtUZTpL7DSzrtIVX3tbGkVen6xqntYguh/MNlO9iKBT57Q8gixdJNmCP8tco2L4BbyuCaMaJJdMgRQI5JBeqIOIpKPtmRK2n+cOgYg=
+	t=1727421997; cv=none; b=d08CjwcOz/Ipoii9aG4fF2OCb7Ep5079mpsy+3JMB8BMjx3OkP9J88U0ol1kZKJo0BwKUd2rNdcaIygh/2XPiAoirgvjsd5TSDDTHsieY8C7xdxVIblim2ScC0UwiDbwaj6q/SzqyR2tQbjeMi21BXuI72uehk5HOKHoAcIse4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727422000; c=relaxed/simple;
-	bh=cqLnf6PJzL54HgNypeyuYcHmMpeSIn784DzivUwFs0E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lQbu6/mxAeMAHD8zL7Qzd4wIpKOkVfeB60nWYrZnfXiEm6UDyqqBmrfCfwTydOgZRCnkNehpaV38sPyqvMkxrEctU7ZVVbQ2anvQrHKvkATfcJgmvHY8YxWKxKLtCKPwibdq59WpThXNRwatplRnXeigC2Cc/tQBiTx078yr0X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allwinnertech.com; spf=pass smtp.mailfrom=allwinnertech.com; arc=none smtp.client-ip=115.124.28.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allwinnertech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=allwinnertech.com
-Received: from SunxiBot.allwinnertech.com(mailfrom:michael@allwinnertech.com fp:SMTPD_---.ZUNKLqQ_1727421960)
-          by smtp.aliyun-inc.com;
-          Fri, 27 Sep 2024 15:26:04 +0800
-From: Michael Wu <michael@allwinnertech.com>
-To: gregkh@linuxfoundation.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	Thinh.Nguyen@synopsys.com,
-	balbi@kernel.org
-Cc: linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dt-bindings: usb: snps,dwc3: Add 'snps,inv-sync-hdr-quirk' quirk
-Date: Fri, 27 Sep 2024 15:25:57 +0800
-Message-Id: <20240927072557.74194-2-michael@allwinnertech.com>
-X-Mailer: git-send-email 2.29.0
-In-Reply-To: <20240927072557.74194-1-michael@allwinnertech.com>
-References: <20240927072557.74194-1-michael@allwinnertech.com>
+	s=arc-20240116; t=1727421997; c=relaxed/simple;
+	bh=xMgAuIsRbpaGRuJllqDUgSrd+lucxNOpIKVPx5iakck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TCdSbsvjd4Od6X5gMHyjhwA9dv7zweUv968k7y3yUGcfxEQMEhscQ6mmFSHWmMbr75MABby0lu8I/UeMMN85dyFkLtv6U+NUd8p0g87b/gHx/C4lmAaJn/LfDoDLJUvpKHY9huLW04DGyf5uAKe3FutV+Ujc4fW5Irv5Vqon8EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TRu/7hJw; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d3cde1103so230061066b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:26:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727421993; x=1728026793; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=80ztDIsJWeriQoGVLSr3JhFbaWjjf3yBIgtVIEKSUh4=;
+        b=TRu/7hJwrxUx3wOak5e/c2+oVr4Z3m54883QdSdso5qBSw31X+adwJtycElOCD4Q6v
+         /1qASgjKoiXjg11Y+yuLtk8rSVHWLl3WoEfnZj6nZeJebmWRRulcTQmWM1eRomi08Kmy
+         1piDNGEUFsS+fExW1zjOO9W/23CkRq9be2YQ/vcM8jh5Yr8mhvV83T81zii5ZfFc9bMX
+         NLQQUe4OU/TNG0bkZH9KL0w9MhpzRvgZQfpew9K2P3lK8YoD8A2F+1ZjZ/P47mgtw1qG
+         AnNbcwWYK9dbJJ/z3gOKJJRR5XKTiHIUpc24H6lhKhskcy08rrZufIJTKhTfutGgGiS5
+         UxcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727421993; x=1728026793;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=80ztDIsJWeriQoGVLSr3JhFbaWjjf3yBIgtVIEKSUh4=;
+        b=pj8mQ9Uf4SYm11/3L3hLLno5o56M5NPyJ0hycVVRrafYMcQBUo1tVnTEMnPxDZ2BHH
+         W6OrwS1IWnRogKacTZroB20qmqfQsREvqdzBADHAtWTMgyzc++fMa3682KxqdU3r1GPE
+         vBtQWThhkrqhbRQ6pybQZiYu2I3jIzd18GxQN6U46PiVCceu/QPjr3R8c2CuFoxM7pqc
+         Z2VPuk7JjqeOL/aMyVXEYiY8gu4c8iQbstcFBk68BvNEXJPeGoSvDBtezWgJtprfY2z/
+         imr9QKv/3/8DM3Z/H9EsiAhDVBbQOATSOyXappNU6B0IfInwBaqb31+eFegTIx4yhuhZ
+         D4Sg==
+X-Gm-Message-State: AOJu0YzCHH6q1rJzuntAEwMgfQW6dXNXRIrUZ/StrDU3c7Yf+ZYO3Z3n
+	YoCFyE4yrKj+UU8gnIRPU40d3n0Y/wNRk7n35AWwWPJmXkqXcXIfFI9wL/TNq04FZgO8WJbXL+l
+	k
+X-Google-Smtp-Source: AGHT+IE7+CblqEppxGApcOTVpZmHP9GLtTzDm9g1t7gy3vhONmLGIDrJpXglSfFblCwn/uYQ+Ow0Nw==
+X-Received: by 2002:a17:906:c115:b0:a86:4649:28e6 with SMTP id a640c23a62f3a-a93c4a98d6amr167324466b.57.1727421993567;
+        Fri, 27 Sep 2024 00:26:33 -0700 (PDT)
+Received: from localhost (109-81-81-255.rct.o2.cz. [109.81.81.255])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27776efsm93534866b.30.2024.09.27.00.26.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 00:26:33 -0700 (PDT)
+Date: Fri, 27 Sep 2024 09:26:32 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>, rcu@vger.kernel.org
+Subject: Re: [PATCH 11/20] sched: Handle CPU isolation on last resort
+ fallback rq selection
+Message-ID: <ZvZeKBzOBbVyA-xL@tiehlicka>
+References: <20240926224910.11106-1-frederic@kernel.org>
+ <20240926224910.11106-12-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926224910.11106-12-frederic@kernel.org>
 
-Added the new 'snps,inv-sync-hdr-quirk' DT property to dwc3 core for Gen2
-polarity detection.
+On Fri 27-09-24 00:48:59, Frederic Weisbecker wrote:
+> When a kthread or any other task has an affinity mask that is fully
+> offline or unallowed, the scheduler reaffines the task to all possible
+> CPUs as a last resort.
+> 
+> This default decision doesn't mix up very well with nohz_full CPUs that
+> are part of the possible cpumask but don't want to be disturbed by
+> unbound kthreads or even detached pinned user tasks.
+> 
+> Make the fallback affinity setting aware of nohz_full. This applies to
+> all architectures supporting nohz_full except arm32. However this
+> architecture that overrides the task possible mask is unlikely to be
+> willing to integrate new development.
+> 
+> Suggested-by: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
-The link uses data block (0011b) sync header for SYNC OS instead of control
-block (1100b). Set this quirk if the third-party PHY does not correct the
-sync header of the SYNC OS in the case of inverse polarity.
+Thanks, this makes sense to me. Up to scheduler maitainers whether this
+makes sense in general though.
 
-Signed-off-by: Michael Wu <michael@allwinnertech.com>
----
- Documentation/devicetree/bindings/usb/snps,dwc3.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+Thanks for looking into this Frederic!
 
-diff --git a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-index 1cd0ca90127d9..e5ed5cca1cf25 100644
---- a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-@@ -280,6 +280,12 @@ properties:
-       asserts utmi_sleep_n.
-     type: boolean
- 
-+  snps,inv-sync-hdr-quirk:
-+    description:
-+      Set if the third-party PHY does not correct the sync header of the
-+      SYNC OS in the case of inverse polarity.
-+    type: boolean
-+
-   snps,hird-threshold:
-     description: HIRD threshold
-     $ref: /schemas/types.yaml#/definitions/uint8
+> ---
+>  kernel/sched/core.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 43e453ab7e20..d4b759c1cbf1 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3421,6 +3421,21 @@ void kick_process(struct task_struct *p)
+>  }
+>  EXPORT_SYMBOL_GPL(kick_process);
+>  
+> +static const struct cpumask *task_cpu_fallback_mask(struct task_struct *t)
+> +{
+> +	const struct cpumask *mask;
+> +
+> +	mask = task_cpu_possible_mask(p);
+> +	/*
+> +	 * Architectures that overrides the task possible mask
+> +	 * must handle CPU isolation.
+> +	 */
+> +	if (mask != cpu_possible_mask)
+> +		return mask;
+> +	else
+> +		return housekeeping_cpumask(HK_TYPE_TICK);
+> +}
+> +
+>  /*
+>   * ->cpus_ptr is protected by both rq->lock and p->pi_lock
+>   *
+> @@ -3489,7 +3504,7 @@ static int select_fallback_rq(int cpu, struct task_struct *p)
+>  			 *
+>  			 * More yuck to audit.
+>  			 */
+> -			do_set_cpus_allowed(p, task_cpu_possible_mask(p));
+> +			do_set_cpus_allowed(p, task_cpu_fallback_mask(p));
+>  			state = fail;
+>  			break;
+>  		case fail:
+> -- 
+> 2.46.0
+
 -- 
-2.29.0
-
+Michal Hocko
+SUSE Labs
 
