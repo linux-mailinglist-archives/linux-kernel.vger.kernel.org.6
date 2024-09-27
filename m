@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-342151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1BD0988B05
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:00:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97ADB988B06
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DD731C22877
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:00:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EC9A1F2415C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F311C32E2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D461C32E3;
 	Fri, 27 Sep 2024 20:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCzAVFDU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgehpmYV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6814C15FCE5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CEC1C2DD1
 	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 20:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727467234; cv=none; b=OYRwwS95GI/xU1YGF4nIatXjcaE1iH+2AkG4kfH/mvEVzdhC36gaZB50HNpYfa9MHYMXRQ7Y18yggymclNuo4rguN6Bj/oAfuMDZDbwqwHVBynI7bckk8JbHMWaiNk5cvrMTgASfvKBifGiUtgAKsDBg6gBobT7SQ7INYtpaUdo=
+	t=1727467234; cv=none; b=n9it+ptR7dZhOT3Wu2nV0wuaFcDWxuq5iwcLpDKfebAesW/lDq4oReP01beBvQXIKnYId+OrCOpTc0Lxup3jYx4O64zXk/gQ03hg9ohAuOaqtF32uaW9ubR/ypavnMoiBOYy51Eks+bHV8/DvCaBqLd3e0L+T8z390sNsfLq7+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727467234; c=relaxed/simple;
 	bh=YJ9F80sAsIr33/PSUGQudPVJdjIJZBKx+I+tMgKicH4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=d26TsMMH/ZObw8gdVDpoyukCegcwZDHuJsvAlI+eC6hmGl40JjWNILJF2r+IFrMroWA+5JYXSJ4fcUex05hpaFQD8VhFs5tyiKcHlH3G07Lu2JxgZsMYlGCsd2Nnrhxr8A8EpeN6XFlgDioLblpshqiLg96IUzL8DlTTPcfyGqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZCzAVFDU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4424BC4CEC4;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=j5r5CGqhuU1K2Wsv1t74Eyj//3MLeQI+aiwy0ptT44Yq2CSWtdzdMKw6VXjRwytX6axBvpQIHkUXhbIjsk/fj0D6eSsCD63QYBJCmdw4pMX7m3PmyXcG+K/mHG05NBmg9NxHTgYCAIX3gzhO3vWqGZC5g/Z42WsYOWtDYfuTTt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgehpmYV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5576BC4CEC9;
 	Fri, 27 Sep 2024 20:00:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1727467234;
 	bh=YJ9F80sAsIr33/PSUGQudPVJdjIJZBKx+I+tMgKicH4=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ZCzAVFDUVcS/IIWiaPiq/YinCQwKfxqwWeNh0CX2Cu1wYfW03EPUSUzIM2AUVlXSj
-	 +h0jks/3VRFFbTVWxhjFjS85G4gW9/cQvdEgFdqFaEbBSiZlKyi5unzGqU06KMhXmS
-	 0L/UnRRmFhtS4uLdxuyajUdeRiCs0qXaYPrxwZlr3TsBCwDwX+7rroC5tMbfRheTcx
-	 IatRA5UrNH2BCnGGVsHqYxIAtXq7VzzfDE9juQRsM/V6/1pJ00zpqc7Oi1fTY8bXlx
-	 msGLN+iHAVgkUP/u/06AulNC9hsIpTpld/LjpSpipR99R6kEMLZuiNWLXcPxPdjpwE
-	 fSzxYYt09OXPQ==
+	b=CgehpmYV2zK0R96MRxF7gTLU8wYSvOToefcd+YGstBXR/vpmPZJBtKN98YFD/5G+L
+	 PJdQH1WlldkUqWfX7qD0zxHhQUqmtp6Nmoxaaf9bqb4em5mCvYys+GTTTeJaGBMPdz
+	 Y2n12o/sdjDcLs17YbDhiVmSod+//WSQSycRnZ+UewnaysjAhTXcWj/4/7WXQ7ngP+
+	 jakahdUlll+CRF8X0bBBFWbukptpWnTXBtjvThbDapymxhhb6bFQ1w+SE5nRePAf1n
+	 SVHcKP0J1UMBLxSJBxHK01CHlrG+Zes1UCjpZ3Z5Cx4fV10+d/Z411sx9x4XqstYyN
+	 QIaFGJtq3/jvQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 352EC3809A81;
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 341FE3809A80;
 	Fri, 27 Sep 2024 20:00:38 +0000 (UTC)
 Subject: Re: [GIT PULL] random number generator fixes for 6.12-rc1
 From: pr-tracker-bot@kernel.org
@@ -53,8 +53,8 @@ X-PR-Tracked-Commit-Id: 9805f39d423a30a7189158905ec3d71774fe98a1
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
 X-PR-Merge-Commit-Id: 34e1a5d43c5deec563b94f3330b690dde9d1de53
-Message-Id: <172746723685.2065565.2165573073264177639.pr-tracker-bot@kernel.org>
-Date: Fri, 27 Sep 2024 20:00:36 +0000
+Message-Id: <172746723765.2065768.7835929926067276816.pr-tracker-bot@kernel.org>
+Date: Fri, 27 Sep 2024 20:00:37 +0000
 To: "Jason A. Donenfeld" <Jason@zx2c4.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org
 Precedence: bulk
