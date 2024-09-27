@@ -1,169 +1,164 @@
-Return-Path: <linux-kernel+bounces-342241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5193988C5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:19:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35C9E988C5D
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF0E728340B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:18:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2D6E282ECD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7913918732E;
-	Fri, 27 Sep 2024 22:18:45 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB78187353;
+	Fri, 27 Sep 2024 22:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBuUlxYX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB61D17C988;
-	Fri, 27 Sep 2024 22:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DAD1F931;
+	Fri, 27 Sep 2024 22:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727475525; cv=none; b=Kt+wjXDT870o0VivS9erkKgpwXbn3U6tK2cF0JrlctNpQFgntncWPtUVXwfLnec6BRQxu9STu8QfP5OPKw5ZFT0z8vv3R0W4XOHcEruCV2oCfBQDWOgR79y4O391Bp8UvTeY81QZ3JVKop3+oNa7Cg6NEAj+/BTd7IWKFe+mxDA=
+	t=1727475513; cv=none; b=pXi2HRfRU9896YkmYdwhCrulOXj7IBdg3C1QLuRX08n4U3c1n2CaXsYcEdHyno62DH/YA4wHilyiOZAoCk6ZKSfOCGNRQbwRBsfbaBXggV7hxJX3U9YhiYunKCKVZsoGIpp/3+HiXfUZKx051HM3sD1vkD/H7ia/g2KnsKiU5X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727475525; c=relaxed/simple;
-	bh=pDAq3jXFAuW/dqJmuTPIlpcyvVhpcj3PUSyb2x9xJJ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=caZvHzV/hGGqgq5kHZ3hfwfdKoXKHbqTeerDC9qRwPzTCfnVybdnWUuAY1oFOOfzYTr27k6nhzpy4M3TPPei0RluggtlSZRI8KqsqneYArRFq8ZJ40x2AOLGFWPW5BKGhD+jREwXhgWyE/MgEpPeRGf0H0CkFp6A0espHd/sgFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XFkr45RLHz9v7Hk;
-	Sat, 28 Sep 2024 05:58:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 3424B1404A9;
-	Sat, 28 Sep 2024 06:18:24 +0800 (CST)
-Received: from [10.45.147.63] (unknown [10.45.147.63])
-	by APP2 (Coremail) with SMTP id GxC2BwD3pscgL_dmmwLIAQ--.52307S2;
-	Fri, 27 Sep 2024 23:18:23 +0100 (CET)
-Message-ID: <4ed833df-54e6-454a-ab1a-73967cc51054@huaweicloud.com>
-Date: Sat, 28 Sep 2024 00:18:03 +0200
+	s=arc-20240116; t=1727475513; c=relaxed/simple;
+	bh=uMyaYEJZLNU05MeCrzdMNUO+M6h8+Xyzu3+DEW7cg3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cFqltkHKjN/SJW6h0LkFnbBKwlNnIEEIqRbWzte0gUecycXSFRPvMkUlXEgUdQJgzD1SQo0A/GRQk8D8JJFL28GJK6TcTpFo0/Wu89aaOHc3zw/TJLv9prsQ0zLe9+CfBQ/ycQ6f9sbFg+3uQD90zGBKQO9CRzW/YjFilFNhs0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBuUlxYX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B877DC4CECE;
+	Fri, 27 Sep 2024 22:18:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727475512;
+	bh=uMyaYEJZLNU05MeCrzdMNUO+M6h8+Xyzu3+DEW7cg3U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mBuUlxYXZsaFExSeyCRZG5b0/ei0hlt3jEIT0C1TrYuEoMPsm7OiKpm//pariQSyk
+	 jipNJSO8TttPNtfpe9QGtBVyt9r77r1913wHJDCozoYCkAmum9FHwy641jCF3RN0Dc
+	 rPYLCKyIE6GEi+mPqagxla73qKcqreJ8C2rDviOGATXcClVg9BK0knm8ojIKbUDCoK
+	 BoTK+wTaPcxjaRU1ib8WXwLpcTPQ+f7YM8kPnn9lgk+pooqJVbXyXUwwt39lzfEXbS
+	 QpFPz/RcMZsIrQ7dqV2xHv0JBQwKYDJ2/0TGPDwmbAzbAwPhyZeY5zIXln317pntx7
+	 aPt9tHrpnYS0Q==
+Date: Fri, 27 Sep 2024 17:18:31 -0500
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/3] of: address: Add cpu_untranslate_addr to struct
+ of_pci_range
+Message-ID: <20240927221831.GA135061-robh@kernel.org>
+References: <20240926-pci_fixup_addr-v2-0-e4524541edf4@nxp.com>
+ <20240926-pci_fixup_addr-v2-1-e4524541edf4@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Boqun Feng <boqun.feng@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
- lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>, Vlastimil Babka
- <vbabka@suse.cz>, maged.michael@gmail.com,
- Neeraj Upadhyay <neeraj.upadhyay@amd.com>
-References: <ZvPp4taB9uu__oSQ@boqun-archlinux>
- <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
- <ZvP_H_R43bXpmkMS@boqun-archlinux>
- <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
- <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
- <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
- <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
- <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
- <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
- <bba2e656-4c3b-46db-b308-483de440b922@efficios.com>
- <ZvY2zBiluLkqRSkc@boqun-archlinux>
- <62508c1f-66ca-450d-abb6-236ca3b9096d@huaweicloud.com>
- <d86536d9-9c5a-48ab-abf3-3483e2e5e980@efficios.com>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <d86536d9-9c5a-48ab-abf3-3483e2e5e980@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwD3pscgL_dmmwLIAQ--.52307S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFyxCFWkAr1rtw4DAFyUGFg_yoW8uw15pr
-	1kKa1UWFZ8CFs7Ar17tr4jyFyYywn3Gas8XFyUWa4DA3yqqr1SvFWjgF90g3ZrCws5Jryj
-	qr4UJr93uFWDAFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	4xRDUUUUU==
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+In-Reply-To: <20240926-pci_fixup_addr-v2-1-e4524541edf4@nxp.com>
 
-
-
-Am 9/27/2024 um 10:10 PM schrieb Mathieu Desnoyers:
-> On 2024-09-27 21:23, Jonas Oberhauser wrote:
-> [...]
->> That idea seems to be confirmed by this (atrocious, not to be copied!) 
->> example:
->>
->> int fct_escape_address_of_b(void)
->> {
->>      int *a, *b;
->>
->>      do {
->>          a = READ_ONCE(p);
->>          asm volatile ("" : : : "memory");
->>          b = READ_ONCE(p);
->>      } while (a != b);
->>
->>      // really really hide b
->>      int **p = &b;
->>      OPTIMIZER_HIDE_VAR(p);
->>
->>      asm volatile ("" : : : "memory");
->>      return *b;
->> }
->>
->> This also does not generate any additional instructions, unlike just 
->> using OPTIMIZER_HIDE_VAR(b).
->>
->> What is the advantage of defining OPTIMIZE_HIDE_VAR the way it 
->> currently works instead of like above?
+On Thu, Sep 26, 2024 at 12:47:13PM -0400, Frank Li wrote:
+> Introduce field 'cpu_untranslate_addr' in of_pci_range to retrieve
+> untranslated CPU address information. This is required for hardware like
+> i.MX8QXP to configure the PCIe controller ATU and eliminate the need for
+> workaround address fixups in drivers. Currently, many drivers use
+> hardcoded CPU addresses for fixups, but this information is already
+> described in the Device Tree. With correct hardware descriptions, such
+> fixups can be removed.
 > 
-> Did you try it on godbolt.org ? Does it have the intended effect ?
+>             ┌─────────┐                    ┌────────────┐
+>  ┌─────┐    │         │ IA: 0x8ff0_0000    │            │
+>  │ CPU ├───►│ BUS     ├─────────────────┐  │ PCI        │
+>  └─────┘    │         │ IA: 0x8ff8_0000 │  │            │
+>   CPU Addr  │ Fabric  ├─────────────┐   │  │ Controller │
+> 0x7000_0000 │         │             │   │  │            │
+>             │         │             │   │  │            │   PCI Addr
+>             │         │             │   └──► CfgSpace  ─┼────────────►
+>             │         ├─────────┐   │      │            │    0
+>             │         │         │   │      │            │
+>             └─────────┘         │   └──────► IOSpace   ─┼────────────►
+>                                 │          │            │    0
+>                                 │          │            │
+>                                 └──────────► MemSpace  ─┼────────────►
+>                         IA: 0x8000_0000    │            │  0x8000_0000
+>                                            └────────────┘
+> 
+> bus@5f000000 {
+>         compatible = "simple-bus";
+>         #address-cells = <1>;
+>         #size-cells = <1>;
+>         ranges = <0x5f000000 0x0 0x5f000000 0x21000000>,
+>                  <0x80000000 0x0 0x70000000 0x10000000>;
+> 
+>         pcieb: pcie@5f010000 {
+>                 compatible = "fsl,imx8q-pcie";
+>                 reg = <0x5f010000 0x10000>, <0x8ff00000 0x80000>;
+>                 reg-names = "dbi", "config";
+>                 #address-cells = <3>;
+>                 #size-cells = <2>;
+>                 device_type = "pci";
+>                 bus-range = <0x00 0xff>;
+>                 ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
+>                          <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
+> 	...
+> 	};
+> };
+> 
+> 'cpu_untranslate_addr' in of_pci_range can indicate above diagram IA
+> address information.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v1 to v2
+> - add cpu_untranslate_addr in of_pci_range, instead adding new API.
+> ---
+>  drivers/of/address.c       | 2 ++
+>  include/linux/of_address.h | 1 +
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/drivers/of/address.c b/drivers/of/address.c
+> index 286f0c161e332..f4cb82f5313cf 100644
+> --- a/drivers/of/address.c
+> +++ b/drivers/of/address.c
+> @@ -811,6 +811,8 @@ struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
+>  	else
+>  		range->cpu_addr = of_translate_address(parser->node,
+>  				parser->range + na);
+> +
+> +	range->cpu_untranslate_addr = of_read_number(parser->range + na, parser->pna);
+>  	range->size = of_read_number(parser->range + parser->pna + na, ns);
+>  
+>  	parser->range += np;
+> diff --git a/include/linux/of_address.h b/include/linux/of_address.h
+> index 26a19daf0d092..0683ce0c07f68 100644
+> --- a/include/linux/of_address.h
+> +++ b/include/linux/of_address.h
+> @@ -26,6 +26,7 @@ struct of_pci_range {
+>  		u64 bus_addr;
+>  	};
+>  	u64 cpu_addr;
+> +	u64 cpu_untranslate_addr;
 
-I certainly did try and certainly read it as having the intended effect, 
-otherwise I wouldn't have written that it seems confirmed.
+Let's call it "parent_bus_addr" as it's not really the "cpu" address any 
+more. With that,
 
-However, just because my eyes read it doesn't mean that's what happened, 
-and even if it happened doesn't mean that it is guaranteed to happen.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> By the looks of it, you're just creating another version of @b called
-> "p", which is then never used and would be discarded by further
-> optimization. >
-> I'm unsure what you are trying to achieve here.
-
-Simply put I'm trying to let the compiler think that I leaked the 
-address of b. After that, the memory barrier should let it think that 
-the b after the memory barrier might not be the same as the one before 
-it (which was equal to a), forcing it to read from b.
-
-However, I suppose on second thought that that might not be enough, 
-because the compiler could still simply do b = a right after exiting the 
-while loop.
-
-And that is true no matter what we put behind the while loop or before 
-the condition, as long as the condition compares a and b, right after it 
-the compiler can do b = a. Just took me a while to see :))
-
-I'm not sure why gcc does the b=a with the normal OPTIMIZER_HIDE_VAR but 
-(as far as I read the code) doesn't do it with the above. Maybe just a 
-weird corner case...
-
-Have fun,
-   jonas
-
+Rob
 
