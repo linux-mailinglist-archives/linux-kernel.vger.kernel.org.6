@@ -1,251 +1,166 @@
-Return-Path: <linux-kernel+bounces-341333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C459B987E7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:36:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46DF8987E87
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20D5028554A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:35:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 787B21C20F48
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F08E158557;
-	Fri, 27 Sep 2024 06:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQMYkyAA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB37178377;
+	Fri, 27 Sep 2024 06:39:33 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4F715D5C1;
-	Fri, 27 Sep 2024 06:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F98158557;
+	Fri, 27 Sep 2024 06:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727418950; cv=none; b=nayKxkU/P32aWiHjJxGdv6RkmLOWuporKf8NevOL2lS907HNR+46nDeXAKnG/wIdm3/GmDAI9HYksOJcVQ1C/b4P6Gy1Xr8ifitQ5WtM+v32Q5ESvobWFHUTrsFrZDTedsEK+yk19XVtoI1NYQCeqr0q5F9erNl74ef7kVpmNKY=
+	t=1727419172; cv=none; b=Ux2Ctv4Nrr7VgD0HWxtElTdsT8Z3GGOzbZEDDHztx56+s3AbwN4X2Wt2Tj5So1CbzSaLHOzcoWl9BOgJ8rv7uCqZcX/S9liyOIENh319DC9LjuFG5fDrGPbi5xhuJWV9SPhK2PWrznMGzNHZBmzu5mbaTuGwbqEGsxmDT1zpaHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727418950; c=relaxed/simple;
-	bh=dHncd2eLjwHvu2QwgdvMZB1HbQlijscjhgYoUwAfAE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/suPnNkdt9pD1zN2U1Rshad5IJFEYNVT1ksMC+E5PWzzkCPoDlHQaiy1XT8RU3TNg7q+EMC1PAAfIgagAim0EXt4yJOhCqOFg1AhgYtTn0M57bZrZP7GLesYlfvP75FVOFuA0AwnSIJgLNBfPKpHV5KmWgWluHclpVIv2ABcek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQMYkyAA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5F55C4CEC4;
-	Fri, 27 Sep 2024 06:35:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727418950;
-	bh=dHncd2eLjwHvu2QwgdvMZB1HbQlijscjhgYoUwAfAE8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oQMYkyAA5yUSR0EP/1Z7Twfsf+uFF/Qh1iK2LxKfaRnhHGUoA4kTWVmKU000C9vPF
-	 jzpbeyyyw5gVsybEIR3lyjRJ0ciwHweuc2sLAgTnHoRPVvhEUajU96RPR2TTsimd/h
-	 7lU1TERAuFXsNQ6U+oMbDIFlvLZT+SH05JAC3OtSYSXRgmTlbNYW07sBpl0rOk4QiH
-	 rMfKKaRFrLvKQCx2gftqkRDwczV6P9h2E37/FO5inyrXo8K/ySJSdxyyp97qCjq56X
-	 N1wHNO9fvJp/vUT2mLLXvyrVZE0CUwmJdlCAhDlXm3gntpI9oZPZJIT/EWxCNo9ZBs
-	 IpHoMCIWETZ3Q==
-Date: Thu, 26 Sep 2024 23:35:48 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] perf arm-spe: Support metadata version 2
-Message-ID: <ZvZSRNi_rVnrecPZ@google.com>
-References: <20240914215458.751802-1-leo.yan@arm.com>
- <20240914215458.751802-5-leo.yan@arm.com>
+	s=arc-20240116; t=1727419172; c=relaxed/simple;
+	bh=uiMMQvxopeaDfVxhERXqaMFelDtteEisin7Ss13WtfA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Fr9oIEZIVuBwCOkEvTPJLoyP18sZcW3DW0OsDFBkwpkW7O9ECm98otN5jl+DlmoLileN5ocqE26vqPdpKCLmZook3xGe4w1XwgxglKhXHPAK4NVXLDVrs50AG1hyCznE3Oh2j3AAI8r+oMX8edeHPjMePulgsIS3q+iZfz9FdCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XFLR06Y4Bz4f3jXP;
+	Fri, 27 Sep 2024 14:39:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 3A6F31A018D;
+	Fri, 27 Sep 2024 14:39:25 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDHR8QWU_ZmwM_lCQ--.36079S4;
+	Fri, 27 Sep 2024 14:39:20 +0800 (CST)
+From: libaokun@huaweicloud.com
+To: linux-ext4@vger.kernel.org
+Cc: tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	libaokun@huaweicloud.com,
+	Baokun Li <libaokun1@huawei.com>,
+	Wesley Hershberger <wesley.hershberger@canonical.com>,
+	=?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@stgraber.org>,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Eric Sandeen <sandeen@redhat.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] ext4: fix off by one issue in alloc_flex_gd()
+Date: Fri, 27 Sep 2024 14:36:20 +0800
+Message-Id: <20240927063620.2630898-1-libaokun@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240914215458.751802-5-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHR8QWU_ZmwM_lCQ--.36079S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw1fJw13ZF47tw13ur15Jwb_yoW5Aw48pF
+	93Ka4xGryYgryUGr4UG34vgF18GrykJr17XrWxWw1xXF17ZFsrGr1xKry8CFyUCF95Cr15
+	JFs0vF1qyrnrJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbknY7UUUUU==
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAPBWbv1ZsktAABse
 
-On Sat, Sep 14, 2024 at 10:54:57PM +0100, Leo Yan wrote:
-> This commit is to support metadata version 2 and at the meantime it is
-> backward compatible for version 1's format.
-> 
-> The metadata version 1 doesn't include the ARM_SPE_HEADER_VERSION field.
-> As version 1 is fixed with two u64 fields, by checking the metadata
-> size, it distinguishes the metadata is version 1 or version 2 (and any
-> new versions if later will have). For version 2, it reads out CPU number
-> and retrieves the metadata info for every CPU.
-> 
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->  tools/perf/util/arm-spe.c | 95 +++++++++++++++++++++++++++++++++++++--
->  1 file changed, 92 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-> index 70989b1bae47..17782cb40fb5 100644
-> --- a/tools/perf/util/arm-spe.c
-> +++ b/tools/perf/util/arm-spe.c
-> @@ -78,6 +78,10 @@ struct arm_spe {
->  
->  	unsigned long			num_events;
->  	u8				use_ctx_pkt_for_pid;
-> +
-> +	u64				**metadata;
-> +	u64				metadata_ver;
-> +	u64				metadata_nr_cpu;
->  };
->  
->  struct arm_spe_queue {
-> @@ -1016,6 +1020,73 @@ static int arm_spe_flush(struct perf_session *session __maybe_unused,
->  	return 0;
->  }
->  
-> +static u64 *arm_spe__alloc_per_cpu_metadata(u64 *buf, int cpu_size)
-> +{
-> +	u64 *metadata;
-> +
-> +	metadata = zalloc(sizeof(*metadata) * cpu_size);
+From: Baokun Li <libaokun1@huawei.com>
 
-Maybe calloc() is slightly better here, but not a strong opinion.
+Wesley reported an issue:
 
+==================================================================
+EXT4-fs (dm-5): resizing filesystem from 7168 to 786432 blocks
+------------[ cut here ]------------
+kernel BUG at fs/ext4/resize.c:324!
+CPU: 9 UID: 0 PID: 3576 Comm: resize2fs Not tainted 6.11.0+ #27
+RIP: 0010:ext4_resize_fs+0x1212/0x12d0
+Call Trace:
+ __ext4_ioctl+0x4e0/0x1800
+ ext4_ioctl+0x12/0x20
+ __x64_sys_ioctl+0x99/0xd0
+ x64_sys_call+0x1206/0x20d0
+ do_syscall_64+0x72/0x110
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+==================================================================
 
-> +	if (!metadata)
-> +		return NULL;
-> +
-> +	memcpy(metadata, buf, cpu_size);
+While reviewing the patch, Honza found that when adjusting resize_bg in
+alloc_flex_gd(), it was possible for flex_gd->resize_bg to be bigger than
+flexbg_size.
 
-I'm not sure if it's correct since you allocated cpu_size * 8 and copies
-only cpu_size.
+The reproduction of the problem requires the following:
 
+ o_group = flexbg_size * 2 * n;
+ o_size = (o_group + 1) * group_size;
+ n_group: [o_group + flexbg_size, o_group + flexbg_size * 2)
+ o_size = (n_group + 1) * group_size;
 
-> +	return metadata;
-> +}
-> +
-> +static void arm_spe__free_metadata(u64 **metadata, int nr_cpu)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < nr_cpu; i++)
-> +		zfree(&metadata[i]);
-> +	free(metadata);
-> +}
-> +
-> +static u64 **arm_spe__alloc_metadata(struct perf_record_auxtrace_info *info,
-> +				     u64 *ver, int *nr_cpu)
-> +{
-> +	u64 *ptr = (u64 *)info->priv;
-> +	u64 metadata_size;
-> +	u64 **metadata = NULL;
-> +	int hdr_sz, cpu_sz, i;
-> +
-> +	metadata_size = info->header.size -
-> +		sizeof(struct perf_record_auxtrace_info);
-> +
-> +	/* Metadata version 1 */
-> +	if (metadata_size == ARM_SPE_AUXTRACE_V1_PRIV_SIZE) {
-> +		*ver = 1;
-> +		*nr_cpu = 0;
-> +		/* No per CPU metadata */
-> +		return NULL;
-> +	}
-> +
-> +	*ver = ptr[ARM_SPE_HEADER_VERSION];
-> +	hdr_sz = ptr[ARM_SPE_HEADER_SIZE];
-> +	*nr_cpu = ptr[ARM_SPE_CPUS_NUM];
-> +
-> +	metadata = zalloc(sizeof(*metadata) * (*nr_cpu));
+Take n=0,flexbg_size=16 as an example:
 
-calloc() instead?  But probably better defining a struct for metadata.
+              last:15
+|o---------------|--------------n-|
+o_group:0    resize to      n_group:30
 
-Thanks,
-Namhyung
+The corresponding reproducer is:
 
+img=test.img
+truncate -s 600M $img
+mkfs.ext4 -F $img -b 1024 -G 16 8M
+dev=`losetup -f --show $img`
+mkdir -p /tmp/test
+mount $dev /tmp/test
+resize2fs $dev 248M
 
-> +	if (!metadata)
-> +		return NULL;
-> +
-> +	/* Locate the start address of per CPU metadata */
-> +	ptr += hdr_sz;
-> +	cpu_sz = (metadata_size - (hdr_sz * sizeof(u64))) / (*nr_cpu);
-> +
-> +	for (i = 0; i < *nr_cpu; i++) {
-> +		metadata[i] = arm_spe__alloc_per_cpu_metadata(ptr, cpu_sz);
-> +		if (!metadata[i])
-> +			goto err_per_cpu_metadata;
-> +
-> +		ptr += cpu_sz / sizeof(u64);
-> +	}
-> +
-> +	return metadata;
-> +
-> +err_per_cpu_metadata:
-> +	arm_spe__free_metadata(metadata, *nr_cpu);
-> +	return NULL;
-> +}
-> +
->  static void arm_spe_free_queue(void *priv)
->  {
->  	struct arm_spe_queue *speq = priv;
-> @@ -1050,6 +1121,7 @@ static void arm_spe_free(struct perf_session *session)
->  	auxtrace_heap__free(&spe->heap);
->  	arm_spe_free_events(session);
->  	session->auxtrace = NULL;
-> +	arm_spe__free_metadata(spe->metadata, spe->metadata_nr_cpu);
->  	free(spe);
->  }
->  
-> @@ -1267,15 +1339,24 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
->  	const char *cpuid = perf_env__cpuid(session->evlist->env);
->  	u64 midr = strtol(cpuid, NULL, 16);
->  	struct arm_spe *spe;
-> -	int err;
-> +	u64 **metadata = NULL;
-> +	u64 metadata_ver;
-> +	int nr_cpu, err;
->  
->  	if (auxtrace_info->header.size < sizeof(struct perf_record_auxtrace_info) +
->  					min_sz)
->  		return -EINVAL;
->  
-> +	metadata = arm_spe__alloc_metadata(auxtrace_info, &metadata_ver,
-> +					   &nr_cpu);
-> +	if (!metadata && metadata_ver != 1) {
-> +		pr_err("Failed to parse Arm SPE metadata.\n");
-> +		return -EINVAL;
-> +	}
-> +
->  	spe = zalloc(sizeof(struct arm_spe));
->  	if (!spe)
-> -		return -ENOMEM;
-> +		goto err_free_metadata;
->  
->  	err = auxtrace_queues__init(&spe->queues);
->  	if (err)
-> @@ -1284,8 +1365,14 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
->  	spe->session = session;
->  	spe->machine = &session->machines.host; /* No kvm support */
->  	spe->auxtrace_type = auxtrace_info->type;
-> -	spe->pmu_type = auxtrace_info->priv[ARM_SPE_PMU_TYPE];
-> +	if (metadata_ver == 1)
-> +		spe->pmu_type = auxtrace_info->priv[ARM_SPE_PMU_TYPE];
-> +	else
-> +		spe->pmu_type = auxtrace_info->priv[ARM_SPE_SHARED_PMU_TYPE];
->  	spe->midr = midr;
-> +	spe->metadata = metadata;
-> +	spe->metadata_ver = metadata_ver;
-> +	spe->metadata_nr_cpu = nr_cpu;
->  
->  	spe->timeless_decoding = arm_spe__is_timeless_decoding(spe);
->  
-> @@ -1346,5 +1433,7 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
->  	session->auxtrace = NULL;
->  err_free:
->  	free(spe);
-> +err_free_metadata:
-> +	arm_spe__free_metadata(metadata, nr_cpu);
->  	return err;
->  }
-> -- 
-> 2.34.1
-> 
+Delete the problematic plus 1 to fix the issue, and add a WARN_ON_ONCE()
+to prevent the issue from happening again.
+
+Reported-by: Wesley Hershberger <wesley.hershberger@canonical.com>
+Closes: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2081231
+Reported-by: Stéphane Graber <stgraber@stgraber.org>
+Closes: https://lore.kernel.org/all/20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com/
+Tested-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Tested-by: Eric Sandeen <sandeen@redhat.com>
+Fixes: 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation in alloc_flex_gd()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+ fs/ext4/resize.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
+index e04eb08b9060..397970121d43 100644
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -253,9 +253,9 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned int flexbg_size,
+ 	/* Avoid allocating large 'groups' array if not needed */
+ 	last_group = o_group | (flex_gd->resize_bg - 1);
+ 	if (n_group <= last_group)
+-		flex_gd->resize_bg = 1 << fls(n_group - o_group + 1);
++		flex_gd->resize_bg = 1 << fls(n_group - o_group);
+ 	else if (n_group - last_group < flex_gd->resize_bg)
+-		flex_gd->resize_bg = 1 << max(fls(last_group - o_group + 1),
++		flex_gd->resize_bg = 1 << max(fls(last_group - o_group),
+ 					      fls(n_group - last_group));
+ 
+ 	flex_gd->groups = kmalloc_array(flex_gd->resize_bg,
+-- 
+2.46.0
+
 
