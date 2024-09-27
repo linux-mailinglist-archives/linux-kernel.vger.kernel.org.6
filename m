@@ -1,110 +1,78 @@
-Return-Path: <linux-kernel+bounces-342261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD49988CC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 01:03:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2AB988CCB
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 01:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4EA61F222A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:03:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC27B1C204F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4372A1B5ED3;
-	Fri, 27 Sep 2024 23:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B781B6549;
+	Fri, 27 Sep 2024 23:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ggBHIXMv"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sC/lmtg/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF2B17E01D;
-	Fri, 27 Sep 2024 23:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438051384B3;
+	Fri, 27 Sep 2024 23:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727478165; cv=none; b=bcTOxdmWcyfU2WjdRR6qI8lMfgvrPSJcRXdKQkklmaiE7r32xPfieFBnp/viID33AJ6Kqep3n7bF4N7SaADN1ilSW882AtGxRID8L6YQAWqhacanDPbpbk902nTNhzq2dY1i6shJSM7bjMr3HB3pcQ+pnIi+yHNHhLjyTMMBnhk=
+	t=1727478215; cv=none; b=QJK16OQcMZ/RlzpqG6bkmLkv8gk+zV2EMuVDbWm+wfCAmBTAMp8xAOxaKubYW+ycjAF0RlQGoXI+/yq5Q3VpPeoLvIZsi+F63AqsaE4lrWVYh1fwRE44lZKdUyVwaicrF/0eCQmpGhCtnnldD/1/MzZP0Zj85hdHD2etWKESTFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727478165; c=relaxed/simple;
-	bh=KtDtI67O/T5NmvNP3sdnrOdHn0o03XVj0MzD4XEC5Vg=;
+	s=arc-20240116; t=1727478215; c=relaxed/simple;
+	bh=cDsTwguOFWY1iKRV1PzfSAUB+ha3Hm/urm6km6cIwQs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IxOZAr6CkANXezuwXwHuOLyvWvUcV+KJA+LJR2pHWZY5P04iojQqe5w36xAJ6NL/l2Ua9qbF1cnlk5ZYDCcM0JAFDEkThlP/jUIkjsDJ5ahMqSFNLYg7LhhhEZta7ZG6+x328Zy/BN/Y39cVGRDAQvaCTIHZ0ewVK3RgJ5/7em0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ggBHIXMv; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6D28F9EC;
-	Sat, 28 Sep 2024 01:01:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727478073;
-	bh=KtDtI67O/T5NmvNP3sdnrOdHn0o03XVj0MzD4XEC5Vg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=JcxH+iB0iGwlPrLL8hk7ExdLCMsCu2GQzvmbw0w/yPdBtUeCexMt4H/dFo9k+QVZZm3VNuPnq01HRgP2ySUEuNV8PLKOdca319ej/W1+n/wI1txezNM6152/t0TwARzNURGSqyFK0THuJxLSI8y38x6/WCgvj+FKibQ6H9FvXPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sC/lmtg/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91996C4CEC4;
+	Fri, 27 Sep 2024 23:03:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727478214;
+	bh=cDsTwguOFWY1iKRV1PzfSAUB+ha3Hm/urm6km6cIwQs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ggBHIXMvqVQV1PFdXyo+qRqaZEZdOqX87YNjt4ftEUEaH8/NOa7L6zSbY81fywbFU
-	 609knYL9KBswQOnq5I/H3RaGjZT1pnzbI7zLKucVi0/INh7dKZ/aiO+/qdoD3vamIa
-	 LG7XpxRd8En/29qpNhvL4STe0FIk27iEb1Cjvuik=
-Date: Sat, 28 Sep 2024 02:02:39 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 12/16] media: platform: rzg2l-cru: rzg2l-csi2: Remove
- unused datatype field from rzg2l_csi2_format
-Message-ID: <20240927230239.GL12322@pendragon.ideasonboard.com>
-References: <20240910175357.229075-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240910175357.229075-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	b=sC/lmtg/Dj6yYjZS40EzTKyfeqQSjFJ6ZCfNYohkRL+c3NEjFVeBZWLrkh3faHGm+
+	 HgEQ3URuIO/pqDabxFvPBQ3V9unj4mvdf0YGB5umR55O5wbew9UZ/W1KKMADAhQGo+
+	 xElAiqWim84+LeSJfZperGeDrPDoy17r+/28YvN4CeAhspGXANinQYI8f7/qK+iDhl
+	 NknCvVbJIoslonMbTbGsRj9tCs210hU1/cL5+2ZnpeMe8U10mSBCCDXVUHFd/mUMgF
+	 0gEbBSM25pybq9EwBbxgJNoiEKZ4WptN1sLWReqUtrBq1dLLYdzu2xgCc7O5hd1B+j
+	 Q8kWLPiI89fkA==
+Date: Fri, 27 Sep 2024 18:03:32 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-sound@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH 1/1] ASoC: dt-bindings: fsl-esai: Add power-domains for
+ fsl,imx8qm-esai
+Message-ID: <172747821203.186059.10337981239925605095.robh@kernel.org>
+References: <20240927205618.4093591-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240910175357.229075-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240927205618.4093591-1-Frank.Li@nxp.com>
 
-Hi Prabhakar,
 
-Thank you for the patch.
-
-On Tue, Sep 10, 2024 at 06:53:53PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Fri, 27 Sep 2024 16:56:18 -0400, Frank Li wrote:
+> i.MX8QM's esai require power-domains property. Keep the same restriction
+> for other compatible string.
 > 
-> Remove the unused `datatype` field from the `rzg2l_csi2_format` struct and
-> update the `rzg2l_csi2_formats[]` array to reflect the updated structure.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  .../devicetree/bindings/sound/fsl,esai.yaml        | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> index 26953499f305..79d99d865c1f 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> @@ -183,12 +183,11 @@ static const struct rzg2l_csi2_timings rzg2l_csi2_global_timings[] = {
->  
->  struct rzg2l_csi2_format {
->  	u32 code;
-> -	unsigned int datatype;
->  	unsigned int bpp;
->  };
->  
->  static const struct rzg2l_csi2_format rzg2l_csi2_formats[] = {
-> -	{ .code = MEDIA_BUS_FMT_UYVY8_1X16,	.datatype = 0x1e, .bpp = 16 },
-> +	{ .code = MEDIA_BUS_FMT_UYVY8_1X16, .bpp = 16 },
->  };
->  
->  static inline struct rzg2l_csi2 *sd_to_csi2(struct v4l2_subdev *sd)
 
--- 
-Regards,
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Laurent Pinchart
 
