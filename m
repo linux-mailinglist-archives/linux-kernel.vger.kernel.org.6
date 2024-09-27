@@ -1,237 +1,140 @@
-Return-Path: <linux-kernel+bounces-341813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF530988692
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:52:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 510A39886CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D7C21C2212E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:52:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE4BF284BEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAE61BF7E3;
-	Fri, 27 Sep 2024 13:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B005191;
+	Fri, 27 Sep 2024 14:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AGZWDIkp"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="WfN/0X3q"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E61185B72
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 13:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51778493;
+	Fri, 27 Sep 2024 14:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727445123; cv=none; b=b+GJPEtxUmCGA1qp70K8k3Uervy0/Oggf34PFpwFBMLalqlfVNdVW4OmFrYJNNIm9x26+AnESswsgDh28bwJbEH0uXhJOZnlgTV+81paV0XgRAzOCLM1Rsrmdll7IA1E53G2roTdBFWiSXgie0KxiZbV4P1sVFUJEMmXw9NBncM=
+	t=1727446568; cv=none; b=uVlHW3lNHwNXZq/b1YrOoBXiPUwB+mAFRWTPjvbPO3vf7q+MEyakYFORy8vYZIEeSZccSukQD+zIG53E0pMLGmG+L2XC/lX1mYAOXO27Moxi6Eix43WXUt7CV8AStj6GUk10x0uL/wvVaUp2vUQ1jD6B670uRJ17iPgNq4QaqWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727445123; c=relaxed/simple;
-	bh=TMvt6BrLR403fS08wVJ1UKHeD+enDKMmGKdX7ghvBKg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QM9H1PPWfcVNSZ1PVqY++Ga6CBkHOVKJgj264uobAWbGSuMW1ly9af0Fd8G4iRqBP8hDIKb8dJdRakDEY1D9KhZiz7grAfge2mjW2P0Ji0WqoAPUYivPMj97PPO5Ug87UGF0ENGqqyx1eqToJZZBBMVsXlNDdehZVka0oBhnMeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AGZWDIkp; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e2555d3d0eso2553217b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 06:52:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727445120; x=1728049920; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nEP8CF+sqf5svRnf/ud30Te+lohW++0YXoaXmWT1Axo=;
-        b=AGZWDIkpGECsFcfI1pN2OgeR93+/8NbvmE/Xe73hG9lebjjGZsMcF34dWKXSsHwnIJ
-         xF3rWSsRdG08IKmpnioFdpZwJBMWpKbmkL4eFArMBpbXxPo33M5fc9DJHeUlI6aDamDt
-         AWjNQebrnEopahIKtLRkGdDCEljrLMioEoQpLwuauWYUWuq9R4IlBImLnFYwkzoTBEBo
-         +5/bX+NE36lxRjCvB8nSmC8KodnNXbXipCBYIaNQ7vz/HbIySDUgG1FfJvw7QF2Sta8+
-         kwwLOHRyqxlZnZ5tlHN5oqk/twj0RFOzDg6vAXW+ju382E1RYX/p0YwXXbbsJvDa4S2w
-         muug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727445120; x=1728049920;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nEP8CF+sqf5svRnf/ud30Te+lohW++0YXoaXmWT1Axo=;
-        b=pLdZq1Np7DvKuCu6SsBMCWENkaJXXawaSzdwc+3Ma8MtJUf/U48RDGw8KbXHomwHBz
-         3det0fxw+r+4kn8SMw/mJZbfMQs3zM+ySvBRo21bO06A6agtavc1XxT47wWlfxfqXHEU
-         YpNvK+/f23bWA4PCFrWxAEqvdzqRNk9EYDrHIYEi7NepeDd0F/7TNXMno3LogsTTBgun
-         7owFCe+9Due7kjhbuHkKWPAvpYYkRCmXONzG3Yjf8JvM5IVxL/b4KELfo86onBblsxes
-         22LO3JZMadlg7gnxC0znMWSGph/z66tyh5+TXvNMtZ+jcaI1uxWQe8UU35PYPlnJElAR
-         ojNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVY+FWp3TMw13r9QCN7uO/38Aai0Dkbj43B3Up+zQtUEfO3dT1efvlkINxSf05E+iApsaCoNTifhLPdP/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyJOi2IoOI8ds8hreSAzCZNRKQT5rwSoB7ArgqqnLb8R4BoIzi
-	HtPVgEl4G9rHV8tw99Gek1Y0WtqXVpSdw6if6KZuXhYauvChwTEkBC0KXdcyO+VU77c2Mu95NzF
-	vgg==
-X-Google-Smtp-Source: AGHT+IF6dcvm3lu1nvRfd5b8XNVP3WMyqS4UlkG8cak+knDCbjrwpgrPBl9M4w7Sl64vvBi4CwXXBJlDmYk=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:d8c:b0:6b1:8b74:978a with SMTP id
- 00721157ae682-6e2475a7f4emr891097b3.4.1727445120202; Fri, 27 Sep 2024
- 06:52:00 -0700 (PDT)
-Date: Fri, 27 Sep 2024 06:51:58 -0700
-In-Reply-To: <ZvUS+Cwg6DyA62EC@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1727446568; c=relaxed/simple;
+	bh=Y+KbHIb4oHpeFuLUCsPn+9dosUtmgAlL5hFLy/c3O7c=;
+	h=From:To:Cc:Date:Message-Id:MIME-Version:Subject; b=o++qgoSEtNeCKMkp5V4+zEVtQj1Vo+DuV2Lnf5q0d1D90MAmAUThOkkjYEiAWORzkWt4qybmNUhTkwKoKnjPi3lZh1UDHzgJKJ8HOnJq7xD66aQmlwguKMN2Gp7tlG9y0A73i9hL+PFHZ6gLmQ17sA1pLrLcktCEZoCuMyV2tkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=WfN/0X3q; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
+	:From:subject:date:message-id:reply-to;
+	bh=rFY2f6oSwge6XyupmQECSbR1vqc99i87yPhEVwH6LEY=; b=WfN/0X3qoT0Pfn4oZLPNzDrwHD
+	kA1LEpVnfSTZ8ZvHRXwNiwuAkAcQDg25ID4lM82d1DJePJKy02SlN1JVQE8A0KgoSfNKDI2XunotA
+	buyJcTLHjXWT4Zm3RGQEmnFGWmrTpcB24sQs9HXTIfCAhgBkJSZMZRou6wOrA5+K2h8M=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:54798 helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1suBQP-0007xB-Uu; Fri, 27 Sep 2024 09:54:26 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Jagan Teki <jagan@edgeble.ai>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: hugo@hugovil.com,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	stable@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Date: Fri, 27 Sep 2024 09:53:05 -0400
+Message-Id: <20240927135306.857617-1-hugo@hugovil.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <6eecc450d0326c9bedfbb34096a0279410923c8d.1726182754.git.isaku.yamahata@intel.com>
- <ZuOCXarfAwPjYj19@google.com> <ZvUS+Cwg6DyA62EC@yzhao56-desk.sh.intel.com>
-Message-ID: <Zva4aORxE9ljlMNe@google.com>
-Subject: Re: [PATCH] KVM: x86/tdp_mmu: Trigger the callback only when an
- interesting change
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>, kvm@vger.kernel.org, sagis@google.com, 
-	chao.gao@intel.com, pbonzini@redhat.com, rick.p.edgecombe@intel.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+Subject: [PATCH] drm: panel: jd9365da-h3: fix reset signal polarity
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-On Thu, Sep 26, 2024, Yan Zhao wrote:
-> On Thu, Sep 12, 2024 at 05:07:57PM -0700, Sean Christopherson wrote:
-> > On Thu, Sep 12, 2024, Isaku Yamahata wrote:
-> > > KVM MMU behavior
-> > > ================
-> > > The leaf SPTE state machine is coded in make_spte().  Consider AD bits and
-> > > the present bits for simplicity.  The two functionalities and AD bits
-> > > support are related in this context.  unsync (manipulate D bit and W bit,
-> > > and handle write protect fault) and access tracking (manipulate A bit and
-> > > present bit, and hand handle page fault).  (We don't consider dirty page
-> > > tracking for now as it's future work of TDX KVM.)
-> > > 
-> > > * If AD bit is enabled:
-> > > D bit state change for dirty page tracking
-> > > On the first EPT violation without prefetch,
-> > > - D bits are set.
-> > > - Make SPTE writable as TDX supports only RXW (or if write fault).
-> > >   (TDX KVM doesn't support write protection at this state. It's future work.)
-> > > 
-> > > On the second EPT violation.
-> > > - clear D bits if write fault.
-> > 
-> > Heh, I was literally just writing changelogs for patches to address this (I told
-> > Sagi I would do it "this week"; that was four weeks ago).
-> > 
-> > This is a bug in make_spte().  Replacing a W=1,D=1 SPTE with a W=1,D=0 SPTE is
-> > nonsensical.  And I'm pretty sure it's an outright but for the TDP MMU (see below).
-> > 
-> > Right now, the fixes for make_spte() are sitting toward the end of the massive
-> > kvm_follow_pfn() rework (80+ patches and counting), but despite the size, I am
-> > fairly confident that series can land in 6.13 (lots and lots of small patches).
-> > 
-> > ---
-> > Author:     Sean Christopherson <seanjc@google.com>
-> > AuthorDate: Thu Sep 12 16:23:21 2024 -0700
-> > Commit:     Sean Christopherson <seanjc@google.com>
-> > CommitDate: Thu Sep 12 16:35:06 2024 -0700
-> > 
-> >     KVM: x86/mmu: Flush TLBs if resolving a TDP MMU fault clears W or D bits
-> >     
-> >     Do a remote TLB flush if installing a leaf SPTE overwrites an existing
-> >     leaf SPTE (with the same target pfn) and clears the Writable bit or the
-> >     Dirty bit.  KVM isn't _supposed_ to clear Writable or Dirty bits in such
-> >     a scenario, but make_spte() has a flaw where it will fail to set the Dirty
-> >     if the existing SPTE is writable.
-> >     
-> >     E.g. if two vCPUs race to handle faults, the KVM will install a W=1,D=1
-> >     SPTE for the first vCPU, and then overwrite it with a W=1,D=0 SPTE for the
-> >     second vCPU.  If the first vCPU (or another vCPU) accesses memory using
-> >     the W=1,D=1 SPTE, i.e. creates a writable, dirty TLB entry, and that is
-> >     the only SPTE that is dirty at the time of the next relevant clearing of
-> >     the dirty logs, then clear_dirty_gfn_range() will not modify any SPTEs
-> >     because it sees the D=0 SPTE, and thus will complete the clearing of the
-> >     dirty logs without performing a TLB flush.
-> But it looks that kvm_flush_remote_tlbs_memslot() will always be invoked no
-> matter clear_dirty_gfn_range() finds a D bit or not.
+From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-Oh, right, I forgot about that.  I'll tweak the changelog to call that out before
-posting.  Hmm, and I'll drop the Cc: stable@ too, as commit b64d740ea7dd ("kvm:
-x86: mmu: Always flush TLBs when enabling dirty logging") was a bug fix, i.e. if
-anything should be backported it's that commit.
+In jadard_prepare() a reset pulse is generated with the following
+statements (delays ommited for clarity):
 
-> kvm_mmu_slot_apply_flags
->   |kvm_mmu_slot_leaf_clear_dirty
->   |  |kvm_tdp_mmu_clear_dirty_slot
->   |    |clear_dirty_gfn_range
->   |kvm_flush_remote_tlbs_memslot
->      
-> >     Opportunistically harden the TDP MMU against clearing the Writable bit as
-> >     well, both to prevent similar bugs for write-protection, but also so that
-> >     the logic can eventually be deduplicated into spte.c (mmu_spte_update() in
-> >     the shadow MMU has similar logic).
-> >     
-> >     Fix the bug in the TDP MMU's page fault handler even though make_spte() is
-> >     clearly doing odd things, e.g. it marks the page dirty in its slot but
-> >     doesn't set the Dirty bit.  Precisely because replacing a leaf SPTE with
-> >     another leaf SPTE is so rare, the cost of hardening KVM against such bugs
-> >     is negligible.  The make_spte() will be addressed in a future commit.
-> >     
-> >     Fixes: bb18842e2111 ("kvm: x86/mmu: Add TDP MMU PF handler")
-> >     Cc: David Matlack <dmatlack@google.com>
-> >     Cc: stable@vger.kernel.org
-> >     Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > 
-> > diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> > index 3b996c1fdaab..7c6d1c610f0e 100644
-> > --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> > +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> > @@ -1038,7 +1038,9 @@ static int tdp_mmu_map_handle_target_level(struct kvm_vcpu *vcpu,
-> >         else if (tdp_mmu_set_spte_atomic(vcpu->kvm, iter, new_spte))
-> >                 return RET_PF_RETRY;
-> >         else if (is_shadow_present_pte(iter->old_spte) &&
-> > -                !is_last_spte(iter->old_spte, iter->level))
-> > +                (!is_last_spte(iter->old_spte, iter->level) ||
-> > +                 (is_mmu_writable_spte(old_spte) && !is_writable_pte(new_spte)) ||
-> > +                 (is_dirty_spte(old_spte) && !is_dirty_spte(new_spte))))
-> Should we also check is_accessed_spte() as what's done in mmu_spte_update()?
+    gpiod_set_value(jadard->reset, 1); --> Deassert reset
+    gpiod_set_value(jadard->reset, 0); --> Assert reset for 10ms
+    gpiod_set_value(jadard->reset, 1); --> Deassert reset
 
-Heh, it's impossible to see in this standalone "posting", but earlier in the
-massive series is a patch that removes that code.  Aptly titled "KVM: x86/mmu:
-Don't force flush if SPTE update clears Accessed bit".
+However, specifying second argument of "0" to gpiod_set_value() means to
+deassert the GPIO, and "1" means to assert it. If the reset signal is
+defined as GPIO_ACTIVE_LOW in the DTS, the above statements will
+incorrectly generate the reset pulse (inverted) and leave it asserted
+(LOW) at the end of jadard_prepare().
 
-> It is possible for make_spte() to make the second spte !is_dirty_spte(), e.g.
-> the second one is caused by a KVM_PRE_FAULT_MEMORY ioctl.
+Fix reset behavior by inverting gpiod_set_value() second argument
+in jadard_prepare(). Also modify second argument to devm_gpiod_get()
+in jadard_dsi_probe() to assert the reset when probing.
 
-Ya, the mega-series also has a fix for that: "KVM: x86/mmu: Always set SPTE's
-dirty bit if it's created as writable".
+Do not modify it in jadard_unprepare() as it is already properly
+asserted with "1", which seems to be the intended behavior.
 
-> >                 kvm_flush_remote_tlbs_gfn(vcpu->kvm, iter->gfn, iter->level);
-> >  
-> >         /*
-> > ---
-> > 
-> > >  arch/x86/kvm/mmu/spte.h    |  6 ++++++
-> > >  arch/x86/kvm/mmu/tdp_mmu.c | 28 +++++++++++++++++++++++++---
-> > >  2 files changed, 31 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
-> > > index a72f0e3bde17..1726f8ec5a50 100644
-> > > --- a/arch/x86/kvm/mmu/spte.h
-> > > +++ b/arch/x86/kvm/mmu/spte.h
-> > > @@ -214,6 +214,12 @@ extern u64 __read_mostly shadow_nonpresent_or_rsvd_mask;
-> > >   */
-> > >  #define FROZEN_SPTE	(SHADOW_NONPRESENT_VALUE | 0x5a0ULL)
-> > >  
-> > > +#define EXTERNAL_SPTE_IGNORE_CHANGE_MASK		\
-> > > +	(shadow_acc_track_mask |			\
-> > > +	 (SHADOW_ACC_TRACK_SAVED_BITS_MASK <<		\
-> > > +	  SHADOW_ACC_TRACK_SAVED_BITS_SHIFT) |		\
-> > 
-> > Just make TDX require A/D bits, there's no reason to care about access tracking.
-> If KVM_PRE_FAULT_MEMORY is allowed for TDX and if
-> cpu_has_vmx_ept_ad_bits() is false in TDX's hardware (not sure if it's possible),
+Fixes: 6b818c533dd8 ("drm: panel: Add Jadard JD9365DA-H3 DSI panel")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+---
+ drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Make it a requirement in KVM that TDX hardware supports A/D bits and that KVM's
-module param is enabled.  EPT A/D bits have been supported in all CPUs since
-Haswell, I don't expect them to ever go away.
+diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
+index 44897e5218a69..6fec99cf4d935 100644
+--- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
++++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
+@@ -110,13 +110,13 @@ static int jadard_prepare(struct drm_panel *panel)
+ 	if (jadard->desc->lp11_to_reset_delay_ms)
+ 		msleep(jadard->desc->lp11_to_reset_delay_ms);
+ 
+-	gpiod_set_value(jadard->reset, 1);
++	gpiod_set_value(jadard->reset, 0);
+ 	msleep(5);
+ 
+-	gpiod_set_value(jadard->reset, 0);
++	gpiod_set_value(jadard->reset, 1);
+ 	msleep(10);
+ 
+-	gpiod_set_value(jadard->reset, 1);
++	gpiod_set_value(jadard->reset, 0);
+ 	msleep(130);
+ 
+ 	ret = jadard->desc->init(jadard);
+@@ -1131,7 +1131,7 @@ static int jadard_dsi_probe(struct mipi_dsi_device *dsi)
+ 	dsi->format = desc->format;
+ 	dsi->lanes = desc->lanes;
+ 
+-	jadard->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
++	jadard->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+ 	if (IS_ERR(jadard->reset)) {
+ 		DRM_DEV_ERROR(&dsi->dev, "failed to get our reset GPIO\n");
+ 		return PTR_ERR(jadard->reset);
 
-> access tracking bit is possbile to be changed, as in below scenario:
-> 
-> 1. KVM_PRE_FAULT_MEMORY ioctl calls kvm_arch_vcpu_pre_fault_memory() to map
->    a GFN, and make_spte() will call mark_spte_for_access_track() to
->    remove shadow_acc_track_mask (i.e. RWX bits) and move R+X left to
->    SHADOW_ACC_TRACK_SAVED_BITS_SHIFT.
-> 2. If a concurrent page fault occurs on the same GFN on another vCPU, then
->    make_spte() in that vCPU will not see prefetch and the new_spte is
->    with RWX bits and with no bits set in SHADOW_ACC_TRACK_SAVED_MASK.
+base-commit: 18ba6034468e7949a9e2c2cf28e2e123b4fe7a50
+-- 
+2.39.5
 
-This should be fixed by the mega-series.  I'll make sure to Cc you on that series.
-
-Thanks much for the input and feedback!
 
