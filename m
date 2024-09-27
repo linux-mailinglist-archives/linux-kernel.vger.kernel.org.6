@@ -1,105 +1,123 @@
-Return-Path: <linux-kernel+bounces-341868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A3298876C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:45:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F941988784
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E2B11F22003
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:45:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C635EB216FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B531C0DDB;
-	Fri, 27 Sep 2024 14:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E831C0DD2;
+	Fri, 27 Sep 2024 14:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cp5f6pvW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="bYiorruj"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B068C1BFE15;
-	Fri, 27 Sep 2024 14:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C7F158521
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727448337; cv=none; b=Tyo1EzmL0+gFJC6DiDwvRQBShz7q2PAOMBczOKh/zqSGcVjAdSImSS9KZ1w7Y6OSt9GTtuGDiOxQSWfiGVmPwcznrJcV6pOjr2D+iFz1aY5bwz9s3/SdgBFHgFn4ELzZE4a4X6tN+ywObJFs404Es5ISWXFqk1mW9XqmalCHPO8=
+	t=1727448506; cv=none; b=haHDbf0rWPRoOYipZQfSm8RM69iXRPOFG7veaqt8Ion519Fv3Mc/b7m7SIobpL9cIQPwgwvdGtJVxfav/PIITFP1/ycLchuKrEsY1EEJbyUTfppW+QEeafJlr63LUvZfvSiRAhs06vfsEHgO615ux817YpSaFQmVlVU386e0+ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727448337; c=relaxed/simple;
-	bh=AKcPIqZ5+zgmVBoXaw9ytiKXatg95FqsqNs4lZFarVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Of3l5YjA1Dubr5Ig2PPmraE2hCxF2+hB4SppQeN2oUFtI2e9QXLjb3daegjAEHm7b0b+4aiklhsun7UXhJbpdn91vbMAzwB52nSlkB1WHL8BPn9wf6uhWf8KwUtm3qbjU0EIhRKIzxXftD+1DqezSMQwxk/Xk+zM1S/4poO6DHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cp5f6pvW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81734C4CEC4;
-	Fri, 27 Sep 2024 14:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727448337;
-	bh=AKcPIqZ5+zgmVBoXaw9ytiKXatg95FqsqNs4lZFarVU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cp5f6pvWE35oxbIPQtLywsNwotw8O4dECJYgQUnug28LYFvGP56gUpmYN6rMVKYdq
-	 5N0KLAQWrlvMjKTVUUilUSiOHsV8tvOVvR4axdRyyNbx6mcY0zz0uHojofWzBS/Hfz
-	 b9w7uGqIPf7SDU/y7KQKvrqWgMzGWYsgXeLXxN22/RSHBNbL9YWUS34+SXLfYdGvDk
-	 yvINUkpGn/aFY6nsW2xBUoJ2AXqelG/7bCS92Li6vpXYg8bHl/NQ8RGy6j9xXISlyV
-	 6lzI4kSW4F6WHhkMytfcVd5yLf3a7xywbXkRjYEXUS6zpWlI6ZqgzH4fHEcX5gd26W
-	 kR2+wM8tW5RjA==
-Message-ID: <919a3891-4024-4b67-81ae-93f3c87ee37b@kernel.org>
-Date: Fri, 27 Sep 2024 09:45:35 -0500
+	s=arc-20240116; t=1727448506; c=relaxed/simple;
+	bh=d7zc+uqiXFPitn+KyLsTdoo2A6Uo6JRLD0/ngQQeyMc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d0IHwPi4vcOqNaZEEUNTt9tarh3mTIRXLLOXBzkifDzYKwvzLw2SzNZiMjw+NH2yTBNNdRPSib8hRzGL6KpCiSaNU0IXZsnXC18ksUX+cFvBFz/1k6DiZztOGFh0cxozcS0+oexbuG867ZpFFewKedwFhHhpu86xFDH0jxX7zb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=bYiorruj; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=e7+ejxWy+FeNgwZderI1+RcWjnrYFg9VpnRoJUCKCvM=; b=bYiorrujtwke8PNwVODF4XACP2
+	ZhKpOflMsOponGRFEPKZSMfOqy5+wVzPAeQDK4eriIysfZrYS8nS2nO8BB+C2Kjxe9Tb8LFSNloQB
+	ZvkkSmZXRVV1QvkaLCyd17FsXfxj/WvYvzu3UP5ou6kX/Zel4CbjNRvntxRRFI5Dx0XdyzGGl+mGO
+	6SaPBUOFv66UlsRL1dCD4PXfsF6Bx5LMTOcb7VLjTDokuLeUBb0w1XMihUiTdNRPo5QV7CFUpnr+I
+	ESpNVcZvsvurjKD+w0C7KUv4EhtFKDr1Ancok/q0xbc31hD0JoPeLf7xuPbhj7lqoSeko7hmklrxF
+	Ykba9Nfw==;
+Received: from 85-160-70-253.reb.o2.cz ([85.160.70.253] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1suCGd-0006Q4-EV; Fri, 27 Sep 2024 16:48:23 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Jakob Unterwurzacher <jakobunt@gmail.com>,
+ Quentin Schulz <quentin.schulz@cherry.de>
+Cc: linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>
+Subject: Re: [PATCH v2] arm64: dts: rockchip: add attiny_rst_gate to Ringneck
+Date: Fri, 27 Sep 2024 16:48:21 +0200
+Message-ID: <2507281.uoxibFcf9D@phil>
+In-Reply-To: <75946cd5-8f6f-40fd-a218-66d399a0da19@cherry.de>
+References:
+ <69f79284-b52e-496e-a286-d7e5ce3d90ce@cherry.de> <3885598.FjKLVJYuhi@phil>
+ <75946cd5-8f6f-40fd-a218-66d399a0da19@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/9] platform/x86: asus-armoury: move existing tunings
- to asus-armoury module
-To: Luke Jones <luke@ljones.dev>, linux-kernel@vger.kernel.org
-Cc: linux-input@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>,
- Jiri Kosina <jikos@kernel.org>, platform-driver-x86@vger.kernel.org,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Hans de Goede <hdegoede@redhat.com>, corentin.chary@gmail.com
-References: <20240926092952.1284435-1-luke@ljones.dev>
- <20240926092952.1284435-4-luke@ljones.dev>
- <c88f9f36-37f1-4607-aa0c-2baa671c946b@kernel.org>
- <81e62b04-3c1d-4807-b431-d13cf7933054@app.fastmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <81e62b04-3c1d-4807-b431-d13cf7933054@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 9/26/2024 18:20, Luke Jones wrote:
+Hey Quentin,
 
->>> + asus_armoury.mini_led_dev_id = 0;
->>> + if (asus_wmi_is_present(ASUS_WMI_DEVID_MINI_LED_MODE)) {
->>> + asus_armoury.mini_led_dev_id = ASUS_WMI_DEVID_MINI_LED_MODE;
->>> + err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
->>> + &mini_led_mode_attr_group);
->>> + } else if (asus_wmi_is_present(ASUS_WMI_DEVID_MINI_LED_MODE2)) {
->>> + asus_armoury.mini_led_dev_id = ASUS_WMI_DEVID_MINI_LED_MODE2;
->>> + err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
->>> + &mini_led_mode_attr_group);
->>> + }
->>> + if (err)
->>> + pr_warn("Failed to create sysfs-group for mini_led\n");
->>
->> Shouldn't you fail and clean up here?
+Am Freitag, 27. September 2024, 11:50:46 CEST schrieb Quentin Schulz:
+> On 9/27/24 11:39 AM, Heiko Stuebner wrote:
+> > Am Donnerstag, 26. September 2024, 15:24:03 CEST schrieb Quentin Schulz:
+> >> Hi Jakob,
+> >>
+> >> On 9/26/24 3:20 PM, Jakob Unterwurzacher wrote:
+> >>> Ringneck v1.4 can contain (placement option) an on-board ATtiny
+> >>> microcontroller instead of an STM32. In normal operation, this
+> >>> is transparent to the software, as both microcontrollers emulate
+> >>> the same ICs (amc6821 and isl1208).
+> >>>
+> >>> For flashing the ATtiny, the SWITCH_REG1 regulator of the board's PMIC is
+> >>> used to enable the ATtiny UPDI debug interface. If the STM32 is placed, or if
+> >>> we are running on an older Ringneck revision, SWITCH_REG1 is not connected
+> >>> and has no effect.
+> >>>
+> >>> Add attiny-updi-gate-regulator so userspace can control it via sysfs
+> >>> (needs CONFIG_REGULATOR_USERSPACE_CONSUMER):
+> >>>
+> >>>     echo enabled > /sys/devices/platform/attiny-updi-gate-regulator/state
+> >>>
+> >>> Signed-off-by: Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>
+> >>> Tested-by: Quentin Schulz <quentin.schulz@cherry.de>
+> >>
+> >> Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+> >>
+> >> This is a candidate for backporting to stable branches as well I assume,
+> >> @Heiko?
+> > 
+> > That is more on the darker side of gray here.
+> > 
+> > Looking at the stable-kernel-rules [0] the criteria is
+> >    "It must either fix a real bug that bothers people or just add a device ID"
+> > 
+> > This change instead is adding a new feature to allow said flashing from a
+> > running system.
+> > 
 > 
-> Honestly not sure. It's only a failed WMI call, and the group doesn't get created for that fail, the others might be fine. I'll defer to your advice on that.
+> This does mean that the new version of the device won't work as well 
+> with an older kernel though.
 
-It comes down to whether failures are expected on some machines or not 
-in practice.
+"new version of the device" being the key here ;-) .
 
-If a machine will fail to create groups, then yeah you should allow 
-skipping.  If it doesn't then I feel you have a much more logical 
-cleanup and support strategy if you unwind on any failure.
+You also would not expect a new board dts or a new board variant to be
+added to stable-kernels.
 
-Hans or Ilpo might have some thoughts here too.
 
->> I think you should be using this mutex more.  For example what if an
->> attribute is being written while the module is unloaded?
-> 
-> Good point. I'll adjust code to suit. However if I do, this will trickle through the other patches I've added your review tag to. Will this be okay?
-> 
->>
+Heiko
 
-If they change in a material way drop my tag and I can just re-review.
+
 
