@@ -1,366 +1,299 @@
-Return-Path: <linux-kernel+bounces-342134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50905988AEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:51:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5657B988AE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32471F23A99
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:51:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 702751C22975
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40501C331C;
-	Fri, 27 Sep 2024 19:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15E01C2DA3;
+	Fri, 27 Sep 2024 19:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="boCoGFWl"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="jQpyfG9I"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BC046B8
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D4746B8
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727466655; cv=none; b=R9BEhl34Pkr+nvOdcJKAvQ5snH/CyL+yGib0SCaO9gBjqoJ8cXWVfIz+ZBA9zbneycm5Nr8A+OmIGMEALE3SEMs6ZmUCbF9VgjJapgQH7fTe2v0M9dNjxwLSdh9EeiReUfsEpUJhRSBbushbvBe6pftGp8b8+Hss3ZExM5izkJM=
+	t=1727466610; cv=none; b=VGWdQAMX0DiQEikMalzKD7Lhtfk0cpgPxTrpBSw+tTi4jpPmjzCbaEUKflfBDgo97oXwUrwFrn9WhqocU/MJt+BMhviLjAfFjzX1C99Gx/e3hJqYdtjU3uAw2eNW/9ePabl4uUSy+l2dyi8cO5LzgX2kbFI9W2VadOBmlHvZdYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727466655; c=relaxed/simple;
-	bh=8sZxPuRbomSMJfL/W9LjjPUHMhM2X6DLtr5iTM4vWh8=;
-	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=vBQHY4lygPaVOeGKgSrRaqWj7LGgx2+EvxBUlqkyckHoPXhmSIt++LUd4FHkgs4MfQzWwtHLiIBOU8WHGaYa2tso7XIDhV4ibC9Hm4e/L0uv2zSQziVKG6MVnVOaeZ26GAi7uKSmoFcTUhJ+x4Vka0OrJm9FBNGblYbY1rv/F18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=boCoGFWl; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=RpIFeMYhriEM2/4B/8JXzCFYxG/jfIBuyxGPfy1TFiA=; b=boCoGFWllgiin496ZhslbBChPl
-	YvAxQ/SKtVk9dyQMFw47OnySwaaD9/YqEF5h0fmOtsyMUv5D7HiEon1nklas9pfEjo9eira9ewJIk
-	tmZuUR9DCfeycS79BQtqILg4SIxr9Rp5UFXjgjo7orxf3quRbrCAUNRd+iK72dwQgu9R/Ld3/TLc4
-	BEdQkpOQZRJzOduL20es0MW0+JDfCOhlkB9h/+lRfIC/C11EIQ+2qQ6x+dxf0dwr/jnnd8QVmEzse
-	MEdE+XOXikBCeA6Cy83+niMHhZOb567ws8cgVAEdFqe0sB70VGjFjZvnj3/eJzYg0SBIpoHOsmC7l
-	rYRig5ow==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1suGzH-0000000AVcz-04jp;
-	Fri, 27 Sep 2024 19:50:47 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id DE849308CC7; Fri, 27 Sep 2024 21:50:44 +0200 (CEST)
-Message-Id: <20240927194925.808912874@infradead.org>
-User-Agent: quilt/0.65
-Date: Fri, 27 Sep 2024 21:49:10 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
- peterz@infradead.org,
- alyssa.milburn@intel.com,
- scott.d.constable@intel.com,
- joao@overdrivepizza.com,
- andrew.cooper3@citrix.com,
- jpoimboe@kernel.org,
- jose.marchesi@oracle.com,
- hjl.tools@gmail.com,
- ndesaulniers@google.com,
- samitolvanen@google.com,
- nathan@kernel.org,
- ojeda@kernel.org,
- kees@kernel.org,
- alexei.starovoitov@gmail.com
-Subject: [PATCH 14/14] x86/fineibt: Add FineIBT+BHI mitigation
-References: <20240927194856.096003183@infradead.org>
+	s=arc-20240116; t=1727466610; c=relaxed/simple;
+	bh=U2tg8OU6eAd7XdNvSYc+LJitu1DCYWL+a/jnG4hrEak=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VYz8ommxLJzW3aUNpxymXaBEtdHCVSq8oD9IKThUsKUSGqUy61keynp7dUX5Fx09Udq8uGQkGXOwzlops796my17nRtC6fq4IY+iKpYORM9TLjtH96ql/gUsfOmbn2B91Oh01FExWng09a5K94mIw4bHxKMYWImoO4PcQzAbH/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=jQpyfG9I; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6c548eb3354so18960546d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:50:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1727466607; x=1728071407; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=U2tg8OU6eAd7XdNvSYc+LJitu1DCYWL+a/jnG4hrEak=;
+        b=jQpyfG9I659COmlRELwhrnNMMqxmfiYX0p8+rJkDVavUX2tmpPVN8Hf/AB9Q8dU7UV
+         bIKxh5TbxsoFyNf/603KyWNjKC7SRuBvNWJ+OTByfMz41t5jZ5+8PuXboHp5zHEG7sZX
+         ZPf5TNyibS/kllrylYv8E3ofNfmBy4dOVLmyfMQnFplkUZBRiiSIduvWCGIYJtvMo0yp
+         4Hl3ZLnbxIcQvS6F1ZECX02dI12ocIe1WlxTT3XvbeTdUGDW3LEXXk6W/HmmhvlQHLXo
+         5xTyG0SI8S+KLiP47wfknxrFaKvD7A6Mm+qCKb1UsxfAWz629udlGCHu62EkLyJtDNYe
+         Yfbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727466607; x=1728071407;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U2tg8OU6eAd7XdNvSYc+LJitu1DCYWL+a/jnG4hrEak=;
+        b=SlFTA65CnGV8g4N71DS/wxANJCPQ6a/4KMtLvgLBiES+BcFoOo1rJdUL97gJDs2hf2
+         2ppWCWNAAybYEG8HycxwUjJb846K6c+d9tWDxCj5FWgxgNiUkXWrBuZnsdX2fgG4IzZh
+         7wL4qzX2Ht6auQPlHJHcTqHROq9o0eHRdDFsmNKtgKFCN1Oauby3s3aUTNoC/Jj63xb0
+         e3j9CXFQoUMEUb9eoRNvp2V1nFwmooEWms2xnVjcE5IjTDRD4y9lKmQSEHpi4PXhWC1B
+         ObZIogMxDCFTiWNicMgN8v0ugCJP/YzytF+xkL51SFYGbcI+q1LGD/FL36Q+GQOUkU/M
+         DpSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzpAscTflBGeTFCuQ1Hs8GTY8gR5zAY6x+hIoLFDawF6fsSSReWRmZbp5HJbIg836/hRRTgBDy94kUGZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHEchqeMYu2SONRL9tcBB3RUNLuiI5MH38LentcZF6iUjXstMo
+	c7TVHhViMrEExJ/UB1rTEMTIowY6DS9zo493atTGZ2657pk+kJ0nb/Je35H60+8=
+X-Google-Smtp-Source: AGHT+IE8GLjUnXh75USL6POTL0wF3GhP3RbPQsW20Tmjvx9gUrkr/ENH4ZzNWvAis54wTSGF58cLZw==
+X-Received: by 2002:a05:6214:3d8a:b0:6cb:32ef:d55f with SMTP id 6a1803df08f44-6cb3b5b7ef0mr80052226d6.6.1727466607342;
+        Fri, 27 Sep 2024 12:50:07 -0700 (PDT)
+Received: from nicolas-tpx395.lan ([2606:6d00:15:862e::580])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b610b12sm12230896d6.39.2024.09.27.12.50.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 12:50:06 -0700 (PDT)
+Message-ID: <7c9e3a1a6092f6574c17d7206767ece0bcefc81f.camel@ndufresne.ca>
+Subject: Re: [Linaro-mm-sig] Re: [RFC PATCH 0/4] Linaro restricted heap
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Sumit Garg <sumit.garg@linaro.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <christian.koenig@amd.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+  Christian =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>
+Cc: Andrew Davis <afd@ti.com>, Jens Wiklander <jens.wiklander@linaro.org>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Olivier Masse <olivier.masse@nxp.com>, Thierry Reding
+ <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>,  Sumit Semwal
+ <sumit.semwal@linaro.org>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
+ John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,  AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Date: Fri, 27 Sep 2024 15:50:05 -0400
+In-Reply-To: <CAFA6WYMd46quafJoGXjkCiPOKpYoDZdXwrNbG3QekyjB3_2FTA@mail.gmail.com>
+References: <20240830070351.2855919-1-jens.wiklander@linaro.org>
+	 <dhxvyshwi4qmcmwceokhqey2ww4azjcs6qrpnkgivdj7tv5cke@r36srvvbof6q>
+	 <d8e0cb78-7cfb-42bf-b3a5-f765592e8dd4@ti.com>
+	 <mzur3odofwwrdqnystozjgf3qtvb73wqjm6g2vf5dfsqiehaxk@u67fcarhm6ge>
+	 <e967e382-6cca-4dee-8333-39892d532f71@gmail.com>
+	 <lk7a2xuqrctyywuanjwseh5lkcz3soatc2zf3kn3uwc43pdyic@edm3hcd2koas>
+	 <04caa788-19a6-4336-985c-4eb191c24438@amd.com>
+	 <2f9a4abe-b2fc-4bc7-9926-1da2d38f5080@linaro.org>
+	 <CAFA6WYMd46quafJoGXjkCiPOKpYoDZdXwrNbG3QekyjB3_2FTA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 
-Due to FineIBT weakness, add an additional mitigation for BHI.
+Le jeudi 26 septembre 2024 =C3=A0 19:22 +0530, Sumit Garg a =C3=A9crit=C2=
+=A0:
+> [Resend in plain text format as my earlier message was rejected by
+> some mailing lists]
+>=20
+> On Thu, 26 Sept 2024 at 19:17, Sumit Garg <sumit.garg@linaro.org> wrote:
+> >=20
+> > On 9/25/24 19:31, Christian K=C3=B6nig wrote:
+> >=20
+> > Am 25.09.24 um 14:51 schrieb Dmitry Baryshkov:
+> >=20
+> > On Wed, Sep 25, 2024 at 10:51:15AM GMT, Christian K=C3=B6nig wrote:
+> >=20
+> > Am 25.09.24 um 01:05 schrieb Dmitry Baryshkov:
+> >=20
+> > On Tue, Sep 24, 2024 at 01:13:18PM GMT, Andrew Davis wrote:
+> >=20
+> > On 9/23/24 1:33 AM, Dmitry Baryshkov wrote:
+> >=20
+> > Hi,
+> >=20
+> > On Fri, Aug 30, 2024 at 09:03:47AM GMT, Jens Wiklander wrote:
+> >=20
+> > Hi,
+> >=20
+> > This patch set is based on top of Yong Wu's restricted heap patch set [=
+1].
+> > It's also a continuation on Olivier's Add dma-buf secure-heap patch set=
+ [2].
+> >=20
+> > The Linaro restricted heap uses genalloc in the kernel to manage the he=
+ap
+> > carvout. This is a difference from the Mediatek restricted heap which
+> > relies on the secure world to manage the carveout.
+> >=20
+> > I've tried to adress the comments on [2], but [1] introduces changes so=
+ I'm
+> > afraid I've had to skip some comments.
+> >=20
+> > I know I have raised the same question during LPC (in connection to
+> > Qualcomm's dma-heap implementation). Is there any reason why we are
+> > using generic heaps instead of allocating the dma-bufs on the device
+> > side?
+> >=20
+> > In your case you already have TEE device, you can use it to allocate an=
+d
+> > export dma-bufs, which then get imported by the V4L and DRM drivers.
+> >=20
+> > This goes to the heart of why we have dma-heaps in the first place.
+> > We don't want to burden userspace with having to figure out the right
+> > place to get a dma-buf for a given use-case on a given hardware.
+> > That would be very non-portable, and fail at the core purpose of
+> > a kernel: to abstract hardware specifics away.
+> >=20
+> > Unfortunately all proposals to use dma-buf heaps were moving in the
+> > described direction: let app select (somehow) from a platform- and
+> > vendor- specific list of dma-buf heaps. In the kernel we at least know
+> > the platform on which the system is running. Userspace generally doesn'=
+t
+> > (and shouldn't). As such, it seems better to me to keep the knowledge i=
+n
+> > the kernel and allow userspace do its job by calling into existing
+> > device drivers.
+> >=20
+> > The idea of letting the kernel fully abstract away the complexity of in=
+ter
+> > device data exchange is a completely failed design. There has been plen=
+ty of
+> > evidence for that over the years.
+> >=20
+> > Because of this in DMA-buf it's an intentional design decision that
+> > userspace and *not* the kernel decides where and what to allocate from.
+> >=20
+> > Hmm, ok.
+> >=20
+> > What the kernel should provide are the necessary information what type =
+of
+> > memory a device can work with and if certain memory is accessible or no=
+t.
+> > This is the part which is unfortunately still not well defined nor
+> > implemented at the moment.
+> >=20
+> > Apart from that there are a whole bunch of intentional design decision =
+which
+> > should prevent developers to move allocation decision inside the kernel=
+. For
+> > example DMA-buf doesn't know what the content of the buffer is (except =
+for
+> > it's total size) and which use cases a buffer will be used with.
+> >=20
+> > So the question if memory should be exposed through DMA-heaps or a driv=
+er
+> > specific allocator is not a question of abstraction, but rather one of =
+the
+> > physical location and accessibility of the memory.
+> >=20
+> > If the memory is attached to any physical device, e.g. local memory on =
+a
+> > dGPU, FPGA PCIe BAR, RDMA, camera internal memory etc, then expose the
+> > memory as device specific allocator.
+> >=20
+> > So, for embedded systems with unified memory all buffers (maybe except
+> > PCIe BARs) should come from DMA-BUF heaps, correct?
+> >=20
+> >=20
+> > From what I know that is correct, yes. Question is really if that will =
+stay this way.
+> >=20
+> > Neural accelerators look a lot stripped down FPGAs these days and the b=
+enefit of local memory for GPUs is known for decades.
+> >=20
+> > Could be that designs with local specialized memory see a revival any t=
+ime, who knows.
+> >=20
+> > If the memory is not physically attached to any device, but rather just
+> > memory attached to the CPU or a system wide memory controller then expo=
+se
+> > the memory as DMA-heap with specific requirements (e.g. certain sized p=
+ages,
+> > contiguous, restricted, encrypted, ...).
+> >=20
+> > Is encrypted / protected a part of the allocation contract or should it
+> > be enforced separately via a call to TEE / SCM / anything else?
+> >=20
+> >=20
+> > Well that is a really good question I can't fully answer either. From w=
+hat I know now I would say it depends on the design.
+> >=20
+>=20
+> IMHO, I think Dmitry's proposal to rather allow the TEE device to be
+> the allocator and exporter of DMA-bufs related to restricted memory
+> makes sense to me. Since it's really the TEE implementation (OP-TEE,
+> AMD-TEE, TS-TEE or future QTEE) which sets up the restrictions on a
+> particular piece of allocated memory. AFAIK, that happens after the
+> DMA-buf gets allocated and then user-space calls into TEE to set up
+> which media pipeline is going to access that particular DMA-buf. It
+> can also be a static contract depending on a particular platform
+> design.
 
-Use the 5 bytes of the nop at -1 and the 4 byte poison to squirrel in
-a BHI mitigation.
+When the memory get the protection is hardware specific. Otherwise the desi=
+gn
+would be really straightforward, allocate from the a heap or any random dri=
+ver
+API and protect that memory through an call into the TEE. Clear seperation =
+would
+be amazingly better, but this is not how hardware and firmware designer hav=
+e
+seen it.=20
 
-Relies on clang-cfi to emit an additional piece of magic in the kCFI
-pre-amble, identifying which function arguments are pointers.
+In some implementation, there is a carving of memory that be protected befo=
+re
+the kernel is booted. I believe (but I'm not affiliated with them) that MTK=
+ has
+hardware restriction making that design the only usable method.
 
-An additional u8 (next to the existing u32) is emitted like:
+In general, the handling of secure memory is bound to the TEE application f=
+or
+the specific platform, it has to be separated from the generic part of tee
+drivers anyway, and dmabuf heaps is in my opinion the right API for the tas=
+k.
 
-	movl	0x12345678, %eax	// CFI hash
-	movb	0x12, %al		// CFI args
+On MTK, if you have followed, when the SCP (their co-processor) is handling
+restricted video, you can't even call into it anymore directly. So to drive=
+ the
+CODECs, everything has to be routed through the TEE. Would you say that bec=
+ause
+of that this should not be a V4L2 driver anymore ?
 
-This u8 is a bitmask, where BIT(n) indicates the n'th argument is a
-pointer, notably the 6 possible argument registers are:
+>=20
+> As Jens noted in the other thread, we already manage shared memory
+> allocations (from a static carve-out or dynamically mapped) for
+> communications among Linux and TEE that were based on DMA-bufs earlier
+> but since we didn't required them to be shared with other devices, so
+> we rather switched to anonymous memory.
+>=20
+> From user-space perspective, it's cleaner to use TEE device IOCTLs for
+> DMA-buf allocations since it already knows which underlying TEE
+> implementation it's communicating with rather than first figuring out
+> which DMA heap to use for allocation and then communicating with TEE
+> implementation.
 
-	rdi, rsi, rdx, rcx, r8 and r9
+As a user-space developer in the majority of my time, adding common code to
+handle dma heaps is a lot easier and straight forward then having to glue a=
+ll
+the different allocators implement in various subsystems. Communicating whi=
+ch
+heap to work can be generic and simple.
 
-Single bit can be inlined, while 2-4 bits have combinatoric stubs with
-the required magic in. Anything more will fall back to
-__bhi_args_all which additionally poisons %rsp for good measure, in
-case things overflowed to the stack.
-
-
-  FineIBT+				FineIBT+BHI
-
-  __cfi_foo:				__cfi_foo:
-    endbr64				  endbr64
-    subl	$0x12345678, %r10d        subl	$0x12345678, %r10d
-    jz	foo+4                             jz	+2
-    ud2                                   ud2
-    nop                                   call	__bhi_args_foo
-  foo:                                  foo+4:
-    ud1 0x0(%eax), %eax
-    ...                                   ...
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/include/asm/cfi.h    |    1 
- arch/x86/kernel/alternative.c |   82 ++++++++++++++++++++++++++++++++++++++----
- arch/x86/net/bpf_jit_comp.c   |   16 ++++++--
- tools/objtool/check.c         |   16 ++++----
- 4 files changed, 98 insertions(+), 17 deletions(-)
-
---- a/arch/x86/include/asm/cfi.h
-+++ b/arch/x86/include/asm/cfi.h
-@@ -97,6 +97,7 @@ enum cfi_mode {
- 	CFI_OFF,	/* Taditional / IBT depending on .config */
- 	CFI_KCFI,	/* Optionally CALL_PADDING, IBT, RETPOLINE */
- 	CFI_FINEIBT,	/* see arch/x86/kernel/alternative.c */
-+	CFI_FINEIBT_BHI,
- };
- 
- extern enum cfi_mode cfi_mode;
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -932,7 +932,31 @@ __noendbr bool is_endbr(u32 *val)
- 	if (get_kernel_nofault(endbr, val))
- 		return false;
- 
--	return __is_endbr(endbr);
-+	if (__is_endbr(endbr))
-+		return true;
-+
-+#if defined(CONFIG_FINEIBT) && defined(CONFIG_X86_KERNEL_IBT_PLUS)
-+	if (cfi_mode != CFI_FINEIBT_BHI)
-+		return false;
-+
-+	/*
-+	 * The BHI clobbers 'replace' the ENDBR poison, but dynamic call
-+	 * patching (static_call, kprobes, etc..) still need to be able
-+	 * to identify and skip the foo()+0 'endbr'.
-+	 */
-+
-+	/* REX CMOVNE, see bhi_args_1() */
-+	if ((endbr & 0xc2fffff9) == 0xc2450f49)
-+		return true;
-+
-+	/* CALL __bhi_args_* */
-+	void *dest = (void *)val + 4 + (s32)endbr;
-+	if (dest >= (void *)__bhi_args_6c1 &&
-+	    dest <= (void *)__bhi_args_all)
-+		return true;
-+#endif
-+
-+	return false;
- }
- 
- static void poison_cfi(void *addr);
-@@ -1190,6 +1214,8 @@ static __init int cfi_parse_cmdline(char
- 			cfi_mode = CFI_KCFI;
- 		} else if (!strcmp(str, "fineibt")) {
- 			cfi_mode = CFI_FINEIBT;
-+		} else if (IS_ENABLED(CONFIG_X86_KERNEL_IBT_PLUS) && !strcmp(str, "fineibt+bhi")) {
-+			cfi_mode = CFI_FINEIBT_BHI;
- 		} else if (!strcmp(str, "norand")) {
- 			cfi_rand = false;
- 		} else {
-@@ -1208,10 +1234,9 @@ early_param("cfi", cfi_parse_cmdline);
-  *
-  * __cfi_\func:					__cfi_\func:
-  *	movl   $0x12345678,%eax		// 5	     endbr64			// 4
-- *	nop					     subl   $0x12345678,%r10d   // 7
-+ *	movb   $0x12,%al		// 2	     subl   $0x12345678,%r10d   // 7
-  *	nop					     jz     1f			// 2
-  *	nop					     ud2			// 2
-- *	nop					1:   nop			// 1
-  *	nop
-  *	nop
-  *	nop
-@@ -1279,6 +1304,17 @@ static u32 decode_preamble_hash(void *ad
- 	return 0; /* invalid hash value */
- }
- 
-+static u8 decode_preamble_args(void *addr)
-+{
-+	u8 *p = addr;
-+
-+	/* b0 12	movb $0x12, %al */
-+	if (p[5] == 0xb0)
-+		return p[6];
-+
-+	return 0xff; /* invalid args */
-+}
-+
- static u32 decode_caller_hash(void *addr)
- {
- 	u8 *p = addr;
-@@ -1371,6 +1407,7 @@ static int cfi_rewrite_preamble(s32 *sta
- 	for (s = start; s < end; s++) {
- 		void *addr = (void *)s + *s;
- 		u32 hash;
-+		u8 args;
- 
- 		/*
- 		 * When the function doesn't start with ENDBR the compiler will
-@@ -1385,11 +1422,25 @@ static int cfi_rewrite_preamble(s32 *sta
- 			 addr, addr, 5, addr))
- 			return -EINVAL;
- 
-+		args = decode_preamble_args(addr);
-+
- 		text_poke_early(addr, fineibt_preamble_start, fineibt_preamble_size);
- 		WARN_ON(*(u32 *)(addr + fineibt_preamble_hash) != 0x12345678);
- 		text_poke_early(addr + fineibt_preamble_hash, &hash, 4);
- 
- 		*(u8 *)(addr + fineibt_preamble_jccd8) += 4;
-+
-+		if (cfi_mode != CFI_FINEIBT_BHI)
-+			continue;
-+
-+		WARN_ONCE(args == 0xff, "no CFI args found at %pS %px %*ph\n",
-+			  addr, addr, 7, addr);
-+
-+		/*
-+		 * Stash the ARGS byte in the NOP at __cfi_foo+15, see
-+		 * cfi_rewrite_endbr().
-+		 */
-+		*(u8 *)(addr + fineibt_preamble_size - 1) = args;
- 	}
- 
- 	return 0;
-@@ -1401,11 +1452,26 @@ static void cfi_rewrite_endbr(s32 *start
- 
- 	for (s = start; s < end; s++) {
- 		void *addr = (void *)s + *s;
-+		u8 args;
- 
- 		if (!is_endbr(addr + 16))
- 			continue;
- 
--		poison_endbr(addr + 16);
-+		if (cfi_mode != CFI_FINEIBT_BHI) {
-+			poison_endbr(addr + 16);
-+			continue;
-+		}
-+
-+		/* recover the args byte */
-+		args = *(u8 *)(addr + fineibt_preamble_size - 1);
-+		*(u8 *)(addr + fineibt_preamble_size - 1) = BYTES_NOP1;
-+		if (args) {
-+			/* only skip the UD2 */
-+			*(u8 *)(addr + fineibt_preamble_jccd8) = 2;
-+
-+			/* write BHI clobber in the 5 bytes that hold: nop + poison */
-+			bhi_args(args, addr + fineibt_preamble_size - 1);
-+		}
- 	}
- }
- 
-@@ -1506,6 +1572,7 @@ static void __apply_fineibt(s32 *start_r
- 		return;
- 
- 	case CFI_FINEIBT:
-+	case CFI_FINEIBT_BHI:
- 		/* place the FineIBT preamble at func()-16 */
- 		ret = cfi_rewrite_preamble(start_cfi, end_cfi);
- 		if (ret)
-@@ -1519,8 +1586,10 @@ static void __apply_fineibt(s32 *start_r
- 		/* now that nobody targets func()+0, remove ENDBR there */
- 		cfi_rewrite_endbr(start_cfi, end_cfi);
- 
--		if (builtin)
--			pr_info("Using FineIBT CFI\n");
-+		if (builtin) {
-+			pr_info("Using FineIBT%s CFI\n",
-+				cfi_mode == CFI_FINEIBT_BHI ? "+BHI" : "");
-+		}
- 		return;
- 
- 	default:
-@@ -1548,6 +1617,7 @@ static void poison_cfi(void *addr)
- 	 */
- 	switch (cfi_mode) {
- 	case CFI_FINEIBT:
-+	case CFI_FINEIBT_BHI:
- 		/*
- 		 * FineIBT prefix should start with an ENDBR.
- 		 */
---- a/arch/x86/net/bpf_jit_comp.c
-+++ b/arch/x86/net/bpf_jit_comp.c
-@@ -401,10 +401,17 @@ static void emit_fineibt(u8 **pprog, u32
- 
- 	EMIT_ENDBR();
- 	EMIT3_off32(0x41, 0x81, 0xea, hash);		/* subl $hash, %r10d	*/
--	EMIT2(0x74, 0x07);				/* jz.d8 +7		*/
--	EMIT2(0x0f, 0x0b);				/* ud2			*/
--	EMIT1(0x90);					/* nop			*/
--	EMIT_ENDBR_POISON();
-+	if (cfi_mode == CFI_FINEIBT_BHI) {
-+		EMIT2(0x74, 0x02);			/* jz.d8 +2		*/
-+		EMIT2(0x0f, 0x0b);			/* ud2			*/
-+		EMIT1(0x2e);				/* cs			*/
-+		EMIT4(0x49, 0x0f, 0x45, 0xfa);		/* cmovne %r10, %rdi	*/
-+	} else {
-+		EMIT2(0x74, 0x07);			/* jz.d8 +7		*/
-+		EMIT2(0x0f, 0x0b);			/* ud2			*/
-+		EMIT1(0x90);				/* nop			*/
-+		EMIT_ENDBR_POISON();
-+	}
- 
- 	*pprog = prog;
- }
-@@ -438,6 +445,7 @@ static void emit_cfi(u8 **pprog, u32 has
- 
- 	switch (cfi_mode) {
- 	case CFI_FINEIBT:
-+	case CFI_FINEIBT_BHI:
- 		emit_fineibt(&prog, hash);
- 		break;
- 
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -4397,11 +4397,9 @@ static int validate_ibt_insn(struct objt
- 			continue;
- 
- 		off = reloc->sym->offset;
--		if (reloc_type(reloc) == R_X86_64_PC32 ||
--		    reloc_type(reloc) == R_X86_64_PLT32)
--			off += arch_dest_reloc_offset(reloc_addend(reloc));
--		else
--			off += reloc_addend(reloc);
-+		off += reloc_addend(reloc);
-+		if (arch_pc_relative_reloc(reloc))
-+			off = arch_dest_reloc_offset(off);
- 
- 		dest = find_insn(file, reloc->sym->sec, off);
- 		if (!dest)
-@@ -4456,10 +4454,14 @@ static int validate_ibt_insn(struct objt
- static int validate_ibt_data_reloc(struct objtool_file *file,
- 				   struct reloc *reloc)
- {
-+	long offset = reloc->sym->offset;
- 	struct instruction *dest;
- 
--	dest = find_insn(file, reloc->sym->sec,
--			 reloc->sym->offset + reloc_addend(reloc));
-+	offset += reloc_addend(reloc);
-+	if (reloc_type(reloc) == R_X86_64_PLT32) // the fuck ?!
-+		offset = arch_dest_reloc_offset(offset);
-+
-+	dest = find_insn(file, reloc->sym->sec, offset);
- 	if (!dest)
- 		return 0;
- 
-
+Nicolas
 
 
