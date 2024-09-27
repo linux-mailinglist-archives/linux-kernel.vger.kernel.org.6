@@ -1,88 +1,116 @@
-Return-Path: <linux-kernel+bounces-341976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8240A988924
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:34:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D81988926
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44B5828292E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 665EC1C2119A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0C11C0DFB;
-	Fri, 27 Sep 2024 16:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D056A1C0DFB;
+	Fri, 27 Sep 2024 16:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="la7zY3IE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="MjU0fhvN"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3C65234;
-	Fri, 27 Sep 2024 16:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43F51C1745;
+	Fri, 27 Sep 2024 16:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727454869; cv=none; b=qMdNWADtCN5kOc54wApC+6g3MDap1YUtd2F7p/c3xJQlREemWh1LWsqZed0kXrLxugAa5DdHi8eeOAeCzvqSKc4935GQWwAD8Gm60eLLtUVsezKmI9JNQeEUlQJ8/B1Z41+U3Na0P2sPWOfadLYylrSkww4k5S3ZJXzYztgbSOc=
+	t=1727454899; cv=none; b=Kf/VDCtIfT6nduokXxh8rCcXaUBLYQKCZWmnD0rEH/EpIRsZYYiiKcXhpmR+tt7JNyzqxBP4W3RTSrUXZKwlQbqR/yczmcuy21O1mxTLUSBUQzgWFoJpOmhVYBMQcH6WYS597v/IBOkUpIb2TH9VJMPLBnfbPPQY51VrwvmxdUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727454869; c=relaxed/simple;
-	bh=7DDTinGb7nmAWwbihCnhc6k+tp9wXuunS12NbGMRcLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y8Yml89leKvh6j5h0UqHEPf8eqRTuVQIHngYS9vkSb9uBqWXycn+cw4eTWx6CkPZE2KnOGXCgW/INMxWk7dGMV3ng6dIW3PlFITiT4G2uHdglaNjrDawvuW5xwzIkxZE4EmiAwRzYx/cy/zNT1gPuTVu8e0S6SD8ZVqfYRBRICY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=la7zY3IE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1145CC4CEC4;
-	Fri, 27 Sep 2024 16:34:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727454868;
-	bh=7DDTinGb7nmAWwbihCnhc6k+tp9wXuunS12NbGMRcLI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=la7zY3IElbh/7JA8V9X+L8G/dp26TrM145VxTO7lQKDljVBCqrzaJSw2HoNSRkPve
-	 7VpeLnx/hXanwytR09kCJuY/7krhmDJLW+jFo4pmQ7DLI+16IqLY2gtqVVXWg1j1FA
-	 pjUvhTkBAShB9gkk8UxNmS5LLwrvCrtJVbUq4xFmFgwNYWrTeU9uW4Z+pjXlICF4kM
-	 VnvBD/j+G2gNkk0N7WC2fS73bCfIJWD9IKu0I0BxNfKtIqBKxidd0C88kpxmajMFlh
-	 aOiFsxQyIZohMpQH30QL5xkt1EcujFRhhHVnkD9JigjLmmZXOGSSO4xL08CkjuOOXV
-	 r15TyVgjbiwIA==
-Date: Fri, 27 Sep 2024 19:34:23 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] vfs netfs
-Message-ID: <20240927163423.GG967758@unreal>
-References: <20240926174043.GA2166429@unreal>
- <20240913-vfs-netfs-39ef6f974061@brauner>
- <2238233.1727424079@warthog.procyon.org.uk>
+	s=arc-20240116; t=1727454899; c=relaxed/simple;
+	bh=LQoHedUqZJIVDPEPLGQOFF7BgCHqs2L4dazdLhVW6wE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YuEu6/yTvPllCZ0aydOlbexID1wHJJAnuj/N7nk7//wB9sNIJbZHFlCCblVjGFlkzIeKUa65zIhElBxi2/KrJVrAFkNvASpMdcjVh+e/EsbmlfPsDLZP73PA9pgo4BhuEJ8GqKgORJkDF4tCvTFi5oqBt871BTR7f1bJBDod6jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=MjU0fhvN; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cd74c0d16so21734435e9.1;
+        Fri, 27 Sep 2024 09:34:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1727454896; x=1728059696; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fjW0SfXJHHMpF74jkLxhZJc4kDdjeQmRn27IgEhzY20=;
+        b=MjU0fhvNYNylrmw9xCHL8in4CdSAtJR6s7G8+NVPpVmCoui5VdffeRPGdc8SxifIDn
+         NxGvmSbf/O2Vn9spdPVpJ/F+eY209409mYfFM3q40GZbyDsD15F4XxESoQ96ECZZcXmo
+         pR5RLABqyAg/KsBRsNhdEaP6dpMS+hnqwD+F8BZ4u/NiFmgsLuRn/vgaLmFsZe9ulaV7
+         huEaT4M2g6F4PWqcK4QZTVx9u6cZI4uFrqgCn8Z+eqbFE8yFtthD20jfbUNm/I1sjmjx
+         yxq177rCaayK7ZkIepetkOXVZfBZY4wGTbjnMFKkQvvLHpTBUsPFqSxZNEM5rPva5OXD
+         vL2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727454896; x=1728059696;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fjW0SfXJHHMpF74jkLxhZJc4kDdjeQmRn27IgEhzY20=;
+        b=iDsTPLB9ePqLSHeYznbL+Dac/Ql97vpNm/daJ4YUxVsJsQoClytXDVlYSzN7tP0eIr
+         yZjKz2n4TuXfFj7vP8th8qWidd8iKCusEKubP2PSnWGpciVpZWwwHhIdrq1YUI/da7dF
+         xINagS3p+/sHke+zwL/ZXyICaVRWx38RcujKvtEQ6P3ShJrfTZUxn7qjhfaRXGJM+34+
+         d34qOSDDAeFBOTuOktLhh7GMxVTSEhC7kg6SbqUJ+pn9NBrEz4kPHuDMMYdWF00qfnuh
+         HuADYf/DLnjHv5CbPMKdFV3us0FAHw0Ve+PXwZWD2XGc0YPkXeLmRjC5+J8RiLoLz1dH
+         WqtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViIJVHQHZaufN4m9VhWnUbr4QxYikJxk3FyOpcoMkE0/o1v1vf91I1QRnLFzLmrXFaXCPYR7j4f0OxG70=@vger.kernel.org, AJvYcCX2qFzz+v/ueQP7aC4vwGf8bwfdD/6iy+A7AHu5UY7JA5HSotpW2VsRsyulSYYgCjMXu75djvwJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKw1mZf5YY/Ypx90GVUW84PIMpyP5eYgPPVmzQEhrJ63oV4xhZ
+	lUzkQaPzhOFcXjpnIaQR1UOhP6aDqSeasL4i55xZLCPPpeid9zw=
+X-Google-Smtp-Source: AGHT+IFUSNu6KjgVPgBU386pEbCm/OnFQdf54/K7kJsZSt/nXBGa5NuN/1bR2Y85UYvAUiHKqYDdZQ==
+X-Received: by 2002:a05:600c:1c04:b0:428:10d7:a4b1 with SMTP id 5b1f17b1804b1-42f58497f61mr29413145e9.25.1727454895930;
+        Fri, 27 Sep 2024 09:34:55 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4a79.dip0.t-ipconnect.de. [91.43.74.121])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd564d01esm3012052f8f.3.2024.09.27.09.34.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Sep 2024 09:34:55 -0700 (PDT)
+Message-ID: <4f07f599-ef6e-42a8-8b21-b1a69f9cfb7f@googlemail.com>
+Date: Fri, 27 Sep 2024 18:34:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2238233.1727424079@warthog.procyon.org.uk>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.6 00/54] 6.6.53-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240927121719.714627278@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240927121719.714627278@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 09:01:19AM +0100, David Howells wrote:
-> Leon Romanovsky <leon@kernel.org> wrote:
-> 
-> > Do you have fixes for the following issues reported for series?
-> > https://lore.kernel.org/all/20240923183432.1876750-1-chantr4@gmail.com/
-> > https://lore.kernel.org/all/4b5621958a758da830c1cf09c6f6893aed371f9d.camel@gmail.com/
-> > https://lore.kernel.org/all/20240924094809.GA1182241@unreal/
-> 
-> I'm working on a fix for the third one at the moment, I think it's the read
-> version of the write fix I posted previously:
-> 
-> 	https://lore.kernel.org/linux-fsdevel/2050099.1727359110@warthog.procyon.org.uk/
-> 
-> I'm looking to see if I can make a general solution that abstracts out the
-> buffer handling for both as we're early in the cycle.
+Am 27.09.2024 um 14:22 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.6.53 release.
+> There are 54 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-I hope that you mean that we have plenty of time before the merge window ends.
-Otherwise, it will be very inconvenient to open official -next/-rc branches,
-based on -rc1, remembering to revert so many commits.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-It is better to have fast fixes and then work on improving them without
-worrying about time frames.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-Thanks
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
