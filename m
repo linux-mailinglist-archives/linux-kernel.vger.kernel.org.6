@@ -1,176 +1,88 @@
-Return-Path: <linux-kernel+bounces-341806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AFBE98867D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:45:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DB498867F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5351281F3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:45:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51571F24317
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC61A1AF4DA;
-	Fri, 27 Sep 2024 13:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c6dDBzC+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192141BDABF;
+	Fri, 27 Sep 2024 13:46:21 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841541AED39
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 13:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519241BD031;
+	Fri, 27 Sep 2024 13:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727444752; cv=none; b=E50I+Ml+iMiAKSjqArBZF04mDvp9vHIC64DFSQp1rctjv0QafDrwczqfZM9rpPKJyYRxY1Ca035U8pD32vrxNwcdbC+6+cXTOtbEFdWYxmO2ixmCNbVFcqMmG+GVbhbiblal5mJgWW22Get9rg261zrsxMrOcjVySZ0Z094qAVU=
+	t=1727444780; cv=none; b=ueDRlEfp4DCbhFaDSHN9nkPSVWzNnS1lO/3aOctECnXgzvXHv5M4MepoicQvb5Nk8L2juUcp98Lp7q6ERRbj0JyZEKayEfy3Ir98MOzMLftVprgwbxJnUz85aYov4FOKyyGR2pYEQq5LYGIyxpKQlDQSSnj7n2AyWLohmJtAUoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727444752; c=relaxed/simple;
-	bh=D7T8gbwDTyhSckUhWVxsxYFg+JjlnB5hGJ96ASmPuIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QdhrK8ffKexSfu9noNOAPQwpLtKLOtKXzPuST3mPbbIYAMFlZGeipgF6x5OA5iEx7ZagRxzTFePp769BP8Ol7E+Q5XlRbZPFPgXOj8dipRLnv8QqU8M0SNJHIS3GmIygaOrqphKrxtRvzM06SFCF734fWvLNpU7xQ43YVjI1MB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c6dDBzC+; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727444750; x=1758980750;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=D7T8gbwDTyhSckUhWVxsxYFg+JjlnB5hGJ96ASmPuIY=;
-  b=c6dDBzC+SqWt3TzP+jsOWKhvhOTha+LjQOGq9exPOnmyDo1/u1niPurZ
-   /b7uSvfEcjfB99nqTLuY4TqAOISJFFtaDUoaFI/mR874XbeyyVGpBAGk7
-   Ct4fVN1ezxpeJpIRewx1vu8U3qSLbyNoC0X9+OPTkNkV+uUWx1djIFFiJ
-   pO0GfXcVlL3CsTKV5pX4ptjek4IlQHg3zLW05+zg23oZ1w/CemsR3UinC
-   7oIYjP0WSDDna4Bgg6YE3/9Mrmh8P2PJ1qRvkvNpUd8xQPllUFbm0smj8
-   6AyMXnDGb48nZV/DhxAWmGoaDvwKSdRGHKFkO+ZPv8IsrvwpDR2fAveNF
-   Q==;
-X-CSE-ConnectionGUID: 4b30PAYySZOxtoZfyFAVTQ==
-X-CSE-MsgGUID: fqJB4iO4TSqjP56+TsQ3Qw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="37259942"
-X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
-   d="scan'208";a="37259942"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 06:45:49 -0700
-X-CSE-ConnectionGUID: bJTNzlkkQ5qxtlEQtlGC9g==
-X-CSE-MsgGUID: rfHMWwBER5WhHcbLuCQNpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
-   d="scan'208";a="72703408"
-Received: from stinkpipe.fi.intel.com (HELO stinkbox) ([10.237.72.74])
-  by fmviesa008.fm.intel.com with SMTP; 27 Sep 2024 06:45:45 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 27 Sep 2024 16:45:44 +0300
-Date: Fri, 27 Sep 2024 16:45:44 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>, rodrigo.vivi@intel.com,
-	joonas.lahtinen@linux.intel.com, tursulin@ursulin.net,
-	airlied@gmail.com, simona@ffwll.ch, intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com
-Subject: Re: [PATCH] gpu: drm: i915: display: Avoid null values
- intel_plane_atomic_check_with_state
-Message-ID: <Zva3CAewBl8NBL91@intel.com>
-References: <20240927000146.50830-1-alessandro.zanni87@gmail.com>
- <87tte1zewf.fsf@intel.com>
- <ZvaduhDERL-zvED3@intel.com>
- <87tte1xmqe.fsf@intel.com>
+	s=arc-20240116; t=1727444780; c=relaxed/simple;
+	bh=JhOaZlnwaQOlxV6otlt+lNsAcIZqgjt6OZLssQZRiBM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GGouYsoWcqOu4dpbuInB8F1fmEgWL3VYkTxO01btU1n0faVl66DraqZrfK787ye8X1oBO9Y6+0XbsS8gAx8VOvWNS87QMUxHZNOSbrumAonSYnrWdTlo4q6Ry8Kz+gU9AONssXl1dqp/+MX3d8ul8uwr8ESbQ5L6NTMndnr4cys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R5EVcx007323;
+	Fri, 27 Sep 2024 13:46:13 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 41um4xmsa6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 27 Sep 2024 13:46:13 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 27 Sep 2024 06:46:12 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Fri, 27 Sep 2024 06:46:10 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <jirislaby@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <syzbot+8a192e8d090fa9a31135@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH] nilfs2: add ratelimiting to nilfs2 message
+Date: Fri, 27 Sep 2024 21:46:09 +0800
+Message-ID: <20240927134609.2081458-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0bad28d6-0a32-49e1-965b-549ec7a752a3@kernel.org>
+References: <0bad28d6-0a32-49e1-965b-549ec7a752a3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87tte1xmqe.fsf@intel.com>
-X-Patchwork-Hint: comment
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: WC3_5-L6sh1sCLrthkL0fFBnb0bZ9v66
+X-Authority-Analysis: v=2.4 cv=e+1USrp/ c=1 sm=1 tr=0 ts=66f6b725 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=EaEq8P2WXUwA:10 a=SaqRpEZVwUrnCivqqs8A:9
+X-Proofpoint-GUID: WC3_5-L6sh1sCLrthkL0fFBnb0bZ9v66
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-27_06,2024-09-27_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ spamscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0 phishscore=0
+ malwarescore=0 bulkscore=0 suspectscore=0 mlxlogscore=514
+ priorityscore=1501 classifier=spam authscore=0 adjust=0 reason=mlx
+ scancount=1 engine=8.21.0-2408220000 definitions=main-2409270100
 
-On Fri, Sep 27, 2024 at 04:14:17PM +0300, Jani Nikula wrote:
-> On Fri, 27 Sep 2024, Ville Syrjälä <ville.syrjala@linux.intel.com> wrote:
-> > On Fri, Sep 27, 2024 at 11:20:32AM +0300, Jani Nikula wrote:
-> >> On Fri, 27 Sep 2024, Alessandro Zanni <alessandro.zanni87@gmail.com> wrote:
-> >> > This fix solves multiple Smatch errors:
-> >> >
-> >> > drivers/gpu/drm/i915/display/intel_atomic_plane.c:660
-> >> > intel_plane_atomic_check_with_state() error:
-> >> > we previously assumed 'fb' could be null (see line 648)
-> >> >
-> >> > drivers/gpu/drm/i915/display/intel_atomic_plane.c:664
-> >> > intel_plane_atomic_check_with_state()
-> >> > error: we previously assumed 'fb' could be null (see line 659)
-> >> >
-> >> > drivers/gpu/drm/i915/display/intel_atomic_plane.c:671
-> >> > intel_plane_atomic_check_with_state()
-> >> > error: we previously assumed 'fb' could be null (see line 663)
-> >> >
-> >> > We should check first if fb is not null before to access its properties.
-> >> 
-> >> new_plane_state->uapi.visible && !fb should not be possible, but it's
-> >> probably too hard for smatch to figure out. It's not exactly trivial for
-> >> humans to figure out either.
-> >> 
-> >> I'm thinking something like below to help both.
-> >> 
-> >> Ville, thoughts?
-> >> 
-> >> 
-> >> BR,
-> >> Jani.
-> >> 
-> >> 
-> >> diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-> >> index 3505a5b52eb9..d9da47aed55d 100644
-> >> --- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-> >> +++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-> >> @@ -629,6 +629,9 @@ int intel_plane_atomic_check_with_state(const struct intel_crtc_state *old_crtc_
-> >>  	if (ret)
-> >>  		return ret;
-> >>  
-> >> +	if (drm_WARN_ON(display->drm, new_plane_state->uapi.visible && !fb))
-> >> +		return -EINVAL;
-> >> +
-> >
-> > We have probably 100 places that would need this. So it's going
-> > to be extremely ugly.
-> >
-> > One approach I could maybe tolerate is something like
-> > intel_plane_is_visible(plane_state) 
-> > {
-> > 	if (drm_WARN_ON(visible && !fb))
-> > 		return false;
-> >
-> > 	return plane_state->visible;
-> > }
-> >
-> > + s/plane_state->visible/intel_plane_is_visible(plane_state)/
-> >
-> > But is that going to help these obtuse tools?
+On Fri, 27 Sep 2024 12:46:44 +0200, Jiri Slaby wrote:
+> On 27. 09. 24, 11:16, Lizhi Xu wrote:
+> > On Fri, 27 Sep 2024 06:59:22 +0200, Jiri Slaby wrote:
+> >> You should have aimed this at the nilfs developers...
+> > I don't get it.
 > 
-> That does help people, which is more important. :)
-> 
-> I think the problem is first checking if fb is NULL, and then
-> dereferencing it anyway.
-> 
-> visible always means fb != NULL, but I forget, is the reverse true? Can
-> we have fb != NULL and !visible? I mean could we change the fb check to
-> visible check?
+> You are sending nilfs changes to tty maintainers which is not about right.
+Got it, Thanks.
 
-No, the reverse does not hold. A plane can be invisible
-while still having a valid fb. Eg. the plane could be
-positioned completely offscreen, or the entire crtc may
-be inactive (DPMS off).
-
-And whenever we have an fb we want to do all the check to make sure
-it satisfies all the requirements, whether the plane is visible or
-not. Otherwise we could end up confusing userspace with something
-like this:
-
-1. Usespace assigns some unsupported fb to the plane
-   but positions the plane offscreen -> success
-2. Userspace moves the plane to somewhere onscreen -> fail
-
--- 
-Ville Syrjälä
-Intel
+BR,
+Lizhi
 
