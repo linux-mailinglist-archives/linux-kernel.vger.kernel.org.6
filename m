@@ -1,164 +1,148 @@
-Return-Path: <linux-kernel+bounces-341391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D034F987F68
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:26:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A16987F6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791581F22272
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:26:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E1891C20C9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3401C18733B;
-	Fri, 27 Sep 2024 07:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74DF17C98C;
+	Fri, 27 Sep 2024 07:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TRu/7hJw"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZFPpTqoM"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810A613A896
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4592B28EF
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727421997; cv=none; b=d08CjwcOz/Ipoii9aG4fF2OCb7Ep5079mpsy+3JMB8BMjx3OkP9J88U0ol1kZKJo0BwKUd2rNdcaIygh/2XPiAoirgvjsd5TSDDTHsieY8C7xdxVIblim2ScC0UwiDbwaj6q/SzqyR2tQbjeMi21BXuI72uehk5HOKHoAcIse4A=
+	t=1727422116; cv=none; b=C1TKpdz1jAbZwqxA6a9rgM7Nyhf2CLkBkzFhQZhOIg9YLIxb3h4HyJWojelZ/zwtvB4prVO83O7N4DHnFJsMB9mWY6GrbVY/+Qc1yhrWjenvOndXTAmRYYjdJ3GsGljiK2txDd5eBCIMmE7OUpRW738TN9II6y7/iTL++F44WA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727421997; c=relaxed/simple;
-	bh=xMgAuIsRbpaGRuJllqDUgSrd+lucxNOpIKVPx5iakck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TCdSbsvjd4Od6X5gMHyjhwA9dv7zweUv968k7y3yUGcfxEQMEhscQ6mmFSHWmMbr75MABby0lu8I/UeMMN85dyFkLtv6U+NUd8p0g87b/gHx/C4lmAaJn/LfDoDLJUvpKHY9huLW04DGyf5uAKe3FutV+Ujc4fW5Irv5Vqon8EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TRu/7hJw; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d3cde1103so230061066b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:26:35 -0700 (PDT)
+	s=arc-20240116; t=1727422116; c=relaxed/simple;
+	bh=uoJ3Ph451WRu4/35p1hS+4je1NRBdhgvP4Y7yp3yAGY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mH6UpOp4NYX24K1c4+sIJCVpxK33LDiM2doQbZypYwoBJ8JAkl7LPU+HEoSZ0koMVrZ5m51UArbQHSc6uEHwedEvg52LYgVz5/ZAN4EPePsEyR+d/oVxK38OG21gCtbrbPbyu4MQFLGR4xNvJRC1Nwj/H4Rjk5vnWIyHs6+R0ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZFPpTqoM; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-535dc4ec181so1979463e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:28:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727421993; x=1728026793; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=80ztDIsJWeriQoGVLSr3JhFbaWjjf3yBIgtVIEKSUh4=;
-        b=TRu/7hJwrxUx3wOak5e/c2+oVr4Z3m54883QdSdso5qBSw31X+adwJtycElOCD4Q6v
-         /1qASgjKoiXjg11Y+yuLtk8rSVHWLl3WoEfnZj6nZeJebmWRRulcTQmWM1eRomi08Kmy
-         1piDNGEUFsS+fExW1zjOO9W/23CkRq9be2YQ/vcM8jh5Yr8mhvV83T81zii5ZfFc9bMX
-         NLQQUe4OU/TNG0bkZH9KL0w9MhpzRvgZQfpew9K2P3lK8YoD8A2F+1ZjZ/P47mgtw1qG
-         AnNbcwWYK9dbJJ/z3gOKJJRR5XKTiHIUpc24H6lhKhskcy08rrZufIJTKhTfutGgGiS5
-         UxcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727421993; x=1728026793;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727422112; x=1728026912; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=80ztDIsJWeriQoGVLSr3JhFbaWjjf3yBIgtVIEKSUh4=;
-        b=pj8mQ9Uf4SYm11/3L3hLLno5o56M5NPyJ0hycVVRrafYMcQBUo1tVnTEMnPxDZ2BHH
-         W6OrwS1IWnRogKacTZroB20qmqfQsREvqdzBADHAtWTMgyzc++fMa3682KxqdU3r1GPE
-         vBtQWThhkrqhbRQ6pybQZiYu2I3jIzd18GxQN6U46PiVCceu/QPjr3R8c2CuFoxM7pqc
-         Z2VPuk7JjqeOL/aMyVXEYiY8gu4c8iQbstcFBk68BvNEXJPeGoSvDBtezWgJtprfY2z/
-         imr9QKv/3/8DM3Z/H9EsiAhDVBbQOATSOyXappNU6B0IfInwBaqb31+eFegTIx4yhuhZ
-         D4Sg==
-X-Gm-Message-State: AOJu0YzCHH6q1rJzuntAEwMgfQW6dXNXRIrUZ/StrDU3c7Yf+ZYO3Z3n
-	YoCFyE4yrKj+UU8gnIRPU40d3n0Y/wNRk7n35AWwWPJmXkqXcXIfFI9wL/TNq04FZgO8WJbXL+l
-	k
-X-Google-Smtp-Source: AGHT+IE7+CblqEppxGApcOTVpZmHP9GLtTzDm9g1t7gy3vhONmLGIDrJpXglSfFblCwn/uYQ+Ow0Nw==
-X-Received: by 2002:a17:906:c115:b0:a86:4649:28e6 with SMTP id a640c23a62f3a-a93c4a98d6amr167324466b.57.1727421993567;
-        Fri, 27 Sep 2024 00:26:33 -0700 (PDT)
-Received: from localhost (109-81-81-255.rct.o2.cz. [109.81.81.255])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27776efsm93534866b.30.2024.09.27.00.26.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 00:26:33 -0700 (PDT)
-Date: Fri, 27 Sep 2024 09:26:32 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>, rcu@vger.kernel.org
-Subject: Re: [PATCH 11/20] sched: Handle CPU isolation on last resort
- fallback rq selection
-Message-ID: <ZvZeKBzOBbVyA-xL@tiehlicka>
-References: <20240926224910.11106-1-frederic@kernel.org>
- <20240926224910.11106-12-frederic@kernel.org>
+        bh=uoJ3Ph451WRu4/35p1hS+4je1NRBdhgvP4Y7yp3yAGY=;
+        b=ZFPpTqoMgTMQQzsL4jHG/ZKmeD0f83JuWU7ztW3Yjs2svYCxPtOBh32sUweo/qGXDI
+         P6GjZuVSqSuqZRejhPTTQf/AsS7bo9gQ3aEa67vxDKUhcncVwO0JfvY5sd9scB30MlHt
+         X5AoSeZprNB5fQoBV43Zkdfjcr9msi6WtdwFGXyjR3pJMIGLea2sPJYq6cB5PnxkMDTd
+         gOAvGX4Z+6lIeHvRTUyntZG1R13npaM1OHetb5kFi+hH3rm7eAwaZQTXaFxNerNKvB5M
+         GSEaogZgN7pd6gGMhduqBE8veqW/h8zudDpdXVKbDeZQ4FRWeZlcjE/csleM1l/vcI99
+         jG6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727422112; x=1728026912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uoJ3Ph451WRu4/35p1hS+4je1NRBdhgvP4Y7yp3yAGY=;
+        b=Opp0twpuGjBbnZUZS4N3fethakXpeRXh+XUXGFNdzOcuPKhCx0bCMlEMqEO3Aynl42
+         pFJsVbzTBIj5eKnv3f3corzgN6hyRtp1HsnGFJ4C4GZfxusLLr31bPltMvfg6vIChje7
+         4Rsyt9YF/XYc/+d2XkJZSYs+vjMcN5Z1wjqNFy20IZIlpXMFSLbdWdLYP2ISolKcpqxv
+         Os7zimaWs7CkiAvtZQvp0kuGqEcaoVYLzT8n1BjYp8KKZ3md+Bszs50VI9egpqn1Gt0W
+         GUbdIrovsCgC/AhTsA5znkA1lOVGYOsZCDrn46lwaxIomFuUqkPF0v+Cn+zI1NCItUTA
+         1ITw==
+X-Forwarded-Encrypted: i=1; AJvYcCWASGjpc8Q4q/k+TngOO1cyE0lJf1lsdBcvopWhSMs9xJ7MLC9BJgLcZ7shwH9HF2/NvEbI5LBOuB9AqOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyALG8hcoltfiEjGZVHc4nPUKge0cevekc6niElc4fKYYYv1HAM
+	xPCNJTRQNUJq3oxTS9h+NxE76lZzrpANJ15XpT4oGSS1ku8y2ss6pmbbpsiBriClCCuj74/y7SA
+	07gmu7IczgvRnE7N0yUmioTFzlg==
+X-Google-Smtp-Source: AGHT+IHmtyWEtUHfsKHq9g99tzdBj9RE/tE8KQz7cGobSq9bRFg4XWFxuuR2spfaHirGoTu/774OipIK2eJEqFPls4g=
+X-Received: by 2002:a05:6512:118e:b0:536:a4d8:916d with SMTP id
+ 2adb3069b0e04-5389fc4d0d6mr1144642e87.34.1727422112023; Fri, 27 Sep 2024
+ 00:28:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926224910.11106-12-frederic@kernel.org>
+References: <20240925032256.1782-1-fangzheng.zhang@unisoc.com>
+ <CAB=+i9TJcnFhwef+efw8yBynZ28M2tWiYvuYS0aVoD4yt_+0Zw@mail.gmail.com> <cb3b4858-00a8-459f-a195-7f9092f0da8e@suse.cz>
+In-Reply-To: <cb3b4858-00a8-459f-a195-7f9092f0da8e@suse.cz>
+From: zhang fangzheng <fangzheng.zhang1003@gmail.com>
+Date: Fri, 27 Sep 2024 15:28:20 +0800
+Message-ID: <CA+kNDJKDFvA6bamTZ8tHTR+NRaV7NbK8sEQREyhwEOsTnroJjw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Introduce panic function when slub leaks
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>, Fangzheng Zhang <fangzheng.zhang@unisoc.com>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Greg KH <gregkh@linuxfoundation.org>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, tkjos@google.com, 
+	Yuming Han <yuming.han@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 27-09-24 00:48:59, Frederic Weisbecker wrote:
-> When a kthread or any other task has an affinity mask that is fully
-> offline or unallowed, the scheduler reaffines the task to all possible
-> CPUs as a last resort.
-> 
-> This default decision doesn't mix up very well with nohz_full CPUs that
-> are part of the possible cpumask but don't want to be disturbed by
-> unbound kthreads or even detached pinned user tasks.
-> 
-> Make the fallback affinity setting aware of nohz_full. This applies to
-> all architectures supporting nohz_full except arm32. However this
-> architecture that overrides the task possible mask is unlikely to be
-> willing to integrate new development.
-> 
-> Suggested-by: Michal Hocko <mhocko@suse.com>
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+On Thu, Sep 26, 2024 at 8:30=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> On 9/25/24 15:18, Hyeonggon Yoo wrote:
+> > On Wed, Sep 25, 2024 at 12:23=E2=80=AFPM Fangzheng Zhang
+> > <fangzheng.zhang@unisoc.com> wrote:
+> >>
+> >> Hi all,
+> >
+> > Hi Fangzheng,
+> >
+> >> A method to detect slub leaks by monitoring its usage in real time
+> >> on the page allocation path of the slub. When the slub occupancy
+> >> exceeds the user-set value, it is considered that the slub is leaking
+> >> at this time
+> >
+> > I'm not sure why this should be a kernel feature. Why not write a user
+> > script that parses
+> > MemTotal: and Slab: part of /proc/meminfo file and generates a log
+> > entry or an alarm?
+>
+> Yes very much agreed. It seems rather arbitrary. Why slab, why not any ot=
+her
+> kernel-specific counter in /proc/meminfo? Why include NR_SLAB_RECLAIMABLE=
+_B
+> when that's used by caches with shrinkers?
 
-Thanks, this makes sense to me. Up to scheduler maitainers whether this
-makes sense in general though.
+Ok, this is because the current consideration is to specifically
+track the memory usage of the slab module.
+In the stability test, ie, monkey test,
+the anr or reboot problem occurs, there is a high probability
+that the slab occupancy is high when it comes to memory analysis.
+In addition to directly monitoring leaks in the allocation path, it is
+also convenient to record the allocation stack information
+when an exception occurs.
 
-Thanks for looking into this Frederic!
-
-> ---
->  kernel/sched/core.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 43e453ab7e20..d4b759c1cbf1 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -3421,6 +3421,21 @@ void kick_process(struct task_struct *p)
->  }
->  EXPORT_SYMBOL_GPL(kick_process);
->  
-> +static const struct cpumask *task_cpu_fallback_mask(struct task_struct *t)
-> +{
-> +	const struct cpumask *mask;
-> +
-> +	mask = task_cpu_possible_mask(p);
-> +	/*
-> +	 * Architectures that overrides the task possible mask
-> +	 * must handle CPU isolation.
-> +	 */
-> +	if (mask != cpu_possible_mask)
-> +		return mask;
-> +	else
-> +		return housekeeping_cpumask(HK_TYPE_TICK);
-> +}
-> +
->  /*
->   * ->cpus_ptr is protected by both rq->lock and p->pi_lock
->   *
-> @@ -3489,7 +3504,7 @@ static int select_fallback_rq(int cpu, struct task_struct *p)
->  			 *
->  			 * More yuck to audit.
->  			 */
-> -			do_set_cpus_allowed(p, task_cpu_possible_mask(p));
-> +			do_set_cpus_allowed(p, task_cpu_fallback_mask(p));
->  			state = fail;
->  			break;
->  		case fail:
-> -- 
-> 2.46.0
-
--- 
-Michal Hocko
-SUSE Labs
+> A userspace solution should be straightforward and universal - easily
+> configurable for different scenarios.
+>
+> >> and a panic operation will be triggered immediately.
+> >
+> > I don't think it would be a good idea to panic unnecessarily.
+> > IMO it is not proper to panic when the kernel can still run.
+>
+> Yes these days it's practically impossible to add a BUG_ON() for more
+> serious conditions than this.
+>
+> Please don't post new versions addressing specific implementation details
+> until this fundamental issue is addressed.
+>
+> Thanks,
+> Vlastimil
+>
+> > Any thoughts?
+> >
+> > Thanks,
+> > Hyeonggon
+>
 
