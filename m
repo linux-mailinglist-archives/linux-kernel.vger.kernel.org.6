@@ -1,163 +1,224 @@
-Return-Path: <linux-kernel+bounces-341972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FBC988913
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:30:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E1B1988915
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA7A2B213FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:30:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01ADC28122C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7EC13AA47;
-	Fri, 27 Sep 2024 16:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD6018A959;
+	Fri, 27 Sep 2024 16:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9G4Q8QZ"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tDKLvxOK"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30405234;
-	Fri, 27 Sep 2024 16:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374133FB9F
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 16:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727454612; cv=none; b=JcVOauZo4Riv85f1TmVRZrGHSc4SbSh1XJDOuH7VSp10NeiWUYQjzjZD0mG/f6ZhYllYhgboxhcjJKeneZsdy4AWbSQbAs1W8NuaufPEJjAjkrhFx1Njo18OtT01PEn572mzxPBVbTzr1OVYkOQXtGk4nWRnXm1LhAxGoNYqA38=
+	t=1727454737; cv=none; b=GbjZHFwFAu/JM1dNYuhuFmxrvK58Wxt0Fkk7TkIXvu8FvcPQ8wBDP8pCf5w2t3JMVmyomcZn5bUUDxOvyaUdV4CcOZ1ivGZBmeJssfkFXnKfNksugD/OFW6gAPog3d1heYznpl8A0iwPk60JUWpSF+TSeuF3wtz9e1of91smhEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727454612; c=relaxed/simple;
-	bh=Khb7fI3t4uKvIa6tRoyoYLkwmsnRWW2zobCmTiJO5F4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MiIdw45TB1NCwGAlZhLYj71QsFgtG5jbFs5RX4QBvOjHToaclTkkD2qdLgClja/OEAdIeiSWNLzLBnD+OzL5SwQ07owuNgj6b66TgjHH6XMVW8K9m1EwCj5HAqUTZxzgDBsEcOSk12XaC9MxT4IP+U1kyl8pOwVtxOx/BQoH9r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9G4Q8QZ; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a274ef3bdeso9557435ab.2;
-        Fri, 27 Sep 2024 09:30:10 -0700 (PDT)
+	s=arc-20240116; t=1727454737; c=relaxed/simple;
+	bh=6+GMeQXCf9Q0BnxZJLc4yFMZRCGRQksDHZ5OueXWU44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qVfleP68XDMJu/GXrGfouYmkOr6CD6MwMNIeSx5mP9y9L01RVP/9wfAh0VBoaGXPUgzm/5xoaN/l8CR8jmbvV7f8RLMqg1PUtRb7HfdnV03UXkZCWecHbqvhxQl1uqKKEBcbk0IWutNMz22sId35VjzrGpMubpTvAnwkpuned2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tDKLvxOK; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b3d1a77bbso725ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:32:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727454610; x=1728059410; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QvTgw6Pk9gBEviwsx0Cqlnka/Mthb1oy+t9pJwb6oKE=;
-        b=j9G4Q8QZJ1t4gUKHnxXZr6f0FWsbBc+hTfkXudQ50wdjPxY/TcA86cXvTlaopjRz+r
-         u08rkNN3R1HZFvRmJyQx/nbOUsm1NIvOWHkATAWt8SByu5w+F/gqosT86rZyviakEyAw
-         vzyHqvMOkNzW5/zfiyUY7I9HQWRx0pxi9u0DKQMKX6o3DsJC517e3nz5yFG2b0NeKUFv
-         3+P1Kg0HKF+d7FqC+RR4kftOMHa9PwrWOSY6JbClKMbTu3BfFNDLx4zVDZ6gbo52HO5x
-         wm9vsq8jgJEVgZm94T6AlWq2PSCWpFdFF/xpiBTvZgEZ0pdPJGDY4EOyxa+7V2HAfybD
-         FSyQ==
+        d=google.com; s=20230601; t=1727454735; x=1728059535; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=T55+XweVk/w13JnIHjNeR6jsJ3mnW0Rl9vBiTmF/Lxg=;
+        b=tDKLvxOKwpwxH6x97dbJnMUNdnkA1zIheJv6ZEar+ECLrFz3pboyLLpnrL9sucSEs/
+         jPvqmmYqkeZoO/hAa+s9fok4IVTR2SrdD9V9nhxEl5jv/LI9HNMCpReqLik0f0eLqUEE
+         cqPO4efKxbec2JSh2Or9i3+6d4EczyjQb8VbmeqTEUmrMLVvvCySQqakkIa/LdwEB4Z6
+         z0rNDKXxJ4+ZOgjzBVpv6mQEG3Gzrr0FIiEdZ8VEhsisgvmcrDhQyxwlw4i/uf6n2uy7
+         AolGchXr2Bu43yALmrDEMorJtQJDTfOi0YPUToHw7KXcw0FqrY35MpJiqRUoIAh4zo58
+         CaRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727454610; x=1728059410;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QvTgw6Pk9gBEviwsx0Cqlnka/Mthb1oy+t9pJwb6oKE=;
-        b=sfGv3j8p2NZ9WLlVY+d74rrKKswPO31B5teGA+pU/l+p3NRy0/vscSeWXige6Br3Tg
-         lY0NfSHwRW3DJutmSLlDkLAAV/RJir18F89HVlf+7Zq77Gxe3yTJydpJzk0Z3D8Wq9KE
-         3WiFNpeItFQ08kprspEWW/dor0ZXNLF1dhIpx/9VnewtHcKR1FcICnKtXhwr37v9zbay
-         osshNjN0T8EhUhtqYjRuAyhbipjB+AIph/1O0iHUFYfjOCCMMNWK621POmqTFrgR/2Dm
-         ZIFHwk51z+rRrkfP6oO/qdxKM88xVfYKAyjxzIECFFV61+r1H+2ajwy41fz7gCkx+nYJ
-         981w==
-X-Forwarded-Encrypted: i=1; AJvYcCVr4orAU+j1fvhS5cFNR5yf7q+NXCnn0mbddHAgC/dyHh+rtgLPuG06nJsNmIKTzCiQ1g6nhQIUBTDF+6DG@vger.kernel.org, AJvYcCW7DbD9rwKaMKguPCFo7KYwJdWyM5n1kvJdVmkXsfRNm0VeoUigjlwlSSNvxHX4jSwAp2VStn1g/8lkOBKZ@vger.kernel.org, AJvYcCXBkq65AjWKUX4cjUOZVuRaqMk1sEWIbm4vD+l3YHCouRWdQ6/bitWYeWJ9bVoSzMLDW3/ZiJBNgpEO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8OfL4OA9TkmrQ+WyRJhUz5Pb1WVxuuK40YCCI9zouXlCx3h81
-	y24kkb3QZZrzUIwgW1igdXR5fFK79zuEOFgp5S0FDb3nmxGVTBOh58Cwvu+a0u2jMQEGUI7rDDE
-	r1cHcydtsYIIYpo8O0GyCdoJJ9+k=
-X-Google-Smtp-Source: AGHT+IHG8fZKXSPzJQdh8hWyj5jDzymKjpbFKeFVmqIY8B/+EwO1m/phqt/38c7UgSoytYslwNezKZlcY211D56O0qY=
-X-Received: by 2002:a05:6e02:1564:b0:3a0:4df2:52e2 with SMTP id
- e9e14a558f8ab-3a34515ca34mr35037475ab.4.1727454609859; Fri, 27 Sep 2024
- 09:30:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727454735; x=1728059535;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T55+XweVk/w13JnIHjNeR6jsJ3mnW0Rl9vBiTmF/Lxg=;
+        b=rip+iGdutyUBSzIJSOgDjgXdqne9tHR5I9fc8HyXKNsQeBN/eEGEXyQjIAEBzktvwB
+         l3o3M9XyNgaTWEk4rRWWtbWx47tZZTv5+VbktG56pDpH7ZdYb5TxTdiGuecnSQqgJBl4
+         IehUfkASpVciM1H1uFuVhLsfitwLLrYZjN24mNMHtIcJw+8XqBIqCLzqTjd3YAr0qrPS
+         8iEwZeaIbeV0oZHYkcI5T7qU632xOwJOaDvLMFmy8oB7O8wtH+e913z4fZxAPsvUT02y
+         nfQbazJn9Krm0CIu6/a+ikiKcZ4rn4e/2fxRQ99QDjD1JbvrVqcah/nGAthg9+M6OjYQ
+         PLeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfrBKwfL/zibWTWJEsSfT2RZa4wQTOud9FBZMKUdjFEuAMNTxQrX6O7EQ1gGh13o5fRjiG32e3pVcBYcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLLrPeFsPTsfjqeLEdgyHx3YZ730jwQKZoq9tTz/oEaT6qMjWG
+	fkV8Idi3DmUkorIZdv0uYJOeBHG0H93PYcfW+fuQ5/Z1CN1C4d7XGsImhaKZZA==
+X-Google-Smtp-Source: AGHT+IERC+QZegLlyWcleseTDApGQjpHryAcyc0sQgkxXSK9L6Z5l8ucA78bfeScZAG+Qud3BsNUiQ==
+X-Received: by 2002:a17:902:cece:b0:206:bf6e:6001 with SMTP id d9443c01a7336-20b3d576500mr2544045ad.17.1727454735238;
+        Fri, 27 Sep 2024 09:32:15 -0700 (PDT)
+Received: from google.com (201.215.168.34.bc.googleusercontent.com. [34.168.215.201])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db29278esm1802976a12.16.2024.09.27.09.32.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 09:32:14 -0700 (PDT)
+Date: Fri, 27 Sep 2024 16:32:10 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Yu-Ting Tseng <yutingtseng@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 6/8] binder: allow freeze notification for dead nodes
+Message-ID: <ZvbeCg5Ho6p-VU5o@google.com>
+References: <20240926233632.821189-1-cmllamas@google.com>
+ <20240926233632.821189-7-cmllamas@google.com>
+ <CAH5fLggS7C4QdmDFqEy5KARUj+4oNWfstyno3d43joG5haysDw@mail.gmail.com>
+ <CAN5Drs3TCGT1rWJjujo3FP3HxnSFUFo5hcWh=4+xhOYzDg4JqQ@mail.gmail.com>
+ <CAH5fLgjnyKtXsnPbvCFz64BBRqvWPwh6reM-myWA9AEBKFhcJg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926-preemption-a750-t-v6-0-7b6e1ef3648f@gmail.com> <20240926-preemption-a750-t-v6-5-7b6e1ef3648f@gmail.com>
-In-Reply-To: <20240926-preemption-a750-t-v6-5-7b6e1ef3648f@gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Fri, 27 Sep 2024 09:29:58 -0700
-Message-ID: <CAF6AEGviMOLoZKHf4DX9mEj84Y5Xx2hH4tvrkRVLsYyQz35Bwg@mail.gmail.com>
-Subject: Re: [PATCH v6 05/11] drm/msm/a6xx: Implement preemption for a7xx targets
-To: Antonino Maniscalco <antomani103@gmail.com>
-Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Akhil P Oommen <quic_akhilpo@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Sharat Masetty <smasetty@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgjnyKtXsnPbvCFz64BBRqvWPwh6reM-myWA9AEBKFhcJg@mail.gmail.com>
 
-On Thu, Sep 26, 2024 at 2:17=E2=80=AFPM Antonino Maniscalco
-<antomani103@gmail.com> wrote:
->
-> This patch implements preemption feature for A6xx targets, this allows
-> the GPU to switch to a higher priority ringbuffer if one is ready. A6XX
-> hardware as such supports multiple levels of preemption granularities,
-> ranging from coarse grained(ringbuffer level) to a more fine grained
-> such as draw-call level or a bin boundary level preemption. This patch
-> enables the basic preemption level, with more fine grained preemption
-> support to follow.
->
-> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8450-HDK
-> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
-> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> ---
->  drivers/gpu/drm/msm/Makefile              |   1 +
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 283 +++++++++++++++++++++-
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 +++++++++++++
->  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 377 ++++++++++++++++++++++++=
-++++++
->  drivers/gpu/drm/msm/msm_ringbuffer.h      |   7 +
->  5 files changed, 825 insertions(+), 11 deletions(-)
->
+On Fri, Sep 27, 2024 at 06:15:40PM +0200, Alice Ryhl wrote:
+> On Fri, Sep 27, 2024 at 6:13 PM Yu-Ting Tseng <yutingtseng@google.com> wrote:
+> >
+> > On Fri, Sep 27, 2024 at 12:19 AM Alice Ryhl <aliceryhl@google.com> wrote:
+> > >
+> > > On Fri, Sep 27, 2024 at 1:37 AM Carlos Llamas <cmllamas@google.com> wrote:
+> > > >
+> > > > Alice points out that binder_request_freeze_notification() should not
+> > > > return EINVAL when the relevant node is dead [1]. The node can die at
+> > > > any point even if the user input is valid. Instead, allow the request
+> > > > to be allocated but skip the initial notification for dead nodes. This
+> > > > avoids propagating unnecessary errors back to userspace.
+> > > >
+> > > > Fixes: d579b04a52a1 ("binder: frozen notification")
+> > > > Cc: stable@vger.kernel.org
+> > > > Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> > > > Link: https://lore.kernel.org/all/CAH5fLghapZJ4PbbkC8V5A6Zay-_sgTzwVpwqk6RWWUNKKyJC_Q@mail.gmail.com/ [1]
+> > > > Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> > > > ---
+> > > >  drivers/android/binder.c | 28 +++++++++++++---------------
+> > > >  1 file changed, 13 insertions(+), 15 deletions(-)
+> > > >
+> > > > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> > > > index 73dc6cbc1681..415fc9759249 100644
+> > > > --- a/drivers/android/binder.c
+> > > > +++ b/drivers/android/binder.c
+> > > > @@ -3856,7 +3856,6 @@ binder_request_freeze_notification(struct binder_proc *proc,
+> > > >  {
+> > > >         struct binder_ref_freeze *freeze;
+> > > >         struct binder_ref *ref;
+> > > > -       bool is_frozen;
+> > > >
+> > > >         freeze = kzalloc(sizeof(*freeze), GFP_KERNEL);
+> > > >         if (!freeze)
+> > > > @@ -3872,32 +3871,31 @@ binder_request_freeze_notification(struct binder_proc *proc,
+> > > >         }
+> > > >
+> > > >         binder_node_lock(ref->node);
+> > > > -
+> > > > -       if (ref->freeze || !ref->node->proc) {
+> > > > -               binder_user_error("%d:%d invalid BC_REQUEST_FREEZE_NOTIFICATION %s\n",
+> > > > -                                 proc->pid, thread->pid,
+> > > > -                                 ref->freeze ? "already set" : "dead node");
+> > > > +       if (ref->freeze) {
+> > > > +               binder_user_error("%d:%d BC_REQUEST_FREEZE_NOTIFICATION already set\n",
+> > > > +                                 proc->pid, thread->pid);
+> > > >                 binder_node_unlock(ref->node);
+> > > >                 binder_proc_unlock(proc);
+> > > >                 kfree(freeze);
+> > > >                 return -EINVAL;
+> > > >         }
+> > > > -       binder_inner_proc_lock(ref->node->proc);
+> > > > -       is_frozen = ref->node->proc->is_frozen;
+> > > > -       binder_inner_proc_unlock(ref->node->proc);
+> > > >
+> > > >         binder_stats_created(BINDER_STAT_FREEZE);
+> > > >         INIT_LIST_HEAD(&freeze->work.entry);
+> > > >         freeze->cookie = handle_cookie->cookie;
+> > > >         freeze->work.type = BINDER_WORK_FROZEN_BINDER;
+> > > > -       freeze->is_frozen = is_frozen;
+> > > > -
+> > > >         ref->freeze = freeze;
+> > > >
+> > > > -       binder_inner_proc_lock(proc);
+> > > > -       binder_enqueue_work_ilocked(&ref->freeze->work, &proc->todo);
+> > > > -       binder_wakeup_proc_ilocked(proc);
+> > > > -       binder_inner_proc_unlock(proc);
+> > > > +       if (ref->node->proc) {
+> > > > +               binder_inner_proc_lock(ref->node->proc);
+> > > > +               freeze->is_frozen = ref->node->proc->is_frozen;
+> > > > +               binder_inner_proc_unlock(ref->node->proc);
+> > > > +
+> > > > +               binder_inner_proc_lock(proc);
+> > > > +               binder_enqueue_work_ilocked(&freeze->work, &proc->todo);
+> > > > +               binder_wakeup_proc_ilocked(proc);
+> > > > +               binder_inner_proc_unlock(proc);
+> > >
+> > > This is not a problem with your change ... but, why exactly are we
+> > > scheduling the BINDER_WORK_FROZEN_BINDER right after creating it? For
+> > > death notications, we only schedule it immediately if the process is
+> > > dead. So shouldn't we only schedule it if the process is not frozen?
 
-[snip]
+For death notifications, we only care about a remote binder's death.
+Unlike freeze, in which we have a state that can toggle at any point.
+This is important for suspending and resuming transactions to a node.
 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/=
-adreno/a6xx_gpu.c
-> index 6e065500b64d6d95599d89c33e6703c92f210047..355a3e210335d60a5bed0ee28=
-7912271c353402a 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+Sending the freeze notification immediately allows for (1) userspace
+knowing the current state of the remote node and (2) avoiding a race
+with BINDER_FREEZE ioctl in which we could miss a freeze/thaw.
 
-[snip]
+> > > And if the answer is that frozen notifications are always sent
+> > > immediately to notify about the current state, then we should also
+> > > send one for a dead process ... maybe. I guess a dead process is not
+> > > frozen?
+> > Yes this is to immediately notify about the current state (frozen or
+> > unfrozen). A dead process is in neither state so it feels more correct
+> > not to send either?
+> 
+> Okay.
+> 
+> On the other hand, I can easily imagine userspace code being written
+> with the assumption that it'll always get a notification immediately.
+> That would probably result in deadlocks in the edge case where the
+> process happens to be dead.
 
-> @@ -784,6 +1015,16 @@ static int a6xx_ucode_load(struct msm_gpu *gpu)
->                 msm_gem_object_set_name(a6xx_gpu->shadow_bo, "shadow");
->         }
->
-> +       a6xx_gpu->pwrup_reglist_ptr =3D msm_gem_kernel_new(gpu->dev, PAGE=
-_SIZE,
-> +                                                        MSM_BO_WC  | MSM=
-_BO_MAP_PRIV,
-> +                                                        gpu->aspace, &a6=
-xx_gpu->pwrup_reglist_bo,
-> +                                                        &a6xx_gpu->pwrup=
-_reglist_iova);
+There are different ways to proceed with this dead node scenario:
 
-Couldn't this also be MSM_BO_GPU_READONLY?  And same for the
-preempt_postamble_ptr, I assume?
+1. return ESRCH
+2. silently fail and don't allocate a ref->freeze
+3. allocate a ref->freeze but don't notify the current state
+4. allocate and send a "fake" state notification.
 
-Also, it looks like we are only writing the smmu_info from the
-kernel.. is there any way that could be split out into a RO buffer?
+I like 1 just because it is technically the correct thing to do from the
+driver's perspective. However, it does complicate things in userspace as
+we've discussed. Option 2, could work but it would also fail with EINVAL
+if a "clear notification" is sent later anyway. Option 3 changes the
+behavior of guaranteeing a notification upon success. Option 4 can cause
+trouble on how a "not-frozen" notification is handled in userspace e.g
+start sending transactions.
 
-BR,
--R
+As you can see there is no clear winner here, we have to compromise
+something and option #3 is the best we can do IMO.
 
-> +
-> +       if (IS_ERR(a6xx_gpu->pwrup_reglist_ptr))
-> +               return PTR_ERR(a6xx_gpu->pwrup_reglist_ptr);
-> +
-> +       msm_gem_object_set_name(a6xx_gpu->pwrup_reglist_bo, "pwrup_reglis=
-t");
-> +
->         return 0;
->  }
->
+--
+Carlos Llamas
 
