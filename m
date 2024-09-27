@@ -1,148 +1,170 @@
-Return-Path: <linux-kernel+bounces-341393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A16987F6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:28:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D29987F70
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E1891C20C9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:28:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B20E91C20B1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74DF17C98C;
-	Fri, 27 Sep 2024 07:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C74D18800E;
+	Fri, 27 Sep 2024 07:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZFPpTqoM"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NU6bNFyK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4592B28EF
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BDB165EF1
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727422116; cv=none; b=C1TKpdz1jAbZwqxA6a9rgM7Nyhf2CLkBkzFhQZhOIg9YLIxb3h4HyJWojelZ/zwtvB4prVO83O7N4DHnFJsMB9mWY6GrbVY/+Qc1yhrWjenvOndXTAmRYYjdJ3GsGljiK2txDd5eBCIMmE7OUpRW738TN9II6y7/iTL++F44WA0=
+	t=1727422204; cv=none; b=uboliGM3195TSSjluWfQa/HuB2II/+lBN2FNkBgOkhoJrzO6vKZYruMZ8tfrr7fH2P6LRC+AsQzOkFpDGnvZ13fKLx7LYRqTAxGA3HGZwpCVjoE/HIdQtgm0WZRbaumnstbE731ZDTDJFBn1tgx7LmrVfPAjLmtiY+WnXqUq0x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727422116; c=relaxed/simple;
-	bh=uoJ3Ph451WRu4/35p1hS+4je1NRBdhgvP4Y7yp3yAGY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mH6UpOp4NYX24K1c4+sIJCVpxK33LDiM2doQbZypYwoBJ8JAkl7LPU+HEoSZ0koMVrZ5m51UArbQHSc6uEHwedEvg52LYgVz5/ZAN4EPePsEyR+d/oVxK38OG21gCtbrbPbyu4MQFLGR4xNvJRC1Nwj/H4Rjk5vnWIyHs6+R0ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZFPpTqoM; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-535dc4ec181so1979463e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:28:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727422112; x=1728026912; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uoJ3Ph451WRu4/35p1hS+4je1NRBdhgvP4Y7yp3yAGY=;
-        b=ZFPpTqoMgTMQQzsL4jHG/ZKmeD0f83JuWU7ztW3Yjs2svYCxPtOBh32sUweo/qGXDI
-         P6GjZuVSqSuqZRejhPTTQf/AsS7bo9gQ3aEa67vxDKUhcncVwO0JfvY5sd9scB30MlHt
-         X5AoSeZprNB5fQoBV43Zkdfjcr9msi6WtdwFGXyjR3pJMIGLea2sPJYq6cB5PnxkMDTd
-         gOAvGX4Z+6lIeHvRTUyntZG1R13npaM1OHetb5kFi+hH3rm7eAwaZQTXaFxNerNKvB5M
-         GSEaogZgN7pd6gGMhduqBE8veqW/h8zudDpdXVKbDeZQ4FRWeZlcjE/csleM1l/vcI99
-         jG6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727422112; x=1728026912;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uoJ3Ph451WRu4/35p1hS+4je1NRBdhgvP4Y7yp3yAGY=;
-        b=Opp0twpuGjBbnZUZS4N3fethakXpeRXh+XUXGFNdzOcuPKhCx0bCMlEMqEO3Aynl42
-         pFJsVbzTBIj5eKnv3f3corzgN6hyRtp1HsnGFJ4C4GZfxusLLr31bPltMvfg6vIChje7
-         4Rsyt9YF/XYc/+d2XkJZSYs+vjMcN5Z1wjqNFy20IZIlpXMFSLbdWdLYP2ISolKcpqxv
-         Os7zimaWs7CkiAvtZQvp0kuGqEcaoVYLzT8n1BjYp8KKZ3md+Bszs50VI9egpqn1Gt0W
-         GUbdIrovsCgC/AhTsA5znkA1lOVGYOsZCDrn46lwaxIomFuUqkPF0v+Cn+zI1NCItUTA
-         1ITw==
-X-Forwarded-Encrypted: i=1; AJvYcCWASGjpc8Q4q/k+TngOO1cyE0lJf1lsdBcvopWhSMs9xJ7MLC9BJgLcZ7shwH9HF2/NvEbI5LBOuB9AqOk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyALG8hcoltfiEjGZVHc4nPUKge0cevekc6niElc4fKYYYv1HAM
-	xPCNJTRQNUJq3oxTS9h+NxE76lZzrpANJ15XpT4oGSS1ku8y2ss6pmbbpsiBriClCCuj74/y7SA
-	07gmu7IczgvRnE7N0yUmioTFzlg==
-X-Google-Smtp-Source: AGHT+IHmtyWEtUHfsKHq9g99tzdBj9RE/tE8KQz7cGobSq9bRFg4XWFxuuR2spfaHirGoTu/774OipIK2eJEqFPls4g=
-X-Received: by 2002:a05:6512:118e:b0:536:a4d8:916d with SMTP id
- 2adb3069b0e04-5389fc4d0d6mr1144642e87.34.1727422112023; Fri, 27 Sep 2024
- 00:28:32 -0700 (PDT)
+	s=arc-20240116; t=1727422204; c=relaxed/simple;
+	bh=75P1+FkwfrhA+nc+gMZONlm4DJ+b9tTbwaEl7CaM2lY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BkJM3QgT90T4O0bYEknppcMaqy/77XPVf4m5t0dsJTLuiDOXFfUrAXtNOwBXjOCginVXEL2fRYR1xnlllxDke67eOV6BrI3aKLEWFV+YSl8dbmH5Kn3feQNdFdhso4dDrNqFo9JlHXH/1tTDQNLa8ZM4ecKj7wtMnxb1O99TEcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NU6bNFyK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A48C4CEC4;
+	Fri, 27 Sep 2024 07:30:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727422204;
+	bh=75P1+FkwfrhA+nc+gMZONlm4DJ+b9tTbwaEl7CaM2lY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NU6bNFyKNJI927X38EjR1ERVurW8b3+bSGgZTc1XLlJDpvsxLvK87mnKm9UlqCvJc
+	 6sqJ3FzeLyUU2z++ohRVfuTcC7WBjYs7KqXEbxFOSCqx3MwtjAc4tf3DhVOhyhNi4+
+	 4sCxpOWVmMQr2C8mNYcE0fmvd1Q+yAPzLalI9L0Q=
+Date: Fri, 27 Sep 2024 09:29:51 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+	Saravana Kannan <saravanak@google.com>
+Subject: [GIT PULL] Driver core changes for 6.12-rc1
+Message-ID: <ZvZe76mpNqBp18Ts@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925032256.1782-1-fangzheng.zhang@unisoc.com>
- <CAB=+i9TJcnFhwef+efw8yBynZ28M2tWiYvuYS0aVoD4yt_+0Zw@mail.gmail.com> <cb3b4858-00a8-459f-a195-7f9092f0da8e@suse.cz>
-In-Reply-To: <cb3b4858-00a8-459f-a195-7f9092f0da8e@suse.cz>
-From: zhang fangzheng <fangzheng.zhang1003@gmail.com>
-Date: Fri, 27 Sep 2024 15:28:20 +0800
-Message-ID: <CA+kNDJKDFvA6bamTZ8tHTR+NRaV7NbK8sEQREyhwEOsTnroJjw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Introduce panic function when slub leaks
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>, Fangzheng Zhang <fangzheng.zhang@unisoc.com>, 
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Greg KH <gregkh@linuxfoundation.org>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, tkjos@google.com, 
-	Yuming Han <yuming.han@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, Sep 26, 2024 at 8:30=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 9/25/24 15:18, Hyeonggon Yoo wrote:
-> > On Wed, Sep 25, 2024 at 12:23=E2=80=AFPM Fangzheng Zhang
-> > <fangzheng.zhang@unisoc.com> wrote:
-> >>
-> >> Hi all,
-> >
-> > Hi Fangzheng,
-> >
-> >> A method to detect slub leaks by monitoring its usage in real time
-> >> on the page allocation path of the slub. When the slub occupancy
-> >> exceeds the user-set value, it is considered that the slub is leaking
-> >> at this time
-> >
-> > I'm not sure why this should be a kernel feature. Why not write a user
-> > script that parses
-> > MemTotal: and Slab: part of /proc/meminfo file and generates a log
-> > entry or an alarm?
->
-> Yes very much agreed. It seems rather arbitrary. Why slab, why not any ot=
-her
-> kernel-specific counter in /proc/meminfo? Why include NR_SLAB_RECLAIMABLE=
-_B
-> when that's used by caches with shrinkers?
+The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
 
-Ok, this is because the current consideration is to specifically
-track the memory usage of the slab module.
-In the stability test, ie, monkey test,
-the anr or reboot problem occurs, there is a high probability
-that the slab occupancy is high when it comes to memory analysis.
-In addition to directly monitoring leaks in the allocation path, it is
-also convenient to record the allocation stack information
-when an exception occurs.
+  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
 
-> A userspace solution should be straightforward and universal - easily
-> configurable for different scenarios.
->
-> >> and a panic operation will be triggered immediately.
-> >
-> > I don't think it would be a good idea to panic unnecessarily.
-> > IMO it is not proper to panic when the kernel can still run.
->
-> Yes these days it's practically impossible to add a BUG_ON() for more
-> serious conditions than this.
->
-> Please don't post new versions addressing specific implementation details
-> until this fundamental issue is addressed.
->
-> Thanks,
-> Vlastimil
->
-> > Any thoughts?
-> >
-> > Thanks,
-> > Hyeonggon
->
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/driver-core-6.12-rc1
+
+for you to fetch changes up to eb46cb321f1f3f3102f4ad3d61dd5c8c06cdbf17:
+
+  Revert "driver core: don't always lock parent in shutdown" (2024-09-25 11:01:34 +0200)
+
+----------------------------------------------------------------
+Driver core update for 6.12-rc1
+
+Here is a small set of patches for the driver core code for 6.12-rc1.
+
+This set is the one that caused the most delay on my side, due to lots
+of last-minute reports of problems in the async shutdown feature that
+was added.  In the end, I've reverted all of the patches in that series
+so we are back to "normal" and the patch set is being reworked for the
+next merge window.
+
+Other than the async shutdown patches that were reverted, included in
+here are:
+  - minor driver core cleanups
+  - minor driver core bus and class api cleanups and simplifications for
+    some callbacks
+  - some const markings of structures
+  - other even more minor cleanups
+
+All of these, including the last minute reverts, have been in
+linux-next, but all of the reports of problems in linux-next were before
+the reverts happened.  After the reverts, all is good.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Andy Shevchenko (5):
+      driver core: Sort headers
+      driver core: Use kasprintf() instead of fixed buffer formatting
+      driver core: Use guards for simple mutex locks
+      driver core: Make use of returned value of dev_err_probe()
+      driver core: Use 2-argument strscpy()
+
+Dr. David Alan Gilbert (1):
+      driver core: attribute_container: Remove unused functions
+
+Greg Kroah-Hartman (7):
+      Merge 6.11-rc3 into driver-core-next
+      Merge 6.11-rc4 into driver-core-next
+      Revert "driver core: fix async device shutdown hang"
+      Revert "nvme-pci: Make driver prefer asynchronous shutdown"
+      Revert "driver core: shut down devices asynchronously"
+      Revert "driver core: separate function to shutdown one device"
+      Revert "driver core: don't always lock parent in shutdown"
+
+Jann Horn (1):
+      firmware_loader: Block path traversal
+
+Jinjie Ruan (1):
+      driver core: Fix a potential null-ptr-deref in module_add_driver()
+
+Kunwu Chan (2):
+      platform: Make platform_bus_type constant
+      bus: fsl-mc: make fsl_mc_bus_type const
+
+Stuart Hayes (5):
+      driver core: don't always lock parent in shutdown
+      driver core: separate function to shutdown one device
+      driver core: shut down devices asynchronously
+      nvme-pci: Make driver prefer asynchronous shutdown
+      driver core: fix async device shutdown hang
+
+Uros Bizjak (1):
+      devres: Correclty strip percpu address space of devm_free_percpu() argument
+
+Yuesong Li (1):
+      driver:base:core: Adding a "Return:" line in comment for device_link_add()
+
+Zijun Hu (10):
+      driver core: Fix size calculation of symlink name for devlink_(add|remove)_symlinks()
+      driver core: Fix error handling in driver API device_rename()
+      driver core: bus: Return -EIO instead of 0 when show/store invalid bus attribute
+      driver core: Remove unused parameter for virtual_device_parent()
+      driver core: bus: Add simple error handling for buses_init()
+      driver core: bus: Fix double free in driver API bus_register()
+      drivers/base: Introduce device_match_t for device finding APIs
+      driver core: class: Check namespace relevant parameters in class_register()
+      driver core: Make parameter check consistent for API cluster device_(for_each|find)_child()
+      driver core: Trivially simplify ((struct device_private *)curr)->device->p to @curr
+
+ drivers/base/attribute_container.c  |  48 +----------
+ drivers/base/auxiliary.c            |   2 +-
+ drivers/base/base.h                 |   2 +-
+ drivers/base/bus.c                  |  19 ++--
+ drivers/base/class.c                |  14 ++-
+ drivers/base/core.c                 | 168 ++++++++++++++++++------------------
+ drivers/base/dd.c                   |   2 +-
+ drivers/base/devres.c               |   2 +-
+ drivers/base/driver.c               |   2 +-
+ drivers/base/firmware_loader/main.c |  30 +++++++
+ drivers/base/module.c               |  14 +--
+ drivers/base/platform.c             |   2 +-
+ drivers/bus/fsl-mc/fsl-mc-bus.c     |   2 +-
+ include/linux/attribute_container.h |   6 --
+ include/linux/auxiliary_bus.h       |   2 +-
+ include/linux/device/bus.h          |   6 +-
+ include/linux/device/class.h        |   2 +-
+ include/linux/device/driver.h       |   2 +-
+ include/linux/fsl/mc.h              |   2 +-
+ include/linux/platform_device.h     |   2 +-
+ 20 files changed, 165 insertions(+), 164 deletions(-)
 
