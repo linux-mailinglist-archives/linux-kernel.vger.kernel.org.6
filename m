@@ -1,136 +1,87 @@
-Return-Path: <linux-kernel+bounces-341461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5EE988085
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:39:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49944988086
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCE7E1F2211E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:39:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA58B1F238B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC835189B91;
-	Fri, 27 Sep 2024 08:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D47818A6B8;
+	Fri, 27 Sep 2024 08:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BbVa78MD"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6bWUDXz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5FF17A597;
-	Fri, 27 Sep 2024 08:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFDD17A597;
+	Fri, 27 Sep 2024 08:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727426356; cv=none; b=OmGlTzt/lCB+82Am4Z3qmjZW4H9ZMTEmcAokMipGcYe22afrk3jFNZg5/ftG41qq7pazk2vvaZPFOxlaQBQm61bZs/mMNHnmkzJdG4VZi8noF/1gyLutdQec35cFXLQpgQcPNexcJdHtvc89WDoeWBp5MJjIRfpUgar/os8yadU=
+	t=1727426360; cv=none; b=UX2xd/0YT8pZFdbH4/AVvnWgi1EUbm9/8EgDCrPPC3hctJ6AQ4ewxbdl4OsvnbDguzh8y2o/rVPNeHp8iuKbgV8BzoEAD7MfN5sY88wQVAmjssP2Zg/dPudqN/GIxzZpuw5AUfFluXUGSCS3xcF58AQNsNUXDdoOCYPd8Hj1pz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727426356; c=relaxed/simple;
-	bh=92RQnOORjAJsaNb2qDBDg22hmUK/J5GkQTPRwalOP1E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YP7L8QkWd0FYFbv8v3z8srT+2OQiddP5XLWjrHVudG4WHrDYj7eagP6I+R/LECOsso/HBh3QRFtCYhwcq36t08Y1g+1cecvLJ5yk/s3rrZ7mc3KhST7xI1QaIIBdZDNwT9rUnzG2JPevo0CMmhAXUiG9dYpVMbQJwxvdIMbdXUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BbVa78MD; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-20afdad26f5so24090825ad.1;
-        Fri, 27 Sep 2024 01:39:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727426354; x=1728031154; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NLH+mb52MPyjIXhx1azIc5EcwOmHKk4FSK5JYKVOnRs=;
-        b=BbVa78MDsE3wT8EcDZMByZcV7ncxjtZrE/4cL7+3e/kKDX7ASJ3nXv0Hx0Xfy6cwaH
-         B3PfnSOrja7KHi6PA644sV3/zTy5PQmRrM3Y+RIMAAd5GMrHASHd3MNQsB7zOVGS8P4l
-         8p7cMAl7JFQ3CIuj3Y/icElwm+PUFY/DlOsAiJCM+yvnFLh/Wnvpc7AjmcJO/u2UCNmo
-         YCUnPqwFeGt0tgPvxJEPABtXphN6w9rjunSjmr6FdxG+VowIkfh/J65Q+dq72DY5LsP4
-         jrOFj53psqKZUUBEOyoblXmNHxAMTxlPJ6Px2zw5z9P1d7l0bD6k41NX1q8ICgMIE6cq
-         4MGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727426354; x=1728031154;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NLH+mb52MPyjIXhx1azIc5EcwOmHKk4FSK5JYKVOnRs=;
-        b=kpxNXxMpeEanxunessjnMUUU67noj+YdE/ds9zSBHwWYZeoNS/F49BaxiDRU4jwsee
-         wqoEqALarAUbBheuXHx9gBvboTdoJ85EqFg4qpYnP1mb55NQsr689cv2f/GR5KC5t9u7
-         +NfWNU0ISE9AOhRh6fzlyitj0eVqqA4ixhALG1fF2yLL/88U9IChhEaj5eEpjj0J4n0F
-         m/9yYqx2hUPSOL/SFxXGGSlVx82+1mNZYW4xUiAZ1k3paHBOfCgmuclmOaYzsKd7PyXT
-         OG76YWkHF6H9UWYn2iSe63byxb32UL49j+Nfs0QwD7wy7Lki2XM1jX8savXsRtYX/Hbk
-         FReA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqCA/PH1KCGPsgb1D1WC+Basc2H0SyrzrUubqrGfVgYgEAEs9VGNTnfL0QOz/TwIzpcNZp1lOsNpVtREY=@vger.kernel.org, AJvYcCWWo2n8rK3wYDPmzGjSB00hWNKmiHZQQya3lepep4CMr3fSVeENRKDVnum7vSwmbW5js9148Cux@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7k5zXLPyh3LW+kvVVatuDaW9FfiNAFTS6V8CrzHJBWH4V5OAo
-	GEtNAt5P0MYpHd2a8zib1yha7R/3IMFixedlwS01uFmc6FSW5oMYSObSZoEt9XNE4w==
-X-Google-Smtp-Source: AGHT+IGCsiNRL8D++wZZcakGR4RpsXKuis0FJ3wkBnjIimX+d6oBcz/yejgeM2DrBMWfYCsLhkGoww==
-X-Received: by 2002:a17:902:d2ce:b0:206:cc29:e4f7 with SMTP id d9443c01a7336-20b3776e0f3mr41452075ad.34.1727426354025;
-        Fri, 27 Sep 2024 01:39:14 -0700 (PDT)
-Received: from tom-QiTianM540-A739.. ([106.39.42.164])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37db0272sm9482975ad.114.2024.09.27.01.39.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 01:39:13 -0700 (PDT)
-From: Qiu-ji Chen <chenqiuji666@gmail.com>
-To: mchehab@kernel.org,
-	allen.lkml@gmail.com,
-	hverkuil-cisco@xs4all.nl
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	Qiu-ji Chen <chenqiuji666@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] drivers:media:radio: Fix atomicity violation in fmc_send_cmd()
-Date: Fri, 27 Sep 2024 16:39:02 +0800
-Message-Id: <20240927083902.7088-1-chenqiuji666@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727426360; c=relaxed/simple;
+	bh=2CmxE4XpAXVWTY0TaLeb2HVuWbbBpaDz4vtNsP7PnyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PGoEPzrApArREUaWFiUeSP0dq7wlW6p/b2DeVvTWCXRBhZis3l4bcgsJ3oDxQO6R4kwv/ZH0Y2lb+2GwcF6wIQSu8GQ4A6qS8cn+39d6Pglg7bFKtSiROz7tv4MDwrSAJr8LJlxtzZseb2zeeEl3nMJ+z7Y3r147sqNIrNxKDDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6bWUDXz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49FFFC4CEC4;
+	Fri, 27 Sep 2024 08:39:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727426360;
+	bh=2CmxE4XpAXVWTY0TaLeb2HVuWbbBpaDz4vtNsP7PnyI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O6bWUDXzSPoJdMBfA5II7PxzVzThH5Ej/TqBSuu8nPt+ZGPyx6TyiU05Db4O2s/pQ
+	 bTsS6jEmZr4lt+aFd9nGo4KTGJ5+wmGqcpIxkP9eP3fOz6fv5hblXW4wIKnBMEBoCO
+	 Ip5kPeQzu1JBZ0vVp7hrzfOwU1BFIDxCGAjXL7QZk22j56OuN3W3naTzDaJhEiRGBm
+	 fUejM5pxQIc9ddhbG7vg3UefiLHPYKkiF0GNJjgVvAm4NsMkWqmoJvCd1hOaNuBtpo
+	 gwn979RqVgnpkiZO/UZ1Q99ToyKFauw+SQBZj7AMifJcZrCBypGn124WMnHNA+aV+Z
+	 Ds9BhuQSRaJYQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1su6VQ-000000001Wg-1ix0;
+	Fri, 27 Sep 2024 10:39:17 +0200
+Date: Fri, 27 Sep 2024 10:39:16 +0200
+From: Johan Hovold <johan@kernel.org>
+To: John Keeping <jkeeping@inmusicbrands.com>
+Cc: linux-sound@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Elder <elder@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Lee Jones <lee@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Rob Herring <robh@kernel.org>, Daniel Kaehn <kaehndan@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: serial-generic: explicitly disable flow control
+Message-ID: <ZvZvNIOLX1UMJmC3@hovoldconsulting.com>
+References: <20240926104404.3527124-1-jkeeping@inmusicbrands.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926104404.3527124-1-jkeeping@inmusicbrands.com>
 
-Atomicity violation occurs when the fmc_send_cmd() function is executed 
-simultaneously with the modification of the fmdev->resp_skb value. 
-Consider a scenario where, after passing the validity check within the 
-function, a non-null fmdev->resp_skb variable is assigned a null value. 
-This results in an invalid fmdev->resp_skb variable passing the validity 
-check. As seen in the later part of the function, skb = fmdev->resp_skb; 
-when the invalid fmdev->resp_skb passes the check, a null pointer 
-dereference error may occur at line 478, evt_hdr = (void *)skb->data;
+On Thu, Sep 26, 2024 at 11:44:03AM +0100, John Keeping wrote:
+> The serdev subsystem does not specify the default state of flow control
+> when opening a device.
 
-To address this issue, it is recommended to include the validity check of 
-fmdev->resp_skb within the locked section of the function. This 
-modification ensures that the value of fmdev->resp_skb does not change 
-during the validation process, thereby maintaining its validity.
+This bit isn't correct as serdev enables hardware flow control (CRTSCTS)
+by default on open() (see ttyport_open()).
 
-This possible bug is found by an experimental static analysis tool
-developed by our team. This tool analyzes the locking APIs
-to extract function pairs that can be concurrently executed, and then
-analyzes the instructions in the paired functions to identify possible
-concurrency bugs including data races and atomicity violations.
+> Surveying other drivers using serdev shows the
+> vast majority of these set flow control explicitly after opening the
+> device.
+> 
+> MIDI does not use flow control, so ensure it is disabled.
 
-Fixes: e8454ff7b9a4 ("[media] drivers:media:radio: wl128x: FM Driver Common sources")
-Cc: stable@vger.kernel.org
-Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
----
- drivers/media/radio/wl128x/fmdrv_common.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
-index 3d36f323a8f8..4d032436691c 100644
---- a/drivers/media/radio/wl128x/fmdrv_common.c
-+++ b/drivers/media/radio/wl128x/fmdrv_common.c
-@@ -466,11 +466,12 @@ int fmc_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type, void *payload,
- 			   jiffies_to_msecs(FM_DRV_TX_TIMEOUT) / 1000);
- 		return -ETIMEDOUT;
- 	}
-+	spin_lock_irqsave(&fmdev->resp_skb_lock, flags);
- 	if (!fmdev->resp_skb) {
-+		spin_unlock_irqrestore(&fmdev->resp_skb_lock, flags);
- 		fmerr("Response SKB is missing\n");
- 		return -EFAULT;
- 	}
--	spin_lock_irqsave(&fmdev->resp_skb_lock, flags);
- 	skb = fmdev->resp_skb;
- 	fmdev->resp_skb = NULL;
- 	spin_unlock_irqrestore(&fmdev->resp_skb_lock, flags);
--- 
-2.34.1
-
+Johan
 
