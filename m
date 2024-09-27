@@ -1,220 +1,209 @@
-Return-Path: <linux-kernel+bounces-342236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F77988C50
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:09:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C52988C53
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABF092836A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:08:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F3A41F21CED
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BE81B1506;
-	Fri, 27 Sep 2024 22:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832D11B151A;
+	Fri, 27 Sep 2024 22:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QXrxkB0m"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Tx4j2PFR"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0381B1501;
-	Fri, 27 Sep 2024 22:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6AF1B151C;
+	Fri, 27 Sep 2024 22:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727474931; cv=none; b=NkSb9ZBNLCoeGAvExaLmuBbOKTjvQ+DReBRXUJWdgdwWLwpHtwiWXLtj4G+dtE9jbGBcXk0YsmBj9RHQv4TXbXO5AQTsCbL/Ig0I7OH8MBy9cXLJK8IfRxHYB51FKNpFuyAptxhgDLcFwpe14COFlpl76Ff/CjLfiniGkr8QGd4=
+	t=1727474960; cv=none; b=lOsHVaQAVqtlCHEw9PO8gNiPEUENM5dLog/37FWikRWjFTS30/75Dk5dHSDNAUynz8998V+ZD2VgxCTnxyTbJ8YblD6xro7zWRoU4/HH/81uqA9Op4zjuttfhlOZhlJhNnhzJMNkQ+fO8Wbj046PQA90K90YP0UiH5/NGYUTM6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727474931; c=relaxed/simple;
-	bh=PjwHTGA5BsrsNLC2q0jcT95lWCT2/PR7eV5me+6PLsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZkNd/5H9ue/gioTbLBtmSMfhPU94GfgX3RTITZhHzPoS2+SyJe/foNz7QT9q72QBqpLcsp2iISOQsJIBaVU2NOuv6wgiAjI7TdofqQbftvOTdOKylrArpTXTxmiweQJpnVF6wKs58NCuS7UcgdbCBg28XOOAzeeLSJqfVjnyvV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QXrxkB0m; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727474929; x=1759010929;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PjwHTGA5BsrsNLC2q0jcT95lWCT2/PR7eV5me+6PLsU=;
-  b=QXrxkB0mg+jZ4oXci1h0EesfJ6RcL9bMNejXyKXmULlI5dtmtMQJe7is
-   Vbftw0yUSM8+jnhHfFATPSh5sh/ymTDjcvES6rPvBjRzku0e1XomN2Glb
-   nrvLGfnGJNNww/3EfZVShOsVB32XNDJF7Isf3S89yQsegDR54WzrOel88
-   nX1nzx6+1QGGj5hP0TUa4OVMkTNZn1sdrifntZRfYb2vblutoRWUjWWu+
-   ktA4gYD1LKzEYBj+CDC0nscWLNiqnV8pZVNzJ5hiaEXDdnKoH/xfzfe8x
-   soOvFKmBqSVP9bsrD2f2adDHFuOsqsoHbRRcYFp8IR7e30LUAziDyBMz4
-   g==;
-X-CSE-ConnectionGUID: 3Yf6mw+1RKmOpRnXA/ekWg==
-X-CSE-MsgGUID: 2S9TSvqXR7Sb0/HkJyIJPw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="30339291"
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="30339291"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 15:08:48 -0700
-X-CSE-ConnectionGUID: +jdEC4j2SnCYNoASp1qIFQ==
-X-CSE-MsgGUID: m2qpjqb4ScKkNMYWZ0WRNQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="72242342"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 27 Sep 2024 15:08:44 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1suJ8k-000Mg7-18;
-	Fri, 27 Sep 2024 22:08:42 +0000
-Date: Sat, 28 Sep 2024 06:08:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>, patrick@stwcx.xyz,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Carsten =?iso-8859-1?Q?Spie=DF?= <mail@carsten-spiess.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, Yikai Tsai <yikai.tsai.wiwynn@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v7 2/2] hwmon: (isl28022) new driver for ISL28022 power
- monitor
-Message-ID: <202409280806.yxX1K5ey-lkp@intel.com>
-References: <20240925031131.14645-3-yikai.tsai.wiwynn@gmail.com>
+	s=arc-20240116; t=1727474960; c=relaxed/simple;
+	bh=CM/qaVXfiW8uBR2C6CyoRxY7SPpnNXAueBczydPEdRQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l/8mQyOC0Am44J0wcGI1f2YqtKPHt87lED3MmqmvX6mSOasQnUM7oSvj6bG2Im7wQLROYt/fu8ibQGbgAD7PweBduF8XWSEhcqYyvnKsrJQsUHsm5zDyxESxjTSNzIHpLdJpXu3mX7w+fDUUnmLR5465vcVUGSk6mFRgI2uwzUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Tx4j2PFR; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1727474955; x=1727734155;
+	bh=IPLRfC8BzQNV6CULWbRBUr4Rw+Tj/CmdqJzBvNMVXNA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Tx4j2PFRQxMBNSa4HE+J+OvJiC2rBzmY5mfDRY6pWkhrNteWd6fuhROfKcAuJGCbD
+	 ryjUQ9pYbQoQnHV8EqVfpKuGBHOuHop/+2OCaalB9lxo9gkuy336EC6P3Rey2KDgeJ
+	 ycSmXF93BxAQ7yOyp+h5aAxBIQvaDA4mQFmGXBxPZv/Z+82normoamF02e2fiOTFjY
+	 /+2HDTDMUr4krv4JICNingcQ490pYYIMVrmodqyayceyPpFQ49lf8aVX7rYUJpQ9U/
+	 JcqCksau/RyHrm8W1XYooujmYoseEVGs/RWL5d3mZ0l6mmhl7Q1gEtDEglNB0q51XJ
+	 QhLtnKVLCbrUw==
+Date: Fri, 27 Sep 2024 22:09:10 +0000
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, akpm@linux-foundation.org, cyphar@cyphar.com, david@readahead.eu, dmitry.torokhov@gmail.com, dverkamp@chromium.org, hughd@google.com, jeffxu@google.com, jorgelo@chromium.org, keescook@chromium.org, skhan@linuxfoundation.org
+From: =?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>
+Cc: stable@vger.kernel.org
+Subject: Re: [PATCH v4] memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
+Message-ID: <aOShI37M3MN63hDFOQGncbS8dxBsKGXVaxrwu0a5ubcrTqrPrgZJRXXYBOyiW3cHKFqh61sT4efgRsbJpvnJMDOHsurGYnr454oa3dUW3r8=@protonmail.com>
+In-Reply-To: <20240630184912.37335-1-pobrn@protonmail.com>
+References: <20240630184912.37335-1-pobrn@protonmail.com>
+Feedback-ID: 20568564:user:proton
+X-Pm-Message-ID: 5c0df630e371707472ba21da6e6e8ab3c172f12a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925031131.14645-3-yikai.tsai.wiwynn@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yikai,
+Hi
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on groeck-staging/hwmon-next]
-[also build test WARNING on linus/master v6.11 next-20240927]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Gentle ping. Is there any chance we could move forward with this? I am not =
+aware
+of any breakage it would cause; but longer the wait, the higher the likelih=
+ood.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yikai-Tsai/dt-bindings-hwmon-add-renesas-isl28022/20240925-111332
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
-patch link:    https://lore.kernel.org/r/20240925031131.14645-3-yikai.tsai.wiwynn%40gmail.com
-patch subject: [PATCH v7 2/2] hwmon: (isl28022) new driver for ISL28022 power monitor
-config: x86_64-randconfig-121-20240928 (https://download.01.org/0day-ci/archive/20240928/202409280806.yxX1K5ey-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240928/202409280806.yxX1K5ey-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409280806.yxX1K5ey-lkp@intel.com/
+Regards,
+Barnab=C3=A1s P=C5=91cze
 
-sparse warnings: (new ones prefixed by >>)
-   drivers/hwmon/isl28022.c:396:36: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected int err @@     got char * @@
-   drivers/hwmon/isl28022.c:396:36: sparse:     expected int err
-   drivers/hwmon/isl28022.c:396:36: sparse:     got char *
-   drivers/hwmon/isl28022.c:396:88: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected char const *fmt @@     got unsigned int [addressable] [assigned] [usertype] val @@
-   drivers/hwmon/isl28022.c:396:88: sparse:     expected char const *fmt
-   drivers/hwmon/isl28022.c:396:88: sparse:     got unsigned int [addressable] [assigned] [usertype] val
-   drivers/hwmon/isl28022.c:406:36: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected int err @@     got char * @@
-   drivers/hwmon/isl28022.c:406:36: sparse:     expected int err
-   drivers/hwmon/isl28022.c:406:36: sparse:     got char *
-   drivers/hwmon/isl28022.c:406:82: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected char const *fmt @@     got unsigned int [addressable] [assigned] [usertype] val @@
-   drivers/hwmon/isl28022.c:406:82: sparse:     expected char const *fmt
-   drivers/hwmon/isl28022.c:406:82: sparse:     got unsigned int [addressable] [assigned] [usertype] val
-   drivers/hwmon/isl28022.c:414:28: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected int err @@     got char * @@
-   drivers/hwmon/isl28022.c:414:28: sparse:     expected int err
-   drivers/hwmon/isl28022.c:414:28: sparse:     got char *
-   drivers/hwmon/isl28022.c:414:87: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected char const *fmt @@     got unsigned int [usertype] shunt @@
-   drivers/hwmon/isl28022.c:414:87: sparse:     expected char const *fmt
-   drivers/hwmon/isl28022.c:414:87: sparse:     got unsigned int [usertype] shunt
->> drivers/hwmon/isl28022.c:396:36: sparse: sparse: non size-preserving pointer to integer cast
->> drivers/hwmon/isl28022.c:396:88: sparse: sparse: non size-preserving integer to pointer cast
-   drivers/hwmon/isl28022.c:406:36: sparse: sparse: non size-preserving pointer to integer cast
-   drivers/hwmon/isl28022.c:406:82: sparse: sparse: non size-preserving integer to pointer cast
-   drivers/hwmon/isl28022.c:414:28: sparse: sparse: non size-preserving pointer to integer cast
-   drivers/hwmon/isl28022.c:414:83: sparse: sparse: non size-preserving integer to pointer cast
+2024. j=C3=BAnius 30., vas=C3=A1rnap 20:49 keltez=C3=A9ssel, Barnab=C3=
+=A1s P=C5=91cze <pobrn@protonmail.com> =C3=ADrta:
 
-vim +396 drivers/hwmon/isl28022.c
-
-   346	
-   347	/*
-   348	 * read property values and make consistency checks.
-   349	 *
-   350	 * following values for shunt range and resistor are allowed:
-   351	 *   40 mV -> gain 1, shunt min.  800 micro ohms
-   352	 *   80 mV -> gain 2, shunt min. 1600 micro ohms
-   353	 *  160 mV -> gain 4, shunt min. 3200 micro ohms
-   354	 *  320 mV -> gain 8, shunt min. 6400 micro ohms
-   355	 */
-   356	static int isl28022_read_properties(struct device *dev, struct isl28022_data *data)
-   357	{
-   358		u32 val;
-   359		int err;
-   360	
-   361		err = device_property_read_u32(dev, "shunt-resistor-micro-ohms", &val);
-   362		if (err == -EINVAL)
-   363			val = 10000;
-   364		else if (err < 0)
-   365			return err;
-   366		data->shunt = val;
-   367	
-   368		err = device_property_read_u32(dev, "renesas,shunt-range-microvolt", &val);
-   369		if (err == -EINVAL)
-   370			val = 320000;
-   371		else if (err < 0)
-   372			return err;
-   373	
-   374		switch (val) {
-   375		case 40000:
-   376			data->gain = 1;
-   377			if (data->shunt < 800)
-   378				goto shunt_invalid;
-   379			break;
-   380		case 80000:
-   381			data->gain = 2;
-   382			if (data->shunt < 1600)
-   383				goto shunt_invalid;
-   384			break;
-   385		case 160000:
-   386			data->gain = 4;
-   387			if (data->shunt < 3200)
-   388				goto shunt_invalid;
-   389			break;
-   390		case 320000:
-   391			data->gain = 8;
-   392			if (data->shunt < 6400)
-   393				goto shunt_invalid;
-   394			break;
-   395		default:
- > 396			dev_err_probe(dev, "renesas,shunt-range-microvolt invalid value %d\n", val);
-   397			return -EINVAL;
-   398		}
-   399	
-   400		err = device_property_read_u32(dev, "renesas,average-samples", &val);
-   401		if (err == -EINVAL)
-   402			val = 1;
-   403		else if (err < 0)
-   404			return err;
-   405		if (val > 128 || hweight32(val) != 1) {
-   406			dev_err_probe(dev, "renesas,average-samples invalid value %d\n", val);
-   407			return -EINVAL;
-   408		}
-   409		data->average = val;
-   410	
-   411		return 0;
-   412	
-   413	shunt_invalid:
-   414		dev_err_probe(dev, "renesas,shunt-resistor-microvolt invalid value %d\n", data->shunt);
-   415		return -EINVAL;
-   416	}
-   417	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> `MFD_NOEXEC_SEAL` should remove the executable bits and set `F_SEAL_EXEC`
+> to prevent further modifications to the executable bits as per the commen=
+t
+> in the uapi header file:
+>=20
+>   not executable and sealed to prevent changing to executable
+>=20
+> However, commit 105ff5339f498a ("mm/memfd: add MFD_NOEXEC_SEAL and MFD_EX=
+EC")
+> that introduced this feature made it so that `MFD_NOEXEC_SEAL` unsets
+> `F_SEAL_SEAL`, essentially acting as a superset of `MFD_ALLOW_SEALING`.
+>=20
+> Nothing implies that it should be so, and indeed up until the second vers=
+ion
+> of the of the patchset[0] that introduced `MFD_EXEC` and `MFD_NOEXEC_SEAL=
+`,
+> `F_SEAL_SEAL` was not removed, however, it was changed in the third revis=
+ion
+> of the patchset[1] without a clear explanation.
+>=20
+> This behaviour is surprising for application developers, there is no
+> documentation that would reveal that `MFD_NOEXEC_SEAL` has the additional
+> effect of `MFD_ALLOW_SEALING`. Additionally, combined with `vm.memfd_noex=
+ec=3D2`
+> it has the effect of making all memfds initially sealable.
+>=20
+> So do not remove `F_SEAL_SEAL` when `MFD_NOEXEC_SEAL` is requested,
+> thereby returning to the pre-Linux 6.3 behaviour of only allowing
+> sealing when `MFD_ALLOW_SEALING` is specified.
+>=20
+> Now, this is technically a uapi break. However, the damage is expected
+> to be minimal. To trigger user visible change, a program has to do the
+> following steps:
+>=20
+>  - create memfd:
+>    - with `MFD_NOEXEC_SEAL`,
+>    - without `MFD_ALLOW_SEALING`;
+>  - try to add seals / check the seals.
+>=20
+> But that seems unlikely to happen intentionally since this change
+> essentially reverts the kernel's behaviour to that of Linux <6.3,
+> so if a program worked correctly on those older kernels, it will
+> likely work correctly after this change.
+>=20
+> I have used Debian Code Search and GitHub to try to find potential
+> breakages, and I could only find a single one. dbus-broker's
+> memfd_create() wrapper is aware of this implicit `MFD_ALLOW_SEALING`
+> behaviour, and tries to work around it[2]. This workaround will
+> break. Luckily, this only affects the test suite, it does not affect
+> the normal operations of dbus-broker. There is a PR with a fix[3].
+>=20
+> I also carried out a smoke test by building a kernel with this change
+> and booting an Arch Linux system into GNOME and Plasma sessions.
+>=20
+> There was also a previous attempt to address this peculiarity by
+> introducing a new flag[4].
+>=20
+> [0]: https://lore.kernel.org/lkml/20220805222126.142525-3-jeffxu@google.c=
+om/
+> [1]: https://lore.kernel.org/lkml/20221202013404.163143-3-jeffxu@google.c=
+om/
+> [2]: https://github.com/bus1/dbus-broker/blob/9eb0b7e5826fc76cad7b025bc46=
+f267d4a8784cb/src/util/misc.c#L114
+> [3]: https://github.com/bus1/dbus-broker/pull/366
+> [4]: https://lore.kernel.org/lkml/20230714114753.170814-1-david@readahead=
+.eu/
+>=20
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Barnab=C3=A1s P=C5=91cze <pobrn@protonmail.com>
+> ---
+>=20
+> * v3: https://lore.kernel.org/linux-mm/20240611231409.3899809-1-jeffxu@ch=
+romium.org/
+> * v2: https://lore.kernel.org/linux-mm/20240524033933.135049-1-jeffxu@goo=
+gle.com/
+> * v1: https://lore.kernel.org/linux-mm/20240513191544.94754-1-pobrn@proto=
+nmail.com/
+>=20
+> This fourth version returns to removing the inconsistency as opposed to d=
+ocumenting
+> its existence, with the same code change as v1 but with a somewhat extend=
+ed commit
+> message. This is sent because I believe it is worth at least a try; it ca=
+n be easily
+> reverted if bigger application breakages are discovered than initially im=
+agined.
+>=20
+> ---
+>  mm/memfd.c                                 | 9 ++++-----
+>  tools/testing/selftests/memfd/memfd_test.c | 2 +-
+>  2 files changed, 5 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/mm/memfd.c b/mm/memfd.c
+> index 7d8d3ab3fa37..8b7f6afee21d 100644
+> --- a/mm/memfd.c
+> +++ b/mm/memfd.c
+> @@ -356,12 +356,11 @@ SYSCALL_DEFINE2(memfd_create,
+> =20
+>  =09=09inode->i_mode &=3D ~0111;
+>  =09=09file_seals =3D memfd_file_seals_ptr(file);
+> -=09=09if (file_seals) {
+> -=09=09=09*file_seals &=3D ~F_SEAL_SEAL;
+> +=09=09if (file_seals)
+>  =09=09=09*file_seals |=3D F_SEAL_EXEC;
+> -=09=09}
+> -=09} else if (flags & MFD_ALLOW_SEALING) {
+> -=09=09/* MFD_EXEC and MFD_ALLOW_SEALING are set */
+> +=09}
+> +
+> +=09if (flags & MFD_ALLOW_SEALING) {
+>  =09=09file_seals =3D memfd_file_seals_ptr(file);
+>  =09=09if (file_seals)
+>  =09=09=09*file_seals &=3D ~F_SEAL_SEAL;
+> diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/s=
+elftests/memfd/memfd_test.c
+> index 95af2d78fd31..7b78329f65b6 100644
+> --- a/tools/testing/selftests/memfd/memfd_test.c
+> +++ b/tools/testing/selftests/memfd/memfd_test.c
+> @@ -1151,7 +1151,7 @@ static void test_noexec_seal(void)
+>  =09=09=09    mfd_def_size,
+>  =09=09=09    MFD_CLOEXEC | MFD_NOEXEC_SEAL);
+>  =09mfd_assert_mode(fd, 0666);
+> -=09mfd_assert_has_seals(fd, F_SEAL_EXEC);
+> +=09mfd_assert_has_seals(fd, F_SEAL_SEAL | F_SEAL_EXEC);
+>  =09mfd_fail_chmod(fd, 0777);
+>  =09close(fd);
+>  }
+> --=20
+> 2.45.2
+> 
 
