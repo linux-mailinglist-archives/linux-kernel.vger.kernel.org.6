@@ -1,130 +1,94 @@
-Return-Path: <linux-kernel+bounces-342196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D75B988B78
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:46:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E238C988B81
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1A6BB24EED
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:46:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E95B1C21DE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B181C2DBA;
-	Fri, 27 Sep 2024 20:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08A21C2DD6;
+	Fri, 27 Sep 2024 20:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OV5lJ64d"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CeIVyJ0P"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C316D1C2449
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 20:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A6F1C2DC0
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 20:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727469996; cv=none; b=hO6H5rYdbBsGqPnCOeKrs5zlHUjtOS3Y9b3YbiV7Ohu1kE6cBYgUQ4IGqiF8CkO1+hs8qBuNan7ET/6g/VmGywCA2sIjO+blvSxCs0X98KB5W1ptUuSJTpRmQeaLHSpzkdEPUtP3ZZs9DlGRUSXdx6xebuW8BzaLNihPizuiSNw=
+	t=1727470234; cv=none; b=BiAC060TarkoPnwHh029wX1mPr6xTTO+KR1cF4Ng0ph8ZqIUgfFWIbSau8yJzPes1692EfbVMZky/og4iZiMFtCZ9qpBBSrP86oxvFi5ECzYt9ne5CugP/l5lKOrfoeoBmOT/bvjPBGR9yxc3/fwcyJGI7DRbJUHl4MbZSF2cD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727469996; c=relaxed/simple;
-	bh=X0Tu1fbU3iFzETxLdIRaXrvnVItQS17Cn5VyrEtUYCk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fvHDrBRSHL9Iu2LZYuDRiiUNL+vidXUUunZSR1Bu7JQLlfC10y8/bjWVKCpziJ3PcgH1rlzQZtBOY5uf4qsm6HXwgrRCF+6mQR6qlUWjGs8jEWc+LF6j50ekPjOA/UHun39mUDWTD11JfSNu0LrYZBPOu1BFkIF7ARtgpSKuSyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OV5lJ64d; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1727470234; c=relaxed/simple;
+	bh=Ehr+2NKsngL7ZGsFX4D84MvJxLhbtVlSuY/MGkYSJZ0=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=kdc9iq1TH2/EbVQfpN7FspvNVZdKK9vSQDZru7/nur4lBCHE4MDYUsLad5CjbYNJssDAh+9YcC/7mE74vUpxd8I5UVveB3vPLi2jaJTl8IFfNJOD232dxjLGhbJYIFst+HwRePScg5dNpqfHk4YLQWWxXQej3R5APLFvYGQ4wyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CeIVyJ0P; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727469990;
+	s=mimecast20190719; t=1727470230;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=UW32wAnMjxA4S/oz9w5qOVbyTn2kSOgb6EUyptzsUfM=;
-	b=OV5lJ64dbcAJ1jVxKlfgEP1ZCzEebSs1YfvSqh8HEbWV/mbpUKqD1St+3HHmUIaqI+j8dq
-	x9Qb7oaAFyzO8y5Whp7euQzmTFIrxUX4WwBLHQlWsSwN3CdnTdpl5P1+hfFhM3AZ9WWC+h
-	0rJoYQkPmvLzemmCQ230CGZlnvxkPOw=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ehr+2NKsngL7ZGsFX4D84MvJxLhbtVlSuY/MGkYSJZ0=;
+	b=CeIVyJ0Pe5GYx2z4IfYzsemYHvETZ0H08XiJWI/nsNHOrRexFB1bzjZDWQt0zgIBufLEYb
+	bWQO7L81XFhoNavX850v87TfCd1Z0N3oWWM2VUBUz/D3C+aiNssYiFoBs38qYrZZJWI3kr
+	iut+tWqmmWt8ai/KC7lRKO0UcuWr/OI=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-137-KIOkFG8FM3Wgg1-uDgKCGg-1; Fri,
- 27 Sep 2024 16:46:29 -0400
-X-MC-Unique: KIOkFG8FM3Wgg1-uDgKCGg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-319-peQ0JcNLMAKLyO6YtwYCog-1; Fri,
+ 27 Sep 2024 16:50:27 -0400
+X-MC-Unique: peQ0JcNLMAKLyO6YtwYCog-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 06F9519103FE;
-	Fri, 27 Sep 2024 20:46:28 +0000 (UTC)
-Received: from chopper.redhat.com (unknown [10.22.32.36])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A19C219560A3;
-	Fri, 27 Sep 2024 20:46:25 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: dri-devel@lists.freedesktop.org
-Cc: stable@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sean Paul <seanpaul@chromium.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/atomic_helper: Add missing NULL check for drm_plane_helper_funcs.atomic_update
-Date: Fri, 27 Sep 2024 16:46:16 -0400
-Message-ID: <20240927204616.697467-1-lyude@redhat.com>
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8C38818DEF1D;
+	Fri, 27 Sep 2024 20:50:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2A0421956086;
+	Fri, 27 Sep 2024 20:50:16 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240923183432.1876750-1-chantr4@gmail.com>
+References: <20240923183432.1876750-1-chantr4@gmail.com> <20240814203850.2240469-20-dhowells@redhat.com>
+To: Manu Bretelle <chantr4@gmail.com>,
+    Eduard Zingerman <eddyz87@gmail.com>
+Cc: dhowells@redhat.com, asmadeus@codewreck.org,
+    ceph-devel@vger.kernel.org, christian@brauner.io, ericvh@kernel.org,
+    hsiangkao@linux.alibaba.com, idryomov@gmail.com, jlayton@kernel.org,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
+    netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
+    smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
+    v9fs@lists.linux.dev, willy@infradead.org
+Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2663728.1727470216.1@warthog.procyon.org.uk>
+Date: Fri, 27 Sep 2024 21:50:16 +0100
+Message-ID: <2663729.1727470216@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Something I discovered while writing rvkms since some versions of the
-driver didn't have a filled out atomic_update function - we mention that
-this callback is "optional", but we don't actually check whether it's NULL
-or not before calling it. As a result, we'll segfault if it's not filled
-in.
+Is it possible for you to turn on some tracepoints and access the traces?
+Granted, you probably need to do the enablement during boot.
 
-  rvkms rvkms.0: [drm:drm_atomic_helper_commit_modeset_disables] modeset on [ENCODER:36:Virtual-36]
-  BUG: kernel NULL pointer dereference, address: 0000000000000000
-  PGD 0 P4D 0
-  Oops: Oops: 0010 [#1] PREEMPT SMP NOPTI
-  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20240813-1.fc40 08/13/2024
-  RIP: 0010:0x0
-
-So, let's fix that.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Fixes: c2fcd274bce5 ("drm: Add atomic/plane helpers")
-Cc: dri-devel@lists.freedesktop.org
-Cc: <stable@vger.kernel.org> # v3.19+
----
- drivers/gpu/drm/drm_atomic_helper.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index 43cdf39019a44..b3c507040c6d6 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -2797,7 +2797,8 @@ void drm_atomic_helper_commit_planes(struct drm_device *dev,
- 
- 			funcs->atomic_disable(plane, old_state);
- 		} else if (new_plane_state->crtc || disabling) {
--			funcs->atomic_update(plane, old_state);
-+			if (funcs->atomic_update)
-+				funcs->atomic_update(plane, old_state);
- 
- 			if (!disabling && funcs->atomic_enable) {
- 				if (drm_atomic_plane_enabling(old_plane_state, new_plane_state))
-@@ -2889,7 +2890,8 @@ drm_atomic_helper_commit_planes_on_crtc(struct drm_crtc_state *old_crtc_state)
- 		if (disabling && plane_funcs->atomic_disable) {
- 			plane_funcs->atomic_disable(plane, old_state);
- 		} else if (new_plane_state->crtc || disabling) {
--			plane_funcs->atomic_update(plane, old_state);
-+			if (plane_funcs->atomic_update)
-+				plane_funcs->atomic_update(plane, old_state);
- 
- 			if (!disabling && plane_funcs->atomic_enable) {
- 				if (drm_atomic_plane_enabling(old_plane_state, new_plane_state))
-
-base-commit: 22512c3ee0f47faab5def71c4453638923c62522
--- 
-2.46.1
+David
 
 
