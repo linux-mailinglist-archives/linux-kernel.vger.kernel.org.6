@@ -1,94 +1,39 @@
-Return-Path: <linux-kernel+bounces-341437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72B2988018
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:12:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1260988020
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2416BB21365
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:12:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AF9E1F23AFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FB71898E9;
-	Fri, 27 Sep 2024 08:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dp6HvpIf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6LLgul8y";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jq/VV09D";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wRzGfh3I"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B72A189506;
-	Fri, 27 Sep 2024 08:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E82181339;
+	Fri, 27 Sep 2024 08:16:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFF713B58B;
+	Fri, 27 Sep 2024 08:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727424758; cv=none; b=qS38s/PHd93yo1qraHtBSPBypLftUizeKRXJgavLddN+feeKkpGEmpEfPnBSA4ZRwPudx3LIhmngy9hP2jhuDRnYCc4OHF6D7YXtxPHIU7/h3btZ480NKes/6OGnS52/vZ1No5TeEoGwzRksdFWbG6d7BLUy2kgntKDv9BbkzG0=
+	t=1727425001; cv=none; b=QCQQksJSXyBMAqERwhzyxlPFUbYnO6Q5UZuEv1j1udlSYo45DPe07XZVJg3eHHEgDncLnnuVfANGIjm01MNayLpGmZqS4EFcblVo/dGCkvBPB+Fmb7oIvmAFzQckiG/gZO3qKHG+/hFHKOZQtXwPVy1RQnhx7JJsiRof7ArymA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727424758; c=relaxed/simple;
-	bh=wNbSMFx8kgKXTFeXqjZ3KeKBwyvWamiipdjssGRF5to=;
+	s=arc-20240116; t=1727425001; c=relaxed/simple;
+	bh=cRW3AX/c1lHWXHtV/BeY50l4lkGC0423cx0OW/f+EaA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K1F18RQoZNwHrnYXxrMl6Y56p5jxq7aj0gxQaLk25zbyv97cGuvebKTf1h2I/Ft6u81XxGTEF29WOPV3PdvzJa6ucMt5DGFlYfmk0B3vf524l/43TpQegyAKoUkyfxcPTCzVzLsBlZLfxGeF6k42OrYtksig8tIHFXn4IZXg79s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dp6HvpIf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6LLgul8y; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jq/VV09D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wRzGfh3I; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DA8961F88D;
-	Fri, 27 Sep 2024 08:12:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727424755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7gyzWsrLWr2lx1n28TMncaCzhR/d6cRY0Yc1+0Oz+ws=;
-	b=dp6HvpIfVk/tVA2tZAFGXALYbkbWRJJ7KhRRKjtc2estrSfNjnBHvY+7TJ79U4TH61LqZq
-	Xexqp1EeUmsYdRu8eS9WYIl+BZPFjlGbglnN6A1X9AyenRY/zhn2I/kdb0xf/+3dxnh23X
-	UOjBYP0vOkGFm0waS099qVBbly3ZanU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727424755;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7gyzWsrLWr2lx1n28TMncaCzhR/d6cRY0Yc1+0Oz+ws=;
-	b=6LLgul8yUv6OqzvjzF7WKIEiVbkxLtdcMa/IQHmqf6CxDcdmHtouSUjvgxS9MrLdOgNS6l
-	sEuKROjCM7/ZndAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727424753; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7gyzWsrLWr2lx1n28TMncaCzhR/d6cRY0Yc1+0Oz+ws=;
-	b=jq/VV09D5IC2Hyye/f25hew4xosvhgzGYo1OzxiHUBaQlrCjRwDzQo7jPgVjkFb81YukKw
-	FXnbX4gghad7C2rM5Cm0tozT1wRPeCCYBh+0BleN5dpyztmFwTTrhNILqlMk6H4qIDaDOH
-	FVa1JWoiNFL0hSE8XpOdyzUxu/kqX9Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727424753;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7gyzWsrLWr2lx1n28TMncaCzhR/d6cRY0Yc1+0Oz+ws=;
-	b=wRzGfh3IG4Cf2JLEXRyhsYw8L7zzakm2etGUPnQZoZvHyuYXlIqGlrtav3r2q0mZ8gKhMe
-	EaRq2ojnEA8ZBDDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BD7DC13A73;
-	Fri, 27 Sep 2024 08:12:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zNvbLfFo9mYnLwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 27 Sep 2024 08:12:33 +0000
-Message-ID: <c96c4cf6-e007-4a19-a830-4a2a073620e7@suse.cz>
-Date: Fri, 27 Sep 2024 10:12:33 +0200
+	 In-Reply-To:Content-Type; b=UftRh8KkFrBT0BYWGXRLMkhCAuIG8D7T4uLrNGaQ3Aglg56InNnEo+7WLFrGBb3afsQJNU8C66kokHMLDslUxbg8GIL/EL/JJkFXzCZYiuXgOhgYoXIcvqwpIPMtaJNOtddzH3V5YobQFcJ45rj/VwA4dPrtdfZVbglQtRiTLF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1EB2165C;
+	Fri, 27 Sep 2024 01:17:07 -0700 (PDT)
+Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6BBE23F6A8;
+	Fri, 27 Sep 2024 01:16:36 -0700 (PDT)
+Message-ID: <4eea0c0e-e651-49cc-96ee-ef9809e80012@arm.com>
+Date: Fri, 27 Sep 2024 09:16:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,121 +41,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm/madvise: unrestrict process_madvise() for current
- process
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>, Arnd Bergmann <arnd@arndb.de>,
- Shakeel Butt <shakeel.butt@linux.dev>, linux-api@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Minchan Kim <minchan@kernel.org>, Christian Brauner <brauner@kernel.org>,
- pedro.falcato@gmail.com
-References: <20240926151019.82902-1-lorenzo.stoakes@oracle.com>
+Subject: Re: [PATCH v2 3/5] perf arm-spe: Save per CPU information in metadata
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>,
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240914215458.751802-1-leo.yan@arm.com>
+ <20240914215458.751802-4-leo.yan@arm.com> <ZvZO96lj8-aZkuZw@google.com>
 Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240926151019.82902-1-lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <ZvZO96lj8-aZkuZw@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,google.com,arndb.de,linux.dev,vger.kernel.org,kvack.org,kernel.org,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo,oracle.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On 9/26/24 17:10, Lorenzo Stoakes wrote:
-> The process_madvise() call was introduced in commit ecb8ac8b1f14
-> ("mm/madvise: introduce process_madvise() syscall: an external memory
-> hinting API") as a means of performing madvise() operations on another
-> process.
+On 9/27/24 07:21, Namhyung Kim wrote:>
+> On Sat, Sep 14, 2024 at 10:54:56PM +0100, Leo Yan wrote:
+>> Save the Arm SPE information on a per-CPU basis. This approach is easier
+>> in the decoding phase for retrieving metadata based on the CPU number of
+>> every Arm SPE record.
+>>
+>> Signed-off-by: Leo Yan <leo.yan@arm.com>
+>> ---
+>>   tools/perf/arch/arm64/util/arm-spe.c | 71 +++++++++++++++++++++++++++-
+>>   1 file changed, 70 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/perf/arch/arm64/util/arm-spe.c b/tools/perf/arch/arm64/util/arm-spe.c
+>> index 15478989ef30..2790a37709a5 100644
+>> --- a/tools/perf/arch/arm64/util/arm-spe.c
+>> +++ b/tools/perf/arch/arm64/util/arm-spe.c
+>> @@ -26,6 +26,8 @@
+>>   #include "../../../util/arm-spe.h"
+>>   #include <tools/libc_compat.h> // reallocarray
+>>
+>> +#define ARM_SPE_CPU_MAGIC            0x1010101010101010ULL
+>> +
+>>   #define KiB(x) ((x) * 1024)
+>>   #define MiB(x) ((x) * 1024 * 1024)
+>>
+>> @@ -73,14 +75,66 @@ arm_spe_info_priv_size(struct auxtrace_record *itr __maybe_unused,
+>>        return size;
+>>   }
+>>
+>> +static int arm_spe_save_cpu_header(struct auxtrace_record *itr,
+>> +                                struct perf_cpu cpu, __u64 data[])
+>> +{
+>> +     struct arm_spe_recording *sper =
+>> +                     container_of(itr, struct arm_spe_recording, itr);
+>> +     struct perf_pmu *pmu = NULL;
+>> +     struct perf_pmu tmp_pmu;
+>> +     char cpu_id_str[16];
+>> +     char *cpuid = NULL;
+>> +     u64 val;
+>> +
+>> +     snprintf(cpu_id_str, sizeof(cpu_id_str), "%d", cpu.cpu);
+>> +     tmp_pmu.cpus = perf_cpu_map__new(cpu_id_str);
+>> +     if (!tmp_pmu.cpus)
+>> +             return -ENOMEM;
+>> +
+>> +     /* Read CPU MIDR */
+>> +     cpuid = perf_pmu__getcpuid(&tmp_pmu);
+>> +     if (!cpuid)
+>> +             return -ENOMEM;
 > 
-> However, as it provides the means by which to perform multiple madvise()
-> operations in a batch via an iovec, it is useful to utilise the same
-> interface for performing operations on the current process rather than a
-> remote one.
-> 
-> Commit 22af8caff7d1 ("mm/madvise: process_madvise() drop capability check
-> if same mm") removed the need for a caller invoking process_madvise() on
-> its own pidfd to possess the CAP_SYS_NICE capability, however this leaves
-> the restrictions on operation in place.
-> 
-> Resolve this by only applying the restriction on operations when accessing
-> a remote process.
-> 
-> Moving forward we plan to implement a simpler means of specifying this
-> condition other than needing to establish a self pidfd, perhaps in the form
-> of a sentinel pidfd.
-> 
-> Also take the opportunity to refactor the system call implementation
-> abstracting the vectorised operation.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> You'd better call perf_cpu_map__put() before return.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Will do.
 
-Looks like the destructive modes should work with the vectorized version
-too, and with how it returns a partial success.
+Just for recording, 'cpuid' should be released at the end of function.
 
-We'll need a man page update though, right?
+>> +     val = strtol(cpuid, NULL, 16);
+>> +     perf_cpu_map__put(tmp_pmu.cpus);
+>> +
+>> +     data[ARM_SPE_MAGIC] = ARM_SPE_CPU_MAGIC;
+>> +     data[ARM_SPE_CPU] = cpu.cpu;
+>> +     data[ARM_SPE_CPU_NR_PARAMS] = ARM_SPE_CPU_PRIV_MAX - ARM_SPE_CPU_MIDR;
+>> +     data[ARM_SPE_CPU_MIDR] = val;
+>> +
+>> +     /* Find the associate Arm SPE PMU for the CPU */
+>> +     if (perf_cpu_map__has(sper->arm_spe_pmu->cpus, cpu))
+>> +             pmu = sper->arm_spe_pmu;
+>> +
+>> +     if (!pmu) {
+>> +             /* No Arm SPE PMU is found */
+>> +             data[ARM_SPE_CPU_PMU_TYPE] = ULLONG_MAX;
+>> +             data[ARM_SPE_CAP_MIN_IVAL] = 0;
+>> +     } else {
+>> +             data[ARM_SPE_CPU_PMU_TYPE] = pmu->type;
+>> +
+>> +             if (perf_pmu__scan_file(pmu, "caps/min_interval", "%lu", &val) != 1)
+>> +                     val = 0;
+>> +             data[ARM_SPE_CAP_MIN_IVAL] = val;
+>> +     }
+>> +
+>> +     return ARM_SPE_CPU_PRIV_MAX;
+>> +}
+>> +
+>>   static int arm_spe_info_fill(struct auxtrace_record *itr,
+>>                             struct perf_session *session,
+>>                             struct perf_record_auxtrace_info *auxtrace_info,
+>>                             size_t priv_size)
+>>   {
+>> +     int i, ret;
+>> +     size_t offset;
+>>        struct arm_spe_recording *sper =
+>>                        container_of(itr, struct arm_spe_recording, itr);
+>>        struct perf_pmu *arm_spe_pmu = sper->arm_spe_pmu;
+>> +     struct perf_cpu_map *cpu_map = arm_spe_find_cpus(session->evlist);
+> 
+> Maybe you can move this to later in the function to make the error
+> handling easier.  Otherwise it should call perf_cpu_map__put().
 
+Good point. Will do.
+
+>> +     struct perf_cpu cpu;
+>> +     __u64 *data;
+>>
+>>        if (priv_size != arm_spe_info_priv_size(itr, session->evlist))
+>>                return -EINVAL;
+>> @@ -89,8 +143,23 @@ static int arm_spe_info_fill(struct auxtrace_record *itr,
+>>                return -EINVAL;
+>>
+>>        auxtrace_info->type = PERF_AUXTRACE_ARM_SPE;
+>> -     auxtrace_info->priv[ARM_SPE_PMU_TYPE] = arm_spe_pmu->type;
+>> +     auxtrace_info->priv[ARM_SPE_HEADER_VERSION] = ARM_SPE_HEADER_CURRENT_VERSION;
+>> +     auxtrace_info->priv[ARM_SPE_HEADER_SIZE] =
+>> +             ARM_SPE_AUXTRACE_PRIV_MAX - ARM_SPE_HEADER_VERSION;
+>> +     auxtrace_info->priv[ARM_SPE_SHARED_PMU_TYPE] = arm_spe_pmu->type;
+>> +     auxtrace_info->priv[ARM_SPE_CPUS_NUM] = perf_cpu_map__nr(cpu_map);
+>> +
+>> +     offset = ARM_SPE_AUXTRACE_PRIV_MAX;
+>> +     perf_cpu_map__for_each_cpu(cpu, i, cpu_map) {
+>> +             assert(offset < priv_size);
+>> +             data = &auxtrace_info->priv[offset];
+>> +             ret = arm_spe_save_cpu_header(itr, cpu, data);
+>> +             if (ret < 0)
+>> +                     return ret;
+> 
+> Please break the loop and release the cpu map.
+
+Will do.
+
+Thanks for good catchings!
+
+Leo
 
