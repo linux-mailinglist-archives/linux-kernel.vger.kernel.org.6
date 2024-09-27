@@ -1,126 +1,137 @@
-Return-Path: <linux-kernel+bounces-341714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7AAC988411
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:20:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01CF9988415
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98862284569
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:19:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B911C21631
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0B318BC1D;
-	Fri, 27 Sep 2024 12:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8D118BC19;
+	Fri, 27 Sep 2024 12:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fo5sIA+Y"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtvCBuZJ"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B5F18BBB6;
-	Fri, 27 Sep 2024 12:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387F818BBB6;
+	Fri, 27 Sep 2024 12:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727439590; cv=none; b=QLeEnr14FARhjDksq5izPBgw4wIeoR4vSYCRIZQWFIwHM6H7tVGhWVoj1g9gJAuXZzvU4YHOlbjjtxeeiqA8TnymxcdlllxIE8xdQxubhfIQhlw0xj4BjygC1esmzkHCSvNer1RMZc/ye3H3MHNLlNHF8NQC/OwKXqBI+/AZnug=
+	t=1727439609; cv=none; b=g2y4bVOareh1xT4tv0CTXDb96wICDtsq1tVVTQNvoE3ajcODAP7WVMga9cDqKW1BsEYUkV/GnfrR6gtVFby9fGgAtokzDsSyb/6GskGTeocfO5HgZMArOMr6UZFNorBMRisIirwIpzGU5xnMO5RIbeZInF7MDBou9M2PjKaGk6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727439590; c=relaxed/simple;
-	bh=/15zZNSKOt2WUEVyGxetW5cGg/kn6L1W66o0KMpYX3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qy376liEWWcI4+fMV43CJSWkKqoURTJJ+lKjORh+7+anzC4MuL8NcvTUGzpdXX5sozp6Jv50sGlnKb9Ev5cbdwGwanBkEPQHhRkldyMx1Pj6yj2jR4sZjWXJ4ln9mSc75xlcn4z2dnj7A5p5RwnUpnTezj5XrwNxhC1suTHBfUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fo5sIA+Y; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R6WIuN022973;
-	Fri, 27 Sep 2024 12:19:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	25c2JxjzCkcKhseOpu3Fe5tPOLmd9XRrGTGy4VnlaGQ=; b=fo5sIA+Y8l+EF2Mr
-	8YETJT/aSFUOmzM1c22Yyh1LpVcIHJMTVpvAOHG8lt12TfT0zlOPtu9h/doYdsat
-	cERN+L1CdqEeHXLRh1KccIodGFxejQ6FA7dqQt4a7joLbBDMMNJF+2duMvFWs4+W
-	XKMW+7YF2SB8CwlznTVumC51Tee6P82aSWqdRzdyj812VFPvQkN8XVTHpyeiAT9M
-	9ctWr3XrG6qRShtbcHFGp5oSZmP3x79Yh63AXI4r/4V2V57wXvwwR/SaW/wDUNBK
-	mPWnfGKZrDpCU015gNQcCyLdFJNW6EjelKKnX7S+Yj0GNgt8RdNlc1oFEtmQjed5
-	RJMEYA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41spwf2nwv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 12:19:45 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48RCJNdj022748
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 12:19:23 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 27 Sep
- 2024 05:19:20 -0700
-Message-ID: <85b156c8-aef5-4080-bc4d-e1bb8a4f0977@quicinc.com>
-Date: Fri, 27 Sep 2024 17:49:17 +0530
+	s=arc-20240116; t=1727439609; c=relaxed/simple;
+	bh=WPNYO+xd1s1KN3jUa+JBRRpxKWaYwWSOMkkB8tCf+NQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QX2Psro8YHlBIPHwrAU6CCap6WkSGSejSG/vsznCYPuHNydFm1wIxG0s+jaskrmo14sLHUNkV1CSvI5nmUZEdBu2HI/BI5SNkd8mhvEEolPe3mKWKC6D+Y3W/fTtcvPhZbhbfiY+G/G1OIuDr5ipBo+RL3q+GNvwMqyXTfu3+8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtvCBuZJ; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20570b42f24so23842125ad.1;
+        Fri, 27 Sep 2024 05:20:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727439607; x=1728044407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wmpHJeLs6NJdfwlzRVUknQADxAgUSEiuTv5BJcRJnFc=;
+        b=FtvCBuZJqQ1lZf6mSKiHpm2+DJgLbow9NCkWHV4IDQ3ktEL6VIv3M9fAx7r5tE0Svs
+         APTuIAx1/cTOVwhqXb2oGzeYneUJlzMbt4aFa6R+qTVYd/5KyVCr5FUzECEQS+unF+2d
+         VEs5P56IHZs8/W1tzSXTmsfUPvPyo8QVpT3Pynktn0/tEs4U0w4pnLHOgyeys+RBiV67
+         pTSnomoATzEHzge6MkcJ3T/7Yp/UawokYlnZTanboD2I6pqBpr/zaNQzTOkf0OPEtpxY
+         +zOOGXr/rFYwYc6GUaIXevn+dhoWown0Mpesi5DplM13G7lLXuq5bbT6uVNW55u+HRHL
+         6d+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727439607; x=1728044407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wmpHJeLs6NJdfwlzRVUknQADxAgUSEiuTv5BJcRJnFc=;
+        b=wPIxAnASGJigz1jyaAMJEpZ8YOjpmKxLJEriVYjXCd++gQJ6anW0S0F5U12N8+WV8b
+         qzXNmG/lM/mJF83Q8mfxLBldRJfRtriJhUlorc6bTr9CcbXlNHSsYIC/EWDI3D1gagqf
+         nuksO3GJoFhbN9qNnbiUcSwnLFmw3+CPr56b61yvIrTUEJVNtTQ5zFY8PeGaWNsLVyTC
+         cnYDEue2s2hUdEGJFImpiMOsg7zH5B33bq5DQar50hBTEpShJkgP2COIf3pMTwrD2GJ+
+         gSp+sOhz4MWUyEgpG1BQ9z8rWjYXmB443hFqxVOIkriNTSvHdNoIxSUqVW4zv7GLEupM
+         qHYA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2EmWJAe1RGAGbBic3BApC8gWcO70uT/cgf/DaTbbbDdblOTL9TvaA0C9lFredh476aFWq2lZKGMc4@vger.kernel.org, AJvYcCWzWQ3IBtWZFAYh8pht8PFYwKLkiifE56YjsXrS34FGyRMkMlVE9SUzYPwr4KPf2x1VmDNaDzSMVlgV8licFm8Xduo=@vger.kernel.org, AJvYcCXkY4r5h7EAWMq7BWlsr6WHfIDtZRHZ8WKTmeL6G3e6SaiBapHhpF/6aYEZQf6Dq59/Iun1yOt3m4IzwK2F@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5Nu1ne+RxcObONcW2ZQ01a0eolv5FrxGo7lQF+FhxHDXffuJ0
+	h+OTlucf12I1w73sTg9ebFIM1nsCKIpvjAaGYOoO7Qp09a9tl3w73ZftSz7JeC1rp/vgKEf2mxx
+	Tg3DyBdcbEhW2S2wyAjUVIOyNnNs=
+X-Google-Smtp-Source: AGHT+IG8xzE2YhDlqy6m9OCQv2i651ZoyrhJRmx3DU1y1XLHaGexnr0U8wiN8jW67VoZb0Kdz0KoguDZte066MqyFCk=
+X-Received: by 2002:a17:903:98b:b0:206:8d6e:cff9 with SMTP id
+ d9443c01a7336-20b36be53e9mr53189825ad.4.1727439607242; Fri, 27 Sep 2024
+ 05:20:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: i2c-qcom-geni: Serve transfer during early resume
- stage
-To: Andi Shyti <andi.shyti@kernel.org>
-CC: <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <quic_vdadhani@quicinc.com>,
-        <vkoul@kernel.org>
-References: <20240402102741.128424-1-quic_msavaliy@quicinc.com>
- <uib7it3noxnkekza4p4ngf5w677fizrb7j5ov7ekos2vinge5x@sh24m63gmkrr>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <uib7it3noxnkekza4p4ngf5w677fizrb7j5ov7ekos2vinge5x@sh24m63gmkrr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TBCQ83xMowucYXQYLzxzzTB90mzCTuq8
-X-Proofpoint-ORIG-GUID: TBCQ83xMowucYXQYLzxzzTB90mzCTuq8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 priorityscore=1501 clxscore=1015
- malwarescore=0 mlxscore=0 mlxlogscore=591 impostorscore=0 phishscore=0
- spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409270089
+References: <20240926180903.479895-1-sean.anderson@linux.dev> <cb716925-f6c0-4a00-8cfd-b30aed132fd1@linux.dev>
+In-Reply-To: <cb716925-f6c0-4a00-8cfd-b30aed132fd1@linux.dev>
+From: Adam Ford <aford173@gmail.com>
+Date: Fri, 27 Sep 2024 07:19:55 -0500
+Message-ID: <CAHCN7x+tcvih1-kmUs8tVLCAk0Gnj11t0yEZLPWk3UBNyad7Jg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] arm64: dts: renesas: Add SD/OE pin properties
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: linux-arm-kernel@lists.infradead.org, 
+	Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>, 
+	Biju Das <biju.das@bp.renesas.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andi, sorry. Yes this is active. let me push V2 addressing comments 
-for V1. i was completely away earlier hence restarting now.
+On Thu, Sep 26, 2024 at 1:24=E2=80=AFPM Sean Anderson <sean.anderson@linux.=
+dev> wrote:
+>
+> On 9/26/24 14:09, Sean Anderson wrote:
+> > Linux can configure almost every part of this clock generator without
+> > relying on the OTP settings. However, the correct configuration for the
+> > SD/OE pin cannot be determined automatically. Therefore, add the
+> > appropriate properties to configure this pin.
+> >
+> > I have CC'd some people who appear to have access to the following
+> > boards which use the versaclock5:
+> >
+> > - Salvator-X
+> > - HiHope RZ/G2[MN] Main Board
+> > - Beacon Embedded Works RZ/G2N Development Kit
+> >
+> > as I could not find schematics for these boards. You can help me out by
+> > (pick one):
+> >
+> > - Run the following command and send me the output:
+> >
+> >     $ grep 10: /sys/kernel/debug/regmap/*-006a/registers
 
-On 9/12/2024 3:32 PM, Andi Shyti wrote:
-> Hi Mukesh,
-> 
-> Is this patch still needed? Can anyone active in the Qualcomm
-> drivers take a look?
-> 
-> On Tue, Apr 02, 2024 at 03:57:41PM GMT, Mukesh Kumar Savaliya wrote:
->> pm_runtime_get_sync() function fails during PM early resume and returning
->> -EACCES because runtime PM for the device is disabled at the early stage
->> causing i2c transfer to fail. Make changes to serve transfer with force
->> resume.
->>
->> 1. Register interrupt with IRQF_EARLY_RESUME and IRQF_NO_SUSPEND flags
->>     to avoid timeout of transfer when IRQ is not enabled during early stage.
->> 2. Do force resume if pm_runtime_get_sync() is failing after system
->>     suspend when runtime PM is not enabled.
->> 3. Increment power usage count after forced resume to balance
->>     it against regular runtime suspend.
->>
->> Co-developed-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
->> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
->> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> 
-> Should this be considered a fix?
-> 
-> Thanks,
-> Andi
+Without any of the patches from this series, for the Beacon RZ/G2 Boards:
+
+grep 10: /sys/kernel/debug/regmap/*-006a/registers
+/sys/kernel/debug/regmap/2-006a/registers:10: a0
+/sys/kernel/debug/regmap/4-006a/registers:10: a0
+
+> >
+> > - Measure the voltage on the SD/OE pin on a functioning board.
+> > - Inspect (or send me) the schematic to determine the state of the SD/O=
+E
+> >   pin during normal operation.
+
+The SD/OE pins on the Beacon boards are not tied high by default.
+They have an optional pull-up resistor, but it is not populated by
+default.
+
+adam
+> >
+> > My suspicion is that all of these boards use the same configuration
+> > (SD/OE pin tied high) owing to their common design heritage. Thanks in
+> > advance.
+>
+> +CC the people I meant to CC in the first place
 
