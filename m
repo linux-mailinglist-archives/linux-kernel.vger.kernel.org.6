@@ -1,235 +1,165 @@
-Return-Path: <linux-kernel+bounces-341440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A91988024
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:18:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2788D98802A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E509B20FDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:18:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6DAF1F23E55
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F54C188712;
-	Fri, 27 Sep 2024 08:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69275181339;
+	Fri, 27 Sep 2024 08:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TDKxdHf1"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j6rL3U7y"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2542813B58B;
-	Fri, 27 Sep 2024 08:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C06C1607AA
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727425082; cv=none; b=uEFCmrusGj9uKDzFgvu78wXplx8VNqC51QQyPkFgSYO8UC0Xz00bn1zVVJKy/BPRiVqaj54wfrUI5Q33fP+6O7aYyjvUJkXL973KZZyHbF7JSFzxpHqHBwNqykjUN2Z4VFIikaWpdPkLHiHg2mUv4wY4x51A18tqnIqEnw6fZy4=
+	t=1727425245; cv=none; b=SF5FMc3pzHQvnrtipmi6Wa9hStMKvWpElsmwSZfdkWalr8ag3N6MvE4597unyTQK5kYIT34nLVeYn3dGBD1sRSYrMLItkT9/oXP+IX15u/kElQCBpkYwEQHC8n5dtOt7GI1nJEf1JNAYjJSF8+AlYafGjgo7I/kbAAqt7TLxYwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727425082; c=relaxed/simple;
-	bh=XWQo208lHzRpbTiD3VJZgQ1YzqtPjGoCpGkZ2H9pyT4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oW8j+trU14KzSVNh8fvMf9oD7jVm//o38mPwfp7vB3vMp/PVkS5khKHh81ffTMLeHQh9apbcam2yxhwXAwgzfxBkHZkKDwEWrhjfelswEAAVc7RvYrxfuuXb+XUtxBFsm/v9df43y3y1U5FrcDpZTtGsokozjjdkzV4VLwdnQLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TDKxdHf1; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e163e2a9fdso1090237b6e.2;
-        Fri, 27 Sep 2024 01:18:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727425080; x=1728029880; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wik+ChQqsJUQ9vegf6yc2qiPGCL4qopVw1Omly+OHW0=;
-        b=TDKxdHf1xABk98a/6t2S9XzwvoN9gj12lkGxh9Upr/PGyBLMYchdTVJtJ82Z3mkvAZ
-         BkxN3lFC1AdNQYsTUY+rS1uDHGiaWeiKqcM4yftRppEkcEQdqSNCeWMnkNiakAGh4rM0
-         VUdhZfOMKHJeUo43HlozLpdXUsa7mU9fbcSJwaexZGkQcTxmNdtC026JjbOHTNqsXsyZ
-         G1yh5z+dQHXTfv1bug4Db8kByg+ZiqCuqtYzXgfEf2mqEBu1rqy+0fywGd3Rk5OJHj7B
-         MHLGmhDESVNVW3SywOm3olUKJZoj0GYdtXMDjElAmnraGeNajL3wmEcbhN9kslSICm9m
-         BZAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727425080; x=1728029880;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wik+ChQqsJUQ9vegf6yc2qiPGCL4qopVw1Omly+OHW0=;
-        b=evYz9QxZ0W58Tbbr0Z8uJxxN3aJH4sSo100mg7exz9XNJpeN9aGBjPHuYtgWa91sjd
-         DDmYnsvZRdzqDGk4bWr1oL6fg821/HScyw6Im2FZASx56ESVT48cYUEovx3cpCmYhsfE
-         NenueOpJJmwJPqRc6ZV3AU7flXEHvvFOo++vzYmNfv2LQjKljPoxnN+gBnD5DFQ7BQ0d
-         D3zUfyOn52M+RWZydLioWPxTy1YK+sqP60kZfR9pMTD56wOa2ggR0quJJ1yKQr/TIiQn
-         yjy2umUFVReGahGNDh00RcydOkefQo7/98zxj1eToXphu5mon08qxprUB4JuQHOkf5cl
-         QdNA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8gN49OX5bdgKkaR4hNA7RQV+97LSZkNysXRRg7tSq/+NAyZmfCPOV6iFjnu5z89IcJx7EaTEJZrjn2DM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTE4FPOWSoo9f6NTW3OwkmXHjriIS1mo8ITdM1lZLFS2VxMwIH
-	d3wuqYKmFslNNtTV8gQdpkOIgCVdDW1jabKB/mDo/DVEzO1jAOhkFlYACKV2ko9jLgA5YDwTaL6
-	lOeMu0su/zWjHEr4//HVurUfi/R4=
-X-Google-Smtp-Source: AGHT+IGXhzWbBdeIrb0hJqpwNgrU0bjAQ6vyKaWNVNcd1bGRalu2iD6EKqCW4Qs5ETCMD0+1IwTEHcpL/v4onOi88xw=
-X-Received: by 2002:a05:6808:f86:b0:3e2:9d3f:15fe with SMTP id
- 5614622812f47-3e3939e7f79mr1404501b6e.45.1727425079995; Fri, 27 Sep 2024
- 01:17:59 -0700 (PDT)
+	s=arc-20240116; t=1727425245; c=relaxed/simple;
+	bh=ciKZ7fyG7EQCIIC1pnDqm3+FhRp/aFH6oclRu+SsR4s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=krLGYyGSFsRXyQJ4NmCpoCdddPXCo3XWHWJdBBCS30hYECVeuKdPhCOODWr8SpL7AkgeIbU0Po8hnoGRVVu+WbisB4NSrXzNQ6pBuOzO4zHdiHUUjGRLKJtublxs51qwWTdLYKrRzBKTAm6z34asW7XVhRCgCxAcC2tZOwFiUSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j6rL3U7y; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727425244; x=1758961244;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=ciKZ7fyG7EQCIIC1pnDqm3+FhRp/aFH6oclRu+SsR4s=;
+  b=j6rL3U7yehIPIp1k4g3iCIf+POKDSM6HrRTACfTYhOKOnT2VQtvt8ACU
+   uPfOaNbNjcBdRmx3X67AyMvoEmQGhOwvw+nXmb3c7uQ4B3Gn4x1h3nxDy
+   4VYGDiIwLx3Wapk5XJcr1axnG2RxVuWt+c2Ylm4+FXdnM1a7XUJAFj8Gu
+   l0EO/lU289YA189BYZyvu6iW37iYA5JSB6Vo9eGnkXQ3r8fWhMOAudETb
+   le/KrcD17nKRCo0m012ZZ7e+qOBfbpSQYPKnQbU/3mRFCiKBNX+I9CpsZ
+   2vaje3WQATie1poli1UGGNOFwHU3/8VJvo3OSvUQm2l6T6/NMC/kvHNQC
+   w==;
+X-CSE-ConnectionGUID: CJUS9MtuT1iVGK/X4CfhGA==
+X-CSE-MsgGUID: iYUoqz2SSPWKqibQYNpccg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="44030169"
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="44030169"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 01:20:43 -0700
+X-CSE-ConnectionGUID: dPic5LqbQs2pNBTZTNz8sg==
+X-CSE-MsgGUID: El3NEdyzRgua84QjVM1kkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="103248182"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.211])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 01:20:38 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Alessandro Zanni <alessandro.zanni87@gmail.com>, rodrigo.vivi@intel.com,
+ joonas.lahtinen@linux.intel.com, tursulin@ursulin.net, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, anupnewsmail@gmail.com, Ville Syrjala
+ <ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH] gpu: drm: i915: display: Avoid null values
+ intel_plane_atomic_check_with_state
+In-Reply-To: <20240927000146.50830-1-alessandro.zanni87@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240927000146.50830-1-alessandro.zanni87@gmail.com>
+Date: Fri, 27 Sep 2024 11:20:32 +0300
+Message-ID: <87tte1zewf.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240901183221.240361-1-linux.amoon@gmail.com> <20240901183221.240361-2-linux.amoon@gmail.com>
-In-Reply-To: <20240901183221.240361-2-linux.amoon@gmail.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Fri, 27 Sep 2024 13:47:44 +0530
-Message-ID: <CANAwSgSgwx0kuV-boF14_WXiPkE8KXxOWOfS2e_QOWMKgKSLnA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/6] PCI: rockchip: Simplify clock handling by using
- clk_bulk*() function
-To: Shawn Lin <shawn.lin@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-pci@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hi,
-
-On Mon, 2 Sept 2024 at 00:03, Anand Moon <linux.amoon@gmail.com> wrote:
+On Fri, 27 Sep 2024, Alessandro Zanni <alessandro.zanni87@gmail.com> wrote:
+> This fix solves multiple Smatch errors:
 >
-> Refactor the clock handling in the Rockchip PCIe driver,
-> introducing a more robust and efficient method for enabling and
-> disabling clocks using clk_bulk*() API. Using the clk_bulk APIs,
-> the clock handling for the core clocks becomes much simpler.
+> drivers/gpu/drm/i915/display/intel_atomic_plane.c:660
+> intel_plane_atomic_check_with_state() error:
+> we previously assumed 'fb' could be null (see line 648)
 >
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> drivers/gpu/drm/i915/display/intel_atomic_plane.c:664
+> intel_plane_atomic_check_with_state()
+> error: we previously assumed 'fb' could be null (see line 659)
+>
+> drivers/gpu/drm/i915/display/intel_atomic_plane.c:671
+> intel_plane_atomic_check_with_state()
+> error: we previously assumed 'fb' could be null (see line 663)
+>
+> We should check first if fb is not null before to access its properties.
 
-Do you have any review comments on this series?
+new_plane_state->uapi.visible && !fb should not be possible, but it's
+probably too hard for smatch to figure out. It's not exactly trivial for
+humans to figure out either.
 
-Thanks
--Anand
+I'm thinking something like below to help both.
 
+Ville, thoughts?
+
+
+BR,
+Jani.
+
+
+diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+index 3505a5b52eb9..d9da47aed55d 100644
+--- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
++++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+@@ -629,6 +629,9 @@ int intel_plane_atomic_check_with_state(const struct intel_crtc_state *old_crtc_
+ 	if (ret)
+ 		return ret;
+ 
++	if (drm_WARN_ON(display->drm, new_plane_state->uapi.visible && !fb))
++		return -EINVAL;
++
+ 	if (fb)
+ 		new_crtc_state->enabled_planes |= BIT(plane->id);
+ 
+
+
+>
+> Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
 > ---
-> v5: switch to use use devm_clk_bulk_get_all()? gets rid of hardcoding the
->     clock names in driver.
-> v4: use dev_err_probe for error patch.
-> v3: Fix typo in commit message, dropped reported by.
-> v2: Fix compilation error reported by Intel test robot.
-> ---
-> ---
->  drivers/pci/controller/pcie-rockchip.c | 65 +++-----------------------
->  drivers/pci/controller/pcie-rockchip.h |  7 ++-
->  2 files changed, 10 insertions(+), 62 deletions(-)
+>  drivers/gpu/drm/i915/display/intel_atomic_plane.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >
-> diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
-> index c07d7129f1c7..2777ef0cb599 100644
-> --- a/drivers/pci/controller/pcie-rockchip.c
-> +++ b/drivers/pci/controller/pcie-rockchip.c
-> @@ -127,29 +127,9 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rockchip)
->                                              "failed to get ep GPIO\n");
->         }
->
-> -       rockchip->aclk_pcie = devm_clk_get(dev, "aclk");
-> -       if (IS_ERR(rockchip->aclk_pcie)) {
-> -               dev_err(dev, "aclk clock not found\n");
-> -               return PTR_ERR(rockchip->aclk_pcie);
-> -       }
-> -
-> -       rockchip->aclk_perf_pcie = devm_clk_get(dev, "aclk-perf");
-> -       if (IS_ERR(rockchip->aclk_perf_pcie)) {
-> -               dev_err(dev, "aclk_perf clock not found\n");
-> -               return PTR_ERR(rockchip->aclk_perf_pcie);
-> -       }
-> -
-> -       rockchip->hclk_pcie = devm_clk_get(dev, "hclk");
-> -       if (IS_ERR(rockchip->hclk_pcie)) {
-> -               dev_err(dev, "hclk clock not found\n");
-> -               return PTR_ERR(rockchip->hclk_pcie);
-> -       }
-> -
-> -       rockchip->clk_pcie_pm = devm_clk_get(dev, "pm");
-> -       if (IS_ERR(rockchip->clk_pcie_pm)) {
-> -               dev_err(dev, "pm clock not found\n");
-> -               return PTR_ERR(rockchip->clk_pcie_pm);
-> -       }
-> +       rockchip->num_clks = devm_clk_bulk_get_all(dev, &rockchip->clks);
-> +       if (rockchip->num_clks < 0)
-> +               return dev_err_probe(dev, err, "failed to get clocks\n");
->
->         return 0;
->  }
-> @@ -372,39 +352,11 @@ int rockchip_pcie_enable_clocks(struct rockchip_pcie *rockchip)
->         struct device *dev = rockchip->dev;
->         int err;
->
-> -       err = clk_prepare_enable(rockchip->aclk_pcie);
-> -       if (err) {
-> -               dev_err(dev, "unable to enable aclk_pcie clock\n");
-> -               return err;
-> -       }
-> -
-> -       err = clk_prepare_enable(rockchip->aclk_perf_pcie);
-> -       if (err) {
-> -               dev_err(dev, "unable to enable aclk_perf_pcie clock\n");
-> -               goto err_aclk_perf_pcie;
-> -       }
-> -
-> -       err = clk_prepare_enable(rockchip->hclk_pcie);
-> -       if (err) {
-> -               dev_err(dev, "unable to enable hclk_pcie clock\n");
-> -               goto err_hclk_pcie;
-> -       }
-> -
-> -       err = clk_prepare_enable(rockchip->clk_pcie_pm);
-> -       if (err) {
-> -               dev_err(dev, "unable to enable clk_pcie_pm clock\n");
-> -               goto err_clk_pcie_pm;
-> -       }
-> +       err = clk_bulk_prepare_enable(rockchip->num_clks, rockchip->clks);
-> +       if (err)
-> +               return dev_err_probe(dev, err, "failed to enable clocks\n");
->
->         return 0;
-> -
-> -err_clk_pcie_pm:
-> -       clk_disable_unprepare(rockchip->hclk_pcie);
-> -err_hclk_pcie:
-> -       clk_disable_unprepare(rockchip->aclk_perf_pcie);
-> -err_aclk_perf_pcie:
-> -       clk_disable_unprepare(rockchip->aclk_pcie);
-> -       return err;
->  }
->  EXPORT_SYMBOL_GPL(rockchip_pcie_enable_clocks);
->
-> @@ -412,10 +364,7 @@ void rockchip_pcie_disable_clocks(void *data)
->  {
->         struct rockchip_pcie *rockchip = data;
->
-> -       clk_disable_unprepare(rockchip->clk_pcie_pm);
-> -       clk_disable_unprepare(rockchip->hclk_pcie);
-> -       clk_disable_unprepare(rockchip->aclk_perf_pcie);
-> -       clk_disable_unprepare(rockchip->aclk_pcie);
-> +       clk_bulk_disable_unprepare(rockchip->num_clks, rockchip->clks);
->  }
->  EXPORT_SYMBOL_GPL(rockchip_pcie_disable_clocks);
->
-> diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/controller/pcie-rockchip.h
-> index 6111de35f84c..bebab80c9553 100644
-> --- a/drivers/pci/controller/pcie-rockchip.h
-> +++ b/drivers/pci/controller/pcie-rockchip.h
-> @@ -11,6 +11,7 @@
->  #ifndef _PCIE_ROCKCHIP_H
->  #define _PCIE_ROCKCHIP_H
->
-> +#include <linux/clk.h>
->  #include <linux/kernel.h>
->  #include <linux/pci.h>
->  #include <linux/pci-ecam.h>
-> @@ -299,10 +300,8 @@ struct rockchip_pcie {
->         struct  reset_control *pm_rst;
->         struct  reset_control *aclk_rst;
->         struct  reset_control *pclk_rst;
-> -       struct  clk *aclk_pcie;
-> -       struct  clk *aclk_perf_pcie;
-> -       struct  clk *hclk_pcie;
-> -       struct  clk *clk_pcie_pm;
-> +       struct  clk_bulk_data *clks;
-> +       int     num_clks;
->         struct  regulator *vpcie12v; /* 12V power supply */
->         struct  regulator *vpcie3v3; /* 3.3V power supply */
->         struct  regulator *vpcie1v8; /* 1.8V power supply */
-> --
-> 2.44.0
->
+> diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+> index e979786aa5cf..1606f79b39e6 100644
+> --- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+> +++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+> @@ -656,18 +656,18 @@ int intel_plane_atomic_check_with_state(const struct intel_crtc_state *old_crtc_
+>  	    intel_plane_is_scaled(new_plane_state))
+>  		new_crtc_state->scaled_planes |= BIT(plane->id);
+>  
+> -	if (new_plane_state->uapi.visible &&
+> +	if (new_plane_state->uapi.visible && fb &&
+>  	    intel_format_info_is_yuv_semiplanar(fb->format, fb->modifier))
+>  		new_crtc_state->nv12_planes |= BIT(plane->id);
+>  
+> -	if (new_plane_state->uapi.visible &&
+> +	if (new_plane_state->uapi.visible && fb &&
+>  	    fb->format->format == DRM_FORMAT_C8)
+>  		new_crtc_state->c8_planes |= BIT(plane->id);
+>  
+>  	if (new_plane_state->uapi.visible || old_plane_state->uapi.visible)
+>  		new_crtc_state->update_planes |= BIT(plane->id);
+>  
+> -	if (new_plane_state->uapi.visible &&
+> +	if (new_plane_state->uapi.visible && fb &&
+>  	    intel_format_info_is_yuv_semiplanar(fb->format, fb->modifier)) {
+>  		new_crtc_state->data_rate_y[plane->id] =
+>  			intel_plane_data_rate(new_crtc_state, new_plane_state, 0);
+
+-- 
+Jani Nikula, Intel
 
