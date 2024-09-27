@@ -1,140 +1,86 @@
-Return-Path: <linux-kernel+bounces-341509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD289880F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:59:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ABCA9880F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C362826AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:59:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 074F12822D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E966A18A939;
-	Fri, 27 Sep 2024 08:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="b2YCtg10"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBDE189F56;
+	Fri, 27 Sep 2024 08:59:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF7B189505;
-	Fri, 27 Sep 2024 08:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F071C18893F
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727427547; cv=none; b=H3zoD4bYE0+/YLsiTBBrD0v+4DlsxA5q26RxxZcM1shK0kVwYiy4eUxO0ojyG57XOfmcJgIDQx2kHJ0hjAWTKZSDm8W1MilD5GZ30SG/aIK/tFZcPh+lcbVwQXFRpEiNslhj0q+8aTC+p2MLJF9XkSVhbsYrwzH3Zegaja87vmk=
+	t=1727427546; cv=none; b=RjFfoC9KOJY2xV+KW+xD2VdZriFTC4X66WvOybMSuR9n2oDNrRwcJH95uTrqPvLo4uBC7SGYXOiMAfZCmoo3IAQDSW/+27J081STnL3UM/HgAaln4pA1t4JHp+O2zGaMvIttYo0SYbVmicGQSD5sOkwYjwQjs6qql1iPS1jPkNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727427547; c=relaxed/simple;
-	bh=TMNi1TEAkPmIaNzTLKdT90PeWm/JU0u5xNclztXdGBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L0rHfud8Trm4NJJVkThCV2iEj7vbw4Jnf2kmx6jWGGFdJQxo+iv9068V2FbmRyj3Zmmwe09DDeMlstyOHrJLAvNfpNH2gpTkLyAV4V+mTR1WsnJ9oxb0HmlIOYef6hw3WGTlxQFU1esbWx6SgbFe/WiKkicK0aBwWzl3NOw2Yhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=b2YCtg10; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=UEPOauNiUq9T7KfVOX/WwHhE48u8UrL4ukkVKlw7PHw=;
-	t=1727427545; x=1727859545; b=b2YCtg10ixJSNeaw5QwpHpvKfU/mxkEOa4YdKHsL1VjpRMD
-	vbVZeAdgpjOgsXUn3BFtsSM4q5mfj28C0Bs3xsgCmo0iQglmYLntltbettw42QWPrg4gCSEs35Up2
-	b2utvObuDYZdG6VptA71C5jGri2t83nf+Wdi1/mcb1JWfvGlYvClPUJ7DlnnEqJBk1hD56lwB+RIn
-	EjqV42tm44kROD445MemRkeqD68avDcGmEQ4PMZpTdQvxyENCFQglBTbp5avJ3ta7jroIteuU1KCZ
-	jANWnCU6OGmNIxUzp0V2xIQN9kbIDZNaMQ32le/+ZDqcsKrvQCI3c85HVUb9zlDA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1su6oY-0004oG-By; Fri, 27 Sep 2024 10:59:02 +0200
-Message-ID: <38620c47-62ea-40b6-a7b3-afee9a3238a3@leemhuis.info>
-Date: Fri, 27 Sep 2024 10:59:01 +0200
+	s=arc-20240116; t=1727427546; c=relaxed/simple;
+	bh=vh1wYAF+kc+HTxM/G/citDCdJQ8zATeIDO/s4Oi+gHk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Zl2jJHw8024amIt4hCXvF/LjgWguAjmmD3pmchdiH2S1C9L+nkESozzVv4F+syWc8dMEjRKAtYAcGHVFmwVNry3Dql4+xwfhyyBVW+kXh9EziskaBz69F2y4qGddlskwPL8yjL63L63a7afoc0d3ddnbhhQtSyN1KL4kHnuNboY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a348ebb940so2100665ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 01:59:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727427544; x=1728032344;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EvND1OumJaSV1S4zDkx3t0bAVWve6u1ecGn/IYHnScw=;
+        b=Oy4Oq3OKWBU3R0LYE0PChX1D70N6xwoBTboaOUFJl6566DihqZzftr1vNu8zoq91gX
+         MfN+wq3pfi77Im/xHgV6TwyV8Z0G9XsCPUYAmlyfgqN4sT10TQodFchrCUSUVBXhMxkB
+         a0+TBJ9nb0/QIlMXmYoMFapZOT2s4/trtvxC611gww3N+5tN2jjUFGD+y6TZkyV1Yppc
+         CXZ5NMuVAFs8ZSIEB42nob+nBkBEkR0CL6SzmuTU5MlYB7UMWEzDhAP3srPdNGGDIxVF
+         9MNdGH+hOgsgVlVgt3epj23vfvQ87jSWB53BvTcC9zLoNZahqH/JS1GA/4YnTVvOwEwP
+         HChA==
+X-Gm-Message-State: AOJu0YxGTkNnf0wz1Qvl3ueIZAwX05bstHpfrKaMzseSwvNxJ5XZkcpO
+	2AkIuplK5zo3yVFTEm4d62I/xOwVmEE59I+ldLpgEklY2cgVd5Qy4ndBW57AYwA0YgBkPEwyuqJ
+	ywT16F8fGlXxDvFgZkv56l0itLnuhhTJVZb3lU4/9tUjmxy9ZOIvXHA4=
+X-Google-Smtp-Source: AGHT+IHBML4j3KKYAed6evcTX7DlExV/t9himFQB0CXEhvOImPrLVv67+BLgS7OoN1wtsGQnATfJg3p8SE5P488p1Z/qagKmJXZ0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [regression] frozen usb mouse pointer at boot
-To: Dan Williams <dan.j.williams@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <3724e8e8-ab71-4f64-8ba1-c5c9a617632f@leemhuis.info>
- <2024091128-imperial-purchase-f5e7@gregkh>
- <66ef853de5f16_10a0a2946e@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <66f229fc4daa9_2a86294ec@dwillia2-xfh.jf.intel.com.notmuch>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <66f229fc4daa9_2a86294ec@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727427545;4d57946b;
-X-HE-SMSGID: 1su6oY-0004oG-By
+X-Received: by 2002:a05:6e02:1c83:b0:3a0:8c83:91fb with SMTP id
+ e9e14a558f8ab-3a3451bc001mr20992025ab.20.1727427544142; Fri, 27 Sep 2024
+ 01:59:04 -0700 (PDT)
+Date: Fri, 27 Sep 2024 01:59:04 -0700
+In-Reply-To: <20240927083836.37037-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f673d8.050a0220.46d20.0013.GAE@google.com>
+Subject: Re: [syzbot] [squashfs?] possible deadlock in fsnotify_destroy_mark
+From: syzbot <syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 24.09.24 04:54, Dan Williams wrote:
-> Dan Williams wrote:
->> Greg Kroah-Hartman wrote:
->> [..]
->>>
->>> This is odd.
->>>
->>> Does the latest 6.10.y release also show this problem?
->>>
->>> I can't duplicate this here, and it's the first I've heard of it (given
->>> that USB mice are pretty popular, I would suspect others would have hit
->>> it as well...)
->>
->> Sorry for missing this earlier. One thought is that userspace has a
->> dependency on uevent_show() flushing device probing. In other words the
->> side effect of taking the device_lock() in uevent_show() is that udev
->> might enjoy some occasions where the reading the uevent flushes probing
->> before the udev rule runs. With this change, uevent_show() no longer
->> waits for any inflight probes to complete.
->>
->> One idea to fix this problem is to create a special case sysfs attribute
->> type that takes the device_lock() before kernfs_get_active() to avoid
->> the deadlock on attribute teardown.
->>
->> I'll take a look. Thanks for forwarding the report Thorsten!
-> 
-> Ok, the following boots and passes the CXL unit tests, would appreciate
-> if the reporter can give this a try:
+Hello,
 
-Somehow I apparently became a "bugzilla-man-in-the-middle interface" yet
-again... But whatever! ¯\_(ツ)_/¯
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-To forward the latest comment from the ticket:
+Reported-by: syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com
+Tested-by: syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com
 
-"""
---- Comment #11 from brmails+k@disroot.org ---
-Good news!
+Tested on:
 
-I think the proposed patch by Dan Williams fixes the issue.
+commit:         075dbe9f Merge tag 'soc-ep93xx-dt-6.12' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11bf9e27980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5f49dd07427b3bf8
+dashboard link: https://syzkaller.appspot.com/bug?extid=c679f13773f295d2da53
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=174f9e27980000
 
-I have tested it with v6.6.52 and v6.10.11. I haven't been able to
-recreate the
-issue with those modified kernels even once.
-
-The patch can be applied to v6.11.0 and v6.10.11 out of the box. For
-v6.6.52 I
-had to slightly modify it as the line
-
-#define SYSFS_GROUP_INVISIBLE   020000
-
-doesn't exist in /include/linux/sysfs.h in v6.6.52 hence the patch
-looking for
-that line fails on that file.
-But after adjusting the patch accordingly, the patch works fine on
-v6.6.52 and
-the issue is gone with the patched version of v6.6.52, just like 6.10.11.
-
-So, I assume that the fix / patch proposed by Dan Williams works as intended
-resolving the issue I had.
-
-Thanks again for forwarding the bug report and for the quick fix!
-"""
-
-Ciao, Thorsten
+Note: testing is done by a robot and is best-effort only.
 
