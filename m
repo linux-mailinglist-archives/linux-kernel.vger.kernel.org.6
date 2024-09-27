@@ -1,159 +1,116 @@
-Return-Path: <linux-kernel+bounces-342007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B4598898F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:12:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A181D988991
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1DE1F21C55
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:12:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A47301C232A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FCF1C1AA2;
-	Fri, 27 Sep 2024 17:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9AC1C1752;
+	Fri, 27 Sep 2024 17:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oY2VXxVU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ax+DimvL"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF1D524B0;
-	Fri, 27 Sep 2024 17:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232811C173A;
+	Fri, 27 Sep 2024 17:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727457148; cv=none; b=s9NaBXOa/fzBr71QCJ4Gl2it2BUM3sdzM9qPRIYOMY3sN83q2pl56a6qn79SSIEUkNtjtf++X65nsWvL2rHUV3HwVFGD9ac0dS+oMg8ZdveJ8JGofF2jLLAljO6855mfalYH00I7fSvLik/njtX97Zxw2ptMxHSU8p+S4lMxFy0=
+	t=1727457166; cv=none; b=uLf6+CEA6saBNy3rS7JaGgDeCmCHzfmGBMuBa0CvEqrcZd7H31zioVKEi2rcW2sh86V2mmHLGkwE9BSI4WxQrfOOGkldbnf0NBamz8txn4VHGbXqS8XnHVoGHRhOiv1T/RbAAa+aQrU45e9L3MDuv3OuOXCctud9v16Hn3mNe7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727457148; c=relaxed/simple;
-	bh=/aepn4yxs2GacHcxTHHnxPFuOl6EiGqs7P8YQBP1mx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gj9eAHVq4SjoUjyl6op7bvPIJZrcM1mEpUQbEpfIjK6TtYp5wUUXnVIpOaC7ZArF95T5nCO+WPJJBOJEroJSM80jU2TU9WyFJ+2gusLwcRVMs9XXWf8U5baUyDBqlNtT5JAteBDkgEBCj2xQaztwVdWCqCq8revKJOua80WnLNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oY2VXxVU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8807C4CEC4;
-	Fri, 27 Sep 2024 17:12:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727457147;
-	bh=/aepn4yxs2GacHcxTHHnxPFuOl6EiGqs7P8YQBP1mx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oY2VXxVU+quI2gL/DOUPraf3nWFhrGOrvHRjkN5sCL/ieWgt22COKnTzY3JjtAXjy
-	 qAjKdpNoHQl3/DkZfLjeymp81F0cYRURumPt1xzl8fwQid8d4rwdi13rKgQMFx11Ao
-	 uPZIfWkON3PEE00qAlpPoAcRmga9vBYcPCgWXrqMLUeBXyWC48RCaxnU4dUEpec0y9
-	 wenwpKyUNfxl3gOsog8iYPvbrPcuJpT++51TdCWPdqbGLhtjcwy+1y/RCxfmgCNq1I
-	 kpuS/yoRfMJvI+mwUkV8PyhYwkgK3E9BEExElRfvDEz+K3qQ9vkkSOhMOnbRoSsal9
-	 /5Xx6ICCcxeGA==
-Date: Fri, 27 Sep 2024 10:12:24 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Tengda Wu <wutengda@huaweicloud.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, song@kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH -next 1/2] perf stat: Increase perf_attr_map entries
-Message-ID: <ZvbnePGVmbWF0fAF@google.com>
-References: <20240925135523.367957-1-wutengda@huaweicloud.com>
- <20240925135523.367957-2-wutengda@huaweicloud.com>
- <ZvTgHKl4eZvpyVml@google.com>
- <41d1d728-dbf4-4b0d-9855-19cd06e2a594@huaweicloud.com>
+	s=arc-20240116; t=1727457166; c=relaxed/simple;
+	bh=/jjF3BNyT2uuFsUCZVq5e8/Ab2HvHiL2Vr+6m81Zjj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fBxvQRd8BjhBclVkj42DwH4fNor11LgzCiCAOcC486JbAD5gieiCXAcgrIbzUWSStIK/kpKcdsBF/lXlzQ9S/a/itPJn9gvc3YY3anB1I7j6kNnq+A8zWq/DsZeYXIvwkONRQeX3JzEYc8PelAnwGbieDSZbmG/wilGnW849rH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=ax+DimvL; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42e7b7bef42so20115055e9.3;
+        Fri, 27 Sep 2024 10:12:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1727457163; x=1728061963; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gmLqxkFKdXtbMxAbTeqAObhI7W65HYdB4Pl+s1JbGNg=;
+        b=ax+DimvLMskpMM5YbOzs3L1trUfaKNua20W8p1cGbnY8k1LHGzTvNCvE4zEnHNGjBd
+         Y1o9syRAEi/TZuhCYoGlLMVJlp3gj/ywZdEyq/p3LLKqVimRMVRJr6hZKRI0/bzQ8909
+         lSDEnlfM6DogLgC8tOiaA+ONXQx1gEIYOcdtwHT95LQqGeMgToNlpdmSEqUchb6X+O18
+         C/jcgOvI7+cURfS1sjJK3E8114iWk041NtcoDiuPMpjyxb9EBteMMcryIfIXeh1fsgvE
+         1Fj4xvwPx/aLE1DuJLAkqFlXWIWABYDaC3y4p7thm/IHRZKTTgDtBAp3Ui6qZgbaAHZH
+         mcVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727457163; x=1728061963;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gmLqxkFKdXtbMxAbTeqAObhI7W65HYdB4Pl+s1JbGNg=;
+        b=E7kJp5BPj3/UT/u4qye0LL/Umvno0bWd17QSx+gdJj+odNXJzbrr1TkJ90uJ6qbsJC
+         Dgg2eL/jF99RzR6H91inmr0RymimdIbnU8CVSEGQAggfQdyMaeISbBoJbyNiOmSe4OJu
+         /dUoKbNusjX1vBpvzSBsfSIp7OpcnBT6AFKgh4URW1Ygi+swfWfFjGwyVgeGkwj1gWeJ
+         VALJK2M5Z4SBWwgwarZtjwmdnrEr4X51JT9aNwkj6uUOQgSyk0eaWnVNlrz/cg9H1XgY
+         r0JZCbfhRMiDwDg7xXpEaG7v98R2nlIWsZ5vT5Jactam3SW7Q4imkRU7NflAEsdKCaV1
+         yzaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjdb7lc5fpfei9RxFJKjc1THgLwp79OIu8/alBCXY7x2TvyqEqR3kOrqyRSNc1dW8AqDf9Os8S2imnlWY=@vger.kernel.org, AJvYcCWPn9nt1L4Q/YUQMuSnNy2dUPfzr8J5gAvvRPPR0iaouovf481sN2e4kjlfvbdp/adtaFvYlL/V@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9jIDKbBtQFucClrND5h343HefIJTtgiYEPCioqiixQn6C0S/u
+	XDp5L16CdGmhsAnqStDshC5s3i1I8AwRA/DTCYbYpxAm3i/APdk=
+X-Google-Smtp-Source: AGHT+IGgONjs1Ft/KCGwrReAJ25RRuTr1ppc2rdphHCJBObHfx99PM/ELeo2lNAWuDX3fj8o1zzpzQ==
+X-Received: by 2002:a05:600c:4511:b0:428:1608:831e with SMTP id 5b1f17b1804b1-42f584870f4mr32751095e9.22.1727457163037;
+        Fri, 27 Sep 2024 10:12:43 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4a79.dip0.t-ipconnect.de. [91.43.74.121])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e6875sm3015245f8f.55.2024.09.27.10.12.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Sep 2024 10:12:42 -0700 (PDT)
+Message-ID: <3f481ef8-2c82-4f8d-9e5e-223be478a183@googlemail.com>
+Date: Fri, 27 Sep 2024 19:12:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <41d1d728-dbf4-4b0d-9855-19cd06e2a594@huaweicloud.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.10 00/58] 6.10.12-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240927121718.789211866@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240927121718.789211866@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 10:35:54AM +0800, Tengda Wu wrote:
-> 
-> 
-> On 2024/9/26 12:16, Namhyung Kim wrote:
-> > On Wed, Sep 25, 2024 at 01:55:22PM +0000, Tengda Wu wrote:
-> >> bperf restricts the size of perf_attr_map's entries to 16, which
-> >> cannot hold all events in many scenarios. A typical example is
-> >> when the user specifies `-a -ddd` ([0]). And in other cases such as
-> >> top-down analysis, which often requires a set of more than 16 PMUs
-> >> to be collected simultaneously.
-> >>
-> >> Fix this by increase perf_attr_map entries to 100, and an event
-> >> number check has been introduced when bperf__load() to ensure that
-> >> users receive a more friendly prompt when the event limit is reached.
-> >>
-> >>   [0] https://lore.kernel.org/all/20230104064402.1551516-3-namhyung@kernel.org/
-> > 
-> > Apparently this patch was never applied.  I don't know how much you need
-> > but having too many events at the same time won't be very useful because
-> > multiplexing could reduce the accuracy.
-> > 
-> 
-> Could you please explain why patch [0] was not merged at that time? I couldn't
-> find this information from the previous emails.
+Am 27.09.2024 um 14:23 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.10.12 release.
+> There are 58 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-I guess it's just fell through the crack. :)
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-> 
-> In my scenario, we collect more than 40+ events to support necessary metric
-> calculations, which multiplexing is inevitable. Although multiplexing may
-> reduce accuracy, for the purpose of supporting metric calculations, these
-> accuracy losses can be acceptable. Perf also has the same issue with multiplexing.
-> Removing the event limit for bperf can provide users with additional options.
-> 
-> In addition to accuracy, we also care about overhead. I compared the overhead
-> of bperf and perf by testing ./lat_ctx in lmbench [1], and found that the
-> overhead of bperf stat is about 4% less than perf. This is why we choose to
-> use bperf in some extreme scenarios.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-Ok, thanks for explanation.  I think it's ok to increase the limit.
+Beste Grüße,
+Peter Schneider
 
-Thanks,
-Namhyung
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
-> 
->   [1] https://github.com/intel/lmbench
-> 
-> Thanks,
-> Tengda
-> 
-> > 
-> >>
-> >> Fixes: 7fac83aaf2ee ("perf stat: Introduce 'bperf' to share hardware PMCs with BPF")
-> >> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
-> >> ---
-> >>  tools/perf/util/bpf_counter.c | 8 +++++++-
-> >>  1 file changed, 7 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
-> >> index 7a8af60e0f51..3346129c20cf 100644
-> >> --- a/tools/perf/util/bpf_counter.c
-> >> +++ b/tools/perf/util/bpf_counter.c
-> >> @@ -28,7 +28,7 @@
-> >>  #include "bpf_skel/bperf_leader.skel.h"
-> >>  #include "bpf_skel/bperf_follower.skel.h"
-> >>  
-> >> -#define ATTR_MAP_SIZE 16
-> >> +#define ATTR_MAP_SIZE 100
-> >>  
-> >>  static inline void *u64_to_ptr(__u64 ptr)
-> >>  {
-> >> @@ -451,6 +451,12 @@ static int bperf__load(struct evsel *evsel, struct target *target)
-> >>  	enum bperf_filter_type filter_type;
-> >>  	__u32 filter_entry_cnt, i;
-> >>  
-> >> +	if (evsel->evlist->core.nr_entries > ATTR_MAP_SIZE) {
-> >> +		pr_err("Too many events, please limit to %d or less\n",
-> >> +			ATTR_MAP_SIZE);
-> >> +		return -1;
-> >> +	}
-> >> +
-> >>  	if (bperf_check_target(evsel, target, &filter_type, &filter_entry_cnt))
-> >>  		return -1;
-> >>  
-> >> -- 
-> >> 2.34.1
-> >>
-> 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
