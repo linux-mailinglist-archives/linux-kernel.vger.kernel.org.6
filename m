@@ -1,337 +1,261 @@
-Return-Path: <linux-kernel+bounces-341704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450AC9883EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:09:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB5BC9883F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9AA1281E57
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:09:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBEC81C22AFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D456918B487;
-	Fri, 27 Sep 2024 12:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B9C18BBB6;
+	Fri, 27 Sep 2024 12:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OzODtyOy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b49g9la3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OzODtyOy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b49g9la3"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kO+8I2j4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BFE18B474
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEE818B473;
+	Fri, 27 Sep 2024 12:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727438978; cv=none; b=oidzSJ2A2ZQByykaUh2MqPaZYbFTVVqJToT7V74oZKcioP7Ih/2NE2t7RVcU2x4DM8/fHAWcb6/Gs2/GCXJ2g7wjegT3d7CkgVA0THLt+FO8E8S0Roe8ok0JHKRCR9EDCyt337EbmK9ymvueXb0w8hLtmzzmlTtd2IZcj60xi3E=
+	t=1727439022; cv=none; b=nHAByxD5NqVnQVXV96RVoaHUYIKAkGL0oi6MzMtfIbSrv8zpd5OMOBodaiCYgQbpxGyvb5vz50fLIt4c+pYzTZ2vl7S3kHF/uZVbIy6tn9Ka0P/n2vPBiKu+zqJas6u66tRalmNGAp0LAZxx6EOAfZEaGwNLjcQICRvyTttEFJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727438978; c=relaxed/simple;
-	bh=ZaG5/feq9HG4d/YTQXBOZ1Zq4Z9toYcAKgH74UomcD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N1WLuzFZnfDuvEb99Usl/I7thI5wQzNt64P1JhhHHfi+OvvL6i2aQAuDnDzuwK7veO8iMQ70E9yYcbX2R6OVuwovLb6pMUNDFJJN8Nq/6H4tnb1CgHb9rUEgpunYn5Nq+Ouv4iqU60yTzuTMdMjnzAKBRXYR7CYd5Ns4NspZB0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OzODtyOy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b49g9la3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OzODtyOy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b49g9la3; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3334B21BB5;
-	Fri, 27 Sep 2024 12:09:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727438974; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vQLDYdfZrXF03N0qIGUmcgJc6mC47sf8TnOc/KOxuP4=;
-	b=OzODtyOyJmyFvYtUeGdWkXoJAJuKL41rEnJRR+HM9x/Jr2DC89KT1079qP9UW2it8Fz1Lf
-	QwjaTFtvmTHnVTLbn5RzE8p++gI7BaPKf+/IRPdIEuGaxt8E7SI8+pRzFiJ+yx1m2+/eCm
-	e93uav3o51quW4lI08SXYkoCW5lzegU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727438974;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vQLDYdfZrXF03N0qIGUmcgJc6mC47sf8TnOc/KOxuP4=;
-	b=b49g9la38r/R/ang5XhHY9p/6dILXYJLl+WQ6cYWr6IPClCQQEz2rOAKCEhublUA+8VzsC
-	BGvojqaEpvh3IbDQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727438974; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vQLDYdfZrXF03N0qIGUmcgJc6mC47sf8TnOc/KOxuP4=;
-	b=OzODtyOyJmyFvYtUeGdWkXoJAJuKL41rEnJRR+HM9x/Jr2DC89KT1079qP9UW2it8Fz1Lf
-	QwjaTFtvmTHnVTLbn5RzE8p++gI7BaPKf+/IRPdIEuGaxt8E7SI8+pRzFiJ+yx1m2+/eCm
-	e93uav3o51quW4lI08SXYkoCW5lzegU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727438974;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vQLDYdfZrXF03N0qIGUmcgJc6mC47sf8TnOc/KOxuP4=;
-	b=b49g9la38r/R/ang5XhHY9p/6dILXYJLl+WQ6cYWr6IPClCQQEz2rOAKCEhublUA+8VzsC
-	BGvojqaEpvh3IbDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2874A13A73;
-	Fri, 27 Sep 2024 12:09:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id A2XeCX6g9mZheQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 27 Sep 2024 12:09:34 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D2252A0826; Fri, 27 Sep 2024 14:09:33 +0200 (CEST)
-Date: Fri, 27 Sep 2024 14:09:33 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhao Mengmeng <zhaomzhao@126.com>
-Cc: jack@suse.com, zhaomengmeng@kylinos.cn, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] udf: refactor inode_bmap() to handle error
-Message-ID: <20240927120933.okzud3qdygqplekm@quack3>
-References: <20240926120753.3639404-1-zhaomzhao@126.com>
- <20240926120753.3639404-4-zhaomzhao@126.com>
+	s=arc-20240116; t=1727439022; c=relaxed/simple;
+	bh=a1fb3/2UBZXmhRqkIlt5AG6kKqQh2OSO3zovzQzaBPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jhFzTfryXS1Nc2yP2vu2uDcFh99DYvRFo7yb+PejBTizHTTIJRWx1gqy22B5Pg0tCVeYdmXMNj4hjehI3SGx0m//ST3h7Ad+W6nvX/+aFHmHajt9R1hu3K0Fzl5ZOqRcoPgMq79LdQslNO4/CjYCtJyU0IIMQbBqkOjEi50j1k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kO+8I2j4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DCC5C4CEC4;
+	Fri, 27 Sep 2024 12:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727439021;
+	bh=a1fb3/2UBZXmhRqkIlt5AG6kKqQh2OSO3zovzQzaBPQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kO+8I2j40xsiiyXCc7khquyhhR3bn7x+jnoITvV8beHU95AhRoeySBj5YHbg2k6FA
+	 W4txv3lCvYsw19L/hzS2LEMjjLk4eO9mURhhRlKuhRD+pREaxkWtxStgEau1tPgWxt
+	 90h1n8PutJqjK/+YIdP1cq5iRMZGCFkcNXL+QIyaddlhlim95hrnQ2vUDArsZkJp0F
+	 koAmSRBE1+rW3aHu7jrN+f5BSdZZP1KrArTLq/5HLPIWCyO0QL8INp2qHAPn/X8zx/
+	 z+AleBsbaElWvMpPIjP7rC20hgQ/6Hk+x0xb7/HiUXvB8K/a1VP3zmv1f07w6Gj0CK
+	 fW34w6BaYezOA==
+Message-ID: <6d3d58c8-18ed-4832-ba2c-09b90641cb7d@kernel.org>
+Date: Fri, 27 Sep 2024 14:10:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926120753.3639404-4-zhaomzhao@126.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[126.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[126.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] dt-bindings: mfd: mediatek: mt6397: Convert to DT
+ schema format
+To: Macpaul Lin <macpaul.lin@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
+ Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
+ <olteanv@gmail.com>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Sean Wang <sean.wang@mediatek.com>, Sen Chu <sen.chu@mediatek.com>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Chen Zhong <chen.zhong@mediatek.com>, linux-input@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org,
+ Alexandre Mergnat <amergnat@baylibre.com>
+Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+ Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+ MediaTek Chromebook Upstream
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ Chen-Yu Tsai <wenst@chromium.org>
+References: <20240918064955.6518-1-macpaul.lin@mediatek.com>
+ <20240918064955.6518-2-macpaul.lin@mediatek.com>
+ <339b4c83-201c-4f63-85d0-b0aa1eb164b0@kernel.org>
+ <df270bf2-07f3-71a8-1f67-b8417f7a0719@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <df270bf2-07f3-71a8-1f67-b8417f7a0719@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 26-09-24 20:07:53, Zhao Mengmeng wrote:
-> From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+On 27/09/2024 12:41, Macpaul Lin wrote:
 > 
-> Refactor inode_bmap() to handle error since udf_next_aext() can return
-> error now. On situations like ftruncate, udf_extend_file() can now
-> detect errors and bail out early without resorting to checking for
-> particular offsets and assuming internal behavior of these functions.
 > 
-> Reported-by: syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=7a4842f0b1801230a989
-> Tested-by: syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com
-> Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
-> Suggested-by: Jan Kara <jack@suse.cz>
+> On 9/27/24 17:45, Krzysztof Kozlowski wrote:
+>> 	
+>>
+>> External email : Please do not click links or open attachments until you 
+>> have verified the sender or the content.
+>>
+>> On 18/09/2024 08:49, Macpaul Lin wrote:
+>>> Convert the mfd: mediatek: mt6397 binding to DT schema format.
+>>>
+>>> MT6323, MT6358, and MT6397 are PMIC devices with multiple function
+>>> subdevices. They share a common PMIC design but have variations in
+>>> subdevice combinations.
+>>>
+>>> Key updates in this conversion:
+>>>
+>>> 1. RTC:
+>>>    - Convert rtc-mt6397.txt and merge into parent MT6397 PMIC DT schema.
+>>>
+>>> 2. Regulators:
+>>>    - Align to generic name "regulators".
+>>>    - Update references from .txt to .yaml for mt6323, mt6358, and mt6397
+>>>      regulators.
+>>>    - Simplify regulator name labels in device tree examples.
+>>>
+>>> 3. Audio Codec:
+>>>    - Convert sound/mt6358.txt and merge into parent MT6397 PMIC DT schema.
+>>>    - Align to generic name "audio-codec" for codec and sound subdevices.
+>>>    - Add "mediatek,dmic-mode" and "Avdd-supply" properties.
+>>>
+>>> 4. Clocks:
+>>>    - Align to generic name "clocks" for clockbuffer subdevices.
+>>>
+>>> 5. LEDs:
+>>>    - Convert leds-mt6323.txt and merge into parent MT6397 PMIC DT schema.
+>>>    - Update LED binding.
+>>>
+>>> 6. Keys:
+>>>    - Add detailed descriptions for power and home keys.
+>>>    - Add compatible: mediatek,mt6358-keys.
+>>>
+>>> 7. Power Controller:
+>>>    - Convert mt6323-poweroff.txt and merge into parent MT6397 PMIC DT
+>>>      schema.
+>>>    - Add #power-domain-cells property to fix dt-binding check error.
+>>>    - Clarify "BBPU" as "Baseband power up".
+>>>
+>>> 8. Pinctrl:
+>>>    - Align to generic name "pinctrl" instead of "pin-controller".
+>>>
+>>> 9. Compatible:
+>>>    - Drop "mediatek,mt6357" since there is a separated DT Schema
+>>>      for PMIC MT6357.
+>>>
+>>> 10. Examples:
+>>>    - MT6323: Retain complete examples for this PMIC.
+>>>    - MT6358 and MT6397: simplify settings in regulators.
+>>>     - Preserve "audio-codec", "clocks", "pinctrl", "rtc", and "keys"
+>>>       sections as they contain typical settings for different PMICs.
+>>>
+>>> Additional updates:
+>>> - MAINTAINERS: Add co-maintainers and reference to
+>>>   mfd/mediatek,mt6397.yaml for LED and power-controller drivers.
+>>> - input/mediatek,pmic-keys.yaml: Update reference to
+>>>   mfd/mediatek,mt6397.yaml.
+>>>
+>>> Signed-off-by: Sen Chu <sen.chu@mediatek.com>
+>>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+>>
+>> NAK
+>>
+>> Follow up patch pointed out this is incorrect. I don't understand this
+>> concept of sending knowingly incorrect code, so please sort it out at v7.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> 
+> Sorry I didn't know mt6359-codec and mt6358-sound are similar device
+> until Sept 26 (just yesterday) when I was reviewing the DT
+> bindings. Until I've found the previous DT Schema of mt6359-codec 
+> incorrect.
+> See [1] 
+> https://lore.kernel.org/linux-arm-kernel/20240926092519.6556-3-macpaul.lin@mediatek.com/T/
+> and [2] 
+> https://lore.kernel.org/all/20240926092519.6556-2-macpaul.lin@mediatek.com/
+> 
+> And.. I don't understand, the origin this patch v6 should be a text file
+> conversion, shouldn't we keep the origin content just a conversion and
+> trying not to broken other relate modules?
 
-This patch looks good to me now too. Thanks!
+The conversion should be correct. Correct means each compatible has a
+schema ending with additional/unevaluatedProperties: false.
 
-								Honza
+If you need to change this binding to "true", it means above statement
+was not fulfilled. You did not write proper conversion.
 
-> ---
->  fs/udf/directory.c | 13 ++++++++-----
->  fs/udf/inode.c     | 29 ++++++++++++++++++-----------
->  fs/udf/partition.c |  6 ++++--
->  fs/udf/truncate.c  |  8 +++++---
->  fs/udf/udfdecl.h   |  5 +++--
->  5 files changed, 38 insertions(+), 23 deletions(-)
+... or I do not understand what you wanted to achieve with the other patch.
+
 > 
-> diff --git a/fs/udf/directory.c b/fs/udf/directory.c
-> index 82922a4ae425..4b8bb77eaffa 100644
-> --- a/fs/udf/directory.c
-> +++ b/fs/udf/directory.c
-> @@ -246,6 +246,7 @@ int udf_fiiter_init(struct udf_fileident_iter *iter, struct inode *dir,
->  {
->  	struct udf_inode_info *iinfo = UDF_I(dir);
->  	int err = 0;
-> +	int8_t etype;
->  
->  	iter->dir = dir;
->  	iter->bh[0] = iter->bh[1] = NULL;
-> @@ -265,9 +266,9 @@ int udf_fiiter_init(struct udf_fileident_iter *iter, struct inode *dir,
->  		goto out;
->  	}
->  
-> -	if (inode_bmap(dir, iter->pos >> dir->i_blkbits, &iter->epos,
-> -		       &iter->eloc, &iter->elen, &iter->loffset) !=
-> -	    (EXT_RECORDED_ALLOCATED >> 30)) {
-> +	err = inode_bmap(dir, iter->pos >> dir->i_blkbits, &iter->epos, &iter->eloc,
-> +		   &iter->elen, &iter->loffset, &etype);
-> +	if (err || etype != (EXT_RECORDED_ALLOCATED >> 30)) {
->  		if (pos == dir->i_size)
->  			return 0;
->  		udf_err(dir->i_sb,
-> @@ -463,6 +464,7 @@ int udf_fiiter_append_blk(struct udf_fileident_iter *iter)
->  	sector_t block;
->  	uint32_t old_elen = iter->elen;
->  	int err;
-> +	int8_t etype;
->  
->  	if (WARN_ON_ONCE(iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB))
->  		return -EINVAL;
-> @@ -477,8 +479,9 @@ int udf_fiiter_append_blk(struct udf_fileident_iter *iter)
->  		udf_fiiter_update_elen(iter, old_elen);
->  		return err;
->  	}
-> -	if (inode_bmap(iter->dir, block, &iter->epos, &iter->eloc, &iter->elen,
-> -		       &iter->loffset) != (EXT_RECORDED_ALLOCATED >> 30)) {
-> +	err = inode_bmap(iter->dir, block, &iter->epos, &iter->eloc, &iter->elen,
-> +		   &iter->loffset, &etype);
-> +	if (err || etype != (EXT_RECORDED_ALLOCATED >> 30)) {
->  		udf_err(iter->dir->i_sb,
->  			"block %llu not allocated in directory (ino %lu)\n",
->  			(unsigned long long)block, iter->dir->i_ino);
-> diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-> index 6c4f104e2bf7..be9356f0eecf 100644
-> --- a/fs/udf/inode.c
-> +++ b/fs/udf/inode.c
-> @@ -418,10 +418,11 @@ static int udf_map_block(struct inode *inode, struct udf_map_rq *map)
->  		uint32_t elen;
->  		sector_t offset;
->  		struct extent_position epos = {};
-> +		int8_t etype;
->  
->  		down_read(&iinfo->i_data_sem);
-> -		if (inode_bmap(inode, map->lblk, &epos, &eloc, &elen, &offset)
-> -				== (EXT_RECORDED_ALLOCATED >> 30)) {
-> +		err = inode_bmap(inode, map->lblk, &epos, &eloc, &elen, &offset, &etype);
-> +		if (!err && etype == (EXT_RECORDED_ALLOCATED >> 30)) {
->  			map->pblk = udf_get_lb_pblock(inode->i_sb, &eloc,
->  							offset);
->  			map->oflags |= UDF_BLK_MAPPED;
-> @@ -664,8 +665,10 @@ static int udf_extend_file(struct inode *inode, loff_t newsize)
->  	 */
->  	udf_discard_prealloc(inode);
->  
-> -	etype = inode_bmap(inode, first_block, &epos, &eloc, &elen, &offset);
-> -	within_last_ext = (etype != -1);
-> +	err = inode_bmap(inode, first_block, &epos, &eloc, &elen, &offset, &etype);
-> +	if (UDF_EXT_ERR(err))
-> +		goto out;
-> +	within_last_ext = (!err);
->  	/* We don't expect extents past EOF... */
->  	WARN_ON_ONCE(within_last_ext &&
->  		     elen > ((loff_t)offset + 1) << inode->i_blkbits);
-> @@ -2391,13 +2394,17 @@ int8_t udf_delete_aext(struct inode *inode, struct extent_position epos)
->  	return (elen >> 30);
->  }
->  
-> -int8_t inode_bmap(struct inode *inode, sector_t block,
-> -		  struct extent_position *pos, struct kernel_lb_addr *eloc,
-> -		  uint32_t *elen, sector_t *offset)
-> +/*
-> + * return 0 when iudf_next_aext() loop success.
-> + * return err < 0 and err != -ENODATA indicates error.
-> + * return err == -ENODATA indicates hit EOF.
-> + */
-> +int inode_bmap(struct inode *inode, sector_t block, struct extent_position *pos,
-> +	       struct kernel_lb_addr *eloc, uint32_t *elen, sector_t *offset,
-> +	       int8_t *etype)
->  {
->  	unsigned char blocksize_bits = inode->i_sb->s_blocksize_bits;
->  	loff_t lbcount = 0, bcount = (loff_t) block << blocksize_bits;
-> -	int8_t etype;
->  	struct udf_inode_info *iinfo;
->  	int err = 0;
->  
-> @@ -2409,18 +2416,18 @@ int8_t inode_bmap(struct inode *inode, sector_t block,
->  	}
->  	*elen = 0;
->  	do {
-> -		err = udf_next_aext(inode, pos, eloc, elen, &etype, 1);
-> +		err = udf_next_aext(inode, pos, eloc, elen, etype, 1);
->  		if (UDF_EXT_EOF(err)) {
->  			*offset = (bcount - lbcount) >> blocksize_bits;
->  			iinfo->i_lenExtents = lbcount;
->  		}
->  		if (err < 0)
-> -			return -1;
-> +			return err;
->  		lbcount += *elen;
->  	} while (lbcount <= bcount);
->  	/* update extent cache */
->  	udf_update_extent_cache(inode, lbcount - *elen, pos);
->  	*offset = (bcount + *elen - lbcount) >> blocksize_bits;
->  
-> -	return etype;
-> +	return 0;
->  }
-> diff --git a/fs/udf/partition.c b/fs/udf/partition.c
-> index af877991edc1..c441d4ae1f96 100644
-> --- a/fs/udf/partition.c
-> +++ b/fs/udf/partition.c
-> @@ -282,9 +282,11 @@ static uint32_t udf_try_read_meta(struct inode *inode, uint32_t block,
->  	sector_t ext_offset;
->  	struct extent_position epos = {};
->  	uint32_t phyblock;
-> +	int8_t etype;
-> +	int err = 0;
->  
-> -	if (inode_bmap(inode, block, &epos, &eloc, &elen, &ext_offset) !=
-> -						(EXT_RECORDED_ALLOCATED >> 30))
-> +	err = inode_bmap(inode, block, &epos, &eloc, &elen, &ext_offset, &etype);
-> +	if (err || etype != (EXT_RECORDED_ALLOCATED >> 30))
->  		phyblock = 0xFFFFFFFF;
->  	else {
->  		map = &UDF_SB(sb)->s_partmaps[partition];
-> diff --git a/fs/udf/truncate.c b/fs/udf/truncate.c
-> index af06f7101859..d13ba9fd1309 100644
-> --- a/fs/udf/truncate.c
-> +++ b/fs/udf/truncate.c
-> @@ -208,10 +208,12 @@ int udf_truncate_extents(struct inode *inode)
->  	else
->  		BUG();
->  
-> -	etype = inode_bmap(inode, first_block, &epos, &eloc, &elen, &offset);
-> +	err = inode_bmap(inode, first_block, &epos, &eloc, &elen, &offset, &etype);
->  	byte_offset = (offset << sb->s_blocksize_bits) +
-> -		(inode->i_size & (sb->s_blocksize - 1));
-> -	if (etype == -1) {
-> +		      (inode->i_size & (sb->s_blocksize - 1));
-> +	if (UDF_EXT_ERR(err))
-> +		return err;
-> +	if (UDF_EXT_EOF(err)) {
->  		/* We should extend the file? */
->  		WARN_ON(byte_offset);
->  		return 0;
-> diff --git a/fs/udf/udfdecl.h b/fs/udf/udfdecl.h
-> index 206077da9968..a156ed95189a 100644
-> --- a/fs/udf/udfdecl.h
-> +++ b/fs/udf/udfdecl.h
-> @@ -160,8 +160,9 @@ extern struct buffer_head *udf_bread(struct inode *inode, udf_pblk_t block,
->  extern int udf_setsize(struct inode *, loff_t);
->  extern void udf_evict_inode(struct inode *);
->  extern int udf_write_inode(struct inode *, struct writeback_control *wbc);
-> -extern int8_t inode_bmap(struct inode *, sector_t, struct extent_position *,
-> -			 struct kernel_lb_addr *, uint32_t *, sector_t *);
-> +extern int inode_bmap(struct inode *inode, sector_t block,
-> +		      struct extent_position *pos, struct kernel_lb_addr *eloc,
-> +		      uint32_t *elen, sector_t *offset, int8_t *etype);
->  int udf_get_block(struct inode *, sector_t, struct buffer_head *, int);
->  extern int udf_setup_indirect_aext(struct inode *inode, udf_pblk_t block,
->  				   struct extent_position *epos);
-> -- 
-> 2.43.0
+> Please help to indicates what is a better approach here:
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Should I merge the properties of mt6359-codec, mt6358-sound, and 
+> mt6397-codec
+> together and put them all into to mt6359.yaml and redo the converting of 
+> mfd/medaitek,mt6397.yaml?
+
+Not sure, I don't know. Are these different devices? How are they
+related? I expect you to know this, not me.
+
+The problem is that you send a patch having a finished schema for child
+node and then - in next patch in different patchset (!!!) - immediately
+change it to false.
+
+So the first code, which was not even merged, is incorrect. This is
+heavily misleading.
+
+> 
+> That will be much simpler for the audio-codec node for mediatek,mt6397.yaml.
+> However there will be a little mismatch from the origin text file.
+> 
+> Thanks
+> Macpaul Lin
+
+Best regards,
+Krzysztof
+
 
