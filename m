@@ -1,126 +1,112 @@
-Return-Path: <linux-kernel+bounces-341659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A6F98832B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:21:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D5898832F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1AEC1F22C8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:20:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D994F1F22D25
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD19C189BB2;
-	Fri, 27 Sep 2024 11:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9958E189BB2;
+	Fri, 27 Sep 2024 11:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eM7PUCIE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gg1S7vwa"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F211184545;
-	Fri, 27 Sep 2024 11:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46AB184545;
+	Fri, 27 Sep 2024 11:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727436048; cv=none; b=aJKNHfkv4Jfcv5dKpM34Ty1Pr6WLy9TKFdJrOvPyYrGP5n3VsNhM1m6rSXKzUGe/5+Id+yLvpo8xXE/G6q0mwNhAJQ1L7FfNZZSieNwbvC3GEWGFTkt2/RtOFv0DaCwkjN3P3u6MNjjrmoToKmGC31i7iTpRZQBYeZQw6wc/I6Y=
+	t=1727436104; cv=none; b=O7W0qU0GhpIxM/7zClZu5Sk/GY9s5EfPCiq2eoqwXGv1/z56JE8DdpBqMKfSrXvYEB1ybpS4kpPdtX42lXWnmPyahHlOfrz/EKM8CU5pSkPhs6+J+PKvMAZsw5q1xLDTTwt+tgUikBfVKLsTtKbiLnG81EzJQPfxs2nLgSJT14Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727436048; c=relaxed/simple;
-	bh=sgKeHbNcpyAKUI1elNkL0fBx61mN0MG6AdCqqDPHUhg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fkXOnDmVWVW9jo03m6X082Rxdg/9nFzl/w0Vca5qxoKBM1ZPtJV44tr3yJq3XPi4h3ChWRz33cGh5iAQ7edBbBe7AQekJb4v7gY+aKbkc5gWrQbBC5lJxv+jOnTBDUyytwlLFfN9AtFbHi1JjSAVwq3VxI2b9rF7P86uKNzRGLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eM7PUCIE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E41B0C4CEC6;
-	Fri, 27 Sep 2024 11:20:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727436047;
-	bh=sgKeHbNcpyAKUI1elNkL0fBx61mN0MG6AdCqqDPHUhg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eM7PUCIE0o5jmZ6JFjW6Os52mWUpc6DYgeYMS5Pm9RplNaYH/El31hmeme+uzkmc7
-	 dO2OinJr0fV3ZS3iFwrjFoNg/CagSlMqVNU8sHUUe2FS9eBjZCkXM87wmR+gWTm9Ua
-	 zf+tZI2VrfqQQA16ivNttQa8RFmIjSvbFxGuAgJkfH05m7t+BAS7Rdb8gO4EiFontC
-	 UTcN0o4uBXOzqz0oTLAB+Qu9Tzwr6VEGNfeSqcNs5h3+dGYBG3hhG0np0ftQhrobAB
-	 YiXvPUZj+Fe0eWaG5wPd2gAUCO/hvjDRXjcMTyqMrMFK1cmNvZleD4gELJj9FW+rrY
-	 WCAo3a5ecYwow==
-Message-ID: <320e0685-3dae-42a7-a387-75f6f52f4090@kernel.org>
-Date: Fri, 27 Sep 2024 13:20:40 +0200
+	s=arc-20240116; t=1727436104; c=relaxed/simple;
+	bh=AsW4tjDmsLsmUNTIxSA7EE4UAjuROEDpuDg3YcdnwAM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z3kwl/YFgjWXr8Z6JOTzJoWqZ2+dCIT0+y+QGU4nHLFPAcg/thTbMDZQXuFSVKaA4UtGkgFPoQ3rcbgqq9yjaVH4I7+B/S540l0/m0oukT8hvI73xfB9OAZX3tyrivc6detRjA+I6CppUv1Fb5vmvKbPnlJAYAWf8kkNteJqvNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gg1S7vwa; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7d74dfb97a8so89336a12.2;
+        Fri, 27 Sep 2024 04:21:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727436102; x=1728040902; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AsW4tjDmsLsmUNTIxSA7EE4UAjuROEDpuDg3YcdnwAM=;
+        b=gg1S7vwaNls3qy8auCIipXlH4Vd5iuOzku/szCrjFyl+cemwwdw0NlxVyXhMsmlg+/
+         8OJqCQ/2AW+it/q7/csOQJr+YJkyIfizgvdUMVYK7Bc0X+VecyOuElVqP5fMAtAVFZZ7
+         WoX0DN9v21aePiZ6EdZ6+0YBm0ZSWbyIbhuZmBdnL5thPaNF1KCM1U4oteNluyMPnLc2
+         l31xCqJ4baJP4KJJ6TGjqIehJfuPjvTCmVmFPOxd/2H1jL+CZQjUE4kLHEm2536HJAFl
+         r6090KtjA5Tex/zW5Z3b0aPJcZDCwNw5QLGaDI3Kw0JLaVKNeNwfrhpsfKAJfN1f1e2k
+         mX4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727436102; x=1728040902;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AsW4tjDmsLsmUNTIxSA7EE4UAjuROEDpuDg3YcdnwAM=;
+        b=ZLYLvqc6B5EPc4uNzaQ/9A23LrcqqRI+CJCBIN0iDVdaKuIGfVOe3wkGcI0axgE/L2
+         zA9WhHLnKiDy4jG+9vhcoSEqRZUz5uPeZQpeBJfTt5QTTGeP8FObdtzpqjsGpSjShArr
+         tiLsCiPxjpcgbUgD1QUcGf5k9w9U269pB+nzJPhsji8z0C/8FgWNrAWHParLBqbR0Dv5
+         6bSahnm9p3bpyJ0zYmDh+2/QhGkx3Oln+243H03NHuYyUr22+5GQDno7MmCRrEJY+1oa
+         /9H7bT9/q+PjRBEXU+HaojZZ3hE4tu3DbzBy4yb9WgfpRFycwGUty6tTOnFEQUn9ikvx
+         oVLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFo8dyYBIQurf6MMvcLOV3dAtGAvzA0tr36JHh6wxFksXlOz3Cs/SdMfjNLqgi3Jcy2XydTHINY/TTclu6Uh4=@vger.kernel.org, AJvYcCVKqC3qFUEvSDJC4zOM7S54neGBHOBH/uaZkMmZGwSHia9L10KmAQcVTDd+u/Xk/yPGDrojN0NtheUtaCNj@vger.kernel.org, AJvYcCVtMjwYI84z2otsdiLKiVdL2kdjLCK6E8k1SKU0IzqluB2YnLzv0aUE4RlzKH55SrHWT26nRinkZxg/sspAjjY6YezPzfHN@vger.kernel.org, AJvYcCW2KTQGHf3hVqaGkzSuFaTILpjVY4XZT2Atichi2nqPVjLDdxR1Wnm39Paobh1nEqa87CjFP5cd005n6O2n@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuegCgFCNHOqEXrZorqVCrdecDm5haH58yjjDbTmoj/wLKQKJE
+	eUKAEaCf1AjfpJ1j3ijhmEyc3YaiI8QM2bgX71OERFCkrWlSH21DUru1ap9dj0rP4SFKAhFu+75
+	cyU+Y2sp7JO1O6h02b9nAkb088Jo=
+X-Google-Smtp-Source: AGHT+IGj7N9jqWtHPIEU0h6pMHb7fThw6I4tCQ6ZkEj3E9bIYy+SqPCFHcgC8zDgrTgWVOU2lkOqO5NVek9Pi43OSAw=
+X-Received: by 2002:a05:6a00:891:b0:70b:705f:dda7 with SMTP id
+ d2e1a72fcca58-71b26059671mr2028340b3a.4.1727436101870; Fri, 27 Sep 2024
+ 04:21:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
- flag
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Cc: konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
- linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
- vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
- Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org,
- krzk+dt@kernel.org, robh@kernel.org
-References: <20240927063108.2773304-1-quic_msavaliy@quicinc.com>
- <20240927063108.2773304-2-quic_msavaliy@quicinc.com>
- <we3wmw6e25y6e4443ndrduurwvkkpvuw7ozrizuys6pwxppwfy@2uq7uda4evhd>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <we3wmw6e25y6e4443ndrduurwvkkpvuw7ozrizuys6pwxppwfy@2uq7uda4evhd>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+ <20240915-alice-file-v10-1-88484f7a3dcf@google.com> <20240915163850.6af9c78d.gary@garyguo.net>
+In-Reply-To: <20240915163850.6af9c78d.gary@garyguo.net>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 27 Sep 2024 13:21:28 +0200
+Message-ID: <CANiq72kp4XppV2bPTJtcLqM98LRD-HGnOgfLsssrbDLw++uAuA@mail.gmail.com>
+Subject: Re: [PATCH v10 1/8] rust: types: add `NotThreadSafe`
+To: Gary Guo <gary@garyguo.net>
+Cc: Alice Ryhl <aliceryhl@google.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27.09.2024 11:24 AM, Krzysztof Kozlowski wrote:
-> On Fri, Sep 27, 2024 at 12:01:05PM +0530, Mukesh Kumar Savaliya wrote:
->> Adds qcom,shared-se flag usage. Use this when particular I2C serial
->> controller needs to be shared between two subsystems.
->>
->> SE = Serial Engine, meant for I2C controller here.
->> TRE = Transfer Ring Element, refers to Queued Descriptor.
->> SS = Subsystems (APPS processor, Modem, TZ, ADSP etc).
->>
->> Example :
->> Two clients from different SS can share an I2C SE for same slave device
->> OR their owned slave devices.
->> Assume I2C Slave EEPROM device connected with I2C controller.
->> Each client from ADSP SS and APPS Linux SS can perform i2c transactions.
->> This gets serialized by lock TRE + DMA Transfers + Unlock TRE at HW level.
->>
->> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->> ---
->>  Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->> index 9f66a3bb1f80..3b9b20a0edff 100644
->> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->> @@ -60,6 +60,10 @@ properties:
->>    power-domains:
->>      maxItems: 1
->>  
->> +  qcom,shared-se:
->> +    description: True if I2C needs to be shared between two or more subsystems(SS).
-> 
-> The "SS" and subsystem should be explained in the binding. Please do not
-> use some qcom-specific abbreviations here, but explain exactly, e.g.
-> processors like application processor and DSP.
-> 
-> "se" is also not explained in the binding - please open it and look for
-> such explanation.
-> 
-> This all should be rephrased to make it clear... We talked about this
-> and I do not see much of improvements except commit msg, so we are
-> making circles. I don't know, get someone internally to help you in
-> upstreaming this.
-> 
-> Is sharing of IP blocks going to be also for other devices? If yes, then
-> this should be one property for all Qualcomm devices. If not, then be
-> sure that this is the case because I will bring it up if you come with
-> one more solution for something else.
+On Sun, Sep 15, 2024 at 5:38=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
+>
+> Miguel, can we apply this patch now without having it wait on the rest
+> of file abstractions because it'll be useful to other?
 
-As far as I understand, everything that's not protocol-specific (in
-this case it would be I2C tunables etc.) is common across all
-protocols supported by the serial engine.
+Sorry, I missed to reply to this during the conferences.
 
-Konrad
+If we need this for something else that does not go through VFS during
+this (same) cycle, then we can figure something out and apply it to
+rust-next too.
+
+Cheers,
+Miguel
 
