@@ -1,91 +1,80 @@
-Return-Path: <linux-kernel+bounces-342099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 151DA988A84
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:56:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 889E4988A81
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1025CB22EBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:56:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F5ECB21DE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65A01C4608;
-	Fri, 27 Sep 2024 18:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5931C3F0E;
+	Fri, 27 Sep 2024 18:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PF+OITGf"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BMeX4l2y"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C4C1C3F35;
-	Fri, 27 Sep 2024 18:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452E21C330C;
+	Fri, 27 Sep 2024 18:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727463252; cv=none; b=DBMIdeIeTFOzSLu3jHIc9tNcI9BZdGAYCRoU4iAcqa/V3b75uFAv2VZnIDPBEHdBqS+vuA8Q+nzOoQDgXNYYsvuWLuk5mOD2sWEBDz1JHJJ30rLdDsvKagkbsxTdGCt3xXOD82a8PWgar9ga05jJVq5UIoJ/xMAMIqdNaeFaWVU=
+	t=1727463247; cv=none; b=XDBTqV2vTSW5KL8ktlV88SQmQFQym/5UeIdvm8+qXPBvM2BVZUaKsCEkEYvlUfmVh4hh2aIeO8qxI5I6V2jgCSKbFMcX1Xw8PLTLh/0taPTLb+kILsTxFaNz8up+qYzGy4K2RMTAqg8VejdjEZFqn6+oiN7nY5Mo2BqdAbpMaRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727463252; c=relaxed/simple;
-	bh=adiSf7+Y53/FM4VGaERVGEcSkoSzxS48tNZljvrnWsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d1aejU0goG2mJz1qusdId9z4jicXqpPh24pqPLVDcRMPTEFrqTtsyDfgLI6ZR3DFvPfQi9kt/7NBcSQVAJnwJJLUc2Rp0DZ6jrG4gQ2AoA528WamgOb1hJhZOEMK08+G96VEzqDJBbWLek4SHqag6g1pNVUNmhBGpc3NJJvcVvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PF+OITGf; arc=none smtp.client-ip=209.85.210.172
+	s=arc-20240116; t=1727463247; c=relaxed/simple;
+	bh=RL/oXS8HT/W7F9kFa8WXbFROZ++mPP9IRzr6gEiSpFQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fSQlje1eKVGcDaV9UtbbU/6ciSR/6FuptBAbngKX3+au8+DIg4Y8EfVelTs/pPs7Bpm1vKzoey0QDCDGvoCXn4nQ27yUdEQkZFFxfOLpmT8THCeD+bKRHt3ebQ5Mg6DTquXMrDVkbrE9v7jWdldJtHTaQaL3fWuMTsbHK98OdFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BMeX4l2y; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71970655611so2241041b3a.0;
-        Fri, 27 Sep 2024 11:54:09 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c88370ad7bso1293247a12.3;
+        Fri, 27 Sep 2024 11:54:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727463249; x=1728068049; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JAwY2+33GW304kJV0kB3faCFhgqS9trOgDYnXV+VZt0=;
-        b=PF+OITGfE56IqRIzjS5Yjt+cewob77sIo3vJEzUSqaeUsxjs6dLFgpQxT03SFU43sB
-         TH7uokbPgw4hxXj0MJg0mOGERQQ3jJ5xlLvHMzeADDrFV74iQQzX/jodUKq46tqydqqO
-         DXmBm2ykCD0lEryeqK8Ixxt0ZAAcRixwL6pgIS083ll9W+TZEYQeVIW3nAmbXG+fw/mQ
-         BWQdEpgJlSGCvri1nR+ZFyQPYqBzJJEgh+bL81XibC97Zjlvbh9Ya4Sp/K8gGLvLjUnP
-         WH1ms6eNPWfQH4JDi3qkanlO7p7DGXWNRcGPVWr//gjOlPo2VYoBONgb+5Brpf7vNpoi
-         kWpg==
+        d=gmail.com; s=20230601; t=1727463245; x=1728068045; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gINxRe+ASYqtepoVoa4Hly4r/EQvvxkKq3TYC82Kds0=;
+        b=BMeX4l2y6Lo9cn2+qw6CA8ET8fu266tFBYu1UUdORb6yQ6L3l7OgylgzYuOHTv3nJ2
+         8yTgr9hxx9YpdejRp4HuzoNcsB2CykJ/rz6JcNQVDY42NVMmi5Gl0hR2uYI8kzAyDrlv
+         M2jQUMuZ/MQ4Zv4Vc9/fPg2CflxS/2I0tcr0j7YGn3k+PJQ6R5RAZe98anEf1TKdILq0
+         3AOY1Hn/U+9MCoctQlLuD3ASX71iIdo127BfqCh2tDPHz5vhlHRVLduOAl6bRrpCFXKF
+         W2XT1s9bii61LFYbNyTCN/nnn+nIvHsubQm0LZeLZ4vtBA+mQCW9Vmx/EEHeiDjLuKly
+         H9tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727463249; x=1728068049;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JAwY2+33GW304kJV0kB3faCFhgqS9trOgDYnXV+VZt0=;
-        b=jd9hdX7xfc87Ixytrjeh8Et9nc2/0APN3o5sfU8lwUz1k24xKfwLIOOVk7Jr1w7h83
-         i5Comk91CrW9LhYILzc96YR5ZbhQLDZdIc24ZcqC/H0sjJL3LNnlBdskTx4w0CYSWFS7
-         6qleQ75vU4kmFLNFN2uHzh+aip+lXlYdkzPuLkyt+a+3l4i54ETMONpri6k3HqSq8gq1
-         3r5jGmk8bGIhO+z8j6CAtiESB0HOOw5Ba6IyAyOjIDiZPg0sMiPUJeIxmxFywVSixGEP
-         +Tls+HpSL8JA0WVe/6qFVKURSNeWnKaMEcAQWYjwS4VG1VMJJ5p1wKlL0Xn3EKSH1wOI
-         6xzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSuDyy51D4eu+pXgCr5mBsMX9QwdzME3koMAZajzl+1BHxt4SuNim4l4FdcGJDprFQ4LfyGc8kNlFiwAw=@vger.kernel.org, AJvYcCX5P0GGHDiuyY3yrZGFZQNOYVE+TlhKoAOmE81Sgbm5a9MxIZicjLpXMXgPDVTXy3Z3I5CkG2kw611fUCEqJ4S7bg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwE3f8kXCASeoHfbcAHMiLqcUe4fFZwdZu1EZbsGzwWPqSc8Ug8
-	G2ZBQUpPuH5hf6YhZIDWTZg2dqtKvSymjibITrAkqQn7LTDr/Kni
-X-Google-Smtp-Source: AGHT+IFJH1vmFyC+n59Iz0RHu3CWG+QVgdx9LQyeuNYMI2SUrPSq5iNPtBrb/ra4qkTHcQhbXqI6hg==
-X-Received: by 2002:a05:6a00:1304:b0:70d:2e24:af75 with SMTP id d2e1a72fcca58-71b26072fc3mr7231715b3a.24.1727463248861;
-        Fri, 27 Sep 2024 11:54:08 -0700 (PDT)
-Received: from mbp.lan (c-67-174-206-244.hsd1.ca.comcast.net. [67.174.206.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264c23b6sm1930244b3a.88.2024.09.27.11.54.07
+        d=1e100.net; s=20230601; t=1727463245; x=1728068045;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gINxRe+ASYqtepoVoa4Hly4r/EQvvxkKq3TYC82Kds0=;
+        b=tmN4rjkElAs0WjGyGnC4nERNfEZuV2+JPJ5qWzPMn9XYM1GTpCIn30QjQ2l2OTJ7kZ
+         lYntEh5mHGSY7m0L6HHXi0ZHCc8giig2uGiKvMY1bA9q63aEZewtjYESUIt+mxP7+erh
+         v0IcRsZWX865dsSOVLV+Vgk76LBb+FrNgdKqhMQ1Oas+CCMwXogADfYgHL6AS0QGTP0I
+         As3Nt/XMYcE+bZM8K4nLzBpDfACQ9K7VrSFXbF8vdCq1/gBea82ScB3qsumvKw5nMieP
+         dHcaWf2ZBzHrwzzi8svSjAz9ZO4lkrXKWeUsbAPp7LLnZ3lSncg7T0/5reNbErgJ0Per
+         oybQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNWZnbKPFwLfmlpUiRqTV0BIvGfhIq3QI9UKOUfbKjYWOVro8kU8TaITuwkCi1SL+zSvurrVWIKZ4eMco=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEfpfSmtRwa/aC4B4JlRe6Tw8zSemIr/DKE8gRhblcxSktDe9s
+	IjlkvAcEBOQiCPb0ENXzGstDBTsEGk6/NlnOXdIcG+lIHGaSext8
+X-Google-Smtp-Source: AGHT+IGPftOepGRLoDTnihg6bcpLgsR5r3KDRKKWvBIB5J4B4iX6OcAQNwhbRzPhxLJMXNogQEkqpg==
+X-Received: by 2002:a05:6402:1d4e:b0:5c7:20f9:f744 with SMTP id 4fb4d7f45d1cf-5c8824ea530mr3446185a12.15.1727463244292;
+        Fri, 27 Sep 2024 11:54:04 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:a311:80b0:1c80:9433:9060:39fc:2954])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c882405d39sm1434704a12.18.2024.09.27.11.54.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 11:54:08 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: peterz@infradead.org
-Cc: mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: [PATCH v5 7/8] perf record --off-cpu: Parse BPF output embedded data
-Date: Fri, 27 Sep 2024 11:53:39 -0700
-Message-ID: <20240927185340.658143-8-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240927185340.658143-1-howardchu95@gmail.com>
-References: <20240927185340.658143-1-howardchu95@gmail.com>
+        Fri, 27 Sep 2024 11:54:03 -0700 (PDT)
+From: Maya Matuszczyk <maccraft123mc@gmail.com>
+To: Maya Matuszczyk <maccraft123mc@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] dt-bindings: platform: Add bindings for Lenovo Yoga Slim 7x EC
+Date: Fri, 27 Sep 2024 20:53:40 +0200
+Message-ID: <20240927185345.3680-1-maccraft123mc@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,184 +83,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move evsel__is_offcpu_event() to evsel.h
+This patch adds devicetree binding documentation for Lenovo Yoga Slim 7x
+EC driver.
 
-Add a sample_type_embed member to the struct evsel, along with a couple
-of helper functions.
-
-In session.c, we parse BPF output embedded samples in a two-step
-process.
-
-Initial Parsing: Treat the sample as a regular BPF-output event.
-
-Secondary Parsing: Extract data from raw_data and parse it according to
-the sample_type_embed specification. Since the second step relies on the
-raw_data obtained in the first step, we must avoid zero-initializing the
-sample data after the first step.
-
-Suggested-by: Ian Rogers <irogers@google.com>
-Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
+Signed-off-by: Maya Matuszczyk <maccraft123mc@gmail.com>
 ---
- tools/perf/builtin-script.c |  4 ++--
- tools/perf/util/evsel.c     | 39 +++++++++++++++++++++++--------------
- tools/perf/util/evsel.h     |  6 ++++++
- tools/perf/util/session.c   | 12 +++++++++++-
- 4 files changed, 43 insertions(+), 18 deletions(-)
+ .../platform/lenovo,yoga-slim7x-ec.yaml       | 50 +++++++++++++++++++
+ MAINTAINERS                                   |  5 ++
+ 2 files changed, 55 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/platform/lenovo,yoga-slim7x-ec.yaml
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index a644787fa9e1..9719ffae45d5 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -662,7 +662,7 @@ static int perf_session__check_output_opt(struct perf_session *session)
- 
- 		evlist__for_each_entry(session->evlist, evsel) {
- 			not_pipe = true;
--			if (evsel__has_callchain(evsel)) {
-+			if (evsel__has_callchain(evsel) || evsel__is_offcpu_event(evsel)) {
- 				use_callchain = true;
- 				break;
- 			}
-@@ -2352,7 +2352,7 @@ static void process_event(struct perf_script *script,
- 	else if (PRINT_FIELD(BRSTACKOFF))
- 		perf_sample__fprintf_brstackoff(sample, thread, attr, fp);
- 
--	if (evsel__is_bpf_output(evsel) && PRINT_FIELD(BPF_OUTPUT))
-+	if (evsel__is_bpf_output(evsel) && !evsel__is_offcpu_event(evsel) && PRINT_FIELD(BPF_OUTPUT))
- 		perf_sample__fprintf_bpf_output(sample, fp);
- 	perf_sample__fprintf_insn(sample, evsel, attr, thread, machine, fp, al);
- 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 32196e4f0637..4199a1e409f7 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1105,11 +1105,6 @@ static void evsel__set_default_freq_period(struct record_opts *opts,
- 	}
- }
- 
--static bool evsel__is_offcpu_event(struct evsel *evsel)
--{
--	return evsel__is_bpf_output(evsel) && evsel__name_is(evsel, OFFCPU_EVENT);
--}
--
- /*
-  * The enable_on_exec/disabled value strategy:
-  *
-@@ -2677,6 +2672,7 @@ int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
- 	u16 max_size = event->header.size;
- 	const void *endp = (void *)event + max_size;
- 	u64 sz;
-+	bool ip_in_callchain = false;
- 
- 	/*
- 	 * used for cross-endian analysis. See git commit 65014ab3
-@@ -2684,14 +2680,25 @@ int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
- 	 */
- 	union u64_swap u;
- 
--	memset(data, 0, sizeof(*data));
--	data->cpu = data->pid = data->tid = -1;
--	data->stream_id = data->id = data->time = -1ULL;
--	data->period = evsel->core.attr.sample_period;
--	data->cpumode = event->header.misc & PERF_RECORD_MISC_CPUMODE_MASK;
--	data->misc    = event->header.misc;
--	data->data_src = PERF_MEM_DATA_SRC_NONE;
--	data->vcpu = -1;
-+	/*
-+	 * For sample data embedded in BPF output, don't clear the sample we read in the first pass,
-+	 * and read the embedded data from raw_data in the second pass.
-+	 */
-+	if (evsel__is_offcpu_event(evsel) && data->raw_data) {
-+		type = OFFCPU_EMBEDDED_SAMPLE_TYPES;
-+		array = data->raw_data;
-+		ip_in_callchain = true;
-+	} else { /* for normal samples, clear to zero before reading */
-+		array = event->sample.array;
-+		memset(data, 0, sizeof(*data));
-+		data->cpu = data->pid = data->tid = -1;
-+		data->stream_id = data->id = data->time = -1ULL;
-+		data->period = evsel->core.attr.sample_period;
-+		data->cpumode = event->header.misc & PERF_RECORD_MISC_CPUMODE_MASK;
-+		data->misc    = event->header.misc;
-+		data->data_src = PERF_MEM_DATA_SRC_NONE;
-+		data->vcpu = -1;
-+	}
- 
- 	if (event->header.type != PERF_RECORD_SAMPLE) {
- 		if (!evsel->core.attr.sample_id_all)
-@@ -2699,8 +2706,6 @@ int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
- 		return perf_evsel__parse_id_sample(evsel, event, data);
- 	}
- 
--	array = event->sample.array;
--
- 	if (perf_event__check_size(event, evsel->sample_size))
- 		return -EFAULT;
- 
-@@ -2822,6 +2827,10 @@ int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
- 		data->callchain = (struct ip_callchain *)array++;
- 		if (data->callchain->nr > max_callchain_nr)
- 			return -EFAULT;
+diff --git a/Documentation/devicetree/bindings/platform/lenovo,yoga-slim7x-ec.yaml b/Documentation/devicetree/bindings/platform/lenovo,yoga-slim7x-ec.yaml
+new file mode 100644
+index 000000000000..32f8a0b5d667
+--- /dev/null
++++ b/Documentation/devicetree/bindings/platform/lenovo,yoga-slim7x-ec.yaml
+@@ -0,0 +1,50 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/platform/lenovo,yoga-slim7x-ec.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+		if (ip_in_callchain && data->callchain->nr > 1)
-+			data->ip = data->callchain->ips[1];
++title: Lenovo Yoga Slim 7x Embedded Controller.
 +
- 		sz = data->callchain->nr * sizeof(u64);
- 		OVERFLOW_CHECK(array, sz, max_size);
- 		array = (void *)array + sz;
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 3e751ea769ac..6fbf5d4219d1 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -11,6 +11,7 @@
- #include <perf/evsel.h>
- #include "symbol_conf.h"
- #include "pmus.h"
-+#include "off_cpu.h"
- 
- struct bpf_object;
- struct cgroup;
-@@ -580,4 +581,9 @@ u64 evsel__bitfield_swap_branch_flags(u64 value);
- void evsel__set_config_if_unset(struct perf_pmu *pmu, struct evsel *evsel,
- 				const char *config_name, u64 val);
- 
-+static inline bool evsel__is_offcpu_event(struct evsel *evsel)
-+{
-+	return evsel__is_bpf_output(evsel) && evsel__name_is(evsel, OFFCPU_EVENT);
-+}
++maintainers:
++  - Maya Matuszczyk <maccraft123mc@gmail.com>
 +
- #endif /* __PERF_EVSEL_H */
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index dbaf07bf6c5f..d481bc466131 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1229,6 +1229,16 @@ static int evlist__deliver_sample(struct evlist *evlist, const struct perf_tool
- 	u64 sample_type = evsel->core.attr.sample_type;
- 	u64 read_format = evsel->core.attr.read_format;
- 
-+	/* parse sample the second time to get embedded data from raw_data */
-+	if (evsel__is_offcpu_event(evsel) && sample->raw_data) {
-+		int err = evsel__parse_sample(evsel, event, sample);
++description:
++  The Lenovo Yoga Slim 7x has an EC which handles some minor functions, like
++  power LED or some special keys on the keyboard. This bindings describes
++  how it is connected
 +
-+		if (err) {
-+			pr_err("Failed to parse BPF ouput embedded data, err = %d\n", err);
-+			return err;
-+		}
-+	}
++properties:
++  compatible:
++    const: lenovo,yoga-slim7x-ec
 +
- 	/* Standard sample delivery. */
- 	if (!(sample_type & PERF_SAMPLE_READ))
- 		return tool->sample(tool, event, sample, evsel, machine);
-@@ -1339,7 +1349,7 @@ static int perf_session__deliver_event(struct perf_session *session,
- 				       u64 file_offset,
- 				       const char *file_path)
- {
--	struct perf_sample sample;
-+	struct perf_sample sample = { .raw_data = NULL }; /* avoid accidental read of embedded data */
- 	int ret = evlist__parse_sample(session->evlist, event, &sample);
++  reg:
++    const: 0x76
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |+
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c5 {
++        clock-frequency = <400000>;
++
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        embedded-controller@76 {
++            compatible = "lenovo,yoga-slim7x-ec";
++            reg = <0x76>;
++
++            interrupts-extended = <&tlmm 66 IRQ_TYPE_LEVEL_HIGH>;
++        };
++    };
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 00716c1faff6..0d4bfdde166d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12902,6 +12902,11 @@ S:	Maintained
+ W:	http://legousb.sourceforge.net/
+ F:	drivers/usb/misc/legousbtower.c
  
- 	if (ret) {
++LENOVO YOGA SLIM 7X EC DRIVER
++M:	Maya Matuszczyk <maccraft123mc@gmail.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/platform/lenovo,yoga-slim7x-ec.yaml
++
+ LETSKETCH HID TABLET DRIVER
+ M:	Hans de Goede <hdegoede@redhat.com>
+ L:	linux-input@vger.kernel.org
 -- 
-2.43.0
+2.45.2
 
 
