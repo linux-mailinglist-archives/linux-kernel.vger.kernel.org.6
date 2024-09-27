@@ -1,128 +1,115 @@
-Return-Path: <linux-kernel+bounces-341553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B779C988189
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:43:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633B5988193
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E813A1C22122
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:43:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2D41F20C80
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2A71BC08E;
-	Fri, 27 Sep 2024 09:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8ECF1BD012;
+	Fri, 27 Sep 2024 09:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cbwUDazH"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2Av3ebH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3831BBBD8
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464721B0120;
+	Fri, 27 Sep 2024 09:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727430146; cv=none; b=jZ9O7KY254vWntSYEc1eYCS26BSM4mewidWdwkXKW6FS1oo5pMqmqs8H/npc5vtByEyXCACR5HwnlzTibnjSGGTXBIq0cDleFGr6JrDLbaY6nVJXpTy3DOJPKTcSfDnizm7jTCj1BPiEfr2NQ/6pXDy+emRxRTk5gkGHH8CGEVo=
+	t=1727430154; cv=none; b=gmdcGJgv9leyZT01aVh2zyGlAooj8lywWnSYDc8mEiPyrWGWRa48jfKna9QgcqZrJL7504AP6d2EeJc4iZfh27B7K/dDnqas/Lm8vSJcLqF00fH7Ft27cFWYnvn7p5+UB5s09lG0d9ZxZYb7J1K5EBGgVX8h6z3Pve78iHEpD08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727430146; c=relaxed/simple;
-	bh=VyNnQQDdJJNeW/LwMh2KTy2Bsd63Uen2yuUOk3ftr40=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U7Ifapjt9b/VicV/NrkPUuEgL3rIS+MzDkIS24qsJKkDjJUYPa5F5vtjZDC5BOA3t4NbHeK+Y7BWTxLY5y+lIdlQjLD+pfEozX1AlPkji+f8SYHgZ1VgseIM42VhtFOlr5JrAc1nAiJ4afI46Tep3AG4jRApGCEYLncSQZpX/fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cbwUDazH; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6cb259e2eafso16682266d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:42:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727430143; x=1728034943; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H5LcjuiiFLMydGICnxC7Y1POK5qtShnTkO1KY/L5xYc=;
-        b=cbwUDazH20b8HMp8EGF0fOP96luAgSBMpuH1hE0sevSaIbuiNgkKpr5ftXbh9Jhn2T
-         MeKCtMsHrH1+ulUYePGX975CYMBrOqcY4IXqEW4yTTro+PlWVn6CkBb3/kinKDk3AwMw
-         qYU3P5cUtXASC9KeVP8Dp3j5bJFKKIHsmEXqo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727430143; x=1728034943;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H5LcjuiiFLMydGICnxC7Y1POK5qtShnTkO1KY/L5xYc=;
-        b=EOwEZxgmpokSO59Npt7lncrwh+pQYLETMvauk0bXufkmCt7z9mKHVw3vZv0m+ZXxx1
-         LllMT3C3q+ojMzjaFrkej/873Rtm58er8Jbj2H9klPTVKuO/OWvMqoSTypAkb/n2Dd6M
-         T3TqlPrTR0DFZFPUGpnoqKj4fy+ozl4SgjQFECO1ZWVv2UpPOdU4AdXImBAAlu2ZKSnY
-         ixgUok78UqmdAr34XSSdnmLQ5c92vk7jsD9VPJsJi4BnS//7cT6yPDn9RCv/B/Exgc5b
-         45adUtwL1kaumOHhPgNkkoGO5eDbKIL7Wotr/MAhv6byn0wd3vpZbwj6YrkHNEY1GC4n
-         Ps+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUZXGFv+nfPa8A/h2HroSBoNFDUDB7OuLNOkRK2HiI9ObbCFAmbrd04OabXZ0o69yXsMBwXdjFRrhpumwU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAjEpyp8zAOMPz/8UZNl+C6S2+j92A/g8LCEdsKpF30LCZKWOL
-	mV8+jz8pP1I5goHE1qXK+xkyOQCcMs2MPBPYocw6GN0BVKHtio9Xtum4hr+zJA==
-X-Google-Smtp-Source: AGHT+IHqAWy4X2erODR4y6wB6ll6Vg8M7MrsnkD9K4fU/rxNaepW2iQICN+JlQ+jvD6Nif1cTzZ8/A==
-X-Received: by 2002:a05:6214:2583:b0:6cb:46b4:5771 with SMTP id 6a1803df08f44-6cb46b45b01mr7123196d6.13.1727430143583;
-        Fri, 27 Sep 2024 02:42:23 -0700 (PDT)
-Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b5ff594sm7231606d6.14.2024.09.27.02.42.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 02:42:21 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 27 Sep 2024 09:42:15 +0000
-Subject: [PATCH 3/3] media: atomisp: Use max() macros
+	s=arc-20240116; t=1727430154; c=relaxed/simple;
+	bh=TST2aU00V+a/b6WJK9LCwWG80Mq75dZu+SmOHyfGhDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sh2c8MX949/8aR7Vu9AMev7yHy08zfIeUmTdqOXF/LyYxld6NL9VvWq9fwgGP5kES6fUVBx7PKfV7y/kXjt+RclsDGOi1aexaAjBuZRsqeFo4ytafP6MXNa4ozo6ifBtP/tYpf9xoBTJRMACmQzXN9wEUJMmpXPTgSfR9UNdHjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2Av3ebH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C71EC4CEC9;
+	Fri, 27 Sep 2024 09:42:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727430153;
+	bh=TST2aU00V+a/b6WJK9LCwWG80Mq75dZu+SmOHyfGhDw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o2Av3ebHVSl6qmxEGQZKjs86KC6ZaA6DIYPXM79Z6t6ndEl6tL6O7q8ePXtYVBCz8
+	 NFDA7kMcX2J/JBk0DLWyxK+CHpSt0xM8kXlHqSyvjyeJNwSfhbXGGyJCqHh7mc/AqU
+	 YBhz9hNlH/2nzaDLCSrtg3SHW3Ns9MeFQjlxw6SMRcj1L+rUfKVK/EpLVz64LgBcTH
+	 mW6dimPJMBckLxty4HXgLoeT24s1mWNhjwjJhI9fusH43oJz7W3EZPmsbAfm7kTqQN
+	 iTP7t4Eyp85G+qpzHpjA5TxQ/23G4wQQ6tB0BZV/7QS8tPH6kuXFm68xcnB2DzHHAG
+	 xg8NPMi43ymDQ==
+Date: Fri, 27 Sep 2024 11:42:31 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: Conor Dooley <conor@kernel.org>, Sen Chu <sen.chu@mediatek.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Eason Yen <eason.yen@mediatek.com>, 
+	Jiaxin Yu <jiaxin.yu@mediatek.com>, Shane Chien <shane.chien@mediatek.com>, 
+	Hui Liu <hui.liu@mediatek.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
+	Alexandre Mergnat <amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, 
+	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, 
+	Chris-qj chen <chris-qj.chen@mediatek.com>, 
+	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH 2/3] dt-bindings: mfd: mediatek: mt6397: add compatible
+ for mt6359-codec
+Message-ID: <z5zehicgqqsbgsjz5nrjlqrkpqll57gb26jdc3ctpeajtlfusm@b2s5vrbuv3es>
+References: <20240926092519.6556-1-macpaul.lin@mediatek.com>
+ <20240926092519.6556-2-macpaul.lin@mediatek.com>
+ <20240926-smokeless-clobber-0fb8a1cdc7ab@spud>
+ <78381b10-eae6-1414-6913-994e1ed03410@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240927-cocci-6-12-v1-3-a318d4e6a19d@chromium.org>
-References: <20240927-cocci-6-12-v1-0-a318d4e6a19d@chromium.org>
-In-Reply-To: <20240927-cocci-6-12-v1-0-a318d4e6a19d@chromium.org>
-To: Benoit Parrot <bparrot@ti.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-staging@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <78381b10-eae6-1414-6913-994e1ed03410@mediatek.com>
 
-The max() macro produce nicer code and also fixes the following cocci
-errors:
+On Fri, Sep 27, 2024 at 03:57:58PM +0800, Macpaul Lin wrote:
+> On 9/27/24 00:04, Conor Dooley wrote:
+> > On Thu, Sep 26, 2024 at 05:25:18PM +0800, Macpaul Lin wrote:
+> > > This patch updates the audio-codec properties includes:
+> > >   - compatible:
+> > >    - Re-order the supported device items.
+> > >    - Add 'mt6359-codec' to compatible since MT6359 PMIC has been included
+> > >      in this DT Schema.
+> > 
+> > >    - Set 'additionalProperties: true' for 'mt6359-codec'.
+> > 
+> > Why?
+> 
+> The mt6359-codec support these 3 properties:
+> mediatek,mic-type0, mediatek,mic-type-1, mediatek-mic-type2.
+> While mt6358-sound and mt6397-codec don't (at least, I didn't find
+> these 3 properties in driver codes.
+> 
+> Set 'additionalProperties: true' is also required to fix the following
+> dtbs_check errors:
+> pmic: audio-codec: 'mediatek,mic-type-0', 'mediatek,mic-type-1',
+>       'mediatek,mic-type-2' do not match any of the regexes:
+>       'pinctrl-[0-9]+'
 
-drivers/staging/media/atomisp/pci/sh_css_frac.h:40:17-18: WARNING opportunity for max()
-drivers/staging/media/atomisp/pci/sh_css_frac.h:50:17-18: WARNING opportunity for max()
+Why is this a correct fix? Aren't you allowing "pink-pony" property as
+well?
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/staging/media/atomisp/pci/sh_css_frac.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> > > 
+> > > Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> > > ---
+> > >   Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml | 5 +++--
 
-diff --git a/drivers/staging/media/atomisp/pci/sh_css_frac.h b/drivers/staging/media/atomisp/pci/sh_css_frac.h
-index 8ba65161f7a9..9642506d2388 100644
---- a/drivers/staging/media/atomisp/pci/sh_css_frac.h
-+++ b/drivers/staging/media/atomisp/pci/sh_css_frac.h
-@@ -37,7 +37,7 @@ static inline int sDIGIT_FITTING(int v, int a, int b)
- 	int fit_shift = sFRACTION_BITS_FITTING(a) - b;
- 
- 	v >>= sSHIFT;
--	v >>= fit_shift > 0 ? fit_shift : 0;
-+	v >>= max(fit_shift, 0);
- 
- 	return clamp_t(int, v, sISP_VAL_MIN, sISP_VAL_MAX);
- }
-@@ -47,7 +47,7 @@ static inline unsigned int uDIGIT_FITTING(unsigned int v, int a, int b)
- 	int fit_shift = uFRACTION_BITS_FITTING(a) - b;
- 
- 	v >>= uSHIFT;
--	v >>= fit_shift > 0 ? fit_shift : 0;
-+	v >>= max(fit_shift, 0);
- 
- 	return clamp_t(unsigned int, v, uISP_VAL_MIN, uISP_VAL_MAX);
- }
+There is no such file.
 
--- 
-2.46.1.824.gd892dcdcdd-goog
+Best regards,
+Krzysztof
 
 
