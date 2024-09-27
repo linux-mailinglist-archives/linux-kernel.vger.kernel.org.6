@@ -1,188 +1,178 @@
-Return-Path: <linux-kernel+bounces-341336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AC53987E8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:40:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BEDF987E8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE05284F38
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:40:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A4261F23A04
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D73176AD4;
-	Fri, 27 Sep 2024 06:40:25 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3515D176ABE;
+	Fri, 27 Sep 2024 06:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qGjw+2Tj"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73789158557
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 06:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84F9158557
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 06:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727419225; cv=none; b=k6JMgOwQ+Q+NmZwmkYiTY0oxCPOCofllb0DhwViioCDBFVs/1LKUv5zQ06NLG5ya7q6vd6WOzYUOhg5hJ3o3AN6nu/xQItVYa4NaUo05nWCUi7q0TWTouVHcYkWR/18NoRuR6Co930RODthdC1L3Xi+VAd3cDFsSl2NW+nys42Q=
+	t=1727419273; cv=none; b=lNGeXdJLSFwI//w+XF182nGRGTY8DTVDMXJcNEDYEH3e+Q4s5+dHs5/LhrMSoM195t2AoO1x3XXCye5mUv46Stm1w6wLe+aGJYVi9ZIFXoVnsZg0o4SLplaVpTs0aTUVGGrT5WFavrEPEp7PS6T83IHEWghJpOEgpmMgwzXDNys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727419225; c=relaxed/simple;
-	bh=BFbPxhiLL3u740JeDOzsv8dfqldH8It/jattDFPGs6U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fGinSJSPipEAnNhz4UQX7SPI136Di1xgd1NxbzWiEpOPdWd0V1C2Iz8+pjPYDKxwePQMjBWt1TbII/Ccy8HswCoDoPJOeF85MAzMABKTPK09jlRYdXUfrXQCnmSbvrZKPe5wf/yz93HZCt3cV+AgvWhcS82z/uJrpiKnk9+ge2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3412ecb29so16410085ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 23:40:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727419222; x=1728024022;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8LmyZ7ZlkrjTKkraSmB5uOTOQZj0ZwOqJs9k2gnjG7U=;
-        b=jOAf8338lWOxoJg67SA73jdSZ8B36v2IEWcVGzQODaPB2BZcXzObCeD3BP2nLZVBZY
-         UG1vBg47R4YrYaaNFXhi/go1P0n8sR73ubN6JREQ7wba074HzfagbcRMr3rtAiJeoG0s
-         Y8Ce5bOss/Zgqb3OS1yuEI+dKsBd4UXgr6gkNBoQFRIlw0iEqW0h3zWPWM1r+dEAyMh3
-         1En4EWEM7B6+A1MDN5mq39vvBQXJxVzhIw4Q4cD6ebtSt+KIDb7yYLoLd1VrZSy7oZot
-         yQ5XLOX5wJtRDxZBnzpx7w+H8l1+RcWAsFtenKDTluRg+FbMu9FuuqXhcj/md4yBpB18
-         MF6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXQDAZ+JJtmv1DKJ9bMlF7KjN+Bo/nEyyY6BaeolhyX2WyJTImNH9Xfkufj9N7qGjErkYDf9LfoYOcGjLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfDEY9vdkNNr+YO23J/qVGz/wV8og+NdzLxSZRzEh3g39zFBMK
-	gmu9wAH4Catljph7TcdZxzyIKGat3zdqMEueczek2kGUM3pO8+nHpiR830525Z0h27wbiRK00Jc
-	flzBz/HyLeQM0w8CP0EirE7bAyd1TjI8FQkmLgDs7531OuhyMkxBbnDg=
-X-Google-Smtp-Source: AGHT+IFLE0lf8txTQE+1pBUd8/yIGG5ZmXUUyMsnHbYAg5/fq5Y6xZRCew6gxnFvvGLIqIbN2HMTMLm8vU40whagSGw0oRMrRu9R
+	s=arc-20240116; t=1727419273; c=relaxed/simple;
+	bh=rgbHKojH+Xi1VKJFqh2/Nh6XQaEEgO8ilYZrEsGO8IM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s/GIbUSyAz3u/xjzZTzhrs7w0fkz69vIJA2gomve+Z1/E2Sw4+dUZaKpGiZADpW2mJ1FoK48dCFm9lU3iTAcls0npH4/046pbZi66F3PmLIwt8IjVqrQw0qpsevYzHyBae0VOpmnMoQ3LMO2soOF5LRB+qDMmw1UUwRKx4YXel0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qGjw+2Tj; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 16DB4163;
+	Fri, 27 Sep 2024 08:39:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727419175;
+	bh=rgbHKojH+Xi1VKJFqh2/Nh6XQaEEgO8ilYZrEsGO8IM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qGjw+2TjMOTUbIV43DcOn9zmYqVPTHJaDk7K2FIWERwEFqBlv7nEL2Vq2ZJKdKQ/w
+	 aOeqjgjQATCzmXTCpWcDeJ2ZpvfgBJDiro7qfjei57dU1QmKQN5AWuGQJHnZIQz4Ji
+	 v6wJJfaIQoy8FXaxjZZTTRl+qRO37f8JH/Byawkg=
+Message-ID: <bed619c7-1a82-4328-825c-117c2ee3639d@ideasonboard.com>
+Date: Fri, 27 Sep 2024 09:41:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e7:b0:3a1:a69f:939a with SMTP id
- e9e14a558f8ab-3a34518428amr19837345ab.13.1727419222658; Thu, 26 Sep 2024
- 23:40:22 -0700 (PDT)
-Date: Thu, 26 Sep 2024 23:40:22 -0700
-In-Reply-To: <66f24ead.050a0220.c23dd.001d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f65356.050a0220.38ace9.000e.GAE@google.com>
-Subject: Re: [syzbot] [ide?] general protection fault in ata_msense_control_spgt2
-From: syzbot <syzbot+fb415bc0af1b572478e1@syzkaller.appspotmail.com>
-To: cassel@kernel.org, dlemoal@kernel.org, linux-ide@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: fw_devlinks preventing a panel driver from probing
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>,
+ Saravana Kannan <saravanak@google.com>,
+ Aradhya Bhatia <aradhya.bhatia@linux.dev>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Devarsh Thakkar <devarsht@ti.com>
+References: <1a1ab663-d068-40fb-8c94-f0715403d276@ideasonboard.com>
+ <34mewzvfyjsvyud3lzy6swxs7sr64xkgrbkxtvyw3czvoerct7@7guo32ehwa52>
+ <5a540bdb-e3ca-494a-b68d-8f81f4d1cc1a@ideasonboard.com>
+ <il3s26owmtyf3knniv7klkmw3uuz4dffrump7jo47dk6hxdsya@v5plmtjcbukf>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <il3s26owmtyf3knniv7klkmw3uuz4dffrump7jo47dk6hxdsya@v5plmtjcbukf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-syzbot has found a reproducer for the following issue on:
+On 27/09/2024 02:26, Dmitry Baryshkov wrote:
+> On Thu, Sep 26, 2024 at 02:52:35PM GMT, Tomi Valkeinen wrote:
+>> Hi,
+>>
+>> On 21/09/2024 23:15, Dmitry Baryshkov wrote:
+>>> On Mon, Sep 16, 2024 at 02:51:57PM GMT, Tomi Valkeinen wrote:
+>>>> Hi,
+>>>>
+>>>> We have an issue where two devices have dependencies to each other,
+>>>> according to drivers/base/core.c's fw_devlinks, and this prevents them from
+>>>> probing. I've been adding debugging to the core.c, but so far I don't quite
+>>>> grasp the issue, so I thought to ask. Maybe someone can instantly say that
+>>>> this just won't work...
+>>>
+>>> Well, just 2c from my side. I consider that fw_devlink adds devlinks for
+>>> of-graph nodes to be a bug. It doesn't know about the actual direction
+>>> of dependencies between corresponding devices or about the actual
+>>> relationship between drivers. It results in a loop which is then broken
+>>> in some way. Sometimes this works. Sometimes it doesn't. Sometimes this
+>>> hides actual dependencies between devices. I tried reverting offending
+>>> parts of devlink, but this attempt failed.
+>>
+>> I was also wondering about this. The of-graphs are always two-way links, so
+>> the system must always mark them as a cycle. But perhaps there are other
+>> benefits in the devlinks than dependency handling?
+>>
+>>>> If I understand the fw_devlink code correctly, in a normal case the links
+>>>> formed with media graphs are marked as a cycle (FWLINK_FLAG_CYCLE), and then
+>>>> ignored as far as probing goes.
+>>>>
+>>>> What we see here is that when using a single-link OLDI panel, the panel
+>>>> driver's probe never gets called, as it depends on the OLDI, and the link
+>>>> between the panel and the OLDI is not a cycle.
+>>>
+>>> I think in your case you should be able to fix the issue by using the
+>>> FWNODE_FLAG_NOT_DEVICE, which is intented to be used in such cases. You
+>>
+>> How would I go using FWNODE_FLAG_NOT_DEVICE? Won't this only make a
+>> difference if the flag is there at early stage when the linux devices are
+>> being created? I think it's too late if I set the flag when the dss driver
+>> is being probed.
+> 
+> I think you have the NOT_DEVICE case as the DSS device corresponds to
+> the parent of your OLDI nodes. There is no device which corresponds to
+> the oldi@0 / oldi@1 device nodes (which contain corresponding port
+> nodes).
 
-HEAD commit:    075dbe9f6e3c Merge tag 'soc-ep93xx-dt-6.12' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10a2ba80580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=27f034e5d7e70892
-dashboard link: https://syzkaller.appspot.com/bug?extid=fb415bc0af1b572478e1
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13646aa9980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ed9e27980000
+Do you mean that I should already see FWNODE_FLAG_NOT_DEVICE set in the 
+fwnode?
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-075dbe9f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/75cd1cf4fe64/vmlinux-075dbe9f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/737a03861f46/bzImage-075dbe9f.xz
+If I print information about the relevant fwnodes (from dss up to the 
+oldi endpoints) in the DSS driver's probe, I see that none have 
+FWNODE_FLAG_NOT_DEVICE set, all have FWNODE_FLAG_LINKS_ADDED set, and 
+only the main DSS node has the fwnode->dev set (to 30200000.dss).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fb415bc0af1b572478e1@syzkaller.appspotmail.com
+  Tomi
 
-program syz-executor248 is using a deprecated SCSI ioctl, please convert it to SG_IO
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 UID: 0 PID: 5316 Comm: syz-executor248 Not tainted 6.11.0-syzkaller-11558-g075dbe9f6e3c #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ata_msense_control_spgt2.isra.0+0x4ce/0x610 drivers/ata/libata-scsi.c:2276
-Code: 00 48 83 c4 08 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 a3 3c 8e fb 4c 89 e2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 04 02 4c 89 e2 83 e2 07 38 d0 7f 08 84 c0 0f 85 12 01 00 00
-RSP: 0018:ffffc9000568f4f0 EFLAGS: 00010046
-RAX: dffffc0000000000 RBX: ffffffff9aaf34fc RCX: ffffffff85feb145
-RDX: 0000000000000000 RSI: ffffffff85feb51d RDI: 0000000000000001
-RBP: 0000000000000007 R08: 0000000000000001 R09: 0000000000000007
-R10: 0000000000000007 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000007 R14: ffff888027032df8 R15: 00000000000000ff
-FS:  00005555661e1380(0000) GS:ffff88806a700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000048 CR3: 0000000025686000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ata_msense_control+0x1a4/0x6e0 drivers/ata/libata-scsi.c:2358
- ata_scsiop_mode_sense drivers/ata/libata-scsi.c:2474 [inline]
- ata_scsi_rbuf_fill drivers/ata/libata-scsi.c:1815 [inline]
- ata_scsi_simulate+0xcff/0x34c0 drivers/ata/libata-scsi.c:4316
- __ata_scsi_queuecmd+0xb35/0x13c0 drivers/ata/libata-scsi.c:4191
- ata_scsi_queuecmd+0xac/0x160 drivers/ata/libata-scsi.c:4234
- scsi_dispatch_cmd drivers/scsi/scsi_lib.c:1602 [inline]
- scsi_queue_rq+0x1273/0x3650 drivers/scsi/scsi_lib.c:1844
- blk_mq_dispatch_rq_list+0x443/0x1dc0 block/blk-mq.c:2030
- __blk_mq_sched_dispatch_requests+0x219/0x1620 block/blk-mq-sched.c:301
- blk_mq_sched_dispatch_requests+0xd4/0x150 block/blk-mq-sched.c:331
- blk_mq_run_hw_queue+0x645/0x9a0 block/blk-mq.c:2243
- blk_execute_rq+0x198/0x410 block/blk-mq.c:1396
- sg_scsi_ioctl drivers/scsi/scsi_ioctl.c:593 [inline]
- scsi_ioctl+0x983/0x1840 drivers/scsi/scsi_ioctl.c:901
- sg_ioctl_common drivers/scsi/sg.c:1109 [inline]
- sg_ioctl+0xaf3/0x2750 drivers/scsi/sg.c:1163
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __x64_sys_ioctl+0x18f/0x220 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f930cc8a0e9
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffca36a1418 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007ffca36a15e8 RCX: 00007f930cc8a0e9
-RDX: 0000000020000380 RSI: 0000000000000001 RDI: 0000000000000003
-RBP: 00007f930ccfd610 R08: 002367732f766564 R09: 00007ffca36a15e8
-R10: 000000000000000f R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffca36a15d8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ata_msense_control_spgt2.isra.0+0x4ce/0x610 drivers/ata/libata-scsi.c:2276
-Code: 00 48 83 c4 08 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 a3 3c 8e fb 4c 89 e2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 04 02 4c 89 e2 83 e2 07 38 d0 7f 08 84 c0 0f 85 12 01 00 00
-RSP: 0018:ffffc9000568f4f0 EFLAGS: 00010046
-RAX: dffffc0000000000 RBX: ffffffff9aaf34fc RCX: ffffffff85feb145
-RDX: 0000000000000000 RSI: ffffffff85feb51d RDI: 0000000000000001
-RBP: 0000000000000007 R08: 0000000000000001 R09: 0000000000000007
-R10: 0000000000000007 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000007 R14: ffff888027032df8 R15: 00000000000000ff
-FS:  00005555661e1380(0000) GS:ffff88806a700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000048 CR3: 0000000025686000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	48 83 c4 08          	add    $0x8,%rsp
-   4:	5b                   	pop    %rbx
-   5:	5d                   	pop    %rbp
-   6:	41 5c                	pop    %r12
-   8:	41 5d                	pop    %r13
-   a:	41 5e                	pop    %r14
-   c:	41 5f                	pop    %r15
-   e:	c3                   	ret
-   f:	cc                   	int3
-  10:	cc                   	int3
-  11:	cc                   	int3
-  12:	cc                   	int3
-  13:	e8 a3 3c 8e fb       	call   0xfb8e3cbb
-  18:	4c 89 e2             	mov    %r12,%rdx
-  1b:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  22:	fc ff df
-  25:	48 c1 ea 03          	shr    $0x3,%rdx
-* 29:	0f b6 04 02          	movzbl (%rdx,%rax,1),%eax <-- trapping instruction
-  2d:	4c 89 e2             	mov    %r12,%rdx
-  30:	83 e2 07             	and    $0x7,%edx
-  33:	38 d0                	cmp    %dl,%al
-  35:	7f 08                	jg     0x3f
-  37:	84 c0                	test   %al,%al
-  39:	0f 85 12 01 00 00    	jne    0x151
+>>
+>>> have a dependency on DT node which doesn't have backing device.
+>>
+>> Well, there is a backing device, the DSS. But if you mean that the system at
+>> the moment cannot figure out that there is a backing device, then true.
+> 
 
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
