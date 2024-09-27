@@ -1,197 +1,141 @@
-Return-Path: <linux-kernel+bounces-341681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52856988389
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:55:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C0C698838C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347071F2511B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:55:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A507928745E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB7718A6DE;
-	Fri, 27 Sep 2024 11:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE65B18A6CF;
+	Fri, 27 Sep 2024 11:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3K6/kiWG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xo+LolKF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3K6/kiWG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xo+LolKF"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="b8fHkR1R";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jdiGp5DQ"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18B318A93F
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4578157E91
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727438118; cv=none; b=Ol9L66yvg5OVyLvO2fmgC9HKuSkp3LyTyR5CvY/MIobBMxUpYAMJHNQulaHydkWTus6ojH0zGyEAgoeNcNTrqeWndXMIdTOYrq6N+MvRNd5MkbrvThsN4yLZHrP1lLwOpfe3j7Sg5tCYPS/Ir/7e7UmPvbT9SkKx6yl0Lxbn50A=
+	t=1727438204; cv=none; b=Tpscx+lYKC8D5rPWAb/MnE6U43n2B2cWbIZKYCzLJspf08njY+rCgo3ADmDQV+gXg3hlORgtRZ5ZzJTQcmxAAn6+FlGpfcCowK9kZokpY0gepe6A0HjXoyv5tH8v0cIs9mPZKlx4lT30+lxT9i8OiqngBLZA4PZ/FR7d5lTk2H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727438118; c=relaxed/simple;
-	bh=9Z2b9M6Fb8HoLu1XVOiyiFZ4EN2UyaeR1jRknfUVMFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mpb8URc5dkmfMLkJTr8OC1SehmugjSzIXBzC6DfIybmT3cJcgwBm1eOWJ06aXfECH6CwHPZLV9T0XUbMEgdn4b1BUDUa73xILlwthv0sI/OhQWZ2vO5rnVveYmLeBa84fJmr+sSEeKlYz/u1pKh1u6ksPG7D3hnB/aEc/IT3DPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3K6/kiWG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xo+LolKF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3K6/kiWG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xo+LolKF; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BDD0B21BA0;
-	Fri, 27 Sep 2024 11:55:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727438113; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4/3WmS5Gt2NkAv3aG88qqljeWPN827Cnk+c09JDbE/Q=;
-	b=3K6/kiWG/OeNmzrlNz92iWQ4Xz3ytwQAbiajY7Ghq49UimiPT0AN103MGjw2sjUpFvFZVL
-	eobp6SGErOy6UgoYwQrDhpLHGkNgxobUt0YH7mxIqgq14DHP/QN9LeysIa0R5MUuheoaFO
-	YJcUbN1q8kYao4YBWt8chnDLbsGBEbQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727438113;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4/3WmS5Gt2NkAv3aG88qqljeWPN827Cnk+c09JDbE/Q=;
-	b=Xo+LolKFPp8AyWHjW21eqqPo8fGHo5BZTlA1G1p5wJVaCe4NQb5Z2ZPoxuV/7W0QUt6qNB
-	KXNnGZy2/ULL8yDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="3K6/kiWG";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Xo+LolKF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727438113; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4/3WmS5Gt2NkAv3aG88qqljeWPN827Cnk+c09JDbE/Q=;
-	b=3K6/kiWG/OeNmzrlNz92iWQ4Xz3ytwQAbiajY7Ghq49UimiPT0AN103MGjw2sjUpFvFZVL
-	eobp6SGErOy6UgoYwQrDhpLHGkNgxobUt0YH7mxIqgq14DHP/QN9LeysIa0R5MUuheoaFO
-	YJcUbN1q8kYao4YBWt8chnDLbsGBEbQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727438113;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4/3WmS5Gt2NkAv3aG88qqljeWPN827Cnk+c09JDbE/Q=;
-	b=Xo+LolKFPp8AyWHjW21eqqPo8fGHo5BZTlA1G1p5wJVaCe4NQb5Z2ZPoxuV/7W0QUt6qNB
-	KXNnGZy2/ULL8yDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AF1B813A73;
-	Fri, 27 Sep 2024 11:55:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Y/x6KiGd9mbsdAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 27 Sep 2024 11:55:13 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 62B8FA0826; Fri, 27 Sep 2024 13:55:09 +0200 (CEST)
-Date: Fri, 27 Sep 2024 13:55:09 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhao Mengmeng <zhaomzhao@126.com>
-Cc: jack@suse.com, zhaomengmeng@kylinos.cn, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] udf: refactor udf_current_aext() to handle error
-Message-ID: <20240927115509.a6ie4b75c65gjvfu@quack3>
-References: <20240926120753.3639404-1-zhaomzhao@126.com>
- <20240926120753.3639404-2-zhaomzhao@126.com>
+	s=arc-20240116; t=1727438204; c=relaxed/simple;
+	bh=6DmNFqmmvb83gXmF9WjsiVyXZP10O269GmkfDdyUmMo=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=LcDC2/2Uy9zDZwjrHv5ejbD06ofol92UqXe+9UEczh6AbFXIgWvUhPJugmLAS0bCCj6Njfj5WxptHsilNhK04754WGsO4DRx176Zsp22XmxqutTZ1mnunWfjg6At9IYJdGlx6lsQBfAs0IicViZpi42eBOuwM6PT26lqCqVuKbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=b8fHkR1R; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jdiGp5DQ; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id BBCE113805C9;
+	Fri, 27 Sep 2024 07:56:41 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 27 Sep 2024 07:56:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727438201;
+	 x=1727524601; bh=Ay7YF/Xuo5nNlHfCru66Td9SMu/HSo2oVALKq6Fnm2w=; b=
+	b8fHkR1Rn+U1DJr0+tJSBZGI3631TwN7E1T1eXk2gB0RDtSsy5+kgtCSZLVcAWQV
+	MhliV3zGoOUgueadUA0nCdVyFVAA22K7rxTB7CFcQsQLs000ArMgX+xrVEoMQ7eF
+	Kfp64KnAckL0a+4wh5zNN9CD6CZ/2JBJ9dJmb/AbP/O2hvTA7sQctCX57yISD7od
+	T5CxHaTW2T26nnplrIzvBSfiOT0W2F9C526sI6hGvHNuYLux8e3ip4uA47NbtH/r
+	uEOUZwIwBX7JY3R0mUihBhD8EfFBxCUPMQHn0XcpslJHxinEhfEN5lpFjYB12Y+Q
+	+EZycAayGLaT2Q/GjyGX7Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727438201; x=
+	1727524601; bh=Ay7YF/Xuo5nNlHfCru66Td9SMu/HSo2oVALKq6Fnm2w=; b=j
+	diGp5DQLgrsMw7zxu42iklMeZLvUHinEA7GgbnaaRILfgf1RxAtIqEu6eiqW2OrE
+	k3VGmxZJwLEe/P/T2c8NTX1s21PT8msK7k589/q/m4C6RkwPBav649qnl2J4ARIK
+	2hSmi6OhtOon3eaZFGeKPFDnwPn+2ueAiVvqVnT/ay2NAPy3fKma3f+lMRMBfD9Z
+	Mp21FuoWnMJYSaGpeckTluNGJOTYaAbeTJ4oorrC7tS9ybHArfoJYmKm3vLNQOUI
+	u08rZXi3NRANmc07DjszujhlmV7dZtDHwVFP481N/MD5N7tE2MeZLZK0mz6SCZGV
+	zdJVunAT2jOvaSvs+JmYg==
+X-ME-Sender: <xms:eZ32ZgYX4kGVbPPs_XTlr75uogeZ5Qygikd5CBXpIackj7tKd-mr6A>
+    <xme:eZ32ZrZNceMX0N6dD4us9wQQWHOavHC428HNlbn2LHOJSGa0sE9YN-VBEt6JH4M0n
+    fxM-B0JgSY4CamFpas>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtledggeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudef
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhgvghlohhgihhorggttghhih
+    hnohdruggvlhhrvghgnhhosegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepmhgr
+    rhgvgiesuggvnhigrdguvgdprhgtphhtthhopehkvghrnhgvlhesughhqdgvlhgvtghtrh
+    honhhitghsrdgtohhmpdhrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhm
+    pdhrtghpthhtohepshgrrhgrvhgrnhgrkhesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
+    epshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghilhdrrghr
+    mhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmh
+    dqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohep
+    ihhmgieslhhishhtshdrlhhinhhugidruggvvh
+X-ME-Proxy: <xmx:eZ32Zq_yNxIIomxFYxqWVZQbH1Iw3DCWl35sCtIo7HHY2YS-8mQBEg>
+    <xmx:eZ32Zqr6EsZLS_fcYlitFUwSH_jRawbIOp8FmvDGVzS6GhfDPRK_zw>
+    <xmx:eZ32Zro6RSDPlwg93-pUcBGfFaic2u91pCHDv-nUuiRQbWmbfXqWEA>
+    <xmx:eZ32ZoS5m-DfODkHL1RWKcjktB_4XE0WtSn666PTf1acte3crahqfQ>
+    <xmx:eZ32ZphJk9ACd2OgZI6jpVJsQsL8IqvtQMdH0o5Xku4S7OKpmv-rR8t2>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1C8A52220071; Fri, 27 Sep 2024 07:56:41 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926120753.3639404-2-zhaomzhao@126.com>
-X-Rspamd-Queue-Id: BDD0B21BA0
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[126.com];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[126.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	MISSING_XM_UA(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Date: Fri, 27 Sep 2024 11:56:20 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Saravana Kannan" <saravanak@google.com>, "Marek Vasut" <marex@denx.de>
+Cc: linux-arm-kernel@lists.infradead.org, kernel@dh-electronics.com,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Fabio Estevam" <festevam@gmail.com>,
+ "Jeff Johnson" <quic_jjohnson@quicinc.com>,
+ "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Message-Id: <dbdb9141-a345-4a17-becb-29e69a494e59@app.fastmail.com>
+In-Reply-To: 
+ <CAGETcx-q7+DGhPYd3QrsPh7O_0HU7T=NhaJYp0Fu7YW2zwbo7Q@mail.gmail.com>
+References: <20240926213729.2882045-1-marex@denx.de>
+ <CAGETcx-q7+DGhPYd3QrsPh7O_0HU7T=NhaJYp0Fu7YW2zwbo7Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] soc: imx8m: Probe the SoC driver as platform driver
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu 26-09-24 20:07:51, Zhao Mengmeng wrote:
-> From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
-> 
-> As Jan suggested in links below, refactor udf_current_aext() to
-> differentiate between error and "hit EOF", it now takes pointer to etype
-> to store the extent type, return 0 when get etype success; return -ENODATA
-> when hit EOF; return -EINVAL when i_alloc_type invalid. Add two macroes to
-> test return value.
-> 
-> Link: https://lore.kernel.org/all/20240912111235.6nr3wuqvktecy3vh@quack3/
-> Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
-> Suggested-by: Jan Kara <jack@suse.cz>
-...
-> @@ -2167,9 +2173,12 @@ int8_t udf_next_aext(struct inode *inode, struct extent_position *epos,
->  {
->  	int8_t etype;
->  	unsigned int indirections = 0;
-> +	int err = 0;
-> +
-> +	while ((err = udf_current_aext(inode, epos, eloc, elen, &etype, inc))) {
-> +		if (err || etype != (EXT_NEXT_EXTENT_ALLOCDESCS >> 30))
-> +			break;
->  
-> -	while ((etype = udf_current_aext(inode, epos, eloc, elen, inc)) ==
-> -	       (EXT_NEXT_EXTENT_ALLOCDESCS >> 30)) {
+On Thu, Sep 26, 2024, at 23:39, Saravana Kannan wrote:
+>
+> Also, you might want to check that your list of probed devices doesn't
+> change without any async probing or this patch vs with async probing
+> and this patch. Quick way to get list of successfully probed devices
+> is:
+> # find /sys/devices -name driver
+>
+> Arnd,
+>
+> Why is soc_device_match() doing a bus_for_each_dev(&soc_bus_type,...)?
+> Are the real use cases where more than one soc device can be
+> registered with soc_device_register()?
 
-This looks wrong. If udf_current_aext() succeeds, you'll immediately abort
-the loop now. I'd rather code this as:
+Anything can register a soc_device, and I think there is a case
+where both the actual SoC and a firmware driver each register
+one, see drivers/firmware/smccc/soc_id.c and 
+drivers/firmware/imx/imx-scu-soc.c.
 
-	while (1) {
-		err = udf_current_aext(inode, epos, eloc, elen, &etype, inc);
-		if (err || etype != (EXT_NEXT_EXTENT_ALLOCDESCS >> 30))
-			break;
-		...
-	}
+Not sure how common this is, but this was something that people
+asked for when we created the interface.
 
-> diff --git a/fs/udf/udfdecl.h b/fs/udf/udfdecl.h
-> index 88692512a466..a902652450dd 100644
-> --- a/fs/udf/udfdecl.h
-> +++ b/fs/udf/udfdecl.h
-> @@ -43,6 +43,9 @@ extern __printf(3, 4) void _udf_warn(struct super_block *sb,
->  #define UDF_NAME_LEN		254
->  #define UDF_NAME_LEN_CS0	255
->  
-> +#define UDF_EXT_EOF(err)        ((err) == -ENODATA)
-> +#define UDF_EXT_ERR(err)        (((err) < 0) && (!UDF_EXT_EOF(err)))
-> +
-
-So I agree the explicit ENODATA checks are a bit ugly but these macros
-aren't really much better. How about the following calling convention:
-
-On error, ret < 0, on EOF ret == 0, on success ret == 1. This is a similar
-convention as e.g. for read(2) so it is well understood and easy test for
-various combinations.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+      Arnd
 
