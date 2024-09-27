@@ -1,269 +1,709 @@
-Return-Path: <linux-kernel+bounces-341925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0E4D988872
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:43:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66060988879
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28D3B1F210B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:43:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD304282D03
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AE71C1739;
-	Fri, 27 Sep 2024 15:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920991C1739;
+	Fri, 27 Sep 2024 15:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cajIMzwC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="nwW0wHMi"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583EF1E4AE
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 15:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526821E4AE;
+	Fri, 27 Sep 2024 15:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727451810; cv=none; b=CPWvHvCnsX+uiuuekcv953DRbcdWShMvNkd3Bp2A0HTBPsoiDwOWo1lKIMuDGn8F2XtSZqwqZvbeXH7c1coeR1u/8J6vTjUNwBbS3GmwIl2f57rjU+7blMkmiWSU7s6EMpIO64h/O7farncRqvWHvkcs9UBqJrsvu6smvTxJoDQ=
+	t=1727451889; cv=none; b=G82zfE53nPBeXzhUUeCOM5d5p2KYctHH6JgF2kMAKoyODdjP5N4IlacQNB4LjXTthX+dvXLwD+Y650+Ic1MmqvApxmSzkvZGKVg+vFFcD8kC1V9Bu9QymXXnkawIcDaqvABBR3cc3KF/3627eucCzQPvvBq6rZyfv+DfECunXOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727451810; c=relaxed/simple;
-	bh=wao8Y2iW8OXKF85bDNowoj/oRJn4i4qa0dhaPyUbYNY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HBYlHiXSP58iWp6CvOXn3dy1WZS1cU4Vk0jTq26ODgQn3u6XupEOgjyNfNEOVe38FvDW02bJjuOAHflfZXTqKXPJjbPMzkkSF9wkHGYFUEBlP/P+ugr9nyndjqTszZh3ukcCpoXoam9n3F2faGEGEH0gknEkEhtb34S5PuHa05M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cajIMzwC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727451808;
+	s=arc-20240116; t=1727451889; c=relaxed/simple;
+	bh=Amu4yPiQMJu0QXcGSZ13FakxwosI1cwc0GxYiGLXj2s=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=RoAsF2jolLz35hltkgDQdejPZeYqdewsVjTedPMIwzKoaynyJs7OgQMx033CtNWvz+EydbPK+adEr/rFELNWvQw63bHG7BpDXM0R2zdgW5qV3LQpm/OdNVgyZjrFZECKcFSImIMxrN8VGqf3HQbTM2riQGn+UYf/sEIxuPMYQ6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=nwW0wHMi; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 92558E450F;
+	Fri, 27 Sep 2024 15:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1727451883;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nouy7uz2QZ2+HaiysQwlHSVDj7tghdV0IDOXlpVmzA4=;
-	b=cajIMzwCZoEP/qT2xoR03VZc0sySFANgbbdPiLNoQZJWLbvv7vhpIRkESRCcgl9SLiiIkc
-	4N6mNkCKgBctUA7gVsaJUUv+1wDe1m3ee9lQ3LWXvcE+ipNerGvY1UKuHf1GdsRUZyIK1M
-	VcFWoVcPzfLGL9QrOFWpvNXfQXFL6PY=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-397-V_p_XxYMPBKyY-pULve9vg-1; Fri, 27 Sep 2024 11:43:27 -0400
-X-MC-Unique: V_p_XxYMPBKyY-pULve9vg-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb479fab2so16086755e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:43:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727451806; x=1728056606;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nouy7uz2QZ2+HaiysQwlHSVDj7tghdV0IDOXlpVmzA4=;
-        b=IKF+7jtaDuHbXCBiSxCNz361G70Xy1oWqT7SfAvCkPrizSJYRGA76D4q4z1aFxZDJ9
-         bGUzD6BJPMLv3YVxfaNGIYJCXY3QTvhkIXoQq9VIkvC6McRqRIMgvI1qD5lKghxg6zH4
-         bBh1X2KwVngmJguQi6iT3FSUqLLI//kMfrpxW5fwfjUwit6OvCeabiY/ZRgomj5VFx4Q
-         icqOH3WDYixENP0Ztj4iREJBCseD6iy2F6g9la2HYLlBmh5IFdNRgR1sIGOSwMa2G8Ho
-         opw3m0CLtEuXhUpC0C5FKLPFzQSvllrwsw397NeClHc2kkYt5XgPuiIR3qAH0bzi4DlS
-         kw/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXbJiu1exZ1tyU/ekIapXDP5TYt/TRN4RXrB2QCMIOtu5DUQAo3KcGhZ1TXLVuXyvMwjrZkCIMl0MhIOl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGnlgh506L0OiRZSp2BHzu7RNWSvYD6sxVN/VB0VUBWT4EPGr0
-	XrnmQuA42JZ6K1iUcPk2aRIIwmrikRVZtmjyIi39on32wDVLzfMvEwBxvhWteUNEwzWxSuREo/e
-	TsQ3LjEva/BzDjdjfjiFRLGoub9lFQnR3mL5/dI4Gp2f78v+x424HugLSFJyosA==
-X-Received: by 2002:a5d:56ca:0:b0:374:c878:21f7 with SMTP id ffacd0b85a97d-37ccdb1bbb7mr4376512f8f.10.1727451805791;
-        Fri, 27 Sep 2024 08:43:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGVqcYDstIgaqNgteUNW6DY2/9r4otwnCXEY/6PGRPWd6daoj6Q1+FJy4cgu/qVmW0nz5LssA==
-X-Received: by 2002:a5d:56ca:0:b0:374:c878:21f7 with SMTP id ffacd0b85a97d-37ccdb1bbb7mr4376497f8f.10.1727451805372;
-        Fri, 27 Sep 2024 08:43:25 -0700 (PDT)
-Received: from [192.168.1.174] ([151.64.88.92])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42e969ffc11sm78291925e9.24.2024.09.27.08.43.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 08:43:24 -0700 (PDT)
-Message-ID: <de586a25-1ede-482a-8317-cb700be697b4@redhat.com>
-Date: Fri, 27 Sep 2024 17:43:24 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=u6aIqGvdozOC+CFXvI/Vj/wiEIvoDtL6WVLpPR7n4XI=;
+	b=nwW0wHMiOwiVUY0fp8u007e1bb5ytgMkYek+DmUY8IKT4sZl57fGpCRzR15bDuS2rzJFS9
+	4ifYaXqgXkgN9jh/spQr0F7GmNFXp5PEuAg3GhwxDeXiqiLCrZya+WWGkR61NpHyQGYG+s
+	YamC7AYa1aRnP9VGCOTz/TboZsvcy2LTuzBXUOipojp9ZPp1QfNblepCdTGdP3qhqaZ0kR
+	t+6YN45ibEEjL/P9y19aj8oJ3kxqT5KnemC23rUQ4EWo2xnGFdj9ceUbNkQiWVPH+Ga4cS
+	SfsHwsZDiHZItEueB4sSrarKMVDXx2lqTxLLtsAaWBapEI49PLzWVXShpnC6CQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH 0/4] KVM: x86: Revert SLOT_ZAP_ALL quirk
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kai Huang <kai.huang@intel.com>, Rick Edgecombe
- <rick.p.edgecombe@intel.com>, Yan Zhao <yan.y.zhao@intel.com>
-References: <20240927001635.501418-1-seanjc@google.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240927001635.501418-1-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Date: Fri, 27 Sep 2024 17:44:43 +0200
+From: barnabas.czeman@mainlining.org
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, Konrad
+ Dybcio <konrad.dybcio@linaro.org>, Konrad Dybcio
+ <konrad.dybcio@somainline.org>
+Subject: Re: [PATCH 1/2] drm/msm/dpu: Add MSM8996 support
+In-Reply-To: <540ce2add6b1975502e898cc332275a6248aa1bc.camel@icenowy.me>
+References: <20240628-dpu-msm8953-msm8996-v1-0-a31c77248db7@mainlining.org>
+ <20240628-dpu-msm8953-msm8996-v1-1-a31c77248db7@mainlining.org>
+ <540ce2add6b1975502e898cc332275a6248aa1bc.camel@icenowy.me>
+Message-ID: <dd94e7fb72cf85800fbd46758010ea64@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-
-On Fri, Sep 27, 2024 at 2:18 AM Sean Christopherson <seanjc@google.com> wrote:
->
-> Revert the entire KVM_X86_QUIRK_SLOT_ZAP_ALL series, as the code is buggy
-> for shadow MMUs, and I'm not convinced a quirk is actually the right way
-> forward.  I'm not totally opposed to it (obviously, given that I suggested
-> it at one point), but I would prefer to give ourselves ample time to sort
-> out exactly how we want to move forward, i.e. not rush something in to
-> unhose v6.12.
-
-Yeah, the code is buggy but I think it's safe enough to use code like the
-one you wrote back in 2019; untested patch follows:
-
-------------------------------- 8< ------------------------
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Fri, 27 Sep 2024 06:25:35 -0400
-Subject: [PATCH] KVM: x86/mmu: fix KVM_X86_QUIRK_SLOT_ZAP_ALL for shadow MMU
-
-As was tried in commit 4e103134b862 ("KVM: x86/mmu: Zap only the relevant
-pages when removing a memslot"), all shadow pages, i.e. non-leaf SPTEs,
-need to be zapped.  All of the accounting for a shadow page is tied to the
-memslot, i.e. the shadow page holds a reference to the memslot, for all
-intents and purposes.  Deleting the memslot without removing all relevant
-shadow pages, as is done when KVM_X86_QUIRK_SLOT_ZAP_ALL is disabled,
-results in NULL pointer derefs when tearing down the VM.
-
-Reintroduce from that commit the code that walks the whole memslot when
-there are active shadow MMU pages.
-
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index e081f785fb23..6843535905fb 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -7049,14 +7049,42 @@ void kvm_arch_flush_shadow_all(struct kvm *kvm)
-  	kvm_mmu_zap_all(kvm);
-  }
-  
--/*
-- * Zapping leaf SPTEs with memslot range when a memslot is moved/deleted.
-- *
-- * Zapping non-leaf SPTEs, a.k.a. not-last SPTEs, isn't required, worst
-- * case scenario we'll have unused shadow pages lying around until they
-- * are recycled due to age or when the VM is destroyed.
-- */
--static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *slot)
-+static void kvm_mmu_zap_memslot_pages_and_flush(struct kvm *kvm,
-+						struct kvm_memory_slot *slot,
-+						bool flush)
-+{
-+	LIST_HEAD(invalid_list);
-+	unsigned long i;
-+
-+	if (list_empty(&kvm->arch.active_mmu_pages))
-+		goto out_flush;
-+
-+	/*
-+	 * Since accounting information is stored in struct kvm_arch_memory_slot,
-+	 * deleting shadow pages (e.g. in unaccount_shadowed()) requires that all
-+	 * gfns with a shadow page have a corresponding memslot.  Do so before
-+	 * the memslot goes away.
-+	 */
-+	for (i = 0; i < slot->npages; i++) {
-+		struct kvm_mmu_page *sp;
-+		gfn_t gfn = slot->base_gfn + i;
-+
-+		for_each_gfn_valid_sp_with_gptes(kvm, sp, gfn)
-+			kvm_mmu_prepare_zap_page(kvm, sp, &invalid_list);
-+
-+		if (need_resched() || rwlock_needbreak(&kvm->mmu_lock)) {
-+			kvm_mmu_remote_flush_or_zap(kvm, &invalid_list, flush);
-+			flush = false;
-+			cond_resched_rwlock_write(&kvm->mmu_lock);
-+		}
-+	}
-+
-+out_flush:
-+	kvm_mmu_remote_flush_or_zap(kvm, &invalid_list, flush);
-+}
-+
-+static void kvm_mmu_zap_memslot(struct kvm *kvm,
-+				struct kvm_memory_slot *slot)
-  {
-  	struct kvm_gfn_range range = {
-  		.slot = slot,
-@@ -7064,11 +7097,11 @@ static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *s
-  		.end = slot->base_gfn + slot->npages,
-  		.may_block = true,
-  	};
-+	bool flush;
-  
-  	write_lock(&kvm->mmu_lock);
--	if (kvm_unmap_gfn_range(kvm, &range))
--		kvm_flush_remote_tlbs_memslot(kvm, slot);
--
-+	flush = kvm_unmap_gfn_range(kvm, &range);
-+	kvm_mmu_zap_memslot_pages_and_flush(kvm, slot, flush);
-  	write_unlock(&kvm->mmu_lock);
-  }
-  
-@@ -7084,7 +7117,7 @@ void kvm_arch_flush_shadow_memslot(struct kvm *kvm,
-  	if (kvm_memslot_flush_zap_all(kvm))
-  		kvm_mmu_zap_all_fast(kvm);
-  	else
--		kvm_mmu_zap_memslot_leafs(kvm, slot);
-+		kvm_mmu_zap_memslot(kvm, slot);
-  }
-  
-  void kvm_mmu_invalidate_mmio_sptes(struct kvm *kvm, u64 gen)
---------------------------------------------------
-
-(Not too sure about using the sp_has_gptes() test, which is why I haven't
-posted this yet).
-
-With respect to the choice of API, the quirk is at least good for
-testing; this was already proven, I guess.
-
-Also I think it's safe to enable it for SEV/SEV-ES VM types: they
-pretty much depend on NPT (see sev_hardware_setup), and with the
-TDP MMU it should always be better to kill the PTEs for the memslot
-(even if invalidating the whole MMU is cheap) to avoid having to
-fault all the remainder of the memory back in.  So I think the current
-version of kvm_memslot_flush_zap_all() is better than using e.g.
-kvm_arch_has_private_mem().
-
-The only straggler is software-protected VMs, which I don't care
-too much about; but if anything it's better to make them closer to
-SNP and TDX VM types.
-
-For now I think I'll send the existing kvm/next to Linus and we
-can sort it out next week, as the weekend (and the closure of the
-merge window) is impending...
-
-Paolo
-
+On 2024-08-18 09:16, Icenowy Zheng wrote:
+> 在 2024-06-28星期五的 16:39 +0200，Barnabás Czémán写道：
+>> From: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> 
+>> Add support for MSM8996, which - fun fact - was the SoC that this
+>> driver
+>> (or rather SDE, its downstream origin) was meant for and first tested
+>> on.
+>> 
+>> It has some hardware that differs from the modern SoCs, so not a lot
+>> of
+>> current structs could have been reused. It's also seemingly the only
+>> SoC
+>> supported by DPU that uses RGB pipes.
+>> 
+>> Note, by default this platform is still handled by the MDP5 driver
+>> unless the `msm.prefer_mdp5=false' parameter is provided.
+> 
+> For curiosity, will this driver makes DSC possible on MSM8996?
+As far as i know yes, but if i know correctly there are some DSC
+support also in MDP5.
+> 
+> I think the Google Pixel device uses a panel that needs DSC, which
+> makes mainlining it currently impossible.
+> 
+>> 
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> [DB: rebased on top of sblk changes, add dpu_rgb_sblk]
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> [Removed intr_start from CTLs config]
+>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> ---
+>>  .../drm/msm/disp/dpu1/catalog/dpu_1_7_msm8996.h    | 348
+>> +++++++++++++++++++++
+>>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |  94 ++++++
+>>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
+>>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
+>>  drivers/gpu/drm/msm/msm_drv.c                      |   1 +
+>>  5 files changed, 445 insertions(+)
+>> 
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_7_msm8996.h
+>> b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_7_msm8996.h
+>> new file mode 100644
+>> index 000000000000..29d0cfacf7a9
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_7_msm8996.h
+>> @@ -0,0 +1,348 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (c) 2023, Linaro Limited
+>> + * Copyright (c) 2022. Qualcomm Innovation Center, Inc. All rights
+>> reserved.
+>> + * Copyright (c) 2015-2018, 2020 The Linux Foundation. All rights
+>> reserved.
+>> + */
+>> +
+>> +#ifndef _DPU_1_7_MSM8996_H
+>> +#define _DPU_1_7_MSM8996_H
+>> +
+>> +static const struct dpu_caps msm8996_dpu_caps = {
+>> +       .max_mixer_width = DEFAULT_DPU_OUTPUT_LINE_WIDTH,
+>> +       .max_mixer_blendstages = 0x7,
+>> +       .has_src_split = true,
+>> +       .max_linewidth = DEFAULT_DPU_OUTPUT_LINE_WIDTH,
+>> +       .pixel_ram_size = DEFAULT_PIXEL_RAM_SIZE,
+>> +       .max_hdeci_exp = MAX_HORZ_DECIMATION,
+>> +       .max_vdeci_exp = MAX_VERT_DECIMATION,
+>> +};
+>> +
+>> +static const struct dpu_mdp_cfg msm8996_mdp[] = {
+>> +       {
+>> +               .name = "top_0",
+>> +               .base = 0x0, .len = 0x454,
+>> +               .features = BIT(DPU_MDP_VSYNC_SEL),
+>> +               .clk_ctrls = {
+>> +                       [DPU_CLK_CTRL_VIG0] = { .reg_off = 0x2ac,
+>> .bit_off = 0 },
+>> +                       [DPU_CLK_CTRL_VIG1] = { .reg_off = 0x2b4,
+>> .bit_off = 0 },
+>> +                       [DPU_CLK_CTRL_VIG2] = { .reg_off = 0x2bc,
+>> .bit_off = 0 },
+>> +                       [DPU_CLK_CTRL_VIG3] = { .reg_off = 0x2c4,
+>> .bit_off = 0 },
+>> +                       [DPU_CLK_CTRL_RGB0] = { .reg_off = 0x2ac,
+>> .bit_off = 4 },
+>> +                       [DPU_CLK_CTRL_RGB1] = { .reg_off = 0x2b4,
+>> .bit_off = 4 },
+>> +                       [DPU_CLK_CTRL_RGB2] = { .reg_off = 0x2bc,
+>> .bit_off = 4 },
+>> +                       [DPU_CLK_CTRL_RGB3] = { .reg_off = 0x2c4,
+>> .bit_off = 4 },
+>> +                       [DPU_CLK_CTRL_DMA0] = { .reg_off = 0x2ac,
+>> .bit_off = 8 },
+>> +                       [DPU_CLK_CTRL_DMA1] = { .reg_off = 0x2b4,
+>> .bit_off = 8 },
+>> +                       [DPU_CLK_CTRL_CURSOR0] = { .reg_off = 0x3a8,
+>> .bit_off = 16 },
+>> +                       [DPU_CLK_CTRL_CURSOR1] = { .reg_off = 0x3b0,
+>> .bit_off = 16 },
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static const struct dpu_ctl_cfg msm8996_ctl[] = {
+>> +       {
+>> +               .name = "ctl_0", .id = CTL_0,
+>> +               .base = 0x1000, .len = 0x64,
+>> +       }, {
+>> +               .name = "ctl_1", .id = CTL_1,
+>> +               .base = 0x1200, .len = 0x64,
+>> +       }, {
+>> +               .name = "ctl_2", .id = CTL_2,
+>> +               .base = 0x1400, .len = 0x64,
+>> +       }, {
+>> +               .name = "ctl_3", .id = CTL_3,
+>> +               .base = 0x1600, .len = 0x64,
+>> +       }, {
+>> +               .name = "ctl_4", .id = CTL_4,
+>> +               .base = 0x1800, .len = 0x64,
+>> +       },
+>> +};
+>> +
+>> +static const struct dpu_sspp_cfg msm8996_sspp[] = {
+>> +       {
+>> +               .name = "sspp_0", .id = SSPP_VIG0,
+>> +               .base = 0x4000, .len = 0x150,
+>> +               .features = VIG_MSM8996_MASK,
+>> +               .sblk = &dpu_vig_sblk_qseed2,
+>> +               .xin_id = 0,
+>> +               .type = SSPP_TYPE_VIG,
+>> +               .clk_ctrl = DPU_CLK_CTRL_VIG0,
+>> +       }, {
+>> +               .name = "sspp_1", .id = SSPP_VIG1,
+>> +               .base = 0x6000, .len = 0x150,
+>> +               .features = VIG_MSM8996_MASK,
+>> +               .sblk = &dpu_vig_sblk_qseed2,
+>> +               .xin_id = 4,
+>> +               .type = SSPP_TYPE_VIG,
+>> +               .clk_ctrl = DPU_CLK_CTRL_VIG1,
+>> +       }, {
+>> +               .name = "sspp_2", .id = SSPP_VIG2,
+>> +               .base = 0x8000, .len = 0x150,
+>> +               .features = VIG_MSM8996_MASK,
+>> +               .sblk = &dpu_vig_sblk_qseed2,
+>> +               .xin_id = 8,
+>> +               .type = SSPP_TYPE_VIG,
+>> +               .clk_ctrl = DPU_CLK_CTRL_VIG2,
+>> +       }, {
+>> +               .name = "sspp_3", .id = SSPP_VIG3,
+>> +               .base = 0xa000, .len = 0x150,
+>> +               .features = VIG_MSM8996_MASK,
+>> +               .sblk = &dpu_vig_sblk_qseed2,
+>> +               .xin_id = 12,
+>> +               .type = SSPP_TYPE_VIG,
+>> +               .clk_ctrl = DPU_CLK_CTRL_VIG3,
+>> +       }, {
+>> +               .name = "sspp_4", .id = SSPP_RGB0,
+>> +               .base = 0x14000, .len = 0x150,
+>> +               .features = RGB_MSM8996_MASK,
+>> +               .sblk = &dpu_rgb_sblk,
+>> +               .xin_id = 1,
+>> +               .type = SSPP_TYPE_RGB,
+>> +               .clk_ctrl = DPU_CLK_CTRL_RGB0,
+>> +       }, {
+>> +               .name = "sspp_5", .id = SSPP_RGB1,
+>> +               .base = 0x16000, .len = 0x150,
+>> +               .features = RGB_MSM8996_MASK,
+>> +               .sblk = &dpu_rgb_sblk,
+>> +               .xin_id = 5,
+>> +               .type = SSPP_TYPE_RGB,
+>> +               .clk_ctrl = DPU_CLK_CTRL_RGB1,
+>> +       }, {
+>> +               .name = "sspp_6", .id = SSPP_RGB2,
+>> +               .base = 0x18000, .len = 0x150,
+>> +               .features = RGB_MSM8996_MASK,
+>> +               .sblk = &dpu_rgb_sblk,
+>> +               .xin_id = 9,
+>> +               .type = SSPP_TYPE_RGB,
+>> +               .clk_ctrl = DPU_CLK_CTRL_RGB2,
+>> +       }, {
+>> +               .name = "sspp_7", .id = SSPP_RGB3,
+>> +               .base = 0x1a000, .len = 0x150,
+>> +               .features = RGB_MSM8996_MASK,
+>> +               .sblk = &dpu_rgb_sblk,
+>> +               .xin_id = 13,
+>> +               .type = SSPP_TYPE_RGB,
+>> +               .clk_ctrl = DPU_CLK_CTRL_RGB3,
+>> +       }, {
+>> +               .name = "sspp_8", .id = SSPP_DMA0,
+>> +               .base = 0x24000, .len = 0x150,
+>> +               .features = DMA_MSM8996_MASK,
+>> +               .sblk = &dpu_dma_sblk,
+>> +               .xin_id = 2,
+>> +               .type = SSPP_TYPE_DMA,
+>> +               .clk_ctrl = DPU_CLK_CTRL_DMA0,
+>> +       }, {
+>> +               .name = "sspp_9", .id = SSPP_DMA1,
+>> +               .base = 0x26000, .len = 0x150,
+>> +               .features = DMA_MSM8996_MASK,
+>> +               .sblk = &dpu_dma_sblk,
+>> +               .xin_id = 10,
+>> +               .type = SSPP_TYPE_DMA,
+>> +               .clk_ctrl = DPU_CLK_CTRL_DMA1,
+>> +       },
+>> +};
+>> +
+>> +static const struct dpu_lm_cfg msm8996_lm[] = {
+>> +       {
+>> +               .name = "lm_0", .id = LM_0,
+>> +               .base = 0x44000, .len = 0x320,
+>> +               .features = MIXER_MSM8998_MASK,
+>> +               .sblk = &msm8998_lm_sblk,
+>> +               .lm_pair = LM_1,
+>> +               .pingpong = PINGPONG_0,
+>> +               .dspp = DSPP_0,
+>> +       }, {
+>> +               .name = "lm_1", .id = LM_1,
+>> +               .base = 0x45000, .len = 0x320,
+>> +               .features = MIXER_MSM8998_MASK,
+>> +               .sblk = &msm8998_lm_sblk,
+>> +               .lm_pair = LM_0,
+>> +               .pingpong = PINGPONG_1,
+>> +               .dspp = DSPP_1,
+>> +       }, {
+>> +               .name = "lm_2", .id = LM_2,
+>> +               .base = 0x46000, .len = 0x320,
+>> +               .features = MIXER_MSM8998_MASK,
+>> +               .sblk = &msm8998_lm_sblk,
+>> +               .lm_pair = LM_5,
+>> +               .pingpong = PINGPONG_2,
+>> +       }, {
+>> +               .name = "lm_3", .id = LM_3,
+>> +               .base = 0x47000, .len = 0x320,
+>> +               .features = MIXER_MSM8998_MASK,
+>> +               .sblk = &msm8998_lm_sblk,
+>> +       }, {
+>> +               .name = "lm_4", .id = LM_4,
+>> +               .base = 0x48000, .len = 0x320,
+>> +               .features = MIXER_MSM8998_MASK,
+>> +               .sblk = &msm8998_lm_sblk,
+>> +       }, {
+>> +               .name = "lm_5", .id = LM_5,
+>> +               .base = 0x49000, .len = 0x320,
+>> +               .features = MIXER_MSM8998_MASK,
+>> +               .sblk = &msm8998_lm_sblk,
+>> +               .lm_pair = LM_2,
+>> +               .pingpong = PINGPONG_3,
+>> +       },
+>> +};
+>> +
+>> +static const struct dpu_pingpong_cfg msm8996_pp[] = {
+>> +       {
+>> +               .name = "pingpong_0", .id = PINGPONG_0,
+>> +               .base = 0x70000, .len = 0xd4,
+>> +               .features = PINGPONG_MSM8996_TE2_MASK,
+>> +               .sblk = &msm8996_pp_sblk_te,
+>> +               .intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 8),
+>> +               .intr_rdptr = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 12),
+>> +       }, {
+>> +               .name = "pingpong_1", .id = PINGPONG_1,
+>> +               .base = 0x70800, .len = 0xd4,
+>> +               .features = PINGPONG_MSM8996_TE2_MASK,
+>> +               .sblk = &msm8996_pp_sblk_te,
+>> +               .intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 9),
+>> +               .intr_rdptr = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 13),
+>> +       }, {
+>> +               .name = "pingpong_2", .id = PINGPONG_2,
+>> +               .base = 0x71000, .len = 0xd4,
+>> +               .features = PINGPONG_MSM8996_MASK,
+>> +               .sblk = &msm8996_pp_sblk,
+>> +               .intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 10),
+>> +               .intr_rdptr = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 14),
+>> +       }, {
+>> +               .name = "pingpong_3", .id = PINGPONG_3,
+>> +               .base = 0x71800, .len = 0xd4,
+>> +               .features = PINGPONG_MSM8996_MASK,
+>> +               .sblk = &msm8996_pp_sblk,
+>> +               .intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 11),
+>> +               .intr_rdptr = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 15),
+>> +       },
+>> +};
+>> +
+>> +static const struct dpu_dsc_cfg msm8996_dsc[] = {
+>> +       {
+>> +               .name = "dsc_0", .id = DSC_0,
+>> +               .base = 0x80000, .len = 0x140,
+>> +       }, {
+>> +               .name = "dsc_1", .id = DSC_1,
+>> +               .base = 0x80400, .len = 0x140,
+>> +       },
+>> +};
+>> +
+>> +static const struct dpu_dspp_cfg msm8996_dspp[] = {
+>> +       {
+>> +               .name = "dspp_0", .id = DSPP_0,
+>> +               .base = 0x54000, .len = 0x1800,
+>> +               .features = DSPP_SC7180_MASK,
+>> +               .sblk = &msm8998_dspp_sblk,
+>> +       }, {
+>> +               .name = "dspp_1", .id = DSPP_1,
+>> +               .base = 0x56000, .len = 0x1800,
+>> +               .features = DSPP_SC7180_MASK,
+>> +               .sblk = &msm8998_dspp_sblk,
+>> +       },
+>> +};
+>> +
+>> +static const struct dpu_intf_cfg msm8996_intf[] = {
+>> +       {
+>> +               .name = "intf_0", .id = INTF_0,
+>> +               .base = 0x6a000, .len = 0x268,
+>> +               .type = INTF_NONE,
+>> +               .prog_fetch_lines_worst_case = 25,
+>> +               .intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 24),
+>> +               .intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 25),
+>> +               .intr_tear_rd_ptr = -1,
+>> +       }, {
+>> +               .name = "intf_1", .id = INTF_1,
+>> +               .base = 0x6a800, .len = 0x268,
+>> +               .type = INTF_DSI,
+>> +               .controller_id = MSM_DSI_CONTROLLER_0,
+>> +               .prog_fetch_lines_worst_case = 25,
+>> +               .intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 26),
+>> +               .intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 27),
+>> +               .intr_tear_rd_ptr = -1,
+>> +       }, {
+>> +               .name = "intf_2", .id = INTF_2,
+>> +               .base = 0x6b000, .len = 0x268,
+>> +               .type = INTF_DSI,
+>> +               .controller_id = MSM_DSI_CONTROLLER_1,
+>> +               .prog_fetch_lines_worst_case = 25,
+>> +               .intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 28),
+>> +               .intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 29),
+>> +               .intr_tear_rd_ptr = -1,
+>> +       }, {
+>> +               .name = "intf_3", .id = INTF_3,
+>> +               .base = 0x6b800, .len = 0x268,
+>> +               .type = INTF_HDMI,
+>> +               .prog_fetch_lines_worst_case = 25,
+>> +               .intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 30),
+>> +               .intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 31),
+>> +               .intr_tear_rd_ptr = -1,
+>> +       },
+>> +};
+>> +
+>> +static const struct dpu_perf_cfg msm8996_perf_data = {
+>> +       .max_bw_low = 9600000,
+>> +       .max_bw_high = 9600000,
+>> +       .min_core_ib = 2400000,
+>> +       .min_llcc_ib = 0, /* No LLCC on this SoC */
+>> +       .min_dram_ib = 800000,
+>> +       .undersized_prefill_lines = 2,
+>> +       .xtra_prefill_lines = 2,
+>> +       .dest_scale_prefill_lines = 3,
+>> +       .macrotile_prefill_lines = 4,
+>> +       .yuv_nv12_prefill_lines = 8,
+>> +       .linear_prefill_lines = 1,
+>> +       .downscaling_prefill_lines = 1,
+>> +       .amortizable_threshold = 25,
+>> +       .min_prefill_lines = 21,
+>> +       .danger_lut_tbl = {0xf, 0xffff, 0x0},
+>> +       .safe_lut_tbl = {0xfffc, 0xff00, 0xffff},
+>> +       .qos_lut_tbl = {
+>> +               {.nentry = ARRAY_SIZE(msm8998_qos_linear),
+>> +               .entries = msm8998_qos_linear
+>> +               },
+>> +               {.nentry = ARRAY_SIZE(msm8998_qos_macrotile),
+>> +               .entries = msm8998_qos_macrotile
+>> +               },
+>> +               {.nentry = ARRAY_SIZE(msm8998_qos_nrt),
+>> +               .entries = msm8998_qos_nrt
+>> +               },
+>> +       },
+>> +       .cdp_cfg = {
+>> +               {.rd_enable = 1, .wr_enable = 1},
+>> +               {.rd_enable = 1, .wr_enable = 0}
+>> +       },
+>> +       .clk_inefficiency_factor = 105,
+>> +       .bw_inefficiency_factor = 120,
+>> +};
+>> +
+>> +static const struct dpu_mdss_version msm8996_mdss_ver = {
+>> +       .core_major_ver = 1,
+>> +       .core_minor_ver = 7,
+>> +};
+>> +
+>> +const struct dpu_mdss_cfg dpu_msm8996_cfg = {
+>> +       .mdss_ver = &msm8996_mdss_ver,
+>> +       .caps = &msm8996_dpu_caps,
+>> +       .mdp = msm8996_mdp,
+>> +       .ctl_count = ARRAY_SIZE(msm8996_ctl),
+>> +       .ctl = msm8996_ctl,
+>> +       .sspp_count = ARRAY_SIZE(msm8996_sspp),
+>> +       .sspp = msm8996_sspp,
+>> +       .mixer_count = ARRAY_SIZE(msm8996_lm),
+>> +       .mixer = msm8996_lm,
+>> +       .dspp_count = ARRAY_SIZE(msm8996_dspp),
+>> +       .dspp = msm8996_dspp,
+>> +       .pingpong_count = ARRAY_SIZE(msm8996_pp),
+>> +       .pingpong = msm8996_pp,
+>> +       .dsc_count = ARRAY_SIZE(msm8996_dsc),
+>> +       .dsc = msm8996_dsc,
+>> +       .intf_count = ARRAY_SIZE(msm8996_intf),
+>> +       .intf = msm8996_intf,
+>> +       .vbif_count = ARRAY_SIZE(msm8996_vbif),
+>> +       .vbif = msm8996_vbif,
+>> +       .perf = &msm8996_perf_data,
+>> +};
+>> +
+>> +#endif
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+>> b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+>> index fc178ec73907..da7b75e09251 100644
+>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+>> @@ -21,6 +21,11 @@
+>>         (VIG_BASE_MASK | \
+>>         BIT(DPU_SSPP_CSC_10BIT))
+>>  
+>> +#define VIG_MSM8996_MASK \
+>> +       (BIT(DPU_SSPP_QOS) | BIT(DPU_SSPP_CDP) |\
+>> +        BIT(DPU_SSPP_TS_PREFILL) | BIT(DPU_SSPP_SCALER_QSEED2) |\
+>> +        BIT(DPU_SSPP_CSC))
+>> +
+>>  #define VIG_MSM8998_MASK \
+>>         (VIG_MASK | BIT(DPU_SSPP_SCALER_QSEED3_COMPATIBLE))
+>>  
+>> @@ -32,6 +37,9 @@
+>>  
+>>  #define VIG_QCM2290_MASK (VIG_BASE_MASK | BIT(DPU_SSPP_QOS_8LVL))
+>>  
+>> +#define DMA_MSM8996_MASK \
+>> +       (BIT(DPU_SSPP_QOS) | BIT(DPU_SSPP_TS_PREFILL) |
+>> BIT(DPU_SSPP_CDP))
+>> +
+>>  #define DMA_MSM8998_MASK \
+>>         (BIT(DPU_SSPP_QOS) |\
+>>         BIT(DPU_SSPP_TS_PREFILL) | BIT(DPU_SSPP_TS_PREFILL_REC1) |\
+>> @@ -57,9 +65,16 @@
+>>  #define DMA_CURSOR_SDM845_MASK_SDMA \
+>>         (DMA_CURSOR_SDM845_MASK | BIT(DPU_SSPP_SMART_DMA_V2))
+>>  
+>> +#define DMA_CURSOR_MSM8996_MASK \
+>> +       (DMA_MSM8996_MASK | BIT(DPU_SSPP_CURSOR))
+>> +
+>>  #define DMA_CURSOR_MSM8998_MASK \
+>>         (DMA_MSM8998_MASK | BIT(DPU_SSPP_CURSOR))
+>>  
+>> +#define RGB_MSM8996_MASK \
+>> +       (BIT(DPU_SSPP_QOS) | BIT(DPU_SSPP_CDP) |\
+>> +        BIT(DPU_SSPP_TS_PREFILL) | BIT(DPU_SSPP_SCALER_RGB))
+>> +
+>>  #define MIXER_MSM8998_MASK \
+>>         (BIT(DPU_MIXER_SOURCESPLIT))
+>>  
+>> @@ -69,6 +84,12 @@
+>>  #define MIXER_QCM2290_MASK \
+>>         (BIT(DPU_DIM_LAYER) | BIT(DPU_MIXER_COMBINED_ALPHA))
+>>  
+>> +#define PINGPONG_MSM8996_MASK \
+>> +       (BIT(DPU_PINGPONG_DSC))
+>> +
+>> +#define PINGPONG_MSM8996_TE2_MASK \
+>> +       (PINGPONG_MSM8996_MASK | BIT(DPU_PINGPONG_TE2))
+>> +
+>>  #define PINGPONG_SDM845_MASK \
+>>         (BIT(DPU_PINGPONG_DITHER) | BIT(DPU_PINGPONG_DSC))
+>>  
+>> @@ -314,6 +335,35 @@ static const u32 wb2_formats_rgb_yuv[] = {
+>>         .virt_num_formats = ARRAY_SIZE(plane_formats), \
+>>         }
+>>  
+>> +/* qseed2 is not supported, so disabled scaling */
+>> +#define _VIG_SBLK_QSEED2() \
+>> +       { \
+>> +       .maxdwnscale = SSPP_UNITY_SCALE, \
+>> +       .maxupscale = SSPP_UNITY_SCALE, \
+>> +       .scaler_blk = {.name = "scaler", \
+>> +               /* no version for qseed2 */ \
+>> +               .base = 0x200, .len = 0xa0,}, \
+>> +       .csc_blk = {.name = "csc", \
+>> +               .base = 0x320, .len = 0x100,}, \
+>> +       .format_list = plane_formats_yuv, \
+>> +       .num_formats = ARRAY_SIZE(plane_formats_yuv), \
+>> +       .virt_format_list = plane_formats, \
+>> +       .virt_num_formats = ARRAY_SIZE(plane_formats), \
+>> +       .rotation_cfg = NULL, \
+>> +       }
+>> +
+>> +#define _RGB_SBLK() \
+>> +       { \
+>> +       .maxdwnscale = SSPP_UNITY_SCALE, \
+>> +       .maxupscale = SSPP_UNITY_SCALE, \
+>> +       .scaler_blk = {.name = "scaler", \
+>> +               .base = 0x200, .len = 0x28,}, \
+>> +       .format_list = plane_formats, \
+>> +       .num_formats = ARRAY_SIZE(plane_formats), \
+>> +       .virt_format_list = plane_formats, \
+>> +       .virt_num_formats = ARRAY_SIZE(plane_formats), \
+>> +       }
+>> +
+>>  #define _DMA_SBLK() \
+>>         { \
+>>         .maxdwnscale = SSPP_UNITY_SCALE, \
+>> @@ -330,6 +380,9 @@ static const struct dpu_rotation_cfg
+>> dpu_rot_sc7280_cfg_v2 = {
+>>         .rot_format_list = rotation_v2_formats,
+>>  };
+>>  
+>> +static const struct dpu_sspp_sub_blks dpu_vig_sblk_qseed2 =
+>> +                               _VIG_SBLK_QSEED2();
+>> +
+>>  static const struct dpu_sspp_sub_blks dpu_vig_sblk_noscale =
+>>                                 _VIG_SBLK_NOSCALE();
+>>  
+>> @@ -361,6 +414,8 @@ static const struct dpu_sspp_sub_blks
+>> dpu_vig_sblk_qseed3_3_2 =
+>>  static const struct dpu_sspp_sub_blks dpu_vig_sblk_qseed3_3_3 =
+>>                                 _VIG_SBLK(SSPP_SCALER_VER(3, 3));
+>>  
+>> +static const struct dpu_sspp_sub_blks dpu_rgb_sblk = _RGB_SBLK();
+>> +
+>>  static const struct dpu_sspp_sub_blks dpu_dma_sblk = _DMA_SBLK();
+>>  
+>>  /*************************************************************
+>> @@ -425,6 +480,15 @@ static const struct dpu_dspp_sub_blks
+>> sdm845_dspp_sblk = {
+>>  /*************************************************************
+>>   * PINGPONG sub blocks config
+>>   *************************************************************/
+>> +static const struct dpu_pingpong_sub_blks msm8996_pp_sblk_te = {
+>> +       .te2 = {.name = "te2", .base = 0x2000, .len = 0x0,
+>> +               .version = 0x1},
+>> +};
+>> +
+>> +static const struct dpu_pingpong_sub_blks msm8996_pp_sblk = {
+>> +       /* No dither block */
+>> +};
+>> +
+>>  static const struct dpu_pingpong_sub_blks sdm845_pp_sblk_te = {
+>>         .te2 = {.name = "te2", .base = 0x2000, .len = 0x0,
+>>                 .version = 0x1},
+>> @@ -490,6 +554,34 @@ static const struct dpu_vbif_dynamic_ot_cfg
+>> msm8998_ot_rdwr_cfg[] = {
+>>         },
+>>  };
+>>  
+>> +static const struct dpu_vbif_cfg msm8996_vbif[] = {
+>> +       {
+>> +       .name = "vbif_rt", .id = VBIF_RT,
+>> +       .base = 0, .len = 0x1040,
+>> +       .default_ot_rd_limit = 32,
+>> +       .default_ot_wr_limit = 16,
+>> +       .features = BIT(DPU_VBIF_QOS_REMAP) |
+>> BIT(DPU_VBIF_QOS_OTLIM),
+>> +       .xin_halt_timeout = 0x4000,
+>> +       .qos_rp_remap_size = 0x20,
+>> +       .dynamic_ot_rd_tbl = {
+>> +               .count = ARRAY_SIZE(msm8998_ot_rdwr_cfg),
+>> +               .cfg = msm8998_ot_rdwr_cfg,
+>> +               },
+>> +       .dynamic_ot_wr_tbl = {
+>> +               .count = ARRAY_SIZE(msm8998_ot_rdwr_cfg),
+>> +               .cfg = msm8998_ot_rdwr_cfg,
+>> +               },
+>> +       .qos_rt_tbl = {
+>> +               .npriority_lvl = ARRAY_SIZE(msm8998_rt_pri_lvl),
+>> +               .priority_lvl = msm8998_rt_pri_lvl,
+>> +               },
+>> +       .qos_nrt_tbl = {
+>> +               .npriority_lvl = ARRAY_SIZE(msm8998_nrt_pri_lvl),
+>> +               .priority_lvl = msm8998_nrt_pri_lvl,
+>> +               },
+>> +       },
+>> +};
+>> +
+>>  static const struct dpu_vbif_cfg msm8998_vbif[] = {
+>>         {
+>>         .name = "vbif_rt", .id = VBIF_RT,
+>> @@ -673,6 +765,8 @@ static const struct dpu_qos_lut_entry
+>> sc7180_qos_nrt[] = {
+>>   * Hardware catalog
+>>   *************************************************************/
+>>  
+>> +#include "catalog/dpu_1_7_msm8996.h"
+>> +
+>>  #include "catalog/dpu_3_0_msm8998.h"
+>>  #include "catalog/dpu_3_2_sdm660.h"
+>>  #include "catalog/dpu_3_3_sdm630.h"
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+>> b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+>> index 37e18e820a20..69f089431901 100644
+>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+>> @@ -831,6 +831,7 @@ struct dpu_mdss_cfg {
+>>         const struct dpu_format_extended *vig_formats;
+>>  };
+>>  
+>> +extern const struct dpu_mdss_cfg dpu_msm8996_cfg;
+>>  extern const struct dpu_mdss_cfg dpu_msm8998_cfg;
+>>  extern const struct dpu_mdss_cfg dpu_sdm630_cfg;
+>>  extern const struct dpu_mdss_cfg dpu_sdm660_cfg;
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+>> b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+>> index d1e2143110f2..58933d66bace 100644
+>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+>> @@ -1435,6 +1435,7 @@ static const struct dev_pm_ops dpu_pm_ops = {
+>>  };
+>>  
+>>  static const struct of_device_id dpu_dt_match[] = {
+>> +       { .compatible = "qcom,msm8996-mdp5", .data =
+>> &dpu_msm8996_cfg, },
+>>         { .compatible = "qcom,msm8998-dpu", .data = &dpu_msm8998_cfg,
+>> },
+>>         { .compatible = "qcom,qcm2290-dpu", .data = &dpu_qcm2290_cfg,
+>> },
+>>         { .compatible = "qcom,sdm630-mdp5", .data = &dpu_sdm630_cfg,
+>> },
+>> diff --git a/drivers/gpu/drm/msm/msm_drv.c
+>> b/drivers/gpu/drm/msm/msm_drv.c
+>> index 9c33f4e3f822..df1ad00541f5 100644
+>> --- a/drivers/gpu/drm/msm/msm_drv.c
+>> +++ b/drivers/gpu/drm/msm/msm_drv.c
+>> @@ -984,6 +984,7 @@ module_param(prefer_mdp5, bool, 0444);
+>>  
+>>  /* list all platforms supported by both mdp5 and dpu drivers */
+>>  static const char *const msm_mdp5_dpu_migration[] = {
+>> +       "qcom,msm8996-mdp5",
+>>         "qcom,sdm630-mdp5",
+>>         "qcom,sdm660-mdp5",
+>>         NULL,
+>> 
 
