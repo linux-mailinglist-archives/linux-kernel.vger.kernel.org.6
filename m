@@ -1,115 +1,155 @@
-Return-Path: <linux-kernel+bounces-341904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5D1E988812
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:18:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C3598881A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEC171C20F40
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:18:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12CEBB2164D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70AD11411E0;
-	Fri, 27 Sep 2024 15:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UssodlJs"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E753A1C172B;
+	Fri, 27 Sep 2024 15:19:16 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D45149C6D
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 15:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C92157A72;
+	Fri, 27 Sep 2024 15:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727450291; cv=none; b=ALE2un1lH2PuVscAjjdMupxSrvV0HvupqCbK8F8QkzVrrqU7mtj9so6byUkgtZqdxXrdaPfuXjSzyz+pPZofOzo11FnXPqmErjGH93XWwJVoqtZVRDSKkKMX0Og84yKK04PXla50+u2egRW13XxSO0sZu42tnvLYHZqw9MQEE7w=
+	t=1727450356; cv=none; b=UxNeYrg/xnjR3rnDfFIwRnDGFSs5+XflHcC+0xaa8UxexrnOIFAP5u7QEpd6erWkHxSvIDqkLyJDgQWToh72gGSEw7/CdQXxvjbDP/Fj1ol1U2trZJ69YCUDaSWbdN7CS1jw4xBD3v/ncaneAuGk/VPZxXDfjPBhcFWqKz/jqHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727450291; c=relaxed/simple;
-	bh=3SScFSnuQe1/FEIIg37+hL2l/VXFwiSz3zKaA3JRboI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hXRV3DccWcYxKX4kddME+CW6Loia4lVfbQXw5OF0wQMkjWBzeVSwG8TPG/MOJwna3l/vXisPMDibUqZqjfQVX3OvcP+uuB0vdM9fMX6NNgiEkK161KlACY+Sui5awKL/9npgqRz4gk6IpAMP+1o4Jzy3fxyQ5prgKiooCAMgEac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UssodlJs; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c5cf26b95aso2523637a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:18:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727450289; x=1728055089; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3SScFSnuQe1/FEIIg37+hL2l/VXFwiSz3zKaA3JRboI=;
-        b=UssodlJsW0jP0ji5x+5hbJeJzAN8277K8t6p8IUnNnjC61FeE2dhuvUsDN/CxEGrOO
-         /uhThFyw0rfhbrzHXLr2RSfq148ysuzhMbtQLYc1OHT2d9vbggcmuxV9hjcsb1XtQvMm
-         PG0C7aZDFbpStiYSRtvAra+wWIWH0ursRznG5EPr8yvvjYDsd85bsjvZA89pCvDG5wVd
-         bcBia7oRDHYRNj07lD8CTeCxeDFNko5gJfzVtlbCRVUOPPqOx9rfYeOS/dCzC9aLlwCW
-         uS9805iq55DKZ5335Jo+KTzi22ZbNno9Pt9/QMcG6HZxuY47kk/FQEpSORoIsO7frsAq
-         3hjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727450289; x=1728055089;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3SScFSnuQe1/FEIIg37+hL2l/VXFwiSz3zKaA3JRboI=;
-        b=tnL0LglT4ItDK+tCk3nwT332sBgxBcdYFNDGXY+pTsmy+irhZPHeM3C7CZVCyz7dzP
-         Woss5Tdxo5lP6m8BVzM0rlbgiWs9JRCVKTlIt162QAZ7lD8XHGNfBcObHWYKmfYzun2r
-         f4SGMy0N8i4eoDMgm8YwQ4GGk5TDNY3HfVt+vay6qa+aIPrCrG1HEjtB7Vja3ysNRS0u
-         2VDm2zCDCGEtm78FkvRg/kowah8a1gLJ75e9qpE+OxCiQ+1FSoMDmM4yXiO7Jqas1TRQ
-         LTj5XIpAMWCRv8XMIzA3gkh2Eu7JGY9Xy8egM7o25y+MO2HCVhj7qHYqgLxGGXY4qraJ
-         YNEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXETsTXRt2AJyofomQV6hApvWBmK2OWsdnDQrJciHM8TDwemEOcpWO8SZtxUudABlqf/XPjnggRKvKAIpk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0zBjjgoFVRIzvrJPnxAqYJz8Q0Ri++rGU9MQfyHCvO/gMuxdy
-	3yNszAVjPSPlLi/ZBdGxf0KP28f+iqnuBeFtA0ssiRN6KY2L+fcLvHwTMhdgDahahRGkqoLknuU
-	Z3dRDS+E47JWqUGeaLhi7QDHUJqE=
-X-Google-Smtp-Source: AGHT+IFF4jzFwyyncN/Gcd8KYVGvRKHxLqpOVkAtttPgMcZJMOGBXawqXWQp70Q2kfc8vVHlPFbO41eS4MAZmwRVFOU=
-X-Received: by 2002:a05:6402:35c6:b0:5c5:c4b1:883c with SMTP id
- 4fb4d7f45d1cf-5c8824ef708mr2520367a12.4.1727450288449; Fri, 27 Sep 2024
- 08:18:08 -0700 (PDT)
+	s=arc-20240116; t=1727450356; c=relaxed/simple;
+	bh=YLFzYQuBP3w8Ms/jaGDp8hR9hPfwcZeRccyqsB5OIJE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZWAOJDo0wdrjVi38Pnxqxxr9fZGmU8KdZ4l4ORgQw+g9rG2t0AdQ3XrL6B6ly912eGzv+MWTIPNxLNb8cZ229XXATJNr5SK1qhhocRwasGxQxQi+rfH9lVuxPMAxFEXW7H4mPn6RQmOk8XdWm+QuQMH/kKbR63F7W1sFxuigAz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48RAdYlM032580;
+	Fri, 27 Sep 2024 15:19:04 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 41um4xmvgb-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 27 Sep 2024 15:19:04 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 27 Sep 2024 08:19:02 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Fri, 27 Sep 2024 08:19:01 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <lizhi.xu@windriver.com>
+CC: <syzbot+8a192e8d090fa9a31135@syzkaller.appspotmail.com>,
+        <linux-kernel@vger.kernel.org>, <konishi.ryusuke@gmail.com>,
+        <linux-nilfs@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH] nilfs2: add ratelimiting to nilfs2 message
+Date: Fri, 27 Sep 2024 23:19:00 +0800
+Message-ID: <20240927151900.2596508-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240927134620.2081991-1-lizhi.xu@windriver.com>
+References: <20240927134620.2081991-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+fCnZfaZGowWPE8kMeTY60n7BCFT2q4+Z2EJ92YB_+7+OUo7Q@mail.gmail.com>
- <20240922145757.986887-1-snovitoll@gmail.com> <CACzwLxg7_HPxbjLT1v+dHG=V0wAcUJYZvqdcdLBD9xhLgNUmqQ@mail.gmail.com>
-In-Reply-To: <CACzwLxg7_HPxbjLT1v+dHG=V0wAcUJYZvqdcdLBD9xhLgNUmqQ@mail.gmail.com>
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Date: Fri, 27 Sep 2024 20:18:46 +0500
-Message-ID: <CACzwLxjpH=n5RDWnQCPZjH8i1GZAAbG-6BzuWCcVf99=qTO7HQ@mail.gmail.com>
-Subject: Re: [PATCH v5] mm: x86: instrument __get/__put_kernel_nofault
-To: andreyknvl@gmail.com
-Cc: akpm@linux-foundation.org, bp@alien8.de, brauner@kernel.org, 
-	dave.hansen@linux.intel.com, dhowells@redhat.com, dvyukov@google.com, 
-	glider@google.com, hpa@zytor.com, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mingo@redhat.com, 
-	ryabinin.a.a@gmail.com, tglx@linutronix.de, vincenzo.frascino@arm.com, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: nakrBJ0QlNptnxEb3qeSZ387IXUwW2kF
+X-Authority-Analysis: v=2.4 cv=e+1USrp/ c=1 sm=1 tr=0 ts=66f6cce8 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=EaEq8P2WXUwA:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=LDpvdhc8yH1BBIb8LwkA:9 a=cQPPKAXgyycSBL8etih5:22
+ a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: nakrBJ0QlNptnxEb3qeSZ387IXUwW2kF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-27_06,2024-09-27_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1011
+ spamscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0 phishscore=0
+ malwarescore=0 bulkscore=0 suspectscore=0 mlxlogscore=999
+ priorityscore=1501 classifier=spam authscore=0 adjust=0 reason=mlx
+ scancount=1 engine=8.21.0-2408220000 definitions=main-2409270102
 
-On Mon, Sep 23, 2024 at 11:09=E2=80=AFAM Sabyrzhan Tasbolatov
-<snovitoll@gmail.com> wrote:
->
-> Instead of adding KASAN, KCSAN checks per arch macro,
-> here is the alternative, generic way with a wrapper.
-> I've tested it on x86_64 only, going to test on arm64
-> with KASAN_SW_TAGS, KASAN_HW_TAGS if I can do it in qemu,
-> and form a new patch for all arch
-> and this PATCH v5 for x86 only can be abandoned.
->
-> Please let me know if this wrapper is good enough,
-> I will see in kasan_test.c how I should use SW/HW_TAG, probably,
-> they should be a separate test with
-> KASAN_TEST_NEEDS_CONFIG_ON(test, CONFIG_KASAN_SW_TAGS);
-> ---
+Syzbot report a task hung in vcs_open.
+When rec_len too small in nilfs_check_folio, it can result in a huge flood
+of messages being sent to the console. It eventually caused tty to hung when
+retrieving the console_lock().
 
-Hello,
+Reported-by: syzbot+8a192e8d090fa9a31135@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=8a192e8d090fa9a31135
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+ fs/nilfs2/dir.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-I've sent a different patch [1] to support all arch checks,
-tested on x86_64 and arm64 with SW/HW_TAGS.
+diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
+index fe5b1a30c509..0a89dda75414 100644
+--- a/fs/nilfs2/dir.c
++++ b/fs/nilfs2/dir.c
+@@ -32,6 +32,7 @@
+ #include <linux/pagemap.h>
+ #include "nilfs.h"
+ #include "page.h"
++#include <linux/ratelimit.h>
+ 
+ static inline unsigned int nilfs_rec_len_from_disk(__le16 dlen)
+ {
+@@ -115,6 +116,7 @@ static bool nilfs_check_folio(struct folio *folio, char *kaddr)
+ 	size_t limit = folio_size(folio);
+ 	struct nilfs_dir_entry *p;
+ 	char *error;
++	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL * 5, 1);
+ 
+ 	if (dir->i_size < folio_pos(folio) + limit) {
+ 		limit = dir->i_size - folio_pos(folio);
+@@ -148,9 +150,11 @@ static bool nilfs_check_folio(struct folio *folio, char *kaddr)
+ 	/* Too bad, we had an error */
+ 
+ Ebadsize:
+-	nilfs_error(sb,
+-		    "size of directory #%lu is not a multiple of chunk size",
+-		    dir->i_ino);
++	if (__ratelimit(&rs)) {
++		nilfs_error(sb,
++			    "size of directory #%lu is not a multiple of chunk size",
++			    dir->i_ino);
++	}
+ 	goto fail;
+ Eshort:
+ 	error = "rec_len is smaller than minimal";
+@@ -167,18 +171,22 @@ static bool nilfs_check_folio(struct folio *folio, char *kaddr)
+ Einumber:
+ 	error = "disallowed inode number";
+ bad_entry:
+-	nilfs_error(sb,
++	if (__ratelimit(&rs)) {
++		nilfs_error(sb,
+ 		    "bad entry in directory #%lu: %s - offset=%lu, inode=%lu, rec_len=%zd, name_len=%d",
+ 		    dir->i_ino, error, (folio->index << PAGE_SHIFT) + offs,
+ 		    (unsigned long)le64_to_cpu(p->inode),
+ 		    rec_len, p->name_len);
++	}
+ 	goto fail;
+ Eend:
+ 	p = (struct nilfs_dir_entry *)(kaddr + offs);
+-	nilfs_error(sb,
+-		    "entry in directory #%lu spans the page boundary offset=%lu, inode=%lu",
+-		    dir->i_ino, (folio->index << PAGE_SHIFT) + offs,
+-		    (unsigned long)le64_to_cpu(p->inode));
++	if (__ratelimit(&rs)) {
++		nilfs_error(sb,
++			    "entry in directory #%lu spans the page boundary offset=%lu, inode=%lu",
++			    dir->i_ino, (folio->index << PAGE_SHIFT) + offs,
++			    (unsigned long)le64_to_cpu(p->inode));
++	}
+ fail:
+ 	return false;
+ }
+-- 
+2.43.0
 
-This [PATCH v5] for the x86 only can be ignored.
-
-[1] https://lore.kernel.org/linux-mm/20240927151438.2143936-1-snovitoll@gma=
-il.com/T/#u
 
