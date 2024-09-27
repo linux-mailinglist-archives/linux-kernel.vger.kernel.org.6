@@ -1,207 +1,183 @@
-Return-Path: <linux-kernel+bounces-341646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528D99882F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:01:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 336FB9882F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7D051F223EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:01:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6AF52824F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B778D188003;
-	Fri, 27 Sep 2024 11:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC62185E7A;
+	Fri, 27 Sep 2024 11:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="P9OowQtc"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Sa0op7Dr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HaO1PFwd"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D4013D889;
-	Fri, 27 Sep 2024 11:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195E2186E29;
+	Fri, 27 Sep 2024 11:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727434870; cv=none; b=esbLC/P4tHQn5C0ni/pS5BWg74itNiTsGd8IAHdA5sVGpFEBn25xAR8x5bQa+a0UJxTMzVrz7iytRetVWsYDUVI9E1MYGhMnFtGjFzzZMMS8FPkdbwJaMhc0URQXL0WQgjF58oNp6yvrp8y5Vyl02MnFQIr0CU0RQDzIJnpuSnU=
+	t=1727434810; cv=none; b=b82/j6oyl2marpwpKisQHb+d4FYqo7RBD997pt0Bd+6PvW3rtoCN44yM/K1FL7/GWVEXGvVCvJBkhkupSjk1/ltQ8SEfIYKelcdSSyWXmRYX9WQ31W9EHa8wD97IR67OCWF+DCi8tAizDTP1na05ZZEbex9p6yFxQtCoahpM5Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727434870; c=relaxed/simple;
-	bh=w+koXmB7BOFclIQM2otysNtBd+8qkrsHPTo5gWSR9w0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HvCQ8Sy5usDxqFf8XrAG1tgCOGnpniIgrRO01x67r6qUnHJgSfZKj2+Y6HWvOoWmjHlNNWin6WR05Z0gGNTtw5n7w6TXmAWPw8ncTd4l844z6QCg6h0B5m9ta8AnS+q8OZXElk7Y6hGIQewOMAEG+exVgEblv/W8aQUlOrRpEIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=P9OowQtc; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727434866;
-	bh=w+koXmB7BOFclIQM2otysNtBd+8qkrsHPTo5gWSR9w0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=P9OowQtcg/QxmmMSafMStk7GwzfeXc0VlR4KwNBDSBeU9FcEPgC+OORMGH0KNgxEI
-	 80IVtAE4VvFyERUYPQwMwDGyQVqa4diNUZ3iTTWC9iUvIUG7HlTMng5UvPsNcLm3vx
-	 LWTaYRGt1Wq95ppZ3Syp3hzgWHbjTWLAm7k+vlz5FvAWwPmAzoBETI8LbX9UtizMgz
-	 aSMVNjXoHUWD5HTyBeGYAR/aEC3ZZCrXwtkqCUTQKik2gWlLwmysnSB3XAgcmwAsVb
-	 Od+NdeO+Gu9NBati/W1zCdsLNvNBB9B1NLaKQc7oH/FXFlk0vJ6K0OtrHMcmS+hAgP
-	 Arw3Innm1ID9g==
-Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XFSFG1pQRz1MqK;
-	Fri, 27 Sep 2024 07:01:06 -0400 (EDT)
-Message-ID: <8aceaf4f-5578-4fca-8be7-3448d7b89721@efficios.com>
-Date: Fri, 27 Sep 2024 12:59:33 +0200
+	s=arc-20240116; t=1727434810; c=relaxed/simple;
+	bh=lcNikPtKAxq/dN0ibeXX8gwGwA4AaxcYAE0tjk+fG1c=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=gsgnIv/A0HUhZEjDkXCz2b6w4LOOO4hiuewFcUGJ+nlHyY1hyVvjRaJxAKeKVHnp7Sf/pdrxukw0SarlxdC9pYCCw80JxTyeN6WnmRCH67W8qwBMJ6iU/zwmFDH6b8+BZr1JyspDrE7I76Lly0KDddPZ1pyLS8tsEOQkM6pA0OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Sa0op7Dr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HaO1PFwd; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 18FDF1380712;
+	Fri, 27 Sep 2024 07:00:07 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 27 Sep 2024 07:00:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727434807;
+	 x=1727521207; bh=pM2APWPqWSep6TrEUhdTADKW01Hs8FHzTKdjsf1tTCg=; b=
+	Sa0op7Dr+YKcZT4oSmDjVDjyMXp++/lhg9SG1pk3fix1TZsDR1PQWsO3JOSQ7ZTE
+	TG+bn6JASXdbNtP2wemJRrtSYzFtLA0j+/QrA4V/JcTksSDprGBDgx7jJdcAvAF5
+	bvMbk+FESfTZzdv2Wl6E0oUr1i2mpmwCb0/AmMhqu57jWG48qSo5cjfOiXdO9Oqp
+	MRpgpIrqaDx/SLmVkP+nX6NwQ/EfrptteLz2XeTOgt7ANclRlZVb8oiRlzJwcf+g
+	z9Qtq0qarFNckTLUBu0a8kFxg3KwpIrFH6MTfFXfVmNCTq5vh08Ehlwe/npM5eB5
+	XvDNY1hp7zYHB0A/0om7MQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727434807; x=
+	1727521207; bh=pM2APWPqWSep6TrEUhdTADKW01Hs8FHzTKdjsf1tTCg=; b=H
+	aO1PFwdJbcwb/BehiJ5iwCUUWbl9Htv1oPV7KPmK+sSA4EgddZMkdtohxsYgpu5O
+	DR+Q0Dz2HG67E3K5tLab2uGGg3gq2PmzXu1ebKzBHtmHORuXSJrmrwenqajM5gRk
+	Ee9DeYsfwljro3NMVgJoROOsELCctNMwdDLI+Y2fH4DqGcThMKi6b0M49G4IkqpG
+	Q0MKDbXwloEJ2ic68aHg5sTn9RSQvrrz2LuCFxoYvtFmnELPcYBzkmPU0ggpv+gW
+	eAyZCfBQOKlFMIqE5TtmnVQkuLwbqPyZ3nbNQtHvRz3DD0jsGbkt0QrvvHLhm+kU
+	m8lLxabveKBu30AwKHZUw==
+X-ME-Sender: <xms:NpD2ZqeoXQiUdMM4N8bET5a2qBVYW_jNcmmobJya1kyF0ZzAQheh6g>
+    <xme:NpD2ZkP1UElTwyTzTPb6rPqh-VwWjpMkNUMzzD8Axor6jBICpWo1SYJkPPbd03moo
+    E_w8vagQGjFgCEvsY8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtledgfeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddv
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrg
+    hssegrrhhmrdgtohhmpdhrtghpthhtohepjhhvvghtthgvrheskhgrlhhrrgihihhntgdr
+    tghomhdprhgtphhtthhopeihshhiohhnnhgvrghusehkrghlrhgrhihinhgtrdgtohhmpd
+    hrtghpthhtoheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehguhhorhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhn
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrd
+    hinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhoohhnghgrrhgthheslhhishht
+    shdrlhhinhhugidruggvvh
+X-ME-Proxy: <xmx:NpD2Zrj39h4VXYFaMgI8sVlcLpAxmyDOujVyG1ZgjUZ3BT1CGw1SlQ>
+    <xmx:NpD2Zn81OkRaBTLxkF_TIr7PeiNMt_LEThqUoLdGK4t0gQ1yr3D7eg>
+    <xmx:NpD2ZmulMAj_Gpr4hsFXlDcuEbDVjnHZrWLGKMLnPdfXSbCQskLxvw>
+    <xmx:NpD2ZuEs3_rbzNrhVBC-fy7VEXLVJNrvXFvYi3hodc8RvZeUmHKIHg>
+    <xmx:N5D2ZuE5jmWpEuas5KCvyuGrRCcFCPV7idgmVmfWNgU5dFBTyKnkVfC5>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 661A92220071; Fri, 27 Sep 2024 07:00:06 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-To: Boqun Feng <boqun.feng@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
- lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>, rostedt <rostedt@goodmis.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>, Vlastimil Babka
- <vbabka@suse.cz>, maged.michael@gmail.com,
- Neeraj Upadhyay <neeraj.upadhyay@amd.com>
-References: <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
- <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
- <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
- <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
- <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
- <54487a36-f74c-46c3-aed7-fc86eaaa9ca2@huaweicloud.com>
- <CAHk-=wifOW0VEh6uL3sHSaAUA46YmPDS9Wh5HnNC2JyOiXVA=Q@mail.gmail.com>
- <ZvX12_1mK8983cXm@boqun-archlinux>
- <0b262fe5-2fc5-478d-bf66-f208723238d5@efficios.com>
- <e748893f-28a3-4b8a-a848-cfb1173ab940@app.fastmail.com>
- <ZvY0gG2dCJApPbp5@boqun-archlinux>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <ZvY0gG2dCJApPbp5@boqun-archlinux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Date: Fri, 27 Sep 2024 10:59:43 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Julian Vetter" <jvetter@kalrayinc.com>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ guoren <guoren@kernel.org>, "Huacai Chen" <chenhuacai@kernel.org>,
+ "WANG Xuerui" <kernel@xen0n.name>,
+ "Andrew Morton" <akpm@linux-foundation.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ loongarch@lists.linux.dev, "Yann Sionneau" <ysionneau@kalrayinc.com>
+Message-Id: <7100d48e-2b11-4d7a-8c5d-48900e8d4916@app.fastmail.com>
+In-Reply-To: <b9f3f692-d4fa-473b-9bdf-4ea73b22ccde@kalrayinc.com>
+References: <20240925132420.821473-1-jvetter@kalrayinc.com>
+ <20240925132420.821473-2-jvetter@kalrayinc.com>
+ <f47e66f9-ec20-4e75-b88f-d412339e797d@app.fastmail.com>
+ <b9f3f692-d4fa-473b-9bdf-4ea73b22ccde@kalrayinc.com>
+Subject: Re: [PATCH v6 1/5] Consolidate __memcpy_{to,from}io and __memset_io into
+ iomap_copy.c
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 2024-09-27 06:28, Boqun Feng wrote:
-> On Fri, Sep 27, 2024 at 09:37:50AM +0800, Boqun Feng wrote:
->>
->>
->> On Fri, Sep 27, 2024, at 9:30 AM, Mathieu Desnoyers wrote:
->>> On 2024-09-27 02:01, Boqun Feng wrote:
->>>> 	#define ADDRESS_EQ(var, expr)							\
->>>> 	({										\
->>>> 		bool _____cmp_res = (unsigned long)(var) == (unsigned long)(expr);	\
->>>> 											\
->>>> 		OPTIMIZER_HIDE_VAR(var);						\
->>>> 		_____cmp_res;								\
->>>> 	})
->>>
->>> If the goal is to ensure gcc uses the register populated by the
->>> second, I'm afraid it does not work. AFAIU, "hiding" the dependency
->>> chain does not prevent the SSA GVN optimization from combining the
-> 
-> Note it's not hiding the dependency, rather the equality,
-> 
->>> registers as being one and choosing one arbitrary source. "hiding"
-> 
-> after OPTIMIZER_HIDE_VAR(var), compiler doesn't know whether 'var' is
-> equal to 'expr' anymore, because OPTIMIZER_HIDE_VAR(var) uses "=r"(var)
-> to indicate the output is overwritten. So when 'var' is referred later,
-> compiler cannot use the register for a 'expr' value or any other
-> register that has the same value, because 'var' may have a different
-> value from the compiler's POV.
-> 
->>> the dependency chain before or after the comparison won't help here.
->>>
->>> int fct_hide_var_compare(void)
->>> {
->>>       int *a, *b;
->>>
->>>       do {
->>>           a = READ_ONCE(p);
->>>           asm volatile ("" : : : "memory");
->>>           b = READ_ONCE(p);
->>>       } while (!ADDRESS_EQ(a, b));
->>
->> Note that ADDRESS_EQ() only hide first parameter, so this should be ADDRESS_EQ(b, a).
->>
-> 
-> I replaced ADDRESS_EQ(a, b) with ADDRESS_EQ(b, a), and the compile
-> result shows it can prevent the issue:
+On Fri, Sep 27, 2024, at 08:19, Julian Vetter wrote:
+> On 26.09.24 09:14, Arnd Bergmann wrote:
+>>> +#ifndef __memcpy_fromio
+>>> +void __memcpy_fromio(void *to, const volatile void __iomem *from,
+>>> size_t count);
+>>> +#endif
+>>> +
+>>> +#ifndef __memcpy_toio
+>>> +void __memcpy_toio(volatile void __iomem *to, const void *from, size_t
+>>> count);
+>>> +#endif
+>>> +
+>>> +#ifndef __memset_io
+>>> +void __memset_io(volatile void __iomem *dst, int c, size_t count);
+>>> +#endif
+>> 
+>> I'm not entirely sure about the purpose of the #ifdef here, since
+>> nothing ever overrides the double-underscore versions, both before
+>> and after your patches.
+>> 
+>> Unless I'm missing something here, I think a more logical
+>> sequence would be:
+>> 
+>> 1. add the definitions in this file without the underscores,
+>
+> by: "...in this file..." you mean the 'lib/iomap_copy.c' file, right? 
 
-I see, yes. It prevents the issue by making the compiler create
-a copy of the value "modified" by the asm before doing the equality
-comparison.
+Yes
 
-This means the compiler cannot derive the value for b from the first
-load when b is used after after the equality comparison.
+> But what if an architecture does not select 'CONFIG_HAS_IOMEM'. Then 
+> 'iomap_copy.c' is not compiled and we don't have an implementation, 
+> right?
+> I tried to compile with ARCH=um, with some MTD chip driver, like 
+> the robot did and it indeed fails, because um has 'NO_IOMEM' set. and 
+> the driver uses memcpy_fromio. I mean it's a strange combination, 
+> because apparently we try to use IO memory? Is this an invalid 
+> combination? But shouldn't the driver then 'depends on HAS_IOMEM'?
 
-The only downside of OPTIMIZER_HIDE_VAR() is that it adds an extra
-"mov" instruction to move the content across registers. I don't think
-it matters performance wise though, so that solution is appealing
-because it is arch-agnostic.
+Yes, I think that would be the best way to do it. Alternatively,
+arch/um could provide a dummy implementation of these.
 
-One small improvement over your proposed solution would be to apply
-OPTIMIZER_HIDE_VAR() on both inputs. Because this is not a volatile
-asm, it is simply optimized away if var1 or var2 is unused following
-the equality comparison. It is more convenient to prevent replacement
-of both addresses being compared by the other rather than providing
-the guarantee only on a single parameter:
+>> 3. convert the other architectures, removing both the
+>>     implementations and the prototypes.
+>> 
+>
+> I have removed the prototypes and have aligned the function arguments in 
+> m68k, alpha, parisc, and sh, which all have their own implementation, 
+> but had slightly different function arguments.
 
-#define OPTIMIZER_HIDE_VAR(var)			\
-         __asm__ ("" : "+r" (var))
+Sorry for being unclear, I meant only the architectures that
+you are already touching.
 
-#define ADDRESS_EQ(var1, var2)			\
-({						\
-	bool _____cmp_res = (var1) == (var2);	\
-						\
-	OPTIMIZER_HIDE_VAR(var1);		\
-	OPTIMIZER_HIDE_VAR(var2);		\
-	_____cmp_res;				\
-})
+> Btw, I have not removed 
+> their implementations because some of them seem to have optimized 
+> implementations (e.g., alpha and m68k), that I didn't want to touch. But 
+> you're right others (e.g., sh) just do byte wise accesses and have a 
+> comment "This needs to be optimized." Maybe I should remove these and 
+> let them use the new version?!
 
-Thanks,
+Ideally we should end up with only one copy, but I'd leave the
+rest for a future cleanup. In particular, alpha probably still
+needs a custom function.
 
-Mathieu
-
-> 
-> gcc 14.2 x86-64:
-> 
-> fct_hide_var_compare:
-> .L2:
->          mov     rcx, QWORD PTR p[rip]
->          mov     rdx, QWORD PTR p[rip]
->          mov     rax, rdx
->          cmp     rcx, rdx
->          jne     .L2
->          mov     eax, DWORD PTR [rax]
->          ret
-> 
-> gcc 14.2.0 ARM64:
-> 
-> fct_hide_var_compare:
->          adrp    x2, p
->          add     x2, x2, :lo12:p
-> .L2:
->          ldr     x3, [x2]
->          ldr     x1, [x2]
->          mov     x0, x1
->          cmp     x3, x1
->          bne     .L2
->          ldr     w0, [x0]
->          ret
-> 
-> Link to godbolt:
-> 
-> 	https://godbolt.org/z/a7jsfzjxY-- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+      Arnd
 
