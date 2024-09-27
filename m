@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-341546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4310198817C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0B3988180
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE9B5B2264E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:42:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC541B20DC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8D21BAEDA;
-	Fri, 27 Sep 2024 09:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8929F1BB6A8;
+	Fri, 27 Sep 2024 09:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i5d0hRa/"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bgxBW2XG"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9E71BA895
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8F61BAEFD
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727430139; cv=none; b=GkTjSYgsC/JR0Od3MTfxPIRnshlh9UzxBGTltkKKiRJOYRD3HEycDnKjoHd+2G8ImLaKfdXQ6DQzN0qBZKJvc5oFVAw38ubWvv2k9NUpDTsCiV6+r1k1FpPPjh4O/T4/a44y6j+xR0zEi8//71ICDNuR+ro0hReeNSFx/DjfQ0Q=
+	t=1727430142; cv=none; b=fKoXDcArNjkacxZ8A2xIQ8Wp5GaI+ORThd1XJ1Lp3tv6tr0f85fvoX05vvKqfO2Ljhdzddm+2bw5Am1PoIBh0csYRC6RunHKAcgZhmW0ncomtH+oqXAOYLT57S0DNPaPspfX2Ghqw76C+dw/WuEH+mKMH8BGlzf6q7/6YwwONhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727430139; c=relaxed/simple;
-	bh=EFR/ANWPCKmDg0b6+GGTqssw5qCBOHgmT1Lnn5oCYQI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mMByBv+gUoGHlA9eZzuWMh3DXnBsdL4hjM+TQwyj6sFqh6JiqFheMvpaXNcjwL9vKxyodC3ubSatZNPqRjrPD02GokXpTMZtYicIbCZS4VCMHX1JNe/N8sbgJzYlA5oeVcmUFTiCqxS3p5jhEHqN24pWlzHjazbFmMQ/XA+IJ54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=i5d0hRa/; arc=none smtp.client-ip=209.85.219.48
+	s=arc-20240116; t=1727430142; c=relaxed/simple;
+	bh=NzGO/n5w0inQUSk9Mrg2JWrHNdom3NBH7egriAh15og=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=O2KPkpBNyH2wAUEUzD2zJQs7R6u5PpGvtUIbHeFpSZ6KdFRE3n0wpUkIXfTXYDgERVCrEZFfne6yjDgVXtVhgIuKfklt23EHy28h7wqpNh3ah0wH9YFgx2TOOsy3pBHvgmqIWvhqDsrK0Kwnhlmy1jZsFbnFNJg6VRS753Zw1yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bgxBW2XG; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cb2dffcdbbso15590616d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:42:17 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-45aeed46f5eso8478871cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:42:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727430137; x=1728034937; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=viz2TzhohWKxeTATpvOhL62kLKmbL4Cojnm7H5/tiU4=;
-        b=i5d0hRa/GsArRpCJM5fN5CvlUpc9X4tZaSaDW+P2uOcYBxR9Xt/buJN3ibtaPjN4MF
-         n2nf7IKG0jtpiUkTxEVj7BQO3q54KFbARHO8wGF+DTZIFgDIxdXW3oNuHDIARTIuJcfF
-         xKEDL34Mmh6210/W45/Bv2ZLWwKCjYC6fmTQk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727430137; x=1728034937;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=chromium.org; s=google; t=1727430139; x=1728034939; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=viz2TzhohWKxeTATpvOhL62kLKmbL4Cojnm7H5/tiU4=;
-        b=Q+qcoa0au4HV1VhX5c2Qas5j4lTgO2Ds5Iuc7EfIRvp/jzTKQqhZU7J8wUHT6IN6Ld
-         KtcsKTdSqHfOMHSSAxL6vQeuaknvX+FI7MgmbI555ZKr6X+tVacKt9w1Z0gjwZEPHIol
-         ALgnjI4NFVghYyXwSzkzxXaJcUNA+iNj8+IdoVsBXX4iUFFM6Fp9qjNDNib518NglNon
-         oBMF88+Vb63/T5H6XyIqTpp1IP4vJAj1VoEexV9+Gfz62s98r0TPkG3NBWYY1p83641O
-         a9ifjwdw5fEeNHtF0l1g2CYJbFl/fWao4pK0PDlIqrYNXTE4FMYxNtu0btlI3jFHetET
-         ZouQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvHIhOTTVDiKSp0AQP09XnHPtYDekicZw6iavjdiMuRqD54QeWWuFkr/WRd8qWzJdE5V+BOb4zpxEnMM4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1gs13j1VzL8oZeZmkbZqHcxRAN4u04+iXEGYHK2O4M+mJkw5X
-	rA0WRAwgBrQW4XVGjniPZdQK8O+CC/9x8fSkXAStHLVGVeJOJPNCzXZrgqkLeA==
-X-Google-Smtp-Source: AGHT+IFsTN8CFq2x0Pg4RmTcoxyR4STd3A5CNEsdWGLsHPgu10qVTYe1JETF4NlcDf2XSH+FN50qMA==
-X-Received: by 2002:a05:6214:2b91:b0:6ca:756d:68a8 with SMTP id 6a1803df08f44-6cb3b5f853amr31175796d6.15.1727430136764;
-        Fri, 27 Sep 2024 02:42:16 -0700 (PDT)
+        bh=YwJYpIvOPMah9ocVmXZ/vnejPzGmcFsHFsHmC+ou0no=;
+        b=bgxBW2XG1nkeaFkLtiLwwW/ZrInM6i1enQVEFDZqz104Fc6EOuNCRje4+0W2PGRZMl
+         4CxozEV8VpsUiRzFHN39VAw3DaejLCS2StWRb281CMkpCqj8QAaeLRFhDKK/CI00v101
+         P0NbTvT4PypcAQ7zlKSZiit+55Ffo6yJkhN7s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727430139; x=1728034939;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YwJYpIvOPMah9ocVmXZ/vnejPzGmcFsHFsHmC+ou0no=;
+        b=QMJwDWQPtOEhvngFR1wCfyfBdY7Zrj1QbaTuECevADeC62sdPVQ0kCGsAMn7kudSEH
+         wAUlLlahqelydPzeZ+9AVvcbBejMSfphoU6u+cgv25hyXGruUyoINt/DjVTT2TnOg3+2
+         9QpbBfd22nIYSlk0KSdftVRIgoTrIXV1TjBB43OWpwx4Sdd5MwpBQY27OTGjN66Rjvz6
+         iv8PGgNQ8blOV8qMwmaQg8ZCTDsTtYEcDN92iSJ0xdNKmPNzjErfpPQDfRnzoaFw+4GF
+         6qnK5O3/RKT5DZPya5Gv1Eo8/VL6d0t+47lXc0jqSUdconEsG1sj2aUz2meOKSYRCAtX
+         6wCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUo4KoItSC2CyNAKP12vYWDTRSTyllhWBwpCv5/qNzf5Fb0fKfHPJP+1Yyyf07SZpLsm+9lTI3Wd7XKCYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5DLl1DBoj5X+DUCJrvJdh+KYqbQJHmvGrhjSU+5GMxfjDqh9I
+	++AX05WvpFx0l/XN103ixfYAaYFI6Ilke9Vu2dqXjfy14RCygrPnmHdSqPzPEQ==
+X-Google-Smtp-Source: AGHT+IEnh+IrKYShpTgUNIZMuZaNaBR2/h1owwwElW96gX0SdsoHqfJeYKcEmzOAdy8nirRvvS/+Hg==
+X-Received: by 2002:a05:6214:5789:b0:6c5:32a5:567a with SMTP id 6a1803df08f44-6cb3b5b93ddmr40210646d6.1.1727430139367;
+        Fri, 27 Sep 2024 02:42:19 -0700 (PDT)
 Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b5ff594sm7231606d6.14.2024.09.27.02.42.14
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b5ff594sm7231606d6.14.2024.09.27.02.42.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 02:42:15 -0700 (PDT)
+        Fri, 27 Sep 2024 02:42:17 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Subject: [PATCH 0/3] media: static-analyzers: Fix 6.12-rc1 cocci warnings
-Date: Fri, 27 Sep 2024 09:42:12 +0000
-Message-Id: <20240927-cocci-6-12-v1-0-a318d4e6a19d@chromium.org>
+Date: Fri, 27 Sep 2024 09:42:13 +0000
+Subject: [PATCH 1/3] media: ti: cal: Use str_up_down()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,9 +74,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPR99mYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDSyNz3eT85ORMXTNdQyNdk2RTc8OkZItUy5QUJaCGgqLUtMwKsGHRsbW
- 1AKKZfgdcAAAA
+Message-Id: <20240927-cocci-6-12-v1-1-a318d4e6a19d@chromium.org>
+References: <20240927-cocci-6-12-v1-0-a318d4e6a19d@chromium.org>
+In-Reply-To: <20240927-cocci-6-12-v1-0-a318d4e6a19d@chromium.org>
 To: Benoit Parrot <bparrot@ti.com>, 
  Mauro Carvalho Chehab <mchehab@kernel.org>, 
  Sakari Ailus <sakari.ailus@linux.intel.com>, 
@@ -87,26 +88,31 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-staging@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-This patchset introduces fixes for all the new warnings introduced in
-Linux 6.12-rc1
+The str_up_down() helper simplifies the code and fixes the following cocci
+warning:
+
+drivers/media/platform/ti/cal/cal-camerarx.c:194:3-9: opportunity for str_up_down(enable)
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
-Ricardo Ribalda (3):
-      media: ti: cal: Use str_up_down()
-      staging: media: ipu3:Use str_down_up()
-      media: atomisp: Use max() macros
+ drivers/media/platform/ti/cal/cal-camerarx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/media/platform/ti/cal/cal-camerarx.c    | 2 +-
- drivers/staging/media/atomisp/pci/sh_css_frac.h | 4 ++--
- drivers/staging/media/ipu3/ipu3-css.c           | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
----
-base-commit: 075dbe9f6e3c21596c5245826a4ee1f1c1676eb8
-change-id: 20240927-cocci-6-12-4c571bc8e9dd
+diff --git a/drivers/media/platform/ti/cal/cal-camerarx.c b/drivers/media/platform/ti/cal/cal-camerarx.c
+index 42dfe08b765f..ba8c4743f539 100644
+--- a/drivers/media/platform/ti/cal/cal-camerarx.c
++++ b/drivers/media/platform/ti/cal/cal-camerarx.c
+@@ -191,7 +191,7 @@ static void cal_camerarx_power(struct cal_camerarx *phy, bool enable)
+ 
+ 	if (i == 10)
+ 		phy_err(phy, "Failed to power %s complexio\n",
+-			enable ? "up" : "down");
++			str_up_down(enable);
+ }
+ 
+ static void cal_camerarx_wait_reset(struct cal_camerarx *phy)
 
-Best regards,
 -- 
-Ricardo Ribalda <ribalda@chromium.org>
+2.46.1.824.gd892dcdcdd-goog
 
 
