@@ -1,108 +1,114 @@
-Return-Path: <linux-kernel+bounces-342075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47EB7988A58
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:49:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DCF9988A62
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B631F23F06
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:49:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78B61F24535
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B2D1C231C;
-	Fri, 27 Sep 2024 18:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2CA1C1AD1;
+	Fri, 27 Sep 2024 18:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cez9ZeDw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b="htT5hZAv"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8BF1C230D;
-	Fri, 27 Sep 2024 18:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C376171E76
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 18:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727462958; cv=none; b=WvLbhkOx8IVW46GBiMOe+FwxZsW8NEJJi44oDsIl0SNCdK1Yvqgm9i1kycPSnxApTvO6PWt82nOgrrxJsokzq953iqU7F2BaOwoudghb/RBNQtKfM2woCgwWfySz1aEjvqNP750jFH2PitTQSB+RffXONi3LmMxEk6CelsYfYX8=
+	t=1727463119; cv=none; b=oPwJuhDOWeFeVrDEMaH3+4WDEF2q137pmC2bVbYRSdsP9KS7orh5MyU5fflv9wNQmT7kYSRMI6AjlbmYB0reujrVvJKzpDuBLqR3VqBjiMYp4/RhJkQ0ogAj18CnKtVVluExjHRnFbtcKUyBxaF3eClLAhxEbJt0OczOI+fbkaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727462958; c=relaxed/simple;
-	bh=y/7cSwxsNP5gG8rsS+LqL1ZWq68q/juRgwY4ok3wZVs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=uMeN7nPgKykN8CQ2+ooXh6C6n2CGignYnEszUTOTJ8RH4Fyr1G3nvfOQMOw5FQ2WP3dg4xDPJqGypnt+ii+b3XwjrJTUIt7v9tNg/C4psIIYq9DKnGQGCO1zsWPdVCc9kIYShc5/01mvWzLCWzHItxokSNfH04JEPERElfmic7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cez9ZeDw; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727462956; x=1758998956;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=y/7cSwxsNP5gG8rsS+LqL1ZWq68q/juRgwY4ok3wZVs=;
-  b=Cez9ZeDwQr15mfwmS7ub3wtt2itI9gNYzxsSAE5YN9vurfd4oQw9L5QX
-   DdpWNTK+pL7UUu6+JblcP/gZxsf2tWfhukcTFNZnAPcgIt4a7jAonACjH
-   5CR8Cts7dkyzH1yZSno6zL+csSK4SIgFOE2LeuqHG3fgaYkReCj5cMyHz
-   VEznh7j3XdXa4TflxdXoGyWpTEvlus9kWaKAT//ZiZGZ5Lqh+QuPe2E5C
-   QdpkxAI3vgxNIinyL2S02JrLeqaVI0Q0C8kJaESs1Ad1yU8xOQr8/IUHe
-   idcr7HSd3fz4nQDaH6AbDkMjpSoASp6MHyfHKOuUAkm7SfBq4ijAgws7b
-   g==;
-X-CSE-ConnectionGUID: AZ85WXwtRQG0DeZ45EdovA==
-X-CSE-MsgGUID: mhqtoshnR/OF84taf+84GA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="49144479"
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="49144479"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 11:47:58 -0700
-X-CSE-ConnectionGUID: 7Q1/PQMATFOXD5E9wYaQ0g==
-X-CSE-MsgGUID: fXhCSlRqRn+GPhKo/AlG3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="103427647"
-Received: from tzanussi-mobl4.amr.corp.intel.com (HELO [10.246.129.181]) ([10.246.129.181])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 11:47:56 -0700
-Message-ID: <9afce713-db32-487b-b79e-3b294500d8d4@linux.intel.com>
-Date: Fri, 27 Sep 2024 13:47:55 -0500
+	s=arc-20240116; t=1727463119; c=relaxed/simple;
+	bh=eITh1z6ROeAVjf34DngYzl3Vc0FLZBZpfykTmNZoXY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HDJW3PscRGKUtg+4u/X1qToVfNinO40BdwcPHybI4rHdPeb2ZO19wylYIsnlPC1Zf5scSJ77unThOE8UATZZcmQcfAOPKjwzMU+YHhj6ETUOEMGr2cTDNBmTvC0VyH3c1j8OHg5Jt+yt2a2Ndd5aGRTPwo/4Bsc6g8lroNwLQSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b=htT5hZAv; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a344f92143so6357045ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxtx.org; s=google; t=1727463116; x=1728067916; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gxyQQgkA3wMtE3Hi9DOhcULcCDQzTPtIVdh2jdevVzY=;
+        b=htT5hZAvsc4OzGUhVRT0aOz+u1Tj4OQsqKOwZKMxumVI9srorEk0Nkt12LoxPPkxrb
+         G0ENv9lBv11YkPUPnrnrQ88UNsBJ9rhNuIF1jqb7VFlQedkvWhZ8RBzmXHrSNo6kHAEB
+         O1ECxrFJ6/QW8fe0ceXVzejqRAZZQqcOOLcUw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727463116; x=1728067916;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gxyQQgkA3wMtE3Hi9DOhcULcCDQzTPtIVdh2jdevVzY=;
+        b=XwAE+yMZ9EhdoKQVwpkMzzgsfYKBu1v5GuTw51Yp78VkAIV5WzZuRhM5101/MLBlE1
+         AIzRD/455eRyyPk8EGTfIo+Goe/wUN7/Wp4VcEr5eYISCh1FlSU/94ed2ys8kEzGshXi
+         VZenQ1O7AziJNAn7fCYOU7frVxpDGGxWcChLp9i1+AUS2FUOCUJg02W0BqXHq6FQQP3I
+         j67ieg28EkMpxOaqmDA/VhUEr7rAckdhpvrSMIIqlN/eEcAGIHDw6I0dK9dJQG62Ixmg
+         1ewEqt/zr+KrV0V2lHnFDR1xKWTxlKDjNwi2FI5KzJOV/W3OltTUxTEm2VV6B56mLnE6
+         iBjw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3hVkdj0oPtad0DnmGJLVwlV6BVx/AGuWTCDRKe9SLI9RoXe9YXJaOqJ9sVGa0uoI00QgpxYDnHB2Qyiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsOCm81OYcE3wLXdTzjYuNkarbPa/RLSDleJWbs5UvSY2SSrqI
+	ckcjwb2IWNREBiOYJUQSSimkDFnkpHzcnY4wNkxfpV2w9CO3fK7pXlObKedvZlvFJy2EzNFQdKs
+	/Mw==
+X-Google-Smtp-Source: AGHT+IGBJMHjU3F3oNzrEVYyvsCJoiibFm59q1GvVFt61CRaclCtx2Dq6FUyz7K8DJ0ILIP0e9KCaQ==
+X-Received: by 2002:a05:6e02:19cd:b0:3a0:c7f9:29e2 with SMTP id e9e14a558f8ab-3a3451b691amr37024015ab.19.1727463116011;
+        Fri, 27 Sep 2024 11:51:56 -0700 (PDT)
+Received: from fedora64.linuxtx.org ([72.42.103.70])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a344d82ae5sm7443195ab.28.2024.09.27.11.51.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 11:51:55 -0700 (PDT)
+Sender: Justin Forbes <jmforbes@linuxtx.org>
+Date: Fri, 27 Sep 2024 12:51:53 -0600
+From: Justin Forbes <jforbes@fedoraproject.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.11 00/12] 6.11.1-rc1 review
+Message-ID: <Zvb-yRASvJclm4hT@fedora64.linuxtx.org>
+References: <20240927121715.213013166@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 2/2] MAINTAINERS: Make Kristen Accardi the IAA crypto driver
- maintainer
-Content-Language: en-GB
-From: "Zanussi, Tom" <tom.zanussi@linux.intel.com>
-To: herbert@gondor.apana.org.au
-Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
- linux-kernel <linux-kernel@vger.kernel.org>,
- "Accardi, Kristen C" <kristen.c.accardi@intel.com>, zanussi@kernel.org
-References: <733a19ce-16f2-4d06-bce9-85d7473c9a4d@linux.intel.com>
-In-Reply-To: <733a19ce-16f2-4d06-bce9-85d7473c9a4d@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927121715.213013166@linuxfoundation.org>
 
-Since I'll be retiring from Intel and will no longer have access to
-hardware, Kristen Accardi will be taking over as the iaa_crypto
-maintainer.
+On Fri, Sep 27, 2024 at 02:24:03PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.1 release.
+> There are 12 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.1-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested rc1 against the Fedora build system (aarch64, ppc64le, s390x,
+x86_64), and boot tested x86_64. No regressions noted.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a0b4c1210e92..b89c21ff2bc8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11300,7 +11300,7 @@ Q:	https://patchwork.kernel.org/project/linux-dmaengine/list/
- F:	drivers/dma/ioat*
- 
- INTEL IAA CRYPTO DRIVER
--M:	Tom Zanussi <tom.zanussi@linux.intel.com>
-+M:	Kristen Accardi <kristen.c.accardi@intel.com>
- L:	linux-crypto@vger.kernel.org
- S:	Supported
- F:	Documentation/driver-api/crypto/iaa/iaa-crypto.rst
--- 
-2.38.1
-
-
+Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
 
