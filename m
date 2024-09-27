@@ -1,434 +1,237 @@
-Return-Path: <linux-kernel+bounces-341812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFAE988690
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:51:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF530988692
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DCB91C20C3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:51:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D7C21C2212E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CC51BF32A;
-	Fri, 27 Sep 2024 13:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAE61BF7E3;
+	Fri, 27 Sep 2024 13:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vKCVcQ3/"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AGZWDIkp"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BC818CC1C
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 13:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E61185B72
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 13:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727445062; cv=none; b=f3k9NgDVbeX+VyklBaeUebSpcBrWw3PtsjXYtM0PvU45yeCiPSQgMPWIA9Opk44Dy1jM2Bejkdnh+1tTCU5TcEKtZCvB1mIWT7GHPh/ZOYMkOCI+1gu1z17qG+hlxfk2WnkbEjlIGuR6x8hef/SproKUbVzRougdYqVFjaI69fU=
+	t=1727445123; cv=none; b=b+GJPEtxUmCGA1qp70K8k3Uervy0/Oggf34PFpwFBMLalqlfVNdVW4OmFrYJNNIm9x26+AnESswsgDh28bwJbEH0uXhJOZnlgTV+81paV0XgRAzOCLM1Rsrmdll7IA1E53G2roTdBFWiSXgie0KxiZbV4P1sVFUJEMmXw9NBncM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727445062; c=relaxed/simple;
-	bh=ZPVUm3ywQ6FI2H6TG/nRldosfyxx1+wOOj4hQa8ViiQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g6B2ids9Egv3oYLTgXAll46Jwthz7ELB32CBypeMOeFgVCOiOjphcax0d+9xrM4ueI2dS7djR1fTeCyACJ0LGGGCvND0HTaiLNMnsgBXSDTZuernip5nzP8n+1OvaVp7SEa5cikhthFB6y2X09qHVsiDRvsVUESH6DLj+N/94Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vKCVcQ3/; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1727445123; c=relaxed/simple;
+	bh=TMvt6BrLR403fS08wVJ1UKHeD+enDKMmGKdX7ghvBKg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=QM9H1PPWfcVNSZ1PVqY++Ga6CBkHOVKJgj264uobAWbGSuMW1ly9af0Fd8G4iRqBP8hDIKb8dJdRakDEY1D9KhZiz7grAfge2mjW2P0Ji0WqoAPUYivPMj97PPO5Ug87UGF0ENGqqyx1eqToJZZBBMVsXlNDdehZVka0oBhnMeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AGZWDIkp; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53690eb134bso22274e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 06:50:59 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e2555d3d0eso2553217b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 06:52:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727445058; x=1728049858; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Zzx6oozJdX/kfg2gPAt8X0HRxrMRG20NImzc+qe9leg=;
-        b=vKCVcQ3/IEEYe//IQAvC6URMnaDsFZF320Yq+iS5/KdH1V3hOur1yT42DxwvR5Gzd5
-         TY5C+vdBKOY9LfLe4i/bwUgCgjBV2z4x14zGRJ68lq52rsbph0+D08aY2C7M+NQVIsEX
-         Ii+KHrNsvDAUxZIux7iHB39x4fCAHty/6dXWLwqfXI2E2/lNU8F33pHnaoX3cZ4JnT1s
-         elSkslpbxIfpL/Too6TctJ05dwS9rYC1EcU/KyLZL/kZtblqK7yNqgqyxMT+KeH+H+lD
-         9LS52jhI62fQPmmWyeOpgxSuq8FFfFZQFUfKmrsrGKFQntmZNmxZtXZX+AqZQg0pLtXQ
-         0p1Q==
+        d=google.com; s=20230601; t=1727445120; x=1728049920; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nEP8CF+sqf5svRnf/ud30Te+lohW++0YXoaXmWT1Axo=;
+        b=AGZWDIkpGECsFcfI1pN2OgeR93+/8NbvmE/Xe73hG9lebjjGZsMcF34dWKXSsHwnIJ
+         xF3rWSsRdG08IKmpnioFdpZwJBMWpKbmkL4eFArMBpbXxPo33M5fc9DJHeUlI6aDamDt
+         AWjNQebrnEopahIKtLRkGdDCEljrLMioEoQpLwuauWYUWuq9R4IlBImLnFYwkzoTBEBo
+         +5/bX+NE36lxRjCvB8nSmC8KodnNXbXipCBYIaNQ7vz/HbIySDUgG1FfJvw7QF2Sta8+
+         kwwLOHRyqxlZnZ5tlHN5oqk/twj0RFOzDg6vAXW+ju382E1RYX/p0YwXXbbsJvDa4S2w
+         muug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727445058; x=1728049858;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zzx6oozJdX/kfg2gPAt8X0HRxrMRG20NImzc+qe9leg=;
-        b=D0f8O5rvZz6QaLqZb4BSO2LV8edugOXgn3ybMb6fgeuIKrGNsTSoWg5UjHzbaVMJIy
-         gXapSTVQuWkV/QClyykVbPEomp/chb7yEXX/2Uxsy3TO6p1krZZ29HqdFVyjjsQ4q7V1
-         m+xDc6U5l3Osnf0WCIXTcAv+5SQ8N56lL9sjm9H/Rchmc2dMEtZiU8d67Xl8o5zn9ZRv
-         l8fYziebO6UovySZB/l8STEj9MjVEmjpbKAXmOzm3/+hugs85ygg+i6xrr62FovMEwEs
-         V1gxCMOpN6JDAqnCJWQyxQDbZ5LE4xf6QCngKgYvHvUVA0GN7dXsaJ6DeizyKmJlHBHR
-         8+UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUE81fye8sc/DwgNRrZQYBx0vd4VnRuuUWOVv8DBxlqKR3pjZJVxHvquHnkVPawnYc6Yx6Li6gFVwHXswM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyHHwLRTA121QjHMOLg51jux1zsdzXNEuIvASnH5buryYMiHPd
-	wC9KqHXBiiRFsCQWSKIAXtt+axfBvNrlJmqq3FiPjSCs5jTmSHrFAchmwElaTw==
-X-Google-Smtp-Source: AGHT+IE4cquSMqnSIkNOYvzP4mf+EjxpWo+6lvqw1vEYhgsv6NYFCxWx7JURpC+N3lnj/vz+qtEIhQ==
-X-Received: by 2002:a05:6512:3da7:b0:52e:8475:7c23 with SMTP id 2adb3069b0e04-5394bb84da1mr324032e87.7.1727445057592;
-        Fri, 27 Sep 2024 06:50:57 -0700 (PDT)
-Received: from google.com (105.93.155.104.bc.googleusercontent.com. [104.155.93.105])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969f2083sm74362305e9.15.2024.09.27.06.50.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 06:50:57 -0700 (PDT)
-Date: Fri, 27 Sep 2024 13:50:52 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
-	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
-	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
-	shameerali.kolothum.thodi@huawei.com, yi.l.liu@intel.com
-Subject: Re: [PATCH v2 06/19] iommufd/viommu: Add
- IOMMU_VIOMMU_SET/UNSET_VDEV_ID ioctl
-Message-ID: <Zva4PJ3FhpMlWxhF@google.com>
-References: <cover.1724776335.git.nicolinc@nvidia.com>
- <6348cc7a72ce9f2ac0e9caf9737e70177a01eb74.1724776335.git.nicolinc@nvidia.com>
+        d=1e100.net; s=20230601; t=1727445120; x=1728049920;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nEP8CF+sqf5svRnf/ud30Te+lohW++0YXoaXmWT1Axo=;
+        b=pLdZq1Np7DvKuCu6SsBMCWENkaJXXawaSzdwc+3Ma8MtJUf/U48RDGw8KbXHomwHBz
+         3det0fxw+r+4kn8SMw/mJZbfMQs3zM+ySvBRo21bO06A6agtavc1XxT47wWlfxfqXHEU
+         YpNvK+/f23bWA4PCFrWxAEqvdzqRNk9EYDrHIYEi7NepeDd0F/7TNXMno3LogsTTBgun
+         7owFCe+9Due7kjhbuHkKWPAvpYYkRCmXONzG3Yjf8JvM5IVxL/b4KELfo86onBblsxes
+         22LO3JZMadlg7gnxC0znMWSGph/z66tyh5+TXvNMtZ+jcaI1uxWQe8UU35PYPlnJElAR
+         ojNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVY+FWp3TMw13r9QCN7uO/38Aai0Dkbj43B3Up+zQtUEfO3dT1efvlkINxSf05E+iApsaCoNTifhLPdP/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyJOi2IoOI8ds8hreSAzCZNRKQT5rwSoB7ArgqqnLb8R4BoIzi
+	HtPVgEl4G9rHV8tw99Gek1Y0WtqXVpSdw6if6KZuXhYauvChwTEkBC0KXdcyO+VU77c2Mu95NzF
+	vgg==
+X-Google-Smtp-Source: AGHT+IF6dcvm3lu1nvRfd5b8XNVP3WMyqS4UlkG8cak+knDCbjrwpgrPBl9M4w7Sl64vvBi4CwXXBJlDmYk=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:d8c:b0:6b1:8b74:978a with SMTP id
+ 00721157ae682-6e2475a7f4emr891097b3.4.1727445120202; Fri, 27 Sep 2024
+ 06:52:00 -0700 (PDT)
+Date: Fri, 27 Sep 2024 06:51:58 -0700
+In-Reply-To: <ZvUS+Cwg6DyA62EC@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6348cc7a72ce9f2ac0e9caf9737e70177a01eb74.1724776335.git.nicolinc@nvidia.com>
+Mime-Version: 1.0
+References: <6eecc450d0326c9bedfbb34096a0279410923c8d.1726182754.git.isaku.yamahata@intel.com>
+ <ZuOCXarfAwPjYj19@google.com> <ZvUS+Cwg6DyA62EC@yzhao56-desk.sh.intel.com>
+Message-ID: <Zva4aORxE9ljlMNe@google.com>
+Subject: Re: [PATCH] KVM: x86/tdp_mmu: Trigger the callback only when an
+ interesting change
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>, kvm@vger.kernel.org, sagis@google.com, 
+	chao.gao@intel.com, pbonzini@redhat.com, rick.p.edgecombe@intel.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Nicolin,
+On Thu, Sep 26, 2024, Yan Zhao wrote:
+> On Thu, Sep 12, 2024 at 05:07:57PM -0700, Sean Christopherson wrote:
+> > On Thu, Sep 12, 2024, Isaku Yamahata wrote:
+> > > KVM MMU behavior
+> > > ================
+> > > The leaf SPTE state machine is coded in make_spte().  Consider AD bits and
+> > > the present bits for simplicity.  The two functionalities and AD bits
+> > > support are related in this context.  unsync (manipulate D bit and W bit,
+> > > and handle write protect fault) and access tracking (manipulate A bit and
+> > > present bit, and hand handle page fault).  (We don't consider dirty page
+> > > tracking for now as it's future work of TDX KVM.)
+> > > 
+> > > * If AD bit is enabled:
+> > > D bit state change for dirty page tracking
+> > > On the first EPT violation without prefetch,
+> > > - D bits are set.
+> > > - Make SPTE writable as TDX supports only RXW (or if write fault).
+> > >   (TDX KVM doesn't support write protection at this state. It's future work.)
+> > > 
+> > > On the second EPT violation.
+> > > - clear D bits if write fault.
+> > 
+> > Heh, I was literally just writing changelogs for patches to address this (I told
+> > Sagi I would do it "this week"; that was four weeks ago).
+> > 
+> > This is a bug in make_spte().  Replacing a W=1,D=1 SPTE with a W=1,D=0 SPTE is
+> > nonsensical.  And I'm pretty sure it's an outright but for the TDP MMU (see below).
+> > 
+> > Right now, the fixes for make_spte() are sitting toward the end of the massive
+> > kvm_follow_pfn() rework (80+ patches and counting), but despite the size, I am
+> > fairly confident that series can land in 6.13 (lots and lots of small patches).
+> > 
+> > ---
+> > Author:     Sean Christopherson <seanjc@google.com>
+> > AuthorDate: Thu Sep 12 16:23:21 2024 -0700
+> > Commit:     Sean Christopherson <seanjc@google.com>
+> > CommitDate: Thu Sep 12 16:35:06 2024 -0700
+> > 
+> >     KVM: x86/mmu: Flush TLBs if resolving a TDP MMU fault clears W or D bits
+> >     
+> >     Do a remote TLB flush if installing a leaf SPTE overwrites an existing
+> >     leaf SPTE (with the same target pfn) and clears the Writable bit or the
+> >     Dirty bit.  KVM isn't _supposed_ to clear Writable or Dirty bits in such
+> >     a scenario, but make_spte() has a flaw where it will fail to set the Dirty
+> >     if the existing SPTE is writable.
+> >     
+> >     E.g. if two vCPUs race to handle faults, the KVM will install a W=1,D=1
+> >     SPTE for the first vCPU, and then overwrite it with a W=1,D=0 SPTE for the
+> >     second vCPU.  If the first vCPU (or another vCPU) accesses memory using
+> >     the W=1,D=1 SPTE, i.e. creates a writable, dirty TLB entry, and that is
+> >     the only SPTE that is dirty at the time of the next relevant clearing of
+> >     the dirty logs, then clear_dirty_gfn_range() will not modify any SPTEs
+> >     because it sees the D=0 SPTE, and thus will complete the clearing of the
+> >     dirty logs without performing a TLB flush.
+> But it looks that kvm_flush_remote_tlbs_memslot() will always be invoked no
+> matter clear_dirty_gfn_range() finds a D bit or not.
 
-On Tue, Aug 27, 2024 at 09:59:43AM -0700, Nicolin Chen wrote:
-> Introduce a pair of new ioctls to set/unset a per-viommu virtual device id
-> that should be linked to a physical device id via an idev pointer.
+Oh, right, I forgot about that.  I'll tweak the changelog to call that out before
+posting.  Hmm, and I'll drop the Cc: stable@ too, as commit b64d740ea7dd ("kvm:
+x86: mmu: Always flush TLBs when enabling dirty logging") was a bug fix, i.e. if
+anything should be backported it's that commit.
+
+> kvm_mmu_slot_apply_flags
+>   |kvm_mmu_slot_leaf_clear_dirty
+>   |  |kvm_tdp_mmu_clear_dirty_slot
+>   |    |clear_dirty_gfn_range
+>   |kvm_flush_remote_tlbs_memslot
+>      
+> >     Opportunistically harden the TDP MMU against clearing the Writable bit as
+> >     well, both to prevent similar bugs for write-protection, but also so that
+> >     the logic can eventually be deduplicated into spte.c (mmu_spte_update() in
+> >     the shadow MMU has similar logic).
+> >     
+> >     Fix the bug in the TDP MMU's page fault handler even though make_spte() is
+> >     clearly doing odd things, e.g. it marks the page dirty in its slot but
+> >     doesn't set the Dirty bit.  Precisely because replacing a leaf SPTE with
+> >     another leaf SPTE is so rare, the cost of hardening KVM against such bugs
+> >     is negligible.  The make_spte() will be addressed in a future commit.
+> >     
+> >     Fixes: bb18842e2111 ("kvm: x86/mmu: Add TDP MMU PF handler")
+> >     Cc: David Matlack <dmatlack@google.com>
+> >     Cc: stable@vger.kernel.org
+> >     Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > 
+> > diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+> > index 3b996c1fdaab..7c6d1c610f0e 100644
+> > --- a/arch/x86/kvm/mmu/tdp_mmu.c
+> > +++ b/arch/x86/kvm/mmu/tdp_mmu.c
+> > @@ -1038,7 +1038,9 @@ static int tdp_mmu_map_handle_target_level(struct kvm_vcpu *vcpu,
+> >         else if (tdp_mmu_set_spte_atomic(vcpu->kvm, iter, new_spte))
+> >                 return RET_PF_RETRY;
+> >         else if (is_shadow_present_pte(iter->old_spte) &&
+> > -                !is_last_spte(iter->old_spte, iter->level))
+> > +                (!is_last_spte(iter->old_spte, iter->level) ||
+> > +                 (is_mmu_writable_spte(old_spte) && !is_writable_pte(new_spte)) ||
+> > +                 (is_dirty_spte(old_spte) && !is_dirty_spte(new_spte))))
+> Should we also check is_accessed_spte() as what's done in mmu_spte_update()?
+
+Heh, it's impossible to see in this standalone "posting", but earlier in the
+massive series is a patch that removes that code.  Aptly titled "KVM: x86/mmu:
+Don't force flush if SPTE update clears Accessed bit".
+
+> It is possible for make_spte() to make the second spte !is_dirty_spte(), e.g.
+> the second one is caused by a KVM_PRE_FAULT_MEMORY ioctl.
+
+Ya, the mega-series also has a fix for that: "KVM: x86/mmu: Always set SPTE's
+dirty bit if it's created as writable".
+
+> >                 kvm_flush_remote_tlbs_gfn(vcpu->kvm, iter->gfn, iter->level);
+> >  
+> >         /*
+> > ---
+> > 
+> > >  arch/x86/kvm/mmu/spte.h    |  6 ++++++
+> > >  arch/x86/kvm/mmu/tdp_mmu.c | 28 +++++++++++++++++++++++++---
+> > >  2 files changed, 31 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
+> > > index a72f0e3bde17..1726f8ec5a50 100644
+> > > --- a/arch/x86/kvm/mmu/spte.h
+> > > +++ b/arch/x86/kvm/mmu/spte.h
+> > > @@ -214,6 +214,12 @@ extern u64 __read_mostly shadow_nonpresent_or_rsvd_mask;
+> > >   */
+> > >  #define FROZEN_SPTE	(SHADOW_NONPRESENT_VALUE | 0x5a0ULL)
+> > >  
+> > > +#define EXTERNAL_SPTE_IGNORE_CHANGE_MASK		\
+> > > +	(shadow_acc_track_mask |			\
+> > > +	 (SHADOW_ACC_TRACK_SAVED_BITS_MASK <<		\
+> > > +	  SHADOW_ACC_TRACK_SAVED_BITS_SHIFT) |		\
+> > 
+> > Just make TDX require A/D bits, there's no reason to care about access tracking.
+> If KVM_PRE_FAULT_MEMORY is allowed for TDX and if
+> cpu_has_vmx_ept_ad_bits() is false in TDX's hardware (not sure if it's possible),
+
+Make it a requirement in KVM that TDX hardware supports A/D bits and that KVM's
+module param is enabled.  EPT A/D bits have been supported in all CPUs since
+Haswell, I don't expect them to ever go away.
+
+> access tracking bit is possbile to be changed, as in below scenario:
 > 
-> Continue the support IOMMU_VIOMMU_TYPE_DEFAULT for a core-managed viommu.
-> Provide a lookup function for drivers to load device pointer by a virtual
-> device id.
-> 
-> Add a rw_semaphore protection around the vdev_id list. Any future ioctl
-> handlers that potentially access the list must grab the lock too.
-> 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/iommufd/device.c          |  12 +++
->  drivers/iommu/iommufd/iommufd_private.h |  21 ++++
->  drivers/iommu/iommufd/main.c            |   6 ++
->  drivers/iommu/iommufd/viommu.c          | 121 ++++++++++++++++++++++++
->  include/uapi/linux/iommufd.h            |  40 ++++++++
->  5 files changed, 200 insertions(+)
-> 
-> diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
-> index 5fd3dd420290..3ad759971b32 100644
-> --- a/drivers/iommu/iommufd/device.c
-> +++ b/drivers/iommu/iommufd/device.c
-> @@ -136,6 +136,18 @@ void iommufd_device_destroy(struct iommufd_object *obj)
->  	struct iommufd_device *idev =
->  		container_of(obj, struct iommufd_device, obj);
->  
-> +	/* Unlocked since there should be no race in a destroy() */
-> +	if (idev->vdev_id) {
-> +		struct iommufd_vdev_id *vdev_id = idev->vdev_id;
-> +		struct iommufd_viommu *viommu = vdev_id->viommu;
-> +		struct iommufd_vdev_id *old;
-> +
-> +		old = xa_cmpxchg(&viommu->vdev_ids, vdev_id->id, vdev_id, NULL,
-> +				 GFP_KERNEL);
-> +		WARN_ON(old != vdev_id);
-> +		kfree(vdev_id);
-> +		idev->vdev_id = NULL;
-> +	}
->  	iommu_device_release_dma_owner(idev->dev);
->  	iommufd_put_group(idev->igroup);
->  	if (!iommufd_selftest_is_mock_dev(idev->dev))
-> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-> index 1f2a1c133b9a..2c6e168c5300 100644
-> --- a/drivers/iommu/iommufd/iommufd_private.h
-> +++ b/drivers/iommu/iommufd/iommufd_private.h
-> @@ -416,6 +416,7 @@ struct iommufd_device {
->  	struct iommufd_object obj;
->  	struct iommufd_ctx *ictx;
->  	struct iommufd_group *igroup;
-> +	struct iommufd_vdev_id *vdev_id;
->  	struct list_head group_item;
->  	/* always the physical device */
->  	struct device *dev;
-> @@ -533,11 +534,31 @@ struct iommufd_viommu {
->  	struct iommufd_ctx *ictx;
->  	struct iommufd_hwpt_paging *hwpt;
->  
-> +	/* The locking order is vdev_ids_rwsem -> igroup::lock */
-> +	struct rw_semaphore vdev_ids_rwsem;
-> +	struct xarray vdev_ids;
-> +
->  	unsigned int type;
->  };
->  
-> +struct iommufd_vdev_id {
-> +	struct iommufd_viommu *viommu;
-> +	struct iommufd_device *idev;
-> +	u64 id;
-> +};
-> +
-> +static inline struct iommufd_viommu *
-> +iommufd_get_viommu(struct iommufd_ucmd *ucmd, u32 id)
-> +{
-> +	return container_of(iommufd_get_object(ucmd->ictx, id,
-> +					       IOMMUFD_OBJ_VIOMMU),
-> +			    struct iommufd_viommu, obj);
-> +}
-> +
->  int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd);
->  void iommufd_viommu_destroy(struct iommufd_object *obj);
-> +int iommufd_viommu_set_vdev_id(struct iommufd_ucmd *ucmd);
-> +int iommufd_viommu_unset_vdev_id(struct iommufd_ucmd *ucmd);
->  
->  #ifdef CONFIG_IOMMUFD_TEST
->  int iommufd_test(struct iommufd_ucmd *ucmd);
-> diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
-> index 288ee51b6829..199ad90fa36b 100644
-> --- a/drivers/iommu/iommufd/main.c
-> +++ b/drivers/iommu/iommufd/main.c
-> @@ -334,6 +334,8 @@ union ucmd_buffer {
->  	struct iommu_option option;
->  	struct iommu_vfio_ioas vfio_ioas;
->  	struct iommu_viommu_alloc viommu;
-> +	struct iommu_viommu_set_vdev_id set_vdev_id;
-> +	struct iommu_viommu_unset_vdev_id unset_vdev_id;
->  #ifdef CONFIG_IOMMUFD_TEST
->  	struct iommu_test_cmd test;
->  #endif
-> @@ -387,6 +389,10 @@ static const struct iommufd_ioctl_op iommufd_ioctl_ops[] = {
->  		 __reserved),
->  	IOCTL_OP(IOMMU_VIOMMU_ALLOC, iommufd_viommu_alloc_ioctl,
->  		 struct iommu_viommu_alloc, out_viommu_id),
-> +	IOCTL_OP(IOMMU_VIOMMU_SET_VDEV_ID, iommufd_viommu_set_vdev_id,
-> +		 struct iommu_viommu_set_vdev_id, vdev_id),
-> +	IOCTL_OP(IOMMU_VIOMMU_UNSET_VDEV_ID, iommufd_viommu_unset_vdev_id,
-> +		 struct iommu_viommu_unset_vdev_id, vdev_id),
->  #ifdef CONFIG_IOMMUFD_TEST
->  	IOCTL_OP(IOMMU_TEST_CMD, iommufd_test, struct iommu_test_cmd, last),
->  #endif
-> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
-> index 200653a4bf57..8ffcd72b16b8 100644
-> --- a/drivers/iommu/iommufd/viommu.c
-> +++ b/drivers/iommu/iommufd/viommu.c
-> @@ -8,6 +8,15 @@ void iommufd_viommu_destroy(struct iommufd_object *obj)
->  {
->  	struct iommufd_viommu *viommu =
->  		container_of(obj, struct iommufd_viommu, obj);
-> +	struct iommufd_vdev_id *vdev_id;
-> +	unsigned long index;
-> +
-> +	xa_for_each(&viommu->vdev_ids, index, vdev_id) {
-> +		/* Unlocked since there should be no race in a destroy() */
-> +		vdev_id->idev->vdev_id = NULL;
-> +		kfree(vdev_id);
-> +	}
-> +	xa_destroy(&viommu->vdev_ids);
->  
->  	refcount_dec(&viommu->hwpt->common.obj.users);
->  }
-> @@ -53,6 +62,9 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd)
->  	viommu->ictx = ucmd->ictx;
->  	viommu->hwpt = hwpt_paging;
->  
-> +	xa_init(&viommu->vdev_ids);
-> +	init_rwsem(&viommu->vdev_ids_rwsem);
-> +
->  	refcount_inc(&viommu->hwpt->common.obj.users);
->  
->  	cmd->out_viommu_id = viommu->obj.id;
-> @@ -70,3 +82,112 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd)
->  	iommufd_put_object(ucmd->ictx, &idev->obj);
->  	return rc;
->  }
-> +
-> +int iommufd_viommu_set_vdev_id(struct iommufd_ucmd *ucmd)
-> +{
-> +	struct iommu_viommu_set_vdev_id *cmd = ucmd->cmd;
-> +	struct iommufd_vdev_id *vdev_id, *curr;
-> +	struct iommufd_viommu *viommu;
-> +	struct iommufd_device *idev;
-> +	int rc = 0;
-> +
-> +	if (cmd->vdev_id > ULONG_MAX)
-> +		return -EINVAL;
-> +
-> +	viommu = iommufd_get_viommu(ucmd, cmd->viommu_id);
-> +	if (IS_ERR(viommu))
-> +		return PTR_ERR(viommu);
-> +
-> +	idev = iommufd_get_device(ucmd, cmd->dev_id);
-> +	if (IS_ERR(idev)) {
-> +		rc = PTR_ERR(idev);
-> +		goto out_put_viommu;
-> +	}
-> +
-> +	down_write(&viommu->vdev_ids_rwsem);
-> +	mutex_lock(&idev->igroup->lock);
-> +	if (idev->vdev_id) {
-> +		rc = -EEXIST;
-> +		goto out_unlock_igroup;
-> +	}
-> +
-> +	vdev_id = kzalloc(sizeof(*vdev_id), GFP_KERNEL);
-> +	if (!vdev_id) {
-> +		rc = -ENOMEM;
-> +		goto out_unlock_igroup;
-> +	}
-> +
-> +	vdev_id->idev = idev;
-> +	vdev_id->viommu = viommu;
-> +	vdev_id->id = cmd->vdev_id;
+> 1. KVM_PRE_FAULT_MEMORY ioctl calls kvm_arch_vcpu_pre_fault_memory() to map
+>    a GFN, and make_spte() will call mark_spte_for_access_track() to
+>    remove shadow_acc_track_mask (i.e. RWX bits) and move R+X left to
+>    SHADOW_ACC_TRACK_SAVED_BITS_SHIFT.
+> 2. If a concurrent page fault occurs on the same GFN on another vCPU, then
+>    make_spte() in that vCPU will not see prefetch and the new_spte is
+>    with RWX bits and with no bits set in SHADOW_ACC_TRACK_SAVED_MASK.
 
-My understanding of IOMMUFD is very little, but AFAICT, that means that
-it’s assumed that each device can only have one stream ID(RID)?
+This should be fixed by the mega-series.  I'll make sure to Cc you on that series.
 
-As I can see in patch 17 in arm_smmu_convert_viommu_vdev_id(), it
-converts the virtual ID to a physical one using master->streams[0].id.
-
-Is that correct or am I missing something?
-
-As I am looking at similar problem for paravirtual IOMMU with pKVM, where
-the UAPI would be something similar to:
-
-	GET_NUM_END_POINTS(dev) => nr_sids
-
-	SET_END_POINT_VSID(dev, sid_index, vsid)
-
-Similar to what VFIO does with IRQs.
-
-As a device can have many SIDs.
-
-Thanks,
-Mostafa
-
-> +
-> +	curr = xa_cmpxchg(&viommu->vdev_ids, cmd->vdev_id, NULL, vdev_id,
-> +			  GFP_KERNEL);
-> +	if (curr) {
-> +		rc = xa_err(curr) ? : -EBUSY;
-> +		goto out_free;
-> +	}
-> +
-> +	idev->vdev_id = vdev_id;
-> +	goto out_unlock_igroup;
-> +
-> +out_free:
-> +	kfree(vdev_id);
-> +out_unlock_igroup:
-> +	mutex_unlock(&idev->igroup->lock);
-> +	up_write(&viommu->vdev_ids_rwsem);
-> +	iommufd_put_object(ucmd->ictx, &idev->obj);
-> +out_put_viommu:
-> +	iommufd_put_object(ucmd->ictx, &viommu->obj);
-> +	return rc;
-> +}
-> +
-> +int iommufd_viommu_unset_vdev_id(struct iommufd_ucmd *ucmd)
-> +{
-> +	struct iommu_viommu_unset_vdev_id *cmd = ucmd->cmd;
-> +	struct iommufd_viommu *viommu;
-> +	struct iommufd_vdev_id *old;
-> +	struct iommufd_device *idev;
-> +	int rc = 0;
-> +
-> +	if (cmd->vdev_id > ULONG_MAX)
-> +		return -EINVAL;
-> +
-> +	viommu = iommufd_get_viommu(ucmd, cmd->viommu_id);
-> +	if (IS_ERR(viommu))
-> +		return PTR_ERR(viommu);
-> +
-> +	idev = iommufd_get_device(ucmd, cmd->dev_id);
-> +	if (IS_ERR(idev)) {
-> +		rc = PTR_ERR(idev);
-> +		goto out_put_viommu;
-> +	}
-> +
-> +	down_write(&viommu->vdev_ids_rwsem);
-> +	mutex_lock(&idev->igroup->lock);
-> +	if (!idev->vdev_id) {
-> +		rc = -ENOENT;
-> +		goto out_unlock_igroup;
-> +	}
-> +	if (idev->vdev_id->id != cmd->vdev_id) {
-> +		rc = -EINVAL;
-> +		goto out_unlock_igroup;
-> +	}
-> +
-> +	old = xa_cmpxchg(&viommu->vdev_ids, idev->vdev_id->id,
-> +			 idev->vdev_id, NULL, GFP_KERNEL);
-> +	if (xa_is_err(old)) {
-> +		rc = xa_err(old);
-> +		goto out_unlock_igroup;
-> +	}
-> +	kfree(old);
-> +	idev->vdev_id = NULL;
-> +
-> +out_unlock_igroup:
-> +	mutex_unlock(&idev->igroup->lock);
-> +	up_write(&viommu->vdev_ids_rwsem);
-> +	iommufd_put_object(ucmd->ictx, &idev->obj);
-> +out_put_viommu:
-> +	iommufd_put_object(ucmd->ictx, &viommu->obj);
-> +	return rc;
-> +}
-> diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-> index 51ce6a019c34..1816e89c922d 100644
-> --- a/include/uapi/linux/iommufd.h
-> +++ b/include/uapi/linux/iommufd.h
-> @@ -52,6 +52,8 @@ enum {
->  	IOMMUFD_CMD_HWPT_INVALIDATE = 0x8d,
->  	IOMMUFD_CMD_FAULT_QUEUE_ALLOC = 0x8e,
->  	IOMMUFD_CMD_VIOMMU_ALLOC = 0x8f,
-> +	IOMMUFD_CMD_VIOMMU_SET_VDEV_ID = 0x90,
-> +	IOMMUFD_CMD_VIOMMU_UNSET_VDEV_ID = 0x91,
->  };
->  
->  /**
-> @@ -882,4 +884,42 @@ struct iommu_viommu_alloc {
->  	__u32 out_viommu_id;
->  };
->  #define IOMMU_VIOMMU_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VIOMMU_ALLOC)
-> +
-> +/**
-> + * struct iommu_viommu_set_vdev_id - ioctl(IOMMU_VIOMMU_SET_VDEV_ID)
-> + * @size: sizeof(struct iommu_viommu_set_vdev_id)
-> + * @viommu_id: viommu ID to associate with the device to store its virtual ID
-> + * @dev_id: device ID to set its virtual ID
-> + * @__reserved: Must be 0
-> + * @vdev_id: Virtual device ID
-> + *
-> + * Set a viommu-specific virtual ID of a device
-> + */
-> +struct iommu_viommu_set_vdev_id {
-> +	__u32 size;
-> +	__u32 viommu_id;
-> +	__u32 dev_id;
-> +	__u32 __reserved;
-> +	__aligned_u64 vdev_id;
-> +};
-> +#define IOMMU_VIOMMU_SET_VDEV_ID _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VIOMMU_SET_VDEV_ID)
-> +
-> +/**
-> + * struct iommu_viommu_unset_vdev_id - ioctl(IOMMU_VIOMMU_UNSET_VDEV_ID)
-> + * @size: sizeof(struct iommu_viommu_unset_vdev_id)
-> + * @viommu_id: viommu ID associated with the device to delete its virtual ID
-> + * @dev_id: device ID to unset its virtual ID
-> + * @__reserved: Must be 0
-> + * @vdev_id: Virtual device ID (for verification)
-> + *
-> + * Unset a viommu-specific virtual ID of a device
-> + */
-> +struct iommu_viommu_unset_vdev_id {
-> +	__u32 size;
-> +	__u32 viommu_id;
-> +	__u32 dev_id;
-> +	__u32 __reserved;
-> +	__aligned_u64 vdev_id;
-> +};
-> +#define IOMMU_VIOMMU_UNSET_VDEV_ID _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VIOMMU_UNSET_VDEV_ID)
->  #endif
-> -- 
-> 2.43.0
-> 
+Thanks much for the input and feedback!
 
