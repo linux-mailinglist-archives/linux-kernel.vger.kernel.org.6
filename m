@@ -1,112 +1,168 @@
-Return-Path: <linux-kernel+bounces-341648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7790C9882FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:04:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE1A59882FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EAE81C2137C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:04:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E1DB1F22E23
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F95188A19;
-	Fri, 27 Sep 2024 11:04:08 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750841891A1;
+	Fri, 27 Sep 2024 11:07:08 +0000 (UTC)
+Received: from mail115-95.sinamail.sina.com.cn (mail115-95.sinamail.sina.com.cn [218.30.115.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E48939AD6;
-	Fri, 27 Sep 2024 11:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD6739AD6
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727435048; cv=none; b=n6zEw32TEaJVKcRUvzzS3blD0ttDFGrvGaBk7DSyp2iLEH7FZegyYehbqQCiWy4qKAwgczbUfOMjO796APbAUcVodXm5IoL7ouw4W8/Ntr4f9DfnnpuGBkTRrlLKEyxO2rr8KIE3IFbGZXB90GnLdSx77uPspuDVISZHlbO4mVA=
+	t=1727435228; cv=none; b=OHkDvNFLyhn72OAWkyj0tVSVyjz07YYVgVR12awVnTRv9TF6pu+DQc5X4Q+euRX88YY7tZYVvQuKZQ/U4yO6fNtX7X0I1Z0489uxEaEwrLDHtY6NvTjecNgCkZh7sD2fx0BaVPymSwTTNnN3HURAbV5mKjykbqeWKzv9fX9bsPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727435048; c=relaxed/simple;
-	bh=Y4rcvCDAdeYvUPe4nn9t94GcJUqUTEe/gAfLrq1/GM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FPOP1dm2OAWrMOKxVdYdGL3R0/kShQnNFEUUohjsERX0xo+bLsn0Cl+fclRua44DJ1hFaQ1Pab8pH8F838Fiv4LjStcYHO7Lu9g0I6fWrAdLWN0Y1wOQqi/OjiG17mzEhIaMQDkv8uBA02n/wZzGffN3cKLAxxSh0ntt5N35bRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1BFFC4CEC4;
-	Fri, 27 Sep 2024 11:04:06 +0000 (UTC)
-Date: Fri, 27 Sep 2024 12:04:04 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	LKML <linux-kernel@vger.kernel.org>, Andrew <quark@disroot.org>
-Subject: Re: [regression] segfault in Qt apps running on Linux kernel 6.10.8
- ARM with LPAE
-Message-ID: <ZvaRJK8GQR7GYHnZ@arm.com>
-References: <bf8288c9-13a1-47f0-9842-3b8eff37ef65@leemhuis.info>
+	s=arc-20240116; t=1727435228; c=relaxed/simple;
+	bh=2tSp+dNwcQEwowgMcQOt+6/Tf3SFxGTWuF1blVlLegM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K++qPJg/tQsShpX8QJ33szeJ+ka1C6MU7BiYmc1TfcvBSOxOh2DoWQqC64A8sJ0uwWr3h8CEBX/fQdbnd8invUoGrGTKBY5RvxZrylfsn+LAnTT84YtGljnzUbnYVkva8W2xhZbIGQXLa+TC7L5y43SMm75W4vyGfVIgQBwWU6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.71.54])
+	by sina.com (10.185.250.23) with ESMTP
+	id 66F6913C00004461; Fri, 27 Sep 2024 19:04:32 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 4710658913404
+X-SMAIL-UIID: FFEC4222DA184718A802C62B5670DD0B-20240927-190432-1
+From: Hillf Danton <hdanton@sina.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: syzbot <syzbot+05f9cecd28e356241aba@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] INFO: task hung in new_device_store (5)
+Date: Fri, 27 Sep 2024 19:04:22 +0800
+Message-Id: <20240927110422.1084-1-hdanton@sina.com>
+In-Reply-To: <CANn89iKLTNs5LAuSz6xeKB39hQ2FOEJNmffZsv1F3iNHqXe0tQ@mail.gmail.com>
+References: <66f5a0ca.050a0220.46d20.0002.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bf8288c9-13a1-47f0-9842-3b8eff37ef65@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 25, 2024 at 02:23:35PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> Catalin, Linus, I noticed a report about a regression in
-> bugzilla.kernel.org that appears to be caused by a change of yours:
+On Thu, 26 Sep 2024 22:14:14 +0200 Eric Dumazet <edumazet@google.com>
+> On Thu, Sep 26, 2024 at 7:58 PM syzbot wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    97d8894b6f4c Merge tag 'riscv-for-linus-6.12-mw1' of git:/..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=12416a27980000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=bc30a30374b0753
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=05f9cecd28e356241aba
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/bd119f4fdc08/disk-97d8894b.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/4d0bfed66f93/vmlinux-97d8894b.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/0f9223ac9bfb/bzImage-97d8894b.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+05f9cecd28e356241aba@syzkaller.appspotmail.com
+> >
+> > INFO: task syz-executor:9916 blocked for more than 143 seconds.
+> >       Not tainted 6.11.0-syzkaller-10045-g97d8894b6f4c #0
+> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > task:syz-executor    state:D stack:21104 pid:9916  tgid:9916  ppid:1      flags:0x00000004
+> > Call Trace:
+> >  <TASK>
+> >  context_switch kernel/sched/core.c:5315 [inline]
+> >  __schedule+0x1895/0x4b30 kernel/sched/core.c:6674
+> >  __schedule_loop kernel/sched/core.c:6751 [inline]
+> >  schedule+0x14b/0x320 kernel/sched/core.c:6766
+> >  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6823
+> >  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+> >  __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+> >  new_device_store+0x1b4/0x890 :166
+> >  kernfs_fop_write_iter+0x3a2/0x500 fs/kernfs/file.c:334
+> >  new_sync_write fs/read_write.c:590 [inline]
+> >  vfs_write+0xa6f/0xc90 fs/read_write.c:683
+> >  ksys_write+0x183/0x2b0 fs/read_write.c:736
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > RIP: 0033:0x7f8310d7c9df
+> > RSP: 002b:00007ffe830a52e0 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+> > RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f8310d7c9df
+> > RDX: 0000000000000003 RSI: 00007ffe830a5330 RDI: 0000000000000005
+> > RBP: 00007f8310df1c39 R08: 0000000000000000 R09: 00007ffe830a5137
+> > R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+> > R13: 00007ffe830a5330 R14: 00007f8311a64620 R15: 0000000000000003
+> >  </TASK>
 > 
-> 7af5b901e84743 ("ARM: 9358/2: Implement PAN for LPAE by TTBR0 page table
-> walks disablement") [v6.10-rc1]
+> typical sysfs deadlock ?
 > 
-> As many (most?) kernel developers don't keep an eye on the bug tracker,
-> I decided to write this mail. To quote from
-> https://bugzilla.kernel.org/show_bug.cgi?id=219247 :
+> diff --git a/drivers/net/netdevsim/bus.c b/drivers/net/netdevsim/bus.c
+> index 64c0cdd31bf85468ce4fa2b2af5c8aff4cfba897..3bf0ce52d71653fd9b8c752d52d0b5b7e19042d8
+> 100644
+> --- a/drivers/net/netdevsim/bus.c
+> +++ b/drivers/net/netdevsim/bus.c
+> @@ -163,7 +163,9 @@ new_device_store(const struct bus_type *bus, const
+> char *buf, size_t count)
+>                 return -EINVAL;
+>         }
 > 
-> > Trying to run LxQt on a Chromebook XE303C12 with Devuan 4 and Linux
-> > kernel 6.10.8 results in a segmentation fault (for LxQt). There are
-> > no such problems with Linux kernel 6.9.12 or earlier. With Linux
-> > kernel 6.10.8 it is possible to run Xfce4, but trying to run for
-> > example Kate ends in a segmentation fault. Mesa 20.3.5, patched for
-> > partial hardware acceleration, preserves this acceleration in Xfce4.
-> > The mpv works using acceleration regardless of the Linux kernel
-> > version. dmesg does not give anything significantly new compared to
-> > previous kernel version.
+> -       mutex_lock(&nsim_bus_dev_list_lock);
+> +       if (!mutex_trylock(&nsim_bus_dev_list_lock))
+> +               return restart_syscall();
+> +
+>         /* Prevent to use resource before initialization. */
+>         if (!smp_load_acquire(&nsim_bus_enable)) {
+>                 err = -EBUSY;
 > 
-> See the ticket for more details and the bisection log. The reporter is CCed.
+> 
+> >
+> > Showing all locks held in the system:
+...
+> > 4 locks held by syz-executor/9916:
+> >  #0: ffff88807ca86420 (sb_writers#8){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2930 [inline]
+> >  #0: ffff88807ca86420 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x224/0xc90 fs/read_write.c:679
+> >  #1: ffff88802e71e488 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x1ea/0x500 fs/kernfs/file.c:325
+> >  #2: ffff888144ff5968 (kn->active#50){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x20e/0x500 fs/kernfs/file.c:326
+> >  #3: ffffffff8f56d3e8 (nsim_bus_dev_list_lock){+.+.}-{3:3}, at: new_device_store+0x1b4/0x890 drivers/net/netdevsim/bus.c:166
 
-I had a quick look and the fault seems to be a level 2 translation fault
-while in user space (code 0x206). I can't tell whether the fault address
-is valid and we just messed up the pairing of user access enable/disable
-or something else happened. Having TTBCR.PD0 == 1 does lead to
-translation faults, though not sure what the DFSR register says. Anyway,
-normally I'd expect do_page_fault() to get stuck in a continuous fault
-loop if the vma was valid rather than end up with SIGSEGV.
+syz-executor/9916 is lock waiter, and
 
-Andrew, could you please share the .config file you have, maybe attach
-it to the bugzilla report? Also, could you try the kernel with
-CONFIG_CPU_TTBR0_PAN disabled without any patches reverted?
+> > 7 locks held by syz-executor/9976:
+> >  #0: ffff88807ca86420 (sb_writers#8){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2930 [inline]
+> >  #0: ffff88807ca86420 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x224/0xc90 fs/read_write.c:679
+> >  #1: ffff88807abc2888 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x1ea/0x500 fs/kernfs/file.c:325
+> >  #2: ffff888144ff5a58 (kn->active#49){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x20e/0x500 fs/kernfs/file.c:326
+> >  #3: ffffffff8f56d3e8 (nsim_bus_dev_list_lock){+.+.}-{3:3}, at: del_device_store+0xfc/0x480 drivers/net/netdevsim/bus.c:216
+> >  #4: ffff888060f5a0e8 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
+> >  #4: ffff888060f5a0e8 (&dev->mutex){....}-{3:3}, at: __device_driver_lock drivers/base/dd.c:1095 [inline]
+> >  #4: ffff888060f5a0e8 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0xce/0x7c0 drivers/base/dd.c:1293
+> >  #5: ffff888060f5b250 (&devlink->lock_key#40){+.+.}-{3:3}, at: nsim_drv_remove+0x50/0x160 drivers/net/netdevsim/dev.c:1672
+> >  #6: ffffffff8fccdc48 (rtnl_mutex){+.+.}-{3:3}, at: nsim_destroy+0x71/0x5c0 drivers/net/netdevsim/netdev.c:773
 
-Another thing to try is invalidate the TLBs before returning to user,
-just in case those TTBCR bits are cached in the TLB in a way we did not
-envisage. Untested diff below:
-
-----------------8<--------------------------------
-diff --git a/arch/arm/include/asm/uaccess-asm.h b/arch/arm/include/asm/uaccess-asm.h
-index 4bccd895d954..c00b400b7f4d 100644
---- a/arch/arm/include/asm/uaccess-asm.h
-+++ b/arch/arm/include/asm/uaccess-asm.h
-@@ -91,6 +91,9 @@
- 	bic	\tmp, \tmp, #TTBCR_EPD0 | TTBCR_T0SZ_MASK
- 	bic	\tmp, \tmp, #TTBCR_A1
- 	mcr	p15, 0, \tmp, c2, c0, 2		@ write TTBCR
-+	isb
-+	mcr	p15, 0, \tmp, c8, c7, 0		@ invalidate TLBs
-+	dsb
- 	.if	\isb
- 	instr_sync
- 	.endif
-----------------8<--------------------------------
-
-Thanks.
-
--- 
-Catalin
+syz-executor/9976 is lock owner. Given both waiter and owner printed,
+the proposed trylock looks like the typical paperover at least from a
+hoofed skull because of no real deadlock detected.
 
