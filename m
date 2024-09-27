@@ -1,117 +1,103 @@
-Return-Path: <linux-kernel+bounces-341463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5FE988087
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:40:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C9A988088
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C44BE1C2276F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:40:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE33E1F21E39
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096B4189B95;
-	Fri, 27 Sep 2024 08:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEB5189B95;
+	Fri, 27 Sep 2024 08:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMVCl9Zi"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="llo5zjpR"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390A2188A13;
-	Fri, 27 Sep 2024 08:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55280188A13;
+	Fri, 27 Sep 2024 08:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727426398; cv=none; b=EFsE8DbFAmCiciEYLPqZ61bvAGjsOWII5kNdAULeuYW7NONm06gRvYB6FETrVApHzF32/iVaGdak2ospj6JTLabXDUIkfk06x4QogXtGsRCa+Vk88T2/PWNUIIUYqMyBO6wdLsnX0ivbS/eDb/Tc3/ZfNsgPYmqSPfOaylibS6A=
+	t=1727426414; cv=none; b=m1FAVEistxbS7/Nup912e9usFGZE0izd/8XsWhR17JtKsdoj907ciYCVILNcmkkxvExS4tkTaXLnQv8Kn2eXBsxmbgsLKVrgSTvNkyVz1sYEx0/ojCt04JiBSyfs8yjf3NpsJiNHGomK/2u/hwvbheRDy8MZIZ30epeGdYEEgWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727426398; c=relaxed/simple;
-	bh=hYbImJ4Ev4jx5aCpniSYpcjeYjZwxXIkcu27iki++i4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d4ztGs1o319s331eYtyIEMFb2vlKXYj0HUb5oUCI5i9nRkUiOHtuw4BLxh2boOrc0EibIvB9TTad77tPq4ZS0QlhULOzuVcsFLAXWriN6Bm8RgHMz/JkAdagYYy+o9F/cXEuDcgX2O444Hcrvcmt61ixPsIznLmwfIBuCwyV2tY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GMVCl9Zi; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2da516e6940so377594a91.3;
-        Fri, 27 Sep 2024 01:39:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727426396; x=1728031196; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hYbImJ4Ev4jx5aCpniSYpcjeYjZwxXIkcu27iki++i4=;
-        b=GMVCl9ZiAdnGVF/eO+0cz7vMi4vvpKUisj1kCay/i9sfQ/kFQPygSgPRNuDr9ZvjYg
-         kbL4ZfUW0PDIlHPq4A4KcGBhiAY5shM89I/GvSB8ZiroY1ugM1fJ8ji589KgBujdpjU4
-         NThlJrpULbHIqYlbxBwWOyUkB+30Lw17a5Vq8Pa8qvwvC3D+mcgKVnGmsmaFpKFzvmyJ
-         mxrtNujDDzYUUFtvPBg4fiWYkT8GrAFO5UQvKep8QuoeKtXxi+nQRq5vt72etj13Es6B
-         1ogx0ZuBulffIhAn7W7VS+G/kaq33gB7Nk+zJRG4u6zGUKWvcJ/7bltcZea1t2S25ujO
-         VpMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727426396; x=1728031196;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hYbImJ4Ev4jx5aCpniSYpcjeYjZwxXIkcu27iki++i4=;
-        b=HRzPdVPVxqx+p7fDN9lZYNelJr3AeXV5hkEtnL541Jmii+12IxDm5Sh+tWFFNjdLXB
-         CX4ujQKAXVet11whdtyR8GaCS0i5u05nyy7kU5o0RMeBFXFDh9ofjp8cQU3OMEhwJDEm
-         tNn/FuJljm3gHn4hHf2+3GUhaZkuxpmOQIPW1f6vB28210c6RxXItFwOYFFAF8koYdKH
-         cRMj5X24xp1Trpnyj2PtezqRLe+Mbyai9nz8HoZatDuzXjje1gzcp0934BYbwmj1o/+6
-         uMx3tuBeNp45eEdWhBrufDlJ5v+Dk+bJHfs167LANIgtmaGX6EoZ7/oVhzQfapoql/qW
-         vDeg==
-X-Forwarded-Encrypted: i=1; AJvYcCU42oydU+FsFdFMy7PyJHcb9sA+8/2y+wwA3Gxgi4MsE47iYoOvk1Z6n54kuGv0uqsa6FKi7AjmfLgjvahY5Ho=@vger.kernel.org, AJvYcCXkSqNIE1jOmxY82NbYIofeUuGcUt7kIP6DZ3GEElw9p9LlAjK4lW2CF3KjGyQT1KRUz7Vn4CfoKTcNtR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy31aN4OLPjevferUKNyAmwVgb/FlZH9uFiFLFzh13aiwhxcTnQ
-	9Hj0tREMLG5SNTkTFWksLHAnrdStvQ5ajl6mnxrPogXwqMKWbvgZdCm1h/t3NyIj7c5IcsjeHxu
-	aqfAO9hHtn80zR8VFRzBmd7oD1kM=
-X-Google-Smtp-Source: AGHT+IH9QurLB9HGk/Herxmqe5pGQY/6ke+XUcdq9kiZsDiH58lNraRrvoW/7EyVrCJ92UxX4BV4JrXtWgxtGKVARq0=
-X-Received: by 2002:a17:90a:ff0e:b0:2e0:9147:7dc1 with SMTP id
- 98e67ed59e1d1-2e0b8ebebdemr1237952a91.6.1727426396447; Fri, 27 Sep 2024
- 01:39:56 -0700 (PDT)
+	s=arc-20240116; t=1727426414; c=relaxed/simple;
+	bh=2FBkk0yLD16RQQyh1heH4ztZUj0UmTANpi28s92/U7o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kqftJ36GHcJ9+uBhNF+DD3NJRf6ktd9TcyngueHRZsbl4T0H2tXcGajnnd1xJNdAhXYe6o9j3qfCppEEB3szElKyLORCZS6Pc2S7Q7pn0XlUQhXYQ8c6Qh0hQKsEg6SLctiGaBtX8fRrNc7J4SDfbhgDr5xlmq2NsPoKFsXskjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=llo5zjpR; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727426408; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=GDvQ4ucNXmwvli4Xh35RrqDvu4gn2U4viPcCqlB44+Q=;
+	b=llo5zjpRTzI2R7TvskGynMXMIpkjhiuBFBnceBmWNNtttKrG/cbcpdqoA+3JzVnWeeon59/WiVL3O2iSxt9KpEQl4Gvjoy56w/fjVzRf2oTPil4iyU18cDlkC2sCQ8mG8DFfTdv51S7moUOv7UodDaKx2lhpF5cG0zvoZFN3HWM=
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WFq6Vdc_1727426403)
+          by smtp.aliyun-inc.com;
+          Fri, 27 Sep 2024 16:40:08 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] perf test: Use ARRAY_SIZE for array length
+Date: Fri, 27 Sep 2024 16:40:02 +0800
+Message-Id: <20240927084002.8437-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925205244.873020-2-benno.lossin@proton.me>
- <202409270303.kUIAmOmY-lkp@intel.com> <42d17306-1ac6-4fc7-ab1b-69ef045039ac@proton.me>
- <CANiq72kXGNyLg0Ooo3Ne=KmZWBnSO9HE2tcfP=gf+WGFqnjDEg@mail.gmail.com> <1aa088b1-ca4d-4a97-b25c-96a18f62a79c@proton.me>
-In-Reply-To: <1aa088b1-ca4d-4a97-b25c-96a18f62a79c@proton.me>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 27 Sep 2024 10:39:43 +0200
-Message-ID: <CANiq72=-bV_=TUoH6gLnPwTcxROBqyrCpOpbumki_S+po1TPhQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] rust: add untrusted data abstraction
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: kernel test robot <lkp@intel.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
-	Greg KH <greg@kroah.com>, Simona Vetter <simona.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 12:15=E2=80=AFAM Benno Lossin <benno.lossin@proton.=
-me> wrote:
->
-> Personally, I would prefer adding a symbol. Since if we allow it, then
-> it might take a long time until the code is removed once we increase the
-> minimum version.
->
-> It would be best, if it produces an error when we raise the minimum
-> version beyond the one represented by the symbol. Is that already the
-> case?
+Use of macro ARRAY_SIZE to calculate array size minimizes
+the redundant code and improves code reusability.
 
-No -- that is a nice idea that I guess could be implemented in Kconfig
-somewhere (i.e. when checking conditions). However, one of the common
-things to do when upgrading the minimum is to review/clean the
-`*_VERSION` uses anyway (and they may occur outside Kconfig files
-too), and also sometimes one wants to upgrade a minimum without doing
-the cleanups immediately (e.g. the recently proposed GCC 8.1 upgrade).
+./tools/perf/tests/demangle-java-test.c:31:34-35: WARNING: Use ARRAY_SIZE.
 
-> Gave it a try and I also can't reproduce the error there...
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11173
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ tools/perf/tests/demangle-java-test.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Hmm... I think CE uses the Rust-provided binaries (and I guess the
-playground too). Do you have a link ("Share" in CE)?
+diff --git a/tools/perf/tests/demangle-java-test.c b/tools/perf/tests/demangle-java-test.c
+index 44d1be303b67..611c18cdf4d3 100644
+--- a/tools/perf/tests/demangle-java-test.c
++++ b/tools/perf/tests/demangle-java-test.c
+@@ -6,6 +6,7 @@
+ #include "session.h"
+ #include "debug.h"
+ #include "demangle-java.h"
++#include "kselftest.h"
+ 
+ static int test__demangle_java(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
+ {
+@@ -28,7 +29,7 @@ static int test__demangle_java(struct test_suite *test __maybe_unused, int subte
+ 		  "void java.lang.Object<init>()" },
+ 	};
+ 
+-	for (i = 0; i < sizeof(test_cases) / sizeof(test_cases[0]); i++) {
++	for (i = 0; i < ARRAY_SIZE(test_cases); i++) {
+ 		buf = java_demangle_sym(test_cases[i].mangled, 0);
+ 		if (strcmp(buf, test_cases[i].demangled)) {
+ 			pr_debug("FAILED: %s: %s != %s\n", test_cases[i].mangled,
+-- 
+2.32.0.3.g01195cf9f
 
-Cheers,
-Miguel
 
