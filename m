@@ -1,169 +1,103 @@
-Return-Path: <linux-kernel+bounces-341943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F579888A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:01:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8763F9888A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BF991C20372
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:01:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3059B1F22382
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5188C1C1AA5;
-	Fri, 27 Sep 2024 16:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0025616DED2;
+	Fri, 27 Sep 2024 16:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CQycrSD9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cR/6kEjj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCDE200A3;
-	Fri, 27 Sep 2024 16:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6C3200A3;
+	Fri, 27 Sep 2024 16:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727452883; cv=none; b=MbTITho5nn9VSpWU9U/b1nieF5M+oAiqlq8lFjKa2T1XvQolBuLXNXhTQZx8C4iz97sUjKYbmPcV3qfXACnK/ZQfbjcozOrYS2HVQpSEfz4Qhdq6dDNnnqGOgraeuQ7tBJTdLAXCj1mZVjydxsR68HPvRiTymg21PIWEiyErnTI=
+	t=1727452878; cv=none; b=QnojTfcgbidd+V1RwWfScZmknFftrliOWq4PAB6aQIlddYUjjKTRIKq0odK8bAXMYhCi3aQd14asIUlzZrrxI/eHTwlDCbx4ZVPkIgGYo3fQ6j3zmzJlB4qQmzqHBC3Fr0qvs31N1mtVQjgIfiK143wagBXRqaQMj5rTpED5r9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727452883; c=relaxed/simple;
-	bh=ML4bUSiL9vWSGJG2FlDF3bvvDk9dX/mDX9Fx3HwVjfA=;
+	s=arc-20240116; t=1727452878; c=relaxed/simple;
+	bh=GpIvd9hipSTskI1lT7iREGb8R5ac9xwK+hYxlfG8v0s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K/PbICkCY4OeqRQA0kMBVfRZSTAjClu140/ZEsUPHhZYfaZEERCWmfv7llEWZPmr7JKm1N5shtuOfXgLewKUdqsTDyj8V2ksgPORVPsxbXMGxsNfjMxPJUZsF/beAQKBDYEb9zrmFk/FntLEdvfosdK0o3oxUn1zEE9AlKJMqJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CQycrSD9; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727452882; x=1758988882;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ML4bUSiL9vWSGJG2FlDF3bvvDk9dX/mDX9Fx3HwVjfA=;
-  b=CQycrSD960Vc2hganxkoYS2K2unKeh5qQIcrxF7WZz98WXnrZEY/5G5y
-   A9Cjibateng18tKIC5Ij4QrWeSS3nk2HGlFzaihk3NzCSVLa18xCB3vWL
-   0+avJ39ga/tOei7sB7WCSbvC/lUCgTdE9Ex345O1uBvYcTZBNTA9YfDTA
-   JO794Slsu13ADC4vNiKIJXV8I6epi4tXmNbRS47ZHr0HgqccQuziVIyj0
-   Hl/KDM9x9NRb1z4JtxIK80dbyPeijn4J2a5U9fmUF9DaU2JqfXrepu0LA
-   YLnaLFS6UxrPGHLf4NsxGfE0mju51vri2QJUC/HX8NjG+djXDbiSW1OzB
-   g==;
-X-CSE-ConnectionGUID: /CzqOtRnR3+UyPnEwxf/Yg==
-X-CSE-MsgGUID: dOlPpVFDQfCBj9Q0K4l0pA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="49129534"
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="49129534"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 09:01:21 -0700
-X-CSE-ConnectionGUID: ERXO9FCDTvOhNgMlz6XQsQ==
-X-CSE-MsgGUID: w/2fPN6HQTatXxXL7cy9Ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="73002111"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 09:01:14 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 81E1511F817;
-	Fri, 27 Sep 2024 19:01:10 +0300 (EEST)
-Date: Fri, 27 Sep 2024 16:01:10 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 11/11] media: i2c: ov5645: Report streams using frame
- descriptors
-Message-ID: <ZvbWxsOtF7PGrbsz@kekkonen.localdomain>
-References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240910170610.226189-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <ZvWBlivUaZ92KoAI@kekkonen.localdomain>
- <20240926174819.GK21788@pendragon.ideasonboard.com>
- <ZvWumaGsMPGGwPaS@kekkonen.localdomain>
- <CA+V-a8uGmyrSQQULY9sS9r-Ss_Gxw7OBtbYjFYOMpLJ_e=ZRGg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M5svGAyPDg5zsSG93p5WbQy/6Btbw9sSasNCvPnuC/9+WqGFaKJOLu1ocNTliYuR/xaKJRkMsSk8w77zsTwg9G5/zDdK6xx6z4PC/vStK+TsYyzx+8pqDXSGiXIlNY0u+213gHbtsJ0EbP+4vucBjm4Q6hK+5D30LdFG848IDLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cR/6kEjj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85E74C4CEC4;
+	Fri, 27 Sep 2024 16:01:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727452878;
+	bh=GpIvd9hipSTskI1lT7iREGb8R5ac9xwK+hYxlfG8v0s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cR/6kEjjE0xM+1i27pUcTVCQaDDefN4LgoqyMFQEBKRKCfeVH1xS8SoQkHXIBmaca
+	 dUlEuD3RpahDRdN+r2E6/aDwId8TMJq4lBN+RF3uvUXbeRQ563WZauOEuNo6ciFIGj
+	 0LpiUkA32dkPjG4L0HkkZee299bcpXp2da1/s8bb0v1uk/qDCLKReiJHnkejjkvMLf
+	 yMdT9PLMHiCTxMXITG0TyjcT+9T2fFO1nb0mZOigE9NeUEPiLd7Ymgb//6EC3a4gpX
+	 d2nIkmzUwiLeKRn4XnhwimE3AMAbS+po3V7fxFbnUclrVuZXkPaIXD/h4PpjxHIoLu
+	 LweXTMHZ+48xg==
+Date: Fri, 27 Sep 2024 18:01:14 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-i2c <linux-i2c@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] i2c-host-fixes for v6.12-rc1
+Message-ID: <fvyjsdwpqo7vnx7acs63hp7dwx6avxouvxkcynov5c6dgmwji6@ob6j7haixn4z>
+References: <auogjhzhbs2w45ptdkl5ceyxsm7apyfi5wmfv3iwuzfh47pl6f@4nnrnpqqlum2>
+ <ZvbTAl5uYbMcVI6m@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+V-a8uGmyrSQQULY9sS9r-Ss_Gxw7OBtbYjFYOMpLJ_e=ZRGg@mail.gmail.com>
+In-Reply-To: <ZvbTAl5uYbMcVI6m@black.fi.intel.com>
 
-Hi Prabhakar,
+Hi Andy,
 
-On Fri, Sep 27, 2024 at 04:31:31PM +0100, Lad, Prabhakar wrote:
-> Hi Sakari and Laurent,
+On Fri, Sep 27, 2024 at 06:45:06PM GMT, Andy Shevchenko wrote:
+> On Fri, Sep 27, 2024 at 12:09:36PM +0200, Andi Shyti wrote:
 > 
-> On Thu, Sep 26, 2024 at 7:57 PM Sakari Ailus
-> <sakari.ailus@linux.intel.com> wrote:
-> >
-> > On Thu, Sep 26, 2024 at 08:48:19PM +0300, Laurent Pinchart wrote:
-> > > On Thu, Sep 26, 2024 at 03:45:26PM +0000, Sakari Ailus wrote:
-> > > > Hi Prabhakar,
-> > > >
-> > > > Thanks for the set. It looks largely very nice to me, after addressing
-> > > > Laurent's comments. A few comments here and possibly on other patches...
-> > > >
-> > > > On Tue, Sep 10, 2024 at 06:06:10PM +0100, Prabhakar wrote:
-> > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > >
-> > > > > Implement the .get_frame_desc() subdev operation to report information
-> > > > > about streams to the connected CSI-2 receiver. This is required to let
-> > > > > the CSI-2 receiver driver know about virtual channels and data types for
-> > > > > each stream.
-> > > > >
-> > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > > ---
-> > > > >  drivers/media/i2c/ov5645.c | 28 ++++++++++++++++++++++++++++
-> > > > >  1 file changed, 28 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-> > > > > index 7f1133292ffc..c24eb6e7a7b5 100644
-> > > > > --- a/drivers/media/i2c/ov5645.c
-> > > > > +++ b/drivers/media/i2c/ov5645.c
-> > > > > @@ -28,6 +28,7 @@
-> > > > >  #include <linux/regulator/consumer.h>
-> > > > >  #include <linux/slab.h>
-> > > > >  #include <linux/types.h>
-> > > > > +#include <media/mipi-csi2.h>
-> > > > >  #include <media/v4l2-ctrls.h>
-> > > > >  #include <media/v4l2-event.h>
-> > > > >  #include <media/v4l2-fwnode.h>
-> > > > > @@ -829,6 +830,32 @@ static const struct v4l2_ctrl_ops ov5645_ctrl_ops = {
-> > > > >   .s_ctrl = ov5645_s_ctrl,
-> > > > >  };
-> > > > >
-> > > > > +static int ov5645_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-> > > > > +                          struct v4l2_mbus_frame_desc *fd)
-> > > > > +{
-> > > > > + const struct v4l2_mbus_framefmt *fmt;
-> > > > > + struct v4l2_subdev_state *state;
-> > > > > +
-> > > > > + if (pad != OV5645_PAD_SOURCE)
-> > > > > +         return -EINVAL;
-> > > >
-> > > > As you have a single source pad, and pretty much all sensor drivers will, I
-> > > > think it'd be nice to add a check for this (that it's not an internal pad)
-> > > > to the caller side in v4l2-subdev.c. And of course drop this one.
-> > >
-> > > What check would you add, just verifying that the pad is a source pad ?
-> >
-> > I think you could add that, too, besides the absence of the internal flag.
-> >
-> Checking only for the source flag should suffice, as the
-> MEDIA_PAD_FL_INTERNAL flag cannot be set for a source pad because
-> media_entity_pads_init() enforces this restriction.
+> ...
 > 
-> Do you agree?
+> > ----------------------------------------------------------------
+> > The DesignWare driver now has the correct ENABLE-ABORT sequence,
+> > ensuring ABORT can always be sent when needed.
+> > 
+> > In the SynQuacer controller we now check for PCLK as an optional
+> > clock, allowing ACPI to directly provide the clock rate.
+> > 
+> > The recent KEBA driver required a dependency fix in Kconfig.
+> > 
+> > The XIIC driver now has a corrected power suspend sequence.
+> 
+> While tag message looks nice here, I think it still has to follow the
+> same (as in the commit message) pattern, i.e.
+> 
+> $SUMMARY
+> ...blank line...
+> $DESCRIPTION
+> 
+> Why? Because the Web representation of the message looks weird on the
+> Web. Compare
+> https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel.git/tag/?h=intel-pinctrl-v6.12-1
+> and yours
+> https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git/tag/?h=i2c-host-fixes-6.12-rc1
 
-Works for me.
+I've been looking at many git tag descriptions and I haven't seen
+a rule being enforced as it is for the commits.
 
--- 
-Sakari Ailus
+In any case, thanks a lot for looking into my tag description, I
+can defeinitely adopt your way.
+
+I will resend this pull request with a proper formatting.
+
+Thanks,
+Andi
 
