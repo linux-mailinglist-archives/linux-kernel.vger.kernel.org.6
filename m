@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-341462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49944988086
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:39:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D5FE988087
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA58B1F238B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:39:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C44BE1C2276F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D47818A6B8;
-	Fri, 27 Sep 2024 08:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096B4189B95;
+	Fri, 27 Sep 2024 08:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6bWUDXz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMVCl9Zi"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFDD17A597;
-	Fri, 27 Sep 2024 08:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390A2188A13;
+	Fri, 27 Sep 2024 08:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727426360; cv=none; b=UX2xd/0YT8pZFdbH4/AVvnWgi1EUbm9/8EgDCrPPC3hctJ6AQ4ewxbdl4OsvnbDguzh8y2o/rVPNeHp8iuKbgV8BzoEAD7MfN5sY88wQVAmjssP2Zg/dPudqN/GIxzZpuw5AUfFluXUGSCS3xcF58AQNsNUXDdoOCYPd8Hj1pz0=
+	t=1727426398; cv=none; b=EFsE8DbFAmCiciEYLPqZ61bvAGjsOWII5kNdAULeuYW7NONm06gRvYB6FETrVApHzF32/iVaGdak2ospj6JTLabXDUIkfk06x4QogXtGsRCa+Vk88T2/PWNUIIUYqMyBO6wdLsnX0ivbS/eDb/Tc3/ZfNsgPYmqSPfOaylibS6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727426360; c=relaxed/simple;
-	bh=2CmxE4XpAXVWTY0TaLeb2HVuWbbBpaDz4vtNsP7PnyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PGoEPzrApArREUaWFiUeSP0dq7wlW6p/b2DeVvTWCXRBhZis3l4bcgsJ3oDxQO6R4kwv/ZH0Y2lb+2GwcF6wIQSu8GQ4A6qS8cn+39d6Pglg7bFKtSiROz7tv4MDwrSAJr8LJlxtzZseb2zeeEl3nMJ+z7Y3r147sqNIrNxKDDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6bWUDXz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49FFFC4CEC4;
-	Fri, 27 Sep 2024 08:39:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727426360;
-	bh=2CmxE4XpAXVWTY0TaLeb2HVuWbbBpaDz4vtNsP7PnyI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O6bWUDXzSPoJdMBfA5II7PxzVzThH5Ej/TqBSuu8nPt+ZGPyx6TyiU05Db4O2s/pQ
-	 bTsS6jEmZr4lt+aFd9nGo4KTGJ5+wmGqcpIxkP9eP3fOz6fv5hblXW4wIKnBMEBoCO
-	 Ip5kPeQzu1JBZ0vVp7hrzfOwU1BFIDxCGAjXL7QZk22j56OuN3W3naTzDaJhEiRGBm
-	 fUejM5pxQIc9ddhbG7vg3UefiLHPYKkiF0GNJjgVvAm4NsMkWqmoJvCd1hOaNuBtpo
-	 gwn979RqVgnpkiZO/UZ1Q99ToyKFauw+SQBZj7AMifJcZrCBypGn124WMnHNA+aV+Z
-	 Ds9BhuQSRaJYQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1su6VQ-000000001Wg-1ix0;
-	Fri, 27 Sep 2024 10:39:17 +0200
-Date: Fri, 27 Sep 2024 10:39:16 +0200
-From: Johan Hovold <johan@kernel.org>
-To: John Keeping <jkeeping@inmusicbrands.com>
-Cc: linux-sound@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Elder <elder@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Lee Jones <lee@kernel.org>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Rob Herring <robh@kernel.org>, Daniel Kaehn <kaehndan@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: serial-generic: explicitly disable flow control
-Message-ID: <ZvZvNIOLX1UMJmC3@hovoldconsulting.com>
-References: <20240926104404.3527124-1-jkeeping@inmusicbrands.com>
+	s=arc-20240116; t=1727426398; c=relaxed/simple;
+	bh=hYbImJ4Ev4jx5aCpniSYpcjeYjZwxXIkcu27iki++i4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d4ztGs1o319s331eYtyIEMFb2vlKXYj0HUb5oUCI5i9nRkUiOHtuw4BLxh2boOrc0EibIvB9TTad77tPq4ZS0QlhULOzuVcsFLAXWriN6Bm8RgHMz/JkAdagYYy+o9F/cXEuDcgX2O444Hcrvcmt61ixPsIznLmwfIBuCwyV2tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GMVCl9Zi; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2da516e6940so377594a91.3;
+        Fri, 27 Sep 2024 01:39:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727426396; x=1728031196; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hYbImJ4Ev4jx5aCpniSYpcjeYjZwxXIkcu27iki++i4=;
+        b=GMVCl9ZiAdnGVF/eO+0cz7vMi4vvpKUisj1kCay/i9sfQ/kFQPygSgPRNuDr9ZvjYg
+         kbL4ZfUW0PDIlHPq4A4KcGBhiAY5shM89I/GvSB8ZiroY1ugM1fJ8ji589KgBujdpjU4
+         NThlJrpULbHIqYlbxBwWOyUkB+30Lw17a5Vq8Pa8qvwvC3D+mcgKVnGmsmaFpKFzvmyJ
+         mxrtNujDDzYUUFtvPBg4fiWYkT8GrAFO5UQvKep8QuoeKtXxi+nQRq5vt72etj13Es6B
+         1ogx0ZuBulffIhAn7W7VS+G/kaq33gB7Nk+zJRG4u6zGUKWvcJ/7bltcZea1t2S25ujO
+         VpMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727426396; x=1728031196;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hYbImJ4Ev4jx5aCpniSYpcjeYjZwxXIkcu27iki++i4=;
+        b=HRzPdVPVxqx+p7fDN9lZYNelJr3AeXV5hkEtnL541Jmii+12IxDm5Sh+tWFFNjdLXB
+         CX4ujQKAXVet11whdtyR8GaCS0i5u05nyy7kU5o0RMeBFXFDh9ofjp8cQU3OMEhwJDEm
+         tNn/FuJljm3gHn4hHf2+3GUhaZkuxpmOQIPW1f6vB28210c6RxXItFwOYFFAF8koYdKH
+         cRMj5X24xp1Trpnyj2PtezqRLe+Mbyai9nz8HoZatDuzXjje1gzcp0934BYbwmj1o/+6
+         uMx3tuBeNp45eEdWhBrufDlJ5v+Dk+bJHfs167LANIgtmaGX6EoZ7/oVhzQfapoql/qW
+         vDeg==
+X-Forwarded-Encrypted: i=1; AJvYcCU42oydU+FsFdFMy7PyJHcb9sA+8/2y+wwA3Gxgi4MsE47iYoOvk1Z6n54kuGv0uqsa6FKi7AjmfLgjvahY5Ho=@vger.kernel.org, AJvYcCXkSqNIE1jOmxY82NbYIofeUuGcUt7kIP6DZ3GEElw9p9LlAjK4lW2CF3KjGyQT1KRUz7Vn4CfoKTcNtR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy31aN4OLPjevferUKNyAmwVgb/FlZH9uFiFLFzh13aiwhxcTnQ
+	9Hj0tREMLG5SNTkTFWksLHAnrdStvQ5ajl6mnxrPogXwqMKWbvgZdCm1h/t3NyIj7c5IcsjeHxu
+	aqfAO9hHtn80zR8VFRzBmd7oD1kM=
+X-Google-Smtp-Source: AGHT+IH9QurLB9HGk/Herxmqe5pGQY/6ke+XUcdq9kiZsDiH58lNraRrvoW/7EyVrCJ92UxX4BV4JrXtWgxtGKVARq0=
+X-Received: by 2002:a17:90a:ff0e:b0:2e0:9147:7dc1 with SMTP id
+ 98e67ed59e1d1-2e0b8ebebdemr1237952a91.6.1727426396447; Fri, 27 Sep 2024
+ 01:39:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926104404.3527124-1-jkeeping@inmusicbrands.com>
+References: <20240925205244.873020-2-benno.lossin@proton.me>
+ <202409270303.kUIAmOmY-lkp@intel.com> <42d17306-1ac6-4fc7-ab1b-69ef045039ac@proton.me>
+ <CANiq72kXGNyLg0Ooo3Ne=KmZWBnSO9HE2tcfP=gf+WGFqnjDEg@mail.gmail.com> <1aa088b1-ca4d-4a97-b25c-96a18f62a79c@proton.me>
+In-Reply-To: <1aa088b1-ca4d-4a97-b25c-96a18f62a79c@proton.me>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 27 Sep 2024 10:39:43 +0200
+Message-ID: <CANiq72=-bV_=TUoH6gLnPwTcxROBqyrCpOpbumki_S+po1TPhQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] rust: add untrusted data abstraction
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: kernel test robot <lkp@intel.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
+	Greg KH <greg@kroah.com>, Simona Vetter <simona.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 11:44:03AM +0100, John Keeping wrote:
-> The serdev subsystem does not specify the default state of flow control
-> when opening a device.
+On Fri, Sep 27, 2024 at 12:15=E2=80=AFAM Benno Lossin <benno.lossin@proton.=
+me> wrote:
+>
+> Personally, I would prefer adding a symbol. Since if we allow it, then
+> it might take a long time until the code is removed once we increase the
+> minimum version.
+>
+> It would be best, if it produces an error when we raise the minimum
+> version beyond the one represented by the symbol. Is that already the
+> case?
 
-This bit isn't correct as serdev enables hardware flow control (CRTSCTS)
-by default on open() (see ttyport_open()).
+No -- that is a nice idea that I guess could be implemented in Kconfig
+somewhere (i.e. when checking conditions). However, one of the common
+things to do when upgrading the minimum is to review/clean the
+`*_VERSION` uses anyway (and they may occur outside Kconfig files
+too), and also sometimes one wants to upgrade a minimum without doing
+the cleanups immediately (e.g. the recently proposed GCC 8.1 upgrade).
 
-> Surveying other drivers using serdev shows the
-> vast majority of these set flow control explicitly after opening the
-> device.
-> 
-> MIDI does not use flow control, so ensure it is disabled.
+> Gave it a try and I also can't reproduce the error there...
 
-Johan
+Hmm... I think CE uses the Rust-provided binaries (and I guess the
+playground too). Do you have a link ("Share" in CE)?
+
+Cheers,
+Miguel
 
