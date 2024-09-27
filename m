@@ -1,157 +1,212 @@
-Return-Path: <linux-kernel+bounces-341842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A8729886FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:22:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE2F988702
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9DBF1C22E19
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:22:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3D8A2817D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8663191;
-	Fri, 27 Sep 2024 14:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="POAMUXUe"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5DE13E41D;
+	Fri, 27 Sep 2024 14:22:35 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D91481AB
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B1A481AB
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727446948; cv=none; b=Z2vk8rH5k8EDkkVtVfbLO+FodGuqfdIbXeGP/17qTAr1LD4vAvgA1W2YzeDFb53oJwojjxCMB+EzN7JPv9ie10w4PUDrXa9FnhynP7qrRJbRE7TbXCb1INt9hxy5a68Vo+lJPF9+b5QrYA3nvMhU5qfpT9XjT9iyXCo1T2AOZpY=
+	t=1727446954; cv=none; b=eD7rd2IT8gzIV62Nsvs8MfXBSSNZosB/NsDGwjobv7BGYRPqzUlIEF5qJFQrQAjKznYaRSc84g5abp2pJ12pyha95MhDkNkCVq6P8f4XtV+zZdFPZIBQa/Kg8OsZWlIz6avQ2C95fNLMAMhDskGcYgUMRfqRqFaXMiKPruHT5B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727446948; c=relaxed/simple;
-	bh=Ch2iEEf7t3BPPxauvPjzbm5y3oiW6BijuAn8NuC5kGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jigovjvu9n5O7buH9pDSUxP4Lpks9EprBL5cUj1fldVb7vRombA7EWcsgY+gs3UwWarO8HEDV/zBI0Hx1mHam8B5eNolqoMCIv0ru9fCFO+lb7cDmvL0B/8RvSfWWu49NTmVqtyQDCE08NM/VkAa6PXrmM2A8bLIfyOlow/ph+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=POAMUXUe; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cae4ead5bso203455e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:22:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727446945; x=1728051745; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hhj4ZQ6Xld1eIudfd0RTNxx6Jiz8E1lbDuETxH/nQZM=;
-        b=POAMUXUexwL5zKcfaGjIhvnSS7zMkNTK8/JrXwfXmO4bUar3dty6PHMQ7X2YQ/SPrN
-         viuqv7Ar7ifW5BmAX2BLE95ZHixMPPXDyFtDBv62hfVcziOXDrqrT5Iyqlaz2ERYjBuk
-         PFnIrgoLbchz7YqO3UIyZJUtNYcDIQm5SatZYLLTUo6WRIV8xFSZNxUv+aR8CiOXvRiV
-         uLutSYNZAV9d10nUZ4f5nCAt1U2u/etLXqm9/j5tiRboyg+Z3Z+JGAxLZZrbIx9BihYm
-         cZnov3h9SJbkXJfdMNQhQxEXeJfE2IADV1WfaCdN1KE68GssfW2RobyiAtJHSKWaTWuE
-         7WIg==
+	s=arc-20240116; t=1727446954; c=relaxed/simple;
+	bh=3FczA7AobfLgZQr28zdTwGPi8mMRJ9sE+8Oe5Ra701g=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IFso/7UjNdKwQNE5TGNUOSxzELNlpyXm3mNGVLZfdK9mHw5DR3ZzIzwoGKG2DH27Riz5r/kzk1pQaNgLkwtyv2WUFcUnddht6dN9EUxSDnyRL4Fz06em2b7lLHQlqr+0LVKRNRfhrWBr7L2IT6W21UqRADlFLYQQ0OZtx5RckPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3481b26d6so5871455ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:22:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727446945; x=1728051745;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hhj4ZQ6Xld1eIudfd0RTNxx6Jiz8E1lbDuETxH/nQZM=;
-        b=PYPAreCbdKT01tT7xnxziEsXVc0lFbXkon7b3GX+HAYIDkc9zuZRkBnTt9skv9A4cS
-         4hxyR8slr5A8xHP9wXIYXfxVkfD4G8i2JMWCNZ5t4ybRTpt0nLJTME/Gdg/6knctPVnU
-         tBfQmGrMzVJs8KKpSSwI1JMzmLuh7i56ygFceimVcUMMUPFEgIgNOq3xFOuMIKNzKDwv
-         4mI5YYPzFDlnvDEVTFXXUAyX+m5ALVHotaYsdDrJyZiDqjMV4gSWWnhxvVpq3rP1o/OJ
-         lNYsJvc8K4IOHQeVy5/xlXUwU4wMODHmEdHfV/gi0amKqtGeG7T7OnRFUynxOFj4olbH
-         1dTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhLw92ZWvZ2o7EaJ5Tb1/I38WyiMwmRRPkZbzqGAfxfAXrsJzDv5sDjPJ2kFkoCaTXqjhUfHPbJjRDiEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yycjr9bduBmSD+IHdm6l/DGmPkWb2jWdsfrkGIo8YZk2ViiZJ+B
-	ceQA11V0nWROdjXRq8TtYepb6hdJAHzLs2oSOWYKFMCSUGi9+FZ0M0N8+Yyy0g==
-X-Google-Smtp-Source: AGHT+IEyha9B5v1BC8Ql2C8y6hVRirTJDh8x//Y8F1dggxgjTZk/aBm90T880breDpO4GrzY3E7fHQ==
-X-Received: by 2002:a05:600c:3d9b:b0:426:7018:2e2f with SMTP id 5b1f17b1804b1-42f59b52c0amr3701145e9.5.1727446944666;
-        Fri, 27 Sep 2024 07:22:24 -0700 (PDT)
-Received: from google.com (105.93.155.104.bc.googleusercontent.com. [104.155.93.105])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57e13944sm28884195e9.30.2024.09.27.07.22.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 07:22:24 -0700 (PDT)
-Date: Fri, 27 Sep 2024 14:22:20 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
-	will@kernel.org, joro@8bytes.org, suravee.suthikulpanit@amd.com,
-	robin.murphy@arm.com, dwmw2@infradead.org, baolu.lu@linux.intel.com,
-	shuah@kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
-	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
-	shameerali.kolothum.thodi@huawei.com, yi.l.liu@intel.com
-Subject: Re: [PATCH v2 06/19] iommufd/viommu: Add
- IOMMU_VIOMMU_SET/UNSET_VDEV_ID ioctl
-Message-ID: <Zva_nFXZgT4MEfDg@google.com>
-References: <cover.1724776335.git.nicolinc@nvidia.com>
- <6348cc7a72ce9f2ac0e9caf9737e70177a01eb74.1724776335.git.nicolinc@nvidia.com>
- <Zva4PJ3FhpMlWxhF@google.com>
- <20240927140141.GA4568@nvidia.com>
+        d=1e100.net; s=20230601; t=1727446952; x=1728051752;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Fw4xmU6GpRJTjF1S/NmnMFH01B1zeuNXnSIGAPqNETA=;
+        b=lERWagPoxzWs5Xdhx8rHoTTM8e7rhTWKOCMWLE+WdT4aADghCfIgG7+CNBU3hVR7wQ
+         qPAMX5i9hVAprYf5q9r0Snu462+vsq016uqd08VdBN38DGvyDrHoGRrF/hvdkwvV9ppC
+         ZmjxdbNMfz4NQI5oPU8ZJYDpgv+A+37WHB2Vt7PyHpdMPIoF5v2gSm/B8hrdlLGrF1cx
+         aoB2cpBGXwBKrzC10PIjHkxgrAk0gT4aZoBJZtJOzvdQyg3qqnHezdYQ2dGXPWY5u2wh
+         Y/ebWg4y1tbk1C4j97fotknESND1bUer78k3tryw2iTK1BfKhPjQ+El/r0QmlZPK1shZ
+         OsMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXl8H6XghCtrFc/B/N0gnNBq5f5QRJia+Q0+61E83N5vUpwuv8uyfEG6Q2PLu/6B59OJ4ETwkW3DVEhQgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6nP4TtDOvOmVRfHmISJVJ5ufum858HERvOqJwE8AAQTq09sv8
+	pdqFiDgCR5FTeQtp6og7czXJwAl8/kihxTYLVS5KbO2ZpCSqpgTxKUoKueKAZFZSTL4WUcNlY5X
+	WsSbLLSkIYArEybC6+upHkJ557mM9NlCRY01LIeBISQRDBjMmx7AxNio=
+X-Google-Smtp-Source: AGHT+IGB8L7l5TJGmygAtpk/EFeIknJHc0WE28kgq1N/sYGnTQuUlRyrxEIZWqIBFMg0Is9QROkpKwVHbQ5gD8hqkjV4fvV9bTPY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240927140141.GA4568@nvidia.com>
+X-Received: by 2002:a92:ca0c:0:b0:3a0:533e:3c0a with SMTP id
+ e9e14a558f8ab-3a345165300mr38449615ab.7.1727446952044; Fri, 27 Sep 2024
+ 07:22:32 -0700 (PDT)
+Date: Fri, 27 Sep 2024 07:22:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f6bfa7.050a0220.38ace9.001a.GAE@google.com>
+Subject: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_dir_foreach_blk
+From: syzbot <syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 27, 2024 at 11:01:41AM -0300, Jason Gunthorpe wrote:
-> On Fri, Sep 27, 2024 at 01:50:52PM +0000, Mostafa Saleh wrote:
-> 
-> > My understanding of IOMMUFD is very little, but AFAICT, that means that
-> > it’s assumed that each device can only have one stream ID(RID)?
-> > 
-> > As I can see in patch 17 in arm_smmu_convert_viommu_vdev_id(), it
-> > converts the virtual ID to a physical one using master->streams[0].id.
-> > 
-> > Is that correct or am I missing something?
-> > 
-> > As I am looking at similar problem for paravirtual IOMMU with pKVM, where
-> > the UAPI would be something similar to:
-> > 
-> > 	GET_NUM_END_POINTS(dev) => nr_sids
-> > 
-> > 	SET_END_POINT_VSID(dev, sid_index, vsid)
-> > 
-> > Similar to what VFIO does with IRQs.
-> > 
-> > As a device can have many SIDs.
-> 
-> We don't support multi SID through this interface, at least in this
-> version.
-> 
-> To do multi-sid you have to inform the VM of all the different pSIDs
-> the device has and then setup the vSID/pSID translation to map them
-> all to the HW invalidation logic.
+Hello,
 
-Why would the VM need to know the pSID? The way I view this is quite close to
-how irq works, the VM only views the GSI which is the virtualized number.
-The VMM then would need to configure vSID->pSID translation, also without
-knowing the actual pSID, just how many SIDs are there per-device; very similar to
-how it configures IRQs through
-VFIO_DEVICE_GET_INFO/VFIO_DEVICE_SET_IRQS.
+syzbot found the following issue on:
 
-And as long as we only allow 1:1 vSID to pSID mapping, I guess it would be
-easy to implement.
+HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15e9de9f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e851828834875d6f
+dashboard link: https://syzkaller.appspot.com/bug?extid=b20bbf680bb0f2ecedae
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> 
-> Which is alot more steps, and we have no use case right now. Multi-sid
-> is also not something I expect to see in any modern PCI device, and
-> this is VFIO PCI...
-> 
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Ah, I thought IOMMUFD would be used instead of VFIO_TYPE1*, which should cover
-platform devices (VFIO-platform) or am I missing something?
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-88264981.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/df2a0a047a7a/vmlinux-88264981.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bbdb25081712/bzImage-88264981.xz
 
-And multi-SIDs is common in platform devices and this would be quite
-restricting, and I was hoping to support the pKVM vIOMMU through IOMMUFD
-interface.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com
 
-If possible, can the UAPI be designed with this in mind, even if not
-implemented now?
+loop0: detected capacity change from 0 to 32768
+=======================================================
+WARNING: The mand mount option has been deprecated and
+         and is ignored by this kernel. Remove the mand
+         option from the mount to silence this warning.
+=======================================================
+ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
+overlayfs: upper fs does not support tmpfile.
+overlayfs: upper fs does not support RENAME_WHITEOUT.
+overlayfs: upper fs missing required features.
+==================================================================
+BUG: KASAN: use-after-free in ocfs2_check_dir_entry fs/ocfs2/dir.c:305 [inline]
+BUG: KASAN: use-after-free in ocfs2_dir_foreach_blk_id fs/ocfs2/dir.c:1784 [inline]
+BUG: KASAN: use-after-free in ocfs2_dir_foreach_blk+0x1704/0x1b20 fs/ocfs2/dir.c:1912
+Read of size 2 at addr ffff88804d20b008 by task syz.0.0/5119
 
-Thanks,
-Mostafa
+CPU: 0 UID: 0 PID: 5119 Comm: syz.0.0 Not tainted 6.11.0-syzkaller-08481-g88264981f208 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ ocfs2_check_dir_entry fs/ocfs2/dir.c:305 [inline]
+ ocfs2_dir_foreach_blk_id fs/ocfs2/dir.c:1784 [inline]
+ ocfs2_dir_foreach_blk+0x1704/0x1b20 fs/ocfs2/dir.c:1912
+ ocfs2_readdir+0x2a1/0x5e0 fs/ocfs2/dir.c:1956
+ wrap_directory_iterator+0x91/0xd0 fs/readdir.c:65
+ iterate_dir+0x571/0x800 fs/readdir.c:108
+ __do_sys_getdents64 fs/readdir.c:407 [inline]
+ __se_sys_getdents64+0x20d/0x4f0 fs/readdir.c:392
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9e2d77def9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9e2e4f8038 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 00007f9e2d935f80 RCX: 00007f9e2d77def9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000008
+RBP: 00007f9e2d7f0b76 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f9e2d935f80 R15: 00007ffd76550ee8
+ </TASK>
 
-> Jason
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x20001 pfn:0x4d20b
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+raw: 04fff00000000000 ffffea0001347788 ffffea0001347808 0000000000000000
+raw: 0000000000020001 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as freed
+page last allocated via order 0, migratetype Movable, gfp_mask 0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), pid 5119, tgid 5118 (syz.0.0), ts 141582230460, free_ts 141702836739
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ folio_alloc_mpol_noprof+0x36/0x50 mm/mempolicy.c:2283
+ __read_swap_cache_async+0x250/0x8e0 mm/swap_state.c:477
+ swap_cluster_readahead+0x674/0x7f0 mm/swap_state.c:703
+ swapin_readahead+0x1bb/0xdf0 mm/swap_state.c:882
+ do_swap_page+0x584/0x7b30 mm/memory.c:4324
+ handle_pte_fault+0x61d/0x6800 mm/memory.c:5754
+ __handle_mm_fault mm/memory.c:5894 [inline]
+ handle_mm_fault+0x1106/0x1bb0 mm/memory.c:6062
+ do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x2b9/0x8c0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+page last free pid 5119 tgid 5118 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_folios+0xf12/0x18d0 mm/page_alloc.c:2686
+ folios_put_refs+0x76c/0x860 mm/swap.c:1007
+ free_pages_and_swap_cache+0x5c8/0x690 mm/swap_state.c:335
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+ tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+ vms_clear_ptes+0x437/0x530 mm/vma.c:1096
+ vms_clean_up_area+0x62/0x1c0 mm/vma.c:1108
+ mmap_region+0x1a84/0x2990 mm/mmap.c:1439
+ do_mmap+0x8f0/0x1000 mm/mmap.c:496
+ vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
+ ksys_mmap_pgoff+0x4eb/0x720 mm/mmap.c:542
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88804d20af00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88804d20af80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff88804d20b000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                      ^
+ ffff88804d20b080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff88804d20b100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
