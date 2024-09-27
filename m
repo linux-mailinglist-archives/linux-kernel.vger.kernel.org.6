@@ -1,61 +1,58 @@
-Return-Path: <linux-kernel+bounces-342272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1461C988CFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 01:24:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7666B988D00
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 01:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72527282D14
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:24:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D30F1282D26
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9331B81AE;
-	Fri, 27 Sep 2024 23:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1563918B475;
+	Fri, 27 Sep 2024 23:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dkhEHmh+"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LnJ4t1MP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276BE189513;
-	Fri, 27 Sep 2024 23:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E40E1FB3
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 23:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727479449; cv=none; b=ntSPMa4eHdnBQyqUxP8Zz1Kj0Q2w4wQmduuupYZEL5fIzF0kIYElvkBZ1PoP9upBLHcamtbNsUSJenc+an19x8dkyNgqOgM3zbLlhHITsj/yTRCQn2ZlTGAGGC4pbKwtbh/HgFbNGXu/LIYqQv+3GL9vvikm62z8HSv2UWHq9KI=
+	t=1727479670; cv=none; b=PRwbKHNem08K4OIQSuwdYMbuz9JwqKFRZy1bbnBLbClXDmJzUwB+ZLQMiFJBfw1ocu0Nn710HjJ7+s3fwir4Hb3RgvVmt4f94+DdBGT+IskXHMUoTFvg9pdzU0eEizpWJEG3iSTcFBDeaIMOl0GfyQo3trXD6hBbfgwDBluYYSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727479449; c=relaxed/simple;
-	bh=uEckwRuZumhYbRsx5HcqVfwOPVifSbZosYszgEKLa+w=;
+	s=arc-20240116; t=1727479670; c=relaxed/simple;
+	bh=c532xcn0E6+t0IqMIXYFeF1PfUk7PBKFyy/CT8muD+s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=na+wxebTqgW4csiW7RW3fbnkTlzDVEknp8U6fEmmKl4oG8dt6ph4FURkmskUHXvkfLmN00WhBBJyZZCS95FifB7ruqTBlnD8CTS5xzEQXj78xtE/FbUuI2FRhC7oynJ3icdOupB8YHgUgPiVeleWvfi+/c8Aq35fRNKwNMIkq8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=dkhEHmh+; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 416B46DE;
-	Sat, 28 Sep 2024 01:22:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727479357;
-	bh=uEckwRuZumhYbRsx5HcqVfwOPVifSbZosYszgEKLa+w=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=htO8omeTG1rARBkz2rLtEOfBd8AqPrrDHHtR0QTxlWbbtBk/NpmhoHXavSD+sgesgPNLCxmL5MmZwbk9eEOsGNJ/TISutxXIWGzvATH7yzlO8yX0e8VH8fbU3RqFq4hjVhoMd1z9bmyV2MYlTA9dpsATVi5dePaP0o0MKsuGb/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LnJ4t1MP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B965C4CEC4;
+	Fri, 27 Sep 2024 23:27:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727479669;
+	bh=c532xcn0E6+t0IqMIXYFeF1PfUk7PBKFyy/CT8muD+s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dkhEHmh+nWWH3I2imOqXloFaxEzbNFbdfIHz1NRfaoeMkEX3ywMQdWHrsqX5Qt/MH
-	 hA28uZGt9qE8bnSbcNtETQwjqswoaBqAEEtGRv+ioiYqH3hggYzgZSlxw4zzuR3Ytg
-	 J3NT2IBktr+pqqZsAx+m3JcEl49bqTnDwe3rXtq0=
-Date: Sat, 28 Sep 2024 02:24:03 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 16/16] media: platform: rzg2l-cru: Add support to
- capture 8bit raw sRGB
-Message-ID: <20240927232403.GP12322@pendragon.ideasonboard.com>
-References: <20240910175357.229075-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240910175357.229075-17-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	b=LnJ4t1MPwBnYHC6pN/TqfQNh3V9asN4XeXIa/MV1sFLH6clTrgCGt39s6UIVHypaa
+	 1U9xhWppV/uCAjfQPyN/aYltapdX7r5vUFZwQoq6atfPybbYKA5KjVdgRiuQ2AOb7S
+	 5ZktEIq2kTC0cp6kJaQK7/9u6D50DaHU2i0sa2ESIMbq3pCVKipDigtgopaqLIlSAH
+	 wGjyQWqtZVx0HJa3EiIbm30PDLnOzR+YopuThyEdfnBBvYYYBma2mh5VrPApX/POFy
+	 8cmrqQSR/sdKsQbnWPxEBbSImCK+LPqNHkg9DHoP1Ix6rJ/Og+l+N7cSRTTxy+XD7V
+	 wpYjq8jjIT5lw==
+Date: Fri, 27 Sep 2024 16:27:47 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+	scott.d.constable@intel.com, joao@overdrivepizza.com,
+	andrew.cooper3@citrix.com, jose.marchesi@oracle.com,
+	hjl.tools@gmail.com, ndesaulniers@google.com,
+	samitolvanen@google.com, nathan@kernel.org, ojeda@kernel.org,
+	kees@kernel.org, alexei.starovoitov@gmail.com
+Subject: Re: [PATCH 03/14] x86/alternative: Simplify callthunk patching
+Message-ID: <20240927232747.q3vcou7c2ueimr32@treble>
+References: <20240927194856.096003183@infradead.org>
+ <20240927194924.617641991@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,83 +61,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240910175357.229075-17-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240927194924.617641991@infradead.org>
 
-Hi Prabhakar,
+On Fri, Sep 27, 2024 at 09:48:59PM +0200, Peter Zijlstra wrote:
+> -	 * Now all calls are established. Apply the call thunks if
+> -	 * required.
+> +	 * Adjust call CALL instructions to point to func()-10, including those
+> +	 * in .altinstr_replacement.
 
-Thank you for the patch.
+A couple of tweaks:
 
-On Tue, Sep 10, 2024 at 06:53:57PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Add support to capture 8bit Bayer formats.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-> ---
->  .../platform/renesas/rzg2l-cru/rzg2l-csi2.c   |  4 +++
->  .../platform/renesas/rzg2l-cru/rzg2l-ip.c     | 28 +++++++++++++++++++
->  2 files changed, 32 insertions(+)
-> 
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> index e630283dd1f1..d46f0bd10cec 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> @@ -188,6 +188,10 @@ struct rzg2l_csi2_format {
->  
->  static const struct rzg2l_csi2_format rzg2l_csi2_formats[] = {
->  	{ .code = MEDIA_BUS_FMT_UYVY8_1X16, .bpp = 16 },
-> +	{ .code = MEDIA_BUS_FMT_SBGGR8_1X8, .bpp = 8, },
-> +	{ .code = MEDIA_BUS_FMT_SGBRG8_1X8, .bpp = 8, },
-> +	{ .code = MEDIA_BUS_FMT_SGRBG8_1X8, .bpp = 8, },
-> +	{ .code = MEDIA_BUS_FMT_SRGGB8_1X8, .bpp = 8, },
->  };
->  
->  static inline struct rzg2l_csi2 *sd_to_csi2(struct v4l2_subdev *sd)
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> index 9b0563198b50..9bb192655f25 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> @@ -19,6 +19,34 @@ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] = {
->  		.bpp = 2,
->  		.icndmr = ICnDMR_YCMODE_UYVY,
->  	},
-> +	{
-> +		.code = MEDIA_BUS_FMT_SBGGR8_1X8,
-> +		.format = V4L2_PIX_FMT_SBGGR8,
-> +		.datatype = MIPI_CSI2_DT_RAW8,
-> +		.bpp = 1,
-> +		.icndmr = 0,
-> +	},
-> +	{
-> +		.code = MEDIA_BUS_FMT_SGBRG8_1X8,
-> +		.format = V4L2_PIX_FMT_SGBRG8,
-> +		.datatype = MIPI_CSI2_DT_RAW8,
-> +		.bpp = 1,
-> +		.icndmr = 0,
-> +	},
-> +	{
-> +		.code = MEDIA_BUS_FMT_SGRBG8_1X8,
-> +		.format = V4L2_PIX_FMT_SGRBG8,
-> +		.datatype = MIPI_CSI2_DT_RAW8,
-> +		.bpp = 1,
-> +		.icndmr = 0,
-> +	},
-> +	{
-> +		.code = MEDIA_BUS_FMT_SRGGB8_1X8,
-> +		.format = V4L2_PIX_FMT_SRGGB8,
-> +		.datatype = MIPI_CSI2_DT_RAW8,
-> +		.bpp = 1,
-> +		.icndmr = 0,
-> +	},
->  };
->  
->  const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned int code)
+"Adjust all CALL instructions to point to func()-0x10..."
 
 -- 
-Regards,
-
-Laurent Pinchart
+Josh
 
