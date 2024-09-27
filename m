@@ -1,156 +1,156 @@
-Return-Path: <linux-kernel+bounces-342048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A42988A07
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:20:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66EAC9889F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0E81C22B26
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D04A281D8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652271C1740;
-	Fri, 27 Sep 2024 18:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DB5175D20;
+	Fri, 27 Sep 2024 18:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="M7XzGxx/"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ojVEYjxg"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995E9175D20
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 18:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C46EEA6
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 18:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727461196; cv=none; b=uKy2CLSAZLiBQihfs4WCA25ydYje1lOHWmq90vvpJbNCWmbA0U+LH8J8SdNtPOPgfdID+i1FabpAOEuIxSX7Uc+g/pB1WeJNFfrOjwgAA/ZATo0g66EcUwem02BEUGISW7YziGZeEhNOzL7ghVhUe8LQhhjKBV03BPEc0ATAafE=
+	t=1727460935; cv=none; b=bWOAoPGnFBXoaNLKXNlZsa2lxR6djx/kmaxsJuBv56Ecr76Mu8rrTFVImijBQ3z1njmQGDaCS1WtPcKeAOJ5Xr3rNah7h0v1jpZ+46yGP2iIisOlrZ7QH7MMl+cZ7+MTTn92pqJAHxSBWeV71RIW0dJLtncy+5oQ6GFUXaw6KQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727461196; c=relaxed/simple;
-	bh=07wSPeAgU67g80HqM54Nnsi81+Gz526YFvVEU0VUWqY=;
+	s=arc-20240116; t=1727460935; c=relaxed/simple;
+	bh=Ed2AIMaX3f7BGc8MB2jzvog+jOEdaeMd9lnvnD1l0Mw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GH3hzieA8s1/ZTwLUTGoeqbrdOqm24zJenCfeM3SnlEmL+aC3umcpLioh8wmmwvQtXjtw3IxEUbQu4kGD+qsOkVlnlWava0eDzUvcRw9luAuH7AeQWHk4i9Mb9OU4wcku+ijyhqiJkXfscQBp9RqzAH+Yz0A+Zf0XEu007qMRkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=M7XzGxx/; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f8ca33ef19so33364171fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:19:54 -0700 (PDT)
+	 To:Cc:Content-Type; b=iw8/kjuV7VK+y6zx/gNlq5zS3ghokol38tF5ivgbu5LGpXUP8vOy81nWjnnEUPFV6KNGm60PRKio19g71+MV9p349ntIKjGPC6Rpdfhk2ekt7JRdriSXFFAQo/hgxZdYUJQOqpBZk12TqIinbufCD6lB3Ic+Tu4miCYdvJQsF14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ojVEYjxg; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso28815ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:15:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1727461192; x=1728065992; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZUX1kCLvq6+bfGUvOV4xSkP3/ox8tqlvT0bJqmyP1AA=;
-        b=M7XzGxx/2ker8vZJ5KqQkgIG3Eu+KaHu/2hFBG39+bnoVpsxRyNOC2RHWIUMSfXk0Z
-         rZhiNlZeTSDszibKs43WMys+ZhMB/RXsNPJMUCwuXu5b47cxNYvAa654yyWAAJNobF0j
-         VDH2eWVS7IRZQIO/hyzXO+ng5LgziqEqDhJ18=
+        d=google.com; s=20230601; t=1727460933; x=1728065733; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=msEXp9GhhjtLPFvzPtf34SEgy53Qncsp9L24YHMBUCg=;
+        b=ojVEYjxgRYm9+4PS22M72/fPAtXikKA7v0eSF0rgUwMC/1VX3bH9UFvtPMs9IKfMbj
+         j6rL57Gzf5csAqX2FQkQyaGDj5U2tAXQybrAK+HbYs+p9pGTZHmba89yXTopnZABUtYx
+         SG0ilbeAsqOTHoHDNP4Fog+gj2DXZ9mZVFhs6lYMwDzM/TP2+6ZetlWR2JD5hNZWYB1+
+         ZUgwY49OaHcyTEGjNZ7VS8kLjhGwju78O/2d2Dzow3UutoLigkkLEKM0Ug1FRWs3T1eF
+         7H4y2UcXkn5TvlQh/5MGRC7xARucZhaOQWFgPjfJSjmU33l7EbtTQWLbCBCJc3c9pwx0
+         6jYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727461192; x=1728065992;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZUX1kCLvq6+bfGUvOV4xSkP3/ox8tqlvT0bJqmyP1AA=;
-        b=p5uRToCUt257qTR2HBwl+SVaYKttRij6WCIBhNXqtS9bAOf4ADwcssnhLPjhbVjuxV
-         7yaSzDHqSACP79JG00N185nmNjfhUnqzA/dBnK/wrkk8EWURjqQxmGPMw8C5wTzBMoeq
-         OJrGXFGURJeVEvHyi2YhNeF7gaWifyJ8dodhXnM5Ny05ll5shVHuSDasCpI2ko8iOGGM
-         d4TVI21IESCumLo0VObhOyPPaZpYhFHXYQa+xEXRDJl/KktG218NBf6ZINjxeN86BjY6
-         X+ORsPEEkGyBMP+pblORobpc/dLIB9iXjD6Ki6KtrDzxngwKDVHNmjhgf0Qa+sOb7rr0
-         svWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkIGTQMvzRAKgUCphI2y2EkB9CkjOTbS5aIFj4J979Cl/USEHo0E5+OepFrR+QxwzhbpsFsgt65BnW6hs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm4YUAoRrWeWaek2lRh5eKR0WvXl7frv2iUsGgsvBlQ/pfLADW
-	LNXlGP2tl6fhcuZkRUU+KVS3I5xD7t5UP1gxRO/nBSqIXHLYWJF02JuJIZDAiIGQhHINahI9lsx
-	9b9Q8Rw==
-X-Google-Smtp-Source: AGHT+IGk5mG2UP7ylhPxQksOBaVPlAoD5CfSM+NgWscaXxJ0X2b2yX27WyXVEDbZ4bNdQK9nDG6I8w==
-X-Received: by 2002:a05:6512:230e:b0:535:6baa:8c5d with SMTP id 2adb3069b0e04-5389fc3f111mr3205211e87.20.1727461192424;
-        Fri, 27 Sep 2024 11:19:52 -0700 (PDT)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27756fasm162423166b.18.2024.09.27.11.19.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 11:19:52 -0700 (PDT)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c46c2bf490so1173158a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:19:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVXSLZOzaqNsJ8QyvcJ2MmCJi5tqd7ZkHPW4KGibC5NpvflO0SsrDE1AYstMaGNhEYcLMLhnRkL358aZwU=@vger.kernel.org
-X-Received: by 2002:a2e:b8c8:0:b0:2f7:562d:cb5b with SMTP id
- 38308e7fff4ca-2f9d3e3d465mr41944381fa.7.1727460802851; Fri, 27 Sep 2024
- 11:13:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727460933; x=1728065733;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=msEXp9GhhjtLPFvzPtf34SEgy53Qncsp9L24YHMBUCg=;
+        b=l22iljVxvBDs3N92Xt5dv9ikSC4CXfrX79h7ICxDwSe/nY5p3dyRFrt+eWN/mssp/t
+         33CpES3ilaDRCt6i+blPSJz2wWCf3XP8bQ9z/Vox5yGQmaEmLM8Q6Bai+yl/VfpZjdSV
+         pW96GZAzHjNfbVWhipdSx6GxAeDtQPKvL0kelJHmGtNmuCI/64GRB8e8G/5+NOr+z8Qx
+         69QGNQCl0TAGr5l7bOdjBDqqXUWTmQ+EV8E1qTqkco7qam4cG62j+DX5AcwNGrSVbx9H
+         X99KBOIJ6joGn6xFfq7IuzrAFhHzWdRBS65UYHSV8Y8st2ZQjqucSNBaYD549oh1jAP4
+         5Y5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUtiJ/ARRLuMhqYCFlcYPBfmzJquWl+5zakISi2iQIQ+6PRhes6pwG9sUfIqekqwgIUIndBjgk1EV5i/4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx4NfB7RBIKR+ijC1a2dP1394AIPoj+byvkucOTif/5fqiN9Z+
+	rRLKkNlw0H07vLa1BiNnKRYY0stjRP1dwQdZPrqJQgX8gjQFTc8rMb+91FkWBnrtGYPOCYIPr2a
+	tNsfvn/69/1djeeTTiG7DLBIN/4HUcvndukxV
+X-Google-Smtp-Source: AGHT+IEYFhx2BEU0uXcjKj+UYSEA6hnpclc5LwV5KDdflfmvVe10tOmbv/cHHZsqgdwOA2Mjphu49j9diypFlUrqKuQ=
+X-Received: by 2002:a05:6e02:6cb:b0:3a0:80a6:ae9f with SMTP id
+ e9e14a558f8ab-3a34c1181ddmr121825ab.9.1727460933249; Fri, 27 Sep 2024
+ 11:15:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
- <ZvP_H_R43bXpmkMS@boqun-archlinux> <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
- <48992c9f-6c61-4716-977c-66e946adb399@efficios.com> <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
- <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com> <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
- <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
- <54487a36-f74c-46c3-aed7-fc86eaaa9ca2@huaweicloud.com> <CAHk-=wifOW0VEh6uL3sHSaAUA46YmPDS9Wh5HnNC2JyOiXVA=Q@mail.gmail.com>
- <ZvX12_1mK8983cXm@boqun-archlinux> <0b262fe5-2fc5-478d-bf66-f208723238d5@efficios.com>
- <e748893f-28a3-4b8a-a848-cfb1173ab940@app.fastmail.com> <CAHk-=wgQyXOt_HjDZHNqWMmyvv74xLAcMw88grfp4HkKoS2vLw@mail.gmail.com>
- <7e1c8a5e-c110-414c-8fb2-022eacc2bd4a@efficios.com> <CAHk-=wgBgh5U+dyNaN=+XCdcm2OmgSRbcH4Vbtk8i5ZDGwStSA@mail.gmail.com>
- <34ec590c-b109-44a0-8bfe-8aafc6e7ad64@efficios.com>
-In-Reply-To: <34ec590c-b109-44a0-8bfe-8aafc6e7ad64@efficios.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 27 Sep 2024 11:13:06 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi_hz8Whs2ogRUQEfMBk=OkZ3usmvJkzb5YyEKwqEJBmQ@mail.gmail.com>
-Message-ID: <CAHk-=wi_hz8Whs2ogRUQEfMBk=OkZ3usmvJkzb5YyEKwqEJBmQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard pointers
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, 
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, linux-kernel@vger.kernel.org, 
-	rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, 
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>, 
-	Josh Triplett <josh@joshtriplett.org>, "Uladzislau Rezki (Sony)" <urezki@gmail.com>, rostedt <rostedt@goodmis.org>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Kent Overstreet <kent.overstreet@gmail.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com, 
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20240924160418.1391100-1-irogers@google.com> <20240924160418.1391100-12-irogers@google.com>
+ <ZvTUo_nbr_gKaJrs@google.com> <CAP-5=fVQVEgSK55Y_38KXyp3CJ1ssPOcqkA2JKwMDVYJe8iztA@mail.gmail.com>
+ <ZvW4iZpTinJKWIFD@google.com> <CAP-5=fUcV6rXiTSpGPCGou6h9Gy-MYcYtrvdFJKCz28gQAf-LA@mail.gmail.com>
+ <ZvbocHwtPkwJwDOA@google.com>
+In-Reply-To: <ZvbocHwtPkwJwDOA@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 27 Sep 2024 11:15:21 -0700
+Message-ID: <CAP-5=fWn6ejdozTt8GHvDkv-QW_GF5+b4C3kTO_544H-fXZ+0w@mail.gmail.com>
+Subject: Re: [PATCH v1 11/11] perf build: Rename PERF_HAVE_DWARF_REGS to PERF_HAVE_LIBDW_REGS
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+	Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>, 
+	Guilherme Amadio <amadio@gentoo.org>, Changbin Du <changbin.du@huawei.com>, 
+	"Steinar H. Gunderson" <sesse@google.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
+	Bibo Mao <maobibo@loongson.cn>, Kajol Jain <kjain@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>, Shenlin Liang <liangshenlin@eswincomputing.com>, 
+	Atish Patra <atishp@rivosinc.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Chen Pei <cp0613@linux.alibaba.com>, Dima Kogan <dima@secretsauce.net>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller" <davem@davemloft.net>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Yang Jihong <yangjihong@bytedance.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 27 Sept 2024 at 10:53, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
+On Fri, Sep 27, 2024 at 10:16=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
 >
-> >   (b) the value barrier needs to be on *both* values so that the order
-> > of the equality testing doesn't matter.
+> On Thu, Sep 26, 2024 at 12:55:18PM -0700, Ian Rogers wrote:
+> > On Thu, Sep 26, 2024 at 12:40=E2=80=AFPM Namhyung Kim <namhyung@kernel.=
+org> wrote:
+> > >
+> > > On Thu, Sep 26, 2024 at 05:47:16AM -0700, Ian Rogers wrote:
+> > > > On Wed, Sep 25, 2024 at 8:27=E2=80=AFPM Namhyung Kim <namhyung@kern=
+el.org> wrote:
+> > > > >
+> > > > > On Tue, Sep 24, 2024 at 09:04:18AM -0700, Ian Rogers wrote:
+> > > > > > The name dwarf can imply libunwind support, whereas
+> > > > > > PERF_HAVE_DWARF_REGS is only enabled with libdw support. Rename=
+ to
+> > > > > > make it clearer there is a libdw connection.
+> > > > >
+> > > > > While it only covers libdw, I think the idea of this macro is whe=
+ther
+> > > > > the arch has register mappings defined in DWARF standard.  So I t=
+hink
+> > > > > it's better to keep the name for this case.
+> > > >
+> > > > How can the dwarf standard exist for an arch but not define registe=
+rs?
+> > >
+> > > I meant it's about the arch code in the perf tools to have the mappin=
+g,
+> > > not the DWARF standard itself.
+> >
+> > But we guard those definitions behind having libdw:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/arch/x86/Makefile?h=3Dperf-tools-next#n3
+> > So we only have the regs if libdw is present, not if dwarf is in use
+> > for libunwind/libdw. Hence wanting to be specific that they are just a
+> > libdw and not a dwarf thing. Trying to use the regs in libunwind code
+> > would be broken. That could change but I wanted to make the code clear
+> > for the way things are at the moment.
 >
-> If we use OPTIMIZER_HIDE_VAR() on both parameters, it indeed minimizes
-> the odds that someone get the order wrong, but it disallows using
-> ADDRESS_EQ() with a constant parameter
+> I understand your point but calling it LIBDW_REGS looks unnatural to me.
 
-No it doesn't.
+I don't follow. Wouldn't it be unnatural to see PERF_HAVE_DWARF_REGS
+in libunwind code but you are to some how know that the code only had
+meaning if libdw was present? I don't like the implication that DWARF
+means LIBDW as throughout the code it doesn't. I think the name
+PERF_HAVE_LIBDW_REGS better captures how the code is, makes the code
+more intention revealing and so readable, etc.
 
-This is trivial - just hide the source of the *comparison*, so that
-the compiler doesn't know what you are comparing, and can't use it to
-then replace one with the other:
-
-   static __always_inline bool compare_ptr(const volatile void *a,
-const volatile void *b)
-   {
-        OPTIMIZER_HIDE_VAR(a);
-        OPTIMIZER_HIDE_VAR(b);
-        return a == b;
-   }
-
-compares two arbitrary pointer values without allowing the compiler to
-then use the comparison result to use either of the original values as
-a replacement for the other.
-
-And yes, that "hide both" model will cause a bit more register
-pressure, because the compiler will now compare two values that it
-really thinks are potentially different from the originals. So you'll
-have two "useless" temporaries that contain the same values as the
-source pointers, but if that's the cost of having a comparison that
-the compiler can't see, that's fine.
-
-Making it a bit less obvious, you can hide just one of the variables -
-you don't actually need to hide both m(but for clarity, maybe you want
-to).
-
-Because even hiding the value one from the compiler will mean that it
-can't use the comparison to decide that the originals are equal, even
-if one of them is unhidden.
-
-No?
-
-              Linus
+Thanks,
+Ian
 
