@@ -1,92 +1,200 @@
-Return-Path: <linux-kernel+bounces-341822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2096F9886AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:06:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164F89886AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1179A1C21864
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:06:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89F38B212C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2918074BED;
-	Fri, 27 Sep 2024 14:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9535D477;
+	Fri, 27 Sep 2024 14:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VG+MnshA"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DE21C6A5;
-	Fri, 27 Sep 2024 14:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FTFAg0gk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8554D8DA
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727445996; cv=none; b=dInvQRp7mdSO2v3+19GU7dOoTkoCWcaWzsr//hqWLl7oqYcXllwCBlrha4UtLzQapOmEml8WcKLbz5d9mYUTrqo4F6+BfC1YMit6/OvYbWQyx4FoWvC70PV49E2ki5dfX0NyTle3s/pZRCjrcbCjneDL2GwzGgUgit8V+B12VIc=
+	t=1727446042; cv=none; b=NERnSvFxmQQ9427kHnofl/FLdaPgjPo+p/RQQz5oaPB0Y1T/ikNNCaof4ycwTPozCTSBOIcK8Qt/8kDXwOCXGiFisW4OTRFv/K+9gTHrVXkuT5kjV94pKS24ydGzGhhK5/uKvbfpII2nR8wZd4JgvgffeaIbP4AwsEeo4Pl+x4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727445996; c=relaxed/simple;
-	bh=aC0TxgrhZHUTChxkXc9EvwUvF8VBrHt5psIyCgaIAqs=;
+	s=arc-20240116; t=1727446042; c=relaxed/simple;
+	bh=CLo9OzVwUZsZ0uIWth/rFORlhVysacKJrF8TOBj8qI0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nJh/BafbdZn+NJWJZAzCqltV33b6ppl5srvDakuwhG2JOgRghQ/j3FyS2xZPaBnded78JmSXY73Hz54U65JCtCwf69Lm+Ui1nNJBlh/M8ZA5YnQnZQU+aE41MtTY/48ZVyxu4LruOesBjv+wPQzf+a965DmSQTurZlETUiTHQ78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VG+MnshA; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=XouRcwFqOZE9bIJUqu6gKwF2et2ukORfgR4iVk6tkbM=;
-	b=VG+MnshADyC57I5ak/1y4dpkDWqCTiPXWux0pCmaLlRf3MwIZiM+WVnECJVkwT
-	VvGUCE2O4sHofnV0Vdg1dGYYyxAcmpR+hZxWtsP6B970zO3UWkYbThrSv6tVEBxA
-	pv6nFVRiRVnQirnumMiHDTmxsL35+UveIPFr1YSuuffSs=
-Received: from localhost (unknown [120.26.85.94])
-	by gzsmtp1 (Coremail) with SMTP id sCgvCgBHr6LVu_Zm3nNSAQ--.3767S2;
-	Fri, 27 Sep 2024 22:06:14 +0800 (CST)
-Date: Fri, 27 Sep 2024 22:06:13 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: leon@kernel.org
-Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] RDMA/nldev: Fix NULL pointer dereferences issue in
- rdma_nl_notify_event
-Message-ID: <Zva71Yf3F94uxi5A@iZbp1asjb3cy8ks0srf007Z>
-References: <20240926143402.70354-1-qianqiang.liu@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=j6ryk7f6OMomHmgMueghktx0/2ijPkNqbAwesOBnVDAXHTEScAhLtAXeVWICKMjRwzk3vRmOIKmJh80CoGhCA2D8QsOKgLLcoJeFmRA2H5bEHrOMpKSSlIzAS66P1hRI8I1dWL7xJcMVB86LKxEEOQ00KA6naXsIutNdMGlEnD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FTFAg0gk; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727446041; x=1758982041;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=CLo9OzVwUZsZ0uIWth/rFORlhVysacKJrF8TOBj8qI0=;
+  b=FTFAg0gkZ0VkQs1zHyrMOi4g+kuEY8HtVqRhRKYPEJp50L/fErjc7pet
+   RW2Gmf1aJ6bKv6zm8BughGkN6HLIUYVepOw7kOwV0elsj6QC1dF4WK5CC
+   YqIEF6el18UuhUwCIjnNWelryzYe12pv/0l1Jvp/ECdKcqCppKl9N6d2V
+   zOoqChNn5gYLVvG/pyicq0gqzid3fxm4isfZ8/ooiXFa5eYzswyGndFRp
+   ZwghbYWhtBsjhHXnWTsarCa+00YdR4bbx5kvNKg3MqKv8xx77YoDFySgX
+   SL7KOF7sKFOiUF1tmyKAwxCTylZMPBzJKWf00tehoASKIngFfseDk+bko
+   g==;
+X-CSE-ConnectionGUID: tAU4GNUUS66EhMJpckZH6A==
+X-CSE-MsgGUID: n8AdVdXiRt+c+c2pzJDtFA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="37262392"
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="37262392"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 07:07:20 -0700
+X-CSE-ConnectionGUID: pYcf9pL4QQyGlpwN2L8OuQ==
+X-CSE-MsgGUID: xIrr8pHUQhedg+DyPQcs/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="72706953"
+Received: from stinkpipe.fi.intel.com (HELO stinkbox) ([10.237.72.74])
+  by fmviesa008.fm.intel.com with SMTP; 27 Sep 2024 07:07:16 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Fri, 27 Sep 2024 17:07:15 +0300
+Date: Fri, 27 Sep 2024 17:07:15 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>, rodrigo.vivi@intel.com,
+	joonas.lahtinen@linux.intel.com, tursulin@ursulin.net,
+	airlied@gmail.com, simona@ffwll.ch, intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com
+Subject: Re: [PATCH] gpu: drm: i915: display: Avoid null values
+ intel_plane_atomic_check_with_state
+Message-ID: <Zva8E_L9yUN6IWlW@intel.com>
+References: <20240927000146.50830-1-alessandro.zanni87@gmail.com>
+ <87tte1zewf.fsf@intel.com>
+ <ZvaduhDERL-zvED3@intel.com>
+ <87tte1xmqe.fsf@intel.com>
+ <Zva3CAewBl8NBL91@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240926143402.70354-1-qianqiang.liu@163.com>
-X-CM-TRANSID:sCgvCgBHr6LVu_Zm3nNSAQ--.3767S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZrW8WrWDtr4DXr4xCw4UArb_yoWfJFcEgr
-	y0qFykJr1jkF1Skwn5Ar1fXFyvqw1Fv3Z5uanFgr95Jryava90qwn2vrWDZ348KF4kKFy7
-	J3y3uw4ru3y8GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUezpB3UUUUU==
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiLx5namb2tM1sSwAAsy
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zva3CAewBl8NBL91@intel.com>
+X-Patchwork-Hint: comment
 
-nlmsg_put() may return a NULL pointer assigned to nlh, which will later
-be dereferenced in nlmsg_end().
+On Fri, Sep 27, 2024 at 04:45:44PM +0300, Ville Syrjälä wrote:
+> On Fri, Sep 27, 2024 at 04:14:17PM +0300, Jani Nikula wrote:
+> > On Fri, 27 Sep 2024, Ville Syrjälä <ville.syrjala@linux.intel.com> wrote:
+> > > On Fri, Sep 27, 2024 at 11:20:32AM +0300, Jani Nikula wrote:
+> > >> On Fri, 27 Sep 2024, Alessandro Zanni <alessandro.zanni87@gmail.com> wrote:
+> > >> > This fix solves multiple Smatch errors:
+> > >> >
+> > >> > drivers/gpu/drm/i915/display/intel_atomic_plane.c:660
+> > >> > intel_plane_atomic_check_with_state() error:
+> > >> > we previously assumed 'fb' could be null (see line 648)
+> > >> >
+> > >> > drivers/gpu/drm/i915/display/intel_atomic_plane.c:664
+> > >> > intel_plane_atomic_check_with_state()
+> > >> > error: we previously assumed 'fb' could be null (see line 659)
+> > >> >
+> > >> > drivers/gpu/drm/i915/display/intel_atomic_plane.c:671
+> > >> > intel_plane_atomic_check_with_state()
+> > >> > error: we previously assumed 'fb' could be null (see line 663)
+> > >> >
+> > >> > We should check first if fb is not null before to access its properties.
+> > >> 
+> > >> new_plane_state->uapi.visible && !fb should not be possible, but it's
+> > >> probably too hard for smatch to figure out. It's not exactly trivial for
+> > >> humans to figure out either.
+> > >> 
+> > >> I'm thinking something like below to help both.
+> > >> 
+> > >> Ville, thoughts?
+> > >> 
+> > >> 
+> > >> BR,
+> > >> Jani.
+> > >> 
+> > >> 
+> > >> diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+> > >> index 3505a5b52eb9..d9da47aed55d 100644
+> > >> --- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+> > >> +++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+> > >> @@ -629,6 +629,9 @@ int intel_plane_atomic_check_with_state(const struct intel_crtc_state *old_crtc_
+> > >>  	if (ret)
+> > >>  		return ret;
+> > >>  
+> > >> +	if (drm_WARN_ON(display->drm, new_plane_state->uapi.visible && !fb))
+> > >> +		return -EINVAL;
+> > >> +
+> > >
+> > > We have probably 100 places that would need this. So it's going
+> > > to be extremely ugly.
+> > >
+> > > One approach I could maybe tolerate is something like
+> > > intel_plane_is_visible(plane_state) 
+> > > {
+> > > 	if (drm_WARN_ON(visible && !fb))
+> > > 		return false;
+> > >
+> > > 	return plane_state->visible;
+> > > }
+> > >
+> > > + s/plane_state->visible/intel_plane_is_visible(plane_state)/
+> > >
+> > > But is that going to help these obtuse tools?
+> > 
+> > That does help people, which is more important. :)
+> > 
+> > I think the problem is first checking if fb is NULL, and then
+> > dereferencing it anyway.
+> > 
+> > visible always means fb != NULL, but I forget, is the reverse true? Can
+> > we have fb != NULL and !visible? I mean could we change the fb check to
+> > visible check?
+> 
+> No, the reverse does not hold. A plane can be invisible
+> while still having a valid fb. Eg. the plane could be
+> positioned completely offscreen, or the entire crtc may
+> be inactive (DPMS off).
+> 
+> And whenever we have an fb we want to do all the check to make sure
+> it satisfies all the requirements, whether the plane is visible or
+> not. Otherwise we could end up confusing userspace with something
+> like this:
+> 
+> 1. Usespace assigns some unsupported fb to the plane
+>    but positions the plane offscreen -> success
+> 2. Userspace moves the plane to somewhere onscreen -> fail
 
-Fixes: 9cbed5aab5ae ("RDMA/nldev: Add support for RDMA monitoring")
-Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
----
- Changes since v1:
- - Add Fixes tag
----
- drivers/infiniband/core/nldev.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/infiniband/core/nldev.c b/drivers/infiniband/core/nldev.c
-index 39f89a4b86498..7dc8e2ec62cc8 100644
---- a/drivers/infiniband/core/nldev.c
-+++ b/drivers/infiniband/core/nldev.c
-@@ -2816,6 +2816,8 @@ int rdma_nl_notify_event(struct ib_device *device, u32 port_num,
- 	nlh = nlmsg_put(skb, 0, 0,
- 			RDMA_NL_GET_TYPE(RDMA_NL_NLDEV, RDMA_NLDEV_CMD_MONITOR),
- 			0, 0);
-+	if (!nlh)
-+		goto err_free;
- 
- 	switch (type) {
- 	case RDMA_REGISTER_EVENT:
+Basically planes should have three different "enabled" states:
+
+logically_enabled: fb!=NULL (also the crtc must be logically enabled,
+                             but drm_atomic_plane_check() guarantees
+			     this for us)
+visible: logically_enabled && dst rectangle is at least
+         partially within pipe_src rectangle
+active: visible && crtc_is_active
+
+Currently we try to make the proper distinction between
+logically_enabled vs. invisible, but we do not properly
+handle the visible vs. active case. That is, we currently
+mark the plane as invisible if the crtc is inactive.
+
+That means we eg. calculate watermarks as if the plane was
+invisible. That may cause a subsequent "DPMS on" operation
+to fail unexpectedly because all of a sudden we realize 
+that we don't have enough FIFO space for this particular
+plane configuration. There's a FIXME somewhere in the plane
+code about this.
+
 -- 
-2.39.5
-
+Ville Syrjälä
+Intel
 
