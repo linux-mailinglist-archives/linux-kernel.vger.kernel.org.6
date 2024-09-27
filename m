@@ -1,149 +1,144 @@
-Return-Path: <linux-kernel+bounces-342207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C75F988BAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:03:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56D9988BB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB4A7B211AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:03:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B84F1F2275F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD61F1C2317;
-	Fri, 27 Sep 2024 21:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB341C2DCA;
+	Fri, 27 Sep 2024 21:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="kAuFu+HO"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FsJTpKKn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EA71514C6;
-	Fri, 27 Sep 2024 21:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A505D1C245F
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 21:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727471001; cv=none; b=F5OIzNI5bzJ+cZZsf4Nz9S3rLPJIo29IZOcga9dXWU0jyUESjhYf2cokNaq8fFuoiRk+UVeXL8kqFbTzdV+V5NQqGqEiRy/t8FymHekO3EfKXkYaPv5vdtlCrf+dbHy+SB+Ijmme52xQzIRJpjXyq1LY3jeOTgNLRHDBjRyyBL0=
+	t=1727471518; cv=none; b=eZm0gF1FVBSD37OA2xt5rpKjBT7ZPeStttZ5D5wjTcmzzC4EJqEK9+J59+Cqx8354RYfPGIjCORXBso3X7nm8kUBCF+mxaAbVvSepFO2tXxTkpgyQA8ruO1FBJ0Oc0fWqKsFfuMwRUznSFPQEVxR/kY8ezvG+C8b1v6qKoF590E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727471001; c=relaxed/simple;
-	bh=Ww9xGXgX7UDQQbSHopbSKGixwCYJIXFtdHxGvD1P0vI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nsJfi24fctpb1eDgjYaU/Bk5wf6hAEC9nNDu1bNrqYXZUpgrU6PkO9FGok1S7sqk0Q+8Yuwp6v0O5hKu3NZCxSUrpviWwvsP+GHYNrdR4atUATrFmsPtF3G8SFyFeZj5fXd1zom5JSrzknLuNwC2RDCRas1xPtR0SnnU9tEasW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=kAuFu+HO; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id DB0A41C00B3; Fri, 27 Sep 2024 23:03:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1727470995;
+	s=arc-20240116; t=1727471518; c=relaxed/simple;
+	bh=j3c5/Zh4p82GAk9vaXtDQNsggU/jIEjNscDXUpnSLwI=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=caHPD0r4cfb4R+RjWdwZGG/nLEzHnaXIIdmR1HkKbMMvkJ775EHGndgc2yBAaICQyFOsBrVvuftLBaTbXPjnFLW4eqZsVO1L75fURi3opAuGynAgDiGWL7jKGkTRCH5Oaf1yJMvMMo49G9Qqv+M/hoRaYMxlLyfpu7KhWOMfNNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FsJTpKKn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727471515;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SDyrJfOzttkCBWAPJJENDhELp/mHPzDrymXHNYlDyd0=;
-	b=kAuFu+HO2SGrke+T3SD9lIoFQTaLsBFA29Qft2q5QnPTKWu1hhQd6pUo0XNcwRej/Y+8Qg
-	15G/kZT5ylTIcwJscQ2g5aLTHBNv9zjaXJQnNvzkADK3p5YfuAUhF2qZ3O8IXrqsBZuA7e
-	YDhk0rfYqlCb06k9Ff4q3ppQ4fnq5WI=
-Date: Fri, 27 Sep 2024 23:03:14 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Werner Sembach <wse@tuxedocomputers.com>,
-	dri-devel@lists.freedesktop.org, hdegoede@redhat.com,
-	jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
-	ojeda@kernel.org, onitake@gmail.com
-Subject: Re: [PATCH 0/1] platform/x86/tuxedo: Add virtual LampArray for
- TUXEDO NB04
-Message-ID: <ZvcdknJWzaLbhgyE@amd.ucw.cz>
-References: <20240926174405.110748-1-wse@tuxedocomputers.com>
- <et3cv7i2lhsjoq26toweh4uv72yo34u3wqrj3q2urfnx2bhiq3@fdtkag4bcekh>
+	bh=8uMxOBU2H6Hw+qD+HRMDEGiSShQKw6OKRseN26Hxg0M=;
+	b=FsJTpKKnXbio8SND1s1thRm9O+Ioa7LV/ohIU03LvcLBVubCeLSwPhE1dyTSBb+jfNKVZ8
+	GHwWXy1+trr933LG+RJ+dfxgJ0lRhulKrVE+XI8QT/vWODhKbkXZugqJuHOGNKH4WxTm6k
+	Vb4OZ/lpvZXFEEmyBeDVsN41G9vDUWQ=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-nkGTJbKIOsK6M6_0H6aoDw-1; Fri,
+ 27 Sep 2024 17:11:52 -0400
+X-MC-Unique: nkGTJbKIOsK6M6_0H6aoDw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F2381936B95;
+	Fri, 27 Sep 2024 21:11:49 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BC3D43003DF2;
+	Fri, 27 Sep 2024 21:11:43 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <55cef4bef5a14a70b97e104c4ddd8ef64430f168.camel@gmail.com>
+References: <55cef4bef5a14a70b97e104c4ddd8ef64430f168.camel@gmail.com> <20240923183432.1876750-1-chantr4@gmail.com> <20240814203850.2240469-20-dhowells@redhat.com> <2663729.1727470216@warthog.procyon.org.uk>
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: dhowells@redhat.com, Manu Bretelle <chantr4@gmail.com>,
+    asmadeus@codewreck.org, ceph-devel@vger.kernel.org,
+    christian@brauner.io, ericvh@kernel.org, hsiangkao@linux.alibaba.com,
+    idryomov@gmail.com, jlayton@kernel.org,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
+    netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
+    smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
+    v9fs@lists.linux.dev, willy@infradead.org
+Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8et7i8b3htfBrpbi"
-Content-Disposition: inline
-In-Reply-To: <et3cv7i2lhsjoq26toweh4uv72yo34u3wqrj3q2urfnx2bhiq3@fdtkag4bcekh>
-
-
---8et7i8b3htfBrpbi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2668611.1727471502.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Fri, 27 Sep 2024 22:11:42 +0100
+Message-ID: <2668612.1727471502@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri 2024-09-27 18:08:52, Benjamin Tissoires wrote:
-> On Sep 26 2024, Werner Sembach wrote:
-> > Hi,
-> > took some time but now a first working draft of the suggested new way of
-> > handling per-key RGB keyboard backlights is finished. See:
-> > https://lore.kernel.org/all/1fb08a74-62c7-4d0c-ba5d-648e23082dcb@tuxedo=
-computers.com/
-> > First time for me sending a whole new driver to the LKML, so please exc=
-use
-> > mistakes I might have made.
-> >=20
-> > Known bugs:
-> > - The device has a lightbar which is currently not implemented and
-> >   therefore stuck to blue once the first backlight control command is s=
-end.
-> >=20
-> > What is still missing:
-> > - The leds fallback
-> > - Lightbar control
-> >=20
-> > Some general noob questions:
-> >=20
-> > Initially I though it would be nice to have 2 modules, one jsut being t=
-he
-> > wmi initialization and utility stuff and one just being the backlight l=
-ogic
-> > stuff, being loaded automatically via module_alias, but that would still
-> > require me to create the virtual hid device during the wmi_ab probe, and
-> > that already needs the ll_driver, so i guess I have to do it statically
-> > like i did now?
-> > Or in other words: I would have liked to have a module dependency graph
-> > like this:
-> >     tuxedo_nb04_lamp_array depends on tuxedo_nb04_platform (combining *=
-_wmi_init and *_wmi_utility)
-> > but if i currently split it into modules i would get this:
-> >     tuxedo_nb04_wmi_ab_init dpends on tuxedo_nb04_wmi_ab_lamp_array dep=
-ends on tuxedo_nb04_wmi_utility
->=20
-> On more general question to you: how much confident are you about your
-> LampArray implementation?
->=20
-> If you still need to add/fix stuff in it, I would advise you to have a
-> simple HID device, with bare minimum functionality, and then add the
-> LampArray functionality on top through HID-BPF. This way you can fix
-> LampArray out of band with the kernel, while having a more stable kernel
-> module. This should be possible with v6.11+.
->=20
-> Another solution is to still have your wmi-to-hid module, and then a
-> HID kernel module in drivers/hid that supports LampArray.
->=20
-> But I would strongly suggest while you are figuring out the userspace
-> part to stick to HID-BPF, and then once you are happy we can move to a
-> full kernel module.
+Eduard Zingerman <eddyz87@gmail.com> wrote:
 
-What about creating real kernel driver with real interface to
-userland, instead? My preference would be treating this as a display,
-but nearly anything is better than _this_.
+> On Fri, 2024-09-27 at 21:50 +0100, David Howells wrote:
+> > Is it possible for you to turn on some tracepoints and access the trac=
+es?
+> > Granted, you probably need to do the enablement during boot.
+> =
 
-Best regards,
-								Pavel
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
+> Yes, sure, tell me what you need.
 
---8et7i8b3htfBrpbi
-Content-Type: application/pgp-signature; name="signature.asc"
+If you look here:
 
------BEGIN PGP SIGNATURE-----
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log=
+/?h=3Dnetfs-fixes
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZvcdkgAKCRAw5/Bqldv6
-8rBlAKCfdrgp9aTsCLmDnhs2OYYXhvpJUgCglw2O3Bhu87qBixOdtRPMx4XXxIk=
-=fk2l
------END PGP SIGNATURE-----
+you can see some patches I've added.  If you can try this branch or cherry
+pick:
 
---8et7i8b3htfBrpbi--
+	netfs: Fix write oops in generic/346 (9p) and generic/074 (cifs)
+	netfs: Advance iterator correctly rather than jumping it
+	netfs: Use a folio_queue allocation and free functions
+	netfs: Add a tracepoint to log the lifespan of folio_queue structs
+
+And then turn on the following "netfs" tracepoints:
+
+	read,sreq,rreq,failure,write,write_iter,folio,folioq,progress,donate
+
+which can be done by:
+
+	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_read/enable
+	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_rreq/enable
+	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_sreq/enable
+	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_failure/enable
+	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_write/enable
+	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_write_iter/enable
+	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_folio/enable
+	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_folioq/enable
+	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_progress/enable
+	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_donate/enable
+
+or through trace-cmd.
+
+> Alternatively I can pack this thing in a dockerfile, so that you would
+> be able to reproduce locally (but that would have to wait till my evenin=
+g).
+
+I don't have Docker set up, so I'm not sure how easy that would be for me =
+to
+use.
+
+Thanks,
+David
+
 
