@@ -1,185 +1,209 @@
-Return-Path: <linux-kernel+bounces-342270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC448988CED
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 01:21:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368F1988CEC
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 01:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D23C1C20BB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:21:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C49BB21B3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFBB1B81D4;
-	Fri, 27 Sep 2024 23:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFAF1B653C;
+	Fri, 27 Sep 2024 23:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X/h2/Xav"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qU5QN6Vy"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6471B81CC;
-	Fri, 27 Sep 2024 23:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384B92C1AE;
+	Fri, 27 Sep 2024 23:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727479272; cv=none; b=pdd1q0OZyzEDhS84fa56f0A7STbNLzEFqIXCTGVL7IkfgF7xhLbGy5SdBOiqkYDevkAsNSLyqc44Inl726ToXUHlDQFvvAJtt0xutRXwZWu0vQ6sPMbnaGEYQEY4vwuWy4mVgjEOZ0NrY0HfOqQXkoH4Ygps/e44k2AKIkizc+c=
+	t=1727479267; cv=none; b=Z5xVST1sZ5jr7YCTpLuXixYw1Auzb87b/n//c2BqqG5ctnaIxhA7hJCQ4WASg/YbFox3B2I95fvYB9q4ELagtjoP6aKysZMKkRLYskrhylmx/K3ov/G3ECYnc7XDkbVDf+AJh506HJPAtO+PuMWqA55JFXHdWt70RREgaTvoszU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727479272; c=relaxed/simple;
-	bh=FEOA2rJOqDQDdAsoe75gRmLT3XIG7BacAiVDnHTKlsI=;
+	s=arc-20240116; t=1727479267; c=relaxed/simple;
+	bh=MXTmM/6hoUuoq4jtSC/E/tyOSKXa25gKalesn62mkfg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dF0SXhHMtIOJMzRTsQhnhp6G/3M+2F6G28+EXGmd7r6nTopON05ziov6c00nZq2m0zJ+iVqaWH/zi0Oq1spxI5xJA0+4jaG1ArKLofeQ3QXKkUpqRLYD1ZO+8jY8ZDyCYdRfhbevzYhIcKPMQLoj/+2VcitMv5Nepv5ggksBoIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X/h2/Xav; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-45aeed46f5eso11574921cf.3;
-        Fri, 27 Sep 2024 16:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727479270; x=1728084070; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sRWP0NQhRRIkTJAGGN9No6EkCeFNUseCOmrQOI6Inr4=;
-        b=X/h2/XavzY451ARFTf4/EQh05Wb7+7lilyAWVQvSAzT2iQX5HCwht5WMjreGu6RQkl
-         oPGyU+0tafJMp/iIunYI3ydhtBvbFHakRvQjcIbrAmcewqBsnDrx2N1t4073Kgt9XnUE
-         hzI7e5j6QAhlpJAiWNeKSCV6md3d/GMdY5x8O3Ig/rDpapB+iAacWGNiQXJ751A1hnKf
-         YhnTQDTKfLRohVCJa5sPIL1GvyWa2r7VKaR3+4gv/6W3iT6QFI84RgF/AVDdZQiKQmLY
-         UKZBTAzt5RFcXDekcZfGuvh4voMON5JyWkxCVljOsnzkGLY8wHplXLordQ16aWlecmy/
-         L1sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727479270; x=1728084070;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sRWP0NQhRRIkTJAGGN9No6EkCeFNUseCOmrQOI6Inr4=;
-        b=MPE+1PxO2NAuPKlo4iFj99oLxZDZ8k1/3aPYIpmXFwUqyEGaZH8SilUT6AzKerxjvS
-         7RTq6XT3gJSov3uUo9mQojprY+1OSHWEwalExya0CTG/f21vh8Vgy+t8IhBnzyNnXxa0
-         ECOQcIAt3szW1+xJykIHaK4a29yISXUVi/ytPYJygAavW3d22KlXTJHJ7DN8tIONbxTl
-         pdkzcyjSfbQP7X/Y3l7I88Xj154nFvEhsHgs+DQH+ndS01I20xnmU/YUo4IKDfvDx7xP
-         ElYgrDNbdFCl8bsqXIz0jHCLg+5muAX+vxSzfI6BkxnFgW64YaqvmBdcR3wBC0xEYaIe
-         XgQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcETy6maHZB2T0ZhP/Bqt/6VAboX+0R64SFdcNmPV+pGiaAUPt2EWJDY5bCVjn+ExrqWFZhPAnGYQyAIk=@vger.kernel.org, AJvYcCXu7waAeKy5wnVxe5YKcs7yGwPmbbAUcKE8x+rzMQgfnf5m6T6SjowThHbLie75Z+NTaxkV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn0GigGF/AjFud1UmdKK1rFLs6OiDDm5mIYPRvzgWS9RV5WTbU
-	9MEhYIRfrmYKAJGYJkWqfFTLGgFzH5tD5aavGv+B4iMhzawjEA/i
-X-Google-Smtp-Source: AGHT+IFVYWr7YfLP2ZOmoXZeV+ICDbqgORNSo+RKjNe6YotBXK+vAKKnLzTlsohS5VqeARSVg8gozA==
-X-Received: by 2002:ac8:5a49:0:b0:458:5191:65c1 with SMTP id d75a77b69052e-45c9f20e2e4mr63920411cf.26.1727479270057;
-        Fri, 27 Sep 2024 16:21:10 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45c9f290162sm12661021cf.3.2024.09.27.16.21.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 16:21:09 -0700 (PDT)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id E1EA01200043;
-	Fri, 27 Sep 2024 19:21:08 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Fri, 27 Sep 2024 19:21:08 -0400
-X-ME-Sender: <xms:5D33ZpbOAoqWbsQEWv-2ah-lKjQzTxxiAx_96i-apsXeBvlGE10HCQ>
-    <xme:5D33ZgbWChfSpGTTSocGO_Rr4Q65sDBkqcjxHRDYqawY4cJD1TVkLXrIQ6YhXNZ1V
-    eodm74MS6NnU-I6Lw>
-X-ME-Received: <xmr:5D33Zr_czgSae13vz_NG4jWDYfzbfsgvdepqy4sYZ_Ztwi5uCik0-KzzAlhu2Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddutddgvddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpedttddugeeuveeghffgueffteffueehkeegtdff
-    feehhfejfffhgfefgeegteeghfenucffohhmrghinhepvghffhhitghiohhsrdgtohhmne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
-    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
-    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
-    nhgrmhgvpdhnsggprhgtphhtthhopedvledpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepmhgrthhhihgvuhdruggvshhnohihvghrshesvghffhhitghiohhsrdgtohhmpdhr
-    tghpthhtohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrgh
-    dprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrgh
-    dprhgtphhtthhopegsihhgvggrshihsehlihhnuhhtrhhonhhigidruggvpdhrtghpthht
-    ohepphgruhhlmhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilhhlsehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhr
-    ghdprhgtphhtthhopehsthgvrhhnsehrohiflhgrnhgurdhhrghrvhgrrhgurdgvughu
-X-ME-Proxy: <xmx:5D33ZnoDX035qFKxQ5NqPjWe7tIhXakWcMSeR9X4B80yXSNB5mD-bw>
-    <xmx:5D33ZkrbT4sbI90ifwgb8pSgMwmpZ43xW7aaDI8bkL14ZvEDeC00Fw>
-    <xmx:5D33ZtR2I-Uj11BrrQ1qZLKmOIKT6mg52MSnXFZ4TimMZOuiIjK7yQ>
-    <xmx:5D33Zsqh6UJKV-ZYNMU8Zezt6tsCg8A_z-8ygUJOcF9ZE3uZIDVzjg>
-    <xmx:5D33Zt4rvr9Jo2GHF4t6OYBC0jChwiplFVQaxJyrH0yrUA4Patuw1kza>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 27 Sep 2024 19:21:08 -0400 (EDT)
-Date: Fri, 27 Sep 2024 16:20:18 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alan Stern <stern@rowland.harvard.edu>,	John Stultz <jstultz@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,	Vlastimil Babka <vbabka@suse.cz>,
- maged.michael@gmail.com,	Mateusz Guzik <mjguzik@gmail.com>,
- rcu@vger.kernel.org,	linux-mm@kvack.org, lkmm@lists.linux.dev
-Subject: Re: [RFC PATCH] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-Message-ID: <Zvc9sg4TCqrmgjkz@boqun-archlinux>
-References: <20240927203334.976821-1-mathieu.desnoyers@efficios.com>
- <23882bd6-c0e0-4f6c-9000-b79216194198@efficios.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=luIvz70cz5UCGJYoo7hEPFg6hCDEyCf0DgYx5UAiJ7mmejq2Couz84SWDgMJBjzKErtxwhEopJ2o88ogAbgbVnm+exQWt3bzEf5QxEfjPPzQR47BJH9AHgQ1Sv2MCHO9FSGW5stGUZhSJC2cxPol96I0rf+fwed8oNe5rCzxFsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qU5QN6Vy; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CB5E06DE;
+	Sat, 28 Sep 2024 01:19:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727479171;
+	bh=MXTmM/6hoUuoq4jtSC/E/tyOSKXa25gKalesn62mkfg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qU5QN6VyjNdkpZBIskfJxwggqrPjMmRiCs0+7kyf/vNttyu/q/FaQhaLeZNUI7KbZ
+	 T4ZZusv1lFwQcIS1QoEcU6YvDWGSZryxncRIlwsMwWVDacnwpl1ZgpsAFlF3Vcz9h7
+	 T3bNRuSBZ3XXV0ZmgCehmG/yPnlCimixlh0JU9/4=
+Date: Sat, 28 Sep 2024 02:20:57 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 15/16] media: renesas: rzg2l-cru: Refactor ICnDMR
+ register configuration
+Message-ID: <20240927232057.GO12322@pendragon.ideasonboard.com>
+References: <20240910175357.229075-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240910175357.229075-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <23882bd6-c0e0-4f6c-9000-b79216194198@efficios.com>
+In-Reply-To: <20240910175357.229075-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Fri, Sep 27, 2024 at 07:05:53PM -0400, Mathieu Desnoyers wrote:
-> On 2024-09-27 22:33, Mathieu Desnoyers wrote:
-> [...]
-> 
-> > ---
-> >   include/linux/compiler.h | 62 ++++++++++++++++++++++++++++++++++++++++
-> >   1 file changed, 62 insertions(+)
-> > 
-> 
-> I'm wondering if this really belongs in compiler.h, or if it's so
-> RCU/HP specific that it should be implemented in rcupdate.h ?
-> 
-> [... ]
-> > +static __always_inline
-> > +int ptr_eq(const volatile void *a, const volatile void *b)
-> 
-> And perhaps rename this to rcu_ptr_eq() ?
-> 
+Hi Prabhakar,
 
-I think the current place and name is fine, yes RCU is the most
-important address dependency user, but there are other users as well.
+Thank you for the patch.
 
+On Tue, Sep 10, 2024 at 06:53:56PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Refactor the ICnDMR register configuration in
+> `rzg2l_cru_initialize_image_conv()` by adding a new member `icndmr` in the
+> `rzg2l_cru_ip_format` structure. This change introduces a new function
+> `rzg2l_cru_ip_pix_fmt_to_icndmr()` to map the pixel format to its
+> corresponding ICnDMR value.
+
+Skip this new function, use the function thar returns a
+rzg2l_cru_ip_format pointer, and access the icndmr field from there.
+rzg2l_cru_initialize_image_conv() already gets the format info pointer,
+so the code will be simpler and more efficient.
+
+> 
+> Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h |  5 +++++
+>  drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c  | 12 ++++++++++++
+>  .../media/platform/renesas/rzg2l-cru/rzg2l-video.c   | 10 ++++------
+>  3 files changed, 21 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> index 24097df14881..3da9e8e7025a 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> @@ -31,6 +31,8 @@
+>  #define RZG2L_CRU_MIN_INPUT_HEIGHT	240
+>  #define RZG2L_CRU_MAX_INPUT_HEIGHT	4095
+>  
+> +#define ICnDMR_YCMODE_UYVY		(1 << 4)
+
+Not a candidate for this patch, but I would recommend moving all the
+register definitions to this file, or to a rzg2l-cru-regs.h file.
+
+> +
+>  enum rzg2l_csi2_pads {
+>  	RZG2L_CRU_IP_SINK = 0,
+>  	RZG2L_CRU_IP_SOURCE,
+> @@ -68,12 +70,14 @@ struct rzg2l_cru_ip {
+>   * @format: 4CC format identifier (V4L2_PIX_FMT_*)
+>   * @datatype: MIPI CSI2 data type
+>   * @bpp: bytes per pixel
+> + * @icndmr: ICnDMR register value
+>   */
+>  struct rzg2l_cru_ip_format {
+>  	u32 code;
+>  	u32 format;
+>  	u32 datatype;
+>  	u8 bpp;
+> +	u32 icndmr;
+>  };
+>  
+>  /**
+> @@ -165,5 +169,6 @@ struct v4l2_mbus_framefmt *rzg2l_cru_ip_get_src_fmt(struct rzg2l_cru_dev *cru);
+>  const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned int code);
+>  u8 rzg2l_cru_ip_pix_fmt_to_bpp(u32 format);
+>  int rzg2l_cru_ip_index_to_pix_fmt(u32 index);
+> +int rzg2l_cru_ip_pix_fmt_to_icndmr(u32 format);
+>  
+>  #endif
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> index c7bc82bf3f14..9b0563198b50 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> @@ -17,6 +17,7 @@ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] = {
+>  		.format = V4L2_PIX_FMT_UYVY,
+>  		.datatype = MIPI_CSI2_DT_YUV422_8B,
+>  		.bpp = 2,
+> +		.icndmr = ICnDMR_YCMODE_UYVY,
+>  	},
+>  };
+>  
+> @@ -50,6 +51,17 @@ int rzg2l_cru_ip_index_to_pix_fmt(u32 index)
+>  	return rzg2l_cru_ip_formats[index].format;
+>  }
+>  
+> +int rzg2l_cru_ip_pix_fmt_to_icndmr(u32 format)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(rzg2l_cru_ip_formats); i++)
+> +		if (rzg2l_cru_ip_formats[i].format == format)
+> +			return rzg2l_cru_ip_formats[i].icndmr;
+> +
+> +	return -EINVAL;
+> +}
+> +
+>  struct v4l2_mbus_framefmt *rzg2l_cru_ip_get_src_fmt(struct rzg2l_cru_dev *cru)
+>  {
+>  	struct v4l2_subdev_state *state;
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index c32608c557a3..1f25dcff2515 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -88,7 +88,6 @@
+>  
+>  /* CRU Data Output Mode Register */
+>  #define ICnDMR				0x26c
+> -#define ICnDMR_YCMODE_UYVY		(1 << 4)
+>  
+>  #define RZG2L_TIMEOUT_MS		100
+>  #define RZG2L_RETRIES			10
+> @@ -316,6 +315,7 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
+>  	const struct v4l2_format_info *src_finfo, *dst_finfo;
+>  	const struct rzg2l_cru_ip_format *cru_ip_fmt;
+>  	u32 icndmr;
+> +	int ret;
+>  
+>  	cru_ip_fmt = rzg2l_cru_ip_code_to_fmt(ip_sd_fmt->code);
+>  	if (!cru_ip_fmt)
+> @@ -327,15 +327,13 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
+>  	dst_finfo = v4l2_format_info(cru->format.pixelformat);
+>  
+>  	/* Output format */
+> -	switch (cru->format.pixelformat) {
+> -	case V4L2_PIX_FMT_UYVY:
+> -		icndmr = ICnDMR_YCMODE_UYVY;
+> -		break;
+> -	default:
+> +	ret = rzg2l_cru_ip_pix_fmt_to_icndmr(cru->format.pixelformat);
+> +	if (ret < 0) {
+>  		dev_err(cru->dev, "Invalid pixelformat (0x%x)\n",
+>  			cru->format.pixelformat);
+>  		return -EINVAL;
+>  	}
+> +	icndmr = ret;
+>  
+>  	/* If input and output use same colorspace, do bypass mode */
+>  	if (v4l2_is_format_yuv(src_finfo) && v4l2_is_format_yuv(dst_finfo))
+
+-- 
 Regards,
-Boqun
 
-> Thanks,
-> 
-> Mathieu
-> 
-> > +{
-> > +	OPTIMIZER_HIDE_VAR(a);
-> > +	OPTIMIZER_HIDE_VAR(b);
-> > +	return a == b;
-> > +}
-> > +
-> 
-> 
-> 
-> -- 
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> https://www.efficios.com
-> 
+Laurent Pinchart
 
