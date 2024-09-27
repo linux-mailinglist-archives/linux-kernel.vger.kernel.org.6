@@ -1,186 +1,163 @@
-Return-Path: <linux-kernel+bounces-341618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16D498827F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:32:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084D698826B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77F23282763
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:31:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEBB028251B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2333C1BD4E0;
-	Fri, 27 Sep 2024 10:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="sdHECydX"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92ACE18005B;
+	Fri, 27 Sep 2024 10:30:25 +0000 (UTC)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBB01BC9FE;
-	Fri, 27 Sep 2024 10:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ED82B9CD;
+	Fri, 27 Sep 2024 10:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727433065; cv=none; b=nxdQ3xEEIG1ghu3JyqmFKnO2x7rvnJMhxyi1UNjupicF5lTTasy7yg+/szNW5E3J8t2OG0wnwI+qpNRcPyECZ+D+jkaWMQLpzGgjI/WfyXUkkZGUVVvsD1wbzZVgbZDo09oXhBeg9wsjJHcWPI48/0heWPrSb/F8g5VkqGaPSbo=
+	t=1727433025; cv=none; b=XEo+/mCB3S9kjV21JJtcSgy9Czs+pm0JQ8A0ckJ106Snhffti5aETMxjU/DlDtcI4ppxxRwf0azViDXgrVi2BwmFOw1R7EDcLkL0Xu1FsLWv5A8G+yg0MZ9BhFIisxYa4eIi3Iag2KxppjvYZbxSedMsY42dB/f46JUJtBT7q68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727433065; c=relaxed/simple;
-	bh=KaWPXepJuehfSjJcLHhJ8i3X/9cBCKdeHAGOKeUpX4M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OPiIRThK/t+6OUoHbnUv2VAfI5TLJ/wViDkto9ku3j05LUUQZ7OVTD0k/wnVcPVV5htmZkCFf07F+KyFUpJbjg2tiRPdfCzhCRaKX3lMzYlXGkXCJFA9roCOUp6Ea965s+i/qsSPjFSraML0Oopqv4YgHFnzs27iUpemg44rWi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=sdHECydX; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 96177c2a7cbb11ef8b96093e013ec31c-20240927
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=7pX6Bx2UDow/yH3v2m2llMgyTYlhfmP3tKJ6OGoPnUw=;
-	b=sdHECydXUPxJbzrcVaSLHNJ3nJrQxaRYBjHSiskm9Xk7X3yfiSe7iJBOnu4c+QPoyHIzkOcX4+lxISQPPDoi2I3HLvM5fg0QwIDsBqrNN2cLMDDpMMp+ujT6bBPMY8gneP82ZYeHVSDfzSn5h5Zj2s41AbOHZa2vgN4oLrYhw5c=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:62755ebe-8a4e-4c01-8092-ae3462cbcac8,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:c2de5a18-b42d-49a6-94d2-a75fa0df01d2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
-X-UUID: 96177c2a7cbb11ef8b96093e013ec31c-20240927
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
-	(envelope-from <pablo.sun@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 740005951; Fri, 27 Sep 2024 18:30:59 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 27 Sep 2024 03:30:57 -0700
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 27 Sep 2024 18:30:57 +0800
-From: Pablo Sun <pablo.sun@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Srinivas
- Kandagatla <srinivas.kandagatla@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, Pablo Sun <pablo.sun@mediatek.com>
-Subject: [PATCH v2 6/6] arm64: dts: mediatek: mt8390-genio-700-evk: Enable Mali GPU
-Date: Fri, 27 Sep 2024 18:30:05 +0800
-Message-ID: <20240927103005.17605-7-pablo.sun@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20240927103005.17605-1-pablo.sun@mediatek.com>
-References: <20240927103005.17605-1-pablo.sun@mediatek.com>
+	s=arc-20240116; t=1727433025; c=relaxed/simple;
+	bh=i23Iim9cXkdz6Ckb0/1ebishCfbJ1d4LcWObJufVyDU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ck0XyCzZtERVxvVY7xqjISD/9JH1bmIrJV80nZCCzKEVmtIeEn31FTiXbuo7M/x1uTi+RD8nwcuQIJu8LyjKMiY8NatR9gMuIev3DgNWUbrJppyASxjQM7vtVv8xTuWWMDwC77javYsrSqh0XSoemXGn+g/qhH3OcxM//PKi90w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so18976765e9.0;
+        Fri, 27 Sep 2024 03:30:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727433022; x=1728037822;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S0irRWsRKnoaNN2u1s1xIgNFbfY4YoxqLzDCKhb9xrs=;
+        b=LhWHMo1+LLujeUQTCig4J6EvXlQ6WnSjyJN+A0YqYn+XMiFI1mJu8CqFgdBe9SNNQK
+         XgzJQ/+g+paPCUHm4moLeX+UkZvfuFsMtX4BeMzE4TjbSh2JV6fwXC8xQ9gihNj2Z/U9
+         RqkJ2QvXiKeUSkHri5c3oo+Roz0FanIfrflnL9RbwlygXopKSBSkXTyPXd2VyUNSOHxM
+         rlq84EaFQPgOESb+tgnfu4cUW6FqyvtNHiemGTo/WQHKhBlEDHbZfIfBvqyBkqmL7s+j
+         n3iNKINtz7BVfUHfc1FTSEA9X1dG+tsK64oZxp2GsyvZ/8yMCqvU0N52jbk7aEXp9GMv
+         /E/A==
+X-Forwarded-Encrypted: i=1; AJvYcCV9GkJn017xr6h0kDKAwIcXZRHEUh6f6xLvc5X2Vty+GcmXpmop+7S62rFR0u7R7EomDKWBT4JT3LHHvzE9@vger.kernel.org, AJvYcCVVXfHjVf3tmzLUKXge0mbZkT/eg8NnWIHmwHUNUL1I0/MzubauEFmM8ZWMfXQoZDQMpoZuxePTg9LtUg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqLbBCEUXVmzhFHxGOGY3snaaZ4nsMGx+XbnZ7FOsd3QYkEgxG
+	e11k8t6gF+7KQPz3HX1G6Zmd/RfTHmmzNZRZqWCgrcJjz8NufubUCZdLTqOQGZK7Eg==
+X-Google-Smtp-Source: AGHT+IFmClhrcMQrR/bnQGKsXe8FFtEfQLC+uO9RryHGCXleHz6eZa8yvlVFO4IjZi4Tos/cCGhhVA==
+X-Received: by 2002:a05:600c:1d20:b0:42c:b995:2100 with SMTP id 5b1f17b1804b1-42f5840d2a9mr19447505e9.6.1727433021513;
+        Fri, 27 Sep 2024 03:30:21 -0700 (PDT)
+Received: from nuc.fritz.box (p200300f6f71aeb00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f71a:eb00:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e9027450asm80141695e9.0.2024.09.27.03.30.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 03:30:20 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Filipe Manana <fdmanana@suse.com>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v2] btrfs: remove code duplication in ordered extent finishing
+Date: Fri, 27 Sep 2024 12:30:05 +0200
+Message-ID: <20240927103005.16239-1-jth@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Transfer-Encoding: 8bit
 
-Configure GPU regulator supplies and enable GPU for GENIO 700 EVK.
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-The GPU in MT8390 & MT8188 has two power inputs: "DVDD_GPU" and
-"DVDD_SRAM_GPU". In Genio 700 EVK, DVDD_GPU is supplied by
-mt6359_vproc2_buck_reg, and DVDD_SRAM_GPU is supplied by
-mt6359_vsram_others_ldo_reg.
+Remove the duplicated transaction joining, block reserve setting and raid
+extent inserting in btrfs_finish_ordered_extent().
 
-According to section 5.2 "Recommended Operating Conditions" in
-MT8390 IoT Application Processor Datasheet v1.9, The recommended
-operating voltage ranges are:
+While at it, also abort the transaction in case inserting a RAID
+stripe-tree entry fails.
 
-- DVDD_GPU: min 0.55V, max 0.86V, typical 0.75V
-- DVDD_SRAM_GPU: min 0.71V, max 0.92V, typical 0.85V
-
-To further optimize power saving, we couple DVDD_SRAM_GPU to
-DVDD_GPU according to the following relation:
-
-- For opp-880000000 or lower frequency, keep 0.75V
-- For opp-915000000 and higher, DVDD_SRAM_GPU should follow
-  DVDD_GPU. The exact voltage for DVDD_GPU should be decided by
-  speed binning.
-
-This rule is derived from the OPP table in the link.
-
-In addition, set the voltage spread to 6250 uV, the step size of
-'ldo_vsram_others' regulator of mt6359, otherwise the regulator
-set_voltage operation fails.
-
-Link: https://gitlab.com/mediatek/aiot/rity/meta-mediatek-bsp/-/blob/eedd6aedd4b0cfc0ee79b9c9b9650dfa73cf87f6/recipes-kernel/dtbo/mt8390/gpu-mali.dts
-Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
-Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Suggested-by: Naohiro Aota <naohiro.aota@wdc.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- .../dts/mediatek/mt8390-genio-700-evk.dts     | 31 +++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Changes to v1:
+- Moved comments to the preferred style (Filipe)
+---
+ fs/btrfs/inode.c | 48 +++++++++++++++++++-----------------------------
+ 1 file changed, 19 insertions(+), 29 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-index 1474bef7e754..0a6c9871b41e 100644
---- a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-@@ -190,6 +190,11 @@ usb_p2_vbus: regulator-10 {
- 	};
- };
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 353fb58c83da..412dba9c66c3 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -3068,34 +3068,6 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_extent *ordered_extent)
+ 			goto out;
+ 	}
  
-+&gpu {
-+	mali-supply = <&mt6359_vproc2_buck_reg>;
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c0_pins>;
-@@ -253,6 +258,14 @@ &i2c6 {
- 	status = "okay";
- };
+-	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
+-		BUG_ON(!list_empty(&ordered_extent->list)); /* Logic error */
+-
+-		btrfs_inode_safe_disk_i_size_write(inode, 0);
+-		if (freespace_inode)
+-			trans = btrfs_join_transaction_spacecache(root);
+-		else
+-			trans = btrfs_join_transaction(root);
+-		if (IS_ERR(trans)) {
+-			ret = PTR_ERR(trans);
+-			trans = NULL;
+-			goto out;
+-		}
+-		trans->block_rsv = &inode->block_rsv;
+-		ret = btrfs_update_inode_fallback(trans, inode);
+-		if (ret) /* -ENOMEM or corruption */
+-			btrfs_abort_transaction(trans, ret);
+-
+-		ret = btrfs_insert_raid_extent(trans, ordered_extent);
+-		if (ret)
+-			btrfs_abort_transaction(trans, ret);
+-
+-		goto out;
+-	}
+-
+-	clear_bits |= EXTENT_LOCKED;
+-	lock_extent(io_tree, start, end, &cached_state);
+-
+ 	if (freespace_inode)
+ 		trans = btrfs_join_transaction_spacecache(root);
+ 	else
+@@ -3109,8 +3081,26 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_extent *ordered_extent)
+ 	trans->block_rsv = &inode->block_rsv;
  
-+&mfg0 {
-+	domain-supply = <&mt6359_vproc2_buck_reg>;
-+};
+ 	ret = btrfs_insert_raid_extent(trans, ordered_extent);
+-	if (ret)
++	if (ret) {
++		btrfs_abort_transaction(trans, ret);
+ 		goto out;
++	}
 +
-+&mfg1 {
-+	domain-supply = <&mt6359_vsram_others_ldo_reg>;
-+};
++	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
++		/* Logic error */
++		BUG_ON(!list_empty(&ordered_extent->list));
 +
- &mmc0 {
- 	status = "okay";
- 	pinctrl-names = "default", "state_uhs";
-@@ -314,6 +327,15 @@ &mt6359_vpa_buck_reg {
- 	regulator-max-microvolt = <3100000>;
- };
++		btrfs_inode_safe_disk_i_size_write(inode, 0);
++		ret = btrfs_update_inode_fallback(trans, inode);
++		if (ret) {
++			/* -ENOMEM or corruption */
++			btrfs_abort_transaction(trans, ret);
++		}
++		goto out;
++	}
++
++	clear_bits |= EXTENT_LOCKED;
++	lock_extent(io_tree, start, end, &cached_state);
  
-+&mt6359_vproc2_buck_reg {
-+	/* The name "vgpu" is required by mtk-regulator-coupler */
-+	regulator-name = "vgpu";
-+	regulator-min-microvolt = <550000>;
-+	regulator-max-microvolt = <800000>;
-+	regulator-coupled-with = <&mt6359_vsram_others_ldo_reg>;
-+	regulator-coupled-max-spread = <6250>;
-+};
-+
- &mt6359_vpu_buck_reg {
- 	regulator-always-on;
- };
-@@ -326,6 +348,15 @@ &mt6359_vsim1_ldo_reg {
- 	regulator-enable-ramp-delay = <480>;
- };
- 
-+&mt6359_vsram_others_ldo_reg {
-+	/* The name "vsram_gpu" is required by mtk-regulator-coupler */
-+	regulator-name = "vsram_gpu";
-+	regulator-min-microvolt = <750000>;
-+	regulator-max-microvolt = <800000>;
-+	regulator-coupled-with = <&mt6359_vproc2_buck_reg>;
-+	regulator-coupled-max-spread = <6250>;
-+};
-+
- &mt6359_vufs_ldo_reg {
- 	regulator-always-on;
- };
+ 	if (test_bit(BTRFS_ORDERED_COMPRESSED, &ordered_extent->flags))
+ 		compress_type = ordered_extent->compress_type;
 -- 
-2.45.2
+2.46.1
 
 
