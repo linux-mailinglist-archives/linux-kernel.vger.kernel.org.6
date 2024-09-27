@@ -1,210 +1,108 @@
-Return-Path: <linux-kernel+bounces-341189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2DE7987C38
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:46:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39CB5987C3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:48:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D53501C20BEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:46:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1671D1C2257A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD913D69;
-	Fri, 27 Sep 2024 00:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7062DEEB2;
+	Fri, 27 Sep 2024 00:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Z+Be1s8z"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Ae1hDkvV"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D3D1CD23;
-	Fri, 27 Sep 2024 00:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C7AEACD;
+	Fri, 27 Sep 2024 00:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727397997; cv=none; b=rngrt5CtB1uJ1hvZS9uUgnOf17fAneW+GQz4a6cDH8h4YEZwOH1X/Ft/51eAHBnxYBux7earO+SBF7D0cXrECktNEe/ETaZYIMHLe4Izer7ScLv/wtlZ3MAn1kJwMmwkv9u8JzD9arVsponfD+Wsw3j3xCG3i2LvzJ4oz9WosZw=
+	t=1727398114; cv=none; b=B5YsZF+et1Nvq+wFvICWUVFc/vkSVVgPdQKYkOS8PdAT2rNiWub9aDyoj9ABDhIhOpXEW0/x3GSLp+5SKPzgh2EEvj/t4Uj0+w0cannl1VQ7vWzSI5EvGrY1JRKozxef2/Y9mquLXDKvZTpLHMvTbCo+YhTi/iXqCWZoEHRvfBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727397997; c=relaxed/simple;
-	bh=f5CdAj7wO0aS2YYIpIN0BGV+mfuOKKc1eQbVTdnNyYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VbeOsbNuIJnU36MPx1fxFo2N1peLlBzcGgNU4HU4x0rbHx9mDC8TriUuyV2tdZCWZt/LHhxH4M36XlRmeLD20wT24z2VA58EHqRlwXOqEgMpNRgTCRs6cziy9GCGko8GT8uL+jQtPpKgvrFTpkqPO/FqJfseYRBXKs5c8m1riOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Z+Be1s8z; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1727397989;
-	bh=XVEoEgesWQ83ePKBrKT4S1RU/Hzvezx24SvewYaDZT0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Z+Be1s8zeeGGSDDITn6aBeV8NbnwdutJTTZQvURq5WzRuiFRJNjBvx1whvHxxQYBa
-	 hKguvMtvT1dr+wZBf+QfLct2Wovgtj2qkYtvjnEJgpzxDLiYPumgQb6rtoNzfNPnd+
-	 SeGdiTe4DIaY1ZR8VpZgzs2yikzWlGLlrspskymgJxG7gFMRv1MnPyvMAttY2JcYDx
-	 QwwjVm4FtTWoqEB3M6Nyr8NAD+flCrNWoOf9zlB5Ogu2v1G1eSRNs3PutSDjojTJNf
-	 FV08iAapNqziIWJpxW6JNMkP3yH4/jlHyHNtp42AW6fjWk9yV6ihC7VikHE4NToe+3
-	 WiLXqtwhpvreg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XFBc470T4z4xNx;
-	Fri, 27 Sep 2024 10:46:28 +1000 (AEST)
-Date: Fri, 27 Sep 2024 10:46:28 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kent Overstreet <kent.overstreet@linux.dev>, "Cc: Andrew Morton"
- <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the bcachefs tree
-Message-ID: <20240927104628.2ca6ad07@canb.auug.org.au>
+	s=arc-20240116; t=1727398114; c=relaxed/simple;
+	bh=NZoZG5Fq/KN0fXsfXGJBfvPGTUFN3ANPPxnXaQGlogs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AsyzCO5/W/4YILfU/MQwEsmH0Mi79qxPKR6xFDJzGpAjjvF7RCtrY59vWLEkIvYE0HKct+wp/2q1/5wu3uSivcrmFxkEgGZ1iw3NT5RB6Ryb7pSACNYgU2zfX8hUKeOJhIULnn3kj/nC5p/dy4zA/lp8HGZKrPe62fYjl/ti2+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Ae1hDkvV; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=UEwo8Z5dWn7UoZgdVw71nh1ggeBZQz2H3RZ0PCeeF84=; b=Ae1hDkvVuXXGOZm9UJW4yz8i37
+	16+GvwjVbLy+LuFntcIMX87idMKt6tX3DKXJheVBVZwftahl2q/2UMLY0LRseEHL7nUQURCvtQFoH
+	Hja+699crclwa/0odJPdTVsCzjLdgy+zbFYfK0KTD0T5+2Q70BJ/FNIlqHne4HvMoeNosqjdBUpJN
+	oYOOr/NdYXBPt8rrzsNWFVAEhqEdQSXyNs9fcux76QmJORPWv4AO6cyl3Evrvh31bPOzFe7toSKuQ
+	RopYUhpt7N83NSqL6UiqG4hWs3/mFmmHF96RD+R3qNSehIpwx/s3BfyuLHqXtS6565hJakUDG50OS
+	klnKs14Q==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1styzg-0059mK-2F;
+	Fri, 27 Sep 2024 08:48:15 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 27 Sep 2024 08:48:14 +0800
+Date: Fri, 27 Sep 2024 08:48:14 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+	Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
+Message-ID: <ZvYAzh1gEw3u5nyD@gondor.apana.org.au>
+References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
+ <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
+ <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
+ <ZvIHUL+3iO3ZXtw7@dread.disaster.area>
+ <CAHk-=whbD0zwn-0RMNdgAw-8wjVJFQh4o_hGqffazAiW7DwXSQ@mail.gmail.com>
+ <CAHk-=wh+atcBWa34mDdG1bFGRc28eJas3tP+9QrYXX6C7BX0JQ@mail.gmail.com>
+ <ZvI4N55fzO7kg0W/@dread.disaster.area>
+ <CAHk-=wjNPE4Oz2Qn-w-mo1EJSUCQ+XJfeR3oSgQtM0JJid2zzg@mail.gmail.com>
+ <ZvNWqhnUgqk5BlS4@dread.disaster.area>
+ <jeyayqez34guxgvzf4unzytbfgjv2thgrha5miul25y4eearp2@33junxiz2o7f>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/i8QpOE8ZEyt57fNB+h0B8zs";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <jeyayqez34guxgvzf4unzytbfgjv2thgrha5miul25y4eearp2@33junxiz2o7f>
 
---Sig_/i8QpOE8ZEyt57fNB+h0B8zs
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 24, 2024 at 10:48:07PM -0400, Kent Overstreet wrote:
+>
+> I've been noticing rhashtable resize is surprisingly heavy (the default
+> parameters don't ever shrink the table, which is why it's not seen as
+> much).
 
-Hi all,
+Most rhashtable users enable automatic shrinking.
 
-After merging the fs-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> And, when I was torture testing that code I tripped over what appeared
+> to be an infinite loop in rht_bucket() when a rehsah is in progress,
+> which I worked around in
+> 
+>   a592cdf5164d bcachefs: don't use rht_bucket() in btree_key_cache_scan()
 
-In file included from fs/bcachefs/str_hash.h:5,
-                 from fs/bcachefs/xattr.h:5,
-                 from fs/bcachefs/acl.c:6:
-fs/bcachefs/acl.c: In function 'bch2_acl_from_disk':
-fs/bcachefs/btree_iter.h:896:44: error: 'PF_MEMALLOC_NORECLAIM' undeclared =
-(first use in this function); did you mean 'PF_MEMALLOC_NOIO'?
-  896 |         typeof(_do) _p =3D memalloc_flags_do(PF_MEMALLOC_NORECLAIM|=
-PF_MEMALLOC_NOWARN, _do);\
-      |                                            ^~~~~~~~~~~~~~~~~~~~~
-fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
-gs_do'
-  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
-               \
-      |                                                     ^~~~~~
-fs/bcachefs/acl.c:139:15: note: in expansion of macro 'allocate_dropping_lo=
-cks'
-  139 |         acl =3D allocate_dropping_locks(trans, ret,
-      |               ^~~~~~~~~~~~~~~~~~~~~~~
-fs/bcachefs/btree_iter.h:896:44: note: each undeclared identifier is report=
-ed only once for each function it appears in
-  896 |         typeof(_do) _p =3D memalloc_flags_do(PF_MEMALLOC_NORECLAIM|=
-PF_MEMALLOC_NOWARN, _do);\
-      |                                            ^~~~~~~~~~~~~~~~~~~~~
-fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
-gs_do'
-  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
-               \
-      |                                                     ^~~~~~
-fs/bcachefs/acl.c:139:15: note: in expansion of macro 'allocate_dropping_lo=
-cks'
-  139 |         acl =3D allocate_dropping_locks(trans, ret,
-      |               ^~~~~~~~~~~~~~~~~~~~~~~
-fs/bcachefs/btree_iter.h:896:66: error: 'PF_MEMALLOC_NOWARN' undeclared (fi=
-rst use in this function); did you mean 'PF_MEMALLOC_NOFS'?
-  896 |         typeof(_do) _p =3D memalloc_flags_do(PF_MEMALLOC_NORECLAIM|=
-PF_MEMALLOC_NOWARN, _do);\
-      |                                                                  ^~=
-~~~~~~~~~~~~~~~~
-fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
-gs_do'
-  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
-               \
-      |                                                     ^~~~~~
-fs/bcachefs/acl.c:139:15: note: in expansion of macro 'allocate_dropping_lo=
-cks'
-  139 |         acl =3D allocate_dropping_locks(trans, ret,
-      |               ^~~~~~~~~~~~~~~~~~~~~~~
-fs/bcachefs/acl.c: In function 'bch2_acl_chmod':
-fs/bcachefs/btree_iter.h:886:38: error: 'PF_MEMALLOC_NORECLAIM' undeclared =
-(first use in this function); did you mean 'PF_MEMALLOC_NOIO'?
-  886 |         int _ret =3D memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEM=
-ALLOC_NOWARN, _do);\
-      |                                      ^~~~~~~~~~~~~~~~~~~~~
-fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
-gs_do'
-  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
-               \
-      |                                                     ^~~~~~
-fs/bcachefs/acl.c:430:15: note: in expansion of macro 'allocate_dropping_lo=
-cks_errcode'
-  430 |         ret =3D allocate_dropping_locks_errcode(trans,
-      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-fs/bcachefs/btree_iter.h:886:60: error: 'PF_MEMALLOC_NOWARN' undeclared (fi=
-rst use in this function); did you mean 'PF_MEMALLOC_NOFS'?
-  886 |         int _ret =3D memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEM=
-ALLOC_NOWARN, _do);\
-      |                                                            ^~~~~~~~=
-~~~~~~~~~~
-fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
-gs_do'
-  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
-               \
-      |                                                     ^~~~~~
-fs/bcachefs/acl.c:430:15: note: in expansion of macro 'allocate_dropping_lo=
-cks_errcode'
-  430 |         ret =3D allocate_dropping_locks_errcode(trans,
-      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from fs/bcachefs/btree_locking.h:13,
-                 from fs/bcachefs/btree_io.h:7,
-                 from fs/bcachefs/btree_cache.c:7:
-fs/bcachefs/btree_cache.c: In function 'bch2_btree_node_mem_alloc':
-fs/bcachefs/btree_cache.c:807:31: error: 'PF_MEMALLOC_NORECLAIM' undeclared=
- (first use in this function); did you mean 'PF_MEMALLOC_NOIO'?
-  807 |         if (memalloc_flags_do(PF_MEMALLOC_NORECLAIM,
-      |                               ^~~~~~~~~~~~~~~~~~~~~
-fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
-gs_do'
-  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
-               \
-      |                                                     ^~~~~~
-fs/bcachefs/btree_cache.c:807:31: note: each undeclared identifier is repor=
-ted only once for each function it appears in
-  807 |         if (memalloc_flags_do(PF_MEMALLOC_NORECLAIM,
-      |                               ^~~~~~~~~~~~~~~~~~~~~
-fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_fla=
-gs_do'
-  878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);     =
-               \
-      |                                                     ^~~~~~
+You must not walk the rhashtable internal data structures by hand.
+If you need to iterate through the whole table, use the provided
+walking mechanism.
 
-Caused by commit
+However, as rhashtable is dynamic, walking it during a resize may
+cause you to see some elements twice.  If you want to avoid that,
+set up your own linked list of all elements for a completely stable
+walk.
 
-  87a3e08121cb ("bcachefs: Switch to memalloc_flags_do() for vmalloc alloca=
-tions")
-
-from the bcachefs tree interacting with commit
-
-  0df1d8edfe8a ("Revert "mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_N=
-OWARN"")
-
-from the mm-hotfixes-unstable branch of the mm-hotfixes tree.
-
-I have reverted that mm-hotfixes commit for today.
-
---=20
 Cheers,
-Stephen Rothwell
-
---Sig_/i8QpOE8ZEyt57fNB+h0B8zs
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb2AGQACgkQAVBC80lX
-0Gw2Vwf6Ap0xX636APFWEG/uC6rioHhMAgbFrcA8/NLp0rp1qzd6YSfd/yJgMXwa
-PX27GQk2/6pwgkKWjtSvq+YsoF6fMVmQnbgVW0FtjSYTBqfs3fBgSvsvfd8hhHhJ
-pQGptdgL3+Cxq3cUq4kZAtUodYXnJdjJyoFvDq8H0JI7TQAzhAmZDFP3rLHUEh/z
-wj3p1OToI/bWSJTkH8rta0e/LO3GTiduBcCKXAp7mtyyR/eNpuEfTTa1nO/qSd0j
-+fnMFQ7rpm8pxwSRwWuGnG9vdD6AqM3rYiUnxVtFfzB5odwdpHcxoAHd4cvmHXJ2
-sp5GXcC+gC47jPm3HE9FNRy+iA062A==
-=wNli
------END PGP SIGNATURE-----
-
---Sig_/i8QpOE8ZEyt57fNB+h0B8zs--
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
