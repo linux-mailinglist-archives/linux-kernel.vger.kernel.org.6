@@ -1,140 +1,181 @@
-Return-Path: <linux-kernel+bounces-341325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78AC987E5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:28:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09658987E6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82FEC2839B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:28:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1809AB23C3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510ED176AB6;
-	Fri, 27 Sep 2024 06:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235CE14D70A;
+	Fri, 27 Sep 2024 06:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="hvXoLJvB"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dACh1fMy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E912215D5C1;
-	Fri, 27 Sep 2024 06:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A8AF9E4;
+	Fri, 27 Sep 2024 06:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727418519; cv=none; b=Kb2gCCitA8tVDnzyGO+z3VYnVfn3QPNQ6GLesEyUo77St03pBMCQSsV6LuAHBNNuDQ+QAfswDgaYLMtNc3JK4q6iNK5Nv9t5kW90J0UZEQZ0Shzx66/gYmLFP91+N9JV37DBrgeWPSLd1XVQ9OkUrSrwR8T5yUu8j96PZ40LOkk=
+	t=1727418698; cv=none; b=nuhFG/VrnYH01WYgqS1bpmATBEgR9xmcBbmlcHp9Dvh/7uQ/Vk0h9w7E2FnpqwzVMHuOuurmn5RyiwHwqzFNyIE0b4LLYv8l6gsaZ1yqJecnSGm343bUAlWH0CIyz6Z5cHxxCYjyCHL/VNo0WGI9qxwtowq+3Nrb9uJx6tNTD1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727418519; c=relaxed/simple;
-	bh=Py70J+qsFKOzHKwovKggJjoeyCbIouq1GSbx9PBnfzo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MPWWHZ+hMN+BM84VSocyQiWY2+aq6cvVKXWuSvf4xGg30+wjFHWa/7+r5x5y+gWE35x7yxxtAn1LwlRED1NrDxS5pBLxFcS3MNTQvKyBR7iyJiiIhtLowIepQ/Wg+GPW8ciHa3YfexdMqHF/uuqA4i1poopTnSp5ThcKEgCiQK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=hvXoLJvB; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1727418515;
-	bh=jNmakUXF9nFiw23nJHwLmNqrMrEr852fUIAk37NrrB8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=hvXoLJvBl0haqgB9gLlA5P7D0kpS7Lxe1BqXBsMzkz8L6h4g3DrxdzyEJ2/5jd3kh
-	 5MoA2DXjwFlmM0E1NpmelUA6lD44TU3cKLK7B5qPfxYCy7XXnpEOzl1oRv8/IjFFXm
-	 Le2Lnmqle6RCJ+QHaPqGke71+CTmlm1tqM6HT6RSWXstx0ONEDS7z7RjXn1Tcm2o8M
-	 JsluSpJpYopW15KGXLH96pH3DhigLtu8Txil+jbIl13uPyb4o+1BzLL7AWqFc//Hy1
-	 sXjFNkcmD4TrAvChxTRDs3exFvwzGQZeEnXedkxeXyk+62edYoD0uewbxubLUo0G1A
-	 t+ZEmPk5eqCKA==
-Received: from [192.168.68.112] (ppp118-210-187-73.adl-adc-lon-bras34.tpg.internode.on.net [118.210.187.73])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id F397365029;
-	Fri, 27 Sep 2024 14:28:34 +0800 (AWST)
-Message-ID: <7fd8cffb3212de8ae6acd7ab434a22cdd94d7279.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v1] ARM: dts: aspeed: yosemite4: correct the compatible
- string of adm1272
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Delphine_CC_Chiu/WYHQ/Wiwynn <Delphine_CC_Chiu@wiwynn.com>, 
-	"patrick@stwcx.xyz"
-	 <patrick@stwcx.xyz>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
-	 <joel@jms.id.au>
-Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, "devicetree@vger.kernel.org"
-	 <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	 <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	 <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>
-Date: Fri, 27 Sep 2024 15:58:34 +0930
-In-Reply-To: <TYZPR04MB5853E2B3197AAD9268A0BAB2D66B2@TYZPR04MB5853.apcprd04.prod.outlook.com>
-References: <20240926013411.3701546-1-Delphine_CC_Chiu@wiwynn.com>
-	 <c2ddf0375eff2c9c18fd26029fc6a1be7ed23a8b.camel@codeconstruct.com.au>
-	 <TYZPR04MB5853E2B3197AAD9268A0BAB2D66B2@TYZPR04MB5853.apcprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1727418698; c=relaxed/simple;
+	bh=E5l+KF3z9LuX0cSWiFxdVNZgCJHKrA4+XBIkYIUc6a4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uU6GUXNevxgUyIc/DsQE5Q+T5ayLqEC2AfGft558h38uRf2Ec+3GJbvlcGaCYVNiocn7ti78sIN6yPW0cqu6kQsDsnVp1go34fA7t+KZKVVvFCO2MHUWcDIJYlg1dhnY8UDMim0FNHemvhtqkM5lPomfLBsOEWxaCpDSjpbmhP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dACh1fMy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48QG9eei001881;
+	Fri, 27 Sep 2024 06:31:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=v8jhLGIcyIuoj1CO2ilW6C
+	o4k21cGdVKm0hOEnMA9oU=; b=dACh1fMywTAcN5ht4AD2tBf2S8ObqtvlKUb4gV
+	XhiPIT3F3QkXKjFlyxHtqe1rsdzSt7zThYYHT6TobjLV6mtxt1elLq2G/GeI60EE
+	RSqvxAXXvoHLnTSjbxrmpVjj1iaOKvtUJwc2bv8Jn0Z4dDn0bQkRu8iCoGcyheNC
+	SkpkF5PGvU8qm7eKZrsKGoWWUwsclNgjauqPrvK9iPzZcW6lkjyGu42L4H4xufju
+	UXte64gHPVlWDzB0SW5IDzO/eB7zvLM2SDA6JXserq0MloA+HXcZpz7xgsK/SEEP
+	r4+kzyIE8KvTIjXfTyw2Y1wf9hobwCb6W0yz1idnyRLZDNlw==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41skgnjf6r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 06:31:19 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48R6VG3U001808;
+	Fri, 27 Sep 2024 06:31:16 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 41sq7mnbms-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 06:31:16 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48R6VFI3001801;
+	Fri, 27 Sep 2024 06:31:15 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-msavaliy-hyd.qualcomm.com [10.213.110.207])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 48R6VFDP001799
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 06:31:15 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 429934)
+	id 9D1532408B; Fri, 27 Sep 2024 12:01:14 +0530 (+0530)
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+To: konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
+        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
+        vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
+        Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org,
+        krzk+dt@kernel.org, robh@kernel.org
+Cc: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Subject: [PATCH v3 0/4] Enable shared SE support over I2C
+Date: Fri, 27 Sep 2024 12:01:04 +0530
+Message-Id: <20240927063108.2773304-1-quic_msavaliy@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 5K6K7_MrA_cXfg1bPr5Jw7p9XTeAbp0i
+X-Proofpoint-GUID: 5K6K7_MrA_cXfg1bPr5Jw7p9XTeAbp0i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ mlxlogscore=999 adultscore=0 suspectscore=0 phishscore=0 impostorscore=0
+ spamscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409270043
 
-On Fri, 2024-09-27 at 06:21 +0000, Delphine_CC_Chiu/WYHQ/Wiwynn wrote:
->=20
-> > -----Original Message-----
-> > From: Andrew Jeffery <andrew@codeconstruct.com.au>
-> > Sent: Friday, September 27, 2024 2:01 PM
-> > To: Delphine_CC_Chiu/WYHQ/Wiwynn <Delphine_CC_Chiu@wiwynn.com>;
-> > patrick@stwcx.xyz; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
-> > <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Joel Stanley
-> > <joel@jms.id.au>
-> > Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>;
-> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > linux-aspeed@lists.ozlabs.org; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH v1] ARM: dts: aspeed: yosemite4: correct the compat=
-ible
-> > string of adm1272
-> >=20
-> >  [External Sender]
-> >=20
-> >  [External Sender]
-> >=20
-> > On Thu, 2024-09-26 at 09:34 +0800, Delphine CC Chiu wrote:
-> > > From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
-> > >=20
-> > > Remove the redundant space in the compatible string of adm1272.
-> >=20
-> > In this case the space is not redundant, it's just incorrect, the compa=
-tible string
-> > doesn't match any specified. Do you mind fixing the wording?
-> >=20
-> Sure, I'll fixing the wording in v2.
+This Series adds support to share QUP (Qualcomm Unified peripheral)
+based I2C SE (Serial Engine) controller between two subsystems
+(Apps/ADSP/TZ etc). Each SS having it's own dedicated GPII(General
+Purpose Interface Instance) acting as pipe between SE and GSI(Generic SW-
+Interface) DMA HW engine. Hence the sharing of SE is possible only with
+I2C SE in GSI mode, not with FIFO/CPU DMA mode.
 
-Thanks.
+Subsystem must acquire Lock over the SE so that it gets uninterrupted
+control till it unlocks the SE. It also makes sure the commonly shared
+TLMM GPIOs are not touched which can impact other subsystem or cause
+any interruption. Generally, GPIOs are being unconfigured during
+suspend time.
 
->=20
-> > >=20
-> > > Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
-> > > Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-> >=20
-> > Can you please add an appropriate Fixes: tag?
-> >=20
-> > Thanks,
-> >=20
-> > Andrew
-> >=20
-> Would like to ask where should I add the Fixes: tag?
-> Should I add in the patch title like:
-> Fixes: ARM: dts: aspeed: yosemite4: correct the compatible string of adm1=
-272
->=20
-> Or should I add in the commit message?
+GSI DMA engine is capable to perform requested transfer operations
+from any of the I2C client in a seamless way and its transparent to
+the subsystems. Make sure to enable “qcom,shared-se” flag only while
+enabling this feature. I2C client should add in its respective parent
+node. 
 
-It goes in the trailer block above your Signed-off-by tag. It will be
-worth your time to review the following documentation:
+Example : 
+Two clients from different SS can share an I2C SE for same slave device
+OR their owned slave devices.
+Assume I2C Slave EEPROM device connected with I2C controller.
+Each client from ADSP SS and APPS Linux SS can perform i2c transactions.
+This gets serialized by lock TRE + Transfers + Unlock TRE at HW level.
 
-- https://docs.kernel.org/process/5.Posting.html#patch-formatting-and-chang=
-elogs
-- https://docs.kernel.org/process/submitting-patches.html#describe-your-cha=
-nges
 
-The expected format and other details are described there.
+Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+---
 
-Thanks,
+Link to V2: https://lore.kernel.org/lkml/a88a16ff-3537-4396-b2ea-4ba02b4850e9@quicinc.com/T/
 
-Andrew
+Changes in V3:
+ - Added missing maintainers which i forgot to add.
+ - Add cover letter with description of SS and EE for dt-bindings patch.
+ - Added acronyms expansion to commit log.
+ - [PATCH v2 3/4] : Removed exported symbol geni_se_clks_off(). 
+   Instead added changes to bypass pinctrl sleep configuration from
+   geni_se_resources_off() function.
+ - Changed title name of [PATCH v2 3/4] to reflect the suggested changes.
+ - [PATCH v2 4/4] kept geni_i2c_runtime_suspend() as is and removed 
+   explicit call to geni_se_clks_off().
+ - Removed is_shared variable from i2c driver and instead used common 
+   shared_geni_se variable from qcom-geni-se.h so that other protocols
+   can also extend for similar feature.
+ - I2C driver log changed from dev_err() to dev_dbg() for timeout.
+ - set gpi_mode = true if shared_geni_se is set for this usecase. Enhanced
+   comments around code and commit log.
+---
+
+Link to V1: https://lore.kernel.org/lkml/cb7613d0-586e-4089-a1b6-2405f4dc4883@quicinc.com/T/
+
+Changes in V2:
+ - Enhanced commit log grammatically for PATCH v1 3/4 as suggested by Bryan.
+ - Updated Cover letter along with acronyms expansion.
+ - Added maintainers list from other subsystems for review, which was missing.
+   Thanks to Krzysztof for pointing out.
+ - Added cover letter with an example of Serial Engine sharing.
+ - Addressed review comments for all the patches.
+
+---
+
+Mukesh Kumar Savaliya (4):
+  dt-bindindgs: i2c: qcom,i2c-geni: Document shared flag
+  dma: gpi: Add Lock and Unlock TRE support to access SE exclusively
+  soc: qcom: geni-se: Do not keep GPIOs to sleep state for shared SE
+    usecase
+  i2c: i2c-qcom-geni: Enable i2c controller sharing between two
+    subsystems
+
+ .../bindings/i2c/qcom,i2c-geni-qcom.yaml      |  4 ++
+ drivers/dma/qcom/gpi.c                        | 37 ++++++++++++++++++-
+ drivers/i2c/busses/i2c-qcom-geni.c            | 24 ++++++++++--
+ drivers/soc/qcom/qcom-geni-se.c               | 14 +++++--
+ include/linux/dma/qcom-gpi-dma.h              |  6 +++
+ include/linux/soc/qcom/geni-se.h              |  3 ++
+ 6 files changed, 79 insertions(+), 9 deletions(-)
+
+-- 
+2.25.1
 
 
