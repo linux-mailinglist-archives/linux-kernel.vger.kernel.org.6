@@ -1,58 +1,46 @@
-Return-Path: <linux-kernel+bounces-342047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16995988A06
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 426D3988A04
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA542283D9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:19:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8892F283428
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185AB1C1AA7;
-	Fri, 27 Sep 2024 18:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiOjYNZh"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25931C1AD6;
+	Fri, 27 Sep 2024 18:19:30 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C4917ADF0;
-	Fri, 27 Sep 2024 18:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846091C1AB0;
+	Fri, 27 Sep 2024 18:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727461179; cv=none; b=iuKs3dyoG2wQlZSEjBqL+czJpRz6Bnmiods9GFduoWG5dhx+ufqsLt2DxVavwJUqyZ1fVGJbgXGm94TgBSxK4s6OdyXhpdlVFqV8bsNSJAFF8qeM/1tHimlxjl9CIEdRyCtyvUsr8dbsgxqqqCmpqk4AWrfjQko5TLd8pZ3MlkM=
+	t=1727461170; cv=none; b=tICGtQvzm/ee01ZRqy+AZtVlsni3zCwBGwIuIoCpvwtpVLd4Q8/33a4TsbDZ3fjyFajLhVGts4cvt9GfJ7lHFAc4ezE8682p+j06eeBzz6P6rJtubHtop2k7/8NOfGHt0VGOKpLkDlethHHNeJQ3rvhYHbaXPcz9fCju1BfpPVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727461179; c=relaxed/simple;
-	bh=xuH1d2vaPlz5jT4/9KGPhuQeCHrYLk+LwemcXt+ZUxE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=UKK+VlrND4XneBvmpKFIweHlYhXaqMne0GsUltK4K1zcCbxGukARI8eB3LMMO+8UNIWkbeYlTDjPGXEzKGm8wGBob6vVyX6zGQX4hY6yJ2YMc5WZJ6jXq5E9xMwMszYTdIQNgQ63UkbJfrM7nly/iipmPFdsWTcEEy2DV4FrohY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GiOjYNZh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FDC9C4CEC4;
-	Fri, 27 Sep 2024 18:19:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727461179;
-	bh=xuH1d2vaPlz5jT4/9KGPhuQeCHrYLk+LwemcXt+ZUxE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=GiOjYNZhIhUq5SE58LOU5zWywjg3kAlYS3JFr0Zzj0WH+COi7HFm8gOGKFvRjOxaQ
-	 Ufo3E2876Pbv5n2qAVhqQ9iJilJZALONxcY31KQO1GeFqODXzxYNLSbX1wXqCj9Get
-	 HEWaolU1iAtcbhQYsu5t2ziQcdALBOUnaCEypBeCyl7EzbumHZYWdjsI426piT9sWW
-	 ThlqD+4hGX4cSbAvTe6xrThdaO9pJSL3YFtwNocUb4exQEmGbeR11qJtZB6a5ZWHUy
-	 wJWCNSApw9vfbBLsuVwvC+bSqBqM16LjWTOO0N5SW3ouDBjSK7gmIPqJqyfrZ7Owbj
-	 ezWg6aWGutOBg==
-Date: Fri, 27 Sep 2024 20:19:36 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Vishnu Sankar <vishnuocv@gmail.com>
-cc: kernel test robot <lkp@intel.com>, bentiss@kernel.org, 
-    linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    oe-kbuild-all@lists.linux.dev, mpearson-lenovo@squebb.ca, 
-    vsankar@lenovo.com
-Subject: Re: [PATCH] hid: hid-lenovo: Supporting TP-X12-TAB-1/2 Kbd Hotkeys
- using raw events.
-In-Reply-To: <CABxCQKuya7HUWPPw+3vSigddHa84hGZdtuN-02mxvNdfieLXZQ@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.2409272018370.31206@cbobk.fhfr.pm>
-References: <20240917100432.10887-1-vishnuocv@gmail.com> <202409211318.ZsE7JGOi-lkp@intel.com> <CABxCQKuya7HUWPPw+3vSigddHa84hGZdtuN-02mxvNdfieLXZQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1727461170; c=relaxed/simple;
+	bh=ExF5NdFyt2gwt2UFq/9gjmINDypBVoNqff3CF4CiT9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nncGqzeRocrTdZgQ8z6YP1g3Vgc9ZxN/OWVapLlVSF5qavAPExbgz5ZaL+kCjlYV5ZKssXTSfgt3kHTcwjsV9PcI1Q/aBhgzjO96XEbgKQAMgCq0ackaSU4dPm7ZbYiRqNodRRUadPgfKO0ud8HQJKSi9nCr/04VdvO+3bxMCWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44A3FC4CEC4;
+	Fri, 27 Sep 2024 18:19:29 +0000 (UTC)
+Date: Fri, 27 Sep 2024 14:20:09 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the ftrace tree with Linus' tree
+Message-ID: <20240927142009.16fe7e19@gandalf.local.home>
+In-Reply-To: <CAEf4BzbU_hzj=BQQC5arRwN5TY+vHS9S9acts=c1kX28C95zkg@mail.gmail.com>
+References: <20240927113620.7a673f55@canb.auug.org.au>
+	<CAEf4BzbU_hzj=BQQC5arRwN5TY+vHS9S9acts=c1kX28C95zkg@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,26 +48,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 24 Sep 2024, Vishnu Sankar wrote:
+On Fri, 27 Sep 2024 11:13:30 -0700
+Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
 
-> Sorry for the inconvenience.
-> The base I used was the Master branch.
+> Hm... sounds like two versions of my patch were applied to two
+> different trees or something? FWIW, 10cdb82aa77f is the right one cto
+> pick (I didn't check which one is in Linus' tree), but the differences
+> are tiny.
 > 
-> Should I resubmit this patch again with the base as linus/master next-2024xxxx?
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index 87b468d93f6a..c3df411a2684 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -834,7 +834,7 @@ static int probes_profile_seq_show(struct seq_file
+> *m, void *v)
+> 
+>         nhits = 0;
+>         for_each_possible_cpu(cpu) {
+> -               nhits += READ_ONCE(*per_cpu_ptr(tu->nhits, cpu));
+> +               nhits += per_cpu(*tu->nhits, cpu);
+>         }
+> 
+>         seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
+> 
+> >
 
-Please ideally base your patches on:
+It looks like Masami rebased his tree and I didn't do the update yet.
 
-- topic branch in hid.git for the particular driver you are touching (in 
-  this case it'd be called hid.git#for-6.13/lenovo)
+I updated the latest for-next in the tracing repo, so everything should be
+good again.
 
-- hid.git#master if a topic branch for your particular driver doesn't 
-  exist in hid.git
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
+-- Steve
 
 
