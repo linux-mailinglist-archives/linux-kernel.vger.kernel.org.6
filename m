@@ -1,153 +1,121 @@
-Return-Path: <linux-kernel+bounces-341396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47CAA987F75
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:30:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF697987F77
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:31:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E693D1F22E8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:30:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB531C2230E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835C017C204;
-	Fri, 27 Sep 2024 07:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01D3186E3E;
+	Fri, 27 Sep 2024 07:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXM+Lz2y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YJDGVUo4"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D633D158557;
-	Fri, 27 Sep 2024 07:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA57170A27
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727422237; cv=none; b=Gmsv7zzkZ9j4umJ6ioFggQHmepSl5reJaOzqdBrLaXbQ51lmPThecMpg52CEdZhxohcNcNoen4PRD/cjD8Nrn/Q2ivdVYapY+u/JViuNJqOkFBp6X7nRUga5Z6yXZJMAocxJOJF3c7fjyoQGDMmyXh9MNlHDyqit9uoXHwFmrAk=
+	t=1727422309; cv=none; b=DEyV+qfTNeRK7L/5iUlyj7iPs0fQW5aHcXHlyOZyxrJ7o8UaQWwkrNe0ICOn+nT67ZTPYY1XciaIb8xyDJqELdjBbm7f0CntYoKHJ61Pw17MsQjdreBkBDgAxpygGPEikCwH+nwocIWAyWhWrqGoRCWijDxmfKeJRqqUoP90ur0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727422237; c=relaxed/simple;
-	bh=7BBmEL4qhfybuaet/VOBEv3xMEna/TL1iMvTU7ecAdY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mG+kXvchuVjxTfKgaiQH11rld+cY34dSgysLpfCR3x+XjvNXP3Q+fPqPjjtTOCm/IGpR1E7tmgi6MPWmYZH/YB/cDRCti7pTojUAXy9JpjBFaYoSBcHkdRwG+IdEKYkCYZr1wMCgCpSj6FmxTSzSSX7eYjxtjU4WUFt2K1UzI/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXM+Lz2y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A435C4CEC4;
-	Fri, 27 Sep 2024 07:30:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727422237;
-	bh=7BBmEL4qhfybuaet/VOBEv3xMEna/TL1iMvTU7ecAdY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hXM+Lz2yqgY5/IVVeAABostlIQMd0BjIGsnQE0PtSa65PWiLO1pR5gKH6ZNp24UGI
-	 l5ElqWnNFj6nH6ubTQwfCUN+gsCaMvc7ulbRzocm116p/SnOyZU6P3Uh5z73BmaHdd
-	 WgJk8nuXA9X+C6fcMTKumHLUZ6HbaiG5KHWSgpIwDIw8jFc/MSqvB5sn9EjYIw0lPl
-	 oqgCZImfUlMPeQp2Hgn4RdiV27LUVib5cabFFWvV+gRPEr6IFky0A2LqcEPNVQAsMA
-	 TGU0PIL+4WQ+Af4M2MDDDjNzcmKWo+xODKn3RIXG8jBYAAIlFH8Q8SC9UuxK0cndoj
-	 tW4KPv7byrcLA==
-Message-ID: <4b98196a-c898-4d08-9101-31feb4e59b5c@kernel.org>
-Date: Fri, 27 Sep 2024 09:30:30 +0200
+	s=arc-20240116; t=1727422309; c=relaxed/simple;
+	bh=Uy4tL0PqPFDhK96Kj3mnXwSCBSdfpL26nnqRfG1rP/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GQ+K6uqSocKlMVHVPdypFydag6YWwK6ysZNhghbw75tcxFJZNW7sQsoafo5sl8NTEjv3RCzGOxT3Vq8cq1ooBJaAscm43A88+Yo80P9fFNKOpolR/zy8L1E4wehN00OnGULgQmP5qjIeHtdXhWAjAsHtVeP9ukaSeSll12r/USE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YJDGVUo4; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cbb08a1a5so16803245e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:31:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727422306; x=1728027106; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CARlbOQ4FmC/9vY1epkLbqmUBoOe6yHrpUpTFdvHe8c=;
+        b=YJDGVUo4ecK3QXHj009CUUoDMmWPJVZVIHpwAHBQn0/t8JeFW1GzcY9fVBJakggF+R
+         19wbNgfaX5fKhSF8Xl1td2fVXICQKszdEft4U1wrJQ67DVOGO2sLcm9bLVub1G0Fr6Gg
+         WoUQcY5UkV5ccLIfFRCf4m/XTZYTMnLTBlc6oKxLc+Wau3Afw/r02S2rjSfA/2Fh+Vdt
+         nUMwrcJNYdIGgUvj0i0HFdeohr+ibwLJKO3sETuGo/iRMcwNRFJB36PEdo65u0uifzEp
+         OnuISoJho8jkifdoNyySwGEtBBFH8zxrtddfXr8lFjbKaYlaD2U4uhHLZ6yyRK7wXdWS
+         gcFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727422306; x=1728027106;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CARlbOQ4FmC/9vY1epkLbqmUBoOe6yHrpUpTFdvHe8c=;
+        b=BYTaTD2O57EwJxpMhMxav6Jf/3hE3RkFA8u+hd1ZAF0QKDORrIjdKxOE3zQOdYe+4R
+         Gr6YFlyHyzhcxD2vlqTOqNxv8EZexYqv2cR45vejekQGjTFteMIxvJIl17rkTet9nOPJ
+         tTRJFd+g4VrQnAdvAi1biSz4g7r2nzY90bOMQDK1jgYGUJCqcAG7jCQdWNltETX/4wha
+         2yMpsk+bCnauvNW525eRNM0d1/Az6GtHSZf2K2K6mTswoefxYPH+d25SedzNVZGQnRLw
+         tODq7IncgT+MwEIiMghqIuXRZeobfNFbDpNBMHCXeoF5owyRUbysnIWvImBDXw45QZ45
+         0W3g==
+X-Gm-Message-State: AOJu0YzR/GOTo421DDWTk5i1d6ZVHI8aMIxKXGuLMvks9rCqk+LlgyRj
+	Z8rXbTSOJz3iyDL+7lLPnh97Wzls5rn5mk/4gE4D/rSjR9Pt+jebra8KBKv+8BU=
+X-Google-Smtp-Source: AGHT+IF81JpWowwb9D5kWOGhGgC/ac8khItY3F3XOGFkdslwMZr2KkOOfjfGAElFjyyrmN2pecwNRQ==
+X-Received: by 2002:a05:600c:4f01:b0:42c:b995:20d9 with SMTP id 5b1f17b1804b1-42f584981b0mr13389735e9.28.1727422305796;
+        Fri, 27 Sep 2024 00:31:45 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969f1a76sm65422405e9.12.2024.09.27.00.31.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 00:31:44 -0700 (PDT)
+Date: Fri, 27 Sep 2024 10:31:40 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	amadeuszx.slawinski@linux.intel.com,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@intel.com>
+Subject: Re: [RFC PATCH] cleanup: make scoped_guard() to be return-friendly
+Message-ID: <10515bca-782a-47bf-9bcd-eab7fd2fa49e@stanley.mountain>
+References: <20240926134347.19371-1-przemyslaw.kitszel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: phy: rockchip,inno-usb2phy: add
- rk3576
-To: Frank Wang <frawang.cn@gmail.com>, vkoul@kernel.org, kishon@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
- tim.chen@rock-chips.com, frank.wang@rock-chips.com
-References: <20240926103223.29538-1-frawang.cn@gmail.com>
- <ed829240-d4f7-471f-84f6-3509f87f11a1@kernel.org>
- <7944f4dd-96f0-40df-8c91-523409e3cb20@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <7944f4dd-96f0-40df-8c91-523409e3cb20@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926134347.19371-1-przemyslaw.kitszel@intel.com>
 
-On 27/09/2024 09:01, Frank Wang wrote:
-> Hi Krzysztof,
-> 
-> On 2024/9/26 22:19, Krzysztof Kozlowski wrote:
->> On 26/09/2024 12:32, Frank Wang wrote:
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            enum:
->>> +              - rockchip,rk3576-usb2phy
->>> +    then:
->>> +      properties:
->>> +        clocks:
->>> +          minItems: 3
->>> +          maxItems: 3
->> Read one more time the example I gave you. Top-level constraints are
->> saying max one clock.
->>
->> Best regards,
->> Krzysztof
->>
-> 
-> Sorry for overlooking this, I will set both "clocks" and "clock-names" 
-> to true, and add the else case below the above codes for the "old" SoCs.
-> Just like the below.
-> 
-> -  clocks:
-> -    maxItems: 1
-> +  clocks: true
-> 
-> -  clock-names:
-> -    const: phyclk
-> +  clock-names: true
+On Thu, Sep 26, 2024 at 03:41:38PM +0200, Przemek Kitszel wrote:
+> diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+> index d9e613803df1..6b568a8a7f9c 100644
+> --- a/include/linux/cleanup.h
+> +++ b/include/linux/cleanup.h
+> @@ -168,9 +168,16 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
+>  
+>  #define __guard_ptr(_name) class_##_name##_lock_ptr
+>  
+> -#define scoped_guard(_name, args...)					\
+> -	for (CLASS(_name, scope)(args),					\
+> -	     *done = NULL; __guard_ptr(_name)(&scope) && !done; done = (void *)1)
+> +#define scoped_guard(_name, args...)	\
+> +	__scoped_guard_labeled(__UNIQUE_ID(label), _name, args)
+> +
+> +#define __scoped_guard_labeled(_label, _name, args...)	\
+> +	if (0)						\
+> +		_label: ;				\
+> +	else						\
+> +		for (CLASS(_name, scope)(args);		\
+> +		     __guard_ptr(_name)(&scope), 1;	\
+                                               ^^^
+> +		     ({ goto _label; }))
+>  
 
-For the third time, read the code I gave you. Do you see something like
-this there? Why doing all the time something different than existing code?
+Remove the ", 1".  The point of the __guard_ptr() condition is for try_locks
+but the ", 1" means they always succeed.  The only try lock I can find in
+the current tree is tsc200x_esd_work().
 
-Best regards,
-Krzysztof
+regards,
+dan carpenter
+
 
 
