@@ -1,88 +1,92 @@
-Return-Path: <linux-kernel+bounces-341402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AD76987F89
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:37:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBF6987F99
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE522B21D96
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:37:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89256282C40
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944F117C9E8;
-	Fri, 27 Sep 2024 07:37:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBA418787B;
+	Fri, 27 Sep 2024 07:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CmQb5/xE"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3549165EE3
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F054C17BB33
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727422625; cv=none; b=UwY6DFNUuyz6Jr7kHPfW7JnK0MQ0/IaPwKSD6tusAisx4O6sXSshQXG52gv1UbvsvReeU1mdRqCw1aBjwwqN/4e5wEPFKClVEBKwTbkBokiuM4j60Cithq2Pm0VFMBgX0Fltu/T7/virEr6KRwVCWbSR753NXs8A4NCHDl5JgIs=
+	t=1727422905; cv=none; b=f5FVTcZCEh7TRzSLcgX78pjCrxYtkllv4V9I1g074XaWhLxvOx3n1Q79umst9T5lMNgar7kpO8KoxcKEmOhCij8zKZRNuox6X6XhPjnIQcS55nOFI7JJIfzrv+UerG0K1JUlN4rUM0yhSTAgkmD0fIukAHZ2oy3b0G7Irv8bXvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727422625; c=relaxed/simple;
-	bh=pZ1uB/XJBjEl6D21v2+KHYZz/RwbUjAFWAp4RP1NzPw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tyrP9oqcyKy7fA+fntk2evZ367Yfnaueuy5WrxbavMAGkhwKvWQif6DVfOA+ijkmEyaKwpQ5Gvj91dJMCJvLuVSILRvOqvSPN4TBj79X0XbdUyMqZX01uwO7NW09ySlm1GX5WW9cUNWhOj+vQzzBBgl6bfmxJC39KMZbLK+8q9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3496b480dso500275ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:37:03 -0700 (PDT)
+	s=arc-20240116; t=1727422905; c=relaxed/simple;
+	bh=Nq/GzUihNbVYzxTa7EPEL5sIN9ljkiIkLuozmHVPcAM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=XEm/bQ1XUAi8EWAMrblSj1DAXUsgfSNZLWa6MogEqc/xQZduRBVEOg9iOqQ31V9KNrdB4JE4Q8vxYYrloyo7NQDgJ2axjlMYT9Ygd5DjHBc8PmTuM17jvcpF/GOWrkU9V6j3QblXsb5cFoRrhcWqHaq8iuiTU+EJoMmOGppPWzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wnliu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CmQb5/xE; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wnliu.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6886cd07673so35265147b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:41:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727422903; x=1728027703; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nX65nEvrl8c2bAG4dwYO3ALnsJ3H00hLsCIdrQbSMT8=;
+        b=CmQb5/xE/Mfq1tt8P5H647Tpf22z/giXmVevXn/Zs4jXh7W4cy8xSG2oLidm0Tb0rn
+         2uI9lskr4ukmEQBmS+yGBB+PZWciI6b7o9kA706ajhqGuzzHMBGSGRO19ZY5KN8+IKjq
+         4ck6LH8v2a2ziSG/nh5bx5gGtzICwAhAm+Wadcfgs7HhzY3lCpmKUOMVlo2yZaEMsc6C
+         zhA33eFWhnYgsYoJ0aug2acJvljep94/VOLpin357D7mAMA7B+NTnct4AbyHdfLBgsJP
+         o6+mrnTQbWzURIPAx4O6wlw5C61bMYuoXPyLDGt6hKLA4f3DVa9HoCjphDDIrtr9PF+N
+         t86g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727422623; x=1728027423;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lehVuHc/G3YmOIICMpiPm5yqzC+B6vqDGq6lwJPGaz0=;
-        b=a1c0wfsDCX6V1ZStdvnh5WdSsmfR/WE3Yk5eMquNVx34Na7FgWnv0Uhyv3IsLd5mG6
-         nw9J5D/YUJyN4GEg1ZygUkWBtow+Y7PBKvDJk9My2Uq6ijT8haCYTzwbZTiZOI6P+sj5
-         Em+Zpn9ILMHJZp3/bM6+1tk9EX2uFssS7ssjlxlrvPdIUm0jiuLFEsU8NN6E4OPIWe6J
-         UoZ+jnlSufOFp0Y1+p5Y6YkmY2UvVW6iZRLVUV8puAYyVuJod6dsrx4WhjRXF1LksxaN
-         IoFtM2dlUZaxYvW6YUtrfPoFKyp+GAYQ6fCkGW4gCptdI4q0S52TeAW2QcIZNojoZXDe
-         nwjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRheErOtWmZkYG7GaDtJU8/JXvyaJPWyn2GODZGiHfvXeuD/VtK8fJ2qxqwJyqqisCMsP17nW6i3v0O/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymUCQkiKk61IHTdP1HsrCnbC1YlDgY5T3c+bW1buL/gSWJWXXr
-	prHXxjXSrzodxDywo+pB9oKtMUXIMHpHrenkujkKxgUtOukVE7IiIl6t6MYYX4le1aqVdFYV9fO
-	DIA5qQ5yMAaRYVsTaKRRTyfa5VLeN/qfksXgmW5ygQZR0GNR85cMSJ1Y=
-X-Google-Smtp-Source: AGHT+IEpzlW7cze/+T+3UwIjnirvFs6E+EOntv3U7QiaD3/RHrulutVP/mU/HPA8uLNjjTnE+Ii/kMFgk68Gzr/2APctgN7uisyO
+        d=1e100.net; s=20230601; t=1727422903; x=1728027703;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nX65nEvrl8c2bAG4dwYO3ALnsJ3H00hLsCIdrQbSMT8=;
+        b=BNYZOYDF0ZePOO5bGP+OS3OGXm0Ems+2g0PXN0MV60e7TDeGuJnlcSiu+iRWMPkHKk
+         ALcI1yyLllYTeSNK2bm8uf++8GCxHNDHBKn/gPF7NbM600aJn7KPrilD20mpNtuquCB1
+         LLB63lflMtKQ6qbmNXEXrsAriYRs7BE5cUu5F8BfgF3SgapmfD8TH1SGHcA+HXNMweUm
+         Ekm2a+5X7Pr9RJY4NuiwvjR8m7pLbPjL6T1QEl0X9CZZQg2zhaST1auziKK4V0O07A+x
+         z7motuL+7tTVtGpjBVZmT9ciU3CjTyn077Imw8oVmuzYWLWor90yKsNjvU949rr8tSr/
+         0EqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVR3vWUhAsSd1wPhTuX1EIFy9s6u4GOuZn0Zc92SJ79IDfEs6100bXTlehST+65e583mxTL0VXwmEE2nQo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx/bDJvBDSZkg0JcoY/3cPEoXFnt3nRRS+G5YWVq3tqmhFYP1n
+	4dFEEry4P2SnUQR1KmFfbKJ2rD3rS+/jqWN3PMmu+8nnTDBnpk9KGyeNGt91lYPWLMcrCcnn1g=
+	=
+X-Google-Smtp-Source: AGHT+IHv+V7TrnoRkTknrxCQf2udj+QD2JXSuqMR8tmU8ZFo0gB5BIQ6MEHE/Kyko7jUwDjudbLD/oXTFQ==
+X-Received: from liuweina.c.googlers.com ([fda3:e722:ac3:cc00:99:2717:ac13:e22f])
+ (user=wnliu job=sendgmr) by 2002:a05:690c:700d:b0:6db:c3b8:c4ce with SMTP id
+ 00721157ae682-6e24762237cmr646337b3.7.1727422902920; Fri, 27 Sep 2024
+ 00:41:42 -0700 (PDT)
+Date: Fri, 27 Sep 2024 07:41:41 +0000
+In-Reply-To: <8e02ed1a-42a9-41ab-b1b4-cb5e66bf4018@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:184a:b0:3a0:ab71:ed38 with SMTP id
- e9e14a558f8ab-3a345179e33mr20985775ab.14.1727422623043; Fri, 27 Sep 2024
- 00:37:03 -0700 (PDT)
-Date: Fri, 27 Sep 2024 00:37:03 -0700
-In-Reply-To: <k53rd76iiguxb6prfmkqfnlfmkjjdzjvzc6uo7eppjc2t4ssdf@2q7pmj7sstml>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f6609f.050a0220.46d20.0011.GAE@google.com>
-Subject: Re: [syzbot] [overlayfs?] general protection fault in ovl_llseek
-From: syzbot <syzbot+d9efec94dcbfa0de1c07@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, anupnewsmail@gmail.com, leocstone@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	miklos@szeredi.hu, skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com
+Mime-Version: 1.0
+References: <8e02ed1a-42a9-41ab-b1b4-cb5e66bf4018@linux.microsoft.com>
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Message-ID: <20240927074141.71195-1-wnliu@google.com>
+Subject: Re: ARM64 Livepatch based on SFrame
+From: Weinan Liu <wnliu@google.com>
+To: kumarpraveen@linux.microsoft.com
+Cc: broonie@kernel.org, catalin.marinas@arm.com, chenzhongjin@huawei.com, 
+	jamorris@linux.microsoft.com, jpoimboe@redhat.com, kpraveen.lkml@gmail.com, 
+	kumarpraveen@microsoft.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, 
+	madvenka@linux.microsoft.com, mark.rutland@arm.com, nobuta.keiya@fujitsu.com, 
+	peterz@infradead.org, sjitindarsingh@gmail.com, will@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+We from Google are working on implementing SFrame unwinder for the Linux kernel, 
+And we will be happy to collaborate with others for adding arm64 livepatch support
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+d9efec94dcbfa0de1c07@syzkaller.appspotmail.com
-Tested-by: syzbot+d9efec94dcbfa0de1c07@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         075dbe9f Merge tag 'soc-ep93xx-dt-6.12' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13ce159f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b2d4fdf18a83ec0b
-dashboard link: https://syzkaller.appspot.com/bug?extid=d9efec94dcbfa0de1c07
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=112c6aa9980000
-
-Note: testing is done by a robot and is best-effort only.
+Weinan
 
