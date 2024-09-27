@@ -1,117 +1,88 @@
-Return-Path: <linux-kernel+bounces-342031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2FDD9889DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:03:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 037879889E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0481C21A3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:03:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87BAA1F2174A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52561C1ABD;
-	Fri, 27 Sep 2024 18:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441431C1AAA;
+	Fri, 27 Sep 2024 18:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F5u1qA1s"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="kF8G//FH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120441714CA;
-	Fri, 27 Sep 2024 18:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E598A920;
+	Fri, 27 Sep 2024 18:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727460181; cv=none; b=GysMaROytMC+AQKJbldx81riYp/ZvG6USYfsGmaUxbfBwgI3+vt1Buzy2itMO6z70fk+piy2dD3Z0cWfgJptslLVAzZvvz14N9qmsOzJ5Qw1kZb9K4pltzp1Pg1Own3PAmqfnZag9xNtdbBlFc71yZ73kHuriNTMPKtwTIagh9o=
+	t=1727460446; cv=none; b=IgsPIZrqYNqXL55H3AV1cAPxoOhd8lFjJ1G30SDqH+OFzNBpd4lDUdIkLRq5y5FunnReC5US/ekx98lqiJM6/wn/uTqLmwB7R57hPxf8cOfFGC+180n9a/jqDNLr0mVC8Usfx3/LBrVGQq0SK4wSm1v28+elN9bAwn7xd/Vkc9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727460181; c=relaxed/simple;
-	bh=rO7ILgqqCINnQGYBS5eI25H05hnIR6qPhzytv293eLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OoEtts8Hlu9gnnbVCFz58pcDONrH1L9/80U8iaLTBjblZTY1eQWCGQu0XEw8e0b/aD+brjhoeIt3OCyZH9x+bzYCbugEmuQal9eW0tFBjmR7vKsLyY6RSdJJNshDUNLTkgDP1QfRMwJvgdCC264Gf20GeNSkYsYlSlgj+I9JBjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F5u1qA1s; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso349775066b.3;
-        Fri, 27 Sep 2024 11:02:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727460174; x=1728064974; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cZdnszJDfeatzu18HmNKBik841ueKLsxPFN9CU9wYOc=;
-        b=F5u1qA1sq9lyG3oyRAzps8Ta/722vdf9xkXpgPJHwJqXxqhVKTeAmi/zR6dYMki82b
-         wOCZDVgazu3IC/43tj/PXLewP/zlGqVOTr7utRFDqfvH0i2ZHykT7KnLECH9IRvE8hyw
-         2mMJUlPyWhwJVFuYDzJFXCoEr1Ri+ZN39n829s/7s5fUmLNoVsFAyf6GCQnHX0EKabeQ
-         HVmn8SXKW9xLEAuQYyX+5AhZ2XENFMVK6iUe9AhpnkW0u7OulZfbN8wj1oQDnIxsJGMF
-         iaITayRsPf4wsZUlTR07FcCVVaDwMGsGFBEVqHb8YpH2OvoL6hVKH2pMnkcYr+yLSXE6
-         /BNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727460174; x=1728064974;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cZdnszJDfeatzu18HmNKBik841ueKLsxPFN9CU9wYOc=;
-        b=CcLtQCcN+nGKQllYA/8mIjLvAWrwz861+RExTrEhJlpv3TvnGOcTvE29zQTH9Zp+Zu
-         VkTbY9BzY6jyXC6mO6sNJPP1CgQOSSzVHWUyRv/EcQEpbkrPcghPXg44ewJNudPWw358
-         kg0fbPTkvSnJSgrtlTSYtiezWLYj1tyKBBW5gPexDCiRpYW/sO8g8ZU254fKVHHvW7j2
-         OEcHITKDr9gim+YCTbL326dxHZduEMyXq+nZCASvs0FGyD0akSZULXDXUOhV+jFeii0z
-         S2Ke9eIUYT1fgndifcUn753kI8R0TToUgyn3027OMWXREWuGf2er9IpOMTUpZxCxbKsR
-         0H3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUObTkCwaGOyLyj8Nn+5bi23O9xwM2amu7wdEw23P0rHaSzWYvgSfYvnKw0JSnHo3JWXPrbV8BJHsL7@vger.kernel.org, AJvYcCUm9NYXzjiVrxq/6pAuidm5lWgFWFw4NX0p3s8Qzmtwt3aC5d8R0vnWUwgqfHP+G+ucRuuEZpm+AkaJ880k@vger.kernel.org, AJvYcCWv9N60fRF9Dp4NQPxjW/w213JAU3DDOLRe/NSxvoQlZxCWZSewCvWw6KdJFLM6X9KBz4Rxsax9rvs3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxTj3E+cOnmeLpry99BAZ/fv69CWuUGTu9cJWIOenuwzw5UW1O
-	VVGBtPrafT08zvCmrL3kjt8CPkcWeubFOwdf0Jn/4E9/ms4uwaCU
-X-Google-Smtp-Source: AGHT+IHRvkXDlcJ51AemySrdaLL3w4kyV0/iF/ZaQw7Ikxt8LsBhY+cxaZG3MJ0XO5FwrLsHHsUuVg==
-X-Received: by 2002:a17:907:9349:b0:a7a:3928:3529 with SMTP id a640c23a62f3a-a93c48e80b2mr476475566b.13.1727460174056;
-        Fri, 27 Sep 2024 11:02:54 -0700 (PDT)
-Received: from ?IPV6:2a02:8389:41cf:e200:6e73:3ff7:9936:9d4d? (2a02-8389-41cf-e200-6e73-3ff7-9936-9d4d.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:6e73:3ff7:9936:9d4d])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2998cc0sm157293366b.191.2024.09.27.11.02.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 11:02:53 -0700 (PDT)
-Message-ID: <9e94e94d-a970-4409-ad41-85e2effa2896@gmail.com>
-Date: Fri, 27 Sep 2024 20:02:50 +0200
+	s=arc-20240116; t=1727460446; c=relaxed/simple;
+	bh=jTaAQiUlDkC1PTsTvWvhk1I8jlzMMQA2e2HSfNMXEQ8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=IZ+mEkUIemOXjRsgIXyUogE6jeMKrWaVmFRxtLqc+fJHfOgHtqCf1PmUW9Jqyyg/RDrjamSr56clEYXY2k5mYPAUqca7vUyV+Ivtl4vAlNe3exJCIy6vYRq/aZlp3yBZ6cO5Y/hUMiLc/Gi6plung9encSk14zN8Er1oR2jAVao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=kF8G//FH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F597C4CEC4;
+	Fri, 27 Sep 2024 18:07:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1727460446;
+	bh=jTaAQiUlDkC1PTsTvWvhk1I8jlzMMQA2e2HSfNMXEQ8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kF8G//FHH42f+jl8cOd+ZK/weRpEyxUrNX63E+gVDz6nHhDGl2elM1eVBcriZ3JuY
+	 vua26O2bJE1p6P6AGtCHnfgrcPqyDkgxwMtI3zEEu/eu1zyvzX/AZrcnyPUhzXFmFE
+	 ulAXXnDuTfEiQl/8AM/Nx7Sd6ZADLEy2gWZbCy0I=
+Date: Fri, 27 Sep 2024 11:07:25 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Donet Tom <donettom@linux.ibm.com>
+Cc: Muhammad Usama Anjum <Usama.Anjum@collabora.com>, Shuah Khan
+ <shuah@kernel.org>, =?ISO-8859-1?Q?J=E9r=F4me?= Glisse
+ <jglisse@redhat.com>, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>, Kees
+ Cook <keescook@chromium.org>, Mark Brown <broonie@kernel.org>, Przemek
+ Kitszel <przemyslaw.kitszel@intel.com>, Ralph Campbell
+ <rcampbell@nvidia.com>, Jason Gunthorpe <jgg@mellanox.com>
+Subject: Re: [PATCH] selftests/mm: Fixed incorrect buffer->mirror size in
+ hmm2 double_map test
+Message-Id: <20240927110725.f4a340b86ef684918e862a52@linux-foundation.org>
+In-Reply-To: <831bb979-e27f-4af0-b933-5b05895aff8f@linux.ibm.com>
+References: <20240927050752.51066-1-donettom@linux.ibm.com>
+	<c62ee507-361b-4dc8-b80e-148c914052f1@collabora.com>
+	<831bb979-e27f-4af0-b933-5b05895aff8f@linux.ibm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/10] dt-bindings: iio: light: veml6030: add
- vdd-supply property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20240923-veml6035-v2-0-58c72a0df31c@gmail.com>
- <20240923-veml6035-v2-4-58c72a0df31c@gmail.com>
- <s7ylc7uxh376hmessk3mnuxsmjpmgnvgnxbu7vxect3evqjsfp@ifou7lugbxae>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <s7ylc7uxh376hmessk3mnuxsmjpmgnvgnxbu7vxect3evqjsfp@ifou7lugbxae>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 24/09/2024 12:06, Krzysztof Kozlowski wrote:
-> On Mon, Sep 23, 2024 at 12:17:52AM +0200, Javier Carrasco wrote:
->> Add vdd-supply to account for the sensor's power source.
->>
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->> ---
->>  Documentation/devicetree/bindings/iio/light/vishay,veml6030.yaml | 3 +++
->>  1 file changed, 3 insertions(+)
+On Fri, 27 Sep 2024 16:21:30 +0530 Donet Tom <donettom@linux.ibm.com> wrote:
+
+> >> Test Result with this patch
+> >> ===========================
+> >>   #  RUN           hmm2.hmm2_device_private.double_map ...
+> >>   #            OK  hmm2.hmm2_device_private.double_map
+> >>   ok 53 hmm2.hmm2_device_private.double_map
+> >>
+> >> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+> > Please add Fixes-by tag. Other than this, LGTM
 > 
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Fixes-by : Donet Tom <donettom@linux.ibm.com>
 > 
-> Best regards,
-> Krzysztof
+> I have added the Fixes-by tag here. Please let me know if you would prefer that I send a V2 with this tag.
 > 
 
-I just realized that the indentation of vdd-supply is not right in the
-version I sent, and dt_binding_check rightfully complains about that. I
-will fix it for v3.
+"Fixes:".  I added
 
-Best regards,
-Javier Carrasco
+Fixes: fee9f6d1b8df ("mm/hmm/test: add selftests for HMM")
+Cc: <stable@vger.kernel.org>
+
 
