@@ -1,74 +1,62 @@
-Return-Path: <linux-kernel+bounces-342124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40DB3988AD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:40:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 992E9988ADA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB4EF282B04
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:40:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C86051C229BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFE21C243D;
-	Fri, 27 Sep 2024 19:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB54D1C2442;
+	Fri, 27 Sep 2024 19:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q/XuaPH6"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UuqAXsFd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7FA1C1AC4;
-	Fri, 27 Sep 2024 19:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979541C1AC4;
+	Fri, 27 Sep 2024 19:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727466038; cv=none; b=bSUUrdTL4a0Rs9x/EHQG1fX65WuNvol2zZyCPuxZu4jMqCCJSfO4JrHWbAmksGDyvIN4D1tzamB61itbzlXG50kUpMDfkbNMEkBjqNZLh+LARe4TT9Uf6SmH/R8qLFrNHx1jwJp4jmagiQ1FhguJl0WKfFWXK0xOaH8PGrjsCtw=
+	t=1727466208; cv=none; b=Wc+SWlQK7CbmEmabGsqR6VtemO88jkmCM8cmG836tx/EsilYJR2miuvRfqHNlibJO2DuvknNoPv08H3Y2g0PfaJNU6pHdjW0uTsjLd0nZtsveGWPVxFaeoi+jMsjpW4jX7FN6VMb0i7vKthzM5ZfSBBuWTMW7Qzn3IqBlJ84Wyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727466038; c=relaxed/simple;
-	bh=J+81MylFTMzuNwwwkpRozmP4VNzdRuGtipXkPqm5M14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UnGQceUSBVffGsmX+9Ogn/BnjjcEim/JSJ5V5DMIwrJmX22K3xc4BOoIo9DcYbPXAsSTKpOIkdwsKJIlrjespzFeRQ+f9exjaVOOAt5vIFYfLTZRZ/WCLIx19oHxxUHUEB4ltwNFWp6HNnD3efaC11w1UPbYSiemg/WEttIOfD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q/XuaPH6; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71b0722f221so1973659b3a.3;
-        Fri, 27 Sep 2024 12:40:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727466036; x=1728070836; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=WBXm/dFMaBWQiyv3mnntiiT6t8EQFlLzcHHbt0KBI3M=;
-        b=Q/XuaPH6wqNasu9DuX8qUl+moxllSzCRCYGmjt/I4JFqjS+nkxSdRGOb73FZHy09XH
-         1xtBwbauOET8XUB2e2GgTYciS1tjoIrXwWJKVEPdK8q97r8M0tLpLFcW61vKt1msno0F
-         YN7ZzOgtjU0jjGIq53aX+89samh/OQGP0jHqnf6pEMe44rKE+EoWambFpDDHCaGX8B0M
-         jb/284tfZgpJp/aJHnmrSdpz23BCeMbSAzEWv1F3no5E+wCP3CxQV1fB8WXE8Ik1wdqG
-         KwgFyLXtjdjL8e/oOq3MdxDAevQOe9tdlAygqHsycfE5FlJWxL/ng71Nlv2P2StTnw2D
-         v/nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727466036; x=1728070836;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WBXm/dFMaBWQiyv3mnntiiT6t8EQFlLzcHHbt0KBI3M=;
-        b=qHVjItl6TAUfgso0O2tJ4NEIFm7qTVHRcsHRngHFanJTyp3enkiE99BvPR76QKBV3C
-         E6xT5Y7dBTAVNIqRmQ/GJei2mT0UbU2c4y9n3wunpDnQFkGBsbsna5EtYgJZhgGC6k+p
-         2lPXqnfO+JRrm7Pu11YTv3Voe8+GGJiuObmaC+1+EDrF4YN04/fmDoUw2NKg4M5PgqGO
-         woq8O8AS7J/yzNY1f3C7/PHo0ZFprZODrRHhcCSZ+uEqDjrDHesSsHjCRqM4se+SMUV3
-         zNijoI8nfDWcmoJTpCATnpURbRZbOuwChIBxrEqwZbvJgQf6hyllfFzelGcVihBrmXoN
-         sLtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlI5TvmGWG5CtdfNS5nPcp+rE/XCw0884z6bC5MjEs97fuxHX5p0a/i89rDcXAmtUdWuo9JKG4znNNRKI=@vger.kernel.org, AJvYcCXuuioQXHRsdNJ0aM5byVastt59Zz9BQ3DVmW56n9EqCtwhIS+Vd/Rzym5D4K31uWa9Q6iGoPzk@vger.kernel.org
-X-Gm-Message-State: AOJu0YybBCGkUV3JN0kmxaiqPJjOfvH/kfCtphdxwW8BpNg0FbTTo3CG
-	57sJ6JCi0SwmeNPZmJhQ81zBHSe/aUXCf1ZRPQvbupw1rL7xUGmw
-X-Google-Smtp-Source: AGHT+IGdAmHZh/o/XiBalmcGUTKqFVJ4NIE9Hv3U8KiwEI/3ToNX9+T54B9ngfN6Ume+X8nFCMK66w==
-X-Received: by 2002:a05:6a20:c797:b0:1d2:bbfc:769e with SMTP id adf61e73a8af0-1d4fa78fce7mr5416167637.38.1727466036339;
-        Fri, 27 Sep 2024 12:40:36 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26518818sm1955604b3a.129.2024.09.27.12.40.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 12:40:35 -0700 (PDT)
-Message-ID: <54572dfb-ea53-485e-99d6-6f80cffe8d2b@gmail.com>
-Date: Fri, 27 Sep 2024 12:40:32 -0700
+	s=arc-20240116; t=1727466208; c=relaxed/simple;
+	bh=fCRW+m6LmxKtj1w6mA73cVlDXMaap/Z4KhK3XVQji6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G5zz4lx6dXYIr/8smIFMKI3GSzqKShD1Fze93FygXxJZQ8fRa4VFdQ0HNVh1gBKo4SaPJ9ASFliIxGO/LNIt+Ov9ddazMFTZw6DM6T1UVxiNoMjZrLSpoWQmoCzlZR8aopNhJ44jwPWDL3n8/vRMI9eaEpHRGiebXoxe0dq5xFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UuqAXsFd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48RFNY6l020952;
+	Fri, 27 Sep 2024 19:42:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	riuVibAcHN2TeSq86kZuy81O8eMVZ87ANRWLASxkiuY=; b=UuqAXsFdJThL0Yvg
+	B7alqzAAkZPhVTo9s7ND2EbkE1PJpb/D7ie3AfjpYKWpRbizVzs7AmcylLmHOeLK
+	nKKPsPAFD8IpjcFLYnDxFE3GxTcZrdWnCsGTqKQR8qMOibCBSK+3L1jLwkPVwxEC
+	S21DEFnhCrsYsS2r4UTDBb4+AVdOm6Hr71+rh6FOsgo1I23vATh5o+5dfXDksTct
+	rMW2JUjfO5Ffh8stV30nCzXKbc/0Nka/ysKgOCD6Kuw7F/DQ35ZKxs+5XfTfTQD8
+	++RjTbgGc5aZ9xMoE8GW/VwaCFGptzWhNRYdcR/vOMPMDMw95rMYA7wAcf1bA23r
+	64mKiA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sp7uv6da-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 19:42:58 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48RJgkmR026171
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 19:42:46 GMT
+Received: from [10.46.19.239] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 27 Sep
+ 2024 12:42:42 -0700
+Message-ID: <048bbc09-b7e1-4f49-8eff-a2c6cec28d05@quicinc.com>
+Date: Fri, 27 Sep 2024 12:42:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,77 +64,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 00/58] 6.10.12-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240927121718.789211866@linuxfoundation.org>
+Subject: Re: [PATCH net v4 2/2] net: phy: aquantia: remove usage of
+ phy_set_max_speed
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
+        "Russell King (Oracle)" <linux@armlinux.org.uk>,
+        Andrew Lunn
+	<andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>,
+        Brad Griffis <bgriffis@nvidia.com>,
+        "Vladimir
+ Oltean" <vladimir.oltean@nxp.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        "Przemek Kitszel" <przemyslaw.kitszel@intel.com>, <kernel@quicinc.com>
+References: <20240927010553.3557571-1-quic_abchauha@quicinc.com>
+ <20240927010553.3557571-3-quic_abchauha@quicinc.com>
+ <20240927183756.16d3c6a3@fedora.home>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240927121718.789211866@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
+In-Reply-To: <20240927183756.16d3c6a3@fedora.home>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fqMA-LfAqd6mWR8PaVqMrTFFjnkkpibe
+X-Proofpoint-ORIG-GUID: fqMA-LfAqd6mWR8PaVqMrTFFjnkkpibe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 mlxlogscore=999 mlxscore=0 phishscore=0
+ suspectscore=0 impostorscore=0 spamscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409270144
 
-On 9/27/24 05:23, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.12 release.
-> There are 58 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.12-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+On 9/27/2024 9:37 AM, Maxime Chevallier wrote:
+> Hi,
+> 
+> On Thu, 26 Sep 2024 18:05:53 -0700
+> Abhishek Chauhan <quic_abchauha@quicinc.com> wrote:
+> 
+>> Remove the use of phy_set_max_speed in phy driver as the
+>> function is mainly used in MAC driver to set the max
+>> speed.
+>>
+>> Instead use get_features to fix up Phy PMA capabilities for
+>> AQR111, AQR111B0, AQR114C and AQCS109
+>>
+>> Fixes: 038ba1dc4e54 ("net: phy: aquantia: add AQR111 and AQR111B0 PHY ID")
+>> Fixes: 0974f1f03b07 ("net: phy: aquantia: remove false 5G and 10G speed ability for AQCS109")
+>> Fixes: c278ec644377 ("net: phy: aquantia: add support for AQR114C PHY ID")
+>> Link: https://lore.kernel.org/all/20240913011635.1286027-1-quic_abchauha@quicinc.com/T/
+>> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+> 
+> [...]
+> 
+>> +static int aqr111_get_features(struct phy_device *phydev)
+>> +{
+>> +	unsigned long *supported = phydev->supported;
+>> +	int ret;
+>> +
+>> +	/* Normal feature discovery */
+>> +	ret = genphy_c45_pma_read_abilities(phydev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* PHY FIXUP */
+>> +	/* Although the PHY sets bit 12.18.19, it does not support 10G modes */
+>> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, supported);
+>> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKX4_Full_BIT, supported);
+>> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKR_Full_BIT, supported);
+>> +
+>> +	/* Phy supports Speeds up to 5G with Autoneg though the phy PMA says otherwise */
+>> +	linkmode_or(supported, supported, phy_gbit_features);
+>> +	/* Set the 5G speed if it wasn't set as part of the PMA feature discovery */
+>> +	linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, supported);
+>> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
+> 
+> As you are moving away from phy_set_max_speed(phydev, 5000), it should mean
+> that what used to be in the supported bits already contained the
+> 5GBaseT bit, as phy_set_max_speed simply clears the highest speeds.
+> 
+> In such case, calling the newly introduced function from
+> patch 1 should be enough ?
+> 
+
+Well i am not sure about how other phy(AQR111, AQR111B0, AQR114C and AQCS109) behaved, 
+but based on my testing and observation with AQR115c, it was pretty clear that 
+the phy did not advertise Autoneg capabilities, did not set lower speed such as 10M/100M/1000BaseT
+,it did set capabilities beyond what is recommended in the data book.
+
+So the below mentioned phys such as 
+
+AQR111, AQR111B0, AQR114C = supports speed up to 5Gbps which means i cannot use the function
+defined in the previous patch as that sets speeds up to 2.5Gbps and all lower speeds. 
+
+AQCS109 = supports speed up to 2.5Gbps and hence i have reused the same function aqr115c_get_features
+as part of this patch.  
+
+Also my plan was to make 1 patch but i got review comments from Andrew to separate it out 
+and hence two patches with 2 different functions and removing the usage of phy_set_max_speed
+
+
+
+
+> Thanks,
+> 
+> Maxime
 
