@@ -1,95 +1,75 @@
-Return-Path: <linux-kernel+bounces-341416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE3B2987FCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:52:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5492987FD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FE6E2856B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:52:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EDDE284F7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F73188A02;
-	Fri, 27 Sep 2024 07:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D917F188CA3;
+	Fri, 27 Sep 2024 07:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pNx6G9kU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="v8lVgU2c";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pNx6G9kU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="v8lVgU2c"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bcn5Idzk"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2507D17836E;
-	Fri, 27 Sep 2024 07:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37F318787B
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727423554; cv=none; b=dfB3jrRybNlHUqKPy8SjM3eG/ur78ojfb/7sBKTFVtAi8QKsr3r5N3iebEjGl7tRG4AR+kUIFWfXuL5Z0TnBqB5HSyZgV1lNPO2WvQQ1iJo3vC+igDwlAUNPjxGXC5elt+61GIlB7APdfgbvNfpdM8uY2PHQnzv9OpX20LpaVlE=
+	t=1727423827; cv=none; b=JA2m0b5zxjNIcj6EbUyQxWgTsKApOlnmaQqhSDfU2lYxFoxX4SwFStaPXZIUYkYIP4PUorNoX7jkAO7OVL95MWAn0fJEV3xtkm+vxO/8hRxMWeM0plJEK0dnmzAsvLUnri5v0eSXd7MBGTrMz+TSXUv3U9kchvwblyRSN84fCro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727423554; c=relaxed/simple;
-	bh=toSiaUZU3JYSwR0oRPeImt4GKSiXczhpvl1wev/p68k=;
+	s=arc-20240116; t=1727423827; c=relaxed/simple;
+	bh=OZtUCfvDaSRTPyDPgz9cjRsWvyFdmjmqLZwQsHr4xfc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UBvlK8bpnUy9BNPJPWzW9LKG/nuGQiaR6WEVxGsX12Du7aGS6eAyJl7NjARDB8rTLhKTBsNzL0GBV+DCJ0eB9QH+wZz4ZZP+WYU48OpKaN2wqCjJcTxctHebWG3uDN3R0TZivoLcB/143vPR5WZT3PLv2Fw5/E4LEHl/s5hRmCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pNx6G9kU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=v8lVgU2c; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pNx6G9kU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=v8lVgU2c; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2BCCA21B89;
-	Fri, 27 Sep 2024 07:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727423550; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=t4FFCkQ+LnIbGDUYOEMzMCvYmBqmhXsfnOzw2844FjA=;
-	b=pNx6G9kU6FxzKAcaubWOz10dN0PE6nPw9k6M2R00JO34twiP73t9tb8ii4A6MzuNlsfgB5
-	ThJ/Yflj7GfvY2EgkyJrhqswzx/qD7NFYC3cvDqVQ5Tsds38mIuqF3Vb14JgNWun7HfOgt
-	Lpew6GmWiDeoowW1xl1arLwNN+5Qa44=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727423550;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=t4FFCkQ+LnIbGDUYOEMzMCvYmBqmhXsfnOzw2844FjA=;
-	b=v8lVgU2cHjzLwe8BW/p+AOkkiokPY05X0uwNqK6nYTA3QGUCZJdJ7o+ZrwVvWhZY3760zQ
-	yStCZHWgLUWigmBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=pNx6G9kU;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=v8lVgU2c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727423550; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=t4FFCkQ+LnIbGDUYOEMzMCvYmBqmhXsfnOzw2844FjA=;
-	b=pNx6G9kU6FxzKAcaubWOz10dN0PE6nPw9k6M2R00JO34twiP73t9tb8ii4A6MzuNlsfgB5
-	ThJ/Yflj7GfvY2EgkyJrhqswzx/qD7NFYC3cvDqVQ5Tsds38mIuqF3Vb14JgNWun7HfOgt
-	Lpew6GmWiDeoowW1xl1arLwNN+5Qa44=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727423550;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=t4FFCkQ+LnIbGDUYOEMzMCvYmBqmhXsfnOzw2844FjA=;
-	b=v8lVgU2cHjzLwe8BW/p+AOkkiokPY05X0uwNqK6nYTA3QGUCZJdJ7o+ZrwVvWhZY3760zQ
-	yStCZHWgLUWigmBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C57BC13A73;
-	Fri, 27 Sep 2024 07:52:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /lAHLz1k9mYfKQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Fri, 27 Sep 2024 07:52:29 +0000
-Message-ID: <32f5a048-47cb-45f7-9140-25b089c81628@suse.de>
-Date: Fri, 27 Sep 2024 09:52:29 +0200
+	 In-Reply-To:Content-Type; b=t09S2VIy+9jRr5z+a3jEObVzvLlGOWui4gWqryd2ifQCnUidgOGexdnnphaGFCgvGuorudJ+/Z9cYqCYHL/uUIZnljFp3I9lJBkQuSpY/7n1Goafn1B7aoXgLC4aDpJiduzr2i5L4Lx9lzQSuIVEnQXGdbZjFFyIq0lWceGHbK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bcn5Idzk; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a90deec0f8bso23552466b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:57:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727423823; x=1728028623; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=L+nFUwTG8TeeWwku7cS7rWiWP38oV+D+0z+Xf1wWA7E=;
+        b=bcn5Idzkl3Mg9HG3HkKgJyEoM7hz2VHny5n2BzGNrDWpA6IoiNuY1eYNrSOct9dFsx
+         x6uHTlkhe02WvNWRZGfSHfmOjeJhlBA1q+XekAe5yW2wWq/ucNDCdJBa819E8pG2D6P/
+         a8x+MhHZj4ljNYKAHBAh/pTOaxmoOSk02R5f3UoRQpwGhb1WvIY6VRQ3Xuf1NvlTd9Wf
+         f89uhGqJuOi9usXrTpGHgI9/TUzh9bXCbxE8Tb+XuDP6iDeEtQC64Dzff3euIcP1U7ex
+         lrDUGbCrjjg+eiwafLPD34TZ29lL+QBkOv8ZcSSS0Z5GE6AW/4UglsX79rAis3roN+4E
+         mcNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727423823; x=1728028623;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L+nFUwTG8TeeWwku7cS7rWiWP38oV+D+0z+Xf1wWA7E=;
+        b=e0/6ydHoxfGD83FtoX5IFBVXNWj4fX9bvGWlj3fbCUtd/8IcKuTrX4vrnp9TXb9Jos
+         7Hu7wBKgKymT6vk5cYH6HlbfpAaxFGznBIC7jBX4xKCEPyGrIChzGduyPBFPXOrNPTUZ
+         Ni/wXWSdC38mcw2RSWJl8I9E1glPt/7UTmE9Q8ExG9Vy6B8AlgkGQ8B4UYqDWDDmPuA4
+         3M9Ea9CtbPMIXBWiyczczd4AEf6i/q7zbNkKE4UtfvtuUckmIE23IQEM4EA8suJf8zmD
+         V0N0IZ7+voTQ2lKtLmPGYFhWkU75mcmk92l8T54BDR+Wwgmc6nXE/GJwDjDRZKuQMF2A
+         /Zrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUCzIGc+hPXTrMN1/e9MpUa4EUOReDaGL0vX9HeB48HydhtZkeCDQz4d8HJYjx44i/OtfB8030MDIsBZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLIHNtl9ORsAyArZax8rhYYAUNJmZRQf6GLJHxCns0amsHLfO9
+	KCy0IpBJVObj0ntLKZZaGfXKiaODo/V/Qbj4QGb9mjtpU2EVs9V1vJwwkxD5TByxb8U5TApstB1
+	l
+X-Google-Smtp-Source: AGHT+IFi7rOXtdUqAxhUetMwe8gtb6a/xV9ZXm9g63edqmUl5elGNWyp7G8/RmAbdH72cxyAjilTug==
+X-Received: by 2002:a17:907:1c8b:b0:a8d:2623:dd19 with SMTP id a640c23a62f3a-a93c4ade9bcmr88134366b.14.1727423823198;
+        Fri, 27 Sep 2024 00:57:03 -0700 (PDT)
+Received: from [192.168.0.18] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c294747asm96048666b.107.2024.09.27.00.57.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Sep 2024 00:57:02 -0700 (PDT)
+Message-ID: <e1523562-0cf9-44a9-9cbe-23ace46ea997@linaro.org>
+Date: Fri, 27 Sep 2024 09:57:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,344 +77,284 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 9/10] drm/format-helper: Add conversion from XRGB8888
- to BGR888
-To: Aditya Garg <gargaditya08@live.com>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch"
- <daniel@ffwll.ch>, Jiri Kosina <jikos@kernel.org>,
- "bentiss@kernel.org" <bentiss@kernel.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
- <thomas@t-8ch.de>
-Cc: Orlando Chamberlain <orlandoch.dev@gmail.com>,
- Kerem Karabay <kekrby@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <DD9C41AD-6543-47CE-8504-69E4992229B2@live.com>
- <ECFD946D-2DCD-46DE-A86C-616496D1ACE7@live.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
+ Systems remote processors
+To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
+ Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org,
+ sudeep.holla@arm.com, robin.murphy@arm.com
+References: <20240919093517.GA43740@e130802.arm.com>
+ <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
+ <20240919145741.GA7940@e130802.arm.com>
+ <85a223e9-05a4-4034-87a5-57d3eb9409b7@kernel.org>
+ <20240920141958.GA288724@e130802.arm.com>
+ <7784248d-4372-4cf1-a01a-5b731b3f6b96@kernel.org>
+ <20240920163851.GA385919@e130802.arm.com>
+ <e37a0542-d405-4d15-84d2-4c7b1385d3ef@kernel.org>
+ <20240923114945.GA133670@e130802.arm.com>
+ <c263b843-50bc-4c2c-b15e-9b87dfb201ab@linaro.org>
+ <20240923171948.GA348509@e130802.arm.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <ECFD946D-2DCD-46DE-A86C-616496D1ACE7@live.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240923171948.GA348509@e130802.arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 2BCCA21B89
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[live.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,t-8ch.de];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,lists.freedesktop.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-Hi
+On 23/09/2024 19:19, Abdellatif El Khlifi wrote:
 
-Am 17.08.24 um 13:51 schrieb Aditya Garg:
-> From: Kerem Karabay <kekrby@gmail.com>
->
-> Add XRGB8888 emulation helper for devices that only support BGR888.
->
-> Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-> Signed-off-by: Aditya Garg <gargaditya08@live.com>
-> ---
->   drivers/gpu/drm/drm_format_helper.c           | 54 +++++++++++++
->   .../gpu/drm/tests/drm_format_helper_test.c    | 81 +++++++++++++++++++
->   include/drm/drm_format_helper.h               |  3 +
->   3 files changed, 138 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_format_helper.c b/drivers/gpu/drm/drm_format_helper.c
-> index b1be458ed..28c0e76a1 100644
-> --- a/drivers/gpu/drm/drm_format_helper.c
-> +++ b/drivers/gpu/drm/drm_format_helper.c
-> @@ -702,6 +702,57 @@ void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, const unsigned int *dst_pi
->   }
->   EXPORT_SYMBOL(drm_fb_xrgb8888_to_rgb888);
->   
-> +static void drm_fb_xrgb8888_to_bgr888_line(void *dbuf, const void *sbuf, unsigned int pixels)
-> +{
-> +	u8 *dbuf8 = dbuf;
-> +	const __le32 *sbuf32 = sbuf;
-> +	unsigned int x;
-> +	u32 pix;
-> +
-> +	for (x = 0; x < pixels; x++) {
-> +		pix = le32_to_cpu(sbuf32[x]);
-> +		/* write red-green-blue to output in little endianness */
-> +		*dbuf8++ = (pix & 0x00FF0000) >> 16;
-> +		*dbuf8++ = (pix & 0x0000FF00) >> 8;
-> +		*dbuf8++ = (pix & 0x000000FF) >> 0;
+>>>
+>>> The Host Base System Control [3] is the big block containing various functionalities (MMIO registers).
+>>> Among the functionalities, the two remote cores registers (aka External system 0 and 1).
+>>> The remote cores have two registers each.
+>>>
+>>> 1/ In the v1 patchset, a valid point was made by the community:
+>>>
+>>>    Right now it seems somewhat tenuous to describe two consecutive
+>>>    32-bit registers as separate "reg" entries, but *maybe* it's OK if that's
+>>
+>> ARM is not special, neither this hardware is. Therefore:
+>> 1. Each register as reg: nope, for obvious reasons.
+>> 2. One device for entire syscon: quite common, why do you think it is
+>> somehow odd?
+>> 3. If you quote other person, please provide the lore link, so I won't
+>> spend useless 5 minutes to find who said that or if it was even said...
+> 
+> Please have a look at this lore link [1]. The idea is to add syscon
+> and regmap support which I did in the v2 patchset.
+> 
+> [1]: https://lore.kernel.org/all/ZfMVcQsmgQUXXcef@bogus/
 
-I know the file is inconsistent, but I'd prefer lower-case numbers 
-(0xff) here. Apart from that
+There is nothing there about DT bindings. We do not talk here about
+drivers. MFD and regmap are Linux driver stuff, not bindings.
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+I said nothing about not using MFD, regmap or whatever driver stuff you
+want. We talk *only* about bindings. Syscon is mentioned there but I am
+sorry - that quite a stretch to call a block syscon just because you
+want regmap.
 
-Best regards
-Thomas
+> 
+>>
+>>>    all there ever is. However if it's actually going to end up needing several
+>>>    more additional MMIO and/or memory regions for other functionality, then
+>>>    describing each register and location individually is liable to get
+>>>    unmanageable really fast, and a higher-level functional grouping (e.g. these
+>>>    reset-related registers together as a single 8-byte region) would likely be
+>>>    a better design.
+>>>
+>>>    The Exernal system registers are part of a bigger block with other functionality in place.
+>>>    MFD/syscon might be better way to use these registers. You never know in
+>>>    future you might want to use another set of 2-4 registers with a different
+>>>    functionality in another driver.
+>>>
+>>>    I would see if it makes sense to put together a single binding for
+>>>    this "Host Base System Control" register (not sure what exactly that means).
+>>>    Use MFD/regmap you access parts of this block. The remoteproc driver can
+>>>    then be semi-generic (meaning applicable to group of similar platforms)
+>>>    based on the platform compatible and use this regmap to provide the
+>>>    functionality needed.
+>>
+>> I don't understand how this lengthy semi-quote answers my concerns.
+>> Please write concise points as arguments to my questions.
+>>
+>> For example, I don't care what your remote proc driver does and it
+>> should not matter in the terms of this binding.
+> 
+> I just wanted to show why we are using syscon based on the arguments
+> of other reviewers.
+> 
+>>
+>>>
+>>> 2/ There are many examples in the kernel that use syscon as a parent node of
+>>>    child nodes for devices located at an offset from the syscon base address.
+>>>    Please see these two examples [1][2]. I'm trying to follow a similar design if that
+>>>    makes sense.
+>>
+>> Yeah, for separate devices. If you have two words without any resources,
+>> I claim you might not have here any separate devices or "not separate
+>> enough", because all this is somehow fluid. Remote core sounds like
+>> separate device, but all your arguments about need of extid which cannot
+>> be used in reg does not support this case.
+>>
+>> The example in the binding is also not complete - missing rest of
+>> devices - which does not help.
+> 
+> Here I would like to explain the current suggestion and suggest an alternative solution.
+> 
+> 1/ For more clarity, here is a complete example of use of both remote cores
+> at the same time:
+> 
+>     syscon@1a010000 {
+>         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
+>         reg = <0x1a010000 0x1000>;
+> 
+>         #address-cells = <1>;
+>         #size-cells = <1>;
+> 
+>         remoteproc@310 {
+>             compatible = "arm,sse710-extsys0";
+>             reg = <0x310 8>;
+>             firmware-name = "es0_flashfw.elf";
+>             mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>;
+>             mbox-names = "txes0", "rxes0";
+>             memory-region = <&extsys0_vring0>, <&extsys0_vring1>;
+>         };
+> 
+>         remoteproc@318 {
+>             compatible = "arm,sse710-extsys1";
+>             reg = <0x318 8>;
+>             firmware-name = "es1_flashfw.elf";
+>             mboxes = <&mhu0_hes1 0 1>, <&mhu0_es1h 0 1>;
+>             mbox-names = "txes0", "rxes0";
+>             memory-region = <&extsys1_vring0>, <&extsys1_vring1>;
+>         };
+> };
+> 
+> Here we have 2 cores, each one have 2 registers mapped respectively
+> at 0x1a010310 and 0x1a010318.
 
-> +	}
-> +}
-> +
-> +/**
-> + * drm_fb_xrgb8888_to_bgr888 - Convert XRGB8888 to BGR888 clip buffer
-> + * @dst: Array of BGR888 destination buffers
-> + * @dst_pitch: Array of numbers of bytes between the start of two consecutive scanlines
-> + *             within @dst; can be NULL if scanlines are stored next to each other.
-> + * @src: Array of XRGB8888 source buffers
-> + * @fb: DRM framebuffer
-> + * @clip: Clip rectangle area to copy
-> + * @state: Transform and conversion state
-> + *
-> + * This function copies parts of a framebuffer to display memory and converts the
-> + * color format during the process. Destination and framebuffer formats must match. The
-> + * parameters @dst, @dst_pitch and @src refer to arrays. Each array must have at
-> + * least as many entries as there are planes in @fb's format. Each entry stores the
-> + * value for the format's respective color plane at the same index.
-> + *
-> + * This function does not apply clipping on @dst (i.e. the destination is at the
-> + * top-left corner).
-> + *
-> + * Drivers can use this function for BGR888 devices that don't natively
-> + * support XRGB8888.
-> + */
-> +void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *dst_pitch,
-> +			       const struct iosys_map *src, const struct drm_framebuffer *fb,
-> +			       const struct drm_rect *clip, struct drm_format_conv_state *state)
-> +{
-> +	static const u8 dst_pixsize[DRM_FORMAT_MAX_PLANES] = {
-> +		3,
-> +	};
-> +
-> +	drm_fb_xfrm(dst, dst_pitch, dst_pixsize, src, fb, clip, false, state,
-> +		    drm_fb_xrgb8888_to_bgr888_line);
-> +}
-> +EXPORT_SYMBOL(drm_fb_xrgb8888_to_bgr888);
-> +
->   static void drm_fb_xrgb8888_to_argb8888_line(void *dbuf, const void *sbuf, unsigned int pixels)
->   {
->   	__le32 *dbuf32 = dbuf;
-> @@ -1035,6 +1086,9 @@ int drm_fb_blit(struct iosys_map *dst, const unsigned int *dst_pitch, uint32_t d
->   		} else if (dst_format == DRM_FORMAT_RGB888) {
->   			drm_fb_xrgb8888_to_rgb888(dst, dst_pitch, src, fb, clip, state);
->   			return 0;
-> +		} else if (dst_format == DRM_FORMAT_BGR888) {
-> +			drm_fb_xrgb8888_to_bgr888(dst, dst_pitch, src, fb, clip, state);
-> +			return 0;
->   		} else if (dst_format == DRM_FORMAT_ARGB8888) {
->   			drm_fb_xrgb8888_to_argb8888(dst, dst_pitch, src, fb, clip, state);
->   			return 0;
-> diff --git a/drivers/gpu/drm/tests/drm_format_helper_test.c b/drivers/gpu/drm/tests/drm_format_helper_test.c
-> index 08992636e..35cd3405d 100644
-> --- a/drivers/gpu/drm/tests/drm_format_helper_test.c
-> +++ b/drivers/gpu/drm/tests/drm_format_helper_test.c
-> @@ -60,6 +60,11 @@ struct convert_to_rgb888_result {
->   	const u8 expected[TEST_BUF_SIZE];
->   };
->   
-> +struct convert_to_bgr888_result {
-> +	unsigned int dst_pitch;
-> +	const u8 expected[TEST_BUF_SIZE];
-> +};
-> +
->   struct convert_to_argb8888_result {
->   	unsigned int dst_pitch;
->   	const u32 expected[TEST_BUF_SIZE];
-> @@ -107,6 +112,7 @@ struct convert_xrgb8888_case {
->   	struct convert_to_argb1555_result argb1555_result;
->   	struct convert_to_rgba5551_result rgba5551_result;
->   	struct convert_to_rgb888_result rgb888_result;
-> +	struct convert_to_bgr888_result bgr888_result;
->   	struct convert_to_argb8888_result argb8888_result;
->   	struct convert_to_xrgb2101010_result xrgb2101010_result;
->   	struct convert_to_argb2101010_result argb2101010_result;
-> @@ -151,6 +157,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
->   			.dst_pitch = TEST_USE_DEFAULT_PITCH,
->   			.expected = { 0x00, 0x00, 0xFF },
->   		},
-> +		.bgr888_result = {
-> +			.dst_pitch = TEST_USE_DEFAULT_PITCH,
-> +			.expected = { 0xFF, 0x00, 0x00 },
-> +		},
->   		.argb8888_result = {
->   			.dst_pitch = TEST_USE_DEFAULT_PITCH,
->   			.expected = { 0xFFFF0000 },
-> @@ -217,6 +227,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
->   			.dst_pitch = TEST_USE_DEFAULT_PITCH,
->   			.expected = { 0x00, 0x00, 0xFF },
->   		},
-> +		.bgr888_result = {
-> +			.dst_pitch = TEST_USE_DEFAULT_PITCH,
-> +			.expected = { 0xFF, 0x00, 0x00 },
-> +		},
->   		.argb8888_result = {
->   			.dst_pitch = TEST_USE_DEFAULT_PITCH,
->   			.expected = { 0xFFFF0000 },
-> @@ -330,6 +344,15 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
->   				0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
->   			},
->   		},
-> +		.bgr888_result = {
-> +			.dst_pitch = TEST_USE_DEFAULT_PITCH,
-> +			.expected = {
-> +				0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00,
-> +				0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00,
-> +				0x00, 0x00, 0xFF, 0xFF, 0x00, 0xFF,
-> +				0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF,
-> +			},
-> +		},
->   		.argb8888_result = {
->   			.dst_pitch = TEST_USE_DEFAULT_PITCH,
->   			.expected = {
-> @@ -468,6 +491,17 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
->   				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
->   			},
->   		},
-> +		.bgr888_result = {
-> +			.dst_pitch = 15,
-> +			.expected = {
-> +				0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05, 0xA8, 0xF3, 0x03,
-> +				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +				0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05,
-> +				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +				0xA8, 0x03, 0x03, 0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C,
-> +				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +			},
-> +		},
->   		.argb8888_result = {
->   			.dst_pitch = 20,
->   			.expected = {
-> @@ -914,6 +948,52 @@ static void drm_test_fb_xrgb8888_to_rgb888(struct kunit *test)
->   	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
->   }
->   
-> +static void drm_test_fb_xrgb8888_to_bgr888(struct kunit *test)
-> +{
-> +	const struct convert_xrgb8888_case *params = test->param_value;
-> +	const struct convert_to_bgr888_result *result = &params->bgr888_result;
-> +	size_t dst_size;
-> +	u8 *buf = NULL;
-> +	__le32 *xrgb8888 = NULL;
-> +	struct iosys_map dst, src;
-> +
-> +	struct drm_framebuffer fb = {
-> +		.format = drm_format_info(DRM_FORMAT_XRGB8888),
-> +		.pitches = { params->pitch, 0, 0 },
-> +	};
-> +
-> +	dst_size = conversion_buf_size(DRM_FORMAT_BGR888, result->dst_pitch,
-> +				       &params->clip, 0);
-> +	KUNIT_ASSERT_GT(test, dst_size, 0);
-> +
-> +	buf = kunit_kzalloc(test, dst_size, GFP_KERNEL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buf);
-> +	iosys_map_set_vaddr(&dst, buf);
-> +
-> +	xrgb8888 = cpubuf_to_le32(test, params->xrgb8888, TEST_BUF_SIZE);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, xrgb8888);
-> +	iosys_map_set_vaddr(&src, xrgb8888);
-> +
-> +	/*
-> +	 * BGR888 expected results are already in little-endian
-> +	 * order, so there's no need to convert the test output.
-> +	 */
-> +	drm_fb_xrgb8888_to_bgr888(&dst, &result->dst_pitch, &src, &fb, &params->clip,
-> +				  &fmtcnv_state);
-> +	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
-> +
-> +	buf = dst.vaddr; /* restore original value of buf */
-> +	memset(buf, 0, dst_size);
-> +
-> +	int blit_result = 0;
-> +
-> +	blit_result = drm_fb_blit(&dst, &result->dst_pitch, DRM_FORMAT_BGR888, &src, &fb, &params->clip,
-> +				  &fmtcnv_state);
-> +
-> +	KUNIT_EXPECT_FALSE(test, blit_result);
-> +	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
-> +}
-> +
->   static void drm_test_fb_xrgb8888_to_argb8888(struct kunit *test)
->   {
->   	const struct convert_xrgb8888_case *params = test->param_value;
-> @@ -1851,6 +1931,7 @@ static struct kunit_case drm_format_helper_test_cases[] = {
->   	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb1555, convert_xrgb8888_gen_params),
->   	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgba5551, convert_xrgb8888_gen_params),
->   	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgb888, convert_xrgb8888_gen_params),
-> +	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_bgr888, convert_xrgb8888_gen_params),
->   	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb8888, convert_xrgb8888_gen_params),
->   	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_xrgb2101010, convert_xrgb8888_gen_params),
->   	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb2101010, convert_xrgb8888_gen_params),
-> diff --git a/include/drm/drm_format_helper.h b/include/drm/drm_format_helper.h
-> index 428d81afe..aa1604d92 100644
-> --- a/include/drm/drm_format_helper.h
-> +++ b/include/drm/drm_format_helper.h
-> @@ -96,6 +96,9 @@ void drm_fb_xrgb8888_to_rgba5551(struct iosys_map *dst, const unsigned int *dst_
->   void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, const unsigned int *dst_pitch,
->   			       const struct iosys_map *src, const struct drm_framebuffer *fb,
->   			       const struct drm_rect *clip, struct drm_format_conv_state *state);
-> +void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *dst_pitch,
-> +			       const struct iosys_map *src, const struct drm_framebuffer *fb,
-> +			       const struct drm_rect *clip, struct drm_format_conv_state *state);
->   void drm_fb_xrgb8888_to_argb8888(struct iosys_map *dst, const unsigned int *dst_pitch,
->   				 const struct iosys_map *src, const struct drm_framebuffer *fb,
->   				 const struct drm_rect *clip, struct drm_format_conv_state *state);
+All this looks fine, resources are indeed reasonable, except that I
+still do not understand why do you need to call them 0 and 1 (now via
+compatible).
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Your driver code shows this nicely - it is entirely redundant! The 'reg'
+- so the base - is already there! You just duplicate it with the
+extsys_id, instead of relying on the base. So think what is the point of
+'reg' property if you do not use it?
+
+> 
+> Definetly these cores have seperate HW resources associated with them
+> which are the MHUs (mailboxes HW). There are 2 pairs of MHUs associated
+> with each core. These mailbox peripherals are obviously seperate.
+> Furthermore, the vring buffers used for communication are seperate.
+> 
+> Moreover, the remote cores are independent. They are not SMP cores of one processor.
+> 
+> They can have different default firmware to use. In this example es0_flashfw.elf
+> and es1_flashfw.elf
+> 
+> The current HW implementation (Corstone-1000) provides one remote core only.
+> However, the second core control registers are at 0x1a010318 do exist.
+> 
+> Support for a second core is taken into consideration in this work to help
+> end users who want to add a second core to their HW.
+> 
+> 2/ Here I'm suggesting an alternative solution by using one remoteproc node for both cores as
+> follows:
+> 
+>     syscon@1a010000 {
+>         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
+>         reg = <0x1a010000 0x1000>;
+> 
+>         remoteproc {
+>             compatible = "arm,sse710-extsys";
+>             firmware-name = "es0_flashfw.elf";
+>             mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>, <&mhu0_hes1 0 1>, <&mhu0_es1h 0 1>;
+>             mbox-names = "txes0", "rxes0", "txes1", "rxes1";
+>             memory-region = <&extsys0_vring0>, <&extsys0_vring1>, <&extsys1_vring0>, <&extsys1_vring1>;
+>         };
+> };
+> 
+> Does this meet your expectations please ?
+> 
+>>
+>>>
+>>> 3/ Since there are two registers for each remote core. I'm suggesting to set the
+>>>    size in the reg property to 8. 
+>>
+>> How is this related?
+>>
+>>> The driver will read the match data to get the right
+>>>    offset to be used with regmap APIs.
+>>
+>> Sorry, no talks about driver. Don't care, at least in this context.
+>>
+>> You can completely omit address space from children in DT and everything
+>> will work fine and look fine from bindings point of view.
+>>
+>>>
+>>> Suggested nodes:
+>>>
+>>>
+>>>     syscon@1a010000 {
+>>>         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
+>>>         reg = <0x1a010000 0x1000>;
+>>>
+>>>         #address-cells = <1>;
+>>>         #size-cells = <1>;
+>>>
+>>>         remoteproc@310 {
+>>>             compatible = "arm,sse710-extsys0";
+>>>             reg = <0x310 8>;
+>>>             firmware-name = "es_flashfw.elf";
+>>>             mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>;
+>>>             mbox-names = "txes0", "rxes0";
+>>>             memory-region = <&extsys0_vring0>, <&extsys0_vring1>;
+>>>         };
+>>>
+>>>         remoteproc@318 {
+>>>             compatible = "arm,sse710-extsys1";
+>>>             reg = <0x318 8>;
+>>>             firmware-name = "es_flashfw.elf";
+>>
+>> Same firmware? Always or only depends?
+> 
+> The firmware of the second core depends on the end user choice.
+> Currently the second core is not implemented in the HW.
+> Users who want to tweak Corstone-1000 HW can add
+> a second core.
+
+
+Two cores make more sense in such case.
+
+Best regards,
+Krzysztof
 
 
