@@ -1,115 +1,141 @@
-Return-Path: <linux-kernel+bounces-341927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A9D498887B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:45:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CFB98888C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B724CB21F95
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:45:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B391C2105D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3661C0DFD;
-	Fri, 27 Sep 2024 15:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4871C172D;
+	Fri, 27 Sep 2024 15:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nXeJm1nF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZzhiuY8"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0806C13A27E;
-	Fri, 27 Sep 2024 15:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F352D18B1A;
+	Fri, 27 Sep 2024 15:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727451912; cv=none; b=Q+7nEaatssTGIcT+essQ7/hKS8jtYvfzfaeYmxMnrQD9ZZBDCMxV7HA0pyALTrSZKcyD45ws/K/cqZ0hGIPPOiHCSgC5vF9QL3NfQaLCsKKVfwAU4H+Qm4S4NW2TxMxZIbjkBr4qQyaKJw+Q4MBhyx2nhqs7UKdqCPkK9sxTbW8=
+	t=1727452293; cv=none; b=Q+L9ch7vygOfQQ35j/iPVyGboDsyVow+bbhwW21mzSa6oYIrWHn346jaDXZeMRPywn5HzQLuz0qYnK1p8exKCtqmexUYmaeW291K3u7xqnZZNOmfo8xl4Jpf4QjHpKuIQ9HodiXDOLgYPghHmRmjSCnzFEWjzBPPtcEFN5+5dlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727451912; c=relaxed/simple;
-	bh=SSsVxrLU3Pis+OTeEMtEhV8WM8q9d22wDjApC2JZH7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U+bwZWVJs1ZUDjJeY8mQfTiGWODKZ3O8P4Z/ZIYnWDSn6ahwZYql2gw5woKxZ2Oq2g/gvcbCITGE75ok3lZLqqz2gNaP3x5SqTPEnHu0nOiVLK1IHh+CRTMVlvae07uF9fQwAjvIKUimU/4UnhI6va9LP/Rsvh9zpsGYhwNRZl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nXeJm1nF; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727451911; x=1758987911;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SSsVxrLU3Pis+OTeEMtEhV8WM8q9d22wDjApC2JZH7A=;
-  b=nXeJm1nFfOVPWrGhZr8aWN4dFc7W3IrcLCrDCKBDRebF4Abaagmmz5j3
-   IgvSs0RXTZrMLK9iwNqLcLgL8sNotshTgkPOe4PbPAf0BGLt30URxm7px
-   KvBFUFh4zRVUcEP+ABAAKClK+/YWtay5Gc/T5JHYu/a69YYW7v6OnfUrA
-   0s3KmdMcEs9Z6v0eNuGAY0gvmao/vcjhsODClvhpmCT6Tr3C/2ZFAjnUG
-   kGbC2ASIYgEohhhyvXT6PdnTVgVXi2K2oAbKSPg2QkSdfRApY+SP6DE/7
-   6xxFbYNce/cUSBlHg05C4RM7jDBRFpdBKjCdrnO+HTppWOegx8Bh8VK4x
-   Q==;
-X-CSE-ConnectionGUID: RsSAabRYRNmdjarxKmBbbw==
-X-CSE-MsgGUID: afu+NoIJTP2rSdKsjObx4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="49127540"
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="49127540"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 08:45:09 -0700
-X-CSE-ConnectionGUID: v6pwkCoWT26fhaC+l2LbaQ==
-X-CSE-MsgGUID: RXhXG783Sk+Jd0tNY9ukUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
-   d="scan'208";a="72992038"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 27 Sep 2024 08:45:08 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id EE52330D; Fri, 27 Sep 2024 18:45:06 +0300 (EEST)
-Date: Fri, 27 Sep 2024 18:45:06 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] i2c-host-fixes for v6.12-rc1
-Message-ID: <ZvbTAl5uYbMcVI6m@black.fi.intel.com>
-References: <auogjhzhbs2w45ptdkl5ceyxsm7apyfi5wmfv3iwuzfh47pl6f@4nnrnpqqlum2>
+	s=arc-20240116; t=1727452293; c=relaxed/simple;
+	bh=Be+ZGbp3IfAlLZpZF/dmewOvihf2CFmNlZ+Q66KjvMg=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=KcucUGrd0MWBvKtl413CCv8LgmGbjd1cA+yLGVojM6tLByVYnbH4I99mwuECZuyRlKkVmyk77i7Em8044hTKnMECe+R/T1bCY53GCUeygqLKosuDRvfFnFVjv9enetWYgUUEc78tT0v4UcvxdnJKK53g2gqImjXMJ/g88aG5mUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LZzhiuY8; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-206aee40676so20053045ad.0;
+        Fri, 27 Sep 2024 08:51:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727452290; x=1728057090; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=siq7XCFpoWz1j+ij/CuNUWO3s9GtQAEeoPcY53GflA8=;
+        b=LZzhiuY8xSsYPUo4JFGcP+NDGY/4nggzmc9BuRVRJ2zE+87Y1oXLSXJ9EgQOuNBL76
+         OfYGNF+FW+TJco0iokhaQotPzyhij0lIsicyi+S9c4m/ieXNHwQCM1Sx7yVxLglTvf8m
+         25BWLlqTpkBQ5gipZCOdY7JGyNYJvBzR5vtZ+vDKLjG0sDaoDIf5qwIOqxrHYhyHu8d8
+         YUlmvwzmHNkmDapr/lj5qGzqUcqJLoxQFgF/THaq73sodHs7gCEog1ALcGeowz1nyd3f
+         EZ7o8btu9W1qh4ops9bFXC/gWGkxTAJzARjEV+b5gEI0waFwCBMgxhxmJ12mR9H5wVMS
+         0bXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727452290; x=1728057090;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=siq7XCFpoWz1j+ij/CuNUWO3s9GtQAEeoPcY53GflA8=;
+        b=QoTgnFZNRlx9VJG/vBd4amghvJPxSAVgvRzIHhM+ue0uzo4AMmJTtNh4ZQg/YwKqlE
+         MlhfiiYlwt7DtWngf0ahjDuueOCtugutE9+3LdKZTsZlKR/DhXlCyjM7fWICmxKKsAH4
+         mobEtQsWWoAd1hLuDX5bmDja3lfHU34MKAMXfKVdRyCeeSrVWIOrqmrdSKB9Bdc3xR5f
+         OFigGWKtYC76SO5vdkCdohPu5zGJScrdMGcrguOxpgDHR8Z4CUrW+4evQHODGH4eHx6q
+         ZDgCH+oDiLw5U0wTdQrHOrQoBOvd9Jb2fAa3NA/uz66oxLo0HiO6JI7CiOpMwg3Yoj+O
+         uDYg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+TfDELExEbbitIOqGzMp57paU7y0QoA3C1CZ0r4L2uK2r9Gc8YkV7YIPqyGmO6HJ7Y6q4LPPi+cuyXdWEzjfa@vger.kernel.org, AJvYcCWZ+FIopcZARVctN5VaGfw/3FfHTIADGtjWmfMdbKpdgRrPA66ovywMhsvx+EszPBELYEVGRelRFEuAnhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJAvm5HttozTt+k73ybKpEkLsw5QG0dq9kEGkudneqCz0W49yo
+	5b9EMfZCBWJ+yQHYg28bGpdD7oPmoOR1TfKWoIIngtmviYo36Eh3Wg8wqw==
+X-Google-Smtp-Source: AGHT+IHYen+9SCB9zAwc+2YM+I/YJeUCIgN9O5oINntyeB1ech4upS2dfT1q+IPsJIFbM8mIsRWLFg==
+X-Received: by 2002:a17:903:11cd:b0:206:96ae:dc57 with SMTP id d9443c01a7336-20b37b912b5mr62267395ad.48.1727452290237;
+        Fri, 27 Sep 2024 08:51:30 -0700 (PDT)
+Received: from dw-tp ([171.76.86.51])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37da2667sm15170095ad.102.2024.09.27.08.51.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 08:51:29 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, shuah@kernel.org
+Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Subject: Re: [PATCH] selftests/powerpc: Rm the unnecessary remove function.
+In-Reply-To: <20240927043125.8199-1-zhangjiao2@cmss.chinamobile.com>
+Date: Fri, 27 Sep 2024 21:15:41 +0530
+Message-ID: <87h6a1aymy.fsf@gmail.com>
+References: <20240927043125.8199-1-zhangjiao2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <auogjhzhbs2w45ptdkl5ceyxsm7apyfi5wmfv3iwuzfh47pl6f@4nnrnpqqlum2>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Sep 27, 2024 at 12:09:36PM +0200, Andi Shyti wrote:
+zhangjiao2 <zhangjiao2@cmss.chinamobile.com> writes:
 
-...
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+>
+> Path is not initialized before use,
+> remove the unnecessary remove function.
+>
+> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> ---
+>  tools/testing/selftests/powerpc/mm/tlbie_test.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/powerpc/mm/tlbie_test.c b/tools/testing/selftests/powerpc/mm/tlbie_test.c
+> index 48344a74b212..fd1456d16a7d 100644
+> --- a/tools/testing/selftests/powerpc/mm/tlbie_test.c
+> +++ b/tools/testing/selftests/powerpc/mm/tlbie_test.c
+> @@ -314,7 +314,6 @@ static inline void end_verification_log(unsigned int tid, unsigned nr_anamolies)
+>  	fclose(f);
+>  
+>  	if (nr_anamolies == 0) {
+> -		remove(path);
+>  		return;
+>  	}
 
-> ----------------------------------------------------------------
-> The DesignWare driver now has the correct ENABLE-ABORT sequence,
-> ensuring ABORT can always be sent when needed.
-> 
-> In the SynQuacer controller we now check for PCLK as an optional
-> clock, allowing ACPI to directly provide the clock rate.
-> 
-> The recent KEBA driver required a dependency fix in Kconfig.
-> 
-> The XIIC driver now has a corrected power suspend sequence.
+Nice catch. Indeed the path is uninitialized here. 
 
-While tag message looks nice here, I think it still has to follow the
-same (as in the commit message) pattern, i.e.
+However, I believe the above "if" block should come after initializing
+the path. The idea is if there were no anamolies noted, then we can
+simply remove the log file and return.
 
-$SUMMARY
-...blank line...
-$DESCRIPTION
+Something like below. Thoughts?
 
-Why? Because the Web representation of the message looks weird on the
-Web. Compare
-https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel.git/tag/?h=intel-pinctrl-v6.12-1
-and yours
-https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git/tag/?h=i2c-host-fixes-6.12-rc1
+diff --git a/tools/testing/selftests/powerpc/mm/tlbie_test.c b/tools/testing/selftests/powerpc/mm/tlbie_test.c
+index 48344a74b212..35f0098399cc 100644
+--- a/tools/testing/selftests/powerpc/mm/tlbie_test.c
++++ b/tools/testing/selftests/powerpc/mm/tlbie_test.c
+@@ -313,16 +313,16 @@ static inline void end_verification_log(unsigned int tid, unsigned nr_anamolies)
 
--- 
-With Best Regards,
-Andy Shevchenko
+        fclose(f);
+
+-       if (nr_anamolies == 0) {
+-               remove(path);
+-               return;
+-       }
+-
+        sprintf(logfile, logfilename, tid);
+        strcpy(path, logdir);
+        strcat(path, separator);
+        strcat(path, logfile);
+
++       if (nr_anamolies == 0) {
++               remove(path);
++               return;
++       }
++
+        printf("Thread %02d chunk has %d corrupted words. For details check %s\n",
+                tid, nr_anamolies, path);
+ }
 
 
+-ritesh
 
