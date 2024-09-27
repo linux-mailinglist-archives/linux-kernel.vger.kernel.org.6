@@ -1,192 +1,235 @@
-Return-Path: <linux-kernel+bounces-341439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1260988020
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:16:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A91988024
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AF9E1F23AFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:16:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E509B20FDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E82181339;
-	Fri, 27 Sep 2024 08:16:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFF713B58B;
-	Fri, 27 Sep 2024 08:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F54C188712;
+	Fri, 27 Sep 2024 08:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TDKxdHf1"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2542813B58B;
+	Fri, 27 Sep 2024 08:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727425001; cv=none; b=QCQQksJSXyBMAqERwhzyxlPFUbYnO6Q5UZuEv1j1udlSYo45DPe07XZVJg3eHHEgDncLnnuVfANGIjm01MNayLpGmZqS4EFcblVo/dGCkvBPB+Fmb7oIvmAFzQckiG/gZO3qKHG+/hFHKOZQtXwPVy1RQnhx7JJsiRof7ArymA8=
+	t=1727425082; cv=none; b=uEFCmrusGj9uKDzFgvu78wXplx8VNqC51QQyPkFgSYO8UC0Xz00bn1zVVJKy/BPRiVqaj54wfrUI5Q33fP+6O7aYyjvUJkXL973KZZyHbF7JSFzxpHqHBwNqykjUN2Z4VFIikaWpdPkLHiHg2mUv4wY4x51A18tqnIqEnw6fZy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727425001; c=relaxed/simple;
-	bh=cRW3AX/c1lHWXHtV/BeY50l4lkGC0423cx0OW/f+EaA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UftRh8KkFrBT0BYWGXRLMkhCAuIG8D7T4uLrNGaQ3Aglg56InNnEo+7WLFrGBb3afsQJNU8C66kokHMLDslUxbg8GIL/EL/JJkFXzCZYiuXgOhgYoXIcvqwpIPMtaJNOtddzH3V5YobQFcJ45rj/VwA4dPrtdfZVbglQtRiTLF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1EB2165C;
-	Fri, 27 Sep 2024 01:17:07 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6BBE23F6A8;
-	Fri, 27 Sep 2024 01:16:36 -0700 (PDT)
-Message-ID: <4eea0c0e-e651-49cc-96ee-ef9809e80012@arm.com>
-Date: Fri, 27 Sep 2024 09:16:34 +0100
+	s=arc-20240116; t=1727425082; c=relaxed/simple;
+	bh=XWQo208lHzRpbTiD3VJZgQ1YzqtPjGoCpGkZ2H9pyT4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oW8j+trU14KzSVNh8fvMf9oD7jVm//o38mPwfp7vB3vMp/PVkS5khKHh81ffTMLeHQh9apbcam2yxhwXAwgzfxBkHZkKDwEWrhjfelswEAAVc7RvYrxfuuXb+XUtxBFsm/v9df43y3y1U5FrcDpZTtGsokozjjdkzV4VLwdnQLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TDKxdHf1; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e163e2a9fdso1090237b6e.2;
+        Fri, 27 Sep 2024 01:18:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727425080; x=1728029880; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wik+ChQqsJUQ9vegf6yc2qiPGCL4qopVw1Omly+OHW0=;
+        b=TDKxdHf1xABk98a/6t2S9XzwvoN9gj12lkGxh9Upr/PGyBLMYchdTVJtJ82Z3mkvAZ
+         BkxN3lFC1AdNQYsTUY+rS1uDHGiaWeiKqcM4yftRppEkcEQdqSNCeWMnkNiakAGh4rM0
+         VUdhZfOMKHJeUo43HlozLpdXUsa7mU9fbcSJwaexZGkQcTxmNdtC026JjbOHTNqsXsyZ
+         G1yh5z+dQHXTfv1bug4Db8kByg+ZiqCuqtYzXgfEf2mqEBu1rqy+0fywGd3Rk5OJHj7B
+         MHLGmhDESVNVW3SywOm3olUKJZoj0GYdtXMDjElAmnraGeNajL3wmEcbhN9kslSICm9m
+         BZAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727425080; x=1728029880;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wik+ChQqsJUQ9vegf6yc2qiPGCL4qopVw1Omly+OHW0=;
+        b=evYz9QxZ0W58Tbbr0Z8uJxxN3aJH4sSo100mg7exz9XNJpeN9aGBjPHuYtgWa91sjd
+         DDmYnsvZRdzqDGk4bWr1oL6fg821/HScyw6Im2FZASx56ESVT48cYUEovx3cpCmYhsfE
+         NenueOpJJmwJPqRc6ZV3AU7flXEHvvFOo++vzYmNfv2LQjKljPoxnN+gBnD5DFQ7BQ0d
+         D3zUfyOn52M+RWZydLioWPxTy1YK+sqP60kZfR9pMTD56wOa2ggR0quJJ1yKQr/TIiQn
+         yjy2umUFVReGahGNDh00RcydOkefQo7/98zxj1eToXphu5mon08qxprUB4JuQHOkf5cl
+         QdNA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8gN49OX5bdgKkaR4hNA7RQV+97LSZkNysXRRg7tSq/+NAyZmfCPOV6iFjnu5z89IcJx7EaTEJZrjn2DM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTE4FPOWSoo9f6NTW3OwkmXHjriIS1mo8ITdM1lZLFS2VxMwIH
+	d3wuqYKmFslNNtTV8gQdpkOIgCVdDW1jabKB/mDo/DVEzO1jAOhkFlYACKV2ko9jLgA5YDwTaL6
+	lOeMu0su/zWjHEr4//HVurUfi/R4=
+X-Google-Smtp-Source: AGHT+IGXhzWbBdeIrb0hJqpwNgrU0bjAQ6vyKaWNVNcd1bGRalu2iD6EKqCW4Qs5ETCMD0+1IwTEHcpL/v4onOi88xw=
+X-Received: by 2002:a05:6808:f86:b0:3e2:9d3f:15fe with SMTP id
+ 5614622812f47-3e3939e7f79mr1404501b6e.45.1727425079995; Fri, 27 Sep 2024
+ 01:17:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] perf arm-spe: Save per CPU information in metadata
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>,
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240914215458.751802-1-leo.yan@arm.com>
- <20240914215458.751802-4-leo.yan@arm.com> <ZvZO96lj8-aZkuZw@google.com>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <ZvZO96lj8-aZkuZw@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240901183221.240361-1-linux.amoon@gmail.com> <20240901183221.240361-2-linux.amoon@gmail.com>
+In-Reply-To: <20240901183221.240361-2-linux.amoon@gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Fri, 27 Sep 2024 13:47:44 +0530
+Message-ID: <CANAwSgSgwx0kuV-boF14_WXiPkE8KXxOWOfS2e_QOWMKgKSLnA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/6] PCI: rockchip: Simplify clock handling by using
+ clk_bulk*() function
+To: Shawn Lin <shawn.lin@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: linux-pci@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/27/24 07:21, Namhyung Kim wrote:>
-> On Sat, Sep 14, 2024 at 10:54:56PM +0100, Leo Yan wrote:
->> Save the Arm SPE information on a per-CPU basis. This approach is easier
->> in the decoding phase for retrieving metadata based on the CPU number of
->> every Arm SPE record.
->>
->> Signed-off-by: Leo Yan <leo.yan@arm.com>
->> ---
->>   tools/perf/arch/arm64/util/arm-spe.c | 71 +++++++++++++++++++++++++++-
->>   1 file changed, 70 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/perf/arch/arm64/util/arm-spe.c b/tools/perf/arch/arm64/util/arm-spe.c
->> index 15478989ef30..2790a37709a5 100644
->> --- a/tools/perf/arch/arm64/util/arm-spe.c
->> +++ b/tools/perf/arch/arm64/util/arm-spe.c
->> @@ -26,6 +26,8 @@
->>   #include "../../../util/arm-spe.h"
->>   #include <tools/libc_compat.h> // reallocarray
->>
->> +#define ARM_SPE_CPU_MAGIC            0x1010101010101010ULL
->> +
->>   #define KiB(x) ((x) * 1024)
->>   #define MiB(x) ((x) * 1024 * 1024)
->>
->> @@ -73,14 +75,66 @@ arm_spe_info_priv_size(struct auxtrace_record *itr __maybe_unused,
->>        return size;
->>   }
->>
->> +static int arm_spe_save_cpu_header(struct auxtrace_record *itr,
->> +                                struct perf_cpu cpu, __u64 data[])
->> +{
->> +     struct arm_spe_recording *sper =
->> +                     container_of(itr, struct arm_spe_recording, itr);
->> +     struct perf_pmu *pmu = NULL;
->> +     struct perf_pmu tmp_pmu;
->> +     char cpu_id_str[16];
->> +     char *cpuid = NULL;
->> +     u64 val;
->> +
->> +     snprintf(cpu_id_str, sizeof(cpu_id_str), "%d", cpu.cpu);
->> +     tmp_pmu.cpus = perf_cpu_map__new(cpu_id_str);
->> +     if (!tmp_pmu.cpus)
->> +             return -ENOMEM;
->> +
->> +     /* Read CPU MIDR */
->> +     cpuid = perf_pmu__getcpuid(&tmp_pmu);
->> +     if (!cpuid)
->> +             return -ENOMEM;
-> 
-> You'd better call perf_cpu_map__put() before return.
+Hi,
 
-Will do.
+On Mon, 2 Sept 2024 at 00:03, Anand Moon <linux.amoon@gmail.com> wrote:
+>
+> Refactor the clock handling in the Rockchip PCIe driver,
+> introducing a more robust and efficient method for enabling and
+> disabling clocks using clk_bulk*() API. Using the clk_bulk APIs,
+> the clock handling for the core clocks becomes much simpler.
+>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 
-Just for recording, 'cpuid' should be released at the end of function.
+Do you have any review comments on this series?
 
->> +     val = strtol(cpuid, NULL, 16);
->> +     perf_cpu_map__put(tmp_pmu.cpus);
->> +
->> +     data[ARM_SPE_MAGIC] = ARM_SPE_CPU_MAGIC;
->> +     data[ARM_SPE_CPU] = cpu.cpu;
->> +     data[ARM_SPE_CPU_NR_PARAMS] = ARM_SPE_CPU_PRIV_MAX - ARM_SPE_CPU_MIDR;
->> +     data[ARM_SPE_CPU_MIDR] = val;
->> +
->> +     /* Find the associate Arm SPE PMU for the CPU */
->> +     if (perf_cpu_map__has(sper->arm_spe_pmu->cpus, cpu))
->> +             pmu = sper->arm_spe_pmu;
->> +
->> +     if (!pmu) {
->> +             /* No Arm SPE PMU is found */
->> +             data[ARM_SPE_CPU_PMU_TYPE] = ULLONG_MAX;
->> +             data[ARM_SPE_CAP_MIN_IVAL] = 0;
->> +     } else {
->> +             data[ARM_SPE_CPU_PMU_TYPE] = pmu->type;
->> +
->> +             if (perf_pmu__scan_file(pmu, "caps/min_interval", "%lu", &val) != 1)
->> +                     val = 0;
->> +             data[ARM_SPE_CAP_MIN_IVAL] = val;
->> +     }
->> +
->> +     return ARM_SPE_CPU_PRIV_MAX;
->> +}
->> +
->>   static int arm_spe_info_fill(struct auxtrace_record *itr,
->>                             struct perf_session *session,
->>                             struct perf_record_auxtrace_info *auxtrace_info,
->>                             size_t priv_size)
->>   {
->> +     int i, ret;
->> +     size_t offset;
->>        struct arm_spe_recording *sper =
->>                        container_of(itr, struct arm_spe_recording, itr);
->>        struct perf_pmu *arm_spe_pmu = sper->arm_spe_pmu;
->> +     struct perf_cpu_map *cpu_map = arm_spe_find_cpus(session->evlist);
-> 
-> Maybe you can move this to later in the function to make the error
-> handling easier.  Otherwise it should call perf_cpu_map__put().
+Thanks
+-Anand
 
-Good point. Will do.
-
->> +     struct perf_cpu cpu;
->> +     __u64 *data;
->>
->>        if (priv_size != arm_spe_info_priv_size(itr, session->evlist))
->>                return -EINVAL;
->> @@ -89,8 +143,23 @@ static int arm_spe_info_fill(struct auxtrace_record *itr,
->>                return -EINVAL;
->>
->>        auxtrace_info->type = PERF_AUXTRACE_ARM_SPE;
->> -     auxtrace_info->priv[ARM_SPE_PMU_TYPE] = arm_spe_pmu->type;
->> +     auxtrace_info->priv[ARM_SPE_HEADER_VERSION] = ARM_SPE_HEADER_CURRENT_VERSION;
->> +     auxtrace_info->priv[ARM_SPE_HEADER_SIZE] =
->> +             ARM_SPE_AUXTRACE_PRIV_MAX - ARM_SPE_HEADER_VERSION;
->> +     auxtrace_info->priv[ARM_SPE_SHARED_PMU_TYPE] = arm_spe_pmu->type;
->> +     auxtrace_info->priv[ARM_SPE_CPUS_NUM] = perf_cpu_map__nr(cpu_map);
->> +
->> +     offset = ARM_SPE_AUXTRACE_PRIV_MAX;
->> +     perf_cpu_map__for_each_cpu(cpu, i, cpu_map) {
->> +             assert(offset < priv_size);
->> +             data = &auxtrace_info->priv[offset];
->> +             ret = arm_spe_save_cpu_header(itr, cpu, data);
->> +             if (ret < 0)
->> +                     return ret;
-> 
-> Please break the loop and release the cpu map.
-
-Will do.
-
-Thanks for good catchings!
-
-Leo
+> ---
+> v5: switch to use use devm_clk_bulk_get_all()? gets rid of hardcoding the
+>     clock names in driver.
+> v4: use dev_err_probe for error patch.
+> v3: Fix typo in commit message, dropped reported by.
+> v2: Fix compilation error reported by Intel test robot.
+> ---
+> ---
+>  drivers/pci/controller/pcie-rockchip.c | 65 +++-----------------------
+>  drivers/pci/controller/pcie-rockchip.h |  7 ++-
+>  2 files changed, 10 insertions(+), 62 deletions(-)
+>
+> diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
+> index c07d7129f1c7..2777ef0cb599 100644
+> --- a/drivers/pci/controller/pcie-rockchip.c
+> +++ b/drivers/pci/controller/pcie-rockchip.c
+> @@ -127,29 +127,9 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rockchip)
+>                                              "failed to get ep GPIO\n");
+>         }
+>
+> -       rockchip->aclk_pcie = devm_clk_get(dev, "aclk");
+> -       if (IS_ERR(rockchip->aclk_pcie)) {
+> -               dev_err(dev, "aclk clock not found\n");
+> -               return PTR_ERR(rockchip->aclk_pcie);
+> -       }
+> -
+> -       rockchip->aclk_perf_pcie = devm_clk_get(dev, "aclk-perf");
+> -       if (IS_ERR(rockchip->aclk_perf_pcie)) {
+> -               dev_err(dev, "aclk_perf clock not found\n");
+> -               return PTR_ERR(rockchip->aclk_perf_pcie);
+> -       }
+> -
+> -       rockchip->hclk_pcie = devm_clk_get(dev, "hclk");
+> -       if (IS_ERR(rockchip->hclk_pcie)) {
+> -               dev_err(dev, "hclk clock not found\n");
+> -               return PTR_ERR(rockchip->hclk_pcie);
+> -       }
+> -
+> -       rockchip->clk_pcie_pm = devm_clk_get(dev, "pm");
+> -       if (IS_ERR(rockchip->clk_pcie_pm)) {
+> -               dev_err(dev, "pm clock not found\n");
+> -               return PTR_ERR(rockchip->clk_pcie_pm);
+> -       }
+> +       rockchip->num_clks = devm_clk_bulk_get_all(dev, &rockchip->clks);
+> +       if (rockchip->num_clks < 0)
+> +               return dev_err_probe(dev, err, "failed to get clocks\n");
+>
+>         return 0;
+>  }
+> @@ -372,39 +352,11 @@ int rockchip_pcie_enable_clocks(struct rockchip_pcie *rockchip)
+>         struct device *dev = rockchip->dev;
+>         int err;
+>
+> -       err = clk_prepare_enable(rockchip->aclk_pcie);
+> -       if (err) {
+> -               dev_err(dev, "unable to enable aclk_pcie clock\n");
+> -               return err;
+> -       }
+> -
+> -       err = clk_prepare_enable(rockchip->aclk_perf_pcie);
+> -       if (err) {
+> -               dev_err(dev, "unable to enable aclk_perf_pcie clock\n");
+> -               goto err_aclk_perf_pcie;
+> -       }
+> -
+> -       err = clk_prepare_enable(rockchip->hclk_pcie);
+> -       if (err) {
+> -               dev_err(dev, "unable to enable hclk_pcie clock\n");
+> -               goto err_hclk_pcie;
+> -       }
+> -
+> -       err = clk_prepare_enable(rockchip->clk_pcie_pm);
+> -       if (err) {
+> -               dev_err(dev, "unable to enable clk_pcie_pm clock\n");
+> -               goto err_clk_pcie_pm;
+> -       }
+> +       err = clk_bulk_prepare_enable(rockchip->num_clks, rockchip->clks);
+> +       if (err)
+> +               return dev_err_probe(dev, err, "failed to enable clocks\n");
+>
+>         return 0;
+> -
+> -err_clk_pcie_pm:
+> -       clk_disable_unprepare(rockchip->hclk_pcie);
+> -err_hclk_pcie:
+> -       clk_disable_unprepare(rockchip->aclk_perf_pcie);
+> -err_aclk_perf_pcie:
+> -       clk_disable_unprepare(rockchip->aclk_pcie);
+> -       return err;
+>  }
+>  EXPORT_SYMBOL_GPL(rockchip_pcie_enable_clocks);
+>
+> @@ -412,10 +364,7 @@ void rockchip_pcie_disable_clocks(void *data)
+>  {
+>         struct rockchip_pcie *rockchip = data;
+>
+> -       clk_disable_unprepare(rockchip->clk_pcie_pm);
+> -       clk_disable_unprepare(rockchip->hclk_pcie);
+> -       clk_disable_unprepare(rockchip->aclk_perf_pcie);
+> -       clk_disable_unprepare(rockchip->aclk_pcie);
+> +       clk_bulk_disable_unprepare(rockchip->num_clks, rockchip->clks);
+>  }
+>  EXPORT_SYMBOL_GPL(rockchip_pcie_disable_clocks);
+>
+> diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/controller/pcie-rockchip.h
+> index 6111de35f84c..bebab80c9553 100644
+> --- a/drivers/pci/controller/pcie-rockchip.h
+> +++ b/drivers/pci/controller/pcie-rockchip.h
+> @@ -11,6 +11,7 @@
+>  #ifndef _PCIE_ROCKCHIP_H
+>  #define _PCIE_ROCKCHIP_H
+>
+> +#include <linux/clk.h>
+>  #include <linux/kernel.h>
+>  #include <linux/pci.h>
+>  #include <linux/pci-ecam.h>
+> @@ -299,10 +300,8 @@ struct rockchip_pcie {
+>         struct  reset_control *pm_rst;
+>         struct  reset_control *aclk_rst;
+>         struct  reset_control *pclk_rst;
+> -       struct  clk *aclk_pcie;
+> -       struct  clk *aclk_perf_pcie;
+> -       struct  clk *hclk_pcie;
+> -       struct  clk *clk_pcie_pm;
+> +       struct  clk_bulk_data *clks;
+> +       int     num_clks;
+>         struct  regulator *vpcie12v; /* 12V power supply */
+>         struct  regulator *vpcie3v3; /* 3.3V power supply */
+>         struct  regulator *vpcie1v8; /* 1.8V power supply */
+> --
+> 2.44.0
+>
 
