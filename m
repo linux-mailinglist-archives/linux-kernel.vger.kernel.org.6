@@ -1,125 +1,213 @@
-Return-Path: <linux-kernel+bounces-341774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025B39885F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:59:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DFAF9885F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A33C21F22CA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:59:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E7B1F2237C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D9F18D623;
-	Fri, 27 Sep 2024 12:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D9518DF81;
+	Fri, 27 Sep 2024 12:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5l74yFr"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V+OGDq1Z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5527D186606;
-	Fri, 27 Sep 2024 12:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C788C18D643
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727441985; cv=none; b=RmJFNpIkz11xYz3/dQUVr7uZu1uD6RRWxTCJ5PFm0m7MhB8yerlqaVMZdyF0ON164JZsjnFeamOQxC5FFbt4V7g4dsFyrbZCTUjjbTlqFnV4H5HAHdDPDbJH2on3/RFPShJarxmlMaAGmDVpWRNSonnPgHFVA3zWjjk6gHUIZuk=
+	t=1727441988; cv=none; b=WamM14bcOigWzqS19TqIdM56gS/j677eG3+7af5Z2KeEc4UnBrFxDqikBHa6l3nIceS5+6q+NCyBN/8LtZGCCmZKy+RckNOjHpH0JDxUoVVNczR/kOg1I8+/EcUFdIJEujDMjDTbd9l/2pdjMH2C0m+D4zgDLhLkshwvCe1LrI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727441985; c=relaxed/simple;
-	bh=1xzPtrP9WWBtWHwKXCw5RV2T+tvRkxZEb51Bi1KojTE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CTy0xsc3Pu8uNBNGMBJpU2BQQZXWBYngdXqP6ZmH2PlUBHu6DoBntGBSZv+r6tbGzful4BFOIwl8lOWA+voyj3HN93FVRXyvM0bAQNd0w1OUPEjm/yQ18Sr+C7MTW8TnzkiUa81XX4dxZqiWSZa1FGyQQDBFaiCebuI16spgI+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5l74yFr; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e0a5088777so1370574a91.2;
-        Fri, 27 Sep 2024 05:59:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727441984; x=1728046784; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5kRvQYqrDxlyQ/4IJ60voMIp6Qt/AmF1WSn0sGcC0t0=;
-        b=i5l74yFrAArhpiXnmMJkf8YG6SLG9ckjgh8ItFifsYj8J683yBpgo0Kasy9aSYFnBJ
-         +4hG9l8PTFGY81K5IgtcaLZZzm1WhLNlZ7AOeoCQ/dciCC8a1RyDMBI+IqbgpB32QvVU
-         9kMcwZw5u177CqeOv0beQC9EwNN9T70rCzqoJp41BC1rM9ljPJwkUhuDQx/sPjZy8AnO
-         uPXGx61FTJUDPjklFOtkZgEM+0AJq78c+briH71jAlbpJKmiu72rlca2M6nxGzKcyzf/
-         ZEZjoP+6RKQyPOmOEJDTiENSBr0YjxdfUWN7iFLkxiN8Ztyfd2K1euVIuj+9BuL5cjbx
-         ybVw==
+	s=arc-20240116; t=1727441988; c=relaxed/simple;
+	bh=N/5CAZZeLNF2+HfMHtTAkzxMJvSlcbAphNSzkVwxVSA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LtH7XxXuSsoQq5DZvDBJz2CvoS4ZXSZf+MyzH9aqBn6PZ0ILgGoJIFRcChN3R0Xz8M44md/MfuUCtnoYxWnT6YwST9Euxd1+8z8Gy4fRzDO8DhKHHcGw0WaL0ZZ6ev7JsxgN0mZDxE89FUzEa5PSs+bspIvYwlFc4ZIPZWCYISQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V+OGDq1Z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727441985;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1cAYqNnznIpaL2OR+FI2hyJu8oZ8S20vf+FCtiXbbEQ=;
+	b=V+OGDq1Z3Nw4AN7OmKk1mLshZ7igdN5mUIfwthXTuU6HIyb8LG58xPWPfcE9o4qnJSG+w8
+	zV6Stu+Ar0CyFDlbQa8eVZygS2f70NCXyphntMxBDN2yJ5AgduD7K3YjaKcVwEc6gARTi6
+	s5rVlb5hHTfmkrLAhDCl8/AC1SsXi8U=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-2-bbTPn5cAM9SnTLR_vCBF2Q-1; Fri, 27 Sep 2024 08:59:44 -0400
+X-MC-Unique: bbTPn5cAM9SnTLR_vCBF2Q-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cdeac2da6so17579705e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 05:59:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727441984; x=1728046784;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5kRvQYqrDxlyQ/4IJ60voMIp6Qt/AmF1WSn0sGcC0t0=;
-        b=OeNCZsB7V03hrC8zLeEnYw/tICfJqMc0uEjSWDEGR67oToGCvwHU35gaR16TQZ/QN2
-         ZpXUYkOnRaOSF0FQgRdoITvoQGEbr1YM/9MJ/QuDSXHOirrcWpjfLwDjT2seX3PFnsTC
-         ESN6V0792zTEZ9tCzjON5Qb+ucdM/OaU8k4uUeRYMM+9z3rZCixz7C7huIqvlSPsmWyr
-         UZ5UHsOvYKePEDtBOCpoKETG9ppLIk+9a0wsOKm6f4AHq4k5FAssM6BXoujfpWXR0Bxm
-         0+Ikm93VY+zbDHt5Wir1CWQpDOqJRts2K0C4iPxtSbUSSKdPEEKbBHupeTYkRPaPAJ1P
-         +Ldg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9wKycuJ+MiOd0CXbp0fwqzOUvZVGqVcilVmMOQDQYKsA5EdidU4IMPfKw1oKn70jk7FT+NsY1QQVR@vger.kernel.org, AJvYcCUMYsImxg+zafxQaOdKmqVJrOEGSC9fUswxP/BEAg37gqv2ljjpd9p7NfK+dnNSdsMBlfCEOCYCLSM1zDA=@vger.kernel.org, AJvYcCV+qbp6Rsuj5BtWyb9btolm/DyvfWnFbAubGJPew8oX+3X+v5yU6z61Lx1yArAGwWt5gymLWAYILuodpQ==@vger.kernel.org, AJvYcCV06DeS34jtGqQEWOv41OUKIhE4wVqo7VJQfTREH3BDSrBjPqtMPdynVXRooBZhuyy5wQe50m+Rf+hbriA34cKtkBE=@vger.kernel.org, AJvYcCXesp1RtOASJmWwW3Ztud60T1sXfeTwIwM/+PVa8+r81olielhWqeXuAD+3476gM9wfHdx28aDeMdfg0z5L@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgFr7pYAz4q1An8sMaK4qv/s4vnirTGuuMBbYF9ViOAQtoz/CS
-	UuXEy1ZWx70p/4VWGZGknBz2nLl4DefyW8L+aEuFT++DAjt9V7xaP+sWF+cTeotxpy9YO884TjH
-	NHRzSlVpwXTOGWxqV62SKsvKn1cE=
-X-Google-Smtp-Source: AGHT+IHCtWkk/m0gIJI4HjMGIxf6HDCRDpOESUdGt/5A/Krn13z9jK+YnLyf6mEmoZB4cokgO5ouczhwAV6HyE5bjfY=
-X-Received: by 2002:a17:90b:1896:b0:2de:ec70:837 with SMTP id
- 98e67ed59e1d1-2e0b876f84bmr4254037a91.1.1727441983559; Fri, 27 Sep 2024
- 05:59:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727441983; x=1728046783;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1cAYqNnznIpaL2OR+FI2hyJu8oZ8S20vf+FCtiXbbEQ=;
+        b=lK0G2hshB73wFNy2iOpwgKfEc1irkHgbgE/Quvxe0uBY32CRAIXVW1Yvhth5GMC26T
+         6QoQmhzwcQRUCbVmC+LuzPKPaB6Y7d09VjkGzsXlDCzSr9pU/MY8FzyasOpDrnqBrbQO
+         FmOajXO3DhqWXn3hkR1vVBeVIpE3/8ombJMwgQn66InYRPuB3CqopTGCh7I6JpukP/zV
+         2meDKTMH5g8bNzJ9zNRgZiYNJNnJn3C5kRoRONWFM7A7C9g4ArCrjj9sod/d7yB7cS/E
+         u5mOnCw903pxX+ssPbQcAfEM0S1zDK/1WJ1xz+/ikVIIdCy1dOsbreky+s+6sTZy/jng
+         TMKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWH7jSA1/iPpkoc+VLlhI1KJDh4vepLSSe1/yKHa7TGq4N8DvMeEzpLZjllBPyjexU8uV6ArfyO4R/9ogE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEW8mkrDZcDqFsdyoxZnw3KQCc8Fmu6/MoVTfLsYDu6VQv49eW
+	0CvGv18oS8BUpU1L2kUFGtoBBNlALJu6eE7OH4OeWsOJhmwXHZmv2ksU53795tkF3SyFRSqGO6F
+	GA1HgXYLK+gRwL8m5FWqFHeXLJvteeuV8FBgYUlK9iJqy2l4qOPJ/hAOl+edAdw==
+X-Received: by 2002:a05:600c:3541:b0:42c:c080:7954 with SMTP id 5b1f17b1804b1-42f5849fb09mr25203735e9.30.1727441983231;
+        Fri, 27 Sep 2024 05:59:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH+rQp8YhBfzYRu+58aycmtGQdSRhM5UBylIOfB3fQV0gw1txRUPPMs5UU9KE8j67WB90/zjw==
+X-Received: by 2002:a05:600c:3541:b0:42c:c080:7954 with SMTP id 5b1f17b1804b1-42f5849fb09mr25203265e9.30.1727441982705;
+        Fri, 27 Sep 2024 05:59:42 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c709:8000:b502:8c1c:3624:99d4? (p200300cbc7098000b5028c1c362499d4.dip0.t-ipconnect.de. [2003:cb:c709:8000:b502:8c1c:3624:99d4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd566a41fsm2476804f8f.45.2024.09.27.05.59.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Sep 2024 05:59:41 -0700 (PDT)
+Message-ID: <813b9bcb-afde-40b6-a604-cdb71b4b6d7a@redhat.com>
+Date: Fri, 27 Sep 2024 14:59:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1727438777.git.geert+renesas@glider.be> <750d6ac7911aef9a461dca6d07e5c1fab6211ecb.1727438777.git.geert+renesas@glider.be>
- <0bd21761-a81f-494a-9934-877f24b7fe0a@kernel.org>
-In-Reply-To: <0bd21761-a81f-494a-9934-877f24b7fe0a@kernel.org>
-From: Adam Ford <aford173@gmail.com>
-Date: Fri, 27 Sep 2024 07:59:32 -0500
-Message-ID: <CAHCN7xKKs9mUvnqZaLE2gCsDau4QtZ706LLoYcS_47-U86-nfA@mail.gmail.com>
-Subject: Re: [PATCH treewide 05/11] arm64: dts: renesas: beacon-renesom:
- Switch to mic-det-gpios
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lubomir Rintel <lkundrak@v3.sk>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Paul Cercueil <paul@crapouillou.net>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Shengjiu Wang <shengjiu.wang@gmail.com>, 
-	Xiubo Li <Xiubo.Lee@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Adrien Grassein <adrien.grassein@gmail.com>, linux-sound@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-mips@vger.kernel.org, 
-	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/7] support for mm-local memory allocations and use
+ it
+To: Fares Mehanna <faresx@amazon.de>
+Cc: nh-open-source@amazon.com, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Kemeng Shi <shikemeng@huaweicloud.com>,
+ =?UTF-8?Q?Pierre-Cl=C3=A9ment_Tosi?= <ptosi@google.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Javier Martinez Canillas <javierm@redhat.com>, Arnd Bergmann
+ <arnd@arndb.de>, Fuad Tabba <tabba@google.com>,
+ Mark Brown <broonie@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+ Kristina Martsenko <kristina.martsenko@arm.com>,
+ Randy Dunlap <rdunlap@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ "Mike Rapoport (IBM)" <rppt@kernel.org>, Roman Kagan <rkagan@amazon.de>,
+ "moderated list:KERNEL VIRTUAL MACHINE FOR ARM64 (KVM/arm64)"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:KERNEL VIRTUAL MACHINE FOR ARM64 (KVM/arm64)"
+ <kvmarm@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>,
+ "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>
+References: <20240911143421.85612-1-faresx@amazon.de>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240911143421.85612-1-faresx@amazon.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 27, 2024 at 7:56=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 27/09/2024 14:42, Geert Uytterhoeven wrote:
-> > Replace the deprecated "mic-det-gpio" property by "mic-det-gpios" in
-> > Audio Graph Card device nodes.
+On 11.09.24 16:33, Fares Mehanna wrote:
+> In a series posted a few years ago [1], a proposal was put forward to allow the
+> kernel to allocate memory local to a mm and thus push it out of reach for
+> current and future speculation-based cross-process attacks.  We still believe
+> this is a nice thing to have.
+> 
+> However, in the time passed since that post Linux mm has grown quite a few new
+> goodies, so we'd like to explore possibilities to implement this functionality
+> with less effort and churn leveraging the now available facilities.
+> 
+> An RFC was posted few months back [2] to show the proof of concept and a simple
+> test driver.
+> 
+> In this RFC, we're using the same approach of implementing mm-local allocations
+> piggy-backing on memfd_secret(), using regular user addresses but pinning the
+> pages and flipping the user/supervisor flag on the respective PTEs to make them
+> directly accessible from kernel.
+> In addition to that we are submitting 5 patches to use the secret memory to hide
+> the vCPU gp-regs and fp-regs on arm64 VHE systems.
 
-Thanks!
+I'm a bit lost on what exactly we want to achieve. The point where we 
+start flipping user/supervisor flags confuses me :)
 
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> >  arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Adam Ford <aford173@gmail.com>
+With secretmem, you'd get memory allocated that
+(a) Is accessible by user space -- mapped into user space.
+(b) Is inaccessible by kernel space -- not mapped into the direct map
+(c) GUP will fail, but copy_from / copy_to user will work.
 
->
-> Best regards,
-> Krzysztof
->
+
+Another way, without secretmem, would be to consider these "secrets" 
+kernel allocations that can be mapped into user space using mmap() of a 
+special fd. That is, they wouldn't have their origin in secretmem, but 
+in KVM as a kernel allocation. It could be achieved by using VM_MIXEDMAP 
+with vm_insert_pages(), manually removing them from the directmap.
+
+But, I am not sure who is supposed to access what. Let's explore the 
+requirements. I assume we want:
+
+(a) Pages accessible by user space -- mapped into user space.
+(b) Pages inaccessible by kernel space -- not mapped into the direct map
+(c) GUP to fail (no direct map).
+(d) copy_from / copy_to user to fail?
+
+And on top of that, some way to access these pages on demand from kernel 
+space? (temporary CPU-local mapping?)
+
+Or how would the kernel make use of these allocations?
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
