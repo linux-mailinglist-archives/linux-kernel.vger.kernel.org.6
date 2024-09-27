@@ -1,101 +1,137 @@
-Return-Path: <linux-kernel+bounces-341620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF56D98828C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:32:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B4E9988292
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 921A7280DD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:32:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D60A1C2182A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2971218951F;
-	Fri, 27 Sep 2024 10:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94450187329;
+	Fri, 27 Sep 2024 10:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Og4wUFVZ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="TVX6ArO8"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D985F15FD16
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 10:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4149E13698F
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 10:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727433142; cv=none; b=W45uxNa2wHXi+oQC+yLcrIovVxH/MmyMUUID0peys/QuPks5ZgJS0wH9BE1ICrVi0SuxtU5gyOJiMxyzbdmQVQQzQ7chnjWCDXFiF4tojI/jMyoypxodHAhFhjdCFoJ6UMs6H2Jpcv/JGYb3jpiqG0N17tBwidbJ+I3CQ4uOg/8=
+	t=1727433219; cv=none; b=oAzJWwlDHQm15C8nyHG5uvrIMSw2eYpYlAMK/9agT339oLUduE0MCyihOZfZ9o9UhDiYFnhZlWJ/xp8+nCABFI2A2ObPp2PsdJfbbgrzkSKM3z2InT/Xr26nG3uZPX3R2WEM/GgqHVyOykYHvb1ujD8BsGy7NJLu6It6aMuqa14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727433142; c=relaxed/simple;
-	bh=/5SZIcto7qgN2Tfj4OlkP3fsvngusO4epQHLOlVZsmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Olk0ewYBo6w3jFsRet6nacAbXOpVstuTEOXk4oVS0A4XzBxkb4NRzdu7fCT9m8Uju/Xn7meWGV+pNcrM+RUcjjrWGuOXd5PRYgXLySKfezIr5618ITUheCXy5pGd+pI5SGySwt4vqYXWZ9SHvFfU7BrndkzGxbaWIgKP0pkIxKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Og4wUFVZ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cacabd2e0so16426035e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 03:32:20 -0700 (PDT)
+	s=arc-20240116; t=1727433219; c=relaxed/simple;
+	bh=jvmEomY0Hp/ILK66ANKCMNaC0jWBActS4+ftVmPCWM4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rcKnagy67SqsoIO0naXpLkBo1Z7mJcAFdO58fM3QFpWH8DE/83UdEC1nQDlR7yluCoc5c72npT7euZRqquveY4ulCDgjvE68rVh/wzrJZHOyB815FO9EzGWMkdqE/AVFLCdSeMRoD4iGLToGPWhEZFDH/7Jaxxk3DCQw0Hmtzeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=TVX6ArO8; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-719ba0654f9so1654306b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 03:33:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727433139; x=1728037939; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DdmvFk1zGQs2rFnRAdCqQIY/+ci6VPOq7UoKUH/vbeg=;
-        b=Og4wUFVZNllH5Db63/5av3S0zilMHYv3uu3ObcjPZGuHxz957gvS3osillpFG+4G38
-         NOim85FF9bTuocb3ARVETffDp9OLlBEXgPzovqgobgwHA4KaYBK6Me53wmwgT3ryCoFb
-         gPK1dcy/HzhtSGAzLIPJjztal4/3d6FtjUwt0QB5wQifTBNdjL82Jj5ftlUniwblgS1m
-         2SxP1hJeUZ/IjkhWiaV09m4yEJoczg76b93V6XCQTbJRg3MOmrScIXYw5ZrxIPAiGjPz
-         vyZGW+YPYp1cnJOjn4+uoC4TId28DLNtvdczh3QJy2BQUxVaPdNVXZx09JpbXMSlOrpw
-         8gJA==
+        d=endlessos.org; s=google; t=1727433217; x=1728038017; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3T2LL56WRUoCrnPPbMQXHKo2gYqUc6Xl1Uhj3Rvhbjc=;
+        b=TVX6ArO89L5+CfIURfPOU0duJ5kBCWmqL6h2Mq7gpAuiszKLMt/h7ZSH/Cwmte9Yjo
+         eDwcxy2q7GvB1pB5sswt8+7PaCVLoN2AfjaEaAYfPlMECE0YLBRJ1Oz1iIHWu05FXGkx
+         mALVryRTnwNZl1DVxC2AoBL1MKdWjnpfdPAbKSFHjxsn1/D+dtR4zSKz4OP07Tm/W5g+
+         ksUAJ46WKsKmJO+DaLJVgmE0Cr0PmqaZljR39Fxb9Tjdj6eUXUMLh4kmRK362fFK168A
+         6wnTVHj1lu3taVStRsmSGGx5NlZDxSrWiu7KUnrBxY/FQS0e57uF2ZGNxra5zTtKQ9za
+         8Q5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727433139; x=1728037939;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DdmvFk1zGQs2rFnRAdCqQIY/+ci6VPOq7UoKUH/vbeg=;
-        b=BynYljDWdn5vsDO6ZQ+ONmM1LU/f5BiVyaA0wqj5nFgjSs8L2ZOpPLwtRpJNC2N8Ir
-         oAwGMJ5t5VS8zlIUX22RRt3q9JGze5WDhEfEdTNXQzmMxzonkz9NG7OeDDWYK4kxeHx1
-         Or1/96h93vM5V8hoQf3NZavCgplCXGnQiorNEVCznPcr8UcMNLAnmG1R+TQ2VyKdCYFd
-         O+hVLLWI3XaPMgcj5N3QOrnHNjIOXb7rFzxrk9MEk85MrHqjop7VHqrtEZ0EnMbOpwkG
-         7pXsEXe8HIfZ2E5HDwhMU/gaPbk/vwh5JPaF47VoL3tIan3EgR0dbl9RpEuvoFZmiEUE
-         hxtA==
-X-Forwarded-Encrypted: i=1; AJvYcCV35lqvC4hgDAIMK7u8vTETML+vCoZqdHv+ME0Ou8W4+lIceqRwoEK8nLQCkPkmGU/JaxY8iJ3mcmoIvZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHTZ8oQNJcsfJBRxsPyEnG5Hd0vw0A5PumzJPW/VTSkCEVJz0M
-	7cIlo96OcaXnNSW6lvxu+lk0ae5L4ET03EZugNj/SPl11bbk4wRJFFJtcUrpurA=
-X-Google-Smtp-Source: AGHT+IEI5zaCi7IffgRkiXlGP/nEaiUxN6UmQFK7bvc31AyVqNBtOMrQp2GsXDb0ukk39MwDBlTJzg==
-X-Received: by 2002:a05:600c:350f:b0:42c:b037:5f9d with SMTP id 5b1f17b1804b1-42f58409dccmr16523645e9.3.1727433139311;
-        Fri, 27 Sep 2024 03:32:19 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57e2fe7dsm21657055e9.46.2024.09.27.03.32.17
+        d=1e100.net; s=20230601; t=1727433217; x=1728038017;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3T2LL56WRUoCrnPPbMQXHKo2gYqUc6Xl1Uhj3Rvhbjc=;
+        b=wKmrc3hSeRTU95ojE2drsEcEqHWCZ0fQ9hfePTu9426e+GifUamdOl0ch3trdUwRUA
+         vRfbbF3JE9PTY930kxe1lptmyfZMTuzv+GzLfZ/q21gdfX6Y8xS15sgZscFJIk4CVf84
+         +SjbJujWBXWClq2b3zG2DSjBnIUBLgqEPPtZOtyfLTsmZucXhvdFDH7ao0jOmSXFZCeV
+         d/Uswx9dLkAYCzLR08XFeyxQjr6lQVw9oRH0MOEa6aiOUTL98DI+ehHUd14w+PepQ9LV
+         LJJN1Jnh5ofzo4SXMMB5Df6O69CDFlb4t+RWUcmvE44Bhq1v6vXDAKzeOS5lNZCjgsZT
+         qJJA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6W95cfA9TrsJUarS/Rds3DyZka7JvhVGVkfhUb5Ozlb9MScRIL55SAyRdq/AS+BeCrN2KxxIxo4YigdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDMrOkm6+MZTMuQShxunlm9Sd7JzKOqxJQQ/82Tb1LRZeYgK29
+	lhw4kjBp5OdUmfyypBojfCntSlLxkZF0ZLtNyrxfscREQQaNvEf5vNTPRmx+jnM=
+X-Google-Smtp-Source: AGHT+IF0zNjfWEDae/br0X7b1tX8Ys2XUZW1pqq4nWxX+EJ/ZMpO2obVuiNEzXm2wGp5BTWq0Y+Z4Q==
+X-Received: by 2002:a05:6a21:3a96:b0:1d3:4675:fc06 with SMTP id adf61e73a8af0-1d4fa6212c8mr4009385637.10.1727433217215;
+        Fri, 27 Sep 2024 03:33:37 -0700 (PDT)
+Received: from localhost.localdomain ([123.51.167.56])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7e6db2b3e22sm1352768a12.30.2024.09.27.03.33.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 03:32:18 -0700 (PDT)
-Date: Fri, 27 Sep 2024 13:32:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Qianqiang Liu <qianqiang.liu@163.com>
-Cc: andi.shyti@kernel.org, shyam-sundar.s-k@amd.com,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: amd-asf: Fix uninitialized variables issue in
- amd_asf_process_target
-Message-ID: <cc527d62-7d0b-42f8-b14c-6448d3665989@stanley.mountain>
-References: <20240926151348.71206-1-qianqiang.liu@163.com>
+        Fri, 27 Sep 2024 03:33:36 -0700 (PDT)
+From: Jian-Hong Pan <jhp@endlessos.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>,
+	David Box <david.e.box@linux.intel.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@endlessos.org,
+	Jian-Hong Pan <jhp@endlessos.org>
+Subject: [PATCH v10 0/3] PCI: vmd: Enable PCI PM's L1 substates of remapped PCIe Root Port and NVMe
+Date: Fri, 27 Sep 2024 18:32:32 +0800
+Message-ID: <20240927103231.24244-2-jhp@endlessos.org>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926151348.71206-1-qianqiang.liu@163.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 26, 2024 at 11:13:48PM +0800, Qianqiang Liu wrote:
-> The len variable is not initialized, which may cause the for loop to
-> behave unexpectedly.
-> 
-> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+Notice the VMD remapped PCIe Root Port and NVMe have PCI PM L1 substates
+capability, but they are disabled originally.
 
-You forgot the Fixes tag.
+Here is a failed example on ASUS B1400CEAE with enabled VMD:
 
-Fixes: 20c3cc299218 ("i2c: amd-asf: Add routine to handle the ASF slave process")
+10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
+    ...
+    Capabilities: [200 v1] L1 PM Substates
+        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
+                  PortCommonModeRestoreTime=45us PortTPowerOnTime=50us
+        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+                   T_CommonMode=0us LTR1.2_Threshold=0ns
+        L1SubCtl2: T_PwrOn=0us
 
-regards,
-dan carpenter
+10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
+    ...
+    Capabilities: [900 v1] L1 PM Substates
+        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substates+
+                  PortCommonModeRestoreTime=32us PortTPowerOnTime=10us
+        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+                   T_CommonMode=0us LTR1.2_Threshold=101376ns
+        L1SubCtl2: T_PwrOn=50us
 
+According to "PCIe r6.0, sec 5.5.4", to config the link between the PCIe
+Root Port and the child device correctly:
+* Ensure both devices are in D0 before enabling PCI-PM L1 PM Substates.
+* Ensure L1.2 parameters: Common_Mode_Restore_Times, T_POWER_ON and
+  LTR_L1.2_THRESHOLD are programmed properly on both devices before enable
+  bits for L1.2.
+
+Prepare this series to fix that.
+
+Jian-Hong Pan (3):
+  PCI: vmd: Set PCI devices to D0 before enable PCI PM's L1 substates
+  PCI/ASPM: Add notes about enabling PCI-PM L1SS to
+    pci_enable_link_state(_locked)
+  PCI: ASPM: Make pci_save_aspm_l1ss_state save both child and parent's
+    L1SS configuration
+
+ drivers/pci/controller/vmd.c | 13 +++++++----
+ drivers/pci/pcie/aspm.c      | 45 +++++++++++++++++++++++++++++-------
+ 2 files changed, 46 insertions(+), 12 deletions(-)
+
+-- 
+2.46.2
 
 
