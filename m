@@ -1,164 +1,200 @@
-Return-Path: <linux-kernel+bounces-341406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E643A987FA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:42:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E17CB987F9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A14D282596
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:42:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B070282A9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1436189511;
-	Fri, 27 Sep 2024 07:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ZQL33wck"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2E6188A14;
+	Fri, 27 Sep 2024 07:42:29 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C0D186E3E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5590D17C9E8
 	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727422951; cv=none; b=Buu8aApE3chljdxfA+LNih92z3XQwSFUIjVc9UaJ3IUWpMNnobB/kdRSOnsJ+EV69QVajWcuAJp+Zkz6Li85wz6sQaTKOvM1lqhKSlfydFUKFoOPod9Fed1294COgAZd2CfZaQXLbaeenj1vA4UMYuy3c92ZkoveI8UdnsMCcJ8=
+	t=1727422948; cv=none; b=eXhKlB29rD3UeAzCg7u4cxLOrlBaUdt9q5t2AvL0vOT/wU6SrfevxJYWn6QkZZpU83efKqLa3qcvH/Rgruvpe6kQnzcfWQD13yIi/0tOvnh5PyT8oJRqbK7HWac7Y+SGaZ3BmRWNmLqfYMpG148+bEsME9E+DXy4DVZ0Ztb1Afs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727422951; c=relaxed/simple;
-	bh=WFc3Z2Ci7iK0/myrsyoCWo27iBCWNjw4NgcDOnuMOxU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CzyxPUqlWtXttjbpS2LelVP6e58eL5NVTZRm2rSa93mb7CpIsNqSNpYA96Iylu/UNYg0iRgeook13awHyuK/HoTEGmJuAyGR6m4qeM0afylY38qFwFlFx/jpws/wUKBy0XePpP8xZz+gZBXQ24aBsivJ7j2c9pIEfewm5D5RV5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ZQL33wck; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cbc38a997so11439895e9.1
+	s=arc-20240116; t=1727422948; c=relaxed/simple;
+	bh=Y85+uEMLKyCCsjGCE8+X3WPnq07CyeZ2Xkntji605Pw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BuJ4pE1FNzgbbCGbAHqYvocJCI0kBqHXzq6bQBOjwgGunV/+D95NIUBI9tn49QTgC/P4THuVfLFK2joV/hQiCnZirP4s5gCXW+86WedCOLfq36dKglTo3SJ6Rm+5bx2HPMlTfV7qlBWyQrezwR3SM+x0bW0ml5xM+/mkw8CDF4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a08c7d4273so20962025ab.1
         for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:42:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727422946; x=1728027746; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DOdUobVOVtgiYgdW4L8/ozYZLZuDj7lViLzqUU9bECY=;
-        b=ZQL33wckrAnc9qqL0X8NPUuoKfh0zlK7KUiKPwHdLxtHR58LDq8EwIUcwwPTtIyzNC
-         PEHkhYnSu904jLbleyTFWMtVQUyQH5C/PtGOWGO91F9yymOUT5qBzEv7aWICFRKvLMSw
-         Y8pNudQfFQeR7xsiScYFJLSMvCzrFZ4nwLIS4pzk9FXXmDESIh7yqV7RP+swm4EvhCm1
-         pEqQurQtGZGehPkbieB1UFC3jNHD0f8EbNR2rwj27TD2w/3PyLldOAxsbiIUP0ioDym2
-         wymx+ZZWb+eTulq3XkuipdKZrz2O3akZMWFNBnEtEJxjlQCm0UrRXHqrbQ2rnIDrd793
-         p6Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1727422946; x=1728027746;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DOdUobVOVtgiYgdW4L8/ozYZLZuDj7lViLzqUU9bECY=;
-        b=q0M4VW64KwQwClD8UN+kF8tgR3KkKvajKwa8w+BMwemC4y7EN1qFqSC9g/zQ2kaCKL
-         bGwEzv21nF8Vu5wOtl9+4bIv9XkxCM2YtcEgnXO4naGDgNRdqVVXVZECyb3W4kDaH3Wy
-         ftXqCcgkCPI1r02TgH5Ts7fTpq9XBGPMLZKP7xk6Zi0HKvaIsZ/1/jwwWo7yhRgoecqC
-         0k5AWhXdR0YuUczgsLj3AolDZTaHwnB+0qFb5cUDXubHhnw4OGwBaZ5Noz76vDvyo+Jg
-         XRynFLOFjoSXEMFYvk++o/LruHFhjsfREGDbK83Na7c7pkcrHJNzKX0QcVRp8EZFE/tT
-         djxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfjjdUL8oazxg8Vr9ollNj3eEjV2nO0/3fDroyfixNuSnyBMi4Hp6SNoWS2qjh8sii4E7XVDuI3yjmDtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIgeJg+uiqGrRzNJSD3kUrETndwUkYrBVojX/RGg6+8hebYNDn
-	XqE9NAKxYhjk+1UnRCbZ5Si+gM8yed4xwQTx+5QPZ24Tlvhw7gCZlgjpcQJynyE=
-X-Google-Smtp-Source: AGHT+IGTLNYx8CXWt5+mDv5PuKKxPV7lSlddClOvc1ENfOSqGWWc0UL48qHYTfSq1l5VF/dXqDa7tA==
-X-Received: by 2002:a05:600c:5117:b0:42c:b166:913 with SMTP id 5b1f17b1804b1-42f57fc9204mr13235475e9.11.1727422946272;
-        Fri, 27 Sep 2024 00:42:26 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a28d:27a8:18cd:2c6f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a36760sm66541265e9.30.2024.09.27.00.42.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 00:42:25 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Kent Gibson <warthog618@gmail.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [RFC PATCH] gpio: sysfs: make the sysfs export behavior consistent
-Date: Fri, 27 Sep 2024 09:42:21 +0200
-Message-ID: <20240927074221.9985-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=njVp7Usi7eU+qsX5ofV6zvIiP/FfZPRnWFIKpJMtD1M=;
+        b=EpsLqFyUZlRUM1yjUymoQcJ3tjZLdoOiCEqa+FdlefwfuOIleCbJDWszL/FNNwf/s4
+         LmIYY5isHtP6TcHZiLy9MURtPCZBWFaQy+XxP22XtD6jWF4fSyzdwJQLFS4PN/90O+2N
+         e4L8WD77OoOTuByLAfMEO2HMWideg5aJQeYr32J3CHwkNzoEcniNTNX0VzdrhcPCkURy
+         PdCq2I2Ce32wznmtqgiNDtTeYMNwSE5RfyqiKbhi9pHAtbjA3Ms+KYe/8i8dZ1E+L2+E
+         VpYT4d7fH7nd8doOCzB8U4P7vSta3Wz230IWzy5uvW3rMQ1C4g8YwfDkLiqOqcTQ2yas
+         objQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUCy4ZKCZENT50FzVjYZiL/qFgpNIUwOLn5e3gfcFAgAfZ+Zs5szMGr4HxFj7OaU4yi+6bRLyYYMV1C4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp1tZOH9shiBu1JVC3mSiSsOI2bDK/cUFEnk6O/QZtqboN7i3p
+	bnrGwEsn81vyrt5dnT7az1/IW5VLJTvD0z16sHA7xNmA+woNCLisfOJFxXp+HRXev6pdE6jBTDO
+	ep9VnCjb9yQN0/a3GApL2jgZ9PmmFOWe5lv4twPIprpFbNIhAEK8GXhM=
+X-Google-Smtp-Source: AGHT+IHkbvVR1zRnDN6g66btasQuzklpsAJk1gErTEQWtyZu8q3/5LjdIZBSUp20vXHrUSWeqlhspogCCqsuy1z7uS0ssfEgjAbx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:12ee:b0:3a2:aed1:1285 with SMTP id
+ e9e14a558f8ab-3a344fc8e06mr27030935ab.0.1727422946540; Fri, 27 Sep 2024
+ 00:42:26 -0700 (PDT)
+Date: Fri, 27 Sep 2024 00:42:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f661e2.050a0220.38ace9.000f.GAE@google.com>
+Subject: [syzbot] [ppp?] inconsistent lock state in ppp_input
+From: syzbot <syzbot+bd8d55ee2acd0a71d8ce@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-ppp@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hello,
 
-For drivers or board files that set gpio_chip->names, the links to the
-GPIO attribute group created on sysfs export will be named after the
-line's name set in that array. For lines that are named using device
-properties, the names pointer of the gpio_chip struct is never assigned
-so they are exported as if they're not named.
+syzbot found the following issue on:
 
-The ABI documentation does not mention the former behavior and given
-that the majority of modern systems use device-tree, ACPI or other way
-of passing GPIO names using device properties - bypassing gc->names -
-it's better to make the behavior consistent by always exporting lines as
-"gpioXYZ".
+HEAD commit:    5f5673607153 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=14568c80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dedbcb1ff4387972
+dashboard link: https://syzkaller.appspot.com/bug?extid=bd8d55ee2acd0a71d8ce
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16296107980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14de92a9980000
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/40172aed5414/disk-5f567360.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/58372f305e9d/vmlinux-5f567360.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d2aae6fa798f/Image-5f567360.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bd8d55ee2acd0a71d8ce@syzkaller.appspotmail.com
+
+================================
+WARNING: inconsistent lock state
+6.11.0-rc7-syzkaller-g5f5673607153 #0 Not tainted
+--------------------------------
+inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+ksoftirqd/1/24 [HC0[0]:SC1[1]:HE1:SE0] takes:
+ffff0000db7f11e0 (&pch->downl){+.?.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
+ffff0000db7f11e0 (&pch->downl){+.?.}-{2:2}, at: ppp_channel_bridge_input drivers/net/ppp/ppp_generic.c:2272 [inline]
+ffff0000db7f11e0 (&pch->downl){+.?.}-{2:2}, at: ppp_input+0x16c/0x854 drivers/net/ppp/ppp_generic.c:2304
+{SOFTIRQ-ON-W} state was registered at:
+  lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
+  __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+  _raw_spin_lock+0x48/0x60 kernel/locking/spinlock.c:154
+  spin_lock include/linux/spinlock.h:351 [inline]
+  ppp_channel_bridge_input drivers/net/ppp/ppp_generic.c:2272 [inline]
+  ppp_input+0x16c/0x854 drivers/net/ppp/ppp_generic.c:2304
+  pppoe_rcv_core+0xfc/0x314 drivers/net/ppp/pppoe.c:379
+  sk_backlog_rcv include/net/sock.h:1111 [inline]
+  __release_sock+0x1a8/0x3d8 net/core/sock.c:3004
+  release_sock+0x68/0x1b8 net/core/sock.c:3558
+  pppoe_sendmsg+0xc8/0x5d8 drivers/net/ppp/pppoe.c:903
+  sock_sendmsg_nosec net/socket.c:730 [inline]
+  __sock_sendmsg net/socket.c:745 [inline]
+  __sys_sendto+0x374/0x4f4 net/socket.c:2204
+  __do_sys_sendto net/socket.c:2216 [inline]
+  __se_sys_sendto net/socket.c:2212 [inline]
+  __arm64_sys_sendto+0xd8/0xf8 net/socket.c:2212
+  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+irq event stamp: 282914
+hardirqs last  enabled at (282914): [<ffff80008b42e30c>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (282914): [<ffff80008b42e30c>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+hardirqs last disabled at (282913): [<ffff80008b42e13c>] __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
+hardirqs last disabled at (282913): [<ffff80008b42e13c>] _raw_spin_lock_irqsave+0x2c/0x7c kernel/locking/spinlock.c:162
+softirqs last  enabled at (282904): [<ffff8000801f8e88>] softirq_handle_end kernel/softirq.c:400 [inline]
+softirqs last  enabled at (282904): [<ffff8000801f8e88>] handle_softirqs+0xa3c/0xbfc kernel/softirq.c:582
+softirqs last disabled at (282909): [<ffff8000801fbdf8>] run_ksoftirqd+0x70/0x158 kernel/softirq.c:928
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&pch->downl);
+  <Interrupt>
+    lock(&pch->downl);
+
+ *** DEADLOCK ***
+
+1 lock held by ksoftirqd/1/24:
+ #0: ffff80008f74dfa0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x10/0x4c include/linux/rcupdate.h:325
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 24 Comm: ksoftirqd/1 Not tainted 6.11.0-rc7-syzkaller-g5f5673607153 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:319
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:326
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
+ dump_stack+0x1c/0x28 lib/dump_stack.c:128
+ print_usage_bug+0x698/0x9ac kernel/locking/lockdep.c:4000
+ mark_lock_irq+0x980/0xd2c
+ mark_lock+0x258/0x360 kernel/locking/lockdep.c:4677
+ __lock_acquire+0xf48/0x779c kernel/locking/lockdep.c:5096
+ lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x48/0x60 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:351 [inline]
+ ppp_channel_bridge_input drivers/net/ppp/ppp_generic.c:2272 [inline]
+ ppp_input+0x16c/0x854 drivers/net/ppp/ppp_generic.c:2304
+ ppp_async_process+0x98/0x150 drivers/net/ppp/ppp_async.c:495
+ tasklet_action_common+0x318/0x3f4 kernel/softirq.c:785
+ tasklet_action+0x68/0x8c kernel/softirq.c:811
+ handle_softirqs+0x2e4/0xbfc kernel/softirq.c:554
+ run_ksoftirqd+0x70/0x158 kernel/softirq.c:928
+ smpboot_thread_fn+0x4b0/0x90c kernel/smpboot.c:164
+ kthread+0x288/0x310 kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+
+
 ---
-Story time:
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-I decided to learn rust. I figured I'd best find me a project to work on
-that would involve some proper coding but wouldn't have much impact on
-anything important when I inevitably get it wrong the first few times.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-I decided to write a sysfs-to-libgpiod compatibility layer based on
-FUSE. Since Rust is hard, I started prototyping the thing in python
-first to at least have the logic nailed down before I tackle the rust
-part.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-When working on the exporting part, I vagely recalled that when I used
-to work with GPIO sysfs somewhere between 2009 and 2012 (still with
-board-file based systems), named lines exported with sysfs would appear
-under /sys/class/gpio as symbolic links named like the line and not the
-usual "gpioXYZ". I realized that this is not the case now.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-Quick glance at the sysfs code reveals that I didn't dream it up, but
-that behavior is reserved to drivers setting gc->names. This has been
-slowly going out of fashion with device-tree and device properties.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-We could easily restore the behavior for everybody by taking the name
-from the descriptor we already have access to or even just assign
-gc->names from descriptors in gpiolib core but first: the sysfs ABI
-document does not mention the named links at all and second: given how
-this has naturally effectively been phased out over the years, it would
-probably cause more harm than good when the exported names suddenly
-change for existing users.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-I'm proposing to just drop the named links alogether.
-
-Let me know what you think.
-
- drivers/gpio/gpiolib-sysfs.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 17ed229412af..643620d261f5 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -577,7 +577,7 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 	struct gpio_device *gdev;
- 	struct gpiod_data *data;
- 	struct device *dev;
--	int status, offset;
-+	int status;
- 
- 	/* can't export until sysfs is available ... */
- 	if (!class_is_registered(&gpio_class)) {
-@@ -626,10 +626,6 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 	else
- 		data->direction_can_change = false;
- 
--	offset = gpio_chip_hwgpio(desc);
--	if (guard.gc->names && guard.gc->names[offset])
--		ioname = guard.gc->names[offset];
--
- 	dev = device_create_with_groups(&gpio_class, &gdev->dev,
- 					MKDEV(0, 0), data, gpio_groups,
- 					ioname ? ioname : "gpio%u",
--- 
-2.43.0
-
+If you want to undo deduplication, reply with:
+#syz undup
 
