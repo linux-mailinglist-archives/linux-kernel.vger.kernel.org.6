@@ -1,108 +1,175 @@
-Return-Path: <linux-kernel+bounces-342115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BCAC988ABD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:27:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 879B8988AB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C08D1C226B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:27:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15379B20F75
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F2A1C2332;
-	Fri, 27 Sep 2024 19:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b="W347u7uF"
-Received: from mail.nppct.ru (mail.nppct.ru [195.133.245.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9A21C231B;
+	Fri, 27 Sep 2024 19:23:45 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0561189F5C
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.245.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F70139D1B;
+	Fri, 27 Sep 2024 19:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727465269; cv=none; b=c8ETk0Csl53ThJ5B9bmdG/Epvb7Y8v8mxQa53g7tYA5ott/pFeK/ChUiF+UWMP3gf7zoQetLmsEiu+1mpnHdt9Von65SWS5RRltTeEEhT689JgoM9rRpS9Lt8P9y3iB0qDynYnqXSE3qNi8oyOgGQAeI1Xa6BXq81O6pllI44ko=
+	t=1727465025; cv=none; b=clQmnjYEFzjyv2LASUmNkMeS0PgVYHLj2p7aIXIS31Jmh5ph67N9uSI6+HUW9dEKn8TdS3HEIRpX9AKCh4Vl7AzC9Rkgz+1ixH2/DqPv8OSlg7ihCWN3hYFez6xDitZ3Q9sWfIfEcn9URuSJjwPIS2LmmTJEdtBgt4zE9UOQRIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727465269; c=relaxed/simple;
-	bh=+6Z8zlYwsiNEwXds5k9H7KKtvVM+H5+chHKO7+K6B/Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JJu12G29y5pu2F/Qansxf60BWEOEB4wg/qpNloWdjlT+APzIcb8pZo71kJ2xNEm2OqEXfw2Un8RW1c+uPQIY/XXNHjCJ2rlVENkaaanz2pYU3trCjwYPUJ6+k56nYE+7HZH1tACNxKVssKJUr3qTFCUCPghe/dTWkQ4W0DpvTH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru; spf=pass smtp.mailfrom=nppct.ru; dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b=W347u7uF; arc=none smtp.client-ip=195.133.245.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nppct.ru
-Received: from mail.nppct.ru (localhost [127.0.0.1])
-	by mail.nppct.ru (Postfix) with ESMTP id 779BA1C0CF9
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 22:18:29 +0300 (MSK)
-Authentication-Results: mail.nppct.ru (amavisd-new); dkim=pass (1024-bit key)
-	reason="pass (just generated, assumed good)" header.d=nppct.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nppct.ru; h=
-	content-transfer-encoding:mime-version:x-mailer:message-id:date
-	:date:subject:subject:to:from:from; s=dkim; t=1727464708; x=
-	1728328709; bh=+6Z8zlYwsiNEwXds5k9H7KKtvVM+H5+chHKO7+K6B/Q=; b=W
-	347u7uFRHrVhYkbN191d14BIydsN/RlynclndjmZ102V1KmLdiHbAGCELE2vXDWV
-	DZ3ZPD2vfv/Do7c6MIqDTbVCgznn1xSvtWe62lAQUZVFCdZ9NZ8p7LfOy4ARCEMm
-	W6VWwvMqNt2b04oac+CNCf7C40A+C4W6EwyE343vQs=
-X-Virus-Scanned: Debian amavisd-new at mail.nppct.ru
-Received: from mail.nppct.ru ([127.0.0.1])
-	by mail.nppct.ru (mail.nppct.ru [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id R8cor9oSa9WY for <linux-kernel@vger.kernel.org>;
-	Fri, 27 Sep 2024 22:18:28 +0300 (MSK)
-Received: from localhost.localdomain (mail.dev-ai-melanoma.ru [185.130.227.204])
-	by mail.nppct.ru (Postfix) with ESMTPSA id 8EB3E1C0604;
-	Fri, 27 Sep 2024 22:18:27 +0300 (MSK)
-From: Andrey Shumilin <shum.sdl@nppct.ru>
-To: ichal Kalderon <mkalderon@marvell.com>
-Cc: Andrey Shumilin <shum.sdl@nppct.ru>,
-	Ariel Elior <aelior@marvell.com>,
-	Doug Ledford <dledford@redhat.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	khoroshilov@ispras.ru,
-	ykarpov@ispras.ru,
-	vmerzlyakov@ispras.ru,
-	vefanov@ispras.ru
-Subject: [PATCH] qedr/verbs: Add pd pointer null check
-Date: Fri, 27 Sep 2024 22:18:18 +0300
-Message-Id: <20240927191818.3576242-1-shum.sdl@nppct.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1727465025; c=relaxed/simple;
+	bh=GM2PMzkiugJoiVXHiXF3aEICP/a8rNLrEmgoYpGtqoo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L3/7A0w5EQaMkeFwSoMxHlsWhGt4TvB4h/dFBlpWU5JXv78Qyf02dL9tTsdXHVamEJ0qKq2BnRVuZucslkKNY7cWQo5cLIsDsvgNmlAjR23ZdhdtWMktsLnSoxwBRiCYj6ADji2aPox6BNiXtLxRUZa1VICTMxZ024Dw0O58k/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XFfyJ0cLGz9v7NM;
+	Sat, 28 Sep 2024 03:03:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id EDE42140496;
+	Sat, 28 Sep 2024 03:23:37 +0800 (CST)
+Received: from [10.81.203.162] (unknown [10.81.203.162])
+	by APP2 (Coremail) with SMTP id GxC2BwBnFscqBvdmpgHGAQ--.52397S2;
+	Fri, 27 Sep 2024 20:23:37 +0100 (CET)
+Message-ID: <62508c1f-66ca-450d-abb6-236ca3b9096d@huaweicloud.com>
+Date: Fri, 27 Sep 2024 21:23:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+To: Boqun Feng <boqun.feng@gmail.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
+ lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>, Vlastimil Babka
+ <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+References: <ZvPp4taB9uu__oSQ@boqun-archlinux>
+ <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
+ <ZvP_H_R43bXpmkMS@boqun-archlinux>
+ <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
+ <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+ <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
+ <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
+ <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
+ <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
+ <bba2e656-4c3b-46db-b308-483de440b922@efficios.com>
+ <ZvY2zBiluLkqRSkc@boqun-archlinux>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <ZvY2zBiluLkqRSkc@boqun-archlinux>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwBnFscqBvdmpgHGAQ--.52397S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WF48Zw4Duw13Kr45ZFyDGFg_yoW8ZF1kpr
+	WagF1YgF4kAr4Syr1Ivr4UZFyFyrn3Grn8Cw10gryqv3W3GF4xuF4fK3y7CF9rCrn3Cr1j
+	qr129a4S9wsxZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+	jzE__UUUUU=
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-It is possible that a null pointer will be passed
-to the qedr_set_common_qp_params function.
-The patch adds a pointer check before dereferencing.
+Two comments inline,
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Am 9/27/2024 um 6:38 AM schrieb Boqun Feng:
 
-Signed-off-by: Andrey Shumilin <shum.sdl@nppct.ru>
+> compilers can replace 'ptr' with 'head' because of the equality, and
+> even putting barrier() here cannot prevent compiler to rewrite the else
+> branch into:
+> 
+> 	else {
+> 		barrier();
+> 		return head;
+> 	}
+> 
+> because that's just using a different register, unrelated to memory
+> accesses.
 
----
- drivers/infiniband/hw/qedr/verbs.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Yeah, that was the solution I had in mind. My reasoning was that from 
+the C abstract machine, head is still a memory access, and the barrier() 
+should make the compiler forget everything it knew about the value of 
+head from before the barrier().
 
-diff --git a/drivers/infiniband/hw/qedr/verbs.c b/drivers/infiniband/hw/qedr/verbs.c
-index 511c95bb3d01..09bb7fbe2bba 100644
---- a/drivers/infiniband/hw/qedr/verbs.c
-+++ b/drivers/infiniband/hw/qedr/verbs.c
-@@ -2270,6 +2270,11 @@ struct ib_qp *qedr_create_qp(struct ib_pd *ibpd,
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
-+	if (!pd) {
-+		DP_ERR(dev, "create qp: pd is NULL\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
- 	qedr_set_common_qp_params(dev, qp, pd, attrs);
- 
- 	if (attrs->qp_type == IB_QPT_GSI) {
--- 
-2.30.2
+So I had a gap in my understanding of the strength of barrier(). Can I 
+understand it to mean that the compiler can do escape analysis to reason 
+that a volatile asm code with ::memory can't possibly be manipulating 
+some variables (like head in this case)?
+
+That idea seems to be confirmed by this (atrocious, not to be copied!) 
+example:
+
+int fct_escape_address_of_b(void)
+{
+     int *a, *b;
+
+     do {
+         a = READ_ONCE(p);
+         asm volatile ("" : : : "memory");
+         b = READ_ONCE(p);
+     } while (a != b);
+
+     // really really hide b
+     int **p = &b;
+     OPTIMIZER_HIDE_VAR(p);
+
+     asm volatile ("" : : : "memory");
+     return *b;
+}
+
+This also does not generate any additional instructions, unlike just 
+using OPTIMIZER_HIDE_VAR(b).
+
+What is the advantage of defining OPTIMIZE_HIDE_VAR the way it currently 
+works instead of like above?
+
+
+
+ > On Fri, Sep 27, 2024 at 03:20:40AM +0200, Mathieu Desnoyers wrote:
+
+>> I have a set of examples below that show gcc use the result of the
+>> first load, and clang use the result of the second load (on
+>> both x86-64 and aarch64). Likewise when a load-acquire is used as
+>> second load, which I find odd. 
+
+Note that if you use acquire on the second load, the code is correct 
+even if the compiler uses the result of the first load.
+
+That is because the acquire load will still synchronize sufficiently 
+with the second publishing store after the ABA, and then we can get the 
+right data even from the old address.
+
+Best wishes,
+
+   jonas
 
 
