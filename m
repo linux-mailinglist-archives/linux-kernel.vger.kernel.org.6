@@ -1,114 +1,100 @@
-Return-Path: <linux-kernel+bounces-341597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1901798823C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:09:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900C4988240
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49D641C21FE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:09:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB6C1F22D52
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15BA1BC074;
-	Fri, 27 Sep 2024 10:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqCHPbc0"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0816F1BC094;
+	Fri, 27 Sep 2024 10:10:01 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483F917C232;
-	Fri, 27 Sep 2024 10:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9638E1BC067;
+	Fri, 27 Sep 2024 10:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727431781; cv=none; b=bIDzcb0hWnxdMcxitCyOHLmMd4qpVsFQKc5BKe1zDe/KEijM65100QF/oAW1ZMADaiCKLOL0NksBFKETjPgxBNN6RlKBKx1vJ1pn4h0wZxBHha3c8CxT+dlNz11JKEQNFkB0XcVeOV+uEYCpdrjT4PbIi5fB6jLWiAzHtiri2U8=
+	t=1727431800; cv=none; b=S/y3FWiAkehCZXyCt/HBvU8Rhaav4WyPSVKVk5jUai/F4GIhX7AAJHbJslgUrWaOT3OCK3wB6JeZdEAI7i3bpq4Yjq9dqjZ//HUpVK+W70sauupvvpdAKZJoDKCYRZEjATw7CfQOwvXjvYLdjr2zBCyaJqptNQm0nMivxjslikM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727431781; c=relaxed/simple;
-	bh=aOI1znHzlcS3KjD1jj6wA2LPTGwM80fPp/V7uRtFpLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=F3Bt38IjHm4QrHgTDsg5ATBlrABkP7YEgCxuBzzIkydffIAtd9SyMrF9HySExl6kxQS2+T9RJIPAeB+1PqMQ8gVClBZyYAYPmlxTUOQFhX5G9/dssZYzsNjxTe4VOHRNY3IMWS6giqXG7BLQuwIPD8uTAm5w/cxOh2dBjuMwiXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqCHPbc0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B929C4CECD;
-	Fri, 27 Sep 2024 10:09:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727431780;
-	bh=aOI1znHzlcS3KjD1jj6wA2LPTGwM80fPp/V7uRtFpLE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=QqCHPbc0n6miRgNFWuO1nS+0pKCg0UgDJ4Xb/AmC+/K1NS1bcCT2sbamiMoDNKMIg
-	 0EloshYiwzcd7Ie/Hhl0cdblbi1O5+SSEgmWYgl9/U5w/F24318klaZJoeLZgBsPqU
-	 ylfZ+ortu8eRH6gbfysPLxH8e56XkTuOhy4/luySaO9nwM72wWerC37tU5KMDb3Yvg
-	 RECnJhS4h4MEkBNNHLlQUUgOkWmXPziyWB55buy2DAGbY7HQI0YDHwQlu+wipTjrcn
-	 cpJnGbp+zL1p7Pup+uu/Vgr5FxnPT/QNhqVpYTKZkm6zrdrAXnF+3d6XmFMWey2Ta1
-	 d4DmAae4ZyzOg==
-Date: Fri, 27 Sep 2024 12:09:36 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Subject: [GIT PULL] i2c-host-fixes for v6.12-rc1
-Message-ID: <auogjhzhbs2w45ptdkl5ceyxsm7apyfi5wmfv3iwuzfh47pl6f@4nnrnpqqlum2>
+	s=arc-20240116; t=1727431800; c=relaxed/simple;
+	bh=bfTVNyHA8T5YebxsMPfa9M28R6M0BnoxV58WaZn4zdQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pxuToZbei0qAoKtEzlbT55aIr4Jtekqnws6csFW78RSUvHdxQBMq5zJizOubteQiDiDRwTrCs3FXtiyoGu8A9eehfxo/YMjnlhqquzbNO3VtPxyFNnP529QsPsS0XLicHp25F7E8IfOyF8+uqB9RShwYOB0ZwpOuPoqE7MQnnzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE015C4CEC4;
+	Fri, 27 Sep 2024 10:09:57 +0000 (UTC)
+Message-ID: <aeb90ae8-8572-434a-82bc-3d218d3affb8@xs4all.nl>
+Date: Fri, 27 Sep 2024 12:09:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] media: atomisp: Use max() macros
+To: Ricardo Ribalda <ribalda@chromium.org>, Benoit Parrot <bparrot@ti.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-staging@lists.linux.dev
+References: <20240927-cocci-6-12-v2-0-1c6ad931959b@chromium.org>
+ <20240927-cocci-6-12-v2-3-1c6ad931959b@chromium.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20240927-cocci-6-12-v2-3-1c6ad931959b@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Wolfram,
+On 27/09/2024 12:02, Ricardo Ribalda wrote:
+> The max() macro produce nicer code and also fixes the following cocci
+> errors:
+> 
+> drivers/staging/media/atomisp/pci/sh_css_frac.h:40:17-18: WARNING opportunity for max()
+> drivers/staging/media/atomisp/pci/sh_css_frac.h:50:17-18: WARNING opportunity for max()
 
-Here’s the first pull request for the new 6.12 cycle. I hope
-the tag description is good this time.
+Subject and commit message is now out of sync with the code.
 
-My i2c/i2c-host-fixes branch is based on Linus's merge commit
-of the i2c stable patches.
+Hans
 
-I wish you a great weekend!
-Andi
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/staging/media/atomisp/pci/sh_css_frac.h | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/media/atomisp/pci/sh_css_frac.h b/drivers/staging/media/atomisp/pci/sh_css_frac.h
+> index 8ba65161f7a9..3191d2858f59 100644
+> --- a/drivers/staging/media/atomisp/pci/sh_css_frac.h
+> +++ b/drivers/staging/media/atomisp/pci/sh_css_frac.h
+> @@ -37,7 +37,8 @@ static inline int sDIGIT_FITTING(int v, int a, int b)
+>  	int fit_shift = sFRACTION_BITS_FITTING(a) - b;
+>  
+>  	v >>= sSHIFT;
+> -	v >>= fit_shift > 0 ? fit_shift : 0;
+> +	if (fit_shift > 0)
+> +		v >>= fit_shift;
+>  
+>  	return clamp_t(int, v, sISP_VAL_MIN, sISP_VAL_MAX);
+>  }
+> @@ -47,7 +48,8 @@ static inline unsigned int uDIGIT_FITTING(unsigned int v, int a, int b)
+>  	int fit_shift = uFRACTION_BITS_FITTING(a) - b;
+>  
+>  	v >>= uSHIFT;
+> -	v >>= fit_shift > 0 ? fit_shift : 0;
+> +	if (fit_shift > 0)
+> +		v >>= fit_shift;
+>  
+>  	return clamp_t(unsigned int, v, uISP_VAL_MIN, uISP_VAL_MAX);
+>  }
+> 
 
-The following changes since commit 4e2c9cd7dce6c7480f236c3ead196ff4e92ed597:
-
-  Merge tag 'i2c-for-6.12-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux (2024-09-23 14:34:19 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.12-rc1
-
-for you to fetch changes up to 0c8d604dea437b69a861479b413d629bc9b3da70:
-
-  i2c: xiic: Fix pm_runtime_set_suspended() with runtime pm enabled (2024-09-27 11:48:21 +0200)
-
-----------------------------------------------------------------
-The DesignWare driver now has the correct ENABLE-ABORT sequence,
-ensuring ABORT can always be sent when needed.
-
-In the SynQuacer controller we now check for PCLK as an optional
-clock, allowing ACPI to directly provide the clock rate.
-
-The recent KEBA driver required a dependency fix in Kconfig.
-
-The XIIC driver now has a corrected power suspend sequence.
-
-----------------------------------------------------------------
-Ard Biesheuvel (1):
-      i2c: synquacer: Deal with optional PCLK correctly
-
-Geert Uytterhoeven (1):
-      i2c: keba: I2C_KEBA should depend on KEBA_CP500
-
-Jinjie Ruan (1):
-      i2c: xiic: Fix pm_runtime_set_suspended() with runtime pm enabled
-
-Kimriver Liu (1):
-      i2c: designware: fix controller is holding SCL low while ENABLE bit is disabled
-
- drivers/i2c/busses/Kconfig                 |  1 +
- drivers/i2c/busses/i2c-designware-common.c | 14 ++++++++++++++
- drivers/i2c/busses/i2c-designware-core.h   |  1 +
- drivers/i2c/busses/i2c-designware-master.c | 38 ++++++++++++++++++++++++++++++++++++++
- drivers/i2c/busses/i2c-synquacer.c         |  5 +++--
- drivers/i2c/busses/i2c-xiic.c              |  2 +-
- 6 files changed, 58 insertions(+), 3 deletions(-)
 
