@@ -1,204 +1,197 @@
-Return-Path: <linux-kernel+bounces-341444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD61D988031
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AB9D988034
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39B12B209D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:22:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C0BEB2164C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 08:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE831898F4;
-	Fri, 27 Sep 2024 08:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80A6189900;
+	Fri, 27 Sep 2024 08:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Wj2AzHex"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2087.outbound.protection.outlook.com [40.107.255.87])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="IUJpuv8q"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22AC718C1F;
-	Fri, 27 Sep 2024 08:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727425350; cv=fail; b=ZUYD6xedDlm14PVSn+5J33OAZWdAp91OTt41R6zMB8NMTpLS6rYokMEPpvPoU4KTliKe/ob/KUrNcDM4egBKAb8NXUtO3XLVs4WTeLQuFtzu+eHPQCw5ONSfmDBaQngoVKDK8pMCKZaSDxkSiW6K8LQYRs0SesGpZsvnODgMbJo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727425350; c=relaxed/simple;
-	bh=p5GlO3Sj1JrbmDvd5ZwZewAMf5QeBjOaSvPi+kr51yk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=QcDu2g4n5vUIGNfDHqij9ctHDi80vaUMP4vTyNecSztvujh57C/bXoA5MlTA/LFVHFe7GdaGSEB9Byj+BYBygvpqtRqG1QXq+Muj/aQPTp8rOjclspn+DFtdfogxUBN09jhFCxfesqlyeAK8/fXvqnsnVx0tMkOoUZEfqCskoeA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Wj2AzHex; arc=fail smtp.client-ip=40.107.255.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QI8ReCbTRN1qFKAhw6+D/7pYXri4zvSvS8oNHJbM2iF771I3YrRthPrgqqwGbFQzYoYSv2S4EUzpCPoz8D6qeb7SJvilb66msD3rqRo8HUnY3TNzXSEYFCdKOUQlZXr0iVkPeHTPjKcAX+hWgoNBuTOU5zYv2IQfza2cEOh1nGLgHFq6XgSa7FqhD1T+0NFLSH+rCgSDjffTjsbIeKRB3p8PNVWCNcIi9nA0wBcku6UVqBNTMLHDC/X/aF7Vt743Zs05y+Re/WaCPyrrACSM/aKyh29udQO5HrAYfEoo55xsiP06RVqkbu+AlU67vgsuW6V4fMqXD/U3pWfocSxpuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kj0ERSVTCpblKXgiUQZ3J8CtJ68VcGe3ifSoPZm9g9w=;
- b=fzEL092wAwhSM/BZ+sj9JEgLMfACwmfn15Cn5S6ANms7smju+md6Vab38L6JALOCdgIutuhQNOqjTEGJk1GpadT1L+DW0QsWMnJxoGH5jACjQX1mWKWGA+7RhIo3xuhueHuxmqj8Oeo+N/OY9F1XCSWnLq8x9uhxOIGKUIQSsRtOOY6f+q/jxNv+cbbTVwcpsMlFfaQR9CTSUsqOnv8AyEDF88AA58FDefsYmyfoSAk5wFtFGfLnxou5ge4mOrZ0BZB3WlxGPpG8TakPhNaciS3iSdAb93gqk4FLXi8Z7lFocz2kAeXVmNAHcpJY2Lqb27HTPZXxq9kjU5tdbeFGUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kj0ERSVTCpblKXgiUQZ3J8CtJ68VcGe3ifSoPZm9g9w=;
- b=Wj2AzHexYW7EyggFfWy1jkiOjQXAjxR4/46BQIhtuVbV+D8u05E6TyxFTD86IonxHd7aEPnbRwiTLsXL9yNF2iwfizzVqEGcmo6PG1p3yzE777p5LNr1MJvVH7m7QEOix3GX/oCYwCptQy+6DirLE5czDQ7/tzUkVHLiipp6XVNfjqAnq+AXsqaUgUPF3jtuVpBPD6c0oVsOGb3OfX7c3wnWpUy2LZYn2qEwWQgApjn6DUnIqMM6PB2AWCapVkA52gUfm06moZFxVerCeB2ZpCPC2PoSNXut06lfNLg+hzDhi+UVZtXJgbupLumhEmwkH8sPSeY7D/NiCWIWeHIDiA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB4128.apcprd06.prod.outlook.com (2603:1096:400:22::9)
- by SEZPR06MB7228.apcprd06.prod.outlook.com (2603:1096:101:229::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Fri, 27 Sep
- 2024 08:22:24 +0000
-Received: from TYZPR06MB4128.apcprd06.prod.outlook.com
- ([fe80::2bb1:c586:b61b:b920]) by TYZPR06MB4128.apcprd06.prod.outlook.com
- ([fe80::2bb1:c586:b61b:b920%7]) with mapi id 15.20.8005.020; Fri, 27 Sep 2024
- 08:22:22 +0000
-Message-ID: <812b36ac-2fcc-4107-99ad-a44e3e2eda71@vivo.com>
-Date: Fri, 27 Sep 2024 16:22:19 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] atm: Fix typo in the comment
-To: Simon Horman <horms@kernel.org>, Yan Zhen <yanzhen@vivo.com>
-Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- opensource.kernel@vivo.com
-References: <20240925105707.3313674-1-yanzhen@vivo.com>
- <20240925200539.GA4029621@kernel.org>
-From: yanzhen <11171358@vivo.com>
-In-Reply-To: <20240925200539.GA4029621@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR01CA0040.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::14) To TYZPR06MB4128.apcprd06.prod.outlook.com
- (2603:1096:400:22::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E4317B515
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727425364; cv=none; b=UwZy/Hh+j30nirH2MZlKqVjxlUJLFhwwZAXmIJfTDekm3te4k6DDaH+h3v644xclaQrVj4Mxt6XfcWn1Xw6q8Zhc9CRzkFh3JRU9wKPPNJ5uHRb9igrEAMbdR6FB1oqr+11rUtU8yVIngmy4ntTKEJE/QYzTotqc0WEJIUjpDZ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727425364; c=relaxed/simple;
+	bh=nCofjQvqVmGPYIlxe6BoJ7pyKEd8n5AkGXr9/7mxEVc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L+oM3kGVzB3pU5/XgryG/MFEaneuVaur+EqlfubD16zzLFgHK8GF4jQlaiDL89F1vFTktuCqxay5GTbfijn9qQZ+SYOAlWj8uDbG9HkcfmOEPDJmPTJKbe9cEvv0QVmHH7JYPQ4121ysAwb1PDBNJcKf//SSfUIXwQkxngAromQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=IUJpuv8q; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com [209.85.221.200])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E31FA3F6B0
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:22:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727425359;
+	bh=6o4BzwXJTtkXK6Zwi1/UCNsYes9vFKCE8U5Ra86zWN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=IUJpuv8qdf0AOcytXBkOB6rt+irSqPHGasAT9bOo9P4Q3kwaocwFFoXFHSuZYGhnh
+	 BvAjxk5OJ4osDkSqKG1gvviDdDLxqRv5bSDnVXu37z63h9AMEFEHZYN23Zfgs2/ZVA
+	 a2N0fGa6Jp6ZyHBgNef/WVW2yv/HnmZuvS6rtwebD4Zj0/iWmzyd/ywl/m5BS4AEqi
+	 C8M9Q8KJ5BqZetHu1hnVO3wKCp6VjlhEMihFgzX0xpW4ULSu/SEC6US4RWIrBJ2rmh
+	 1IevnzOwW3o0tZjJ3AbT+FKMcaIX/0siwb37RWn9XaqKd2y141L2gFiVMMqHDeMI4/
+	 AcK+Rl5M3RYMA==
+Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-50125547a1fso557282e0c.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 01:22:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727425355; x=1728030155;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6o4BzwXJTtkXK6Zwi1/UCNsYes9vFKCE8U5Ra86zWN0=;
+        b=b4hgS6kQ47Gx+orGFuayf/JFGnXP9iyrshpvHmfVJH7JHC3GdcZtGi7LtkT9I0NsEd
+         jd0FuFL1o7YvfRYlqXKDLfuPWDlnlbWXK1XxBSs7eUWnabe1ZSMq1Gpf1TweGtIdskye
+         9xFTjlnmnSVabQd+w5eFqoVtcZqy3nR/Dug3cbTo2bCiYhgTFwVUV17oUblJf7HIQNyE
+         4SFqiEwdpZZ+3dEc8yINSwzZVbH6V0NbNISPp+vMr4RFgWo0xmDUCSF0mR578BTsKzeA
+         zbaW++CIhNkJEf/VLhxDRF50AR5XSDhMjQmcC+ti7nq2ptz9QrfT4kQraLPaN3fmkCYP
+         dEfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJixbIDCEfyQE6Rg7WbvWgw5MU2CF6BcszOuXklpugktgQIsMB+RC0WZ6PMIgpqs0zxqMBO0nZwjpsHxg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqdQFNWOmuxTzvJp8Pn/RzYH7Xmp1md0BbtJBCOqlehXiSwYg+
+	V3WaJrXynUbRnTBN7VjpjJ/HJhTRsjX/beuSmN+4SFs7qvfz2KqYYFZzyiRRY++ga2Usk/oJn7l
+	P71BxX3W+XvP4mdQPKvixMO+IzPc7EZjuZC7shn3H47KmHjnOcpgBq+OX4v5M2s1rwR/rSchVCS
+	kxlPdRuWyP2Pm+ZI0EtVYeR2Yy2wU5AulkWzqLK/10G/OiiCoeLsSt
+X-Received: by 2002:a05:6122:2210:b0:4f5:2276:137c with SMTP id 71dfb90a1353d-507818a2492mr1709917e0c.8.1727425354645;
+        Fri, 27 Sep 2024 01:22:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFqpL30ZkblX/b944Huzx7lqUbyEFfDe+FJLlF1k9fhXsMfFJZLEfn4eshi1gmcIvh7QJhcfAr0c3paWnuNKZE=
+X-Received: by 2002:a05:6122:2210:b0:4f5:2276:137c with SMTP id
+ 71dfb90a1353d-507818a2492mr1709910e0c.8.1727425354306; Fri, 27 Sep 2024
+ 01:22:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB4128:EE_|SEZPR06MB7228:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7316835a-5082-44f5-a028-08dcdecd82ee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|43062017|81742002;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eEdZWkhuWktDeEpSK2hQRldXejUwQUhpNmZsTjRnVzRyRW9RMkdHQkR0TWVG?=
- =?utf-8?B?TGs5cXBpM1MvbVk3VXFZeGFQRkQwYTVaMjhlWUNkL016RjRUVnpPdTJuQVhi?=
- =?utf-8?B?YkpQUDBJcFN6Tm82bmF6WVJ1dG5rUHZIdzdtVVJPc3lKdmFhYWZYeE1DdmtD?=
- =?utf-8?B?RWFkS3JrN1k3Y25jbXJRNllXbm5uakFGMGNCQWp0Qkd4ZmoyNTk3TWI2QXE4?=
- =?utf-8?B?aHFOcmREeGZ2cHllWjNjNkhXdWhPS2xoTHVweFBGT1BPSWdDaGhHQ3lMU3p1?=
- =?utf-8?B?MXhaR2tWeDFGRDlaS3Bqa1YwRWtHNG9ZSGJUQ1VTeWcxS2NEMmN5OE1ueDBO?=
- =?utf-8?B?U2ZXSURrOVNCVXZnNTVEZkxvMzFJMjFUbzZuYmV6TlRTNE1Ma0VUc1ZMNG9U?=
- =?utf-8?B?OTAwZ2Z5RVU4RkF5Ny9DRG5pcWpvdjU1QWVnRHV3M2FuQXdTOWxxSGNZVHg0?=
- =?utf-8?B?N05GdmRMZXFHbVRKdXIxajU2YkRXek4wdFBYMjBvSkRxL0tUdzRwK1FJTWd2?=
- =?utf-8?B?OTJzRmg0TStnZkR5bUozMUdRWTVpRGlmTGhqTVFaRzNJYnIxaUZyMGUzTXUy?=
- =?utf-8?B?TnV0UHMyUExQVC91VHlhTExoalVzNFo1aC9RQ0RWL3dmdEtZUVp4emExZlZa?=
- =?utf-8?B?blVhZnVPZ0Jidmd4MXJNWmEzbXlrd1htVGhsNlFNdnVmblY1YnRYdGVnSkxk?=
- =?utf-8?B?czExUmJuOWsvUUloTHZTbEJPSHlxMkkxTWE4Q3lxSEV0Q21WcjBsZjhtUEJB?=
- =?utf-8?B?MGY2TmFlYkdiTUh5TWxmbHM2bGtRcTFhM0ZPSEtpVVd2TXJZczdEUWREc0tq?=
- =?utf-8?B?U3ozNUZiUk5HQ1FCdlEwL0c3SW45TGxoeit1bUsxZC9acHBoS2JlMkZNWlcw?=
- =?utf-8?B?UzM3bm1zZzZlMjhQWGpYK1N5MGI3WW85d2JzZXg2eGZMdmFxaWxLTFlleVZQ?=
- =?utf-8?B?U0pvMWJ3dHFPSjI2VU1QdHFtMkVUNE43ajhZVkN0RTFvTUtZdUdleE1CTTFD?=
- =?utf-8?B?YkRMNks5UzlrNGlkUWJOTkl0alhtRTFTSWxrU3NtUndBWklZYXRjbHhlZFNt?=
- =?utf-8?B?Y3ZzTU9CRk1xNTZudmVtOVlTYmd3N3kxOHJJQm1RWVRUR1ZNYVhxUXZUTWRH?=
- =?utf-8?B?TndNODlSWjVRdnRGdk1IMERnZXZLQXVxRGhIS2diOVJWelJLYXd1VjV3dk5o?=
- =?utf-8?B?WGcrYlFLa1dPdGZYeEROKzNOZHNZSFM2UjVXaXNOSkgzRXNqaWRoektxUXFl?=
- =?utf-8?B?MnVYWFpwalVqTU1UWG1iTlZKdE91MTdLbW5XZWZYRkFuKzBPV1NVa0xReUpZ?=
- =?utf-8?B?QzRQUVg0VXVHaGVpQW1OUmtvcG1ZaVcxVHpBSkJac05mZU91am5rL0laaGx1?=
- =?utf-8?B?bDZsa1N5bVRBaDBYTHhKZW9FTFpGeGdkNFVvZ24wT3hIY3VQMnk1aVRjdTBQ?=
- =?utf-8?B?L3loSzFhV0srWlE2SkVJaUdjTnIvdjNzZVN6NDVjYmVnb1VDaldlZExRTmRq?=
- =?utf-8?B?dkNheloxTkYxaTJjMERyNWtmNm9aTVk0MmNTMWw1Mmh2S090UzljelpzM1dh?=
- =?utf-8?B?cEdJeHJqRjRjelNRMkRBN0E1OWpKQzBNb2U1djEvdU43UUFRalhSRUo3MDFl?=
- =?utf-8?B?SjNFZURRdm5nWCtBZUtHaGdkM0dOMDQ5RnJwTmZidGx3c3F6SXNiV3hBT0Js?=
- =?utf-8?B?MjNWQTVoU25UREE5V3IrUzA0eEZVZ1E2T3BmelpFWmpJd096RG5aZFd0S2hx?=
- =?utf-8?B?OUt6Ynd3UDUyMW05Lzd1NktEWGZ2ZFNveGs2bThEd2pkdWZsMkpFSU5McitQ?=
- =?utf-8?B?RS9weWI0dnVFaURhai9lQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4128.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(43062017)(81742002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MnFOQVdmbE91WFVQZUxxSC9VUzlvWHlnTDlHVzVEY2NHOGJxUWJ4bzgvYThE?=
- =?utf-8?B?NE5RaFVLdXd3Z1cvYWVneUpNQ3ZFT1hxY1N5T29QNDlkMTU5OHFJMkxvZjN0?=
- =?utf-8?B?azZlOG9HS1lERHdsZWtaNXVWZ2xBeGp3ZldvcU4zRkF0djRIcEtwTmNwaWZP?=
- =?utf-8?B?YThSMENWL2pRcmxIbnZwUlJZcmM0TXgvNDljdVJhb0RkWXArSWxrR1BHcXN3?=
- =?utf-8?B?MzNpc042S09PQm1oOVArMXBtbE8wYjYrMHlFVWg2K1A4SEh5VURXQWZVaS83?=
- =?utf-8?B?bUY3ZHlpTW5DaC94aDBZNXo3OVp3SUt1OXZEbGxpT0VpYTY4bkI5bFpRMlgr?=
- =?utf-8?B?REo5RXJjb2NKVmxIVkZkdmQ2VWFBZW1yaHN4QjY3bDVwaFFRcjBZMEF1aTl2?=
- =?utf-8?B?OVVnTkpDTC8wM2VJTXB4V21XYm1rMWlJYVF0aG02NnF6M1IzL3dLUUI1MWl4?=
- =?utf-8?B?Mk9xNkgyUUpES3pVQWRkWlNDT2w5QzRDV0VBK3h3eTZrNzhQbHFsUkhrVTdM?=
- =?utf-8?B?VWR1Z3ZuVnI1UzhjejRybURMQXNPU2gwMGxWa0FIOWdjSXFuNHFHaXBYRGU3?=
- =?utf-8?B?SWZwQlY4OWdZL1JQekZ0aTRVblBVQW81YU5VS2NJb0plV09vWHJIdWFBVDBa?=
- =?utf-8?B?YyszVXRjS0ROTi90QUFVYTNIL0VKZS9pWmpzNCtvRU40bDZZQkE2SzlqYVhh?=
- =?utf-8?B?YW5CcVlYRTMvS01DdlBTcUE4QnBpYmwvNWFXSGRCSVZEcEt4aXJCd0lrQUdX?=
- =?utf-8?B?T0x5VmlCVktKSmxmZHNyQWhLM3FWZUUwR3hROWxXTDMxeFZPVGxQMi93bk50?=
- =?utf-8?B?TTQrWWgrUnlHVkNxRm8wbjQ1Z3BHdkRzSzNSWUs5a3Z0Y0R6NFk5bERNYmNL?=
- =?utf-8?B?c2d3U0VUWVNFdWJvTVh5dzJrdjJwdHJrSXNMOUVGdTJTWGk4aU1sV0lOU2FE?=
- =?utf-8?B?aHNjTDN6TGtGSG5XenpDOVZnclVSZDBQbktZOFdVU2w4ZkJ3VUxXTVhaN1Zw?=
- =?utf-8?B?T2Nwd0IxbDFlVjdxQWFzT28yRDd5dGxvSEdDYWVwaU1CK0VCS2YwSDhNQzk4?=
- =?utf-8?B?Y0E3RVBUOXpxNlZLKzZxM0lwVXVKa0k1QmFDcEZmRDY2amhOeXE2SU9HTnkz?=
- =?utf-8?B?a0hmY2lLc3ZEOFEwR2dwSlQ2aThIY0k4NHpTY0kyc2F4VkZ3WmpaSW10MUZ5?=
- =?utf-8?B?VEZNTEdZUDhCV1VKS2ZJK0ZNZTNOaGFpdFJjblUvOThTNkw5ZkxOenBxQXg1?=
- =?utf-8?B?UFoxcHIrd2doRVprQWpqVUtqNWJ1Z3BjQkFvSy9wYktqWmJLUVNoVHhKU3pr?=
- =?utf-8?B?eTFYd1VkUU5TMnJtTklJVmxRQ1N3bEdyZ3FzNWNVRzF1bkhjbkJNTkNKelhQ?=
- =?utf-8?B?ckh6NGVaelBoQW9xT1RxVEs1QXVrMFJ3WUc0K0U0V3JSVEpCWjMrNmV6czVs?=
- =?utf-8?B?djYrM0FsK0JZSGhnUDFQQTRxY0VhZFN0elZoVVFobDg1QTRXemZPVUg2WDh5?=
- =?utf-8?B?NmJsc3VPVFNLLzQwMzN1Y3NTVHg4eUZQSjR6eGVxcXFuSHBhTEFqb1BrY25x?=
- =?utf-8?B?OU10SFdjMlVEdlA5VTY3andocDVKVGJHMC9HVDdtOUY5NFFsYmsyTG0wcmVp?=
- =?utf-8?B?OEpWZzhiWU1rWWVlc2hmUGEwTW5TNXdKMFI4T3dNTUo5RTMyTjdIcWpNVzZv?=
- =?utf-8?B?V2lUSXVsbGpBSEVoQkxyU2pwSWtrVThsN1lFNEhtZHA4bE9ZUU9DRCsxaFh2?=
- =?utf-8?B?VnhHbHYzcStQS3pHQXl0MDlmYTBRa1RiSjVkS09wVFdNTE1lcmlwQktVajRa?=
- =?utf-8?B?OExhVzVrVVNNOUVrWW0xS2RBK3RZYTROenZLUGZoQUY1eWFRVnJ1aWVoRE9P?=
- =?utf-8?B?TXRLMk9qRjBWNVBQK2xEd0VRTUxYRTgrSlh0OXRqb0JweWMveWFqWVYweGNM?=
- =?utf-8?B?Ui96dS93dVZjVGhUNDFCbXpFNmtuZFNXc1lsQk8yYm96dThNUVZBWXVBM3Nq?=
- =?utf-8?B?Qm5SbFVPR2RCWjhvd3BjV2V1VFpzK1lZSXgrWlJFRkE3WS9FSFM4cHUwbkFJ?=
- =?utf-8?B?ZEczREhpVEhaOTY1SmJJd3pNK21CeWxzU2FPVVV1TDdJSHk1eGlhaVZ5NDQ5?=
- =?utf-8?Q?hY3te3+mugmv6kwLyuAkKia1N?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7316835a-5082-44f5-a028-08dcdecd82ee
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4128.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 08:22:22.7871
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZM6AD84jkLWhLF/Dr7KUYlVxj5JoYD64cx//J+HUF7DDS18rjjgCFZa7W8RYGmDFTb1DqkZcdO17ly8uirnD0g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7228
+References: <20240927063620.2630898-1-libaokun@huaweicloud.com>
+In-Reply-To: <20240927063620.2630898-1-libaokun@huaweicloud.com>
+From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date: Fri, 27 Sep 2024 10:22:23 +0200
+Message-ID: <CAEivzxej-DiXpkcQeYrVVPXbXXnCf=4d3EWyhw8euwBjuB8S9w@mail.gmail.com>
+Subject: Re: [PATCH] ext4: fix off by one issue in alloc_flex_gd()
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, yi.zhang@huawei.com, 
+	yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>, 
+	Wesley Hershberger <wesley.hershberger@canonical.com>, 
+	=?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@stgraber.org>, 
+	Eric Sandeen <sandeen@redhat.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-在 2024/9/26 4:05, Simon Horman 写道:
-> On Wed, Sep 25, 2024 at 06:57:07PM +0800, Yan Zhen wrote:
->> Correctly spelled comments make it easier for the reader to understand
->> the code.
->>
->> Fix typos:
->> 'behing' ==> 'being',
->> 'useable' ==> 'usable',
->> 'arry' ==> 'array',
->> 'receieve' ==> 'receive',
->> 'desriptor' ==> 'descriptor',
->> 'varients' ==> 'variants',
->> 'recevie' ==> 'receive',
->> 'Decriptor' ==> 'Descriptor',
->> 'Lable' ==> 'Label',
->> 'transmiting' ==> 'transmitting',
->> 'correspondance' ==> 'correspondence',
->> 'claculation' ==> 'calculation',
->> 'everone' ==> 'everyone',
->> 'contruct' ==> 'construct'.
->>
->>
->> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
-> Hi,
+On Fri, Sep 27, 2024 at 8:39=E2=80=AFAM <libaokun@huaweicloud.com> wrote:
 >
-> I am curious to know which tree is this based on?
-> I don't seem to be able to apply it to net-next, linux-net,
-> or Linus's tree.
-I apologize, I may not have generated the patch based on the latest 
-branch. Is the net-next branch currently closed? Should I wait for it to 
-reopen before submitting?
+> From: Baokun Li <libaokun1@huawei.com>
+>
+> Wesley reported an issue:
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> EXT4-fs (dm-5): resizing filesystem from 7168 to 786432 blocks
+> ------------[ cut here ]------------
+> kernel BUG at fs/ext4/resize.c:324!
+> CPU: 9 UID: 0 PID: 3576 Comm: resize2fs Not tainted 6.11.0+ #27
+> RIP: 0010:ext4_resize_fs+0x1212/0x12d0
+> Call Trace:
+>  __ext4_ioctl+0x4e0/0x1800
+>  ext4_ioctl+0x12/0x20
+>  __x64_sys_ioctl+0x99/0xd0
+>  x64_sys_call+0x1206/0x20d0
+>  do_syscall_64+0x72/0x110
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> While reviewing the patch, Honza found that when adjusting resize_bg in
+> alloc_flex_gd(), it was possible for flex_gd->resize_bg to be bigger than
+> flexbg_size.
+>
+> The reproduction of the problem requires the following:
+>
+>  o_group =3D flexbg_size * 2 * n;
+>  o_size =3D (o_group + 1) * group_size;
+>  n_group: [o_group + flexbg_size, o_group + flexbg_size * 2)
+>  o_size =3D (n_group + 1) * group_size;
+>
+> Take n=3D0,flexbg_size=3D16 as an example:
+>
+>               last:15
+> |o---------------|--------------n-|
+> o_group:0    resize to      n_group:30
+>
+> The corresponding reproducer is:
+>
+> img=3Dtest.img
+> truncate -s 600M $img
+> mkfs.ext4 -F $img -b 1024 -G 16 8M
+> dev=3D`losetup -f --show $img`
+> mkdir -p /tmp/test
+> mount $dev /tmp/test
+> resize2fs $dev 248M
+>
+> Delete the problematic plus 1 to fix the issue, and add a WARN_ON_ONCE()
+> to prevent the issue from happening again.
+>
+> Reported-by: Wesley Hershberger <wesley.hershberger@canonical.com>
+> Closes: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2081231
+> Reported-by: St=C3=A9phane Graber <stgraber@stgraber.org>
+> Closes: https://lore.kernel.org/all/20240925143325.518508-1-aleksandr.mik=
+halitsyn@canonical.com/
+> Tested-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> Tested-by: Eric Sandeen <sandeen@redhat.com>
+> Fixes: 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation in alloc=
+_flex_gd()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+
+Thanks, Baokun!
+
+JFYI, I'm on the way to submit a test to xfstests suite.
+
+Kind regards,
+Alex
+
+> ---
+>  fs/ext4/resize.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
+> index e04eb08b9060..397970121d43 100644
+> --- a/fs/ext4/resize.c
+> +++ b/fs/ext4/resize.c
+> @@ -253,9 +253,9 @@ static struct ext4_new_flex_group_data *alloc_flex_gd=
+(unsigned int flexbg_size,
+>         /* Avoid allocating large 'groups' array if not needed */
+>         last_group =3D o_group | (flex_gd->resize_bg - 1);
+>         if (n_group <=3D last_group)
+> -               flex_gd->resize_bg =3D 1 << fls(n_group - o_group + 1);
+> +               flex_gd->resize_bg =3D 1 << fls(n_group - o_group);
+>         else if (n_group - last_group < flex_gd->resize_bg)
+> -               flex_gd->resize_bg =3D 1 << max(fls(last_group - o_group =
++ 1),
+> +               flex_gd->resize_bg =3D 1 << max(fls(last_group - o_group)=
+,
+>                                               fls(n_group - last_group));
+>
+>         flex_gd->groups =3D kmalloc_array(flex_gd->resize_bg,
+> --
+> 2.46.0
+>
 
