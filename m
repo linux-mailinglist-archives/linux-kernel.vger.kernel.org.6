@@ -1,239 +1,173 @@
-Return-Path: <linux-kernel+bounces-341180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74156987C1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:17:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48DD1987C24
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E69EB1F2485C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:17:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A51528525A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 00:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D534413A3EC;
-	Fri, 27 Sep 2024 00:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C13A932;
+	Fri, 27 Sep 2024 00:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cCXiUjIa"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AmXKzBzV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDB98248D
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD9D8493;
+	Fri, 27 Sep 2024 00:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727396208; cv=none; b=sGldPCqyUNqmg9IgzfzG3XAACrEeRYpWVcq4bwGa/P/kHMISDX4fwBQ18gy49VPGLy5+J/bfOLTH3UIdSk5A9JRxwy5strAY+6CS1tuGhpqZ5ZenuV3u+W8ZKf+4T22dmrnnZCHGhNdAsted8w3SChIl0i66Vo2kta5uqyL5mHw=
+	t=1727396302; cv=none; b=PJiYGDd8PacY6/anNjNa/fqg5WuXGSfJcxUDyyFoO7EcfG1bhpKTj7YMLO69huAuPfh5RkRbDX5KKMMHL5VxcA0+dpV8PRBLY65Pn3OsDM6D7LUGY48eRE/WSrsacV7VM83wOGEBtZvFUXsHVX7m8UxjaMxklnsxomrB31dY/Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727396208; c=relaxed/simple;
-	bh=XUxMxGbo8IVDbos6wBsnolJD2X9/FpSrjZX7NpyOkvU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=J1t2Jk/CvTlqegG1ET0DUR55hAfSBTo0RjUBWe99wqSJBCRVb2PTfdyzwjaK/MY6bOc3iivYVJRqTc/iihf9bbjVFr08EXxCTjJtjz2796V7TnELAUAUCq/i9XEtwHxxjzcziWUZZ91FYvaWX8ggKICzhwBNajvoyxF6Oulplac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cCXiUjIa; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2db446a3d28so2238353a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 17:16:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727396206; x=1728001006; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=BT2ULlw760pN7swvLVwkns3C2/rih9SJJkz53vDfr04=;
-        b=cCXiUjIaPzIDAlBu7asmH/5sECoMHafYECfaApR7/InQiDwObMtshG90HruQriZBTG
-         IH9fKbhJAEeQ/QXMzrokzOaKP3Rcn2P0TEIX1IjYtGJPloZFYCu9WagMhpJIj5pvO5OH
-         L9lTsQa/afM+xecxEFOyEWShahI/CSdufbzMTmI1CVfHXvVqD7ctdg7xDnGwyXOu3R5Q
-         o2kSowIwK6pil5c09w6b7O5vlJtQx2o1a1S4gPc8qJP82doK7wwI418nyG0v5TO8I8xb
-         A8+1RNke0HSS8BW0NLsA1Qh2DRgDR7iifPbukV7jIOJ79OSXVnXKSiLWD9DElMQTDRIL
-         RAfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727396206; x=1728001006;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BT2ULlw760pN7swvLVwkns3C2/rih9SJJkz53vDfr04=;
-        b=JgLj+45rIWWSIqgT1YTmp3oGckWMDg33aNQzfxe8VOOTCSD8m4D376SjgJkjQnkg2M
-         Zp65TgmusFDJCQWEoo31lRZXcp+Z+YkN5d3gwB0CViIfExNOw4C9+v/I6yZjPKSYqCwk
-         DDlPnvm1nBVaO8RQ3vIoyDoqZfKb/lOhuYEIDjE7SVdkMM+wXrcpuG+hMDTB7ecA4fZ7
-         e2oPctCFK3BkbAOMUrg87EnqOrL8NjmHNEd/T+tu0e3MUNqe4oAr3xeJiK3AFb3rdLA1
-         2xRW7GkjrBprj33KkAQswDxSDnpZ9vWP6ST79f3xv5Is87OnsCK0aNy+HTS7NTOnCjmm
-         dtiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXR4hCFNPFGMSFlP7MepWMmsYNnuHnwTJo2baR504Fti7EqLICehaLQV4r1C9g5/MgMmNySUqTAeBVvPnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQhdOHV+OnE+Ey1aHmZ6hAdmxryIc60EFQd3eiWLtLp1j9ONF/
-	ebLhrfsyMCcP4pwHBuQAYK3sDKlUXEToQl3OLGzU7kRyhP6uYOACR+XG0FG895RXNzwDqn+yrZP
-	z2A==
-X-Google-Smtp-Source: AGHT+IGwasQylCvu4I8BVuSCdmfP6ZlSeL8v6Z33k4yxeX8y33WMwNDys5uVYIJwxQ2AD7a3aefe7ozkktc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:903:2289:b0:20b:26e2:5507 with SMTP id
- d9443c01a7336-20b37c3063dmr231745ad.11.1727396205787; Thu, 26 Sep 2024
- 17:16:45 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 26 Sep 2024 17:16:35 -0700
-In-Reply-To: <20240927001635.501418-1-seanjc@google.com>
+	s=arc-20240116; t=1727396302; c=relaxed/simple;
+	bh=2HOY+XtzKx8PdUWTpWdegVzmUzRS00BuFm/Q7+QgKtE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pIzOpbSb3dxgzBUK/docb4nj1qhm4jcbOcB39Jn3vSSKgOmvNXFbAn0kLYRfZ1y6airt1bBR+r/wd8W68ZVLt2ISOMNynSNoTXZ7pRoKdZ0e5UlIQ6sUHozQMMkufUUc/gH2fpxwZ9r2gGUJ46i5uBy3UeysdciTV+XtTP+D/nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AmXKzBzV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48QG9fCU026555;
+	Fri, 27 Sep 2024 00:17:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VrnvhxbqRFeTXh6paRlpfiR2SwCI4Z58/6oWdIlLds8=; b=AmXKzBzVgEB+c6hp
+	QcrJ7BnBrVpSSk9ZpvmKsdqCuaQMLJz22SuJxbxBsEdBeIu7tTcigvRJcwB6OwIf
+	/K6HCyXBs9Ip5DFCKG3+i5wC7HYXxTcVPAa4Uu/oWkyfoYCQE/c6Lcu8ezly1GyB
+	ojQ6u0L0O0G03UZUxLFS/2Of9qnZJFr7Yd2cagFXZWLW9NbiwbjD0cdunBowMu8o
+	mziiF5ViUwnA6pbC7j/IJZ5LEvdS2Sp1eMlBqmj7yHclmkjpJ6mitkTozxCQDwzD
+	9P8ZxURkchiTekD4FuSrolTzkP/hVwDZHrvnK5C0ySP5XvbE8lazsYwXdtuzTw0w
+	TZsCSA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41snfh9b8y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 00:17:53 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48R0Hqn2001326
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 00:17:52 GMT
+Received: from [10.110.100.83] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 26 Sep
+ 2024 17:17:48 -0700
+Message-ID: <ed33f7a4-89b1-4090-bcb5-14f2d98cbd75@quicinc.com>
+Date: Thu, 26 Sep 2024 17:17:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240927001635.501418-1-seanjc@google.com>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Message-ID: <20240927001635.501418-5-seanjc@google.com>
-Subject: [PATCH 4/4] Revert "KVM: x86/mmu: Introduce a quirk to control
- memslot zap behavior"
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kai Huang <kai.huang@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3 1/2] net: phy: aquantia: AQR115c fix up PMA
+ capabilities
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
+        "Russell King (Oracle)" <linux@armlinux.org.uk>,
+        Andrew Lunn
+	<andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>,
+        Brad Griffis <bgriffis@nvidia.com>,
+        "Vladimir
+ Oltean" <vladimir.oltean@nxp.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        "Przemek Kitszel" <przemyslaw.kitszel@intel.com>, <kernel@quicinc.com>
+References: <20240925230129.2064336-1-quic_abchauha@quicinc.com>
+ <20240925230129.2064336-2-quic_abchauha@quicinc.com>
+ <20240926084222.48042652@fedora.home>
+Content-Language: en-US
+From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
+In-Reply-To: <20240926084222.48042652@fedora.home>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 0uTlD4aqkwFWN_LW9TPCU-xR2Ju_EgDA
+X-Proofpoint-GUID: 0uTlD4aqkwFWN_LW9TPCU-xR2Ju_EgDA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 priorityscore=1501 malwarescore=0 mlxscore=0
+ suspectscore=0 impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=877
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409270001
 
-Remove KVM_X86_QUIRK_SLOT_ZAP_ALL, as the code is broken for shadow MMUs,
-and the underlying premise is dodgy.
 
-As was tried in commit 4e103134b862 ("KVM: x86/mmu: Zap only the relevant
-pages when removing a memslot"), all shadow pages, i.e. non-leaf SPTEs,
-need to be zapped.  All of the accounting for a shadow page is tied to the
-memslot, i.e. the shadow page holds a reference to the memslot, for all
-intents and purposes.  Deleting the memslot without removing all relevant
-shadow pages, as is done when KVM_X86_QUIRK_SLOT_ZAP_ALL is disabled,
-results in NULL pointer derefs when tearing down the VM.
 
- BUG: kernel NULL pointer dereference, address: 00000000000000b0
- #PF: supervisor read access in kernel mode
- #PF: error_code(0x0000) - not-present page
- PGD 6085f43067 P4D 608c080067 PUD 608c081067 PMD 0
- Oops: Oops: 0000 [#1] SMP NOPTI
- CPU: 79 UID: 0 PID: 187063 Comm: set_memory_regi Tainted: G        W          6.11.0-smp--24867312d167-cpl #395
- Tainted: [W]=WARN
- Hardware name: Google Astoria/astoria, BIOS 0.20240617.0-0 06/17/2024
- RIP: 0010:__kvm_mmu_prepare_zap_page+0x3a9/0x7b0 [kvm]
- Code:  <48> 8b 8e b0 00 00 00 48 8b 96 e0 00 00 00 48 c1 e9 09 48 29 c8 8b
- RSP: 0018:ff314a25b19f7c28 EFLAGS: 00010212
- Call Trace:
-  <TASK>
-  kvm_arch_flush_shadow_all+0x7a/0xf0 [kvm]
-  kvm_mmu_notifier_release+0x6c/0xb0 [kvm]
-  mmu_notifier_unregister+0x85/0x140
-  kvm_put_kvm+0x263/0x410 [kvm]
-  kvm_vm_release+0x21/0x30 [kvm]
-  __fput+0x8d/0x2c0
-  __se_sys_close+0x71/0xc0
-  do_syscall_64+0x83/0x160
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+On 9/25/2024 11:42 PM, Maxime Chevallier wrote:
+> Hello,
+> 
+> On Wed, 25 Sep 2024 16:01:28 -0700
+> Abhishek Chauhan <quic_abchauha@quicinc.com> wrote:
+> 
+>> AQR115c reports incorrect PMA capabilities which includes
+>> 10G/5G and also incorrectly disables capabilities like autoneg
+>> and 10Mbps support.
+>>
+>> AQR115c as per the Marvell databook supports speeds up to 2.5Gbps
+>> with autonegotiation.
+>>
+>> Fixes: 0ebc581f8a4b ("net: phy: aquantia: add support for aqr115c")
+>> Link: https://lore.kernel.org/all/20240913011635.1286027-1-quic_abchauha@quicinc.com/T/
+>> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+>> ---
+> 
+> [...]
+> 
+>>  
+>> +static int aqr115c_get_features(struct phy_device *phydev)
+>> +{
+>> +	int ret;
+>> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported) = { 0, };
+>> +
+>> +	/* Normal feature discovery */
+>> +	ret = genphy_c45_pma_read_abilities(phydev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* PHY FIXUP */
+>> +	/* Although the PHY sets bit 12.18.19.48, it does not support 5G/10G modes */
+>> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, phydev->supported);
+>> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKX4_Full_BIT, phydev->supported);
+>> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKR_Full_BIT, phydev->supported);
+>> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, phydev->supported);
+>> +
+>> +	/* Phy supports Speeds up to 2.5G with Autoneg though the phy PMA says otherwise */
+>> +	linkmode_copy(supported, phy_gbit_features);
+>> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseX_Full_BIT, supported);
+> 
+> I still think you shouldn't report 2500BaseX, as you mentionned
+> it's a BaseT PHY. This is independent of the modes that the PHY uses to
+> connect to the MAC. Although the PHY can talk to the MAC using
+> 2500BaseX on its MII interface, it looks like it can't use
+> 2500BaseX on its MDI (the LP side of the PHY). There's the same issue in
+> patch 2.
+> 
+I Agree with you. I did some experiments today without setting the 2500BaseX bit and i see
+the link still comes up with 2.5Gbps with autoneg on. 
 
-Rather than trying to get things functional for shadow MMUs (which
-includes nested TDP), scrap the quirk idea, at least for now.  In addition
-to the function bug, it's not clear that unconditionally doing a targeted
-zap for all non-default VM types is actually desirable.  E.g. it's entirely
-possible that SEV-ES and SNP VMs would exhibit worse performance than KVM's
-current "zap all" behavior, or that it's better to do a targeted zap only
-in specific situations, etc.
+I will rectify this as part of the next patch 
 
-This reverts commit aa8d1f48d353b0469bff357183ee9df137d15ef0.
+Thanks Maxime 
 
-Cc: Kai Huang <kai.huang@intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Yan Zhao <yan.y.zhao@intel.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- Documentation/virt/kvm/api.rst  |  8 --------
- arch/x86/include/asm/kvm_host.h |  3 +--
- arch/x86/include/uapi/asm/kvm.h |  1 -
- arch/x86/kvm/mmu/mmu.c          | 34 +--------------------------------
- 4 files changed, 2 insertions(+), 44 deletions(-)
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index e32471977d0a..a4b7dc4a9dda 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -8097,14 +8097,6 @@ KVM_X86_QUIRK_MWAIT_NEVER_UD_FAULTS By default, KVM emulates MONITOR/MWAIT (if
-                                     guest CPUID on writes to MISC_ENABLE if
-                                     KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT is
-                                     disabled.
--
--KVM_X86_QUIRK_SLOT_ZAP_ALL          By default, KVM invalidates all SPTEs in
--                                    fast way for memslot deletion when VM type
--                                    is KVM_X86_DEFAULT_VM.
--                                    When this quirk is disabled or when VM type
--                                    is other than KVM_X86_DEFAULT_VM, KVM zaps
--                                    only leaf SPTEs that are within the range of
--                                    the memslot being deleted.
- =================================== ============================================
- 
- 7.32 KVM_CAP_MAX_VCPU_ID
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 6d9f763a7bb9..4738f6f5a794 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -2358,8 +2358,7 @@ int memslot_rmap_alloc(struct kvm_memory_slot *slot, unsigned long npages);
- 	 KVM_X86_QUIRK_OUT_7E_INC_RIP |		\
- 	 KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT |	\
- 	 KVM_X86_QUIRK_FIX_HYPERCALL_INSN |	\
--	 KVM_X86_QUIRK_MWAIT_NEVER_UD_FAULTS |	\
--	 KVM_X86_QUIRK_SLOT_ZAP_ALL)
-+	 KVM_X86_QUIRK_MWAIT_NEVER_UD_FAULTS)
- 
- /*
-  * KVM previously used a u32 field in kvm_run to indicate the hypercall was
-diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-index a8debbf2f702..bf57a824f722 100644
---- a/arch/x86/include/uapi/asm/kvm.h
-+++ b/arch/x86/include/uapi/asm/kvm.h
-@@ -439,7 +439,6 @@ struct kvm_sync_regs {
- #define KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT	(1 << 4)
- #define KVM_X86_QUIRK_FIX_HYPERCALL_INSN	(1 << 5)
- #define KVM_X86_QUIRK_MWAIT_NEVER_UD_FAULTS	(1 << 6)
--#define KVM_X86_QUIRK_SLOT_ZAP_ALL		(1 << 7)
- 
- #define KVM_STATE_NESTED_FORMAT_VMX	0
- #define KVM_STATE_NESTED_FORMAT_SVM	1
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index e081f785fb23..0d94354bb2f8 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -7049,42 +7049,10 @@ void kvm_arch_flush_shadow_all(struct kvm *kvm)
- 	kvm_mmu_zap_all(kvm);
- }
- 
--/*
-- * Zapping leaf SPTEs with memslot range when a memslot is moved/deleted.
-- *
-- * Zapping non-leaf SPTEs, a.k.a. not-last SPTEs, isn't required, worst
-- * case scenario we'll have unused shadow pages lying around until they
-- * are recycled due to age or when the VM is destroyed.
-- */
--static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *slot)
--{
--	struct kvm_gfn_range range = {
--		.slot = slot,
--		.start = slot->base_gfn,
--		.end = slot->base_gfn + slot->npages,
--		.may_block = true,
--	};
--
--	write_lock(&kvm->mmu_lock);
--	if (kvm_unmap_gfn_range(kvm, &range))
--		kvm_flush_remote_tlbs_memslot(kvm, slot);
--
--	write_unlock(&kvm->mmu_lock);
--}
--
--static inline bool kvm_memslot_flush_zap_all(struct kvm *kvm)
--{
--	return kvm->arch.vm_type == KVM_X86_DEFAULT_VM &&
--	       kvm_check_has_quirk(kvm, KVM_X86_QUIRK_SLOT_ZAP_ALL);
--}
--
- void kvm_arch_flush_shadow_memslot(struct kvm *kvm,
- 				   struct kvm_memory_slot *slot)
- {
--	if (kvm_memslot_flush_zap_all(kvm))
--		kvm_mmu_zap_all_fast(kvm);
--	else
--		kvm_mmu_zap_memslot_leafs(kvm, slot);
-+	kvm_mmu_zap_all_fast(kvm);
- }
- 
- void kvm_mmu_invalidate_mmio_sptes(struct kvm *kvm, u64 gen)
--- 
-2.46.1.824.gd892dcdcdd-goog
-
+> Thanks,
+> 
+> Maxime
 
