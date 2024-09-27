@@ -1,360 +1,169 @@
-Return-Path: <linux-kernel+bounces-341417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5492987FD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:57:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BD7987FD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EDDE284F7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:57:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0943B21678
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D917F188CA3;
-	Fri, 27 Sep 2024 07:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197E31891B5;
+	Fri, 27 Sep 2024 07:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bcn5Idzk"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="pm+L6SuX"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37F318787B
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB83C16EBE6;
+	Fri, 27 Sep 2024 07:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727423827; cv=none; b=JA2m0b5zxjNIcj6EbUyQxWgTsKApOlnmaQqhSDfU2lYxFoxX4SwFStaPXZIUYkYIP4PUorNoX7jkAO7OVL95MWAn0fJEV3xtkm+vxO/8hRxMWeM0plJEK0dnmzAsvLUnri5v0eSXd7MBGTrMz+TSXUv3U9kchvwblyRSN84fCro=
+	t=1727423891; cv=none; b=Lrw4GJd4HGTsdFs9Crnpsdryan9ZfADN0v2h7ORlZI2VI7ZD2q2FGedUf96uyyILv48i9VrGyUeRuWdmx/F1GQsnT730lr9sErOVDCiFW8fZUBvygkp6TOJsY1PLkDCDFcTHioi/msSzWH/kVrPxKMzZgmyVOpiOR6PzaDPQZso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727423827; c=relaxed/simple;
-	bh=OZtUCfvDaSRTPyDPgz9cjRsWvyFdmjmqLZwQsHr4xfc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t09S2VIy+9jRr5z+a3jEObVzvLlGOWui4gWqryd2ifQCnUidgOGexdnnphaGFCgvGuorudJ+/Z9cYqCYHL/uUIZnljFp3I9lJBkQuSpY/7n1Goafn1B7aoXgLC4aDpJiduzr2i5L4Lx9lzQSuIVEnQXGdbZjFFyIq0lWceGHbK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bcn5Idzk; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a90deec0f8bso23552466b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:57:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727423823; x=1728028623; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=L+nFUwTG8TeeWwku7cS7rWiWP38oV+D+0z+Xf1wWA7E=;
-        b=bcn5Idzkl3Mg9HG3HkKgJyEoM7hz2VHny5n2BzGNrDWpA6IoiNuY1eYNrSOct9dFsx
-         x6uHTlkhe02WvNWRZGfSHfmOjeJhlBA1q+XekAe5yW2wWq/ucNDCdJBa819E8pG2D6P/
-         a8x+MhHZj4ljNYKAHBAh/pTOaxmoOSk02R5f3UoRQpwGhb1WvIY6VRQ3Xuf1NvlTd9Wf
-         f89uhGqJuOi9usXrTpGHgI9/TUzh9bXCbxE8Tb+XuDP6iDeEtQC64Dzff3euIcP1U7ex
-         lrDUGbCrjjg+eiwafLPD34TZ29lL+QBkOv8ZcSSS0Z5GE6AW/4UglsX79rAis3roN+4E
-         mcNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727423823; x=1728028623;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L+nFUwTG8TeeWwku7cS7rWiWP38oV+D+0z+Xf1wWA7E=;
-        b=e0/6ydHoxfGD83FtoX5IFBVXNWj4fX9bvGWlj3fbCUtd/8IcKuTrX4vrnp9TXb9Jos
-         7Hu7wBKgKymT6vk5cYH6HlbfpAaxFGznBIC7jBX4xKCEPyGrIChzGduyPBFPXOrNPTUZ
-         Ni/wXWSdC38mcw2RSWJl8I9E1glPt/7UTmE9Q8ExG9Vy6B8AlgkGQ8B4UYqDWDDmPuA4
-         3M9Ea9CtbPMIXBWiyczczd4AEf6i/q7zbNkKE4UtfvtuUckmIE23IQEM4EA8suJf8zmD
-         V0N0IZ7+voTQ2lKtLmPGYFhWkU75mcmk92l8T54BDR+Wwgmc6nXE/GJwDjDRZKuQMF2A
-         /Zrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUCzIGc+hPXTrMN1/e9MpUa4EUOReDaGL0vX9HeB48HydhtZkeCDQz4d8HJYjx44i/OtfB8030MDIsBZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLIHNtl9ORsAyArZax8rhYYAUNJmZRQf6GLJHxCns0amsHLfO9
-	KCy0IpBJVObj0ntLKZZaGfXKiaODo/V/Qbj4QGb9mjtpU2EVs9V1vJwwkxD5TByxb8U5TApstB1
-	l
-X-Google-Smtp-Source: AGHT+IFi7rOXtdUqAxhUetMwe8gtb6a/xV9ZXm9g63edqmUl5elGNWyp7G8/RmAbdH72cxyAjilTug==
-X-Received: by 2002:a17:907:1c8b:b0:a8d:2623:dd19 with SMTP id a640c23a62f3a-a93c4ade9bcmr88134366b.14.1727423823198;
-        Fri, 27 Sep 2024 00:57:03 -0700 (PDT)
-Received: from [192.168.0.18] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c294747asm96048666b.107.2024.09.27.00.57.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 00:57:02 -0700 (PDT)
-Message-ID: <e1523562-0cf9-44a9-9cbe-23ace46ea997@linaro.org>
-Date: Fri, 27 Sep 2024 09:57:00 +0200
+	s=arc-20240116; t=1727423891; c=relaxed/simple;
+	bh=K4Ha9SzluEelrcb7mPJ+hSpYuWIb/WY9wcGQ3BuJxPU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mZ5ErZuolZkgHIrozMLGN+9ouFC/SEohKNQUcuQav27yw6BMBYelzi8hv15mc4+C5Ul2w814YOzmE/XiQW2J0VR3zKvVe8iV/LsJ2RMknK43iCyGu8tOs/J2eA52qbMG09Jw0TNE3IkdFx1BO8dl8r/4rS0jchgXpjOcz3HuiwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=pm+L6SuX; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 3882a9787ca611ef8b96093e013ec31c-20240927
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=FSHvJiePihDHrvRm0P0iXE0axppBM5CqjqpGGZtkmaU=;
+	b=pm+L6SuXs8JD+H7o0asCxTFJPtH4P9Y8t1ICqDkmzKrf0tYRm36pa3rqRVnFUDHbTQUgPEYXfOoNC5dvgK7UModwFGXuHhm/HqX2nQlQgCQ44FRxL/E63G+g6mT2gCrGzX4v/lrJ99sj595JhPOjWVbSGXOkaNTEOXhctImRs7s=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:effb94ce-42ef-4fd9-b367-5cfcc011b8c5,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:00885818-b42d-49a6-94d2-a75fa0df01d2,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 3882a9787ca611ef8b96093e013ec31c-20240927
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1584982245; Fri, 27 Sep 2024 15:58:02 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 27 Sep 2024 15:58:00 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n1.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Fri, 27 Sep 2024 15:57:59 +0800
+Message-ID: <78381b10-eae6-1414-6913-994e1ed03410@mediatek.com>
+Date: Fri, 27 Sep 2024 15:57:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
- Systems remote processors
-To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
- Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org,
- sudeep.holla@arm.com, robin.murphy@arm.com
-References: <20240919093517.GA43740@e130802.arm.com>
- <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
- <20240919145741.GA7940@e130802.arm.com>
- <85a223e9-05a4-4034-87a5-57d3eb9409b7@kernel.org>
- <20240920141958.GA288724@e130802.arm.com>
- <7784248d-4372-4cf1-a01a-5b731b3f6b96@kernel.org>
- <20240920163851.GA385919@e130802.arm.com>
- <e37a0542-d405-4d15-84d2-4c7b1385d3ef@kernel.org>
- <20240923114945.GA133670@e130802.arm.com>
- <c263b843-50bc-4c2c-b15e-9b87dfb201ab@linaro.org>
- <20240923171948.GA348509@e130802.arm.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 2/3] dt-bindings: mfd: mediatek: mt6397: add compatible
+ for mt6359-codec
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240923171948.GA348509@e130802.arm.com>
-Content-Type: text/plain; charset=UTF-8
+To: Conor Dooley <conor@kernel.org>
+CC: Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, "Lee
+ Jones" <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Eason Yen
+	<eason.yen@mediatek.com>, Jiaxin Yu <jiaxin.yu@mediatek.com>, Shane Chien
+	<shane.chien@mediatek.com>, Hui Liu <hui.liu@mediatek.com>,
+	<linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-sound@vger.kernel.org>,
+	Alexandre Mergnat <amergnat@baylibre.com>, Bear Wang
+	<bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin
+	<macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>, "MediaTek
+ Chromebook Upstream" <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	Chen-Yu Tsai <wenst@chromium.org>
+References: <20240926092519.6556-1-macpaul.lin@mediatek.com>
+ <20240926092519.6556-2-macpaul.lin@mediatek.com>
+ <20240926-smokeless-clobber-0fb8a1cdc7ab@spud>
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+In-Reply-To: <20240926-smokeless-clobber-0fb8a1cdc7ab@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--15.744400-8.000000
+X-TMASE-MatchedRID: cgbqQT5W8hcOwH4pD14DsPHkpkyUphL9GNMTWh+TA9t+YesuCgkiXJsn
+	GP/L/vukQ2hUNgLaYpUvndTJnUi/SAAt/Fsc5wFGbc297PAGtWbXof+XRfBH287EPIkVcg+OD3J
+	fu36QI2GIi0Yt2qmJZR9K6LGpAwssZMLMXtQ7bzFsG7r4Qh7N3J6KYa03LCO2myiLZetSf8nJ4y
+	0wP1A6AKEwgORH8p/AjaPj0W1qn0Q7AFczfjr/7HPBXw4uHT3JyO9Fb+NyVxV9IeBCvU2xpOg2z
+	GJYtXDU5BRVekiXxRE=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--15.744400-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: AFFE03E053B385FE89437B5129CE9C73A9E0002E6ECFE675424FD8767641666F2000:8
 
-On 23/09/2024 19:19, Abdellatif El Khlifi wrote:
+On 9/27/24 00:04, Conor Dooley wrote:
+> On Thu, Sep 26, 2024 at 05:25:18PM +0800, Macpaul Lin wrote:
+>> This patch updates the audio-codec properties includes:
+>>   - compatible:
+>>    - Re-order the supported device items.
+>>    - Add 'mt6359-codec' to compatible since MT6359 PMIC has been included
+>>      in this DT Schema.
+> 
+>>    - Set 'additionalProperties: true' for 'mt6359-codec'.
+> 
+> Why?
 
->>>
->>> The Host Base System Control [3] is the big block containing various functionalities (MMIO registers).
->>> Among the functionalities, the two remote cores registers (aka External system 0 and 1).
->>> The remote cores have two registers each.
->>>
->>> 1/ In the v1 patchset, a valid point was made by the community:
->>>
->>>    Right now it seems somewhat tenuous to describe two consecutive
->>>    32-bit registers as separate "reg" entries, but *maybe* it's OK if that's
->>
->> ARM is not special, neither this hardware is. Therefore:
->> 1. Each register as reg: nope, for obvious reasons.
->> 2. One device for entire syscon: quite common, why do you think it is
->> somehow odd?
->> 3. If you quote other person, please provide the lore link, so I won't
->> spend useless 5 minutes to find who said that or if it was even said...
-> 
-> Please have a look at this lore link [1]. The idea is to add syscon
-> and regmap support which I did in the v2 patchset.
-> 
-> [1]: https://lore.kernel.org/all/ZfMVcQsmgQUXXcef@bogus/
+The mt6359-codec support these 3 properties:
+mediatek,mic-type0, mediatek,mic-type-1, mediatek-mic-type2.
+While mt6358-sound and mt6397-codec don't (at least, I didn't find
+these 3 properties in driver codes.
 
-There is nothing there about DT bindings. We do not talk here about
-drivers. MFD and regmap are Linux driver stuff, not bindings.
+Set 'additionalProperties: true' is also required to fix the following
+dtbs_check errors:
+pmic: audio-codec: 'mediatek,mic-type-0', 'mediatek,mic-type-1',
+       'mediatek,mic-type-2' do not match any of the regexes:
+       'pinctrl-[0-9]+'
 
-I said nothing about not using MFD, regmap or whatever driver stuff you
-want. We talk *only* about bindings. Syscon is mentioned there but I am
-sorry - that quite a stretch to call a block syscon just because you
-want regmap.
+>>
+>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+>> ---
+>>   Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml | 5 +++--
+>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+>> index 40cabaf60d0d..ffb5848a96d5 100644
+>> --- a/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+>> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+>> @@ -104,7 +104,7 @@ properties:
+>>   
+>>     audio-codec:
+>>       type: object
+>> -    additionalProperties: false
+>> +    additionalProperties: true
+>>       description:
+>>         Audio codec support with MT6397 and MT6358.
+>>   
+>> @@ -112,8 +112,9 @@ properties:
+>>         compatible:
+>>           oneOf:
+>>             - enum:
+>> -              - mediatek,mt6397-codec
+>>                 - mediatek,mt6358-sound
+>> +              - mediatek,mt6359-codec
+>> +              - mediatek,mt6397-codec
+>>             - items:
+>>                 - enum:
+>>                     - mediatek,mt6366-sound
+>> -- 
+>> 2.45.2
+>>
 
-> 
->>
->>>    all there ever is. However if it's actually going to end up needing several
->>>    more additional MMIO and/or memory regions for other functionality, then
->>>    describing each register and location individually is liable to get
->>>    unmanageable really fast, and a higher-level functional grouping (e.g. these
->>>    reset-related registers together as a single 8-byte region) would likely be
->>>    a better design.
->>>
->>>    The Exernal system registers are part of a bigger block with other functionality in place.
->>>    MFD/syscon might be better way to use these registers. You never know in
->>>    future you might want to use another set of 2-4 registers with a different
->>>    functionality in another driver.
->>>
->>>    I would see if it makes sense to put together a single binding for
->>>    this "Host Base System Control" register (not sure what exactly that means).
->>>    Use MFD/regmap you access parts of this block. The remoteproc driver can
->>>    then be semi-generic (meaning applicable to group of similar platforms)
->>>    based on the platform compatible and use this regmap to provide the
->>>    functionality needed.
->>
->> I don't understand how this lengthy semi-quote answers my concerns.
->> Please write concise points as arguments to my questions.
->>
->> For example, I don't care what your remote proc driver does and it
->> should not matter in the terms of this binding.
-> 
-> I just wanted to show why we are using syscon based on the arguments
-> of other reviewers.
-> 
->>
->>>
->>> 2/ There are many examples in the kernel that use syscon as a parent node of
->>>    child nodes for devices located at an offset from the syscon base address.
->>>    Please see these two examples [1][2]. I'm trying to follow a similar design if that
->>>    makes sense.
->>
->> Yeah, for separate devices. If you have two words without any resources,
->> I claim you might not have here any separate devices or "not separate
->> enough", because all this is somehow fluid. Remote core sounds like
->> separate device, but all your arguments about need of extid which cannot
->> be used in reg does not support this case.
->>
->> The example in the binding is also not complete - missing rest of
->> devices - which does not help.
-> 
-> Here I would like to explain the current suggestion and suggest an alternative solution.
-> 
-> 1/ For more clarity, here is a complete example of use of both remote cores
-> at the same time:
-> 
->     syscon@1a010000 {
->         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
->         reg = <0x1a010000 0x1000>;
-> 
->         #address-cells = <1>;
->         #size-cells = <1>;
-> 
->         remoteproc@310 {
->             compatible = "arm,sse710-extsys0";
->             reg = <0x310 8>;
->             firmware-name = "es0_flashfw.elf";
->             mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>;
->             mbox-names = "txes0", "rxes0";
->             memory-region = <&extsys0_vring0>, <&extsys0_vring1>;
->         };
-> 
->         remoteproc@318 {
->             compatible = "arm,sse710-extsys1";
->             reg = <0x318 8>;
->             firmware-name = "es1_flashfw.elf";
->             mboxes = <&mhu0_hes1 0 1>, <&mhu0_es1h 0 1>;
->             mbox-names = "txes0", "rxes0";
->             memory-region = <&extsys1_vring0>, <&extsys1_vring1>;
->         };
-> };
-> 
-> Here we have 2 cores, each one have 2 registers mapped respectively
-> at 0x1a010310 and 0x1a010318.
-
-All this looks fine, resources are indeed reasonable, except that I
-still do not understand why do you need to call them 0 and 1 (now via
-compatible).
-
-Your driver code shows this nicely - it is entirely redundant! The 'reg'
-- so the base - is already there! You just duplicate it with the
-extsys_id, instead of relying on the base. So think what is the point of
-'reg' property if you do not use it?
-
-> 
-> Definetly these cores have seperate HW resources associated with them
-> which are the MHUs (mailboxes HW). There are 2 pairs of MHUs associated
-> with each core. These mailbox peripherals are obviously seperate.
-> Furthermore, the vring buffers used for communication are seperate.
-> 
-> Moreover, the remote cores are independent. They are not SMP cores of one processor.
-> 
-> They can have different default firmware to use. In this example es0_flashfw.elf
-> and es1_flashfw.elf
-> 
-> The current HW implementation (Corstone-1000) provides one remote core only.
-> However, the second core control registers are at 0x1a010318 do exist.
-> 
-> Support for a second core is taken into consideration in this work to help
-> end users who want to add a second core to their HW.
-> 
-> 2/ Here I'm suggesting an alternative solution by using one remoteproc node for both cores as
-> follows:
-> 
->     syscon@1a010000 {
->         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
->         reg = <0x1a010000 0x1000>;
-> 
->         remoteproc {
->             compatible = "arm,sse710-extsys";
->             firmware-name = "es0_flashfw.elf";
->             mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>, <&mhu0_hes1 0 1>, <&mhu0_es1h 0 1>;
->             mbox-names = "txes0", "rxes0", "txes1", "rxes1";
->             memory-region = <&extsys0_vring0>, <&extsys0_vring1>, <&extsys1_vring0>, <&extsys1_vring1>;
->         };
-> };
-> 
-> Does this meet your expectations please ?
-> 
->>
->>>
->>> 3/ Since there are two registers for each remote core. I'm suggesting to set the
->>>    size in the reg property to 8. 
->>
->> How is this related?
->>
->>> The driver will read the match data to get the right
->>>    offset to be used with regmap APIs.
->>
->> Sorry, no talks about driver. Don't care, at least in this context.
->>
->> You can completely omit address space from children in DT and everything
->> will work fine and look fine from bindings point of view.
->>
->>>
->>> Suggested nodes:
->>>
->>>
->>>     syscon@1a010000 {
->>>         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
->>>         reg = <0x1a010000 0x1000>;
->>>
->>>         #address-cells = <1>;
->>>         #size-cells = <1>;
->>>
->>>         remoteproc@310 {
->>>             compatible = "arm,sse710-extsys0";
->>>             reg = <0x310 8>;
->>>             firmware-name = "es_flashfw.elf";
->>>             mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>;
->>>             mbox-names = "txes0", "rxes0";
->>>             memory-region = <&extsys0_vring0>, <&extsys0_vring1>;
->>>         };
->>>
->>>         remoteproc@318 {
->>>             compatible = "arm,sse710-extsys1";
->>>             reg = <0x318 8>;
->>>             firmware-name = "es_flashfw.elf";
->>
->> Same firmware? Always or only depends?
-> 
-> The firmware of the second core depends on the end user choice.
-> Currently the second core is not implemented in the HW.
-> Users who want to tweak Corstone-1000 HW can add
-> a second core.
-
-
-Two cores make more sense in such case.
-
-Best regards,
-Krzysztof
-
+Thanks
+Macpaul Lin
 
