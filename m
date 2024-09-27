@@ -1,153 +1,112 @@
-Return-Path: <linux-kernel+bounces-342002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B6298896F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:01:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E9E988948
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89F9FB22545
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:01:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3B21F21C85
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42D3166F23;
-	Fri, 27 Sep 2024 17:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D931C173B;
+	Fri, 27 Sep 2024 16:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hb7x4jv2"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IUEsB+IA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0QpyIETp"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3363218B
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 17:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510DA139587;
+	Fri, 27 Sep 2024 16:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727456496; cv=none; b=rZbq1ddchD57jAa8LpBf39so6JYVWqhS4Bhi8dKKj7Qqx+vglRqc9u1XX0yrHUig2oBHco5WuRdmmnHR63NPczHy/R4qtyea9TkVoDv51/2Bje30gYLM3rPemlF/8cZUJrKN6+j/IrJBmSa7/mCJ+8S0qp/E16ScVGA1uLBGsBw=
+	t=1727455565; cv=none; b=LaBX/IMZlIj5Ha0UBVsHM+K5qbcuIXgGpZJC+0GJ8SVM2D+120hwkMDGZ+9ve5hc3ULvnXY4gGTlOU6TV3b23VKSpLkui0ndM6l1+u2QJRXS1IKc+wGAg2tVs5+m5XdZbgQgiw//C4Yeig4zOIk4t5TAxbKHnUNjSk6Bcz9hMxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727456496; c=relaxed/simple;
-	bh=WLPW3vYOhVb8JN5ILaO/6AVIelRqy+oC6hnkCvD81tU=;
-	h=From:To:Subject:In-Reply-To:Date:Message-ID:References; b=hTBocIj+zixOq/tbgue9S84fBPMdU2rrdunBj+xFqQsqRnq2kweg/9uo4V3xnQHGydyXmMX4fPuZ7+JoP/tii5u3Po8Eav6RO+G1TBekVb++Zr+avJGXvV+6VYGjD8peTrcuNRx7j9Rag0l8/bxyuuAlD+yz+RYk0edzv0/wurQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hb7x4jv2; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7198de684a7so1727110b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 10:01:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727456493; x=1728061293; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0e/LXRDatzR1ko5dqutMPc7tTkgrpupuki1OBNWU17U=;
-        b=Hb7x4jv2LG0ZmjyizljSVGdDG8PN0CFgTEl5ffsg2l5I/Mcy1x6mazmrOmfvAJOiyf
-         1SpmIfgJELCKZCSq1Ue0PX57kL1DSxadQkCxpGaw0qhqkfnyMogeWIaK4xnd6qkvLzKw
-         CREk82aVD1kczJnrWBd4r0DywGXTjCfHZLhgOZ+9sUskDW7/wMdcwznI1ypP27Vg7yvm
-         hLG/Ig+xdVR5Kd9d6Le7YGkqhHOXhkjN8Km8G+jMSsRJSAuvOsklSi+oLQsgH7jLMWgD
-         d82FQwBkTA5Xd8TqsXvXo/QF93rIpRBT6dLEW7x/ji588aIaZ/BsB9vQR5yg3wgPHCaA
-         /XUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727456493; x=1728061293;
-        h=references:message-id:date:in-reply-to:subject:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0e/LXRDatzR1ko5dqutMPc7tTkgrpupuki1OBNWU17U=;
-        b=THkuhWpupi0pT60YJkEimX+uHY2rFHyI/639/FjEKACIB2CvOdBwyIBukkJ4hzCdVa
-         wZFZXXYl+/kt7sXB2ZC3bLKb/HB7+fJu/rnt5T/NhWaCBkf8e/5jwvTEiIXhf1KFcKGJ
-         XLVZTGAVBnZYcBH7ar+pJpfnqMSQW35SFEegplTntquJc4XD8MlRKe0pyDIN2BHc5sX8
-         ptbsASChMWVZ+5XcbuPJcA12sUASoz6cWGJPoAJdJAxK3UiAIp8JgA5TUIMHqxRZGfUR
-         AAu1lQx+PoYbk++N3KJezrYg/aRidhHLyvC5pupb+WMPy64BGlqFbAgP+z/5V3U18QyD
-         HTVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZwK0dk81qSW/t+pFXUsbR+/D9wKk5JZSVy+IjnVAdKSQMw1qDVQKKoeDEu3Gj+tjL2S9fxuLcCyhAgKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWxIktmn86PPwUJt/QAolpYKi4bfOEAExevURt6jDNBvFSg110
-	btz1WzpTJ25jDgOpQxIsbejOCgQP7WNy6NorQLJe+kYLKK0FAgCKF21y2w==
-X-Google-Smtp-Source: AGHT+IG8JPYkmIGygGx7DzIdtslWIAQ+eYr4XQKWx2dNuwfUnD/ENoX2brDodsF7v6n1OqO5YT016A==
-X-Received: by 2002:a05:6a00:2d11:b0:717:839c:6822 with SMTP id d2e1a72fcca58-71b2604d3dfmr6004694b3a.17.1727456493238;
-        Fri, 27 Sep 2024 10:01:33 -0700 (PDT)
-Received: from dw-tp ([171.76.86.51])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b2652bb5esm1878603b3a.175.2024.09.27.10.01.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 10:01:32 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Costa Shulyupin <costa.shul@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Ming Lei <ming.lei@redhat.com>, Costa Shulyupin <costa.shul@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] powerpc/xive: Use cpumask_intersects()
-In-Reply-To: <20240926092623.399577-2-costa.shul@redhat.com>
-Date: Fri, 27 Sep 2024 22:14:54 +0530
-Message-ID: <87ed55avw9.fsf@gmail.com>
-References: <20240926092623.399577-2-costa.shul@redhat.com>
+	s=arc-20240116; t=1727455565; c=relaxed/simple;
+	bh=Dq39zctb0+M+IyvzrX8hPT9pWJireV6GwwDwnMBinqk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o2sF6YUrusWVCIVTry2Xpi1aty9MzvFCjrMgWdtqHWAkFpwhnd7CvEtvrM4zGv+aHSXxxclhEkYBCIHt2CUnSsxrN2eaMcSREgTb4zT7vuYylGC1EOtxL6I8+Y8vsNeH94hwmSKBnhpcS2CMtABXnr1mrUF09gBENPXlv7CtiHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IUEsB+IA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0QpyIETp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727455558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=duuwl2G3x5FNBhikPhn175qnffZs/xH8VAphAGWC7mw=;
+	b=IUEsB+IA9enHtwMdL/vLDJ0YFw+n9xoDyBRk6/96HRC4rToE7tKdmZ89Zll61tVuiMjydo
+	bK1G2L3p5fXzjkl3i+57cg12GOwPtR04r3LIj+WwAzewGHDg2fPp+mIIYmqVPEbj1IAuQM
+	ZTODKk9Lmg+Xgf6CDNPSo6kHlFTqwjcncZ94n+4CFHuNkm0RNGDe4NoZUN6CpwgZqxmEqR
+	/d7+LD0qHW8UZKmqN2GgrwlvOyMghwMXKpHL3DFK0Bej3+HMwbP0RphXLc7RyzZal73yvG
+	JZO95wlGEkz4iDYD/LrKCaWcOX+C70nNiY80ZdjXVLm91pUaZ3gqyPXVtX4AuA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727455558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=duuwl2G3x5FNBhikPhn175qnffZs/xH8VAphAGWC7mw=;
+	b=0QpyIETpEcfanTxgcw7vJOJ3XHz1/iIZntGUDzbL1dAv1JsdR7VLmxxZ0RSzFwdIMpryNT
+	apZGu9u4dOX98eAA==
+Date: Fri, 27 Sep 2024 18:45:38 +0200
+Subject: [PATCH] tools/nolibc: s390: include std.h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240927-nolibc-s390-std-h-v1-1-30442339a6b9@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIADHh9mYC/x3MQQqAIBBA0avErBswDcSuEi3SxhoIDSciiO6et
+ HyL/x8QKkwCQ/NAoYuFc6ro2gbCNqeVkJdq0Er3ymmLKe/sA4pxCuVccMPgfWeiVXG2Bmp3FIp
+ 8/89xet8PcaK7D2MAAAA=
+X-Change-ID: 20240927-nolibc-s390-std-h-cbb13f70fa73
+To: Willy Tarreau <w@1wt.eu>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727455556; l=1026;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=Dq39zctb0+M+IyvzrX8hPT9pWJireV6GwwDwnMBinqk=;
+ b=RHItbtGGV9sIR5Q1cpcfUcivvYj0Q1EtXVlat1lkjCcJMvcz6dOUQBzxZcV7s/Vb04V2F4XOf
+ 1gSclD3z7NcDdPDbriSORa6H5WfvFhdVQWjubRJk76uK1bq1omzOuyD
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Costa Shulyupin <costa.shul@redhat.com> writes:
+arch-s390.h uses types from std.h, but does not include it.
+Depending on the inclusion order the compilation can fail.
+Include std.h explicitly to avoid these errors.
 
-> Replace `cpumask_any_and(a, b) >= nr_cpu_ids`
-> with the more readable `!cpumask_intersects(a, b)`.
->
-> Comparison between cpumask_any_and() and cpumask_intersects()
->
-> The cpumask_any_and() function expands using FIND_FIRST_BIT(),
-> resulting in a loop that iterates through each bit of the bitmask:
->
-> for (idx = 0; idx * BITS_PER_LONG < sz; idx++) {
-> 	val = (FETCH);
-> 	if (val) {
-> 		sz = min(idx * BITS_PER_LONG + __ffs(MUNGE(val)), sz);
-> 		break;
-> 	}
-> }
->
-> The cpumask_intersects() function expands using __bitmap_intersects(),
-> resulting in that the first loop iterates through each long word of the bitmask,
-> and the second through each bit within a long word:
->
-> unsigned int k, lim = bits/BITS_PER_LONG;
-> for (k = 0; k < lim; ++k)
-> 	if (bitmap1[k] & bitmap2[k])
-> 		return true;
->
-> if (bits % BITS_PER_LONG)
-> 	if ((bitmap1[k] & bitmap2[k]) & BITMAP_LAST_WORD_MASK(bits))
-> 		return true;
->
-> Conclusion: cpumask_intersects() is at least as efficient as cpumask_any_and(),
-> if not more so, as it typically performs fewer loops and comparisons.
->
+Fixes: 404fa87c0eaf ("tools/nolibc: s390: provide custom implementation for sys_fork")
+Cc: stable@vger.kernel.org
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+ tools/include/nolibc/arch-s390.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-I agree with the analysis in above. cpumask_any_and() has to get the
-first set bit from the two cpumask for which it also does some
-additional calculations like __ffs().
+diff --git a/tools/include/nolibc/arch-s390.h b/tools/include/nolibc/arch-s390.h
+index 2ec13d8b9a2db80efa8d6cbbbd01bfa3d0059de2..f9ab83a219b8a2d5e53b0b303d8bf0bf78280d5f 100644
+--- a/tools/include/nolibc/arch-s390.h
++++ b/tools/include/nolibc/arch-s390.h
+@@ -10,6 +10,7 @@
+ 
+ #include "compiler.h"
+ #include "crt.h"
++#include "std.h"
+ 
+ /* Syscalls for s390:
+  *   - registers are 64-bit
 
-whereas cpumask_intersects() has to only check if any of the bits is set
-hence does fewer operations.
+---
+base-commit: e477dba5442c0af7acb9e8bbbbde1108a37ed39c
+change-id: 20240927-nolibc-s390-std-h-cbb13f70fa73
 
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-Looks good to me. Please feel free to add - 
-
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.harjani@gmail.com>
-
-
-> Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
-> Reviewed-by: Ming Lei <ming.lei@redhat.com>
->
-> ---
->
-> v2: add comparison between cpumask_any_and() and cpumask_intersects()
->
-> ---
->  arch/powerpc/sysdev/xive/common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/powerpc/sysdev/xive/common.c b/arch/powerpc/sysdev/xive/common.c
-> index fa01818c1972c..a6c388bdf5d08 100644
-> --- a/arch/powerpc/sysdev/xive/common.c
-> +++ b/arch/powerpc/sysdev/xive/common.c
-> @@ -726,7 +726,7 @@ static int xive_irq_set_affinity(struct irq_data *d,
->  	pr_debug("%s: irq %d/0x%x\n", __func__, d->irq, hw_irq);
->  
->  	/* Is this valid ? */
-> -	if (cpumask_any_and(cpumask, cpu_online_mask) >= nr_cpu_ids)
-> +	if (!cpumask_intersects(cpumask, cpu_online_mask))
->  		return -EINVAL;
->  
->  	/*
-> -- 
-> 2.45.0
 
