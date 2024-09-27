@@ -1,45 +1,96 @@
-Return-Path: <linux-kernel+bounces-341238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB91987D16
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 04:36:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D8E8987D1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 04:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEB0D1C2263A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:36:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4EEA285F22
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDF616C451;
-	Fri, 27 Sep 2024 02:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E20D16E87D;
+	Fri, 27 Sep 2024 02:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ecW4kGMt"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="RwZBZcml";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H2yxUoxE"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E86158203
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A448158203;
+	Fri, 27 Sep 2024 02:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727404612; cv=none; b=ra+A1Kg76W/RzlV/Ky2gsj7RaNxit6Xd8+wBt692Pz9gjqvbs3duLQZBJEr3tt3itRey0JXSJXQMYWPGMWqw8vMk9QQnuMADJTh8BrqYyevzqDiFLnTU3UNqSxG6v42OKqkRZwIbtZssIUoGytAWhukxS147II2qLP/CEpiF2y0=
+	t=1727404772; cv=none; b=GmQx+2V6L7jgtwcGXnO0srTd1XbU9Qt7TQh8qom5lqXTjJf6+5cWQmTDWlbz7eZFNXCYniBOHg7Jiir/xkpfeUoGjVSxzERWfTfO2chSWU1tAkhaMhTKucswEA8sZQ+zsuX0znLAU4BNaV6Mb5tw8mpJsLYrc8DVo8+j8vNn1yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727404612; c=relaxed/simple;
-	bh=o7Dgn1kutRKWMQL6mmv0xxwdYBsCLP4Ydnd1NbMwJWI=;
+	s=arc-20240116; t=1727404772; c=relaxed/simple;
+	bh=6IiA3CI+ncRhB4nevilH3Amfa8WE2li/aCE3SCActVY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gAXJuznSIPytnNkwkejqqWnGDYi6YYuk6LiCejYbSE/+O+Z7wdBMTHV9J7F/XpOZUllGAiuowDFRbn3axBXoxRFI9VbtpL93vCr7k4wbv+7boyg/CCNQVDO9TJAp+uQNV6XJKRjHHP6LNoSG/BRQgzDbexPrhfaS227/Ahi/jLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ecW4kGMt; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1727404602; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=3DirFBBLsGZoR5mffHo1eYqOeuH3dk7sCjq7ZC7LMd8=;
-	b=ecW4kGMtPu5068ABu5MuJEittEB8cp3VW1QKObG/ZR8X4+dNfm9GG3+VkjAFHwy5jo48Z3WIIZPFmSpVeBVqUTLhsGyU/cczYAsg9oz6nV5qdVQo/7W8mvPUIuACqfUnXVVjBFGNWgm2eXpz6wNSQ6m4eh1QgiIXzlXRAfMGhOE=
-Received: from 30.74.144.105(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WFooSAm_1727404600)
-          by smtp.aliyun-inc.com;
-          Fri, 27 Sep 2024 10:36:41 +0800
-Message-ID: <300de9ce-7a3d-4495-a232-c7cb419289a5@linux.alibaba.com>
-Date: Fri, 27 Sep 2024 10:36:39 +0800
+	 In-Reply-To:Content-Type; b=c9st+SGAyzqJNIalCfdtdTt19pvsM2VpsT4Ri6f0WWyThqXcJXCp0K66ZBqk/oheWT77ijcVz2tGvTLSzQCzXhHlRo5+ToA0OPz+yRxRSj3cE9CkSO4sTp0RpyfyeeoLvAk95BF8S+09+kq+PMiSEREk/7dc4ey2TNyET6sFfc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=RwZBZcml; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H2yxUoxE; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id 25CC0138026A;
+	Thu, 26 Sep 2024 22:39:29 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Thu, 26 Sep 2024 22:39:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1727404769;
+	 x=1727491169; bh=ooAna1dt8fOcrt2wq9Upl/xQhMR9tlHFSBv1SmAVsp0=; b=
+	RwZBZcmlvKG2MryC9GEGC24TRvHgA5Z2YuEM3a2V0ezLlKJBeOP4Dffi2388Q/vR
+	b9jJbXTBreXuSTpnxSWcLbJCPegH4WYBIEaAb4QSUH3OvYqZf6iR0XgwkfAyiMa5
+	rcwDu94taPzlQVL5zl3yqx5ML7emD+S9paSn8TQtKRf+tp10Jv8hDDM/LXLw8HGV
+	WJE4DQo51HNtPRfc1/5Cwk8qWQTGC2TfYmnY5mKXpwib+86uMx5IKn+WhTqAzj9e
+	tJVn0kHZsaOndjID8Yd6eseqTHzmsToP4pmhdRuLLsVUj6GhmTlk1u3+pySqTerW
+	8JMe63YSy2HoQkLeZiNhig==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727404769; x=
+	1727491169; bh=ooAna1dt8fOcrt2wq9Upl/xQhMR9tlHFSBv1SmAVsp0=; b=H
+	2yxUoxEF9B9TWaPFvVJrhN9gB4fxuSVcA5MrqXWAtOaxHGwVh9ywvrQOtB5vvPJL
+	xke9Cw4MASweIs36Tb9K0P8cEa85Xo2u4P9dG+aM47V21x5La4IdOEBDc9rDEwO4
+	cAWsHanjWxdwZp9RtRb6t4CqniQMHx/YOMgpjMidGa3GEnJ3NWYdXOOel8ykWhhp
+	Z/WcX4YEdtU5NpKAtbUtC/1DByRClPRpDJrHRkqRuqkIiDA+m2z+NVx9Gk1adXmD
+	A87b4ckFr4CscG+Wp4beahDQsqPN6aVzmmbz2nPsjMgoQKZDbUY8Z/TMa6IDcm6p
+	lsxWUSBb/50wCHA5G3rEA==
+X-ME-Sender: <xms:4Br2Zgi8kzSxrRb_h6jQC5uvl9qHZ7Aba2nONSxkl1pCmOZSAldqEQ>
+    <xme:4Br2ZpBbLK06YREupX3ODwlsCim2oJ41eqXiCKfFGanJXeliXIqqt_oVD5TPEhTFA
+    1uwrSHgL_h5P4NFhpc>
+X-ME-Received: <xmr:4Br2ZoG0RtYXRkbu7cUBa9lNcQDiwmofrl8bQFdPixlbvXPMtaNtSq5WrkAt1uqaPjKaaCplC-41meDv7_PAogQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtkedgiedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    necuhfhrohhmpefgrhhitgcuufgrnhguvggvnhcuoehsrghnuggvvghnsehsrghnuggvvg
+    hnrdhnvghtqeenucggtffrrghtthgvrhhnpefgueevteekledtfeegleehudetleettdev
+    heduheeifeeuvdekveduudejudetgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehsrghnuggvvghnsehsrghnuggvvghnrdhnvghtpdhnsggp
+    rhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhisggroh
+    hkuhhnudeshhhurgifvghirdgtohhmpdhrtghpthhtoheprghlvghkshgrnhgurhdrmhhi
+    khhhrghlihhtshihnhestggrnhhonhhitggrlhdrtghomhdprhgtphhtthhopehthihtsh
+    hosehmihhtrdgvughupdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheprgguihhlghgvrhdrkhgvrhhnvghlseguihhlghgvrhdrtg
+    grpdhrtghpthhtohepshhtghhrrggsvghrsehsthhgrhgrsggvrhdrohhrghdprhgtphht
+    thhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
+    qdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:4Br2ZhQtFkxJDhG9Hrv5SIF0nmOv0Nwf97ng5uK6CiGU8CxnT9zx2A>
+    <xmx:4Br2ZtztpHSbOHBXok6oW3FQRVwCyfKIadK3H--R5UjXMXanR14fSQ>
+    <xmx:4Br2Zv6Ko2ecOZI-ZbL5n7lQFylI8TE0_rfgzhGodmZsYZqnVPUTNQ>
+    <xmx:4Br2ZqzzR-h7U7MoXXD5BqgX38HhGMUU1HTXI-LKbXfof3_PQzkF-w>
+    <xmx:4Rr2ZtjmSxyVGRDCJaMv2rIF_WFKw7AiDyZmXULJpKpzk7NP2eRaeXkW>
+Feedback-ID: i2b59495a:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 26 Sep 2024 22:39:27 -0400 (EDT)
+Message-ID: <0596a1ae-f47c-4b6f-8849-73e7cfe7ff39@sandeen.net>
+Date: Thu, 26 Sep 2024 21:39:26 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,55 +98,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/2] Support large folios for tmpfs
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
- wangkefeng.wang@huawei.com, 21cnbao@gmail.com, ryan.roberts@arm.com,
- ioworker0@gmail.com, da.gomez@samsung.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1727338549.git.baolin.wang@linux.alibaba.com>
- <ZvVRiJYfaXD645Nh@casper.infradead.org>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <ZvVRiJYfaXD645Nh@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/1] ext4: fix crash on BUG_ON in ext4_alloc_group_tables
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+ tytso@mit.edu, stable@vger.kernel.org,
+ Andreas Dilger <adilger.kernel@dilger.ca>,
+ =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@stgraber.org>,
+ Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Wesley Hershberger <wesley.hershberger@canonical.com>,
+ Yang Erkun <yangerkun@huawei.com>, Jan Kara <jack@suse.cz>
+References: <20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com>
+ <20240925143325.518508-2-aleksandr.mikhalitsyn@canonical.com>
+ <20240925155706.zad2euxxuq7h6uja@quack3>
+ <142a28f9-5954-47f6-9c0c-26f7c142dbc1@huawei.com>
+ <ac29f2ba-7f77-4413-82b9-45f377f6c971@sandeen.net>
+ <7521d6a5-eb58-4418-8c2a-a9950d8faf9c@sandeen.net>
+ <11e3133e-6069-477f-9c4a-3698bd6a18ec@huawei.com>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@sandeen.net>
+In-Reply-To: <11e3133e-6069-477f-9c4a-3698bd6a18ec@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-
-On 2024/9/26 20:20, Matthew Wilcox wrote:
-> On Thu, Sep 26, 2024 at 04:27:25PM +0800, Baolin Wang wrote:
->> This RFC patch series attempts to support large folios for tmpfs. The first
->> patch is based on Daniel's previous patches in [1], mainly using the length
->> in the write and fallocate paths to get a highest order hint for large
->> order allocation. The last patch adds mTHP filter control for tmpfs if mTHP
->> is set for the following reasons:
+On 9/26/24 8:51 PM, Baokun Li wrote:
+> On 2024/9/27 0:29, Eric Sandeen wrote:
+>> On 9/26/24 11:04 AM, Eric Sandeen wrote:
 >>
->> 1. Maintain backward compatibility for the control interface. Tmpfs already
->> has a global 'huge=' mount option and '/sys/kernel/mm/transparent_hugepage/shmem_enabled'
->> interface to control large order allocations. mTHP extends this capability to a
->> per-size basis while maintaining good interface compatibility.
-> 
-> ... it's confusing as hell to anyone who tries to understand it and
-> you've made it more complicated.  Well done.
-> 
->> 2. For the large order allocation of writable mmap() faults in tmpfs, we need
->> something like the mTHP interfaces to control large orders, as well as ensuring
->> consistent interfaces with shmem.
-> 
-> tmpfs and shmem do NOT need to be consistent!  I don't know why anyone
-> thinks this is a goal.  tmpfs should be consistent with OTHER FILE
-> SYSTEMS.  shmem should do the right thing for the shared anon use case.
-> 
->> 3. Ryan pointed out that large order allocations based on write length could
->> lead to memory fragmentation issue. Just quoting Ryan's comment [2]:
->> "And it's possible (likely even, in my opinion) that allocating lots of different
->> folio sizes will exacerbate memory fragmentation, leading to more order-0
->> fallbacks, which would hurt the overall system performance in the long run, vs
->> restricting to a couple of folio sizes."
-> 
-> I disagree with this.  It's a buddy allocator; it's resistant to this
-> kind of fragmentation.
+>>  
+>>> Can you explain what the 2 cases under
+>>>
+>>> /* Avoid allocating large 'groups' array if not needed */
+>>>
+>>> are doing? I *think* the first 'if' is trying not to over-allocate for the last
+>>> batch of block groups that get added during a resize. What is the "else if" case
+>>> doing?
+>> (or maybe I had that backwards)
+>>
+>> Incidentally, the offending commit that this fixes (665d3e0af4d35ac) got turned
+>> into CVE-2023-52622, so it's quite likely that distros have backported the broken
+>> commit as part of the CVE game.
+> The commit to fix CVE-2023-52622 is commit 5d1935ac02ca5a
+> ("ext4: avoid online resizing failures due to oversized flex bg").
 
-Fine. Thanks for sharing your opinion. So far, I can drop patch 2 to 
-stop adding mTHP interfaces for tmpfs.
+I'm sorry - you're right. 665d3e0af4d35ac was part of the original
+series that included 5d1935ac02ca5a, but it was not the fix.
+
+> This commit does not address the off by one issue above.
+
+Agreed.
+
+>>
+>> So the followup fix looks a bit urgent to me.
+>>
+>> -Eric
+> Okay, I'll send out the fix patch today.
+
+thanks :)
+
+-Eric
+
+> 
+> Regards,
+> Baokun
+> .
+> 
+
 
