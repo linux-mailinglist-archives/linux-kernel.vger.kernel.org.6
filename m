@@ -1,198 +1,269 @@
-Return-Path: <linux-kernel+bounces-341924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60769988871
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:40:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0E4D988872
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C1D4282BFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:40:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28D3B1F210B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D601C1739;
-	Fri, 27 Sep 2024 15:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AE71C1739;
+	Fri, 27 Sep 2024 15:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NR02XBPt"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2049.outbound.protection.outlook.com [40.107.21.49])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cajIMzwC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD60018A959;
-	Fri, 27 Sep 2024 15:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727451646; cv=fail; b=BWXxmM8JUuo+DCDeVJmXfYjf/hJbbUOwWVO1BtTxSh06P6GerPBwZziQHeZ8fyxFtcp4F9VHuWjuBKIvzy/TRggwbZ9GBYRDhTONR9g//TtK6MbcI4M/ddiA8nQvecpyU/lNa193HbLTawJCSjGhqo7AJBymu4+tEjdz2NA+mVU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727451646; c=relaxed/simple;
-	bh=46X1s1OxvBBtn3/ZTbw+w0ngrcVLZ4mlCejGC0cAUmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uFn4+Zs85yKfO7SNKScdGwSCjzHTCoprGI0RJo72ScAwPYuGD2HmlsFz+g1wG5u4i2+TXe4qjnmhpvxWGR1Xa75PPk9ah/TmdiLtcTPHqOPIKB99LVuqMujsdTU2zsc7XP8BNkGFdCDatkt7sgBqp13nTWMCM9gO1m6DMXCgVz0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NR02XBPt; arc=fail smtp.client-ip=40.107.21.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b2HHJx+wTtQPS/5AAmQkIP6cS/N7ARlfICu9XPuAXzL4oKENido3gRWX/crS7cg3C3tAz5Vb+Dj693xRJPGUNxAj7ab3PRN72OkNibaBhuX80/5tC0+qH3xHtlGXulGcExvWa/88DEwSqvGiEj6Eq+f9vdKPl7oRPcG4wTRCAFh8Q6xPp9cVP2dkT6Yp5TlLmJg8Kr3uAOpXmj6O7dtiKxuRMx5gZYFwmNhPEGNwI0r72rO+tUowi6NEMLJteVnJDP+8Goqb2y+NW/Noi175frkck6btGK5NkoEqqbZPGKb7O8U/xVIcxzBZw+wajcJnr/FLp2tGq4N0UWX2gSW99w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u7yCjJr1kZa9+dHGeTeEtGX+hHVy02PBwfYvoCfDPws=;
- b=MPwHACaUuCDfvz7gMrqjcHzscjrfluWs4aCRJLp2J7quY2Pyi8vDlU3Srm5b5b2u+Aw3ykzPuPT6Mt48rwTQ+0hy+Wbu2XFCpWPTudHwQL0ysQQbZySlKlmDLFrQVqSrvKVocMdpXs6D5U09TYYBtOIqeE4M4fA7WB+BJoNr7RAvAQ+60Hd/ugOTIwU3Aq3z5fu6d0mY3i9TDSRXlui1Cs40Q5BXLdjX/LtbKczzwmd1e0zu6pkI3uUvTkQmEVKT6avhlDixj117buTFbd1dt+JZQLGTSBHYe7CSYNq9KF96nYkjI+DnJlGUaGlCHJGpq468TXyLLSJSQ913Qjx7oA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u7yCjJr1kZa9+dHGeTeEtGX+hHVy02PBwfYvoCfDPws=;
- b=NR02XBPtqhLJkkMUI5Z0a3DkgRgRo05h7qBSoSykIsAmBlioVotvv13nwPSSfGaMg1Bxq8khNFTQltW1xR+q1ihMNFd9ZxfUfyOfFLf0znOrkAS86//PsV1lsjy/lMEpwmIgk1N4ZLr87JGMuA9pjd+DHZPYGQiq6Sh4eH1jRMLuoP+J/wqEUtYIuE9qCjXJ0kunEL2auWP54TQt7391c0d2cIJMNZ7UgEdMs7TTy8CA0ZBF9lfSWBE1DeixEwkA5ts+okgajBNBNig3BFTc1IK+O/574B0nwQaMvR9ziN+TeM8D1s2kWmTvBmYNc1zrAJaojaxEcoDxLUDGNNZzyA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM7PR04MB7095.eurprd04.prod.outlook.com (2603:10a6:20b:11c::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.22; Fri, 27 Sep
- 2024 15:40:41 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7982.022; Fri, 27 Sep 2024
- 15:40:41 +0000
-Date: Fri, 27 Sep 2024 11:40:32 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-Cc: linux-spi@vger.kernel.org, olteanv@gmail.com, broonie@kernel.org,
-	Han Xu <han.xu@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Haibo Chen <haibo.chen@nxp.com>,
-	Yogesh Gaur <yogeshgaur.83@gmail.com>, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/4] spi: spi-fsl-qspi: Fix casting warnings
-Message-ID: <ZvbR8OaXeg4SQc1i@lizhi-Precision-Tower-5810>
-References: <20240927132944.19285-1-hardevsinh.palaniya@siliconsignals.io>
- <20240927132944.19285-2-hardevsinh.palaniya@siliconsignals.io>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927132944.19285-2-hardevsinh.palaniya@siliconsignals.io>
-X-ClientProxiedBy: BYAPR06CA0017.namprd06.prod.outlook.com
- (2603:10b6:a03:d4::30) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583EF1E4AE
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 15:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727451810; cv=none; b=CPWvHvCnsX+uiuuekcv953DRbcdWShMvNkd3Bp2A0HTBPsoiDwOWo1lKIMuDGn8F2XtSZqwqZvbeXH7c1coeR1u/8J6vTjUNwBbS3GmwIl2f57rjU+7blMkmiWSU7s6EMpIO64h/O7farncRqvWHvkcs9UBqJrsvu6smvTxJoDQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727451810; c=relaxed/simple;
+	bh=wao8Y2iW8OXKF85bDNowoj/oRJn4i4qa0dhaPyUbYNY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HBYlHiXSP58iWp6CvOXn3dy1WZS1cU4Vk0jTq26ODgQn3u6XupEOgjyNfNEOVe38FvDW02bJjuOAHflfZXTqKXPJjbPMzkkSF9wkHGYFUEBlP/P+ugr9nyndjqTszZh3ukcCpoXoam9n3F2faGEGEH0gknEkEhtb34S5PuHa05M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cajIMzwC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727451808;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nouy7uz2QZ2+HaiysQwlHSVDj7tghdV0IDOXlpVmzA4=;
+	b=cajIMzwCZoEP/qT2xoR03VZc0sySFANgbbdPiLNoQZJWLbvv7vhpIRkESRCcgl9SLiiIkc
+	4N6mNkCKgBctUA7gVsaJUUv+1wDe1m3ee9lQ3LWXvcE+ipNerGvY1UKuHf1GdsRUZyIK1M
+	VcFWoVcPzfLGL9QrOFWpvNXfQXFL6PY=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-397-V_p_XxYMPBKyY-pULve9vg-1; Fri, 27 Sep 2024 11:43:27 -0400
+X-MC-Unique: V_p_XxYMPBKyY-pULve9vg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb479fab2so16086755e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:43:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727451806; x=1728056606;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nouy7uz2QZ2+HaiysQwlHSVDj7tghdV0IDOXlpVmzA4=;
+        b=IKF+7jtaDuHbXCBiSxCNz361G70Xy1oWqT7SfAvCkPrizSJYRGA76D4q4z1aFxZDJ9
+         bGUzD6BJPMLv3YVxfaNGIYJCXY3QTvhkIXoQq9VIkvC6McRqRIMgvI1qD5lKghxg6zH4
+         bBh1X2KwVngmJguQi6iT3FSUqLLI//kMfrpxW5fwfjUwit6OvCeabiY/ZRgomj5VFx4Q
+         icqOH3WDYixENP0Ztj4iREJBCseD6iy2F6g9la2HYLlBmh5IFdNRgR1sIGOSwMa2G8Ho
+         opw3m0CLtEuXhUpC0C5FKLPFzQSvllrwsw397NeClHc2kkYt5XgPuiIR3qAH0bzi4DlS
+         kw/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXbJiu1exZ1tyU/ekIapXDP5TYt/TRN4RXrB2QCMIOtu5DUQAo3KcGhZ1TXLVuXyvMwjrZkCIMl0MhIOl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGnlgh506L0OiRZSp2BHzu7RNWSvYD6sxVN/VB0VUBWT4EPGr0
+	XrnmQuA42JZ6K1iUcPk2aRIIwmrikRVZtmjyIi39on32wDVLzfMvEwBxvhWteUNEwzWxSuREo/e
+	TsQ3LjEva/BzDjdjfjiFRLGoub9lFQnR3mL5/dI4Gp2f78v+x424HugLSFJyosA==
+X-Received: by 2002:a5d:56ca:0:b0:374:c878:21f7 with SMTP id ffacd0b85a97d-37ccdb1bbb7mr4376512f8f.10.1727451805791;
+        Fri, 27 Sep 2024 08:43:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGVqcYDstIgaqNgteUNW6DY2/9r4otwnCXEY/6PGRPWd6daoj6Q1+FJy4cgu/qVmW0nz5LssA==
+X-Received: by 2002:a5d:56ca:0:b0:374:c878:21f7 with SMTP id ffacd0b85a97d-37ccdb1bbb7mr4376497f8f.10.1727451805372;
+        Fri, 27 Sep 2024 08:43:25 -0700 (PDT)
+Received: from [192.168.1.174] ([151.64.88.92])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42e969ffc11sm78291925e9.24.2024.09.27.08.43.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Sep 2024 08:43:24 -0700 (PDT)
+Message-ID: <de586a25-1ede-482a-8317-cb700be697b4@redhat.com>
+Date: Fri, 27 Sep 2024 17:43:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM7PR04MB7095:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3ed49ef6-9b1c-432f-9c1a-08dcdf0abdda
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?doCtQPSYCvXRcnSjYirNrFg+7B6BICkSnOSO3Q8DBIyBwI2Jx8LQbe2M1Faz?=
- =?us-ascii?Q?VPLWGuXx1WF7f7Jqj2QY3m9mtNpaEuQBedBt637VnWMzwE6qewkuT4JCjRXn?=
- =?us-ascii?Q?45PoMlJ4+BegAApk9XMkScL1r5E4NDIO1wtfwqQ4cmgvabHT9QRhpK5ry8bR?=
- =?us-ascii?Q?6ymBCpIRyv4pDFAbK+2P3Q7uIN1Ouj8S5YS4uNLQp3KTIpfoOn0Tf8jPG4mN?=
- =?us-ascii?Q?SvJLcG/wFQO+oi6HKBIXAS1DmPoIThflULc9CArv7bvsQuCXq8hfg1R8czcP?=
- =?us-ascii?Q?LJ7EQxj2HL9lULIEmduE37+or6fGb5fZPgVbwX8yLcZYdDLfWLrDrdTFy+nx?=
- =?us-ascii?Q?xh9tqn1desmp8s215GtuXqteLU02P/p7S2oIjT33HiNubv8lhlZmEPMro/Ck?=
- =?us-ascii?Q?j/IhoByxiEokE2XkDS7nrev2cppqkLDIdo4yjknFGTluP2nJhsnybD3PrtjD?=
- =?us-ascii?Q?ptOMsR0C2idXPM5eDKUBGIGgD9BDZGOz/8zBbUe9Pl7LepgisybIPTpHlvoU?=
- =?us-ascii?Q?Tnr79sBuoGZbIDigQwlVvTs8QXWbCp82zl8Fmm48KhnRrXjnBP9p9fPik7/D?=
- =?us-ascii?Q?gedJ6DLNSvot7anYr/sIoHghbUjvUG3gqGlkmvoZllNSRI/STBh72GDXBFQg?=
- =?us-ascii?Q?YJGOIy+zFgTD/ROp6vfPxkQkkMgnOaqIlG6twd2uCWsJtlLJscXpmQTDMlmw?=
- =?us-ascii?Q?ax90XYxlGcxfwrmuElXd32Cc2gySuKMEK1q4zFFdC75gbhubWAh1mNKe/mAd?=
- =?us-ascii?Q?XVu3CNPjQ/jYAOFHC2Vr18va3dR+r9d5lg8vLxOmALjbjoo8GLPmutlk1QIC?=
- =?us-ascii?Q?xiudMZESH61qLOeus2ZT7yOTCA162hqyy9+Zs+WhNFEzq8HlcD5M8WbF6Kpi?=
- =?us-ascii?Q?8v1sAYohnlhmAatQ1GMkC3qDRzNjy4d5hN7ZRsT9POOaAgf678PtB6KLRLWm?=
- =?us-ascii?Q?twagsKuLM6J1yyn41dTFiUip9akF4JJ2jiDr3t+yhn7X5NHhVmBx/Iv7tKl2?=
- =?us-ascii?Q?sUpgboYYYk8GP7N1+A3An3BvbKDuyUV5/VYyDtDRTHmymviBjnbibKoLjat/?=
- =?us-ascii?Q?JXvhE7yKPAtgynxEqKaJ6YZ+5S09e914GrwfcB5i1scxd+wTt+cD0uNoj1TG?=
- =?us-ascii?Q?+vxExhXK0A27e35kq0t9/vTZbOn1sxcwOYY5ddBZEMX+poO/wVOhJRvnWBHJ?=
- =?us-ascii?Q?B0JykBoCH5bmLKiD/Ybi98vQt7z4rICpfSJDcMJNkhF3vpbPVH63oSA66c7d?=
- =?us-ascii?Q?9o9Fz+aGzkdnBV7+iq2icgnptV+Wdp6x9HvhhZdkMzoqIC7/jO0dNP3iJEi6?=
- =?us-ascii?Q?5TQUIOwl8hwZdy1y5UN7XoGvgt6HWL+IyORDUDDPNKP1kg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/KfI3traktIK4pmyKWk1kcIHtPDFeHjYU4dZxVy/YQ+zydYlaxJHkrm8XTSb?=
- =?us-ascii?Q?SyjLlMACvMHISddThWt8q0SVUkSF04PV7/5vnxuGXQ1RChN5OnfFYpVlVuV0?=
- =?us-ascii?Q?cFV+VTkSsv88ANeDp4OYijudsOknLhTqvbEmbuttW82aBgoK+Jd7yLtZPNNz?=
- =?us-ascii?Q?bOwb9p4gmWHTK8BnEwQRP3euHeBakEK4fJBPxSLMrkvU76UTnRv8oRg1z9rc?=
- =?us-ascii?Q?AoQFXitkOHKm0DaMhodIPHYYowa3RudEpTpV1vKkhedG1gd856arYqjTrEPk?=
- =?us-ascii?Q?6MLJ2XvcKskIuEAM1Nz3STcOW40VYMYfqRLEqpBOK7feFbeRyOaRFyFFYUj4?=
- =?us-ascii?Q?NN8SyGpnwtEIANRz3QsLTvCWO4Rw+1YnvC4aUM1AYnVXzdm8mGpHByCSyEj9?=
- =?us-ascii?Q?sKzEASzBPgzmPIP7qgE95UGpRfhuYfqrS7AtbWCe3/DB0W+mYOHLzhUMigdN?=
- =?us-ascii?Q?jaT8FLTCjSLMtSj/CHD/RVsplt5nHPLBBWSmISuyj38dXsJoC4qxDGlCtoKV?=
- =?us-ascii?Q?zBo1koFPsBwo+I53RYy+o1I92UcG+JJ2Yv8VS+zOsVvyg2LdbhkSAi6rDeL/?=
- =?us-ascii?Q?6vO54v9s25PWOsXPDqAelPShuwdpyP1Mt5W1C1UqwYMlKPeQsVxo+/8Is6K+?=
- =?us-ascii?Q?K6fcIiF/8C/hnLWE++pp5WLA8spY1wRrcor65k5Bv9QysQMgBOy5GvGmJU0B?=
- =?us-ascii?Q?iSgrlm8CoMWEi8m5BcQ8vHsgJCAFHUrcIJPiYTrCDX91A9bI2NGB+QOFNDbx?=
- =?us-ascii?Q?q5lGOuFkOQ15AblRWJq+2JBe61kut0l5E1CzX+43eXjc2DNcmdhhL6TlSYeb?=
- =?us-ascii?Q?uzsubJbiulojT9bwrUL1FyxfVs/QK9iXxlB2y4iaQ3TNRiPIf1nDQ87evBXN?=
- =?us-ascii?Q?j4wYCyvtwGwMXqlI7Rr8WM7oo2qcKKnVOBmVrf6obRel2tt8F5yR4n9yByGE?=
- =?us-ascii?Q?EpK6ZjoSKZrjO7gbMEle9JekCeVRvpLLk5okjBh67kONlz5NVtFb+TfKGsI6?=
- =?us-ascii?Q?Q04IHKWAQEAELHklqxwmRYOGRQkEbH4fl5FV9VrV5mjmaNy/vOcdXvmRFlFv?=
- =?us-ascii?Q?raIzKyIoseinET08V+oV/Yf2LLEvgu7Ly8baYtxpZtV2jc8H5FEiwTyKQ0+k?=
- =?us-ascii?Q?43DU7W6++KJ5gRFB/CrUoCZoXYaqkS+p7lGkG4GA+a1s/GOHEyBYY2NsXWYn?=
- =?us-ascii?Q?f1EPxZ9f2fWXDSAnt+D0ds6PXtDbSZbgugFtXOLXN8zGKcuZnn4EsyBuy5KG?=
- =?us-ascii?Q?btsrv4X2+XS/n4fQ6sKF+LMYS3Pbj1dUjOGjsT/VVHwn2vKHgeRYCST5LQpX?=
- =?us-ascii?Q?zhxWE5t48r8NpQvUUzkLWDeATppGp+srD9TGoP+3Yu+TBC+2hYQ/emUHrY1U?=
- =?us-ascii?Q?2tisyFukkVPscQDXI37l5pEXwvVv6aaybbnEPwY1xfB29EHD6RFKbUFvnWTc?=
- =?us-ascii?Q?c7sIf+BCVfCHdwqrMFnYjR+JjbX1iYSYRxEogXnfnSYRngs61IqrtLO5A0PE?=
- =?us-ascii?Q?TbHNuvpXBu1KPJuBqByzb4wxDDasQQQovzelSV56NUs6U9/4XOSWTny01mhj?=
- =?us-ascii?Q?/gqSqdDtFTTsFDoWfRQ=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ed49ef6-9b1c-432f-9c1a-08dcdf0abdda
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 15:40:41.0842
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +TYnK6S1dc+oQLbvkJLsybm4/ww6PW/8lCLsoPOQfuxg5KB675debQ0e3YaeP8jS4/0xIOXe53BwgYngGI7DcA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7095
+User-Agent: Mozilla Thunderbird
+From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH 0/4] KVM: x86: Revert SLOT_ZAP_ALL quirk
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kai Huang <kai.huang@intel.com>, Rick Edgecombe
+ <rick.p.edgecombe@intel.com>, Yan Zhao <yan.y.zhao@intel.com>
+References: <20240927001635.501418-1-seanjc@google.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20240927001635.501418-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 06:58:33PM +0530, Hardevsinh Palaniya wrote:
-> Sparse warnings:
+
+
+On Fri, Sep 27, 2024 at 2:18 AM Sean Christopherson <seanjc@google.com> wrote:
 >
-> drivers/spi/spi-fsl-qspi.c:635:25: warning: cast from restricted __be32
->
-> Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-> ---
->  drivers/spi/spi-fsl-qspi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c
-> index 79bac30e79af..e4a2a6049e33 100644
-> --- a/drivers/spi/spi-fsl-qspi.c
-> +++ b/drivers/spi/spi-fsl-qspi.c
-> @@ -632,7 +632,7 @@ static int fsl_qspi_readl_poll_tout(struct fsl_qspi *q, void __iomem *base,
->  	u32 reg;
->
->  	if (!q->devtype_data->little_endian)
-> -		mask = (u32)cpu_to_be32(mask);
-> +		mask =(__force u32)cpu_to_be32(mask);
+> Revert the entire KVM_X86_QUIRK_SLOT_ZAP_ALL series, as the code is buggy
+> for shadow MMUs, and I'm not convinced a quirk is actually the right way
+> forward.  I'm not totally opposed to it (obviously, given that I suggested
+> it at one point), but I would prefer to give ourselves ample time to sort
+> out exactly how we want to move forward, i.e. not rush something in to
+> unhose v6.12.
 
-Most this kind warning report the real problem. I don't suggest fix as it
+Yeah, the code is buggy but I think it's safe enough to use code like the
+one you wrote back in 2019; untested patch follows:
 
-the 'if branch' should be removed.
+------------------------------- 8< ------------------------
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Fri, 27 Sep 2024 06:25:35 -0400
+Subject: [PATCH] KVM: x86/mmu: fix KVM_X86_QUIRK_SLOT_ZAP_ALL for shadow MMU
 
-and simple
+As was tried in commit 4e103134b862 ("KVM: x86/mmu: Zap only the relevant
+pages when removing a memslot"), all shadow pages, i.e. non-leaf SPTEs,
+need to be zapped.  All of the accounting for a shadow page is tied to the
+memslot, i.e. the shadow page holds a reference to the memslot, for all
+intents and purposes.  Deleting the memslot without removing all relevant
+shadow pages, as is done when KVM_X86_QUIRK_SLOT_ZAP_ALL is disabled,
+results in NULL pointer derefs when tearing down the VM.
 
-return read_poll_timeout(qspi_readl, reg, !(reg & mask), delay_us, timeout_us,
-		  	 q, base);
+Reintroduce from that commit the code that walks the whole memslot when
+there are active shadow MMU pages.
 
-qspi_readl() already handle endian problem.
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 
-Frank
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index e081f785fb23..6843535905fb 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -7049,14 +7049,42 @@ void kvm_arch_flush_shadow_all(struct kvm *kvm)
+  	kvm_mmu_zap_all(kvm);
+  }
+  
+-/*
+- * Zapping leaf SPTEs with memslot range when a memslot is moved/deleted.
+- *
+- * Zapping non-leaf SPTEs, a.k.a. not-last SPTEs, isn't required, worst
+- * case scenario we'll have unused shadow pages lying around until they
+- * are recycled due to age or when the VM is destroyed.
+- */
+-static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *slot)
++static void kvm_mmu_zap_memslot_pages_and_flush(struct kvm *kvm,
++						struct kvm_memory_slot *slot,
++						bool flush)
++{
++	LIST_HEAD(invalid_list);
++	unsigned long i;
++
++	if (list_empty(&kvm->arch.active_mmu_pages))
++		goto out_flush;
++
++	/*
++	 * Since accounting information is stored in struct kvm_arch_memory_slot,
++	 * deleting shadow pages (e.g. in unaccount_shadowed()) requires that all
++	 * gfns with a shadow page have a corresponding memslot.  Do so before
++	 * the memslot goes away.
++	 */
++	for (i = 0; i < slot->npages; i++) {
++		struct kvm_mmu_page *sp;
++		gfn_t gfn = slot->base_gfn + i;
++
++		for_each_gfn_valid_sp_with_gptes(kvm, sp, gfn)
++			kvm_mmu_prepare_zap_page(kvm, sp, &invalid_list);
++
++		if (need_resched() || rwlock_needbreak(&kvm->mmu_lock)) {
++			kvm_mmu_remote_flush_or_zap(kvm, &invalid_list, flush);
++			flush = false;
++			cond_resched_rwlock_write(&kvm->mmu_lock);
++		}
++	}
++
++out_flush:
++	kvm_mmu_remote_flush_or_zap(kvm, &invalid_list, flush);
++}
++
++static void kvm_mmu_zap_memslot(struct kvm *kvm,
++				struct kvm_memory_slot *slot)
+  {
+  	struct kvm_gfn_range range = {
+  		.slot = slot,
+@@ -7064,11 +7097,11 @@ static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *s
+  		.end = slot->base_gfn + slot->npages,
+  		.may_block = true,
+  	};
++	bool flush;
+  
+  	write_lock(&kvm->mmu_lock);
+-	if (kvm_unmap_gfn_range(kvm, &range))
+-		kvm_flush_remote_tlbs_memslot(kvm, slot);
+-
++	flush = kvm_unmap_gfn_range(kvm, &range);
++	kvm_mmu_zap_memslot_pages_and_flush(kvm, slot, flush);
+  	write_unlock(&kvm->mmu_lock);
+  }
+  
+@@ -7084,7 +7117,7 @@ void kvm_arch_flush_shadow_memslot(struct kvm *kvm,
+  	if (kvm_memslot_flush_zap_all(kvm))
+  		kvm_mmu_zap_all_fast(kvm);
+  	else
+-		kvm_mmu_zap_memslot_leafs(kvm, slot);
++		kvm_mmu_zap_memslot(kvm, slot);
+  }
+  
+  void kvm_mmu_invalidate_mmio_sptes(struct kvm *kvm, u64 gen)
+--------------------------------------------------
 
->
->  	return readl_poll_timeout(base, reg, !(reg & mask), delay_us,
->  				  timeout_us);
-> --
-> 2.43.0
->
+(Not too sure about using the sp_has_gptes() test, which is why I haven't
+posted this yet).
+
+With respect to the choice of API, the quirk is at least good for
+testing; this was already proven, I guess.
+
+Also I think it's safe to enable it for SEV/SEV-ES VM types: they
+pretty much depend on NPT (see sev_hardware_setup), and with the
+TDP MMU it should always be better to kill the PTEs for the memslot
+(even if invalidating the whole MMU is cheap) to avoid having to
+fault all the remainder of the memory back in.  So I think the current
+version of kvm_memslot_flush_zap_all() is better than using e.g.
+kvm_arch_has_private_mem().
+
+The only straggler is software-protected VMs, which I don't care
+too much about; but if anything it's better to make them closer to
+SNP and TDX VM types.
+
+For now I think I'll send the existing kvm/next to Linus and we
+can sort it out next week, as the weekend (and the closure of the
+merge window) is impending...
+
+Paolo
+
 
