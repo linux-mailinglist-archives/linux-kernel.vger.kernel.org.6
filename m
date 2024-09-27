@@ -1,82 +1,78 @@
-Return-Path: <linux-kernel+bounces-342016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1ED29889A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:24:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504E99889A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BE0D2833B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:24:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B01F283372
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6CF1C1AA2;
-	Fri, 27 Sep 2024 17:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CF41C1AAA;
+	Fri, 27 Sep 2024 17:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="lL0XU8kv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="irmwQ0ZA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A69613AD1C;
-	Fri, 27 Sep 2024 17:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807A31714B8;
+	Fri, 27 Sep 2024 17:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727457851; cv=none; b=ZR7e1GwFqDhGe4riJRcNQbLxDmygbK+0nrEdw+DJNLzggwHVu2bUlkTLfmjjHfgDsowbwdYJqmvkPpljJE1tjRYerWN6gjwhC95p3IDiWFisAZwO8ZJtzNQBmix7WsFLC5WQafiPOkwIe1AZvdtT4OpUTbSOxgpf/7d7swO0pGI=
+	t=1727457897; cv=none; b=jYihs+2tPaOKoLdVyyFHI6elDstfezT5GmaOsPTxPlSWdiuix2iDI0XWi8wQzzZNp+ld8hlaKMmflPRpQsnIh0S8uHF7VIQH+K7gjYrKLEQtTm0xDDkHUuIk12wqDw4J6BeNJqWI8szXpi3oa27OhIFTnB5+osZ6rSjykAZRCI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727457851; c=relaxed/simple;
-	bh=wnv7RPPgGCLIynbMHaq85HN0wyTllmJ1Kt4B7AqPZ04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pp89X88MhZpHffIxFFvb5Qas/ze8B1mkYZ6iDHK3awUXUU3HuyiAD5CNdMJqGMvXf5TkHEnhb7235OCMw0fAzl8OA5KXvBIpb+84pHac14WNP6MUzrf8OX6zQOzhgU4E/a5wffLtdH54PyDGcXlJwVxzKab2o/YFsVLu/3jsUmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=lL0XU8kv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A6EEC4CEC4;
-	Fri, 27 Sep 2024 17:24:10 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="lL0XU8kv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1727457847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BequuRoJr1pAWOgY2c3ww2p0CVBUraXUs5WRnDceAkw=;
-	b=lL0XU8kvoFp6NdtHZLgjSD5mVsgYWyEiVmL/m5DIArEYdF+dhYgE7lPdlsUxBnrWdQQK4M
-	wSs79zMYy328fMX+DEtGGSoj4Qc5XqvvVy5t7Ee/E49slo3LuldbUvf2eBuUzEpqkBGEcH
-	0a0UAD8/Qtc50D7Uu/m21PSOuW3KUZ0=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 1df0590a (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 27 Sep 2024 17:24:07 +0000 (UTC)
-Date: Fri, 27 Sep 2024 19:24:05 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: christophe.leroy@csgroup.eu, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-Cc: kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH] selftests: vDSO: align stack for O2-optimized memcpy
-Message-ID: <ZvbqNZz547IGq7vy@zx2c4.com>
-References: <202409241558.98e13f6f-oliver.sang@intel.com>
- <20240924115001.916112-1-Jason@zx2c4.com>
+	s=arc-20240116; t=1727457897; c=relaxed/simple;
+	bh=CIOcRkI5PSg0AJNUdw+NMCW2SFvCLDXu5df8u0Jeg4k=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=KWCyM0ZOp18+vKnalhaNwh/nVljAAOQaTp6o0vF+VpAgfDW6BGWHm5wR183xhI8LfPUp2i9dzF0kYgOEeYtHL0W3nGe5Gm624VnyUML0fCZ94h6BMogWFWcHTNk2H8KSLXNoiY4nnAoj5MXAOfkcobp7oN7HsR24B+ytx4Kd84k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=irmwQ0ZA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 506DAC4CEC4;
+	Fri, 27 Sep 2024 17:24:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727457897;
+	bh=CIOcRkI5PSg0AJNUdw+NMCW2SFvCLDXu5df8u0Jeg4k=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=irmwQ0ZAm0iJtnH/Rg7sYzOAn4A/JsOE+Z7aX0OGkXtxcs5chJgRAdArwySyzmsjD
+	 KRB4d9MwuqPUeQ5exUbISfLOP/1koAHqQrVgtiHXS8RkdBaTY+oMK7p5F7dCsiEamC
+	 hVwsYgDOcT5BgEYVz4RDm2ID2vF/X2IHP5OWF71Sg9jcgMSyqtqZyhG2L+LAenKVx1
+	 BUgpH2lMBZZmgi+udKy4O9o6i06kZvIGY1PjEDeHGFIJ/Bd69DMEL1dslMO55TDthh
+	 bHkj3YKaCjthSPPQLPxTiPcS9z3QCNvPQ70GruM9GS4lJJ5XrSBG1A6ffJZVGNwOTH
+	 h7axmotxVmbfw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E9E3809A80;
+	Fri, 27 Sep 2024 17:25:01 +0000 (UTC)
+Subject: Re: [GIT PULL] LoongArch changes for v6.12
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240927142320.2144898-1-chenhuacai@loongson.cn>
+References: <20240927142320.2144898-1-chenhuacai@loongson.cn>
+X-PR-Tracked-List-Id: <linux-arch.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240927142320.2144898-1-chenhuacai@loongson.cn>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-6.12
+X-PR-Tracked-Commit-Id: f339bd3b51dac675fbbc08b861d2371ae3df0c0b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3630400697a3d334a391c1dba1b601d852145f2c
+Message-Id: <172745789970.2030610.6201608111296713701.pr-tracker-bot@kernel.org>
+Date: Fri, 27 Sep 2024 17:24:59 +0000
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen <chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240924115001.916112-1-Jason@zx2c4.com>
 
-Hi Shuah,
+The pull request you sent on Fri, 27 Sep 2024 22:23:20 +0800:
 
-On Tue, Sep 24, 2024 at 01:47:23PM +0200, Jason A. Donenfeld wrote:
-> When switching on -O2, gcc generates SSE2 instructions that assume a
-> 16-byte aligned stack, which the standalone test's start point wasn't
-> aligning. Fix this with the usual alignnent sequence.
-> 
-> Fixes: ecb8bd70d51 ("selftests: vDSO: build tests with O2 optimization")
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202409241558.98e13f6f-oliver.sang@intel.com
-> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
- 
-Just FYI, I'm expecting that this is a patch you take through your tree
-for 6.12, and hopefully before rc1, as automated testing is failing.
+> git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-6.12
 
-Jason
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3630400697a3d334a391c1dba1b601d852145f2c
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
