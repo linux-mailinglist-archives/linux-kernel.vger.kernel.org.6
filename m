@@ -1,155 +1,201 @@
-Return-Path: <linux-kernel+bounces-341366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB82D987F13
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:02:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28577987F1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A5C0B2536C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC0701F220CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EDC17BECC;
-	Fri, 27 Sep 2024 07:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA23F17C9E7;
+	Fri, 27 Sep 2024 07:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="sFZxV/xM"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tu+jZSzR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E5E170A27;
-	Fri, 27 Sep 2024 07:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7688517A5B6;
+	Fri, 27 Sep 2024 07:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727420549; cv=none; b=B4M3dXS9QTbNqEwSUPHFhRU35/kyPUujuWs9TqGrcyD62jGWkQ3SgjKPF7RvPw8I2AFQQd2AvCUwdHf4twECZvPovhrfNa0PrE0MQTF+VKhdcQJOm7Bf7BHWRJtIiqeL4r1Sy5Uebt6kvpsMJ4DAmKZ2jE6W1SgCAt7v2lfz+7Y=
+	t=1727420651; cv=none; b=V5sOJ1iKRDiOBkMolRciLCVgnoW7uAHKANvWrEagMWuJB/0TcOGd4wNibMmg5NYHb8HsUYX6lLFmz1w3WRy11FG8UAys024anTfigJL/GixkNwc3cn9Z/RfJDZ/Y4I9e5pC6rGAxt0lGYdHedr2yFOaUVSJGWLl86Df67Y43vNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727420549; c=relaxed/simple;
-	bh=pPETlumeZfk8BUPmC9xV20OEoFe4aY3SU6T58FRAyGw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gBCfi/oDFEciZaKJ59rHeU6IfORNmB1bvivKJAVBUTNypo4ohHC2bwaNFOip8fZHgWrPxGSj8qGwpyYn+exipDMenz424cZe9M8TIJsu39l0Ag50V9t/XR6aNlsLDdZiOmofcm0Te4scC2A+fqo//7Jgt0QiQGLYopZexvZHRtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=sFZxV/xM; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 711e366a7c9e11ef8b96093e013ec31c-20240927
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=KhtQyrefSaqhSJzfUoA/J9/fh2qANj+W43YRxUZuX+Y=;
-	b=sFZxV/xMwDiMvGobRU1JZm9noSsIRRD6f12cT9MGhE0Vt6gX3NbjWyoTEoXCt8GhMJDvXHXjZFhc3uFKRfl1Vsdxq9WpEVsVr1MiQcG8XPB9A+itFlc6Al1om2XlgJxw81u1papC5tARdGLCkbPaRX8Eto6gjMWYYVQKP7cCuEc=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:924ae4d4-a6bc-4587-8123-3ac05e45ecf9,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:61f0dad0-7921-4900-88a1-3aef019a55ce,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: 711e366a7c9e11ef8b96093e013ec31c-20240927
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1549227480; Fri, 27 Sep 2024 15:02:21 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 27 Sep 2024 15:02:19 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n1.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Fri, 27 Sep 2024 15:02:18 +0800
-Message-ID: <cada4a75-4b2d-e1b6-bebc-ce15a13a288e@mediatek.com>
-Date: Fri, 27 Sep 2024 15:02:17 +0800
+	s=arc-20240116; t=1727420651; c=relaxed/simple;
+	bh=nWh818rj5AhbrxF8NjTX5z1Pkd7RgEinEYr2g/FLkLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mOmnQoJB4v+oWIWYAPbgYUqGdL0ymxnHB0/EE8wCBhqMCIJ3f5RaLv5X2CrB2oFclkmAHpEmilRQth/y4FNeS1uHPJsDRiPOHxNJG/xlSJlk9u5ltQ5fubvyz+a1BNVdSUxCnT/urxrWBxWWT9jMTQujm2q2v8XSsSHIwiEPPow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tu+jZSzR; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727420647; x=1758956647;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nWh818rj5AhbrxF8NjTX5z1Pkd7RgEinEYr2g/FLkLU=;
+  b=Tu+jZSzRjoarjt0Te9iykphBpcuXu4ozXmHfAApDqHX9R8vYLOvd9f3N
+   qQPB5b6pH1n8JpHruI1dhWfae0k8CtRlGfT2ucAT7Vybs5c0fVk6jE5Bf
+   SCH1clMZBqCfIn6CI8eJ39IOW5YqqvcSdOOtAOWJN6IWEj05cJAsu9ons
+   9BWZZjFFRrc+cJQ+AhoPBMyotgMCRTW9hmSIGxBqeoUou5qhrACoNrkN2
+   2mb71rOn2H77jQDRXOzNnwdd+23W2TGTyJMZts/XcAQDBaVgrIqnNC0nw
+   848JwqcEl71aCphCkSZl+jTsj9ZzbeXDFjdJazc6Q6im3ZSz7yGMH58mr
+   w==;
+X-CSE-ConnectionGUID: dIlF71ejTxaNq0NQEJ/Tqw==
+X-CSE-MsgGUID: F6BOMGI8RRCpZL0dF9+NNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="37692415"
+X-IronPort-AV: E=Sophos;i="6.11,157,1725346800"; 
+   d="scan'208";a="37692415"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 00:04:07 -0700
+X-CSE-ConnectionGUID: uzfPGVUgQD2k7HG11eH5+A==
+X-CSE-MsgGUID: dtCoeqF4R2uSnFM6N1QkfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,157,1725346800"; 
+   d="scan'208";a="77264334"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 27 Sep 2024 00:04:03 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1su51E-000LdB-0Q;
+	Fri, 27 Sep 2024 07:04:00 +0000
+Date: Fri, 27 Sep 2024 15:03:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Subject: Re: [PATCH v4 3/4] gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs
+ support
+Message-ID: <202409271406.SOjGw98h-lkp@intel.com>
+References: <20240926143122.1385658-4-andrei.stefanescu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v2 5/5] dt-bindings: display: mediatek: dpi: Add mt8195
- support in power domains
-Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>
-CC: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>, "Joerg
- Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, CK Hu
-	<ck.hu@mediatek.com>, Jitao shi <jitao.shi@mediatek.com>, Tinghan Shen
-	<tinghan.shen@mediatek.com>, Seiya Wang <seiya.wang@mediatek.com>, Ben Lok
-	<ben.lok@mediatek.com>, "Nancy . Lin" <nancy.lin@mediatek.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>, "Alexandre
- Mergnat" <amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, "Pablo
- Sun" <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen Chu
-	<sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>, "MediaTek
- Chromebook Upstream" <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Chen-Yu Tsai <wenst@chromium.org>
-References: <20240926111449.9245-1-macpaul.lin@mediatek.com>
- <20240926111449.9245-5-macpaul.lin@mediatek.com>
- <20240926-visible-harmonica-a7cda103ff70@spud>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20240926-visible-harmonica-a7cda103ff70@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--11.014300-8.000000
-X-TMASE-MatchedRID: L8tZF6zWW2oOwH4pD14DsPHkpkyUphL9MZm0+sEE9ms+zqOf/RM2rvFo
-	ODtDoX2Qa8dzyZlF6/UhzQ5Mp0WQPT7dljlY/nlHSEQN/D/3cG6Vq+okl1rYDwDqzaYhcjeQLPv
-	NvFI8A1X8iIBnP6y347s9OusH9JJyzB1CJ6qmdNrhuXUWQoMQtzQsOZ4mhPfZDO+DX+rUwfZjOk
-	Y6jTBnQ10EtLM2oIeDMPuSmMtOM67I2RqSAXh33hlckvO1m+JcfLPKYyLDlAebKItl61J/ycnjL
-	TA/UDoAoTCA5Efyn8CNo+PRbWqfRDsAVzN+Ov/stFRELSGgUUwRPXFwDjp7875XMMt8JxNIHRRl
-	YMHNv0WZTXkb2/rFPg==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--11.014300-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: A017A170104B5427D244883B62BFD51C539651236B943B919967563A14DF14A42000:8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926143122.1385658-4-andrei.stefanescu@oss.nxp.com>
+
+Hi Andrei,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on brgl/gpio/for-next]
+[also build test ERROR on driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus robh/for-next linus/master v6.11 next-20240926]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrei-Stefanescu/drivers-provide-devm_platform_get_and_ioremap_resource_byname/20240926-223448
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20240926143122.1385658-4-andrei.stefanescu%40oss.nxp.com
+patch subject: [PATCH v4 3/4] gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs support
+config: openrisc-allyesconfig (https://download.01.org/0day-ci/archive/20240927/202409271406.SOjGw98h-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240927/202409271406.SOjGw98h-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409271406.SOjGw98h-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from ./arch/openrisc/include/generated/asm/div64.h:1,
+                    from include/linux/math.h:6,
+                    from include/linux/kernel.h:27,
+                    from include/linux/cpumask.h:11,
+                    from include/linux/smp.h:13,
+                    from include/linux/lockdep.h:14,
+                    from include/linux/spinlock.h:63,
+                    from include/linux/mmzone.h:8,
+                    from include/linux/gfp.h:7,
+                    from include/linux/mm.h:7,
+                    from arch/openrisc/include/asm/pgalloc.h:20,
+                    from arch/openrisc/include/asm/io.h:18,
+                    from include/linux/io.h:14,
+                    from drivers/gpio/gpio-siul2-s32g2.c:11:
+   drivers/gpio/gpio-siul2-s32g2.c: In function 'common_regmap_init':
+   include/asm-generic/div64.h:222:35: warning: comparison of distinct pointer types lacks a cast [-Wcompare-distinct-pointer-types]
+     222 |         (void)(((typeof((n)) *)0) == ((uint64_t *)0));  \
+         |                                   ^~
+   drivers/gpio/gpio-siul2-s32g2.c:296:46: note: in expansion of macro 'do_div'
+     296 |                 conf->num_reg_defaults_raw = do_div(size, conf->reg_stride);
+         |                                              ^~~~~~
+   In file included from include/linux/err.h:5,
+                    from drivers/gpio/gpio-siul2-s32g2.c:9:
+   include/asm-generic/div64.h:234:32: warning: right shift count >= width of type [-Wshift-count-overflow]
+     234 |         } else if (likely(((n) >> 32) == 0)) {          \
+         |                                ^~
+   include/linux/compiler.h:76:45: note: in definition of macro 'likely'
+      76 | # define likely(x)      __builtin_expect(!!(x), 1)
+         |                                             ^
+   drivers/gpio/gpio-siul2-s32g2.c:296:46: note: in expansion of macro 'do_div'
+     296 |                 conf->num_reg_defaults_raw = do_div(size, conf->reg_stride);
+         |                                              ^~~~~~
+>> include/asm-generic/div64.h:238:36: error: passing argument 1 of '__div64_32' from incompatible pointer type [-Wincompatible-pointer-types]
+     238 |                 __rem = __div64_32(&(n), __base);       \
+         |                                    ^~~~
+         |                                    |
+         |                                    resource_size_t * {aka unsigned int *}
+   drivers/gpio/gpio-siul2-s32g2.c:296:46: note: in expansion of macro 'do_div'
+     296 |                 conf->num_reg_defaults_raw = do_div(size, conf->reg_stride);
+         |                                              ^~~~~~
+   include/asm-generic/div64.h:213:38: note: expected 'uint64_t *' {aka 'long long unsigned int *'} but argument is of type 'resource_size_t *' {aka 'unsigned int *'}
+     213 | extern uint32_t __div64_32(uint64_t *dividend, uint32_t divisor);
+         |                            ~~~~~~~~~~^~~~~~~~
 
 
-On 9/26/24 23:59, Conor Dooley wrote:
-> On Thu, Sep 26, 2024 at 07:14:49PM +0800, Macpaul Lin wrote:
->> Add power domain binding to the mediatek DPI controller for MT8185.
-> 
-> This wording is confusing, no binding is being added here, you're just
-> allowing one property.
-> 
->> The dpi node in mt8195.dtsi was triggering a dtbs_check error:
->>    dp-intf@1c113000: power-domains: False schema does not allow [[44, 18]]
-> 
-> And while it is good to have the warning, it would be better to explain
-> here that there are actually power domains, since the dts could be wrong
-> here also.
+vim +/__div64_32 +238 include/asm-generic/div64.h
 
-Thanks for the reminder! After MediaTek's internal discussion, a new
-patch v3 has been submitted. The details has been written in that patch.
+^1da177e4c3f41 Linus Torvalds     2005-04-16  215  
+^1da177e4c3f41 Linus Torvalds     2005-04-16  216  /* The unnecessary pointer compare is there
+^1da177e4c3f41 Linus Torvalds     2005-04-16  217   * to check for type safety (n must be 64bit)
+^1da177e4c3f41 Linus Torvalds     2005-04-16  218   */
+^1da177e4c3f41 Linus Torvalds     2005-04-16  219  # define do_div(n,base) ({				\
+^1da177e4c3f41 Linus Torvalds     2005-04-16  220  	uint32_t __base = (base);			\
+^1da177e4c3f41 Linus Torvalds     2005-04-16  221  	uint32_t __rem;					\
+^1da177e4c3f41 Linus Torvalds     2005-04-16  222  	(void)(((typeof((n)) *)0) == ((uint64_t *)0));	\
+911918aa7ef6f8 Nicolas Pitre      2015-11-02  223  	if (__builtin_constant_p(__base) &&		\
+911918aa7ef6f8 Nicolas Pitre      2015-11-02  224  	    is_power_of_2(__base)) {			\
+911918aa7ef6f8 Nicolas Pitre      2015-11-02  225  		__rem = (n) & (__base - 1);		\
+911918aa7ef6f8 Nicolas Pitre      2015-11-02  226  		(n) >>= ilog2(__base);			\
+c747ce4706190e Geert Uytterhoeven 2021-08-11  227  	} else if (__builtin_constant_p(__base) &&	\
+461a5e51060c93 Nicolas Pitre      2015-10-30  228  		   __base != 0) {			\
+461a5e51060c93 Nicolas Pitre      2015-10-30  229  		uint32_t __res_lo, __n_lo = (n);	\
+461a5e51060c93 Nicolas Pitre      2015-10-30  230  		(n) = __div64_const32(n, __base);	\
+461a5e51060c93 Nicolas Pitre      2015-10-30  231  		/* the remainder can be computed with 32-bit regs */ \
+461a5e51060c93 Nicolas Pitre      2015-10-30  232  		__res_lo = (n);				\
+461a5e51060c93 Nicolas Pitre      2015-10-30  233  		__rem = __n_lo - __res_lo * __base;	\
+911918aa7ef6f8 Nicolas Pitre      2015-11-02  234  	} else if (likely(((n) >> 32) == 0)) {		\
+^1da177e4c3f41 Linus Torvalds     2005-04-16  235  		__rem = (uint32_t)(n) % __base;		\
+^1da177e4c3f41 Linus Torvalds     2005-04-16  236  		(n) = (uint32_t)(n) / __base;		\
+c747ce4706190e Geert Uytterhoeven 2021-08-11  237  	} else {					\
+^1da177e4c3f41 Linus Torvalds     2005-04-16 @238  		__rem = __div64_32(&(n), __base);	\
+c747ce4706190e Geert Uytterhoeven 2021-08-11  239  	}						\
+^1da177e4c3f41 Linus Torvalds     2005-04-16  240  	__rem;						\
+^1da177e4c3f41 Linus Torvalds     2005-04-16  241   })
+^1da177e4c3f41 Linus Torvalds     2005-04-16  242  
 
-> Otherwise,
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-Since the new patch v3 use a different approach to update the DT Schema,
-the "Acked-by:" tag has been dropped, please help to review the 
-replacement v3 patch. Thanks!
-
->> Fixes: 5474d49b2f79 ("dt-bindings: display: mediatek: dpi: Add power domains")
->> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
->> ---
->>   .../devicetree/bindings/display/mediatek/mediatek,dpi.yaml       | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> Changes for v2:
->>   - Because of the corresponding dts fix has been reviewed with a Reviewed-by: tag.
->>     [1] https://lore.kernel.org/all/20240925080515.16377-1-macpaul.lin@mediatek.com/
->>     We still need this change to fix the 2 dtbs_check errors.
->>     So keeps no change here.
->>
-
-Best regards,
-Macpaul Lin
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
