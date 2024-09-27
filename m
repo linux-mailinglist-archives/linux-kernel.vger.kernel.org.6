@@ -1,176 +1,159 @@
-Return-Path: <linux-kernel+bounces-342109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CBC1988AB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:06:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F83988AB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E25282879
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:06:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CBF6B2132A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2171C2320;
-	Fri, 27 Sep 2024 19:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQPlB/T7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E2E1C231B;
+	Fri, 27 Sep 2024 19:06:29 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAB016FF3B;
-	Fri, 27 Sep 2024 19:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5296316FF3B
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727463954; cv=none; b=EYxqjczfkzDRqyofsEBxM9IZoq+OMwBhr0rK1TjZOq7yimtCAYnoyw1qEKUjXJ6q8aRYulEjFIUcihTVf8AO5MREne9pwVUx3RRK30g91vtodcjvjzyqYfiUbS95tm6rV2wb2fJ+ry8nm4pjogDi0NzGd5wHxyHvapJFgG9Bz8I=
+	t=1727463988; cv=none; b=l89WovySnxLDrmv8fzUbxH/7R7YNSRTUSQVCGoYnNIMs7vZfy9lDOp9NhLbHcWoYa0qhP/DHe4hGzmhwhwFHnPh4Jb7gSUp8UPwyltdWQKU6bmcAsWIKMOyZ+QXEqqaquWsuNorCCbevxUDvFVRISXYnuVqD+K2+amW+wmsYBN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727463954; c=relaxed/simple;
-	bh=AlVmqydRc0H9M6uSiES4idlufya26gQJmhUiInsVoMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aCh17W80B7Nu4ehGbjwonEycmtpsHXv04Kts+a8A5vHCLB/VAFJBmxhZUgpkbsSxQsZ32IWlIKf8gwl1CPxdJBbD4Mr4k0bqFLOIbwgGppPlCcXaRUIDn80GjtcXPfTe0anrkiBH9bu/eJEzRGm6B5R2YPGv+QU0o9ibUco9ldQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQPlB/T7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E1CC4CEC4;
-	Fri, 27 Sep 2024 19:05:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727463954;
-	bh=AlVmqydRc0H9M6uSiES4idlufya26gQJmhUiInsVoMM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VQPlB/T7qzO8uuxc1elhRj4hg/sUzm8ppcz/jKj7zzv1LjM68viaJZoYK9bFRU3JN
-	 kusPDdDssMCcRYjgPKF+meCQETY6Uj2YopNl1j0V31TdQBF/sFt1oZIDzNbw7gUxRP
-	 +t6kggF30jZfjgk/PyHt4+pm8aoP6dYTW/uM6ATypzoxcAGTaPnHjK1dM2KceNZdbI
-	 XQL3weL3C54wTigW471cG9thwQ47Su2sKHZJq22J1M7zsg2bXwRDAkk3pQ2Xh7AuIU
-	 mFIbqCkH1Nnr0o9kfgot8Qs2fv2cZlh9IdUtNfiL23LPKV2BSF1XAMH0DxYYyZREwB
-	 PVVNeGCHTFeEg==
-Date: Fri, 27 Sep 2024 16:05:50 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/8] perf record --off-cpu: Dump off-cpu samples
- directly
-Message-ID: <ZvcCDkrzwilKYQR2@x1>
-References: <20240927185340.658143-1-howardchu95@gmail.com>
+	s=arc-20240116; t=1727463988; c=relaxed/simple;
+	bh=w1dC9j7fndcQTKIgy4Ii3T0Rd7BykY2onXtMnlRZGcE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=D1Peozyo5woOyvc+EjzOxRM/rPSQU90xwVKEKi6hT7cKV/X1zSX4ZeFoy8ana53nsRCpbayDV8nKLeG08cBFcWtqz/UBmLdiOK/mpMQkFukvNMzm0CuxA5RMOYQodC1MMgXEaln7v9xCw4GwWT4TqSfHXLVoFxjAtCJq6rGwj14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a1e69f6f51so25685175ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:06:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727463986; x=1728068786;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hgY8hzI99QnPWMPwvALIbHs6Az4q/B4sE1z/OIjt2MA=;
+        b=FD4cVxbLA4JplOPoYQZQPDrWm0qL58Kisb4aQBV4q9FUWAdvt/Y+oVYNeDTG/18LXu
+         qZ1NmSaNY26eqDRRvqZZd8CQZEk8tsglTCosSOPkXSDxMOsGCdsV/WsLWZdnyIIlKu6J
+         ZUbNN4Q6h1WANVTb29A+77J0L5GTKeiVs2jYVt4sQ2uMeRcVxkCq6Sj4DSSWgabkAOax
+         U0H7Et3ceopvWLnqw00ukffgG4zQoNlKLVNSFfdY87RJ2/gy3x5J0gVw7xGtW2pw7Kx6
+         1qBG9bGssNUNFv2AhCbdAWqbrOZeJRweQtX0PrcbjFg/tKgmI7s/Z5PF8/66R8akj+go
+         cDDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUER8V7NVikFgiO1TiOx4AqzCFj7AtKmftyJcMLfJZqooY/OajElKnDDokOhuJNYwx/xcCCBCKBsVzIQZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIruAKIfSMeGTrAj8zfC2h6zWQNHKQAHYf/Mi3mAC2EiWSemvc
+	etDGVNTuIiomWXY2xQBoRe8kwX6m49YacVWRyc8OXOOi1gpWtM6ycTTPxSHpp8PBUJYkxradcDZ
+	QPE/zzhhUm8cIR7Xyg3e2LnCkZVo5vwbq7Gq3GzUZagJK+LaAthzGp0E=
+X-Google-Smtp-Source: AGHT+IGE8RNmEFTPX2Ywn6IH8Zh04GJEFSVVevZAvdbyqKj9hV2LEyChhp8FfbasKEdwpEq8OE+5ktgv1rh3oxhj4y8IB52wKtm2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927185340.658143-1-howardchu95@gmail.com>
+X-Received: by 2002:a05:6e02:1c25:b0:3a3:44e6:fe66 with SMTP id
+ e9e14a558f8ab-3a34515d324mr44989385ab.10.1727463986466; Fri, 27 Sep 2024
+ 12:06:26 -0700 (PDT)
+Date: Fri, 27 Sep 2024 12:06:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f70232.050a0220.38ace9.002f.GAE@google.com>
+Subject: [syzbot] [ntfs3?] WARNING in wnd_init (2)
+From: syzbot <syzbot+47de774a425e2380f16f@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 27, 2024 at 11:53:32AM -0700, Howard Chu wrote:
-> Changes in v5:
->  - Delete unnecessary copy in BPF program
->  - Remove sample_embed from perf header, hard code off-cpu stuff instead
->  - Move evsel__is_offcpu_event() to evsel.h
->  - Minor changes to the test
->  - Edit some comments
+Hello,
 
-Thanks, I'll try to review and test this early next week, and check on
-bisectability issues as you mentioned privately.
+syzbot found the following issue on:
 
-Thanks!
+HEAD commit:    de5cb0dcb74c Merge branch 'address-masking'
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12b8ca27980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e851828834875d6f
+dashboard link: https://syzkaller.appspot.com/bug?extid=47de774a425e2380f16f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159a0c80580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120d619f980000
 
-- Arnaldo
- 
-> Changes in v4:
->  - Minimize the size of data output by perf_event_output()
->  - Keep only one off-cpu event
->  - Change off-cpu threshold's unit to microseconds
->  - Set a default off-cpu threshold
->  - Print the correct error message for the field 'embed' in perf data header
-> 
-> Changes in v3:
->  - Add off-cpu-thresh argument
->  - Process direct off-cpu samples in post
-> 
-> Changes in v2:
->  - Remove unnecessary comments.
->  - Rename function off_cpu_change_type to off_cpu_prepare_parse
-> 
-> v1:
-> 
-> As mentioned in: https://bugzilla.kernel.org/show_bug.cgi?id=207323
-> 
-> Currently, off-cpu samples are dumped when perf record is exiting. This
-> results in off-cpu samples being after the regular samples. This patch
-> series makes possible dumping off-cpu samples on-the-fly, directly into
-> perf ring buffer. And it dispatches those samples to the correct format
-> for perf.data consumers.
-> 
-> Before:
-> ```
->      migration/0      21 [000] 27981.041319: 2944637851    cycles:P:  ffffffff90d2e8aa record_times+0xa ([kernel.kallsyms])
->             perf  770116 [001] 27981.041375:          1    cycles:P:  ffffffff90ee4960 event_function+0xf0 ([kernel.kallsyms])
->             perf  770116 [001] 27981.041377:          1    cycles:P:  ffffffff90c184b1 intel_bts_enable_local+0x31 ([kernel.kallsyms])
->             perf  770116 [001] 27981.041379:      51611    cycles:P:  ffffffff91a160b0 native_sched_clock+0x30 ([kernel.kallsyms])
->      migration/1      26 [001] 27981.041400: 4227682775    cycles:P:  ffffffff90d06a74 wakeup_preempt+0x44 ([kernel.kallsyms])
->      migration/2      32 [002] 27981.041477: 4159401534    cycles:P:  ffffffff90d11993 update_load_avg+0x63 ([kernel.kallsyms])
-> 
-> sshd  708098 [000] 18446744069.414584:     286392 offcpu-time: 
-> 	    79a864f1c8bb ppoll+0x4b (/usr/lib/libc.so.6)
-> 	    585690935cca [unknown] (/usr/bin/sshd)
-> ```
-> 
-> After:
-> ```
->             perf  774767 [003] 28178.033444:        497           cycles:P:  ffffffff91a160c3 native_sched_clock+0x43 ([kernel.kallsyms])
->             perf  774767 [003] 28178.033445:     399440           cycles:P:  ffffffff91c01f8d nmi_restore+0x25 ([kernel.kallsyms])
->          swapper       0 [001] 28178.036639:  376650973           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
->          swapper       0 [003] 28178.182921:  348779378           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
->     blueman-tray    1355 [000] 28178.627906:  100184571 offcpu-time: 
-> 	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
-> 	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
-> 	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
-> 	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
-> 	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
-> 	    7fff24e862d8 [unknown] ([unknown])
-> 
-> 
->     blueman-tray    1355 [000] 28178.728137:  100187539 offcpu-time: 
-> 	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
-> 	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
-> 	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
-> 	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
-> 	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
-> 	    7fff24e862d8 [unknown] ([unknown])
-> 
-> 
->          swapper       0 [000] 28178.463253:  195945410           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
->      dbus-broker     412 [002] 28178.464855:  376737008           cycles:P:  ffffffff91c000a0 entry_SYSCALL_64+0x20 ([kernel.kallsyms])
-> ```
-> 
-> Howard Chu (8):
->   perf evsel: Set off-cpu BPF output to system-wide
->   perf record --off-cpu: Add --off-cpu-thresh
->   perf record --off-cpu: Parse offcpu-time event
->   perf record off-cpu: Dump direct off-cpu samples in BPF
->   perf record --off-cpu: Dump total off-cpu time at the end.
->   perf evsel: Delete unnecessary = 0
->   perf record --off-cpu: Parse BPF output embedded data
->   perf test: Add direct off-cpu dumping test
-> 
->  tools/perf/builtin-record.c             |  26 ++++
->  tools/perf/builtin-script.c             |   4 +-
->  tools/perf/tests/builtin-test.c         |   1 +
->  tools/perf/tests/shell/record_offcpu.sh |  29 ++++
->  tools/perf/tests/tests.h                |   1 +
->  tools/perf/tests/workloads/Build        |   1 +
->  tools/perf/tests/workloads/offcpu.c     |  16 +++
->  tools/perf/util/bpf_off_cpu.c           | 174 +++++++++++++++---------
->  tools/perf/util/bpf_skel/off_cpu.bpf.c  | 123 +++++++++++++++++
->  tools/perf/util/evsel.c                 |  47 ++++---
->  tools/perf/util/evsel.h                 |   6 +
->  tools/perf/util/off_cpu.h               |  10 +-
->  tools/perf/util/record.h                |   1 +
->  tools/perf/util/session.c               |  12 +-
->  14 files changed, 359 insertions(+), 92 deletions(-)
->  create mode 100644 tools/perf/tests/workloads/offcpu.c
-> 
-> -- 
-> 2.43.0
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-de5cb0dc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2124e771a37c/vmlinux-de5cb0dc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b134c0b5e676/bzImage-de5cb0dc.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/22d82b1df465/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+47de774a425e2380f16f@syzkaller.appspotmail.com
+
+         option from the mount to silence this warning.
+=======================================================
+ntfs3: loop0: Different NTFS sector size (4096) and media sector size (512).
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5096 at mm/util.c:670 __kvmalloc_node_noprof+0x17a/0x190 mm/util.c:670
+Modules linked in:
+CPU: 0 UID: 0 PID: 5096 Comm: syz-executor108 Not tainted 6.11.0-syzkaller-08833-gde5cb0dcb74c #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__kvmalloc_node_noprof+0x17a/0x190 mm/util.c:670
+Code: cc 44 89 fe 81 e6 00 20 00 00 31 ff e8 1f ec b9 ff 41 81 e7 00 20 00 00 74 0a e8 d1 e7 b9 ff e9 3b ff ff ff e8 c7 e7 b9 ff 90 <0f> 0b 90 e9 2d ff ff ff 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00
+RSP: 0018:ffffc90002d9f8b8 EFLAGS: 00010293
+RAX: ffffffff81dad1e9 RBX: 0003ffffff400002 RCX: ffff88801f15c880
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff81dad1d1 R09: 00000000ffffffff
+R10: ffffc90002d9f720 R11: fffff520005b3ee9 R12: ffff88804032e0b0
+R13: 0003ffffff400002 R14: 00000000ffffffff R15: 0000000000000000
+FS:  0000555588ee8380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa23b395ed8 CR3: 0000000041826000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ kvmalloc_array_node_noprof include/linux/slab.h:1040 [inline]
+ wnd_init+0x1ed/0x320 fs/ntfs3/bitmap.c:663
+ ntfs_fill_super+0x2ffe/0x4730 fs/ntfs3/super.c:1315
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1635
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f528f5191fa
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcd5057158 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffcd5057160 RCX: 00007f528f5191fa
+RDX: 000000002001f6c0 RSI: 00000000200000c0 RDI: 00007ffcd5057160
+RBP: 0000000000000004 R08: 00007ffcd50571a0 R09: 000000000001f27a
+R10: 000000000181c041 R11: 0000000000000286 R12: 00007ffcd50571a0
+R13: 0000000000000003 R14: 0000000000200000 R15: 00007f528f56103b
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
