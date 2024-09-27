@@ -1,135 +1,123 @@
-Return-Path: <linux-kernel+bounces-342082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4030988A66
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:52:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C108988A69
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D41031C2336C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:52:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315E9282730
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BA11C2319;
-	Fri, 27 Sep 2024 18:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E50F1C2335;
+	Fri, 27 Sep 2024 18:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pdYENyEG"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fxPvMwyb"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63121C1AD9
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 18:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DEE1C2306
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 18:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727463138; cv=none; b=hwxSWcqkhe1LkwjsgVxLFrGFuQrLPJvNBhHGEK4NJjmir9fp67jmJLsr3t+LJzPMpN637orssrD6bPvMlHN1ot3xrcUMbLtQeKhWgQ4CYbixyiq1ke6zEWKCf3Zo/Sk0KG/6fR6TrG8bEreOtRHt4ECq0DlogqUs7zyyXDRguQs=
+	t=1727463139; cv=none; b=aYBAzKgBUoV5NiEutmhhtWZOo7izoT1/2O2fipADo9RHUKPPxL6SJlLXrXEtjNBlofbEUIcxBF+8ne3vlH5KaKV0skKdTIGC9khJJ3Ov/doGhkI1tMscVirspBzWpcQLUc6Pojxnp+I0HcWRPZtqRIdtxG6NbSBn/Z1dl2kpt3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727463138; c=relaxed/simple;
-	bh=IzWjw7eN0y01PVEFCALDoih+toQy5a+BhLNxBF2j7ms=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=IdveObseHgBwuOUKJ1j1G0L4+nNOujjyvTKiLdajwwj7uJHVO8BlHd561g/+QestSq+18v8G0odNLNPzQ1+RLhLiL8JiYcmTVE2DRzqpNAudbX8HAsKRRQIvg8vOKZ0at3PvF5IUJWT3EglC7tD15hsRtqJzjJuynKIbxhcm0zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pdYENyEG; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso37775ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:52:16 -0700 (PDT)
+	s=arc-20240116; t=1727463139; c=relaxed/simple;
+	bh=CgVxO7j7fcIwhZ8sGJOfD3oqD56qz+Htb/d2q9B8S/s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fVAVQov5D1ckv1VVZUx51D/GB95Kp/r4MWLzDjeLylEULnZVwly/yL/sjprKk9gXRT2Ts2qLqevEg8UNLSqkhucZY5MPI7WdjaYvqiWLanLu/ij+1BbKlhii30tVGpUmRaWjqinCLua6kWrH/28Yed1k4N1fXCAVe2Xw4rN6Xh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fxPvMwyb; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7db61fd92a1so77500a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:52:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727463136; x=1728067936; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1oLFkKO1VpfbWh8RAovo3jp9IKk3ALZrZVKd9HwvoaM=;
-        b=pdYENyEG3AWrqQC4lHurdQQGECdq6Fyf1bwFX7HUzwCLNzQu9NlKm7zELR0kJLOidy
-         wpgG1x1ji/PgB6BdTSV7uGZQQa3NzgSoQuBdtIDgEZt0m07IlAZG6bHaGQ7aIqeV7Nem
-         F7h1jd2pKmOjX5G3f5WNsFj6OaXAdsUGhslUMXQ/jVCKRLz/sm9PW6+T8jalbHGESCXO
-         lkLftwkCtV9K0JeNhzdRGG42Q0f/ADOOriN0c6rIRpn6UwUOKvED2TqRfEMNyYd0pncl
-         VNQlPq3wewAu+2uQkMifP42739HVYHXaSVRePwzRAJdWMZUhqXnCdlMFzIpXz0dgJ92n
-         nF0A==
+        d=chromium.org; s=google; t=1727463137; x=1728067937; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tjNTTjSP1D6OLEEAIGyE9s8gzDaTa6XxG0RsJUdZJBA=;
+        b=fxPvMwyblRQ3qxDvCrQQpxwMycRjXr7B6dO49ipXVzJ/2AgSEIssr8urLu6pwOvNq5
+         HrEaos/0Wx0qbZDdgx/HY6ofh1Cewqgt91JjpFUt3yNnQENa0HDeic2mpjPxNSDbW/fW
+         qdoE8O4n254AB77a79oZptA7zu22IjVCdn/g4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727463136; x=1728067936;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1oLFkKO1VpfbWh8RAovo3jp9IKk3ALZrZVKd9HwvoaM=;
-        b=DeYfSoMRtoCoeTfQWmOnBzMu2HTiPZWcwQedW/IH0nwUKBTBMyO7DH8EpONgBaEyS0
-         H0pEYOjsyfV96ajcF5xXrNk1XHD8Qt9g/HMe+6HpUxeMqglbkGIsame7ryypABzVNGBb
-         ApazIityCXHrFppaH2J1bXtLTgibuzmNCR45tz6sRS4OnahQUuTWykn46ys+tazl80KU
-         4ivMcVlQHfPFxv63p3++HLSWLxJPfZPeu/f2At4SkOfVxAxBzm3mi918m5BZjvaq+40y
-         muEqjscBOKPekKHAQB7T+GeBE6p4+gCCUgMibTCDhKqBMb6WkJwQYJfzPDOGzTpoD3Lp
-         e4QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1q3qOhXyUd1cS+FrpWdnYaJpKc0aJZH2uFe+mn15pP68u+SlXzb07U/wslklZokb2mneHIlXzG+dXSQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8CgmaQg228Hk4LsY5Y5kuxT/FqiS7zpXtpcJozw6w/Lq8J3Ji
-	8TJV1STfPpou+Ox4Dd90GLKf/2d+UtQFEKewqrD6kO7Lr2yWTicScsmyCbqcUX1miNOO9vY1gs4
-	ZpDKzNkqo+JyC1lFsc4A69CvlOAixRR4n0kHH
-X-Google-Smtp-Source: AGHT+IHsljO1XOSs8sBOur4Zv2fgb8b4s3bUfld8PGFucwZxQKtVXzovLlISUT9gEFG9kNJu45XDphWC853dVxqtTwg=
-X-Received: by 2002:a92:cd8b:0:b0:39e:68d8:2891 with SMTP id
- e9e14a558f8ab-3a34bc236c6mr444995ab.6.1727463135626; Fri, 27 Sep 2024
- 11:52:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727463137; x=1728067937;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tjNTTjSP1D6OLEEAIGyE9s8gzDaTa6XxG0RsJUdZJBA=;
+        b=DY3Di9/tH9olXp+YCqxfb+mcJfoQEbp+qjXp0miM3sI1kgIOLpXnkQJqVNAt0iCFF1
+         kyauJetk+7lST5IjGYl6aMIKI/NKht77AbZehr/+qP3pLnYBKzqnnQk8gJHvKDDq215D
+         eBK5g0i8504tq1PC/UNyG1EbJ0SUihe3Pc8HwtwC+CSdM/jn5s8fKC5mZoSkR5oShWf4
+         O2fE2LXa/sPrrT5tF0itqK1hZW9ZXcDq4v04ZfAekJwb+dJaFQoo/QMhWHJsjAiFVqNR
+         2G0wbc31YMyczoJ29hsGPoFD4843dZkJgctM+v+w7yiV+GRhleUAUicJ52CddG+cUsXk
+         BNvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVudwF6mK5SL3/K01cA/LZkbj2FgIg05N4c5vGDykflm/irxKTYFYVoaxJj4DrRXEb4lud3Nh5Rc6VLgIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhRc2slvXdxeKdf4AuiAH+YUB9KyrKBXjhiWiCmpTJ6jzF2Smd
+	37cg/ZFRZpS213dp6WLg1a0ESkGIGFAcmzbdWF3j5zWODL0CazvEvOzPMPLWOw==
+X-Google-Smtp-Source: AGHT+IF0HtH1+PEmCntzA1h5vec66p92JMnSHwfX+hTVjrGe8VMsda+UKDIBB/ShNgo5UqX48lyoGQ==
+X-Received: by 2002:a05:6a00:b85:b0:70d:2c09:45ff with SMTP id d2e1a72fcca58-71c636f23c9mr339784b3a.4.1727463137261;
+        Fri, 27 Sep 2024 11:52:17 -0700 (PDT)
+Received: from localhost (99.34.197.35.bc.googleusercontent.com. [35.197.34.99])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-71b265385fasm1922905b3a.216.2024.09.27.11.52.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Sep 2024 11:52:16 -0700 (PDT)
+From: jeffxu@chromium.org
+To: akpm@linux-foundation.org,
+	keescook@chromium.org,
+	corbet@lwn.net
+Cc: jeffxu@google.com,
+	jorgelo@chromium.org,
+	groeck@chromium.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	jannh@google.com,
+	sroettger@google.com,
+	pedro.falcato@gmail.com,
+	linux-hardening@vger.kernel.org,
+	willy@infradead.org,
+	gregkh@linuxfoundation.org,
+	torvalds@linux-foundation.org,
+	deraadt@openbsd.org,
+	usama.anjum@collabora.com,
+	surenb@google.com,
+	merimus@google.com,
+	rdunlap@infradead.org,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	enh@google.com,
+	Jeff Xu <jeffxu@chromium.org>
+Subject: [PATCH v1 0/1] update mseal.rst
+Date: Fri, 27 Sep 2024 18:52:08 +0000
+Message-ID: <20240927185211.729207-1-jeffxu@chromium.org>
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913173242.3271406-1-jmattson@google.com>
-In-Reply-To: <20240913173242.3271406-1-jmattson@google.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Fri, 27 Sep 2024 11:52:03 -0700
-Message-ID: <CALMp9eSd49O_J=hJKdE0QAcYFY1N1cxG1rKDJH-GUZL7i_VJig@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] Distinguish between variants of IBPB
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Jim Mattson <jmattson@google.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Kai Huang <kai.huang@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 13, 2024 at 10:32=E2=80=AFAM Jim Mattson <jmattson@google.com> =
-wrote:
->
-> Prior to Zen4, AMD's IBPB did not flush the RAS (or, in Intel
-> terminology, the RSB). Hence, the older version of AMD's IBPB was not
-> equivalent to Intel's IBPB. However, KVM has been treating them as
-> equivalent, synthesizing Intel's CPUID.(EAX=3D7,ECX=3D0):EDX[bit 26] on a=
-ny
-> platform that supports the synthetic features X86_FEATURE_IBPB and
-> X86_FEATURE_IBRS.
->
-> Equivalence also requires a previously ignored feature on the AMD side,
-> CPUID Fn8000_0008_EBX[IBPB_RET], which is enumerated on Zen4.
->
-> v4: Added "guaranteed" to X86_FEATURE_IBPB comment [Pawan]
->     Changed logic for deducing AMD IBPB features from Intel IBPB features
->     in kvm_set_cpu_caps [Tom]
->     Intel CPUs that suffer from PBRSB can't claim AMD_IBPB_RET [myself]
->
-> v3: Pass through IBPB_RET from hardware to userspace. [Tom]
->     Derive AMD_IBPB from X86_FEATURE_SPEC_CTRL rather than
->     X86_FEATURE_IBPB. [Tom]
->     Clarify semantics of X86_FEATURE_IBPB.
->
-> v2: Use IBPB_RET to identify semantic equality. [Venkatesh]
->
-> Jim Mattson (3):
->   x86/cpufeatures: Define X86_FEATURE_AMD_IBPB_RET
->   KVM: x86: Advertise AMD_IBPB_RET to userspace
->   KVM: x86: AMD's IBPB is not equivalent to Intel's IBPB
+From: Jeff Xu <jeffxu@chromium.org>
 
-Oops. I forgot to include the v3 responses:
+Pedro Falcato's optimization [1] for checking sealed VMAs, which replaces
+the can_modify_mm() function with an in-loop check, necessitates an update
+to the mseal.rst documentation to reflect this change.
 
-> For the series:
->
-> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Furthermore, the document has received offline comments regarding the code
+sample and suggestions for sentence clarification to enhance reader
+comprehension.
 
-and
+[1] https://lore.kernel.org/linux-mm/20240817-mseal-depessimize-v3-0-d8d2e037df30@gmail.com/
 
-> Assuming this goes through the KVM tree:
->
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Jeff Xu (1):
+  mseal: update mseal.rst
 
-The only substantive change was to patch 3/3.
+ Documentation/userspace-api/mseal.rst | 290 ++++++++++++--------------
+ 1 file changed, 136 insertions(+), 154 deletions(-)
 
-Sean: Are you willing to take this through KVM/x86?
+-- 
+2.46.1.824.gd892dcdcdd-goog
+
 
