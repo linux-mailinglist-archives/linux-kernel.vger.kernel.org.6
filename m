@@ -1,159 +1,146 @@
-Return-Path: <linux-kernel+bounces-342110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2F83988AB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:06:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF08F988AB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CBF6B2132A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:06:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AA47B21BFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E2E1C231B;
-	Fri, 27 Sep 2024 19:06:29 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36AD1C231B;
+	Fri, 27 Sep 2024 19:12:39 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5296316FF3B
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC8513AD1C;
+	Fri, 27 Sep 2024 19:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727463988; cv=none; b=l89WovySnxLDrmv8fzUbxH/7R7YNSRTUSQVCGoYnNIMs7vZfy9lDOp9NhLbHcWoYa0qhP/DHe4hGzmhwhwFHnPh4Jb7gSUp8UPwyltdWQKU6bmcAsWIKMOyZ+QXEqqaquWsuNorCCbevxUDvFVRISXYnuVqD+K2+amW+wmsYBN4=
+	t=1727464359; cv=none; b=CILSoZyAAvZvlW/+pLrgGAfTGsBgwNQPnXS1uP3OjhirPE2KQyNpNDi94ToX0/fJs0tDAgAhrY+tMCcexcid9eFLIwMMgSwGW0o1eq4oB9C3j6OeVxOxc9oeeorTM4aMPPFBaMU+Jj22NwrMn4y/vNi799tiLiT7PSs0cmnTgwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727463988; c=relaxed/simple;
-	bh=w1dC9j7fndcQTKIgy4Ii3T0Rd7BykY2onXtMnlRZGcE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=D1Peozyo5woOyvc+EjzOxRM/rPSQU90xwVKEKi6hT7cKV/X1zSX4ZeFoy8ana53nsRCpbayDV8nKLeG08cBFcWtqz/UBmLdiOK/mpMQkFukvNMzm0CuxA5RMOYQodC1MMgXEaln7v9xCw4GwWT4TqSfHXLVoFxjAtCJq6rGwj14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a1e69f6f51so25685175ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:06:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727463986; x=1728068786;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hgY8hzI99QnPWMPwvALIbHs6Az4q/B4sE1z/OIjt2MA=;
-        b=FD4cVxbLA4JplOPoYQZQPDrWm0qL58Kisb4aQBV4q9FUWAdvt/Y+oVYNeDTG/18LXu
-         qZ1NmSaNY26eqDRRvqZZd8CQZEk8tsglTCosSOPkXSDxMOsGCdsV/WsLWZdnyIIlKu6J
-         ZUbNN4Q6h1WANVTb29A+77J0L5GTKeiVs2jYVt4sQ2uMeRcVxkCq6Sj4DSSWgabkAOax
-         U0H7Et3ceopvWLnqw00ukffgG4zQoNlKLVNSFfdY87RJ2/gy3x5J0gVw7xGtW2pw7Kx6
-         1qBG9bGssNUNFv2AhCbdAWqbrOZeJRweQtX0PrcbjFg/tKgmI7s/Z5PF8/66R8akj+go
-         cDDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUER8V7NVikFgiO1TiOx4AqzCFj7AtKmftyJcMLfJZqooY/OajElKnDDokOhuJNYwx/xcCCBCKBsVzIQZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIruAKIfSMeGTrAj8zfC2h6zWQNHKQAHYf/Mi3mAC2EiWSemvc
-	etDGVNTuIiomWXY2xQBoRe8kwX6m49YacVWRyc8OXOOi1gpWtM6ycTTPxSHpp8PBUJYkxradcDZ
-	QPE/zzhhUm8cIR7Xyg3e2LnCkZVo5vwbq7Gq3GzUZagJK+LaAthzGp0E=
-X-Google-Smtp-Source: AGHT+IGE8RNmEFTPX2Ywn6IH8Zh04GJEFSVVevZAvdbyqKj9hV2LEyChhp8FfbasKEdwpEq8OE+5ktgv1rh3oxhj4y8IB52wKtm2
+	s=arc-20240116; t=1727464359; c=relaxed/simple;
+	bh=8wpubwXCGXoVmfAHfIF5StVhRnWB0U7keO4Zg6GWO58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PAuYUbZrAU65T0ycj77itkVxgFikXhzEX5c/flkURdoC2rmS5qlTXsgzPfer/miEJEG1TFZv6N8Ev3FL62NvAiKEyqqz5JRbAFNWOJ2RplCPK2RPc04rcbzpgOF6RBCxjMCkuFvIdrUSfTELrRo5hVZH7dlyjxuFsVEMR9Q0YCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XFfZc18S7z9v7Nc;
+	Sat, 28 Sep 2024 02:46:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id DD54C1400CA;
+	Sat, 28 Sep 2024 03:12:27 +0800 (CST)
+Received: from [10.81.203.162] (unknown [10.81.203.162])
+	by APP2 (Coremail) with SMTP id GxC2BwAniMiMA_dm8ODFAQ--.41972S2;
+	Fri, 27 Sep 2024 20:12:27 +0100 (CET)
+Message-ID: <1b04e35c-8994-48d9-907a-966bb4dfabaf@huaweicloud.com>
+Date: Fri, 27 Sep 2024 21:12:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c25:b0:3a3:44e6:fe66 with SMTP id
- e9e14a558f8ab-3a34515d324mr44989385ab.10.1727463986466; Fri, 27 Sep 2024
- 12:06:26 -0700 (PDT)
-Date: Fri, 27 Sep 2024 12:06:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f70232.050a0220.38ace9.002f.GAE@google.com>
-Subject: [syzbot] [ntfs3?] WARNING in wnd_init (2)
-From: syzbot <syzbot+47de774a425e2380f16f@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    de5cb0dcb74c Merge branch 'address-masking'
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b8ca27980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e851828834875d6f
-dashboard link: https://syzkaller.appspot.com/bug?extid=47de774a425e2380f16f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159a0c80580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120d619f980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-de5cb0dc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2124e771a37c/vmlinux-de5cb0dc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b134c0b5e676/bzImage-de5cb0dc.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/22d82b1df465/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+47de774a425e2380f16f@syzkaller.appspotmail.com
-
-         option from the mount to silence this warning.
-=======================================================
-ntfs3: loop0: Different NTFS sector size (4096) and media sector size (512).
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5096 at mm/util.c:670 __kvmalloc_node_noprof+0x17a/0x190 mm/util.c:670
-Modules linked in:
-CPU: 0 UID: 0 PID: 5096 Comm: syz-executor108 Not tainted 6.11.0-syzkaller-08833-gde5cb0dcb74c #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__kvmalloc_node_noprof+0x17a/0x190 mm/util.c:670
-Code: cc 44 89 fe 81 e6 00 20 00 00 31 ff e8 1f ec b9 ff 41 81 e7 00 20 00 00 74 0a e8 d1 e7 b9 ff e9 3b ff ff ff e8 c7 e7 b9 ff 90 <0f> 0b 90 e9 2d ff ff ff 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00
-RSP: 0018:ffffc90002d9f8b8 EFLAGS: 00010293
-RAX: ffffffff81dad1e9 RBX: 0003ffffff400002 RCX: ffff88801f15c880
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff81dad1d1 R09: 00000000ffffffff
-R10: ffffc90002d9f720 R11: fffff520005b3ee9 R12: ffff88804032e0b0
-R13: 0003ffffff400002 R14: 00000000ffffffff R15: 0000000000000000
-FS:  0000555588ee8380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa23b395ed8 CR3: 0000000041826000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- kvmalloc_array_node_noprof include/linux/slab.h:1040 [inline]
- wnd_init+0x1ed/0x320 fs/ntfs3/bitmap.c:663
- ntfs_fill_super+0x2ffe/0x4730 fs/ntfs3/super.c:1315
- get_tree_bdev+0x3f7/0x570 fs/super.c:1635
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f528f5191fa
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcd5057158 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffcd5057160 RCX: 00007f528f5191fa
-RDX: 000000002001f6c0 RSI: 00000000200000c0 RDI: 00007ffcd5057160
-RBP: 0000000000000004 R08: 00007ffcd50571a0 R09: 000000000001f27a
-R10: 000000000181c041 R11: 0000000000000286 R12: 00007ffcd50571a0
-R13: 0000000000000003 R14: 0000000000200000 R15: 00007f528f56103b
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+ rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>, rostedt <rostedt@goodmis.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>, Vlastimil Babka
+ <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
+ <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
+ <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+ <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
+ <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
+ <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
+ <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
+ <54487a36-f74c-46c3-aed7-fc86eaaa9ca2@huaweicloud.com>
+ <CAHk-=wifOW0VEh6uL3sHSaAUA46YmPDS9Wh5HnNC2JyOiXVA=Q@mail.gmail.com>
+ <ZvX12_1mK8983cXm@boqun-archlinux>
+ <0b262fe5-2fc5-478d-bf66-f208723238d5@efficios.com>
+ <e748893f-28a3-4b8a-a848-cfb1173ab940@app.fastmail.com>
+ <CAHk-=wgQyXOt_HjDZHNqWMmyvv74xLAcMw88grfp4HkKoS2vLw@mail.gmail.com>
+ <7e1c8a5e-c110-414c-8fb2-022eacc2bd4a@efficios.com>
+ <CAHk-=wgBgh5U+dyNaN=+XCdcm2OmgSRbcH4Vbtk8i5ZDGwStSA@mail.gmail.com>
+ <34ec590c-b109-44a0-8bfe-8aafc6e7ad64@efficios.com>
+ <CAHk-=wi_hz8Whs2ogRUQEfMBk=OkZ3usmvJkzb5YyEKwqEJBmQ@mail.gmail.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <CAHk-=wi_hz8Whs2ogRUQEfMBk=OkZ3usmvJkzb5YyEKwqEJBmQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwAniMiMA_dm8ODFAQ--.41972S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYs7kC6x804xWl14x267AKxVWrJVCq3wAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjc
+	xK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY
+	04v7MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v26r4a6rW5MxC20s026xCaFV
+	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
+	x4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
+	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
+	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7IU1c4S7UUUUU==
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Am 9/27/2024 um 8:13 PM schrieb Linus Torvalds:
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> Because even hiding the value one from the compiler will mean that it
+> can't use the comparison to decide that the originals are equal, even
+> if one of them is unhidden.
+> 
+> No?
+> 
+>                Linus
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+I think it depends on which one you hide.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+If you do
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+  z = b;
+  hide(z);
+  if (a==z) { *b; }
 
-If you want to undo deduplication, reply with:
-#syz undup
+then it will be fine, because it knows a==z but nothing about the 
+relation of b with a or z.
+
+
+But for
+
+  z = a;
+  hide(z);
+  if (z==b) { *b; }
+
+then it would still know that b == z, and could replace *b with *z 
+(which really is *a).
+
+
+Best wishes,
+   jonas
+
+
+
 
