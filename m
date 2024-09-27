@@ -1,177 +1,149 @@
-Return-Path: <linux-kernel+bounces-341559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75F39881A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:46:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F5A9881B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B6981F22547
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:46:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93568B240F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C401BC07E;
-	Fri, 27 Sep 2024 09:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2AF1BB6AD;
+	Fri, 27 Sep 2024 09:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XXOK0aGP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kikG9Ycy"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368E01BC066;
-	Fri, 27 Sep 2024 09:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C82715ADAB;
+	Fri, 27 Sep 2024 09:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727430264; cv=none; b=Nif8vGziZey9CSfv+g8cjwWnbiy/INiq4hd6/+aGM+M88R89reN0yBSIO/rLfgtWYoMqFnT7QUEkpkYemD881TcESCfthNc4i7MbqPeGUUQOi53+aC5ZaRSKXvE2NUqqsAgFtsOHTKhGWF8nsdWbZU4izlfBZSHEfg+c5sTINxw=
+	t=1727430364; cv=none; b=pbHRv21NYD2cZwmfOMVTLNr+P3Z8dwBgnjDl98asX+M2kVdCfc3QYpeU6wlRDDdtFsFU1HCr+x1uyBxEu+8cL28I2Jy6Q0QlpoM02N3BeXg3ra2AE0iOBMP5jhz8hTgXTgN9D8rEv5g7bv763CPaVdc/ZN3nH2a+TCInCkGuols=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727430264; c=relaxed/simple;
-	bh=n/bltVhnYzxNYiNE4PxbxGOVMK5htlf883JwUC9dahs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RQcCu7jmHhuHEadsRhQiCYQ9Vr3pHrRFvBpNJ0oLUp4E7H6RPCi8tm/SlrwmK1l2Rprj6omhh67/HOQYSLokxQqDA4pq9pKFPrVBFkLKDScqxzKFxTVZGZ+uNrTgTYSAw5L1Ac9fKYXhr1jLmZddct7ngEcnTivZdHq6YiDGTsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XXOK0aGP; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727430262; x=1758966262;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=n/bltVhnYzxNYiNE4PxbxGOVMK5htlf883JwUC9dahs=;
-  b=XXOK0aGPjK3KGxO3viW+tFrhysvwkqJXPKKyZYLIO0HCS+x3XICxTpaf
-   NQ9Ov3fcgA7H8FLcrwaw0emhVAb+d0Yj5nS+jixomcg61WvlpAWYH6USD
-   HYoDCAt+B8LWRjWCYzgS048z9RjRg0rhCRFAj78Q6IoLKxxH37DyBV+hg
-   0xLZq0s2d1yRhvMMWfZeplEhTPYdMkBLXtInXrg7P7wsMjQ7oF1zq5q49
-   ZeV2LqfBW1FzSQqroxkrZBIPbl3dT5m/fI+QsOUHEyAuEVO5lUnP6AFG1
-   lK4dtdcFXTDSOZ77NkV7Y/jHZuZGaSbYfUFQ+Mr925WpQph4xOl76uPfz
-   Q==;
-X-CSE-ConnectionGUID: KjpAhFJ+SXKW39n6pAchjA==
-X-CSE-MsgGUID: Wmx6Tf4wTKaMui5G6pGezQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="51984046"
-X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
-   d="scan'208";a="51984046"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 02:44:21 -0700
-X-CSE-ConnectionGUID: JrghRUXCShqSfvO3s9n4NA==
-X-CSE-MsgGUID: hRP4172ySS6/WR2zK0n4sg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
-   d="scan'208";a="76997208"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 02:44:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1su7WJ-0000000DWWK-45nm;
-	Fri, 27 Sep 2024 12:44:15 +0300
-Date: Fri, 27 Sep 2024 12:44:15 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Michael Wu <michael.wu@kneron.us>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1727430364; c=relaxed/simple;
+	bh=dHFIqzDSAcs/LJ9D4ZKQcgGwC3lxFR5LYOie6vevEAs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a9kFltCixPfReYdqVpICaruVLGZ4Z40bgWfVa1T5/RU4yWjBLHUuxAo8puS6ke9YakjCgFkfhzy+VWPPwCvVC6nY7ESL0AcyZJJIH3S/WHXtGNgf7SY9i8O3C63p9KFB7gBuSN5NRU0WfeChReJwXiF6eVEissXCdzGRVtVBt6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kikG9Ycy; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-206aee40676so16499655ad.0;
+        Fri, 27 Sep 2024 02:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727430363; x=1728035163; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dg8Cm5qu3yzUVKUg5XLjDCIXUrVKekLRBfh6xFK8yD0=;
+        b=kikG9Ycy3Oxdm6ymoalEEWeuJ8bJserQDfjj7C1RnrMMaZhc9RF1CwWdlQECxntfEY
+         t5j0InYuFgfvqICqjKJ6bHU+HGeFpsEJC9iUCLo2s5ojBFtBFvo6z9h2GRMMSZS852sa
+         TjgjY6/n5MZPHkQt2e+T11HA2kOkNeNT7jcHHjMaEwpuMK3/ozyIvmsjuyWbNTH/gBOF
+         OnBv2BJBHKu/znThcQ1YWakgHswPn+aBvlOa/C9Cbexgw7Q1ErXvGLxWzHoiW8LkWUxQ
+         k9GVn/Ri08hU0Tm6Iv9YKl3bmZmwMUWKBUacggFSSlVd6DFjiihQDpfHOG6FrOyETX+g
+         rXcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727430363; x=1728035163;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Dg8Cm5qu3yzUVKUg5XLjDCIXUrVKekLRBfh6xFK8yD0=;
+        b=Xs9Vc7U6n5XHkyyp/Zj9ZFPvLzJOqGnayg6ipYjS4kypaaiVW7tTUal7t7958s6LqU
+         xlxA+99W23BXd1I+xQQQwODSPdWk/xcHKfc/Kc3kz1pNUfx5CnyQVPXe7fm5J5Mjx5pl
+         9rsF84UNIuQKxcJt3Qcowy3ShHOdVn6LF/kkI0rmrzogB2+gBvYdRnDhWh3eAx240bNC
+         9Zyv1GadmbD6vF2weIWJqN2eod+fisRAs5X/QBoHbAqfQ/nVXzRjqTzziruLRTbdDrQ5
+         If2Z/S2fsZTU63IO6E9zZPVorxLelCBB/sMQRpUcmUr4mTawvywWSVMZygsaDBYtdDbU
+         QQ5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWgTvtrKn8wFe7asECEHYCILev/AR6A+1UwxoxOrLlHdpJQVMwGdSPRRfvlMRkBvwG1zCaB6JeSHAlA@vger.kernel.org, AJvYcCX0rthzXPo1y3wjcXrusCwifp9JKOIrVwicYlyPUbtA26otCqhmfNUHjSIlV0NURRno6kFYvxSpxzDhX64JCQ==@vger.kernel.org, AJvYcCXJ0rsDqqkOIfNbl82enB5Hlgl6L0ToYH7SVtRJTRAZBmMmSv2+9PAkEbaifJUpHBb4kUVA/Ss4o4kSq2L+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJxlAg3raXxGtJOf7d0C+JCZd0ZpzgM16IFOcEwTjiHuVJI0Co
+	zD2qZhmHUuOHqAcqBL/Ns2ITIWxm097KGtL73bChV+aYrRfPF30=
+X-Google-Smtp-Source: AGHT+IHZcCivTIFJllgFWqRP7trmJT7BjcpvHl0dD420q1qxmyXZbp3opHtYulSJ0AEhAtroKhSK0Q==
+X-Received: by 2002:a17:902:f601:b0:207:457f:b8a6 with SMTP id d9443c01a7336-20b367d0285mr38679045ad.12.1727430362501;
+        Fri, 27 Sep 2024 02:46:02 -0700 (PDT)
+Received: from localhost.. ([42.116.8.116])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e4e61csm10533895ad.237.2024.09.27.02.45.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 02:46:01 -0700 (PDT)
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Morgan Chang <morgan.chang@kneron.us>, mvp.kutali@gmail.com
-Subject: Re: [PATCH v2 2/2] i2c: dwsignware: determine HS tHIGH and tLOW
- based on HW parameters
-Message-ID: <ZvZ-b_JRVnsh9o_8@smile.fi.intel.com>
-References: <20240927042230.277144-1-michael.wu@kneron.us>
- <20240927042230.277144-3-michael.wu@kneron.us>
+	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Subject: [PATCH v3 0/3] X1E Dell XPS 9345 support
+Date: Fri, 27 Sep 2024 11:44:17 +0200
+Message-ID: <20240927094544.6966-1-alex.vinarskis@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927042230.277144-3-michael.wu@kneron.us>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 12:22:17PM +0800, Michael Wu wrote:
-> In commit 35eba185fd1a ("i2c: designware: Calculate SCL timing parameter
-> for High Speed Mode") hs_hcnt and hs_lcnt are calculated based on fixed
-> tHIGH = 160 and tLOW = 120. However, the set of these fixed values only
-> applies to the combination of hardware parameters IC_CAP_LOADING = 400pF
-> and IC_CLK_FREQ_OPTIMIZATION = 1. Outside of this combination, if these
-> fixed tHIGH = 160 and tLOW = 120 are still used, the calculated hs_hcnt
-> and hs_lcnt may not be small enough, making it impossible for the SCL
-> frequency to reach 3.4 MHz.
-> 
-> Section 3.15.4.5 in DesignWare DW_apb_i2b Databook v2.03 says that when
-> IC_CLK_FREQ_OPTIMIZATION = 0,
-> 
->     MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
-> 		     = 120 ns for 3.4 Mbps, bus loading = 400pF
->     MIN_SCL_LOWtime = 160 ns for 3.4 Mbps, bus loading = 100pF
-> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
-> 
-> and section 3.15.4.6 says that when IC_CLK_FREQ_OPTIMIZATION = 1,
-> 
->     MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
-> 		     = 160 ns for 3.4 Mbps, bus loading = 400pF
->     MIN_SCL_LOWtime = 120 ns for 3.4 Mbps, bus loading = 100pF
-> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
-> 
-> In order to calculate more accurate hs_hcnt amd hs_lcnt, two hardware
-> parameters IC_CAP_LOADING and IC_CLK_FREQ_OPTIMIZATION must be
-> considered together.
+Introduce support for the mentioned laptop.
 
-...
+Very similar to other X1E laptops, device tree was derived by analyzing dtsi of
+existing models and ACPI tables of this laptop [1]. Most notable difference were
+* TZ protected SPI19.
+* Keyboard only working after suspend/resume sequence, will do a follow up patch
+to i2c-hid.
+* Lots of small deviations in LDOs voltages.
 
-> +static void i2c_dw_fw_parse_hw_params(struct dw_i2c_dev *dev)
+Successfully tested with Debian 12 and Gnome, although this required additional
+patches, namely harcode GPU chipid, apply [2] and _revert_ [3] - same as in Abel
+Vesa's branches. Without last two the boot process is terminated by TZ. Firmware
+for GPU/aDSP/cDSP was extracted from Windows, WiFi firmware from upstream
+linux-firmware.
 
-Separate function is an overkill. Just inline its contents...
+Quite a few things alraedy work, details in patches, quite a few still in WIP or
+TODOs. Since fixing these may take me a while due to lack of documentation,
+sending current progress as its very much usable.
 
-...
+[1] https://github.com/aarch64-laptops/build/blob/master/misc/dell-xps-9345/acpi/DSDT.dsl
+[2] https://lore.kernel.org/all/20240830-x1e80100-bypass-pdc-v1-1-d4c00be0c3e3@linaro.org/
+[3] https://lore.kernel.org/all/20240708-x1e80100-pd-mapper-v1-1-854386af4cf5@linaro.org/
 
-> +	ret = device_property_read_u32(device, "bus-capacitance-pf", &dev->bus_capacitance_pf);
-> +	if (ret || dev->bus_capacitance_pf < 400)
-> +		dev->bus_capacitance_pf = 100;
-> +	else
-> +		dev->bus_capacitance_pf = 400;
-> +
-> +	dev->clk_freq_optimized = device_property_read_bool(device, "clk-freq-optimized");
+--------
 
-...
+Changes to V2:
+* Fix uart21 missing alias
+* Fix redundant mdss_dp3 defines
+* Fix touchscreen i2c address
+* Update commit description - OLED panel reported working
+* Update commit description - touchscreen reported working
+* Update commit description - battery info reported working
+* Update commit description - add keyboard patches link
 
->  	i2c_parse_fw_timings(device, t, false);
->  
-> +	i2c_dw_fw_parse_hw_params(dev);
+--------
 
-...here.
+Changes to V1:
+* Fix misalignments due to wrong tab/space conversion
+* Fix regulator namings
+* Fix reasonable warnings from `scripts/checkpatch.pl`
+* Restructure all (sub)nodes alphabetically
 
->  	i2c_dw_adjust_bus_speed(dev);
 
-...
+Aleksandrs Vinarskis (3):
+  dt-bindings: arm: qcom: Add Dell XPS 13 9345
+  firmware: qcom: scm: Allow QSEECOM on Dell XPS 13 9345
+  arm64: dts: qcom: Add support for X1-based Dell XPS 13 9345
 
-> + * @bus_capacitance_pf: bus capacitance in picofarad
-
-picofarads
-
-...
-
-> +			u32 t_high, t_low;
-> +
-> +			if (dev->bus_capacitance_pf == 400) {
-> +				t_high = dev->clk_freq_optimized ? 160 : 120;
-> +				t_low = 320;
-> +			} else {
-
-Yeah, this has no protection against wrong values in the DT/ACPI.
-So, perhaps
-
-			} else if (...) {
-
-and assign defaults or bail out with an error?
-
-> +				t_high = 60;
-> +				t_low = dev->clk_freq_optimized ? 120 : 160;
-> +			}
+ .../devicetree/bindings/arm/qcom.yaml         |   1 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../dts/qcom/x1e80100-dell-tributo-13.dts     | 863 ++++++++++++++++++
+ drivers/firmware/qcom/qcom_scm.c              |   1 +
+ 4 files changed, 866 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-dell-tributo-13.dts
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
