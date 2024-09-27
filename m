@@ -1,679 +1,215 @@
-Return-Path: <linux-kernel+bounces-341726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F2D9884B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:30:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 213429884BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 138CCB21DCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:30:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDAEDB21C32
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5820818B46D;
-	Fri, 27 Sep 2024 12:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B0318C019;
+	Fri, 27 Sep 2024 12:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4TEymfMc"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AfzDtLwD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3278818BC32
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C021E507
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727440208; cv=none; b=Ih1UltNYx13j+Qh+jFoxcux010ZfnoyBUwN6Y6KK29O7dDYuhHIUI2/CvBWiWRbcm7uMi9m/0IiaamOidvNZJB5N4fy7VcQwHPv4KbiQswY8GRpcvr10UcQNOMtmzsTdQnBcw+XNfkIg9+8shWMwp5/5e4E2VQkCPpIjX91E76Q=
+	t=1727440226; cv=none; b=TwHt7++Ygmpr8CCEwPiaiwbP3Pl2xuQg4/G8Cp5VJSCivArSmVXe6u+z63BmgyKRP7gWsdv5zCaV1cRf8oqFg7eqLc7kATAIAUvhhEcXYeURg36aliimBMmF0tyWecdLAp94zoLPSvFZqoyLgizs8nsZ0zpLjZuge4eElFX3664=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727440208; c=relaxed/simple;
-	bh=G4sM4B+hoEwt/TOOYJeNkTr/fK7MoonBllTZSHDY650=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KbAZ1xpPgK5Rx3l/XS+ypTs8NC2p7SEFukt8ApuD9RNuSKWIdAeIm2Mq/vmF1iK+fVyRY0NYVJMD7p9CEdGilfUg3rjLiB+S/8Ku/f2vi+1yhBMC42bYIFmYSXI4tFLC+ydPmIZFwRRHYVfNTxZQWDkJnMQGUVVTXuCpLRoF9XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jakiela.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4TEymfMc; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jakiela.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a93bac20fccso162777566b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 05:30:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727440203; x=1728045003; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JJH90s9ehM/6C3cC3wlLnVAl5HGuTGpg9uLiBC2hcY0=;
-        b=4TEymfMcNCSwDsEIIYId4LRyYE81LHxRaN7uk+vCjfAFtt4CDc4+wk5+zYjMDRu8Cx
-         ZB5bQ1GK5oL71zywQnv1/smEw30dNS42mGsewE6IAUYwnZ7a+yoRqZWnLPDTKpxtbp9j
-         71MG5Xe6OUK3W72l/gtFvL4xr5OSB4e/+lRLEw4LEEWsFH04Ry5PclPYRHw7iDbRWc32
-         YZkBVXi7IyFsKxDNWCfTV63JNv/gsTcAsxcHHuUnwg7CH18UTIcKqw+ip//Rc/ajeGJw
-         LmqEGFhVCa1dM/kip3YCMLIWP4covRSNi4vllXhkC4QxTN+cXBU5apFkvV73A2A0NqlV
-         ic4A==
+	s=arc-20240116; t=1727440226; c=relaxed/simple;
+	bh=tHRUqCMWaS4E0lwZZuFt/tXCyKXxjn5fb4KXIUqpMWs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iXkwV6e51vtkBON4YWoUwS2tX0/bj+izZe+hZP237Jb7RkscLhdUaWKpDHjz9Ab9ToSpQaMuZMwVTB70E7XrdmRVICMed/kZ1cLc/ydG3Tp9U4sKHbuisY26IHmMr/FDfL2ZBLfBhO55/jbwu+JCfL43bq4p2u+NRV4pG8sEAbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AfzDtLwD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727440223;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=b70emq1asFc0837pR5hOySriSfg2vpMiOIzL46iGcG0=;
+	b=AfzDtLwDv2CDEwBDc8hUBhFBck2qMMuB16E/eCZw4XXDKt38q0TbbVvqxSMazMQxvq2O4P
+	U5AcECgrE97ACUQ2SLCDTscghCD55pqYh30eUMAHNQsKMMEu9iKyuhCp4C0eSyMmC+v3yo
+	2Mmttj3enmNFqApEuAjjFtNV/e4gODo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-5-3-sUwM4CNq6A3uPHcWRcdQ-1; Fri, 27 Sep 2024 08:30:22 -0400
+X-MC-Unique: 3-sUwM4CNq6A3uPHcWRcdQ-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb471a230so15147735e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 05:30:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727440203; x=1728045003;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+        d=1e100.net; s=20230601; t=1727440221; x=1728045021;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=JJH90s9ehM/6C3cC3wlLnVAl5HGuTGpg9uLiBC2hcY0=;
-        b=YtoUDjh6exVZ6XIZZHoQuoibi4cZGacTXk2Oi24C4+BCSD7ryTwZhWEdDcDB7wXJCu
-         +k9uNkH2GvfWVlvWnqr0PCuY49lsge6nocrouv2ZvgtU1vLNtuaKp18HZRV1FUbD3j9z
-         34oweCPxnr2cXWryvFPfvSJ7Ka0XN1mTnvn3eli6DDAFGsgwsp165X5UPIQtvlpdYq+h
-         lGxjzMIlZY1yI8okO66qnp6reiOWvboVn/qGiQT/fTgXoZnPHkWuyb1PGPiQXFG8CZbo
-         Wy1iiFyYzt59neYWNmTSyEJmSh1p3qroANQdVnLt7SA08c4Et+SNDWimmpQ0YF7Vczmo
-         k0lg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5Po7LSJVKZ9qsFTWKAGC8XHkPWp24zRp6UaXIa1DnZIcANqZwO0WBwg7fL6JwnrQPbwKJQ7I780A8Wg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8lzEIpZwLScpUX/EvXTGlGnuX0apPk+b2pQDRj9Mi7bBHsWkx
-	7epGzeXUutNVd6tNT5L2tTbnQ0wQJtmRLrnktEmieYbvOp+mPblmEr6J042Hq4R1fELTafYyxpB
-	f0fRtYg==
-X-Google-Smtp-Source: AGHT+IFtaqAnYTlWl4p2ORNPKpErcac7yI1t2VhcCjW2ce9GaYjOFl421nfSmPjLIcMrtK0TIAES3Sf1Hgjt
-X-Received: from malysz.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:a1e])
- (user=jakiela job=sendgmr) by 2002:a17:906:688f:b0:a93:9041:4d02 with SMTP id
- a640c23a62f3a-a93b156c313mr392066b.1.1727440203152; Fri, 27 Sep 2024 05:30:03
- -0700 (PDT)
-Date: Fri, 27 Sep 2024 12:29:40 +0000
-In-Reply-To: <20240927122940.4190949-1-jakiela@google.com>
+        bh=b70emq1asFc0837pR5hOySriSfg2vpMiOIzL46iGcG0=;
+        b=fUuF/T9Y2NFug6akdkP9uetezLFcFRHw40sTrVls0sAzfH2GJFTCIqqpLCEVUGSEbt
+         KbsfUL6mc6D1HKWmoTmoKYBGyjMp8hjORBb1e/PCmS3s5IrR5TQJ19WpkzGUqDuzhk06
+         11fV33ubbEKMhEdRifU6IAA907xK27EqNeElmjheHaK4exS4weEdaVl7Ji3lG6vbP2YT
+         U46GQkDY1kphhV6vEWD5N5koOkrv8CuHWnAs/CoWaGckosvaqGfjVDoIn9coqPyQ5gvH
+         F6J5Um/hrB0yPBsRGL+KrTaPiaM0UMp0KDQc+Nbk958GP/QNchm2Q/aRJyzslJzRY3la
+         H+BA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZRyqBJBg0MNrrFTIuH2RuuP5hmEvpfetuBOjkUliQ/CYwOVoH4CEBklKIm7qkQo7AkhN5IPWbi5B32MU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwteqBbKPEP1bp5jhseeZ5XKSAGkhJhxgTxxZqvWmA8recTD6bB
+	BhIYrUPNXpSccOJyJHeDS5hJzoeeH2AYxIOmtV5YXjmVFwMWISdDfbApJonu5Cev8cYwO53Mvc8
+	J4WAcVzUpAABeHcV5Ni86k3mZpYKS6zqAneUtTxev32Hd+v52hB6GXoaGY4LmBg==
+X-Received: by 2002:a05:600c:4e8f:b0:42c:b950:680b with SMTP id 5b1f17b1804b1-42f5844b9e9mr21067935e9.20.1727440220884;
+        Fri, 27 Sep 2024 05:30:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHbeKokqzPe5HzgTC9M987h8/ulPeXqAyPBJYVCgaBKlgmGQE/SiUjYvPIcdpIf0Eah4AKNjg==
+X-Received: by 2002:a05:600c:4e8f:b0:42c:b950:680b with SMTP id 5b1f17b1804b1-42f5844b9e9mr21067725e9.20.1727440220462;
+        Fri, 27 Sep 2024 05:30:20 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c709:8000:b502:8c1c:3624:99d4? (p200300cbc7098000b5028c1c362499d4.dip0.t-ipconnect.de. [2003:cb:c709:8000:b502:8c1c:3624:99d4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969f2083sm72248885e9.15.2024.09.27.05.30.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Sep 2024 05:30:20 -0700 (PDT)
+Message-ID: <755ff53a-2727-4993-92b4-95be668f3b67@redhat.com>
+Date: Fri, 27 Sep 2024 14:30:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240927122940.4190949-1-jakiela@google.com>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Message-ID: <20240927122940.4190949-2-jakiela@google.com>
-Subject: [PATCH v2 2/2] arm64: dts: mediate: Introduce MT8186
- Chinchou/Chinchou360 Chromebooks
-From: "=?UTF-8?q?Albert=20Jakie=C5=82a?=" <jakiela@google.com>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
-	wenst@chromium.org, rafal@milecki.pl, hsinyi@chromium.org, 
-	nfraprado@collabora.com, sean.wang@mediatek.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	"=?UTF-8?q?Albert=20Jakie=C5=82a?=" <jakiela@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/cma: print total and used count in cma_alloc()
+To: Xiang Gao <gxxa03070307@gmail.com>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ gaoxiang17 <gaoxiang17@xiaomi.com>
+References: <20240926120049.321514-1-gxxa03070307@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240926120049.321514-1-gxxa03070307@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The MT8186 Chinchou/Chinchou360, also known as the Asus Chromebook
-CZ12/CZ11 Flip, is a clamshell or convertible device with touchscreen,
-stylus and extra buttons.
+On 26.09.24 14:00, Xiang Gao wrote:
+> From: gaoxiang17 <gaoxiang17@xiaomi.com>
+> 
+> before:
+> [   24.407814] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
+> [   24.413397] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
+> [   24.415886] cma: cma_alloc(cma (____ptrval____), name: reserved, count 1, align 0)
+> 
+> after:
+> [   24.097989] cma: cma_alloc(cma (____ptrval____), name: reserved, total count 16384, used count: 64, request count 1, align 0)
+> [   24.104260] cma: cma_alloc(cma (____ptrval____), name: reserved, total count 16384, used count: 65, request count 1, align 0)
+> [   24.107504] cma: cma_alloc(cma (____ptrval____), name: reserved, total count 16384, used count: 66, request count 1, align 0)
+> 
+> Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
+> ---
+>   mm/cma.c | 15 +++++++++++++--
+>   1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/cma.c b/mm/cma.c
+> index 2d9fae939283..fc35a86aa82f 100644
+> --- a/mm/cma.c
+> +++ b/mm/cma.c
+> @@ -403,6 +403,17 @@ static void cma_debug_show_areas(struct cma *cma)
+>   	spin_unlock_irq(&cma->lock);
+>   }
+>   
+> +static unsigned long cma_get_used(struct cma *cma)
 
-Signed-off-by: Albert Jakie=C5=82a <jakiela@google.com>
----
-Changes in v2:
-- PATCH 2/2: Remove sku2147483647, remove duplicate nodes, add model
-	and remove uneccecery nodes from sound card.
-- Link to v1: https://lore.kernel.org/all/20240925080353.2362879-2-jakiela@=
-google.com/
+I would call it "cma_get_used_pages()"
 
----
- arch/arm64/boot/dts/mediatek/Makefile         |   3 +
- .../mediatek/mt8186-corsola-chinchou-sku0.dts |  18 +
- .../mediatek/mt8186-corsola-chinchou-sku1.dts |  34 ++
- .../mt8186-corsola-chinchou-sku16.dts         |  28 ++
- .../dts/mediatek/mt8186-corsola-chinchou.dtsi | 432 ++++++++++++++++++
- 5 files changed, 515 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sk=
-u0.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sk=
-u1.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sk=
-u16.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dt=
-si
+> +{
+> +	unsigned long used;
+> +
+> +	spin_lock_irq(&cma->lock);
+> +	used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
+> +	spin_unlock_irq(&cma->lock);
+> +
+> +	return used << cma->order_per_bit;
+> +}
+> +
+>   static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+>   				unsigned int align, gfp_t gfp)
+>   {
+> @@ -420,8 +431,8 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+>   	if (!cma || !cma->count || !cma->bitmap)
+>   		return page;
+>   
+> -	pr_debug("%s(cma %p, name: %s, count %lu, align %d)\n", __func__,
+> -		(void *)cma, cma->name, count, align);
+> +	pr_debug("%s(cma %p, name: %s, total count %lu, used count: %lu, request count %lu, align %d)\n", __func__,
 
-diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/me=
-diatek/Makefile
-index 8fd7b2bb7a15..0db7770e8907 100644
---- a/arch/arm64/boot/dts/mediatek/Makefile
-+++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -55,6 +55,9 @@ dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8183-kukui-kodama-sku3=
-2.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8183-kukui-krane-sku0.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8183-kukui-krane-sku176.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8183-pumpkin.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-chinchou-sku0.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-chinchou-sku1.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-chinchou-sku16.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-magneton-sku393216.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-magneton-sku393217.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-magneton-sku393218.dtb
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku0.dts =
-b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku0.dts
-new file mode 100644
-index 000000000000..29dd92318da1
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku0.dts
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2023 Google LLC
-+ */
-+
-+/dts-v1/;
-+#include "mt8186-corsola-chinchou.dtsi"
-+
-+/ {
-+	model =3D "Google chinchou sku0 board";
-+	compatible =3D "google,chinchou-sku0", "google,chinchou-sku2",
-+			"google,chinchou-sku4", "google,chinchou-sku5",
-+			"google,chinchou", "mediatek,mt8186";
-+};
-+
-+&gpio_keys {
-+	status =3D "disabled";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku1.dts =
-b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku1.dts
-new file mode 100644
-index 000000000000..8ba31f81d9ad
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku1.dts
-@@ -0,0 +1,34 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2023 Google LLC
-+ */
-+
-+/dts-v1/;
-+#include "mt8186-corsola-chinchou.dtsi"
-+
-+/ {
-+	model =3D "Google chinchou sku1/sku17 board";
-+	compatible =3D "google,chinchou-sku1", "google,chinchou-sku17",
-+			"google,chinchou-sku3", "google,chinchou-sku6",
-+			"google,chinchou-sku7", "google,chinchou-sku20",
-+			"google,chinchou-sku22", "google,chinchou-sku23",
-+			"mediatek,mt8186";
-+};
-+
-+&i2c1 {
-+	i2c-scl-internal-delay-ns =3D <10000>;
-+
-+	touchscreen: touchscreen@41 {
-+		compatible =3D "ilitek,ili2901";
-+		reg =3D <0x41>;
-+		interrupts-extended =3D <&pio 12 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&touchscreen_pins>;
-+		reset-gpios =3D <&pio 60 GPIO_ACTIVE_LOW>;
-+		vccio-supply =3D <&pp1800_tchscr_report_disable>;
-+	};
-+};
-+
-+&gpio_keys {
-+	status =3D "disabled";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku16.dts=
- b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku16.dts
-new file mode 100644
-index 000000000000..24084a77999a
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku16.dts
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2023 Google LLC
-+ */
-+
-+/dts-v1/;
-+#include "mt8186-corsola-chinchou.dtsi"
-+
-+/ {
-+	model =3D "Google chinchou sku16/sku2147483647 board";
-+	compatible =3D "google,chinchou-sku16", "google,chinchou-sku18",
-+			"google,chinchou-sku19", "google,chinchou-sku21",
-+			"mediatek,mt8186";
-+};
-+
-+&i2c1 {
-+	i2c-scl-internal-delay-ns =3D <10000>;
-+
-+	touchscreen: touchscreen@41 {
-+		compatible =3D "ilitek,ili2901";
-+		reg =3D <0x41>;
-+		interrupts-extended =3D <&pio 12 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&touchscreen_pins>;
-+		reset-gpios =3D <&pio 60 GPIO_ACTIVE_LOW>;
-+		vccio-supply =3D <&pp1800_tchscr_report_disable>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi b/ar=
-ch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
-new file mode 100644
-index 000000000000..96cc3c267c20
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
-@@ -0,0 +1,432 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2023 Google LLC
-+ */
-+
-+/dts-v1/;
-+#include "mt8186-corsola.dtsi"
-+
-+/ {
-+	tboard_thermistor1: thermal-sensor1 {
-+		compatible =3D "generic-adc-thermal";
-+		#thermal-sensor-cells =3D <0>;
-+		io-channels =3D <&auxadc 0>;
-+		io-channel-names =3D "sensor-channel";
-+		temperature-lookup-table =3D <    (-5000) 1491
-+						0 1413
-+						5000 1324
-+						10000 1225
-+						15000 1120
-+						20000 1012
-+						25000 900
-+						30000 797
-+						35000 698
-+						40000 607
-+						45000 525
-+						50000 451
-+						55000 386
-+						60000 330
-+						65000 282
-+						70000 241
-+						75000 206
-+						80000 176
-+						85000 151
-+						90000 129
-+						95000 111
-+						100000 96
-+						105000 83
-+						110000 72
-+						115000 62
-+						120000 54
-+						125000 47>;
-+	};
-+
-+	tboard_thermistor2: thermal-sensor2 {
-+		compatible =3D "generic-adc-thermal";
-+		#thermal-sensor-cells =3D <0>;
-+		io-channels =3D <&auxadc 1>;
-+		io-channel-names =3D "sensor-channel";
-+		temperature-lookup-table =3D <    (-5000) 1491
-+						0 1413
-+						5000 1324
-+						10000 1225
-+						15000 1120
-+						20000 1012
-+						25000 900
-+						30000 797
-+						35000 698
-+						40000 607
-+						45000 525
-+						50000 451
-+						55000 386
-+						60000 330
-+						65000 282
-+						70000 241
-+						75000 206
-+						80000 176
-+						85000 151
-+						90000 129
-+						95000 111
-+						100000 96
-+						105000 83
-+						110000 72
-+						115000 62
-+						120000 54
-+						125000 47>;
-+	};
-+
-+	pp1800_tchscr_report_disable: regulator-pp1800-tchscr-report-disable {
-+		compatible =3D "regulator-fixed";
-+		regulator-name =3D "pp1800_tchscr_report_disable";
-+		pinctrl-names =3D "default";
-+		enable-active-low;
-+		regulator-boot-on;
-+		pinctrl-0 =3D <&touch_pin_report>;
-+		gpio =3D <&pio 37 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	pp1000_edpbrdg: regulator-pp1000-edpbrdg {
-+		compatible =3D "regulator-fixed";
-+		regulator-name =3D "pp1000_edpbrdg";
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&en_pp1000_edpbrdg>;
-+		enable-active-high;
-+		regulator-boot-on;
-+		gpio =3D <&pio 29 GPIO_ACTIVE_HIGH>;
-+		vin-supply =3D <&pp3300_z2>;
-+	};
-+
-+	pp1800_edpbrdg_dx: regulator-pp1800-edpbrdg-dx {
-+		compatible =3D "regulator-fixed";
-+		regulator-name =3D "pp1800_edpbrdg_dx";
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&en_pp1800_edpbrdg>;
-+		enable-active-high;
-+		regulator-boot-on;
-+		gpio =3D <&pio 30 GPIO_ACTIVE_HIGH>;
-+		vin-supply =3D <&mt6366_vio18_reg>;
-+	};
-+
-+	pp3300_edp_dx: regulator-pp3300-edp-dx {
-+		compatible =3D "regulator-fixed";
-+		regulator-name =3D "pp3300_edp_dx";
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&en_pp3300_edpbrdg>;
-+		enable-active-high;
-+		regulator-boot-on;
-+		gpio =3D <&pio 31 GPIO_ACTIVE_HIGH>;
-+		vin-supply =3D <&pp3300_z2>;
-+	};
-+};
-+
-+&rt5682s {
-+	status =3D "disabled";
-+};
-+
-+&rt1019p {
-+	status =3D "disabled";
-+};
-+
-+&dsi_out {
-+	remote-endpoint =3D <&anx7625_in>;
-+};
-+
-+&i2c0 {
-+	clock-frequency =3D <400000>;
-+
-+	anx_bridge: anx7625@58 {
-+		compatible =3D "analogix,anx7625";
-+		reg =3D <0x58>;
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&anx7625_pins>;
-+		panel_flags =3D <1>;
-+		enable-gpios =3D <&pio 96 GPIO_ACTIVE_HIGH>;
-+		reset-gpios =3D <&pio 98 GPIO_ACTIVE_HIGH>;
-+		vdd10-supply =3D <&pp1000_edpbrdg>;
-+		vdd18-supply =3D <&pp1800_edpbrdg_dx>;
-+		vdd33-supply =3D <&pp3300_edp_dx>;
-+		#address-cells =3D <1>;
-+		#size-cells =3D <0>;
-+		analogix,lane0-swing =3D /bits/ 8 <0x70 0x30>;
-+		analogix,lane1-swing =3D /bits/ 8 <0x70 0x30>;
-+
-+		port@0 {
-+			reg =3D <0>;
-+
-+			anx7625_in: endpoint {
-+				remote-endpoint =3D <&dsi_out>;
-+				data-lanes =3D <0 1 2 3>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg =3D <1>;
-+
-+			anx7625_out: endpoint {
-+				remote-endpoint =3D <&panel_in>;
-+			};
-+		};
-+
-+		aux-bus {
-+			panel: panel {
-+				compatible =3D "edp-panel";
-+				power-supply =3D <&pp3300_disp_x>;
-+				backlight =3D <&backlight_lcd0>;
-+
-+				port {
-+					panel_in: endpoint {
-+						remote-endpoint =3D <&anx7625_out>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&i2c2 {
-+	trackpad@15 {
-+		compatible =3D "hid-over-i2c";
-+		post-power-on-delay-ms =3D <10>;
-+		hid-descr-addr =3D <0x0001>;
-+		vdd-supply =3D <&pp3300_s3>;
-+	};
-+};
-+
-+&i2c5 {
-+	clock-frequency =3D <400000>;
-+
-+	rt5650: rt5650@1a {
-+		compatible =3D "realtek,rt5650";
-+		reg =3D <0x1a>;
-+		avdd-supply =3D <&mt6366_vio18_reg>;
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&rt1019p_pins_default>;
-+		cbj-sleeve-gpio =3D <&pio 150 GPIO_ACTIVE_HIGH>;
-+		interrupt-parent =3D <&pio>;
-+		interrupts =3D <17 IRQ_TYPE_EDGE_BOTH>;
-+		#sound-dai-cells =3D <0>;
-+		realtek,dmic1-data-pin =3D <2>;
-+		realtek,jd-mode =3D <2>;
-+	};
-+};
-+
-+&mmc1_pins_default {
-+	pins-clk {
-+		drive-strength =3D <8>;
-+	};
-+
-+	pins-cmd-dat {
-+		drive-strength =3D <8>;
-+	};
-+};
-+
-+&mmc1_pins_uhs {
-+	pins-clk {
-+		drive-strength =3D <8>;
-+	};
-+
-+	pins-cmd-dat {
-+		drive-strength =3D <8>;
-+	};
-+};
-+
-+&sound {
-+	status =3D "okay";
-+
-+	compatible =3D "mediatek,mt8186-mt6366-rt5650-sound";
-+	model =3D "mt8186_rt5650";
-+
-+	audio-routing =3D
-+		"Headphone", "HPOL",
-+		"Headphone", "HPOR",
-+		"HDMI1", "TX";
-+
-+	hs-playback-dai-link {
-+		codec {
-+			sound-dai =3D <&rt5650>;
-+		};
-+	};
-+
-+	hs-capture-dai-link {
-+		codec {
-+			sound-dai =3D <&rt5650>;
-+		};
-+	};
-+
-+	spk-hdmi-playback-dai-link {
-+		codec {
-+			sound-dai =3D <&it6505dptx>;
-+		};
-+	};
-+};
-+
-+&keyboard_controller {
-+	keypad,num-columns =3D <15>;
-+
-+	function-row-physmap =3D <
-+		MATRIX_KEY(0x00, 0x02, 0)        /* T1 */
-+		MATRIX_KEY(0x03, 0x02, 0)        /* T2 */
-+		MATRIX_KEY(0x02, 0x02, 0)        /* T3 */
-+		MATRIX_KEY(0x01, 0x02, 0)        /* T4 */
-+		MATRIX_KEY(0x03, 0x04, 0)        /* T5 */
-+		MATRIX_KEY(0x02, 0x04, 0)        /* T6 */
-+		MATRIX_KEY(0x01, 0x04, 0)        /* T7 */
-+		MATRIX_KEY(0x02, 0x09, 0)        /* T8 */
-+		MATRIX_KEY(0x01, 0x09, 0)        /* T9 */
-+		MATRIX_KEY(0x00, 0x04, 0)        /* T10 */
-+		MATRIX_KEY(0x00, 0x01, 0)        /* T11 */
-+		MATRIX_KEY(0x01, 0x05, 0)        /* T12 */
-+	>;
-+
-+	linux,keymap =3D <
-+		CROS_STD_MAIN_KEYMAP
-+		MATRIX_KEY(0x00, 0x02, KEY_BACK)           /* T1 */
-+		MATRIX_KEY(0x03, 0x02, KEY_REFRESH)        /* T2 */
-+		MATRIX_KEY(0x02, 0x02, KEY_ZOOM)           /* T3 */
-+		MATRIX_KEY(0x01, 0x02, KEY_SCALE)          /* T4 */
-+		MATRIX_KEY(0x03, 0x04, KEY_SYSRQ)          /* T5 */
-+		MATRIX_KEY(0x02, 0x04, KEY_BRIGHTNESSDOWN) /* T6 */
-+		MATRIX_KEY(0x01, 0x04, KEY_BRIGHTNESSUP)   /* T7 */
-+		MATRIX_KEY(0x02, 0x09, KEY_MUTE)           /* T8 */
-+		MATRIX_KEY(0x01, 0x09, KEY_VOLUMEDOWN)	   /* T9 */
-+		MATRIX_KEY(0x00, 0x04, KEY_VOLUMEUP)	   /* T10 */
-+		MATRIX_KEY(0x00, 0x01, KEY_MICMUTE)        /* T11 */
-+		MATRIX_KEY(0x01, 0x05, KEY_CONTROLPANEL)   /* T12 */
-+		MATRIX_KEY(0x03, 0x05, KEY_PREVIOUSSONG)   /* T13 */
-+		MATRIX_KEY(0x00, 0x09, KEY_PLAYPAUSE)	   /* T14 */
-+		MATRIX_KEY(0x00, 0x0b, KEY_NEXTSONG)	   /* T15 */
-+		MATRIX_KEY(0x03, 0x00, KEY_LEFTMETA)	   /* Search*/
-+		MATRIX_KEY(0x01, 0x0e, KEY_LEFTCTRL)	   /* Left Control*/
-+		MATRIX_KEY(0x06, 0x0d, KEY_LEFTALT)        /* Left ALT*/
-+		MATRIX_KEY(0x03, 0x0e, KEY_RIGHTCTRL)      /* Right Control*/
-+		MATRIX_KEY(0x06, 0x0a, KEY_BACKSLASH)      /* BACKSLASH*/
-+	>;
-+};
-+
-+&thermal_zones {
-+	cpu-ntc {
-+		polling-delay =3D <1000>; /* milliseconds */
-+		polling-delay-passive =3D <0>; /* milliseconds */
-+		thermal-sensors =3D <&tboard_thermistor1>;
-+	};
-+
-+	pmic-ntc {
-+		polling-delay =3D <1000>; /* milliseconds */
-+		polling-delay-passive =3D <50>; /* milliseconds */
-+		thermal-sensors =3D <&tboard_thermistor2>;
-+		sustainable-power =3D <1500>;
-+
-+		trips {
-+			pmic_temp_alert0: trip-point@0 {
-+				temperature =3D <50000>;
-+				hysteresis =3D <2000>;
-+				type =3D "passive";
-+			};
-+
-+			pmic_temp_alert1: target@1 {
-+				temperature =3D <60000>;
-+				hysteresis =3D <2000>;
-+				type =3D "passive";
-+			};
-+
-+			pmic_ntc_crit: pmic-ntc-crit@0 {
-+				temperature =3D <80000>;
-+				hysteresis =3D <2000>;
-+				type =3D "critical";
-+			};
-+		};
-+
-+		cooling-maps {
-+			map0 {
-+				trip =3D <&pmic_temp_alert1>;
-+				cooling-device =3D <&cpu0
-+					THERMAL_NO_LIMIT
-+					THERMAL_NO_LIMIT>,
-+						<&cpu1
-+					THERMAL_NO_LIMIT
-+					THERMAL_NO_LIMIT>,
-+						<&cpu2
-+					THERMAL_NO_LIMIT
-+					THERMAL_NO_LIMIT>,
-+						<&cpu3
-+					THERMAL_NO_LIMIT
-+					THERMAL_NO_LIMIT>,
-+						<&cpu4
-+					THERMAL_NO_LIMIT
-+					THERMAL_NO_LIMIT>,
-+						<&cpu5
-+					THERMAL_NO_LIMIT
-+					THERMAL_NO_LIMIT>;
-+				contribution =3D <4096>;
-+			};
-+
-+			map1 {
-+				trip =3D <&pmic_temp_alert1>;
-+				cooling-device =3D <&cpu6
-+					THERMAL_NO_LIMIT
-+					THERMAL_NO_LIMIT>,
-+						<&cpu7
-+					THERMAL_NO_LIMIT
-+					THERMAL_NO_LIMIT>;
-+				contribution =3D <1024>;
-+			};
-+		};
-+	};
-+};
-+
-+&pio {
-+	touch_pin_report: pin-report {
-+		pinmux =3D <PINMUX_GPIO37__FUNC_GPIO37>;
-+		output-low;
-+	};
-+
-+	anx7625_pins: anx7625-pins {
-+		pins1 {
-+			pinmux =3D <PINMUX_GPIO96__FUNC_GPIO96>,
-+			<PINMUX_GPIO98__FUNC_GPIO98>;
-+			output-low;
-+		};
-+
-+		pins2 {
-+			pinmux =3D <PINMUX_GPIO9__FUNC_GPIO9>;
-+			input-enable;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	en_pp1000_edpbrdg: pp1000-edpbrdg-en-pins {
-+		pins-vreg-en {
-+			pinmux =3D <PINMUX_GPIO29__FUNC_GPIO29>;
-+			output-low;
-+		};
-+	};
-+
-+	en_pp1800_edpbrdg: pp1800-edpbrdg-en-pins {
-+		pins-vreg-en {
-+			pinmux =3D <PINMUX_GPIO30__FUNC_GPIO30>;
-+			output-low;
-+		};
-+	};
-+
-+	en_pp3300_edpbrdg: pp3300-edpbrdg-en-pins {
-+		pins-vreg-en {
-+			pinmux =3D <PINMUX_GPIO31__FUNC_GPIO31>;
-+			output-low;
-+		};
-+	};
-+};
-+
-+&i2c_tunnel {
-+	/delete-node/ sbs-battery@b;
-+
-+	battery: sbs-battery@f {
-+		compatible =3D "sbs,sbs-battery";
-+		reg =3D <0xf>;
-+		sbs,i2c-retry-count =3D <2>;
-+		sbs,poll-retry-count =3D <1>;
-+	};
-+};
-+
-+&pen_insert {
-+	wakeup-event-action =3D <EV_ACT_ANY>;
-+};
---=20
-2.46.1.824.gd892dcdcdd-goog
+I would suggest dropping the "count", or using "pages" instead. Also, 
+inconsistent usage of ":".
+
+Either:
+
+pr_debug("%s(cma %p, name: %s, total: %lu, used: %lu, requested: %lu, ..."
+
+or
+
+pr_debug("%s(cma %p, name: %s, total pages: %lu, used pages: %lu, 
+requested pages: %lu, ..."
+
+> +		(void *)cma, cma->name, cma->count, cma_get_used(cma), count, align);
+>   
+>   	if (!count)
+>   		return page;
+
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
