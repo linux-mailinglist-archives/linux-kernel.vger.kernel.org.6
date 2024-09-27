@@ -1,115 +1,86 @@
-Return-Path: <linux-kernel+bounces-342165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5600D988B20
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:14:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D05D1988B24
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 863211C23087
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:14:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D707F1F230E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14AE81C330F;
-	Fri, 27 Sep 2024 20:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6941C2DCE;
+	Fri, 27 Sep 2024 20:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rcxxiKrg"
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OXw4eh88"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0397A1C32FA
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 20:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E5B16A949;
+	Fri, 27 Sep 2024 20:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727468018; cv=none; b=cWr+O64ZA9GmwEQaSr4BZU62QJ09PaKO0A1UGpkr6ZNMtmV43g7yKf14+eZStZaEVmaWQT3A63COStm8G2wrdv7ZYnuo95hhK47Sy9Uobo+0e3QUruLwZ3WeALBVIgfixKZhASGT2jPhgj0Ss//FvjzU0u1FI8x292enrRdhhY4=
+	t=1727468129; cv=none; b=qWCUzP3tkwDVHo1uqGS0lrRs4Igw4RoVQ+Xq+P6I4HdwgO3hvVdrw7mx5wI6SWNetzk7kbYIrIRl5hYoVzLjcBCeJ5kaoVPcS7qd2HMrWt2yV8BT0v58uQH9lZb3aKpvC49F8iro8tOtnnxsEM6zwfColg4JI/tigj39Uv2RR3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727468018; c=relaxed/simple;
-	bh=neR70FWeqdxs0yYwmEFhXqtSf0MZQGryaX6gVOWU4kk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HY3gqS+x1Hp5PRWhIvAQK16WP+JXAHKHuAs4qs2+bbVf3jAdU+1Wjl8RaW8RHArOZ2EnENafSr/EGFw/2BCJqWbv7nGsbit1y2HfOjUkUjCIDq+e/t/l1dVZDT7+GI0zRSufTnUpYwsxytlLwxJ52YBx26to56AORAVovA7ndZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rcxxiKrg; arc=none smtp.client-ip=95.215.58.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727468015;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9/xNhc8+PZj0WTaGQ0MRXNuLuruFyK61DR8gHEBRuys=;
-	b=rcxxiKrgGAE5h+oeQSAHFT7DjCxxTCQWZt3lrCGpZJftAAAtk3SKtsw1o1lwyCK6oCUHjb
-	oW/77VnRtIwOkTBTjE2KEU1ABBCJg3LOf1oGljmSq5ftyK1F6y3SViQEKoxq/11YPLdNvG
-	StEUj03XkItYIAbEmq9JNcC6QkokF7w=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH 3/3] arm64: dts: renesas: beacon: Add SD/OE pin properties
-Date: Fri, 27 Sep 2024 16:13:13 -0400
-Message-Id: <20240927201313.624762-4-sean.anderson@linux.dev>
-In-Reply-To: <20240927201313.624762-1-sean.anderson@linux.dev>
-References: <20240927201313.624762-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1727468129; c=relaxed/simple;
+	bh=sUcXjqJXesE5GUuxXbEF77J3wkvDa6pF3vtCYKKPeM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uqB19OJzikWX+9LgsnZZCL2OXa2VxPT7KijNj9QVPQsphcz7oefR6Dv0myHapMnXB8/I1FVp6G3bLeqmKZBEyPaQMXShM5KSmDBpA+PJUj+LO1jpr3gxnyNKiL8BpLlspd/qH4LgD+wda7JPPIomDHRrLUEHAcxqI+gp4zFXCgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OXw4eh88; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sUcXjqJXesE5GUuxXbEF77J3wkvDa6pF3vtCYKKPeM0=; b=OXw4eh88Ab9lDK7EfV20df3MVK
+	dDMqG0syFywlMqObd7HH3Eviv/iYr/vOPzZ4PiCFf+xWmA+f+VE9emHmiph1E8bAabjK82tGPc4of
+	ZdfJlo0XMQYEZSpFFKozOM4xxzc0N6YwYgds4H8KqGdZtr9+h2wnZQCic85dsZt4zkLKGrHBxMTx6
+	DcVJqE3shOIGZy2XVODKztg1/DFese7cqUIb5MYQ/tZc8zZgFqTPIjEP4RXTCoyGE6oHFqiZxVN6X
+	V6sgMAffTsd992/R8fEDnAxSBG2E5YBURURxc0FnOscpmtMh1I4ezSTJDrKwL8YGA9rJ5R1m6AulG
+	oqG1W7rA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1suHN4-0000000G3i8-0fwy;
+	Fri, 27 Sep 2024 20:15:22 +0000
+Date: Fri, 27 Sep 2024 21:15:22 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, Leo Stone <leocstone@gmail.com>,
+	syzbot+d9efec94dcbfa0de1c07@syzkaller.appspotmail.com,
+	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com,
+	skhan@linuxfoundation.org, anupnewsmail@gmail.com,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [syzbot] [overlayfs?] general protection fault in ovl_llseek
+Message-ID: <20240927201522.GW3550746@ZenIV>
+References: <k53rd76iiguxb6prfmkqfnlfmkjjdzjvzc6uo7eppjc2t4ssdf@2q7pmj7sstml>
+ <CAOQ4uxhXbTZS3wmLibit-vP_3yQSC=p+qmBLxKkBHL1OgO5NBQ@mail.gmail.com>
+ <CAOQ4uxiTOJNk-Sy6RFezv=_kpsM9AqMSej=9DxfKtO53-vqXqA@mail.gmail.com>
+ <CAHk-=wikugk2soi_2OFz1k27qjjYMQ140ZXWeOh8_9iSxpr=PQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wikugk2soi_2OFz1k27qjjYMQ140ZXWeOh8_9iSxpr=PQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Add SD/OE pin properties to the devicetree so that Linux can configure
-the pin without relying on the OTP. This matches the register
-configuration reported by Adam [1] as well as his analysis of the
-schematic.
+On Fri, Sep 27, 2024 at 12:47:16PM -0700, Linus Torvalds wrote:
 
-[1] https://lore.kernel.org/linux-arm-kernel/CAHCN7x+tcvih1-kmUs8tVLCAk0Gnj11t0yEZLPWk3UBNyad7Jg@mail.gmail.com/
+> But I still strongly suspect that to make it more likely that I don't
+> miss anything, you make the subject line some big clue-bat to my head
+> like having "[PATCH-for-linus]" header.
 
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
----
+BTW, what do you prefer for "please run this script with this explanation
+just before -rc1" kind of stuff?
 
- arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 2 ++
- arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi       | 2 ++
- 2 files changed, 4 insertions(+)
+Example: https://lore.kernel.org/all/20240927015611.GT3550746@ZenIV/
 
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-index 5a14f116f7a1..a258ba0d6b4f 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-@@ -364,6 +364,8 @@ versaclock6_bb: clock-controller@6a {
- 		#clock-cells = <1>;
- 		clocks = <&x304_clk>;
- 		clock-names = "xin";
-+		idt,shutdown = <0>;
-+		idt,output-enable-active = <0>;
- 
- 		assigned-clocks = <&versaclock6_bb 1>, <&versaclock6_bb 2>,
- 				  <&versaclock6_bb 3>, <&versaclock6_bb 4>;
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-index 68b04e56ae56..06ad9db420d6 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-@@ -166,6 +166,8 @@ versaclock5: versaclock_som@6a {
- 		#clock-cells = <1>;
- 		clocks = <&x304_clk>;
- 		clock-names = "xin";
-+		idt,shutdown = <0>;
-+		idt,output-enable-active = <0>;
- 		/* du_dotclkin0, du_dotclkin2, usb_extal, avb_txcrefclk */
- 		assigned-clocks = <&versaclock5 1>,
- 				   <&versaclock5 2>,
--- 
-2.35.1.1320.gc452695387.dirty
-
+I've used "[tree-wide]" as a prefix, but I've no idea what your preferences
+would be in that respect...
 
