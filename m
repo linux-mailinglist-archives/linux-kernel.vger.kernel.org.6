@@ -1,292 +1,117 @@
-Return-Path: <linux-kernel+bounces-341938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F958988897
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:54:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9420C98889C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C62D92820D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:54:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C47EF1C20C51
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D1715443B;
-	Fri, 27 Sep 2024 15:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B756B1C1731;
+	Fri, 27 Sep 2024 15:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T9G6tOiW"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="riyQJO5r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2851C172C
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 15:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE4118B1A;
+	Fri, 27 Sep 2024 15:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727452479; cv=none; b=GXFxdaIked8liTRUQ3flQvwvoGCUGUQyBifzcoL78R1wroX6CwXCqrfnr07rXor4JHZAneFIKDfQAkAHeG8S51aWc171/OrhOqYTHLJeJcR3Wb3J7LZevrUn3VE3l8q4uiJuhgRvhLoWaztBlnyARytKxW4E0WWo2SeSIh6Sj4I=
+	t=1727452585; cv=none; b=WBePpuxecTmz2Md6NMuDjJwpdIUBRhZcdKNBfYaYgiG8LlU9wl8utXCEO8V49/mAFse5P0k1BeUNdsvNs2653BU380K+VjM4hp6Njyv/5M2JndHFaZj4MinYbqyk0GKaYxsgMTefXHwDYqOeLat+ct2ySIXjX0ZQp5Qn4G2HdkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727452479; c=relaxed/simple;
-	bh=ep0RvRtv73mutGyS8SaEhoi+6lj917nsCDWLGYkd0eg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cjJ0Aeb4QKugcuL+LabD+d92HQVsdGwdxgg8S2sBneEiprs7VqVT0wUJS+5FR4zTSiePWZSDIG/V4b8Xu1RAmr9SDP0oR/onAyyhqHvuWCfKwKjh40G4RTJ/SfGWsbNno9FqccabQsb9bMJzUwA+STQ338BwjasP/m0nnNrfl9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T9G6tOiW; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8d446adf6eso329295566b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 08:54:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727452475; x=1728057275; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WTWcf3wEQOp0ZG+W1Uw3hN1FUsd0hqHBQyj5b1PZ/g8=;
-        b=T9G6tOiWrPlfX92E87K7rAZER78d+xb06DIeNa4uaVZOdJCmV9Lc80Jr9El9oGyGxs
-         XrxgfR3uYOj6bVfc2zFilt1KOsjgDOntsyJZjpi8W1+39tRm65pf3ltGMdhC4O94y04p
-         3uzGW7oaULMmSswMCAHF0BNTekBMCrf+DqzDetIzHW3fBufj0qQlfsn+ZrsWjbicGRbM
-         ur4tN/YjpYnrAGHgB8qRVvfI/Nr/K4PhBHM5QA5I014tHoeOZxvRNOhfZZcW9O1VvPw8
-         6+f+su8JNsnmkItZ19Gp0Xb0gmcJLjrMQeJ1145YAZijVF2QZsg7a/F/XTqRvFyNhUp5
-         ZgnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727452475; x=1728057275;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WTWcf3wEQOp0ZG+W1Uw3hN1FUsd0hqHBQyj5b1PZ/g8=;
-        b=QB6OcEEoSv07tvNHT5W46d4leacn/G3F/aH2NeJl3lDfxaJfo0hvEVsPMTPGNt2IMT
-         pLGYTZFwCEUtLnmQyMh3vLCHD1wjMfnIXKYp8RUK0Aj32sB3dLzdl/kAONtS33sy49W8
-         QjlztvTbqx2Z+DIUuas0Z+mFW05tKlwvGNkTuopJV+KabmrpaGrxpWFr4T7t4mRFtoWj
-         79/SeRGDOpKUXqzKQD6nPNb36tby3jiRDaDEIkh5X8KX4U3WDFL5e5xM4FJ40ivGBnrD
-         KmMN0uGKKqu/NbIJc9YlkidIPVH/xw/rCyVbaAX36EvXSal0dEUMGSk/uAmBd8YOCaT/
-         lkeg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIQZg1plGN9iiu5B2sw5T4vUwJOWa46mTtkUx3Gzf4Ubir6l48Zu7bm1VrMqqqZIWqYR+7C/KX5OaQJOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaYeo4GckkfeJrnKvbBE5gssvlilEF9oZnT9nDcWDKyjw2t19J
-	duLV9lRJKZvnj4wht0R5G2NiWYfv9+wwL7l1JRycKFo/Q3411cbG4uH1rtveoqVYW+z+atevQwH
-	4
-X-Google-Smtp-Source: AGHT+IETEFZCtphrEJ+iZKtr2ARdxALMycDyn4/kYKJb4Tv/4K8oebKQCLUJkqMC4yJc8htLh0JeQA==
-X-Received: by 2002:a17:907:74b:b0:a86:7e7f:69ab with SMTP id a640c23a62f3a-a93c49087f3mr354566466b.15.1727452475311;
-        Fri, 27 Sep 2024 08:54:35 -0700 (PDT)
-Received: from lino.lan ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297bc6fsm145874966b.184.2024.09.27.08.54.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 08:54:34 -0700 (PDT)
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 27 Sep 2024 17:54:28 +0200
-Subject: [PATCH] Revert "mmc: mvsdio: Use sg_miter for PIO"
+	s=arc-20240116; t=1727452585; c=relaxed/simple;
+	bh=LDGGmgVf9JJZZvlWGW82IbklqNVGYZgzG1K6LHijCQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3u5s0ysm9yPpzxTyZlWf/dJuz8jSByaq5ibJzWO26CwTGjQLlsiS0jCj7TE6o2mByxyo5GKK0lbt0FAViX/GAt/XQjBKZiOlOOa8m+Riu7MGxAQ0CK6myydeO45bNQrmQCcevegh/VtBuSrUIf36QOA56pSZqV3aFqS1CXS2Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=riyQJO5r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E677EC4CEC4;
+	Fri, 27 Sep 2024 15:56:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727452584;
+	bh=LDGGmgVf9JJZZvlWGW82IbklqNVGYZgzG1K6LHijCQQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=riyQJO5rRdwj+aBpiHRdqdHYmGu738xPfJAF38WjjCIL2wNPMu6yTL1J2ZtishcXG
+	 TWyjy9RNjzVFR5f32GFGduMzUYorFgRAguQwz6gaHHBvcXbgEGyowzZ/5Ncpr6dYfE
+	 hA4qO2aKABag5k4bBq6SC2U0xOOL/+GcBrL4Vi29xOP93ZOWHzBSAew4Xi4/1R3CPq
+	 7AK8SPC2jKUxkunxd8JJh0d5IeRtxz3POsUJQ8R+j0A0yDwbkLPJThfiSPSd9L/XNI
+	 NgvM8wmUOXRHX4J39fvR2SnbUev4EO4KXOH3kCHIsOZ8ZHTqXPIigTyS01Qi5crY7t
+	 +ZvQQ4lPKrQRA==
+Date: Fri, 27 Sep 2024 17:56:19 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "tzimmermann@suse.de" <tzimmermann@suse.de>, 
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, 
+	"airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
+	Jiri Kosina <jikos@kernel.org>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	Orlando Chamberlain <orlandoch.dev@gmail.com>, Kerem Karabay <kekrby@gmail.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v5 4/10] HID: multitouch: support getting the contact ID
+ from HID_DG_TRANSDUCER_INDEX fields
+Message-ID: <xdkn2y6wpnqjrngem3xjxjn2a7cykhrb6dj56w6avz4noj7itu@xlknbwmp63h7>
+References: <DD9C41AD-6543-47CE-8504-69E4992229B2@live.com>
+ <BD919A98-0D44-42F9-867F-B936BBB8267A@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240927-kirkwood-mmc-regression-v1-1-2e55bbbb7b19@linaro.org>
-X-B4-Tracking: v=1; b=H4sIADPV9mYC/x3MSwqAMAwA0atI1gZq8VevIi6kjRqKVlJQQby71
- eUs3twQSZgidNkNQgdHDluKIs/ALuM2E7JLDVrpUhndoGfxZwgO19Wi0CwUP4OmrW1lWldaQ5D
- 0LjTx9Z/74Xle1lZaiWkAAAA=
-To: Nicolas Pitre <nico@fluxnic.net>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Charlie <g4sra@protonmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BD919A98-0D44-42F9-867F-B936BBB8267A@live.com>
 
-This reverts commit 2761822c00e8c271f10a10affdbd4917d900d7ea.
+On Aug 17 2024, Aditya Garg wrote:
+> From: Kerem Karabay <kekrby@gmail.com>
+> 
+> This is needed to support Apple Touch Bars, where the contact ID is
+> contained in fields with the HID_DG_TRANSDUCER_INDEX usage.
+> 
+> Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+> ---
+>  drivers/hid/hid-multitouch.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+> index 56fc78841..3e92789ed 100644
+> --- a/drivers/hid/hid-multitouch.c
+> +++ b/drivers/hid/hid-multitouch.c
+> @@ -635,7 +635,9 @@ static struct mt_report_data *mt_allocate_report_data(struct mt_device *td,
+>  
+>  		if (field->logical == HID_DG_FINGER || td->hdev->group != HID_GROUP_MULTITOUCH_WIN_8) {
+>  			for (n = 0; n < field->report_count; n++) {
+> -				if (field->usage[n].hid == HID_DG_CONTACTID) {
+> +				unsigned int hid = field->usage[n].hid;
+> +
+> +				if (hid == HID_DG_CONTACTID || hid == HID_DG_TRANSDUCER_INDEX) {
 
-When testing on real hardware the patch does not work.
-Revert, try to acquire real hardware, and retry.
-These systems typically don't have highmem anyway so the
-impact is likely zero.
+I'm not super happy about this. The HID spec specifically mentions
+CONTACTID to be related to multitouch, when TRANSDUCER is not
+specifically for multitouch. I would rather have this hidden behind a
+quirk, because I don't think this is standard (the device comes from an
+environment where both the hardware and the software stack is
+controlled, which already gave some fun decisions from Apple).
 
-Cc: stable@vger.kernel.org
-Reported-by: Charlie <g4sra@protonmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/mmc/host/mvsdio.c | 71 ++++++++++++-----------------------------------
- 1 file changed, 18 insertions(+), 53 deletions(-)
+Cheers,
+Benjamin
 
-diff --git a/drivers/mmc/host/mvsdio.c b/drivers/mmc/host/mvsdio.c
-index af7f21888e27..ca01b7d204ba 100644
---- a/drivers/mmc/host/mvsdio.c
-+++ b/drivers/mmc/host/mvsdio.c
-@@ -38,9 +38,8 @@ struct mvsd_host {
- 	unsigned int xfer_mode;
- 	unsigned int intr_en;
- 	unsigned int ctrl;
--	bool use_pio;
--	struct sg_mapping_iter sg_miter;
- 	unsigned int pio_size;
-+	void *pio_ptr;
- 	unsigned int sg_frags;
- 	unsigned int ns_per_clk;
- 	unsigned int clock;
-@@ -115,18 +114,11 @@ static int mvsd_setup_data(struct mvsd_host *host, struct mmc_data *data)
- 		 * data when the buffer is not aligned on a 64 byte
- 		 * boundary.
- 		 */
--		unsigned int miter_flags = SG_MITER_ATOMIC; /* Used from IRQ */
--
--		if (data->flags & MMC_DATA_READ)
--			miter_flags |= SG_MITER_TO_SG;
--		else
--			miter_flags |= SG_MITER_FROM_SG;
--
- 		host->pio_size = data->blocks * data->blksz;
--		sg_miter_start(&host->sg_miter, data->sg, data->sg_len, miter_flags);
-+		host->pio_ptr = sg_virt(data->sg);
- 		if (!nodma)
--			dev_dbg(host->dev, "fallback to PIO for data\n");
--		host->use_pio = true;
-+			dev_dbg(host->dev, "fallback to PIO for data at 0x%p size %d\n",
-+				host->pio_ptr, host->pio_size);
- 		return 1;
- 	} else {
- 		dma_addr_t phys_addr;
-@@ -137,7 +129,6 @@ static int mvsd_setup_data(struct mvsd_host *host, struct mmc_data *data)
- 		phys_addr = sg_dma_address(data->sg);
- 		mvsd_write(MVSD_SYS_ADDR_LOW, (u32)phys_addr & 0xffff);
- 		mvsd_write(MVSD_SYS_ADDR_HI,  (u32)phys_addr >> 16);
--		host->use_pio = false;
- 		return 0;
- 	}
- }
-@@ -297,8 +288,8 @@ static u32 mvsd_finish_data(struct mvsd_host *host, struct mmc_data *data,
- {
- 	void __iomem *iobase = host->base;
- 
--	if (host->use_pio) {
--		sg_miter_stop(&host->sg_miter);
-+	if (host->pio_ptr) {
-+		host->pio_ptr = NULL;
- 		host->pio_size = 0;
- 	} else {
- 		dma_unmap_sg(mmc_dev(host->mmc), data->sg, host->sg_frags,
-@@ -353,12 +344,9 @@ static u32 mvsd_finish_data(struct mvsd_host *host, struct mmc_data *data,
- static irqreturn_t mvsd_irq(int irq, void *dev)
- {
- 	struct mvsd_host *host = dev;
--	struct sg_mapping_iter *sgm = &host->sg_miter;
- 	void __iomem *iobase = host->base;
- 	u32 intr_status, intr_done_mask;
- 	int irq_handled = 0;
--	u16 *p;
--	int s;
- 
- 	intr_status = mvsd_read(MVSD_NOR_INTR_STATUS);
- 	dev_dbg(host->dev, "intr 0x%04x intr_en 0x%04x hw_state 0x%04x\n",
-@@ -382,36 +370,15 @@ static irqreturn_t mvsd_irq(int irq, void *dev)
- 	spin_lock(&host->lock);
- 
- 	/* PIO handling, if needed. Messy business... */
--	if (host->use_pio) {
--		/*
--		 * As we set sgm->consumed this always gives a valid buffer
--		 * position.
--		 */
--		if (!sg_miter_next(sgm)) {
--			/* This should not happen */
--			dev_err(host->dev, "ran out of scatter segments\n");
--			spin_unlock(&host->lock);
--			host->intr_en &=
--				~(MVSD_NOR_RX_READY | MVSD_NOR_RX_FIFO_8W |
--				  MVSD_NOR_TX_AVAIL | MVSD_NOR_TX_FIFO_8W);
--			mvsd_write(MVSD_NOR_INTR_EN, host->intr_en);
--			return IRQ_HANDLED;
--		}
--		p = sgm->addr;
--		s = sgm->length;
--		if (s > host->pio_size)
--			s = host->pio_size;
--	}
--
--	if (host->use_pio &&
-+	if (host->pio_size &&
- 	    (intr_status & host->intr_en &
- 	     (MVSD_NOR_RX_READY | MVSD_NOR_RX_FIFO_8W))) {
--
-+		u16 *p = host->pio_ptr;
-+		int s = host->pio_size;
- 		while (s >= 32 && (intr_status & MVSD_NOR_RX_FIFO_8W)) {
- 			readsw(iobase + MVSD_FIFO, p, 16);
- 			p += 16;
- 			s -= 32;
--			sgm->consumed += 32;
- 			intr_status = mvsd_read(MVSD_NOR_INTR_STATUS);
- 		}
- 		/*
-@@ -424,7 +391,6 @@ static irqreturn_t mvsd_irq(int irq, void *dev)
- 				put_unaligned(mvsd_read(MVSD_FIFO), p++);
- 				put_unaligned(mvsd_read(MVSD_FIFO), p++);
- 				s -= 4;
--				sgm->consumed += 4;
- 				intr_status = mvsd_read(MVSD_NOR_INTR_STATUS);
- 			}
- 			if (s && s < 4 && (intr_status & MVSD_NOR_RX_READY)) {
-@@ -432,13 +398,10 @@ static irqreturn_t mvsd_irq(int irq, void *dev)
- 				val[0] = mvsd_read(MVSD_FIFO);
- 				val[1] = mvsd_read(MVSD_FIFO);
- 				memcpy(p, ((void *)&val) + 4 - s, s);
--				sgm->consumed += s;
- 				s = 0;
- 				intr_status = mvsd_read(MVSD_NOR_INTR_STATUS);
- 			}
--			/* PIO transfer done */
--			host->pio_size -= sgm->consumed;
--			if (host->pio_size == 0) {
-+			if (s == 0) {
- 				host->intr_en &=
- 				     ~(MVSD_NOR_RX_READY | MVSD_NOR_RX_FIFO_8W);
- 				mvsd_write(MVSD_NOR_INTR_EN, host->intr_en);
-@@ -450,10 +413,14 @@ static irqreturn_t mvsd_irq(int irq, void *dev)
- 		}
- 		dev_dbg(host->dev, "pio %d intr 0x%04x hw_state 0x%04x\n",
- 			s, intr_status, mvsd_read(MVSD_HW_STATE));
-+		host->pio_ptr = p;
-+		host->pio_size = s;
- 		irq_handled = 1;
--	} else if (host->use_pio &&
-+	} else if (host->pio_size &&
- 		   (intr_status & host->intr_en &
- 		    (MVSD_NOR_TX_AVAIL | MVSD_NOR_TX_FIFO_8W))) {
-+		u16 *p = host->pio_ptr;
-+		int s = host->pio_size;
- 		/*
- 		 * The TX_FIFO_8W bit is unreliable. When set, bursting
- 		 * 16 halfwords all at once in the FIFO drops data. Actually
-@@ -464,7 +431,6 @@ static irqreturn_t mvsd_irq(int irq, void *dev)
- 			mvsd_write(MVSD_FIFO, get_unaligned(p++));
- 			mvsd_write(MVSD_FIFO, get_unaligned(p++));
- 			s -= 4;
--			sgm->consumed += 4;
- 			intr_status = mvsd_read(MVSD_NOR_INTR_STATUS);
- 		}
- 		if (s < 4) {
-@@ -473,13 +439,10 @@ static irqreturn_t mvsd_irq(int irq, void *dev)
- 				memcpy(((void *)&val) + 4 - s, p, s);
- 				mvsd_write(MVSD_FIFO, val[0]);
- 				mvsd_write(MVSD_FIFO, val[1]);
--				sgm->consumed += s;
- 				s = 0;
- 				intr_status = mvsd_read(MVSD_NOR_INTR_STATUS);
- 			}
--			/* PIO transfer done */
--			host->pio_size -= sgm->consumed;
--			if (host->pio_size == 0) {
-+			if (s == 0) {
- 				host->intr_en &=
- 				     ~(MVSD_NOR_TX_AVAIL | MVSD_NOR_TX_FIFO_8W);
- 				mvsd_write(MVSD_NOR_INTR_EN, host->intr_en);
-@@ -487,6 +450,8 @@ static irqreturn_t mvsd_irq(int irq, void *dev)
- 		}
- 		dev_dbg(host->dev, "pio %d intr 0x%04x hw_state 0x%04x\n",
- 			s, intr_status, mvsd_read(MVSD_HW_STATE));
-+		host->pio_ptr = p;
-+		host->pio_size = s;
- 		irq_handled = 1;
- 	}
- 
-
----
-base-commit: 075dbe9f6e3c21596c5245826a4ee1f1c1676eb8
-change-id: 20240927-kirkwood-mmc-regression-986c598d4c9e
-
-Best regards,
--- 
-Linus Walleij <linus.walleij@linaro.org>
-
+>  					rdata->is_mt_collection = true;
+>  					break;
+>  				}
+> @@ -814,6 +816,7 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+>  			MT_STORE_FIELD(tip_state);
+>  			return 1;
+>  		case HID_DG_CONTACTID:
+> +		case HID_DG_TRANSDUCER_INDEX:
+>  			MT_STORE_FIELD(contactid);
+>  			app->touches_by_report++;
+>  			return 1;
+> -- 
+> 2.43.0
+> 
 
