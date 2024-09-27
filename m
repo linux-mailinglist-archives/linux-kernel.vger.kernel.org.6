@@ -1,136 +1,98 @@
-Return-Path: <linux-kernel+bounces-341283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C50E987DC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:59:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6624E987DC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4769B2326A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 04:59:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 974F21C226AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 05:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FD11741EF;
-	Fri, 27 Sep 2024 04:59:29 +0000 (UTC)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7371741D9;
+	Fri, 27 Sep 2024 05:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DRMSI2LA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5B014A4D6;
-	Fri, 27 Sep 2024 04:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E562F2E;
+	Fri, 27 Sep 2024 05:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727413169; cv=none; b=s7Xq313xRQ6BCKD0N6h5kwT6bAdU8dY1Q31CUqWJlOIYx1vV66y0d+PUy2DL1X3qDCOtf1podg0k//kgbc6Qb4vNfOaTm5oqJEO2OsB0s0ektRq6wSKjUgR4PJYHfnssmuXzg08rMPwJeHKX2i8SP3QgiRQSLUhjgEr69TyQMwM=
+	t=1727413229; cv=none; b=cDmsE9ZzxqdbGa+Ux5/yMScxmh0c4RsvQky6kOgvFg9v7ZKz0bfFG28u9jdEcOgWIs45WU/xb+fDrFo6WNx153H0l4JaVAaTaJQ5JfZDHsbO5Gyq9mj0DFYukEiBJUrdvWfSEAMp25ynR4RdSo3zNYVT7Fw9B8w6oap0/ZwRzBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727413169; c=relaxed/simple;
-	bh=EDaTH0Illn9Eqnh8KKn2ddjP64yHyaCSxExYtMlMQRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GnkEDNfaF22/vSCsvK5tSQAgUiLCudbFAHn2vV5e7nOXGE0qvws5O+GPDgLPubpISBeiIxKgg6Zfl7h+MbIfugI9jFQQsOo5sxEKnOFwJj+K06LnW9opD+Z8FpgiSMnFqCoRllJNM3xhpUS9JPcxDak1V/JFZpFOlOApo+94h24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c4226a5af8so2121996a12.1;
-        Thu, 26 Sep 2024 21:59:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727413166; x=1728017966;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m5CceRvn1nGQYVLaIBnfN4iwqbdraidCb1nSVb9qlfA=;
-        b=Cpt1hXnqAaVai+l10frA0PSlOJGzGWOWGhDTQHo6ny6rmvGeziYdqQBHednqar550d
-         YkoBSSvlOipgpTFxHUf19v9b34Rfj1kWJQw5QJawXbtwGRgo5oNI9jmEDYH6M4hgHpk4
-         8BoXniLyDNfVvxtMANfzXniwKxLkq8qJoWUq6QsQJD6X+09Lwhd038pCc78BsbqmlNtj
-         JXqOy7ZWtmWvrWWlJ8XFeP3VP+JsHw7QE+5pXt5UQzAsLX9KtfJ7C6RF8BmkqfuKbIgC
-         R8OFpjpFC3s5qa60T0V9fPawaVo9zCsf9ZgZgvS9xoyyHhmsZwWCB0iIEYe9sdsYvuvJ
-         mguA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxjA0h5T5hCjxc+c/fcVCjYQIN9kh8o7SeG2rX6STY+qdDMmB1mcP494tbUs619NgnKw9DoybiHQpO9+k=@vger.kernel.org, AJvYcCWMHlIISYQR7rA+mvjhikgK5hxDHyIFAdxtywC1AgrUQEFav+/gXgry9i4byXf9YrCwkvLMfHVmYUbpLCgX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZGhJC7Oo8XX1mL8k+ciYDmVsrhw1NEugONLm5fwBEcb5ZbpwI
-	jwp7YfTiTtXdBXPAUPcAWEpbBYyPeiGIjWYOg6S7LmukGuaz0HkJAizwESHo
-X-Google-Smtp-Source: AGHT+IHWIvCwlTapDlJGDl+AJheX87SnJGr0My8dURGzqaqh4Ka/QPc6HazkGdkdA7ynOOpn88i6Yw==
-X-Received: by 2002:a05:6402:34d2:b0:5c4:51b3:d75f with SMTP id 4fb4d7f45d1cf-5c882600337mr1404528a12.24.1727413165570;
-        Thu, 26 Sep 2024 21:59:25 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c882405b3bsm676709a12.20.2024.09.26.21.59.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 21:59:23 -0700 (PDT)
-Message-ID: <7312bc09-5cad-4d0e-a7f5-2891d5b0f15b@kernel.org>
-Date: Fri, 27 Sep 2024 06:59:22 +0200
+	s=arc-20240116; t=1727413229; c=relaxed/simple;
+	bh=fyEkOgWNjkVh2h59wO0cF/KpMYftbWbXFZjDs5tjBfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lwmx/3TfmT2mYIBlxD45eP80+Xtwm2EBo+8CEqCrZFJGEar9txhYVRKx27YGaCamUq3XgcqJoT300a8M8q9R9C3rtFbCbiLSQEmUf7dpGsdNf4lxwI1J4ykMgDFtVIEKVVbaBGFypoJKVxHUzkVvumfuU2bQDYuqy2/piXB/q6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DRMSI2LA; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727413228; x=1758949228;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fyEkOgWNjkVh2h59wO0cF/KpMYftbWbXFZjDs5tjBfo=;
+  b=DRMSI2LA/te88F0BJTN35VZs8jJmeVkJSHq5FPW2eAOcBFZFzp75IfbY
+   tDM7byQoJ2kvLHqnqCVqeSDq45h1wizpHUAOa1QpkJGJ/ec7BSR3BkC0m
+   lL1Rr7pBXIRHNFTElca8pcerLIHhxj1jSChzpMKAPsvtzkMkLQFPaygTa
+   jmZipcs3znzc7eL2nIAw65A5WXUbpVaAK8R5rnExsv6ShKOYj5xEeKNNt
+   gT312WiGzT7Giqi3JVsQHPfaJSIugiZsZImZijnWdZcpq5j/Kuq+PNk4X
+   j3Y8phAAJwkETU9Q9QQUAyuySm/nf+9NjlXqWcJ+8YaudyUwxKbpVXrgV
+   g==;
+X-CSE-ConnectionGUID: EL00soVsSoutFVN5lONqJA==
+X-CSE-MsgGUID: nqZSdCbTRAupxs2nIVuZvQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="44062605"
+X-IronPort-AV: E=Sophos;i="6.11,157,1725346800"; 
+   d="scan'208";a="44062605"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 22:00:27 -0700
+X-CSE-ConnectionGUID: y0CtHs0STD2a81Hi67P80A==
+X-CSE-MsgGUID: Ua0jgpiCTPOtT7V2VjnvJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,157,1725346800"; 
+   d="scan'208";a="72558649"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 26 Sep 2024 22:00:25 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id A8CD6170; Fri, 27 Sep 2024 08:00:24 +0300 (EEST)
+Date: Fri, 27 Sep 2024 08:00:24 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 0/2] pinctrl: intel: platform: fix error path in
+ device_for_each_child_node()
+Message-ID: <20240927050024.GB275077@black.fi.intel.com>
+References: <20240926-intel-pinctrl-platform-scoped-v1-0-5ee4c936eea3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nilfs2: add ratelimiting to nilfs2 message
-To: Lizhi Xu <lizhi.xu@windriver.com>,
- syzbot+8a192e8d090fa9a31135@syzkaller.appspotmail.com
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <66f59678.050a0220.46d20.0001.GAE@google.com>
- <20240927021322.4088706-1-lizhi.xu@windriver.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20240927021322.4088706-1-lizhi.xu@windriver.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240926-intel-pinctrl-platform-scoped-v1-0-5ee4c936eea3@gmail.com>
 
-You should have aimed this at the nilfs developers...
-
-On 27. 09. 24, 4:13, Lizhi Xu wrote:
-> Syzbot report a task hung in vcs_open.
-> When rec_len too small in nilfs_check_folio, it can result in a huge flood
-> of messages being sent to the console. It eventually caused tty to hung when
-> retrieving the console_lock().
+On Thu, Sep 26, 2024 at 04:11:01PM +0200, Javier Carrasco wrote:
+> This series fixes an error path where the reference of a child node is
+> not decremented upon early return. When at it, a trivial comma/semicolon
+> substitution I found by chance has been added to improve code clarity.
 > 
-> Reported-by: syzbot+8a192e8d090fa9a31135@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=8a192e8d090fa9a31135
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+> Javier Carrasco (2):
+>       pinctrl: intel: platform: fix error path in device_for_each_child_node()
+>       pinctrl: intel: platform: use semicolon instead of comma in ncommunities assignment
 
--- 
-js
-suse labs
+Both,
 
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
