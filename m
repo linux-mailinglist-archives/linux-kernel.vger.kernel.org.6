@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-341237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384D7987D14
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 04:36:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EB91987D16
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 04:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B908B285F36
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:36:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEB0D1C2263A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF1516D9B8;
-	Fri, 27 Sep 2024 02:36:11 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDF616C451;
+	Fri, 27 Sep 2024 02:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ecW4kGMt"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38508475;
-	Fri, 27 Sep 2024 02:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E86158203
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727404570; cv=none; b=mhTQdD9O4MKf97GgZ+7gMtEVgZ5Ra8BtWrIvmKVkCIS7yd7a8jaEWIM5VLl6URAzyOBTl1weOlSh5BRp0E29o0GWzNfuMTnmm+tLKTJC+DCe7S2QlveiUKACVbZUbuKFZEa2fo9sR4kCSwJDo/K7XMQ1e8P0TP7OaBzZ+cDuYWY=
+	t=1727404612; cv=none; b=ra+A1Kg76W/RzlV/Ky2gsj7RaNxit6Xd8+wBt692Pz9gjqvbs3duLQZBJEr3tt3itRey0JXSJXQMYWPGMWqw8vMk9QQnuMADJTh8BrqYyevzqDiFLnTU3UNqSxG6v42OKqkRZwIbtZssIUoGytAWhukxS147II2qLP/CEpiF2y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727404570; c=relaxed/simple;
-	bh=dOpf6OD4qs7FUOTqjZZO1NJu3mPxmgwPN0iebZyhN5E=;
+	s=arc-20240116; t=1727404612; c=relaxed/simple;
+	bh=o7Dgn1kutRKWMQL6mmv0xxwdYBsCLP4Ydnd1NbMwJWI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pn8WEqiTKva6FWQsqrRYf+Lq5PjDQvR/WIkParEum7rpk1drV0vgsNOHli3FzJK2vu3qMvTBwTqTd4aMZJZN21EcHYrL/1tEsDkipTCfqjoqsa5cGxFNwSRXo5hn+sjUemC/mpD9MDC1lCg23A3d6rhG/CL5cDTDx9PCOemX87w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XFF250jZpz4f3jXL;
-	Fri, 27 Sep 2024 10:35:41 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 5DF001A1637;
-	Fri, 27 Sep 2024 10:35:57 +0800 (CST)
-Received: from [10.67.110.36] (unknown [10.67.110.36])
-	by APP2 (Coremail) with SMTP id Syh0CgAnW2AKGvZm6J_LCQ--.34226S2;
-	Fri, 27 Sep 2024 10:35:55 +0800 (CST)
-Message-ID: <41d1d728-dbf4-4b0d-9855-19cd06e2a594@huaweicloud.com>
-Date: Fri, 27 Sep 2024 10:35:54 +0800
+	 In-Reply-To:Content-Type; b=gAXJuznSIPytnNkwkejqqWnGDYi6YYuk6LiCejYbSE/+O+Z7wdBMTHV9J7F/XpOZUllGAiuowDFRbn3axBXoxRFI9VbtpL93vCr7k4wbv+7boyg/CCNQVDO9TJAp+uQNV6XJKRjHHP6LNoSG/BRQgzDbexPrhfaS227/Ahi/jLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ecW4kGMt; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727404602; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=3DirFBBLsGZoR5mffHo1eYqOeuH3dk7sCjq7ZC7LMd8=;
+	b=ecW4kGMtPu5068ABu5MuJEittEB8cp3VW1QKObG/ZR8X4+dNfm9GG3+VkjAFHwy5jo48Z3WIIZPFmSpVeBVqUTLhsGyU/cczYAsg9oz6nV5qdVQo/7W8mvPUIuACqfUnXVVjBFGNWgm2eXpz6wNSQ6m4eh1QgiIXzlXRAfMGhOE=
+Received: from 30.74.144.105(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WFooSAm_1727404600)
+          by smtp.aliyun-inc.com;
+          Fri, 27 Sep 2024 10:36:41 +0800
+Message-ID: <300de9ce-7a3d-4495-a232-c7cb419289a5@linux.alibaba.com>
+Date: Fri, 27 Sep 2024 10:36:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,119 +47,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 1/2] perf stat: Increase perf_attr_map entries
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, song@kernel.org,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-References: <20240925135523.367957-1-wutengda@huaweicloud.com>
- <20240925135523.367957-2-wutengda@huaweicloud.com>
- <ZvTgHKl4eZvpyVml@google.com>
-Content-Language: en-US
-From: Tengda Wu <wutengda@huaweicloud.com>
-In-Reply-To: <ZvTgHKl4eZvpyVml@google.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [RFC PATCH v2 0/2] Support large folios for tmpfs
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
+ wangkefeng.wang@huawei.com, 21cnbao@gmail.com, ryan.roberts@arm.com,
+ ioworker0@gmail.com, da.gomez@samsung.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1727338549.git.baolin.wang@linux.alibaba.com>
+ <ZvVRiJYfaXD645Nh@casper.infradead.org>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <ZvVRiJYfaXD645Nh@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgAnW2AKGvZm6J_LCQ--.34226S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZw4fKryDAw1rCw4kZr43Jrb_yoW5AryrpF
-	4kCF9rKF15Wr1xGwnxZanIgr90gw45uFW5Kr13KrW8AFnxWr1rKayIgF4FgF1xJrZ2yr1F
-	qw4qgrW7ZayY9aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
 
 
-On 2024/9/26 12:16, Namhyung Kim wrote:
-> On Wed, Sep 25, 2024 at 01:55:22PM +0000, Tengda Wu wrote:
->> bperf restricts the size of perf_attr_map's entries to 16, which
->> cannot hold all events in many scenarios. A typical example is
->> when the user specifies `-a -ddd` ([0]). And in other cases such as
->> top-down analysis, which often requires a set of more than 16 PMUs
->> to be collected simultaneously.
+On 2024/9/26 20:20, Matthew Wilcox wrote:
+> On Thu, Sep 26, 2024 at 04:27:25PM +0800, Baolin Wang wrote:
+>> This RFC patch series attempts to support large folios for tmpfs. The first
+>> patch is based on Daniel's previous patches in [1], mainly using the length
+>> in the write and fallocate paths to get a highest order hint for large
+>> order allocation. The last patch adds mTHP filter control for tmpfs if mTHP
+>> is set for the following reasons:
 >>
->> Fix this by increase perf_attr_map entries to 100, and an event
->> number check has been introduced when bperf__load() to ensure that
->> users receive a more friendly prompt when the event limit is reached.
->>
->>   [0] https://lore.kernel.org/all/20230104064402.1551516-3-namhyung@kernel.org/
+>> 1. Maintain backward compatibility for the control interface. Tmpfs already
+>> has a global 'huge=' mount option and '/sys/kernel/mm/transparent_hugepage/shmem_enabled'
+>> interface to control large order allocations. mTHP extends this capability to a
+>> per-size basis while maintaining good interface compatibility.
 > 
-> Apparently this patch was never applied.  I don't know how much you need
-> but having too many events at the same time won't be very useful because
-> multiplexing could reduce the accuracy.
+> ... it's confusing as hell to anyone who tries to understand it and
+> you've made it more complicated.  Well done.
 > 
-
-Could you please explain why patch [0] was not merged at that time? I couldn't
-find this information from the previous emails.
-
-In my scenario, we collect more than 40+ events to support necessary metric
-calculations, which multiplexing is inevitable. Although multiplexing may
-reduce accuracy, for the purpose of supporting metric calculations, these
-accuracy losses can be acceptable. Perf also has the same issue with multiplexing.
-Removing the event limit for bperf can provide users with additional options.
-
-In addition to accuracy, we also care about overhead. I compared the overhead
-of bperf and perf by testing ./lat_ctx in lmbench [1], and found that the
-overhead of bperf stat is about 4% less than perf. This is why we choose to
-use bperf in some extreme scenarios.
-
-  [1] https://github.com/intel/lmbench
-
-Thanks,
-Tengda
-
+>> 2. For the large order allocation of writable mmap() faults in tmpfs, we need
+>> something like the mTHP interfaces to control large orders, as well as ensuring
+>> consistent interfaces with shmem.
 > 
->>
->> Fixes: 7fac83aaf2ee ("perf stat: Introduce 'bperf' to share hardware PMCs with BPF")
->> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
->> ---
->>  tools/perf/util/bpf_counter.c | 8 +++++++-
->>  1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
->> index 7a8af60e0f51..3346129c20cf 100644
->> --- a/tools/perf/util/bpf_counter.c
->> +++ b/tools/perf/util/bpf_counter.c
->> @@ -28,7 +28,7 @@
->>  #include "bpf_skel/bperf_leader.skel.h"
->>  #include "bpf_skel/bperf_follower.skel.h"
->>  
->> -#define ATTR_MAP_SIZE 16
->> +#define ATTR_MAP_SIZE 100
->>  
->>  static inline void *u64_to_ptr(__u64 ptr)
->>  {
->> @@ -451,6 +451,12 @@ static int bperf__load(struct evsel *evsel, struct target *target)
->>  	enum bperf_filter_type filter_type;
->>  	__u32 filter_entry_cnt, i;
->>  
->> +	if (evsel->evlist->core.nr_entries > ATTR_MAP_SIZE) {
->> +		pr_err("Too many events, please limit to %d or less\n",
->> +			ATTR_MAP_SIZE);
->> +		return -1;
->> +	}
->> +
->>  	if (bperf_check_target(evsel, target, &filter_type, &filter_entry_cnt))
->>  		return -1;
->>  
->> -- 
->> 2.34.1
->>
+> tmpfs and shmem do NOT need to be consistent!  I don't know why anyone
+> thinks this is a goal.  tmpfs should be consistent with OTHER FILE
+> SYSTEMS.  shmem should do the right thing for the shared anon use case.
+> 
+>> 3. Ryan pointed out that large order allocations based on write length could
+>> lead to memory fragmentation issue. Just quoting Ryan's comment [2]:
+>> "And it's possible (likely even, in my opinion) that allocating lots of different
+>> folio sizes will exacerbate memory fragmentation, leading to more order-0
+>> fallbacks, which would hurt the overall system performance in the long run, vs
+>> restricting to a couple of folio sizes."
+> 
+> I disagree with this.  It's a buddy allocator; it's resistant to this
+> kind of fragmentation.
 
+Fine. Thanks for sharing your opinion. So far, I can drop patch 2 to 
+stop adding mTHP interfaces for tmpfs.
 
