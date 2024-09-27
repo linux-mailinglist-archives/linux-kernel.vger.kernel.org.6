@@ -1,167 +1,105 @@
-Return-Path: <linux-kernel+bounces-341869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D169988774
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:46:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5FB988768
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DABF1B2112E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:46:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EC511F22201
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7CA21C0DDB;
-	Fri, 27 Sep 2024 14:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11D41C0DD3;
+	Fri, 27 Sep 2024 14:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="HDaUr8Jl"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="hHZyQS+v"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05731BFE18;
-	Fri, 27 Sep 2024 14:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EF71BFE15;
+	Fri, 27 Sep 2024 14:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727448371; cv=none; b=t358qkiCrAJP1vqaX4sPLpF/SLYlTcCadqqt4LrA7GyaIp4W5POOzD5c9fZIMDhhOGnbcQfrAGiM3f5MQOHBQJlpLE4XHM6DogzA4GI0aO+k6y8Ro8EmgUd/ZKSWM8P3PBs3CxCjmhOdsAXOtiXPlA1JxId3VTF1GXGYEY1eI50=
+	t=1727448318; cv=none; b=giJVwrYvCeRNuGW70raU2/YBW4MRnV30FvSSKioFTJZe/m/fjoUyqDMxkJrGlOgrUkP/vXStVJSfKVTl4kvUNXt/QPRqqotlVpXFKFq0vKJX4GfPlaCrIyCmcDDJ6oFWukvCR9FEy/J5YNjsB63EDR0NrvpVaxOT9rA7WuPEHns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727448371; c=relaxed/simple;
-	bh=xD+akKG2WsLXNifs5kWRujVjHdAwiGgMHce05hDMYP4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=m5A84lTuUYzrih7r11218ZXbRgmLGgTsWjrU7BU7CMtUfqA7FEAlBqdqJ10Kd8EMJWdoLkHeV/VRGVzk5DXULQ4NekcQZ2VYXNihLXFJhKG2W0UU0gM3zALedBtuj8REq8r1iRBFiQg1Lgm51HrSOSFCu29xeUwaYRi/1sVeB2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=HDaUr8Jl; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727448367;
-	bh=xD+akKG2WsLXNifs5kWRujVjHdAwiGgMHce05hDMYP4=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=HDaUr8JlcQb+Iam8HThov2FtvO0R0VEH8ApXioSxl/6HkWF9TM74GkVwndOYWxVPA
-	 kcYrOkobLfkSlg4IoIDTikp5BFSibZzsVcr/AMdhA4HNrTUyi5Ys4HZKJcOWIM6jk6
-	 vP3Op45mLNp8G+2yywkUtu3CLdXdU6Tubwy00zgg18t/SyWBMChXMQV4Z3KFSirpoq
-	 bonlIgsrqOGNXpaYI3L4Zp8dzBV2shg1zt+OldcbN/td/yzMykX3uAN/XE+VKcom/G
-	 EDe+il41Q3OW+SoANnOoRHipjtFxT7vkyeesC2dOK/Gj9cxJrgydqSI/eKenV00rrw
-	 ZFSaSk5Z1fgMw==
-Received: from [IPV6:2605:8d80:582:29fa:9e57:c437:e7dd:8f59] (unknown [IPv6:2605:8d80:582:29fa:9e57:c437:e7dd:8f59])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XFYDs436zz1P2X;
-	Fri, 27 Sep 2024 10:46:05 -0400 (EDT)
-Message-ID: <08423acb-1f8e-407a-80fe-c424c6ee2861@efficios.com>
-Date: Fri, 27 Sep 2024 10:43:59 -0400
+	s=arc-20240116; t=1727448318; c=relaxed/simple;
+	bh=MEJMjn9ntS8Y8zmLvfnNVYD5q/dmVMCCKHH9WIxiXyc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b7bYZN2buH4Udg+zEwAP+6R/dco2IvmD1+tVJUfqJ15Ee8ye3VejJVCDsx3/T9KJBQXr+w0D7hWtd0AciyqbulPmjJf9ZAWmbJ87MmSNCXeOy416xa84XtQ833S1xJn1lXVTL3UkMu4bg7qYUnpuAKWnSm52WibY3OoAbgdZN+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=hHZyQS+v; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Eyv6FxKbSvQOFgQGcK5COE/kC4alwt92KY2oNq8SFCM=; b=hHZyQS+vg3fGvDLP66OXewKSw/
+	MgkYPIHasNP3Y4Vnw+Qz32VU90hJgUuL0TNZM9Z0ex/VAcLL+btM20yOKGwqvGR0MSZJy8sZzWNmu
+	CRtWZj46gdvGkeDWd8p6q6YFW0AO0Dg5nO6P2uO2uLV/GZj9x94qWOdQJ0+fOJKpEOeNwONe2b8my
+	IytLCrYxSKBSyluqn/mTPCnt7Whlj3/ufprGWJQo4y2pUCu3eDn29jqe+Qo39CjycUpZaK6XK8Vbs
+	wKQGVRYSz7kf5xERWOuc7hB190jPyoC7OddhWU6836LF6mjGb7UEvB/bz8zUJ6HC3A5y94d4HTLiu
+	+ui1ah4g==;
+Received: from 85-160-70-253.reb.o2.cz ([85.160.70.253] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1suCD8-0006OK-Lb; Fri, 27 Sep 2024 16:44:46 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Magnus Damm <magnus.damm@gmail.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Paul Cercueil <paul@crapouillou.net>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
+ Nicolin Chen <nicoleotsuka@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Adrien Grassein <adrien.grassein@gmail.com>, Adam Ford <aford173@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-mips@vger.kernel.org, alsa-devel@alsa-project.org,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH treewide 00/11] ASoC: Clean up {hp,mic}-det-gpio handling
+Date: Fri, 27 Sep 2024 16:44:43 +0200
+Message-ID: <4455919.MSiuQNM8U4@phil>
+In-Reply-To: <cover.1727438777.git.geert+renesas@glider.be>
+References: <cover.1727438777.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Boqun Feng <boqun.feng@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
- lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>, rostedt <rostedt@goodmis.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>, Vlastimil Babka
- <vbabka@suse.cz>, maged.michael@gmail.com,
- Neeraj Upadhyay <neeraj.upadhyay@amd.com>
-References: <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
- <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
- <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
- <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
- <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
- <54487a36-f74c-46c3-aed7-fc86eaaa9ca2@huaweicloud.com>
- <CAHk-=wifOW0VEh6uL3sHSaAUA46YmPDS9Wh5HnNC2JyOiXVA=Q@mail.gmail.com>
- <ZvX12_1mK8983cXm@boqun-archlinux>
- <0b262fe5-2fc5-478d-bf66-f208723238d5@efficios.com>
- <e748893f-28a3-4b8a-a848-cfb1173ab940@app.fastmail.com>
- <ZvY0gG2dCJApPbp5@boqun-archlinux>
- <8aceaf4f-5578-4fca-8be7-3448d7b89721@efficios.com>
-Content-Language: en-US
-In-Reply-To: <8aceaf4f-5578-4fca-8be7-3448d7b89721@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 2024-09-27 12:59, Mathieu Desnoyers wrote:
-> On 2024-09-27 06:28, Boqun Feng wrote:
-[...]
->> I replaced ADDRESS_EQ(a, b) with ADDRESS_EQ(b, a), and the compile
->> result shows it can prevent the issue:
+Hi Geert,
+
+Am Freitag, 27. September 2024, 14:42:15 CEST schrieb Geert Uytterhoeven:
+>   - The second patch updates the Audio Graph and Simple Audio Card DT
+>     bindings,
+>   - Patches 3-9 converts various DTS files to use the new properties,
+>   - The last 2 patches convert Freescale sound device nodes to use the
+>     new properties.
 > 
-> I see, yes. It prevents the issue by making the compiler create
-> a copy of the value "modified" by the asm before doing the equality
-> comparison.
-> 
-> This means the compiler cannot derive the value for b from the first
-> load when b is used after after the equality comparison.
-> 
-> The only downside of OPTIMIZER_HIDE_VAR() is that it adds an extra
-> "mov" instruction to move the content across registers. I don't think
-> it matters performance wise though, so that solution is appealing
-> because it is arch-agnostic.
-> 
-> One small improvement over your proposed solution would be to apply
-> OPTIMIZER_HIDE_VAR() on both inputs. Because this is not a volatile
-> asm, it is simply optimized away if var1 or var2 is unused following
-> the equality comparison. It is more convenient to prevent replacement
-> of both addresses being compared by the other rather than providing
-> the guarantee only on a single parameter:
+> All patches can be applied independently,
 
-Actually, your approach is better (only preserving the address
-dependency on the first parameter), because it allows the second
-parameter to be a constant.
+though I guess dts patches should wait till patch 2 gets applied
+somewhere, so that changed dts and changed binding can again find
+together in linux-next?
 
-Here is a diff. Please let me know if I need to improve anything wrt
-comments or implementation:
 
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 2df665fa2964..52434eccd715 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -186,6 +186,32 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
-  	__asm__ ("" : "=r" (var) : "0" (var))
-  #endif
-  
-+/*
-+ * Compare an address with an expression while preserving the address
-+ * dependencies for later use of the address. It should be used when
-+ * comparing an address returned by rcu_dereference() with another
-+ * address (either constant or in registers).
-+ *
-+ * This is needed to prevent the compiler SSA GVN optimization pass from
-+ * replacing the register holding @addr by @expr (either a constant or a
-+ * register) based on their equality, which does not preserve address
-+ * dependencies and allows the following misordering speculations:
-+ *
-+ * - If @expr is a constant, the compiler can issue the loads which depend
-+ *   on @addr before the load of @addr.
-+ * - If @expr is a register populated by a prior load, weakly-ordered
-+ *   CPUs can speculate loads which depend on @addr before the load of the
-+ *   address they depend on.
-+ */
-+#ifndef ADDRESS_EQ
-+#define ADDRESS_EQ(addr, expr)					\
-+	({							\
-+		bool __res = (addr) == (expr);			\
-+		OPTIMIZER_HIDE_VAR(addr);			\
-+		__res;						\
-+	})
-+#endif
-+
-  #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-  
-  /**
+Heiko
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
 
 
