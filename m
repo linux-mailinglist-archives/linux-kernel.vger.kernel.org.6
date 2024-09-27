@@ -1,87 +1,132 @@
-Return-Path: <linux-kernel+bounces-341221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F26987CD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 04:05:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D3A987CDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 04:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9AB1F2261C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:05:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6772BB24F11
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E987E290F;
-	Fri, 27 Sep 2024 02:05:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD49169AE6;
+	Fri, 27 Sep 2024 02:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F0sAoPfF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F2414D282
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874123A1A8;
+	Fri, 27 Sep 2024 02:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727402704; cv=none; b=X5cnDtql06RpMX211XR8TG114+CBFMbqvUQgZtYFJZzVVv46vmPcXVvm202JtQmgch7jVnwVa/yyPp9e9mVfqC3hjgIetim1qhVnvA6piwlcxqqCvXCWrvNYGo31RNQDu8gdlbQvec6tFGtnCMD0vwhty5Pbn5Z2OyL1cytfrBE=
+	t=1727403005; cv=none; b=bU4CMPD+n4DZ5XBa6XDaEYT8vezDsyUTOg6jX3/jXrcTLlJedf2wAx1/qmmsiyxvdNMH1g4XsMhbkOMuq5s29e052jKg183XENLNFJFd+GueiHwerFdDZAEqNWN6TNEAAAR6OZ42tYh50BHhKUfuvDXkxZetfcsoKxFkyHD3I9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727402704; c=relaxed/simple;
-	bh=OHyvCo9NiAIpi8C7XwA/tpWUbjNyO1z7zEGBzofv0UI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BJj/cjGTko+kLTFlt/lqSLZE0ofqUkCTbtlQiu8Md4sDQz7D5yMKKa7M/WGdSbJ8RLGgp+h+8V0HHvMThBl4ycoyzifgw1OODnPCTTBYEIHHIqJw13PCgtKcbciSSNzjQkR5qAifO2ocFCOQKV5KhWCY32DOy4CKRnuOeZIVFLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82ced069d94so176062539f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 19:05:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727402702; x=1728007502;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=URDsUQT57ZVIt02dfN1M1XAVNfSaTLuQwRlPHDLTxnw=;
-        b=PqHP0UCawK/SEs17oU+t+ulJelueeGpoIr6Olbf/wGvchB+VsDsIW+vrXCpEONQpwR
-         IqfTKrPIXxeN6tKFAyejm0nMsktM6IMGfMNYITVu2tWutfUMXEl73/NckjIyGLBbv6YT
-         DWMAFm7sls4EJDhbIEHiDxH/rLiUVLF/8uDxBlOkXvWn9Wz0HLJkT4mBFhCzduy2IrXA
-         10utfMQaubU21LEH7hQpHwV7+aCFApWnGD3Ue7dNiSqfZP0bQQuR1u69+zh6rs87yUDt
-         3o4Qq9qLtYFlJG5G+WwhWh/oZ8JbqclsLlW5JJxuJeKG+6/DTri5/6bQxhvgAEBd4Y2Z
-         PF/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWupEH4WXluP/V1hoKjQRMGpsQj5JtHHABqUax9R8XV8K3uUaQIShOZpsIhVv+emYcFOlwoXKveIzb5FEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzrp7bD+suGyxbug/P6MzsW3IHulhc1+Ei1eRWFYX55zOfrxtIw
-	FbrUc14JH9CI6d5d/t9CCXBOvwSDlC3j5Y4hbNXSVTtD5b6lfiR14x3MPEi7LMfWa6gx+HdvW7M
-	TO3T7pzYK5IULYTUaiw8MWCuOBLDms+6dfMdpGmrmkV4QZwgYkDp5cxQ=
-X-Google-Smtp-Source: AGHT+IHHvvKoVaJa3WZYWHvQJAtTmIYpqzTDBC/A3KV+fSDHUB42moVaaXXLcAcjwlIQCYmUHWIBplbmefoc68WBJ2pDs7ywEG+b
+	s=arc-20240116; t=1727403005; c=relaxed/simple;
+	bh=hxwzEUSAu4nppCQkrodBnYJTu2L6SXlL2T8Cbgq8CtA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jlG8kgBQVDqkaIHzk5vLkePTkTgev3h/JknanUwykeHg9vDCq0C5wHNOcGuxH7cfIJMcOxZFE5X5VQc5tIX+Qgl3L/V5mQtw4T0ZgHxqOG/qdW4YiSRAPFhvOqrE9JYM2XaY27xHT1FRY0/OJkglLjzm9p8TpZ3uwxZdEiaBPFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F0sAoPfF; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727403004; x=1758939004;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hxwzEUSAu4nppCQkrodBnYJTu2L6SXlL2T8Cbgq8CtA=;
+  b=F0sAoPfFitS4wC9lwaNk0dca9PByc26VTDRj4iUrR6n4bu5FSfrzf0/+
+   QLGJYtthRNo27AlcLiqYlG0cBUcXpIjl8rBXojuPbREFcwD3TfOr3Bmmc
+   gmj0DxBkCy72DGcLuNTmqWLdEqY0y0VgSxvmIdfysKJMFC05j1M2ewSA+
+   916Hugsz+Qt9/fExg2jOw2UNMytTAsiBntJ/7OP+i894ALEVJqh5LY7bu
+   S8+9uyz6zxphqPDEC6ivs45dVaIzL768BeaIOnjtn7ijq56SC8bMo0cBY
+   RG+nzk6Yq0Plv7+N5DIeKweCXzI3IyZ0+gXL7qEeHV4fkaYHNpQ8HZ2Kx
+   w==;
+X-CSE-ConnectionGUID: kMiewlXbTuys7hPvy6oAFA==
+X-CSE-MsgGUID: 4H9hku4GRUWcZkPVNkNMsw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="37102251"
+X-IronPort-AV: E=Sophos;i="6.11,157,1725346800"; 
+   d="scan'208";a="37102251"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 19:10:03 -0700
+X-CSE-ConnectionGUID: AfvG0hxfSWGrhLa2PUJ7vg==
+X-CSE-MsgGUID: 7pKaXJYUSAGUzgVX+TeqiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,157,1725346800"; 
+   d="scan'208";a="72032686"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa007.fm.intel.com with ESMTP; 26 Sep 2024 19:09:58 -0700
+Message-ID: <05a6b098-8197-4ae6-af80-6dcc16c9f29f@linux.intel.com>
+Date: Fri, 27 Sep 2024 10:05:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216e:b0:3a3:4477:e2f0 with SMTP id
- e9e14a558f8ab-3a3451652f5mr16621045ab.10.1727402702428; Thu, 26 Sep 2024
- 19:05:02 -0700 (PDT)
-Date: Thu, 26 Sep 2024 19:05:02 -0700
-In-Reply-To: <20240927013806.3577931-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f612ce.050a0220.38ace9.0006.GAE@google.com>
-Subject: Re: [syzbot] [serial?] INFO: task hung in vcs_open (8)
-From: syzbot <syzbot+8a192e8d090fa9a31135@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	lizhi.xu@windriver.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, jgg@nvidia.com, kevin.tian@intel.com,
+ will@kernel.org, joro@8bytes.org, suravee.suthikulpanit@amd.com,
+ robin.murphy@arm.com, dwmw2@infradead.org, shuah@kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
+ eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
+ mshavit@google.com, shameerali.kolothum.thodi@huawei.com, smostafa@google.com
+Subject: Re: [PATCH v2 00/19] iommufd: Add VIOMMU infrastructure (Part-1)
+To: Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>
+References: <cover.1724776335.git.nicolinc@nvidia.com>
+ <bf95f910-e837-4d79-8218-18d234ece730@intel.com>
+ <ZvRcskGx2u94Vs+R@Asurada-Nvidia>
+ <82632802-c55a-4199-b685-8b594a8e7104@intel.com>
+ <ZvW+BoovlyJ/wziX@Asurada-Nvidia>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <ZvW+BoovlyJ/wziX@Asurada-Nvidia>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 9/27/24 4:03 AM, Nicolin Chen wrote:
+> On Thu, Sep 26, 2024 at 04:47:02PM +0800, Yi Liu wrote:
+>> On 2024/9/26 02:55, Nicolin Chen wrote:
+>>> On Wed, Sep 25, 2024 at 06:30:20PM +0800, Yi Liu wrote:
+>>>> Hi Nic,
+>>>>
+>>>> On 2024/8/28 00:59, Nicolin Chen wrote:
+>>>>> This series introduces a new VIOMMU infrastructure and related ioctls.
+>>>>>
+>>>>> IOMMUFD has been using the HWPT infrastructure for all cases, including a
+>>>>> nested IO page table support. Yet, there're limitations for an HWPT-based
+>>>>> structure to support some advanced HW-accelerated features, such as CMDQV
+>>>>> on NVIDIA Grace, and HW-accelerated vIOMMU on AMD. Even for a multi-IOMMU
+>>>>> environment, it is not straightforward for nested HWPTs to share the same
+>>>>> parent HWPT (stage-2 IO pagetable), with the HWPT infrastructure alone.
+>>>> could you elaborate a bit for the last sentence in the above paragraph?
+>>> Stage-2 HWPT/domain on ARM holds a VMID. If we share the parent
+>>> domain across IOMMU instances, we'd have to make sure that VMID
+>>> is available on all IOMMU instances. There comes the limitation
+>>> and potential resource starving, so not ideal.
+>> got it.
+>>
+>>> Baolu told me that Intel may have the same: different domain IDs
+>>> on different IOMMUs; multiple IOMMU instances on one chip:
+>>> https://lore.kernel.org/linux-iommu/cf4fe15c-8bcb-4132-a1fd-b2c8ddf2731b@linux.intel.com/
+>>> So, I think we are having the same situation here.
+>> yes, it's called iommu unit or dmar. A typical Intel server can have
+>> multiple iommu units. But like Baolu mentioned in that thread, the intel
+>> iommu driver maintains separate domain ID spaces for iommu units, which
+>> means a given iommu domain has different DIDs when associated with
+>> different iommu units. So intel side is not suffering from this so far.
+> An ARM SMMU has its own VMID pool as well. The suffering comes
+> from associating VMIDs to one shared parent S2 domain.
+> 
+> Does a DID per S1 nested domain or parent S2? If it is per S2,
+> I think the same suffering applies when we share the S2 across
+> IOMMU instances?
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-no output from test machine
+It's per S1 nested domain in current VT-d design. It's simple but lacks
+sharing of DID within a VM. We probably will change this later.
 
-
-
-Tested on:
-
-commit:         075dbe9f Merge tag 'soc-ep93xx-dt-6.12' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1305aaa9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f7f1af2ec501f918
-dashboard link: https://syzkaller.appspot.com/bug?extid=8a192e8d090fa9a31135
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=158be59f980000
-
+Thanks,
+baolu
 
