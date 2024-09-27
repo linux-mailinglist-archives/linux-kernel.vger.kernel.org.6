@@ -1,113 +1,71 @@
-Return-Path: <linux-kernel+bounces-341409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 753A1987FAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:45:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F55987FB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 217011F235BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:45:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89FC28463D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50F618800E;
-	Fri, 27 Sep 2024 07:45:24 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BDB1891B5;
+	Fri, 27 Sep 2024 07:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IloIFCHQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD85D208D7;
-	Fri, 27 Sep 2024 07:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB761167D80;
+	Fri, 27 Sep 2024 07:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727423124; cv=none; b=fQL3kYhOmtGFK3JYlIQ/RoF5H8cvdb6/gEutJS5+XOGy/qleiKnrAEetJNBQZkJ+Eam4CHvePOpx6B5lAscvMfZkbhX3Np61eHFaRTiynZpqSEI+SrhiJn26SJRHpZxLVOF+moATuk3JkdxnIybUa4B/i0ChUEAP69AudwMH4fA=
+	t=1727423154; cv=none; b=mkMkYZjLsJLR00sov+Xkyad0vvIZjpRvb8DAEnBDaZS3gfuMrytF1BV4C3JbsrDh+ehzpGG5JJdHxifukYLVldQv7yXkJuscYhhYjS7jZa81M8oKg3QkStRMryget9glv9bKDyCHVybhHixzl6LRGYOtn3Np4k597NHkv2vRhmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727423124; c=relaxed/simple;
-	bh=ypXZmQ6dKOwdo+1jgOYy9lN6chCL2pA6F1O+NZ0qugw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lMGMrtbOFfycq6vGM1mBxV9N1Jf5vH6FlinGGsyXRMfyw1Pvl7YzwuZmnwD9O96jXX/w/tr5tSldoI4WQklHR88O+cutMWaCDURHn1R1c3z93+8vx5gajnpbnwtGOa63S61NOGaJ891zW9cG3/pXsPa/yBReXTD8kbJOcjIil0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XFMv02XGFz4f3jJ1;
-	Fri, 27 Sep 2024 15:45:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id A72791A0D44;
-	Fri, 27 Sep 2024 15:45:16 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP3 (Coremail) with SMTP id _Ch0CgCH24eLYvZmVXyTCQ--.18822S2;
-	Fri, 27 Sep 2024 15:45:16 +0800 (CST)
-Message-ID: <c7bcf377-c386-41cd-8268-7b6f8cb251fd@huaweicloud.com>
-Date: Fri, 27 Sep 2024 15:45:15 +0800
+	s=arc-20240116; t=1727423154; c=relaxed/simple;
+	bh=muHlqJ7iEOLfJfdfnWfRQ+Z4rZB4TQDLw6WtJrxW/FY=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=A/bg8hw1hKGS4XhKYhFdotOj2JIaOct7DbBwxp4zZYB4jqLf5CXl2wTRnZRY0/dhDsFNt3hANXzj+T0+gVkLRmrEt81OjcGXMPFCWidFHxI4GpuQTI1UbNcGP230q0dSyDAVXMWPMswLrHPCH3cRndX8JhJAIxNy+Y73/Ytsnm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IloIFCHQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9D42C4CEC7;
+	Fri, 27 Sep 2024 07:45:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727423154;
+	bh=muHlqJ7iEOLfJfdfnWfRQ+Z4rZB4TQDLw6WtJrxW/FY=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=IloIFCHQVPrmcLnhS3Iihmfb/Rcd24BcaORt9mlaW+c37RrYEgtgRNkITVY51uovw
+	 bl5kjuT3ljwQiEQHrZVjBP7+Vx0RUkuMDqg1oDhtTGroKD/xCIr22LVQhMB1yuP68s
+	 SZSI/1KRueCUqGo7kSSWyUcJMEw/wZu2wEIvkUkZEUo2ZNmxktazbBQfpOZU+EugIm
+	 8h/BPS2wdxXpxWRGlJ5UvYdO5vqB74ndbB/67+qxPXVd+cprGszrfx145c0svxxFqg
+	 whyEQjU8IM1LLGgb68qfvB7beaP5QcLEDjE9vM5e3EvC/a/WFLOOkD/DkrWkMA/cLn
+	 oFcajaknfB5fg==
+Message-ID: <545585e6f2e9d0bbe35f0a2785838cfa@kernel.org>
+Date: Fri, 27 Sep 2024 07:45:51 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Vignesh Raman" <vignesh.raman@collabora.com>
+Subject: Re: [PATCH v3] docs/gpu: ci: update flake tests requirements
+In-Reply-To: <20240927052416.1833889-1-vignesh.raman@collabora.com>
+References: <20240927052416.1833889-1-vignesh.raman@collabora.com>
+Cc: airlied@gmail.com, amd-gfx@lists.freedesktop.org, daniel@ffwll.ch, daniels@collabora.com, deborah.brouwer@collabora.com, dmitry.baryshkov@linaro.org, dri-devel@lists.freedesktop.org, guilherme.gallo@collabora.com, helen.koike@collabora.com, intel-gfx@lists.freedesktop.org, linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, mripard@kernel.org, quic_abhinavk@quicinc.com, robdclark@gmail.com, rodrigo.vivi@intel.com, sergi.blanch.torne@collabora.com, virtualization@lists.linux.dev, "Maxime
+ Ripard" <mripard@kernel.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] cgroup/bpf: use a dedicated workqueue for cgroup
- bpf destruction
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
- longman@redhat.com, chenridong@huawei.com, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240923114352.4001560-1-chenridong@huaweicloud.com>
- <20240923114352.4001560-2-chenridong@huaweicloud.com>
- <24rp7n32rtzdszc7zxwmeitfmtib5yu7wo432b7uxjkvbdtrxp@kemt7l74yich>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <24rp7n32rtzdszc7zxwmeitfmtib5yu7wo432b7uxjkvbdtrxp@kemt7l74yich>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgCH24eLYvZmVXyTCQ--.18822S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZw1fWF1fGryxCF4kGFWrGrg_yoWfZrb_Wa
-	yIkwn2k3yrCay2gw1Iq39xXrWkCF48JryUWwn5Gr47Gw1fWw4DWa97Jrn3Za4UZa1vyasr
-	uFZxWa42qr129jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbwkYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxG
-	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-
-
-On 2024/9/26 20:49, Michal Koutný wrote:
-> Hello.
+On Fri, 27 Sep 2024 10:54:14 +0530, Vignesh Raman wrote:
+> Update the documentation to specify linking to a relevant GitLab
+> issue or email report for each new flake entry. Added specific
+> GitLab issue urls for i915, msm and amdgpu driver.
 > 
-> On Mon, Sep 23, 2024 at 11:43:50AM GMT, Chen Ridong <chenridong@huaweicloud.com> wrote:
->> +static int __init cgroup_bpf_wq_init(void)
->> +{
->> +	cgroup_bpf_destroy_wq = alloc_workqueue("cgroup_bpf_destroy", 0, 1);
->> +	WARN_ON_ONCE(!cgroup_bpf_destroy_wq);
->> +	return 0;
->> +}
->> +core_initcall(cgroup_bpf_wq_init);
+> Acked-by: Abhinav Kumar <quic_abhinavk@quicinc.com> # msm
 > 
-> I think hard fail (panic() if you want to avoid BUG_ON) would be
-> warranted here and mere warning would leave system exposed to worse
-> errors later (and _ONCE in an initcall looks unnecessary).
-> 
-Thank you. I think panic() is alright.
+> [ ... ]
 
-Best regards,
-Ridong
+Acked-by: Maxime Ripard <mripard@kernel.org>
 
-> Maybe look at other global wqs. I see that returning -ENOMEM might be an
-> option, however, I don't see that initcall's return value would be
-> processed anywhere currently :-/
-> 
-> Besides this allocation failpath this is a sensible change to me.
-> 
-> Thanks,
-> Michal
-
+Thanks!
+Maxime
 
