@@ -1,118 +1,148 @@
-Return-Path: <linux-kernel+bounces-341801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94483988668
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:41:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A96A988669
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D3EB1C21F0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:41:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B1C2B23924
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9198B19C561;
-	Fri, 27 Sep 2024 13:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01FA19C56C;
+	Fri, 27 Sep 2024 13:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mohr5Vpl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="HZsmwKDC"
+Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4536619AA5D;
-	Fri, 27 Sep 2024 13:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD97D19ADBF
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 13:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727444493; cv=none; b=sifDgNWUs0ir+kM0RKNI5MhUIj8kdeUoialMzQuJJmZsdeb9bYajTgIxF6+ndkne5AjIlXEuI1KYRYtobCHOmvpycKsEFTYAuC88mzHjSgqFKNeMo6hOlU6mx++abNkRizuI6f4xz4HRaHmC9FJ0JYYiBzS0juWqA57AzVdADiU=
+	t=1727444515; cv=none; b=uGFoyCwWUcCe0nAH4PmWmA932UKAt2xJvBgJ8gjlgsB/Fft756+eRlTAUFkxyXGb1MmUNpW/Mbs+VAinvHx2ZYwD+OLnFuEmjsDc/EPJw4oUk3gIyeMcYDrB39krki8hYJM/0awEzkPx9jUKcluVsUflRakhqYqaJzhvXecCFM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727444493; c=relaxed/simple;
-	bh=YWJgIOGhBxScyu3P5vF/TXVdwAQ44I0GxFG1b8KDCbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUZysEOwxdExuuUYyZrDTll5Jp/teHq2QvHhuwqdtYgUGpnzcYrzi7bx+rXV4Htip6l6TCSYKNQxkW+1PZcuP29sgUIZue1QQVw0X72QYZnBHY9iYuqXIs0kdTBYpUon/qAaFivRgb30+HFSKyAf2xbggOCEOk6yiAwKZPTUJrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mohr5Vpl; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727444491; x=1758980491;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YWJgIOGhBxScyu3P5vF/TXVdwAQ44I0GxFG1b8KDCbo=;
-  b=Mohr5VplHKAzl3TLhtmnx7+jZdUnQsazMN5xW5Ptpy9D4EmLgmXnHrTM
-   XIE1jL9CtAEr95sZQ/+Emf/KEs+/qjMhCQdBBRY3l07jwsZKtlDTvp13+
-   l0adHesw9Q+R2lXmhNw7IcNAtkynThgotL3ULewrH3rhbgmlAxDGoqCiA
-   wC8DhiP+TW5tGLAHf1satALj9Kp9YknTGHOt4WViYsxHMOZioxNJYwu6B
-   ANbc/BNrwmzI6xMNWeHo6EsmsUxojVzfUyRiKPmV6L/TkzNZ6a9xNzRu2
-   QbrRf7Hgo2tq7BkFAI4zMBaefOixwm4M+oqMmwHtcuvbyrmx+hmRa+stZ
-   A==;
-X-CSE-ConnectionGUID: tRaMddGXQqWG81kYTIu/5A==
-X-CSE-MsgGUID: F+fKVm5qSIyplM+JvId+Sw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26761820"
-X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
-   d="scan'208";a="26761820"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 06:41:27 -0700
-X-CSE-ConnectionGUID: CoHiEqGcRie6yKf5wFbsTw==
-X-CSE-MsgGUID: YuN0b83TSsmqpKujZ6spkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
-   d="scan'208";a="77323694"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 27 Sep 2024 06:41:24 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1suBDm-000MBZ-07;
-	Fri, 27 Sep 2024 13:41:22 +0000
-Date: Fri, 27 Sep 2024 21:41:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Michael Wu <michael.wu@kneron.us>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Andi Shyti <andi.shyti@kernel.org>,
-	Morgan Chang <morgan.chang@kneron.us>, linux-kernel@vger.kernel.org,
-	Michael Wu <michael.wu@kneron.us>
-Subject: Re: [PATCH 1/2] i2c: designware: determine HS tHIGH and tLOW based
- on HW paramters
-Message-ID: <202409272122.Lw9sP2il-lkp@intel.com>
-References: <20240925080432.186408-2-michael.wu@kneron.us>
+	s=arc-20240116; t=1727444515; c=relaxed/simple;
+	bh=kXRwG34UI+bturoVzhgeOOxPV0f/Bx4DS5Ky79B+J7c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kfvVXI2HRTP8dXHiAfOxqxhfOrR6BuwbReYgW7Yum2pWmMJ6xy9xEydSgOyR5iZBqiVrk7K4OvGzXOAZ4GV9GGaR6EMoBjVcxf+ROtdjFJIm8WrduhZR78ZKEDGDmQoquKhJP0s5zurCEJMTW0ioGGh5/MSbAPNFR04kiUDiOEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=HZsmwKDC; arc=none smtp.client-ip=209.85.216.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-2e0b93157caso762076a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 06:41:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1727444513; x=1728049313; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g7rJ/O+z7bpxFdhA8Ut3eubNwBQf96yErA3CvXZEpw4=;
+        b=HZsmwKDCg5z5iv0oyxA4a1hnmSOBOQ4tDzYy5JS3nUBflIM6SY5gDlhU8MMipvezKk
+         Pl0kwE41+4EwSq2oMIZD5sHh6bXxaotMdRDMZw22ONg7gWz4ljU/K5B5Am8gZlZInA4h
+         /VCbLUiQhKxqmFWCmEvYyqUg2lxYB06hMMqRvDcA5omIdnegd/VSDWTIiXFjCtjifygd
+         H4Yh8vqFDem+c+n5U7SpngkvALh1K6jdv6yp2FfLCpR3A391GfCCYHxT1MvfixOFsu+M
+         TJ5x/ptaPASdu2DwuTjBprVLS0Xnd3HAzpOhQNn2eBj9g8k1Y2iISCsN69/I2NASrHyR
+         nD0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727444513; x=1728049313;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g7rJ/O+z7bpxFdhA8Ut3eubNwBQf96yErA3CvXZEpw4=;
+        b=vQQBbqH/2QWql3eZSkoCEj0L+Wncr2a6av7n3y4Bbb3+hM3QwZ4fS+/CSX/fG0rnFn
+         8n3Bsn2TzHrnlHeaEgVMSbimr6Aa/F6TSSFE8Lz6201xpYxa84N2gkSLysVT2znYRo7X
+         LEeeqmxzWWkbzhMe3zVV+YCgvIJcF0RJlS+/1k8oDXYUPmWhPxoi0VVYej0wrVXJPNX3
+         Rg2qQV+fxb4Hy6nRPD2Jie6LISOZgMEuoWfpJrlOqCh9LEAIrEmvkKa0zH6ruURTLc4N
+         9RbY9kpCoygFAwpswJP48V3YFqwMSUCjCxMy6hUqteEBjTpRD3+/LSQSov/viYEmjra1
+         JkSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUP0PRva3gLP3Ytwl+K0b2bJJVIDl8zhul4k+f6O5VuBfyJccz/SBvmqwVKfMZEtZLv1rJPb6SVFmiHUxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwohfvVyG5/n9rb5rCUJx237y1uGt5ug8MGCTe4JhYqUmQGGFld
+	/VXcXw+RhSBZ/TaQiaie0TfUAR/7q0cdz8V3qFs09VEWtSamU7Aqnm4o2geCQ3M=
+X-Google-Smtp-Source: AGHT+IHd0pjdAibmhIjPPq9egnYivm5hXKu9xdNfijgHfStvVPMb8ZqhOcsLfmCZcJhJm3LSp2aMNg==
+X-Received: by 2002:a17:90a:f002:b0:2c9:6abd:ca64 with SMTP id 98e67ed59e1d1-2e0b71be347mr5415189a91.9.1727444513078;
+        Fri, 27 Sep 2024 06:41:53 -0700 (PDT)
+Received: from [127.0.1.1] (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e16d6d2sm5671744a91.2.2024.09.27.06.41.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 06:41:52 -0700 (PDT)
+From: Max Hsu <max.hsu@sifive.com>
+Subject: [PATCH RFC v2 0/3] riscv: add Svukte extension
+Date: Fri, 27 Sep 2024 21:41:42 +0800
+Message-Id: <20240927-dev-maxh-svukte-rebase-2-v2-0-9afe57c33aee@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925080432.186408-2-michael.wu@kneron.us>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABa29mYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDIxMDSyNz3ZTUMt3cxIoM3eKy0uySVN2i1KTE4lRdI13TZJMUI0uzFENLEwM
+ loPaCotS0zAqw0dFKQW7OSrG1tQB4a8FLbwAAAA==
+X-Change-ID: 20240927-dev-maxh-svukte-rebase-2-5c4d296d1940
+To: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>
+Cc: Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+ Max Hsu <max.hsu@sifive.com>, Samuel Holland <samuel.holland@sifive.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1609; i=max.hsu@sifive.com;
+ h=from:subject:message-id; bh=kXRwG34UI+bturoVzhgeOOxPV0f/Bx4DS5Ky79B+J7c=;
+ b=owEB7QES/pANAwAKAdID/Z0HeUC9AcsmYgBm9rYeApPCCtbRKlNa0fE1A0kbxZJAywkNuCj78
+ NBFhfYWq4mJAbMEAAEKAB0WIQTqXmcbOhS2KZE9X2jSA/2dB3lAvQUCZva2HgAKCRDSA/2dB3lA
+ vcpOC/0VaRoc0IjaAnv5H9+vh7FVkndqjkCNsVcqxk7vUeC9xBFqJEoAHh5Dl03M8SXUcJ8tph+
+ kFnL4hsHgu0u/UtJ6QcJaL+7CCnhKx+7tQFuviIbbm4knj91J+2iFU0cIHheHEn26UHvx1oguar
+ gxMGJo+JZMRcVhWae2ABGXQx9YY8kENuIRar1jmm2qFfhvL5hAHp4MuT1XWx3KTzqxwQLNt2VQm
+ hbNVCJA0Lb7EXREcgCeKddpxezeHTlJiiUlMFEOWo/waRN/8XRYhddDP3fdSUf5gWc/1Qe9kcW9
+ quTNevQGuK0XZM4K3EgGpRN0C3wxIDdHlcxrI3xNihgTxIPbQF9kaHOnUfxLrfbpeGc4qXy9VQC
+ b4M2V68cTEUW/+cEe2lz77WnQSGlvWTsOz+tJaIm2NTSASK6jQHC1xWzxDiyCHYMk3v2i58wV7t
+ yi4jBX8y+8xIyEZ6Ae4U0cA1xHOQQZlVSqJ+/DZFECCRAmqfnyNjygsleoVQ/eDg2oaU8=
+X-Developer-Key: i=max.hsu@sifive.com; a=openpgp;
+ fpr=EA5E671B3A14B629913D5F68D203FD9D077940BD
 
-Hi Michael,
+RISC-V privileged spec will be added with Svukte extension [1]
 
-kernel test robot noticed the following build errors:
+Svukte introduce senvcfg.UKTE and hstatus.HUKTE bitfield.
+which makes user-mode access to supervisor memory raise page faults
+in constant time, mitigating attacks that attempt to discover the
+supervisor software's address-space layout.
 
-[auto build test ERROR on v6.11]
-[cannot apply to andi-shyti/i2c/i2c-host linus/master next-20240927]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The following patches add
+- dt-binding of Svukte ISA string
+- CSR bit definition, ISA detection, senvcfg.UKTE enablement in kernel
+- KVM ONE_REG support for Svukte extension
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Michael-Wu/i2c-designware-determine-HS-tHIGH-and-tLOW-based-on-HW-paramters/20240925-160823
-base:   v6.11
-patch link:    https://lore.kernel.org/r/20240925080432.186408-2-michael.wu%40kneron.us
-patch subject: [PATCH 1/2] i2c: designware: determine HS tHIGH and tLOW based on HW paramters
-config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20240927/202409272122.Lw9sP2il-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240927/202409272122.Lw9sP2il-lkp@intel.com/reproduce)
+Changes in v2:
+- rebase on riscv/for-next (riscv-for-linus-6.12-mw1)
+- modify the description of dt-binding on Svukte ISA string
+- Link to v1: https://lore.kernel.org/all/20240920-dev-maxh-svukte-rebase-v1-0-7864a88a62bd@sifive.com/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409272122.Lw9sP2il-lkp@intel.com/
+Link: https://github.com/riscv/riscv-isa-manual/pull/1564 [1]
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+Signed-off-by: Max Hsu <max.hsu@sifive.com>
+---
+Max Hsu (3):
+      dt-bindings: riscv: Add Svukte entry
+      riscv: Add Svukte extension support
+      riscv: KVM: Add Svukte extension support for Guest/VM
 
->> ERROR: modpost: "i2c_dw_parse_of" [drivers/i2c/busses/i2c-designware-platform.ko] undefined!
+ Documentation/devicetree/bindings/riscv/extensions.yaml | 9 +++++++++
+ arch/riscv/include/asm/csr.h                            | 2 ++
+ arch/riscv/include/asm/hwcap.h                          | 1 +
+ arch/riscv/include/uapi/asm/kvm.h                       | 1 +
+ arch/riscv/kernel/cpufeature.c                          | 4 ++++
+ arch/riscv/kvm/vcpu_onereg.c                            | 1 +
+ 6 files changed, 18 insertions(+)
+---
+base-commit: b3f835cd7339919561866252a11831ead72e7073
+change-id: 20240927-dev-maxh-svukte-rebase-2-5c4d296d1940
 
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Max Hsu <max.hsu@sifive.com>
+
 
