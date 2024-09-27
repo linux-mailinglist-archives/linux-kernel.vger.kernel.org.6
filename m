@@ -1,138 +1,155 @@
-Return-Path: <linux-kernel+bounces-341231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458F9987CF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 04:19:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8CF987CFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 04:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFAB41F21DD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:19:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1BE2285A39
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 02:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082BF42A83;
-	Fri, 27 Sep 2024 02:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDA416DEA2;
+	Fri, 27 Sep 2024 02:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="a4N3/6/K"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="dQxZMayw"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD21166F33
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37C62628D
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727403545; cv=none; b=UdoPuVMA+oStMyR6csOwL6b7RAcJ8YWk1eYy3DCLBEoZZihXIQ02N3Fb1JzslhGTu7WSu6yE3iin2edfk4Rr5xuVxLIYZoNAFcQf6TxAMnenEK23wVTsnmFfCAK0WbdvdjudfSUx/MDeGBftwegq3TcokcM7QXrLNf59adPR24o=
+	t=1727403786; cv=none; b=R9gw2VM1yLOz0olkYo3RL08NeDmGhQOuKSl5Pof50LY9W/ey5lFk/n0XnB6+3fkI3sMnm/aDhgqNjlP98p2EA9drdYor1yyjnp+KU8uVlmdsVzMbMiS5euC+1TUnnm1VFYIqcUPCR1VSQtwjoHOZ0MKoMjNS0SIeqjZp399Od9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727403545; c=relaxed/simple;
-	bh=+XSd3m/YKL5NTyqHOmjTIE8xIHP4v3krEfaP+p8Oal8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=h8zfAFnuvgcC3+grgMGNfAn8rokgLvoPdB6dgbCi/KOqNpz44zmO/52Hio7R5zT7DeeD41QjcptwKt1RTskfrh/JR3mOddG/ifTTUWzICsGnm/oi+woJRp2CXAMb3Y7bAgwqmcuiF7fOtqRffjWDkKWPcQr0IYxwfqCnckPG9+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=a4N3/6/K reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+	s=arc-20240116; t=1727403786; c=relaxed/simple;
+	bh=V5nTFEg40BS9fpyNzgTctWWGF7NZtj92BLrRC7NQ+HU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lIAvoYNE1pYaoEIGCgN6MGYeADKTTA9/LpUNvojooLn9jOgaqtB8AuS/olhTGgzqVCX/aoa3wUQy/esC/Up4dnmsz8Olm+LfHjF/EDsuMoNfhB09R8mBzGcdrRIdAQmRC28aaJQTk/AvukDJIvhodyt4YR8ncNUEI6kz3+CbH7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=none smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=dQxZMayw; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=daynix.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7db0fb03df5so1208306a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 19:23:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=+XSd3m/YKL5NTyqHOmjTIE8xIHP4v3krEfaP+p8Oal8=;
-  b=a4N3/6/K+GWCy3syI8xs4gDxbI+DfIs4PMRL4IkuZjX3oVoOJVYJhmPc
-   VF7uHKCvegpGpqMmTKtrQXPaemTbsyIExfqeNUIZEwolZ+E/BRWE1Br5y
-   Mpr7gbuiOQGEHEb59Fijz+ExyqVmPnJ3oyxyelE9yaZw3NE6B1v9B0xSv
-   V2NjTO6X4sz0FscRavN/p4P1oTZT1yFhh5dsLbx55QpFNWPqdljWyePYb
-   gw2g52RsyvRuPHCCkvZH9GE9nNQ17XC3pwDTd5SGZ+5IkBhJhJNGRNRaQ
-   oE+yb2UvWBMLwjdIdfKlZeivepX8ahUbF9yjqrzvrpgAT+wp6NN4PT6fj
-   A==;
-X-CSE-ConnectionGUID: SI3+qkF0SAu7hh35SbZPVg==
-X-CSE-MsgGUID: DuagwJduRomNCXxcpOu1/Q==
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 27 Sep 2024 10:18:58 +0800
-Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
-	by mse.ite.com.tw with ESMTP id 48R2It2e044020;
-	Fri, 27 Sep 2024 10:18:55 +0800 (GMT-8)
-	(envelope-from Hermes.Wu@ite.com.tw)
-Received: from TPEMAIL1.internal.ite.com.tw (192.168.15.58) by
- TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 27 Sep 2024 10:18:54 +0800
-Received: from TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68]) by
- TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68%6]) with mapi id
- 15.01.2507.039; Fri, 27 Sep 2024 10:18:54 +0800
-From: <Hermes.Wu@ite.com.tw>
-To: <dmitry.baryshkov@linaro.org>
-CC: <Kenneth.Hung@ite.com.tw>, <andrzej.hajda@intel.com>,
-        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-        <simona@ffwll.ch>, <angelogioacchino.delregno@collabora.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4 05/11] drm/bridge: it6505: increase supports of HDCP
- repeater ksv devices
-Thread-Topic: [PATCH v4 05/11] drm/bridge: it6505: increase supports of HDCP
- repeater ksv devices
-Thread-Index: AQHbD+sd3qzcwRskzkCj5hXUt0VncbJq5XnA
-Date: Fri, 27 Sep 2024 02:18:54 +0000
-Message-ID: <79e5e8479b2b4563b2ce4f4a252b2586@ite.com.tw>
-References: <20240926075018.22328-1-Hermes.Wu@ite.com.tw>
- <xyi4czye2dwqmh6iaschacduwxm52oaipbt5ulvlmalamkzwbc@6gt5endjo6gl>
-In-Reply-To: <xyi4czye2dwqmh6iaschacduwxm52oaipbt5ulvlmalamkzwbc@6gt5endjo6gl>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tm-snts-smtp: 186E9732336EDFD251D8FBBC3A07BD8ABE17C1F77E5FF22CB6D459C42C674D592002:8
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1727403784; x=1728008584; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fm6FdUgor1DMp4AzKUDxfLdY/zKgjnsnnCTT3QZsc5c=;
+        b=dQxZMaywWfRVNSvsij2ddn5q1q3tEa2PKca/DKE35Xn8Kwh9VAwLuw+Sna8VhaD95U
+         vZQ8QEN1TXntbkxRvpab8otxeOB3U70/jJ4ikIYF+NY5CriZ+C5M4SESdvDZCOi2/3nJ
+         L65mW331pF8ED7xRIMZZvNLan3wnMFE+MDUw9Mp7D5ECuiNoSNBwSKV4/tn2+PLjQOcA
+         dOeCYby1SIZeHjRHtfgVvvdQXRljBcf4K74O25zKCpLaZfckDvoIcvkih+gKFS9Nhnq3
+         Qt/XGUVsaHxxXj2SKfkvfYeVPce8B14NLR8saB2OzBpjFOWE+BvS3YBKkdlpXxg1z3k2
+         1C9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727403784; x=1728008584;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fm6FdUgor1DMp4AzKUDxfLdY/zKgjnsnnCTT3QZsc5c=;
+        b=A8rdtrk2TP0EC4SvxrZ1NAZ1amElFwa3yDutoKQJ3wwy+B12bp/q9cHOLSDCOFqa3J
+         tOPtNsjwjVQBSigAsSM/0SR6fEmOsfGPv2gGODBus2ST20RnpyulxjTyNspjQXZfX9kg
+         amEtjqvLpE0aVtyJc9VbfdqYIiusdpXaOkosrLfo1RBSKsx8qChNNe2wkkY8+8qCJdce
+         S5ueh+Ebi3t31A5ibFPELfJIJfkUbL1NtJLDcjrHQPAkK3XFrE+nS7KT9F4pTWRAMBSH
+         t++oIE3bmfoWAU+wWEWDX13+wXj6Neub47uGJdcHFMr30p457ZH65kallZ7wj8WSUib5
+         xa0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCViM6rDHSPqULXDwymFfRvjZ5wlle4rMnHpT8Y5wWMHmPRWImiZDj5RVLPbDTlTbtNKo7egeoDemsYnaE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIMRM0xOgqzpiASIhTCNt59F1ShygX35TQ32zIYf0dZKcRRTUk
+	LEfP+fhlE7Knc8mKZKFfJc/CpVEVoMfPbUCcxKFVFt04ehetIRk5YuTLFLua//0=
+X-Google-Smtp-Source: AGHT+IE8eclHHp/rZtYVB0h05WFJYdKId7bC7EfQYU296diw2AVIsMjGQmM4ppAbwhdAEFSQulsWLQ==
+X-Received: by 2002:a05:6a20:db0d:b0:1cf:3d14:6921 with SMTP id adf61e73a8af0-1d4fa78b468mr2830052637.35.1727403784277;
+        Thu, 26 Sep 2024 19:23:04 -0700 (PDT)
+Received: from [157.82.207.107] ([157.82.207.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264bc443sm570468b3a.70.2024.09.26.19.23.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Sep 2024 19:23:03 -0700 (PDT)
+Message-ID: <66438fad-d697-4b34-89de-528bd5e081b5@daynix.com>
+Date: Fri, 27 Sep 2024 11:22:59 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MAIL:mse.ite.com.tw 48R2It2e044020
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 7/9] tun: Introduce virtio-net RSS
+To: Simon Horman <horms@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Jason Wang <jasowang@redhat.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
+ Yuri Benditovich <yuri.benditovich@daynix.com>,
+ Andrew Melnychenko <andrew@daynix.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com
+References: <20240924-rss-v4-0-84e932ec0e6c@daynix.com>
+ <20240924-rss-v4-7-84e932ec0e6c@daynix.com>
+ <20240924130550.GJ4029621@kernel.org>
+Content-Language: en-US
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <20240924130550.GJ4029621@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Pg0KPi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogRG1pdHJ5IEJhcnlzaGtvdiA8
-ZG1pdHJ5LmJhcnlzaGtvdkBsaW5hcm8ub3JnPiANCj5TZW50OiBUaHVyc2RheSwgU2VwdGVtYmVy
-IDI2LCAyMDI0IDQ6MDcgUE0NCj5UbzogSGVybWVzIFd1ICinZKjOp7spIDxIZXJtZXMuV3VAaXRl
-LmNvbS50dz4NCj5DYzogS2VubmV0aCBIdW5nICiseK5hrdspIDxLZW5uZXRoLkh1bmdAaXRlLmNv
-bS50dz47IEFuZHJ6ZWogSGFqZGEgPGFuZHJ6ZWouaGFqZGFAaW50ZWwuY29tPjsgTmVpbCBBcm1z
-dHJvbmcgPG5laWwuYXJtc3Ryb25nQGxpbmFyby5vcmc+OyBSb2JlcnQgRm9zcyA8cmZvc3NAa2Vy
-bmVsLm9yZz47IExhdXJlbnQgUGluY2hhcnQgPExhdXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJk
-LmNvbT47IEpvbmFzIEthcmxtYW4gPGpvbmFzQGt3aWJvby5zZT47IEplcm5laiBTa3JhYmVjIDxq
-ZXJuZWouc2tyYWJlY0BnbWFpbC5jb20+OyBNYWFydGVuIExhbmtob3JzdCA8bWFhcnRlbi5sYW5r
-aG9yc3RAbGludXguaW50ZWwuY29tPjsgTWF4aW1lIFJpcGFyZCA8bXJpcGFyZEBrZXJuZWwub3Jn
-PjsgVGhvbWFzIFppbW1lcm1hbm4gPHR6aW1tZXJtYW5uQHN1c2UuZGU+OyBEYXZpZCBBaXJsaWUg
-PGFpcmxpZWRAZ21haWwuY29tPjsgU2ltb25hIFZldHRlciA8c2ltb25hQGZmd2xsLmNoPjsgQWxs
-ZW4gQ2hlbiA8YWxsZW4uY2hlbkBpdGUuY29tLnR3PjsgQW5nZWxvR2lvYWNjaGlubyBEZWwgUmVn
-bm8gPGFuZ2Vsb2dpb2FjY2hpbm8uZGVscmVnbm9AY29sbGFib3JhLmNvbT47IG9wZW4gbGlzdDpE
-Uk0gRFJJVkVSUyA8ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZz47IG9wZW4gbGlzdCA8
-bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz4NCj5TdWJqZWN0OiBSZTogW1BBVENIIHY0IDA1
-LzExXSBkcm0vYnJpZGdlOiBpdDY1MDU6IGluY3JlYXNlIHN1cHBvcnRzIG9mIEhEQ1AgcmVwZWF0
-ZXIga3N2IGRldmljZXMNCj4NCj5PbiBUaHUsIFNlcCAyNiwgMjAyNCBhdCAwMzo1MDoxNFBNIEdN
-VCwgSGVybWVzIFd1IHdyb3RlOg0KPj4gRnJvbTogSGVybWVzIFd1IDxIZXJtZXMud3VAaXRlLmNv
-bS50dz4NCj4+IA0KPj4gQSBIRENQIHNvdXJjZSBzaGFsbCBzdXBwb3J0IG1heCBkb3duc3RyZWFt
-IGRldmljZSB0byAxMjcuDQo+PiANCj4+IENoYW5nZSBkZWZpbml0aW9uIG9mIE1BWF9IRENQX0RP
-V05fU1RSRUFNX0NPVU5UIHRvIDEyNw0KPg0KPlRoaXMgcmVzdWx0cyBpbiBzdHJ1Y3QgaXQ2NTA1
-IGdyb3d0aCBieSB+MC41IEtpQi4gUGxlYXNlIG1lbnRpb24gaXQgaW4gdGhlIGNvbW1pdCBtZXNz
-YWdlLg0KPg0KPklzIGl0IHJlYWxseSByZXF1aXJlZCB0byBoYXZlIHNoYTFfaW5wdXQgaW4gdGhl
-IGNvbnN0YW50bHkgYWxsb2NhdGVkIHN0cnVjdHVyZT8gSSB0aGluayBpdCdzIGEgdGVtcG9yYXJ5
-IGRhdGEsIHdoaWNoIGlzbid0IG5lY2Vzc2FyeSBhZnRlciBwcm9jZXNzaW5nLg0KDQpDaGFuZ2Ug
-c2hhMV9pbnB1dCB3aXRoIGR5bmFtaWMgbWVtb3J5IGludG8gb25lIGNvbW1pdCBvciANCg0KY2hh
-bmdlIHRvIHVzZSB0ZW1wb3JhcnkgZGF0YSBpbiBvbmUgYW5kIGNoYW5nZSBkZWZpbml0aW9uIG9m
-IE1BWF9IRENQX0RPV05fU1RSRUFNX0NPVU4gaW4gYW5vdGhlcj8NCg0KPj4gDQo+PiBGaXhlczog
-YjVjODRhOWVkY2Q0ICgiZHJtL2JyaWRnZTogYWRkIGl0NjUwNSBkcml2ZXIiKQ0KPj4gU2lnbmVk
-LW9mZi1ieTogSGVybWVzIFd1IDxIZXJtZXMud3VAaXRlLmNvbS50dz4NCj4+IC0tLQ0KPj4gIGRy
-aXZlcnMvZ3B1L2RybS9icmlkZ2UvaXRlLWl0NjUwNS5jIHwgMiArLQ0KPj4gIDEgZmlsZSBjaGFu
-Z2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPj4gDQo+PiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9pdGUtaXQ2NTA1LmMgDQo+PiBiL2RyaXZlcnMvZ3B1L2Ry
-bS9icmlkZ2UvaXRlLWl0NjUwNS5jDQo+PiBpbmRleCBkMWY1MjIwZTA0YTYuLjVkNWNlMTJjZDA1
-NCAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvaXRlLWl0NjUwNS5jDQo+
-PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2l0ZS1pdDY1MDUuYw0KPj4gQEAgLTI5Niw3
-ICsyOTYsNyBAQA0KPj4gICNkZWZpbmUgTUFYX0xBTkVfQ09VTlQgNA0KPj4gICNkZWZpbmUgTUFY
-X0xJTktfUkFURSBIQlINCj4+ICAjZGVmaW5lIEFVVE9fVFJBSU5fUkVUUlkgMw0KPj4gLSNkZWZp
-bmUgTUFYX0hEQ1BfRE9XTl9TVFJFQU1fQ09VTlQgMTANCj4+ICsjZGVmaW5lIE1BWF9IRENQX0RP
-V05fU1RSRUFNX0NPVU5UIDEyNw0KPj4gICNkZWZpbmUgTUFYX0NSX0xFVkVMIDB4MDMNCj4+ICAj
-ZGVmaW5lIE1BWF9FUV9MRVZFTCAweDAzDQo+PiAgI2RlZmluZSBBVVhfV0FJVF9USU1FT1VUX01T
-IDE1DQo+PiAtLQ0KPj4gMi4zNC4xDQo+PiANCj4NCj4tLSANCj5XaXRoIGJlc3Qgd2lzaGVzDQo+
-RG1pdHJ5DQo+DQoNCkJSLA0KSGVybWVzDQoNCg==
+On 2024/09/24 22:05, Simon Horman wrote:
+> On Tue, Sep 24, 2024 at 11:01:12AM +0200, Akihiko Odaki wrote:
+>> RSS is a receive steering algorithm that can be negotiated to use with
+>> virtio_net. Conventionally the hash calculation was done by the VMM.
+>> However, computing the hash after the queue was chosen defeats the
+>> purpose of RSS.
+>>
+>> Another approach is to use eBPF steering program. This approach has
+>> another downside: it cannot report the calculated hash due to the
+>> restrictive nature of eBPF steering program.
+>>
+>> Introduce the code to perform RSS to the kernel in order to overcome
+>> thse challenges. An alternative solution is to extend the eBPF steering
+>> program so that it will be able to report to the userspace, but I didn't
+>> opt for it because extending the current mechanism of eBPF steering
+>> program as is because it relies on legacy context rewriting, and
+>> introducing kfunc-based eBPF will result in non-UAPI dependency while
+>> the other relevant virtualization APIs such as KVM and vhost_net are
+>> UAPIs.
+>>
+>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> 
+> ...
+> 
+>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> 
+> ...
+> 
+>> @@ -333,8 +336,10 @@ static long tun_set_vnet_be(struct tun_struct *tun, int __user *argp)
+>>   		return -EFAULT;
+>>   
+>>   	if (be) {
+>> +		struct tun_vnet_hash_container *vnet_hash = rtnl_dereference(tun->vnet_hash);
+>> +
+>>   		if (!(tun->flags & TUN_VNET_LE) &&
+>> -		    (tun->vnet_hash.flags & TUN_VNET_HASH_REPORT))
+>> +		    vnet_hash && (vnet_hash->flags & TUN_VNET_HASH_REPORT))
+> 
+> Hi Odaki-san,
+> 
+> I am wondering if the above should this be vnet_hash->common.flags?
+> I am seeing this:
+> 
+> ../drivers/net/tun.c:342:44: error: ‘struct tun_vnet_hash_container’ has no member named ‘flags’
+>    342 |                     vnet_hash && (vnet_hash->flags & TUN_VNET_HASH_REPORT))
+> 
+> ...
+
+You are right. I couldn't notice this error because I was testing 
+without CONFIG_TUN_VNET_CROSS_LE; I'll test with the configuration and 
+submit a new version with fix.
+
+Regards,
+Akihiko Odaki
 
