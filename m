@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-341720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 282E2988426
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:24:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4A798847A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F0C4B21596
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:24:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A872282134
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6E418BC29;
-	Fri, 27 Sep 2024 12:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5946A18BC1D;
+	Fri, 27 Sep 2024 12:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ay7eqnEf"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YYpFAsW6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4FE1779BD;
-	Fri, 27 Sep 2024 12:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7780C17B515;
+	Fri, 27 Sep 2024 12:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727439883; cv=none; b=unQawbNdp/Xf6+ag6jbitMBQuiYTLXEsku10n2TqtHJ7eJ3ZeRN9Cd4otv8nJPlwHnXhc1Mh8Jm05PZKeWi/CmbEdpFatIooS5NBH435wbmsRgJOHsjrQUYw9fq9Mgpiv56281cv+GaAui54omcAhmIqmFXlnVDFREVcg+D5wVg=
+	t=1727440078; cv=none; b=FnUwMJy97DeA4VZoQKLpg1HAcDMsrqUNfMRe2GviYxrSQwHC0vLyYo5beTUYH5tE6qsEQvkGvv0WTSJQ0iPVj9mz/D2UZUEkZjNh1t4dlVdNe1SI3kBnr0brHNAULOwyuYhZE+WavLTSkShtkguNAi+1JHTRLaHQaggEh2hfwIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727439883; c=relaxed/simple;
-	bh=Ra2iSzl5+YL+QRzGfdRAIhKQTe20Rlh7LlXazJQpJWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H2AU4jklroMaeWPzdPgv0bXU3D2hpO+bWciHSw0cjBC2/BQoyIifZxIYndlgcgOX0KZabm8Q/8GtfH69RqRDq/omSc879UkNRLRAjlNUswu1J/OU4jEDqmuJzbRPng4fVGTcEVp8QdauV4Xap3OkcuqjB9pzs81Yj1m75FzJoIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ay7eqnEf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD7E1C4CEC4;
-	Fri, 27 Sep 2024 12:24:42 +0000 (UTC)
+	s=arc-20240116; t=1727440078; c=relaxed/simple;
+	bh=RrPwdkbMT+9TMbPMe4Te+DVlw2cdVvTMg5yQq47rSPc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eVc1vF81TfeMBn5GNMMofB7B0SyNt6QpWIP9DxCVP/XaA9FBzucNZd2bBwpcoeNimczq/wNz9xN6glfn8c2Dk0njCTkgXfjdISIq7ikwflE2JR4KYzfUPImpxAO0wBzHqySn44Z3YEyYtkPisS3KRYclrPPdSfm46kcb0cegtSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YYpFAsW6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF6E4C4CEC4;
+	Fri, 27 Sep 2024 12:27:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727439883;
-	bh=Ra2iSzl5+YL+QRzGfdRAIhKQTe20Rlh7LlXazJQpJWg=;
+	s=korg; t=1727440078;
+	bh=RrPwdkbMT+9TMbPMe4Te+DVlw2cdVvTMg5yQq47rSPc=;
 	h=From:To:Cc:Subject:Date:From;
-	b=Ay7eqnEfsIhIkJVuybsLmhuPOS7h/lEJEpxUZKPK4wlj+ur7GXqGQOt+p35NZgIpu
-	 4OY+GJkXkzcl9vF/PqH2MqAmUPsW72oIPZNxL7LCKybhw0n3TKybiA6YL+GdScSrnH
-	 UgjFqXt6T5tmeJSdhz67MrZgoMJsNNQ/w/GB9LTo=
+	b=YYpFAsW6nOkCGU6LGuYIP2SbWbS+vLBfYNKPNR+oFaT81XR0wl1qI5aS/CN3CRIIs
+	 w03dogKiLfFX7/uZOFz0bsAnXUILrHt16yzyeZiHU182CMSVjAkpzOy1ZfG1oD1Qle
+	 wavrAxEzeKKsCSu1liWHJaCWLTfD5CIuv1iTP7lY=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -56,9 +56,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	conor@kernel.org,
 	allen.lkml@gmail.com,
 	broonie@kernel.org
-Subject: [PATCH 6.6 00/54] 6.6.53-rc1 review
-Date: Fri, 27 Sep 2024 14:22:52 +0200
-Message-ID: <20240927121719.714627278@linuxfoundation.org>
+Subject: [PATCH 6.10 00/58] 6.10.12-rc1 review
+Date: Fri, 27 Sep 2024 14:23:02 +0200
+Message-ID: <20240927121718.789211866@linuxfoundation.org>
 X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,17 +69,17 @@ MIME-Version: 1.0
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.53-rc1.gz
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.12-rc1.gz
 X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.6.y
+X-KernelTest-Branch: linux-6.10.y
 X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.6.53-rc1
+X-KernelTest-Version: 6.10.12-rc1
 X-KernelTest-Deadline: 2024-09-29T12:17+00:00
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This is the start of the stable review cycle for the 6.6.53 release.
-There are 54 patches in this series, all will be posted as a response
+This is the start of the stable review cycle for the 6.10.12 release.
+There are 58 patches in this series, all will be posted as a response
 to this one.  If anyone has any issues with these being applied, please
 let me know.
 
@@ -87,9 +87,9 @@ Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
 Anything received after that time might be too late.
 
 The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.53-rc1.gz
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.12-rc1.gz
 or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
 and the diffstat can be found below.
 
 thanks,
@@ -100,7 +100,7 @@ greg k-h
 Pseudo-Shortlog of commits:
 
 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.6.53-rc1
+    Linux 6.10.12-rc1
 
 Edward Adam Davis <eadavis@qq.com>
     USB: usbtmc: prevent kernel-usb-infoleak
@@ -114,29 +114,20 @@ Marc Kleine-Budde <mkl@pengutronix.de>
 Marc Kleine-Budde <mkl@pengutronix.de>
     can: mcp251xfd: properly indent labels
 
-Tony Luck <tony.luck@intel.com>
-    x86/mm: Switch to new Intel CPU model defines
-
 Keith Busch <kbusch@kernel.org>
     nvme-pci: qdepth 1 quirk
 
-Kent Gibson <warthog618@gmail.com>
-    gpiolib: cdev: Ignore reconfiguration without direction
-
-Ping-Ke Shih <pkshih@realtek.com>
-    Revert "wifi: cfg80211: check wiphy mutex is held for wdev mutex"
-
-Pablo Neira Ayuso <pablo@netfilter.org>
-    netfilter: nf_tables: missing iterator type in lookup walk
-
-Pablo Neira Ayuso <pablo@netfilter.org>
-    netfilter: nft_set_pipapo: walk over current view on netlink dump
+Kiran K <kiran.k@intel.com>
+    Bluetooth: btintel_pcie: Allocate memory for driver private data
 
 Dan Carpenter <dan.carpenter@linaro.org>
     netfilter: nft_socket: Fix a NULL vs IS_ERR() bug in nft_socket_cgroup_subtree_level()
 
 Florian Westphal <fw@strlen.de>
     netfilter: nft_socket: make cgroupsv2 matching work with namespaces
+
+Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+    powercap/intel_rapl: Fix the energy-pkg event for AMD CPUs
 
 Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
     powercap/intel_rapl: Add support for AMD family 1Ah
@@ -159,14 +150,20 @@ Ferry Meng <mengferry@linux.alibaba.com>
 Geert Uytterhoeven <geert+renesas@glider.be>
     spi: spidev: Add missing spi_device_id for jg10309-01
 
-Hongyu Jin <hongyu.jin@unisoc.com>
-    block: Fix where bio IO priority gets set
+Kenneth Feng <kenneth.feng@amd.com>
+    drm/amd/pm: fix the pp_dpm_pcie issue on smu v14.0.2/3
 
 zhang jiao <zhangjiao2@cmss.chinamobile.com>
     tools: hv: rm .*.cmd when make clean
 
 Michael Kelley <mhklinux@outlook.com>
     x86/hyperv: Set X86_FEATURE_TSC_KNOWN_FREQ when Hyper-V provides frequency
+
+Larysa Zaremba <larysa.zaremba@intel.com>
+    ice: check for XDP rings instead of bpf program when unconfiguring
+
+Luke D. Jones <luke@ljones.dev>
+    platform/x86/amd: pmf: Make ASUS GA403 quirk generic
 
 Paulo Alcantara <pc@manguebit.com>
     smb: client: fix hang in wait_for_response() for negproto
@@ -180,11 +177,17 @@ hongchi.peng <hongchi.peng@siengine.com>
 Kai Vehmanen <kai.vehmanen@linux.intel.com>
     ALSA: hda: add HDMI codec ID for Intel PTL
 
+Neil Armstrong <neil.armstrong@linaro.org>
+    clk: qcom: gcc-sm8650: Don't use shared clk_ops for QUPs
+
 Markuss Broks <markuss.broks@gmail.com>
     ASoC: amd: yc: Add a quirk for MSI Bravo 17 (D7VEK)
 
 Fabio Estevam <festevam@gmail.com>
     spi: spidev: Add an entry for elgin,jg10309-01
+
+Zhang Yi <zhangyi@everest-semi.com>
+    ASoC: mediatek: mt8188-mt6359: Modify key
 
 Liao Chen <liaochen4@huawei.com>
     ASoC: fix module autoloading
@@ -203,6 +206,9 @@ Hans de Goede <hdegoede@redhat.com>
 
 Marc Kleine-Budde <mkl@pengutronix.de>
     can: mcp251xfd: mcp251xfd_ring_init(): check TX-coalescing configuration
+
+Markus Schneider-Pargmann <msp@baylibre.com>
+    can: m_can: Limit coalescing to peripheral instances
 
 Emmanuel Grumbach <emmanuel.grumbach@intel.com>
     wifi: iwlwifi: clear trans->state earlier upon error
@@ -225,6 +231,9 @@ Daniel Gabay <daniel.gabay@intel.com>
 Benjamin Berg <benjamin.berg@intel.com>
     wifi: iwlwifi: lower message level for FW buffer destination
 
+Bibo Mao <maobibo@loongson.cn>
+    LoongArch: KVM: Invalidate guest steal time address on vCPU reset
+
 Huacai Chen <chenhuacai@kernel.org>
     LoongArch: Define ARCH_IRQ_INIT_FLAGS as IRQ_NOPROBE
 
@@ -233,6 +242,9 @@ Jacky Chou <jacky_chou@aspeedtech.com>
 
 Hans de Goede <hdegoede@redhat.com>
     platform/x86: x86-android-tablets: Make Lenovo Yoga Tab 3 X90F DMI match less strict
+
+Mathieu Fenniak <mathieu@fenniak.net>
+    platform/x86: asus-wmi: Fix spurious rfkill on UX8406MA
 
 Mike Rapoport <rppt@kernel.org>
     microblaze: don't treat zero reserved memory regions as error
@@ -271,19 +283,22 @@ Diffstat:
 
  Makefile                                           |   4 +-
  arch/loongarch/include/asm/hw_irq.h                |   2 +
+ arch/loongarch/include/asm/kvm_vcpu.h              |   1 -
  arch/loongarch/kernel/irq.c                        |   3 -
+ arch/loongarch/kvm/timer.c                         |   7 --
+ arch/loongarch/kvm/vcpu.c                          |   2 +-
  arch/microblaze/mm/init.c                          |   5 -
  arch/x86/kernel/cpu/mshyperv.c                     |   1 +
- arch/x86/mm/init.c                                 |  16 ++-
- block/blk-core.c                                   |  10 ++
- block/blk-mq.c                                     |  10 --
  drivers/accel/drm_accel.c                          | 110 ++-------------------
- drivers/gpio/gpiolib-cdev.c                        |  12 ++-
+ drivers/bluetooth/btintel_pcie.c                   |   2 +-
+ drivers/clk/qcom/gcc-sm8650.c                      |  56 +++++------
+ .../gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c   |   3 +
  drivers/gpu/drm/arm/display/komeda/komeda_kms.c    |  10 +-
  drivers/gpu/drm/drm_drv.c                          |  97 +++++++++---------
  drivers/gpu/drm/drm_file.c                         |   2 +-
  drivers/gpu/drm/drm_internal.h                     |   4 -
  drivers/hwmon/asus-ec-sensors.c                    |   2 +-
+ drivers/net/can/m_can/m_can.c                      |  16 +--
  drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c     |  42 ++++----
  drivers/net/can/spi/mcp251xfd/mcp251xfd-dump.c     |   2 +-
  drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c   |   2 +-
@@ -292,6 +307,9 @@ Diffstat:
  .../net/can/spi/mcp251xfd/mcp251xfd-timestamp.c    |   7 +-
  drivers/net/can/spi/mcp251xfd/mcp251xfd.h          |   1 +
  drivers/net/ethernet/faraday/ftgmac100.c           |  26 +++--
+ drivers/net/ethernet/intel/ice/ice_lib.c           |   4 +-
+ drivers/net/ethernet/intel/ice/ice_main.c          |   4 +-
+ drivers/net/ethernet/intel/ice/ice_xsk.c           |   6 +-
  drivers/net/wireless/intel/iwlwifi/fw/dbg.c        |   2 +-
  drivers/net/wireless/intel/iwlwifi/iwl-trans.h     |   2 +-
  drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c  |   9 +-
@@ -301,8 +319,11 @@ Diffstat:
  drivers/nvme/host/nvme.h                           |   5 +
  drivers/nvme/host/pci.c                            |  18 ++--
  drivers/pinctrl/pinctrl-at91.c                     |   5 +-
+ drivers/platform/x86/amd/pmf/pmf-quirks.c          |   2 +-
+ drivers/platform/x86/asus-nb-wmi.c                 |  20 +++-
+ drivers/platform/x86/asus-wmi.h                    |   1 +
  drivers/platform/x86/x86-android-tablets/dmi.c     |   1 -
- drivers/powercap/intel_rapl_common.c               |   1 +
+ drivers/powercap/intel_rapl_common.c               |  35 ++++++-
  drivers/scsi/lpfc/lpfc_bsg.c                       |   2 +-
  drivers/spi/spi-bcm63xx.c                          |   1 +
  drivers/spi/spidev.c                               |   2 +
@@ -313,13 +334,8 @@ Diffstat:
  fs/smb/client/connect.c                            |  14 ++-
  include/drm/drm_accel.h                            |  18 +---
  include/drm/drm_file.h                             |   5 +
- include/net/netfilter/nf_tables.h                  |  13 +++
  net/mac80211/tx.c                                  |   4 +-
- net/netfilter/nf_tables_api.c                      |   5 +
- net/netfilter/nft_lookup.c                         |   1 +
- net/netfilter/nft_set_pipapo.c                     |   6 +-
  net/netfilter/nft_socket.c                         |  41 +++++++-
- net/wireless/core.h                                |   8 +-
  sound/pci/hda/patch_hdmi.c                         |   1 +
  sound/pci/hda/patch_realtek.c                      |  76 +++++++++-----
  sound/soc/amd/acp/acp-sof-mach.c                   |   2 +
@@ -331,9 +347,10 @@ Diffstat:
  sound/soc/intel/common/soc-acpi-intel-cht-match.c  |   1 -
  sound/soc/intel/keembay/kmb_platform.c             |   1 +
  sound/soc/mediatek/mt8188/mt8188-afe-pcm.c         |   1 +
+ sound/soc/mediatek/mt8188/mt8188-mt6359.c          |  17 +++-
  sound/soc/sof/mediatek/mt8195/mt8195.c             |   3 +
  tools/hv/Makefile                                  |   2 +-
- 64 files changed, 384 insertions(+), 331 deletions(-)
+ 69 files changed, 450 insertions(+), 359 deletions(-)
 
 
 
