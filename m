@@ -1,206 +1,327 @@
-Return-Path: <linux-kernel+bounces-342033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295009889E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:10:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 412F19889EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B75FF1F21C17
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 604761C219E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE19C1C1AB5;
-	Fri, 27 Sep 2024 18:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5331C1AC1;
+	Fri, 27 Sep 2024 18:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hm3A4Vr+"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZH9Li0TX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1C11C173F
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 18:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B938A920;
+	Fri, 27 Sep 2024 18:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727460605; cv=none; b=NzMxsh9MVv6H/etNw6Ct5JbsRr7IYqlOV5XDONTNBx1DkEyT+YPQcb23b1EHnWOHT/VdoWfyJJHP6oJlk50vcRB9YY54ygzJtOCQSMzVusdRSqwMj+SWelh1EKndPKCKQmazUW2P6shZP5TSg8hOMhmrUaMlKJtfZGBnx6TNrr0=
+	t=1727460671; cv=none; b=JqWguiM/kbLszBhvYi+ERN+1KA2stkkUySE56XElX5s8qY59KC8SftNvOawRiKZE7WnjcQGcUEV/rrnrQTBVLW0jw2EUXlrUQ6Fo7UCIdgCAh51N5sfy9Fpg0Heb2uS45PLS/jc/0v/9TlgYLnu+SuYXe2rPxZ614dXXigCEwiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727460605; c=relaxed/simple;
-	bh=QnZc5IMpRvKkSTOCSj7lB8RPszal7wcZ5QEHB8a+8d4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O8QpgVd/OrhoykUx5J7RUK3DTyUZQJJyw0tGvpeBE0D5IctB/R9Or/gSASREr5aDlohi22oFySvL6ie2tt/shNWoGWH4N+gfvuVBre5vN8Y+VEelhQz73H446i95ujTkVJvtQLeYBOiJ/1Ju0RvkNUSoI4U61qN0HTf7LR/XJ0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hm3A4Vr+; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20b4a090f3eso17885ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:10:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727460603; x=1728065403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kIEsrVTlTvILQ2eWv0DM89YVNKjAZnVoC4sB1CwcgVo=;
-        b=Hm3A4Vr+BOX8oOoQvB5n6HJ4f7px1p5FdlohiKy+//bEQcaTRlkkIbqQfx1FXyKT8R
-         wroS7rTnTa1ZdeFlAvwq9fPpNpnwGol4POq5jjhJ+ctLdAzObnsRJ9wcPNSHnQ04ZW+Y
-         BnBYwkH3xLYlo50dX3znJQEs+hnjWI7E5/uiF9rM8RPGLeSb6+Vf0DytzKAYBqSo+hxj
-         9J7tncXAQG8x8LAoUqV1YmH+B3omIEsayin/AJO7LNZZavqFS54DAS7+LH2fUWdH0Pg2
-         /XPVnC3JUNHSevPnnloOYp3MX+lXC8J6UEfJyKVCGoL4ybaeObE3T+AxU+mazQY7xtB7
-         TNiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727460603; x=1728065403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kIEsrVTlTvILQ2eWv0DM89YVNKjAZnVoC4sB1CwcgVo=;
-        b=VUDVmV6n0nGYXPoFS2sofDrdDDRQFCgroNNHmd309r0iiUVC/l4mllPVactwr5I092
-         daU5lYm04mgprc48xH2GJl8sZ6pYBltDEelQzxyFx+qCG3/a1rmBlQ+C5Y9Que9UsS5+
-         uF0lbhcqNbPe3TXVgwJEn4BjEFlF8g546UN9smmcVdnOBBcriXxd2jOQTvr8C+g2EFd/
-         wR0MmyRlqFy97CXy/FOf3fTPUHpHlDzlqpO33S0YTQd3c1cMT4gEBrG/svRhEE6gxa4/
-         RtzazC6Z8y18su0bnVTGWLrQ8Ldb4w8bwcyrXLcuSuQOECNE+53g1afU5QUN16fHVOUs
-         r/dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpXpFSeqgBd/UcrmcRfvOHfRkgRqGyNBHWGhDljp0FQQHixdgJPy5Zo2NwGF/+u+4kVACvjR/WRWlkOUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys194UphSgIZNGHWl3gxLIk1XinmrINwVXpOoYS17Wa+DW1mm8
-	NJLs6ujUA3ZzB23nQRR9r+uwUevOfktA9N0Wc/j1yy2qoWI9Ybhvoo6En5c/f96riI7A3vuD6V3
-	SHvIBO5Uh5fzzMqS71lRBk6aubX7aREgnwf3F
-X-Google-Smtp-Source: AGHT+IFEBPKfylkkIQVwpgBI2XQqTnVQtiDU0l1waIs+ur0JDVovqp8FFbY18VqbLvdSwSyPV4QwU2PxoShy7qGd+B4=
-X-Received: by 2002:a17:903:32c1:b0:205:8610:3e39 with SMTP id
- d9443c01a7336-20b5835d373mr58945ad.23.1727460602549; Fri, 27 Sep 2024
- 11:10:02 -0700 (PDT)
+	s=arc-20240116; t=1727460671; c=relaxed/simple;
+	bh=6FDJIhSe4fG4oWn/NoyBMrL+8doHC+qUBUXlALAyfas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QFvyKI1YcsCdiOYdYuVzJbS0++xZIzpbaXuW+DRQLho7pf5NoVnqfN5INmJAr8cff2DD5iJVkBW3UomH5RrzN78+fKHZ+dZDb6JmopDUua0BbFAcoVcNb8QLK29VSi8V4A8ET605ZKUGPEglPBAwCBVpKdXCYmB5r+SfTh0bBqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZH9Li0TX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52571C4CEC4;
+	Fri, 27 Sep 2024 18:11:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727460669;
+	bh=6FDJIhSe4fG4oWn/NoyBMrL+8doHC+qUBUXlALAyfas=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZH9Li0TXBg5L7b7RvkksO/G6HPnF0uTs8MuWuHMbgs4iWRPzend5qFY0tkYkO4ZOa
+	 pzl7iv48sJNv8QfsJo/JKidr2ssjWszuWyGgxpW/RZR10YEKZy0ZFbxE9NMIVewYAL
+	 u96BIbD3zNLIZeKpxqvSf1XlK1lyjetmr06wHKzeCm/vQ7eyRxV6RWvsYOLn17Kd3v
+	 r3Xv9luw6+ezEpnxiLDfIzkUNM8Ifql33FSnGmXCZksncC9+P5VUaVbDQ44lugHL+b
+	 mBFcVeDbn5BSh0xesxHy/8y7O5MfYG0cZ/808VBxAs2KLPr7yU+22ViuDsRxAPmBA/
+	 FpYqRT+RaTkfg==
+Received: by pali.im (Postfix)
+	id 889BD9ED; Fri, 27 Sep 2024 20:11:03 +0200 (CEST)
+Date: Fri, 27 Sep 2024 20:11:03 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Enzo Matsumiya <ematsumiya@suse.de>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] cifs: Add support for creating SFU symlinks
+Message-ID: <20240927181103.qf43ziyp5kddcr2b@pali>
+References: <20240912120548.15877-7-pali@kernel.org>
+ <20240915194545.14779-1-pali@kernel.org>
+ <20240915194545.14779-2-pali@kernel.org>
+ <re4m7ihhapjrjiu6acrnuex3jgbanz27uacig37xkereilmdcp@jzsjtdeg5wnb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912190341.919229-1-irogers@google.com> <ZuNwJ07GyMVIT0Qi@google.com>
- <CAP-5=fW3MrfOJf=yQgxG-UkKJnoVavda5_4oMh5e4RdkLCJxgw@mail.gmail.com>
- <CAP-5=fX3jXPiFhY+Neo8imz7V=86WDtjM42Gcq5phe6LoCLMkA@mail.gmail.com> <Zvbp3YCQLNBVWFmD@google.com>
-In-Reply-To: <Zvbp3YCQLNBVWFmD@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 27 Sep 2024 11:09:49 -0700
-Message-ID: <CAP-5=fVigHrvtabp1T1HcLRn-LFwzOiShWP8qugtPfkO31u1sA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/13] Tool and hwmon PMUs
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, Ravi Bangoria <ravi.bangoria@amd.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Jing Zhang <renyu.zj@linux.alibaba.com>, 
-	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Benjamin Gray <bgray@linux.ibm.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
-	Howard Chu <howardchu95@gmail.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Yang Jihong <yangjihong@bytedance.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	Veronika Molnarova <vmolnaro@redhat.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Changbin Du <changbin.du@huawei.com>, 
-	Ze Gao <zegao2021@gmail.com>, Andi Kleen <ak@linux.intel.com>, 
-	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
-	Sun Haiyong <sunhaiyong@loongson.cn>, Junhao He <hejunhao3@huawei.com>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Yicong Yang <yangyicong@hisilicon.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <re4m7ihhapjrjiu6acrnuex3jgbanz27uacig37xkereilmdcp@jzsjtdeg5wnb>
+User-Agent: NeoMutt/20180716
 
-On Fri, Sep 27, 2024 at 10:22=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> On Thu, Sep 26, 2024 at 12:47:26PM -0700, Ian Rogers wrote:
-> > On Fri, Sep 13, 2024 at 7:34=E2=80=AFAM Ian Rogers <irogers@google.com>=
- wrote:
-> > >
-> > > On Thu, Sep 12, 2024 at 3:50=E2=80=AFPM Namhyung Kim <namhyung@kernel=
-.org> wrote:
-> > > >
-> > > > On Thu, Sep 12, 2024 at 12:03:27PM -0700, Ian Rogers wrote:
-> > > > > Rather than have fake and tool PMUs being special flags in an evs=
-el,
-> > > > > create special PMUs. This allows, for example, duration_time to a=
-lso
-> > > > > be tool/duration_time/. Once adding events to the tools PMU is ju=
-st
-> > > > > adding to an array, add events for nearly all the expr literals l=
-ike
-> > > > > num_cpus_online. Rather than create custom logic for finding and
-> > > > > describing the tool events use json and add a notion of common js=
-on
-> > > > > for the tool events.
-> > > > >
-> > > > > Following the convention of the tool PMU, create a hwmon PMU that
-> > > > > exposes hwmon data for reading. For example, the following shows
-> > > > > reading the CPU temperature and 2 fan speeds alongside the uncore
-> > > > > frequency:
-> > > > > ```
-> > > > > $ perf stat -e temp_cpu,fan1,hwmon_thinkpad/fan2/,tool/num_cpus_o=
-nline/ -M UNCORE_FREQ -I 1000
-> > > > >      1.001153138              52.00 'C   temp_cpu
-> > > > >      1.001153138              2,588 rpm  fan1
-> > > > >      1.001153138              2,482 rpm  hwmon_thinkpad/fan2/
-> > > > >      1.001153138                  8      tool/num_cpus_online/
-> > > > >      1.001153138      1,077,101,397      UNC_CLOCK.SOCKET        =
-         #     1.08 UNCORE_FREQ
-> > > > >      1.001153138      1,012,773,595      duration_time
-> > > > > ...
-> > > > > ```
-> > > > >
-> > > > > Additional data on the hwmon events is in perf list:
-> > > > > ```
-> > > > > $ perf list
-> > > > > ...
-> > > > > hwmon:
-> > > > > ...
-> > > > >   temp_core_0 OR temp2
-> > > > >        [Temperature in unit coretemp named Core 0. crit=3D100'C,m=
-ax=3D100'C crit_alarm=3D0'C. Unit:
-> > > > >         hwmon_coretemp]
-> > > > > ...
-> > > > > ```
-> > > > >
-> > > > > v2: Address Namhyung's review feedback. Rebase dropping 4 patches
-> > > > >     applied by Arnaldo, fix build breakage reported by Arnaldo.
-> > > > >
-> > > > > Ian Rogers (13):
-> > > > >   perf pmu: Simplify an asprintf error message
-> > > > >   perf pmu: Allow hardcoded terms to be applied to attributes
-> > > > >   perf parse-events: Expose/rename config_term_name
-> > > > >   perf tool_pmu: Factor tool events into their own PMU
-> > > > >   perf tool_pmu: Rename enum perf_tool_event to tool_pmu_event
-> > > > >   perf tool_pmu: Rename perf_tool_event__* to tool_pmu__*
-> > > > >   perf tool_pmu: Move expr literals to tool_pmu
-> > > > >   perf jevents: Add tool event json under a common architecture
-> > > > >   perf tool_pmu: Switch to standard pmu functions and json descri=
-ptions
-> > > > >   perf tests: Add tool PMU test
-> > > > >   perf hwmon_pmu: Add a tool PMU exposing events from hwmon in sy=
-sfs
-> > > > >   perf test: Add hwmon "PMU" test
-> > > > >   perf docs: Document tool and hwmon events
-> > > >
-> > > > For patch 1-10,
-> > > >
-> > > > Acked-by: Namhyung Kim <namhyung@kernel.org>
-> >
-> > I thought the plan was for 1 to 10 to be in v6.12 and the remaining 3
-> > to be in perf-tools-next/v6.13. I'm not seeing any of the series in
-> > perf-tools so should everything be going in perf-tools-next?
->
-> Ok, I'll pick up the tools_pmu changes first.
->
-> And I think it'd be much easier for me if you break the hwmon change
-> like with basic PMU enabling and unit/alias support.
+On Friday 27 September 2024 14:54:31 Enzo Matsumiya wrote:
+> Hi Pali,
+> 
+> On 09/15, Pali Rohár wrote:
+> > Linux cifs client can already detect SFU symlinks and reads it content
+> > (target location). But currently is not able to create new symlink. So
+> > implement this missing support.
+> > 
+> > When 'sfu' mount option is specified and 'mfsymlinks' is not specified then
+> > create new symlinks in SFU-style. This will provide full SFU compatibility
+> > of symlinks when mounting cifs share with 'sfu' option. 'mfsymlinks' option
+> > override SFU for better Apple compatibility as explained in fs_context.c
+> > file in smb3_update_mnt_flags() function.
+> > 
+> > Extend __cifs_sfu_make_node() function, which now can handle also S_IFLNK
+> > type and refactor structures passed to sync_write() in this function, by
+> > splitting SFU type and SFU data from original combined struct win_dev as
+> > combined fixed-length struct cannot be used for variable-length symlinks.
+> > 
+> > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > ---
+> > fs/smb/client/cifspdu.h    |  6 ---
+> > fs/smb/client/cifsproto.h  |  4 ++
+> > fs/smb/client/fs_context.c | 13 ++++---
+> > fs/smb/client/link.c       |  3 ++
+> > fs/smb/client/smb2ops.c    | 80 +++++++++++++++++++++++++++++---------
+> > 5 files changed, 77 insertions(+), 29 deletions(-)
+> > 
+> > diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
+> > index a2072ab9e586..c3b6263060b0 100644
+> > --- a/fs/smb/client/cifspdu.h
+> > +++ b/fs/smb/client/cifspdu.h
+> > @@ -2573,12 +2573,6 @@ typedef struct {
+> > } __attribute__((packed)) FIND_FILE_STANDARD_INFO; /* level 0x1 FF resp data */
+> > 
+> > 
+> > -struct win_dev {
+> > -	unsigned char type[8]; /* IntxCHR or IntxBLK or LnxFIFO or LnxSOCK */
+> > -	__le64 major;
+> > -	__le64 minor;
+> > -} __attribute__((packed));
+> > -
+> > struct fea {
+> > 	unsigned char EA_flags;
+> > 	__u8 name_len;
+> > diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
+> > index 497bf3c447bc..791bddac0396 100644
+> > --- a/fs/smb/client/cifsproto.h
+> > +++ b/fs/smb/client/cifsproto.h
+> > @@ -676,6 +676,10 @@ char *extract_sharename(const char *unc);
+> > int parse_reparse_point(struct reparse_data_buffer *buf,
+> > 			u32 plen, struct cifs_sb_info *cifs_sb,
+> > 			bool unicode, struct cifs_open_info_data *data);
+> > +int __cifs_sfu_make_node(unsigned int xid, struct inode *inode,
+> > +			 struct dentry *dentry, struct cifs_tcon *tcon,
+> > +			 const char *full_path, umode_t mode, dev_t dev,
+> > +			 const char *symname);
+> > int cifs_sfu_make_node(unsigned int xid, struct inode *inode,
+> > 		       struct dentry *dentry, struct cifs_tcon *tcon,
+> > 		       const char *full_path, umode_t mode, dev_t dev);
+> > diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
+> > index bc926ab2555b..2f0c3894b0f7 100644
+> > --- a/fs/smb/client/fs_context.c
+> > +++ b/fs/smb/client/fs_context.c
+> > @@ -1896,14 +1896,17 @@ void smb3_update_mnt_flags(struct cifs_sb_info *cifs_sb)
+> > 	if (ctx->mfsymlinks) {
+> > 		if (ctx->sfu_emul) {
+> > 			/*
+> > -			 * Our SFU ("Services for Unix" emulation does not allow
+> > -			 * creating symlinks but does allow reading existing SFU
+> > -			 * symlinks (it does allow both creating and reading SFU
+> > -			 * style mknod and FIFOs though). When "mfsymlinks" and
+> > +			 * Our SFU ("Services for Unix") emulation allows now
+> > +			 * creating new and reading existing SFU symlinks.
+> > +			 * Older Linux kernel versions were not able to neither
+> > +			 * read existing nor create new SFU symlinks. But
+> > +			 * creating and reading SFU style mknod and FIFOs was
+> > +			 * supported for long time. When "mfsymlinks" and
+> > 			 * "sfu" are both enabled at the same time, it allows
+> > 			 * reading both types of symlinks, but will only create
+> > 			 * them with mfsymlinks format. This allows better
+> > -			 * Apple compatibility (probably better for Samba too)
+> > +			 * Apple compatibility, compatibility with older Linux
+> > +			 * kernel clients (probably better for Samba too)
+> > 			 * while still recognizing old Windows style symlinks.
+> > 			 */
+> > 			cifs_dbg(VFS, "mount options mfsymlinks and sfu both enabled\n");
+> > diff --git a/fs/smb/client/link.c b/fs/smb/client/link.c
+> > index 80099bbb333b..47ddeb7fa111 100644
+> > --- a/fs/smb/client/link.c
+> > +++ b/fs/smb/client/link.c
+> > @@ -606,6 +606,9 @@ cifs_symlink(struct mnt_idmap *idmap, struct inode *inode,
+> > 	/* BB what if DFS and this volume is on different share? BB */
+> > 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MF_SYMLINKS) {
+> > 		rc = create_mf_symlink(xid, pTcon, cifs_sb, full_path, symname);
+> > +	} else if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL) {
+> > +		rc = __cifs_sfu_make_node(xid, inode, direntry, pTcon,
+> > +					  full_path, S_IFLNK, 0, symname);
+> > #ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
+> > 	} else if (pTcon->unix_ext) {
+> > 		rc = CIFSUnixCreateSymLink(xid, pTcon, full_path, symname,
+> > diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+> > index 9c2d065d3cc4..2c251e9a3a30 100644
+> > --- a/fs/smb/client/smb2ops.c
+> > +++ b/fs/smb/client/smb2ops.c
+> > @@ -5055,9 +5055,10 @@ static int smb2_next_header(struct TCP_Server_Info *server, char *buf,
+> > 	return 0;
+> > }
+> > 
+> > -static int __cifs_sfu_make_node(unsigned int xid, struct inode *inode,
+> > +int __cifs_sfu_make_node(unsigned int xid, struct inode *inode,
+> > 				struct dentry *dentry, struct cifs_tcon *tcon,
+> > -				const char *full_path, umode_t mode, dev_t dev)
+> > +				const char *full_path, umode_t mode, dev_t dev,
+> > +				const char *symname)
+> > {
+> > 	struct TCP_Server_Info *server = tcon->ses->server;
+> > 	struct cifs_open_parms oparms;
+> > @@ -5065,30 +5066,64 @@ static int __cifs_sfu_make_node(unsigned int xid, struct inode *inode,
+> > 	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
+> > 	struct cifs_fid fid;
+> > 	unsigned int bytes_written;
+> > -	struct win_dev pdev = {};
+> > -	struct kvec iov[2];
+> > +	u8 type[8];
+> > +	int type_len = 0;
+> > +	struct {
+> > +		__le64 major;
+> > +		__le64 minor;
+> > +	} __packed pdev = {};
+> > +	__le16 *symname_utf16 = NULL;
+> > +	u8 *data = NULL;
+> > +	int data_len = 0;
+> > +	struct kvec iov[3];
+> > 	__u32 oplock = server->oplocks ? REQ_OPLOCK : 0;
+> > 	int rc;
+> > 
+> > 	switch (mode & S_IFMT) {
+> > 	case S_IFCHR:
+> > -		memcpy(pdev.type, "IntxCHR\0", 8);
+> > +		type_len = 8;
+> > +		memcpy(type, "IntxCHR\0", type_len);
+> > 		pdev.major = cpu_to_le64(MAJOR(dev));
+> > 		pdev.minor = cpu_to_le64(MINOR(dev));
+> > +		data = (u8 *)&pdev;
+> > +		data_len = sizeof(pdev);
+> > 		break;
+> > 	case S_IFBLK:
+> > -		memcpy(pdev.type, "IntxBLK\0", 8);
+> > +		type_len = 8;
+> > +		memcpy(type, "IntxBLK\0", type_len);
+> > 		pdev.major = cpu_to_le64(MAJOR(dev));
+> > 		pdev.minor = cpu_to_le64(MINOR(dev));
+> > +		data = (u8 *)&pdev;
+> > +		data_len = sizeof(pdev);
+> > +		break;
+> > +	case S_IFLNK:
+> > +		type_len = 8;
+> > +		memcpy(type, "IntxLNK\1", type_len);
+> > +		symname_utf16 = cifs_strndup_to_utf16(symname, strlen(symname),
+> > +						      &data_len, cifs_sb->local_nls,
+> > +						      NO_MAP_UNI_RSVD);
+> > +		if (!symname_utf16) {
+> > +			rc = -ENOMEM;
+> > +			goto out;
+> > +		}
+> > +		data_len -= 2; /* symlink is without trailing wide-nul */
+> > +		data = (u8 *)symname_utf16;
+> 
+> Can't S_IFLNK be handled somewhere else/other function?  mknod doesn't
+> support S_IFLNK, so this seems out of place.
+> 
+> And even though it's unreachable (AFAICS), cifs_sfu_make_node() calls
+> this with @symname == NULL (caught with gcc -fanalyzer).
+> 
+> 
+> Cheers,
+> 
+> Enzo
 
-I'd kept the hwmon PMU as a single addition on purpose - testing and
-documentation are follow up patches. Typically a new driver would be a
-single commit, and so I think this is the LKML norm. For example:
-https://lore.kernel.org/lkml/20190326151753.19384-3-shameerali.kolothum.tho=
-di@huawei.com/
+Hello! As SFU-style special files have same format, I just extended this
+function which handles all SFU types, to handle also symlink.
 
-Having multiple commits where things are only partially working means
-bisects will be broken. It also means changes I have on top of this
-can end up conflicting with what you're doing. I agree this means we
-have a big patch when the new thing is added, I think this is normal
-in the case of a driver - which to some extent this is.
+I wanted to reuse existing function instead of copying and duplicating
+code.
 
-Thanks,
-Ian
+Parameter symname is used only for S_IFLNK, so this should be safe. And
+as you pointed out mknod does not support S_IFLNK, so mknod code path
+would not call __cifs_sfu_make_node() function with S_IFLNK argument.
+
+So I think that there is not issue. But if you want to refactor this
+code, do you have an idea what to do?
+
+> > 		break;
+> > 	case S_IFSOCK:
+> > -		strscpy(pdev.type, "LnxSOCK");
+> > +		type_len = 8;
+> > +		strscpy(type, "LnxSOCK");
+> > +		data = (u8 *)&pdev;
+> > +		data_len = sizeof(pdev);
+> > 		break;
+> > 	case S_IFIFO:
+> > -		strscpy(pdev.type, "LnxFIFO");
+> > +		type_len = 8;
+> > +		strscpy(type, "LnxFIFO");
+> > +		data = (u8 *)&pdev;
+> > +		data_len = sizeof(pdev);
+> > 		break;
+> > 	default:
+> > -		return -EPERM;
+> > +		rc = -EPERM;
+> > +		goto out;
+> > 	}
+> > 
+> > 	oparms = CIFS_OPARMS(cifs_sb, tcon, full_path, GENERIC_WRITE,
+> > @@ -5098,17 +5133,26 @@ static int __cifs_sfu_make_node(unsigned int xid, struct inode *inode,
+> > 
+> > 	rc = server->ops->open(xid, &oparms, &oplock, NULL);
+> > 	if (rc)
+> > -		return rc;
+> > +		goto out;
+> > 
+> > -	io_parms.pid = current->tgid;
+> > -	io_parms.tcon = tcon;
+> > -	io_parms.length = sizeof(pdev);
+> > -	iov[1].iov_base = &pdev;
+> > -	iov[1].iov_len = sizeof(pdev);
+> > +	if (type_len + data_len > 0) {
+> > +		io_parms.pid = current->tgid;
+> > +		io_parms.tcon = tcon;
+> > +		io_parms.length = type_len + data_len;
+> > +		iov[1].iov_base = type;
+> > +		iov[1].iov_len = type_len;
+> > +		iov[2].iov_base = data;
+> > +		iov[2].iov_len = data_len;
+> > +
+> > +		rc = server->ops->sync_write(xid, &fid, &io_parms,
+> > +					     &bytes_written,
+> > +					     iov, ARRAY_SIZE(iov)-1);
+> > +	}
+> > 
+> > -	rc = server->ops->sync_write(xid, &fid, &io_parms,
+> > -				     &bytes_written, iov, 1);
+> > 	server->ops->close(xid, tcon, &fid);
+> > +
+> > +out:
+> > +	kfree(symname_utf16);
+> > 	return rc;
+> > }
+> > 
+> > @@ -5120,7 +5164,7 @@ int cifs_sfu_make_node(unsigned int xid, struct inode *inode,
+> > 	int rc;
+> > 
+> > 	rc = __cifs_sfu_make_node(xid, inode, dentry, tcon,
+> > -				  full_path, mode, dev);
+> > +				  full_path, mode, dev, NULL);
+> > 	if (rc)
+> > 		return rc;
 
