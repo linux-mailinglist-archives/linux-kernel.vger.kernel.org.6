@@ -1,316 +1,256 @@
-Return-Path: <linux-kernel+bounces-341291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53A4D987DDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:25:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC0D987D95
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:25:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FE71B24B2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 05:25:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 805471C22752
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 04:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1963175D2A;
-	Fri, 27 Sep 2024 05:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kneron.us header.i=@kneron.us header.b="j0/3HB82"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2132.outbound.protection.outlook.com [40.107.237.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FD5175562;
-	Fri, 27 Sep 2024 05:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.132
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727414743; cv=fail; b=gMDn/MmPgwdYq+/4MpJU1gttTPQMHg9zL7fpECrVU+idRhiyvzE6Jzue8unKrb5irX1hqwY9DwJ3B7TKT8V1wyxXOADR42M72UF/cdO13eXTuLD6k03WwZUdIwCUVh0yS1ZVLT/QcEZnnFA9WxgGp9NvUAKq+x0j+T7vC5qAKKU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727414743; c=relaxed/simple;
-	bh=iggXLZrvO31cSQa/efuFQnc8m3BGiQEGwSczGGaVlGU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mqhPMgl7PN1Z2wl4z66ruikzlK1KROfNSLjnQBv+n4Wctm/L1hfrjBxRP3PhUeHCQK+qx9wvHYaU5Au5NqEKzW/s+26Mo3Aq8CQocFH1rvXxxiwxJwvK9Ci5BxqOAAUNRkC5vrLWd4SWjlmjsPqJfUwxreNtUx0SeqBpPvDyuy4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kneron.us; spf=pass smtp.mailfrom=kneron.us; dkim=pass (1024-bit key) header.d=kneron.us header.i=@kneron.us header.b=j0/3HB82; arc=fail smtp.client-ip=40.107.237.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kneron.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kneron.us
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t/6fRaeHJ9SUla1XMeQhp7zjOcYdTm1Tyg1ezV5ujxFy5G7eS9NkgZc/Bn0f7Mu3Efij+xpQcNQdm30HX2vQ7CU9kXRkmp+AbEMO8eM9nJVqv7fd6Cx3GcZeB0nykrZqAHS95FMoGtjbv8xyd6aw1/FkUzc2AseXRU14sbdisj3dC7BQom1dkc73eAYLAnSeVahkH48R2qog0F+h7pHK1K0+DS28HLjIhIkpfRB8cocALQLJsH66ugkKGdZIDksun4d+OLCfLEjb5XgbqVVQ3FUotz7RQIFq+vtw1MIOhO8lCdoLUUeRD/7JjUDgSeDki2WgbVgLFXdPFDelP0Vb5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HfrxJmvZ/E5r0G5Euv9dngxSdBDj9xpz/WN8F/z1ciU=;
- b=TuTD0QATxJnJEVhazk7t+G6lgm4HmXBKnr5PQIvK9lI6iEc+iZOJDt9LRPosm5Om0TYzuKIhSqLEMR6oZ+gJ5Ve5n+XJ6qQUfkJJYv8BC0MLWkvqMuPLFXLVYw70AtXKVowP8C36XJJTxBIyWtEqCM7kG/xDJs1qUklNIwv1SKK2nVwXHqpTwPZje84Kb1DBMC1xFJiI5UhIUOq0A3m60G61OiR/4Xg1Hv7J5ZGfv6A/ETXZRDgRAvwSZYm05wd8lW0avQ3/pokN7H2NQ+fOze7al/+7Kg7cSciIDso6w4Lxq8KcZaVeaqP1WHNww8OkyBiafrQVcdZ4eoorhXH0Qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kneron.us; dmarc=pass action=none header.from=kneron.us;
- dkim=pass header.d=kneron.us; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kneron.us;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HfrxJmvZ/E5r0G5Euv9dngxSdBDj9xpz/WN8F/z1ciU=;
- b=j0/3HB826niGZwXiN9sE5423tZRfHlQYkLrlwSwjlU6ZUbTT3mw/m9/Z6ikmlxnOEy7PvbflCX6m1TbhEcy8GuC3N2iV3eQQ3ytDTnYe+Ra1Vul/9q20fnFgjeTnMl50n3dlt3jV+jMolpc2Pa0ISK0R3ilGp8aH9mHlnOGYfTI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kneron.us;
-Received: from IA1PR14MB6224.namprd14.prod.outlook.com (2603:10b6:208:42b::6)
- by DM6PR14MB3449.namprd14.prod.outlook.com (2603:10b6:5:1ed::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Fri, 27 Sep
- 2024 05:25:37 +0000
-Received: from IA1PR14MB6224.namprd14.prod.outlook.com
- ([fe80::c527:653c:698d:3d94]) by IA1PR14MB6224.namprd14.prod.outlook.com
- ([fe80::c527:653c:698d:3d94%3]) with mapi id 15.20.8005.021; Fri, 27 Sep 2024
- 05:25:36 +0000
-From: Michael Wu <michael.wu@kneron.us>
-To: Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Morgan Chang <morgan.chang@kneron.us>,
-	mvp.kutali@gmail.com,
-	Michael Wu <michael.wu@kneron.us>
-Subject: [PATCH v2 2/2] i2c: dwsignware: determine HS tHIGH and tLOW based on HW parameters
-Date: Fri, 27 Sep 2024 12:22:17 +0800
-Message-ID: <20240927042230.277144-3-michael.wu@kneron.us>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240927042230.277144-1-michael.wu@kneron.us>
-References: <20240927042230.277144-1-michael.wu@kneron.us>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYAPR01CA0148.jpnprd01.prod.outlook.com
- (2603:1096:404:7e::16) To IA1PR14MB6224.namprd14.prod.outlook.com
- (2603:10b6:208:42b::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440C016D4E5;
+	Fri, 27 Sep 2024 04:25:12 +0000 (UTC)
+Received: from smtp.cecloud.com (unknown [1.203.97.246])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6E02C9A;
+	Fri, 27 Sep 2024 04:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.246
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727411111; cv=none; b=h7zTTfwM9vmn6ptIepCarqXmQEnVbHMLZ0b/36Rw6RRPIbH2xUJ0WggsTU97iFkNJbTPiWP+HjxyWQUkb6LekrRfImSg7VZVGBSSmaAkDTmQ/9HkPemqOvM3vrpewasnRj+toA8PVN9OF9jPXfdJY7zCQrpxmuaN2Z7ZwybIkps=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727411111; c=relaxed/simple;
+	bh=Dxgzbf82JqIWX+r2O0pKg8sK6BGpUNRW8FBqj5+RzpI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I8/8CNXPFKba92CinSbGf7tsMS3hW6fOGAJ7Plz5gjqIw3kBs05PEchNCm9Q+cvLLeAkvpk/plfE0n3WgTHeNOzmFqiv+qy8IjkhJ2TAFewp5tGuBiM6sJBZnDes1/Zk2zPQLkeU/Z0exnGHZu35oFU6RwIwhskC6CncsHyJi0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.cecloud.com (Postfix) with ESMTP id D05657C0115;
+	Fri, 27 Sep 2024 12:25:04 +0800 (CST)
+X-MAIL-GRAY:0
+X-MAIL-DELIVERY:1
+X-SKE-CHECKED:1
+X-ANTISPAM-LEVEL:2
+Received: from localhost.localdomain (unknown [111.48.58.13])
+	by smtp.cecloud.com (postfix) whith ESMTP id P880592T281472241627504S1727411103986661_;
+	Fri, 27 Sep 2024 12:25:04 +0800 (CST)
+X-IP-DOMAINF:1
+X-RL-SENDER:zhangyanjun@cestc.cn
+X-SENDER:zhangyanjun@cestc.cn
+X-LOGIN-NAME:zhangyanjun@cestc.cn
+X-FST-TO:trondmy@kernel.org
+X-RCPT-COUNT:5
+X-LOCAL-RCPT-COUNT:1
+X-MUTI-DOMAIN-COUNT:0
+X-SENDER-IP:111.48.58.13
+X-ATTACHMENT-NUM:0
+X-UNIQUE-TAG:<2e3845889b9d4a73778b2f0543bcb833>
+X-System-Flag:0
+From: zhangyanjun@cestc.cn
+To: trondmy@kernel.org,
+	anna@kernel.org
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yanjun Zhang <zhangyanjun@cestc.cn>
+Subject: [PATCH v2] NFSv4: fix possible NULL-pointer dereference in nfs42_complete_copies after state recovery failed
+Date: Fri, 27 Sep 2024 12:25:00 +0800
+Message-Id: <20240927042500.205967-1-zhangyanjun@cestc.cn>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR14MB6224:EE_|DM6PR14MB3449:EE_
-X-MS-Office365-Filtering-Correlation-Id: 951e3701-48dd-4909-8dd6-08dcdeb4d14a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|921020|38350700014|80162021;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N3pVQjJCR3NleVhjVXBKTG42QzZ4WHV0ZTF1aDVrQ0drMDE2QzZEaHV6cTFT?=
- =?utf-8?B?UWhMMWNJeEgydzVEVXlHK04zdS9jMlFvdGxTQWVFTXA2YnlZbndvODZWZGcy?=
- =?utf-8?B?TXV3NGtxTW03RVBMR1dpL3F5Qmp2SGxvbk1ycWJ2K3NBOGpYUTVOSWtlR2ZX?=
- =?utf-8?B?amV0bzdhenptWFgzbUNGSmh5VVdHMFBSSlhtekxyRnJJM28xRitBNkVDQ29N?=
- =?utf-8?B?QWZIRHJPRWdRMUErcldvYjRxSG5BNXp4bmtKbFl3Qm50WnlEQnhVSE95NEFF?=
- =?utf-8?B?V0tURXpieWVvY09IN0JWbkYyTjVYL3dBV2x2Z2VaOUNPcllVVDBLbnZZMDNF?=
- =?utf-8?B?aUpXNkFqUzQyaHk3OGY5WmgxaWhhZTlsSmZjVHBxblg0ZGt2YTNaWEtmeXpZ?=
- =?utf-8?B?VllCWlZ5Zlk0cjV3b0R3N2tCeXZVNTRxZ1laQy9oR21INVhLaGkrMWh2QUJW?=
- =?utf-8?B?UldmSk1RMWpMcHpwTFV5Q3EzWjlxWkFNKytEUWUyNldDUitZem9rdXgrZWM4?=
- =?utf-8?B?c245QXRRS0ZGMVRvQXZpd1FqNyt0S0R6L2RndzZoRmFWUUtyYWZhK0hPRHNw?=
- =?utf-8?B?cG44NGVtQnJyODhaU0g2clFsRDlndHorV21XbTdlY2RWSFkxeW45VXMrSm1Q?=
- =?utf-8?B?YUc4a1FleUptRy9QWnBDeE54WDVvdUlpbW9JNU00UTNOMnh5aXBzSFpaM2V1?=
- =?utf-8?B?eDFCeGp2WW5ZNFBpVnVscUNUS0llbjYyTjlPQTZuOTFBTWtycHJKUS9MM1Fo?=
- =?utf-8?B?d21mbnZuZ2dReWVYbHpRdGNiaG9DUy84TnQ2WFhaSnZIVUpqYTZQTWxlV0ZC?=
- =?utf-8?B?WDhMdktoYkttNjkyc2Fwc2dIYU9laXJNREdnZUV5dXROVGQvb0lTTW1ySzVn?=
- =?utf-8?B?a1BKejhhZ3FvRUNIL0diTmJKUEpkYUJtdkt1cG1rajUzZElWbjlCSkJOaGNS?=
- =?utf-8?B?RXlxZmRXdE9uUUhmYXhPRVRzNTdIbWNSRWFCYzFMRGRmSmxRanFlS0RwYmJl?=
- =?utf-8?B?UW1CeDkrdmhMMytDWnhVR1RVdnBPbE5aNUp4SUp2cyt0T3hRNWo4ckx3bXNF?=
- =?utf-8?B?WkE4YXJWT1ZZYXI1SjFEUzBNVTdXbEtYMldJUXZUMDI0QlpQZDhPeUZBVEtV?=
- =?utf-8?B?Vnlaa05sMWs2UkVGaTVBM2NVR1JiMVQ0dmJaU0pJMlFZaGljUzh1OUlZOTNk?=
- =?utf-8?B?b2tpcVdUdnlmQ2VmQnpSOXMxRFpFclF1cVJ4ZFZGaU9DdURORGE3SktpYytG?=
- =?utf-8?B?SHBZM1M2ZExRV0lxL3NnSEhZRkFjdE1JT09TbHl2S2NLbjlvRSt3eGxJK3dX?=
- =?utf-8?B?cHplZ3VCRUQrNjByQU1FMnhXaGJxQnNpcDdDU1kwclcrRkxPekR4RXp1Y3BO?=
- =?utf-8?B?NE94STh3UXVHYzBFYWdVY29VY0pHaXpZQU0xeEs3eWU2WkpXQkZiaDdWSXhT?=
- =?utf-8?B?dm1wbk9MaXlsRzVnSWNybUlrSDVrejkxNmtydWR3ajEza1ZwblZRQmIvQjRU?=
- =?utf-8?B?MXV5QVk0T2Q2aUpOK2F4eVFHOTRDbjczMkV0S1phR05DNndSVTJjYWdlNWs4?=
- =?utf-8?B?M3BXT3FIbE1WL0JOTlZlVlB6NGZVZ0JQVFhlRktQc2hoMXV3UEZFdjhXUUlE?=
- =?utf-8?B?KzRNOEVSTnFwU1ZUOURtQzNPSWQxZkZNR0trRnBpRE9IN3czckYzS1hMTktl?=
- =?utf-8?B?Nk9nczhIY2IyRElFbXNWTUxIMURHY09FcFFuZWs3QTU2MnVxeTJzWHFTZ0hL?=
- =?utf-8?B?SkdJNS9OUkFGc09FVk1MZDdyUmRCY3FzZEJDcGlhU09uWTFDTUw1NWhZdzJ1?=
- =?utf-8?B?Um5yL2daaGRGUk9UUXV6cmlPdHRJd1c0YUo4N3NRKzVEa1ZqVVhWWTlGMk9X?=
- =?utf-8?Q?MERDsRrQQoQBl?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR14MB6224.namprd14.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(921020)(38350700014)(80162021);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dzlQZGVNME9vY2FOMWYrb0RJeVNFdnFXblhaRnFFMmlVY3k3clpNNUg5RUt0?=
- =?utf-8?B?eitCck9zdTRPay9mQkp2WkFVa256YkpxVUFNL2hJWm16dmlpN3N4QVY2MytY?=
- =?utf-8?B?MlNxRnNWWjBvc0RZa0Zwd0ZWY1JJK01mVEJtNXZha09yc3VZcHVQbkdBekJL?=
- =?utf-8?B?STdkSTJ3NkxXeGdQcmhXWkFkYVM2azlkVU4vYVNYK1grVGVEYSsreGpKcmZG?=
- =?utf-8?B?ZHVnQVJEbFdiOVpyUVdqWWhOVko4a0I5OXJuNWZIbjB3dDhoZjBhQkFhZjFx?=
- =?utf-8?B?ckFEbTdBZGJVNE55b0NyYjFxcVBEREd6MlFJRlRVdlRpMGhnSElRWUZYN05o?=
- =?utf-8?B?ZHpNTlJVY2IyblpCT0RkcTVBbUQ5Q0RjSG5GSm5iMGJJZklNNHhEZXlkMlZ0?=
- =?utf-8?B?dEh4YXhrSFdLOWNRYk5NTnhOYTg4dUp5Sk1OZHJpazZnT2RWdmZWN1dzbm5z?=
- =?utf-8?B?VnRPU3VSS3p6UmpnYWJOTGhqZGx0SW91RGJSVlhXYWxLbWplejJHMHQyS25p?=
- =?utf-8?B?T3g5b05OOS9wc1RNRHVLNDF6M1BjenNGbzlVaHFxY21EZk91OWVDcjY3cWFC?=
- =?utf-8?B?WUV4TDk1TEhSUlduY0UwOEJGZ1dqVkpaYUtqNkJ2bzN4M2dydUVzeUNHSW51?=
- =?utf-8?B?alExSUtjQk5PclQrb1hKdWJHSTZISURuM3dkRk50aUkxeTU3UVZmZUVuYnRT?=
- =?utf-8?B?QWQ4K2psWHZqSjhSUE9WZzFxeWtvS2dwVEY5SVNGRlVzc0N3Y05aN2NhMWto?=
- =?utf-8?B?OEhBanNPamt1NHRFb1N3emxMdjNBa0ZvWXRmMndLSzBhaU5Eb0RFSFNoNmwr?=
- =?utf-8?B?TW1TM2pYNmg4Sll1aWg5NHIvalhoclUxeUUzZDNla2V0TmhnbHQ5MjY1TUVV?=
- =?utf-8?B?OGhKYkNLYTlzVm94ZG9WelUxTG5Jek5Sc2E1SUNUUjNsaVQrNW85VWF2dExF?=
- =?utf-8?B?WUIzd2o1cldZU0ExNVFLcFQ0UjlicHNwdkk2ZFlXSEVCN3VHazVCTXJPZy9j?=
- =?utf-8?B?RitvVG9hQXBJUDNHd1VCcXhIOFc5SU5zK3BybXQ0ZitNd3BmVE1QQnh3L1Zr?=
- =?utf-8?B?K3U0T0ZrM254bUJLVnJ5OGo5akU4cGw0cm9rMGhkZm5Ud0tCU0Q0R2tYRUZJ?=
- =?utf-8?B?THJPTXNaRnNkOENVbHBLcitPVlJuMEtyNGVtZDN5TEFSWTB4cXp0WnJWRTFF?=
- =?utf-8?B?ditIMThVSHVXbG5ucUgzeUVUbGhSUXY1bEdhcG1JUkxEcmwvcGdGT3gxODJO?=
- =?utf-8?B?RVVIYXJsSXdRZkZXWndIUWFCQ3g5WENZTW01REhUN1I3TzVGcFFKdDdHblBi?=
- =?utf-8?B?d1ZpZEhzak9SM0svR3VWZmtrNFZDdE4ya3hxS1lYSkRLVWVSUEQzZ0J2Qy9B?=
- =?utf-8?B?Q3lNZlE2SkEvaUJnSm1Cd1BKR3hpd1pvNkppRGNKYkpCc3crMjJZWkJPMXhX?=
- =?utf-8?B?ZzB3eE1tbkMwd0c5ZWNPdnZtMkFOakpzbGp3K2dRTHIzU2Y1SWMxWjdBVjVt?=
- =?utf-8?B?a3Z2R1RZZzUwcUtoZHJubVNWZ0pIV05IWXRLMVVJa3J1M21vWk8wdEM4dVJR?=
- =?utf-8?B?SzFmYk9BUGJDN0JnWUNOK25wcmtFTTU2VG13bUFFaGFYZzF3eVMwRFgzMkc3?=
- =?utf-8?B?cWpEd0JRMXQ2bUQwMkh0cDRtRW5YeCtMc2dTZkduanVTUi9LaGllblBDUEVi?=
- =?utf-8?B?WUdmN2hKemhhTkwvREpzNVBmemwwMGZMU1d2R1orQzJoakYyYzlKSGJ5eWtG?=
- =?utf-8?B?SzZZbUNHZHFOY09iSE1KeUhGRUtBRFVsWU1GZVhvaFNyTG0rNThWb2I3WTNj?=
- =?utf-8?B?NnE3b0x5b3ZNc2dQOTBxRWg1SnhwSzVTVTdyOUQ4ekNtQVNiVmwwd1daRG0r?=
- =?utf-8?B?NXpjc092ZjZNZ2tNUVJNempaejlnZkNLdVZhSWFjK05kV1dkQ1QyT3ZkZnhC?=
- =?utf-8?B?M0laOFlYbXE1NVY3Y09vT2VEYWwvc3UvNjVhZjNYZUtKRUJCNjE2VndxUUxE?=
- =?utf-8?B?ZUJhOEdwZEhzV1hoaGFmUURGYkdWU0ZuNzV1NTJUc1NCOU5iTnpiUjAxWUto?=
- =?utf-8?B?cEhsRnE5KzgwL3p1aDY1K2RIRms2M1ZzYWJVOVp5SnBwU0RMdjh2d3FxRUp4?=
- =?utf-8?Q?IewiSUorJIzssw6rXf/BUV4vx?=
-X-OriginatorOrg: kneron.us
-X-MS-Exchange-CrossTenant-Network-Message-Id: 951e3701-48dd-4909-8dd6-08dcdeb4d14a
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR14MB6224.namprd14.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 05:25:36.9013
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f92b0f4b-650a-4d8a-bae3-0e64697d65f2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1x2wL9b1blRbXTXQEBB5V56GP1F6LFOw3pvxUOyWNL4LNLCK29Tc2cQMXppwhko1wop5BryQbGKs6FheUdEqng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR14MB3449
+Content-Transfer-Encoding: quoted-printable
 
-In commit 35eba185fd1a ("i2c: designware: Calculate SCL timing parameter
-for High Speed Mode") hs_hcnt and hs_lcnt are calculated based on fixed
-tHIGH = 160 and tLOW = 120. However, the set of these fixed values only
-applies to the combination of hardware parameters IC_CAP_LOADING = 400pF
-and IC_CLK_FREQ_OPTIMIZATION = 1. Outside of this combination, if these
-fixed tHIGH = 160 and tLOW = 120 are still used, the calculated hs_hcnt
-and hs_lcnt may not be small enough, making it impossible for the SCL
-frequency to reach 3.4 MHz.
+From: Yanjun Zhang <zhangyanjun@cestc.cn>
 
-Section 3.15.4.5 in DesignWare DW_apb_i2b Databook v2.03 says that when
-IC_CLK_FREQ_OPTIMIZATION = 0,
+On the node of an nfs client, some files saved in the mountpoint of the nfs=
+ server was coping within
+the same nfs server. Accidentally, the nfs42_complete_copies get a NULL-poi=
+nter dereference crash, as
+can be seen in following syslog:
 
-    MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
-		     = 120 ns for 3.4 Mbps, bus loading = 400pF
-    MIN_SCL_LOWtime = 160 ns for 3.4 Mbps, bus loading = 100pF
-		    = 320 ns for 3.4 Mbps, bus loading = 400pF
+[232064.838881] NFSv4: state recovery failed for open file nfs/pvc-12b5200d=
+-cd0f-46a3-b9f0-af8f4fe0ef64.qcow2, error =3D -116
+[232064.839360] NFSv4: state recovery failed for open file nfs/pvc-12b5200d=
+-cd0f-46a3-b9f0-af8f4fe0ef64.qcow2, error =3D -116
+[232066.588183] Unable to handle kernel NULL pointer dereference at virtual=
+ address 0000000000000058
+[232066.588586] Mem abort info:
+[232066.588701]   ESR =3D 0x0000000096000007
+[232066.588862]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
+[232066.589084]   SET =3D 0, FnV =3D 0
+[232066.589216]   EA =3D 0, S1PTW =3D 0
+[232066.589340]   FSC =3D 0x07: level 3 translation fault
+[232066.589559] Data abort info:
+[232066.589683]   ISV =3D 0, ISS =3D 0x00000007
+[232066.589842]   CM =3D 0, WnR =3D 0
+[232066.589967] user pgtable: 64k pages, 48-bit VAs, pgdp=3D00002000956ff400
+[232066.590231] [0000000000000058] pgd=3D08001100ae100003, p4d=3D08001100ae=
+100003, pud=3D08001100ae100003, pmd=3D08001100b3c00003, pte=3D0000000000000=
+000
+[232066.590757] Internal error: Oops: 96000007 [#1] SMP
+[232066.590958] Modules linked in: rpcsec_gss_krb5 auth_rpcgss nfsv4 dns_re=
+solver nfs lockd grace fscache netfs ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm=
+ vhost_net vhost vhost_iotlb tap tun ipt_rpfilter xt_multiport ip_set_hash_=
+ip ip_set_hash_net xfrm_interface xfrm6_tunnel tunnel4 tunnel6 esp4 ah4 wir=
+eguard libcurve25519_generic veth xt_addrtype xt_set nf_conntrack_netlink i=
+p_set_hash_ipportnet ip_set_hash_ipportip ip_set_bitmap_port ip_set_hash_ip=
+port dummy ip_set ip_vs_sh ip_vs_wrr ip_vs_rr ip_vs iptable_filter sch_ingr=
+ess nfnetlink_cttimeout vport_gre ip_gre ip_tunnel gre vport_geneve geneve =
+vport_vxlan vxlan ip6_udp_tunnel udp_tunnel openvswitch nf_conncount dm_rou=
+nd_robin dm_service_time dm_multipath xt_nat xt_MASQUERADE nft_chain_nat nf=
+_nat xt_mark xt_conntrack xt_comment nft_compat nft_counter nf_tables nfnet=
+link ocfs2 ocfs2_nodemanager ocfs2_stackglue iscsi_tcp libiscsi_tcp libiscs=
+i scsi_transport_iscsi ipmi_ssif nbd overlay 8021q garp mrp bonding tls rfk=
+ill sunrpc ext4 mbcache jbd2
+[232066.591052]  vfat fat cas_cache cas_disk ses enclosure scsi_transport_s=
+as sg acpi_ipmi ipmi_si ipmi_devintf ipmi_msghandler ip_tables vfio_pci vfi=
+o_pci_core vfio_virqfd vfio_iommu_type1 vfio dm_mirror dm_region_hash dm_lo=
+g dm_mod nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge stp=
+ llc fuse xfs libcrc32c ast drm_vram_helper qla2xxx drm_kms_helper syscopya=
+rea crct10dif_ce sysfillrect ghash_ce sysimgblt sha2_ce fb_sys_fops cec sha=
+256_arm64 sha1_ce drm_ttm_helper ttm nvme_fc igb sbsa_gwdt nvme_fabrics drm=
+ nvme_core i2c_algo_bit i40e scsi_transport_fc megaraid_sas aes_neon_bs
+[232066.596953] CPU: 6 PID: 4124696 Comm: 10.253.166.125- Kdump: loaded Not=
+ tainted 5.15.131-9.cl9_ocfs2.aarch64 #1
+[232066.597356] Hardware name: Great Wall .\x93\x8e...RF6260 V5/GWMSSE2GL1T=
+, BIOS T656FBE_V3.0.18 2024-01-06
+[232066.597721] pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=
+=3D--)
+[232066.598034] pc : nfs4_reclaim_open_state+0x220/0x800 [nfsv4]
+[232066.598327] lr : nfs4_reclaim_open_state+0x12c/0x800 [nfsv4]
+[232066.598595] sp : ffff8000f568fc70
+[232066.598731] x29: ffff8000f568fc70 x28: 0000000000001000 x27: ffff21003d=
+b33000
+[232066.599030] x26: ffff800005521ae0 x25: ffff0100f98fa3f0 x24: 0000000000=
+000001
+[232066.599319] x23: ffff800009920008 x22: ffff21003db33040 x21: ffff21003d=
+b33050
+[232066.599628] x20: ffff410172fe9e40 x19: ffff410172fe9e00 x18: 0000000000=
+000000
+[232066.599914] x17: 0000000000000000 x16: 0000000000000004 x15: 0000000000=
+000000
+[232066.600195] x14: 0000000000000000 x13: ffff800008e685a8 x12: 00000000ea=
+c0c6e6
+[232066.600498] x11: 0000000000000000 x10: 0000000000000008 x9 : ffff800005=
+4e5828
+[232066.600784] x8 : 00000000ffffffbf x7 : 0000000000000001 x6 : 000000000a=
+9eb14a
+[232066.601062] x5 : 0000000000000000 x4 : ffff70ff8a14a800 x3 : 0000000000=
+000058
+[232066.601348] x2 : 0000000000000001 x1 : 54dce46366daa6c6 x0 : 0000000000=
+000000
+[232066.601636] Call trace:
+[232066.601749]  nfs4_reclaim_open_state+0x220/0x800 [nfsv4]
+[232066.601998]  nfs4_do_reclaim+0x1b8/0x28c [nfsv4]
+[232066.602218]  nfs4_state_manager+0x928/0x10f0 [nfsv4]
+[232066.602455]  nfs4_run_state_manager+0x78/0x1b0 [nfsv4]
+[232066.602690]  kthread+0x110/0x114
+[232066.602830]  ret_from_fork+0x10/0x20
+[232066.602985] Code: 1400000d f9403f20 f9402e61 91016003 (f9402c00)
+[232066.603284] SMP: stopping secondary CPUs
+[232066.606936] Starting crashdump kernel...
+[232066.607146] Bye!
 
-and section 3.15.4.6 says that when IC_CLK_FREQ_OPTIMIZATION = 1,
+With the vmcore, we know that nfs4_copy_state listed by destination nfs_ser=
+ver->ss_copies was added with
+the field copies in the handle_async_copy, and we found that waiting copy p=
+rocess with the stack as:
+PID: 3511963  TASK: ffff710028b47e00  CPU: 0   COMMAND: "cp"
+ #0 [ffff8001116ef740] __switch_to at ffff8000081b92f4
+ #1 [ffff8001116ef760] __schedule at ffff800008dd0650
+ #2 [ffff8001116ef7c0] schedule at ffff800008dd0a00
+ #3 [ffff8001116ef7e0] schedule_timeout at ffff800008dd6aa0
+ #4 [ffff8001116ef860] __wait_for_common at ffff800008dd166c
+ #5 [ffff8001116ef8e0] wait_for_completion_interruptible at ffff800008dd1898
+ #6 [ffff8001116ef8f0] handle_async_copy at ffff8000055142f4 [nfsv4]
+ #7 [ffff8001116ef970] _nfs42_proc_copy at ffff8000055147c8 [nfsv4]
+ #8 [ffff8001116efa80] nfs42_proc_copy at ffff800005514cf0 [nfsv4]
+ #9 [ffff8001116efc50] __nfs4_copy_file_range.constprop.0 at ffff8000054ed6=
+94 [nfsv4]
 
-    MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
-		     = 160 ns for 3.4 Mbps, bus loading = 400pF
-    MIN_SCL_LOWtime = 120 ns for 3.4 Mbps, bus loading = 100pF
-		    = 320 ns for 3.4 Mbps, bus loading = 400pF
+We found that the NULL-pointer dereference was due to nfs42_complete_copies=
+ list the nfs_server->ss_copies by
+the field ss_copies of nfs4_copy_state. So the nfs4_copy_state address ffff=
+0100f98fa3f0 is offset by 0x10 and
+the data accessed through this pointer is also incorrect. Generally, the nf=
+s4_state_owner->so_states is ordered
+and open(O_RDWR) or open(O_WRITE) states are reclaimed firstly by nfs4_recl=
+aim_open_state. But when destination
+state was reclaimed failed with NFS_STATE_RECOVERY_FAILED and copies were n=
+ot deleted in nfs_server->ss_copies,
+the source state may be taken into nfs42_complete_copies earlier resulting =
+in this situation. To solve this, we
+newly add a list_head nfs_server->ss_src_copies for a server-to-server copy=
+ specially.
 
-In order to calculate more accurate hs_hcnt amd hs_lcnt, two hardware
-parameters IC_CAP_LOADING and IC_CLK_FREQ_OPTIMIZATION must be
-considered together.
-
-Signed-off-by: Michael Wu <michael.wu@kneron.us>
+Fixes: b1a0913adbef ("NFS: handle source server reboot")
+Signed-off-by: Yanjun Zhang <zhangyanjun@cestc.cn>
 ---
- drivers/i2c/busses/i2c-designware-common.c | 16 ++++++++++++++++
- drivers/i2c/busses/i2c-designware-core.h   |  6 ++++++
- drivers/i2c/busses/i2c-designware-master.c | 14 ++++++++++++--
- 3 files changed, 34 insertions(+), 2 deletions(-)
+ fs/nfs/client.c           | 1 +
+ fs/nfs/nfs42proc.c        | 2 +-
+ fs/nfs/nfs4state.c        | 2 +-
+ include/linux/nfs_fs_sb.h | 1 +
+ 4 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
-index 080204182bb5..907f049f09f8 100644
---- a/drivers/i2c/busses/i2c-designware-common.c
-+++ b/drivers/i2c/busses/i2c-designware-common.c
-@@ -372,6 +372,20 @@ static void i2c_dw_adjust_bus_speed(struct dw_i2c_dev *dev)
- 		t->bus_freq_hz = I2C_MAX_FAST_MODE_FREQ;
- }
- 
-+static void i2c_dw_fw_parse_hw_params(struct dw_i2c_dev *dev)
-+{
-+	struct device *device = dev->dev;
-+	int ret;
-+
-+	ret = device_property_read_u32(device, "bus-capacitance-pf", &dev->bus_capacitance_pf);
-+	if (ret || dev->bus_capacitance_pf < 400)
-+		dev->bus_capacitance_pf = 100;
-+	else
-+		dev->bus_capacitance_pf = 400;
-+
-+	dev->clk_freq_optimized = device_property_read_bool(device, "clk-freq-optimized");
-+}
-+
- int i2c_dw_fw_parse_and_configure(struct dw_i2c_dev *dev)
- {
- 	struct i2c_timings *t = &dev->timings;
-@@ -380,6 +394,8 @@ int i2c_dw_fw_parse_and_configure(struct dw_i2c_dev *dev)
- 
- 	i2c_parse_fw_timings(device, t, false);
- 
-+	i2c_dw_fw_parse_hw_params(dev);
-+
- 	i2c_dw_adjust_bus_speed(dev);
- 
- 	if (is_of_node(fwnode))
-diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-index 1ac2afd03a0a..893c2c53648a 100644
---- a/drivers/i2c/busses/i2c-designware-core.h
-+++ b/drivers/i2c/busses/i2c-designware-core.h
-@@ -240,6 +240,10 @@ struct reset_control;
-  * @set_sda_hold_time: callback to retrieve IP specific SDA hold timing
-  * @mode: operation mode - DW_IC_MASTER or DW_IC_SLAVE
-  * @rinfo: I²C GPIO recovery information
-+ * @bus_capacitance_pf: bus capacitance in picofarad
-+ * @clk_freq_optimized: indicate whether the hardware input clock frequency is
-+ *	reduced by reducing the internal latency required to generate the high
-+ *	period and low period of the SCL line
-  *
-  * HCNT and LCNT parameters can be used if the platform knows more accurate
-  * values than the one computed based only on the input clock frequency.
-@@ -297,6 +301,8 @@ struct dw_i2c_dev {
- 	int			(*set_sda_hold_time)(struct dw_i2c_dev *dev);
- 	int			mode;
- 	struct i2c_bus_recovery_info rinfo;
-+	u32			bus_capacitance_pf;
-+	bool			clk_freq_optimized;
- };
- 
- #define ACCESS_INTR_MASK			BIT(0)
-diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-index e46f1b22c360..b18da66da6a8 100644
---- a/drivers/i2c/busses/i2c-designware-master.c
-+++ b/drivers/i2c/busses/i2c-designware-master.c
-@@ -154,12 +154,22 @@ static int i2c_dw_set_timings_master(struct dw_i2c_dev *dev)
- 			dev->hs_hcnt = 0;
- 			dev->hs_lcnt = 0;
- 		} else if (!dev->hs_hcnt || !dev->hs_lcnt) {
-+			u32 t_high, t_low;
-+
-+			if (dev->bus_capacitance_pf == 400) {
-+				t_high = dev->clk_freq_optimized ? 160 : 120;
-+				t_low = 320;
-+			} else {
-+				t_high = 60;
-+				t_low = dev->clk_freq_optimized ? 120 : 160;
-+			}
-+
- 			ic_clk = i2c_dw_clk_rate(dev);
- 			dev->hs_hcnt =
- 				i2c_dw_scl_hcnt(dev,
- 						DW_IC_HS_SCL_HCNT,
- 						ic_clk,
--						160,	/* tHIGH = 160 ns */
-+						t_high,
- 						sda_falling_time,
- 						0,	/* DW default */
- 						0);	/* No offset */
-@@ -167,7 +177,7 @@ static int i2c_dw_set_timings_master(struct dw_i2c_dev *dev)
- 				i2c_dw_scl_lcnt(dev,
- 						DW_IC_HS_SCL_LCNT,
- 						ic_clk,
--						320,	/* tLOW = 320 ns */
-+						t_low,
- 						scl_falling_time,
- 						0);	/* No offset */
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 8286edd60..c49d5cce5 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -983,6 +983,7 @@ struct nfs_server *nfs_alloc_server(void)
+ 	INIT_LIST_HEAD(&server->layouts);
+ 	INIT_LIST_HEAD(&server->state_owners_lru);
+ 	INIT_LIST_HEAD(&server->ss_copies);
++	INIT_LIST_HEAD(&server->ss_src_copies);
+=20
+ 	atomic_set(&server->active, 0);
+=20
+diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
+index 28704f924..531c9c20e 100644
+--- a/fs/nfs/nfs42proc.c
++++ b/fs/nfs/nfs42proc.c
+@@ -218,7 +218,7 @@ static int handle_async_copy(struct nfs42_copy_res *res,
+=20
+ 	if (dst_server !=3D src_server) {
+ 		spin_lock(&src_server->nfs_client->cl_lock);
+-		list_add_tail(&copy->src_copies, &src_server->ss_copies);
++		list_add_tail(&copy->src_copies, &src_server->ss_src_copies);
+ 		spin_unlock(&src_server->nfs_client->cl_lock);
+ 	}
+=20
+diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+index 877f682b4..00516982b 100644
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -1596,7 +1596,7 @@ static void nfs42_complete_copies(struct nfs4_state_o=
+wner *sp, struct nfs4_state
+ 			complete(&copy->completion);
  		}
--- 
-2.43.0
+ 	}
+-	list_for_each_entry(copy, &sp->so_server->ss_copies, src_copies) {
++	list_for_each_entry(copy, &sp->so_server->ss_src_copies, src_copies) {
+ 		if ((test_bit(NFS_CLNT_SRC_SSC_COPY_STATE, &state->flags) &&
+ 				!nfs4_stateid_match_other(&state->stateid,
+ 				&copy->parent_src_state->stateid)))
+diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
+index 1df86ab98..793a4a610 100644
+--- a/include/linux/nfs_fs_sb.h
++++ b/include/linux/nfs_fs_sb.h
+@@ -240,6 +240,7 @@ struct nfs_server {
+ 	struct list_head	layouts;
+ 	struct list_head	delegations;
+ 	struct list_head	ss_copies;
++	struct list_head	ss_src_copies;
+=20
+ 	unsigned long		delegation_gen;
+ 	unsigned long		mig_gen;
+--=20
+2.31.1
+
+
 
 
