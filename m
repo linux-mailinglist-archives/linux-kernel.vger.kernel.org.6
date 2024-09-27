@@ -1,248 +1,470 @@
-Return-Path: <linux-kernel+bounces-342274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F22988D01
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 01:33:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863A4988D06
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 01:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9B891C210A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:33:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7334B1F21FB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9231B2515;
-	Fri, 27 Sep 2024 23:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62EA19D8AD;
+	Fri, 27 Sep 2024 23:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b="dfqTDqOF"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2110.outbound.protection.outlook.com [40.107.102.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XjcGzdvW"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23801EEAA;
-	Fri, 27 Sep 2024 23:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.110
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727480014; cv=fail; b=s78/KnblhrxKdeY5gD+zIkxpjyKQguayalMmlNPkdaXv+239/0h6AiM/1SfuWt5F7RXaKl/mSEg1ne0TvwXhH3Ybzc/eYg6HcCLIwys4KT64f97Ckj/owsg+8nLkGTqiNmIerAIu6Cvc2R7nfIADOnkqpFZjJGo1GFbLLpRZmHQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727480014; c=relaxed/simple;
-	bh=IOqgk0h/LNnsaFua+vP48UoiW53g+A/SidSZQixR+QI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=cojLZTuMJerfaNspFHatDMaw0xYKdjtp9wjDLaAEjS/8CGgjiyFg0nWu0vb4L6yB2db8GrJdMxdZX8KdqbuoCyYluqSib4Zsc+QWBeH+xcOJXl6hBiB0YR+RGOle9qC5Whs6J792rBQY8W2CRgse4r5l5L5tT/Ah+hTBB+iBKgI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com; spf=pass smtp.mailfrom=phytec.com; dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b=dfqTDqOF; arc=fail smtp.client-ip=40.107.102.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xs3RxVZBGbi6Lujhu7oVLjSb4dT3ZftujkmqiCnZMgbZU8SxRSEyjOssc543s6bMnE4JcVfe0AxjSrl6+vCog6mvRBfEVncD1SZlO44NCLdGFrsopASBw4o2tWsznd0yJk47dVcY3qaoeMLLVdwPwUW1Pwx9vuW6ijK8Sw0dB2Hr5S8q385H8HEGlAe/gJPd3iZU0M3yh2BuvQqnCdEe+e/9JWN8o4irCOImTngx7Frl25k0fqKB/9H8v7v0ZiIttcEQXYGQa4nkNuleVsMhy5Z0GHYPT8zGM1khot379A39IjTON3QBA5Nvl3zabeOZpbupDqXmLfCVHHfH6MzX1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wyjNvd8M/2lae61xTa9xAYZ9jL2jLFYCHVSHlEIF46w=;
- b=L4S2zuHnQEuwdaxivZsjIoR0RYjB5wGs189kCI6wZMLeqa5dAeRDKbxtSwPzvPHm4mBOhpJzc5pPYpB5jq/8wOU+OQ2qn4s0LW8CebpasDzasxdABmYf5v5CE+on42dasxi9yu7CvRezbkqXsfQ1jKfE7Jor6cYKLorwzr/UHU6PlL6DeXqoPWl1MkwBH7IILdJtDz0jav2xAeoJEJqI5X1zbmAjkhfPRBjtWr8uQJQmIEOw3MHx5C+ABqb9WlO+MNuwDDkLMZ0hyzF4lQVUVlM43uVa/NXK9TeFIwwziQU3u/sHoxVAM0EzN9D8R4+CHvG50CLMu6ggIRjWq98umA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=phytec.com; dmarc=pass action=none header.from=phytec.com;
- dkim=pass header.d=phytec.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wyjNvd8M/2lae61xTa9xAYZ9jL2jLFYCHVSHlEIF46w=;
- b=dfqTDqOFAZoWnUqbKw77H45hxE1wtN4STne4lo4PqLI90ftN3oof+vK1e+rgbYywORHDr1IR5NTo9CzApP6ROFLU0jPt4/iREzW4U4Gdeu8nxJBdaO7dVyuHbzBV0qYk5CEgWVdGmF4xfPoMleNgrJ/tLdkR4BstrLf2vAOCkyI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=phytec.com;
-Received: from SJ2PR22MB4354.namprd22.prod.outlook.com (2603:10b6:a03:537::8)
- by CO3PR22MB3278.namprd22.prod.outlook.com (2603:10b6:303:178::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.21; Fri, 27 Sep
- 2024 23:33:29 +0000
-Received: from SJ2PR22MB4354.namprd22.prod.outlook.com
- ([fe80::789c:e41e:1367:383d]) by SJ2PR22MB4354.namprd22.prod.outlook.com
- ([fe80::789c:e41e:1367:383d%5]) with mapi id 15.20.7982.022; Fri, 27 Sep 2024
- 23:33:28 +0000
-Message-ID: <bf3ea670-4759-462b-8694-87db180ee4b8@phytec.com>
-Date: Fri, 27 Sep 2024 16:33:26 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: ti: am62-phycore-som: Increase cpu
- frequency to 1.4 GHz
-To: Nishanth Menon <nm@ti.com>
-Cc: vigneshr@ti.com, kristo@kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, w.egorov@phytec.de,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, upstream@lists.phytec.de
-References: <20240913175625.3190757-1-ggiordano@phytec.com>
- <20240913175625.3190757-2-ggiordano@phytec.com>
- <20240913180949.dlw3k6epqmzlpuu5@studied>
-Content-Language: en-US
-From: Garrett Giordano <ggiordano@phytec.com>
-In-Reply-To: <20240913180949.dlw3k6epqmzlpuu5@studied>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0206.namprd04.prod.outlook.com
- (2603:10b6:303:86::31) To SJ2PR22MB4354.namprd22.prod.outlook.com
- (2603:10b6:a03:537::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFDF3C6BA
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 23:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727480396; cv=none; b=BM7qHJ/YdwkqF0YwYthqF/wBX8VrkT7K8zdKd5SVfw0Dh+KGZExQhyHHZ9simzjy7CMmEGzKxC5nrxd2K68rYQOvrUs0eE/NHzYDQkbpbc1rb7PJnNIXewBYft8IqySm3Su/nqqIuHdvQStsv2n/uY3tzYmYYq4BT/VJ4+uq69U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727480396; c=relaxed/simple;
+	bh=04+q+3sihcg5yBNZf50qXKnEGuNZu6Y1RC+MVx8ax6U=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=fvl9q81gcYGl9JU/6oBQj/QA2JHHj9bouvGn28Vp2cH8xrWUhqJqYSwKiE0QiiiLDQY77wjXmRGFvok+6+rh4nOCg6x2bcLx3ggTtm7OoJFNtG/h1NbeObhfzBZ3868s0w7WvMXTNdCSG3eyqAR7igYqh+5MFXl+C2R2KHyvbxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XjcGzdvW; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c42f406e29so3317287a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 16:39:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727480393; x=1728085193; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7TryZeK2Kos3KKpHAebxMKpIIfHZPCpKrvsN7ghxB5c=;
+        b=XjcGzdvW6gpXvDZJEovJR3AykEYhbGPp+ihNUfjN0DrmEybVBQ64afBNmUhpqTJsuR
+         fQmqLC3i424DKJL95C4XQuJBqSN2iOmeLpSIc/wck5js1JiVelqTf2BvJ9tNdF9H83s9
+         +6oHUSyoSpdo+kNaGjSJrpnwl4ZKBPbhjYc9dNCuDSBBFhAp3a3BRez1pRKDXY9RvSml
+         aE5na0HeEF3uGfR3vAub2BHeaUtKIOEsp4ZU4XlHSeq9HNRkQY6pzxdeCnmD8D9tus37
+         QNw1QX75TotITpMjxtyquxGn0er4H/cVHh3gLt53VoxcGw23NB1fIXMTw/LePi+N2a9k
+         63Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727480393; x=1728085193;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7TryZeK2Kos3KKpHAebxMKpIIfHZPCpKrvsN7ghxB5c=;
+        b=ju1pX1SInFAOvYBxc9/Ha0vxnwLMQLStixXnp06En2MAtOeoaIFR9K8xPT2+fa2E0B
+         NGOSsEOV+UG605naQG0y28mXzfi86OlFWU/zfXpIrx7ARV11IWpxI0TxaYg2S4n4qTq7
+         bWY+MFvWLGT0X/yiaHCe2aCeFiNTwwVSfDpq0LVWpB24eHTi4mx9hfR6J19f46wVTXKL
+         V0Y7EaBe8nKMFsMxfLOrRUcdUPqTeY/IZRDCz2nIVaYVqWpLuE1uMS/aDVDGwnG8JbYI
+         e8Q0oFMxGsOaBpLuMO7yRwmcySXquBosrLF6WJ4FoX1n7xPCFkNAWxlw7DPofKcatfXf
+         u0sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW06OgX9bPVsRGlSADNTmQyArXpkgoVD4oiX7ZhQEFcmHgUdA08tb2wkKy8rjWHDUX+ZcMYp7z0Ezp+0+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz29AuCtfXrDU5LRz9ozk69yyRnnWEeAahI4K97+jFgs4R5ZdGu
+	geDq3pAjq5LA33RCXC4YbUhDfHrhx1hBbw/w61JNO9zkC1TG+oleDb7RvS1YwmaMqFU1WvUqmiN
+	t20WzuJy0sUg63EV+bnJLVjL97O4=
+X-Google-Smtp-Source: AGHT+IHkfaOevsltuWcj7+YnivigBZ4Ra1hTSIEB76ApixftmSlbEAniaqu2ShpduxnI3FVZLYiwsLWldyhu/QhV30A=
+X-Received: by 2002:a17:907:f74d:b0:a93:d5d3:f860 with SMTP id
+ a640c23a62f3a-a93d5d400f1mr121634966b.38.1727480392614; Fri, 27 Sep 2024
+ 16:39:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR22MB4354:EE_|CO3PR22MB3278:EE_
-X-MS-Office365-Filtering-Correlation-Id: 753cccdb-e8ad-4579-cd38-08dcdf4cca7b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|366016|376014|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MDZpK2dEalVnQks0ZzFxdUs3enhjRmhjb2FVQzAwVm1XVmxDK1lNcFNJcE9v?=
- =?utf-8?B?S1QvbHBUaHhaMHQ5OWZuZnVlWHFYRmxMczkrTHcwdWFqZnZNYUhzOHp6NkpB?=
- =?utf-8?B?OFMyZUpsdDROQjFSNVFFTTBRWUhKcExydU5NeVJoWEloRGZ1OGUwSE1rSmhY?=
- =?utf-8?B?VjN3S0ZhQ3lNQjd0RmdWc1dVN2JVZHl1ZlBSNHh3SjBJYUVqSUV3M0VaSW1u?=
- =?utf-8?B?RlNreTE2VlFJTzZIdDRIeWlsWlg3QUw5ZjRDTUFIMDA0N2hNOEpqK0s1NXlV?=
- =?utf-8?B?YjlwZjEyQUVFRFZzNmxaaUgrZlNiYzE3ckIvL2d2cTAza0hIZFVsbWlRanp3?=
- =?utf-8?B?QTVqU2gzQnVmNnY0TTRiM2R0aVBsMTVpR3ByOXNaS1ZpbVRhRFh0OHBZRFBl?=
- =?utf-8?B?bVJ4NnplazRlM3dicnRMQ2F2S3JJdnhZUldqU2kyQjNuZmFhbmNxRm5jWmJy?=
- =?utf-8?B?UUl3S3hzTnFCaEYveDJndWt3aEdqdVQ1SWRMZ2ovbklMLzlUYkxqdFdyZTJv?=
- =?utf-8?B?R2Z6V2hKOXRtN09SWEZUMm5kN1VWcTRvd3VIdkhPU1Brb1QxNW94WVh6UmVY?=
- =?utf-8?B?Wmh4bzh5Nk9CTWhkWjV0VHRhakFWMXc0RkZ3bytGOXVBbkFXc01NWWo4Ti9i?=
- =?utf-8?B?Nk9iUFB5amtjZEgwenVqdktoWWxpM1BDcS9CVjRoRE5GQUdRRVpBdE1ZVFdG?=
- =?utf-8?B?NWx5Q3Vwd0ppSXlUSC9qR0N3K3ZmU3RCTVJZMk0wRXFaQWo3SVZ2QkV5cVhQ?=
- =?utf-8?B?amNUaWRySmErWnA1clJ3YnVDRFBLTnUzMCtOdWVDRUlWdWtaczBZdGkrQUV4?=
- =?utf-8?B?YWFQSVFQN0VhREJLNXZMT085UDNINGRtQVFFM3pxUGp5ejUwUWl1V2xCMEFL?=
- =?utf-8?B?bUR0QWVQaTIvUGxwcjdncTdVVXhsMnhnQXRTa1NYOHQvTzlQUENscVl1cFJE?=
- =?utf-8?B?dXZhRVpwQnR0TkE2Yjl0cmp4Z2R6Qmtlb2NDOXNaK2l5N1prWVAxVW1kbXEw?=
- =?utf-8?B?T2kzSEg5dVBsMkhvYXErc2NhT1pZQ2dvYTI0N3l3aUhQMldGMVhKdzR6am1Y?=
- =?utf-8?B?OTl5ekFJMGZSL0lnOUExU0NGeTdETExvV1ZlMDl3QkVkMW9lOVFDTE9MelBV?=
- =?utf-8?B?T1EzaytXOHp0cVFGenJOQzBaVVFlNG9mUG5RSllIZm9JeExjTWFxSm1iQ2s4?=
- =?utf-8?B?bnNseFI5bkdDaU1VeVlieDdWVVcxWjl3aGJxZzdNUmtPWXB5WFZqNEF3SzVi?=
- =?utf-8?B?MlNPYmd5MExVQmRTZk0wNXpDeWxxSy8zTjRIaWl1dXRvbG8yMW5vQ0JkRDN6?=
- =?utf-8?B?NHJwOWRpM2lhNGNSQlVPNDE3dGs3Tmc4Y0JXcC9VTXFjYklTc3dkVWNnS0NU?=
- =?utf-8?B?TkZUanUxc0swM3RUcnpQRlBaWVFZc2VteUJzcGJiS2F5VmdyMlhabm9uQmxH?=
- =?utf-8?B?UERzSGd3a3NrellLdFkxSzRaUmpYRXpRN1AwNjZRTS95cVNBRmh2a3dZRmIr?=
- =?utf-8?B?dkhaZEx4empVbDcwVVZ0bkticEsyVnVxZlNzNHhHZEZjaFlGVUNjWENBZVFq?=
- =?utf-8?B?cXpnRUVFZWNSUzR5RUwwL0lTUGFlU0s3QzJ6QllGYUkxb2t0c1ZiYUR0dXc3?=
- =?utf-8?B?T1h4U2JVR1pSNmVXdlBsdXVIYnBob2lESDBVNEJadklrajR0dWpTZXNnM1NG?=
- =?utf-8?B?SE5sZmM2dVN0eHYzWkZtejl4Y3ZhaEt6YzZVbXB4YWU3Q1RaNVhYUGF4SXZZ?=
- =?utf-8?B?MFMyVTN1SlUwMUE0Y1l6Zkk3YnBuOE5qSElldm1ReWVNRzJ0UFlxdnRWSmQ2?=
- =?utf-8?B?ZU9LS3k1MmhiWkxrMk9lUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR22MB4354.namprd22.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(10070799003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TW41ckovSkJReUlqUlBNcnpFQ2FtSGZBOFU4dUtBaDBxcTZLaVFoYUZpWkdn?=
- =?utf-8?B?NVExODhubkpMVzhVNDU2SUR1TWRDR2t0bmE4L1QwdjBtdnN3SFFQSXF1MUxG?=
- =?utf-8?B?Y1FKZWRzT1R3WUdxZFZNMzk3b01hTGFUWUk1SFRZNWNrSDR6dkpCY2pEMEpC?=
- =?utf-8?B?cW5uMTBzYTZKUE5YYWRRMjFWNitNYzl2TmFWOFUvSkRrRnAxTkc2U0NKRS8y?=
- =?utf-8?B?QnRwc2hsRlpVd0xFeFkwMHlXQlJJVDk2cXBSY0JDWHAvb21NWXhENFFTMFFX?=
- =?utf-8?B?YkE1YitZL3UwSTdLMmFRTDduUThsQ21KMjBIVkh6UkJoVGZqSmE2b1VKWmJX?=
- =?utf-8?B?bXBsZGNNQkZnV2FZUXZrMGtqdVdVaDRJVmpEQTRKa20rTjl3azlDRGVRS1F5?=
- =?utf-8?B?WG1ZbUY1NStKNW0xakRmYi9BWDU1b0V1TDkzakVLdzBBbDA4ZGFoY0t1RCtP?=
- =?utf-8?B?SnVYbG8yczQ0RWNncmxUeE5waEx2eXZ5Nkk3WURPRjU2amQ2cVI2T0Y1VDRu?=
- =?utf-8?B?ek1RZnJjdHJjNzliU0xPcFpRcERlMm43T2dYcnQrYnZCY2l3ZFdVWUZ2K1V6?=
- =?utf-8?B?VmZ6Rm04Q3NqU3NpRWcxTVA5WndpUmh4NUdXbFBwMFNoZGZYcktTVUcxSHY2?=
- =?utf-8?B?UlVaOTYrSGdMaTFVVWhLZWVVa0pMU2M2ZnExY3E0T0FZeUxiQ20wRWExNWZH?=
- =?utf-8?B?bm55SHZmc1NEdUxNdVFBTlJTM2c4NTNCZFVnOTlMQ1pKaGxSNGtQTE1EdzVt?=
- =?utf-8?B?NHV2eG1sTXRTb2VOejJ6QTYrRG1IQ0trYW5udmRnZ3JwTGwxYkp0WWhTaXlR?=
- =?utf-8?B?cVlxTWdLejVJQkdZVzhINW8yQS9GZUpvZzIwMFBWOTJpOU5SZWl2NzdYNW1q?=
- =?utf-8?B?NEpWaUxmbVc3ZnRhdlBQVkV3Mmp5RzlWMk0xaFI3VDhsUDdoa0doeGh5RG9w?=
- =?utf-8?B?RTM1M1cyL1ZzSlc3cndjTDN2eEpPbk1Nci9tQk04TDRsTHU5dU9nYnN6M1ZJ?=
- =?utf-8?B?M0doVmhoT0RxTEhkakI3Y0xaV2lrWWFrTnYyMTZMeDQzZkRZWW5QbUo2YnRl?=
- =?utf-8?B?QnByalJyNkxpYUxsUFlXZUpZalRYQ21NQjBaSXF1RkFtc2JVYVZFb0JNN3F5?=
- =?utf-8?B?VkZxSkQwTFFSY1ArYTNtNkpsUGNHdkZsVm1EaHg5aG1NRXRSVDVLTjNUajU1?=
- =?utf-8?B?NzRZb2xrRGhyU25yOXJ4ZVNrbGpHamJ0Mk95TW9uQWJMcUczajl4NjBDYXh2?=
- =?utf-8?B?SHU4N3hpenVGZFpqc2ZLL1RaVldkUGx0S0dNbldtTWRCSS9BVzlZMUNhbnpM?=
- =?utf-8?B?TWt4d0Y0Tnh5aDM3UVNPaXZZNGZkaVRSbnBIbXdaT09ibU41Vy82ZlZkd1Zn?=
- =?utf-8?B?ZVlKTnFJVzZiaHVPYTVRTkFoU2Z6WVB5aElpdDVmZ3ZpeDEwOUxYQjEyWjlV?=
- =?utf-8?B?RzhzdERLRHBtOXZMUkdmc0E2MCtyRk5WaXlDaHhYb2NFWGlrV0ZRamE4MTE0?=
- =?utf-8?B?QzBvVVNKOW80WlZNRTlYYzJRYTdNRzl6MURyMTBsc0h3M2M5OVRrQnJDMmM1?=
- =?utf-8?B?MXN1SWZrV1o1TURzVTJwTkJ1a2tUdmZ4NlREcDJSSStyamlhaGd1bGtKQzFU?=
- =?utf-8?B?S2MvMVBpN2djUG5OMVBmd0Y3QkRabzhXR09kZ3duV2JCNHZLbUVUamZBYkFR?=
- =?utf-8?B?WFhHWWJKcGExWWkwdkdsTnhycXlsZXVnY2tQVXdpYnpCNUJ4VlpQancxNXBj?=
- =?utf-8?B?RmVLRlFXeHBBQm1kY2FlMGl5L1BJMjYzRUZ1TTJkcDlNRFJXcWxWYjFpLzFk?=
- =?utf-8?B?Witja0gxNnZCTmozVkhFQTVhaE1BRjdTMlVkRm9GUGpRd0xNeHNrc0VBOUxF?=
- =?utf-8?B?ZXJtSU5MM3dnYVpDTjRteUJqNDlKcjREYXEwVnhUSTRYUmZkbzU4MUJKOE1k?=
- =?utf-8?B?dFRiVGRMSGlEbTBVZ2Qva2o4MXJNRG5RY3dYSGxCeSttU0tvN29uTW5PeDds?=
- =?utf-8?B?S1hsM0dHRHZ5UlBjK0VNaE5qUkVOeTVtVmNPR1RzRnY1SHBOM0pJa2J4ZnBV?=
- =?utf-8?B?cFptdlA0MHdLdjZBR2h4WHFtOGtaY1JoTDUvQlpFc2V5SEtXMGdGQjY0NThM?=
- =?utf-8?B?NUNndzVUenozOFNrekEzc2RnaGc4aStDZmJWQlkzME03MjhYcHF5WTlLUEc2?=
- =?utf-8?Q?B0UuHBzZFRytRC7/xju3JWHN6YhFkjUFrUiStMjQ6KRb?=
-X-OriginatorOrg: phytec.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 753cccdb-e8ad-4579-cd38-08dcdf4cca7b
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR22MB4354.namprd22.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 23:33:28.8873
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 67bcab1a-5db0-4ee8-86f4-1533d0b4b5c7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7b51l8snIQFhYl/EkhJc2lIi7WqvfLj7rTR43PB+IMjLebRdQ6ryaD7BjLZ5liJD2LcmxyCiztA+avTT60+PcA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO3PR22MB3278
+From: Dave Airlie <airlied@gmail.com>
+Date: Sat, 28 Sep 2024 09:39:41 +1000
+Message-ID: <CAPM=9tyzGT9vTmFUBK51bJAT-fEsKMkfScQZCCEcHCX7Lq553w@mail.gmail.com>
+Subject: [git pull] drm fixes for 6.12-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hey Nishanth,
+Hi Linus,
 
-On 9/13/24 11:09, Nishanth Menon wrote:
-> On 10:56-20240913, Garrett Giordano wrote:
->> The am625 is capable of running at 1.4 GHz when VDD_CORE is increased
->> from 0.75V to 0.85V. Here we add a 1.4 GHz node to the a53_opp_table and
->> increase the VDD_CORE voltage accordingly.
-> The entire argument in introducing the 1.4Ghz overlay seems to have been
-> to let users have the choice. What has changed since then?
-
-I talked with the team and we came back with the following:
-
-- Our default PMIC configuration changed for 850000 uV / 1.4 GHz operations
-
-- All available users will receive a PCN on update with instructions 
-towards 850000 uV / 1.4 GHz operations
-
-These changes make this overlay obsolete.
-
->
-> Ref: commit 7a5775a3da906dab059b8de60a2b88f6016cb4b8
->
-> btw, instead of putting a patch to delete the dtso, you should
-> probably consider a revert patch instead.
-
-Thank you, I will send a v2 Monday reverting this patch instead. This 
-will also address the Makefile edits.
+Regular fixes for the week to end the merge window, i915 and xe have a
+few each, amdgpu makes up most of it with a bunch of SR-IOV related
+fixes amongst others.
 
 Regards,
+Dave.
 
-Garrett
+drm-next-2024-09-28:
+drm fixes for 6.12-rc1
 
->> Signed-off-by: Garrett Giordano <ggiordano@phytec.com>
->> ---
->>   arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi | 11 +++++++++--
->>   1 file changed, 9 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
->> index ac8959f3d953..8acbd4facf37 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
->> @@ -205,6 +205,13 @@ AM62X_IOPAD(0x01f4, PIN_INPUT, 0) /* (D16) EXTINTn */
->>   	};
->>   };
->>   
->> +&a53_opp_table {
->> +	opp-1400000000 {
->> +		opp-hz = /bits/ 64 <1400000000>;
->> +		opp-supported-hw = <0x01 0x0004>;
->> +	};
->> +};
->> +
->>   &mcu_m4fss {
->>   	mboxes = <&mailbox0_cluster0 &mbox_m4_0>;
->>   	memory-region = <&mcu_m4fss_dma_memory_region>,
->> @@ -265,8 +272,8 @@ pmic@30 {
->>   		regulators {
->>   			vdd_core: buck1 {
->>   				regulator-name = "VDD_CORE";
->> -				regulator-min-microvolt = <750000>;
->> -				regulator-max-microvolt = <750000>;
->> +				regulator-min-microvolt = <850000>;
->> +				regulator-max-microvolt = <850000>;
->>   				regulator-boot-on;
->>   				regulator-always-on;
->>   			};
->> -- 
->> 2.25.1
->>
->
+i915:
+- Fix BMG support to UHBR13.5
+- Two PSR fixes
+- Fix colorimetry detection for DP
+
+xe
+- Fix macro for checking minimum GuC version
+- Fix CCS offset calculation for some BMG SKUs
+- Fix locking on memory usage reporting via fdinfo and BO destroy
+- Fix GPU page fault handler on a closed VM
+- Fix overflow in oa batch buffer
+
+amdgpu:
+- MES 12 fix
+- KFD fence sync fix
+- SR-IOV fixes
+- VCN 4.0.6 fix
+- SDMA 7.x fix
+- Bump driver version to note cleared VRAM support
+- SWSMU fix
+- Display fixes
+
+amdgpu:
+- CU occupancy logic fix
+- SDMA queue fix
+The following changes since commit ae2c6d8b3b88c176dff92028941a4023f1b4cb91=
+:
+
+  Merge tag 'drm-xe-next-fixes-2024-09-12' of
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-next (2024-09-17
+14:53:34 +1000)
+
+are available in the Git repository at:
+
+  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-next-2024-09-28
+
+for you to fetch changes up to e7268dd9bb9953a9eb0df9948abf5195bf474538:
+
+  Merge tag 'amd-drm-fixes-6.12-2024-09-27' of
+https://gitlab.freedesktop.org/agd5f/linux into drm-next (2024-09-28
+08:42:53 +1000)
+
+----------------------------------------------------------------
+drm fixes for 6.12-rc1
+
+i915:
+- Fix BMG support to UHBR13.5
+- Two PSR fixes
+- Fix colorimetry detection for DP
+
+xe
+- Fix macro for checking minimum GuC version
+- Fix CCS offset calculation for some BMG SKUs
+- Fix locking on memory usage reporting via fdinfo and BO destroy
+- Fix GPU page fault handler on a closed VM
+- Fix overflow in oa batch buffer
+
+amdgpu:
+- MES 12 fix
+- KFD fence sync fix
+- SR-IOV fixes
+- VCN 4.0.6 fix
+- SDMA 7.x fix
+- Bump driver version to note cleared VRAM support
+- SWSMU fix
+- Display fixes
+- Backlight fixes
+
+amdgpu:
+- CU occupancy logic fix
+- SDMA queue fix
+
+----------------------------------------------------------------
+Alex Deucher (10):
+      drm/amdgpu/gfx9.4.3: drop extra wrapper
+      drm/amdgpu: fix spelling in amd_shared.h
+      drm/amdgpu/gfx9.4.3: set additional bits on MEC halt
+      drm/amdgpu/gfx9.4.3: Explicitly halt MEC before init
+      drm/amdgpu/bios: split vbios fetching between APU and dGPU
+      drm/amdgpu: clean up vbios fetching code
+      drm/amdgpu/mes11: reduce timeout
+      drm/amdgpu/mes12: reduce timeout
+      drm/amdgpu: fix vbios fetching for SR-IOV
+      drm/amdgpu: bump driver version for cleared VRAM
+
+Alex Hung (2):
+      drm/amd/display: Check null pointer before dereferencing se
+      drm/amd/display: Remove always-false branches
+
+Andrew Kreimer (1):
+      drm/amdgpu: Fix a typo
+
+Aric Cyr (2):
+      drm/amd/display: 3.2.300
+      drm/amd/display: 3.2.301
+
+Arun R Murthy (1):
+      drm/i915/display: BMG supports UHBR13.5
+
+Asad Kamal (2):
+      drm/amd/pm: Update SMUv13.0.6 PMFW headers
+      drm/amdgpu: Fix get each xcp macro
+
+Aurabindo Pillai (1):
+      drm/amd/display: Fix underflow when setting underscan on DCN401
+
+Bob Zhou (1):
+      drm/amdgpu: Fix missing check pcie_p2p module param
+
+Charlene Liu (2):
+      drm/amd/display: Use full update for swizzle mode change
+      drm/amd/display: Clear cached watermark after resume
+
+Christian K=C3=B6nig (5):
+      drm/amdgpu: nuke the VM PD/PT shadow handling
+      drm/amdgpu: explicitely set the AMDGPU_GEM_CREATE_VRAM_CONTIGUOUS fla=
+g
+      drm/amdgpu: remove amdgpu_pin_restricted()
+      drm/amdgpu: use GEM references instead of TTMs v2
+      drm/amdgpu: sync to KFD fences before clearing PTEs
+
+Daniel Sa (1):
+      drm/amd/display: Emulate Display Hotplug Hang
+
+Dave Airlie (4):
+      Merge tag 'drm-intel-next-fixes-2024-09-19' of
+https://gitlab.freedesktop.org/drm/i915/kernel into drm-next
+      Merge tag 'drm-xe-next-fixes-2024-09-19' of
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-next
+      Merge tag 'drm-intel-next-fixes-2024-09-26' of
+https://gitlab.freedesktop.org/drm/i915/kernel into drm-next
+      Merge tag 'amd-drm-fixes-6.12-2024-09-27' of
+https://gitlab.freedesktop.org/agd5f/linux into drm-next
+
+David Belanger (1):
+      drm/amdgpu: Fix selfring initialization sequence on soc24
+
+Dillon Varone (1):
+      drm/amd/display: Block timing sync for different output formats in pm=
+o
+
+Frank Min (2):
+      drm/amdgpu: update golden regs for gfx12
+      drm/amdgpu: fix PTE copy corruption for sdma 7
+
+Imre Deak (1):
+      drm/i915/dp: Fix AUX IO power enabling for eDP PSR
+
+Jack Xiao (2):
+      drm/amdgpu/mes12: switch SET_SHADER_DEBUGGER pkt to mes schq pipe
+      drm/amdgpu/mes12: set enable_level_process_quantum_check
+
+Jesse Zhang (1):
+      drm/amdkfd: clean up code for interrupt v10
+
+Jos=C3=A9 Roberto de Souza (1):
+      drm/xe/oa: Fix overflow in oa batch buffer
+
+Jouni H=C3=B6gander (1):
+      drm/i915/psr: Do not wait for PSR being idle on on Panel Replay
+
+Kenneth Feng (1):
+      drm/amd/pm: update workload mask after the setting
+
+Kent Russell (2):
+      drm/amdkfd: Move queue fs deletion after destroy check
+      drm/amdgpu: Retry i2c transfer once if it fails on SMU13.0.6
+
+Le Ma (2):
+      drm/amdgpu: add psp funcs callback to check if aux fw is needed
+      drm/amdgpu: load sos binary properly on the basis of pmfw version
+
+Leo Ma (1):
+      drm/amd/display: Add HDMI DSC native YCbCr422 support
+
+Lijo Lazar (1):
+      drm/amdgpu: Fix XCP instance mask calculation
+
+Mario Limonciello (2):
+      drm/amd/display: Validate backlight caps are sane
+      drm/amd/display: Allow backlight to go below
+`AMDGPU_DM_DEFAULT_MIN_BACKLIGHT`
+
+Martin Tsai (1):
+      drm/amd/display: Clean up dsc blocks in accelerated mode
+
+Matthew Auld (5):
+      drm/xe/vram: fix ccs offset calculation
+      drm/xe/client: fix deadlock in show_meminfo()
+      drm/xe/client: add missing bo locking in show_meminfo()
+      drm/xe/client: use mem_type from the current resource
+      drm/xe/bo: add some annotations in bo_put()
+
+Matthew Brost (1):
+      drm/xe: Do not run GPU page fault handler on a closed VM
+
+Michal Wajdeczko (1):
+      drm/xe/guc: Fix GUC_{SUBMIT,FIRMWARE}_VER helper macros
+
+Mukul Joshi (2):
+      drm/amdkfd: Update logic for CU occupancy calculations
+      drm/amdkfd: Fix CU occupancy for GFX 9.4.3
+
+Nicholas Kazlauskas (1):
+      drm/amd/display: Block dynamic IPS2 on DCN35 for incompatible FW vers=
+ions
+
+Peichen Huang (1):
+      drm/amd/display: Restructure dpia link training
+
+Relja Vojvodic (1):
+      drm/amd/display: Add fullscreen only sharpening policy
+
+Robin Chen (1):
+      drm/amd/display: Round calculated vtotal
+
+Roman Li (2):
+      drm/amd/display: Add dmub hpd sense callback
+      drm/amd/display: Update IPS default mode for DCN35/DCN351
+
+Ryan Seto (1):
+      drm/amd/display: Implement new DPCD register handling
+
+Saleemkhan Jamadar (1):
+      drm/amdgpu/vcn: enable AV1 on both instances
+
+Samson Tam (2):
+      drm/amd/display: Use SDR white level to calculate matrix coefficients
+      drm/amd/display: Add debug options to change sharpen policies
+
+Sreekant Somasekharan (1):
+      drm/amdkfd: Add SDMA queue quantum support for GFX12
+
+Srinivasan Shanmugam (1):
+      drm/amd/display: Fix kdoc entry for 'tps' in
+'dc_process_dmub_dpia_set_tps_notification'
+
+Sung Joon Kim (1):
+      drm/amd/display: Disable SYMCLK32_LE root clock gating
+
+Tao Zhou (1):
+      drm/amdgpu: disable GPU RAS bad page feature for specific ASIC
+
+Tim Huang (1):
+      drm/amdgpu: ensure the connector is not null before using it
+
+Tobias Jakobi (1):
+      drm/amd/display: handle nulled pipe context in DCE110's set_drr()
+
+Ville Syrj=C3=A4l=C3=A4 (1):
+      drm/i915/dp: Fix colorimetry detection
+
+Yan Zhen (2):
+      drm/amdgpu: fix typo in the comment
+      drm/amd/display: fix typo in the comment
+
+Yihan Zhu (1):
+      drm/amd/display: Enable DML2 override_det_buffer_size_kbytes
+
+ZhenGuo Yin (1):
+      drm/amdgpu: skip coredump after job timeout in SRIOV
+
+Zhikai Zhai (1):
+      drm/amd/display: Skip to enable dsc if it has been off
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h                |   4 -
+ drivers/gpu/drm/amd/amdgpu/amdgpu_aca.c            |   2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v9.c  | 104 ++++++-------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v9.h  |   5 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c   |   2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_bios.c           |  64 ++++++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c         |  89 +----------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_display.c        |   4 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c            |   3 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c            |  13 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h            |   2 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_job.c            |   5 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c         | 132 ++---------------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.h         |  23 ---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c            |  31 +++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.h            |   4 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c            |   7 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ras_eeprom.c     |   2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_sync.c           |  30 ++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_sync.h           |   1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c            |   2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h          |  11 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c           |   1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c             |  23 +--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm_pt.c          |  56 +------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm_sdma.c        |  19 +--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_xcp.h            |   2 +-
+ drivers/gpu/drm/amd/amdgpu/aqua_vanjaram.c         |  32 ++--
+ drivers/gpu/drm/amd/amdgpu/dce_v10_0.c             |   2 +
+ drivers/gpu/drm/amd/amdgpu/dce_v11_0.c             |   2 +
+ drivers/gpu/drm/amd/amdgpu/dce_v6_0.c              |   2 +
+ drivers/gpu/drm/amd/amdgpu/dce_v8_0.c              |   2 +
+ drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c             |  14 +-
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c            |  20 ++-
+ drivers/gpu/drm/amd/amdgpu/imu_v11_0.c             |   2 +-
+ drivers/gpu/drm/amd/amdgpu/mes_v11_0.c             |   2 +-
+ drivers/gpu/drm/amd/amdgpu/mes_v12_0.c             |  14 +-
+ drivers/gpu/drm/amd/amdgpu/nbio_v2_3.c             |   2 +-
+ drivers/gpu/drm/amd/amdgpu/psp_v13_0.c             |  17 +++
+ drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c             |   2 +-
+ drivers/gpu/drm/amd/amdgpu/sdma_v7_0.c             |   7 +-
+ drivers/gpu/drm/amd/amdgpu/smuio_v9_0.c            |   2 +-
+ drivers/gpu/drm/amd/amdgpu/soc24.c                 |  23 +--
+ drivers/gpu/drm/amd/amdgpu/vcn_v4_0_5.c            | 165 -----------------=
+----
+ .../gpu/drm/amd/amdkfd/kfd_device_queue_manager.c  |  24 +++
+ .../gpu/drm/amd/amdkfd/kfd_device_queue_manager.h  |   3 +
+ drivers/gpu/drm/amd/amdkfd/kfd_int_process_v10.c   |  15 --
+ drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v12.c   |   4 +
+ drivers/gpu/drm/amd/amdkfd/kfd_process.c           |  30 +++-
+ .../gpu/drm/amd/amdkfd/kfd_process_queue_manager.c |   2 +-
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  86 ++++++++---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h  |   2 +-
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |   4 +-
+ .../drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c    |   1 +
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c   |   1 +
+ drivers/gpu/drm/amd/display/dc/basics/dce_calcs.c  |   2 +-
+ drivers/gpu/drm/amd/display/dc/clk_mgr/clk_mgr.c   |   9 +-
+ .../amd/display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c   |   6 +
+ drivers/gpu/drm/amd/display/dc/core/dc.c           |  41 ++++-
+ drivers/gpu/drm/amd/display/dc/dc.h                |  14 +-
+ drivers/gpu/drm/amd/display/dc/dc_dp_types.h       |  12 ++
+ drivers/gpu/drm/amd/display/dc/dc_dsc.h            |   4 +-
+ drivers/gpu/drm/amd/display/dc/dc_spl_translate.c  |  14 +-
+ .../display/dc/dml/dcn20/display_rq_dlg_calc_20.c  |   3 -
+ .../dc/dml/dcn20/display_rq_dlg_calc_20v2.c        |   3 -
+ .../amd/display/dc/dml/dcn31/display_mode_vba_31.c |   9 --
+ .../drm/amd/display/dc/dml2/display_mode_core.c    |   6 +-
+ .../dc/dml2/dml21/dml21_translation_helper.c       |   4 +-
+ .../dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4_fams2.c  |   8 +-
+ drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c        |  15 +-
+ .../drm/amd/display/dc/hubbub/dcn35/dcn35_hubbub.c |   1 +
+ .../drm/amd/display/dc/hwss/dce110/dce110_hwseq.c  |  69 ++++++++-
+ .../drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c    |   2 +-
+ .../drm/amd/display/dc/hwss/dcn32/dcn32_hwseq.c    |  14 ++
+ .../drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c    |  13 ++
+ .../drm/amd/display/dc/link/hwss/link_hwss_dpia.c  |  31 +++-
+ .../gpu/drm/amd/display/dc/link/link_validation.c  |   7 +
+ .../display/dc/link/protocols/link_dp_capability.c |   5 +
+ .../display/dc/link/protocols/link_dp_training.c   |  80 ++++++++--
+ .../display/dc/link/protocols/link_dp_training.h   |  16 +-
+ .../dc/link/protocols/link_dp_training_8b_10b.c    |  21 +--
+ .../dc/link/protocols/link_dp_training_dpia.c      |  64 ++++----
+ .../dc/link/protocols/link_dp_training_dpia.h      |  19 +++
+ .../amd/display/dc/resource/dcn35/dcn35_resource.c |   1 +
+ .../display/dc/resource/dcn351/dcn351_resource.c   |   3 +-
+ drivers/gpu/drm/amd/display/dc/spl/dc_spl.c        |  54 +++++--
+ .../drm/amd/display/dc/spl/dc_spl_isharp_filters.c |  85 ++++++++++-
+ .../drm/amd/display/dc/spl/dc_spl_isharp_filters.h |   9 +-
+ drivers/gpu/drm/amd/display/dc/spl/dc_spl_types.h  |  15 +-
+ drivers/gpu/drm/amd/display/dmub/dmub_srv.h        |   1 +
+ drivers/gpu/drm/amd/display/dmub/inc/dmub_cmd.h    |  25 +++-
+ drivers/gpu/drm/amd/display/dmub/src/dmub_dcn35.c  |   1 +
+ .../drm/amd/display/modules/freesync/freesync.c    |   2 +-
+ drivers/gpu/drm/amd/include/amd_shared.h           |   2 +-
+ drivers/gpu/drm/amd/include/kgd_kfd_interface.h    |  10 +-
+ .../amd/pm/swsmu/inc/pmfw_if/smu_v13_0_6_pmfw.h    |   6 +-
+ .../gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c   |   6 +-
+ .../gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c   |   8 +-
+ .../gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c   |   3 +
+ .../gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c   |   6 +-
+ drivers/gpu/drm/i915/display/intel_ddi.c           |   2 +-
+ drivers/gpu/drm/i915/display/intel_dp.c            |  22 ++-
+ drivers/gpu/drm/i915/display/intel_psr.c           |  32 ++--
+ drivers/gpu/drm/i915/display/intel_psr.h           |   2 +
+ drivers/gpu/drm/xe/xe_bb.c                         |   3 +-
+ drivers/gpu/drm/xe/xe_bo.c                         |  14 ++
+ drivers/gpu/drm/xe/xe_bo.h                         |   6 +-
+ drivers/gpu/drm/xe/xe_drm_client.c                 |  50 +++++--
+ drivers/gpu/drm/xe/xe_gt_pagefault.c               |   6 +
+ drivers/gpu/drm/xe/xe_guc.h                        |   6 +-
+ drivers/gpu/drm/xe/xe_vram.c                       |   1 +
+ 111 files changed, 1134 insertions(+), 862 deletions(-)
 
