@@ -1,47 +1,62 @@
-Return-Path: <linux-kernel+bounces-341776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1FC9885F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:00:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80448988602
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2F352828BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:00:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 345B7281E52
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC04318E038;
-	Fri, 27 Sep 2024 13:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8DD18DF62;
+	Fri, 27 Sep 2024 13:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1Eunqo9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XG+nKQ2g"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024BA18CC00;
-	Fri, 27 Sep 2024 13:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DE116C6A1;
+	Fri, 27 Sep 2024 13:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727442009; cv=none; b=My6QOJjyRZ2HQVbR3gslLzK6SPYb78jBONzHQl8EZ8nDXxn8eYDeL6DO9/uVNVrLRLl5S/lojtgLTc6Q868gTYx0Qxh1YGSyXwcFNsBll+2j9Ql8K2AMj7o2Nw9hRJAjyUbJuroMQuEv4tG7rY88XeF0Xso/M8HXo+NKm08MlkU=
+	t=1727442163; cv=none; b=F1PRB8d4KKpT4C8xwk3YdluiTrEpQUrRiu8Of6lrZDnxYxDMPv3X+IBICybWIzSd1I9yu94AiYH41Ob2y+MLZu4UcTZXB8X14c07SzX7WpAMjCQFb/lBtBWteMc7+2XY1C02YBm371gaANIo0Ggkletyazy/t0lAyRAsVPlRSuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727442009; c=relaxed/simple;
-	bh=Ee0Q/JS6j6Be3GL0oiQfbUBPEIgHZRQob9pPgugKAqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NnxImrB5PJeFCMyD74uweoZQifQgeGeOg+Q6YhaO6/eSfiFp42pr7plrFXD/+o9jiV7vPK8Hh1SkPld4mnXPSUAUCpa/YbZZwPA0Jr4umRC/bhBWf34LPRUkaybGuRQf5JQytyfydDh+xHUj7Hh9Y0HcjZEYc6Y4qYT4jJZmoxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1Eunqo9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18F03C4CEC4;
-	Fri, 27 Sep 2024 13:00:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727442008;
-	bh=Ee0Q/JS6j6Be3GL0oiQfbUBPEIgHZRQob9pPgugKAqU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=u1Eunqo9tkpr0482d/migHpm/hJU6OBMCxPxgMJ+vnVKywAMzy1KmaeS9eo6DhkjV
-	 U5itVoEzX1HNJNPiof71DzlBMAhI8lsSEM3ALb2JyAIys3UDnKVgGTwAgfZu8GP41S
-	 muUOFprRBckjpzNlhVLldab0EYnIpjgOZYrcPxkJ97R+pCRR1h1HBYGae5ReZweTB5
-	 Zlv9PuBneIc8/6e9MQevN1SXCKBNzNJQLXRUYbPxu0ZKWgKVr6W11BhqX4IlEb5y0T
-	 dkXHuuQi8iFOnKtIEtVcc/EBrdhQbXpR3w2JlBTXDcwxRQabkmk6nZmHceoWeeCIs5
-	 MRtkjOw7B/Pug==
-Message-ID: <00fd0f7d-e05b-4140-9997-b4ffe0fcd8e9@kernel.org>
-Date: Fri, 27 Sep 2024 14:59:59 +0200
+	s=arc-20240116; t=1727442163; c=relaxed/simple;
+	bh=quDg/WTHOUWxyG4wdkg0y+YyZgY3G7BZqKrSLPoqeYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qXA0OwWeeS3CBwXtsLFyJMZXQB8r4LLYi0ykTbQAY+SOf+qNED9a5viyM5Aq24cN6Nnhx4Eop3ZCse1ZGKDRkW2YaSq028Ba6iEln3qHhmrsQ4mQHam8JP9cKt0wsByhHwcMJFXXLY8/NKBSzKNVM5eJckXAGDqbPuHQcAr6pgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XG+nKQ2g; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48RD04qW026375;
+	Fri, 27 Sep 2024 13:02:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4cB22I4o+uZPMHUCsQ4G8pU+CQy1I+qeGUQIDjJ0fEM=; b=XG+nKQ2gifreiJ6e
+	TrD+NHXiW3Kkp8kO01CkA6t8DvaOmE4hKrLs/LkbLEc5hySfITd6U9Ds4m2C03ad
+	GEtZl6i2F/xcMDBE0Fws3tEzZvE1x8y9AKDjQySqohD2uLHpr7KHLsFl0U262Grq
+	odvUokH01gKvZY3jDSlq5i8FoSwGjMdW7E0ZSW2nWBC4M6nlDxQQYHcZEpb+Ded8
+	TEqRyoltyIVYWKiuuoIhtF0yBA8L9qy076fmSOk5tse2DT9xmsllaa5kq368HZlt
+	fG1FK+p2Zfk5V93mT4T/37hGe3ynzYOHL/e4biUeBdcUtDtpC7eoksoPOB/KOagk
+	+/F4jA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41ww7080d6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 13:02:22 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48RD2L0o027936
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 13:02:21 GMT
+Received: from [10.50.40.232] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 27 Sep
+ 2024 06:02:13 -0700
+Message-ID: <64c24ac5-f689-4226-8f28-1f597aa3b892@quicinc.com>
+Date: Fri, 27 Sep 2024 18:32:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,105 +64,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH treewide 10/11] ARM: dts: nxp: imx: Switch to
- {hp,mic}-det-gpios
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Magnus Damm <magnus.damm@gmail.com>,
- Heiko Stuebner <heiko@sntech.de>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Paul Cercueil
- <paul@crapouillou.net>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
- Nicolin Chen <nicoleotsuka@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Adrien Grassein <adrien.grassein@gmail.com>, Adam Ford <aford173@gmail.com>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-mips@vger.kernel.org, alsa-devel@alsa-project.org,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <cover.1727438777.git.geert+renesas@glider.be>
- <7ff1bfb73a6d6fc71f3d751dbb7133b045853f64.1727438777.git.geert+renesas@glider.be>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH V2 2/9] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
+ binding
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
+        <dmitry.baryshkov@linaro.org>, <neil.armstrong@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_varada@quicinc.com>
+References: <20240927065244.3024604-1-quic_srichara@quicinc.com>
+ <20240927065244.3024604-3-quic_srichara@quicinc.com>
+ <ruti7hmkxkayzmqfbme6rw6j2vbhlx4ul4ptcckwamcpd4cyfx@owufhxwpvlcj>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <7ff1bfb73a6d6fc71f3d751dbb7133b045853f64.1727438777.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <ruti7hmkxkayzmqfbme6rw6j2vbhlx4ul4ptcckwamcpd4cyfx@owufhxwpvlcj>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: j_Hh1pZZyt3a_TVkV6tK8IgFT9N0cvtO
+X-Proofpoint-ORIG-GUID: j_Hh1pZZyt3a_TVkV6tK8IgFT9N0cvtO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 clxscore=1015
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409270094
 
-On 27/09/2024 14:42, Geert Uytterhoeven wrote:
-> Replace the deprecated "hp-det-gpio" and "mic-det-gpio" properties by
-> "hp-det-gpios" resp. "mic-det-gpios" in Freescale Generic ASoC Sound
-> Card device nodes.
+
+
+On 9/27/2024 2:13 PM, Krzysztof Kozlowski wrote:
+> On Fri, Sep 27, 2024 at 12:22:37PM +0530, Sricharan R wrote:
+>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>
+>> Add binding for the Qualcomm IPQ5424 Global Clock Controller
+>>
+>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>> ---
+>> [v2] Added the bindings as a part of ipq5332-gcc.yaml itself.
+>>       Difference between ipq5332 and ipq5424 being 2 additional phy's.
+>>
+>>   .../bindings/clock/qcom,ipq5332-gcc.yaml      |  57 +++-
+>>   include/dt-bindings/clock/qcom,ipq5424-gcc.h  | 156 +++++++++
+>>   include/dt-bindings/reset/qcom,ipq5424-gcc.h  | 310 ++++++++++++++++++
+>>   3 files changed, 508 insertions(+), 15 deletions(-)
+>>   create mode 100644 include/dt-bindings/clock/qcom,ipq5424-gcc.h
+>>   create mode 100644 include/dt-bindings/reset/qcom,ipq5424-gcc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+>> index 9193de681de2..aaa8b399c3b4 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+>> @@ -4,31 +4,24 @@
+>>   $id: http://devicetree.org/schemas/clock/qcom,ipq5332-gcc.yaml#
+>>   $schema: http://devicetree.org/meta-schemas/core.yaml#
+>>   
+>> -title: Qualcomm Global Clock & Reset Controller on IPQ5332
+>> +title: Qualcomm Global Clock & Reset Controller on IPQ5332 and IPQ5424
+>>   
+>>   maintainers:
+>>     - Bjorn Andersson <andersson@kernel.org>
+>>   
+>>   description: |
+>>     Qualcomm global clock control module provides the clocks, resets and power
+>> -  domains on IPQ5332.
+>> +  domains on IPQ5332 and IPQ5424.
+>>   
+>> -  See also:: include/dt-bindings/clock/qcom,gcc-ipq5332.h
+>> -
+>> -allOf:
+>> -  - $ref: qcom,gcc.yaml#
+>> +  See also::
+>> +    include/dt-bindings/clock/qcom,gcc-ipq5332.h
+>> +    include/dt-bindings/clock/qcom,gcc-ipq5424.h
+>>   
+>>   properties:
+>>     compatible:
+>> -    const: qcom,ipq5332-gcc
+>> -
+>> -  clocks:
+>> -    items:
+>> -      - description: Board XO clock source
+>> -      - description: Sleep clock source
+>> -      - description: PCIE 2lane PHY pipe clock source
+>> -      - description: PCIE 2lane x1 PHY pipe clock source (For second lane)
+>> -      - description: USB PCIE wrapper pipe clock source
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This has a run-time dependency on "ASoC: fsl-asoc-card: Add missing
-> handling of {hp,mic}-dt-gpios".
+> You cannot remove properties from top-level. Unify the list, so it uses
+> common part (ipq5332) and keep it here with minItems.  Then in allOf you
+> only control min/maxItems.
+> 
+ok, got it. Will fix in V3. Thanks !!
 
-Therefore this should wait a cycle. Patch is good, although maybe we
-should keep both properties for backwards compatibility?
-
-Subject: drop "nxp" prefix.
-
-> ---
->  arch/arm/boot/dts/nxp/imx/imx6qdl-sabresd.dtsi  | 4 ++--
->  arch/arm/boot/dts/nxp/imx/imx6sl-evk.dts        | 2 +-
->  arch/arm/boot/dts/nxp/imx/imx6sll-evk.dts       | 2 +-
->  arch/arm/boot/dts/nxp/imx/imx6sx-sdb.dtsi       | 2 +-
->  arch/arm/boot/dts/nxp/imx/imx6ul-14x14-evk.dtsi | 2 +-
->  arch/arm/boot/dts/nxp/imx/imx7d-sdb.dts         | 2 +-
-
-
-Best regards,
-Krzysztof
-
+Regards,
+  Sricharan
 
