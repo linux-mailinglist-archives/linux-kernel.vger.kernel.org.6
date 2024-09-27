@@ -1,149 +1,88 @@
-Return-Path: <linux-kernel+bounces-341401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690FB987F87
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:35:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD76987F89
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CE862820BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:35:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE522B21D96
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AE217C9F6;
-	Fri, 27 Sep 2024 07:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="drrEX/rw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944F117C9E8;
+	Fri, 27 Sep 2024 07:37:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37A7176FDF
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3549165EE3
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727422509; cv=none; b=DqNt80GK0M0EJQ8AvrBk6LOayMciuqzZhBMNTW9We6nBGQgDJyiUXRPOTkhjzWWnX+4OhuosGFaHsilhZfURAUKyNi72BSFpqgj2voBpav3wGKCrSY+2SiJLTYJNamznonZAcXMShhgh27xhzY0APxg4qiOhz0YoOCJFg81wheI=
+	t=1727422625; cv=none; b=UwY6DFNUuyz6Jr7kHPfW7JnK0MQ0/IaPwKSD6tusAisx4O6sXSshQXG52gv1UbvsvReeU1mdRqCw1aBjwwqN/4e5wEPFKClVEBKwTbkBokiuM4j60Cithq2Pm0VFMBgX0Fltu/T7/virEr6KRwVCWbSR753NXs8A4NCHDl5JgIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727422509; c=relaxed/simple;
-	bh=dl7KEC3bcA0zG29w0kvbzh2j7JbKLNg0ctUNe/5nXZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HgcbsDZNFHmz/waZ5o4ImsQ4zJfLVnyjUr0c/p4ecclL4zymR7BDtJdLTdI2mRTnmRquCS+f6f/OGOZHuyM/jGMRXU3unINE4uIfwm9JKdvpFANOSFpLzL9d5AR3f/ISIQJUWb9WcRbdtIOKAedO5m2aUiOn9SXEmF2Jtw0LAhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=drrEX/rw; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727422508; x=1758958508;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dl7KEC3bcA0zG29w0kvbzh2j7JbKLNg0ctUNe/5nXZ8=;
-  b=drrEX/rwneUYonRKN2CJ8cSPQBk7XWnd5JnN1fCj19o5zMeJGESj3Uxg
-   lzC6P9HXOg3l/OzWm7DlFGUyOb+5RQSMV/vG2K7BBVvZ5KXV2r25RMpsp
-   +zhwxIA3N83QJiUDoKLgp81mHSgsE9QrwbugwKIIs36gD6yr4rWjRGgEM
-   8hJYl/e9L9oxGx3s41qFoOEGsIrltcRlOa8PepOk0eGA6yciVWXMO9QO9
-   wOhhwfuGXgm9fsWwORc5dvWtNmUr+PNNuN8MofVXWbNUYzWUclm2Yb3mZ
-   Ls6VCY0lCsllhzQ7fMJsVBDvu6u7gl2l+CStE9BEf+wmbg/XUDyBkZMGj
-   g==;
-X-CSE-ConnectionGUID: 8J48D9jaRxSdn79gvb9nAQ==
-X-CSE-MsgGUID: d7feLK6nRp+ex1tr4PkUpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="30270224"
-X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
-   d="scan'208";a="30270224"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 00:35:07 -0700
-X-CSE-ConnectionGUID: wXRWhCHvTuKNDOX5qWfodg==
-X-CSE-MsgGUID: bH2h9b3jQhi6nOnMmjKtvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
-   d="scan'208";a="72444779"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 27 Sep 2024 00:35:04 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1su5VF-000Lex-1x;
-	Fri, 27 Sep 2024 07:35:01 +0000
-Date: Fri, 27 Sep 2024 15:34:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	heikki.krogerus@linux.intel.com, tzungbi@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, jthies@google.com, pmalani@chromium.org,
-	akuchynski@google.com,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/8] platform/chrome: cros_ec_typec: Thunderbolt support
-Message-ID: <202409271548.taoANDmm-lkp@intel.com>
-References: <20240925092505.7.Ic61ced3cdfb5d6776435356061f12307da719829@changeid>
+	s=arc-20240116; t=1727422625; c=relaxed/simple;
+	bh=pZ1uB/XJBjEl6D21v2+KHYZz/RwbUjAFWAp4RP1NzPw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tyrP9oqcyKy7fA+fntk2evZ367Yfnaueuy5WrxbavMAGkhwKvWQif6DVfOA+ijkmEyaKwpQ5Gvj91dJMCJvLuVSILRvOqvSPN4TBj79X0XbdUyMqZX01uwO7NW09ySlm1GX5WW9cUNWhOj+vQzzBBgl6bfmxJC39KMZbLK+8q9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3496b480dso500275ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:37:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727422623; x=1728027423;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lehVuHc/G3YmOIICMpiPm5yqzC+B6vqDGq6lwJPGaz0=;
+        b=a1c0wfsDCX6V1ZStdvnh5WdSsmfR/WE3Yk5eMquNVx34Na7FgWnv0Uhyv3IsLd5mG6
+         nw9J5D/YUJyN4GEg1ZygUkWBtow+Y7PBKvDJk9My2Uq6ijT8haCYTzwbZTiZOI6P+sj5
+         Em+Zpn9ILMHJZp3/bM6+1tk9EX2uFssS7ssjlxlrvPdIUm0jiuLFEsU8NN6E4OPIWe6J
+         UoZ+jnlSufOFp0Y1+p5Y6YkmY2UvVW6iZRLVUV8puAYyVuJod6dsrx4WhjRXF1LksxaN
+         IoFtM2dlUZaxYvW6YUtrfPoFKyp+GAYQ6fCkGW4gCptdI4q0S52TeAW2QcIZNojoZXDe
+         nwjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRheErOtWmZkYG7GaDtJU8/JXvyaJPWyn2GODZGiHfvXeuD/VtK8fJ2qxqwJyqqisCMsP17nW6i3v0O/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymUCQkiKk61IHTdP1HsrCnbC1YlDgY5T3c+bW1buL/gSWJWXXr
+	prHXxjXSrzodxDywo+pB9oKtMUXIMHpHrenkujkKxgUtOukVE7IiIl6t6MYYX4le1aqVdFYV9fO
+	DIA5qQ5yMAaRYVsTaKRRTyfa5VLeN/qfksXgmW5ygQZR0GNR85cMSJ1Y=
+X-Google-Smtp-Source: AGHT+IEpzlW7cze/+T+3UwIjnirvFs6E+EOntv3U7QiaD3/RHrulutVP/mU/HPA8uLNjjTnE+Ii/kMFgk68Gzr/2APctgN7uisyO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925092505.7.Ic61ced3cdfb5d6776435356061f12307da719829@changeid>
+X-Received: by 2002:a05:6e02:184a:b0:3a0:ab71:ed38 with SMTP id
+ e9e14a558f8ab-3a345179e33mr20985775ab.14.1727422623043; Fri, 27 Sep 2024
+ 00:37:03 -0700 (PDT)
+Date: Fri, 27 Sep 2024 00:37:03 -0700
+In-Reply-To: <k53rd76iiguxb6prfmkqfnlfmkjjdzjvzc6uo7eppjc2t4ssdf@2q7pmj7sstml>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f6609f.050a0220.46d20.0011.GAE@google.com>
+Subject: Re: [syzbot] [overlayfs?] general protection fault in ovl_llseek
+From: syzbot <syzbot+d9efec94dcbfa0de1c07@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, anupnewsmail@gmail.com, leocstone@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	miklos@szeredi.hu, skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Abhishek,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-[auto build test ERROR on chrome-platform/for-next]
-[also build test ERROR on chrome-platform/for-firmware-next usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.11 next-20240927]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Reported-by: syzbot+d9efec94dcbfa0de1c07@syzkaller.appspotmail.com
+Tested-by: syzbot+d9efec94dcbfa0de1c07@syzkaller.appspotmail.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Abhishek-Pandit-Subedi/usb-typec-Add-driver-for-Thunderbolt-3-Alternate-Mode/20240926-002931
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240925092505.7.Ic61ced3cdfb5d6776435356061f12307da719829%40changeid
-patch subject: [PATCH 7/8] platform/chrome: cros_ec_typec: Thunderbolt support
-config: i386-randconfig-r133-20240927 (https://download.01.org/0day-ci/archive/20240927/202409271548.taoANDmm-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240927/202409271548.taoANDmm-lkp@intel.com/reproduce)
+Tested on:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409271548.taoANDmm-lkp@intel.com/
+commit:         075dbe9f Merge tag 'soc-ep93xx-dt-6.12' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13ce159f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b2d4fdf18a83ec0b
+dashboard link: https://syzkaller.appspot.com/bug?extid=d9efec94dcbfa0de1c07
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=112c6aa9980000
 
-All errors (new ones prefixed by >>):
-
-   ld: drivers/platform/chrome/cros_typec_thunderbolt.o: in function `cros_typec_register_displayport':
->> drivers/platform/chrome/cros_typec_altmode.h:24: multiple definition of `cros_typec_register_displayport'; drivers/platform/chrome/cros_ec_typec.o:drivers/platform/chrome/cros_typec_altmode.h:24: first defined here
-   ld: drivers/platform/chrome/cros_typec_thunderbolt.o: in function `cros_typec_displayport_status_update':
->> drivers/platform/chrome/cros_typec_altmode.h:30: multiple definition of `cros_typec_displayport_status_update'; drivers/platform/chrome/cros_ec_typec.o:drivers/platform/chrome/cros_typec_altmode.h:30: first defined here
-
-
-vim +24 drivers/platform/chrome/cros_typec_altmode.h
-
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  10  
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  11  #if IS_ENABLED(CONFIG_TYPEC_DP_ALTMODE)
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  12  struct typec_altmode *
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  13  cros_typec_register_displayport(struct cros_typec_port *port,
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  14  				struct typec_altmode_desc *desc,
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  15  				bool ap_mode_entry);
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  16  
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  17  int cros_typec_displayport_status_update(struct typec_altmode *altmode,
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  18  					 struct typec_displayport_data *data);
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  19  #else
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  20  struct typec_altmode *
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  21  cros_typec_register_displayport(struct cros_typec_port *port,
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  22  				struct typec_altmode_desc *desc,
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  23  				bool ap_mode_entry)
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25 @24  {
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  25  	return typec_port_register_altmode(port->port, desc);
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  26  }
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  27  
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  28  int cros_typec_displayport_status_update(struct typec_altmode *altmode,
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  29  					 struct typec_displayport_data *data)
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25 @30  {
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  31  	return 0;
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  32  }
-a57f16462c7621 Abhishek Pandit-Subedi 2024-09-25  33  #endif
-4db96705bb611f Abhishek Pandit-Subedi 2024-09-25  34  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Note: testing is done by a robot and is best-effort only.
 
