@@ -1,47 +1,44 @@
-Return-Path: <linux-kernel+bounces-341748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B858988563
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:45:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E9B498854A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE5D6285750
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:45:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 346EA1F2560D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4603518FC91;
-	Fri, 27 Sep 2024 12:43:16 +0000 (UTC)
-Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DE518DF9E;
+	Fri, 27 Sep 2024 12:43:11 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC48218E35A
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5E518CBFA
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727440995; cv=none; b=ACtEyQ6V8MQhZDOsidfNKjV78DxJIfGIfisPhPGfG151BfrIMg7LufCPfTwazVlMWFqcs+jWxzZeUbNp3P/TaBiqBRncJbTiG+u8CwqcIDfjbFl3eXy6eMx+dAUphHwX1jwfUE5CWsEcBCMeKtQGWN180gw8mw5VPpEtKeBL6vs=
+	t=1727440989; cv=none; b=VAgfmVDjIh1JZHT2WV7n/YA7IkGo72LboIvZCNVka4gduMCMigY2HJEYVsrDSbOyO4pgKkB7Q1x++A6YPTBGUBhGSIRd7eLKAAV1OQ4Gvj37C25UJWm0vHAmMfSBgBo3Z+Qb5aFmZeq6Eu0WlBUZO5IecWcfCm6V/QZvSD5AtCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727440995; c=relaxed/simple;
-	bh=hMSQBIK69XhiQuKN80DdfClsFEKyUwfCRw2R5VKzLTU=;
+	s=arc-20240116; t=1727440989; c=relaxed/simple;
+	bh=gJF6Vp8OyXRl1gBpDJQDv5Bh3hk35GPxQbTUGGKRpag=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Uu2YvHVYAl7mcjalH+kNxICx+bGTIB/obNquelwfmQTNRRn/U+wc3dhwxqjUtIr8VFbOpZAJtQ1d2//DBK0OKcfcRIHMCnQW+l4ZRJ+sKjzGOLYgM4ErU2DqkHsmiQRBrT/aRZAENrSLB1XcQRatdzE3SRQeVxdKpKqRPLdrmUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
+	 MIME-Version; b=uvMjm6ycSsVpQA5hMRIDR4omB3a2uGJxLy7psjfXyAp5s42SNV46LWLNGhlEm+aTgWhflWkjYnInj6P2wdwPn/CV9SjScyI/KftB2X7AVVCSnQ5hYa8BXl0yMWbMmNSVXTV/SKZM/oKeebhfr+SGEKogBlj4/4ZC5SyEFl0ft60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4XFVW12wmsz4xRWD
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 14:43:09 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b47d:fd74:3975:15b7])
-	by michel.telenet-ops.be with cmsmtp
-	id HQic2D00L3BfLyr06Qicqj; Fri, 27 Sep 2024 14:43:02 +0200
+	by baptiste.telenet-ops.be with cmsmtp
+	id HQic2D00E3BfLyr01Qicjw; Fri, 27 Sep 2024 14:43:02 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1suAIj-000fPv-HG;
+	id 1suAIj-000fPr-HE;
 	Fri, 27 Sep 2024 14:42:31 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1suAIo-008IDd-UI;
+	id 1suAIo-008IDg-V7;
 	Fri, 27 Sep 2024 14:42:30 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Liam Girdwood <lgirdwood@gmail.com>,
@@ -79,9 +76,9 @@ Cc: linux-sound@vger.kernel.org,
 	linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH treewide 01/11] ASoC: fsl-asoc-card: Add missing handling of {hp,mic}-dt-gpios
-Date: Fri, 27 Sep 2024 14:42:16 +0200
-Message-Id: <dbcb5bfea005a468ec6dc38374fe6d02bc693c22.1727438777.git.geert+renesas@glider.be>
+Subject: [PATCH treewide 02/11] ASoC: dt-bindings: Deprecate {hp,mic}-det-gpio
+Date: Fri, 27 Sep 2024 14:42:17 +0200
+Message-Id: <833d5d9560339bf39a125914225c9a0930e134cc.1727438777.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1727438777.git.geert+renesas@glider.be>
 References: <cover.1727438777.git.geert+renesas@glider.be>
@@ -93,56 +90,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The DT bindings deprecated the "hp-det-gpio" and "mic-det-gpio"
-properties in favor of "hp-det-gpios" and "mic-det-gpios", but the
-driver was never updated to support the latter.
+Commit 2071d0968e564b4b ("Documentation: gpio: guidelines for bindings")
+deprecated the "gpio" suffix for GPIO consumers in favor of the "gpios"
+suffix.  Update the Audio Graph and Simple Audio Card DT bindings to
+reflect this.
 
-Even before, there existed users of "hp-det-gpios" and "mic-det-gpios".
-While this may have been handled fine by the ASoC core, this was missed
-by the Freescale-specific part.
-
-Fixes: 4189b54220e5af15 ("ASoC: dt-bindings: fsl-asoc-card: convert to YAML")
-Fixes: 40ba2eda0a7b727f ("arm64: dts: imx8mm-nitrogen-r2: add audio")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Noticed accidentally.
-Compile-tested only.
+No driver changes needed, as gpiod_get_optional() as called from
+simple_util_init_jack() tries all suffixes.
 ---
- sound/soc/fsl/fsl-asoc-card.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/sound/audio-graph.yaml       |  6 ++++++
+ .../devicetree/bindings/sound/simple-card.yaml       | 12 ++++++++++++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/sound/soc/fsl/fsl-asoc-card.c b/sound/soc/fsl/fsl-asoc-card.c
-index f6c3aeff0d8eafd7..a0c2ce84c32b1d06 100644
---- a/sound/soc/fsl/fsl-asoc-card.c
-+++ b/sound/soc/fsl/fsl-asoc-card.c
-@@ -1033,14 +1033,15 @@ static int fsl_asoc_card_probe(struct platform_device *pdev)
- 	}
+diff --git a/Documentation/devicetree/bindings/sound/audio-graph.yaml b/Documentation/devicetree/bindings/sound/audio-graph.yaml
+index 71f52f7e55f6ce72..9899d9d1958d9d93 100644
+--- a/Documentation/devicetree/bindings/sound/audio-graph.yaml
++++ b/Documentation/devicetree/bindings/sound/audio-graph.yaml
+@@ -37,8 +37,14 @@ properties:
+   pa-gpios:
+     maxItems: 1
+   hp-det-gpio:
++    deprecated: true
++    maxItems: 1
++  hp-det-gpios:
+     maxItems: 1
+   mic-det-gpio:
++    deprecated: true
++    maxItems: 1
++  mic-det-gpios:
+     maxItems: 1
  
- 	/*
--	 * Properties "hp-det-gpio" and "mic-det-gpio" are optional, and
-+	 * Properties "hp-det-gpios" and "mic-det-gpios" are optional, and
- 	 * simple_util_init_jack() uses these properties for creating
- 	 * Headphone Jack and Microphone Jack.
- 	 *
- 	 * The notifier is initialized in snd_soc_card_jack_new(), then
- 	 * snd_soc_jack_notifier_register can be called.
- 	 */
--	if (of_property_read_bool(np, "hp-det-gpio")) {
-+	if (of_property_read_bool(np, "hp-det-gpios") ||
-+	    of_property_read_bool(np, "hp-det-gpio") /* deprecated */) {
- 		ret = simple_util_init_jack(&priv->card, &priv->hp_jack,
- 					    1, NULL, "Headphone Jack");
- 		if (ret)
-@@ -1049,7 +1050,8 @@ static int fsl_asoc_card_probe(struct platform_device *pdev)
- 		snd_soc_jack_notifier_register(&priv->hp_jack.jack, &hp_jack_nb);
- 	}
+ required:
+diff --git a/Documentation/devicetree/bindings/sound/simple-card.yaml b/Documentation/devicetree/bindings/sound/simple-card.yaml
+index 59ac2d1d1ccfa4ce..533d0a1da56e34eb 100644
+--- a/Documentation/devicetree/bindings/sound/simple-card.yaml
++++ b/Documentation/devicetree/bindings/sound/simple-card.yaml
+@@ -207,8 +207,14 @@ properties:
+   simple-audio-card,pin-switches:
+     $ref: "#/definitions/pin-switches"
+   simple-audio-card,hp-det-gpio:
++    deprecated: true
++    maxItems: 1
++  simple-audio-card,hp-det-gpios:
+     maxItems: 1
+   simple-audio-card,mic-det-gpio:
++    deprecated: true
++    maxItems: 1
++  simple-audio-card,mic-det-gpios:
+     maxItems: 1
  
--	if (of_property_read_bool(np, "mic-det-gpio")) {
-+	if (of_property_read_bool(np, "mic-det-gpios") ||
-+	    of_property_read_bool(np, "mic-det-gpio") /* deprecated */) {
- 		ret = simple_util_init_jack(&priv->card, &priv->mic_jack,
- 					    0, NULL, "Mic Jack");
- 		if (ret)
+ patternProperties:
+@@ -256,8 +262,14 @@ patternProperties:
+       pin-switches:
+         $ref: "#/definitions/pin-switches"
+       hp-det-gpio:
++        deprecated: true
++        maxItems: 1
++      hp-det-gpios:
+         maxItems: 1
+       mic-det-gpio:
++        deprecated: true
++        maxItems: 1
++      mic-det-gpios:
+         maxItems: 1
+ 
+     patternProperties:
 -- 
 2.34.1
 
