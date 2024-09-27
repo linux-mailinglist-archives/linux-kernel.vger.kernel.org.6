@@ -1,104 +1,126 @@
-Return-Path: <linux-kernel+bounces-342104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E798988AA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:57:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0727B988A4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74DB8B20D60
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:57:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A59AB1F22E23
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFD71C2459;
-	Fri, 27 Sep 2024 18:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58721C1AD9;
+	Fri, 27 Sep 2024 18:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="DBxUmgDF"
-Received: from rcdn-iport-8.cisco.com (rcdn-iport-8.cisco.com [173.37.86.79])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nqshLzfE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8C51C1ABE;
-	Fri, 27 Sep 2024 18:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.86.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92C2171E76;
+	Fri, 27 Sep 2024 18:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727463364; cv=none; b=RFS4/fRDBS2Ll73E9HIE3ayU6N2r0dt3SHb/GCkrUyBmHRjwFaA5sFzLTi13EUcgRZrlPrXUi9sjp/eOAIs65yqwhPz3iUUdoQk06Nj6zMUTbaMPoHtada4EBwtr838Ei1ikUtnaK2NRfv5EEWWCF4FyzDSACD9owyIWCz5ozOs=
+	t=1727462814; cv=none; b=Dxo4rT4rEKRNr0Y2YagR4C4CdKGtIm8WFl/a21VhaK9MaDwutEIZmJ5wboGyrbCXQqIzes0B3bnwAAO2vepXTQ0z8Tg3iQfAvYw0hMBQXTjXWx8bI2dKCSv+/BAJ0Okn5HgChljHM66WUXcMjYPmdv/Ms/oU/an+aCON6atKKrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727463364; c=relaxed/simple;
-	bh=5qfWodULDLVsekB+OCOLWzJk/ZdiqaiLkSFAzUFicmI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kYQMPlbGesSeUWEzTQPAWP+we/nkLQ6VQS2JDPzV4zUtQ6RMyxoH3CFhZTwnibrzDjv5hcpfUoXiesCtyUh96ipcqLkK1I8iMoQtT3nSNQwO/dRZz3JBu8/PkqhpGcjOXvePh1ui2KCU0pLLWyX11Gg5/zcaJn6dvkMrDczEu+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=DBxUmgDF; arc=none smtp.client-ip=173.37.86.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=797; q=dns/txt; s=iport;
-  t=1727463363; x=1728672963;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=h+NDOGTVmsXxT1gPQhPkHFEQFR9jHtVt7H8Q2NXM1ZE=;
-  b=DBxUmgDFIKG46tsY8C8HU7xAKzAm+jOHaYAT/yBytW4ZZB/WqtkJfIZn
-   OvVUbDx8X9SBpEvjgd5ljryzBrqFgmhK3+3E7tIj9NVf+LIA+NtAcfseF
-   Hj56OGt/OhgzDMh/JYS2OqjPAOl/wCe9L/8jUr9DUwL+1kRIa7KmZD6CD
-   A=;
-X-CSE-ConnectionGUID: Wnf5uCrBRrGlz5a3iMzJ5A==
-X-CSE-MsgGUID: L9WG+6FIQLqOR3ZlSCWffw==
-X-IronPort-AV: E=Sophos;i="6.11,159,1725321600"; 
-   d="scan'208";a="258700094"
-Received: from rcdn-core-5.cisco.com ([173.37.93.156])
-  by rcdn-iport-8.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 18:56:02 +0000
-Received: from localhost.cisco.com ([10.193.101.253])
-	(authenticated bits=0)
-	by rcdn-core-5.cisco.com (8.15.2/8.15.2) with ESMTPSA id 48RIkQav022754
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 27 Sep 2024 18:56:01 GMT
-From: Karan Tilak Kumar <kartilak@cisco.com>
-To: sebaddel@cisco.com
-Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com, mkai2@cisco.com,
-        satishkh@cisco.com, aeasi@cisco.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Karan Tilak Kumar <kartilak@cisco.com>
-Subject: [PATCH v3 14/14] scsi: fnic: Increment driver version
-Date: Fri, 27 Sep 2024 11:46:13 -0700
-Message-Id: <20240927184613.52172-15-kartilak@cisco.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20240927184613.52172-1-kartilak@cisco.com>
-References: <20240927184613.52172-1-kartilak@cisco.com>
+	s=arc-20240116; t=1727462814; c=relaxed/simple;
+	bh=IhHEjvPxQf+RDdoLilNZ8Cw+tcPLXWdx9ZxWbieFqVk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=I/1oucWJbU8r8lyHIQ26GZdcO/6YEXeItWuNz/pZ96aGbGqQOZeZZrqMebW4BacnHwOxS4ibYKm2SSRkVSg38DLrIJCEJzRrJg4RG74Bz/80tiYpxgDPn+xc93uTNTFxMvvzoQIivpyNnGKQAX7/NTlnfwOXen66A8AiYopF3Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nqshLzfE; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727462814; x=1758998814;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=IhHEjvPxQf+RDdoLilNZ8Cw+tcPLXWdx9ZxWbieFqVk=;
+  b=nqshLzfET3C4N46etxJWFjMp6xcf+OnofdeKIFFM7HpsypMjo5ISyspK
+   QH0L5gBtxRcLYUhlTDthkZpBE8B6z4U3KVL/RgujwqQt5clknlyGevCyA
+   yY4Fv+WHXT+rlysKSehV+sJdznZhC4DdaRvz1ANjT4MC/VYh/+Lue64E8
+   19BwBIzo5RlxMMQw+ebZb75viAIZHecfLHI4MDA/HBbSj59SNYAjBoOBy
+   1shFBcuaG3djngpp+OLEEsZp6WJ7do6WbkiXn/Rx/XCZTf+42qPsWVoPJ
+   wu40H79GEyzpqvGINvxawiIRrWutpjPNKUYgDGTNkRgHTiDziPMhQDa1o
+   A==;
+X-CSE-ConnectionGUID: f89ML4c6SESfmbRN0M2fVg==
+X-CSE-MsgGUID: CwFZQ657TY2yuPC6/bMIaw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="26421548"
+X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
+   d="scan'208";a="26421548"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 11:46:53 -0700
+X-CSE-ConnectionGUID: L2qlIXE1SXGpMWrouFPlAA==
+X-CSE-MsgGUID: rnDkqNmqSH+VAtus7/xSFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,159,1725346800"; 
+   d="scan'208";a="103396006"
+Received: from tzanussi-mobl4.amr.corp.intel.com (HELO [10.246.129.181]) ([10.246.129.181])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 11:46:51 -0700
+Message-ID: <91e2a30c-d00b-4648-8b48-24467dca17dc@linux.intel.com>
+Date: Fri, 27 Sep 2024 13:46:49 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authenticated-User: kartilak@cisco.com
-X-Outbound-SMTP-Client: 10.193.101.253, [10.193.101.253]
-X-Outbound-Node: rcdn-core-5.cisco.com
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 1/2] crypto: iaa - Remove potential infinite loop in
+ check_completion()
+Content-Language: en-GB
+From: "Zanussi, Tom" <tom.zanussi@linux.intel.com>
+To: herbert@gondor.apana.org.au
+Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ "Accardi, Kristen C" <kristen.c.accardi@intel.com>, zanussi@kernel.org
+References: <733a19ce-16f2-4d06-bce9-85d7473c9a4d@linux.intel.com>
+In-Reply-To: <733a19ce-16f2-4d06-bce9-85d7473c9a4d@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Increment driver version to 1.8.0.0
+For iaa_crypto operations, it's assumed that if an operation doesn't
+make progress, the IAA watchdog timer will kick in and set the
+completion status bit to failure and the reason to completion timeout.
 
-Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
-Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
-Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
-Tested-by: Karan Tilak Kumar <kartilak@cisco.com>
-Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
+Some systems may have broken hardware that doesn't even do that, which
+can result in an infinite status-checking loop. Add a check for that
+in the loop, and disable the driver if it occurs.
+
+Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- drivers/scsi/fnic/fnic.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/intel/iaa/iaa_crypto_main.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/scsi/fnic/fnic.h b/drivers/scsi/fnic/fnic.h
-index 5fd506fcea35..e98e665801d1 100644
---- a/drivers/scsi/fnic/fnic.h
-+++ b/drivers/scsi/fnic/fnic.h
-@@ -30,7 +30,7 @@
+diff --git a/drivers/crypto/intel/iaa/iaa_crypto_main.c b/drivers/crypto/intel/iaa/iaa_crypto_main.c
+index 237f87000070..8fced88d3d06 100644
+--- a/drivers/crypto/intel/iaa/iaa_crypto_main.c
++++ b/drivers/crypto/intel/iaa/iaa_crypto_main.c
+@@ -945,12 +945,22 @@ static inline int check_completion(struct device *dev,
+ 				   bool only_once)
+ {
+ 	char *op_str = compress ? "compress" : "decompress";
++	int status_checks = 0;
+ 	int ret = 0;
  
- #define DRV_NAME		"fnic"
- #define DRV_DESCRIPTION		"Cisco FCoE HBA Driver"
--#define DRV_VERSION		"1.7.0.0"
-+#define DRV_VERSION		"1.8.0.0"
- #define PFX			DRV_NAME ": "
- #define DFX                     DRV_NAME "%d: "
+ 	while (!comp->status) {
+ 		if (only_once)
+ 			return -EAGAIN;
+ 		cpu_relax();
++		if (status_checks++ >= IAA_COMPLETION_TIMEOUT) {
++			/* Something is wrong with the hw, disable it. */
++			dev_err(dev, "%s completion timed out - "
++				"assuming broken hw, iaa_crypto now DISABLED\n",
++				op_str);
++			iaa_crypto_enabled = false;
++			ret = -ETIMEDOUT;
++			goto out;
++		}
+ 	}
  
+ 	if (comp->status != IAX_COMP_SUCCESS) {
 -- 
-2.31.1
+2.38.1
+
 
 
