@@ -1,176 +1,149 @@
-Return-Path: <linux-kernel+bounces-342012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BAC9889A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:19:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2D569889A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26554B21FFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:19:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F192826E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9EE1C1AA2;
-	Fri, 27 Sep 2024 17:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0203E1C1AD0;
+	Fri, 27 Sep 2024 17:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="AYHtG6/i"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fdxJwMKN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BE09443;
-	Fri, 27 Sep 2024 17:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112051C1AB8
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 17:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727457545; cv=none; b=RwniqaGIKEipQ+rmuBKu8KHGC7BFv1c7CLc7svqKViVYLyMDb+wmqE15jHD1oqaaOXYfxScNh+O9WzzJZhiQmFJgD/9MdbsFw8VnpP8Evsvcb59p3aMW112zRHSOsZdqLdZN114GiPxXTOmksisPleMmf6hXUq20AiwV0SCRlEI=
+	t=1727457548; cv=none; b=Ao3rGqEtBWxK4RACshS9yIY2KVYts2xCa+Pmk+xoaNlPWCzzZKQc/EmAFPfF5yE9IaRikzGVnrEaEbRNPCmyDAUI1dZ93n0jkuoOBDJZ/+CRlxcBcoBDgapu+f/caJzJLq0QWUdOtWhnzseEEMlQ0pH7wjl1/Z39qF8xNteWaTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727457545; c=relaxed/simple;
-	bh=wtDpYwOAOKofX4RvJxSntDIhYtfMCgqh7rhIZgRfwJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V0iXUbhMHkmExu/TBJnwPs7dd+tPTishh2Qzxw9sEpX5sAhS+abiFlAGFRaAfpbYcNe8HrzT7RwUxyxJqkfCRgKYeBZ9mG4Mi279en5EwXTSTKvGAEvKJCYyCL+Vk5p/hgDO/PHgskWptHqfyEkVLrso333R2lS0InfnzfLzos4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=AYHtG6/i; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1727457523; x=1728062323; i=w_armin@gmx.de;
-	bh=wtDpYwOAOKofX4RvJxSntDIhYtfMCgqh7rhIZgRfwJ8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=AYHtG6/iQJDvQyZfJRLG0SQe1DP9ifBowEWfHWSBcvEnaLO5NTWDCJ/M+nCIQTir
-	 AkW9qx6YMJxcGFk9M9/wUAx42Ks4uRaKBfp16FEjTt2jb1MmKPz3lopUQskCcXpmD
-	 3nGKlRMmXftcIZ0neM7BmsgL1BpPaTeMTjRPg3BfTuRsGUzRYhmPJ4gsAGA57oh3N
-	 0b6NA9/glWLeJPEMVAW4re2opBpulSJ82nB5Qr53tW1kFnsUQcswZ9hYjrWbAkAJr
-	 hQze/JLxMBbSQxdQxao9sQdYy+sl8fGmHVRsCWRSSLlqu0KfbTooe6BEHaTu+O9VE
-	 uQa5ozJABfYATk2ViQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MYNJq-1sOnoW3TbW-00QuPw; Fri, 27
- Sep 2024 19:18:42 +0200
-Message-ID: <95d1342d-f2a1-4f55-b8f9-d1ede1207aaa@gmx.de>
-Date: Fri, 27 Sep 2024 19:18:37 +0200
+	s=arc-20240116; t=1727457548; c=relaxed/simple;
+	bh=Zp6SyMPgdhEkHqeCFYD6sX1hBb7DHCkuERt7Hc0a3xk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=izCj/2vtRNKH5xAyQNDSYBeY5r9cOKW7BkybylKW3HesRDUpIhBc1qJIcaoFEShm1MlzwcmNssq5iVw/4gItEVVFG2AXFuTyupAt6AMyphBtqliSGakiAerL/8vMPjv8lAP2w/7f2pTBGtPChYo/lC+vCnZP5IuvwHctoIojgCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fdxJwMKN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727457546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kkF/xzfEMxIlkPDkfo2c1lZs/o5nQk9VkvqNorbPdc4=;
+	b=fdxJwMKNCxFwQ2qTya4YZuQRFGxZFBdz/0Nuy2H8xzYZGPA2FgiZRN6wSPO4FgyZEzI0hf
+	hubMw7YJJ6UyZmY92JAIB4640HNPHd7aTAAGrD/zarABAxRT5663Ah7IJ8+sbZdNeAE8pW
+	MDMmpLSrCatsNGZQ5nyzbq4rp+9Cibw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-sWABljdNP5uxXiN9FFPMhw-1; Fri,
+ 27 Sep 2024 13:19:03 -0400
+X-MC-Unique: sWABljdNP5uxXiN9FFPMhw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 81B0219792DE;
+	Fri, 27 Sep 2024 17:19:00 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.23])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 70CBD1956054;
+	Fri, 27 Sep 2024 17:18:52 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 27 Sep 2024 19:18:47 +0200 (CEST)
+Date: Fri, 27 Sep 2024 19:18:39 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Liao Chang <liaochang1@huawei.com>
+Cc: ak@linux.intel.com, mhiramat@kernel.org, andrii@kernel.org,
+	peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v2] uprobes: Improve the usage of xol slots for better
+ scalability
+Message-ID: <20240927171838.GA15877@redhat.com>
+References: <20240927094549.3382916-1-liaochang1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
- NB04 devices
-To: Werner Sembach <wse@tuxedocomputers.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: bentiss@kernel.org, dri-devel@lists.freedesktop.org, jelle@vdwaa.nl,
- jikos@kernel.org, lee@kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
- miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com,
- pavel@ucw.cz, platform-driver-x86@vger.kernel.org
-References: <20240926174405.110748-1-wse@tuxedocomputers.com>
- <20240926174405.110748-2-wse@tuxedocomputers.com>
- <ad01bc38-3834-44c9-a5e3-540a09a20643@gmx.de>
- <3dde4572-78a0-4a93-916a-563b7150f078@tuxedocomputers.com>
- <3e5630c0-2ab4-49fc-8b91-988b327bdcf8@tuxedocomputers.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <3e5630c0-2ab4-49fc-8b91-988b327bdcf8@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:VFjl67dLNrv6Jc4tqj4gacATd5Ifbha8xEOZ4lw5in4oH2CWA8t
- MYnzLPSKY1axuJqaUQMWHFQYPKO1pZAxYxN0X8Mmd2AkbecbkzKKo/RgtKAz8ANi73lMeXI
- t/h2gowUjE3f+AAMAmK1Rm4hqp+m8gFY7wGH6HQ4lq5P917kN9fxelePqkrx7szzQZOd4ud
- o0/LSuuDcFwKE0aNNKjnw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vEEe5JzzMiY=;rdnoMfl7Ge1slGcTHb2xD/BJNx5
- o5VocNTqMshaUv15dIW6Zbx26P56xKZgODeDJeLzlrpEDyJkKM5+577L2HpHATlxdWAB3EpbT
- yQJO8KYiVm26Mm/RJxRK2idvn69cBPCLBm0E9Cc5Y2eXHgVcRgjy6fFxeAdujANXxZD3Quynz
- mz4gRj12PsMSdyI3oVAeIJ7eKW+YI83W8fELMIoJAZAVI3HDxv1wxI7YhlxCcGT143DpU9zgm
- LAqLT55AVLFWpq4D3BaqPNuGo8DvKwkG1MAW4gIfjjrgiTGehzBh5zAbrbMIZzqx7O7KT4YwV
- C0UIL3mR7tEOUCiwYIlugNHwC/z87T4lAFpZa5NoE4unBEVc6xdF5oylI4NF7wVZi6PN8IPGk
- EvEe0c8r9KTRIppTToz3Uk8zVd7TeOnPN9AdScV+1cqG//18nbKqzcGNIuKjZaZrHsHTqAnvj
- +IqG/+Ce2RQks+rwEanWiLi9dKtDXi5KV6XHTlQ6vGBfNnWP+1FBmIsACNMpvbcQEmzfZpeAQ
- txotazX9ZqOuA8WYvTOFcCiBNbDsQyn3yYbX0CMzOB3EwzYFYGNmrG+hQ8bpqxGbXtT7zbSZv
- LI0OzpVl2dzHD2Sj8r+USuvx4YK9gI/2aYsKEQE006bZIQ+hbbV7/lk2rCFDo4XsjQo1oT8Ee
- OT6nLYuK/Xd3NbVj2Zqad8Xlydj6QNkJBW4XsCg1P24tegd7IzU1LQwjc4HeB6RL87pUQ//1S
- iN9FcPjRnZ9+FSi1rzDdqeq33Kq+RZWNN0x7WTl1mHRIqA0XFjDMn8igRUn9kPctLPJAH3fiX
- mKZ6gfYv/mvqy/GAfGsXUEHoRh55LoKVit9s5Opx0GqyA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927094549.3382916-1-liaochang1@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Am 27.09.24 um 13:24 schrieb Werner Sembach:
+On 09/27, Liao Chang wrote:
+>
+> +int recycle_utask_slot(struct uprobe_task *utask, struct xol_area *area)
+> +{
+> +	int slot = UINSNS_PER_PAGE;
+> +
+> +	/*
+> +	 * Ensure that the slot is not in use on other CPU. However, this
+> +	 * check is unnecessary when called in the context of an exiting
+> +	 * thread. See xol_free_insn_slot() called from uprobe_free_utask()
+> +	 * for more details.
+> +	 */
+> +	if (test_and_put_task_slot(utask)) {
+> +		list_del(&utask->gc);
+> +		clear_bit(utask->insn_slot, area->bitmap);
+> +		atomic_dec(&area->slot_count);
+> +		utask->insn_slot = UINSNS_PER_PAGE;
+> +		refcount_set(&utask->slot_ref, 1);
 
-> Hi,
->
-> an additional question below
->
-> Am 27.09.24 um 08:59 schrieb Werner Sembach:
->> Hi,
->>
->> Am 26.09.24 um 20:39 schrieb Armin Wolf:
->>> Am 26.09.24 um 19:44 schrieb Werner Sembach:
->>>
->>>> [...]
->>>> +// We don't know if the WMI API is stable and how unique the GUID
->>>> is for this ODM. To be on the safe
->>>> +// side we therefore only run this driver on tested devices
->>>> defined by this list.
->>>> +static const struct dmi_system_id tested_devices_dmi_table[] =3D {
->>>> +=C2=A0=C2=A0=C2=A0 {
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // TUXEDO Sirius 16 Gen1
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .matches =3D {
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 D=
-MI_EXACT_MATCH(DMI_SYS_VENDOR, "TUXEDO"),
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 D=
-MI_EXACT_MATCH(DMI_BOARD_NAME, "APX958"),
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
->>>> +=C2=A0=C2=A0=C2=A0 },
->>>> +=C2=A0=C2=A0=C2=A0 {
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // TUXEDO Sirius 16 Gen2
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .matches =3D {
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 D=
-MI_EXACT_MATCH(DMI_SYS_VENDOR, "TUXEDO"),
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 D=
-MI_EXACT_MATCH(DMI_BOARD_NAME, "AHP958"),
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
->>>> +=C2=A0=C2=A0=C2=A0 },
->>>> +=C2=A0=C2=A0=C2=A0 { }
->>>> +};
->>>> +
->>>> +static int probe(struct wmi_device *wdev, const void
->>>> __always_unused *context)
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 struct tuxedo_nb04_wmi_driver_data_t *driver_data=
-;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 if (dmi_check_system(tested_devices_dmi_table))
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENODEV;
->>>
->>> Hi,
->>>
->>> please do this DMI check during module initialization. This avoids
->>> having an useless WMI driver
->>> on unsupported machines and allows for marking
->>> tested_devices_dmi_table as __initconst.
-> I wonder how to do it since I don't use module_init manually but
-> module_wmi_driver to register the module.
+This lacks a barrier, CPU can reorder the last 2 insns
 
-In this case you cannot use module_wmi_driver. You have to manually call w=
-mi_driver_register()/wmi_driver_unregister()
-in module_init()/module_exit().
+		refcount_set(&utask->slot_ref, 1);
+		utask->insn_slot = UINSNS_PER_PAGE;
 
->>>
->>> Besides that, maybe a "force" module parameter for overriding the
->>> DMI checking could be
->>> useful?
->
-> Considering the bricking potential i somewhat want for people to look
-> in the source first, so i would not implementen a force module parameter=
-.
->
-Ok.
+so the "utask->insn_slot == UINSNS_PER_PAGE" check in xol_get_insn_slot()
+can be false negative.
 
-> Kind regards,
+> +static unsigned long xol_get_insn_slot(struct uprobe_task *utask,
+> +				       struct uprobe *uprobe)
+>  {
+>  	struct xol_area *area;
+>  	unsigned long xol_vaddr;
+> @@ -1665,16 +1740,46 @@ static unsigned long xol_get_insn_slot(struct uprobe *uprobe)
+>  	if (!area)
+>  		return 0;
 >
-> Werner
->
->
+> -	xol_vaddr = xol_take_insn_slot(area);
+> -	if (unlikely(!xol_vaddr))
+> +	/*
+> +	 * The racing on the utask associated slot_ref can occur unless the
+> +	 * area runs out of slots. This isn't a common case. Even if it does
+> +	 * happen, the scalability bottleneck will shift to another point.
+> +	 */
+
+I don't understand the comment, I guess it means the race with
+recycle_utask_slot() above.
+
+> +	if (!test_and_get_task_slot(utask))
+>  		return 0;
+
+No, we can't do this. xol_get_insn_slot() should never fail.
+
+OK, OK, currently xol_get_insn_slot() _can_ fail, but only if get_xol_area()
+fails to allocate the memory. Which should "never" happen and we can do nothing
+in this case anyway.
+
+But it certainly must not fail if it races with another thread, this is insane.
+
+And. This patch changes the functions which ask for cleanups. I'll try to send
+a couple of simple patches on Monday.
+
+Oleg.
+
 
