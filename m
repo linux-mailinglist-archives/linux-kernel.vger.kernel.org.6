@@ -1,115 +1,162 @@
-Return-Path: <linux-kernel+bounces-341554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 633B5988193
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:44:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53FB8988194
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2D41F20C80
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:44:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 140FA283057
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8ECF1BD012;
-	Fri, 27 Sep 2024 09:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C611BAECB;
+	Fri, 27 Sep 2024 09:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2Av3ebH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hzC5h/a7";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hzC5h/a7"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464721B0120;
-	Fri, 27 Sep 2024 09:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576741B0120
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727430154; cv=none; b=gmdcGJgv9leyZT01aVh2zyGlAooj8lywWnSYDc8mEiPyrWGWRa48jfKna9QgcqZrJL7504AP6d2EeJc4iZfh27B7K/dDnqas/Lm8vSJcLqF00fH7Ft27cFWYnvn7p5+UB5s09lG0d9ZxZYb7J1K5EBGgVX8h6z3Pve78iHEpD08=
+	t=1727430227; cv=none; b=cdUJP0BJuSsEYsHDp7OD+ag66E3HSnC87mRZwFdFG3F4CuVyPGgA7SR50QVJXo2vc/R3cILJ1dGHIZ4YVkKypw6aqhCciacx4NE3MYocXJ9VIHCgxd+nd8bZaASoSlGetL9r3EJG4SUuIsMDRrIf0uz+jyp7Ydaksg2oW3hxDyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727430154; c=relaxed/simple;
-	bh=TST2aU00V+a/b6WJK9LCwWG80Mq75dZu+SmOHyfGhDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sh2c8MX949/8aR7Vu9AMev7yHy08zfIeUmTdqOXF/LyYxld6NL9VvWq9fwgGP5kES6fUVBx7PKfV7y/kXjt+RclsDGOi1aexaAjBuZRsqeFo4ytafP6MXNa4ozo6ifBtP/tYpf9xoBTJRMACmQzXN9wEUJMmpXPTgSfR9UNdHjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2Av3ebH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C71EC4CEC9;
-	Fri, 27 Sep 2024 09:42:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727430153;
-	bh=TST2aU00V+a/b6WJK9LCwWG80Mq75dZu+SmOHyfGhDw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o2Av3ebHVSl6qmxEGQZKjs86KC6ZaA6DIYPXM79Z6t6ndEl6tL6O7q8ePXtYVBCz8
-	 NFDA7kMcX2J/JBk0DLWyxK+CHpSt0xM8kXlHqSyvjyeJNwSfhbXGGyJCqHh7mc/AqU
-	 YBhz9hNlH/2nzaDLCSrtg3SHW3Ns9MeFQjlxw6SMRcj1L+rUfKVK/EpLVz64LgBcTH
-	 mW6dimPJMBckLxty4HXgLoeT24s1mWNhjwjJhI9fusH43oJz7W3EZPmsbAfm7kTqQN
-	 iTP7t4Eyp85G+qpzHpjA5TxQ/23G4wQQ6tB0BZV/7QS8tPH6kuXFm68xcnB2DzHHAG
-	 xg8NPMi43ymDQ==
-Date: Fri, 27 Sep 2024 11:42:31 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: Conor Dooley <conor@kernel.org>, Sen Chu <sen.chu@mediatek.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Eason Yen <eason.yen@mediatek.com>, 
-	Jiaxin Yu <jiaxin.yu@mediatek.com>, Shane Chien <shane.chien@mediatek.com>, 
-	Hui Liu <hui.liu@mediatek.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
-	Alexandre Mergnat <amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, 
-	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, 
-	Chris-qj chen <chris-qj.chen@mediatek.com>, 
-	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH 2/3] dt-bindings: mfd: mediatek: mt6397: add compatible
- for mt6359-codec
-Message-ID: <z5zehicgqqsbgsjz5nrjlqrkpqll57gb26jdc3ctpeajtlfusm@b2s5vrbuv3es>
-References: <20240926092519.6556-1-macpaul.lin@mediatek.com>
- <20240926092519.6556-2-macpaul.lin@mediatek.com>
- <20240926-smokeless-clobber-0fb8a1cdc7ab@spud>
- <78381b10-eae6-1414-6913-994e1ed03410@mediatek.com>
+	s=arc-20240116; t=1727430227; c=relaxed/simple;
+	bh=79RiOmD/BiXLQ5A2D328+AYht1UMrQfYxxIC45P4ifo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S7hPuO/b4tt5+BYeNetliTiD9u7t1yg9PKX2snSLYmwenMrqml6sA4ftrgrXHqj1bpd8Zpy6P1nI2w/Rc1Flch1MBVdkJhmGDGBrW2Ts7TJGOxiC0OHibwH1wC3bMiDhZ/8o+jS43SJ+z2yW0KgrLPfxHkM3cUDmjNzCU2hyTHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hzC5h/a7; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hzC5h/a7; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8846C21BAE;
+	Fri, 27 Sep 2024 09:43:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1727430218; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2Uu1EfCgnj4wDrzRwDuAI68ysm7+uYD9d5yxXTU5Yw0=;
+	b=hzC5h/a7+zFH4q3ZcenRbERSq1ayIZA6/MS2Xr3UMo4IJIuCHTAmLv9f2auffRtQIB7D4f
+	5o1jfFPzAK7EVMSzvwI/9uhRfzYa6870TeDkbtJgevy5pfNsByuKeXLVaWz9YbcD9PdJoR
+	kwFDQ5TkgdYH7tuhN2MoPkAxr9Viv5o=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1727430218; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2Uu1EfCgnj4wDrzRwDuAI68ysm7+uYD9d5yxXTU5Yw0=;
+	b=hzC5h/a7+zFH4q3ZcenRbERSq1ayIZA6/MS2Xr3UMo4IJIuCHTAmLv9f2auffRtQIB7D4f
+	5o1jfFPzAK7EVMSzvwI/9uhRfzYa6870TeDkbtJgevy5pfNsByuKeXLVaWz9YbcD9PdJoR
+	kwFDQ5TkgdYH7tuhN2MoPkAxr9Viv5o=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5744D13A73;
+	Fri, 27 Sep 2024 09:43:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dw+vE0p+9mbcSwAAD6G6ig
+	(envelope-from <jgross@suse.com>); Fri, 27 Sep 2024 09:43:38 +0000
+From: Juergen Gross <jgross@suse.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	sstabellini@kernel.org
+Subject: [GIT PULL] xen: branch for v6.12-rc1a
+Date: Fri, 27 Sep 2024 11:43:37 +0200
+Message-ID: <20240927094337.32387-1-jgross@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <78381b10-eae6-1414-6913-994e1ed03410@mediatek.com>
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,imap1.dmz-prg2.suse.org:helo];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On Fri, Sep 27, 2024 at 03:57:58PM +0800, Macpaul Lin wrote:
-> On 9/27/24 00:04, Conor Dooley wrote:
-> > On Thu, Sep 26, 2024 at 05:25:18PM +0800, Macpaul Lin wrote:
-> > > This patch updates the audio-codec properties includes:
-> > >   - compatible:
-> > >    - Re-order the supported device items.
-> > >    - Add 'mt6359-codec' to compatible since MT6359 PMIC has been included
-> > >      in this DT Schema.
-> > 
-> > >    - Set 'additionalProperties: true' for 'mt6359-codec'.
-> > 
-> > Why?
-> 
-> The mt6359-codec support these 3 properties:
-> mediatek,mic-type0, mediatek,mic-type-1, mediatek-mic-type2.
-> While mt6358-sound and mt6397-codec don't (at least, I didn't find
-> these 3 properties in driver codes.
-> 
-> Set 'additionalProperties: true' is also required to fix the following
-> dtbs_check errors:
-> pmic: audio-codec: 'mediatek,mic-type-0', 'mediatek,mic-type-1',
->       'mediatek,mic-type-2' do not match any of the regexes:
->       'pinctrl-[0-9]+'
+Linus,
 
-Why is this a correct fix? Aren't you allowing "pink-pony" property as
-well?
+Please git pull the following tag:
 
-> 
-> > > 
-> > > Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> > > ---
-> > >   Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml | 5 +++--
+ git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-6.12-rc1a-tag
 
-There is no such file.
+xen: branch for v6.12-rc1a
 
-Best regards,
-Krzysztof
+It contains a second round of Xen related changes and features for the
+6.12 merge window:
 
+- A small fix of the xen-pciback driver for a warning issued by sparse
+
+- A series of 3 patches supporting PCI passthrough when using a PVH
+  dom0
+
+- A series of 5 patches enabling to load the kernel in PVH mode at
+  arbitrary addresses, avoiding conflicts with the memory map when
+  running as a Xen dom0 using the host memory layout
+
+Thanks.
+
+Juergen
+
+ arch/x86/include/asm/pgtable_64.h               |  23 +++-
+ arch/x86/kernel/head_64.S                       |  20 ---
+ arch/x86/platform/pvh/head.S                    | 161 ++++++++++++++++++++++--
+ arch/x86/xen/enlighten_pvh.c                    |  23 ++++
+ drivers/acpi/pci_irq.c                          |   2 +-
+ drivers/xen/Kconfig                             |   1 +
+ drivers/xen/acpi.c                              |  50 ++++++++
+ drivers/xen/pci.c                               |  13 ++
+ drivers/xen/privcmd.c                           |  32 +++++
+ drivers/xen/xen-pciback/conf_space_capability.c |   2 +-
+ drivers/xen/xen-pciback/pci_stub.c              |  78 ++++++++++--
+ include/linux/acpi.h                            |   1 +
+ include/uapi/xen/privcmd.h                      |   7 ++
+ include/xen/acpi.h                              |  27 ++++
+ include/xen/interface/elfnote.h                 |  93 +++++++++++++-
+ include/xen/interface/physdev.h                 |  17 +++
+ include/xen/pci.h                               |   6 +
+ 17 files changed, 509 insertions(+), 47 deletions(-)
+
+Jason Andryuk (5):
+      xen: sync elfnote.h from xen tree
+      x86/pvh: Make PVH entrypoint PIC for x86-64
+      x86/pvh: Set phys_base when calling xen_prepare_pvh()
+      x86/kernel: Move page table macros to header
+      x86/pvh: Add 64bit relocation page tables
+
+Jiqian Chen (3):
+      xen/pci: Add a function to reset device for xen
+      xen/pvh: Setup gsi for passthrough device
+      xen/privcmd: Add new syscall to get gsi from dev
+
+Min-Hua Chen (1):
+      xen/pciback: fix cast to restricted pci_ers_result_t and pci_power_t
 
