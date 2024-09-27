@@ -1,134 +1,114 @@
-Return-Path: <linux-kernel+bounces-341959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4CD9888DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:16:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D58FE9888E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C98F2841F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:16:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11E3C1C21C1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046501714B8;
-	Fri, 27 Sep 2024 16:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807AD1C175A;
+	Fri, 27 Sep 2024 16:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bmSxR155"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="laTHtPtJ"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF171E4AE
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 16:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825CC1339A4;
+	Fri, 27 Sep 2024 16:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727453796; cv=none; b=OmN0KcxSPYmLNcOFB9NHDbbYsvI6yN9xVJnWRVAm2q49XwXoBM+SNcX0MOlzolP9vmUVPTRC9/CO/Aeob73q/EJy+sTbQWrkw6zBdXGUz/B0xOMMbA/JEVD4jsdxS5F7wfQ4JP1gK1Yn/iI29oqQGNR7TGH3X6oZL1dnleQChgM=
+	t=1727453829; cv=none; b=d1zXPR5hxeRZ59C1ukywyM8TGK5TV5Bht3kL7lNIQvcpoX7UojSFPBJEQD8SuXrIJDjSCE7TCq67W8IIt18EFnuzJQ1PdYcC4FF9ugBiHJVyd+MbZBN2YkC6fr88ACtmCUf6OfRUyq0OdywJiNBmQ87YoOF8Hpgai05AaY3P3F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727453796; c=relaxed/simple;
-	bh=Wu52U0EBGUW8RDbNXrq7iBFkfNUHVmBD2A0I09aK/XU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gAtWKETr/Cw6VfQ2pdkZrMkv5nmvkpsL5/JhEMDOIM+SWjpqjfnoxldb7fppNXlJAY97MfChpUy6zVX4JT4sMaaDS1SCC7ximM3JLskziNbNOczYh8ioRNo9zAdt8S0wE+XMO+VnWZlX+Z9zjfRnkCo/IC8hhQ3bUGZdboKgITI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bmSxR155; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-82ce1cd2026so81283839f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:16:34 -0700 (PDT)
+	s=arc-20240116; t=1727453829; c=relaxed/simple;
+	bh=yzrKctZAKwgK9erGnRdUthcZlmhUjwpRi/OBXAtr1x0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YkaCNriFPocNm2TMImA4Js/PeeO4+CWceDPs6xhZ+vjilcdRdD/pgXkQaa82FS7cS34YpgQ6M3mHhnbjHjIFTxK9FFhzA/ApsPzSWzRGrjSSQbsGqVqipWtSq4WgZ/gq/RfoIMwdDxQvpdS1QuD/CRUN67MCcMYdtRhlJK3kjdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=laTHtPtJ; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727453794; x=1728058594; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HR9L1tFGwvsuWLdcZhMfYeFWtiRJ32Evy1PyzIhswm4=;
-        b=bmSxR155LpztWLjHuK6OM0XH94QISn4Cqa81heCkCyb5UEC+4TRjr/I2E53cOBwyGX
-         42L0hLiGtkq/WGzzGYYaOa+BLvFHkkJGc2Os+T1omyzcbPEgFmiXkB42ab0pef67UTWE
-         JVKeSMdgXCc3TRjddUPE7HxeTXc5bw2ZNtiM4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727453794; x=1728058594;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HR9L1tFGwvsuWLdcZhMfYeFWtiRJ32Evy1PyzIhswm4=;
-        b=fktWedi/yFojLp+prlBnDLxgN7X2hnj2LUpW9bFJGlFfTDP4Gig3lpvwkiFicYSH4c
-         EwF3bBZ4nV2vCosjaUpoh66a0O41JnVdEgNqw1UzGmHF5cxEgdigzodqUqTqgcxBpi6T
-         jUCFhyxDHEu0cMu+C4SFTEjqJMCqhWxEQFR+AqhPz6so+vLBhIhpzG2CTGGbz1ODJnFw
-         AvjrfZHrUmgVobZ+KTuSd22hvi9j0MoRWJLgzR6LCDud3nA6uTo4dp/I5ewcZBMv4qbS
-         u/O1I+GHotu/1jMEGGlYUjzBSta8lKm5v5iPreBVqZnh8IqfrTonPq4H8iDuSMNDY2ey
-         lEEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWR2Bmig+y/AKkjNA2WevFFMEWian7jafigCkowWWr+Cn3nyr2MrAMtJWwYgOexvaelEADxp45e7Oa/Kwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn14g7skbMdbojcjTeFJlQC3D41UBYraVVmIiTYM2BLUqPAprK
-	Sg39FziDJlp76Jz14p/mW5KF1ILNIybKooX/W2QwF6LjsSXIrJqPEzBaHepEThU=
-X-Google-Smtp-Source: AGHT+IEP5nmUu95Efe+WgHxrtI1tFEnKpgExLNzW4lKixMYXEZzO3I9iY25TPelr+EvCIoR5XQW/Sw==
-X-Received: by 2002:a05:6602:2b0b:b0:81f:8f5d:6e19 with SMTP id ca18e2360f4ac-834931ae996mr458104939f.2.1727453793860;
-        Fri, 27 Sep 2024 09:16:33 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d888835209sm554605173.11.2024.09.27.09.16.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 09:16:33 -0700 (PDT)
-Message-ID: <765e0a55-8bb6-45a7-a32e-73b40f92f7dd@linuxfoundation.org>
-Date: Fri, 27 Sep 2024 10:16:32 -0600
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1727453828; x=1758989828;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2+CGiLOuqlQzvKuL984AV8PU2tD0786sslSnNXNYL0A=;
+  b=laTHtPtJekwjVecAGiCGZPB4q+btlwnW4c2cW1jWsgq/S+fzigO5aOwt
+   L3JIE+mmI8uAhXxNgr/2sySd356xzbV17XkfSsCcHPaLQ8KXODvypdyfP
+   z/vKKyxcO6B0iHEDiyIdLuoRUsDHCu2lmETWOF+rYhiBNHAAimBUkkigc
+   M=;
+X-IronPort-AV: E=Sophos;i="6.11,159,1725321600"; 
+   d="scan'208";a="131040232"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 16:17:05 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [10.0.43.254:23623]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.9.81:2525] with esmtp (Farcaster)
+ id 427c4878-1590-4a4f-96c1-fd1843bc240a; Fri, 27 Sep 2024 16:17:04 +0000 (UTC)
+X-Farcaster-Flow-ID: 427c4878-1590-4a4f-96c1-fd1843bc240a
+Received: from EX19D033EUB001.ant.amazon.com (10.252.61.11) by
+ EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Fri, 27 Sep 2024 16:17:04 +0000
+Received: from EX19MTAUEB002.ant.amazon.com (10.252.135.47) by
+ EX19D033EUB001.ant.amazon.com (10.252.61.11) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Fri, 27 Sep 2024 16:17:03 +0000
+Received: from email-imr-corp-prod-iad-all-1b-85daddd1.us-east-1.amazon.com
+ (10.43.8.2) by mail-relay.amazon.com (10.252.135.97) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.34 via Frontend Transport; Fri, 27 Sep 2024 16:17:03 +0000
+Received: from dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com [10.253.74.38])
+	by email-imr-corp-prod-iad-all-1b-85daddd1.us-east-1.amazon.com (Postfix) with ESMTPS id 39B074040A;
+	Fri, 27 Sep 2024 16:17:02 +0000 (UTC)
+From: Ivan Orlov <iorlov@amazon.com>
+To: <bp@alien8.de>, <dave.hansen@linux.intel.com>, <mingo@redhat.com>,
+	<pbonzini@redhat.com>, <seanjc@google.com>, <shuah@kernel.org>,
+	<tglx@linutronix.de>
+CC: Ivan Orlov <iorlov@amazon.com>, <hpa@zytor.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<x86@kernel.org>, <jalliste@amazon.com>, <nh-open-source@amazon.com>,
+	<pdurrant@amazon.co.uk>
+Subject: [PATCH 0/3] Handle MMIO during event delivery error on SVM
+Date: Fri, 27 Sep 2024 16:16:54 +0000
+Message-ID: <20240927161657.68110-1-iorlov@amazon.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] selftests: forwarding: no_forwarding: Fix issue
- related with assigning two different vids to the same interface.
-To: =?UTF-8?Q?Kacper_Ludwi=C5=84ski?= <kac.ludwinski@protonmail.com>,
- "davem@davemloft.net" <davem@davemloft.net>
-Cc: "kuba@kernel.org" <kuba@kernel.org>,
- "vladimir.oltean@nxp.com" <vladimir.oltean@nxp.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "pabeni@redhat.com" <pabeni@redhat.com>, "petrm@nvidia.com"
- <petrm@nvidia.com>, "horms@kernel.org" <horms@kernel.org>,
- "edumazet@google.com" <edumazet@google.com>,
- "shuah@kernel.org" <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
-References: <fQknN_r6POzmrp8UVjyA3cknLnB1HB9I_jfaHoQScvvgHr59VfUNRs9IDo4kQHm1uxEp8_Luym2Vi6_aUGJIec3ZPhjY2qnJ57NgLZGA3K4=@protonmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <fQknN_r6POzmrp8UVjyA3cknLnB1HB9I_jfaHoQScvvgHr59VfUNRs9IDo4kQHm1uxEp8_Luym2Vi6_aUGJIec3ZPhjY2qnJ57NgLZGA3K4=@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 9/27/24 01:03, Kacper Ludwiński wrote:
-> Fix typo.
+Currently, the situation when guest accesses MMIO during event delivery
+is handled differently in VMX and SVM: on VMX KVM returns internal error
+with suberror = KVM_INTERNAL_ERROR_DELIVERY_EV, when SVM simply goes
+into infinite loop trying to deliver an event again and again.
 
-Remove the above line. It gives the impression that this is
-a minor spelling fix when it is not. It is fixing a problem
-that prevents the test from running correctly.
+This patch series eliminates this difference by returning a KVM internal
+error with suberror = KVM_INTERNAL_ERROR_DELIVERY_EV when guest is
+performing MMIO during event delivery, for both VMX and SVM.
 
-> Currently, the second bridge command overwrites the first one.
-> Fix this by adding this VID to the interface behind $swp2.
-> 
-> Fixes: 476a4f05d9b8 ("selftests: forwarding: add a no_forwarding.sh test")
-> Signed-off-by: Kacper Ludwinski <kacper@ludwinski.dev>
-> ---
->   tools/testing/selftests/net/forwarding/no_forwarding.sh | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/net/forwarding/no_forwarding.sh b/tools/testing/selftests/net/forwarding/no_forwarding.sh
-> index 9e677aa64a06..694ece9ba3a7 100755
-> --- a/tools/testing/selftests/net/forwarding/no_forwarding.sh
-> +++ b/tools/testing/selftests/net/forwarding/no_forwarding.sh
-> @@ -202,7 +202,7 @@ one_bridge_two_pvids()
->   	ip link set $swp2 master br0
-> 
->   	bridge vlan add dev $swp1 vid 1 pvid untagged
-> -	bridge vlan add dev $swp1 vid 2 pvid untagged
-> +	bridge vlan add dev $swp2 vid 2 pvid untagged
-> 
->   	run_test "Switch ports in VLAN-aware bridge with different PVIDs"
-> 
-> --
-> 2.43.0
-> 
+Also, it introduces a selftest test case which covers the MMIO during
+event delivery error handling.
 
-With the above change:
+Ivan Orlov (3):
+  KVM: x86, vmx: Add function for event delivery error generation
+  KVM: vmx, svm, mmu: Process MMIO during event delivery
+  selftests: KVM: Add test case for MMIO during event delivery
 
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+ arch/x86/include/asm/kvm_host.h               |  8 ++++
+ arch/x86/kvm/mmu/mmu.c                        | 15 +++++-
+ arch/x86/kvm/svm/svm.c                        |  4 ++
+ arch/x86/kvm/vmx/vmx.c                        | 32 ++++---------
+ arch/x86/kvm/x86.c                            | 22 +++++++++
+ .../selftests/kvm/set_memory_region_test.c    | 46 +++++++++++++++++++
+ 6 files changed, 104 insertions(+), 23 deletions(-)
 
-thanks,
--- Shuah
+-- 
+2.43.0
+
 
