@@ -1,127 +1,140 @@
-Return-Path: <linux-kernel+bounces-341778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA78988608
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:04:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052C398860C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D041C21CE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:04:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A572B22068
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2535A18DF73;
-	Fri, 27 Sep 2024 13:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83ECF18DF62;
+	Fri, 27 Sep 2024 13:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XwyNXTd8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QytLK7YK"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E989316C6A1;
-	Fri, 27 Sep 2024 13:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9491618CBF9;
+	Fri, 27 Sep 2024 13:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727442236; cv=none; b=h7CDXuJpdwgVXTif/EBJ3WUPWImJfwuycQk/rRHJFAPUZs8EnThSX1KNfPNZYK8y9RLbvp6FnsJiZA6W3uZCry1OZH4uwdp9IUI9e/jW0gPnhrNY3IMdu5XMg+ulFTJfWZYspjcpurbb9ht9RbtFE5jUk4988JM9IGUcQmsRA9Y=
+	t=1727442245; cv=none; b=ULD9qu1oRdaFkw6tFzWeDL5cFi55M/cLpDP80fRWYF+HTUEBLMUaDBEc7Jv/Z0zxHvUsCjkjzN+MPZdH9kUWokFzrdUXsLIo4+1MMEl8O+CM+xFsbWpwLtTVGmi5arnqmaUvDUePTmjyNq7tHJ1ggkGluHOv7OL7mKZdio/xRxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727442236; c=relaxed/simple;
-	bh=KGaBNjNO7DouBka7wHY7CLPjOBmuYFckfmsZhp4KAVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XXGdQy6CCVru7VhmuwXQKl2oI5Zq6TwERrzEKJKgVc0Xv+u4AIn1k45Ap0+exodTnzmISlfSYdLDk4QTOLmtvXAI+G+ezj02eRgjhXQ0x8vDKawOcPpymjUS6D/JjO3K6yMV1l+QFjNX4BxeER9igVulzPMYQ+PT5eA4ITErYIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XwyNXTd8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R6umUH001908;
-	Fri, 27 Sep 2024 13:03:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jgDk6xMKnrNMczCXf9wyrjb0y6qIThGjEzlCc7vi6a0=; b=XwyNXTd8nQ31TWuy
-	xksBVRoa6BujLruof/UBDybf+EW0RCgEVbNVFzu2viFVubv9SkSFUOtpqWsxbHTR
-	t/9pA3CDzJptp0u+GFRaj1GtrVZEoBWcI5QtOBzeZosPLPKUOVoy8Da5WibHP4fN
-	bf4/nkDLc7TUAeXgCTiSjFiWmzz5lqv/k0K6PVOcZctmfxjEyPCesExylbOthPAQ
-	Pes7BbDf/VFmjTtPhfITXWUQbGTlZ54gyJTdz84w5QZ3zovcOa6Bci/JxCNBINIK
-	UTpQZ8fqDqqx68k852abI0/Ai/TmqBKwOwAjcWCHU90GiKZLo3yr45M5j7jS93Qu
-	KPn84w==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41skgnkjp2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 13:03:27 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48RD3PNW028858
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 13:03:25 GMT
-Received: from [10.50.40.232] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 27 Sep
- 2024 06:03:18 -0700
-Message-ID: <21d89d9d-8bac-4bb8-a4e3-81328e783241@quicinc.com>
-Date: Fri, 27 Sep 2024 18:33:15 +0530
+	s=arc-20240116; t=1727442245; c=relaxed/simple;
+	bh=lMZjaaCr3EBfndkZEzdIumPZ24tnOworlO7tnZ5+lEE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YLUVFp2FiLEF0XDrDYLKZl069AM4cwnSY+DQIZGAJaUSSHFrMrH7T1+nUHsfpxoBDXnTIxh2EnCQhX468mWEIVlp+RiyHKKjCMdrjnZ3oE/zVSGsedOj8wA418Goxq3tkg5K8DWIhF65ij7wLR8JRcIJWeundnrF75cqMa4x8js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QytLK7YK; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e077a4b8c0so1558046a91.1;
+        Fri, 27 Sep 2024 06:04:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727442243; x=1728047043; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lLZBoouw/VuTYq1d8wJ2tQsyjB5lc2Ro32qoC8DsyX8=;
+        b=QytLK7YKJn7neczB3bLXKsGmCCbl0VMugxkmb76y0yvEgWyfc4W/8ow/jJjQbQMGsq
+         8k4Vhs8fIT8oc8M50e6O7T4G98xJIvojZHY5vLmNThRXzT8t9mdbHYTF3kHwbt9z0vkF
+         Uxxx5qz6gPlRw0HXvGv7ef6s5L6V+/Dw3oPSLbACHD5CaIQ8Jq6z6qwAWVzxjwjUb3y7
+         4FnYHSIHNggRD5vImFyzDYl7V4SBZzWCPDlu1O//NiGUWsbYd/hGpGmwdyeDpQL2l2A5
+         VFp6CBkfaXasJxQ1Xvh8oF0UAGJLx4dOjiajerR6LMjBRVSp8fl78TwKypZmXcqc37Q5
+         Ujkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727442243; x=1728047043;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lLZBoouw/VuTYq1d8wJ2tQsyjB5lc2Ro32qoC8DsyX8=;
+        b=BjZYNicTtak1D7V+g9v6aPn741xrkFafmYzgNzbgtxM/xODxgmk88gVj+l7qggxrw8
+         sG5H9Si9XO+sRY64ba0lkpqrSd2WTEVpe3mWfOyTvHgHWoXckUd3jKRbYTeD99z/SnEj
+         IfLFvp/dMaIy2ut2C16+7oHnx/L4/EVltKWivDO4Tj+2HPPHqt7PqMhmQq3cFaw5n/uD
+         kMVV63sLiiyPUJMTQFIEMblCLWy5ECelnr4qqBDIrxRLlwBpyLDUvyFvdEgMB3kkEbuO
+         UfKxxJAlCe3K2VEY13Q22p/zeUTrkdWerQELLFdwSpltSQThtNXzC68UVNHnuqrHLfd1
+         XIBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVM0ZvYgoQFByMIHDRWwcHNHtb5Zz2fokMnsG2S+LepTKOKYbCcqDa1G5gvguQSfxtj8tvlgkcHNeVJr0w=@vger.kernel.org, AJvYcCVRNQVnx8xp+4Vv+chQ4OS+NZ9jQ/MRnG1zgDSs3fjjEojeAUiKBEVuJ9NUgJ5rRtRBslxE1BlU8vGGZOAZ@vger.kernel.org, AJvYcCVTtcp3UMYQFumBFqGon7PMrcQLgaoISTIXcGJm3wpI7hCxdq2k8p2VkSTdH/dCCChmwXiX5XGaTgD8xUtQqYe6A3Y=@vger.kernel.org, AJvYcCVVaVn3xe9gce6/4yizsE6WyfvWAtbF/k6VQVXzog5NUxGly+A0jUsg4fw/M90Ceu5GeVYiergifVmBqg==@vger.kernel.org, AJvYcCVwRQ705lyQXPMbUsf1Sy3tVXjGwcbUb0FSbULcKKMcoM6DYQUXolaQ0KjGRm+MwstpaP8xg4hWbFN9@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZinjBMtr0qnsDDlCOMWX6YR1HB6W9ez+j3pWYD/aeTrH7PuXX
+	RttEa42HAbrhWfBXSovOkqGKJcFaYfYJHmBnT7wKTSKCHOcwHnQ1/mbEtY190Sc+cMnusgnPdAE
+	TIaqDIFYm+A08VwNRSwFctVTY/80=
+X-Google-Smtp-Source: AGHT+IFtB7KLDPn+GDWKySAL2J4hNThlacj2FyNRmL5tDSlTqDrYlCCyOxeg5M2NMx4sjqT6GHGIxy0O+b+GZDd+MQM=
+X-Received: by 2002:a17:90a:8984:b0:2e0:855b:9b21 with SMTP id
+ 98e67ed59e1d1-2e09111a9ebmr10387052a91.8.1727442242759; Fri, 27 Sep 2024
+ 06:04:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 6/9] clk: qcom: add Global Clock controller (GCC)
- driver for IPQ5424 SoC
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
-        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
-        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_varada@quicinc.com>
-References: <20240927065244.3024604-1-quic_srichara@quicinc.com>
- <20240927065244.3024604-7-quic_srichara@quicinc.com>
- <hitzcz3gjp4mywesnoicjnv4sfy4sckgepbl43bjjndp74etpl@adnjplfj3pfg>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <hitzcz3gjp4mywesnoicjnv4sfy4sckgepbl43bjjndp74etpl@adnjplfj3pfg>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eGJXufWxpeO_VZ9kBbgYTb7N3xRbGydw
-X-Proofpoint-GUID: eGJXufWxpeO_VZ9kBbgYTb7N3xRbGydw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- mlxlogscore=856 adultscore=0 suspectscore=0 phishscore=0 impostorscore=0
- spamscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409270094
+References: <cover.1727438777.git.geert+renesas@glider.be> <7ff1bfb73a6d6fc71f3d751dbb7133b045853f64.1727438777.git.geert+renesas@glider.be>
+ <00fd0f7d-e05b-4140-9997-b4ffe0fcd8e9@kernel.org>
+In-Reply-To: <00fd0f7d-e05b-4140-9997-b4ffe0fcd8e9@kernel.org>
+From: Adam Ford <aford173@gmail.com>
+Date: Fri, 27 Sep 2024 08:03:51 -0500
+Message-ID: <CAHCN7xKywTnuW9W-5abwpq8txNYhN39G9OX8zJDy_j=fqJFPfg@mail.gmail.com>
+Subject: Re: [PATCH treewide 10/11] ARM: dts: nxp: imx: Switch to {hp,mic}-det-gpios
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Lubomir Rintel <lkundrak@v3.sk>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Paul Cercueil <paul@crapouillou.net>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Shengjiu Wang <shengjiu.wang@gmail.com>, 
+	Xiubo Li <Xiubo.Lee@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Adrien Grassein <adrien.grassein@gmail.com>, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-mips@vger.kernel.org, 
+	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Sep 27, 2024 at 8:00=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 27/09/2024 14:42, Geert Uytterhoeven wrote:
+> > Replace the deprecated "hp-det-gpio" and "mic-det-gpio" properties by
+> > "hp-det-gpios" resp. "mic-det-gpios" in Freescale Generic ASoC Sound
+> > Card device nodes.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > This has a run-time dependency on "ASoC: fsl-asoc-card: Add missing
+> > handling of {hp,mic}-dt-gpios".
+>
+> Therefore this should wait a cycle. Patch is good, although maybe we
+> should keep both properties for backwards compatibility?
 
+I also wonder what the point of the customer fsl-asoc-card is when
+used in conjunction with a standard audio codec because the simple
+audio card works just fine.  I think they have some special drivers
+that need it like their ARC/eARC and HDMI drivers, but I have tested
+several NXP boards using a simple sound card and it works fine.
 
-On 9/27/2024 2:32 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 27, 2024 at 12:22:41PM GMT, Sricharan R wrote:
->> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>
->> Add support for the global clock controller found on IPQ5424 SoC.
->>
->> Co-developed-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->> ---
->>    [v2] Remove CLK_IS_CRITICAL for all clks
->>         Added CLK_IGNORE_UNUSED only for gpll0 temporarily till
-> 
-> This should be gpll4, not gpll0 (no need to resend just to fix the
-> changelog though).
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-  ok, Thanks !
-
-Regards,
-  Sricharan
-
+adam
+>
+> Subject: drop "nxp" prefix.
+>
+> > ---
+> >  arch/arm/boot/dts/nxp/imx/imx6qdl-sabresd.dtsi  | 4 ++--
+> >  arch/arm/boot/dts/nxp/imx/imx6sl-evk.dts        | 2 +-
+> >  arch/arm/boot/dts/nxp/imx/imx6sll-evk.dts       | 2 +-
+> >  arch/arm/boot/dts/nxp/imx/imx6sx-sdb.dtsi       | 2 +-
+> >  arch/arm/boot/dts/nxp/imx/imx6ul-14x14-evk.dtsi | 2 +-
+> >  arch/arm/boot/dts/nxp/imx/imx7d-sdb.dts         | 2 +-
+>
+>
+> Best regards,
+> Krzysztof
+>
 
