@@ -1,163 +1,101 @@
-Return-Path: <linux-kernel+bounces-341612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084D698826B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:30:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF56D98828C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEBB028251B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:30:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 921A7280DD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92ACE18005B;
-	Fri, 27 Sep 2024 10:30:25 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2971218951F;
+	Fri, 27 Sep 2024 10:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Og4wUFVZ"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ED82B9CD;
-	Fri, 27 Sep 2024 10:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D985F15FD16
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 10:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727433025; cv=none; b=XEo+/mCB3S9kjV21JJtcSgy9Czs+pm0JQ8A0ckJ106Snhffti5aETMxjU/DlDtcI4ppxxRwf0azViDXgrVi2BwmFOw1R7EDcLkL0Xu1FsLWv5A8G+yg0MZ9BhFIisxYa4eIi3Iag2KxppjvYZbxSedMsY42dB/f46JUJtBT7q68=
+	t=1727433142; cv=none; b=W45uxNa2wHXi+oQC+yLcrIovVxH/MmyMUUID0peys/QuPks5ZgJS0wH9BE1ICrVi0SuxtU5gyOJiMxyzbdmQVQQzQ7chnjWCDXFiF4tojI/jMyoypxodHAhFhjdCFoJ6UMs6H2Jpcv/JGYb3jpiqG0N17tBwidbJ+I3CQ4uOg/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727433025; c=relaxed/simple;
-	bh=i23Iim9cXkdz6Ckb0/1ebishCfbJ1d4LcWObJufVyDU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ck0XyCzZtERVxvVY7xqjISD/9JH1bmIrJV80nZCCzKEVmtIeEn31FTiXbuo7M/x1uTi+RD8nwcuQIJu8LyjKMiY8NatR9gMuIev3DgNWUbrJppyASxjQM7vtVv8xTuWWMDwC77javYsrSqh0XSoemXGn+g/qhH3OcxM//PKi90w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so18976765e9.0;
-        Fri, 27 Sep 2024 03:30:23 -0700 (PDT)
+	s=arc-20240116; t=1727433142; c=relaxed/simple;
+	bh=/5SZIcto7qgN2Tfj4OlkP3fsvngusO4epQHLOlVZsmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Olk0ewYBo6w3jFsRet6nacAbXOpVstuTEOXk4oVS0A4XzBxkb4NRzdu7fCT9m8Uju/Xn7meWGV+pNcrM+RUcjjrWGuOXd5PRYgXLySKfezIr5618ITUheCXy5pGd+pI5SGySwt4vqYXWZ9SHvFfU7BrndkzGxbaWIgKP0pkIxKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Og4wUFVZ; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cacabd2e0so16426035e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 03:32:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727433139; x=1728037939; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DdmvFk1zGQs2rFnRAdCqQIY/+ci6VPOq7UoKUH/vbeg=;
+        b=Og4wUFVZNllH5Db63/5av3S0zilMHYv3uu3ObcjPZGuHxz957gvS3osillpFG+4G38
+         NOim85FF9bTuocb3ARVETffDp9OLlBEXgPzovqgobgwHA4KaYBK6Me53wmwgT3ryCoFb
+         gPK1dcy/HzhtSGAzLIPJjztal4/3d6FtjUwt0QB5wQifTBNdjL82Jj5ftlUniwblgS1m
+         2SxP1hJeUZ/IjkhWiaV09m4yEJoczg76b93V6XCQTbJRg3MOmrScIXYw5ZrxIPAiGjPz
+         vyZGW+YPYp1cnJOjn4+uoC4TId28DLNtvdczh3QJy2BQUxVaPdNVXZx09JpbXMSlOrpw
+         8gJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727433022; x=1728037822;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S0irRWsRKnoaNN2u1s1xIgNFbfY4YoxqLzDCKhb9xrs=;
-        b=LhWHMo1+LLujeUQTCig4J6EvXlQ6WnSjyJN+A0YqYn+XMiFI1mJu8CqFgdBe9SNNQK
-         XgzJQ/+g+paPCUHm4moLeX+UkZvfuFsMtX4BeMzE4TjbSh2JV6fwXC8xQ9gihNj2Z/U9
-         RqkJ2QvXiKeUSkHri5c3oo+Roz0FanIfrflnL9RbwlygXopKSBSkXTyPXd2VyUNSOHxM
-         rlq84EaFQPgOESb+tgnfu4cUW6FqyvtNHiemGTo/WQHKhBlEDHbZfIfBvqyBkqmL7s+j
-         n3iNKINtz7BVfUHfc1FTSEA9X1dG+tsK64oZxp2GsyvZ/8yMCqvU0N52jbk7aEXp9GMv
-         /E/A==
-X-Forwarded-Encrypted: i=1; AJvYcCV9GkJn017xr6h0kDKAwIcXZRHEUh6f6xLvc5X2Vty+GcmXpmop+7S62rFR0u7R7EomDKWBT4JT3LHHvzE9@vger.kernel.org, AJvYcCVVXfHjVf3tmzLUKXge0mbZkT/eg8NnWIHmwHUNUL1I0/MzubauEFmM8ZWMfXQoZDQMpoZuxePTg9LtUg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqLbBCEUXVmzhFHxGOGY3snaaZ4nsMGx+XbnZ7FOsd3QYkEgxG
-	e11k8t6gF+7KQPz3HX1G6Zmd/RfTHmmzNZRZqWCgrcJjz8NufubUCZdLTqOQGZK7Eg==
-X-Google-Smtp-Source: AGHT+IFmClhrcMQrR/bnQGKsXe8FFtEfQLC+uO9RryHGCXleHz6eZa8yvlVFO4IjZi4Tos/cCGhhVA==
-X-Received: by 2002:a05:600c:1d20:b0:42c:b995:2100 with SMTP id 5b1f17b1804b1-42f5840d2a9mr19447505e9.6.1727433021513;
-        Fri, 27 Sep 2024 03:30:21 -0700 (PDT)
-Received: from nuc.fritz.box (p200300f6f71aeb00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f71a:eb00:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e9027450asm80141695e9.0.2024.09.27.03.30.19
+        d=1e100.net; s=20230601; t=1727433139; x=1728037939;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DdmvFk1zGQs2rFnRAdCqQIY/+ci6VPOq7UoKUH/vbeg=;
+        b=BynYljDWdn5vsDO6ZQ+ONmM1LU/f5BiVyaA0wqj5nFgjSs8L2ZOpPLwtRpJNC2N8Ir
+         oAwGMJ5t5VS8zlIUX22RRt3q9JGze5WDhEfEdTNXQzmMxzonkz9NG7OeDDWYK4kxeHx1
+         Or1/96h93vM5V8hoQf3NZavCgplCXGnQiorNEVCznPcr8UcMNLAnmG1R+TQ2VyKdCYFd
+         O+hVLLWI3XaPMgcj5N3QOrnHNjIOXb7rFzxrk9MEk85MrHqjop7VHqrtEZ0EnMbOpwkG
+         7pXsEXe8HIfZ2E5HDwhMU/gaPbk/vwh5JPaF47VoL3tIan3EgR0dbl9RpEuvoFZmiEUE
+         hxtA==
+X-Forwarded-Encrypted: i=1; AJvYcCV35lqvC4hgDAIMK7u8vTETML+vCoZqdHv+ME0Ou8W4+lIceqRwoEK8nLQCkPkmGU/JaxY8iJ3mcmoIvZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHTZ8oQNJcsfJBRxsPyEnG5Hd0vw0A5PumzJPW/VTSkCEVJz0M
+	7cIlo96OcaXnNSW6lvxu+lk0ae5L4ET03EZugNj/SPl11bbk4wRJFFJtcUrpurA=
+X-Google-Smtp-Source: AGHT+IEI5zaCi7IffgRkiXlGP/nEaiUxN6UmQFK7bvc31AyVqNBtOMrQp2GsXDb0ukk39MwDBlTJzg==
+X-Received: by 2002:a05:600c:350f:b0:42c:b037:5f9d with SMTP id 5b1f17b1804b1-42f58409dccmr16523645e9.3.1727433139311;
+        Fri, 27 Sep 2024 03:32:19 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57e2fe7dsm21657055e9.46.2024.09.27.03.32.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 03:30:20 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Filipe Manana <fdmanana@suse.com>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v2] btrfs: remove code duplication in ordered extent finishing
-Date: Fri, 27 Sep 2024 12:30:05 +0200
-Message-ID: <20240927103005.16239-1-jth@kernel.org>
-X-Mailer: git-send-email 2.43.0
+        Fri, 27 Sep 2024 03:32:18 -0700 (PDT)
+Date: Fri, 27 Sep 2024 13:32:14 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Qianqiang Liu <qianqiang.liu@163.com>
+Cc: andi.shyti@kernel.org, shyam-sundar.s-k@amd.com,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: amd-asf: Fix uninitialized variables issue in
+ amd_asf_process_target
+Message-ID: <cc527d62-7d0b-42f8-b14c-6448d3665989@stanley.mountain>
+References: <20240926151348.71206-1-qianqiang.liu@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926151348.71206-1-qianqiang.liu@163.com>
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+On Thu, Sep 26, 2024 at 11:13:48PM +0800, Qianqiang Liu wrote:
+> The len variable is not initialized, which may cause the for loop to
+> behave unexpectedly.
+> 
+> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
 
-Remove the duplicated transaction joining, block reserve setting and raid
-extent inserting in btrfs_finish_ordered_extent().
+You forgot the Fixes tag.
 
-While at it, also abort the transaction in case inserting a RAID
-stripe-tree entry fails.
+Fixes: 20c3cc299218 ("i2c: amd-asf: Add routine to handle the ASF slave process")
 
-Suggested-by: Naohiro Aota <naohiro.aota@wdc.com>
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
-Changes to v1:
-- Moved comments to the preferred style (Filipe)
----
- fs/btrfs/inode.c | 48 +++++++++++++++++++-----------------------------
- 1 file changed, 19 insertions(+), 29 deletions(-)
+regards,
+dan carpenter
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 353fb58c83da..412dba9c66c3 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -3068,34 +3068,6 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_extent *ordered_extent)
- 			goto out;
- 	}
- 
--	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
--		BUG_ON(!list_empty(&ordered_extent->list)); /* Logic error */
--
--		btrfs_inode_safe_disk_i_size_write(inode, 0);
--		if (freespace_inode)
--			trans = btrfs_join_transaction_spacecache(root);
--		else
--			trans = btrfs_join_transaction(root);
--		if (IS_ERR(trans)) {
--			ret = PTR_ERR(trans);
--			trans = NULL;
--			goto out;
--		}
--		trans->block_rsv = &inode->block_rsv;
--		ret = btrfs_update_inode_fallback(trans, inode);
--		if (ret) /* -ENOMEM or corruption */
--			btrfs_abort_transaction(trans, ret);
--
--		ret = btrfs_insert_raid_extent(trans, ordered_extent);
--		if (ret)
--			btrfs_abort_transaction(trans, ret);
--
--		goto out;
--	}
--
--	clear_bits |= EXTENT_LOCKED;
--	lock_extent(io_tree, start, end, &cached_state);
--
- 	if (freespace_inode)
- 		trans = btrfs_join_transaction_spacecache(root);
- 	else
-@@ -3109,8 +3081,26 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_extent *ordered_extent)
- 	trans->block_rsv = &inode->block_rsv;
- 
- 	ret = btrfs_insert_raid_extent(trans, ordered_extent);
--	if (ret)
-+	if (ret) {
-+		btrfs_abort_transaction(trans, ret);
- 		goto out;
-+	}
-+
-+	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
-+		/* Logic error */
-+		BUG_ON(!list_empty(&ordered_extent->list));
-+
-+		btrfs_inode_safe_disk_i_size_write(inode, 0);
-+		ret = btrfs_update_inode_fallback(trans, inode);
-+		if (ret) {
-+			/* -ENOMEM or corruption */
-+			btrfs_abort_transaction(trans, ret);
-+		}
-+		goto out;
-+	}
-+
-+	clear_bits |= EXTENT_LOCKED;
-+	lock_extent(io_tree, start, end, &cached_state);
- 
- 	if (test_bit(BTRFS_ORDERED_COMPRESSED, &ordered_extent->flags))
- 		compress_type = ordered_extent->compress_type;
--- 
-2.46.1
 
 
