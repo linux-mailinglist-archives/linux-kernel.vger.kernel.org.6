@@ -1,85 +1,88 @@
-Return-Path: <linux-kernel+bounces-341249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F77987D3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 05:01:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22CDC987D3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 05:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 457F5B21086
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:01:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E29AB22D16
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FE849634;
-	Fri, 27 Sep 2024 03:01:29 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B979833EA;
-	Fri, 27 Sep 2024 03:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C34123CB;
+	Fri, 27 Sep 2024 03:15:07 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE17D16DEB2
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 03:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727406089; cv=none; b=faVF1aXfjzo6A1xI6ifbbI9jkqfreuioFc7QOIpZdJ65lNoz/icxLqWMLhAQeqOZha5poWUZbyB5YcFSLCniY7E2y2KfKfSga9TGA7Ao6WgCr8dfC7I19bYkybs0NOS8V9Jz9NSg+C+6XVvlcJnDIKGXDzFu4rYNUA0D8aoZ0tA=
+	t=1727406907; cv=none; b=dW62Wgx69LVvZlIN2E8HH3kE56xp7QXn9gWuqR1J11rX7nAcch+aBlab5gl1QR4NudmQz4lwYTB+0l59g+/cIDURp9SJ8DiOaaIRlM++42x9QqQ9axwsT4kilNyIalvsw9xloaurIGjRc3C/aeKq2kwAmmdVvHjeRVwpsc7CXrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727406089; c=relaxed/simple;
-	bh=TKDYi1Est0qtsTfBoJQsqjNCm5BH5ShjwJeqn6DcCsw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R9oNKGwEDiDH+GfzZ3K2jIJDFzwx6ygOl+kIz0VmnJLAIPzZQhpX2H1pbUjZbW2MPhZlKF/HBBRXKOWz7fhOFvBoPxrky5Zdm1Z4rKzWhJtyTJXtG+H9LyqhguAWHYK30DzMzLELJpTQW4YKRRrt+mRk/LwlmszPe7tJzd/LF5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee166f61ff937c-6cc80;
-	Fri, 27 Sep 2024 11:01:16 +0800 (CST)
-X-RM-TRANSID:2ee166f61ff937c-6cc80
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.101])
-	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee166f61ffb975-2bc22;
-	Fri, 27 Sep 2024 11:01:16 +0800 (CST)
-X-RM-TRANSID:2ee166f61ffb975-2bc22
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: akpm@linux-foundation.org
-Cc: shuah@kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] selftests/mm: Add missing free.
-Date: Fri, 27 Sep 2024 11:01:14 +0800
-Message-Id: <20240927030114.3792-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1727406907; c=relaxed/simple;
+	bh=IfVUnQzvsU3erRjtyBu275kBik322qL9HgyBtPj5+e0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iLDq/3H6RQSUXJ2i99dD9KuQ/7AztvPy0xv1qPQFnpLGmZWETPe5XRlYKkkZhApQTw5W+UH3NwTHSrOkyCK4+D6WFLUy67O+Yg4NFwb9x43SUlx6zj/2SdKd2FVx8047mObTy5azRHLlLBDhSj0yt53xK89ZDK7qct30RmCdxdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82ad9fca614so252852739f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 20:15:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727406905; x=1728011705;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vtM/9D39coALiNrlEfJyi9fXiC+6RfG7FZwDHO74uRk=;
+        b=SD51iOnrzPxXRKA6E3+wTE59HV0CdYGYJ3PLmT1clwW50Rc61yfUaSh7hxoPanqo6x
+         n1A4uVD+POl+4xvy0W5E1YbcxYvsEb9b5aORdt37M1PL2hWnRN+FPHp8w+e4AgCDgtB3
+         pgvS9pBeCJHu6IHyc/e3kh0qpW9CtazckrypINMWPd7Qt65ZDKac4gOUJKExRWUB1Rl6
+         c5mMDbWb4iJ5rrHl5uZqAkr1X0QCEgJEFfpwbTRufxq1UF52VwxIfbKO7xkkPmdmp2ao
+         wasRVVV+pnWYwNh6qNzgHpOpnY/8hhI4u/Z8vNWDDI9XfyKIhZfbAe4Liw3Md9lKroA9
+         R7rw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXW0aYleuTIELVL8NF22a90GBfOTxyvuZTMcRrMcGK6qqt7HahF2oWxqXE9axBHzuN6ZHo7ZyN0eMgy/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO4xwkeYkD24EgJcz8e2y3RLoHlJCW/wxa7Y09GNq6kO3A0VQz
+	M//RV+IONCYoNUF3qmcXrhkzUtnKhSe/v2gCV9TmcKf1yQq1pmGwMIeOJe8pzQA5Adx1f7CnheI
+	LHtgHGbM5QPYMYLreTHtrXpHzhKg5jukGP9/6gQ/w9fXpnqndpfkhsNA=
+X-Google-Smtp-Source: AGHT+IEGTqjsQ/oJn0hD8jsSMGmR0OsAiQuVDLHvFz7nHX7qFlEYhJSBTm3BXyVIJl2UHJPPKpQQN5NyVhSvM9iZaIEwTd+rMxZl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1582:b0:39f:5521:2cd4 with SMTP id
+ e9e14a558f8ab-3a3452bf444mr15452985ab.26.1727406904713; Thu, 26 Sep 2024
+ 20:15:04 -0700 (PDT)
+Date: Thu, 26 Sep 2024 20:15:04 -0700
+In-Reply-To: <c3d3c52e-ec5b-4238-aac7-284a3838be90@126.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f62338.050a0220.46d20.0009.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_stripe_to_text
+From: syzbot <syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	zhaomzhao@126.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Hello,
 
-There is a memory leak in mkdirty, just free src before return.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
----
- tools/testing/selftests/mm/mkdirty.c | 1 +
- 1 file changed, 1 insertion(+)
+Reported-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
+Tested-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
 
-diff --git a/tools/testing/selftests/mm/mkdirty.c b/tools/testing/selftests/mm/mkdirty.c
-index 1db134063c38..af2fce496912 100644
---- a/tools/testing/selftests/mm/mkdirty.c
-+++ b/tools/testing/selftests/mm/mkdirty.c
-@@ -280,6 +280,7 @@ static void test_uffdio_copy(void)
- 	dst = mmap(NULL, pagesize, PROT_READ, MAP_PRIVATE|MAP_ANON, -1, 0);
- 	if (dst == MAP_FAILED) {
- 		ksft_test_result_fail("mmap() failed\n");
-+		free(src);
- 		return;
- 	}
- 
--- 
-2.33.0
+Tested on:
 
+commit:         1ec6d097 Merge tag 's390-6.12-1' of git://git.kernel.o..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=13ffe59f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6265dd30e362bb47
+dashboard link: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=151daaa9980000
 
-
+Note: testing is done by a robot and is best-effort only.
 
