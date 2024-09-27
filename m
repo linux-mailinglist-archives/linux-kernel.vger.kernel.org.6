@@ -1,114 +1,135 @@
-Return-Path: <linux-kernel+bounces-342080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DCF9988A62
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:52:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4030988A66
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78B61F24535
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:52:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D41031C2336C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2CA1C1AD1;
-	Fri, 27 Sep 2024 18:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BA11C2319;
+	Fri, 27 Sep 2024 18:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b="htT5hZAv"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pdYENyEG"
 Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C376171E76
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 18:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63121C1AD9
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 18:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727463119; cv=none; b=oPwJuhDOWeFeVrDEMaH3+4WDEF2q137pmC2bVbYRSdsP9KS7orh5MyU5fflv9wNQmT7kYSRMI6AjlbmYB0reujrVvJKzpDuBLqR3VqBjiMYp4/RhJkQ0ogAj18CnKtVVluExjHRnFbtcKUyBxaF3eClLAhxEbJt0OczOI+fbkaE=
+	t=1727463138; cv=none; b=hwxSWcqkhe1LkwjsgVxLFrGFuQrLPJvNBhHGEK4NJjmir9fp67jmJLsr3t+LJzPMpN637orssrD6bPvMlHN1ot3xrcUMbLtQeKhWgQ4CYbixyiq1ke6zEWKCf3Zo/Sk0KG/6fR6TrG8bEreOtRHt4ECq0DlogqUs7zyyXDRguQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727463119; c=relaxed/simple;
-	bh=eITh1z6ROeAVjf34DngYzl3Vc0FLZBZpfykTmNZoXY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HDJW3PscRGKUtg+4u/X1qToVfNinO40BdwcPHybI4rHdPeb2ZO19wylYIsnlPC1Zf5scSJ77unThOE8UATZZcmQcfAOPKjwzMU+YHhj6ETUOEMGr2cTDNBmTvC0VyH3c1j8OHg5Jt+yt2a2Ndd5aGRTPwo/4Bsc6g8lroNwLQSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b=htT5hZAv; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a344f92143so6357045ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:51:56 -0700 (PDT)
+	s=arc-20240116; t=1727463138; c=relaxed/simple;
+	bh=IzWjw7eN0y01PVEFCALDoih+toQy5a+BhLNxBF2j7ms=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=IdveObseHgBwuOUKJ1j1G0L4+nNOujjyvTKiLdajwwj7uJHVO8BlHd561g/+QestSq+18v8G0odNLNPzQ1+RLhLiL8JiYcmTVE2DRzqpNAudbX8HAsKRRQIvg8vOKZ0at3PvF5IUJWT3EglC7tD15hsRtqJzjJuynKIbxhcm0zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pdYENyEG; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso37775ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 11:52:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxtx.org; s=google; t=1727463116; x=1728067916; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gxyQQgkA3wMtE3Hi9DOhcULcCDQzTPtIVdh2jdevVzY=;
-        b=htT5hZAvsc4OzGUhVRT0aOz+u1Tj4OQsqKOwZKMxumVI9srorEk0Nkt12LoxPPkxrb
-         G0ENv9lBv11YkPUPnrnrQ88UNsBJ9rhNuIF1jqb7VFlQedkvWhZ8RBzmXHrSNo6kHAEB
-         O1ECxrFJ6/QW8fe0ceXVzejqRAZZQqcOOLcUw=
+        d=google.com; s=20230601; t=1727463136; x=1728067936; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1oLFkKO1VpfbWh8RAovo3jp9IKk3ALZrZVKd9HwvoaM=;
+        b=pdYENyEG3AWrqQC4lHurdQQGECdq6Fyf1bwFX7HUzwCLNzQu9NlKm7zELR0kJLOidy
+         wpgG1x1ji/PgB6BdTSV7uGZQQa3NzgSoQuBdtIDgEZt0m07IlAZG6bHaGQ7aIqeV7Nem
+         F7h1jd2pKmOjX5G3f5WNsFj6OaXAdsUGhslUMXQ/jVCKRLz/sm9PW6+T8jalbHGESCXO
+         lkLftwkCtV9K0JeNhzdRGG42Q0f/ADOOriN0c6rIRpn6UwUOKvED2TqRfEMNyYd0pncl
+         VNQlPq3wewAu+2uQkMifP42739HVYHXaSVRePwzRAJdWMZUhqXnCdlMFzIpXz0dgJ92n
+         nF0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727463116; x=1728067916;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727463136; x=1728067936;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gxyQQgkA3wMtE3Hi9DOhcULcCDQzTPtIVdh2jdevVzY=;
-        b=XwAE+yMZ9EhdoKQVwpkMzzgsfYKBu1v5GuTw51Yp78VkAIV5WzZuRhM5101/MLBlE1
-         AIzRD/455eRyyPk8EGTfIo+Goe/wUN7/Wp4VcEr5eYISCh1FlSU/94ed2ys8kEzGshXi
-         VZenQ1O7AziJNAn7fCYOU7frVxpDGGxWcChLp9i1+AUS2FUOCUJg02W0BqXHq6FQQP3I
-         j67ieg28EkMpxOaqmDA/VhUEr7rAckdhpvrSMIIqlN/eEcAGIHDw6I0dK9dJQG62Ixmg
-         1ewEqt/zr+KrV0V2lHnFDR1xKWTxlKDjNwi2FI5KzJOV/W3OltTUxTEm2VV6B56mLnE6
-         iBjw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3hVkdj0oPtad0DnmGJLVwlV6BVx/AGuWTCDRKe9SLI9RoXe9YXJaOqJ9sVGa0uoI00QgpxYDnHB2Qyiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsOCm81OYcE3wLXdTzjYuNkarbPa/RLSDleJWbs5UvSY2SSrqI
-	ckcjwb2IWNREBiOYJUQSSimkDFnkpHzcnY4wNkxfpV2w9CO3fK7pXlObKedvZlvFJy2EzNFQdKs
-	/Mw==
-X-Google-Smtp-Source: AGHT+IGBJMHjU3F3oNzrEVYyvsCJoiibFm59q1GvVFt61CRaclCtx2Dq6FUyz7K8DJ0ILIP0e9KCaQ==
-X-Received: by 2002:a05:6e02:19cd:b0:3a0:c7f9:29e2 with SMTP id e9e14a558f8ab-3a3451b691amr37024015ab.19.1727463116011;
-        Fri, 27 Sep 2024 11:51:56 -0700 (PDT)
-Received: from fedora64.linuxtx.org ([72.42.103.70])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a344d82ae5sm7443195ab.28.2024.09.27.11.51.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 11:51:55 -0700 (PDT)
-Sender: Justin Forbes <jmforbes@linuxtx.org>
-Date: Fri, 27 Sep 2024 12:51:53 -0600
-From: Justin Forbes <jforbes@fedoraproject.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.11 00/12] 6.11.1-rc1 review
-Message-ID: <Zvb-yRASvJclm4hT@fedora64.linuxtx.org>
-References: <20240927121715.213013166@linuxfoundation.org>
+        bh=1oLFkKO1VpfbWh8RAovo3jp9IKk3ALZrZVKd9HwvoaM=;
+        b=DeYfSoMRtoCoeTfQWmOnBzMu2HTiPZWcwQedW/IH0nwUKBTBMyO7DH8EpONgBaEyS0
+         H0pEYOjsyfV96ajcF5xXrNk1XHD8Qt9g/HMe+6HpUxeMqglbkGIsame7ryypABzVNGBb
+         ApazIityCXHrFppaH2J1bXtLTgibuzmNCR45tz6sRS4OnahQUuTWykn46ys+tazl80KU
+         4ivMcVlQHfPFxv63p3++HLSWLxJPfZPeu/f2At4SkOfVxAxBzm3mi918m5BZjvaq+40y
+         muEqjscBOKPekKHAQB7T+GeBE6p4+gCCUgMibTCDhKqBMb6WkJwQYJfzPDOGzTpoD3Lp
+         e4QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1q3qOhXyUd1cS+FrpWdnYaJpKc0aJZH2uFe+mn15pP68u+SlXzb07U/wslklZokb2mneHIlXzG+dXSQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8CgmaQg228Hk4LsY5Y5kuxT/FqiS7zpXtpcJozw6w/Lq8J3Ji
+	8TJV1STfPpou+Ox4Dd90GLKf/2d+UtQFEKewqrD6kO7Lr2yWTicScsmyCbqcUX1miNOO9vY1gs4
+	ZpDKzNkqo+JyC1lFsc4A69CvlOAixRR4n0kHH
+X-Google-Smtp-Source: AGHT+IHsljO1XOSs8sBOur4Zv2fgb8b4s3bUfld8PGFucwZxQKtVXzovLlISUT9gEFG9kNJu45XDphWC853dVxqtTwg=
+X-Received: by 2002:a92:cd8b:0:b0:39e:68d8:2891 with SMTP id
+ e9e14a558f8ab-3a34bc236c6mr444995ab.6.1727463135626; Fri, 27 Sep 2024
+ 11:52:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927121715.213013166@linuxfoundation.org>
+References: <20240913173242.3271406-1-jmattson@google.com>
+In-Reply-To: <20240913173242.3271406-1-jmattson@google.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Fri, 27 Sep 2024 11:52:03 -0700
+Message-ID: <CALMp9eSd49O_J=hJKdE0QAcYFY1N1cxG1rKDJH-GUZL7i_VJig@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] Distinguish between variants of IBPB
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jim Mattson <jmattson@google.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Kai Huang <kai.huang@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 02:24:03PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.1 release.
-> There are 12 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.1-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Fri, Sep 13, 2024 at 10:32=E2=80=AFAM Jim Mattson <jmattson@google.com> =
+wrote:
+>
+> Prior to Zen4, AMD's IBPB did not flush the RAS (or, in Intel
+> terminology, the RSB). Hence, the older version of AMD's IBPB was not
+> equivalent to Intel's IBPB. However, KVM has been treating them as
+> equivalent, synthesizing Intel's CPUID.(EAX=3D7,ECX=3D0):EDX[bit 26] on a=
+ny
+> platform that supports the synthetic features X86_FEATURE_IBPB and
+> X86_FEATURE_IBRS.
+>
+> Equivalence also requires a previously ignored feature on the AMD side,
+> CPUID Fn8000_0008_EBX[IBPB_RET], which is enumerated on Zen4.
+>
+> v4: Added "guaranteed" to X86_FEATURE_IBPB comment [Pawan]
+>     Changed logic for deducing AMD IBPB features from Intel IBPB features
+>     in kvm_set_cpu_caps [Tom]
+>     Intel CPUs that suffer from PBRSB can't claim AMD_IBPB_RET [myself]
+>
+> v3: Pass through IBPB_RET from hardware to userspace. [Tom]
+>     Derive AMD_IBPB from X86_FEATURE_SPEC_CTRL rather than
+>     X86_FEATURE_IBPB. [Tom]
+>     Clarify semantics of X86_FEATURE_IBPB.
+>
+> v2: Use IBPB_RET to identify semantic equality. [Venkatesh]
+>
+> Jim Mattson (3):
+>   x86/cpufeatures: Define X86_FEATURE_AMD_IBPB_RET
+>   KVM: x86: Advertise AMD_IBPB_RET to userspace
+>   KVM: x86: AMD's IBPB is not equivalent to Intel's IBPB
 
-Tested rc1 against the Fedora build system (aarch64, ppc64le, s390x,
-x86_64), and boot tested x86_64. No regressions noted.
+Oops. I forgot to include the v3 responses:
 
-Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
+> For the series:
+>
+> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+
+and
+
+> Assuming this goes through the KVM tree:
+>
+> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+
+The only substantive change was to patch 3/3.
+
+Sean: Are you willing to take this through KVM/x86?
 
