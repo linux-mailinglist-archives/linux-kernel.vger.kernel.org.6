@@ -1,57 +1,44 @@
-Return-Path: <linux-kernel+bounces-341647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596A89882FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:02:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7790C9882FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 047571F224A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:02:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EAE81C2137C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05692188CA8;
-	Fri, 27 Sep 2024 11:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujwwUHcm"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F95188A19;
+	Fri, 27 Sep 2024 11:04:08 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601701741C6;
-	Fri, 27 Sep 2024 11:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E48939AD6;
+	Fri, 27 Sep 2024 11:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727434961; cv=none; b=eCMpTx1aNHgAabt3/548qBk+CTD/PRCipnKMIBW7Eb5oOzUHIHQsrNsF/0R4mElQBHvJC+HgOBoC7TGVTXHH3P1irMub1HCXJxoFTFM7Cd93zKAZO9mhYUHsUOzUCSvpwviebGMYV1HjZAKTN5oRKt+p3YNQiKz0WygVL6s64JU=
+	t=1727435048; cv=none; b=n6zEw32TEaJVKcRUvzzS3blD0ttDFGrvGaBk7DSyp2iLEH7FZegyYehbqQCiWy4qKAwgczbUfOMjO796APbAUcVodXm5IoL7ouw4W8/Ntr4f9DfnnpuGBkTRrlLKEyxO2rr8KIE3IFbGZXB90GnLdSx77uPspuDVISZHlbO4mVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727434961; c=relaxed/simple;
-	bh=4UPUuX+Trl4Y6sfymx/iQndzU9LD0gq1bEPGXiBZtFc=;
+	s=arc-20240116; t=1727435048; c=relaxed/simple;
+	bh=Y4rcvCDAdeYvUPe4nn9t94GcJUqUTEe/gAfLrq1/GM8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k1ZV7Uoci6fNUjJkDlhHM6ob8OvcE7Zt96v9dYHgVtCXBsI/wIzK+V5QIAJ+uOK3febH6lJIq84p7U+blukOXalh+RWC1WldzZTzGYs9w+BRH8oDSSjOcoXtn160S2n57Ou9/pmjZtsp9DX6E+l/W9XYsz6AnAPRnvTFJ+m7Dyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujwwUHcm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA56EC4CEC4;
-	Fri, 27 Sep 2024 11:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727434961;
-	bh=4UPUuX+Trl4Y6sfymx/iQndzU9LD0gq1bEPGXiBZtFc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ujwwUHcmPp97C/xhQjjwj/gz60+VNaaokKw8sZYPYQdyUINq5UXPPCHZ1r66xELKG
-	 5zYbOOwUYsEb4AWdx1OPwsOOnDxuxbZjxvkwuSSDRa03ocAKuqNM1LqQrwSP+kq1AB
-	 xTT82tILsrGbg2O1d3mB5xTDEzhHXzNG9roywwkZHTiRrxQcGRvG8LRDc5kdl0cLN8
-	 UQaOzN8XNEXWy4K4+WhU1vjPzW0tFxybZBIdMjsEsS1RWCCDzVLQc0h56JgGluz2wL
-	 yaraiSEoQMXGshQymdd1HHUDmIkNL9uYkHxT4Zc4hs4qx4IpvbaO3p13qgpkEGKx72
-	 Yff/re53DwQEA==
-Date: Fri, 27 Sep 2024 12:02:36 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dipendra Khadka <kdipendra88@gmail.com>
-Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, maxime.chevallier@bootlin.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: Re: [PATCH net v5] net: systemport: Add error pointer checks in
- bcm_sysport_map_queues() and bcm_sysport_unmap_queues()
-Message-ID: <20240927110236.GK4029621@kernel.org>
-References: <20240926160513.7252-1-kdipendra88@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FPOP1dm2OAWrMOKxVdYdGL3R0/kShQnNFEUUohjsERX0xo+bLsn0Cl+fclRua44DJ1hFaQ1Pab8pH8F838Fiv4LjStcYHO7Lu9g0I6fWrAdLWN0Y1wOQqi/OjiG17mzEhIaMQDkv8uBA02n/wZzGffN3cKLAxxSh0ntt5N35bRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1BFFC4CEC4;
+	Fri, 27 Sep 2024 11:04:06 +0000 (UTC)
+Date: Fri, 27 Sep 2024 12:04:04 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	LKML <linux-kernel@vger.kernel.org>, Andrew <quark@disroot.org>
+Subject: Re: [regression] segfault in Qt apps running on Linux kernel 6.10.8
+ ARM with LPAE
+Message-ID: <ZvaRJK8GQR7GYHnZ@arm.com>
+References: <bf8288c9-13a1-47f0-9842-3b8eff37ef65@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,75 +47,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240926160513.7252-1-kdipendra88@gmail.com>
+In-Reply-To: <bf8288c9-13a1-47f0-9842-3b8eff37ef65@leemhuis.info>
 
-+ Vladimir
-
-On Thu, Sep 26, 2024 at 04:05:12PM +0000, Dipendra Khadka wrote:
-> Add error pointer checks in bcm_sysport_map_queues() and
-> bcm_sysport_unmap_queues() after calling dsa_port_from_netdev().
+On Wed, Sep 25, 2024 at 02:23:35PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+> Catalin, Linus, I noticed a report about a regression in
+> bugzilla.kernel.org that appears to be caused by a change of yours:
 > 
-> Fixes: 1593cd40d785 ("net: systemport: use standard netdevice notifier to detect DSA presence")
-> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-
-> ---
-> v5: 
->  -Removed extra parentheses
-> v4: https://lore.kernel.org/all/20240925152927.4579-1-kdipendra88@gmail.com/
->  - Removed wrong and used correct Fixes: tag
-> v3: https://lore.kernel.org/all/20240924185634.2358-1-kdipendra88@gmail.com/
->  - Updated patch subject
->  - Updated patch description
->  - Added Fixes: tags
->  - Fixed typo from PRT_ERR to PTR_ERR
->  - Error is checked just after  assignment
-> v2: https://lore.kernel.org/all/20240923053900.1310-1-kdipendra88@gmail.com/
->  - Change the subject of the patch to net
-> v1: https://lore.kernel.org/all/20240922181739.50056-1-kdipendra88@gmail.com/
->  drivers/net/ethernet/broadcom/bcmsysport.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
+> 7af5b901e84743 ("ARM: 9358/2: Implement PAN for LPAE by TTBR0 page table
+> walks disablement") [v6.10-rc1]
 > 
-> diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
-> index c9faa8540859..a7ad829f11d4 100644
-> --- a/drivers/net/ethernet/broadcom/bcmsysport.c
-> +++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-> @@ -2331,11 +2331,15 @@ static const struct net_device_ops bcm_sysport_netdev_ops = {
->  static int bcm_sysport_map_queues(struct net_device *dev,
->  				  struct net_device *slave_dev)
->  {
-> -	struct dsa_port *dp = dsa_port_from_netdev(slave_dev);
->  	struct bcm_sysport_priv *priv = netdev_priv(dev);
->  	struct bcm_sysport_tx_ring *ring;
->  	unsigned int num_tx_queues;
->  	unsigned int q, qp, port;
-> +	struct dsa_port *dp;
-> +
-> +	dp = dsa_port_from_netdev(slave_dev);
-> +	if (IS_ERR(dp))
-> +		return PTR_ERR(dp);
->  
->  	/* We can't be setting up queue inspection for non directly attached
->  	 * switches
-> @@ -2386,11 +2390,15 @@ static int bcm_sysport_map_queues(struct net_device *dev,
->  static int bcm_sysport_unmap_queues(struct net_device *dev,
->  				    struct net_device *slave_dev)
->  {
-> -	struct dsa_port *dp = dsa_port_from_netdev(slave_dev);
->  	struct bcm_sysport_priv *priv = netdev_priv(dev);
->  	struct bcm_sysport_tx_ring *ring;
->  	unsigned int num_tx_queues;
->  	unsigned int q, qp, port;
-> +	struct dsa_port *dp;
-> +
-> +	dp = dsa_port_from_netdev(slave_dev);
-> +	if (IS_ERR(dp))
-> +		return PTR_ERR(dp);
->  
->  	port = dp->index;
->  
-> -- 
-> 2.43.0
+> As many (most?) kernel developers don't keep an eye on the bug tracker,
+> I decided to write this mail. To quote from
+> https://bugzilla.kernel.org/show_bug.cgi?id=219247 :
 > 
+> > Trying to run LxQt on a Chromebook XE303C12 with Devuan 4 and Linux
+> > kernel 6.10.8 results in a segmentation fault (for LxQt). There are
+> > no such problems with Linux kernel 6.9.12 or earlier. With Linux
+> > kernel 6.10.8 it is possible to run Xfce4, but trying to run for
+> > example Kate ends in a segmentation fault. Mesa 20.3.5, patched for
+> > partial hardware acceleration, preserves this acceleration in Xfce4.
+> > The mpv works using acceleration regardless of the Linux kernel
+> > version. dmesg does not give anything significantly new compared to
+> > previous kernel version.
+> 
+> See the ticket for more details and the bisection log. The reporter is CCed.
+
+I had a quick look and the fault seems to be a level 2 translation fault
+while in user space (code 0x206). I can't tell whether the fault address
+is valid and we just messed up the pairing of user access enable/disable
+or something else happened. Having TTBCR.PD0 == 1 does lead to
+translation faults, though not sure what the DFSR register says. Anyway,
+normally I'd expect do_page_fault() to get stuck in a continuous fault
+loop if the vma was valid rather than end up with SIGSEGV.
+
+Andrew, could you please share the .config file you have, maybe attach
+it to the bugzilla report? Also, could you try the kernel with
+CONFIG_CPU_TTBR0_PAN disabled without any patches reverted?
+
+Another thing to try is invalidate the TLBs before returning to user,
+just in case those TTBCR bits are cached in the TLB in a way we did not
+envisage. Untested diff below:
+
+----------------8<--------------------------------
+diff --git a/arch/arm/include/asm/uaccess-asm.h b/arch/arm/include/asm/uaccess-asm.h
+index 4bccd895d954..c00b400b7f4d 100644
+--- a/arch/arm/include/asm/uaccess-asm.h
++++ b/arch/arm/include/asm/uaccess-asm.h
+@@ -91,6 +91,9 @@
+ 	bic	\tmp, \tmp, #TTBCR_EPD0 | TTBCR_T0SZ_MASK
+ 	bic	\tmp, \tmp, #TTBCR_A1
+ 	mcr	p15, 0, \tmp, c2, c0, 2		@ write TTBCR
++	isb
++	mcr	p15, 0, \tmp, c8, c7, 0		@ invalidate TLBs
++	dsb
+ 	.if	\isb
+ 	instr_sync
+ 	.endif
+----------------8<--------------------------------
+
+Thanks.
+
+-- 
+Catalin
 
