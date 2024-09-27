@@ -1,53 +1,50 @@
-Return-Path: <linux-kernel+bounces-342027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4CB9889C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:50:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D249889D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84129281B0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:50:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CE62B210F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5BF1C1ABA;
-	Fri, 27 Sep 2024 17:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130A01C1AAA;
+	Fri, 27 Sep 2024 17:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Y67HVPvl"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="lRcJMXoL"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F7923B0;
-	Fri, 27 Sep 2024 17:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12C51C0DEE;
+	Fri, 27 Sep 2024 17:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727459402; cv=none; b=q8z1aa3T2c73yd6HD4NtHH+chmyGml9H9aWO9lOwWNuV+s6Fw1S+y1ef0gwsGD4DvkVc8G5Yb8nHONItxYZEjDrWxOeWhxX88O72XM7BERJ4Jbx0sXcNrPmdwXyOe26blDv88NpSK2P0SlW7dkIZrHrXUueN/0u+khxof2n7u2I=
+	t=1727459591; cv=none; b=kg9+ReXl/DmW8FMzuYLUyU1s1NU6wXFB0oXsQHpImwGnGJyAAyPdZrh6d73ha0y/287KRaoclxLtYAon5a+qkyuaKPXucL7nqQnVmfhjN+QntS4S4xi9tahGK31IhlyJRV8mPNKZBX72aMNFal5L/+1dctRaykszJFdVjDcE9eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727459402; c=relaxed/simple;
-	bh=OQ8UJ21YYnXWk8uGEtOeg4cUNizdeSHYo13CO6Dp/7c=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=silTTQXtJjq59jAZSgMWPyJWwweEXsgjVF1CRH6wvOJfVkc91RPHHTjOI4t46UbdyeqgZ9OTsF0Avyg8jTkYeimSacqzs+TpqXIvsBIZ4VAtiRHH1pz3f7U2uMHTbv4q4o7XNsFCJOm9GDoXH1YdCweRaXfuhc5VM+zfAwfrS60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Y67HVPvl; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 48RHmuBk1788498
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 27 Sep 2024 10:48:56 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 48RHmuBk1788498
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024091601; t=1727459337;
-	bh=SF0FL9WmYDEbaKMO13C88v3yLZ0MrWkzlusCVl5FVsI=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=Y67HVPvl61EVkWatxnhOVeXKW63UykF8TU4cDEDQiKbePtlNSYbVPcCS7S1o7qRmW
-	 ki644wA0aln7/r+v87u68bpGmD+gJ/XFRJKJrP2lvuXu2IkbCYXV8wReZwNVkJATHP
-	 fv8LId0DEgqsrTbBisdaSSSwg/iEGOY7mz+Zw5EA5ttwpHkdZfOpefApYvzPdlNxU0
-	 Kcerz93cj51dM7YRIk4YWSUMNUJ9bx2cTpxJKXy8J3kiE8gNmPf/uB48ITrEvtSZJX
-	 bgR0btyYoKr9XBOBoeWKFWPg8KpyBiiMmKXHJSWil8jM0W79ajOOIfFEkfQt9keelb
-	 vIPxGdpQNNGNg==
-Message-ID: <208429ae-d9c5-4b73-86ff-a9b31e68f7eb@zytor.com>
-Date: Fri, 27 Sep 2024 10:48:55 -0700
+	s=arc-20240116; t=1727459591; c=relaxed/simple;
+	bh=B95OindKXLVMUgZ0DnE2pN33eeTCKFPMp1bnPOx7T1c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SKOHXx3q7xOK6sOZBSomL62+ZtlbXNfMwfK0T87N5rCXIgU637yjNYOOwkpPFcMuHywWyGNGoqQh+rROTydGD+2kTuXFs4nD8zAubEIlqjtcL7fLr0y/k2oV9vJRi+syrEBPk1Uc38wYAk/+BZum0n94Phc9dVEhO884gHK2+WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=lRcJMXoL; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727459589;
+	bh=B95OindKXLVMUgZ0DnE2pN33eeTCKFPMp1bnPOx7T1c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lRcJMXoLNLKyGh1mgeZ4yvB5sYPUBJIkzBwSFoqmXozL/aio3E8vgxH5eySSHkwH1
+	 ePW9UBcso2hLuTlELFNcj7j6HUVntd/DLvimpgd0wPcQMujGjWgMAVLVGSuX6QMKxv
+	 lb5CG4DYHbKrMF4bMfuIZl4bFNlpas5eUGvQbI8qpEC+CqT1CQU0Nt6yCqBvlGbw6Y
+	 J0Wqi1xHk1lstlnjoEKonZhm19XvbnLpAjuvtM1fnS4D+XcbodDHJHzmJ9QMMhmFlF
+	 Qpx6qK8y96WD/hOon0SsDwJ/mSPHIYckvXNUf+t5oHEtEq5HagRCrczzCqvLA7wHdl
+	 hw4wFDzsDnPjw==
+Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XFdNh5T6Hz1QLR;
+	Fri, 27 Sep 2024 13:53:08 -0400 (EDT)
+Message-ID: <34ec590c-b109-44a0-8bfe-8aafc6e7ad64@efficios.com>
+Date: Fri, 27 Sep 2024 13:51:04 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,86 +52,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/25] KVM: VMX: Set intercept for FRED MSRs
-From: Xin Li <xin@zytor.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Chao Gao <chao.gao@intel.com>, Xin Li <xin3.li@intel.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, shuah@kernel.org, vkuznets@redhat.com,
-        peterz@infradead.org, ravi.v.shankar@intel.com
-References: <20240207172646.3981-1-xin3.li@intel.com>
- <20240207172646.3981-8-xin3.li@intel.com> <ZiJzFsoHR41Sd8lE@chao-email>
- <ZmoT0jaX_3Ww3Uzu@google.com>
- <feefa9d1-f266-414f-bb7b-b770ef0d8ec6@zytor.com>
- <ZuNJlzXntREQVb3n@google.com>
- <d65e62d2-ca64-4b29-8656-bb8411fe837d@zytor.com>
- <ZvQaNRhrsSJTYji3@google.com>
- <496a337d-a20d-4122-93a9-1520779c6d2d@zytor.com>
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
+ lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>, rostedt <rostedt@goodmis.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>, Vlastimil Babka
+ <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
+ <ZvP_H_R43bXpmkMS@boqun-archlinux>
+ <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
+ <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+ <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
+ <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
+ <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
+ <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
+ <54487a36-f74c-46c3-aed7-fc86eaaa9ca2@huaweicloud.com>
+ <CAHk-=wifOW0VEh6uL3sHSaAUA46YmPDS9Wh5HnNC2JyOiXVA=Q@mail.gmail.com>
+ <ZvX12_1mK8983cXm@boqun-archlinux>
+ <0b262fe5-2fc5-478d-bf66-f208723238d5@efficios.com>
+ <e748893f-28a3-4b8a-a848-cfb1173ab940@app.fastmail.com>
+ <CAHk-=wgQyXOt_HjDZHNqWMmyvv74xLAcMw88grfp4HkKoS2vLw@mail.gmail.com>
+ <7e1c8a5e-c110-414c-8fb2-022eacc2bd4a@efficios.com>
+ <CAHk-=wgBgh5U+dyNaN=+XCdcm2OmgSRbcH4Vbtk8i5ZDGwStSA@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <496a337d-a20d-4122-93a9-1520779c6d2d@zytor.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+In-Reply-To: <CAHk-=wgBgh5U+dyNaN=+XCdcm2OmgSRbcH4Vbtk8i5ZDGwStSA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
->>> When FRED is advertised to a guest, KVM should allow FRED SSP MSRs
->>> accesses through disabling FRED SSP MSRs interception no matter whether
->>> supervisor shadow stacks are enabled or not.
+On 2024-09-27 19:23, Linus Torvalds wrote:
+> On Fri, 27 Sept 2024 at 10:17, Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
 >>
->> KVM doesn't necessarily need to disabling MSR interception, e.g. if 
->> the expectation
->> is that the guest will rarely/never access the MSRs when CET is 
->> unsupported, then
->> we're likely better off going with a trap-and-emulate model.  KVM 
->> needs to emulate
->> RDMSR and WRMSR no matter what, e.g. in case the guest triggers a 
->> WRMSR when KVM
->> is emulating, and so that userspace can get/set MSR values.
->>
->> And this means that yes, FRED virtualization needs to land after CET 
->> virtualization,
->> otherwise managing the conflicts/dependencies will be a nightmare.
->>
+>> The barrier() is ineffective at fixing the issue.
+>> It does not prevent the compiler CSE from losing the
+>> address dependency:
+> 
+> Ok. Thanks for actually specifying code.
+> 
+> That needs to be
+> 
+>   (a) in a comment
 
-I still plan to send another iteration of the FRED patch set for review,
-however I haven't seen your x86 KVM changes land into Linus' tree, it
-will happen soon, right?
+OK. I'll add the code/asm examples to the comment above ADDRESS_EQ().
 
 > 
-> No argument.
+>   (b) the value barrier needs to be on *both* values so that the order
+> of the equality testing doesn't matter.
+
+If we use OPTIMIZER_HIDE_VAR() on both parameters, it indeed minimizes
+the odds that someone get the order wrong, but it disallows using
+ADDRESS_EQ() with a constant parameter
+(e.g. ADDRESS_EQ(ptr, &mystruct)), which would be nice to cover. It
+works fine with using OPTIMIZER_HIDE_VAR() on the first argument,
+but it opens the door to misuses.
+
+Perhaps there is a trick with compiler builtins we could do to only
+use OPTIMIZER_HIDE_VAR() on non-constant arguments, but I can't get
+it to work so far.
+
+> 
+>> I'm preparing a small series that aims to show how a minimal
+>> hazard pointer implementation can help improve common scenarios:
+> 
+> I want actual numbers on real loads. Just so you know.  Not "this can
+> help". But "this actually really _does_ help".
+
+Noted, thanks!
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
