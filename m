@@ -1,178 +1,124 @@
-Return-Path: <linux-kernel+bounces-341515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72035988102
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:02:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1274B988108
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A47D281D15
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:02:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 976F0B25063
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016B2189511;
-	Fri, 27 Sep 2024 09:02:01 +0000 (UTC)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA12F183CB4;
+	Fri, 27 Sep 2024 09:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hg+L5Rs1"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A45178CD9;
-	Fri, 27 Sep 2024 09:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA3817BEAC
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727427720; cv=none; b=QQNL8JbP9guJmr63s0eNNuFNcTDe6JHdhq+3qsrya8gjWaD9JiQzDCAG3xugzns9e4JffWF1cvq0eM/bUX36RzOAG9nHe0t3lQiLXWUb64Eennv2BvvqaNtBxxS1uvJF5Lbd+xchNL8YdMPbiwc4fEt3KGPoTRJjvpFCoVVnaSw=
+	t=1727427732; cv=none; b=AodehVQbAKXYus8wKqRWBi0oU2rs+mutz+1wmAbvLmGE82TczwMiYRdsVQCMCN5rC1INES0RUu+cXnzsm9KMuCiGj42Tm9j+FYmC/QjTQZf/NcDB6zNH4dw1MeObphf0YDudimF649aY76ilRfzQK5gtbHfuQPmAmmO0BYlsrsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727427720; c=relaxed/simple;
-	bh=IqkBHRxr7d1fBDVzmvw2gdcNOT/C68E7RcyAI5Sqa7k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bwf5Yt/kXERbyCy1UjGMvuQ1qBOqSYsa4NYWd0I7uEtawR40OpeCA/4Git0cxxJUB25wBVPrkiJJ0fcaeZDFWVfsVD7CKFka67WhhczhXOo0DVuLoI2bWsbgrwHA7wKjWAdG9rAS/M+8CQL+BUyQtf7/futI0oE/p10n+C0IRC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6dbbe7e51bbso16076267b3.3;
-        Fri, 27 Sep 2024 02:01:57 -0700 (PDT)
+	s=arc-20240116; t=1727427732; c=relaxed/simple;
+	bh=OzTlkDrZ5UNBFj2egyQHy9ztwtmLwwcWSRs7QSGkC50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=suNqBVOmmbXsN7i3/8R0p4+gDcdrDSMoYbZn4Rhf1NmD5PWU3WRmK5bY6kyTyBOSsAqQOj34z/fUfZCXABaRxoFeyIx6pMGNDo8iPk3GKLoULtPrQ0Fn15A4fLw+VNeWZuv0xQaYMkYLQse+WfNusTkDg7R47XSuTLZ6UAzTZek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hg+L5Rs1; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53659867cbdso3075549e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:02:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727427729; x=1728032529; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JWb73ryEVZ2J3BVL15FqHfUHxoOk+Qe9ibuCLa7loPI=;
+        b=hg+L5Rs1pReWVvspjzeOE+foIQAtENSDFZU/5kgir7LJKflnOTlFKzbJoOnFgvNCbD
+         cSamnnba7WGZfdYRguBTPftPWvnqP7Q7CXt1MnTW/LOxYDCTtAeUEa+IDDzyt9+BxCwE
+         z2MVIuvjSmpSoMqWIM4YJXZf2qUX3hD9SxBtoXQvOYQP3qDoUT5OCYt3wXlga0oK2Nld
+         c7GtRxXDydCFSR0alay70Co9JJYNOKTy1/smdh1fsyiX5z12QHcl/Yp3jXnbmOBfB8o4
+         1sfITV7OT4KJmLq9yaahgi+RQaZRrCVbhtuAo4ne79kQQsrNxQ6NtlZcAjb/wrdzYpqw
+         Kndg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727427716; x=1728032516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EYpGlPebM2Nqa2sukOeuZlgj4MxBo1H7Y96fl9yBVfE=;
-        b=lJLvVuEVGyPkPMvBt2z/QfIqyhqcICKV/ezG5VQyksZoSSNT9KPHpyju8xULswTiIT
-         jqJPO0yPNMx5z0/PchKbmEux6TVM5xfD25Bi+Megajdbln6B4F9gN5bp7bG5bJB6cjtS
-         m/WENyllmlWfwSSTIaZpqHBez6LpK5ugPW6KodbM490Msqwz3mxUAnqfDblnPKcI9EmF
-         2UQV4UXamqYj1XgSBhN+hcAXPgv6jb7tYTjjurhSgCVxdhzQBBTw2dvx0L0QVZefsmjC
-         lOQgVNrTFG/8lFysnyfjL+Kf5G4bVDnG+DynTtyDpIasC7+gW5XMJURPXIW2gcJVpkSK
-         h3qg==
-X-Forwarded-Encrypted: i=1; AJvYcCU84HI49b4HfIkTRU758j+yTWrkM3ZICtsoIUchkAhIcWR2LkfLsIfWiDIfo4jCFVwppwo3G4mOnMfj+lhH@vger.kernel.org, AJvYcCUbDhg0NJ9xgNYFB2F2ApOxWe3AqbNyrom6xK3TGzOVHoxwfrt6ZerwSYu5q3WRU36dvaqEMTVgxbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyvz412U7dd18NbWAJXC1NY4e4LP89fBwZErpAF9pVliQvZfqgG
-	E5oOhsFKsDDpLfuoeZBV99limxn3UDQzkoc3h6tnQGV2y9osBLmen9dbz+Ki
-X-Google-Smtp-Source: AGHT+IFZ+5aPs8sH2R+9V8w8GVDpa1UFFcbtEEy7SkaF14w1Od5x4dq+ixTnuHQFY7qdZcpkvGARGg==
-X-Received: by 2002:a05:690c:fd1:b0:6db:e52f:69f4 with SMTP id 00721157ae682-6e24757f28bmr16389447b3.20.1727427716464;
-        Fri, 27 Sep 2024 02:01:56 -0700 (PDT)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e24548f81fsm2465387b3.129.2024.09.27.02.01.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 02:01:56 -0700 (PDT)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6de15eefdd3so17058197b3.0;
-        Fri, 27 Sep 2024 02:01:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUNi6vP/wfx502fY6EU1UOhLhGMhEk+sWz+e01Kav7O+H+ty5bms2/o480aFXMVVAnbDRxF0FsSN/s=@vger.kernel.org, AJvYcCWNYmDJW+WSHE1rWv2BRnjmsQsDOZAGW4r/SOfaRjv4Yh8lCMF05mTjpvLFfrbo84U4LgLsyxrYstTXhl/H@vger.kernel.org
-X-Received: by 2002:a05:690c:638a:b0:6b1:3bf8:c161 with SMTP id
- 00721157ae682-6e247544fa8mr19544927b3.13.1727427715792; Fri, 27 Sep 2024
- 02:01:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727427729; x=1728032529;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JWb73ryEVZ2J3BVL15FqHfUHxoOk+Qe9ibuCLa7loPI=;
+        b=OMM+fhoLQvFgrjE3s0EW6vEFb05x0A7v5Re1yyo6e1UOfSjf6ZvD6VyCOLLrx14q8w
+         1oXncp3VarwQtFUzX9EOtBGC+RaM5kBcPTW7lfKuuesVLw6Dzf1fu8m7zGc/etY7/b1v
+         +Aq2tf70VBFBTmCwGPwakNi62nqb4OBU8/ZgY1ARWBzqfAatgSm1TF6UNBKxG9GOMZpP
+         v6M8fST+0/TuSvJDyfugV57Vd3oHsNvgMOtU36vwBpwyYIf5y96d4KXQXe00CqkK0fCh
+         Et6BQnFKRMXLwYN/YMGvqnL3Me54Dyb41gHZMyBgJ8ELosHOpdifMesS4xZkSCJDoK75
+         KrJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/2QGwxMrc7PXwx2IRr0YmdWVw4YEE9qGVfWvCNs+iA0iHreMH1Juc6809MWUbbXUlXFNSA34wk/IeWFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws3Fa2MKyMbtfRMjoVSI9ZKA8KYeEiSPscDWNX/1QuqGEXk7Uj
+	xuTiPLpVNBc0hFplOZKjL4rFc0TKBZcEB0vj6HBQqyU1c3Guq0qjtmjv+o464FI=
+X-Google-Smtp-Source: AGHT+IFdzeCd6YYS6wM/QqC+S3hSNA2f3XY8BHe1b5ScvCd2SfMlzBQM0TBaxSb+NfI+Cw6mQEmOgA==
+X-Received: by 2002:a05:6512:eaa:b0:535:6a34:b8c3 with SMTP id 2adb3069b0e04-5389fc34366mr2411280e87.5.1727427728569;
+        Fri, 27 Sep 2024 02:02:08 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd5e3c5sm233552e87.106.2024.09.27.02.02.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 02:02:07 -0700 (PDT)
+Date: Fri, 27 Sep 2024 12:02:05 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sricharan R <quic_srichara@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	ulf.hansson@linaro.org, linus.walleij@linaro.org, catalin.marinas@arm.com, 
+	p.zabel@pengutronix.de, geert+renesas@glider.be, neil.armstrong@linaro.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, quic_varada@quicinc.com
+Subject: Re: [PATCH V2 6/9] clk: qcom: add Global Clock controller (GCC)
+ driver for IPQ5424 SoC
+Message-ID: <hitzcz3gjp4mywesnoicjnv4sfy4sckgepbl43bjjndp74etpl@adnjplfj3pfg>
+References: <20240927065244.3024604-1-quic_srichara@quicinc.com>
+ <20240927065244.3024604-7-quic_srichara@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1713462643-11781-1-git-send-email-lizhi.hou@amd.com>
- <1713462643-11781-2-git-send-email-lizhi.hou@amd.com> <CAMuHMdXVoTx8K+Vppt07s06OE6R=4BxoBbgtp1WWkCi8DwqgSA@mail.gmail.com>
- <e2a37bb6-3353-1c2f-3841-d63748756df1@amd.com>
-In-Reply-To: <e2a37bb6-3353-1c2f-3841-d63748756df1@amd.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 27 Sep 2024 11:01:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVChqbMLN2vdc4iZ7iZ8+dz07k4pVOM_SfZarHWV93JqQ@mail.gmail.com>
-Message-ID: <CAMuHMdVChqbMLN2vdc4iZ7iZ8+dz07k4pVOM_SfZarHWV93JqQ@mail.gmail.com>
-Subject: Re: [PATCH V12 1/1] dmaengine: amd: qdma: Add AMD QDMA driver
-To: Lizhi Hou <lizhi.hou@amd.com>
-Cc: nishad.saraf@amd.com, vkoul@kernel.org, dmaengine@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Nishad Saraf <nishads@amd.com>, sonal.santan@amd.com, 
-	max.zhen@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927065244.3024604-7-quic_srichara@quicinc.com>
 
-Hi Lizhi,
+On Fri, Sep 27, 2024 at 12:22:41PM GMT, Sricharan R wrote:
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> 
+> Add support for the global clock controller found on IPQ5424 SoC.
+> 
+> Co-developed-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> ---
+>   [v2] Remove CLK_IS_CRITICAL for all clks
+>        Added CLK_IGNORE_UNUSED only for gpll0 temporarily till
 
-On Tue, Sep 3, 2024 at 6:50=E2=80=AFPM Lizhi Hou <lizhi.hou@amd.com> wrote:
-> On 9/3/24 02:20, Geert Uytterhoeven wrote:
-> > On Thu, Apr 18, 2024 at 7:51=E2=80=AFPM Lizhi Hou <lizhi.hou@amd.com> w=
-rote:
-> >> From: Nishad Saraf <nishads@amd.com>
-> >>
-> >> Adds driver to enable PCIe board which uses AMD QDMA (the Queue-based
-> >> Direct Memory Access) subsystem. For example, Xilinx Alveo V70 AI
-> >> Accelerator devices.
-> >>      https://www.xilinx.com/applications/data-center/v70.html
-> >>
-> >> The QDMA subsystem is used in conjunction with the PCI Express IP bloc=
-k
-> >> to provide high performance data transfer between host memory and the
-> >> card's DMA subsystem.
-> >>
-> >>              +-------+       +-------+       +-----------+
-> >>     PCIe     |       |       |       |       |           |
-> >>     Tx/Rx    |       |       |       |  AXI  |           |
-> >>   <=3D=3D=3D=3D=3D=3D=3D>  | PCIE  | <=3D=3D=3D> | QDMA  | <=3D=3D=3D=
-=3D>| User Logic|
-> >>              |       |       |       |       |           |
-> >>              +-------+       +-------+       +-----------+
-> >>
-> >> The primary mechanism to transfer data using the QDMA is for the QDMA
-> >> engine to operate on instructions (descriptors) provided by the host
-> >> operating system. Using the descriptors, the QDMA can move data in bot=
-h
-> >> the Host to Card (H2C) direction, or the Card to Host (C2H) direction.
-> >> The QDMA provides a per-queue basis option whether DMA traffic goes
-> >> to an AXI4 memory map (MM) interface or to an AXI4-Stream interface.
-> >>
-> >> The hardware detail is provided by
-> >>      https://docs.xilinx.com/r/en-US/pg302-qdma
-> >>
-> >> Implements dmaengine APIs to support MM DMA transfers.
-> >> - probe the available DMA channels
-> >> - use dma_slave_map for channel lookup
-> >> - use virtual channel to manage dmaengine tx descriptors
-> >> - implement device_prep_slave_sg callback to handle host scatter gathe=
-r
-> >>    list
-> >>
-> >> Signed-off-by: Nishad Saraf <nishads@amd.com>
-> >> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
-> > Thanks for your patch, which is now commit 73d5fc92a11cacb7
-> > ("dmaengine: amd: qdma: Add AMD QDMA driver") in dmaengine/next.
-> >
-> >> --- /dev/null
-> >> +++ b/drivers/dma/amd/Kconfig
-> >> @@ -0,0 +1,14 @@
-> >> +# SPDX-License-Identifier: GPL-2.0-only
-> >> +
-> >> +config AMD_QDMA
-> >> +       tristate "AMD Queue-based DMA"
-> >> +       depends on HAS_IOMEM
-> > Any other subsystem or platform dependencies, to prevent asking the
-> > user about this driver when configuring a kernel for a system which
-> > cannot possibly have this hardware?
-> > E.g. depends on PCI, or can this be used with other transports than PCI=
-e?
->
-> No, this driver does not have other dependencies. It can be used with
-> other transports.
->
-> It is similar with dmaengine/xilinx/xdma
+This should be gpll4, not gpll0 (no need to resend just to fix the
+changelog though).
 
-OK.
-
-> >> --- /dev/null
-> >> +++ b/drivers/dma/amd/qdma/qdma-comm-regs.c
-> >> +static struct platform_driver amd_qdma_driver =3D {
-> >> +       .driver         =3D {
-> >> +               .name =3D "amd-qdma",
-> > Which code is responsible for creating "amd-qdma" platform devices?
-
-I still would like to receive an answer to this question?
-Thanks!
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
-Gr{oetje,eeting}s,
+>        dependent consumers are enabled
+>        Fixed probe to use qcom_cc_probe
+> 
+>  drivers/clk/qcom/Kconfig       |    8 +
+>  drivers/clk/qcom/Makefile      |    1 +
+>  drivers/clk/qcom/gcc-ipq5424.c | 3309 ++++++++++++++++++++++++++++++++
+>  3 files changed, 3318 insertions(+)
+>  create mode 100644 drivers/clk/qcom/gcc-ipq5424.c
+> 
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+With best wishes
+Dmitry
 
