@@ -1,129 +1,169 @@
-Return-Path: <linux-kernel+bounces-342239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB88988C58
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:14:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5193988C5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CA691F21636
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:14:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF0E728340B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E8C1B1D70;
-	Fri, 27 Sep 2024 22:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rjZRVXK2"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7913918732E;
+	Fri, 27 Sep 2024 22:18:45 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A77188002;
-	Fri, 27 Sep 2024 22:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB61D17C988;
+	Fri, 27 Sep 2024 22:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727475244; cv=none; b=fxkIiC4UQZ5FxedEXvEHDSXaNa1IwuZ28fHp3/74hS0yzYfg22IvgmZQBJFQE/DoUOmwyF9VjrvOF2Pe2v/N2++AXPfCdYnPHqh0rUO3g+ZCqj9fj7x/PL44j8Ci2+lwhzU7fVO3HzZ3jerlcxjRC+3eSX6POg+uS4BKruXUw78=
+	t=1727475525; cv=none; b=Kt+wjXDT870o0VivS9erkKgpwXbn3U6tK2cF0JrlctNpQFgntncWPtUVXwfLnec6BRQxu9STu8QfP5OPKw5ZFT0z8vv3R0W4XOHcEruCV2oCfBQDWOgR79y4O391Bp8UvTeY81QZ3JVKop3+oNa7Cg6NEAj+/BTd7IWKFe+mxDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727475244; c=relaxed/simple;
-	bh=D6YkRMNcc9I7x6tPyBz3AQZw7mi/udiqZ9Hnxl8f9LM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C8WgxbA9HIVTjAapZqXFI0bbhVz6MTlxYDF8HYErK64gGNY7D/X271rOFD4SDr5KyvfULHCaUm5XDzhPDj+vGGyE1jMEeVPp2ncmASUvqAtSjuWDl6jsKyfA2y+IWb5ZXLcVFPp2+l6LZlBOncax8mpls8RPkzKVZrtUzPsTY1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rjZRVXK2; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A5779161;
-	Sat, 28 Sep 2024 00:12:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727475151;
-	bh=D6YkRMNcc9I7x6tPyBz3AQZw7mi/udiqZ9Hnxl8f9LM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rjZRVXK2kSZBlh3csjpvdhhaRDCid/3i1LazPhdcNhJ4eLLViafRqfdT/PGgScJMr
-	 53jH5BacHg+aakVwDc/ACf/01Phb/GSP+JTne7jbMlwZ0CAonNkTq5qtXBaqqBd68h
-	 7qH0Sn2OF9skjkXpgxXY8prHZ41Rh3P6qQbVHHfY=
-Date: Sat, 28 Sep 2024 01:13:57 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 02/16] media: platform: rzg2l-cru: Mark sink pads with
- MUST_CONNECT flag
-Message-ID: <20240927221357.GD12322@pendragon.ideasonboard.com>
-References: <20240910175357.229075-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240910175357.229075-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1727475525; c=relaxed/simple;
+	bh=pDAq3jXFAuW/dqJmuTPIlpcyvVhpcj3PUSyb2x9xJJ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=caZvHzV/hGGqgq5kHZ3hfwfdKoXKHbqTeerDC9qRwPzTCfnVybdnWUuAY1oFOOfzYTr27k6nhzpy4M3TPPei0RluggtlSZRI8KqsqneYArRFq8ZJ40x2AOLGFWPW5BKGhD+jREwXhgWyE/MgEpPeRGf0H0CkFp6A0espHd/sgFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XFkr45RLHz9v7Hk;
+	Sat, 28 Sep 2024 05:58:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 3424B1404A9;
+	Sat, 28 Sep 2024 06:18:24 +0800 (CST)
+Received: from [10.45.147.63] (unknown [10.45.147.63])
+	by APP2 (Coremail) with SMTP id GxC2BwD3pscgL_dmmwLIAQ--.52307S2;
+	Fri, 27 Sep 2024 23:18:23 +0100 (CET)
+Message-ID: <4ed833df-54e6-454a-ab1a-73967cc51054@huaweicloud.com>
+Date: Sat, 28 Sep 2024 00:18:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240910175357.229075-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Boqun Feng <boqun.feng@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
+ lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>, Vlastimil Babka
+ <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+References: <ZvPp4taB9uu__oSQ@boqun-archlinux>
+ <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
+ <ZvP_H_R43bXpmkMS@boqun-archlinux>
+ <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
+ <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+ <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
+ <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
+ <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
+ <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
+ <bba2e656-4c3b-46db-b308-483de440b922@efficios.com>
+ <ZvY2zBiluLkqRSkc@boqun-archlinux>
+ <62508c1f-66ca-450d-abb6-236ca3b9096d@huaweicloud.com>
+ <d86536d9-9c5a-48ab-abf3-3483e2e5e980@efficios.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <d86536d9-9c5a-48ab-abf3-3483e2e5e980@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwD3pscgL_dmmwLIAQ--.52307S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFyxCFWkAr1rtw4DAFyUGFg_yoW8uw15pr
+	1kKa1UWFZ8CFs7Ar17tr4jyFyYywn3Gas8XFyUWa4DA3yqqr1SvFWjgF90g3ZrCws5Jryj
+	qr4UJr93uFWDAFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	4xRDUUUUU==
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-Hi Prabhakar,
 
-Thank you for the patch.
 
-On Tue, Sep 10, 2024 at 06:53:43PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Am 9/27/2024 um 10:10 PM schrieb Mathieu Desnoyers:
+> On 2024-09-27 21:23, Jonas Oberhauser wrote:
+> [...]
+>> That idea seems to be confirmed by this (atrocious, not to be copied!) 
+>> example:
+>>
+>> int fct_escape_address_of_b(void)
+>> {
+>>      int *a, *b;
+>>
+>>      do {
+>>          a = READ_ONCE(p);
+>>          asm volatile ("" : : : "memory");
+>>          b = READ_ONCE(p);
+>>      } while (a != b);
+>>
+>>      // really really hide b
+>>      int **p = &b;
+>>      OPTIMIZER_HIDE_VAR(p);
+>>
+>>      asm volatile ("" : : : "memory");
+>>      return *b;
+>> }
+>>
+>> This also does not generate any additional instructions, unlike just 
+>> using OPTIMIZER_HIDE_VAR(b).
+>>
+>> What is the advantage of defining OPTIMIZE_HIDE_VAR the way it 
+>> currently works instead of like above?
 > 
-> Mark the sink pads with the MEDIA_PAD_FL_MUST_CONNECT flag to ensure
-> pipeline validation fails if it is not connected.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c | 2 +-
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c   | 3 ++-
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> index 19e0ba9596c9..69cd45b26951 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> @@ -209,7 +209,7 @@ static int rzg2l_cru_media_init(struct rzg2l_cru_dev *cru)
->  	const struct of_device_id *match;
->  	int ret;
->  
-> -	cru->pad.flags = MEDIA_PAD_FL_SINK;
-> +	cru->pad.flags = MEDIA_PAD_FL_SINK | MEDIA_PAD_FL_MUST_CONNECT;
+> Did you try it on godbolt.org ? Does it have the intended effect ?
 
-The corresponding link is ENABLED and IMMUTABLE, so this will not have
-any effect. It shouldn't cause any issue though, and makes things more
-explicit.
+I certainly did try and certainly read it as having the intended effect, 
+otherwise I wouldn't have written that it seems confirmed.
 
->  	ret = media_entity_pads_init(&cru->vdev.entity, 1, &cru->pad);
->  	if (ret)
->  		return ret;
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> index 9f0ea1de50da..db48118fc817 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> @@ -217,7 +217,8 @@ int rzg2l_cru_ip_subdev_register(struct rzg2l_cru_dev *cru)
->  	ip->subdev.entity.function = MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER;
->  	ip->subdev.entity.ops = &rzg2l_cru_ip_entity_ops;
->  
-> -	ip->pads[RZG2L_CRU_IP_SINK].flags = MEDIA_PAD_FL_SINK;
-> +	ip->pads[RZG2L_CRU_IP_SINK].flags = MEDIA_PAD_FL_SINK |
-> +					    MEDIA_PAD_FL_MUST_CONNECT;
+However, just because my eyes read it doesn't mean that's what happened, 
+and even if it happened doesn't mean that it is guaranteed to happen.
 
-Same here. For this pad, the MUST_CONNECT flag will come handy when
-adding support for the parallel input, as the link will not be immutable
-anymore.
+> By the looks of it, you're just creating another version of @b called
+> "p", which is then never used and would be discarded by further
+> optimization. >
+> I'm unsure what you are trying to achieve here.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Simply put I'm trying to let the compiler think that I leaked the 
+address of b. After that, the memory barrier should let it think that 
+the b after the memory barrier might not be the same as the one before 
+it (which was equal to a), forcing it to read from b.
 
->  	ip->pads[RZG2L_CRU_IP_SOURCE].flags = MEDIA_PAD_FL_SOURCE;
->  
->  	ret = media_entity_pads_init(&ip->subdev.entity, 2, ip->pads);
+However, I suppose on second thought that that might not be enough, 
+because the compiler could still simply do b = a right after exiting the 
+while loop.
 
--- 
-Regards,
+And that is true no matter what we put behind the while loop or before 
+the condition, as long as the condition compares a and b, right after it 
+the compiler can do b = a. Just took me a while to see :))
 
-Laurent Pinchart
+I'm not sure why gcc does the b=a with the normal OPTIMIZER_HIDE_VAR but 
+(as far as I read the code) doesn't do it with the above. Maybe just a 
+weird corner case...
+
+Have fun,
+   jonas
+
 
