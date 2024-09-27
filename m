@@ -1,251 +1,360 @@
-Return-Path: <linux-kernel+bounces-341809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E419988682
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 15:47:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 738C49886BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F511F24379
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 13:47:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25579283D8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD641BF316;
-	Fri, 27 Sep 2024 13:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD7D82481;
+	Fri, 27 Sep 2024 14:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="arewJ1Sp"
-Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ETiZAzw8"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7E81411E0;
-	Fri, 27 Sep 2024 13:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727444864; cv=fail; b=V1CYC5Un5rZgM4Zja8vCqnc5KQyt6QaMCjUZ3AaDlcZYld6Gti5FKAQrRqW2fMZhsZ3vPKbJVQziOQGpA0IND7E2xr2dgNsT8IIyKJEfepYlv4k3fX7yBlKPCwAoNDFbQli+d+JlOkhEn2aePJHp1ijSi2Kr/8wqylNpw2lFMg8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727444864; c=relaxed/simple;
-	bh=d5IqXDck2rUmJwU/vFwsS2BJHZPXxZQibDqhfU08RH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CHXqGiUBDOgvi9u497ruyZey+fPqzfbhN2DhNegBrGHEPKZoc8I371iLV6stu362XVp7tefxyQD7g+fYXu4Jqkr0MNaUpSMxrA69uWcAYfklP7xjy1IYDIAobNfC4nOyaLK1JtAPcBUHWTk1dk1LXBeAZhOQGNT8Dp3whCm0FmA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=arewJ1Sp; arc=fail smtp.client-ip=185.183.30.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-Received: from pps.filterd (m0209319.ppops.net [127.0.0.1])
-	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R9Kiud016333;
-	Fri, 27 Sep 2024 13:47:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=S1; bh=l6Po1c/leKWen0gLTunQbG9plwgpIgx
-	tCvWeQM4wstA=; b=arewJ1SpF6cDQo/6rKa8efNmXgczKOGRlOgYRKcxMCBZLSI
-	0jVkH8YLOIHPj8h6+siNyZZFTlvV2xExvV4SEtmxHxwOTpdNJKh9jeYBhNZIYJWb
-	kPU7eMMiL/EC+hOT3B2/v0NKs3ny9c+QZGZG3+s0bp34+8UD7d/LYshMik2u9Y6d
-	k4QeMXq4neO37OTdFVpi9EPQo5y+s6kwsPSIh4SA2PojzX2BCSaOaUciQaiGgNSN
-	hLzi7h2WP53hGulPf7wHIwPqTDqgf6EX8RqxFxJsNiHJjPjb/wYrkxelaxJqLiSQ
-	QDEaKs3AW2GW1L508SkPn5xIOnd9WA/MrL5kT6g==
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2176.outbound.protection.outlook.com [104.47.55.176])
-	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 41sphq5k1q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 27 Sep 2024 13:47:33 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b7iESt53sOZXb6FGD941mvXaMPKo91pK2UYIlBuLIepjRTWMgWMCgGxQDIH0qfZwsdAOvC7PzYijRiyHPk6moKiKMrGrgFJnlX96EoOMQhRKPXi5DxndsK2olk/X/h6Zv6JJ7LscUbEY0n23mcfqLgsQl7JRH8jXTCE4IZkbDY1rwno8E4PnI7Qy5r2lTJf1r1Kqe8AmqafbYNtc2p62HkPtnenm/4KoNz4KLFAcxJ5U3JKhlieN8rVM2FFxdbzW7MXcZIxnVFABKCGQaINQS/h72TUCpJM5jsjsF8ptgW20ym64qZUfR2qqKkCBscShqx57cG/1/3hbhiOBQwSOjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l6Po1c/leKWen0gLTunQbG9plwgpIgxtCvWeQM4wstA=;
- b=QIxRVX9V3WzHd+btMS6Br3FxAXrCUpSbub3EljkcA1D5vklaI9ri5brYC+aRCyhb3rIM9AbQ5GR9CbwInKRfmTjglw0oDyGfxx416ssJkszxo7eNEbyaBNyi498cPss4Ron1cb2s2kug6aO41tV4RqQLI0E8ib2wKcdXOQnqXEh8zL9NScslUfyV305WfT8E2RM0YhNkA0c+wVR9pROUWYIk6KKZuxLyb3ooRxZHd59WUOREPeBI6Dc811abobsvT5znaxsdXnlqUBHAAGRvwaO1towxTVFFqrZLukqU5FS4EZLqnsmt2Eqd5hYlGn3+1BMsWcB4Mvl0khI3iTle9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 121.100.38.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=sony.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=sony.com;
- dkim=none (message not signed); arc=none (0)
-Received: from MN2PR03CA0003.namprd03.prod.outlook.com (2603:10b6:208:23a::8)
- by IA2PR13MB6703.namprd13.prod.outlook.com (2603:10b6:208:4bb::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Fri, 27 Sep
- 2024 13:47:20 +0000
-Received: from BN2PEPF000055DF.namprd21.prod.outlook.com
- (2603:10b6:208:23a:cafe::b) by MN2PR03CA0003.outlook.office365.com
- (2603:10b6:208:23a::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.22 via Frontend
- Transport; Fri, 27 Sep 2024 13:47:20 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 121.100.38.198)
- smtp.mailfrom=sony.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=sony.com;
-Received-SPF: Fail (protection.outlook.com: domain of sony.com does not
- designate 121.100.38.198 as permitted sender)
- receiver=protection.outlook.com; client-ip=121.100.38.198;
- helo=gepdcl09.sg.gdce.sony.com.sg;
-Received: from gepdcl09.sg.gdce.sony.com.sg (121.100.38.198) by
- BN2PEPF000055DF.mail.protection.outlook.com (10.167.245.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8026.0 via Frontend Transport; Fri, 27 Sep 2024 13:47:19 +0000
-Received: from gepdcl04.s.gdce.sony.com.sg (SGGDCSE1NS08.sony.com.sg [146.215.123.198])
-	by gepdcl09.sg.gdce.sony.com.sg (8.14.7/8.14.4) with ESMTP id 48RDlHRp018579;
-	Fri, 27 Sep 2024 21:47:17 +0800
-Received: from mail.sony.com ([43.88.80.182])
-	by gepdcl04.s.gdce.sony.com.sg (8.14.7/8.14.4) with ESMTP id 48RDlGSm013472;
-	Fri, 27 Sep 2024 21:47:16 +0800
-Received: by mail.sony.com (Postfix, from userid 1000)
-	id F121A1BA903B; Fri, 27 Sep 2024 19:44:37 +0530 (IST)
-Date: Fri, 27 Sep 2024 19:44:37 +0530
-From: Nayeemahmed Badebade <nayeemahmed.badebade@sony.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        rafael@kernel.org, yoshihiro.toyama@sony.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/2] Add framework for user controlled driver probes
-Message-ID: <Zva9zUY3DwEPeXwI@NAB-HP-ProDesk-600sony.com>
-References: <20240911142319.3435746-1-nayeemahmed.badebade@sony.com>
- <2024091327-repacking-avatar-ec23@gregkh>
- <ZulGr8Ul7y0T0NkQ@NAB-HP-ProDesk-600sony.com>
- <2024091743-germinate-fructose-3ded@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C9518B1A;
+	Fri, 27 Sep 2024 14:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727446493; cv=none; b=TaHViEfMj+nxqMM+47EK2X7NrQMGxaw7lLlrNKGiJ0IQaxqglwKAWBhgcja5HrPlVX4WgkhnaiWD1Cge/3sdnGK9d1Kvy+WMg7SJl5UkoomOzEwNQro2FuRyO+3bRI9q5IV6JjjN7kyUAIYWSQ3hoXYY5Pgby0n7bkDsbqI/Rds=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727446493; c=relaxed/simple;
+	bh=lk3RhykLJngcEDVRXH/SDu1OOgxZLlk0DOm58JC78XU=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=av+SxBvF8budVOHtlMxNOcw+E8TVcVPmNzjgqAQTI9TQbxocIXTvx6h/p9ZRb3qlPn9yGudCtzxV39sQdjgTupYDCYHdN/xyY+NQ6GWHz/UpndSIgEEDQzZrM/J5RkF+pLp1qVbhudIzjHT+c9Hi/6bQZzR6MUNGjlZU1NKfHLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ETiZAzw8; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53959a88668so991049e87.2;
+        Fri, 27 Sep 2024 07:14:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727446490; x=1728051290; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C72TPhpbh5i3Zhaa7WL58puaC2zZDkgeX/W2cYZyPHk=;
+        b=ETiZAzw80xkzAeeAIIukRnOhmChTD5ufbiHSQZWDrMi3p3rMnw3yETnilc5gOFsKYk
+         0zI6ZgLS/86ISfl2UmHoM1ecR4DWSMGQy7cyGgw5O1KvSasxwTlWH6oesljxmX5a9noq
+         BtgBqSroCdRyl38kYslKY8Abxy3EWJzCJye86AoF4+4kv+gL/NMxK3YIxREsGJJ8cIE6
+         WWmynxG/QueC8YWjSwODD5dEpHQz1ar5a4jqXxF1L6asS8f/Pnlj1+8mguGnipOb4rSH
+         Bvl9KOxP1TP/NyZDBZ/ZJrp7fxL5boaEjHqZCnujmu6+JQ+iwz89suE4FyKa3Pi6PdfW
+         U8/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727446490; x=1728051290;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C72TPhpbh5i3Zhaa7WL58puaC2zZDkgeX/W2cYZyPHk=;
+        b=jA9/Pj+CiHX+4FNjQQsL97Y1fM+/vh/mQH6EDDsf9tLks2PwamjXUNjUdq4UFYCvtf
+         suLBxaapKNNEmFyNZJqdAP+sbU6uWvFHkUbIIMYcGi+liXM+6VcFF0nyjpPv34YDcKG9
+         aVtem+oYOIEuSx8KwbkC27ro1YVnSmIqMghKAKV86cuH/6/KrKgQHd96gm/NQlu1kt6C
+         Izix2WHB0Av0okOMG5wajtyjv/HlGSnVRFowrEo4DeSruZBl9zDlE3ZQd3TjJd4HJdB6
+         Wqzss3ErRtWNa6aZ8yWd8GrM8JNpBQRYzGSTNQo53OcjTMkakAxcIiMt+SMM/KPjFf4S
+         vwjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUs/q74poTvFmA/Afx272tKDcW7SgROk3fad6GCvKlb9MvxWQotMa248h4B/kn4cU1NYawxAMDXHGz9@vger.kernel.org, AJvYcCV4OI9YHU//vcTCd8p5J9PygjD7z+X3ZpxB1IBr06/Rz2tDsCpVSDbZ5ZUfMOTrf/HKafVwaxcoeOTI1kZ9@vger.kernel.org, AJvYcCXdxtujOaLiTgbu8sxeq9nnyje91z5a7riQsrRungCSKj0xj7b/QsFwDPNiEuMYIuHMHTx+5yXfGjZIEw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKuS5NPNqXdLPsafkiczkpLhggXmRK2NMR59OtPWPKzp4HrxmB
+	VsF5oOpZh0w1di/kVJa1Q0JvRWYZIpG9BZ8uvgqr4Yw1KZxVrWfrgnBXOXzd
+X-Google-Smtp-Source: AGHT+IHQtsgZddhEas31MPYGzYur0N324IQ6rvA5FqFZTxyiZgn/59YkhLz1uPOEqsn2kCPJtNxxXQ==
+X-Received: by 2002:a05:6512:3b0e:b0:52f:2ea:499f with SMTP id 2adb3069b0e04-5389fc46c96mr2566206e87.24.1727446489121;
+        Fri, 27 Sep 2024 07:14:49 -0700 (PDT)
+Received: from iris-Ian.fritz.box (p200300eb5f4f030052bd6081d2396adf.dip0.t-ipconnect.de. [2003:eb:5f4f:300:52bd:6081:d239:6adf])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88248af00sm1184519a12.67.2024.09.27.07.14.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 07:14:48 -0700 (PDT)
+From: iansdannapel@gmail.com
+To: mdf@kernel.org,
+	hao.wu@intel.com,
+	yilun.xu@intel.com,
+	trix@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	neil.armstrong@linaro.org,
+	heiko.stuebner@cherry.de,
+	rafal@milecki.pl,
+	linus.walleij@linaro.org,
+	iansdannapel@gmail.com,
+	linux-fpga@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] fpga: Add Efinix Trion & Titanium serial SPI programming driver
+Date: Fri, 27 Sep 2024 16:14:42 +0200
+Message-Id: <20240927141445.157234-1-iansdannapel@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024091743-germinate-fructose-3ded@gregkh>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000055DF:EE_|IA2PR13MB6703:EE_
-X-MS-Office365-Filtering-Correlation-Id: dcca2898-51a9-4b6a-6b71-08dcdefae859
-x-proofpoint-id: d8690225-876f-412f-87c6-a7cb45557a4c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7289dXdkjH64MfZpao8RAOaZ5d4wZVj4ViDhDh4E3uuHGqGa2TXww/AkUAvo?=
- =?us-ascii?Q?PU+t4IySmHxcOCqRncaGiJ6u8ynmiydoy+ZTMURIgzs25z0MATfY51WbzWxh?=
- =?us-ascii?Q?oGzByaLZPc6prD5Ug6u2rp87sNKQUs3aodCdVw1xoYVU2ygsPkOAsC0WFlHW?=
- =?us-ascii?Q?v/KSI3B0VVQMv1djUnzkCzfUYKMsgdwxxLslwcWeJNsjTtE2M34IAPaNYzsV?=
- =?us-ascii?Q?Hw3lgawrTXbeOmc99MRTqMVd7uMBDpcSwB6SIkNX0lNHMldZSdapebjYjcVo?=
- =?us-ascii?Q?2NjR6XJ7n31G4akMNsZY0gYXmtWPq/2eGbGBScRyoTvqMrd/Z0k6G4EBz/85?=
- =?us-ascii?Q?cQOhfybGLGyNldd7CpPua6SxNaHGEaX0qZVuGtmFnHcGEhHAOQPhb95DsyV8?=
- =?us-ascii?Q?0QkKP4wUeJ0MozWrkPEouh/sTOeOS3aCSO3GHLmIFI26Pvd6gN7VnbduOA5m?=
- =?us-ascii?Q?bHFtxn5CccQ+TYCvWX7h2HkPck+DeWJCidfnYVwYzYA1EVEYQ6gtdJvXpz0U?=
- =?us-ascii?Q?VR08xrRBAshwzDBvEfrx1UgUzKwqRXaRwDtCIbQmbraCYd4W7CyGoEMyCqGo?=
- =?us-ascii?Q?TZ8KAzNfoWgEeIbfq6/oMYI343byb5NpZWsK4HcbHVE2oFR6Fvz5ejpwLTRt?=
- =?us-ascii?Q?cnbQJ9FWdHnUrT2N58x6hyOOAxFKXl6EqC2kZMALLkgqGpzeA3ONsOthkgZn?=
- =?us-ascii?Q?jzAF9lr9MQcQ5NSVBbL5zL+smCn2fYBtcj94UYS2Su2gzPp/M+Lv24IYbPwy?=
- =?us-ascii?Q?cL5zT5GgUoENayGJr0RbuYtPOOIKJl9oYQwk6BDlrPMkh3Pijz/W25larzGL?=
- =?us-ascii?Q?qI74QYUokqonNZi6uY3IWepz447hM9iY8gcLe1+h/W0RdS0s5Cm/ZtBdXv8t?=
- =?us-ascii?Q?BTMr0rqs/XeOYO39JSQwVbdKhg4ILg++Vv0YmZzMoknEZeJExs9MncsnrAHm?=
- =?us-ascii?Q?WbbJ3YJtDODK2q9df2m4wQHLVmmCvfCN/s+7cL8z69ZYI8Ql/njP2cMWj/ap?=
- =?us-ascii?Q?uCR0cbLxSjdgp1bG3WL8nbY/Q3P9IDbShxN60vcQUMFw7EpCApm4QnXE7eQx?=
- =?us-ascii?Q?0MWaOwaX/A3yZIOWtna9nXm4p+KptbRj3QMI+GEd1BTxIQYR81HCFg5i17du?=
- =?us-ascii?Q?0E3O7AO3m8evYYW5T+f+ZCcYUtdkH2mt5Y/g5WiNkFasUAVu4Gd+TdkOXUP6?=
- =?us-ascii?Q?pA39gsiKYgV6KB6IzH5p6dl1cG7MUv7+bqdNiqK4PXsn3cZW4QUFmaSbBPeZ?=
- =?us-ascii?Q?z2r2MNk+ldWwXNrTxiI2jJncvy/NR8MPZ4nrk5XyUa/gJKHG7wF5L4cgXB37?=
- =?us-ascii?Q?AFzMt/xTLglswbsL1XEN0TfnyUxpm0ptppE+kltwxYWuyPBfHBS/+Vo37QKO?=
- =?us-ascii?Q?tF/vXpv1IKgW3OOqp4LBdwVyOjSa?=
-X-Forefront-Antispam-Report:
-	CIP:121.100.38.198;CTRY:SG;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:gepdcl09.sg.gdce.sony.com.sg;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	zFRtvbp77ACVCZf1I4QU0iOY/5BvmvNbk2Z7/CxwsuagpObOno2l7FZj+5PLu6L7J8PBvcwkDI+qjExwELcZI/e5mNHdXicD6dxF4GNjeJ+W/ovIdSGneOP8U52DPGQNEnFv/4KdpGmm11zt+EF5sbP3gASlw8lMv7tSQ8FiPWt1a1V5AuLB7URNQSePh6HFoHV/JL2Cg4/jFLOwBXMFSH0Ck40CY7GiO5qBBGfnjP3e1FVn3FmRCv0+WcyeerEh3F+l7iPpHWwVoVCSBA82kof4R/oxylGkL3nno68yHTa/EzUGLjh+9dLn9VeyUo+SRu0lfRp2KF+aoNkKXcYsB1Kx4+3j+a3KNSnqHY15CcCjIi2e0+VmOUT59SR3q4VsK5G5elpu2WBDNcbzpFQhIIGw6XoPhlQ0WxRTBZG6siOdvBKhbnA/vDEov8xAPoXx5RBKHcsnhllmbKdCgoPsWk8HSg1rqLCwmWTpNULFhitDAX6lqdt0/phJ+7oC2AmISPw7LrZlSs+1eJUncgJGb1xzQYuhZM09gMpNRV+YzRKFf9dR9Zb+2AlyhYYwvIoltpWpOl8TqZ+qXQSxGmRc9PKV2OdRevfwsS6OUI19GjFvK6OxElhWOYrevO6zUQU/
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 13:47:19.3944
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dcca2898-51a9-4b6a-6b71-08dcdefae859
-X-MS-Exchange-CrossTenant-Id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=66c65d8a-9158-4521-a2d8-664963db48e4;Ip=[121.100.38.198];Helo=[gepdcl09.sg.gdce.sony.com.sg]
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-BN2PEPF000055DF.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA2PR13MB6703
-X-Proofpoint-GUID: 1Kt2VX25IzvKHt0P7RqM_QegPkahuZhd
-X-Proofpoint-ORIG-GUID: 1Kt2VX25IzvKHt0P7RqM_QegPkahuZhd
-X-Sony-Outbound-GUID: 1Kt2VX25IzvKHt0P7RqM_QegPkahuZhd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-27_06,2024-09-27_01,2024-09-02_01
+Content-Transfer-Encoding: 8bit
 
-Hi Greg,
+From: Ian Dannapel <iansdannapel@gmail.com>
 
-Sorry for the delay in our response.
-Please find our reply to your comments:
+Add a new driver for loading binary firmware to volatile
+configuration RAM using "SPI passive programming" on Efinix FPGAs.
 
-On Tue, Sep 17, 2024 at 12:11:22PM +0200, Greg KH wrote:
-> > On Fri, Sep 13, 2024 at 06:36:38AM +0200, Greg KH wrote:
-> > > > This patch series introduces a new framework in the form of a driver
-> > > > probe-control, aimed at addressing the need for deferring the probes
-> > > > from built-in drivers in kernels where modules are not used.
-> > > 
-> > > Wait, why?
-> > >
-> > 
-> > We have a scenario where a driver cannot be built as a module and ends up
-> > as a built-in driver. We don't want to probe this driver during boot as its
-> > not required at the time of booting.
-> > Example: drivers/pci/controller/dwc/pci-imx6.c
-> > So the intention is to only postpone some driver probes similar to:
-> > https://elinux.org/Deferred_Initcalls
-> > But instead of delaying initcall execution(which requires initmem to be kept
-> > and not freed during boot) we are trying to delay driver probes as this is
-> > much simpler.
-> > The proposed driver is a generic solution for managing such driver
-> > probes.
-> 
-> Again, please fix the drivers that are having problems with this, and
-> build them as a module and load them when you need/want them and can be
-> probed correctly.
-> 
+Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
+---
+ drivers/fpga/Kconfig                    |  10 ++
+ drivers/fpga/Makefile                   |   1 +
+ drivers/fpga/efinix-trion-spi-passive.c | 211 ++++++++++++++++++++++++
+ 3 files changed, 222 insertions(+)
+ create mode 100644 drivers/fpga/efinix-trion-spi-passive.c
 
-Sure, we will try to do that.
+diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+index 37b35f58f0df..eb1e44c4e3e0 100644
+--- a/drivers/fpga/Kconfig
++++ b/drivers/fpga/Kconfig
+@@ -83,6 +83,16 @@ config FPGA_MGR_XILINX_SPI
+ 	  FPGA manager driver support for Xilinx FPGA configuration
+ 	  over slave serial interface.
+ 
++config FPGA_MGR_EFINIX_SPI
++	tristate "Efinix FPGA configuration over SPI passive"
++	depends on SPI
++	help
++	  This option enables support for the FPGA manager driver to
++	  configure Efinix Trion and Titanium Series FPGAs over SPI
++	  using passive serial mode.
++	  Warning: Do not activate this if there are other SPI devices
++	  on the same bus as it might interfere with the transmission.
++
+ config FPGA_MGR_ICE40_SPI
+ 	tristate "Lattice iCE40 SPI"
+ 	depends on OF && SPI
+diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+index aeb89bb13517..1a95124ff847 100644
+--- a/drivers/fpga/Makefile
++++ b/drivers/fpga/Makefile
+@@ -18,6 +18,7 @@ obj-$(CONFIG_FPGA_MGR_TS73XX)		+= ts73xx-fpga.o
+ obj-$(CONFIG_FPGA_MGR_XILINX_CORE)	+= xilinx-core.o
+ obj-$(CONFIG_FPGA_MGR_XILINX_SELECTMAP)	+= xilinx-selectmap.o
+ obj-$(CONFIG_FPGA_MGR_XILINX_SPI)	+= xilinx-spi.o
++obj-$(CONFIG_FPGA_MGR_EFINIX_SPI)	+= efinix-trion-spi-passive.o
+ obj-$(CONFIG_FPGA_MGR_ZYNQ_FPGA)	+= zynq-fpga.o
+ obj-$(CONFIG_FPGA_MGR_ZYNQMP_FPGA)	+= zynqmp-fpga.o
+ obj-$(CONFIG_FPGA_MGR_VERSAL_FPGA)	+= versal-fpga.o
+diff --git a/drivers/fpga/efinix-trion-spi-passive.c b/drivers/fpga/efinix-trion-spi-passive.c
+new file mode 100644
+index 000000000000..87ff645265ca
+--- /dev/null
++++ b/drivers/fpga/efinix-trion-spi-passive.c
+@@ -0,0 +1,211 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Trion and Titanium Series FPGA SPI Passive Programming Driver
++ *
++ * Copyright (C) 2024 iris-GmbH infrared & intelligent sensors
++ *
++ * Ian Dannapel <iansdannapel@gmail.com>
++ *
++ * Manage Efinix FPGA firmware that is loaded over SPI using
++ * the serial configuration interface.
++ */
++
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/fpga/fpga-mgr.h>
++#include <linux/gpio/consumer.h>
++#include <linux/module.h>
++#include <linux/mod_devicetable.h>
++#include <linux/of.h>
++#include <linux/spi/spi.h>
++#include <linux/sizes.h>
++
++struct efinix_spi_conf {
++	struct spi_device *spi;
++	struct gpio_desc *cdone;
++	struct gpio_desc *creset;
++	struct gpio_desc *cs;
++};
++
++static int efinix_spi_get_cdone_gpio(struct efinix_spi_conf *conf)
++{
++	int ret;
++
++	ret = gpiod_get_value(conf->cdone);
++	return ret;
++}
++
++static void efinix_spi_reset(struct efinix_spi_conf *conf)
++{
++	gpiod_set_value(conf->creset, 1);
++	/* wait tCRESET_N */
++	usleep_range(5, 15);
++	gpiod_set_value(conf->creset, 0);
++}
++
++static enum fpga_mgr_states efinix_spi_state(struct fpga_manager *mgr)
++{
++	struct efinix_spi_conf *conf = mgr->priv;
++
++	if (conf->cdone && efinix_spi_get_cdone_gpio(conf) == 1)
++		return FPGA_MGR_STATE_OPERATING;
++
++	return FPGA_MGR_STATE_UNKNOWN;
++}
++
++static int efinix_spi_apply_clk_cycles(struct efinix_spi_conf *conf)
++{
++	char data[13] = {0};
++
++	return spi_write(conf->spi, data, sizeof(data));
++}
++
++static int efinix_spi_write_init(struct fpga_manager *mgr,
++				 struct fpga_image_info *info,
++				 const char *buf, size_t count)
++{
++	struct efinix_spi_conf *conf = mgr->priv;
++
++	if (info->flags & FPGA_MGR_PARTIAL_RECONFIG) {
++		dev_err(&mgr->dev, "Partial reconfiguration not supported\n");
++		return -EINVAL;
++	}
++
++	/* reset with chip select active */
++	gpiod_set_value(conf->cs, 1);
++	usleep_range(5, 15);
++	efinix_spi_reset(conf);
++
++	/* wait tDMIN */
++	usleep_range(100, 150);
++
++	return 0;
++}
++
++static int efinix_spi_write(struct fpga_manager *mgr, const char *buf,
++			    size_t count)
++{
++	struct efinix_spi_conf *conf = mgr->priv;
++	int ret;
++
++	ret = spi_write(conf->spi, buf, count);
++	if (ret) {
++		dev_err(&mgr->dev, "SPI error in firmware write: %d\n",
++			ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int efinix_spi_write_complete(struct fpga_manager *mgr,
++				     struct fpga_image_info *info)
++{
++	struct efinix_spi_conf *conf = mgr->priv;
++	unsigned long timeout =
++		jiffies + usecs_to_jiffies(info->config_complete_timeout_us);
++	bool expired = false;
++	int done;
++
++	/* append at least 100 clock cycles */
++	efinix_spi_apply_clk_cycles(conf);
++
++	/* release chip select */
++	gpiod_set_value(conf->cs, 0);
++
++	if (conf->cdone) {
++		while (!expired) {
++			expired = time_after(jiffies, timeout);
++
++			done = efinix_spi_get_cdone_gpio(conf);
++			if (done < 0)
++				return done;
++
++			if (done)
++				break;
++		}
++	}
++
++	if (expired)
++		return -ETIMEDOUT;
++
++	/* wait tUSER */
++	usleep_range(75, 125);
++
++	return 0;
++}
++
++static const struct fpga_manager_ops efinix_spi_ops = {
++	.state = efinix_spi_state,
++	.write_init = efinix_spi_write_init,
++	.write = efinix_spi_write,
++	.write_complete = efinix_spi_write_complete,
++};
++
++static int efinix_spi_probe(struct spi_device *spi)
++{
++	struct efinix_spi_conf *conf;
++	struct fpga_manager *mgr;
++
++	conf = devm_kzalloc(&spi->dev, sizeof(*conf), GFP_KERNEL);
++	if (!conf)
++		return -ENOMEM;
++
++	conf->spi = spi;
++
++	conf->creset = devm_gpiod_get(&spi->dev, "creset", GPIOD_OUT_HIGH);
++	if (IS_ERR(conf->creset))
++		return dev_err_probe(&spi->dev, PTR_ERR(conf->creset),
++				"Failed to get RESET gpio\n");
++
++	conf->cs = devm_gpiod_get(&spi->dev, "cs", GPIOD_OUT_HIGH);
++	if (IS_ERR(conf->cs))
++		return dev_err_probe(&spi->dev, PTR_ERR(conf->cs),
++				"Failed to get CHIP_SELECT gpio\n");
++
++	if (!(spi->mode & SPI_CPHA) || !(spi->mode & SPI_CPOL))
++		return dev_err_probe(&spi->dev, -EINVAL,
++				"Unsupported SPI mode, set CPHA and CPOL\n");
++
++	conf->cdone = devm_gpiod_get_optional(&spi->dev, "cdone", GPIOD_IN);
++	if (IS_ERR(conf->cdone))
++		return dev_err_probe(&spi->dev, PTR_ERR(conf->cdone),
++				"Failed to get CDONE gpio\n");
++
++	mgr = devm_fpga_mgr_register(&spi->dev,
++				"Efinix SPI Passive Programming FPGA Manager",
++					&efinix_spi_ops, conf);
++
++	return PTR_ERR_OR_ZERO(mgr);
++}
++
++#ifdef CONFIG_OF
++static const struct of_device_id efinix_spi_of_match[] = {
++	{ .compatible = "efinix,trion-spi-passive", },
++	{ .compatible = "efinix,titanium-spi-passive", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, efinix_spi_of_match);
++#endif
++
++static const struct spi_device_id efinix_ids[] = {
++	{ "trion-spi-passive", 0 },
++	{ "titanium-spi-passive", 0 },
++	{},
++};
++MODULE_DEVICE_TABLE(spi, efinix_ids);
++
++static struct spi_driver efinix_spi_passive_driver = {
++	.driver = {
++		.name = "efinix-fpga-spi-passive",
++		.of_match_table = of_match_ptr(efinix_spi_of_match),
++	},
++	.probe = efinix_spi_probe,
++	.id_table = efinix_ids,
++};
++
++module_spi_driver(efinix_spi_passive_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Ian Dannapel <iansdannapel@gmail.com>");
++MODULE_DESCRIPTION("Load Efinix FPGA firmware over SPI passive");
+-- 
+2.34.1
 
-> > > > In such scenario, delaying the initialization of certain devices such
-> > > > as pcie based devices not needed during boot and giving user the control
-> > > > on probing these devices post boot, can help reduce overall boot time.
-> > > > This is achieved without modifying the driver code, simply by configuring
-> > > > the platform device tree.
-> > > 
-> > > PCI devices should not be on the platform device tree.
-> > >
-> > 
-> > You are right, we are referring to the pci host controller that will be
-> > listed in device tree and skipping its probe during boot as an example
-> > here.
-> 
-> pci host controllers should really be availble at boot time, wow your
-> hardware is b0rked, sorry.  Just make it a module and load it when you
-> want/need it.
-> 
-> > > And what's wrong with async probing?  That was written for this very
-> > > issue.
-> > >
-> > 
-> > We have explored async probe as an option, but we noticed below:
-> > 1) Probe initiated via async
-> > 2) Boot continues with other setup.
-> > 3) Boot reaches stage where ip configuration is to be done via
-> >    ip_auto_config() and 1) is still in progress, then boot waits for all
-> >    async calls to be completed before proceeding with network setup.
-> >    ip_auto_config()
-> >     -> wait_for_devices()
-> >       -> wait_for_device_probe()
-> >          -> async_synchronize_full()
-> > 4) Similar thing happens with rootfs mount step in prepare_namespace()
-> >    initcall
-> 
-> Again, if you make the problem driver as a module you should be ok,
-> right?
-> 
-
-Yes.
-
-> > So to avoid getting blocked on these probes which are not required
-> > during boot, we proposed this driver for managing such built-in driver
-> > probes execution.
-> 
-> Fix the broken drivers please :)
-> 
-
-Sure, we will do that.
-Thank you for your feedback.
-
-Regards,
-Nayeem
 
