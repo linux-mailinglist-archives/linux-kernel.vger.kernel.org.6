@@ -1,183 +1,177 @@
-Return-Path: <linux-kernel+bounces-341558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A655098819C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:45:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A75F39881A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 356211F2256A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:45:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B6981F22547
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083651BAED8;
-	Fri, 27 Sep 2024 09:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C401BC07E;
+	Fri, 27 Sep 2024 09:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="CcLgHUi5"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XXOK0aGP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D1E1BBBEB
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368E01BC066;
+	Fri, 27 Sep 2024 09:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727430254; cv=none; b=WtcMO92vo4M6DtMqHWODxue9FrPC5YO5eN306CVmT6mSOSE1TsAao9UOU3qG79kEdSdHagYheydi4n8fAKnM9U3BxKMZHIqy0v6iIvJUEj4wAxX3FSlCDC8LgRfvc0fYrIZ7LTbjlr8TaE5Js8rMStQjF04bLoIpta5eTKZO8iU=
+	t=1727430264; cv=none; b=Nif8vGziZey9CSfv+g8cjwWnbiy/INiq4hd6/+aGM+M88R89reN0yBSIO/rLfgtWYoMqFnT7QUEkpkYemD881TcESCfthNc4i7MbqPeGUUQOi53+aC5ZaRSKXvE2NUqqsAgFtsOHTKhGWF8nsdWbZU4izlfBZSHEfg+c5sTINxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727430254; c=relaxed/simple;
-	bh=HcCP2rekDd7lA+V0zfMNj7Eaud2KbIIRS5cNTt4Dysk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=oHPQMmVKUwQJK4qrWWOa09fmRtmukAAaLx736u/SLri4h9lPWFgAVHq4AZuv9gf9mPltGznPObGkt4f65zRlddtjdMCgyNeR967hKDqGbkRJgdCpFiD7dRwYxfQvYRVcbSvjvrIQVRZIWdQF0D/o2YXN65EoUPtQuj+lTKewh1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=CcLgHUi5; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e0c2e42b75so107759a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 02:44:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1727430252; x=1728035052; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6vXo/QBqbRSPcyQ8x6xHYpiZBOONjq8OugZwsB+apMA=;
-        b=CcLgHUi5g9lfWHEIpZn7vx/cOFF8ZpVi72+Z9ZZgy/xXxNUCB1bHBzCfBLZMRgGUIJ
-         u5YzNXMTwjaISe8IlHnqvGUJY63sV/OJ8pGps0FTp6pPBSgQBq0ktcH2igx9BgNeL6Qs
-         ujiTsGxx0hPF+qIwcK53kT8Adfivs2uhxtlqOiW3tC9qiQrcoBAvngM1oCrNrfla7Zo8
-         tgr5r4FMo4R3uNK9t0rJlrlpl7mRGoGSO4+KxAhaaG07SDe7LUDTLVz3mCdykYglYgFF
-         THWmbACxCIpU1DP597C4kozNut2w0CWVRuu86fpTyBUivn6tQPbgQhel58pmh9A87Nqp
-         cNig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727430252; x=1728035052;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6vXo/QBqbRSPcyQ8x6xHYpiZBOONjq8OugZwsB+apMA=;
-        b=gJyUlMDerD+IegDQtdL6yNEKCqF8SUDY9fiDpO2G7lBXsMJ1NAeT1BvFXbq8z4r+mD
-         Y5rKN+CTDHvX8YWVCCAGP6J+bGTxHaHc41KBAG3Z71gO6Mil7UwJ9tM8n1J5ABjRs9hS
-         J6UQQXoA1RNJ8bbg1cnGbScM/1AGl+UFFaBwQf/OlfW8p94ajqEleBsfc5UTZYKEc1c7
-         shlHEdvixMa0uKkok4JbuYqOYrhrKwFwfKz3P5nLu4hX4CYtVqJpTd/+snFloyogSYXN
-         Z0JtSZvu850+w4VWxhnh8vqARoDb9YpqoGMHMmNwTsEwa8MHfjO+pao7EShWj0bUHvhe
-         dZBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVozFQoH8HpqtliwQW4IBJtAxZzrzHRHJlt8T8S1EIuVsQ72RUTCjH5hqQBVjQsYMwujZMnPpqX8cfIDiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbINoZPmGc6lKA+6aq2rBr8doUOasMuUhExo0apRI7jSQRa6Tf
-	D3xaiMhuUU7EZyGaB0HAzI/F63nJAPD1bqEqZPSvzYfiD9H8yw0t3MV1oT+Z+iw=
-X-Google-Smtp-Source: AGHT+IE7RZB9BJpIiNesgL3dY0bxd4GYrJD5iq+grbfZ17f5PpYAXUaASOupLwHC3H3KxQnpst0sMw==
-X-Received: by 2002:a17:90a:d802:b0:2da:71f8:7ff with SMTP id 98e67ed59e1d1-2e0b8e841bfmr1312757a91.5.1727430251873;
-        Fri, 27 Sep 2024 02:44:11 -0700 (PDT)
-Received: from lvzhaoxiong-KLVC-WXX9.huaqin.com ([116.66.212.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1bae46sm5105895a91.22.2024.09.27.02.44.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 02:44:11 -0700 (PDT)
-From: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-To: neil.armstrong@linaro.org,
-	quic_jesszhan@quicinc.com,
-	sam@ravnborg.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dianders@chromium.org,
-	hsinyi@google.com,
-	awarnecke002@hotmail.com,
-	dmitry.baryshkov@linaro.org
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Subject: [PATCH v3 2/2] drm/panel: boe-th101mb31ig002: Modify Starry panel timing
-Date: Fri, 27 Sep 2024 17:43:40 +0800
-Message-Id: <20240927094340.18544-3-lvzhaoxiong@huaqin.corp-partner.google.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240927094340.18544-1-lvzhaoxiong@huaqin.corp-partner.google.com>
-References: <20240927094340.18544-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+	s=arc-20240116; t=1727430264; c=relaxed/simple;
+	bh=n/bltVhnYzxNYiNE4PxbxGOVMK5htlf883JwUC9dahs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RQcCu7jmHhuHEadsRhQiCYQ9Vr3pHrRFvBpNJ0oLUp4E7H6RPCi8tm/SlrwmK1l2Rprj6omhh67/HOQYSLokxQqDA4pq9pKFPrVBFkLKDScqxzKFxTVZGZ+uNrTgTYSAw5L1Ac9fKYXhr1jLmZddct7ngEcnTivZdHq6YiDGTsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XXOK0aGP; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727430262; x=1758966262;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=n/bltVhnYzxNYiNE4PxbxGOVMK5htlf883JwUC9dahs=;
+  b=XXOK0aGPjK3KGxO3viW+tFrhysvwkqJXPKKyZYLIO0HCS+x3XICxTpaf
+   NQ9Ov3fcgA7H8FLcrwaw0emhVAb+d0Yj5nS+jixomcg61WvlpAWYH6USD
+   HYoDCAt+B8LWRjWCYzgS048z9RjRg0rhCRFAj78Q6IoLKxxH37DyBV+hg
+   0xLZq0s2d1yRhvMMWfZeplEhTPYdMkBLXtInXrg7P7wsMjQ7oF1zq5q49
+   ZeV2LqfBW1FzSQqroxkrZBIPbl3dT5m/fI+QsOUHEyAuEVO5lUnP6AFG1
+   lK4dtdcFXTDSOZ77NkV7Y/jHZuZGaSbYfUFQ+Mr925WpQph4xOl76uPfz
+   Q==;
+X-CSE-ConnectionGUID: KjpAhFJ+SXKW39n6pAchjA==
+X-CSE-MsgGUID: Wmx6Tf4wTKaMui5G6pGezQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="51984046"
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="51984046"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 02:44:21 -0700
+X-CSE-ConnectionGUID: JrghRUXCShqSfvO3s9n4NA==
+X-CSE-MsgGUID: hRP4172ySS6/WR2zK0n4sg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="76997208"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 02:44:18 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1su7WJ-0000000DWWK-45nm;
+	Fri, 27 Sep 2024 12:44:15 +0300
+Date: Fri, 27 Sep 2024 12:44:15 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Michael Wu <michael.wu@kneron.us>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Morgan Chang <morgan.chang@kneron.us>, mvp.kutali@gmail.com
+Subject: Re: [PATCH v2 2/2] i2c: dwsignware: determine HS tHIGH and tLOW
+ based on HW parameters
+Message-ID: <ZvZ-b_JRVnsh9o_8@smile.fi.intel.com>
+References: <20240927042230.277144-1-michael.wu@kneron.us>
+ <20240927042230.277144-3-michael.wu@kneron.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927042230.277144-3-michael.wu@kneron.us>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-In MTK chips, if the DRM runtime resume has not yet completed and the
-system enters sleep mode at the same time, there is a possibility of
-a black screen after waking the machine. Reduce the disable delay
-resolves this issue,
+On Fri, Sep 27, 2024 at 12:22:17PM +0800, Michael Wu wrote:
+> In commit 35eba185fd1a ("i2c: designware: Calculate SCL timing parameter
+> for High Speed Mode") hs_hcnt and hs_lcnt are calculated based on fixed
+> tHIGH = 160 and tLOW = 120. However, the set of these fixed values only
+> applies to the combination of hardware parameters IC_CAP_LOADING = 400pF
+> and IC_CLK_FREQ_OPTIMIZATION = 1. Outside of this combination, if these
+> fixed tHIGH = 160 and tLOW = 120 are still used, the calculated hs_hcnt
+> and hs_lcnt may not be small enough, making it impossible for the SCL
+> frequency to reach 3.4 MHz.
+> 
+> Section 3.15.4.5 in DesignWare DW_apb_i2b Databook v2.03 says that when
+> IC_CLK_FREQ_OPTIMIZATION = 0,
+> 
+>     MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
+> 		     = 120 ns for 3.4 Mbps, bus loading = 400pF
+>     MIN_SCL_LOWtime = 160 ns for 3.4 Mbps, bus loading = 100pF
+> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
+> 
+> and section 3.15.4.6 says that when IC_CLK_FREQ_OPTIMIZATION = 1,
+> 
+>     MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
+> 		     = 160 ns for 3.4 Mbps, bus loading = 400pF
+>     MIN_SCL_LOWtime = 120 ns for 3.4 Mbps, bus loading = 100pF
+> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
+> 
+> In order to calculate more accurate hs_hcnt amd hs_lcnt, two hardware
+> parameters IC_CAP_LOADING and IC_CLK_FREQ_OPTIMIZATION must be
+> considered together.
 
-The "backlight_off_to_display_off_delay_ms" was added between
-"backlight off" and "display off"  to prevent "display off" from being
-executed when the backlight is not fully powered off, which may cause
-a white screen. However, we removed this
-"backlight_off_to_display_off_delay_ms" and found that this situation
-did not occur. Therefore, in order to solve the problem mentioned
-above, we removed this delay, and the delay between "display off" and
-"enter sleep" is not defined in the spec, so we reduce it from 120ms
-to 50ms.
+...
 
-In addition, T14 >= 120ms, so we change
-"enter_sleep_to_reset_down_delay_ms" from 100ms to 120ms.
+> +static void i2c_dw_fw_parse_hw_params(struct dw_i2c_dev *dev)
 
-The panel spec:
-1. https://github.com/Vme5o/power-on-off-sequential
+Separate function is an overkill. Just inline its contents...
 
-Fixes: e4bd1db1c1f7 ("drm/panel: boe-th101mb31ig002: Support for starry-er88577 MIPI-DSI panel")
+...
 
-Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
----
-Changes between V3 and V2:
--  1. Modify the commit message 
-v2: https://lore.kernel.org/all/20240923134227.11383-3-lvzhaoxiong@huaqin.corp-partner.google.com/
+> +	ret = device_property_read_u32(device, "bus-capacitance-pf", &dev->bus_capacitance_pf);
+> +	if (ret || dev->bus_capacitance_pf < 400)
+> +		dev->bus_capacitance_pf = 100;
+> +	else
+> +		dev->bus_capacitance_pf = 400;
+> +
+> +	dev->clk_freq_optimized = device_property_read_bool(device, "clk-freq-optimized");
 
-Changes between V2 and V1:
--  1. Modify the commit message.
--  2. Delete the value of backlight_off_to_display_off_delay_ms.
--  3. Modify the value of enter_sleep_to_reset_down_delay_ms from 100ms to 120ms.
-v1: https://lore.kernel.org/all/20240915080830.11318-3-lvzhaoxiong@huaqin.corp-partner.google.com/
----
- .../gpu/drm/panel/panel-boe-th101mb31ig002-28a.c    | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+...
 
-diff --git a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-index 0b87f1e6ecae..9e4d91c7c394 100644
---- a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-+++ b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-@@ -29,7 +29,7 @@ struct panel_desc {
- 	bool lp11_before_reset;
- 	unsigned int vcioo_to_lp11_delay_ms;
- 	unsigned int lp11_to_reset_delay_ms;
--	unsigned int backlight_off_to_display_off_delay_ms;
-+	unsigned int display_off_to_enter_sleep_delay_ms;
- 	unsigned int enter_sleep_to_reset_down_delay_ms;
- 	unsigned int power_off_delay_ms;
- };
-@@ -184,12 +184,10 @@ static int boe_th101mb31ig002_disable(struct drm_panel *panel)
- 						      panel);
- 	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
- 
--	if (ctx->desc->backlight_off_to_display_off_delay_ms)
--		mipi_dsi_msleep(&dsi_ctx, ctx->desc->backlight_off_to_display_off_delay_ms);
--
- 	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
- 
--	mipi_dsi_msleep(&dsi_ctx, 120);
-+	if (ctx->desc->display_off_to_enter_sleep_delay_ms)
-+		mipi_dsi_msleep(&dsi_ctx, ctx->desc->display_off_to_enter_sleep_delay_ms);
- 
- 	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
- 
-@@ -275,6 +273,7 @@ static const struct panel_desc boe_th101mb31ig002_desc = {
- 			  MIPI_DSI_MODE_NO_EOT_PACKET |
- 			  MIPI_DSI_MODE_LPM,
- 	.init = boe_th101mb31ig002_enable,
-+	.display_off_to_enter_sleep_delay_ms = 120,
- };
- 
- static const struct drm_display_mode starry_er88577_default_mode = {
-@@ -302,8 +301,8 @@ static const struct panel_desc starry_er88577_desc = {
- 	.lp11_before_reset = true,
- 	.vcioo_to_lp11_delay_ms = 5,
- 	.lp11_to_reset_delay_ms = 50,
--	.backlight_off_to_display_off_delay_ms = 100,
--	.enter_sleep_to_reset_down_delay_ms = 100,
-+	.display_off_to_enter_sleep_delay_ms = 50,
-+	.enter_sleep_to_reset_down_delay_ms = 120,
- 	.power_off_delay_ms = 1000,
- };
- 
+>  	i2c_parse_fw_timings(device, t, false);
+>  
+> +	i2c_dw_fw_parse_hw_params(dev);
+
+...here.
+
+>  	i2c_dw_adjust_bus_speed(dev);
+
+...
+
+> + * @bus_capacitance_pf: bus capacitance in picofarad
+
+picofarads
+
+...
+
+> +			u32 t_high, t_low;
+> +
+> +			if (dev->bus_capacitance_pf == 400) {
+> +				t_high = dev->clk_freq_optimized ? 160 : 120;
+> +				t_low = 320;
+> +			} else {
+
+Yeah, this has no protection against wrong values in the DT/ACPI.
+So, perhaps
+
+			} else if (...) {
+
+and assign defaults or bail out with an error?
+
+> +				t_high = 60;
+> +				t_low = dev->clk_freq_optimized ? 120 : 160;
+> +			}
+
 -- 
-2.17.1
+With Best Regards,
+Andy Shevchenko
+
 
 
