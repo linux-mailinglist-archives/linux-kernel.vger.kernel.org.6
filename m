@@ -1,99 +1,208 @@
-Return-Path: <linux-kernel+bounces-341626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C70CB9882A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:37:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1E69882B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 036EC1C20887
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:37:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 384631F23909
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 10:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F214188CD5;
-	Fri, 27 Sep 2024 10:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419E3189BBF;
+	Fri, 27 Sep 2024 10:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FoqJtozH"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="cNvJQPby"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D85185956;
-	Fri, 27 Sep 2024 10:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCBC13698F;
+	Fri, 27 Sep 2024 10:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727433443; cv=none; b=dWCAsp0rLxrTBexJHHqnp1hS/BrHruAegoRNIBSIPm4Fy/o706CrROqpXUq2Kx6aP71PxkhFEUaE+MiE1gtKa2QW3i50fcvD18A0DejRNtZ3XSLBTZOBioFys+iCs12qicMuMk49PUIvpGmpv+7cksP5UQ/BNitk9DOkAtcccPE=
+	t=1727433687; cv=none; b=U4aHf2J2j2jKN64VBwWUBzcDe4SOVgTS7J2MVj2h1Rm6s799V0omDGbAm9cskmTNwDzGZfu5Mx0KhLUCDe5A9PBeuUVN8SCAZCdDTaP4l7VDzFLVOXkw3x9wRMJIwCuzCHZA0U3UqyuCzYs15vAuTLGT0i0QYoclsplljIQPX6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727433443; c=relaxed/simple;
-	bh=hHoju3u/041HhlyK9FzkDceCp+u0ugdPviMfZb0y9V0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ojl/rT+c0QX8rmk1rvbexrg0RYKmOkyRStgbcary9iPHfGpo9HmtWHD3y9oOJGVp/zVFnD6iCrI2K5Ul1YL9P9JVFocqfd7SV5wg8Sjz53h+FD6n5gVp0cLu3L3SoCKlSUilxa66eCUvVLxDUmGwvVzY8w1ytrpZ9i6vK6SO2mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FoqJtozH; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso285006066b.3;
-        Fri, 27 Sep 2024 03:37:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727433440; x=1728038240; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hHoju3u/041HhlyK9FzkDceCp+u0ugdPviMfZb0y9V0=;
-        b=FoqJtozHHcI8TDm63+7afV1A59QjPgWM4zSh5+TdMNgX4qZROVe37mr8Fx6EGCt9xo
-         tpC6GFa2224m0IwwratUOg3AzzxEtbWDYy5nwwNqLBcO8RRrInQwhGetgdDh5H+4yqGS
-         3js8ELoFg+c5pTswmbCcGvCsEZeSmjxJYQQOFmJ6s+3JqWzMvNlVeanaEaz5wkmp2R2l
-         01eYoy8gmIxMnfRYf6k6yz1SR0SMLfT7y5q4+yxBPaFOrmKZsWSpUlUp8DLega/Czja3
-         LafWHkmDi6zHdzGi1lxBUWhJ94EmdmR0go7fCBsniL9j4u4JPev0CcWJU6Hlf0rgsWxb
-         5wNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727433440; x=1728038240;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hHoju3u/041HhlyK9FzkDceCp+u0ugdPviMfZb0y9V0=;
-        b=respLPZPKJhOV5zZXmvkzZUvERPJQL2KXbHYqz27bxdlTh44PLu7iiQv4pq39ZYh9J
-         MqbR0kZTyfFU50YBwNBIl4WT8VvNWbo3QuAZDqkwzv8KR+QujCOSbpLmNjYhXy8QkQ0B
-         n8Z4F0cSKy9eBmfVE4Z5E5MZzPyXnqaqKWs8HoSJU6uBMSrFwJ6i9HwlQm1pqOkxjCvQ
-         vUsQgKk5ZbdJ+YGkUdCOjhQUBEiUCmfPQ7I6n1sSzXZXA4detplalJQrBEEoZaGhlOyz
-         ODDciGCUjqZrtJC0oP59HJqAO2u1SOBS4xvKjty2JDH92+oIrOhHpj4RNc0vx4cDhYPt
-         gUcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhYFGq9tDwDYbhfPI3c2Bkf8HLms6MrlBynbQUWqCpEK0+AJwMF444FVCKNxNkW9M9Rj2lVz8jp+4Ybis=@vger.kernel.org, AJvYcCWdQPocpfOWGq4lGtONqTMQtZjVbs05wjEj192IVqQHmm0UPldzvWPJGHNst7ExIuF4qw8gv28FWdzlFW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk30RkIZS9c2p05fZteJnlmPjVbBMBIXTcH6MHSqQwr/tgv/5z
-	9pFIsSahptGUllFBwdZ6Z8CzjO/B1dkI7UtMf8CK//fK9zUMAn7756TV5qiXgf3AjUy3A5Ih9OD
-	o84JKrtrpQCR183lh9wENr/eKlZQ=
-X-Google-Smtp-Source: AGHT+IH78ZbE2U9C9t69k5TZ6X+Gi8DEQA9qne76aeeb9j3yf1y3FHSicvo5uPYPSIyCtIKCVHczjOJor/I4gd87RzU=
-X-Received: by 2002:a17:907:9709:b0:a8a:7b8e:fe52 with SMTP id
- a640c23a62f3a-a93c4a98d9dmr283774766b.59.1727433440228; Fri, 27 Sep 2024
- 03:37:20 -0700 (PDT)
+	s=arc-20240116; t=1727433687; c=relaxed/simple;
+	bh=KoZaEI3JS55lBiC+OYgLUGIMIHYdubCt/PR1wyVVYdY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RjXT0BycXQf6eFx3agiSNwJ2eccbwYkrSPF9N3fKQO0MmnJYcfc8tdv1GL46sziJ8/PwVoQrfvI/WCVtEafzPeDZLCMiNwXj1UULzmLP2ZmAnwmj55J4dK5dvYxp+wNY+4woXiVVcjGNHPm5ITP42Bi2tTrA6KI54qanFTSDSjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=cNvJQPby; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 073f6b8c7cbd11efb66947d174671e26-20240927
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=d2ip2mdxnBklx0orvnPYOI2t7UUGH6wKZQCQEfSWN/M=;
+	b=cNvJQPbyJ6oFPLgZyt/1g0EYfq8n3VH+y4XXUJZIB+r2wX2taVtwRXxIE531/RmUuT3BCcTY7MfQrx88Z+0CI2lIyGoSskhY6zGcnIGngCvVVQ4ceGQz1ScrT0G4CnJHcleh08BT3G9ai7Xf9DP0FcuIIocfI/daNvJesCthVR0=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:64f08183-e24a-4257-8530-75b5f9675b25,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:1353aa9e-8e9a-4ac1-b510-390a86b53c0a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
+	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
+X-UUID: 073f6b8c7cbd11efb66947d174671e26-20240927
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1432560207; Fri, 27 Sep 2024 18:41:18 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 27 Sep 2024 18:41:17 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Fri, 27 Sep 2024 18:41:16 +0800
+Message-ID: <df270bf2-07f3-71a8-1f67-b8417f7a0719@mediatek.com>
+Date: Fri, 27 Sep 2024 18:41:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1727424031-19551-1-git-send-email-shengjiu.wang@nxp.com> <1727424031-19551-2-git-send-email-shengjiu.wang@nxp.com>
-In-Reply-To: <1727424031-19551-2-git-send-email-shengjiu.wang@nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Fri, 27 Sep 2024 13:38:15 +0300
-Message-ID: <CAEnQRZC3SPUQg3B=0KtsWdNj40=rvjp9+e=1zAn7DhS+Z3wZ5Q@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ASoC: fsl_micfil: fix regmap_write_bits usage
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
-	nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, 
-	perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v6 2/2] dt-bindings: mfd: mediatek: mt6397: Convert to DT
+ schema format
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sean Wang
+	<sean.wang@mediatek.com>, Sen Chu <sen.chu@mediatek.com>,
+	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Dmitry Torokhov
+	<dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones
+	<lee@kernel.org>, Sebastian Reichel <sre@kernel.org>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Chen Zhong <chen.zhong@mediatek.com>,
+	<linux-input@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
+	<wenst@chromium.org>
+References: <20240918064955.6518-1-macpaul.lin@mediatek.com>
+ <20240918064955.6518-2-macpaul.lin@mediatek.com>
+ <339b4c83-201c-4f63-85d0-b0aa1eb164b0@kernel.org>
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+In-Reply-To: <339b4c83-201c-4f63-85d0-b0aa1eb164b0@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 27, 2024 at 11:23=E2=80=AFAM Shengjiu Wang <shengjiu.wang@nxp.c=
-om> wrote:
->
-> The last parameter 1 means BIT(0), which should be the
-> correct BIT(X).
->
-> Fixes: 47a70e6fc9a8 ("ASoC: Add MICFIL SoC Digital Audio Interface driver=
-.")
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+
+On 9/27/24 17:45, Krzysztof Kozlowski wrote:
+> 	
+> 
+> External email : Please do not click links or open attachments until you 
+> have verified the sender or the content.
+> 
+> On 18/09/2024 08:49, Macpaul Lin wrote:
+>> Convert the mfd: mediatek: mt6397 binding to DT schema format.
+>> 
+>> MT6323, MT6358, and MT6397 are PMIC devices with multiple function
+>> subdevices. They share a common PMIC design but have variations in
+>> subdevice combinations.
+>> 
+>> Key updates in this conversion:
+>> 
+>> 1. RTC:
+>>    - Convert rtc-mt6397.txt and merge into parent MT6397 PMIC DT schema.
+>> 
+>> 2. Regulators:
+>>    - Align to generic name "regulators".
+>>    - Update references from .txt to .yaml for mt6323, mt6358, and mt6397
+>>      regulators.
+>>    - Simplify regulator name labels in device tree examples.
+>> 
+>> 3. Audio Codec:
+>>    - Convert sound/mt6358.txt and merge into parent MT6397 PMIC DT schema.
+>>    - Align to generic name "audio-codec" for codec and sound subdevices.
+>>    - Add "mediatek,dmic-mode" and "Avdd-supply" properties.
+>> 
+>> 4. Clocks:
+>>    - Align to generic name "clocks" for clockbuffer subdevices.
+>> 
+>> 5. LEDs:
+>>    - Convert leds-mt6323.txt and merge into parent MT6397 PMIC DT schema.
+>>    - Update LED binding.
+>> 
+>> 6. Keys:
+>>    - Add detailed descriptions for power and home keys.
+>>    - Add compatible: mediatek,mt6358-keys.
+>> 
+>> 7. Power Controller:
+>>    - Convert mt6323-poweroff.txt and merge into parent MT6397 PMIC DT
+>>      schema.
+>>    - Add #power-domain-cells property to fix dt-binding check error.
+>>    - Clarify "BBPU" as "Baseband power up".
+>> 
+>> 8. Pinctrl:
+>>    - Align to generic name "pinctrl" instead of "pin-controller".
+>> 
+>> 9. Compatible:
+>>    - Drop "mediatek,mt6357" since there is a separated DT Schema
+>>      for PMIC MT6357.
+>> 
+>> 10. Examples:
+>>    - MT6323: Retain complete examples for this PMIC.
+>>    - MT6358 and MT6397: simplify settings in regulators.
+>>     - Preserve "audio-codec", "clocks", "pinctrl", "rtc", and "keys"
+>>       sections as they contain typical settings for different PMICs.
+>> 
+>> Additional updates:
+>> - MAINTAINERS: Add co-maintainers and reference to
+>>   mfd/mediatek,mt6397.yaml for LED and power-controller drivers.
+>> - input/mediatek,pmic-keys.yaml: Update reference to
+>>   mfd/mediatek,mt6397.yaml.
+>> 
+>> Signed-off-by: Sen Chu <sen.chu@mediatek.com>
+>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> 
+> NAK
+> 
+> Follow up patch pointed out this is incorrect. I don't understand this
+> concept of sending knowingly incorrect code, so please sort it out at v7.
+> 
+> Best regards,
+> Krzysztof
+> 
+
+Sorry I didn't know mt6359-codec and mt6358-sound are similar device
+until Sept 26 (just yesterday) when I was reviewing the DT
+bindings. Until I've found the previous DT Schema of mt6359-codec 
+incorrect.
+See [1] 
+https://lore.kernel.org/linux-arm-kernel/20240926092519.6556-3-macpaul.lin@mediatek.com/T/
+and [2] 
+https://lore.kernel.org/all/20240926092519.6556-2-macpaul.lin@mediatek.com/
+
+And.. I don't understand, the origin this patch v6 should be a text file
+conversion, shouldn't we keep the origin content just a conversion and
+trying not to broken other relate modules?
+
+Please help to indicates what is a better approach here:
+
+Should I merge the properties of mt6359-codec, mt6358-sound, and 
+mt6397-codec
+together and put them all into to mt6359.yaml and redo the converting of 
+mfd/medaitek,mt6397.yaml?
+
+That will be much simpler for the audio-codec node for mediatek,mt6397.yaml.
+However there will be a little mismatch from the origin text file.
+
+Thanks
+Macpaul Lin
 
