@@ -1,139 +1,164 @@
-Return-Path: <linux-kernel+bounces-341404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1861987F9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:42:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E643A987FA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D19C282B94
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:42:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A14D282596
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078B21D5ABA;
-	Fri, 27 Sep 2024 07:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1436189511;
+	Fri, 27 Sep 2024 07:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQmr+z7z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ZQL33wck"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58ABD17C9E8;
-	Fri, 27 Sep 2024 07:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C0D186E3E
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727422931; cv=none; b=CGefq8L80xO9CmkvbY+ZasPrvdRB3D0Gx12EQ93wSpGq98MxHYOgGH9XkEC8sFfcEvDrfhogZNsFSAE6GA+3KH+ujY+mm72TQA2gAHIILRLGwh1zo0/miV3I2TNMSZwF3FWH5HZLD8L/zjVzYI5KZNCP2eW14fD/Lp6OoE2BMb4=
+	t=1727422951; cv=none; b=Buu8aApE3chljdxfA+LNih92z3XQwSFUIjVc9UaJ3IUWpMNnobB/kdRSOnsJ+EV69QVajWcuAJp+Zkz6Li85wz6sQaTKOvM1lqhKSlfydFUKFoOPod9Fed1294COgAZd2CfZaQXLbaeenj1vA4UMYuy3c92ZkoveI8UdnsMCcJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727422931; c=relaxed/simple;
-	bh=4cSEU+BlVShce+rMJkVIHeDVoDj4iOY0cw4EX60EB5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q1kOHr2JvV/7QPOcEcY8Gx5ElbKO423HsSbKXlRxoCWTjqeA296e9rMsb4lyahMVSaXM91PRijEgu/Q+fCYG1MoIyKzV8kY7Y0YDgJmBXdby1qhOemu22vuBBgPse3TOXfR4KPxD7fIOy9KZR/4ezFd0n1q343A/uaYgaupQyMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQmr+z7z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0100C4CEC4;
-	Fri, 27 Sep 2024 07:42:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727422931;
-	bh=4cSEU+BlVShce+rMJkVIHeDVoDj4iOY0cw4EX60EB5k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bQmr+z7zQfw2VbGaGMOxNMR0OiXqugTiaoK5lxrgVyQu4V6+aKmbZmq+RWmBTBPEg
-	 tVWrvVFkqJNhcT6wUbjufeJQmxjCam1Sij/SX8RduKx8/ihui92hUyyW06m7IoT4nP
-	 qute0SrSDhEa6Zbpy8iYhRTxsvA1TOiCc2KZQgsddQnu+9bCRVzv25/LPAjD3hWFEv
-	 /zvyeNR/WNH0CV9ivvs4HtjCsES9zM7oo+urhBOBgEILG35StRr6WGCN/04BhxOyWx
-	 it0+zak0kpoN/ZyE1oQcKQ7wC9lz8ikt+s0Znpo8+F7b/odz8elhdV1ZI6+67ADBjg
-	 JY0um6KCRCi5Q==
-Date: Fri, 27 Sep 2024 09:42:08 +0200
-From: "mripard@kernel.org" <mripard@kernel.org>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina <jikos@kernel.org>, 
-	"bentiss@kernel.org" <bentiss@kernel.org>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
-	Orlando Chamberlain <orlandoch.dev@gmail.com>, Kerem Karabay <kekrby@gmail.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v5 10/10] drm/tiny: add driver for Apple Touch Bars in
- x86 Macs
-Message-ID: <rq3gcr7y2eygp7gifzivxvrj3tzd7ouexz36aeluxjoufs6k6c@kulq7plg52vi>
-References: <DD9C41AD-6543-47CE-8504-69E4992229B2@live.com>
- <3C9E8938-32EC-44AC-A783-3BFDE2F01290@live.com>
+	s=arc-20240116; t=1727422951; c=relaxed/simple;
+	bh=WFc3Z2Ci7iK0/myrsyoCWo27iBCWNjw4NgcDOnuMOxU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CzyxPUqlWtXttjbpS2LelVP6e58eL5NVTZRm2rSa93mb7CpIsNqSNpYA96Iylu/UNYg0iRgeook13awHyuK/HoTEGmJuAyGR6m4qeM0afylY38qFwFlFx/jpws/wUKBy0XePpP8xZz+gZBXQ24aBsivJ7j2c9pIEfewm5D5RV5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ZQL33wck; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cbc38a997so11439895e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 00:42:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727422946; x=1728027746; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DOdUobVOVtgiYgdW4L8/ozYZLZuDj7lViLzqUU9bECY=;
+        b=ZQL33wckrAnc9qqL0X8NPUuoKfh0zlK7KUiKPwHdLxtHR58LDq8EwIUcwwPTtIyzNC
+         PEHkhYnSu904jLbleyTFWMtVQUyQH5C/PtGOWGO91F9yymOUT5qBzEv7aWICFRKvLMSw
+         Y8pNudQfFQeR7xsiScYFJLSMvCzrFZ4nwLIS4pzk9FXXmDESIh7yqV7RP+swm4EvhCm1
+         pEqQurQtGZGehPkbieB1UFC3jNHD0f8EbNR2rwj27TD2w/3PyLldOAxsbiIUP0ioDym2
+         wymx+ZZWb+eTulq3XkuipdKZrz2O3akZMWFNBnEtEJxjlQCm0UrRXHqrbQ2rnIDrd793
+         p6Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727422946; x=1728027746;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DOdUobVOVtgiYgdW4L8/ozYZLZuDj7lViLzqUU9bECY=;
+        b=q0M4VW64KwQwClD8UN+kF8tgR3KkKvajKwa8w+BMwemC4y7EN1qFqSC9g/zQ2kaCKL
+         bGwEzv21nF8Vu5wOtl9+4bIv9XkxCM2YtcEgnXO4naGDgNRdqVVXVZECyb3W4kDaH3Wy
+         ftXqCcgkCPI1r02TgH5Ts7fTpq9XBGPMLZKP7xk6Zi0HKvaIsZ/1/jwwWo7yhRgoecqC
+         0k5AWhXdR0YuUczgsLj3AolDZTaHwnB+0qFb5cUDXubHhnw4OGwBaZ5Noz76vDvyo+Jg
+         XRynFLOFjoSXEMFYvk++o/LruHFhjsfREGDbK83Na7c7pkcrHJNzKX0QcVRp8EZFE/tT
+         djxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfjjdUL8oazxg8Vr9ollNj3eEjV2nO0/3fDroyfixNuSnyBMi4Hp6SNoWS2qjh8sii4E7XVDuI3yjmDtY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIgeJg+uiqGrRzNJSD3kUrETndwUkYrBVojX/RGg6+8hebYNDn
+	XqE9NAKxYhjk+1UnRCbZ5Si+gM8yed4xwQTx+5QPZ24Tlvhw7gCZlgjpcQJynyE=
+X-Google-Smtp-Source: AGHT+IGTLNYx8CXWt5+mDv5PuKKxPV7lSlddClOvc1ENfOSqGWWc0UL48qHYTfSq1l5VF/dXqDa7tA==
+X-Received: by 2002:a05:600c:5117:b0:42c:b166:913 with SMTP id 5b1f17b1804b1-42f57fc9204mr13235475e9.11.1727422946272;
+        Fri, 27 Sep 2024 00:42:26 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a28d:27a8:18cd:2c6f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a36760sm66541265e9.30.2024.09.27.00.42.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 00:42:25 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Kent Gibson <warthog618@gmail.com>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [RFC PATCH] gpio: sysfs: make the sysfs export behavior consistent
+Date: Fri, 27 Sep 2024 09:42:21 +0200
+Message-ID: <20240927074221.9985-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="brmuv7eam2ubwxdk"
-Content-Disposition: inline
-In-Reply-To: <3C9E8938-32EC-44AC-A783-3BFDE2F01290@live.com>
+Content-Transfer-Encoding: 8bit
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
---brmuv7eam2ubwxdk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For drivers or board files that set gpio_chip->names, the links to the
+GPIO attribute group created on sysfs export will be named after the
+line's name set in that array. For lines that are named using device
+properties, the names pointer of the gpio_chip struct is never assigned
+so they are exported as if they're not named.
 
-On Sat, Aug 17, 2024 at 11:52:22AM GMT, Aditya Garg wrote:
-> From: Kerem Karabay <kekrby@gmail.com>
->=20
-> The Touch Bars found on x86 Macs support two USB configurations: one
-> where the device presents itself as a HID keyboard and can display
-> predefined sets of keys, and one where the operating system has full
-> control over what is displayed. This commit adds support for the display
-> functionality of the second configuration.
->=20
-> Note that this driver has only been tested on T2 Macs, and only includes
-> the USB device ID for these devices. Testing on T1 Macs would be
-> appreciated.
->=20
-> Credit goes to @imbushuo on GitHub for reverse engineering most of the
-> protocol.
->=20
-> Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-> Signed-off-by: Aditya Garg <gargaditya08@live.com>
-> ---
->  MAINTAINERS                       |   6 +
->  drivers/gpu/drm/tiny/Kconfig      |  12 +
->  drivers/gpu/drm/tiny/Makefile     |   1 +
->  drivers/gpu/drm/tiny/appletbdrm.c | 624 ++++++++++++++++++++++++++++++
->  4 files changed, 643 insertions(+)
->  create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8766f3e5e..2665e6c57 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6889,6 +6889,12 @@ S:	Supported
->  T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
->  F:	drivers/gpu/drm/sun4i/sun8i*
-> =20
-> +DRM DRIVER FOR APPLE TOUCH BARS
-> +M:	Kerem Karabay <kekrby@gmail.com>
-> +L:	dri-devel@lists.freedesktop.org
-> +S:	Maintained
-> +F:	drivers/gpu/drm/tiny/appletbdrm.c
+The ABI documentation does not mention the former behavior and given
+that the majority of modern systems use device-tree, ACPI or other way
+of passing GPIO names using device properties - bypassing gc->names -
+it's better to make the behavior consistent by always exporting lines as
+"gpioXYZ".
 
-How do you plan on maintaining it? If you want to do so through drm-misc
-(and you should), you need to list the gitlab repo here.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Story time:
 
-Also, I haven't seen Kerem take part of the discussion at all. Are they
-ok with taking on the maintainer's role?
+I decided to learn rust. I figured I'd best find me a project to work on
+that would involve some proper coding but wouldn't have much impact on
+anything important when I inevitably get it wrong the first few times.
 
-It's really clear to me either why this needs to be going through hid at
-all. Is it not standalone?
+I decided to write a sysfs-to-libgpiod compatibility layer based on
+FUSE. Since Rust is hard, I started prototyping the thing in python
+first to at least have the logic nailed down before I tackle the rust
+part.
 
-Maxime
+When working on the exporting part, I vagely recalled that when I used
+to work with GPIO sysfs somewhere between 2009 and 2012 (still with
+board-file based systems), named lines exported with sysfs would appear
+under /sys/class/gpio as symbolic links named like the line and not the
+usual "gpioXYZ". I realized that this is not the case now.
 
---brmuv7eam2ubwxdk
-Content-Type: application/pgp-signature; name="signature.asc"
+Quick glance at the sysfs code reveals that I didn't dream it up, but
+that behavior is reserved to drivers setting gc->names. This has been
+slowly going out of fashion with device-tree and device properties.
 
------BEGIN PGP SIGNATURE-----
+We could easily restore the behavior for everybody by taking the name
+from the descriptor we already have access to or even just assign
+gc->names from descriptors in gpiolib core but first: the sysfs ABI
+document does not mention the named links at all and second: given how
+this has naturally effectively been phased out over the years, it would
+probably cause more harm than good when the exported names suddenly
+change for existing users.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZvZhywAKCRAnX84Zoj2+
-drZEAYDXfSQwdEQELLZAn1fDt8kp1AMKxh7uc4HvWdsgncx92uVquXnyrV8Ajx9r
-GVDiuS4BgIheSxUqmByNX7Zrziwg7oHJQyWpydRiSVvchCzYRsdOpJURa8xY3mJy
-s+Yr7sQ4mA==
-=TV0a
------END PGP SIGNATURE-----
+I'm proposing to just drop the named links alogether.
 
---brmuv7eam2ubwxdk--
+Let me know what you think.
+
+ drivers/gpio/gpiolib-sysfs.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index 17ed229412af..643620d261f5 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -577,7 +577,7 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
+ 	struct gpio_device *gdev;
+ 	struct gpiod_data *data;
+ 	struct device *dev;
+-	int status, offset;
++	int status;
+ 
+ 	/* can't export until sysfs is available ... */
+ 	if (!class_is_registered(&gpio_class)) {
+@@ -626,10 +626,6 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
+ 	else
+ 		data->direction_can_change = false;
+ 
+-	offset = gpio_chip_hwgpio(desc);
+-	if (guard.gc->names && guard.gc->names[offset])
+-		ioname = guard.gc->names[offset];
+-
+ 	dev = device_create_with_groups(&gpio_class, &gdev->dev,
+ 					MKDEV(0, 0), data, gpio_groups,
+ 					ioname ? ioname : "gpio%u",
+-- 
+2.43.0
+
 
