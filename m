@@ -1,71 +1,109 @@
-Return-Path: <linux-kernel+bounces-341994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094DC988965
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 18:58:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A157988969
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B250F1F22EB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 16:58:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4911E28029B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 17:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE4E1C1AA0;
-	Fri, 27 Sep 2024 16:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FF51C1758;
+	Fri, 27 Sep 2024 17:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sp4lDaXh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA051C173B;
-	Fri, 27 Sep 2024 16:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9ECE1C1AA2;
+	Fri, 27 Sep 2024 17:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727456333; cv=none; b=fJWauLObgQHfMbWwaCgQxYcrUD7MFEx2GR7ehfkyXDyECkytQi/gT4/CA5XAmYtYW19xNnexzlAp7Vbh9RO8wS5jF2Qzhg2FOUZ7GQppott4uFXDhGamuiqhAxTNctM8umCx/B4Rja2RfoMCmd21se1OXHMFCdgst62F8Ck/FWo=
+	t=1727456402; cv=none; b=ML1Poi8gvUEBdTWkFppDw0UZdYVEzpkFTMMiLtbAoFXZtXkxGC4cH6EwJMy1H86VG8SoScQBG4Z3j7MSVWjKrEWfjvKJJAQw2VxGPfGE2PrHghlaKgmr4WGVmx22uhSItJS+fYetNqVyTCBXCOjY343JyivvFz1sXcyOnF7agH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727456333; c=relaxed/simple;
-	bh=ZQ2wpPec/kihzJfbX7V6XpvDB3fQJZCRGJltEj9rFSc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oZvb8UDJ/o8v5aBS2fEF5zozL8Qvf1LoTwMcPhlUAttCtPE5fHJQbXG0OW6QcrRdMrrgt6GZylOmLwFG8lfE4riCXamy5xSjSBC9uObuMhOewZZ3cwbsj2eJoIJNQs2ZhZpGhms4eiC2GgoTWnvwfxlDPIKBXdH9zC2N9xOhjG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DA2AC4CEC4;
-	Fri, 27 Sep 2024 16:58:52 +0000 (UTC)
-Date: Fri, 27 Sep 2024 12:59:32 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the ftrace tree
-Message-ID: <20240927125932.1cbf7e18@gandalf.local.home>
-In-Reply-To: <20240927075439.2dac541e@canb.auug.org.au>
-References: <20240927075439.2dac541e@canb.auug.org.au>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727456402; c=relaxed/simple;
+	bh=2ApnVOpy3phuG2Yl6/xKeNiOdwIr7PHbwb1uUNWV3Ks=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G8ALWqfCoZhwSukh3MqVho7+A5pWe5Bum46NjaHZqnuFFq4fiJ+5SiUab5XKa0kQlrrWpq9ZOKPTeVDz1HwKqTFa9LkZkhAIKXmX7uEpsMBSxPCtZ9G9vJitFLFeBYr4gvdczjnFUJO/mS68bNVKGYDzLIJkRWlWlM4rmUVAvBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sp4lDaXh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68FFDC4CEC4;
+	Fri, 27 Sep 2024 17:00:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727456402;
+	bh=2ApnVOpy3phuG2Yl6/xKeNiOdwIr7PHbwb1uUNWV3Ks=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Sp4lDaXhYOW/ZY4+SO/sT2KX+HqwkS8DSVU0d3Xty+9CiIpBG6W6m+zl70HAZm3fe
+	 9+1mFqYEwKk3m6HckbEtwxVsCZemxJuHoIaSJsWZye9vsvT7x/fEx2oOZySdxSQOqD
+	 t3nC9XK+XYl8Q7hwVtEYhfbdXbYqQwseF7Awwm1lc+eIa/YfkYp3dFjv0ymKZRtWAl
+	 3oE4Sd4OpZ3+5o+gcy3blskDS81ZXMl9uG5H+KeXjSc3y8NOr/iU3Ehg3agnzhojWu
+	 rYwzf+c7jqs1Ox0hGNYbP5P9doYXdFJNNSNUtQMlokUknlSsoJwUcychUoSog1qgHV
+	 UtmF6xqv8lOVQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: irogers@google.com,
+	linux-perf-users@vger.kernel.org,
+	kan.liang@linux.intel.com,
+	ak@linux.intel.com,
+	James Clark <james.clark@linaro.org>
+Cc: John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Ze Gao <zegao2021@gmail.com>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Sun Haiyong <sunhaiyong@loongson.cn>,
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 0/7] Event parsing fixes
+Date: Fri, 27 Sep 2024 09:59:57 -0700
+Message-ID: <172745636991.248403.11015785931495275902.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+In-Reply-To: <20240926144851.245903-1-james.clark@linaro.org>
+References: <20240926144851.245903-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 27 Sep 2024 07:54:39 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, 26 Sep 2024 15:48:31 +0100, James Clark wrote:
 
-> Hi all,
+> I rebased this one and made some other fixes so that I could test it,
+> so I thought I'd repost it here in case it's helpful. I also added a
+> new test.
 > 
-> The following commits are also in Linus Torvalds' tree as different
-> commits (but the same patches):
+> But for the testing it all looks ok.
 > 
->   1a41e44aaf63 ("tracepoint: Support iterating over tracepoints on modules")
->   3c842de2d916 ("sefltests/tracing: Add a test for tracepoint events on modules")
->   4ca74b253b11 ("tracepoint: Support iterating tracepoints in a loading module")
->   59c9f2923c04 ("tracing/fprobe: Support raw tracepoints on future loaded modules")
->   8e327678a908 ("kprobes: Remove obsoleted declaration for init_test_probes")
->   c37e4bc7f70a ("tracing/fprobe: Support raw tracepoint events on modules")
+> There is one small difference where it now hides _all_ default
+> <not supported> events, when previously it would only hide some
+> selected subset of events like "stalled-cycles-frontend". I think
+> this is now more consistent across platforms because, for example,
+> Apple M only has cycles and instructions, and the rest of the
+> default events would always show as <not supported> there.
 > 
+> [...]
 
-Hmm, seems that Masami rebased his for-next branch. I just updated the
-tracing for-next tree. They should have the same commits again.
+Applied to perf-tools-next, thanks!
 
--- Steve
+Best regards,
+Namhyung
 
