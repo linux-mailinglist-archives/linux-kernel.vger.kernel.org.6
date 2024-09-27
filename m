@@ -1,247 +1,361 @@
-Return-Path: <linux-kernel+bounces-341384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D92987F4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:22:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8FA987F53
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D142B21BBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:22:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA361F22A4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 07:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0EE183CCF;
-	Fri, 27 Sep 2024 07:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC93918800E;
+	Fri, 27 Sep 2024 07:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="ymp0M1ij"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010014.outbound.protection.outlook.com [52.101.128.14])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZNTpQ1Qt"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBB414A0A9;
-	Fri, 27 Sep 2024 07:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727421734; cv=fail; b=PfNrWppKPX602x8xc0fzLQk2XYlQR891+Gnen0h5Z3VuI/SfAUx0a5XbisSfiT5K86SGzDkDMEF+rxqLVayJmk2a63dWhQ94HzsWogTWfWuBnAuDJEIHzvz/Ei6sIF8KA9FZufAFGTZOdb8j5H7B8ZMrm+ALND3DxNu7AR+1B7I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727421734; c=relaxed/simple;
-	bh=nhjQpRUHSq3GjhyuICLmQ4ibUcljIFIFFZVXu2gF/S4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AEjTKiUvGtl+fcT/kfgWGJZVLnCDNGFWnKzVin8ovnLFvTiMRH7JQ5Kkl7Oq6cFuXgPzmN11hhlNd7k7T75YdxOw8Ge4a49gTJv+vSC06dCxzN7i4VLiTk2T6Yb5yifPnxoaqR6DuVbPun+eGx5bKdtcilV3IMx9AYoMSwRGGJ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=ymp0M1ij; arc=fail smtp.client-ip=52.101.128.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XeGNyxgKUhtpoScOyqNnRPQ6y8BzSiQm3CqMDxzCMRpxCiEHDx10tMSkVUusFkRd6KFcgKtQE8qgIwAVvUnLIJ34fBuMy7tgUnt2EAHCoGA2qrO0ZiUCK+/OqeagWZFW6HA4ISMtHiFjIaV7L9gLm3SuU2YX2wwBezEyBuGklsRrEiMx2eE6FMCQ1dP1ouKG4lo48dDoo6s4YxWzjaiB4mfJvqA1b+gJMIUVcqpqt5NOVhDb/wwrnPbVj2DLETsQXJyJ3tPGVQPk65ZoMg12KfhPc7FAGtSFl/2Hepdb6rp0GTqXX+UoKOgZGgEKrcug01FK8K4/i5C1ZFeAklwOqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nhjQpRUHSq3GjhyuICLmQ4ibUcljIFIFFZVXu2gF/S4=;
- b=DwKEh6K1OTgf6ADW4BOjhJoKmWAC4WkGhV1qVruKWD1VD9ygQnvduNAAL+cLB/70uBmVjF/JSje/oec18BJLVaiCMSBYZcyYAEmOgahbIhIr72WxFk7jhRH0+O48i/TkeQ+NEsXXS3PcChLlgQe9a1mPd8Ix+FmVwNv/8Jc1SSldM+ynwRbR7lHIiG45nZ4JBmAeaCApolXo++xvzz7MhAAAF7snUrvSc75Tj1EL9HCgYGIx8vDy0o1brWWmrAeQZ/yrgqMh7c+puT+W6zGjaO2ovgNoLBKDMAdykBXHxdLw+q9shiiKs5gZkqIp+LV63LCdwNUSAfrOuL4N0lWUkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wiwynn.com; dmarc=pass action=none header.from=wiwynn.com;
- dkim=pass header.d=wiwynn.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nhjQpRUHSq3GjhyuICLmQ4ibUcljIFIFFZVXu2gF/S4=;
- b=ymp0M1ij37qQM+mPuxCRtQ51KBwlBycySfAv8oNsz1YDoP/Peke5ItSVA/hPF+J1RjZAuBQxL/wSNmUQdd2c4PAt085FRX6QllLDNuxMVxTTbPIls9d7FlWD6slxN+r0FbjEMyj3/nCr2+wfBoll25D4os0RueX7gKWQIhe4HrRtfu2YBL5aERmOZVcU2ylJNvYLcXl3HDDSxWSGMPeGZhuVlMUhpuBFwtxQuXuXOIjMVjJZ6OY/VNuAnUXQEA+xmvZsz2G+ghLZjU/ZQFuBQHsvE2q4+rXwe06hc59fDgNoPEP0k2hxFCRgA3FRfdJS7xlXW5/QzUkUY9ys7Qz0rA==
-Received: from TYZPR04MB5853.apcprd04.prod.outlook.com (2603:1096:400:1f3::5)
- by TYZPR04MB7579.apcprd04.prod.outlook.com (2603:1096:405:3c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Fri, 27 Sep
- 2024 07:22:07 +0000
-Received: from TYZPR04MB5853.apcprd04.prod.outlook.com
- ([fe80::ae7d:7486:9319:8d96]) by TYZPR04MB5853.apcprd04.prod.outlook.com
- ([fe80::ae7d:7486:9319:8d96%6]) with mapi id 15.20.7982.022; Fri, 27 Sep 2024
- 07:22:06 +0000
-From: Ricky CX Wu/WYHQ/Wiwynn <Ricky_CX_Wu@wiwynn.com>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>, Delphine_CC_Chiu/WYHQ/Wiwynn
-	<Delphine_CC_Chiu@wiwynn.com>, "patrick@stwcx.xyz" <patrick@stwcx.xyz>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
-CC: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v1] ARM: dts: aspeed: yosemite4: correct the compatible
- string of adm1272
-Thread-Topic: [PATCH v1] ARM: dts: aspeed: yosemite4: correct the compatible
- string of adm1272
-Thread-Index: AQHbD7Q2eW66Wbq4s0SgBTKCf2nHYLJrJbkAgAAE6+CAAALoAIAADvNA
-Date: Fri, 27 Sep 2024 07:22:06 +0000
-Message-ID:
- <TYZPR04MB5853261AECA51C086E3FD30ED66B2@TYZPR04MB5853.apcprd04.prod.outlook.com>
-References: <20240926013411.3701546-1-Delphine_CC_Chiu@wiwynn.com>
-	 <c2ddf0375eff2c9c18fd26029fc6a1be7ed23a8b.camel@codeconstruct.com.au>
-	 <TYZPR04MB5853E2B3197AAD9268A0BAB2D66B2@TYZPR04MB5853.apcprd04.prod.outlook.com>
- <7fd8cffb3212de8ae6acd7ab434a22cdd94d7279.camel@codeconstruct.com.au>
-In-Reply-To:
- <7fd8cffb3212de8ae6acd7ab434a22cdd94d7279.camel@codeconstruct.com.au>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wiwynn.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR04MB5853:EE_|TYZPR04MB7579:EE_
-x-ms-office365-filtering-correlation-id: 52e9309d-fead-48e7-e4ef-08dcdec517cb
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?YjNDNkJ5b3kzWXlCRjBWMThmVndybWdWbkVNTDRmbnNQQmRRejgyRDNpNDAw?=
- =?utf-8?B?RkhvbmNlNFBOQVFab285NUdRWFRDT05mZHZLckZXZ0dTQWYzOVBsYzZFajVr?=
- =?utf-8?B?M1lhT2VBZU9Mc0pCK0VHUkhKaHE1WFR4aktKN0RLaGVEQlEveGJMK3hsZnVO?=
- =?utf-8?B?N0p1U1NiZmU5bUxiWnEvdFlvWGlNVEZSdHQrdm5tTHZGYTJWREJDKzlWQTZs?=
- =?utf-8?B?NzFPVk1kOUxOcjh5ek9kUElGUU9DSFVNZGFtOFdCN2Q2UkN3bVlGSHZKWWQx?=
- =?utf-8?B?Nng1Nm83cHdqTDBXVkZ6b3lmWlhuRnMyK2dyN3RjbHpvVHp6WTNob3Yra1ZK?=
- =?utf-8?B?aTlPOERuNVd6RmRLekcwN0ZNQ0lxSGVrL2phb20yZ0dEOWNrSGNrVEVHSGFO?=
- =?utf-8?B?M3dvWXpMNW55T0Vhbnp3eWJ3N3hPRThHTU5GNFNNKzhhV0M4WUQvTDdOQ3J3?=
- =?utf-8?B?blRDcDNjSE5rYXBGL3hzSWdIcjNYTnZMV0dKVE1KRnZ3V2FhaGtmRm8vUCsz?=
- =?utf-8?B?alAwNWM0QmZOQ0o0elFxSzA2SlVXUzg4VmZRd1NKaFNvSGhLczMrMkVoMVl2?=
- =?utf-8?B?UlBBVDlJOXkxd1IyNm4wMTdCZ2Z0ZjBudHc0N0wvQnRzQzk4ZkRRSmkwakRD?=
- =?utf-8?B?L0tJRjFoWWw5S0hpYjN0UXY2eUhZaEg2TXF6bjlmVUg4YnlGN21LMkNqajRL?=
- =?utf-8?B?c0FhVHRMWTJWZlNTeU1jNURRcXIyZVJ2TFJURE5XUzZqYjkxYVhrbVNMTWNl?=
- =?utf-8?B?TDVrWnd5dWtqbE41YlBOS3cyRDdBUTJCRW42dUlVUjhIdmdWdi81R2M5SnhU?=
- =?utf-8?B?SXJVUEo3M0NuUk9zeGpEZDdqdVRZRHVlMXAwVS9NNUEwaDJOY2dyVDFZbGhW?=
- =?utf-8?B?S0tDMDJIaWhwM2JwYnBFQVhqWWpVSHpxaHBlZ2RZbjJGZklkWDdDTHMzbXcw?=
- =?utf-8?B?SjBUaGJwUlRhZ2dGMGdTNVZSbk56dW5kVjkra1pzV090Z0tQWk9PRVZoRkNK?=
- =?utf-8?B?QUdQd3kyMGhsWFpoVWI3RllTMXNqZkFHbnJ4bEszbGJPUXl6ek9pd1ZMRDZN?=
- =?utf-8?B?bWlsTFUrYWwxV21GUDhYVmVCcVIraVhXMzIrUnNieHhXQXhxNGdyY2J4M2lG?=
- =?utf-8?B?OWpmZk5uQUs1c1BmeGxFcHNtRDJ3WkZrVjRiWXJ1eHJ6NzdHamxrSE5EQ2Rq?=
- =?utf-8?B?YlkyV1p4a0Iwd2Nva2k0U01IZHYzTjAyVWhyMUtmalA5V2RpV3QrZ2VBWnll?=
- =?utf-8?B?Y0k3N05lb0hTV01vUjRyS0lLa1dMNUtmUDhqMUwzb3Nvc0FQeEpWUjI2RWdx?=
- =?utf-8?B?bGJKdTgreVVWUzR0bmlvNjE2Z3J3S1M3RDJSSk0rYVJsaUhUcUd5U0xiQ1Js?=
- =?utf-8?B?ekRaTUcrMVZjWkhsRGZBdXJMS0dGSENNSGl6MU95Z1FzMFNIK01jV1VYaFlu?=
- =?utf-8?B?dHJLRmlqWlpRYXZpbUlqa20xTU5sVG9wT0dKQURPR1RWWDBQL2lNQUFHVmFp?=
- =?utf-8?B?bGJQK3FJVWlramxUTUJsbjgrOGh4TDlIR0M3OFFQVFcya1VJdzN2V3YyVGVX?=
- =?utf-8?B?Mk94dzdOOGpGZTRPb25PUXU3L3VPbzY3dG5MVmhiaWdpQ0k0b3BqQ0RiWHo4?=
- =?utf-8?B?bzdHSlV6VFZMblJpckNHbE5OaWNFQ0FXMmtwMGJqT1lLMmhLVERPTFhKZExO?=
- =?utf-8?B?dGNiWVpMZ2xzTnVZNDFzeG90eGdaSjluSmczN2dWbkhEZmplak1QVG5RPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR04MB5853.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?bkdSUkxFa0tGUzdOT2VuY1ZWV3kxc2hGbkZlbUp6STdjSTJUYnZocjRKcU8y?=
- =?utf-8?B?WWZJY29jY0k2OFdKOXVwOEVYRjRpM1RxWlZacGp2WEhxcDh6MGNYcnpTTWh2?=
- =?utf-8?B?RW96dkFTUE5xWmRwZjlldWNLa1hhZmxXOHNMTnVNK1kvV2RackNwVTVxT05X?=
- =?utf-8?B?bElrYjNjdEpkQnFZSmg0bUVqVnRuSlFIa205eEtzMmp4TVNVTjl3SE4xeVRC?=
- =?utf-8?B?clVUcmxVcGpUbGxiRnFXWFVSWE1CVm5UZURnYnRLdW43cnBFOUxSRDRqbTRh?=
- =?utf-8?B?eUhOaDVCWlZDdlNYYVREcmZJL04xTWs0TUVQcnNKQWtKalZjazNFa1gvRmF3?=
- =?utf-8?B?QUdhaExCSTNsR3ptNllRRmc3Nm80ZUJkVU1obHhyWEV0dy9KM09rdzJBTkVu?=
- =?utf-8?B?Ynp5ZEgrY0tEQ2g2YUhVRlovUW42L3hydHEvVWwyQXovWTRjR0N4aTNNcEJ5?=
- =?utf-8?B?TnB2My9PQ1VOY09oNVNiTFhhUlgwMzZTSDZFLzJvU0V4TnpxV3NPSm0zdE1C?=
- =?utf-8?B?RnMyMTJMck9XSFJrU2k0WDhXblZDY1Qrb0dvS0NRZzJhdFFlWjRyMlpCZ1B2?=
- =?utf-8?B?UTZhMHNLdzhwRUdpbWUxOGwvVy9JbDRRYktJTFEvZXlOUVozUWh5akJ2cWZl?=
- =?utf-8?B?MC9DOHNZYjRBQXg5ZHMvQWo3dnpWM3ZZdUozUzNQZ0pUeExIZ1RxTXRNWWJ5?=
- =?utf-8?B?WVpFalJScWh2OXNOMUhDUmhDZmZZcG5DdWF0bWY3bHBaUTkwTWxEVkdWVmwx?=
- =?utf-8?B?ZTRrVnVmb3Fka1RxU20yWUIrVElZZC9sM2ZFVGxiSzF1eTRPdEJhUzlWVEov?=
- =?utf-8?B?RTFXaXdrWjh0T01RZDFHcFp3V01DNDRMa29TMzhEV1NGendoa2NBVlVHUUVR?=
- =?utf-8?B?YkNZWEJVMFdEM3k5SjJqdGovelc1YkpTYkQvQkpiektzSmc1STdKS1NwVFhZ?=
- =?utf-8?B?bS9hblFwaEJOSlQzOU93T3RZYnhKOER0S0tYQWlNOUhNbElzQ1NRaUpoalQw?=
- =?utf-8?B?OG1DajQycmpnQ01wbmRoNjFwSDBidkp0THJOQnhaN281aU1ZenhGU1hRSWxE?=
- =?utf-8?B?STZzYmx5dEZOamJHUEdVTWhaOXdwYU10aGtqSGs4WUdaenNMMHNEc1EwYjlH?=
- =?utf-8?B?UHI5c1J4YTljRDFlWTRLNVVkYkpBTC96dVhFR25LRkJVMVE4NGdzSmZWRTUz?=
- =?utf-8?B?aUltNXAwSG44bDQ4SHJINkgxZXJ0S0xIeGFwSm90RS96U2VBQ29aUkZHVjlV?=
- =?utf-8?B?b0ZVWWRnaDJFWGI4eG9nVHVTU1Nrd2NhRXR6M3dRZ21XKzJQTVB2UFhBTWZW?=
- =?utf-8?B?djAvcG5qUE10US95aVkyZHVLYVRqclMyQnFqTDhEeGU0dUhaT0NxMWdVam1J?=
- =?utf-8?B?L1lidUxkWlByckRsSXRKRjJrdUlUaURNMksvSThpbW5keDFxOTZ4dnV5UzNX?=
- =?utf-8?B?bTBLaGdrNktIME5iTTdMOWpYMWxxRm1Ea2wxc0toVWhBaVBKTjZQYUw2SDJh?=
- =?utf-8?B?VGFEU2dxelEzT3JIYVVralBYdnlkcnU1VTBvT2dGekRBRi9HbzB4R3hGUGg4?=
- =?utf-8?B?UEg3Y2tpYTdNTmV6YlJqcjRoMHdxTVlXcllSaG93NzFlTnhaNk5NS2ZibTlT?=
- =?utf-8?B?QmNpSlhubG1PMHVJK0lUd1YrUnhFWnNCTDR2QVJpN2xPeFR4SGVlZ29ZMHlo?=
- =?utf-8?B?WG1UTlh2Ris0U2dHOEpTYXlhMXdGVHVzMWhWYnV0cXpaRWZZUFZndExVdHpZ?=
- =?utf-8?B?eDBMdWRLa0NtU2p2K0dHb2xOUWhId2dqcmpNeU0yRjh3L1lvZEtrU1djNGNQ?=
- =?utf-8?B?ZWxETEtDOU9IVS94VForMFBvb1VrLzI1RjJUdkxaWGxWbHpqN1dxVTRsVHRu?=
- =?utf-8?B?MytBUkFFVERoT3NYZ015UUFLY2VFT3dBaTdyZ0gvNWkwWHR0MnVuaUZ1OWE1?=
- =?utf-8?B?aUV4QWxwa0J5bk52OXB5QTNYZ1pqeFJnaWtkd1hZRWcrNmhOdDlDRmFpMG5E?=
- =?utf-8?B?b3I4R1FUZ004Q05XVU9BT3RRdUpXN3J3OUlpY2JWUG9kWmtzZWdaTm5sTWp4?=
- =?utf-8?B?R0NUVVIvUHIvQzdzZzkzOXhPRFQ3ajdhakcvZUlJQWdHLzR3MXlRRDhlaiti?=
- =?utf-8?Q?zR+2dNNGRVCaQnI465pj8vGBI?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55CA165EED
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727421826; cv=none; b=dYZomGMUWXxXM3dI3jRm6ZcPWp3Qwo4TcCkcmrbZegZqk9z+2z5m+V6KmHTtpfserKhmkTnrS56oHqmaJXqUJzV3xHLdF1daIB19URYY4STUUQlTfelid/Rogs72aRMYNtaK0LcKfEi4IYaihyNZ47WtG/EHPbFetrbeZM2r+AE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727421826; c=relaxed/simple;
+	bh=FPKk/UcEwSVGC4UZrzMydu8P8y29bvWi1qlWpVSReyA=;
+	h=Mime-Version:Subject:From:To:CC:Message-ID:Date:Content-Type:
+	 References; b=YogZDzpp3uH4rtzikZJj3NyN4WRxY52P184ONmre2Gr2lN5Np3KWdGjgcIe/YzNgJuRyvUA/8XOuy4vt/BM4S/PN5fO2B+p6O0Vn97eKjuWcwR+OrW127nqf5ZnPb/3rEtgQ5a6uXNrfOVZrFfVWxox4aON7/nzpQwOdUGoT2CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZNTpQ1Qt; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240927072341epoutp042d042ee63b6484cc8b16273837d05f59~5CP6pTD2j0357103571epoutp04C
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 07:23:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240927072341epoutp042d042ee63b6484cc8b16273837d05f59~5CP6pTD2j0357103571epoutp04C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727421821;
+	bh=bKvR6u7Z+4asRr044F0emGgCRq2BudWA4bDNeltmyac=;
+	h=Subject:Reply-To:From:To:CC:Date:References:From;
+	b=ZNTpQ1Qtm8GiG8QPWC3p+M/+GRwyFIxkRenrLcK/Bynbmy1r3lVZUHOKnI9jb30RG
+	 32x0lwiYOFWvpWueBB+QFjk5/+EDBxqk/hLuXy2QFjaywzJjYJsftCQTjOq0z7uIcp
+	 CcHQUH6DT5lX+zTSL4ly08xiuTevfS7JKhGIzzJ0=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20240927072340epcas2p46f7fde9a46e9e16745dc35ec128a3ee1~5CP5kd2pl0197001970epcas2p4G;
+	Fri, 27 Sep 2024 07:23:40 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.98]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XFMQN1R8rz4x9Q2; Fri, 27 Sep
+	2024 07:23:40 +0000 (GMT)
+X-AuditID: b6c32a46-4b7fa70000002752-ed-66f65d7b5b4e
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+	AE.68.10066.B7D56F66; Fri, 27 Sep 2024 16:23:40 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR04MB5853.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 52e9309d-fead-48e7-e4ef-08dcdec517cb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Sep 2024 07:22:06.8726
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VaISeqW/FePpEJWXRYD6ZSklbsTOExSW+wLGFslYaPYPnotglsNjIEdC39stnIbg9/33sIrBt9p7Sgwt5ZOI1g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR04MB7579
+Mime-Version: 1.0
+Subject: [PATCH] f2fs: support dio write for zoned storage
+Reply-To: daejun7.park@samsung.com
+Sender: Daejun Park <daejun7.park@samsung.com>
+From: Daejun Park <daejun7.park@samsung.com>
+To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org"
+	<chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net"
+	<linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Dongjin Kim <dongjin_.kim@samsung.com>, Yonggil Song
+	<yonggil.song@samsung.com>, Siwoo Jung <siu.jung@samsung.com>, Daejun Park
+	<daejun7.park@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20240927072239epcms2p48e5ae61717652c25e1fe3c87ce53573c@epcms2p4>
+Date: Fri, 27 Sep 2024 16:22:39 +0900
+X-CMS-MailID: 20240927072239epcms2p48e5ae61717652c25e1fe3c87ce53573c
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphk+LIzCtJLcpLzFFi42LZdljTVLcm9luawf85TBanp55lsnh5SNNi
+	1YNwix8nTSyerJ/FbHFpkbvF5V1z2CzOT3zNZDH1/BEmB06PTas62Tx2L/jM5NG3ZRWjx+dN
+	cgEsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUB3
+	KCmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKzAv0ihNzi0vz0vXyUkusDA0MjEyB
+	ChOyM3bfvcJWcMe54u2/VewNjJssuhg5OSQETCRuNBxg72Lk4hAS2MEocfD3DdYuRg4OXgFB
+	ib87hEFqhAWsJE7PbWUBsYUElCTWX5zFDhHXk7j1cA0jiM0moCMx/cR9sLiIwCtGiTOrRUFs
+	ZoFFjBJv11VA7OKVmNH+lAXClpbYvnwrI4StIfFjWS8zhC0qcXP1W3YY+/2x+VA1IhKt985C
+	1QhKPPi5GyouKXF77iao+nyJ/1eWQ9k1EtsOzIOy9SWudWwE28sr4Ctxa80EMJtFQFXi7J9G
+	JpB3JQRcJHa/LII4WV5i+9s5zCBhZgFNifW79CEqlCWO3GKBqOCT6Dj8lx3mqYaNv7Gyd8x7
+	wgRhq0ms+7keapGMxK15jBMYlWYhQnkWkrWzENYuYGRexSiWWlCcm55abFRgBI/Y5PzcTYzg
+	5KjltoNxytsPeocYmTgYDzFKcDArifBanfuaJsSbklhZlVqUH19UmpNafIjRFOjficxSosn5
+	wPScVxJvaGJpYGJmZmhuZGpgriTOe691boqQQHpiSWp2ampBahFMHxMHp1QDU+6s5rl97x4E
+	/w81yHruFMBa7fJz9hQuX+m9Fkr3BbeWuRYK3JFWvHm8he3mpgKZhG1pjP9a3r7kmGySeXmi
+	fcnG3LdGchqCrHlpvyNPXJtu4bfy/3Erpnkl60pvOLMLnA/h+/bzRsC5VS+7Bc+ln3P3Pvah
+	/bFb14W2jXNeG7gacc1h+bnyxdJMf922NUUz1yc1fk1olr2czvxeY46Q93QBzmMfpobwnHs6
+	TcH2mou5w9dCicNczpNtk/h3S8jP3VQVI8/zuiTBOWC15A6ZP+0i2WoM3X7f3Lm0z12affbY
+	tV8br6wUrWXZmXpnoen6rJ65gv9Mdx+zXqZ2MvYSmyP3vNwp7U597iEpi3rKlFiKMxINtZiL
+	ihMB1SFMpRcEAAA=
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240927072239epcms2p48e5ae61717652c25e1fe3c87ce53573c
+References: <CGME20240927072239epcms2p48e5ae61717652c25e1fe3c87ce53573c@epcms2p4>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5kcmV3IEplZmZlcnkg
-PGFuZHJld0Bjb2RlY29uc3RydWN0LmNvbS5hdT4NCj4gU2VudDogRnJpZGF5LCBTZXB0ZW1iZXIg
-MjcsIDIwMjQgMjoyOSBQTQ0KPiBUbzogRGVscGhpbmVfQ0NfQ2hpdS9XWUhRL1dpd3lubiA8RGVs
-cGhpbmVfQ0NfQ2hpdUB3aXd5bm4uY29tPjsNCj4gcGF0cmlja0BzdHdjeC54eXo7IFJvYiBIZXJy
-aW5nIDxyb2JoQGtlcm5lbC5vcmc+OyBLcnp5c3p0b2YgS296bG93c2tpDQo+IDxrcnprK2R0QGtl
-cm5lbC5vcmc+OyBDb25vciBEb29sZXkgPGNvbm9yK2R0QGtlcm5lbC5vcmc+OyBKb2VsIFN0YW5s
-ZXkNCj4gPGpvZWxAam1zLmlkLmF1Pg0KPiBDYzogUmlja3kgQ1ggV3UgPHJpY2t5LmN4Lnd1Lndp
-d3lubkBnbWFpbC5jb20+Ow0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJt
-LWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiBsaW51eC1hc3BlZWRAbGlzdHMub3psYWJz
-Lm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENI
-IHYxXSBBUk06IGR0czogYXNwZWVkOiB5b3NlbWl0ZTQ6IGNvcnJlY3QgdGhlIGNvbXBhdGlibGUN
-Cj4gc3RyaW5nIG9mIGFkbTEyNzINCj4NCj4gIFtFeHRlcm5hbCBTZW5kZXJdDQo+DQo+ICBbRXh0
-ZXJuYWwgU2VuZGVyXQ0KPg0KPiBPbiBGcmksIDIwMjQtMDktMjcgYXQgMDY6MjEgKzAwMDAsIERl
-bHBoaW5lX0NDX0NoaXUvV1lIUS9XaXd5bm4gd3JvdGU6DQo+ID4NCj4gPiA+IC0tLS0tT3JpZ2lu
-YWwgTWVzc2FnZS0tLS0tDQo+ID4gPiBGcm9tOiBBbmRyZXcgSmVmZmVyeSA8YW5kcmV3QGNvZGVj
-b25zdHJ1Y3QuY29tLmF1Pg0KPiA+ID4gU2VudDogRnJpZGF5LCBTZXB0ZW1iZXIgMjcsIDIwMjQg
-MjowMSBQTQ0KPiA+ID4gVG86IERlbHBoaW5lX0NDX0NoaXUvV1lIUS9XaXd5bm4NCj4gPERlbHBo
-aW5lX0NDX0NoaXVAd2l3eW5uLmNvbT47DQo+ID4gPiBwYXRyaWNrQHN0d2N4Lnh5ejsgUm9iIEhl
-cnJpbmcgPHJvYmhAa2VybmVsLm9yZz47IEtyenlzenRvZg0KPiA+ID4gS296bG93c2tpIDxrcnpr
-K2R0QGtlcm5lbC5vcmc+OyBDb25vciBEb29sZXkgPGNvbm9yK2R0QGtlcm5lbC5vcmc+Ow0KPiA+
-ID4gSm9lbCBTdGFubGV5IDxqb2VsQGptcy5pZC5hdT4NCj4gPiA+IENjOiBSaWNreSBDWCBXdSA8
-cmlja3kuY3gud3Uud2l3eW5uQGdtYWlsLmNvbT47DQo+ID4gPiBkZXZpY2V0cmVlQHZnZXIua2Vy
-bmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiA+ID4gbGlu
-dXgtYXNwZWVkQGxpc3RzLm96bGFicy5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcN
-Cj4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjFdIEFSTTogZHRzOiBhc3BlZWQ6IHlvc2VtaXRl
-NDogY29ycmVjdCB0aGUNCj4gPiA+IGNvbXBhdGlibGUgc3RyaW5nIG9mIGFkbTEyNzINCj4gPiA+
-DQo+ID4gPiAgW0V4dGVybmFsIFNlbmRlcl0NCj4gPiA+DQo+ID4gPiAgW0V4dGVybmFsIFNlbmRl
-cl0NCj4gPiA+DQo+ID4gPiBPbiBUaHUsIDIwMjQtMDktMjYgYXQgMDk6MzQgKzA4MDAsIERlbHBo
-aW5lIENDIENoaXUgd3JvdGU6DQo+ID4gPiA+IEZyb206IFJpY2t5IENYIFd1IDxyaWNreS5jeC53
-dS53aXd5bm5AZ21haWwuY29tPg0KPiA+ID4gPg0KPiA+ID4gPiBSZW1vdmUgdGhlIHJlZHVuZGFu
-dCBzcGFjZSBpbiB0aGUgY29tcGF0aWJsZSBzdHJpbmcgb2YgYWRtMTI3Mi4NCj4gPiA+DQo+ID4g
-PiBJbiB0aGlzIGNhc2UgdGhlIHNwYWNlIGlzIG5vdCByZWR1bmRhbnQsIGl0J3MganVzdCBpbmNv
-cnJlY3QsIHRoZQ0KPiA+ID4gY29tcGF0aWJsZSBzdHJpbmcgZG9lc24ndCBtYXRjaCBhbnkgc3Bl
-Y2lmaWVkLiBEbyB5b3UgbWluZCBmaXhpbmcgdGhlDQo+IHdvcmRpbmc/DQo+ID4gPg0KPiA+IFN1
-cmUsIEknbGwgZml4aW5nIHRoZSB3b3JkaW5nIGluIHYyLg0KPg0KPiBUaGFua3MuDQo+DQo+ID4N
-Cj4gPiA+ID4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogUmlja3kgQ1ggV3UgPHJpY2t5LmN4Lnd1
-Lndpd3lubkBnbWFpbC5jb20+DQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IERlbHBoaW5lIENDIENo
-aXUgPERlbHBoaW5lX0NDX0NoaXVAd2l3eW5uLmNvbT4NCj4gPiA+DQo+ID4gPiBDYW4geW91IHBs
-ZWFzZSBhZGQgYW4gYXBwcm9wcmlhdGUgRml4ZXM6IHRhZz8NCj4gPiA+DQo+ID4gPiBUaGFua3Ms
-DQo+ID4gPg0KPiA+ID4gQW5kcmV3DQo+ID4gPg0KPiA+IFdvdWxkIGxpa2UgdG8gYXNrIHdoZXJl
-IHNob3VsZCBJIGFkZCB0aGUgRml4ZXM6IHRhZz8NCj4gPiBTaG91bGQgSSBhZGQgaW4gdGhlIHBh
-dGNoIHRpdGxlIGxpa2U6DQo+ID4gRml4ZXM6IEFSTTogZHRzOiBhc3BlZWQ6IHlvc2VtaXRlNDog
-Y29ycmVjdCB0aGUgY29tcGF0aWJsZSBzdHJpbmcgb2YNCj4gPiBhZG0xMjcyDQo+ID4NCj4gPiBP
-ciBzaG91bGQgSSBhZGQgaW4gdGhlIGNvbW1pdCBtZXNzYWdlPw0KPg0KPiBJdCBnb2VzIGluIHRo
-ZSB0cmFpbGVyIGJsb2NrIGFib3ZlIHlvdXIgU2lnbmVkLW9mZi1ieSB0YWcuIEl0IHdpbGwgYmUg
-d29ydGggeW91cg0KPiB0aW1lIHRvIHJldmlldyB0aGUgZm9sbG93aW5nIGRvY3VtZW50YXRpb246
-DQo+DQo+IC0NCj4gaHR0cHM6Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0dHBzOi8vZG9jcy5rZXJu
-ZWwub3JnL3Byb2Nlc3MvNS5Qb3N0aW5nLmh0bWwqcA0KPiBhdGNoLWZvcm1hdHRpbmctYW5kLWNo
-YW5nZWxvZ3NfXztJdyEhSjYzcXFnWGohTGRwS1RyMzZZVjVlNGNDUmx5NWxJSTVpQ0YNCj4gbTl6
-c25hdmlfdlJ1ZU5Xdk5IR1E4U2ltQ2YtWWZMMTRmeFhUUkwzRnhua21pZDRWTERsR1NZX0d4ZFhC
-aFNUckENCj4gJA0KPiAtDQo+IGh0dHBzOi8vdXJsZGVmZW5zZS5jb20vdjMvX19odHRwczovL2Rv
-Y3Mua2VybmVsLm9yZy9wcm9jZXNzL3N1Ym1pdHRpbmctcGF0Y2gNCj4gZXMuaHRtbCpkZXNjcmli
-ZS15b3VyLWNoYW5nZXNfXztJdyEhSjYzcXFnWGohTGRwS1RyMzZZVjVlNGNDUmx5NWxJSTVpQ0Zt
-DQo+IDl6c25hdmlfdlJ1ZU5Xdk5IR1E4U2ltQ2YtWWZMMTRmeFhUUkwzRnhua21pZDRWTERsR1NZ
-X0d4ZDBwS0FZbVUNCj4gJA0KPg0KPiBUaGUgZXhwZWN0ZWQgZm9ybWF0IGFuZCBvdGhlciBkZXRh
-aWxzIGFyZSBkZXNjcmliZWQgdGhlcmUuDQo+DQo+IFRoYW5rcywNCj4NCj4gQW5kcmV3DQoNCldJ
-V1lOTiBQUk9QUklFVEFSWQ0KVGhpcyBlbWFpbCAoYW5kIGFueSBhdHRhY2htZW50cykgY29udGFp
-bnMgcHJvcHJpZXRhcnkgb3IgY29uZmlkZW50aWFsIGluZm9ybWF0aW9uIGFuZCBpcyBmb3IgdGhl
-IHNvbGUgdXNlIG9mIGl0cyBpbnRlbmRlZCByZWNpcGllbnQuIEFueSB1bmF1dGhvcml6ZWQgcmV2
-aWV3LCB1c2UsIGNvcHlpbmcgb3IgZGlzdHJpYnV0aW9uIG9mIHRoaXMgZW1haWwgb3IgdGhlIGNv
-bnRlbnQgb2YgdGhpcyBlbWFpbCBpcyBzdHJpY3RseSBwcm9oaWJpdGVkLiBJZiB5b3UgYXJlIG5v
-dCB0aGUgaW50ZW5kZWQgcmVjaXBpZW50LCBwbGVhc2Ugbm90aWZ5IHRoZSBzZW5kZXIgYW5kIGRl
-bGV0ZSB0aGlzIGVtYWlsIGltbWVkaWF0ZWx5Lg0K
+With zoned storage, F2FS avoids direct IO writes and uses buffered writes
+with page cache flushes to prevent unaligned writes. However, the
+unaligned write can be avoided by allowing only a single thread per zone
+to perform direct writes.
+
+To achieve direct writes in zoned storage, it uses semephores to serialize
+block allocation and writes per zone.
+
+Signed-off-by: Daejun Park <daejun7.park@samsung.com>
+---
+ fs/f2fs/data.c    | 28 ++++++++++++++++++++++++++-
+ fs/f2fs/f2fs.h    |  7 +++++--
+ fs/f2fs/file.c    | 48 ++++++++++++++++++++++++++++++++++++++++-------
+ fs/f2fs/gc.c      |  4 ++--
+ fs/f2fs/segment.c |  6 +++---
+ fs/f2fs/super.c   |  5 ++++-
+ 6 files changed, 82 insertions(+), 16 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index b94cf6eea2f9..fa2bd88a2ed2 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -922,7 +922,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+ }
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+-static bool is_end_zone_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr)
++bool is_end_zone_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr)
+ {
+ 	struct block_device *bdev = sbi->sb->s_bdev;
+ 	int devi = 0;
+@@ -4207,6 +4207,7 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 			    struct iomap *srcmap)
+ {
+ 	struct f2fs_map_blocks map = {};
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	pgoff_t next_pgofs = 0;
+ 	int err;
+ 
+@@ -4218,6 +4219,18 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 	if (flags & IOMAP_WRITE)
+ 		map.m_may_create = true;
+ 
++	if (f2fs_sb_has_blkzoned(sbi) && !f2fs_is_pinned_file(inode)) {
++		struct f2fs_rwsem *io_order_lock =
++				&sbi->io_order_lock[map.m_seg_type];
++
++		f2fs_down_write(io_order_lock);
++
++		/* set io order lock */
++		iomap->private = io_order_lock;
++	} else {
++		iomap->private = NULL;
++	}
++
+ 	err = f2fs_map_blocks(inode, &map, F2FS_GET_BLOCK_DIO);
+ 	if (err)
+ 		return err;
+@@ -4273,6 +4286,19 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 	return 0;
+ }
+ 
++static int f2fs_iomap_end(struct inode *inode, loff_t pos, loff_t length,
++		ssize_t written, unsigned int flags, struct iomap *iomap)
++{
++	struct f2fs_rwsem *io_order_lock = iomap->private;
++
++	/* ordered write */
++	if (io_order_lock)
++		f2fs_up_write(io_order_lock);
++
++	return 0;
++}
++
+ const struct iomap_ops f2fs_iomap_ops = {
+ 	.iomap_begin	= f2fs_iomap_begin,
++	.iomap_end	= f2fs_iomap_end,
+ };
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 33f5449dc22d..06ed132f22ad 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1582,8 +1582,8 @@ struct f2fs_sb_info {
+ 
+ 	/* for bio operations */
+ 	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
+-	/* keep migration IO order for LFS mode */
+-	struct f2fs_rwsem io_order_lock;
++	/* keep IO order for LFS mode */
++	struct f2fs_rwsem io_order_lock[NR_CURSEG_DATA_TYPE];
+ 	pgoff_t page_eio_ofs[NR_PAGE_TYPE];	/* EIO page offset */
+ 	int page_eio_cnt[NR_PAGE_TYPE];		/* EIO count */
+ 
+@@ -3863,6 +3863,9 @@ void f2fs_submit_merged_ipu_write(struct f2fs_sb_info *sbi,
+ void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
+ int f2fs_submit_page_bio(struct f2fs_io_info *fio);
+ int f2fs_merge_page_bio(struct f2fs_io_info *fio);
++#ifdef CONFIG_BLK_DEV_ZONED
++bool is_end_zone_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr);
++#endif
+ void f2fs_submit_page_write(struct f2fs_io_info *fio);
+ struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
+ 		block_t blk_addr, sector_t *sector);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 99903eafa7fe..fde49f3e54cf 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -869,13 +869,7 @@ static bool f2fs_force_buffered_io(struct inode *inode, int rw)
+ 	/* disallow direct IO if any of devices has unaligned blksize */
+ 	if (f2fs_is_multi_device(sbi) && !sbi->aligned_blksize)
+ 		return true;
+-	/*
+-	 * for blkzoned device, fallback direct IO to buffered IO, so
+-	 * all IOs can be serialized by log-structured write.
+-	 */
+-	if (f2fs_sb_has_blkzoned(sbi) && (rw == WRITE) &&
+-	    !f2fs_is_pinned_file(inode))
+-		return true;
++
+ 	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED))
+ 		return true;
+ 
+@@ -4815,6 +4809,17 @@ static int f2fs_dio_write_end_io(struct kiocb *iocb, ssize_t size, int error,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
++static void f2fs_dio_zone_write_end_io(struct bio *bio)
++{
++	struct f2fs_bio_info *io = (struct f2fs_bio_info *)bio->bi_private;
++
++	bio->bi_private = io->bi_private;
++	complete(&io->zone_wait);
++	iomap_dio_bio_end_io(bio);
++}
++#endif
++
+ static void f2fs_dio_write_submit_io(const struct iomap_iter *iter,
+ 					struct bio *bio, loff_t file_offset)
+ {
+@@ -4824,6 +4829,31 @@ static void f2fs_dio_write_submit_io(const struct iomap_iter *iter,
+ 	enum temp_type temp = f2fs_get_segment_temp(seg_type);
+ 
+ 	bio->bi_write_hint = f2fs_io_type_to_rw_hint(sbi, DATA, temp);
++
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (f2fs_sb_has_blkzoned(sbi) && !f2fs_is_pinned_file(inode)) {
++		struct f2fs_bio_info *io = sbi->write_io[DATA] + temp;
++		block_t last_blkaddr = SECTOR_TO_BLOCK(bio_end_sector(bio) - 1);
++
++		f2fs_down_write(&io->io_rwsem);
++		if (io->zone_pending_bio) {
++			wait_for_completion_io(&io->zone_wait);
++			bio_put(io->zone_pending_bio);
++			io->zone_pending_bio = NULL;
++			io->bi_private = NULL;
++		}
++
++		if (is_end_zone_blkaddr(sbi, last_blkaddr)) {
++			bio_get(bio);
++			reinit_completion(&io->zone_wait);
++			io->bi_private = bio->bi_private;
++			bio->bi_private = io;
++			bio->bi_end_io = f2fs_dio_zone_write_end_io;
++			io->zone_pending_bio = bio;
++		}
++		f2fs_up_write(&io->io_rwsem);
++	}
++#endif
+ 	submit_bio(bio);
+ }
+ 
+@@ -4897,6 +4927,10 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
+ 	dio_flags = 0;
+ 	if (pos + count > inode->i_size)
+ 		dio_flags |= IOMAP_DIO_FORCE_WAIT;
++
++	if (f2fs_sb_has_blkzoned(sbi) && !f2fs_is_pinned_file(inode))
++		dio_flags |= IOMAP_DIO_FORCE_WAIT;
++
+ 	dio = __iomap_dio_rw(iocb, from, &f2fs_iomap_ops,
+ 			     &f2fs_iomap_dio_write_ops, dio_flags, NULL, 0);
+ 	if (IS_ERR_OR_NULL(dio)) {
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 9322a7200e31..49270713f739 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1361,7 +1361,7 @@ static int move_data_block(struct inode *inode, block_t bidx,
+ 	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
+ 
+ 	if (lfs_mode)
+-		f2fs_down_write(&fio.sbi->io_order_lock);
++		f2fs_down_write(&fio.sbi->io_order_lock[CURSEG_COLD_DATA]);
+ 
+ 	mpage = f2fs_grab_cache_page(META_MAPPING(fio.sbi),
+ 					fio.old_blkaddr, false);
+@@ -1444,7 +1444,7 @@ static int move_data_block(struct inode *inode, block_t bidx,
+ 							true, true, true);
+ up_out:
+ 	if (lfs_mode)
+-		f2fs_up_write(&fio.sbi->io_order_lock);
++		f2fs_up_write(&fio.sbi->io_order_lock[CURSEG_COLD_DATA]);
+ put_out:
+ 	f2fs_put_dnode(&dn);
+ out:
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1766254279d2..d602ae4d79e3 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3796,10 +3796,10 @@ void f2fs_update_device_state(struct f2fs_sb_info *sbi, nid_t ino,
+ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
+ {
+ 	int type = __get_segment_type(fio);
+-	bool keep_order = (f2fs_lfs_mode(fio->sbi) && type == CURSEG_COLD_DATA);
++	bool keep_order = (f2fs_lfs_mode(fio->sbi) && type <= CURSEG_COLD_DATA);
+ 
+ 	if (keep_order)
+-		f2fs_down_read(&fio->sbi->io_order_lock);
++		f2fs_down_read(&fio->sbi->io_order_lock[type]);
+ 
+ 	if (f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
+ 			&fio->new_blkaddr, sum, type, fio)) {
+@@ -3819,7 +3819,7 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
+ 	f2fs_update_device_state(fio->sbi, fio->ino, fio->new_blkaddr, 1);
+ out:
+ 	if (keep_order)
+-		f2fs_up_read(&fio->sbi->io_order_lock);
++		f2fs_up_read(&fio->sbi->io_order_lock[type]);
+ }
+ 
+ void f2fs_do_write_meta_page(struct f2fs_sb_info *sbi, struct folio *folio,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index fc2c586c7619..5289b6f5f6f3 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3833,7 +3833,10 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 
+ 	INIT_LIST_HEAD(&sbi->s_list);
+ 	mutex_init(&sbi->umount_mutex);
+-	init_f2fs_rwsem(&sbi->io_order_lock);
++
++	for (i = 0; i < NR_CURSEG_DATA_TYPE; i++)
++		init_f2fs_rwsem(&sbi->io_order_lock[i]);
++
+ 	spin_lock_init(&sbi->cp_lock);
+ 
+ 	sbi->dirty_device = 0;
+-- 
+2.25.1
+
 
