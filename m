@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-342133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33AC988AEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:51:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC885988AF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2139B1C22FCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:51:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F0071F24199
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B991C3318;
-	Fri, 27 Sep 2024 19:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BA61C6888;
+	Fri, 27 Sep 2024 19:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TukinRj6"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jXkJBXjj"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9AD1C231F
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B111C3F3B
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727466656; cv=none; b=PXsVDCm+busvqZ4Oo+IIxc4/qga78Eyb6PL4ZSsV7sZ4HhMbfDfoH8v4gQfEOcKo3wfowvT4eLcBWeuHWurck4B4qcwykRyrgHO3B0qhOi4V5EeCnIBXHzyhmQmj6j8Lf4fw/t8nKRlDH2ldk6YFWTm7e2/KTVsghWHpkpxt0a0=
+	t=1727466664; cv=none; b=erPM827v2yKxbsZySISMPn5Gw2Vj84CG8mkJrJqap1/HuklCDwM6YHe5LXYwwqL+AcuzvEKNGU46qEV7A+ZqotjuUuMNb9W9TcK9ov9gwpt87QxOfA8XcpM5nYuIcljplI/cTaEHROLA/5PPnKftkeP+Sce9f73JA+0AorISefo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727466656; c=relaxed/simple;
-	bh=5uvF95TgyiLT6G2jUE9sdhJmR7W94HYAXCCl/2TomHA=;
+	s=arc-20240116; t=1727466664; c=relaxed/simple;
+	bh=py351CAWFlpDz3zpAmSiVjHSczEFA6gMsdfJlNnaVlw=;
 	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=ID8U/ph5kznopZx75ZclZ5litAGAolU7DRifgeyAtopg2/4hH59+or3CiRUso+PXYFhjdloF5Q5TnG2J6pciiXA0GuvzhIDg5lgQ5nAoviCGJpuYvu1aKTFzZ6dVhqk9jmaXV7BkP/I2WGrmBqmRtu58AXyLDmwsrBr19sJuZGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TukinRj6; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type; b=awxhwCXwkj1ghFYGFROvQfmvYK5n1B2GYzhkByr8fXoJMQTAeeYCLDsTol1MVtjMeR4f7qJ11tKa7QsPkWasTk56P1pPwzVvLuE/A3KiC6Qo1dOyQswHnIX0s2a1+0ZQQ6iqbtoVxy6DumZdt3ki8jUytf0uslLbzVt+dBe39LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jXkJBXjj; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
+	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=2mwu19/OYEXX9hX1sQCEguvJJl/pwlDcYstsYT0uFu8=; b=TukinRj6T4fYMAE5hSrgZIorfx
-	RvO6hF+dYbk7EVXrvjOQwA36ex+7V0HinnmTGTyqOu4zZdCbcImrJfAdBh88gDAAWZPTUsh5E6V1y
-	nR3Av6gIsvPoZxQt4JQkf2hJpXKkTEF49qXh0UaGHJhPk3z2FFSPWtdNtERNPzVgtDlZcwJAxcTH2
-	vJeIz7K74zY3LQW9sK7GQSZGppGLWpqrKd4acvdB5mMp5rWVbdAZN3svDeD8Os7vFLl04u/+HxX9H
-	S3nw61JZVuXmpN35IdmKIOMpwf0n0Du1h5rdKElTrAXM+boCtIyAryuqnmp1djhi2iwgt3Yt2cM0E
-	ionBptYg==;
+	bh=clz+4HfhflDwK3Xr2tLt2iX5CBtaxE7c7ymYTUq298k=; b=jXkJBXjjTICTsfXA3JjdRp7jTS
+	lJIxgoX2jEc1dhrwQORV3ojKs08HUmu1mLpYpYtKYzcSyXnWOTgkYkh/8kSegtMwgUlqcEfQYyDZH
+	CS9xkiNnqM7B7X7LZBtNSwyj+8mTiPACN2gJIVeylNzmjE/4qMoBdxDR40qX8mzS0YVcc8l0G6mYM
+	DW1jhqkSkuHoBrGDz6hzVeeTrNWe81glnYSotmktBJJwWapJJtL/LcXrL0/SOIP/SHe9kvgjIZRj3
+	9QYYwEFmfoPYdGzSxTyMnQZ9djWI6Mt0s8G2AC6F2zZO+aYmXW631IKmKSn43KVJGgcSpNzVvCgn+
+	fp/zC3wQ==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1suGzG-0000000AVcw-3FDP;
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1suGzH-00000002Onx-2UXh;
 	Fri, 27 Sep 2024 19:50:47 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id CE635308CBD; Fri, 27 Sep 2024 21:50:44 +0200 (CEST)
-Message-Id: <20240927194925.389465951@infradead.org>
+	id D2C8B308CBF; Fri, 27 Sep 2024 21:50:44 +0200 (CEST)
+Message-Id: <20240927194925.498161564@infradead.org>
 User-Agent: quilt/0.65
-Date: Fri, 27 Sep 2024 21:49:06 +0200
+Date: Fri, 27 Sep 2024 21:49:07 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -66,7 +66,7 @@ Cc: linux-kernel@vger.kernel.org,
  ojeda@kernel.org,
  kees@kernel.org,
  alexei.starovoitov@gmail.com
-Subject: [PATCH 10/14] x86/early_printk: Harden early_serial
+Subject: [PATCH 11/14] llvm: kCFI pointer stuff
 References: <20240927194856.096003183@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -76,143 +76,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Scott found that mem32_serial_in() is an ideal speculation gadget, an
-indirectly callable function that takes an adddress and offset and
-immediately does a load.
+Quick hack to extend the Clang-kCFI function meta-data (u32 hash) with
+a u8 bitmask of pointer arguments. This should really be under a new
+compiler flag, dependent on both x86_64 and kCFI.
 
-Use static_call() to take away the need for indirect calls and
-explicitly seal the functions to ensure they're not callable on IBT
-enabled parts.
+Per the comment, the bitmask represents the register based arguments
+as the first 6 bits and bit 6 is used to cover all stack based
+arguments. The high bit is used for invalid values.
 
-Reported-by: Scott Constable <scott.d.constable@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+The purpose is to put a store dependency on the set registers, thereby
+blocking speculation paths that would otherwise expoit their value.
+
+
+Note1:
+
+This implementation simply sets the bit for any pointer type. A better
+implementation would only set the bit for any argument that is
+dereferenced in the function body.
+
+This better implementation would also capture things like:
+
+  void foo(unsigned long addr, void *args)
+  {
+    u32 t = *(u32 *)addr;
+    bar(t, args);
+  }
+
+Which, in contrast to the implementation below, would set bit0 while
+leaving bit1 unset -- the exact opposite of this implementation.
+
+Notably, addr *is* dereferenced, even though it is not a pointer on
+entry, while args is a pointer, but is not derefereced but passed on
+to bar -- if bar uses it, it gets to deal with it.
+
+Note2:
+
+Do we want to make this a u32 to keep room for all registers? AFAICT
+the current use is only concerned with the argument registers and
+those are limited to 6 for the C ABI, but custom (assembly) functions
+could use things outside of that.
+
 ---
- arch/x86/kernel/early_printk.c |   51 ++++++++++++++++++++---------------------
- 1 file changed, 25 insertions(+), 26 deletions(-)
-
---- a/arch/x86/kernel/early_printk.c
-+++ b/arch/x86/kernel/early_printk.c
-@@ -19,6 +19,7 @@
- #include <linux/usb/ehci_def.h>
- #include <linux/usb/xhci-dbgp.h>
- #include <asm/pci_x86.h>
-+#include <linux/static_call.h>
+diff --git a/llvm/lib/Target/X86/X86AsmPrinter.cpp b/llvm/lib/Target/X86/X86AsmPrinter.cpp
+index 73c745062096..42dcbc40ab4b 100644
+--- a/llvm/lib/Target/X86/X86AsmPrinter.cpp
++++ b/llvm/lib/Target/X86/X86AsmPrinter.cpp
+@@ -143,11 +143,28 @@ void X86AsmPrinter::EmitKCFITypePadding(const MachineFunction &MF,
+   // one. Otherwise, just pad with nops. The X86::MOV32ri instruction emitted
+   // in X86AsmPrinter::emitKCFITypeId is 5 bytes long.
+   if (HasType)
+-    PrefixBytes += 5;
++    PrefixBytes += 7;
  
- /* Simple VGA output */
- #define VGABASE		(__ISA_IO_base + 0xb8000)
-@@ -94,26 +95,28 @@ static unsigned long early_serial_base =
- #define DLL             0       /*  Divisor Latch Low         */
- #define DLH             1       /*  Divisor latch High        */
- 
--static unsigned int io_serial_in(unsigned long addr, int offset)
-+static __noendbr unsigned int io_serial_in(unsigned long addr, int offset)
- {
- 	return inb(addr + offset);
- }
-+NOENDBR_SYMBOL(io_serial_in);
- 
--static void io_serial_out(unsigned long addr, int offset, int value)
-+static __noendbr void io_serial_out(unsigned long addr, int offset, int value)
- {
- 	outb(value, addr + offset);
- }
-+NOENDBR_SYMBOL(io_serial_out);
- 
--static unsigned int (*serial_in)(unsigned long addr, int offset) = io_serial_in;
--static void (*serial_out)(unsigned long addr, int offset, int value) = io_serial_out;
-+DEFINE_STATIC_CALL(serial_in, io_serial_in);
-+DEFINE_STATIC_CALL(serial_out, io_serial_out);
- 
- static int early_serial_putc(unsigned char ch)
- {
- 	unsigned timeout = 0xffff;
- 
--	while ((serial_in(early_serial_base, LSR) & XMTRDY) == 0 && --timeout)
-+	while ((static_call(serial_in)(early_serial_base, LSR) & XMTRDY) == 0 && --timeout)
- 		cpu_relax();
--	serial_out(early_serial_base, TXR, ch);
-+	static_call(serial_out)(early_serial_base, TXR, ch);
- 	return timeout ? 0 : -1;
+   emitNops(offsetToAlignment(PrefixBytes, MF.getAlignment()));
  }
  
-@@ -131,16 +134,16 @@ static __init void early_serial_hw_init(
- {
- 	unsigned char c;
- 
--	serial_out(early_serial_base, LCR, 0x3);	/* 8n1 */
--	serial_out(early_serial_base, IER, 0);	/* no interrupt */
--	serial_out(early_serial_base, FCR, 0);	/* no fifo */
--	serial_out(early_serial_base, MCR, 0x3);	/* DTR + RTS */
--
--	c = serial_in(early_serial_base, LCR);
--	serial_out(early_serial_base, LCR, c | DLAB);
--	serial_out(early_serial_base, DLL, divisor & 0xff);
--	serial_out(early_serial_base, DLH, (divisor >> 8) & 0xff);
--	serial_out(early_serial_base, LCR, c & ~DLAB);
-+	static_call(serial_out)(early_serial_base, LCR, 0x3);	/* 8n1 */
-+	static_call(serial_out)(early_serial_base, IER, 0);	/* no interrupt */
-+	static_call(serial_out)(early_serial_base, FCR, 0);	/* no fifo */
-+	static_call(serial_out)(early_serial_base, MCR, 0x3);	/* DTR + RTS */
++static uint8_t getKCFIPointerArgs(const Function &F)
++{
++  uint8_t val = 0;
 +
-+	c = static_call(serial_in)(early_serial_base, LCR);
-+	static_call(serial_out)(early_serial_base, LCR, c | DLAB);
-+	static_call(serial_out)(early_serial_base, DLL, divisor & 0xff);
-+	static_call(serial_out)(early_serial_base, DLH, (divisor >> 8) & 0xff);
-+	static_call(serial_out)(early_serial_base, LCR, c & ~DLAB);
- }
++  if (F.isVarArg())
++    return 0x7f;
++
++  for (int i = 0; i < F.arg_size() ; i++) {
++    Argument *A = F.getArg(i);
++    Type *T = A->getType();
++    if (T->getTypeID() == Type::PointerTyID)
++      val |= 1 << std::min(i, 6);
++  }
++
++  return val;
++}
++
+ /// emitKCFITypeId - Emit the KCFI type information in architecture specific
+ /// format.
+ void X86AsmPrinter::emitKCFITypeId(const MachineFunction &MF) {
+@@ -183,6 +200,26 @@ void X86AsmPrinter::emitKCFITypeId(const MachineFunction &MF) {
+                               .addReg(X86::EAX)
+                               .addImm(MaskKCFIType(Type->getZExtValue())));
  
- #define DEFAULT_BAUD 9600
-@@ -183,28 +186,26 @@ static __init void early_serial_init(cha
- 	/* Convert from baud to divisor value */
- 	divisor = 115200 / baud;
++  // Extend the kCFI meta-data with a byte that has a bit set for each argument
++  // register that contains a pointer. Specifically for x86_64, which has 6
++  // argument registers:
++  //
++  //   bit0 - rdi
++  //   bit1 - rsi
++  //   bit2 - rdx
++  //   bit3 - rcx
++  //   bit4 - r8
++  //   bit5 - r9
++  //
++  // bit6 will denote any pointer on stack (%rsp), and all 7 bits set will
++  // indicate vararg or any other 'unknown' configuration. Leaving bit7 for
++  // error states.
++  //
++  // XXX: should be conditional on some new x86_64 specific 'bhi' argument.
++  EmitAndCountInstruction(MCInstBuilder(X86::MOV8ri)
++		  .addReg(X86::AL)
++		  .addImm(getKCFIPointerArgs(F)));
++
+   if (MAI->hasDotTypeDotSizeDirective()) {
+     MCSymbol *EndSym = OutContext.createTempSymbol("cfi_func_end");
+     OutStreamer->emitLabel(EndSym);
+diff --git a/llvm/lib/Target/X86/X86MCInstLower.cpp b/llvm/lib/Target/X86/X86MCInstLower.cpp
+index cbb012161524..c0776ef78153 100644
+--- a/llvm/lib/Target/X86/X86MCInstLower.cpp
++++ b/llvm/lib/Target/X86/X86MCInstLower.cpp
+@@ -897,7 +897,7 @@ void X86AsmPrinter::LowerKCFI_CHECK(const MachineInstr &MI) {
+                               .addReg(AddrReg)
+                               .addImm(1)
+                               .addReg(X86::NoRegister)
+-                              .addImm(-(PrefixNops + 4))
++                              .addImm(-(PrefixNops + 6))
+                               .addReg(X86::NoRegister));
  
--	/* These will always be IO based ports */
--	serial_in = io_serial_in;
--	serial_out = io_serial_out;
--
- 	/* Set up the HW */
- 	early_serial_hw_init(divisor);
- }
- 
- #ifdef CONFIG_PCI
--static void mem32_serial_out(unsigned long addr, int offset, int value)
-+static __noendbr void mem32_serial_out(unsigned long addr, int offset, int value)
- {
- 	u32 __iomem *vaddr = (u32 __iomem *)addr;
- 	/* shift implied by pointer type */
- 	writel(value, vaddr + offset);
- }
-+NOENDBR_SYMBOL(mem32_serial_out);
- 
--static unsigned int mem32_serial_in(unsigned long addr, int offset)
-+static __noendbr unsigned int mem32_serial_in(unsigned long addr, int offset)
- {
- 	u32 __iomem *vaddr = (u32 __iomem *)addr;
- 	/* shift implied by pointer type */
- 	return readl(vaddr + offset);
- }
-+NOENDBR_SYMBOL(mem32_serial_in);
- 
- /*
-  * early_pci_serial_init()
-@@ -278,15 +279,13 @@ static __init void early_pci_serial_init
- 	 */
- 	if ((bar0 & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) {
- 		/* it is IO mapped */
--		serial_in = io_serial_in;
--		serial_out = io_serial_out;
- 		early_serial_base = bar0 & PCI_BASE_ADDRESS_IO_MASK;
- 		write_pci_config(bus, slot, func, PCI_COMMAND,
- 				 cmdreg|PCI_COMMAND_IO);
- 	} else {
- 		/* It is memory mapped - assume 32-bit alignment */
--		serial_in = mem32_serial_in;
--		serial_out = mem32_serial_out;
-+		static_call_update(serial_in, mem32_serial_in);
-+		static_call_update(serial_out, mem32_serial_out);
- 		/* WARNING! assuming the address is always in the first 4G */
- 		early_serial_base =
- 			(unsigned long)early_ioremap(bar0 & PCI_BASE_ADDRESS_MEM_MASK, 0x10);
+   MCSymbol *Pass = OutContext.createTempSymbol();
 
 
 
