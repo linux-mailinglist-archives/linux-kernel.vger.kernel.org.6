@@ -1,113 +1,229 @@
-Return-Path: <linux-kernel+bounces-341518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 252C798810D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:07:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3EEA988112
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E039B2263F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:07:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F9272864D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E1018B475;
-	Fri, 27 Sep 2024 09:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C77519341F;
+	Fri, 27 Sep 2024 09:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="bKVPAOaQ"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="VtGT/OA1"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A5B18A93A
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 09:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434AE18A959;
+	Fri, 27 Sep 2024 09:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727428016; cv=none; b=nPJwIuzs+KuxArBrY2LC1cWab/OSMi+Tie9I5AWbrm66dJ12v7syNPrKGVhLNbNEuNCZD2dB64UNEFIvsX67Obor28d6tC4016ooG1XBQmmmkLx3IFd3xdNDfGj9pPNav+v3lWgOfN3NMlTTW4BZdg2R1rLfhpunodeeZ1RsuFE=
+	t=1727428021; cv=none; b=RH7HXmH54XhHh8fKv96ZY+f01Bd2cDIs+/nahwYQdSTS+IqGlvCBjves/mVBYEisSDpPXEkkXGuDowQrAVJqsap2vVkQ8Zw7icAWXlN5yQuUClbsj71BC7f4ox9GZ4XXi5jIF+TfGc5hS/pigoU2twh7JzESu/FI4VTNKJgX5lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727428016; c=relaxed/simple;
-	bh=XJi4lkPN6suJ6SAQVTKbY8dUP1e7mUKYZhisWbQCV2o=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jM7arWvyHZOOZeTfuwaynO8dFFAsjoi9ZGbhn6IkaerDZBCjjP/WPcw3jGaoQKHt2A89fWSbJbEmn2LRCK7WJIz46duqcKTgkv3YRGxR4j54eF/bdYe5rI5zHqAWql6Plnd5Xzo1pBZ6kfihjTEypJ2qvMZ6c9q1OGjeDBfCjVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=bKVPAOaQ; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=yj54tm3ptfco7bqyilauajek4y.protonmail; t=1727428012; x=1727687212;
-	bh=Y/ZMKfKxXxmed7Y4nQfgv37JqGP7l9vxlakQNi8YpsM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=bKVPAOaQ20srGUp6b38HUwM2Nlzq2jdqUDf+eRI+1rOBGIVUpHr3X7BwbhrXMaNvQ
-	 nXr96s0CpRM11Q+SkRpdwVtp788NMwzKSeVudfLIUbY14oraKkzy0HwaVBGMSpUmjI
-	 yIWYgwF8YDLcGj/Lx1v3wWumunsiKXeJw/Z6A4bF5hYpXjXhFkswn8mSC0XkaaJVbb
-	 eQJ9+gq8b6d0dxooo++z/VhIZ6t4w0HM4d5NPwtM5aRUhJ2IMqsZ6fl+lUMCE7hC+a
-	 J042WZeIO6lyUI3ME9z6uYcN7CiN9HBtq0XLAF/BhUwdiqP/ARWsOeVLlOebfQwEUp
-	 EVNul4+43d7Gg==
-Date: Fri, 27 Sep 2024 09:06:45 +0000
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: kernel test robot <lkp@intel.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, Greg KH <greg@kroah.com>, Simona Vetter <simona.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] rust: add untrusted data abstraction
-Message-ID: <00ca48e4-1b4a-496d-a06b-3c12a9ef2d14@proton.me>
-In-Reply-To: <CANiq72=-bV_=TUoH6gLnPwTcxROBqyrCpOpbumki_S+po1TPhQ@mail.gmail.com>
-References: <20240925205244.873020-2-benno.lossin@proton.me> <202409270303.kUIAmOmY-lkp@intel.com> <42d17306-1ac6-4fc7-ab1b-69ef045039ac@proton.me> <CANiq72kXGNyLg0Ooo3Ne=KmZWBnSO9HE2tcfP=gf+WGFqnjDEg@mail.gmail.com> <1aa088b1-ca4d-4a97-b25c-96a18f62a79c@proton.me> <CANiq72=-bV_=TUoH6gLnPwTcxROBqyrCpOpbumki_S+po1TPhQ@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: d03cb3c88484f51dc99e6d9272da316b79dd1db5
+	s=arc-20240116; t=1727428021; c=relaxed/simple;
+	bh=Eu20caTVDuYFkjSNbtlsKZAt0thZ1W9gzLCf/RaCc6M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=vAmaqK7KX8jpbLfYDcOVSFJ53iqWtXoGn8rcb4WIOvWNyLTWcp+rN5kG97mOXsa5h9gn3tzVyVr6lCuCFp+lUvvlKnI9AfWls+U8mcIF12Q70TzguAmO0IoG7qh0wuIDJs3Lak3GLoFxk11lMDaJoAeGMQfPVPC/gfBbCuAb0sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=VtGT/OA1; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=XeUc6G+ijEKJod2eAolRc/0pDu+4naba5TZ9vLUildU=; t=1727428018; x=1728032818; 
+	b=VtGT/OA1B9TATzpKxHZc6QRrY/kCjyitI2Iy9O8Mbt4oWI8z7nDYWzP53EtSOLYx3q1G6XMkkYI
+	K1wquzz8XITNK806PlpxPzHf5eG6UtpccWhvt3jPbC2J11VVh6rnOAv+8UPdIKQMBHqk6JPMPmy5o
+	Im2abz+NXGHe9B7JtAU8fyBgwfMnibtNc08/63E3MkNGtCb+zp1P9RHMS90uZgAcWTClXKGCrsY3X
+	DbEJOze0ZRrPHKpVd/8fM1quHCe4uuvnuFlzjNdW+qqaWt8E0oUBj5JIbK+dkUFvOAraDzj27cHN1
+	XJBWwLgjADfW+ENyAXceQKnWJ7MewbXJC3Ug==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1su6w4-00000003BAD-3bb0; Fri, 27 Sep 2024 11:06:48 +0200
+Received: from p57bd904e.dip0.t-ipconnect.de ([87.189.144.78] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1su6w4-00000001TWj-2adp; Fri, 27 Sep 2024 11:06:48 +0200
+Message-ID: <fbc1dde6650a3e729fab57decbb5bf4ef14436ce.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH V2 3/3] SH: cpuinfo: Fix a warning for
+ CONFIG_CPUMASK_OFFSTACK
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Kexy Biscuit <kexybiscuit@aosc.io>, Huacai Chen <chenhuacai@gmail.com>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, Arnd Bergmann <arnd@arndb.de>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Yoshinori Sato
+ <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+ loongarch@lists.linux.dev, linux-arch@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>, Xuerui Wang
+ <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+ linux-mips@vger.kernel.org, linux-sh@vger.kernel.org, stable@vger.kernel.org
+Date: Fri, 27 Sep 2024 11:06:47 +0200
+In-Reply-To: <a45f1209-ff29-4010-b035-921cb136d58d@aosc.io>
+References: <20220714084136.570176-1-chenhuacai@loongson.cn>
+	 <20220714084136.570176-3-chenhuacai@loongson.cn>
+	 <3a5a4bee5c0739a3b988a328376a6eed3c385fda.camel@physik.fu-berlin.de>
+	 <CAAhV-H5bw3xcym2-GpyntQEad1h2eB8xDQGwVr_bRRKAOakzoQ@mail.gmail.com>
+	 <8947f91ba1a10f98723a5982f0fc13ee589d3bf7.camel@physik.fu-berlin.de>
+	 <a45f1209-ff29-4010-b035-921cb136d58d@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On 27.09.24 10:39, Miguel Ojeda wrote:
-> On Fri, Sep 27, 2024 at 12:15=E2=80=AFAM Benno Lossin <benno.lossin@proto=
-n.me> wrote:
->>
->> Personally, I would prefer adding a symbol. Since if we allow it, then
->> it might take a long time until the code is removed once we increase the
->> minimum version.
->>
->> It would be best, if it produces an error when we raise the minimum
->> version beyond the one represented by the symbol. Is that already the
->> case?
+Hi,
+
+On Fri, 2024-09-27 at 13:31 +0800, Kexy Biscuit wrote:
+> On 3/19/2024 1:12 AM, John Paul Adrian Glaubitz wrote:
+> > Hi Hucai,
+> >=20
+> > On Mon, 2024-03-18 at 22:21 +0800, Huacai Chen wrote:
+> > > Hi, SuperH maintainers,
+> > >=20
+> > > On Wed, Feb 8, 2023 at 8:59=E2=80=AFPM John Paul Adrian Glaubitz
+> > > <glaubitz@physik.fu-berlin.de> wrote:
+> > > >=20
+> > > > On Thu, 2022-07-14 at 16:41 +0800, Huacai Chen wrote:
+> > > > > When CONFIG_CPUMASK_OFFSTACK and CONFIG_DEBUG_PER_CPU_MAPS is sel=
+ected,
+> > > > > cpu_max_bits_warn() generates a runtime warning similar as below =
+while
+> > > > > we show /proc/cpuinfo. Fix this by using nr_cpu_ids (the runtime =
+limit)
+> > > > > instead of NR_CPUS to iterate CPUs.
+> > > > >=20
+> > > > > [    3.052463] ------------[ cut here ]------------
+> > > > > [    3.059679] WARNING: CPU: 3 PID: 1 at include/linux/cpumask.h:=
+108 show_cpuinfo+0x5e8/0x5f0
+> > > > > [    3.070072] Modules linked in: efivarfs autofs4
+> > > > > [    3.076257] CPU: 0 PID: 1 Comm: systemd Not tainted 5.19-rc5+ =
+#1052
+> > > > > [    3.099465] Stack : 9000000100157b08 9000000000f18530 90000000=
+00cf846c 9000000100154000
+> > > > > [    3.109127]         9000000100157a50 0000000000000000 90000001=
+00157a58 9000000000ef7430
+> > > > > [    3.118774]         90000001001578e8 0000000000000040 00000000=
+00000020 ffffffffffffffff
+> > > > > [    3.128412]         0000000000aaaaaa 1ab25f00eec96a37 90000001=
+0021de80 900000000101c890
+> > > > > [    3.138056]         0000000000000000 0000000000000000 00000000=
+00000000 0000000000aaaaaa
+> > > > > [    3.147711]         ffff8000339dc220 0000000000000001 00000000=
+06ab4000 0000000000000000
+> > > > > [    3.157364]         900000000101c998 0000000000000004 90000000=
+00ef7430 0000000000000000
+> > > > > [    3.167012]         0000000000000009 000000000000006c 00000000=
+00000000 0000000000000000
+> > > > > [    3.176641]         9000000000d3de08 9000000001639390 90000000=
+002086d8 00007ffff0080286
+> > > > > [    3.186260]         00000000000000b0 0000000000000004 00000000=
+00000000 0000000000071c1c
+> > > > > [    3.195868]         ...
+> > > > > [    3.199917] Call Trace:
+> > > > > [    3.203941] [<90000000002086d8>] show_stack+0x38/0x14c
+> > > > > [    3.210666] [<9000000000cf846c>] dump_stack_lvl+0x60/0x88
+> > > > > [    3.217625] [<900000000023d268>] __warn+0xd0/0x100
+> > > > > [    3.223958] [<9000000000cf3c90>] warn_slowpath_fmt+0x7c/0xcc
+> > > > > [    3.231150] [<9000000000210220>] show_cpuinfo+0x5e8/0x5f0
+> > > > > [    3.238080] [<90000000004f578c>] seq_read_iter+0x354/0x4b4
+> > > > > [    3.245098] [<90000000004c2e90>] new_sync_read+0x17c/0x1c4
+> > > > > [    3.252114] [<90000000004c5174>] vfs_read+0x138/0x1d0
+> > > > > [    3.258694] [<90000000004c55f8>] ksys_read+0x70/0x100
+> > > > > [    3.265265] [<9000000000cfde9c>] do_syscall+0x7c/0x94
+> > > > > [    3.271820] [<9000000000202fe4>] handle_syscall+0xc4/0x160
+> > > > > [    3.281824] ---[ end trace 8b484262b4b8c24c ]---
+> > > > >=20
+> > > > > Cc: stable@vger.kernel.org
+> > > > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> > > > > ---
+> > > > >   arch/sh/kernel/cpu/proc.c | 2 +-
+> > > > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > >=20
+> > > > > diff --git a/arch/sh/kernel/cpu/proc.c b/arch/sh/kernel/cpu/proc.=
+c
+> > > > > index a306bcd6b341..5f6d0e827bae 100644
+> > > > > --- a/arch/sh/kernel/cpu/proc.c
+> > > > > +++ b/arch/sh/kernel/cpu/proc.c
+> > > > > @@ -132,7 +132,7 @@ static int show_cpuinfo(struct seq_file *m, v=
+oid *v)
+> > > > >=20
+> > > > >   static void *c_start(struct seq_file *m, loff_t *pos)
+> > > > >   {
+> > > > > -     return *pos < NR_CPUS ? cpu_data + *pos : NULL;
+> > > > > +     return *pos < nr_cpu_ids ? cpu_data + *pos : NULL;
+> > > > >   }
+> > > > >   static void *c_next(struct seq_file *m, void *v, loff_t *pos)
+> > > > >   {
+> > > >=20
+> > > > I build-tested the patch and also booted the patched kernel success=
+fully
+> > > > on my SH-7785LCR board.
+> > > >=20
+> > > > Showing the contents of /proc/cpuinfo works fine, too:
+> > > >=20
+> > > > root@tirpitz:~> cat /proc/cpuinfo
+> > > > machine         : SH7785LCR
+> > > > processor       : 0
+> > > > cpu family      : sh4a
+> > > > cpu type        : SH7785
+> > > > cut             : 7.x
+> > > > cpu flags       : fpu perfctr llsc
+> > > > cache type      : split (harvard)
+> > > > icache size     : 32KiB (4-way)
+> > > > dcache size     : 32KiB (4-way)
+> > > > address sizes   : 32 bits physical
+> > > > bogomips        : 599.99
+> > > > root@tirpitz:~>
+> > > >=20
+> > > > Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> > > >=20
+> > > > I am not sure yet whether the change is also correct as I don't kno=
+w whether
+> > > > it's possible to change the number of CPUs at runtime on SuperH.
+> > > Can this patch be merged? This is the only one still unmerged in the
+> > > whole series.
+> >=20
+> > Thanks for the reminder. I will pick it up for 6.10.
+> >=20
+> > Got sick this week, so I can't pick up anymore patches for 6.9 and will=
+ just
+> > send Linus a PR later this week.
+> >=20
+> > Adrian
+> >=20
 >=20
-> No -- that is a nice idea that I guess could be implemented in Kconfig
-> somewhere (i.e. when checking conditions). However, one of the common
-> things to do when upgrading the minimum is to review/clean the
-> `*_VERSION` uses anyway (and they may occur outside Kconfig files
-> too), and also sometimes one wants to upgrade a minimum without doing
-> the cleanups immediately (e.g. the recently proposed GCC 8.1 upgrade).
->=20
->> Gave it a try and I also can't reproduce the error there...
->=20
-> Hmm... I think CE uses the Rust-provided binaries (and I guess the
-> playground too). Do you have a link ("Share" in CE)?
+> Gentle ping on this, can we get this patch merged into 6.12?
 
-Here you go: https://godbolt.org/z/qE8E9M56c
+Thanks a lot for the reminder. Since the merge window is about to close, I'=
+ll
+pick this up for 6.13 as it hasn't been reviewed yet from what I can see.
 
-The error that I get locally:
+I will definitely pick it up for 6.13 and I'm sorry for the very long delay=
+.
 
-    error: unreachable pattern
-     --> src/main.rs:8:9
-      |
-    8 |         Err(e) =3D> match e {},
-      |         ^^^^^^ matches no values because `Infallible` is uninhabite=
-d
-      |
-      =3D note: to learn more about uninhabited types, see https://doc.rust=
--lang.org/nomicon/exotic-sizes.html#empty-types
-    note: the lint level is defined here
-     --> src/main.rs:1:9
-      |
-    1 | #![deny(unreachable_patterns)]
-      |         ^^^^^^^^^^^^^^^^^^^^
-   =20
-    error: could not compile `rust` (bin "rust") due to 1 previous error
+However, when this patch got posted back then, I wasn't a kernel maintainer=
+ yet.
 
----
-Cheers,
-Benno
+Adrian
 
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
