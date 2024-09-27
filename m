@@ -1,258 +1,238 @@
-Return-Path: <linux-kernel+bounces-341198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 723D9987C68
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:23:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50443987C6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90E311C22529
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:23:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F75EB22432
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 01:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C684D8CE;
-	Fri, 27 Sep 2024 01:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC254D8CE;
+	Fri, 27 Sep 2024 01:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CnzfDRu+";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="zO+zJZ4B"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="Zo8T/hYS"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF09984D13;
-	Fri, 27 Sep 2024 01:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727400179; cv=fail; b=p30Zfbhbivqw7whPRl6tP44U4pGKFU3ChBed+9GSaib+3AMdKpqy533DaMUfJ6kKOCq+Ovaz1Q2Du60Ktqhf/BwK/Lx4J6PBUfM0KRZHJQeG+F30i0D3iIljnD3nhho+/Mv4eq8hKk+vKK7KpO5/8R78b3eXeyFN6GFFfuuykV4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727400179; c=relaxed/simple;
-	bh=e7fihnFUPiGGSXMOs2YtFMM9+1KapEOCqU/I0vGkYvA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FxpvJUCRzxIQRXCx1wXBilOpKMyvHRg70+EbpNu4q6eAxHEC7j3y/82uoWQa+Ajs16HiO8y5K2wGQ2m3oScoqT4OKRAnHZu5HjblFL+EY9KlaaR/hDGtvncYJR+v5ioKhC+Mbbtv9dTP7nbfGgB9gcO93CHfmTNMx95PouuMhdo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CnzfDRu+; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=zO+zJZ4B; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R0tmAa027861;
-	Fri, 27 Sep 2024 01:22:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:content-transfer-encoding:content-type:mime-version; s=
-	corp-2023-11-20; bh=T2WV2d8E66mXBaEVIEIETBwIqZPPsFb7v48xcUMsV+Q=; b=
-	CnzfDRu+nmgx7WkvTRji6DCsViliqv4eHruLaiTwWbW6ohYkWfIH0WeHZtjRDZm/
-	CGT9SmfVYUeDl90P4AH997mfsGOTvdHKH5CMIE+NcWXCt8ZVgdVxcltTuD6Fpvbs
-	90Byf7R1LedykRPz3kZ17AIEi5Je2rSg+s0VGb/uZsNubH2d4Pu6kI1xSIUIb4tR
-	bk756N8BWbzyc/MAh2M60TGvoS/PSOC7FUz0eJ9aiZreo1m3XH546XzZFcSpxLER
-	Lf3XSAfBhwy2AR9VvHIujE5sMWlsToduwF49Kw+Sor3+8a5hQ7CZm/RxLcCoJnfS
-	qStIdMQfUWClt8Yz8VEXaA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41sp1apfqb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 27 Sep 2024 01:22:45 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48R1CiuY031228;
-	Fri, 27 Sep 2024 01:22:44 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2175.outbound.protection.outlook.com [104.47.56.175])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41tkc9frg1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 27 Sep 2024 01:22:44 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lnjw3MOrQ9w1qNYcXFF3dxAlxcYLwqf7s0ndyDRqHRSIS0T2dwGeQ5ltquBo0laE1U3wIUbt0lr630+CkvGDg2tKo6nYB9EVvRkD8fvuDdOBMt7mkDhVXDrw7qqGgyCUG0oZp1vIG0UJkGMUtFlPmB4zBTa2OK29wo+kYLNv30o6J7ia++2RDX6+YkeM45u8cDQqC79kpNUC7uclNpWwOVpJT+b+I6VSxcAdKYiEXnYakC4F7YM/wiopMySxtW0RdZapbi3R1lLJCS2M0+W7izZIkZFrdDaHSKw2yWHRqpiXe8++Xl5VSCHNSMbRPeveJBg7rxFyHFpkefHDT3XvLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T2WV2d8E66mXBaEVIEIETBwIqZPPsFb7v48xcUMsV+Q=;
- b=X+vvLX/FpcbSotFhGTzucRvNwdXq32YRXCRsnJizeZpWROh+tVf42dcZwRYDdR3TssvDnyS+6bT3/fAaPrmIK7/uLTv+EoS2D8CYWZ9fsYOWXfH1HnQYmVxMMnzDNuXwtPbu4VM6jCLdyvxw/ds39Ss3Coem2/nAKaeEMLLKjNtptAiGsoAIGaljqpPOkDk5QoEm01Lf+6mgI7eyu86XpBoHh0kyfgdO0ImT4HRrS3W1FFL83sWRv1/EkAqhgS2qIJDh4LKgdQkQKsrcnCUeAdPjxhmSxaycqNa7LxDUUzNIhUrD6ZJJouBAxEL8Spv1FiJXtT0ZiaPo1M5fU4PhvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CEEA932
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 01:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727400324; cv=none; b=KjnsPINk+0gfRjn4nY8ycYc5GQcji28Z0r/nfoGIiJl3rD0J5yS0mwKGtg3UuZvHeFlkBlPB31/1f20upGejutIyv0RqsczCMSz2q453GZmFU5bQerNwDPSody+5DUTt2feRYBtRJTQlNUaC26NRcU23sro7qGBgs6uCaUta6kw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727400324; c=relaxed/simple;
+	bh=oQ+4b7BRgXRVADP2MBjlvEd8Yh3A6ngbN9lYzOPKaSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nPO9IE2dh+b+G6aIclreSKZbkLQe6tgc7oM/LBcH78r6DaeSAl4HqBCAyzdi4p/JEdswSOpM5W90ft57IFhgNY0i6lu1Vzxi2fuALJYanNM77hLPtTXwGG9qBx/D4Jl3urwERHzuj8OwpY9eVtK5ZEZq5pIHmTFLtPHMNhdOTnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=Zo8T/hYS; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-207397d1000so20625695ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 18:25:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T2WV2d8E66mXBaEVIEIETBwIqZPPsFb7v48xcUMsV+Q=;
- b=zO+zJZ4B87+ZtuVGROB2pTakbla4HzbxasGgUXJZC4BuwozVSj89JCgW0tmW8vq+Dii/qs0FU4Mgq6/TjSzdxa1D9stCKVkr+A1175/U2k1v2t/rNlbzL9X9uhnVAEFvl8aE0TRkhm7Ej53ZStqugJJZXFx7TsZ8AnMbJMvKlXw=
-Received: from MN2PR10MB4269.namprd10.prod.outlook.com (2603:10b6:208:1d1::8)
- by SN7PR10MB6306.namprd10.prod.outlook.com (2603:10b6:806:272::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.8; Fri, 27 Sep
- 2024 01:22:42 +0000
-Received: from MN2PR10MB4269.namprd10.prod.outlook.com
- ([fe80::f430:b41f:d4c4:9f9]) by MN2PR10MB4269.namprd10.prod.outlook.com
- ([fe80::f430:b41f:d4c4:9f9%3]) with mapi id 15.20.8026.005; Fri, 27 Sep 2024
- 01:22:42 +0000
-From: Eric Mackay <eric.mackay@oracle.com>
-To: boris.ostrovsky@oracle.com
-Cc: eric.mackay@oracle.com, imammedo@redhat.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com, seanjc@google.com
-Subject: Re: [PATCH] KVM/x86: Do not clear SIPI while in SMM
-Date: Thu, 26 Sep 2024 18:22:39 -0700
-Message-ID: <20240927012239.34406-1-eric.mackay@oracle.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <4274f9be-1c3d-4246-abe9-69c4d8ca8964@oracle.com>
-References: <4274f9be-1c3d-4246-abe9-69c4d8ca8964@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR03CA0203.namprd03.prod.outlook.com
- (2603:10b6:a03:2ef::28) To MN2PR10MB4269.namprd10.prod.outlook.com
- (2603:10b6:208:1d1::8)
+        d=tenstorrent.com; s=google; t=1727400321; x=1728005121; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jCmcLe0SmYgeEcqqhkJU0Qezbgs/J4u3/7L98eJgBA8=;
+        b=Zo8T/hYSCiQUH5F6C5bCQ/mQjEXKks9fYL/F1KPWAM8iE5ZBGHDMvIuuSFWnmJd/pe
+         Du4+scH5OH2qbPQO8RZAy1dXsVpLWuonfZXJtUw4B4JgTvuNabPL/EsLHdyQTEIDYDC5
+         zMUIeN6ygnM5Frlpnq2lP28P9Po9/hINfftBfdQGwweAuqsomPLDRweG4J4t2HviFdnp
+         FRQOFvwA+/my+qetT6u6ivVR4OGCLFeZgYfasW2wY6LUDM4hszqJ4D4BuKk3wiR08Ryz
+         QonmyMwUM8HYSJX1SqlM/NuuwWtQSlNrn1/dScbbEbejyIe47abx1yLslPBCldRxLV7l
+         iHmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727400321; x=1728005121;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jCmcLe0SmYgeEcqqhkJU0Qezbgs/J4u3/7L98eJgBA8=;
+        b=eTigGTY/08p8iXUPjrADC9ufmlinElTqECbqfjBxArLUZvpLnWEpeFKYPSbTVb41RY
+         bkzypCalfSL+OomyVFmu+00nZD4Hn6bc4sGpSYtgSfeCK+H/i2MMIOZPLeMEWTWhCvlp
+         zXtqU6mriKTRjfg0M0fN5wM8aGI2cF5ptHR/0bG7Q/S4cGJz0FmdVc8lIZTG5a49T4r5
+         kQ+4uWNCOprmIXBsOVRzfKxVDY6o4a+kBWhIOfaDRwq3QXhVcYWBfcrm/dxpU5pB5e2x
+         um/xuEsM1D83SlTBNLNZR4na33wUfuNkJr5CYAmdOoFqpvf7s2XR+O/d+J0JszeLHW6k
+         9+fw==
+X-Forwarded-Encrypted: i=1; AJvYcCXz+xEX4bptftlCR4uogXKT6/GfEVGsb0g0WCGTNRMJfW8ShyweiS5Rwhvy2tR2Iq7Pe9w+STJ4Lpt3ugY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ9F+aU13xwDGhG0mOrwmEoRj/6VqedYYC5tmEH4WUJ0TtKAcM
+	aSy0qB2g5iqnc9QJpImqUENjxkdYGjr/nwgweWBWmFwDYruiL05b9oCud/7zZ1Q=
+X-Google-Smtp-Source: AGHT+IFNIOZRxH8HvJGMbMu1i8sPGpIXAzt+jVyHPQIeV5WglmLr8F5WYqM/TslsbY+ZUY/LOi5w8A==
+X-Received: by 2002:a17:903:2a84:b0:205:8a8b:bd2a with SMTP id d9443c01a7336-20b19cadb22mr63571405ad.22.1727400321286;
+        Thu, 26 Sep 2024 18:25:21 -0700 (PDT)
+Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e357e8sm4132645ad.187.2024.09.26.18.25.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 18:25:20 -0700 (PDT)
+Date: Thu, 26 Sep 2024 18:25:18 -0700
+From: Drew Fustini <dfustini@tenstorrent.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] riscv: dts: thead: Add TH1520 ethernet nodes
+Message-ID: <ZvYJfrPx75FA1IFC@x1>
+References: <20240926-th1520-dwmac-v2-0-f34f28ad1dc9@tenstorrent.com>
+ <20240926-th1520-dwmac-v2-3-f34f28ad1dc9@tenstorrent.com>
+ <3e26f580-bc5d-448e-b5bd-9b607c33702b@lunn.ch>
+ <ZvWyQo+2mwsC1HS6@x1>
+ <0b49b681-2289-412a-8969-d134ffcfb7fc@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR10MB4269:EE_|SN7PR10MB6306:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3daeec47-dd61-4843-acfb-08dcde92e22d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IBaf4e5qYh/0NH4+DANNXx+vHBmUulOpy6pZT88HVm7M7K4gt2i/3NF1Y/xU?=
- =?us-ascii?Q?Yer/rrTb8pwl2n6pNuPX5AoDhwcVXf+PRsG/Jf57LKyuiCfXJskzvrJieBSp?=
- =?us-ascii?Q?2LDlLAbphXlAK3qZ82P1z4+OHT80Vn1e9PeqnYMyao+YKhzm/k4usN6OEscM?=
- =?us-ascii?Q?JQ2VWfR4jh2NL7QOvoWyeLbgzLXZ3WHdGBDEaL/OEx+l+a2eK7FqZAkgkvNa?=
- =?us-ascii?Q?we0uEBG1JtGuriZl3CJInWxGZ/Rf8sxED9r5Al1neuS/jLC96Uoul+R/ClIk?=
- =?us-ascii?Q?8Efl6vqsH8SIa+I9KmxFSgdAUUcvE6YMO8v+v5LS6WHGVMHnFAtVb+4tgNC5?=
- =?us-ascii?Q?48UwT1SJijcpf+PZ5k3KMGxBV/WjpUEMX7gd1CvVm5ZxWZKvvOkhvhpaXyJf?=
- =?us-ascii?Q?D4h9cqSlWksnRP+0HyjrnhiJwjr5g6QABiu6lRyzDDbRUrL0Wcc/SUU93gNx?=
- =?us-ascii?Q?O/3HTJOVxDft4Ve1dcKNwh9ow7Wwta03fg+n6xng5MhPeQCjSgw8zbkxH+0V?=
- =?us-ascii?Q?kjCVoXxLU91eRt16vEdGWWmLFDQUlh3huEOSI7Uafte7cND4mScZkIfgtuL4?=
- =?us-ascii?Q?21bDwJuR0MdGPxwRqe02iK5qFTQjOZ891dT6sPY1MNGOmxMFoUyktnUJDpud?=
- =?us-ascii?Q?/NfHeenc4McqvB2wk7CdOBZg3EKfk0Ka9JY1q2o59O4pQMwie4ByYBxc/8F9?=
- =?us-ascii?Q?aDXJBAK8c9AxcTbn0UCE6BGQnMnUhtQojVTPKJILLLmHBhWrCcnmLViJmkaG?=
- =?us-ascii?Q?uAMS50KP5tRlpR01LnorwvZXFoLwg09bw4XDHzCzQazKCwUFzGs7r3VYy7eY?=
- =?us-ascii?Q?k6iV7Tk9/1ieKJeuNEeoozFvtQv0M88qR38Rw84s39cWzt0QwMrKW7bgXiH8?=
- =?us-ascii?Q?glC1spTH0k8+TFcDpP5RPxiO1bZ/7/rptAf6P5zG/XbQp4J+t6bkRVYvaDpa?=
- =?us-ascii?Q?8Z2P6NUnVVUH7BidhQqMuU944A6BDZ1NXD6gs4/2W0aN2Uy3s600mj+LBSgP?=
- =?us-ascii?Q?uu3dwvoMcZ0DGgLcmOR5geAkc9D3IgkJHsN36rdTP/bwCEZy/sHZY+9iBPTQ?=
- =?us-ascii?Q?Akf7d9zgw1IC0nimlapNt3kvhg+xMwu5HLiTVkGdrThrop8+2sHpS/5zbWWj?=
- =?us-ascii?Q?mbe0UurlK+EHeTSn0hzmtYaMMdd3CiCQtiwC/ZUuq4mJrRZARjf/CtvcFfiP?=
- =?us-ascii?Q?55SKp+QPDfgNGLvvBihFfVslCTtQW5x4qA0Y8ySI5VhmZ5lgszUjlCs0G0dh?=
- =?us-ascii?Q?TvmsF1pEBNElH+hLaIqCDS4U6pEjOP8MNRrzwU/L9g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4269.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DKQkSIx3DyAVNUm1IjRORgCfkB+I/KE+6R2eT52zzuMZURkBZSMa2bVKX24T?=
- =?us-ascii?Q?jxUuDdcAyQNncw+Ekoe7XCtKaFHY3n+AfjKapqsmynFI5hvDB3ISo4CQ9JZC?=
- =?us-ascii?Q?7t4ILS8RBTtMPabSQ19JBv99JyqpsliSJFWbSnHsWDempFRqSGeN1R9ieLS6?=
- =?us-ascii?Q?cS2nH6On0Dy7iyzxwrPSV/GEZihafNoLj4yqbXWdmiMWl/hbTinPSvMFxgJY?=
- =?us-ascii?Q?k9LHbbZSGQQrc59L6HdniiKYN1BQoVIQG5vQrz6iPmQOj0SkocbYDhcdoUjW?=
- =?us-ascii?Q?yilWb4gKgO9WDH7goKXvPfPn9iMsZ2RV7NQ8vs3FGlehtrYiUlY61SbVrxr6?=
- =?us-ascii?Q?NqiXqiNMqjuadL/b201dTymyugFYN5U6sXJZzUHUVNczr43QzWlq5STjlqEb?=
- =?us-ascii?Q?6kamZzmw5sorG6gkTd4IZ3/GEaQfCc6tXBhvujq+n97tWD9tJc+s1LkLZhMF?=
- =?us-ascii?Q?X43EuQWmGodxmc8v/mtR4UHqK9OcOrdbOSZAXDJ4WlkVGFD2+mhWUf5qvjJC?=
- =?us-ascii?Q?AXgCCZNGwkXZvuZ1RrZpWZzquabtS/J1vde8JNzOArbvmnn0jYxE1PMxrn+X?=
- =?us-ascii?Q?HuKRhjfXa2nBJNKVxip60vzck8BwzbMB1flNxTRj9nv834Jwlj5jqkptzkd7?=
- =?us-ascii?Q?m1c/8OkWmKw1R6rkinT5L5oLC6B87XPcpYhNp/7w5ERpbUfqXY6i+j6b75Ai?=
- =?us-ascii?Q?iZ82d6ipQj/cKZUmnqmDs7+qmys/b+SpHPRlngtb5N/93WwQGRYOQCjVS8Wy?=
- =?us-ascii?Q?ar5r8bvGiwu9fuqI3+arusTLJokW+Q3E7Csm9/yjx7lwMngmhR2s9FSmEGXh?=
- =?us-ascii?Q?w6OHfYPj5Jvd6bsI9YmnzNFWc7wYNmgPIInlMRSykgFAQ3puN8h7z8OVj6E7?=
- =?us-ascii?Q?AnKbLCQrwImsnTtTZML6Y9fAlMhh6m0ryR61s5+dI9qlZMNqCXLSw95LDxZN?=
- =?us-ascii?Q?+1mFF4L7LNr8Z80y2H296vgw1TDM8p5vTj6YU0rnaRKacue10UNRaKpU/rtH?=
- =?us-ascii?Q?co8uGVcV+RwTXeFTtFi62OJrYHxKy2Rrr2H1NfU8MViuiVfLo5Cxt/f2kcfl?=
- =?us-ascii?Q?eZZtPf7mpLBwr4yz0AvIxUzEJaWWanuJhRtf5j21Ww5WC9I7FWsuXFkwe3xc?=
- =?us-ascii?Q?1dX2yBx0UcsgJGbuATFpR0EtaLJQqjUpqwaWk9cRvBsVWrOD00M6ghuFxm9l?=
- =?us-ascii?Q?W0L6iB1pRTXIEZGKC54vqVxZ5djT2M7ZHqdx49YZuhspfW6UkSHLgZ4WRlvt?=
- =?us-ascii?Q?7cvncrvIeO58yWnLeZTcx7X7sDsrHOoQ2a3pA9KRp0ue2AWn4RUQNDZgireE?=
- =?us-ascii?Q?Tjtz3QKKnO0uAG09HHlV5ckJOXl1XziVWImO8B5rp04VqF4Z/b2Cbot2uu+K?=
- =?us-ascii?Q?vZePXsrbYL1uJEw1YGXfewXFKRwg9ziaqyZasPAYnV1QP4WhvCrN45XQHgEn?=
- =?us-ascii?Q?7BctFbDqHYQu061LMtj7LthhKewzuUgZ2rWv+Y2lMzSK6xLj330j74hTw8U/?=
- =?us-ascii?Q?pWhgnG8Gur0FLxwDitOzoJ3QVAKflhOjLWO+1N0BNQW6VAH1ecrE5uqpZ45V?=
- =?us-ascii?Q?nUyuVYnDNs2CEle7Ko6/3XLIeAUHsXbS7OTW2gn+?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	kUZvMyCjUKf3byYHzVuw1M2dxZ8wIk1ci8z3vqVLug+2FwAjbGqQQ/jNByBtlLYlQNN8XdkxvQyNQDyo2xlgVjNpk2Qi+rtz7QJFomhqdOjaSX0YvpSQZocD0PVahhDu1Mtj5lZKvXZWJYPxfSUHLZ0Knwbvk/sd4I/Nslh7hBAF5SL9fVftjPqqIH15TbBGWciEcKRisclO0mqLcsr1a9ZHNirk51uFPlxNt79SrFT4dC9bx1CwqMpie2VVih9smGjLoShnPSmw/D9YIQUUBM57N6PXuNKnbIgGFgZ9v2pG+fSiHhxbaOwrHORoAPVXPTqJ0cGZj4fRJrtE1e+LIGdRNCUi2LbRpreCSMcOmD10ntRx68SzuEoEhpZa1w+Zts9EnWv/zPHJH6FxNYONFBfPsmZDnuv/Nk8YcPVLZt8q0CNlArkGMQXWHoq1Z1bRaTDoaAGF9vy7b68JT8jTPxaQPMeF+yNIHhThxlJNmuHUNq8qu4wzVsDn2w1R6480+pScUVxMcfNH+ADpnlzbGU/l+i3LrEpeDZcakovlI8twZ8HJBR3l5nMJoH5oSBRsS66M8n0EOP1r0OX9gzDoWP3XMP6jRigpr6hfl04oVj8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3daeec47-dd61-4843-acfb-08dcde92e22d
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4269.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 01:22:42.3487
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jb0Jb7L0mpc4HBRuWW2jPjtYU8O1E0q57rd2+ZXu0u2BPHUnukVQ8zzKiOdMrNiZEZipCLvGwTZgJQoQb0NaQQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB6306
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-26_06,2024-09-26_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
- phishscore=0 bulkscore=0 adultscore=0 mlxscore=0 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2408220000 definitions=main-2409270007
-X-Proofpoint-ORIG-GUID: 58tKbUGhBIqDJ25WLRwFwMhIp_lFcmt5
-X-Proofpoint-GUID: 58tKbUGhBIqDJ25WLRwFwMhIp_lFcmt5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0b49b681-2289-412a-8969-d134ffcfb7fc@lunn.ch>
 
-> On 9/24/24 5:40 AM, Igor Mammedov wrote:
->> On Fri, 19 Apr 2024 12:17:01 -0400
->> boris.ostrovsky@oracle.com wrote:
->> 
->>> On 4/17/24 9:58 AM, boris.ostrovsky@oracle.com wrote:
->>>>
->>>> I noticed that I was using a few months old qemu bits and now I am
->>>> having trouble reproducing this on latest bits. Let me see if I can get
->>>> this to fail with latest first and then try to trace why the processor
->>>> is in this unexpected state.
->>>
->>> Looks like 012b170173bc "system/qdev-monitor: move drain_call_rcu call
->>> under if (!dev) in qmp_device_add()" is what makes the test to stop failing.
->>>
->>> I need to understand whether lack of failures is a side effect of timing
->>> changes that simply make hotplug fail less likely or if this is an
->>> actual (but seemingly unintentional) fix.
->> 
->> Agreed, we should find out culprit of the problem.
->
->
-> I haven't been able to spend much time on this unfortunately, Eric is 
-> now starting to look at this again.
->
-> One of my theories was that ich9_apm_ctrl_changed() is sending SMIs to 
-> vcpus serially while on HW my understanding is that this is done as a 
-> broadcast so I thought this could cause a race. I had a quick test with 
-> pausing and resuming all vcpus around the loop but that didn't help.
->
->
->> 
->> PS:
->> also if you are using AMD host, there was a regression in OVMF
->> where where vCPU that OSPM was already online-ing, was yanked
->> from under OSMP feet by OVMF (which depending on timing could
->> manifest as lost SIPI).
->> 
->> edk2 commit that should fix it is:
->>      https://github.com/tianocore/edk2/commit/1c19ccd5103b
->> 
->> Switching to Intel host should rule that out at least.
->> (or use fixed edk2-ovmf-20240524-5.el10.noarch package from centos,
->> if you are forced to use AMD host)
+On Thu, Sep 26, 2024 at 09:30:32PM +0200, Andrew Lunn wrote:
+> On Thu, Sep 26, 2024 at 12:13:06PM -0700, Drew Fustini wrote:
+> > On Thu, Sep 26, 2024 at 08:39:29PM +0200, Andrew Lunn wrote:
+> > > > +&mdio0 {
+> > > > +	phy0: ethernet-phy@1 {
+> > > > +		reg = <1>;
+> > > > +	};
+> > > > +
+> > > > +	phy1: ethernet-phy@2 {
+> > > > +		reg = <2>;
+> > > > +	};
+> > > > +};
+> > > 
+> > > Two PHYs on one bus...
+> > 
+> > Thanks for pointing this out. I will move phy1 to mdio1.
+> 
+> ???
+> 
+> Are you saying the two PHYs are not on the same bus?
 
-I haven't been able to reproduce the issue on an Intel host thus far,
-but it may not be an apples-to-apples comparison because my AMD hosts
-have a much higher core count.
+Sorry, this is my first time working on an Ethernet driver and I
+misunderstood.
 
->
-> I just tried with latest bits that include this commit and still was 
-> able to reproduce the problem.
->
->
->-boris
+Sipeed only shares the schematic of the baseboard for the LPi4a [1].
+There are pages for GMAC Ethernet0 and GMAC Ethernet1. Each shows 4 MDIO
+differential pairs going into a SG4301G transformer.
 
-The initial hotplug of each CPU appears to complete from the
-perspective of OVMF and OSPM. SMBASE relocation succeeds, and the new
-CPU reports back from the pen. It seems to be the later INIT-SIPI-SIPI
-sequence sent from the guest that doesn't complete.
+I believe that RTL8211F-CG phy chips are on the LM4A SoM board which
+contains the TH1520 SoC. Unfortunately, Sipeed does not provide a
+schematic of the SoM so its hard for me to inspect how the phy chips are
+wired up.
 
-My working theory has been that some CPU/AP is lagging behind the others
-when the BSP is waiting for all the APs to go into SMM, and the BSP just
-gives up and moves on. Presumably the INIT-SIPI-SIPI is sent while that
-CPU does finally go into SMM, and other CPUs are in normal mode.
+Vendor kernel [2] that Sipeed uses has:
 
-I've been able to observe the SMI handler for the problematic CPU will
-sometimes start running when no BSP is elected. This means we have a
-window of time where the CPU will ignore SIPI, and least 1 CPU is in
-normal mode (the BSP) which is capable of sending INIT-SIPI-SIPI from
-the guest.
+	mdio0 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		compatible = "snps,dwmac-mdio";
 
+		phy_88E1111_0: ethernet-phy@0 {
+			reg = <0x1>;
+		};
+
+		phy_88E1111_1: ethernet-phy@1 {
+			reg = <0x2>;
+		};
+	};
+
+so I think that does mean they are on the same MDIO bus.
+
+> 
+> > > > +		gmac1: ethernet@ffe7060000 {
+> > > > +			compatible = "thead,th1520-gmac", "snps,dwmac-3.70a";
+> > > > +			reg = <0xff 0xe7060000 0x0 0x2000>, <0xff 0xec004000 0x0 0x1000>;
+> > > > +			reg-names = "dwmac", "apb";
+> > > > +			interrupts = <67 IRQ_TYPE_LEVEL_HIGH>;
+> > > > +			interrupt-names = "macirq";
+> > > > +			clocks = <&clk CLK_GMAC_AXI>, <&clk CLK_GMAC_AXI>;
+> > > > +			clock-names = "stmmaceth", "pclk";
+> > > > +			snps,pbl = <32>;
+> > > > +			snps,fixed-burst;
+> > > > +			snps,multicast-filter-bins = <64>;
+> > > > +			snps,perfect-filter-entries = <32>;
+> > > > +			snps,axi-config = <&stmmac_axi_config>;
+> > > > +			status = "disabled";
+> > > > +
+> > > > +			mdio1: mdio {
+> > > > +				compatible = "snps,dwmac-mdio";
+> > > > +				#address-cells = <1>;
+> > > > +				#size-cells = <0>;
+> > > > +			};
+> > > > +		};
+> > > > +
+> > > > +		gmac0: ethernet@ffe7070000 {
+> > > > +			compatible = "thead,th1520-gmac", "snps,dwmac-3.70a";
+> > > > +			reg = <0xff 0xe7070000 0x0 0x2000>, <0xff 0xec003000 0x0 0x1000>;
+> > > > +			reg-names = "dwmac", "apb";
+> > > > +			interrupts = <66 IRQ_TYPE_LEVEL_HIGH>;
+> > > > +			interrupt-names = "macirq";
+> > > > +			clocks = <&clk CLK_GMAC_AXI>, <&clk CLK_GMAC_AXI>;
+> > > 
+> > > And the MACs are listed in opposite order. Does gmac1 probe first,
+> > > find the PHY does not exist, and return -EPROBE_DEFER. Then gmac0
+> > > probes successfully, and then sometime later gmac1 then reprobes?
+> > > 
+> > > I know it is normal to list nodes in address order, but you might be
+> > > able to avoid the EPROBE_DEFER if you reverse the order.
+> > 
+> > The probe order seems to always be the ethernet@ffe7060000 (gmac1) first
+> > and then ethernet@ffe7070000 (gmac0). I do not see any probe deferral
+> > in the boot log [1].
+> 
+> > [1] https://gist.github.com/pdp7/02a44b024bdb6be5fe61ac21303ab29a
+> 
+> So two PHYs are found, so they must be on the same bus.
+> 
+> It could well be that this MAC driver does not connect to the PHY
+> until the interface is opened. That is a good 30 seconds after the
+> driver probes in this log message. So there has been plenty of time
+> for the PHYs to be found.
+> 
+> What would be interesting is if you used NFS root. Then the interface
+> would be opened much faster, and you might see an EPROBE_DEFER. But
+> i'm just speculating. If it works for you, there is no need to do
+> more.
+> 
+>       Andrew
+
+I tried to setup an nfs server with a rootfs on my local network. I can
+mount it okay from my laptop so I think it is working okay. However, it
+does not seem to work on the lpi4a [3]. It appears the rgmii-id
+validation fails and the dwmac driver can not open the phy:
+
+ thead-dwmac ffe7060000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-0
+ thead-dwmac ffe7060000.ethernet eth0: validation of rgmii-id with support \
+             00,00000000,00000000,00006280 and advertisementa \
+	     00,00000000,00000000,00006280 failed: -EINVAL
+ thead-dwmac ffe7060000.ethernet eth0: __stmmac_open: Cannot attach to PHY (error: -22)
+
+I suppose that this is what you were talking about that NFS will cause
+the interface to be opened much faster.
+
+Thanks,
+Drew
+
+[1] https://dl.sipeed.com/shareURL/LICHEE/licheepi4a/02_Schematic
+[2] https://github.com/revyos/thead-kernel/blob/lpi4a/arch/riscv/boot/dts/thead/th1520-b-product.dts#L758
+[3] https://gist.github.com/pdp7/458eb93509548383beabeb21c8ffc43a
 
