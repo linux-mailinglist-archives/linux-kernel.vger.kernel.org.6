@@ -1,200 +1,421 @@
-Return-Path: <linux-kernel+bounces-341561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0089881B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:46:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 762D0988202
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69578B26316
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:46:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97CD61C22954
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE72D1BB69E;
-	Fri, 27 Sep 2024 09:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQ2WgeCV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5981BB6BC;
+	Fri, 27 Sep 2024 09:56:24 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F30A187561;
-	Fri, 27 Sep 2024 09:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8617115F3FB;
+	Fri, 27 Sep 2024 09:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727430325; cv=none; b=su7A5n5zE4fve6wdbn2PjCXsYI74poMODoLD8LdOkhGP4YaPTuWIl6THdFbsVcwqLhSIz/oYUjn7v2noIEbwlgOzcvmHtpj1f89YeFjOAGOm7/iJSB/JKu3J8LGVCAeA/F8tunYzyXPIE44fRuQUM057cUJrzA8fkdORUN2Y+k0=
+	t=1727430983; cv=none; b=CMtvB8LrN3KFomZ7eBPxiVYg6Z/plabp679GHoiRS7xmyFkfxg2eX0WGuXaK22XyHzMMpCPThDjpIeUz4OHOFYxxIZegaMRSZ9fu8ZkMOxtDPJmNCrvoyQIXK3xZeDpBtiLrD2lzdPEMtTq1t4Uygf/43Axd5+vbpnCbe7RW5bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727430325; c=relaxed/simple;
-	bh=cwf8IiiGMd/tYm41ABqY1vKY44XgS/xx0rcgCwLxuEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ucTYgt/Ek3blh14XLwbpKHcLus6jq8W7wDuyyaO7BrrUixKSTTOi4NBHh5nwav0ohyIk+emXtX6FdBIRw9DYLqNfF+eQ/JLVrrP92O8DOVD7zo3wVn0AQ6vdN38Q0ypxp78I+H5x+3LyO/bQJMueQHKEFATOayvPT4ZT9o/umf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQ2WgeCV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53229C4CEC4;
-	Fri, 27 Sep 2024 09:45:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727430325;
-	bh=cwf8IiiGMd/tYm41ABqY1vKY44XgS/xx0rcgCwLxuEk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mQ2WgeCVzDkapGr7rmirjLeMZvQ2+hGoTK4cneHRo9mSLFVJ3Rnx8wlvjiDAkEBDX
-	 DHaSFMkPAYGQ7Cl/JzVrOBtbrSNO0R1bsjGmtmWoVm6cv4RCtE54w0Htm6F8XEduCe
-	 uSWWFDFkP+a2IrGvGItIUJvKL4I5IWA7/F1Dk9oGsk+PkeiBt0JmYrVbNTkiWBduBc
-	 feJETcSw4c+2PaFgMdihdC+UL8dNJ2jM4j+ArVHQEk+XK/SulTpQmJ4cidgzfuPpX1
-	 BqLm9hnItb+cVVQ/xdJnCDsnQQs9xERH4NF4oU5RGVIit8CszBOSebkLqa4nCRT1Gb
-	 9BvCVcRSy9FZA==
-Message-ID: <339b4c83-201c-4f63-85d0-b0aa1eb164b0@kernel.org>
-Date: Fri, 27 Sep 2024 11:45:13 +0200
+	s=arc-20240116; t=1727430983; c=relaxed/simple;
+	bh=fecCblTVlXRytdY3RhI+s3PtueayGXXXGTySOz04tRg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=unPwmarCl0VB2c9KYUFuunVSRmsVWWKrREhqRGf3KThEEG/t8usejvCxfExLg950TzVpP5WgdVg5x5zcx0ZOLfOPXxPs7tN5aAQKJPsDksUbXBXsK02gg4goCA311O2J8bJ2tOpiVk8W/tn8mO/sX8r58OlddzlxZ0gB8RAD4c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XFQnw4kgzzFqwk;
+	Fri, 27 Sep 2024 17:55:48 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4F912140158;
+	Fri, 27 Sep 2024 17:56:12 +0800 (CST)
+Received: from huawei.com (10.67.174.28) by kwepemd200013.china.huawei.com
+ (7.221.188.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 27 Sep
+ 2024 17:56:11 +0800
+From: Liao Chang <liaochang1@huawei.com>
+To: <ak@linux.intel.com>, <mhiramat@kernel.org>, <oleg@redhat.com>,
+	<andrii@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
+	<acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>
+Subject: [PATCH v2] uprobes: Improve the usage of xol slots for better scalability
+Date: Fri, 27 Sep 2024 09:45:49 +0000
+Message-ID: <20240927094549.3382916-1-liaochang1@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] dt-bindings: mfd: mediatek: mt6397: Convert to DT
- schema format
-To: Macpaul Lin <macpaul.lin@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
- Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
- <olteanv@gmail.com>, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Sean Wang <sean.wang@mediatek.com>, Sen Chu <sen.chu@mediatek.com>,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Chen Zhong <chen.zhong@mediatek.com>, linux-input@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org,
- Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
- Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
- MediaTek Chromebook Upstream
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-References: <20240918064955.6518-1-macpaul.lin@mediatek.com>
- <20240918064955.6518-2-macpaul.lin@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240918064955.6518-2-macpaul.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On 18/09/2024 08:49, Macpaul Lin wrote:
-> Convert the mfd: mediatek: mt6397 binding to DT schema format.
-> 
-> MT6323, MT6358, and MT6397 are PMIC devices with multiple function
-> subdevices. They share a common PMIC design but have variations in
-> subdevice combinations.
-> 
-> Key updates in this conversion:
-> 
-> 1. RTC:
->    - Convert rtc-mt6397.txt and merge into parent MT6397 PMIC DT schema.
-> 
-> 2. Regulators:
->    - Align to generic name "regulators".
->    - Update references from .txt to .yaml for mt6323, mt6358, and mt6397
->      regulators.
->    - Simplify regulator name labels in device tree examples.
-> 
-> 3. Audio Codec:
->    - Convert sound/mt6358.txt and merge into parent MT6397 PMIC DT schema.
->    - Align to generic name "audio-codec" for codec and sound subdevices.
->    - Add "mediatek,dmic-mode" and "Avdd-supply" properties.
-> 
-> 4. Clocks:
->    - Align to generic name "clocks" for clockbuffer subdevices.
-> 
-> 5. LEDs:
->    - Convert leds-mt6323.txt and merge into parent MT6397 PMIC DT schema.
->    - Update LED binding.
-> 
-> 6. Keys:
->    - Add detailed descriptions for power and home keys.
->    - Add compatible: mediatek,mt6358-keys.
-> 
-> 7. Power Controller:
->    - Convert mt6323-poweroff.txt and merge into parent MT6397 PMIC DT
->      schema.
->    - Add #power-domain-cells property to fix dt-binding check error.
->    - Clarify "BBPU" as "Baseband power up".
-> 
-> 8. Pinctrl:
->    - Align to generic name "pinctrl" instead of "pin-controller".
-> 
-> 9. Compatible:
->    - Drop "mediatek,mt6357" since there is a separated DT Schema
->      for PMIC MT6357.
-> 
-> 10. Examples:
->    - MT6323: Retain complete examples for this PMIC.
->    - MT6358 and MT6397: simplify settings in regulators.
->     - Preserve "audio-codec", "clocks", "pinctrl", "rtc", and "keys"
->       sections as they contain typical settings for different PMICs.
-> 
-> Additional updates:
-> - MAINTAINERS: Add co-maintainers and reference to
->   mfd/mediatek,mt6397.yaml for LED and power-controller drivers.
-> - input/mediatek,pmic-keys.yaml: Update reference to
->   mfd/mediatek,mt6397.yaml.
-> 
-> Signed-off-by: Sen Chu <sen.chu@mediatek.com>
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+The uprobe handler allocates xol slot from xol_area and quickly release
+it in the single-step handler. The atomic operations on the xol bitmap
+and slot_count lead to expensive cache line bouncing between multiple
+CPUs. Given the xol slot is on the hot path for uprobe and kretprobe
+handling, the profiling results on some Arm64 machine show that nearly
+80% of cycles are spent on this. So optimizing xol slot usage will
+become important to scalability after the Andrii's series land.
 
-NAK
+This patch address this scalability issues from two perspectives:
 
-Follow up patch pointed out this is incorrect. I don't understand this
-concept of sending knowingly incorrect code, so please sort it out at v7.
+- Allocated xol slot is now saved in the thread associated utask data.
+  It allows to reuse it throughout the therad's lifetime. This avoid
+  the frequent atomic operation on the slot bitmap and slot_count of
+  xol_area data, which is the major negative impact on scalability.
 
-Best regards,
-Krzysztof
+- A garbage collection routine xol_recycle_insn_slot() is introduced to
+  reclaim unused xol slots. utask instances that own xol slot but
+  haven't reclaimed them are linked in a linked list. When xol_area runs
+  out of slots, the garbage collection routine travel the list to free
+  one slot. Allocated xol slots is marked as unused in single-step
+  handler. While the marking relies on the refcount of utask instance,
+  due to thread can't run on multiple CPUs at same time, therefore, it
+  is unlikely CPUs take the refcount of same utask, minimizing cache
+  line bouncing.
+
+  Upon thread exit, the utask is deleted from the linked-list, and the
+  associated xol slot will be free.
+
+v2->v1:
+-------
+As suggested by Andi Kleen [1], the updates to the garbage collection
+list of xol slots is not a common case. This revision replaces the
+complex lockless RCU scheme with a simple raw spinlock.
+
+Here's an explanation of the locking and refcount update scheme in the
+patch:
+
+- area->gc_lock protects the write operations on the area->gc_list. This
+  includes inserting slot into area->gc_list in xol_get_insn_slot() and
+  removing slot from area->gc_list in xol_recycle_insn_slot().
+
+- utask->slot_ref is used to track the status of uprobe_task instance
+  associated insn_slot. It has three values, the value of 1 means the
+  slot is free to use or recycle. The value of 2 means the slot is in
+  use. The value of 0 means the slot is being recycled. This design
+  ensure that slots in use aren't recycled from GC list and that slots
+  being recycled aren't available for uprobe use. For example,
+  refcount_inc_not_zero() turns the value from 1 to 2 in uprobe BRK
+  handling, Using refcount_dec() to turn it from 2 to 1 during uprobe
+  single-step handling. Using refcount_dec_if_one() to turn the value
+  from 1 to 0 when recycling slot from GC list.
+
+[1] https://lore.kernel.org/all/ZuwoUmqXrztp-Mzh@tassilo/
+
+Signed-off-by: Liao Chang <liaochang1@huawei.com>
+---
+ include/linux/uprobes.h |   4 +
+ kernel/events/uprobes.c | 177 ++++++++++++++++++++++++++++++----------
+ 2 files changed, 139 insertions(+), 42 deletions(-)
+
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index 2b294bf1881f..7a29fbe2a09f 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -77,6 +77,10 @@ struct uprobe_task {
+ 	struct uprobe			*active_uprobe;
+ 	unsigned long			xol_vaddr;
+ 
++	struct list_head		gc;
++	refcount_t			slot_ref;
++	int				insn_slot;
++
+ 	struct arch_uprobe              *auprobe;
+ 
+ 	struct return_instance		*return_instances;
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 2ec796e2f055..2d2ef2117a89 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -110,6 +110,9 @@ struct xol_area {
+ 	 * the vma go away, and we must handle that reasonably gracefully.
+ 	 */
+ 	unsigned long 			vaddr;		/* Page(s) of instruction slots */
++	struct list_head		gc_list;	/* The list for the
++							   garbage slots */
++	raw_spinlock_t			gc_lock;	/* Hold for gc_list */
+ };
+ 
+ static void uprobe_warn(struct task_struct *t, const char *msg)
+@@ -1551,6 +1554,8 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
+ 
+ 	area->vaddr = vaddr;
+ 	init_waitqueue_head(&area->wq);
++	INIT_LIST_HEAD(&area->gc_list);
++	raw_spin_lock_init(&area->gc_lock);
+ 	/* Reserve the 1st slot for get_trampoline_vaddr() */
+ 	set_bit(0, area->bitmap);
+ 	atomic_set(&area->slot_count, 1);
+@@ -1626,37 +1631,107 @@ void uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm)
+ 	}
+ }
+ 
++/*
++ * Use the slot_ref to track the status of utask and avoid racing on
++ * the insn_slot field of utask instances linked on area->gc_list.
++ *  - 1->2, insn_slot is in use.
++ *  - 1->0, insn_slot is being recycled.
++ *  - 2->1, insn_slot is free to use or recycle.
++ */
++static __always_inline
++struct uprobe_task *test_and_get_task_slot(struct uprobe_task *utask)
++{
++	return refcount_inc_not_zero(&utask->slot_ref) ? utask : NULL;
++}
++
++static __always_inline
++struct uprobe_task *test_and_put_task_slot(struct uprobe_task *utask)
++{
++	return refcount_dec_if_one(&utask->slot_ref) ? utask : NULL;
++}
++
++static __always_inline
++void put_task_slot(struct uprobe_task *utask)
++{
++	refcount_dec(&utask->slot_ref);
++}
++
++static __always_inline
++int recycle_utask_slot(struct uprobe_task *utask, struct xol_area *area)
++{
++	int slot = UINSNS_PER_PAGE;
++
++	/*
++	 * Ensure that the slot is not in use on other CPU. However, this
++	 * check is unnecessary when called in the context of an exiting
++	 * thread. See xol_free_insn_slot() called from uprobe_free_utask()
++	 * for more details.
++	 */
++	if (test_and_put_task_slot(utask)) {
++		list_del(&utask->gc);
++		clear_bit(utask->insn_slot, area->bitmap);
++		atomic_dec(&area->slot_count);
++		utask->insn_slot = UINSNS_PER_PAGE;
++		refcount_set(&utask->slot_ref, 1);
++	}
++
++	return slot;
++}
++
++/*
++ * xol_recycle_insn_slot - recycle a slot from the garbage collection list.
++ */
++static int xol_recycle_insn_slot(struct xol_area *area)
++{
++	struct uprobe_task *utask;
++	int slot = UINSNS_PER_PAGE;
++
++	raw_spin_lock(&area->gc_lock);
++	list_for_each_entry(utask, &area->gc_list, gc) {
++		slot = recycle_utask_slot(utask, area);
++		if (slot != UINSNS_PER_PAGE)
++			break;
++	}
++	raw_spin_unlock(&area->gc_lock);
++
++	return slot;
++}
++
+ /*
+  *  - search for a free slot.
+  */
+-static unsigned long xol_take_insn_slot(struct xol_area *area)
++static int xol_take_insn_slot(struct xol_area *area)
+ {
+-	unsigned long slot_addr;
+ 	int slot_nr;
+ 
+ 	do {
+ 		slot_nr = find_first_zero_bit(area->bitmap, UINSNS_PER_PAGE);
+-		if (slot_nr < UINSNS_PER_PAGE) {
+-			if (!test_and_set_bit(slot_nr, area->bitmap))
+-				break;
+-
+-			slot_nr = UINSNS_PER_PAGE;
+-			continue;
++		if (slot_nr == UINSNS_PER_PAGE) {
++			/* It recycles slot from GC list upon area runs out */
++			slot_nr = xol_recycle_insn_slot(area);
+ 		}
+-		wait_event(area->wq, (atomic_read(&area->slot_count) < UINSNS_PER_PAGE));
++
++		if (slot_nr == UINSNS_PER_PAGE)
++			wait_event(area->wq,
++				   (atomic_read(&area->slot_count) <
++				    UINSNS_PER_PAGE));
++		else if (!test_and_set_bit(slot_nr, area->bitmap))
++			break;
++
++		slot_nr = UINSNS_PER_PAGE;
+ 	} while (slot_nr >= UINSNS_PER_PAGE);
+ 
+-	slot_addr = area->vaddr + (slot_nr * UPROBE_XOL_SLOT_BYTES);
+ 	atomic_inc(&area->slot_count);
+ 
+-	return slot_addr;
++	return slot_nr;
+ }
+ 
+ /*
+  * xol_get_insn_slot - allocate a slot for xol.
+  * Returns the allocated slot address or 0.
+  */
+-static unsigned long xol_get_insn_slot(struct uprobe *uprobe)
++static unsigned long xol_get_insn_slot(struct uprobe_task *utask,
++				       struct uprobe *uprobe)
+ {
+ 	struct xol_area *area;
+ 	unsigned long xol_vaddr;
+@@ -1665,16 +1740,46 @@ static unsigned long xol_get_insn_slot(struct uprobe *uprobe)
+ 	if (!area)
+ 		return 0;
+ 
+-	xol_vaddr = xol_take_insn_slot(area);
+-	if (unlikely(!xol_vaddr))
++	/*
++	 * The racing on the utask associated slot_ref can occur unless the
++	 * area runs out of slots. This isn't a common case. Even if it does
++	 * happen, the scalability bottleneck will shift to another point.
++	 */
++	if (!test_and_get_task_slot(utask))
+ 		return 0;
+ 
++	if (utask->insn_slot == UINSNS_PER_PAGE) {
++		utask->insn_slot = xol_take_insn_slot(area);
++		raw_spin_lock(&area->gc_lock);
++		list_add(&utask->gc, &area->gc_list);
++		raw_spin_unlock(&area->gc_lock);
++	}
++
++	xol_vaddr = area->vaddr + (utask->insn_slot * UPROBE_XOL_SLOT_BYTES);
++
+ 	arch_uprobe_copy_ixol(area->page, xol_vaddr,
+ 			      &uprobe->arch.ixol, sizeof(uprobe->arch.ixol));
+ 
+ 	return xol_vaddr;
+ }
+ 
++/*
++ * xol_delay_free_insn_slot - Make the slot available for garbage collection
++ */
++static void xol_delay_free_insn_slot(void)
++{
++	struct xol_area *area = current->mm->uprobes_state.xol_area;
++
++	/*
++	 * This refcount would't cause expensive cache line bouncing
++	 * between CPUs, as it is unlikely that multiple CPUs take the
++	 * slot_ref of same utask.
++	 */
++	put_task_slot(current->utask);
++	if (waitqueue_active(&area->wq))
++		wake_up(&area->wq);
++}
++
+ /*
+  * xol_free_insn_slot - If slot was earlier allocated by
+  * @xol_get_insn_slot(), make the slot available for
+@@ -1683,35 +1788,21 @@ static unsigned long xol_get_insn_slot(struct uprobe *uprobe)
+ static void xol_free_insn_slot(struct task_struct *tsk)
+ {
+ 	struct xol_area *area;
+-	unsigned long vma_end;
+-	unsigned long slot_addr;
+ 
+ 	if (!tsk->mm || !tsk->mm->uprobes_state.xol_area || !tsk->utask)
+ 		return;
+ 
+-	slot_addr = tsk->utask->xol_vaddr;
+-	if (unlikely(!slot_addr))
+-		return;
+-
+ 	area = tsk->mm->uprobes_state.xol_area;
+-	vma_end = area->vaddr + PAGE_SIZE;
+-	if (area->vaddr <= slot_addr && slot_addr < vma_end) {
+-		unsigned long offset;
+-		int slot_nr;
+-
+-		offset = slot_addr - area->vaddr;
+-		slot_nr = offset / UPROBE_XOL_SLOT_BYTES;
+-		if (slot_nr >= UINSNS_PER_PAGE)
+-			return;
+ 
+-		clear_bit(slot_nr, area->bitmap);
+-		atomic_dec(&area->slot_count);
+-		smp_mb__after_atomic(); /* pairs with prepare_to_wait() */
+-		if (waitqueue_active(&area->wq))
+-			wake_up(&area->wq);
++	raw_spin_lock(&area->gc_lock);
++	recycle_utask_slot(tsk->utask, area);
++	raw_spin_unlock(&area->gc_lock);
+ 
+-		tsk->utask->xol_vaddr = 0;
+-	}
++	smp_mb__after_atomic(); /* pairs with prepare_to_wait() */
++	if (waitqueue_active(&area->wq))
++		wake_up(&area->wq);
++
++	tsk->utask->xol_vaddr = 0;
+ }
+ 
+ void __weak arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+@@ -1792,8 +1883,12 @@ void uprobe_free_utask(struct task_struct *t)
+  */
+ static struct uprobe_task *get_utask(void)
+ {
+-	if (!current->utask)
++	if (!current->utask) {
+ 		current->utask = kzalloc(sizeof(struct uprobe_task), GFP_KERNEL);
++		current->utask->insn_slot = UINSNS_PER_PAGE;
++		INIT_LIST_HEAD(&current->utask->gc);
++		refcount_set(&current->utask->slot_ref, 1);
++	}
+ 	return current->utask;
+ }
+ 
+@@ -1991,7 +2086,7 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
+ 	if (!try_get_uprobe(uprobe))
+ 		return -EINVAL;
+ 
+-	xol_vaddr = xol_get_insn_slot(uprobe);
++	xol_vaddr = xol_get_insn_slot(utask, uprobe);
+ 	if (!xol_vaddr) {
+ 		err = -ENOMEM;
+ 		goto err_out;
+@@ -2001,10 +2096,8 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
+ 	utask->vaddr = bp_vaddr;
+ 
+ 	err = arch_uprobe_pre_xol(&uprobe->arch, regs);
+-	if (unlikely(err)) {
+-		xol_free_insn_slot(current);
++	if (unlikely(err))
+ 		goto err_out;
+-	}
+ 
+ 	utask->active_uprobe = uprobe;
+ 	utask->state = UTASK_SSTEP;
+@@ -2353,7 +2446,7 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
+ 	put_uprobe(uprobe);
+ 	utask->active_uprobe = NULL;
+ 	utask->state = UTASK_RUNNING;
+-	xol_free_insn_slot(current);
++	xol_delay_free_insn_slot();
+ 
+ 	spin_lock_irq(&current->sighand->siglock);
+ 	recalc_sigpending(); /* see uprobe_deny_signal() */
+-- 
+2.34.1
 
 
