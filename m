@@ -1,120 +1,137 @@
-Return-Path: <linux-kernel+bounces-342113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91E2988AB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:24:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B79988ACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 21:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A5C728314C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:24:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90FE21C2290D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 19:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB301C2335;
-	Fri, 27 Sep 2024 19:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qix9VuY3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H328Pc8C"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDD61C243D;
+	Fri, 27 Sep 2024 19:36:38 +0000 (UTC)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3DD1C2323
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6231C242F
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727465085; cv=none; b=dqBPVc2o+Qe4E/9+jso6vkdMkyOQjFBa1128txNQ82iP3magoqj39wzULEsj0tninjfFgtF5+UQ9casshsrTEmRsAb2e4Mb9585KlR2u6WwA9q1m4KXIOsMlFuhg+2qJKXb/MtTBq/4ArKhUq3QTGcjKuZhaYokij1gkm1Tm2Rk=
+	t=1727465798; cv=none; b=lK0YMTDa0B7v0B2HNYlqpa8d9QSqOimK22C6qnYQDVEnN+jAHfX9syKFFeVTbBWZ05NaLlY6p4PC3HgBonvgkXlaI8DrlZVLWhWere6e885F+IvChw3QWq11JWp9eGGMJ90LG3+lon0n2/ap+NqHDZUaCbuUdtuXknVY/NjDhe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727465085; c=relaxed/simple;
-	bh=BnVvJPg0q+ucLQBn9QzNWpsLwSSHsWnQ0QJjvTi8wzw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AEloD9bo9qHAVfpssa6CVldXYC6PgqTnHwPjBn+KBjX3w8uXrY9lg68MJF1lUpAJK2AIyxUyolGt+PSu3BC/rHHFeRT/vPOSTG36MAJFF9G5LJQLED2EdmTY2FnFFi810Xv5OVTIvYsmvv0AmK2UW3YRwpcSP+m/ax01xr+a1Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qix9VuY3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H328Pc8C; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727465081;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F1ga0MGIrO4qo0RmiWY7ZcyKIypxbEhP6no11WpHP7A=;
-	b=qix9VuY3aFkNjQpp09NLUS2qB1mlJXInvnXBod9UTswORzrLn+eFNubpLKEd9OpZrK9uHv
-	PZ1LHsx01LwPEhtaqXJa3Gh0jBu6e1C1XXEicTo5w8Js+gD60qmXCXq9JgU8glVxTwAbku
-	4fujbPYWn/VlmajiIzzL+2+U+PMrY4cgHtN3FDMo9crLyboIMK4xfXR4gPoe3m4ReBN6JZ
-	Hjv+LhgC7rCYbeuJ7G4yG+5PwMbuYqBSM3vYCaNUB/aiYJN2x3PZ/JJmV12XegYduhAvrb
-	aH8lMtKHGDlPyKYBYYxoB49aGpzowOn/DLIyg4POI7h9TBHKPuQm1t1fGrGtWA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727465081;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F1ga0MGIrO4qo0RmiWY7ZcyKIypxbEhP6no11WpHP7A=;
-	b=H328Pc8CzP228AFK3jQSywn8u9AUmTDD4C1tpcAS0d9fQJQb5rtGXHPVeXvlhQWqU41cIP
-	OTglQKznu/9mDrCg==
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
- John Stultz <jstultz@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Oleg
- Nesterov <oleg@redhat.com>
-Subject: Re: [patch v4 00/27] posix-timers: Cure the SIG_IGN mess
-In-Reply-To: <87o749xisy.fsf@email.froward.int.ebiederm.org>
-References: <20240927083900.989915582@linutronix.de>
- <87o749xisy.fsf@email.froward.int.ebiederm.org>
-Date: Fri, 27 Sep 2024 21:24:41 +0200
-Message-ID: <87y13c293a.ffs@tglx>
+	s=arc-20240116; t=1727465798; c=relaxed/simple;
+	bh=sC4hFjNlUQ0SDOPno3iCpmpUA7Dfvp5eJOCGaC/tLS8=;
+	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=mL8wG5ObpclnZfSfJIMMopCjWfqkRM+jNm0F2hM5qRIpezZ7iHWvbqVy3ABcBfmGsqX7fnvrD+srwBZmQsP6yh30ivTJ6DKK4wIf3sxWCxH9+HJtMU4sdb1Lj+f4xvVAfLKSv2LOzoBzPzlnyR14uGOAkQy0Zb7iV4xHvsww52o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 91DA064CD861;
+	Fri, 27 Sep 2024 21:28:13 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id 0tq4pwMvCWFM; Fri, 27 Sep 2024 21:28:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 0E2D064CD864;
+	Fri, 27 Sep 2024 21:28:13 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 5E4KcxzTF_hK; Fri, 27 Sep 2024 21:28:12 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id E0E3764CD861;
+	Fri, 27 Sep 2024 21:28:12 +0200 (CEST)
+Date: Fri, 27 Sep 2024 21:28:12 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: torvalds <torvalds@linux-foundation.org>
+Cc: linux-um <linux-um@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <1875454673.111023.1727465292786.JavaMail.zimbra@nod.at>
+Subject: [GIT PULL] UML updates for v6.12-rc1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF130 (Linux)/8.8.12_GA_3809)
+Thread-Index: xCpkD3WT7efuMYU9z9yiA7gEewPKjA==
+Thread-Topic: UML updates for v6.12-rc1
 
-On Fri, Sep 27 2024 at 09:39, Eric W. Biederman wrote:
-> I have stopped looking at this after patch 4.
->
-> The current code can and does handle userspace injecting a signal with
-> si_sys_private sent to an non-zero value using rt_sigqueueinfo(2) and
-> that value will be delivered to userspace.
->
-> I think the at least the ability to inject such a signal (ignoring
-> si_sys_private) is very interesting for debuggers and checkpoint restart
-> applications.
->
-> I get the feeling the rest of the patch series depends upon not
-> supporting userspace injecting signals with si_code == SI_TIMER.  That
-> seems unnecessary.
->
-> It seems reasonable to depend upon something like the SIGQUEUE_PREALLOC
-> in the flags field of struct sigqueue to detect a kernel generated
-> signal.  Rather than adding various hacks to make everything work
-> with just a struct kernel_siginfo_t.  Especially as the timer signals
-> today are the only signals that are preallocated.
+Linus,
 
-Fair enough.
+The following changes since commit 431c1646e1f86b949fa3685efc50b660a364c2b6:
 
-> Is there any chance 18/27 posix-timers: Embed sigqueue in struct k_itimer
-> can be moved up?
->
-> That should allow removing the reliance on si_sys_private.
->
-> That should prevent the need to add another hack with sys_private_ptr in
-> struct kernel_siginfo
->
-> Perhaps what needs to happen is to update collect_signal to return the
-> sigqueue entry (if it was preallocated), instead of the resched_timer.
-> Then the timer code can just use container_of to get the struct
-> k_itimer?
->
-> After that si_sys_private can move into struct k_itimer, and the code
-> won't need to worry about userspace setting that value, or about needing
-> to clear that value.  As si_sys_private will always be 0 in preallocated
-> signals.
+  Linux 6.11-rc6 (2024-09-01 19:46:02 +1200)
 
-Let me try that.
+are available in the Git repository at:
 
-Thanks for taking a look!
+  git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linus-6.12-rc1
 
-       tglx
+for you to fetch changes up to 381d2f95c8aa575d5d42bf1fe0ea9a70c4bec0cf:
+
+  um: fix time-travel syscall scheduling hack (2024-09-12 20:46:23 +0200)
+
+----------------------------------------------------------------
+This pull request contains the following changes for UML:
+
+- Removal of dead code (TT mode leftovers, etc.)
+- Fixes for the network vector driver
+- Fixes for time-travel mode
+
+----------------------------------------------------------------
+Anton Ivanov (2):
+      um: vector: Replace locks guarding queue depth with atomics
+      um: vector: Fix NAPI budget handling
+
+Gaosheng Cui (1):
+      um: Remove obsoleted declaration for execute_syscall_skas
+
+Johannes Berg (3):
+      um: remove variable stack array in os_rcv_fd_msg()
+      um: remove ARCH_NO_PREEMPT_DYNAMIC
+      um: fix time-travel syscall scheduling hack
+
+Renzo Davoli (2):
+      vector_user: add VDE support
+      user_mode_linux_howto_v2: add VDE vector support in doc
+
+Tiwei Bie (7):
+      um: Remove unused kpte_clear_flush macro
+      um: Remove the redundant newpage check in update_pte_range
+      um: Remove unused fields from thread_struct
+      um: Remove unused mm_fd field from mm_id
+      um: Remove the call to SUBARCH_EXECVE1 macro
+      um: Remove the declaration of user_thread function
+      um: Remove outdated asm/sysrq.h header
+
+ .../virt/uml/user_mode_linux_howto_v2.rst          |  37 ++++
+ arch/um/Kconfig                                    |   1 -
+ arch/um/drivers/vector_kern.c                      | 212 +++++++++++----------
+ arch/um/drivers/vector_kern.h                      |   4 +-
+ arch/um/drivers/vector_user.c                      |  83 ++++++++
+ arch/um/include/asm/pgtable.h                      |   7 -
+ arch/um/include/asm/processor-generic.h            |  20 +-
+ arch/um/include/asm/sysrq.h                        |   8 -
+ arch/um/include/shared/skas/mm_id.h                |   5 +-
+ arch/um/include/shared/skas/skas.h                 |   2 -
+ arch/um/kernel/exec.c                              |   3 -
+ arch/um/kernel/process.c                           |   8 +-
+ arch/um/kernel/reboot.c                            |   2 +-
+ arch/um/kernel/skas/mmu.c                          |  12 +-
+ arch/um/kernel/skas/process.c                      |   4 +-
+ arch/um/kernel/skas/syscall.c                      |  34 ++--
+ arch/um/kernel/sysrq.c                             |   1 -
+ arch/um/kernel/time.c                              |   2 +-
+ arch/um/kernel/tlb.c                               |  16 +-
+ arch/um/os-Linux/file.c                            |   8 +-
+ arch/um/os-Linux/skas/mem.c                        |   2 +-
+ arch/um/os-Linux/skas/process.c                    |   2 +-
+ arch/x86/um/sysrq_32.c                             |   1 -
+ arch/x86/um/sysrq_64.c                             |   1 -
+ 24 files changed, 286 insertions(+), 189 deletions(-)
+ delete mode 100644 arch/um/include/asm/sysrq.h
 
