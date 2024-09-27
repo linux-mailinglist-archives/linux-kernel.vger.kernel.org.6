@@ -1,131 +1,154 @@
-Return-Path: <linux-kernel+bounces-341761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8F39885AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:54:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387579885B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 14:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2761F1F24218
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:54:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9258A2838FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 12:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3FA18C92D;
-	Fri, 27 Sep 2024 12:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2994018C92D;
+	Fri, 27 Sep 2024 12:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dKB7Ma40";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/NF0xsi3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dKB7Ma40";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/NF0xsi3"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="cpYTVPJN"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B371116D9AA;
-	Fri, 27 Sep 2024 12:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C6F18C34D
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727441686; cv=none; b=TeeVMzGOXsRtFYEpkTEH9HlQKQHpEE4TpDO1C15C97racLhNXwZzZeOTbTCNJiVLxgtal3c00O9qhCqa2QVmVjLo9q30b1ea1v8AX8mHPozKKKRhIbPZ3ViIwyVdNsUIHy9b7Nxer/DEwdocj1AKx9EzTlkLXxdgI6f8ny9o080=
+	t=1727441714; cv=none; b=afN0hKMzSRwWyu2+v9gsuqCfVt+PVwj1zzMpRrtozchgCLr5ND0hfvFThvS2CLc/upgFtC4nk/T4EeZSInMSIPbzKey9on61gjLR+IDRHjB3yOSb8Ao67WDxlBC5DLGcQH8P+YUHjc033f36435QtPjhLvM8t98Az7Wg0fKXivE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727441686; c=relaxed/simple;
-	bh=InK0PDJWlx6THXOea6wr9PRfOwmr38Y9USw+wLa2e+c=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ZxmBo70OatbelG+BI6KhGvuk1XLf11sKTItKXXwPPqi02BQ95kX4iu/NGIkDvssZvid8kte4HSuwMtxq+LpRImNrjeLBPyc31xOJ1ouHD5JPp4aCu4VSX9pT1wund9SHn7rTBK6/y005hk5r448TlgL480+AmcZSV2Ugu18xvWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dKB7Ma40; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/NF0xsi3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dKB7Ma40; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/NF0xsi3; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	s=arc-20240116; t=1727441714; c=relaxed/simple;
+	bh=XIIAM18PIWY1uWyT4rOqqfqO716IvFJ3bHm8Si4kxpg=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qnx9L6SM6TjBsMm6/ZePPFl5aiDtek7EqASi5xoTFi2uEhIiXvWS4AiiOasVMgXd66F1NlYoHtcC3cWj1/wChmAFzl36mB+Std6YyB9CotUHRN0ruLV/pKHjco19nxhbJbW8jF0TgO77zX+EE5U77soLMhYH1ZK+e5ciYTv8rwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=cpYTVPJN; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 16A8121BC8;
-	Fri, 27 Sep 2024 12:54:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727441683; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=InK0PDJWlx6THXOea6wr9PRfOwmr38Y9USw+wLa2e+c=;
-	b=dKB7Ma40+Yo8V8o2fJihqQuaIGXVk12F9LSFifur9DTmtLUFxPEZaIMffaw50TXH97pae/
-	KLzF/xkM7ZcUKTeGKhcqTPyO6VxBKE7kOKoBiWQiPbWe7LfBcFWdGJc0i13eqv7O4GoisX
-	CLT8I8aYcTDQrELAQANRK+EYDVJBA3g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727441683;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=InK0PDJWlx6THXOea6wr9PRfOwmr38Y9USw+wLa2e+c=;
-	b=/NF0xsi3NqgY44cZF6oiLYworOTahK7/ahcUsD3D3CyNdO3rnvGMLpap9T+EwN5WTrPWjt
-	WzLODVapSOeBZXAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727441683; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=InK0PDJWlx6THXOea6wr9PRfOwmr38Y9USw+wLa2e+c=;
-	b=dKB7Ma40+Yo8V8o2fJihqQuaIGXVk12F9LSFifur9DTmtLUFxPEZaIMffaw50TXH97pae/
-	KLzF/xkM7ZcUKTeGKhcqTPyO6VxBKE7kOKoBiWQiPbWe7LfBcFWdGJc0i13eqv7O4GoisX
-	CLT8I8aYcTDQrELAQANRK+EYDVJBA3g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727441683;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=InK0PDJWlx6THXOea6wr9PRfOwmr38Y9USw+wLa2e+c=;
-	b=/NF0xsi3NqgY44cZF6oiLYworOTahK7/ahcUsD3D3CyNdO3rnvGMLpap9T+EwN5WTrPWjt
-	WzLODVapSOeBZXAg==
-Date: Fri, 27 Sep 2024 14:54:43 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Michael Vetter <mvetter@suse.com>
-cc: linux-kselftest@vger.kernel.org, live-patching@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] selftests: livepatch: test livepatching a kprobed
- function
-In-Reply-To: <20240920115631.54142-4-mvetter@suse.com>
-Message-ID: <alpine.LSU.2.21.2409271453340.15317@pobox.suse.cz>
-References: <20240920115631.54142-1-mvetter@suse.com> <20240920115631.54142-4-mvetter@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id CCC3E3F135
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 12:55:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727441706;
+	bh=sSmJYgv7I+zUFEDVZuQHO2YXTAln9N/geQIOSH+hGyE=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=cpYTVPJNTX0sqbyrMEJRO/uVjz2otErD6UKsNj5Ar1mFDwh5wFPV+z1lFG9GFas+t
+	 sHxYZTmUUDHGZAI7XUxtI3NVLMW9k2oSKf7AL1Rdk3nvJ8dwAUc6feCond7OClug3o
+	 kDbSHAZ4kk1efruWv2WZUPA76AkNgsr5xoJgnAYWbfzmyhAwqPgSSJH1MfQ502bmq7
+	 1Dp9jwzS6ngF9wL7LdL1qDYl4PvQD/dTUoYgEE/0PDAxahJkISnUmUBW1s5zXhkGfo
+	 17OpLxRlchX0EJzfBhoBejqMEqdmyl6HHhlesT24gqi8tpNbsbhforB5Vt//051NoO
+	 8PIEyS7GD5aLw==
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5e1d2056d62so1604309eaf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 05:55:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727441705; x=1728046505;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sSmJYgv7I+zUFEDVZuQHO2YXTAln9N/geQIOSH+hGyE=;
+        b=EcIyuH4MA96Hc4LrTq172n4uKlkkgvQuaBiPP6/ezMy0L4cJdM1mNLDxiTCA9VfimW
+         Ph5MY5GWT2CfR/SlOKnLTPov909eKplwdObP7ohX7zt9QkshMio0r3eiH4RSXz3dIT9n
+         97voX/ZuWgtvRjshROuuwbCUEouLUxh/FbEZ3VnSrZa/pdW5hEihE5WuwYzrJ/V913ul
+         MrItz+3VUYtKEzk0pfS2z8ie4XbiFhegjbD8BN0SNKrIv3P1JyweUHilCttGYgTcCr5I
+         QDvc1xmb60KZFxkVRGPDLxCSrZIWauQ4ymvCu0paJXVnan7Vpl3cG/FosEa6BShCmlAs
+         6cvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbQ5pGFsnm5ZORF9LuPucOLNHQ2yO5YiWKlO4oHluDz6rdGgDM5z1daICSRY/mX4Evjl8uWSzUjMKxzdg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSmQxPFMeGSKXj29FxU7i4mHutk3tffUs+c6/4G2Aik/IkEsNd
+	4ThoqGT1eMK/bq+i0UJFZbbzM0CUQyUOl2qnm2xIrAIkuQqcrQVOfFyYbJNbbifJNHM1KvzADIi
+	LqyyfPWgWCV+VT2wK1ikluqwDGs0saIWgi5pvcGsqZFXG3K961G3RphFOMQknIkAkNIC987ouVB
+	2tiGmbp7dKEozba4lXccNSVdmvDwTYMEZA5E7+eB6J1JkEfS7D4wex
+X-Received: by 2002:a05:6871:890e:b0:27b:66ea:add7 with SMTP id 586e51a60fabf-287109f5bb4mr2306166fac.4.1727441705659;
+        Fri, 27 Sep 2024 05:55:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFq2edOIUBYR+Xf5m9TknVcpYnAPqK6sQBsqv8AamrOSSkCMEyyDtCAwOwZQ7rY9zd/qv/ETMaRzLJy5zKgxVE=
+X-Received: by 2002:a05:6871:890e:b0:27b:66ea:add7 with SMTP id
+ 586e51a60fabf-287109f5bb4mr2306155fac.4.1727441705340; Fri, 27 Sep 2024
+ 05:55:05 -0700 (PDT)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 27 Sep 2024 05:55:04 -0700
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <20240926-th1520-dwmac-v2-3-f34f28ad1dc9@tenstorrent.com>
+References: <20240926-th1520-dwmac-v2-0-f34f28ad1dc9@tenstorrent.com> <20240926-th1520-dwmac-v2-3-f34f28ad1dc9@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -4.29
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.19)[-0.948];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[pobox.suse.cz:mid,pobox.suse.cz:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Mime-Version: 1.0
+Date: Fri, 27 Sep 2024 05:55:04 -0700
+Message-ID: <CAJM55Z-FLmpFfisNpJi8FP7o_5mwoDa7r18VXW7u7nF0V6oiRw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] riscv: dts: thead: Add TH1520 ethernet nodes
+To: Drew Fustini <dfustini@tenstorrent.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Drew Fustini <drew@pdp7.com>, 
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Drew Fustini wrote:
+> From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+>
+> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> [drew: change apb registers from syscon to second reg of gmac node]
+> [drew: add phy reset delay properties for beaglev ahead]
+> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+> ---
+>  arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts |  91 ++++++++++++++
+>  .../boot/dts/thead/th1520-lichee-module-4a.dtsi    | 135 +++++++++++++++++++++
+>  arch/riscv/boot/dts/thead/th1520.dtsi              |  50 ++++++++
+>  3 files changed, 276 insertions(+)
 
-On Fri, 20 Sep 2024, Michael Vetter wrote:
+...
 
-> +# Kprobe a function and verify that we can't livepatch that same function
-> +# when it uses a post_handler since only one IPMODIFY maybe be registered
-> +# to any given function at a time.
+> diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
+> index ca84bc2039ef..d9d2e1f4dc68 100644
+> --- a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
+> +++ b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
+> @@ -11,6 +11,11 @@ / {
+>  	model = "Sipeed Lichee Module 4A";
+>  	compatible = "sipeed,lichee-module-4a", "thead,th1520";
+>
+> +	aliases {
+> +		ethernet0 = &gmac0;
+> +		ethernet1 = &gmac1;
+> +	};
 > +
-> +start_test "livepatch interaction with kprobed function with post_handler"
+>  	memory@0 {
+>  		device_type = "memory";
+>  		reg = <0x0 0x00000000 0x2 0x00000000>;
+> @@ -25,6 +30,16 @@ &osc_32k {
+>  	clock-frequency = <32768>;
+>  };
+>
+> +&dmac0 {
+> +	status = "okay";
+> +};
 > +
-> +echo 1 > /sys/kernel/debug/kprobes/enabled
+> +&aogpio {
+> +	gpio-line-names = "", "", "",
+> +			  "GPIO00",
+> +			  "GPIO04";
+> +};
+> +
 
-opencoded here again.
+These GPIO line names does not belong in this patch. They should
+already be included in your other patchset adding the names for the
+other lines.
 
-The rest looks good to me.
-
-Miroslav
+/Emil
 
