@@ -1,164 +1,130 @@
-Return-Path: <linux-kernel+bounces-342195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153A4988B70
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:46:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D75B988B78
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 22:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E3E91C21555
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:46:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1A6BB24EED
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 20:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CF61C32F7;
-	Fri, 27 Sep 2024 20:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B181C2DBA;
+	Fri, 27 Sep 2024 20:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Dp88WDvA"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OV5lJ64d"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2515C1C32E2
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 20:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C316D1C2449
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 20:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727469951; cv=none; b=Xx0VCpF55qmO9hSEWAnXLNlhOkIRo3gjfIYwFqI2E7HlOn2JZG3tNNZYBHd8he8fWojRwV52Wd9gQ+7uZgelbjJDIa9GQ5pt/vGh8yOYA8vlk0f6ebJfiDAxp784HmZzuOK44QRkd5qWX/7QYl2aZv7+iR+8QNyULdTgvGGSs74=
+	t=1727469996; cv=none; b=hO6H5rYdbBsGqPnCOeKrs5zlHUjtOS3Y9b3YbiV7Ohu1kE6cBYgUQ4IGqiF8CkO1+hs8qBuNan7ET/6g/VmGywCA2sIjO+blvSxCs0X98KB5W1ptUuSJTpRmQeaLHSpzkdEPUtP3ZZs9DlGRUSXdx6xebuW8BzaLNihPizuiSNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727469951; c=relaxed/simple;
-	bh=6Of1VxGdAUu5212I6xyD0qz6mSisX0o6Xz6i9ngeA6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p4lO4AtcdxN+dcquHHFdLiotEs/xpAnehy3gwQI4m6Tb616AdbqELWcVIWejGIFrBrSwtpif2ajffpSWRdvdnZ/H9e8TK/FgJ1xMsuxFzQ1swc4oeo1qqlsA/K7r7siNZeGjLoyapUWTyzJup/O6HtddKg0v5GH1vsTGAKebWnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Dp88WDvA; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a0c8b81b4eso10771635ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 13:45:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727469949; x=1728074749; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ELeUhyHEhkX/mXAg1aV0b4XCeqINhoTNbiqlv9cXJu0=;
-        b=Dp88WDvAg+uodPTF8RxbmEWY5PVWhc2ztmEvdLiYXxQT3v8Eps9Of3Jlf8Mr+7ITRA
-         zyvzCRq9SgKd4Od4k4ds509MdH2tpIxDHrcowqZW9Ne4JLjXMYOSwStIgY+vqBTvKX9d
-         q49nIqM3xrtvJxlKa53Fz3zWxXELVkb86Ob88=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727469949; x=1728074749;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ELeUhyHEhkX/mXAg1aV0b4XCeqINhoTNbiqlv9cXJu0=;
-        b=rIM7S2yxkYJBMfJ74ooQ/u5lyD4E9KjxuZm3O9eiRPPXb14rnMKccb+4UVRQePgE0p
-         5sQQw9G4Xr1Eaysz1MLs3Cw6tSFgbMddwdH3MBEqyudVXjwr+P+v6I30cgMIg8V5ptoc
-         TstTG9A9Uv4xM8LzvZrH/uz7VOPB4odo4Nvfhw3OOHbZ6ajmk6b9WDFEdHOXJuDZknqV
-         NqF2f86Gg8k6Bx+zCbGPocx+YMlPyiD4MOheQ/T4b45DN8ygZEFNN/OI9wLb+JZGYNQ0
-         rjYOd9yA64lcIS8AiS/ZmoKh3Kodvj3qmBzlQaELiXXyIZ6mD32mqMvTMimuP6AYTjvQ
-         No9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVNJXJYjPWZdKkkswCHKUD/xnueXJ1097NEszzZ6RWQMWsoPH/+50fuUNi+LkLZh47Fuk0WTOCy1xk/61o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcSBPFXmcyEpfxHIF5jSAQYxltmGeuAECpchukyFkw6FdNEdG1
-	IvmGpN0mCs8uKwsvYxDk01AD63DOsct3Ju4rz8N0q15ULsz5CKUBmPkBpZqWnw1J8T80X4inXuz
-	p
-X-Google-Smtp-Source: AGHT+IG8H8BaLurHSTTAfNxUSV4X7fVN3L5lrZqFFO8rs0RzP2N+Y+8YF1zbMMAzEzM94iNQwXnCAg==
-X-Received: by 2002:a05:6e02:12ee:b0:3a3:445d:f711 with SMTP id e9e14a558f8ab-3a344fc8ff7mr59088925ab.0.1727469949083;
-        Fri, 27 Sep 2024 13:45:49 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d888849ca8sm694390173.41.2024.09.27.13.45.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 13:45:48 -0700 (PDT)
-Message-ID: <6f5a5b5f-71a7-4ed3-8cb3-d930bbce599b@linuxfoundation.org>
-Date: Fri, 27 Sep 2024 14:45:47 -0600
+	s=arc-20240116; t=1727469996; c=relaxed/simple;
+	bh=X0Tu1fbU3iFzETxLdIRaXrvnVItQS17Cn5VyrEtUYCk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fvHDrBRSHL9Iu2LZYuDRiiUNL+vidXUUunZSR1Bu7JQLlfC10y8/bjWVKCpziJ3PcgH1rlzQZtBOY5uf4qsm6HXwgrRCF+6mQR6qlUWjGs8jEWc+LF6j50ekPjOA/UHun39mUDWTD11JfSNu0LrYZBPOu1BFkIF7ARtgpSKuSyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OV5lJ64d; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727469990;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UW32wAnMjxA4S/oz9w5qOVbyTn2kSOgb6EUyptzsUfM=;
+	b=OV5lJ64dbcAJ1jVxKlfgEP1ZCzEebSs1YfvSqh8HEbWV/mbpUKqD1St+3HHmUIaqI+j8dq
+	x9Qb7oaAFyzO8y5Whp7euQzmTFIrxUX4WwBLHQlWsSwN3CdnTdpl5P1+hfFhM3AZ9WWC+h
+	0rJoYQkPmvLzemmCQ230CGZlnvxkPOw=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-137-KIOkFG8FM3Wgg1-uDgKCGg-1; Fri,
+ 27 Sep 2024 16:46:29 -0400
+X-MC-Unique: KIOkFG8FM3Wgg1-uDgKCGg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 06F9519103FE;
+	Fri, 27 Sep 2024 20:46:28 +0000 (UTC)
+Received: from chopper.redhat.com (unknown [10.22.32.36])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A19C219560A3;
+	Fri, 27 Sep 2024 20:46:25 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: dri-devel@lists.freedesktop.org
+Cc: stable@vger.kernel.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sean Paul <seanpaul@chromium.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/atomic_helper: Add missing NULL check for drm_plane_helper_funcs.atomic_update
+Date: Fri, 27 Sep 2024 16:46:16 -0400
+Message-ID: <20240927204616.697467-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 8/8] clk: Add KUnit tests for clks registered with
- struct clk_parent_data
-To: Guenter Roeck <linux@roeck-us.net>, Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- patches@lists.linux.dev, kunit-dev@googlegroups.com,
- linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org,
- Brendan Higgins <brendan.higgins@linux.dev>, David Gow
- <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>, Daniel Latypov
- <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240718210513.3801024-1-sboyd@kernel.org>
- <20240718210513.3801024-9-sboyd@kernel.org>
- <6cd337fb-38f0-41cb-b942-5844b84433db@roeck-us.net>
- <a339ec8c-38f6-425a-94d1-ad69b5ddbd88@roeck-us.net>
- <dcd8894f-1eb6-4b5c-9e6f-f6e584c601d2@roeck-us.net>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <dcd8894f-1eb6-4b5c-9e6f-f6e584c601d2@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 9/27/24 10:19, Guenter Roeck wrote:
-> Copying devicetree maintainers.
-> 
-> On Thu, Sep 26, 2024 at 09:39:38PM -0700, Guenter Roeck wrote:
->> On Thu, Sep 26, 2024 at 09:14:11PM -0700, Guenter Roeck wrote:
->>> Hi Stephen,
->>>
->>> On Thu, Jul 18, 2024 at 02:05:07PM -0700, Stephen Boyd wrote:
->>>> Test that clks registered with 'struct clk_parent_data' work as
->>>> intended and can find their parents.
->>>>
->>>
->>> When testing this on arm64, I see the error below. The error is only
->>> seen if I boot through efi, i.e., with "-bios QEMU_EFI-aarch64.fd"
->>> qemu parameter.
->>>
->>> Any idea what might cause the problem ?
->>>
->> I noticed that the new overlay tests fail as well, also with "path '/' not
->> found".
->>
->> [Maybe] answering my own question: I think the problem may be that there
->> is no devicetree file and thus no devicetree root when booting through
->> efi (in other words, of_root is NULL). Would it make sense to skip the
->> tests in that case ?
->>
-> 
-> The problem is that of_root is not initialized in arm64 boots if ACPI
-> is enabled.
-> 
->  From arch/arm64/kernel/setup.c:setup_arch():
-> 
-> 	if (acpi_disabled)
-> 		unflatten_device_tree();		// initializes of_root
-> 
-> ACPI is enabled if the system boots from EFI. This also affects
-> CONFIG_OF_KUNIT_TEST, which explicitly checks if of_root exists and
-> fails the test if it doesn't.
-> 
-> I think those tests need to add a check for this condition, or affected
-> machines won't be able to run those unit tests. The obvious solution would
-> be to check if of_root is set, but then the associated test case in
-> CONFIG_OF_KUNIT_TEST would not make sense.
-> 
-> Any suggestions ?
-> 
+Something I discovered while writing rvkms since some versions of the
+driver didn't have a filled out atomic_update function - we mention that
+this callback is "optional", but we don't actually check whether it's NULL
+or not before calling it. As a result, we'll segfault if it's not filled
+in.
 
-Would it work if these tests check if acpi_disabled and skip if it isn't
-disabled? It might be low overhead condition to check from these tests.
+  rvkms rvkms.0: [drm:drm_atomic_helper_commit_modeset_disables] modeset on [ENCODER:36:Virtual-36]
+  BUG: kernel NULL pointer dereference, address: 0000000000000000
+  PGD 0 P4D 0
+  Oops: Oops: 0010 [#1] PREEMPT SMP NOPTI
+  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20240813-1.fc40 08/13/2024
+  RIP: 0010:0x0
 
-acpi_disabled is exported:
+So, let's fix that.
 
-arch/arm64/kernel/acpi.c:EXPORT_SYMBOL(acpi_disabled);
-arch/loongarch/kernel/acpi.c:EXPORT_SYMBOL(acpi_disabled);
-arch/riscv/kernel/acpi.c:EXPORT_SYMBOL(acpi_disabled);
-arch/x86/kernel/acpi/boot.c:EXPORT_SYMBOL(acpi_disabled);
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Fixes: c2fcd274bce5 ("drm: Add atomic/plane helpers")
+Cc: dri-devel@lists.freedesktop.org
+Cc: <stable@vger.kernel.org> # v3.19+
+---
+ drivers/gpu/drm/drm_atomic_helper.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-thanks,
--- Shuah
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 43cdf39019a44..b3c507040c6d6 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -2797,7 +2797,8 @@ void drm_atomic_helper_commit_planes(struct drm_device *dev,
+ 
+ 			funcs->atomic_disable(plane, old_state);
+ 		} else if (new_plane_state->crtc || disabling) {
+-			funcs->atomic_update(plane, old_state);
++			if (funcs->atomic_update)
++				funcs->atomic_update(plane, old_state);
+ 
+ 			if (!disabling && funcs->atomic_enable) {
+ 				if (drm_atomic_plane_enabling(old_plane_state, new_plane_state))
+@@ -2889,7 +2890,8 @@ drm_atomic_helper_commit_planes_on_crtc(struct drm_crtc_state *old_crtc_state)
+ 		if (disabling && plane_funcs->atomic_disable) {
+ 			plane_funcs->atomic_disable(plane, old_state);
+ 		} else if (new_plane_state->crtc || disabling) {
+-			plane_funcs->atomic_update(plane, old_state);
++			if (plane_funcs->atomic_update)
++				plane_funcs->atomic_update(plane, old_state);
+ 
+ 			if (!disabling && plane_funcs->atomic_enable) {
+ 				if (drm_atomic_plane_enabling(old_plane_state, new_plane_state))
+
+base-commit: 22512c3ee0f47faab5def71c4453638923c62522
+-- 
+2.46.1
 
 
