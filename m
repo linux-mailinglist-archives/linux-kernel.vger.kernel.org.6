@@ -1,148 +1,88 @@
-Return-Path: <linux-kernel+bounces-341263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA54987D66
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 05:59:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D718D987D68
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 06:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD021C22175
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 03:58:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EB242820F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 04:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0080A1714AE;
-	Fri, 27 Sep 2024 03:58:54 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8999171E43;
+	Fri, 27 Sep 2024 04:00:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4004E170854;
-	Fri, 27 Sep 2024 03:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196761C01
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 04:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727409533; cv=none; b=mVGeTg17fkN3Mpdb5INjQ82VRc07d5jwvz9A5d0buNbhcUQYkljkHczlz67NAYc37uzqsKhKOxmmveb8ugiwfna3qQCvsXyL2jzUum0imGu2cWgEq9OlokBILRdD2cdUOxQ+z5kAq2C8jbsUc1FK9Wvr5Dbs8NmJY60p3gZxGx8=
+	t=1727409607; cv=none; b=cia1n7GIjLs5sxyLdjdqXD9d75wr3tdtBI3ZFLo91KCCAMpYEoMfgA5B4ilrpqkFQ5jn188K2AM9wockqGxy2DW8sA56bqiFjO29kAUPapeVbja/++2FFtBavKC0jCXVacAUEbMliFLH2cPaTaQieyE8+alV2oHZRU/55LfR9Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727409533; c=relaxed/simple;
-	bh=3hDG/ygzY27dtTjKfW77NKMg1gZKhXO9wYT9u5Wdvko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=e99oxX7qUt2YbjR3zCpbaJmorKhLsw5MxgE2cWiuJWZX1Y/tamwLnRdSrDWY869zrsQOs0lsRjQqEJSDOV9eBA51XGM3vg8qv/kqPxt4H30mWq0SwrqpRmMowaeZ33uOX0RvHqw4Bmvu4bkNCPpAuq5kStE3+KTR2Cnf2ZQGf20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XFGt23XZzz1ymGy;
-	Fri, 27 Sep 2024 11:58:50 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 81C6C1A0188;
-	Fri, 27 Sep 2024 11:58:48 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 27 Sep 2024 11:58:48 +0800
-Message-ID: <64eeeee0-8ec8-458b-b01a-ac1dd6c96583@huawei.com>
-Date: Fri, 27 Sep 2024 11:58:47 +0800
+	s=arc-20240116; t=1727409607; c=relaxed/simple;
+	bh=RYy8CyEWcBSdrHr/r+lzZm8SfWgstJs2rf1y0S3C5qU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QsAn8Sn6rMVUcG+iVyB9c/9WSwqz++Xu68SyWZXVErUJomLZpiCyCXblzimb8uPor8ixBP0qyNVQK0SmFWehxCmekyYWSa9eOgK6Zv3MHdJy/c2Y1vD46ld6IG2kmtJ3+VSMho8UlzTz8Ge2ceDbQ1FmD1+krHbSHMNPLgAyHYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a19534ac2fso20768895ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 21:00:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727409605; x=1728014405;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HEAFg3AScnvZ001p+VbgHZ3C1WnEaWn3zSkKleAo5Fk=;
+        b=ohXw4VmQMfrRIc0rlnBHJ0kUIbdCOzWkSiHF9YWGTph2j3xYrPAdBlx8SVLCNyhIeL
+         6iP6at0pRAq48wMQudlY4ALZgA90U6YFn2kIXb+prmER/Xxq5byBaoKUQquD72t7jrBO
+         J1rX2qBMT6/YdOtqyq60caED0pjNsVkSXJyVaUUHwHUDyFAK5+w0sDzM8fv8wxfoac9Y
+         1Cm+fNDp5AHhh88FU99cAHBpVfMY6d3WWLz+oDE9TWsp9FUy1ZdT3fj+HuusBU404TUw
+         8idgxkH9vnx3O4cmIC9dF7P8hGbXKM3gnSuXopkQodu1Q4IjpC6AiABEotf8fBeMOUbv
+         rT7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX8PXsJ5RmUxDZAIXdVBlAry8q56bcXD1r0ToNO5ciBg3xpHMW8srHA0V9RTbPDGyvwPtfoV9hEn7azTQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3NbWez/xsWn1gm07EKbKThivtkZDjpG334ji6aoXOVTX/ULPg
+	sejUFm0vmbBZeO6sqanJPWr5W706KsiZdbTZER48iVigKBSpGND7gKLX2E8FsPhiSgSfYD3+aoN
+	NQ9OfRGYI5b3fIFB9feSJpplRzqPRMb6UUuCjWvzs4RCkQXGOBkp6j6s=
+X-Google-Smtp-Source: AGHT+IEhQltlpxmQQfXE9prJplXAErwRePVQ8P3vB0aYsuhg6BUT+HwvO8Bdx8qPF8DrOCRSSXoJm6WnoZ5QEzgvzPUsvwGP+sU/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 1/2] page_pool: fix timing for checking and
- disabling napi_local
-To: Joe Damato <jdamato@fastly.com>, <davem@davemloft.net>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <liuyonglong@huawei.com>, <fanghaiqing@huawei.com>,
-	<zhangkun09@huawei.com>, Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
-	<ilias.apalodimas@linaro.org>, Eric Dumazet <edumazet@google.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<mkarsten@uwaterloo.ca>
-References: <20240925075707.3970187-1-linyunsheng@huawei.com>
- <20240925075707.3970187-2-linyunsheng@huawei.com>
- <ZvW-uEXITmZtncub@LQ3V64L9R2>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <ZvW-uEXITmZtncub@LQ3V64L9R2>
+X-Received: by 2002:a05:6e02:1a08:b0:3a0:92b1:ec3c with SMTP id
+ e9e14a558f8ab-3a345161e57mr15643585ab.4.1727409605322; Thu, 26 Sep 2024
+ 21:00:05 -0700 (PDT)
+Date: Thu, 26 Sep 2024 21:00:05 -0700
+In-Reply-To: <ff3f13ee-2356-4731-8534-5813800f3757@126.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f62dc5.050a0220.46d20.000b.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_stripe_to_text
+From: syzbot <syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	zhaomzhao@126.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf200006.china.huawei.com (7.185.36.61)
 
-On 2024/9/27 4:06, Joe Damato wrote:
-> On Wed, Sep 25, 2024 at 03:57:06PM +0800, Yunsheng Lin wrote:
->> page_pool page may be freed from skb_defer_free_flush() to
->> softirq context, it may cause concurrent access problem for
->> pool->alloc cache due to the below time window, as below,
->> both CPU0 and CPU1 may access the pool->alloc cache
->> concurrently in page_pool_empty_alloc_cache_once() and
->> page_pool_recycle_in_cache():
->>
->>           CPU 0                           CPU1
->>     page_pool_destroy()          skb_defer_free_flush()
->>            .                               .
->>            .                   page_pool_put_unrefed_page()
->>            .                               .
->>            .               allow_direct = page_pool_napi_local()
->>            .                               .
->> page_pool_disable_direct_recycling()       .
->>            .                               .
->> page_pool_empty_alloc_cache_once() page_pool_recycle_in_cache()
->>
->> Use rcu mechanism to avoid the above concurrent access problem.
->>
->> Note, the above was found during code reviewing on how to fix
->> the problem in [1].
->>
->> 1. https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/
->>
->> Fixes: dd64b232deb8 ("page_pool: unlink from napi during destroy")
->> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->> CC: Alexander Lobakin <aleksander.lobakin@intel.com>
-> 
-> Sorry for the noise, but I hit an assert in page_pool_unref_netmem
-> and I am trying to figure out if it is related to what you all are
-> debugging? I thought it might be, but if not, my apologies.
-> 
-> Just in case it is, I've put the backtrace on github [1]. I
-> triggered this while testing an RFC [2] I've been working on. Please
-> note, the RFC posted publicly does not currently apply cleanly to
-> net-next and has some bugs I've fixed in my v4. I had planned to
-> send the v4 early next week and mention the page pool issue I am
-> hitting.
-> 
-> After triggering the assert in [1], I tried applying the patches of
-> this series and retesting the RFC v4 I have queued locally. When I
-> did that, I hit a new assertion page_pool_destroy [3].
-> 
-> There are a few possibilities:
->    1. I am hitting the same issue you are hitting
->    2. I am hitting a different issue caused by a bug I introduced
->    3. I am hitting a different page pool issue entirely
-> 
-> In case of 2 and 3, my apologies for the noise.
-> 
-> In case of 1: If you think I am hitting the same issue as you are
-> trying to solve, I can reliably reproduce this with my RFC v4 and
-> would be happy to test any patches meant to fix the issue.
-> 
-> [1]: https://gist.githubusercontent.com/jdamato-fsly/eb628c8bf4e4d1c8158441644cdb7e52/raw/96dcf422303d9e64b5060f2fb0f1d71e04ab048e/warning1.txt
+Hello,
 
-It seems there may be some concurrent access of page->pp_ref_count/
-page_pool->frag_users or imbalance‌ incrementing and decrementing of
-page->pp_ref_count.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+BUG: Bad rss-counter state
 
-For the concurrent access part, you may refer to the below patch
-for debugging, but it seems mlx5 driver doesn't use frag API directly
-as my last recall, so you can't use it directly.
+BUG: Bad rss-counter state mm:ffff8880121d0980 type:MM_SWAPENTS val:2
 
-https://lore.kernel.org/all/20240903122208.3379182-1-linyunsheng@huawei.com/
 
-> [2]: https://lore.kernel.org/all/20240912100738.16567-1-jdamato@fastly.com/#r
-> [3]: https://gist.githubusercontent.com/jdamato-fsly/eb628c8bf4e4d1c8158441644cdb7e52/raw/96dcf422303d9e64b5060f2fb0f1d71e04ab048e/warning2.txt
+Tested on:
 
-There warning is only added to see if there is any infight page that
-need dma unmapping when page_pool_destroy() is called, you can ignore
-that warning or remove that WARN_ONCE() in page_pool_item_uninit()
-when testing.
+commit:         1ec6d097 Merge tag 's390-6.12-1' of git://git.kernel.o..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=136e4507980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6265dd30e362bb47
+dashboard link: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13564507980000
 
-> 
 
