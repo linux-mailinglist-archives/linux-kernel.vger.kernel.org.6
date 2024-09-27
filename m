@@ -1,54 +1,88 @@
-Return-Path: <linux-kernel+bounces-341567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-341568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B6099881C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:48:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D899881C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 11:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1690A28580C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C78E1C224A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 09:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E373719F467;
-	Fri, 27 Sep 2024 09:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2E2188002;
+	Fri, 27 Sep 2024 09:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJU3nTSl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R4igTBc7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C4218756A;
-	Fri, 27 Sep 2024 09:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FA5185B70;
+	Fri, 27 Sep 2024 09:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727430420; cv=none; b=M95T8RQ6RlVsbpS8GHwn9BXUY5ekMFz7AGFEzUQ/M1SGXWb97XipTxQ4KVvB26h6Svkk77zsqrxFsRsT4yJ7QQOp5Io3DCVed5wAl7hlh7QyVSnhjCMB44nyGTLMq521QP1muSB8OFXlhLm8WnUVYI0zOnbOmap6Zb+RNtPhaBg=
+	t=1727430545; cv=none; b=IVuIcHFqPbrAHZf2Kdwcxro+TnWm6wqieTuY9GtivxibTFDmUmJtVK75pZS4eTpgohDvYOW0N+yko6TCVJBEPaWNN//PJgYldq6iH3z6FMI/cc8UuntsWcp1MFVqInNxp9hYm6iJl+d2srTE5H+x87pp1V9rVuJEVK6NT/rJsJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727430420; c=relaxed/simple;
-	bh=bX37R5ZLSZqTwnDOVmSnI1kKRm7LKRBsIvjfkpf7tP8=;
+	s=arc-20240116; t=1727430545; c=relaxed/simple;
+	bh=6Pe2Go0yn1c7MxwBdsnnPYOewixVQPGWJ9HMIvscZ8o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RBfbRs7U7Hs9mbPtwe7O0WfqBRiZCv+VUlPwjFIeKUFIA+MpGSZQiI4oAHtcwUhhbRB6XaI8iKtrmkUfWRuzahNbLl4e91oQJx97BOhfqM0s5WvTYVHEA2mw05dF+DFcVlp1X0CNIakJOO1mn8wE/JmB4jDjIq9L28UXJEpjgO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJU3nTSl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B645C4CEC9;
-	Fri, 27 Sep 2024 09:46:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727430419;
-	bh=bX37R5ZLSZqTwnDOVmSnI1kKRm7LKRBsIvjfkpf7tP8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gJU3nTSlFool2P3OOwD/cgEZg6cbWR2XzD314ACL0uOYuxoaGu3sYs1TWnI19jKJh
-	 KMD8pbfpjMltSmRDsTycGc8E82a7KWx1+VVncdBxVG14Jz9k9m0mYtpm5pwtKkyozX
-	 kXV8Gbpf937JyUszVk6QVHD7iRYXd2k8PNpIKMeUBP1fIIejBDxdXOjtJJUOK0Q8R/
-	 J2yxOZXmwVx45E5ZfyQnJS87jO1Sb1T07x6eLaHjNzEMrD7K7shutwssK4v7CXQFGN
-	 FLukl2B8ROlIAm3j1PxDzNC7DadOrXh9aV0j2CB126/lN+Re56hdWIrsooOpLU0oiH
-	 bNcT7LINNCXZw==
-Date: Fri, 27 Sep 2024 11:46:57 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michael Wu <michael@allwinnertech.com>
-Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, Thinh.Nguyen@synopsys.com, balbi@kernel.org, 
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] usb: dwc3: core: add Gen2 polarity detection support
-Message-ID: <5gxoahmmyhzl2ruai6nvmdodhi5r5xq4cwpgaw3td7b23xyfb6@ucjqoxitosnd>
-References: <20240927072557.74194-1-michael@allwinnertech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V9amcuF0jwjdhwNOc6bItwwvFSmSvatbAq+6xD/rY1vwAp9ttZcm3/8n7TweGC2rFtGxPNMTT1B7NEXpFPBGGJAXbB9vDx33wereSAVmZEymPcZ+kqOniwWFbexBscL3lROmHoa5SddAvnOI5QU3KyWI0W4tK0ZX77In/SiFpDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R4igTBc7; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727430544; x=1758966544;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=6Pe2Go0yn1c7MxwBdsnnPYOewixVQPGWJ9HMIvscZ8o=;
+  b=R4igTBc786M0teC4uj1GxHHcPFlv3GismbVIEZCryg3gcAR4Aab9nfBA
+   waVly8mGfPTUh4QkJUd+5K3RAfg9fJKCmbOJB36kyY8ehppahmqPoO6/R
+   9+bOgV8gp5129ISQJoqcBt9HeHM/CYhjIXuFTq8Slx5PQzUKGHPYimeT8
+   Pyt0GSuDSsGsUAKOuhi49T3CaU76yow8jxpqX9w1KZeSZNHcVQWc27V7+
+   eiGrRsZTyWR6gcp2SFm0cc9CTc8ZwFNx/OvIy7o1LFjv8oULBxwq910w3
+   x/cQBFfnxYI8dQvjmb11j8cWS7oUf0bKf0Y4+ptw5RwgQoLrKKd9M/ErC
+   Q==;
+X-CSE-ConnectionGUID: 7jqagqY/RzSCR0juaw+oFg==
+X-CSE-MsgGUID: W0W4m2Q5RPujaiYUrZ2m7Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="37149841"
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="37149841"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 02:49:04 -0700
+X-CSE-ConnectionGUID: 9aWBSpURTpuXHkrgFTdtBg==
+X-CSE-MsgGUID: Q19sk9QDS2ab/YNt173aOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,158,1725346800"; 
+   d="scan'208";a="72143095"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 02:49:00 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1su7ar-0000000DWcI-29Th;
+	Fri, 27 Sep 2024 12:48:57 +0300
+Date: Fri, 27 Sep 2024 12:48:57 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH v8 2/3] regulator: Add devres version of
+ of_regulator_get_optional()
+Message-ID: <ZvZ_idJsmuzNhFMc@smile.fi.intel.com>
+References: <20240925093807.1026949-1-wenst@chromium.org>
+ <20240925093807.1026949-3-wenst@chromium.org>
+ <ZvPscRdWlFPmtCyR@smile.fi.intel.com>
+ <CAGXv+5Gf9+rc+vLcr-JFhO561G8dw38ksV3drat+DyCfWEVakQ@mail.gmail.com>
+ <ZvVS7ITg2t-RIh8C@smile.fi.intel.com>
+ <CAGXv+5EV4nNiAneajqr4VBkX4TO3zV76yqBM_u81ZMNjU52Bvw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,66 +91,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240927072557.74194-1-michael@allwinnertech.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXv+5EV4nNiAneajqr4VBkX4TO3zV76yqBM_u81ZMNjU52Bvw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Sep 27, 2024 at 03:25:56PM +0800, Michael Wu wrote:
-> According to the DWC31 Enhanced SuperSpeed USB3.1 Controller Programming
-> Guide, for Gen2 polarity detection, link uses data block (0011b) sync
-> header for SYNC OS instead of control block (1100b).
-> 
-> Added 'snps,inv-sync-hdr-quirk' a DT property to set this bit 30 of
-> LLUCTL if the third-party PHY doesn't correct the sync header of the
-> SYNC OS in the case of inverse polarity.
-> 
-> Signed-off-by: Michael Wu <michael@allwinnertech.com>
-> ---
->  drivers/usb/dwc3/core.c | 24 ++++++++++++++++--------
->  drivers/usb/dwc3/core.h |  6 ++++++
->  2 files changed, 22 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index 734de2a8bd212..72fddfcbdd0c3 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -1434,15 +1434,20 @@ static int dwc3_core_init(struct dwc3 *dwc)
->  
->  	dwc3_config_threshold(dwc);
->  
-> -	/*
-> -	 * Modify this for all supported Super Speed ports when
-> -	 * multiport support is added.
-> -	 */
-> -	if (hw_mode != DWC3_GHWPARAMS0_MODE_GADGET &&
-> -	    (DWC3_IP_IS(DWC31)) &&
-> -	    dwc->maximum_speed == USB_SPEED_SUPER) {
-> +	if (DWC3_IP_IS(DWC31)) {
->  		reg = dwc3_readl(dwc->regs, DWC3_LLUCTL);
-> -		reg |= DWC3_LLUCTL_FORCE_GEN1;
-> +
-> +		/*
-> +		 * Modify this for all supported Super Speed ports when
-> +		 * multiport support is added.
-> +		 */
-> +		if (hw_mode != DWC3_GHWPARAMS0_MODE_GADGET &&
-> +		    dwc->maximum_speed == USB_SPEED_SUPER)
-> +			reg |= DWC3_LLUCTL_FORCE_GEN1;
-> +
-> +		if (dwc->inv_sync_hdr_quirk)
-> +			reg |= DWC3_LLUCTL_INV_SYNC_HDR;
-> +
->  		dwc3_writel(dwc->regs, DWC3_LLUCTL, reg);
->  	}
->  
-> @@ -1774,6 +1779,9 @@ static void dwc3_get_properties(struct dwc3 *dwc)
->  	dwc->dis_split_quirk = device_property_read_bool(dev,
->  				"snps,dis-split-quirk");
->  
-> +	dwc->inv_sync_hdr_quirk = device_property_read_bool(dev,
-> +				"snps,inv-sync-hdr-quirk");
+On Fri, Sep 27, 2024 at 12:38:35PM +0800, Chen-Yu Tsai wrote:
+> On Thu, Sep 26, 2024 at 8:26 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Thu, Sep 26, 2024 at 04:43:52PM +0800, Chen-Yu Tsai wrote:
+> > > On Wed, Sep 25, 2024 at 6:56 PM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > On Wed, Sep 25, 2024 at 05:38:05PM +0800, Chen-Yu Tsai wrote:
 
-Bindings are *always* before their users.
+...
 
-Best regards,
-Krzysztof
+> > > > > +#if IS_ENABLED(CONFIG_OF)
+> > > >
+> > > > Do we really need this?
+> > >
+> > > What's the point of going through devres_* stuff if we already know
+> > > _of_regulator_get() is going to fail anyway?
+> >
+> > With devm_add_action*() this will be other way around and there are plenty of
+> > APIs done this way. The ifdeffery is simply ugly in the code.
+> 
+> It's still extra code that doesn't get compiled out.
+
+Are you sure? In case of the stub the compiler should go with a "dead code
+elimination" optimisation and get rid of most of it (yes, I admit that it might
+be the overhead for the exporting a function which returns a constant).
+
+> > > Also, _of_regulator_get() does not have a stub version for !CONFIG_OF.
+> >
+> > So, what prevents us from adding it?
+> 
+> Because there's no need if the only internal user isn't using it.
+> 
+> I could also move them over to of_regulator.c.
+> 
+> _of_regulator_get() stays internal to that file, and devm_regulator_release()
+> gets exposed instead.
+> 
+> Does that sound better?
+
+This sounds good to me!
+
+...
+
+> > > > > +static inline struct regulator *__must_check devm_of_regulator_get_optional(struct device *dev,
+> > > > > +                                                                         struct device_node *node,
+> > > > > +                                                                         const char *id)
+> > > >
+> > > > I don't know the conventions here, but I find better to have it as
+> > > >
+> > > > static inline __must_check struct regulator *
+> > > > devm_of_regulator_get_optional(struct device *dev, struct device_node *node, const char *id)
+> > > >
+> > > > Similar to other stubs and declarations.
+> > >
+> > > I don't think there are any conventions. This file already has three types:
+> > >
+> > > 1. Wrap the line with the function name on the second line
+> > > 2. Wrap the arguments; wrapped arguments aligned to the left parenthesis.
+> > > 3. Wrap the arguments; wrapped arguments aligned with aribtrary number of
+> > >    tabs.
+> > >
+> > > I prefer the way I have put them.
+> >
+> > The way you put it despite relaxed limit is slightly harder to read.
+> > I don't remember many headers that do so-o indented parameters. Besides
+> > your way defers the burden of resplit to the future in case one more parameter
+> > needs to be added which will excess the 100 limit.
+> >
+> > Also __must_check is somehow misplaced in my opinion (talking from my
+> > experience and this can be simply checked by grepping other headers).
+> 
+> Seems correct to me. It's between the return type and the function name.
+> From the coding style doc:
+> 
+>  __init void * __must_check action(enum magic value, size_t size, u8 count,
+>                                    char *fmt, ...) __printf(4, 5) __malloc;
+> 
+> The preferred order of elements for a function prototype is:
+> 
+> - storage class (below, ``static __always_inline``, noting that
+> ``__always_inline``
+>   is technically an attribute but is treated like ``inline``)
+> - storage class attributes (here, ``__init`` -- i.e. section
+> declarations, but also
+>   things like ``__cold``)
+> - return type (here, ``void *``)
+> - return type attributes (here, ``__must_check``)
+> - function name (here, ``action``)
+> - function parameters (here, ``(enum magic value, size_t size, u8
+> count, char *fmt, ...)``,
+>   noting that parameter names should always be included)
+> - function parameter attributes (here, ``__printf(4, 5)``)
+> - function behavior attributes (here, ``__malloc``)
+> 
+> > That said, I prefer the way I suggested or something alike.
+> 
+> Two people arguing over style that is not clearly specified in the coding
+> style doc is probably wasting time. I'll use what `clang-format` gave:
+> 
+> static inline struct regulator *__must_check of_regulator_get_optional(
+>        struct device *dev, struct device_node *node, const char *id)
+> static inline struct regulator *__must_check devm_of_regulator_get_optional(
+>        struct device *dev, struct device_node *node, const char *id)
+
+With all my hatred towards this clang-format "feature", i.e. open ended
+parenthesis, this looks better than your original variant.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
