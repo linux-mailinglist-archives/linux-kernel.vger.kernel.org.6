@@ -1,159 +1,83 @@
-Return-Path: <linux-kernel+bounces-342282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A2B988D13
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 01:55:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73FDE988D15
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 997B4281645
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2024 23:54:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA1031F21FE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B471B790D;
-	Fri, 27 Sep 2024 23:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18974BA42;
+	Sat, 28 Sep 2024 00:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wgc0B/X6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D34cNR4s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CA3187345;
-	Fri, 27 Sep 2024 23:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FFDB641
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 00:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727481286; cv=none; b=V4L1mq6KNPEMj3MJ2ghMm3dU/k2OA3Hqt/MuKY9tpxgGYeuCcswWHgr26JTGlThXdU7slbTo4FCu2J6bkc4taZx3lW2fymPmKIhImboPU9hSylvU7X9w0iTxiE3EC4YS937fWfmcl/swHV/CiWDLJHNVNfcRLmRTUMGLn15xNaM=
+	t=1727481887; cv=none; b=Zy9MI0qcej9IT3YbpOvojuUo1j4hsMPkuOQwM7P90iWuDNYN2H4jW+87rQgPpnva8acE94GYMDTjzZPGAXFuYt8sADNPeKDOaZkUVXNu5hxXsBkdINolzgNCB8rUefesTGL8UkQgWdRxj53DyjvIrZaWv7Dvex40sXhPob3fSUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727481286; c=relaxed/simple;
-	bh=xuljhnvBCGrJKOmRNT+0jGIXwSOHGJy+hMu8r7QwgC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Ne8TT1a1zlf0KVx+qLDHka9nq8fIeeT/iXwsiiz/lDkt9j04MtPtFrJdsloCS8SIkIwKUM3fYIReSlXBeFn+B40zIecU+EZs8XvtZ9Tmu7dr9HtBIqfrkRw9+xJIcXdzhCvBhZAn1ZVNI04OUbQwdq4NcyE/9gX1sHfxrTCYwDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wgc0B/X6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF9CCC4CEC4;
-	Fri, 27 Sep 2024 23:54:45 +0000 (UTC)
+	s=arc-20240116; t=1727481887; c=relaxed/simple;
+	bh=qPSr+bYFOiKJ4gHsMYwbYDfuwX5ijfbCguA7R/0Wv5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=La4apmRrHi+OV/ZsedjI1hHy48Hnd1k9XQZT+n/oPV7XCl9reNe9uEuRKHiUTQZ2gZrfbVgbkF2KkA1DqXpCLHTDWcgqjYuYPVc/FPXJnNP/Y6yb+C/h7EZmWgq6c+YzYxRKaFOfgkFrLEW0BRJB41xoQ8rWu6R97PC0X8OvnBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D34cNR4s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CC7DC4CEC4;
+	Sat, 28 Sep 2024 00:04:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727481286;
-	bh=xuljhnvBCGrJKOmRNT+0jGIXwSOHGJy+hMu8r7QwgC8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Wgc0B/X6N9Wpa23OFUqvPsmyDacOOMPxTRWZca6USb44APmwCH1LTlX7CSftlXD4n
-	 THkDexcFUOI0t5CKfrY6D3Eh82TGVYEF7DXQHd4l0vMQMOLL5u+oSPn0dSL45o1faK
-	 lYqrTokvnKclH8/5lK81DgwIvEfLK0yjwM2TImkuz3Nt3Y+df5AAY5wT3qzPx8ljsj
-	 T0pCkQfsyYdR6OnMRVfqAAiLc+0D1vpeBfDXc9saqJUa1mPtSXOnSwqY8ig3aKwW5x
-	 fmNDlzhoPAgPXkjv6G63HDci1RpDcJOy+BkT4Yi25d243V1zpOs/dWStLKAHcwKxwy
-	 97mYpxIHWERHA==
-Date: Fri, 27 Sep 2024 18:54:44 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
-Subject: Re: [PATCH v2 3/3] PCI: imx6: Remove cpu_addr_fixup()
-Message-ID: <20240927235444.GA98792@bhelgaas>
+	s=k20201202; t=1727481887;
+	bh=qPSr+bYFOiKJ4gHsMYwbYDfuwX5ijfbCguA7R/0Wv5c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D34cNR4sf4UwJknHseHjhLyoV0kwhoggoQqLHUVHAFtH032CCLmGCpKL0ra9tGwZ7
+	 3EsvFCfFZHEmox0hpTCjxe2zBUcS1T1R1FyBci7bcGJ5bQlkmhmkd2g3JkTfajAcOB
+	 MKz8Vb0Fkwn6ixAo2uQZp3SArxNJGVyparG83at8A8kP1QtNrad+SsfnLd4Hq7F/Xg
+	 iM7fkI9UwmlB4bAXz1EWGrBb8+aUWgZkZIO/LObn9IFpD8jtm46QBiK0rYbNWrngYE
+	 r8Eqsk4VQDZrGDUhLq44w4W99ODPBMZ1zpgSNN6EPAk88FRNQhBsUz7m2raHAegLeh
+	 oiqtCMNc+45WQ==
+Date: Fri, 27 Sep 2024 17:04:44 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+	scott.d.constable@intel.com, joao@overdrivepizza.com,
+	andrew.cooper3@citrix.com, jose.marchesi@oracle.com,
+	hjl.tools@gmail.com, ndesaulniers@google.com,
+	samitolvanen@google.com, nathan@kernel.org, ojeda@kernel.org,
+	kees@kernel.org, alexei.starovoitov@gmail.com,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [PATCH 07/14] x86/ibt: Clean up is_endbr()
+Message-ID: <20240928000444.grd3jxltzoiihsz3@treble>
+References: <20240927194856.096003183@infradead.org>
+ <20240927194925.069013308@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240926-pci_fixup_addr-v2-3-e4524541edf4@nxp.com>
+In-Reply-To: <20240927194925.069013308@infradead.org>
 
-On Thu, Sep 26, 2024 at 12:47:15PM -0400, Frank Li wrote:
-> Remove cpu_addr_fixup() because dwc common driver already handle address
-> translate.
+On Fri, Sep 27, 2024 at 09:49:03PM +0200, Peter Zijlstra wrote:
+> Pretty much every caller of is_endbr() actually wants to test something at an
+> address and ends up doing get_kernel_nofault(). Fold the lot into a more
+> convenient helper.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v1 to v2
-> - set using_dtbus_info true
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 22 ++--------------------
->  1 file changed, 2 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 1e58c24137e7f..94f3411352bf0 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -82,7 +82,6 @@ enum imx_pcie_variants {
->  #define IMX_PCIE_FLAG_HAS_PHY_RESET		BIT(5)
->  #define IMX_PCIE_FLAG_HAS_SERDES		BIT(6)
->  #define IMX_PCIE_FLAG_SUPPORT_64BIT		BIT(7)
-> -#define IMX_PCIE_FLAG_CPU_ADDR_FIXUP		BIT(8)
->  
->  #define imx_check_flag(pci, val)	(pci->drvdata->flags & val)
->  
-> @@ -1015,22 +1014,6 @@ static void imx_pcie_host_exit(struct dw_pcie_rp *pp)
->  		regulator_disable(imx_pcie->vpcie);
->  }
->  
-> -static u64 imx_pcie_cpu_addr_fixup(struct dw_pcie *pcie, u64 cpu_addr)
-> -{
-> -	struct imx_pcie *imx_pcie = to_imx_pcie(pcie);
-> -	struct dw_pcie_rp *pp = &pcie->pp;
-> -	struct resource_entry *entry;
-> -
-> -	if (!(imx_pcie->drvdata->flags & IMX_PCIE_FLAG_CPU_ADDR_FIXUP))
-> -		return cpu_addr;
-> -
-> -	entry = resource_list_first_type(&pp->bridge->windows, IORESOURCE_MEM);
-> -	if (!entry)
-> -		return cpu_addr;
-> -
-> -	return cpu_addr - entry->offset;
-> -}
-> -
->  static const struct dw_pcie_host_ops imx_pcie_host_ops = {
->  	.init = imx_pcie_host_init,
->  	.deinit = imx_pcie_host_exit,
-> @@ -1039,7 +1022,6 @@ static const struct dw_pcie_host_ops imx_pcie_host_ops = {
->  static const struct dw_pcie_ops dw_pcie_ops = {
->  	.start_link = imx_pcie_start_link,
->  	.stop_link = imx_pcie_stop_link,
-> -	.cpu_addr_fixup = imx_pcie_cpu_addr_fixup,
+> Note: this effectively reverts commit a8497506cd2c ("bpf: Avoid
+> get_kernel_nofault() to fetch kprobe entry IP") which was entirely the
+> wrong way to go about doing things. The right solution is to optimize
+> get_kernel_nofault() itself, it really doesn't need STAC/CLAC nor the
+> speculation barrier. Using __get_user is a historical hack, not a
+> requirement.
 
-This is tremendous, thank you very much for doing this!
+But these patches don't actually optimize get_kernel_nofault()?
 
-Have you looked at the other users of .cpu_addr_fixup()?  It looks
-like cadence, dra7xx, artpec6, intel-gw, and visconti all use it.
-
-Do we know whether any of them have to deal with DTs that don't
-describe the correct translations?  It would be even better if we
-could fix them all and we didn't need using_dtbus_info.
-
->  };
->  
->  static void imx_pcie_ep_init(struct dw_pcie_ep *ep)
-> @@ -1459,6 +1441,7 @@ static int imx_pcie_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	pci->using_dtbus_info = true;
->  	if (imx_pcie->drvdata->mode == DW_PCIE_EP_TYPE) {
->  		ret = imx_add_pcie_ep(imx_pcie, pdev);
->  		if (ret < 0)
-> @@ -1598,8 +1581,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  	},
->  	[IMX8Q] = {
->  		.variant = IMX8Q,
-> -		.flags = IMX_PCIE_FLAG_HAS_PHYDRV |
-> -			 IMX_PCIE_FLAG_CPU_ADDR_FIXUP,
-> +		.flags = IMX_PCIE_FLAG_HAS_PHYDRV,
->  		.clk_names = imx8q_clks,
->  		.clks_cnt = ARRAY_SIZE(imx8q_clks),
->  	},
-> 
-> -- 
-> 2.34.1
-> 
+-- 
+Josh
 
