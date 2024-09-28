@@ -1,310 +1,158 @@
-Return-Path: <linux-kernel+bounces-342507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9842988FC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:50:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3873C988FC6
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55228282007
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:50:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 676841C20F07
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FBB1C286;
-	Sat, 28 Sep 2024 14:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B79D1CA80;
+	Sat, 28 Sep 2024 14:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="e8Rcgt2l"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOL4aNrC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB1617545
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 14:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824FF168C7;
+	Sat, 28 Sep 2024 14:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727534994; cv=none; b=D5R4OIaOQNY9SV+hwEY4K/SqncxMXk5VzyU9F7KUIxefLRSJutP5JAX+klQMZZuPMCl27Yz/SBxekcSiSU6Ecxv7X/HE7Zy4cwVO8SaPxeVZnK0K2huMBA9Dq5SoY5CZDeTrUf/cUj6N7uGshsBvvw1aVWI8zcZYmv4UrKg6Hbk=
+	t=1727535327; cv=none; b=YJcybgMVw32Bc6yC4xc4U1QoCGPpQtd3AKfrT1g4xf9NWkjrHoyJyvi5pvBx/su52Vkic/5GNwM6ZDWGxCuxc9YlG0tpv/+f8cK9rhkqnVj/kbjUvhf+AEfxzmAAWbRmVcL6aGlNo8ROzF61mgH+RR30vXJsuKlzTVPco/eGYFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727534994; c=relaxed/simple;
-	bh=W9jdtW9g7G/b2IlDh+2LPBLrbkqYnTJ5gfrPPG1M/yI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DfCDAAC4As5FzqnE/G8LVlebW/51f9CAEGRPJw4zRw2D5DFqtGYL0HYVnsoudQe3DbIEfr7e2Mgw2et9ubNB1/ciBIt0zqYZQ5GO/Ol/qkn0llyRHxkv/WfOcXNuvV0vcB0wHuJcSVXeMLEWWAMEFLXvptDWs2vc7jN2P0zh668=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=e8Rcgt2l; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6c582ca168fso21738556d6.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 07:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1727534991; x=1728139791; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1yi3s2Vi95xenb/4sW3OtKFLyrwZhQyIWMqCuz6AJtQ=;
-        b=e8Rcgt2lsA7cI9LB+egxFW0zFYE/JiVpwcSTtb1iursRhcdtVn87nHAkDhoaeYjTq9
-         IBrVsMv9EK/Bxi9XKEwD92TGNGbCjbhKgyfmpAO+eYqf+wcHs3XOGL9heiPy1Emo1QTT
-         1xlnR/n7vFoh/IbR87Ll4vlWFVjtDHrcieNvomPtcsRSbrixHcINxfIoN/IJujKboFTm
-         PsR35uC7AupbHFZkYai7a6iK8S3/hG9zBoO/uTFVqk0RHwh75FEoSTcxfcttFMBxXISp
-         5BP892DoVEo+ldUR95YDvtK6MI39PgIAeKj9SRpO7iyGUAkfeRryFvXVSCS2faCw/fhQ
-         R38Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727534991; x=1728139791;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1yi3s2Vi95xenb/4sW3OtKFLyrwZhQyIWMqCuz6AJtQ=;
-        b=EweKbb2S5WKRp/3ZmHZYl3a8YroapJG4INO10khwTab53IV8lTsdo7h/iIk9NuKknS
-         /Ps1WYLWbhv4/Gn5A6wD9gD7wMXKLsUwlLZJHUGS6k2ebEgTdqC2ISatS34rWomGFBCU
-         5stywffAvsf3P8VFgG4XmyZSWjqeB4QPEosRi4bCtSxuMCx2/tHSu8KRMm15HH4tFYow
-         3fIfJq5slOJkSJ6iD6up2P4YM5LQxB+L88GU7M2ZLa/ir0X64HuvLMm5w6Y3eHIfXwAY
-         75IPR+iU/ZAxp0SZMoQb1rrgFNb2JL69ywbAK30ZB+su+CDVnZY5hxUJ3JqwIjqbw6yB
-         W/YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYokhYatRbiwUkFAbFw+SOonipY515BjZwZduH5ZvbvNt43SvzD5iMk7RhLbiVYBcbYnUW5BK0hfKwiCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpoFTjwkFBWqvnDAeqIvSvEBIWgOdu1tpRPPpnXsac4hDEdqC8
-	4S6U3zGFMHBQq77cjKVLbkFyyP8T/U7xjsxItxqnhJzkMtJugvPFKv9zEPVDRDkD8jioFq36vuk
-	RqQ==
-X-Google-Smtp-Source: AGHT+IGYsBThwDk0+Q9GAkjd0Qrkf1rZeLvqxc9J+iXThiKd1XuEa4qWnG2xVu4bINYg8B5pAobCEg==
-X-Received: by 2002:a05:6214:3bc3:b0:6cb:4e86:bb53 with SMTP id 6a1803df08f44-6cb4e86bc21mr44373516d6.43.1727534990879;
-        Sat, 28 Sep 2024 07:49:50 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::abbf])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b66b507sm20259966d6.99.2024.09.28.07.49.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Sep 2024 07:49:49 -0700 (PDT)
-Date: Sat, 28 Sep 2024 10:49:45 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, John Stultz <jstultz@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
-Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-Message-ID: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
-References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
- <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1727535327; c=relaxed/simple;
+	bh=/XBuEmGWh41GCpXYfLKTvhCysEsaxQHPOmWufH3r+zg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rr7HrwtUX++mbk5AKJVNmlK3YuMzuBivZB7aN74h8bahvQ1SYXFXx1J1rSGreUUGEijM6kl20u6zRcw1DwkAEMO6vv5KUefJirBU5SiSK+VkrH4wzJAVAZQaIFMtGczqZAEbiK1D2jNnHCT/xRbicktqxVvE0P5M+Bjr69KCxoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOL4aNrC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 619D3C4CEC7;
+	Sat, 28 Sep 2024 14:55:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727535327;
+	bh=/XBuEmGWh41GCpXYfLKTvhCysEsaxQHPOmWufH3r+zg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TOL4aNrCKXQ41Ty55vgq168EKvzBTjU1GmOG3VMGjf7pMZHBFl/QOcpR6X4f0/Jlo
+	 uutHN8yOFnKs9CnwcSldLjzjqVGxDMSaR11vpeqXlE7qhaGbYAKG5SdKHjY2aTQ4xG
+	 wIQ+MhsRjvCcgUki/6dY1wzkuoh8izXJoQXV7qIIWeE/OLuoxaX+3tuVNc+33wcFta
+	 Tw4882I/eenFkdQ8YTzujHpBeCFSimQoAYvYIhC8/SGaUaIr+u/zwT5PMMflHnotwz
+	 3KFsEBluXyeFQnPpLXHNH8T/9uSJmctRhltqR5YMofOMteWavWoVlT8Nl9dO7SYJoS
+	 +mCx8IBHmETSQ==
+Date: Sat, 28 Sep 2024 15:55:19 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] iio: core: remove iio_validate_own_trigger()
+ function
+Message-ID: <20240928155519.1112f995@jic23-huawei>
+In-Reply-To: <20240922110721.GA439861@vamoiridPC>
+References: <20240921181939.392517-1-vassilisamir@gmail.com>
+	<cd1df0c5-d95f-4880-b374-a7544a323d93@metafoo.de>
+	<20240921200759.GA400156@vamoiridPC>
+	<609fdda9-fcf4-426f-84c8-411a59ed5fab@gmail.com>
+	<20240922110721.GA439861@vamoiridPC>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 28, 2024 at 09:51:27AM -0400, Mathieu Desnoyers wrote:
-> Compiler CSE and SSA GVN optimizations can cause the address dependency
-> of addresses returned by rcu_dereference to be lost when comparing those
-> pointers with either constants or previously loaded pointers.
-> 
-> Introduce ptr_eq() to compare two addresses while preserving the address
-> dependencies for later use of the address. It should be used when
-> comparing an address returned by rcu_dereference().
-> 
-> This is needed to prevent the compiler CSE and SSA GVN optimizations
-> from replacing the registers holding @a or @b based on their
+On Sun, 22 Sep 2024 13:07:21 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-"Replacing" isn't the right word.  What the compiler does is use one 
-rather than the other.  Furthermore, the compiler can play these games 
-even with values that aren't in registers.
-
-You should just say: "... from using @a (or @b) in places where the 
-source refers to @b (or @a) (based on the fact that after the 
-comparison, the two are known to be equal), which does not ..."
-
-> equality, which does not preserve address dependencies and allows the
-> following misordering speculations:
+> On Sun, Sep 22, 2024 at 12:44:15PM +0300, Matti Vaittinen wrote:
+> > On 9/21/24 23:07, Vasileios Amoiridis wrote:  
+> > > On Sat, Sep 21, 2024 at 12:23:39PM -0700, Lars-Peter Clausen wrote:  
+> > > > On 9/21/24 11:19, Vasileios Amoiridis wrote:  
+> > > > > The iio_validate_own_trigger() function was added in this commit [1] but it is
+> > > > > the same with the below function called iio_trigger_validate_own_device(). The
+> > > > > bodies of the functions can be found in [2], [3].
+> > > > > 
+> > > > > [1]: https://lore.kernel.org/all/51cd3e3e74a6addf8d333f4a109fb9c5a11086ee.1683541225.git.mazziesaccount@gmail.com/
+> > > > > [2]: https://elixir.bootlin.com/linux/v6.11/source/drivers/iio/industrialio-trigger.c#L732
+> > > > > [3]: https://elixir.bootlin.com/linux/v6.11/source/drivers/iio/industrialio-trigger.c#L752  
+> > > > 
+> > > > The signature of the two functions are different, the order of the
+> > > > parameters is switched. So you can't just swap them out for the
+> > > > `validate_trigger` callback since the signature is not compatible. But maybe
+> > > > you can update the implementation of one of the functions to calling the
+> > > > other function.
+> > > >   
+> > > 
+> > > Hi Lars,
+> > > 
+> > > Hmm, I see what you mean. Still though, do you think that we could do some
+> > > cleaning here? I can see 3 approaches:
+> > > 
+> > > 1) One of the 2 functions calls the other internally and nothing else has
+> > > to change.  
+> > 
+> > I would go with this. Changing the signatures to be the same would be (in
+> > my, not always humble enough, opinion) wrong. The different order of
+> > parameters reflects the different idea. One checks if device for trigger is
+> > the right one, the other checks if the trigger for the device is the right
+> > one. Thus, the order of parameters should be different.
+> > 
+> > Calling the same implementation internally is fine with me. Maybe Jonathan
+> > will share his opinion when recovers from all the plumbing in Vienna ;)
+> > 
+> > Yours,
+> > 	-- Matti
+> > 
+> > -- 
+> > Matti Vaittinen
+> > Linux kernel developer at ROHM Semiconductors
+> > Oulu Finland
+> >   
 > 
-> - If @b is a constant, the compiler can issue the loads which depend
->   on @a before loading @a.
-> - If @b is a register populated by a prior load, weakly-ordered
->   CPUs can speculate loads which depend on @a before loading @a.
+> Hi Matti!
+> 
+> Thanks for your comment! Well, I still think in my eyes is better to
+> have one function do one thing instead of multiple. Also, I didn't
+> think of this argument with the order of arguments, it makes sense.
+> My experience is quite limited to how things should be in such a
+> large project so I trust your opinion. I would still like to see
+> what Jonathan has to say on this though, maybe he had some
+> reasoning behind!!!
+> 
+No to changing the signatures. It removes the difference
+in meaning of the callbacks even though they happen to have
+the same implementation in this very simple (and common case).
 
-It shouldn't matter whether @a and @b are constants, registers, or 
-anything else.  All that matters is that the compiler uses the wrong 
-one, which allows weakly ordered CPUs to speculate loads you wouldn't 
-expect it to, based on the source code alone.
+In the trigger first one, that is the subject.  We are asking the
+question 'is this trigger ok being used for this device'.
+In the other the device is the subject and we asking the
+question 'is this device ok to use this trigger'
 
-> The same logic applies with @a and @b swapped.
-> 
-> The compiler barrier() is ineffective at fixing this issue.
-> It does not prevent the compiler CSE from losing the address dependency:
-> 
-> int fct_2_volatile_barriers(void)
-> {
->     int *a, *b;
-> 
->     do {
->         a = READ_ONCE(p);
->         asm volatile ("" : : : "memory");
->         b = READ_ONCE(p);
->     } while (a != b);
->     asm volatile ("" : : : "memory");  <----- barrier()
->     return *b;
-> }
-> 
-> With gcc 14.2 (arm64):
-> 
-> fct_2_volatile_barriers:
->         adrp    x0, .LANCHOR0
->         add     x0, x0, :lo12:.LANCHOR0
-> .L2:
->         ldr     x1, [x0]    <------ x1 populated by first load.
->         ldr     x2, [x0]
->         cmp     x1, x2
->         bne     .L2
->         ldr     w0, [x1]    <------ x1 is used for access which should depend on b.
->         ret
-> 
-> On weakly-ordered architectures, this lets CPU speculation use the
-> result from the first load to speculate "ldr w0, [x1]" before
-> "ldr x2, [x0]".
-> Based on the RCU documentation, the control dependency does not prevent
-> the CPU from speculating loads.
-> 
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> Acked-by: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: John Stultz <jstultz@google.com>
-> Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Frederic Weisbecker <frederic@kernel.org>
-> Cc: Joel Fernandes <joel@joelfernandes.org>
-> Cc: Josh Triplett <josh@joshtriplett.org>
-> Cc: Uladzislau Rezki <urezki@gmail.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-> Cc: Zqiang <qiang.zhang1211@gmail.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: maged.michael@gmail.com
-> Cc: Mateusz Guzik <mjguzik@gmail.com>
-> Cc: Gary Guo <gary@garyguo.net>
-> Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-> Cc: rcu@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: lkmm@lists.linux.dev
-> ---
->  include/linux/compiler.h | 62 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
-> 
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index 2df665fa2964..f26705c267e8 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -186,6 +186,68 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
->  	__asm__ ("" : "=r" (var) : "0" (var))
->  #endif
->  
-> +/*
-> + * Compare two addresses while preserving the address dependencies for
-> + * later use of the address. It should be used when comparing an address
-> + * returned by rcu_dereference().
-> + *
-> + * This is needed to prevent the compiler CSE and SSA GVN optimizations
-> + * from replacing the registers holding @a or @b based on their
-> + * equality, which does not preserve address dependencies and allows the
-> + * following misordering speculations:
-> + *
-> + * - If @b is a constant, the compiler can issue the loads which depend
-> + *   on @a before loading @a.
-> + * - If @b is a register populated by a prior load, weakly-ordered
-> + *   CPUs can speculate loads which depend on @a before loading @a.
-> + *
-> + * The same logic applies with @a and @b swapped.
+When we are checking the combination you have here, sure they
+become the same thing but there are devices where it
+matters that the trigger is not used to drive other devices
+(typically because it's a hardware line that goes nowhere
+else, so no interrupts etc) but other triggers can be used
+to drive this device (often by software triggering the scan).
+We have the opposite case as well but that's often
+a shortcut when it just happens to be really complex to get
+the trigger to reset (often requires reading all the data
+or similar) - that condition can almost always be relaxed
+but sometimes it's a lot of code for a niche case.
 
-This could be more concise, and it should be more general (along the 
-same lines as the description above).
+So fine to change the implementation of one of these
+checks on tightly coupled device and trigger to call the other
+but don't touch the callback signatures as to that breaks the
+logical parameter ordering.
 
-> + *
-> + * Return value: true if pointers are equal, false otherwise.
-> + *
-> + * The compiler barrier() is ineffective at fixing this issue. It does
-> + * not prevent the compiler CSE from losing the address dependency:
-> + *
-> + * int fct_2_volatile_barriers(void)
-> + * {
-> + *     int *a, *b;
-> + *
-> + *     do {
-> + *         a = READ_ONCE(p);
-> + *         asm volatile ("" : : : "memory");
-> + *         b = READ_ONCE(p);
-> + *     } while (a != b);
-> + *     asm volatile ("" : : : "memory");  <-- barrier()
-> + *     return *b;
-> + * }
-> + *
-> + * With gcc 14.2 (arm64):
-> + *
-> + * fct_2_volatile_barriers:
-> + *         adrp    x0, .LANCHOR0
-> + *         add     x0, x0, :lo12:.LANCHOR0
-> + * .L2:
-> + *         ldr     x1, [x0]  <-- x1 populated by first load.
-> + *         ldr     x2, [x0]
-> + *         cmp     x1, x2
-> + *         bne     .L2
-> + *         ldr     w0, [x1]  <-- x1 is used for access which should depend on b.
-> + *         ret
-> + *
-> + * On weakly-ordered architectures, this lets CPU speculation use the
-> + * result from the first load to speculate "ldr w0, [x1]" before
-> + * "ldr x2, [x0]".
-> + * Based on the RCU documentation, the control dependency does not
-> + * prevent the CPU from speculating loads.
+Jonathan
 
-IMO, this lengthy explanation is not needed in the source code.  Just 
-refer interested readers to the commit description.  You're repeating 
-the same text verbatim, after all.
-
-(Or if you firmly believe that this explanation _does_ belong in the 
-code, then omit it from the commit description.  There's no need to say 
-everything twice.)
-
-Alan Stern
-
-> + */
-> +static __always_inline
-> +int ptr_eq(const volatile void *a, const volatile void *b)
-> +{
-> +	OPTIMIZER_HIDE_VAR(a);
-> +	OPTIMIZER_HIDE_VAR(b);
-> +	return a == b;
-> +}
-> +
->  #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
->  
->  /**
-> -- 
-> 2.39.2
+> Have a nice day!
 > 
+> Cheers,
+> Vasilis
+
 
