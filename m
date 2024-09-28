@@ -1,204 +1,225 @@
-Return-Path: <linux-kernel+bounces-342707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BCB19891F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:53:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C84F9891FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 01:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34CBA1C2214D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:53:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF92D1F22F9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 23:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E99187347;
-	Sat, 28 Sep 2024 22:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE09C186E59;
+	Sat, 28 Sep 2024 23:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ejh2e5+K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gg3df5dM"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948601802AB
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 22:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E622AEEE;
+	Sat, 28 Sep 2024 23:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727563988; cv=none; b=pA0OE1UPiNbqmJA+QGoiZPzLcfhRKfoJF/ZtTve78vtAq8akLySa8geiO/vxyVMVKHoOz+Ry+tDs67UGi6v0ttjZtxXNzkxIZPJCeJY5q+1pgxclnaLHytIml+VcKVu+NRgu2n2cY6KqRhTI2eUnsx0L57ODRXH2gC3RaIAb9X0=
+	t=1727565195; cv=none; b=RRgDmYPgDlTaQ0k0BTNcyVhBzg6rsnENAUgTRBfgkPRlULWdM+fJDmL//Ok3kQ2ZuQYQrZBryIZnChu9ywQLSloiPTCtAcciPsKZIzPcTJ7ypGph6dzk1JoUw1WlajG9CSp8j1ADoQBW6cD0ObAawmMLIoeP1QqdJYDiRWAn1AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727563988; c=relaxed/simple;
-	bh=JQc0Z2OjYL4V5ha5EFr4cWv2UKg0TOWssALGaegsMts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JI8gfgqtdYlXrelDi6A2tTVk4lCp3Q/lMNUdsm6OSX7P2JPhk8yzcQ/mALhz0Q02subFilSSyEM8NFrg5no6PhpnBwrerBRqqXxG7HwkscxcLZChyNGxYgkrFjT02w9ZjDt+XyFKi3UEcJ0UA/NvQdh/p9hndHplR3efd1NhhOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ejh2e5+K; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727563986; x=1759099986;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JQc0Z2OjYL4V5ha5EFr4cWv2UKg0TOWssALGaegsMts=;
-  b=ejh2e5+KclfIAD+69qxreYXOIwaVp7bov+QZe3XwacfoUIGAe9GC4ada
-   x4uL0eeTjNIyxth10gXmMdTtC7FGcip3yIuclpjDFfzlKKmDkgovFq9qD
-   u9nPpP4vEU++3ZMD/xiHhiE25wb+zvMx8GNpXriEjT6B+QWpHtjkdS38q
-   fHAaQ1laNbKE3li1pcpQ9DiamlOW6yhjbwjeWfBRLRjNQWi9v0DxND6x4
-   Vnrscq/GxBNfl1hAJQib++vWEHlZSKrQL3617K2xhcf4pcgKX2DCT4XJP
-   nN9FZuheCYX9cIgIyzRPA8rtidvj2l2KQ0UeOmIqVm5YKZmxWM5vpK/vB
-   g==;
-X-CSE-ConnectionGUID: lZWleAXASfettfPTwX5ZiA==
-X-CSE-MsgGUID: QXy/5cP3QRyC/Ssux0ipaQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="52096695"
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="52096695"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 15:53:06 -0700
-X-CSE-ConnectionGUID: S4HAL6U0THeeehG2HcCX5A==
-X-CSE-MsgGUID: kbcuEdr5Rqa1gR96kN6zNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="72760530"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 28 Sep 2024 15:53:02 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sugJA-000Njn-05;
-	Sat, 28 Sep 2024 22:53:00 +0000
-Date: Sun, 29 Sep 2024 06:52:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
-	Alper Nebi Yasak <alpernebiyasak@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Shawn Sung <shawn.sung@mediatek.com>,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
-	Singo Chang <singo.chang@mediatek.com>,
-	Nancy Lin <nancy.lin@mediatek.com>,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v6 2/2] drm/mediatek: Add blend_modes to mtk_plane_init()
- for different SoCs
-Message-ID: <202409290651.YLKsl39c-lkp@intel.com>
-References: <20240926083526.24629-3-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1727565195; c=relaxed/simple;
+	bh=xDhJtQezYDQhYGdc7LW28hqcUGAUnvcmud6T657Ut/E=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=nK/oira+4BdWOA/1q9h56Hpm64MIKO7O0K3j+SZTo9d00oOBqMuma17QOfyO7Z3eojIkW9MKMm42ipfta7Lu9e94pPukywEY6dAj7gW2DpxXIloFPcT6eQuLiTTYqtGkf+2vk56jj+nwb8vF82aHOnxrkNLvnQTy1aVywl4dUiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gg3df5dM; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20551eeba95so31950825ad.2;
+        Sat, 28 Sep 2024 16:13:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727565193; x=1728169993; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hlXRms7F/yIYEZIpY96anVWqMAu7/hjyZTvOiryivSE=;
+        b=Gg3df5dMW6aHeFQjwsLgchrD4bsND/kPSjl4f2grnCj4A8Uf4XQj7K9+eHTU2WwqC7
+         CGxTHJupEHFpT3UjwO0duZuuTYvp3Jii6vrm549lw94bDbnVEzSkjNXo7X6C7jJY8pi4
+         eCgZjhJ7P7FGqXsbdxXFeAHePaXd6nl9Nap2L5qff8fipyMy8HQtDWmCDJRJMuiY57o0
+         2nw/1JxpJFLl2RWDRISFpruz2svfHPafTCoextnuxaoAM3jZ3ZEFQyycNVae0gHgPB1G
+         DML+9fkI7cT6IMhJAvkpsh9Cz/pChSnbDCSbhE263lYm3Vs+AZHOrcdbnS5mTMxt2cU/
+         qDXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727565193; x=1728169993;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hlXRms7F/yIYEZIpY96anVWqMAu7/hjyZTvOiryivSE=;
+        b=SIo5HyEAhX/aL3fyMyKYL3v8arZw/a3zpBl4xyGdNOKMYrpC3iK5bjzOq8SaP+abhB
+         VPa4XmIkg1c6uxBJ7ZctPy3z3nFgbNbPHzbRx5GCtNY5T7B7vviFusFYMCNlAoEjphbv
+         VbSKXvbaol+4YJfASYi7zPFT9jKUMJ9//hwUbfiOmwg9uEdNubOs5YLFKplRTpOV8hzb
+         2A02D7ipdqGouyBUuXp8EkkNnSgdN8m5dIolZZGaSBYjVc3qg0ey+AzTNYW8TTqV/Xd0
+         yJ8xZUNgT/fWb4jnoRrmVhDp+INZrrV40nZ1PRtbwgpTLh3B215Ul6irov3w4JpU2shm
+         AAHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULP7s7GQOAGNpBVNYfaVhaPozye+d+PSLU+kMOwevJ8cWsht6WV7RFLFxHiWdP+ZvVlq6/8I+7Ce06zcc=@vger.kernel.org, AJvYcCWwSlooaLLW00nGAo2PDWFH40Of/2zxI97iqRE4oLGiTFOF2oRRtQkKNr70si2fNVNNtd20@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3+i0oiyWAMrCqZ9pvmL0bakqSaxqQtqHFN/Bj6u4oIMeOSW93
+	RT0OP+82kq5XcPuW7H/fHDLxZguYAO6/+UdYr4ZAPXSzM1oS2NZQ
+X-Google-Smtp-Source: AGHT+IE2sBYP1tAvZqMQRpXmx8wMXmRsA3LnUmxXborZPEfW+jZDkloOvwEfncz/nFiCQJfXofJTmQ==
+X-Received: by 2002:a17:902:d4c3:b0:20b:7731:e3f8 with SMTP id d9443c01a7336-20b7731e676mr1645985ad.26.1727565192698;
+        Sat, 28 Sep 2024 16:13:12 -0700 (PDT)
+Received: from smtpclient.apple ([2402:d0c0:11:86::1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e0fa94sm31491515ad.135.2024.09.28.16.13.06
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 28 Sep 2024 16:13:12 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926083526.24629-3-jason-jh.lin@mediatek.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+From: Alan Huang <mmpgouride@gmail.com>
+In-Reply-To: <5F741990-7A14-4528-9AF8-817007689B0A@gmail.com>
+Date: Sun, 29 Sep 2024 07:12:53 +0800
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ RCU <rcu@vger.kernel.org>,
+ linux-mm@kvack.org,
+ lkmm@lists.linux.dev,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>,
+ Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>,
+ Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ maged.michael@gmail.com,
+ Neeraj upadhyay <neeraj.upadhyay@amd.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C78F7BBA-860A-412D-B2B7-5028C5540695@gmail.com>
+References: <ZvPp4taB9uu__oSQ@boqun-archlinux>
+ <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
+ <ZvP_H_R43bXpmkMS@boqun-archlinux>
+ <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
+ <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+ <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
+ <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
+ <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
+ <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
+ <bba2e656-4c3b-46db-b308-483de440b922@efficios.com>
+ <ZvY2zBiluLkqRSkc@boqun-archlinux>
+ <62508c1f-66ca-450d-abb6-236ca3b9096d@huaweicloud.com>
+ <d86536d9-9c5a-48ab-abf3-3483e2e5e980@efficios.com>
+ <4ed833df-54e6-454a-ab1a-73967cc51054@huaweicloud.com>
+ <5F741990-7A14-4528-9AF8-817007689B0A@gmail.com>
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-Hi Jason-JH.Lin,
+2024=E5=B9=B49=E6=9C=8829=E6=97=A5 06:10=EF=BC=8CAlan Huang =
+<mmpgouride@gmail.com> wrote=EF=BC=9A
+>=20
+> 2024=E5=B9=B49=E6=9C=8828=E6=97=A5 06:18=EF=BC=8CJonas Oberhauser =
+<jonas.oberhauser@huaweicloud.com> wrote=EF=BC=9A
+>>=20
+>>=20
+>>=20
+>> Am 9/27/2024 um 10:10 PM schrieb Mathieu Desnoyers:
+>>> On 2024-09-27 21:23, Jonas Oberhauser wrote:
+>>> [...]
+>>>> That idea seems to be confirmed by this (atrocious, not to be =
+copied!) example:
+>>>>=20
+>>>> int fct_escape_address_of_b(void)
+>>>> {
+>>>>     int *a, *b;
+>>>>=20
+>>>>     do {
+>>>>         a =3D READ_ONCE(p);
+>>>>         asm volatile ("" : : : "memory");
+>>>>         b =3D READ_ONCE(p);
+>>>>     } while (a !=3D b);
+>>>>=20
+>>>>     // really really hide b
+>>>>     int **p =3D &b;
+>>>>     OPTIMIZER_HIDE_VAR(p);
+>>>>=20
+>>>>     asm volatile ("" : : : "memory");
+>>>>     return *b;
+>>>> }
+>>>>=20
+>>>> This also does not generate any additional instructions, unlike =
+just using OPTIMIZER_HIDE_VAR(b).
+>>>>=20
+>>>> What is the advantage of defining OPTIMIZE_HIDE_VAR the way it =
+currently works instead of like above?
+>>> Did you try it on godbolt.org ? Does it have the intended effect ?
+>>=20
+>> I certainly did try and certainly read it as having the intended =
+effect, otherwise I wouldn't have written that it seems confirmed.
+>>=20
+>> However, just because my eyes read it doesn't mean that's what =
+happened, and even if it happened doesn't mean that it is guaranteed to =
+happen.
+>>=20
+>>> By the looks of it, you're just creating another version of @b =
+called
+>>> "p", which is then never used and would be discarded by further
+>>> optimization. >
+>>> I'm unsure what you are trying to achieve here.
+>>=20
+>> Simply put I'm trying to let the compiler think that I leaked the =
+address of b. After that, the memory barrier should let it think that =
+the b after the memory barrier might not be the same as the one before =
+it (which was equal to a), forcing it to read from b.
+>>=20
+>> However, I suppose on second thought that that might not be enough, =
+because the compiler could still simply do b =3D a right after exiting =
+the while loop.
+>>=20
+>> And that is true no matter what we put behind the while loop or =
+before the condition, as long as the condition compares a and b, right =
+after it the compiler can do b =3D a. Just took me a while to see :))
+>>=20
+>> I'm not sure why gcc does the b=3Da with the normal =
+OPTIMIZER_HIDE_VAR but (as far as I read the code) doesn't do it with =
+the above. Maybe just a weird corner case...
+>=20
+> Let the p to be a static variable out of the function will make a =
+difference.
+>=20
+> Or the following:
+>=20
+> int **p =3D &b;
+> barrier_data(p);
 
-kernel test robot noticed the following build warnings:
+Or the following:
 
-[auto build test WARNING on drm/drm-next]
-[also build test WARNING on linus/master next-20240927]
-[cannot apply to v6.11]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+	int **t =3D &b;
+	WRITE_ONCE(t, &b);
+	barrier();
+ 	return *b;
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jason-JH-Lin/drm-mediatek-ovl-Add-blend_modes-to-driver-data/20240926-163734
-base:   git://anongit.freedesktop.org/drm/drm drm-next
-patch link:    https://lore.kernel.org/r/20240926083526.24629-3-jason-jh.lin%40mediatek.com
-patch subject: [PATCH v6 2/2] drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
-config: arm64-randconfig-001-20240929 (https://download.01.org/0day-ci/archive/20240929/202409290651.YLKsl39c-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 7773243d9916f98ba0ffce0c3a960e4aa9f03e81)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290651.YLKsl39c-lkp@intel.com/reproduce)
+also works.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409290651.YLKsl39c-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/gpu/drm/mediatek/mtk_ethdr.c:18:
-   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:9:
-   In file included from include/drm/drm_crtc.h:32:
-   In file included from include/drm/drm_modes.h:33:
-   In file included from include/drm/drm_connector.h:32:
-   In file included from include/drm/drm_util.h:36:
-   In file included from include/linux/kgdb.h:19:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:2232:
-   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_ethdr.c:18:
-   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:10:
-   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:2: warning: 'const' type qualifier on return type has no effect [-Wignored-qualifiers]
-      83 |         const u32 (*get_blend_modes)(struct device *dev);
-         |         ^~~~~
-   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: warning: 'const' type qualifier on return type has no effect [-Wignored-qualifiers]
-     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
-         | ^~~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_ethdr.c:21:
->> drivers/gpu/drm/mediatek/mtk_ethdr.h:16:1: warning: 'const' type qualifier on return type has no effect [-Wignored-qualifiers]
-      16 | const u32 mtk_ethdr_get_blend_modes(struct device *dev);
-         | ^~~~~
->> drivers/gpu/drm/mediatek/mtk_ethdr.c:148:1: warning: 'const' type qualifier on return type has no effect [-Wignored-qualifiers]
-     148 | const u32 mtk_ethdr_get_blend_modes(struct device *dev)
-         | ^~~~~
-   5 warnings generated.
---
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:7:
-   In file included from include/drm/drm_of.h:8:
-   In file included from include/drm/drm_bridge.h:30:
-   In file included from include/drm/drm_atomic.h:31:
-   In file included from include/drm/drm_crtc.h:32:
-   In file included from include/drm/drm_modes.h:33:
-   In file included from include/drm/drm_connector.h:32:
-   In file included from include/drm/drm_util.h:36:
-   In file included from include/linux/kgdb.h:19:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:2232:
-   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:20:
-   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:2: warning: 'const' type qualifier on return type has no effect [-Wignored-qualifiers]
-      83 |         const u32 (*get_blend_modes)(struct device *dev);
-         |         ^~~~~
-   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: warning: 'const' type qualifier on return type has no effect [-Wignored-qualifiers]
-     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
-         | ^~~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:21:
-   drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: warning: 'const' type qualifier on return type has no effect [-Wignored-qualifiers]
-     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
-         | ^~~~~
-   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: warning: 'const' type qualifier on return type has no effect [-Wignored-qualifiers]
-     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
-         | ^~~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:23:
->> drivers/gpu/drm/mediatek/mtk_ethdr.h:16:1: warning: 'const' type qualifier on return type has no effect [-Wignored-qualifiers]
-      16 | const u32 mtk_ethdr_get_blend_modes(struct device *dev);
-         | ^~~~~
-   drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:403:1: warning: 'const' type qualifier on return type has no effect [-Wignored-qualifiers]
-     403 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev)
-         | ^~~~~
-   7 warnings generated.
+>=20
+> also works.
+>=20
+> BTW, barrier_data(&b) generates more instructions than godbolt when =
+build the kernel.
+>=20
+>>=20
+>> Have fun,
+>> jonas
 
 
-vim +/const +16 drivers/gpu/drm/mediatek/mtk_ethdr.h
-
-     8	
-     9	void mtk_ethdr_start(struct device *dev);
-    10	void mtk_ethdr_stop(struct device *dev);
-    11	int mtk_ethdr_clk_enable(struct device *dev);
-    12	void mtk_ethdr_clk_disable(struct device *dev);
-    13	void mtk_ethdr_config(struct device *dev, unsigned int w,
-    14			      unsigned int h, unsigned int vrefresh,
-    15			      unsigned int bpc, struct cmdq_pkt *cmdq_pkt);
-  > 16	const u32 mtk_ethdr_get_blend_modes(struct device *dev);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
