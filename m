@@ -1,193 +1,154 @@
-Return-Path: <linux-kernel+bounces-342341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8DD988DBE
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 05:54:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF15988DC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 05:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99096282A87
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 03:54:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5D5E1C21279
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 03:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7361422A8;
-	Sat, 28 Sep 2024 03:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFC615C139;
+	Sat, 28 Sep 2024 03:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Si+OyKUp"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W1kG9cXi"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326884A1B;
-	Sat, 28 Sep 2024 03:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F89C4A1B;
+	Sat, 28 Sep 2024 03:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727495651; cv=none; b=ly9S+R79W/jU84JHEKf/B8W2PuKNneMYVAlqk8v0RKm+m9t5MLpoH4ZFHSv6Lr9Mfxmm+LHTLSfoHPpAeK2Jb8uI4yPnVUVUy3QJhg8H447+jrDWCOS0jm0o5btR+PbXpewizVvq/QI5BID8YNybu93xxT/b8DYCmBRpff/qEFg=
+	t=1727495656; cv=none; b=BhNUOhANGaN5YMXUsmYEE188LCKnS4eDOVVLC1Bm83mCX3lqc91kYbVu0PsEtundpwWD68F6cnE/xLgj4oz3AWf6dRRr6jkH59CEDcMoqP8tfysWOcf3OlZV5Ll5mLsXofsqegFmaswfteleUnaLRapFcwZ6f/d/HGOSXnZWe80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727495651; c=relaxed/simple;
-	bh=rj7UqAEj5nQUkjablc7CjxDbfFQSdJCh0F90jpjERnU=;
+	s=arc-20240116; t=1727495656; c=relaxed/simple;
+	bh=x82iWF7eXQQdQXKKJVmDu/4AANMqTHSwpVsRnGv7kqo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BaZPYs8XTmnUiV3dtksGl+mFPN3dWV3mxV16ch3ngy6ApqR9O3v/qUiceFZApIo2pRJYoabsVOAL7dC8kLXJWrdDBWQGqC2cLAPq7QVLTVD/MHP407cHYkrc5an+iOvHTQp8Ba+C/EFHRCVGzvzekXWHKh/UGpufAHJlR8B4h5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Si+OyKUp; arc=none smtp.client-ip=209.85.167.41
+	 To:Cc:Content-Type; b=r8KBXmZ5VeOT7mAvX/H1C/KODqzrGFCVxC+yM9qCngYed2Cw6zPjinezkZwv8Q1A/ORsSU1QxhrdjcZmn4qVMmpu6E1XoWfiP7IJ1B+Mg6/QuZn62IXC7vrEP5UWtSP5/yc5pOUKWNH9NgpJJXlo2QoA/yQyyEhfP8m6grVPqeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W1kG9cXi; arc=none smtp.client-ip=209.85.161.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5398e7dda5fso30919e87.0;
-        Fri, 27 Sep 2024 20:54:08 -0700 (PDT)
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5e5b57127e6so1386250eaf.2;
+        Fri, 27 Sep 2024 20:54:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727495647; x=1728100447; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727495654; x=1728100454; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0qu2RbmNt8gPqRKvTmXGhJ0rCOvq4hj8MvwdpxuHcVg=;
-        b=Si+OyKUpv2NUa2yqHrr+NWh53JchCduj8/ko0MUU7AlniAHd4Gdh2iSv68VIv1QWPt
-         2JjkB9AHWMgrEXd5acgGbGNvhlbn9IhkCiyIlkIbpSXHApIoCxwbKjXfRPIPpFIsAMap
-         IhSFljxAvzTssZKuS2m0EDcGVRUfSN5tzx9jarruH66tpqKgAUnbDjxUOH/r3TqEiVDz
-         nA/jqXLNu5nCVdcr7Mpc0BkvEqkCSKLHGaRMRKOPlZmb2bGuQJKgGHP4ZGgwC6cC6LO8
-         AcAEIul1PpgBFWd6ePyA7rqdIYJEW7xJ/gOWdq5KRJUOOrGvxwa7Jf25Pl0gglYA8lFz
-         dqaA==
+        bh=5xSAL7rchY/v+2Rzw+lrnyuOu9f7/62fqJf77xc7j10=;
+        b=W1kG9cXi/7LeA0avguEdQiqRck1a24NW/p6mm+EgaXiMIXysXCaFQkGvw+yl72OF33
+         5KyagbqLS3InaQSAX0izK5BMXlZDb34JcrkC7cYf73ifh/WGVpNVds6b4idZsIYZiliP
+         bbiiwk2L8EUCv2tWDD1Akjd4YWu+f7HGHYchpqlwnm2huvMfVSF5AvIkSduULkxGT9nB
+         Qh+xdEHdq2A+7KuiAigX8oVJ3lWp7OtcrQD7edsdflxfeiN3WfM8Rqaa18CJYTeU4MS3
+         qe8O5rOO7CrZxuivM1/ZfGQ866OuMxoCqc/6piIvV0zsVZ9EO7nYzNhxOngkWUDS26Sz
+         ODwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727495647; x=1728100447;
+        d=1e100.net; s=20230601; t=1727495654; x=1728100454;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0qu2RbmNt8gPqRKvTmXGhJ0rCOvq4hj8MvwdpxuHcVg=;
-        b=WGD1guufRiQGfChw3xmNZivTaequKooDovaS9lYx8TXnOJy4gido0yvu5FFj2jYnpa
-         cDxDVWp4RjYu/phtLHsDBjt80a+8QKVQdEpYd0XGrKVKt5P859VwPqutjjcSnyNlIdyu
-         E3cru8mYyAr/uzYR/9ss5F6cItucyrID05B4G1alqec0fKwtgkD4mi3bYhcY0Ppv5JX2
-         WhT/sVQ1REMB/2e2Y7aiceHuN7gMiTSFqywaZqsN+wPfF1HODePSMuwhVXBwLoJy/XHu
-         Mjyye6vRCz98f3VvVTeQ1JLtLlq9+U+siTmKL8gmpE7L5f8S9VJq21M6OAApeR8p24j7
-         bVOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3OozCbRthTnsg0fuU7J+wxU6yP//CxqXBnn5P40e6FsPqOo8x3P1jInQtEFiVE8x8W2vx7Y99n4pBmoIP@vger.kernel.org, AJvYcCUgJjKPXvwbdEs4XVkEG+kv+ws+etyrb2+lRNJc22NI3m36LOh8R0FHHmCniPb6or6bwWxP1yQdp+hixio=@vger.kernel.org, AJvYcCVZp0++iwV5cDdtPc8WJs+Xaq7JNjOxJzEf+2pi2LkaZIup0NIloz7hvXnQWj/II9zU/85wcG+qDjvsT6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP0X1rG57ovYhb3fq4NKv1OpOERvfS+tUAYXUlzhSBA+Balo6M
-	qwh+0BvWcGIs1wjPuknMGdttw9Wbuz+/5AeijBWJtGzZMl40n0g9EgW9jkkP8qYzWopYRuIi6E+
-	Zs6Omj4zU5LNfObjc5b1/J3oqFslonbrN
-X-Google-Smtp-Source: AGHT+IFhvJLe27KdjkZ3nhPAKadgpehDnrCg3V3j5B8FSZ2L9iBcuvKGAWVXeJV889MRUBeOohncNNrxFhp+wJnTDW0=
-X-Received: by 2002:a05:6512:1054:b0:52c:e05e:849b with SMTP id
- 2adb3069b0e04-5389fc63377mr3217782e87.39.1727495646768; Fri, 27 Sep 2024
- 20:54:06 -0700 (PDT)
+        bh=5xSAL7rchY/v+2Rzw+lrnyuOu9f7/62fqJf77xc7j10=;
+        b=Y9QYU/rV9Tklqzg740inE7EgJHTdOVnKb9byp1X8fmHtx7aX0sN7tCU8q3Ja0zeLNP
+         1Azoc4V/k5sqcaWL/fzHEZXWXxLhFFqIxaQJqs0QIaZSPj86UCVF52fVdi5BOW/CNBvd
+         zZ6cAwsP9V30EGla9Fv6nPGs6jQiWPDXnX0EmI+k/rHBWO3L4KB+nRoQi8u/IReV1/3R
+         74Y2syA2Q4CupeCqMeP5xYIlTYjJD/K+14/+YhD4PZiG1Ni5poWtbOKWKsu8Wrd0wWnS
+         6lGe+z5XXq6u4JjdyCMxONnKBdF6rzUxl/TmOfJVKVmbhXFG8UHbd+KpIcnp8iNPp62E
+         PqRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdhXy93Rvnwn9C6vvlcqxn03P6w4+EgZe9+vyYSEZclaPnL6Y5kFMj6Kh4F9b1Qmgb0hwPmFjvXNO+sr4=@vger.kernel.org, AJvYcCVzzZ8DVPI3QwmPzlmCo+/hjwMvcmn6dQ8JFRiDxkA3xTygud0N2fdGpU0NwyU3j3S6F4SmjDOBPHmR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4fDyURSYmpdycwWTdwLEAzGhCAF9iUiCIwCORh3nLF1T/ihIv
+	IJy8bSgKfQ5FYmaqkGxeRBdkMMuzIHfrvkhlVIgmfSLKJM2Bmh64K9/hYKA/qkTzQRt9HYoh12J
+	L76JeL/1gMpX46LCVjLvkC4/pUVE=
+X-Google-Smtp-Source: AGHT+IFFVM/jy3GYgQAk0AUcs3/sUs86ULzn48zHEdO6RjqIDIiJRQA43uZkEY2zPfymuKbW/S4rRLppwl3fVJ6w2Tk=
+X-Received: by 2002:a05:6820:50d:b0:5e1:c19d:3f4e with SMTP id
+ 006d021491bc7-5e7727bb098mr3002051eaf.8.1727495654182; Fri, 27 Sep 2024
+ 20:54:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66f59678.050a0220.46d20.0001.GAE@google.com>
-In-Reply-To: <66f59678.050a0220.46d20.0001.GAE@google.com>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Sat, 28 Sep 2024 12:53:50 +0900
-Message-ID: <CAKFNMo=mAYHtfq+QP2v4v9YL7RxEMu-m0BdM5VCW65boHDt34g@mail.gmail.com>
-Subject: Re: [syzbot] [serial?] INFO: task hung in vcs_open (8)
-To: syzbot <syzbot+8a192e8d090fa9a31135@syzkaller.appspotmail.com>
-Cc: Lizhi Xu <lizhi.xu@windriver.com>, linux-nilfs <linux-nilfs@vger.kernel.org>, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	linux-serial@vger.kernel.org
+References: <CANAwSgSgwx0kuV-boF14_WXiPkE8KXxOWOfS2e_QOWMKgKSLnA@mail.gmail.com>
+ <20240927182238.GA85539@bhelgaas>
+In-Reply-To: <20240927182238.GA85539@bhelgaas>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Sat, 28 Sep 2024 09:23:58 +0530
+Message-ID: <CANAwSgSfdU9Ms_JCDdU+c9CxmBqGy1i8QkLtuorjMAw9GQe16w@mail.gmail.com>
+Subject: Re: [PATCH v5 1/6] PCI: rockchip: Simplify clock handling by using
+ clk_bulk*() function
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 2:36=E2=80=AFAM syzbot
-<syzbot+8a192e8d090fa9a31135@syzkaller.appspotmail.com> wrote:
+Hi Bjorn,
+
+Thanks for your review comments.
+
+On Fri, 27 Sept 2024 at 23:52, Bjorn Helgaas <helgaas@kernel.org> wrote:
 >
-> Hello,
+> On Fri, Sep 27, 2024 at 01:47:44PM +0530, Anand Moon wrote:
+> > On Mon, 2 Sept 2024 at 00:03, Anand Moon <linux.amoon@gmail.com> wrote:
+> > >
+> > > Refactor the clock handling in the Rockchip PCIe driver,
+> > > introducing a more robust and efficient method for enabling and
+> > > disabling clocks using clk_bulk*() API. Using the clk_bulk APIs,
+> > > the clock handling for the core clocks becomes much simpler.
+> > >
+> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> >
+> > Do you have any review comments on this series?
 >
-> syzbot found the following issue on:
+> Looks like nice work, thanks.  Minor tips below.  We'll start applying
+> PCI patches to v6.13-rc1 after it is tagged.  It looks like these will
+> apply cleanly, so no rebasing needed.
 >
-> HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.=
-k..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1187c19f98000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D74ffdb3b3fad1=
-a43
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D8a192e8d090fa9a=
-31135
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D16aa3ca9980=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1587c19f98000=
-0
+>   - It would be helpful if you can add a cover letter (0/n), which is
+>     a good place for the overall diffstat and series-level changelog.
 >
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/87eaf0ad6d60/dis=
-k-88264981.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/30c01cf8bc82/vmlinu=
-x-88264981.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/a1407424ea54/b=
-zImage-88264981.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/a8a56914d1=
-d8/mount_6.gz
+>   - This v5 series adds drivers/phy patches, which are also related to
+>     rockchip, but will be handled by a different maintainer, so best
+>     to send them as separate series (and of course send the phy
+>     patches to the right maintainer, linux-phy, etc).
 >
-> Bisection is inconclusive: the issue happens on the oldest tested release=
-.
+>   - "b4 am -o/tmp/ 20240901183221.240361-2-linux.amoon@gmail.com"
+>     complains about something, I dunno how to fix:
 >
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D16154c8058=
-0000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D15154c8058=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D11154c8058000=
-0
+>       Checking attestation on all messages, may take a moment...
+>       ---
+>         =E2=9C=97 [PATCH v5 1/6] PCI: rockchip: Simplify clock handling b=
+y using clk_bulk*() function
+>         =E2=9C=97 [PATCH v5 2/6] PCI: rockchip: Simplify reset control ha=
+ndling by using reset_control_bulk*() function
+>         =E2=9C=97 [PATCH v5 3/6] PCI: rockchip: Refactor rockchip_pcie_di=
+sable_clocks function signature
+>         =E2=9C=97 [PATCH v5 4/6] phy: rockchip-pcie: Simplify error handl=
+ing with dev_err_probe()
+>         =E2=9C=97 [PATCH v5 5/6] phy: rockchip-pcie: Change to use devm_c=
+lk_get_enabled() helper
+>         =E2=9C=97 [PATCH v5 6/6] phy: rockchip-pcie: Use regmap_read_poll=
+_timeout for PCIe reference clk PLL status
+>         ---
+>         =E2=9C=97 BADSIG: DKIM/gmail.com
 >
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+8a192e8d090fa9a31135@syzkaller.appspotmail.com
+>   - In 3/6 and 6/6 commit logs, add parens after function names as
+>     you did elsewhere.
 >
-> INFO: task syz-executor199:5270 blocked for more than 147 seconds.
->       Not tainted 6.11.0-syzkaller-08481-g88264981f208 #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz-executor199 state:D stack:27360 pid:5270  tgid:5255  ppid:5233  =
- flags:0x00004006
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5315 [inline]
->  __schedule+0x1843/0x4ae0 kernel/sched/core.c:6674
->  __schedule_loop kernel/sched/core.c:6751 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6766
->  schedule_timeout+0xb0/0x310 kernel/time/timer.c:2591
->  ___down_common kernel/locking/semaphore.c:225 [inline]
->  __down_common+0x346/0x7f0 kernel/locking/semaphore.c:246
->  down+0x84/0xc0 kernel/locking/semaphore.c:63
->  console_lock+0x145/0x1b0 kernel/printk/printk.c:2808
->  vcs_open+0x5d/0xd0 drivers/tty/vt/vc_screen.c:763
->  chrdev_open+0x521/0x600 fs/char_dev.c:414
->  do_dentry_open+0x978/0x1460 fs/open.c:958
->  vfs_open+0x3e/0x330 fs/open.c:1088
->  do_open fs/namei.c:3774 [inline]
->  path_openat+0x2c84/0x3590 fs/namei.c:3933
->  do_filp_open+0x235/0x490 fs/namei.c:3960
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+>   - Super nit: In 5/6, s/Change to use/Use/.  Every patch is a change,
+>     so "Change to" doesn't add any information.
 >
 
-The problem caused by this reproducer seems to be an issue on the
-nilfs side based on testing with Lizhi's patch (not all logs recorded
-are like that), so I will add a nilfs tag:
+Ok, I will try to fix and improve on your suggestion in the next version.
 
-#syz set subsystems: nilfs, serial
+> Bjorn
 
-Ryusuke Konishi
+Thanks
+-Anand
 
