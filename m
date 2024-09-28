@@ -1,213 +1,261 @@
-Return-Path: <linux-kernel+bounces-342657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB9998914B
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:14:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF70989155
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A33AF285C5C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:14:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 638E2285C0F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842B0165F0F;
-	Sat, 28 Sep 2024 20:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE481779BD;
+	Sat, 28 Sep 2024 20:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JSHM4egy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HN6l/kql"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48BB136358;
-	Sat, 28 Sep 2024 20:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B4923774;
+	Sat, 28 Sep 2024 20:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727554466; cv=none; b=mYnC4A6DgMOKUlkEpWesRPiBizcMrcBRtUsDeMyBiuLftnJ064AlmtC6GEMoREdBaQH8KCHCxfBVOdGhL3o2Y7HPVuFNi9a1bJs+RJZlO55wnhuQegw7qLo+59K1rC1o4jVGPraARmOPayu6j+PQ0xffVf1yn9p1NZNFF+a57Ts=
+	t=1727554640; cv=none; b=rD9oQZlM1czX9pW+L9DSjhkIEG77TnaxdHKayjfqdxEOeKkcUQua6O6jz3v9eA9VmwmaaNQKTzYHjaGG2FKQpiTUcKiYrJ9dGyBBOFDV+fWCzJcAowGZlRFh9yYOuc1mh1AhdAt0pxM6p3kXXq49nSo4lUv+CUy4U/i/08zdeJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727554466; c=relaxed/simple;
-	bh=fyzkp8bwC+pgUCdnd/ipBoI0RRrRQvdTxtU1+uStjnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NS4pkceHvPAdNJM28Qb7xjSWbIBV0i7+wpQOe/sH1/t9yb4dlz4rDqzp/smtBxJMHDehM++Kgudncv1+C/pMZhd1gsV71JAJnTjFjU7DofUxtj5HKrt3vkzzii0G78vVreoKl+cDb0chCMY4leBcheASaGWsarurXC33ej8RE6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JSHM4egy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DA6CC4CEC3;
-	Sat, 28 Sep 2024 20:14:19 +0000 (UTC)
+	s=arc-20240116; t=1727554640; c=relaxed/simple;
+	bh=GxLnxv0XYQXvlin9TcvZ4RiHtAZjSqilKKtgN9ttjaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=bWpU6JlkPjs+vIpWZ+oLa20d2VyokvAP86K7sShakOYkoYvbYslFNPNFiQ/SHPh3j09ieqKNh1Fez4x3LKuk5J30gkudSrpWqil1UumFqHtax/wi+9cG39CxU/RBSB0+ByPyInUKs4bIVKD7BaswLk21aBELEVkbQbc5OmE5lb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HN6l/kql; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85778C4CEC3;
+	Sat, 28 Sep 2024 20:17:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727554466;
-	bh=fyzkp8bwC+pgUCdnd/ipBoI0RRrRQvdTxtU1+uStjnE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JSHM4egySK3ezdTOqKcIpDj8cQX3z1AAr6lqvqqTdKVx0OWDlqhPhp908NTUbGMgv
-	 PB15gK0cQ4KW+H0wmbEbEltG3rsLnnpqEiN6xrXptgDaQ3UvYh4vQr3wDnyua+GdvM
-	 nGEJ87/BBQLVLp7Nqh/f79aNFNvEhnyEfQpxaYcNu9rzpOJFzKQ3fz/r6basWILMLI
-	 R9usdwOLwKR0Q4cmKmYi9dSbLMEQIXtO1s10v2XtQp8H2ZZ6nN6t2VIantBsAjiEKp
-	 6HP6A7RaJC4LveccmPV0bZCLchG4RoSA5OgIKEOlwdM8iVvVEPty8Bf2j1haujXQqH
-	 6imGmxrESn6FQ==
-Date: Sat, 28 Sep 2024 21:14:17 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Moudy Ho =?utf-8?B?KOS9leWul+WOnyk=?= <Moudy.Ho@mediatek.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Macpaul Lin =?utf-8?B?KOael+aZuuaWjCk=?= <Macpaul.Lin@mediatek.com>,
-	Pablo Sun =?utf-8?B?KOWtq+avk+e/lCk=?= <pablo.sun@mediatek.com>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Chris-qj Chen =?utf-8?B?KOmZs+Wlh+mAsik=?= <Chris-qj.Chen@mediatek.com>,
-	Bear Wang =?utf-8?B?KOiQqeWOn+aDn+W+tyk=?= <bear.wang@mediatek.com>,
-	"wenst@chromium.org" <wenst@chromium.org>,
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"simona@ffwll.ch" <simona@ffwll.ch>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	Macross Chen =?utf-8?B?KOmZs+izoueiqSk=?= <macross.chen@mediatek.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"macpaul@gmail.com" <macpaul@gmail.com>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	Yong Wu =?utf-8?B?KOWQtOWLhyk=?= <Yong.Wu@mediatek.com>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Sen Chu =?utf-8?B?KOWCqOajrik=?= <Sen.Chu@mediatek.com>,
-	"will@kernel.org" <will@kernel.org>,
-	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: Re: [PATCH 3/6] dt-bindings: display: mediatek: Fix clocks count
- constraint for new SoCs
-Message-ID: <20240928-hummus-carol-0f09081f892d@spud>
-References: <20240924103156.13119-1-macpaul.lin@mediatek.com>
- <20240924103156.13119-3-macpaul.lin@mediatek.com>
- <ffc1900b-3921-48ca-a2b2-1b798c57e572@collabora.com>
- <20240924-commute-collision-13ad39717d31@spud>
- <2821ef09-1b32-082d-69d1-e09a3a302447@mediatek.com>
- <20240925-satisfy-epidermal-bd414891479a@spud>
- <7a1315ef-4be5-4528-858b-9f07c814636d@collabora.com>
- <93d9ffbe466ff61d5426b6f158a4b8464f56824d.camel@mediatek.com>
+	s=k20201202; t=1727554639;
+	bh=GxLnxv0XYQXvlin9TcvZ4RiHtAZjSqilKKtgN9ttjaY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=HN6l/kqlpNLRnX4Tj3J6WmkbDtid6/YNBPS/tnLJtWZVxlTextqj2bwj8ktQuWByR
+	 TYBf6EnmSnIf1nXJODJHVTzzqZ4s8nq3czWZ9esZozC1LrmBHzsBdYHxjGulC3Gwmi
+	 KgNMC1fUuAf+wWNHdjhMht8FJNaYv/bV5HpQ0RlrS+0ZsPoFrDolCPWENRUPmxF93k
+	 G8pecxcSctXbSKJ67xAHr1Zs8GuZg6LHhZrrxt24NTJJyXPmo4SdafNQ8WkjSEsVW+
+	 zLblasZLivej8yvdAgRi1/mG7+RPJvxgwkp6csgTsA0646WhXcvKTUdQ/MaGnV0W7z
+	 H1TjnpPJ3ff5A==
+Date: Sat, 28 Sep 2024 15:17:17 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>, Lizhi Hou <lizhi.hou@amd.com>
+Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
+ parsed from DT
+Message-ID: <20240928201717.GA99402@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="AcDfy0agmX9jcKA8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <93d9ffbe466ff61d5426b6f158a4b8464f56824d.camel@mediatek.com>
+In-Reply-To: <ZvZVPA6ov5XgScpz@apocalypse>
 
+On Fri, Sep 27, 2024 at 08:48:28AM +0200, Andrea della Porta wrote:
+> On 15:16 Thu 05 Sep     , Bjorn Helgaas wrote:
+> > On Thu, Sep 05, 2024 at 06:43:35PM +0200, Andrea della Porta wrote:
+> > > On 17:26 Tue 03 Sep     , Bjorn Helgaas wrote:
+> > > > On Mon, Aug 26, 2024 at 09:51:02PM +0200, Andrea della Porta wrote:
+> > > > > On 10:24 Wed 21 Aug     , Bjorn Helgaas wrote:
+> > > > > > On Tue, Aug 20, 2024 at 04:36:05PM +0200, Andrea della Porta wrote:
+> > > > > > > The of_pci_set_address() function parses devicetree PCI range
+> > > > > > > specifier assuming the address is 'sanitized' at the origin,
+> > > > > > > i.e. without checking whether the incoming address is 32 or 64
+> > > > > > > bit has specified in the flags.  In this way an address with no
+> > > > > > > OF_PCI_ADDR_SPACE_MEM64 set in the flags could leak through and
+> > > > > > > the upper 32 bits of the address will be set too, and this
+> > > > > > > violates the PCI specs stating that in 32 bit address the upper
+> > > > > > > bit should be zero.
+> > > > 
+> > > > > > I don't understand this code, so I'm probably missing something.  It
+> > > > > > looks like the interesting path here is:
+> > > > > > 
+> > > > > >   of_pci_prop_ranges
+> > > > > >     res = &pdev->resource[...];
+> > > > > >     for (j = 0; j < num; j++) {
+> > > > > >       val64 = res[j].start;
+> > > > > >       of_pci_set_address(..., val64, 0, flags, false);
+> > > > > >  +      if (OF_PCI_ADDR_SPACE_MEM64)
+> > > > > >  +        prop[1] = upper_32_bits(val64);
+> > > > > >  +      else
+> > > > > >  +        prop[1] = 0;
+> > > ...
+> > > > However, the CPU physical address space and the PCI bus address are
+> > > > not the same.  Generic code paths should account for that different by
+> > > > applying an offset (the offset will be zero on many platforms where
+> > > > CPU and PCI bus addresses *look* the same).
+> > > > 
+> > > > So a generic code path like of_pci_prop_ranges() that basically copies
+> > > > a CPU physical address to a PCI bus address looks broken to me.
+> > > 
+> > > Hmmm, I'd say that a translation from one bus type to the other is
+> > > going on nonetheless, and this is done in the current upstream function
+> > > as well. This patch of course does not add the translation (which is
+> > > already in place), just to do it avoiding generating inconsistent address.
+> > 
+> > I think I was looking at this backwards.  I assumed we were *parsing"
+> > a "ranges" property, but I think in fact we're *building* a "ranges"
+> > property to describe an existing PCI device (either a PCI-to-PCI
+> > bridge or an endpoint).  For such devices there is no address
+> > translation.
+> > 
+> > Any address translation would only occur at a PCI host bridge that has
+> > CPU address space on the upstream side and PCI address space on the
+> > downstream side.
+> > 
+> > Since (IIUC), we're building "ranges" for a device in the interior of
+> > a PCI hierarchy where address translation doesn't happen, I think both
+> > the parent and child addresses in "ranges" should be in the PCI
+> > address space.
+> > 
+> > But right now, I think they're both in the CPU address space, and we
+> > basically do this:
+> > 
+> >   of_pci_prop_ranges(struct pci_dev *pdev, ...)
+> >     res = &pdev->resource[...];
+> >     for (j = 0; j < num; j++) {   # iterate through BARs or windows
+> >       val64 = res[j].start;       # CPU physical address
+> >       # <convert to PCI address space>
+> >       of_pci_set_address(..., rp[i].parent_addr, val64, ...)
+> >         rp[i].parent_addr = val64
+> >       if (pci_is_bridge(pdev))
+> >         memcpy(rp[i].child_addr, rp[i].parent_addr)
+> >       else
+> >         rp[i].child_addr[0] = j   # child addr unset/unused
+> > 
+> > Here "res" is a PCI BAR or bridge window, and it contains CPU physical
+> > addresses, so "val64" is a CPU physical address.  It looks to me like
+> > we should convert to a PCI bus address at the point noted above, based
+> > on any translation described by the PCI host bridge.  That *should*
+> > naturally result in a 32-bit value if OF_PCI_ADDR_SPACE_MEM64 is not
+> > set.
+> 
+> That's exactly the point, except that right now a 64 bit address would
+> "unnaturally" pass through even if OF_PCI_ADDR_SPACE_MEM64 is not set.
+> Hence the purpose of this patch.
 
---AcDfy0agmX9jcKA8
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From your earlier email
+(https://lore.kernel.org/r/Zszcps6bnCcdFa54@apocalypse):
 
-On Fri, Sep 27, 2024 at 02:27:14AM +0000, Moudy Ho (=E4=BD=95=E5=AE=97=E5=
-=8E=9F) wrote:
-> On Thu, 2024-09-26 at 11:38 +0200, AngeloGioacchino Del Regno wrote:
-> > Il 25/09/24 16:34, Conor Dooley ha scritto:
-> > > On Wed, Sep 25, 2024 at 04:42:59PM +0800, Macpaul Lin wrote:
-> > > >=20
-> > > > On 9/25/24 00:00, Conor Dooley wrote:
-> > > > > On Tue, Sep 24, 2024 at 01:42:01PM +0200, AngeloGioacchino Del
-> > > > > Regno wrote:
-> > > > > > Il 24/09/24 12:31, Macpaul Lin ha scritto:
-> > > > > > > The display node in mt8195.dtsi was triggering a CHECK_DTBS
-> > > > > > > error due
-> > > > > > > to an excessively long 'clocks' property:
-> > > > > > >      display@14f06000: clocks: [[31, 14], [31, 43], [31,
-> > > > > > > 44]] is too long
-> > > > > > >=20
-> > > > > > > To resolve this issue, add "maxItems: 3" to the 'clocks'
-> > > > > > > property in
-> > > > > > > the DT schema.
-> > > > > > >=20
-> > > > > > > Fixes: 4ed545e7d100 ("dt-bindings: display: mediatek: disp:
-> > > > > > > split each block to individual yaml")
-> > > > > > > Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> > > > > > > ---
-> > > > > > >     .../devicetree/bindings/display/mediatek/mediatek,split
-> > > > > > > .yaml     | 1 +
-> > > > > > >     1 file changed, 1 insertion(+)
-> > > > > > >=20
-> > > > > > > diff --git
-> > > > > > > a/Documentation/devicetree/bindings/display/mediatek/mediat
-> > > > > > > ek,split.yaml
-> > > > > > > b/Documentation/devicetree/bindings/display/mediatek/mediat
-> > > > > > > ek,split.yaml
-> > > > > > > index e4affc854f3d..42d2d483cc29 100644
-> > > > > > > ---
-> > > > > > > a/Documentation/devicetree/bindings/display/mediatek/mediat
-> > > > > > > ek,split.yaml
-> > > > > > > +++
-> > > > > > > b/Documentation/devicetree/bindings/display/mediatek/mediat
-> > > > > > > ek,split.yaml
-> > > > > > > @@ -57,6 +57,7 @@ properties:
-> > > > > > >       clocks:
-> > > > > > >         items:
-> > > > > > >           - description: SPLIT Clock
-> > > > > >=20
-> > > > > > That's at least confusing (granted that it works) - either
-> > > > > > add a description for
-> > > > > > each clock and then set `minItems: 1` (preferred), or remove
-> > > > > > this "SPLIT Clock"
-> > > > > > description and allow a maximum of 3 clocks.
-> > > > > >=20
-> > > > > > Removing the description can be done - IMO - because "SPLIT
-> > > > > > Clock" is, well,
-> > > > > > saying that the SPLIT block gets a SPLIT clock ... stating
-> > > > > > the obvious, anyway.
-> > > > >=20
-> > > > > Right, but what are the other two new clocks? Are they as
-> > > > > obvious?
-> > > > > There's no clock-names here to give any more information as to
-> > > > > what the
-> > > > > other clocks are supposed to be.
-> > > > >=20
-> > > > > Kinda unrelated, but I think that "SPLIT Clock" probably isn't
-> > > > > what the
-> > > > > name of the clock in the IP block is anyway, sounds more like
-> > > > > the name
-> > > > > for it on the provider end..
-> > > >=20
-> > > >=20
->  * Thanks for the suggestions. I think Moudy could help on the new
->    fixes
-> > > > for both DT schem and mt8195.dtsi. This patch could be separated
-> > > > from
-> > > > origin patch set.
-> > >=20
-> > > Not sure what you mean about separating it, if you mean correcting
-> > > the
-> > > description for the split clock sure. The other stuff I mentioned
-> > > needs
-> > > to be resolved before I'm willing to ack this.
-> >=20
-> > He means separating this patch from the rest of the series that he
-> > pushed - which
-> > is okay, as it's a bit mixed anyway :-)
-> >=20
-> > Besides ... Moudy, can you please help to clarify the description of
-> > those clocks?
->=20
-> May I address the check error by adding 2 functional descriptions and
-> specifying 'minIeims: 1' for this property, and apply the limit by
-> setting 'maxItems: 3' in MT8195 additional condition?
+> Without this patch the range translation chain is broken, like this:
 
+> pcie@120000: <0x2000000 0x00 0x00    0x1f 0x00                0x00 0xfffffffc>;
+> ~~~ chain breaks here ~~~
+> pci@0      : <0x82000000 0x1f 0x00   0x82000000 0x1f 0x00     0x00 0x600000>;
+> dev@0,0    : <0x01 0x00 0x00         0x82010000 0x1f 0x00     0x00 0x400000>;
+> rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
 
-That sounds reasonable
+The cover letter said "RP1 is an MFD chipset that acts as a
+south-bridge PCIe endpoint .. the RP1 as an endpoint itself is
+discoverable via usual PCI enumeration".
 
---AcDfy0agmX9jcKA8
-Content-Type: application/pgp-signature; name="signature.asc"
+I assume pcie@120000 is the PCI host bridge and is already in the
+original DT describing the platform.  I assume pci@0 is a Root Port
+and dev@0,0 is the RP1 Endpoint, and the existing code already adds
+them as they are enumerated when pci_bus_add_device() calls
+of_pci_make_dev_node(), and I think this series adds the rp1@0
+description.
 
------BEGIN PGP SIGNATURE-----
+And the "ranges" properties are built when of_pci_make_dev_node()
+eventually calls of_pci_prop_ranges().  With reference to sec 2.2.1.1
+of https://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
+and
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#ranges,
+I *think* your example says:
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvhjmQAKCRB4tDGHoIJi
-0t5tAP9AhQrQg5BdiPm51hIYX60FP2j5MfqK3fnJyGLtjY+MhgEAnLtFBSFfQFkq
-wjGbq54IMzZ/w/JrwtVg7Y9ctV0+GAc=
-=/UTH
------END PGP SIGNATURE-----
+pcie@120000 has:
+  child phys.hi	      0x02000000    n=0 p=0 t=0 ss=10b
+  child phys.mid,lo   0x00000000_00000000
+  parent phys.hi,lo   0x0000001f_00000000
+  length hi,lo        0x00000000_fffffffc
 
---AcDfy0agmX9jcKA8--
+which would make it a bridge where the child (PCI) address space is
+relocatable non-prefetchable 32-bit memory space at
+0x00000000-0xfffffffc, and the corresponding parent address space is
+0x1f_00000000-0x1f_fffffffc.  That means the host bridge applies an
+address translation of "child_addr = parent_addr - 0x1f_00000000".
+
+pci@0 has:
+  child phys.hi	      0x82000000    n=1 p=0 t=0 ss=10b
+  child phys.mid,lo   0x0000001f_00000000
+  parent phys.hi      0x82000000    n=1 p=0 t=0 ss=10b
+  parent phys.mid,lo  0x0000001f_00000000
+  length hi,lo        0x00000000_00600000
+
+which would make it a PCI-to-PCI bridge (I assume a PCIe Root Port),
+where the child (secondary bus) address space is the non-relocatable
+non-prefetchable 32-bit memory space 0x1f_00000000-0x1f_005fffff and
+the parent (primary bus) address space is also non-relocatable
+non-prefetchable 32-bit memory space at 0x1f_00000000-0x1f_005fffff.
+
+This looks wrong to me because the pci@0 parent address space
+(0x1f_00000000-0x1f_005fffff) should be inside the pcie@120000 child
+address space (0x00000000-0xfffffffc), but it's not.
+
+IIUC, this patch clears the upper 32 bits in the pci@0 parent address
+space.  That would make things work correctly in this case because
+that happens to be the exact translation of pcie@120000, so it results
+in pci@0 parent address space of 0x00000000-0x005fffff.
+
+But I don't think it works in general because there's no requirement
+that the host bridge address translation be that simple.  For example,
+if we have two host bridges, and we want each to have 2GB of 32-bit
+PCI address space starting at 0x0, it might look like this:
+
+  0x00000002_00000000 -> PCI 0x00000000 (subtract 0x00000002_00000000)
+  0x00000002_80000000 -> PCI 0x00000000 (subtract 0x00000002_80000000)
+
+In this case simply ignoring the high 32 bits of the CPU address isn't
+the correct translation for the second host bridge.  I think we should
+look at each host bridge's "ranges", find the difference between its
+parent and child addresses, and apply the same difference to
+everything below that bridge.
+
+> while with the patch applied the chain correctly become:
+
+> pcie@120000: <0x2000000 0x00 0x00    0x1f 0x00                0x00 0xfffffffc>;
+> pci@0      : <0x82000000 0x00 0x00   0x82000000 0x00 0x00     0x00 0x600000>;
+> dev@0,0    : <0x01 0x00 0x00         0x82010000 0x00 0x00     0x00 0x400000>;
+> rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
+
+> > > > Maybe my expectation of this being described in DT is mistaken.
+> > > 
+> > > Not sure what you mean here, the address being translated are coming from
+> > > DT, in fact they are described by "ranges" properties.
+> > 
+> > Right, for my own future reference since I couldn't find a generic
+> > description of "ranges" in Documentation/devicetree/:
+> > 
+> > [1] https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#ranges
 
