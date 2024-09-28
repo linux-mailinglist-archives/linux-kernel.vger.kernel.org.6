@@ -1,117 +1,406 @@
-Return-Path: <linux-kernel+bounces-342611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721C79890E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:40:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814679890E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A28DC1C20EA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:40:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08EE71F20F26
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D29225DA;
-	Sat, 28 Sep 2024 17:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE4514B06C;
+	Sat, 28 Sep 2024 17:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tc/fKp5U"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M3o8AfQd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8D913E40F
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 17:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A7F1DDC9;
+	Sat, 28 Sep 2024 17:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727545250; cv=none; b=Mqu1MYEprPQjdGjWKDuUvKGtHZkEnn3Nt+/vccRW1p3vUCJmGsae39ngwjiugNlutbL+EO0wLqD2OhORZfHl7hg3JLwoah1dVWUIq8U4/clk4k+fd0t8V++qY0p60GceMXmtxroc6tkIUgLssnKN5/q4rC5vN6CJPDMbjeYEw00=
+	t=1727545653; cv=none; b=qUUfXmpFRdPRXz0+7e7vIMFSq8IHJUBrO4a6Z4qgOcVD9ojUDKSvJN9cDdMsxjG8gFYShf0xaIk3R3Wl1hKx6TFuFBQlFj23sBmYjpbPnCEJUWxn+M7QFVTZWUsHxAHGDl27nbrF0/6h2r9Gf4LlWqwZeCmIUNUzgF6HdZu/kKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727545250; c=relaxed/simple;
-	bh=7cSxZan5VJJanBjU9FgW+bT2c3OOVf4g9f4UDy02JAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ff6445riFnXSAKtwL52pcJbSGhlWmKGQ7OQ3oCDd+EKhnffCMVwW3aorkCK2BdpCzwvl9Lv2NK7iIYl1cZ9OItv/XPFG+2e1bUTSIOUNVWdJod9N7nW65+cGRb9rm12FA0TtdEvBZnaLcSwnfsOGsh3WBh3aqguCrp7rN5Sx2HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tc/fKp5U; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 28 Sep 2024 13:40:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727545245;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yHOTQNCADZnKsuE9lSzG+7fMe7LaXb0o/Rvu27/vHKQ=;
-	b=tc/fKp5UrPYEpRWoVOTK6KHpaOWVe3O0r9IsHUPrFD61yM46clpeE630s1hUMbcHr81ui3
-	CcsWmiRXXesP1AqKybsgg58UUCFwAdlDewip+kyOU3OwcpryG4ZWbowkoPF6u+8elO68hc
-	m2tHkVYIWi21W6o+JQK8TcuruwgzffU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, 
-	Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	syzbot <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] Monthly lsm report (Sep 2024)
-Message-ID: <y6vqh3zrzcfsq3ngocrcyjo4tn3y3sgarnbcc25kmur3ucp4va@tt5t5rwblvta>
-References: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
- <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
- <03c3a47ca225050d37dca6a9249c1f978f1fc56b.camel@huaweicloud.com>
- <734977390eeecba39789df939a00904e87367e5e.camel@huaweicloud.com>
- <nqxo5tqcwbwksibg45spssrnhxw7tabfithgnqnmpl2egmbfb7@gyczfn7hivvu>
- <owdoubzm3jqf4cuhawaavver5mzko32ijuh2nrm5vhzegmjbmf@az3mweawrni6>
- <ceb762ee-2518-44d1-b73c-fd165da7fbbb@I-love.SAKURA.ne.jp>
- <pdghzlvw6ypcju6ldsngka44cjp6g56bjjsmxm3sd7dqev4g6y@x72zm7vurxyz>
- <deff904e-5c56-42ae-b8b0-7b55580b023a@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1727545653; c=relaxed/simple;
+	bh=JVWMZ2uryw2i0TZEETV/srEzMJ/lmNarVJCMpotwcaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ApP+yXkkCuAr9lU+dei4LDYhxfKcbHaViitFSZf/DElefugTBlii606/c3TRI3VIw9bdzyRjAfvs0sVmBFPbi/GSpj5MlQWHOKvKif6jXBpuOqyPbgXCgPbTMp8coKxb2k3Yvtql2U7GUyeIAyUb135/6Wbj9ezosNIJYvLaCt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M3o8AfQd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF1DC4CEC3;
+	Sat, 28 Sep 2024 17:47:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727545653;
+	bh=JVWMZ2uryw2i0TZEETV/srEzMJ/lmNarVJCMpotwcaQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=M3o8AfQdIkW/PHzyM9vZ9wb04F2SFJZi3L3wF63oB0fH6QSVKt2dBqicfdzoj3VFq
+	 Aw013BCWTik+VYjC5hH1/lnsRTdeAKxmOzs+3mxaQc6scTw31krT/44rSCsI1PcgS3
+	 sFbD2VqjzqHL+0a1RKOKUmfIlujhOPBWxVugzd8nVUiDkEqXTcSHZ+G6RWaoE16yt0
+	 NruHuaHRm3ghoCeT2D/VrzOvkzhBCGqIwdRDL8A2UXFdyBDDhHeu+E78drzpIXiw2K
+	 sSFGq9H3C0Yzv2BmDhY5k83Iyj6FUkEoUy4x3MOgyQQl2ABVN9+J8Yj40SJPKsaoOB
+	 94XL5wERyYcdQ==
+Date: Sat, 28 Sep 2024 18:47:22 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno Sa
+ <nuno.sa@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Andy Shevchenko
+ <andy@kernel.org>, David Lechner <dlechner@baylibre.com>, Marcelo Schmitt
+ <marcelo.schmitt@analog.com>, =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29u?=
+ =?UTF-8?B?w6dhbHZlcw==?= <joao.goncalves@toradex.com>, Mike Looijmans
+ <mike.looijmans@topic.nl>, Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>, Sergiu Cuciurean
+ <sergiu.cuciurean@analog.com>, Dragos Bogdan <dragos.bogdan@analog.com>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+Subject: Re: [PATCH 6/7] iio: adc: ad485x: add ad485x driver
+Message-ID: <20240928184722.314b329b@jic23-huawei>
+In-Reply-To: <20240923101206.3753-7-antoniu.miclaus@analog.com>
+References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
+	<20240923101206.3753-7-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <deff904e-5c56-42ae-b8b0-7b55580b023a@I-love.SAKURA.ne.jp>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 28, 2024 at 06:23:53PM GMT, Tetsuo Handa wrote:
-> On 2024/09/28 17:57, Kent Overstreet wrote:
-> > On Sat, Sep 28, 2024 at 03:49:27PM GMT, Tetsuo Handa wrote:
-> >> On 2024/09/28 10:25, Kent Overstreet wrote:
-> >>> And looking further, I don't see anyhting in the console log from when
-> >>> bcachefs actually mounted (???), which means I don't think I have enough
-> >>> to go on. It's clearly an upgrade path issue - we didn't run
-> >>> check_allocations as is required when upgrading to 1.11 - but it's not
-> >>> reproducing for me when I run tests with old tools.
-> >>>
-> >>> Can we get some more information about the syzbot reproducer? Exact
-> >>> tools version, format command and mount command.
-> >>
-> >> Reproducer for this bug is not yet found. But syzbot does not use userspace
-> >> tools. That is, testing with old (or new) tools will not help. Please note
-> >> that syzbot uses crafted (intentionally corrupted) filesystem images. If the
-> >> kernel side depends on sanity checks / validations done by the userspace
-> >> side, syzbot will find oversights on the kernel side. Please don't make any
-> >> assumptions made by the userspace tools.
-> >>
-> > 
-> > You seem to be confused; how do you expect sysbot to test a filesystem
-> > without the format comand?
+On Mon, 23 Sep 2024 13:10:23 +0300
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
+
+> Add support for the AD485X DAS familiy.
 > 
-> Please find syz_mount_image$bcachefs from e.g.
-> https://syzkaller.appspot.com/text?tag=CrashLog&x=17441e80580000 .
-> 
-> syzbot creates in-memory filesystem image using memfd and mount it
-> using loopback devices. For example,
-> https://syzkaller.appspot.com/text?tag=ReproC&x=102e0907980000 is
-> a C reproducer for an ext4 bug; check how setup_loop_device() and
-> syz_mount_image() are used for mounting filesystems.
-> 
-> Again, syzbot does not use userspace tools for managing filesystems.
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 
-Well, they must have started with /something/, I very much doubt they
-wrote their own code for writing a bcachefs superblock.
+A few additional comments from me.
 
-And if they were using the standard format command I would've gotten the
-full contents of the superblock in a nice text format, so I could piece
-together what happened.
+Thanks,
 
-Since I don't have that, and the part of the dmesg log where bcachefs
-mounted doesn't even seem to be there, I don't have anything to go on.
+Jonathan
+
+> diff --git a/drivers/iio/adc/ad485x.c b/drivers/iio/adc/ad485x.c
+> new file mode 100644
+> index 000000000000..3333cad9ed8f
+> --- /dev/null
+> +++ b/drivers/iio/adc/ad485x.c
+> @@ -0,0 +1,1061 @@
+
+> +static int ad485x_setup(struct ad485x_state *st)
+> +{
+> +	unsigned int product_id;
+> +	int ret;
+> +
+> +	ret = ad485x_set_sampling_freq(st, 1000000);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(st->regmap, AD485X_REG_INTERFACE_CONFIG_A,
+> +			   AD485X_SW_RESET);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(st->regmap, AD485X_REG_INTERFACE_CONFIG_B,
+> +			   AD485X_SINGLE_INSTRUCTION);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(st->regmap, AD485X_REG_INTERFACE_CONFIG_A,
+> +			   AD485X_SDO_ENABLE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(st->regmap, AD485X_REG_PRODUCT_ID_L, &product_id);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (product_id != st->info->product_id)
+> +		dev_warn(&st->spi->dev, "Unknown product ID: 0x%02X\n",
+> +			 product_id);
+
+dev_info() for this is probably better.  Might be fine afterall if
+the new part is fully backwards compatible with this one.
+
+> +
+> +	ret = regmap_write(st->regmap, AD485X_REG_DEVICE_CTRL,
+> +			   AD485X_ECHO_CLOCK_MODE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return regmap_write(st->regmap, AD485X_REG_PACKET, 0);
+> +}
+
+
+> +
+> +static int ad485x_get_packet_format(struct iio_dev *indio_dev,
+> +				    const struct iio_chan_spec *chan)
+> +{
+> +	struct ad485x_state *st = iio_priv(indio_dev);
+> +	unsigned int format;
+> +	int ret;
+> +
+> +	ret = regmap_read(st->regmap, AD485X_REG_PACKET, &format);
+> +	if (ret)
+> +		return ret;
+> +
+> +	format = FIELD_GET(AD485X_PACKET_FORMAT_MASK, format);
+> +
+> +	return format;
+	return FIELD_GET()
+> +}
+
+> +
+> +static int ad485x_get_calibscale(struct ad485x_state *st, int ch, int *val,
+> +				 int *val2)
+> +{
+> +	unsigned int reg_val;
+> +	int gain;
+> +	int ret;
+> +
+> +	guard(mutex)(&st->lock);
+> +
+> +	ret = regmap_read(st->regmap, AD485X_REG_CHX_GAIN_MSB(ch),
+> +			  &reg_val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	gain = (reg_val & 0xFF) << 8;
+Use a byte array into which you write the regval then a get_unalignedb_be16
+or similar to get the value.
+> +
+> +	ret = regmap_read(st->regmap, AD485X_REG_CHX_GAIN_LSB(ch),
+> +			  &reg_val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	gain |= reg_val & 0xFF;
+> +
+> +	*val = gain;
+> +	*val2 = 32768;
+> +
+> +	return IIO_VAL_FRACTIONAL;
+> +}
+
+> +static int ad485x_get_calibbias(struct ad485x_state *st, int ch, int *val,
+> +				int *val2)
+> +{
+> +	unsigned int lsb, mid, msb;
+> +	int ret;
+> +
+> +	guard(mutex)(&st->lock);
+> +
+> +	ret = regmap_read(st->regmap, AD485X_REG_CHX_OFFSET_MSB(ch),
+> +			  &msb);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(st->regmap, AD485X_REG_CHX_OFFSET_MID(ch),
+> +			  &mid);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(st->regmap, AD485X_REG_CHX_OFFSET_LSB(ch),
+> +			  &lsb);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (st->info->resolution == 16) {
+> +		*val = msb << 8;
+> +		*val |= mid;
+> +		*val = sign_extend32(*val, 15);
+> +	} else {
+> +		*val = msb << 12;
+> +		*val |= mid << 4;
+> +		*val |= lsb >> 4;
+As below I'd use a byte array then you can do get_unaligned_be24 to
++ a right shift by 4 of the whole thing.
+
+> +		*val = sign_extend32(*val, 19);
+> +	}
+> +
+> +	return IIO_VAL_INT;
+> +}
+> +
+> +static int ad485x_set_calibbias(struct ad485x_state *st, int ch, int val,
+> +				int val2)
+> +{
+> +	unsigned int lsb, mid, msb;
+> +	int ret;
+> +
+> +	if (st->info->resolution == 16) {
+> +		lsb = 0;
+> +		mid = val & 0xFF;
+> +		msb = (val >> 8) & 0xFF;
+> +	} else {
+> +		lsb = (val << 4) & 0xFF;
+
+Might as well mask by 0xF0 to make it really clear
+nothing in bottom few bits.
+
+
+> +		mid = (val >> 4) & 0xFF;
+> +		msb = (val >> 12) & 0xFF;
+
+I'd be tempted to shift the whole thing left 4 bits and
+then use a put_unaligned_be24 on it into a byte array then pick
+out the bytes from that array.  Will be easier to read.
+Above 16 bit case would be a put_unaligned_be16
+
+> +	}
+> +
+> +	guard(mutex)(&st->lock);
+> +
+> +	ret = regmap_write(st->regmap, AD485X_REG_CHX_OFFSET_LSB(ch), lsb);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(st->regmap, AD485X_REG_CHX_OFFSET_MID(ch), mid);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return regmap_write(st->regmap, AD485X_REG_CHX_OFFSET_MSB(ch), msb);
+
+I think you already got this question, but consider bulk writes.
+
+> +}
+> +
+> +static const unsigned int ad485x_scale_table[][2] = {
+> +	{2500, 0x0}, {5000, 0x1}, {5000, 0x2}, {10000, 0x3}, {6250, 0x04},
+> +	{12500, 0x5}, {10000, 0x6}, {20000, 0x7}, {12500, 0x8}, {25000, 0x9},
+> +	{20000, 0xA}, {40000, 0xB}, {25000, 0xC}, {50000, 0xD}, {40000, 0xE},
+> +	{80000, 0xF}
+
+Spaces after { and before } preferred.
+Maybe just have this as one item per line. I think that is more readable.
+
+> +};
+
+> +
+> +static int ad485x_read_raw(struct iio_dev *indio_dev,
+> +			   const struct iio_chan_spec *chan,
+> +			   int *val, int *val2, long info)
+> +{
+> +	struct ad485x_state *st = iio_priv(indio_dev);
+> +
+> +	switch (info) {
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
+> +		*val = st->sampling_freq;
+> +		return IIO_VAL_INT;
+> +	case IIO_CHAN_INFO_CALIBSCALE:
+> +		return ad485x_get_calibscale(st, chan->channel, val, val2);
+> +	case IIO_CHAN_INFO_SCALE:
+> +		return ad485x_get_scale(st, chan, val, val2);
+> +	case IIO_CHAN_INFO_CALIBBIAS:
+> +		return ad485x_get_calibbias(st, chan->channel, val, val2);
+> +	case IIO_CHAN_INFO_OFFSET:
+> +		scoped_guard(mutex, &st->lock)
+> +			* val = st->offsets[chan->channel];
+
+			*val = ...
+
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+> +
+> +#define AD485X_IIO_CHANNEL(index, real, storage, info)			\
+> +{									\
+> +	.type = IIO_VOLTAGE,						\
+> +	.ext_info = info,						\
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_CALIBSCALE) |		\
+> +		BIT(IIO_CHAN_INFO_CALIBBIAS) |				\
+> +		BIT(IIO_CHAN_INFO_SCALE) |				\
+> +		BIT(IIO_CHAN_INFO_OFFSET),				\
+> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),	\
+> +	.info_mask_shared_by_type_available =				\
+> +		BIT(IIO_CHAN_INFO_SCALE) |				\
+> +		BIT(IIO_CHAN_INFO_OFFSET),				\
+
+Maybe add avail for calibscale and calibbias as well.
+
+
+> +
+> +static struct iio_chan_spec_ext_info ad4858_ext_info[] = {
+> +	IIO_ENUM("packet_format", IIO_SHARED_BY_ALL, &ad4858_packet_fmt),
+> +	IIO_ENUM_AVAILABLE("packet_format",
+> +			   IIO_SHARED_BY_ALL, &ad4858_packet_fmt),
+> +	{},
+> +};
+> +
+> +static struct iio_chan_spec_ext_info ad4857_ext_info[] = {
+> +	IIO_ENUM("packet_format", IIO_SHARED_BY_ALL, &ad4857_packet_fmt),
+> +	IIO_ENUM_AVAILABLE("packet_format",
+> +			   IIO_SHARED_BY_ALL, &ad4857_packet_fmt),
+> +	{},
+I think Andy pointed these out. No trailing comma on terminators.
+
+However, I'm not sure this ABI is practical currently.
+Basically I have no idea what it is or how to use it!
+> +};
+
+> +
+> +static const struct ad485x_chip_info ad4858i_info = {
+> +	.name = "ad4858i",
+> +	.product_id = AD4858I_PROD_ID,
+> +	.scale_table = ad485x_scale_table,
+> +	.num_scales = ARRAY_SIZE(ad485x_scale_table),
+> +	.offset_table = ad4858_offset_table,
+> +	.num_offset = ARRAY_SIZE(ad4858_offset_table),
+> +	.channels = ad4858_channels,
+> +	.num_channels = ARRAY_SIZE(ad4858_channels),
+> +	.throughput = 1000000,
+
+Odd you use MEGA above, but not here.
+
+> +	.resolution = 20,
+> +};
+
+> +static int ad485x_probe(struct spi_device *spi)
+> +{
+> +	struct iio_dev *indio_dev;
+> +	struct ad485x_state *st;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	st = iio_priv(indio_dev);
+> +	st->spi = spi;
+> +
+> +	mutex_init(&st->lock);
+
+Ever so slight preference for the new option of.
+	ret = devm_mutex_init(dev, &st->lock);
+	if (ret)
+		return ret;
+
+...
+
+> +}
+> +
+> +static const struct of_device_id ad485x_of_match[] = {
+> +	{ .compatible = "adi,ad4858", .data = &ad4858_info, },
+> +	{ .compatible = "adi,ad4857", .data = &ad4857_info, },
+> +	{ .compatible = "adi,ad4856", .data = &ad4856_info, },
+> +	{ .compatible = "adi,ad4855", .data = &ad4855_info, },
+> +	{ .compatible = "adi,ad4854", .data = &ad4854_info, },
+> +	{ .compatible = "adi,ad4853", .data = &ad4853_info, },
+> +	{ .compatible = "adi,ad4852", .data = &ad4852_info, },
+> +	{ .compatible = "adi,ad4851", .data = &ad4851_info, },
+> +	{ .compatible = "adi,ad4858i", .data = &ad4858i_info, },
+> +	{}
+	{ }
+> +};
+> +
+
+
 
