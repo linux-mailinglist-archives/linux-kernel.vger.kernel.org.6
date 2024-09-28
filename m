@@ -1,130 +1,155 @@
-Return-Path: <linux-kernel+bounces-342603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014E69890C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:25:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AAF89890CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAEBF2819B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:25:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCAE21F216A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E56116BE14;
-	Sat, 28 Sep 2024 17:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A317A14A4F1;
+	Sat, 28 Sep 2024 17:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gGP4UWxi"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMpImFzb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11044140E5F
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 17:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C1B1531CB;
+	Sat, 28 Sep 2024 17:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727544260; cv=none; b=WjfM/55MiH9bt4imc0MMqqs+/tIiVYvbXVCIs5betBgAY/Kes80EPWIP6qx0/4XEsZAiemK1UTCDpvWU86ljliz4a/OjhtFiIkStwhKQnmfgad47VsJRMx5dWgwtpZqzV6/A8U+XVjgU+G5hy5BxqS311IzN605D+BlC9EUYqBY=
+	t=1727544311; cv=none; b=AE1/5u7q0WCqiM+frd8aDD3zHrKiRx1iLxONehhLSpOzACGJERUEf1w+iV6Syh7VQVA2/TaGvHQN/duX92OGhBSr7ce9mDwUBNZfVJyXjeGRaahApZbp71xOOr9DjW89QWM+msJSguMbZ5USd/Yc81J3Eb0Vh8C4dwVM2nVLGs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727544260; c=relaxed/simple;
-	bh=hgkkoJn8PRzdejp8I35gJaE8ZuE8GBz1RxcmW/6Wl+g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=R59UL8kMVE4dT1kCag9HZ9zj0MMQqZmrG4vz3B+rt1pasEuhTM9mlJdu4yMZPhnfdm4c0z6LD+/DQFMhXvTcqjVu5kVTg8fqiGqxylKe672dK9+WjAgD/QG+QpOfOBvDbWMuiPWvTQB2eyUXu9qG6Z3vWyzpQbUzUtNnc9oAMGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gGP4UWxi; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cb399056b4so20337986d6.0
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 10:24:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727544258; x=1728149058; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0V4zAv66G9UTs98/sxGH5EUfTLy7Jj/aYXT4lmuMNEQ=;
-        b=gGP4UWxigzZMNWCVVy9+SQBgmVXRcrwXOfz5rJqGQGO1ARuQL4UoY2/MQXj/JOoeJr
-         DKjw2dbHAjtHjvDS+3quGpwpgikOmHrHEveksb+XOzAUz6BziS5ZEVNoDW3y3k4LRKgb
-         NK6+zGoakPQuC4dCPkbJ6fUtrS21S/gMd5waI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727544258; x=1728149058;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0V4zAv66G9UTs98/sxGH5EUfTLy7Jj/aYXT4lmuMNEQ=;
-        b=qCul9Lm+RU6HK9Z5Ljia75tsOZRRrlTngDIV7BFDsLAXaWQ+zZojs5Xil4nSbh3rTr
-         i98ECuNMULfdIazXM0mlYbCCYuBDaMZmLdCmSf6DekR4NO0dRfXoEwxjkUudEP1yEfBY
-         d21t6obWmoQKJi1Bp4hILjNZdiu+68eVGony7AMWYrvK7uF7JFKXjIpSA3yZ2s7BMtFq
-         QHDktFgPy4gerOHI9kyujiaSv7zdBHSrWBQP27B10V1yq5FuevfyEbDkmUb3WeRETUJu
-         kjsDFouPBJdkmrQJznX9xPBtCRvELhpmgMUdqXFsHt7ajEujWxf8aYHPqFN0/NPZRHxD
-         9ang==
-X-Forwarded-Encrypted: i=1; AJvYcCU2LLESPNxJDZqC0B5iXzts1x/M66Q7S0/8LaV5JwVFmFsKh9WH9gZFV84hNBleR6wIYDTPV1iITwIveZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycoViw+w8cbzZgJZhYZ8o+AuyoakE7ukGj4P7saD92kLfSc+nm
-	8T3qZTQW2/BKu/dWop11ctkAiE++CPOfhzksD6adSdH+k3Bre3A02ykRG4TPsA==
-X-Google-Smtp-Source: AGHT+IH+tjSCRlTFxQ4PkHc9qIvV7UgaC6LscTYg12k3dh3Dx2AnhCdOqFqATrCtJLZthR1CXmZWqA==
-X-Received: by 2002:a05:6214:5d8f:b0:6c5:50be:dd74 with SMTP id 6a1803df08f44-6cb3b64cb65mr103688526d6.45.1727544257964;
-        Sat, 28 Sep 2024 10:24:17 -0700 (PDT)
-Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b68311dsm21437756d6.122.2024.09.28.10.24.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Sep 2024 10:24:16 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Sat, 28 Sep 2024 17:24:00 +0000
-Subject: [PATCH v3 3/3] media: atomisp: Replace ternary operator with if
+	s=arc-20240116; t=1727544311; c=relaxed/simple;
+	bh=IjPaXoJUOuxQfoMfc1RuNS6iFJFev3/P85f58SkSDfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aOStcs9odeBBVOuN+7AKPjcUtlULsuwb2GckN4WrKus4XS+sJxx57e6z5GpSWPBzY1KKXLyXvAWrCHpHUfiDGJ/dOha+zQlAVbitbNjpaWh8lNAa8h4gUHdY4eNtZ6IH0M2fnE1iVTVXjn1Ki2Yv8tOrgivjqLcMItwQMZzxh9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMpImFzb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E7DFC4CEC3;
+	Sat, 28 Sep 2024 17:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727544310;
+	bh=IjPaXoJUOuxQfoMfc1RuNS6iFJFev3/P85f58SkSDfU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tMpImFzbe1/6Ar934ecy2fJYGP8CijrwbhOZBbXYCMBvbvGxDv9I/LfK/NROqQ6Hz
+	 dNJH2w/1Fb1nPOuCDdGTbFlbQ30Fljk4io8D1H2VaqEObUZJKBNqQHCPNdAHh2/FN8
+	 4If3GIX0FYf8zc48i7qkWpKH3faaVH9ux6mqTj/E4qYyNPyoKwxLs/5mo50e5d9KRe
+	 2yqUNV0RPOnYw7YIkXHgoaWS1xxPIVWKEzQx65qmAhAITkAmEQ1OeQGN6SKfT1o0rx
+	 HUhIHz3FgwdcHRVTSSzcRewE5FBCGXqS386J/jDb2rOqgkTtCcYyxaEtfaUjN2Fgxs
+	 5NmaccmrWMXJA==
+Date: Sat, 28 Sep 2024 18:24:57 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno Sa
+ <nuno.sa@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Andy Shevchenko
+ <andy@kernel.org>, David Lechner <dlechner@baylibre.com>, Marcelo Schmitt
+ <marcelo.schmitt@analog.com>, =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29u?=
+ =?UTF-8?B?w6dhbHZlcw==?= <joao.goncalves@toradex.com>, Dumitru Ceclan
+ <mitrutzceclan@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Alisa-Dariana Roman
+ <alisadariana@gmail.com>, Marius Cristea <marius.cristea@microchip.com>,
+ Sergiu Cuciurean <sergiu.cuciurean@analog.com>, Dragos Bogdan
+ <dragos.bogdan@analog.com>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>
+Subject: Re: [PATCH 2/7] iio: backend: add support for data size set
+Message-ID: <20240928182457.5919be0d@jic23-huawei>
+In-Reply-To: <20240923101206.3753-3-antoniu.miclaus@analog.com>
+References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
+	<20240923101206.3753-3-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240928-cocci-6-12-v3-3-53fc5ed20be0@chromium.org>
-References: <20240928-cocci-6-12-v3-0-53fc5ed20be0@chromium.org>
-In-Reply-To: <20240928-cocci-6-12-v3-0-53fc5ed20be0@chromium.org>
-To: Benoit Parrot <bparrot@ti.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-staging@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
 
-Replace the ternary operator with an if. In this case the code is more
-clear and also fixes the following cocci warnings:
+On Mon, 23 Sep 2024 13:10:19 +0300
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-drivers/staging/media/atomisp/pci/sh_css_frac.h:40:17-18: WARNING opportunity for max()
-drivers/staging/media/atomisp/pci/sh_css_frac.h:50:17-18: WARNING opportunity for max()
+> Add backend support for setting the data size used.
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/staging/media/atomisp/pci/sh_css_frac.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Say 'why' a device might do this.  I assume in general
+it's because you haven't wired all the pins, but is there a
+reason it might be dynamic?
 
-diff --git a/drivers/staging/media/atomisp/pci/sh_css_frac.h b/drivers/staging/media/atomisp/pci/sh_css_frac.h
-index 8ba65161f7a9..3191d2858f59 100644
---- a/drivers/staging/media/atomisp/pci/sh_css_frac.h
-+++ b/drivers/staging/media/atomisp/pci/sh_css_frac.h
-@@ -37,7 +37,8 @@ static inline int sDIGIT_FITTING(int v, int a, int b)
- 	int fit_shift = sFRACTION_BITS_FITTING(a) - b;
- 
- 	v >>= sSHIFT;
--	v >>= fit_shift > 0 ? fit_shift : 0;
-+	if (fit_shift > 0)
-+		v >>= fit_shift;
- 
- 	return clamp_t(int, v, sISP_VAL_MIN, sISP_VAL_MAX);
- }
-@@ -47,7 +48,8 @@ static inline unsigned int uDIGIT_FITTING(unsigned int v, int a, int b)
- 	int fit_shift = uFRACTION_BITS_FITTING(a) - b;
- 
- 	v >>= uSHIFT;
--	v >>= fit_shift > 0 ? fit_shift : 0;
-+	if (fit_shift > 0)
-+		v >>= fit_shift;
- 
- 	return clamp_t(unsigned int, v, uISP_VAL_MIN, uISP_VAL_MAX);
- }
+Jonathan
 
--- 
-2.46.1.824.gd892dcdcdd-goog
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+>  drivers/iio/industrialio-backend.c | 21 +++++++++++++++++++++
+>  include/linux/iio/backend.h        |  3 +++
+>  2 files changed, 24 insertions(+)
+> 
+> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
+> index 53ab6bc86a50..a6a6bedce7f1 100644
+> --- a/drivers/iio/industrialio-backend.c
+> +++ b/drivers/iio/industrialio-backend.c
+> @@ -473,6 +473,27 @@ int iio_backend_interface_type_get(struct iio_backend *back,
+>  }
+>  EXPORT_SYMBOL_NS_GPL(iio_backend_interface_type_get, IIO_BACKEND);
+>  
+> +/**
+> + * iio_backend_data_size_set - set the data width/size in the data bus.
+> + * @back: Backend device
+> + * @size: Size in bits
+> + *
+> + * Some frontend devices can dynamically control the word/data size on the
+> + * interface/data bus. Hence, the backend device needs to be aware of it so
+> + * data can be correctly transferred.
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +ssize_t iio_backend_data_size_set(struct iio_backend *back, ssize_t size)
+> +{
+> +	if (!size)
+> +		return -EINVAL;
+> +
+> +	return iio_backend_op_call(back, data_size_set, size);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_data_size_set, IIO_BACKEND);
+> +
+>  /**
+>   * iio_backend_extend_chan_spec - Extend an IIO channel
+>   * @indio_dev: IIO device
+> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+> index ba8ad30ac9ba..85b33ed69cc0 100644
+> --- a/include/linux/iio/backend.h
+> +++ b/include/linux/iio/backend.h
+> @@ -87,6 +87,7 @@ enum iio_backend_interface_type {
+>   * @ext_info_set: Extended info setter.
+>   * @ext_info_get: Extended info getter.
+>   * @interface_type_get: Interface type.
+> + * @data_size_set: Data size.
+>   **/
+>  struct iio_backend_ops {
+>  	int (*enable)(struct iio_backend *back);
+> @@ -121,6 +122,7 @@ struct iio_backend_ops {
+>  			    const struct iio_chan_spec *chan, char *buf);
+>  	int (*interface_type_get)(struct iio_backend *back,
+>  				  enum iio_backend_interface_type *type);
+> +	int (*data_size_set)(struct iio_backend *back, ssize_t size);
+>  };
+>  
+>  int iio_backend_chan_enable(struct iio_backend *back, unsigned int chan);
+> @@ -152,6 +154,7 @@ ssize_t iio_backend_ext_info_get(struct iio_dev *indio_dev, uintptr_t private,
+>  
+>  int iio_backend_interface_type_get(struct iio_backend *back,
+>  				   enum iio_backend_interface_type *type);
+> +ssize_t iio_backend_data_size_set(struct iio_backend *back, ssize_t size);
+>  int iio_backend_extend_chan_spec(struct iio_dev *indio_dev,
+>  				 struct iio_backend *back,
+>  				 struct iio_chan_spec *chan);
 
 
