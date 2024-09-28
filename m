@@ -1,138 +1,161 @@
-Return-Path: <linux-kernel+bounces-342620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257E5989101
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:08:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D43C989102
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B2F8B20F40
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77CCB1F21AA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F30154454;
-	Sat, 28 Sep 2024 18:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8E814D6EF;
+	Sat, 28 Sep 2024 18:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PNeyrAbW"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VYAoL+dl"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981863C0C;
-	Sat, 28 Sep 2024 18:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802543C0C
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 18:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727546883; cv=none; b=cuIWrh3Vm2ZVP+zUro/bo4WuuY8dbqTX6cZoLACbW1wC/wO1xmkjXYeselxOQn/M6pBNDo4QVfC6kZLixg7gWsUy1o0An2MJYOlmbsBP3A2P07bC/QitIJ7OZbc9PgSQEhXNziucd8fQrdxepZR+tGJ+YT8B2eRq3uJg+CyvPRU=
+	t=1727547129; cv=none; b=WI+zinj+aGLjlzS3tazVn0rRzVnDOQ1ZS1wTkdqV/3LKQ8JnValzLAWrl48XwX5I+a/Od9zNoAeSGASlId3LcsFLVL3hddu1oKC6v36b6h2+rEA8ivJhtSrcuV1uv0fy7qcxPxbtYpLHHWCgdBmAnI2ivexFsPSocDe7y51Al44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727546883; c=relaxed/simple;
-	bh=4rqWLjYuai7cfKpnkWeDQNh9AmqL1eAP/dgFhclyNuo=;
+	s=arc-20240116; t=1727547129; c=relaxed/simple;
+	bh=MdY/Y8s8xqDgKQuXtL5G9clOjcmnMm533GTnFcDL7lQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Blw8hEkIHkkdCI/mcLe3GZ/U/S4XId5ok7ef0Os98Xa8QrkXOPTrNTe9ybVuwu44TO5B1D7BxMJaCU741m6nKBgyqqYSDzFTMgkB4WxxOgC4GYolx9Ssjq8cC3Ryos0+edBwT8LVCeDDruPKtDQP6meg8S9PHehoHy71BMAlTHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PNeyrAbW; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso21322931fa.1;
-        Sat, 28 Sep 2024 11:08:01 -0700 (PDT)
+	 To:Cc:Content-Type; b=AJ5mWLEGyPerzviEXlbDx6Ba727vR7jSKQLwFlrqiKk65XQK+5K1N10Nq8z3ZPAlBaaO6e0qCYNp3C03TDeI70qeEedjNIrIp1GfUYhRG/7e2ucF5rSRBQcTmzRaelcoFXRluc8gUYxhVVSSxlUwQd1BqElZp5xpk3NXmKB2org=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VYAoL+dl; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso572364366b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 11:12:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727546880; x=1728151680; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CKzeRt3cZsRqbJmwfzDXtTwI6KtcqI0hnC8kaq1Fnag=;
-        b=PNeyrAbWFB7UibjsQRzP99XFI1tttqHthop3UtaTSpBdpck2GbdyYwyk+FD8wu2NgZ
-         20qHMOGq+/yB8Y0776kTJy7SljZRtHaliRjG4LQ6mD43XXFkvSw9VQWMnj1hPclFsVTe
-         pwix55YgkfwXMjM07ZKGqavzv6l6A5mMKH8XdigSzOPOnZsAqQRuIPGALjk95Fm5ZmIg
-         8ltt8q3etD8kuC66naa829kSyaYfqokhgeese54+MG7EXxQEVcsyFHO0vRqUvbvioJQO
-         pERiZtsi4wTnkBH6FFIew4hxKqJpKDYMARIR6IpCzeXphWbqrfXAt7D7wf0irGbWPJWn
-         mTsQ==
+        d=google.com; s=20230601; t=1727547126; x=1728151926; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o1tSX6KXK+1nAZ0odwK92NuRBXV6X5liZSsTngEzTrE=;
+        b=VYAoL+dly/D5nlxQbAT/MFWz33X815YgudKXdUqW7Wfay8LCQRBftK+DcDKbiw9FX3
+         xWOO9b6XKY/Es18adeqklQi6HSzwE7RuNMhmIbfFNmBByhcMjn3NTc93FElD22h2uqcW
+         gaWMcQAJc25HNRbWnR4OC7lGczrTV6WsOunJQ26Cr2JZjOEvZnfvnMKoJDwqf0+8vCcE
+         1/vd7yjsHDP6E95ETNfglh9eZKdt3uy5qL4rB4gWFXcrZpRMLq2ZQ+1VRxTvUiTynD8d
+         j2+UoprUwZz/BBISx5eIQKW6qFH7HCSmn7rB2oR273ANKVw4wLzXQMw2GN2l/ARgu7CV
+         Xohw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727546880; x=1728151680;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CKzeRt3cZsRqbJmwfzDXtTwI6KtcqI0hnC8kaq1Fnag=;
-        b=fKFXBrCMT8ZPOtKzlvddenBT9tmYcSnNZeJ1KMrfh1UK30A0Dw51s45KOAiMw0jYpP
-         P7LyqvMVLqSbWIv8kjdhLZvvy2GSZ/Beoigq0oOJW3GjtfQLb3/UIKSDOGIi8ObTqhy8
-         0sXQiInH0PcKMTCbWSPYZ8oC3jgbRyKh6bMTW1gNMxhfH/jxI0En6qBDgBlL06uvjXAV
-         zEtREbAjssNPI9LfgoYlIUIkIvqJlLDiw/IkKgMUN8kqErihbEuF4uU7+pWtYNi4aHd6
-         93BQ7tAsAkmJlOmZ3MjoGX58lX9Q0yokGNuYks7lLMP62lcEQRot8foxPSG6zjs49feg
-         YCaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvnLasvO3DTIX5C1DsPYfJcUgCav6I5J4cxrwQIZqKoWx+sXmXf2kJjREYJDtN8kLuR23Uv0Vz0leohWlL@vger.kernel.org, AJvYcCW4dywiUFm4GRXU/SV4hhQf4CzC7Iumd9xAI5EA+q0HTkU0gQpTXcsiZ2ikjrvghVuINQz8bpEGPQxwQ0fqVQY=@vger.kernel.org, AJvYcCXKa1GU+olX3eyPMXLC2wK/hFyBUn0adSBc0TlI8s1RD6xMGrpHm2cyIMae6y4JjWqkIFsLNCIMT3n/REPcS/iq/viZHcE9@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbX+OHTpdjBdywgRkdEFt2cH9LS2v3FTPwRUfGajlppzsaLRtw
-	fGhJ9yYLSSsxaKKIpyXvqfphAfoDggJk46ZuZ3i/DXSrmOJ8xwm7PwFW2Zh0kJbR4DDMK7dUFL7
-	rV8TfNQOGBMEu/ckWvgnzZNq+RYU=
-X-Google-Smtp-Source: AGHT+IEHtJbAYaY5EIQkY1zTXt6zA874QpVFjKS1zKSC/F3APB4uGQGUuz33Th8SwOiUeFGc8eDxsTfTsTynmonlvGA=
-X-Received: by 2002:a05:6512:3e05:b0:52c:cd77:fe03 with SMTP id
- 2adb3069b0e04-5389fc3bd31mr4795623e87.14.1727546879336; Sat, 28 Sep 2024
- 11:07:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727547126; x=1728151926;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o1tSX6KXK+1nAZ0odwK92NuRBXV6X5liZSsTngEzTrE=;
+        b=dnRXAGQzREkmi7g7uLN1LmIv7u6u/oN/Z2k9d3mycFw/Drbdca6qNOHVybiuF6QsEH
+         VSIrwPD+7yqCKsTU1oNgW6inbNlDbEtEKyRn35ihoug7UrIgnA/WEtM5Ua5z7ibBjZLp
+         94DZaS0suzXOXotAuPPODByP1g+VOA/b0j+4WNXia3KhWiDlVO+MokIi32bEwnS+8lUJ
+         Z9cn7bKA4P6y0Wcn+Nx3pFrL1LEkSbDIUrj1d0zeWYjjKYKs+GfBkkhjpKEX2HMVehII
+         YGu1A9RXD1ZVooQ0grwEPUZ+6M3Dxv9KkAaQGkLDf5ReJfvdpuIzFGw1YejSy5pCYwl/
+         UM/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXpnKomkqAGT17xUM8bkiKZ9vzY6VB5HEpRSGg1S+SnL8CFOrmwDKx8qHbh2XUf2ukB1vAd6suYyYywJNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9u7vGZMlwU0CAu5W8MXKxcC0I0ynKSX0vJM15++L/Y87mNJ8w
+	GNikQ+hzYXik0vvzYaACLymb6QBgxrS39KMwnMM+XN7v3O/dhY1+jFyDFFYLsMpuoXj1G8mocfO
+	XftnG9ddfuHx7FDMgdn4Ekxv02axRSOqB88Pi
+X-Google-Smtp-Source: AGHT+IGRY39i/STfC2j/oMouTeJpF0nUdCDC0tCFbOs4ADr/Lq3A7oGhwV7NiUzL2y70BVk4oJ8MVd2/97kVISbiZGQ=
+X-Received: by 2002:a17:907:2685:b0:a8d:42ec:e65d with SMTP id
+ a640c23a62f3a-a93b157cc39mr1220243366b.7.1727547125478; Sat, 28 Sep 2024
+ 11:12:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
-In-Reply-To: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
-From: Shu Han <ebpqwerty472123@gmail.com>
-Date: Sun, 29 Sep 2024 02:07:47 +0800
-Message-ID: <CAHQche-Gsy4=UT6+znKyPRDEHQm9y-MQ+zacoqfywKaz7VA2kg@mail.gmail.com>
-Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
- process_measurement (4)
-To: syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, hughd@google.com, jmorris@namei.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	paul@paul-moore.com, roberto.sassu@huawei.com, serge@hallyn.com, 
-	stephen.smalley.work@gmail.com, syzkaller-bugs@googlegroups.com, 
-	zohar@linux.ibm.com
+References: <20240928021620.8369-1-kanchana.p.sridhar@intel.com>
+ <20240928021620.8369-7-kanchana.p.sridhar@intel.com> <CAJD7tkZRTAiEJQpg96zqDye3ViCfvBsMM1Ozmcs75e__WcF0kQ@mail.gmail.com>
+ <20240928141514.GE957841@cmpxchg.org>
+In-Reply-To: <20240928141514.GE957841@cmpxchg.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Sat, 28 Sep 2024 11:11:28 -0700
+Message-ID: <CAJD7tkbw7i=JB5NDYmmsxEw--NqkOidNeO-0+Gj0EvZfk627Dw@mail.gmail.com>
+Subject: Re: [PATCH v8 6/8] mm: zswap: Support large folios in zswap_store().
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, nphamcs@gmail.com, chengming.zhou@linux.dev, 
+	usamaarif642@gmail.com, shakeel.butt@linux.dev, ryan.roberts@arm.com, 
+	ying.huang@intel.com, 21cnbao@gmail.com, akpm@linux-foundation.org, 
+	nanhai.zou@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 6.11.0-syzkaller-10045-g97d8894b6f4c #0 Not tainted
-> ------------------------------------------------------
-> syz-executor369/5231 is trying to acquire lock:
-> ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
-> ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+On Sat, Sep 28, 2024 at 7:15=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.org=
+> wrote:
 >
-> but task is already holding lock:
-> ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
-> ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __do_sys_remap_file_pages mm/mmap.c:1649 [inline]
-> ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __se_sys_remap_file_pages+0x22d/0xa50 mm/mmap.c:1624
+> On Fri, Sep 27, 2024 at 08:42:16PM -0700, Yosry Ahmed wrote:
+> > On Fri, Sep 27, 2024 at 7:16=E2=80=AFPM Kanchana P Sridhar
+> > >  {
+> > > +       struct page *page =3D folio_page(folio, index);
+> > >         swp_entry_t swp =3D folio->swap;
+> > > -       pgoff_t offset =3D swp_offset(swp);
+> > >         struct xarray *tree =3D swap_zswap_tree(swp);
+> > > +       pgoff_t offset =3D swp_offset(swp) + index;
+> > >         struct zswap_entry *entry, *old;
+> > > -       struct obj_cgroup *objcg =3D NULL;
+> > > -       struct mem_cgroup *memcg =3D NULL;
+> > > -
+> > > -       VM_WARN_ON_ONCE(!folio_test_locked(folio));
+> > > -       VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
+> > > +       int type =3D swp_type(swp);
+> >
+> > Why do we need type? We use it when initializing entry->swpentry to
+> > reconstruct the swp_entry_t we already have.
 >
-> which lock already depends on the new lock.
+> It's not the same entry. folio->swap points to the head entry, this
+> function has to store swap entries with the offsets of each subpage.
 
-This issue (if not a false positive?) is due to the possible `prot`
-change caused by the processing logic for READ_IMPLIES_EXEC in do_mmap(),
-so the remap_file_pages() must perform LSM check before calling do_mmap(),
-this is what the previous commit want to do.
+Duh, yeah, thanks.
 
-The LSM check is required to know what the `prot` is, but `prot` must be
-obtained after holding the `mmap_write_lock`.
+>
+> Given the name of this function, it might be better to actually pass a
+> page pointer to it; do the folio_page() inside zswap_store().
+>
+> Then do
+>
+>                 entry->swpentry =3D page_swap_entry(page);
+>
+> below.
 
-If the `mmap_write_lock` is released after getting the `prot` and before
-the LSM call in remap_file_pages(), it may cause TOCTOU.
+That is indeed clearer.
 
-So, possible solutions may include:
-1. Remove the security check by removing the the possibility of the `prot`
-   change:
-1.1. move the the processing logic for READ_IMPLIES_EXEC out of the
-     do_mmap(). This also ensures that such missing checks which the
-     previous commit fixes will not occur again(suggested).
-     See the RFC PATCH
-     https://lore.kernel.org/all/20240928180044.50-1-ebpqwerty472123@gmail.com/
-1.2. Replace do_mmap() in remap_file_pages() to mmap_region(), which do
-     the actually memory mapping without the respect to READ_IMPLIES_EXEC.
-     But this requires other checks in do_mmap() is performed in
-     remap_file_pages(), such as the `file_mmap_ok`(may complex).
-2. Perform operations similar to updating a value by CAS(may slow):
-for (;;) {
-    mmap_write_lock();
-    prot = get_prot();
-    mmap_write_unlock();
-    if (!call_lsm(prot)) return;
-    mmap_write_lock();
-    if (prot != get_prot()) continue;
-    do_mmap();
-    mmap_write_unlock();
-}
+Although this will be adding yet another caller of page_swap_entry()
+that already has the folio, yet it calls page_swap_entry() for each
+page in the folio, which calls page_folio() inside.
+
+I wonder if we should add (or replace page_swap_entry()) with a
+folio_swap_entry(folio, index) helper. This can also be done as a
+follow up.
+
+>
+> > >         obj_cgroup_put(objcg);
+> > > -       if (zswap_pool_reached_full)
+> > > -               queue_work(shrink_wq, &zswap_shrink_work);
+> > > -check_old:
+> > > +       return false;
+> > > +}
+> > > +
+> > > +bool zswap_store(struct folio *folio)
+> > > +{
+> > > +       long nr_pages =3D folio_nr_pages(folio);
+> > > +       swp_entry_t swp =3D folio->swap;
+> > > +       struct xarray *tree =3D swap_zswap_tree(swp);
+> > > +       pgoff_t offset =3D swp_offset(swp);
+> > > +       struct obj_cgroup *objcg =3D NULL;
+> > > +       struct mem_cgroup *memcg =3D NULL;
+> > > +       struct zswap_pool *pool;
+> > > +       size_t compressed_bytes =3D 0;
+> >
+> > Why size_t? entry->length is int.
+>
+> In light of Willy's comment, I think size_t is a good idea.
+
+Agreed.
 
