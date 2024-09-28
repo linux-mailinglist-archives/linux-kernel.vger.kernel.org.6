@@ -1,162 +1,126 @@
-Return-Path: <linux-kernel+bounces-342564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E0C2989060
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:21:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D406698905D
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 298801F21E08
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:21:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E8CFB21A9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8E7762E0;
-	Sat, 28 Sep 2024 16:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ScZq+jgE"
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E140B13E40F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5A813D53B;
 	Sat, 28 Sep 2024 16:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EYUkt3na"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095CD28DBC;
+	Sat, 28 Sep 2024 16:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727540473; cv=none; b=OcdBEkoYzDCTRo6V/kw/c2MlVEHxrwhQjuY8nb03Pt4PR3vyHelDB8zVHMvLASGe6VulzytvLpMCCKloXO+JPAk2CXscU1SJaeLMogEvsLCCd/xqT2M54DTbN49ss7cMAjFKqQ1zgs0BZt312vbMYwDxjQv2r4fivcy/QeFwdco=
+	t=1727540469; cv=none; b=Tz1wJGzKeoWDH8vKmo/CRY/hO00Egm4G4pLe/FkvK9ENSiuVuVW24e+uaEZ10hmc9xmcItEVuD8SNUxJQBswsbaV+zA87+Sg0ZGUp9WFglenjDZ1qmN2lAE7rAjWzd/ezjBiZGFp5GkkC4BvH7g884R6OUnLlQx9dlx+VmtysVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727540473; c=relaxed/simple;
-	bh=HeDTPRstMRbJUF0VYtbVmMGCe9XPyQsWIuIWJu5p48c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dq/R+ekEM7wC5w0x3bO/4Flbpi21WRgUD6vQFt+WizErNKXNTwmR1oAsX/ffdSUleG9iiZ0HfgDsyrGw7cj7P7P7hwi5xSW2HDxRyAyEqW16oVCHOf++JSB2nTp+59K190IV7jn0SIfBJs0NcxAWrL54Z0NKmkP+PT9yorThLFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ScZq+jgE; arc=none smtp.client-ip=80.12.242.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id uaBpsnxpYx1imuaBpsyoC6; Sat, 28 Sep 2024 18:21:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727540461;
-	bh=q4g3CAAXG7+9scRECwbKlds18eqRTGeqcQDCJmApgMw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=ScZq+jgE7obHCAxUC3fYRkWao467elQvpX2SINVFMhq7TfyArNEXmx/GbqBw2FtYn
-	 asgtVViivvRDESi8qa1PL/PxLpyjygPvtcZDABPQVwzCcAq+X2vtPw2QKtWA+5CC51
-	 mPp9HFM/n40CGWxTOPdA9VNRglU6zSIFHS1VDyufJbMnePzpkKWUA91o01j6IkdVv/
-	 Zq5rPrtBJOFFIWjZ0G7/rf+VzX5LeETZRzo680caMVdRBfK1vHJtEYS2EVZ/nxCecu
-	 bow8LVDwS5Fp9J2NcY6g31anKzb7x97akhD3L5Fx1tjqYboCSJXNkrr+seL1zpSkhS
-	 Kwg5cTX9wNKBg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 28 Sep 2024 18:21:01 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Maxim Levitsky <maximlevitsky@gmail.com>,
-	Alex Dubov <oakad@yahoo.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-mmc@vger.kernel.org
-Subject: [PATCH] memstick: Constify struct memstick_device_id
-Date: Sat, 28 Sep 2024 18:20:56 +0200
-Message-ID: <6509d6f6ed64193f04e747a98ccea7492c976ca8.1727540434.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727540469; c=relaxed/simple;
+	bh=xPw92/uFCnLlTNJ6/zUt+W0GFuWqJf+auw4yd0flj3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SROpQ+DvDFPlhADR8C3BMN3/wdNKzkPCzimRgKoyUlZBM6mKHNZmBnSUoojNNxzgfYsNXr0YRZm/h0Ky7uY5G1sbJOijqG1slkQJv9XPY448ocubKRufYJ7WEkfXZcT3+A4Kk6/JvWWzLE1FYl6zczqWSSIeu3rGXbd6gVfuF5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EYUkt3na; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 701E0C4CEC7;
+	Sat, 28 Sep 2024 16:21:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727540468;
+	bh=xPw92/uFCnLlTNJ6/zUt+W0GFuWqJf+auw4yd0flj3g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EYUkt3nauUlue9Bk6yKcOE4LYamMZU79dyhdcK33+7HKwNvN2yDg9cc/0TWkVD2Ep
+	 gRqvPZVR+Ru5oRy61sYNnC6CMg1bEOLZ7OD2osJBwdMkFDXi7MB4IkZM0uNpL3nNJW
+	 EIkTvG1ZI3LKyk7bPMCBsmXc7I3s1l5bE+zDU9VfpQZ9oUKyqndI94VBWjffOJZLSJ
+	 2CasA6Fc9YOkVK/bD7OVu8V2HZWy32UD8BnfJjnXlBQf0oWLnaZsxaH742OjpV1iAw
+	 ChWr3iiHaGu6NRSELCmTTtCp9U0qJzKRAy5QiQk0EIcSN8YSqiro4RH77364ldIObA
+	 sqq0ZXBh2la/g==
+Date: Sat, 28 Sep 2024 17:20:59 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 07/10] iio: light: veml6030: drop processed info for
+ white channel
+Message-ID: <20240928172059.3a7fa45d@jic23-huawei>
+In-Reply-To: <20240923-veml6035-v2-7-58c72a0df31c@gmail.com>
+References: <20240923-veml6035-v2-0-58c72a0df31c@gmail.com>
+	<20240923-veml6035-v2-7-58c72a0df31c@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-'struct memstick_device_id' are not modified in these drivers.
+On Mon, 23 Sep 2024 00:17:55 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-Constifying this structure moves some data to a read-only section, so
-increases overall security.
+> The resolution of the WHITE channel is not provided by the manufacturer,
+> neither in the datasheet nor in the application note (even their
+> proprietary application only processes the ALS channel, giving raw
+> values for WHITE).
+> 
+> The current implementation assumes that both resolutions are identical,
+> which is extremely unlikely, especially for photodiodes with different
+> spectral responses.
+> 
+> Drop the processed information as it is meaningless.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Just to note, this one is fine as it is fixing an ABI bug
+so is a valid reason to change the ABI.
 
-Update memstick_dev_match(), memstick_bus_match() and struct
-memstick_driver accordingly.
+In theory though we should pull it out as a fix to add to stable
+as well, but it's low risk that anyone is using the 'false'
+channel so I don't think we care about backports for this one.
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  74055	   3455	     88	  77598	  12f1e	drivers/memstick/core/ms_block.o
+Thanks,
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  74087	   3423	     88	  77598	  12f1e	drivers/memstick/core/ms_block.o
+Jonathan
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/memstick/core/memstick.c    | 4 ++--
- drivers/memstick/core/ms_block.c    | 2 +-
- drivers/memstick/core/mspro_block.c | 2 +-
- include/linux/memstick.h            | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
-index 9a3a784054cc..ae4e8b8e6eb7 100644
---- a/drivers/memstick/core/memstick.c
-+++ b/drivers/memstick/core/memstick.c
-@@ -26,7 +26,7 @@ static DEFINE_IDR(memstick_host_idr);
- static DEFINE_SPINLOCK(memstick_host_lock);
- 
- static int memstick_dev_match(struct memstick_dev *card,
--			      struct memstick_device_id *id)
-+			      const struct memstick_device_id *id)
- {
- 	if (id->match_flags & MEMSTICK_MATCH_ALL) {
- 		if ((id->type == card->id.type)
-@@ -44,7 +44,7 @@ static int memstick_bus_match(struct device *dev, const struct device_driver *dr
- 						 dev);
- 	const struct memstick_driver *ms_drv = container_of_const(drv, struct memstick_driver,
- 								  driver);
--	struct memstick_device_id *ids = ms_drv->id_table;
-+	const struct memstick_device_id *ids = ms_drv->id_table;
- 
- 	if (ids) {
- 		while (ids->match_flags) {
-diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
-index 47a314a4eb6f..c572f870fcf1 100644
---- a/drivers/memstick/core/ms_block.c
-+++ b/drivers/memstick/core/ms_block.c
-@@ -2279,7 +2279,7 @@ static int msb_resume(struct memstick_dev *card)
- 
- #endif /* CONFIG_PM */
- 
--static struct memstick_device_id msb_id_tbl[] = {
-+static const struct memstick_device_id msb_id_tbl[] = {
- 	{MEMSTICK_MATCH_ALL, MEMSTICK_TYPE_LEGACY, MEMSTICK_CATEGORY_STORAGE,
- 	 MEMSTICK_CLASS_FLASH},
- 
-diff --git a/drivers/memstick/core/mspro_block.c b/drivers/memstick/core/mspro_block.c
-index 49accfdc89d6..13b317c56069 100644
---- a/drivers/memstick/core/mspro_block.c
-+++ b/drivers/memstick/core/mspro_block.c
-@@ -1349,7 +1349,7 @@ static int mspro_block_resume(struct memstick_dev *card)
- 
- #endif /* CONFIG_PM */
- 
--static struct memstick_device_id mspro_block_id_tbl[] = {
-+static const struct memstick_device_id mspro_block_id_tbl[] = {
- 	{MEMSTICK_MATCH_ALL, MEMSTICK_TYPE_PRO, MEMSTICK_CATEGORY_STORAGE_DUO,
- 	 MEMSTICK_CLASS_DUO},
- 	{}
-diff --git a/include/linux/memstick.h b/include/linux/memstick.h
-index ebf73d4ee969..107bdcbedf79 100644
---- a/include/linux/memstick.h
-+++ b/include/linux/memstick.h
-@@ -293,7 +293,7 @@ struct memstick_host {
- };
- 
- struct memstick_driver {
--	struct memstick_device_id *id_table;
-+	const struct memstick_device_id *id_table;
- 	int                       (*probe)(struct memstick_dev *card);
- 	void                      (*remove)(struct memstick_dev *card);
- 	int                       (*suspend)(struct memstick_dev *card,
--- 
-2.46.2
+> ---
+>  drivers/iio/light/veml6030.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/drivers/iio/light/veml6030.c b/drivers/iio/light/veml6030.c
+> index a3190fab3add..861bdf2edd4d 100644
+> --- a/drivers/iio/light/veml6030.c
+> +++ b/drivers/iio/light/veml6030.c
+> @@ -209,8 +209,7 @@ static const struct iio_chan_spec veml6030_channels[] = {
+>  		.channel = CH_WHITE,
+>  		.modified = 1,
+>  		.channel2 = IIO_MOD_LIGHT_BOTH,
+> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> -				BIT(IIO_CHAN_INFO_PROCESSED),
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+>  		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME) |
+>  					       BIT(IIO_CHAN_INFO_SCALE),
+>  		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_INT_TIME) |
+> @@ -549,11 +548,6 @@ static int veml6030_read_raw(struct iio_dev *indio_dev,
+>  				dev_err(dev, "can't read white data %d\n", ret);
+>  				return ret;
+>  			}
+> -			if (mask == IIO_CHAN_INFO_PROCESSED) {
+> -				*val = (reg * data->cur_resolution) / 10000;
+> -				*val2 = (reg * data->cur_resolution) % 10000;
+> -				return IIO_VAL_INT_PLUS_MICRO;
+> -			}
+>  			*val = reg;
+>  			return IIO_VAL_INT;
+>  		default:
+> 
 
 
