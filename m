@@ -1,167 +1,102 @@
-Return-Path: <linux-kernel+bounces-342716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F9EC989209
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 01:45:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BAE7989206
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 01:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBB2B2838B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 23:45:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C06C52843DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 23:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0324A188701;
-	Sat, 28 Sep 2024 23:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C358187875;
+	Sat, 28 Sep 2024 23:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WUz9WOzS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="OLobDaid";
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="nlekskVz"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5FD0188591;
-	Sat, 28 Sep 2024 23:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B871DFF0
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 23:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727567108; cv=none; b=l7i2wmVrjBtg1fSVNlg5F2R8jWiogOYjuqA4x6sSzZbU2OdREtoEv6chj+j6r9m997Cj3E2IW2vEhRK3Cf2ny78rEUbMrHqdxrcDLXR5BZRqJOfCf6RbQuyw07PfuSg0/WjZfT33Bz90pmBtz8TyrBHBmiNFH4i3nTlSIVgLpVE=
+	t=1727566989; cv=none; b=uAuwI8rZsTHI93Dp6eee2EiiuT+1HqR0s8aby5UjAohUbdEt5mgOvta1Xlg5X9+7u4fUmsVFJKuz1oFA6XV+HIQiwhIMNoR48tIVmH6/mFQNFqLQtszHF51GQ5OUkN8PTEh+YEGEIQdAzLCbVS626DPlWDVE65kEd/D+qL/jop0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727567108; c=relaxed/simple;
-	bh=sRtstZyamgTFvaWC2HT26A4k0j5wMsLi6ZRHUYxbr60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gq/ovcUS3hfP3H8/2Tyx3PDRKsMcBtiVIbrL/DglB/3enY5SuhW5JBwmDvQ5faq1DTg05MwYVFtn5BBUviJZMZIL3+L6I8ntDWPYlRv8uwkDv0t0sSyRJWccr3FxG5PHUpSIM+ICDwUVDZZP0R9shmGtetyFiqhD5A8unCY03J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WUz9WOzS; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727567105; x=1759103105;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sRtstZyamgTFvaWC2HT26A4k0j5wMsLi6ZRHUYxbr60=;
-  b=WUz9WOzS9BIiTZaBhzFoKkMMG/TsnKudIYjOh2mR4/md1N5M8LaXKb5t
-   ANUq+yHIz6gFLnDr0coIjKyz1KJXtk5K9N31SQRgh630IBhYg9gEl31i8
-   PIi0u1QiqZycWyO0s/3bFuN4UL0YQZ5HbJsE47omIAj3+yx62NFHOoytK
-   LwDiRS7hXuwIx5DJBB2UzWDDR/Ga8xs9U4++yTPtCh1krdUV5/6dNUmA2
-   jv3v4ztuNte0hCyLfZmfuEmCql++KfVSYNlInGxGZsuWwfYez1pfb8qDU
-   UQ8++1y1i1EkcYDCuOTA+Azn7xorB12gZ7Q4lz3hLh6Ua5lTb9T0Hw+Kn
-   A==;
-X-CSE-ConnectionGUID: kk6aZLPNRA+8fOw/uON2EQ==
-X-CSE-MsgGUID: eoV/FNreT2WdoU8Npx1U+Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="26192343"
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="26192343"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 16:45:05 -0700
-X-CSE-ConnectionGUID: KI4+d7XNS7iUtlrv57V2gg==
-X-CSE-MsgGUID: LwqmGFfYR5CYkeryjZ8msQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="103705533"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 28 Sep 2024 16:45:02 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1suh7U-000Nkv-22;
-	Sat, 28 Sep 2024 23:45:00 +0000
-Date: Sun, 29 Sep 2024 07:44:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	s=arc-20240116; t=1727566989; c=relaxed/simple;
+	bh=BWCVkPWkmquLZakojwWCB1NPLhmscnfGPhreYqIdQOg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b9eOe1WZKh3+Iz4ogYAK+6c+v/R6WM9WWPqyLpTSxWGZrID1SzSXrHlGf4uBt2IC5zdEyjKKTUd+O362+nEZexCPuKtCWCyFDBBV/F9e3pUbIq7llMalsdGrjx1WlOepW6xTjPqAK48S7IxY3X2FYOrFhc5erV54p0MVrg1dXog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=OLobDaid; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=nlekskVz; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=OLobDaidpSlfZgzzWq0ATmqnyDTY7bncWC0s2v31brlJS1u4/dHCsGywWb/+kGwYxFMQ05rsgeq+JQwJHYaCOmnKldL8V5kS5+PQnOOLgo9f5igo1dVHhJDZ8hkir9auGU3xk611ymHVauQsHV43ERj01F+i7i+ymebi+7OjqW+gTff38bXzsPOpwDWN9X5+qNHYqsjNbKPgXaBzD6BkIIwQmMVs6Z+NjHzk4iSmRe9tdyH6iJAbxvn3ktcHJuuZOHMamPwl5BAMCmOIIyzu2TC7PoOLAhxhpXOZTWcTLBijEMKPH9QHYoRkDoisQkKIBumUSQKaH4wTEIkyMOZEqA==; s=purelymail1; d=lkcamp.dev; v=1; bh=BWCVkPWkmquLZakojwWCB1NPLhmscnfGPhreYqIdQOg=; h=Received:From:To:Subject:Date;
+DKIM-Signature: a=rsa-sha256; b=nlekskVzgzqhNCpI00Qfg3eoaY7I08GudKMM9TNh6X9MHmwnNzFYS9K4QLuqrzmV1m6mEByrmOY692Enh7cxHb2HKr2ESNYb4KxhfSFabNHjemMki+qruoH+5iSjoDASu2hHfpd//71mtqFh/Ju7Lbr35/4ZkdhQ5/3hK2NEvtFW+LTo9YYPU59ZJy4sr0PQ5WYpseVqnxyr+h2hjsAzgzbQXmnrewZB+WSLptPevQfjNS8I7jiylw6KBOxn7R8AJrR0OMdfCsTnqXX2nQDBY3wNj4xk2yDVdXPz7b7QY1iuSeW40KH+16BBzavrijOAgu13A92OUA0GKfKTRJsBIQ==; s=purelymail1; d=purelymail.com; v=1; bh=BWCVkPWkmquLZakojwWCB1NPLhmscnfGPhreYqIdQOg=; h=Feedback-ID:Received:From:To:Subject:Date;
+Feedback-ID: 40598:7130:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 975610571;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Sat, 28 Sep 2024 23:42:50 +0000 (UTC)
+From: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
+To: Andy Whitcroft <apw@canonical.com>,
+	Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	Dzmitry Sankouski <dsankouski@gmail.com>
-Subject: Re: [PATCH v5 2/2] gcc-sdm845: Add general purpose clock ops
-Message-ID: <202409290702.jlF0XWJZ-lkp@intel.com>
-References: <20240617-starqltechn_integration_upstream-v5-2-761795ea5084@gmail.com>
+	~lkcamp/patches@lists.sr.ht
+Cc: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
+Subject: [PATCH] Add information on checkpatch warning about `help` in modules
+Date: Sat, 28 Sep 2024 20:46:44 -0300
+Message-ID: <20240928234649.193664-1-gbittencourt@lkcamp.dev>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617-starqltechn_integration_upstream-v5-2-761795ea5084@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
+Content-Type: text/plain; charset=UTF-8
 
-Hi Dzmitry,
+Add lines number information to warning of `module help` on Kconfig.
+On the creation of a new module, if `help` section is smaller than 4
+lines, checkpatch.pl gives a warning asking for a fully description. So
+add the information of the minimal required lines to be considered a
+fully description.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
+---
 
-[auto build test WARNING on 92fc9636d1471b7f68bfee70c776f7f77e747b97]
+Hi all,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/clk-qcom-clk-rcg2-document-calc_rate-function/20240926-184051
-base:   92fc9636d1471b7f68bfee70c776f7f77e747b97
-patch link:    https://lore.kernel.org/r/20240617-starqltechn_integration_upstream-v5-2-761795ea5084%40gmail.com
-patch subject: [PATCH v5 2/2] gcc-sdm845: Add general purpose clock ops
-config: i386-buildonly-randconfig-006-20240929 (https://download.01.org/0day-ci/archive/20240929/202409290702.jlF0XWJZ-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290702.jlF0XWJZ-lkp@intel.com/reproduce)
+I'm kind of new at linux development and I'm not sure if that's the best
+solution. It is just an easy one that I found that fixes the problem.
+If it should not be done as I proposed, I will be happy to change the
+solution.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409290702.jlF0XWJZ-lkp@intel.com/
+:)
 
-All warnings (new ones prefixed by >>):
+ scripts/checkpatch.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> drivers/clk/qcom/clk-rcg2.c:431:13: warning: variable 'count' set but not used [-Wunused-but-set-variable]
-     431 |         int i = 2, count = 0;
-         |                    ^
-   1 warning generated.
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 4427572b2477..8a6b6c22b175 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3660,7 +3660,7 @@ sub process {
+ =09=09=09    $help_length < $min_conf_desc_length) {
+ =09=09=09=09my $stat_real =3D get_stat_real($linenr, $ln - 1);
+ =09=09=09=09WARN("CONFIG_DESCRIPTION",
+-=09=09=09=09     "please write a help paragraph that fully describes the c=
+onfig symbol\n" . "$here\n$stat_real\n");
++=09=09=09=09     "please write a help paragraph with at least $min_conf_de=
+sc_length lines that fully describes the config symbol\n" . "$here\n$stat_r=
+eal\n");
+ =09=09=09}
+ =09=09}
+=20
+2.46.2
 
-
-vim +/count +431 drivers/clk/qcom/clk-rcg2.c
-
-   427	
-   428	static void clk_rcg2_calc_mnd(u64 parent_rate, u64 rate, struct freq_tbl *f,
-   429				unsigned int mnd_max, unsigned int pre_div_max)
-   430	{
- > 431		int i = 2, count = 0;
-   432		unsigned int pre_div = 1;
-   433		unsigned long rates_gcd, scaled_parent_rate;
-   434		u16 m, n = 1, n_candidate = 1, n_max;
-   435	
-   436		rates_gcd = gcd(parent_rate, rate);
-   437		m = div64_u64(rate, rates_gcd);
-   438		scaled_parent_rate = div64_u64(parent_rate, rates_gcd);
-   439		while (scaled_parent_rate > (mnd_max + m) * pre_div_max) {
-   440			// we're exceeding divisor's range, trying lower scale.
-   441			if (m > 1) {
-   442				m--;
-   443				scaled_parent_rate = mult_frac(scaled_parent_rate, m, (m + 1));
-   444			} else {
-   445				f->n = mnd_max + m;
-   446				f->pre_div = pre_div_max;
-   447				f->m = m;
-   448			}
-   449		}
-   450	
-   451		n_max = m + mnd_max;
-   452	
-   453		while (scaled_parent_rate > 1) {
-   454			while (scaled_parent_rate % i == 0) {
-   455				n_candidate *= i;
-   456				if (n_candidate < n_max)
-   457					n = n_candidate;
-   458				else if (pre_div * i < pre_div_max)
-   459					pre_div *= i;
-   460				else
-   461					clk_rcg2_split_div(i, &pre_div, &n, pre_div_max);
-   462	
-   463				scaled_parent_rate /= i;
-   464			}
-   465			i++;
-   466			count++;
-   467		}
-   468	
-   469		f->m = m;
-   470		f->n = n;
-   471		f->pre_div = pre_div > 1 ? pre_div : 0;
-   472	}
-   473	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
