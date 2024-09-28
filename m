@@ -1,213 +1,164 @@
-Return-Path: <linux-kernel+bounces-342572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4C6398907D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:37:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F068989082
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 412D2281A04
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:37:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D75841F21D29
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9032082488;
-	Sat, 28 Sep 2024 16:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518A11422A8;
+	Sat, 28 Sep 2024 16:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9SREswQ"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aYLwXQuN"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B73614A96;
-	Sat, 28 Sep 2024 16:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D5C17C95;
+	Sat, 28 Sep 2024 16:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727541439; cv=none; b=oT25tfWz9IE1eimtwCPghD3NfJtq/s8XluWzFSG1Cd3Cov/8+3OXu0OXXHF2GZcJzvQlAYk6N77ACcjwl9DBMdWsJfhomMAzaTvAf1Xk2ekQF/z8eGiVyHDBKvL5TDYmY+mkEB22jdtvRis1yOfDL2zvsN06nrR6SA2899QOaw0=
+	t=1727541585; cv=none; b=Nv6lPHi6ZSKP+dkzFvP+Vasln/tEjg+RXVKBIFkqUF4BvJHb6JhRhMdzLpfbQQshJ24Cr+oCZ3N7Za/Kk8ogb3uTcHi+5YxophAeFtrxkFAtW0WC/rGD1cBbkxqdYBIY378pzgcmz8RZ/WjcnN32WXJhsnu9yUzbUwL2NorA+C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727541439; c=relaxed/simple;
-	bh=koVz/ln5F1wiPscG190/9l2/xOw7jSM7KVoWY1j5LXA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OBuRSNiw+1hn7Bola7r72xFzfbV+DyHngE4JbQayg/TI+9Zf3IAwT5G9C4aOArru0Qf+zqBm4SZh57lQPpkRc/7lv5BLap1OAQnOu1uJuiKDgEFHgyqnwb4mMg2fhnQC2vkuB6geU0dtU8YGLvZ1PXO75XU6kuXE/8/ruP5uhKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N9SREswQ; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1727541585; c=relaxed/simple;
+	bh=oDYgX2j7bOQyyljCF5IWsCSe2FE81M8yuuciAaPzbik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iQtDSJb3VaJN6ZfsmvamQ1zEHYoSl04A3lzmMiYdH4HybreGlLKSSBAGA6cibotdcYknmxudynAqUZmEI7dPx7/GIp9Ug5gtzshHM65AGo1i/R8h3MSFcB/14iieaQuHlyFl5I7635l4/Z0Um0hUb/xJ9CU3kSk301gm/bCUt6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aYLwXQuN; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e24a2bc0827so2881393276.2;
-        Sat, 28 Sep 2024 09:37:17 -0700 (PDT)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e09fe0a878so1969358a91.1;
+        Sat, 28 Sep 2024 09:39:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727541436; x=1728146236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1nl9bgLuzs+y5Hwfh6ZezhQ59+LSYEnB9kHBKOLaIBc=;
-        b=N9SREswQQ1py/1BU43bngXh4fF1z3L8zBmiMmU63i2kfGMO3l0iI12MzjtmTn1g1OX
-         RbsFggDDoo1YiF96spnJOtPbQgkf87XeAPGcn9dL8OOEbTPAYBmcZQCZShtHvRRuRwCa
-         Rcpt787sEL/kpIDC1/oavbjN+QlH7L2scPTO+43vdQ9JajA5zf6GTkg8t7YrPsmHiktw
-         3Mmb0ayqqaWc5F4K0NPlKeWSVIfA594QbZg6ZnTIn4ntfhVlp95k96PYhjeVofVh1259
-         iSK4zCZt7pZQ2OjaW8eQpCYVbgIWzL1sMiJvUDW7Oh7wvMiGrJ2zO0vjO0LOPTwM+4HZ
-         suNg==
+        d=gmail.com; s=20230601; t=1727541583; x=1728146383; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=kvzo9Dw8yCMA498VifiVQ3iKuvGDh2Xe6iIAnfkituk=;
+        b=aYLwXQuNS9yCJmN1pHR9MbDylsf4K+oOv2lR4Yymdq1CX+LNwwz2YxJM1wXjhBiSZe
+         UDd0VxXHMxWIiWfuI7Jv1vYb+BE83hK0rXNF6xr6Rla2jmUCxfTUZs+z+Q2p4mTxruVj
+         OJo/Wb8eglWeltWkN5pYa/h1JFVSaGhb0juc7b5Qng3dRzje4DoLoMmNxvb67OryJnQI
+         ogBFjLCgB18bDHLAnZ7iDDSKm6cpRtV8lF7v1Xu6n5OQXEN1DgqE25jPCbdcZFYelcBS
+         5GdK1GBIUtE4bMLbKSb9HQ6L99h3dkTiFr5sw4T85n+66dtDHUVeTTxVhtMm0AjPkwM3
+         9joA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727541436; x=1728146236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1nl9bgLuzs+y5Hwfh6ZezhQ59+LSYEnB9kHBKOLaIBc=;
-        b=pAV8v0cwxbqmUlffF+ZRiUlJMHklN4DmeRg70N8KIrUtEvHQl1Eev1ldEHoWRyEdnk
-         hfLrj34vcQ0MCHAwrMr7E8TttWdPRX9ESVcaFmXkVyIzCL7nvimB5Rv/zmcGVKx7PL1I
-         OjEechRgqd0EraUFoHIdpORMsb3poC5F4ke9EE/cXBmvFk8lQexxXmceXolGEqlAH/8V
-         +AFPRxrSGn+Pm2zIgoIY6p8sX/kfgHs3o3A1BFGWTwo9+TE2LJnzz3X8LsPTHJ+koJV+
-         kQ7w7rO712SYgukHlL87kW91GXxXgFcTyUD6M8YzL5ah7hrHPSt6JanF34TNK7NcompU
-         Jc1w==
-X-Forwarded-Encrypted: i=1; AJvYcCU1qXXApOvfNsd7pYusPe5M3D4hsW+LynJeCon3XZ7+j4guB9gINaFWWmouKgY5uxvV2cWtoKyrYb/yRW/1@vger.kernel.org, AJvYcCVq6QW+vYWfyX4cc9TutvEJ5IYkURkK2QyBSDjdMpQE1fgyK7nqV0sXW+BmsXXYboWpy+O4bYsq@vger.kernel.org, AJvYcCXHDjOsSDP2vZGUxvXQNjuEXGCbpds7Fsqu1vGwl88i3/L/+EJhy06/xyKjGJvE/9IvJcIo2Vh6pz6h@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJbyxxSFKz87uwRogQBa9TgplsPI75bxjJUQnPmmlJkxuFhzTH
-	M9GfkByXeDVyh1KTRgbodNMqbs86uE8CYSTajlIvBKD6e7wDNIVInajsb5bX6BfZHzSjYLAUcCX
-	BZnrtrkxn3qFRWq07H2h6U9pK9AM=
-X-Google-Smtp-Source: AGHT+IFqQ7hE0yBezED2+Hc1PgATK5XbX30GW43woqeLiKk3Uuz+M/WZ1ZUUSvfXvI4HMUvTVPcV1g+l4UMjKSLbbpI=
-X-Received: by 2002:a05:6902:cca:b0:e24:9eba:aad0 with SMTP id
- 3f1490d57ef6-e2604b3e6c3mr5956491276.14.1727541436360; Sat, 28 Sep 2024
- 09:37:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727541583; x=1728146383;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kvzo9Dw8yCMA498VifiVQ3iKuvGDh2Xe6iIAnfkituk=;
+        b=aBV8Aa5VvJrCbbSOmSAecfIEBzY4hq9HH5vtkuy1wROxfI653+n811gYq+kwE+cAqL
+         /ap/24o+PJecVG+lmXEZg6bQmyvcsVbZvcE9gBXt8eruHKUz3bWLk/i8D6nkhRctfv49
+         GQn2+X5FFazHBe+oDsHv6Gdw5F3e3pbRJ56rGHtv7eQmUq9Q638o5f7ZzQmj8yllcEXJ
+         MtdrRTXSgMsK0xTvFfULhLwrFLf59zu9jRzHgnHWYkcrsI1t4mG/fBU0cogL5TvqKzSL
+         V06LXVUeQZM7wlLa1qBtd0JwMu5bxpIUy5NfUTW2L9p4q0SA4Y1SnEKzGKVFkhKElbOv
+         8xKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjXFv1yuJMMij7401EEf5R8wx/BKF9cCKewjIv2+HJlyD6BFQNJ36RpK+ZNp84kvUwx8t2uni8BfUnrM0j@vger.kernel.org, AJvYcCXn61l8Y5KcoMC1Y7x8DN1JEnxtkeftFQyFXDH2hNbR1bXxCfbsP1IABb+2aUTn1ej5dkO7aXWvYGdxcFg=@vger.kernel.org, AJvYcCXy6Tboud52zNG5eQ3C+moQWKyeoAUiq1lOGFtbLZveDdCTeMKBBdH2x0MvINQ9ziwQTU0t45omSw51@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNz/wXzSkO4pHYYaiiQaHfOonJf//c20BBLrI/IUzomL0hn4Fu
+	aYm4pPicvFLIYxMBDA4dLrI8kdVNDXbplST/fxxTtfIsIOvmxgph
+X-Google-Smtp-Source: AGHT+IEZbz4+NfKVIi4mSbv0u3LAU6sOozSBItqjzEJ0I7r/FltLIFmJfkdL1HWxN0IK7RD0P60HxQ==
+X-Received: by 2002:a17:90a:c790:b0:2d3:cd5c:15bb with SMTP id 98e67ed59e1d1-2e0b8ebd993mr8064593a91.25.1727541583240;
+        Sat, 28 Sep 2024 09:39:43 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1046b8723sm450453a91.14.2024.09.28.09.39.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 28 Sep 2024 09:39:42 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <4717815c-7d56-450f-8974-15c5ba245aa2@roeck-us.net>
+Date: Sat, 28 Sep 2024 09:39:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <DFC1DAC5-5C6C-4DC2-807A-DAF12E4B7882@gmail.com>
- <20240923075527.3B9A.409509F4@e16-tech.com> <CABaPp_iqgUw3TffQHrVYUoVoh03Rx0UjvrNw0ALStF8FxufFrg@mail.gmail.com>
- <CABaPp_hf8haF20YCipL0cdB6NQPMHue45n1fmEUvo_BL_Wuyfg@mail.gmail.com>
-In-Reply-To: <CABaPp_hf8haF20YCipL0cdB6NQPMHue45n1fmEUvo_BL_Wuyfg@mail.gmail.com>
-From: james young <pronoiac@gmail.com>
-Date: Sat, 28 Sep 2024 09:37:04 -0700
-Message-ID: <CABaPp_iLCoCAW=2jHEvgM15UJiwWXq5BXh0rCXtu-80tk6Zuvw@mail.gmail.com>
-Subject: Re: [REGRESSION] Corruption on cifs / smb write on ARM, kernels 6.3-6.9
-To: Wang Yugui <wangyugui@e16-tech.com>
-Cc: pronoiac+kernel@gmail.com, stable@vger.kernel.org, 
-	regressions@lists.linux.dev, linux-cifs@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org, 
-	Steve French <sfrench@samba.org>, smfrench@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 3/8] dt-bindings: hwmon: add support for ti,amc6821
+To: Farouk Bouabid <farouk.bouabid@cherry.de>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Quentin Schulz <quentin.schulz@cherry.de>,
+ Peter Rosin <peda@axentia.se>, Jean Delvare <jdelvare@suse.com>,
+ Heiko Stuebner <heiko@sntech.de>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <20240906-dev-mule-i2c-mux-v8-0-dbd28a150e41@cherry.de>
+ <20240906-dev-mule-i2c-mux-v8-3-dbd28a150e41@cherry.de>
+ <df6b9303-155e-4796-adb2-e05c7e76e289@cherry.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <df6b9303-155e-4796-adb2-e05c7e76e289@cherry.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-I retraced my steps:
-* looking for the breaking commit, between 6.2 and 6.3-rc1
-* I switched to checksumming the stream and the written file; this can
-save time, compared to decompression
-* I checked for lzop, pigz, and pbzip2
+On 9/27/24 07:58, Farouk Bouabid wrote:
+> Hi,
+> 
+> On 06.09.24 17:54, Farouk Bouabid wrote:
+>> Add dt-bindings for amc6821 intelligent temperature monitor and
+>> pulse-width modulation (PWM) fan controller.
+>>
+>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>> Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
+>> ---
+>>
+>> Notes:
+>>      Merge after patch 1
+> 
+> Patch 1 is merged in next-20240910 and it represents the dependency required for patches 3. I guess we should be ready to merge patches 3 and 4 through the hwmon subsystem.
+> 
 
-So, breakage. I landed on different commits:
-last working commit. ok: lzop, pigz, pbzip2.
-16541195c6d9 cifs: Add a function to read into an iter from a socket
+I'll do that after the commit window closes.
 
-first broken commit. lzop failed.
-d08089f649a0 cifs: Change the I/O paths to use an iterator rather than
-a page list
-
-That broken commit is right before my previous "last good" and "break".
-
-I'm seeing some inconsistencies. I'd *thought* I was careful with dtb
-files and .config; I might have dropped the ball occasionally, or
-there's something else, I don't know what, that I'm stumbling over.
-
-To check for marginal hardware, I tried another Raspberry Pi 4. I
-verified baseline 6.6.52 didn't work there, and stopped there. It
-doesn't have any cooling; it *almost certainly* would throttle for
-thermal reasons, but I didn't want to push it.
-
--James
+Guenter
 
 
-On Tue, Sep 24, 2024 at 9:35=E2=80=AFPM james young <pronoiac@gmail.com> wr=
-ote:
->
-> On request:
-> * adding another cc for Steven
-> * I tested 6.6.52, without any extra commits: it was bad.
->
-> -James
->
-> On Mon, Sep 23, 2024 at 12:36=E2=80=AFPM james young <pronoiac@gmail.com>=
- wrote:
-> >
-> > Hey there -
-> >
-> > On Sun, Sep 22, 2024 at 4:55=E2=80=AFPM Wang Yugui <wangyugui@e16-tech.=
-com> wrote:
-> > >
-> > > Hi,
-> > >
-> > > > I was benchmarking some compressors, piping to and from a network s=
-hare on a NAS, and some consistently wrote corrupted data.
-> >
-> > > > Important commits:
-> > > > It looked like both the breakage and the fix came in during rc1 rel=
-eases.
-> > > >
-> > > > Breakage, v6.3-rc1:
-> > > > I manually bisected commits in fs/smb* and fs/cifs.
-> > > >
-> > > > 3d78fe73fa12 cifs: Build the RDMA SGE list directly from an iterato=
-r
-> > > > > lzop and pigz worked. last working. test in progress: pbzip2
-> >
-> > This is a first for me: lzop was fine, but pbzip2 still had issues,
-> > roughly a clock hour into compression. (When lzop has issues, it's
-> > usually within a minute or two.)
-> >
-> >
-> > > > 607aea3cc2a8 cifs: Remove unused code
-> > > > > lzop didn't work. first broken
-> > > >
-> > > >
-> > > > Fix, v6.10-rc1:
-> > > > I manually bisected commits in fs/smb.
-> > > >
-> > > > 69c3c023af25 cifs: Implement netfslib hooks
-> > > > > lzop didn't work. last broken one
-> > > >
-> > > > 3ee1a1fc3981 cifs: Cut over to using netfslib
-> > > > > lzop, pigz, pbzip2, all worked. first fixed one
-> >
-> > > I checked 607aea3cc2a8, it just removed some code in #if 0 ... #endif=
-.
-> > > so this regression is not introduced in 607aea3cc2a8,  but the reprod=
-uce
-> > > frequency is changed here.
-> >
-> > I agree. The pbzip2 results above, regarding the break bisection I
-> > landed on: they mark when it became more of an issue, but not when it
-> > started.
-> >
-> > I could re-run tests and dig into possible false negatives. It'll be
-> > slower going, though.
-> >
-> >
-> > > Another issue in 6.6.y maybe related
-> > > https://lore.kernel.org/linux-fsdevel/9e8f8872-f51b-4a09-a92c-4921874=
-8dd62@meta.com/T/
-> >
-> > In comparison: I'm relieved that my issue is something that can be
-> > tested within hours, on one device.
-> >
-> >
-> > > Do this regression still happen after the following patches are appli=
-ed?
-> > >
-> > > a60cc288a1a2 :Luis Chamberlain: test_xarray: add tests for advanced m=
-ulti-index use
-> > > a08c7193e4f1 :Sidhartha Kumar: mm/filemap: remove hugetlb special cas=
-ing in filemap.c
-> > > 6212eb4d7a63 :Hongbo Li: mm/filemap: avoid type conversion
-> > >
-> > > de60fd8ddeda :Kairui Song: mm/filemap: return early if failed to allo=
-cate memory for split
-> > > b2ebcf9d3d5a :Kairui Song: mm/filemap: clean up hugetlb exclusion cod=
-e
-> > > a4864671ca0b :Kairui Song: lib/xarray: introduce a new helper xas_get=
-_order
-> > > 6758c1128ceb :Kairui Song: mm/filemap: optimize filemap folio adding
-> >
-> > No luck: I cherry-picked those commits into 6.6.52, and upon testing
-> > lzop, the file didn't match the stream, and decompression failed.
-> >
-> > Thank you for investigating, and giving me something to try!
-> >
-> > -James
 
