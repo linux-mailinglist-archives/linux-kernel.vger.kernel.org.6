@@ -1,294 +1,108 @@
-Return-Path: <linux-kernel+bounces-342669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC68989174
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 23:05:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4AD2989177
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 23:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9474CB23B6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:05:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 908E61F23935
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40031175D56;
-	Sat, 28 Sep 2024 21:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3AF175D56;
+	Sat, 28 Sep 2024 21:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="TJ0Pnlgw"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0P7nLBu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E884C136358
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 21:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A61136358;
+	Sat, 28 Sep 2024 21:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727557517; cv=none; b=j7i3eNnyl5xKHE94O6OzCchzpn0e6zoSuaxqaoe53S66Rx6bIj7VTtL7FqM0qpoh6XKSEJ2h1hwpIn3wEb/jFQT7DVBuUFMnBljilQwfZLEnxMWa0nvaKRk9yrjJ1vArCC9ckFHB8WMq0v4haQEFmaMnh0gTrJ/PA0VxCOWt6gs=
+	t=1727557716; cv=none; b=DQ6vdnKZqjvgug6HrHHCT+XmlWFdhhjCfx9DatamWzwnfKHENAVa5qjNZM9+1cE6vNkQmLT114W7wxvQvYqO6aOCUATs/OFKcPmKCEod6J4MWVD+cGn28zVYNqMc9RFQUjLug8IeqFTY7/VwGsdBpMlEXfBLZ8gBvUYZiqikD3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727557517; c=relaxed/simple;
-	bh=3iwNZf9694qndONfeZ/ixAk+ja9A/vLtbNrNa24+SFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EaTPFPzg4lwRI951iHHvh+25Qmh2D4AoBpq/8lHbQyBitcZGN7yRcLIOrn1ftEescqSz7xTwMbtKWwk/tts9eGrn63IVC1J0GJ6tXqnCrxnHH8NwFmA8GcX9kIVSXG0znWw+nbXXSeI7mQQauIHB/7pIP/vGgvd39iwXfkgpJmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=TJ0Pnlgw; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71b00a97734so2755230b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 14:05:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1727557515; x=1728162315; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9i+1khY6cZCPGetGL9p/QuDc4cg82jy9GCe3mjkCw+I=;
-        b=TJ0PnlgwvtgCoeoptViDmGj7d7BCzkxY3UkMTOVU1B2yK82C7FTsNmlgf+qyu919/V
-         MDTNFYU/mu6YzSG9mJWZkRTk9X9+nVCY9Wp8I++TsPo1jDxxfYzElgpd+9uM5DzvTOBo
-         L5fdLGbWfOOvsfg2diAWQH4lkgOyvlkIfBcoVlCMCm8h3XcSlXy0wTPY9ZMAELpRNNbL
-         gqpfKjfLHan0as0LftfMCsznYepTRGYy6wGRJUg8KsDY1XzCU+3XMWodf/GvPTIPLmaD
-         YhO2OlBlPLH7dtoPzbBhhf0x2mi+pmMNL3+fwWiG7NTaETpJBXynnhRxgjUle94ydd3D
-         lJ1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727557515; x=1728162315;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9i+1khY6cZCPGetGL9p/QuDc4cg82jy9GCe3mjkCw+I=;
-        b=Hm0PS+9QAM9/Qxovq2APiBa3Ph/dCf6s1hooRFw30niE1Oh0XBZ/ME2FtvM3n4I/Dk
-         yYak+D9CE376xCQnhJwaLLkL7cj9W9+2RE30yqik6hYjH01UmQFvN+Bm/StEPqPea7e5
-         C/UruKbjfli4jlxgj8qDa16K63O00UiJWPIrhFUKwnRPvwJdaZgSKjnPPT0cRxOrOh1C
-         t+LlSavgpD6l7i8VfbDYuG3vgWrTbytoF+wINUPrz34trwMrLl8a2IS0Cgh3KV6r2bIv
-         sG4T6Sxs+CxyWWV+OAHDBbfxCVT0Atv073LXeRAadA6R4lWUKbYuDuVDWjr2edv6nFlY
-         utnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEQnVToeBPUw6wzq/PP5z1v39lyuM8f2mTY95/1oXP/IQ/hZY3SzOLkJRdw6iEB+U+1YuqUM+Y19ukWIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKW26//f6zW9zONdzPQSVXCXtK6wviiRyVa81My4XgGCrc2foZ
-	7nC7WrkVAe+uNN4aOWg+X+E1EdMM5QxfIz0DncTYu5FPfP9gun6OgjCqXSuZ+EM=
-X-Google-Smtp-Source: AGHT+IFPA8N1lIApwXdlaSl/HNsi0gfOXQ+7UfB2eYS+MdF/mHrjX6Aptdb7GIyUvtzl3aI6WvOevg==
-X-Received: by 2002:a05:6a00:22c8:b0:70d:33b3:2d7f with SMTP id d2e1a72fcca58-71b260790a9mr10956907b3a.26.1727557515302;
-        Sat, 28 Sep 2024 14:05:15 -0700 (PDT)
-Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264bb2b8sm3550025b3a.61.2024.09.28.14.05.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Sep 2024 14:05:15 -0700 (PDT)
-Date: Sat, 28 Sep 2024 14:05:13 -0700
-From: Drew Fustini <dfustini@tenstorrent.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] riscv: dts: thead: Add TH1520 ethernet nodes
-Message-ID: <ZvhviRUb/CitmhgQ@x1>
-References: <20240926-th1520-dwmac-v2-0-f34f28ad1dc9@tenstorrent.com>
- <20240926-th1520-dwmac-v2-3-f34f28ad1dc9@tenstorrent.com>
- <3e26f580-bc5d-448e-b5bd-9b607c33702b@lunn.ch>
- <ZvWyQo+2mwsC1HS6@x1>
- <0b49b681-2289-412a-8969-d134ffcfb7fc@lunn.ch>
- <ZvYJfrPx75FA1IFC@x1>
- <5076789c-3a35-4349-9733-f5d47528c184@lunn.ch>
+	s=arc-20240116; t=1727557716; c=relaxed/simple;
+	bh=4Xmit0s6cg5hAP8OdkN+IzG4qiO6XhKktY2ixLwGd/o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W0HvMT+aBXRR2a+J0RXyAGA1WqSzrs8xKKRNW1VEGhmq9b99d/YnAr5N6jQAmEEVvNchFzz9xoHbOq/u63orjg+yogZ8yysuZb63ch5CI0cJ8mYk/BxGmONedG2wqw71JBtMOsO6cuwqce+zSgZRpB2WAfvxukYptB3Uk59gzoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k0P7nLBu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B1FDC4CEC3;
+	Sat, 28 Sep 2024 21:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727557716;
+	bh=4Xmit0s6cg5hAP8OdkN+IzG4qiO6XhKktY2ixLwGd/o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=k0P7nLBuQ06YEZkCK8iQBLlPixyyujIpA1EZE+82NEwaboD17N2JkRQs5KhoaftWT
+	 gz3Ss9du0tJb4Ss6iBl+uX2/N4wFBQRtqmGcnd9lYtgK/ssSeEOKRYbp/7cj8xxioW
+	 U32IgGdUZSFfirIYEywKtfvzZqeQwD+GXrU4FCsppDF3QZ8FUeEXns1Yl+pSelixUp
+	 O2FcwnfVtNRxEgo00k0rWw+MKveGdynVLpqnchSo/KBZs0oXatxO2IAs2vb0JRUXYz
+	 kCVMRmJAUFun0aaYirAQj7VGT4oKFHhmEE4vHk7rqEhJYSJxrV/VxH+M6WRrV1weII
+	 Rr9erfEXrVZhA==
+From: Kees Cook <kees@kernel.org>
+To: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Kees Cook <kees@kernel.org>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Allen Pais <apais@linux.microsoft.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Kisel <romank@linux.microsoft.com>,
+	Xiaoming Ni <nixiaoming@huawei.com>,
+	Vijay Nag <nagvijay@microsoft.com>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] coredump: Do not lock during 'comm' reporting
+Date: Sat, 28 Sep 2024 14:08:31 -0700
+Message-Id: <20240928210830.work.307-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5076789c-3a35-4349-9733-f5d47528c184@lunn.ch>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1640; i=kees@kernel.org; h=from:subject:message-id; bh=4Xmit0s6cg5hAP8OdkN+IzG4qiO6XhKktY2ixLwGd/o=; b=owGbwMvMwCVmps19z/KJym7G02pJDGk/CvyVTWusvot4f9knNTHYyH42e0yA5MUn/tYLYp8F2 Bn98aztKGVhEONikBVTZAmyc49z8XjbHu4+VxFmDisTyBAGLk4BmEj7JkaGzqcbfq/5vqP+2JoF Had5AnT/r5xY5OaxIHfW8Ym5v7MVDzP8z70ePeXA3apbNrVvhOL/zhPj/RxpGJr5fIXM0xdrfxW ZsQMA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 01:58:40PM +0200, Andrew Lunn wrote:
-> > I tried to setup an nfs server with a rootfs on my local network. I can
-> > mount it okay from my laptop so I think it is working okay. However, it
-> > does not seem to work on the lpi4a [3]. It appears the rgmii-id
-> > validation fails and the dwmac driver can not open the phy:
-> > 
-> >  thead-dwmac ffe7060000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-0
-> >  thead-dwmac ffe7060000.ethernet eth0: validation of rgmii-id with support \
-> >              00,00000000,00000000,00006280 and advertisementa \
-> > 	     00,00000000,00000000,00006280 failed: -EINVAL
-> >  thead-dwmac ffe7060000.ethernet eth0: __stmmac_open: Cannot attach to PHY (error: -22)
-> 
-> Given what Emil said, i would suggest flipping the MDIO busses
-> around. Put the PHYs on gmac1's MDIO bus, and set the pinmux so that
-> its MDIO bus controller is connected to the outside world. Then, when
-> gmac1 probes first, its MDIO bus will be probed at the same time, and
-> its PHY found.
-> 
-> 	Andrew
+The 'comm' member will always be NUL terminated, and this is not
+fast-path, so we can just perform a direct memcpy during a coredump
+instead of potentially deadlocking while holding the task struct lock.
 
-I'm trying to configure the pinmux to have gmac1 control the mdio bus
-but it seems I've not done so correctly. I changed pins "GMAC0_MDC" and
-"GMAC0_MDIO" to function "gmac1" (see the patch below).
+Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
+Closes: https://lore.kernel.org/all/d122ece6-3606-49de-ae4d-8da88846bef2@oracle.com
+Fixes: c114e9948c2b ("coredump: Standartize and fix logging")
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Allen Pais <apais@linux.microsoft.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Roman Kisel <romank@linux.microsoft.com>
+Cc: Xiaoming Ni <nixiaoming@huawei.com>
 
-I don't see any errors about the dwmac or phy in the boot log [1] but
-ultimately there is no carrier detected and the ethernet interface does
-not come up.
+Vegard, can you validate that this fixes the problem for you? I have
+been wrecked by covid, so very slow to respond here. There's a related
+thread about this locked, but we can just totally bypass it here.
 
-Section "3.3.4.103 G3_MUXCFG_007" in the TH1520 System User Manual shows
-that bits [19:16] control GMAC0_MDIO_MUX_CFG where value of 2 selects
-GMAC1_MDIO. Similarly, bits [15:12] control GMAC0_MDC_MUX_CFG where a
-value of 2 also selects GMAC1_MDC.
+---
+ include/linux/coredump.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Emil - do you have any suggestion as to what I might be doing wrong with
-the pinmux?
-
-Thanks,
-Drew
-
-[1] https://gist.github.com/pdp7/1f9fcd76f26acd5715398d54f65a2e27
-
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-index ca84bc2039ef..f2f6c9d9b590 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-@@ -11,6 +11,11 @@ / {
-        model = "Sipeed Lichee Module 4A";
-        compatible = "sipeed,lichee-module-4a", "thead,th1520";
-
-+       aliases {
-+               ethernet0 = &gmac0;
-+               ethernet1 = &gmac1;
-+       };
-+
-        memory@0 {
-                device_type = "memory";
-                reg = <0x0 0x00000000 0x2 0x00000000>;
-@@ -55,6 +60,22 @@ &sdio0 {
-        status = "okay";
- };
-
-+&gmac0 {
-+       pinctrl-names = "default";
-+       pinctrl-0 = <&gmac0_pins>;
-+       phy-handle = <&phy0>;
-+       phy-mode = "rgmii-id";
-+       status = "okay";
-+};
-+
-+&gmac1 {
-+       pinctrl-names = "default";
-+       pinctrl-0 = <&gmac1_pins>, <&mdio1_pins>;
-+       phy-handle = <&phy1>;
-+       phy-mode = "rgmii-id";
-+       status = "okay";
-+};
-+
- &gpio0 {
-        gpio-line-names = "", "", "", "", "", "", "", "", "", "",
-                          "", "", "", "", "", "", "", "", "", "",
-@@ -87,3 +108,101 @@ &gpio3 {
-                          "GPIO09",
-                          "GPIO10";
- };
-+
-+&mdio1 {
-+       phy0: ethernet-phy@1 {
-+               reg = <1>;
-+       };
-+
-+       phy1: ethernet-phy@2 {
-+               reg = <2>;
-+       };
-+};
-+
-+&padctrl0_apsys {
-+       gmac0_pins: gmac0-0 {
-+               tx-pins {
-+                       pins = "GMAC0_TX_CLK",
-+                              "GMAC0_TXEN",
-+                              "GMAC0_TXD0",
-+                              "GMAC0_TXD1",
-+                              "GMAC0_TXD2",
-+                              "GMAC0_TXD3";
-+                       function = "gmac0";
-+                       bias-disable;
-+                       drive-strength = <25>;
-+                       input-disable;
-+                       input-schmitt-disable;
-+                       slew-rate = <0>;
-+               };
-+
-+               rx-pins {
-+                       pins = "GMAC0_RX_CLK",
-+                              "GMAC0_RXDV",
-+                              "GMAC0_RXD0",
-+                              "GMAC0_RXD1",
-+                              "GMAC0_RXD2",
-+                              "GMAC0_RXD3";
-+                       function = "gmac0";
-+                       bias-disable;
-+                       drive-strength = <1>;
-+                       input-enable;
-+                       input-schmitt-disable;
-+                       slew-rate = <0>;
-+               };
-+       };
-+
-+       gmac1_pins: gmac1-0 {
-+               tx-pins {
-+                       pins = "GPIO2_18", /* GMAC1_TX_CLK */
-+                              "GPIO2_20", /* GMAC1_TXEN */
-+                              "GPIO2_21", /* GMAC1_TXD0 */
-+                              "GPIO2_22", /* GMAC1_TXD1 */
-+                              "GPIO2_23", /* GMAC1_TXD2 */
-+                              "GPIO2_24"; /* GMAC1_TXD3 */
-+                       function = "gmac1";
-+                       bias-disable;
-+                       drive-strength = <25>;
-+                       input-disable;
-+                       input-schmitt-disable;
-+                       slew-rate = <0>;
-+               };
-+
-+               rx-pins {
-+                       pins = "GPIO2_19", /* GMAC1_RX_CLK */
-+                              "GPIO2_25", /* GMAC1_RXDV */
-+                              "GPIO2_30", /* GMAC1_RXD0 */
-+                              "GPIO2_31", /* GMAC1_RXD1 */
-+                              "GPIO3_0",  /* GMAC1_RXD2 */
-+                              "GPIO3_1";  /* GMAC1_RXD3 */
-+                       function = "gmac1";
-+                       bias-disable;
-+                       drive-strength = <1>;
-+                       input-enable;
-+                       input-schmitt-disable;
-+                       slew-rate = <0>;
-+               };
-+       };
-+
-+       mdio1_pins: mdio1-0 {
-+               mdc-pins {
-+                       pins = "GMAC0_MDC";
-+                       function = "gmac1";
-+                       bias-disable;
-+                       drive-strength = <13>;
-+                       input-disable;
-+                       input-schmitt-disable;
-+                       slew-rate = <0>;
-+               };
-+
-+               mdio-pins {
-+                       pins = "GMAC0_MDIO";
-+                       function = "gmac1";
-+                       bias-disable;
-+                       drive-strength = <13>;
-+                       input-enable;
-+                       input-schmitt-enable;
-+                       slew-rate = <0>;
-+               };
-+       };
-+};
+diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+index edeb8532ce0f..a99079115a38 100644
+--- a/include/linux/coredump.h
++++ b/include/linux/coredump.h
+@@ -52,8 +52,8 @@ extern int do_coredump(const kernel_siginfo_t *siginfo);
+ #define __COREDUMP_PRINTK(Level, Format, ...) \
+ 	do {	\
+ 		char comm[TASK_COMM_LEN];	\
+-	\
+-		get_task_comm(comm, current);	\
++		/* This will always be NUL terminated. */ \
++		memcpy(comm, current->comm, sizeof(comm)); \
+ 		printk_ratelimited(Level "coredump: %d(%*pE): " Format "\n",	\
+ 			task_tgid_vnr(current), (int)strlen(comm), comm, ##__VA_ARGS__);	\
+ 	} while (0)	\
+-- 
+2.34.1
 
 
