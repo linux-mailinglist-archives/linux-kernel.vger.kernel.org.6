@@ -1,193 +1,118 @@
-Return-Path: <linux-kernel+bounces-342329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B98988D9C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 04:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DECA1988DA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 04:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C30591C2189A
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:40:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8C31C2190F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02FE1917DE;
-	Sat, 28 Sep 2024 02:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377C4199EB4;
+	Sat, 28 Sep 2024 02:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Ls3uGU9J"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PRhx80tP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0B3190671
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 02:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984DB19994E;
+	Sat, 28 Sep 2024 02:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727491239; cv=none; b=AdyvhGY6/TTsDFF/4Z6yqtKgSf0RpWFuB/uaoV3QAZXH4vFDyDx0uHkKMKsV1sXfFhs/UlLplCakhGr+aZmUrRaC1xEMsvEZs8UaV7G1ASQxTSEbDZ5VsS01bq59VGWdkQwgdelTPIO0TW+OaeWB9xzp7a7nfIS2Rgkh1ERrjKI=
+	t=1727492043; cv=none; b=cPCxI3dyVED/R11Y6ZtEO+itgX8yI1zGIV8Cs8U9yjIoXT4q8a2UhSxa7PjDtdfXlcENPRs41TBbveNL/yzkLiUsdYujjBk8dqta9z+vEVhnqu/1owbMQjhlZ/ip51Xj03HZ98hPLBaeoy1wIGqpsj+uIoU64DZhkUDS/ujwwJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727491239; c=relaxed/simple;
-	bh=64qfS1EE5wjBUpQHKrIT9D7kQLs6UILsGxCkIIwJe10=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fucNDLeN/kFrc4V9b4Y2V9ybKN8afGrj/5vLZSSGrPpPqeF44FNdbKorByTuuSv2TLprqkgGDC6DNxaQxxYlYB3F+CWkB5Ycox+e8+oytRCBnk6buxmRR0eFAJIGpAx0GF3RotdpyaluKBdVUDRo+oDFi+Cs09uVpvjWsiis5os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Ls3uGU9J; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2054feabfc3so26762445ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1727491237; x=1728096037; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LnTsq4VEfa3DVUeX5+2WsJ45Yn/L9lDZxQSrrKE2Knw=;
-        b=Ls3uGU9JSRq6povHEOpxNtIZ6X7mVXizE1AnwF5aOK7P+GNOmzJnm4HRn7qAdZE5UY
-         KYLkkcd0p73Oevl2cNwDBWF5u0NXYQYXakJgF4jgUEQbPt3hmM/PFq6u+IhtjHw0a+Ki
-         GSKDajsz02LjOu0zdGRSYbzPfSNOCiTjX9x5g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727491237; x=1728096037;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LnTsq4VEfa3DVUeX5+2WsJ45Yn/L9lDZxQSrrKE2Knw=;
-        b=AQC/+vi8crh6e5i0TEML0Zvr3A+K75dk8C9WOCcmq7e6hJWilN/EkbJ5KVdj038ojh
-         iguGu0W2uN1eMmLT2pEJVhw2/3iIt9UkRTt0aG6u7+Rwoq8/nSwRxdGC/vNaF2hJ34DF
-         GgwR23zKFvp3gCLuIcTDSugN4YFBwOP8FYAMzWsECqHgMowsOD1mlwY0ZizGjdIV0Bsr
-         ezo/h4E7/LgONyAs+M07IVFI1Zq04f5OwhkGjaRKpeU9MG/kIXygepLjaBYyZ4tPCmGu
-         zNnInO9AcDP5y7W9rKCfLUzCiToYtdjxrdLLa2+JWRTLCnFf/YqQJF6FA9oxXJSHEHbu
-         nDpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvt1mPc2ePQVqGjuboHoA2Mjd3WYAEf4igY7pddqQenfT/tOgmYx/Db6DT47mJEErG/8hboBWNSxZVh5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1OekyAf0UzBkIP6ATCeW3JigeY1AxE5g2fUPcQigOOfvc2ayD
-	D05PNW2UumMB9Ej8PmosguCyXjTXU3RwqBP2VnVL5aShgFEUBlRj9Nd2ZTp+AQ==
-X-Google-Smtp-Source: AGHT+IGMtSlIL5dzrEwafO9gPcWiqC1NF4q8PhLQ4Zacu1bMXW87bbHAECMzRgIokClUg8/fjODRog==
-X-Received: by 2002:a17:902:e884:b0:201:efe7:cafc with SMTP id d9443c01a7336-20b36ad291emr91904655ad.23.1727491236778;
-        Fri, 27 Sep 2024 19:40:36 -0700 (PDT)
-Received: from shivania.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e50c2esm19434185ad.235.2024.09.27.19.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 19:40:36 -0700 (PDT)
-From: Shivani Agarwal <shivani.agarwal@broadcom.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org
-Cc: zack.rusin@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.c,
-	krastevm@vmware.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	ajay.kaher@broadcom.com,
-	alexey.makhalov@broadcom.com,
-	vasavi.sirnapalli@broadcom.com,
-	Martin Krastev <martin.krastev@broadcom.com>,
-	Maaz Mombasawala <maaz.mombasawala@broadcom.com>,
-	Shivani Agarwal <shivani.agarwal@broadcom.com>
-Subject: [PATCH v6.1] drm/vmwgfx: Prevent unmapping active read buffers
-Date: Fri, 27 Sep 2024 19:40:27 -0700
-Message-Id: <20240928024027.154907-1-shivani.agarwal@broadcom.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1727492043; c=relaxed/simple;
+	bh=L/4ztKUmR2hY9BORg5sinYR4OqxxO8+qKgs09g1Q7iA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rZXr1u92NrK/IzqCXg8rOXjuWr8lC0/MBLB7S5jabJApi6KjFjJf35u32Ekgkm5AMZRR3q42Wg014Ig0/hd5C8iKJbkWGxM0bb0gzc4YqFyyFnIMxJ0lIdZJSrLEd3P9+aShIiFxv4shXInEk7CQlddRieE9Fu//yqPSGKrGKnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PRhx80tP; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727492041; x=1759028041;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L/4ztKUmR2hY9BORg5sinYR4OqxxO8+qKgs09g1Q7iA=;
+  b=PRhx80tPUMxtu/JQSHqMQky7mTB009nEJf2MLbrW34G3mEhwDA5KK/T0
+   HgceKIaZfj0VTbj2ZOhglXbOruDJRNS3tiLFe0tx4OsC8CsZO9CJJOC7H
+   oGqijRpgSf8uzdJz+fJcQTyyVm+CPcjdI+fQZcIaib6GuyK1A7k9GLh0U
+   y7dAlUJdkguTdEjXl54jpJMOEIvFqsqQB/AwgP5y811uryG5RGMvDV58J
+   AVy6uu+jEDeWF7gCRY3uNcrZh0FKCtkj0YRPlAL+Y60izVMgzC/TwoYlK
+   IoOvSS9gqOVIL5aZSZU4fn2EU3XlJ36XdBdddUYkIKG/zJSKIA0pHEbey
+   A==;
+X-CSE-ConnectionGUID: TrmiaAsQTymT0eshmAVG8A==
+X-CSE-MsgGUID: 8onLslsIQaium7bmDT55fQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="26779795"
+X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
+   d="scan'208";a="26779795"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 19:54:00 -0700
+X-CSE-ConnectionGUID: KFmS8c7gQuSlY+Pxl/vwwA==
+X-CSE-MsgGUID: dvlsoNVgQO6q7/UFTPhPlw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
+   d="scan'208";a="73513459"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 27 Sep 2024 19:53:57 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1suNal-000MrY-0m;
+	Sat, 28 Sep 2024 02:53:55 +0000
+Date: Sat, 28 Sep 2024 10:53:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Michael Grzeschik <m.grzeschik@pengutronix.de>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Avichal Rakesh <arakesh@google.com>,
+	Jayant Chowdhary <jchowdhary@google.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Grzeschik <m.grzeschik@pengutronix.de>
+Subject: Re: [PATCH v5 8/9] usb: gadget: uvc: add trace of enqueued and
+ completed requests
+Message-ID: <202409281004.YHy0SVaY-lkp@intel.com>
+References: <20240403-uvc_request_length_by_interval-v5-8-2de78794365c@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240403-uvc_request_length_by_interval-v5-8-2de78794365c@pengutronix.de>
 
-From: Zack Rusin <zack.rusin@broadcom.com>
+Hi Michael,
 
-commit aba07b9a0587f50e5d3346eaa19019cf3f86c0ea upstream.
+kernel test robot noticed the following build errors:
 
-The kms paths keep a persistent map active to read and compare the cursor
-buffer. These maps can race with each other in simple scenario where:
-a) buffer "a" mapped for update
-b) buffer "a" mapped for compare
-c) do the compare
-d) unmap "a" for compare
-e) update the cursor
-f) unmap "a" for update
-At step "e" the buffer has been unmapped and the read contents is bogus.
+[auto build test ERROR on 68d4209158f43a558c5553ea95ab0c8975eab18c]
 
-Prevent unmapping of active read buffers by simply keeping a count of
-how many paths have currently active maps and unmap only when the count
-reaches 0.
+url:    https://github.com/intel-lab-lkp/linux/commits/Michael-Grzeschik/usb-gadget-uvc-wake-pump-everytime-we-update-the-free-list/20240927-074027
+base:   68d4209158f43a558c5553ea95ab0c8975eab18c
+patch link:    https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v5-8-2de78794365c%40pengutronix.de
+patch subject: [PATCH v5 8/9] usb: gadget: uvc: add trace of enqueued and completed requests
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20240928/202409281004.YHy0SVaY-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240928/202409281004.YHy0SVaY-lkp@intel.com/reproduce)
 
-Fixes: 485d98d472d5 ("drm/vmwgfx: Add support for CursorMob and CursorBypass 4")
-Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: <stable@vger.kernel.org> # v5.19+
-Signed-off-by: Zack Rusin <zack.rusin@broadcom.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20240816183332.31961-2-zack.rusin@broadcom.com
-Reviewed-by: Martin Krastev <martin.krastev@broadcom.com>
-Reviewed-by: Maaz Mombasawala <maaz.mombasawala@broadcom.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[Shivani: Modified to apply on v6.1.y]
-Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_bo.c  | 12 +++++++++++-
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.h |  3 +++
- 2 files changed, 14 insertions(+), 1 deletion(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409281004.YHy0SVaY-lkp@intel.com/
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_bo.c b/drivers/gpu/drm/vmwgfx/vmwgfx_bo.c
-index c46f380d9149..733b0013eda1 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_bo.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_bo.c
-@@ -348,6 +348,8 @@ void *vmw_bo_map_and_cache(struct vmw_buffer_object *vbo)
- 	void *virtual;
- 	int ret;
- 
-+	atomic_inc(&vbo->map_count);
-+
- 	virtual = ttm_kmap_obj_virtual(&vbo->map, &not_used);
- 	if (virtual)
- 		return virtual;
-@@ -370,10 +372,17 @@ void *vmw_bo_map_and_cache(struct vmw_buffer_object *vbo)
-  */
- void vmw_bo_unmap(struct vmw_buffer_object *vbo)
- {
-+	int map_count;
-+
- 	if (vbo->map.bo == NULL)
- 		return;
- 
--	ttm_bo_kunmap(&vbo->map);
-+	map_count = atomic_dec_return(&vbo->map_count);
-+
-+	if (!map_count) {
-+		ttm_bo_kunmap(&vbo->map);
-+		vbo->map.bo = NULL;
-+	}
- }
- 
- 
-@@ -510,6 +519,7 @@ int vmw_bo_init(struct vmw_private *dev_priv,
- 	BUILD_BUG_ON(TTM_MAX_BO_PRIORITY <= 3);
- 	vmw_bo->base.priority = 3;
- 	vmw_bo->res_tree = RB_ROOT;
-+	atomic_set(&vmw_bo->map_count, 0);
- 
- 	size = ALIGN(size, PAGE_SIZE);
- 	drm_gem_private_object_init(vdev, &vmw_bo->base.base, size);
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-index b0c23559511a..bca10214e0bf 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-@@ -116,6 +116,8 @@ struct vmwgfx_hash_item {
-  * @base: The TTM buffer object
-  * @res_tree: RB tree of resources using this buffer object as a backing MOB
-  * @base_mapped_count: ttm BO mapping count; used by KMS atomic helpers.
-+ * @map_count: The number of currently active maps. Will differ from the
-+ * cpu_writers because it includes kernel maps.
-  * @cpu_writers: Number of synccpu write grabs. Protected by reservation when
-  * increased. May be decreased without reservation.
-  * @dx_query_ctx: DX context if this buffer object is used as a DX query MOB
-@@ -129,6 +131,7 @@ struct vmw_buffer_object {
- 	/* For KMS atomic helpers: ttm bo mapping count */
- 	atomic_t base_mapped_count;
- 
-+	atomic_t map_count;
- 	atomic_t cpu_writers;
- 	/* Not ref-counted.  Protected by binding_mutex */
- 	struct vmw_resource *dx_query_ctx;
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "__tracepoint_uvcg_video_complete" [drivers/usb/gadget/function/usb_f_uvc.ko] undefined!
+>> ERROR: modpost: "__traceiter_uvcg_video_complete" [drivers/usb/gadget/function/usb_f_uvc.ko] undefined!
+>> ERROR: modpost: "__tracepoint_uvcg_video_queue" [drivers/usb/gadget/function/usb_f_uvc.ko] undefined!
+>> ERROR: modpost: "__traceiter_uvcg_video_queue" [drivers/usb/gadget/function/usb_f_uvc.ko] undefined!
+
 -- 
-2.39.4
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
