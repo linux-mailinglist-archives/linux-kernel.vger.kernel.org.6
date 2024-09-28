@@ -1,78 +1,94 @@
-Return-Path: <linux-kernel+bounces-342582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B36B989094
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:46:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71670989098
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A70FB21663
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:46:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28FCD1F22479
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED38A187561;
-	Sat, 28 Sep 2024 16:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153E7140E5F;
+	Sat, 28 Sep 2024 16:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0j5fGKh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpLpMmx8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DE71865F6;
-	Sat, 28 Sep 2024 16:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDA1210FF;
+	Sat, 28 Sep 2024 16:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727541915; cv=none; b=W/tLCsl3tmdknXZsGWWeq74FLaGQgdZqod0RVme6na/+zoadbpMrpwhHZ3xN99WAu7sTQzAlDAzyLwv31pb4blbuhMLRt8sLyjCnSUq5jO+r9Mw8G0KuR6Rk+chrs2CxDfEkiZ5xDNCMsgQIyJaqe7LEwarNiwjASTK5wnZQ2SI=
+	t=1727541958; cv=none; b=Tkn+qAdGpVN4UvILL20BGc+9EeCSHdHY9mfRDMkLuEdM8wSgHeTasrHyAo7SMV8jojxMop1ep7IGNJRb2UN6Y0KY3hV1JCY51ST5Qo2UzUciBSH+FhXs86OMQdscIXCVP1P+7qtUJfE+ApkGAbRdq7gEbLHYO/ICQ/q5rmnenKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727541915; c=relaxed/simple;
-	bh=obB9ZBsesxXaAxs8hrO4DYdTVgeIenw9QLBKy4kVAPs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=E9VvMDPAPAx+Ga8e+gudiE9Bl3haI/PtjYW5lR6696opennmjTMr3ZwcyJq1T0HOdkmbHS4AoVO34y4HLykLjrlw/LQzap6aqutsu4ILAuXH/ZYaemBIZOMV5uGLxCdReYtBJOj833HRG3EflsflNGCGOJ94OhlvwE3GnvQTrXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0j5fGKh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B35AC4CECE;
-	Sat, 28 Sep 2024 16:45:15 +0000 (UTC)
+	s=arc-20240116; t=1727541958; c=relaxed/simple;
+	bh=WApryzmH66rukuAuy+jm07E9eoB/7WIDC7wHujna7y4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T80I+uTc3sx5ZIehOKOP/ttYSOKLp7MDC37RimAlEu9UrTpsknO9NNGOhZz2pdb5OtZai4Vbt8HysSaKVrA5Ilh4J3IIMnCGGpQsKvlyrjgVIMUZz9JG7aOtNIPgZMAiK0Pi+ct1kdZLxtYXoyPoYLtabM0rQU6phR0mq0NSetA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpLpMmx8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E657C4CEC3;
+	Sat, 28 Sep 2024 16:45:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727541915;
-	bh=obB9ZBsesxXaAxs8hrO4DYdTVgeIenw9QLBKy4kVAPs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Y0j5fGKhrUcTeCYu5UEIwgHje61ft32jnPSIwWMQUWq0dNIKkulUcF3dKzKvJOAFH
-	 zi2nVk8az6wWHEKcVQZNqkh4IP4GJ1286wQefWh5qf1aBASFNeNeNKPCwl/hwFDsTW
-	 mkQ7CjXQpJLDr9cxuai1YaLya61/0xWwo0DosMIs2PrXBE88R/4HSe7TDOIHshu0tV
-	 /shQFlyLIfZh5aHp4OWpupjsAz0SK6ZIsBKYvjTAZrDiAAZ/hrla2lr56/tyBYaCGq
-	 srHycsiOvuT/1Uz9/Hk3qvSGSYo+bHa5sCL6Dijkjxg1tzHu5wUqaTlEZfYyvdrD3E
-	 BVl7AtPCBI5sA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FF03809A80;
-	Sat, 28 Sep 2024 16:45:19 +0000 (UTC)
-Subject: Re: [GIT PULL] KVM/x86 changes for Linux 6.12
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240928153302.92406-1-pbonzini@redhat.com>
-References: <20240928153302.92406-1-pbonzini@redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240928153302.92406-1-pbonzini@redhat.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-X-PR-Tracked-Commit-Id: efbc6bd090f48ccf64f7a8dd5daea775821d57ec
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3efc57369a0ce8f76bf0804f7e673982384e4ac9
-Message-Id: <172754191786.2302262.6073223623361742953.pr-tracker-bot@kernel.org>
-Date: Sat, 28 Sep 2024 16:45:17 +0000
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+	s=k20201202; t=1727541958;
+	bh=WApryzmH66rukuAuy+jm07E9eoB/7WIDC7wHujna7y4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rpLpMmx8AjGcuQXN8MNECLy4E/iwF6q9BHVj6Dt4PN1eUjzckcJJs5DRjlht1+XsC
+	 SqmnhxKv+UTssd9y4HkyRX9T9aAy25/RDkKJ9Z8+Q9zHQ/er0z6R5ZnsBSokJJQn7Q
+	 Js1QffEi5tWmm7qNYbYY/5TsWYFC+UAJEZPY1F66I0qb6a+FeeLahmr/xZu1peIlVm
+	 scoSDY18T/d6lZ9jfkdDmMtlEHj9zQl2by6+U8lQYAYTU5qSA2tY3qf0b5RdCznGfN
+	 Ent15CLUhmJK7OoQ+WZhNANYcYIaDIJpwhBdxbejm2uWElXvcmvHqGgpTJp0W8MBs4
+	 ossKbmOZ8eWow==
+Date: Sat, 28 Sep 2024 17:45:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: jean-baptiste.maneyrol@tdk.com, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jean-Baptiste Maneyrol
+ <jmaneyrol@invensense.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: imu: mpu6050: Add
+ iam20680ht/hp bindings to mpu6050
+Message-ID: <20240928174550.47cec40f@jic23-huawei>
+In-Reply-To: <685c0c28-9439-45da-8bc1-19c2c56b2053@kernel.org>
+References: <20240923-inv-mpu6050-add-iam20680-ht-hp-v2-0-48290e0b9931@tdk.com>
+	<20240923-inv-mpu6050-add-iam20680-ht-hp-v2-1-48290e0b9931@tdk.com>
+	<685c0c28-9439-45da-8bc1-19c2c56b2053@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Sat, 28 Sep 2024 11:33:02 -0400:
+On Mon, 23 Sep 2024 17:38:44 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+> On 23/09/2024 16:53, Jean-Baptiste Maneyrol via B4 Relay wrote:
+> > From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+> > 
+> > IAM-20680HT & HP are 2 variants of IAM-20680 fully compatible.
+> > They just have better specs, temperature range and a bigger FIFO.
+> > 
+> > Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+> > ---  
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Ah. I missed v2 as checked by email address.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3efc57369a0ce8f76bf0804f7e673982384e4ac9
+As per v1 review I've tweaked this patch description to say they are
+backwards compatible rather than fully (as the fifo size is not
+discoverable)
 
-Thank you!
+Jonathan
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> 
+> Best regards,
+> Krzysztof
+> 
+
 
