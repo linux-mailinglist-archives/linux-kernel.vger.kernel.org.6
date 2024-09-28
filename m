@@ -1,195 +1,102 @@
-Return-Path: <linux-kernel+bounces-342482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33502988F86
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:54:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B33C8988F85
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B57031F217C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:54:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ADCD282076
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCE8188A05;
-	Sat, 28 Sep 2024 13:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A70188013;
+	Sat, 28 Sep 2024 13:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="VZ2bjJPy"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="AmJo7Ab4"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A873918890A;
-	Sat, 28 Sep 2024 13:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A7E188703
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 13:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727531635; cv=none; b=SeoksmkRSS8c9TS5RCU9/UBZ4XtO6ZTcYGqCsZ9yV6ie65fN500RRgo/PQEerbG6HxzOQuuHKTE31drT1Qsa0VOs39Z7dzZgc0dp8QvPuopCKFS7/4M/Qlv5+zNTjA3FVd6e259PyYe8Nh58UAMFO0PLF7c35UX7VH6who7Enww=
+	t=1727531632; cv=none; b=VEqb+DYoSEb9t+Hp+HJ0Uth/siK54FNYWs56lx5r3XxizNlSYCMN8wP9YPeEfm0NrAEQ1PMtrmeiUNRwewEuMLxl9lGrpKArzOm0m3FhqjTrFlBhgQEAzScz/lgmHOeGgF6LAAEKwZr7fMAuiaVWYNAnelSs1Ikrud6yFBN06ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727531635; c=relaxed/simple;
-	bh=adr64DJrpL036YYqX3VlBhGw9oL6SMunripgcF3S5mk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MndRobE69JjEOnZZ7nMrqmM6Fad09Uzqqm34pyUv7x14Febvw+AXaXLVAlusvYI/pp5bfXO46kU92Pui7IKf15PbG3toyTbOe3bGjQOZji08bQYprfQeZRnLXUdYYiOGWLKxrOSyeulg+lNEMOscFR53SXzR47WI+BO6PgsOoAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=VZ2bjJPy; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727531632;
-	bh=adr64DJrpL036YYqX3VlBhGw9oL6SMunripgcF3S5mk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VZ2bjJPyzV8LOr/fUK3q5+I26yAxJvJ8sorbWZ4MKmbGYZTIJ/fIr7Hyx30CAKpxO
-	 WpIBkNQNlW+jolCn9hc284TT8OGzd/5YzG2DKaCz5NhwzMJGPWiHb3T3Q2ElKSsVQk
-	 iY5gtCZDD8laZdfbhHUFc1K4XKjgTuoGqs8JP62v3fuje2aC3KS1EKrX9G6HQmkKQ9
-	 afMfgD+0hWceM6vNAUQGUEgDUjAWBhXzNeWOA2qANQmQZadycqwMlcCHN1lkspEiZU
-	 i4ggfozc1u0PYWQlkV8coab3oTkaE8OMtg/HAVLx7XKlwkGOVU3RwUet1Tk7XSLeES
-	 KNMf+4kwaXmuQ==
-Received: from thinkos.internal.efficios.com (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XG8282zDgz1bsD;
-	Sat, 28 Sep 2024 09:53:52 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	John Stultz <jstultz@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	maged.michael@gmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	rcu@vger.kernel.org,
-	linux-mm@kvack.org,
-	lkmm@lists.linux.dev
-Subject: [PATCH 2/2] Documentation: RCU: Refer to ptr_eq()
-Date: Sat, 28 Sep 2024 09:51:28 -0400
-Message-Id: <20240928135128.991110-3-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
-References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1727531632; c=relaxed/simple;
+	bh=p23RQLyoKlIeRAa5KuGjKRJENRQ2fdoTF+wSfPDPzIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BrgpgLlUDddf04nbrzlTBZ6MkxCkPSmi08/O2lDcpnvOM8YY+HqFbsMaZ4ePnPL/6iF0cNwb9eJnAhKI3iwX5ZNQDrZcCJKqVDNcUUuymdWxpVgt0sXmKJaxQkIaGC5GKXqRxmO5uKSOWqFwioeCTSsbZH1vk4/LomWnVBIjul8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=AmJo7Ab4; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6cb37b34a87so18587366d6.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 06:53:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1727531628; x=1728136428; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dayhq3MTxfga64TVXaDsvojrghHz89xXzeqjJuXzgwk=;
+        b=AmJo7Ab4uSiEhf8iouaQtRhyakSmav1RvxuGx/Uk/tUGpaQ8cBtp1wy9TEKzX51sLX
+         T35HgURcEFNkSIfqfIeZ3yRSj2auvOVT0/stvk7jb5Gwgowwz73+2gwKRzuhQvwqftGw
+         2y1eGMzvoAFFykgY2BUjGFuJsW0hHdf32/RKgxkeLpWSi0QYQ1sseYQDuMbaWDtimNXb
+         LPDvwWnI0eRrxwFYy/7lUsdSCy7GePpzwm1p636u+HY9EM9kAkt4agMA4krrKSStI9Az
+         CBpEJ6FBUbuO3Mj18NGjqgVfTyB7eYfdDmcSt/jm8sh+fzpPmIUVIcR+Y+Nxi9eEabtB
+         mVcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727531628; x=1728136428;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dayhq3MTxfga64TVXaDsvojrghHz89xXzeqjJuXzgwk=;
+        b=g9Jk4St+LuY1EQE6wozByCf5fzqORb4MEsS2IY5GJNlQM2BZsSfc8buuyxahUl4zGE
+         gB7cqEwd9jknt/Eb2scFgFsdv22ad2U5dxh3PWR8nJ1hkZX++8T7v6TeyuQ8Kw2fYuTB
+         Nd+fDhrnN8GZ+XJKv0zr0Tl36riGN9yXHlV5GY1ScWD3/TPdrqRF4tYX+x+ODCSReDtK
+         r4YZZoPLUrZwlTjpXUWmJtJAz+dmH3YY6Z9zlV1rzlUAQmzpLXPzpQaXRuLnkKQ/XIr9
+         Xvq+eIfkkMl7KrWoCfW5FOq6X+9Wb6s7xHlY4xhUQN2Eu50geWQjkU+hTWitte1VZE8x
+         iS1Q==
+X-Gm-Message-State: AOJu0YzCfuCagNPrRlXGWATgW7NteQljPLPGLvY1x68yJBfOCx94hZZq
+	XHPo51s5mparlkUgdRJ5ghLWxWtfYoYwVKoXRK+sqffy+vm9LprakKDlkEXgmkc=
+X-Google-Smtp-Source: AGHT+IEj8ecZQlUVp6W/h+37oUBnpND2E6jQoQDicgs2joAcvMOP+ThVv/U8AlLrIsjEWgOlvkuL5A==
+X-Received: by 2002:a05:6214:4884:b0:6c5:b883:92c6 with SMTP id 6a1803df08f44-6cb3b5da9eamr82694856d6.12.1727531628043;
+        Sat, 28 Sep 2024 06:53:48 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b5ff612sm19534126d6.9.2024.09.28.06.53.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Sep 2024 06:53:46 -0700 (PDT)
+Date: Sat, 28 Sep 2024 09:53:46 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, yosryahmed@google.com,
+	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com,
+	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com,
+	21cnbao@gmail.com, akpm@linux-foundation.org, nanhai.zou@intel.com,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Subject: Re: [PATCH v8 5/8] mm: zswap: Modify zswap_stored_pages to be
+ atomic_long_t.
+Message-ID: <20240928135346.GD957841@cmpxchg.org>
+References: <20240928021620.8369-1-kanchana.p.sridhar@intel.com>
+ <20240928021620.8369-6-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240928021620.8369-6-kanchana.p.sridhar@intel.com>
 
-Refer to ptr_eq() in the rcu_dereference() documentation.
+On Fri, Sep 27, 2024 at 07:16:17PM -0700, Kanchana P Sridhar wrote:
+> For zswap_store() to support large folios, we need to be able to do
+> a batch update of zswap_stored_pages upon successful store of all pages
+> in the folio. For this, we need to add folio_nr_pages(), which returns
+> a long, to zswap_stored_pages.
+> 
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 
-ptr_eq() is a mechanism that preserves address dependencies when
-comparing pointers, and should be favored when comparing a pointer
-obtained from rcu_dereference() against another pointer.
+Long for pages makes sense to me even independent of the large folios
+coming in. An int is just 8TB in 4k (base) pages.
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: John Stultz <jstultz@google.com>
-Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Zqiang <qiang.zhang1211@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: maged.michael@gmail.com
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Gary Guo <gary@garyguo.net>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Cc: rcu@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: lkmm@lists.linux.dev
----
- Documentation/RCU/rcu_dereference.rst | 34 +++++++++++++++++++++++----
- 1 file changed, 29 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/RCU/rcu_dereference.rst b/Documentation/RCU/rcu_dereference.rst
-index 2524dcdadde2..c36b8d1721f6 100644
---- a/Documentation/RCU/rcu_dereference.rst
-+++ b/Documentation/RCU/rcu_dereference.rst
-@@ -104,11 +104,13 @@ readers working properly:
- 	after such branches, but can speculate loads, which can again
- 	result in misordering bugs.
- 
---	Be very careful about comparing pointers obtained from
--	rcu_dereference() against non-NULL values.  As Linus Torvalds
--	explained, if the two pointers are equal, the compiler could
--	substitute the pointer you are comparing against for the pointer
--	obtained from rcu_dereference().  For example::
-+-	Use relational operators which preserve address dependencies
-+	(such as "ptr_eq()") to compare pointers obtained from
-+	rcu_dereference() against non-NULL values or against pointers
-+	obtained from prior loads. As Linus Torvalds explained, if the
-+	two pointers are equal, the compiler could substitute the
-+	pointer you are comparing against for the pointer obtained from
-+	rcu_dereference().  For example::
- 
- 		p = rcu_dereference(gp);
- 		if (p == &default_struct)
-@@ -125,6 +127,23 @@ readers working properly:
- 	On ARM and Power hardware, the load from "default_struct.a"
- 	can now be speculated, such that it might happen before the
- 	rcu_dereference().  This could result in bugs due to misordering.
-+	Performing the comparison with "ptr_eq()" ensures the compiler
-+	does not perform such transformation.
-+
-+	If the comparison is against a pointer obtained from prior
-+	loads, the compiler is allowed to use either register for the
-+	following accesses, which loses the address dependency and
-+	allows weakly-ordered architectures such as ARM and PowerPC
-+	to speculate the address-dependent load before rcu_dereference().
-+	For example::
-+
-+		p1 = READ_ONCE(gp);
-+		p2 = rcu_dereference(gp);
-+		if (p1 == p2)
-+			do_default(p2->a);
-+
-+	Performing the comparison with "ptr_eq()" ensures the compiler
-+	preserves the address dependencies.
- 
- 	However, comparisons are OK in the following cases:
- 
-@@ -204,6 +223,11 @@ readers working properly:
- 		comparison will provide exactly the information that the
- 		compiler needs to deduce the value of the pointer.
- 
-+	When in doubt, use relational operators that preserve address
-+	dependencies (such as "ptr_eq()") to compare pointers obtained
-+	from rcu_dereference() against non-NULL values or against
-+	pointers obtained from prior loads.
-+
- -	Disable any value-speculation optimizations that your compiler
- 	might provide, especially if you are making use of feedback-based
- 	optimizations that take data collected from prior runs.  Such
--- 
-2.39.2
-
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
