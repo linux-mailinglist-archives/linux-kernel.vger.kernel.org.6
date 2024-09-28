@@ -1,147 +1,134 @@
-Return-Path: <linux-kernel+bounces-342452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BCE0988F42
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:51:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD09988F45
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26B00B21423
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:51:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AC3C1F21961
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34829187FF2;
-	Sat, 28 Sep 2024 12:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QD4Dyz/q"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD7F187FFE;
+	Sat, 28 Sep 2024 12:51:29 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05631DFF7;
-	Sat, 28 Sep 2024 12:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3993157490;
+	Sat, 28 Sep 2024 12:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727527864; cv=none; b=leT+SHQPUDOgT2nyj0Wr/Ek2fIyEZcrHtP/bwpmblMJ44eYg7oq8HfCHezyfzkcP4lg5hC3Q8xg8NfkG5JBjOlZmtZavn+ZjjhUmvA/OmVG5yvyPiDHuXQK0pt7dTqlXpLyuodF3Of3UayvoMDq4zLqsLtKptsqqki7gmNqK41E=
+	t=1727527889; cv=none; b=GqP03QSQxZHeSIfC5RqLD9PoMsdGf1ejg3OnZO2nu1MZoOhpeEjLAkR7fOoHKqy0bju6YqYzG2McEWcjunV8FtKj4fU2rpmm1j27L9aXARiB5gnVOb6TDKZS4HqhhQuMRaqz7SKWBS20gqKUFNm+veSPJEvLMFrPH97kOK6elW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727527864; c=relaxed/simple;
-	bh=PRkDeDVL/zAoAyxR11/ZS4jjYRTj8u2zgcEH/K6juF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=GR7IpaJ6E4bZtdAcfRrvVqHCuRK2O+0aFX0V5fRP7x8QSYrOV5kDjsIh1tQq2xCjmkx1V2hNs1Vm8Dv/WGE5q/7nzQiThdbaK6tJ6LjZJfR8NF/uNCJeGK8LD6/AYdCKNjG/H627wMe0uYSvYwDVDERI8nA3/vtHwc2USdla67M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QD4Dyz/q; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48SCTKcH007498;
-	Sat, 28 Sep 2024 12:50:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:content-type:mime-version; s=pp1;
-	 bh=s9THryNP4zd8kM7BjJX1ngfnX0gczJ7mSSFjWVRwowA=; b=QD4Dyz/qh4CU
-	wi9ztJ8RVeiSvycXzQmrAQT2uxp/iu7/JAo9rVFzrqswlOTLnwXaT+9zTmSNHpkJ
-	D2ZRdZcRLADrG4JnhSQXNCnLGXwh2hU7sI20qThWV76jqoAWKLn3Szlc+ElonpXt
-	VAzH7pJKVi3THzSe6DqNG4zrCfRi8omNIJ+x7rp8Iwms4Ier2jRXqFUALOOKx3LP
-	LshVGpNV/cm9Z8pgFsYtDFsaxgNj3vZUmeuXC0hYEZxsHXrofq4Zjl3LQmd2PR96
-	WAlZ7BXJ07gF7j5qKHFsoaSePrkMegJZ/GA5lbkseSGjP2nssPyExsQS9Tx9DSLY
-	4CUZIBY36w==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41x9ap1npg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 28 Sep 2024 12:50:59 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48SAxeAr014068;
-	Sat, 28 Sep 2024 12:50:58 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41t9ynhx39-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 28 Sep 2024 12:50:58 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48SCosSV57868622
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 28 Sep 2024 12:50:54 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8B2232004B;
-	Sat, 28 Sep 2024 12:50:54 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1C49C20040;
-	Sat, 28 Sep 2024 12:50:54 +0000 (GMT)
-Received: from localhost (unknown [9.171.40.215])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sat, 28 Sep 2024 12:50:54 +0000 (GMT)
-Date: Sat, 28 Sep 2024 14:50:52 +0200
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Heiko Carstens <hca@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: [GIT PULL] more s390 updates for 6.12 merge window
-Message-ID: <Zvf7rJHDO45f7kuQ@localhost>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Ai_UGDZ1ipOqskIwBMl6OEERw5HnDJyF
-X-Proofpoint-GUID: Ai_UGDZ1ipOqskIwBMl6OEERw5HnDJyF
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1727527889; c=relaxed/simple;
+	bh=6S+YyEr/c3fqAX5Kkcpvp25mS8aOOd74ckZaAniXTOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNkiXo+FpeGmoEEDiU3kDJ3Aob4wipZFmgUSmKCiXSOElxGq4eBrPdckoUhLzPrgsohHdtWwxlgrU7PrndxGISwLER2oMSjoSGJng8kGOgZs233TYvNOmqVhdq31Y/BWaQ3Z2W5zXufKTGzZ57QfQ+TGA1Osq6bKp+A1lzya4U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 4B3F5300002D0;
+	Sat, 28 Sep 2024 14:51:17 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 448663972FA; Sat, 28 Sep 2024 14:51:17 +0200 (CEST)
+Date: Sat, 28 Sep 2024 14:51:17 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: AceLan Kao <acelan.kao@canonical.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: pciehp: Fix system hang on resume after hot-unplug
+ during suspend
+Message-ID: <Zvf7xYEA32VgLRJ6@wunner.de>
+References: <20240926125909.2362244-1-acelan.kao@canonical.com>
+ <ZvVgTGVSco0Kg7H5@wunner.de>
+ <CAFv23Q=5KdqDHYxf9PVO=kq=VqP0LwRaHQ-KnY2taDEkZ9Fueg@mail.gmail.com>
+ <ZvZ61srt3QAca2AI@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-28_07,2024-09-27_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- lowpriorityscore=0 mlxlogscore=436 malwarescore=0 priorityscore=1501
- phishscore=0 mlxscore=0 suspectscore=0 adultscore=0 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409280096
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZvZ61srt3QAca2AI@wunner.de>
 
-Hello Linus,
+On Fri, Sep 27, 2024 at 11:28:54AM +0200, Lukas Wunner wrote:
+> I realize now that commit 9d573d19547b ("PCI: pciehp: Detect device
+> replacement during system sleep") is a little overzealous because it
+> not only reacts to *replaced* devices but also to *unplugged* devices:
+> If the device was unplugged, reading the vendor and device ID returns
+> 0xffff, which is different from the cached value, so the device is
+> assumed to have been replaced even though it's actually been unplugged.
+> 
+> The device replacement check runs in the ->resume_noirq phase.  Later on
+> in the ->resume phase, pciehp_resume() calls pciehp_check_presence() to
+> check for unplugged devices.  Commit 9d573d19547b inadvertantly reacts
+> before pciehp_check_presence() gets a chance to react.  So that's something
+> that we should probably change.
 
-please pull a couple more s390 updates for the 6.12 merge window.
+FWIW, below is a (compile-tested only) patch which modifies
+pciehp_device_replaced() to return false if the device was
+*unplugged* during system sleep.  It continues to return
+true if it was *replaced* during system sleep.
 
-Thank you,
-Vasily
+This might avoid the issue you're seeing, though it would
+be good if you could also try Keith's deadlock prevention
+patch (without any other patch) to determine if the deadlock
+is the actual root cause (as I suspect).
 
-The following changes since commit 1ec6d097897a35dfb55c4c31fc8633cf5be46497:
+Thanks!
 
-  Merge tag 's390-6.12-1' of git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux (2024-09-21 09:02:54 -0700)
+-- >8 --
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.12-2
-
-for you to fetch changes up to 2d8721364ce83956d0a184a64052928589ef15df:
-
-  s390/vfio-ap: Driver feature advertisement (2024-09-23 17:57:04 +0200)
-
-----------------------------------------------------------------
-more s390 updates for 6.12 merge window
-
-- Clean up and improve vdso code: use SYM_* macros for function and
-  data annotations, add CFI annotations to fix GDB unwinding, optimize
-  the chacha20 implementation
-
-- Add vfio-ap driver feature advertisement for use by libvirt and mdevctl
-
-----------------------------------------------------------------
-Heiko Carstens (5):
-      s390/vdso: Get rid of permutation constants
-      s390/vdso: Fix comment within __arch_chacha20_blocks_nostack()
-      tools: Add additional SYM_*() stubs to linkage.h
-      s390/vdso: Use SYM_DATA_START_LOCAL()/SYM_DATA_END() for data objects
-      s390/vdso: Use one large alternative instead of an alternative branch
-
-Jason J. Herne (1):
-      s390/vfio-ap: Driver feature advertisement
-
-Jens Remus (2):
-      s390/vdso: Add CFI annotations to __arch_chacha20_blocks_nostack()
-      s390/vdso: Use macros for annotation of asm functions
-
- Documentation/arch/s390/vfio-ap.rst         | 30 ++++++++++++
- arch/s390/kernel/vdso64/vdso_user_wrapper.S | 14 ++----
- arch/s390/kernel/vdso64/vgetrandom-chacha.S | 76 ++++++++++++++---------------
- drivers/s390/crypto/vfio_ap_drv.c           | 13 +++++
- tools/include/linux/linkage.h               |  4 +-
- 5 files changed, 86 insertions(+), 51 deletions(-)
+diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
+index ff458e6..174832b 100644
+--- a/drivers/pci/hotplug/pciehp_core.c
++++ b/drivers/pci/hotplug/pciehp_core.c
+@@ -287,24 +287,32 @@ static int pciehp_suspend(struct pcie_device *dev)
+ static bool pciehp_device_replaced(struct controller *ctrl)
+ {
+ 	struct pci_dev *pdev __free(pci_dev_put);
++	u64 dsn;
+ 	u32 reg;
+ 
+ 	pdev = pci_get_slot(ctrl->pcie->port->subordinate, PCI_DEVFN(0, 0));
+ 	if (!pdev)
++		return false;
++
++	if (pci_read_config_dword(pdev, PCI_VENDOR_ID, &reg) == 0 &&
++	    !PCI_POSSIBLE_ERROR(reg) &&
++	    reg != (pdev->vendor | (pdev->device << 16)))
+ 		return true;
+ 
+-	if (pci_read_config_dword(pdev, PCI_VENDOR_ID, &reg) ||
+-	    reg != (pdev->vendor | (pdev->device << 16)) ||
+-	    pci_read_config_dword(pdev, PCI_CLASS_REVISION, &reg) ||
++	if (pci_read_config_dword(pdev, PCI_CLASS_REVISION, &reg) == 0 &&
++	    !PCI_POSSIBLE_ERROR(reg) &&
+ 	    reg != (pdev->revision | (pdev->class << 8)))
+ 		return true;
+ 
+ 	if (pdev->hdr_type == PCI_HEADER_TYPE_NORMAL &&
+-	    (pci_read_config_dword(pdev, PCI_SUBSYSTEM_VENDOR_ID, &reg) ||
+-	     reg != (pdev->subsystem_vendor | (pdev->subsystem_device << 16))))
++	    pci_read_config_dword(pdev, PCI_SUBSYSTEM_VENDOR_ID, &reg) == 0 &&
++	    !PCI_POSSIBLE_ERROR(reg) &&
++	    reg != (pdev->subsystem_vendor | (pdev->subsystem_device << 16)))
+ 		return true;
+ 
+-	if (pci_get_dsn(pdev) != ctrl->dsn)
++	dsn = pci_get_dsn(pdev);
++	if (!PCI_POSSIBLE_ERROR(dsn) &&
++	    dsn != ctrl->dsn)
+ 		return true;
+ 
+ 	return false;
 
