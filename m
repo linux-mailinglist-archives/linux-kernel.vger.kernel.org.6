@@ -1,105 +1,191 @@
-Return-Path: <linux-kernel+bounces-342492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E74988F9C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:25:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C55F988F9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCF8EB216EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:25:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA814281EBF
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA585188920;
-	Sat, 28 Sep 2024 14:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AE7188925;
+	Sat, 28 Sep 2024 14:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAThjtkj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kv0zVEoY"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A62F186287;
-	Sat, 28 Sep 2024 14:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395E9188736;
+	Sat, 28 Sep 2024 14:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727533525; cv=none; b=IZvOmvtV30I473X/lywtcBBQfqrcU4Snvf/qEQlkIpXBTvWwVUQkjyDZrrCwo+T6mJQD9ZUpN0jiu6BfZcaXM1vVX+MLaFpY5lIDEsjmZduVPJOreXiqvmFK71j7NHf2flen0sLQkxUByl3FK/B0CDV7RW9eqhE1T1Ngi08aQ4A=
+	t=1727533576; cv=none; b=Zmu1DEjeOwuBGmtcRusxofyda06DQWIhJY5i9XfBioyp1vr8FoCiLwV1VHUOD/hi0F9UkERcSR4D+4OmsE74gMdNwNI19+taMeA6M+eTZqwgM+ANyvgQCmm2LJMAJy9+mGxMR97/WHS7SlElEA2WVQeZN1jY9N0XsTUU5nvFf2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727533525; c=relaxed/simple;
-	bh=n/Y0Anj9nP0Sgfmkct6Br5yJAJkrMZ80Y0JmDNmOs14=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bSl68G3iPtXffkrUEtgum9IEzL2aDMUXh32uwwNvdYwrm/jOOqrtzELYwFIhB8Mydxjvcvq4seTXPFt1W8jn7Sw+L//uTbZblGmCEt9PaQ9iMArelBn/eYWpuMg5o3FeP0CQfcC+K22DZn9sLWLpfOqKupYO9GKNZW1ZLxOdbz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAThjtkj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BBAAC4CEC3;
-	Sat, 28 Sep 2024 14:25:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727533524;
-	bh=n/Y0Anj9nP0Sgfmkct6Br5yJAJkrMZ80Y0JmDNmOs14=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LAThjtkjZxXFpNqc4Shx4Tkjwl/raQB20DWTxaXmJnpWJWZUeKrTGPhVJ3KVQgKt1
-	 V2eQvujJWO7QWo57DMmMyBb46A2eqgZkwZVlpVXQCBaEo9E0IdtxD9hzA4IMZUO4In
-	 Py4GYPSuH//cFM7g0ghVmIO+l6n2bbyqkbmFuwIQZeQUG+3dPoM0jDbZAZZpRZ3j89
-	 mYIEiukC4Vej2YFaUrFBxGGb07Zs7KVcej2uraSlYnJH+rd4ch1b1ob7A0XWMY93yu
-	 G4wULi10wxi1+aLxuUGOBW09waRh6MFsLmsXwQ7MfOx54q8xC3FNnG3GNaqhqUNfIx
-	 8UWWBwYUoGF2A==
-Date: Sat, 28 Sep 2024 15:25:17 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Jerome Brunet
- <jbrunet@baylibre.com>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iio: adc: amlogic,meson-saradc: also allow
- meson8-saradc to have amlogic,hhi-sysctrl property
-Message-ID: <20240928152517.7386f220@jic23-huawei>
-In-Reply-To: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-amlogic-hhi-sysctrl-v1-1-b8c3180b2fba@linaro.org>
-References: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-amlogic-hhi-sysctrl-v1-1-b8c3180b2fba@linaro.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727533576; c=relaxed/simple;
+	bh=CqACvt4uPObOZuE6ZysyiZbqZ+n1Gy2VqWBmupvIcQQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BY+Jl0X3O9IZekf+s+BG6zTyzzXd0llbI7LcLzgKvMv/q0JPfHe8e+OpKzp1DA0d45UUvR0kgG1W5vpg1aDtMWCldii9B+/L2aHegvnTUQrXbcxPrLiDpd1y8ZjRXJPVArjP7xFpuRlxNolEsWYXqbr4lP7HSj/vBchKacEoT28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kv0zVEoY; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e25cb91f3b3so2946164276.1;
+        Sat, 28 Sep 2024 07:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727533574; x=1728138374; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oR+0oOiN8d/1wYicxD2JwSqLGDZwlCg3FFKs5UVXkaQ=;
+        b=kv0zVEoYUdD9jdCDWp299AboKwziNwbwVVSYtdsf05v8K5saXKwoObVcucj4GR+kcR
+         DeLXnmMZaBvLjrMs4r43tfAQrKF5lMNn+4Y1HniwVz/w2BrbBT2Cet/AmYkbsSofmYO/
+         ZvUZka/bUA18puQGhf2Wz7Z362/gkUXRXQb+cEcHkwtT7HO90um7lNGsZ8ohmr85VR5l
+         9lQmtxn2Ol+yJKzs7vIXQdfGr5wCR1QN4qr9t/53DkSY9EH2FJ/iDEa20hfiA29mfX9z
+         Z0x/YQEFk9v5gOWX8F/gFJjZ1unxaFmtpczvf6HpAI+WTjECqklR8lhMg3/+bRxVPG5i
+         Eu+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727533574; x=1728138374;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oR+0oOiN8d/1wYicxD2JwSqLGDZwlCg3FFKs5UVXkaQ=;
+        b=A4z2E+1DKe6RnzadjNZyfe5bGqvmv5/73PObRkNTtVDPsGQUvWMsXXPEMbPCKe/VwD
+         N6KmrjbJPIMFReWfks2/TfNv33R+y7eppkMmTRAwAUWcapAOQbHyEbgZfnmhRHnXzp2h
+         YMZ5v6z/WNYx/lynhDnUh01AafrITGCZsXnPmmgPHpVxDVXbh4Fj2OhwfOEaPgUwEi0o
+         o3omskguxdOxONW8a234gSJ32dNbMqBVswWyWxoLeNQGRSDylkbDg758JF/AJijlUad/
+         q+p+0BmLFcHynCtk1rW7jlIKobKz3l8oOCW1fcSNV4IygS1wDCS4Kqwg107+EXromaxC
+         fBAg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5rZZKiCLX/25rcmvn2598e0v8MpKf2TDuHy35K5ADZ8Z2cTqgIBxSO9mQClSJGHsL5Nl5cMUK4wzlTlFO@vger.kernel.org, AJvYcCU6Icjkm43HXY+ADyKsHYyJ/T1Z6ban8r4q6zxhAusBBa4vRjkNvEGti2T1f4DdxdkIrRiGNgQN2xd1@vger.kernel.org, AJvYcCXLtbROqPLLmke9cxe3DdeyjC7wWQN7Rgljx9wizCopvqr2ZZt93HW6hXsMnSMT8YnWbsh4rnSJJquBhw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy515IfLQZRKhImESdlYyldsLKijzqOGt8a6ORbqXZiGMUv78IU
+	MZ0hKsay7eiIumy5uEKHQb3pjkGqk1X0h/7xJIL2qkhY7lahctMhhoVlggDigBEekPR8q91kLPn
+	EaAMO2LogOng1VgQMgcVlQE+Am1o=
+X-Google-Smtp-Source: AGHT+IH3PnqrIfD196KWiWq7zGkumFiC9yGM8Nc1vv/w+CjbKYRbXBPsh2nOXQj9kirbOcjpp+BnnIOXrKb8zy0u7L0=
+X-Received: by 2002:a05:6902:238a:b0:e25:d554:c06d with SMTP id
+ 3f1490d57ef6-e2604b5f495mr5743887276.7.1727533573882; Sat, 28 Sep 2024
+ 07:26:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240927141445.157234-1-iansdannapel@gmail.com>
+ <20240927141445.157234-2-iansdannapel@gmail.com> <dd9ae106-3c39-423b-9413-5a7ca57f7aec@kernel.org>
+ <CAKrir7irvRbwCsdjF_NNfWy68wTDfRuyW2oHb90gYgBA=L7-Tg@mail.gmail.com>
+ <c6ac1c4d-7f7a-41a9-9f32-55428f88bdfe@kernel.org> <CAKrir7iyiDWXQnxMrkDhsRj4+2XEUDBFpHYyfzdJksE_HE62JA@mail.gmail.com>
+ <f57ca7c6-cb60-42cd-bba1-b48144bdef14@kernel.org>
+In-Reply-To: <f57ca7c6-cb60-42cd-bba1-b48144bdef14@kernel.org>
+From: Ian Dannapel <iansdannapel@gmail.com>
+Date: Sat, 28 Sep 2024 16:26:03 +0200
+Message-ID: <CAKrir7hfMww8GgxEbDd-WWhXmXD-q6=xddfy1GATr9JnF5Xohg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: fpga: Add Efinix serial SPI programming bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mdf@kernel.org, hao.wu@intel.com, yilun.xu@intel.com, trix@redhat.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	neil.armstrong@linaro.org, heiko.stuebner@cherry.de, rafal@milecki.pl, 
+	linus.walleij@linaro.org, linux-fpga@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 11 Sep 2024 17:29:53 +0200
-Neil Armstrong <neil.armstrong@linaro.org> wrote:
-
-> The SARADC on the Amlogic Meson8 SoC also requires the amlogic,hhi-sysctrl,
-> property, document it by adding the amlogic,meson8-saradc compatible in the
-> adequate allOf:if:compatible:contains:enums along meson8b and meson8m2.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-Applied to the togreg branch of iio.git.
-
-Shout and provide a fixes tag if this should be in stable.
-
-Jonathan
-
-> ---
->  Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
-> index f748f3a60b35..b0962a4583ac 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
-> @@ -98,6 +98,7 @@ allOf:
->          compatible:
->            contains:
->              enum:
-> +              - amlogic,meson8-saradc
->                - amlogic,meson8b-saradc
->                - amlogic,meson8m2-saradc
->      then:
-> 
-> ---
-> base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
-> change-id: 20240911-topic-amlogic-arm32-upstream-bindings-fixes-amlogic-hhi-sysctrl-127d3feddf3a
-> 
+Am Sa., 28. Sept. 2024 um 14:53 Uhr schrieb Krzysztof Kozlowski
+<krzk@kernel.org>:
+>
+> On 28/09/2024 14:33, Ian Dannapel wrote:
+> >>>>
+> >>>>> +
+> >>>>> +  spi-cpha: true
+> >>>>> +
+> >>>>> +  spi-cpol: true
+> >>>>> +
+> >>>>> +  spi-max-frequency:
+> >>>>> +    maximum: 25000000
+> >>>>> +
+> >>>>> +  reg:
+> >>>>> +    maxItems: 1
+> >>>>> +
+> >>>>> +  creset-gpios:
+> >>>>
+> >>>> reset-gpios
+> >>>>
+> >>>> Do not invent own properties.
+> >>>>
+> >>>>> +    description:
+> >>>>> +      reset and re-configuration trigger pin (low active)
+> >>>>> +    maxItems: 1
+> >>>>> +
+> >>>>> +  cs-gpios:
+> >>>>> +    description:
+> >>>>> +      chip-select pin (low active)
+> >>>>
+> >>>> Eee? That's a property of controller, not child. Aren't you duplicat=
+ing
+> >>>> existing controller property?
+> >>> This device uses this pin in combination with the reset to enter the
+> >>> programming mode. Also, the driver must guarantee that the pin is
+> >>
+> >> Isn't this the same on every SPI device?
+> > Yes, but I was not very clear. In this case the pin must be hold
+> > active including entering the programming mode. And if the controller
+>
+> Just like every CS, no?
+>
+> The only difference is that you must send entire programming sequence
+> without releasing the CS.
+>
+> > transfers the data in bursts, the pin is also not allowed to go
+> > inactive between transfer bursts.
+> >>
+> >>> active for the whole transfer process, including ending dummy bits.
+> >>> This is why I added a warning to NOT use this driver with other
+> >>> devices on the same bus.
+> >>
+> >> Not really related. None of this grants exception from duplicating
+> >> controller's property.
+> >>
+> >> How do you think it will even work in Linux, if same GPIO is requested
+> >> twice (imagine controller also has it)? Till now, this would be -EBUSY=
+.
+> > I expected that the controller is not able request the same gpio. From
+> > the controller point of view, it is a device that does not have a chip
+> > select. Not sure if the controller would be able to get to this gpio
+> > if it is not explicitly given.
+>
+> But it could be given. Don't think only about your case.
+it won't work if the controller also may request this gpio or interfere wit=
+h it.
+>
+> Your description earlier clearly suggests it is CS. Description here
+> suggests it is not a CS.
+>
+> No clue then.
+>
+> >>
+> >> But regardless of implementation, I still do not understand why do you
+> >> need duplicate same chip-select. Maybe just the naming is the confusio=
+n,
+> >> dunno.
+> > This could be an option to make the difference to a "real chip-select"
+> > clear, but it would drift away from the datasheet naming. Eg,
+> > prog-select?
+>
+> Please go back to datasheet. Which pin is this? CS, yes or not? If not,
+> then which other pin is CS?
+Yes, this pin in question is referred to as the Chip Select (CS) or
+Slave Select in the datasheet and pinout.
+It is used in combination with the reset for entering the programming
+mode and then used for the SPI data transfer to the FPGA=E2=80=99s volatile
+configuration RAM.
+There must be no state change on this CS pin between entering
+programming mode and the completion of the SPI transfer.
+Since the controller chip-select functionality can't fulfill these
+requirements for this device, the proposed solution is to move this
+pin from the controller to the child driver.
+>
 > Best regards,
-
+> Krzysztof
+>
+Best regards
+Ian
 
