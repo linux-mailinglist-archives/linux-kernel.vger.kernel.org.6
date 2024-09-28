@@ -1,155 +1,92 @@
-Return-Path: <linux-kernel+bounces-342413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04DCE988E9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:53:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2BB988E9E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D24C1F21C84
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 08:53:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69609282582
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 08:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1AE19E7FB;
-	Sat, 28 Sep 2024 08:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903F4125B9;
+	Sat, 28 Sep 2024 08:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hPwCbCM6"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cqx6RdVZ"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428BF14A96;
-	Sat, 28 Sep 2024 08:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8810A17C98C
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 08:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727513577; cv=none; b=YbiDWni+AKBi+OjB6B9c9oRcDyrn7GdkqIZedKwLzES/V1EGFTMSSwqa5tjIj/UmY6cLO3VZvqli4bxoRXAmBxgKCf906spP/ds0BFeOvMrsFEpE9IVgkk5nNbeIM/gyi6PExwHBZ7pHnicTH5aCEax9DuYNn1M06JuFLb17tic=
+	t=1727513865; cv=none; b=Lh4ISBJgdhPhal5m5/+RgCEYF+JXlnreFNylFauqZaXGzrXd399toVtuKhrX3r09tAKTlLojnTJeykJx10aR4U/snxBh/Pk+Eb5POHjGU/EEPJHXfpAuiWXPJfE+nWUMAPU0aB7gxOXWa/uuiG3FfpzxK6x8M81sVUV+/pAaJfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727513577; c=relaxed/simple;
-	bh=LNjMKyjVSfHxInOWlB47fxPqDwE/l+Ptv8He1D8GMHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cedANOggGty+IRHW06SpwXybKehaZyaEtMoI6ibvX5GMDKoge9Ol/QIN/SIvs1UqR+DIbcTL+OegAMnbsNx2wZFK0ZIkcOGuE+rgR5lCEQ8xc+h1CxQac9EBogTAO2tM2S/z/+4q6ndWaqBuUqIBjsEgiM4aAQ7EZtSNYWCrpCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hPwCbCM6; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 35F5CC0006;
-	Sat, 28 Sep 2024 08:52:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727513566;
+	s=arc-20240116; t=1727513865; c=relaxed/simple;
+	bh=8Z9JCi4yhlBV0WO699VWsRmVMtZb78fwfRNgqBbs2MQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kzipPCjP3RUSUEUap/BPyb5IAsvVmX6g3FXim1O50EuJrDC0glB8BKVoQf3jZKnbdxQ8AV1/Nx1M8B4xiSRDGI4olXe2AHCvLwZVD8uLI9zuwicEtiF8nvOIz3tEszg1BLY4FKBwXODasP+BDTrvxbVoXreZI2n7qJWeWe+1YeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cqx6RdVZ; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 28 Sep 2024 04:57:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727513860;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HxaHERXSPXpBstiT8Z7ypWFbQiGKhSYTsnQt5D7bf0o=;
-	b=hPwCbCM6UTnPbRrYa3n2JsWBMp0fCnx++0udF/U66JGoK31ZaoiOKG7LGGSCEvUJOsE80G
-	W1NxFRtiqkmXXpi/DqjL7SeU2z9nP/CTEc6Robm1Wbl5gBzwUs8LBLPidnxXZA32U9KUp2
-	o6z+Q5JYmGDkAzsNxpqAKVFgPMqpqgXeuDqDwlj7CfHpYhsRrSCi22OCrJIavEgd2mubZN
-	CKi4W1Mk0tDpD/66YDinzcXgDhq8pHEFXB4NGcWNGfzWYY/zS4FYkX9R4v6svKTZTjFSQP
-	tgPnwbLbzFIVYeYz+gtYkd2l0Hr52lQ5xqximL9ioDWrYLu3JQCol4mfO2lUyg==
-Date: Sat, 28 Sep 2024 10:52:42 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
- "Russell King (Oracle)" <linux@armlinux.org.uk>, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Bartosz
- Golaszewski <bartosz.golaszewski@linaro.org>, "linux-tegra@vger.kernel.org"
- <linux-tegra@vger.kernel.org>, Brad Griffis <bgriffis@nvidia.com>,
- "Vladimir Oltean" <vladimir.oltean@nxp.com>, Jon Hunter
- <jonathanh@nvidia.com>, "Przemek Kitszel" <przemyslaw.kitszel@intel.com>,
- <kernel@quicinc.com>
-Subject: Re: [PATCH net v4 2/2] net: phy: aquantia: remove usage of
- phy_set_max_speed
-Message-ID: <20240928105242.5fe7f0e1@fedora.home>
-In-Reply-To: <048bbc09-b7e1-4f49-8eff-a2c6cec28d05@quicinc.com>
-References: <20240927010553.3557571-1-quic_abchauha@quicinc.com>
-	<20240927010553.3557571-3-quic_abchauha@quicinc.com>
-	<20240927183756.16d3c6a3@fedora.home>
-	<048bbc09-b7e1-4f49-8eff-a2c6cec28d05@quicinc.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	bh=+G/Act2+rDOGPVSEZItb2sOKKvrD8MFc52o7wVlkE5w=;
+	b=cqx6RdVZMVJWaEwzKw0oNdvg6g9wv2YV8PE44kFtbduvxrrx8WfvtJdu0NaM72BJhu0IRi
+	WFIKgb8MtDg8d5Ff7tg/S5Q7ikzRuRRnoCAku5DOKLVBYwOfxgpWj0YTQ5wk425t48TmYx
+	CbBW2SwBuawYiuUcLDaAG571yf/IOk0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, 
+	Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	syzbot <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] Monthly lsm report (Sep 2024)
+Message-ID: <pdghzlvw6ypcju6ldsngka44cjp6g56bjjsmxm3sd7dqev4g6y@x72zm7vurxyz>
+References: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
+ <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
+ <03c3a47ca225050d37dca6a9249c1f978f1fc56b.camel@huaweicloud.com>
+ <734977390eeecba39789df939a00904e87367e5e.camel@huaweicloud.com>
+ <nqxo5tqcwbwksibg45spssrnhxw7tabfithgnqnmpl2egmbfb7@gyczfn7hivvu>
+ <owdoubzm3jqf4cuhawaavver5mzko32ijuh2nrm5vhzegmjbmf@az3mweawrni6>
+ <ceb762ee-2518-44d1-b73c-fd165da7fbbb@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ceb762ee-2518-44d1-b73c-fd165da7fbbb@I-love.SAKURA.ne.jp>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 27 Sep 2024 12:42:36 -0700
-"Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com> wrote:
+On Sat, Sep 28, 2024 at 03:49:27PM GMT, Tetsuo Handa wrote:
+> On 2024/09/28 10:25, Kent Overstreet wrote:
+> > And looking further, I don't see anyhting in the console log from when
+> > bcachefs actually mounted (???), which means I don't think I have enough
+> > to go on. It's clearly an upgrade path issue - we didn't run
+> > check_allocations as is required when upgrading to 1.11 - but it's not
+> > reproducing for me when I run tests with old tools.
+> > 
+> > Can we get some more information about the syzbot reproducer? Exact
+> > tools version, format command and mount command.
+> 
+> Reproducer for this bug is not yet found. But syzbot does not use userspace
+> tools. That is, testing with old (or new) tools will not help. Please note
+> that syzbot uses crafted (intentionally corrupted) filesystem images. If the
+> kernel side depends on sanity checks / validations done by the userspace
+> side, syzbot will find oversights on the kernel side. Please don't make any
+> assumptions made by the userspace tools.
+> 
 
-> On 9/27/2024 9:37 AM, Maxime Chevallier wrote:
-> > Hi,
-> > 
-> > On Thu, 26 Sep 2024 18:05:53 -0700
-> > Abhishek Chauhan <quic_abchauha@quicinc.com> wrote:
-> >   
-> >> Remove the use of phy_set_max_speed in phy driver as the
-> >> function is mainly used in MAC driver to set the max
-> >> speed.
-> >>
-> >> Instead use get_features to fix up Phy PMA capabilities for
-> >> AQR111, AQR111B0, AQR114C and AQCS109
-> >>
-> >> Fixes: 038ba1dc4e54 ("net: phy: aquantia: add AQR111 and AQR111B0 PHY ID")
-> >> Fixes: 0974f1f03b07 ("net: phy: aquantia: remove false 5G and 10G speed ability for AQCS109")
-> >> Fixes: c278ec644377 ("net: phy: aquantia: add support for AQR114C PHY ID")
-> >> Link: https://lore.kernel.org/all/20240913011635.1286027-1-quic_abchauha@quicinc.com/T/
-> >> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>  
-> > 
-> > [...]
-> >   
-> >> +static int aqr111_get_features(struct phy_device *phydev)
-> >> +{
-> >> +	unsigned long *supported = phydev->supported;
-> >> +	int ret;
-> >> +
-> >> +	/* Normal feature discovery */
-> >> +	ret = genphy_c45_pma_read_abilities(phydev);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	/* PHY FIXUP */
-> >> +	/* Although the PHY sets bit 12.18.19, it does not support 10G modes */
-> >> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, supported);
-> >> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKX4_Full_BIT, supported);
-> >> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKR_Full_BIT, supported);
-> >> +
-> >> +	/* Phy supports Speeds up to 5G with Autoneg though the phy PMA says otherwise */
-> >> +	linkmode_or(supported, supported, phy_gbit_features);
-> >> +	/* Set the 5G speed if it wasn't set as part of the PMA feature discovery */
-> >> +	linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, supported);
-> >> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);  
-> > 
-> > As you are moving away from phy_set_max_speed(phydev, 5000), it should mean
-> > that what used to be in the supported bits already contained the
-> > 5GBaseT bit, as phy_set_max_speed simply clears the highest speeds.
-> > 
-> > In such case, calling the newly introduced function from
-> > patch 1 should be enough ?
-> >   
-> 
-> Well i am not sure about how other phy(AQR111, AQR111B0, AQR114C and AQCS109) behaved, 
-> but based on my testing and observation with AQR115c, it was pretty clear that 
-> the phy did not advertise Autoneg capabilities, did not set lower speed such as 10M/100M/1000BaseT
-> ,it did set capabilities beyond what is recommended in the data book.
-> 
-> So the below mentioned phys such as 
-> 
-> AQR111, AQR111B0, AQR114C = supports speed up to 5Gbps which means i cannot use the function
-> defined in the previous patch as that sets speeds up to 2.5Gbps and all lower speeds. 
-> 
-> AQCS109 = supports speed up to 2.5Gbps and hence i have reused the same function aqr115c_get_features
-> as part of this patch.
-
-I understand your point, and it's hard indeed to be sure that no
-regression was introduced. It does feel like you're reading the PHY
-features, then reconstructing them almost from scratch again, but given
-that the PMA report looks totally incorrect, there not much choice
-indeed. So that's fine for me then.
-
-Maxime
+You seem to be confused; how do you expect sysbot to test a filesystem
+without the format comand?
 
