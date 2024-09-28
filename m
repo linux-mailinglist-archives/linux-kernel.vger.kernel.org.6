@@ -1,137 +1,202 @@
-Return-Path: <linux-kernel+bounces-342301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45D8988D41
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 03:16:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13E0988D67
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 03:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06D00B21CBC
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 01:16:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 804F5282F6F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 01:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8710D14267;
-	Sat, 28 Sep 2024 01:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410AF14277;
+	Sat, 28 Sep 2024 01:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SvMeX0S+"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CVhlO0jX"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E0C28EA;
-	Sat, 28 Sep 2024 01:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233E7BA3D
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 01:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727486168; cv=none; b=lxfmXvpWVuDnztOztHEWENGavgglh/xkDJDjJtRB6oFqBcyzLk/rlspOLd0lAY+zclGWNNl6bRZRJP/2gjfeGD7hsQm4KYPdJMVFjhKEd9MGTsem/5ISrIbLqk/nUfEH1yEakk64TuBN+6vfzsuLLwzvx/G83IWP/Us28FwRz0w=
+	t=1727486746; cv=none; b=KOChXoyBoIedgFNSynw2S0M1UBhVg8o69MP6TQRT85obyXq7y9s/nmalfjjZKY3lQnQHWeJ1tSoMeD4elj5s4YMGTHpSmVej0cRGApp2qM/2hyapvQScLzSN+59m3+Shgc2gaie1S0B1hJ7jayhYWj7XzasF9fKCISDi6NIHgnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727486168; c=relaxed/simple;
-	bh=X07uvNQvv0B1WrIKvyaB24pGAOcrmypzYdWwXWzs3l8=;
+	s=arc-20240116; t=1727486746; c=relaxed/simple;
+	bh=jPUSEh9FCNIvrNqStehrhErh5ihqIT1DZ9rsVyEazeo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HNeagPIpriz38AVxj8M0jc3bRnAiaof2AJQw4gLkdGg9Vpw1dEqZfwBhM0raWuxpl2hINRfm8o6+ZY6r8wsEtbyuo7YCeca209QyZIPbE8UbCwQmXSm16/HQO5jwoKYCoZeREGb3vNPDYk2kU2GNdBzAvE1RHBXKgENDjdeht7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SvMeX0S+; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20792913262so32162685ad.3;
-        Fri, 27 Sep 2024 18:16:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727486166; x=1728090966; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RmenBwjo2Vbivz5a9dMMksnrytNzMFbtLIwdP8yXAPE=;
-        b=SvMeX0S+M5KBTnM7EvljR4UH81no2PWa2haYTkhWU6YbBFQgnz7uRnkuQTLwrD7TdV
-         z2Qc6qF8P3nXXggoPLy758QQ9OtTMOgu0DtR7wVtOJX/doJMPtDpLPd6x90fOn7RBM+l
-         OCCiWoIIHets+K0UYgXkDyOTXFVCcaCVvU27+UByB8Er1zkOr1ywGPflHM1C2EMLiMiw
-         8dboJf9USpSKzyHoEEIcmEQ3Nx0PcXHAa3S6TXRT7oDiYY7XIdV5F+GjcfR9Mq11j7z5
-         pSzeoM4WY+H7BGcu0sfvoLwoT34afUGLQByqDxtHuybqhARZoVwZy/KKb3ah2drFzOb1
-         ZmMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727486166; x=1728090966;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RmenBwjo2Vbivz5a9dMMksnrytNzMFbtLIwdP8yXAPE=;
-        b=Mc4IeCKpL/sFPWyO0A8TXBtTU/ysyWH8/z1IBQ8HNBPZoXKC5/L0h+bjJeOAw0DuAc
-         Y3v73Nf3v1j0ATEapPwqZ0D2uisN6MxSYI4596iwJPNi4Kjy7ornSJ14Hi+NEkx0u+xS
-         zUSLiq4/IaTNcP52Nnc9ruxeH0udQhuO/kV+WcOBD6DUM2nZu0O5QiHdkivbLLP3Cof6
-         ly75xfVjCSeaSyG2qhPsSCWTqrsZ1IG5tXVlO3njei/16Dcfm7s4agE5iC8d5JforYVc
-         4zKoxKMV9uS9H2sMut84TuHXRlMc3uAugo5su909vAqDEVEk5n+NPtTGbbX49233XvKI
-         6uog==
-X-Forwarded-Encrypted: i=1; AJvYcCUnNFc4BGBEhpqSKdl5hmb8rL7Mr5SGyXJ4ydeZwPyAZmWe93RP/MkdekRFbNlK91tLHdc+SQTiIExXWA==@vger.kernel.org, AJvYcCXCCL5K0XYAiJlOligBE67G130ZU1C8S2MVLPKLXv4yZ1+xg6noRC4BnAxIOpORKvUVV78lQNNC2P0=@vger.kernel.org, AJvYcCXrlLAX3R3yZ2Dv0L6y0bJAISIK/viRM4avAY2KINaIS7erAQQYetXgmly/ZPIaaHimOz8vxkwXvfWvtG9f@vger.kernel.org
-X-Gm-Message-State: AOJu0YxADxByQy1AJWTTqF/zhBP26RbcFFbjtVOkeV7/mHQg/rr90joy
-	pIe6RQNIqDidmljUaHvCm6dZaqmtFcxTeM+90ZCqWgNfww9nLqss
-X-Google-Smtp-Source: AGHT+IF2XdiOwSv21FunwBwuZApRttzCK4YIV+a+BZKXgPByJl59BffjPiw4iGOEPtjD6f9+V2Tv4g==
-X-Received: by 2002:a17:903:228d:b0:207:6e9:2da1 with SMTP id d9443c01a7336-20b376750a8mr81564615ad.17.1727486165641;
-        Fri, 27 Sep 2024 18:16:05 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e51d27sm18804125ad.246.2024.09.27.18.16.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 18:16:04 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 320924601118; Sat, 28 Sep 2024 08:15:58 +0700 (WIB)
-Date: Sat, 28 Sep 2024 08:15:58 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	linux-doc@vger.kernel.org
-Subject: Re: linux-next: build warning after merge of the ftrace tree
-Message-ID: <ZvdYzrZ56X_OvIPr@archie.me>
-References: <20240919150513.067dd727@canb.auug.org.au>
- <20240926091452.4be87000@rorschach.local.home>
- <87a5fte6mj.fsf@trenco.lwn.net>
- <20240927141137.75ecdf71@gandalf.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tn/1JcajqEUz24MOxCd/pUBKoPnwXiOVK31A+Q1o3N0BzXOe0j/wBs2pGhIyLHJaFZOYVTgsr6VL1a7wAHK6F+F36IGW2uRWt08nTQwLtTaxiVA15xXEFIdRIoTa7hGSBwvXXeV8h8C6UT3HGMozFDVzvPD2al30pGVtyLxA8YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CVhlO0jX; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 27 Sep 2024 21:25:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727486741;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ff6ohtx94F3pZDLlRAIikfKqB72ebwv0OgN33Zat0K0=;
+	b=CVhlO0jX7j56+Go8Hw0rWq2kfvkB4Dm0/VSUsCDktamGOK2teTcZAIR79+8Rq/NPEwZcOW
+	F8kCOIwav5f1rcPnuaLSktzS28v/gSWl/0inzPUqv00jyJHQqHqWv/ebPgM732qCDiAQuP
+	iULHgGIEJq6hK9vTTKtAUNwtGJEP5QE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	syzbot <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] Monthly lsm report (Sep 2024)
+Message-ID: <owdoubzm3jqf4cuhawaavver5mzko32ijuh2nrm5vhzegmjbmf@az3mweawrni6>
+References: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
+ <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
+ <03c3a47ca225050d37dca6a9249c1f978f1fc56b.camel@huaweicloud.com>
+ <734977390eeecba39789df939a00904e87367e5e.camel@huaweicloud.com>
+ <nqxo5tqcwbwksibg45spssrnhxw7tabfithgnqnmpl2egmbfb7@gyczfn7hivvu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pyY6iDoOgRfOJJ52"
-Content-Disposition: inline
-In-Reply-To: <20240927141137.75ecdf71@gandalf.local.home>
-
-
---pyY6iDoOgRfOJJ52
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <nqxo5tqcwbwksibg45spssrnhxw7tabfithgnqnmpl2egmbfb7@gyczfn7hivvu>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Sep 27, 2024 at 02:11:37PM -0400, Steven Rostedt wrote:
-> Like this?
->=20
-> -- Steve
->=20
-> diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-> index 0b300901fd75..f3d235c8438b 100644
-> --- a/Documentation/trace/index.rst
-> +++ b/Documentation/trace/index.rst
-> @@ -5,6 +5,7 @@ Linux Tracing Technologies
->  .. toctree::
->     :maxdepth: 2
-> =20
-> +   debugging
->     ftrace-design
->     tracepoint-analysis
->     ftrace
->=20
+On Fri, Sep 27, 2024 at 08:08:48PM GMT, Kent Overstreet wrote:
+> On Fri, Sep 27, 2024 at 02:18:10PM GMT, Roberto Sassu wrote:
+> > On Tue, 2024-09-24 at 13:53 +0200, Roberto Sassu wrote:
+> > > On Mon, 2024-09-23 at 08:06 -0400, Paul Moore wrote:
+> > > > On Mon, Sep 23, 2024 at 5:02 AM syzbot
+> > > > <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com> wrote:
+> > > > > 
+> > > > > Hello lsm maintainers/developers,
+> > > > > 
+> > > > > This is a 31-day syzbot report for the lsm subsystem.
+> > > > > All related reports/information can be found at:
+> > > > > https://syzkaller.appspot.com/upstream/s/lsm
+> > > > > 
+> > > > > During the period, 0 new issues were detected and 0 were fixed.
+> > > > > In total, 4 issues are still open and 27 have been fixed so far.
+> > > > > 
+> > > > > Some of the still happening issues:
+> > > > > 
+> > > > > Ref Crashes Repro Title
+> > > > > <1> 306     No    INFO: task hung in process_measurement (2)
+> > > > >                   https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
+> > > > 
+> > > > Mimi, Roberto,
+> > > > 
+> > > > Any chance this is this related in any way to this report:
+> > > > 
+> > > > https://lore.kernel.org/linux-security-module/CALAgD-4hkHVcCq2ycdwnA2hYDBMqijLUOfZgvf1WfFpU-8+42w@mail.gmail.com/
+> > > 
+> > > I reproduced the last, but I got a different result (the kernel crashed
+> > > in a different place).
+> > > 
+> > > It seems a corruption case, while the former looks more a lock
+> > > inversion issue. Will check more.
+> > 
+> > + Kent Overstreet
+> > 
+> > https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
+> > 
+> > It happens few times per day, since commit 4a39ac5b7d62 (which is
+> > followed by a lot of merges). The bug has been likely introduced there.
+> > 
+> > In all recent reports, I noticed that there is always the following
+> > lock sequence:
+> > 
+> > [  291.584319][   T30] 5 locks held by syz.0.75/5970:
+> > [  291.594487][   T30]  #0: ffff888064066420 (sb_writers#25){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90
+> > [  291.603984][   T30]  #1: ffff88805d8b0148 (&sb->s_type->i_mutex_key#30){++++}-{3:3}, at: do_truncate+0x20c/0x310
+> > [  291.614497][   T30]  #2: ffff888054700a38 (&c->snapshot_create_lock){.+.+}-{3:3}, at: bch2_truncate+0x16d/0x2c0
+> > [  291.624871][   T30]  #3: ffff888054704398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x7de/0xd20
+> > [  291.635446][   T30]  #4: ffff8880547266d0 (&c->gc_lock){.+.+}-{3:3}, at: bch2_btree_update_start+0x682/0x14e0
+> > 
+> > IMA is stuck too, since it is waiting for the inode lock to be released:
+> > 
+> > [  291.645689][   T30] 1 lock held by syz.0.75/6010:
+> > [  291.650622][   T30]  #0: ffff88805d8b0148 (&sb->s_type->i_mutex_key#30){++++}-{3:3}, at: process_measurement+0x439/0x1fb0
+> > 
+> > It seems that the super block is locked by someone else, which is not
+> > able to unlock. Maybe, it is related to bch2_journal_reclaim_thread(),
+> > but I don't know for sure.
+> > 
+> > Kent, do you have time to look at this report?
+> 
+> If you scroll back in the console log, you see this:
+> 
+> [  230.372988][ T6772] Allocator stuck? Waited for 30 seconds
+> [  230.373025][ T6772] Allocator debug:
+> [  230.373039][ T6772]   capacity1536
+> [  230.373051][ T6772]   reserved             31232
+> [  230.373064][ T6772]   hidden               0
+> [  230.373077][ T6772]   btree                0
+> [  230.373090][ T6772]   data                 0
+> [  230.373102][ T6772]   cached               0
+> [  230.373114][ T6772]   reserved             0
+> [  230.373127][ T6772]   online_reserved      768
+> [  230.373140][ T6772]   nr_inodes            0
+> [  230.373152][ T6772]   
+> [  230.373164][ T6772]   freelist_wait        waiting
+> [  230.373176][ T6772]   open buckets allocated1
+> [  230.373189][ T6772]   open buckets total   1024
+> [  230.373202][ T6772]   open_buckets_wait    empty
+> [  230.373214][ T6772]   open_buckets_btree   0
+> [  230.373227][ T6772]   open_buckets_user    0
+> [  230.373239][ T6772]   btree reserve cache  0
+> [  230.373251][ T6772] 
+> [  230.373262][ T6772] Dev 0:
+> [  230.373274][ T6772]                      buckets         sectors      fragmented
+> [  230.373288][ T6772]   free                     0               0               0
+> [  230.373303][ T6772]   sb                       0               0               0
+> [  230.373318][ T6772]   journal                  0               0               0
+> [  230.373332][ T6772]   btree                    0               0               0
+> [  230.373347][ T6772]   user                     0               0               0
+> [  230.373361][ T6772]   cached                   0               0               0
+> [  230.373375][ T6772]   parity                   0               0               0
+> [  230.373390][ T6772]   stripe                   0               0               0
+> [  230.373404][ T6772]   need_gc_gens             0               0               0
+> [  230.373418][ T6772]   need_discard             0               0               0
+> [  230.373432][ T6772]   unstriped                0               0               0
+> [  230.373446][ T6772]   capacity               128
+> [  230.373459][ T6772]   
+> [  230.373470][ T6772]   reserves:
+> [  230.373481][ T6772]   stripe                  60
+> [  230.373494][ T6772]   normal                  58
+> [  230.373506][ T6772]   copygc                  56
+> [  230.373519][ T6772]   btree                   28
+> [  230.373531][ T6772]   btree_copygc             0
+> [  230.373543][ T6772]   reclaim                  0
+> [  230.373556][ T6772]   interior_updates         0
+> [  230.373569][ T6772]   
+> [  230.373580][ T6772]   open buckets             0
+> [  230.373592][ T6772]   buckets to invalidate    0
+> [  230.373605][ T6772] 
+> [  230.373616][ T6772] Copygc debug:
+> [  230.373627][ T6772]   running: 1
+> [  230.373656][ T6772]   copygc_wait:0
+> [  230.373675][ T6772]   copygc_wait_at:0
+> [  230.373694][ T6772]   Currently waiting for:0 B
+> [  230.373708][ T6772]   Currently waiting since:644 KiB
+> [  230.373722][ T6772]   Currently calculated wait:0 B
+> [  230.373735][ T6772]
+> 
+> this looks like a bug in bcachefs where alloc counters didn't get
+> initialized correctly, which makes sense given that 6.11 landed the disk
+> accounting rewrite. Will dig more as I have time.
 
-Yup, that's right!
+And looking further, I don't see anyhting in the console log from when
+bcachefs actually mounted (???), which means I don't think I have enough
+to go on. It's clearly an upgrade path issue - we didn't run
+check_allocations as is required when upgrading to 1.11 - but it's not
+reproducing for me when I run tests with old tools.
 
---=20
-An old man doll... just what I always wanted! - Clara
-
---pyY6iDoOgRfOJJ52
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZvdYyAAKCRD2uYlJVVFO
-o7P2AQC6wxh/4R1J4ZfW4DJhfv5cwk2W6gQ274Nsb3RIQu9lsAEAvI3EPUZLSX6O
-TZtclINSfKUY3S9XsV8+SeNar0AOLAk=
-=0d66
------END PGP SIGNATURE-----
-
---pyY6iDoOgRfOJJ52--
+Can we get some more information about the syzbot reproducer? Exact
+tools version, format command and mount command.
 
