@@ -1,155 +1,100 @@
-Return-Path: <linux-kernel+bounces-342350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF64B988DD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 06:28:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810E1988DDD
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 06:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92B52B2191E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 04:28:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89CE5282F6F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 04:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F83915B0E4;
-	Sat, 28 Sep 2024 04:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C6A19CCE8;
+	Sat, 28 Sep 2024 04:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FXZ8vNvo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A/Tb5/cf"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5825D23A6
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 04:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECCC15A8
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 04:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727497685; cv=none; b=ppXITaTF31mRnQGbywYUl/8HVjUaVsCxDTSgL867Luz6+DULtakTzJ+UbFWEqxfSYIsebpf9gy/Jzb7VyZKUA3tjTeZnV2epIIKTrL+/6xnnZ37IcqGQEhRcjSTee3nZHzZ46lLy+rCwMTPF3eMRcODotn18S4mdB6mD1Rgo40c=
+	t=1727499069; cv=none; b=uZsazwH4yWAw38PH/E1OmQqSft4KX9pfi15OeBgbI2rYWoWEpG9o1P+TfRTnxX8FmoQuNYAq94TCUqoN8dzlyYesgXBmH/W+tfly0KVmoR00msi3/Df1xyzoa5xQyHgulazZi0/rOwUQHgrybq6b1IZj8sWtEejhgelkl9H3eM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727497685; c=relaxed/simple;
-	bh=3Va6m4aP32feiSS3Bwmiq96mkkCGpqjkUnk4TUYjfyE=;
+	s=arc-20240116; t=1727499069; c=relaxed/simple;
+	bh=WR2AuSiiBSTPeDaYv2VjsZ5GAMmUorRYiW3/BvalMeg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EY5To0cmb/C/nITBmEIMimAQautsPhRFK3hoFpUr4Cxj3EsjXlujFR5bAxqHsJYeJP+9fHDc1JRz7Fv6ymt9kh5P2XdgYlVAiteStoj3lEHzLMIMEX7n9Vd34ec4pMB9WQ5VioO6EjXiVncy3S2AY1Llgjo4Uj01H5nrOtFZ91g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FXZ8vNvo; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727497683; x=1759033683;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3Va6m4aP32feiSS3Bwmiq96mkkCGpqjkUnk4TUYjfyE=;
-  b=FXZ8vNvoc7HOL1zZ4y72LRBvd1ojbGXw52neq2Phwsd/pedQ1UEjFBDP
-   Parm3nC+Dl8ltnu6s62q/3yrRi+iJ7FeAK+Z+4p3fUkG0OQQw1HUOfMRj
-   pRy0OvTqYKMqEql9zJ6uxkGHkKewh7gVVC/pn87Z+APtqOJ0ccBR4cSES
-   F+5KS7U1ldAqKOXPeunILgwopMTGxbFr46te0/yHn7l9n5Y9+iRIr/lsv
-   yTzAQmRj1oxYgqlMwCojk3T/9fjcixva0JAsu1ePliYPX4mYoHTvm90X9
-   DZNSWZ+OfMPYf9ty2v8PG/eTLu2qcCOVgACcaK1Xalslm1uE0oNnwwUf3
-   A==;
-X-CSE-ConnectionGUID: 1xRL6L91SjCaxMsyyQk/Vg==
-X-CSE-MsgGUID: SEeTZ3VrR5KAVlFG5TzHdg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="29530980"
-X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
-   d="scan'208";a="29530980"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 21:28:02 -0700
-X-CSE-ConnectionGUID: mHUk22eXRO+YX+RW8moBRw==
-X-CSE-MsgGUID: unMTifetTLe6509csDHvpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
-   d="scan'208";a="73050718"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 27 Sep 2024 21:27:59 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1suP3l-000Mut-0o;
-	Sat, 28 Sep 2024 04:27:57 +0000
-Date: Sat, 28 Sep 2024 12:27:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	heikki.krogerus@linux.intel.com, tzungbi@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jthies@google.com,
-	pmalani@chromium.org, akuchynski@google.com,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/8] platform/chrome: cros_ec_typec: Displayport support
-Message-ID: <202409281250.dtPQ2TrT-lkp@intel.com>
-References: <20240925092505.6.I142fc0c09df58689b98f0cebf1c5e48b9d4fa800@changeid>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRpgOF4VwmAPcgo73F0fEguqFiC7YanbLBMwUv/VokpUIUfY7RpqcXdbBcisuX0aaJgfsp/sELMyPVcgT+86YkZLMI+JHDMx6lIBQQm1lRqcByLxAUCiIet8FHglaNqKHWHtH5um3r7Ebmls59ohkiUgF2FXvdqqQ3SgHHethUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A/Tb5/cf; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=SWosS3jl6trCdAKJuZfWE5QOA2qArqoNUePynF1px8o=; b=A/Tb5/cfs5SOYAcs9otvzgfLQL
+	jQXxisSnET+Vb4GFBlp5AU7bKcuy8oKLJ5Dnzo5rD99vVCdrYaAjNCD/LdhOBsyKvpdjnHnjpPklI
+	4Bg2+zNB82wnVu8ugEvkfJkC7uCT43JoEdGzuFd6dLD7LKyOVqZ5p7Owc+CZzAXU+2KeE2av6qoTc
+	t2e3VALxvDWXTFRJxoDvlbjtaCi/Y02Qf6MpgyOl5gGPDq4GMdxOUrUMuvUD83Vg+daSfNWjo11SN
+	vfHvOtwd25vfLlegCwB9GG/gDWR9t7z48DenUtMLBHqhclYZd41WMQiDptPQdRd6o5ND+ifLtgm8M
+	JG+IDnrA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1suPQ3-0000000BTN5-23aY;
+	Sat, 28 Sep 2024 04:50:59 +0000
+Date: Sat, 28 Sep 2024 05:50:59 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	hannes@cmpxchg.org, nphamcs@gmail.com, chengming.zhou@linux.dev,
+	usamaarif642@gmail.com, shakeel.butt@linux.dev,
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
+	akpm@linux-foundation.org, nanhai.zou@intel.com,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Subject: Re: [PATCH v8 5/8] mm: zswap: Modify zswap_stored_pages to be
+ atomic_long_t.
+Message-ID: <ZveLM6EINpVWwJZD@casper.infradead.org>
+References: <20240928021620.8369-1-kanchana.p.sridhar@intel.com>
+ <20240928021620.8369-6-kanchana.p.sridhar@intel.com>
+ <CAJD7tka0qyRWhgHrC9p1ytfDKVPr9bBTFCYy7HC4DZ-Ovfu7VQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240925092505.6.I142fc0c09df58689b98f0cebf1c5e48b9d4fa800@changeid>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tka0qyRWhgHrC9p1ytfDKVPr9bBTFCYy7HC4DZ-Ovfu7VQ@mail.gmail.com>
 
-Hi Abhishek,
+On Fri, Sep 27, 2024 at 07:57:49PM -0700, Yosry Ahmed wrote:
+> On Fri, Sep 27, 2024 at 7:16 PM Kanchana P Sridhar
+> <kanchana.p.sridhar@intel.com> wrote:
+> >
+> > For zswap_store() to support large folios, we need to be able to do
+> > a batch update of zswap_stored_pages upon successful store of all pages
+> > in the folio. For this, we need to add folio_nr_pages(), which returns
+> > a long, to zswap_stored_pages.
+> 
+> Do we really need this? A lot of places in the kernel assign the
+> result of folio_nr_pages() to an int (thp_nr_pages(),
+> split_huge_pages_all(), etc). I don't think we need to worry about
+> folio_nr_pages() exceeding INT_MAX for a while.
 
-kernel test robot noticed the following build warnings:
+You'd be surprised.  Let's assume we add support for PUD-sized pages
+(personally I think this is too large to make sense, but some people can't
+be told).  On arm64, we can have a 64kB page size, so that's 13 bits per
+level for a total of 2^26 pages per PUD.  That feels uncomfortable close
+to 2^32 to me.
 
-[auto build test WARNING on chrome-platform/for-next]
-[also build test WARNING on chrome-platform/for-firmware-next usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.11 next-20240927]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Anywhere you've found that's using an int to store folio_nr_pages() is
+somewhere we should probably switch to long.  And this, btw, is why I've
+moved from using an int to store folio_size() to using size_t.  A PMD is
+already 512MB (with a 64KB page size), and so a PUD will be 4TB.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Abhishek-Pandit-Subedi/usb-typec-Add-driver-for-Thunderbolt-3-Alternate-Mode/20240926-002931
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240925092505.6.I142fc0c09df58689b98f0cebf1c5e48b9d4fa800%40changeid
-patch subject: [PATCH 6/8] platform/chrome: cros_ec_typec: Displayport support
-config: i386-randconfig-001-20240928 (https://download.01.org/0day-ci/archive/20240928/202409281250.dtPQ2TrT-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240928/202409281250.dtPQ2TrT-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409281250.dtPQ2TrT-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/platform/chrome/cros_ec_typec.c:21:
->> drivers/platform/chrome/cros_typec_altmode.h:21:1: warning: no previous prototype for function 'cros_typec_register_displayport' [-Wmissing-prototypes]
-      21 | cros_typec_register_displayport(struct cros_typec_port *port,
-         | ^
-   drivers/platform/chrome/cros_typec_altmode.h:20:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-      20 | struct typec_altmode *
-         | ^
-         | static 
->> drivers/platform/chrome/cros_typec_altmode.h:28:5: warning: no previous prototype for function 'cros_typec_displayport_status_update' [-Wmissing-prototypes]
-      28 | int cros_typec_displayport_status_update(struct typec_altmode *altmode,
-         |     ^
-   drivers/platform/chrome/cros_typec_altmode.h:28:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-      28 | int cros_typec_displayport_status_update(struct typec_altmode *altmode,
-         | ^
-         | static 
-   2 warnings generated.
-
-
-vim +/cros_typec_register_displayport +21 drivers/platform/chrome/cros_typec_altmode.h
-
-    10	
-    11	#if IS_ENABLED(CONFIG_TYPEC_DP_ALTMODE)
-    12	struct typec_altmode *
-    13	cros_typec_register_displayport(struct cros_typec_port *port,
-    14					struct typec_altmode_desc *desc,
-    15					bool ap_mode_entry);
-    16	
-    17	int cros_typec_displayport_status_update(struct typec_altmode *altmode,
-    18						 struct typec_displayport_data *data);
-    19	#else
-    20	struct typec_altmode *
-  > 21	cros_typec_register_displayport(struct cros_typec_port *port,
-    22					struct typec_altmode_desc *desc,
-    23					bool ap_mode_entry)
-    24	{
-    25		return typec_port_register_altmode(port->port, desc);
-    26	}
-    27	
-  > 28	int cros_typec_displayport_status_update(struct typec_altmode *altmode,
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+thp_nr_pages() is not a good example.  I'll be happy when we kill it;
+we're actually almost there.
 
