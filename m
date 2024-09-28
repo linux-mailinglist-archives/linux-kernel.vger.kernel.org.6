@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-342641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1C0989121
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:30:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7C5989122
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13C4F1C22299
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:30:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B2C8284326
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D05158D93;
-	Sat, 28 Sep 2024 19:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA17155392;
+	Sat, 28 Sep 2024 19:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="akr/OR4C"
-Received: from GBR01-LO4-obe.outbound.protection.outlook.com (mail-lo4gbr01on2129.outbound.protection.outlook.com [40.107.122.129])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="iTy3Mu9U"
+Received: from GBR01-CWX-obe.outbound.protection.outlook.com (mail-cwxgbr01on2111.outbound.protection.outlook.com [40.107.121.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD7217736;
-	Sat, 28 Sep 2024 19:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.122.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23F117736;
+	Sat, 28 Sep 2024 19:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.121.111
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727551821; cv=fail; b=T1mbFMRTyt5HloagAM6zefkmMwHEvRo313p8H9zHR72QL+rhmA0FZjMsqiWowf3jgp+OmH2QFQEbIRYkM127GuakyGCMk57PeYvHtojOG38xHllPB3JYyEnG7A5VJZdyM7yj+Cie6lG51pacZKaG/dU76mElSP/BDOQRLKZERX8=
+	t=1727551857; cv=fail; b=BGOFycCEj7dyz7dFdIIsgX5ZsNk9PJvZyJJLpwp/3Pfw1us27pjJovY3yYgKly31WMK7/9yOfM8P03zstTUU+ko22zAGW/XqX/6utZ0G0syqoeDqigizPQLfrNa7dAsoHLp9ZSihC4TRwSbmcNtzefjkmebaOte8vdfpI6U84WI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727551821; c=relaxed/simple;
-	bh=RHQpQw0cWjBDV4eyUy7o/Ep3gefwe6DKy4Fjz1iXPx0=;
+	s=arc-20240116; t=1727551857; c=relaxed/simple;
+	bh=VI6Q52xInN7RrVNCHMck1+z4Y8QajWe0fcb8Yu1ZyQ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=APzFOz1qhwoU0nsU0gE4r+MWvwK/5JRGm7zX5hqYTDpy47WaAAXuZy7xjDZf6j15VaKGKGNiKklXxkG4FswzhnpKz3LJqNxPfS6B9i2OD8xN52Cuj9M7CYV4I7M422WGhGFzIeiq8HMvzalkvx08xh9llaqP9IymqHVKeFUmUgw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=akr/OR4C; arc=fail smtp.client-ip=40.107.122.129
+	 Content-Type:MIME-Version; b=D26ZfDOflxM6SE7QRbhiDJCB51OrAKUTD60Az132R5MNT0Mzhh2zyN8QZJfxWko4Q8aU38wnNpCoo6WKDwDUjpL0Ks00hNXA6+fsnmb88/Fa0yXlXm11euBLMwC6rzb8cQ88wtCieCvaGOklkj1GOB8WTTbfNK3P6C/8AMB5zQI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=iTy3Mu9U; arc=fail smtp.client-ip=40.107.121.111
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qYDOZb3VTgcTry22plJMHU8rS8Xziwx1PWiFvmEvniE2HMAFdavm95kjBvdJGgPiuyxq2iG/rsmCXnbcong0ONti0DrMwF0HHdvAC1HGwNVU6xX+WIZLb1BIU71M1xM9i8o+WBqq3jxg9Mu5n/mHR/7yqM0Ei19hoewxb4JdE5A4dY+JlZQgjyUKbREvWoKTDKwwR5+4iP6pe4S0PZYafOF/5Hdu8g2KTzkRktU64zd5yFKaUZNBmFLf/JQWn2as6CHfaLoMmcNYU4XHecYm35qvRVHrKuAs6MVdd7uEnxlb/lmCkVlBqG2lUNFRAFWzLLLWgs0h69rhlDCicWYaEA==
+ b=DWG0dvPNlSjlGtt6pj/+pQ0Y0P1Vt8d3yVI+/AQ87uMpiOuUX1iN1Gi16tRa8bnq3tGWJKFn9Au6qH+/+MEceCw/mcOxjSH5tz/6/DClNCTNw2WExIVJfhGp18haZHHvcLH1ocdcKJdvjakQuWKHMG8peZaoIJ1BeXuOR9j5eGgbohF88q50f8V6CwY45kDyWcfcJ/90ToCtgucdizZ5RiiJdD6t4Aak1Yhf60LeYRe5ZGPJj6Lnpm1f0ttFMMX293M5vQnoMAqMhKa07J7dTN8dmH9MMbtT80mhetLMl1IpRBbTpE1dweF1BVL+oILvGyrP6GA0vIrZEb8ld25BAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YLjWABuGfyzdQ2OroRmxlu9nh9Df4HN6Ki/aed8o6XM=;
- b=Qg3cgKwTXPPNW5XpVFq1UQJhJa/RGN6pnorUfWtoBFnqHwso09QjiqLyb4JXA2OvsQuIMsDF+jd7oO2wsyfOVQ1l7D+u8D9M6/kVbyCWt6bJ4LqeG5RnRgyXL/bpRhrHnTRUwOagAt3KYqLAhje0vaeMdrLBKBaMID/eGpYRSgar0C+se+e+A+coLksR0Y1rQL/5Av/42YyjIq1tXwteKwh57B5kX2lRuQXoP39W2x9mbXogkyzTmK9mqg4PxAOs6czOUV4R2dahXy5SSY+6Lj/N/dadRCXVcG8XHNB+zmJ4Y8Q63krqaR0HX1TFLqY+Vo0eXDq4QRACRoUSz9a6qw==
+ bh=RKYrvH7ex/GatcTwd39wQBhmzv2nHq0wC58mRj9COsw=;
+ b=JWdYGvDqERul24Ikfv8VykXATPuP4yBDgGh6eKhcMuBnSodzZ/QAgp1eIXJ3NQ4KSnesOS44CpuYH1NeQ9wWPs0qcE1gDqCBwSZdlsSZXkWK7R3mOC6v7vzu73+IknEZNDdotm8POvrv2xiyg/4hRocdAibicB8RW+Q5ULqAeQzV06GZN9nRJfa5mRlaOQoJRW4lDpqdZVqIv+DDxlm+w/tVFXcoAQ9pZVeE4CJXdmUDlS+apV5YskxkCa6qLZpK12FNpuVQPgsu+apXFJjw9e4Irpz3xtqdnyJnFolZs3DGXcwp6lT/TbueXnZkghtj7cKQwp+bT/3LDjCaDXnBZA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
  dkim=pass header.d=garyguo.net; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YLjWABuGfyzdQ2OroRmxlu9nh9Df4HN6Ki/aed8o6XM=;
- b=akr/OR4C2RhLF2/MARNVtRx9p9qiiBk7Ry9f+IlklPg1SJ5FT/kal/gBhd/pA8NGYLNLbYEv74L/rG5QGSJAs1qKCfiyYCgfCaopcpmxwQnl97+XTPPFd0VyzQRlr8UV7JmE6/NBZxKA929SabJVIGkrb3ACBOAObB4Pc77tTY4=
+ bh=RKYrvH7ex/GatcTwd39wQBhmzv2nHq0wC58mRj9COsw=;
+ b=iTy3Mu9UjrL4/L39FdNGn5JyR4qb1ZfrF8rmmTKxnmuATw488xXn198ClCNRJf2aCvLBKu9igjS9Gg/Gz1aZMN8r0OgueaqaqlmV1B7GQqKG7Qv7ZvWMDj5ORynKGwQX/ma3e3ScNbsap6WuavWjfJDr3fv5EeeucOa4hC58zIU=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=garyguo.net;
 Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
  by CWLP265MB6484.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1db::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.25; Sat, 28 Sep
- 2024 19:30:17 +0000
+ 2024 19:30:52 +0000
 Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
  ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
  ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8005.024; Sat, 28 Sep 2024
- 19:30:17 +0000
-Date: Sat, 28 Sep 2024 20:30:15 +0100
+ 19:30:52 +0000
+Date: Sat, 28 Sep 2024 20:30:50 +0100
 From: Gary Guo <gary@garyguo.net>
 To: Danilo Krummrich <dakr@kernel.org>
 Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
@@ -67,16 +67,17 @@ Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
  zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
  ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
  rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v7 19/26] rust: error: use `core::alloc::LayoutError`
-Message-ID: <20240928203015.2c9292ab.gary@garyguo.net>
-In-Reply-To: <20240911225449.152928-20-dakr@kernel.org>
+Subject: Re: [PATCH v7 20/26] rust: error: check for config `test` in
+ `Error::name`
+Message-ID: <20240928203050.55ffd293.gary@garyguo.net>
+In-Reply-To: <20240911225449.152928-21-dakr@kernel.org>
 References: <20240911225449.152928-1-dakr@kernel.org>
-	<20240911225449.152928-20-dakr@kernel.org>
+	<20240911225449.152928-21-dakr@kernel.org>
 X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO0P265CA0007.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:355::18) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-ClientProxiedBy: LO4P265CA0053.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2ac::19) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
  (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -86,83 +87,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CWLP265MB6484:EE_
-X-MS-Office365-Filtering-Correlation-Id: cca0afe0-22ff-468d-771f-08dcdff3fbb9
+X-MS-Office365-Filtering-Correlation-Id: ba0a8234-958b-4559-a204-08dcdff4109d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|376014|7416014|366016|10070799003|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZH8KeEIaZjEUDD0xprMDa77hHtmKYGxrzYFvvQhwOJ2S3sr1LE80Z1izLPqc?=
- =?us-ascii?Q?SYuEg/sD1ZROml3JpCRB2L6nKTe7mfmtwrqJzjRIJmvfsCuVCSmHckoj1hvm?=
- =?us-ascii?Q?rfKSDKaEx1k+msRQ1irmqFmPCpViCwyQFxNXWqyZf89sm7A2PjsrvULXvyy3?=
- =?us-ascii?Q?ZHiq32p1BUjSvgcnXQeWPIDerqAgC/nCKfBSmz2b2ACHpmYd4IOk2mw6XLrh?=
- =?us-ascii?Q?hckrJBqgSVer13XZMLgKxKX5GfzxbFqpGebZRfOJFBvMfsonqPH4laCRCC+i?=
- =?us-ascii?Q?nkXj3pMXfM706GDXWyjierRVbFVi9cFJt8kiVVzleWwzaAlZJaPnSuIl95R7?=
- =?us-ascii?Q?I//fuxPWEbYF0VP0YkqNAJ8vYwEPpaOv97fegPtFz7tBgN26lvUGCbKtvq0H?=
- =?us-ascii?Q?+eK3q2bUlaZ0TrmtuL2J8e3VuOMRHDccO5pLcp5vomOcR/g+1GBvMfdRVkqL?=
- =?us-ascii?Q?ks9PVSWmN9HCm3CovYbifD8vNuRgmX0lY6Als+oDZIhepiR/UTnRULbgKMPV?=
- =?us-ascii?Q?j7cC7moTmRuEx66sqX0oGMYgLMP1HJ5WK+0zSsZAri5tU+cYVjsAtW0pj7fT?=
- =?us-ascii?Q?bspFyISBNoG+sxfmhYoPcZKzVj8Cv/CeXDz6qGgEzqz2jOggWHTp1a4cUCQw?=
- =?us-ascii?Q?tfqYNp0AbXB3ZxY9Vca/58kLPMARY/ZaZONxDjI//GM0W6LCSLqGRlOCOPTK?=
- =?us-ascii?Q?5V9FQauw0EAw4reFvyxoPorLZ+hl1jpqrIhOyxUVPGbHDHAeheY2DS2ZhTek?=
- =?us-ascii?Q?06BtOyMs0llczaBmeXrvQ8a1IL3Gwi5GaXMNVNtJ1qdo6yL/W1YVibdRg3eT?=
- =?us-ascii?Q?UAF59kd8TleF0HpGdrBUQ3HwUA7L1PpCyb73OppV1WUCftmK7BlpF3m3aIWY?=
- =?us-ascii?Q?R/qjtZlToIP9d3HTg39eagQ0a4BavMM0xZhW93xLMEODB41k4edsPBB/9FOe?=
- =?us-ascii?Q?xXfldylOb+HD/LHhVR6YQbLKxQgQoLG65sDhmp+WJJo+xEQRp9jLmOcVxCJd?=
- =?us-ascii?Q?/vBCW2LRiP1aZOpNPRUuCmmsrUUrJpMtauUYtWKtDgSxxjrmmKBxIfi64Ky7?=
- =?us-ascii?Q?FoqV+6gj50b5tIbIGd2ABGGadn0PLVMXIXWSe1kgK0r1o5AolYXI35kPeegO?=
- =?us-ascii?Q?YIG213gvu2lF4Tk5n+44dg4TIOtR26d0yDF/hhqBDiJTAGl6P1NrmlaTC5Fa?=
- =?us-ascii?Q?MIQfpu+chIrE8MXfab5fJe9pl+R81TbiIlhpSSf6vSSCkacg8208ARHhURLQ?=
- =?us-ascii?Q?AhdzlkYmr2BZEMMbyCKQiT82BpTZCXPqX6A2MSslh4dahzaDkqbCsY9W++e0?=
- =?us-ascii?Q?jG5aH1B14y+q+jtC6lN7gRJ8twfa6/jTUhNrqjVh9ynuXg=3D=3D?=
+	=?us-ascii?Q?p9ucjTbKo5Sr+1t+lEQ9B0vFeaUGgEXKMZUK4gFlKaC3/ROxe0f6GyLN6jm6?=
+ =?us-ascii?Q?x3Dc+7/30iz57rWhgevQ3gL+fIStd5a79Fc10vtF7WKTbvwxrqn5zVuP0EYQ?=
+ =?us-ascii?Q?7CeT85MCqSG8u/42xHHBxwgdtJCujl+wY0NSLOkKec7rcsclXsXGkJEfS/ex?=
+ =?us-ascii?Q?IpDwBfYnjFHalZTwrnM+xkXaoEjuBe99P9ibHosriMnyOVIB2/Z17dXPPuMX?=
+ =?us-ascii?Q?P7f/+kLVj74vM8v3wuDRgdiU8Djnrv7/WhMKcj5EsjCjFWBN2ZkPL7qJX0+X?=
+ =?us-ascii?Q?HEQuP6ch9O7A2+NO+Ko/X+fNCjKf5/jy2k5J2epKwg0icszqPiyo8VU42Oig?=
+ =?us-ascii?Q?NjUD6xWelOdEcDPrM8kKLtRi5yP7idE2J12vUKLPkzw6jOEdif9aZQ8ccwPw?=
+ =?us-ascii?Q?O51Z+r1N8rBkzgsCEvY69lq+8w3Bt6mcoeHg+94pies0hWanVP+Gm0TkCP+j?=
+ =?us-ascii?Q?x5u7UK5qEDS1mBfb6uHU5EIyqic9hE/wrRqEGCSYS2ShS5wotJrqlllZYyJj?=
+ =?us-ascii?Q?gdipsA4tGCjzOzLkIZHcOsBC/3baxGKfhlzk6juZ5sY6aT2BaluIV1H7T20x?=
+ =?us-ascii?Q?t/AdjcBFE8GPfrpUvVX6ZnbGc0RLP8ZK+9MrngB11SKDF5skwWbFjVRblDje?=
+ =?us-ascii?Q?cfkirx62lvip6cUZzQIaEtvwJWdCfXSFuI8GbUMnD44L5YiJcpSZAY/i4O9q?=
+ =?us-ascii?Q?/+TxlJHQBuIyZz3uDcoRO3fnbhn5WOQyxo4+tfbQGCPDclOTDSWXkf6MoENc?=
+ =?us-ascii?Q?3GmTKRQ8VRjOLMahfiWuOrBz+KwE9QnuQHrCDuX0s8SstbkJ8Tmd3qEorNDB?=
+ =?us-ascii?Q?zVm1iU5OYqM8YdF9n0EgdvlaiAhrOUiXRqDh1wa9lqEcUjYNaOXMh+F0HISg?=
+ =?us-ascii?Q?up+sy3At3zFX+5Dm0tVnxOIjR0ST7MvVsHQJ147XrfAV59Yj5CvlNs95Tjqk?=
+ =?us-ascii?Q?s8gcfOvzG+n4gXQDB8YRtPOwq4GCdtsMhyUCuTnzLyaDAEJjEaKtzJc97S/j?=
+ =?us-ascii?Q?Ob6/XwG6R7GbJsiCWKQRXueyoMU5jeDQvvZBx2vnDledv5SfpE9woUbu9ohi?=
+ =?us-ascii?Q?dWdpMz0t3hIv8565bNK67F3aqS0tpXOYkiqEGWs5ffFMiHJXWDVDYa1N4A15?=
+ =?us-ascii?Q?fdSYkbHNvzcWN35VpFt8nbL0CLHsVdLdB+f9mSFTvaoj752lT9PTF3xiXOkm?=
+ =?us-ascii?Q?/GLJ2UmbTt2mxAvFeHBup6yb+wK21aMzyZN/fqJrznSviK5KlFJ0urzbxoQ8?=
+ =?us-ascii?Q?J4YYyo8vu2dbr1wuvJlYE1ZoD2uSQQuDjbY8b2eKGM7KhD/15rQXCIX0RgEV?=
+ =?us-ascii?Q?/9bzBpl0tnCF5zoLjqwn6iHBICqxAueVXK2cs19ZSHbrIw=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GgzB2iKqfbGSiGz+raIrFVRGRJEZ7cuJLZVYdCGvNSt++bUIvWA7vTGlpu//?=
- =?us-ascii?Q?YTlwCfoTxDWFL1it12R1ADGz3D7kIGpIII1cvN1LNUSys7FvHZqBc/4hrXh7?=
- =?us-ascii?Q?CDDHLYWugXvcKQiC62S4v1CEZ4P+nZB+a5rips/t9ypnYgQvObSwngIgE5oB?=
- =?us-ascii?Q?yDOJaXZgOkp1Q2c1rAMqXqaIxQYHt9GXNr9X3dzbzbeyRx0AKiyAy+0uB4RL?=
- =?us-ascii?Q?dGAdStB/QP1XNeS8OezjC9nR72FaC6pqFV8B1Z60JZ+sGXrwAnyzFXB7lAPk?=
- =?us-ascii?Q?uOjoOGZkljH1xe1PkbFCIama1QYwxChzvVVyh+ZGQhDF45BeZwnklfTn/M/T?=
- =?us-ascii?Q?N9nRsOuJsX5zLcqDqHU9IvxwwaEn7FZ5qLYZdsDqtE83bh6iMy3d9YLoK7CY?=
- =?us-ascii?Q?4gOs3lLEp/01nJVLuhwJNIPJhW1ycBeVoukf2rRKFP3hINntsFhJnyvFTWYe?=
- =?us-ascii?Q?Z2fIuKoa1MkzjQhAVtAHBoFBVPzXhThDUmSEgUeeOddvhcb476gkpknfFTTU?=
- =?us-ascii?Q?LqtNnkyKzMSuShFJeIGngeLHzIU/lj7Ryfj3ToXEpUOH9Uo9gmeInyzdE6B5?=
- =?us-ascii?Q?eOdFmE/Pd0x0Qj4sNpg8Y+LA14js2DGl6vtIjGkjIJqI070c3GpLa0Mi0XOZ?=
- =?us-ascii?Q?7LaMlE3MAcwNv2F8jJEWlEWDxWEbY04YBZzcoZAtNzvge+JlOCnAHE6lb7BO?=
- =?us-ascii?Q?TjqBNMkkvMPkzBfFdCQD2vAmIH77e5vna8Sb3aZx+3WUVGvYuBOJqgB5kkmx?=
- =?us-ascii?Q?ww0GUlHYDFRsAYEse9fqZedIfwt1I2EEkbs1NqxWX4ybLdtCSzbi0DII8fMJ?=
- =?us-ascii?Q?mwM6vBunDfNbWYXSu56gtm9Msm0B/HxQRs53Mw2Sokhyr/LOykVVOY9qSJ+8?=
- =?us-ascii?Q?8tnBgarp9EY/hO1btbRnZGnrxI+dOs8t2lamh5A13ig7cu4+9PMoSdbfxoU4?=
- =?us-ascii?Q?DMdcpIowqZk6xNBnrvqRxz3I+C2EUZa7EM06mOyV+RFnTn+9DgVscaJ+WlVb?=
- =?us-ascii?Q?68vmjK4A1GKWhihv8RcCA36E9VbN2awQgaQbs34+v8zWzStMWCHV1+LHcSWA?=
- =?us-ascii?Q?SDPuYUHdru0n7m51h+rYclYzogDoOqKho2JbK0qX5xZcBi6LzE8ITZlfSWvt?=
- =?us-ascii?Q?SKnw87Hj4FHyPPPTzkyMNIECjkwmJxXIsgfH+TYZcM2w7Hfr0VsjznMnQlxO?=
- =?us-ascii?Q?3BO77G/MJmJj+5k/bSuMzX22gb4kSI7iUw1yZiLlXA3s7O46jf5UYmSzIqCj?=
- =?us-ascii?Q?vPt+hnFIFRlVOVDy+oelFL719RIHv1uwqCQwXNd6tvkHPlsRjpVLpVRLLIj1?=
- =?us-ascii?Q?WrAJB5DmSYhJejKufgJJPRZCQNwYZqTUVsrQf+zCqvEcxx7cRi5voF3irM68?=
- =?us-ascii?Q?nHdGccn28Xxw0eNPD6yxlLWUKJ40jsJh8T+P/epXfHd+7vik+T9cIl9T3P65?=
- =?us-ascii?Q?nSo31sS6mCgERFqmCeIvg5lINtpYLxSMvx4noWn1rn2vTIBoLFFN3pGMQekm?=
- =?us-ascii?Q?lv/ofZ5PNhFkTcyOlsxLkAnJCX2EsW7t1illKxj8fp2qn0MT0k7jl29aYhMG?=
- =?us-ascii?Q?ccu34dZnxai3om6REecabFIucyODi5uY9Nt4ht6R?=
+	=?us-ascii?Q?7BHdcdZl+aGuwnK9OEjmj3mTJ8Q/w5ycEdiIena6jhxlNM98ujOEkRxnmhgL?=
+ =?us-ascii?Q?RKE+kf5AQPIafj0dNF3PTM5FUykZlz+UFtFxIZlWEt9nql3kVeN4rqeDEf7i?=
+ =?us-ascii?Q?tmekYuWzNpmgJGydPPk5Agfa1e54ytZ+0IcJXtyDtRtTUVz9ESlnQJYohntT?=
+ =?us-ascii?Q?dwCli0Q71Acyc9XDpmQ3r7v7AesVQj0J36/Gdp3Zcr/SMRcyO+r56PXH/H0L?=
+ =?us-ascii?Q?dpOzBsC6vdqrSJC/vzQ2G941xTI5wmQpigyUg0LASo3ggNleJxKIhU4sJMkA?=
+ =?us-ascii?Q?6AUrc7R08DPfSeWJ76oJcTlJ51VpFCq/HGJgDzo29U/+q2s3iltGcaTMl2+N?=
+ =?us-ascii?Q?X+oMmNveh+Cf38jLjROMhcohtn/ermyK0r78uzq5dvMeuRH/jvQx6QqIF7bN?=
+ =?us-ascii?Q?eWeazwU1iozbkm2swwWbKZS0tyY9uQLozFFfSaqHUdyLfBxm5dRUBcjx74ik?=
+ =?us-ascii?Q?x+ItGw+1GBSGF40Kj+h9FUXWnYZQlSBPFqtKAdNHMM0xt/OVLf2PljhInajb?=
+ =?us-ascii?Q?sUrZK+FkZp8N+6J1pREvyBsTKG10dyxd8RyMaSqeUjPS1E2g8MjJrKZC3s+k?=
+ =?us-ascii?Q?aVXyn193/P2f1Z9dXYJxDmJ2fm23nsGy79ZjW3994rU/vM9BGUmRMDFby9IK?=
+ =?us-ascii?Q?IyV4Fd7MM3jEubcAiwF3Xi1UOFh7Y1peDMzG+iNM8faDBYZOnZTR0wEcNBuV?=
+ =?us-ascii?Q?4IMpi92pSF0u0pxefAvJFP9p0ga8Uu5IgodWSmK2NNMFf/gAEgyz9oJOmhs9?=
+ =?us-ascii?Q?94oxFq2rRjA0MjEUTq968cuXrebiiCi7vz26eWqrvhISNfmXs7GPQRRBVDo3?=
+ =?us-ascii?Q?bYHVll1HGHBAWiI0kSbxpAaFQbDdLS9H9fqOB5TBVcktLIs8Xp39hEN+ajnS?=
+ =?us-ascii?Q?Q/A0ZxmYoXBBepOJMdwNyyWjnKHKUsWYwKrABykZLDpgqCOOMKGEHFL1mzr4?=
+ =?us-ascii?Q?ZnyHVF6KjbKLMykP91ZZQcmk7a8XrUQSbftUpN7Y1yRORXpYQZe0cRf3xIIC?=
+ =?us-ascii?Q?X5ivT9ay+OKfGu4OULKvUSjUfby1rs1CZRlylcSnRSc3cfMoR6qWNMz0VxT/?=
+ =?us-ascii?Q?yqfrr1PZ3QKsNc8YcOkqGD1Ejacws2VQIhdbdJiYUQ6QKDKDn2XElrUwV4Hl?=
+ =?us-ascii?Q?2TkYsWQ6ufck5ADJUMe5ZwBHORhq/IvJ7r2wV3GHgnhZVV223ufSoC+hhbzR?=
+ =?us-ascii?Q?XMN5FLoRK3/+jWtbgXSXtDpeem6llc+6ZU+6mA72Qr4ha5zzhE+YAep+bZ9i?=
+ =?us-ascii?Q?kwr2ETGcr7Umc+w5p8g0+oCe0uzw6Ih8UOTwvtC1LuATDiIrJEObOUfKkLWz?=
+ =?us-ascii?Q?qKgV4SHc0XyxbSpjuT2S6jFaFAnx9XlMk6hfRHW7CKBLFFBbTkcK1XkDz/nr?=
+ =?us-ascii?Q?jEvln120YbTGOBvzimptq/pIP4j/Af+vhaGq7mB1zVM89CUftSSEvUjCKcV3?=
+ =?us-ascii?Q?WCqHbUTPQw4addpVnR/IGbER+FlzByf1DJJV7ghfxjV/kSr4wUEVdepyv60n?=
+ =?us-ascii?Q?cWCUFJ75IQ83gA8YC04g5YK8vctNBe/e4ugTe+YNAuXU8FGwh2TV9PM5LnzY?=
+ =?us-ascii?Q?YlTQrii7A6DkA4RSX/2/WzHhuIzh+bEaxa2O3ASU?=
 X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: cca0afe0-22ff-468d-771f-08dcdff3fbb9
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba0a8234-958b-4559-a204-08dcdff4109d
 X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2024 19:30:17.4022
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2024 19:30:52.4856
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Gph5TxW+37xTTO1+n4/4TqN6ff53qtdA5R3BjGTpB2tj6+eQHm8L83YXCJ3+kjxs/urjrI4RXikgFaA7ZPLUEQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: gaS2gvJvNJDgQxGMEDEIi5q8sUsNfYE16FhK+3nZRbPwS9FrV08XM3LIHCXfjA4CCZqLVVFGqCA2W3H9d7MILQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB6484
 
-On Thu, 12 Sep 2024 00:52:55 +0200
+On Thu, 12 Sep 2024 00:52:56 +0200
 Danilo Krummrich <dakr@kernel.org> wrote:
 
-> Use `core::alloc::LayoutError` instead of `alloc::alloc::LayoutError` in
-> preparation to get rid of Rust's alloc crate.
+> Additional to `testlib` also check for `test` in `Error::name`. This is
+> required by a subsequent patch that (indirectly) uses `Error` in test
+> cases.
 > 
 > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
@@ -171,21 +173,30 @@ Danilo Krummrich <dakr@kernel.org> wrote:
 Reviewed-by: Gary Guo <gary@garyguo.net>
 
 > ---
->  rust/kernel/error.rs | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  rust/kernel/error.rs | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 > diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-> index 6f1587a2524e..81b4fc5cf21e 100644
+> index 81b4fc5cf21e..b71fdd0f54c2 100644
 > --- a/rust/kernel/error.rs
 > +++ b/rust/kernel/error.rs
-> @@ -6,7 +6,7 @@
+> @@ -143,7 +143,7 @@ pub(crate) fn to_ptr<T>(self) -> *mut T {
+>      }
 >  
->  use crate::{alloc::AllocError, str::CStr};
->  
-> -use alloc::alloc::LayoutError;
-> +use core::alloc::LayoutError;
->  
->  use core::fmt;
->  use core::num::TryFromIntError;
+>      /// Returns a string representing the error, if one exists.
+> -    #[cfg(not(testlib))]
+> +    #[cfg(not(any(test, testlib)))]
+>      pub fn name(&self) -> Option<&'static CStr> {
+>          // SAFETY: Just an FFI call, there are no extra safety requirements.
+>          let ptr = unsafe { bindings::errname(-self.0) };
+> @@ -160,7 +160,7 @@ pub fn name(&self) -> Option<&'static CStr> {
+>      /// When `testlib` is configured, this always returns `None` to avoid the dependency on a
+>      /// kernel function so that tests that use this (e.g., by calling [`Result::unwrap`]) can still
+>      /// run in userspace.
+> -    #[cfg(testlib)]
+> +    #[cfg(any(test, testlib))]
+>      pub fn name(&self) -> Option<&'static CStr> {
+>          None
+>      }
 
 
