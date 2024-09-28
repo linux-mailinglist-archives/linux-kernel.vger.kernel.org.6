@@ -1,173 +1,213 @@
-Return-Path: <linux-kernel+bounces-342698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56729891E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:21:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9239891E7
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ED602853E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:21:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7141F23943
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C57516132A;
-	Sat, 28 Sep 2024 22:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE7F185B4C;
+	Sat, 28 Sep 2024 22:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YaKKw2mV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ELfUgilK"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F3F15C14E
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 22:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8638915C139;
+	Sat, 28 Sep 2024 22:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727562067; cv=none; b=JCpvCT0vgo4kq2TTvOBhIqwaNffZu6uk5JL64LmMIN85I1DpMRjKgfQ0nBHEVPVWfdHlCW2vGOxSxy1i6UG5TpHLAj3ii7oAICZ+n8RWPf7d+8tvC5MUeAKpog4hNe/J0iO+zpPbG+6muMdyvAbdqSWB3Rr9illbqiqzJFe6zrI=
+	t=1727562427; cv=none; b=VKiAK4veRqfRITwD8BqpQFACZwL+XDJ3h1KETN/j7kyKzXPAfhDmeZcGsw9GukM8QNmjULXF+fGlovJ/FKDpPHqqoEyKXmEuOXmU6nE3xdbhiwva2hwJ1qwSVSW3C9QVdyAX1Z9hxJk2izM2ejZhkrG8ZWiTnto2zKbEGYuzX9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727562067; c=relaxed/simple;
-	bh=9RAyA+ypZaeM4MqbmjvZP8YQy4DGo/KMw07dJSdAJo0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hBQsSip4RubB8Nhx3+1Dq9RTq1Qy/2P0fDQGUIAKpBcBR6T7/h2rBwncd8QUsxeyC3JkK+7ledOHEkjzoL5/kEk3M2qK4Zk1WIWiAOJ0OY0QmTKObkeknUVMx04IZW9op/HZPaFkqKCalTa1iZ7WwOeyin2coi/IU8hwz3IBdhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YaKKw2mV; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727562065; x=1759098065;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9RAyA+ypZaeM4MqbmjvZP8YQy4DGo/KMw07dJSdAJo0=;
-  b=YaKKw2mVtebGVKenPrW/k9X7Xc3YnByUJjitOi8ZhfMdZXcFHVj342sR
-   N7fzlvPVKoczRWm38LPK0Pn3WPuH0Yq14MmZwubjpKmCCXhYR0aDGwdWZ
-   XxJHOu1ASyX5tCComojHKJU/6XNFYRMrFotYsVrAhHwQ7SMzlkJG51CSR
-   O4SnpVXPXAb7UkgX+XpFmF+RWJC1uSB7xtgGT8Jzl+yy+zBXeE4d3T59k
-   11TRzUw5OSJNwaiJRi8HMO/4ukSMi3eJ+7AvMZ/NjtHFEgJSBdDVtfKt5
-   l3VVWiAxBzME63i9+akQRMUjFVjKF3ZQgY/+pjIwmnzOoecnvaNWI9/Af
-   A==;
-X-CSE-ConnectionGUID: XsNmJBfFRS29ZV9Vpe+z+g==
-X-CSE-MsgGUID: panzSexSRgi9ze3e8CrzgQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="37247968"
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="37247968"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 15:21:04 -0700
-X-CSE-ConnectionGUID: iT/u9qU6TCWvbP7MkVPXJw==
-X-CSE-MsgGUID: hjXfMSkoTUK9fWG1wX7Z4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="73183630"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 28 Sep 2024 15:21:01 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sufoA-000Nhl-2M;
-	Sat, 28 Sep 2024 22:20:58 +0000
-Date: Sun, 29 Sep 2024 06:20:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
-	Alper Nebi Yasak <alpernebiyasak@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: oe-kbuild-all@lists.linux.dev, Shawn Sung <shawn.sung@mediatek.com>,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
-	Singo Chang <singo.chang@mediatek.com>,
-	Nancy Lin <nancy.lin@mediatek.com>,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v6 2/2] drm/mediatek: Add blend_modes to mtk_plane_init()
- for different SoCs
-Message-ID: <202409290616.inw9UGyc-lkp@intel.com>
-References: <20240926083526.24629-3-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1727562427; c=relaxed/simple;
+	bh=iT+lEwf1Yp1LuoaQLOYzlAsb/T1uUnPPqijfxDwh6hE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=D8IMIqp0nadGQlKHCb7FgOHVIBAk0PzJziD7WlQ+EOg+yYupL/D5g1Jd+0B6AUHPqnLrGUPGldHqq0iiTvz2wyQ1lwVOHMLHQ9mYIjiddV7PNIFc/KaCW0ugP9SgGyyTteEcosJ0RB8AW10ev7CYCjo2IoKaB4UMoZgbH9PnKWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ELfUgilK; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7db238d07b3so2715400a12.2;
+        Sat, 28 Sep 2024 15:27:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727562425; x=1728167225; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=39TwabcFKO8PAh5Fmj4zbLOsgDGHvVg85M19XMWn6GI=;
+        b=ELfUgilK8IlxOHzgzvhpQg5/NmZiAleN/IlzakE3hv16F1xm0YIjOfx5G7nlb+MN0G
+         jWjkIx12ZqEB0IUNZh7sNGv+Y2AdlEpU5FSpOKDMiu14Nxwi+1aqNJO2D5kE2EM/Q2wx
+         7wlmb6in9Tduylgf+WPh9iBTXuj7h16sNRu6LARMe7ddlv0BHrNmCoXjFG6I3Kac9nQ0
+         qZFzVVwRbdKu+/Q/8lmdZZymsK+/D424SApatmV6ExNo9jK+YxJm/jLAgPdgTUrhTZxx
+         7bxbMdWGplQNT0x4LCmPqCNlO/VzdE0ZP/YOEryjXXivaaK0mCpKsSr+7ECb77GjyX68
+         mgfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727562425; x=1728167225;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=39TwabcFKO8PAh5Fmj4zbLOsgDGHvVg85M19XMWn6GI=;
+        b=ZK2k2zaA+JH6TaKvoBf7fZEHKDmZD8WU5Hi+oCFsmvixxieKCDKsp28wAW6Jr6Lbyz
+         N/Od2966ciWPVKWwQDpGmIaUGuSOdcqaS/87h5ac+1ni0hTkj8WzRRV+FrWjYADTpwnr
+         BIUanc/DsBhPyMnjEb2nZOv8EfBvrh4NzeYdBgTRFAYm9qFVBQYV95bm8FMLW7TmfGcz
+         ULxLniGGVKhL1rTIL+D6Ng1MTWFhi3iL92x31mVIJ6e3H7DXIpxjXtVBOQyAeJ+7J65Z
+         ZLloNmyXmLAEjI5yRB8VL95QW1He3meyHl70Dcy6lVMeLUbJjQS0664VBQ/u249CndOS
+         Ypsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNBWwNFS83Av//Unzj0Y6Rd7WatcyT61cBWQxMe/6YI8LnxiSpatT4x3gi7dRBbZT4TM49@vger.kernel.org, AJvYcCWRZFRM/rAGOzJ+KwDqB4kxVTRKN2UmGbrMmtxSMFLkbxgdJrRtvHsymkNRBcXT+EVEFumspL51enDPO00=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa5edDofvnoPUuOQhs/X2hP/wIQjDksJE3oJqJ33mh8OQ76T4r
+	6ZyOtVgLgvGj1Z2750g2wCpm9oSb8RjbFrP4p2yupXDYF7aSc7RW
+X-Google-Smtp-Source: AGHT+IHU++ItzZuI4JRlnnSPKUEq6zSjBveX5lFZ0ZRGbjdCCFJ3yEqulKfbG3mepSJoVqt/Zuzl+A==
+X-Received: by 2002:a05:6a20:1b18:b0:1d3:ba1:18f4 with SMTP id adf61e73a8af0-1d4fa6c7bd2mr9103220637.26.1727562424750;
+        Sat, 28 Sep 2024 15:27:04 -0700 (PDT)
+Received: from smtpclient.apple ([2402:d0c0:11:86::1])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db2bce30sm3269533a12.38.2024.09.28.15.26.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 28 Sep 2024 15:27:04 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926083526.24629-3-jason-jh.lin@mediatek.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+From: Alan Huang <mmpgouride@gmail.com>
+In-Reply-To: <d49f5d9f-559d-449b-b330-9e5a57d9b438@efficios.com>
+Date: Sun, 29 Sep 2024 06:26:39 +0800
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ John Stultz <jstultz@google.com>,
+ Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>,
+ Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>,
+ Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ maged.michael@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+ RCU <rcu@vger.kernel.org>,
+ linux-mm@kvack.org,
+ lkmm@lists.linux.dev
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D31AF4E7-B9D5-4D2F-A4B9-1E12B5E69549@gmail.com>
+References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
+ <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
+ <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+ <2091628c-2d96-4492-99d9-0f6a61b08d1d@efficios.com>
+ <d2c87672-af75-4210-bd96-d7f38f2f63ac@rowland.harvard.edu>
+ <d49f5d9f-559d-449b-b330-9e5a57d9b438@efficios.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-Hi Jason-JH.Lin,
+2024=E5=B9=B49=E6=9C=8828=E6=97=A5 23:55=EF=BC=8CMathieu Desnoyers =
+<mathieu.desnoyers@efficios.com> wrote=EF=BC=9A
+>=20
+> On 2024-09-28 17:49, Alan Stern wrote:
+>> On Sat, Sep 28, 2024 at 11:32:18AM -0400, Mathieu Desnoyers wrote:
+>>> On 2024-09-28 16:49, Alan Stern wrote:
+>>>> On Sat, Sep 28, 2024 at 09:51:27AM -0400, Mathieu Desnoyers wrote:
+>>>>> equality, which does not preserve address dependencies and allows =
+the
+>>>>> following misordering speculations:
+>>>>>=20
+>>>>> - If @b is a constant, the compiler can issue the loads which =
+depend
+>>>>>    on @a before loading @a.
+>>>>> - If @b is a register populated by a prior load, weakly-ordered
+>>>>>    CPUs can speculate loads which depend on @a before loading @a.
+>>>>=20
+>>>> It shouldn't matter whether @a and @b are constants, registers, or
+>>>> anything else.  All that matters is that the compiler uses the =
+wrong
+>>>> one, which allows weakly ordered CPUs to speculate loads you =
+wouldn't
+>>>> expect it to, based on the source code alone.
+>>>=20
+>>> I only partially agree here.
+>>>=20
+>>> On weakly-ordered architectures, indeed we don't care whether the
+>>> issue is caused by the compiler reordering the code (constant)
+>>> or the CPU speculating the load (registers).
+>>>=20
+>>> However, on strongly-ordered architectures, AFAIU, only the constant
+>>> case is problematic (compiler reordering the dependent load), =
+because
+>> I thought you were trying to prevent the compiler from using one =
+pointer
+>> instead of the other, not trying to prevent it from reordering =
+anything.
+>> Isn't this the point the documentation wants to get across when it =
+says
+>> that comparing pointers can be dangerous?
+>=20
+> The motivation for introducing ptr_eq() is indeed because the
+> compiler barrier is not sufficient to prevent the compiler from
+> using one pointer instead of the other.
 
-kernel test robot noticed the following build errors:
+barrier_data(&b) prevents that.
 
-[auto build test ERROR on drm/drm-next]
-[also build test ERROR on linus/master next-20240927]
-[cannot apply to v6.11]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>=20
+> But it turns out that ptr_eq() is also a good tool to prevent the
+> compiler from reordering loads in case where the comparison is
+> done against a constant.
+>=20
+>>> CPU speculating the loads across the control dependency is not an
+>>> issue.
+>>>=20
+>>> So am I tempted to keep examples that clearly state whether
+>>> the issue is caused by compiler reordering instructions, or by
+>>> CPU speculation.
+>> Isn't it true that on strongly ordered CPUs, a compiler barrier is
+>> sufficient to prevent the rcu_dereference() problem?  So the whole =
+idea
+>> behind ptr_eq() is that it prevents the problem on all CPUs.
+>=20
+> Correct. But given that we have ptr_eq(), it's good to show how it
+> equally prevents the compiler from reordering address-dependent loads
+> (comparison with constant) *and* prevents the compiler from using
+> one pointer rather than the other (comparison between two non-constant
+> pointers) which affects speculation on weakly-ordered CPUs.
+>=20
+>> You can make your examples as specific as you like, but the fact =
+remains
+>> that ptr_eq() is meant to prevent situations where both:
+>> The compiler uses the wrong pointer for a load, and
+>> The CPU performs the load earlier than you want.
+>> If either one of those doesn't hold then the problem won't arise.
+>=20
+> Correct.
+>=20
+> Thanks,
+>=20
+> Mathieu
+>=20
+>=20
+> --=20
+> Mathieu Desnoyers
+> EfficiOS Inc.
+> https://www.efficios.com
+>=20
+>=20
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jason-JH-Lin/drm-mediatek-ovl-Add-blend_modes-to-driver-data/20240926-163734
-base:   git://anongit.freedesktop.org/drm/drm drm-next
-patch link:    https://lore.kernel.org/r/20240926083526.24629-3-jason-jh.lin%40mediatek.com
-patch subject: [PATCH v6 2/2] drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
-config: arm-randconfig-002-20240929 (https://download.01.org/0day-ci/archive/20240929/202409290616.inw9UGyc-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290616.inw9UGyc-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409290616.inw9UGyc-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:10,
-                    from drivers/gpu/drm/mediatek/mtk_ethdr.c:18:
-   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:9: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
-      83 |         const u32 (*get_blend_modes)(struct device *dev);
-         |         ^~~~~
-   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
-     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
-         | ^~~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_ethdr.c:21:
->> drivers/gpu/drm/mediatek/mtk_ethdr.h:16:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
-      16 | const u32 mtk_ethdr_get_blend_modes(struct device *dev);
-         | ^~~~~
->> drivers/gpu/drm/mediatek/mtk_ethdr.c:148:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
-     148 | const u32 mtk_ethdr_get_blend_modes(struct device *dev)
-         | ^~~~~
-   cc1: all warnings being treated as errors
---
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:20:
-   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:9: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
-      83 |         const u32 (*get_blend_modes)(struct device *dev);
-         |         ^~~~~
-   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
-     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
-         | ^~~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:21:
-   drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
-     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
-         | ^~~~~
-   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
-     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
-         | ^~~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:23:
->> drivers/gpu/drm/mediatek/mtk_ethdr.h:16:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
-      16 | const u32 mtk_ethdr_get_blend_modes(struct device *dev);
-         | ^~~~~
-   drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:403:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
-     403 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev)
-         | ^~~~~
-   cc1: all warnings being treated as errors
-
-
-vim +16 drivers/gpu/drm/mediatek/mtk_ethdr.h
-
-     8	
-     9	void mtk_ethdr_start(struct device *dev);
-    10	void mtk_ethdr_stop(struct device *dev);
-    11	int mtk_ethdr_clk_enable(struct device *dev);
-    12	void mtk_ethdr_clk_disable(struct device *dev);
-    13	void mtk_ethdr_config(struct device *dev, unsigned int w,
-    14			      unsigned int h, unsigned int vrefresh,
-    15			      unsigned int bpc, struct cmdq_pkt *cmdq_pkt);
-  > 16	const u32 mtk_ethdr_get_blend_modes(struct device *dev);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
