@@ -1,264 +1,125 @@
-Return-Path: <linux-kernel+bounces-342599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 621749890C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:23:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BEBB9890C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC30C1F214CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:23:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F3F281DCD
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B98B1E519;
-	Sat, 28 Sep 2024 17:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C6E1474D8;
+	Sat, 28 Sep 2024 17:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTFwQpOM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wnlmd2O4"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684101E531;
-	Sat, 28 Sep 2024 17:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C65713B294
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 17:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727544194; cv=none; b=YZu8t1cAA1vuRvvke1aPwRSof3CzZXK0u3ZXlh+Y88wINjywOgbwzIIPfJqOQ7eRaA8wQYj1ymk1eTQjlYDx8NxgZ4sB6GckVfR/9W4XeQTG0s3dOq+vVhs2juNZWwVfmSp+4vCA9jMME5YsDSwvkigxhThK5+YiaaBI9AM+bdI=
+	t=1727544253; cv=none; b=s8hVSTJt1rhHmy5WW5MxxlvYOCtL+q+b59jp8pzkNc3Sezl4yIqC+K0X4Csf/wTOz9cN+rj22LJ7rWWzRM3GVhAjSeVSFuoCMxKx2xA8vmDpMVviuV1MM3dygQh9fuyF9ucWol6rbTaGM59Pw/6FcHAxqHBmvd7KYb88mkiNm8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727544194; c=relaxed/simple;
-	bh=wd/Emuxjg9/zfO5SPUVqf/dFDYAu1S36dkWeltTNXUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cmMdd/8Mdp6UycSpESk2XGgBCaV6azYI2tSVhQRR4HZEP3bwMt0wyd4/IqGVG4zhKhVeXN3x/FPSGz7AZhBU1/FVEiiHSvgq4d04eF9HJdTpNxFL5pmH3hylQI7FZdt8fKCefkc5lTdz/iNIgPMine4mFplGf8zQWfuO3kYr3/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sTFwQpOM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7667C4CEC3;
-	Sat, 28 Sep 2024 17:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727544193;
-	bh=wd/Emuxjg9/zfO5SPUVqf/dFDYAu1S36dkWeltTNXUM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sTFwQpOMyyOFFEYGSu6JfEqLrn9WOtqSDuuiEyYE1LGC03I9qVhfH8jTMhdMG0Oex
-	 ZYYfcvaNT//8TIrgX7mzFSwzLwHFsaWdp2zgzd8DAVxmtvCDcZnhtMpDbiEgOeSVP9
-	 BRCBy34W6Vp9zbHG0qBJSD48+OezpiYt6iuNWPwHXvzljEuzPVDOK++aAI8LyL3TMV
-	 3OcsvwpXSCWnA0JUkdKD0UU33W33siXl42IHofSvmhQ+EOokmEqssbmGI3W/FyaKsG
-	 JgNNCEf4fvVZW3WJtx802yH2i07YpCrmVeeA6roelpmGJxGfTb+1DqfjIBNOW+EBJ/
-	 SOfaPnym7puog==
-Date: Sat, 28 Sep 2024 18:23:02 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Antoniu Miclaus 
- <antoniu.miclaus@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, Olivier Moysan
- <olivier.moysan@foss.st.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <ukleinek@kernel.org>, Andy Shevchenko <andy@kernel.org>, Marcelo Schmitt
- <marcelo.schmitt@analog.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>, =?UTF-8?B?Sm/Do28=?= Paulo
- =?UTF-8?B?R29uw6dhbHZlcw==?= <joao.goncalves@toradex.com>, Marius Cristea
- <marius.cristea@microchip.com>, Sergiu Cuciurean
- <sergiu.cuciurean@analog.com>, Dragos Bogdan <dragos.bogdan@analog.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 1/7] iio: backend: add API for interface get
-Message-ID: <20240928182302.767953f1@jic23-huawei>
-In-Reply-To: <83cf3c3eb1cc5fcc06ce72cab14cc0da3bd817b6.camel@gmail.com>
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
-	<20240923101206.3753-2-antoniu.miclaus@analog.com>
-	<CAMknhBHmtpnX-nXxReF-rUW1ks1=iw3m_BmiRUTkf5XckPsvPw@mail.gmail.com>
-	<83cf3c3eb1cc5fcc06ce72cab14cc0da3bd817b6.camel@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727544253; c=relaxed/simple;
+	bh=qlD4hAYezzRfMJSVTKMvcaprQkVTpNx1pCXkIvcQKXo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TVfQFtYNJtMU/pQP4VY/QvYo9SgXv3IkqSatOxBOzQ1z/R8nzVgCwh1EelRA4ir9+BncxMPBVbQ/9vTbEAO1sC5MmigbuiVuvcCnn8mJ/4vtiPzEAdD1r2BhfvW4+ybsiGAAo00QJ9LHehXJWIoItPiZhoXuQkVwzHdJxltK2YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Wnlmd2O4; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cb2824ddc2so24307616d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 10:24:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727544251; x=1728149051; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YFbHhEntad0YRkHRniEw4Op6jqg3FVPKb/3C0+dPTjk=;
+        b=Wnlmd2O42mQ6XykMcxjd12wCbj04PPfCi4cV2UyHRpEYRSsdjhXiiavgqnuksrSpKz
+         5ElcO6SufmNFAyBS7KHGN96boryPZHNTMf6h7RRt174uAOS68RuZLvDgrSSKB9dwsoWr
+         2T/M/mX9lL1wydvUDYNf4XeF9t8Bp6NSRy81U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727544251; x=1728149051;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YFbHhEntad0YRkHRniEw4Op6jqg3FVPKb/3C0+dPTjk=;
+        b=YicI0bFWHkzAZ/gWqWar0OCXurmIVeEhgSNohXFCji0q/tkHoAD3oGqFcxC3OpQ4Tu
+         Y7SN2lmaUe+5jY5xDQ3aR699srU1JfrMPVml9KXcx5PwPwcJG2UTTlT/G6Y5S69qzUSo
+         2k+Z2XV6VZKz/v3ZQa5v5T5fwhKpvLDz/WGdGS2Be7zUqkU9DWdXM2Tcf11anFi/uFQZ
+         LGjcjdQGKLqK4cLTolNkxitrPBKv4wFYkEwqTJ/CjQ3Ib8mXpy0yDWJFwMkJ1d4COerH
+         7Ms5ulVXomCATSjc4Tp7CcJunOFU1/lePUiAde6b1dtbJFI+MVB96g+fBhloDUmLI+x2
+         LEAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMTyHPpy/QeqIuba3Apns8gWqxbfwKzt18HMFyKMIiXSKrFZ+Ng74ml5XovU4xhTOlpmtJYCh/FRtWeGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEnC2JJUCA8JGpd9IJqdiDVprq6bxOMhVCSGS97DmpRDcahipL
+	bwSc0CMDxz1M520jEhxMN7dS07P8mbwg/Sc8pxq51O6ZTegJK6lcVjAStzEHoQ==
+X-Google-Smtp-Source: AGHT+IH5Q56DnLabPE84rAsJDRreZzkbe2cLbv9f5se3Te8mZWhOiHBZCEcJotjViuL7j8ic39Ib3g==
+X-Received: by 2002:ad4:4d03:0:b0:6cb:3da9:b8ac with SMTP id 6a1803df08f44-6cb3da9bbd0mr78224976d6.3.1727544251157;
+        Sat, 28 Sep 2024 10:24:11 -0700 (PDT)
+Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b68311dsm21437756d6.122.2024.09.28.10.24.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Sep 2024 10:24:09 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v3 0/3] media: static-analyzers: Fix 6.12-rc1 cocci
+ warnings
+Date: Sat, 28 Sep 2024 17:23:57 +0000
+Message-Id: <20240928-cocci-6-12-v3-0-53fc5ed20be0@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK07+GYC/3WMyw6CMBAAf4X07Bq2lEc9+R/GQ9lW2APUtNpoC
+ P9u4Wj0OJPMLCK6wC6KU7GI4BJH9nOG6lAIGs08OGCbWchSqlLLFsgTMTSAEhTVLfbUOW2tyME
+ 9uBu/9tnlmnnk+PDhvb8TbvbnJiGUYCrsrHKNQW3PNAY/8XM6+jCI7ZTk/1rmGqkxVleoa91/1
+ eu6fgAO4B8b5QAAAA==
+To: Benoit Parrot <bparrot@ti.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>, 
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-staging@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-On Thu, 26 Sep 2024 12:52:39 +0200
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+This patchset introduces fixes for all the new warnings introduced in
+Linux 6.12-rc1
 
-> On Thu, 2024-09-26 at 10:40 +0200, David Lechner wrote:
-> > On Mon, Sep 23, 2024 at 12:15=E2=80=AFPM Antoniu Miclaus
-> > <antoniu.miclaus@analog.com> wrote: =20
-> > >=20
-> > > Add backend support for obtaining the interface type used.
-> > >=20
-> > > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> > > ---
-> > > =C2=A0drivers/iio/industrialio-backend.c | 24 ++++++++++++++++++++++++
-> > > =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 10 ++++++++++
-> > > =C2=A02 files changed, 34 insertions(+)
-> > >=20
-> > > diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industr=
-ialio-
-> > > backend.c
-> > > index efe05be284b6..53ab6bc86a50 100644
-> > > --- a/drivers/iio/industrialio-backend.c
-> > > +++ b/drivers/iio/industrialio-backend.c
-> > > @@ -449,6 +449,30 @@ ssize_t iio_backend_ext_info_set(struct iio_dev =
-*indio_dev,
-> > > uintptr_t private,
-> > > =C2=A0}
-> > > =C2=A0EXPORT_SYMBOL_NS_GPL(iio_backend_ext_info_set, IIO_BACKEND);
-> > >=20
-> > > +/**
-> > > + * iio_backend_interface_type_get - get the interace type used.
-> > > + * @back: Backend device
-> > > + * @type: Interface type
-> > > + *
-> > > + * RETURNS:
-> > > + * 0 on success, negative error number on failure.
-> > > + */
-> > > +int iio_backend_interface_type_get(struct iio_backend *back,
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_=
-interface_type *type)
-> > > +{
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D iio_backend_op_call(bac=
-k, interface_type_get, type);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return ret;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (*type > IIO_BACKEND_INTERFA=
-CE_CMOS)
-Put a COUNT entry or similar on the end of the enum so this doesn't need
-updating for more types.
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v3: Thanks Andy and Hans
+- Fix patch description
+- Fix build error :S
+- Link to v2: https://lore.kernel.org/r/20240927-cocci-6-12-v2-0-1c6ad931959b@chromium.org
 
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return -EINVAL;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
-> > > +}
-> > > +EXPORT_SYMBOL_NS_GPL(iio_backend_interface_type_get, IIO_BACKEND);
-> > > +
-> > > =C2=A0/**
-> > > =C2=A0 * iio_backend_extend_chan_spec - Extend an IIO channel
-> > > =C2=A0 * @indio_dev: IIO device
-> > > diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
-> > > index 8099759d7242..ba8ad30ac9ba 100644
-> > > --- a/include/linux/iio/backend.h
-> > > +++ b/include/linux/iio/backend.h
-> > > @@ -63,6 +63,11 @@ enum iio_backend_sample_trigger {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_BACKEND_SAMPLE_TRIGGER=
-_MAX
-> > > =C2=A0};
-> > >=20
-> > > +enum iio_backend_interface_type {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_BACKEND_INTERFACE_LVDS,
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_BACKEND_INTERFACE_CMOS
+Changes in v2: Thanks Andy and Hans
+- Replace max with if
+- Fix style in subject
+- Link to v1: https://lore.kernel.org/r/20240927-cocci-6-12-v1-0-a318d4e6a19d@chromium.org
 
-trailing comma.
+---
+Ricardo Ribalda (3):
+      media: ti: cal: Use str_up_down()
+      staging: media: ipu3: Use str_down_up()
+      media: atomisp: Replace ternary operator with if
 
-This is going to get bigger!
+ drivers/media/platform/ti/cal/cal-camerarx.c    | 2 +-
+ drivers/staging/media/atomisp/pci/sh_css_frac.h | 6 ++++--
+ drivers/staging/media/ipu3/ipu3-css.c           | 2 +-
+ 3 files changed, 6 insertions(+), 4 deletions(-)
+---
+base-commit: 075dbe9f6e3c21596c5245826a4ee1f1c1676eb8
+change-id: 20240927-cocci-6-12-4c571bc8e9dd
 
-> > > +};
-> > > +
-> > > =C2=A0/**
-> > > =C2=A0 * struct iio_backend_ops - operations structure for an iio_bac=
-kend
-> > > =C2=A0 * @enable: Enable backend.
-> > > @@ -81,6 +86,7 @@ enum iio_backend_sample_trigger {
-> > > =C2=A0 * @extend_chan_spec: Extend an IIO channel.
-> > > =C2=A0 * @ext_info_set: Extended info setter.
-> > > =C2=A0 * @ext_info_get: Extended info getter.
-> > > + * @interface_type_get: Interface type.
-> > > =C2=A0 **/
-> > > =C2=A0struct iio_backend_ops {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int (*enable)(struct iio_b=
-ackend *back);
-> > > @@ -113,6 +119,8 @@ struct iio_backend_ops {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 const char *buf, size_t len);
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int (*ext_info_get)(struct=
- iio_backend *back, uintptr_t private,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 const struct iio_chan_spec *chan, char *buf);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int (*interface_type_get)(struc=
-t iio_backend *back,
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_interf=
-ace_type *type);
-> > > =C2=A0};
-> > >=20
-> > > =C2=A0int iio_backend_chan_enable(struct iio_backend *back, unsigned =
-int chan);
-> > > @@ -142,6 +150,8 @@ ssize_t iio_backend_ext_info_set(struct iio_dev *=
-indio_dev,
-> > > uintptr_t private,
-> > > =C2=A0ssize_t iio_backend_ext_info_get(struct iio_dev *indio_dev, uin=
-tptr_t private,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct iio_chan_spec=
- *chan, char *buf);
-> > >=20
-> > > +int iio_backend_interface_type_get(struct iio_backend *back,
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_=
-interface_type *type);
-> > > =C2=A0int iio_backend_extend_chan_spec(struct iio_dev *indio_dev,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_backend *back,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_chan_spec *chan=
-);
-> > > --
-> > > 2.46.0
-> > >  =20
-> >=20
-> > This seems very specific to the AD485x chips and the AXI ADC backend.
-> > Since it is describing how the chip is wired to the AXI DAC IP block,
-> > I would be tempted to use the devicetree for this info instead of
-> > adding a new backend function. =20
->=20
-> Not sure If I'm following your point but I think this is the typical case=
- where the
-> chip (being it a DAC or ADC) supports both CMOS and LVDS interfaces. Natu=
-rally you
-> only use one on your system and this is a synthesis parameter on the FPGA=
- IP core.
-> Therefore, it makes sense for the frontend to have way to ask for this in=
-formation to
-> the backend.
->=20
-> That said, we could also have a DT parameter but, ideally, we would then =
-need a way
-> to match the parameter with the backend otherwise we could have DT statin=
-g LVDS and
-> the backend built with CMOS.
-
-That would be a DTS bug that you should fix :)  For this to make sense you =
-are
-relying on an FPGA that also has pins flexible enough to support LVDS and C=
-MOS
-so it's only a firmware thing. Been a while since I last messed with FPGAs,
-but that seems unlikely to be true in general.
-
-So far I'm with David on this, feels like something we shouldn't be discove=
-ring
-at runtime though maybe that's a convenience that we do want to enable.
-
->=20
-> Other thing that we could think about is a new devm_iio_backend_get_with_=
-info() where
-> the frontend would get some constant and static info about the backend (t=
-he interface
-> type would an ideal match for something like this). But I feel it's still=
- early days
-> for something like this :)
->=20
-> - Nuno S=C3=A1
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
 
 
