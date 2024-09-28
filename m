@@ -1,77 +1,59 @@
-Return-Path: <linux-kernel+bounces-342658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF70989155
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:17:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD5A298915A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 638E2285C0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:17:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B7401F22BE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE481779BD;
-	Sat, 28 Sep 2024 20:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2ACA169AE6;
+	Sat, 28 Sep 2024 20:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HN6l/kql"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMwPDKcq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B4923774;
-	Sat, 28 Sep 2024 20:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26A5800;
+	Sat, 28 Sep 2024 20:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727554640; cv=none; b=rD9oQZlM1czX9pW+L9DSjhkIEG77TnaxdHKayjfqdxEOeKkcUQua6O6jz3v9eA9VmwmaaNQKTzYHjaGG2FKQpiTUcKiYrJ9dGyBBOFDV+fWCzJcAowGZlRFh9yYOuc1mh1AhdAt0pxM6p3kXXq49nSo4lUv+CUy4U/i/08zdeJ4=
+	t=1727555653; cv=none; b=lIIHTqPKxYeBeXY3ICCGL5iv2xoDn1Od6DYiBwZeoZXbcyFZuhUsTnrwJlmc0WuZTZ+Jee/hXk4wdODDxvgkq7oICNvzjSBCfLWp7R3Icr/C2UyjQutOQv2xyH1OVQ0mYv/SbWRtPzAeERIfFLqaPnutUBsehuut1hkijqh2C3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727554640; c=relaxed/simple;
-	bh=GxLnxv0XYQXvlin9TcvZ4RiHtAZjSqilKKtgN9ttjaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=bWpU6JlkPjs+vIpWZ+oLa20d2VyokvAP86K7sShakOYkoYvbYslFNPNFiQ/SHPh3j09ieqKNh1Fez4x3LKuk5J30gkudSrpWqil1UumFqHtax/wi+9cG39CxU/RBSB0+ByPyInUKs4bIVKD7BaswLk21aBELEVkbQbc5OmE5lb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HN6l/kql; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85778C4CEC3;
-	Sat, 28 Sep 2024 20:17:19 +0000 (UTC)
+	s=arc-20240116; t=1727555653; c=relaxed/simple;
+	bh=T8UwSWJRZ6br6AGBbJFruPF3C6xfU0XMPpxn4ylzjN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTle1KQOgmfqpfJ8tpoPpuwVyRchQIwE7LL9nS615Z0IiBjrkiMp/CNjOe+CK0EAZ5eSxzNiI65mFCVLwTq2QoeezzQaZcpc4LMFSkMr/ICnv0GFxF4MhS/jPWftQfOgdwLgutfh1G3LYsWBL428NboEUdbO6yff3McpHoLWH/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMwPDKcq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49267C4CEC3;
+	Sat, 28 Sep 2024 20:34:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727554639;
-	bh=GxLnxv0XYQXvlin9TcvZ4RiHtAZjSqilKKtgN9ttjaY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=HN6l/kqlpNLRnX4Tj3J6WmkbDtid6/YNBPS/tnLJtWZVxlTextqj2bwj8ktQuWByR
-	 TYBf6EnmSnIf1nXJODJHVTzzqZ4s8nq3czWZ9esZozC1LrmBHzsBdYHxjGulC3Gwmi
-	 KgNMC1fUuAf+wWNHdjhMht8FJNaYv/bV5HpQ0RlrS+0ZsPoFrDolCPWENRUPmxF93k
-	 G8pecxcSctXbSKJ67xAHr1Zs8GuZg6LHhZrrxt24NTJJyXPmo4SdafNQ8WkjSEsVW+
-	 zLblasZLivej8yvdAgRi1/mG7+RPJvxgwkp6csgTsA0646WhXcvKTUdQ/MaGnV0W7z
-	 H1TjnpPJ3ff5A==
-Date: Sat, 28 Sep 2024 15:17:17 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>, Lizhi Hou <lizhi.hou@amd.com>
-Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
- parsed from DT
-Message-ID: <20240928201717.GA99402@bhelgaas>
+	s=k20201202; t=1727555653;
+	bh=T8UwSWJRZ6br6AGBbJFruPF3C6xfU0XMPpxn4ylzjN8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nMwPDKcqgST/Kqxuaa54fEoULxhYPE6wupQfs2MuYhPfW1JG41524tan0jHxNKt7L
+	 WFs3zrvmNz99kvgqafEfKpEUTfeWmkTIkPsFKHA9WgnSLOAIFusnfaUshUjz+gRux1
+	 CJSaYWNMEPsqbK1gK8lWpaNtXbnNbXAhUcXhquSS7Bgb46gqJBrkwozYQ+JouIguEu
+	 +BObX84BgjZgcDih8ydMPQmH7cBKKVDi+WHUzsiks1yUNkYCBj/XMGwKtOGc2hE+pz
+	 Ngy0GixpdiF7v86OVt3wq2oY/NVmsunILVH/N0NQoxxz/YMHFwFi4Dx1xnROATeywV
+	 ZpAc7Mfh247Qw==
+Date: Sat, 28 Sep 2024 13:34:12 -0700
+From: Kees Cook <kees@kernel.org>
+To: Jan Hendrik Farr <kernel@jfarr.cc>
+Cc: Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
+	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ardb@kernel.org, morbo@google.com
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <202409281331.1F04259@keescook>
+References: <ZvV6X5FPBBW7CO1f@archlinux>
+ <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+ <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+ <Zvg-mDsvvOueGpzs@archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,182 +62,269 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZvZVPA6ov5XgScpz@apocalypse>
+In-Reply-To: <Zvg-mDsvvOueGpzs@archlinux>
 
-On Fri, Sep 27, 2024 at 08:48:28AM +0200, Andrea della Porta wrote:
-> On 15:16 Thu 05 Sep     , Bjorn Helgaas wrote:
-> > On Thu, Sep 05, 2024 at 06:43:35PM +0200, Andrea della Porta wrote:
-> > > On 17:26 Tue 03 Sep     , Bjorn Helgaas wrote:
-> > > > On Mon, Aug 26, 2024 at 09:51:02PM +0200, Andrea della Porta wrote:
-> > > > > On 10:24 Wed 21 Aug     , Bjorn Helgaas wrote:
-> > > > > > On Tue, Aug 20, 2024 at 04:36:05PM +0200, Andrea della Porta wrote:
-> > > > > > > The of_pci_set_address() function parses devicetree PCI range
-> > > > > > > specifier assuming the address is 'sanitized' at the origin,
-> > > > > > > i.e. without checking whether the incoming address is 32 or 64
-> > > > > > > bit has specified in the flags.  In this way an address with no
-> > > > > > > OF_PCI_ADDR_SPACE_MEM64 set in the flags could leak through and
-> > > > > > > the upper 32 bits of the address will be set too, and this
-> > > > > > > violates the PCI specs stating that in 32 bit address the upper
-> > > > > > > bit should be zero.
-> > > > 
-> > > > > > I don't understand this code, so I'm probably missing something.  It
-> > > > > > looks like the interesting path here is:
-> > > > > > 
-> > > > > >   of_pci_prop_ranges
-> > > > > >     res = &pdev->resource[...];
-> > > > > >     for (j = 0; j < num; j++) {
-> > > > > >       val64 = res[j].start;
-> > > > > >       of_pci_set_address(..., val64, 0, flags, false);
-> > > > > >  +      if (OF_PCI_ADDR_SPACE_MEM64)
-> > > > > >  +        prop[1] = upper_32_bits(val64);
-> > > > > >  +      else
-> > > > > >  +        prop[1] = 0;
-> > > ...
-> > > > However, the CPU physical address space and the PCI bus address are
-> > > > not the same.  Generic code paths should account for that different by
-> > > > applying an offset (the offset will be zero on many platforms where
-> > > > CPU and PCI bus addresses *look* the same).
-> > > > 
-> > > > So a generic code path like of_pci_prop_ranges() that basically copies
-> > > > a CPU physical address to a PCI bus address looks broken to me.
+On Sat, Sep 28, 2024 at 07:36:24PM +0200, Jan Hendrik Farr wrote:
+> On 26 18:09:57, Thorsten Blum wrote:
+> > On 26. Sep 2024, at 17:28, Thorsten Blum <thorsten.blum@toblux.com> wrote:
+> > > On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> > >> 
+> > >> Hi Kent,
+> > >> 
+> > >> found a strange regression in the patch set for 6.12.
+> > >> 
+> > >> First bad commit is: 86e92eeeb23741a072fe7532db663250ff2e726a
+> > >> bcachefs: Annotate struct bch_xattr with __counted_by()
+> > >> 
+> > >> When compiling with clang 18.1.8 (also with latest llvm main branch) and
+> > >> CONFIG_FORTIFY_SOURCE=y my rootfs does not mount because there is an erroneous
+> > >> detection of a buffer overflow.
+> > >> 
+> > >> The __counted_by attribute is supposed to be supported starting with gcc 15,
+> > >> not sure if it is implemented yet so I haven't tested with gcc trunk yet.
+> > >> 
+> > >> Here's the relevant section of dmesg:
+> > >> 
+> > >> [    6.248736] bcachefs (nvme1n1p2): starting version 1.12: rebalance_work_acct_fix
+> > >> [    6.248744] bcachefs (nvme1n1p2): recovering from clean shutdown, journal seq 1305969
+> > >> [    6.252374] ------------[ cut here ]------------
+> > >> [    6.252375] memchr: detected buffer overflow: 12 byte read of buffer size 0
+> > >> [    6.252379] WARNING: CPU: 18 PID: 511 at lib/string_helpers.c:1033 __fortify_report+0x45/0x50
+> > >> [    6.252383] Modules linked in: bcachefs lz4hc_compress lz4_compress hid_generic usbhid btrfs crct10dif_pclmul libcrc32c crc32_pclmul crc32c_generic polyval_clmulni crc32c_intel polyval_generic raid6_pq ghash_clmulni_intel xor sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni_intel gf128mul nvme crypto_simd ccp xhci_pci cryptd sp5100_tco xhci_pci_renesas nvme_core nvme_auth video wmi ip6_tables ip_tables x_tables i2c_dev
+> > >> [    6.252404] CPU: 18 UID: 0 PID: 511 Comm: mount Not tainted 6.11.0-10065-g6fa6588e5964 #98 d8e0beb515d91b387aa60970de7203f35ddd182c
+> > >> [    6.252406] Hardware name: Micro-Star International Co., Ltd. MS-7D78/PRO B650-P WIFI (MS-7D78), BIOS 1.C0 02/06/2024
+> > >> [    6.252407] RIP: 0010:__fortify_report+0x45/0x50
+> > >> [    6.252409] Code: 48 8b 34 c5 30 92 21 87 40 f6 c7 01 48 c7 c0 75 1b 0a 87 48 c7 c1 e1 93 07 87 48 0f 44 c8 48 c7 c7 ef 03 10 87 e8 0b c2 9b ff <0f> 0b e9 cf 5d 9e 00 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90
+> > >> [    6.252410] RSP: 0018:ffffbb3d03aff350 EFLAGS: 00010246
+> > >> [    6.252412] RAX: 4ce590fb7c372800 RBX: ffff98d559a400e8 RCX: 0000000000000027
+> > >> [    6.252413] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffff98e43db21a08
+> > >> [    6.252414] RBP: ffff98d559a400d0 R08: 0000000000001fff R09: ffff98e47ddcd000
+> > >> [    6.252415] R10: 0000000000005ffd R11: 0000000000000004 R12: ffff98d559a40000
+> > >> [    6.252416] R13: ffff98d54abf1320 R14: ffffbb3d03aff430 R15: 0000000000000000
+> > >> [    6.252417] FS:  00007efc82117800(0000) GS:ffff98e43db00000(0000) knlGS:0000000000000000
+> > >> [    6.252418] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > >> [    6.252419] CR2: 000055d96658ea80 CR3: 000000010a12c000 CR4: 0000000000f50ef0
+> > >> [    6.252420] PKRU: 55555554
+> > >> [    6.252421] Call Trace:
+> > >> [    6.252423]  <TASK>
+> > >> [    6.252425]  ? __warn+0xd5/0x1d0
+> > >> [    6.252427]  ? __fortify_report+0x45/0x50
+> > >> [    6.252429]  ? report_bug+0x144/0x1f0
+> > >> [    6.252431]  ? __fortify_report+0x45/0x50
+> > >> [    6.252433]  ? handle_bug+0x6a/0x90
+> > >> [    6.252435]  ? exc_invalid_op+0x1a/0x50
+> > >> [    6.252436]  ? asm_exc_invalid_op+0x1a/0x20
+> > >> [    6.252440]  ? __fortify_report+0x45/0x50
+> > >> [    6.252441]  __fortify_panic+0x9/0x10
+> > >> [    6.252443]  bch2_xattr_validate+0x13b/0x140 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> > >> [    6.252463]  bch2_btree_node_read_done+0x125a/0x17a0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> > >> [    6.252482]  btree_node_read_work+0x202/0x4a0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> > >> [    6.252499]  bch2_btree_node_read+0xa8d/0xb20 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> > >> [    6.252514]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > >> [    6.252515]  ? pcpu_alloc_noprof+0x741/0xb50
+> > >> [    6.252517]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > >> [    6.252519]  ? time_stats_update_one+0x75/0x1f0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> > >> 
+> > >> ...
+> > >> 
+> > >> 
+> > >> The memchr in question is at:
+> > >> https://github.com/torvalds/linux/blob/11a299a7933e03c83818b431e6a1c53ad387423d/fs/bcachefs/xattr.c#L99
+> > >> 
+> > >> There is not actually a buffer overflow here, I checked with gdb that
+> > >> xattr.v->x_name does actually contain a string of the correct length and
+> > >> xattr.v->x_name_len contains the correct length and should be used to determine
+> > >> the length when memchr uses __struct_size for bounds-checking due to the
+> > >> __counted_by annotation.
+> > >> 
+> > >> I'm at the point where I think this is probably a bug in clang. I have a patch
+> > >> that does fix (more like bandaid) the problem and adds some print statements:
+> > >> 
+> > >> --
+> > >> diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
+> > >> index 56c8d3fe55a4..8d7e749b7dda 100644
+> > >> --- a/fs/bcachefs/xattr.c
+> > >> +++ b/fs/bcachefs/xattr.c @@ -74,6 +74,7 @@ int bch2_xattr_validate(struct bch_fs *c, struct bkey_s_c k,
+> > >>      enum bch_validate_flags flags)
+> > >> {
+> > >> struct bkey_s_c_xattr xattr = bkey_s_c_to_xattr(k);
+> > >> + const struct bch_xattr *v = (void *)k.v;
+> > >> unsigned val_u64s = xattr_val_u64s(xattr.v->x_name_len,
+> > >>  le16_to_cpu(xattr.v->x_val_len));
+> > >> int ret = 0;
+> > >> @@ -94,9 +95,12 @@ int bch2_xattr_validate(struct bch_fs *c, struct bkey_s_c k,
+> > >> 
+> > >> bkey_fsck_err_on(!bch2_xattr_type_to_handler(xattr.v->x_type),
+> > >> c, xattr_invalid_type,
+> > >> - "invalid type (%u)", xattr.v->x_type);
+> > >> + "invalid type (%u)", v->x_type);
+> > >> 
+> > >> - bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_name_len),
+> > >> + pr_info("x_name_len: %d", v->x_name_len);
+> > >> + pr_info("__struct_size(x_name): %ld", __struct_size(v->x_name));
+> > >> + pr_info("__struct_size(x_name): %ld", __struct_size(xattr.v->x_name));
+> > >> + bkey_fsck_err_on(memchr(v->x_name, '\0', v->x_name_len),
+> > >> c, xattr_name_invalid_chars,
+> > >> "xattr name has invalid characters");
+> > >> fsck_err:
+> > >> --
+> > >> 
+> > >> 
+> > >> Making memchr access via a pointer created with
+> > >> const struct bch_xattr *v = (void *)k.v fixes it. From the print statements I
+> > >> can see that __struct_size(xattr.v->x_name) incorrectly returns 0, while
+> > >> __struct_size(v->x_name) correctly returns 10 in this case (the value of
+> > >> x_name_len).
+> > >> 
+> > >> The generated assembly illustrates what is going wrong. Below is an excerpt
+> > >> of the assembly clang generated for the bch2_xattr_validate function:
+> > >> 
+> > >> mov r13d, ecx
+> > >> mov r15, rdi
+> > >> mov r14, rsi
+> > >> mov rdi, offset .L.str.3
+> > >> mov rsi, offset .L__func__.bch2_xattr_validate
+> > >> mov rbx, rdx
+> > >> mov edx, eax
+> > >> call _printk
+> > >> movzx edx, byte ptr [rbx + 1]
+> > >> mov rdi, offset .L.str.4
+> > >> mov rsi, offset .L__func__.bch2_xattr_validate
+> > >> call _printk
+> > >> movzx edx, bh
+> > >> mov rdi, offset .L.str.4
+> > >> mov rsi, offset .L__func__.bch2_xattr_validate
+> > >> call _printk
+> > >> lea rdi, [rbx + 4]
+> > >> mov r12, rbx
+> > >> movzx edx, byte ptr [rbx + 1]
+> > >> xor ebx, ebx
+> > >> xor esi, esi
+> > >> call memchr
+> > >> 
+> > >> At the start of this rdx contains k.v (and is moved into rbx). The three calls
+> > >> to printk are the ones you can see in my patch. You can see that for the
+> > >> print that uses __struct_size(v->x_name) the compiler correctly uses
+> > >> movzx edx, byte ptr [rbx + 1]
+> > >> to load x_name_len into edx.
+> > >> 
+> > >> For the printk call that uses __struct_size(xattr.v->x_name) however the
+> > >> compiler uses
+> > >> movzx edx, bh
+> > >> So it will print the high 8 bits of the lower 16 bits (second least
+> > >> significant byte) of the memory address of xattr.v->x_type. This is obviously
+> > >> completely wrong.
+> > >> 
+> > >> It is then doing the correct call of memchr because this is using my patch.
+> > >> Without my patch it would be doing the same thing for the call to memchr where
+> > >> it uses the second least significant byte of the memory address of x_type as the
+> > >> length used for the bounds-check.
+> > >> 
+> > >> 
+> > >> 
+> > >> The LLVM IR also shows the same problem:
+> > >> 
+> > >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
+> > >> [...]
+> > >> %51 = ptrtoint ptr %2 to i64
+> > >> %52 = lshr i64 %51, 8
+> > >> %53 = and i64 %52, 255
+> > >> 
+> > >> This is the IR for the incorrect behavior. It simply converts the pointer to an
+> > >> int, shifts right by 8 bits, then and with 0xFF. If it did a load (to i64)
+> > >> instead of ptrtoint this would actually work, as the second least significant
+> > >> bit of an i64 loaded from that memory address does contain the value of
+> > >> x_name_len. It's as if clang forgot to dereference a pointer here.
+> > >> 
+> > >> Correct IR does this (for the other printk invocation):
+> > >> 
+> > >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
+> > >> [...]
+> > >> %4 = getelementptr inbounds %struct.bch_xattr, ptr %1, i64 0, i32 1
+> > >> %5 = load i8, ptr %4, align 8
+> > >> [...]
+> > >> %48 = load i8, ptr %5, align 4
+> > >> %49 = zext i8 %48 to i64
+> > >> 
+> > >> Best Regards
+> > >> Jan
 > > > 
-> > > Hmmm, I'd say that a translation from one bus type to the other is
-> > > going on nonetheless, and this is done in the current upstream function
-> > > as well. This patch of course does not add the translation (which is
-> > > already in place), just to do it avoiding generating inconsistent address.
+> > > I suspect it's the same Clang __bdos() "bug" as in [1] and [2].
+> > > 
+> > > [1] https://lore.kernel.org/linux-kernel/3D0816D1-0807-4D37-8D5F-3C55CA910FAA@linux.dev/
+> > > [2] https://lore.kernel.org/all/20240913164630.GA4091534@thelio-3990X/
 > > 
-> > I think I was looking at this backwards.  I assumed we were *parsing"
-> > a "ranges" property, but I think in fact we're *building* a "ranges"
-> > property to describe an existing PCI device (either a PCI-to-PCI
-> > bridge or an endpoint).  For such devices there is no address
-> > translation.
+> > Could you try this and see if it resolves the problem?
 > > 
-> > Any address translation would only occur at a PCI host bridge that has
-> > CPU address space on the upstream side and PCI address space on the
-> > downstream side.
-> > 
-> > Since (IIUC), we're building "ranges" for a device in the interior of
-> > a PCI hierarchy where address translation doesn't happen, I think both
-> > the parent and child addresses in "ranges" should be in the PCI
-> > address space.
-> > 
-> > But right now, I think they're both in the CPU address space, and we
-> > basically do this:
-> > 
-> >   of_pci_prop_ranges(struct pci_dev *pdev, ...)
-> >     res = &pdev->resource[...];
-> >     for (j = 0; j < num; j++) {   # iterate through BARs or windows
-> >       val64 = res[j].start;       # CPU physical address
-> >       # <convert to PCI address space>
-> >       of_pci_set_address(..., rp[i].parent_addr, val64, ...)
-> >         rp[i].parent_addr = val64
-> >       if (pci_is_bridge(pdev))
-> >         memcpy(rp[i].child_addr, rp[i].parent_addr)
-> >       else
-> >         rp[i].child_addr[0] = j   # child addr unset/unused
-> > 
-> > Here "res" is a PCI BAR or bridge window, and it contains CPU physical
-> > addresses, so "val64" is a CPU physical address.  It looks to me like
-> > we should convert to a PCI bus address at the point noted above, based
-> > on any translation described by the PCI host bridge.  That *should*
-> > naturally result in a 32-bit value if OF_PCI_ADDR_SPACE_MEM64 is not
-> > set.
+> > diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> > index 1a957ea2f4fe..b09759f31789 100644
+> > --- a/include/linux/compiler_types.h
+> > +++ b/include/linux/compiler_types.h
+> > @@ -413,7 +413,7 @@ struct ftrace_likely_data {
+> >   * When the size of an allocated object is needed, use the best available
+> >   * mechanism to find it. (For cases where sizeof() cannot be used.)
+> >   */
+> > -#if __has_builtin(__builtin_dynamic_object_size)
+> > +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
+> >  #define __struct_size(p)	__builtin_dynamic_object_size(p, 0)
+> >  #define __member_size(p)	__builtin_dynamic_object_size(p, 1)
+> >  #else
 > 
-> That's exactly the point, except that right now a 64 bit address would
-> "unnaturally" pass through even if OF_PCI_ADDR_SPACE_MEM64 is not set.
-> Hence the purpose of this patch.
+> 
+> Alright, figured out why this fix doesn't work. The function signature
+> of memchr is:
+> 
+> void *memchr(const void * const POS0 p, int c, __kernel_size_t size)
+> 
+> The POS0 is the culprit. It's defined as __pass_object_size(0), which
+> leads to the call to __builtin_object_size being upgraded to
+> __builtin_dynamic_object_size.
+> 
+> So to make this work the POS0 definition needs the same
+> !defined(__clang__) on it. There's also two more
+> __has_builtin(__builtin_dynamic_object_size) checks in
+> lib/fortify_kunit.c. But they have no impact.
+> 
+> Now the fix works:
+> 
+> 
+> --
+> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> index f14c275950b5..43ac0bca485d 100644
+> --- a/include/linux/compiler_types.h
+> +++ b/include/linux/compiler_types.h
+> @@ -413,7 +413,7 @@ struct ftrace_likely_data {
+>   * When the size of an allocated object is needed, use the best available
+>   * mechanism to find it. (For cases where sizeof() cannot be used.)
+>   */
+> -#if __has_builtin(__builtin_dynamic_object_size)
+> +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
+>  #define __struct_size(p)	__builtin_dynamic_object_size(p, 0)
+>  #define __member_size(p)	__builtin_dynamic_object_size(p, 1)
+>  #else
+> diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
+> index 0d99bf11d260..7235655d9b80 100644
+> --- a/include/linux/fortify-string.h
+> +++ b/include/linux/fortify-string.h
+> @@ -148,7 +148,7 @@ extern char *__underlying_strncpy(char *p, const char *q, __kernel_size_t size)
+>   * size, rather than struct size), but there remain some stragglers using
+>   * type 0 that will be converted in the future.
+>   */
+> -#if __has_builtin(__builtin_dynamic_object_size)
+> +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
+>  #define POS			__pass_dynamic_object_size(1)
+>  #define POS0			__pass_dynamic_object_size(0)
+>  #else
 
-From your earlier email
-(https://lore.kernel.org/r/Zszcps6bnCcdFa54@apocalypse):
+Sorry, I've been out of commission with covid. Globally disabling this
+macro for clang is not the right solution (way too big a hammer).
 
-> Without this patch the range translation chain is broken, like this:
+Until Bill has a fix, we can revert commit
+86e92eeeb23741a072fe7532db663250ff2e726a, as the problem is limited to
+certain situations where 'counted_by' is in use.
 
-> pcie@120000: <0x2000000 0x00 0x00    0x1f 0x00                0x00 0xfffffffc>;
-> ~~~ chain breaks here ~~~
-> pci@0      : <0x82000000 0x1f 0x00   0x82000000 0x1f 0x00     0x00 0x600000>;
-> dev@0,0    : <0x01 0x00 0x00         0x82010000 0x1f 0x00     0x00 0x400000>;
-> rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
+-Kees
 
-The cover letter said "RP1 is an MFD chipset that acts as a
-south-bridge PCIe endpoint .. the RP1 as an endpoint itself is
-discoverable via usual PCI enumeration".
-
-I assume pcie@120000 is the PCI host bridge and is already in the
-original DT describing the platform.  I assume pci@0 is a Root Port
-and dev@0,0 is the RP1 Endpoint, and the existing code already adds
-them as they are enumerated when pci_bus_add_device() calls
-of_pci_make_dev_node(), and I think this series adds the rp1@0
-description.
-
-And the "ranges" properties are built when of_pci_make_dev_node()
-eventually calls of_pci_prop_ranges().  With reference to sec 2.2.1.1
-of https://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
-and
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#ranges,
-I *think* your example says:
-
-pcie@120000 has:
-  child phys.hi	      0x02000000    n=0 p=0 t=0 ss=10b
-  child phys.mid,lo   0x00000000_00000000
-  parent phys.hi,lo   0x0000001f_00000000
-  length hi,lo        0x00000000_fffffffc
-
-which would make it a bridge where the child (PCI) address space is
-relocatable non-prefetchable 32-bit memory space at
-0x00000000-0xfffffffc, and the corresponding parent address space is
-0x1f_00000000-0x1f_fffffffc.  That means the host bridge applies an
-address translation of "child_addr = parent_addr - 0x1f_00000000".
-
-pci@0 has:
-  child phys.hi	      0x82000000    n=1 p=0 t=0 ss=10b
-  child phys.mid,lo   0x0000001f_00000000
-  parent phys.hi      0x82000000    n=1 p=0 t=0 ss=10b
-  parent phys.mid,lo  0x0000001f_00000000
-  length hi,lo        0x00000000_00600000
-
-which would make it a PCI-to-PCI bridge (I assume a PCIe Root Port),
-where the child (secondary bus) address space is the non-relocatable
-non-prefetchable 32-bit memory space 0x1f_00000000-0x1f_005fffff and
-the parent (primary bus) address space is also non-relocatable
-non-prefetchable 32-bit memory space at 0x1f_00000000-0x1f_005fffff.
-
-This looks wrong to me because the pci@0 parent address space
-(0x1f_00000000-0x1f_005fffff) should be inside the pcie@120000 child
-address space (0x00000000-0xfffffffc), but it's not.
-
-IIUC, this patch clears the upper 32 bits in the pci@0 parent address
-space.  That would make things work correctly in this case because
-that happens to be the exact translation of pcie@120000, so it results
-in pci@0 parent address space of 0x00000000-0x005fffff.
-
-But I don't think it works in general because there's no requirement
-that the host bridge address translation be that simple.  For example,
-if we have two host bridges, and we want each to have 2GB of 32-bit
-PCI address space starting at 0x0, it might look like this:
-
-  0x00000002_00000000 -> PCI 0x00000000 (subtract 0x00000002_00000000)
-  0x00000002_80000000 -> PCI 0x00000000 (subtract 0x00000002_80000000)
-
-In this case simply ignoring the high 32 bits of the CPU address isn't
-the correct translation for the second host bridge.  I think we should
-look at each host bridge's "ranges", find the difference between its
-parent and child addresses, and apply the same difference to
-everything below that bridge.
-
-> while with the patch applied the chain correctly become:
-
-> pcie@120000: <0x2000000 0x00 0x00    0x1f 0x00                0x00 0xfffffffc>;
-> pci@0      : <0x82000000 0x00 0x00   0x82000000 0x00 0x00     0x00 0x600000>;
-> dev@0,0    : <0x01 0x00 0x00         0x82010000 0x00 0x00     0x00 0x400000>;
-> rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
-
-> > > > Maybe my expectation of this being described in DT is mistaken.
-> > > 
-> > > Not sure what you mean here, the address being translated are coming from
-> > > DT, in fact they are described by "ranges" properties.
-> > 
-> > Right, for my own future reference since I couldn't find a generic
-> > description of "ranges" in Documentation/devicetree/:
-> > 
-> > [1] https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#ranges
+-- 
+Kees Cook
 
