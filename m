@@ -1,161 +1,364 @@
-Return-Path: <linux-kernel+bounces-342609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A81F9890E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:35:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B38C59890E1
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84B00281DAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:35:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4AB51C2136C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FD014C5BA;
-	Sat, 28 Sep 2024 17:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C35143880;
+	Sat, 28 Sep 2024 17:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJ4Msfby"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="FFTUc8tW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FFnNkRbP"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B391F4A1B;
-	Sat, 28 Sep 2024 17:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982A813E40F;
+	Sat, 28 Sep 2024 17:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727544935; cv=none; b=hVpk/FsRBtvLbqsLpEWeIRgMpjmihpuMB7JrMXfvl5xCw55eYmVF6vMY8hKwSNxn2ETWPkQMPXOaJJEP+RiNyoYDWz9yvfOsGpfY1Wu3uuG+gIZQieSf4MNjeo0nWspru32TwrUDEjye920wc51lZ+p7rL0Yg7cIieCI4PCi+sk=
+	t=1727544990; cv=none; b=rZwmDm6Djciecvn9rJu4xoEVntbeTJ4fexv5PJMnINeMpJx69e6VuuSv92t9Qer6fyS356rFPNBIPGdg+0YOWuPQtV+eWLxsTCqUPdRFbfrckUo6BxQFqahoisNndnsVxxXcLYmQ9/l/cp3aRn9SSq+0UmunyBwRMATcGOF4pxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727544935; c=relaxed/simple;
-	bh=bB2TppACa73qNvdpxzZBOI5mAq3cV8/IE4AHhZY4SiY=;
+	s=arc-20240116; t=1727544990; c=relaxed/simple;
+	bh=HXGhUK8FrKk0WuWa4qJqST0XST+En12lPnXxvx8pW74=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dDsElIhp0Vg6VnXhmMoQ9VHGPbfXJD2mzVpnU3+P92ETBkB70R6mJHOZIj0XhEOVzOY2sV87+aNeuKzolJWeLa/50nnVBISEsjZhcorEo3gAlucppiv6FWmmPH7l2swt9YynTtniXeEXy3Bow4TbglNE+nrC1+Kws2Y8/mxExlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJ4Msfby; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50CA8C4CEC3;
-	Sat, 28 Sep 2024 17:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727544935;
-	bh=bB2TppACa73qNvdpxzZBOI5mAq3cV8/IE4AHhZY4SiY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tJ4MsfbyKpA8Esh+QS3uAmaX1WGDmewgqfgYwVwy7C+UjMvu2+vUCvfK3vH3KMSR/
-	 ZNsVAKu9T1nJjVhLY7IsxlBe87yjC3ieL7BYmwiokaxCzLA6o5co5P32q4hEwvqE+N
-	 9aZr8yG+i38uIB6k0sU8RCPd80yhRw5X37G6jkQu+taG6EQP/oTL1QNlSzMl/XH/Mr
-	 awJ2kDI/4d8uMekYOWPzfOIlRmhqfv5LeMrrE1KxmL87cb614xDwcFMENyJFZ0ngXA
-	 aGR/AoQ2TP8GuFgSj1VSlATiM6nqScq/svAuS2jKKS+9h/AeE34k5FLpGq6rAwpq8f
-	 uIgIZQvGTAliw==
-Date: Sat, 28 Sep 2024 10:35:30 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Maksim Panchenko <max4bolt@gmail.com>, Rong Xu <xur@google.com>,
-	Han Shen <shenhan@google.com>,
-	Sriraman Tallam <tmsriram@google.com>,
-	David Li <davidxl@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	John Moon <john@jmoon.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Rafael Aquini <aquini@redhat.com>, Petr Pavlu <petr.pavlu@suse.com>,
-	Eric DeVolder <eric.devolder@oracle.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Benjamin Segall <bsegall@google.com>,
-	Breno Leitao <leitao@debian.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	Brian Gerst <brgerst@gmail.com>, Juergen Gross <jgross@suse.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Kees Cook <kees@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Xiao Wang <xiao.w.wang@intel.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org,
-	llvm@lists.linux.dev, Krzysztof Pszeniczny <kpszeniczny@google.com>,
-	Stephane Eranian <eranian@google.com>,
-	Maksim Panchenko <maks@meta.com>
-Subject: Re: [PATCH 6/6] Add Propeller configuration for kernel build.
-Message-ID: <20240928173530.GC430964@thelio-3990X>
-References: <20240728203001.2551083-1-xur@google.com>
- <20240728203001.2551083-7-xur@google.com>
- <c65a07ef-6436-4e04-a263-7cad9758e9be@gmail.com>
- <CAKwvOdm0iZspjpuueBV1=eFt+Bf4edWBZsDsj10kEvTGZRye2w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tGzN5vYNdGDYkhZ4JV3BAzvvsjhQxGeOO/Xh63357u+K8/N4yOL5TpCF++ejmkkX52tUnHI50oGrO/z4U4DLkxVMGKhs6NWd3C6KpaTywGlA6RSJ4kbw79XZ7jLRXWm9zmKp+nrmVpjC3UiAb5tlSNYi0tcAVdfdaV4geIWwtW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=FFTUc8tW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FFnNkRbP; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id C646811400F8;
+	Sat, 28 Sep 2024 13:36:27 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Sat, 28 Sep 2024 13:36:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1727544987; x=1727631387; bh=JnumIukBSe
+	ev0nlJ/SGcgw51UJmk81utBDPPldgQUR0=; b=FFTUc8tWqjfaNyYE6D4arxZoTD
+	wisZzlR7FPBGCXWzKueXHoLfoKxtFFsW3oth2fDO5uupss1ELZ2VMuM0gQsFQGTK
+	enbn91eElhb0ukYxqzleUPRMsXR+GrGftmA5J8gbVIrw9LWVpOSNFIhTF5idKM/u
+	DheFdNis1/CmK2sGfhE8sikSB6Hog87jjeyB26d5ARxLFTfZ+empoNlB/oVpSo8i
+	JvL0/K4TmiPduaAfiCH39BTXW6s8WTrzBiGMGphta4YDBnSGzotbDYx36/woBjNc
+	G5ByIUGjjXzOgJeIlm1fNhz6ArVJthINn88iXfHGb+yFvUTdQHOlI1d8/uyw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1727544987; x=1727631387; bh=JnumIukBSeev0nlJ/SGcgw51UJmk
+	81utBDPPldgQUR0=; b=FFnNkRbP31a65+B5mdSUHfqfkz6BxwH2nXuHcUvopJDo
+	GxTFtsLWKkvTGTomfn4JyPNtqpHLC4ME63rLpRzFY9iKAiGHgcmYZXmCnU5cxJCf
+	EgdXYJjJQkKWBE91ivfUiO9AfkAtHmdhvwXg9oU/Ms8mm1BPD7y6DlByXdTPDIOZ
+	12PgAlU6sgghr8gOp35EVVO6GvMLYn3r0YXJvTyVWzkq5930y7srE8PRyHNBR5l8
+	6ZXxSt25Rk+QyfJbSKcwAzxKeqhnL1wJLIlT0DXclHJCwI/djlJTzgyFLW4V0qHt
+	NGxAjOj2p7qdy1cFFcrGIkobNiLmKgVMIRosZbeAdA==
+X-ME-Sender: <xms:mz74ZhOUOfoeagD1XC-Y8abx4Zsm-y_FLVeIrU60x3m_scG0hwofCg>
+    <xme:mz74Zj86B4nupxGZgDgt0vr2_4FdksN90BYK7q6UqQJeXnguLTH2vy3CsMLW2LJQS
+    VWVxQbuKqcLiVdyEOE>
+X-ME-Received: <xmr:mz74ZgS_3CH-YO7NY-3FxgQ9pULaALswU1s6trD6wZ07Yq23tUPkcTd_NuJCsR_68TwFJb3mlCzmIoBJV9Vlfmr_LGvp>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduuddgledtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdluddtmdenucfjughrpeffhffvvefukfhf
+    gggtuggjsehttdertddttddvnecuhfhrohhmpeflrghnucfjvghnughrihhkucfhrghrrh
+    cuoehkvghrnhgvlhesjhhfrghrrhdrtggtqeenucggtffrrghtthgvrhhnpeffudettdei
+    udduteejgeejueejgeejueehtedtteeivedvveffkeejjeeuheeghfenucffohhmrghinh
+    epghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigv
+    pedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkvghrnhgvlhesjhhfrghrrhdrtggtpd
+    hnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehthhho
+    rhhsthgvnhdrsghluhhmsehtohgslhhugidrtghomhdprhgtphhtthhopehkvghnthdroh
+    hvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheprhgvghhrvghsshhi
+    ohhnsheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgstg
+    grtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
+    qdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    khgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhgusgeskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepmhhorhgsohesghhoohhglhgvrdgtohhm
+X-ME-Proxy: <xmx:mz74ZttYLpOf5GxB9Lph7ToXdH6_DJ6p0oj6cSAFFucVYa-2qyjkug>
+    <xmx:mz74ZpdbuF7m5enR3JqZhWOHckuTavGEy0_Wiekz8VzTCvhTQBJz3A>
+    <xmx:mz74Zp1F49gdMfn1a0BajruwTcrKYrpZxdyK6tirP_e1YYYXtezJSw>
+    <xmx:mz74Zl9DqU7vXEIJFyK6RkhdHLUD-5XesH3DE5M1idrrVHVet2zHpw>
+    <xmx:mz74Zl5mxztye5GycLtfSZaNFUCvA4ojJz_p4NX2eGNYds2_ES0pztRK>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 28 Sep 2024 13:36:25 -0400 (EDT)
+Date: Sat, 28 Sep 2024 19:36:24 +0200
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: kent.overstreet@linux.dev, regressions@lists.linux.dev,
+	linux-bcachefs@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kees@kernel.org, ardb@kernel.org,
+	morbo@google.com
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <Zvg-mDsvvOueGpzs@archlinux>
+References: <ZvV6X5FPBBW7CO1f@archlinux>
+ <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+ <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKwvOdm0iZspjpuueBV1=eFt+Bf4edWBZsDsj10kEvTGZRye2w@mail.gmail.com>
+In-Reply-To: <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
 
-On Fri, Sep 27, 2024 at 03:45:39PM -0700, Nick Desaulniers wrote:
-> On Thu, Sep 19, 2024 at 4:52 AM Maksim Panchenko <max4bolt@gmail.com> wrote:
-> >
-> > On Sun, Jul 28, 2024 at 01:29:56PM -0700, Rong Xu wrote:
-> > > Add the build support for using Clang's Propeller optimizer. Like
-> > > AutoFDO, Propeller uses hardware sampling to gather information
-> > > about the frequency of execution of different code paths within a
-> > > binary. This information is then used to guide the compiler's
-> > > optimization decisions, resulting in a more efficient binary.
-> >
-> > Thank you for submitting the patches with the latest compiler features.
-> >
-> > Regarding Propeller, I want to quickly mention that I plan to send a
-> > patch to include BOLT as a profile-based post-link optimizer for the
-> > kernel. I'd like it to be considered an alternative that is selectable
-> > at build time.
-> >
-> > BOLT also uses sampling, and the profile can be collected on virtually
-> > any kernel (with some caveats).  There are no constraints on the
-> > compiler (i.e., any version of GCC or Clang is acceptable), while Linux
-> > perf is the only external dependency used for profile collection and
-> > conversion. BOLT works on top of AutoFDO and LTO but can be used without
-> > them if the user desires. The build overhead is a few seconds.
-> >
-> > As you've heard from the LLVM discussion
-> > (https://discourse.llvm.org/t/optimizing-the-linux-kernel-with-autofdo-including-thinlto-and-propeller)
-> > and LPC talk (https://lpc.events/event/18/contributions/1921/), at Meta,
-> > we've also successfully optimized the kernel and got similar results.
-> >
-> > Again, this is a heads-up before the patch, and I would like to hear
-> > what people think about having a binary optimizer as a user-selectable
-> > alternative to Propeller.
+On 26 18:09:57, Thorsten Blum wrote:
+> On 26. Sep 2024, at 17:28, Thorsten Blum <thorsten.blum@toblux.com> wrote:
+> > On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> >> 
+> >> Hi Kent,
+> >> 
+> >> found a strange regression in the patch set for 6.12.
+> >> 
+> >> First bad commit is: 86e92eeeb23741a072fe7532db663250ff2e726a
+> >> bcachefs: Annotate struct bch_xattr with __counted_by()
+> >> 
+> >> When compiling with clang 18.1.8 (also with latest llvm main branch) and
+> >> CONFIG_FORTIFY_SOURCE=y my rootfs does not mount because there is an erroneous
+> >> detection of a buffer overflow.
+> >> 
+> >> The __counted_by attribute is supposed to be supported starting with gcc 15,
+> >> not sure if it is implemented yet so I haven't tested with gcc trunk yet.
+> >> 
+> >> Here's the relevant section of dmesg:
+> >> 
+> >> [    6.248736] bcachefs (nvme1n1p2): starting version 1.12: rebalance_work_acct_fix
+> >> [    6.248744] bcachefs (nvme1n1p2): recovering from clean shutdown, journal seq 1305969
+> >> [    6.252374] ------------[ cut here ]------------
+> >> [    6.252375] memchr: detected buffer overflow: 12 byte read of buffer size 0
+> >> [    6.252379] WARNING: CPU: 18 PID: 511 at lib/string_helpers.c:1033 __fortify_report+0x45/0x50
+> >> [    6.252383] Modules linked in: bcachefs lz4hc_compress lz4_compress hid_generic usbhid btrfs crct10dif_pclmul libcrc32c crc32_pclmul crc32c_generic polyval_clmulni crc32c_intel polyval_generic raid6_pq ghash_clmulni_intel xor sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni_intel gf128mul nvme crypto_simd ccp xhci_pci cryptd sp5100_tco xhci_pci_renesas nvme_core nvme_auth video wmi ip6_tables ip_tables x_tables i2c_dev
+> >> [    6.252404] CPU: 18 UID: 0 PID: 511 Comm: mount Not tainted 6.11.0-10065-g6fa6588e5964 #98 d8e0beb515d91b387aa60970de7203f35ddd182c
+> >> [    6.252406] Hardware name: Micro-Star International Co., Ltd. MS-7D78/PRO B650-P WIFI (MS-7D78), BIOS 1.C0 02/06/2024
+> >> [    6.252407] RIP: 0010:__fortify_report+0x45/0x50
+> >> [    6.252409] Code: 48 8b 34 c5 30 92 21 87 40 f6 c7 01 48 c7 c0 75 1b 0a 87 48 c7 c1 e1 93 07 87 48 0f 44 c8 48 c7 c7 ef 03 10 87 e8 0b c2 9b ff <0f> 0b e9 cf 5d 9e 00 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90
+> >> [    6.252410] RSP: 0018:ffffbb3d03aff350 EFLAGS: 00010246
+> >> [    6.252412] RAX: 4ce590fb7c372800 RBX: ffff98d559a400e8 RCX: 0000000000000027
+> >> [    6.252413] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffff98e43db21a08
+> >> [    6.252414] RBP: ffff98d559a400d0 R08: 0000000000001fff R09: ffff98e47ddcd000
+> >> [    6.252415] R10: 0000000000005ffd R11: 0000000000000004 R12: ffff98d559a40000
+> >> [    6.252416] R13: ffff98d54abf1320 R14: ffffbb3d03aff430 R15: 0000000000000000
+> >> [    6.252417] FS:  00007efc82117800(0000) GS:ffff98e43db00000(0000) knlGS:0000000000000000
+> >> [    6.252418] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >> [    6.252419] CR2: 000055d96658ea80 CR3: 000000010a12c000 CR4: 0000000000f50ef0
+> >> [    6.252420] PKRU: 55555554
+> >> [    6.252421] Call Trace:
+> >> [    6.252423]  <TASK>
+> >> [    6.252425]  ? __warn+0xd5/0x1d0
+> >> [    6.252427]  ? __fortify_report+0x45/0x50
+> >> [    6.252429]  ? report_bug+0x144/0x1f0
+> >> [    6.252431]  ? __fortify_report+0x45/0x50
+> >> [    6.252433]  ? handle_bug+0x6a/0x90
+> >> [    6.252435]  ? exc_invalid_op+0x1a/0x50
+> >> [    6.252436]  ? asm_exc_invalid_op+0x1a/0x20
+> >> [    6.252440]  ? __fortify_report+0x45/0x50
+> >> [    6.252441]  __fortify_panic+0x9/0x10
+> >> [    6.252443]  bch2_xattr_validate+0x13b/0x140 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> >> [    6.252463]  bch2_btree_node_read_done+0x125a/0x17a0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> >> [    6.252482]  btree_node_read_work+0x202/0x4a0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> >> [    6.252499]  bch2_btree_node_read+0xa8d/0xb20 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> >> [    6.252514]  ? srso_alias_return_thunk+0x5/0xfbef5
+> >> [    6.252515]  ? pcpu_alloc_noprof+0x741/0xb50
+> >> [    6.252517]  ? srso_alias_return_thunk+0x5/0xfbef5
+> >> [    6.252519]  ? time_stats_update_one+0x75/0x1f0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> >> 
+> >> ...
+> >> 
+> >> 
+> >> The memchr in question is at:
+> >> https://github.com/torvalds/linux/blob/11a299a7933e03c83818b431e6a1c53ad387423d/fs/bcachefs/xattr.c#L99
+> >> 
+> >> There is not actually a buffer overflow here, I checked with gdb that
+> >> xattr.v->x_name does actually contain a string of the correct length and
+> >> xattr.v->x_name_len contains the correct length and should be used to determine
+> >> the length when memchr uses __struct_size for bounds-checking due to the
+> >> __counted_by annotation.
+> >> 
+> >> I'm at the point where I think this is probably a bug in clang. I have a patch
+> >> that does fix (more like bandaid) the problem and adds some print statements:
+> >> 
+> >> --
+> >> diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
+> >> index 56c8d3fe55a4..8d7e749b7dda 100644
+> >> --- a/fs/bcachefs/xattr.c
+> >> +++ b/fs/bcachefs/xattr.c @@ -74,6 +74,7 @@ int bch2_xattr_validate(struct bch_fs *c, struct bkey_s_c k,
+> >>      enum bch_validate_flags flags)
+> >> {
+> >> struct bkey_s_c_xattr xattr = bkey_s_c_to_xattr(k);
+> >> + const struct bch_xattr *v = (void *)k.v;
+> >> unsigned val_u64s = xattr_val_u64s(xattr.v->x_name_len,
+> >>  le16_to_cpu(xattr.v->x_val_len));
+> >> int ret = 0;
+> >> @@ -94,9 +95,12 @@ int bch2_xattr_validate(struct bch_fs *c, struct bkey_s_c k,
+> >> 
+> >> bkey_fsck_err_on(!bch2_xattr_type_to_handler(xattr.v->x_type),
+> >> c, xattr_invalid_type,
+> >> - "invalid type (%u)", xattr.v->x_type);
+> >> + "invalid type (%u)", v->x_type);
+> >> 
+> >> - bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_name_len),
+> >> + pr_info("x_name_len: %d", v->x_name_len);
+> >> + pr_info("__struct_size(x_name): %ld", __struct_size(v->x_name));
+> >> + pr_info("__struct_size(x_name): %ld", __struct_size(xattr.v->x_name));
+> >> + bkey_fsck_err_on(memchr(v->x_name, '\0', v->x_name_len),
+> >> c, xattr_name_invalid_chars,
+> >> "xattr name has invalid characters");
+> >> fsck_err:
+> >> --
+> >> 
+> >> 
+> >> Making memchr access via a pointer created with
+> >> const struct bch_xattr *v = (void *)k.v fixes it. From the print statements I
+> >> can see that __struct_size(xattr.v->x_name) incorrectly returns 0, while
+> >> __struct_size(v->x_name) correctly returns 10 in this case (the value of
+> >> x_name_len).
+> >> 
+> >> The generated assembly illustrates what is going wrong. Below is an excerpt
+> >> of the assembly clang generated for the bch2_xattr_validate function:
+> >> 
+> >> mov r13d, ecx
+> >> mov r15, rdi
+> >> mov r14, rsi
+> >> mov rdi, offset .L.str.3
+> >> mov rsi, offset .L__func__.bch2_xattr_validate
+> >> mov rbx, rdx
+> >> mov edx, eax
+> >> call _printk
+> >> movzx edx, byte ptr [rbx + 1]
+> >> mov rdi, offset .L.str.4
+> >> mov rsi, offset .L__func__.bch2_xattr_validate
+> >> call _printk
+> >> movzx edx, bh
+> >> mov rdi, offset .L.str.4
+> >> mov rsi, offset .L__func__.bch2_xattr_validate
+> >> call _printk
+> >> lea rdi, [rbx + 4]
+> >> mov r12, rbx
+> >> movzx edx, byte ptr [rbx + 1]
+> >> xor ebx, ebx
+> >> xor esi, esi
+> >> call memchr
+> >> 
+> >> At the start of this rdx contains k.v (and is moved into rbx). The three calls
+> >> to printk are the ones you can see in my patch. You can see that for the
+> >> print that uses __struct_size(v->x_name) the compiler correctly uses
+> >> movzx edx, byte ptr [rbx + 1]
+> >> to load x_name_len into edx.
+> >> 
+> >> For the printk call that uses __struct_size(xattr.v->x_name) however the
+> >> compiler uses
+> >> movzx edx, bh
+> >> So it will print the high 8 bits of the lower 16 bits (second least
+> >> significant byte) of the memory address of xattr.v->x_type. This is obviously
+> >> completely wrong.
+> >> 
+> >> It is then doing the correct call of memchr because this is using my patch.
+> >> Without my patch it would be doing the same thing for the call to memchr where
+> >> it uses the second least significant byte of the memory address of x_type as the
+> >> length used for the bounds-check.
+> >> 
+> >> 
+> >> 
+> >> The LLVM IR also shows the same problem:
+> >> 
+> >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
+> >> [...]
+> >> %51 = ptrtoint ptr %2 to i64
+> >> %52 = lshr i64 %51, 8
+> >> %53 = and i64 %52, 255
+> >> 
+> >> This is the IR for the incorrect behavior. It simply converts the pointer to an
+> >> int, shifts right by 8 bits, then and with 0xFF. If it did a load (to i64)
+> >> instead of ptrtoint this would actually work, as the second least significant
+> >> bit of an i64 loaded from that memory address does contain the value of
+> >> x_name_len. It's as if clang forgot to dereference a pointer here.
+> >> 
+> >> Correct IR does this (for the other printk invocation):
+> >> 
+> >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
+> >> [...]
+> >> %4 = getelementptr inbounds %struct.bch_xattr, ptr %1, i64 0, i32 1
+> >> %5 = load i8, ptr %4, align 8
+> >> [...]
+> >> %48 = load i8, ptr %5, align 4
+> >> %49 = zext i8 %48 to i64
+> >> 
+> >> Best Regards
+> >> Jan
+> > 
+> > I suspect it's the same Clang __bdos() "bug" as in [1] and [2].
+> > 
+> > [1] https://lore.kernel.org/linux-kernel/3D0816D1-0807-4D37-8D5F-3C55CA910FAA@linux.dev/
+> > [2] https://lore.kernel.org/all/20240913164630.GA4091534@thelio-3990X/
 > 
-> I'd imagine that folks would be interested in running Propeller, or
-> BOLT, but perhaps not both.
+> Could you try this and see if it resolves the problem?
 > 
-> In that sense, Kconfig has the means to express mutual exclusion.
-> It's perhaps worth working together to get the kconfig selection
-> working such that folks can play with enabling these newer toolchain
-> related technologies.
+> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> index 1a957ea2f4fe..b09759f31789 100644
+> --- a/include/linux/compiler_types.h
+> +++ b/include/linux/compiler_types.h
+> @@ -413,7 +413,7 @@ struct ftrace_likely_data {
+>   * When the size of an allocated object is needed, use the best available
+>   * mechanism to find it. (For cases where sizeof() cannot be used.)
+>   */
+> -#if __has_builtin(__builtin_dynamic_object_size)
+> +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
+>  #define __struct_size(p)	__builtin_dynamic_object_size(p, 0)
+>  #define __member_size(p)	__builtin_dynamic_object_size(p, 1)
+>  #else
 
-Right, I would expect this to just be a Kconfig choice with a
-description like "Post link optimization" or something of the sort, like
-the RANDSTRUCT or DEBUG_INFO ones. If it does make sense to do them at
-the same time, they can obviously be separate.
 
-> The next instance of the bi-weekly public Clang Built Linux meeting is
-> next Wednesday. (Links from https://clangbuiltlinux.github.io/)
-> 
-> Perhaps it's worth Rong (and Sriraman and Han) and Maksim to stop by and chat?
+Alright, figured out why this fix doesn't work. The function signature
+of memchr is:
 
-I would certainly be open to discussing the plans for upstreaming these
-in the meeting. I think the sessions went well in the Toolchains Track.
-There were no major objections from what I could tell.
+void *memchr(const void * const POS0 p, int c, __kernel_size_t size)
 
-Cheers,
-Nathan
+The POS0 is the culprit. It's defined as __pass_object_size(0), which
+leads to the call to __builtin_object_size being upgraded to
+__builtin_dynamic_object_size.
+
+So to make this work the POS0 definition needs the same
+!defined(__clang__) on it. There's also two more
+__has_builtin(__builtin_dynamic_object_size) checks in
+lib/fortify_kunit.c. But they have no impact.
+
+Now the fix works:
+
+
+--
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index f14c275950b5..43ac0bca485d 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -413,7 +413,7 @@ struct ftrace_likely_data {
+  * When the size of an allocated object is needed, use the best available
+  * mechanism to find it. (For cases where sizeof() cannot be used.)
+  */
+-#if __has_builtin(__builtin_dynamic_object_size)
++#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
+ #define __struct_size(p)	__builtin_dynamic_object_size(p, 0)
+ #define __member_size(p)	__builtin_dynamic_object_size(p, 1)
+ #else
+diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
+index 0d99bf11d260..7235655d9b80 100644
+--- a/include/linux/fortify-string.h
++++ b/include/linux/fortify-string.h
+@@ -148,7 +148,7 @@ extern char *__underlying_strncpy(char *p, const char *q, __kernel_size_t size)
+  * size, rather than struct size), but there remain some stragglers using
+  * type 0 that will be converted in the future.
+  */
+-#if __has_builtin(__builtin_dynamic_object_size)
++#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
+ #define POS			__pass_dynamic_object_size(1)
+ #define POS0			__pass_dynamic_object_size(0)
+ #else
 
