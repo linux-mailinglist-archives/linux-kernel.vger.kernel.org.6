@@ -1,502 +1,434 @@
-Return-Path: <linux-kernel+bounces-342618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE13F9890FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:01:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845379890FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4421A1F21671
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:01:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5E641C20A1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5059A1531D8;
-	Sat, 28 Sep 2024 18:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB4914F135;
+	Sat, 28 Sep 2024 18:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hd7OfI5H"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNixr7Xf"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77EEC3C0C;
-	Sat, 28 Sep 2024 18:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2560E3C0C;
+	Sat, 28 Sep 2024 18:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727546460; cv=none; b=FGIu00IIHYDv6TzUIVDdl0UZqBHiqq2HSVq8i6fGa9D7vJoO8iqRK7dv04kWYm2OmUU7bXqHDECTEk1fNx6P1dOkczl2KgphA0czdJggDXXK5MRq2nEpRgBpt/rfJkNT7D5VojG11jC1Gz6CTrafKvZ++XuSnpXYGrAZKldO3/Q=
+	t=1727546710; cv=none; b=EJ8uKCUY+OKFZ/pHh/M8zCujyDTyU+z3UhLcJ2FNu2ZEJ2LnrB2Owk97iqtqQIgMJztkn62KrJiYa0tlUDmzhxwmP2dRzA2ECFwxDHcPtHktKRYz38CqY+G0slBwX9p5HleY0mwdJuAypPoC7mPbQ54XkTsXlXOkmZG6Hze+Zlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727546460; c=relaxed/simple;
-	bh=Ql4dS6CSU59YDPuYlaVujLhGtSQ8kBFRWZShXVtAATo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ofXTwxifERBBO+af6F9q5eqi3egJfxQiJkBZGExujWMC0EtBVEhmg2Lu0Rsr6W5p4vpvNzydu4Swz0EXaqAvEbeK8q4Eugq2pqAJKX0xZK4+wXhZWJINAz9V2enG4etoid6EmxSU74ri4sKgVAVzHQW6DNBFgndLnD7tMO705/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hd7OfI5H; arc=none smtp.client-ip=209.85.215.182
+	s=arc-20240116; t=1727546710; c=relaxed/simple;
+	bh=yvkeI1Lrp1XfVt9qUvRiksR9i6gQx9z60t0ui+jgy0w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EpZxLX7+jG741vEwoTxhC3D4DDWW0JaL8MTgw42CjeXcE1pO3NKt6UH2P/2fWLCMg8e6uzKPWlesL4l1KPMXD2V5stkzS9jOu4vhcOn3wU9Es4/GvziwWFOjTvNtG2TeIhQChzOt729cvmWU79xB2OUrAjvKFDvwjtEUXXMG4qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hNixr7Xf; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-6e7b121be30so2120515a12.1;
-        Sat, 28 Sep 2024 11:00:58 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c42f406e29so4112758a12.2;
+        Sat, 28 Sep 2024 11:05:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727546458; x=1728151258; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U2+GsiuIKpICD0jp4J/MwRwjOL4N458aVUdezvXmH88=;
-        b=hd7OfI5H9U0WeyUR6F+hJdx0XlFe73HMcmLM/QjRZ+WRzaWRTVD4i8NXY5+AehmnoU
-         92Qk8PEnXPUQf8HwqlH3LIvjVBZ4CiGVdIE9EDIINIdtw2I78t7cTqpwFVxFtFO89j6E
-         uOr/b8k/LUAV+GgqmoxUCoODun13XFSOo+vUsaweNxEotVGn9NckSTnnzn06+2hWux9M
-         fus0xoVZFdHTVrdfS2ZQ6cIjtceDFG7DeOzx7c5Vizv5DS1VCWUf/EKqOiOTU0nGFxkD
-         R4R7LIrhKvQHE/O8/LrhrZMF8uqa4jw1aRIIAaH0N568TtqOkm6QVBAvoRNTX1rq9iOs
-         DamA==
+        d=gmail.com; s=20230601; t=1727546706; x=1728151506; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xBd1EdC6KnvZObHS9/JtjvKZht/tzJLxuXszVZyBpSg=;
+        b=hNixr7Xf5AntKcbWdMXF40E1EAWcJJXpPk05tSaB2nWnbIPhR4Z/hhAps3Q28Vo95D
+         ZHkzp7F1ei9TT8t2oDFE0bRRdx0Of6C2j5SMIuUZ6WIZnXapJsQpyPkmqAiIwqJokY6k
+         +8Hh2kYPPbnfR40WVcuiY3B62c02NaLonZVHrqt46tjTuiU8/ssyBrWWQk73MU3kNIeO
+         8Sue/JU2Ff8SpCfeO5V3MqWAPXh0J7dLnH3wmJJSgFsTnH8wXzzNQH8qGJDZdYB0Pl27
+         aaA86BBLn89KBm+NGRmDXCIi+pH/evNogmfwiX5EEOAyoAzWTv5dJ1pZ+c6xkMav5zyS
+         zZMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727546458; x=1728151258;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U2+GsiuIKpICD0jp4J/MwRwjOL4N458aVUdezvXmH88=;
-        b=KkH0Ye6Mj9HrfhJE+DtUaU3Nsyu+ssmdXCSq4rK02NTiwNej0xak23oeoi5udnekW4
-         EV7IkL+CK0/YPUknr4HCDxNwPsA/8HLq8CPuf3n9gQ7itvvEt4+JGN6H/Jp8gpC4oFQx
-         mi++wpYXza9oakW3A2lg7K3gI4otJZDG5tp+JZJOBJoNLQENorPtep4iDKodl+xMNOy8
-         Rgb4wZeQQKy29U98twEMs8vzCW7H04/R32pZMqrS7YwMJehmNY2U9+m87D+Y+iwR9QWy
-         landbejKSfYllyx6+QFD07IV05tEV/iabv5Koy4yWWo+Dsoo5PVnIEK7isksvtBZMO2h
-         nR+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVrTpy4fudJ4Bvwu3UB7CfQhTklS/hsIBMkQXMsN4fdF4PEO/TiVbGdD4Rmkbd5dZsrypJpRDnIh4KTf/8Fokf+A05QK+93@vger.kernel.org, AJvYcCX2W+fgPiqPovhfYCsuXDqrCn5zHkPQVAg1/RJPoXuQyqIIxwP3xbWl2RSoPYC0YCKB1sMmc+puLgmjP9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVsV70f6GmiHCihYeaFVABO5gheLPJSUzw0yWeE0MZbEjrhIfs
-	Il99XJs+b2GZERiY2RoMRSUfnPh/kmw+OiYaMMeG21MJSSPyU8Qv
-X-Google-Smtp-Source: AGHT+IEVmr91INafLLcN+NX6rAWIWchNBGjB3qLEDxQMYuCAirU2pxQYk8LGqwVkkAqHmGlM/Yd82w==
-X-Received: by 2002:a05:6a21:710a:b0:1cf:51a1:8e89 with SMTP id adf61e73a8af0-1d4fa815ec4mr10490782637.47.1727546457353;
-        Sat, 28 Sep 2024 11:00:57 -0700 (PDT)
-Received: from localhost.localdomain ([20.37.103.148])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db605029sm3513516a12.81.2024.09.28.11.00.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Sep 2024 11:00:56 -0700 (PDT)
-From: Shu Han <ebpqwerty472123@gmail.com>
-To: akpm@linux-foundation.org,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
-Subject: [RFC PATCH v4] mm: move the check of READ_IMPLIES_EXEC out of do_mmap()
-Date: Sun, 29 Sep 2024 02:00:44 +0800
-Message-Id: <20240928180044.50-1-ebpqwerty472123@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1727546706; x=1728151506;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xBd1EdC6KnvZObHS9/JtjvKZht/tzJLxuXszVZyBpSg=;
+        b=HxoA7A8b4ORI+yKTw2Xs6ZcEdCCh/OvHJdP2wgZ3s1Tay6aI/MQzuuNI9N0mlJHYKE
+         CGjVjiqDFqbiUHiknXf3NwhllPHMKqJbkarBi0XqEnenUZYvjKQpfG3uxioGXiAyXMtu
+         JKxNCuYAm5A6T10evJfeWzD0J60duvg5NM/qQZ8Xk7UQvXfZgx0GhKtTuI45l/qNtUnD
+         KrJeqBBGHc2pT3JiFfSPXHBbSAAmZn9xCUSGB+Oapu9e6zIYXXtfuCAMOX7BLnqGgS3Y
+         Q/xf4jvfqXAPxODS0kAjAkQHkjdq1/G3KGwi5rOerWYh2JMuShkB/sydiKs+YixltMFM
+         Urow==
+X-Forwarded-Encrypted: i=1; AJvYcCUKc1JU6p/MGjhVJU/vhqgM+Mu4Mk2GPwzE2Jm+H20ONgLAh+avENXUIRiieh1b68lUnTFdFY9zIUXmkSM=@vger.kernel.org, AJvYcCUrXwsMPzhFQn5ERCKFppneUA8TlDGn3UUjmEi3xEhJhSNL1WnTtvDCYO8XLzFktfAx3fuKJ2n7UNVfv9Evgpz1uc4QIg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsQR6kj5IJpRGoPV6kj/kWyihLoJNqXG5K8gaUEsV8dqrE5ufz
+	vB1CL1vBDNXzNZqmIRv54FMk0oWne2z8ecHG1CaMjbgyHFdCOw+pUPEAfdXeE403PAgmXCDhLLK
+	HnEZANSpLdxCQP+FBOU5toxGa2Bc=
+X-Google-Smtp-Source: AGHT+IEn5x/YlvLzo3Jw3iTX+sO39V8v9oRKjH7bbkGnNeIe2Ufv2TD1uZD6KfcX0OuDVlca2is0wubYPeI1wL1RC0Y=
+X-Received: by 2002:a05:6402:40c5:b0:5c5:b7fd:16fa with SMTP id
+ 4fb4d7f45d1cf-5c8824d3c6cmr6783113a12.14.1727546706119; Sat, 28 Sep 2024
+ 11:05:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240927185345.3680-1-maccraft123mc@gmail.com>
+ <20240927185345.3680-2-maccraft123mc@gmail.com> <4365cae6-33e2-4b86-aab9-0b9ad112e6b0@redhat.com>
+In-Reply-To: <4365cae6-33e2-4b86-aab9-0b9ad112e6b0@redhat.com>
+From: Maya Matuszczyk <maccraft123mc@gmail.com>
+Date: Sat, 28 Sep 2024 20:04:29 +0200
+Message-ID: <CAO_MupJTdo8+cpx2DHtC47WDQsFRVnB7xQFOmHiEQQzVmkFywg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] platform: arm64: Add driver for Lenovo Yoga Slim 7x's EC
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, linux-kernel@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch moves the check of READ_IMPLIES_EXEC out of do_mmap(), and
-calls the LSM hooks at the same time. Below is the reason.
+Hi, thanks for taking a look at this driver.
 
-This patch is related to:
+sob., 28 wrz 2024 o 17:53 Hans de Goede <hdegoede@redhat.com> napisa=C5=82(=
+a):
+>
+> Hi Maya,
+>
+> Thank you for your patch. It is great to so people working on supporting
+> more ARM64 based laptop ECs.
+>
+> Note not a full review just one remark from a quick scan of the driver.
+>
+> On 27-Sep-24 8:53 PM, Maya Matuszczyk wrote:
+> > This patch adds a basic driver for the EC in Qualcomm Snapdragon X1
+> > Elite-based Lenovo Yoga Slim 7x.
+> >
+> > For now it supports only reporting that the AP is going to suspend and
+> > the microphone mute button, however the EC seems to also support readin=
+g
+> > fan information, other key combinations and thermal data.
+> >
+> > Signed-off-by: Maya Matuszczyk <maccraft123mc@gmail.com>
+> > ---
+> >  MAINTAINERS                                 |   1 +
+> >  drivers/platform/arm64/Kconfig              |  12 ++
+> >  drivers/platform/arm64/Makefile             |   1 +
+> >  drivers/platform/arm64/lenovo-yoga-slim7x.c | 202 ++++++++++++++++++++
+> >  4 files changed, 216 insertions(+)
+> >  create mode 100644 drivers/platform/arm64/lenovo-yoga-slim7x.c
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 0d4bfdde166d..f689cba80fa3 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -12906,6 +12906,7 @@ LENOVO YOGA SLIM 7X EC DRIVER
+> >  M:   Maya Matuszczyk <maccraft123mc@gmail.com>
+> >  S:   Maintained
+> >  F:   Documentation/devicetree/bindings/platform/lenovo,yoga-slim7x-ec.=
+yaml
+> > +F:   drivers/platform/arm64/lenovo-yoga-slim7x.c
+> >
+> >  LETSKETCH HID TABLET DRIVER
+> >  M:   Hans de Goede <hdegoede@redhat.com>
+> > diff --git a/drivers/platform/arm64/Kconfig b/drivers/platform/arm64/Kc=
+onfig
+> > index f88395ea3376..9ceae50f8b4e 100644
+> > --- a/drivers/platform/arm64/Kconfig
+> > +++ b/drivers/platform/arm64/Kconfig
+> > @@ -49,4 +49,16 @@ config EC_LENOVO_YOGA_C630
+> >
+> >         Say M or Y here to include this support.
+> >
+> > +config EC_LENOVO_YOGA_SLIM7X
+> > +     tristate "Lenovo Yoga Slim 7x Embedded Controller driver"
+> > +     depends on ARCH_QCOM || COMPILE_TEST
+> > +     depends on I2C
+> > +     help
+> > +       Select this option to enable driver for the EC found in the Len=
+ovo
+> > +       Yoga Slim 7x.
+> > +
+> > +       This driver currently supports reporting input event for microp=
+hone
+> > +       mute button, and reporting device suspend to the EC so it can t=
+ake
+> > +       appropriate actions.
+> > +
+> >  endif # ARM64_PLATFORM_DEVICES
+> > diff --git a/drivers/platform/arm64/Makefile b/drivers/platform/arm64/M=
+akefile
+> > index b2ae9114fdd8..70dfc1fb979d 100644
+> > --- a/drivers/platform/arm64/Makefile
+> > +++ b/drivers/platform/arm64/Makefile
+> > @@ -7,3 +7,4 @@
+> >
+> >  obj-$(CONFIG_EC_ACER_ASPIRE1)        +=3D acer-aspire1-ec.o
+> >  obj-$(CONFIG_EC_LENOVO_YOGA_C630) +=3D lenovo-yoga-c630.o
+> > +obj-$(CONFIG_EC_LENOVO_YOGA_SLIM7X) +=3D lenovo-yoga-slim7x.o
+> > diff --git a/drivers/platform/arm64/lenovo-yoga-slim7x.c b/drivers/plat=
+form/arm64/lenovo-yoga-slim7x.c
+> > new file mode 100644
+> > index 000000000000..8f6d523395bc
+> > --- /dev/null
+> > +++ b/drivers/platform/arm64/lenovo-yoga-slim7x.c
+> > @@ -0,0 +1,202 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (c) 2024 Maya Matuszczyk <maya.matuszczyk@gmail.com>
+> > + */
+> > +#include <linux/auxiliary_bus.h>
+> > +#include <linux/cleanup.h>
+> > +#include <linux/device.h>
+> > +#include <linux/err.h>
+> > +#include <linux/i2c.h>
+> > +#include <linux/irqreturn.h>
+> > +#include <linux/lockdep.h>
+> > +#include <linux/module.h>
+> > +#include <linux/mutex.h>
+> > +#include <linux/notifier.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/input.h>
+> > +//#include <linux/platform_data/lenovo-yoga-slim7x.h>
+> > +
+> > +// These are the registers that i know about available from SMBUS
+> > +#define EC_IRQ_REASON_REG 0x05
+> > +#define EC_SUSPEND_RESUME_REG 0x23
+> > +#define EC_IRQ_ENABLE_REG 0x35
+> > +#define EC_BACKLIGHT_STATUS_REG 0x83
+> > +#define EC_MIC_MUTE_LED_REG 0x84
+> > +#define EC_AC_STATUS_REG 0x90
+> > +
+> > +// Valid values for EC_SUSPEND_RESUME_REG
+> > +#define EC_NOTIFY_SUSPEND_ENTER 0x01
+> > +#define EC_NOTIFY_SUSPEND_EXIT 0x00
+> > +#define EC_NOTIFY_SCREEN_OFF 0x03
+> > +#define EC_NOTIFY_SCREEN_ON 0x04
+> > +
+> > +// These are the values in EC_IRQ_REASON_REG that i could find in DSDT
+> > +#define EC_IRQ_MICMUTE_BUTTON 0x04
+> > +#define EC_IRQ_FAN1_STATUS_CHANGE 0x30
+> > +#define EC_IRQ_FAN2_STATUS_CHANGE 0x31
+> > +#define EC_IRQ_FAN1_SPEED_CHANGE 0x32
+> > +#define EC_IRQ_FAN2_SPEED_CHANGE 0x33
+> > +#define EC_IRQ_COMPLETED_LUT_UPDATE 0x34
+> > +#define EC_IRQ_COMPLETED_FAN_PROFILE_SWITCH 0x35
+> > +#define EC_IRQ_THERMISTOR_1_TEMP_THRESHOLD_CROSS 0x36
+> > +#define EC_IRQ_THERMISTOR_2_TEMP_THRESHOLD_CROSS 0x37
+> > +#define EC_IRQ_THERMISTOR_3_TEMP_THRESHOLD_CROSS 0x38
+> > +#define EC_IRQ_THERMISTOR_4_TEMP_THRESHOLD_CROSS 0x39
+> > +#define EC_IRQ_THERMISTOR_5_TEMP_THRESHOLD_CROSS 0x3a
+> > +#define EC_IRQ_THERMISTOR_6_TEMP_THRESHOLD_CROSS 0x3b
+> > +#define EC_IRQ_THERMISTOR_7_TEMP_THRESHOLD_CROSS 0x3c
+> > +#define EC_IRQ_RECOVERED_FROM_RESET 0x3d
+> > +#define EC_IRQ_LENOVO_SUPPORT_KEY 0x90
+> > +#define EC_IRQ_FN_Q 0x91
+> > +#define EC_IRQ_FN_M 0x92
+> > +#define EC_IRQ_FN_SPACE 0x93
+> > +#define EC_IRQ_FN_R 0x94
+> > +#define EC_IRQ_FNLOCK_ON 0x95
+> > +#define EC_IRQ_FNLOCK_OFF 0x96
+> > +#define EC_IRQ_FN_N 0x97
+> > +#define EC_IRQ_AI 0x9a
+> > +#define EC_IRQ_NPU 0x9b
+> > +
+> > +struct yoga_slim7x_ec {
+> > +     struct i2c_client *client;
+> > +     struct input_dev *idev;
+> > +     struct mutex lock;
+> > +};
+> > +
+> > +static irqreturn_t yoga_slim7x_ec_irq(int irq, void *data)
+> > +{
+> > +     struct yoga_slim7x_ec *ec =3D data;
+> > +     struct device *dev =3D &ec->client->dev;
+> > +     int val;
+> > +
+> > +     guard(mutex)(&ec->lock);
+> > +
+> > +     val =3D i2c_smbus_read_byte_data(ec->client, EC_IRQ_REASON_REG);
+> > +     if (val < 0) {
+> > +             dev_err(dev, "Failed to get EC IRQ reason: %d\n", val);
+> > +             return IRQ_HANDLED;
+> > +     }
+> > +
+> > +     switch (val) {
+> > +     case EC_IRQ_MICMUTE_BUTTON:
+> > +             input_report_key(ec->idev, KEY_MICMUTE, 1);
+> > +             input_sync(ec->idev);
+> > +             input_report_key(ec->idev, KEY_MICMUTE, 0);
+> > +             input_sync(ec->idev);
+> > +             break;
+> > +     default:
+> > +             dev_info(dev, "Unhandled EC IRQ reason: %d\n", val);
+> > +     }
+>
+> I strongly suggest to use include/linux/input/sparse-keymap.h functionali=
+ty
+> here. This will make adding new keys a lot easier and will allow re-mappi=
+ng
+> codes from userspace.
+>
+> E.g. replace the whole switch-case with:
+>
+>         if (!sparse_keymap_report_event(ec->idev, val, 1, true))
+>                 dev_info(dev, "Unhandled EC IRQ reason: %d\n", val);
+>
+> This takes care of mapping val -> KEY_MICMUTE, and doing all
+> the reporting (after calling sparse_keymap_setup() with an appropriate
+> keymap from probe())
 
-1. the personality flag READ_IMPLIES_EXEC, which can be changed in
-   userspace and will add PROT_EXEC to prot in do_mmap() when it is set and
-   some other conditions are met.
-2. the LSM hook security_mmap_file, which requires the prot before and
-   after 1.
+Thank you for the suggestion. I'm not sure how to handle the non-key
+related IRQs, like fan status changes.
+Do you think they should be filtered out like this:
+if (val =3D=3D 0x04 || (val >=3D 0x90 && val <=3D 0x97))
 
-For now, this is the mmap() logic that actually executes (only the part
-we care):
+Best Regards,
+Maya Matuszczyk.
 
-1. call security_mmap_file()
-1.1. calculate the final prot in mmap_prot()
-1.2. call hooks by the original prot and the final prot
-2. lock mmap_write_lock
-3. call do_mmap()
-3.1. calculate the final prot again according to the personality flag
-     READ_IMPLIES_EXEC and other conditions
-3.2. do the actual memory map with the final prot
-4. unlock mmap_write_lock
-
-There are 2 problems with them:
-1. The final prot is calculated twice, which is redundant. And currently,
-   the !MMU case won't imply exec if the file's mmap_capabilities do not
-   exist in step 3.1, but step 1.1 is different.
-2. Some other call sites call do_mmap() without step 1, which is still
-   secure if there is no step 3.1 since they map an anonymous page or a
-   private file without PROT_EXEC, which is not cared for by LSM. So, it
-   is implied that it is call sites' duty to do step 1.1 or let step 3.1
-   never take effect(let other conditions not be met, such as marking the
-   mapped file as NO_EXEC).
-
-Especially the implicit duty in problem 2 is rarely noticed by the caller,
-which leads to some security issues(in aio[1] and remap_file_pages[2]).
-It is believed that the future call sites to do_mmap() is easily to harm
-the security if we don't take measures.
-
-The measures in this patch are moving step 3.1 out of do_mmap(), into the
-new function mmap_check_prot(), and calling the LSM hooks in the same
-function. The function is out of the mmap_write_lock.
-
-The measures remove the repeated logic in step 1.1 and let further call
-sites have 2 choices:
-1. call mmap_check_prot() before calling do_mmap(), which is equal to the
-   current steps 1-4.
-2. call do_mmap() directly, which is still secure since there is no
-   step 3.1 in do_mmap() anymore.
-
-The potential harm that remains without precedent is a new caller calls
-do_mmap() with a non-private file or have both PROT_WRITE|PROT_EXEC flags,
-which is mentioned in the comment of do_mmap(). mmap_region() is in the
-same state.
-
-The measures have a minor behavior change, which is:
-
-If the call site selects choice 2 and the conditions for READ_IMPLIES_EXEC
-are met, there will be no PROT_EXEC automatically added anymore.
-
-This is all call sites currently and why they should clearly be fine:
-1. mm/util.c: choice 1.
-2. ipc/shm.c: choice 1.
-3. fs/aio.c: the conditions for READ_IMPLIES_EXEC will never be met since
-             the patch for [1] adds the noexec flag.
-4. arch/x86/kernel/shstk.c: must not be intended to have PROT_EXEC, since
-                            shadow stack is a stack that only store return
-                            addresses, executing it is never required.
-5. mm/mmap.c: in the history, remap_file_pages won't change prot, which is
-              changed in the emulation version after the deprecated mark
-              exists. the patch only revert the side effect introduced in
-              the emulation version.
-
-Solving the problem 2 in [2] by this way can remove the check introduced
-in the original patch(done in this patch) is also solving the deadlock
-mentioned in [3].
-
-Link: https://project-zero.issues.chromium.org/issues/42452389 [1]
-Link: https://lore.kernel.org/all/20240919080905.4506-2-paul@paul-moore.com/ [2]
-Link: https://lore.kernel.org/linux-mm/66f7b10e.050a0220.46d20.0036.GAE@google.com/ [3]
-
-Reported-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-mm/66f7b10e.050a0220.46d20.0036.GAE@google.com/
-Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in remap_file_pages()")
-Signed-off-by: Shu Han <ebpqwerty472123@gmail.com>
----
-May require a better name for mmap_check_prot().
-v4: Take mmap_region into consideration, which is found by
-    lorenzo.stoakes@oracle.com, and refine the comment in the patch, and
-    add the deadlock reason.
-v3: Send only one version as lorenzo.stoakes@oracle.com suggested and
-    rewrite the description more clearly.
-    https://lore.kernel.org/all/20240925145249.50-1-ebpqwerty472123@gmail.com/
-v2: Add RFC tag as lorenzo.stoakes@oracle.com suggested, and refine
-    the comment in the patch.
-    https://lore.kernel.org/all/20240925120940.309-1-ebpqwerty472123@gmail.com/
-v1: The original.
-    https://lore.kernel.org/all/20240925063034.169-1-ebpqwerty472123@gmail.com/
-Alternatives mentioned in v3 may not worked well, but this patch is still:
-1. Add sufficient comments for do_mmap() without code changes.
-   This method remains problem 1 unsolved.
-   Hard to solve the remap_file_pages() issue properly.
-2. Move security_mmap_file() back into do_mmap().
-   i.e. revert
-   8b3ec6814c83("take security_mmap_file() outside of ->mmap_sem")
-   which may also cause the deadlock mentioned in [3].
----
- include/linux/mm.h       |  2 ++
- include/linux/security.h |  8 +++----
- ipc/shm.c                |  2 +-
- mm/mmap.c                | 51 +++++++++++++++++++++++++++++-----------
- mm/nommu.c               | 49 +++++++++++++++++++++++++++++---------
- mm/util.c                |  2 +-
- security/security.c      | 41 ++++----------------------------
- 7 files changed, 87 insertions(+), 68 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c4b238a20b76..83f334590b06 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3392,6 +3392,8 @@ get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
- extern unsigned long mmap_region(struct file *file, unsigned long addr,
- 	unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
- 	struct list_head *uf);
-+extern int mmap_check_prot(struct file *file, unsigned long *prot,
-+	unsigned long flags);
- extern unsigned long do_mmap(struct file *file, unsigned long addr,
- 	unsigned long len, unsigned long prot, unsigned long flags,
- 	vm_flags_t vm_flags, unsigned long pgoff, unsigned long *populate,
-diff --git a/include/linux/security.h b/include/linux/security.h
-index c37c32ebbdcd..e061bc9a0331 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -423,8 +423,8 @@ void security_file_free(struct file *file);
- int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
- int security_file_ioctl_compat(struct file *file, unsigned int cmd,
- 			       unsigned long arg);
--int security_mmap_file(struct file *file, unsigned long prot,
--			unsigned long flags);
-+int security_mmap_file(struct file *file, unsigned long reqprot,
-+		       unsigned long prot, unsigned long flags);
- int security_mmap_addr(unsigned long addr);
- int security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
- 			   unsigned long prot);
-@@ -1077,8 +1077,8 @@ static inline int security_file_ioctl_compat(struct file *file,
- 	return 0;
- }
- 
--static inline int security_mmap_file(struct file *file, unsigned long prot,
--				     unsigned long flags)
-+static inline int security_mmap_file(struct file *file, unsigned long reqprot,
-+				     unsigned long prot, unsigned long flags)
- {
- 	return 0;
- }
-diff --git a/ipc/shm.c b/ipc/shm.c
-index 3e3071252dac..f1095ee3796d 100644
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -1636,7 +1636,7 @@ long do_shmat(int shmid, char __user *shmaddr, int shmflg,
- 	sfd->vm_ops = NULL;
- 	file->private_data = sfd;
- 
--	err = security_mmap_file(file, prot, flags);
-+	err = mmap_check_prot(file, &prot, flags);
- 	if (err)
- 		goto out_fput;
- 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 18fddcce03b8..3722c7f38a5a 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1249,8 +1249,39 @@ static inline bool file_mmap_ok(struct file *file, struct inode *inode,
- 	return true;
- }
- 
-+int mmap_check_prot(struct file *file, unsigned long *prot,
-+		    unsigned long flags)
-+{
-+	unsigned long req_prot = *prot;
-+	unsigned long new_prot = req_prot;
-+	int err;
-+
-+	/*
-+	 * Does the application expect PROT_READ to imply PROT_EXEC?
-+	 *
-+	 * (the exception is when the underlying filesystem is noexec
-+	 *  mounted, in which case we don't add PROT_EXEC.)
-+	 */
-+	if (((req_prot & (PROT_READ | PROT_EXEC)) == PROT_READ) &&
-+	    (current->personality & READ_IMPLIES_EXEC) &&
-+	    !(file && path_noexec(&file->f_path)))
-+		new_prot |= PROT_EXEC;
-+
-+	err = security_mmap_file(file, req_prot, new_prot, flags);
-+	if (err)
-+		return err;
-+
-+	*prot = new_prot;
-+	return 0;
-+}
-+
- /*
-  * The caller must write-lock current->mm->mmap_lock.
-+ * The caller must consider to call mmap_check_prot or
-+ * security_mmap_file before if
-+ * (file && !IS_PRIVATE(file_inode(file)) || (
-+ *  ((prot & PROT_EXEC) || (vm_flags & VM_EXEC)) &&
-+ *  ((prot & PROT_WRITE) || (vm_flags & VM_WRITE)))).
-  */
- unsigned long do_mmap(struct file *file, unsigned long addr,
- 			unsigned long len, unsigned long prot,
-@@ -1266,16 +1297,6 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 	if (!len)
- 		return -EINVAL;
- 
--	/*
--	 * Does the application expect PROT_READ to imply PROT_EXEC?
--	 *
--	 * (the exception is when the underlying filesystem is noexec
--	 *  mounted, in which case we don't add PROT_EXEC.)
--	 */
--	if ((prot & PROT_READ) && (current->personality & READ_IMPLIES_EXEC))
--		if (!(file && path_noexec(&file->f_path)))
--			prot |= PROT_EXEC;
--
- 	/* force arch specific MAP_FIXED handling in get_unmapped_area */
- 	if (flags & MAP_FIXED_NOREPLACE)
- 		flags |= MAP_FIXED;
-@@ -2846,6 +2867,12 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	return do_vmi_munmap(&vmi, mm, start, len, uf, false);
- }
- 
-+/*
-+ * The caller must write-lock current->mm->mmap_lock.
-+ * The caller must consider to call security_mmap_file before if
-+ * ((file && !IS_PRIVATE(file_inode(file))) ||
-+ *  (vm_flags & VM_EXEC) && (vm_flags & VM_WRITE)).
-+ */
- unsigned long mmap_region(struct file *file, unsigned long addr,
- 		unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
- 		struct list_head *uf)
-@@ -3198,12 +3225,8 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
- 		flags |= MAP_LOCKED;
- 
- 	file = get_file(vma->vm_file);
--	ret = security_mmap_file(vma->vm_file, prot, flags);
--	if (ret)
--		goto out_fput;
- 	ret = do_mmap(vma->vm_file, start, size,
- 			prot, flags, 0, pgoff, &populate, NULL);
--out_fput:
- 	fput(file);
- out:
- 	mmap_write_unlock(mm);
-diff --git a/mm/nommu.c b/mm/nommu.c
-index 7296e775e04e..96761add1295 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -792,12 +792,6 @@ static int validate_mmap_request(struct file *file,
- 		if (path_noexec(&file->f_path)) {
- 			if (prot & PROT_EXEC)
- 				return -EPERM;
--		} else if ((prot & PROT_READ) && !(prot & PROT_EXEC)) {
--			/* handle implication of PROT_EXEC by PROT_READ */
--			if (current->personality & READ_IMPLIES_EXEC) {
--				if (capabilities & NOMMU_MAP_EXEC)
--					prot |= PROT_EXEC;
--			}
- 		} else if ((prot & PROT_READ) &&
- 			 (prot & PROT_EXEC) &&
- 			 !(capabilities & NOMMU_MAP_EXEC)
-@@ -810,11 +804,6 @@ static int validate_mmap_request(struct file *file,
- 		 * privately mapped
- 		 */
- 		capabilities = NOMMU_MAP_COPY;
--
--		/* handle PROT_EXEC implication by PROT_READ */
--		if ((prot & PROT_READ) &&
--		    (current->personality & READ_IMPLIES_EXEC))
--			prot |= PROT_EXEC;
- 	}
- 
- 	/* allow the security API to have its say */
-@@ -992,6 +981,44 @@ static int do_mmap_private(struct vm_area_struct *vma,
- 	return -ENOMEM;
- }
- 
-+int mmap_check_prot(struct file *file, unsigned long *prot,
-+		    unsigned long flags)
-+{
-+	unsigned long req_prot = *prot;
-+	unsigned long new_prot = req_prot;
-+	int err;
-+
-+	/*
-+	 * Does the application expect PROT_READ to imply PROT_EXEC?
-+	 *
-+	 * (the exception is when the underlying filesystem is noexec
-+	 *  mounted or the file does not have NOMMU_MAP_EXEC
-+	 * (== VM_MAYEXEC), in which case we don't add PROT_EXEC.)
-+	 */
-+	if ((req_prot & (PROT_READ | PROT_EXEC)) != PROT_READ)
-+		goto check;
-+	if (!(current->personality & READ_IMPLIES_EXEC))
-+		goto check;
-+	if (!file) {
-+		new_prot |= PROT_EXEC;
-+		goto check;
-+	}
-+	if (file->f_op->mmap_capabilities) {
-+		unsigned int caps = file->f_op->mmap_capabilities(file);
-+
-+		if (!(caps & NOMMU_MAP_EXEC))
-+			goto check;
-+		new_prot |= PROT_EXEC;
-+	}
-+check:
-+	err = security_mmap_file(file, req_prot, new_prot, flags);
-+	if (err)
-+		return err;
-+
-+	*prot = new_prot;
-+	return 0;
-+}
-+
- /*
-  * handle mapping creation for uClinux
-  */
-diff --git a/mm/util.c b/mm/util.c
-index bd283e2132e0..2eb4d6037610 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -581,7 +581,7 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
- 	unsigned long populate;
- 	LIST_HEAD(uf);
- 
--	ret = security_mmap_file(file, prot, flag);
-+	ret = mmap_check_prot(file, &prot, flag);
- 	if (!ret) {
- 		if (mmap_write_lock_killable(mm))
- 			return -EINTR;
-diff --git a/security/security.c b/security/security.c
-index 4564a0a1e4ef..25556629f588 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2927,42 +2927,10 @@ int security_file_ioctl_compat(struct file *file, unsigned int cmd,
- }
- EXPORT_SYMBOL_GPL(security_file_ioctl_compat);
- 
--static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
--{
--	/*
--	 * Does we have PROT_READ and does the application expect
--	 * it to imply PROT_EXEC?  If not, nothing to talk about...
--	 */
--	if ((prot & (PROT_READ | PROT_EXEC)) != PROT_READ)
--		return prot;
--	if (!(current->personality & READ_IMPLIES_EXEC))
--		return prot;
--	/*
--	 * if that's an anonymous mapping, let it.
--	 */
--	if (!file)
--		return prot | PROT_EXEC;
--	/*
--	 * ditto if it's not on noexec mount, except that on !MMU we need
--	 * NOMMU_MAP_EXEC (== VM_MAYEXEC) in this case
--	 */
--	if (!path_noexec(&file->f_path)) {
--#ifndef CONFIG_MMU
--		if (file->f_op->mmap_capabilities) {
--			unsigned caps = file->f_op->mmap_capabilities(file);
--			if (!(caps & NOMMU_MAP_EXEC))
--				return prot;
--		}
--#endif
--		return prot | PROT_EXEC;
--	}
--	/* anything on noexec mount won't get PROT_EXEC */
--	return prot;
--}
--
- /**
-  * security_mmap_file() - Check if mmap'ing a file is allowed
-  * @file: file
-+ * @reqprot: protection requested by user
-  * @prot: protection applied by the kernel
-  * @flags: flags
-  *
-@@ -2971,11 +2939,10 @@ static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_mmap_file(struct file *file, unsigned long prot,
--		       unsigned long flags)
-+int security_mmap_file(struct file *file, unsigned long reqprot,
-+		       unsigned long prot, unsigned long flags)
- {
--	return call_int_hook(mmap_file, file, prot, mmap_prot(file, prot),
--			     flags);
-+	return call_int_hook(mmap_file, file, reqprot, prot, flags);
- }
- 
- /**
-
-base-commit: f89722faa31466ff41aed21bdeb9cf34c2312858
--- 
-2.34.1
-
+>
+>
+>
+> > +
+> > +     return IRQ_HANDLED;
+> > +}
+> > +
+> > +static int yoga_slim7x_ec_probe(struct i2c_client *client)
+> > +{
+> > +     struct device *dev =3D &client->dev;
+> > +     struct yoga_slim7x_ec *ec;
+> > +     int ret;
+> > +
+> > +     ec =3D devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
+> > +     if (!ec)
+> > +             return -ENOMEM;
+> > +
+> > +     mutex_init(&ec->lock);
+> > +     ec->client =3D client;
+> > +
+> > +     ec->idev =3D devm_input_allocate_device(dev);
+> > +     if (!ec->idev)
+> > +             return -ENOMEM;
+> > +     ec->idev->name =3D "yoga-slim7x-ec";
+> > +     ec->idev->phys =3D "yoga-slim7x-ec/input0";
+> > +     input_set_capability(ec->idev, EV_KEY, KEY_MICMUTE);
+>
+> Same here, please use sparse_keymap_setup() here to have it
+> setup capabilities for all keys in your (to be defined)
+>
+> const struct key_entry yoga_slim7x_ec_keymap[]
+>
+> This way you only need to add new mappings in the keymap
+> and then both the capability setting as well as the reporting
+> in the irq-handler will be taken care of by the sparse-keymap
+> helpers.
+>
+> Other then that the overall structure of the driver looks good
+> (again this is not a full review, just a quick scan).
+>
+> Regards,
+>
+> Hans
+>
+>
+>
+>
+>
+> > +
+> > +     ret =3D input_register_device(ec->idev);
+> > +     if (ret < 0)
+> > +             return dev_err_probe(dev, ret, "Failed to register input =
+device\n");
+> > +
+> > +     ret =3D devm_request_threaded_irq(dev, client->irq,
+> > +                                     NULL, yoga_slim7x_ec_irq,
+> > +                                     IRQF_ONESHOT, "yoga_slim7x_ec", e=
+c);
+> > +     if (ret < 0)
+> > +             return dev_err_probe(dev, ret, "Unable to request irq\n")=
+;
+> > +
+> > +     ret =3D i2c_smbus_write_byte_data(client, EC_IRQ_ENABLE_REG, 0x01=
+);
+> > +     if (ret < 0)
+> > +             return dev_err_probe(dev, ret, "Failed to enable interrup=
+ts\n");
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static void yoga_slim7x_ec_remove(struct i2c_client *client)
+> > +{
+> > +     struct device *dev =3D &client->dev;
+> > +     int ret;
+> > +
+> > +     ret =3D i2c_smbus_write_byte_data(client, EC_IRQ_ENABLE_REG, 0x00=
+);
+> > +     if (ret < 0)
+> > +             dev_err(dev, "Failed to disable interrupts: %d\n", ret);
+> > +}
+> > +
+> > +static int yoga_slim7x_ec_suspend(struct device *dev)
+> > +{
+> > +     struct i2c_client *client =3D to_i2c_client(dev);
+> > +     int ret;
+> > +
+> > +     ret =3D i2c_smbus_write_byte_data(client, EC_SUSPEND_RESUME_REG, =
+EC_NOTIFY_SCREEN_OFF);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D i2c_smbus_write_byte_data(client, EC_SUSPEND_RESUME_REG, =
+EC_NOTIFY_SUSPEND_ENTER);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int yoga_slim7x_ec_resume(struct device *dev)
+> > +{
+> > +     struct i2c_client *client =3D to_i2c_client(dev);
+> > +     int ret;
+> > +
+> > +     ret =3D i2c_smbus_write_byte_data(client, EC_SUSPEND_RESUME_REG, =
+EC_NOTIFY_SUSPEND_EXIT);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D i2c_smbus_write_byte_data(client, EC_SUSPEND_RESUME_REG, =
+EC_NOTIFY_SCREEN_ON);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static const struct of_device_id yoga_slim7x_ec_of_match[] =3D {
+> > +     { .compatible =3D "lenovo,yoga-slim7x-ec" },
+> > +     {}
+> > +};
+> > +MODULE_DEVICE_TABLE(of, yoga_slim7x_ec_of_match);
+> > +
+> > +static const struct i2c_device_id yoga_slim7x_ec_i2c_id_table[] =3D {
+> > +     { "yoga-slim7x-ec", },
+> > +     {}
+> > +};
+> > +MODULE_DEVICE_TABLE(i2c, yoga_slim7x_ec_i2c_id_table);
+> > +
+> > +static DEFINE_SIMPLE_DEV_PM_OPS(yoga_slim7x_ec_pm_ops,
+> > +             yoga_slim7x_ec_suspend,
+> > +             yoga_slim7x_ec_resume);
+> > +
+> > +static struct i2c_driver yoga_slim7x_ec_i2c_driver =3D {
+> > +     .driver =3D {
+> > +             .name =3D "yoga-slim7x-ec",
+> > +             .of_match_table =3D yoga_slim7x_ec_of_match,
+> > +             .pm =3D &yoga_slim7x_ec_pm_ops
+> > +     },
+> > +     .probe =3D yoga_slim7x_ec_probe,
+> > +     .remove =3D yoga_slim7x_ec_remove,
+> > +     .id_table =3D yoga_slim7x_ec_i2c_id_table,
+> > +};
+> > +module_i2c_driver(yoga_slim7x_ec_i2c_driver);
+> > +
+> > +MODULE_DESCRIPTION("Lenovo Yoga Slim 7x Embedded Controller");
+> > +MODULE_LICENSE("GPL");
+>
 
