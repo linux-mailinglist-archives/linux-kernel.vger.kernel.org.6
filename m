@@ -1,90 +1,88 @@
-Return-Path: <linux-kernel+bounces-342431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309AF988EFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:35:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A109988F08
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 619191C20E1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:35:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 419BA1F2192E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05252185952;
-	Sat, 28 Sep 2024 10:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3456C18732A;
+	Sat, 28 Sep 2024 10:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kuruczgy.com header.i=@kuruczgy.com header.b="f5TJBMgN"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MWET9nlm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08903D3B3
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 10:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A50812E75;
+	Sat, 28 Sep 2024 10:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727519712; cv=none; b=MOePE5fYM8phAHtM1pi7Bamft5dMZa13v4Dmtw/76wPFMJ7WdqkMEpcCQ21RIWikR6D9lSdHUAjfqwhmhj2QXu1FudeI1/hgyBRwFr77A7ULnK9j021MbT10Vxlb19KQxn7bQBx0dCHrjJuCoRLYX7fLOaYUmNn/MiR8ObHaD0g=
+	t=1727520630; cv=none; b=b9Tg+ZCkouZ34nHTniYnyS5G32mMZbKwtjVudNGFf0/vRy03p1Brpqes+IWJXEkzYapj6xWUAGx9YNTs9omD1UtL9sk3l8LVtLlhrt1fk7B7LaegyucZMMtOe7cFER77o+hnVFSjp5G/Y4rcsY+rY433Jqv6wDcOr6klXpas9Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727519712; c=relaxed/simple;
-	bh=nLdvlM+r46/bj0ot7pT+pTfR1IApI5YWisr9Al+BRvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m6qNpp4WoP67/UAztlcJqIV9paSxJCuFY4BBaM0LpEXcIidHTZtMJ8ZNimcxjhR6s5vvDO0nC10v4ugpq6BlffL7H5flfiIHnKSZJOwQRaXX+btz60LkbHfaU7dx78M4Ql0Wng7xPUkxohFD6KAZAUzGuXxrNYzpf22wTkiPWro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kuruczgy.com; spf=pass smtp.mailfrom=kuruczgy.com; dkim=pass (1024-bit key) header.d=kuruczgy.com header.i=@kuruczgy.com header.b=f5TJBMgN; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kuruczgy.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kuruczgy.com
-Message-ID: <a9a7cab1-1039-44a8-bf20-33d3b1708b6f@kuruczgy.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kuruczgy.com;
-	s=default; t=1727519707;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zpbSMNI4+5T9LQvkTktWG0gkMWFha2E7Vjeq9GNW7hY=;
-	b=f5TJBMgNp/wzzkxz6tKQzfBZkrkLL4BBiA61CTxMyJR/aRst8RbuZaxQkPOAtKhcm7KMbO
-	MP1jI1WT1wPLIiqhOZ+7BDnd7wu54ilfuaKYXCZ9A4lME/6pkX5C0Mu6uFMhSrj9srW8KA
-	yOImeTRrD5Cmh+rULw1MTCLMBgkl6nw=
-Date: Sat, 28 Sep 2024 12:35:03 +0200
+	s=arc-20240116; t=1727520630; c=relaxed/simple;
+	bh=derXC/iYKGo7lUr6kvmLUS4NflZd1br/P30+QWMsE/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nqlMQbjLe8U/ISZw2KgkMP7S0lK4B+Dhjgn2ro7kstc8rzWXJw9Qmx4CTguIohPNZfNYZCfh0UuXdUJrZ0UsomkQF6OdaKSCssIfw5Y1praRTN3BeAhZunD8gBCvyCsL0t7PHDOBFkpCDkkJewYb3uv2xd25sRz0ggcgdW1Hla8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MWET9nlm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1315C4CEC3;
+	Sat, 28 Sep 2024 10:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727520630;
+	bh=derXC/iYKGo7lUr6kvmLUS4NflZd1br/P30+QWMsE/Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MWET9nlmwbYX+y1u9PHhUZlCjeV0btkWdANYXJTWc0Cr63kqoKb4xuiemROaDFAzG
+	 +5zP/HsVVbHWbctKqpNaqeA3ukZA6hTCtBT1Tt0Ai7BQ/N/DtEMgySn//xVVh3RNly
+	 RkvI6uHo9lqPnZRnZ2BKvY7zHTIiy8qcVeDFIQKA=
+Date: Sat, 28 Sep 2024 12:50:21 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Zijun Hu <quic_zijuhu@quicinc.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Tony Lindgren <tony@atomide.com>, Zijun Hu <zijun_hu@icloud.com>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] PM: sleep: wakeirq: Fix a serious logical error in
+ dev_pm_disarm_wake_irq()
+Message-ID: <2024092842-diabetic-suction-861a@gregkh>
+References: <20240928-fix_wakeirq-v1-1-25d13a7e13ba@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/3] platform: arm64: Add driver for Lenovo Yoga Slim 7x's
- EC
-To: Maya Matuszczyk <maccraft123mc@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20240927185345.3680-1-maccraft123mc@gmail.com>
- <20240927185345.3680-2-maccraft123mc@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>
-In-Reply-To: <20240927185345.3680-2-maccraft123mc@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240928-fix_wakeirq-v1-1-25d13a7e13ba@quicinc.com>
 
-Dear Maya,
+On Sat, Sep 28, 2024 at 02:26:27AM -0700, Zijun Hu wrote:
+> IT is a serious logical error for dev_pm_disarm_wake_irq() not to disable
+> the wake irq enabled by dev_pm_arm_wake_irq(), fixed by simply correcting
+> the wrong if condition.
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 
-> For now it supports only reporting that the AP is going to suspend and
-> the microphone mute button, however the EC seems to also support reading
-> fan information, other key combinations and thermal data.
+What commit id does this fix?
 
-I tested the following:
-- When I suspend the laptop, the keyboard backlight turns off, and the 
-power button LED starts blinking.
-- When I press the Fn+F4 key combo, the KEY_MICMUTE event is correctly 
-reported to userspace.
+> ---
+> List relevant commits as following:
+> 
+> johan+linaro@kernel.org  2023-07-13
+> Commit: 8527beb12087 ("PM: sleep: wakeirq: fix wake irq arming")
+> 
+> tony@atomide.com  2018-02-09
+> Commit: 69728051f5bf ("PM / wakeirq: Fix unbalanced IRQ enable for wakeirq")
+> 
+> The former commit fixes the later.
 
-> +// These are the registers that i know about available from SMBUS
+I do not understand this series of commits, what exactly are you trying
+to show here?
 
-> +// These are the values in EC_IRQ_REASON_REG that i could find in DSDT
+confused,
 
-Nitpick: capitalize "I" if you create a v2
-
-Tested-by: György Kurucz <me@kuruczgy.com>
-
-Best regards,
-György
+greg k-h
 
