@@ -1,102 +1,137 @@
-Return-Path: <linux-kernel+bounces-342480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B06988F84
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:50:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38FBE988F87
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 328A31C20EC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:50:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3424B21085
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C54188728;
-	Sat, 28 Sep 2024 13:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A65188A0F;
+	Sat, 28 Sep 2024 13:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bx4+U4+F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="q/B77HSh"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF282125DE;
-	Sat, 28 Sep 2024 13:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28555188727;
+	Sat, 28 Sep 2024 13:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727531447; cv=none; b=EVTeRmuhmNb+ayXr3549HJJBErZKppXT9opq5pTkZCM9Ev84vK0NjprDciT9jgyEEbDbDCCnsAbHbLpK4TYlLHxlhSYi38pWbrvRARacfc9DAEgsuopaCpeeyvcA6rZ9TxctKLx6WCFaWZaJGfsVihoOinGP0FsWrn5mQ+KfB4I=
+	t=1727531636; cv=none; b=lyHo+VsCuqv77BdY+MwUoroycdIaDwGdHPIMK5hJtCB3sE8gVnCY4eVp0zaK33oYj8G96Q4mpxFjhXfuNrCFc/it7rihi7QLsr2737a/SkrJtsCHYUolveuenw3eJXRU2emfoNxSFxyMkeJZf9rcMpG88ANli/jMKRqgHnpAQzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727531447; c=relaxed/simple;
-	bh=ebIdiMVnr7YdFN3py+uVaU4t4rlZhbCkOPHsLHlqKXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jp8TcOlVyCNGvDgXELWiM5li9bBH6IJiRFN0amgb4TZZp4syrioa0gi/cEujI1GfP0TYkaClNOgsTCyHLo1Sryo29F70H3h9jU9rFuv8sD9g6BRrSvH9Y2qd0VPfniXgG2LIxiV6FEBwpxbC2dqhaHFuGrqp1PedbIhnF66Bb3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bx4+U4+F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAB65C4CEC3;
-	Sat, 28 Sep 2024 13:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727531447;
-	bh=ebIdiMVnr7YdFN3py+uVaU4t4rlZhbCkOPHsLHlqKXk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bx4+U4+Fi8G4U/FSQGjtIv+7qDTNquTnZ8Nejf4vnd3WDzXyaUJYR4m5BeHAsWKTS
-	 /Xr8z9cSFpry2pkzXDeSI0UIQrr5bg8smhU7vMdGkkOM4199hWQBOv9zKuD+C0TpTb
-	 j04TqP9akDaY0iwcI2doAOget/g0hjoTvmJE0/31PPeydjaymI6p6cl4sQvmgVF0e7
-	 lahMwvBo8IRSwb2yb4D5v/sQBM/w1AogMqkwrrfG70Htz03Tz+Wn9Ujs8BSo/uoUV5
-	 tMLRdfikeFpIClnh1usKuy0bmEsAwAym/cpzLQDkFyWitYXMBGTveZmIg0W3INRcxV
-	 uPm8oFaYiP+Dw==
-Date: Sat, 28 Sep 2024 14:50:49 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Michael Auchter
- <michael.auchter@ni.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iio: dac: adi,ad56xx: Fix duplicate
- compatible strings
-Message-ID: <20240928145049.74dabfee@jic23-huawei>
-In-Reply-To: <CAL_Jsq+oJ71ncJOLH_ozyKgO8N0Dq85nvXM00cpOE24wUprXjQ@mail.gmail.com>
-References: <20240910234440.1045098-1-robh@kernel.org>
-	<20240914151806.66c58bfd@jic23-huawei>
-	<CAL_Jsq+oJ71ncJOLH_ozyKgO8N0Dq85nvXM00cpOE24wUprXjQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727531636; c=relaxed/simple;
+	bh=AXylBb84Gi4ZLn9QbdSfWz1bezylh9IXiXx7KEkTzjs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PB3GtbhR3Qj0PpBweLio+W9jlxqw9h0KFSgzPvIGcYcYu9MCAoXTJEjggEowB0GC1PSEzG/ROpnQkvlPc0H/O+nOzQhDn0ejcD6dApqN0oAchnikLsXsDJ/De1LDmxR6aAHfomMG3Mcsp0iuC/Scu+SJ3yGp682QIvbMmPXOxgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=q/B77HSh; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727531631;
+	bh=AXylBb84Gi4ZLn9QbdSfWz1bezylh9IXiXx7KEkTzjs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=q/B77HShFdxTc/U7T2Q1s8y3U5mDSC/aRDqgMJJThc8YVccivPQM/rgth9IwRaxeH
+	 q44c9RUC6wckcPus36YKTqUj1+84amth0u/vDFEvEQ0i0txruTuKX+tWl5zQpyUmJN
+	 OJMnFaAtEfrx7mGTm8fj3CL1xhf60KrptOGMvyMB0hretwuZvD1wx03r/DMWurATlj
+	 4XxAH5Xr44Pp7louBaDrFRsxAym3fVPLVypG5LFyDLOkGXPcftZJtVB/F601kzYnxd
+	 LNm7L2NJlaPKAiykaompuGpW35Qmu3DuVs5TkzZZoDOhU2wHjHNU+7DVOemv/7SU+z
+	 QvayCYLOM8vnA==
+Received: from thinkos.internal.efficios.com (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XG82754zDz1bpl;
+	Sat, 28 Sep 2024 09:53:51 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	John Stultz <jstultz@google.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	maged.michael@gmail.com,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	rcu@vger.kernel.org,
+	linux-mm@kvack.org,
+	lkmm@lists.linux.dev
+Subject: [PATCH 0/2] Introduce ptr_eq() to preserve address dependency
+Date: Sat, 28 Sep 2024 09:51:26 -0400
+Message-Id: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, 16 Sep 2024 10:22:19 -0500
-Rob Herring <robh@kernel.org> wrote:
-
-> On Sat, Sep 14, 2024 at 9:18=E2=80=AFAM Jonathan Cameron <jic23@kernel.or=
-g> wrote:
-> >
-> > On Tue, 10 Sep 2024 18:44:39 -0500
-> > "Rob Herring (Arm)" <robh@kernel.org> wrote:
-> > =20
-> > > adi,ad5686.yaml and adi,ad5696.yaml duplicate all the I2C device
-> > > compatible strings with the exception of "adi,ad5337r". Since
-> > > adi,ad5686.yaml references spi-peripheral-props.yaml, drop the I2C
-> > > devices from it making it only SPI devices. Update the titles to make
-> > > the distinction clear.
-> > >
-> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org> =20
-> > Is this an urgent thing, or can it wait for the merge window after next?
-> > For now I've queued it up for then in my testing branch but can yank it
-> > out and send it as a fix after rc1 if that is useful. =20
->=20
-> Sooner would be better. It's now a warning in dtschema main branch.
-> The issue is not so much the duplication, but that which schema gets
-> applied is not deterministic.
-
-Shifted it to my fixes-togreg branch. I'll do a pull request for that
-fairly soon (once rc1 is out and it's had a little soak in next)
+Introduce ptr_eq() to compare two addresses while preserving the address
+dependencies for later use of the address. It should be used when
+comparing an address returned by rcu_dereference().
 
 Thanks,
 
-Jonathan
+Mathieu
 
->=20
-> Rob
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: John Stultz <jstultz@google.com>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Zqiang <qiang.zhang1211@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: maged.michael@gmail.com
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Gary Guo <gary@garyguo.net>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: rcu@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: lkmm@lists.linux.dev
 
+Mathieu Desnoyers (2):
+  compiler.h: Introduce ptr_eq() to preserve address dependency
+  Documentation: RCU: Refer to ptr_eq()
+
+ Documentation/RCU/rcu_dereference.rst | 34 ++++++++++++---
+ include/linux/compiler.h              | 62 +++++++++++++++++++++++++++
+ 2 files changed, 91 insertions(+), 5 deletions(-)
+
+-- 
+2.39.2
 
