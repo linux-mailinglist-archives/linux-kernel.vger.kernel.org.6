@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-342441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E528988F1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:09:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBDA1988F20
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5A7B1F21840
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:09:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C5C1F219AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E993318785B;
-	Sat, 28 Sep 2024 12:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76C418785B;
+	Sat, 28 Sep 2024 12:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqIVTF1x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekHkL3Wv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E41381A4;
-	Sat, 28 Sep 2024 12:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C4B186E32;
+	Sat, 28 Sep 2024 12:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727525350; cv=none; b=R05967L1cX//NAP+kUJVyqBw3FI5F3+a17KjlhQ4WkarJd5F23YptD3l00JKId3FFhhFjbXxPxbYn9Fm/z7l2hJM66j0LS78q67fIdb5O05zRh7a60SC3wjjDwq4LAIddFQKPS325p+AuOjTt16We1idjjO8Wnb+QEPKBxi3NAQ=
+	t=1727525603; cv=none; b=pOz8kHSgPK/t+1wh74OmOAMPUa4oA9wUtfgSV3tu8+Dmt5spWg3CD1HqqQbs649crmjiX6ABvHlWFtMu4XZraeKqbmTCntPtgf80CPPINa7b/oGUq8gcZ01+9gDkoGE51n5SgM/dSLz59makLNRPAwv3N5J33LQXcUVribgRt0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727525350; c=relaxed/simple;
-	bh=nYd2z7+Rgz2kvjtUPQM5r9bB4wMPpzSss5HUUF5gCvM=;
+	s=arc-20240116; t=1727525603; c=relaxed/simple;
+	bh=HdhiJ2c51QDa2RHjBSfRR/SdBFFKNbXSUVDqJ2cSA3k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rcYqxHkRUvs/rF+PQmmA3EoTc4lhfc88HLMyrK4hkUYNcK6XUdobR56Ip851xFLLEcv4Cp6wb6sE+ol377Q18WdwVoaSwkN5y7F0I4HQfVBsF6kXUZiCjnVM4BhLYdYvD8+lJYuFn9dZjrlkVdcis8KJcXQGz5OnHfZk1V9l/0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqIVTF1x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B2B4C4CEC3;
-	Sat, 28 Sep 2024 12:09:04 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=rSERRVkb8+I8dbLlK/rff7tS85Va7nCx8jNB5EWLvWQ9FUBQUDGmWLmt/J9AxfJNseGwVj/PgDZXQYXXIuwlMUmM7L450k6rUqGtW5VuYU0rWsJdceJVchV4X5H+Fz6I6sgy6aMqqQTFzGNuNo+w6daFhvho2Z0+0IH29nMO7mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekHkL3Wv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28043C4CEC3;
+	Sat, 28 Sep 2024 12:13:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727525349;
-	bh=nYd2z7+Rgz2kvjtUPQM5r9bB4wMPpzSss5HUUF5gCvM=;
+	s=k20201202; t=1727525602;
+	bh=HdhiJ2c51QDa2RHjBSfRR/SdBFFKNbXSUVDqJ2cSA3k=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tqIVTF1xuUAA7dG76w9jC6EoGBbWsQNa+yb1h1V5JZ9u1Lqv9+7dQjiMMpGnhZ5+0
-	 Uv92UX38IYvrsiF0t+Sb03UEw9OAa1BjUGErqMeW9hX4EEtnq9S5BK2CxY+7qTP7MP
-	 Aj25nLhsbX/A/h6n7JAeCTDBNCDYabaqLzqmKv32XWFQ7m25P7SkGN7PhwCC5epAte
-	 djMTDgNp8w5LgAbJ8rd5xTf3D4M90TeLPsk2q23WnRJ1VlzYOiG8RiBmDqpXfR/3dj
-	 cTKQca01I0pgr1rJetfs9+Q+HgBDjkcyC7Lc255AQvZ1iKm8N2FzDl+s2jSr7odg0N
-	 pF3V/otwCZ48g==
-Message-ID: <566859c1-a397-4465-987e-0682b07a703e@kernel.org>
-Date: Sat, 28 Sep 2024 14:09:01 +0200
+	b=ekHkL3WvGTRyiLwwheRnYmrierRUnZDNJRStXCLOIg10iOB/QCZl3uKElAqgHj0Z2
+	 kbv4KH/pHMZnlGmPxUTgCpg0zfwqMm7Tc3hqwu+RWCMWOazic2q6SP34vecxmpA0k6
+	 r5Tfia55SM2EZTtAsAJac2UOkkaY4EZ/27H7sUXH3KqJwD+pA4jBVeMbncICHEdkqe
+	 4WHTYoyzKoi5udoTJrA0p/9ne8eSY5k80C1sI+LVatOZlKRWCI2/X+x5EPEWBEYbYY
+	 zipr8wYeQx/tq5qPAx9Fa7MWiG0bCGRfp8jVCz6k3GrooJRDZOg7naT9bXLyRKs/Ou
+	 NHvcvvDsREjdg==
+Message-ID: <b7ec2c3a-fab3-4ca1-9c18-f0fd00554e09@kernel.org>
+Date: Sat, 28 Sep 2024 14:13:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m-anatop: support spread
- spectrum clocking
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
- linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com, Conor Dooley <conor+dt@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20240928083804.1073942-1-dario.binacchi@amarulasolutions.com>
- <20240928083804.1073942-2-dario.binacchi@amarulasolutions.com>
+Subject: Re: [PATCH v2 1/6] dt-bindings: ti, sci: Add property for
+ partial-io-wakeup-sources
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Vibhore Vardhan <vibhore@ti.com>, Kevin Hilman <khilman@baylibre.com>,
+ Dhruva Gole <d-gole@ti.com>, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <f0f60af7-8561-433a-a027-811015fc5e16@kernel.org>
+ <ti4ffymrixcpptlrn3o5bytoyc4w5oovdrzgu442ychai2fjet@wtdhrmwrozee>
+ <44feed5a-95a7-4baa-b17e-514c0f50dae6@kernel.org>
+ <sf2pklbnlkpgnkemv3wevldpj55kk2xqh4fabbmkcbh2tvnbzr@gg3gxgztq6pt>
+ <d2eb4faf-c723-453b-a9d8-68693c96fb42@kernel.org>
+ <fa11631e-48f9-4e95-95c4-20b77cb0a1be@kernel.org>
+ <h4kapqs5vpparh5b3tter54fbnxubq6gpnb4yrqjdio66tj37w@l3xzum2bq5sz>
+ <58f5f778-9f0a-4a05-8c33-949f3b3d1f49@kernel.org>
+ <sisw3whyzr7itjtuznvt5t6cbmfxzop5c4nfrxwpxjil6rxqzc@cfnb5panavxe>
+ <4f2ec575-4c2c-49d5-b1c0-85d5b6ce9f2e@kernel.org>
+ <ivyujm6do2wmpgoa42amgli4yqthhqzme6xepzcj2ifzg7xzxp@rauwer3wjigp>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,72 +115,69 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240928083804.1073942-2-dario.binacchi@amarulasolutions.com>
+In-Reply-To: <ivyujm6do2wmpgoa42amgli4yqthhqzme6xepzcj2ifzg7xzxp@rauwer3wjigp>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/09/2024 10:37, Dario Binacchi wrote:
-> The patch adds the DT bindings for enabling and tuning spread spectrum
-> clocking generation.
+On 27/09/2024 11:35, Markus Schneider-Pargmann wrote:
+>>>
+>>> It's not obvious for me. Maybe you can elaborate a bit.
+>>>
+>>> The hardware has a different set of wakeup sources depending on the
+>>> power mode it is in and I would like to describe these different sets of
+>>> wakeup sources in the devicetree as for me this is a hardware property,
+>>> not a driver thing.
+>>
+>> I stated the argument to which you did not respond: it will not matter
+>> for the device whether this is wakeup-source = S2R or wakeup-source =
+>> TI-Partial-IO or whatever.
+>>
+>> Each device is or is not wakeup source.
+>>
+>> And just because your device has some registers or some configuration
+>> does not mean this property is suitable for DT.
 > 
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> ---
+> I came up with a different (better) way to model this in the devicetree.
+> This group of units that are powered in Partial-IO are all powered by
+> just one regulator that is always on. I can simply describe this in the
+> devicetree by defining the regulator and consumer relationship:
 > 
->  .../bindings/clock/fsl,imx8m-anatop.yaml      | 41 +++++++++++++++++++
->  1 file changed, 41 insertions(+)
+> Defining the regulator as described in the board schematic:
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
-> index bbd22e95b319..c91eb4229ed3 100644
-> --- a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
-> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
-> @@ -32,6 +32,47 @@ properties:
->  
->    '#clock-cells':
->      const: 1
-> +if:
+>   vddshv_canuart: regulator-7 {
+>          /* TPS22965DSGT */
+>          compatible = "regulator-fixed";
+>          regulator-name = "vddshv_canuart";
+>          regulator-min-microvolt = <3300000>;
+>          regulator-max-microvolt = <3300000>;
+>          vin-supply = <&vcc_3v3_main>;
+>          regulator-always-on;
+>          regulator-boot-on;
+>   };
+> 
+> Adding vio-supply to mcan and uarts, note, this binding does not exist
+> yet:
+> 
+>   &mcu_mcan0 {
+>          vio-supply = <&vddshv_canuart>;
+>   };
+> 
+>   &mcu_mcan1 {
+>          vio-supply = <&vddshv_canuart>;
+>   };
+> 
+>   &mcu_uart0 {
+>          vio-supply = <&vddshv_canuart>;
+>   };
+> 
+>   &wkup_uart0 {
+>          vio-supply = <&vddshv_canuart>;
+>   };
+> 
 
-This should be allOf: and placed after required: block, like in example
-schema.
-
-
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +          - fsl,imx8mm-anatop
-> +
-> +then:
-> +  properties:
-> +    fsl,ssc-clocks:
-
-Nope. Properties must be defined in top-level.
-
-> +      $ref: /schemas/types.yaml#/definitions/phandle-array
-> +      description:
-> +        The phandles to the PLLs with spread spectrum clock generation
-> +        hardware capability.
-
-These should be clocks.
-
-> +      maxItems: 4
-> +
-> +    fsl,ssc-modfreq-hz:
-> +      $ref: /schemas/types.yaml#/definitions/uint32-array
-
-This should fail. I don't think you tested this patch.
-
-https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
-
-> +      description:
-> +        The values of modulation frequency (Hz unit) of spread spectrum
-> +        clocking for each PLL.
-> +      maxItems: 4
-> +
-> +    fsl,ssc-modrate-percent:
-
-Same problems
-
-
+I am happy that problem is solved, but it really, really puzzles me how
+above fits wakeup-mode-problem at all. This is so different that I doubt
+you came up with proper hardware description.
 
 Best regards,
 Krzysztof
