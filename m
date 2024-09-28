@@ -1,98 +1,195 @@
-Return-Path: <linux-kernel+bounces-342712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D74C989201
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 01:27:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A06989202
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 01:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17E8A1F23F12
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 23:27:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03ACE28618B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 23:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50074186E2C;
-	Sat, 28 Sep 2024 23:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CD3187878;
+	Sat, 28 Sep 2024 23:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JXTtRF+B"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="qUTEZf4Q";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="n3q8vA2p"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCDA18654
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 23:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1B41DFF0;
+	Sat, 28 Sep 2024 23:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727566058; cv=none; b=iOJ1evw2N2lXseRhXynSYFKdhy5mHi9nvbvp01Sn9/TCDbZIftlC/rEDCtEIL31F65T1yeZ6u9h9CIXy4rMZV8fJI/QHHx5zvfruwitL7Jq8s9whN/RRkqlUul2Vf5EZWDIl5+xzJsO89MNgVkb+aSR/RKdM1tY0wSf5a/4LX2k=
+	t=1727566424; cv=none; b=Sc1/2uvvR0MY20ciT3Th0srE5Xu2Vr82Jpr+2ofg9b8VTyKxq/oIXUKQY+St3QCUnjY+fXFZ5+tOA4Wcsf3PpY3nb4xcAN84mcKLHsBOUmLanNfjPXcNgQUnhA/kS+DSwfNm++4I5Kx3/XcrgnYEjdLshQV6DADPYcwVBmAVGVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727566058; c=relaxed/simple;
-	bh=npv6Rj8FWCOZ8gEBRCao7lujGD4CQ1EdbY1kbZ5iaaw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pxLTtePPpvlNXTbLHluebnlv1QgiXvAW+x8TFxQ/yeRs/MlTONMcOjdCZ/QpgNjOgv5HglBR66YSqAdst7L4E/9EAmqcUUwbljxsx4n7ZrHqsbaAZY6bhMPkrhv5cKZ8pD+jmdWnyJZZZKfu1+CYoY/X8soeVJ4g+z8OHj9XvUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JXTtRF+B; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6cb2a6d3144so15960416d6.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 16:27:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727566056; x=1728170856; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=npv6Rj8FWCOZ8gEBRCao7lujGD4CQ1EdbY1kbZ5iaaw=;
-        b=JXTtRF+B4s+2NFAztbMtUH7q3+edZCJe5PO/i3y2RnwEQ/SeV49DPnh1IHh0MgxLTR
-         +lC35796skB14leLeCSt+yXUAZPT7HeFJkSUliqaMg0k3jxQeeJimK+UaPfOR2cm/G8e
-         WMGtpYdkDU8ZbNVin/lIq2u2OXSkt1TnL4DhkCj/o6sBH4MdYrw19/mP94nbBYkZagKE
-         jETl/9RBdrjvhbOA9LYcfCJ5oTQ3XtqrRz0Z6lzkJvvNTrZ9/CnGUAv60lUvvH9kepPq
-         qW10nPwTg7Abd9/zKZ8CRDvJ+6s1pDy1QaPTswW8T4wtdSHI+1pqSsJWmHKU2PEw7Mgr
-         defQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727566056; x=1728170856;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=npv6Rj8FWCOZ8gEBRCao7lujGD4CQ1EdbY1kbZ5iaaw=;
-        b=EDliCvbobX9bdhFWak3aZJawYEqY7x8mcFoSP+xAzeZHoCqinnI6T8zNWHNYggsgTQ
-         IKojwjy3FlpXQc0Jp0Xe6J/j0YASNBcd1iUp3CF1mr/XML9AA1Dx2oQAwCHiaJzy1wbg
-         jp0TQPmXZ/aLMmcZ+J6E8MP55hUlQOWAB/jVw4JbcPX+AWP48qAMFIK0yw/T3yKdHHCh
-         aNHiI8ymhO8F8WjykOSZdYY28i7Q34Rv3pXPmwaIYPi2K63JEzcCco9IHrBHyzpe1NkQ
-         NRDV8gNFCL3lD+/sAzhvjpRYXKIlmZj08fYrz5EynBmQNnvt1VkJVQ8ef+t8vZTsB6Ji
-         SgYw==
-X-Gm-Message-State: AOJu0YylPfhBOkGW7gRIfkmGgWEz4K205CcUnxN958nDyXuNwlOz2KnD
-	hnflYVWwZ4h/8QdIZ9fXD3H+eoEZYLLCuzE4Muky0UUpcPqYvyY1Qo8xrjqT/D90zAfCGJaUY+x
-	Ko78zeSQ8VFAzcQD02jHvo9ceyyY=
-X-Google-Smtp-Source: AGHT+IE0/dKYerdIMnZGH0rnfGoWpORRuQM4LjdmeTujKZ6oQ21kxTgnWofae4IHKA4mGsBmT+zODBjm7LNEB6nkSK0=
-X-Received: by 2002:a05:6214:5549:b0:6cb:2ab7:56df with SMTP id
- 6a1803df08f44-6cb3b64deccmr107912196d6.49.1727566056169; Sat, 28 Sep 2024
- 16:27:36 -0700 (PDT)
+	s=arc-20240116; t=1727566424; c=relaxed/simple;
+	bh=PHkkvQkJc6JI2zl2MnZr30jDS4ppY8cDh4JJQ5fr6Uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RIQxiId1dGDQnN1xMdnAMr2T8wzSikQ1ULiUFvDNjOK9HU+JTx2JWR4MgZT0+mnsF6s4rsrxYX5B9wnVDYWRpGm2QPnLs0wXPgT25ph0JCU+EOQBBAUMa3skmU4yZjfRGuMrr1LQX4rN/mbMpTiIjlsqYu+Ky2TTOgTx4xc4qiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=qUTEZf4Q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=n3q8vA2p; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 332B91140196;
+	Sat, 28 Sep 2024 19:33:40 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Sat, 28 Sep 2024 19:33:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727566420;
+	 x=1727652820; bh=1on8eXvP9p4hIW54Ypcwhpe4cMgbbs7J3C6kLOiZgm8=; b=
+	qUTEZf4QOqUd2E7oesIN9tYG29skZIXDSHpNQ8W3BNS03CrU5hlkEnZ5ClpLF5mW
+	qAFfA5SXPgfXMEIIjzqr+vcST8HWJWK7ytfxuqFKJShvZEYivY3jQdUUW1yDnZV9
+	b3YwYTmeHJYyYlnpeW+LbHQKUXJMDyFpfJWTU7NalvuPYQ7yzhFg0OBgkBOtePsT
+	M87Gj8IeuihijeM4mz3sqM6tdDNs2YgQY/fXCLV+L/HTrDysX0Y3PgDNZWLR+JRR
+	aiNxA3c601zbbg/gfDjJpqQxAD60aFNSHO77SY5GLxRd/fTwJe+zRWluaGFA9UzP
+	X9Yy9Mw6Z87LumVHls/7pQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727566420; x=
+	1727652820; bh=1on8eXvP9p4hIW54Ypcwhpe4cMgbbs7J3C6kLOiZgm8=; b=n
+	3q8vA2pMOqyXpFgZm6cZpZxnEUgjXHrXJ6NtqlWFYA/rniVivatLjJnN42NMEyE1
+	Ciems5PkAkKwQtf9ioaNJNL/KzNGCjaUOB+8FgkYqVzaQlYc3wZqi9Wd2IBFNirL
+	a+TEhUdcJCLd7ZScJ8thQOJVqUm05mBYbUszG/eexj8+CqYbo2HSMekAm6LMdVzJ
+	xkOba8kziwHu07z8DVhLQ20hv9mTEJq0oWpL4rvmA6gUelkYSqaOooROLMbCR5HU
+	EhijjzqZoosL6MQh2uWLDLNVB0s/2VBcitwU+qD/3kpszedVwbqJr3K4pxdtoeiM
+	fpSKvrfCWq9RNIoOhye/Q==
+X-ME-Sender: <xms:U5L4Zk6QcaDcOYNljw1R3a6bHEs5F9rbWRcZOc28ARQdetmX8WpzbA>
+    <xme:U5L4Zl6h3ktl4MmZBVC3nxOyzlYGAjnJLJgs6T15P-ZYvasKkKDTs4v42_QXJIS99
+    Sxk878WcQxx5rS6WZ0>
+X-ME-Received: <xmr:U5L4ZjeBzZChNmOc0zKsrdsQnCn06okR3H18vBUssn27b8_1wN_gq8CtoZIObAZ_YbzvkTDahbkAiqG8a0jHz2btUCKh>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduvddgvdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdluddtmdenucfjughrpeffhffvvefukfhf
+    gggtugfgjgesthekredttddtjeenucfhrhhomheplfgrnhcujfgvnhgurhhikhcuhfgrrh
+    hruceokhgvrhhnvghlsehjfhgrrhhrrdgttgeqnecuggftrfgrthhtvghrnhepfeejieet
+    gfegiedtkeeigffgkeelvddtfedttddtleelffdtudevjedvleelvdelnecuffhomhgrih
+    hnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihii
+    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhgvrhhnvghlsehjfhgrrhhrrdgttg
+    dpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepkhgv
+    vghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmohhrsghosehgohhoghhlvgdrtg
+    homhdprhgtphhtthhopegrrhgusgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhh
+    ohhrshhtvghnrdgslhhumhesthhosghluhigrdgtohhmpdhrtghpthhtohepkhgvnhhtrd
+    hovhgvrhhsthhrvggvtheslhhinhhugidruggvvhdprhgtphhtthhopehrvghgrhgvshhs
+    ihhonhhssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqsg
+    gtrggthhgvfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
+    gidqhhgrrhguvghnihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:VJL4ZpLaLl8NOmgesctsC_FDuzNISvh79vR7kHZU9tpQoOsL0vmRJQ>
+    <xmx:VJL4ZoIALvZ97TQHVo1UdZgcyzy2iB-vjvQNqsnrBkhhAWZvA5v7Aw>
+    <xmx:VJL4ZqyfydrCxw56U2_4A0YqVvDB0eFPeNASkj5Haz2Ef9y6frTL-A>
+    <xmx:VJL4ZsIVexrPqsAvTmJDIFlGU39_YcoszMf5ryLIjL7JIxf6d-Z2yQ>
+    <xmx:VJL4ZtXD129tY4ai2UbKnJsXeOT43nIOBUsrL2rWcyiTzrQFEKg4xcLV>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 28 Sep 2024 19:33:38 -0400 (EDT)
+Date: Sun, 29 Sep 2024 01:33:37 +0200
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+To: Kees Cook <kees@kernel.org>
+Cc: Bill Wendling <morbo@google.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
+	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <ZviSURL7kaxZPkSN@archlinux>
+References: <ZvV6X5FPBBW7CO1f@archlinux>
+ <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+ <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+ <ZvWTXaqkmxP2E2dc@archlinux>
+ <ZvWd0aK7p_1rkb7E@archlinux>
+ <CAMj1kXFV+Jck9Yf4w18rOzHckXvpXkhPhL-KrpBC8hqgXusw2g@mail.gmail.com>
+ <CAGG=3QXG+Vsm7mjLV42Q-uA-EvgfOehSUeNQjKA3QQbw8vqSCg@mail.gmail.com>
+ <CAGG=3QVWCQB-3sM=iwgTmX8zrU81H+F_A1icJwROvW_DSvsBeA@mail.gmail.com>
+ <202409281335.5EE231B9C7@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240928021620.8369-1-kanchana.p.sridhar@intel.com> <20240928021620.8369-6-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20240928021620.8369-6-kanchana.p.sridhar@intel.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Sat, 28 Sep 2024 16:27:25 -0700
-Message-ID: <CAKEwX=PeF2KmOjhswDyAYJcPAREosARnpQTFKK+vRXgFwLwa_w@mail.gmail.com>
-Subject: Re: [PATCH v8 5/8] mm: zswap: Modify zswap_stored_pages to be atomic_long_t.
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	yosryahmed@google.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
-	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
-	21cnbao@gmail.com, akpm@linux-foundation.org, nanhai.zou@intel.com, 
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202409281335.5EE231B9C7@keescook>
 
-On Fri, Sep 27, 2024 at 7:16=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
->
-> For zswap_store() to support large folios, we need to be able to do
-> a batch update of zswap_stored_pages upon successful store of all pages
-> in the folio. For this, we need to add folio_nr_pages(), which returns
-> a long, to zswap_stored_pages.
->
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+On 28 13:50:12, Kees Cook wrote:
+> On Thu, Sep 26, 2024 at 06:30:15PM -0700, Bill Wendling wrote:
+> > On Thu, Sep 26, 2024 at 3:18 PM Bill Wendling <morbo@google.com> wrote:
+> > >
+> > > On Thu, Sep 26, 2024 at 12:58 PM Ard Biesheuvel <ardb@kernel.org> wrote:
+> > > >
+> > > > (cc Kees and Bill)
+> > > >
+> > > > On Thu, 26 Sept 2024 at 19:46, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> > > > >
+> > > > > On 26 19:01:20, Jan Hendrik Farr wrote:
+> > > > > > On 26 18:09:57, Thorsten Blum wrote:
+> > > > > > > On 26. Sep 2024, at 17:28, Thorsten Blum <thorsten.blum@toblux.com> wrote:
+> > > > > > > > On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> > [...]
+> > > > > > > >> [    6.252375] memchr: detected buffer overflow: 12 byte read of buffer size 0
+> > [...]
+> > > > > >       bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_name_len),
+> > > > > >                        c, xattr_name_invalid_chars,
+> > > > > >                        "xattr name has invalid characters");
+> > [...]
+> 
+> The thing going wrong is that __bdos(xattr.v->x_name, 0) is returning 0.
+> This looks exactly like the bug I minimized here:
+> https://lore.kernel.org/all/202409170436.C3C6E7F7A@keescook/
+> 
+> Since there wasn't an LLVM open bug yet, I've created:
+> https://github.com/llvm/llvm-project/issues/110385
+> 
+> -Kees
+> 
 
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+I found a fix for the issue. Fixes both the issue in this thread as well
+as your reproducer. First thought they might not actually be the same
+issue, but they indeed are. Haven't tested against the issue Thorsten
+linked.
+
+Havn't run the clang tests on it yet, but it does successfully compile
+my kernel and fix the issue.
+
+I'll open a PR and give more explanation tomorrow, it's getting
+pretty late over here in CEST.
+
+
+Here's the patch to be applied on top of
+https://github.com/llvm/llvm-project
+
+--
+diff --git a/clang/lib/CodeGen/CGExpr.cpp b/clang/lib/CodeGen/CGExpr.cpp
+index 9166db4c7412..143dd3fcfcf8 100644
+--- a/clang/lib/CodeGen/CGExpr.cpp
++++ b/clang/lib/CodeGen/CGExpr.cpp
+@@ -1164,15 +1164,15 @@ llvm::Value *CodeGenFunction::EmitLoadOfCountedByField(
+     Res = EmitDeclRefLValue(DRE).getPointer(*this);
+     Res = Builder.CreateAlignedLoad(ConvertType(DRE->getType()), Res,
+                                     getPointerAlign(), "dre.load");
+-  } else if (const MemberExpr *ME = dyn_cast<MemberExpr>(StructBase)) {
+-    LValue LV = EmitMemberExpr(ME);
+-    Address Addr = LV.getAddress();
+-    Res = Addr.emitRawPointer(*this);
+   } else if (StructBase->getType()->isPointerType()) {
+     LValueBaseInfo BaseInfo;
+     TBAAAccessInfo TBAAInfo;
+     Address Addr = EmitPointerWithAlignment(StructBase, &BaseInfo, &TBAAInfo);
+     Res = Addr.emitRawPointer(*this);
++  } else if (const MemberExpr *ME = dyn_cast<MemberExpr>(StructBase)) {
++    LValue LV = EmitMemberExpr(ME);
++    Address Addr = LV.getAddress();
++    Res = Addr.emitRawPointer(*this);
+   } else {
+     return nullptr;
+   }
 
