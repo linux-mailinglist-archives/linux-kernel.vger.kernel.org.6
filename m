@@ -1,135 +1,149 @@
-Return-Path: <linux-kernel+bounces-342369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD98988E0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 08:50:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81084988E0E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 08:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8884B21395
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 06:50:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7481C20E2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 06:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9CB19DF68;
-	Sat, 28 Sep 2024 06:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B0E19A282;
+	Sat, 28 Sep 2024 06:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C54qUm3m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="b0Vz7rmu"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C21A800;
-	Sat, 28 Sep 2024 06:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E621537D7
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 06:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727506242; cv=none; b=L2v7yV7dXxdYx03wHsMMbnWMpCphG9LuzaLUok+DdbC/z2eABzXnj4Lp1vk/r9J3/yrY4tvOd2bw6XYz3iS4WctnseiPgwhxHhUGkd4/Md/n+DJyEEwVAZDXJaogG2vaKDNuTY3w5iptHX1j+vhP649U5t3JbJQJd+iHzdWhoG8=
+	t=1727506470; cv=none; b=B0kBLVqeJfOQDC3S9C0QxVwmpD9eUVhoOZhoMIxi/qDB25z9bLuMlsQ6ODsbTMhyCVvvgo3hXJFeMlLEIHZkxpNQ8FX05OQ5HxEfvJGlI2/7BmQNoWVsmJcBa5lXVu9BN9R7XxoBmHExMDRobaoBJ5SiYSmu45HgkbWe4f6jz80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727506242; c=relaxed/simple;
-	bh=QH+t3MerDvmzRG9sFgWzJ77drNpMYqtI1XrfxZrhfdE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HzwuGnBji14C5ma0MrBH2ap2TA8BOlSknxbhokJuWJaGelidfljYa+mzpsv6VCR+PVU4cooufiR93KKh8T5mlBg9J+agELEr3OqxEzYu8Hu0zmykbKn74ICrD2xxfLygQN3WjIwbqBBLrN9/QFcSpdi9SXg2D+ujz7r+q6b2p/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C54qUm3m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1965DC4CECE;
-	Sat, 28 Sep 2024 06:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727506242;
-	bh=QH+t3MerDvmzRG9sFgWzJ77drNpMYqtI1XrfxZrhfdE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=C54qUm3m/aDnZl834J/2oJNu57OB3jvn/HwaMmwJ0YYYAj9mVaKGHWqxoCL2CrlWM
-	 XlBd8TiSCDZ8/Bylh5wOlQgCY36eKUtISwEJJPjRTazWfXPT1K8sqNZzE9i3pZ+qV9
-	 OZytqDFQ1monWfG8rNFQ3psIHxI8mMpDmwWLhSZ4YV+k/TUMw1v0puZnaIiHZQ4Ksu
-	 aBN+rD0fxp7kCVdVDF18KASkfc+wibKCw53Liwyq3O/fb7hR48fiE7s6QLjm7iZQfC
-	 md30uiJvghTecU/ev0dIB/TVODnx66RYhX+SEFN6EedUjXHrObS9J6U18jKdD4rIBc
-	 IAhkxTp8zEQGQ==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fac49b17ebso142081fa.0;
-        Fri, 27 Sep 2024 23:50:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU0o0C+tb2W17f5Ky8AafGd8SjkHZQ+rqGVHqKubokTWl7clsbj+RwDMtZ7ND12JnpjMPlxin8xqh+N3Y79qA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw8NbrAlBT/UwSX7T5t2lJfyO6KAPzHrEHGSrwTn6khryfBL7z
-	Hqr08QA7XN120gid6UA9zhBknJVgO0bWBYSjd3++aF7BzPGG0PkEV9B4+dk3d1+g6KQWNUD1MFy
-	ExuMJIglgrCdSFnSLDeL0Q0qzMMY=
-X-Google-Smtp-Source: AGHT+IEqwnWCLVXEtWkbCpAIZlYYF51Xp5KoGIX4UzbwFFf7LVvcN3x7ZoySdwlJuaa4FJhpiilvPkNk491jcPrfpXU=
-X-Received: by 2002:a2e:b88b:0:b0:2f7:7f76:994b with SMTP id
- 38308e7fff4ca-2f9d3e6bee1mr33536181fa.24.1727506240671; Fri, 27 Sep 2024
- 23:50:40 -0700 (PDT)
+	s=arc-20240116; t=1727506470; c=relaxed/simple;
+	bh=FyK1UT2kKLEtWV22jilqugWmDUI+PIiVzxgAW8iI9V8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Nz+7RCdRmzdyhzUWL0PGY/AzdSADkVmc+1+5oQrjCUM9f/hiDmtTytSjbZwn6Qrs9Mcr1bIjG0GszRRavZPquCcwAtvzBb50YLlFSXNGrIutGIU7AghseMRRnvmz2ItiactlmirohvWTqxitLFFgEyytXTDb5rUZ0+2U7lJ+iqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=b0Vz7rmu; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240917141725.466514-1-masahiroy@kernel.org>
-In-Reply-To: <20240917141725.466514-1-masahiroy@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 28 Sep 2024 15:50:04 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASDcpk3k+SKZ61dPW_D=pqfekEcnu2c+00MynpomE2RNw@mail.gmail.com>
-Message-ID: <CAK7LNASDcpk3k+SKZ61dPW_D=pqfekEcnu2c+00MynpomE2RNw@mail.gmail.com>
-Subject: Re: [PATCH 00/23] kbuild: support building external modules in a
- separate build directory
-To: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	rust-for-linux <rust-for-linux@vger.kernel.org>
-Cc: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1727506465;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N/ve3pnXDKZbzYHAOFPE/dzau+YjyATV+0kZoaLGUmA=;
+	b=b0Vz7rmuHOHUrxm7FxiNsXUooJWQB/SdbZqwtXjpw2s6BwdpJV86xqEFisTnUFFDUfmlvI
+	yJoB5VWLAhwT+fq2/Nkh6lTY84NU2nMK4zlxcPAa4REOKf9pqehY/RQEIV/iUbFSNF1Hvj
+	41cW5UamvHOWqEfCfAlpRBJkNfcSJP7+XrHaeMDpaMAMsmFWvkShaapNmoJsU+YYn6oY2w
+	612ge6Hb+lwldQNenKpDgOsaXdk+kAlfRj5e2MsPxK9jgkcHSGRh9+z9jeiKJbq6V4ZNei
+	j1t+Bb7cEJj0OK6f9agzQPZGHbruoc1eq0j9pQZiRSF5atS02rTuw3sFPs2Trg==
+Content-Type: multipart/signed;
+ boundary=cfd3c3afaff839dbcdcc8144397420e9c5125dae20b348a12ed9b6623dd4;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Sat, 28 Sep 2024 08:54:12 +0200
+Message-Id: <D4HPXGCB5GGE.1KQFZR61CHMVF@cknow.org>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Arnd Bergmann"
+ <arnd@arndb.de>, "Armin Wolf" <W_Armin@gmx.de>, "Guenter Roeck"
+ <linux@roeck-us.net>, "Vinod Koul" <vkoul@kernel.org>, "Diederik de Haas"
+ <didi.debian@cknow.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: Error "ee1004 3-0050: probe with driver ee1004 failed with
+ error -5" since 6.11
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+References: <D4G7XD1WU5GY.D22KFST6MHIT@cknow.org>
+ <2024092616-showing-fragrance-f70a@gregkh>
+ <D4H312REVAZ3.3JWUT4NMWDA7C@cknow.org>
+ <sr6p4lwnlznee73t4jof537dcwdl6m6vxriwk3pk4dnlxyaih4@6wv52esrfpyq>
+In-Reply-To: <sr6p4lwnlznee73t4jof537dcwdl6m6vxriwk3pk4dnlxyaih4@6wv52esrfpyq>
+X-Migadu-Flow: FLOW_OUT
+
+--cfd3c3afaff839dbcdcc8144397420e9c5125dae20b348a12ed9b6623dd4
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On Tue, Sep 17, 2024 at 11:17=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
+Hi Uwe,
+
+On Fri Sep 27, 2024 at 11:59 PM CEST, Uwe Kleine-K=C3=B6nig wrote:
+> On Fri, Sep 27, 2024 at 02:57:30PM +0200, Diederik de Haas wrote:
+> > On Thu Sep 26, 2024 at 2:44 PM CEST, Greg Kroah-Hartman wrote:
+> > > On Thu, Sep 26, 2024 at 02:35:05PM +0200, Diederik de Haas wrote:
+> > > > I updated an amd64 machine to (Debian's) 6.11 kernel and got this e=
+rror:
+> > > > ``ee1004 3-0050: probe with driver ee1004 failed with error -5``
+> > > >=20
+> > > > which I didn't get with 6.10.9.
+> > >
+> > > bisect would be great, thanks!
+> >=20
+> > $ git bisect log
+> > git bisect start
+> > # status: waiting for both good and bad commits
+> > # good: [6150e5e1ae2d8ad72f52217f8f41fe446cae9e27] eeprom: ee1004: Inst=
+antiate jc42 devices for DIMMS implementing Rev.1 SPD
+> > git bisect good 6150e5e1ae2d8ad72f52217f8f41fe446cae9e27
+> > # status: waiting for bad commit, 1 good commit known
+> > # bad: [8400291e289ee6b2bf9779ff1c83a291501f017b] Linux 6.11-rc1
+> > ... [omitted for brevity] ...
+> > # bad: [7a46b17d4c00c2547b5bd82eec9489b19128fd65] Merge tag 'dmaengine-=
+6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine
+> > git bisect bad 7a46b17d4c00c2547b5bd82eec9489b19128fd65
+> > # first bad commit: [7a46b17d4c00c2547b5bd82eec9489b19128fd65] Merge ta=
+g 'dmaengine-6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/vko=
+ul/dmaengine
 >
+> The following is completely generic. Note I didn't try to to understand
+> the problem, just giving some hint how to further improve the bisection
+> result.
 >
-> There has been a long-standing request to support building external
-> modules in a separate build directory.
+> [ extensive description on what to do when git bisect results
+>   in a merge commit as 'first bad commit' ]
 >
-> The first half is cleanups of documents and Makefiles.
->
-> The last part adds KBUILD_EXTMOD_OUTPUT (MO=3D).
-> This is too big changes, and too late for the current MW.
-> (I did not test kselftest at all.)
-> I hope people test this and may uncover some issues.
->
->
->
-> Masahiro Yamada (23):
->   kbuild: doc: update the description about Kbuild/Makefile split
->   kbuild: doc: remove description about grepping CONFIG options
->   kbuild: doc: remove outdated description of the limitation on -I usage
->   kbuild: doc: remove the description about shipped files
->   kbuild: doc: describe the -C option precisely for external module
->     builds
->   kbuild: doc: replace "gcc" in external module description
->   kbuild: remove unnecessary prune of rust/alloc for rustfmt
->   kbuild: simplify find command for rustfmt
->   speakup: use SPKDIR=3D$(src) to specify the source directory
->   kbuild: refactor the check for missing config files
->   kbuild: check the presence of include/generated/rustc_cfg
->   scripts/nsdeps: use VPATH as src_prefix
->   kbuild: replace two $(abs_objtree) with $(CURDIR) in top Makefile
->   kbuild: add $(objtree)/ prefix to some in-kernel build artifacts
->   kbuild: rename abs_objtree to abs_output
->   kbuild: use 'output' variable to create the output directory
->   kbuild: build external modules in their directory
->   kbuild: remove extmod_prefix, MODORDER, MODULES_NSDEPS variables
->   kbuild: support building external modules in a separate build
->     directory
->   kbuild: support -fmacro-prefix-map for external modules
->   kbuild: use absolute path in the generated wrapper Makefile
->   kbuild: make wrapper Makefile more convenient for external modules
->   kbuild: allow to start building external module in any directory
+
+This is awesome, thank you very much :)
+
+I already thought that this git bisect result wasn't very useful as I
+failed to see the logic of dmaengine changes being relevant for this
+issue.
+And I (indeed) didn't know what to do when a git bisect resulted in a
+merge commit as 'first bad commit', so your description will surely come
+in handy (someday).
+
+I haven't made up my mind yet whether I'll apply it to this specific
+issue. It doesn't cause any actual problems (AFAICT) and most
+importantly, it seems to be fixed in 6.12(-rc1) already.
+And the 6.11 kernel is only a 'temporary' one which I don't care (much)
+about, while it is fixed in the kernel I do care about (6.12).
+
+So if there isn't a follow up from me on this issue, it certainly is NOT
+related to your message, which I appreciate a LOT :-)
+(And I'm pretty sure there'll be other instances where a git bisect
+results in a merge commit ...)
+
+Cheers,
+  Diederik
 
 
+--cfd3c3afaff839dbcdcc8144397420e9c5125dae20b348a12ed9b6623dd4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I CC'ed rust ML because Ack for the following patches are appreciated.
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZveoGQAKCRDXblvOeH7b
+bnTtAQCGgg5XDAzQsP4/1SYV6AoOufdTACCaRLMM9H0V2UhhSwD/ZfqwnFGyeVvo
+DTebpUW57HamITbxd12Isscrs/Z+/g4=
+=0KJi
+-----END PGP SIGNATURE-----
 
-[07/23] kbuild: remove unnecessary prune of rust/alloc for rustfmt
-[08/23] kbuild: simplify find command for rustfmt
-[11/23] kbuild: check the presence of include/generated/rustc_cfg
-
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+--cfd3c3afaff839dbcdcc8144397420e9c5125dae20b348a12ed9b6623dd4--
 
