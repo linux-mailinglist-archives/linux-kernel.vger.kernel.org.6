@@ -1,117 +1,111 @@
-Return-Path: <linux-kernel+bounces-342438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F7F988F14
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:36:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BD5988F17
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8958A1F211AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 11:36:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BACA2B20FB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 11:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4FF186287;
-	Sat, 28 Sep 2024 11:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwZ+zTfs"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93026186287;
+	Sat, 28 Sep 2024 11:50:38 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B615F2A1C0
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 11:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0919917085A;
+	Sat, 28 Sep 2024 11:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727523401; cv=none; b=lTA+JZE+WSatBGG2MJWmV6vy4vTKuk5SnyPgH8oYFHFXC0rOp5WKsZu2NoD4hjDagTENh+m1C7igO6v7SX7df6upEo+UlfJClhIZaRuAWYBapDPOYxxIYL73ob+lGbzhE7yh45SoUyGdnfCs0/n8wdwA1jVlQp9Fudm4xJlBFGA=
+	t=1727524238; cv=none; b=qRzNiEwWdVnZwUCNKDa1T2Fbl8BhhXJvGioem8haQUYDIO6lEbnZYxKgGY5XgBGRswhL/ftebp7VF3fNnyUZOznEb7/hT8l6u9ZzEDdNDTTCsokMMkHWZDwiQbF+Et75dMYPMYBLU2UDLFdVOasQN//OtvcLG6UNiWscp5wVgOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727523401; c=relaxed/simple;
-	bh=I7r0OeNRYq7UEJ9WJscMDhm3+wDQOwmMd4aQSvLc2sI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mAao4OncBPnAWUYJezHLwJIrFYyt+WhPJlZdrPdvkUEybMIXhQ+uXZ7LhrQB7pkvvh0lQGfovTWQzP3G2lA6jaqfJzDXdCy6S8Qi4f0PXf9+73evBsypXsbAiU2jl/PL/0sEQcHIl9hCU4oGIH0iR+G2xtfPgTzVtzKC7xICdDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NwZ+zTfs; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7d50e865b7aso2283048a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 04:36:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727523399; x=1728128199; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zs7gCtqY1hbtoA4ZCdcRbSkJC2v2a700bLuubXnIOkI=;
-        b=NwZ+zTfs8DYpgxVDsFl7enPQVTfC4tMhDOKAtSyczyy9D1xjMkoIaO44pgqWq3JAa9
-         dZ1cnyb0FO2R/31QY61aUlJIpaI4AexxrPMEdPIbEy77Dohwqtx9gQd/rniUZ+c4a/WZ
-         /E+8QASyAsAS6JAi5gGSBOXbgispMMtqwCGNtRt1zfP2viUI3wSBxXV/pMZx+V/yKjVA
-         QMWiPUBLeXJBJji1wsp336nr/Qpu3uylXnZKTi+7aWI0cvfyFwSUqGj6d3YfXMsCQ4Q9
-         OC7VrtGDFwRxA3aTtlsLfKoSZw6vtJQ3Peit/716nGl1ncKBOe+rdYgngdVxd8Bh4L9P
-         zz9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727523399; x=1728128199;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zs7gCtqY1hbtoA4ZCdcRbSkJC2v2a700bLuubXnIOkI=;
-        b=YcdbBulQkh4FZ86OKvuoFD7ofjdPQ6ez4yjHFkcX5X4WNA70YytqiQ7xUvLoAK1qwG
-         AQ6lNCNduvc7mlaGp9QCguqaMtHr47NwiEBcW38zoCc3LXRH194C9Eq1GJ40PyKd3FSa
-         ep0oHJyUdDp3/h5mRZgz9CJVa1CXpixaHboNZ+oa5ZmUj/5A387KfY9Hf4zbII1qqVe/
-         fJOsX2UltIi712p4DNdlaKjOfh0OdhW+RQ8NQyiO7Cy4tIFyg3DaTL72DYqzS1sZeGqf
-         0ROK/+s03hruJNEfFqFYPT+nFcJMmN9YpeZKcSBPNqlWxpq3DX3TSimaIARcBpA7OzG/
-         RMHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVs+CNKm8qxghb2rqXT0wTnO5+2wbqt3uhgC/v0GsRXgjrT2op63teDOLUR8PZal75Bo98TcIWzbWqjtJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYcKgeRQJwCy5upKUjCqcohlLAP6dSJ9ZWbGbyxGh84VXfpF/O
-	9M5EmTSgQm48aE/irBPsO6W5HiZdJ3jD62ysrTjneSkFHZWUwFmP
-X-Google-Smtp-Source: AGHT+IEi2FzbvOuIK1FQQmV397I3vlvQXzbrRvDu4QC1gN5XfsT66lR1V2Wc/XxOFntGtfk2YqUI3Q==
-X-Received: by 2002:a17:903:186:b0:208:d6da:a22b with SMTP id d9443c01a7336-20b36cdb4e0mr101418725ad.23.1727523398864;
-        Sat, 28 Sep 2024 04:36:38 -0700 (PDT)
-Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264986eesm2969573b3a.38.2024.09.28.04.36.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Sep 2024 04:36:38 -0700 (PDT)
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Ching-Chun Huang <jserv@ccns.ncku.edu.tw>,
-	linux-kernel@vger.kernel.org,
-	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH] printk: Fix signed integer overflow when defining LOG_BUF_LEN_MAX
-Date: Sat, 28 Sep 2024 19:36:08 +0800
-Message-Id: <20240928113608.1438087-1-visitorckw@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727524238; c=relaxed/simple;
+	bh=8P3Zw7MFYAZvL1cGHyTuojhG3OvEjU0fxG4TGXibf5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X0vaKZVpKU9+za7ireHkf0ubYbcKsVQrdZhDXlhFbHqDaJxlBuLkMSU62LexizeUFxPMcLXp0GpswE56MvHgNqP6wwaKeONS/R6GCNfUDscBiKUjzs7+xq/9pMK4ZYn/5vB9TMiaoCbZXkDTNGOTQJLodwW6kaPVBQ8C/6ed/co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XG4kC4QzHz9v7JM;
+	Sat, 28 Sep 2024 19:24:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 8CB4E1401F0;
+	Sat, 28 Sep 2024 19:50:32 +0800 (CST)
+Received: from [10.81.205.100] (unknown [10.81.205.100])
+	by APP2 (Coremail) with SMTP id GxC2BwBHqcl47fdm4VvRAQ--.57124S2;
+	Sat, 28 Sep 2024 12:50:31 +0100 (CET)
+Message-ID: <42709627-8bb9-4f9f-beeb-dde9bd420022@huaweicloud.com>
+Date: Sat, 28 Sep 2024 13:50:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/1] hpref: Hazard Pointers with Reference Counter
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Alan Stern
+ <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>, rcu@vger.kernel.org, linux-mm@kvack.org,
+ lkmm@lists.linux.dev
+References: <20240921164210.256278-1-mathieu.desnoyers@efficios.com>
+ <db17633f-354d-428e-97c2-bcd455766c3a@huaweicloud.com>
+ <2ca589bc-2a60-48ef-95a0-d9ee4a814dea@efficios.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <2ca589bc-2a60-48ef-95a0-d9ee4a814dea@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwBHqcl47fdm4VvRAQ--.57124S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7GFW7JF1ftF4UXr1DZry5Jwb_yoWxAwcEvw
+	nrCa15Ar43JF4xW347JF13GrWfJrWvkr4UJw18CF47Zry5ZFnxCFn3CryIy3WfG3yUC3s0
+	qryrX3yUZr9xWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbx8YFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AK
+	xVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wryl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jxCz
+	tUUUUU=
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-Shifting 1 << 31 on a 32-bit int causes signed integer overflow, which
-leads to undefined behavior. To prevent this, cast 1 to u32 before
-performing the shift, ensuring well-defined behavior.
+Thanks for your response,
 
-This change explicitly avoids any potential overflow by ensuring that
-the shift occurs on an unsigned 32-bit integer.
+Am 9/28/2024 um 1:33 PM schrieb Mathieu Desnoyers:
+> 
+> This is a userspace prototype. This will behave similarly to a userspace
+> spinlock in that case, which is not great in terms of CPU usage, but
+> should eventually unblock the waiter, unless it has a RT priority that
+> really prevents any progress from the emergency slot owner.
+> 
+> On my TODO list, I have a bullet about integrating with sys_futex to
+> block on wait, wake up on slot release. I would then use the wait/wakeup
+> code based on sys_futex already present in liburcu.
 
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
----
-Note: Build test only.
+Oh, I see. I think if it is for userspace then it really should use 
+wait/wakeup as you said.
 
- kernel/printk/printk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index beb808f4c367..ea0b2290e2d1 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -523,7 +523,7 @@ static struct latched_seq clear_seq = {
- /* record buffer */
- #define LOG_ALIGN __alignof__(unsigned long)
- #define __LOG_BUF_LEN (1 << CONFIG_LOG_BUF_SHIFT)
--#define LOG_BUF_LEN_MAX (u32)(1 << 31)
-+#define LOG_BUF_LEN_MAX ((u32)1 << 31)
- static char __log_buf[__LOG_BUF_LEN] __aligned(LOG_ALIGN);
- static char *log_buf = __log_buf;
- static u32 log_buf_len = __LOG_BUF_LEN;
--- 
-2.34.1
+Best wishes,
+   jonas
 
 
