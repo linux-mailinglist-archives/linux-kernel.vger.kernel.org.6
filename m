@@ -1,164 +1,114 @@
-Return-Path: <linux-kernel+bounces-342496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20EB7988FA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:29:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3DDB988FAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEAE6281F7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:29:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CB0E1F2195B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7713B188A01;
-	Sat, 28 Sep 2024 14:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F6C18C3D;
+	Sat, 28 Sep 2024 14:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQHjJYtF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b="QAM6i8Cg"
+Received: from mail.nppct.ru (mail.nppct.ru [195.133.245.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF26186E59;
-	Sat, 28 Sep 2024 14:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2922156E4
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 14:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.245.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727533779; cv=none; b=X8Fg1NIShf79V0MxHH+LmEAzRApk8FGV7vVJwO3VQCYOmFOF7Pi+l8TqWPR7w1ZNh0LWLDAl4sHiVxY1zkPxVK0/37ArdgW+l7NPr1Jzud8DwXJLzdZ/wT4p6hbqBh8bS1vRr46zA4PgPaCEDNi04p7/obhxjTTQx/QRj98eMwM=
+	t=1727533814; cv=none; b=XpUCeyOYPRkjXYGbcceuoGjBcauLqMyLDqEFzIO0Yt7U9NWZOVj4sm9LjwlpsmRaZPF7gr2eReAfQ1M5uRlB5+KMcZSz7CirZicv9Z/8hgyMBiKkFFjG77aUkKdpVsU5Q4Wy+tLsMA4jJTmpm4Ujg78hcWwKytHfQlbUCxgmZDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727533779; c=relaxed/simple;
-	bh=BQe8e7lFzVfmZUr+z2sDDGSb5uLfPX8XMR5x5U2lb1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nn3tglf3Uvvbpr9dSMlZ9XiWbUolU9mSAxz5kHFfAC7g4Ul+KgESMbRgW14qkq9a1AriQJcxMbAXz3hmMxMJGfTcfTa4tezE8NK3+Wi9QAdMb9ukiIfGFB5CVT6ZYC0M7V6dOUZvJjrcDmWfGh1hz+EQG2pUCjL9KrxJuGbMIeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQHjJYtF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35F07C4CEC3;
-	Sat, 28 Sep 2024 14:29:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727533779;
-	bh=BQe8e7lFzVfmZUr+z2sDDGSb5uLfPX8XMR5x5U2lb1k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mQHjJYtFlEhZLQlmUwozo1Yr23MlhMSqY4p/UtWwNWhZaXGG77Zie9XTRVRqK15rF
-	 bb069Iq4WvmGLkAtNE1/WyqOw6Lm6oJ5l+RzZ3SEcKmse8Eulns9HyiEgXnwKLW8wb
-	 Yb9SOZWr4LkHumNHH6lgF5bX+yLfb2FpZGbB9jLdT9YRXmeP/ulDFTkRlzJ8mCrnYY
-	 /IgsV75WCSz3PawyVgKik4PGPAmrlXlC2HRpEgvRux3rUugmw2Dlwprj+j5np3QlTc
-	 CeuuMPtqqu9/mxnbtl0hktIBmtp8WeaHQDgBad6dTQszVYqFp+EQsaFSzvrc1uUXXA
-	 3NMEI1O8Z2x7g==
-Date: Sat, 28 Sep 2024 15:29:28 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: "Nechita, Ramona" <Ramona.Nechita@analog.com>, Lars-Peter Clausen
- <lars@metafoo.de>, "Tanislav, Cosmin" <Cosmin.Tanislav@analog.com>,
- "Hennerich, Michael" <Michael.Hennerich@analog.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, "Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>, Olivier
- Moysan <olivier.moysan@foss.st.com>, Dumitru Ceclan
- <mitrutzceclan@gmail.com>, Matteo Martelli <matteomartelli3@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>, Ivan Mikhaylov
- <fr0st61te@gmail.com>, Mike Looijmans <mike.looijmans@topic.nl>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 3/3] drivers: iio: adc: add support for ad777x family
-Message-ID: <20240928152928.38ee18b1@jic23-huawei>
-In-Reply-To: <CAMknhBFyydCJeAazDYMkkH=rKU2DbJGy=Kpb0242Vn81MHn0mQ@mail.gmail.com>
-References: <20240912121609.13438-1-ramona.nechita@analog.com>
-	<20240912121609.13438-4-ramona.nechita@analog.com>
-	<20240914180648.592cd69e@jic23-huawei>
-	<SN6PR03MB4320E03B052A867DE73196CBF36C2@SN6PR03MB4320.namprd03.prod.outlook.com>
-	<CAMknhBFyydCJeAazDYMkkH=rKU2DbJGy=Kpb0242Vn81MHn0mQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727533814; c=relaxed/simple;
+	bh=ttKcZFr/8sdP9TiuXTUu6pdooXISSDx0ykud/QmX5xk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AMBVnLnTdHQUgNVtbFJpIJWONOhH0OrZ2TrzH2qu+IBqLUIQTLVkZ2f9haWDs3ywPokCpsQ8OJzazhhuz5X9Gw9cjytCvXTI7V5STlQKuamRnNlWGFes1ESoD+/GXdr2ihXQykcoQBdPvcDQkt/x/7seXpq6PcEEjat9qj5oqJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru; spf=pass smtp.mailfrom=nppct.ru; dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b=QAM6i8Cg; arc=none smtp.client-ip=195.133.245.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nppct.ru
+Received: from mail.nppct.ru (localhost [127.0.0.1])
+	by mail.nppct.ru (Postfix) with ESMTP id AC2E01C0CD3
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 17:30:04 +0300 (MSK)
+Authentication-Results: mail.nppct.ru (amavisd-new); dkim=pass (1024-bit key)
+	reason="pass (just generated, assumed good)" header.d=nppct.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nppct.ru; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:to:from:from; s=dkim; t=1727533803; x=
+	1728397804; bh=ttKcZFr/8sdP9TiuXTUu6pdooXISSDx0ykud/QmX5xk=; b=Q
+	AM6i8Cgy4mgyr2kQ5WUrvaUCyjBUPTHN3MscMv2cx34BDOT7OAbaqRwO3JVvQ3nh
+	A5qPRulqG3RvahStxzgyvXBHJh/jBdczkyuK03ZZ8rVnyGFBbZc3sIILcrpIu1d2
+	X6jJw2bPl3U4RDhqShmb8sR0Mz3fKDVuBvOhfRj/0g=
+X-Virus-Scanned: Debian amavisd-new at mail.nppct.ru
+Received: from mail.nppct.ru ([127.0.0.1])
+	by mail.nppct.ru (mail.nppct.ru [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ESAzYNJ4ZQqv for <linux-kernel@vger.kernel.org>;
+	Sat, 28 Sep 2024 17:30:03 +0300 (MSK)
+Received: from localhost.localdomain (mail.dev-ai-melanoma.ru [185.130.227.204])
+	by mail.nppct.ru (Postfix) with ESMTPSA id 5B66F1C05F7;
+	Sat, 28 Sep 2024 17:30:02 +0300 (MSK)
+From: Andrey Shumilin <shum.sdl@nppct.ru>
+To: Chas Williams <3chas3@gmail.com>
+Cc: Andrey Shumilin <shum.sdl@nppct.ru>,
+	linux-atm-general@lists.sourceforge.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	khoroshilov@ispras.ru,
+	ykarpov@ispras.ru,
+	vmerzlyakov@ispras.ru,
+	vefanov@ispras.ru
+Subject: [PATCH 3/3] horizon: Casting type 32 to 64 bits.
+Date: Sat, 28 Sep 2024 17:29:57 +0300
+Message-Id: <20240928142957.99143-1-shum.sdl@nppct.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, 23 Sep 2024 14:51:28 +0200
-David Lechner <dlechner@baylibre.com> wrote:
+In one of the 3 cases, 1<<30 is passed as the second
+parameter to the make_rate() function.
+In the expressions "c << (CR_MAXPEXP+div-br_exp)"
+and "c<<div" a shift of 14 is possible.
+The INT type may overflow.
+To fix this, it is suggested to cast the type.
 
-> On Fri, Sep 20, 2024 at 3:24=E2=80=AFPM Nechita, Ramona
-> <Ramona.Nechita@analog.com> wrote:
-> >
-> > Hello all,
-> >
-> > Just a minor question
-> > ... =20
-> > > =20
-> > >> +
-> > >> +static irqreturn_t ad7779_trigger_handler(int irq, void *p) {
-> > >> +    struct iio_poll_func *pf =3D p;
-> > >> +    struct iio_dev *indio_dev =3D pf->indio_dev;
-> > >> +    struct ad7779_state *st =3D iio_priv(indio_dev);
-> > >> +    int ret;
-> > >> +    int bit;
-> > >> +    int k =3D 0;
-> > >> +    /*
-> > >> +     * Each channel shifts out HEADER + 24 bits of data therefore 8=
- * u32
-> > >> +     * for the data and 64 bits for the timestamp
-> > >> +     */
-> > >> +    u32 tmp[10];
-> > >> +
-> > >> +    struct spi_transfer sd_readback_tr[] =3D {
-> > >> +            {
-> > >> +                    .rx_buf =3D st->spidata_rx,
-> > >> +                    .tx_buf =3D st->spidata_tx,
-> > >> +                    .len =3D AD7779_NUM_CHANNELS * AD7779_CHAN_DATA=
-_SIZE,
-> > >> +            }
-> > >> +    };
-> > >> +
-> > >> +    if (!iio_buffer_enabled(indio_dev))
-> > >> +            goto exit_handler; =20
-> > >
-> > >If buffers aren't enabled, the push to buffers won't do anything. So t=
-his race shouldn't matter.  If it does, what happens?
-> > >I'm curious because I'd expect any races that cause trouble in this ca=
-se to be pretty universal across drivers. =20
-> >
-> > I added that condition rather because the DRDY pulse will keep on being=
- generated even when the buffers are not active,
-> > and it would be better to exit the function sooner. I tested it and it =
-does not break to remove the condition, I just
-> > thought it made more sense like this. Should I delete it?
-> > =20
-> > >.... =20
-> >
-> > Best regards,
-> > Ramona Nechita
-> >
-> > =20
->=20
-> Perhaps a better way to handle this would be to move
->=20
->     disable_irq(st->spi->irq);
->=20
-> to the buffer predisable callback instead of doing it in the buffer
-> postdisable callback. Then we will be sure to not get any more DRDY
-> interrupts after the buffer is disabled.
->=20
-> (And to keep things balanced, moved the corresponding irq_enable() to
-> the buffer postenable callback.)
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-That makes logical sense but in reality in the vast majority of cases
-it makes no practical difference whether things are in the pre or
-post callbacks as the fundamental races with tear down are there in
-both cases but shouldn't matter as they correspond to slightly
-earlier or later disabling of the buffer.  So this is a nice to
-have for readabilty and understanding rather than a required change I think.
+Signed-off-by: Andrey Shumilin <shum.sdl@nppct.ru>
+---
+ drivers/atm/horizon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->=20
-> Since ad7779_trigger_handler is the IIO trigger interrupt handler and
-> not the DRDY interrupt handler though, it is already not possible for
-> this interrupt handler to be called while the IIO buffer is enabled.
-> So it should be safe to remove the if
-> (!iio_buffere_enabled(indio_dev)) even without the other changes I
-> suggested.
-Exactly. =20
-
-Jonathan
-
+diff --git a/drivers/atm/horizon.c b/drivers/atm/horizon.c
+index 4f2951cbe69c..6f3e65e65225 100644
+--- a/drivers/atm/horizon.c
++++ b/drivers/atm/horizon.c
+@@ -631,7 +631,7 @@ static int make_rate (const hrz_dev * dev, u32 c, rounding r,
+ 	// d == MIND and (c << (MAXPEXP+MIND)) < B
+ 	while (div < CR_MAXD) {
+ 		div++;
+-		if (br_man <= (c << (CR_MAXPEXP+div-br_exp))) {
++		if (br_man <= ((u64)c << (CR_MAXPEXP+div-br_exp))) {
+ 			// Equivalent to: B <= (c << (MAXPEXP+d))
+ 			// c << (MAXPEXP+d-1) < B <= c << (MAXPEXP+d)
+ 			// 1 << (MAXPEXP-1) < B/2^d/c <= 1 << MAXPEXP
+@@ -645,7 +645,7 @@ static int make_rate (const hrz_dev * dev, u32 c, rounding r,
+ 					pre = DIV_ROUND_CLOSEST(br, c<<div);
+ 					break;
+ 				default: /* round_up */
+-					pre = br/(c<<div);
++					pre = br/((u64)c<<div);
+ 			}
+ 			PRINTD (DBG_QOS, "B: p=%u, d=%u", pre, div);
+ 			goto got_it;
+-- 
+2.30.2
 
 
