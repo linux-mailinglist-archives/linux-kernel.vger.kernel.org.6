@@ -1,135 +1,132 @@
-Return-Path: <linux-kernel+bounces-342543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD68898901B
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:36:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B97698901D
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E506B21354
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:36:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC0628235D
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC6839AF4;
-	Sat, 28 Sep 2024 15:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B0B37165;
+	Sat, 28 Sep 2024 15:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZof2b5T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="g9Wrf6Hn"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5763F1B299;
-	Sat, 28 Sep 2024 15:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EEA43165
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 15:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727537800; cv=none; b=sx4NNHe3ra+kFz1p0D82hqfUdmC1gp/qHmAiuLF9k9nN/4cZdhkmXz8927qXv7VgOwALtqQhQBBOIC9mbFQTgAU0EgHs8p2nw2w4QYScKAyhCqZIbUtvNFD+r39jmRTKD5LyUOxAMsZv4gR+ll/g1gG9TFQRFRenVvqyfkrX2Z8=
+	t=1727537952; cv=none; b=lBsJ0Ohvnu4X7fg8ZJm+3D9pXUbR1iAT4Mi1vwfMCoyjZFpP1QKTnH/FtzAoEKAXaS4Widw6L9mYq8aJKV/IPZIAW1FgdpqIDQE09t2L/j6VJiqMdAJfwKClb4ggPNAEqFZjGCPkJOQCJQ8YtFyN+CsMVtHcPR7d0dS54R1yLII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727537800; c=relaxed/simple;
-	bh=Ru/ELRIfllqCBraFIMscj6mlLudwcl3rFTYcSY28sW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q59g1MpOhZk/7iGbcSDhvK44BBpKJw4HSCBoBfnW8j3z1Uc/X8SV0EMV9/OfND6VihCW0N+D75fy5BI4evAtGFXl1raZxKFDgjeDofIPHj1OQ9bpcL6deqL8NKrICGleL+KmS+eZDHJ4sAgwb2O8I5ithy0zj/dLtKq+0KPX/Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZof2b5T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 698F5C4CEC3;
-	Sat, 28 Sep 2024 15:36:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727537799;
-	bh=Ru/ELRIfllqCBraFIMscj6mlLudwcl3rFTYcSY28sW4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QZof2b5TbYYZMx3ao/w/J0aSKQDGQzeVPTFEIPa+h/eegbYkuLQx0wFfwK/pXEsci
-	 Ix7xMwz6cn8Kx02Wpzx5Q4NzPXJjkjmdA18x5RsOkGmeVPWiJLp7HOHuXvcNK1G1Ec
-	 DbatnGJWrczc21B/CMG3LmsBWKFclHAg1bmJRjE1hhU69fWXZNvdcm4mFP81DgdZ7r
-	 bRbuioq0jEsSLPhjUQSeXosa7U1YhIrSj5tu1BsdZ+k8pRXn8FqVjJ/F2OOYPHwZpv
-	 cmC87Cy1s2GXOe0mlvpp7I0xqzsA7LSPSezuaUrvBgR8mmpvwYz0RnOWT4t4wJEBBu
-	 QU5yQ2O9hn9rQ==
-Date: Sat, 28 Sep 2024 16:36:31 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Abhash Jha <abhashkumarjha123@gmail.com>
-Cc: linux-iio@vger.kernel.org, anshulusr@gmail.com, lars@metafoo.de,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] iio: light: ltr390: Suspend and Resume support
-Message-ID: <20240928163631.04e11191@jic23-huawei>
-In-Reply-To: <20240914181246.504450-3-abhashkumarjha123@gmail.com>
-References: <20240914181246.504450-1-abhashkumarjha123@gmail.com>
-	<20240914181246.504450-3-abhashkumarjha123@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727537952; c=relaxed/simple;
+	bh=Jcwgqmrk7hrevC2k2xJQkkfVs640nD7arnhpY4rl8lE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qZsseXbn/2rjICKYPvf4Vn5Umjhfjn/5B5s8WyY2JTRNjARGGcqCYUbyNy4uSHSFYgvHXHgX879MMqEb6NFHzd/ftZbTL2aOFvwpTZLl8Q601lKX489i+2UqRCVVrsyLESwuRwb5DOI4C/BZYf1oLdWEbs/RpTu6VyM67QFYnio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=g9Wrf6Hn; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37cdb42b29dso901802f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 08:39:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1727537948; x=1728142748; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H7aENbVHrbvubesI/cqKrU4sOUEl+g1GzFRVwX3oKYw=;
+        b=g9Wrf6HnAk59KDHLgmmFpIzjj5LgFIIrfThLZvTrqHme3Ptlyd9LtRU4Yc6FeU1HMh
+         pvHJQ2hXLJeL+YDwxApl/746xhCZtujmM2KoEfEDCW0QgvbZncjnd5CaJtMZY7V1K34G
+         pt4iiJATqw47jljVxMf9aYVZu1ew3ynFzYGqdRSe1FummLKtfIThI0p3lSqhaF8Kibjg
+         5am6As4pwPqXYDehXAGSmoHN8t7OEkQEStu6Mnr2ys8SnMgK4mLzH5uKADtSu6bvS86B
+         WcanrsvBt2P8LbpJOpuW9UHh9T49xBhAqzYM+B7cBQwMlPNbH1p7iHyFaznWPLKd4dlO
+         /EEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727537948; x=1728142748;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H7aENbVHrbvubesI/cqKrU4sOUEl+g1GzFRVwX3oKYw=;
+        b=Wmg3xLa3TKwXN5CiKJM7bt7AOOYGUxlSkl3qiFT58zDRzXJ6b86xMEVli4zLb451Q4
+         8r0d7k1Wfr+shyQ8cbLaSRLALs4FviEYThYpDdtLC4jwXSSoe1X/I32g9AzCvOl0gYcY
+         rRXM9QyrtoyGHhBFtyuntgEv1sUU2QrXh9R6T0pbtXGFxgxX0EYUqW7zlqoBC0VRJvAW
+         aXr1iT2oJzRTBSoek2JXEnvfIbfZiZ5MOtudXwUf2ZUZiiUDmSkJlIPHrTuBeti3IdKO
+         Q93lz+9s80+NzFjbtxLHrC48RT7yEyLXyjmr/XX4YQhkBH371h6iIzH8Fjncfn5Ncmqd
+         qRTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGcPiXtT9/OSztZf+PuuJlBYI7oE0ZzYurHyZtZTTtPJdGREv5CSDy6E5Jz2d5GzcJ56vthJn87GnhagU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8FHm9QFEmXsiYxV05kB3vJZOPEd5u20cQG0WdSkHIi0s29XeF
+	9KKC0z1a4wuQbI4It94FPWzAP/ubLySY2G457bmtdmZwerCMVD9vDAMDxCRySQdrjyTRRxGlpBG
+	UnzeLTPKZXltBTS0Z+Ty9ag/3PfHxZVz+7VC8rg==
+X-Google-Smtp-Source: AGHT+IENz0+ya7bPS4gQ8rnB5EDXaQ9xmNq2ebP8DILfBv1Tj1+FcWPvQW6UPkGkD9Bi3+cHYW6jTXQv0SY+blo+hDQ=
+X-Received: by 2002:a5d:6741:0:b0:378:e8a9:98c5 with SMTP id
+ ffacd0b85a97d-37cd5aaa6d4mr4083932f8f.34.1727537948113; Sat, 28 Sep 2024
+ 08:39:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240927121719.714627278@linuxfoundation.org>
+In-Reply-To: <20240927121719.714627278@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Sun, 29 Sep 2024 00:38:57 +0900
+Message-ID: <CAKL4bV6czyU05L2eUMmaE+s_fY_hX8nN6Tim7m4Fgvs2oDXZqQ@mail.gmail.com>
+Subject: Re: [PATCH 6.6 00/54] 6.6.53-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 14 Sep 2024 23:42:44 +0530
-Abhash Jha <abhashkumarjha123@gmail.com> wrote:
+Hi Greg
 
-> Added support for suspend and resume PM ops.
-> We suspend the sensor by clearing the ALS_UVS_EN bit in the MAIN CONTROL
-> register. And we resume it by setting that bit.
-> 
-> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
-I made a few tweaks whilst applying.
-> ---
->  drivers/iio/light/ltr390.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
-> index c50ea31e2..e152009b5 100644
-> --- a/drivers/iio/light/ltr390.c
-> +++ b/drivers/iio/light/ltr390.c
-> @@ -24,6 +24,7 @@
->  #include <linux/mutex.h>
->  #include <linux/regmap.h>
->  #include <linux/bitfield.h>
-> +#include <linux/device.h>
-This is already out of order, but moving the new include to the top
-means only bitfield.h is misplaced.
+On Fri, Sep 27, 2024 at 9:24=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.53 release.
+> There are 54 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.53-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
->  
->  #include <linux/iio/iio.h>
->  
-> @@ -430,6 +431,26 @@ static int ltr390_probe(struct i2c_client *client)
->  	return devm_iio_device_register(dev, indio_dev);
->  }
->  
-> +static int ltr390_suspend(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> +	struct ltr390_data *data = iio_priv(indio_dev);
-> +
-> +	return regmap_clear_bits(data->regmap, LTR390_MAIN_CTRL,
-> +				LTR390_SENSOR_ENABLE);
-> +}
-> +
-> +static int ltr390_resume(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> +	struct ltr390_data *data = iio_priv(indio_dev);
-> +
-> +	return regmap_set_bits(data->regmap, LTR390_MAIN_CTRL,
-> +				LTR390_SENSOR_ENABLE);
-> +}
-> +
-> +static DEFINE_SIMPLE_DEV_PM_OPS(ltr390_pm_ops, ltr390_suspend, ltr390_resume);
-> +
->  static const struct i2c_device_id ltr390_id[] = {
->  	{ "ltr390" },
->  	{ /* Sentinel */ }
-> @@ -446,6 +467,7 @@ static struct i2c_driver ltr390_driver = {
->  	.driver = {
->  		.name = "ltr390",
->  		.of_match_table = ltr390_of_table,
-> +		.pm	= pm_sleep_ptr(&ltr390_pm_ops),
-Tabs for aligning these go wrong so often by creating noise
-in future patches + this code doesn't use them. So I dropped that
-to be a space.
+6.6.53-rc1 tested.
 
-Thanks,
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
 
-Jonathan
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
 
->  	},
->  	.probe = ltr390_probe,
->  	.id_table = ltr390_id,
+[    0.000000] Linux version 6.6.53-rc1rv
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240910, GNU ld (GNU
+Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Sat Sep 28 23:37:43 JST 2024
 
+Thanks
+
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
