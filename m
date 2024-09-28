@@ -1,211 +1,173 @@
-Return-Path: <linux-kernel+bounces-342697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4565D9891DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:10:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA1E9891E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3AAD2851CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:10:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A05828537C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7649185B72;
-	Sat, 28 Sep 2024 22:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3233D187878;
+	Sat, 28 Sep 2024 22:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="khO61w9k"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZaRm8IAU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27CF82488;
-	Sat, 28 Sep 2024 22:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CBD1F5EA;
+	Sat, 28 Sep 2024 22:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727561442; cv=none; b=jeedAlWknj5FyHGENJSmSasKId0jaWXfIstixA1XveI3W5jN0eMDVGdxCB6DVZnHyxE6YY23uZ+/W5jPwv035CkGCFFrVBFwa91hA4iFiGpCNcyRLRZEVTUw7/uVpJaeGT0uij28/IzYdYHn9+5pjJLfQUA40CMbVyJ3PXPzc/w=
+	t=1727562069; cv=none; b=XZ8htIDUnSxYHWClI/2HeDN8LIeyePyfgt8HSeKGHABywZqO4RfDOHYtLOYLxIrDJ/0r4i33OifGvSwfGnG3miQZSdygvg5dirQuTjnWtDS7crH9uN5xPJuUAPiiiV/tU67ROfxaaO+94Pm9jbjKFWtPIvoTOKYmiLaUlhksiUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727561442; c=relaxed/simple;
-	bh=iFvrb/lmFsBDg2xcV9M9jcJjJV8Gn6DxXflBVHcwH94=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=sqT6+Vh960fGugKDHUDjDB8BnfaukdRkeIqdIl9smHANH9hGs9nFF9iVGdue0tldK5xf35TOZcUVXLLjGySqU0UX9pz3pHH7kn7C2KMdOdlwR3pNZcnKeH2pFIL00VgMZbGdnwJvrggTTunUaC2flLV0oxHidB0eAOYUeHdcVbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=khO61w9k; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-717934728adso2495299b3a.2;
-        Sat, 28 Sep 2024 15:10:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727561440; x=1728166240; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lqv6uZtvWgufJBQFjoO2lvT5jL4vVi5PDl7zOSvVCAI=;
-        b=khO61w9kK2XIaREBXUTQSTF9TDHeXLUpQeca6zAkoowENnnlJQ3LFgfSVj+ZQ6QVny
-         ISXSGZkyXQvQi7AZen/NALhNKlaRKFNbivIMH+Efhoc30i4Sil69PXJLQ6UcWMMyof95
-         s1TC40s2mrZ4agVxjIKzA9VGl+FTHBAMBc8Dh6iXSH+qQIndjCapD2uANcUwtnWYWEZe
-         F5Qis1QV491KHitnZKlV3aTRwlZHrHJUGRRFmR1lXst5Vic30WXP32w3/zs3uxKKRu+m
-         +FulBAlana+NWQMJvs//11SJ8E2oQ64TYudTN9fXyJ7gP9Mt3UOehINpVFNnrGtDFKd+
-         R55w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727561440; x=1728166240;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lqv6uZtvWgufJBQFjoO2lvT5jL4vVi5PDl7zOSvVCAI=;
-        b=SrZLxUTI4NOkt3pX/MIqDyN/k3g/E1ToiKDvjajFd0hUDE7IgVlLAWuPzS0EB1YFUv
-         8gVxMyvo7cKFgePzltJmLlzn/g40VO0C9zhZAck00S7DHmoYneEDNK+1GQ6VJYG9vXZc
-         y940xtBvDcazEhDeQihRkebcvOWPglfp5bSQAwk0Xwj8fsWMCcG6Fd67v+ydoOCCCDxQ
-         gQDa9Z+iz1erlqJASkE26fyh5gYRThqIY+Tya95R7rEu5BndkGbH9+qJ+hRiAh5hO+kp
-         8QLd4TASjTAutgA2t5qAxfdwBlrN9wo8xbdPB0PNBi9y6ciQqarZ0Go3SFW8UzlnX1qS
-         R2yA==
-X-Forwarded-Encrypted: i=1; AJvYcCVw5fO19BIPbcuF11gACU2ZnNC6VZ1Clfjv2fLyXJ1xoVCAZ87omxScYCBNyZEAk9LGyBEl@vger.kernel.org, AJvYcCXyECPXnSzQ8re6yYBpmYVjeaL1ScbtMOdfCeT8s4hxLiKsWuPi9wShA66iSqgTx67mbUViCax4rUftrLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6MKJ5JCmQooPxLeRGlFJro9z1yXrgl79TDDfgiTD4gu1sxuCr
-	p+of/Ob3VR8+98fpI7T57zScAKYJIfYIdLD0FaNvsbhYplT47lah
-X-Google-Smtp-Source: AGHT+IFhovJoNYleXxjXLz6aGvITgc6JOAD0PX6lEgltW3VQ1SR5GvjGyJEZPadxx0f45FlXPLeQ4g==
-X-Received: by 2002:a05:6a21:a247:b0:1d5:10d7:2020 with SMTP id adf61e73a8af0-1d510d72090mr2118216637.41.1727561440019;
-        Sat, 28 Sep 2024 15:10:40 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26538828sm3592306b3a.219.2024.09.28.15.10.32
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 28 Sep 2024 15:10:39 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1727562069; c=relaxed/simple;
+	bh=753n/HZnmHMAeAEp/81I+HWoLFnnpgyNJSj2QobhRAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t+8mcm98UiUJhk5ZWFVlbe7I6OsnDCKNaq8k1yaWsaQMBgZuslRuZY+mXTXVY2V4UB2BR+lKTksrS3WyJX3l4xdaQzalQbcKN+RdLy8juv0jTZ2UXPe4urGqeC4trC5kve3xAfUaXPd8KpEUkr0A6QbCxD5nZl9qjTUA2T+LLBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZaRm8IAU; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727562068; x=1759098068;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=753n/HZnmHMAeAEp/81I+HWoLFnnpgyNJSj2QobhRAI=;
+  b=ZaRm8IAUdNKloL8n7zj6tQSWg5EGKegpjRY1f+Pe21X4JYfMm2sshBt8
+   C391kDDtynyFuvgOxGLj/LLAfcoBJ4cFxH81gxAukC374vCfpFdaSH/Ds
+   A8Lw5I+EN+PHKfmWrYMIin5FIKcYLeWWXuQ9uK9/VBLY4MYUm0AcLgeys
+   VAFfhz3PtNxiCNAEsJM/6xrumZmnI1i65Y54VjsD8bgtcndEzzB3Jl+FC
+   uptQ4NtBokAxyY0eJCnsU/Cbzk15pqsbKdgUyjegQ4bUgeNLeWwvXJofo
+   G1PCF8ZDISGl0fALtVq7iOBqV758cbQlw4aviTw4XORTil031br7iLpCs
+   w==;
+X-CSE-ConnectionGUID: Wa6qfH7FSASG3jfRLf8ngQ==
+X-CSE-MsgGUID: 6GHH03N7SmOVWOWc9Qo29Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="37247974"
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="37247974"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 15:21:07 -0700
+X-CSE-ConnectionGUID: SZ77uNqsRS+YvGRrXkIpJQ==
+X-CSE-MsgGUID: EF6fF7mjRKyzfeRhvubsoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="73183641"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 28 Sep 2024 15:21:01 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sufoA-000Nhj-2I;
+	Sat, 28 Sep 2024 22:20:58 +0000
+Date: Sun, 29 Sep 2024 06:20:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jonathan.Cameron@huawei.com,
+	helgaas@kernel.org, corbet@lwn.net, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	alex.williamson@redhat.com, gospo@broadcom.com,
+	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
+	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
+	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
+	wei.huang2@amd.com, vadim.fedorenko@linux.dev, horms@kernel.org,
+	bagasdotme@gmail.com, bhelgaas@google.com, lukas@wunner.de,
+	paul.e.luse@intel.com, jing2.liu@intel.com
+Subject: Re: [PATCH V6 2/5] PCI/TPH: Add Steering Tag support
+Message-ID: <202409290628.jR98LDA9-lkp@intel.com>
+References: <20240927215653.1552411-3-wei.huang2@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <4ed833df-54e6-454a-ab1a-73967cc51054@huaweicloud.com>
-Date: Sun, 29 Sep 2024 06:10:21 +0800
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- LKML <linux-kernel@vger.kernel.org>,
- RCU <rcu@vger.kernel.org>,
- linux-mm@kvack.org,
- lkmm@lists.linux.dev,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- maged.michael@gmail.com,
- Neeraj upadhyay <neeraj.upadhyay@amd.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5F741990-7A14-4528-9AF8-817007689B0A@gmail.com>
-References: <ZvPp4taB9uu__oSQ@boqun-archlinux>
- <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
- <ZvP_H_R43bXpmkMS@boqun-archlinux>
- <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
- <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
- <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
- <2b2aea37-06fe-40cb-8458-9408406ebda6@efficios.com>
- <55633835-242c-4d7f-875b-24b16f17939c@huaweicloud.com>
- <CAHk-=wjL803+FxtAPSGrWqThGQP5cCHzzwZJFq+-fkgt5DQ3VQ@mail.gmail.com>
- <bba2e656-4c3b-46db-b308-483de440b922@efficios.com>
- <ZvY2zBiluLkqRSkc@boqun-archlinux>
- <62508c1f-66ca-450d-abb6-236ca3b9096d@huaweicloud.com>
- <d86536d9-9c5a-48ab-abf3-3483e2e5e980@efficios.com>
- <4ed833df-54e6-454a-ab1a-73967cc51054@huaweicloud.com>
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927215653.1552411-3-wei.huang2@amd.com>
 
-2024=E5=B9=B49=E6=9C=8828=E6=97=A5 06:18=EF=BC=8CJonas Oberhauser =
-<jonas.oberhauser@huaweicloud.com> wrote=EF=BC=9A
->=20
->=20
->=20
-> Am 9/27/2024 um 10:10 PM schrieb Mathieu Desnoyers:
->> On 2024-09-27 21:23, Jonas Oberhauser wrote:
->> [...]
->>> That idea seems to be confirmed by this (atrocious, not to be =
-copied!) example:
->>>=20
->>> int fct_escape_address_of_b(void)
->>> {
->>>      int *a, *b;
->>>=20
->>>      do {
->>>          a =3D READ_ONCE(p);
->>>          asm volatile ("" : : : "memory");
->>>          b =3D READ_ONCE(p);
->>>      } while (a !=3D b);
->>>=20
->>>      // really really hide b
->>>      int **p =3D &b;
->>>      OPTIMIZER_HIDE_VAR(p);
->>>=20
->>>      asm volatile ("" : : : "memory");
->>>      return *b;
->>> }
->>>=20
->>> This also does not generate any additional instructions, unlike just =
-using OPTIMIZER_HIDE_VAR(b).
->>>=20
->>> What is the advantage of defining OPTIMIZE_HIDE_VAR the way it =
-currently works instead of like above?
->> Did you try it on godbolt.org ? Does it have the intended effect ?
->=20
-> I certainly did try and certainly read it as having the intended =
-effect, otherwise I wouldn't have written that it seems confirmed.
->=20
-> However, just because my eyes read it doesn't mean that's what =
-happened, and even if it happened doesn't mean that it is guaranteed to =
-happen.
->=20
->> By the looks of it, you're just creating another version of @b called
->> "p", which is then never used and would be discarded by further
->> optimization. >
->> I'm unsure what you are trying to achieve here.
->=20
-> Simply put I'm trying to let the compiler think that I leaked the =
-address of b. After that, the memory barrier should let it think that =
-the b after the memory barrier might not be the same as the one before =
-it (which was equal to a), forcing it to read from b.
->=20
-> However, I suppose on second thought that that might not be enough, =
-because the compiler could still simply do b =3D a right after exiting =
-the while loop.
->=20
-> And that is true no matter what we put behind the while loop or before =
-the condition, as long as the condition compares a and b, right after it =
-the compiler can do b =3D a. Just took me a while to see :))
->=20
-> I'm not sure why gcc does the b=3Da with the normal OPTIMIZER_HIDE_VAR =
-but (as far as I read the code) doesn't do it with the above. Maybe just =
-a weird corner case...
+Hi Wei,
 
-Let the p to be a static variable out of the function will make a =
-difference.
+kernel test robot noticed the following build errors:
 
-Or the following:
-=09
-	int **p =3D &b;
-	barrier_data(p);
+[auto build test ERROR on pci/next]
+[also build test ERROR on pci/for-linus linus/master next-20240927]
+[cannot apply to v6.11]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-also works.
+url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Huang/PCI-Add-TLP-Processing-Hints-TPH-support/20240928-055915
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20240927215653.1552411-3-wei.huang2%40amd.com
+patch subject: [PATCH V6 2/5] PCI/TPH: Add Steering Tag support
+config: sparc64-randconfig-r062-20240929 (https://download.01.org/0day-ci/archive/20240929/202409290628.jR98LDA9-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290628.jR98LDA9-lkp@intel.com/reproduce)
 
-BTW, barrier_data(&b) generates more instructions than godbolt when =
-build the kernel.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409290628.jR98LDA9-lkp@intel.com/
 
->=20
-> Have fun,
->  jonas
->=20
->=20
+All errors (new ones prefixed by >>):
 
+   drivers/pci/tph.c: In function 'write_tag_to_msix':
+>> drivers/pci/tph.c:230:26: error: 'struct pci_dev' has no member named 'msix_base'; did you mean 'msix_cap'?
+     230 |         vec_ctrl = pdev->msix_base + msix_idx * PCI_MSIX_ENTRY_SIZE;
+         |                          ^~~~~~~~~
+         |                          msix_cap
+
+
+vim +230 drivers/pci/tph.c
+
+   205	
+   206	/* Write ST to MSI-X vector control reg - Return 0 if OK, otherwise -errno */
+   207	static int write_tag_to_msix(struct pci_dev *pdev, int msix_idx, u16 tag)
+   208	{
+   209		struct msi_desc *msi_desc = NULL;
+   210		void __iomem *vec_ctrl;
+   211		u32 val, mask, st_val;
+   212		int err = 0;
+   213	
+   214		msi_lock_descs(&pdev->dev);
+   215	
+   216		/* Find the msi_desc entry with matching msix_idx */
+   217		msi_for_each_desc(msi_desc, &pdev->dev, MSI_DESC_ASSOCIATED) {
+   218			if (msi_desc->msi_index == msix_idx)
+   219				break;
+   220		}
+   221	
+   222		if (!msi_desc) {
+   223			err = -ENXIO;
+   224			goto err_out;
+   225		}
+   226	
+   227		st_val = (u32)tag;
+   228	
+   229		/* Get the vector control register (offset 0xc) pointed by msix_idx */
+ > 230		vec_ctrl = pdev->msix_base + msix_idx * PCI_MSIX_ENTRY_SIZE;
+   231		vec_ctrl += PCI_MSIX_ENTRY_VECTOR_CTRL;
+   232	
+   233		val = readl(vec_ctrl);
+   234		mask = PCI_MSIX_ENTRY_CTRL_ST_LOWER | PCI_MSIX_ENTRY_CTRL_ST_UPPER;
+   235		val &= ~mask;
+   236		val |= FIELD_PREP(mask, st_val);
+   237		writel(val, vec_ctrl);
+   238	
+   239		/* Read back to flush the update */
+   240		val = readl(vec_ctrl);
+   241	
+   242	err_out:
+   243		msi_unlock_descs(&pdev->dev);
+   244		return err;
+   245	}
+   246	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
