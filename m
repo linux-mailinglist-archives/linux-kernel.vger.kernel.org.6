@@ -1,117 +1,237 @@
-Return-Path: <linux-kernel+bounces-342471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21816988F65
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:31:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90379988F6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498ED1C20B09
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:31:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23283B21E0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6058188014;
-	Sat, 28 Sep 2024 13:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FB318871A;
+	Sat, 28 Sep 2024 13:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JMWGX9sf"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uc4lAi5L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF258C8DF
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 13:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B7BC8DF;
+	Sat, 28 Sep 2024 13:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727530285; cv=none; b=RjCEiXVUiEiY90y1CrecEgLNg9Q2Q82DdguSG0+Bzg+22KXBhoWKf1FahTNBnDfZMoyogodHjk+OTTRb73WwA43I1ar0yT9h73qVB3ubs032gpD/VcJ6RLW/c/Ujqx37+UZI2iyFgIKEJkpqZ5HJOzuSvKJ2mzSE0FnN7kIQiEc=
+	t=1727530792; cv=none; b=gBtoXF/o2Of+KVVYkcU49lxPYp0LjiKOzLBQoAG+EwpgZcC33F3Yy1lqzjqzvAkM2DFM+VhXwnqKWreHpXgq/dSW5NI7LIzBblYTdDmn46uN8h8bG/WuhK4LnWSgoKVRdCLVgsdHpYn4uUrYaCRQHv+nqeKETm1qCLouS0784dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727530285; c=relaxed/simple;
-	bh=LbZsTRAlB7jsXws4637asyXQKwtUK+5v9ZClVjEBUi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nSUs7XMkapn2IV2+GmufAWdBxNgnjln/yOG3uvDsIXxyT5OMSoYn0JyICREZQ43z/V3ACqz07bHerButciIQ5U7nSccr5VhsSROlB0NEMlZYHUwHTorNcpkqbw6HEvtrkVeC+S52C3J4n/Ve6gdV0nm0rdIByePu/FR1CQbZEtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JMWGX9sf; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oNmWZpR+4wN8DEFvjDQJ2iVf4wwDsGeXGTFBgKXmZ2E=; b=JMWGX9sfL5ww64LfzEARqVtNHf
-	Oyw1FOUiz4IltGWKUHXiY8uD9JXhXJuTGGxfSMf4OQ7RMiD+PzvJSUxP2mGwlpBJEUvNU87ZrynNa
-	r85PfucemuJf8LBxvJc1aWa4lHcJHpuyIIro7d9f7m8BAGo/Fsof4LuBkVGQuSHlRZwU8m2ozQc2S
-	jcDpkTI+jgxgpf/q5GjpPaWBFmHs8graGoXuTiUduWpxTxTYWbIJrKiAcxFaSzV1XJNMWFHmOxg8i
-	OTIId6bmYVuLT4VViTr5Kg62WNrrMkabhkJsznk8hxLtH46XN5N2to+UGESe5FN9gUk5B2DpNeIE6
-	IBSHXLSQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1suXXX-00000002Vwp-05Po;
-	Sat, 28 Sep 2024 13:31:15 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8ED4B300848; Sat, 28 Sep 2024 15:31:14 +0200 (CEST)
-Date: Sat, 28 Sep 2024 15:31:14 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	andrew.cooper3@citrix.com, jose.marchesi@oracle.com,
-	hjl.tools@gmail.com, ndesaulniers@google.com,
-	samitolvanen@google.com, nathan@kernel.org, ojeda@kernel.org,
-	kees@kernel.org, alexei.starovoitov@gmail.com
-Subject: Re: [PATCH 01/14] x86/cfi: Wreck things...
-Message-ID: <20240928133114.GE19439@noisy.programming.kicks-ass.net>
-References: <20240927194856.096003183@infradead.org>
- <20240927194924.390462812@infradead.org>
- <20240927231527.em2a4cjbnpos6c4u@treble>
+	s=arc-20240116; t=1727530792; c=relaxed/simple;
+	bh=H5ZN0gpItc2hzxYwHv5spamvIBLBAgjW6cCpZ+l4R7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZYk9Da18kcmuIec2dlHEVhUvNhZ8jD++tmHrwbAV2jfuNNWDySIdpqtOza3CAxuARSIKY3fj0ZyeHbLH7++WyOPR+eH+vQAPbA5uOb1sSKfHZWLaScLYxBL4yWRRgFanBoqb+ilGjuAg3YlYzpPTcTh0OHxwplx1QV2vL4i/S3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uc4lAi5L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92ABCC4CEC3;
+	Sat, 28 Sep 2024 13:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727530791;
+	bh=H5ZN0gpItc2hzxYwHv5spamvIBLBAgjW6cCpZ+l4R7Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uc4lAi5Lsvgx1JHrdNvawk0WkKZ5YJUKC2Rq36zUzdTwrD4P73ehT/q+NGlNGwLDQ
+	 sK8Ha9eJEB83DdeeT2V6zjSGstN3jLRSNC057M0Tleawil/HdDuxraB2ttd+nRg+DM
+	 J9Dx4TsoiPx8s+oLJeaWxIbGM7cQSoAQIlzleQnlIVPkbOaLA5GTii74muoJ5Mu29K
+	 WvScgSycgAIvaBZBSuEk7tRdk+NJl4PhfA272OQxLWSuzm319FfKqZfjjKChYhNQ5U
+	 37MPReypFNLtzXJY26/+EE47dIEvSXboVV31sxvpRO8rNmekAoL57DXNIFpZmI5H2x
+	 sZJNtYsqzr3Ug==
+Message-ID: <30e4735e-bf50-440c-8ad1-6bcf8b8bd930@kernel.org>
+Date: Sat, 28 Sep 2024 15:39:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927231527.em2a4cjbnpos6c4u@treble>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dt-bindings: mmc: mtk-sd: Add support for MT8196
+To: =?UTF-8?B?QW5keS1sZCBMdSAo5Y2i5LicKQ==?= <Andy-ld.Lu@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ =?UTF-8?B?V2VuYmluIE1laSAo5qKF5paH5b2sKQ==?= <Wenbin.Mei@mediatek.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>
+References: <20240926070405.20212-1-andy-ld.lu@mediatek.com>
+ <20240926070405.20212-3-andy-ld.lu@mediatek.com>
+ <20240926175409.GA2644361-robh@kernel.org>
+ <10ce6e9af6daa69735f46b45028ec1b2d25ee66a.camel@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <10ce6e9af6daa69735f46b45028ec1b2d25ee66a.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 04:15:27PM -0700, Josh Poimboeuf wrote:
-> On Fri, Sep 27, 2024 at 09:48:57PM +0200, Peter Zijlstra wrote:
-> > vmlinux.o: warning: objtool: .export_symbol+0x3c9f0: data relocation to !ENDBR: entry_untrain_ret+0x0
-> > 
-> > Which states that while these functions are exported and (directly)
-> > callable, they cannot be called indirectly. There are two solutions:
+On 28/09/2024 15:14, Andy-ld Lu (卢东) wrote:
+> On Thu, 2024-09-26 at 12:54 -0500, Rob Herring wrote:
+>>  	 
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
+>>  On Thu, Sep 26, 2024 at 03:03:18PM +0800, Andy-ld Lu wrote:
+>>> Extend the devicetree bindings to include the MT8196 mmc controller
+>>> by adding the compatible string 'mediatek,msdc-v2', which could be
+>>> also used for future compatible SoCs that support new tx/rx.
+>>
+>> Generally, every SoC ends up changing at least slightly. So we don't
+>> do 
+>> version numbers except when there's a well defined versioning scheme
+>> of 
+>> the h/w (e.g. FPGA IP blocks). So, use SoC for compatible string.
+> Thanks for your review.
 > 
-> IIRC, exported symbols are by far the most common "need" for ENDBR.  But
-> presumably the vast majority of them aren't being indirect called.
-> 
-> >  - exclude the .export_symbol section from validation; effectively
-> >    saying that having linkable but not indirectly callable exports are
-> >    fine by default, or
-> 
-> This is confusingly inconsistent IMO.
+> The new tx/rx represents a significant update for mmc controller of
+> mediatek from the MT8196 chipset, and the dependent settings remain
+> consistent for MT8196 and subsequent SoCs. Therefore, It is proposed to
+> use a unified compatible string for these SoCs that support new tx/rx,
+> and name it as 'IP(msdc) version two'.
 
-Yes. OTOH less indirectly callable functions is more better, no?
+Sorry, nope. That's not valid reasons.
 
-> >  - make all of those use SYM_TYPED_FUNC_START to restore the
-> >    traditional (and expected, but less secure?) behaviour.
-> 
-> Why not just make SYM_FUNC_START imply "typed"?  That's consistent with
-> what the compiler does anyway right?
+>>
+>>>
+>>> Add three properties for MT8196 settings:
+>>> - 'mediatek,prohibit-gate-cg', indicate if the source clock CG
+>> could
+>>>   be disabled when CPU access IP registers.
+>>>
+>>> - 'mediatek,stop-dly-sel', configure read data clock stops at block
+>> gap.
+>>>
+>>> - 'mediatek,pop-en-cnt', configure the margins of write and read
+>>>   pointers while begin to pop data transfer.
+>>>
+>>> Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
+>>> ---
+>>>  .../devicetree/bindings/mmc/mtk-sd.yaml       | 26
+>> +++++++++++++++++++
+>>>  1 file changed, 26 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+>> b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+>>> index c532ec92d2d9..82d1a9fac67c 100644
+>>> --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+>>> +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+>>> @@ -25,6 +25,7 @@ properties:
+>>>            - mediatek,mt8173-mmc
+>>>            - mediatek,mt8183-mmc
+>>>            - mediatek,mt8516-mmc
+>>> +          - mediatek,msdc-v2
+>>>        - items:
+>>>            - const: mediatek,mt7623-mmc
+>>>            - const: mediatek,mt2701-mmc
+>>> @@ -154,6 +155,30 @@ properties:
+>>>      enum: [32, 64]
+>>>      default: 32
+>>>  
+>>> +  mediatek,stop-dly-sel:
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    description:
+>>> +      Some SoCs need to set appropriate stop-dly-sel to configure
+>> read data clock
+>>> +      stops at block gap. The valid range is from 0 to 0xf.
+>>
+>> SoC dependent or board dependent? Imply from the compatible for the 
+>> former. A property is fine for the latter case.
+> Yes, it is SoC dependent in principle, but we would like to use a
+> unified compatible string for MT8196 and subsequent SoCs as mentioned
 
-It is indeed what the compiler does (unless __nocfi attribute is
-employed), but it requires that there is a C declaration of the function
--- which is true for all exported functions but not necessary for all
-SYM_FUNC_START() symbols per-se.
+Also no :(. Use SoC specific compatible.
 
-Also, it would make all ASM functions indirectly callable by default --
-which I'm not sure is a good idea, I would much rather we keep this
-explicit.
+> above, and this register setting(not relavant with new tx/rx) may be
+> variant. Therefore, want to use the property of device tree to set
+> individually.
+>>
+>>> +    minimum: 0
+>>> +    maximum: 0xf
+>>> +
+>>> +  mediatek,pop-en-cnt:
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    description:
+>>> +      Some SoCs need to set appropriate pop-en-cnt to configure
+>> the margins of write
+>>> +      and read pointers while begin to pop data transfer. The
+>> valid range is from 0
+>>> +      to 0xf.
+>>> +    minimum: 0
+>>> +    maximum: 0xf
+>>
+>> Same question.
+> Same as the reply above.
+>>
+>>> +
+>>> +  mediatek,prohibit-gate-cg:
+>>> +    $ref: /schemas/types.yaml#/definitions/flag
+>>> +    description:
+>>> +      Decide if source clock CG could be disabled when CPU access
+>> IP registers.
+>>> +      If present, source clock CG could not be disabled.
+>>> +      If not present, source clock CG could be disabled.
+>>
+>>
+>> Sounds like you need to describe the clock in "clocks".
+> It is not with clock itself, but rather with the bus design that would
+> check the 'source_cg' status bit to decide whether to prevent the CPU
+> from accessing the IP registers. And there have been no changes to the
+> 'source_cg'(already been descirbed before) for MT8196.
 
-> Even better, require exported+indirect-called symbols to use
-> EXPORT_SYMBOL_TYPED, otherwise they get sealed.  I suppose we'd need to
-> add some module-to-vmlinux ENDBR validation to make sure modules don't
-> get broken by this.
+I don't understand why do you need this property if it was already
+described. Please do not describe things twice.
 
-So I like this idea. but yeah, this is going to be a bit tricky to
-validate.
 
-Anyway, I think I'll do an initial patch moving all the EXPORT'ed
-symbols over to SYM_TYPED_FUNC_START() for now, and we can look at
-adding extra EXPORT magic on top of all that later on.
+Best regards,
+Krzysztof
+
 
