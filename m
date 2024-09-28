@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-342425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD16988EE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C494D988EF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48DF3B217F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:04:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AA59B21863
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7B319F10F;
-	Sat, 28 Sep 2024 10:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB12619F43D;
+	Sat, 28 Sep 2024 10:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z59+6Mbn"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o3HdzhXn"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E0F27733
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 10:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2E619E977
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 10:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727517848; cv=none; b=B8wpo5W20jx9yHzmjznRmZyjkL2AHTZJCnwA9D1to1yBukZ8wfd9rkNe1HDGRXIXHxGE0o99NLaBSK6er2aeZYAdGxaXPz6x3a2rZh+jF7/UYgd5/cBhBUvX1/2frVzDbOqSdJ4FrcOYiIlst3jjF/22bfeDhpyJDWnwIqca09s=
+	t=1727517947; cv=none; b=ny50Xf+K6WbDED/5YJ5FWEfqn9/ZV5uwKxggygBpaxT8yFeRF4zYwe6mtIuFLqbKnXFJsIbMKg+/M2P1/5pA7+ITAC93W+s8xHBvllEEcdP8/a0g+vQsvD/CunL+pacaLXbgvPOreXsXmzt/0wccbQh27UOMCTOvz3OgAuLvQSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727517848; c=relaxed/simple;
-	bh=4+1mwT5zLcDgrEjzOfG3P87kf1xwTT+nnr6GaCcnKBA=;
+	s=arc-20240116; t=1727517947; c=relaxed/simple;
+	bh=Fhj/2WAgRX6TZNq4s+b672pG6RSzJbtSTQ4lNixnLGY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cQw3ZhaeStVAwsdz+QWhFFOPNQQEbIhkR6luobpk9k1SyyRrvLZ/ZsshNnbWcMDq84cYA7Uv1z4eZCxv97xjPOlaWjuuZVk+vk3YZUT+nv1vi6V2nPnD3PIRyxJzqo79gaotyQnTqvr2YS4D31Zt2i+ORqs214b67f6pPzu0PDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z59+6Mbn; arc=none smtp.client-ip=209.85.128.43
+	 Content-Disposition; b=qqekhVPlO5c/1uzOAfFDw1DpHJIvRE2jR5wCzwzNf5ck2RZIHYHsEhoMRqJmj7diOIgovSJVkoE5+7Z79TGokYfE4llHcL9EyhVhg+47/F8y+QRViF/c8pldjxT9blFC+DK95HnxQAY18LxKpwReJhMb+l58SNSZTZPQJthwUPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o3HdzhXn; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso17900555e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 03:04:06 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cc43454d5so22256605e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 03:05:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727517845; x=1728122645; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1727517944; x=1728122744; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BtK7Ih0GNRwfLjqmfDTPx6+2O4u4ad9cD8UabTfETxE=;
-        b=z59+6Mbn0z12d0b6sfK3VujYXpDl+fAONeq6/3sRkzxfclJOo0YdqcHN8qMLffwNIb
-         nOnmj6tC1TN3jdRd0Mt6ATBTD5+sThmB0Y7lCFzUCOG0MxmHr2qRWO60kEiJNcvkDFos
-         kjkW3K+K+Zr+j7c+sehw0q3cjzcsIEGMSmU7d1z7s/CIw9+70XtdxssTUjo4vbJ2Z0J7
-         LAwg8sR67A5wyIOKgiNGMifq4ezv4IZ91S6Cd1I+yl93ekw4Wa/Md0ki/5AqTZCd47CQ
-         ut0H0gO9AC5Wi+SNqMq6gopKeTUt4GDUHgrCwWUHvUK+bA6ESBvM1F6ptLfXtgLxHwmM
-         JV0Q==
+        bh=wFXnq8tjuGE++NF0IRFhg8u5PXx+L4dCmmjvPjHBwaI=;
+        b=o3HdzhXnPH1LpR51MzYDBAiJA6/5cRm2VJR/v0v9YpbfHcaf6GES4L9riF64ru572b
+         2lmmjUDWPxwnCZEnmu85tpo/RqFuCAaSacVyONl9evKLdHRoVePv3W/nP1NwrBaaFNms
+         ghxXQfuTQiqKUySMbJRaKW13XzY3dT55VU5PQttiNJsKgp43Tqo7Hxoo0KECndUQARSH
+         uty3cxnnanyT886dRCask47aVrONdQRItwj0C3jyHDlrDWCncSMdxAckPQHsLHzTV5RZ
+         zOsJls1LNOKNQ2VY4zJYye6PttLoSx64abd3vsBjl6wHmbVljkH/Zsy/en1t3CIkZ4MO
+         K+4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727517845; x=1728122645;
+        d=1e100.net; s=20230601; t=1727517944; x=1728122744;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BtK7Ih0GNRwfLjqmfDTPx6+2O4u4ad9cD8UabTfETxE=;
-        b=umN4R0YTeqm5eFJKbaK2TaErcnvQCGkJcHCL6fdzfT0coCiFOzy2z4A19l44IJ6ARS
-         SaRnGA2hhKSx2YIV+s3bLshMA/grvkYgXWddXvoejVOSRtInVYXs1XW4OPliC4jzo5dM
-         7QPiFJ5+dCQnnftU4esJagtVyJx9ffhrsRV3ewIBepniP2T3HGlKNExaB/wRFlpf8LHx
-         Bc3dWDnsyTJqHLCMn4f2XYLPOhBRWuEqCjIHcTYnXMcUqdDeGfRuEgWGDgJ9z4XQIwUN
-         Zp/r+ReipUmIVxGMnrV3cO+624ly7R8TNftn8KVRKPyTi4/EbRuKKeuNwWrJkkBmG5Pv
-         eT2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUYW9j7m+i8QUPv+kOrWAU43QV56ewBL+9OQ2VzcXB8brr0LimupHBoxjBcCiOabjySsyxsiNeCMBDGWhA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywfq+Y67Lx/pj8JvoQT3mVzxi/YtMprhcXGmydyTAQK2viDLMOc
-	mMqtcc0fwN0YqwwANecLPbrjlHkbeL70wSrmpIXkmLdej+qPbzjkMFYDGabHQzg=
-X-Google-Smtp-Source: AGHT+IFU0bjRjLrQLfM0b06xv21LP9ly86RjBkJWZbMkiF/UDbns48K3HU5bwc/Yb08Uix53u3u4mg==
-X-Received: by 2002:a05:600c:1d08:b0:42c:b697:a62c with SMTP id 5b1f17b1804b1-42f521ce1a4mr63768475e9.5.1727517845154;
-        Sat, 28 Sep 2024 03:04:05 -0700 (PDT)
+        bh=wFXnq8tjuGE++NF0IRFhg8u5PXx+L4dCmmjvPjHBwaI=;
+        b=JbodmyKGmxI+F19mtl8G3tzU3ifvIQVHQqele1aJEPtRxEvwDH+ZBZaNgeq6pxsuac
+         RsPR6mOhnFCVA7iuhdIx/6K2/LCQKsFyscTcFiQFwdfeXIUoH4jozGAeS7vKISemHqMa
+         dw5qTvN8vIKlF0ZwxxPRfbw6CEa/+KxPlfaZbfZJDn06NUsVSban3utEQTTd3pisNAQK
+         GHsSLpZZiBcbmCVp0x008TqsC0tnXstJ2F8Je0RxDeUnaJIsp2E6lNwG9BAB2M8zyNdT
+         7eUwSEhDgTWcflxGsktGyZCC1/HKh/LPilN7RlIQq1k76jXOx6Iwp9W/SyRPBM47kzDj
+         ytHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWw7TEimzS6jOPQHz74xHdREPtUKsK/j+B8rAcsZu6h6ML1dsIDsvdhC1JIc5gPpYDlSCQk+P/7Txzf+WQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+6OSoAdsLfza9i2kuBCiIRzG7A/gM8Qf8/PywvG53oFhuJzkz
+	uri9DnTlLejDqt/gPq318Mje+ZP5WY+TElHS6eYoidKHVDR5no95wtM94YIj5lAp4V5hlD8BgJB
+	o
+X-Google-Smtp-Source: AGHT+IHZBI2SeNYmPuzbzS4OIpWMwP4GQ7Yg15aONo1+6wQnhIL+THchIfM5hb67RF96jt8tGxyVRA==
+X-Received: by 2002:a05:600c:4f8f:b0:426:6a53:e54f with SMTP id 5b1f17b1804b1-42f5849101emr43200315e9.33.1727517943974;
+        Sat, 28 Sep 2024 03:05:43 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ddb4csm97336095e9.6.2024.09.28.03.04.04
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e90274aa0sm77268275e9.0.2024.09.28.03.05.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Sep 2024 03:04:04 -0700 (PDT)
-Date: Sat, 28 Sep 2024 13:04:01 +0300
+        Sat, 28 Sep 2024 03:05:43 -0700 (PDT)
+Date: Sat, 28 Sep 2024 13:05:01 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Julien Panis <jpanis@baylibre.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	Chintan Vankar <c-vankar@ti.com>, Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Jie Wang <jie.wang@intel.com>
+Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Damian Muszynski <damian.muszynski@intel.com>,
+	Tero Kristo <tero.kristo@linux.intel.com>,
+	Shashank Gupta <shashank.gupta@intel.com>,
+	Lucas Segarra Fernandez <lucas.segarra.fernandez@intel.com>,
+	Dong Xie <dong.xie@intel.com>, qat-linux@intel.com,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2 net] net: ethernet: ti: am65-cpsw: Fix forever loop in
- cleanup code
-Message-ID: <8e7960cc-415d-48d7-99ce-f623022ec7b5@stanley.mountain>
+Subject: [PATCH] crypto: qat - (qat_420xx) fix off by one in uof_get_name()
+Message-ID: <796ecd7c-54ad-4bec-b748-3e156cc0a1aa@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,32 +90,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This error handling has a typo.  It should i++ instead of i--.  In the
-original code the error handling will loop until it crashes.
+This is called from uof_get_name_420xx() where "num_objs" is the
+ARRAY_SIZE() of fw_objs[].  The > needs to be >= to prevent an out of
+bounds access.
 
-Fixes: da70d184a8c3 ("net: ethernet: ti: am65-cpsw: Introduce multi queue Rx")
+Fixes: fcf60f4bcf54 ("crypto: qat - add support for 420xx devices")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
 ---
-v2: The first version of this patch had white space corruption and didn't apply.
-
- drivers/net/ethernet/ti/am65-cpsw-nuss.c | 2 +-
+ drivers/crypto/intel/qat/qat_420xx/adf_420xx_hw_data.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index cbe99017cbfa..d253727b160f 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -763,7 +763,7 @@ static int am65_cpsw_nuss_common_open(struct am65_cpsw_common *common)
- 	k3_udma_glue_disable_rx_chn(rx_chn->rx_chn);
+diff --git a/drivers/crypto/intel/qat/qat_420xx/adf_420xx_hw_data.c b/drivers/crypto/intel/qat/qat_420xx/adf_420xx_hw_data.c
+index 78f0ea49254d..9faef33e54bd 100644
+--- a/drivers/crypto/intel/qat/qat_420xx/adf_420xx_hw_data.c
++++ b/drivers/crypto/intel/qat/qat_420xx/adf_420xx_hw_data.c
+@@ -375,7 +375,7 @@ static const char *uof_get_name(struct adf_accel_dev *accel_dev, u32 obj_num,
+ 	else
+ 		id = -EINVAL;
  
- fail_rx:
--	for (i = 0; i < common->rx_ch_num_flows; i--)
-+	for (i = 0; i < common->rx_ch_num_flows; i++)
- 		k3_udma_glue_reset_rx_chn(rx_chn->rx_chn, i, &rx_chn->flows[i],
- 					  am65_cpsw_nuss_rx_cleanup, 0);
+-	if (id < 0 || id > num_objs)
++	if (id < 0 || id >= num_objs)
+ 		return NULL;
  
+ 	return fw_objs[id];
 -- 
 2.45.2
 
