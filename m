@@ -1,69 +1,91 @@
-Return-Path: <linux-kernel+bounces-342656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3BD989148
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:12:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB9998914B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FD3E1F23BD6
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:12:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A33AF285C5C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B5E165F04;
-	Sat, 28 Sep 2024 20:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842B0165F0F;
+	Sat, 28 Sep 2024 20:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JI/efwwF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JSHM4egy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0281718633;
-	Sat, 28 Sep 2024 20:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48BB136358;
+	Sat, 28 Sep 2024 20:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727554344; cv=none; b=I+iMDTT9N31cld64Jyt9BW4o9gq/Uf9Ek+4bGNO1LYCSMFJmYxs3DXupiQxV89G41WdaOHkfxwxGNGsPHIgB/Ig4isIPd9N+vJ+/lNCP27pXr6vRKrmiI3PgjKKkhM5Qn5Mz6vOmQ7DMwz8F/53USTyFoOmxNqFZ5wCNfG3Km4U=
+	t=1727554466; cv=none; b=mYnC4A6DgMOKUlkEpWesRPiBizcMrcBRtUsDeMyBiuLftnJ064AlmtC6GEMoREdBaQH8KCHCxfBVOdGhL3o2Y7HPVuFNi9a1bJs+RJZlO55wnhuQegw7qLo+59K1rC1o4jVGPraARmOPayu6j+PQ0xffVf1yn9p1NZNFF+a57Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727554344; c=relaxed/simple;
-	bh=I26IhX4NPnUeeWPTVvJaD0+ucaQP/7Z8uFoi3S8v0Bk=;
+	s=arc-20240116; t=1727554466; c=relaxed/simple;
+	bh=fyzkp8bwC+pgUCdnd/ipBoI0RRrRQvdTxtU1+uStjnE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DoavZZ6NjMOM2FQ6xAqJY2DB5kulrHB95ntVdJAGEFTUepMBvYMQL61Wy031ytZPm0WSpORdnDzXALn/z4cnBo9CleHwLzHS6xbUTc8Yor0WlR253dOOTEy+Hud2S+tbgZM0HVQa9TBfMTXP91fFtIFFLa+ocqlZFHx554/IjpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JI/efwwF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2EE4C4CEC3;
-	Sat, 28 Sep 2024 20:12:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NS4pkceHvPAdNJM28Qb7xjSWbIBV0i7+wpQOe/sH1/t9yb4dlz4rDqzp/smtBxJMHDehM++Kgudncv1+C/pMZhd1gsV71JAJnTjFjU7DofUxtj5HKrt3vkzzii0G78vVreoKl+cDb0chCMY4leBcheASaGWsarurXC33ej8RE6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JSHM4egy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DA6CC4CEC3;
+	Sat, 28 Sep 2024 20:14:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727554343;
-	bh=I26IhX4NPnUeeWPTVvJaD0+ucaQP/7Z8uFoi3S8v0Bk=;
+	s=k20201202; t=1727554466;
+	bh=fyzkp8bwC+pgUCdnd/ipBoI0RRrRQvdTxtU1+uStjnE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JI/efwwFtDmd+Nkm6Hsk/gt9t5XEcQqUqD6b0o9RIUI+KDDCIgO8mlFeVr8Jyyy9j
-	 5A0ZX0W7fAwebJwawO3dh13IX0OT/81s5+95Rj/ux3eS4cdNz3UixGYMloVSl32d5/
-	 ldHHuC+BLQm2X+9+Hho5fu5cEKRSyxsJGxt+OLHm8tG4L1ylu3UJTs5Bd0Nv5hwqEL
-	 p7EKwU2ON28oYc49PQI9ovO6XdjWtI3gYJc/qN/7DLSkJTkFaVEWOzbVw3IfclOmve
-	 F5pLNYURtBGOEfxu6fg3shNJroczcjQx+mkla31XkuDYkXlvV7GwMwm2SSKuXMHp6R
-	 EvTZ0wgbrpeLA==
-Date: Sat, 28 Sep 2024 21:12:18 +0100
+	b=JSHM4egySK3ezdTOqKcIpDj8cQX3z1AAr6lqvqqTdKVx0OWDlqhPhp908NTUbGMgv
+	 PB15gK0cQ4KW+H0wmbEbEltG3rsLnnpqEiN6xrXptgDaQ3UvYh4vQr3wDnyua+GdvM
+	 nGEJ87/BBQLVLp7Nqh/f79aNFNvEhnyEfQpxaYcNu9rzpOJFzKQ3fz/r6basWILMLI
+	 R9usdwOLwKR0Q4cmKmYi9dSbLMEQIXtO1s10v2XtQp8H2ZZ6nN6t2VIantBsAjiEKp
+	 6HP6A7RaJC4LveccmPV0bZCLchG4RoSA5OgIKEOlwdM8iVvVEPty8Bf2j1haujXQqH
+	 6imGmxrESn6FQ==
+Date: Sat, 28 Sep 2024 21:14:17 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>,
-	"broonie@kernel.org" <broonie@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"Simek, Michal" <michal.simek@amd.com>,
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+To: Moudy Ho =?utf-8?B?KOS9leWul+WOnyk=?= <Moudy.Ho@mediatek.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Macpaul Lin =?utf-8?B?KOael+aZuuaWjCk=?= <Macpaul.Lin@mediatek.com>,
+	Pablo Sun =?utf-8?B?KOWtq+avk+e/lCk=?= <pablo.sun@mediatek.com>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"git (AMD-Xilinx)" <git@amd.com>,
-	"amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>
-Subject: Re: [PATCH] dt-bindings: spi: xilinx: Add clocks & clock-names
- properties
-Message-ID: <20240928-postcard-lively-c0c9bbe74d04@spud>
-References: <20240923123242.2101562-1-amit.kumar-mahapatra@amd.com>
- <20240924-impaired-starving-eef91b339f67@spud>
- <IA0PR12MB76998D7BC3429606508E6202DC692@IA0PR12MB7699.namprd12.prod.outlook.com>
- <20240925-trapdoor-stunt-33516665fdc5@spud>
- <IA0PR12MB76999B696A9BA0834644AC71DC6B2@IA0PR12MB7699.namprd12.prod.outlook.com>
- <03a1c7e7-c516-41ab-a668-7c6785ab1c4f@kernel.org>
+	Chris-qj Chen =?utf-8?B?KOmZs+Wlh+mAsik=?= <Chris-qj.Chen@mediatek.com>,
+	Bear Wang =?utf-8?B?KOiQqeWOn+aDn+W+tyk=?= <bear.wang@mediatek.com>,
+	"wenst@chromium.org" <wenst@chromium.org>,
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	Macross Chen =?utf-8?B?KOmZs+izoueiqSk=?= <macross.chen@mediatek.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"macpaul@gmail.com" <macpaul@gmail.com>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	Yong Wu =?utf-8?B?KOWQtOWLhyk=?= <Yong.Wu@mediatek.com>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	Alexandre Mergnat <amergnat@baylibre.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Sen Chu =?utf-8?B?KOWCqOajrik=?= <Sen.Chu@mediatek.com>,
+	"will@kernel.org" <will@kernel.org>,
+	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: Re: [PATCH 3/6] dt-bindings: display: mediatek: Fix clocks count
+ constraint for new SoCs
+Message-ID: <20240928-hummus-carol-0f09081f892d@spud>
+References: <20240924103156.13119-1-macpaul.lin@mediatek.com>
+ <20240924103156.13119-3-macpaul.lin@mediatek.com>
+ <ffc1900b-3921-48ca-a2b2-1b798c57e572@collabora.com>
+ <20240924-commute-collision-13ad39717d31@spud>
+ <2821ef09-1b32-082d-69d1-e09a3a302447@mediatek.com>
+ <20240925-satisfy-epidermal-bd414891479a@spud>
+ <7a1315ef-4be5-4528-858b-9f07c814636d@collabora.com>
+ <93d9ffbe466ff61d5426b6f158a4b8464f56824d.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,91 +93,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="1NX/bfG8PX15XlnI"
+	protocol="application/pgp-signature"; boundary="AcDfy0agmX9jcKA8"
 Content-Disposition: inline
-In-Reply-To: <03a1c7e7-c516-41ab-a668-7c6785ab1c4f@kernel.org>
+In-Reply-To: <93d9ffbe466ff61d5426b6f158a4b8464f56824d.camel@mediatek.com>
 
 
---1NX/bfG8PX15XlnI
-Content-Type: text/plain; charset=us-ascii
+--AcDfy0agmX9jcKA8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 28, 2024 at 10:19:01AM +0200, Krzysztof Kozlowski wrote:
-> On 27/09/2024 11:30, Mahapatra, Amit Kumar wrote:
-> > Hello Conor,
+On Fri, Sep 27, 2024 at 02:27:14AM +0000, Moudy Ho (=E4=BD=95=E5=AE=97=E5=
+=8E=9F) wrote:
+> On Thu, 2024-09-26 at 11:38 +0200, AngeloGioacchino Del Regno wrote:
+> > Il 25/09/24 16:34, Conor Dooley ha scritto:
+> > > On Wed, Sep 25, 2024 at 04:42:59PM +0800, Macpaul Lin wrote:
+> > > >=20
+> > > > On 9/25/24 00:00, Conor Dooley wrote:
+> > > > > On Tue, Sep 24, 2024 at 01:42:01PM +0200, AngeloGioacchino Del
+> > > > > Regno wrote:
+> > > > > > Il 24/09/24 12:31, Macpaul Lin ha scritto:
+> > > > > > > The display node in mt8195.dtsi was triggering a CHECK_DTBS
+> > > > > > > error due
+> > > > > > > to an excessively long 'clocks' property:
+> > > > > > >      display@14f06000: clocks: [[31, 14], [31, 43], [31,
+> > > > > > > 44]] is too long
+> > > > > > >=20
+> > > > > > > To resolve this issue, add "maxItems: 3" to the 'clocks'
+> > > > > > > property in
+> > > > > > > the DT schema.
+> > > > > > >=20
+> > > > > > > Fixes: 4ed545e7d100 ("dt-bindings: display: mediatek: disp:
+> > > > > > > split each block to individual yaml")
+> > > > > > > Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> > > > > > > ---
+> > > > > > >     .../devicetree/bindings/display/mediatek/mediatek,split
+> > > > > > > .yaml     | 1 +
+> > > > > > >     1 file changed, 1 insertion(+)
+> > > > > > >=20
+> > > > > > > diff --git
+> > > > > > > a/Documentation/devicetree/bindings/display/mediatek/mediat
+> > > > > > > ek,split.yaml
+> > > > > > > b/Documentation/devicetree/bindings/display/mediatek/mediat
+> > > > > > > ek,split.yaml
+> > > > > > > index e4affc854f3d..42d2d483cc29 100644
+> > > > > > > ---
+> > > > > > > a/Documentation/devicetree/bindings/display/mediatek/mediat
+> > > > > > > ek,split.yaml
+> > > > > > > +++
+> > > > > > > b/Documentation/devicetree/bindings/display/mediatek/mediat
+> > > > > > > ek,split.yaml
+> > > > > > > @@ -57,6 +57,7 @@ properties:
+> > > > > > >       clocks:
+> > > > > > >         items:
+> > > > > > >           - description: SPLIT Clock
+> > > > > >=20
+> > > > > > That's at least confusing (granted that it works) - either
+> > > > > > add a description for
+> > > > > > each clock and then set `minItems: 1` (preferred), or remove
+> > > > > > this "SPLIT Clock"
+> > > > > > description and allow a maximum of 3 clocks.
+> > > > > >=20
+> > > > > > Removing the description can be done - IMO - because "SPLIT
+> > > > > > Clock" is, well,
+> > > > > > saying that the SPLIT block gets a SPLIT clock ... stating
+> > > > > > the obvious, anyway.
+> > > > >=20
+> > > > > Right, but what are the other two new clocks? Are they as
+> > > > > obvious?
+> > > > > There's no clock-names here to give any more information as to
+> > > > > what the
+> > > > > other clocks are supposed to be.
+> > > > >=20
+> > > > > Kinda unrelated, but I think that "SPLIT Clock" probably isn't
+> > > > > what the
+> > > > > name of the clock in the IP block is anyway, sounds more like
+> > > > > the name
+> > > > > for it on the provider end..
+> > > >=20
+> > > >=20
+>  * Thanks for the suggestions. I think Moudy could help on the new
+>    fixes
+> > > > for both DT schem and mt8195.dtsi. This patch could be separated
+> > > > from
+> > > > origin patch set.
+> > >=20
+> > > Not sure what you mean about separating it, if you mean correcting
+> > > the
+> > > description for the split clock sure. The other stuff I mentioned
+> > > needs
+> > > to be resolved before I'm willing to ack this.
 > >=20
+> > He means separating this patch from the rest of the series that he
+> > pushed - which
+> > is okay, as it's a bit mixed anyway :-)
 > >=20
-> >>>> Subject: Re: [PATCH] dt-bindings: spi: xilinx: Add clocks &
-> >>>> clock-names properties
-> >>>>
-> >>>> On Mon, Sep 23, 2024 at 06:02:42PM +0530, Amit Kumar Mahapatra wrote:
-> >>>>> Include the 'clocks' and 'clock-names' properties in the AXI
-> >>>>> Quad-SPI bindings. When the AXI4-Lite interface is enabled, the
-> >>>>> core operates in legacy mode, maintaining backward compatibility
-> >>>>> with version 1.00, and uses 's_axi_aclk' and 'ext_spi_clk'. For
-> >>>>> the AXI interface, it uses 's_axi4_aclk' and 'ext_spi_clk'.
+> > Besides ... Moudy, can you please help to clarify the description of
+> > those clocks?
+>=20
+> May I address the check error by adding 2 functional descriptions and
+> specifying 'minIeims: 1' for this property, and apply the limit by
+> setting 'maxItems: 3' in MT8195 additional condition?
 
-> >>>>> +      properties:
-> >>>>> +        clock-names:
-> >>>>> +          items:
-> >>>>> +            - const: s_axi_aclk
-> >>>>> +            - const: ext_spi_clk
-> >>>>
-> >>>> These are all clocks, there should be no need to have "clk" in the n=
-ames.
-> >>>
-> >>> These are the names exported by the IP and used by the DTG.
-> >>
-> >> So? This is a binding, not a verilog file.
-> >=20
-> > Axi Quad SPI is an FPGA-based IP, and the clock names are derived from =
-the=20
-> > IP signal names as specified in the IP documentation [1].=20
-> > We chose these names to ensure alignment with the I/O signal names list=
-ed=20
-> > in Table 2-2 on page 19 of [1].
-> >=20
-> > [1] chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.amd=
-=2Ecom/content/dam/xilinx/support/documents/ip_documentation/axi_quad_spi/v=
-3_2/pg153-axi-quad-spi.pdf
->=20
-> So if hardware engineers call them "pink_pony_clk_aclk_really_clk" we
-> should follow...
->=20
->  - bus or axi
->  - ext_spi or spi
->=20
-> You have descriptions of each item to reference real signals. Conor's
-> comment is valid - do no make it verilog file.
->=20
-> >=20
-> >>
-> >>>>> +
-> >>>>> +    else:
-> >>>>> +      properties:
-> >>>>> +        clock-names:
-> >>>>> +          items:
-> >>>>> +            - const: s_axi4_aclk
-> >>>>> +            - const: ext_spi_clk
->=20
-> Nah, these are the same.
 
-They may be different, depending on whether or not the driver has to
-handle "axi4-lite" versus "axi" differently. That said, I find the
-commit message kinda odd in that it states that axi4-lite goes with
-the s_axi_aclk clock and axi goes with s_axi4_aclk. Seems backwards..
+That sounds reasonable
 
---1NX/bfG8PX15XlnI
+--AcDfy0agmX9jcKA8
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvhjIgAKCRB4tDGHoIJi
-0hFsAP9qhLfMvQnzh6cmsRecT9CTopCWp6KmwX/VcslN+ktYaAEAi5sAx2oVJBfy
-K00tigLYMqwYoZS6Oac4xOrzlxuOaAs=
-=lz2t
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvhjmQAKCRB4tDGHoIJi
+0t5tAP9AhQrQg5BdiPm51hIYX60FP2j5MfqK3fnJyGLtjY+MhgEAnLtFBSFfQFkq
+wjGbq54IMzZ/w/JrwtVg7Y9ctV0+GAc=
+=/UTH
 -----END PGP SIGNATURE-----
 
---1NX/bfG8PX15XlnI--
+--AcDfy0agmX9jcKA8--
 
