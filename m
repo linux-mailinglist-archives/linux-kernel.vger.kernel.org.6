@@ -1,128 +1,161 @@
-Return-Path: <linux-kernel+bounces-342323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C4FF988D8E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 04:32:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84736988D8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 04:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385AD2829AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:30:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A644E282A28
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39865381A;
-	Sat, 28 Sep 2024 02:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690825FEE6;
+	Sat, 28 Sep 2024 02:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cXFUW/fx"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=stwcx.xyz header.i=@stwcx.xyz header.b="W9q2j/+D";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JwLn3Sml"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EBB171A7
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 02:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B75171A7;
+	Sat, 28 Sep 2024 02:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727490645; cv=none; b=uMhZuxlWisd05zOqbKRzS6pgl75dHUdvb7ENHe/c5zTxny6hDbcf4HKV8JAivSI5I3zlpNgkJmVilhHbPI3CkirVFtideHisT+L1tTvo1uE511k9uUwl/dflqSCbOP5lbQ8WX0R9BdSOqEHrwBPCll/9XcS7W1HjNwjDUgL/T74=
+	t=1727490804; cv=none; b=PG7Mv0K8ZgXvfG7F57l3jsH/bBp0liwxon//kedEBr59HqNDE+BPq7vLFuluCC/oKVBgkbZSTQRqTPiwEmKgI6NnNvTRleAKzrjBZaAgqNMIie+hQMmxhJtWQtTGYggJf5t8Rqvv+x0d4dky1VOUGpS+nrkUgm0qyCy7HTK8bT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727490645; c=relaxed/simple;
-	bh=WyH/4vdnVcLBkVnBup1I/7f8Grtzl0gJ1xiYbKUceXA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=phBF220PNCVKSoytOP6urK4d+2f7gkt9NW6bqW5jo8d4vP9nXWTuf9hL5JzaKscaqZd6CbxcH8d1SrN7/vXDHlsl8EdjZubXaBSERVigVXCFZv/+ppNY9yCn252Qjorz2FZYB/QjPAkFiI9X33DIVIuJmC1dhtE+oULBP4LQD4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cXFUW/fx; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a93a1cda54dso357519766b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 19:30:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727490642; x=1728095442; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OZ/wHMNg0d+dVALsuK0UnbKStRq6V9Y0t0+9ftzzOzI=;
-        b=cXFUW/fxwb2E3cHEgibJdXIwvSmFhTWsUCbunVZgQf+RL+Wl3WzSwyonA03HZiPVoq
-         EMFi95l+JCLx4LfARsyFn5+DeTehOLqBzuF35eIJhrsukW0kjpRanEjHxck5hQrEfMU+
-         tqaRF6NfT3Zcky3q1/Hw6ZtfwiLB+PE+6c+sz7lfDmCyo173E4pfAWFcoKSnx5pN04Bo
-         vFu9JVCr2pGwmEkh5Z1WjmElpO8/IpkjLV+9R16dLtTm/nTl6gr/gvTppxECbwog6qgf
-         k5qoeXBDUeTY5Vz73mmKss1pPeMVfimsw5YD1UnfxZP7vCG6dypLHW/lNLWT7YJC2Uya
-         CIYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727490642; x=1728095442;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OZ/wHMNg0d+dVALsuK0UnbKStRq6V9Y0t0+9ftzzOzI=;
-        b=WvSmKsKJfiSODy2ApaVGy0SmjYwCxWi4+5Ynaqt6ThVHzn9kUC56D/glIiJUPLuyod
-         0IKsRDsxJPfukDoYRQ1sTmmlqAHwf6TmPvvOcP+Fenq2vOuSHciPBvcYKJIsTrRuGK5g
-         Diz/jheKOpwJqBbHvhu3y0nhpcMycA16irsjc2ize4wasu1qcWvFXpiiljuFvehxGKUd
-         QE6VWEmbbTeaIjgxO/8zct9CY2p1phrcIveyw67W1lV9pzbGw9qJsjh6FNBuTcTv2Kts
-         QR9ithPKbeNDtDSPtM68BJ80V8rn3dkSMEp8eEUoliOz5k8SxNgSKq4+pGGU10zd+Vw5
-         WcKg==
-X-Gm-Message-State: AOJu0YxEFBnnw7Ha2qZtKNcIeEOmKDnmfbY5kAm4L/7Ivx1pL8blNwsQ
-	a77MR6nlnlLC7sjTP2UtXZvp+H4nqJ8Q8SDvUoXVc99tFLYCoGg4u0h+UscQ8CVv+9aqwonf7fC
-	YnJ2IYbnYa95uwFBZjyHLWt5qjREmIHCYf6IM
-X-Google-Smtp-Source: AGHT+IEckE1V7emNRJoahGMNy6LaBiiwJXt/HE2bsdWFZ8PKiaKO8kTBJzYFXUhiDlBPaxpQF3bRj2SzBSKg6Z8lSBY=
-X-Received: by 2002:a17:906:794d:b0:a8e:a578:29df with SMTP id
- a640c23a62f3a-a93c48f0c1cmr534977766b.6.1727490641730; Fri, 27 Sep 2024
- 19:30:41 -0700 (PDT)
+	s=arc-20240116; t=1727490804; c=relaxed/simple;
+	bh=ExIpGKmuiqi9anvxljGHaHookFdfgSRM6o29FPew6XQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fS2Von/GKrU7kKJoqeN7atbTs2NRp/WWtCUQ9+9qaVMum1EdmQICtWe6IZAiAfYDu1cz0wtOsBo0MK/Eu72fXJtPK4CI6nh3q+1wgHRC9rq6xs9IzqJ5Tn0pN3S+vlQpCzdcORaDAgJURsd7Rzn8Hb3pokQACkXVXm2MZsbvVPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stwcx.xyz; spf=pass smtp.mailfrom=stwcx.xyz; dkim=pass (2048-bit key) header.d=stwcx.xyz header.i=@stwcx.xyz header.b=W9q2j/+D; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JwLn3Sml; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stwcx.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stwcx.xyz
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 190D9138013E;
+	Fri, 27 Sep 2024 22:33:21 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Fri, 27 Sep 2024 22:33:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stwcx.xyz; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1727490801; x=1727577201; bh=U16jMjEN3o
+	91EK9M5P3qO8Yu0T8PNqWRntnLHRz8uow=; b=W9q2j/+Dh0mRTa/gSw9482qMMM
+	BBCrUk71jKJntWKW75705styTSjgNzIv/ybwIk/NbCMirc6TpMeOA/Uli5RK4kCF
+	keKa7eBVLT4tU5wbLFN3Dc/41uNqb74sauhjTX2dsLg3Vn6XXYTZakpv78yPsmxM
+	r0afIGUS5f6LJ8ujLooE21PqEfavjfSJeyZxc4Jdnw/vs9SOQ6WPxFmupGh36O3W
+	3OO/XAluhA7PYjP3r8rfcrBGbykHJfPFK50cEuFisu//EAbDWc331NZcAh5wOAPy
+	UgrecwgiZq9BxdlUN5Z8pZlDKgtUoPjh1qfNs7Cm7hL04wZiKQ9s0UOqjR7Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1727490801; x=1727577201; bh=U16jMjEN3o91EK9M5P3qO8Yu0T8P
+	NqWRntnLHRz8uow=; b=JwLn3SmlNNNbZ30EP0RBJXv0SGZQk9oIF6/seslJjbof
+	SF8HIlZjoSYDnHazZXyV+vzvMQNhbnV/HgZMYrj44lJIn0XLMdLZZscvkFhMV5GO
+	wsdrWvaPfWYNRJz2N3HGcWw2shnjNPvdNCcEQtgVbKI1hIT64KZqinBgxWAol0Td
+	KUF/WJ9/xcU81DX949N+nRuhVtYb4tVD9Loa29OKc8nEFSGNKJheYeIi8ZESjyIv
+	fE40x9OL3u1bES2BeFt6mm+GoZP1XS6SwG8pASa/0VDuDIFQMQxftaNcFjSOR7YZ
+	iDtBmZTLFkcHr1RkyhXRV8wM9St+/uuLDMk8DpTVmg==
+X-ME-Sender: <xms:72r3Zm877f7aa0EdZbuxnxp0Ke11_k9TEv1HLX9_CuHBlhPSveXVgw>
+    <xme:72r3ZmsksgLTPPMNtIO7yS68JAAKWDAga-xt-ziT6jhrPzRO3jIKg-3pJx6dLeveB
+    wZl5ieyDD2jz91eRkc>
+X-ME-Received: <xmr:72r3ZsD7lYYAeI3_dzW7wXaLMoQrWH3has_sOldd9lsfg3tZIn4-aFIa0ks>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddutddgieduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdlfeehmdenucfjughrpeffhffvvefukfhf
+    gggtuggjsehgtderredttddvnecuhfhrohhmpefrrghtrhhitghkucghihhllhhirghmsh
+    cuoehprghtrhhitghksehsthiftgigrdighiiiqeenucggtffrrghtthgvrhhnpeehfeej
+    heeftdejiedvfeekffehledukeduleelffekgfdtleduledvtdegtdehkeenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehprghtrhhitghksehs
+    thiftgigrdighiiipdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpd
+    hrtghpthhtohepuggvlhhphhhinhgvpggttggptghhihhuseifihifhihnnhdrtghomhdp
+    rhgtphhtthhopegrnhgurhgvfiestghouggvtghonhhsthhruhgtthdrtghomhdrrghupd
+    hrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdo
+    ughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepjhhovghlsehjmhhsrdhiugdrrghupdhrtghpthhtohep
+    rhhitghkhidrtgigrdifuhdrfihifiihnhhnsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    epuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorh
+    hg
+X-ME-Proxy: <xmx:72r3Zucc7ue6hk_tsxZJr7OiFQGM5fVzr7LKnkGklEwyUlLYiMOj9A>
+    <xmx:72r3ZrOckeE2FJcElDzjWjnJp3td2mC3BTTKZQQH3nG8aAw-5jsi4Q>
+    <xmx:72r3Zokmsw12VYSwom7oOKcJYKdylb9_HZmQFHwUvG5f7FAViZJQfQ>
+    <xmx:72r3ZtsP0JAlRA7ja9K_el2a3Fh7RV-Wpi8iCPPJpFWYrdy0PRDEoA>
+    <xmx:8Wr3Zontc_WIk1SWfGEE10s0jaEHGS-rDs7m_KWF6qcY0EYzamFw0F9q>
+Feedback-ID: i68a1478a:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 27 Sep 2024 22:33:19 -0400 (EDT)
+Date: Fri, 27 Sep 2024 22:33:18 -0400
+From: Patrick Williams <patrick@stwcx.xyz>
+To: Delphine_CC_Chiu/WYHQ/Wiwynn <Delphine_CC_Chiu@wiwynn.com>
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] ARM: dts: aspeed: yosemite4: Add i2c-mux for CPLD IOE
+ on Spider Board
+Message-ID: <Zvdq7o6NFXRVCJqX@heinlein.vulture-banana.ts.net>
+References: <20240926024133.3786712-1-Delphine_CC_Chiu@wiwynn.com>
+ <fbdc9efe87a1bed9fea7d0abaf955aa1a3dc24ac.camel@codeconstruct.com.au>
+ <TYZPR04MB5853B51141F3D0610D970265D66B2@TYZPR04MB5853.apcprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240928021620.8369-1-kanchana.p.sridhar@intel.com> <20240928021620.8369-2-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20240928021620.8369-2-kanchana.p.sridhar@intel.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Fri, 27 Sep 2024 19:30:06 -0700
-Message-ID: <CAJD7tkYnCSe-pXx86PypDVivkfueiipv1cizDGBNs-sVmZqRew@mail.gmail.com>
-Subject: Re: [PATCH v8 1/8] mm: Define obj_cgroup_get() if CONFIG_MEMCG is not defined.
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
-	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
-	21cnbao@gmail.com, akpm@linux-foundation.org, nanhai.zou@intel.com, 
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hSfDXba+Ub+nJ+df"
+Content-Disposition: inline
+In-Reply-To: <TYZPR04MB5853B51141F3D0610D970265D66B2@TYZPR04MB5853.apcprd04.prod.outlook.com>
+
+
+--hSfDXba+Ub+nJ+df
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 7:16=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
->
-> This resolves an issue with obj_cgroup_get() not being defined if
-> CONFIG_MEMCG is not defined.
->
-> Before this patch, we would see build errors if obj_cgroup_get() is
-> called from code that is agnostic of CONFIG_MEMCG.
->
-> The zswap_store() changes for large folios in subsequent commits will
-> require the use of obj_cgroup_get() in zswap code that falls into this
-> category.
->
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-> Reviewed-by: Nhat Pham <nphamcs@gmail.com>'
+On Fri, Sep 27, 2024 at 09:24:11AM +0000, Delphine_CC_Chiu/WYHQ/Wiwynn wrot=
+e:
 
-Reviewed-by: Yosry Ahmed <yosryahmed@google.com>
+> Would like to ask should I base on the openbmc/linux repo to create the
+> remaining patches that have context dependencies and add the lore link
+> of the those patches that I've sent in the cover letter?
 
-> ---
->  include/linux/memcontrol.h | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 34d2da05f2f1..15c2716f9aa3 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -1282,6 +1282,10 @@ struct mem_cgroup *mem_cgroup_from_css(struct cgro=
-up_subsys_state *css)
->         return NULL;
->  }
->
-> +static inline void obj_cgroup_get(struct obj_cgroup *objcg)
-> +{
-> +}
-> +
->  static inline void obj_cgroup_put(struct obj_cgroup *objcg)
->  {
->  }
-> --
-> 2.27.0
->
+I believe you're trying to get the patches applied onto the upstream
+tree, so no you should not base on the openbmc/linux repo.  That repo is
+a 6.6 branch.  You need to base the commits on torvalds/linux.
+
+--=20
+Patrick Williams
+
+--hSfDXba+Ub+nJ+df
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEBGD9ii4LE9cNbqJBqwNHzC0AwRkFAmb3au0ACgkQqwNHzC0A
+wRnAhQ//XxrZHbFUlNyP/xRc1TLUJNby9aMAX2znwLHml4QgPpbR47qu7vsMneOx
+HGnIXsiWVugP0x4Q93ozxrfAXO1wTyM0GRBg3Iew00Fgmekp/kkfNKrbI4xjXpmy
+xK/LbmYEY+a+/Rki3ekWsLmJ+ExZvsPFMdai+WBxaUQaEbnNyHhWk7xE2W5juFfS
+aSkhkLs97Ef+fMtBQjEFjZ1esEvlXGBpMLMDq+Hi+u+J0/jYu/Ip8lW+fzGD7kUm
+xWDD+fE0TmUQO/8G4qhox9r3/yzLAsbu+pn8GPJE7qIy8nJW61y3VAv12m+xmROM
+bHOiTTYJlGopmBbwbLG2KkeDeRKGG6KiDnPP5HfhPIVsOHgpiBtPxwnWpbGGwmM2
+atL8kkz7FYXT8QOhyWgPR4+dmaDGlm/INcS7JCeJZMDLBbmDdxaR4d//7XkLBU3s
+9hxIuNnSw1V4l8lYgwTG+YSKhnLfmZYxb2G529f5XBOCun+IxIJlqV1FWLrHwnpO
+XgpqTW5c1AYvP01C/eySBlN5/e2Ksn2mXYmkZJ8E9Qi2JIZ38XDpStdRRlV8aRWZ
+Y6PtyzuZC8m0tnNHPekbYCCZsBTAJeo2dItP28pSfHA20657kM/47mfYpZ+pwuoZ
+G87JMVQ8mVvswlniL052id82uejdOhilWLxYVjwOV3A44yecCUo=
+=cWYx
+-----END PGP SIGNATURE-----
+
+--hSfDXba+Ub+nJ+df--
 
