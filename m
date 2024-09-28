@@ -1,233 +1,93 @@
-Return-Path: <linux-kernel+bounces-342460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1264D988F54
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:08:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4D4988F55
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C64128224E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:08:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB03D1C20C8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937A2187FEA;
-	Sat, 28 Sep 2024 13:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F79187FEC;
+	Sat, 28 Sep 2024 13:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DEWPMNs3"
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QHyPvcvH"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E616187332
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 13:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCABE200DE
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 13:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727528878; cv=none; b=f6PX1zGUr4G/H/rokroADzjUTnnT/0ZU+BngIJCZmMuhlHkqdT9WRqd3RwNtTj2FNGsZlQejSfLyHByeZRije4MoJbdKEAkyqjW40aLVrTMVvLMdWcnSU1zQCW5oWdMpbBkVDyC+Hx7auRp/f7GRD8VH/ZQJSzB8heARHJGPLpo=
+	t=1727528936; cv=none; b=OVqrpjnFQpqRPmsU86drb98bK7CMdLfqlI7311aRQFmnmQlZG50Prj7r5755s0lSwXLy1sUboahfDlJp3ezQO+faf63/IL3oTVq5ZPvNhPVc10BJBXJ1Kq1aM/YSECJ4w7qphE95jzBQGscydugefsR+vafKAVaWbRiZVnwT4Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727528878; c=relaxed/simple;
-	bh=NF0Z16Sr+zxpBPzPl9FRHxZtteQuFZvwfQ5o4ap1K20=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OGu+tG5jMJwJwcQ9WP2OA+H6opxhbcsAH9YOmA2eS+7C4hgO/jzBBrBDuIcZBeYrl9ShriSMNMAuWXyz3xhNrfzmJvMczfO9QDjEhRzfsJ92q8BIFRYHEBljbJZBzjotVLN+xb+RxpJUyNYgbSmazXsIb6AGLRfiUaP3AkYwvGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DEWPMNs3; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5011af337d4so768245e0c.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 06:07:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727528875; x=1728133675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+p8ve9O0X2u3XZpQMEXjYXFloRPDslr669RcjkIfYiY=;
-        b=DEWPMNs3HLqscKWiMjfry8THAtVHGw8oNnpZnFJ5NpkofUyPe5Wwn8pDmgZM3TpORT
-         FZkkhaK6ObJOSRcMPIRQni8PF+HrON/G1v4VNRB2ifhiOuVCBnwuqqbQjBLZxJfmCcsr
-         vbnrpeX/hYAHmkaki9wag4hGInP5JilD5dA5ikY2tHzaWPCpCMXc4iWnPqwGFoCIg91a
-         e+eqUAbBx+R1TSo4NAqv5a7d3c4Ze9F6Ki3XqKITMM8UTm2ICH3qp0tdwc5gVNHhHALO
-         dgqUkxPM4p9J0xJHwAHAyAD/VyAth6zWFizOuaElPj9x4Q6YwlG80EHv3H+92ze4n0/Y
-         dDbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727528875; x=1728133675;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+p8ve9O0X2u3XZpQMEXjYXFloRPDslr669RcjkIfYiY=;
-        b=kUTC0vha0TUWGDR/WMe7L/R5F3AU/QGL41fjDMYoYKo4YAsrBE9gme9v3DeLE66WOC
-         uEBpnymHchXt93IkzgSqzlW3K2HKD+TCXG4bkGE+pE6YkKAdYnSgYXxeo5larR2ZHB/l
-         86K9HKrsSL04q06lDePmLDymjgr0mRRjkA8QNR+Kk7/MmT6TF6Btjs6RQgxUJtIyG14i
-         ALId+SZmgiQjTyD0mSvxHQoKoLDouGPVh+hXXWt+llBw8PZHZF+qTaEsJtPU2sHI5XhV
-         RYlylTT9LDPFAB4xUd/bXQo4dHnGuylYbVTSyftFftxIsLZ1vHZQ2U0qklv3JcdX76Qe
-         3B9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV9GKZ8HJ98FJTy0CBmVs4V9EhhQY9U1Ii+klDVElzrU6ejQJgETWqdL7tOepZn70YtBVvqoAEePk+k338=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxhMnwsWOH1qImL3685PWYQ+f1YjqXFK/kD0dpKC8faZ2Txb8O
-	ap1vIwvvs6VuN9JmW/ANR0IN2HH6g6aAHn2OrT09Z+vv2s5XvmQgUv0p0m39rbLHBS13WGFmz4x
-	Z/LwczyNymlYJ//LkRwBpGEKyJvWaqMdtX74RkQ==
-X-Google-Smtp-Source: AGHT+IHdUyjpLmb12iBp0x3k2LddQ3GVji+hY/nYqPlkPljo9avsX1iDl2Nt7RuhUa/sUTGdu2VYf0PrKcOldQGS4iY=
-X-Received: by 2002:a05:6122:1d4e:b0:501:af0:565a with SMTP id
- 71dfb90a1353d-507816aef43mr3873023e0c.2.1727528875123; Sat, 28 Sep 2024
- 06:07:55 -0700 (PDT)
+	s=arc-20240116; t=1727528936; c=relaxed/simple;
+	bh=auOTkgC/saZaH+G9k7EQrhdHKg52RRCkrrjyliPrYok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=huYcQSQO7zquLhdX8UsnOuw+cgI4y+5dHSdwpEfGIV8B+GPmF6NedluVd6ITILxPXh3b9c6gKcgfhrlmQ84FLCSvo96/tjlISZP6VpfHi24ioTBbDVlwHWWz853xvw8vWcz05ehHBvqoKEZuwLFiOopxRn8EB3Hjkst6OIYMZzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QHyPvcvH; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=HzpZb6ZI/TJGTTzS8CVVVai1NrTI6wk/Gp3LCLox2cA=; b=QHyPvcvHJQ3I5JLnFWjORF73RY
+	PkEDS9AShi2pGmBnnPyAOpKg6yPfqTZrhbdnYZuUuxH47n7j/vwts1rO416ls0QWlDHe6VSv/c+58
+	3SwBzP4L/Sk4TahygjDFVvTngGaM7FQYHHImTCia7fc25L97701m4rpM76iZLmVSXFvXSAKQzJ3eR
+	ykNfflaUIkajhEE4rdnBiGZAQNH+vi8A1AYL8NxvXCsBCi6fmD/VTfAjGTvXbGW7LAEmNdKtPBxhm
+	La7R/3pWGgvL3eMOe2i7TGafFeRAgTpUMOBmgsY+/h8GAV4Pvcqc8mimLdqXyEQS3UCOSMvzPnfRJ
+	2mH9Ggkg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1suXBb-0000000CJXO-31vR;
+	Sat, 28 Sep 2024 13:08:36 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7B340300848; Sat, 28 Sep 2024 15:08:35 +0200 (CEST)
+Date: Sat, 28 Sep 2024 15:08:35 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+	scott.d.constable@intel.com, joao@overdrivepizza.com,
+	andrew.cooper3@citrix.com, jose.marchesi@oracle.com,
+	hjl.tools@gmail.com, ndesaulniers@google.com,
+	samitolvanen@google.com, nathan@kernel.org, ojeda@kernel.org,
+	kees@kernel.org, alexei.starovoitov@gmail.com,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [PATCH 07/14] x86/ibt: Clean up is_endbr()
+Message-ID: <20240928130835.GA19439@noisy.programming.kicks-ass.net>
+References: <20240927194856.096003183@infradead.org>
+ <20240927194925.069013308@infradead.org>
+ <20240928000444.grd3jxltzoiihsz3@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927121719.714627278@linuxfoundation.org>
-In-Reply-To: <20240927121719.714627278@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 28 Sep 2024 18:37:43 +0530
-Message-ID: <CA+G9fYv5yR4TQV-H9O=YZS-bCkHkXqOfQ9qut3U2hCiH+ni1Eg@mail.gmail.com>
-Subject: Re: [PATCH 6.6 00/54] 6.6.53-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240928000444.grd3jxltzoiihsz3@treble>
 
-On Fri, 27 Sept 2024 at 17:54, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.53 release.
-> There are 54 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.53-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Fri, Sep 27, 2024 at 05:04:44PM -0700, Josh Poimboeuf wrote:
+> On Fri, Sep 27, 2024 at 09:49:03PM +0200, Peter Zijlstra wrote:
+> > Pretty much every caller of is_endbr() actually wants to test something at an
+> > address and ends up doing get_kernel_nofault(). Fold the lot into a more
+> > convenient helper.
+> > 
+> > Note: this effectively reverts commit a8497506cd2c ("bpf: Avoid
+> > get_kernel_nofault() to fetch kprobe entry IP") which was entirely the
+> > wrong way to go about doing things. The right solution is to optimize
+> > get_kernel_nofault() itself, it really doesn't need STAC/CLAC nor the
+> > speculation barrier. Using __get_user is a historical hack, not a
+> > requirement.
+> 
+> But these patches don't actually optimize get_kernel_nofault()?
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+No, I figured there was enough there already. Also, given the state I
+was in, I'd probably get it wrong.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 6.6.53-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 3ecfbb62e37adaf95813d2e47d300dc943abbdc6
-* git describe: v6.6.51-145-g3ecfbb62e37a
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.5=
-1-145-g3ecfbb62e37a
-
-## Test Regressions (compared to v6.6.51-92-gfd49ddc1e5f8)
-
-## Metric Regressions (compared to v6.6.51-92-gfd49ddc1e5f8)
-
-## Test Fixes (compared to v6.6.51-92-gfd49ddc1e5f8)
-
-## Metric Fixes (compared to v6.6.51-92-gfd49ddc1e5f8)
-
-## Test result summary
-total: 173914, pass: 152411, fail: 1575, skip: 19725, xfail: 203
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 129 total, 129 passed, 0 failed
-* arm64: 41 total, 41 passed, 0 failed
-* i386: 28 total, 26 passed, 2 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 36 total, 35 passed, 1 failed
-* riscv: 10 total, 10 passed, 0 failed
-* s390: 14 total, 13 passed, 1 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 7 total, 7 passed, 0 failed
-* x86_64: 33 total, 33 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+I have it on a todo list somewhere though. It shouldn't be too hard.
 
