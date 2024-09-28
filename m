@@ -1,146 +1,380 @@
-Return-Path: <linux-kernel+bounces-342490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2FE6988F94
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:15:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA52988F98
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97148281EEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:15:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFC611F21685
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040501885B7;
-	Sat, 28 Sep 2024 14:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC0218873F;
+	Sat, 28 Sep 2024 14:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="Ph10BNP1"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KUFE1gt0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E6F18454C
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 14:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795F118454C;
+	Sat, 28 Sep 2024 14:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727532924; cv=none; b=XGBz0vSNCG7kc/OHMtivi5SYisv6iFCaT2h8xWyCDz01JLR1cbmOO3MsAAidO0PVhoLzlgJDMi0NxQ8kV7Pj24Uq9LQAlColQu32ZZzSmQjBB4MDyTk8y6QIdU1tRZ8qAHQoAgm8NQk8uXiZRnSNpxAYIknfQm30r7/IAxeZrIc=
+	t=1727533180; cv=none; b=GHYo7HlFn1OkA4OzslAeXgeDVX0AY37W4PTTOyRHHY5ResHaIzW/gerVZWrKo/VG81PPIWRZkgI95Yndi8Lbhnp0VVt+0sOyXPLkYE6OshA+xYyfscYR4ghEaLhFRW0tqaWaRzUDg7zsyUxMQXf6v4BxGClfPxFr/RbjKY3CwYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727532924; c=relaxed/simple;
-	bh=aqM3BBrmcjoH0ekW+TeKiFR7j39XYgP3dsJCtSlSdmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uvemCJXnDSeqlKlKNovkr//rTI9rA3AvebVDtRvvTlp8WXJoCryvAtdyFRAiFbBPJrq6jtB9rO6V++v9WwsWs+x7Uc+mQqHBaiHST0IDK/pfHgJHq7ABVVruhd6WkKgZyqTDkTMrCodOLCxAWV5kqJWD3h5hxKq/teRSIhh1Hzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=Ph10BNP1; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6cb321145easo23587676d6.1
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 07:15:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1727532920; x=1728137720; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1n1yhYZ2jePqstMxv83IrNQpWfd5taqozmZvKKkqosE=;
-        b=Ph10BNP1D2et8a3/n5RD4wMs5b8ULD3f3U4lcHcZiWNIwrzQdarYI8HpYWEtXcxCKw
-         QFHunPPphrwKw9vm+FabESjrnm1VncHqu0+UCsMPmpuNQRPNAkIK8E8i/FJ7HfxrK10H
-         pr6om7+dAS4caW/22zgU+80BXbzMAdKYo2wFh+hzyHzGhIaRC1e7cYpAQPi/bMRDsgCB
-         DkNTnJjHOir2IxzOgnfShnJd5bduww65exYHDWOG6tWcu2f0Eq7kzLq6+8vpOnl/KFCB
-         BnM/aFekpLA/DDcSVGI/A9ayLaXDrtkJRqCsQH2eg6LtO9+YSWjELrXzSqIyFyvxIBx8
-         q1GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727532920; x=1728137720;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1n1yhYZ2jePqstMxv83IrNQpWfd5taqozmZvKKkqosE=;
-        b=xKO2nl8I78rJVLJyOpcUl5mSDgWE7EwVF+A8y3VevFDipdaEilZxirWhrUy/tYqjwC
-         qYG4junu/Bt4o+1HKW4QeQrykWPblvs1xbE849HNMlNMGGpGA6CYYUdaEtVqKxdZn9sV
-         IlS0u2f8xn5sGiODb5Gh0AnXFl6dDGPEIj9bZebLBIlH2QxG+EU5JFoMD1UsSq6k+VHD
-         66c5OurGWedUyNNacsorO/oY5W4AOO8nseExYQ7o6LcDONg9o4tWajIbAmw/Vu7VZvZe
-         h0bPAqqZDSm6NdFZHiXEGWEMxdjQdRMk8Xk05nEd0dnFjaTpu1gaW/leBysriSkLh/bl
-         XfMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMwz3rVnzrh5GRL1/b2Pjuo7kxZgiwhGOH4hP/S18WopLtTeiLs9l9lyXbth+EaVQF8c/XZyV199O3RNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk39w9mtHuA93QZItlMb6fVPF9gIBqz1oUtpP1gQcq0IgHPIEL
-	u5FIzv5LNDhKyx/Ee2x00ZEEAlgPJburQ4uRX72OTYgNeoXFJg86bMAK0tNTMnQ=
-X-Google-Smtp-Source: AGHT+IHd3wDhlYhXVZ+88k2ZjgoreOFUU3e+oUfQyAaHR5koWFTiMsugOsIxve2cJUf4gyU3Uemsbw==
-X-Received: by 2002:a05:6214:4b11:b0:6c3:5c75:d2b1 with SMTP id 6a1803df08f44-6cb3b32d1ebmr109084796d6.5.1727532919982;
-        Sat, 28 Sep 2024 07:15:19 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b60fbf0sm19761396d6.37.2024.09.28.07.15.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Sep 2024 07:15:18 -0700 (PDT)
-Date: Sat, 28 Sep 2024 10:15:14 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, nphamcs@gmail.com,
-	chengming.zhou@linux.dev, usamaarif642@gmail.com,
-	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com,
-	21cnbao@gmail.com, akpm@linux-foundation.org, nanhai.zou@intel.com,
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Subject: Re: [PATCH v8 6/8] mm: zswap: Support large folios in zswap_store().
-Message-ID: <20240928141514.GE957841@cmpxchg.org>
-References: <20240928021620.8369-1-kanchana.p.sridhar@intel.com>
- <20240928021620.8369-7-kanchana.p.sridhar@intel.com>
- <CAJD7tkZRTAiEJQpg96zqDye3ViCfvBsMM1Ozmcs75e__WcF0kQ@mail.gmail.com>
+	s=arc-20240116; t=1727533180; c=relaxed/simple;
+	bh=POookSFDq8fwGr2RQqfcqGdNvcWHpGxh8YttZ6cwiNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AtU4OyQHshBh5Ho6gkSvGLm4558syjYlkSknWKldJt+XbyGnAGvCjfIUgTJHV8kBfXupbGfvBW2sI1+cuyaMfm4Y7K0FnyKbecRQ96gmmBWY8O3EdMAyKgINZpW89L+rPpjBR3/qsFn/AK5PD1D8ehSUR3+1XzBiYUzmFDZBbYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KUFE1gt0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED87EC4CEC3;
+	Sat, 28 Sep 2024 14:19:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727533179;
+	bh=POookSFDq8fwGr2RQqfcqGdNvcWHpGxh8YttZ6cwiNU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KUFE1gt03xK6aELbCpjLj2KCpz4Bjwux+g490qMzKKMQuM+EJhdgR1bTlKYbP8RDJ
+	 jivOTzCaUYaeZJTnQxNv46NqfTjNBDlpVQXnJZ3HyTnG65Gh7h+1mLMaX2PP6i0/9v
+	 4WgnYzJEobOASAuqNd+izuoruY80I/7x5//5CEYlS6M3iBI3NE/iQWNWSJaG8xYye2
+	 l7clSYp5bt0JJWQM3/PH5fvLHCyF7CEXBrAIEOQTGC59252c4D82wntvV/EaimTsxZ
+	 EV8sWlW7sJHijP6lK6AUM1CppjDiZZHtKMX3mOGrmYHFa6vbGKlHjG64xtyzPlsGSo
+	 dDIzCMWsKEyww==
+Date: Sat, 28 Sep 2024 15:19:30 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Mariel Tinaco <Mariel.Tinaco@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter
+ Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Conor Dooley <conor+dt@kernel.org>, Marcelo
+ Schmitt <marcelo.schmitt1@gmail.com>, Dimitri Fedrau
+ <dima.fedrau@gmail.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Subject: Re: [PATCH v4 2/2] iio: dac: support the ad8460 Waveform DAC
+Message-ID: <20240928151930.0c22e5e9@jic23-huawei>
+In-Reply-To: <8f869b3b-df3f-49a9-9b6e-640697aa91dd@wanadoo.fr>
+References: <20240912095435.18639-1-Mariel.Tinaco@analog.com>
+	<20240912095435.18639-3-Mariel.Tinaco@analog.com>
+	<8f869b3b-df3f-49a9-9b6e-640697aa91dd@wanadoo.fr>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkZRTAiEJQpg96zqDye3ViCfvBsMM1Ozmcs75e__WcF0kQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 08:42:16PM -0700, Yosry Ahmed wrote:
-> On Fri, Sep 27, 2024 at 7:16 PM Kanchana P Sridhar
-> >  {
-> > +       struct page *page = folio_page(folio, index);
-> >         swp_entry_t swp = folio->swap;
-> > -       pgoff_t offset = swp_offset(swp);
-> >         struct xarray *tree = swap_zswap_tree(swp);
-> > +       pgoff_t offset = swp_offset(swp) + index;
-> >         struct zswap_entry *entry, *old;
-> > -       struct obj_cgroup *objcg = NULL;
-> > -       struct mem_cgroup *memcg = NULL;
-> > -
-> > -       VM_WARN_ON_ONCE(!folio_test_locked(folio));
-> > -       VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
-> > +       int type = swp_type(swp);
-> 
-> Why do we need type? We use it when initializing entry->swpentry to
-> reconstruct the swp_entry_t we already have.
+On Sat, 14 Sep 2024 20:21:56 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-It's not the same entry. folio->swap points to the head entry, this
-function has to store swap entries with the offsets of each subpage.
+> Le 12/09/2024 =C3=A0 11:54, Mariel Tinaco a =C3=A9crit=C2=A0:
+> > The AD8460 is a =E2=80=9Cbits in, power out=E2=80=9D high voltage, high=
+-power,
+> > high-speed driver optimized for large output current (up to =C2=B11 A)
+> > and high slew rate (up to =C2=B11800 V/=CE=BCs) at high voltage (up to =
+=C2=B140 V)
+> > into capacitive loads.
+> >=20
+> > A digital engine implements user-configurable features: modes for
+> > digital input, programmable supply current, and fault monitoring
+> > and programmable protection settings for output current,
+> > output voltage, and junction temperature. The AD8460 operates on
+> > high voltage dual supplies up to =C2=B155 V and a single low voltage
+> > supply of 5 V.
+> >=20
+> > Signed-off-by: Mariel Tinaco <Mariel.Tinaco-OyLXuOCK7orQT0dZR+AlfA@publ=
+ic.gmane.org>
+> > --- =20
 
-Given the name of this function, it might be better to actually pass a
-page pointer to it; do the folio_page() inside zswap_store().
+Rather than go around again, I fixed up all the comments made
+and the autobuilder issues then applied this.
 
-Then do
+Diff follows. The only bit I'm not 100% sure on was your intent
+with the temperature channel. I've made it an input but shout if
+I'm missing something.
 
-		entry->swpentry = page_swap_entry(page);
+With this diff applied on top, applied to the togreg branch of iio.git
+which is only pushed out as testing for now as I'll rebase on rc1
+once available.
 
-below.
+Thanks,
 
-> >         obj_cgroup_put(objcg);
-> > -       if (zswap_pool_reached_full)
-> > -               queue_work(shrink_wq, &zswap_shrink_work);
-> > -check_old:
-> > +       return false;
+Jonathan
+
+diff --git a/drivers/iio/dac/ad8460.c b/drivers/iio/dac/ad8460.c
+index 9ce3a0f288ba..dc8c76ba573d 100644
+--- a/drivers/iio/dac/ad8460.c
++++ b/drivers/iio/dac/ad8460.c
+@@ -533,7 +533,7 @@ static int ad8460_write_event_value(struct iio_dev *ind=
+io_dev,
+                                    enum iio_event_info info, int val, int =
+val2)
+ {
+        struct ad8460_state *state =3D iio_priv(indio_dev);
+-       unsigned int fault;
++       int fault;
+=20
+        if (type !=3D IIO_EV_TYPE_THRESH)
+                return -EINVAL;
+@@ -555,7 +555,7 @@ static int ad8460_read_event_value(struct iio_dev *indi=
+o_dev,
+                                   enum iio_event_info info, int *val, int =
+*val2)
+ {
+        struct ad8460_state *state =3D iio_priv(indio_dev);
+-       unsigned int fault;
++       int fault;
+=20
+        if (type !=3D IIO_EV_TYPE_THRESH)
+                return -EINVAL;
+@@ -576,7 +576,7 @@ static int ad8460_write_event_config(struct iio_dev *in=
+dio_dev,
+                                     enum iio_event_direction dir, int val)
+ {
+        struct ad8460_state *state =3D iio_priv(indio_dev);
+-       unsigned int fault;
++       int fault;
+=20
+        if (type !=3D IIO_EV_TYPE_THRESH)
+                return -EINVAL;
+@@ -594,9 +594,8 @@ static int ad8460_read_event_config(struct iio_dev *ind=
+io_dev,
+                                    enum iio_event_direction dir)
+ {
+        struct ad8460_state *state =3D iio_priv(indio_dev);
+-       unsigned int fault;
++       int fault, ret;
+        bool en;
+-       int ret;
+=20
+        if (type !=3D IIO_EV_TYPE_THRESH)
+                return -EINVAL;
+@@ -660,14 +659,14 @@ static const struct iio_enum ad8460_powerdown_mode_en=
+um =3D {
+ };
+=20
+ #define AD8460_CHAN_EXT_INFO(_name, _what, _read, _write) {            \
+-       .name =3D _name,                                                  \
++       .name =3D (_name),                                                \
+        .read =3D (_read),                                                \
+        .write =3D (_write),                                              \
+        .private =3D (_what),                                             \
+        .shared =3D IIO_SEPARATE,                                         \
+ }
+=20
+-static struct iio_chan_spec_ext_info ad8460_ext_info[] =3D {
++static const struct iio_chan_spec_ext_info ad8460_ext_info[] =3D {
+        AD8460_CHAN_EXT_INFO("raw0", 0, ad8460_dac_input_read,
+                             ad8460_dac_input_write),
+        AD8460_CHAN_EXT_INFO("raw1", 1, ad8460_dac_input_read,
+@@ -709,7 +708,7 @@ static struct iio_chan_spec_ext_info ad8460_ext_info[] =
+=3D {
+        IIO_ENUM("powerdown_mode", IIO_SEPARATE, &ad8460_powerdown_mode_enu=
+m),
+        IIO_ENUM_AVAILABLE("powerdown_mode", IIO_SHARED_BY_TYPE,
+                           &ad8460_powerdown_mode_enum),
+-       {}
++       { }
+ };
+=20
+ static const struct iio_event_spec ad8460_events[] =3D {
+@@ -761,7 +760,6 @@ static const struct iio_event_spec ad8460_events[] =3D {
+ #define AD8460_TEMP_CHAN {                                     \
+        .type =3D IIO_TEMP,                                       \
+        .info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW),           \
+-       .output =3D 1,                                            \
+        .indexed =3D 1,                                           \
+        .channel =3D 0,                                           \
+        .scan_index =3D -1,                                       \
+@@ -792,9 +790,9 @@ static const char * const ad8460_supplies[] =3D {
+=20
+ static int ad8460_probe(struct spi_device *spi)
+ {
++       struct device *dev  =3D &spi->dev;
+        struct ad8460_state *state;
+        struct iio_dev *indio_dev;
+-       struct device *dev;
+        u32 tmp[2], temp;
+        int ret;
+=20
+@@ -808,14 +806,15 @@ static int ad8460_probe(struct spi_device *spi)
+        indio_dev->info =3D &ad8460_info;
+=20
+        state->spi =3D spi;
+-       dev =3D &spi->dev;
+=20
+        state->regmap =3D devm_regmap_init_spi(spi, &ad8460_regmap_config);
+        if (IS_ERR(state->regmap))
+                return dev_err_probe(dev, PTR_ERR(state->regmap),
+                                     "Failed to initialize regmap");
+=20
+-       devm_mutex_init(dev, &state->lock);
++       ret =3D devm_mutex_init(dev, &state->lock);
++       if (ret)
++               return ret;
+=20
+        state->sync_clk =3D devm_clk_get_enabled(dev, NULL);
+        if (IS_ERR(state->sync_clk))
+@@ -835,10 +834,9 @@ static int ad8460_probe(struct spi_device *spi)
+=20
+        ret =3D devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(ad8460_suppl=
+ies),
+                                             ad8460_supplies);
+-       if (ret) {
+-               dev_err(dev, "Failed to enable power supplies\n");
+-               return ret;
+-       }
++       if (ret)
++               return dev_err_probe(dev, ret,
++                                    "Failed to enable power supplies\n");
+=20
+        ret =3D devm_regulator_get_enable_read_voltage(dev, "refio_1p2v");
+        if (ret < 0 && ret !=3D -ENODEV)
+@@ -908,9 +906,8 @@ static int ad8460_probe(struct spi_device *spi)
+                return ret;
+=20
+        /* Enables DAC by default */
+-       ret =3D regmap_update_bits(state->regmap, AD8460_CTRL_REG(0x01),
+-                                AD8460_HVDAC_SLEEP_MSK,
+-                                FIELD_PREP(AD8460_HVDAC_SLEEP_MSK, 0));
++       ret =3D regmap_clear_bits(state->regmap, AD8460_CTRL_REG(0x01),
++                               AD8460_HVDAC_SLEEP_MSK);
+        if (ret)
+                return ret;
+=20
+
+>=20
+> Hi,
+>=20
+> ...
+>=20
+> > +#define AD8460_CHAN_EXT_INFO(_name, _what, _read, _write) {		\
+> > +	.name =3D _name,							\
+> > +	.read =3D (_read),						\
+> > +	.write =3D (_write),						\
+> > +	.private =3D (_what),						\ =20
+>=20
+> Why () for _read, _write, _what?
+> (or why no () for _name?)
+>=20
+> > +	.shared =3D IIO_SEPARATE,						\
 > > +}
 > > +
-> > +bool zswap_store(struct folio *folio)
+> > +static struct iio_chan_spec_ext_info ad8460_ext_info[] =3D { =20
+>=20
+> I think this can be static const struct.
+>=20
+> > +	AD8460_CHAN_EXT_INFO("raw0", 0, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw1", 1, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw2", 2, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw3", 3, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw4", 4, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw5", 5, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw6", 6, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw7", 7, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw8", 8, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw9", 9, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw10", 10, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw11", 11, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw12", 12, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw13", 13, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw14", 14, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("raw15", 15, ad8460_dac_input_read,
+> > +			     ad8460_dac_input_write),
+> > +	AD8460_CHAN_EXT_INFO("toggle_en", 0, ad8460_read_toggle_en,
+> > +			     ad8460_write_toggle_en),
+> > +	AD8460_CHAN_EXT_INFO("symbol", 0, ad8460_read_symbol,
+> > +			     ad8460_write_symbol),
+> > +	AD8460_CHAN_EXT_INFO("powerdown", 0, ad8460_read_powerdown,
+> > +			     ad8460_write_powerdown),
+> > +	IIO_ENUM("powerdown_mode", IIO_SEPARATE, &ad8460_powerdown_mode_enum),
+> > +	IIO_ENUM_AVAILABLE("powerdown_mode", IIO_SHARED_BY_TYPE,
+> > +			   &ad8460_powerdown_mode_enum),
+> > +	{}
+> > +}; =20
+>=20
+> ...
+>=20
+> > +static int ad8460_probe(struct spi_device *spi)
 > > +{
-> > +       long nr_pages = folio_nr_pages(folio);
-> > +       swp_entry_t swp = folio->swap;
-> > +       struct xarray *tree = swap_zswap_tree(swp);
-> > +       pgoff_t offset = swp_offset(swp);
-> > +       struct obj_cgroup *objcg = NULL;
-> > +       struct mem_cgroup *memcg = NULL;
-> > +       struct zswap_pool *pool;
-> > +       size_t compressed_bytes = 0;
-> 
-> Why size_t? entry->length is int.
+> > +	struct ad8460_state *state;
+> > +	struct iio_dev *indio_dev;
+> > +	struct device *dev;
+> > +	u32 tmp[2], temp;
+> > +	int ret;
+> > +
+> > +	indio_dev =3D devm_iio_device_alloc(&spi->dev, sizeof(*state));
+> > +	if (!indio_dev)
+> > +		return -ENOMEM;
+> > +
+> > +	state =3D iio_priv(indio_dev);
+> > +
+> > +	indio_dev->name =3D "ad8460";
+> > +	indio_dev->info =3D &ad8460_info;
+> > +
+> > +	state->spi =3D spi;
+> > +	dev =3D &spi->dev;
+> > +
+> > +	state->regmap =3D devm_regmap_init_spi(spi, &ad8460_regmap_config);
+> > +	if (IS_ERR(state->regmap))
+> > +		return dev_err_probe(dev, PTR_ERR(state->regmap),
+> > +				     "Failed to initialize regmap");
+> > +
+> > +	devm_mutex_init(dev, &state->lock);
+> > +
+> > +	state->sync_clk =3D devm_clk_get_enabled(dev, NULL);
+> > +	if (IS_ERR(state->sync_clk))
+> > +		return dev_err_probe(dev, PTR_ERR(state->sync_clk),
+> > +				     "Failed to get sync clk\n");
+> > +
+> > +	state->tmp_adc_channel =3D devm_iio_channel_get(dev, "ad8460-tmp");
+> > +	if (IS_ERR(state->tmp_adc_channel)) {
+> > +		if (PTR_ERR(state->tmp_adc_channel) =3D=3D -EPROBE_DEFER)
+> > +			return -EPROBE_DEFER;
+> > +		indio_dev->channels =3D ad8460_channels;
+> > +		indio_dev->num_channels =3D ARRAY_SIZE(ad8460_channels);
+> > +	} else {
+> > +		indio_dev->channels =3D ad8460_channels_with_tmp_adc;
+> > +		indio_dev->num_channels =3D ARRAY_SIZE(ad8460_channels_with_tmp_adc);
+> > +	}
+> > +
+> > +	ret =3D devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(ad8460_supplie=
+s),
+> > +					     ad8460_supplies);
+> > +	if (ret) {
+> > +		dev_err(dev, "Failed to enable power supplies\n");
+> > +		return ret; =20
+>=20
+> Nitpick: return dev_err_probe() as done in other places?
+>=20
+> > +	}
+> > +
+> > +	ret =3D devm_regulator_get_enable_read_voltage(dev, "refio_1p2v");
+> > +	if (ret < 0 && ret !=3D -ENODEV)
+> > +		return dev_err_probe(dev, ret, "Failed to get reference voltage\n");
+> > +
+> > +	state->refio_1p2v_mv =3D ret =3D=3D -ENODEV ? 1200 : ret / 1000; =20
+>=20
+> ...
+>=20
+> CJ
 
-In light of Willy's comment, I think size_t is a good idea.
 
