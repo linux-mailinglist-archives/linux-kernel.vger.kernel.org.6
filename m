@@ -1,213 +1,147 @@
-Return-Path: <linux-kernel+bounces-342552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C862A989038
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:05:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC19898903A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 724751F21AEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:05:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7498D281FC4
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3650D745F2;
-	Sat, 28 Sep 2024 16:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE5E1292CE;
+	Sat, 28 Sep 2024 16:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyJGst2s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l+SeJtNx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87ED229429;
-	Sat, 28 Sep 2024 16:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B649222089;
+	Sat, 28 Sep 2024 16:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727539530; cv=none; b=BPUBq88EreWemkOB8oFHFgERJmKltoV1QvXDbpQWWQcLSzioMV9xl3KyV1STD4nMjungCSgH6L0f5253fOG4TygmXuVjDiYFr84dNbzdJK/eYvkuhPpryhXU4qKgWp0vL0Ekw07MJaPnkmHIAhE0BFpZWlErKZfWaDcz1EU0pZk=
+	t=1727539712; cv=none; b=sYNf0KIE8EWxPmiWVJ3A81fpBQxX2y7BE4ZCxn2i/lLsCcfPgISSfbL547sSwhHcpo4tY2xuXNnCVjufvJkxU0gN6bHcJ5PG/tngRlNjinv7aM5y+XK3+0LxqLXEFDATDs+xqgvpvt7T2u8u2qkkNTRcW98hiH0ZnXEv0YwwZlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727539530; c=relaxed/simple;
-	bh=/kpQ5i5Ao0vJN3d7/pzZXKZZN8p8Kj+a3qxCCDNZSnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d+3i2M07KXGvlJLeynj8vi3TE14CnWM47KKFek4JEGpWU+SgDh2xyWRXFo0xvhMO/NPlCpMJvdecKwW68fgNRvXOf7Mshf7nJuENzJf/FXgCl5u9i2hryY5ZZhpoaCD4rXojat/G9v8MZvFkkHeApM/+cyVJmjOjLrxwVJgWpJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyJGst2s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24F5DC4CEC3;
-	Sat, 28 Sep 2024 16:05:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727539530;
-	bh=/kpQ5i5Ao0vJN3d7/pzZXKZZN8p8Kj+a3qxCCDNZSnk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hyJGst2sThzdvSg7P1HLPcogfK12E1vG5BRfe7sko0eskeZP3PMpsnt47lNyKkbCn
-	 ZeNc+N82wvrmElt4fLezFqY0zB5XHVm34hT6xlooaV22aXgcTtI5yvQClHlSmxhzEr
-	 +9lGIYTBwCyN8uGx9fjMz5QELBZ8D6/UsfgwG+2c+fdSiR13/fjNGOnRURVOYSe63k
-	 sb6yn23gjSdIMJWzMsHCko2bMcR22Ta9W18uiVF3q6VNAubJXn25DtkdIMsNNzQ4Fz
-	 p5MRWzs+VIhifp5a8Py1uxNHtXRqO3rqQuYKLWQ1P/tLSz4TFKoRNLFqY9gCNTI9px
-	 tieRYY4FUb4MQ==
-Date: Sat, 28 Sep 2024 17:05:20 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Emil Gedenryd <emil.gedenryd@axis.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andreas Dannenberg <dannenberg@ti.com>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <kernel@axis.com>
-Subject: Re: [PATCH v3 3/3] iio: light: opt3001: add support for TI's
- opt3002 light sensor
-Message-ID: <20240928170520.02a27690@jic23-huawei>
-In-Reply-To: <20240916-add_opt3002-v3-3-984b190cd68c@axis.com>
-References: <20240916-add_opt3002-v3-0-984b190cd68c@axis.com>
-	<20240916-add_opt3002-v3-3-984b190cd68c@axis.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727539712; c=relaxed/simple;
+	bh=fIMubsjAsUXbV/YGdV1q7TthGWEkg23AlPN/MkC1lnc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BQHp8/JopLvBgFuhyshPAO64QZtJk4EL7nQRTYaJMjFqUlnjsT2POcK84fmKGGLxmNb+u+yLLGzuJPYI7aLzbiQHoIDC/53MOBa02OU4WDAr6Q6YyA0DlM+Qjdb3FRqR+xivuQnBE5rSuS8/MJ5DwhSiYUduMQiywxuSASBuYW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l+SeJtNx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48SG0gl6017977;
+	Sat, 28 Sep 2024 16:08:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1zgACunI07I9LNrrkDzVrZ7t0SaIRd/sniZLEKl4ay4=; b=l+SeJtNxcd/zArDk
+	jeYn7Ys8OaJ21QqsqKD8TqlRjOa5TmudMNolgFPQWq470L8/CBBMfOoNSc5EaHkk
+	SoR1IIc7gGdxNdnLZiF6umkqPAc+ZITfIN0Pgs877chalPaxaSxqUKo2juKTeoKR
+	N0rekNVPXgLrLmoUoyWCIjRV65B7k+IHVsxdXTgXNEgtiwpBt82NHEu8Q1jeEsb2
+	ZjP0OH1i6IR18qBBOqYOAV2o5091AErqKBW9faOYatufXpS4fC30PVmKMneX9EHo
+	YN8aqmnBnwkYsA79odvONLCvupUQmSvt1ZbDDlsJD+stbfvRxkzWopNN4bvwA0Oe
+	m13ihw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xaym8u6y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 28 Sep 2024 16:08:14 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48SG8EUT005984
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 28 Sep 2024 16:08:14 GMT
+Received: from [10.253.39.0] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 28 Sep
+ 2024 09:08:09 -0700
+Message-ID: <1ab63479-15d1-4116-ac70-9bc42b85a972@quicinc.com>
+Date: Sun, 29 Sep 2024 00:08:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] PM: sleep: wakeirq: Fix a serious logical error in
+ dev_pm_disarm_wake_irq()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+        Pavel Machek <pavel@ucw.cz>, Johan Hovold <johan+linaro@kernel.org>,
+        Tony
+ Lindgren <tony@atomide.com>, Zijun Hu <zijun_hu@icloud.com>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <d-gole@ti.com>, <qingliang.li@mediatek.com>
+References: <20240928-fix_wakeirq-v1-1-25d13a7e13ba@quicinc.com>
+ <2024092842-diabetic-suction-861a@gregkh>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <2024092842-diabetic-suction-861a@gregkh>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: xIX_KWAeKX7IacHfrQj0yP_fBpyXxkH5
+X-Proofpoint-GUID: xIX_KWAeKX7IacHfrQj0yP_fBpyXxkH5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ mlxscore=0 adultscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
+ clxscore=1011 bulkscore=0 lowpriorityscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409280123
 
-On Mon, 16 Sep 2024 16:56:39 +0200
-Emil Gedenryd <emil.gedenryd@axis.com> wrote:
-
-> TI's opt3002 light sensor shares most properties with the opt3001
-> model, with the exception of supporting a wider spectrum range.
+On 9/28/2024 6:50 PM, Greg Kroah-Hartman wrote:
+> On Sat, Sep 28, 2024 at 02:26:27AM -0700, Zijun Hu wrote:
+>> IT is a serious logical error for dev_pm_disarm_wake_irq() not to disable
+>> the wake irq enabled by dev_pm_arm_wake_irq(), fixed by simply correcting
+>> the wrong if condition.
+>>
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 > 
-> Add support for TI's opt3002 by extending the TI opt3001 driver.
+> What commit id does this fix?
 > 
-> Datasheet: https://www.ti.com/product/OPT3002
-> Signed-off-by: Emil Gedenryd <emil.gedenryd@axis.com>
-Hi Emil,
 
-A few things inline,
+it is below commit ever mentioned.
 
-Thanks,
+tony@atomide.com  2018-02-09
+Commit: 69728051f5bf ("PM / wakeirq: Fix unbalanced IRQ enable for wakeirq")
 
-Jonathan
+>> ---
+>> List relevant commits as following:
+>>
 
-> diff --git a/drivers/iio/light/opt3001.c b/drivers/iio/light/opt3001.c
-> index 176e54bb48c3..5e3fe42c5b59 100644
-> --- a/drivers/iio/light/opt3001.c
-> +++ b/drivers/iio/light/opt3001.c
+there are one more related commit shown below:
 
+qingliang.li@mediatek.com  2024-03-01
+Fixes: e7a7681c8596 ("PM: sleep: wakeirq: fix wake irq warning in system
+suspend")
 
-> @@ -479,6 +565,9 @@ static int opt3001_write_event_value(struct iio_dev *iio,
->  {
->  	struct opt3001 *opt = iio_priv(iio);
->  	int ret;
-> +	int whole;
-> +	int integer;
-> +	int decimal;
->  
->  	u16 mantissa;
->  	u16 value;
-> @@ -497,7 +586,12 @@ static int opt3001_write_event_value(struct iio_dev *iio,
->  		goto err;
->  	}
->  
-> -	mantissa = (((val * 1000) + (val2 / 1000)) / 10) >> exponent;
-> +	whole = opt->chip_info->factor_whole;
-> +	integer = opt->chip_info->factor_integer;
-> +	decimal = opt->chip_info->factor_decimal;
-> +
-> +	mantissa = (((val * integer) + (val2 / decimal)) / whole) >> exponent;
-> +
->  	value = (exponent << 12) | mantissa;
->  
->  	switch (dir) {
-> @@ -610,7 +704,7 @@ static int opt3001_read_id(struct opt3001 *opt)
->  	ret = i2c_smbus_read_word_swapped(opt->client, OPT3001_DEVICE_ID);
->  	if (ret < 0) {
->  		dev_err(opt->dev, "failed to read register %02x\n",
-> -				OPT3001_DEVICE_ID);
-> +			OPT3001_DEVICE_ID);
-
-Unrelated change so in theory should be in a separate patch but
-meh, it's trivial so leave it here if you like.
-
->  		return ret;
->  	}
-
-> @@ -755,22 +850,25 @@ static int opt3001_probe(struct i2c_client *client)
->  	opt = iio_priv(iio);
->  	opt->client = client;
->  	opt->dev = dev;
-> +	opt->chip_info = device_get_match_data(&client->dev);
-
-Use the i2c specific way to to do this.
-https://elixir.bootlin.com/linux/v6.11/source/drivers/i2c/i2c-core-base.c#L120
-i2c_get_match_data() because it will also handle falling back to matching
-via the i2c_match_id() path against the old style match tables in a few
-cases.
-
->  
->  	mutex_init(&opt->lock);
->  	init_waitqueue_head(&opt->result_ready_queue);
->  	i2c_set_clientdata(client, iio);
->  
-> -	ret = opt3001_read_id(opt);
-> -	if (ret)
-> -		return ret;
-> +	if (opt->chip_info->has_id) {
-> +		ret = opt3001_read_id(opt);
-> +		if (ret)
-> +			return ret;
-> +	}
->  
->  	ret = opt3001_configure(opt);
->  	if (ret)
->  		return ret;
->  
->  	iio->name = client->name;
-> -	iio->channels = opt3001_channels;
-> -	iio->num_channels = ARRAY_SIZE(opt3001_channels);
-> +	iio->channels = *opt->chip_info->channels;
-> +	iio->num_channels = ARRAY_SIZE(*opt->chip_info->channels);
-This won't work as it has no way to perform a sizeof
-through a pointer.
-
-Add a num_channels filed to your opt3001_chip_info structure
-as then it can be ARRAY_SIZE(&opt3001_channels) which can work.
-
->  	iio->modes = INDIO_DIRECT_MODE;
->  	iio->info = &opt3001_info;
->  
-> @@ -825,14 +923,36 @@ static void opt3001_remove(struct i2c_client *client)
->  	}
->  }
->  
-> +static const struct opt3001_chip_info opt3001_chip_information = {
-> +	.channels = &opt3001_channels,
-> +	.chan_type = IIO_LIGHT,
-> +	.scales = &opt3001_scales,
-> +	.factor_whole = 10,
-> +	.factor_integer = 1000,
-> +	.factor_decimal = 1000,
-> +	.has_id = true,
-> +};
-> +
-> +static const struct opt3001_chip_info opt3002_chip_information = {
-> +	.channels = &opt3002_channels,
-> +	.chan_type = IIO_INTENSITY,
-> +	.scales = &opt3002_scales,
-> +	.factor_whole = 12,
-> +	.factor_integer = 10,
-> +	.factor_decimal = 100000,
-> +	.has_id = false,
-> +};
-> +
->  static const struct i2c_device_id opt3001_id[] = {
-> -	{ "opt3001" },
-> +	{ "opt3001", (kernel_ulong_t)&opt3001_chip_information },
-> +	{ "opt3002", (kernel_ulong_t)&opt3002_chip_information },
->  	{ } /* Terminating Entry */
->  };
->  MODULE_DEVICE_TABLE(i2c, opt3001_id);
->  
->  static const struct of_device_id opt3001_of_match[] = {
-> -	{ .compatible = "ti,opt3001" },
-> +	{ .compatible = "ti,opt3001", .data = &opt3001_chip_information },
-> +	{ .compatible = "ti,opt3002", .data = &opt3002_chip_information },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, opt3001_of_match);
+>> johan+linaro@kernel.org  2023-07-13
+>> Commit: 8527beb12087 ("PM: sleep: wakeirq: fix wake irq arming")
+>>
+>> tony@atomide.com  2018-02-09
+>> Commit: 69728051f5bf ("PM / wakeirq: Fix unbalanced IRQ enable for wakeirq")
+>>
+>> The former commit fixes the later.
 > 
+> I do not understand this series of commits, what exactly are you trying
+> to show here?
+>
+
+there are total 3 history commits mentioned, and the 1st fixes the 2nd
+which in turn fixes the 3rd, and all these commits involves "unbalanced
+wake IRQ enablement"
+
+is the issue "unbalanced wake IRQ enablement" relevant to this weird
+logic which looks wrong ?
+
+> confused,
+> 
+> greg k-h
 
 
