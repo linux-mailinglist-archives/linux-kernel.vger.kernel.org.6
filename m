@@ -1,103 +1,135 @@
-Return-Path: <linux-kernel+bounces-342567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E162D989068
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:25:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E4DF98906C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9FF1F21CE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:25:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0561128335C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8A51428FA;
-	Sat, 28 Sep 2024 16:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED21143744;
+	Sat, 28 Sep 2024 16:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEuzXFvy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="mkaMcpZY"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4617136352;
-	Sat, 28 Sep 2024 16:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55C8136352;
+	Sat, 28 Sep 2024 16:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727540740; cv=none; b=D4donpYsCSOhXQpVksPArbtpq4Vojlhi6T/6/ApCXLg1blzZ5zdoa8pA4JTjmu9mv5Aw9bXGCxOMPuHj31/pJE+BagycV2ZtVDoKuWCOE8OWbzBFSbHy+y21jAQtpe+CiEXeX3eloPtI6Gq1auBL/O7wUZ8rbiPMF5S1tMQLVAQ=
+	t=1727540753; cv=none; b=Fq1FwiBemZyuZ6j5XP0OpUWmDeeJ6sRq0sQ12BWgJyEnNJElDUPsIbp/WqchX66rrM6j3vH4NueBmJ9qNXaozvRag10wPA6l+ahxpOzIU3MTWMpGG6dGrAkYJ5mZ7d4eMtJF94VZbzA2BdVcWeHaapY87HVTXgW5DW/do+ddGUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727540740; c=relaxed/simple;
-	bh=vq13hHE5O7lTVEqGifGbhmWUFMTmHLB/74zu5TrzjoA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K5cfHRi0WkWQI3S+voqN80+qNugKwfLBrlil1PeeDux0xopDUvqsaOkg1x4vfcoie7QcJ5S0iU+ca6S4cSqoFkmvLik/i2TE3md+6uNplM2+u8Gj3GCPsU+wyltNBuLqApC82uMiuDHDfUTmOCmJVGlxZXuvKgdGoerDVIT8Dgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bEuzXFvy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CAB5C4CEC3;
-	Sat, 28 Sep 2024 16:25:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727540739;
-	bh=vq13hHE5O7lTVEqGifGbhmWUFMTmHLB/74zu5TrzjoA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bEuzXFvyLhZnsVZ8b12194bXyid4vCDD1MyCxEJy/78LFVcvclyB4WdsWhta/3exJ
-	 LJN4vKOu+xTBFu803Uh25yZTb2lQBU3pu0mFxp4MJtoE08s6vEkbhXyOMDrOPJXFtZ
-	 P50qJBCtsJrdT+E9Wi1fAK7iIANhY4bL2axDVoPfbORp26CA20IgASc9IN8Al8DfJP
-	 a7Z8zca2bqI8ZoV9qlCyj6CRKvU/detkgpKKpZimAG43fSj1SUOPBLobfQK4Re7Rab
-	 hPHMwRxNOrRtezBOk+412rTEvTSvYWTr0mnoPQt5l4hpVEmb1uZZCw//lTNWuDcWaP
-	 49FwBmTh3TIxA==
-Date: Sat, 28 Sep 2024 17:25:32 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 10/10] iio: light: veml6030: add support for veml6035
-Message-ID: <20240928172532.487df904@jic23-huawei>
-In-Reply-To: <20240923-veml6035-v2-10-58c72a0df31c@gmail.com>
-References: <20240923-veml6035-v2-0-58c72a0df31c@gmail.com>
-	<20240923-veml6035-v2-10-58c72a0df31c@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727540753; c=relaxed/simple;
+	bh=V5mT+wVYjQpoHBouSd/nQpnt5/+4LDMm5lqddyF74tk=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=NHmsjX7J0mEzisQX+I5LoJTexPDNF/1FVitRL77o9SUAHURXABos++cmOwOHTEL7HY1pPdRGneUmv30OScxLPcS78DeK03qv+8v8LSH3yKbBYOyY8jHciKXApKAq5vRJeWZlJbuOjuLk+u34OxxeL0RuQHZ1k1Dap0gJ/Z/mjyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=mkaMcpZY; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 6A7F523CA1;
+	Sat, 28 Sep 2024 18:25:43 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id srQnTbUPZUl5; Sat, 28 Sep 2024 18:25:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1727540742; bh=V5mT+wVYjQpoHBouSd/nQpnt5/+4LDMm5lqddyF74tk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=mkaMcpZYJIz+xBxoWJGqd0rIqHSd0s2VEQxFWmfpn97RgDQH+fRMlM3BFEW/C3kcX
+	 ifY0AtfwLRrLX51ObBThq0YbPMdrSI1UHG5YFYKt+jI3Nw6THBWNMtuZAMyeBlKX4f
+	 5soS39s708vXjvon9WsGEBPan0orpu3HEHgryvb1t2Ve7OnAxaLxVpTd9OwvJFP4NA
+	 tO+NmZinLmsbx6tauEXHDsIO9Jxv3DwyN3DkiRwQO3kKv6D1jMG29P+MEBICwGYw20
+	 Wqqk7z5eqAjTJR4o0/IdzDYwnDCP1Av4tUXyZ2dPGQauDtMdIYnfE2TFEwZFkAlDsK
+	 fyAlSOANWAAcQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Sat, 28 Sep 2024 16:25:42 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Kwanghoon Son <k.son@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, airlied@gmail.com,
+ alim.akhtar@samsung.com, conor@kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, inki.dae@samsung.com,
+ kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, robh@kernel.org,
+ simona@ffwll.ch, sw0312.kim@samsung.com, tzimmermann@suse.de, kauschluss
+ <kauschluss@disroot.org>
+Subject: Re: [PATCH 6/6] dt-bindings: display: samsung,exynos7-decon: add
+ exynos7870 compatible
+In-Reply-To: <d2a6b8d16b001b72fd01cfc5b4895e6fee0b7032.camel@samsung.com>
+References: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
+ <20240919-exynosdrm-decon-v1-6-8c3e3ccffad5@disroot.org>
+ <32ae1188-196d-4fe8-8719-968e5149a771@kernel.org>
+ <7e5caaea80390e8cf87ba0a74d9719f0@disroot.org>
+ <1bc0ad48-03c0-4cf6-afb1-2296d1c259b9@kernel.org>
+ <8e0672ad3fd72f69d2bdb5687e778c86@disroot.org>
+ <ef786b8b-32c0-457a-9e14-ed7bd9f04172@kernel.org>
+ <d8f5999921a31d7723e0aa9b12bb9eaf@disroot.org>
+ <CGME20240926053449epcas1p2e8596f64b7ee5d3b8cdf565bacdc6510@epcas1p2.samsung.com>
+ <d2a6b8d16b001b72fd01cfc5b4895e6fee0b7032.camel@samsung.com>
+Message-ID: <91447671a12d04e177a7a54e7facc5df@disroot.org>
+X-Sender: kauschluss@disroot.org
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 23 Sep 2024 00:17:58 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
-
-> The veml6035 is an ALS that shares most of its functionality with the
-> veml6030, which allows for some code recycling.
+On 2024-09-26 05:34, Kwanghoon Son wrote:
+> On Wed, 2024-09-25 at 20:05 +0000, Kaustabh Chakraborty wrote:
+>> On 2024-09-25 19:56, Krzysztof Kozlowski wrote:
+>> > On 25/09/2024 21:36, Kaustabh Chakraborty wrote:
+>> > > On 2024-09-25 19:25, Krzysztof Kozlowski wrote:
+>> > > > On 25/09/2024 20:42, Kaustabh Chakraborty wrote:
+>> > > > > On 2024-09-20 12:39, Krzysztof Kozlowski wrote:
+>> > > > > > On 19/09/2024 17:20, Kaustabh Chakraborty wrote:
+>> > > > > > > Add the compatible string of Exynos7870 to the existing list.
+>> > > > > > > 
+>> > > > > > > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>> > > > > > 
+>> > > > > > ... and the DTS is <please provide lore ink in changelog>?
+>> > > > > 
+>> > > > > Didn't quite understand. The patch adds the compatible string
+>> > > > > for Exynos7870 DECON in documentation. There's no DTS involved
+>> > > > > in here, right?
+>> > > > 
+>> > > > Provide lore link to the DTS submission.
+>> > > 
+>> > > There aren't any DTS submissions *yet* which use the compatible.
+>> > > Is that an issue?
+>> > > 
+>> > 
+>> > Yeah, users are supposed to be upstream. Not downstream.
+>> 
+>> I understand that. I had plans to submit it in the future.
+>> If that's how it's meant to be done, I'll have to revisit this
+>> submission at a later date then.
 > 
-> Some chip-specific properties differ and dedicated functions to get and
-> set the sensor gain as well as its initialization are required.
+> Hi, may I ask for reason that you don't submit dts?
+
+It's not that I don't want, I have nowhere to submit it to yet. As
+pointed out by Krzysztof, support for exynos7870 doesn't exist in
+upstream. I'll get back to this after I get that finished.
+
+> I am asking because I wonder if there is an issue related to DPP.
+
+Exynos7870 doesn't have DPP blocks as far as I could tell. Let me
+know if I misunderstood anything.
+
 > 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
-Just a trivial formatting follow up comment inline.
-
-Thanks,
-
-Jonathan
-
-> diff --git a/drivers/iio/light/veml6030.c b/drivers/iio/light/veml6030.c
-> index 19c69bfad8cb..d5c09c148d22 100644
-> --- a/drivers/iio/light/veml6030.c
-> +++ b/drivers/iio/light/veml6030.c
-> @@ -78,6 +104,15 @@ static const int veml6030_scale_vals[][2] = {
->  	{2, 0},
->  };
->  
-> +static const int veml6035_scale_vals[][2] = {
-> +	{0, 125000},
-> +	{0, 250000},
-> +	{0, 500000},
-> +	{1, 0},
-> +	{2, 0},
-> +	{4, 0},
-
-Similar to previous comments, add spaces after { and before }
-
-> +};
+> https://lore.kernel.org/linux-samsung-soc/2e4d3d180f535e57d9cb98e7bac1d14b51ffc5d4.camel@gmail.com/#t
+> 
+> Best regards,
+> kwang.
+> 
+>> 
+>> > 
+>> > Best regards,
+>> > Krzysztof
 
