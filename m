@@ -1,94 +1,310 @@
-Return-Path: <linux-kernel+bounces-342506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9F6988FC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:47:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9842988FC4
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26448B215F0
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:47:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55228282007
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991D11CD2A;
-	Sat, 28 Sep 2024 14:47:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FBB1C286;
+	Sat, 28 Sep 2024 14:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="e8Rcgt2l"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9AE917545
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 14:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB1617545
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 14:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727534825; cv=none; b=vBub5Id3sqKiPg0Py6G1yhkhh2SibBfjHvw/3Eg0B9it3t8Rj48uQN3g1ft6yf/rxNQvZW4w3y6KpxEhgRzjY//PlyRk5it/sjSIiN0LXWa64Dvps/4EZ/xE0LKnGUc0WIPUYI1dAbetIvbE9U9fkl3agIq6tTzl3ON8zCbrH2Q=
+	t=1727534994; cv=none; b=D5R4OIaOQNY9SV+hwEY4K/SqncxMXk5VzyU9F7KUIxefLRSJutP5JAX+klQMZZuPMCl27Yz/SBxekcSiSU6Ecxv7X/HE7Zy4cwVO8SaPxeVZnK0K2huMBA9Dq5SoY5CZDeTrUf/cUj6N7uGshsBvvw1aVWI8zcZYmv4UrKg6Hbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727534825; c=relaxed/simple;
-	bh=lx7Ifb9q719owpGrIkO2jtwN2HKzH6UEVno5u3b+iF4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nWKxwkhIKKhpO8gy0B7gqUxcwZuSbxBrFHDlwjofYFTpoi89yRrOrZXgaE6yOnM6SN0O2zY/X0XrFQ+Tgq0fQuwA4y0uLzCh4Q5NYkWELG25CY5hKf87TahKFX5e3QFTIAJka26vX1z//IsyE+zLrYS+vMvf+mMqgnOu0YVFU4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a19534ac2fso40820515ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 07:47:03 -0700 (PDT)
+	s=arc-20240116; t=1727534994; c=relaxed/simple;
+	bh=W9jdtW9g7G/b2IlDh+2LPBLrbkqYnTJ5gfrPPG1M/yI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DfCDAAC4As5FzqnE/G8LVlebW/51f9CAEGRPJw4zRw2D5DFqtGYL0HYVnsoudQe3DbIEfr7e2Mgw2et9ubNB1/ciBIt0zqYZQ5GO/Ol/qkn0llyRHxkv/WfOcXNuvV0vcB0wHuJcSVXeMLEWWAMEFLXvptDWs2vc7jN2P0zh668=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=e8Rcgt2l; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6c582ca168fso21738556d6.2
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 07:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1727534991; x=1728139791; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1yi3s2Vi95xenb/4sW3OtKFLyrwZhQyIWMqCuz6AJtQ=;
+        b=e8Rcgt2lsA7cI9LB+egxFW0zFYE/JiVpwcSTtb1iursRhcdtVn87nHAkDhoaeYjTq9
+         IBrVsMv9EK/Bxi9XKEwD92TGNGbCjbhKgyfmpAO+eYqf+wcHs3XOGL9heiPy1Emo1QTT
+         1xlnR/n7vFoh/IbR87Ll4vlWFVjtDHrcieNvomPtcsRSbrixHcINxfIoN/IJujKboFTm
+         PsR35uC7AupbHFZkYai7a6iK8S3/hG9zBoO/uTFVqk0RHwh75FEoSTcxfcttFMBxXISp
+         5BP892DoVEo+ldUR95YDvtK6MI39PgIAeKj9SRpO7iyGUAkfeRryFvXVSCS2faCw/fhQ
+         R38Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727534823; x=1728139623;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qS3n76UGkCFfSzpWf68kEL7cLIcUZy/Q42VybJ4lvPc=;
-        b=hBCmrX6HAU4WYpkEU/CmxIQ452XY1lbZcBdueLRfG3Pp4KjYg5Uh5qbIaBtMgm43Nt
-         x/XOWN6fpjv5se6yP90wENH4w0g2cXMBv660ILm015E8fLnPfDvainpX7yTQjHaghgD5
-         tYef4PlLae4OWvN6IKEQQiHwixbNrv0chiGvhKY5dqd53L3H6KOHlqev1ZW5EgOVg/BI
-         BBPIKJ2AB/dn45XhZlBwNhQRn46BGPOFKjF2QaMxJOWxBpWcQsVcniVxUovsNPmIWk3o
-         FP1C4VqrjG++P1xwsatqB8gHg4UOeVsIeSo+U1Dhqx1G2O9FgDi0w4K00LUDPf/gPQoO
-         RT5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXCoK47glWnVLpJlDDlOTYHCwyLXMU2ETuD16dPVrkVyyUPwTyfERYSiUqII1SoYEeJnY57Nn2/gDNr610=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydelI0rddAh0JU0nOurvG3w57o2RUq7A1+DeTxvX9YUgxR4cct
-	nlKwX8AuoLhZFm5hr48vCnwnRGkosU/KECQAgMASGXNeYXGXY6c7uB/QksY3F4q/iE5LaUPyJ8C
-	weTsd5+2GY3qMwbT45M+6vJn1Pzz6CAkIM/Ev8hJKuHC8o5E3IGhBIlU=
-X-Google-Smtp-Source: AGHT+IFQPRWXJ8MlIWkc8iJvXKX8p5A6JpNeYO/NKPlG50WuJZZ4zc7BrIPosH16IdW8xqGLrFONOFk/JPLQ+xYj3mCLBIvJNAzl
+        d=1e100.net; s=20230601; t=1727534991; x=1728139791;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1yi3s2Vi95xenb/4sW3OtKFLyrwZhQyIWMqCuz6AJtQ=;
+        b=EweKbb2S5WKRp/3ZmHZYl3a8YroapJG4INO10khwTab53IV8lTsdo7h/iIk9NuKknS
+         /Ps1WYLWbhv4/Gn5A6wD9gD7wMXKLsUwlLZJHUGS6k2ebEgTdqC2ISatS34rWomGFBCU
+         5stywffAvsf3P8VFgG4XmyZSWjqeB4QPEosRi4bCtSxuMCx2/tHSu8KRMm15HH4tFYow
+         3fIfJq5slOJkSJ6iD6up2P4YM5LQxB+L88GU7M2ZLa/ir0X64HuvLMm5w6Y3eHIfXwAY
+         75IPR+iU/ZAxp0SZMoQb1rrgFNb2JL69ywbAK30ZB+su+CDVnZY5hxUJ3JqwIjqbw6yB
+         W/YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYokhYatRbiwUkFAbFw+SOonipY515BjZwZduH5ZvbvNt43SvzD5iMk7RhLbiVYBcbYnUW5BK0hfKwiCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpoFTjwkFBWqvnDAeqIvSvEBIWgOdu1tpRPPpnXsac4hDEdqC8
+	4S6U3zGFMHBQq77cjKVLbkFyyP8T/U7xjsxItxqnhJzkMtJugvPFKv9zEPVDRDkD8jioFq36vuk
+	RqQ==
+X-Google-Smtp-Source: AGHT+IGYsBThwDk0+Q9GAkjd0Qrkf1rZeLvqxc9J+iXThiKd1XuEa4qWnG2xVu4bINYg8B5pAobCEg==
+X-Received: by 2002:a05:6214:3bc3:b0:6cb:4e86:bb53 with SMTP id 6a1803df08f44-6cb4e86bc21mr44373516d6.43.1727534990879;
+        Sat, 28 Sep 2024 07:49:50 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::abbf])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b66b507sm20259966d6.99.2024.09.28.07.49.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Sep 2024 07:49:49 -0700 (PDT)
+Date: Sat, 28 Sep 2024 10:49:45 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>, John Stultz <jstultz@google.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+	Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
+Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+Message-ID: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
+ <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a08:b0:3a0:92b1:ec3c with SMTP id
- e9e14a558f8ab-3a345161e57mr58864265ab.4.1727534822873; Sat, 28 Sep 2024
- 07:47:02 -0700 (PDT)
-Date: Sat, 28 Sep 2024 07:47:02 -0700
-In-Reply-To: <000000000000aefb4d061e34a346@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f816e6.050a0220.aab67.0004.GAE@google.com>
-Subject: Re: [syzbot] [net?] INFO: task hung in linkwatch_event (4)
-From: syzbot <syzbot+2ba2d70f288cf61174e4@syzkaller.appspotmail.com>
-To: bsegall@google.com, davem@davemloft.net, dietmar.eggemann@arm.com, 
-	edumazet@google.com, jiri@resnulli.us, johannes.berg@intel.com, 
-	juri.lelli@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	mgorman@suse.de, mingo@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	peterz@infradead.org, rostedt@goodmis.org, syzkaller-bugs@googlegroups.com, 
-	vincent.guittot@linaro.org, vschneid@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
 
-syzbot has bisected this issue to:
+On Sat, Sep 28, 2024 at 09:51:27AM -0400, Mathieu Desnoyers wrote:
+> Compiler CSE and SSA GVN optimizations can cause the address dependency
+> of addresses returned by rcu_dereference to be lost when comparing those
+> pointers with either constants or previously loaded pointers.
+> 
+> Introduce ptr_eq() to compare two addresses while preserving the address
+> dependencies for later use of the address. It should be used when
+> comparing an address returned by rcu_dereference().
+> 
+> This is needed to prevent the compiler CSE and SSA GVN optimizations
+> from replacing the registers holding @a or @b based on their
 
-commit e8901061ca0cd9acbd3d29d41d16c69c2bfff9f0
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Thu May 23 08:48:09 2024 +0000
+"Replacing" isn't the right word.  What the compiler does is use one 
+rather than the other.  Furthermore, the compiler can play these games 
+even with values that aren't in registers.
 
-    sched: Split DEQUEUE_SLEEP from deactivate_task()
+You should just say: "... from using @a (or @b) in places where the 
+source refers to @b (or @a) (based on the fact that after the 
+comparison, the two are known to be equal), which does not ..."
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13ce9e80580000
-start commit:   075dbe9f6e3c Merge tag 'soc-ep93xx-dt-6.12' of git://git.k..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=102e9e80580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ce9e80580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b2d4fdf18a83ec0b
-dashboard link: https://syzkaller.appspot.com/bug?extid=2ba2d70f288cf61174e4
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e2c507980000
+> equality, which does not preserve address dependencies and allows the
+> following misordering speculations:
+> 
+> - If @b is a constant, the compiler can issue the loads which depend
+>   on @a before loading @a.
+> - If @b is a register populated by a prior load, weakly-ordered
+>   CPUs can speculate loads which depend on @a before loading @a.
 
-Reported-by: syzbot+2ba2d70f288cf61174e4@syzkaller.appspotmail.com
-Fixes: e8901061ca0c ("sched: Split DEQUEUE_SLEEP from deactivate_task()")
+It shouldn't matter whether @a and @b are constants, registers, or 
+anything else.  All that matters is that the compiler uses the wrong 
+one, which allows weakly ordered CPUs to speculate loads you wouldn't 
+expect it to, based on the source code alone.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> The same logic applies with @a and @b swapped.
+> 
+> The compiler barrier() is ineffective at fixing this issue.
+> It does not prevent the compiler CSE from losing the address dependency:
+> 
+> int fct_2_volatile_barriers(void)
+> {
+>     int *a, *b;
+> 
+>     do {
+>         a = READ_ONCE(p);
+>         asm volatile ("" : : : "memory");
+>         b = READ_ONCE(p);
+>     } while (a != b);
+>     asm volatile ("" : : : "memory");  <----- barrier()
+>     return *b;
+> }
+> 
+> With gcc 14.2 (arm64):
+> 
+> fct_2_volatile_barriers:
+>         adrp    x0, .LANCHOR0
+>         add     x0, x0, :lo12:.LANCHOR0
+> .L2:
+>         ldr     x1, [x0]    <------ x1 populated by first load.
+>         ldr     x2, [x0]
+>         cmp     x1, x2
+>         bne     .L2
+>         ldr     w0, [x1]    <------ x1 is used for access which should depend on b.
+>         ret
+> 
+> On weakly-ordered architectures, this lets CPU speculation use the
+> result from the first load to speculate "ldr w0, [x1]" before
+> "ldr x2, [x0]".
+> Based on the RCU documentation, the control dependency does not prevent
+> the CPU from speculating loads.
+> 
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> Acked-by: "Paul E. McKenney" <paulmck@kernel.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: John Stultz <jstultz@google.com>
+> Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Frederic Weisbecker <frederic@kernel.org>
+> Cc: Joel Fernandes <joel@joelfernandes.org>
+> Cc: Josh Triplett <josh@joshtriplett.org>
+> Cc: Uladzislau Rezki <urezki@gmail.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+> Cc: Zqiang <qiang.zhang1211@gmail.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: maged.michael@gmail.com
+> Cc: Mateusz Guzik <mjguzik@gmail.com>
+> Cc: Gary Guo <gary@garyguo.net>
+> Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+> Cc: rcu@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: lkmm@lists.linux.dev
+> ---
+>  include/linux/compiler.h | 62 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+> 
+> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> index 2df665fa2964..f26705c267e8 100644
+> --- a/include/linux/compiler.h
+> +++ b/include/linux/compiler.h
+> @@ -186,6 +186,68 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+>  	__asm__ ("" : "=r" (var) : "0" (var))
+>  #endif
+>  
+> +/*
+> + * Compare two addresses while preserving the address dependencies for
+> + * later use of the address. It should be used when comparing an address
+> + * returned by rcu_dereference().
+> + *
+> + * This is needed to prevent the compiler CSE and SSA GVN optimizations
+> + * from replacing the registers holding @a or @b based on their
+> + * equality, which does not preserve address dependencies and allows the
+> + * following misordering speculations:
+> + *
+> + * - If @b is a constant, the compiler can issue the loads which depend
+> + *   on @a before loading @a.
+> + * - If @b is a register populated by a prior load, weakly-ordered
+> + *   CPUs can speculate loads which depend on @a before loading @a.
+> + *
+> + * The same logic applies with @a and @b swapped.
+
+This could be more concise, and it should be more general (along the 
+same lines as the description above).
+
+> + *
+> + * Return value: true if pointers are equal, false otherwise.
+> + *
+> + * The compiler barrier() is ineffective at fixing this issue. It does
+> + * not prevent the compiler CSE from losing the address dependency:
+> + *
+> + * int fct_2_volatile_barriers(void)
+> + * {
+> + *     int *a, *b;
+> + *
+> + *     do {
+> + *         a = READ_ONCE(p);
+> + *         asm volatile ("" : : : "memory");
+> + *         b = READ_ONCE(p);
+> + *     } while (a != b);
+> + *     asm volatile ("" : : : "memory");  <-- barrier()
+> + *     return *b;
+> + * }
+> + *
+> + * With gcc 14.2 (arm64):
+> + *
+> + * fct_2_volatile_barriers:
+> + *         adrp    x0, .LANCHOR0
+> + *         add     x0, x0, :lo12:.LANCHOR0
+> + * .L2:
+> + *         ldr     x1, [x0]  <-- x1 populated by first load.
+> + *         ldr     x2, [x0]
+> + *         cmp     x1, x2
+> + *         bne     .L2
+> + *         ldr     w0, [x1]  <-- x1 is used for access which should depend on b.
+> + *         ret
+> + *
+> + * On weakly-ordered architectures, this lets CPU speculation use the
+> + * result from the first load to speculate "ldr w0, [x1]" before
+> + * "ldr x2, [x0]".
+> + * Based on the RCU documentation, the control dependency does not
+> + * prevent the CPU from speculating loads.
+
+IMO, this lengthy explanation is not needed in the source code.  Just 
+refer interested readers to the commit description.  You're repeating 
+the same text verbatim, after all.
+
+(Or if you firmly believe that this explanation _does_ belong in the 
+code, then omit it from the commit description.  There's no need to say 
+everything twice.)
+
+Alan Stern
+
+> + */
+> +static __always_inline
+> +int ptr_eq(const volatile void *a, const volatile void *b)
+> +{
+> +	OPTIMIZER_HIDE_VAR(a);
+> +	OPTIMIZER_HIDE_VAR(b);
+> +	return a == b;
+> +}
+> +
+>  #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+>  
+>  /**
+> -- 
+> 2.39.2
+> 
 
