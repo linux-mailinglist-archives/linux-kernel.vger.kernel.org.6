@@ -1,101 +1,171 @@
-Return-Path: <linux-kernel+bounces-342537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF8E4989011
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:31:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2153C989015
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 673501F21ACF
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:31:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4D69B21302
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BC32837D;
-	Sat, 28 Sep 2024 15:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228DE37165;
+	Sat, 28 Sep 2024 15:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lh8Yk9m1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ry2vMne4"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381531B299;
-	Sat, 28 Sep 2024 15:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1192A171A7;
+	Sat, 28 Sep 2024 15:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727537453; cv=none; b=G7pG8w3xDIELl8KBBJxfvzNqkBdE+eUV5tsSb+WBfzhOSRnAhHkrazZdanKBvZL6f2B67vczH6JPI0Kvi0qkpH7/1/H9+9vAmTRuRqJcHQvMgjbhoRY9fB8wmf1SXcBoBR0D2A6yot/JjBEX48wjXrLj9j/uCyq99ti1fg9mqAU=
+	t=1727537574; cv=none; b=JUfl6VnAOVhQSYpxPKYgVCJMocI7XvL60W/3fZZ/Wcr4tcf9mEG89+stzgPFEpUr1A11TqZT55/WesRQtr4iG7Lik3zGypl3m/9kamI8Yo+Y7eCWRBDXGX6NpC2xJqzRP1vQIscOdRx0XttI/+3YCdi697MoJRr9SlUtjuSMBPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727537453; c=relaxed/simple;
-	bh=fogb1hMBCduyik9CgRcLmE7yygTxQUjCoKc6wf23StU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N7Hdu4bIrj55oPpytRerfMkVx1/c0kg0YGBsjzpaKq8/mHqs899+pqA+2hs6vL+ppVyxgGHCZmzTDO24oNAqD3eDQ/RUk+9tPTqJVfvvVO8lrQtw+4Bbd17sPLbr26Nz1bceJvwMufn1BHR/8dhUC2dgdrxJE7kDeVJi35p25kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lh8Yk9m1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07ABFC4CEC3;
-	Sat, 28 Sep 2024 15:30:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727537452;
-	bh=fogb1hMBCduyik9CgRcLmE7yygTxQUjCoKc6wf23StU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Lh8Yk9m1fy3IZTgBD/HqtMYWFsUvYiSWTWNGkAi8d0dfNk+BcfEjDOXkCKsZLEnyo
-	 TPrbryBOHOQEZF8E6GsEJ2UD5Fzzuz5QqPe2C68oqwUmNTzyW5gWO4fTFzoZCf0jG/
-	 UhsWv2XN9WvdyiAgd1u7oOMTqXfN1RmtXum6uZr1TfcwntZVkbibUTfr6YeiN37e7R
-	 o4xJwIdmYb43vF/1Ec/jruDz22sIDC02jfjttgWGhXDskgfGpQUMCQj4gW5LA3PlM5
-	 KRwyW08AbpkgrQfKuhQrZekzkP1a0ltb+MMOrZbghXixMRfIoIYWIwUqfbpB31+AEy
-	 Zc/ba5dls5FZQ==
-Date: Sat, 28 Sep 2024 16:30:46 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Abhash Jha <abhashkumarjha123@gmail.com>
-Cc: linux-iio@vger.kernel.org, lars@metafoo.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: max1363: Convert to get_unaligned_be16
-Message-ID: <20240928163046.2abc6943@jic23-huawei>
-In-Reply-To: <20240920181437.20194-1-abhashkumarjha123@gmail.com>
-References: <20240920181437.20194-1-abhashkumarjha123@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727537574; c=relaxed/simple;
+	bh=qODK3D1TzkfHZd3mLIQ/9d2R+3FrtROj8weI9Fwm3Ks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=obYcU0+yNG7170CRM5C6FxfHrP3SSH33BWcV2szNI2Jc95BTR5GhxnhWRbuKVQ3NfahVBBYj+uyp8bSoXBU+bpduMH6wrUFkra0eT6T+UtMXrjGocvjeXzWcj/1bkPYA6uqpqyI6wBFAcEC1Nzt1i/nYrCLVjDZFFGNsrpZkdcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=ry2vMne4; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727537571;
+	bh=qODK3D1TzkfHZd3mLIQ/9d2R+3FrtROj8weI9Fwm3Ks=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ry2vMne4TQGJwkx0bJ2IjOP2Cb5Tgxr2ePDOIpQHTOkSk8osr3n0dAsiJmq14ORIL
+	 ee2X1r783c167zydFF7NBhsAQKKYuu57tz66h7KzV8KpT/RJ4Dpc5cxrqeSTOuGIbU
+	 T3hWymsEbvxEMk3v2+4B+ZG/xuhRZVxFUYvtAcMvO94HwJUK0FY2X+FzF8pstjXnfy
+	 CuLFnhlCwaYMDVaP6idxJ1BKyoxfPBBrEXPqMWbnsUpxAxcGUT5eI1OUSM6RkI4NB+
+	 5OmfD8g9Ni68aL5YfYbZzdwDYzkmVx2YpPb3+w1Lrdpx/xy+2uKuobYBHhlatblqEK
+	 u1ijhgxJKB3Kg==
+Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XGBDM4sGZz1cc6;
+	Sat, 28 Sep 2024 11:32:51 -0400 (EDT)
+Message-ID: <2bb50d49-f1ce-4282-a03c-f52420c95dd1@efficios.com>
+Date: Sat, 28 Sep 2024 11:30:48 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+To: Alan Stern <stern@rowland.harvard.edu>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
+ John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, rcu@vger.kernel.org,
+ linux-mm@kvack.org, lkmm@lists.linux.dev
+References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
+ <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
+ <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Fri, 20 Sep 2024 23:44:37 +0530
-Abhash Jha <abhashkumarjha123@gmail.com> wrote:
-
-> Converted manual shifting and or to use `get_unaligned_be16` api
-> instead.
+On 2024-09-28 16:49, Alan Stern wrote:
+> On Sat, Sep 28, 2024 at 09:51:27AM -0400, Mathieu Desnoyers wrote:
+[...]
+>> +/*
+>> + * Compare two addresses while preserving the address dependencies for
+>> + * later use of the address. It should be used when comparing an address
+>> + * returned by rcu_dereference().
+>> + *
+>> + * This is needed to prevent the compiler CSE and SSA GVN optimizations
+>> + * from replacing the registers holding @a or @b based on their
+>> + * equality, which does not preserve address dependencies and allows the
+>> + * following misordering speculations:
+>> + *
+>> + * - If @b is a constant, the compiler can issue the loads which depend
+>> + *   on @a before loading @a.
+>> + * - If @b is a register populated by a prior load, weakly-ordered
+>> + *   CPUs can speculate loads which depend on @a before loading @a.
+>> + *
+>> + * The same logic applies with @a and @b swapped.
+[...]
+>> + *
+>> + * Return value: true if pointers are equal, false otherwise.
+>> + *
+>> + * The compiler barrier() is ineffective at fixing this issue. It does
+>> + * not prevent the compiler CSE from losing the address dependency:
+>> + *
+>> + * int fct_2_volatile_barriers(void)
+>> + * {
+>> + *     int *a, *b;
+>> + *
+>> + *     do {
+>> + *         a = READ_ONCE(p);
+>> + *         asm volatile ("" : : : "memory");
+>> + *         b = READ_ONCE(p);
+>> + *     } while (a != b);
+>> + *     asm volatile ("" : : : "memory");  <-- barrier()
+>> + *     return *b;
+>> + * }
+>> + *
+>> + * With gcc 14.2 (arm64):
+>> + *
+>> + * fct_2_volatile_barriers:
+>> + *         adrp    x0, .LANCHOR0
+>> + *         add     x0, x0, :lo12:.LANCHOR0
+>> + * .L2:
+>> + *         ldr     x1, [x0]  <-- x1 populated by first load.
+>> + *         ldr     x2, [x0]
+>> + *         cmp     x1, x2
+>> + *         bne     .L2
+>> + *         ldr     w0, [x1]  <-- x1 is used for access which should depend on b.
+>> + *         ret
+>> + *
+>> + * On weakly-ordered architectures, this lets CPU speculation use the
+>> + * result from the first load to speculate "ldr w0, [x1]" before
+>> + * "ldr x2, [x0]".
+>> + * Based on the RCU documentation, the control dependency does not
+>> + * prevent the CPU from speculating loads.
 > 
-> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
-Applied
+> IMO, this lengthy explanation is not needed in the source code.  Just
+> refer interested readers to the commit description.  You're repeating
+> the same text verbatim, after all.
+> 
+> (Or if you firmly believe that this explanation _does_ belong in the
+> code, then omit it from the commit description.  There's no need to say
+> everything twice.)
+> 
+
+Linus asked for this code/asm example to be in the comment:
+
+   https://lore.kernel.org/lkml/CAHk-=wgBgh5U+dyNaN=+XCdcm2OmgSRbcH4Vbtk8i5ZDGwStSA@mail.gmail.com/
+
+I agree that it may be a bit verbose for the comment.
+
+Linus, do you want the explanation wrt compiler barriers not being
+enough (with C/asm example) in the comment above ptr_eq() or in
+the commit message ?
 
 Thanks,
 
-Jonathan
+Mathieu
 
-> ---
->  drivers/iio/adc/max1363.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/max1363.c b/drivers/iio/adc/max1363.c
-> index bf4b6dc53..0801317da 100644
-> --- a/drivers/iio/adc/max1363.c
-> +++ b/drivers/iio/adc/max1363.c
-> @@ -33,6 +33,8 @@
->  #include <linux/iio/trigger_consumer.h>
->  #include <linux/iio/triggered_buffer.h>
->  
-> +#include <asm/unaligned.h>
-> +
->  #define MAX1363_SETUP_BYTE(a) ((a) | 0x80)
->  
->  /* There is a fair bit more defined here than currently
-> @@ -391,7 +393,7 @@ static int max1363_read_single_chan(struct iio_dev *indio_dev,
->  			if (data < 0)
->  				return data;
->  
-> -			data = (rxbuf[1] | rxbuf[0] << 8) &
-> +			data = get_unaligned_be16(rxbuf) &
->  				((1 << st->chip_info->bits) - 1);
->  		} else {
->  			/* Get reading */
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
