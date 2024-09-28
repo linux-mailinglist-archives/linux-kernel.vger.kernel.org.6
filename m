@@ -1,165 +1,109 @@
-Return-Path: <linux-kernel+bounces-342550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D9F98902D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:57:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA05989030
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F64C1C20D72
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:57:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5AEE1F222EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FDC5478E;
-	Sat, 28 Sep 2024 15:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562576F30C;
+	Sat, 28 Sep 2024 15:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="FvoaUoVC"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A3vn+iXD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD3418030;
-	Sat, 28 Sep 2024 15:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74A418030;
+	Sat, 28 Sep 2024 15:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727539048; cv=none; b=ajl8WZv5U4sFgMIL2ExAK6vwXoIT4cVX853qJutTShhqFiDWbw7++JXgFCeVD2cAJDIbXGaLGrqnPuFN37zvXt3dpLkq9wZOpoirCCMbdCBinrTj16/tAva38l/ss0Nkh1sm9Vcp0nwnmFl/LAqWtTi41jdzV9eGweIOvJnNZ6M=
+	t=1727539062; cv=none; b=lwYPal/JmhOKjxEVhpPZaCoUzNi3YNSQNdOvhOpleV/wrt8xlHSc44ePkM7v1hdyYK8pTMPh9BAx1XHJj/n3N0keRGyx1KUmS/W8sqW7U2Sv2C6goMXLnea1dSqDdjWhRL5P2OC6OacyWteIatmnumHUgOFVx2RVXjWaTsKtwI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727539048; c=relaxed/simple;
-	bh=OT5+a5qZ1o8omlaCZ7kGSp45uaSP88DQUWgurlZRS/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z3ORAYraQJjIDP30FFIF6Bl1TY7zSPCjI21YRTVYVEwhUbXrtVVWQehrf/AKQ+Ijeg8574yMRjSNWs/H2uY4sKxcfiSqxNky5s64Cy+sSQLAo4ZWGrBelkduY5FyzP8e3lam1sy2Q/oVY5V9xKw+mkUWjase6/er2JaW6Gs6Lz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=FvoaUoVC; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727539045;
-	bh=OT5+a5qZ1o8omlaCZ7kGSp45uaSP88DQUWgurlZRS/4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FvoaUoVCkk1vlFwGKRn1BPSxesgO2ojACv9ZacAleSmS6TGVCqaZ/OfDlT1chVCAS
-	 HDGh65+0A0LCmXPkguJXDQXtB9Cos7jWdqq/QE1HYCVHOqYrJerKBsQzC+JKphGByf
-	 82dhG6UawKRMs+Xitf2UKZGQEn676aHJuo87ix9Edj2EVTTQD38F4VnqH86NF9/2mG
-	 2Ff8V3pD9kpPIFI6MG/yytZ75PH/ZPCLXProkF32hqn+XNuSbAk37I+vwypQ7z+IUz
-	 ljxDZ9Efm3tCoGa2fuLhiPLt3S70NJM3TZUjosE1XilIFYcs0rlw3StbWdIb2MVC6k
-	 XFx3z5WbkG/Aw==
-Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XGBmj27MNz1ccf;
-	Sat, 28 Sep 2024 11:57:25 -0400 (EDT)
-Message-ID: <d49f5d9f-559d-449b-b330-9e5a57d9b438@efficios.com>
-Date: Sat, 28 Sep 2024 11:55:22 -0400
+	s=arc-20240116; t=1727539062; c=relaxed/simple;
+	bh=wGj282cuzEInS8/dLr0Pj5jeNenvFwH+aquZbxThikE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OTi0A8envHo/+1eDWtuF3wuLR3zxUV0IiFPMXfaxW+ELGvLAN/H3HCKnVHB+hsRdUUnvh1l/ojUQa2gyOngeEi1WOqA3O1kUmbpPcyl8d6uKLE+5F202rK0ZGMkrC+UatMYcZn4ZWCkb1M8Tw7mNBkgfh9X9lWPoalSshRzFBG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A3vn+iXD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18AD0C4CEC3;
+	Sat, 28 Sep 2024 15:57:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727539062;
+	bh=wGj282cuzEInS8/dLr0Pj5jeNenvFwH+aquZbxThikE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=A3vn+iXDHx+yhf6IQLO1qg8PkzO2iM50HgSmdHAjPsn0et6CRqKSd2sqittlSkkF+
+	 WzBvB+B6PtxUEyKzTuUFN5UHegv/rNPDZ+StBNCbhLhmjV8a/QXD9tX8AtyuVLrVDY
+	 Y+H/rGa/tAfZGh4//0gQXrNAbB6vkBXK4g0D1opwg3pRMhrxx4pF+GrERfNMhidKJp
+	 4vyzf8kYUSWdCiK7t592GqEgiQbzjobyQOU+v7qL9+bzBMApM1UlEz5OxTm5Ayd287
+	 5FcE+Vwi0+x/fODoBHpzt3KzzuOIjGSYmpk6UEVv5DukTVYdZYTA359cM7PIgOyLJi
+	 CfyZFomH6CABA==
+Date: Sat, 28 Sep 2024 16:57:37 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Emil Gedenryd <emil.gedenryd@axis.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andreas Dannenberg <dannenberg@ti.com>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <kernel@axis.com>
+Subject: Re: [PATCH v3 1/3] iio: light: opt3001: add missing full-scale
+ range value
+Message-ID: <20240928165737.6ed1e4ff@jic23-huawei>
+In-Reply-To: <20240916-add_opt3002-v3-1-984b190cd68c@axis.com>
+References: <20240916-add_opt3002-v3-0-984b190cd68c@axis.com>
+	<20240916-add_opt3002-v3-1-984b190cd68c@axis.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
- John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
- Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, rcu@vger.kernel.org,
- linux-mm@kvack.org, lkmm@lists.linux.dev
-References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
- <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
- <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
- <2091628c-2d96-4492-99d9-0f6a61b08d1d@efficios.com>
- <d2c87672-af75-4210-bd96-d7f38f2f63ac@rowland.harvard.edu>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <d2c87672-af75-4210-bd96-d7f38f2f63ac@rowland.harvard.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2024-09-28 17:49, Alan Stern wrote:
-> On Sat, Sep 28, 2024 at 11:32:18AM -0400, Mathieu Desnoyers wrote:
->> On 2024-09-28 16:49, Alan Stern wrote:
->>> On Sat, Sep 28, 2024 at 09:51:27AM -0400, Mathieu Desnoyers wrote:
->>>> equality, which does not preserve address dependencies and allows the
->>>> following misordering speculations:
->>>>
->>>> - If @b is a constant, the compiler can issue the loads which depend
->>>>     on @a before loading @a.
->>>> - If @b is a register populated by a prior load, weakly-ordered
->>>>     CPUs can speculate loads which depend on @a before loading @a.
->>>
->>> It shouldn't matter whether @a and @b are constants, registers, or
->>> anything else.  All that matters is that the compiler uses the wrong
->>> one, which allows weakly ordered CPUs to speculate loads you wouldn't
->>> expect it to, based on the source code alone.
->>
->> I only partially agree here.
->>
->> On weakly-ordered architectures, indeed we don't care whether the
->> issue is caused by the compiler reordering the code (constant)
->> or the CPU speculating the load (registers).
->>
->> However, on strongly-ordered architectures, AFAIU, only the constant
->> case is problematic (compiler reordering the dependent load), because
-> 
-> I thought you were trying to prevent the compiler from using one pointer
-> instead of the other, not trying to prevent it from reordering anything.
-> Isn't this the point the documentation wants to get across when it says
-> that comparing pointers can be dangerous?
+On Mon, 16 Sep 2024 16:56:37 +0200
+Emil Gedenryd <emil.gedenryd@axis.com> wrote:
 
-The motivation for introducing ptr_eq() is indeed because the
-compiler barrier is not sufficient to prevent the compiler from
-using one pointer instead of the other.
-
-But it turns out that ptr_eq() is also a good tool to prevent the
-compiler from reordering loads in case where the comparison is
-done against a constant.
-
+> The opt3001 driver uses predetermined full-scale range values to
+> determine what exponent to use for event trigger threshold values.
+> The problem is that one of the values specified in the datasheet is
+> missing from the implementation. This causes larger values to be
+> scaled down to an incorrect exponent, effectively reducing the
+> maximum settable threshold value by a factor of 2.
 > 
->> CPU speculating the loads across the control dependency is not an
->> issue.
->>
->> So am I tempted to keep examples that clearly state whether
->> the issue is caused by compiler reordering instructions, or by
->> CPU speculation.
+> Add missing full-scale range array value.
 > 
-> Isn't it true that on strongly ordered CPUs, a compiler barrier is
-> sufficient to prevent the rcu_dereference() problem?  So the whole idea
-> behind ptr_eq() is that it prevents the problem on all CPUs.
-
-Correct. But given that we have ptr_eq(), it's good to show how it
-equally prevents the compiler from reordering address-dependent loads
-(comparison with constant) *and* prevents the compiler from using
-one pointer rather than the other (comparison between two non-constant
-pointers) which affects speculation on weakly-ordered CPUs.
-
-> You can make your examples as specific as you like, but the fact remains
-> that ptr_eq() is meant to prevent situations where both:
-> 
-> 	The compiler uses the wrong pointer for a load, and
-> 
-> 	The CPU performs the load earlier than you want.
-> 
-> If either one of those doesn't hold then the problem won't arise.
-
-Correct.
+> Fixes: 94a9b7b1809f ("iio: light: add support for TI's opt3001 light sensor")
+> Signed-off-by: Emil Gedenryd <emil.gedenryd@axis.com>
+This one is already queued up, so you can drop it from future
+versions of this series posted for review.
 
 Thanks,
 
-Mathieu
+Jonathan
 
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+> ---
+>  drivers/iio/light/opt3001.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/iio/light/opt3001.c b/drivers/iio/light/opt3001.c
+> index 887c4b776a86..176e54bb48c3 100644
+> --- a/drivers/iio/light/opt3001.c
+> +++ b/drivers/iio/light/opt3001.c
+> @@ -138,6 +138,10 @@ static const struct opt3001_scale opt3001_scales[] = {
+>  		.val = 20966,
+>  		.val2 = 400000,
+>  	},
+> +	{
+> +		.val = 41932,
+> +		.val2 = 800000,
+> +	},
+>  	{
+>  		.val = 83865,
+>  		.val2 = 600000,
+> 
 
 
