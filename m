@@ -1,89 +1,111 @@
-Return-Path: <linux-kernel+bounces-342419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B338988EC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 11:22:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA59C988ECB
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 11:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05CFF28249E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 761EF1F21AA2
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C904119F10F;
-	Sat, 28 Sep 2024 09:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E2BoSkdh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BE519F138;
+	Sat, 28 Sep 2024 09:24:21 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CE974BED;
-	Sat, 28 Sep 2024 09:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA6219E965
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 09:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727515325; cv=none; b=rwZ2lUjVlJ6p3oMxztiGVGsSfA3OYowWkmcOLoSlL9NYeOF2WUYPsZoMjoVSpTUypfeOjFMxmS2wblbZQkLLCU7BOC6Y1rJ8/wHERTt7Y75SmNY947rQfk+7udeX28S9paBg2j9b64p4PHgylYFWIoy0x8Ps953u5WzBaI481uI=
+	t=1727515461; cv=none; b=alT80EnRGg66CARwr36sIxauHYdqnsRoc5fCzrxV7omXLdIB0b0qFZuNWSmQ9tB/RVnb0pR05pljiduq6BPus8ceM9wHJBd/XrFoAf74hjrGNT6oW6tdDXcs04P0JUq27R7TJveDI9kYw8bABiUmxay9pRawVQXyLI+aYm8lg2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727515325; c=relaxed/simple;
-	bh=uCgtAKSgxvi3oFwpCxLapBxV0u9+nUh8QinzO5ofaro=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=dvL+Gaes22hJo4xM0b7nKPHUZMIXWD3K/uEPYeP+KtVOZ088Farx5urai1e3lesRppAyJOLXpYIcp498H4cDOGmq9JqbAZpfgyPm15Yh04VSABbRoE6pFtiZTdFkjJwf/HdT9ES177w8SZfSrD/bkkrTJMwQNLM6OFR8qlcw4Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E2BoSkdh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91AFFC4CEC3;
-	Sat, 28 Sep 2024 09:22:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727515324;
-	bh=uCgtAKSgxvi3oFwpCxLapBxV0u9+nUh8QinzO5ofaro=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=E2BoSkdh7EcgYYncu4sHIzlPwyxK84ixHU61HX94xf4KZ9JD7nreUCTEsGbmO+lG2
-	 HgMXEICrW1wWK412VPQxVkq/mGRiaKWq1VOeKoUxyMpcW8Xsh27MpECLeoeyfE+vtQ
-	 uIkaFrRfka/77Z3/VCSkrTI4gVuaDjxWgUr6ntUk9gYe3e2WzBbVx3R3YGXE57oYTM
-	 gKgO6xmhJYUy7DweOn8V0vSr2mv/0Wh8gWSKvNuKhsxsKO4oV4n25qeDguJw9clhwv
-	 fl6NfrkVvzoSO+TJRx00tMBelSYI8PtP+iasBcJRCIOYaF8XdXnspNAB/lDCK7BJrj
-	 8vybX7HEsILMQ==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1727515461; c=relaxed/simple;
+	bh=aXnYmNA3D4Zi6MT4JWf0ODz8h/3lfqb0mT5NJS7phNw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PE5kNOT70WbCSwAALBKmoo/j6okOXqmIhwSMk04eoG2o4VDFKCTqpTy3DJJ2dDuUle3EOkZRNsP6Vrrj1GgC5eb+9vbfs+VEHME7TCRXcAK6XXiFgfHsULrJIWCo6tQp/K+UuYoBf/4zdt4w5xyC4tvvzaTw+ucFfddXIy3WIWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav120.sakura.ne.jp (fsav120.sakura.ne.jp [27.133.134.247])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 48S9OHbo075641;
+	Sat, 28 Sep 2024 18:24:17 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav120.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp);
+ Sat, 28 Sep 2024 18:24:17 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 48S9NtdO075537
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 28 Sep 2024 18:24:17 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <deff904e-5c56-42ae-b8b0-7b55580b023a@I-love.SAKURA.ne.jp>
+Date: Sat, 28 Sep 2024 18:23:53 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] Monthly lsm report (Sep 2024)
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        syzbot <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
+ <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
+ <03c3a47ca225050d37dca6a9249c1f978f1fc56b.camel@huaweicloud.com>
+ <734977390eeecba39789df939a00904e87367e5e.camel@huaweicloud.com>
+ <nqxo5tqcwbwksibg45spssrnhxw7tabfithgnqnmpl2egmbfb7@gyczfn7hivvu>
+ <owdoubzm3jqf4cuhawaavver5mzko32ijuh2nrm5vhzegmjbmf@az3mweawrni6>
+ <ceb762ee-2518-44d1-b73c-fd165da7fbbb@I-love.SAKURA.ne.jp>
+ <pdghzlvw6ypcju6ldsngka44cjp6g56bjjsmxm3sd7dqev4g6y@x72zm7vurxyz>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <pdghzlvw6ypcju6ldsngka44cjp6g56bjjsmxm3sd7dqev4g6y@x72zm7vurxyz>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the inputs
- of
- the ath11k on WCN6855
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240814082301.8091-1-brgl@bgdev.pl>
-References: <20240814082301.8091-1-brgl@bgdev.pl>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- ath11k@lists.infradead.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172751531994.2249584.3150490336155869162.kvalo@kernel.org>
-Date: Sat, 28 Sep 2024 09:22:01 +0000 (UTC)
 
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-
-> Describe the inputs from the PMU of the ath11k module on WCN6855.
+On 2024/09/28 17:57, Kent Overstreet wrote:
+> On Sat, Sep 28, 2024 at 03:49:27PM GMT, Tetsuo Handa wrote:
+>> On 2024/09/28 10:25, Kent Overstreet wrote:
+>>> And looking further, I don't see anyhting in the console log from when
+>>> bcachefs actually mounted (???), which means I don't think I have enough
+>>> to go on. It's clearly an upgrade path issue - we didn't run
+>>> check_allocations as is required when upgrading to 1.11 - but it's not
+>>> reproducing for me when I run tests with old tools.
+>>>
+>>> Can we get some more information about the syzbot reproducer? Exact
+>>> tools version, format command and mount command.
+>>
+>> Reproducer for this bug is not yet found. But syzbot does not use userspace
+>> tools. That is, testing with old (or new) tools will not help. Please note
+>> that syzbot uses crafted (intentionally corrupted) filesystem images. If the
+>> kernel side depends on sanity checks / validations done by the userspace
+>> side, syzbot will find oversights on the kernel side. Please don't make any
+>> assumptions made by the userspace tools.
+>>
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+> You seem to be confused; how do you expect sysbot to test a filesystem
+> without the format comand?
 
-Patch applied to ath-next branch of ath.git, thanks.
+Please find syz_mount_image$bcachefs from e.g.
+https://syzkaller.appspot.com/text?tag=CrashLog&x=17441e80580000 .
 
-02d697272cc6 dt-bindings: net: ath11k: document the inputs of the ath11k on WCN6855
+syzbot creates in-memory filesystem image using memfd and mount it
+using loopback devices. For example,
+https://syzkaller.appspot.com/text?tag=ReproC&x=102e0907980000 is
+a C reproducer for an ext4 bug; check how setup_loop_device() and
+syz_mount_image() are used for mounting filesystems.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240814082301.8091-1-brgl@bgdev.pl/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-https://docs.kernel.org/process/submitting-patches.html
+Again, syzbot does not use userspace tools for managing filesystems.
 
 
