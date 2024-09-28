@@ -1,214 +1,178 @@
-Return-Path: <linux-kernel+bounces-342499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD58988FB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:36:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC26988FB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6A061F21438
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:36:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF99A1F21854
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614D11BC44;
-	Sat, 28 Sep 2024 14:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ug9Lq6qL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DCB1B285;
+	Sat, 28 Sep 2024 14:38:25 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FD1171C2;
-	Sat, 28 Sep 2024 14:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0EA18E11;
+	Sat, 28 Sep 2024 14:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727534183; cv=none; b=g8urXxzSAtabkxW17WOqAo7N/m875goD/fK2INDy4+K7i6iX1Bejdpx1R8P+VR0nie+oS8Wj5uNeaETVLx0lnuqGKVERbRWRE3ESdtBlZ1zaE4/URb15gA6t0CO+wLhgnMNXNZSNlYZDLex6JucYFCb1el3E5Ae4E4ZlLhaLDlw=
+	t=1727534305; cv=none; b=GDtyOifNPeWzqI2TA9YBkgPjmqJhdH0LDsl++fitSGapyoXo7D2tispvE6Gt08BZRMG7OcFu1iueHRFXR54yTFQ9ABnwuxtPnhIANirDUUZQGUYbetLqTtxChJYvdylf+GTF4h0QNrBj/e+tlu/mfUm848pMtXRaSf47POlOcdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727534183; c=relaxed/simple;
-	bh=nRRUMseygmxYxhEF2/iockbCVkHQbD6xwG9F33DE7zs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fttDeX4qaoFa20LmS85RpRIZrtouGWYcHNaCJ8OKCmQX9SMSANXTEBydn1WenYER0T9LMS6jGd4dKUIP5qlvoEbpgxxBx+RB6H/h0S/D1Gf3G0CRiFIOiD6pTldH1ZMAfQg9HKAUuGf0QNRWmvyO+OYjBqr1xbhl+cdXNDXLMb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ug9Lq6qL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17FDEC4CEC3;
-	Sat, 28 Sep 2024 14:36:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727534183;
-	bh=nRRUMseygmxYxhEF2/iockbCVkHQbD6xwG9F33DE7zs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ug9Lq6qLGoBOTo3GfgOQ0/ASNDqkRfywpHGHJNm/DCdtWvpdwxFUKPwHf3+tuD1nP
-	 ox5EdqvaQZ/ktBax3yv4wA0Qx+x3jck4u3TI1kcgeYRE4ucrT03yYyfiZPyeZuS4Ap
-	 VxMGFW30b/NLCeH3+3Yq3vZuARkaLssmG4H7Ob+XxFrFd670GH7/MRlKuWvfxrSJYh
-	 9i+PZDiU+GgbJHa+TJxOa9Dq1x/5gGwWeLdhy+AZm18oaHXpZI4lld3GgycMHpZirq
-	 gmR21yh3qY7drsCi0iIuNuvBdu1QmV3ZmTdJmR3W3+S1T87/j3WGmyeIIIRsdRk7st
-	 duSH7rhpYnzvw==
-Date: Sat, 28 Sep 2024 15:36:14 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
-Cc: "lars@metafoo.de" <lars@metafoo.de>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>, "dima.fedrau@gmail.com"
- <dima.fedrau@gmail.com>, "marcelo.schmitt1@gmail.com"
- <marcelo.schmitt1@gmail.com>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "Lorenz Christian (ME-SE/EAD2)"
- <Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike (ME/PJ-SW3)"
- <Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
- <Kai.Dolde@de.bosch.com>
-Subject: Re: [PATCH v7 2/2] iio: imu: smi240: add driver
-Message-ID: <20240928153614.758ea7e8@jic23-huawei>
-In-Reply-To: <AM8PR10MB4721D14E9A13F1DE04FA8B68CD612@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-References: <20240913100011.4618-1-Jianping.Shen@de.bosch.com>
-	<20240913100011.4618-3-Jianping.Shen@de.bosch.com>
-	<20240914173229.57548005@jic23-huawei>
-	<AM8PR10MB4721196E13BCDAD7ABAD8E85CD602@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-	<20240917121301.3864a3f7@jic23-huawei>
-	<AM8PR10MB4721D14E9A13F1DE04FA8B68CD612@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727534305; c=relaxed/simple;
+	bh=orNYKmAZbrf/C4rgpwI9BuYiqkQCDmytE2oEUIOF6vk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MGQ9O6+mBVt9wyAbdBweYtu0TMhUr15fcCZkEm3/TuOAzFJ/jc0yzR7005b3fW/mzmH7ztFUgyWyU4Z84gFDFH1oiiVCBcd983zd/Po6sJfsaZlxO2NUOl9DORHCVDPfUAKEVWobu6uUz+tqioOQFZCcgS8yRQHGiizQr8TQtjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1suYaL-000000004ig-0ri1;
+	Sat, 28 Sep 2024 14:38:13 +0000
+Date: Sat, 28 Sep 2024 15:38:09 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
+	John Crispin <john@phrozen.org>, linux-mtd@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/2] dt-bindings: mtd: ubi-volume: add
+ 'volume-is-critical' property
+Message-ID: <ZvgU0eBEwTJ3sHuN@makrotopia.org>
+References: <e0936674dd1d6c98322e35831b8f0538a5cfa7a3.1727527457.git.daniel@makrotopia.org>
+ <7a2e8819-ac70-4070-a731-53994c72cd79@kernel.org>
+ <Zvf_84xxhxwpPgee@makrotopia.org>
+ <18e9d774-813b-427e-9938-53853d695e18@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <18e9d774-813b-427e-9938-53853d695e18@kernel.org>
 
-On Tue, 17 Sep 2024 13:13:57 +0000
-"Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com> wrote:
-
-> >> >Hi Shen,
-> >> >
-> >> >I suspect I led you astray.  regmap core seems unlikely to feed us
-> >> >little endian buffers on writes (they should be CPU endian I think)
-> >> >so there should be memcpy() for that not a get_unaligned_le16()
-> >> >  
-> >> >> +
-> >> >> +static int smi240_regmap_spi_write(void *context, const void *data,
-> >> >> +				   size_t count)
-> >> >> +{
-> >> >> +	u8 reg_addr;
-> >> >> +	u16 reg_data;
-> >> >> +	u32 request;
-> >> >> +	struct spi_device *spi = context;
-> >> >> +	struct iio_dev *indio_dev = dev_get_drvdata(&spi->dev);
-> >> >> +	struct smi240_data *iio_priv_data = iio_priv(indio_dev);
-> >> >> +
-> >> >> +	if (count < 2)
-> >> >> +		return -EINVAL;
-> >> >> +
-> >> >> +	reg_addr = ((u8 *)data)[0];
-> >> >> +	reg_data = get_unaligned_le16(&((u8 *)data)[1]);  
-> >> >
-> >> >Why is the regmap core giving us an le16?
-> >> >I probably sent you wrong way with this earlier :( memcpy probably
-> >> >the correct choice here.  
+On Sat, Sep 28, 2024 at 03:45:49PM +0200, Krzysztof Kozlowski wrote:
+> On 28/09/2024 15:09, Daniel Golle wrote:
+> > On Sat, Sep 28, 2024 at 03:02:47PM +0200, Krzysztof Kozlowski wrote:
+> >> On 28/09/2024 14:47, Daniel Golle wrote:
+> >>> Add the 'volume-is-critical' boolean property which marks a UBI volume
+> >>> as critical for the device to boot. If set it prevents the user from
+> >>> all kinds of write access to the volume as well as from renaming it or
+> >>> detaching the UBI device it is located on.
+> >>>
+> >>> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> >>> ---
+> >>>  .../devicetree/bindings/mtd/partitions/ubi-volume.yaml   | 9 +++++++++
+> >>>  1 file changed, 9 insertions(+)
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml b/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml
+> >>> index 19736b26056b..2bd751bb7f9e 100644
+> >>> --- a/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml
+> >>> +++ b/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml
+> >>> @@ -29,6 +29,15 @@ properties:
+> >>>      description:
+> >>>        This container may reference an NVMEM layout parser.
+> >>>  
+> >>> +  volume-is-critical:
+> >>> +    description: This parameter, if present, indicates that the UBI volume
+> >>> +      contains early-boot firmware images or data which should not be clobbered.
+> >>> +      If set, it prevents the user from renaming the volume, writing to it or
+> >>> +      making any changes affecting it, as well as detaching the UBI device it is
+> >>> +      located on, so direct access to the underlying MTD device is prevented as
+> >>> +      well.
+> >>> +    type: boolean
 > >>
-> >> Yes, you are right. We shall use memcpy to keep the be CPU endian.  Just using  
-> >memcpy may be not enough.  
-> >>
-> >> Shall we also change regmap_config.val_format_endian  from  
-> >REGMAP_ENDIAN_LITTLE to  REGMAP_ENDIAN_NATIVE ?  
-> >>
-> >> This is to make sure that regmap_write passes the reg-value to  
-> >smi240_regmap_spi_write without changing the CPU endian.  
-> >>  
-> >Hmm. I'd missed that control.  If the register data needs to be little endian then it is
-> >correct to leave that set as REGMAP_ENDIAN_LITTLE as then the regmap core will
-> >do the endian swap for you on Big endian systems.
-> >
-> >If I follow that bit of regmap correctly it will then have the data in the right order so
-> >the above still wants to just be a memcpy.
-> >
-> >As it stands, on a Big endian host, regmap will use the val_format_endian to decide
-> >to flip the bytes.  This code then flips them back again and the value written is big
-> >endian which is not what you intend!
-> >
-> >Easy way to check this will be to set it, on your little endian host, to
-> >REGMAP_BIG_ENDIAN and see what you get in the value.
-> >Then consider if you'd had get_unaligned_be16 then it would end up as little endian
-> >again.  This should mirror the current situation if this driver runs on a big endian host.
-> >
-> >Hope that confusing set of comments helps!
-> >
-> >Jonathan
-> >  
-> Hi  Jonathan,
+> >> UBI volumes are mapping to partitions 1-to-1, right? So rather I would
+> >> propose to use partition.yaml - we already have read-only there with
+> >> very similar description.
+> > 
+> > No, that's not the case.
+> > 
+> > An MTD partition can be used as UBI device. A UBI device (and hence MTD
+> > partition) can host *several* UBI volumes.
+> > 
+> > Marking the MTD partition as 'read-only' won't work, as UBI needs
+> > read-write access to perform bad block relocation, scrubbing, ...
 > 
-> we check the regmap behavior with the following tests
-> 
-> 1. host : little endian   val_format_endian ==REGMAP_BIG_ENDIAN     regmap_write(data->regmap, REG_ADDR, 0x12AB)  
->     then  in smi240_regmap_spi_write(void *context, const void *data, size_t count)    we have data[0]== REG_ADDR, data[1]==0xAB , data[2]==0x12 
-> 
-> 2. host : little endian   val_format_endian ==REGMAP_BIG_LITTLE     regmap_write(data->regmap, REG_ADDR, 0x12AB)  
->     then  in smi240_regmap_spi_write(void *context, const void *data, size_t count)    we have data[0]== REG_ADDR, data[1]==0x12 , data[2]==0xAB
-> 
-> 3. host : little endian   val_format_endian ==REGMAP_BIG_NATIVE     regmap_write(data->regmap, REG_ADDR, 0x12AB)  
->     then  in smi240_regmap_spi_write(void *context, const void *data, size_t count)    we have data[0]== REG_ADDR, data[1]==0x12 , data[2]==0xAB
-> 
-> when regmap_write passes the reg-value to the underlaying spi-write function, it flips the bytes if  val_format_endian != cpu_endian
-> 
-> Since we prepare the request and the reg-value (as part of the request) with cpu_endian, we need to make sure that the cpu_endian keeps untouched until we pass the whole request to spi buffer using  "iio_priv_data->spi_buf = cpu_to_be32(request)"
-> Therefore we need to remove the change of cpu_endian during the request preparation. 
-> 
-> 1. Instead get_unaligned_le16 now we use memcpy to take the reg-value without changing the cpu_endian.
-> 2, we use REGMAP_BIG_NATIVE on val_format_endian to make sure when regmap_write passes the reg-value to the underlaying spi-write function the cpu_endian kept untouched.
-> 
-> This makes our driver be able to work properly on both little endian and big endian host. We tested the new changes on little endian host it works properly. Big endian host case is not tested yet, since today the big endian processors are almost dead.
-> 
-> The next version will looks like that.
-> 
-> static const struct regmap_config smi240_regmap_config = {
-> 	.reg_bits = 8,
-> 	.val_bits = 16,
-> 	.val_format_endian = REGMAP_ENDIAN_NATIVE,
+> OK, so not partition but read-only volume.
 
-You say REGMAP_BIG_NATIVE above by which I think you mean REGMAP_ENDIAN_BIG
-(which seems correct to me) but then set REGMAP_ENDIAN_NATIVE here.
-
-Other than that this looks correct and thanks for working through
-the test cases above.
++1
 
 > 
-> };
+> > 
+> > Also, typically not all UBI volumes on a UBI device are
+> > read-only/critical but only a subset of them.
+> > 
+> > But you are right that the description is inspired by the description
+> > of the 'read-only' property in partition.yaml ;)
+> > 
+> > I initially thought to also name the property 'read-only', just like
+> > for MTD partitions. However, as the desired effect goes beyond
+> > preventing write access to the volume itself, I thought it'd be
+> > better to use a new name.
 > 
-> static int smi240_regmap_spi_write(void *context, const void *data,size_t count)
-> {
-> 	u8 reg_addr;
-> 	u16 reg_data;
-> 	u32 request;
-> 	struct spi_device *spi = context;
-> 	struct iio_dev *indio_dev = dev_get_drvdata(&spi->dev);
-> 	struct smi240_data *iio_priv_data = iio_priv(indio_dev);
-> 	if (count < 2)
-> 		return -EINVAL;
-> 
-> 	reg_addr = ((u8 *)data)[0];
-> 	memcpy(&reg_data, &((u8 *)data)[1], 2);
-> 
-> 	request = FIELD_PREP(SMI240_BUS_ID_MASK, SMI240_BUS_ID);
-> 	request |= FIELD_PREP(SMI240_WRITE_BIT_MASK, 1);
-> 	request |= FIELD_PREP(SMI240_WRITE_ADDR_MASK, reg_addr);
-> 	request |= FIELD_PREP(SMI240_WRITE_DATA_MASK, reg_data);
-> 	request |= smi240_crc3(request, SMI240_CRC_INIT, SMI240_CRC_POLY);
-> 
-> 	iio_priv_data->spi_buf = cpu_to_be32(request);
-> 	return spi_write(spi, &iio_priv_data->spi_buf, sizeof(request));
-> }
-> 
-> Is the new version now correct ?
-> 
-> Best regards
-> 
-> Jianping Shen
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
+> Yeah, maybe... critical indeed covers multiple cases but is also
+> subjective. For some bootloader is critical, for other bootloader still
+> might be fully A/B updateable thus could be modifiable. For others, they
+> want to use fw_setenv from user-space so not critical at all.
 
+The case I want to cover here is the bootloader itself being stored
+inside a UBI volume. MediaTek's fork of ARM TrustedFirmware-A bl2 comes
+with support for UBI and loads BL3 (which is TF-A BL31 and U-Boot, and
+maybe OP-TEE as well) from a static UBI volume. Removing, renaming or
+altering that volume results in the device not being able to boot any
+more and requiring a complicated intervention (at attaching debugging
+UART and using low-level recovery tool) in order to recover.
+
+It is true that also in this case a fully A/B updateable strategy could
+be implemented, however, typically that would not be done in Linux, but
+rather the code carrying out such update would be part of the bootloader
+itself.
+UEFI update capsules are a good example for that, but in most cases
+things are much less complex on simple embedded Linux networking
+appliances such as routers, access points, switches, ...
+
+> 
+> I am in general not so happy in describing flash layout in DT, because
+> it sounds way too policy or one-use-case specific.
+> 
+> UBI volume is purely SW construct. One OS can partition MTD in multiple
+> ways, so maybe I just do not understand why we have in the first place.
+
+Support for attaching UBI from DT and referencing UBI volumes has been
+added because they serve as NVMEM providers, ie. UBI volumes are used to
+store things such as Ethernet MAC addresses and Wi-Fi calibration data,
+similar to how it also works on devices with NOR flash and simple MTD
+partitions holding that data.
+And we needed the kernel drivers to be able to access that information
+directly, also in case eg. nfsroot is being used.
+
+So while it's true that both, MTD partitioning as well as use of UBI
+are pure software constructs, their use can go beyond and below the OS
+kernel, meaning that early boot firmware usually requires a specific MTD
+partition layout, and some require also certain UBI volumes to be present
+for the device to be able to even start the bootloader.
+
+It is also true that (just like MTD partitioning as well) it is
+questionable whether this should be communicated as a property of the
+flash hardware in DT, or rather end up as information filed under the
+/chosen node which to me seems more appropriate. Moving all MTD
+partitioning away from the node representing the flash chip and into the
+/chosen node would have to happen in a way which doesn't break
+compatibility with existing DT, which all describe MTD partitions as a
+subnode of the storage hardware itself. Obviously that is beyond the
+scope (and independent) of being able to mark some UBI volumes as
+critical.
 
