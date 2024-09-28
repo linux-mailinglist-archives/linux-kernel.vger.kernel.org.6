@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-342313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D8C988D83
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 04:16:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93633988D86
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 04:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C8CC1C20298
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:16:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBE211F2233A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B30142A81;
-	Sat, 28 Sep 2024 02:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8802560B8A;
+	Sat, 28 Sep 2024 02:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lw1e5ogQ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HTm0byvn"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FB31C286
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 02:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5618238389
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 02:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727489787; cv=none; b=hKXE1w1Yyda49LweQ+ylnAgD80PLSIrWDKXL0btpY5fqq06pjB4L+b3fUs9aADYz1qLDYSYsfcqz8SA1ZlstgHQyCnGSAFy3hKB9w0qBPa1z78opObHC2pcjLQHEevwKRmTHT8bj3+bFWn6+V2HtqbZsE3znYHonCSKU7WnrCNg=
+	t=1727489788; cv=none; b=LNltF+ij/lg7CBrEuifdKlX283700JsqzZV3IfUsRKZnOfLuxPbnkTJzHUN7/wsnji0lDYlmuwV9l77P7+mND6sPdjHkxlf/Qk1o7tS0Ep0/LgEB6tX3JZ4UJ+P/AXk1rF9Tmd7wBU+FAEEMWZolHPOgjMyVCNJvywiYZF1r004=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727489787; c=relaxed/simple;
-	bh=/WDA8F+aPpzJk3yIqLIwiWFiov3kl+WxDzwsHsiRG30=;
+	s=arc-20240116; t=1727489788; c=relaxed/simple;
+	bh=QHKnkJGGdaPi/P8pWr1YVsvSRJmDf6+suHy+r3IyAYQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=g1emX7miWVZEFmiycLC3kedBToqpmA/2FDBIVvRLs4mIoxVuda0mufVc8yq3rDi0+nwKPEK9bmapxJagt+6NIkDUATwuNQxpLCR9QbTkJlU43wmeT8eBUqHfQI5FUiREm2c+Jm40gdRnrptpdhfcwsb7PIifEsDH46T8rqaIKbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lw1e5ogQ; arc=none smtp.client-ip=192.198.163.13
+	 MIME-Version; b=ckR6tnlGFiiPoZIUgzCMFcCYpEvgdPjEDXipQiTqZ+xlz1GAUDKiEAP/CqBKNt9RXA+T6SA++7IZkuT8CsirFya2D8k/8OTADDbWAEYWGYa9lW3jL7ntvE6zVXXIKCBYCDS/96RHwmSluF/N9b/8nJlwgyIWgbUJQJBnfD19aTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HTm0byvn; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727489785; x=1759025785;
+  t=1727489787; x=1759025787;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=/WDA8F+aPpzJk3yIqLIwiWFiov3kl+WxDzwsHsiRG30=;
-  b=Lw1e5ogQ09COCWG4Q3ij/cExfzmu1au+xeO/bccIRuZqlnnaVK9tzA60
-   4cN2lSBdpVdfooYo1mhVVML9xpOYKcTnPDmA6omEMgvGVqLcaH4zbpDhZ
-   HNoIUgVWy6Z4dSqz/CwiFiHR9IdUy5LbPxtzXLpEVu133zQrpHal81Qvl
-   Jkx5iLzQbKyowCr54NVIxpXbDb66Pf3h2jXZ7BKum+74yLD9hfy4T5WuW
-   U5JPzKBiyudT0ss7BnY9YTtfoTHfUC8CqMFwqmDj4unn1cfrP5EfCIQAN
-   mhBxGpJ53sxNXf/Km3Cc5YSlXdPBDLf1uD1lXUaGSl86d4ffINGHeDfmr
-   g==;
-X-CSE-ConnectionGUID: 52O2MEFQQ4aGqwncK01rBg==
-X-CSE-MsgGUID: zgoFGUyMQcCAVrilnnPsPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="29526875"
+  bh=QHKnkJGGdaPi/P8pWr1YVsvSRJmDf6+suHy+r3IyAYQ=;
+  b=HTm0byvnzXkP9HeJ92lpTpdGE2YxqttyZb5Xz4VFHy987RZgNL8Lt4h8
+   Pxzqiygb/TQLYw2RknEj1qMzJX1wKyuXW8nALWffbEGx5Tkc+HYF9bG4B
+   oG2Cn6Cxnr+RccZvyNBOiFafvhMhn+8yiRi+1fMe7B9rlXz0xaA4E8U5z
+   ZU3PXrqSpMko+Y0gu8OayKOm0W0J/SteSfjIFRvxdQoclqXlyB7Jzcyvj
+   KtLHeb3xTGRLPQ9Lo5SdNRaVz9Dq4jwQfEw1+P5Mm+Y0OwrThCYvXvSh6
+   nbZrXBuYbLNFW8Ai+JUHhP7tg0pX3L3lDoReL4nOktd7kegc0Ww8SU9m9
+   A==;
+X-CSE-ConnectionGUID: Q/8KffVeRXiZNplaLzrckA==
+X-CSE-MsgGUID: mtULPFWtSeCe88QxYczbJQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="29526884"
 X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
-   d="scan'208";a="29526875"
+   d="scan'208";a="29526884"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
   by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 19:16:21 -0700
-X-CSE-ConnectionGUID: H4RpcxvRRyKCBU3hp5OkjA==
-X-CSE-MsgGUID: hIO6QzIVRNS6vQR5jZoNyA==
+X-CSE-ConnectionGUID: NLInsGB0QhKm+ll4bJ7x3w==
+X-CSE-MsgGUID: VaCbO+f5T0Sm7iNs63SZkw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
-   d="scan'208";a="73507119"
+   d="scan'208";a="73507123"
 Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
   by orviesa008.jf.intel.com with ESMTP; 27 Sep 2024 19:16:21 -0700
 From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
@@ -74,9 +74,9 @@ Cc: nanhai.zou@intel.com,
 	wajdi.k.feghali@intel.com,
 	vinodh.gopal@intel.com,
 	kanchana.p.sridhar@intel.com
-Subject: [PATCH v8 3/8] mm: zswap: Rename zswap_pool_get() to zswap_pool_tryget().
-Date: Fri, 27 Sep 2024 19:16:15 -0700
-Message-Id: <20240928021620.8369-4-kanchana.p.sridhar@intel.com>
+Subject: [PATCH v8 4/8] mm: Provide a new count_objcg_events() API for batch event updates.
+Date: Fri, 27 Sep 2024 19:16:16 -0700
+Message-Id: <20240928021620.8369-5-kanchana.p.sridhar@intel.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20240928021620.8369-1-kanchana.p.sridhar@intel.com>
 References: <20240928021620.8369-1-kanchana.p.sridhar@intel.com>
@@ -88,55 +88,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Modify the name of the existing zswap_pool_get() to zswap_pool_tryget()
-to be representative of the call it makes to percpu_ref_tryget().
-A subsequent patch will introduce a new zswap_pool_get() that calls
-percpu_ref_get().
-
-The intent behind this change is for higher level zswap API such as
-zswap_store() to call zswap_pool_tryget() to check upfront if the pool's
-refcount is "0" (which means it could be getting destroyed) and to handle
-this as an error condition. zswap_store() would proceed only if
-zswap_pool_tryget() returns success, and any additional pool refcounts that
-need to be obtained for compressing sub-pages in a large folio could simply
-call zswap_pool_get().
+With the introduction of zswap_store() swapping out large folios,
+we need to efficiently update the objcg's memcg events once per
+successfully stored folio. For instance, the 'ZSWPOUT' event needs
+to be incremented by folio_nr_pages().
 
 Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 ---
- mm/zswap.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/memcontrol.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index fd7a8c14457a..0f281e50a034 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -403,7 +403,7 @@ static void __zswap_pool_empty(struct percpu_ref *ref)
- 	spin_unlock_bh(&zswap_pools_lock);
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 15c2716f9aa3..f47fd00c5eea 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1778,6 +1778,21 @@ static inline void count_objcg_event(struct obj_cgroup *objcg,
+ 	rcu_read_unlock();
  }
  
--static int __must_check zswap_pool_get(struct zswap_pool *pool)
-+static int __must_check zswap_pool_tryget(struct zswap_pool *pool)
++static inline void count_objcg_events(struct obj_cgroup *objcg,
++				      enum vm_event_item idx,
++				      unsigned long count)
++{
++	struct mem_cgroup *memcg;
++
++	if (!memcg_kmem_online())
++		return;
++
++	rcu_read_lock();
++	memcg = obj_cgroup_memcg(objcg);
++	count_memcg_events(memcg, idx, count);
++	rcu_read_unlock();
++}
++
+ #else
+ static inline bool mem_cgroup_kmem_disabled(void)
  {
- 	if (!pool)
- 		return 0;
-@@ -441,7 +441,7 @@ static struct zswap_pool *zswap_pool_current_get(void)
- 	rcu_read_lock();
+@@ -1834,6 +1849,11 @@ static inline void count_objcg_event(struct obj_cgroup *objcg,
+ {
+ }
  
- 	pool = __zswap_pool_current();
--	if (!zswap_pool_get(pool))
-+	if (!zswap_pool_tryget(pool))
- 		pool = NULL;
++static inline void count_objcg_events(struct obj_cgroup *objcg,
++				      enum vm_event_item idx,
++				      unsigned long count)
++{
++}
+ #endif /* CONFIG_MEMCG */
  
- 	rcu_read_unlock();
-@@ -462,7 +462,7 @@ static struct zswap_pool *zswap_pool_find_get(char *type, char *compressor)
- 		if (strcmp(zpool_get_type(pool->zpool), type))
- 			continue;
- 		/* if we can't get it, it's about to be destroyed */
--		if (!zswap_pool_get(pool))
-+		if (!zswap_pool_tryget(pool))
- 			continue;
- 		return pool;
- 	}
+ #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
 -- 
 2.27.0
 
