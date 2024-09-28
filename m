@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-342575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1A5989086
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:45:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22A298908A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD207B2143B
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:45:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55FFF1F223B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C891140E5F;
-	Sat, 28 Sep 2024 16:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D76F6F099;
+	Sat, 28 Sep 2024 16:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/jZH9+Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIxXI601"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5E441C7F;
-	Sat, 28 Sep 2024 16:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A84960B8A;
+	Sat, 28 Sep 2024 16:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727541900; cv=none; b=YGUXa3hSEHsT5K3AFYl++jCzklhDjfqSFjgy7OZrhk4fL2JXub9sjd8KQQByqzk35D+yUfxoWUpaPGizQT3goH+rtJcN9t554XVKSS2NU77d99nx0qd1CxZMnpj8Qec7Ybs43iMI22C7Fk4Q+kmcRqHGHJV/rogHVsnz456CbpA=
+	t=1727541906; cv=none; b=krXni5N1FBzXFqxe8IcM/l2QU9xBSUFXlqf+tFSBFYXVViD4+0uGbP1rVHe8mAPNTHeGc8QfX0IQSfrEUvUaSvJ9jF5/9r4xvtvBdp6z0a0RJW/waFLdQ/Tuf5k1UlKKFbisbld0h28OdQitIluOgej17K+GwMasDcfttbedIUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727541900; c=relaxed/simple;
-	bh=n+2FOMOPrt8TvPY95vA1Hh4z5CLQC3xMPbPLwTzJm8c=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ZcSMpsTgfWHpOnF3mXJlMQ0EPMGN72jhDMi7wW3eTGjmLCx7SnAgh28PB8C4m8dc648cTbHYOdya3xsQRxHbf/2kSDNHKxdAiVWXpeauG5krgQRVVHaPf0DrP42WpldcaH/gxyassOxxVyWqh1gDkJt7Hb7/7oVUlGINDLgttcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/jZH9+Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80052C4CEC3;
-	Sat, 28 Sep 2024 16:45:00 +0000 (UTC)
+	s=arc-20240116; t=1727541906; c=relaxed/simple;
+	bh=W+QCWxaV3/8+3vmy4b0wINy5wFK776ZoGeWIdhLw6SI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Wdqjiv8+h/pxzVDux1DTHZrJkcdqMDcwLL68fEb3U3d54uQoOgWuXLq1+zkjD45oR65ASiFtEq3cZWwAn9P25gEXMf5uqWQYoyvDyqyXyXArN62XX4GnTo41efvo/Ffgo9Lnnt/NqQ4CoI38NykUuaHDzow5uR0lli8OhiIYUiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIxXI601; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1E68C4CEC3;
+	Sat, 28 Sep 2024 16:45:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727541900;
-	bh=n+2FOMOPrt8TvPY95vA1Hh4z5CLQC3xMPbPLwTzJm8c=;
+	s=k20201202; t=1727541906;
+	bh=W+QCWxaV3/8+3vmy4b0wINy5wFK776ZoGeWIdhLw6SI=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=j/jZH9+ZJlc9myX1ErCPqLGhf860ZMAl8Bg0x6OvdsyWQ2DcAuwjzOOlqPSL1ZJ2D
-	 obcXLSRhpSecdsx7Vgu0FRMNqyRN6500nZbIrxkqHN0sNDpszv7K5ORW5s68xDnj2h
-	 CKG0fJ7U6QqNepgDjFlg5nLtw4qHOcue0Y5oSfxw3j4GEvHK8iiYkfBgNipksOfj6e
-	 6FhEb+N98r7mIPVH7l3C3lPK9Xi7FL/gwZ2gwLEYshh9GVOJov7hN/+3TXSojMnslX
-	 kqWVqefWLOfEER+t5ea3XoQQ4PpQ1CLvxGtvBFHq9mwAVvbaGKsn8c2e5h+lHiHUkG
-	 gPCTx7AkV21ew==
+	b=cIxXI601wPwSRkEIgNXmv8L7GtOOlcUFl4a5vy72QEelpprjAjSOAe55/5NLNQUmt
+	 yUeLaZoWSZGLjz3jR5nL8mYLv/AAE5y03IEm1UNtBgCbWSkkPUnQ6WpPWGlrclyANp
+	 0m/PDwnzSKraPgVpeVaKbdFZcWLsQXToh7rKLe4Blhe9fMErykSZnkvmbHvrEptfEL
+	 wk0lr3tyzfsPT8hS9fjfq1DL1BzvY5Y0QQi1fr8xYbJU+K/k2mJkudPYns95aio6jR
+	 mNTq+MzHqtzIc87IUsUm1ugK7OU0WAGmQXES6j+47titVzxRn5Ou8i5m+huqCt45AE
+	 vXFojaRX0LBFQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71DE73809A80;
-	Sat, 28 Sep 2024 16:45:04 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph fixes for 6.12-rc1
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB8073809A80;
+	Sat, 28 Sep 2024 16:45:09 +0000 (UTC)
+Subject: Re: [GIT PULL] smb3 client fixes
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240927214629.141146-1-idryomov@gmail.com>
-References: <20240927214629.141146-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240927214629.141146-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.12-rc1
-X-PR-Tracked-Commit-Id: c08dfb1b49492c09cf13838c71897493ea3b424e
+In-Reply-To: <CAH2r5mv17isy4Or5+Gffn82y=HWWdgdsUOayJbbJ7dd4r3Teqw@mail.gmail.com>
+References: <CAH2r5mv17isy4Or5+Gffn82y=HWWdgdsUOayJbbJ7dd4r3Teqw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5mv17isy4Or5+Gffn82y=HWWdgdsUOayJbbJ7dd4r3Teqw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/6.12rc-more-smb3-client-fixes
+X-PR-Tracked-Commit-Id: 220d83b52c7d16ec3c168b82f4e6ce59c645f7ab
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 894b3c35d1de9cfa4f72b21e280d80d278879c20
-Message-Id: <172754190310.2302262.3989008838768415801.pr-tracker-bot@kernel.org>
-Date: Sat, 28 Sep 2024 16:45:03 +0000
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+X-PR-Merge-Commit-Id: f04ff5a02b66f99fce7c3293025169e440da8096
+Message-Id: <172754190862.2302262.15880490427280934322.pr-tracker-bot@kernel.org>
+Date: Sat, 28 Sep 2024 16:45:08 +0000
+To: Steve French <smfrench@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 27 Sep 2024 23:46:17 +0200:
+The pull request you sent on Fri, 27 Sep 2024 15:39:59 -0500:
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-6.12-rc1
+> git://git.samba.org/sfrench/cifs-2.6.git tags/6.12rc-more-smb3-client-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/894b3c35d1de9cfa4f72b21e280d80d278879c20
+https://git.kernel.org/torvalds/c/f04ff5a02b66f99fce7c3293025169e440da8096
 
 Thank you!
 
