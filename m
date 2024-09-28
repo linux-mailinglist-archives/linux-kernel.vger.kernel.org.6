@@ -1,101 +1,97 @@
-Return-Path: <linux-kernel+bounces-342584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0995F98909B
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:47:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3D798909C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAE3E280F2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:47:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 037542819F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D5613A40C;
-	Sat, 28 Sep 2024 16:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01A83B290;
+	Sat, 28 Sep 2024 16:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKODqdx9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SPsQO3AX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C95A52F71;
-	Sat, 28 Sep 2024 16:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1B322089
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 16:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727542055; cv=none; b=RCmTzQuvyxlTcpzMfMb3Lq4a3lJTrG+w5ng/IJr9FBL2tNPkoSr7X6Bdo+XA2CX1ypC6mNyXh/g8ytBFILKc9sxzn3w4k31wLL1v4MTPC8vaHFweeNRxbF7sxI4M6MaIydXGZ4K3W2w1nj9ngyFhqdhaeDORJlP5jFNCrjQnwNA=
+	t=1727542327; cv=none; b=hf7biwEUI15EZOZjOkowsqGreLEX/0DIfjM0hA8q2xux4ccjC8orAAK/oKYCo+tEKef/6f96qjuEw30upf8QwvJcPl5JPdssLobt469t2PzFTMtdhfVY8bFIENuFj7j5oAXivSOU3rpLTahhEnXe00xZerTHUcDjHLL+W1GCixc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727542055; c=relaxed/simple;
-	bh=XBwQYhto9eQRyzppeCrM5Ft/X8D4Ia0CMaJXH5MTD/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KWY023sBGx2EJ7Zi+b2m2GK/2W54RG7K3A4E/cSiIhkEtyIXzF0ydP1eo015DMFWKWHeU/oMLsnz85gfoPz44VDdEJYC52WY6jQP/ceAXJwzv2/kwNbVzDVEd/IdZCAjJUOuCBszqBge7NVWDIEV7XRKnZuB/ywQNUNAW14aq+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKODqdx9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D8FC4CEC3;
-	Sat, 28 Sep 2024 16:47:31 +0000 (UTC)
+	s=arc-20240116; t=1727542327; c=relaxed/simple;
+	bh=yKRhcmgvO7ZUa0g4UElPy8WX5eVQgICXeFas361yv0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eCJNqJE7ouTNOOZ1/p5vpSQjs4rYee6nPzzACGZmEHz2Y2t+bJbDQu1bXhVNqABZicJgiMM8Fy18NFltXSPZNt2GB5YRb4Yl/q6bRGUV11scHb55f2fhBAc5f3Cd0fUhH4grKWSYLPHQyYP3guOohZ5AezGUNCUY8TgG7iB1V4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SPsQO3AX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6CCDC4CEC3;
+	Sat, 28 Sep 2024 16:52:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727542055;
-	bh=XBwQYhto9eQRyzppeCrM5Ft/X8D4Ia0CMaJXH5MTD/M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MKODqdx9t3ZVR2XQnG+tuL8SnmYeeLyVgDqikMIJ7I7GyfFMEx4Agao+5v6lRe9m1
-	 fM4iqbuQxRuQ/5EjX62mpRkpUN9jetVxugxgXjAW7azc0hlMdc6JHtgt8cnijvyPkn
-	 Vw2qwzkHo1aWOhncb77ddFQE4P095ify2kMenOBSEesx7Y9l4vN1Vn0R3PC30jzgeJ
-	 VTT/9pXGkvFYOtgdSzxe/ucTAiE1Qmj4t8q5rQxrqT3c73aal16SzsMpcBiHfdXr6W
-	 uT+1Ax2X9b5PxRCBbTli/yAfivehy3al4NTNF5OXCklef37V3hGpJIaKlgL2u4n9oq
-	 8Iz1D9xY0ulXg==
-Date: Sat, 28 Sep 2024 17:47:26 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jean-Baptiste Maneyrol via B4 Relay
- <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
-Cc: jean-baptiste.maneyrol@tdk.com, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jean-Baptiste Maneyrol
- <jmaneyrol@invensense.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Add support of IAM-20680 HP & HT
-Message-ID: <20240928174726.6f6b4f0f@jic23-huawei>
-In-Reply-To: <20240923-inv-mpu6050-add-iam20680-ht-hp-v2-0-48290e0b9931@tdk.com>
-References: <20240923-inv-mpu6050-add-iam20680-ht-hp-v2-0-48290e0b9931@tdk.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1727542327;
+	bh=yKRhcmgvO7ZUa0g4UElPy8WX5eVQgICXeFas361yv0E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SPsQO3AXMIdwpFhAzHvxcA6+anoVkK8kVWOyVqkr+15ltxED7ojpGMOm3Dh1thosy
+	 37/aRjS4zbaBnM52Ej0PHR4byq8MXvMCaV9e2YZU+Pjo769FZvDbyfWgd5apcdtu/Q
+	 aI9+MvtbOagWDw7vkiE9bRHEoWy1QvuYCP9OVBP4L1lV3wt9FOE5fgQxXLegrzwl6/
+	 r7yWzHOQ3e43A0AcupdiTOnoaK/c4y873w3gbunSVbIRY2P3+iEc9yG1y+m+GG/6T6
+	 fSv/1xlPzvxljMbwxF+alIf2bbcD9zZHg6sO0Zk8hfmXNuo6xbPK5N2otDjroAkyeh
+	 2fcz26ijYEJ6A==
+Date: Sat, 28 Sep 2024 06:52:05 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <andrea.righi@linux.dev>
+Cc: void@manifault.com, peterz@infradead.org, mingo@redhat.com,
+	kernel-team@meta.com, linux-kernel@vger.kernel.org,
+	sched-ext@meta.com, Daniel Hodges <hodges.daniel.scott@gmail.com>,
+	Changwoo Min <multics69@gmail.com>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>
+Subject: Re: [PATCH 3/3] sched_ext, scx_qmap: Add and use SCX_ENQ_CPU_SELECTED
+Message-ID: <Zvg0NarLiSoguzCA@slm.duckdns.org>
+References: <20240927234838.152112-1-tj@kernel.org>
+ <20240927234838.152112-4-tj@kernel.org>
+ <ZvgC6rhPCxXYTrh6@gpd3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZvgC6rhPCxXYTrh6@gpd3>
 
-On Mon, 23 Sep 2024 16:53:20 +0200
-Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org> wrote:
+Hello,
 
-> Add support of IAM-20680 HP & HT variants. These chips have better
-> hardware specs and a bigger FIFO while retaining full compatibility with
-> IAM-20680.
+On Sat, Sep 28, 2024 at 03:21:46PM +0200, Andrea Righi wrote:
+...
+> > sched core has been udpated to specify ENQUEUE_RQ_SELECTED if
+> > ->select_task_rq() was called. Map it to SCX_ENQ_CPU_SELECTED and update
+> > scx_qmap to test it instead of SCX_ENQ_WAKEUP.
 > 
-> Changes for v2:
-> * Send patches to the correct list (devicetree was missing)
+> Even if it's quite convenient to have the SCX_ENQ_CPU_SELECTED flag
+> provided by kernel, I was wondering if we could just delegate this whole
+> logic to BPF and avoid introducing this extra flag in the kernel.
 > 
-> Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-Series applied to the testing branch of iio.git which I will rebase once
-rc1 is available.
-
-Thanks,
-
-Jonathan
-
-> ---
-> Jean-Baptiste Maneyrol (2):
->       dt-bindings: iio: imu: mpu6050: Add iam20680ht/hp bindings to mpu6050
->       iio: imu: inv_mpu6050: add support for IAM-20680HT/HP
+> In theory we could track when ops.select_cpu() is called by setting a
+> flag in the BPF task context (BPF_MAP_TYPE_TASK_STORAGE). Specifically,
+> the flag could be set in ops.select_cpu() and cleared in ops.stopping().
+> Then, when ops.enqueue() is called, we can check the flag to determine
+> whether ops.select_cpu() was skipped or not.
 > 
->  .../bindings/iio/imu/invensense,mpu6050.yaml         |  5 +++++
->  drivers/iio/imu/inv_mpu6050/inv_mpu_core.c           | 20 ++++++++++++++++++++
->  drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c            | 10 ++++++++++
->  drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h            |  4 ++++
->  drivers/iio/imu/inv_mpu6050/inv_mpu_spi.c            | 10 ++++++++++
->  5 files changed, 49 insertions(+)
-> ---
-> base-commit: 1504ee03b6e48187348d20f6efc74e7d93855728
-> change-id: 20240923-inv-mpu6050-add-iam20680-ht-hp-f5a42a96933b
-> 
-> Best regards,
+> Since most of the scx schedulers already implement their own task
+> context, this shouldn't add too much complexity/overhead to the BPF
+> code, it'd be fully backward-compatible and it doesn't depend on the
+> particular kernel logic that calls ->select_task_rq(). WDYT?
 
+Yeah, that would work too and probably what we should do to work around on
+older kernels, but also it's a relatively obvious hole in the API and we
+don't lose anything by updating the kernel to indicate the state.
+
+Thanks.
+
+-- 
+tejun
 
