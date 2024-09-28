@@ -1,93 +1,135 @@
-Return-Path: <linux-kernel+bounces-342684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1485698919E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 23:51:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58FA49891A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 23:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B65821F22E58
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:51:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1086D1F23A29
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71CE184532;
-	Sat, 28 Sep 2024 21:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC191865ED;
+	Sat, 28 Sep 2024 21:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4tI913n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Teb2HkVS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359C313A40C;
-	Sat, 28 Sep 2024 21:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6057E17B428;
+	Sat, 28 Sep 2024 21:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727560267; cv=none; b=GIhO3IgZYfKE1Pkk27yPDLD0EEqihWKDurk5ZeOFX6Wpypd6fdw5aiUz7pw51Huxeg6LezwE6f3ZDFOfr6EfNlNiBUvWJ9VwpE3lxPgPqAJSUzQarLf5GNdApfYv+yCweKKbmOE87QwnEFFZBF+6F+1w+juCnpU8mWFJBMheO5o=
+	t=1727560563; cv=none; b=b5CAEpt5PGLBqOdqM4HAO8Lt+5uHEdnEzrRzl8WGkp4TD75Ch5RGkWrIKcXFlxMVo9ikfeasiwUQBQZ3Hk3cojSAEQp2XOWgbSbcNLX1G3p9JReYCdvkIrVA4ATf25SmY/koxTYbSJj467Y2xwmb2RNBMdXQde5OzYKJWoYYGwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727560267; c=relaxed/simple;
-	bh=Ieu/6NBrjDmKc+A6Qg2WBZVQaHkRzHU5QOcz9DyXwJA=;
+	s=arc-20240116; t=1727560563; c=relaxed/simple;
+	bh=Bls5swmpeMzUWj2RlsQGBW8bINZMXO0c0CeG2/n6aR0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LIGah8eRcT12HIL2DIgrqkV1I0dY6sxJSIBP9hIjfUGqbJUuZqJQQODOCAft86qCtgfU05zIHHYVEMXSCyRRF2WS9MKy3RuH4JJ3wLnaF32+vzpzWevnGY39WfKYMRw8Zvk2SFwBoDU6QwPXITS4IXPF18aN/bVZJcN0T+S03Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4tI913n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BABF3C4CEC3;
-	Sat, 28 Sep 2024 21:51:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bi29yvr/Z5BbjwCUmS1rXFTTSQkhL/cTvhSznhTCx+b41EW1le0lUeP4BLjiNBl1ebwCaJ8tkXBZGo710qRuMYBqKEqQLkcwuDV1R7+lUswTITp10DdMa6pDw5YomuJl+wmXR+TK8q/98iNlp7WHLn5+K78m0Ot+ouFCi/QaJ6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Teb2HkVS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1605C4CEC3;
+	Sat, 28 Sep 2024 21:56:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727560266;
-	bh=Ieu/6NBrjDmKc+A6Qg2WBZVQaHkRzHU5QOcz9DyXwJA=;
+	s=k20201202; t=1727560563;
+	bh=Bls5swmpeMzUWj2RlsQGBW8bINZMXO0c0CeG2/n6aR0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q4tI913nkPwTsnIeECD78nRW6tqHiRHJEgCzoFI8GWF7K+LIJ9tjF8MBAr8xvQ+kj
-	 Eymlpgo1BHjzRmSuod/TKN+p9ajG2OJ2ceWpBA1E9HTZjBqi2QxKb1y/oYD4sb2BtP
-	 1ne/hBpgB40VgIMpd6Qg1L8lIIGyAnHPugTWXHxqr9QTpkWMUSCK1Y8wzLnWnHLgK/
-	 fqxmsUsg9OvRx/sHWoBxSjIqVAbUVA2XcMGc52jNyMIqmhP7IVP+duCPVmrw7oldNd
-	 G2WVgCXkaSRKdiEV2kW2vEiMMZ0fl4ZgwtT3JW4Rdzbc7iKMko8FEMxbCimf9Fb/aN
-	 HnVvrFh/YZdNg==
-Date: Sat, 28 Sep 2024 14:51:06 -0700
+	b=Teb2HkVSXlHPGKaQcYTedlkoVOlbSwhrrHJD0daluNnTdurb5ZsbWx4N/mlLU3GVJ
+	 uTJuNrdK0n2GyH6iTeTPQRWzyCGKBkaFYMN+ED6ybnoII/TOZg7zbMBk7IfPu2+YLE
+	 akqKzVjZSHmpndorYJ3AcDK0ROyPcMDoQSfp8+K3M3gSHrxWKWIgkLcCO5So2Gafk7
+	 EReey6Ip1vTAFTo+Xj/JKL5Gyhrgp9SfWyfRdnXA0H0umdKOJcEu3gCiPUv9N2SosM
+	 8B0QXa2iZV93R3OQUvaCk4dmersJxQSJp/yPDdyYo58dEbHX2AEbj8xHsyCT+ML2Ak
+	 Narrp1bIfYvoQ==
+Date: Sat, 28 Sep 2024 14:56:02 -0700
 From: Kees Cook <kees@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vegard Nossum <vegard.nossum@oracle.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Allen Pais <apais@linux.microsoft.com>,
-	Roman Kisel <romank@linux.microsoft.com>,
-	Xiaoming Ni <nixiaoming@huawei.com>,
-	Vijay Nag <nagvijay@microsoft.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] coredump: Do not lock during 'comm' reporting
-Message-ID: <202409281449.B228D0C1E7@keescook>
-References: <20240928210830.work.307-kees@kernel.org>
- <20240928143532.39559729f9eceee468358abe@linux-foundation.org>
- <202409281438.EAC4B88C@keescook>
- <20240928144636.d1964e6c6bb77c3e9123fc64@linux-foundation.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Tycho Andersen <tycho@tycho.pizza>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Tycho Andersen <tandersen@netflix.com>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: [PATCH v2 1/2] exec: add a flag for "reasonable" execveat() comm
+Message-ID: <202409281453.B9B9999D@keescook>
+References: <20240927151746.391931-1-tycho@tycho.pizza>
+ <87ikuhw155.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240928144636.d1964e6c6bb77c3e9123fc64@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87ikuhw155.fsf@email.froward.int.ebiederm.org>
 
-On Sat, Sep 28, 2024 at 02:46:36PM -0700, Andrew Morton wrote:
-> On Sat, 28 Sep 2024 14:39:45 -0700 Kees Cook <kees@kernel.org> wrote:
+On Fri, Sep 27, 2024 at 10:45:58AM -0500, Eric W. Biederman wrote:
+> Tycho Andersen <tycho@tycho.pizza> writes:
 > 
-> > On Sat, Sep 28, 2024 at 02:35:32PM -0700, Andrew Morton wrote:
-> > > On Sat, 28 Sep 2024 14:08:31 -0700 Kees Cook <kees@kernel.org> wrote:
-> > > 
-> > > > The 'comm' member will always be NUL terminated,
-> > > 
-> > > Why is this?  I thought this is only true if the caller holds task_lock()?
-> > 
-> > Because it's always written with strscpy_pad(). The final byte will
-> > always be NUL. (And this has been true for a very long time.)
+> > From: Tycho Andersen <tandersen@netflix.com>
+> >
+> > Zbigniew mentioned at Linux Plumber's that systemd is interested in
+> > switching to execveat() for service execution, but can't, because the
+> > contents of /proc/pid/comm are the file descriptor which was used,
+> > instead of the path to the binary. This makes the output of tools like
+> > top and ps useless, especially in a world where most fds are opened
+> > CLOEXEC so the number is truly meaningless.
+> >
+> > Change exec path to fix up /proc/pid/comm in the case where we have
+> > allocated one of these synthetic paths in bprm_init(). This way the actual
+> > exec machinery is unchanged, but cosmetically the comm looks reasonable to
+> > admins investigating things.
 > 
-> So why does __get_task_comm() need to take task_lock()?
+> Perhaps change the subject to match the code.
+> 
+> > Signed-off-by: Tycho Andersen <tandersen@netflix.com>
+> > Suggested-by: Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
+> > CC: Aleksa Sarai <cyphar@cyphar.com>
+> > Link: https://github.com/uapi-group/kernel-features#set-comm-field-before-exec
+> > ---
+> > v2: * drop the flag, everyone :)
+> >     * change the rendered value to f_path.dentry->d_name.name instead of
+> >       argv[0], Eric
+> > ---
+> >  fs/exec.c | 13 ++++++++++++-
+> >  1 file changed, 12 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/exec.c b/fs/exec.c
+> > index dad402d55681..9520359a8dcc 100644
+> > --- a/fs/exec.c
+> > +++ b/fs/exec.c
+> > @@ -1416,7 +1416,18 @@ int begin_new_exec(struct linux_binprm * bprm)
+> >  		set_dumpable(current->mm, SUID_DUMP_USER);
+> >  
+> >  	perf_event_exec();
+> > -	__set_task_comm(me, kbasename(bprm->filename), true);
+> > +
+> > +	/*
+> > +	 * If fdpath was set, execveat() made up a path that will
+> > +	 * probably not be useful to admins running ps or similar.
+> > +	 * Let's fix it up to be something reasonable.
+> > +	 */
+> > +	if (bprm->fdpath) {
+> > +		BUILD_BUG_ON(TASK_COMM_LEN > DNAME_INLINE_LEN);
+> > +		__set_task_comm(me, bprm->file->f_path.dentry->d_name.name, true);
+> 
+> We can just do this regardless of bprm->fdpath.
+> 
+> It will be a change of behavior on when executing symlinks and possibly
+> mount points but I don't think we care.  If we do then we can add make
+> it conditional with "if (bprm->fdpath)"
+> 
+> At the very least using the above version unconditionally ought to flush
+> out any bugs.
 
-That was to make sure we didn't end up with garbled results, but
-discussions have determined that we don't care:
-https://lore.kernel.org/all/20240828030321.20688-1-laoar.shao@gmail.com/
+I'm not super comfortable doing this regardless of bprm->fdpath; that
+seems like too many cases getting changed. Can we just leave it as
+depending on bprm->fdpath?
 
-But just for safety's sake, I'll change this memcpy to:
-
-    memcpy_and_pad(comm, sizeof(comm), current->comm, sizeof(comm) - 1, 0);
+Also, is d_name.name always going to be set? e.g. what about memfd, etc?
 
 -- 
 Kees Cook
