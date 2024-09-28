@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-342699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA1E9891E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:21:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56729891E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:21:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A05828537C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:21:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ED602853E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3233D187878;
-	Sat, 28 Sep 2024 22:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C57516132A;
+	Sat, 28 Sep 2024 22:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZaRm8IAU"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YaKKw2mV"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CBD1F5EA;
-	Sat, 28 Sep 2024 22:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F3F15C14E
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 22:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727562069; cv=none; b=XZ8htIDUnSxYHWClI/2HeDN8LIeyePyfgt8HSeKGHABywZqO4RfDOHYtLOYLxIrDJ/0r4i33OifGvSwfGnG3miQZSdygvg5dirQuTjnWtDS7crH9uN5xPJuUAPiiiV/tU67ROfxaaO+94Pm9jbjKFWtPIvoTOKYmiLaUlhksiUM=
+	t=1727562067; cv=none; b=JCpvCT0vgo4kq2TTvOBhIqwaNffZu6uk5JL64LmMIN85I1DpMRjKgfQ0nBHEVPVWfdHlCW2vGOxSxy1i6UG5TpHLAj3ii7oAICZ+n8RWPf7d+8tvC5MUeAKpog4hNe/J0iO+zpPbG+6muMdyvAbdqSWB3Rr9illbqiqzJFe6zrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727562069; c=relaxed/simple;
-	bh=753n/HZnmHMAeAEp/81I+HWoLFnnpgyNJSj2QobhRAI=;
+	s=arc-20240116; t=1727562067; c=relaxed/simple;
+	bh=9RAyA+ypZaeM4MqbmjvZP8YQy4DGo/KMw07dJSdAJo0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t+8mcm98UiUJhk5ZWFVlbe7I6OsnDCKNaq8k1yaWsaQMBgZuslRuZY+mXTXVY2V4UB2BR+lKTksrS3WyJX3l4xdaQzalQbcKN+RdLy8juv0jTZ2UXPe4urGqeC4trC5kve3xAfUaXPd8KpEUkr0A6QbCxD5nZl9qjTUA2T+LLBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZaRm8IAU; arc=none smtp.client-ip=198.175.65.11
+	 Content-Type:Content-Disposition:In-Reply-To; b=hBQsSip4RubB8Nhx3+1Dq9RTq1Qy/2P0fDQGUIAKpBcBR6T7/h2rBwncd8QUsxeyC3JkK+7ledOHEkjzoL5/kEk3M2qK4Zk1WIWiAOJ0OY0QmTKObkeknUVMx04IZW9op/HZPaFkqKCalTa1iZ7WwOeyin2coi/IU8hwz3IBdhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YaKKw2mV; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727562068; x=1759098068;
+  t=1727562065; x=1759098065;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=753n/HZnmHMAeAEp/81I+HWoLFnnpgyNJSj2QobhRAI=;
-  b=ZaRm8IAUdNKloL8n7zj6tQSWg5EGKegpjRY1f+Pe21X4JYfMm2sshBt8
-   C391kDDtynyFuvgOxGLj/LLAfcoBJ4cFxH81gxAukC374vCfpFdaSH/Ds
-   A8Lw5I+EN+PHKfmWrYMIin5FIKcYLeWWXuQ9uK9/VBLY4MYUm0AcLgeys
-   VAFfhz3PtNxiCNAEsJM/6xrumZmnI1i65Y54VjsD8bgtcndEzzB3Jl+FC
-   uptQ4NtBokAxyY0eJCnsU/Cbzk15pqsbKdgUyjegQ4bUgeNLeWwvXJofo
-   G1PCF8ZDISGl0fALtVq7iOBqV758cbQlw4aviTw4XORTil031br7iLpCs
-   w==;
-X-CSE-ConnectionGUID: Wa6qfH7FSASG3jfRLf8ngQ==
-X-CSE-MsgGUID: 6GHH03N7SmOVWOWc9Qo29Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="37247974"
+  bh=9RAyA+ypZaeM4MqbmjvZP8YQy4DGo/KMw07dJSdAJo0=;
+  b=YaKKw2mVtebGVKenPrW/k9X7Xc3YnByUJjitOi8ZhfMdZXcFHVj342sR
+   N7fzlvPVKoczRWm38LPK0Pn3WPuH0Yq14MmZwubjpKmCCXhYR0aDGwdWZ
+   XxJHOu1ASyX5tCComojHKJU/6XNFYRMrFotYsVrAhHwQ7SMzlkJG51CSR
+   O4SnpVXPXAb7UkgX+XpFmF+RWJC1uSB7xtgGT8Jzl+yy+zBXeE4d3T59k
+   11TRzUw5OSJNwaiJRi8HMO/4ukSMi3eJ+7AvMZ/NjtHFEgJSBdDVtfKt5
+   l3VVWiAxBzME63i9+akQRMUjFVjKF3ZQgY/+pjIwmnzOoecnvaNWI9/Af
+   A==;
+X-CSE-ConnectionGUID: XsNmJBfFRS29ZV9Vpe+z+g==
+X-CSE-MsgGUID: panzSexSRgi9ze3e8CrzgQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="37247968"
 X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="37247974"
+   d="scan'208";a="37247968"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 15:21:07 -0700
-X-CSE-ConnectionGUID: SZ77uNqsRS+YvGRrXkIpJQ==
-X-CSE-MsgGUID: EF6fF7mjRKyzfeRhvubsoQ==
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 15:21:04 -0700
+X-CSE-ConnectionGUID: iT/u9qU6TCWvbP7MkVPXJw==
+X-CSE-MsgGUID: hjXfMSkoTUK9fWG1wX7Z4g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="73183641"
+   d="scan'208";a="73183630"
 Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
   by orviesa006.jf.intel.com with ESMTP; 28 Sep 2024 15:21:01 -0700
 Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sufoA-000Nhj-2I;
+	id 1sufoA-000Nhl-2M;
 	Sat, 28 Sep 2024 22:20:58 +0000
-Date: Sun, 29 Sep 2024 06:20:01 +0800
+Date: Sun, 29 Sep 2024 06:20:02 +0800
 From: kernel test robot <lkp@intel.com>
-To: Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Jonathan.Cameron@huawei.com,
-	helgaas@kernel.org, corbet@lwn.net, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	wei.huang2@amd.com, vadim.fedorenko@linux.dev, horms@kernel.org,
-	bagasdotme@gmail.com, bhelgaas@google.com, lukas@wunner.de,
-	paul.e.luse@intel.com, jing2.liu@intel.com
-Subject: Re: [PATCH V6 2/5] PCI/TPH: Add Steering Tag support
-Message-ID: <202409290628.jR98LDA9-lkp@intel.com>
-References: <20240927215653.1552411-3-wei.huang2@amd.com>
+To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
+	Alper Nebi Yasak <alpernebiyasak@gmail.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: oe-kbuild-all@lists.linux.dev, Shawn Sung <shawn.sung@mediatek.com>,
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
+	Singo Chang <singo.chang@mediatek.com>,
+	Nancy Lin <nancy.lin@mediatek.com>,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v6 2/2] drm/mediatek: Add blend_modes to mtk_plane_init()
+ for different SoCs
+Message-ID: <202409290616.inw9UGyc-lkp@intel.com>
+References: <20240926083526.24629-3-jason-jh.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,85 +86,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240927215653.1552411-3-wei.huang2@amd.com>
+In-Reply-To: <20240926083526.24629-3-jason-jh.lin@mediatek.com>
 
-Hi Wei,
+Hi Jason-JH.Lin,
 
 kernel test robot noticed the following build errors:
 
-[auto build test ERROR on pci/next]
-[also build test ERROR on pci/for-linus linus/master next-20240927]
+[auto build test ERROR on drm/drm-next]
+[also build test ERROR on linus/master next-20240927]
 [cannot apply to v6.11]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Huang/PCI-Add-TLP-Processing-Hints-TPH-support/20240928-055915
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20240927215653.1552411-3-wei.huang2%40amd.com
-patch subject: [PATCH V6 2/5] PCI/TPH: Add Steering Tag support
-config: sparc64-randconfig-r062-20240929 (https://download.01.org/0day-ci/archive/20240929/202409290628.jR98LDA9-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290628.jR98LDA9-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Jason-JH-Lin/drm-mediatek-ovl-Add-blend_modes-to-driver-data/20240926-163734
+base:   git://anongit.freedesktop.org/drm/drm drm-next
+patch link:    https://lore.kernel.org/r/20240926083526.24629-3-jason-jh.lin%40mediatek.com
+patch subject: [PATCH v6 2/2] drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
+config: arm-randconfig-002-20240929 (https://download.01.org/0day-ci/archive/20240929/202409290616.inw9UGyc-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290616.inw9UGyc-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409290628.jR98LDA9-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409290616.inw9UGyc-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   drivers/pci/tph.c: In function 'write_tag_to_msix':
->> drivers/pci/tph.c:230:26: error: 'struct pci_dev' has no member named 'msix_base'; did you mean 'msix_cap'?
-     230 |         vec_ctrl = pdev->msix_base + msix_idx * PCI_MSIX_ENTRY_SIZE;
-         |                          ^~~~~~~~~
-         |                          msix_cap
+   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:10,
+                    from drivers/gpu/drm/mediatek/mtk_ethdr.c:18:
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:9: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+      83 |         const u32 (*get_blend_modes)(struct device *dev);
+         |         ^~~~~
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
+         | ^~~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_ethdr.c:21:
+>> drivers/gpu/drm/mediatek/mtk_ethdr.h:16:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+      16 | const u32 mtk_ethdr_get_blend_modes(struct device *dev);
+         | ^~~~~
+>> drivers/gpu/drm/mediatek/mtk_ethdr.c:148:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     148 | const u32 mtk_ethdr_get_blend_modes(struct device *dev)
+         | ^~~~~
+   cc1: all warnings being treated as errors
+--
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:20:
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:9: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+      83 |         const u32 (*get_blend_modes)(struct device *dev);
+         |         ^~~~~
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
+         | ^~~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:21:
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
+         | ^~~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:23:
+>> drivers/gpu/drm/mediatek/mtk_ethdr.h:16:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+      16 | const u32 mtk_ethdr_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:403:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     403 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev)
+         | ^~~~~
+   cc1: all warnings being treated as errors
 
 
-vim +230 drivers/pci/tph.c
+vim +16 drivers/gpu/drm/mediatek/mtk_ethdr.h
 
-   205	
-   206	/* Write ST to MSI-X vector control reg - Return 0 if OK, otherwise -errno */
-   207	static int write_tag_to_msix(struct pci_dev *pdev, int msix_idx, u16 tag)
-   208	{
-   209		struct msi_desc *msi_desc = NULL;
-   210		void __iomem *vec_ctrl;
-   211		u32 val, mask, st_val;
-   212		int err = 0;
-   213	
-   214		msi_lock_descs(&pdev->dev);
-   215	
-   216		/* Find the msi_desc entry with matching msix_idx */
-   217		msi_for_each_desc(msi_desc, &pdev->dev, MSI_DESC_ASSOCIATED) {
-   218			if (msi_desc->msi_index == msix_idx)
-   219				break;
-   220		}
-   221	
-   222		if (!msi_desc) {
-   223			err = -ENXIO;
-   224			goto err_out;
-   225		}
-   226	
-   227		st_val = (u32)tag;
-   228	
-   229		/* Get the vector control register (offset 0xc) pointed by msix_idx */
- > 230		vec_ctrl = pdev->msix_base + msix_idx * PCI_MSIX_ENTRY_SIZE;
-   231		vec_ctrl += PCI_MSIX_ENTRY_VECTOR_CTRL;
-   232	
-   233		val = readl(vec_ctrl);
-   234		mask = PCI_MSIX_ENTRY_CTRL_ST_LOWER | PCI_MSIX_ENTRY_CTRL_ST_UPPER;
-   235		val &= ~mask;
-   236		val |= FIELD_PREP(mask, st_val);
-   237		writel(val, vec_ctrl);
-   238	
-   239		/* Read back to flush the update */
-   240		val = readl(vec_ctrl);
-   241	
-   242	err_out:
-   243		msi_unlock_descs(&pdev->dev);
-   244		return err;
-   245	}
-   246	
+     8	
+     9	void mtk_ethdr_start(struct device *dev);
+    10	void mtk_ethdr_stop(struct device *dev);
+    11	int mtk_ethdr_clk_enable(struct device *dev);
+    12	void mtk_ethdr_clk_disable(struct device *dev);
+    13	void mtk_ethdr_config(struct device *dev, unsigned int w,
+    14			      unsigned int h, unsigned int vrefresh,
+    15			      unsigned int bpc, struct cmdq_pkt *cmdq_pkt);
+  > 16	const u32 mtk_ethdr_get_blend_modes(struct device *dev);
 
 -- 
 0-DAY CI Kernel Test Service
